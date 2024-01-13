@@ -21,6 +21,7 @@ const modalNameToComponentMap = {
   'create-playlist-folder-form': defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistFolderForm.vue')),
   'edit-playlist-folder-form': defineAsyncComponent(() => import('@/components/playlist/EditPlaylistFolderForm.vue')),
   'about-koel': defineAsyncComponent(() => import('@/components/meta/AboutKoelModal.vue')),
+  'koel-plus': defineAsyncComponent(() => import('@/components/koel-plus/KoelPlusModal.vue')),
   'equalizer': defineAsyncComponent(() => import('@/components/ui/Equalizer.vue'))
 }
 
@@ -40,6 +41,7 @@ const close = () => {
 }
 
 eventBus.on('MODAL_SHOW_ABOUT_KOEL', () => (activeModalName.value = 'about-koel'))
+  .on('MODAL_SHOW_KOEL_PLUS', () => (activeModalName.value = 'koel-plus'))
   .on('MODAL_SHOW_ADD_USER_FORM', () => (activeModalName.value = 'add-user-form'))
   .on('MODAL_SHOW_INVITE_USER_FORM', () => (activeModalName.value = 'invite-user-form'))
   .on('MODAL_SHOW_CREATE_PLAYLIST_FORM', (folder, songs) => {
@@ -85,6 +87,7 @@ dialog {
   border-radius: 4px;
   min-width: 460px;
   max-width: calc(100vw - 24px);
+  overflow: visible;
 
   @media screen and (max-width: 768px) {
     min-width: calc(100vw - 24px);

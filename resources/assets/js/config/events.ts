@@ -27,6 +27,7 @@ export interface Events {
   MODAL_SHOW_CREATE_PLAYLIST_FOLDER_FORM: () => void
   MODAL_SHOW_EDIT_PLAYLIST_FOLDER_FORM: (playlistFolder: PlaylistFolder) => void
   MODAL_SHOW_ABOUT_KOEL: () => void
+  MODAL_SHOW_KOEL_PLUS: () => void
   MODAL_SHOW_EQUALIZER: () => void
 
   PLAYLIST_DELETE: (playlist: Playlist) => void

@@ -1,15 +1,17 @@
 <template>
-  <a :href="storeUrl" target="_blank" class="upgrade-to-plus-btn">
+  <a href class="upgrade-to-plus-btn" @click.prevent="openModal">
     <Icon :icon="faPlus" fixed-width/>
     Upgrade to Plus
   </a>
 </template>
 
 <script setup lang="ts">
-import { useKoelPlus } from '@/composables'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import { eventBus } from '@/utils'
 
-const { storeUrl } = useKoelPlus()
+const openModal = () => {
+  eventBus.emit('MODAL_SHOW_KOEL_PLUS')
+}
 </script>
 
 <style scoped lang="scss">

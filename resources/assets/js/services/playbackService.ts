@@ -164,7 +164,7 @@ class PlaybackService {
         position: 0
       })
     } catch (error) {
-      console.log(error)
+      logger.error(error)
     }
 
     this.player.restart()
@@ -397,7 +397,7 @@ class PlaybackService {
             position: Math.ceil(media.currentTime)
           })
         } catch (error) {
-          console.log(error)
+          logger.error(error)
         }
       }
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Facades\YouTube;
+use App\Http\Controllers\API\ActivateLicenseController;
 use App\Http\Controllers\API\AlbumController;
 use App\Http\Controllers\API\AlbumSongController;
 use App\Http\Controllers\API\ArtistAlbumController;
@@ -161,6 +162,8 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
 
         Route::put('songs/make-public', MakeSongsPublicController::class);
         Route::put('songs/make-private', MakeSongsPrivateController::class);
+
+        Route::post('licenses/activate', ActivateLicenseController::class);
     });
 
     // Object-storage (S3) routes

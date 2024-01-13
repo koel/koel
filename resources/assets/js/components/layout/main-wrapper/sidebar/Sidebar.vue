@@ -60,7 +60,7 @@ import QueueSidebarItem from './QueueSidebarItem.vue'
 import YouTubeSidebarItem from './YouTubeSidebarItem.vue'
 import PlaylistList from './PlaylistSidebarList.vue'
 import SearchForm from '@/components/ui/SearchForm.vue'
-import BtnUpgradeToPlus from '@/components/meta/BtnUpgradeToPlus.vue'
+import BtnUpgradeToPlus from '@/components/koel-plus/BtnUpgradeToPlus.vue'
 
 const { onRouteChanged } = useRouter()
 const { useYouTube } = useThirdPartyServices()

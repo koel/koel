@@ -9,6 +9,6 @@ export const useKoelPlus = () => {
       customerName: commonStore.state.koel_plus.customer_name,
       customerEmail: commonStore.state.koel_plus.customer_email
     },
-    storeUrl: computed(() => commonStore.state.koel_plus.store_url)
+    checkoutUrl: computed(() => `https://store.plus.koel.dev/checkout/buy/${commonStore.state.koel_plus.product_id}?embed=1&media=0`)
   }
 }

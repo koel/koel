@@ -30,6 +30,10 @@ button {
     box-shadow: inset 0 0 0 10rem rgba(0, 0, 0, .05);
   }
 
+  &[big] {
+    padding: .85rem 1.4rem;
+  }
+
   &[small] {
     font-size: .9rem;
     padding: .4rem .7rem;

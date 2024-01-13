@@ -14,7 +14,7 @@ interface CommonStoreState {
     short_key: string | null
     customer_name: string | null
     customer_email: string | null
-    store_url: string
+    product_id: string
   }
   media_path_set: boolean
   playlists: Playlist[]
@@ -41,7 +41,7 @@ export const commonStore = {
       short_key: null,
       customer_name: null,
       customer_email: null,
-      store_url: ''
+      product_id: ''
     },
     latest_version: '',
     media_path_set: false,

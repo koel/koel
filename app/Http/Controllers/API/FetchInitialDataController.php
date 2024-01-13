@@ -59,7 +59,7 @@ class FetchInitialDataController extends Controller
                 'short_key' => $licenseStatus->license?->short_key,
                 'customer_name' => $licenseStatus->license?->meta->customerName,
                 'customer_email' => $licenseStatus->license?->meta->customerEmail,
-                'store_url' => config('lemonsqueezy.store_url'),
+                'product_id' => config('lemonsqueezy.product_id'),
             ],
         ]);
     }
