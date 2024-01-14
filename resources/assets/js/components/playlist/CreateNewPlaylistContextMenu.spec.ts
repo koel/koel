@@ -8,7 +8,7 @@ import CreateNewPlaylistContextMenu from './CreateNewPlaylistContextMenu.vue'
 new class extends UnitTestCase {
   private async renderComponent () {
     this.render(CreateNewPlaylistContextMenu)
-    eventBus.emit('CREATE_NEW_PLAYLIST_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent)
+    eventBus.emit('CREATE_NEW_PLAYLIST_CONTEXT_MENU_REQUESTED', { top: 420, left: 42 })
     await this.tick(2)
   }
 

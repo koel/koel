@@ -100,7 +100,7 @@ const maybeClose = async () => {
 
 <style lang="scss" scoped>
 form {
-  width: 540px;
+  min-width: 100%;
 }
 
 label.folder {

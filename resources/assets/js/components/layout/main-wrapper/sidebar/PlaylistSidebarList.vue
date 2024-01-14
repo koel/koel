@@ -1,14 +1,15 @@
 <template>
   <section id="playlists">
     <h1>
-      <span>Playlists</span>
-      <icon
-        :icon="faCirclePlus"
-        class="control create"
-        role="button"
+      <span class="heading">Playlists</span>
+      <button
+        type="button"
+        ref="createBtnEl"
         title="Create a new playlist or folder"
         @click.stop.prevent="requestContextMenu"
-      />
+      >
+        <Icon :icon="faCirclePlus" />
+      </button>
     </h1>
 
     <ul>
@@ -22,20 +23,28 @@
 
 <script lang="ts" setup>
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons'
-import { computed, toRef } from 'vue'
+import { computed, ref, toRef } from 'vue'
 import { favoriteStore, playlistFolderStore, playlistStore } from '@/stores'
 import { eventBus } from '@/utils'
 
 import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
 import PlaylistFolderSidebarItem from './PlaylistFolderSidebarItem.vue'
 
+const createBtnEl = ref<HTMLElement>()
 const folders = toRef(playlistFolderStore.state, 'folders')
 const playlists = toRef(playlistStore.state, 'playlists')
 const favorites = toRef(favoriteStore.state, 'songs')
 
 const orphanPlaylists = computed(() => playlists.value.filter(playlist => playlist.folder_id === null))
 
-const requestContextMenu = (event: MouseEvent) => eventBus.emit('CREATE_NEW_PLAYLIST_CONTEXT_MENU_REQUESTED', event)
+const requestContextMenu = () => {
+  const clientRect = createBtnEl.value!.getBoundingClientRect()
+
+  eventBus.emit('CREATE_NEW_PLAYLIST_CONTEXT_MENU_REQUESTED', {
+    top: clientRect.bottom,
+    left: clientRect.right
+  })
+}
 </script>
 
 <style lang="scss">
@@ -44,8 +53,23 @@ const requestContextMenu = (event: MouseEvent) => eventBus.emit('CREATE_NEW_PLAY
     display: flex;
     align-items: center;
 
-    span {
+    span.heading {
       flex: 1;
+    }
+
+    button {
+      position: relative;
+
+      &::before {
+        // increase clickable area
+        content: '';
+        position: absolute;
+        width: 28px;
+        height: 28px;
+        top: -6px;
+        left: -6px;
+        cursor: pointer;
+      }
     }
   }
 }
