@@ -48,13 +48,5 @@ const requestContextMenu = (event: MouseEvent) => eventBus.emit('CREATE_NEW_PLAY
       flex: 1;
     }
   }
-
-  .control.create {
-    transition: .3s;
-
-    &.creating {
-      transform: rotate(135deg);
-    }
-  }
 }
 </style>

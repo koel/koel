@@ -4,7 +4,7 @@
       <SearchForm/>
     </section>
 
-    <section class="menu-wrapper">
+    <section class="menu-wrapper" v-koel-overflow-fade>
       <section class="music">
         <h1>Your Music</h1>
 
@@ -103,12 +103,12 @@ nav {
   }
 
   .search-wrapper {
-    padding: 2.05rem 1.5rem 0;
+    padding: 1.8rem 1.5rem;
   }
 
   .menu-wrapper {
     flex: 1;
-    padding: 2.05rem 1.5rem;
+    padding: 0 1.5rem;
     overflow-y: auto;
 
     @media (hover: none) {
