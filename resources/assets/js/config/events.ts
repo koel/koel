@@ -10,7 +10,7 @@ export interface Events {
   SONG_CONTEXT_MENU_REQUESTED: (event: MouseEvent, songs: Song | Song[]) => void
   ALBUM_CONTEXT_MENU_REQUESTED: (event: MouseEvent, album: Album) => void
   ARTIST_CONTEXT_MENU_REQUESTED: (event: MouseEvent, artist: Artist) => void
-  CREATE_NEW_PLAYLIST_CONTEXT_MENU_REQUESTED: (event: MouseEvent) => void
+  CREATE_NEW_PLAYLIST_CONTEXT_MENU_REQUESTED: ({ top, left }: { top: number, left: number }) => void
   PLAYLIST_CONTEXT_MENU_REQUESTED: (event: MouseEvent, playlist: Playlist) => void
   PLAYLIST_FOLDER_CONTEXT_MENU_REQUESTED: (event: MouseEvent, playlistFolder: PlaylistFolder) => void
   CONTEXT_MENU_OPENED: (el: Ref<HTMLElement> | HTMLElement) => void
