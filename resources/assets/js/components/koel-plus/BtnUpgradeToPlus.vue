@@ -9,9 +9,7 @@
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { eventBus } from '@/utils'
 
-const openModal = () => {
-  eventBus.emit('MODAL_SHOW_KOEL_PLUS')
-}
+const openModal = () => eventBus.emit('MODAL_SHOW_KOEL_PLUS')
 </script>
 
 <style scoped lang="scss">
