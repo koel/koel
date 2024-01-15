@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Exceptions\InvitationNotFoundException;
 use App\Mail\UserInvite;
 use App\Models\User;
+use App\Repositories\UserRepository;
 use Illuminate\Contracts\Hashing\Hasher as Hash;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +14,7 @@ use Illuminate\Support\Str;
 
 class UserInvitationService
 {
-    public function __construct(private Hash $hash)
+    public function __construct(private Hash $hash, private UserRepository $userRepository)
     {
     }
 
@@ -36,8 +37,7 @@ class UserInvitationService
     /** @throws InvitationNotFoundException */
     public function revokeByEmail(string $email): void
     {
-        /** @var ?User $user */
-        $user = User::query()->where('email', $email)->first();
+        $user = $this->userRepository->findOneByEmail($email);
         throw_unless($user?->is_prospect, new InvitationNotFoundException());
         $user->delete();
     }

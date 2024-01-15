@@ -5,6 +5,7 @@ namespace Tests\Unit\Services;
 use App\Events\LibraryChanged;
 use App\Models\Song;
 use App\Repositories\SongRepository;
+use App\Repositories\UserRepository;
 use App\Services\MediaMetadataService;
 use App\Services\S3Service;
 use Aws\CommandInterface;
@@ -16,11 +17,14 @@ use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
 use Tests\TestCase;
 
+use function Tests\create_admin;
+
 class S3ServiceTest extends TestCase
 {
     private S3ClientInterface|LegacyMockInterface|MockInterface $s3Client;
     private Cache|LegacyMockInterface|MockInterface $cache;
     private SongRepository|LegacyMockInterface|MockInterface $songRepository;
+    private UserRepository|LegacyMockInterface|MockInterface $userRepository;
     private S3Service $s3Service;
 
     public function setUp(): void
@@ -32,13 +36,25 @@ class S3ServiceTest extends TestCase
 
         $metadataService = Mockery::mock(MediaMetadataService::class);
         $this->songRepository = Mockery::mock(SongRepository::class);
+        $this->userRepository = Mockery::mock(UserRepository::class);
 
-        $this->s3Service = new S3Service($this->s3Client, $this->cache, $metadataService, $this->songRepository);
+        $this->s3Service = new S3Service(
+            $this->s3Client,
+            $this->cache,
+            $metadataService,
+            $this->songRepository,
+            $this->userRepository
+        );
     }
 
     public function testCreateSongEntry(): void
     {
         $this->expectsEvents(LibraryChanged::class);
+
+        $user = create_admin();
+        $this->userRepository->shouldReceive('getDefaultAdminUser')
+            ->once()
+            ->andReturn($user);
 
         $song = $this->s3Service->createSongEntry(
             bucket: 'foo',
@@ -60,11 +76,17 @@ class S3ServiceTest extends TestCase
         self::assertSame(355.5, $song->length);
         self::assertSame('Is this the real life?', $song->lyrics);
         self::assertSame(1, $song->track);
+        self::assertSame($user->id, $song->owner_id);
     }
 
     public function testUpdateSongEntry(): void
     {
         $this->expectsEvents(LibraryChanged::class);
+
+        $user = create_admin();
+        $this->userRepository->shouldReceive('getDefaultAdminUser')
+            ->once()
+            ->andReturn($user);
 
         /** @var Song $song */
         $song = Song::factory()->create([
@@ -95,6 +117,7 @@ class S3ServiceTest extends TestCase
         self::assertSame(355.5, $song->length);
         self::assertSame('Is this the real life?', $song->lyrics);
         self::assertSame(1, $song->track);
+        self::assertSame($user->id, $song->owner_id);
     }
 
     public function testDeleteSong(): void

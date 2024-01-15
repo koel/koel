@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Libraries\WatchRecord\InotifyWatchRecord;
 use App\Models\Setting;
 use App\Models\User;
+use App\Repositories\UserRepository;
 use App\Services\MediaScanner;
 use App\Values\ScanConfiguration;
 use App\Values\ScanResult;
@@ -29,7 +30,7 @@ class ScanCommand extends Command
     private ?string $mediaPath;
     private ProgressBar $progressBar;
 
-    public function __construct(private MediaScanner $mediaScanner)
+    public function __construct(private MediaScanner $mediaScanner, private UserRepository $userRepository)
     {
         parent::__construct();
 
@@ -170,8 +171,8 @@ class ScanCommand extends Command
             return $user;
         }
 
-        /** @var User $user */
-        $user = User::where('is_admin', true)->oldest()->firstOrFail();
+        $user = $this->userRepository->getDefaultAdminUser();
+
         $this->components->warn(
             "No song owner specified. Setting the first admin ($user->name, ID $user->id) as owner."
         );
