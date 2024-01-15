@@ -11,9 +11,9 @@ new class extends UnitTestCase {
         commonStore.state.uses_spotify = useSpotify
 
         if (isAdmin) {
-          this.actingAsAdmin()
+          this.beAdmin()
         } else {
-          this.actingAs()
+          this.be()
         }
 
         expect(this.render(SpotifyIntegration).html()).toMatchSnapshot();

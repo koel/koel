@@ -11,7 +11,7 @@ new class extends UnitTestCase {
         avatar: 'https://example.com/avatar.jpg'
       })
 
-      expect(this.actingAs(user).render(ProfileAvatar).html()).toMatchSnapshot()
+      expect(this.be(user).render(ProfileAvatar).html()).toMatchSnapshot()
     })
   }
 }

@@ -26,7 +26,7 @@
           </label>
         </div>
 
-        <div class="form-row rules">
+        <div class="form-row rules" v-koel-overflow-fade>
           <RuleGroup
             v-for="(group, index) in mutablePlaylist.rules"
             :key="group.id"

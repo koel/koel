@@ -52,21 +52,22 @@ export default abstract class UnitTestCase {
 
   protected afterEach (cb?: Closure) {
     afterEach(() => {
+      isMobile.any = false
       commonStore.state.song_length = 10
       cleanup()
       this.restoreAllMocks()
-      isMobile.any = false
+      this.disablePlusEdition()
       cb && cb()
     })
   }
 
-  protected actingAs (user?: User) {
+  protected be (user?: User) {
     userStore.state.current = user || factory<User>('user')
     return this
   }
 
-  protected actingAsAdmin () {
-    return this.actingAs(factory.states('admin')<User>('user'))
+  protected beAdmin () {
+    return this.be(factory.states('admin')<User>('user'))
   }
 
   protected mock<T, M extends MethodOf<Required<T>>> (obj: T, methodName: M, implementation?: any) {
@@ -135,6 +136,26 @@ export default abstract class UnitTestCase {
     }
 
     return options
+  }
+
+  protected enablePlusEdition () {
+    commonStore.state.koel_plus = {
+      active: true,
+      short_key: '****-XXXX',
+      customer_name: 'John Doe',
+      customer_email: 'Koel Plus',
+      product_id: 'koel-plus',
+    }
+  }
+
+  protected disablePlusEdition () {
+    commonStore.state.koel_plus = {
+      active: false,
+      short_key: '',
+      customer_name: '',
+      customer_email: '',
+      product_id: '',
+    }
   }
 
   protected stub (testId = 'stub') {

@@ -38,7 +38,7 @@ class SongController extends Controller
             $this->songRepository->getForListing(
                 sortColumn: $request->sort ?: 'songs.title',
                 sortDirection: $request->order ?: 'asc',
-                ownSongsOnly: (bool) $request->ownSongsOnly,
+                ownSongsOnly: $request->boolean('own_songs_only'),
                 scopedUser: $this->user
             )
         );

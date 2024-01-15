@@ -4,7 +4,7 @@ import { eventBus } from '@/utils'
 import YouTubeSidebarItem from './YouTubeSidebarItem.vue'
 
 new class extends UnitTestCase {
-  protected test() {
+  protected test () {
     it('renders', async () => {
       const { html } = this.render(YouTubeSidebarItem)
 

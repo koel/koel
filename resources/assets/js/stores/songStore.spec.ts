@@ -274,9 +274,14 @@ new class extends UnitTestCase {
 
       const syncMock = this.mock(songStore, 'syncWithVault', reactive(songs))
 
-      expect(await songStore.paginate('title', 'desc', 2)).toBe(3)
+      expect(await songStore.paginate({
+        page: 2,
+        sort: 'title',
+        order: 'desc',
+        own_songs_only: true
+      })).toBe(3)
 
-      expect(getMock).toHaveBeenCalledWith('songs?page=2&sort=title&order=desc')
+      expect(getMock).toHaveBeenCalledWith('songs?page=2&sort=title&order=desc&own_songs_only=true')
       expect(syncMock).toHaveBeenCalledWith(songs)
       expect(songStore.state.songs).toEqual(reactive(songs))
     })
@@ -297,7 +302,11 @@ new class extends UnitTestCase {
 
       const syncMock = this.mock(songStore, 'syncWithVault', reactiveSongs)
 
-      expect(await songStore.paginateForGenre('foo', 'title', 'desc', 2)).toEqual({
+      expect(await songStore.paginateForGenre('foo', {
+        page: 2,
+        sort: 'title',
+        order: 'desc'
+      })).toEqual({
         songs: reactiveSongs,
         nextPage: 3
       })

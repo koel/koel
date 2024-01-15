@@ -1,137 +1,74 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-<section id="songsWrapper">
-  <header class="screen-header expanded" data-v-5691beb5="">
-    <aside class="thumbnail-wrapper" data-v-5691beb5="">
-      <div class="thumbnail-stack single" style="background-image: url(undefined/resources/assets/img/covers/default.svg);" data-v-55bfc268="" data-v-5691beb5-s=""><span data-testid="thumbnail" data-v-55bfc268=""></span></div>
-    </aside>
-    <main data-v-5691beb5="">
-      <div class="heading-wrapper" data-v-5691beb5="">
-        <h1 class="name" data-v-5691beb5=""> All Songs
-          <!--v-if-->
-        </h1><span class="meta text-secondary" data-v-5691beb5=""><span data-v-5691beb5-s="">420 songs</span><span data-v-5691beb5-s="">34 hr 17 min</span></span>
-      </div>
-      <div class="song-list-controls" data-testid="song-list-controls" data-v-d396e0d2="" data-v-5691beb5-s="">
-        <div class="wrapper" data-v-d396e0d2=""><span class="btn-group" uppercased="" data-v-e884c19a="" data-v-d396e0d2=""><button type="button" class="btn-shuffle-all" data-testid="btn-shuffle-all" orange="" title="Shuffle all songs" data-v-e368fe26="" data-v-d396e0d2=""><br data-testid="icon" icon="[object Object]" fixed-width="" data-v-d396e0d2=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
-          <!--v-if-->
-          <!--v-if-->
-        </div>
-        <div class="menu-wrapper" data-v-d396e0d2="">
-          <div class="add-to" data-testid="add-to-menu" tabindex="0" data-v-42061e3e="" data-v-d396e0d2="">
-            <section class="existing-playlists" data-v-42061e3e="">
-              <p data-v-42061e3e="">Add 0 songs to</p>
-              <ul data-v-42061e3e="">
-                <li data-testid="queue" tabindex="0" data-v-42061e3e="">Queue</li>
-                <li class="favorites" data-testid="add-to-favorites" tabindex="0" data-v-42061e3e=""> Favorites </li>
-              </ul>
-            </section><button type="button" transparent="" data-v-e368fe26="" data-v-42061e3e="">New Playlist…</button>
-          </div>
-        </div>
-      </div>
-    </main>
-  </header><br data-testid="song-list">
-</section>
-`;
-
-exports[`renders 2`] = `
-<section id="songsWrapper">
-  <header class="screen-header expanded" data-v-5691beb5="">
-    <aside class="thumbnail-wrapper" data-v-5691beb5="">
-      <div class="thumbnail-stack single" style="background-image: url(undefined/resources/assets/img/covers/default.svg);" data-v-55bfc268="" data-v-5691beb5-s=""><span data-testid="thumbnail" data-v-55bfc268=""></span></div>
-    </aside>
-    <main data-v-5691beb5="">
-      <div class="heading-wrapper" data-v-5691beb5="">
-        <h1 class="name" data-v-5691beb5=""> All Songs
-          <!--v-if-->
-        </h1><span class="meta text-secondary" data-v-5691beb5=""><span data-v-5691beb5-s="">420 songs</span><span data-v-5691beb5-s="">34 hr 17 min</span></span>
-      </div>
-      <div class="song-list-controls" data-testid="song-list-controls" data-v-d396e0d2="" data-v-5691beb5-s="">
-        <div class="wrapper" data-v-d396e0d2=""><span class="btn-group" uppercased="" data-v-e884c19a="" data-v-d396e0d2=""><button class="btn-shuffle-all" data-testid="btn-shuffle-all" orange="" title="Shuffle all songs" data-v-e368fe26="" data-v-d396e0d2=""><br data-testid="icon" icon="[object Object]" fixed-width="" data-v-d396e0d2=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
-          <!--v-if-->
-          <!--v-if-->
-        </div>
-        <div class="menu-wrapper" data-v-d396e0d2="">
-          <div class="add-to" data-testid="add-to-menu" tabindex="0" data-v-42061e3e="" data-v-d396e0d2="">
-            <section class="existing-playlists" data-v-42061e3e="">
-              <p data-v-42061e3e="">Add 0 songs to</p>
-              <ul data-v-42061e3e="">
-                <li data-testid="queue" tabindex="0" data-v-42061e3e="">Queue</li>
-                <li class="favorites" data-testid="add-to-favorites" tabindex="0" data-v-42061e3e=""> Favorites </li>
-              </ul>
-            </section><button transparent="" data-v-e368fe26="" data-v-42061e3e="">New Playlist…</button>
-          </div>
-        </div>
-      </div>
-    </main>
-  </header><br data-testid="song-list">
-</section>
-`;
-
-exports[`renders 3`] = `
-<section id="songsWrapper">
-  <header data-v-5691beb5="" class="screen-header expanded">
+<section data-v-8ea4eaa5="" id="songsWrapper">
+  <header data-v-5691beb5="" data-v-8ea4eaa5="" class="screen-header expanded">
     <aside data-v-5691beb5="" class="thumbnail-wrapper">
-      <div data-v-55bfc268="" data-v-5691beb5-s="" class="thumbnail-stack single" style="background-image: url(undefined/resources/assets/img/covers/default.svg);"><span data-v-55bfc268="" data-testid="thumbnail"></span></div>
+      <div data-v-55bfc268="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="thumbnail-stack single" style="background-image: url(undefined/resources/assets/img/covers/default.svg);"><span data-v-55bfc268="" data-testid="thumbnail"></span></div>
     </aside>
     <main data-v-5691beb5="">
       <div data-v-5691beb5="" class="heading-wrapper">
         <h1 data-v-5691beb5="" class="name"> All Songs
           <!--v-if-->
-        </h1><span data-v-5691beb5="" class="meta text-secondary"><span data-v-5691beb5-s="">420 songs</span><span data-v-5691beb5-s="">34 hr 17 min</span></span>
+        </h1><span data-v-5691beb5="" class="meta text-secondary"><span data-v-8ea4eaa5="" data-v-5691beb5-s="">420 songs</span><span data-v-8ea4eaa5="" data-v-5691beb5-s="">34 hr 17 min</span></span>
       </div>
-      <div data-v-d396e0d2="" data-v-5691beb5-s="" class="song-list-controls" data-testid="song-list-controls">
-        <div data-v-d396e0d2="" class="wrapper"><span data-v-e884c19a="" data-v-d396e0d2="" class="btn-group" uppercased=""><button data-v-e368fe26="" data-v-d396e0d2="" class="btn-shuffle-all" data-testid="btn-shuffle-all" orange="" title="Shuffle all songs"><br data-v-d396e0d2="" data-testid="icon" icon="[object Object]" fixed-width=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
-          <!--v-if-->
-          <!--v-if-->
-        </div>
-        <div data-v-d396e0d2="" class="menu-wrapper">
-          <div data-v-42061e3e="" data-v-d396e0d2="" class="add-to" data-testid="add-to-menu" tabindex="0">
-            <section data-v-42061e3e="" class="existing-playlists">
-              <p data-v-42061e3e="">Add 0 songs to</p>
-              <ul data-v-42061e3e="">
-                <li data-v-42061e3e="" data-testid="queue" tabindex="0">Queue</li>
-                <li data-v-42061e3e="" class="favorites" data-testid="add-to-favorites" tabindex="0"> Favorites </li>
-              </ul>
-            </section><button data-v-e368fe26="" data-v-42061e3e="" transparent="">New Playlist…</button>
+      <div data-v-8ea4eaa5="" data-v-5691beb5-s="" class="controls">
+        <div data-v-d396e0d2="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="song-list-controls" data-testid="song-list-controls">
+          <div data-v-d396e0d2="" class="wrapper"><span data-v-e884c19a="" data-v-d396e0d2="" class="btn-group" uppercased=""><button data-v-e368fe26="" data-v-d396e0d2="" class="btn-shuffle-all" data-testid="btn-shuffle-all" orange="" title="Shuffle all. Press Alt/⌥ to change mode."><br data-v-d396e0d2="" data-testid="Icon" icon="[object Object]" fixed-width=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
+            <!--v-if-->
+            <!--v-if-->
+          </div>
+          <div data-v-d396e0d2="" class="menu-wrapper">
+            <div data-v-42061e3e="" data-v-d396e0d2="" class="add-to" data-testid="add-to-menu" tabindex="0">
+              <section data-v-42061e3e="" class="existing-playlists">
+                <p data-v-42061e3e="">Add 0 songs to</p>
+                <ul data-v-42061e3e="">
+                  <li data-v-42061e3e="" data-testid="queue" tabindex="0">Queue</li>
+                  <li data-v-42061e3e="" class="favorites" data-testid="add-to-favorites" tabindex="0"> Favorites </li>
+                </ul>
+              </section><button data-v-e368fe26="" data-v-42061e3e="" transparent="">New Playlist…</button>
+            </div>
           </div>
         </div>
+        <!--v-if-->
       </div>
     </main>
-  </header><br data-testid="song-list">
+  </header><br data-v-8ea4eaa5="" data-testid="song-list">
 </section>
 `;
 
-exports[`renders 4`] = `
-<section id="songsWrapper">
-  <header data-v-5691beb5="" class="screen-header expanded">
+exports[`renders in Plus edition 1`] = `
+<section data-v-8ea4eaa5="" id="songsWrapper">
+  <header data-v-5691beb5="" data-v-8ea4eaa5="" class="screen-header expanded">
     <aside data-v-5691beb5="" class="thumbnail-wrapper">
-      <div data-v-55bfc268="" data-v-5691beb5-s="" class="thumbnail-stack single" style="background-image: url(undefined/resources/assets/img/covers/default.svg);"><span data-v-55bfc268="" data-testid="thumbnail"></span></div>
+      <div data-v-55bfc268="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="thumbnail-stack single" style="background-image: url(undefined/resources/assets/img/covers/default.svg);"><span data-v-55bfc268="" data-testid="thumbnail"></span></div>
     </aside>
     <main data-v-5691beb5="">
       <div data-v-5691beb5="" class="heading-wrapper">
         <h1 data-v-5691beb5="" class="name"> All Songs
           <!--v-if-->
-        </h1><span data-v-5691beb5="" class="meta text-secondary"><span data-v-5691beb5-s="">420 songs</span><span data-v-5691beb5-s="">34 hr 17 min</span></span>
+        </h1><span data-v-5691beb5="" class="meta text-secondary"><span data-v-8ea4eaa5="" data-v-5691beb5-s="">420 songs</span><span data-v-8ea4eaa5="" data-v-5691beb5-s="">34 hr 17 min</span></span>
       </div>
-      <div data-v-d396e0d2="" data-v-5691beb5-s="" class="song-list-controls" data-testid="song-list-controls">
-        <div data-v-d396e0d2="" class="wrapper"><span data-v-e884c19a="" data-v-d396e0d2="" class="btn-group" uppercased=""><button data-v-e368fe26="" data-v-d396e0d2="" class="btn-shuffle-all" data-testid="btn-shuffle-all" orange="" title="Shuffle all songs"><br data-v-d396e0d2="" data-testid="Icon" icon="[object Object]" fixed-width=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
-          <!--v-if-->
-          <!--v-if-->
-        </div>
-        <div data-v-d396e0d2="" class="menu-wrapper">
-          <div data-v-42061e3e="" data-v-d396e0d2="" class="add-to" data-testid="add-to-menu" tabindex="0">
-            <section data-v-42061e3e="" class="existing-playlists">
-              <p data-v-42061e3e="">Add 0 songs to</p>
-              <ul data-v-42061e3e="">
-                <li data-v-42061e3e="" data-testid="queue" tabindex="0">Queue</li>
-                <li data-v-42061e3e="" class="favorites" data-testid="add-to-favorites" tabindex="0"> Favorites </li>
-              </ul>
-            </section><button data-v-e368fe26="" data-v-42061e3e="" transparent="">New Playlist…</button>
+      <div data-v-8ea4eaa5="" data-v-5691beb5-s="" class="controls">
+        <div data-v-d396e0d2="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="song-list-controls" data-testid="song-list-controls">
+          <div data-v-d396e0d2="" class="wrapper"><span data-v-e884c19a="" data-v-d396e0d2="" class="btn-group" uppercased=""><button data-v-e368fe26="" data-v-d396e0d2="" class="btn-shuffle-all" data-testid="btn-shuffle-all" orange="" title="Shuffle all. Press Alt/⌥ to change mode."><br data-v-d396e0d2="" data-testid="Icon" icon="[object Object]" fixed-width=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
+            <!--v-if-->
+            <!--v-if-->
           </div>
-        </div>
+          <div data-v-d396e0d2="" class="menu-wrapper">
+            <div data-v-42061e3e="" data-v-d396e0d2="" class="add-to" data-testid="add-to-menu" tabindex="0">
+              <section data-v-42061e3e="" class="existing-playlists">
+                <p data-v-42061e3e="">Add 0 songs to</p>
+                <ul data-v-42061e3e="">
+                  <li data-v-42061e3e="" data-testid="queue" tabindex="0">Queue</li>
+                  <li data-v-42061e3e="" class="favorites" data-testid="add-to-favorites" tabindex="0"> Favorites </li>
+                </ul>
+              </section><button data-v-e368fe26="" data-v-42061e3e="" transparent="">New Playlist…</button>
+            </div>
+          </div>
+        </div><label data-v-8ea4eaa5="" data-v-5691beb5-s="" class="own-songs-toggle text-secondary"><span data-v-b5259680="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class=""><input data-v-b5259680="" type="checkbox"></span><span data-v-8ea4eaa5="" data-v-5691beb5-s="">Own songs only</span></label>
       </div>
     </main>
-  </header><br data-testid="song-list">
+  </header><br data-v-8ea4eaa5="" data-testid="song-list">
 </section>
 `;

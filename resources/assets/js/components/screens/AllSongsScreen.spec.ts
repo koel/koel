@@ -26,13 +26,19 @@ new class extends UnitTestCase {
       }
     })
 
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('title', 'asc', 1))
-    return rendered
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith({
+      sort: 'title',
+      order: 'asc',
+      page: 1,
+      own_songs_only: false
+    }))
+
+    return [rendered, fetchMock] as const
   }
 
   protected test () {
     it('renders', async () => {
-      const { html } = await this.renderComponent()
+      const [{ html }] = await this.renderComponent()
       await waitFor(() => expect(html()).toMatchSnapshot())
     })
 
@@ -42,13 +48,28 @@ new class extends UnitTestCase {
       const goMock = this.mock(this.router, 'go')
       await this.renderComponent()
 
-      await this.user.click(screen.getByTitle('Shuffle all songs'))
+      await this.user.click(screen.getByTitle('Shuffle all. Press Alt/⌥ to change mode.'))
 
       await waitFor(() => {
         expect(queueMock).toHaveBeenCalled()
         expect(playMock).toHaveBeenCalled()
         expect(goMock).toHaveBeenCalledWith('queue')
       })
+    })
+
+    it('renders in Plus edition', async () => {
+      this.enablePlusEdition()
+
+      const [{ html }, fetchMock] = await this.renderComponent()
+      await waitFor(() => expect(html()).toMatchSnapshot())
+
+      await this.user.click(screen.getByLabelText('Own songs only'))
+      await waitFor(() => expect(fetchMock).toHaveBeenCalledWith({
+        sort: 'title',
+        order: 'asc',
+        page: 1,
+        own_songs_only: true
+      }))
     })
   }
 }

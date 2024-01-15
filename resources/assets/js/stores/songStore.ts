@@ -29,6 +29,19 @@ export interface SongUpdateResult {
   }
 }
 
+export interface SongListPaginateParams extends Record<string, any> {
+  sort: SongListSortField
+  order: SortOrder
+  page: number
+  own_songs_only: boolean
+}
+
+export interface GenreSongListPaginateParams extends Record<string, any> {
+  sort: SongListSortField
+  order: SortOrder
+  page: number
+}
+
 export const songStore = {
   vault: new Map<string, UnwrapNestedRefs<Song>>(),
 
@@ -184,13 +197,9 @@ export const songStore = {
     return uniqBy(songs, 'id')
   },
 
-  async paginateForGenre (genre: Genre | string, sortField: SongListSortField, sortOrder: SortOrder, page: number) {
+  async paginateForGenre (genre: Genre | string, params: GenreSongListPaginateParams) {
     const name = typeof genre === 'string' ? genre : genre.name
-
-    const resource = await http.get<PaginatorResource>(
-      `genres/${name}/songs?page=${page}&sort=${sortField}&order=${sortOrder}`
-    )
-
+    const resource = await http.get<PaginatorResource>(`genres/${name}/songs?${new URLSearchParams(params).toString()}`)
     const songs = this.syncWithVault(resource.data)
 
     return {
@@ -204,11 +213,8 @@ export const songStore = {
     return this.syncWithVault(await http.get<Song[]>(`genres/${name}/songs/random?limit=${limit}`))
   },
 
-  async paginate (sortField: SongListSortField, sortOrder: SortOrder, page: number, ownSongOnly: boolean) {
-    const resource = await http.get<PaginatorResource>(
-      `songs?page=${page}&sort=${sortField}&order=${sortOrder}&ownSongsOnly=${ownSongOnly ? 1 : 0}`
-    )
-
+  async paginate (params: SongListPaginateParams) {
+    const resource = await http.get<PaginatorResource>(`songs?${new URLSearchParams(params).toString()}`)
     this.state.songs = unionBy(this.state.songs, this.syncWithVault(resource.data), 'id')
 
     return resource.links.next ? ++resource.meta.current_page : null

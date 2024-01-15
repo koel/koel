@@ -60,6 +60,7 @@ interface Window {
   readonly PUSHER_APP_KEY: string
   readonly PUSHER_APP_CLUSTER: string
   readonly MediaMetadata: Constructable<Record<string, any>>
+  createLemonSqueezy?: () => Closure
 }
 
 interface FileSystemDirectoryReader {

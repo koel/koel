@@ -20,7 +20,7 @@ new class extends UnitTestCase {
   protected test () {
     it('has different behaviors for current user', () => {
       const user = factory<User>('user')
-      this.actingAs(user).renderComponent(user)
+      this.be(user).renderComponent(user)
 
       screen.getByTitle('This is you!')
       screen.getByText('Your Profile')
@@ -39,7 +39,7 @@ new class extends UnitTestCase {
     it('redirects to Profile screen if edit current user', async () => {
       const mock = this.mock(this.router, 'go')
       const user = factory<User>('user')
-      this.actingAs(user).renderComponent(user)
+      this.be(user).renderComponent(user)
 
       await this.user.click(screen.getByRole('button', { name: 'Your Profile' }))
 
@@ -49,7 +49,7 @@ new class extends UnitTestCase {
     it('deletes user if confirmed', async () => {
       this.mock(DialogBoxStub.value, 'confirm').mockResolvedValue(true)
       const user = factory<User>('user')
-      this.actingAsAdmin().renderComponent(user)
+      this.beAdmin().renderComponent(user)
       const destroyMock = this.mock(userStore, 'destroy')
 
       await this.user.click(screen.getByRole('button', { name: 'Delete' }))
@@ -60,7 +60,7 @@ new class extends UnitTestCase {
     it('does not delete user if not confirmed', async () => {
       this.mock(DialogBoxStub.value, 'confirm').mockResolvedValue(false)
       const user = factory<User>('user')
-      this.actingAsAdmin().renderComponent(user)
+      this.beAdmin().renderComponent(user)
       const destroyMock = this.mock(userStore, 'destroy')
 
       await this.user.click(screen.getByRole('button', { name: 'Delete' }))
@@ -71,7 +71,7 @@ new class extends UnitTestCase {
     it('revokes invite for prospects', async () => {
       this.mock(DialogBoxStub.value, 'confirm').mockResolvedValue(true)
       const prospect = factory.states('prospect')<User>('user')
-      this.actingAsAdmin().renderComponent(prospect)
+      this.beAdmin().renderComponent(prospect)
       const revokeMock = this.mock(invitationService, 'revoke')
 
       await this.user.click(screen.getByRole('button', { name: 'Revoke' }))
@@ -82,7 +82,7 @@ new class extends UnitTestCase {
     it('does not revoke invite for prospects if not confirmed', async () => {
       this.mock(DialogBoxStub.value, 'confirm').mockResolvedValue(false)
       const prospect = factory.states('prospect')<User>('user')
-      this.actingAsAdmin().renderComponent(prospect)
+      this.beAdmin().renderComponent(prospect)
       const revokeMock = this.mock(invitationService, 'revoke')
 
       await this.user.click(screen.getByRole('button', { name: 'Revoke' }))

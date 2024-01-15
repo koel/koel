@@ -7,7 +7,7 @@ import UserBadge from './UserBadge.vue'
 
 new class extends UnitTestCase {
   private renderComponent () {
-    return this.actingAs(factory<User>('user', {
+    return this.be(factory<User>('user', {
       name: 'John Doe'
     })).render(UserBadge)
   }

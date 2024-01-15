@@ -53,7 +53,7 @@ new class extends UnitTestCase {
       this.renderComponent(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 
-      await this.user.click(screen.getByTitle('Shuffle all songs'))
+      await this.user.click(screen.getByTitle('Shuffle all. Press Alt/⌥ to change mode.'))
       await waitFor(() => expect(playMock).toHaveBeenCalledWith(songs, true))
     })
   }

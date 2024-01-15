@@ -18,6 +18,37 @@ class SongTest extends TestCase
         License::fakePlusLicense();
     }
 
+    public function testWithOwnSongsOnlyOptionOn(): void
+    {
+        $user = create_user();
+
+        Song::factory(2)->public()->create();
+        $ownSongs = Song::factory(3)->for($user, 'owner')->create();
+
+        $this->getAs('api/songs?own_songs_only=true', $user)
+            ->assertSuccessful()
+            ->assertJsonCount(3, 'data')
+            ->assertJsonFragment(['id' => $ownSongs[0]->id])
+            ->assertJsonFragment(['id' => $ownSongs[1]->id])
+            ->assertJsonFragment(['id' => $ownSongs[2]->id]);
+    }
+
+    public function testWithOwnSongsOnlyOptionOffOrMissing(): void
+    {
+        $user = create_user();
+
+        Song::factory(2)->public()->create();
+        Song::factory(3)->for($user, 'owner')->create();
+
+        $this->getAs('api/songs?own_songs_only=false', $user)
+            ->assertSuccessful()
+            ->assertJsonCount(5, 'data');
+
+        $this->getAs('api/songs', $user)
+            ->assertSuccessful()
+            ->assertJsonCount(5, 'data');
+    }
+
     public function testShowSongPolicy(): void
     {
         $user = create_user();
