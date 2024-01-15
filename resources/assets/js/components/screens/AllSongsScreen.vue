@@ -132,7 +132,12 @@ const fetchSongs = async () => {
   loading.value = true
 
   try {
-    page.value = await songStore.paginate(sortField, sortOrder, page.value!, ownSongsOnly.value)
+    page.value = await songStore.paginate({
+      sort: sortField,
+      order: sortOrder,
+      page: page.value!,
+      own_songs_only: ownSongsOnly.value
+    })
   } catch (error) {
     toastError('Failed to load songs.')
     logger.error(error)

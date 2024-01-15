@@ -31,7 +31,7 @@ new class extends UnitTestCase {
       const song = factory<Song>('song', { lyrics: null })
 
       const mock = this.mock(eventBus, 'emit')
-      this.actingAsAdmin().renderComponent(song)
+      this.beAdmin().renderComponent(song)
 
       await this.user.click(screen.getByRole('button', { name: 'Click here' }))
 
@@ -39,7 +39,7 @@ new class extends UnitTestCase {
     })
 
     it('does not have a button to add lyrics if current user is not an admin', async () => {
-      this.actingAs().renderComponent(factory<Song>('song', { lyrics: null }))
+      this.be().renderComponent(factory<Song>('song', { lyrics: null }))
       expect(screen.queryByRole('button', { name: 'Click here' })).toBeNull()
     })
   }

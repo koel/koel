@@ -9,12 +9,12 @@
         in the future!
       </div>
 
-      <div class="buttons" v-show="!showingActivateLicenseForm">
+      <div v-show="!showingActivateLicenseForm" class="buttons" data-testid="buttons">
         <Btn big red @click.prevent="openPurchaseOverlay">Purchase Koel Plus</Btn>
         <Btn big green @click.prevent="showActivateLicenseForm">I have a license key</Btn>
       </div>
 
-      <div class="activate-form" v-if="showingActivateLicenseForm">
+      <div v-if="showingActivateLicenseForm" class="activate-form" data-testid="activateForm">
         <ActivateLicenseForm v-if="showingActivateLicenseForm" />
         <Btn transparent class="cancel" @click.prevent="hideActivateLicenseForm">Cancel</Btn>
       </div>
@@ -52,7 +52,7 @@ const openPurchaseOverlay = () => {
 const showActivateLicenseForm = () => (showingActivateLicenseForm.value = true)
 const hideActivateLicenseForm = () => (showingActivateLicenseForm.value = false)
 
-onMounted(() => window.createLemonSqueezy()) // @ts-ignore
+onMounted(() => window.createLemonSqueezy?.())
 </script>
 
 <style scoped lang="scss">

@@ -88,13 +88,8 @@ export default class Router {
     return this.cache.get(location.hash)
   }
 
-  public async triggerNotFound () {
-    await this.activateRoute(this.notFoundRoute)
-  }
-
-  public onRouteChanged (handler: RouteChangedHandler) {
-    this.routeChangedHandlers.push(handler)
-  }
+  public triggerNotFound = async () => await this.activateRoute(this.notFoundRoute)
+  public onRouteChanged = (handler: RouteChangedHandler) => this.routeChangedHandlers.push(handler)
 
   public async activateRoute (route: Route, params: RouteParams = {}) {
     this.$currentRoute.value = route

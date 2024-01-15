@@ -8,7 +8,7 @@ import ProfileForm from './ProfileForm.vue'
 
 new class extends UnitTestCase {
   private async renderComponent (user: User) {
-    return this.actingAs(user).render(ProfileForm)
+    return this.be(user).render(ProfileForm)
   }
 
   protected test () {

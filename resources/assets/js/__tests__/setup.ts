@@ -1,12 +1,19 @@
-declare global {
-  interface Window {
-    BASE_URL: string;
-  }
-}
-
 import vueSnapshotSerializer from 'jest-serializer-vue'
 import { expect, vi } from 'vitest'
 import Axios from 'axios'
+
+declare global {
+  interface Window {
+    BASE_URL: string;
+    createLemonSqueezy: () => void;
+  }
+
+  interface LemonSqueezy {
+    Url: {
+      Open: () => void;
+    }
+  }
+}
 
 expect.addSnapshotSerializer(vueSnapshotSerializer)
 
@@ -16,6 +23,13 @@ global.ResizeObserver = global.ResizeObserver ||
     observe: vi.fn(),
     unobserve: vi.fn()
   }))
+
+
+global.LemonSqueezy = {
+  Url: {
+    Open: vi.fn()
+  }
+}
 
 HTMLMediaElement.prototype.load = vi.fn()
 HTMLMediaElement.prototype.play = vi.fn()
@@ -34,5 +48,6 @@ HTMLDialogElement.prototype.close = vi.fn(function mock () {
 })
 
 window.BASE_URL = 'http://test/'
+window.createLemonSqueezy = vi.fn()
 
 Axios.defaults.adapter = vi.fn()

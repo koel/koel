@@ -31,7 +31,11 @@ new class extends UnitTestCase {
 
     await waitFor(() => {
       expect(fetchGenreMock).toHaveBeenCalledWith(genre!.name)
-      expect(paginateMock).toHaveBeenCalledWith(genre!.name, 'title', 'asc', 1)
+      expect(paginateMock).toHaveBeenCalledWith(genre!.name, {
+        sort: 'title',
+        order: 'asc',
+        page: 1
+      })
     })
 
     await this.tick(2)
@@ -52,7 +56,7 @@ new class extends UnitTestCase {
 
       await this.renderComponent(genre, songs)
 
-      await this.user.click(screen.getByTitle('Shuffle all songs'))
+      await this.user.click(screen.getByTitle('Shuffle all. Press Alt/⌥ to change mode.'))
 
       expect(playbackMock).toHaveBeenCalledWith(songs, true)
     })
@@ -65,7 +69,7 @@ new class extends UnitTestCase {
 
       await this.renderComponent(genre, songs)
 
-      await this.user.click(screen.getByTitle('Shuffle all songs'))
+      await this.user.click(screen.getByTitle('Shuffle all. Press Alt/⌥ to change mode.'))
 
       await waitFor(() => {
         expect(fetchMock).toHaveBeenCalledWith(genre, 500)

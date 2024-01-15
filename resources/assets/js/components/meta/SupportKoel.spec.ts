@@ -35,6 +35,11 @@ new class extends UnitTestCase {
       expect((await this.renderComponent()).queryByTestId('support-bar')).toBeNull()
     })
 
+    it('does not show for Plus edition', async () => {
+      this.enablePlusEdition()
+      expect((await this.renderComponent()).queryByTestId('support-bar')).toBeNull()
+    })
+
     it('hides', async () => {
       await this.renderComponent()
       await this.user.click(screen.getByRole('button', { name: 'Hide' }))

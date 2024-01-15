@@ -130,18 +130,6 @@ class PlaybackService {
     })
   }
 
-  public setCurrentSongAndPlaybackPosition (song: Song, playbackPosition: number) {
-    if (queueStore.current) {
-      queueStore.current.playback_state = 'Stopped'
-    }
-
-    song.playback_state = 'Paused'
-
-    this.player.media.src = songStore.getSourceUrl(song)
-    this.player.seek(playbackPosition)
-    this.player.pause()
-  }
-
   // Record the UNIX timestamp the song starts playing, for scrobbling purpose
   private recordStartTime (song: Song) {
     song.play_start_time = Math.floor(Date.now() / 1000)

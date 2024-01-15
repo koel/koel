@@ -36,7 +36,7 @@ const stopBugging = () => {
 watch(preferenceStore.initialized, initialized => {
   if (!initialized) return
   if (preferenceStore.state.supportBarNoBugging || isMobile.any) return
-  if (!isPlus.value) return
+  if (isPlus.value) return
 
   setUpShowBarTimeout()
 }, { immediate: true })

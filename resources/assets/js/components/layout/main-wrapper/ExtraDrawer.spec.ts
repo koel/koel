@@ -77,7 +77,7 @@ new class extends UnitTestCase {
       it('shows new version', () => {
         commonStore.state.current_version = 'v1.0.0'
         commonStore.state.latest_version = 'v1.0.1'
-        this.actingAsAdmin().renderComponent()[0].getByRole('button', { name: 'New version available!' })
+        this.beAdmin().renderComponent()[0].getByRole('button', { name: 'New version available!' })
       })
     })
 

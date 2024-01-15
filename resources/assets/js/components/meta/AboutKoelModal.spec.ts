@@ -27,7 +27,7 @@ new class extends UnitTestCase {
     it('shows new version', () => {
       commonStore.state.current_version = 'v1.0.0'
       commonStore.state.latest_version = 'v1.0.1'
-      this.actingAsAdmin().renderComponent().getByTestId('new-version-about')
+      this.beAdmin().renderComponent().getByTestId('new-version-about')
     })
 
     it('shows demo notation', async () => {

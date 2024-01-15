@@ -103,7 +103,11 @@ const fetch = async () => {
 
     [genre.value, fetched] = await Promise.all([
       genreStore.fetchOne(name.value!),
-      songStore.paginateForGenre(name.value!, sortField, sortOrder, page.value!)
+      songStore.paginateForGenre(name.value!, {
+        sort: sortField,
+        order: sortOrder,
+        page: page.value!,
+      })
     ])
 
     page.value = fetched.nextPage

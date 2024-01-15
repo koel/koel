@@ -19,14 +19,14 @@ const standardItems = [
 const adminItems = [...standardItems, 'Users', 'Upload', 'Settings']
 
 new class extends UnitTestCase {
-  protected test() {
+  protected test () {
     it('shows the standard items', () => {
-      this.actingAs().render(Sidebar)
+      this.be().render(Sidebar)
       standardItems.forEach(label => screen.getByText(label))
     })
 
     it('shows administrative items', () => {
-      this.actingAsAdmin().render(Sidebar)
+      this.beAdmin().render(Sidebar)
       adminItems.forEach(label => screen.getByText(label))
     })
 

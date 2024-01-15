@@ -247,7 +247,7 @@ new class extends UnitTestCase {
     })
 
     it('allows edit songs if current user is admin', async () => {
-      await this.actingAsAdmin().renderComponent()
+      await this.beAdmin().renderComponent()
 
       // mock after render to ensure that the component is mounted properly
       const emitMock = this.mock(eventBus, 'emit')
@@ -257,7 +257,7 @@ new class extends UnitTestCase {
     })
 
     it('does not allow edit songs if current user is not admin', async () => {
-      await this.actingAs().renderComponent()
+      await this.be().renderComponent()
       expect(screen.queryByText('Edit…')).toBeNull()
     })
 
@@ -270,7 +270,7 @@ new class extends UnitTestCase {
       const confirmMock = this.mock(DialogBoxStub.value, 'confirm', true)
       const toasterMock = this.mock(MessageToasterStub.value, 'success')
       const deleteMock = this.mock(songStore, 'deleteFromFilesystem')
-      await this.actingAsAdmin().renderComponent()
+      await this.beAdmin().renderComponent()
 
       const emitMock = this.mock(eventBus, 'emit')
 
@@ -285,12 +285,12 @@ new class extends UnitTestCase {
     })
 
     it('does not have an option to delete songs if current user is not admin', async () => {
-      await this.actingAs().renderComponent()
+      await this.be().renderComponent()
       expect(screen.queryByText('Delete from Filesystem')).toBeNull()
     })
 
     it('creates playlist from selected songs', async () => {
-      await this.actingAs().renderComponent()
+      await this.be().renderComponent()
 
       // mock after render to ensure that the component is mounted properly
       const emitMock = this.mock(eventBus, 'emit')
