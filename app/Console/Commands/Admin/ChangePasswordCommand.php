@@ -3,7 +3,7 @@
 namespace App\Console\Commands\Admin;
 
 use App\Console\Commands\Traits\AskForPassword;
-use App\Models\User;
+use App\Repositories\UserRepository;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Hashing\Hasher as Hash;
 
@@ -15,7 +15,7 @@ class ChangePasswordCommand extends Command
                             {email? : The user's email. If empty, will get the default admin user.}";
     protected $description = "Change a user's password";
 
-    public function __construct(private Hash $hash)
+    public function __construct(private Hash $hash, private UserRepository $userRepository)
     {
         parent::__construct();
     }
@@ -24,10 +24,9 @@ class ChangePasswordCommand extends Command
     {
         $email = $this->argument('email');
 
-        /** @var User|null $user */
         $user = $email
-            ? User::query()->where('email', $email)->first()
-            : User::query()->where('is_admin', true)->first();
+            ? $this->userRepository->findOneByEmail($email)
+            : $this->userRepository->getDefaultAdminUser();
 
         if (!$user) {
             $this->error('The user account cannot be found.');

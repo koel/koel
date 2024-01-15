@@ -8,6 +8,7 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Repositories\SongRepository;
+use App\Repositories\UserRepository;
 use Aws\S3\S3ClientInterface;
 use Illuminate\Cache\Repository as Cache;
 
@@ -18,6 +19,7 @@ class S3Service implements ObjectStorageInterface
         private Cache $cache,
         private MediaMetadataService $mediaMetadataService,
         private SongRepository $songRepository,
+        private UserRepository $userRepository,
     ) {
     }
 
@@ -48,6 +50,7 @@ class S3Service implements ObjectStorageInterface
         int $track,
         string $lyrics
     ): Song {
+        $user = $this->userRepository->getDefaultAdminUser();
         $path = Song::getPathFromS3BucketAndKey($bucket, $key);
         $artist = Artist::getOrCreate($artistName);
 
@@ -74,6 +77,8 @@ class S3Service implements ObjectStorageInterface
             'track' => $track,
             'lyrics' => $lyrics,
             'mtime' => time(),
+            'owner_id' => $user->id,
+            'is_public' => true,
         ]);
 
         event(new LibraryChanged());
