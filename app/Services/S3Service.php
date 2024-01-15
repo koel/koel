@@ -49,7 +49,6 @@ class S3Service implements ObjectStorageInterface
         string $lyrics
     ): Song {
         $path = Song::getPathFromS3BucketAndKey($bucket, $key);
-
         $artist = Artist::getOrCreate($artistName);
 
         $albumArtist = $albumArtistName && $albumArtistName !== $artistName
@@ -66,8 +65,8 @@ class S3Service implements ObjectStorageInterface
             );
         }
 
-        $song = Song::query()->updateOrCreate(['id' => Helper::getFileHash($path)], [
-            'path' => $path,
+        /** @var Song $song */
+        $song = Song::query()->updateOrCreate(['path' => $path], [
             'album_id' => $album->id,
             'artist_id' => $artist->id,
             'title' => $title,
