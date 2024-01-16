@@ -114,17 +114,17 @@ const firstSongPlaying = computed(() => songs.value.length ? songs.value[0].play
 const normalPlaylists = computed(() => playlists.value.filter(playlist => !playlist.is_smart))
 
 const makePublic = () => trigger(async () => {
-  await songStore.makePublic(songs.value)
+  await songStore.publicize(songs.value)
   toastSuccess(`Made ${pluralize(songs.value, 'song')} public to everyone.`)
 })
 
 const makePrivate = () => trigger(async () => {
-  await songStore.makePrivate(songs.value)
+  await songStore.privatize(songs.value)
   toastSuccess(`Removed public access to ${pluralize(songs.value, 'song')}.`)
 })
 
 const visibilityActions = computed(() => {
-  if (!isPlus) return []
+  if (!isPlus.value) return []
 
   // If some songs don't belong to the current user, no actions are available.
   if (songs.value.some(song => song.owner_id !== currentUser.value?.id)) return []

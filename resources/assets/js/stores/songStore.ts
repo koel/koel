@@ -242,7 +242,7 @@ export const songStore = {
     await http.delete('songs', { songs: ids })
   },
 
-  async makePublic (songs: Song[]) {
+  async publicize (songs: Song[]) {
     await http.put('songs/publicize', {
       songs: songs.map(song => song.id)
     })
@@ -250,7 +250,7 @@ export const songStore = {
     songs.forEach(song => song.is_public = true)
   },
 
-  async makePrivate (songs: Song[]) {
+  async privatize (songs: Song[]) {
     await http.put('songs/privatize', {
       songs: songs.map(song => song.id)
     })

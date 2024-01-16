@@ -31,9 +31,7 @@ const generate = (partOfCompilation = false): Song => {
   }
 }
 
-export default (faker: Faker): Song => {
-  return generate()
-}
+export default (): Song => generate()
 
 export const states: Record<string, Partial<Song>> = {
   partOfCompilation: generate(true)
