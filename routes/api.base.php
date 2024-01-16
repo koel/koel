@@ -23,14 +23,14 @@ use App\Http\Controllers\API\FetchSongsForQueueController;
 use App\Http\Controllers\API\GenreController;
 use App\Http\Controllers\API\GenreSongController;
 use App\Http\Controllers\API\LikeMultipleSongsController;
-use App\Http\Controllers\API\MakeSongsPrivateController;
-use App\Http\Controllers\API\MakeSongsPublicController;
 use App\Http\Controllers\API\ObjectStorage\S3\SongController as S3SongController;
 use App\Http\Controllers\API\PlaylistController;
 use App\Http\Controllers\API\PlaylistFolderController;
 use App\Http\Controllers\API\PlaylistFolderPlaylistController;
 use App\Http\Controllers\API\PlaylistSongController;
+use App\Http\Controllers\API\PrivatizeSongsController;
 use App\Http\Controllers\API\ProfileController;
+use App\Http\Controllers\API\PublicizeSongsController;
 use App\Http\Controllers\API\QueueStateController;
 use App\Http\Controllers\API\RegisterPlayController;
 use App\Http\Controllers\API\ScrobbleController;
@@ -160,8 +160,8 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::post('invitations', [UserInvitationController::class, 'invite']);
         Route::delete('invitations', [UserInvitationController::class, 'revoke']);
 
-        Route::put('songs/make-public', MakeSongsPublicController::class);
-        Route::put('songs/make-private', MakeSongsPrivateController::class);
+        Route::put('songs/publicize', PublicizeSongsController::class);
+        Route::put('songs/privatize', PrivatizeSongsController::class);
 
         Route::post('licenses/activate', ActivateLicenseController::class);
     });
