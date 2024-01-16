@@ -5,6 +5,7 @@ import factory from '@/__tests__/factory'
 import { screen, waitFor } from '@testing-library/vue'
 import { songStore } from '@/stores'
 import { playbackService } from '@/services'
+import { queueStore } from '@/stores'
 import { MessageToasterStub } from '@/__tests__/stubs'
 import PlaylistContextMenu from './PlaylistContextMenu.vue'
 
@@ -115,6 +116,23 @@ new class extends UnitTestCase {
         expect(queueMock).not.toHaveBeenCalled()
         expect(goMock).not.toHaveBeenCalled()
         expect(warnMock).toHaveBeenCalledWith('The playlist is empty.')
+      })
+    })
+
+    it('queues', async () => {
+      const playlist = factory<Playlist>('playlist')
+      const songs = factory<Song>('song', 3)
+      const fetchMock = this.mock(songStore, 'fetchForPlaylist').mockResolvedValue(songs)
+      const queueMock = this.mock(queueStore, 'queueAfterCurrent')
+      const toastMock = this.mock(MessageToasterStub.value, 'success')
+      await this.renderComponent(playlist)
+
+      await this.user.click(screen.getByText('Add to Queue'))
+
+      await waitFor(() => {
+        expect(fetchMock).toHaveBeenCalledWith(playlist)
+        expect(queueMock).toHaveBeenCalledWith(songs)
+        expect(toastMock).toHaveBeenCalledWith('Playlist added to queue.')
       })
     })
   }
