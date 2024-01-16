@@ -133,4 +133,49 @@ class SongTest extends TestCase
         $this->deleteAs('api/songs', ['songs' => $ownSongs->pluck('id')->toArray()], $currentUser)
             ->assertSuccessful();
     }
+
+    public function testPublicizeSongs(): void
+    {
+        $user = create_user();
+
+        /** @var Song $songs */
+        $songs = Song::factory(3)->for($user, 'owner')->private()->create();
+
+        $this->putAs('api/songs/publicize', ['songs' => $songs->pluck('id')->toArray()], $user)
+            ->assertSuccessful();
+
+        $songs->each(static function (Song $song): void {
+            $song->refresh();
+            self::assertTrue($song->is_public);
+        });
+    }
+
+    public function testPrivatizeSongs(): void
+    {
+        $user = create_user();
+
+        /** @var Song $songs */
+        $songs = Song::factory(3)->for($user, 'owner')->public()->create();
+
+        $this->putAs('api/songs/privatize', ['songs' => $songs->pluck('id')->toArray()], $user)
+            ->assertSuccessful();
+
+        $songs->each(static function (Song $song): void {
+            $song->refresh();
+            self::assertFalse($song->is_public);
+        });
+    }
+
+    public function testPublicizingOrPrivatizingSongsRequiresOwnership(): void
+    {
+        $songs = Song::factory(3)->public()->create();
+
+        $this->putAs('api/songs/privatize', ['songs' => $songs->pluck('id')->toArray()])
+            ->assertForbidden();
+
+        $otherSongs = Song::factory(3)->private()->create();
+
+        $this->putAs('api/songs/publicize', ['songs' => $otherSongs->pluck('id')->toArray()])
+            ->assertForbidden();
+    }
 }

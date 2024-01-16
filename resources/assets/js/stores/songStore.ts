@@ -243,7 +243,7 @@ export const songStore = {
   },
 
   async makePublic (songs: Song[]) {
-    await http.put('songs/make-public', {
+    await http.put('songs/publicize', {
       songs: songs.map(song => song.id)
     })
 
@@ -251,7 +251,7 @@ export const songStore = {
   },
 
   async makePrivate (songs: Song[]) {
-    await http.put('songs/make-private', {
+    await http.put('songs/privatize', {
       songs: songs.map(song => song.id)
     })
 
