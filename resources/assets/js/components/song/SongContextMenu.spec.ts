@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { arrayify, eventBus } from '@/utils'
+import { arrayify, eventBus, use } from '@/utils'
 import { screen, waitFor } from '@testing-library/vue'
 import { downloadService, playbackService } from '@/services'
 import { favoriteStore, playlistStore, queueStore, songStore } from '@/stores'
@@ -298,6 +298,87 @@ new class extends UnitTestCase {
       await this.user.click(screen.getByText('New Playlist…'))
 
       expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_CREATE_PLAYLIST_FORM', null, songs)
+    })
+
+    it('makes songs private', async () => {
+      this.enablePlusEdition()
+
+      const user = factory<User>('user')
+      const songs = factory<Song>('song', 5, {
+        is_public: true,
+        owner_id: user.id
+      })
+
+      await this.be(user).renderComponent(songs)
+      const privatizeMock = this.mock(songStore, 'privatize')
+
+      await this.user.click(screen.getByText('Make Private'))
+
+      expect(privatizeMock).toHaveBeenCalledWith(songs)
+    })
+
+    it('makes songs public', async () => {
+      this.enablePlusEdition()
+
+      const user = factory<User>('user')
+      const songs = factory<Song>('song', 5, {
+        is_public: false,
+        owner_id: user.id
+      })
+
+      await this.be(user).renderComponent(songs)
+      const publicizeMock = this.mock(songStore, 'publicize')
+
+      await this.user.click(screen.getByText('Make Public'))
+
+      expect(publicizeMock).toHaveBeenCalledWith(songs)
+    })
+
+    it('does not have an option to make songs public or private if current user is not owner', async () => {
+      this.enablePlusEdition()
+
+      const user = factory<User>('user')
+      const owner = factory<User>('user')
+      const songs = factory<Song>('song', 5, {
+        is_public: false,
+        owner_id: owner.id
+      })
+
+      await this.be(user).renderComponent(songs)
+
+      expect(screen.queryByText('Make Public')).toBeNull()
+      expect(screen.queryByText('Make Private')).toBeNull()
+    })
+
+    it('has both options to make public and private if songs have mixed visibilities', async () => {
+      this.enablePlusEdition()
+
+      const owner = factory<User>('user')
+      const songs = factory<Song>('song', 2, {
+        is_public: false,
+        owner_id: owner.id
+      }).concat(...factory<Song>('song', 3, {
+        is_public: true,
+        owner_id: owner.id
+      }))
+
+      await this.be(owner).renderComponent(songs)
+
+      screen.getByText('Make Public')
+      screen.getByText('Make Private')
+    })
+
+    it('does not have an option to make songs public or private oin Community edition', async () => {
+      const owner = factory<User>('user')
+      const songs = factory<Song>('song', 5, {
+        is_public: false,
+        owner_id: owner.id
+      })
+
+      await this.be(owner).renderComponent(songs)
+
+      expect(screen.queryByText('Make Public')).toBeNull()
+      expect(screen.queryByText('Make Private')).toBeNull()
     })
   }
 }

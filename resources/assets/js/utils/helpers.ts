@@ -11,7 +11,7 @@ export const use = <T> (value: T, cb: (arg: T) => void) => {
   cb(value)
 }
 
-export const arrayify = <T> (maybeArray: T | Array<T>) => ([] as Array<T>).concat(maybeArray)
+export const arrayify = <T> (maybeArray: T | Array<T>) => Array.isArray(maybeArray) ? maybeArray : [maybeArray]
 
 // @ts-ignore
 export const noop = () => {
