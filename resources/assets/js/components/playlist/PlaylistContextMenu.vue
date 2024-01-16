@@ -2,6 +2,7 @@
   <ContextMenuBase ref="base">
     <li @click="play">Play</li>
     <li @click="shuffle">Shuffle</li>
+    <li @click="addToQueue">Add to Queue</li>
     <li class="separator" />
     <li @click="edit">Edit…</li>
     <li @click="destroy">Delete</li>
@@ -13,11 +14,11 @@ import { ref } from 'vue'
 import { eventBus } from '@/utils'
 import { useContextMenu, useMessageToaster, useRouter } from '@/composables'
 import { playbackService } from '@/services'
-import { songStore } from '@/stores'
+import { songStore, queueStore } from '@/stores'
 
 const { base, ContextMenuBase, open, trigger } = useContextMenu()
 const { go } = useRouter()
-const { toastWarning } = useMessageToaster()
+const { toastWarning, toastSuccess } = useMessageToaster()
 
 const playlist = ref<Playlist>()
 
@@ -41,6 +42,17 @@ const shuffle = () => trigger(async () => {
   if (songs.length) {
     playbackService.queueAndPlay(songs, true)
     go('queue')
+  } else {
+    toastWarning('The playlist is empty.')
+  }
+})
+
+const addToQueue = () => trigger(async () => {
+  const songs = await songStore.fetchForPlaylist(playlist.value!)
+
+  if (songs.length) {
+    queueStore.queueAfterCurrent(songs)
+    toastSuccess('Playlist added to queue.')
   } else {
     toastWarning('The playlist is empty.')
   }
