@@ -141,7 +141,7 @@ onScreenActivated('Queue', async () => {
     logger.error(e)
     return
   } finally {
-    storage.remove('songQueuedFromRoute')
+    storage.remove('song-to-queue')
     loading.value = false
   }
 
