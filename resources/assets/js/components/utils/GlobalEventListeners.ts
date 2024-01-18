@@ -4,7 +4,7 @@
 
 import { defineComponent, onMounted } from 'vue'
 import { authService } from '@/services'
-import { playlistFolderStore, playlistStore, userStore } from '@/stores'
+import { playlistFolderStore, playlistStore } from '@/stores'
 import { eventBus, forceReloadWindow } from '@/utils'
 import { useDialogBox, useMessageToaster, useRouter } from '@/composables'
 
@@ -33,8 +33,7 @@ export const GlobalEventListeners = defineComponent({
         go('home')
       }
     }).on('LOG_OUT', async () => {
-      await userStore.logout()
-      authService.destroy()
+      await authService.logout()
       forceReloadWindow()
     })
 

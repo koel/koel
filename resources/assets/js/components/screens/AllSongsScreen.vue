@@ -17,6 +17,7 @@
         <div class="controls">
           <SongListControls
             v-if="totalSongCount && (!isPhone || showingControls)"
+            :config="config"
             @play-all="playAll"
             @play-selected="playSelected"
           />
@@ -62,7 +63,7 @@ import { computed, ref, toRef, watch } from 'vue'
 import { logger, pluralize, secondsToHumanReadable } from '@/utils'
 import { commonStore, queueStore, songStore } from '@/stores'
 import { localStorageService, playbackService } from '@/services'
-import { useMessageToaster, useKoelPlus, useRouter, useSongList } from '@/composables'
+import { useMessageToaster, useKoelPlus, useRouter, useSongList, useSongListControls } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
@@ -74,7 +75,6 @@ const totalDuration = computed(() => secondsToHumanReadable(commonStore.state.so
 
 const {
   SongList,
-  SongListControls,
   ControlsToggle,
   ThumbnailStack,
   headerLayout,
@@ -88,6 +88,8 @@ const {
   playSelected,
   onScrollBreakpoint
 } = useSongList(toRef(songStore.state, 'songs'))
+
+const { SongListControls, config } = useSongListControls('Songs')
 
 const { toastError } = useMessageToaster()
 const { go, onScreenActivated } = useRouter()

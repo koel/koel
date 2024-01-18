@@ -3,12 +3,14 @@ import { Faker } from '@faker-js/faker'
 
 export default (faker: Faker): Playlist => ({
   type: 'playlists',
-  id: faker.datatype.number(),
+  user_id: faker.datatype.number({ min: 1, max: 1000 }),
+  id: faker.datatype.uuid(),
   folder_id: faker.datatype.uuid(),
   name: faker.random.word(),
   is_smart: false,
   rules: [],
-  ownSongsOnly: false
+  own_songs_only: false,
+  collaborators: []
 })
 
 export const states: Record<string, (faker: Faker) => Omit<Partial<Playlist>, 'type'>> = {

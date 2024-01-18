@@ -24,6 +24,8 @@ use App\Http\Controllers\API\GenreController;
 use App\Http\Controllers\API\GenreSongController;
 use App\Http\Controllers\API\LikeMultipleSongsController;
 use App\Http\Controllers\API\ObjectStorage\S3\SongController as S3SongController;
+use App\Http\Controllers\API\PlaylistCollaboration\AcceptPlaylistCollaborationController;
+use App\Http\Controllers\API\PlaylistCollaboration\CreatePlaylistCollaborationTokenController;
 use App\Http\Controllers\API\PlaylistController;
 use App\Http\Controllers\API\PlaylistFolderController;
 use App\Http\Controllers\API\PlaylistFolderPlaylistController;
@@ -163,7 +165,12 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::put('songs/publicize', PublicizeSongsController::class);
         Route::put('songs/privatize', PrivatizeSongsController::class);
 
+        // License routes
         Route::post('licenses/activate', ActivateLicenseController::class);
+
+        // Playlist collaboration routes
+        Route::post('playlists/{playlist}/collaborators/invite', CreatePlaylistCollaborationTokenController::class);
+        Route::post('playlists/collaborators/accept', AcceptPlaylistCollaborationController::class);
     });
 
     // Object-storage (S3) routes

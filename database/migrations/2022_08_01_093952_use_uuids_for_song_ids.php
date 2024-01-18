@@ -36,7 +36,7 @@ return new class extends Migration
         });
 
         Song::all()->each(static function (Song $song): void {
-            $song->id = Str::uuid();
+            $song->id = Str::uuid()->toString();
             $song->save();
         });
 

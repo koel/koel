@@ -40,4 +40,9 @@ class PlaylistFolder extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function ownedBy(User $user): bool
+    {
+        return $this->user_id === $user->id;
+    }
 }

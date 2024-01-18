@@ -155,6 +155,14 @@ interface Song {
   deleted?: boolean
 }
 
+interface CollaborativeSong extends Song {
+  collaboration: {
+    user: Pick<User, 'name' | 'avatar'>
+    added_at: string | null
+    fmt_added_at: string | null
+  }
+}
+
 interface QueueState {
   type: 'queue-states'
   songs: Song[]
@@ -217,12 +225,14 @@ interface PlaylistFolder {
 
 interface Playlist {
   type: 'playlists'
-  readonly id: number
+  readonly id: string
+  readonly user_id: User['id']
   name: string
   folder_id: PlaylistFolder['id'] | null
   is_smart: boolean
   rules: SmartPlaylistRuleGroup[]
   own_songs_only: boolean
+  collaborators: User[]
 }
 
 type PlaylistLike = Playlist | FavoriteList | RecentlyPlayedList
@@ -302,7 +312,7 @@ interface EqualizerPreset {
 declare type PlaybackState = 'Stopped' | 'Playing' | 'Paused'
 declare type ScreenName =
   | 'Home'
-  | 'Default'
+  | 'Default' | 'Blank'
   | 'Queue'
   | 'Songs'
   | 'Albums'
@@ -333,7 +343,6 @@ interface AddToMenuConfig {
 }
 
 interface SongListControlsConfig {
-  play: boolean
   addTo: AddToMenuConfig
   clearQueue: boolean
   deletePlaylist: boolean
@@ -369,6 +378,7 @@ type RepeatMode = 'NO_REPEAT' | 'REPEAT_ALL' | 'REPEAT_ONE'
 interface SongListConfig {
   sortable: boolean
   reorderable: boolean
+  collaborative: boolean
 }
 
 type SongListSortField = keyof Pick<Song, 'track' | 'disc' | 'title' | 'album_name' | 'length' | 'artist_name' | 'created_at'>

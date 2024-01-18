@@ -15,9 +15,9 @@ class PlaylistSongTest extends TestCase
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
-        $playlist->songs()->attach(Song::factory(5)->create());
+        $playlist->addSongs(Song::factory(5)->create());
 
-        $this->getAs('api/playlists/' . $playlist->id . '/songs', $playlist->user)
+        $this->getAs("api/playlists/$playlist->id/songs", $playlist->user)
             ->assertJsonStructure(['*' => SongTest::JSON_STRUCTURE]);
     }
 
@@ -50,9 +50,9 @@ class PlaylistSongTest extends TestCase
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->for(create_user())->create();
-        $playlist->songs()->attach(Song::factory(5)->create());
+        $playlist->addSongs(Song::factory(5)->create());
 
-        $this->getAs('api/playlists/' . $playlist->id . '/songs')
+        $this->getAs("api/playlists/$playlist->id/songs")
             ->assertForbidden();
     }
 
@@ -64,9 +64,7 @@ class PlaylistSongTest extends TestCase
         /** @var Collection|array<array-key, Song> $songs */
         $songs = Song::factory(2)->create();
 
-        $this->postAs('api/playlists/' . $playlist->id . '/songs', [
-            'songs' => $songs->map(static fn (Song $song) => $song->id)->all(),
-        ], $playlist->user)
+        $this->postAs("api/playlists/$playlist->id/songs", ['songs' => $songs->pluck('id')->all()], $playlist->user)
             ->assertNoContent();
 
         self::assertEqualsCanonicalizing($songs->pluck('id')->all(), $playlist->songs->pluck('id')->all());
@@ -82,13 +80,15 @@ class PlaylistSongTest extends TestCase
         /** @var Collection|array<array-key, Song> $toBeRemovedSongs */
         $toBeRemovedSongs = Song::factory(2)->create();
 
-        $playlist->songs()->attach($toRemainSongs->merge($toBeRemovedSongs));
+        $playlist->addSongs($toRemainSongs->merge($toBeRemovedSongs));
 
         self::assertCount(7, $playlist->songs);
 
-        $this->deleteAs('api/playlists/' . $playlist->id . '/songs', [
-            'songs' => $toBeRemovedSongs->map(static fn (Song $song) => $song->id)->all(),
-        ], $playlist->user)
+        $this->deleteAs(
+            "api/playlists/$playlist->id/songs",
+            ['songs' => $toBeRemovedSongs->pluck('id')->all()],
+            $playlist->user
+        )
             ->assertNoContent();
 
         $playlist->refresh();
@@ -104,10 +104,10 @@ class PlaylistSongTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create();
 
-        $this->postAs('api/playlists/' . $playlist->id . '/songs', ['songs' => [$song->id]])
+        $this->postAs("api/playlists/$playlist->id/songs", ['songs' => [$song->id]])
             ->assertForbidden();
 
-        $this->deleteAs('api/playlists/' . $playlist->id . '/songs', ['songs' => [$song->id]])
+        $this->deleteAs("api/playlists/$playlist->id/songs", ['songs' => [$song->id]])
             ->assertForbidden();
     }
 
@@ -130,14 +130,12 @@ class PlaylistSongTest extends TestCase
             ],
         ]);
 
-        /** @var Collection|array<array-key, Song> $songs */
-        $songs = Song::factory(2)->create();
-        $songIds = $songs->map(static fn (Song $song) => $song->id)->all();
+        $songs = Song::factory(2)->create()->pluck('id')->all();
 
-        $this->postAs('api/playlists/' . $playlist->id . '/songs', ['songs' => $songIds], $playlist->user)
+        $this->postAs("api/playlists/$playlist->id/songs", ['songs' => $songs], $playlist->user)
             ->assertForbidden();
 
-        $this->deleteAs('api/playlists/' . $playlist->id . '/songs', ['songs' => $songIds], $playlist->user)
+        $this->deleteAs("api/playlists/$playlist->id/songs", ['songs' => $songs], $playlist->user)
             ->assertForbidden();
     }
 }

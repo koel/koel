@@ -4,6 +4,7 @@ namespace Tests\Integration\KoelPlus\Services;
 
 use App\Facades\License;
 use App\Models\Song;
+use App\Services\License\FakePlusLicenseService;
 use Tests\Integration\Services\SmartPlaylistServiceTest as BaseSmartPlaylistServiceTest;
 
 use function Tests\create_user;
@@ -14,7 +15,7 @@ class SmartPlaylistServiceTest extends BaseSmartPlaylistServiceTest
     {
         parent::setUp();
 
-        License::fakePlusLicense();
+        License::swap(app()->make(FakePlusLicenseService::class));
     }
 
     public function testOwnSongsOnlyOption(): void

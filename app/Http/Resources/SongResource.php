@@ -7,7 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class SongResource extends JsonResource
 {
-    public function __construct(private Song $song)
+    public function __construct(protected Song $song)
     {
         parent::__construct($song);
     }

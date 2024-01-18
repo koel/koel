@@ -14,6 +14,7 @@
       <Icon v-if="isRecentlyPlayedList(list)" :icon="faClockRotateLeft" class="text-green" fixed-width />
       <Icon v-else-if="isFavoriteList(list)" :icon="faHeart" class="text-maroon" fixed-width />
       <Icon v-else-if="list.is_smart" :icon="faWandMagicSparkles" fixed-width />
+      <Icon v-else-if="list.collaborators.length" :icon="faUsers" fixed-width />
       <Icon v-else :icon="faFileLines" fixed-width />
       <span>{{ list.name }}</span>
     </a>
@@ -21,7 +22,13 @@
 </template>
 
 <script lang="ts" setup>
-import { faClockRotateLeft, faFileLines, faHeart, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
+import {
+  faClockRotateLeft,
+  faFileLines,
+  faHeart,
+  faUsers,
+  faWandMagicSparkles
+} from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRefs } from 'vue'
 import { eventBus } from '@/utils'
 import { favoriteStore } from '@/stores'
@@ -110,7 +117,7 @@ onRouteChanged(route => {
       break
 
     case 'Playlist':
-      active.value = (list.value as Playlist).id === parseInt(route.params!.id)
+      active.value = (list.value as Playlist).id === route.params!.id
       break
 
     default:

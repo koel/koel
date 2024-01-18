@@ -1,3 +1,4 @@
+import Router from '@/router'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { eventBus } from '@/utils'
@@ -41,7 +42,7 @@ new class extends UnitTestCase {
       const songs = factory<Song>('song', 3)
       const fetchMock = this.mock(songStore, 'fetchForPlaylistFolder').mockResolvedValue(songs)
       const queueMock = this.mock(playbackService, 'queueAndPlay')
-      const goMock = this.mock(this.router, 'go')
+      const goMock = this.mock(Router, 'go')
       await this.renderComponent(folder)
 
       await this.user.click(screen.getByText('Play All'))
@@ -58,7 +59,7 @@ new class extends UnitTestCase {
 
       const fetchMock = this.mock(songStore, 'fetchForPlaylistFolder').mockResolvedValue([])
       const queueMock = this.mock(playbackService, 'queueAndPlay')
-      const goMock = this.mock(this.router, 'go')
+      const goMock = this.mock(Router, 'go')
       const warnMock = this.mock(MessageToasterStub.value, 'warning')
 
       await this.renderComponent(folder)
@@ -78,7 +79,7 @@ new class extends UnitTestCase {
       const songs = factory<Song>('song', 3)
       const fetchMock = this.mock(songStore, 'fetchForPlaylistFolder').mockResolvedValue(songs)
       const queueMock = this.mock(playbackService, 'queueAndPlay')
-      const goMock = this.mock(this.router, 'go')
+      const goMock = this.mock(Router, 'go')
       await this.renderComponent(folder)
 
       await this.user.click(screen.getByText('Shuffle All'))
@@ -103,7 +104,7 @@ new class extends UnitTestCase {
 
       const fetchMock = this.mock(songStore, 'fetchForPlaylistFolder').mockResolvedValue([])
       const queueMock = this.mock(playbackService, 'queueAndPlay')
-      const goMock = this.mock(this.router, 'go')
+      const goMock = this.mock(Router, 'go')
       const warnMock = this.mock(MessageToasterStub.value, 'warning')
 
       await this.renderComponent(folder)

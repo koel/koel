@@ -1,3 +1,4 @@
+import Router from '@/router'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
@@ -45,7 +46,7 @@ new class extends UnitTestCase {
     it('shuffles', async () => {
       const queueMock = this.mock(queueStore, 'fetchRandom')
       const playMock = this.mock(playbackService, 'playFirstInQueue')
-      const goMock = this.mock(this.router, 'go')
+      const goMock = this.mock(Router, 'go')
       await this.renderComponent()
 
       await this.user.click(screen.getByTitle('Shuffle all. Press Alt/⌥ to change mode.'))

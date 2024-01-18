@@ -2,11 +2,14 @@
 
 namespace App\Services;
 
+use App\Exceptions\PlaylistBothSongsAndRulesProvidedException;
 use App\Facades\License;
 use App\Models\Playlist;
 use App\Models\PlaylistFolder as Folder;
+use App\Models\Song;
 use App\Models\User;
 use App\Values\SmartPlaylistRuleGroupCollection;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use Webmozart\Assert\Assert;
@@ -22,8 +25,10 @@ class PlaylistService
         bool $ownSongsOnly = false
     ): Playlist {
         if ($folder) {
-            Assert::true($user->is($folder->user), 'The playlist folder does not belong to the user');
+            Assert::true($folder->ownedBy($user), 'The playlist folder does not belong to the user');
         }
+
+        throw_if($songs && $ruleGroups, new PlaylistBothSongsAndRulesProvidedException());
 
         throw_if($ownSongsOnly && (!$ruleGroups || !License::isPlus()), new InvalidArgumentException(
             '"Own songs only" option only works with smart playlists and Plus license.'
@@ -40,7 +45,7 @@ class PlaylistService
                 ]);
 
                 if (!$playlist->is_smart && $songs) {
-                    $playlist->songs()->sync($songs);
+                    $playlist->addSongs($songs, $user);
                 }
 
                 return $playlist;
@@ -56,7 +61,7 @@ class PlaylistService
         bool $ownSongsOnly = false
     ): Playlist {
         if ($folder) {
-            Assert::true($playlist->user->is($folder->user), 'The playlist folder does not belong to the user');
+            Assert::true($playlist->ownedBy($folder->user), 'The playlist folder does not belong to the user');
         }
 
         throw_if($ownSongsOnly && (!$playlist->is_smart || !License::isPlus()), new InvalidArgumentException(
@@ -73,13 +78,16 @@ class PlaylistService
         return $playlist;
     }
 
-    public function addSongsToPlaylist(Playlist $playlist, array $songIds): void
+    public function addSongsToPlaylist(Playlist $playlist, Collection|Song|array $songs, User $user): void
     {
-        $playlist->songs()->syncWithoutDetaching($songIds);
+        $playlist->addSongs(
+            Collection::wrap($songs)->filter(static fn ($song): bool => !$playlist->songs->contains($song)),
+            $user
+        );
     }
 
-    public function removeSongsFromPlaylist(Playlist $playlist, array $songIds): void
+    public function removeSongsFromPlaylist(Playlist $playlist, Collection|Song|array $songs): void
     {
-        $playlist->songs()->detach($songIds);
+        $playlist->removeSongs($songs);
     }
 }

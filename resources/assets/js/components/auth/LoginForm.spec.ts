@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/vue'
 import { expect, it, Mock } from 'vitest'
-import { userStore } from '@/stores'
 import UnitTestCase from '@/__tests__/UnitTestCase'
+import { authService } from '@/services'
 import LoginFrom from './LoginForm.vue'
 
 new class extends UnitTestCase {
@@ -21,11 +21,11 @@ new class extends UnitTestCase {
     it('renders', () => expect(this.render(LoginFrom).html()).toMatchSnapshot())
 
     it('logs in', async () => {
-      expect((await this.submitForm(this.mock(userStore, 'login'))).emitted().loggedin).toBeTruthy()
+      expect((await this.submitForm(this.mock(authService, 'login'))).emitted().loggedin).toBeTruthy()
     })
 
     it('fails to log in', async () => {
-      const mock = this.mock(userStore, 'login').mockRejectedValue(new Error('Unauthenticated'))
+      const mock = this.mock(authService, 'login').mockRejectedValue(new Error('Unauthenticated'))
       const { emitted } = await this.submitForm(mock)
       await this.tick()
 

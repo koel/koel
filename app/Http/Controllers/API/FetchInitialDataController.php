@@ -8,6 +8,7 @@ use App\Http\Resources\PlaylistResource;
 use App\Http\Resources\QueueStateResource;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Repositories\PlaylistRepository;
 use App\Repositories\SettingRepository;
 use App\Repositories\SongRepository;
 use App\Services\ApplicationInformationService;
@@ -26,6 +27,7 @@ class FetchInitialDataController extends Controller
         ITunesService $iTunesService,
         SettingRepository $settingRepository,
         SongRepository $songRepository,
+        PlaylistRepository $playlistRepository,
         ApplicationInformationService $applicationInformationService,
         QueueService $queueService,
         LicenseServiceInterface $licenseService,
@@ -35,7 +37,7 @@ class FetchInitialDataController extends Controller
 
         return response()->json([
             'settings' => $user->is_admin ? $settingRepository->getAllAsKeyValueArray() : [],
-            'playlists' => PlaylistResource::collection($user->playlists),
+            'playlists' => PlaylistResource::collection($playlistRepository->getAllAccessibleByUser($user)),
             'playlist_folders' => PlaylistFolderResource::collection($user->playlist_folders),
             'current_user' => UserResource::make($user, true),
             'uses_last_fm' => LastfmService::used(),

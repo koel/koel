@@ -29,7 +29,7 @@ class Http {
     return (await this.request<T>('get', url)).data
   }
 
-  public async post<T> (url: string, data: Record<string, any>, onUploadProgress?: any) {
+  public async post<T> (url: string, data: Record<string, any> = {}, onUploadProgress?: any) {
     return (await this.request<T>('post', url, data, onUploadProgress)).data
   }
 
@@ -61,12 +61,10 @@ class Http {
       this.silent || this.hideLoadingIndicator()
       this.silent = false
 
-      // …get the tokens from the header or response data if exist, and save them.
-      const token = response.headers.authorization || response.data.token
+      // …get the tokens from the header if exist, and save them
+      // This occurs during user updating password.
+      const token = response.headers.authorization
       token && authService.setApiToken(token)
-
-      const audioToken = response.data['audio-token']
-      audioToken && authService.setAudioToken(audioToken)
 
       return response
     }, error => {

@@ -17,19 +17,23 @@ export const forceReloadWindow = (): void => {
   window.location.reload()
 }
 
-export const copyText = (text: string): void => {
-  let copyArea = document.querySelector<HTMLTextAreaElement>('#copyArea')
+export const copyText = async (text: string) => {
+  try {
+    await navigator.clipboard.writeText(text)
+  } catch (e) {
+    let copyArea = document.querySelector<HTMLTextAreaElement>('#copyArea')
 
-  if (!copyArea) {
-    copyArea = document.createElement('textarea')
-    copyArea.id = 'copyArea'
-    document.body.appendChild(copyArea)
+    if (!copyArea) {
+      copyArea = document.createElement('textarea')
+      copyArea.id = 'copyArea'
+      document.body.appendChild(copyArea)
+    }
+
+    copyArea.style.top = `${window.scrollY || document.documentElement.scrollTop}px`
+    copyArea.value = text
+    select(copyArea)
+    document.execCommand('copy')
   }
-
-  copyArea.style.top = `${window.scrollY || document.documentElement.scrollTop}px`
-  copyArea.value = text
-  select(copyArea)
-  document.execCommand('copy')
 }
 
 export const isDemo = () => {

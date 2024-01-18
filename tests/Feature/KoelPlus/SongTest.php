@@ -2,22 +2,14 @@
 
 namespace Tests\Feature\KoelPlus;
 
-use App\Facades\License;
 use App\Models\Song;
 use Illuminate\Support\Collection;
-use Tests\TestCase;
+use Tests\PlusTestCase;
 
 use function Tests\create_user;
 
-class SongTest extends TestCase
+class SongTest extends PlusTestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        License::fakePlusLicense();
-    }
-
     public function testWithOwnSongsOnlyOptionOn(): void
     {
         $user = create_user();

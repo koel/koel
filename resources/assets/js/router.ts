@@ -1,7 +1,8 @@
 import { ref, Ref, watch } from 'vue'
+import { forceReloadWindow } from '@/utils'
 
 type RouteParams = Record<string, string>
-type ResolveHook = (params: RouteParams) => boolean | void
+type ResolveHook = (params: RouteParams) => Promise<boolean | void> | boolean | void
 type RedirectHook = (params: RouteParams) => Route | string
 
 export type Route = {
@@ -44,7 +45,7 @@ export default class Router {
 
   public async resolve () {
     if (!location.hash || location.hash === '#/' || location.hash === '#!/') {
-      return this.go(this.homeRoute.path)
+      return Router.go(this.homeRoute.path)
     }
 
     const matched = this.tryMatchRoute()
@@ -54,13 +55,13 @@ export default class Router {
       return this.triggerNotFound()
     }
 
-    if (route.onResolve?.(params) === false) {
+    if ((await route.onResolve?.(params)) === false) {
       return this.triggerNotFound()
     }
 
     if (route.redirect) {
       const to = route.redirect(params)
-      return typeof to === 'string' ? this.go(to) : this.activateRoute(to, params)
+      return typeof to === 'string' ? Router.go(to) : this.activateRoute(to, params)
     }
 
     return this.activateRoute(route, params)
@@ -96,7 +97,7 @@ export default class Router {
     this.$currentRoute.value.params = params
   }
 
-  public go (path: string | number) {
+  public static go (path: string | number, reload = false) {
     if (typeof path === 'number') {
       history.go(path)
       return
@@ -112,5 +113,7 @@ export default class Router {
 
     path = path.substring(1, path.length)
     location.assign(`${location.origin}${location.pathname}${path}`)
+
+    reload && forceReloadWindow()
   }
 }

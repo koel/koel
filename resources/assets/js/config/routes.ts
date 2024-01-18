@@ -1,7 +1,11 @@
 import { Route } from '@/router'
 import { userStore } from '@/stores'
-import { localStorageService } from '@/services'
+import { localStorageService, playlistCollaborationService } from '@/services'
 import { useUpload } from '@/composables'
+import { forceReloadWindow, logger } from '@/utils'
+import Router from '@/router'
+
+const UUID_REGEX = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 export const routes: Route[] = [
   {
@@ -80,8 +84,22 @@ export const routes: Route[] = [
     screen: 'Artist'
   },
   {
-    path: '/playlist/(?<id>\\d+)',
+    path: `/playlist/(?<id>${UUID_REGEX})`,
     screen: 'Playlist'
+  },
+  {
+    path: `/playlist/collaborate/(?<id>${UUID_REGEX})`,
+    screen: 'Blank',
+    onResolve: async params => {
+      try {
+        const playlist = await playlistCollaborationService.acceptInvite(params.id)
+        Router.go(`/playlist/${playlist.id}`, true)
+        return true
+      } catch (e) {
+        logger.error(e)
+        return false
+      }
+    }
   },
   {
     path: '/genres',
@@ -96,7 +114,7 @@ export const routes: Route[] = [
     screen: 'Visualizer'
   },
   {
-    path: '/song/(?<id>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})',
+    path: `/song/(?<id>${UUID_REGEX})`,
     screen: 'Queue',
     redirect: () => 'queue',
     onResolve: params => {
@@ -105,7 +123,7 @@ export const routes: Route[] = [
     }
   },
   {
-    path: '/invitation/accept/(?<token>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})',
+    path: `/invitation/accept/(?<token>${UUID_REGEX})`,
     screen: 'Invitation.Accept'
   }
 ]

@@ -12,6 +12,7 @@ use App\Models\Playlist;
 use App\Models\PlaylistFolder;
 use App\Models\User;
 use App\Repositories\PlaylistFolderRepository;
+use App\Repositories\PlaylistRepository;
 use App\Services\PlaylistService;
 use App\Values\SmartPlaylistRuleGroupCollection;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -23,6 +24,7 @@ class PlaylistController extends Controller
     /** @param User $user */
     public function __construct(
         private PlaylistService $playlistService,
+        private PlaylistRepository $playlistRepository,
         private PlaylistFolderRepository $folderRepository,
         private ?Authenticatable $user
     ) {
@@ -30,7 +32,7 @@ class PlaylistController extends Controller
 
     public function index()
     {
-        return PlaylistResource::collection($this->user->playlists);
+        return PlaylistResource::collection($this->playlistRepository->getAllAccessibleByUser($this->user));
     }
 
     public function store(PlaylistStoreRequest $request)

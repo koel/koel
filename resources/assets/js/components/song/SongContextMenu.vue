@@ -151,7 +151,7 @@ const visibilityActions = computed(() => {
 
 const canBeRemovedFromPlaylist = computed(() => {
   if (!isCurrentScreen('Playlist')) return false
-  const playlist = playlistStore.byId(parseInt(getRouteParam('id')!))
+  const playlist = playlistStore.byId(getRouteParam('id')!)
   return playlist && !playlist.is_smart
 })
 
@@ -183,7 +183,7 @@ const viewArtistDetails = (artistId: number) => trigger(() => go(`artist/${artis
 const download = () => trigger(() => downloadService.fromSongs(songs.value))
 
 const removeFromPlaylist = () => trigger(async () => {
-  const playlist = playlistStore.byId(parseInt(getRouteParam('id')!))
+  const playlist = playlistStore.byId(getRouteParam('id')!)
   if (!playlist) return
 
   await removeSongsFromPlaylist(playlist, songs.value)
@@ -192,8 +192,8 @@ const removeFromPlaylist = () => trigger(async () => {
 const removeFromQueue = () => trigger(() => queueStore.unqueue(songs.value))
 const removeFromFavorites = () => trigger(() => favoriteStore.unlike(songs.value))
 
-const copyUrl = () => trigger(() => {
-  copyText(songStore.getShareableUrl(songs.value[0]))
+const copyUrl = () => trigger(async () => {
+  await copyText(songStore.getShareableUrl(songs.value[0]))
   toastSuccess('URL copied to clipboard.')
 })
 

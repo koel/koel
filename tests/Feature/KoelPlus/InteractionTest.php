@@ -2,22 +2,14 @@
 
 namespace Tests\Feature\KoelPlus;
 
-use App\Facades\License;
 use App\Models\Song;
 use Illuminate\Support\Collection;
-use Tests\TestCase;
+use Tests\PlusTestCase;
 
 use function Tests\create_user;
 
-class InteractionTest extends TestCase
+class InteractionTest extends PlusTestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        License::fakePlusLicense();
-    }
-
     public function testPolicyForRegisterPlay(): void
     {
         $this->withoutEvents();

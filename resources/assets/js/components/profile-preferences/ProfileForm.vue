@@ -55,7 +55,8 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
-import { UpdateCurrentProfileData, userStore } from '@/stores'
+import { userStore } from '@/stores'
+import { authService, UpdateCurrentProfileData } from '@/services'
 import { isDemo, logger, parseValidationError } from '@/utils'
 import { useDialogBox, useMessageToaster } from '@/composables'
 
@@ -85,7 +86,7 @@ const update = async () => {
   }
 
   try {
-    await userStore.updateProfile(Object.assign({}, profile.value))
+    await authService.updateProfile(Object.assign({}, profile.value))
     profile.value.current_password = null
     delete profile.value.new_password
     toastSuccess('Profile updated.')

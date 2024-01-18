@@ -71,3 +71,8 @@ function attempt_unless($condition, callable $callback, bool $log = true): mixed
 {
     return !value($condition) ? attempt($callback, $log) : null;
 }
+
+function gravatar(string $email, int $size = 192): string
+{
+    return sprintf('https://www.gravatar.com/avatar/%s?s=192&d=robohash', md5($email));
+}

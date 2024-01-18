@@ -1,3 +1,4 @@
+import Router from '@/router'
 import { screen, waitFor } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
@@ -57,7 +58,7 @@ new class extends UnitTestCase {
     })
 
     it('goes back to list if artist is deleted', async () => {
-      const goMock = this.mock(this.router, 'go')
+      const goMock = this.mock(Router, 'go')
       const byIdMock = this.mock(artistStore, 'byId', null)
       await this.renderComponent()
 

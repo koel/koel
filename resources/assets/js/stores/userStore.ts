@@ -2,15 +2,6 @@ import { differenceBy, merge } from 'lodash'
 import { http } from '@/services'
 import { reactive } from 'vue'
 import { arrayify } from '@/utils'
-import { UnwrapNestedRefs } from '@vue/reactivity'
-
-export interface UpdateCurrentProfileData {
-  current_password: string | null
-  name: string
-  email: string
-  avatar?: string
-  new_password?: string
-}
 
 interface UserFormData {
   name: string
@@ -27,7 +18,7 @@ export interface UpdateUserData extends UserFormData {
 }
 
 export const userStore = {
-  vault: new Map<number, UnwrapNestedRefs<User>>(),
+  vault: new Map<number, User>(),
 
   state: reactive({
     users: [] as User[],
@@ -59,14 +50,6 @@ export const userStore = {
 
   get current () {
     return this.state.current
-  },
-
-  login: async (email: string, password: string) => await http.post<User>('me', { email, password }),
-  logout: async () => await http.delete('me'),
-  getProfile: async () => await http.get<User>('me'),
-
-  async updateProfile (data: UpdateCurrentProfileData) {
-    merge(this.current, (await http.put<User>('me', data)))
   },
 
   async store (data: CreateUserData) {

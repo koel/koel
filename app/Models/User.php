@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -32,6 +33,7 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @property ?string $invitation_token
  * @property ?Carbon $invited_at
  * @property-read bool $is_prospect
+ * @property Collection|array<array-key, Playlist> $collaboratedPlaylists
  */
 class User extends Authenticatable
 {
@@ -58,6 +60,11 @@ class User extends Authenticatable
         return $this->hasMany(Playlist::class);
     }
 
+    public function collaboratedPlaylists(): BelongsToMany
+    {
+        return $this->belongsToMany(Playlist::class, 'playlist_collaborators')->withTimestamps();
+    }
+
     public function playlist_folders(): HasMany // @phpcs:ignore
     {
         return $this->hasMany(PlaylistFolder::class);
@@ -70,9 +77,7 @@ class User extends Authenticatable
 
     protected function avatar(): Attribute
     {
-        return Attribute::get(
-            fn () => sprintf('https://www.gravatar.com/avatar/%s?s=192&d=robohash', md5($this->email))
-        );
+        return Attribute::get(fn (): string => gravatar($this->email));
     }
 
     /**

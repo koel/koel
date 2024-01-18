@@ -1,3 +1,4 @@
+import Router from '@/router'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
@@ -5,8 +6,8 @@ import { screen } from '@testing-library/vue'
 import { eventBus } from '@/utils'
 import { userStore } from '@/stores'
 import { DialogBoxStub } from '@/__tests__/stubs'
-import UserCard from './UserCard.vue'
 import { invitationService } from '@/services'
+import UserCard from './UserCard.vue'
 
 new class extends UnitTestCase {
   private renderComponent (user: User) {
@@ -37,7 +38,7 @@ new class extends UnitTestCase {
     })
 
     it('redirects to Profile screen if edit current user', async () => {
-      const mock = this.mock(this.router, 'go')
+      const mock = this.mock(Router, 'go')
       const user = factory<User>('user')
       this.be(user).renderComponent(user)
 

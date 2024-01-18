@@ -67,6 +67,7 @@ header.screen-header {
 
     .meta {
       display: block;
+      margin-top: .2rem;
     }
 
     main {

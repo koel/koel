@@ -174,8 +174,8 @@ export const songStore = {
     ))
   },
 
-  async fetchForPlaylist (playlist: Playlist | number, refresh = false) {
-    const id = typeof playlist === 'number' ? playlist : playlist.id
+  async fetchForPlaylist (playlist: Playlist | string, refresh = false) {
+    const id = typeof playlist === 'string' ? playlist : playlist.id
 
     if (refresh) {
       cache.remove(['playlist.songs', id])

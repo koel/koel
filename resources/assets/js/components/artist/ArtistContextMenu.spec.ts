@@ -1,11 +1,12 @@
+import Router from '@/router'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { eventBus } from '@/utils'
 import { downloadService, playbackService } from '@/services'
 import { commonStore, songStore } from '@/stores'
-import ArtistContextMenu from './ArtistContextMenu.vue'
 import { screen } from '@testing-library/vue'
+import ArtistContextMenu from './ArtistContextMenu.vue'
 
 let artist: Artist
 
@@ -16,7 +17,7 @@ new class extends UnitTestCase {
     })
 
     const rendered = this.render(ArtistContextMenu)
-    eventBus.emit('ARTIST_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 }, artist)
+    eventBus.emit('ARTIST_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, artist)
     await this.tick(2)
 
     return rendered
@@ -68,7 +69,7 @@ new class extends UnitTestCase {
     })
 
     it('goes to artist', async () => {
-      const mock = this.mock(this.router, 'go')
+      const mock = this.mock(Router, 'go')
       await this.renderComponent()
 
       await screen.getByText('Go to Artist').click()

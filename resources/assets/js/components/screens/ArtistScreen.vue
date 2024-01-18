@@ -29,6 +29,7 @@
       <template #controls>
         <SongListControls
           v-if="songs.length && (!isPhone || showingControls)"
+          :config="config"
           @filter="applyFilter"
           @play-all="playAll"
           @play-selected="playSelected"
@@ -88,7 +89,7 @@ import { computed, defineAsyncComponent, ref, toRef, watch } from 'vue'
 import { eventBus, logger, pluralize } from '@/utils'
 import { albumStore, artistStore, commonStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
-import { useDialogBox, useRouter, useSongList, useThirdPartyServices } from '@/composables'
+import { useDialogBox, useRouter, useSongList, useSongListControls, useThirdPartyServices } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ArtistThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
@@ -115,7 +116,6 @@ let info = ref<ArtistInfo | undefined | null>()
 
 const {
   SongList,
-  SongListControls,
   ControlsToggle,
   headerLayout,
   songList,
@@ -129,6 +129,8 @@ const {
   applyFilter,
   onScrollBreakpoint
 } = useSongList(songs)
+
+const { SongListControls, config } = useSongListControls('Artist')
 
 const { useLastfm } = useThirdPartyServices()
 const allowDownload = toRef(commonStore.state, 'allows_download')

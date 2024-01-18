@@ -1,8 +1,8 @@
 import factory from 'factoria'
 import { expect, it } from 'vitest'
-import { screen, waitFor } from '@testing-library/vue'
+import { screen } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { userStore } from '@/stores'
+import { authService } from '@/services'
 import { MessageToasterStub } from '@/__tests__/stubs'
 import ProfileForm from './ProfileForm.vue'
 
@@ -13,7 +13,7 @@ new class extends UnitTestCase {
 
   protected test () {
     it('updates profile', async () => {
-      const updateMock = this.mock(userStore, 'updateProfile')
+      const updateMock = this.mock(authService, 'updateProfile')
       const alertMock = this.mock(MessageToasterStub.value, 'success')
 
       await this.renderComponent(factory<User>('user'))

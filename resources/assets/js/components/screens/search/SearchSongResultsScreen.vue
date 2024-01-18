@@ -16,6 +16,7 @@
       <template #controls>
         <SongListControls
           v-if="songs.length && (!isPhone || showingControls)"
+          :config="config"
           @filter="applyFilter"
           @play-all="playAll"
           @play-selected="playSelected"
@@ -31,7 +32,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref, toRef } from 'vue'
 import { searchStore } from '@/stores'
-import { useRouter, useSongList } from '@/composables'
+import { useRouter, useSongList, useSongListControls } from '@/composables'
 import { pluralize } from '@/utils'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -42,7 +43,6 @@ const q = ref('')
 
 const {
   SongList,
-  SongListControls,
   ControlsToggle,
   ThumbnailStack,
   headerLayout,
@@ -60,6 +60,7 @@ const {
   onScrollBreakpoint
 } = useSongList(toRef(searchStore.state, 'songs'))
 
+const { SongListControls, config } = useSongListControls('Search.Songs')
 const decodedQ = computed(() => decodeURIComponent(q.value))
 const loading = ref(false)
 

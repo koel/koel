@@ -1,3 +1,4 @@
+import Router from '@/router'
 import factory from '@/__tests__/factory'
 import { ref } from 'vue'
 import { expect, it } from 'vitest'
@@ -29,27 +30,27 @@ new class extends UnitTestCase {
       expect(toggleMock).toHaveBeenCalled()
     })
 
-    it.each<[ScreenName, MethodOf<typeof songStore>]>([
-      ['Album', 'fetchForAlbum'],
-      ['Artist', 'fetchForArtist'],
-      ['Playlist', 'fetchForPlaylist']
-    ])('initiates playback for %s screen', async (screenName, fetchMethod) => {
+    it.each<[ScreenName, MethodOf<typeof songStore>, string|number]>([
+      ['Album', 'fetchForAlbum', 42],
+      ['Artist', 'fetchForArtist', 42],
+      ['Playlist', 'fetchForPlaylist', '71d8cd40-20d4-4b17-b460-d30fe5bb7b66']
+    ])('initiates playback for %s screen', async (screenName, fetchMethod, id) => {
       commonStore.state.song_count = 10
       const songs = factory<Song>('song', 3)
       const fetchMock = this.mock(songStore, fetchMethod).mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
-      const goMock = this.mock(this.router, 'go')
+      const goMock = this.mock(Router, 'go')
 
       await this.router.activateRoute({
         screen: screenName,
         path: '_'
-      }, { id: '42' })
+      }, { id: String(id) })
 
       this.renderComponent()
 
       await this.user.click(screen.getByRole('button'))
       await waitFor(() => {
-        expect(fetchMock).toHaveBeenCalledWith(42)
+        expect(fetchMock).toHaveBeenCalledWith(id)
         expect(playMock).toHaveBeenCalledWith(songs)
         expect(goMock).toHaveBeenCalledWith('queue')
       })
@@ -67,7 +68,7 @@ new class extends UnitTestCase {
       const songs = factory<Song>('song', 3)
       const fetchMock = this.mock(store, fetchMethod).mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
-      const goMock = this.mock(this.router, 'go')
+      const goMock = this.mock(Router, 'go')
 
       await this.router.activateRoute({
         screen: screenName,
@@ -89,7 +90,7 @@ new class extends UnitTestCase {
       const songs = factory<Song>('song', 3)
       const fetchMock = this.mock(queueStore, 'fetchRandom').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
-      const goMock = this.mock(this.router, 'go')
+      const goMock = this.mock(Router, 'go')
 
       await this.router.activateRoute({
         screen: screenName,
@@ -110,7 +111,7 @@ new class extends UnitTestCase {
       commonStore.state.song_count = 0
 
       const playMock = this.mock(playbackService, 'queueAndPlay')
-      const goMock = this.mock(this.router, 'go')
+      const goMock = this.mock(Router, 'go')
 
       await this.router.activateRoute({
         screen: 'Songs',

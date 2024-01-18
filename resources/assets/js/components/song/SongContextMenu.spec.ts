@@ -1,3 +1,4 @@
+import Router from '@/router'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
@@ -62,7 +63,7 @@ new class extends UnitTestCase {
     })
 
     it('goes to album details screen', async () => {
-      const goMock = this.mock(this.router, 'go')
+      const goMock = this.mock(Router, 'go')
       await this.renderComponent(factory<Song>('song'))
 
       await this.user.click(screen.getByText('Go to Album'))
@@ -71,7 +72,7 @@ new class extends UnitTestCase {
     })
 
     it('goes to artist details screen', async () => {
-      const goMock = this.mock(this.router, 'go')
+      const goMock = this.mock(Router, 'go')
       await this.renderComponent(factory<Song>('song'))
 
       await this.user.click(screen.getByText('Go to Artist'))

@@ -13,8 +13,8 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { userStore } from '@/stores'
 import { isDemo } from '@/utils'
+import { authService } from '@/services'
 
 import Btn from '@/components/ui/Btn.vue'
 import PasswordField from '@/components/ui/PasswordField.vue'
@@ -33,7 +33,7 @@ const emit = defineEmits<{ (e: 'loggedin'): void }>()
 
 const login = async () => {
   try {
-    await userStore.login(email.value, password.value)
+    await authService.login(email.value, password.value)
     failed.value = false
 
     // Reset the password so that the next login will have this field empty.

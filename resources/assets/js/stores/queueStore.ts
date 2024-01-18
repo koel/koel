@@ -9,6 +9,8 @@ export const queueStore = {
     songs: []
   }),
 
+  i: 0,
+
   init (savedState: QueueState) {
     // don't set this.all here, as it would trigger saving state
     this.state.songs = songStore.syncWithVault(savedState.songs)

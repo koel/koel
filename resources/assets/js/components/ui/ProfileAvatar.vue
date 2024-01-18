@@ -7,22 +7,19 @@
     href="/#/profile"
     title="Profile and preferences"
   >
-    <img :alt="`Avatar of ${currentUser.name}`" :src="currentUser.avatar">
+    <UserAvatar :user="currentUser" width="40"/>
   </a>
 </template>
 
 <script lang="ts" setup>
 import { useAuthorization } from '@/composables'
+import UserAvatar from '@/components/user/UserAvatar.vue'
 
 const { currentUser } = useAuthorization()
 </script>
 
 <style lang="scss" scoped>
 img {
-  display: block;
-  width: 39px;
-  aspect-ratio: 1/1;
-  border-radius: 50%;
   padding: 2px;
   border: 1px solid rgba(255, 255, 255, .1);
   transition: border .2s ease-in-out;

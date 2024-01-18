@@ -8,7 +8,8 @@
         <ThumbnailStack :thumbnails="thumbnails" />
       </template>
 
-      <template v-if="songs.length" #meta>
+      <template v-if="songs.length || playlist.collaborators.length" #meta>
+        <CollaboratorsBadge :playlist="playlist" v-if="playlist.collaborators.length" />
         <span>{{ pluralize(songs, 'song') }}</span>
         <span>{{ duration }}</span>
         <a
@@ -70,26 +71,22 @@ import { ref, toRef, watch } from 'vue'
 import { eventBus, pluralize } from '@/utils'
 import { commonStore, playlistStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
-import { usePlaylistManagement, useRouter, useSongList } from '@/composables'
+import { usePlaylistManagement, useRouter, useSongList, useAuthorization, useSongListControls } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
+import CollaboratorsBadge from '@/components/playlist/CollaboratorsBadge.vue'
 
-const { onRouteChanged, triggerNotFound, getRouteParam, onScreenActivated } = useRouter()
+const { currentUser } = useAuthorization()
+const { triggerNotFound, getRouteParam, onScreenActivated } = useRouter()
 
-const playlistId = ref<number>()
+const playlistId = ref<string>()
 const playlist = ref<Playlist>()
 const loading = ref(false)
 
-const controlsConfig: Partial<SongListControlsConfig> = {
-  deletePlaylist: true,
-  refresh: true
-}
-
 const {
   SongList,
-  SongListControls,
   ControlsToggle,
   ThumbnailStack,
   headerLayout,
@@ -105,9 +102,11 @@ const {
   playSelected,
   applyFilter,
   onScrollBreakpoint,
-  sort
+  sort,
+  config: listConfig
 } = useSongList(ref<Song[]>([]))
 
+const { SongListControls, config: controlsConfig } = useSongListControls('Playlist')
 const { removeSongsFromPlaylist } = usePlaylistManagement()
 
 const allowDownload = toRef(commonStore.state, 'allows_download')
@@ -131,10 +130,20 @@ watch(playlistId, async id => {
   if (!id) return
 
   playlist.value = playlistStore.byId(id)
-  playlist.value ? await fetchSongs() : await triggerNotFound()
+
+  // reset this config value to its default to not cause rows to be mal-rendered
+  listConfig.collaborative = false
+
+  if (playlist.value) {
+    await fetchSongs()
+    listConfig.collaborative = playlist.value.collaborators.length > 0
+    controlsConfig.deletePlaylist = playlist.value.user_id === currentUser.value?.id
+  } else {
+    await triggerNotFound()
+  }
 })
 
-onScreenActivated('Playlist', async () => (playlistId.value = parseInt(getRouteParam('id')!)))
+onScreenActivated('Playlist', () => (playlistId.value = getRouteParam('id')!))
 
 eventBus.on('PLAYLIST_UPDATED', async updated => updated.id === playlistId.value && await fetchSongs())
   .on('PLAYLIST_SONGS_REMOVED', async (playlist, removed) => {

@@ -19,7 +19,8 @@ return new class extends Migration
         Schema::table('playlists', static function (Blueprint $table): void {
             $table->string('folder_id', 36)->nullable();
             $table->foreign('folder_id')
-                ->references('id')->on('playlist_folders')
+                ->references('id')
+                ->on('playlist_folders')
                 ->cascadeOnUpdate()
                 ->nullOnDelete();
         });

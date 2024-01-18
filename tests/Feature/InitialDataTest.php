@@ -33,7 +33,7 @@ class InitialDataTest extends TestCase
                 'short_key',
                 'customer_name',
                 'customer_email',
-                'store_url',
+                'product_id',
             ],
         ]);
     }

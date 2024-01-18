@@ -1,3 +1,4 @@
+import Router from '@/router'
 import { expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
@@ -68,7 +69,7 @@ new class extends UnitTestCase {
     })
 
     it('goes to album', async () => {
-      const mock = this.mock(this.router, 'go')
+      const mock = this.mock(Router, 'go')
       await this.renderComponent()
 
       await this.user.click(screen.getByText('Go to Album'))
@@ -85,7 +86,7 @@ new class extends UnitTestCase {
     })
 
     it('goes to artist', async () => {
-      const mock = this.mock(this.router, 'go')
+      const mock = this.mock(Router, 'go')
       await this.renderComponent()
 
       await this.user.click(screen.getByText('Go to Artist'))

@@ -84,8 +84,8 @@ class PlaylistServiceTest extends TestCase
         $playlist = $this->service->createPlaylist('foo', $folder->user, $folder);
 
         self::assertSame('foo', $playlist->name);
-        self::assertTrue($folder->user->is($playlist->user));
-        self::assertTrue($folder->is($playlist->folder));
+        self::assertTrue($folder->ownedBy($playlist->user));
+        self::assertTrue($playlist->inFolder($folder));
     }
 
     public function testCreatePlaylistInAnotherUsersFolder(): void

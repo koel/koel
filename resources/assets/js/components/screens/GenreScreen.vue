@@ -14,7 +14,12 @@
       </template>
 
       <template #controls>
-        <SongListControls v-if="!isPhone || showingControls" @play-all="playAll" @play-selected="playSelected" />
+        <SongListControls
+          v-if="!isPhone || showingControls"
+          :config="config"
+          @play-all="playAll"
+          @play-selected="playSelected"
+        />
       </template>
     </ScreenHeader>
     <ScreenHeaderSkeleton v-else />
@@ -45,7 +50,7 @@ import { faTags } from '@fortawesome/free-solid-svg-icons'
 import { eventBus, logger, pluralize, secondsToHumanReadable } from '@/utils'
 import { playbackService } from '@/services'
 import { genreStore, songStore } from '@/stores'
-import { useDialogBox, useRouter, useSongList } from '@/composables'
+import { useDialogBox, useRouter, useSongList, useSongListControls } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -54,7 +59,6 @@ import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton
 
 const {
   SongList,
-  SongListControls,
   ControlsToggle,
   ThumbnailStack,
   headerLayout,
@@ -67,6 +71,8 @@ const {
   playSelected,
   onScrollBreakpoint
 } = useSongList(ref<Song[]>([]))
+
+const { SongListControls, config } = useSongListControls('Genre')
 
 const { showErrorDialog } = useDialogBox()
 const { getRouteParam, go, onRouteChanged } = useRouter()
