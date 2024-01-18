@@ -1,4 +1,4 @@
-import { take } from 'lodash'
+import { merge, take } from 'lodash'
 import { ref } from 'vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
@@ -8,13 +8,18 @@ import { screen } from '@testing-library/vue'
 import SongListControls from './SongListControls.vue'
 
 new class extends UnitTestCase {
-  private renderComponent (selectedSongCount = 1, screen: ScreenName = 'Songs') {
+  private renderComponent (selectedSongCount = 1, configOverrides: Partial<SongListControlsConfig> = {}) {
     const songs = factory<Song>('song', 5)
-
-    this.router.activateRoute({
-      screen,
-      path: '_'
-    })
+    const config: SongListControlsConfig = merge({
+      addTo: {
+        queue: true,
+        favorites: true
+      },
+      clearQueue: true,
+      deletePlaylist: true,
+      refresh: true,
+      filter: true
+    }, configOverrides)
 
     return this.render(SongListControls, {
       global: {
@@ -22,6 +27,9 @@ new class extends UnitTestCase {
           [<symbol>SongsKey]: [ref(songs)],
           [<symbol>SelectedSongsKey]: [ref(take(songs, selectedSongCount))]
         }
+      },
+      props: {
+        config
       }
     })
   }
@@ -64,7 +72,7 @@ new class extends UnitTestCase {
     })
 
     it('clears queue', async () => {
-      const { emitted } = this.renderComponent(0, 'Queue')
+      const { emitted } = this.renderComponent(0)
 
       await this.user.click(screen.getByTitle('Clear current queue'))
 
@@ -72,7 +80,7 @@ new class extends UnitTestCase {
     })
 
     it('deletes current playlist', async () => {
-      const { emitted } = this.renderComponent(0, 'Playlist')
+      const { emitted } = this.renderComponent(0)
 
       await this.user.click(screen.getByTitle('Delete this playlist'))
 

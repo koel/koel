@@ -2,16 +2,15 @@
 
 namespace Tests\Feature\KoelPlus;
 
-use App\Facades\License;
 use App\Models\Setting;
 use App\Models\Song;
 use Illuminate\Http\UploadedFile;
-use Tests\TestCase;
+use Tests\PlusTestCase;
 
 use function Tests\create_user;
 use function Tests\test_path;
 
-class UploadTest extends TestCase
+class UploadTest extends PlusTestCase
 {
     private UploadedFile $file;
 
@@ -19,7 +18,6 @@ class UploadTest extends TestCase
     {
         parent::setUp();
 
-        License::fakePlusLicense();
         Setting::set('media_path', public_path('sandbox/media'));
         $this->file = UploadedFile::fromFile(test_path('songs/full.mp3'), 'song.mp3'); //@phpstan-ignore-line
     }

@@ -108,7 +108,7 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
       switch (getDragType(event)) {
         case 'playlist':
           return playlistStore
-            .byId(parseInt(event.dataTransfer!.getData('application/x-koel.playlist'))) as T | undefined
+            .byId(event.dataTransfer!.getData('application/x-koel.playlist')) as T | undefined
         default:
           return
       }
@@ -133,7 +133,7 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
           const artist = await artistStore.resolve(<number>data)
           return artist ? await songStore.fetchForArtist(artist) : <Song[]>[]
         case 'playlist':
-          const playlist = playlistStore.byId(<number>data)
+          const playlist = playlistStore.byId(<string>data)
           return playlist ? await songStore.fetchForPlaylist(playlist) : <Song[]>[]
         case 'playlist-folder':
           const folder = playlistFolderStore.byId(<string>data)

@@ -52,7 +52,7 @@ export const playlistStore = {
     })
   },
 
-  byId (id: number) {
+  byId (id: string) {
     return this.state.playlists.find(playlist => playlist.id === id)
   },
 

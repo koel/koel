@@ -1,3 +1,4 @@
+import Router from '@/router'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { settingStore } from '@/stores'
@@ -11,7 +12,7 @@ new class extends UnitTestCase {
 
     it('submits the settings form', async () => {
       const updateMock = this.mock(settingStore, 'update')
-      const goMock = this.mock(this.router, 'go')
+      const goMock = this.mock(Router, 'go')
 
       settingStore.state.media_path = ''
       this.render(SettingsScreen)
@@ -27,7 +28,7 @@ new class extends UnitTestCase {
 
     it('confirms upon media path change', async () => {
       const updateMock = this.mock(settingStore, 'update')
-      const goMock = this.mock(this.router, 'go')
+      const goMock = this.mock(Router, 'go')
       const confirmMock = this.mock(DialogBoxStub.value, 'confirm')
 
       settingStore.state.media_path = '/old'

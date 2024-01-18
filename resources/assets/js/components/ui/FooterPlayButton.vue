@@ -35,7 +35,7 @@ const initiatePlayback = async () => {
       songs = await songStore.fetchForArtist(parseInt(getRouteParam('id')!))
       break
     case 'Playlist':
-      songs = await songStore.fetchForPlaylist(parseInt(getRouteParam('id')!))
+      songs = await songStore.fetchForPlaylist(getRouteParam('id')!)
       break
     case 'Favorites':
       songs = await favoriteStore.fetch()

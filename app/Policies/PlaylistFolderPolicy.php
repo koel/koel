@@ -9,6 +9,6 @@ class PlaylistFolderPolicy
 {
     public function own(User $user, PlaylistFolder $folder): bool
     {
-        return $folder->user->is($user);
+        return $folder->ownedBy($user);
     }
 }

@@ -48,6 +48,10 @@
           <Icon v-if="sortField === 'album_name' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight" />
         </template>
       </span>
+      <template v-if="config.collaborative">
+        <span class="collaborator">User</span>
+        <span class="added-at">Added</span>
+      </template>
       <span
         class="time"
         data-testid="header-length"
@@ -77,7 +81,7 @@
         :key="item.song.id"
         :item="item"
         draggable="true"
-        @click="rowClicked(item, $event)"
+        @click="onClick(item, $event)"
         @dragleave="onDragLeave"
         @dragstart="onDragStart(item, $event)"
         @dragenter.prevent="onDragEnter"
@@ -137,7 +141,7 @@ const songRows = ref<SongRow[]>([])
 
 watch(songRows, () => setSelectedSongs(songRows.value.filter(row => row.selected).map(row => row.song)), { deep: true })
 
-const filteredSongRows = computed(() => {
+const filteredSongRows = computed<SongRow[]>(() => {
   const keywords = filterKeywords.value.trim().toLowerCase()
 
   if (!keywords) {
@@ -223,7 +227,7 @@ const clearSelection = () => songRows.value.forEach(row => (row.selected = false
 const handleA = (event: KeyboardEvent) => (event.ctrlKey || event.metaKey) && selectAllRows()
 const getAllSongsWithSort = () => songRows.value.map(row => row.song)
 
-const rowClicked = (row: SongRow, event: MouseEvent) => {
+const onClick = (row: SongRow, event: MouseEvent) => {
   // If we're on a touch device, or if Ctrl/Cmd key is pressed, just toggle selection.
   if (isMobile.any) {
     toggleRow(row)
@@ -262,11 +266,12 @@ const selectRowsBetween = (first: SongRow, second: SongRow) => {
   }
 }
 
-const onDragStart = (row: SongRow, event: DragEvent) => {
+const onDragStart = async (row: SongRow, event: DragEvent) => {
   // If the user is dragging an unselected row, clear the current selection.
   if (!row.selected) {
     clearSelection()
     row.selected = true
+    await nextTick()
   }
 
   // Add "dragging" class to the wrapper so that we can disable pointer events on child elements.
@@ -373,8 +378,20 @@ onMounted(() => render())
       flex-basis: 27%;
     }
 
+    &.collaborator {
+      flex-basis: 72px;
+      text-align: center;
+    }
+
+
+    &.added-at {
+      flex-basis: 144px;
+      text-align: left;
+    }
+
     &.extra {
       flex-basis: 36px;
+      text-align: center;
     }
 
     &.play {
@@ -387,10 +404,6 @@ onMounted(() => render())
 
     &.title-artist {
       flex: 1;
-    }
-
-    &.extra {
-      text-align: center;
     }
   }
 
@@ -452,8 +465,8 @@ onMounted(() => render())
       width: 200%;
     }
 
-    .song-item :is(.track-number, .album, .time),
-    .song-list-header :is(.track-number, .album, .time) {
+    .song-item :is(.track-number, .album, .time, .added-at),
+    .song-list-header :is(.track-number, .album, .time, .added-at) {
       display: none;
     }
 

@@ -16,6 +16,7 @@
       <template #controls>
         <SongListControls
           v-if="songs.length && (!isPhone || showingControls)"
+          :config="config"
           @filter="applyFilter"
           @play-all="playAll"
           @play-selected="playSelected"
@@ -41,7 +42,7 @@
 import { faClock } from '@fortawesome/free-regular-svg-icons'
 import { pluralize } from '@/utils'
 import { recentlyPlayedStore } from '@/stores'
-import { useRouter, useSongList } from '@/composables'
+import { useRouter, useSongList, useSongListControls } from '@/composables'
 import { ref, toRef } from 'vue'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -52,7 +53,6 @@ const recentlyPlayedSongs = toRef(recentlyPlayedStore.state, 'songs')
 
 const {
   SongList,
-  SongListControls,
   ControlsToggle,
   ThumbnailStack,
   headerLayout,
@@ -68,6 +68,8 @@ const {
   applyFilter,
   onScrollBreakpoint
 } = useSongList(recentlyPlayedSongs)
+
+const { SongListControls, config } = useSongListControls('RecentlyPlayed')
 
 let initialized = false
 let loading = ref(false)

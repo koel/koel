@@ -132,7 +132,7 @@ const onUserLoggedIn = async () => {
 
 const init = async () => {
   try {
-    userStore.init(await userStore.getProfile())
+    userStore.init(await authService.getProfile())
 
     await socketService.init()
 

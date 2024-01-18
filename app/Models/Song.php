@@ -37,6 +37,11 @@ use Laravel\Scout\Searchable;
  * @property int $owner_id
  * @property bool $is_public
  * @property User $owner
+ *
+ * // The following are only available for collaborative playlists
+ * @property-read ?string $collaborator_email The email of the user who added the song to the playlist
+ * @property-read ?string $collaborator_name The name of the user who added the song to the playlist
+ * @property-read ?string $added_at The date the song was added to the playlist
  */
 class Song extends Model
 {

@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Builders\SongBuilder;
+use App\Facades\License;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Playlist;
@@ -182,8 +183,18 @@ class SongRepository extends Repository
             ->withMetaFor($scopedUser)
             ->leftJoin('playlist_song', 'songs.id', '=', 'playlist_song.song_id')
             ->leftJoin('playlists', 'playlists.id', '=', 'playlist_song.playlist_id')
+            ->when(License::isPlus(), static function (SongBuilder $query): SongBuilder {
+                return
+                    $query->join('users as collaborators', 'playlist_song.user_id', '=', 'collaborators.id')
+                    ->addSelect(
+                        'collaborators.name as collaborator_name',
+                        'collaborators.email as collaborator_email',
+                        'playlist_song.created_at as added_at'
+                    );
+            })
             ->where('playlists.id', $playlist->id)
             ->orderBy('songs.title')
+            ->logSql()
             ->get();
     }
 

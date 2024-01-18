@@ -16,6 +16,7 @@
       <template #controls>
         <SongListControls
           v-if="songs.length && (!isPhone || showingControls)"
+          :config="config"
           @filter="applyFilter"
           @clear-queue="clearQueue"
           @play-all="playAll"
@@ -50,11 +51,11 @@
 
 <script lang="ts" setup>
 import { faCoffee } from '@fortawesome/free-solid-svg-icons'
-import { computed, ref, toRef } from 'vue'
+import { computed, ref, toRef, watch } from 'vue'
 import { logger, pluralize } from '@/utils'
 import { commonStore, queueStore, songStore } from '@/stores'
 import { localStorageService as storage, playbackService } from '@/services'
-import { useDialogBox, useRouter, useSongList } from '@/composables'
+import { useDialogBox, useRouter, useSongList, useSongListControls } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -65,7 +66,6 @@ const { showErrorDialog } = useDialogBox()
 
 const {
   SongList,
-  SongListControls,
   ControlsToggle,
   ThumbnailStack,
   headerLayout,
@@ -80,6 +80,8 @@ const {
   applyFilter,
   onScrollBreakpoint
 } = useSongList(toRef(queueStore.state, 'songs'))
+
+const { SongListControls, config } = useSongListControls('Queue')
 
 const loading = ref(false)
 const libraryNotEmpty = computed(() => commonStore.state.song_count > 0)
@@ -111,7 +113,6 @@ const removeSelected = () => {
   if (!selectedSongs.value.length) return
 
   const currentSongId = queueStore.current?.id
-
   queueStore.unqueue(selectedSongs.value)
 
   if (currentSongId && selectedSongs.value.find(song => song.id === currentSongId)) {

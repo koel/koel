@@ -49,10 +49,10 @@ class PlaylistTest extends TestCase
             ->assertJsonStructure(self::JSON_STRUCTURE);
 
         /** @var Playlist $playlist */
-        $playlist = Playlist::query()->orderByDesc('id')->first();
+        $playlist = Playlist::query()->latest()->first();
 
         self::assertSame('Foo Bar', $playlist->name);
-        self::assertTrue($playlist->user->is($user));
+        self::assertTrue($playlist->ownedBy($user));
         self::assertNull($playlist->folder_id);
         self::assertEqualsCanonicalizing($songs->pluck('id')->all(), $playlist->songs->pluck('id')->all());
     }
@@ -78,10 +78,10 @@ class PlaylistTest extends TestCase
         ], $user)->assertJsonStructure(self::JSON_STRUCTURE);
 
         /** @var Playlist $playlist */
-        $playlist = Playlist::query()->orderByDesc('id')->first();
+        $playlist = Playlist::query()->latest()->first();
 
         self::assertSame('Smart Foo Bar', $playlist->name);
-        self::assertTrue($playlist->user->is($user));
+        self::assertTrue($playlist->ownedBy($user));
         self::assertTrue($playlist->is_smart);
         self::assertCount(1, $playlist->rule_groups);
         self::assertNull($playlist->folder_id);

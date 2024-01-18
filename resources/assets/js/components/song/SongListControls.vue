@@ -1,5 +1,5 @@
 <template>
-  <div ref="el" class="song-list-controls" data-testid="song-list-controls">
+  <div ref="el" class="song-list-controls" data-testid="song-list-controls" v-if="config">
     <div class="wrapper">
       <BtnGroup uppercased>
         <template v-if="altPressed">
@@ -97,10 +97,10 @@
 
 <script lang="ts" setup>
 import { faPlay, faRandom, faRotateRight, faTrashCan } from '@fortawesome/free-solid-svg-icons'
-import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, Ref, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, Ref, ref, toRef, watch } from 'vue'
 import { SelectedSongsKey, SongsKey } from '@/symbols'
 import { requireInjection } from '@/utils'
-import { useFloatingUi, useSongListControls } from '@/composables'
+import { useFloatingUi } from '@/composables'
 
 import AddToMenu from '@/components/song/AddToMenu.vue'
 import Btn from '@/components/ui/Btn.vue'
@@ -108,7 +108,8 @@ import BtnGroup from '@/components/ui/BtnGroup.vue'
 
 const SongListFilter = defineAsyncComponent(() => import('@/components/song/SongListFilter.vue'))
 
-const config = useSongListControls().getSongListControlsConfig()
+const props = defineProps<{ config: SongListControlsConfig }>()
+const config = toRef(props, 'config')
 
 const [songs] = requireInjection<[Ref<Song[]>]>(SongsKey)
 const [selectedSongs] = requireInjection(SelectedSongsKey)

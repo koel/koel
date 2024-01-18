@@ -21,7 +21,7 @@ new class extends UnitTestCase {
     await this.router.activateRoute({
       path: `playlists/${playlist.id}`,
       screen: 'Playlist'
-    }, { id: playlist.id.toString() })
+    }, { id: playlist.id })
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalledWith(playlist, false))
 

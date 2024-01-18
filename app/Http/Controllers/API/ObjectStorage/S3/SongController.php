@@ -8,6 +8,7 @@ use App\Http\Requests\API\ObjectStorage\S3\PutSongRequest;
 use App\Http\Requests\API\ObjectStorage\S3\RemoveSongRequest;
 use App\Services\S3Service;
 use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
 
 class SongController extends Controller
 {
@@ -17,19 +18,19 @@ class SongController extends Controller
 
     public function put(PutSongRequest $request)
     {
-        $artist = array_get($request->tags, 'artist', '');
+        $artist = Arr::get($request->tags, 'artist', '');
 
         $song = $this->s3Service->createSongEntry(
             $request->bucket,
             $request->key,
             $artist,
-            array_get($request->tags, 'album'),
-            trim(array_get($request->tags, 'albumartist')),
-            array_get($request->tags, 'cover'),
-            trim(array_get($request->tags, 'title', '')),
-            (int) array_get($request->tags, 'duration', 0),
-            (int) array_get($request->tags, 'track'),
-            (string) array_get($request->tags, 'lyrics', '')
+            Arr::get($request->tags, 'album'),
+            trim(Arr::get($request->tags, 'albumartist')),
+            Arr::get($request->tags, 'cover'),
+            trim(Arr::get($request->tags, 'title', '')),
+            (int) Arr::get($request->tags, 'duration', 0),
+            (int) Arr::get($request->tags, 'track'),
+            (string) Arr::get($request->tags, 'lyrics', '')
         );
 
         return response()->json($song);

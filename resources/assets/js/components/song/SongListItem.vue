@@ -25,6 +25,12 @@
       </span>
     </span>
     <span class="album">{{ song.album_name }}</span>
+    <template v-if="config.collaborative">
+      <span class="collaborator">
+        <UserAvatar :user="collaborator" width="24" />
+      </span>
+      <span class="added-at" :title="song.collaboration.added_at">{{ song.collaboration.fmt_added_at }}</span>
+    </template>
     <span class="time">{{ fmtLength }}</span>
     <span class="extra">
       <LikeButton :song="song" />
@@ -37,13 +43,16 @@ import { faSquareUpRight } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
 import { playbackService } from '@/services'
 import { queueStore } from '@/stores'
-import { secondsToHis } from '@/utils'
-import { useAuthorization } from '@/composables'
-import { useKoelPlus } from '@/composables'
+import { requireInjection, secondsToHis } from '@/utils'
+import { useAuthorization, useKoelPlus } from '@/composables'
+import { SongListConfigKey } from '@/symbols'
 
 import LikeButton from '@/components/song/SongLikeButton.vue'
 import SoundBars from '@/components/ui/SoundBars.vue'
 import SongThumbnail from '@/components/song/SongThumbnail.vue'
+import UserAvatar from '@/components/user/UserAvatar.vue'
+
+const [config] = requireInjection<[Partial<SongListConfig>]>(SongListConfigKey, [{}])
 
 const { currentUser } = useAuthorization()
 const { isPlus } = useKoelPlus()
@@ -51,10 +60,14 @@ const { isPlus } = useKoelPlus()
 const props = defineProps<{ item: SongRow }>()
 const { item } = toRefs(props)
 
-const song = computed(() => item.value.song)
+const song = computed<Song | CollaborativeSong>(() => item.value.song)
 const playing = computed(() => ['Playing', 'Paused'].includes(song.value.playback_state!))
 const external = computed(() => isPlus.value && song.value.owner_id !== currentUser.value?.id)
 const fmtLength = secondsToHis(song.value.length)
+
+const collaborator = computed<Pick<User, 'name' | 'avatar'>>(() => {
+  return (song.value as CollaborativeSong).collaboration.user;
+})
 
 const play = () => {
   queueStore.queueIfNotQueued(song.value)

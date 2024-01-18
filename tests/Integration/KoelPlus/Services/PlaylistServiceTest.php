@@ -2,16 +2,15 @@
 
 namespace Tests\Integration\KoelPlus\Services;
 
-use App\Facades\License;
 use App\Models\Playlist;
 use App\Services\PlaylistService;
 use App\Values\SmartPlaylistRuleGroupCollection;
 use InvalidArgumentException;
-use Tests\TestCase;
+use Tests\PlusTestCase;
 
 use function Tests\create_user;
 
-class PlaylistServiceTest extends TestCase
+class PlaylistServiceTest extends PlusTestCase
 {
     private PlaylistService $service;
 
@@ -19,7 +18,6 @@ class PlaylistServiceTest extends TestCase
     {
         parent::setUp();
 
-        License::fakePlusLicense();
         $this->service = app(PlaylistService::class);
     }
 

@@ -2,26 +2,18 @@
 
 namespace Tests\Feature\KoelPlus;
 
-use App\Facades\License;
 use App\Models\Song;
 use App\Services\Streamers\DirectStreamerInterface;
 use App\Services\TokenManager;
 use App\Values\CompositeToken;
 use Mockery;
-use Tests\TestCase;
+use Tests\PlusTestCase;
 
 use function Tests\create_user;
 use function Tests\test_path;
 
-class SongPlayTest extends TestCase
+class SongPlayTest extends PlusTestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        License::fakePlusLicense();
-    }
-
     public function testPlayPublicUnownedSong(): void
     {
         /** @var CompositeToken $token */

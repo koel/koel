@@ -2,23 +2,15 @@
 
 namespace Tests\Feature\KoelPlus;
 
-use App\Facades\License;
 use App\Models\Song;
 use App\Services\DownloadService;
-use Tests\TestCase;
+use Tests\PlusTestCase;
 
 use function Tests\create_user;
 use function Tests\test_path;
 
-class DownloadTest extends TestCase
+class DownloadTest extends PlusTestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        License::fakePlusLicense();
-    }
-
     public function testDownloadPolicy(): void
     {
         $owner = create_user();

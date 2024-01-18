@@ -1,6 +1,6 @@
 <template>
   <article :class="{ me: isCurrentUser }" class="user-card">
-    <img :alt="`${user.name}'s avatar`" :src="user.avatar" height="80" width="80">
+    <UserAvatar :user="user" width="80" />
 
     <main>
       <h1>
@@ -41,6 +41,7 @@ import { useAuthorization, useDialogBox, useMessageToaster, useRouter } from '@/
 import { eventBus, parseValidationError } from '@/utils'
 
 import Btn from '@/components/ui/Btn.vue'
+import UserAvatar from '@/components/user/UserAvatar.vue'
 
 const props = defineProps<{ user: User }>()
 const { user } = toRefs(props)

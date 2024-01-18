@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Facades\License;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\AddSongsToPlaylistRequest;
 use App\Http\Requests\API\RemoveSongsFromPlaylistRequest;
+use App\Http\Resources\CollaborativeSongResource;
 use App\Http\Resources\SongResource;
 use App\Models\Playlist;
 use App\Models\User;
@@ -27,35 +29,39 @@ class PlaylistSongController extends Controller
 
     public function index(Playlist $playlist)
     {
-        $this->authorize('own', $playlist);
+        if ($playlist->is_smart) {
+            $this->authorize('own', $playlist);
+            return SongResource::collection($this->smartPlaylistService->getSongs($playlist, $this->user));
+        }
 
-        return SongResource::collection(
-            $playlist->is_smart
-                ? $this->smartPlaylistService->getSongs($playlist, $this->user)
-                : $this->songRepository->getByStandardPlaylist($playlist, $this->user)
-        );
+        $this->authorize('collaborate', $playlist);
+
+        $songs = $this->songRepository->getByStandardPlaylist($playlist, $this->user);
+
+        return License::isPlus()
+            ? CollaborativeSongResource::collection($songs)
+            : SongResource::collection($songs);
     }
 
     public function store(Playlist $playlist, AddSongsToPlaylistRequest $request)
     {
-        $this->authorize('own', $playlist);
+        abort_if($playlist->is_smart, Response::HTTP_FORBIDDEN, 'Smart playlist content is automatically generated');
 
-        $this->songRepository->getMany(ids: $request->songs, scopedUser: $this->user)
-            ->each(fn ($song) => $this->authorize('access', $song));
+        $this->authorize('collaborate', $playlist);
 
-        abort_if($playlist->is_smart, Response::HTTP_FORBIDDEN);
+        $songs = $this->songRepository->getMany(ids: $request->songs, scopedUser: $this->user);
+        $songs->each(fn ($song) => $this->authorize('access', $song));
 
-        $this->playlistService->addSongsToPlaylist($playlist, $request->songs);
+        $this->playlistService->addSongsToPlaylist($playlist, $songs, $this->user);
 
         return response()->noContent();
     }
 
     public function destroy(Playlist $playlist, RemoveSongsFromPlaylistRequest $request)
     {
-        $this->authorize('own', $playlist);
-
-        abort_if($playlist->is_smart, Response::HTTP_FORBIDDEN);
-
+        abort_if($playlist->is_smart, Response::HTTP_FORBIDDEN, 'Smart playlist content is automatically generated');
+        
+        $this->authorize('collaborate', $playlist);
         $this->playlistService->removeSongsFromPlaylist($playlist, $request->songs);
 
         return response()->noContent();

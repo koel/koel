@@ -1,4 +1,4 @@
-import { Faker, faker } from '@faker-js/faker'
+import { faker } from '@faker-js/faker'
 import { genres } from '@/config'
 
 const generate = (partOfCompilation = false): Song => {

@@ -2,23 +2,15 @@
 
 namespace Tests\Feature\KoelPlus;
 
-use App\Facades\License;
 use App\Models\Playlist;
 use App\Values\SmartPlaylistRule;
 use Tests\Feature\PlaylistTest as BasePlaylistTest;
-use Tests\TestCase;
+use Tests\PlusTestCase;
 
 use function Tests\create_user;
 
-class PlaylistTest extends TestCase
+class PlaylistTest extends PlusTestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        License::fakePlusLicense();
-    }
-
     public function testCreatingPlaylistWithOwnSongsOnlyOption(): void
     {
         $user = create_user();
@@ -41,10 +33,10 @@ class PlaylistTest extends TestCase
         ], $user)->assertJsonStructure(BasePlaylistTest::JSON_STRUCTURE);
 
         /** @var Playlist $playlist */
-        $playlist = Playlist::query()->orderByDesc('id')->first();
+        $playlist = Playlist::query()->latest()->first();
 
         self::assertSame('Smart Foo Bar', $playlist->name);
-        self::assertTrue($playlist->user->is($user));
+        self::assertTrue($playlist->ownedBy($user));
         self::assertTrue($playlist->is_smart);
         self::assertCount(1, $playlist->rule_groups);
         self::assertNull($playlist->folder_id);
@@ -57,7 +49,7 @@ class PlaylistTest extends TestCase
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->smart()->create();
 
-        $this->putAs('api/playlists/' . $playlist->id, [
+        $this->putAs("api/playlists/$playlist->id", [
             'name' => 'Foo',
             'own_songs_only' => true,
             'rules' => $playlist->rules->toArray(),

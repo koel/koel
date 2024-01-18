@@ -20,7 +20,7 @@ export default factory
   .define('album', faker => albumFactory(faker), albumStates)
   .define('album-track', faker => albumTrackFactory(faker))
   .define('album-info', faker => albumInfoFactory(faker))
-  .define('song', faker => songFactory(faker), songStates)
+  .define('song', () => songFactory(), songStates)
   .define('interaction', faker => interactionFactory(faker))
   .define('genre', faker => genreFactory(faker))
   .define('video', faker => youTubeVideoFactory(faker))

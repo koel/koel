@@ -89,7 +89,7 @@ class PlaybackService {
     await this.restart()
   }
 
-  private async setNowPlayingMeta(song) {
+  private async setNowPlayingMeta(song: Song) {
     document.title = `${song.title} ♫ Koel`
     this.player.media.setAttribute('title', `${song.artist_name} - ${song.title}`)
 

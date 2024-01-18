@@ -1,3 +1,4 @@
+import Router from '@/router'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
@@ -19,7 +20,7 @@ new class extends UnitTestCase {
     })
 
     it('goes to dedicated screen', async () => {
-      const mock = this.mock(this.router, 'go')
+      const mock = this.mock(Router, 'go')
       this.render(RecentlyPlayedSongs)
 
       await this.user.click(screen.getByRole('button', { name: 'View All' }))

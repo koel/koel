@@ -17,12 +17,11 @@ import {
 
 import ControlsToggle from '@/components/ui/ScreenControlsToggle.vue'
 import SongList from '@/components/song/SongList.vue'
-import SongListControls from '@/components/song/SongListControls.vue'
 import ThumbnailStack from '@/components/ui/ThumbnailStack.vue'
 
 export const useSongList = (
   songs: Ref<Song[]>,
-  config: Partial<SongListConfig> = { sortable: true, reorderable: true }
+  config: Partial<SongListConfig> = { sortable: true, reorderable: true, collaborative: false }
 ) => {
   const filterKeywords = ref('')
   config = reactive(config)
@@ -124,10 +123,10 @@ export const useSongList = (
 
   return {
     SongList,
-    SongListControls,
     ControlsToggle,
     ThumbnailStack,
     songs,
+    config,
     headerLayout,
     sortField,
     sortOrder,

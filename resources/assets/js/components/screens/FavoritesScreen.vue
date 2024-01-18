@@ -26,6 +26,7 @@
       <template #controls>
         <SongListControls
           v-if="songs.length && (!isPhone || showingControls)"
+          :config="config"
           @filter="applyFilter"
           @play-all="playAll"
           @play-selected="playSelected"
@@ -63,7 +64,7 @@ import { faHeart } from '@fortawesome/free-regular-svg-icons'
 import { pluralize } from '@/utils'
 import { commonStore, favoriteStore } from '@/stores'
 import { downloadService } from '@/services'
-import { useRouter, useSongList } from '@/composables'
+import { useRouter, useSongList, useSongListControls } from '@/composables'
 import { nextTick, ref, toRef } from 'vue'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -72,7 +73,6 @@ import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 
 const {
   SongList,
-  SongListControls,
   ControlsToggle,
   ThumbnailStack,
   headerLayout,
@@ -90,6 +90,8 @@ const {
   onScrollBreakpoint,
   sort
 } = useSongList(toRef(favoriteStore.state, 'songs'))
+
+const { SongListControls, config } = useSongListControls('Favorites')
 
 const allowDownload = toRef(commonStore.state, 'allows_download')
 

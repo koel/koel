@@ -1,9 +1,42 @@
-import { localStorageService } from '@/services'
+import { merge } from 'lodash'
+import { http, localStorageService } from '@/services'
+import { userStore } from '@/stores'
+
+export interface UpdateCurrentProfileData {
+  current_password: string | null
+  name: string
+  email: string
+  avatar?: string
+  new_password?: string
+}
+
+interface CompositeToken {
+  'audio-token': string
+  'token': string
+}
 
 const API_TOKEN_STORAGE_KEY = 'api-token'
 const AUDIO_TOKEN_STORAGE_KEY = 'audio-token'
 
 export const authService = {
+  async login (email: string, password: string) {
+    const token = await http.post<CompositeToken>('me', { email, password })
+
+    this.setAudioToken(token['audio-token'])
+    this.setApiToken(token.token)
+  },
+
+  async logout () {
+    await http.delete('me')
+    this.destroy()
+  },
+
+  getProfile: async () => await http.get<User>('me'),
+
+  updateProfile: async (data: UpdateCurrentProfileData) => {
+    merge(userStore.current, (await http.put<User>('me', data)))
+  },
+
   getApiToken: () => localStorageService.get(API_TOKEN_STORAGE_KEY),
 
   hasApiToken () {

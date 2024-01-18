@@ -39,7 +39,6 @@ import { mediaInfoService, playbackService } from '@/services'
 import { useRouter, useThirdPartyServices } from '@/composables'
 
 import AlbumThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
-import { defaultCover } from '@/utils'
 
 const TrackList = defineAsyncComponent(() => import('@/components/album/AlbumTrackList.vue'))
 
