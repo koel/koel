@@ -15,6 +15,8 @@ class SongTest extends PlusTestCase
         $user = create_user();
 
         Song::factory(2)->public()->create();
+
+        /** @var Collection<Song>|array<array-key, Song> $ownSongs */
         $ownSongs = Song::factory(3)->for($user, 'owner')->create();
 
         $this->getAs('api/songs?own_songs_only=true', $user)

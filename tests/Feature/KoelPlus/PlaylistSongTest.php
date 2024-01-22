@@ -31,6 +31,7 @@ class PlaylistSongTest extends PlusTestCase
 
     public function testGetSongsInCollaborativePlaylist(): void
     {
+        /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
         $playlist->addSongs(Song::factory()->public()->count(3)->create());
 
@@ -45,6 +46,7 @@ class PlaylistSongTest extends PlusTestCase
 
     public function testPrivateSongsDoNotShowUpInCollaborativePlaylist(): void
     {
+        /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
         $playlist->addSongs(Song::factory()->public()->count(3)->create());
 
@@ -64,6 +66,7 @@ class PlaylistSongTest extends PlusTestCase
 
     public function testCollaboratorCanAddSongs(): void
     {
+        /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
         $collaborator = create_user();
         $playlist->addCollaborator($collaborator);
@@ -77,6 +80,7 @@ class PlaylistSongTest extends PlusTestCase
 
     public function testCollaboratorCanRemoveSongs(): void
     {
+        /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
         $collaborator = create_user();
         $playlist->addCollaborator($collaborator);
