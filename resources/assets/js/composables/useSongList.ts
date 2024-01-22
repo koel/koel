@@ -21,16 +21,11 @@ import ThumbnailStack from '@/components/ui/ThumbnailStack.vue'
 
 export const useSongList = (
   songs: Ref<Song[]>,
-  config: Partial<SongListConfig> = { sortable: true, reorderable: true, collaborative: false }
+  config: Partial<SongListConfig> = { sortable: true, reorderable: false, collaborative: false }
 ) => {
   const filterKeywords = ref('')
   config = reactive(config)
-  const { isCurrentScreen, go, onRouteChanged } = useRouter()
-
-  onRouteChanged(route => {
-    config.reorderable = route.screen === 'Queue'
-    config.sortable = !['Queue', 'RecentlyPlayed', 'Search.Songs'].includes(route.screen)
-  })
+  const { isCurrentScreen, go } = useRouter()
 
   const songList = ref<InstanceType<typeof SongList>>()
 
