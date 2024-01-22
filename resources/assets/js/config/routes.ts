@@ -1,8 +1,8 @@
 import { Route } from '@/router'
 import { userStore } from '@/stores'
-import { localStorageService, playlistCollaborationService } from '@/services'
+import { cache, playlistCollaborationService } from '@/services'
 import { useUpload } from '@/composables'
-import { forceReloadWindow, logger } from '@/utils'
+import { logger } from '@/utils'
 import Router from '@/router'
 
 const UUID_REGEX = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
@@ -118,7 +118,7 @@ export const routes: Route[] = [
     screen: 'Queue',
     redirect: () => 'queue',
     onResolve: params => {
-      localStorageService.set('song-to-queue', params.id)
+      cache.set('song-to-queue', params.id)
       return true
     }
   },

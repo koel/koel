@@ -51,10 +51,10 @@
 
 <script lang="ts" setup>
 import { faCoffee } from '@fortawesome/free-solid-svg-icons'
-import { computed, ref, toRef, watch } from 'vue'
+import { computed, ref, toRef } from 'vue'
 import { logger, pluralize } from '@/utils'
 import { commonStore, queueStore, songStore } from '@/stores'
-import { localStorageService as storage, playbackService } from '@/services'
+import { cache, playbackService } from '@/services'
 import { useDialogBox, useRouter, useSongList, useSongListControls } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -124,7 +124,7 @@ const onPressEnter = () => selectedSongs.value.length && playbackService.play(se
 const onReorder = (target: Song) => queueStore.move(selectedSongs.value, target)
 
 onScreenActivated('Queue', async () => {
-  if (!storage.get('song-to-queue')) {
+  if (!cache.get('song-to-queue')) {
     return
   }
 
@@ -132,7 +132,7 @@ onScreenActivated('Queue', async () => {
 
   try {
     loading.value = true
-    song = await songStore.resolve(storage.get('song-to-queue')!)
+    song = await songStore.resolve(cache.get('song-to-queue')!)
 
     if (!song) {
       throw new Error('Song not found')
@@ -142,7 +142,7 @@ onScreenActivated('Queue', async () => {
     logger.error(e)
     return
   } finally {
-    storage.remove('song-to-queue')
+    cache.remove('song-to-queue')
     loading.value = false
   }
 
