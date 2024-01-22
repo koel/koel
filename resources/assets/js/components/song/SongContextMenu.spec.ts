@@ -262,9 +262,23 @@ new class extends UnitTestCase {
       expect(screen.queryByText('Edit…')).toBeNull()
     })
 
-    it('has an option to copy shareable URL', async () => {
+    it('has an option to copy shareable URL in Community edition', async () => {
       await this.renderComponent(factory<Song>('song'))
       screen.getByText('Copy Shareable URL')
+    })
+
+    it('has an option to copy shareable URL if song is public in Plus edition', async () => {
+      this.enablePlusEdition()
+
+      await this.renderComponent(factory<Song>('song', { is_public: true }))
+      screen.getByText('Copy Shareable URL')
+    })
+
+    it('does not have an option to share if song is private in Plus edition', async () => {
+      this.enablePlusEdition()
+
+      await this.renderComponent(factory<Song>('song', { is_public: false }))
+      expect(screen.queryByText('Copy Shareable URL')).toBeNull()
     })
 
     it('deletes song', async () => {

@@ -50,7 +50,7 @@
 
     <li v-if="canModify" @click="openEditForm">Edit…</li>
     <li v-if="allowsDownload" @click="download">Download</li>
-    <li v-if="onlyOneSongSelected" @click="copyUrl">Copy Shareable URL</li>
+    <li v-if="onlyOneSongSelected && canBeShared" @click="copyUrl">Copy Shareable URL</li>
 
     <template v-if="canBeRemovedFromPlaylist">
       <li class="separator" />
@@ -122,6 +122,8 @@ const makePrivate = () => trigger(async () => {
   await songStore.privatize(songs.value)
   toastSuccess(`Removed public access to ${pluralize(songs.value, 'song')}.`)
 })
+
+const canBeShared = computed(() => !isPlus.value || songs.value[0].is_public)
 
 const visibilityActions = computed(() => {
   if (!isPlus.value) return []
