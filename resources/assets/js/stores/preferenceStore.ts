@@ -1,52 +1,51 @@
 import { reactive, ref } from 'vue'
-import { localStorageService } from '@/services'
+import { http, localStorageService } from '@/services'
 
 interface Preferences extends Record<string, any> {
   volume: number
-  notify: boolean
-  repeatMode: RepeatMode
-  confirmClosing: boolean
+  show_now_playing_notification: boolean
+  repeat_mode: RepeatMode
+  confirm_before_closing: boolean
   equalizer: EqualizerPreset,
-  artistsViewMode: ArtistAlbumViewMode | null,
-  albumsViewMode: ArtistAlbumViewMode | null,
-  transcodeOnMobile: boolean
-  supportBarNoBugging: boolean
-  showAlbumArtOverlay: boolean
-  lyricsZoomLevel: number | null
+  artists_view_mode: ArtistAlbumViewMode | null,
+  albums_view_mode: ArtistAlbumViewMode | null,
+  transcode_on_mobile: boolean
+  support_bar_no_bugging: boolean
+  show_album_art_overlay: boolean
+  lyrics_zoom_level: number | null
   theme?: Theme['id'] | null
   visualizer?: Visualizer['id'] | null
-  activeExtraPanelTab: ExtraPanelTab | null
+  active_extra_panel_tab: ExtraPanelTab | null
+  make_uploads_public: boolean
 }
 
 const preferenceStore = {
-  storeKey: '',
   initialized: ref(false),
 
   state: reactive<Preferences>({
     volume: 7,
-    notify: true,
-    repeatMode: 'NO_REPEAT',
-    confirmClosing: false,
+    show_now_playing_notification: true,
+    repeat_mode: 'NO_REPEAT',
+    confirm_before_closing: false,
     equalizer: {
-      id: 0,
       name: 'Default',
       preamp: 0,
       gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     },
-    artistsViewMode: null,
-    albumsViewMode: null,
-    transcodeOnMobile: false,
-    supportBarNoBugging: false,
-    showAlbumArtOverlay: true,
-    lyricsZoomLevel: 1,
+    artists_view_mode: null,
+    albums_view_mode: null,
+    transcode_on_mobile: false,
+    support_bar_no_bugging: false,
+    show_album_art_overlay: true,
+    lyrics_zoom_level: 1,
     theme: null,
     visualizer: 'default',
-    activeExtraPanelTab: null
+    active_extra_panel_tab: null,
+    make_uploads_public: false
   }),
 
-  init (user: User): void {
-    this.storeKey = `preferences_${user.id}`
-    Object.assign(this.state, localStorageService.get(this.storeKey, this.state))
+  init (preferences: Preferences): void {
+    Object.assign(this.state, preferences)
     this.setupProxy()
 
     this.initialized.value = true
@@ -65,17 +64,15 @@ const preferenceStore = {
     })
   },
 
-  set (key: keyof Preferences, val: any) {
-    this.state[key] = val
-    this.save()
+  set (key: keyof Preferences, value: any) {
+    if (this.state[key] === value) return
+
+    this.state[key] = value
+    http.silently.patch('me/preferences', { key, value })
   },
 
   get (key: string) {
     return this.state?.[key]
-  },
-
-  save () {
-    localStorageService.set(this.storeKey, this.state)
   }
 }
 

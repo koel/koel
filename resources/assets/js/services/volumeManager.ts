@@ -14,17 +14,13 @@ export class VolumeManager {
     return this.volume.value
   }
 
-  public set (volume: number, persist = true) {
-    if (persist) {
-      preferenceStore.volume = volume
-    }
-
+  public set (volume: number) {
     this.volume.value = volume
     this.input.value = String(volume)
   }
 
   public mute () {
-    this.set(0, false)
+    this.set(0)
   }
 
   public unmute () {

@@ -62,7 +62,7 @@ const {
   makeScrollable
 } = useInfiniteScroll(async () => await fetchArtists())
 
-watch(viewMode, () => preferences.artistsViewMode = viewMode.value)
+watch(viewMode, () => preferences.artists_view_mode = viewMode.value)
 
 let initialized = false
 const loading = ref(false)
@@ -84,7 +84,7 @@ const fetchArtists = async () => {
 useRouter().onScreenActivated('Artists', async () => {
   if (libraryEmpty.value) return
   if (!initialized) {
-    viewMode.value = preferences.artistsViewMode || 'thumbnails'
+    viewMode.value = preferences.artists_view_mode || 'thumbnails'
     initialized = true
 
     try {

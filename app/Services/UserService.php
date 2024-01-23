@@ -45,4 +45,11 @@ class UserService
     {
         $user->delete();
     }
+
+    public function savePreference(User $user, string $key, mixed $value): void
+    {
+        $user->preferences = $user->preferences->set($key, $value);
+
+        $user->save();
+    }
 }

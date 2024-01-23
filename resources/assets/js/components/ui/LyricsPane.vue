@@ -35,7 +35,7 @@ const { song } = toRefs(props)
 const { isAdmin } = useAuthorization()
 
 const lyricsContainer = ref<HTMLElement>()
-const zoomLevel = ref(preferences.lyricsZoomLevel || 1)
+const zoomLevel = ref(preferences.lyrics_zoom_level || 1)
 
 const showEditSongForm = () => eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', song.value, 'lyrics')
 
@@ -54,7 +54,7 @@ const setFontSize = () => {
 
 watch(zoomLevel, level => {
   setFontSize()
-  preferences.lyricsZoomLevel = level
+  preferences.lyrics_zoom_level = level
 })
 
 onMounted(() => setFontSize())

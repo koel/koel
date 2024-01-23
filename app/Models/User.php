@@ -20,7 +20,6 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @property UserPreferences $preferences
  * @property int $id
  * @property bool $is_admin
- * @property ?string $lastfm_session_key
  * @property string $name
  * @property string $email
  * @property string $password
@@ -80,14 +79,6 @@ class User extends Authenticatable
         return Attribute::get(fn (): string => gravatar($this->email));
     }
 
-    /**
-     * Get the user's Last.fm session key.
-     */
-    protected function lastfmSessionKey(): Attribute
-    {
-        return Attribute::get(fn (): ?string => $this->preferences->lastFmSessionKey);
-    }
-
     protected function isProspect(): Attribute
     {
         return Attribute::get(fn (): bool => (bool) $this->invitation_token);
@@ -98,6 +89,6 @@ class User extends Authenticatable
      */
     public function connectedToLastfm(): bool
     {
-        return (bool) $this->lastfm_session_key;
+        return (bool) $this->preferences->lastFmSessionKey;
     }
 }

@@ -14,7 +14,11 @@ class UpdateLastfmNowPlaying implements ShouldQueue
 
     public function handle(PlaybackStarted $event): void
     {
-        if (!LastfmService::enabled() || !$event->user->lastfm_session_key || $event->song->artist->is_unknown) {
+        if (
+            !LastfmService::enabled()
+            || !$event->user->preferences->lastFmSessionKey
+            || $event->song->artist->is_unknown
+        ) {
             return;
         }
 

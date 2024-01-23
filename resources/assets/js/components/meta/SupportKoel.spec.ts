@@ -12,7 +12,7 @@ new class extends UnitTestCase {
   protected afterEach () {
     super.afterEach(() => {
       vi.useRealTimers()
-      preferenceStore.state.supportBarNoBugging = false
+      preferenceStore.state.support_bar_no_bugging = false
     })
   }
 
@@ -30,7 +30,7 @@ new class extends UnitTestCase {
     it('shows after a delay', async () => expect((await this.renderComponent()).html()).toMatchSnapshot())
 
     it('does not show if user so demands', async () => {
-      preferenceStore.state.supportBarNoBugging = true
+      preferenceStore.state.support_bar_no_bugging = true
       preferenceStore.initialized.value = true
       expect((await this.renderComponent()).queryByTestId('support-bar')).toBeNull()
     })
@@ -52,7 +52,7 @@ new class extends UnitTestCase {
       await this.user.click(screen.getByRole('button', { name: 'Don\'t bug me again' }))
 
       expect(await screen.queryByTestId('support-bar')).toBeNull()
-      expect(preferenceStore.state.supportBarNoBugging).toBe(true)
+      expect(preferenceStore.state.support_bar_no_bugging).toBe(true)
     })
   }
 }

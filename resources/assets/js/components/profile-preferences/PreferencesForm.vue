@@ -1,26 +1,32 @@
 <template>
   <div>
-    <div v-if="!isPhone" class="form-row">
+    <div class="form-row" v-if="isPlus">
       <label>
-        <CheckBox v-model="preferences.notify" name="notify" />
+        <CheckBox v-model="preferences.make_uploads_public" name="make_upload_public" />
+        Make uploaded songs public by default
+      </label>
+    </div>
+    <div v-if="isPhone" class="form-row">
+      <label>
+        <CheckBox v-model="preferences.show_now_playing_notification" name="notify" />
         Show “Now Playing” song notification
       </label>
     </div>
     <div v-if="!isPhone" class="form-row">
       <label>
-        <CheckBox v-model="preferences.confirmClosing" name="confirm_closing" />
+        <CheckBox v-model="preferences.confirm_before_closing" name="confirm_closing" />
         Confirm before closing Koel
       </label>
     </div>
     <div v-if="isPhone" class="form-row">
       <label>
-        <CheckBox v-model="preferences.transcodeOnMobile" name="transcode_on_mobile" />
+        <CheckBox v-model="preferences.transcode_on_mobile" name="transcode_on_mobile" />
         Convert and play media at 128kbps on mobile
       </label>
     </div>
     <div class="form-row">
       <label>
-        <CheckBox v-model="preferences.showAlbumArtOverlay" name="show_album_art_overlay" />
+        <CheckBox v-model="preferences.show_album_art_overlay" name="show_album_art_overlay" />
         Show a translucent, blurred overlay of the current album’s art
       </label>
     </div>
@@ -30,9 +36,12 @@
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
 import { preferenceStore as preferences } from '@/stores'
+import { useKoelPlus } from '@/composables'
+
 import CheckBox from '@/components/ui/CheckBox.vue'
 
 const isPhone = isMobile.phone
+const { isPlus } = useKoelPlus()
 </script>
 
 <style lang="scss" scoped>

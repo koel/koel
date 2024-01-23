@@ -39,7 +39,7 @@ new class extends UnitTestCase {
     it('renders without a current song', () => expect(this.renderComponent()[0].html()).toMatchSnapshot())
 
     it('sets the active tab to the preference', async () => {
-      preferenceStore.activeExtraPanelTab = 'YouTube'
+      preferenceStore.active_extra_panel_tab = 'YouTube'
       this.renderComponent(ref(factory<Song>('song')))
       const tab = screen.getByTestId<HTMLElement>('extra-drawer-youtube')
 

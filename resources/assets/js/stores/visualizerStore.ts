@@ -5,7 +5,7 @@ export const visualizerStore = {
     return visualizers
   },
 
-  getVisualizerById (id: string) {
+  getVisualizerById (id: Visualizer['id']) {
     return visualizers.find(visualizer => visualizer.id === id)
   }
 }

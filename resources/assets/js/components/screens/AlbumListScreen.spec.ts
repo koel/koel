@@ -38,7 +38,7 @@ new class extends UnitTestCase {
     })
 
     it.each<[ArtistAlbumViewMode]>([['list'], ['thumbnails']])('sets layout from preferences', async (mode) => {
-      preferenceStore.albumsViewMode = mode
+      preferenceStore.albums_view_mode = mode
 
       await this.renderComponent()
 

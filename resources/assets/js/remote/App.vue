@@ -92,7 +92,7 @@ const connected = ref(false)
 const muted = ref(false)
 const showingVolumeSlider = ref(false)
 const retries = ref(0)
-const showAlbumArtOverlay = toRef(preferenceStore.state, 'showAlbumArtOverlay')
+const showAlbumArtOverlay = toRef(preferenceStore.state, 'show_album_art_overlay')
 const volume = ref(DEFAULT_VOLUME)
 
 const inStandaloneMode = ref(

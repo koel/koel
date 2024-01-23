@@ -37,6 +37,10 @@ class Http {
     return (await this.request<T>('put', url, data)).data
   }
 
+  public async patch<T> (url: string, data: Record<string, any>) {
+    return (await this.request<T>('patch', url, data)).data
+  }
+
   public async delete<T> (url: string, data: Record<string, any> = {}) {
     return (await this.request<T>('delete', url, data)).data
   }

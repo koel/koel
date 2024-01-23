@@ -64,7 +64,7 @@ class LastfmService implements MusicEncyclopedia
             'artist' => $song->artist->name,
             'track' => $song->title,
             'timestamp' => $timestamp,
-            'sk' => $user->lastfm_session_key,
+            'sk' => $user->preferences->lastFmSessionKey,
             'method' => 'track.scrobble',
         ];
 
@@ -80,7 +80,7 @@ class LastfmService implements MusicEncyclopedia
         attempt(fn () => $this->client->post('/', [
             'track' => $song->title,
             'artist' => $song->artist->name,
-            'sk' => $user->lastfm_session_key,
+            'sk' => $user->preferences->lastFmSessionKey,
             'method' => $love ? 'track.love' : 'track.unlove',
         ], false));
     }
@@ -95,7 +95,7 @@ class LastfmService implements MusicEncyclopedia
                 return $this->client->postAsync('/', [
                     'track' => $song->title,
                     'artist' => $song->artist->name,
-                    'sk' => $user->lastfm_session_key,
+                    'sk' => $user->preferences->lastFmSessionKey,
                     'method' => $love ? 'track.love' : 'track.unlove',
                 ], false);
             }
@@ -110,7 +110,7 @@ class LastfmService implements MusicEncyclopedia
             'artist' => $song->artist->name,
             'track' => $song->title,
             'duration' => $song->length,
-            'sk' => $user->lastfm_session_key,
+            'sk' => $user->preferences->lastFmSessionKey,
             'method' => 'track.updateNowPlaying',
         ];
 

@@ -10,7 +10,7 @@ new class extends UnitTestCase {
   protected afterEach () {
     super.afterEach(() => {
       isMobile.any = false
-      preferenceStore.transcodeOnMobile = false
+      preferenceStore.transcode_on_mobile = false
     })
   }
 
@@ -152,7 +152,7 @@ new class extends UnitTestCase {
       expect(songStore.getSourceUrl(song)).toBe('http://test/play/foo?t=hadouken')
 
       isMobile.any = true
-      preferenceStore.transcodeOnMobile = true
+      preferenceStore.transcode_on_mobile = true
       expect(songStore.getSourceUrl(song)).toBe('http://test/play/foo/1/128?t=hadouken')
     })
 

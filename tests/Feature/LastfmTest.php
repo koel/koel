@@ -20,7 +20,7 @@ class LastfmTest extends TestCase
         $this->postAs('api/lastfm/session-key', ['key' => 'foo'], $user)
             ->assertNoContent();
 
-        self::assertSame('foo', $user->refresh()->lastfm_session_key);
+        self::assertSame('foo', $user->refresh()->preferences->lastFmSessionKey);
     }
 
     public function testConnectToLastfm(): void
@@ -68,7 +68,7 @@ class LastfmTest extends TestCase
         $this->get('lastfm/callback?token=lastfm-token&api_token=' . urlencode($token))
             ->assertOk();
 
-        self::assertSame('my-session-key', $user->refresh()->lastfm_session_key);
+        self::assertSame('my-session-key', $user->refresh()->preferences->lastFmSessionKey);
         // make sure the user's api token is deleted
         self::assertNull(PersonalAccessToken::findToken($token));
     }
@@ -95,17 +95,17 @@ class LastfmTest extends TestCase
 
         $this->get('lastfm/callback?token=foo&api_token=my-token');
 
-        self::assertSame('my-session-key', $user->refresh()->lastfm_session_key);
+        self::assertSame('my-session-key', $user->refresh()->preferences->lastFmSessionKey);
     }
 
     public function testDisconnectUser(): void
     {
         $user = create_user();
-        self::assertNotNull($user->lastfm_session_key);
+        self::assertNotNull($user->preferences->lastFmSessionKey);
 
         $this->deleteAs('api/lastfm/disconnect', [], $user);
 
         $user->refresh();
-        self::assertNull($user->lastfm_session_key);
+        self::assertNull($user->preferences->lastFmSessionKey);
     }
 }
