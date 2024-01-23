@@ -29,10 +29,15 @@ class UploadService
         $targetPathName = $uploadDirectory . $targetFileName;
 
         try {
-            $result = $this->scanner->setFile($targetPathName)->scan(ScanConfiguration::make(owner: $uploader));
-        } catch (Throwable) {
+            $result = $this->scanner->setFile($targetPathName)->scan(
+                ScanConfiguration::make(
+                    owner: $uploader,
+                    makePublic: $uploader->preferences->makeUploadsPublic
+                )
+            );
+        } catch (Throwable $e) {
             File::delete($targetPathName);
-            throw new SongUploadFailedException('Unknown error');
+            throw new SongUploadFailedException($e->getMessage());
         }
 
         if ($result->isError()) {

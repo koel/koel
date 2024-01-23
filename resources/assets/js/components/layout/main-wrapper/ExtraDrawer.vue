@@ -114,13 +114,13 @@ const fetchSongInfo = async (_song: Song) => {
 }
 
 watch(song, song => song && fetchSongInfo(song), { immediate: true })
-watch(activeTab, tab => (preferenceStore.activeExtraPanelTab = tab))
+watch(activeTab, tab => (preferenceStore.active_extra_panel_tab = tab))
 
 const openAboutKoelModal = () => eventBus.emit('MODAL_SHOW_ABOUT_KOEL')
 const onProfileLinkClick = () => isMobile.any && (activeTab.value = null)
 const logout = () => eventBus.emit('LOG_OUT')
 
-onMounted(() => isMobile.any || (activeTab.value = preferenceStore.activeExtraPanelTab))
+onMounted(() => isMobile.any || (activeTab.value = preferenceStore.active_extra_panel_tab))
 </script>
 
 <style lang="scss" scoped>

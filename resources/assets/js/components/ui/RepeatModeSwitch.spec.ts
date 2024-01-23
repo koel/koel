@@ -9,7 +9,7 @@ new class extends UnitTestCase {
   protected test () {
     it('changes mode', async () => {
       const mock = this.mock(playbackService, 'changeRepeatMode')
-      preferenceStore.state.repeatMode = 'NO_REPEAT'
+      preferenceStore.state.repeat_mode = 'NO_REPEAT'
       this.render(RepeatModeSwitch)
 
       await this.user.click(screen.getByRole('button'))

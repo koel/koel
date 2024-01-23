@@ -62,7 +62,7 @@ const {
   makeScrollable
 } = useInfiniteScroll(async () => await fetchAlbums())
 
-watch(viewMode, () => (preferences.albumsViewMode = viewMode.value))
+watch(viewMode, () => (preferences.albums_view_mode = viewMode.value))
 
 let initialized = false
 const loading = ref(false)
@@ -85,7 +85,7 @@ useRouter().onScreenActivated('Albums', async () => {
   if (libraryEmpty.value) return
 
   if (!initialized) {
-    viewMode.value = preferences.albumsViewMode || 'thumbnails'
+    viewMode.value = preferences.albums_view_mode || 'thumbnails'
     initialized = true
 
     try {

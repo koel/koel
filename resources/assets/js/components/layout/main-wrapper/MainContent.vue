@@ -68,7 +68,7 @@ const { onRouteChanged, getCurrentScreen } = useRouter()
 
 const currentSong = requireInjection(CurrentSongKey, ref(undefined))
 
-const showAlbumArtOverlay = toRef(preferenceStore.state, 'showAlbumArtOverlay')
+const showAlbumArtOverlay = toRef(preferenceStore.state, 'show_album_art_overlay')
 const screen = ref<ScreenName>('Home')
 
 onRouteChanged(route => (screen.value = route.screen))

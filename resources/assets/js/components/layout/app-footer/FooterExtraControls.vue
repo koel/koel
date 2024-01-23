@@ -23,7 +23,7 @@
         <Icon :icon="faSliders" />
       </button>
 
-      <Volume />
+      <VolumeSlider />
 
       <button
         v-if="isFullscreenSupported()"
@@ -43,7 +43,7 @@ import { computed, onMounted, ref } from 'vue'
 import { eventBus, isAudioContextSupported as useEqualizer, isFullscreenSupported } from '@/utils'
 import { useRouter } from '@/composables'
 
-import Volume from '@/components/ui/Volume.vue'
+import VolumeSlider from '@/components/ui/VolumeSlider.vue'
 
 const isFullscreen = ref(false)
 const fullscreenButtonTitle = computed(() => (isFullscreen.value ? 'Exit fullscreen mode' : 'Enter fullscreen mode'))

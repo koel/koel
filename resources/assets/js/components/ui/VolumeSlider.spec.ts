@@ -3,7 +3,7 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import { fireEvent, screen } from '@testing-library/vue'
 import { socketService, volumeManager } from '@/services'
 import { preferenceStore } from '@/stores'
-import Volume from './Volume.vue'
+import Volume from './VolumeSlider.vue'
 
 new class extends UnitTestCase {
   protected beforeEach (cb?: Closure) {

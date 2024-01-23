@@ -29,13 +29,13 @@ const setUpShowBarTimeout = () => setTimeout(() => (shown.value = true), delayUn
 const close = () => shown.value = false
 
 const stopBugging = () => {
-  preferenceStore.set('supportBarNoBugging', true)
+  preferenceStore.set('support_bar_no_bugging', true)
   close()
 }
 
 watch(preferenceStore.initialized, initialized => {
   if (!initialized) return
-  if (preferenceStore.state.supportBarNoBugging || isMobile.any) return
+  if (preferenceStore.state.support_bar_no_bugging || isMobile.any) return
   if (isPlus.value) return
 
   setUpShowBarTimeout()

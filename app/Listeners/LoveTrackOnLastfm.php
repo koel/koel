@@ -16,7 +16,7 @@ class LoveTrackOnLastfm implements ShouldQueue
     {
         if (
             !LastfmService::enabled() ||
-            !$event->interaction->user->lastfm_session_key ||
+            !$event->interaction->user->preferences->lastFmSessionKey ||
             $event->interaction->song->artist->is_unknown
         ) {
             return;

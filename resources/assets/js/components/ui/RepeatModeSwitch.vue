@@ -21,7 +21,7 @@ import { computed, toRef } from 'vue'
 import { playbackService } from '@/services'
 import { preferenceStore } from '@/stores'
 
-const mode = toRef(preferenceStore.state, 'repeatMode')
+const mode = toRef(preferenceStore.state, 'repeat_mode')
 
 const readableMode = computed(() => mode.value
   .split('_')

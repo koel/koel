@@ -115,7 +115,7 @@ new class extends UnitTestCase {
       'when song ends, if repeat mode is %s then restart() is called %d times and playNext() is called %d times',
       (repeatMode, restartCalls, playNextCalls) => {
         commonStore.state.uses_last_fm = false // so that no scrobbling is made unnecessarily
-        preferences.repeatMode = repeatMode
+        preferences.repeat_mode = repeatMode
         playbackService.init(document.querySelector('.plyr')!)
         const restartMock = this.mock(playbackService, 'restart')
         const playNextMock = this.mock(playbackService, 'playNext')
@@ -219,10 +219,10 @@ new class extends UnitTestCase {
       ['REPEAT_ONE', 'NO_REPEAT']
     ])('it switches from repeat mode %s to repeat mode %s', (fromMode, toMode) => {
       playbackService.init(document.querySelector('.plyr')!)
-      preferences.repeatMode = fromMode
+      preferences.repeat_mode = fromMode
       playbackService.changeRepeatMode()
 
-      expect(preferences.repeatMode).toEqual(toMode)
+      expect(preferences.repeat_mode).toEqual(toMode)
     })
 
     it('restarts song if playPrev is triggered after 5 seconds', async () => {
@@ -243,7 +243,7 @@ new class extends UnitTestCase {
       const stopMock = this.mock(playbackService, 'stop')
       this.setReadOnlyProperty(playbackService.player!.media, 'currentTime', 4)
       this.setReadOnlyProperty(playbackService, 'previous', undefined)
-      preferences.repeatMode = 'NO_REPEAT'
+      preferences.repeat_mode = 'NO_REPEAT'
 
       await playbackService.playPrev()
 
@@ -267,7 +267,7 @@ new class extends UnitTestCase {
       playbackService.init(document.querySelector('.plyr')!)
 
       this.setReadOnlyProperty(playbackService, 'next', undefined)
-      preferences.repeatMode = 'NO_REPEAT'
+      preferences.repeat_mode = 'NO_REPEAT'
       const stopMock = this.mock(playbackService, 'stop')
 
       await playbackService.playNext()

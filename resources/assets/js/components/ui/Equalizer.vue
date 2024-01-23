@@ -2,9 +2,9 @@
   <form id="equalizer" ref="root" data-testid="equalizer" tabindex="0" @keydown.esc="close">
     <header>
       <label class="select-wrapper">
-        <select v-model="selectedPresetId" title="Select equalizer">
-          <option disabled value="-1">Preset</option>
-          <option v-for="preset in presets" :key="preset.id" :value="preset.id">{{ preset.name }}</option>
+        <select v-model="selectedPresetName" title="Select equalizer">
+          <option disabled :value="null">Preset</option>
+          <option v-for="preset in presets" :key="preset.name" :value="preset.name">{{ preset.name }}</option>
         </select>
         <Icon :icon="faCaretDown" class="arrow text-highlight" size="sm" />
       </label>
@@ -51,13 +51,13 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 const bands = audioService.bands
 const root = ref<HTMLElement>()
 const preampGain = ref(0)
-const selectedPresetId = ref(-1)
+const selectedPresetName = ref<string|null>(null)
 
 watch(preampGain, value => audioService.changePreampGain(value))
 
-watch(selectedPresetId, () => {
-  if (selectedPresetId.value !== -1) {
-    loadPreset(equalizerStore.getPresetById(selectedPresetId.value) || presets[0])
+watch(selectedPresetName, (value) => {
+  if (value !== null) {
+    loadPreset(equalizerStore.getPresetByName(value) || presets[0])
   }
 
   save()
@@ -66,7 +66,7 @@ watch(selectedPresetId, () => {
 const createSliders = () => {
   const config = equalizerStore.getConfig()
 
-  selectedPresetId.value = config.id
+  selectedPresetName.value = config.name
   preampGain.value = config.preamp
 
   if (!root.value) {
@@ -95,10 +95,10 @@ const createSliders = () => {
       }
 
       // User has customized the equalizer. No preset should be selected.
-      selectedPresetId.value = -1
-
-      save()
+      selectedPresetName.value = null
     })
+
+    el.noUiSlider.on('change', () => save())
   })
 }
 
@@ -119,7 +119,7 @@ const loadPreset = (preset: EqualizerPreset) => {
   })
 }
 
-const save = () => equalizerStore.saveConfig(selectedPresetId.value, preampGain.value, bands.map(band => band.db))
+const save = () => equalizerStore.saveConfig(selectedPresetName.value, preampGain.value, bands.map(band => band.db))
 const close = () => emit('close')
 
 onMounted(() => createSliders())

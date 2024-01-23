@@ -99,7 +99,7 @@ class PlaybackService {
   }
 
   public showNotification (song: Song) {
-    if (preferences.notify) {
+    if (preferences.show_now_playing_notification) {
       try {
         const notification = new window.Notification(`♫ ${song.title}`, {
           icon: song.album_cover,
@@ -168,7 +168,7 @@ class PlaybackService {
   }
 
   public get isTranscoding () {
-    return isMobile.any && preferences.transcodeOnMobile
+    return isMobile.any && preferences.transcode_on_mobile
   }
 
   /**
@@ -180,7 +180,7 @@ class PlaybackService {
       return queueStore.next
     }
 
-    if (preferences.repeatMode === 'REPEAT_ALL') {
+    if (preferences.repeat_mode === 'REPEAT_ALL') {
       return queueStore.first
     }
   }
@@ -194,7 +194,7 @@ class PlaybackService {
       return queueStore.previous
     }
 
-    if (preferences.repeatMode === 'REPEAT_ALL') {
+    if (preferences.repeat_mode === 'REPEAT_ALL') {
       return queueStore.last
     }
   }
@@ -204,13 +204,13 @@ class PlaybackService {
    * The selected mode will be stored into local storage as well.
    */
   public changeRepeatMode () {
-    let index = this.repeatModes.indexOf(preferences.repeatMode) + 1
+    let index = this.repeatModes.indexOf(preferences.repeat_mode) + 1
 
     if (index >= this.repeatModes.length) {
       index = 0
     }
 
-    preferences.repeatMode = this.repeatModes[index]
+    preferences.repeat_mode = this.repeatModes[index]
   }
 
   /**
@@ -226,7 +226,7 @@ class PlaybackService {
       return
     }
 
-    if (!this.previous && preferences.repeatMode === 'NO_REPEAT') {
+    if (!this.previous && preferences.repeat_mode === 'NO_REPEAT') {
       await this.stop()
     } else {
       this.previous && await this.play(this.previous)
@@ -238,7 +238,7 @@ class PlaybackService {
    * If the next song is not found and the current mode is NO_REPEAT, we stop completely.
    */
   public async playNext () {
-    if (!this.next && preferences.repeatMode === 'NO_REPEAT') {
+    if (!this.next && preferences.repeat_mode === 'NO_REPEAT') {
       await this.stop() //  Nothing lasts forever, even cold November rain.
     } else {
       this.next && await this.play(this.next)
@@ -361,7 +361,7 @@ class PlaybackService {
         songStore.scrobble(queueStore.current!)
       }
 
-      preferences.repeatMode === 'REPEAT_ONE' ? this.restart() : this.playNext()
+      preferences.repeat_mode === 'REPEAT_ONE' ? this.restart() : this.playNext()
     })
 
     let timeUpdateHandler = () => {

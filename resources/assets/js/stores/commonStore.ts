@@ -73,7 +73,7 @@ export const commonStore = {
     this.state.current_user.preferences = this.state.current_user.preferences || {}
 
     userStore.init(this.state.current_user)
-    preferenceStore.init(this.state.current_user)
+    preferenceStore.init(this.state.current_user.preferences)
     playlistStore.init(this.state.playlists)
     playlistFolderStore.init(this.state.playlist_folders)
     settingStore.init(this.state.settings)

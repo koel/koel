@@ -303,8 +303,7 @@ interface SongRow {
 }
 
 interface EqualizerPreset {
-  id: number
-  name: string
+  name: string | null
   preamp: number
   gains: number[]
 }

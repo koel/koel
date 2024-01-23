@@ -44,6 +44,7 @@ use App\Http\Controllers\API\SongSearchController;
 use App\Http\Controllers\API\ToggleLikeSongController;
 use App\Http\Controllers\API\UnlikeMultipleSongsController;
 use App\Http\Controllers\API\UpdatePlaybackStatusController;
+use App\Http\Controllers\API\UpdateUserPreferenceController;
 use App\Http\Controllers\API\UploadAlbumCoverController;
 use App\Http\Controllers\API\UploadArtistImageController;
 use App\Http\Controllers\API\UploadController;
@@ -137,6 +138,7 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::apiResource('user', UserController::class);
         Route::get('me', [ProfileController::class, 'show']);
         Route::put('me', [ProfileController::class, 'update']);
+        Route::patch('me/preferences', UpdateUserPreferenceController::class);
 
         // Last.fm-related routes
         Route::post('lastfm/session-key', SetLastfmSessionKeyController::class);

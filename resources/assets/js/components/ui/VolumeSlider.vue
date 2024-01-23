@@ -30,7 +30,7 @@
       step="0.1"
       title="Volume"
       type="range"
-      @change="broadcastVolume"
+      @change="onVolumeChanged"
       @input="setVolume"
     >
   </span>
@@ -40,6 +40,7 @@
 import { faVolumeHigh, faVolumeLow, faVolumeMute } from '@fortawesome/free-solid-svg-icons'
 import { computed } from 'vue'
 import { socketService, volumeManager } from '@/services'
+import { preferenceStore } from '@/stores'
 
 const volume = volumeManager.volume
 
@@ -56,7 +57,8 @@ const setVolume = (e: Event) => volumeManager.set(parseFloat((e.target as HTMLIn
 /**
  * Broadcast the volume changed event to remote controller.
  */
-const broadcastVolume = (e: Event) => {
+const onVolumeChanged = (e: Event) => {
+  preferenceStore.volume = parseFloat((e.target as HTMLInputElement).value)
   socketService.broadcast('SOCKET_VOLUME_CHANGED', parseFloat((e.target as HTMLInputElement).value))
 }
 </script>

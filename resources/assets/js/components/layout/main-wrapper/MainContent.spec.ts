@@ -34,7 +34,7 @@ new class extends UnitTestCase {
     })
 
     it('does not have a translucent over if configured not so', async () => {
-      preferenceStore.state.showAlbumArtOverlay = false
+      preferenceStore.state.show_album_art_overlay = false
 
       this.renderComponent()
 

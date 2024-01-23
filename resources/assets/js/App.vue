@@ -71,8 +71,8 @@ const { offline } = useNetworkStatus()
  * Request for notification permission if it's not provided and the user is OK with notifications.
  */
 const requestNotificationPermission = async () => {
-  if (preferences.notify && window.Notification && window.Notification.permission !== 'granted') {
-    preferences.notify = await window.Notification.requestPermission() === 'denied'
+  if (preferences.show_now_playing_notification && window.Notification && window.Notification.permission !== 'granted') {
+    preferences.show_now_playing_notification = await window.Notification.requestPermission() === 'denied'
   }
 }
 
@@ -109,7 +109,7 @@ const init = async () => {
     await requestNotificationPermission()
 
     window.addEventListener('beforeunload', (e: BeforeUnloadEvent) => {
-      if (uploadService.shouldWarnUponWindowUnload() || preferences.confirmClosing) {
+      if (uploadService.shouldWarnUponWindowUnload() || preferences.confirm_before_closing) {
         e.preventDefault()
         e.returnValue = ''
       }
