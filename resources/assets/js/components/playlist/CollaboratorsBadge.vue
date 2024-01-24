@@ -1,7 +1,7 @@
 <template>
   <div>
     <ul>
-      <li v-for="user in displayedCollaborators">
+      <li v-for="user in displayedCollaborators" :key="user.id">
         <UserAvatar :user="user" width="24" />
       </li>
     </ul>

@@ -58,8 +58,8 @@ const createSmartPlaylist = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE
 const rename = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FOLDER_FORM', folder.value!))
 const destroy = () => trigger(() => eventBus.emit('PLAYLIST_FOLDER_DELETE', folder.value!))
 
-eventBus.on('PLAYLIST_FOLDER_CONTEXT_MENU_REQUESTED', async (e, _folder) => {
+eventBus.on('PLAYLIST_FOLDER_CONTEXT_MENU_REQUESTED', async ({ pageX, pageY }, _folder) => {
   folder.value = _folder
-  await open(e.pageY, e.pageX)
+  await open(pageY, pageX)
 })
 </script>

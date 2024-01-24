@@ -44,7 +44,7 @@ const mutatedRule = Object.assign({}, rule.value) as SmartPlaylistRule
 const selectedModel = ref<SmartPlaylistModel>()
 const selectedOperator = ref<SmartPlaylistOperator>()
 
-const model = models.find(m => m.name === mutatedRule.model.name)
+const model = models.find(({ name }) => name === mutatedRule.model.name)
 
 if (!model) {
   throw new Error(`Invalid smart playlist model: ${mutatedRule.model.name}`)
@@ -56,7 +56,7 @@ const availableOperators = computed<SmartPlaylistOperator[]>(() => {
   return selectedModel.value ? inputTypes[selectedModel.value.type] : []
 })
 
-const operator = availableOperators.value.find(o => o.operator === mutatedRule.operator)
+const operator = availableOperators.value.find(({ operator }) => operator === mutatedRule.operator)
 
 if (!operator) {
   throw new Error(`Invalid smart playlist operator: ${mutatedRule.operator}`)
@@ -88,7 +88,7 @@ const availableInputs = computed<{ id: string, value: any }[]>(() => {
 
 watch(availableOperators, () => {
   if (selectedModel.value?.name === mutatedRule.model.name) {
-    selectedOperator.value = availableOperators.value.find(o => o.operator === mutatedRule.operator)!
+    selectedOperator.value = availableOperators.value.find(({ operator }) => operator === mutatedRule.operator)!
   } else {
     selectedOperator.value = availableOperators.value[0]
   }

@@ -65,7 +65,7 @@ const queue = toRef(queueStore.state, 'songs')
 const currentSong = queueStore.current
 
 const allPlaylists = toRef(playlistStore.state, 'playlists')
-const playlists = computed(() => allPlaylists.value.filter(playlist => !playlist.is_smart))
+const playlists = computed(() => allPlaylists.value.filter(({ is_smart }) => !is_smart))
 
 const emit = defineEmits<{ (e: 'closing'): void }>()
 const close = () => emit('closing')

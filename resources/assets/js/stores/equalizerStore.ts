@@ -2,7 +2,7 @@ import { preferenceStore as preferences } from '@/stores'
 import { equalizerPresets as presets } from '@/config'
 
 export const equalizerStore = {
-  getPresetByName (name: EqualizerPreset['name']) {
+  getPresetByName (name: string) {
     return presets.find(preset => preset.name === name)
   },
 

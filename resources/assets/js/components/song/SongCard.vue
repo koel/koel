@@ -64,6 +64,7 @@ article {
   border: 1px solid var(--color-bg-secondary);
   border-radius: 5px;
   align-items: center;
+  transition: border-color .2s ease-in-out;
 
   &:focus, &:focus-within {
     box-shadow: 0 0 1px 1px var(--color-accent);
@@ -79,6 +80,8 @@ article {
   }
 
   &:hover {
+    border-color: rgba(255, 255, 255, .15);
+
     button {
       opacity: 1;
     }

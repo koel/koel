@@ -80,7 +80,7 @@ const { allowsUpload, mediaPathSetUp, queueFilesForUpload, handleDropEvent } = u
 const files = toRef(uploadService.state, 'files')
 const droppable = ref(false)
 
-const hasUploadFailures = computed(() => files.value.filter((file) => file.status === 'Errored').length > 0)
+const hasUploadFailures = computed(() => files.value.filter(({ status }) => status === 'Errored').length > 0)
 
 const onDragEnter = () => (droppable.value = allowsUpload.value)
 const onDragLeave = () => (droppable.value = false)

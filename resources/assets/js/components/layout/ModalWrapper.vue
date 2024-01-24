@@ -20,6 +20,7 @@ const modalNameToComponentMap = {
   'edit-song-form': defineAsyncComponent(() => import('@/components/song/EditSongForm.vue')),
   'create-playlist-folder-form': defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistFolderForm.vue')),
   'edit-playlist-folder-form': defineAsyncComponent(() => import('@/components/playlist/EditPlaylistFolderForm.vue')),
+  'playlist-collaboration': defineAsyncComponent(() => import('@/components/playlist/CollaborationModal.vue')),
   'about-koel': defineAsyncComponent(() => import('@/components/meta/AboutKoelModal.vue')),
   'koel-plus': defineAsyncComponent(() => import('@/components/koel-plus/KoelPlusModal.vue')),
   'equalizer': defineAsyncComponent(() => import('@/components/ui/Equalizer.vue'))
@@ -77,6 +78,10 @@ eventBus.on('MODAL_SHOW_ABOUT_KOEL', () => (activeModalName.value = 'about-koel'
     context.value = { folder }
     activeModalName.value = 'edit-playlist-folder-form'
   })
+  .on('MODAL_SHOW_PLAYLIST_COLLABORATION', playlist => {
+    context.value = { playlist }
+    activeModalName.value = 'playlist-collaboration'
+  })
   .on('MODAL_SHOW_EQUALIZER', () => (activeModalName.value = 'equalizer'))
 </script>
 
@@ -97,7 +102,7 @@ dialog {
     background: rgba(0, 0, 0, 0.7);
   }
 
-  :deep(form) {
+  :deep(form), :deep(>div) {
     position: relative;
 
     > header, > main, > footer {
@@ -106,6 +111,8 @@ dialog {
 
     > footer {
       margin-top: 0;
+      background: rgba(0, 0, 0, 0.1);
+      border-top: 1px solid rgba(255, 255, 255, .05);
     }
 
     [type=text], [type=number], [type=email], [type=password], [type=url], [type=date], textarea, select {

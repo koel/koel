@@ -45,7 +45,7 @@ export const overviewStore = {
     // All album/artist stats are simply ignored.
     this.state.mostPlayedSongs = songStore.getMostPlayed(7)
     this.state.recentlyPlayed = recentlyPlayedStore.excerptState.songs.filter(
-      song => !song.deleted && song.play_count > 0
+      ({ deleted, play_count }) => !deleted && play_count > 0
     )
   }
 }

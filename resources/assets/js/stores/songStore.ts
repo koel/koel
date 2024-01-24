@@ -63,7 +63,7 @@ export const songStore = {
   },
 
   byAlbum (album: Album) {
-    return Array.from(this.vault.values()).filter(song => song.album_id === album.id)
+    return Array.from(this.vault.values()).filter(({ album_id }) => album_id === album.id)
   },
 
   async resolve (id: string) {
@@ -154,7 +154,7 @@ export const songStore = {
     watch(() => song.play_count, () => overviewStore.refresh())
   },
 
-  ensureNotDeleted: (songs: Song | Song[]) => arrayify(songs).filter(song => !song.deleted),
+  ensureNotDeleted: (songs: Song | Song[]) => arrayify(songs).filter(({ deleted }) => !deleted),
 
   async fetchForAlbum (album: Album | number) {
     const id = typeof album === 'number' ? album : album.id
@@ -223,7 +223,7 @@ export const songStore = {
   getMostPlayed (count: number) {
     return take(
       orderBy(
-        Array.from(this.vault.values()).filter(song => !song.deleted && song.play_count > 0),
+        Array.from(this.vault.values()).filter(({ deleted, play_count })=> !deleted && play_count > 0),
         'play_count',
         'desc'
       ),

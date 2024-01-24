@@ -40,7 +40,7 @@ export const themeStore = {
     this.state.themes.forEach(t => (t.selected = t.id === theme.id))
   },
 
-  getThemeById (id: string) {
+  getThemeById (id: Theme['id']) {
     return this.state.themes.find(theme => theme.id === id)
   },
 

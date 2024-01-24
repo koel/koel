@@ -139,7 +139,11 @@ const lastSelectedRow = ref<SongRow>()
 const sortFields = ref<SongListSortField[]>([])
 const songRows = ref<SongRow[]>([])
 
-watch(songRows, () => setSelectedSongs(songRows.value.filter(row => row.selected).map(row => row.song)), { deep: true })
+watch(
+  songRows,
+  () => setSelectedSongs(songRows.value.filter(({ selected }) => selected).map(({ song }) => song)),
+  { deep: true }
+)
 
 const filteredSongRows = computed<SongRow[]>(() => {
   const keywords = filterKeywords.value.trim().toLowerCase()
@@ -148,9 +152,7 @@ const filteredSongRows = computed<SongRow[]>(() => {
     return songRows.value
   }
 
-  return songRows.value.filter(row => {
-    const song = row.song
-
+  return songRows.value.filter(({ song }) => {
     return (
       song.title.toLowerCase().includes(keywords) ||
       song.artist_name.toLowerCase().includes(keywords) ||

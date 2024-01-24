@@ -149,7 +149,7 @@ const download = () => downloadService.fromAlbum(album.value!)
 watch(activeTab, async tab => {
   if (tab === 'OtherAlbums' && !otherAlbums.value) {
     const albums = await albumStore.fetchForArtist(album.value!.artist_id)
-    otherAlbums.value = albums.filter(a => a.id !== album.value!.id)
+    otherAlbums.value = albums.filter(({ id }) => id !== album.value!.id)
   }
 })
 

@@ -187,6 +187,7 @@ class SongRepository extends Repository
                 return
                     $query->join('users as collaborators', 'playlist_song.user_id', '=', 'collaborators.id')
                     ->addSelect(
+                        'collaborators.id as collaborator_id',
                         'collaborators.name as collaborator_name',
                         'collaborators.email as collaborator_email',
                         'playlist_song.created_at as added_at'

@@ -20,7 +20,7 @@ export const useUpload = () => {
 
   const queueFilesForUpload = (files: Array<File>) => {
     const uploadCandidates = files
-      .filter(file => acceptedMediaTypes.includes(file.type))
+      .filter(({ type }) => acceptedMediaTypes.includes(type))
       .map((file): UploadFile => ({
         file,
         id: `${file.name}-${file.size}`, // for simplicity, a file's identity is determined by its name and size

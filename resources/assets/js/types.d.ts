@@ -157,7 +157,7 @@ interface Song {
 
 interface CollaborativeSong extends Song {
   collaboration: {
-    user: Pick<User, 'name' | 'avatar'>
+    user: PlaylistCollaborator
     added_at: string | null
     fmt_added_at: string | null
   }
@@ -223,6 +223,8 @@ interface PlaylistFolder {
   // we don't need to keep track of the playlists here, as they can be computed using their folder_id value
 }
 
+type PlaylistCollaborator = Pick<User, 'id' | 'name' | 'avatar'>
+
 interface Playlist {
   type: 'playlists'
   readonly id: string
@@ -232,7 +234,7 @@ interface Playlist {
   is_smart: boolean
   rules: SmartPlaylistRuleGroup[]
   own_songs_only: boolean
-  collaborators: User[]
+  collaborators: PlaylistCollaborator[]
 }
 
 type PlaylistLike = Playlist | FavoriteList | RecentlyPlayedList

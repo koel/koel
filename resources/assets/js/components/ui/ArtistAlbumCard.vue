@@ -50,6 +50,11 @@ const onContextMenu = (e: MouseEvent) => emit('contextmenu', e)
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  transition: border-color .2s ease-in-out;
+
+  &:hover {
+    border-color: rgba(255, 255, 255, .15);
+  }
 
   .name {
     display: flex;

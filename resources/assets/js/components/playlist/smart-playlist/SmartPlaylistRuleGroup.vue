@@ -44,12 +44,12 @@ const notifyParentForUpdate = () => emit('input', mutatedGroup)
 const addRule = () => mutatedGroup.rules.push(playlistStore.createEmptySmartPlaylistRule())
 
 const onRuleChanged = (data: SmartPlaylistRule) => {
-  Object.assign(mutatedGroup.rules.find(r => r.id === data.id)!, data)
+  Object.assign(mutatedGroup.rules.find(({ id }) => id === data.id)!, data)
   notifyParentForUpdate()
 }
 
 const removeRule = (rule: SmartPlaylistRule) => {
-  mutatedGroup.rules = mutatedGroup.rules.filter(r => r.id !== rule.id)
+  mutatedGroup.rules = mutatedGroup.rules.filter(({ id }) => id !== rule.id)
   notifyParentForUpdate()
 }
 </script>

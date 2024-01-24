@@ -57,7 +57,7 @@ export const playlistStore = {
   },
 
   byFolder (folder: PlaylistFolder) {
-    return this.state.playlists.filter(playlist => playlist.folder_id === folder.id)
+    return this.state.playlists.filter(({ folder_id }) => folder_id === folder.id)
   },
 
   async store (

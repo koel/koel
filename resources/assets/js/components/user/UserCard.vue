@@ -91,6 +91,11 @@ const revokeInvite = async () => {
   background: var(--color-bg-secondary);
   border: 1px solid var(--color-bg-secondary);
   gap: 1rem;
+  transition: border-color .2s ease-in-out;
+
+  &:hover {
+    border-color: rgba(255, 255, 255, .15);
+  }
 
   .anonymous {
     font-weight: var(--font-weight-light);
