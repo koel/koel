@@ -26,6 +26,7 @@ export interface Events {
   MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM: (folder?: PlaylistFolder | null) => void
   MODAL_SHOW_CREATE_PLAYLIST_FOLDER_FORM: () => void
   MODAL_SHOW_EDIT_PLAYLIST_FOLDER_FORM: (playlistFolder: PlaylistFolder) => void
+  MODAL_SHOW_PLAYLIST_COLLABORATION: (playlist: Playlist) => void
   MODAL_SHOW_ABOUT_KOEL: () => void
   MODAL_SHOW_KOEL_PLUS: () => void
   MODAL_SHOW_EQUALIZER: () => void
@@ -34,6 +35,7 @@ export interface Events {
   PLAYLIST_FOLDER_DELETE: (playlistFolder: PlaylistFolder) => void
   PLAYLIST_SONGS_REMOVED: (playlist: Playlist, songs: Song[]) => void
   PLAYLIST_UPDATED: (playlist: Playlist) => void
+  PLAYLIST_COLLABORATOR_REMOVED: (playlist: Playlist) => void
 
   SONGS_UPDATED: () => void
   SONGS_DELETED: (songs: Song[]) => void

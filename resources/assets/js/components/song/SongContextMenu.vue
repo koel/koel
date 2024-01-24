@@ -105,13 +105,13 @@ const queue = toRef(queueStore.state, 'songs')
 const currentSong = toRef(queueStore, 'current')
 
 const canModify = computed(() => {
-  if (isPlus.value) return songs.value.every(song => song.owner_id === currentUser.value?.id)
+  if (isPlus.value) return songs.value.every(({ owner_id }) => owner_id === currentUser.value?.id)
   return isAdmin.value
 })
 
 const onlyOneSongSelected = computed(() => songs.value.length === 1)
 const firstSongPlaying = computed(() => songs.value.length ? songs.value[0].playback_state === 'Playing' : false)
-const normalPlaylists = computed(() => playlists.value.filter(playlist => !playlist.is_smart))
+const normalPlaylists = computed(() => playlists.value.filter(({ is_smart }) => !is_smart))
 
 const makePublic = () => trigger(async () => {
   await songStore.publicize(songs.value)
@@ -129,7 +129,7 @@ const visibilityActions = computed(() => {
   if (!isPlus.value) return []
 
   // If some songs don't belong to the current user, no actions are available.
-  if (songs.value.some(song => song.owner_id !== currentUser.value?.id)) return []
+  if (songs.value.some(({ owner_id }) => owner_id !== currentUser.value?.id)) return []
 
   const visibilities = Array.from(new Set(songs.value.map(song => song.is_public)))
 
@@ -207,9 +207,9 @@ const deleteFromFilesystem = () => trigger(async () => {
   }
 })
 
-eventBus.on('SONG_CONTEXT_MENU_REQUESTED', async (e, _songs) => {
+eventBus.on('SONG_CONTEXT_MENU_REQUESTED', async ({ pageX, pageY }, _songs) => {
   songs.value = arrayify(_songs)
-  await open(e.pageY, e.pageX)
+  await open(pageY, pageX)
 })
 </script>
 

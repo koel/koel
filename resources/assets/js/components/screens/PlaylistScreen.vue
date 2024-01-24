@@ -104,7 +104,7 @@ const {
   onScrollBreakpoint,
   sort,
   config: listConfig
-} = useSongList(ref<Song[]>([]))
+} = useSongList(ref<Song[] | CollaborativeSong[]>([]))
 
 const { SongListControls, config: controlsConfig } = useSongListControls('Playlist')
 const { removeSongsFromPlaylist } = usePlaylistManagement()
@@ -145,9 +145,11 @@ watch(playlistId, async id => {
 
 onScreenActivated('Playlist', () => (playlistId.value = getRouteParam('id')!))
 
-eventBus.on('PLAYLIST_UPDATED', async updated => updated.id === playlistId.value && await fetchSongs())
-  .on('PLAYLIST_SONGS_REMOVED', async (playlist, removed) => {
-    if (playlist.id !== playlistId.value) return
+eventBus
+  .on('PLAYLIST_UPDATED', async ({ id }) => id === playlistId.value && await fetchSongs())
+  .on('PLAYLIST_COLLABORATOR_REMOVED', async ({ id }) => id === playlistId.value && await fetchSongs())
+  .on('PLAYLIST_SONGS_REMOVED', async ({ id }, removed) => {
+    if (id !== playlistId.value) return
     songs.value = differenceBy(songs.value, removed, 'id')
   })
 </script>

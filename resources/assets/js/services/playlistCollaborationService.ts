@@ -1,4 +1,4 @@
-import { http } from '@/services'
+import { cache, http } from '@/services'
 
 export const playlistCollaborationService = {
   async createInviteLink (playlist: Playlist) {
@@ -12,5 +12,15 @@ export const playlistCollaborationService = {
 
   async acceptInvite (token: string) {
     return http.post<Playlist>(`playlists/collaborators/accept`, { token })
+  },
+
+  async getCollaborators (playlist: Playlist) {
+    return http.get<PlaylistCollaborator[]>(`playlists/${playlist.id}/collaborators`)
+  },
+
+  async removeCollaborator (playlist: Playlist, collaborator: PlaylistCollaborator) {
+    await http.delete(`playlists/${playlist.id}/collaborators`, { collaborator: collaborator.id })
+    // invalidate the playlist cache
+    cache.remove(['playlist.songs', playlist.id])
   }
 }

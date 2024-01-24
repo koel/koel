@@ -3,9 +3,9 @@
     <li @click="play">Play</li>
     <li @click="shuffle">Shuffle</li>
     <li @click="addToQueue">Add to Queue</li>
-    <template v-if="canInviteCollaborators">
+    <template v-if="canShowCollaboration">
       <li class="separator"></li>
-      <li @click="inviteCollaborators">Invite Collaborators</li>
+      <li @click="showCollaborationModal">Collaborate…</li>
       <li class="separator"></li>
     </template>
     <li v-if="ownedByCurrentUser" @click="edit">Edit…</li>
@@ -29,7 +29,7 @@ const { currentUser } = useAuthorization()
 const playlist = ref<Playlist>()
 
 const ownedByCurrentUser = computed(() => playlist.value?.user_id === currentUser.value?.id)
-const canInviteCollaborators = computed(() => ownedByCurrentUser.value && isPlus.value && !playlist.value?.is_smart)
+const canShowCollaboration = computed(() => isPlus.value && !playlist.value?.is_smart)
 
 const edit = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist.value!))
 const destroy = () => trigger(() => eventBus.emit('PLAYLIST_DELETE', playlist.value!))
@@ -67,14 +67,10 @@ const addToQueue = () => trigger(async () => {
   }
 })
 
-const inviteCollaborators = () => trigger(async () => {
-  const link = await playlistCollaborationService.createInviteLink(playlist.value!)
-  await copyText(link)
-  toastSuccess('Link copied to clipboard. Share it with your friends!')
-})
+const showCollaborationModal = () => trigger(() => eventBus.emit('MODAL_SHOW_PLAYLIST_COLLABORATION', playlist.value!))
 
-eventBus.on('PLAYLIST_CONTEXT_MENU_REQUESTED', async (event, _playlist) => {
+eventBus.on('PLAYLIST_CONTEXT_MENU_REQUESTED', async ({ pageX, pageY }, _playlist) => {
   playlist.value = _playlist
-  await open(event.pageY, event.pageX)
+  await open(pageY, pageX)
 })
 </script>

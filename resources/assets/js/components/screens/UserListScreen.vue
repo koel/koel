@@ -54,8 +54,8 @@ const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 const BtnGroup = defineAsyncComponent(() => import('@/components/ui/BtnGroup.vue'))
 
 const allUsers = toRef(userStore.state, 'users')
-const users = computed(() => allUsers.value.filter(user => !user.is_prospect))
-const prospects = computed(() => allUsers.value.filter(user => user.is_prospect))
+const users = computed(() => allUsers.value.filter(({ is_prospect }) => !is_prospect))
+const prospects = computed(() => allUsers.value.filter(({ is_prospect }) => is_prospect))
 
 const isPhone = isMobile.phone
 const showingControls = ref(false)

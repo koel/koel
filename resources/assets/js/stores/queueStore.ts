@@ -1,6 +1,6 @@
 import { reactive } from 'vue'
 import { differenceBy, unionBy } from 'lodash'
-import { arrayify } from '@/utils'
+import { arrayify, logger } from '@/utils'
 import { http } from '@/services'
 import { songStore } from '@/stores'
 
@@ -140,7 +140,7 @@ export const queueStore = {
   },
 
   get current () {
-    return this.all.find(song => song.playback_state !== 'Stopped')
+    return this.all.find(({ playback_state }) => playback_state !== 'Stopped')
   },
 
   async fetchRandom (limit = 500) {
@@ -155,9 +155,9 @@ export const queueStore = {
 
   saveState () {
     try {
-      http.silently.put('queue/state', { songs: this.state.songs.map(song => song.id) })
+      http.silently.put('queue/state', { songs: this.state.songs.map(({ id }) => id) })
     } catch (e) {
-      console.error(e)
+      logger.error(e)
     }
   }
 }

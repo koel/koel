@@ -22,9 +22,7 @@ const addMessage = (type: 'info' | 'success' | 'warning' | 'danger', content: st
   })
 }
 
-const removeMessage = (message: ToastMessage) => {
-  messages.value = messages.value.filter(m => m.id !== message.id)
-}
+const removeMessage = (message: ToastMessage) => (messages.value = messages.value.filter(({ id }) => id !== message.id))
 
 const info = (content: string, timeout?: number) => addMessage('info', content, timeout)
 const success = (content: string, timeout?: number) => addMessage('success', content, timeout)

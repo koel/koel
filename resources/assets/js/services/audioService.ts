@@ -74,7 +74,7 @@ export const audioService = {
   },
 
   changeFilterGain (node: BiquadFilterNode, db: number) {
-    this.bands.find(band => band.filter === node)!.db = db
+    this.bands.find(({ filter }) => filter === node)!.db = db
     node.gain.value = dbToGain(db)
   },
 

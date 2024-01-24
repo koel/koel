@@ -27,8 +27,8 @@ export default class Router {
 
   constructor (routes: Route[]) {
     this.routes = routes
-    this.homeRoute = routes.find(route => route.screen === 'Home')!
-    this.notFoundRoute = routes.find(route => route.screen === '404')!
+    this.homeRoute = routes.find(({ screen }) => screen === 'Home')!
+    this.notFoundRoute = routes.find(({ screen }) => screen === '404')!
     this.$currentRoute = ref(this.homeRoute)
 
     watch(

@@ -41,8 +41,8 @@ export const useSongList = (
   const duration = computed(() => songStore.getFormattedLength(songs.value))
 
   const thumbnails = computed(() => {
-    const songsWithCover = songs.value.filter(song => song.album_cover)
-    const sampleCovers = sampleSize(songsWithCover, 20).map(song => song.album_cover)
+    const songsWithCover = songs.value.filter(({ album_cover }) => album_cover)
+    const sampleCovers = sampleSize(songsWithCover, 20).map(({ album_cover }) => album_cover)
     return take(Array.from(new Set(sampleCovers)), 4)
   })
 

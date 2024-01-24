@@ -4,8 +4,8 @@ import { differenceBy, orderBy } from 'lodash'
 import { playlistStore } from '@/stores/playlistStore'
 
 export const playlistFolderStore = {
-  state: reactive({
-    folders: [] as PlaylistFolder[]
+  state: reactive<{ folders: PlaylistFolder [] }>({
+    folders: []
   }),
 
   init (folders: PlaylistFolder[]) {
@@ -33,7 +33,7 @@ export const playlistFolderStore = {
 
   async rename (folder: PlaylistFolder, name: string) {
     await http.put(`playlist-folders/${folder.id}`, { name })
-    this.byId(folder.id).name = name
+    this.byId(folder.id)!.name = name
   },
 
   async addPlaylistToFolder (folder: PlaylistFolder, playlist: Playlist) {

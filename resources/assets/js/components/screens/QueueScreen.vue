@@ -115,7 +115,7 @@ const removeSelected = () => {
   const currentSongId = queueStore.current?.id
   queueStore.unqueue(selectedSongs.value)
 
-  if (currentSongId && selectedSongs.value.find(song => song.id === currentSongId)) {
+  if (currentSongId && selectedSongs.value.find(({ id }) => id === currentSongId)) {
     playbackService.playNext()
   }
 }

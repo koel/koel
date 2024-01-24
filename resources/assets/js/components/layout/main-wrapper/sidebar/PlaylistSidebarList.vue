@@ -35,7 +35,7 @@ const folders = toRef(playlistFolderStore.state, 'folders')
 const playlists = toRef(playlistStore.state, 'playlists')
 const favorites = toRef(favoriteStore.state, 'songs')
 
-const orphanPlaylists = computed(() => playlists.value.filter(playlist => playlist.folder_id === null))
+const orphanPlaylists = computed(() => playlists.value.filter(({ folder_id }) => folder_id === null))
 
 const requestContextMenu = () => {
   const clientRect = createBtnEl.value!.getBoundingClientRect()

@@ -47,8 +47,8 @@ const viewAlbumDetails = () => trigger(() => go(`album/${album.value!.id}`))
 const viewArtistDetails = () => trigger(() => go(`artist/${album.value!.artist_id}`))
 const download = () => trigger(() => downloadService.fromAlbum(album.value!))
 
-eventBus.on('ALBUM_CONTEXT_MENU_REQUESTED', async (e, _album) => {
+eventBus.on('ALBUM_CONTEXT_MENU_REQUESTED', async ({ pageX, pageY }, _album) => {
   album.value = _album
-  await open(e.pageY, e.pageX)
+  await open(pageY, pageX)
 })
 </script>

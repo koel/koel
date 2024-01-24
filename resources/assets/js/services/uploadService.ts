@@ -56,11 +56,11 @@ export const uploadService = {
   },
 
   getUploadingFiles () {
-    return this.state.files.filter(file => file.status === 'Uploading')
+    return this.state.files.filter(({ status }) => status === 'Uploading')
   },
 
   getUploadCandidate () {
-    return this.state.files.find(file => file.status === 'Ready')
+    return this.state.files.find(({ status }) => status === 'Ready')
   },
 
   shouldWarnUponWindowUnload () {
@@ -117,6 +117,6 @@ export const uploadService = {
   },
 
   removeFailed () {
-    this.state.files = this.state.files.filter(file => file.status !== 'Errored')
+    this.state.files = this.state.files.filter(({ status }) => status !== 'Errored')
   }
 }

@@ -8,7 +8,7 @@ use App\Models\User;
 use App\Services\PlaylistCollaborationService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
-class AcceptPlaylistCollaborationController extends Controller
+class AcceptPlaylistCollaborationInviteController extends Controller
 {
     /** @param User $user */
     public function __invoke(PlaylistCollaborationService $service, Authenticatable $user)
