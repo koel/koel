@@ -167,17 +167,21 @@ nav {
       color: var(--color-text-primary);
     }
 
+    &::before {
+      content: '';
+      right: -1.5rem;
+      top: 25%;
+      width: 4px;
+      height: 50%;
+      position: absolute;
+      transition: box-shadow .5s ease-in-out, background-color .5s ease-in-out;
+      border-radius: 9999rem;
+    }
+
     &.active {
       &::before {
-        content: '';
-        position: absolute;
-        top: 25%;
-        right: -1.5rem;
-        width: 4px;
-        height: 50%;
         background-color: var(--color-highlight);
         box-shadow: 0 0 40px 10px var(--color-highlight);
-        border-radius: 9999rem;
       }
     }
 
