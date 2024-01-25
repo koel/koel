@@ -83,9 +83,10 @@ const play = () => {
   height: 64px;
   display: flex;
   align-items: center;
+  transition: background-color .2s ease-in-out, box-shadow .2s ease-in-out;
 
   &:focus, &:focus-within {
-    box-shadow: 0 0 1px 1px var(--color-accent) inset;
+    box-shadow: 0 0 1px 1px var(--color-accent) inset !important;
     border-radius: 4px;
   }
 
@@ -110,6 +111,8 @@ const play = () => {
 
   &:hover {
     background: rgba(255, 255, 255, .05);
+    box-shadow: 0 0 1px 1px rgba(255, 255, 255, .1) inset;
+    border-radius: 5px;
   }
 
   &.selected {
