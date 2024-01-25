@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Http\Resources\PlaylistFolderResource;
 use App\Models\PlaylistFolder;
 use Tests\TestCase;
 
@@ -9,21 +10,13 @@ use function Tests\create_user;
 
 class PlaylistFolderTest extends TestCase
 {
-    private const JSON_STRUCTURE = [
-        'type',
-        'id',
-        'name',
-        'user_id',
-        'created_at',
-    ];
-
     public function testListing(): void
     {
         $user = create_user();
         PlaylistFolder::factory()->for($user)->count(3)->create();
 
         $this->getAs('api/playlist-folders', $user)
-            ->assertJsonStructure(['*' => self::JSON_STRUCTURE])
+            ->assertJsonStructure(['*' => PlaylistFolderResource::JSON_STRUCTURE])
             ->assertJsonCount(3, '*');
     }
 
@@ -32,7 +25,7 @@ class PlaylistFolderTest extends TestCase
         $user = create_user();
 
         $this->postAs('api/playlist-folders', ['name' => 'Classical'], $user)
-            ->assertJsonStructure(self::JSON_STRUCTURE);
+            ->assertJsonStructure(PlaylistFolderResource::JSON_STRUCTURE);
 
         $this->assertDatabaseHas(PlaylistFolder::class, ['name' => 'Classical', 'user_id' => $user->id]);
     }
@@ -43,7 +36,7 @@ class PlaylistFolderTest extends TestCase
         $folder = PlaylistFolder::factory()->create(['name' => 'Metal']);
 
         $this->patchAs('api/playlist-folders/' . $folder->id, ['name' => 'Classical'], $folder->user)
-            ->assertJsonStructure(self::JSON_STRUCTURE);
+            ->assertJsonStructure(PlaylistFolderResource::JSON_STRUCTURE);
 
         self::assertSame('Classical', $folder->fresh()->name);
     }

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Http\Resources\SongResource;
 use App\Models\QueueState;
 use App\Models\Song;
 use Tests\TestCase;
@@ -12,7 +13,7 @@ class QueueTest extends TestCase
 {
     public const QUEUE_STATE_JSON_STRUCTURE = [
         'current_song',
-        'songs' => ['*' => SongTest::JSON_STRUCTURE],
+        'songs' => ['*' => SongResource::JSON_STRUCTURE],
         'playback_position',
     ];
 
@@ -81,11 +82,11 @@ class QueueTest extends TestCase
         Song::factory(10)->create();
 
         $this->getAs('api/queue/fetch?order=rand&limit=5')
-            ->assertJsonStructure(['*' => SongTest::JSON_STRUCTURE])
+            ->assertJsonStructure(['*' => SongResource::JSON_STRUCTURE])
             ->assertJsonCount(5, '*');
 
         $this->getAs('api/queue/fetch?order=asc&sort=title&limit=5')
-            ->assertJsonStructure(['*' => SongTest::JSON_STRUCTURE])
+            ->assertJsonStructure(['*' => SongResource::JSON_STRUCTURE])
             ->assertJsonCount(5, '*');
     }
 }

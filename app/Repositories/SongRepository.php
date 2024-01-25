@@ -118,11 +118,11 @@ class SongRepository extends Repository
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
-                ->accessibleBy($scopedUser)
-                ->withMetaFor($scopedUser)
-                ->sort($sortColumn, $sortDirection)
-                ->limit($limit)
-                ->get();
+            ->accessibleBy($scopedUser)
+            ->withMetaFor($scopedUser)
+            ->sort($sortColumn, $sortDirection)
+            ->limit($limit)
+            ->get();
     }
 
     /** @return Collection|array<array-key, Song> */
@@ -186,16 +186,15 @@ class SongRepository extends Repository
             ->when(License::isPlus(), static function (SongBuilder $query): SongBuilder {
                 return
                     $query->join('users as collaborators', 'playlist_song.user_id', '=', 'collaborators.id')
-                    ->addSelect(
-                        'collaborators.id as collaborator_id',
-                        'collaborators.name as collaborator_name',
-                        'collaborators.email as collaborator_email',
-                        'playlist_song.created_at as added_at'
-                    );
+                        ->addSelect(
+                            'collaborators.id as collaborator_id',
+                            'collaborators.name as collaborator_name',
+                            'collaborators.email as collaborator_email',
+                            'playlist_song.created_at as added_at'
+                        );
             })
             ->where('playlists.id', $playlist->id)
             ->orderBy('songs.title')
-            ->logSql()
             ->get();
     }
 
@@ -226,6 +225,35 @@ class SongRepository extends Repository
             ->get();
 
         return $inThatOrder ? $songs->orderByArray($ids) : $songs;
+    }
+
+    /**
+     * Gets several songs, but also includes collaborative information.
+     *
+     * @return Collection|array<array-key, Song>
+     */
+    public function getManyInCollaborativeContext(array $ids, ?User $scopedUser = null): Collection
+    {
+        /** @var ?User $scopedUser */
+        $scopedUser ??= $this->auth->user();
+
+        return Song::query()
+            ->accessibleBy($scopedUser)
+            ->withMetaFor($scopedUser)
+            ->when(License::isPlus(), static function (SongBuilder $query): SongBuilder {
+                return
+                    $query->leftJoin('playlist_song', 'songs.id', '=', 'playlist_song.song_id')
+                        ->leftJoin('playlists', 'playlists.id', '=', 'playlist_song.playlist_id')
+                        ->join('users as collaborators', 'playlist_song.user_id', '=', 'collaborators.id')
+                        ->addSelect(
+                            'collaborators.id as collaborator_id',
+                            'collaborators.name as collaborator_name',
+                            'collaborators.email as collaborator_email',
+                            'playlist_song.created_at as added_at'
+                        );
+            })
+            ->whereIn('songs.id', $ids)
+            ->get();
     }
 
     /** @param string $id */

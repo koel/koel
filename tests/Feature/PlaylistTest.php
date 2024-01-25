@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Http\Resources\PlaylistResource;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Values\SmartPlaylistRule;
@@ -12,25 +13,13 @@ use function Tests\create_user;
 
 class PlaylistTest extends TestCase
 {
-    public const JSON_STRUCTURE = [
-        'type',
-        'id',
-        'name',
-        'folder_id',
-        'user_id',
-        'is_smart',
-        'rules',
-        'own_songs_only',
-        'created_at',
-    ];
-
     public function testListing(): void
     {
         $user = create_user();
         Playlist::factory()->for($user)->count(3)->create();
 
         $this->getAs('api/playlists', $user)
-            ->assertJsonStructure(['*' => self::JSON_STRUCTURE])
+            ->assertJsonStructure(['*' => PlaylistResource::JSON_STRUCTURE])
             ->assertJsonCount(3, '*');
     }
 
@@ -46,7 +35,7 @@ class PlaylistTest extends TestCase
             'songs' => $songs->pluck('id')->all(),
             'rules' => [],
         ], $user)
-            ->assertJsonStructure(self::JSON_STRUCTURE);
+            ->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
 
         /** @var Playlist $playlist */
         $playlist = Playlist::query()->latest()->first();
@@ -75,7 +64,7 @@ class PlaylistTest extends TestCase
                     'rules' => [$rule->toArray()],
                 ],
             ],
-        ], $user)->assertJsonStructure(self::JSON_STRUCTURE);
+        ], $user)->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
 
         /** @var Playlist $playlist */
         $playlist = Playlist::query()->latest()->first();
@@ -124,7 +113,7 @@ class PlaylistTest extends TestCase
         $playlist = Playlist::factory()->create(['name' => 'Foo']);
 
         $this->putAs("api/playlists/$playlist->id", ['name' => 'Bar'], $playlist->user)
-            ->assertJsonStructure(self::JSON_STRUCTURE);
+            ->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
 
         self::assertSame('Bar', $playlist->refresh()->name);
     }

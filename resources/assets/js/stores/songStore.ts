@@ -174,7 +174,7 @@ export const songStore = {
     ))
   },
 
-  async fetchForPlaylist (playlist: Playlist | string, refresh = false) {
+  async fetchForPlaylist (playlist: Playlist | Playlist['id'], refresh = false) {
     const id = typeof playlist === 'string' ? playlist : playlist.id
 
     if (refresh) {
@@ -197,7 +197,7 @@ export const songStore = {
     return uniqBy(songs, 'id')
   },
 
-  async paginateForGenre (genre: Genre | string, params: GenreSongListPaginateParams) {
+  async paginateForGenre (genre: Genre | Genre['name'], params: GenreSongListPaginateParams) {
     const name = typeof genre === 'string' ? genre : genre.name
     const resource = await http.get<PaginatorResource>(`genres/${name}/songs?${new URLSearchParams(params).toString()}`)
     const songs = this.syncWithVault(resource.data)
@@ -208,7 +208,7 @@ export const songStore = {
     }
   },
 
-  async fetchRandomForGenre (genre: Genre | string, limit = 500) {
+  async fetchRandomForGenre (genre: Genre | Genre['name'], limit = 500) {
     const name = typeof genre === 'string' ? genre : genre.name
     return this.syncWithVault(await http.get<Song[]>(`genres/${name}/songs/random?limit=${limit}`))
   },
@@ -251,10 +251,15 @@ export const songStore = {
   },
 
   async privatize (songs: Song[]) {
-    await http.put('songs/privatize', {
-      songs: songs.map(song => song.id)
+    const privatizedIds = await http.put<Song['id'][]>('songs/privatize', {
+      songs: songs.map(({ id }) => id)
     })
 
-    songs.forEach(song => song.is_public = false)
+    privatizedIds.forEach(id => {
+      const song = this.byId(id)
+      song && (song.is_public = false)
+    })
+
+    return privatizedIds
   }
 }

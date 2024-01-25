@@ -6,11 +6,13 @@ use App\Events\LibraryChanged;
 use App\Events\MediaScanCompleted;
 use App\Events\MultipleSongsLiked;
 use App\Events\MultipleSongsUnliked;
+use App\Events\NewPlaylistCollaboratorJoined;
 use App\Events\PlaybackStarted;
 use App\Events\SongLikeToggled;
 use App\Listeners\DeleteNonExistingRecordsPostSync;
 use App\Listeners\LoveMultipleTracksOnLastfm;
 use App\Listeners\LoveTrackOnLastfm;
+use App\Listeners\MakePlaylistSongsPublic;
 use App\Listeners\PruneLibrary;
 use App\Listeners\UnloveMultipleTracksOnLastfm;
 use App\Listeners\UpdateLastfmNowPlaying;
@@ -45,6 +47,10 @@ class EventServiceProvider extends BaseServiceProvider
         MediaScanCompleted::class => [
             DeleteNonExistingRecordsPostSync::class,
             WriteSyncLog::class,
+        ],
+
+        NewPlaylistCollaboratorJoined::class => [
+            MakePlaylistSongsPublic::class,
         ],
     ];
 

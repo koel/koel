@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Events\LibraryChanged;
+use App\Facades\License;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
@@ -82,14 +83,36 @@ class SongService
         return $this->songRepository->getOne($song->id);
     }
 
-    public function publicizeSongs(Collection $songs): void
+    public function markSongsAsPublic(Collection $songs): void
     {
         Song::query()->whereIn('id', $songs->pluck('id'))->update(['is_public' => true]);
     }
 
-    public function privatizeSongs(Collection $songs): void
+    /** @return array<string> IDs of songs that are marked as private */
+    public function markSongsAsPrivate(Collection $songs): array
     {
-        Song::query()->whereIn('id', $songs->pluck('id'))->update(['is_public' => false]);
+        if (License::isPlus()) {
+            /**
+             * @var Collection|array<array-key, Song> $collaborativeSongs
+             * Songs that are in collaborative playlists and can't be marked as private as a result
+             */
+            $collaborativeSongs = Song::query()
+                ->whereIn('songs.id', $songs->pluck('id'))
+                ->join('playlist_song', 'songs.id', '=', 'playlist_song.song_id')
+                ->join('playlist_collaborators', 'playlist_song.playlist_id', '=', 'playlist_collaborators.playlist_id')
+                ->select('songs.id')
+                ->distinct()
+                ->pluck('songs.id')
+                ->all();
+
+            $applicableSongIds = $songs->whereNotIn('id', $collaborativeSongs)->pluck('id')->all();
+        } else {
+            $applicableSongIds = $songs->pluck('id')->all();
+        }
+
+        Song::query()->whereIn('id', $applicableSongIds)->update(['is_public' => false]);
+
+        return $applicableSongIds;
     }
 
     /**

@@ -7,6 +7,11 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class PlaylistCollaborationTokenResource extends JsonResource
 {
+    public const JSON_STRUCTURE = [
+        'type',
+        'token',
+    ];
+
     public function __construct(private PlaylistCollaborationToken $token)
     {
         parent::__construct($token);

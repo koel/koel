@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Http\Resources\SongResource;
 use App\Models\Interaction;
 use Tests\TestCase;
 
@@ -16,6 +17,6 @@ class RecentlyPlayedSongTest extends TestCase
         Interaction::factory(5)->for($user)->create();
 
         $this->getAs('api/songs/recently-played', $user)
-            ->assertJsonStructure(['*' => SongTest::JSON_STRUCTURE]);
+            ->assertJsonStructure(['*' => SongResource::JSON_STRUCTURE]);
     }
 }

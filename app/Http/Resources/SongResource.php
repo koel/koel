@@ -7,6 +7,48 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class SongResource extends JsonResource
 {
+    public const JSON_STRUCTURE = [
+        'type',
+        'id',
+        'title',
+        'lyrics',
+        'album_id',
+        'album_name',
+        'artist_id',
+        'artist_name',
+        'album_artist_id',
+        'album_artist_name',
+        'album_cover',
+        'length',
+        'liked',
+        'play_count',
+        'track',
+        'genre',
+        'year',
+        'disc',
+        'is_public',
+        'created_at',
+    ];
+
+    public const PAGINATION_JSON_STRUCTURE = [
+        'data' => [
+            '*' => self::JSON_STRUCTURE,
+        ],
+        'links' => [
+            'first',
+            'last',
+            'prev',
+            'next',
+        ],
+        'meta' => [
+            'current_page',
+            'from',
+            'path',
+            'per_page',
+            'to',
+        ],
+    ];
+
     public function __construct(protected Song $song)
     {
         parent::__construct($song);

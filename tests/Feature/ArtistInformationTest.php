@@ -10,15 +10,6 @@ use Tests\TestCase;
 
 class ArtistInformationTest extends TestCase
 {
-    private const JSON_STRUCTURE = [
-        'url',
-        'image',
-        'bio' => [
-            'summary',
-            'full',
-        ],
-    ];
-
     public function testGet(): void
     {
         config(['koel.lastfm.key' => 'foo']);
@@ -40,7 +31,7 @@ class ArtistInformationTest extends TestCase
             ));
 
         $this->getAs('api/artists/' . $artist->id . '/information')
-            ->assertJsonStructure(self::JSON_STRUCTURE);
+            ->assertJsonStructure(ArtistInformation::JSON_STRUCTURE);
     }
 
     public function testGetWithoutLastfmStillReturnsValidStructure(): void
@@ -52,6 +43,6 @@ class ArtistInformationTest extends TestCase
         $artist = Artist::factory()->create();
 
         $this->getAs('api/artists/' . $artist->id . '/information')
-            ->assertJsonStructure(self::JSON_STRUCTURE);
+            ->assertJsonStructure(ArtistInformation::JSON_STRUCTURE);
     }
 }

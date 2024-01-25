@@ -13,13 +13,14 @@
 
 <script setup lang="ts">
 import { computed, toRefs } from 'vue'
+
 import UserAvatar from '@/components/user/UserAvatar.vue'
 
-const props = defineProps<{ playlist: Playlist }>()
-const { playlist } = toRefs(props)
+const props = defineProps<{ collaborators: PlaylistCollaborator[] }>()
+const { collaborators } = toRefs(props)
 
-const displayedCollaborators = computed(() => playlist.value.collaborators.slice(0, 3))
-const remainderCount = computed(() => playlist.value.collaborators.length - displayedCollaborators.value.length)
+const displayedCollaborators = computed(() => collaborators.value.slice(0, 3))
+const remainderCount = computed(() => collaborators.value.length - displayedCollaborators.value.length)
 </script>
 
 <style scoped lang="scss">

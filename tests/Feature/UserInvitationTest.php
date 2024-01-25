@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Http\Resources\UserProspectResource;
 use App\Mail\UserInvite;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
@@ -12,8 +13,6 @@ use function Tests\create_admin;
 
 class UserInvitationTest extends TestCase
 {
-    private const JSON_STRUCTURE = ['id', 'name', 'email', 'is_admin'];
-
     public function testInvite(): void
     {
         Mail::fake();
@@ -23,7 +22,7 @@ class UserInvitationTest extends TestCase
             'is_admin' => true,
         ], create_admin())
             ->assertSuccessful()
-            ->assertJsonStructure(['*' => self::JSON_STRUCTURE]);
+            ->assertJsonStructure(['*' => UserProspectResource::JSON_STRUCTURE]);
 
         Mail::assertQueued(UserInvite::class, 2);
     }
@@ -44,7 +43,7 @@ class UserInvitationTest extends TestCase
 
         $this->get("api/invitations?token=$prospect->invitation_token")
             ->assertSuccessful()
-            ->assertJsonStructure(self::JSON_STRUCTURE);
+            ->assertJsonStructure(UserProspectResource::JSON_STRUCTURE);
     }
 
     public function testRevoke(): void

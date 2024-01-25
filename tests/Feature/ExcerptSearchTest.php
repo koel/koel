@@ -2,6 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Http\Resources\AlbumResource;
+use App\Http\Resources\ArtistResource;
+use App\Http\Resources\SongResource;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
@@ -22,9 +25,9 @@ class ExcerptSearchTest extends TestCase
 
         $this->getAs('api/search?q=foo')
             ->assertJsonStructure([
-                'songs' => ['*' => SongTest::JSON_STRUCTURE],
-                'artists' => ['*' => ArtistTest::JSON_STRUCTURE],
-                'albums' => ['*' => AlbumTest::JSON_STRUCTURE],
+                'songs' => ['*' => SongResource::JSON_STRUCTURE],
+                'artists' => ['*' => ArtistResource::JSON_STRUCTURE],
+                'albums' => ['*' => AlbumResource::JSON_STRUCTURE],
             ]);
     }
 }

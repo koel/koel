@@ -232,9 +232,9 @@ interface Playlist {
   name: string
   folder_id: PlaylistFolder['id'] | null
   is_smart: boolean
+  is_collaborative: boolean
   rules: SmartPlaylistRuleGroup[]
   own_songs_only: boolean
-  collaborators: PlaylistCollaborator[]
 }
 
 type PlaylistLike = Playlist | FavoriteList | RecentlyPlayedList

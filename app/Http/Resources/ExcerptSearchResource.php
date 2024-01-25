@@ -7,6 +7,18 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class ExcerptSearchResource extends JsonResource
 {
+    public const JSON_STRUCTURE = [
+        'songs' => [
+            SongResource::JSON_STRUCTURE,
+        ],
+        'artists' => [
+            ArtistResource::JSON_STRUCTURE,
+        ],
+        'albums' => [
+            AlbumResource::JSON_STRUCTURE,
+        ],
+    ];
+
     public function __construct(private ExcerptSearchResult $result)
     {
         parent::__construct($result);

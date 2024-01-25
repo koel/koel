@@ -39,7 +39,7 @@ class SongVisibilityTest extends PlusTestCase
         /** @var Collection<Song> $externalSongs */
         $externalSongs = Song::factory(3)->for($anotherUser, 'owner')->public()->create();
 
-        // We can't make private songs that are not ours.
+        // We can't Mark as Private songs that are not ours.
         $this->putAs('api/songs/privatize', ['songs' => $externalSongs->pluck('id')->toArray()], $currentUser)
             ->assertForbidden();
 

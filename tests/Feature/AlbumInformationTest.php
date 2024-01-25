@@ -10,22 +10,6 @@ use Tests\TestCase;
 
 class AlbumInformationTest extends TestCase
 {
-    private const JSON_STRUCTURE = [
-        'url',
-        'cover',
-        'wiki' => [
-            'summary',
-            'full',
-        ],
-        'tracks' => [
-            '*' => [
-                'title',
-                'length',
-                'url',
-            ],
-        ],
-    ];
-
     public function testGet(): void
     {
         config(['koel.lastfm.key' => 'foo']);
@@ -59,7 +43,7 @@ class AlbumInformationTest extends TestCase
             ));
 
         $this->getAs('api/albums/' . $album->id . '/information')
-            ->assertJsonStructure(self::JSON_STRUCTURE);
+            ->assertJsonStructure(AlbumInformation::JSON_STRUCTURE);
     }
 
     public function testGetWithoutLastfmStillReturnsValidStructure(): void
@@ -71,6 +55,6 @@ class AlbumInformationTest extends TestCase
         $album = Album::factory()->create();
 
         $this->getAs('api/albums/' . $album->id . '/information')
-            ->assertJsonStructure(self::JSON_STRUCTURE);
+            ->assertJsonStructure(AlbumInformation::JSON_STRUCTURE);
     }
 }

@@ -222,7 +222,7 @@ new class extends UnitTestCase {
 
     it('fetches for playlist', async () => {
       const songs = factory<Song>('song', 3)
-      const playlist = factory<Playlist>('playlist', { id: 42 })
+      const playlist = factory<Playlist>('playlist', { id: '966268ea-935d-4f63-a84e-180385376a78' })
       const getMock = this.mock(http, 'get').mockResolvedValueOnce(songs)
       const syncMock = this.mock(songStore, 'syncWithVault', songs)
 
@@ -235,7 +235,7 @@ new class extends UnitTestCase {
 
     it('fetches for playlist with cache', async () => {
       const songs = factory<Song>('song', 3)
-      const playlist = factory<Playlist>('playlist', { id: 42 })
+      const playlist = factory<Playlist>('playlist', { id: '966268ea-935d-4f63-a84e-180385376a78' })
       cache.set(['playlist.songs', playlist.id], songs)
 
       const getMock = this.mock(http, 'get')
@@ -248,7 +248,7 @@ new class extends UnitTestCase {
 
     it('fetches for playlist discarding cache', async () => {
       const songs = factory<Song>('song', 3)
-      const playlist = factory<Playlist>('playlist', { id: 42 })
+      const playlist = factory<Playlist>('playlist', { id: '966268ea-935d-4f63-a84e-180385376a78' })
       cache.set(['playlist.songs', playlist.id], songs)
 
       const getMock = this.mock(http, 'get').mockResolvedValueOnce([])

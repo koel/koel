@@ -7,6 +7,14 @@ use Carbon\Carbon;
 
 class CollaborativeSongResource extends SongResource
 {
+    public const JSON_STRUCTURE = SongResource::JSON_STRUCTURE + [
+        'collaboration' => [
+            'user' => PlaylistCollaboratorResource::JSON_STRUCTURE,
+            'added_at',
+            'fmt_added_at',
+        ],
+    ];
+
     /** @return array<mixed> */
     public function toArray($request): array
     {

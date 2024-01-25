@@ -2,24 +2,22 @@
 
 namespace App\Http\Controllers\API\PlaylistCollaboration;
 
-use App\Facades\License;
+use App\Exceptions\CannotRemoveOwnerFromPlaylistException;
+use App\Exceptions\KoelPlusRequiredException;
+use App\Exceptions\NotAPlaylistCollaboratorException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\PlaylistCollaboration\PlaylistCollaboratorDestroyRequest;
 use App\Models\Playlist;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\PlaylistCollaborationService;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Response;
 
 class PlaylistCollaboratorController extends Controller
 {
     /** @param User $user */
-    public function __construct(
-        private PlaylistCollaborationService $service,
-        private UserRepository $userRepository,
-        private ?Authenticatable $user
-    ) {
+    public function __construct(private PlaylistCollaborationService $service, private UserRepository $userRepository)
+    {
     }
 
     public function index(Playlist $playlist)
@@ -36,20 +34,16 @@ class PlaylistCollaboratorController extends Controller
         /** @var User $collaborator */
         $collaborator = $this->userRepository->getOne($request->collaborator);
 
-        abort_unless(License::isPlus(), Response::HTTP_FORBIDDEN, 'This feature is only available for Plus users.');
+        try {
+            $this->service->removeCollaborator($playlist, $collaborator);
 
-        abort_if(
-            $collaborator->is($this->user),
-            Response::HTTP_FORBIDDEN,
-            'You cannot remove yourself from your own playlist.'
-        );
-
-        abort_unless(
-            $playlist->hasCollaborator($collaborator),
-            Response::HTTP_NOT_FOUND,
-            'This user is not a collaborator of this playlist.'
-        );
-
-        $this->service->removeCollaborator($playlist, $collaborator);
+            return response()->noContent();
+        } catch (KoelPlusRequiredException) {
+            abort(Response::HTTP_FORBIDDEN, 'This feature is only available for Plus users.');
+        } catch (CannotRemoveOwnerFromPlaylistException) {
+            abort(Response::HTTP_FORBIDDEN, 'You cannot remove yourself from your own playlist.');
+        } catch (NotAPlaylistCollaboratorException) {
+            abort(Response::HTTP_NOT_FOUND, 'This user is not a collaborator of this playlist.');
+        }
     }
 }

@@ -6,9 +6,9 @@
 
     <main>
       <p class="intro text-secondary">
-        Collaborative playlists allow multiple users to contribute. Please note that songs added to a collaborative
-        playlist are made accessible to all users, and you cannot make a song private as long as it’s still a part of a
-        collaborative playlist.
+        Collaborative playlists allow multiple users to contribute. <br>
+        Please note that songs added to a collaborative playlist are made accessible to all users,
+        and you cannot mark a song as private if it’s still part of a collaborative playlist.
       </p>
 
       <section class="collaborators">
@@ -38,8 +38,10 @@
                 title="This is you!"
               />
             </span>
-            <span v-if="user.id === playlist.user_id" class="role text-secondary">Owner</span>
-            <span v-else class="role text-secondary">Contributor</span>
+            <span class="role text-secondary">
+              <span v-if="user.id === playlist.user_id" class="owner">Owner</span>
+              <span v-else class="contributor">Contributor</span>
+            </span>
             <span v-if="canManageCollaborators" class="actions">
               <Btn v-if="user.id !== playlist.user_id" small red @click.prevent="removeCollaborator(user)">
                 Remove
@@ -106,7 +108,7 @@ const inviteCollaborators = async () => {
 
 const removeCollaborator = async (collaborator: PlaylistCollaborator) => {
   const deadSure = await showConfirmDialog(
-    `Remove ${collaborator.name} as a collaborator? This will remove their contributed songs as well.`
+    `Remove ${collaborator.name} as a collaborator? This will remove their contributions as well.`
   )
 
   if (!deadSure) return
@@ -178,10 +180,7 @@ h2 {
       span {
         display: inline-block;
         min-width: 0;
-      }
-
-      .avatar {
-        display: flex;
+        line-height: 1;
       }
 
       .name {
@@ -192,6 +191,12 @@ h2 {
         text-align: right;
         flex: 0 0 96px;
         text-transform: uppercase;
+
+        span {
+          padding: 3px 4px;
+          border-radius: 4px;
+          border: 1px solid rgba(255, 255, 255, .2);
+        }
       }
 
       .actions {

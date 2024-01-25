@@ -17,8 +17,6 @@ class PrivatizeSongsController extends Controller
         $songs = Song::query()->findMany($request->songs);
         $songs->each(fn ($song) => $this->authorize('own', $song));
 
-        $songService->privatizeSongs($songs);
-
-        return response()->noContent();
+        return response()->json($songService->markSongsAsPrivate($songs));
     }
 }

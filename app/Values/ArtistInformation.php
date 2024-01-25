@@ -8,6 +8,15 @@ final class ArtistInformation implements Arrayable
 {
     use FormatsLastFmText;
 
+    public const JSON_STRUCTURE = [
+        'url',
+        'image',
+        'bio' => [
+            'summary',
+            'full',
+        ],
+    ];
+
     private function __construct(public ?string $url, public ?string $image, public array $bio)
     {
     }

@@ -8,8 +8,8 @@
         <ThumbnailStack :thumbnails="thumbnails" />
       </template>
 
-      <template v-if="songs.length || playlist.collaborators.length" #meta>
-        <CollaboratorsBadge :playlist="playlist" v-if="playlist.collaborators.length" />
+      <template v-if="songs.length || playlist.is_collaborative" #meta>
+        <CollaboratorsBadge :collaborators="collaborators" v-if="collaborators.length" />
         <span>{{ pluralize(songs, 'song') }}</span>
         <span>{{ duration }}</span>
         <a
@@ -30,7 +30,7 @@
           @filter="applyFilter"
           @play-all="playAll"
           @play-selected="playSelected"
-          @refresh="fetchSongs(true)"
+          @refresh="fetchDetails(true)"
         />
       </template>
     </ScreenHeader>
@@ -68,9 +68,9 @@
 import { faFile } from '@fortawesome/free-regular-svg-icons'
 import { differenceBy } from 'lodash'
 import { ref, toRef, watch } from 'vue'
-import { eventBus, pluralize } from '@/utils'
+import { eventBus, logger, pluralize } from '@/utils'
 import { commonStore, playlistStore, songStore } from '@/stores'
-import { downloadService } from '@/services'
+import { downloadService, playlistCollaborationService } from '@/services'
 import { usePlaylistManagement, useRouter, useSongList, useAuthorization, useSongListControls } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -116,14 +116,23 @@ const download = () => downloadService.fromPlaylist(playlist.value!)
 const editPlaylist = () => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist.value!)
 
 const removeSelected = async () => await removeSongsFromPlaylist(playlist.value!, selectedSongs.value)
+let collaborators = ref<PlaylistCollaborator[]>([])
 
-const fetchSongs = async (refresh = false) => {
+const fetchDetails = async (refresh = false) => {
   if (loading.value) return
 
-  loading.value = true
-  songs.value = await songStore.fetchForPlaylist(playlist.value!, refresh)
-  loading.value = false
-  sort()
+  try {
+    [songs.value, collaborators.value] = await Promise.all([
+      songStore.fetchForPlaylist(playlist.value!, refresh),
+      playlistCollaborationService.getCollaborators(playlist.value!),
+    ])
+
+    sort()
+  } catch (e) {
+    logger.error(e)
+  } finally {
+    loading.value = false
+  }
 }
 
 watch(playlistId, async id => {
@@ -135,8 +144,8 @@ watch(playlistId, async id => {
   listConfig.collaborative = false
 
   if (playlist.value) {
-    await fetchSongs()
-    listConfig.collaborative = playlist.value.collaborators.length > 0
+    await fetchDetails()
+    listConfig.collaborative = playlist.value.is_collaborative
     controlsConfig.deletePlaylist = playlist.value.user_id === currentUser.value?.id
   } else {
     await triggerNotFound()
@@ -146,8 +155,8 @@ watch(playlistId, async id => {
 onScreenActivated('Playlist', () => (playlistId.value = getRouteParam('id')!))
 
 eventBus
-  .on('PLAYLIST_UPDATED', async ({ id }) => id === playlistId.value && await fetchSongs())
-  .on('PLAYLIST_COLLABORATOR_REMOVED', async ({ id }) => id === playlistId.value && await fetchSongs())
+  .on('PLAYLIST_UPDATED', async ({ id }) => id === playlistId.value && await fetchDetails())
+  .on('PLAYLIST_COLLABORATOR_REMOVED', async ({ id }) => id === playlistId.value && await fetchDetails())
   .on('PLAYLIST_SONGS_REMOVED', async ({ id }, removed) => {
     if (id !== playlistId.value) return
     songs.value = differenceBy(songs.value, removed, 'id')
