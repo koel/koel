@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Http\Resources\SongResource;
 use App\Models\Album;
 use App\Models\Song;
 use Tests\TestCase;
@@ -16,6 +17,6 @@ class AlbumSongTest extends TestCase
         Song::factory(5)->for($album)->create();
 
         $this->getAs('api/albums/' . $album->id . '/songs')
-            ->assertJsonStructure(['*' => SongTest::JSON_STRUCTURE]);
+            ->assertJsonStructure(['*' => SongResource::JSON_STRUCTURE]);
     }
 }

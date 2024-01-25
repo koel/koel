@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Playlist;
 use App\Models\User;
 use App\Values\SmartPlaylistRule;
 use App\Values\SmartPlaylistRuleGroup;
@@ -12,8 +11,6 @@ use Illuminate\Support\Str;
 
 class PlaylistFactory extends Factory
 {
-    protected $model = Playlist::class;
-
     /** @return array<mixed> */
     public function definition(): array
     {

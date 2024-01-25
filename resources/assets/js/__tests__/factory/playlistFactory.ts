@@ -10,7 +10,7 @@ export default (faker: Faker): Playlist => ({
   is_smart: false,
   rules: [],
   own_songs_only: false,
-  collaborators: []
+  is_collaborative: false,
 })
 
 export const states: Record<string, (faker: Faker) => Omit<Partial<Playlist>, 'type'>> = {

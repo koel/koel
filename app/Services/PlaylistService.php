@@ -8,6 +8,7 @@ use App\Models\Playlist;
 use App\Models\PlaylistFolder as Folder;
 use App\Models\Song;
 use App\Models\User;
+use App\Repositories\SongRepository;
 use App\Values\SmartPlaylistRuleGroupCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +17,10 @@ use Webmozart\Assert\Assert;
 
 class PlaylistService
 {
+    public function __construct(private SongRepository $songRepository)
+    {
+    }
+
     public function createPlaylist(
         string $name,
         User $user,
@@ -78,16 +83,29 @@ class PlaylistService
         return $playlist;
     }
 
-    public function addSongsToPlaylist(Playlist $playlist, Collection|Song|array $songs, User $user): void
+    public function addSongsToPlaylist(Playlist $playlist, Collection|Song|array $songs, User $user): Collection
     {
-        $playlist->addSongs(
-            Collection::wrap($songs)->filter(static fn ($song): bool => !$playlist->songs->contains($song)),
-            $user
-        );
+        return DB::transaction(function () use ($playlist, $songs, $user) {
+            $songs = Collection::wrap($songs);
+            $playlist->addSongs($songs->filter(static fn ($song): bool => !$playlist->songs->contains($song)), $user);
+
+            // if the playlist is collaborative, make the songs public
+            if ($playlist->is_collaborative) {
+                $this->makePlaylistSongsPublic($playlist);
+            }
+
+            // we want a fresh copy of the songs with the possibly updated visibility
+            return $this->songRepository->getManyInCollaborativeContext(ids: $songs->pluck('id')->all(), scopedUser: $user);
+        });
     }
 
     public function removeSongsFromPlaylist(Playlist $playlist, Collection|Song|array $songs): void
     {
         $playlist->removeSongs($songs);
+    }
+
+    public function makePlaylistSongsPublic(Playlist $playlist): void
+    {
+        $playlist->songs()->where('is_public', false)->update(['is_public' => true]);
     }
 }

@@ -30,6 +30,7 @@ use Laravel\Scout\Searchable;
  * @property Carbon $created_at
  * @property bool $own_songs_only
  * @property Collection|array<array-key, User> $collaborators
+ * @property-read bool $is_collaborative
  */
 class Playlist extends Model
 {
@@ -144,7 +145,9 @@ class Playlist extends Model
 
     protected function isCollaborative(): Attribute
     {
-        return Attribute::get(fn (): bool => LicenseFacade::isPlus() && $this->collaborators->isNotEmpty());
+        return Attribute::get(fn (): bool => !$this->is_smart &&
+            LicenseFacade::isPlus()
+            && $this->collaborators->isNotEmpty());
     }
 
     /** @return array<mixed> */

@@ -80,7 +80,7 @@ import {
   useSongMenuMethods
 } from '@/composables'
 
-const { toastSuccess } = useMessageToaster()
+const { toastSuccess, toastError, toastWarning } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { go, getRouteParam, isCurrentScreen } = useRouter()
 const { isAdmin, currentUser } = useAuthorization()
@@ -115,12 +115,23 @@ const normalPlaylists = computed(() => playlists.value.filter(({ is_smart }) => 
 
 const makePublic = () => trigger(async () => {
   await songStore.publicize(songs.value)
-  toastSuccess(`Made ${pluralize(songs.value, 'song')} public to everyone.`)
+  toastSuccess(`Unmarked ${pluralize(songs.value, 'song')} as private.`)
 })
 
 const makePrivate = () => trigger(async () => {
-  await songStore.privatize(songs.value)
-  toastSuccess(`Removed public access to ${pluralize(songs.value, 'song')}.`)
+  const privatizedIds = await songStore.privatize(songs.value)
+
+  if (!privatizedIds.length) {
+    toastError('Songs cannot be marked as private if they’part of a collaborative playlist.')
+    return
+  }
+
+  if (privatizedIds.length < songs.value.length) {
+    toastWarning('Some songs cannot be marked as private as they’re part of a collaborative playlist.')
+    return
+  }
+
+  toastSuccess(`Marked ${pluralize(songs.value, 'song')} as private.`)
 })
 
 const canBeShared = computed(() => !isPlus.value || songs.value[0].is_public)
@@ -136,19 +147,19 @@ const visibilityActions = computed(() => {
   if (visibilities.length === 2) {
     return [
       {
-        label: 'Make Public',
+        label: 'Unmark as Private',
         handler: makePublic
       },
       {
-        label: 'Make Private',
+        label: 'Mark as Private',
         handler: makePrivate
       }
     ]
   }
 
   return visibilities[0]
-    ? [{ label: 'Make Private', handler: makePrivate }]
-    : [{ label: 'Make Public', handler: makePublic }]
+    ? [{ label: 'Mark as Private', handler: makePrivate }]
+    : [{ label: 'Unmark as Private', handler: makePublic }]
 })
 
 const canBeRemovedFromPlaylist = computed(() => {

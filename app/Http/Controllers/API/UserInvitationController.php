@@ -8,7 +8,7 @@ use App\Http\Requests\API\AcceptUserInvitationRequest;
 use App\Http\Requests\API\GetUserInvitationRequest;
 use App\Http\Requests\API\InviteUserRequest;
 use App\Http\Requests\API\RevokeUserInvitationRequest;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\UserProspectResource;
 use App\Models\User;
 use App\Services\AuthenticationService;
 use App\Services\UserInvitationService;
@@ -37,13 +37,13 @@ class UserInvitationController extends Controller
             $this->invitor
         );
 
-        return UserResource::collection($invitees);
+        return UserProspectResource::collection($invitees);
     }
 
     public function get(GetUserInvitationRequest $request)
     {
         try {
-            return UserResource::make($this->invitationService->getUserProspectByToken($request->token));
+            return UserProspectResource::make($this->invitationService->getUserProspectByToken($request->token));
         } catch (InvitationNotFoundException) {
             abort(Response::HTTP_NOT_FOUND, 'The invitation token is invalid.');
         }

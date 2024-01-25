@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\KoelPlus;
 
+use App\Http\Resources\PlaylistResource;
 use App\Models\Playlist;
 use App\Values\SmartPlaylistRule;
-use Tests\Feature\PlaylistTest as BasePlaylistTest;
 use Tests\PlusTestCase;
 
 use function Tests\create_user;
@@ -30,7 +30,7 @@ class PlaylistTest extends PlusTestCase
                 ],
             ],
             'own_songs_only' => true,
-        ], $user)->assertJsonStructure(BasePlaylistTest::JSON_STRUCTURE);
+        ], $user)->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
 
         /** @var Playlist $playlist */
         $playlist = Playlist::query()->latest()->first();
@@ -54,7 +54,7 @@ class PlaylistTest extends PlusTestCase
             'own_songs_only' => true,
             'rules' => $playlist->rules->toArray(),
         ], $playlist->user)
-            ->assertJsonStructure(BasePlaylistTest::JSON_STRUCTURE);
+            ->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
 
         $playlist->refresh();
 

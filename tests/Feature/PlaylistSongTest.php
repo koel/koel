@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Http\Resources\SongResource;
 use App\Models\Playlist;
 use App\Models\Song;
 use Illuminate\Support\Collection;
@@ -18,7 +19,7 @@ class PlaylistSongTest extends TestCase
         $playlist->addSongs(Song::factory(5)->create());
 
         $this->getAs("api/playlists/$playlist->id/songs", $playlist->user)
-            ->assertJsonStructure(['*' => SongTest::JSON_STRUCTURE]);
+            ->assertJsonStructure(['*' => SongResource::JSON_STRUCTURE]);
     }
 
     public function testGetSmartPlaylist(): void
@@ -43,7 +44,7 @@ class PlaylistSongTest extends TestCase
         ]);
 
         $this->getAs("api/playlists/$playlist->id/songs", $playlist->user)
-            ->assertJsonStructure(['*' => SongTest::JSON_STRUCTURE]);
+            ->assertJsonStructure(['*' => SongResource::JSON_STRUCTURE]);
     }
 
     public function testNonOwnerCannotAccessPlaylist(): void

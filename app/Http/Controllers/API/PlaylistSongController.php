@@ -14,7 +14,9 @@ use App\Repositories\SongRepository;
 use App\Services\PlaylistService;
 use App\Services\SmartPlaylistService;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Collection;
 
 class PlaylistSongController extends Controller
 {
@@ -36,11 +38,7 @@ class PlaylistSongController extends Controller
 
         $this->authorize('collaborate', $playlist);
 
-        $songs = $this->songRepository->getByStandardPlaylist($playlist, $this->user);
-
-        return License::isPlus()
-            ? CollaborativeSongResource::collection($songs)
-            : SongResource::collection($songs);
+        return self::createResourceCollection($this->songRepository->getByStandardPlaylist($playlist, $this->user));
     }
 
     public function store(Playlist $playlist, AddSongsToPlaylistRequest $request)
@@ -50,17 +48,21 @@ class PlaylistSongController extends Controller
         $this->authorize('collaborate', $playlist);
 
         $songs = $this->songRepository->getMany(ids: $request->songs, scopedUser: $this->user);
-        $songs->each(fn ($song) => $this->authorize('access', $song));
 
-        $this->playlistService->addSongsToPlaylist($playlist, $songs, $this->user);
+        return self::createResourceCollection($this->playlistService->addSongsToPlaylist($playlist, $songs, $this->user));
+    }
 
-        return response()->noContent();
+    private static function createResourceCollection(Collection $songs): ResourceCollection
+    {
+        return License::isPlus()
+            ? CollaborativeSongResource::collection($songs)
+            : SongResource::collection($songs);
     }
 
     public function destroy(Playlist $playlist, RemoveSongsFromPlaylistRequest $request)
     {
         abort_if($playlist->is_smart, Response::HTTP_FORBIDDEN, 'Smart playlist content is automatically generated');
-        
+
         $this->authorize('collaborate', $playlist);
         $this->playlistService->removeSongsFromPlaylist($playlist, $request->songs);
 

@@ -538,15 +538,9 @@ class SmartPlaylistServiceTest extends TestCase
         Collection $matches,
         array $rules,
         ?User $owner = null,
-        bool $ownSongsOnly = false
     ): void {
         /** @var Playlist $playlist */
-        $playlist = Playlist::factory()
-            ->for($owner ?? create_admin())
-            ->create([
-                'rules' => $rules,
-                'own_songs_only' => $ownSongsOnly,
-            ]);
+        $playlist = Playlist::factory()->for($owner ?? create_admin())->create(['rules' => $rules]);
 
         self::assertEqualsCanonicalizing(
             $matches->pluck('id')->all(),

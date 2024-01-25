@@ -9,6 +9,22 @@ final class AlbumInformation implements Arrayable
 {
     use FormatsLastFmText;
 
+    public const JSON_STRUCTURE = [
+        'url',
+        'cover',
+        'wiki' => [
+            'summary',
+            'full',
+        ],
+        'tracks' => [
+            '*' => [
+                'title',
+                'length',
+                'url',
+            ],
+        ],
+    ];
+
     private function __construct(public ?string $url, public ?string $cover, public array $wiki, public array $tracks)
     {
     }

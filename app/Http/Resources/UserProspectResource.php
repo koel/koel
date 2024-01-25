@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserResource extends JsonResource
+class UserProspectResource extends JsonResource
 {
     public const JSON_STRUCTURE = [
         'type',
@@ -14,7 +14,6 @@ class UserResource extends JsonResource
         'email',
         'avatar',
         'is_admin',
-        'preferences',
         'is_prospect',
     ];
 
@@ -33,7 +32,6 @@ class UserResource extends JsonResource
             'email' => $this->user->email,
             'avatar' => $this->user->avatar,
             'is_admin' => $this->user->is_admin,
-            'preferences' => $this->user->preferences,
             'is_prospect' => $this->user->is_prospect,
         ];
     }

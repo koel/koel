@@ -7,6 +7,14 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class QueueStateResource extends JsonResource
 {
+    public const JSON_STRUCTURE = [
+        'songs' => [
+            SongResource::JSON_STRUCTURE,
+        ],
+        'current_song',
+        'playback_position',
+    ];
+
     public function __construct(private QueueState $state)
     {
         parent::__construct($state);

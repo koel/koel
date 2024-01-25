@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Http\Resources\SongResource;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
@@ -12,54 +13,12 @@ use function Tests\create_admin;
 
 class SongTest extends TestCase
 {
-    public const JSON_STRUCTURE = [
-        'type',
-        'id',
-        'title',
-        'lyrics',
-        'album_id',
-        'album_name',
-        'artist_id',
-        'artist_name',
-        'album_artist_id',
-        'album_artist_name',
-        'album_cover',
-        'length',
-        'liked',
-        'play_count',
-        'track',
-        'genre',
-        'year',
-        'disc',
-        'is_public',
-        'created_at',
-    ];
-
-    public const JSON_COLLECTION_STRUCTURE = [
-        'data' => [
-            '*' => self::JSON_STRUCTURE,
-        ],
-        'links' => [
-            'first',
-            'last',
-            'prev',
-            'next',
-        ],
-        'meta' => [
-            'current_page',
-            'from',
-            'path',
-            'per_page',
-            'to',
-        ],
-    ];
-
     public function testIndex(): void
     {
         Song::factory(10)->create();
 
-        $this->getAs('api/songs')->assertJsonStructure(self::JSON_COLLECTION_STRUCTURE);
-        $this->getAs('api/songs?sort=title&order=desc')->assertJsonStructure(self::JSON_COLLECTION_STRUCTURE);
+        $this->getAs('api/songs')->assertJsonStructure(SongResource::PAGINATION_JSON_STRUCTURE);
+        $this->getAs('api/songs?sort=title&order=desc')->assertJsonStructure(SongResource::PAGINATION_JSON_STRUCTURE);
     }
 
     public function testShow(): void
@@ -67,7 +26,7 @@ class SongTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create();
 
-        $this->getAs('api/songs/' . $song->id)->assertJsonStructure(self::JSON_STRUCTURE);
+        $this->getAs('api/songs/' . $song->id)->assertJsonStructure(SongResource::JSON_STRUCTURE);
     }
 
     public function testDelete(): void

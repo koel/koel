@@ -2,46 +2,56 @@
 
 namespace Tests\Integration\KoelPlus\Services;
 
-use App\Facades\License;
+use App\Models\Playlist;
 use App\Models\Song;
-use App\Services\License\FakePlusLicenseService;
-use Tests\Integration\Services\SmartPlaylistServiceTest as BaseSmartPlaylistServiceTest;
+use App\Services\SmartPlaylistService;
+use Illuminate\Support\Str;
+use Tests\PlusTestCase;
 
 use function Tests\create_user;
 
-class SmartPlaylistServiceTest extends BaseSmartPlaylistServiceTest
+class SmartPlaylistServiceTest extends PlusTestCase
 {
+    private SmartPlaylistService $service;
+
     public function setUp(): void
     {
         parent::setUp();
 
-        License::swap(app()->make(FakePlusLicenseService::class));
+        $this->service = app(SmartPlaylistService::class);
     }
 
     public function testOwnSongsOnlyOption(): void
     {
         $owner = create_user();
         $matches = Song::factory()->count(3)->for($owner, 'owner')->create(['title' => 'Foo Something']);
+
         Song::factory()->count(2)->create(['title' => 'Foo Something']);
         Song::factory()->count(3)->create(['title' => 'Bar Something']);
 
-        $this->assertMatchesAgainstRules(
-            matches: $matches,
-            rules: [
-                [
-                    'id' => 'aaf61bc3-3bdf-4fa4-b9f3-f7f7838ed502',
-                    'rules' => [
-                        [
-                            'id' => '70b08372-b733-4fe2-aedb-639f77120d6d',
-                            'model' => 'title',
-                            'operator' => 'is',
-                            'value' => ['Foo Something'],
+        /** @var Playlist $playlist */
+        $playlist = Playlist::factory()
+            ->for($owner)
+            ->create([
+                'rules' =>  [
+                    [
+                        'id' => Str::uuid()->toString(),
+                        'rules' => [
+                            [
+                                'id' => Str::uuid()->toString(),
+                                'model' => 'title',
+                                'operator' => 'is',
+                                'value' => ['Foo Something'],
+                            ],
                         ],
                     ],
                 ],
-            ],
-            owner: $owner,
-            ownSongsOnly: true
+                'own_songs_only' => true,
+            ]);
+
+        self::assertEqualsCanonicalizing(
+            $matches->pluck('id')->all(),
+            $this->service->getSongs($playlist, $owner)->pluck('id')->all()
         );
     }
 }

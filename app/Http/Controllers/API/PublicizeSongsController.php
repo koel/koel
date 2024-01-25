@@ -17,7 +17,7 @@ class PublicizeSongsController extends Controller
         $songs = Song::query()->findMany($request->songs);
         $songs->each(fn ($song) => $this->authorize('own', $song));
 
-        $songService->publicizeSongs($songs);
+        $songService->markSongsAsPublic($songs);
 
         return response()->noContent();
     }

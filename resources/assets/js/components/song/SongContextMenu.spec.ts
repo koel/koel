@@ -327,7 +327,7 @@ new class extends UnitTestCase {
       await this.be(user).renderComponent(songs)
       const privatizeMock = this.mock(songStore, 'privatize')
 
-      await this.user.click(screen.getByText('Make Private'))
+      await this.user.click(screen.getByText('Mark as Private'))
 
       expect(privatizeMock).toHaveBeenCalledWith(songs)
     })
@@ -344,7 +344,7 @@ new class extends UnitTestCase {
       await this.be(user).renderComponent(songs)
       const publicizeMock = this.mock(songStore, 'publicize')
 
-      await this.user.click(screen.getByText('Make Public'))
+      await this.user.click(screen.getByText('Unmark as Private'))
 
       expect(publicizeMock).toHaveBeenCalledWith(songs)
     })
@@ -361,8 +361,8 @@ new class extends UnitTestCase {
 
       await this.be(user).renderComponent(songs)
 
-      expect(screen.queryByText('Make Public')).toBeNull()
-      expect(screen.queryByText('Make Private')).toBeNull()
+      expect(screen.queryByText('Unmark as Private')).toBeNull()
+      expect(screen.queryByText('Mark as Private')).toBeNull()
     })
 
     it('has both options to make public and private if songs have mixed visibilities', async () => {
@@ -379,8 +379,8 @@ new class extends UnitTestCase {
 
       await this.be(owner).renderComponent(songs)
 
-      screen.getByText('Make Public')
-      screen.getByText('Make Private')
+      screen.getByText('Unmark as Private')
+      screen.getByText('Mark as Private')
     })
 
     it('does not have an option to make songs public or private oin Community edition', async () => {
@@ -392,8 +392,8 @@ new class extends UnitTestCase {
 
       await this.be(owner).renderComponent(songs)
 
-      expect(screen.queryByText('Make Public')).toBeNull()
-      expect(screen.queryByText('Make Private')).toBeNull()
+      expect(screen.queryByText('Unmark as Private')).toBeNull()
+      expect(screen.queryByText('Mark as Private')).toBeNull()
     })
   }
 }

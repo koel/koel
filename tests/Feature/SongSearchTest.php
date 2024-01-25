@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Http\Resources\SongResource;
 use App\Models\Song;
 use Tests\TestCase;
 
@@ -12,6 +13,6 @@ class SongSearchTest extends TestCase
         Song::factory(10)->create(['title' => 'A Foo Song']);
 
         $this->getAs('api/search/songs?q=foo')
-            ->assertJsonStructure(['*' => SongTest::JSON_STRUCTURE]);
+            ->assertJsonStructure(['*' => SongResource::JSON_STRUCTURE]);
     }
 }

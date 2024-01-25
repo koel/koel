@@ -4,6 +4,7 @@ import { logger, uuid } from '@/utils'
 import { cache, http } from '@/services'
 import models from '@/config/smart-playlist/models'
 import operators from '@/config/smart-playlist/operators'
+import { songStore } from '@/stores/songStore'
 
 type CreatePlaylistRequestData = {
   name: Playlist['name']
@@ -94,7 +95,11 @@ export const playlistStore = {
       return playlist
     }
 
-    await http.post(`playlists/${playlist.id}/songs`, { songs: songs.map(song => song.id) })
+    const updatedSongs = await http.post<Song[]>(`playlists/${playlist.id}/songs`, {
+      songs: songs.map(song => song.id)
+    })
+
+    songStore.syncWithVault(updatedSongs)
     cache.remove(['playlist.songs', playlist.id])
 
     return playlist

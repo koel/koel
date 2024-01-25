@@ -2,6 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Http\Resources\AlbumResource;
+use App\Http\Resources\ArtistResource;
+use App\Http\Resources\SongResource;
 use App\Models\Interaction;
 use Tests\TestCase;
 
@@ -17,12 +20,12 @@ class OverviewTest extends TestCase
 
         $this->getAs('api/overview', $user)
             ->assertJsonStructure([
-                'most_played_songs' => ['*' => SongTest::JSON_STRUCTURE],
-                'recently_played_songs' => ['*' => SongTest::JSON_STRUCTURE],
-                'recently_added_albums' => ['*' => AlbumTest::JSON_STRUCTURE],
-                'recently_added_songs' => ['*' => SongTest::JSON_STRUCTURE],
-                'most_played_artists' => ['*' => ArtistTest::JSON_STRUCTURE],
-                'most_played_albums' => ['*' => AlbumTest::JSON_STRUCTURE],
+                'most_played_songs' => ['*' => SongResource::JSON_STRUCTURE],
+                'recently_played_songs' => ['*' => SongResource::JSON_STRUCTURE],
+                'recently_added_albums' => ['*' => AlbumResource::JSON_STRUCTURE],
+                'recently_added_songs' => ['*' => SongResource::JSON_STRUCTURE],
+                'most_played_artists' => ['*' => ArtistResource::JSON_STRUCTURE],
+                'most_played_albums' => ['*' => AlbumResource::JSON_STRUCTURE],
             ]);
     }
 }

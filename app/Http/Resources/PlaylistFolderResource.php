@@ -7,6 +7,14 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class PlaylistFolderResource extends JsonResource
 {
+    public const JSON_STRUCTURE = [
+        'type',
+        'id',
+        'name',
+        'user_id',
+        'created_at',
+    ];
+
     public function __construct(private PlaylistFolder $folder)
     {
         parent::__construct($folder);
