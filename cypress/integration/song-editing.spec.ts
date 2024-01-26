@@ -24,7 +24,7 @@ context('Song Editing', { scrollBehavior: false }, () => {
       cy.get('[name=title]').clear().type('New Title')
       cy.findByTestId('edit-song-lyrics-tab').click()
       cy.get('textarea[name=lyrics]').should('be.visible').and('contain.value', 'Sample song lyrics')
-        .clear().type('New lyrics{enter}Supports multiline.')
+        .clear().type('New lyrics{enter}Fake multiline.')
 
       cy.get('button[type=submit]').click()
     })
