@@ -5,7 +5,7 @@ import { eventBus } from '@/utils'
 import factory from '@/__tests__/factory'
 import { screen, waitFor } from '@testing-library/vue'
 import { songStore, userStore } from '@/stores'
-import { playbackService, playlistCollaborationService } from '@/services'
+import { playbackService } from '@/services'
 import { queueStore } from '@/stores'
 import { MessageToasterStub } from '@/__tests__/stubs'
 import PlaylistContextMenu from './PlaylistContextMenu.vue'
@@ -153,20 +153,15 @@ new class extends UnitTestCase {
       expect(screen.queryByText('Delete')).toBeNull()
     })
 
-    it('invites collaborators', async () => {
+    it('opens collaboration form', async () => {
       this.enablePlusEdition()
       const playlist = factory<Playlist>('playlist')
       await this.renderComponent(playlist)
+      const emitMock = this.mock(eventBus, 'emit')
 
-      const createInviteLinkMock = this.mock(playlistCollaborationService, 'createInviteLink')
-        .mockResolvedValue('https://koel.app/invite/123')
+      await this.user.click(screen.getByText('Collaborate…'))
 
-      await this.user.click(screen.getByText('Invite Collaborators'))
-
-      await waitFor(async () => {
-        expect(createInviteLinkMock).toHaveBeenCalledWith(playlist)
-        expect(await navigator.clipboard.readText()).equal('https://koel.app/invite/123')
-      })
+      expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_PLAYLIST_COLLABORATION', playlist)
     })
   }
 }

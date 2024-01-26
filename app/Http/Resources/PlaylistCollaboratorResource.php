@@ -23,7 +23,7 @@ class PlaylistCollaboratorResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'type' => 'playlist_collaborators',
+            'type' => 'playlist-collaborators',
             'id' => $this->collaborator->id,
             'name' => $this->collaborator->name,
             'avatar' => $this->collaborator->avatar,
