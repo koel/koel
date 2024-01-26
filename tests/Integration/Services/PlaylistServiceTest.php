@@ -9,6 +9,7 @@ use App\Services\PlaylistService;
 use App\Values\SmartPlaylistRuleGroupCollection;
 use Illuminate\Support\Collection;
 use InvalidArgumentException as BaseInvalidArgumentException;
+use Tests\PlusTestCase;
 use Tests\TestCase;
 use Webmozart\Assert\InvalidArgumentException;
 
@@ -186,5 +187,50 @@ class PlaylistServiceTest extends TestCase
             name: 'foo',
             ownSongsOnly: true
         );
+    }
+
+    public function testAddSongsToPlaylist(): void
+    {
+        /** @var Playlist $playlist */
+        $playlist = Playlist::factory()->create();
+        $playlist->addSongs(Song::factory(3)->create());
+        $songs = Song::factory(2)->create();
+
+        $addedSongs = $this->service->addSongsToPlaylist($playlist, $songs, $playlist->user);
+        $playlist->refresh();
+
+        self::assertCount(2, $addedSongs);
+        self::assertCount(5, $playlist->songs);
+        self::assertEqualsCanonicalizing($addedSongs->pluck('id')->all(), $songs->pluck('id')->all());
+        $songs->each(static fn (Song $song) => self::assertTrue($playlist->songs->contains($song)));
+    }
+
+    public function testPrivateSongsAreMadePublicWhenAddedToCollaborativePlaylist(): void
+    {
+        PlusTestCase::enablePlusLicense();
+
+        /** @var Playlist $playlist */
+        $playlist = Playlist::factory()->create();
+        $user = create_user();
+        $playlist->collaborators()->attach($user);
+        $playlist->refresh();
+        self::assertTrue($playlist->is_collaborative);
+
+        $songs = Song::factory(2)->create(['is_public' => false]);
+
+        $this->service->addSongsToPlaylist($playlist, $songs, $user);
+
+        $songs->each(static fn (Song $song) => self::assertTrue($song->refresh()->is_public));
+    }
+
+    public function testMakePlaylistSongsPublic(): void
+    {
+        /** @var Playlist $playlist */
+        $playlist = Playlist::factory()->create();
+        $playlist->addSongs(Song::factory(2)->create(['is_public' => false]));
+
+        $this->service->makePlaylistSongsPublic($playlist);
+
+        $playlist->songs->each(static fn (Song $song) => self::assertTrue($song->is_public));
     }
 }
