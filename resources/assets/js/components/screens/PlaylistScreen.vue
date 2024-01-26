@@ -76,7 +76,7 @@ import { usePlaylistManagement, useRouter, useSongList, useAuthorization, useSon
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
-import CollaboratorsBadge from '@/components/playlist/CollaboratorsBadge.vue'
+import CollaboratorsBadge from '@/components/playlist/PlaylistCollaboratorsBadge.vue'
 
 const { currentUser } = useAuthorization()
 const { triggerNotFound, getRouteParam, onScreenActivated } = useRouter()
@@ -124,7 +124,7 @@ const fetchDetails = async (refresh = false) => {
   try {
     [songs.value, collaborators.value] = await Promise.all([
       songStore.fetchForPlaylist(playlist.value!, refresh),
-      playlistCollaborationService.getCollaborators(playlist.value!),
+      playlistCollaborationService.fetchCollaborators(playlist.value!),
     ])
 
     sort()

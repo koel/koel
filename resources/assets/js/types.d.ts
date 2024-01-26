@@ -223,7 +223,9 @@ interface PlaylistFolder {
   // we don't need to keep track of the playlists here, as they can be computed using their folder_id value
 }
 
-type PlaylistCollaborator = Pick<User, 'id' | 'name' | 'avatar'>
+type PlaylistCollaborator = Pick<User, 'id' | 'name' | 'avatar'> & {
+  type: 'playlist-collaborators'
+}
 
 interface Playlist {
   type: 'playlists'

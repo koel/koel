@@ -14,7 +14,7 @@ export const playlistCollaborationService = {
     return http.post<Playlist>(`playlists/collaborators/accept`, { token })
   },
 
-  async getCollaborators (playlist: Playlist) {
+  async fetchCollaborators (playlist: Playlist) {
     return http.get<PlaylistCollaborator[]>(`playlists/${playlist.id}/collaborators`)
   },
 

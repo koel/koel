@@ -24,7 +24,7 @@ class PlaylistFolderResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'type' => 'playlist_folders',
+            'type' => 'playlist-folders',
             'id' => $this->folder->id,
             'name' => $this->folder->name,
             'user_id' => $this->folder->user_id,

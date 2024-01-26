@@ -13,6 +13,7 @@ import albumInfoFactory from '@/__tests__/factory/albumInfoFactory'
 import artistInfoFactory from '@/__tests__/factory/artistInfoFactory'
 import youTubeVideoFactory from '@/__tests__/factory/youTubeVideoFactory'
 import genreFactory from '@/__tests__/factory/genreFactory'
+import playlistCollaboratorFactory from '@/__tests__/factory/playlistCollaboratorFactory'
 
 export default factory
   .define('artist', faker => artistFactory(faker), artistStates)
@@ -29,3 +30,4 @@ export default factory
   .define('playlist', faker => playlistFactory(faker), playlistStates)
   .define('playlist-folder', faker => playlistFolderFactory(faker))
   .define('user', faker => userFactory(faker), userStates)
+  .define('playlist-collaborator', faker => playlistCollaboratorFactory(faker))
