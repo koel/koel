@@ -35,7 +35,7 @@ export const artistStore = {
   },
 
   async uploadImage (artist: Artist, image: string) {
-    artist.image = (await http.put<{ imageUrl: string }>(`artist/${artist.id}/image`, { image })).imageUrl
+    artist.image = (await http.put<{ image_url: string }>(`artist/${artist.id}/image`, { image })).image_url
 
     // sync to vault
     this.byId(artist.id)!.image = artist.image

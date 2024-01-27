@@ -27,7 +27,7 @@ import { computed, ref, toRef, toRefs } from 'vue'
 import { albumStore, artistStore, queueStore, songStore, userStore } from '@/stores'
 import { playbackService } from '@/services'
 import { defaultCover, fileReader, logger } from '@/utils'
-import { useAuthorization, useMessageToaster, useRouter } from '@/composables'
+import { useAuthorization, useMessageToaster, useRouter, useKoelPlus } from '@/composables'
 
 const VALID_IMAGE_TYPES = ['image/jpeg', 'image/gif', 'image/png', 'image/webp']
 
@@ -39,6 +39,10 @@ const { entity } = toRefs(props)
 
 const droppable = ref(false)
 const user = toRef(userStore.state, 'current')
+
+const { isAdmin } = useAuthorization()
+const { isPlus } = useKoelPlus()
+const { toastError } = useMessageToaster()
 
 const forAlbum = computed(() => entity.value.type === 'albums')
 const sortFields = computed(() => forAlbum.value ? ['disc', 'track'] : ['album_id', 'disc', 'track'])
@@ -54,7 +58,7 @@ const buttonLabel = computed(() => forAlbum.value
   : `Play all songs by ${entity.value.name}`
 )
 
-const { isAdmin: allowsUpload } = useAuthorization()
+const allowsUpload = computed(() => isAdmin.value || isPlus.value) // for Plus, the logic is handled in the backend
 
 const playOrQueue = async (event: MouseEvent) => {
   const songs = forAlbum.value
@@ -101,6 +105,8 @@ const onDrop = async (event: DragEvent) => {
     return
   }
 
+  const backupImage = forAlbum.value ? (entity.value as Album).cover : (entity.value as Artist).image
+
   try {
     const fileData = await fileReader.readAsDataUrl(event.dataTransfer!.files[0])
 
@@ -113,6 +119,16 @@ const onDrop = async (event: DragEvent) => {
       await artistStore.uploadImage(entity.value as Artist, fileData)
     }
   } catch (e) {
+    const message = e?.response?.data?.message ?? 'Unknown error.'
+    toastError(`Failed to upload: ${message}`)
+
+    // restore the backup image
+    if (forAlbum.value) {
+      (entity.value as Album).cover = backupImage!
+    } else {
+      (entity.value as Artist).image = backupImage!
+    }
+
     logger.error(e)
   }
 }

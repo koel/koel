@@ -47,7 +47,7 @@ export const albumStore = {
    * @param {string} cover The content data string of the cover
    */
   async uploadCover (album: Album, cover: string) {
-    album.cover = (await http.put<{ coverUrl: string }>(`album/${album.id}/cover`, { cover })).coverUrl
+    album.cover = (await http.put<{ cover_url: string }>(`album/${album.id}/cover`, { cover })).cover_url
     songStore.byAlbum(album).forEach(song => song.album_cover = album.cover)
 
     // sync to vault
