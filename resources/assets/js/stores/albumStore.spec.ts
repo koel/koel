@@ -57,7 +57,7 @@ new class extends UnitTestCase {
       const album = factory<Album>('album')
       albumStore.syncWithVault(album)
       const songsInAlbum = factory<Song>('song', 3, { album_id: album.id })
-      const putMock = this.mock(http, 'put').mockResolvedValue({ coverUrl: 'http://test/cover.jpg' })
+      const putMock = this.mock(http, 'put').mockResolvedValue({ cover_url: 'http://test/cover.jpg' })
       this.mock(songStore, 'byAlbum', songsInAlbum)
 
       await albumStore.uploadCover(album, 'data://cover')

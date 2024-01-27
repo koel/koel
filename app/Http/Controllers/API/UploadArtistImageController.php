@@ -15,6 +15,8 @@ class UploadArtistImageController extends Controller
         Artist $artist,
         MediaMetadataService $mediaMetadataService
     ) {
+        $this->authorize('update', $artist);
+
         $mediaMetadataService->writeArtistImage(
             $artist,
             $request->getFileContentAsBinaryString(),
@@ -23,6 +25,6 @@ class UploadArtistImageController extends Controller
 
         event(new LibraryChanged());
 
-        return response()->json(['imageUrl' => $artist->image]);
+        return response()->json(['image_url' => $artist->image]);
     }
 }

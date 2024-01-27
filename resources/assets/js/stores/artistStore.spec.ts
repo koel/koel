@@ -70,7 +70,7 @@ new class extends UnitTestCase {
     it('uploads an image for an artist', async () => {
       const artist = factory<Artist>('artist')
       artistStore.syncWithVault(artist)
-      const putMock = this.mock(http, 'put').mockResolvedValue({ imageUrl: 'http://test/img.jpg' })
+      const putMock = this.mock(http, 'put').mockResolvedValue({ image_url: 'http://test/img.jpg' })
 
       await artistStore.uploadImage(artist, 'data://image')
 

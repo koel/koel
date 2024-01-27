@@ -122,7 +122,12 @@ class Song extends Model
 
     public function accessibleBy(User $user): bool
     {
-        return $this->is_public || $this->owner_id === $user->id;
+        return $this->is_public || $this->ownedBy($user);
+    }
+
+    public function ownedBy(User $user): bool
+    {
+        return $this->owner_id === $user->id;
     }
 
     protected function lyrics(): Attribute

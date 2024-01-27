@@ -12,6 +12,8 @@ class UploadAlbumCoverController extends Controller
 {
     public function __invoke(UploadAlbumCoverRequest $request, Album $album, MediaMetadataService $mediaMetadataService)
     {
+        $this->authorize('update', $album);
+
         $mediaMetadataService->writeAlbumCover(
             $album,
             $request->getFileContentAsBinaryString(),
@@ -20,6 +22,6 @@ class UploadAlbumCoverController extends Controller
 
         event(new LibraryChanged());
 
-        return response()->json(['coverUrl' => $album->cover]);
+        return response()->json(['cover_url' => $album->cover]);
     }
 }

@@ -15,11 +15,6 @@ abstract class MediaImageUpdateRequest extends Request
         ];
     }
 
-    public function authorize(): bool
-    {
-        return auth()->user()->is_admin;
-    }
-
     public function getFileContentAsBinaryString(): string
     {
         return base64_decode(Str::after($this->{$this->getImageFieldName()}, ','), true);
