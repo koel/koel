@@ -194,7 +194,7 @@ class SongRepository extends Repository
                         );
             })
             ->where('playlists.id', $playlist->id)
-            ->orderBy('songs.title')
+            ->orderBy('playlist_song.position')
             ->get();
     }
 

@@ -1,6 +1,6 @@
 import { reactive } from 'vue'
 import { differenceBy, unionBy } from 'lodash'
-import { arrayify, logger } from '@/utils'
+import { arrayify, logger, moveItemsInList } from '@/utils'
 import { http } from '@/services'
 import { songStore } from '@/stores'
 
@@ -92,15 +92,8 @@ export const queueStore = {
   /**
    * Move some songs to after a target.
    */
-  move (songs: Song | Song[], target: Song) {
-    const targetIndex = this.indexOf(target)
-    const movedSongs = arrayify(songs)
-
-    movedSongs.forEach(song => {
-      this.all.splice(this.indexOf(song), 1)
-      this.all.splice(targetIndex, 0, reactive(song))
-    })
-
+  move (songs: Song | Song[], target: Song, type: MoveType) {
+    this.state.songs = moveItemsInList(this.state.songs, songs, target, type)
     this.saveState()
   },
 

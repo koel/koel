@@ -11,7 +11,7 @@ exports[`renders the modal 1`] = `
       <h2 data-v-886145d2=""><span data-v-886145d2="">Current Collaborators</span>
         <!--v-if-->
       </h2>
-      <div data-v-886145d2=""><br data-v-886145d2="" data-testid="CollaboratorList" playlist="[object Object]"></div>
+      <div data-v-886145d2="" class="collaborators-wrapper"><br data-v-886145d2="" data-testid="CollaboratorList" playlist="[object Object]"></div>
     </section>
   </main>
   <footer data-v-886145d2=""><button data-v-e368fe26="" data-v-886145d2="">Close</button></footer>

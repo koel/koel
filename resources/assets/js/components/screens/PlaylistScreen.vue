@@ -43,6 +43,7 @@
       @press:delete="removeSelected"
       @press:enter="onPressEnter"
       @scroll-breakpoint="onScrollBreakpoint"
+      @reorder="onReorder"
     />
 
     <ScreenEmptyState v-if="!songs.length && !loading">
@@ -67,8 +68,8 @@
 <script lang="ts" setup>
 import { faFile } from '@fortawesome/free-regular-svg-icons'
 import { differenceBy } from 'lodash'
-import { ref, toRef, watch } from 'vue'
-import { eventBus, logger, pluralize } from '@/utils'
+import { computed, reactive, ref, toRef, watch } from 'vue'
+import { arrayify, eventBus, logger, pluralize } from '@/utils'
 import { commonStore, playlistStore, songStore } from '@/stores'
 import { downloadService, playlistCollaborationService } from '@/services'
 import { usePlaylistManagement, useRouter, useSongList, useAuthorization, useSongListControls } from '@/composables'
@@ -97,12 +98,13 @@ const {
   selectedSongs,
   showingControls,
   isPhone,
+  sortField,
   onPressEnter,
   playAll,
   playSelected,
   applyFilter,
   onScrollBreakpoint,
-  sort,
+  sort: baseSort,
   config: listConfig
 } = useSongList(ref<Song[] | CollaborativeSong[]>([]))
 
@@ -124,10 +126,13 @@ const fetchDetails = async (refresh = false) => {
   try {
     [songs.value, collaborators.value] = await Promise.all([
       songStore.fetchForPlaylist(playlist.value!, refresh),
-      playlistCollaborationService.fetchCollaborators(playlist.value!),
+      playlist.value!.is_collaborative
+        ? playlistCollaborationService.fetchCollaborators(playlist.value!)
+        : Promise.resolve<PlaylistCollaborator[]>([])
     ])
 
-    sort()
+    sortField.value ??= (playlist.value?.is_smart ? 'title' : 'position')
+    sort(sortField.value, 'asc')
   } catch (e) {
     logger.error(e)
   } finally {
@@ -135,8 +140,26 @@ const fetchDetails = async (refresh = false) => {
   }
 }
 
+const sort = (field: SongListSortField | null, order: SortOrder) => {
+  listConfig.reorderable = field === 'position'
+
+  if (field !== 'position') {
+    return baseSort(field, order)
+  }
+
+  // To sort by position, we simply re-assign the songs array from the playlist, which maintains the original order.
+  songs.value = playlist.value!.songs!
+}
+
+const onReorder = (target: Song, type: MoveType) => {
+  playlistStore.moveSongsInPlaylist(playlist.value!, selectedSongs.value, target, type)
+}
+
 watch(playlistId, async id => {
   if (!id) return
+
+  // sort field will be determined later by the playlist's type
+  sortField.value = null
 
   playlist.value = playlistStore.byId(id)
 
@@ -146,6 +169,7 @@ watch(playlistId, async id => {
   if (playlist.value) {
     await fetchDetails()
     listConfig.collaborative = playlist.value.is_collaborative
+    listConfig.hasCustomSort = !playlist.value.is_smart
     controlsConfig.deletePlaylist = playlist.value.user_id === currentUser.value?.id
   } else {
     await triggerNotFound()

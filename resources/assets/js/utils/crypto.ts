@@ -8,5 +8,5 @@ export const uuid = () => {
 
   return typeof window.crypto?.randomUUID === 'function'
     ? window.crypto.randomUUID()
-    : window.URL.createObjectURL(new Blob([])).substring(31)
+    : URL.createObjectURL(new Blob([])).split(/[:\/]/g).pop()
 }

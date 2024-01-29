@@ -66,7 +66,7 @@ class PlaylistSongTest extends TestCase
         $songs = Song::factory(2)->create();
 
         $this->postAs("api/playlists/$playlist->id/songs", ['songs' => $songs->pluck('id')->all()], $playlist->user)
-            ->assertNoContent();
+            ->assertSuccessful();
 
         self::assertEqualsCanonicalizing($songs->pluck('id')->all(), $playlist->songs->pluck('id')->all());
     }

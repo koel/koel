@@ -13,10 +13,11 @@ new class extends UnitTestCase {
   private async renderComponent (songs: Song[]) {
     playlist = playlist || factory<Playlist>('playlist')
     playlistStore.init([playlist])
+    playlist.songs = songs
 
     const fetchMock = this.mock(songStore, 'fetchForPlaylist').mockResolvedValue(songs)
 
-    this.render(PlaylistScreen)
+    const rendered = this.render(PlaylistScreen)
 
     await this.router.activateRoute({
       path: `playlists/${playlist.id}`,
@@ -25,7 +26,7 @@ new class extends UnitTestCase {
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalledWith(playlist, false))
 
-    return { fetchMock }
+    return { rendered, fetchMock }
   }
 
   protected test () {
@@ -51,7 +52,7 @@ new class extends UnitTestCase {
       const downloadMock = this.mock(downloadService, 'fromPlaylist')
       await this.renderComponent(factory<Song>('song', 10))
 
-      await this.tick()
+      await this.tick(2)
       await this.user.click(screen.getByRole('button', { name: 'Download All' }))
 
       await waitFor(() => expect(downloadMock).toHaveBeenCalledWith(playlist))

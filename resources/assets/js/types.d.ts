@@ -237,6 +237,7 @@ interface Playlist {
   is_collaborative: boolean
   rules: SmartPlaylistRuleGroup[]
   own_songs_only: boolean
+  songs?: Song[]
 }
 
 type PlaylistLike = Playlist | FavoriteList | RecentlyPlayedList
@@ -257,8 +258,22 @@ interface YouTubeVideo {
   }
 }
 
-interface UserPreferences {
-  lastfm_session_key?: string
+interface UserPreferences extends Record<string, any> {
+  volume: number
+  show_now_playing_notification: boolean
+  repeat_mode: RepeatMode
+  confirm_before_closing: boolean
+  equalizer: EqualizerPreset,
+  artists_view_mode: ArtistAlbumViewMode | null,
+  albums_view_mode: ArtistAlbumViewMode | null,
+  transcode_on_mobile: boolean
+  support_bar_no_bugging: boolean
+  show_album_art_overlay: boolean
+  lyrics_zoom_level: number | null
+  theme?: Theme['id'] | null
+  visualizer?: Visualizer['id'] | null
+  active_extra_panel_tab: ExtraPanelTab | null
+  make_uploads_public: boolean
 }
 
 interface User {
@@ -382,11 +397,15 @@ interface SongListConfig {
   sortable: boolean
   reorderable: boolean
   collaborative: boolean
+  hasCustomSort: boolean
 }
 
-type SongListSortField = keyof Pick<Song, 'track' | 'disc' | 'title' | 'album_name' | 'length' | 'artist_name' | 'created_at'>
+type SongListSortField =
+  keyof Pick<Song, 'track' | 'disc' | 'title' | 'album_name' | 'length' | 'artist_name' | 'created_at'>
+  | 'position'
 
 type SortOrder = 'asc' | 'desc'
+type MoveType = 'before' | 'after'
 
 type MethodOf<T> = { [K in keyof T]: T[K] extends Closure ? K : never; }[keyof T]
 

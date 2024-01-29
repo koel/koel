@@ -1,5 +1,5 @@
-import { isObject } from 'lodash'
-import { inject, InjectionKey, isRef, provide, readonly, shallowReadonly } from 'vue'
+import { isObject, without } from 'lodash'
+import { inject, InjectionKey, isRef, provide, reactive, readonly, shallowReadonly } from 'vue'
 import { ReadonlyInjectionKey } from '@/symbols'
 import { logger } from '@/utils'
 
@@ -41,3 +41,25 @@ export const requireInjection = <T> (key: InjectionKey<T>, defaultValue?: T) => 
 }
 
 export const dbToGain = (db: number) => Math.pow(10, db / 20) || 0
+
+export const moveItemsInList = <T> (list: T[], items: T | T[], target: T, type: MoveType) => {
+  if (list.indexOf(target) === -1) {
+    throw 'Target not found in list'
+  }
+
+  const subset = arrayify(items)
+
+  const isTargetAdjacent = type === 'before'
+    ? list.indexOf(subset[subset.length - 1]) + 1 === list.indexOf(target)
+    : list.indexOf(subset[0]) - 1 === list.indexOf(target)
+
+  if (isTargetAdjacent) {
+    return list
+  }
+
+  const updatedList = without(list, ...subset)
+  const targetIndex = updatedList.indexOf(target);
+  updatedList.splice(type === 'before' ? targetIndex : targetIndex + 1, 0, ...subset)
+
+  return updatedList
+}
