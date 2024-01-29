@@ -5,8 +5,8 @@ namespace Tests\Integration\KoelPlus\Services;
 use App\Events\NewPlaylistCollaboratorJoined;
 use App\Exceptions\CannotRemoveOwnerFromPlaylistException;
 use App\Exceptions\NotAPlaylistCollaboratorException;
+use App\Exceptions\OperationNotApplicableForSmartPlaylistException;
 use App\Exceptions\PlaylistCollaborationTokenExpiredException;
-use App\Exceptions\SmartPlaylistsAreNotCollaborativeException;
 use App\Models\Playlist;
 use App\Models\PlaylistCollaborationToken;
 use App\Services\PlaylistCollaborationService;
@@ -39,7 +39,7 @@ class PlaylistCollaborationServiceTest extends PlusTestCase
 
     public function testCreateTokenFailsIfPlaylistIsSmart(): void
     {
-        $this->expectException(SmartPlaylistsAreNotCollaborativeException::class);
+        $this->expectException(OperationNotApplicableForSmartPlaylistException::class);
 
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->smart()->create();

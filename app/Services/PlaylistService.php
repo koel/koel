@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\OperationNotApplicableForSmartPlaylistException;
 use App\Exceptions\PlaylistBothSongsAndRulesProvidedException;
 use App\Facades\License;
 use App\Models\Playlist;
@@ -83,6 +84,7 @@ class PlaylistService
         return $playlist;
     }
 
+    /** @return Collection<Song>|array<array-key, Song> */
     public function addSongsToPlaylist(Playlist $playlist, Collection|Song|array $songs, User $user): Collection
     {
         return DB::transaction(function () use ($playlist, $songs, $user) {
@@ -95,7 +97,10 @@ class PlaylistService
             }
 
             // we want a fresh copy of the songs with the possibly updated visibility
-            return $this->songRepository->getManyInCollaborativeContext(ids: $songs->pluck('id')->all(), scopedUser: $user);
+            return $this->songRepository->getManyInCollaborativeContext(
+                ids: $songs->pluck('id')->all(),
+                scopedUser: $user
+            );
         });
     }
 
@@ -107,5 +112,31 @@ class PlaylistService
     public function makePlaylistSongsPublic(Playlist $playlist): void
     {
         $playlist->songs()->where('is_public', false)->update(['is_public' => true]);
+    }
+
+    public function moveSongsInPlaylist(Playlist $playlist, array $movingIds, string $target, string $type): void
+    {
+        Assert::oneOf($type, ['before', 'after']);
+        throw_if($playlist->is_smart, OperationNotApplicableForSmartPlaylistException::class);
+
+        DB::transaction(static function () use ($playlist, $movingIds, $target, $type): void {
+            $targetPosition = $playlist->songs()->wherePivot('song_id', $target)->value('position');
+            $insertPosition = $type === 'before' ? $targetPosition : $targetPosition + 1;
+
+            // create a "gap" for the moving songs by incrementing the position of the songs after the target
+            $playlist->songs()
+                ->newPivotQuery()
+                ->where('position', $type === 'before' ? '>=' : '>', $targetPosition)
+                ->whereNotIn('song_id', $movingIds)
+                ->increment('position', count($movingIds));
+
+            $values = [];
+
+            foreach ($movingIds as $id) {
+                $values[$id] = ['position' => $insertPosition++];
+            }
+
+            $playlist->songs()->syncWithoutDetaching($values);
+        });
     }
 }

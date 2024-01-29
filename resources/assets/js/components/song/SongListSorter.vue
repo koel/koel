@@ -12,7 +12,8 @@
       >
         <span>{{ item.label }}</span>
         <span class="icon">
-          <Icon v-if="order === 'asc'" :icon="faArrowDown" />
+          <Icon v-if="field === 'position'" :icon="faCheck" />
+          <Icon v-else-if="order === 'asc'" :icon="faArrowDown" />
           <Icon v-else :icon="faArrowUp" />
         </span>
       </li>
@@ -21,44 +22,59 @@
 </template>
 
 <script lang="ts" setup>
-import { faArrowDown, faArrowUp, faSort } from '@fortawesome/free-solid-svg-icons'
-import { onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
+import { faArrowDown, faArrowUp, faCheck, faSort } from '@fortawesome/free-solid-svg-icons'
+import { computed, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
 import { useFloatingUi } from '@/composables'
 
-const props = defineProps<{ field?: SongListSortField, order?: SortOrder }>()
-const { field, order } = toRefs(props)
+const props = withDefaults(defineProps<{ field?: SongListSortField, order?: SortOrder, hasCustomSort?: boolean }>(), {
+  field: 'title',
+  order: 'asc',
+  hasCustomSort: false
+})
+
+const { field, order, hasCustomSort } = toRefs(props)
 
 const emit = defineEmits<{ (e: 'sort', field: SongListSortField): void }>()
 
 const button = ref<HTMLButtonElement>()
 const menu = ref<HTMLDivElement>()
 
-const menuItems: { label: string, field: SongListSortField }[] = [
-  {
+const menuItems = computed<{ label: string, field: SongListSortField }[]>(() => {
+  const items: { label: string, field: SongListSortField }[] = [{
     label: 'Title',
     field: 'title'
   },
-  {
-    label: 'Artist',
-    field: 'artist_name'
-  },
-  {
-    label: 'Album',
-    field: 'album_name'
-  },
-  {
-    label: 'Track & Disc',
-    field: 'track'
-  },
-  {
-    label: 'Time',
-    field: 'length'
-  },
-  {
-    label: 'Date Added',
-    field: 'created_at'
+    {
+      label: 'Artist',
+      field: 'artist_name'
+    },
+    {
+      label: 'Album',
+      field: 'album_name'
+    },
+    {
+      label: 'Track & Disc',
+      field: 'track'
+    },
+    {
+      label: 'Time',
+      field: 'length'
+    },
+    {
+      label: 'Date Added',
+      field: 'created_at'
+    }
+  ]
+
+  if (hasCustomSort.value) {
+    items.push({
+      label: 'Custom Order',
+      field: 'position'
+    })
   }
-]
+
+  return items
+})
 
 const { setup, teardown, trigger, hide } = useFloatingUi(button, menu, {
   placement: 'bottom-end',

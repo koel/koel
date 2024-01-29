@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { preferenceStore } from '@/stores'
-import { volumeManager } from '@/services/volumeManager'
+import { volumeManager, http } from '@/services'
 
 let input: HTMLInputElement
 
@@ -21,7 +21,6 @@ new class extends UnitTestCase {
       volumeManager.set(4.2)
       expect(volumeManager.volume.value).toEqual(4.2)
       expect(input.value).toEqual('4.2')
-      expect(preferenceStore.volume).toEqual(4.2)
     })
 
     it('mutes', () => {

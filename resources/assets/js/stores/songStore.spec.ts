@@ -4,7 +4,16 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import { authService, cache, http } from '@/services'
-import { albumStore, artistStore, commonStore, overviewStore, preferenceStore, songStore, SongUpdateResult } from '.'
+import {
+  albumStore,
+  artistStore,
+  commonStore,
+  overviewStore,
+  playlistStore,
+  preferenceStore,
+  songStore,
+  SongUpdateResult
+} from '.'
 
 new class extends UnitTestCase {
   protected afterEach () {
@@ -223,19 +232,22 @@ new class extends UnitTestCase {
     it('fetches for playlist', async () => {
       const songs = factory<Song>('song', 3)
       const playlist = factory<Playlist>('playlist', { id: '966268ea-935d-4f63-a84e-180385376a78' })
+      this.mock(playlistStore, 'byId').mockReturnValueOnce(playlist)
       const getMock = this.mock(http, 'get').mockResolvedValueOnce(songs)
       const syncMock = this.mock(songStore, 'syncWithVault', songs)
 
       const fetched = await songStore.fetchForPlaylist(playlist)
 
-      expect(getMock).toHaveBeenCalledWith('playlists/42/songs')
+      expect(getMock).toHaveBeenCalledWith('playlists/966268ea-935d-4f63-a84e-180385376a78/songs')
       expect(syncMock).toHaveBeenCalledWith(songs)
       expect(fetched).toEqual(songs)
+      expect(playlist.songs).toEqual(songs)
     })
 
     it('fetches for playlist with cache', async () => {
       const songs = factory<Song>('song', 3)
       const playlist = factory<Playlist>('playlist', { id: '966268ea-935d-4f63-a84e-180385376a78' })
+      this.mock(playlistStore, 'byId').mockReturnValueOnce(playlist)
       cache.set(['playlist.songs', playlist.id], songs)
 
       const getMock = this.mock(http, 'get')
@@ -244,11 +256,13 @@ new class extends UnitTestCase {
 
       expect(getMock).not.toHaveBeenCalled()
       expect(fetched).toEqual(songs)
+      expect(playlist.songs).toEqual(songs)
     })
 
     it('fetches for playlist discarding cache', async () => {
       const songs = factory<Song>('song', 3)
       const playlist = factory<Playlist>('playlist', { id: '966268ea-935d-4f63-a84e-180385376a78' })
+      this.mock(playlistStore, 'byId').mockReturnValueOnce(playlist)
       cache.set(['playlist.songs', playlist.id], songs)
 
       const getMock = this.mock(http, 'get').mockResolvedValueOnce([])
@@ -257,6 +271,7 @@ new class extends UnitTestCase {
 
       expect(getMock).toHaveBeenCalled()
       expect(cache.get(['playlist.songs', playlist.id])).toEqual([])
+      expect(playlist.songs).toEqual([])
     })
 
     it('paginates', async () => {

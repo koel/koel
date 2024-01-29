@@ -233,4 +233,29 @@ class PlaylistServiceTest extends TestCase
 
         $playlist->songs->each(static fn (Song $song) => self::assertTrue($song->is_public));
     }
+
+    public function testMoveSongsInPlaylist(): void
+    {
+        /** @var Playlist $playlist */
+        $playlist = Playlist::factory()->create();
+
+        /** @var Collection|array<array-key, Song> $songs */
+        $songs = Song::factory(4)->create();
+        $ids = $songs->pluck('id')->all();
+        $playlist->addSongs($songs);
+
+        $this->service->moveSongsInPlaylist($playlist, [$ids[2], $ids[3]], $ids[0], 'after');
+        self::assertSame([$ids[0], $ids[2], $ids[3], $ids[1]], $playlist->refresh()->songs->pluck('id')->all());
+
+        $this->service->moveSongsInPlaylist($playlist, [$ids[0]], $ids[3], 'before');
+        self::assertSame([$ids[2], $ids[0], $ids[3], $ids[1]], $playlist->refresh()->songs->pluck('id')->all());
+
+        // move to the first position
+        $this->service->moveSongsInPlaylist($playlist, [$ids[0], $ids[1]], $ids[2], 'before');
+        self::assertSame([$ids[0], $ids[1], $ids[2], $ids[3]], $playlist->refresh()->songs->pluck('id')->all());
+
+        // move to the last position
+        $this->service->moveSongsInPlaylist($playlist, [$ids[0], $ids[1]], $ids[3], 'after');
+        self::assertSame([$ids[2], $ids[3], $ids[0], $ids[1]], $playlist->refresh()->songs->pluck('id')->all());
+    }
 }

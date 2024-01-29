@@ -121,7 +121,7 @@ const removeSelected = () => {
 }
 
 const onPressEnter = () => selectedSongs.value.length && playbackService.play(selectedSongs.value[0])
-const onReorder = (target: Song) => queueStore.move(selectedSongs.value, target)
+const onReorder = (target: Song, type: MoveType) => queueStore.move(selectedSongs.value, target, type)
 
 onScreenActivated('Queue', async () => {
   if (!cache.get('song-to-queue')) {

@@ -23,6 +23,7 @@ use App\Http\Controllers\API\FetchSongsForQueueController;
 use App\Http\Controllers\API\GenreController;
 use App\Http\Controllers\API\GenreSongController;
 use App\Http\Controllers\API\LikeMultipleSongsController;
+use App\Http\Controllers\API\MovePlaylistSongsController;
 use App\Http\Controllers\API\ObjectStorage\S3\SongController as S3SongController;
 use App\Http\Controllers\API\PlaylistCollaboration\AcceptPlaylistCollaborationInviteController;
 use App\Http\Controllers\API\PlaylistCollaboration\CreatePlaylistCollaborationTokenController;
@@ -128,6 +129,7 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::apiResource('playlists', PlaylistController::class);
         Route::apiResource('playlists.songs', PlaylistSongController::class)->except('destroy');
         Route::delete('playlists/{playlist}/songs', [PlaylistSongController::class, 'destroy']);
+        Route::post('playlists/{playlist}/songs/move', MovePlaylistSongsController::class);
 
         Route::get('genres/{genre}/songs', GenreSongController::class)->where('genre', '.*');
         Route::get('genres/{genre}/songs/random', FetchRandomSongsInGenreController::class)->where('genre', '.*');

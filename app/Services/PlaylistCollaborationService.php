@@ -6,8 +6,8 @@ use App\Events\NewPlaylistCollaboratorJoined;
 use App\Exceptions\CannotRemoveOwnerFromPlaylistException;
 use App\Exceptions\KoelPlusRequiredException;
 use App\Exceptions\NotAPlaylistCollaboratorException;
+use App\Exceptions\OperationNotApplicableForSmartPlaylistException;
 use App\Exceptions\PlaylistCollaborationTokenExpiredException;
-use App\Exceptions\SmartPlaylistsAreNotCollaborativeException;
 use App\Facades\License;
 use App\Models\Playlist;
 use App\Models\PlaylistCollaborationToken;
@@ -22,7 +22,7 @@ class PlaylistCollaborationService
     {
         self::assertKoelPlus();
 
-        throw_if($playlist->is_smart, SmartPlaylistsAreNotCollaborativeException::class);
+        throw_if($playlist->is_smart, OperationNotApplicableForSmartPlaylistException::class);
 
         return $playlist->collaborationTokens()->create();
     }

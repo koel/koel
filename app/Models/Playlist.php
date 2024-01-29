@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
+use LogicException;
 
 /**
  * @property string $id
@@ -25,6 +26,7 @@ use Laravel\Scout\Searchable;
  * @property ?string $folder_id
  * @property ?PlaylistFolder $folder
  * @property Collection|array<array-key, Song> $songs
+ * @property array<string> $song_ids
  * @property ?SmartPlaylistRuleGroupCollection $rule_groups
  * @property ?SmartPlaylistRuleGroupCollection $rules
  * @property Carbon $created_at
@@ -59,7 +61,9 @@ class Playlist extends Model
 
     public function songs(): BelongsToMany
     {
-        return $this->belongsToMany(Song::class)->withTimestamps();
+        return $this->belongsToMany(Song::class)->withTimestamps()
+            ->withPivot('position')
+            ->orderByPivot('position');
     }
 
     public function user(): BelongsTo
@@ -93,6 +97,13 @@ class Playlist extends Model
         return Attribute::get(fn () => $this->rules);
     }
 
+    public function songIds(): Attribute
+    {
+        throw_if($this->is_smart, new LogicException('Smart playlist contents are generated dynamically.'));
+
+        return Attribute::get(fn () => $this->songs->pluck('id')->all());
+    }
+
     public function ownedBy(User $user): bool
     {
         return $this->user_id === $user->id;
@@ -123,12 +134,22 @@ class Playlist extends Model
     public function addSongs(Collection|Song|array $songs, ?User $collaborator = null): void
     {
         $collaborator ??= $this->user;
+        $maxPosition = $this->songs()->max('position') ?? 0;
 
         if (!is_array($songs)) {
             $songs = Collection::wrap($songs)->pluck('id')->all();
         }
 
-        $this->songs()->attach($songs, ['user_id' =>  $collaborator->id]);
+        $data = [];
+
+        foreach ($songs as $song) {
+            $data[$song] = [
+                'position' => ++$maxPosition,
+                'user_id' => $collaborator->id,
+            ];
+        }
+
+        $this->songs()->attach($data);
     }
 
     /**

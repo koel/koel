@@ -69,11 +69,8 @@ export const commonStore = {
     // Always disable YouTube integration on mobile.
     this.state.uses_you_tube = this.state.uses_you_tube && !isMobile.phone
 
-    // If this is a new user, initialize his preferences to be an empty object.
-    this.state.current_user.preferences = this.state.current_user.preferences || {}
-
     userStore.init(this.state.current_user)
-    preferenceStore.init(this.state.current_user.preferences)
+    preferenceStore.init(this.state.current_user.preferences!)
     playlistStore.init(this.state.playlists)
     playlistFolderStore.init(this.state.playlist_folders)
     settingStore.init(this.state.settings)

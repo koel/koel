@@ -181,10 +181,14 @@ export const songStore = {
       cache.remove(['playlist.songs', id])
     }
 
-    return this.ensureNotDeleted(await cache.remember<Song[]>(
+    const songs = this.ensureNotDeleted(await cache.remember<Song[]>(
       [`playlist.songs`, id],
       async () => this.syncWithVault(await http.get<Song[]>(`playlists/${id}/songs`))
     ))
+
+    playlistStore.byId(id)!.songs = songs
+
+    return songs
   },
 
   async fetchForPlaylistFolder (folder: PlaylistFolder) {

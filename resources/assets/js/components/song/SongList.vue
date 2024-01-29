@@ -66,12 +66,18 @@
         </template>
       </span>
       <span class="extra">
-        <SongListSorter v-if="config.sortable" :field="sortField" :order="sortOrder" @sort="sort" />
+        <SongListSorter
+          v-if="config.sortable"
+          :has-custom-sort="config.hasCustomSort"
+          :field="sortField"
+          :order="sortOrder"
+          @sort="sort"
+        />
       </span>
     </div>
 
     <VirtualScroller
-      v-slot="{ item }"
+      v-slot="{ item }: { item: SongRow }"
       :item-height="64"
       :items="filteredSongRows"
       @scroll="onScroll"
@@ -85,7 +91,7 @@
         @dragleave="onDragLeave"
         @dragstart="onDragStart(item, $event)"
         @dragenter.prevent="onDragEnter"
-        @dragover.prevent
+        @dragover.prevent="onDragOver"
         @drop.prevent="onDrop(item, $event)"
         @dragend.prevent="onDragEnd"
         @contextmenu.prevent="openContextMenu(item, $event)"
@@ -95,7 +101,7 @@
 </template>
 
 <script lang="ts" setup>
-import { findIndex } from 'lodash'
+import { findIndex, findLastIndex, throttle } from 'lodash'
 import isMobile from 'ismobilejs'
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons'
 import { computed, nextTick, onMounted, Ref, ref, watch } from 'vue'
@@ -120,7 +126,7 @@ const { getDroppedData, acceptsDrop } = useDroppable(['songs'])
 const emit = defineEmits<{
   (e: 'press:enter', event: KeyboardEvent): void,
   (e: 'press:delete'): void,
-  (e: 'reorder', song: Song): void,
+  (e: 'reorder', song: Song, type: MoveType): void,
   (e: 'sort', field: SongListSortField, order: SortOrder): void,
   (e: 'scroll-breakpoint', direction: 'up' | 'down'): void,
   (e: 'scrolled-to-end'): void,
@@ -283,17 +289,33 @@ const onDragStart = async (row: SongRow, event: DragEvent) => {
   startDragging(event, selectedSongs.value)
 }
 
+const onDragOver = throttle((event: DragEvent) => {
+  if (!config.reorderable) return
+
+  if (acceptsDrop(event)) {
+    // console.log(event)
+    const target = event.target as HTMLElement
+    const rect = target.getBoundingClientRect()
+    const midPoint = rect.top + rect.height / 2
+    target.classList.remove('dragover-top', 'dragover-bottom')
+    target.classList.add('droppable', event.clientY < midPoint ? 'dragover-top' : 'dragover-bottom')
+  }
+
+  return false
+}, 50)
+
 const onDragEnter = (event: DragEvent) => {
   if (!config.reorderable) return
 
   if (acceptsDrop(event)) {
-    (event.target as HTMLElement).closest('.song-item')?.classList.add('droppable')
+
+    // ;(event.target as HTMLElement).closest('.song-item')?.classList.add('droppable')
   }
 
   return false
 }
 
-const onDrop = (item: SongRow, event: DragEvent) => {
+const onDrop = (row: SongRow, event: DragEvent) => {
   if (!config.reorderable || !getDroppedData(event) || !selectedSongs.value.length) {
     wrapper.value?.classList.remove('dragging')
     return onDragLeave(event)
@@ -301,16 +323,35 @@ const onDrop = (item: SongRow, event: DragEvent) => {
 
   wrapper.value?.classList.remove('dragging')
 
-  emit('reorder', item.song)
+  if (!rowInSelectedRange(row)) {
+    emit('reorder', row.song, (event.target as HTMLElement).classList.contains('dragover-bottom') ? 'after' : 'before')
+  }
+
   return onDragLeave(event)
 }
 
 const onDragLeave = (event: DragEvent) => {
-  (event.target as HTMLElement).closest('.song-item')?.classList.remove('droppable')
+  (event.target as HTMLElement).closest('.song-item')?.classList.remove('droppable', 'dragover-top', 'dragover-bottom')
   return false
 }
 
 const onDragEnd = () => wrapper.value?.classList.remove('dragging')
+
+const rowInSelectedRange = (row: SongRow) => {
+  if (!row.selected) return false
+
+  const index = findIndex(songRows.value, ({ song }) => song.id === row.song.id)
+  const firstSelectedIndex = Math.max(0, findIndex(songRows.value, ({ selected }) => selected))
+  const lastSelectedIndex = Math.max(0, findLastIndex(songRows.value, ({ selected }) => selected))
+
+  if (index < firstSelectedIndex || index > lastSelectedIndex) return false
+
+  for (let i = firstSelectedIndex; i <= lastSelectedIndex; ++i) {
+    if (!songRows.value[i].selected) return false
+  }
+
+  return true
+}
 
 const openContextMenu = async (row: SongRow, event: MouseEvent) => {
   if (!row.selected) {
@@ -355,7 +396,22 @@ onMounted(() => render())
 
   .droppable {
     position: relative;
-    box-shadow: 0 3px 0 var(--color-green);
+    transition: none;
+
+    &::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 3px;
+      border-radius: 3px;
+      background: var(--color-green);
+      top: 0;
+    }
+
+    &.dragover-bottom::after {
+      top: auto;
+      bottom: 0;
+    }
   }
 
   .song-list-header > span, .song-item > span {
@@ -384,7 +440,6 @@ onMounted(() => render())
       flex-basis: 72px;
       text-align: center;
     }
-
 
     &.added-at {
       flex-basis: 144px;

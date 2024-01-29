@@ -1,6 +1,6 @@
 import { differenceBy, orderBy } from 'lodash'
 import { reactive } from 'vue'
-import { logger, uuid } from '@/utils'
+import { arrayify, logger, moveItemsInList, uuid } from '@/utils'
 import { cache, http } from '@/services'
 import models from '@/config/smart-playlist/models'
 import operators from '@/config/smart-playlist/operators'
@@ -163,5 +163,18 @@ export const playlistStore = {
 
   sort: (playlists: Playlist[]) => {
     return orderBy(playlists, ['is_smart', 'name'], ['desc', 'asc'])
+  },
+
+  moveSongsInPlaylist: async (playlist: Playlist, songs: Song | Song[], target: Song, type: MoveType) => {
+    const orderHash = JSON.stringify(playlist.songs?.map(({ id }) => id))
+    playlist.songs?.splice(0, playlist.songs.length, ...moveItemsInList(playlist.songs, songs, target, type))
+
+    if (orderHash !== JSON.stringify(playlist.songs?.map(({ id }) => id))) {
+      await http.silently.post(`playlists/${playlist.id}/songs/move`, {
+        songs: arrayify(songs).map(({ id }) => id),
+        target: target.id,
+        type
+      })
+    }
   }
 }

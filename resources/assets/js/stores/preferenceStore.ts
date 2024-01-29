@@ -1,50 +1,34 @@
 import { reactive, ref } from 'vue'
 import { http, localStorageService } from '@/services'
 
-interface Preferences extends Record<string, any> {
-  volume: number
-  show_now_playing_notification: boolean
-  repeat_mode: RepeatMode
-  confirm_before_closing: boolean
-  equalizer: EqualizerPreset,
-  artists_view_mode: ArtistAlbumViewMode | null,
-  albums_view_mode: ArtistAlbumViewMode | null,
-  transcode_on_mobile: boolean
-  support_bar_no_bugging: boolean
-  show_album_art_overlay: boolean
-  lyrics_zoom_level: number | null
-  theme?: Theme['id'] | null
-  visualizer?: Visualizer['id'] | null
-  active_extra_panel_tab: ExtraPanelTab | null
-  make_uploads_public: boolean
+export const defaultPreferences: UserPreferences = {
+  volume: 7,
+  show_now_playing_notification: true,
+  repeat_mode: 'NO_REPEAT',
+  confirm_before_closing: false,
+  equalizer: {
+    name: 'Default',
+    preamp: 0,
+    gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  },
+  artists_view_mode: null,
+  albums_view_mode: null,
+  transcode_on_mobile: false,
+  support_bar_no_bugging: false,
+  show_album_art_overlay: true,
+  lyrics_zoom_level: 1,
+  theme: null,
+  visualizer: 'default',
+  active_extra_panel_tab: null,
+  make_uploads_public: false
 }
 
 const preferenceStore = {
   initialized: ref(false),
 
-  state: reactive<Preferences>({
-    volume: 7,
-    show_now_playing_notification: true,
-    repeat_mode: 'NO_REPEAT',
-    confirm_before_closing: false,
-    equalizer: {
-      name: 'Default',
-      preamp: 0,
-      gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    },
-    artists_view_mode: null,
-    albums_view_mode: null,
-    transcode_on_mobile: false,
-    support_bar_no_bugging: false,
-    show_album_art_overlay: true,
-    lyrics_zoom_level: 1,
-    theme: null,
-    visualizer: 'default',
-    active_extra_panel_tab: null,
-    make_uploads_public: false
-  }),
+  state: reactive<UserPreferences>(defaultPreferences),
 
-  init (preferences: Preferences): void {
+  init (preferences: UserPreferences = defaultPreferences) {
     Object.assign(this.state, preferences)
     this.setupProxy()
 
@@ -64,7 +48,7 @@ const preferenceStore = {
     })
   },
 
-  set (key: keyof Preferences, value: any) {
+  set (key: keyof UserPreferences, value: any) {
     if (this.state[key] === value) return
 
     this.state[key] = value
@@ -76,6 +60,6 @@ const preferenceStore = {
   }
 }
 
-const exported = preferenceStore as unknown as Omit<typeof preferenceStore, 'setupProxy'> & Preferences
+const exported = preferenceStore as unknown as Omit<typeof preferenceStore, 'setupProxy'> & UserPreferences
 
 export { exported as preferenceStore }

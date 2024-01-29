@@ -9,7 +9,7 @@ export default (faker: Faker): User => ({
   is_prospect: false,
   is_admin: false,
   avatar: 'https://gravatar.com/foo',
-  preferences: {}
+  preferences: undefined
 })
 
 export const states: Record<string, Omit<Partial<User>, 'type'>> = {

@@ -21,7 +21,7 @@ import ThumbnailStack from '@/components/ui/ThumbnailStack.vue'
 
 export const useSongList = (
   songs: Ref<Song[]>,
-  config: Partial<SongListConfig> = { sortable: true, reorderable: false, collaborative: false }
+  config: Partial<SongListConfig> = { sortable: true, reorderable: false, collaborative: false, hasCustomSort: false }
 ) => {
   const filterKeywords = ref('')
   config = reactive(config)
