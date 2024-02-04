@@ -123,7 +123,6 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-        Aws\Laravel\AwsServiceProvider::class,
         Jackiedo\DotenvEditor\DotenvEditorServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
 
@@ -143,6 +142,7 @@ return [
         App\Providers\BroadcastServiceProvider::class,
         App\Providers\ITunesServiceProvider::class,
         App\Providers\StreamerServiceProvider::class,
+        App\Providers\SongStorageServiceProvider::class,
         App\Providers\ObjectStorageServiceProvider::class,
         App\Providers\MacroProvider::class,
         App\Providers\LicenseServiceProvider::class,

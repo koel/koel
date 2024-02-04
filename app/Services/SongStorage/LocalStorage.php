@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\SongStorage;
 
 use App\Exceptions\MediaPathNotSetException;
 use App\Exceptions\SongUploadFailedException;
 use App\Models\Setting;
 use App\Models\Song;
 use App\Models\User;
+use App\Services\FileScanner;
 use App\Values\ScanConfiguration;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
@@ -14,13 +15,13 @@ use Throwable;
 
 use function Functional\memoize;
 
-class UploadService
+class LocalStorage implements SongStorage
 {
     public function __construct(private FileScanner $scanner)
     {
     }
 
-    public function handleUploadedFile(UploadedFile $file, User $uploader): Song
+    public function storeUploadedFile(UploadedFile $file, User $uploader): Song
     {
         $uploadDirectory = $this->getUploadDirectory($uploader);
         $targetFileName = $this->getTargetFileName($file, $uploader);
@@ -29,12 +30,11 @@ class UploadService
         $targetPathName = $uploadDirectory . $targetFileName;
 
         try {
-            $result = $this->scanner->setFile($targetPathName)->scan(
-                ScanConfiguration::make(
+            $result = $this->scanner->setFile($targetPathName)
+                ->scan(ScanConfiguration::make(
                     owner: $uploader,
                     makePublic: $uploader->preferences->makeUploadsPublic
-                )
-            );
+                ));
         } catch (Throwable $e) {
             File::delete($targetPathName);
             throw new SongUploadFailedException($e->getMessage());

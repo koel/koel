@@ -4,7 +4,7 @@ namespace App\Services\Streamers;
 
 use App\Models\Setting;
 
-class XAccelRedirectStreamer extends Streamer implements DirectStreamerInterface
+class XAccelRedirectStreamer extends Streamer implements LocalStreamerInterface
 {
     /**
      * Stream the current song using nginx's X-Accel-Redirect.
@@ -18,7 +18,7 @@ class XAccelRedirectStreamer extends Streamer implements DirectStreamerInterface
         // See nginx.conf.example.
         header('X-Media-Root: ' . Setting::get('media_path'));
         header("X-Accel-Redirect: /media/$relativePath");
-        header("Content-Type: {$this->contentType}");
+        header("Content-Type: $this->contentType");
         header('Content-Disposition: inline; filename="' . basename($this->song->path) . '"');
 
         exit;

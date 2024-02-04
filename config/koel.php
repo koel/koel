@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'storage_driver' => env('STORAGE_DRIVER', 'r2'),
+
     'media_path' => env('MEDIA_PATH'),
 
     // The *relative* path to the directory to store album covers and thumbnails, *with* a trailing slash.

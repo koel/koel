@@ -134,7 +134,7 @@ class MediaScanner
 
     private function handleDeletedFileRecord(string $path): void
     {
-        $song = $this->songRepository->getOneByPath($path);
+        $song = $this->songRepository->findOneByPath($path);
 
         if ($song) {
             $song->delete();

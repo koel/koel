@@ -17,15 +17,15 @@ class SongRepository extends Repository
 {
     private const DEFAULT_QUEUE_LIMIT = 500;
 
-    public function getOneByPath(string $path): ?Song
+    public function findOneByPath(string $path): ?Song
     {
         return Song::query()->where('path', $path)->first();
     }
 
     /** @return Collection|array<Song> */
-    public function getAllHostedOnS3(): Collection
+    public function getAllStoredOnCloud(): Collection
     {
-        return Song::query()->hostedOnS3()->get();
+        return Song::query()->storedOnCloud()->get();
     }
 
     /** @return Collection|array<array-key, Song> */

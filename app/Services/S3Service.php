@@ -89,7 +89,7 @@ class S3Service implements ObjectStorageInterface
     public function deleteSongEntry(string $bucket, string $key): void
     {
         $path = Song::getPathFromS3BucketAndKey($bucket, $key);
-        $song = $this->songRepository->getOneByPath($path);
+        $song = $this->songRepository->findOneByPath($path);
 
         throw_unless((bool) $song, SongPathNotFoundException::create($path));
 

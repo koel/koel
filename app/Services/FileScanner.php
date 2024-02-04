@@ -42,7 +42,7 @@ class FileScanner
         $file = $path instanceof SplFileInfo ? $path : new SplFileInfo($path);
 
         $this->filePath = $file->getRealPath();
-        $this->song = $this->songRepository->getOneByPath($this->filePath);
+        $this->song = $this->songRepository->findOneByPath($this->filePath);
         $this->fileModifiedTime = Helper::getModifiedTime($file);
 
         return $this;

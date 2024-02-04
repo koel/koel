@@ -3,20 +3,17 @@
 namespace App\Factories;
 
 use App\Models\Song;
-use App\Services\Streamers\DirectStreamerInterface;
-use App\Services\Streamers\ObjectStorageStreamerInterface;
+use App\Services\Streamers\LocalStreamerInterface;
+use App\Services\Streamers\S3CompatibleStreamer;
 use App\Services\Streamers\StreamerInterface;
-use App\Services\Streamers\TranscodingStreamerInterface;
+use App\Services\Streamers\TranscodingStreamer;
 use App\Services\TranscodingService;
+use App\Values\SongStorageMetadata\S3CompatibleMetadata;
 
 class StreamerFactory
 {
-    public function __construct(
-        private DirectStreamerInterface $directStreamer,
-        private TranscodingStreamerInterface $transcodingStreamer,
-        private ObjectStorageStreamerInterface $objectStorageStreamer,
-        private TranscodingService $transcodingService
-    ) {
+    public function __construct(private TranscodingService $transcodingService)
+    {
     }
 
     public function createStreamer(
@@ -25,26 +22,28 @@ class StreamerFactory
         ?int $bitRate = null,
         float $startTime = 0.0
     ): StreamerInterface {
-        if ($song->s3_params) {
-            $this->objectStorageStreamer->setSong($song);
-
-            return $this->objectStorageStreamer;
+        if ($song->storage_metadata instanceof S3CompatibleMetadata) {
+            return tap(
+                app(S3CompatibleStreamer::class),
+                static fn (S3CompatibleStreamer $streamer) => $streamer->setSong($song)
+            );
         }
 
-        if ($transcode === null && $this->transcodingService->songShouldBeTranscoded($song)) {
-            $transcode = true;
-        }
+        $transcode ??= $this->transcodingService->songShouldBeTranscoded($song);
 
         if ($transcode) {
-            $this->transcodingStreamer->setSong($song);
-            $this->transcodingStreamer->setBitRate($bitRate ?: config('koel.streaming.bitrate'));
-            $this->transcodingStreamer->setStartTime($startTime);
+            /** @var TranscodingStreamer $streamer */
+            $streamer = app(TranscodingStreamer::class);
+            $streamer->setSong($song);
+            $streamer->setBitRate($bitRate ?: config('koel.streaming.bitrate'));
+            $streamer->setStartTime($startTime);
 
-            return $this->transcodingStreamer;
+            return $streamer;
         }
 
-        $this->directStreamer->setSong($song);
-
-        return $this->directStreamer;
+        return tap(
+            app(LocalStreamerInterface::class),
+            static fn (LocalStreamerInterface $streamer) => $streamer->setSong($song)
+        );
     }
 }

@@ -3,7 +3,7 @@
 namespace Tests\Feature\KoelPlus;
 
 use App\Models\Song;
-use App\Services\Streamers\DirectStreamerInterface;
+use App\Services\Streamers\LocalStreamerInterface;
 use App\Services\TokenManager;
 use App\Values\CompositeToken;
 use Mockery;
@@ -24,7 +24,7 @@ class SongPlayTest extends PlusTestCase
             'path' => test_path('songs/blank.mp3'),
         ]);
 
-        $mockStreamer = $this->mock(DirectStreamerInterface::class);
+        $mockStreamer = $this->mock(LocalStreamerInterface::class);
 
         $mockStreamer->shouldReceive('setSong')->with(
             Mockery::on(static fn (Song $retrievedSong): bool => $retrievedSong->id === $song->id)
@@ -46,7 +46,7 @@ class SongPlayTest extends PlusTestCase
         /** @var CompositeToken $token */
         $token = app(TokenManager::class)->createCompositeToken($song->owner);
 
-        $mockStreamer = $this->mock(DirectStreamerInterface::class);
+        $mockStreamer = $this->mock(LocalStreamerInterface::class);
 
         $mockStreamer->shouldReceive('setSong')->with(
             Mockery::on(static fn (Song $retrievedSong): bool => $retrievedSong->id === $song->id)
