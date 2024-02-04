@@ -3,9 +3,9 @@
 namespace App\Services\Streamers;
 
 use App\Models\Song;
-use Illuminate\Support\Facades\File;
+use App\Values\SongStorageMetadata\LocalMetadata;
 
-class Streamer
+class Streamer implements StreamerInterface
 {
     protected ?Song $song = null;
 
@@ -21,12 +21,10 @@ class Streamer
     {
         $this->song = $song;
 
-        abort_unless($this->song->s3_params || File::exists($this->song->path), 404);
-
         // Hard code the content type instead of relying on PHP's fileinfo()
         // or even Symfony's MIMETypeGuesser, since they appear to be wrong sometimes.
-        if (!$this->song->s3_params) {
-            $this->contentType = 'audio/' . pathinfo($this->song->path, PATHINFO_EXTENSION);
+        if ($this->song->storage_metadata instanceof LocalMetadata) {
+            $this->contentType = 'audio/' . pathinfo($this->song->storage_metadata->getPath(), PATHINFO_EXTENSION);
         }
     }
 }

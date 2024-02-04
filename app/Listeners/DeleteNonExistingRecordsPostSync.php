@@ -18,7 +18,7 @@ class DeleteNonExistingRecordsPostSync
         $paths = $event->results
             ->valid()
             ->map(static fn (ScanResult $result) => $result->path)
-            ->merge($this->songRepository->getAllHostedOnS3()->pluck('path'))
+            ->merge($this->songRepository->getAllStoredOnCloud()->pluck('path'))
             ->toArray();
 
         Song::deleteWhereValueNotIn($paths, 'path');

@@ -13,7 +13,6 @@
     "laravel/framework": "^9.0",
     "james-heinrich/getid3": "^1.9",
     "guzzlehttp/guzzle": "^7.0.1",
-    "aws/aws-sdk-php-laravel": "^3.1",
     "pusher/pusher-php-server": "^4.0",
     "predis/predis": "~1.0",
     "jackiedo/dotenv-editor": "^2.0",
@@ -36,7 +35,8 @@
     "nunomaduro/collision": "^6.2",
     "jwilsson/spotify-web-api-php": "^5.2",
     "meilisearch/meilisearch-php": "^0.24.0",
-    "http-interop/http-factory-guzzle": "^1.2"
+    "http-interop/http-factory-guzzle": "^1.2",
+    "league/flysystem-aws-s3-v3": "^3.0"
   },
   "require-dev": {
     "mockery/mockery": "~1.0",

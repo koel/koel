@@ -5,7 +5,7 @@ namespace Tests\Integration\Factories;
 use App\Factories\StreamerFactory;
 use App\Models\Song;
 use App\Services\Streamers\PhpStreamer;
-use App\Services\Streamers\S3Streamer;
+use App\Services\Streamers\S3CompatibleStreamer;
 use App\Services\Streamers\TranscodingStreamer;
 use App\Services\Streamers\XAccelRedirectStreamer;
 use App\Services\Streamers\XSendFileStreamer;
@@ -33,7 +33,7 @@ class StreamerFactoryTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->make(['path' => 's3://bucket/foo.mp3']);
 
-        self::assertInstanceOf(S3Streamer::class, $this->streamerFactory->createStreamer($song));
+        self::assertInstanceOf(S3CompatibleStreamer::class, $this->streamerFactory->createStreamer($song));
     }
 
     public function testCreateTranscodingStreamerIfSupported(): void

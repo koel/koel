@@ -2,7 +2,7 @@
 
 namespace App\Services\Streamers;
 
-class TranscodingStreamer extends Streamer implements TranscodingStreamerInterface
+class TranscodingStreamer extends Streamer implements StreamerInterface
 {
     /**
      * Bit rate the stream should be transcoded at.
@@ -39,7 +39,7 @@ class TranscodingStreamer extends Streamer implements TranscodingStreamerInterfa
         ];
 
         if ($this->startTime) {
-            array_unshift($args, "-ss {$this->startTime}");
+            array_unshift($args, "-ss $this->startTime");
         }
 
         passthru("$ffmpeg " . implode(' ', $args));

@@ -2,7 +2,7 @@
 
 namespace App\Services\Streamers;
 
-class XSendFileStreamer extends Streamer implements DirectStreamerInterface
+class XSendFileStreamer extends Streamer implements LocalStreamerInterface
 {
     /**
      * Stream the current song using Apache's x_sendfile module.

@@ -104,8 +104,9 @@ class SongBuilder extends Builder
             : $column;
     }
 
-    public function hostedOnS3(): static
+    public function storedOnCloud(): static
     {
-        return $this->where('path', 'LIKE', 's3://%');
+        return $this->where('path', 'LIKE', 's3://%')
+            ->orWhere('path', 'LIKE', 'r2://%');
     }
 }

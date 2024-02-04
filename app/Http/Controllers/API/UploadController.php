@@ -12,7 +12,7 @@ use App\Http\Resources\SongResource;
 use App\Models\User;
 use App\Repositories\AlbumRepository;
 use App\Repositories\SongRepository;
-use App\Services\UploadService;
+use App\Services\SongStorage\SongStorage;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Response;
 
@@ -20,7 +20,7 @@ class UploadController extends Controller
 {
     /** @param User $user */
     public function __invoke(
-        UploadService $uploadService,
+        SongStorage $storage,
         AlbumRepository $albumRepository,
         SongRepository $songRepository,
         UploadRequest $request,
@@ -29,7 +29,7 @@ class UploadController extends Controller
         $this->authorize('upload', User::class);
 
         try {
-            $song = $songRepository->getOne($uploadService->handleUploadedFile($request->file, $user)->id, $user);
+            $song = $songRepository->getOne($storage->storeUploadedFile($request->file, $user)->id, $user);
 
             event(new LibraryChanged());
 

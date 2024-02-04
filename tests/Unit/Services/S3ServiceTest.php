@@ -129,7 +129,7 @@ class S3ServiceTest extends TestCase
             'path' => 's3://foo/bar',
         ]);
 
-        $this->songRepository->shouldReceive('getOneByPath')
+        $this->songRepository->shouldReceive('findOneByPath')
             ->with('s3://foo/bar')
             ->once()
             ->andReturn($song);
