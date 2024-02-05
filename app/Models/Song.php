@@ -167,11 +167,11 @@ class Song extends Model
                 try {
                     switch ($this->storage) {
                         case 's3':
-                            preg_match('/^s3\\+:\\/\\/(.*)\\/(.*)/', $this->path, $matches);
+                            preg_match('/^s3:\\/\\/(.*)\\/(.*)/', $this->path, $matches);
                             return S3CompatibleMetadata::make($matches[1], $matches[2]);
 
                         case 's3-legacy':
-                            preg_match('/^s3\\+:\\/\\/(.*)\\/(.*)/', $this->path, $matches);
+                            preg_match('/^s3:\\/\\/(.*)\\/(.*)/', $this->path, $matches);
                             return LegacyS3Metadata::make($matches[1], $matches[2]);
 
                         case 'dropbox':
