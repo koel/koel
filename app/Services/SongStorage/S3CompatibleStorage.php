@@ -2,6 +2,7 @@
 
 namespace App\Services\SongStorage;
 
+use App\Facades\License;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\FileScanner;
@@ -25,7 +26,7 @@ class S3CompatibleStorage extends CloudStorage
             $key = $this->generateStorageKey($file->getClientOriginalName(), $uploader);
 
             Storage::disk('s3')->put($key, File::get($result->path));
-            $song->update(['path' => "s3://$this->bucket/$key"]);
+            $song->update(['path' => "s3+://$this->bucket/$key"]);
 
             File::delete($result->path);
 
@@ -36,5 +37,10 @@ class S3CompatibleStorage extends CloudStorage
     public function getSongPresignedUrl(Song $song): string
     {
         return Storage::disk('s3')->temporaryUrl($song->storage_metadata->getPath(), now()->addHour());
+    }
+
+    public function supported(): bool
+    {
+        return License::isPlus();
     }
 }

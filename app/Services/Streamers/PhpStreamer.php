@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 use function DaveRandom\Resume\get_request_header;
 
-class PhpStreamer extends Streamer implements LocalStreamerInterface
+class PhpStreamer extends LocalStreamer
 {
     public function stream(): void
     {

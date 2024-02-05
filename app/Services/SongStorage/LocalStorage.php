@@ -15,10 +15,11 @@ use Throwable;
 
 use function Functional\memoize;
 
-class LocalStorage implements SongStorage
+final class LocalStorage extends SongStorage
 {
     public function __construct(private FileScanner $scanner)
     {
+        parent::__construct();
     }
 
     public function storeUploadedFile(UploadedFile $file, User $uploader): Song
@@ -84,5 +85,10 @@ class LocalStorage implements SongStorage
     private function getUniqueHash(): string
     {
         return substr(sha1(uniqid()), 0, 6);
+    }
+
+    public function supported(): bool
+    {
+        return true; // Local storage is always supported.
     }
 }

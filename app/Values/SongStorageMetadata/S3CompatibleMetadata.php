@@ -2,6 +2,8 @@
 
 namespace App\Values\SongStorageMetadata;
 
+use App\Facades\License;
+
 class S3CompatibleMetadata implements SongStorageMetadata
 {
     private function __construct(public string $bucket, public string $key)
@@ -16,5 +18,10 @@ class S3CompatibleMetadata implements SongStorageMetadata
     public function getPath(): string
     {
         return $this->key;
+    }
+
+    public function supported(): bool
+    {
+        return License::isPlus();
     }
 }

@@ -12,7 +12,7 @@ use League\Flysystem\Filesystem;
 use Spatie\Dropbox\Client;
 use Spatie\FlysystemDropbox\DropboxAdapter;
 
-class DropboxStorage extends CloudStorage
+final class DropboxStorage extends CloudStorage
 {
     private Filesystem $filesystem;
     private DropboxAdapter $adapter;

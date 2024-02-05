@@ -2,7 +2,7 @@
 
 namespace App\Services\Streamers;
 
-class TranscodingStreamer extends Streamer implements StreamerInterface
+class TranscodingStreamer extends Streamer
 {
     /**
      * Bit rate the stream should be transcoded at.
@@ -53,5 +53,10 @@ class TranscodingStreamer extends Streamer implements StreamerInterface
     public function setStartTime(float $startTime): void
     {
         $this->startTime = $startTime;
+    }
+
+    protected function supported(): bool
+    {
+        return true;
     }
 }

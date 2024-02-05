@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Song;
-use App\Services\Streamers\LocalStreamerInterface;
+use App\Services\Streamers\LocalStreamer;
 use App\Services\TokenManager;
 use App\Values\CompositeToken;
 use Mockery;
@@ -26,7 +26,7 @@ class SongPlayTest extends TestCase
             'path' => test_path('songs/blank.mp3'),
         ]);
 
-        $mockStreamer = $this->mock(LocalStreamerInterface::class);
+        $mockStreamer = $this->mock(LocalStreamer::class);
 
         $mockStreamer->shouldReceive('setSong')->with(
             Mockery::on(static fn (Song $retrievedSong): bool => $retrievedSong->id === $song->id)
