@@ -3,11 +3,13 @@
 namespace App\Factories;
 
 use App\Models\Song;
+use App\Services\Streamers\DropboxStreamer;
 use App\Services\Streamers\LocalStreamerInterface;
 use App\Services\Streamers\S3CompatibleStreamer;
 use App\Services\Streamers\StreamerInterface;
 use App\Services\Streamers\TranscodingStreamer;
 use App\Services\TranscodingService;
+use App\Values\SongStorageMetadata\DropboxMetadata;
 use App\Values\SongStorageMetadata\S3CompatibleMetadata;
 
 class StreamerFactory
@@ -23,27 +25,29 @@ class StreamerFactory
         float $startTime = 0.0
     ): StreamerInterface {
         if ($song->storage_metadata instanceof S3CompatibleMetadata) {
-            return tap(
-                app(S3CompatibleStreamer::class),
-                static fn (S3CompatibleStreamer $streamer) => $streamer->setSong($song)
-            );
+            return self::makeStreamerFromClass(S3CompatibleStreamer::class, $song);
+        }
+
+        if ($song->storage_metadata instanceof DropboxMetadata) {
+            return self::makeStreamerFromClass(DropboxStreamer::class, $song);
         }
 
         $transcode ??= $this->transcodingService->songShouldBeTranscoded($song);
 
         if ($transcode) {
             /** @var TranscodingStreamer $streamer */
-            $streamer = app(TranscodingStreamer::class);
-            $streamer->setSong($song);
+            $streamer = self::makeStreamerFromClass(TranscodingStreamer::class, $song);
             $streamer->setBitRate($bitRate ?: config('koel.streaming.bitrate'));
             $streamer->setStartTime($startTime);
 
             return $streamer;
         }
 
-        return tap(
-            app(LocalStreamerInterface::class),
-            static fn (LocalStreamerInterface $streamer) => $streamer->setSong($song)
-        );
+        return self::makeStreamerFromClass(LocalStreamerInterface::class, $song);
+    }
+
+    private static function makeStreamerFromClass(string $class, Song $song): StreamerInterface
+    {
+        return tap(app($class), static fn (StreamerInterface $streamer) => $streamer->setSong($song));
     }
 }

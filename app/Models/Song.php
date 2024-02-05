@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use App\Builders\SongBuilder;
+use App\Values\SongStorageMetadata\DropboxMetadata;
 use App\Values\SongStorageMetadata\LocalMetadata;
 use App\Values\SongStorageMetadata\S3CompatibleMetadata;
-use App\Values\SongStorageMetadata\StorageMetadata;
+use App\Values\SongStorageMetadata\SongStorageMetadata;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -40,7 +41,7 @@ use Laravel\Scout\Searchable;
  * @property int $owner_id
  * @property bool $is_public
  * @property User $owner
- * @property-read StorageMetadata $storage_metadata
+ * @property-read SongStorageMetadata $storage_metadata
  *
  * // The following are only available for collaborative playlists
  * @property-read ?string $collaborator_email The email of the user who added the song to the playlist
@@ -150,9 +151,13 @@ class Song extends Model
     protected function storageMetadata(): Attribute
     {
         return new Attribute(
-            get: function (): StorageMetadata {
+            get: function (): SongStorageMetadata {
                 if (preg_match('/^s3:\\/\\/(.*)\\/(.*)/', $this->path, $matches)) {
                     return S3CompatibleMetadata::make($matches[1], $matches[2]);
+                }
+
+                if (preg_match('/^dropbox:\\/\\/(.*)\\/(.*)/', $this->path, $matches)) {
+                    return DropboxMetadata::make($matches[1], $matches[2]);
                 }
 
                 return LocalMetadata::make($this->path);

@@ -8,13 +8,22 @@ use App\Services\FileScanner;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
+use League\Flysystem\Filesystem;
+use Spatie\Dropbox\Client;
+use Spatie\FlysystemDropbox\DropboxAdapter;
 
-class S3CompatibleStorage extends CloudStorage
+class DropboxStorage extends CloudStorage
 {
-    public function __construct(protected FileScanner $scanner, private string $bucket)
+    private Filesystem $filesystem;
+    private DropboxAdapter $adapter;
+
+    public function __construct(protected FileScanner $scanner, private string $token, private string $folder)
     {
         parent::__construct($scanner);
+
+        $client = new Client($this->token);
+        $this->adapter = new DropboxAdapter($client);
+        $this->filesystem = new Filesystem($this->adapter, ['case_sensitive' => false]);
     }
 
     public function storeUploadedFile(UploadedFile $file, User $uploader): Song
@@ -24,8 +33,8 @@ class S3CompatibleStorage extends CloudStorage
             $song = $this->scanner->getSong();
             $key = $this->generateStorageKey($file->getClientOriginalName(), $uploader);
 
-            Storage::disk('s3')->put($key, File::get($result->path));
-            $song->update(['path' => "s3://$this->bucket/$key"]);
+            $this->filesystem->write($key, File::get($result->path));
+            $song->update(['path' => "dropbox://$this->folder/$key"]);
 
             File::delete($result->path);
 
@@ -35,6 +44,6 @@ class S3CompatibleStorage extends CloudStorage
 
     public function getSongPresignedUrl(Song $song): string
     {
-        return Storage::disk('s3')->temporaryUrl($song->storage_metadata->getPath(), now()->addHour());
+        return $this->adapter->getUrl($song->storage_metadata->getPath());
     }
 }
