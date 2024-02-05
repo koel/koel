@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\API\ObjectStorage\S3;
+namespace App\Http\Controllers\API;
 
 use App\Exceptions\SongPathNotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\ObjectStorage\S3\PutSongRequest;
 use App\Http\Requests\API\ObjectStorage\S3\RemoveSongRequest;
-use App\Services\S3Service;
+use App\Services\SongStorage\S3LambdaStorage;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 
-class SongController extends Controller
+class LambdaSongController extends Controller
 {
-    public function __construct(private S3Service $s3Service)
+    public function __construct(private S3LambdaStorage $storage)
     {
     }
 
@@ -20,7 +20,7 @@ class SongController extends Controller
     {
         $artist = Arr::get($request->tags, 'artist', '');
 
-        $song = $this->s3Service->createSongEntry(
+        $song = $this->storage->createSongEntry(
             $request->bucket,
             $request->key,
             $artist,
@@ -39,7 +39,7 @@ class SongController extends Controller
     public function remove(RemoveSongRequest $request)
     {
         try {
-            $this->s3Service->deleteSongEntry($request->bucket, $request->key);
+            $this->storage->deleteSongEntry($request->bucket, $request->key);
         } catch (SongPathNotFoundException) {
             abort(Response::HTTP_NOT_FOUND);
         }
