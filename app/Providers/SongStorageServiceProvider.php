@@ -27,11 +27,7 @@ class SongStorageServiceProvider extends ServiceProvider
             ->giveConfig('filesystems.disks.s3.bucket');
 
         $this->app->when(DropboxStorage::class)
-            ->needs('$token')
-            ->giveConfig('filesystems.disks.dropbox.token');
-
-        $this->app->when(DropboxStorage::class)
-            ->needs('$folder')
-            ->giveConfig('filesystems.disks.dropbox.folder');
+            ->needs('$config')
+            ->giveConfig('filesystems.disks.dropbox');
     }
 }

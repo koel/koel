@@ -297,7 +297,8 @@ class InitCommand extends Command
         }
 
         $this->newLine();
-        $this->info('The absolute path to your media directory. If this is skipped (left blank) now, you can set it later via the web interface.'); // @phpcs-ignore-line
+        $this->info('The absolute path to your media directory. You can leave it blank and set it later via the web interface.'); // @phpcs-ignore-line
+        $this->info('If you plan to use Koel with a cloud provider (S3 or Dropbox), you can also skip this.');
 
         while (true) {
             $path = $this->ask('Media path', config('koel.media_path'));

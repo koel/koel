@@ -17,9 +17,4 @@ final class LocalMetadata implements SongStorageMetadata
     {
         return $this->path;
     }
-
-    public function supported(): bool
-    {
-        return true;
-    }
 }

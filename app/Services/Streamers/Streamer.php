@@ -20,5 +20,5 @@ abstract class Streamer
         $this->song = $song;
     }
 
-    abstract public function stream(): mixed;
+    abstract public function stream(); // @phpcs:ignore
 }

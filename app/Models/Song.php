@@ -8,6 +8,7 @@ use App\Values\SongStorageMetadata\LegacyS3Metadata;
 use App\Values\SongStorageMetadata\LocalMetadata;
 use App\Values\SongStorageMetadata\S3CompatibleMetadata;
 use App\Values\SongStorageMetadata\SongStorageMetadata;
+use App\Values\SongStorageTypes;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
+use Throwable;
 
 /**
  * @property string $path
@@ -43,6 +45,7 @@ use Laravel\Scout\Searchable;
  * @property bool $is_public
  * @property User $owner
  * @property-read SongStorageMetadata $storage_metadata
+ * @property ?string $storage
  *
  * // The following are only available for collaborative playlists
  * @property-read ?string $collaborator_email The email of the user who added the song to the playlist
@@ -76,6 +79,14 @@ class Song extends Model
     protected static function booted(): void
     {
         static::creating(static fn (self $song) => $song->id = Str::uuid()->toString());
+
+        static::saving(static function (self $song): void {
+            if ($song->storage === '') {
+                $song->storage = SongStorageTypes::LOCAL;
+            }
+
+            SongStorageTypes::assertValidType($song->storage);
+        });
     }
 
     public static function query(): SongBuilder
@@ -153,19 +164,26 @@ class Song extends Model
     {
         return new Attribute(
             get: function (): SongStorageMetadata {
-                if (preg_match('/^s3\\+:\\/\\/(.*)\\/(.*)/', $this->path, $matches)) {
-                    return S3CompatibleMetadata::make($matches[1], $matches[2]);
-                }
+                try {
+                    switch ($this->storage) {
+                        case 's3':
+                            preg_match('/^s3\\+:\\/\\/(.*)\\/(.*)/', $this->path, $matches);
+                            return S3CompatibleMetadata::make($matches[1], $matches[2]);
 
-                if (preg_match('/^s3:\\/\\/(.*)\\/(.*)/', $this->path, $matches)) {
-                    return LegacyS3Metadata::make($matches[1], $matches[2]);
-                }
+                        case 's3-legacy':
+                            preg_match('/^s3\\+:\\/\\/(.*)\\/(.*)/', $this->path, $matches);
+                            return LegacyS3Metadata::make($matches[1], $matches[2]);
 
-                if (preg_match('/^dropbox:\\/\\/(.*)\\/(.*)/', $this->path, $matches)) {
-                    return DropboxMetadata::make($matches[1], $matches[2]);
-                }
+                        case 'dropbox':
+                            preg_match('/^dropbox:\\/\\/(.*)/', $this->path, $matches);
+                            return DropboxMetadata::make($matches[1]);
 
-                return LocalMetadata::make($this->path);
+                        default:
+                            return LocalMetadata::make($this->path);
+                    }
+                } catch (Throwable) {
+                    return LocalMetadata::make($this->path);
+                }
             }
         );
     }

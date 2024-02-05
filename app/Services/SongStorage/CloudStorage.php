@@ -3,7 +3,7 @@
 namespace App\Services\SongStorage;
 
 use App\Exceptions\SongUploadFailedException;
-use App\Facades\License;
+use App\Models\Song;
 use App\Models\User;
 use App\Services\FileScanner;
 use App\Values\ScanConfiguration;
@@ -40,13 +40,23 @@ abstract class CloudStorage extends SongStorage
         return $result;
     }
 
+    public function copyToLocal(Song $song): string
+    {
+        $tmpDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'koel_tmp';
+        File::ensureDirectoryExists($tmpDir);
+
+        $publicUrl = $this->getSongPresignedUrl($song);
+        $localPath = $tmpDir . DIRECTORY_SEPARATOR . basename($song->storage_metadata->getPath());
+
+        File::copy($publicUrl, $localPath);
+
+        return $localPath;
+    }
+
     protected function generateStorageKey(string $filename, User $uploader): string
     {
         return sprintf('%s__%s__%s', $uploader->id, Str::lower(Ulid::generate()), $filename);
     }
 
-    public function supported(): bool
-    {
-        return License::isPlus();
-    }
+    abstract public function getSongPresignedUrl(Song $song): string;
 }

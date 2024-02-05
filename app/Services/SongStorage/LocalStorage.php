@@ -9,6 +9,7 @@ use App\Models\Song;
 use App\Models\User;
 use App\Services\FileScanner;
 use App\Values\ScanConfiguration;
+use App\Values\SongStorageTypes;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Throwable;
@@ -89,6 +90,6 @@ final class LocalStorage extends SongStorage
 
     public function supported(): bool
     {
-        return true; // Local storage is always supported.
+        return SongStorageTypes::supported(SongStorageTypes::LOCAL);
     }
 }

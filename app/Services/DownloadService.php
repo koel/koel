@@ -4,17 +4,16 @@ namespace App\Services;
 
 use App\Models\Song;
 use App\Models\SongZipArchive;
-use Illuminate\Http\Response;
+use App\Services\SongStorage\CloudStorage;
+use App\Services\SongStorage\DropboxStorage;
+use App\Services\SongStorage\S3CompatibleStorage;
+use App\Values\SongStorageTypes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 
 class DownloadService
 {
-    public function __construct(private S3Service $s3Service)
-    {
-    }
-
-    public function getDownloadablePath(Collection $songs): string
+    public function getDownloadablePath(Collection $songs): ?string
     {
         if ($songs->count() === 1) {
             return $this->getLocalPath($songs->first());
@@ -26,27 +25,31 @@ class DownloadService
             ->getPath();
     }
 
-    public function getLocalPath(Song $song): string
+    public function getLocalPath(Song $song): ?string
     {
-        if ($song->s3_params) {
-            // The song is hosted on Amazon S3.
-            // We download it back to our local server first.
-            $url = $this->s3Service->getSongPublicUrl($song);
-
-            // @todo decouple http from services
-            abort_unless((bool) $url, Response::HTTP_NOT_FOUND);
-
-            $localPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . basename($song->s3_params['key']);
-
-            // The following function requires allow_url_fopen to be ON.
-            // We're just assuming that to be the case here.
-            File::copy($url, $localPath);
-        } else {
-            // The song is hosted locally. Make sure the file exists.
-            $localPath = $song->path;
-            abort_unless(File::exists($localPath), Response::HTTP_NOT_FOUND);
+        if (!SongStorageTypes::supported($song->storage)) {
+            return null;
         }
 
-        return $localPath;
+        if (!$song->storage || $song->storage === SongStorageTypes::LOCAL) {
+            return File::exists($song->path) ? $song->path : null;
+        }
+
+        switch (true) {
+            case $song->storage === SongStorageTypes::DROPBOX:
+                /** @var CloudStorage $cloudStorage */
+                $cloudStorage = app(DropboxStorage::class);
+                break;
+
+            case $song->storage === SongStorageTypes::S3 || $song->storage === SongStorageTypes::S3_LAMBDA:
+                /** @var CloudStorage $cloudStorage */
+                $cloudStorage = app(S3CompatibleStorage::class);
+                break;
+
+            default:
+                return null;
+        }
+
+        return $cloudStorage->copyToLocal($song);
     }
 }

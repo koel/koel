@@ -1,6 +1,7 @@
 <?php
 
 use App\Facades\ITunes;
+use App\Http\Controllers\AuthorizeDropboxController;
 use App\Http\Controllers\Download\DownloadAlbumController;
 use App\Http\Controllers\Download\DownloadArtistController;
 use App\Http\Controllers\Download\DownloadFavoritesController;
@@ -26,6 +27,8 @@ Route::middleware('web')->group(static function (): void {
             Route::get('itunes/song/{album}', ViewSongOnITunesController::class)->name('iTunes.viewSong');
         }
     });
+
+    Route::get('dropbox/authorize', AuthorizeDropboxController::class)->name('dropbox.authorize');
 
     Route::middleware('audio.auth')->group(static function (): void {
         Route::get('play/{song}/{transcode?}/{bitrate?}', PlayController::class)->name('song.play');

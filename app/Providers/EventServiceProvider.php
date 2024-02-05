@@ -9,7 +9,7 @@ use App\Events\MultipleSongsUnliked;
 use App\Events\NewPlaylistCollaboratorJoined;
 use App\Events\PlaybackStarted;
 use App\Events\SongLikeToggled;
-use App\Listeners\DeleteNonExistingRecordsPostSync;
+use App\Listeners\DeleteNonExistingRecordsPostScan;
 use App\Listeners\LoveMultipleTracksOnLastfm;
 use App\Listeners\LoveTrackOnLastfm;
 use App\Listeners\MakePlaylistSongsPublic;
@@ -45,7 +45,7 @@ class EventServiceProvider extends BaseServiceProvider
         ],
 
         MediaScanCompleted::class => [
-            DeleteNonExistingRecordsPostSync::class,
+            DeleteNonExistingRecordsPostScan::class,
             WriteSyncLog::class,
         ],
 
