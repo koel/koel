@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Builders\SongBuilder;
 use App\Values\SongStorageMetadata\DropboxMetadata;
+use App\Values\SongStorageMetadata\LegacyS3Metadata;
 use App\Values\SongStorageMetadata\LocalMetadata;
 use App\Values\SongStorageMetadata\S3CompatibleMetadata;
 use App\Values\SongStorageMetadata\SongStorageMetadata;
@@ -152,8 +153,12 @@ class Song extends Model
     {
         return new Attribute(
             get: function (): SongStorageMetadata {
-                if (preg_match('/^s3:\\/\\/(.*)\\/(.*)/', $this->path, $matches)) {
+                if (preg_match('/^s3\\+:\\/\\/(.*)\\/(.*)/', $this->path, $matches)) {
                     return S3CompatibleMetadata::make($matches[1], $matches[2]);
+                }
+
+                if (preg_match('/^s3:\\/\\/(.*)\\/(.*)/', $this->path, $matches)) {
+                    return LegacyS3Metadata::make($matches[1], $matches[2]);
                 }
 
                 if (preg_match('/^dropbox:\\/\\/(.*)\\/(.*)/', $this->path, $matches)) {

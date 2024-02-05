@@ -4,7 +4,7 @@ namespace App\Services\Streamers;
 
 use App\Models\Setting;
 
-class XAccelRedirectStreamer extends Streamer implements LocalStreamerInterface
+class XAccelRedirectStreamer extends LocalStreamer
 {
     /**
      * Stream the current song using nginx's X-Accel-Redirect.

@@ -3,6 +3,7 @@
 namespace App\Services\SongStorage;
 
 use App\Exceptions\SongUploadFailedException;
+use App\Facades\License;
 use App\Models\User;
 use App\Services\FileScanner;
 use App\Values\ScanConfiguration;
@@ -12,18 +13,20 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Symfony\Component\Uid\Ulid;
 
-abstract class CloudStorage implements SongStorage
+abstract class CloudStorage extends SongStorage
 {
     public function __construct(protected FileScanner $scanner)
     {
+        parent::__construct();
     }
 
     protected function scanUploadedFile(UploadedFile $file, User $uploader): ScanResult
     {
         // Can't scan the uploaded file directly, as it apparently causes some misbehavior during idv3 tag reading.
         // Instead, we copy the file to the tmp directory and scan it from there.
-        $tmpDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . Str::uuid();
-        File::makeDirectory($tmpDir);
+        $tmpDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'koel_tmp';
+        File::ensureDirectoryExists($tmpDir);
+
         $tmpFile = $file->move($tmpDir, $file->getClientOriginalName());
 
         $result = $this->scanner->setFile($tmpFile)
@@ -40,5 +43,10 @@ abstract class CloudStorage implements SongStorage
     protected function generateStorageKey(string $filename, User $uploader): string
     {
         return sprintf('%s__%s__%s', $uploader->id, Str::lower(Ulid::generate()), $filename);
+    }
+
+    public function supported(): bool
+    {
+        return License::isPlus();
     }
 }

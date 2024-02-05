@@ -1,13 +1,9 @@
 <?php
 
-namespace App\Factories;
+namespace App\Services\Streamers;
 
+use App\Exceptions\KoelPlusRequiredException;
 use App\Models\Song;
-use App\Services\Streamers\DropboxStreamer;
-use App\Services\Streamers\LocalStreamerInterface;
-use App\Services\Streamers\S3CompatibleStreamer;
-use App\Services\Streamers\StreamerInterface;
-use App\Services\Streamers\TranscodingStreamer;
 use App\Services\TranscodingService;
 use App\Values\SongStorageMetadata\DropboxMetadata;
 use App\Values\SongStorageMetadata\S3CompatibleMetadata;
@@ -23,7 +19,9 @@ class StreamerFactory
         ?bool $transcode = null,
         ?int $bitRate = null,
         float $startTime = 0.0
-    ): StreamerInterface {
+    ): Streamer {
+        throw_unless($song->storage_metadata->supported(), KoelPlusRequiredException::class);
+
         if ($song->storage_metadata instanceof S3CompatibleMetadata) {
             return self::makeStreamerFromClass(S3CompatibleStreamer::class, $song);
         }
@@ -43,11 +41,11 @@ class StreamerFactory
             return $streamer;
         }
 
-        return self::makeStreamerFromClass(LocalStreamerInterface::class, $song);
+        return self::makeStreamerFromClass(LocalStreamer::class, $song);
     }
 
-    private static function makeStreamerFromClass(string $class, Song $song): StreamerInterface
+    private static function makeStreamerFromClass(string $class, Song $song): Streamer
     {
-        return tap(app($class), static fn (StreamerInterface $streamer) => $streamer->setSong($song));
+        return tap(app($class), static fn (Streamer $streamer) => $streamer->setSong($song));
     }
 }

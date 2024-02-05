@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Factories\StreamerFactory;
 use App\Http\Requests\SongPlayRequest;
 use App\Models\Song;
+use App\Services\Streamers\StreamerFactory;
 
 class PlayController extends Controller
 {

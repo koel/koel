@@ -2,10 +2,10 @@
 
 namespace Tests\Integration\Factories;
 
-use App\Factories\StreamerFactory;
 use App\Models\Song;
 use App\Services\Streamers\PhpStreamer;
 use App\Services\Streamers\S3CompatibleStreamer;
+use App\Services\Streamers\StreamerFactory;
 use App\Services\Streamers\TranscodingStreamer;
 use App\Services\Streamers\XAccelRedirectStreamer;
 use App\Services\Streamers\XSendFileStreamer;
