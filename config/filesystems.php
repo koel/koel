@@ -72,6 +72,11 @@ return [
             'throw' => true,
         ],
 
+        'dropbox' => [
+            'token' => env('DROPBOX_ACCESS_TOKEN'),
+            'folder' => env('DROPBOX_APP_FOLDER'),
+        ],
+
         'rackspace' => [
             'driver' => 'rackspace',
             'username' => 'your-username',

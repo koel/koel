@@ -2,7 +2,7 @@
 
 namespace App\Values\SongStorageMetadata;
 
-interface StorageMetadata
+interface SongStorageMetadata
 {
     public function getPath(): string;
 }
