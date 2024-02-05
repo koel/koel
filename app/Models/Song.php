@@ -40,7 +40,6 @@ use Throwable;
  * @property ?bool $liked Whether the song is liked by the current user (dynamically calculated)
  * @property ?int $play_count The number of times the song has been played by the current user (dynamically calculated)
  * @property Carbon $created_at
- * @property array<mixed> $s3_params
  * @property int $owner_id
  * @property bool $is_public
  * @property User $owner
@@ -186,19 +185,6 @@ class Song extends Model
                 }
             }
         );
-    }
-
-    protected function s3Params(): Attribute
-    {
-        return Attribute::get(function (): ?array {
-            if (!preg_match('/^s3:\\/\\/(.*)/', $this->path, $matches)) {
-                return null;
-            }
-
-            [$bucket, $key] = explode('/', $matches[1], 2);
-
-            return compact('bucket', 'key');
-        });
     }
 
     public static function getPathFromS3BucketAndKey(string $bucket, string $key): string

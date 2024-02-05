@@ -1,17 +1,13 @@
 <?php
 
-namespace Tests\Unit\Services;
+namespace Tests\Unit\Services\SongStorage;
 
 use App\Events\LibraryChanged;
 use App\Models\Song;
 use App\Repositories\SongRepository;
 use App\Repositories\UserRepository;
 use App\Services\MediaMetadataService;
-use App\Services\S3Service;
-use Aws\CommandInterface;
-use Aws\S3\S3ClientInterface;
-use GuzzleHttp\Psr7\Request;
-use Illuminate\Cache\Repository as Cache;
+use App\Services\SongStorage\S3LambdaStorage;
 use Mockery;
 use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
@@ -19,28 +15,21 @@ use Tests\TestCase;
 
 use function Tests\create_admin;
 
-class S3ServiceTest extends TestCase
+class S3LambdaStorageTest extends TestCase
 {
-    private S3ClientInterface|LegacyMockInterface|MockInterface $s3Client;
-    private Cache|LegacyMockInterface|MockInterface $cache;
     private SongRepository|LegacyMockInterface|MockInterface $songRepository;
     private UserRepository|LegacyMockInterface|MockInterface $userRepository;
-    private S3Service $s3Service;
+    private S3LambdaStorage $storage;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->s3Client = Mockery::mock(S3ClientInterface::class);
-        $this->cache = Mockery::mock(Cache::class);
-
         $metadataService = Mockery::mock(MediaMetadataService::class);
         $this->songRepository = Mockery::mock(SongRepository::class);
         $this->userRepository = Mockery::mock(UserRepository::class);
 
-        $this->s3Service = new S3Service(
-            $this->s3Client,
-            $this->cache,
+        $this->storage = new S3LambdaStorage(
             $metadataService,
             $this->songRepository,
             $this->userRepository
@@ -56,7 +45,7 @@ class S3ServiceTest extends TestCase
             ->once()
             ->andReturn($user);
 
-        $song = $this->s3Service->createSongEntry(
+        $song = $this->storage->createSongEntry(
             bucket: 'foo',
             key: 'bar',
             artistName: 'Queen',
@@ -93,7 +82,7 @@ class S3ServiceTest extends TestCase
             'path' => 's3://foo/bar',
         ]);
 
-        $this->s3Service->createSongEntry(
+        $this->storage->createSongEntry(
             bucket: 'foo',
             key: 'bar',
             artistName: 'Queen',
@@ -134,35 +123,8 @@ class S3ServiceTest extends TestCase
             ->once()
             ->andReturn($song);
 
-        $this->s3Service->deleteSongEntry('foo', 'bar');
+        $this->storage->deleteSongEntry('foo', 'bar');
 
         self::assertModelMissing($song);
-    }
-
-    public function testGetSongPublicUrl(): void
-    {
-        /** @var Song $song */
-        $song = Song::factory()->create(['path' => 's3://foo/bar']);
-
-        $cmd = Mockery::mock(CommandInterface::class);
-
-        $this->s3Client->shouldReceive('getCommand')
-            ->with('GetObject', [
-                'Bucket' => 'foo',
-                'Key' => 'bar',
-            ])
-            ->andReturn($cmd);
-
-        $request = Mockery::mock(Request::class, ['getUri' => 'https://aws.com/foo.mp3']);
-
-        $this->s3Client->shouldReceive('createPresignedRequest')
-            ->with($cmd, '+1 hour')
-            ->andReturn($request);
-
-        $this->cache->shouldReceive('remember')
-            ->once()
-            ->andReturn('https://aws.com/foo.mp3');
-
-        self::assertSame('https://aws.com/foo.mp3', $this->s3Service->getSongPublicUrl($song));
     }
 }
