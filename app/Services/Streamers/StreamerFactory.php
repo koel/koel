@@ -5,8 +5,7 @@ namespace App\Services\Streamers;
 use App\Exceptions\KoelPlusRequiredException;
 use App\Models\Song;
 use App\Services\TranscodingService;
-use App\Values\SongStorageMetadata\DropboxMetadata;
-use App\Values\SongStorageMetadata\S3CompatibleMetadata;
+use App\Values\SongStorageTypes;
 
 class StreamerFactory
 {
@@ -20,13 +19,13 @@ class StreamerFactory
         ?int $bitRate = null,
         float $startTime = 0.0
     ): Streamer {
-        throw_unless($song->storage_metadata->supported(), KoelPlusRequiredException::class);
+        throw_unless(SongStorageTypes::supported($song->storage), KoelPlusRequiredException::class);
 
-        if ($song->storage_metadata instanceof S3CompatibleMetadata) {
+        if ($song->storage === SongStorageTypes::S3 || $song->storage === SongStorageTypes::S3_LAMBDA) {
             return self::makeStreamerFromClass(S3CompatibleStreamer::class, $song);
         }
 
-        if ($song->storage_metadata instanceof DropboxMetadata) {
+        if ($song->storage === SongStorageTypes::DROPBOX) {
             return self::makeStreamerFromClass(DropboxStreamer::class, $song);
         }
 

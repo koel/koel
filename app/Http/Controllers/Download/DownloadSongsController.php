@@ -7,6 +7,7 @@ use App\Http\Requests\Download\DownloadSongsRequest;
 use App\Models\Song;
 use App\Repositories\SongRepository;
 use App\Services\DownloadService;
+use Illuminate\Http\Response;
 
 class DownloadSongsController extends Controller
 {
@@ -16,6 +17,10 @@ class DownloadSongsController extends Controller
         $songs = Song::query()->findMany($request->songs);
         $songs->each(fn ($song) => $this->authorize('download', $song));
 
-        return response()->download($service->getDownloadablePath($repository->getMany($request->songs)));
+        $downloadablePath = $service->getDownloadablePath($repository->getMany($request->songs));
+
+        abort_unless((bool) $downloadablePath, Response::HTTP_BAD_REQUEST, 'Song cannot be downloaded.');
+
+        return response()->download($downloadablePath);
     }
 }

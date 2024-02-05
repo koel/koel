@@ -7,7 +7,7 @@ use App\Models\Song;
 use App\Repositories\SongRepository;
 use App\Values\ScanResult;
 
-class DeleteNonExistingRecordsPostSync
+class DeleteNonExistingRecordsPostScan
 {
     public function __construct(private SongRepository $songRepository)
     {

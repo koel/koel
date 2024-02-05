@@ -106,8 +106,7 @@ class SongBuilder extends Builder
 
     public function storedOnCloud(): static
     {
-        return $this->where('path', 'LIKE', 's3://%')
-            ->orWhere('path', 'LIKE', 's3+://%')
-            ->orWhere('path', 'LIKE', 'dropbox://%');
+        return $this->whereNotNull('storage')
+            ->where('storage', '!=', '');
     }
 }

@@ -9,6 +9,7 @@ use App\Models\Artist;
 use App\Models\Song;
 use App\Repositories\SongRepository;
 use App\Repositories\UserRepository;
+use App\Values\SongStorageTypes;
 use Aws\S3\S3ClientInterface;
 use Illuminate\Cache\Repository as Cache;
 
@@ -79,6 +80,7 @@ class S3Service implements ObjectStorageInterface
             'mtime' => time(),
             'owner_id' => $user->id,
             'is_public' => true,
+            'storage' => SongStorageTypes::S3_LAMBDA,
         ]);
 
         event(new LibraryChanged());

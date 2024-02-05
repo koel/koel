@@ -3,7 +3,7 @@
 namespace Tests\Integration\Listeners;
 
 use App\Events\MediaScanCompleted;
-use App\Listeners\DeleteNonExistingRecordsPostSync;
+use App\Listeners\DeleteNonExistingRecordsPostScan;
 use App\Models\Song;
 use App\Values\ScanResult;
 use App\Values\ScanResultCollection;
@@ -12,13 +12,13 @@ use Tests\TestCase;
 
 class DeleteNonExistingRecordsPostSyncTest extends TestCase
 {
-    private DeleteNonExistingRecordsPostSync $listener;
+    private DeleteNonExistingRecordsPostScan $listener;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->listener = app(DeleteNonExistingRecordsPostSync::class);
+        $this->listener = app(DeleteNonExistingRecordsPostScan::class);
     }
 
     public function testHandleDoesNotDeleteS3Entries(): void
