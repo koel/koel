@@ -4,6 +4,9 @@
     <span class="details">
       <span class="name">{{ file.name }}</span>
       <span class="controls">
+        <span v-if="file.status === 'Errored'" v-koel-tooltip.left :title="file.message" class="info">
+          <Icon :icon="faInfoCircle" :title="file.message" />
+        </span>
         <Btn v-if="canRetry" icon-only title="Retry" transparent unrounded @click="retry">
           <Icon :icon="faRotateBack" />
         </Btn>
@@ -17,7 +20,7 @@
 
 <script lang="ts" setup>
 import slugify from 'slugify'
-import { faRotateBack, faTrashCan } from '@fortawesome/free-solid-svg-icons'
+import { faInfoCircle, faRotateBack, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, toRefs } from 'vue'
 import { UploadFile, uploadService } from '@/services'
 
@@ -81,10 +84,17 @@ const retry = () => uploadService.retry(file.value)
     .name {
       padding: 0 12px;
     }
+
+    .info {
+      padding: 0 8px;
+    }
   }
 
   .controls {
     display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 0 2px;
   }
 
   button {
