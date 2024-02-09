@@ -30,7 +30,7 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
-import { settingStore } from '@/stores'
+import { commonStore, settingStore } from '@/stores'
 import { forceReloadWindow, parseValidationError } from '@/utils'
 import { useDialogBox, useMessageToaster, useOverlay, useRouter } from '@/composables'
 
@@ -42,12 +42,17 @@ const { showConfirmDialog, showErrorDialog } = useDialogBox()
 const { go } = useRouter()
 const { showOverlay, hideOverlay } = useOverlay()
 
+const storageDriver = ref(commonStore.state.storage_driver)
 const mediaPath = ref(settingStore.state.media_path)
 const originalMediaPath = mediaPath.value
 
 const shouldWarn = computed(() => {
   // Warn the user if the media path is not empty and about to change.
   if (!originalMediaPath || !mediaPath.value) {
+    return false
+  }
+
+  if (storageDriver.value !== 'local') {
     return false
   }
 
@@ -73,8 +78,8 @@ const save = async () => {
 
 const confirmThenSave = async () => {
   if (shouldWarn.value) {
-    await showConfirmDialog('Changing the media path will essentially remove all existing data – songs, artists, \
-          albums, favorites, everything – and empty your playlists! Sure you want to proceed?', 'Confirm')
+    await showConfirmDialog('Changing the media path will essentially remove all existing local data – songs, artists, \
+          albums, favorites, etc. Sure you want to proceed?', 'Confirm')
     && await save()
   } else {
     await save()
