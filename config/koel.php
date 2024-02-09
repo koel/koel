@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'storage_driver' => env('STORAGE_DRIVER', 'r2'),
+    'storage_driver' => env('STORAGE_DRIVER', 'local'),
 
     'media_path' => env('MEDIA_PATH'),
 

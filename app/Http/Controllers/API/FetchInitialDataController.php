@@ -63,6 +63,7 @@ class FetchInitialDataController extends Controller
                 'customer_email' => $licenseStatus->license?->meta->customerEmail,
                 'product_id' => config('lemonsqueezy.product_id'),
             ],
+            'storage_driver' =>  config('koel.storage_driver'),
         ]);
     }
 }

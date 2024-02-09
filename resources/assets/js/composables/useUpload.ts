@@ -13,7 +13,10 @@ export const useUpload = () => {
   const { isPlus } = useKoelPlus()
   const { isAdmin } = useAuthorization()
 
-  const mediaPathSetUp = computed(() => commonStore.state.media_path_set)
+  const mediaPathSetUp = computed(() => {
+    return commonStore.state.storage_driver !== 'local' || commonStore.state.media_path_set
+  })
+
   const allowsUpload = computed(() => (isPlus.value || isAdmin.value) && !isMobile.phone)
 
   const fileEntryToFile = async (entry: FileSystemEntry) => new Promise<File>(resolve => entry.file(resolve))
