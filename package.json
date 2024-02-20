@@ -19,7 +19,7 @@
     "@fortawesome/free-regular-svg-icons": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@fortawesome/vue-fontawesome": "^3.0.1",
-    "axios": "^0.21.1",
+    "axios": "^0.28.0",
     "compare-versions": "^3.5.1",
     "ismobilejs": "^0.4.0",
     "local-storage": "^2.0.0",
