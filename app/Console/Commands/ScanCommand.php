@@ -50,6 +50,12 @@ class ScanCommand extends Command
 
     public function handle(): int
     {
+        if (config('koel.storage_driver') !== 'local') {
+            $this->components->error('This command only works with the local storage driver.');
+
+            return self::INVALID;
+        }
+
         $this->mediaPath = $this->getMediaPath();
 
         $config = ScanConfiguration::make(
