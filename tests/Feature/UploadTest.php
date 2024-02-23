@@ -27,7 +27,7 @@ class UploadTest extends TestCase
 
     public function testUnauthorizedPost(): void
     {
-        Setting::set('media_path');
+        Setting::unset('media_path');
 
         $this->postAs('/api/upload', ['file' => $this->file])->assertForbidden();
     }
@@ -43,7 +43,7 @@ class UploadTest extends TestCase
 
     public function testUploadFailsIfMediaPathIsNotSet(): void
     {
-        Setting::set('media_path');
+        Setting::unset('media_path');
 
         $this->postAs('/api/upload', ['file' => $this->file], create_admin())->assertForbidden();
     }

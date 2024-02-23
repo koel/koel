@@ -26,6 +26,7 @@ class S3CompatibleStorage extends CloudStorage
             $key = $this->generateStorageKey($file->getClientOriginalName(), $uploader);
 
             Storage::disk('s3')->put($key, File::get($result->path));
+
             $song->update([
                 'path' => "s3://$this->bucket/$key",
                 'storage' => SongStorageTypes::S3,
@@ -40,6 +41,18 @@ class S3CompatibleStorage extends CloudStorage
     public function getSongPresignedUrl(Song $song): string
     {
         return Storage::disk('s3')->temporaryUrl($song->storage_metadata->getPath(), now()->addHour());
+    }
+
+    public function delete(Song $song, bool $backup = false): void
+    {
+        $disk = Storage::disk('s3');
+        $path = $song->storage_metadata->getPath();
+
+        if ($backup) {
+            $disk->move($path, "backup/$path");
+        }
+
+        $disk->delete($song->storage_metadata->getPath());
     }
 
     public function supported(): bool

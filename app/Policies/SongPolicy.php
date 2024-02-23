@@ -20,7 +20,7 @@ class SongPolicy
 
     public function delete(User $user, Song $song): bool
     {
-        return (License::isPlus() && $song->accessibleBy($user)) || $user->is_admin;
+        return (License::isPlus() && $song->ownedBy($user)) || $user->is_admin;
     }
 
     public function edit(User $user, Song $song): bool
@@ -30,10 +30,6 @@ class SongPolicy
 
     public function download(User $user, Song $song): bool
     {
-        if (!config('koel.download.allow')) {
-            return false;
-        }
-
-        return $this->access($user, $song);
+        return config('koel.download.allow') && $this->access($user, $song);
     }
 }
