@@ -33,9 +33,6 @@ class AppServiceProvider extends ServiceProvider
             $db->statement($db->raw('PRAGMA foreign_keys = ON'));
         }
 
-        // Add some custom validation rules
-        $validator->extend('path.valid', static fn ($attribute, $value): bool => is_dir($value) && is_readable($value));
-
         // disable wrapping JSON resource in a `data` key
         JsonResource::withoutWrapping();
 

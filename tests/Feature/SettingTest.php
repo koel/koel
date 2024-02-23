@@ -37,4 +37,14 @@ class SettingTest extends TestCase
         $this->putAs('/api/settings', ['media_path' => __DIR__])
             ->assertForbidden();
     }
+
+    public function testMediaPathCannotBeSetForCloudStorage(): void
+    {
+        config(['koel.storage_driver' => 's3']);
+
+        $this->putAs('/api/settings', ['media_path' => __DIR__], create_admin())
+            ->assertUnprocessable();
+
+        config(['koel.storage_driver' => 'local']);
+    }
 }
