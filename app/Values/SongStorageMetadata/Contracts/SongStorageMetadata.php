@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Values\SongStorageMetadata;
+namespace App\Values\SongStorageMetadata\Contracts;
 
 interface SongStorageMetadata
 {

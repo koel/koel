@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\License;
+namespace App\Services\License\Contracts;
 
 use App\Models\License;
 use App\Values\LicenseStatus;

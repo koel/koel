@@ -8,7 +8,7 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Repositories\SongRepository;
-use App\Services\SongStorage\SongStorage;
+use App\Services\SongStorages\SongStorage;
 use App\Values\SongUpdateData;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;

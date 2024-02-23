@@ -4,13 +4,13 @@ namespace App\Services;
 
 use App\Events\LibraryChanged;
 use App\Events\MediaScanCompleted;
-use App\Libraries\WatchRecord\WatchRecordInterface;
 use App\Models\Song;
 use App\Repositories\SettingRepository;
 use App\Repositories\SongRepository;
 use App\Values\ScanConfiguration;
 use App\Values\ScanResult;
 use App\Values\ScanResultCollection;
+use App\Values\WatchRecord\Contracts\WatchRecordInterface;
 use Psr\Log\LoggerInterface;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;

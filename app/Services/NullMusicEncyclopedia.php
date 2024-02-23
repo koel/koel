@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Album;
 use App\Models\Artist;
+use App\Services\Contracts\MusicEncyclopedia;
 use App\Values\AlbumInformation;
 use App\Values\ArtistInformation;
 

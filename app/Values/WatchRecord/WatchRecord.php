@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Libraries\WatchRecord;
+namespace App\Values\WatchRecord;
+
+use App\Values\WatchRecord\Contracts\WatchRecordInterface;
 
 abstract class WatchRecord implements WatchRecordInterface
 {

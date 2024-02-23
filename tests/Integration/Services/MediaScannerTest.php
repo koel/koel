@@ -4,7 +4,6 @@ namespace Tests\Integration\Services;
 
 use App\Events\LibraryChanged;
 use App\Events\MediaScanCompleted;
-use App\Libraries\WatchRecord\InotifyWatchRecord;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Setting;
@@ -12,6 +11,7 @@ use App\Models\Song;
 use App\Services\FileScanner;
 use App\Services\MediaScanner;
 use App\Values\ScanConfiguration;
+use App\Values\WatchRecord\InotifyWatchRecord;
 use getID3;
 use Illuminate\Support\Arr;
 use Mockery;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Values;
+namespace App\Values\Concerns;
 
 trait FormatsLastFmText
 {

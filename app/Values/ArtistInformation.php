@@ -2,6 +2,7 @@
 
 namespace App\Values;
 
+use App\Values\Concerns\FormatsLastFmText;
 use Illuminate\Contracts\Support\Arrayable;
 
 final class ArtistInformation implements Arrayable

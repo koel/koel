@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\SongStorage;
+namespace App\Services\SongStorages;
 
 use App\Exceptions\SongUploadFailedException;
 use App\Models\Song;

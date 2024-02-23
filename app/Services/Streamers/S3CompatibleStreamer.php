@@ -2,7 +2,7 @@
 
 namespace App\Services\Streamers;
 
-use App\Services\SongStorage\S3CompatibleStorage;
+use App\Services\SongStorages\S3CompatibleStorage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
 

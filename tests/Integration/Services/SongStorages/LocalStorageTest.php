@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\Integration\Services\FileStorage;
+namespace Tests\Integration\Services\SongStorages;
 
 use App\Exceptions\MediaPathNotSetException;
 use App\Exceptions\SongUploadFailedException;
 use App\Models\Setting;
-use App\Services\SongStorage\LocalStorage;
+use App\Services\SongStorages\LocalStorage;
 use Illuminate\Http\UploadedFile;
 use Mockery;
 use Tests\TestCase;
@@ -26,7 +26,7 @@ class LocalStorageTest extends TestCase
 
     public function testStoreUploadedFileWithMediaPathNotSet(): void
     {
-        Setting::unset('media_path');
+        Setting::set('media_path', '');
 
         self::expectException(MediaPathNotSetException::class);
         $this->service->storeUploadedFile(Mockery::mock(UploadedFile::class), create_user());

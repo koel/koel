@@ -7,6 +7,7 @@ use App\Models\Artist;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\ApiClients\LastfmClient;
+use App\Services\Contracts\MusicEncyclopedia;
 use App\Values\AlbumInformation;
 use App\Values\ArtistInformation;
 use GuzzleHttp\Promise\Promise;

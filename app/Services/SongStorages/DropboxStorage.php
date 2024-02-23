@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Services\SongStorage;
+namespace App\Services\SongStorages;
 
+use App\Filesystems\DropboxFilesystem;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\FileScanner;
@@ -11,22 +12,17 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
-use League\Flysystem\Filesystem;
-use Spatie\Dropbox\Client;
-use Spatie\FlysystemDropbox\DropboxAdapter;
 
 final class DropboxStorage extends CloudStorage
 {
-    public Filesystem $filesystem;
-    private DropboxAdapter $adapter;
-
-    public function __construct(protected FileScanner $scanner, private array $config)
-    {
+    public function __construct(
+        protected FileScanner $scanner,
+        private DropboxFilesystem $filesystem,
+        private array $config
+    ) {
         parent::__construct($scanner);
 
-        $client = new Client($this->maybeRefreshAccessToken());
-        $this->adapter = new DropboxAdapter($client);
-        $this->filesystem = new Filesystem($this->adapter, ['case_sensitive' => false]);
+        $this->filesystem->getAdapter()->getClient()->setAccessToken($this->maybeRefreshAccessToken());
     }
 
     public function storeUploadedFile(UploadedFile $file, User $uploader): Song
@@ -37,6 +33,7 @@ final class DropboxStorage extends CloudStorage
             $key = $this->generateStorageKey($file->getClientOriginalName(), $uploader);
 
             $this->filesystem->write($key, File::get($result->path));
+
             $song->update([
                 'path' => "dropbox://$key",
                 'storage' => SongStorageTypes::DROPBOX,
@@ -61,20 +58,20 @@ final class DropboxStorage extends CloudStorage
             ->post('https://api.dropboxapi.com/oauth2/token', [
                 'refresh_token' => $this->config['refresh_token'],
                 'grant_type' => 'refresh_token',
-            ])->json();
+            ]);
 
         Cache::put(
             'dropbox_access_token',
-            $response['access_token'],
-            now()->addSeconds($response['expires_in'] - 60) // 60 seconds buffer
+            $response->json('access_token'),
+            now()->addSeconds($response->json('expires_in') - 60) // 60 seconds buffer
         );
 
-        return  $response['access_token'];
+        return  $response->json('access_token');
     }
 
     public function getSongPresignedUrl(Song $song): string
     {
-        return $this->adapter->getUrl($song->storage_metadata->getPath());
+        return $this->filesystem->temporaryUrl($song->storage_metadata->getPath());
     }
 
     public function supported(): bool

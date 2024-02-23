@@ -2,7 +2,7 @@
 
 namespace App\Services\Streamers;
 
-use App\Services\SongStorage\DropboxStorage;
+use App\Services\SongStorages\DropboxStorage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
 

@@ -4,10 +4,10 @@ namespace App\Providers;
 
 use App\Services\ApiClients\ApiClient;
 use App\Services\ApiClients\LemonSqueezyApiClient;
+use App\Services\Contracts\MusicEncyclopedia;
 use App\Services\LastfmService;
-use App\Services\License\LicenseServiceInterface;
+use App\Services\License\Contracts\LicenseServiceInterface;
 use App\Services\LicenseService;
-use App\Services\MusicEncyclopedia;
 use App\Services\NullMusicEncyclopedia;
 use App\Services\SpotifyService;
 use Illuminate\Database\DatabaseManager;

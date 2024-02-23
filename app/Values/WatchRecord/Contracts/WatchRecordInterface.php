@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Libraries\WatchRecord;
+namespace App\Values\WatchRecord\Contracts;
 
 interface WatchRecordInterface
 {
