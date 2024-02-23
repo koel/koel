@@ -33,7 +33,7 @@ class Setting extends Model
      * @param array|string $key the key of the setting, or an associative array of settings,
      *                            in which case $value will be discarded
      */
-    public static function set(array|string $key, $value = ''): void
+    public static function set(array|string $key, $value): void
     {
         if (is_array($key)) {
             foreach ($key as $k => $v) {
@@ -44,5 +44,10 @@ class Setting extends Model
         }
 
         self::query()->updateOrCreate(compact('key'), compact('value'));
+    }
+
+    public static function unset(string $key): void
+    {
+        static::set($key, null);
     }
 }

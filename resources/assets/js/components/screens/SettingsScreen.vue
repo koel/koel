@@ -2,7 +2,11 @@
   <section id="settingsWrapper">
     <ScreenHeader>Settings</ScreenHeader>
 
-    <form class="main-scroll-wrap" @submit.prevent="confirmThenSave">
+    <p v-if="storageDriver !== 'local'" class="cloud-warn text-secondary">
+      Since you’re not using a cloud storage, there’s no need to set a media path.
+    </p>
+
+    <form v-else class="main-scroll-wrap" @submit.prevent="confirmThenSave">
       <div class="form-row">
         <label for="inputSettingsPath">Media Path</label>
 
@@ -98,6 +102,10 @@ const confirmThenSave = async () => {
     input[type="text"] {
       width: 100%;
     }
+  }
+
+  .cloud-warn {
+    padding: 1.8rem;
   }
 }
 </style>
