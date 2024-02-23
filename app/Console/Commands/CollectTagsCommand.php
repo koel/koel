@@ -27,6 +27,12 @@ class CollectTagsCommand extends Command
 
     public function handle(): int
     {
+        if (config('koel.storage_driver') !== 'local') {
+            $this->components->error('This command only works with the local storage driver.');
+
+            return self::INVALID;
+        }
+
         $tags = collect($this->argument('tag'))->unique();
 
         if ($tags->diff(self::COLLECTABLE_TAGS)->isNotEmpty()) {
