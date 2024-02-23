@@ -17,7 +17,9 @@ abstract class SongStorage
         );
     }
 
-    abstract protected function supported(): bool;
-
     abstract public function storeUploadedFile(UploadedFile $file, User $uploader): Song;
+
+    abstract public function delete(Song $song, bool $backup = false): void;
+
+    abstract protected function supported(): bool;
 }

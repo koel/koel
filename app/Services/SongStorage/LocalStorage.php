@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Services\FileScanner;
 use App\Values\ScanConfiguration;
 use App\Values\SongStorageTypes;
+use Exception;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Throwable;
@@ -91,5 +92,16 @@ final class LocalStorage extends SongStorage
     public function supported(): bool
     {
         return SongStorageTypes::supported(SongStorageTypes::LOCAL);
+    }
+
+    public function delete(Song $song, bool $backup = false): void
+    {
+        $path = $song->storage_metadata->getPath();
+
+        if ($backup) {
+            File::move($path, "$path.bak");
+        }
+
+        throw_unless(File::delete($path), new Exception("Failed to delete song file: $path"));
     }
 }

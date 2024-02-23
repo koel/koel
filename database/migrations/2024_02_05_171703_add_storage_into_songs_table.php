@@ -11,7 +11,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('songs', static function (Blueprint $table): void {
-            $table->string('storage')->index();
+            $table->string('storage')->nullable()->index();
         });
 
         DB::table('songs')->where('path', 'like', 's3://%')->update(['storage' => SongStorageTypes::S3_LAMBDA]);

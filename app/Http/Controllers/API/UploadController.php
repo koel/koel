@@ -29,6 +29,7 @@ class UploadController extends Controller
         $this->authorize('upload', User::class);
 
         try {
+            // @todo decouple Song from storage, as storages should not be responsible for creating a song.
             $song = $songRepository->getOne($storage->storeUploadedFile($request->file, $user)->id, $user);
 
             event(new LibraryChanged());

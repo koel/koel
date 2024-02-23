@@ -82,6 +82,17 @@ final class DropboxStorage extends CloudStorage
         return SongStorageTypes::supported(SongStorageTypes::DROPBOX);
     }
 
+    public function delete(Song $song, bool $backup = false): void
+    {
+        $path = $song->storage_metadata->getPath();
+
+        if ($backup) {
+            $this->filesystem->move($path, "backup/$path");
+        }
+
+        $this->filesystem->delete($path);
+    }
+
     public function testSetup(): void
     {
         $this->filesystem->write('test.txt', 'Koel test file.');

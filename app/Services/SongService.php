@@ -8,6 +8,7 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Repositories\SongRepository;
+use App\Services\SongStorage\SongStorage;
 use App\Values\SongUpdateData;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -17,8 +18,11 @@ use Throwable;
 
 class SongService
 {
-    public function __construct(private SongRepository $songRepository, private LoggerInterface $logger)
-    {
+    public function __construct(
+        private SongRepository $songRepository,
+        private SongStorage $songStorage,
+        private LoggerInterface $logger
+    ) {
     }
 
     /** @return Collection|array<array-key, Song> */
@@ -132,11 +136,7 @@ class SongService
 
             $songs->each(function (Song $song) use ($shouldBackUp): void {
                 try {
-                    if ($shouldBackUp) {
-                        rename($song->path, $song->path . '.bak');
-                    } else {
-                        unlink($song->path);
-                    }
+                    $this->songStorage->delete($song, $shouldBackUp);
                 } catch (Throwable $e) {
                     $this->logger->error('Failed to remove song file', [
                         'path' => $song->path,
