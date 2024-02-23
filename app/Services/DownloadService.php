@@ -4,9 +4,9 @@ namespace App\Services;
 
 use App\Models\Song;
 use App\Models\SongZipArchive;
-use App\Services\SongStorage\CloudStorage;
-use App\Services\SongStorage\DropboxStorage;
-use App\Services\SongStorage\S3CompatibleStorage;
+use App\Services\SongStorages\CloudStorage;
+use App\Services\SongStorages\DropboxStorage;
+use App\Services\SongStorages\S3CompatibleStorage;
 use App\Values\SongStorageTypes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;

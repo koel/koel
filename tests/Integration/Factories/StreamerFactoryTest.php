@@ -2,6 +2,7 @@
 
 namespace Tests\Integration\Factories;
 
+use App\Exceptions\KoelPlusRequiredException;
 use App\Models\Song;
 use App\Services\Streamers\PhpStreamer;
 use App\Services\Streamers\S3CompatibleStreamer;
@@ -10,6 +11,8 @@ use App\Services\Streamers\TranscodingStreamer;
 use App\Services\Streamers\XAccelRedirectStreamer;
 use App\Services\Streamers\XSendFileStreamer;
 use App\Services\TranscodingService;
+use App\Values\SongStorageTypes;
+use Exception;
 use Mockery;
 use phpmock\mockery\PHPMockery;
 use Tests\TestCase;
@@ -28,12 +31,41 @@ class StreamerFactoryTest extends TestCase
         PHPMockery::mock('App\Services\Streamers', 'file_exists')->andReturn(true);
     }
 
-    public function testCreateS3Streamer(): void
+    public function testCreateStreamer(): void
     {
-        /** @var Song $song */
-        $song = Song::factory()->make(['path' => 's3://bucket/foo.mp3']);
+        collect(SongStorageTypes::ALL_TYPES)
+            ->each(function (?string $type): void {
+                switch ($type) {
+                    case SongStorageTypes::S3:
+                        self::expectException(KoelPlusRequiredException::class);
+                        $this->streamerFactory->createStreamer(
+                            Song::factory()->make(['path' => "s3://bucket/foo.mp3", 'storage' => $type])
+                        );
+                        break;
 
-        self::assertInstanceOf(S3CompatibleStreamer::class, $this->streamerFactory->createStreamer($song));
+                    case SongStorageTypes::S3_LAMBDA:
+                        self::assertInstanceOf(S3CompatibleStreamer::class, $this->streamerFactory->createStreamer(
+                            Song::factory()->make(['path' => "s3://bucket/foo.mp3", 'storage' => $type])
+                        ));
+                        break;
+
+                    case SongStorageTypes::DROPBOX:
+                        self::expectException(KoelPlusRequiredException::class);
+                        $this->streamerFactory->createStreamer(
+                            Song::factory()->make(['path' => "dropbox://foo.mp3", 'storage' => $type])
+                        );
+                        break;
+
+                    case SongStorageTypes::LOCAL:
+                        self::assertInstanceOf(PhpStreamer::class, $this->streamerFactory->createStreamer(
+                            Song::factory()->make(['path' => test_path('songs/blank.mp3'), 'storage' => $type])
+                        ));
+                        break;
+
+                    default:
+                        throw new Exception("Unhandled storage type: $type");
+                }
+            });
     }
 
     public function testCreateTranscodingStreamerIfSupported(): void

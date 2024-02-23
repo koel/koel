@@ -2,6 +2,8 @@
 
 namespace App\Values\SongStorageMetadata;
 
+use App\Values\SongStorageMetadata\Contracts\SongStorageMetadata;
+
 final class LocalMetadata implements SongStorageMetadata
 {
     private function __construct(public string $path)

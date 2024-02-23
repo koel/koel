@@ -4,7 +4,7 @@ namespace Tests\Fakes;
 
 use App\Exceptions\MethodNotImplementedException;
 use App\Models\License;
-use App\Services\License\LicenseServiceInterface;
+use App\Services\License\Contracts\LicenseServiceInterface;
 use App\Values\LicenseStatus;
 
 class FakePlusLicenseService implements LicenseServiceInterface

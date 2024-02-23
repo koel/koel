@@ -99,6 +99,7 @@ class FileScanner
             $data['owner_id'] = $config->owner->id;
         }
 
+        // @todo Decouple song creation from scanning.
         $this->song = Song::query()->updateOrCreate(['path' => $this->filePath], $data); // @phpstan-ignore-line
 
         return ScanResult::success($this->filePath);

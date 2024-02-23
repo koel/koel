@@ -6,7 +6,7 @@ use App\Exceptions\SongPathNotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\ObjectStorage\S3\PutSongRequest;
 use App\Http\Requests\API\ObjectStorage\S3\RemoveSongRequest;
-use App\Services\SongStorage\S3LambdaStorage;
+use App\Services\SongStorages\S3LambdaStorage;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 

@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;

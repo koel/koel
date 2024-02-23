@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\SongStorage;
+namespace App\Services\SongStorages;
 
 use App\Events\LibraryChanged;
 use App\Exceptions\MethodNotImplementedException;

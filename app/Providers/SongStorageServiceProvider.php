@@ -2,10 +2,10 @@
 
 namespace App\Providers;
 
-use App\Services\SongStorage\DropboxStorage;
-use App\Services\SongStorage\LocalStorage;
-use App\Services\SongStorage\S3CompatibleStorage;
-use App\Services\SongStorage\SongStorage;
+use App\Services\SongStorages\DropboxStorage;
+use App\Services\SongStorages\LocalStorage;
+use App\Services\SongStorages\S3CompatibleStorage;
+use App\Services\SongStorages\SongStorage;
 use Illuminate\Support\ServiceProvider;
 
 class SongStorageServiceProvider extends ServiceProvider

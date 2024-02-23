@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Services\License\LicenseServiceInterface;
+use App\Services\License\Contracts\LicenseServiceInterface;
 use Illuminate\Support\ServiceProvider;
 
 class LicenseServiceProvider extends ServiceProvider

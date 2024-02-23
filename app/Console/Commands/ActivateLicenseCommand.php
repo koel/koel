@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Services\License\LicenseServiceInterface;
+use App\Services\License\Contracts\LicenseServiceInterface;
 use Illuminate\Console\Command;
 use Throwable;
 

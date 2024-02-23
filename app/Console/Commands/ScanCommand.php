@@ -2,13 +2,13 @@
 
 namespace App\Console\Commands;
 
-use App\Libraries\WatchRecord\InotifyWatchRecord;
 use App\Models\Setting;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\MediaScanner;
 use App\Values\ScanConfiguration;
 use App\Values\ScanResult;
+use App\Values\WatchRecord\InotifyWatchRecord;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;

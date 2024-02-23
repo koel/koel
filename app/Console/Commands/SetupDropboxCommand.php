@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Facades\License;
-use App\Services\SongStorage\DropboxStorage;
+use App\Services\SongStorages\DropboxStorage;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel as Artisan;
 use Illuminate\Support\Facades\Cache;

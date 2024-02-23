@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\Integration\KoelPlus\Services\FileStorage;
+namespace Tests\Integration\KoelPlus\Services\SongStorages;
 
 use App\Models\Song;
-use App\Services\SongStorage\S3CompatibleStorage;
+use App\Services\SongStorages\S3CompatibleStorage;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\PlusTestCase;
@@ -22,6 +22,11 @@ class S3CompatibleStorageTest extends PlusTestCase
 
         $this->service = app(S3CompatibleStorage::class);
         $this->file = UploadedFile::fromFile(test_path('songs/full.mp3'), 'song.mp3'); //@phpstan-ignore-line
+    }
+
+    public function testSupported(): void
+    {
+        self::assertTrue($this->service->supported());
     }
 
     public function testStoreUploadedFile(): void

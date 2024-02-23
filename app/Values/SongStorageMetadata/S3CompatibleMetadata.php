@@ -2,6 +2,8 @@
 
 namespace App\Values\SongStorageMetadata;
 
+use App\Values\SongStorageMetadata\Contracts\SongStorageMetadata;
+
 class S3CompatibleMetadata implements SongStorageMetadata
 {
     private function __construct(public string $bucket, public string $key)

@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Exceptions\FailedToActivateLicenseException;
 use App\Models\License;
 use App\Services\ApiClients\ApiClient;
-use App\Services\License\LicenseServiceInterface;
+use App\Services\License\Contracts\LicenseServiceInterface;
 use App\Values\LicenseInstance;
 use App\Values\LicenseMeta;
 use App\Values\LicenseStatus;

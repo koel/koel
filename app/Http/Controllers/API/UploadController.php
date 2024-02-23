@@ -12,7 +12,7 @@ use App\Http\Resources\SongResource;
 use App\Models\User;
 use App\Repositories\AlbumRepository;
 use App\Repositories\SongRepository;
-use App\Services\SongStorage\SongStorage;
+use App\Services\SongStorages\SongStorage;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Response;
 

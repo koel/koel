@@ -7,6 +7,7 @@ use App\Listeners\DeleteNonExistingRecordsPostScan;
 use App\Models\Song;
 use App\Values\ScanResult;
 use App\Values\ScanResultCollection;
+use App\Values\SongStorageTypes;
 use Illuminate\Database\Eloquent\Collection;
 use Tests\TestCase;
 
@@ -21,12 +22,16 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
         $this->listener = app(DeleteNonExistingRecordsPostScan::class);
     }
 
-    public function testHandleDoesNotDeleteS3Entries(): void
+    public function testHandleDoesNotDeleteCloudEntries(): void
     {
-        $song = Song::factory()->create(['path' => 's3://do-not/delete-me.mp3']);
-        $this->listener->handle(new MediaScanCompleted(ScanResultCollection::create()));
+        collect(SongStorageTypes::ALL_TYPES)
+            ->filter(static fn ($type) => $type !== SongStorageTypes::LOCAL)
+            ->each(function ($type): void {
+                $song = Song::factory()->create(['storage' => $type]);
+                $this->listener->handle(new MediaScanCompleted(ScanResultCollection::create()));
 
-        self::assertModelExists($song);
+                self::assertModelExists($song);
+            });
     }
 
     public function testHandle(): void

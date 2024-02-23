@@ -14,7 +14,7 @@ use App\Repositories\SongRepository;
 use App\Services\ApplicationInformationService;
 use App\Services\ITunesService;
 use App\Services\LastfmService;
-use App\Services\License\LicenseServiceInterface;
+use App\Services\License\Contracts\LicenseServiceInterface;
 use App\Services\QueueService;
 use App\Services\SpotifyService;
 use App\Services\YouTubeService;

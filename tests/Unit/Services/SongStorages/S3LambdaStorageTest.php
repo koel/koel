@@ -1,13 +1,13 @@
 <?php
 
-namespace Tests\Unit\Services\SongStorage;
+namespace Tests\Unit\Services\SongStorages;
 
 use App\Events\LibraryChanged;
 use App\Models\Song;
 use App\Repositories\SongRepository;
 use App\Repositories\UserRepository;
 use App\Services\MediaMetadataService;
-use App\Services\SongStorage\S3LambdaStorage;
+use App\Services\SongStorages\S3LambdaStorage;
 use Mockery;
 use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
@@ -126,5 +126,10 @@ class S3LambdaStorageTest extends TestCase
         $this->storage->deleteSongEntry('foo', 'bar');
 
         self::assertModelMissing($song);
+    }
+
+    public function testSupported(): void
+    {
+        self::assertTrue($this->storage->supported());
     }
 }
