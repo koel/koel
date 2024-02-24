@@ -176,5 +176,20 @@ export const playlistStore = {
         type
       })
     }
+  },
+
+  /**
+   * Upload a cover for a playlist.
+   *
+   * @param {Playlist} playlist The playlist object
+   * @param {string} cover The content data string of the cover
+   */
+  async uploadCover (playlist: Playlist, cover: string) {
+    playlist.cover = (await http.put<{ cover_url: string }>(`playlists/${playlist.id}/cover`, { cover })).cover_url
+
+    // sync to vault
+    this.byId(playlist.id)!.cover = playlist.cover
+
+    return playlist.cover
   }
 }

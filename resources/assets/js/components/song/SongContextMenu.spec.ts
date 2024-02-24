@@ -325,7 +325,7 @@ new class extends UnitTestCase {
       })
 
       await this.be(user).renderComponent(songs)
-      const privatizeMock = this.mock(songStore, 'privatize')
+      const privatizeMock = this.mock(songStore, 'privatize').mockResolvedValue(songs.map(song => song.id))
 
       await this.user.click(screen.getByText('Mark as Private'))
 
@@ -342,7 +342,7 @@ new class extends UnitTestCase {
       })
 
       await this.be(user).renderComponent(songs)
-      const publicizeMock = this.mock(songStore, 'publicize')
+      const publicizeMock = this.mock(songStore, 'publicize').mockResolvedValue(songs.map(song => song.id))
 
       await this.user.click(screen.getByText('Unmark as Private'))
 

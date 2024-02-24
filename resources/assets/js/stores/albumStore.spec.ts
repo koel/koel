@@ -63,7 +63,7 @@ new class extends UnitTestCase {
       await albumStore.uploadCover(album, 'data://cover')
 
       expect(album.cover).toBe('http://test/cover.jpg')
-      expect(putMock).toHaveBeenCalledWith(`album/${album.id}/cover`, { cover: 'data://cover' })
+      expect(putMock).toHaveBeenCalledWith(`albums/${album.id}/cover`, { cover: 'data://cover' })
       expect(albumStore.byId(album.id)?.cover).toBe('http://test/cover.jpg')
       songsInAlbum.forEach(song => expect(song.album_cover).toBe('http://test/cover.jpg'))
     })
@@ -74,7 +74,7 @@ new class extends UnitTestCase {
 
       const url = await albumStore.fetchThumbnail(album.id)
 
-      expect(getMock).toHaveBeenCalledWith(`album/${album.id}/thumbnail`)
+      expect(getMock).toHaveBeenCalledWith(`albums/${album.id}/thumbnail`)
       expect(url).toBe('http://test/thumbnail.jpg')
     })
 

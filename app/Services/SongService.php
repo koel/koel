@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Events\LibraryChanged;
 use App\Facades\License;
 use App\Models\Album;
 use App\Models\Artist;
@@ -144,8 +143,6 @@ class SongService
                     ]);
                 }
             });
-
-            event(new LibraryChanged());
         });
     }
 }

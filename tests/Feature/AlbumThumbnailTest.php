@@ -39,7 +39,7 @@ class AlbumThumbnailTest extends TestCase
             }))
             ->andReturn($thumbnailUrl);
 
-        $response = $this->getAs("api/album/{$createdAlbum->id}/thumbnail");
+        $response = $this->getAs("api/albums/{$createdAlbum->id}/thumbnail");
         $response->assertJson(['thumbnailUrl' => $thumbnailUrl]);
     }
 }

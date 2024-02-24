@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\ObjectStorage;
 
-use App\Events\LibraryChanged;
 use App\Models\Song;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\TestCase;
@@ -51,8 +50,6 @@ class S3Test extends TestCase
 
     public function testRemovingASong(): void
     {
-        $this->expectsEvents(LibraryChanged::class);
-
         Song::factory()->create([
             'path' => 's3://koel/sample.mp3',
         ]);

@@ -6,7 +6,7 @@ exports[`renders the modal 1`] = `
     <h1 data-v-886145d2="">Playlist Collaboration</h1>
   </header>
   <main data-v-886145d2="">
-    <p data-v-886145d2="" class="intro text-secondary"> Collaborative playlists allow multiple users to contribute. <br data-v-886145d2=""> Please note that songs added to a collaborative playlist are made accessible to all users, and you cannot mark a song as private if it’s still part of a collaborative playlist. </p>
+    <p data-v-886145d2="" class="intro text-secondary"> Collaborative playlists allow multiple users to contribute. <br data-v-886145d2=""> Note: Songs added to a collaborative playlist are made accessible to all users, and you cannot mark a song as private if it’s still part of a collaborative playlist. </p>
     <section data-v-886145d2="" class="collaborators">
       <h2 data-v-886145d2=""><span data-v-886145d2="">Current Collaborators</span>
         <!--v-if-->

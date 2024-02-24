@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Services\SongStorages;
 
-use App\Events\LibraryChanged;
 use App\Models\Song;
 use App\Repositories\SongRepository;
 use App\Repositories\UserRepository;
@@ -38,8 +37,6 @@ class S3LambdaStorageTest extends TestCase
 
     public function testCreateSongEntry(): void
     {
-        $this->expectsEvents(LibraryChanged::class);
-
         $user = create_admin();
         $this->userRepository->shouldReceive('getDefaultAdminUser')
             ->once()
@@ -70,9 +67,8 @@ class S3LambdaStorageTest extends TestCase
 
     public function testUpdateSongEntry(): void
     {
-        $this->expectsEvents(LibraryChanged::class);
-
         $user = create_admin();
+
         $this->userRepository->shouldReceive('getDefaultAdminUser')
             ->once()
             ->andReturn($user);
@@ -80,6 +76,7 @@ class S3LambdaStorageTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create([
             'path' => 's3://foo/bar',
+            'storage' => 's3-lambda',
         ]);
 
         $this->storage->createSongEntry(
@@ -111,11 +108,10 @@ class S3LambdaStorageTest extends TestCase
 
     public function testDeleteSong(): void
     {
-        $this->expectsEvents(LibraryChanged::class);
-
         /** @var Song $song */
         $song = Song::factory()->create([
             'path' => 's3://foo/bar',
+            'storage' => 's3-lambda',
         ]);
 
         $this->songRepository->shouldReceive('findOneByPath')

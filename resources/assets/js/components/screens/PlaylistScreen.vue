@@ -5,7 +5,9 @@
       <ControlsToggle v-if="songs.length" v-model="showingControls" />
 
       <template #thumbnail>
-        <ThumbnailStack :thumbnails="thumbnails" />
+        <PlaylistThumbnail :playlist="playlist">
+          <ThumbnailStack :thumbnails="thumbnails" v-if="!playlist.cover" />
+        </PlaylistThumbnail>
       </template>
 
       <template v-if="songs.length || playlist.is_collaborative" #meta>
@@ -78,6 +80,7 @@ import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 import CollaboratorsBadge from '@/components/playlist/PlaylistCollaboratorsBadge.vue'
+import PlaylistThumbnail from '@/components/ui/PlaylistThumbnail.vue'
 
 const { currentUser } = useAuthorization()
 const { triggerNotFound, getRouteParam, onScreenActivated } = useRouter()

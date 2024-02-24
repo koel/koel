@@ -121,15 +121,6 @@ article {
     align-items: flex-start;
     gap: 8px;
 
-    .play-count {
-      background: rgba(255, 255, 255, 0.08);
-      position: absolute;
-      height: 100%;
-      top: 0;
-      left: 0;
-      pointer-events: none;
-    }
-
     .by {
       font-size: .9rem;
       opacity: .8;

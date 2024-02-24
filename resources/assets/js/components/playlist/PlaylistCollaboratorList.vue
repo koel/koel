@@ -4,7 +4,7 @@
     <ListItem
       is="li"
       v-for="collaborator in collaborators"
-      :role="currentUserIsOwner ? 'owner' : 'contributor'"
+      :role="collaborator.id === playlist.user_id ? 'owner' : 'contributor'"
       :manageable="currentUserIsOwner"
       :removable="currentUserIsOwner && collaborator.id !== playlist.user_id"
       :collaborator="collaborator"

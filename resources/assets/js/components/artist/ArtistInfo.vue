@@ -36,7 +36,7 @@ import { mediaInfoService, playbackService } from '@/services'
 import { useRouter, useThirdPartyServices } from '@/composables'
 import { songStore } from '@/stores'
 
-import ArtistThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
+import ArtistThumbnail from '@/components/ui/ArtistAlbumThumbnail.vue'
 
 const props = withDefaults(defineProps<{ artist: Artist, mode?: MediaInfoDisplayMode }>(), { mode: 'aside' })
 const { artist, mode } = toRefs(props)

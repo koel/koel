@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts" setup>
-import AlbumArtistThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
+import AlbumArtistThumbnail from '@/components/ui/ArtistAlbumThumbnail.vue'
 
 const props = withDefaults(
   defineProps<{ layout?: ArtistAlbumCardLayout, entity: Artist | Album }>(),

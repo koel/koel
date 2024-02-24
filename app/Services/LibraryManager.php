@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 class LibraryManager
 {
     /**
+     * Delete albums and artists that have no songs.
+     *
      * @return array{
      *     albums: Collection<array-key, Album>,
      *     artists: Collection<array-key, Artist>,

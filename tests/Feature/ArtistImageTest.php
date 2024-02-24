@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Events\LibraryChanged;
 use App\Models\Artist;
 use App\Services\MediaMetadataService;
 use Mockery;
@@ -24,8 +23,6 @@ class ArtistImageTest extends TestCase
 
     public function testUpdate(): void
     {
-        $this->expectsEvents(LibraryChanged::class);
-
         Artist::factory()->create(['id' => 9999]);
 
         $this->mediaMetadataService

@@ -5,7 +5,7 @@ import factory from '@/__tests__/factory'
 import { screen, waitFor } from '@testing-library/vue'
 import { queueStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
-import Thumbnail from './AlbumArtistThumbnail.vue'
+import Thumbnail from './ArtistAlbumThumbnail.vue'
 
 let album: Album
 let artist: Artist

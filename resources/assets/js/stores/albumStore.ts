@@ -47,7 +47,7 @@ export const albumStore = {
    * @param {string} cover The content data string of the cover
    */
   async uploadCover (album: Album, cover: string) {
-    album.cover = (await http.put<{ cover_url: string }>(`album/${album.id}/cover`, { cover })).cover_url
+    album.cover = (await http.put<{ cover_url: string }>(`albums/${album.id}/cover`, { cover })).cover_url
     songStore.byAlbum(album).forEach(song => song.album_cover = album.cover)
 
     // sync to vault
@@ -60,7 +60,7 @@ export const albumStore = {
    * Fetch the (blurry) thumbnail-sized version of an album's cover.
    */
   fetchThumbnail: async (id: number) => {
-    return (await http.get<{ thumbnailUrl: string }>(`album/${id}/thumbnail`)).thumbnailUrl
+    return (await http.get<{ thumbnailUrl: string }>(`albums/${id}/thumbnail`)).thumbnailUrl
   },
 
   async resolve (id: number) {

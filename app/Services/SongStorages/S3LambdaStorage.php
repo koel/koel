@@ -2,7 +2,6 @@
 
 namespace App\Services\SongStorages;
 
-use App\Events\LibraryChanged;
 use App\Exceptions\MethodNotImplementedException;
 use App\Exceptions\SongPathNotFoundException;
 use App\Models\Album;
@@ -77,8 +76,6 @@ final class S3LambdaStorage extends S3CompatibleStorage
             'storage' => SongStorageTypes::S3_LAMBDA,
         ]);
 
-        event(new LibraryChanged());
-
         return $song;
     }
 
@@ -90,7 +87,6 @@ final class S3LambdaStorage extends S3CompatibleStorage
         throw_unless((bool) $song, SongPathNotFoundException::create($path));
 
         $song->delete();
-        event(new LibraryChanged());
     }
 
     public function supported(): bool

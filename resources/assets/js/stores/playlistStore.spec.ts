@@ -84,7 +84,7 @@ new class extends UnitTestCase {
       const playlist = factory<Playlist>('playlist')
       const folder = factory<PlaylistFolder>('playlist-folder')
       const postMock = this.mock(http, 'post').mockResolvedValue(playlist)
-      const serializeMock = this.mock(playlistStore, 'serializeSmartPlaylistRulesForStorage', null)
+      this.mock(playlistStore, 'serializeSmartPlaylistRulesForStorage', null)
 
       await playlistStore.store('New Playlist', { folder_id: folder.id }, songs)
 
@@ -99,39 +99,45 @@ new class extends UnitTestCase {
     })
 
     it('deletes a playlist', async () => {
-      const playlist = factory<Playlist>('playlist', { id: 12 })
+      const playlist = factory<Playlist>('playlist')
       const deleteMock = this.mock(http, 'delete')
       playlistStore.state.playlists = [factory<Playlist>('playlist'), playlist]
 
       await playlistStore.delete(playlist)
 
-      expect(deleteMock).toHaveBeenCalledWith('playlists/12')
+      expect(deleteMock).toHaveBeenCalledWith(`playlists/${playlist.id}`)
       expect(playlistStore.state.playlists).toHaveLength(1)
       expect(playlistStore.byId(playlist.id)).toBeUndefined()
     })
 
     it('adds songs to a playlist', async () => {
-      const playlist = factory<Playlist>('playlist', { id: 12 })
+      const playlist = factory<Playlist>('playlist')
       const songs = factory<Song>('song', 3)
       const postMock = this.mock(http, 'post').mockResolvedValue(playlist)
       const removeMock = this.mock(cache, 'remove')
 
       await playlistStore.addSongs(playlist, songs)
 
-      expect(postMock).toHaveBeenCalledWith('playlists/12/songs', { songs: songs.map(song => song.id) })
-      expect(removeMock).toHaveBeenCalledWith(['playlist.songs', 12])
+      expect(postMock).toHaveBeenCalledWith(`playlists/${playlist.id}/songs`, {
+        songs: songs.map(song => song.id)
+      })
+
+      expect(removeMock).toHaveBeenCalledWith(['playlist.songs', playlist.id])
     })
 
     it('removes songs from a playlist', async () => {
-      const playlist = factory<Playlist>('playlist', { id: 12 })
+      const playlist = factory<Playlist>('playlist')
       const songs = factory<Song>('song', 3)
       const deleteMock = this.mock(http, 'delete').mockResolvedValue(playlist)
       const removeMock = this.mock(cache, 'remove')
 
       await playlistStore.removeSongs(playlist, songs)
 
-      expect(deleteMock).toHaveBeenCalledWith('playlists/12/songs', { songs: songs.map(song => song.id) })
-      expect(removeMock).toHaveBeenCalledWith(['playlist.songs', 12])
+      expect(deleteMock).toHaveBeenCalledWith(`playlists/${playlist.id}/songs`, {
+        songs: songs.map(song => song.id)
+      })
+
+      expect(removeMock).toHaveBeenCalledWith(['playlist.songs', playlist.id])
     })
 
     it('does not modify a smart playlist content', async () => {
@@ -146,7 +152,7 @@ new class extends UnitTestCase {
     })
 
     it('updates a standard playlist', async () => {
-      const playlist = factory<Playlist>('playlist', { id: 12 })
+      const playlist = factory<Playlist>('playlist')
       playlistStore.state.playlists = [playlist]
       const folder = factory<PlaylistFolder>('playlist-folder')
 
@@ -154,12 +160,18 @@ new class extends UnitTestCase {
 
       await playlistStore.update(playlist, { name: 'Foo', folder_id: folder.id })
 
-      expect(putMock).toHaveBeenCalledWith('playlists/12', { name: 'Foo', rules: null, folder_id: folder.id })
+      expect(putMock).toHaveBeenCalledWith(`playlists/${playlist.id}`, {
+        name: 'Foo',
+        rules: null,
+        folder_id: folder.id
+      })
+
       expect(playlist.name).toBe('Foo')
     })
 
     it('updates a smart playlist', async () => {
-      const playlist = factory.states('smart')<Playlist>('playlist', { id: 12 })
+      const playlist = factory.states('smart')<Playlist>('playlist')
+      playlistStore.state.playlists = [playlist]
       const rules = factory<SmartPlaylistRuleGroup>('smart-playlist-rule-group', 2)
       const serializeMock = this.mock(playlistStore, 'serializeSmartPlaylistRulesForStorage', ['Whatever'])
       const putMock = this.mock(http, 'put').mockResolvedValue(playlist)
@@ -168,8 +180,26 @@ new class extends UnitTestCase {
       await playlistStore.update(playlist, { name: 'Foo', rules })
 
       expect(serializeMock).toHaveBeenCalledWith(rules)
-      expect(putMock).toHaveBeenCalledWith('playlists/12', { name: 'Foo', rules: ['Whatever'], folder_id: undefined })
-      expect(removeMock).toHaveBeenCalledWith(['playlist.songs', 12])
+
+      expect(putMock).toHaveBeenCalledWith(`playlists/${playlist.id}`, {
+        name: 'Foo',
+        rules: ['Whatever'],
+        folder_id: undefined
+      })
+
+      expect(removeMock).toHaveBeenCalledWith(['playlist.songs', playlist.id])
+    })
+
+    it('uploads a cover for a playlist', async () => {
+      const playlist = factory<Playlist>('playlist')
+      playlistStore.state.playlists = [playlist]
+      const putMock = this.mock(http, 'put').mockResolvedValue({ cover_url: 'http://test/cover.jpg' })
+
+      await playlistStore.uploadCover(playlist, 'data://cover')
+
+      expect(playlist.cover).toBe('http://test/cover.jpg')
+      expect(putMock).toHaveBeenCalledWith(`playlists/${playlist.id}/cover`, { cover: 'data://cover' })
+      expect(playlistStore.byId(playlist.id)?.cover).toBe('http://test/cover.jpg')
     })
   }
 }

@@ -35,11 +35,15 @@ abstract class TestCase extends BaseTestCase
 
     private static function createSandbox(): void
     {
-        config(['koel.album_cover_dir' => 'sandbox/img/covers/']);
-        config(['koel.artist_image_dir' => 'sandbox/img/artists/']);
+        config([
+            'koel.album_cover_dir' => 'sandbox/img/covers/',
+            'koel.artist_image_dir' => 'sandbox/img/artists/',
+            'koel.playlist_cover_dir' => 'sandbox/img/playlists/',
+        ]);
 
         File::ensureDirectoryExists(public_path(config('koel.album_cover_dir')));
         File::ensureDirectoryExists(public_path(config('koel.artist_image_dir')));
+        File::ensureDirectoryExists(public_path(config('koel.playlist_cover_dir')));
         File::ensureDirectoryExists(public_path('sandbox/media/'));
     }
 

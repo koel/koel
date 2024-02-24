@@ -7,7 +7,7 @@
     <main>
       <p class="intro text-secondary">
         Collaborative playlists allow multiple users to contribute. <br>
-        Please note that songs added to a collaborative playlist are made accessible to all users,
+        Note: Songs added to a collaborative playlist are made accessible to all users,
         and you cannot mark a song as private if it’s still part of a collaborative playlist.
       </p>
 
