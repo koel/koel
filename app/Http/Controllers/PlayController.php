@@ -4,21 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SongPlayRequest;
 use App\Models\Song;
-use App\Services\Streamers\StreamerFactory;
+use App\Services\Streamer\Streamer;
 
 class PlayController extends Controller
 {
-    public function __invoke(
-        StreamerFactory $streamerFactory,
-        SongPlayRequest $request,
-        Song $song,
-        ?bool $transcode = null,
-        ?int $bitRate = null
-    ) {
+    public function __invoke(SongPlayRequest $request, Song $song, ?bool $transcode = null, ?int $bitRate = null)
+    {
         $this->authorize('access', $song);
 
-        return $streamerFactory
-            ->createStreamer($song, $transcode, $bitRate, (float) $request->time)
-            ->stream();
+        return (new Streamer(song: $song, config: [
+            'transcode' => (bool) $transcode,
+            'bit_rate' => $bitRate,
+            'start_time' => (float) $request->time,
+        ]))->stream();
     }
 }

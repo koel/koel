@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Services\Streamers;
+namespace App\Services\Streamer\Adapters;
 
+use App\Models\Song;
 use DaveRandom\Resume\FileResource;
 use DaveRandom\Resume\InvalidRangeHeaderException;
 use DaveRandom\Resume\NonExistentFileException;
@@ -14,18 +15,19 @@ use Symfony\Component\HttpFoundation\Response;
 
 use function DaveRandom\Resume\get_request_header;
 
-class PhpStreamer extends LocalStreamer
+class PhpStreamerAdapter extends LocalStreamerAdapter
 {
-    public function stream(): void
+    public function stream(Song $song, array $config = []): void
     {
         try {
+            $path = $song->storage_metadata->getPath();
             $rangeHeader = get_request_header('Range');
 
             // On Safari, "Range" header value can be "bytes=0-1" which breaks streaming.
             $rangeHeader = $rangeHeader === 'bytes=0-1' ? 'bytes=0-' : $rangeHeader;
 
             $rangeSet = RangeSet::createFromHeader($rangeHeader);
-            $resource = new FileResource($this->song->path, mime_content_type($this->song->path));
+            $resource = new FileResource($path, mime_content_type($path));
             (new ResourceServlet($resource))->sendResource($rangeSet);
         } catch (InvalidRangeHeaderException) {
             abort(Response::HTTP_BAD_REQUEST);
