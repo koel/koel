@@ -1,5 +1,9 @@
 <template>
-  <div :style="{ backgroundImage: thumbnailUrl ? `url(${thumbnailUrl})` : 'none' }" data-testid="album-art-overlay" />
+  <div
+    :style="{ backgroundImage: thumbnailUrl ? `url(${thumbnailUrl})` : 'none' }"
+    class="pointer-events-none"
+    data-testid="album-art-overlay"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -28,7 +32,6 @@ div {
   overflow: hidden;
   background-size: cover;
   background-position: center;
-  pointer-events: none;
   top: 0;
   left: 0;
   width: 100%;

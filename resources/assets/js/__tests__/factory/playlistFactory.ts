@@ -11,6 +11,7 @@ export default (faker: Faker): Playlist => ({
   rules: [],
   own_songs_only: false,
   is_collaborative: false,
+  cover: faker.image.imageUrl(),
 })
 
 export const states: Record<string, (faker: Faker) => Omit<Partial<Playlist>, 'type'>> = {

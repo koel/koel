@@ -1,6 +1,7 @@
 <template>
   <div
     v-if="allowsUpload && mediaPathSetUp"
+    v-koel-clickaway="close"
     :class="{ droppable }"
     class="drop-zone"
     @dragleave="onDropLeave"
@@ -19,6 +20,7 @@ import { useUpload } from '@/composables'
 
 const { allowsUpload, mediaPathSetUp, handleDropEvent } = useUpload()
 
+const emit = defineEmits<{(e: 'close'): void}>()
 const droppable = ref(false)
 
 const onDropLeave = () => (droppable.value = false)
@@ -34,6 +36,8 @@ const onDrop = async (event: DragEvent) => {
   droppable.value = false
   await handleDropEvent(event)
 }
+
+const close = () => emit('close')
 </script>
 
 <style lang="scss" scoped>

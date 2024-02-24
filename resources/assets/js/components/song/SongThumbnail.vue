@@ -1,6 +1,12 @@
 <template>
   <div :style="{ backgroundImage: `url(${defaultCover})` }" class="cover">
-    <img v-koel-hide-broken-icon :alt="song.album_name" :src="song.album_cover" loading="lazy">
+    <img
+      v-koel-hide-broken-icon
+      :alt="song.album_name"
+      :src="song.album_cover"
+      class="pointer-events-none"
+      loading="lazy"
+    >
     <a :title="title" class="control" role="button" @click.prevent="changeSongState">
       <Icon :icon="song.playback_state === 'Playing' ? faPause : faPlay" class="text-highlight" />
     </a>
@@ -65,7 +71,6 @@ const changeSongState = () => {
     position: absolute;
     top: 0;
     left: 0;
-    pointer-events: none;
   }
 
   &::before {

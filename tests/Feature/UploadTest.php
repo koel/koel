@@ -2,13 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Events\LibraryChanged;
 use App\Exceptions\MediaPathNotSetException;
 use App\Exceptions\SongUploadFailedException;
 use App\Models\Setting;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 use function Tests\create_admin;
@@ -50,10 +48,8 @@ class UploadTest extends TestCase
 
     public function testUploadSuccessful(): void
     {
-        Event::fake(LibraryChanged::class);
         Setting::set('media_path', public_path('sandbox/media'));
 
         $this->postAs('/api/upload', ['file' => $this->file], create_admin())->assertJsonStructure(['song', 'album']);
-        Event::assertDispatched(LibraryChanged::class);
     }
 }

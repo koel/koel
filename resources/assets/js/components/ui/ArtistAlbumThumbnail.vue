@@ -5,7 +5,7 @@
     class="cover"
     data-testid="album-artist-thumbnail"
   >
-    <img v-koel-hide-broken-icon :alt="entity.name" :src="image" loading="lazy">
+    <img v-koel-hide-broken-icon :alt="entity.name" :src="image" class="pointer-events-none" loading="lazy">
     <a
       class="control control-play"
       role="button"
@@ -28,8 +28,7 @@ import { albumStore, artistStore, queueStore, songStore, userStore } from '@/sto
 import { playbackService } from '@/services'
 import { defaultCover, fileReader, logger } from '@/utils'
 import { useAuthorization, useMessageToaster, useRouter, useKoelPlus } from '@/composables'
-
-const VALID_IMAGE_TYPES = ['image/jpeg', 'image/gif', 'image/png', 'image/webp']
+import { acceptedImageTypes } from '@/config'
 
 const { toastSuccess } = useMessageToaster()
 const { go } = useRouter()
@@ -91,7 +90,7 @@ const validImageDropEvent = (event: DragEvent) => {
     return false
   }
 
-  return VALID_IMAGE_TYPES.includes(event.dataTransfer.items[0].getAsFile()!.type)
+  return acceptedImageTypes.includes(event.dataTransfer.items[0].getAsFile()!.type)
 }
 
 const onDrop = async (event: DragEvent) => {
@@ -153,7 +152,6 @@ const onDrop = async (event: DragEvent) => {
     position: absolute;
     top: 0;
     left: 0;
-    pointer-events: none;
   }
 
   &::after {
@@ -231,17 +229,6 @@ const onDrop = async (event: DragEvent) => {
         transform: scale(.9);
       }
     }
-  }
-
-  .drop-zone {
-    font-size: 4rem;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    place-content: center;
-    place-items: center;
-    background: rgba(0, 0, 0, .7);
-    display: none;
   }
 
   &.droppable {

@@ -11,6 +11,8 @@ img/covers/*
 !img/artists
 img/artists/*
 !img/artists/.gitkeep
+img/playlists/*
+!img/playlists/.gitkeep
 
 images
 js

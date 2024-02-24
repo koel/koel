@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Playlist;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
@@ -80,6 +81,21 @@ class MediaMetadataService
         });
     }
 
+    public function writePlaylistCover(Playlist $playlist, string $source, string $extension = 'png'): void
+    {
+        attempt(function () use ($playlist, $source, $extension): void {
+            $extension = trim(strtolower($extension), '. ');
+            $destination = $this->generatePlaylistCoverPath($extension);
+            $this->imageWriter->write($destination, $source);
+
+            if ($playlist->cover_path) {
+                File::delete($playlist->cover_path);
+            }
+
+            $playlist->update(['cover' => basename($destination)]);
+        });
+    }
+
     private function generateAlbumCoverPath(string $extension): string
     {
         return album_cover_path(sprintf('%s.%s', sha1(Str::uuid()), trim($extension, '.')));
@@ -88,6 +104,11 @@ class MediaMetadataService
     private function generateArtistImagePath(string $extension): string
     {
         return artist_image_path(sprintf('%s.%s', sha1(Str::uuid()), trim($extension, '.')));
+    }
+
+    private function generatePlaylistCoverPath(string $extension): string
+    {
+        return playlist_cover_path(sprintf('%s.%s', sha1(Str::uuid()), trim($extension, '.')));
     }
 
     /**

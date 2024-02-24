@@ -75,7 +75,7 @@ new class extends UnitTestCase {
       await artistStore.uploadImage(artist, 'data://image')
 
       expect(artist.image).toBe('http://test/img.jpg')
-      expect(putMock).toHaveBeenCalledWith(`artist/${artist.id}/image`, { image: 'data://image' })
+      expect(putMock).toHaveBeenCalledWith(`artists/${artist.id}/image`, { image: 'data://image' })
       expect(artistStore.byId(artist.id)?.image).toBe('http://test/img.jpg')
     })
 

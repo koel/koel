@@ -41,7 +41,7 @@
 
         <div class="form-row" v-if="isPlus">
           <label class="own-songs-only text-secondary small">
-            <CheckBox v-model="mutablePlaylist.own_songs_only" /> Only show songs from my own library
+            <CheckBox v-model="mutablePlaylist.own_songs_only" /> Only include songs from my own library
           </label>
         </div>
       </main>

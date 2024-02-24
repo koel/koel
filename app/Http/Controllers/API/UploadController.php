@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Events\LibraryChanged;
 use App\Exceptions\MediaPathNotSetException;
 use App\Exceptions\SongUploadFailedException;
 use App\Http\Controllers\Controller;
@@ -31,8 +30,6 @@ class UploadController extends Controller
         try {
             // @todo decouple Song from storage, as storages should not be responsible for creating a song.
             $song = $songRepository->getOne($storage->storeUploadedFile($request->file, $user)->id, $user);
-
-            event(new LibraryChanged());
 
             return response()->json([
                 'song' => SongResource::make($song),

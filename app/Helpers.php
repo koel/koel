@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
  * If this installation of Koel has a CDN_URL configured, use it as the base.
  * Otherwise, just use a full URL to the asset.
  *
- * @param string $name The optional resource name/path
+ * @param string|null $name The optional resource name/path
  */
 function static_url(?string $name = null): string
 {
@@ -35,6 +35,16 @@ function artist_image_path(?string $fileName): ?string
 function artist_image_url(?string $fileName): ?string
 {
     return $fileName ? static_url(config('koel.artist_image_dir') . $fileName) : null;
+}
+
+function playlist_cover_path(?string $fileName): ?string
+{
+    return $fileName ? public_path(config('koel.playlist_cover_dir') . $fileName) : null;
+}
+
+function playlist_cover_url(?string $fileName): ?string
+{
+    return $fileName ? static_url(config('koel.playlist_cover_dir') . $fileName) : null;
 }
 
 function koel_version(): string
@@ -74,5 +84,5 @@ function attempt_unless($condition, callable $callback, bool $log = true): mixed
 
 function gravatar(string $email, int $size = 192): string
 {
-    return sprintf('https://www.gravatar.com/avatar/%s?s=192&d=robohash', md5($email));
+    return sprintf("https://www.gravatar.com/avatar/%s?s=$size&d=robohash", md5($email));
 }

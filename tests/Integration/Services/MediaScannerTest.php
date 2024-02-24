@@ -2,7 +2,6 @@
 
 namespace Tests\Integration\Services;
 
-use App\Events\LibraryChanged;
 use App\Events\MediaScanCompleted;
 use App\Models\Album;
 use App\Models\Artist;
@@ -205,8 +204,6 @@ class MediaScannerTest extends TestCase
 
     public function testScanAddedSongViaWatch(): void
     {
-        $this->expectsEvents(LibraryChanged::class);
-
         $path = $this->path('/blank.mp3');
 
         $this->scanner->scanWatchRecord(
@@ -219,8 +216,6 @@ class MediaScannerTest extends TestCase
 
     public function testScanDeletedSongViaWatch(): void
     {
-        $this->expectsEvents(LibraryChanged::class);
-
         /** @var Song $song */
         $song = Song::factory()->create();
 
@@ -234,7 +229,7 @@ class MediaScannerTest extends TestCase
 
     public function testScanDeletedDirectoryViaWatch(): void
     {
-        $this->expectsEvents(LibraryChanged::class, MediaScanCompleted::class);
+        $this->expectsEvents(MediaScanCompleted::class);
 
         $config = ScanConfiguration::make(owner: create_admin());
 

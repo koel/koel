@@ -16,7 +16,7 @@
     <PlaylistContextMenu />
     <PlaylistFolderContextMenu />
     <CreateNewPlaylistContextMenu />
-    <DropZone v-show="showDropZone" />
+    <DropZone v-show="showDropZone" @close="showDropZone = false" />
   </div>
 
   <LoginForm v-if="layout === 'auth'" @loggedin="onUserLoggedIn" />

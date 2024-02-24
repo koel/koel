@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Events\LibraryChanged;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\UploadArtistImageRequest;
 use App\Models\Artist;
@@ -22,8 +21,6 @@ class UploadArtistImageController extends Controller
             $request->getFileContentAsBinaryString(),
             $request->getFileExtension()
         );
-
-        event(new LibraryChanged());
 
         return response()->json(['image_url' => $artist->image]);
     }

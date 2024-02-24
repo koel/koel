@@ -11,6 +11,9 @@ return [
     // The *relative* path to the directory to store artist images, *with* a trailing slash.
     'artist_image_dir' => 'img/artists/',
 
+    // The *relative* path to the directory to store playlist covers, *with* a trailing slash.
+    'playlist_cover_dir' => 'img/playlists/',
+
     /*
     |--------------------------------------------------------------------------
     | Sync Options

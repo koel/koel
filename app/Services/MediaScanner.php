@@ -139,7 +139,6 @@ class MediaScanner
         if ($song) {
             $song->delete();
             $this->logger->info("$path deleted.");
-            event(new LibraryChanged());
         } else {
             $this->logger->info("$path doesn't exist in our database--skipping.");
         }
@@ -154,8 +153,6 @@ class MediaScanner
         } else {
             $this->logger->info("Failed to scan $path. Maybe an invalid file?");
         }
-
-        event(new LibraryChanged());
     }
 
     private function handleDeletedDirectoryRecord(string $path): void
@@ -164,8 +161,6 @@ class MediaScanner
 
         if ($count) {
             $this->logger->info("Deleted $count song(s) under $path");
-
-            event(new LibraryChanged());
         } else {
             $this->logger->info("$path is empty--no action needed.");
         }
@@ -186,7 +181,6 @@ class MediaScanner
         $this->logger->info("Scanned all song(s) under $path");
 
         event(new MediaScanCompleted($scanResults));
-        event(new LibraryChanged());
     }
 
     public function on(string $event, callable $callback): void

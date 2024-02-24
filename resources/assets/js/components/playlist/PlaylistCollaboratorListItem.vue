@@ -90,5 +90,11 @@ li {
     flex: 0 0 72px;
     text-align: right;
   }
+
+  &:only-child {
+    .actions:not(:has(button)) {
+      display: none;
+    }
+  }
 }
 </style>

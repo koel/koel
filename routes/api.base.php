@@ -50,6 +50,7 @@ use App\Http\Controllers\API\UpdateUserPreferenceController;
 use App\Http\Controllers\API\UploadAlbumCoverController;
 use App\Http\Controllers\API\UploadArtistImageController;
 use App\Http\Controllers\API\UploadController;
+use App\Http\Controllers\API\UploadPlaylistCoverController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\UserInvitationController;
 use App\Models\Song;
@@ -157,9 +158,14 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::get('artists/{artist}/information', FetchArtistInformationController::class);
 
         // Cover/image upload routes
+        Route::put('albums/{album}/cover', UploadAlbumCoverController::class);
+        Route::get('albums/{album}/thumbnail', FetchAlbumThumbnailController::class);
+        Route::put('artists/{artist}/image', UploadArtistImageController::class);
+        Route::put('playlists/{playlist}/cover', UploadPlaylistCoverController::class);
+        // deprecated routes
         Route::put('album/{album}/cover', UploadAlbumCoverController::class);
-        Route::put('artist/{artist}/image', UploadArtistImageController::class);
         Route::get('album/{album}/thumbnail', FetchAlbumThumbnailController::class);
+        Route::put('artist/{artist}/image', UploadArtistImageController::class);
 
         Route::get('search', ExcerptSearchController::class);
         Route::get('search/songs', SongSearchController::class);

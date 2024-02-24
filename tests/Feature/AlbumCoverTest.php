@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Events\LibraryChanged;
 use App\Models\Album;
 use App\Services\MediaMetadataService;
 use Mockery;
@@ -25,8 +24,6 @@ class AlbumCoverTest extends TestCase
 
     public function testUpdate(): void
     {
-        $this->expectsEvents(LibraryChanged::class);
-
         /** @var Album $album */
         $album = Album::factory()->create();
 

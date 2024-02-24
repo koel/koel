@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Events\LibraryChanged;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\UploadAlbumCoverRequest;
 use App\Models\Album;
@@ -19,8 +18,6 @@ class UploadAlbumCoverController extends Controller
             $request->getFileContentAsBinaryString(),
             $request->getFileExtension()
         );
-
-        event(new LibraryChanged());
 
         return response()->json(['cover_url' => $album->cover]);
     }

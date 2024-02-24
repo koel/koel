@@ -4,6 +4,10 @@ exports[`displays nothing if fetching fails 1`] = `<div style="background-image:
 
 exports[`displays nothing if fetching fails 2`] = `<div data-v-e7775cad="" style="background-image: none;" data-testid="album-art-overlay"></div>`;
 
+exports[`displays nothing if fetching fails 3`] = `<div data-v-e7775cad="" style="background-image: none;" class="pointer-events-none" data-testid="album-art-overlay"></div>`;
+
 exports[`fetches and displays the album thumbnail 1`] = `<div style="background-image: url(http://test/thumb.jpg);" data-testid="album-art-overlay" data-v-e7775cad=""></div>`;
 
 exports[`fetches and displays the album thumbnail 2`] = `<div data-v-e7775cad="" style="background-image: url(http://test/thumb.jpg);" data-testid="album-art-overlay"></div>`;
+
+exports[`fetches and displays the album thumbnail 3`] = `<div data-v-e7775cad="" style="background-image: url(http://test/thumb.jpg);" class="pointer-events-none" data-testid="album-art-overlay"></div>`;

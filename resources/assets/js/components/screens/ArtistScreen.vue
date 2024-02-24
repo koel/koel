@@ -92,7 +92,7 @@ import { downloadService } from '@/services'
 import { useDialogBox, useRouter, useSongList, useSongListControls, useThirdPartyServices } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
-import ArtistThumbnail from '@/components/ui/AlbumArtistThumbnail.vue'
+import ArtistThumbnail from '@/components/ui/ArtistAlbumThumbnail.vue'
 import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 import ScreenTabs from '@/components/ui/ArtistAlbumScreenTabs.vue'

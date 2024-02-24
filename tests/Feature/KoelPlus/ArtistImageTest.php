@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\KoelPlus;
 
-use App\Events\LibraryChanged;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Services\MediaMetadataService;
@@ -23,8 +22,6 @@ class ArtistImageTest extends PlusTestCase
 
     public function testNormalUserCanUploadImageIfOwningAllSongsInArtist(): void
     {
-        $this->expectsEvents(LibraryChanged::class);
-
         $user = create_user();
 
         /** @var Artist $artist */
@@ -36,7 +33,7 @@ class ArtistImageTest extends PlusTestCase
             ->once()
             ->with(Mockery::on(static fn (Artist $target) => $target->is($artist)), 'Foo', 'jpeg');
 
-        $this->putAs("api/artist/$artist->id/image", ['image' => 'data:image/jpeg;base64,Rm9v'], $user)
+        $this->putAs("api/artists/$artist->id/image", ['image' => 'data:image/jpeg;base64,Rm9v'], $user)
             ->assertOk();
     }
 
@@ -53,14 +50,12 @@ class ArtistImageTest extends PlusTestCase
             ->shouldReceive('writeArtistImage')
             ->never();
 
-        $this->putAs("api/artist/$artist->id/image", ['image' => 'data:image/jpeg;base64,Rm9v'], $user)
+        $this->putAs("api/artists/$artist->id/image", ['image' => 'data:image/jpeg;base64,Rm9v'], $user)
             ->assertForbidden();
     }
 
     public function testAdminCanUploadImageEvenIfNotOwningAllSongsInArtist(): void
     {
-        $this->expectsEvents(LibraryChanged::class);
-
         $user = create_user();
 
         /** @var Artist $artist */
@@ -72,7 +67,7 @@ class ArtistImageTest extends PlusTestCase
             ->once()
             ->with(Mockery::on(static fn (Artist $target) => $target->is($artist)), 'Foo', 'jpeg');
 
-        $this->putAs("api/artist/$artist->id/image", ['image' => 'data:image/jpeg;base64,Rm9v'], create_admin())
+        $this->putAs("api/artists/$artist->id/image", ['image' => 'data:image/jpeg;base64,Rm9v'], create_admin())
             ->assertOk();
     }
 }

@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
@@ -33,6 +34,8 @@ use LogicException;
  * @property bool $own_songs_only
  * @property Collection|array<array-key, User> $collaborators
  * @property-read bool $is_collaborative
+ * @property-read ?string $cover The playlist cover's URL
+ * @property-read ?string $cover_path
  */
 class Playlist extends Model
 {
@@ -102,6 +105,20 @@ class Playlist extends Model
         throw_if($this->is_smart, new LogicException('Smart playlist contents are generated dynamically.'));
 
         return Attribute::get(fn () => $this->songs->pluck('id')->all());
+    }
+
+    protected function cover(): Attribute
+    {
+        return Attribute::get(static fn (?string $value): ?string => playlist_cover_url($value));
+    }
+
+    protected function coverPath(): Attribute
+    {
+        return Attribute::get(function () {
+            $cover = Arr::get($this->attributes, 'cover');
+
+            return $cover ? playlist_cover_path($cover) : null;
+        });
     }
 
     public function ownedBy(User $user): bool
