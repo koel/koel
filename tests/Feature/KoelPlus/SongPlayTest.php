@@ -3,10 +3,9 @@
 namespace Tests\Feature\KoelPlus;
 
 use App\Models\Song;
-use App\Services\Streamers\LocalStreamer;
+use App\Services\Streamer\Adapters\LocalStreamerAdapter;
 use App\Services\TokenManager;
 use App\Values\CompositeToken;
-use Mockery;
 use Tests\PlusTestCase;
 
 use function Tests\create_user;
@@ -24,13 +23,9 @@ class SongPlayTest extends PlusTestCase
             'path' => test_path('songs/blank.mp3'),
         ]);
 
-        $mockStreamer = $this->mock(LocalStreamer::class);
-
-        $mockStreamer->shouldReceive('setSong')->with(
-            Mockery::on(static fn (Song $retrievedSong): bool => $retrievedSong->id === $song->id)
-        )->once();
-
-        $mockStreamer->shouldReceive('stream')->once();
+        $this->mock(LocalStreamerAdapter::class)
+            ->shouldReceive('stream')
+            ->once();
 
         $this->get("play/$song->id?t=$token->audioToken")
             ->assertOk();
@@ -46,13 +41,9 @@ class SongPlayTest extends PlusTestCase
         /** @var CompositeToken $token */
         $token = app(TokenManager::class)->createCompositeToken($song->owner);
 
-        $mockStreamer = $this->mock(LocalStreamer::class);
-
-        $mockStreamer->shouldReceive('setSong')->with(
-            Mockery::on(static fn (Song $retrievedSong): bool => $retrievedSong->id === $song->id)
-        )->once();
-
-        $mockStreamer->shouldReceive('stream')->once();
+        $this->mock(LocalStreamerAdapter::class)
+            ->shouldReceive('stream')
+            ->once();
 
         $this->get("play/$song->id?t=$token->audioToken")
             ->assertOk();
