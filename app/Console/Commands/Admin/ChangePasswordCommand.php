@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands\Admin;
 
-use App\Console\Commands\Traits\AskForPassword;
+use App\Console\Commands\Concerns\AskForPassword;
 use App\Repositories\UserRepository;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Hashing\Hasher as Hash;

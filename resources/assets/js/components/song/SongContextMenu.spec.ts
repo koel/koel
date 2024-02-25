@@ -383,7 +383,7 @@ new class extends UnitTestCase {
       screen.getByText('Mark as Private')
     })
 
-    it('does not have an option to make songs public or private oin Community edition', async () => {
+    it('does not have an option to make songs public or private or Community edition', async () => {
       const owner = factory<User>('user')
       const songs = factory<Song>('song', 5, {
         is_public: false,
