@@ -58,7 +58,7 @@ export const userStore = {
     return this.byId(user.id)
   },
 
-  add (user: User) {
+  add (user: User | User[]) {
     this.state.users.push(...this.syncWithVault(user))
   },
 

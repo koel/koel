@@ -29,11 +29,11 @@ new class extends UnitTestCase {
 
     it('downloads a playlist', () => {
       const mock = this.mock(downloadService, 'trigger')
-      const playlist = factory<Playlist>('playlist', { id: 42 })
+      const playlist = factory<Playlist>('playlist')
 
       downloadService.fromPlaylist(playlist)
 
-      expect(mock).toHaveBeenCalledWith('playlist/42')
+      expect(mock).toHaveBeenCalledWith(`playlist/${playlist.id}`)
     })
 
     it.each<[Song[], boolean]>([[[], false], [factory<Song>('song', 5), true]])(
