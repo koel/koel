@@ -55,6 +55,12 @@ class S3CompatibleStorage extends CloudStorage
         $disk->delete($song->storage_metadata->getPath());
     }
 
+    public function testSetup(): void
+    {
+        Storage::disk('s3')->put('test.txt', 'Koel test file');
+        Storage::disk('s3')->delete('test.txt');
+    }
+
     public function supported(): bool
     {
         return SongStorageTypes::supported(SongStorageTypes::S3);

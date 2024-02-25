@@ -2,15 +2,15 @@
 
 namespace App\Console\Commands;
 
-use App\Console\Commands\Traits\AskForPassword;
+use App\Console\Commands\Concerns\AskForPassword;
 use App\Exceptions\InstallationFailedException;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Console\Command;
-use Illuminate\Contracts\Console\Kernel as Artisan;
 use Illuminate\Contracts\Hashing\Hasher as Hash;
 use Illuminate\Database\DatabaseManager as DB;
 use Illuminate\Encryption\Encrypter;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Jackiedo\DotenvEditor\DotenvEditor;
@@ -32,7 +32,6 @@ class InitCommand extends Command
     private bool $adminSeeded = false;
 
     public function __construct(
-        private Artisan $artisan,
         private Hash $hash,
         private DotenvEditor $dotenvEditor,
         private DB $db,
@@ -87,7 +86,7 @@ class InitCommand extends Command
         }
 
         if (Setting::get('media_path')) {
-            $this->info('You can also scan for media now with `php artisan koel:sync`.');
+            $this->info('You can now set up the storage with `php artisan koel:storage`.');
         }
 
         $this->info('Again, visit 📙 ' . config('koel.misc.docs_url') . ' for more tips and tweaks.');
@@ -105,9 +104,9 @@ class InitCommand extends Command
 
     private function clearCaches(): void
     {
-        $this->components->task('Clearing caches', function (): void {
-            $this->artisan->call('config:clear');
-            $this->artisan->call('cache:clear');
+        $this->components->task('Clearing caches', static function (): void {
+            Artisan::call('config:clear', ['--quiet' => true]);
+            Artisan::call('cache:clear', ['--quiet' => true]);
         });
     }
 
@@ -180,10 +179,7 @@ class InitCommand extends Command
             $config['DB_PASSWORD'] = (string) $this->ask('DB password');
         }
 
-        foreach ($config as $key => $value) {
-            $this->dotenvEditor->setKey($key, $value);
-        }
-
+        $this->dotenvEditor->setKeys($config);
         $this->dotenvEditor->save();
 
         // Set the config so that the next DB attempt uses refreshed credentials
@@ -226,8 +222,8 @@ class InitCommand extends Command
         if (!User::query()->count()) {
             $this->setUpAdminAccount();
 
-            $this->components->task('Seeding data', function (): void {
-                $this->artisan->call('db:seed', ['--force' => true]);
+            $this->components->task('Seeding data', static function (): void {
+                Artisan::call('db:seed', ['--force' => true, '--quiet' => true]);
             });
         } else {
             $this->components->task('Data already seeded -- skipping');
@@ -251,7 +247,7 @@ class InitCommand extends Command
 
             try {
                 // Make sure the config cache is cleared before another attempt.
-                $this->artisan->call('config:clear');
+                Artisan::call('config:clear', ['--quiet' => true]);
                 $this->db->reconnect()->getPdo();
 
                 break;
@@ -279,8 +275,8 @@ class InitCommand extends Command
 
     private function migrateDatabase(): void
     {
-        $this->components->task('Migrating database', function (): void {
-            $this->artisan->call('migrate', ['--force' => true]);
+        $this->components->task('Migrating database', static function (): void {
+            Artisan::call('migrate', ['--force' => true, '--quiet' => true]);
         });
     }
 

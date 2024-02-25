@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands\Traits;
+namespace App\Console\Commands\Concerns;
 
 /**
  * @method void  error($message, $verbosity = null)
