@@ -45,6 +45,7 @@ import isMobile from 'ismobilejs'
 import { computed, defineAsyncComponent, onMounted, ref, toRef } from 'vue'
 import { userStore } from '@/stores'
 import { eventBus } from '@/utils'
+import {useAuthorization} from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ControlsToggle from '@/components/ui/ScreenControlsToggle.vue'
@@ -53,8 +54,14 @@ import UserCard from '@/components/user/UserCard.vue'
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 const BtnGroup = defineAsyncComponent(() => import('@/components/ui/BtnGroup.vue'))
 
+const { currentUser } = useAuthorization()
+
 const allUsers = toRef(userStore.state, 'users')
-const users = computed(() => allUsers.value.filter(({ is_prospect }) => !is_prospect))
+const users = computed(() => allUsers
+  .value
+  .filter(({ is_prospect }) => !is_prospect)
+  .sort((a, b) => a.id === currentUser.value.id ? -1 : b.id === currentUser.value.id ? 1 : a.name.localeCompare(b.name))
+)
 const prospects = computed(() => allUsers.value.filter(({ is_prospect }) => is_prospect))
 
 const isPhone = isMobile.phone
@@ -68,9 +75,9 @@ onMounted(async () => await userStore.fetch())
 
 <style lang="scss" scoped>
 .users {
-  display: grid;
-  grid-gap: .7rem 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
 }
 
 .invited-heading {

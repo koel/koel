@@ -1,6 +1,6 @@
 <template>
   <article :class="{ me: isCurrentUser }" class="user-card">
-    <UserAvatar :user="user" width="80" />
+    <UserAvatar :user="user" width="48" />
 
     <main>
       <h1>
@@ -16,19 +16,19 @@
       </h1>
 
       <p class="email text-secondary">{{ user.email }}</p>
-
-      <footer>
-        <template v-if="user.is_prospect">
-          <Btn class="btn-revoke" red small @click="revokeInvite">Revoke</Btn>
-        </template>
-        <template v-else>
-          <Btn v-if="!isCurrentUser" class="btn-delete" red small @click="destroy">Delete</Btn>
-          <Btn v-if="!user.is_prospect" class="btn-edit" orange small @click="edit">
-            {{ isCurrentUser ? 'Your Profile' : 'Edit' }}
-          </Btn>
-        </template>
-      </footer>
     </main>
+
+    <div class="actions">
+      <template v-if="user.is_prospect">
+        <Btn class="btn-revoke" red small @click="revokeInvite">Revoke</Btn>
+      </template>
+      <template v-else>
+        <Btn v-if="!user.is_prospect" class="btn-edit" orange small @click="edit">
+          {{ isCurrentUser ? 'Your Profile' : 'Edit' }}
+        </Btn>
+        <Btn v-if="!isCurrentUser" class="btn-delete" red small @click="destroy">Delete</Btn>
+      </template>
+    </div>
   </article>
 </template>
 
@@ -102,12 +102,6 @@ const revokeInvite = async () => {
     color: var(--color-text-secondary);
   }
 
-  img {
-    border-radius: 50%;
-    flex: 0 0 80px;
-    background: rgba(0, 0, 0, .2)
-  }
-
   main {
     flex: 1;
     display: flex;
@@ -126,20 +120,9 @@ const revokeInvite = async () => {
     }
   }
 
-  footer {
-    visibility: hidden;
-
-    > * + * {
-      margin-left: .3rem;
-    }
-
-    @media (hover: none) {
-      visibility: visible;
-    }
-  }
-
-  &:hover footer {
-    visibility: visible;
+  .actions {
+    display: flex;
+    gap: .5rem;
   }
 }
 </style>
