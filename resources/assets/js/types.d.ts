@@ -57,8 +57,11 @@ interface Constructable<T> {
 
 interface Window {
   BASE_URL: string
+  MAILER_CONFIGURED: boolean
+
   readonly PUSHER_APP_KEY: string
   readonly PUSHER_APP_CLUSTER: string
+
   readonly MediaMetadata: Constructable<Record<string, any>>
   createLemonSqueezy?: () => Closure
 }
@@ -352,6 +355,7 @@ declare type ScreenName =
   | 'Search.Excerpt'
   | 'Search.Songs'
   | 'Invitation.Accept'
+  | 'Password.Reset'
   | '404'
 
 declare type ArtistAlbumCardLayout = 'full' | 'compact'

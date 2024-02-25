@@ -8,6 +8,7 @@ use App\Http\Middleware\ForceHttps;
 use App\Http\Middleware\ObjectStorageAuthenticate;
 use App\Http\Middleware\ThrottleRequests;
 use App\Http\Middleware\TrimStrings;
+use App\Http\Middleware\TrustHosts;
 use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode;
@@ -26,6 +27,7 @@ class Kernel extends HttpKernel
         ValidatePostSize::class,
         TrimStrings::class,
         ForceHttps::class,
+        TrustHosts::class,
     ];
 
     /**

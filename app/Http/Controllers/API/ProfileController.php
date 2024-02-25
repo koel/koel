@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\TokenManager;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Hashing\Hasher;
+use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 
 class ProfileController extends Controller
@@ -28,9 +29,7 @@ class ProfileController extends Controller
 
     public function update(ProfileUpdateRequest $request)
     {
-        if (config('koel.misc.demo')) {
-            return response()->noContent();
-        }
+        static::disableInDemo(Response::HTTP_NO_CONTENT);
 
         throw_unless(
             $this->hash->check($request->current_password, $this->user->password),

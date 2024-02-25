@@ -22,6 +22,7 @@
   <LoginForm v-if="layout === 'auth'" @loggedin="onUserLoggedIn" />
 
   <AcceptInvitation v-if="layout === 'invitation'" />
+  <ResetPasswordForm v-if="layout === 'reset-password'" />
 </template>
 
 <script lang="ts" setup>
@@ -55,6 +56,7 @@ const CreateNewPlaylistContextMenu = defineAsyncComponent(() => import('@/compon
 const SupportKoel = defineAsyncComponent(() => import('@/components/meta/SupportKoel.vue'))
 const DropZone = defineAsyncComponent(() => import('@/components/ui/upload/DropZone.vue'))
 const AcceptInvitation = defineAsyncComponent(() => import('@/components/invitation/AcceptInvitation.vue'))
+const ResetPasswordForm = defineAsyncComponent(() => import('@/components/auth/ResetPasswordForm.vue'))
 
 const overlay = ref<InstanceType<typeof Overlay>>()
 const dialog = ref<InstanceType<typeof DialogBox>>()
@@ -62,9 +64,9 @@ const toaster = ref<InstanceType<typeof MessageToaster>>()
 const currentSong = ref<Song>()
 const showDropZone = ref(false)
 
-const layout = ref<'main' | 'auth' | 'invitation'>()
+const layout = ref<'main' | 'auth' | 'invitation' | 'reset-password'>()
 
-const { isCurrentScreen, resolveRoute } = useRouter()
+const { isCurrentScreen, getCurrentScreen, resolveRoute } = useRouter()
 const { offline } = useNetworkStatus()
 
 /**
@@ -91,7 +93,17 @@ onMounted(async () => {
     layout.value = 'main'
   } else {
     await resolveRoute()
-    layout.value = isCurrentScreen('Invitation.Accept') ? 'invitation' : 'auth'
+
+    switch (getCurrentScreen()) {
+      case 'Invitation.Accept':
+        layout.value = 'invitation'
+        break
+      case 'Password.Reset':
+        layout.value = 'reset-password'
+        break
+      default:
+        layout.value = 'auth'
+    }
   }
 
   // Add an ugly mac/non-mac class for OS-targeting styles.

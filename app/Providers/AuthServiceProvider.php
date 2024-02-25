@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\User;
 use App\Services\TokenManager;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,6 +26,12 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         $this->setPasswordDefaultRules();
+
+        ResetPassword::createUrlUsing(static function (User $user, string $token): string {
+            $payload = base64_encode($user->getEmailForPasswordReset() . "|$token");
+
+            return url("/#/reset-password/$payload");
+        });
     }
 
     private function setPasswordDefaultRules(): void

@@ -122,7 +122,6 @@ form {
   input {
     &[type="text"], &[type="email"], &[type="password"] {
       width: 100%;
-      height: 32px;
     }
   }
 }

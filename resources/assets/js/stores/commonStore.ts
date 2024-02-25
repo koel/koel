@@ -10,10 +10,10 @@ const initialState = {
   current_version: '',
   koel_plus: {
     active: false,
-    short_key: null,
-    customer_name: null,
-    customer_email: null,
-    product_id: ''
+    short_key: null as string | null,
+    customer_name: null as string | null,
+    customer_email: null as string | null,
+    product_id: '' as string | null
   },
   latest_version: '',
   media_path_set: false,

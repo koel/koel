@@ -10,7 +10,7 @@
             <Icon :icon="faPlus" />
             Add
           </Btn>
-          <Btn class="btn-invite" orange @click="showInviteUserForm">Invite</Btn>
+          <Btn v-if="canInvite" class="btn-invite" orange @click="showInviteUserForm">Invite</Btn>
         </BtnGroup>
       </template>
     </ScreenHeader>
@@ -57,15 +57,18 @@ const BtnGroup = defineAsyncComponent(() => import('@/components/ui/BtnGroup.vue
 const { currentUser } = useAuthorization()
 
 const allUsers = toRef(userStore.state, 'users')
+
 const users = computed(() => allUsers
   .value
   .filter(({ is_prospect }) => !is_prospect)
   .sort((a, b) => a.id === currentUser.value.id ? -1 : b.id === currentUser.value.id ? 1 : a.name.localeCompare(b.name))
 )
+
 const prospects = computed(() => allUsers.value.filter(({ is_prospect }) => is_prospect))
 
 const isPhone = isMobile.phone
 const showingControls = ref(false)
+const canInvite = window.MAILER_CONFIGURED
 
 const showAddUserForm = () => eventBus.emit('MODAL_SHOW_ADD_USER_FORM')
 const showInviteUserForm = () => eventBus.emit('MODAL_SHOW_INVITE_USER_FORM')
