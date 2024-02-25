@@ -10,7 +10,7 @@ export interface UpdateCurrentProfileData {
   new_password?: string
 }
 
-interface CompositeToken {
+export interface CompositeToken {
   'audio-token': string
   'token': string
 }
