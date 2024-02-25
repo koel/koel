@@ -4,13 +4,14 @@ import Axios from 'axios'
 
 declare global {
   interface Window {
-    BASE_URL: string;
-    createLemonSqueezy: () => void;
+    BASE_URL: string
+    MAILER_CONFIGURED: boolean
+    createLemonSqueezy: () => void
   }
 
   interface LemonSqueezy {
     Url: {
-      Open: () => void;
+      Open: () => void
     }
   }
 }
@@ -48,6 +49,8 @@ HTMLDialogElement.prototype.close = vi.fn(function mock () {
 })
 
 window.BASE_URL = 'http://test/'
+window.MAILER_CONFIGURED = true
+
 window.createLemonSqueezy = vi.fn()
 
 Axios.defaults.adapter = vi.fn()

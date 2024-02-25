@@ -86,3 +86,12 @@ function gravatar(string $email, int $size = 192): string
 {
     return sprintf("https://www.gravatar.com/avatar/%s?s=$size&d=robohash", md5($email));
 }
+
+/**
+ * A quick check to determine if a mailer is configured.
+ * This is not bulletproof but should work in most cases.
+ */
+function mailer_configured(): bool
+{
+    return config('mail.default') && !in_array(config('mail.default'), ['log', 'array'], true);
+}

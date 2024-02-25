@@ -1,33 +1,55 @@
 <template>
   <div class="login-wrapper">
-    <form :class="{ error: failed }" data-testid="login-form" @submit.prevent="login">
+    <form
+      v-show="!showingForgotPasswordForm"
+      :class="{ error: failed }"
+      data-testid="login-form"
+      @submit.prevent="login"
+    >
       <div class="logo">
         <img alt="Koel's logo" src="@/../img/logo.svg" width="156">
       </div>
+
       <input v-model="email" autofocus placeholder="Email Address" required type="email">
       <PasswordField v-model="password" placeholder="Password" required />
+
       <Btn type="submit">Log In</Btn>
+      <a
+        v-if="canResetPassword"
+        class="reset-password"
+        role="button"
+        @click.prevent="showForgotPasswordForm"
+      >
+        Forgot password?
+      </a>
     </form>
+
+    <ForgotPasswordForm v-if="showingForgotPasswordForm" @cancel="showingForgotPasswordForm = false" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { isDemo } from '@/utils'
 import { authService } from '@/services'
 
 import Btn from '@/components/ui/Btn.vue'
 import PasswordField from '@/components/ui/PasswordField.vue'
+import ForgotPasswordForm from '@/components/auth/ForgotPasswordForm.vue'
 
 const DEMO_ACCOUNT = {
   email: 'demo@koel.dev',
   password: 'demo'
 }
 
-const url = ref('')
+const canResetPassword = window.MAILER_CONFIGURED && !isDemo()
+
 const email = ref(isDemo() ? DEMO_ACCOUNT.email : '')
 const password = ref(isDemo() ? DEMO_ACCOUNT.password : '')
 const failed = ref(false)
+const showingForgotPasswordForm = ref(false)
+
+const showForgotPasswordForm = () => (showingForgotPasswordForm.value = true)
 
 const emit = defineEmits<{ (e: 'loggedin'): void }>()
 
@@ -75,10 +97,7 @@ const login = async () => {
 .login-wrapper {
   @include vertical-center();
 
-  display: flex;
   height: 100vh;
-  flex-direction: column;
-  justify-content: center;
 }
 
 form {
@@ -99,6 +118,12 @@ form {
 
   .logo {
     text-align: center;
+  }
+
+  .reset-password {
+    display: block;
+    text-align: right;
+    font-size: .95rem;
   }
 
   @media only screen and (max-width: 414px) {

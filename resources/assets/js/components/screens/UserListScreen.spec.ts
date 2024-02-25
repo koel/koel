@@ -4,11 +4,18 @@ import factory from '@/__tests__/factory'
 import { screen } from '@testing-library/vue'
 import { http } from '@/services'
 import { eventBus } from '@/utils'
+import { userStore } from '@/stores'
 import Btn from '@/components/ui/Btn.vue'
 import BtnGroup from '@/components/ui/BtnGroup.vue'
 import UserListScreen from './UserListScreen.vue'
 
 new class extends UnitTestCase {
+  protected beforeEach (cb?: Closure) {
+    super.beforeEach(cb);
+
+    this.beAdmin()
+  }
+
   private async renderComponent (users: User[] = []) {
     if (users.length === 0) {
       users = factory<User>('user', 6)

@@ -33,6 +33,10 @@ html {
   overflow: hidden;
 }
 
+input {
+  height: 32px;
+}
+
 input,
 select,
 button,
@@ -45,7 +49,7 @@ textarea,
   font-size: 1rem;
   font-weight: var(--font-weight-light);
   padding: .5rem .6rem;
-  border-radius: .3rem;
+  border-radius: var(--border-radius-input);
   margin: 0;
   background: var(--color-bg-input);
   color: var(--color-input);
@@ -234,6 +238,18 @@ label {
 .font-size- {
   &0 {
     font-size: 0;
+  }
+
+  &1 {
+    font-size: 1rem;
+  }
+
+  &1\.5 {
+    font-size: 1.5rem;
+  }
+
+  &2 {
+    font-size: 2rem;
   }
 }
 

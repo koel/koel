@@ -20,6 +20,7 @@ use App\Http\Controllers\API\FetchOverviewController;
 use App\Http\Controllers\API\FetchRandomSongsInGenreController;
 use App\Http\Controllers\API\FetchRecentlyPlayedSongController;
 use App\Http\Controllers\API\FetchSongsForQueueController;
+use App\Http\Controllers\API\ForgotPasswordController;
 use App\Http\Controllers\API\GenreController;
 use App\Http\Controllers\API\GenreSongController;
 use App\Http\Controllers\API\LambdaSongController as S3SongController;
@@ -37,6 +38,7 @@ use App\Http\Controllers\API\ProfileController;
 use App\Http\Controllers\API\PublicizeSongsController;
 use App\Http\Controllers\API\QueueStateController;
 use App\Http\Controllers\API\RegisterPlayController;
+use App\Http\Controllers\API\ResetPasswordController;
 use App\Http\Controllers\API\ScrobbleController;
 use App\Http\Controllers\API\SearchYouTubeController;
 use App\Http\Controllers\API\SetLastfmSessionKeyController;
@@ -59,10 +61,13 @@ use Illuminate\Support\Facades\Route;
 use Pusher\Pusher;
 
 Route::prefix('api')->middleware('api')->group(static function (): void {
+    Route::get('ping', static fn () => null);
+
     Route::post('me', [AuthController::class, 'login'])->name('auth.login');
     Route::delete('me', [AuthController::class, 'logout']);
 
-    Route::get('ping', static fn () => null);
+    Route::post('forgot-password', ForgotPasswordController::class);
+    Route::post('reset-password', ResetPasswordController::class);
 
     Route::get('invitations', [UserInvitationController::class, 'get']);
     Route::post('invitations/accept', [UserInvitationController::class, 'accept']);

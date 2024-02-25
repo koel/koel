@@ -55,5 +55,11 @@ export const authService = {
   getAudioToken: () => {
     // for backward compatibility, we first try to get the audio token, and fall back to the (full-privileged) API token
     return localStorageService.get(AUDIO_TOKEN_STORAGE_KEY) || localStorageService.get(API_TOKEN_STORAGE_KEY)
+  },
+
+  requestResetPasswordLink: async (email: string) => await http.post('forgot-password', { email }),
+
+  resetPassword: async (email: string, password: string, token: string) => {
+    await http.post('reset-password', { email, password, token })
   }
 }

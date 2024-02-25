@@ -15,20 +15,27 @@
       <div class="form-row">
         <label>
           Your name
-          <input v-model="formData.name" v-koel-focus type="text" required placeholder="Erm… Bruce Dickinson?">
+          <input
+            v-model="name"
+            v-koel-focus
+            data-testid="name"
+            placeholder="Erm… Bruce Dickinson?"
+            required
+            type="text"
+          >
         </label>
       </div>
 
       <div class="form-row">
         <label>
           Password
-          <PasswordField v-model="formData.password" minlength="10" />
+          <PasswordField v-model="password" data-testid="password" required />
           <small>Min. 10 characters. Should be a mix of characters, numbers, and symbols.</small>
         </label>
       </div>
 
       <div class="form-row">
-        <Btn type="submit">Accept &amp; Log In</Btn>
+        <Btn type="submit" :disabled="loading">Accept &amp; Log In</Btn>
       </div>
     </form>
 
@@ -37,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { invitationService } from '@/services'
 import { useDialogBox, useRouter } from '@/composables'
 
@@ -49,23 +56,24 @@ import { parseValidationError } from '@/utils'
 const { showErrorDialog } = useDialogBox()
 const { getRouteParam, go } = useRouter()
 
+const name = ref('')
+const password = ref('')
 const userProspect = ref<User>()
 const validToken = ref(true)
-
-const formData = reactive<{ name: string, password: string }>({
-  name: '',
-  password: ''
-})
+const loading = ref(false)
 
 const token = String(getRouteParam('token')!)
 
 const submit = async () => {
   try {
-    await invitationService.accept(token, formData.name, formData.password)
+    loading.value = true
+    await invitationService.accept(token, name.value, password.value)
     window.location.href = '/'
   } catch (err: any) {
     const msg = err.response.status === 422 ? parseValidationError(err.response.data)[0] : 'Unknown error.'
     showErrorDialog(msg, 'Error')
+  } finally {
+    loading.value = false
   }
 }
 
@@ -73,12 +81,12 @@ onMounted(async () => {
   try {
     userProspect.value = await invitationService.getUserProspect(token)
   } catch (err: any) {
-    if (err.response.status === 404) {
+    if (err.response?.status === 404) {
       validToken.value = false
       return
     }
 
-    const msg = err.response.status === 422 ? parseValidationError(err.response.data)[0] : 'Unknown error.'
+    const msg = err.response?.status === 422 ? parseValidationError(err.response?.data)[0] : 'Unknown error.'
     showErrorDialog(msg, 'Error')
   }
 })

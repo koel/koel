@@ -125,5 +125,9 @@ export const routes: Route[] = [
   {
     path: `/invitation/accept/(?<token>${UUID_REGEX})`,
     screen: 'Invitation.Accept'
+  },
+  {
+    path: `/reset-password/(?<payload>[a-zA-Z0-9\\+/=]+)`,
+    screen: 'Password.Reset'
   }
 ]

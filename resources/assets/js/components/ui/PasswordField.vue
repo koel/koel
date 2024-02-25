@@ -1,6 +1,6 @@
 <template>
   <div>
-    <input v-model="value" :type="type" v-bind="$attrs">
+    <input v-model="value" :type="type" minlength="10" v-bind="$attrs">
     <button type="button" @click.prevent="toggleReveal">
       <Icon v-if="type === 'password'" :icon="faEye" />
       <Icon v-else :icon="faEyeSlash" />
@@ -16,7 +16,6 @@ import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons'
 defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<{ modelValue?: string }>(), { modelValue: '' })
-
 const emit = defineEmits<{ (e: 'update:modelValue', value: string): void }>()
 
 const type = ref<'password' | 'text'>('password')

@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/vue'
+import { screen, waitFor } from '@testing-library/vue'
 import { expect, it, Mock } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { authService } from '@/services'
@@ -31,6 +31,21 @@ new class extends UnitTestCase {
 
       expect(emitted().loggedin).toBeFalsy()
       expect(screen.getByTestId('login-form').classList.contains('error')).toBe(true)
+    })
+
+    it('shows forgot password form', async () => {
+      this.render(LoginFrom)
+      await this.user.click(screen.getByText('Forgot password?'))
+
+      await waitFor(() => screen.getByTestId('forgot-password-form'))
+    })
+
+    it('does not show forgot password form if mailer is not configure', async () => {
+      window.MAILER_CONFIGURED = false
+      this.render(LoginFrom)
+
+      expect(screen.queryByText('Forgot password?')).toBeNull()
+      window.MAILER_CONFIGURED = true
     })
   }
 }
