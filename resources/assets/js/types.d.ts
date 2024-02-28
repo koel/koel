@@ -58,6 +58,7 @@ interface Constructable<T> {
 interface Window {
   BASE_URL: string
   MAILER_CONFIGURED: boolean
+  IS_DEMO: boolean
 
   readonly PUSHER_APP_KEY: string
   readonly PUSHER_APP_CLUSTER: string

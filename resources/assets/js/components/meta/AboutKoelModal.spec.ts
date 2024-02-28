@@ -32,8 +32,7 @@ new class extends UnitTestCase {
 
     it('shows demo notation', async () => {
       const getMock = this.mock(http, 'get').mockResolvedValue([])
-      // @ts-ignore
-      import.meta.env.VITE_KOEL_ENV = 'demo'
+      window.IS_DEMO = true
 
       this.renderComponent()
 
@@ -41,6 +40,8 @@ new class extends UnitTestCase {
         screen.getByTestId('demo-credits')
         expect(getMock).toHaveBeenCalledWith('demo/credits')
       })
+
+      window.IS_DEMO = false
     })
   }
 }

@@ -35,8 +35,3 @@ export const copyText = async (text: string) => {
     document.execCommand('copy')
   }
 }
-
-export const isDemo = () => {
-  // can't use one-liner as it would break production build with an "Unexpected token" error
-  return import.meta.env.VITE_KOEL_ENV === 'demo'
-}

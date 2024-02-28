@@ -29,8 +29,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
-import { isDemo } from '@/utils'
+import { ref } from 'vue'
 import { authService } from '@/services'
 
 import Btn from '@/components/ui/Btn.vue'
@@ -42,10 +41,10 @@ const DEMO_ACCOUNT = {
   password: 'demo'
 }
 
-const canResetPassword = window.MAILER_CONFIGURED && !isDemo()
+const canResetPassword = window.MAILER_CONFIGURED && !window.IS_DEMO
 
-const email = ref(isDemo() ? DEMO_ACCOUNT.email : '')
-const password = ref(isDemo() ? DEMO_ACCOUNT.password : '')
+const email = ref(window.IS_DEMO ? DEMO_ACCOUNT.email : '')
+const password = ref(window.IS_DEMO ? DEMO_ACCOUNT.password : '')
 const failed = ref(false)
 const showingForgotPasswordForm = ref(false)
 

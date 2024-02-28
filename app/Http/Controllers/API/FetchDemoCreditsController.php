@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\File;
 use Throwable;
 
-class FetchDemoCreditController extends Controller
+class FetchDemoCreditsController extends Controller
 {
     public function __invoke()
     {
