@@ -74,6 +74,10 @@
     padding: 1.8rem;
     overflow: auto;
   }
+
+  .none {
+    padding: 1rem 1.8rem;
+  }
 }
 
 :deep(.info-pane) {

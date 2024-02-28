@@ -13,7 +13,7 @@ use App\Http\Controllers\API\ExcerptSearchController;
 use App\Http\Controllers\API\FetchAlbumInformationController;
 use App\Http\Controllers\API\FetchAlbumThumbnailController;
 use App\Http\Controllers\API\FetchArtistInformationController;
-use App\Http\Controllers\API\FetchDemoCreditController;
+use App\Http\Controllers\API\FetchDemoCreditsController;
 use App\Http\Controllers\API\FetchFavoriteSongsController;
 use App\Http\Controllers\API\FetchInitialDataController;
 use App\Http\Controllers\API\FetchOverviewController;
@@ -197,5 +197,5 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::delete('song', [S3SongController::class, 'remove'])->name('s3.song.remove'); // and here.
     });
 
-    Route::get('demo/credits', FetchDemoCreditController::class);
+    Route::get('demo/credits', FetchDemoCreditsController::class);
 });

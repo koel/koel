@@ -67,7 +67,6 @@
 <script lang="ts" setup>
 import { orderBy } from 'lodash'
 import { onMounted, ref } from 'vue'
-import { isDemo } from '@/utils'
 import { useAuthorization, useKoelPlus, useNewVersionNotification } from '@/composables'
 import { http } from '@/services'
 
@@ -96,7 +95,7 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 const close = () => emit('close')
 
 onMounted(async () => {
-  credits.value = isDemo() ? orderBy(await http.get<DemoCredits[]>('demo/credits'), 'name') : null
+  credits.value = window.IS_DEMO ? orderBy(await http.get<DemoCredits[]>('demo/credits'), 'name') : null
 })
 </script>
 

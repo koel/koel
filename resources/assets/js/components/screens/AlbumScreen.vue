@@ -72,7 +72,7 @@
               <AlbumCard :album="a" layout="compact" />
             </li>
           </ul>
-          <p v-else class="text-secondary">No other albums by {{ album.artist_name }} found in the library.</p>
+          <p v-else class="none text-secondary">No other albums by {{ album.artist_name }} found in the library.</p>
         </template>
         <ul v-else class="as-list">
           <li v-for="i in 12" :key="i">

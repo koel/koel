@@ -34,6 +34,7 @@
 <script>
     window.BASE_URL = @json(asset(''));
     window.MAILER_CONFIGURED = @json(mailer_configured());
+    window.IS_DEMO = @json(config('koel.misc.demo'));
 
     window.PUSHER_APP_KEY = @json(config('broadcasting.connections.pusher.key'));
     window.PUSHER_APP_CLUSTER = @json(config('broadcasting.connections.pusher.options.cluster'));

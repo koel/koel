@@ -46,7 +46,7 @@
 
     <div class="form-row">
       <Btn class="btn-submit" type="submit">Save</Btn>
-      <span v-if="isDemo()" class="demo-notice">
+      <span v-if="isDemo" class="demo-notice">
         Changes will not be saved in the demo version.
       </span>
     </div>
@@ -57,7 +57,7 @@
 import { onMounted, ref } from 'vue'
 import { userStore } from '@/stores'
 import { authService, UpdateCurrentProfileData } from '@/services'
-import { isDemo, logger, parseValidationError } from '@/utils'
+import { logger, parseValidationError } from '@/utils'
 import { useDialogBox, useMessageToaster } from '@/composables'
 
 import Btn from '@/components/ui/Btn.vue'
@@ -66,6 +66,8 @@ import PasswordField from '@/components/ui/PasswordField.vue'
 const { toastSuccess } = useMessageToaster()
 const { showErrorDialog } = useDialogBox()
 const profile = ref<UpdateCurrentProfileData>({} as unknown as UpdateCurrentProfileData)
+
+const isDemo = window.IS_DEMO
 
 onMounted(() => {
   profile.value = {
@@ -80,7 +82,7 @@ const update = async () => {
     throw Error()
   }
 
-  if (isDemo()) {
+  if (isDemo) {
     toastSuccess('Profile updated.')
     return
   }
