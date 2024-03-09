@@ -26,7 +26,7 @@ class InitCommand extends Command
     private const DEFAULT_ADMIN_PASSWORD = 'KoelIsCool';
     private const NON_INTERACTION_MAX_DATABASE_ATTEMPT_COUNT = 10;
 
-    protected $signature = 'koel:init {--no-assets}';
+    protected $signature = 'koel:init {--no-assets : Do not compile front-end assets}';
     protected $description = 'Install or upgrade Koel';
 
     private bool $adminSeeded = false;
