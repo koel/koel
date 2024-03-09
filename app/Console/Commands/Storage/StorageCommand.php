@@ -9,7 +9,7 @@ use Illuminate\Console\Command;
 class StorageCommand extends Command
 {
     protected $signature = 'koel:storage';
-    protected $description = 'Set up and configure Koel’s storage.';
+    protected $description = 'Set up and configure Koel’s storage';
 
     public function handle(): int
     {
