@@ -10,7 +10,7 @@ use Throwable;
 class CheckLicenseStatusCommand extends Command
 {
     protected $signature = 'koel:license:status';
-    protected $description = 'Check the current Koel Plus license status.';
+    protected $description = 'Check the current Koel Plus license status';
 
     public function __construct(private LicenseServiceInterface $licenseService)
     {
