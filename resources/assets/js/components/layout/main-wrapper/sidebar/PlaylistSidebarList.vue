@@ -3,8 +3,8 @@
     <h1>
       <span class="heading">Playlists</span>
       <button
-        type="button"
         ref="createBtnEl"
+        type="button"
         title="Create a new playlist or folder"
         @click.stop.prevent="requestContextMenu"
       >
@@ -35,7 +35,13 @@ const folders = toRef(playlistFolderStore.state, 'folders')
 const playlists = toRef(playlistStore.state, 'playlists')
 const favorites = toRef(favoriteStore.state, 'songs')
 
-const orphanPlaylists = computed(() => playlists.value.filter(({ folder_id }) => folder_id === null))
+const orphanPlaylists = computed(() => playlists.value.filter(({ folder_id }) => {
+  if  (folder_id === null) return true
+
+  // if the playlist's folder is not found, it's an orphan
+  // this can happen if the playlist belongs to another user (collaborative playlist)
+  return !folders.value.find(folder => folder.id === folder_id)
+}))
 
 const requestContextMenu = () => {
   const clientRect = createBtnEl.value!.getBoundingClientRect()
