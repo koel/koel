@@ -4,7 +4,7 @@
       <h1 class="font-size-1.5">Set New Password</h1>
       <div>
         <label>
-          <PasswordField v-model="password" placeholder="New password" required />
+          <PasswordField v-model="password" minlength="10" placeholder="New password" required />
           <span class="help">Min. 10 characters. Should be a mix of characters, numbers, and symbols.</span>
         </label>
       </div>
