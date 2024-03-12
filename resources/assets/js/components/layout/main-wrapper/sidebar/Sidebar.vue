@@ -1,39 +1,39 @@
 <template>
   <nav id="sidebar" v-koel-clickaway="closeIfMobile" :class="{ showing: mobileShowing }" class="side side-nav">
     <section class="search-wrapper">
-      <SearchForm/>
+      <SearchForm />
     </section>
 
-    <section class="menu-wrapper" v-koel-overflow-fade>
+    <section v-koel-overflow-fade class="menu-wrapper">
       <section class="music">
         <h1>Your Music</h1>
 
         <ul class="menu">
           <SidebarItem screen="Home" href="#/home" :icon="faHome">Home</SidebarItem>
-          <QueueSidebarItem/>
+          <QueueSidebarItem />
           <SidebarItem screen="Songs" href="#/songs" :icon="faMusic">All Songs</SidebarItem>
           <SidebarItem screen="Albums" href="#/albums" :icon="faCompactDisc">Albums</SidebarItem>
           <SidebarItem screen="Artists" href="#/artists" :icon="faMicrophone">Artists</SidebarItem>
           <SidebarItem screen="Genres" href="#/genres" :icon="faTags">Genres</SidebarItem>
-          <YouTubeSidebarItem v-show="showYouTube"/>
+          <YouTubeSidebarItem v-show="showYouTube" />
         </ul>
       </section>
 
-      <PlaylistList/>
+      <PlaylistList />
 
       <section v-if="showManageSection" class="manage">
         <h1>Manage</h1>
 
         <ul class="menu">
-          <SidebarItem screen="Settings" href="#/settings" :icon="faTools" v-if="isAdmin">Settings</SidebarItem>
+          <SidebarItem v-if="isAdmin" screen="Settings" href="#/settings" :icon="faTools">Settings</SidebarItem>
           <SidebarItem screen="Upload" href="#/upload" :icon="faUpload">Upload</SidebarItem>
-          <SidebarItem screen="Users" href="#/users" :icon="faUsers" v-if="isAdmin">Users</SidebarItem>
+          <SidebarItem v-if="isAdmin" screen="Users" href="#/users" :icon="faUsers">Users</SidebarItem>
         </ul>
       </section>
     </section>
 
     <section v-if="!isPlus && isAdmin" class="plus-wrapper">
-      <BtnUpgradeToPlus/>
+      <BtnUpgradeToPlus />
     </section>
   </nav>
 </template>
