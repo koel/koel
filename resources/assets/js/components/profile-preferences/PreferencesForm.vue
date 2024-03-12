@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="form-row" v-if="isPlus">
+    <div v-if="isPlus" class="form-row">
       <label>
         <CheckBox v-model="preferences.make_uploads_public" name="make_upload_public" />
         Make uploaded songs public by default
@@ -9,7 +9,7 @@
     <div v-if="isPhone" class="form-row">
       <label>
         <CheckBox v-model="preferences.show_now_playing_notification" name="notify" />
-        Show “Now Playing” song notification
+        Show “Now Playing” notification
       </label>
     </div>
     <div v-if="!isPhone" class="form-row">
