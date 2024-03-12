@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Playlist;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -27,16 +26,12 @@ return new class extends Migration {
             $table->foreign('playlist_id')->references('id')->on('playlists')->cascadeOnDelete()->cascadeOnUpdate();
         });
 
-        Playlist::all()->each(static function (Playlist $playlist): void {
+        DB::table('playlists')->get()->each(static function (object $playlist): void {
             $oldId = $playlist->id;
             $newId = Str::uuid()->toString();
 
-            $playlist->id = $newId;
-            $playlist->save();
-
-            DB::table('playlist_song')->where('playlist_id', $oldId)->update([
-                'playlist_id' => $newId,
-            ]);
+            DB::table('playlists')->where('id', $oldId)->update(['id' => $newId]);
+            DB::table('playlist_song')->where('playlist_id', $oldId)->update(['playlist_id' => $newId]);
         });
 
         Schema::enableForeignKeyConstraints();

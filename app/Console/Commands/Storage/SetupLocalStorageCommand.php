@@ -11,7 +11,7 @@ use Jackiedo\DotenvEditor\DotenvEditor;
 class SetupLocalStorageCommand extends Command
 {
     protected $signature = 'koel:storage:local';
-    protected $description = 'Set up local storage for Koel';
+    protected $description = 'Set up the local storage for Koel';
 
     public function __construct(private DotenvEditor $dotenvEditor)
     {
