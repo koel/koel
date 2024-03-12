@@ -33,10 +33,11 @@
       <label>
         New Password
         <PasswordField
-          placeholder="Leave empty to keep current password"
           v-model="profile.new_password"
-          data-testid="newPassword"
           autocomplete="new-password"
+          data-testid="newPassword"
+          minlength="10"
+          placeholder="Leave empty to keep current password"
         />
         <span class="password-rules help">
           Min. 10 characters. Should be a mix of characters, numbers, and symbols.

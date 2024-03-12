@@ -1,6 +1,6 @@
 <template>
   <div>
-    <input v-model="value" :type="type" minlength="10" v-bind="$attrs">
+    <input v-model="value" :type="type" v-bind="$attrs">
     <button type="button" @click.prevent="toggleReveal">
       <Icon v-if="type === 'password'" :icon="faEye" />
       <Icon v-else :icon="faEyeSlash" />
