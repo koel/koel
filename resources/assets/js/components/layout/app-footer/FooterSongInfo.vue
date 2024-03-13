@@ -1,5 +1,10 @@
 <template>
-  <div class="song-info" :class="{ playing: song?.playback_state === 'Playing' }">
+  <div
+    :class="{ playing: song?.playback_state === 'Playing' }"
+    :draggable="draggable"
+    class="song-info"
+    @dragstart="onDragStart"
+  >
     <span :style="{ backgroundImage: `url('${cover}')` }" class="album-thumb" />
     <div v-if="song" class="meta">
       <h3 class="title">{{ song.title }}</h3>
@@ -12,10 +17,20 @@
 import { computed, ref } from 'vue'
 import { defaultCover, requireInjection } from '@/utils'
 import { CurrentSongKey } from '@/symbols'
+import { useDraggable } from '@/composables'
+
+const { startDragging } = useDraggable('songs')
 
 const song = requireInjection(CurrentSongKey, ref())
 
 const cover = computed(() => song.value?.album_cover || defaultCover)
+const draggable = computed(() => Boolean(song.value))
+
+const onDragStart = (event: DragEvent) => {
+  if (song.value) {
+    startDragging(event, [song.value])
+  }
+}
 </script>
 
 <style lang="scss" scoped>
