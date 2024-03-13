@@ -78,7 +78,7 @@
     "resolve-url-loader": "^3.1.1",
     "sass": "^1.50.0",
     "sass-loader": "^12.6.0",
-    "start-server-and-test": "^1.14.0",
+    "start-server-and-test": "^2.0.3",
     "ts-loader": "^9.3.0",
     "typescript": "^4.8.4",
     "vite": "^3.1.6",
@@ -94,7 +94,7 @@
     "test:e2e:ci": "kill-port 8080 && start-test 'php artisan serve --port=8080 --quiet' http-get://localhost:8080/api/ping 'cypress run --browser chromium'",
     "build": "vite build",
     "build-demo": "cross-env VITE_KOEL_ENV=demo vite build",
-    "dev": "kill-port 8000 && start-test 'php artisan serve --port=8000 --quiet' http-get://localhost:8000/api/ping vite",
+    "dev": "kill-port 8000 && start-test 'php artisan serve --port=8000 --quiet' 'http://127.0.0.1:8000/api/ping' 'vite'",
     "prod": "npm run production"
   },
   "husky": {
