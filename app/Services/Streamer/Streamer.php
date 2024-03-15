@@ -61,7 +61,8 @@ class Streamer
 
         return $this->song->storage === SongStorageTypes::LOCAL
             && Str::endsWith(File::mimeType($this->song->storage_metadata->getPath()), 'flac')
-            && config('koel.streaming.transcode_flac');
+            && config('koel.streaming.transcode_flac')
+            && is_executable(config('koel.streaming.ffmpeg_path'));
     }
 
     public function getAdapter(): StreamerAdapter
