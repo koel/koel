@@ -38,6 +38,10 @@ class LastfmService implements MusicEncyclopedia
 
     public function getArtistInformation(Artist $artist): ?ArtistInformation
     {
+        if ($artist->is_unknown || $artist->is_various) {
+            return null;
+        }
+
         return attempt_if(static::enabled(), function () use ($artist): ?ArtistInformation {
             $name = urlencode($artist->name);
             $response = $this->client->get("?method=artist.getInfo&autocorrect=1&artist=$name&format=json");
@@ -48,6 +52,10 @@ class LastfmService implements MusicEncyclopedia
 
     public function getAlbumInformation(Album $album): ?AlbumInformation
     {
+        if ($album->is_unknown || $album->artist->is_unknown) {
+            return null;
+        }
+
         return attempt_if(static::enabled(), function () use ($album): ?AlbumInformation {
             $albumName = urlencode($album->name);
             $artistName = urlencode($album->artist->name);
