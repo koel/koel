@@ -62,8 +62,8 @@ import { faVolumeOff } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRef, watch } from 'vue'
 import { logger, pluralize, secondsToHumanReadable } from '@/utils'
 import { commonStore, queueStore, songStore } from '@/stores'
-import { localStorageService, playbackService } from '@/services'
-import { useMessageToaster, useKoelPlus, useRouter, useSongList, useSongListControls } from '@/composables'
+import { playbackService } from '@/services'
+import { useMessageToaster, useKoelPlus, useRouter, useSongList, useSongListControls, useLocalStorage } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
@@ -94,6 +94,7 @@ const { SongListControls, config } = useSongListControls('Songs')
 const { toastError } = useMessageToaster()
 const { go, onScreenActivated } = useRouter()
 const { isPlus } = useKoelPlus()
+const { get: lsGet, set: lsSet } = useLocalStorage()
 
 let initialized = false
 const loading = ref(false)
@@ -104,10 +105,10 @@ const page = ref<number | null>(1)
 const moreSongsAvailable = computed(() => page.value !== null)
 const showSkeletons = computed(() => loading.value && songs.value.length === 0)
 
-const ownSongsOnly = ref(isPlus.value ? Boolean(localStorageService.get('own-songs-only')) : false)
+const ownSongsOnly = ref(isPlus.value ? Boolean(lsGet('own-songs-only')) : false)
 
 watch(ownSongsOnly, async value => {
-  localStorageService.set('own-songs-only', value)
+  lsSet('own-songs-only', value)
   page.value = 1
   songStore.state.songs = []
 

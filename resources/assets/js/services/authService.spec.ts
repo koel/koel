@@ -1,32 +1,33 @@
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { expect, it } from 'vitest'
-import { authService, http, localStorageService, UpdateCurrentProfileData } from '@/services'
+import { authService, http, UpdateCurrentProfileData } from '@/services'
+import { useLocalStorage } from '@/composables'
 import factory from '@/__tests__/factory'
 import { userStore } from '@/stores'
 
 new class extends UnitTestCase {
   protected test () {
+    const { get: lsGet, set: lsSet } = useLocalStorage(false)
+
     it('gets the token', () => {
-      const mock = this.mock(localStorageService, 'get')
-      authService.getApiToken()
-      expect(mock).toHaveBeenCalledWith('api-token')
+      lsSet('api-token', 'foo')
+      expect(authService.getApiToken()).toBe('foo')
     })
 
     it.each([['foo', true], [null, false]])('checks if the token exists', (token, exists) => {
-      this.mock(localStorageService, 'get', token)
+      lsSet('api-token', token)
       expect(authService.hasApiToken()).toBe(exists)
     })
 
     it('sets the token', () => {
-      const mock = this.mock(localStorageService, 'set')
       authService.setApiToken('foo')
-      expect(mock).toHaveBeenCalledWith('api-token', 'foo')
+      expect(lsGet('api-token')).toBe('foo')
     })
 
     it('destroys the token', () => {
-      const mock = this.mock(localStorageService, 'remove')
+      lsSet('api-token', 'foo')
       authService.destroy()
-      expect(mock).toHaveBeenCalledWith('api-token')
+      expect(lsGet('api-token')).toBeNull()
     })
 
     it('logs in', async () => {

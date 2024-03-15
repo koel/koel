@@ -1,6 +1,5 @@
 export * from './http'
 export * from './downloadService'
-export * from './localStorageService'
 export * from './playbackService'
 export * from './youTubeService'
 export * from './socketService'
