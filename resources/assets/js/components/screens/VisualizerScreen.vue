@@ -1,5 +1,5 @@
 <template>
-  <section id="vizContainer" :class="{ fullscreen: isFullscreen }" @dblclick="toggleFullscreen">
+  <section id="vizContainer" ref="container" :class="{ fullscreen: isFullscreen }" @dblclick.prevent="toggleFullscreen">
     <div class="artifacts">
       <div v-if="selectedVisualizer" class="credits">
         <h3>{{ selectedVisualizer.name }}</h3>
@@ -23,15 +23,18 @@
 <script lang="ts" setup>
 import { faUpRightFromSquare } from '@fortawesome/free-solid-svg-icons'
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useFullscreen } from '@vueuse/core'
 import { logger } from '@/utils'
 import { preferenceStore as preferences, visualizerStore } from '@/stores'
 
 const visualizers = visualizerStore.all
 let destroyVisualizer: () => void
 
-const el = ref<HTMLElement>()
+const el = ref<HTMLElement | null>(null)
+const container = ref<HTMLElement | null>(null)
 const selectedId = ref<Visualizer['id']>()
-const isFullscreen = ref(false)
+
+const { isFullscreen, toggle: toggleFullscreen } = useFullscreen(container)
 
 const render = async (viz: Visualizer) => {
   if (!el.value) {
@@ -56,11 +59,6 @@ watch(selectedId, id => {
   selectedVisualizer.value = visualizerStore.getVisualizerById(id || 'default')!
   render(selectedVisualizer.value)
 })
-
-const toggleFullscreen = () => {
-  isFullscreen.value ? document.exitFullscreen() : el.value?.requestFullscreen()
-  isFullscreen.value = !isFullscreen.value
-}
 
 onMounted(() => {
   selectedId.value = preferences.visualizer || 'default'

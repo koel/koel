@@ -3,7 +3,7 @@
   <DialogBox ref="dialog" />
   <MessageToaster ref="toaster" />
   <GlobalEventListeners />
-  <OfflineNotification v-if="offline" />
+  <OfflineNotification v-if="!online" />
 
   <div v-if="layout === 'main'" id="main" @dragend="onDragEnd" @dragover="onDragOver" @drop="onDrop">
     <Hotkeys />
@@ -27,10 +27,11 @@
 
 <script lang="ts" setup>
 import { defineAsyncComponent, nextTick, onMounted, provide, ref, watch } from 'vue'
+import { useOnline } from '@vueuse/core'
 import { commonStore, preferenceStore as preferences, queueStore } from '@/stores'
 import { authService, socketListener, socketService, uploadService } from '@/services'
 import { CurrentSongKey, DialogBoxKey, MessageToasterKey, OverlayKey } from '@/symbols'
-import { useNetworkStatus, useRouter } from '@/composables'
+import { useRouter } from '@/composables'
 
 import DialogBox from '@/components/ui/DialogBox.vue'
 import MessageToaster from '@/components/ui/MessageToaster.vue'
@@ -42,7 +43,7 @@ import OfflineNotification from '@/components/ui/OfflineNotification.vue'
 import AppFooter from '@/components/layout/app-footer/index.vue'
 
 // GlobalEventListener must NOT be lazy-loaded, so that it can handle LOG_OUT event properly.
-import { GlobalEventListeners } from '@/components/utils/GlobalEventListeners'
+import GlobalEventListeners from '@/components/utils/GlobalEventListeners.vue'
 
 const Hotkeys = defineAsyncComponent(() => import('@/components/utils/HotkeyListener.vue'))
 const LoginForm = defineAsyncComponent(() => import('@/components/auth/LoginForm.vue'))
@@ -67,7 +68,7 @@ const showDropZone = ref(false)
 const layout = ref<'main' | 'auth' | 'invitation' | 'reset-password'>()
 
 const { isCurrentScreen, getCurrentScreen, resolveRoute } = useRouter()
-const { offline } = useNetworkStatus()
+const online = useOnline()
 
 /**
  * Request for notification permission if it's not provided and the user is OK with notifications.

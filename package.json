@@ -34,7 +34,6 @@
     "three": "^0.146.0",
     "tiny-typed-emitter": "^2.1.0",
     "vue": "^3.3.4",
-    "vue-global-events": "^2.1.1",
     "youtube-player": "^3.0.4"
   },
   "devDependencies": {
@@ -57,6 +56,7 @@
     "@typescript-eslint/parser": "^4.11.1",
     "@vitejs/plugin-vue": "^3.1.2",
     "@vue/test-utils": "^2.1.0",
+    "@vueuse/core": "^10.9.0",
     "cross-env": "^7.0.3",
     "css-loader": "^0.28.7",
     "cypress": "^9.5.4",
