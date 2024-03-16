@@ -19,12 +19,11 @@
 
     <div
       v-else
-      ref="scroller"
+      ref="listEl"
       v-koel-overflow-fade
       :class="`as-${viewMode}`"
       class="artists main-scroll-wrap"
       data-testid="artist-list"
-      @scroll="scrolling"
     >
       <template v-if="showSkeletons">
         <ArtistCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
@@ -52,15 +51,14 @@ import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 
 const { isAdmin } = useAuthorization()
 
+const listEl = ref<HTMLElement | null>(null)
 const viewMode = ref<ArtistAlbumViewMode>('thumbnails')
 const artists = toRef(artistStore.state, 'artists')
 
 const {
   ToTopButton,
-  scroller,
-  scrolling,
   makeScrollable
-} = useInfiniteScroll(async () => await fetchArtists())
+} = useInfiniteScroll(listEl, async () => await fetchArtists())
 
 watch(viewMode, () => preferences.artists_view_mode = viewMode.value)
 

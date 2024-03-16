@@ -8,7 +8,6 @@ export const useSongListControls = (
   configOverrides: Partial<SongListControlsConfig> | (() => Partial<SongListControlsConfig>) = {}
 ) => {
   const defaults: SongListControlsConfig = {
-    play: true,
     addTo: {
       queue: screen !== 'Queue',
       favorites: screen !== 'Favorites',

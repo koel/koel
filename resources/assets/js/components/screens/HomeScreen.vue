@@ -27,7 +27,7 @@
         <MostPlayedArtists data-testid="most-played-artists" :loading="loading" />
         <MostPlayedAlbums data-testid="most-played-albums" :loading="loading" />
 
-        <ToTopButton />
+        <BtnScrollToTop />
       </template>
     </div>
   </section>
@@ -37,9 +37,9 @@
 import { faVolumeOff } from '@fortawesome/free-solid-svg-icons'
 import { sample } from 'lodash'
 import { computed, ref } from 'vue'
-import { eventBus, logger, noop } from '@/utils'
+import { eventBus, logger } from '@/utils'
 import { commonStore, overviewStore, userStore } from '@/stores'
-import { useAuthorization, useDialogBox, useInfiniteScroll, useRouter } from '@/composables'
+import { useAuthorization, useDialogBox, useRouter } from '@/composables'
 
 import MostPlayedSongs from '@/components/screens/home/MostPlayedSongs.vue'
 import RecentlyPlayedSongs from '@/components/screens/home/RecentlyPlayedSongs.vue'
@@ -49,8 +49,8 @@ import MostPlayedArtists from '@/components/screens/home/MostPlayedArtists.vue'
 import MostPlayedAlbums from '@/components/screens/home/MostPlayedAlbums.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
+import BtnScrollToTop from '@/components/ui/BtnScrollToTop.vue'
 
-const { ToTopButton, scrolling } = useInfiniteScroll(() => noop())
 const { isAdmin } = useAuthorization()
 const { showErrorDialog } = useDialogBox()
 

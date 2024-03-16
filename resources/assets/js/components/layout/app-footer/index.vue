@@ -29,6 +29,7 @@ import AudioPlayer from '@/components/layout/app-footer/AudioPlayer.vue'
 import SongInfo from '@/components/layout/app-footer/FooterSongInfo.vue'
 import ExtraControls from '@/components/layout/app-footer/FooterExtraControls.vue'
 import PlaybackControls from '@/components/layout/app-footer/FooterPlaybackControls.vue'
+import { useFullscreen } from '@vueuse/core'
 
 const song = requireInjection(CurrentSongKey, ref())
 let hideControlsTimeout: number
@@ -86,15 +87,18 @@ const showControls = throttle(() => {
   setupControlHidingTimer()
 }, 100)
 
-eventBus.on('FULLSCREEN_TOGGLE', () => {
-  if (document.fullscreenElement) {
-    document.exitFullscreen()
+const { isFullscreen, toggle: toggleFullscreen } = useFullscreen(root)
+
+watch(isFullscreen, fullscreen => {
+  if (fullscreen) {
+    setupControlHidingTimer()
     root.value?.classList.remove('hide-controls')
   } else {
-    root.value?.requestFullscreen()
-    setupControlHidingTimer()
+    window.clearTimeout(hideControlsTimeout)
   }
 })
+
+eventBus.on('FULLSCREEN_TOGGLE', () => toggleFullscreen())
 </script>
 
 <style lang="scss" scoped>
