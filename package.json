@@ -82,6 +82,7 @@
     "ts-loader": "^9.3.0",
     "typescript": "^4.8.4",
     "vite": "^3.1.6",
+    "vitepress": "^1.0.0-rc.45",
     "vitest": "^0.24.0",
     "vue-loader": "^16.2.0",
     "webpack": "^5.72.0",
@@ -95,7 +96,10 @@
     "build": "vite build",
     "build-demo": "cross-env VITE_KOEL_ENV=demo vite build",
     "dev": "kill-port 8000 && start-test 'php artisan serve --port=8000 --quiet' 'http://127.0.0.1:8000/api/ping' 'vite'",
-    "prod": "npm run production"
+    "prod": "npm run production",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "husky": {
     "hooks": {

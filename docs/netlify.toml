@@ -1,0 +1,5 @@
+[[redirects]]
+  from = "/"
+  to = "/guide/what-is-koel"
+  status = 301
+  force = true
