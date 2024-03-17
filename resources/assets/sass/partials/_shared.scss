@@ -386,29 +386,6 @@ menu {
       background-repeat: no-repeat;
       background-position: right 8px center;
       background-size: 10px;
-
-      &:hover {
-        &::before, &::after {
-          content: '';
-          display: block;
-          position: absolute;
-          right: 0;
-          width: 75%;
-          z-index: 2;
-
-          animation: subMenuHoverHelp 1s;
-        }
-
-        &::before {
-          clip-path: polygon(100% 0, 0% 100%, 100% 100%);
-          bottom: 100%;
-        }
-
-        &::after {
-          clip-path: polygon(100% 0, 0 0, 100% 100%);
-          top: 100%;
-        }
-      }
     }
   }
 

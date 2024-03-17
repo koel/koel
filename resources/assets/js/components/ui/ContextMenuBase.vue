@@ -47,11 +47,19 @@ const preventOffScreen = async (element: HTMLElement, isSubmenu = false) => {
   }
 }
 
+const safeAreaHeight = ref('0px')
+const safeAreaWidth = ref('0px')
+const safeAreaClipPath = ref('0 0, 0 0, 0 0, 0 0')
+
+type MenuItem = HTMLElement & {
+  eventsRegistered?: boolean
+}
+
 const initSubmenus = () => {
-  el.value?.querySelectorAll('.has-sub').forEach(item => {
+  el.value?.querySelectorAll<HTMLElement>('.has-sub').forEach((item: MenuItem) => {
     const submenu = item.querySelector<HTMLElement>('.submenu')
 
-    if (!submenu) {
+    if (!submenu || item.eventsRegistered) {
       return
     }
 
@@ -61,17 +69,27 @@ const initSubmenus = () => {
       await preventOffScreen(submenu, true)
     })
 
+    item.addEventListener('mousemove', async (e: MouseEvent) => {
+      await nextTick()
+      const rect = submenu.getBoundingClientRect()
+      safeAreaHeight.value = rect.height + 'px'
+      safeAreaWidth.value = rect.x - e.clientX + 'px'
+      safeAreaClipPath.value = `polygon(100% 0, 0 ${e.clientY - rect.top}px, 100% 100%)`
+    })
+
     item.addEventListener('mouseleave', () => {
       submenu.style.top = '0'
       submenu.style.bottom = 'auto'
       submenu.style.display = 'none'
     })
+
+    item.eventsRegistered = true
   })
 }
 
-const open = async (_top = 0, _left = 0) => {
-  top.value = _top
-  left.value = _left
+const open = async (t = 0, l = 0) => {
+  top.value = t
+  left.value = l
   shown.value = true
 
   await nextTick()
@@ -99,5 +117,17 @@ defineExpose({ open, close, shown })
 <style lang="scss" scoped>
 nav {
   user-select: none;
+
+  :deep(.has-sub)::after {
+    position: absolute;
+    content: '';
+    right: 0;
+    top: 0;
+    z-index: 2;
+    opacity: 0;
+    width: v-bind(safeAreaWidth);
+    height: v-bind(safeAreaHeight);
+    clip-path: v-bind(safeAreaClipPath);
+  }
 }
 </style>
