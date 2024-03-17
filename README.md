@@ -15,7 +15,7 @@ the [Official Documentation](https://docs.koel.dev).
 
 ## Development
 
-See the [Development Guide](https://docs.koel.dev/#local-development).
+See the [Development Guide](https://docs.koel.dev/development).
 
 ## Koel Player
 

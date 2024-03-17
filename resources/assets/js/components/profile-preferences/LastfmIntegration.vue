@@ -23,21 +23,20 @@
         >scrobbling</a>.
       </p>
       <div class="buttons">
-        <Btn class="connect" @click.prevent="connect">
-          {{ connected ? 'Reconnect' : 'Connect' }}
-        </Btn>
-
+        <Btn class="connect" @click.prevent="connect">{{ connected ? 'Reconnect' : 'Connect' }}</Btn>
         <Btn v-if="connected" class="disconnect" gray @click.prevent="disconnect">Disconnect</Btn>
       </div>
     </div>
 
     <div v-else data-testid="lastfm-not-integrated">
       <p>
-        Last.fm integration is not enabled on this installation of Koel.
+        Last.fm integration is not enabled.
         <span v-if="isAdmin" data-testid="lastfm-admin-instruction">
-          Visit
-          <a href="https://docs.koel.dev/3rd-party.html#last-fm" class="text-highlight" target="_blank">Koel’s Wiki</a>
-          for a quick how-to.
+          Check
+          <a href="https://docs.koel.dev/service-integrations#last-fm" class="text-highlight" target="_blank">
+            Documentation
+          </a>
+          for instructions.
         </span>
         <span v-else data-testid="lastfm-user-instruction">
           Try politely asking an administrator to enable it.

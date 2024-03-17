@@ -17,12 +17,11 @@
       <p>
         Spotify integration is not enabled.
         <span v-if="isAdmin" data-testid="spotify-admin-instruction">
-          Visit
-          <a href="https://docs.koel.dev/3rd-party.html#spotify" class="text-highlight" target="_blank">Koel’s Wiki</a>
-          for a quick how-to.
-        </span>
-        <span v-else data-testid="spotify-user-instruction">
-          Try politely asking an administrator to enable it.
+          Check
+          <a href="https://docs.koel.dev/service-integrations#spotify" class="text-highlight" target="_blank">
+            Documentation
+          </a>
+          for instructions.
         </span>
       </p>
     </div>
