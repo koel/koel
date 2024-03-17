@@ -85,4 +85,8 @@ log.json
 
 .php_cs.cache
 
+### VitePress ###
+docs/.vitepress/dist
+docs/.vitepress/cache
+
 demo-credits.json
