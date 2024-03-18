@@ -17,6 +17,15 @@ new class extends UnitTestCase {
         },
         stubs: {
           AlbumArtOverlay,
+          AllSongsScreen: this.stub('all-songs-screen'),
+          AlbumListScreen: this.stub('album-list-screen'),
+          ArtistListScreen: this.stub('artist-list-screen'),
+          PlaylistScreen: this.stub('playlist-screen'),
+          FavoritesScreen: this.stub('favorites-screen'),
+          RecentlyPlayedScreen: this.stub('recently-played-screen'),
+          UploadScreen: this.stub('upload-screen'),
+          SearchExcerptsScreen: this.stub('search-excerpts-screen'),
+          GenreScreen: this.stub('genre-screen'),
           HomeScreen: this.stub(), // so that home overview requests are not made
           Visualizer: this.stub('visualizer')
         }

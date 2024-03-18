@@ -1,15 +1,15 @@
-import { expect, it } from 'vitest'
+import { expect, it, vi } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { fireEvent, screen } from '@testing-library/vue'
+import { fireEvent, screen, waitFor } from '@testing-library/vue'
 import { socketService, volumeManager } from '@/services'
-import { preferenceStore } from '@/stores'
 import Volume from './VolumeSlider.vue'
+import { preferenceStore } from '@/stores'
 
 new class extends UnitTestCase {
-  protected beforeEach (cb?: Closure) {
+  protected beforeEach () {
     super.beforeEach(() => {
+      vi.useFakeTimers()
       preferenceStore.volume = 5
-      volumeManager.init(document.createElement('input'))
     })
   }
 
@@ -29,15 +29,14 @@ new class extends UnitTestCase {
     })
 
     it('sets and broadcasts volume', async () => {
-      const setMock = this.mock(volumeManager, 'set')
-      const broadCastMock = this.mock(socketService, 'broadcast')
+      const broadcastMock = this.mock(socketService, 'broadcast')
       this.render(Volume)
 
       await fireEvent.update(screen.getByRole('slider'), '4.2')
-      await fireEvent.change(screen.getByRole('slider'))
+      vi.runAllTimers()
 
-      expect(setMock).toHaveBeenCalledWith(4.2)
-      expect(broadCastMock).toHaveBeenCalledWith('SOCKET_VOLUME_CHANGED', 4.2)
+      expect(volumeManager.volume.value).toBe(4.2)
+      expect(broadcastMock).toHaveBeenCalledWith('SOCKET_VOLUME_CHANGED', 4.2)
     })
   }
 }

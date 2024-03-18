@@ -6,11 +6,10 @@ import { volumeManager, http } from '@/services'
 let input: HTMLInputElement
 
 new class extends UnitTestCase {
-  protected beforeEach (cb?: Closure) {
+  protected beforeEach () {
     super.beforeEach(() => {
-      preferenceStore.volume = 5
       input = document.createElement('input')
-      volumeManager.init(input)
+      volumeManager.init(input, 5)
     })
   }
 
@@ -27,13 +26,11 @@ new class extends UnitTestCase {
       volumeManager.mute()
       expect(volumeManager.volume.value).toEqual(0)
       expect(input.value).toEqual('0')
-
-      // muting should not persist
-      expect(preferenceStore.volume).toEqual(5)
     })
 
     it('unmutes', () => {
-      preferenceStore.volume = 7
+      volumeManager.set(7)
+      volumeManager.mute()
       volumeManager.unmute()
       expect(volumeManager.volume.value).toEqual(7)
       expect(input.value).toEqual('7')

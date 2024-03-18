@@ -21,7 +21,7 @@
             @play-all="playAll"
             @play-selected="playSelected"
           />
-          <label class="own-songs-toggle text-secondary" v-if="isPlus">
+          <label v-if="isPlus" class="own-songs-toggle text-secondary">
             <CheckBox v-model="ownSongsOnly" />
             <span>Own songs only</span>
           </label>
@@ -32,7 +32,7 @@
     <SongListSkeleton v-if="showSkeletons" />
     <template v-else>
       <SongList
-        v-if="songs.length > 0"
+        v-if="songs?.length > 0"
         ref="songList"
         @sort="sort"
         @scroll-breakpoint="onScrollBreakpoint"
@@ -45,9 +45,9 @@
         </template>
         Your library is empty.
         <a
-          role="button"
-          class="d-block secondary"
           v-if="isPlus && ownSongsOnly"
+          class="d-block secondary"
+          role="button"
           @click.prevent="showSongsFromOthers"
         >
           Show public songs from other users?

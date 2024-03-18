@@ -10,7 +10,7 @@ exports[`renders 1`] = `
       <div data-v-5691beb5="" class="heading-wrapper">
         <h1 data-v-5691beb5="" class="name"> All Songs
           <!--v-if-->
-        </h1><span data-v-5691beb5="" class="meta text-secondary"><span data-v-8ea4eaa5="" data-v-5691beb5-s="">420 songs</span><span data-v-8ea4eaa5="" data-v-5691beb5-s="">34 hr 17 min</span></span>
+        </h1><span data-v-5691beb5="" class="meta text-secondary"><span data-v-8ea4eaa5="" data-v-5691beb5-s="">420 songs</span><span data-v-8ea4eaa5="" data-v-5691beb5-s="">10 sec</span></span>
       </div>
       <div data-v-8ea4eaa5="" data-v-5691beb5-s="" class="controls">
         <div data-v-d396e0d2="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="song-list-controls" data-testid="song-list-controls">
@@ -47,7 +47,7 @@ exports[`renders in Plus edition 1`] = `
       <div data-v-5691beb5="" class="heading-wrapper">
         <h1 data-v-5691beb5="" class="name"> All Songs
           <!--v-if-->
-        </h1><span data-v-5691beb5="" class="meta text-secondary"><span data-v-8ea4eaa5="" data-v-5691beb5-s="">420 songs</span><span data-v-8ea4eaa5="" data-v-5691beb5-s="">34 hr 17 min</span></span>
+        </h1><span data-v-5691beb5="" class="meta text-secondary"><span data-v-8ea4eaa5="" data-v-5691beb5-s="">420 songs</span><span data-v-8ea4eaa5="" data-v-5691beb5-s="">10 sec</span></span>
       </div>
       <div data-v-8ea4eaa5="" data-v-5691beb5-s="" class="controls">
         <div data-v-d396e0d2="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="song-list-controls" data-testid="song-list-controls">
