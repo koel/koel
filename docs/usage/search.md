@@ -1,6 +1,6 @@
 # Instant Search
 
-Powered by [Laravel Scout](https://github.com/laravel/scout), Koel provides an instant search feature that performs full-text, 
+Powered by [Laravel Scout](https://github.com/laravel/scout), Koel provides an instant search feature that performs full-text,
 fuzzy searches against your music collection and returns the most relevant results as you type.
 
 <video controls playsinline>
@@ -10,7 +10,7 @@ fuzzy searches against your music collection and returns the most relevant resul
 
 ## Configuration
 
-Out of the box, Koel uses the [TNTSearch](https://github.com/teamtnt/tntsearch), a powerful full-text search engine written entirely in PHP and requires no configuration.
+Out of the box, Koel uses [TNTSearch](https://github.com/teamtnt/tntsearch), a powerful full-text search engine written entirely in PHP and requires no configuration.
 
 Switching to [Algolia](https://www.algolia.com/) is just a matter of changing the driver value to `algolia` and populating the credentials into `.env`:
 
@@ -42,5 +42,5 @@ There's literally nothing you need to do to keep the index up to date.
 
 ## Usage
 
-To use the instant search, simply start typing in the search box at the top left of the screen or pressing <kbd>F</kbd>. 
+To use the instant search, simply start typing in the search box at the top left of the screen or pressing <kbd>F</kbd>.
 You'll see the results appear as you type.
