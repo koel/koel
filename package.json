@@ -116,5 +116,6 @@
     "cypress/**/*.ts": [
       "eslint"
     ]
-  }
+  },
+  "packageManager": "yarn@1.22.19"
 }
