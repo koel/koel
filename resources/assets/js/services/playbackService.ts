@@ -304,6 +304,12 @@ class PlaybackService {
     this.pause()
   }
 
+  public seekBy (seconds: number) {
+    if (this.player.media.duration) {
+      this.player.media.currentTime += seconds
+    }
+  }
+
   /**
    * Queue up songs (replace them into the queue) and start playing right away.
    *
