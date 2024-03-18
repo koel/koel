@@ -29,7 +29,7 @@ const readableMode = computed(() => mode.value
   .join(' ')
 )
 
-const changeMode = () => playbackService.changeRepeatMode()
+const changeMode = () => playbackService.rotateRepeatMode()
 </script>
 
 <style lang="scss" scoped>

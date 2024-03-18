@@ -20,6 +20,7 @@ onKeyStroke('f', () => eventBus.emit('FOCUS_SEARCH_FIELD'))
 onKeyStroke('j', () => playbackService.playNext())
 onKeyStroke('k', () => playbackService.playPrev())
 onKeyStroke(' ', () => playbackService.toggle())
+onKeyStroke('r', () => playbackService.rotateRepeatMode())
 
 onKeyStroke('ArrowRight', () => playbackService.seekBy(10))
 onKeyStroke('ArrowLeft', () => playbackService.seekBy(-10))

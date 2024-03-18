@@ -137,6 +137,7 @@ or a textarea.
 * <kbd>j</kbd> plays the next song in queue
 * <kbd>k</kbd> plays the previous song in queue
 * <kbd>l</kbd> marks/unmarks the current song as favorite
+* <kbd>r</kbd> circles through repeat modes (no repeat, repeat all, repeat one)
 * <kbd>→</kbd> seeks forward 10 seconds
 * <kbd>←</kbd> seeks backward 10 seconds
 * <kbd>↑</kbd> increases volume by 10%
