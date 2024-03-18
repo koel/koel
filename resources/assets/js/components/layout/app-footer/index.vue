@@ -23,7 +23,7 @@ import { computed, nextTick, ref, watch } from 'vue'
 import { eventBus, isAudioContextSupported, requireInjection } from '@/utils'
 import { CurrentSongKey } from '@/symbols'
 import { artistStore, preferenceStore } from '@/stores'
-import { audioService, playbackService, volumeManager } from '@/services'
+import { audioService, playbackService } from '@/services'
 
 import AudioPlayer from '@/components/layout/app-footer/AudioPlayer.vue'
 import SongInfo from '@/components/layout/app-footer/FooterSongInfo.vue'
@@ -57,16 +57,14 @@ const styles = computed(() => {
 
 const initPlaybackRelatedServices = async () => {
   const plyrWrapper = document.querySelector<HTMLElement>('.plyr')
-  const volumeInput = document.querySelector<HTMLInputElement>('#volumeInput')
 
-  if (!plyrWrapper || !volumeInput) {
+  if (!plyrWrapper) {
     await nextTick()
     await initPlaybackRelatedServices()
     return
   }
 
   playbackService.init(plyrWrapper)
-  volumeManager.init(volumeInput)
   isAudioContextSupported && audioService.init(playbackService.player.media)
 }
 

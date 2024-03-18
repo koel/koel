@@ -137,6 +137,11 @@ or a textarea.
 * <kbd>j</kbd> plays the next song in queue
 * <kbd>k</kbd> plays the previous song in queue
 * <kbd>l</kbd> marks/unmarks the current song as favorite
+* <kbd>→</kbd> seeks forward 10 seconds
+* <kbd>←</kbd> seeks backward 10 seconds
+* <kbd>↑</kbd> increases volume by 10%
+* <kbd>↓</kbd> decreases volume by 10%
+* <kbd>m</kbd> mutes/unmutes
 * <kbd>Cmd/Ctrl</kbd>+<kbd>a</kbd> selects all songs in the current song-list screen when the list is focused
 * <kbd>Delete</kbd> removes selected song(s) from the current queue/playlist
 

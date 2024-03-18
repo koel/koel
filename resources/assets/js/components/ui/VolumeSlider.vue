@@ -23,14 +23,13 @@
     </span>
 
     <input
-      id="volumeInput"
+      ref="inputEl"
       class="plyr__volume"
       max="10"
       role="slider"
       step="0.1"
       title="Volume"
       type="range"
-      @change="onVolumeChanged"
       @input="setVolume"
     >
   </span>
@@ -38,10 +37,12 @@
 
 <script lang="ts" setup>
 import { faVolumeHigh, faVolumeLow, faVolumeMute } from '@fortawesome/free-solid-svg-icons'
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { socketService, volumeManager } from '@/services'
 import { preferenceStore } from '@/stores'
+import { watchThrottled } from '@vueuse/core'
 
+const inputEl = ref<HTMLInputElement>()
 const volume = volumeManager.volume
 
 const level = computed(() => {
@@ -54,13 +55,12 @@ const mute = () => volumeManager.mute()
 const unmute = () => volumeManager.unmute()
 const setVolume = (e: Event) => volumeManager.set(parseFloat((e.target as HTMLInputElement).value))
 
-/**
- * Broadcast the volume changed event to remote controller.
- */
-const onVolumeChanged = (e: Event) => {
-  preferenceStore.volume = parseFloat((e.target as HTMLInputElement).value)
-  socketService.broadcast('SOCKET_VOLUME_CHANGED', parseFloat((e.target as HTMLInputElement).value))
-}
+watchThrottled(volumeManager.volume, volume => {
+  preferenceStore.volume = volume
+  socketService.broadcast('SOCKET_VOLUME_CHANGED', volume)
+}, { throttle: 1_000 })
+
+onMounted(() => volumeManager.init(inputEl.value!, preferenceStore.volume))
 </script>
 
 <style lang="scss">
