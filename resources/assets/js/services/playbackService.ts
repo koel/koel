@@ -199,11 +199,7 @@ class PlaybackService {
     }
   }
 
-  /**
-   * Circle through the repeat mode.
-   * The selected mode will be stored into local storage as well.
-   */
-  public changeRepeatMode () {
+  public rotateRepeatMode () {
     let index = this.repeatModes.indexOf(preferences.repeat_mode) + 1
 
     if (index >= this.repeatModes.length) {

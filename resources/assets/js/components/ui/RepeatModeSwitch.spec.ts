@@ -8,7 +8,7 @@ import RepeatModeSwitch from './RepeatModeSwitch.vue'
 new class extends UnitTestCase {
   protected test () {
     it('changes mode', async () => {
-      const mock = this.mock(playbackService, 'changeRepeatMode')
+      const mock = this.mock(playbackService, 'rotateRepeatMode')
       preferenceStore.state.repeat_mode = 'NO_REPEAT'
       this.render(RepeatModeSwitch)
 

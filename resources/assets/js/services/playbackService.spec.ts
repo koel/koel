@@ -220,7 +220,7 @@ new class extends UnitTestCase {
     ])('it switches from repeat mode %s to repeat mode %s', (fromMode, toMode) => {
       playbackService.init(document.querySelector('.plyr')!)
       preferences.repeat_mode = fromMode
-      playbackService.changeRepeatMode()
+      playbackService.rotateRepeatMode()
 
       expect(preferences.repeat_mode).toEqual(toMode)
     })
