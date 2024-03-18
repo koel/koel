@@ -10,7 +10,8 @@ import { favoriteStore, queueStore } from '@/stores'
 
 const onKeyStroke = (key: KeyFilter, callback: (e: KeyboardEvent) => void) => {
   baseOnKeyStroke(key, e => {
-    if ( (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)) return
+    if (e.altKey || e.ctrlKey || e.metaKey) return
+    if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
     e.preventDefault()
     callback(e)
   })

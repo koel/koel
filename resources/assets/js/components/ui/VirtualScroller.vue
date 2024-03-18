@@ -2,9 +2,7 @@
   <div ref="scroller" v-koel-overflow-fade class="virtual-scroller" @scroll.passive="onScroll">
     <div :style="{ height: `${totalHeight}px` }">
       <div :style="{ transform: `translateY(${offsetY}px)`}">
-        <template v-for="item in renderedItems">
-          <slot :item="item" />
-        </template>
+        <slot v-for="item in renderedItems" :item="item" />
       </div>
     </div>
   </div>
