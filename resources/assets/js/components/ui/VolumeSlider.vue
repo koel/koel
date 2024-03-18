@@ -43,11 +43,10 @@ import { preferenceStore } from '@/stores'
 import { watchThrottled } from '@vueuse/core'
 
 const inputEl = ref<HTMLInputElement>()
-const volume = volumeManager.volume
 
 const level = computed(() => {
-  if (volume.value === 0) return 'muted'
-  if (volume.value < 3) return 'discreet'
+  if (volumeManager.volume.value === 0) return 'muted'
+  if (volumeManager.volume.value < 3) return 'discreet'
   return 'loud'
 })
 
@@ -55,6 +54,8 @@ const mute = () => volumeManager.mute()
 const unmute = () => volumeManager.unmute()
 const setVolume = (e: Event) => volumeManager.set(parseFloat((e.target as HTMLInputElement).value))
 
+// since changing volume can be frequent, we throttle the event to avoid too many "save preferences" API calls
+// and socket broadcasts
 watchThrottled(volumeManager.volume, volume => {
   preferenceStore.volume = volume
   socketService.broadcast('SOCKET_VOLUME_CHANGED', volume)
