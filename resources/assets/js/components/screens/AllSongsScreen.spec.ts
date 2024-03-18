@@ -8,10 +8,15 @@ import { playbackService } from '@/services'
 import AllSongsScreen from './AllSongsScreen.vue'
 
 new class extends UnitTestCase {
-  private async renderComponent () {
+  protected beforeEach (cb?: Closure) {
+    super.beforeEach(cb)
     commonStore.state.song_count = 420
     commonStore.state.song_length = 123_456
     songStore.state.songs = factory<Song>('song', 20)
+    this.be()
+  }
+
+  private async renderComponent () {
     const fetchMock = this.mock(songStore, 'paginate').mockResolvedValue(2)
 
     this.router.$currentRoute.value = {

@@ -1,7 +1,7 @@
 // Vitest Snapshot v1
 
 exports[`renders with current song 1`] = `
-<div data-v-91ed60f7="" class="song-info playing"><span data-v-91ed60f7="" style="background-image: url(https://via.placeholder.com/150);" class="album-thumb"></span>
+<div data-v-91ed60f7="" class="playing song-info" draggable="true"><span data-v-91ed60f7="" style="background-image: url(https://via.placeholder.com/150);" class="album-thumb"></span>
   <div data-v-91ed60f7="" class="meta">
     <h3 data-v-91ed60f7="" class="title">Fahrstuhl zum Mond</h3><a data-v-91ed60f7="" href="/#/artist/10" class="artist">Led Zeppelin</a>
   </div>
@@ -9,7 +9,7 @@ exports[`renders with current song 1`] = `
 `;
 
 exports[`renders with no current song 1`] = `
-<div data-v-91ed60f7="" class="song-info"><span data-v-91ed60f7="" style="background-image: url(undefined/resources/assets/img/covers/default.svg);" class="album-thumb"></span>
+<div data-v-91ed60f7="" class="song-info" draggable="false"><span data-v-91ed60f7="" style="background-image: url(undefined/resources/assets/img/covers/default.svg);" class="album-thumb"></span>
   <!--v-if-->
 </div>
 `;

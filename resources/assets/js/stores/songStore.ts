@@ -1,7 +1,7 @@
 import isMobile from 'ismobilejs'
 import slugify from 'slugify'
 import { merge, orderBy, sumBy, take, unionBy, uniqBy } from 'lodash'
-import { reactive, UnwrapNestedRefs, watch } from 'vue'
+import { reactive, watch } from 'vue'
 import { arrayify, logger, secondsToHumanReadable, use } from '@/utils'
 import { authService, cache, http } from '@/services'
 import { albumStore, artistStore, commonStore, overviewStore, playlistStore, preferenceStore } from '@/stores'
@@ -43,7 +43,7 @@ export interface GenreSongListPaginateParams extends Record<string, any> {
 }
 
 export const songStore = {
-  vault: new Map<string, UnwrapNestedRefs<Song>>(),
+  vault: new Map<Song['id'], Song>(),
 
   state: reactive({
     songs: [] as Song[]
@@ -150,7 +150,7 @@ export const songStore = {
     })
   },
 
-  watchPlayCount: (song: UnwrapNestedRefs<Song>) => {
+  watchPlayCount: (song: Song) => {
     watch(() => song.play_count, () => overviewStore.refresh())
   },
 
