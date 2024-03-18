@@ -6,7 +6,7 @@ Koel’s web interface is designed to be as simple and intuitive as possible, dr
 
 ## Browsing and Searching for Music
 
-The navigation bar on the left side of the screen is where you can find all the main features of Koel. 
+The navigation bar on the left side of the screen is where you can find all the main features of Koel.
 You can browse your music library by songs…
 
 ![All Songs screen](../assets/img/interface/all-songs.webp)
@@ -23,7 +23,7 @@ or genres:
 
 ![Genres screen](../assets/img/interface/genres.webp)
 
-You can click on any artist, album, or genre name to see all the songs that belong to it. 
+You can click on any artist, album, or genre name to see all the songs that belong to it.
 On the artist and album screens, you can also find other albums and songs by the same artist as well as extra metadata
 like the artist or album's information when [configured](../service-integrations).
 
@@ -40,14 +40,14 @@ To search globally for songs, artists, and albums, see [Instant Search](./search
 
 ## Streaming Music
 
-Play a song by double-clicking on it or pressing <kbd>Enter</kbd> on either a song list row or a song card. 
-Queue a song (or multiple songs) by right-clicking and choose one of the Queue options, or by dragging and dropping it 
+Play a song by double-clicking on it or pressing <kbd>Enter</kbd> on either a song list row or a song card.
+Queue a song (or multiple songs) by right-clicking and choose one of the Queue options, or by dragging and dropping it
 into the queue menu item.
 
 You can use the dedicated button (with the <InterfaceIcon :src="shuffleIcon" /> icon) to shuffle the current list or the selected songs.
 To play in order instead of shuffling, hold down <kbd>Alt/Option</kbd> while clicking the button.
 
-When a song is playing, you can control playback using the buttons at the bottom of the screen as well as 
+When a song is playing, you can control playback using the buttons at the bottom of the screen as well as
 rewind/fast-forward the song by clicking and dragging the progress bar.
 
 ![Footer controls](../assets/img/interface/footer.webp)
@@ -72,15 +72,15 @@ Start by clicking the <InterfaceIcon :src="plusIcon" /> button next to the "Play
 * "New Smart Playlist…" brings up a dialog to create a smart playlist
 * "New Folder…" brings up a dialog to create a playlist folder
 
-Creating a standard playlist or playlist folder should be straightforward, as you only need to supply a name. 
+Creating a standard playlist or playlist folder should be straightforward, as you only need to supply a name.
 Once a playlist or playlist folder is created, you can:
 
 * Drag and drop songs into a standard playlist to add them
 * Drag and drop playlists a playlist folder to organize them. You can also drag and drop a playlist out of its folder.
 
-For a smart playlist, you can define the criteria that determine which songs are included in the playlist, 
-and Koel will automatically update the playlist based on those criteria. 
-For example, with the criteria shown in the following screenshot:  
+For a smart playlist, you can define the criteria that determine which songs are included in the playlist,
+and Koel will automatically update the playlist based on those criteria.
+For example, with the criteria shown in the following screenshot:
 
 <img loading="lazy" src="../assets/img/interface/new-smart-playlist.webp" alt="Smart playlist" style="width: 560px" />
 
@@ -116,28 +116,28 @@ As an admin (Community edition) or song owner (Koel Plus), you can delete a song
 You'll be prompted to confirm the deletion, and once confirmed, the song will be removed from the database and the filesystem.
 
 :::danger Backup on Delete
-By default, Koel keeps a backup of the song before deleting it. 
+By default, Koel keeps a backup of the song before deleting it.
 You can disable this behavior by setting `BACKUP_ON_DELETE` to `false` in your `.env` file, but be aware that this will make it impossible to recover a song once it's deleted.
 :::
 
 ## Share a Song
 
-You can share a song by right-clicking on it and choosing "Copy Shareable URL." 
+You can share a song by right-clicking on it and choosing "Copy Shareable URL."
 This will copy a URL to the clipboard that can then be shared with anyone with a Koel account.
 
 ## Keyboard Shortcuts
 
 Koel has a number of keyboard shortcuts to make it easier to navigate and control playback.
-Note that these shortcuts are only triggered when the focus is not on an input field (including the volume control and the music track) 
+Note that these shortcuts are only triggered when the focus is not on an input field (including the volume control and the music track)
 or a textarea.
 
-* <kbd>F</kbd> puts the focus into the search box and triggers the instant search screen
+* <kbd>f</kbd> puts the focus into the search box and triggers the instant search screen
 * <kbd>Enter</kbd> plays a song. If multiple songs are being selected, <kbd>Enter</kbd> adds them to the bottom of the queue, <kbd>Shift</kbd>+<kbd>Enter</kbd> queues them to top. Adding a <kbd>Cmd</kbd> or <kbd>Ctrl</kbd> into the combo plays the first selected song right away.
 * <kbd>Space</kbd> toggles playback
-* <kbd>J</kbd> plays the next song in queue
-* <kbd>K</kbd> plays the previous song in queue
-* <kbd>L</kbd> marks/unmarks the current song as favorite
-* <kbd>Ctrl/Cmd</kbd>+<kbd>A</kbd> selects all songs in the current song-list screen when the list is focused
+* <kbd>j</kbd> plays the next song in queue
+* <kbd>k</kbd> plays the previous song in queue
+* <kbd>l</kbd> marks/unmarks the current song as favorite
+* <kbd>Cmd/Ctrl</kbd>+<kbd>a</kbd> selects all songs in the current song-list screen when the list is focused
 * <kbd>Delete</kbd> removes selected song(s) from the current queue/playlist
 
 With a browser that supports [MediaSession](https://developer.mozilla.org/en-US/docs/Web/API/MediaSession) — basically, all modern browsers — you can control Koel using hardware media keys without even having Koel _or the browser_ focused.
