@@ -7,13 +7,13 @@ import path from 'path'
 export default defineConfig({
   plugins: [
     vue(),
-    laravel({
+    laravel.default({
       input: [
         'resources/assets/js/app.ts',
         'resources/assets/js/remote/app.ts'
       ],
       refresh: true
-    })
+    }),
   ],
   resolve: {
     alias: {

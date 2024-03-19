@@ -11,7 +11,7 @@
     <main>
       <div class="details">
         <h3>
-          <span class="external-mark" v-if="external">
+          <span v-if="external" class="external-mark">
             <Icon :icon="faSquareUpRight" />
           </span>
           {{ song.title }}

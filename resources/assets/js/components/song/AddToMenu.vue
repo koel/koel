@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, toRef, toRefs, watch } from 'vue'
+import { computed, toRef, toRefs, watch } from 'vue'
 import { pluralize } from '@/utils'
 import { playlistStore, queueStore } from '@/stores'
 import { useSongMenuMethods } from '@/composables'

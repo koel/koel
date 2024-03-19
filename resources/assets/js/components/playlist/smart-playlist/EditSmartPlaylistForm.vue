@@ -26,7 +26,7 @@
           </label>
         </div>
 
-        <div class="form-row rules" v-koel-overflow-fade>
+        <div v-koel-overflow-fade class="form-row rules">
           <RuleGroup
             v-for="(group, index) in mutablePlaylist.rules"
             :key="group.id"
@@ -39,7 +39,7 @@
           </Btn>
         </div>
 
-        <div class="form-row" v-if="isPlus">
+        <div v-if="isPlus" class="form-row">
           <label class="own-songs-only text-secondary small">
             <CheckBox v-model="mutablePlaylist.own_songs_only" /> Only include songs from my own library
           </label>

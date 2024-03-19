@@ -4,9 +4,9 @@
     <li @click="shuffle">Shuffle</li>
     <li @click="addToQueue">Add to Queue</li>
     <template v-if="canShowCollaboration">
-      <li class="separator"></li>
+      <li class="separator" />
       <li @click="showCollaborationModal">Collaborate…</li>
-      <li class="separator"></li>
+      <li class="separator" />
     </template>
     <li v-if="ownedByCurrentUser" @click="edit">Edit…</li>
     <li v-if="ownedByCurrentUser" @click="destroy">Delete</li>

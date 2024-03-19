@@ -7,7 +7,7 @@
     href="/#/profile"
     title="Profile and preferences"
   >
-    <UserAvatar :user="currentUser" width="40"/>
+    <UserAvatar :user="currentUser" width="40" />
   </a>
 </template>
 

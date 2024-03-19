@@ -55,11 +55,7 @@ final class S3LambdaStorage extends S3CompatibleStorage
         $album = Album::getOrCreate($albumArtist, $albumName);
 
         if ($cover) {
-            $this->mediaMetadataService->writeAlbumCover(
-                $album,
-                base64_decode($cover['data'], true),
-                $cover['extension']
-            );
+            $this->mediaMetadataService->writeAlbumCover($album, base64_decode($cover['data'], true));
         }
 
         /** @var Song $song */

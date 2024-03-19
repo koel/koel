@@ -10,16 +10,16 @@
     @dragover.prevent
   >
     <div class="pointer-events-none">
-      <slot/>
+      <slot />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, toRef, toRefs } from 'vue'
-import { defaultCover, fileReader, logger } from '@/utils'
+import { defaultCover, logger } from '@/utils'
 import { playlistStore, userStore } from '@/stores'
-import { useAuthorization, useKoelPlus, useMessageToaster } from '@/composables'
+import { useAuthorization, useFileReader, useKoelPlus, useMessageToaster } from '@/composables'
 import { acceptedImageTypes } from '@/config'
 
 const props = defineProps<{ playlist: Playlist }>()
@@ -66,11 +66,11 @@ const onDrop = async (event: DragEvent) => {
   const backupImage = playlist.value.cover
 
   try {
-    const fileData = await fileReader.readAsDataUrl(event.dataTransfer!.files[0])
-
-    // Replace the image right away to create an "instant" effect
-    playlist.value.cover = fileData
-    await playlistStore.uploadCover(playlist.value, fileData)
+    useFileReader().readAsDataUrl(event.dataTransfer!.files[0], async url => {
+      // Replace the image right away to create an "instant" effect
+      playlist.value.cover = url
+      await playlistStore.uploadCover(playlist.value, url)
+    })
   } catch (e) {
     const message = e?.response?.data?.message ?? 'Unknown error.'
     toastError(`Failed to upload: ${message}`)

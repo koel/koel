@@ -9,18 +9,10 @@ use App\Services\MediaMetadataService;
 
 class UploadArtistImageController extends Controller
 {
-    public function __invoke(
-        UploadArtistImageRequest $request,
-        Artist $artist,
-        MediaMetadataService $mediaMetadataService
-    ) {
+    public function __invoke(UploadArtistImageRequest $request, Artist $artist, MediaMetadataService $metadataService)
+    {
         $this->authorize('update', $artist);
-
-        $mediaMetadataService->writeArtistImage(
-            $artist,
-            $request->getFileContentAsBinaryString(),
-            $request->getFileExtension()
-        );
+        $metadataService->writeArtistImage($artist, $request->getFileContent());
 
         return response()->json(['image_url' => $artist->image]);
     }

@@ -43,11 +43,11 @@ class UserController extends Controller
 
         try {
             return UserResource::make($this->userService->updateUser(
-                $user,
-                $request->name,
-                $request->email,
-                $request->password,
-                $request->get('is_admin') ?: false
+                user: $user,
+                name: $request->name,
+                email: $request->email,
+                password: $request->password,
+                isAdmin: $request->get('is_admin') ?: false
             ));
         } catch (UserProspectUpdateDeniedException) {
             abort(Response::HTTP_FORBIDDEN, 'Cannot update a user prospect.');

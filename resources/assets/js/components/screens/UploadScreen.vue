@@ -68,8 +68,8 @@ import { useUpload } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
+import BtnGroup from '@/components/ui/BtnGroup.vue'
 
-const BtnGroup = defineAsyncComponent(() => import('@/components/ui/BtnGroup.vue'))
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
 const UploadItem = defineAsyncComponent(() => import('@/components/ui/upload/UploadItem.vue'))
 

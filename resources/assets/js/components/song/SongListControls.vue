@@ -1,14 +1,14 @@
 <template>
-  <div ref="el" class="song-list-controls" data-testid="song-list-controls" v-if="config">
+  <div v-if="config" ref="el" class="song-list-controls" data-testid="song-list-controls">
     <div class="wrapper">
       <BtnGroup uppercased>
         <template v-if="altPressed">
           <Btn
             v-if="selectedSongs.length < 2 && songs.length"
+            v-koel-tooltip.bottom
             class="btn-play-all"
             orange
             title="Play all. Press Alt/⌥ to change mode."
-            v-koel-tooltip.bottom
             @click.prevent="playAll"
           >
             <Icon :icon="faPlay" fixed-width />
@@ -17,10 +17,10 @@
 
           <Btn
             v-if="selectedSongs.length > 1"
+            v-koel-tooltip.bottom
             class="btn-play-selected"
             orange
             title="Play selected. Press Alt/⌥ to change mode."
-            v-koel-tooltip.bottom
             @click.prevent="playSelected"
           >
             <Icon :icon="faPlay" fixed-width />
@@ -31,11 +31,11 @@
         <template v-else>
           <Btn
             v-if="selectedSongs.length < 2 && songs.length"
+            v-koel-tooltip.bottom
             class="btn-shuffle-all"
             data-testid="btn-shuffle-all"
             orange
             title="Shuffle all. Press Alt/⌥ to change mode."
-            v-koel-tooltip.bottom
             @click.prevent="shuffle"
           >
             <Icon :icon="faRandom" fixed-width />
@@ -44,11 +44,11 @@
 
           <Btn
             v-if="selectedSongs.length > 1"
+            v-koel-tooltip.bottom
             class="btn-shuffle-selected"
             data-testid="btn-shuffle-selected"
             orange
             title="Shuffle selected. Press Alt/⌥ to change mode."
-            v-koel-tooltip.bottom
             @click.prevent="shuffleSelected"
           >
             <Icon :icon="faRandom" fixed-width />

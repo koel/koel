@@ -26,8 +26,8 @@ import { orderBy } from 'lodash'
 import { computed, ref, toRef, toRefs } from 'vue'
 import { albumStore, artistStore, queueStore, songStore, userStore } from '@/stores'
 import { playbackService } from '@/services'
-import { defaultCover, fileReader, logger } from '@/utils'
-import { useAuthorization, useMessageToaster, useRouter, useKoelPlus } from '@/composables'
+import { defaultCover, logger } from '@/utils'
+import { useAuthorization, useMessageToaster, useRouter, useKoelPlus, useFileReader } from '@/composables'
 import { acceptedImageTypes } from '@/config'
 
 const { toastSuccess } = useMessageToaster()
@@ -107,17 +107,17 @@ const onDrop = async (event: DragEvent) => {
   const backupImage = forAlbum.value ? (entity.value as Album).cover : (entity.value as Artist).image
 
   try {
-    const fileData = await fileReader.readAsDataUrl(event.dataTransfer!.files[0])
-
-    if (forAlbum.value) {
-      // Replace the image right away to create an "instant" effect
-      (entity.value as Album).cover = fileData
-      await albumStore.uploadCover(entity.value as Album, fileData)
-    } else {
-      (entity.value as Artist).image = fileData
-      await artistStore.uploadImage(entity.value as Artist, fileData)
-    }
-  } catch (e) {
+    useFileReader().readAsDataUrl(event.dataTransfer!.files[0], async url => {
+      if (forAlbum.value) {
+        // Replace the image right away to create an "instant" effect
+        (entity.value as Album).cover = url
+        await albumStore.uploadCover(entity.value as Album, url)
+      } else {
+        (entity.value as Artist).image = url as string
+        await artistStore.uploadImage(entity.value as Artist, url)
+      }
+    })
+  } catch (e: any) {
     const message = e?.response?.data?.message ?? 'Unknown error.'
     toastError(`Failed to upload: ${message}`)
 

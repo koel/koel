@@ -9,15 +9,10 @@ use App\Services\MediaMetadataService;
 
 class UploadAlbumCoverController extends Controller
 {
-    public function __invoke(UploadAlbumCoverRequest $request, Album $album, MediaMetadataService $mediaMetadataService)
+    public function __invoke(UploadAlbumCoverRequest $request, Album $album, MediaMetadataService $metadataService)
     {
         $this->authorize('update', $album);
-
-        $mediaMetadataService->writeAlbumCover(
-            $album,
-            $request->getFileContentAsBinaryString(),
-            $request->getFileExtension()
-        );
+        $metadataService->writeAlbumCover($album, $request->getFileContent());
 
         return response()->json(['cover_url' => $album->cover]);
     }

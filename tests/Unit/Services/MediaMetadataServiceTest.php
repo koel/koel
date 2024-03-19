@@ -56,7 +56,7 @@ class MediaMetadataServiceTest extends TestCase
 
         $this->imageWriter->shouldReceive('write')->once();
 
-        $this->mediaMetadataService->writeAlbumCover($album, 'dummy-src', 'jpg', $coverPath);
+        $this->mediaMetadataService->writeAlbumCover($album, 'dummy-src', $coverPath);
         self::assertSame(album_cover_url('foo.jpg'), $album->refresh()->cover);
     }
 
@@ -86,7 +86,7 @@ class MediaMetadataServiceTest extends TestCase
             ->once()
             ->with('/koel/public/img/artist/foo.jpg', 'dummy-src');
 
-        $this->mediaMetadataService->writeArtistImage($artist, 'dummy-src', 'jpg', $imagePath);
+        $this->mediaMetadataService->writeArtistImage($artist, 'dummy-src', $imagePath);
 
         self::assertSame(artist_image_url('foo.jpg'), $artist->refresh()->image);
     }

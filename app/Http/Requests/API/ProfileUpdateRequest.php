@@ -7,6 +7,9 @@ use Illuminate\Validation\Rules\Password;
 /**
  * @property-read string|null $current_password
  * @property-read string|null $new_password
+ * @property-read string $name
+ * @property-read string $email
+ * @property-read string|null $avatar
  */
 class ProfileUpdateRequest extends Request
 {

@@ -1,6 +1,6 @@
 <template>
   <a href class="upgrade-to-plus-btn" @click.prevent="openModal">
-    <Icon :icon="faPlus" fixed-width/>
+    <Icon :icon="faPlus" fixed-width />
     Upgrade to Plus
   </a>
 </template>
