@@ -1,7 +1,7 @@
 import { isObject, without } from 'lodash'
-import { inject, InjectionKey, isRef, provide, reactive, readonly, shallowReadonly } from 'vue'
+import { inject, InjectionKey, isRef, provide, readonly, shallowReadonly } from 'vue'
 import { ReadonlyInjectionKey } from '@/symbols'
-import { logger } from '@/utils'
+import { logger, md5 } from '@/utils'
 
 export const use = <T> (value: T, cb: (arg: T) => void) => {
   if (typeof value === 'undefined' || value === null) {
@@ -62,4 +62,9 @@ export const moveItemsInList = <T> (list: T[], items: T | T[], target: T, type: 
   updatedList.splice(type === 'before' ? targetIndex : targetIndex + 1, 0, ...subset)
 
   return updatedList
+}
+
+export const gravatar = (email: string, size = 192) => {
+  const hash = md5(email.trim().toLowerCase())
+  return `https://www.gravatar.com/avatar/${hash}?s=${size}&d=robohash`
 }

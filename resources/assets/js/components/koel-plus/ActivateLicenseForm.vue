@@ -1,17 +1,16 @@
 <template>
   <form class="license-form" @submit.prevent="validateLicenseKey">
     <input
+      v-model="licenseKey"
+      v-koel-focus
       type="text"
       name="license"
-      v-model="licenseKey"
       placeholder="Enter your license key"
       required
-      v-koel-focus
       :disabled="loading"
     >
     <Btn blue type="submit" :disabled="loading">Activate</Btn>
   </form>
-
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'

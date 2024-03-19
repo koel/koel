@@ -15,12 +15,7 @@ class UploadPlaylistCoverController extends Controller
         MediaMetadataService $mediaMetadataService
     ) {
         $this->authorize('collaborate', $playlist);
-
-        $mediaMetadataService->writePlaylistCover(
-            $playlist,
-            $request->getFileContentAsBinaryString(),
-            $request->getFileExtension()
-        );
+        $mediaMetadataService->writePlaylistCover($playlist, $request->getFileContent());
 
         return response()->json(['cover_url' => $playlist->cover]);
     }

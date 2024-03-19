@@ -15,7 +15,7 @@
     </span>
     <span class="title-artist">
       <span class="title text-primary">
-        <span class="external-mark" v-if="external">
+        <span v-if="external" class="external-mark">
           <Icon :icon="faSquareUpRight" />
         </span>
         {{ song.title }}

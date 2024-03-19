@@ -76,7 +76,13 @@ class User extends Authenticatable
 
     protected function avatar(): Attribute
     {
-        return Attribute::get(fn (): string => gravatar($this->email));
+        return Attribute::get(function (): string {
+            if ($this->attributes['avatar']) {
+                return user_avatar_url($this->attributes['avatar']);
+            }
+
+            return gravatar($this->email);
+        });
     }
 
     protected function isProspect(): Attribute

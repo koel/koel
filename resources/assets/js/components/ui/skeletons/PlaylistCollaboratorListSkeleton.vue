@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper skeleton">
-    <div v-for="i in 3" :key="i" class="pulse"/>
+    <div v-for="i in 3" :key="i" class="pulse" />
   </div>
 </template>
 

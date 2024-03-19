@@ -50,9 +50,9 @@ import {useAuthorization} from '@/composables'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ControlsToggle from '@/components/ui/ScreenControlsToggle.vue'
 import UserCard from '@/components/user/UserCard.vue'
+import BtnGroup from '@/components/ui/BtnGroup.vue'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
-const BtnGroup = defineAsyncComponent(() => import('@/components/ui/BtnGroup.vue'))
 
 const { currentUser } = useAuthorization()
 

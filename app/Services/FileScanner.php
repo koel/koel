@@ -115,10 +115,7 @@ class FileScanner
         attempt(function () use ($album, $coverData): void {
             // If the album has no cover, we try to get the cover image from existing tag data
             if ($coverData) {
-                $extension = explode('/', $coverData['image_mime']);
-                $extension = $extension[1] ?? 'png';
-
-                $this->mediaMetadataService->writeAlbumCover($album, $coverData['data'], $extension);
+                $this->mediaMetadataService->writeAlbumCover($album, $coverData['data']);
 
                 return;
             }
@@ -127,8 +124,7 @@ class FileScanner
             $cover = $this->getCoverFileUnderSameDirectory();
 
             if ($cover) {
-                $extension = pathinfo($cover, PATHINFO_EXTENSION);
-                $this->mediaMetadataService->writeAlbumCover($album, $cover, $extension);
+                $this->mediaMetadataService->writeAlbumCover($album, $cover);
             }
         }, false);
     }

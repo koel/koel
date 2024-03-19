@@ -12,7 +12,7 @@
       </span>
     </ScreenEmptyState>
 
-    <div class="main-scroll-wrap" v-else>
+    <div v-else class="main-scroll-wrap">
       <ul v-if="genres" class="genres">
         <li v-for="genre in genres" :key="genre.name" :class="`level-${getLevel(genre)}`">
           <a

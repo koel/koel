@@ -13,6 +13,8 @@ img/artists/*
 !img/artists/.gitkeep
 img/playlists/*
 !img/playlists/.gitkeep
+img/avatars/*
+!img/avatars/.gitkeep
 
 images
 js

@@ -23,7 +23,7 @@
         </template>
         <li v-if="normalPlaylists.length" class="separator" />
         <template class="d-block">
-          <ul class="playlists" v-koel-overflow-fade v-if="normalPlaylists.length">
+          <ul v-if="normalPlaylists.length" v-koel-overflow-fade class="playlists">
             <li v-for="p in normalPlaylists" :key="p.id" @click="addSongsToExistingPlaylist(p)">{{ p.name }}</li>
           </ul>
         </template>

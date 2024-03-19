@@ -1,6 +1,6 @@
 <template>
   <span :class="value && 'checked'">
-    <input :checked="value" type="checkbox" v-bind="$attrs" v-model="value">
+    <input v-bind="$attrs" v-model="value" :checked="value" type="checkbox">
   </span>
 </template>
 

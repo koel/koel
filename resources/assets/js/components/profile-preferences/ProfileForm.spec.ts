@@ -7,7 +7,7 @@ import { MessageToasterStub } from '@/__tests__/stubs'
 import ProfileForm from './ProfileForm.vue'
 
 new class extends UnitTestCase {
-  private async renderComponent (user: User) {
+  private renderComponent (user: User) {
     return this.be(user).render(ProfileForm)
   }
 
@@ -16,7 +16,9 @@ new class extends UnitTestCase {
       const updateMock = this.mock(authService, 'updateProfile')
       const alertMock = this.mock(MessageToasterStub.value, 'success')
 
-      await this.renderComponent(factory<User>('user'))
+      this.renderComponent(factory<User>('user', {
+        avatar: 'https://gravatar.com/foo'
+      }))
 
       await this.type(screen.getByTestId('currentPassword'), 'old-password')
       await this.type(screen.getByTestId('email'), 'koel@example.com')
@@ -29,6 +31,7 @@ new class extends UnitTestCase {
         email: 'koel@example.com',
         current_password: 'old-password',
         new_password: 'new-password',
+        avatar: 'https://gravatar.com/foo'
       })
 
       expect(alertMock).toHaveBeenCalledWith('Profile updated.')

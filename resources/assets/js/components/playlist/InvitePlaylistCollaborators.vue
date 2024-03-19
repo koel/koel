@@ -1,12 +1,12 @@
 <template>
-    <span>
-      <Btn v-if="shouldShowInviteButton" green small @click.prevent="inviteCollaborators">Invite</Btn>
-      <span v-if="justCreatedInviteLink" class="text-secondary copied">
-        <Icon :icon="faCheckCircle" class="text-green" />
-        Link copied to clipboard!
-      </span>
-      <Icon v-if="creatingInviteLink" :icon="faCircleNotch" class="text-green" spin />
+  <span>
+    <Btn v-if="shouldShowInviteButton" green small @click.prevent="inviteCollaborators">Invite</Btn>
+    <span v-if="justCreatedInviteLink" class="text-secondary copied">
+      <Icon :icon="faCheckCircle" class="text-green" />
+      Link copied to clipboard!
     </span>
+    <Icon v-if="creatingInviteLink" :icon="faCircleNotch" class="text-green" spin />
+  </span>
 </template>
 
 <script setup lang="ts">

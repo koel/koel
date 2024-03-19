@@ -14,5 +14,6 @@ img {
   border-radius: 50%;
   aspect-ratio: 1/1;
   background: var(--color-bg-primary);
+  object-fit: cover;
 }
 </style>

@@ -10,10 +10,18 @@ After that, you can update your name and email, and set a new password.
 Leaving the New Password field blank will keep your current password intact.
 
 :::tip Pick a strong password
-Koel enforces a strong password policy. 
+Koel enforces a strong password policy.
 Make sure to pick a password that is at least 10 characters long and contains a mix of letters, numbers, and special characters.
 Your password will also be checked against a list of leaked passwords for extra security.
 :::
+
+## Custom Avatar
+
+By default, Koel uses [Gravatar](https://gravatar.com) to fetch your avatar based on your email address.
+By hovering over the avatar and clicking the <InterfaceIcon :src="uploadIcon" /> icon, you can select an image file from your computer, crop it, and set it as your custom avatar.
+Remember to click Save for the change to take effect.
+
+To remove your custom avatar and revert to using Gravatar, click the <InterfaceIcon :src="timesIcon" /> icon.
 
 ## Themes
 
@@ -38,3 +46,8 @@ These preferences are saved immediately upon change and synced across all of you
 ## Service Integration Statuses
 
 If your Koel installation is [integrated](../service-integrations) with any external services, such as Last.fm or Spotify, you can see their statuses here along with the ability to connect or disconnect them when applicable.
+
+<script lang="ts" setup>
+import uploadIcon from '../assets/icons/upload.svg'
+import timesIcon from '../assets/icons/times.svg'
+</script>

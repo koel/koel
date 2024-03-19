@@ -1,3 +1,5 @@
+import { md5 as baseMd5 } from 'js-md5'
+
 export const uuid = () => {
   if (typeof window === 'undefined') {
     // @ts-ignore
@@ -10,6 +12,8 @@ export const uuid = () => {
     ? window.crypto.randomUUID()
     : URL.createObjectURL(new Blob([])).split(/[:\/]/g).pop()
 }
+
+export const md5 = (str: string) => baseMd5(str)
 
 export const base64Encode = (str: string) => {
   return btoa(String.fromCodePoint(...(new TextEncoder().encode(str))))

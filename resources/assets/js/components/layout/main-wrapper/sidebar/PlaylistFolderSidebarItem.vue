@@ -31,12 +31,12 @@
 
 <script lang="ts" setup>
 import { faFolder, faFolderOpen } from '@fortawesome/free-solid-svg-icons'
-import { computed, defineAsyncComponent, ref, toRefs } from 'vue'
+import { computed, ref, toRefs } from 'vue'
 import { playlistFolderStore, playlistStore } from '@/stores'
 import { eventBus } from '@/utils'
 import { useDraggable, useDroppable } from '@/composables'
 
-const PlaylistSidebarItem = defineAsyncComponent(() => import('./PlaylistSidebarItem.vue'))
+import PlaylistSidebarItem from '@/components/layout/main-wrapper/sidebar/PlaylistSidebarItem.vue'
 
 const props = defineProps<{ folder: PlaylistFolder }>()
 const { folder } = toRefs(props)

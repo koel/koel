@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\File as FileFacade;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 /**
  * Get a URL for static file requests.
@@ -47,6 +48,16 @@ function playlist_cover_url(?string $fileName): ?string
     return $fileName ? static_url(config('koel.playlist_cover_dir') . $fileName) : null;
 }
 
+function user_avatar_path(?string $fileName): ?string
+{
+    return $fileName ? public_path(config('koel.user_avatar_dir') . $fileName) : null;
+}
+
+function user_avatar_url(?string $fileName): ?string
+{
+    return $fileName ? static_url(config('koel.user_avatar_dir') . $fileName) : null;
+}
+
 function koel_version(): string
 {
     return trim(FileFacade::get(base_path('.version')));
@@ -84,7 +95,7 @@ function attempt_unless($condition, callable $callback, bool $log = true): mixed
 
 function gravatar(string $email, int $size = 192): string
 {
-    return sprintf("https://www.gravatar.com/avatar/%s?s=$size&d=robohash", md5($email));
+    return sprintf("https://www.gravatar.com/avatar/%s?s=$size&d=robohash", md5(Str::lower($email)));
 }
 
 /**

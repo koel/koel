@@ -17,9 +17,9 @@
         </p>
 
         <template v-else>
-          <p class="upgrade" v-if="isAdmin">
+          <p v-if="isAdmin" class="upgrade">
             <!-- close the modal first to prevent it from overlapping Lemonsqueezy's overlay -->
-            <BtnUpgradeToPlus @click="close"/>
+            <BtnUpgradeToPlus @click="close" />
           </p>
         </template>
       </div>

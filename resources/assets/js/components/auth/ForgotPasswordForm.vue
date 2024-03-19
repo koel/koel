@@ -1,9 +1,9 @@
 <template>
-  <form @submit.prevent="requestResetPasswordLink" data-testid="forgot-password-form">
+  <form data-testid="forgot-password-form" @submit.prevent="requestResetPasswordLink">
     <h1 class="font-size-1.5">Forgot Password</h1>
 
     <div>
-      <input v-model="email" placeholder="Your email address" required type="email" />
+      <input v-model="email" placeholder="Your email address" required type="email">
       <Btn :disabled="loading" type="submit">Reset Password</Btn>
       <Btn :disabled="loading" class="text-secondary" transparent @click="cancel">Cancel</Btn>
     </div>

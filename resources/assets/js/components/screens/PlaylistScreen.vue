@@ -6,12 +6,12 @@
 
       <template #thumbnail>
         <PlaylistThumbnail :playlist="playlist">
-          <ThumbnailStack :thumbnails="thumbnails" v-if="!playlist.cover" />
+          <ThumbnailStack v-if="!playlist.cover" :thumbnails="thumbnails" />
         </PlaylistThumbnail>
       </template>
 
       <template v-if="songs.length || playlist.is_collaborative" #meta>
-        <CollaboratorsBadge :collaborators="collaborators" v-if="collaborators.length" />
+        <CollaboratorsBadge v-if="collaborators.length" :collaborators="collaborators" />
         <span>{{ pluralize(songs, 'song') }}</span>
         <span>{{ duration }}</span>
         <a

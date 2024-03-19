@@ -1,48 +1,57 @@
 <template>
   <form data-testid="update-profile-form" @submit.prevent="update">
-    <div class="form-row">
-      <label>
-        Current Password
-        <input
-          v-model="profile.current_password"
-          v-koel-focus
-          name="current_password"
-          placeholder="Required to update your profile"
-          required
-          type="password"
-          data-testid="currentPassword"
-        >
-      </label>
-    </div>
+    <div class="profile form-row">
+      <div class="left">
+        <div class="form-row">
+          <label>
+            Current Password
+            <input
+              v-model="profile.current_password"
+              v-koel-focus
+              name="current_password"
+              placeholder="Required to update your profile"
+              required
+              type="password"
+              data-testid="currentPassword"
+            >
+          </label>
+        </div>
 
-    <div class="form-row">
-      <label>
-        Name
-        <input id="inputProfileName" v-model="profile.name" name="name" required type="text" data-testid="name">
-      </label>
-    </div>
+        <div class="form-row">
+          <label>
+            Name
+            <input id="inputProfileName" v-model="profile.name" name="name" required type="text" data-testid="name">
+          </label>
+        </div>
 
-    <div class="form-row">
-      <label>
-        Email Address
-        <input id="inputProfileEmail" v-model="profile.email" name="email" required type="email" data-testid="email">
-      </label>
-    </div>
+        <div class="form-row">
+          <label>
+            Email Address
+            <input
+              id="inputProfileEmail" v-model="profile.email" name="email" required type="email"
+              data-testid="email"
+            >
+          </label>
+        </div>
 
-    <div class="form-row">
-      <label>
-        New Password
-        <PasswordField
-          v-model="profile.new_password"
-          autocomplete="new-password"
-          data-testid="newPassword"
-          minlength="10"
-          placeholder="Leave empty to keep current password"
-        />
-        <span class="password-rules help">
-          Min. 10 characters. Should be a mix of characters, numbers, and symbols.
-        </span>
-      </label>
+        <div class="form-row">
+          <label>
+            New Password
+            <PasswordField
+              v-model="profile.new_password"
+              autocomplete="new-password"
+              data-testid="newPassword"
+              minlength="10"
+              placeholder="Leave empty to keep current password"
+            />
+            <span class="password-rules help">
+              Min. 10 characters. Should be a mix of characters, numbers, and symbols.
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <EditableProfileAvatar :profile="profile" />
     </div>
 
     <div class="form-row">
@@ -63,10 +72,12 @@ import { useDialogBox, useMessageToaster } from '@/composables'
 
 import Btn from '@/components/ui/Btn.vue'
 import PasswordField from '@/components/ui/PasswordField.vue'
+import EditableProfileAvatar from '@/components/profile-preferences/EditableProfileAvatar.vue'
 
 const { toastSuccess } = useMessageToaster()
 const { showErrorDialog } = useDialogBox()
-const profile = ref<UpdateCurrentProfileData>({} as unknown as UpdateCurrentProfileData)
+
+const profile = ref<UpdateCurrentProfileData>({} as UpdateCurrentProfileData)
 
 const isDemo = window.IS_DEMO
 
@@ -74,6 +85,7 @@ onMounted(() => {
   profile.value = {
     name: userStore.current.name,
     email: userStore.current.email,
+    avatar: userStore.current.avatar,
     current_password: null
   }
 })
@@ -95,7 +107,7 @@ const update = async () => {
     toastSuccess('Profile updated.')
   } catch (error: any) {
     const msg = error.response.status === 422 ? parseValidationError(error.response.data)[0] : 'Unknown error.'
-    showErrorDialog(msg, 'Error')
+    await showErrorDialog(msg, 'Error')
     logger.log(error)
   }
 }
@@ -103,10 +115,20 @@ const update = async () => {
 
 <style lang="scss" scoped>
 form {
-  width: 33%;
+  width: 66%;
 
   input {
     width: 100%;
+  }
+
+  .profile {
+    display: flex;
+    align-items: flex-start;
+    gap: 2.5rem;
+
+    .left {
+      width: 50%;
+    }
   }
 }
 
@@ -119,13 +141,5 @@ form {
   font-size: .95rem;
   opacity: .7;
   margin-left: 5px;
-}
-
-@media only screen and (max-width: 667px) {
-  input {
-    &[type="text"], &[type="email"], &[type="password"] {
-      width: 100%;
-    }
-  }
 }
 </style>
