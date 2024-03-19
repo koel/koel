@@ -26,6 +26,7 @@ export default defineConfig({
       level: 'deep'
     },
 
+    logo: '/logo.svg',
     logoLink: '/guide/what-is-koel',
 
     // https://vitepress.dev/reference/default-theme-config

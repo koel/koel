@@ -4,8 +4,11 @@ layout: home
 
 hero:
   name: "Koel"
-  text: 
-  tagline: The official documentation for Koel, the music streaming solution that works.
+  text: Music streaming solution that works
+  tagline: The official documentation for Koel, the music streaming solution that <em>actually</em> works.
+  image:
+    src: /logo.svg
+    alt: Koel logo
   actions:
     - theme: brand
       text: Getting Started
