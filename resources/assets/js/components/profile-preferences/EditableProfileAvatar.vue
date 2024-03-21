@@ -3,34 +3,20 @@
     <UserAvatar v-if="profile.avatar" :user="profile" style="width: var(--w)" />
 
     <div class="buttons">
-      <button class="upload" type="button" title="Pick a new avatar" @click.prevent="openFileDialog">
+      <button class="upload" title="Pick a new avatar" type="button" @click.prevent="openFileDialog">
         <Icon :icon="faUpload" />
       </button>
 
-      <button v-if="avatarChanged" type="button" class="reset" title="Reset avatar" @click.prevent="resetAvatar">
+      <button v-if="avatarChanged" class="reset" title="Reset avatar" type="button" @click.prevent="resetAvatar">
         <Icon :icon="faRefresh" />
       </button>
 
-      <button v-else class="remove" type="button" title="Remove avatar" @click.prevent="removeAvatar">
+      <button v-else class="remove" title="Remove avatar" type="button" @click.prevent="removeAvatar">
         <Icon :icon="faTimes" />
       </button>
     </div>
 
-    <div v-if="cropperSource" class="cropper-wrapper">
-      <div>
-        <Cropper
-          ref="cropper"
-          :src="cropperSource"
-          :stencil-props="{ aspectRatio: 1 }"
-          :min-height="192"
-          :max-height="480"
-        />
-        <div class="controls">
-          <Btn type="button" green @click.prevent="crop">Crop</Btn>
-          <Btn type="button" red @click.prevent="cropperSource = null">Cancel</Btn>
-        </div>
-      </div>
-    </div>
+    <ImageCropper v-if="cropperSource" :source="cropperSource" @cancel="onCancel" @crop="onCrop" />
   </div>
 </template>
 
@@ -40,7 +26,6 @@ import {
   faTimes,
   faUpload
 } from '@fortawesome/free-solid-svg-icons'
-import { Cropper } from 'vue-advanced-cropper'
 import 'vue-advanced-cropper/dist/style.css'
 import { computed, ref, toRefs } from 'vue'
 import { useFileDialog } from '@vueuse/core'
@@ -49,16 +34,15 @@ import { useFileReader } from '@/composables'
 import { gravatar } from '@/utils'
 
 import UserAvatar from '@/components/user/UserAvatar.vue'
-import Btn from '@/components/ui/Btn.vue'
+import ImageCropper from '@/components/utils/ImageCropper.vue'
 
 const props = defineProps<{ profile: Pick<User, 'name' | 'avatar'> }>()
 const { profile } = toRefs(props)
 
-const cropper = ref<typeof Cropper>()
-
-const { open: openFileDialog, onChange } = useFileDialog({
+const { open: openFileDialog, onChange, reset } = useFileDialog({
   accept: 'image/*',
-  multiple: false
+  multiple: false,
+  reset: true
 })
 
 const cropperSource = ref<string | null>(null)
@@ -84,11 +68,12 @@ const resetAvatar = () => {
 
 const avatarChanged = computed(() => profile.value.avatar !== userStore.current.avatar)
 
-const crop = () => {
-  const { canvas } = cropper.value!.getResult()
-  profile.value.avatar = canvas.toDataURL()
+const onCrop = (result: string) => {
+  profile.value.avatar = result
   cropperSource.value = null
 }
+
+const onCancel = () => (cropperSource.value = null)
 </script>
 
 
