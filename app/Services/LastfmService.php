@@ -17,11 +17,12 @@ use App\Services\Contracts\MusicEncyclopedia;
 use App\Values\AlbumInformation;
 use App\Values\ArtistInformation;
 use Generator;
+use Illuminate\Cache\Repository as Cache;
 use Illuminate\Support\Collection;
 
 class LastfmService implements MusicEncyclopedia
 {
-    public function __construct(private LastfmConnector $connector)
+    public function __construct(private LastfmConnector $connector, private Cache $cache)
     {
     }
 
@@ -48,7 +49,11 @@ class LastfmService implements MusicEncyclopedia
         }
 
         return attempt_if(static::enabled(), function () use ($artist): ?ArtistInformation {
-            return $this->connector->send(new GetArtistInfoRequest($artist))->dto();
+            return $this->cache->remember(
+                "lastfm:artist:$artist->id",
+                now()->addWeek(),
+                fn () => $this->connector->send(new GetArtistInfoRequest($artist))->dto()
+            );
         });
     }
 
@@ -59,7 +64,11 @@ class LastfmService implements MusicEncyclopedia
         }
 
         return attempt_if(static::enabled(), function () use ($album): ?AlbumInformation {
-            return $this->connector->send(new GetAlbumInfoRequest($album))->dto();
+            return $this->cache->remember(
+                "lastfm:album:$album->id",
+                now()->addWeek(),
+                fn () => $this->connector->send(new GetAlbumInfoRequest($album))->dto()
+            );
         });
     }
 
