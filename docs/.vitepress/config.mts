@@ -22,6 +22,15 @@ export default defineConfig({
     }
   },
   themeConfig: {
+    search: {
+      provider: 'algolia',
+      options: {
+        appId: '2EQKL1O1UU',
+        apiKey: 'e9d7b5be73f29af4030535a726ec7196',
+        indexName: 'koel'
+      }
+    },
+
     outline: {
       level: 'deep'
     },

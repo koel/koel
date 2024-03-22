@@ -10,6 +10,10 @@ Pay __once__, and you get all current _and_ future updates at no extra fee, fore
 
 <a class="lemonsqueezy-button" :href="config.plus.purchaseUrl">Click here</a> to purchase Koel Plus.
 
+<div class="info custom-block" style="padding-top: 8px">
+❤️  If you’re a current or past sponsor, <a href="mailto:me@phanan.net">reach out</a> for a discount code. ❤️
+</div>
+
 ## Activation
 
 <UISubjectToChangeNote />
@@ -38,7 +42,7 @@ If the key is valid, you'll see a Success message.
 
 ### Verification
 
-To verify that Koel Plus is activated, reload the web app if you haven't done so. 
+To verify that Koel Plus is activated, reload the web app if you haven't done so.
 Afterward, trigger the About Koel modal by clicking the <InterfaceIcon :src="iconInfo" /> icon in the bottom-right corner of the screen.
 You should see the information about your Koel Plus license in the modal.
 
@@ -55,9 +59,9 @@ php artisan koel:license:deactivate
 Reload Koel, and it will revert to the Community edition. You can re-activate it at any time following the steps above.
 
 <script lang="ts" setup>
-import { onMounted } from 'vue' 
+import { onMounted } from 'vue'
 import iconInfo from '../assets/icons/info.svg'
-import config from '../config' 
+import config from '../config'
 
 onMounted(() => {
   window.createLemonSqueezy()
