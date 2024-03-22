@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use App\Services\ApiClients\ApiClient;
-use App\Services\ApiClients\LemonSqueezyApiClient;
 use App\Services\Contracts\MusicEncyclopedia;
 use App\Services\LastfmService;
 use App\Services\License\Contracts\LicenseServiceInterface;
@@ -47,7 +45,6 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->bind(LicenseServiceInterface::class, LicenseService::class);
-        $this->app->bind(ApiClient::class, LemonSqueezyApiClient::class);
 
         $this->app->when(LicenseService::class)
             ->needs('$hashSalt')

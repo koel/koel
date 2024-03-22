@@ -3,43 +3,43 @@
 namespace App\Services;
 
 use App\Exceptions\FailedToActivateLicenseException;
+use App\Http\Integrations\LemonSqueezy\LemonSqueezyConnector;
+use App\Http\Integrations\LemonSqueezy\Requests\ActivateLicenseRequest;
+use App\Http\Integrations\LemonSqueezy\Requests\DeactivateLicenseRequest;
+use App\Http\Integrations\LemonSqueezy\Requests\ValidateLicenseRequest;
 use App\Models\License;
-use App\Services\ApiClients\ApiClient;
 use App\Services\License\Contracts\LicenseServiceInterface;
 use App\Values\LicenseInstance;
 use App\Values\LicenseMeta;
 use App\Values\LicenseStatus;
-use GuzzleHttp\Exception\ClientException;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Saloon\Exceptions\Request\RequestException;
 use Throwable;
 
 class LicenseService implements LicenseServiceInterface
 {
-    public function __construct(private ApiClient $client, private string $hashSalt)
+    public function __construct(private LemonSqueezyConnector $connector, private string $hashSalt)
     {
     }
 
     public function activate(string $key): License
     {
         try {
-            $response = $this->client->post('licenses/activate', [
-                'license_key' => $key,
-                'instance_name' => 'Koel Plus',
-            ]);
+            $result = $this->connector->send(new ActivateLicenseRequest($key))->object();
 
-            if ($response->meta->store_id !== config('lemonsqueezy.store_id')) {
+            if ($result->meta->store_id !== config('lemonsqueezy.store_id')) {
                 throw new FailedToActivateLicenseException('This license key is not from Koel’s official store.');
             }
 
-            $license = $this->updateOrCreateLicenseFromApiResponse($response);
+            $license = $this->updateOrCreateLicenseFromApiResponseBody($result);
             $this->cacheStatus(LicenseStatus::valid($license));
 
             return $license;
-        } catch (ClientException $e) {
-            throw FailedToActivateLicenseException::fromClientException($e);
+        } catch (RequestException $e) {
+            throw FailedToActivateLicenseException::fromRequestException($e);
         } catch (Throwable $e) {
             Log::error($e);
             throw FailedToActivateLicenseException::fromThrowable($e);
@@ -49,23 +49,20 @@ class LicenseService implements LicenseServiceInterface
     public function deactivate(License $license): void
     {
         try {
-            $response = $this->client->post('licenses/deactivate', [
-                'license_key' => $license->key,
-                'instance_id' => $license->instance->id,
-            ]);
+            $result = $this->connector->send(new DeactivateLicenseRequest($license))->object();
 
-            if ($response->deactivated) {
+            if ($result->deactivated) {
                 self::deleteLicense($license);
             }
-        } catch (ClientException $e) {
-            if ($e->getResponse()->getStatusCode() === Response::HTTP_NOT_FOUND) {
+        } catch (RequestException $e) {
+            if ($e->getStatus() === Response::HTTP_NOT_FOUND) {
                 // The instance ID was not found. The license record must be a leftover from an erroneous attempt.
                 self::deleteLicense($license);
 
                 return;
             }
 
-            throw FailedToActivateLicenseException::fromClientException($e);
+            throw FailedToActivateLicenseException::fromRequestException($e);
         } catch (Throwable $e) {
             Log::error($e);
             throw $e;
@@ -86,19 +83,12 @@ class LicenseService implements LicenseServiceInterface
         }
 
         try {
-            $response = $this->client->post('licenses/validate', [
-                'license_key' => $license->key,
-                'instance_id' => $license->instance->id,
-            ]);
-
-            $updatedLicense = $this->updateOrCreateLicenseFromApiResponse($response);
+            $result = $this->connector->send(new ValidateLicenseRequest($license))->object();
+            $updatedLicense = $this->updateOrCreateLicenseFromApiResponseBody($result);
 
             return self::cacheStatus(LicenseStatus::valid($updatedLicense));
-        } catch (ClientException $e) {
-            Log::error($e);
-            $statusCode = $e->getResponse()->getStatusCode();
-
-            if ($statusCode === Response::HTTP_BAD_REQUEST || $statusCode === Response::HTTP_NOT_FOUND) {
+        } catch (RequestException $e) {
+            if ($e->getStatus() === Response::HTTP_BAD_REQUEST || $e->getStatus() === Response::HTTP_NOT_FOUND) {
                 return self::cacheStatus(LicenseStatus::invalid($license));
             }
 
@@ -114,16 +104,16 @@ class LicenseService implements LicenseServiceInterface
     }
 
     /** @noinspection PhpIncompatibleReturnTypeInspection */
-    private function updateOrCreateLicenseFromApiResponse(object $response): License
+    private function updateOrCreateLicenseFromApiResponseBody(object $body): License
     {
         return License::query()->updateOrCreate([
-            'hash' => sha1($response->license_key->key . $this->hashSalt),
+            'hash' => sha1($body->license_key->key . $this->hashSalt),
         ], [
-            'key' => $response->license_key->key,
-            'instance' => LicenseInstance::fromJsonObject($response->instance),
-            'meta' => LicenseMeta::fromJsonObject($response->meta),
-            'created_at' => $response->license_key->created_at,
-            'expires_at' => $response->license_key->expires_at,
+            'key' => $body->license_key->key,
+            'instance' => LicenseInstance::fromJsonObject($body->instance),
+            'meta' => LicenseMeta::fromJsonObject($body->meta),
+            'created_at' => $body->license_key->created_at,
+            'expires_at' => $body->license_key->expires_at,
         ]);
     }
 

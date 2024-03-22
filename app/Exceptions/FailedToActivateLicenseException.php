@@ -3,20 +3,18 @@
 namespace App\Exceptions;
 
 use Exception;
-use GuzzleHttp\Exception\ClientException;
+use Saloon\Exceptions\Request\RequestException;
 use Throwable;
 
-class FailedToActivateLicenseException extends Exception
+final class FailedToActivateLicenseException extends Exception
 {
     public static function fromThrowable(Throwable $e): self
     {
-        return new static($e->getMessage(), $e->getCode(), $e);
+        return new self($e->getMessage(), $e->getCode(), $e);
     }
 
-    public static function fromClientException(ClientException $e): self
+    public static function fromRequestException(RequestException $e): self
     {
-        $response = $e->getResponse();
-
-        return new static(json_decode($response->getBody())->error, $response->getStatusCode());
+        return new self(object_get($e->getResponse()->object(), 'error'), $e->getStatus());
     }
 }
