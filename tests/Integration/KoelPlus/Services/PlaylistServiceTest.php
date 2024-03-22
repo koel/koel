@@ -53,8 +53,8 @@ class PlaylistServiceTest extends PlusTestCase
 
     public function testOwnSongsOnlyOptionOnlyWorksWithSmartPlaylistsWhenCreate(): void
     {
-        self::expectException(InvalidArgumentException::class);
-        self::expectExceptionMessage('"Own songs only" option only works with smart playlists and Plus license.');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('"Own songs only" option only works with smart playlists and Plus license.');
 
         $this->service->createPlaylist(
             name: 'foo',
@@ -65,8 +65,8 @@ class PlaylistServiceTest extends PlusTestCase
 
     public function testOwnSongsOnlyOptionOnlyWorksWithSmartPlaylistsWhenUpdate(): void
     {
-        self::expectException(InvalidArgumentException::class);
-        self::expectExceptionMessage('"Own songs only" option only works with smart playlists and Plus license.');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('"Own songs only" option only works with smart playlists and Plus license.');
 
         /** @var Playlist */
         $playlist = Playlist::factory()->create();

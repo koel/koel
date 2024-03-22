@@ -10,7 +10,7 @@ class S3CompatibleStorageTest extends TestCase
 {
     public function testSupported(): void
     {
-        self::expectException(KoelPlusRequiredException::class);
+        $this->expectException(KoelPlusRequiredException::class);
         app(S3CompatibleStorage::class);
     }
 }

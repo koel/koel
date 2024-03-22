@@ -31,13 +31,9 @@ class PlaylistCoverTest extends PlusTestCase
         $this->mediaMetadataService
             ->shouldReceive('writePlaylistCover')
             ->once()
-            ->with(Mockery::on(static fn (Playlist $target) => $target->is($playlist)), 'Foo', 'jpeg');
+            ->with(Mockery::on(static fn (Playlist $target) => $target->is($playlist)), 'data:image/jpeg;base64,Rm9v');
 
-        $this->putAs(
-            "api/playlists/$playlist->id/cover",
-            ['cover' => 'data:image/jpeg;base64,Rm9v'],
-            $collaborator
-        )
+        $this->putAs("api/playlists/$playlist->id/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], $collaborator)
             ->assertOk();
     }
 }

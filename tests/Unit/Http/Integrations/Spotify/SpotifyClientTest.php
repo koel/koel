@@ -71,7 +71,7 @@ class SpotifyClientTest extends TestCase
             'koel.spotify.client_secret' => null,
         ]);
 
-        self::expectException(SpotifyIntegrationDisabledException::class);
+        $this->expectException(SpotifyIntegrationDisabledException::class);
         (new SpotifyClient($this->wrapped, $this->session, $this->cache))->search('foo', 'track');
     }
 

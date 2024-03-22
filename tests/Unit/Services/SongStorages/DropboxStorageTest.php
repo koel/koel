@@ -10,7 +10,7 @@ class DropboxStorageTest extends TestCase
 {
     public function testSupported(): void
     {
-        self::expectException(KoelPlusRequiredException::class);
+        $this->expectException(KoelPlusRequiredException::class);
         app(DropboxStorage::class);
     }
 }

@@ -30,13 +30,9 @@ class PlaylistCoverTest extends TestCase
         $this->mediaMetadataService
             ->shouldReceive('writePlaylistCover')
             ->once()
-            ->with(Mockery::on(static fn (Playlist $target) => $target->is($playlist)), 'Foo', 'jpeg');
+            ->with(Mockery::on(static fn (Playlist $target) => $target->is($playlist)), 'data:image/jpeg;base64,Rm9v');
 
-        $this->putAs(
-            "api/playlists/$playlist->id/cover",
-            ['cover' => 'data:image/jpeg;base64,Rm9v'],
-            $playlist->user
-        )
+        $this->putAs("api/playlists/$playlist->id/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], $playlist->user)
             ->assertOk();
     }
 
@@ -47,11 +43,7 @@ class PlaylistCoverTest extends TestCase
 
         $this->mediaMetadataService->shouldNotReceive('writePlaylistCover');
 
-        $this->putAs(
-            "api/playlists/$playlist->id/cover",
-            ['cover' => 'data:image/jpeg;base64,Rm9v'],
-            create_user()
-        )
+        $this->putAs("api/playlists/$playlist->id/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], create_user())
             ->assertForbidden();
     }
 }

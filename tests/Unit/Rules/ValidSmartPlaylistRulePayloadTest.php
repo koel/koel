@@ -94,7 +94,7 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
     /** @dataProvider provideInvalidPayloads */
     public function testInvalidCases($value): void
     {
-        self::expectException(Throwable::class);
+        $this->expectException(Throwable::class);
         self::assertFalse((new ValidSmartPlaylistRulePayload())->passes('rules', $value));
     }
 

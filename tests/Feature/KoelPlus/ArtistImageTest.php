@@ -6,6 +6,7 @@ use App\Models\Artist;
 use App\Models\Song;
 use App\Services\MediaMetadataService;
 use Mockery;
+use Mockery\MockInterface;
 use Tests\PlusTestCase;
 
 use function Tests\create_admin;
@@ -13,6 +14,8 @@ use function Tests\create_user;
 
 class ArtistImageTest extends PlusTestCase
 {
+    private MockInterface|MediaMetadataService $mediaMetadataService;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -31,7 +34,7 @@ class ArtistImageTest extends PlusTestCase
         $this->mediaMetadataService
             ->shouldReceive('writeArtistImage')
             ->once()
-            ->with(Mockery::on(static fn (Artist $target) => $target->is($artist)), 'Foo', 'jpeg');
+            ->with(Mockery::on(static fn (Artist $target) => $target->is($artist)), 'data:image/jpeg;base64,Rm9v');
 
         $this->putAs("api/artists/$artist->id/image", ['image' => 'data:image/jpeg;base64,Rm9v'], $user)
             ->assertOk();
@@ -65,7 +68,7 @@ class ArtistImageTest extends PlusTestCase
         $this->mediaMetadataService
             ->shouldReceive('writeArtistImage')
             ->once()
-            ->with(Mockery::on(static fn (Artist $target) => $target->is($artist)), 'Foo', 'jpeg');
+            ->with(Mockery::on(static fn (Artist $target) => $target->is($artist)), 'data:image/jpeg;base64,Rm9v');
 
         $this->putAs("api/artists/$artist->id/image", ['image' => 'data:image/jpeg;base64,Rm9v'], create_admin())
             ->assertOk();
