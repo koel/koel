@@ -2,9 +2,9 @@
 
 namespace Tests\Unit\Services;
 
+use App\Http\Integrations\Spotify\SpotifyClient;
 use App\Models\Album;
 use App\Models\Artist;
-use App\Services\ApiClients\SpotifyClient;
 use App\Services\SpotifyService;
 use Illuminate\Support\Facades\File;
 use Mockery;
