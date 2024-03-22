@@ -23,14 +23,14 @@ class StreamerTest extends TestCase
     public function testResolveAdapters(): void
     {
         collect(SongStorageTypes::ALL_TYPES)
-            ->each(static function (?string $type): void {
+            ->each(function (?string $type): void {
                 /** @var Song $song */
                 $song = Song::factory()->make(['storage' => $type]);
 
                 switch ($type) {
                     case SongStorageTypes::S3:
                     case SongStorageTypes::DROPBOX:
-                        self::expectException(KoelPlusRequiredException::class);
+                        $this->expectException(KoelPlusRequiredException::class);
                         new Streamer($song);
                         break;
 

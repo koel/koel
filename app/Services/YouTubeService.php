@@ -18,8 +18,7 @@ class YouTubeService
         return (bool) config('koel.youtube.key');
     }
 
-    /** @return array<mixed>|null */
-    public function searchVideosRelatedToSong(Song $song, string $pageToken = ''): ?array
+    public function searchVideosRelatedToSong(Song $song, string $pageToken = ''): ?object
     {
         if (!self::enabled()) {
             return null;
@@ -29,9 +28,9 @@ class YouTubeService
         $hash = md5(serialize($request->query()->all()));
 
         return $this->cache->remember(
-            "youtube:$hash",
+            "youtube.$hash",
             now()->addWeek(),
-            fn () => $this->connector->send($request)->json()
+            fn () => $this->connector->send($request)->object()
         );
     }
 }

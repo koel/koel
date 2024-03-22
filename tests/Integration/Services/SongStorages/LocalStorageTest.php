@@ -28,7 +28,7 @@ class LocalStorageTest extends TestCase
     {
         Setting::set('media_path', '');
 
-        self::expectException(MediaPathNotSetException::class);
+        $this->expectException(MediaPathNotSetException::class);
         $this->service->storeUploadedFile(Mockery::mock(UploadedFile::class), create_user());
     }
 
@@ -36,7 +36,7 @@ class LocalStorageTest extends TestCase
     {
         Setting::set('media_path', public_path('sandbox/media'));
 
-        self::expectException(SongUploadFailedException::class);
+        $this->expectException(SongUploadFailedException::class);
         $this->service->storeUploadedFile(UploadedFile::fake()->create('fake.mp3'), create_user());
     }
 

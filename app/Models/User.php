@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Arr;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\PersonalAccessToken;
 
@@ -77,11 +78,9 @@ class User extends Authenticatable
     protected function avatar(): Attribute
     {
         return Attribute::get(function (): string {
-            if ($this->attributes['avatar']) {
-                return user_avatar_url($this->attributes['avatar']);
-            }
+            $avatar = Arr::get($this->attributes, 'avatar');
 
-            return gravatar($this->email);
+            return $avatar ? user_avatar_url($avatar) : gravatar($this->email);
         });
     }
 

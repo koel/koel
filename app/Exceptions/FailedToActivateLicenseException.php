@@ -15,6 +15,10 @@ final class FailedToActivateLicenseException extends Exception
 
     public static function fromRequestException(RequestException $e): self
     {
-        return new self(object_get($e->getResponse()->object(), 'error'), $e->getStatus());
+        try {
+            return new self(object_get($e->getResponse()->object(), 'error'), $e->getStatus());
+        } catch (Throwable) {
+            return self::fromThrowable($e);
+        }
     }
 }

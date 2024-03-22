@@ -31,7 +31,7 @@ class AlbumCoverTest extends PlusTestCase
         $this->mediaMetadataService
             ->shouldReceive('writeAlbumCover')
             ->once()
-            ->with(Mockery::on(static fn (Album $target) => $target->is($album)), 'Foo', 'jpeg');
+            ->with(Mockery::on(static fn (Album $target) => $target->is($album)), 'data:image/jpeg;base64,Rm9v');
 
         $this->putAs("api/albums/$album->id/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], $user)
             ->assertOk();
@@ -65,7 +65,7 @@ class AlbumCoverTest extends PlusTestCase
         $this->mediaMetadataService
             ->shouldReceive('writeAlbumCover')
             ->once()
-            ->with(Mockery::on(static fn (Album $target) => $target->is($album)), 'Foo', 'jpeg');
+            ->with(Mockery::on(static fn (Album $target) => $target->is($album)), 'data:image/jpeg;base64,Rm9v');
 
         $this->putAs("api/albums/$album->id/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], create_admin())
             ->assertOk();

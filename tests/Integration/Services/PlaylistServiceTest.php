@@ -94,7 +94,7 @@ class PlaylistServiceTest extends TestCase
         /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->create();
 
-        self::expectException(InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $this->service->createPlaylist('foo', create_user(), $folder);
     }
@@ -151,8 +151,8 @@ class PlaylistServiceTest extends TestCase
 
     public function testSettingOwnsSongOnlyFailsForCommunityLicenseWhenCreate(): void
     {
-        self::expectException(BaseInvalidArgumentException::class);
-        self::expectExceptionMessage('"Own songs only" option only works with smart playlists and Plus license.');
+        $this->expectException(BaseInvalidArgumentException::class);
+        $this->expectExceptionMessage('"Own songs only" option only works with smart playlists and Plus license.');
 
         $this->service->createPlaylist(
             name: 'foo',
@@ -176,8 +176,8 @@ class PlaylistServiceTest extends TestCase
 
     public function testSettingOwnsSongOnlyFailsForCommunityLicenseWhenUpdate(): void
     {
-        self::expectException(BaseInvalidArgumentException::class);
-        self::expectExceptionMessage('"Own songs only" option only works with smart playlists and Plus license.');
+        $this->expectException(BaseInvalidArgumentException::class);
+        $this->expectExceptionMessage('"Own songs only" option only works with smart playlists and Plus license.');
 
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->smart()->create();

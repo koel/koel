@@ -3,19 +3,17 @@
 namespace Tests\Integration\Services;
 
 use App\Exceptions\FailedToActivateLicenseException;
+use App\Http\Integrations\LemonSqueezy\Requests\ActivateLicenseRequest;
+use App\Http\Integrations\LemonSqueezy\Requests\DeactivateLicenseRequest;
+use App\Http\Integrations\LemonSqueezy\Requests\ValidateLicenseRequest;
 use App\Models\License;
-use App\Services\ApiClients\ApiClient;
 use App\Services\LicenseService;
 use App\Values\LicenseStatus;
-use Exception;
-use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
-use Mockery;
-use Mockery\LegacyMockInterface;
-use Mockery\MockInterface;
-use Psr\Http\Message\ResponseInterface;
+use Saloon\Http\Faking\MockResponse;
+use Saloon\Laravel\Facades\Saloon;
 use Tests\TestCase;
 
 use function Tests\test_path;
@@ -23,13 +21,11 @@ use function Tests\test_path;
 class LicenseServiceTest extends TestCase
 {
     private LicenseService $service;
-    private ApiClient|MockInterface|LegacyMockInterface $apiClient;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->apiClient = $this->mock(ApiClient::class);
         $this->service = app(LicenseService::class);
     }
 
@@ -38,14 +34,11 @@ class LicenseServiceTest extends TestCase
         config(['lemonsqueezy.store_id' => 42]);
         $key = '38b1460a-5104-4067-a91d-77b872934d51';
 
-        $this->apiClient
-            ->shouldReceive('post')
-            ->with('licenses/activate', [
-                'license_key' => $key,
-                'instance_name' => 'Koel Plus',
-            ])
-            ->once()
-            ->andReturn(json_decode(File::get(test_path('blobs/lemonsqueezy/license-activated-successful.json'))));
+        Saloon::fake([
+            ActivateLicenseRequest::class => MockResponse::make(
+                body: File::get(test_path('blobs/lemonsqueezy/license-activated-successful.json')),
+            ),
+        ]);
 
         $license = $this->service->activate($key);
 
@@ -59,48 +52,45 @@ class LicenseServiceTest extends TestCase
 
         self::assertSame($license->key, $cachedLicenseStatus->license->key);
         self::assertTrue($cachedLicenseStatus->isValid());
+
+        Saloon::assertSent(static function (ActivateLicenseRequest $request) use ($key): bool {
+            self::assertSame([
+                'license_key' => $key,
+                'instance_name' => 'Koel Plus',
+            ], $request->body()->all());
+
+            return true;
+        });
     }
 
     public function testActivateLicenseFailsBecauseOfIncorrectStoreId(): void
     {
-        self::expectException(FailedToActivateLicenseException::class);
-        self::expectExceptionMessage('This license key is not from Koel’s official store.');
+        $this->expectException(FailedToActivateLicenseException::class);
+        $this->expectExceptionMessage('This license key is not from Koel’s official store.');
 
         config(['lemonsqueezy.store_id' => 43]);
         $key = '38b1460a-5104-4067-a91d-77b872934d51';
 
-        $this->apiClient
-            ->shouldReceive('post')
-            ->with('licenses/activate', [
-                'license_key' => $key,
-                'instance_name' => 'Koel Plus',
-            ])
-            ->once()
-            ->andReturn(json_decode(File::get(test_path('blobs/lemonsqueezy/license-activated-successful.json'))));
+        Saloon::fake([
+            ActivateLicenseRequest::class => MockResponse::make(
+                body: File::get(test_path('blobs/lemonsqueezy/license-activated-successful.json')),
+            ),
+        ]);
 
         $this->service->activate($key);
     }
 
     public function testActivateLicenseFailsForInvalidLicenseKey(): void
     {
-        self::expectException(FailedToActivateLicenseException::class);
-        self::expectExceptionMessage('license_key not found');
+        $this->expectException(FailedToActivateLicenseException::class);
+        $this->expectExceptionMessage('license_key not found');
 
-        $exception = Mockery::mock(ClientException::class, [
-            'getResponse' => Mockery::mock(ResponseInterface::class, [
-                'getBody' => File::get(test_path('blobs/lemonsqueezy/license-invalid.json')),
-                'getStatusCode' => Response::HTTP_NOT_FOUND,
-            ]),
+        Saloon::fake([
+            ActivateLicenseRequest::class => MockResponse::make(
+                body: File::get(test_path('blobs/lemonsqueezy/license-invalid.json')),
+                status: Response::HTTP_NOT_FOUND,
+            ),
         ]);
-
-        $this->apiClient
-            ->shouldReceive('post')
-            ->with('licenses/activate', [
-                'license_key' => 'invalid-key',
-                'instance_name' => 'Koel Plus',
-            ])
-            ->once()
-            ->andThrow($exception);
 
         $this->service->activate('invalid-key');
     }
@@ -110,40 +100,33 @@ class LicenseServiceTest extends TestCase
         /** @var License $license */
         $license = License::factory()->create();
 
-        $this->apiClient
-            ->shouldReceive('post')
-            ->with('licenses/deactivate', [
-                'license_key' => $license->key,
-                'instance_id' => $license->instance->id,
-            ])
-            ->once()
-            ->andReturn(json_decode(File::get(test_path('blobs/lemonsqueezy/license-deactivated-successful.json'))));
+        Saloon::fake([
+            DeactivateLicenseRequest::class => MockResponse::make(
+                body: File::get(test_path('blobs/lemonsqueezy/license-deactivated-successful.json')),
+                status: Response::HTTP_NOT_FOUND,
+            ),
+        ]);
 
         $this->service->deactivate($license);
 
         self::assertModelMissing($license);
         self::assertFalse(Cache::has('license_status'));
+
+        Saloon::assertSent(static function (DeactivateLicenseRequest $request) use ($license): bool {
+            self::assertSame([
+                'license_key' => $license->key,
+                'instance_id' => $license->instance->id,
+            ], $request->body()->all());
+
+            return true;
+        });
     }
 
     public function testDeactivateLicenseHandlesLeftoverRecords(): void
     {
         /** @var License $license */
         $license = License::factory()->create();
-
-        $exception = Mockery::mock(ClientException::class, [
-            'getResponse' => Mockery::mock(ResponseInterface::class, [
-                'getStatusCode' => Response::HTTP_NOT_FOUND,
-            ]),
-        ]);
-
-        $this->apiClient
-            ->shouldReceive('post')
-            ->with('licenses/deactivate', [
-                'license_key' => $license->key,
-                'instance_id' => $license->instance->id,
-            ])
-            ->once()
-            ->andThrow($exception);
+        Saloon::fake([DeactivateLicenseRequest::class => MockResponse::make(status: Response::HTTP_NOT_FOUND)]);
 
         $this->service->deactivate($license);
 
@@ -152,43 +135,43 @@ class LicenseServiceTest extends TestCase
 
     public function testDeactivateLicenseFails(): void
     {
-        self::expectExceptionMessage('Something went horribly wrong');
+        $this->expectExceptionMessage('Unprocessable Entity (422) Response: Something went horrible wrong');
 
         /** @var License $license */
         $license = License::factory()->create();
 
-        $this->apiClient
-            ->shouldReceive('post')
-            ->with('licenses/deactivate', [
-                'license_key' => $license->key,
-                'instance_id' => $license->instance->id,
-            ])
-            ->once()
-            ->andThrow(new Exception('Something went horribly wrong'));
+        Saloon::fake([
+            DeactivateLicenseRequest::class => MockResponse::make(
+                body: 'Something went horrible wrong',
+                status: Response::HTTP_UNPROCESSABLE_ENTITY
+            ),
+        ]);
 
         $this->service->deactivate($license);
     }
 
     public function testGetLicenseStatusFromCache(): void
     {
+        Saloon::fake([]);
+
         /** @var License $license */
         $license = License::factory()->create();
 
         Cache::put('license_status', LicenseStatus::valid($license));
 
-        $this->apiClient->shouldNotReceive('post');
-
         self::assertTrue($this->service->getStatus()->license->is($license));
         self::assertTrue($this->service->getStatus()->isValid());
+
+        Saloon::assertNothingSent();
     }
 
     public function testGetLicenseStatusWithNoLicenses(): void
     {
+        Saloon::fake([]);
         License::query()->delete();
 
-        $this->apiClient->shouldNotReceive('post');
-
         self::assertTrue($this->service->getStatus()->hasNoLicense());
+        Saloon::assertNothingSent();
     }
 
     public function testGetLicenseStatusValidatesWithApi(): void
@@ -198,40 +181,32 @@ class LicenseServiceTest extends TestCase
 
         self::assertFalse(Cache::has('license_status'));
 
-        $this->apiClient
-            ->shouldReceive('post')
-            ->with('licenses/validate', [
-                'license_key' => $license->key,
-                'instance_id' => $license->instance->id,
-            ])
-            ->once()
-            ->andReturn(json_decode(File::get(test_path('blobs/lemonsqueezy/license-validated-successful.json'))));
+        Saloon::fake([
+            ValidateLicenseRequest::class => MockResponse::make(
+                body: File::get(test_path('blobs/lemonsqueezy/license-validated-successful.json')),
+            ),
+        ]);
 
         self::assertTrue($this->service->getStatus()->isValid());
         self::assertTrue(Cache::has('license_status'));
+
+        Saloon::assertSent(static function (ValidateLicenseRequest $request) use ($license): bool {
+            self::assertSame([
+                'license_key' => $license->key,
+                'instance_id' => $license->instance->id,
+            ], $request->body()->all());
+
+            return true;
+        });
     }
 
     public function testGetLicenseStatusValidatesWithApiWithInvalidLicense(): void
     {
-        /** @var License $license */
-        $license = License::factory()->create();
+        License::factory()->create();
 
         self::assertFalse(Cache::has('license_status'));
 
-        $exception = Mockery::mock(ClientException::class, [
-            'getResponse' => Mockery::mock(ResponseInterface::class, [
-                'getStatusCode' => Response::HTTP_NOT_FOUND,
-            ]),
-        ]);
-
-        $this->apiClient
-            ->shouldReceive('post')
-            ->with('licenses/validate', [
-                'license_key' => $license->key,
-                'instance_id' => $license->instance->id,
-            ])
-            ->once()
-            ->andThrow($exception);
+        Saloon::fake([ValidateLicenseRequest::class => MockResponse::make(status: Response::HTTP_NOT_FOUND)]);
 
         self::assertFalse($this->service->getStatus()->isValid());
         self::assertTrue(Cache::has('license_status'));
