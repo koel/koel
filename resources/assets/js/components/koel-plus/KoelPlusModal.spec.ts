@@ -18,7 +18,7 @@ new class extends UnitTestCase {
       expect(screen.queryByTestId('activateForm')).toBeNull()
       await this.user.click(screen.getByText('Purchase Koel Plus'))
       expect(global.LemonSqueezy.Url.Open).toHaveBeenCalledWith(
-        'https://store.plus.koel.dev/checkout/buy/42?embed=1&media=0&desc=0'
+        'https://store.koel.dev/checkout/buy/42?embed=1&media=0&desc=0'
       )
     })
 

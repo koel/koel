@@ -19,7 +19,7 @@
         <template v-else>
           <p v-if="isAdmin" class="upgrade">
             <!-- close the modal first to prevent it from overlapping Lemonsqueezy's overlay -->
-            <BtnUpgradeToPlus @click="close" />
+            <BtnUpgradeToPlus @click.prevent="showPlusModal" />
           </p>
         </template>
       </div>
@@ -69,6 +69,7 @@ import { orderBy } from 'lodash'
 import { onMounted, ref } from 'vue'
 import { useAuthorization, useKoelPlus, useNewVersionNotification } from '@/composables'
 import { http } from '@/services'
+import { eventBus } from '@/utils'
 
 import SponsorList from '@/components/meta/SponsorList.vue'
 import Btn from '@/components/ui/Btn.vue'
@@ -93,6 +94,11 @@ const { isAdmin } = useAuthorization()
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 const close = () => emit('close')
+
+const showPlusModal = () => {
+  close()
+  eventBus.emit('MODAL_SHOW_KOEL_PLUS')
+}
 
 onMounted(async () => {
   credits.value = window.IS_DEMO ? orderBy(await http.get<DemoCredits[]>('demo/credits'), 'name') : null
