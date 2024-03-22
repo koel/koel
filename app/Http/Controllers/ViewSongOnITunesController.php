@@ -21,7 +21,7 @@ class ViewSongOnITunesController extends Controller
             Response::HTTP_UNAUTHORIZED
         );
 
-        $url = $iTunesService->getTrackUrl($request->q, $album->name, $album->artist->name);
+        $url = $iTunesService->getTrackUrl($request->q, $album);
         abort_unless((bool) $url, Response::HTTP_NOT_FOUND, "Koel can't find such a song on iTunes Store.");
 
         return redirect($url);
