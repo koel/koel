@@ -37,7 +37,9 @@
     "meilisearch/meilisearch-php": "^0.24.0",
     "http-interop/http-factory-guzzle": "^1.2",
     "league/flysystem-aws-s3-v3": "^3.0",
-    "spatie/flysystem-dropbox": "^3.0"
+    "spatie/flysystem-dropbox": "^3.0",
+    "saloonphp/saloon": "^3.8",
+    "saloonphp/laravel-plugin": "^3.0"
   },
   "require-dev": {
     "mockery/mockery": "~1.0",

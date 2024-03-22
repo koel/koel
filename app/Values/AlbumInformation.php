@@ -2,14 +2,10 @@
 
 namespace App\Values;
 
-use App\Values\Concerns\FormatsLastFmText;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Support\Arr;
 
 final class AlbumInformation implements Arrayable
 {
-    use FormatsLastFmText;
-
     public const JSON_STRUCTURE = [
         'url',
         'cover',
@@ -37,23 +33,6 @@ final class AlbumInformation implements Arrayable
         array $tracks = []
     ): self {
         return new self($url, $cover, $wiki, $tracks);
-    }
-
-    public static function fromLastFmData(object $data): self
-    {
-        return self::make(
-            url: $data->url,
-            cover: Arr::get($data->image, '0.#text'),
-            wiki: [
-                'summary' => isset($data->wiki) ? self::formatLastFmText($data->wiki->summary) : '',
-                'full' => isset($data->wiki) ? self::formatLastFmText($data->wiki->content) : '',
-            ],
-            tracks: array_map(static fn ($track): array => [
-                'title' => $track->name,
-                'length' => (int) $track->duration,
-                'url' => $track->url,
-            ], $data->tracks?->track ?? []),
-        );
     }
 
     /** @return array<mixed> */
