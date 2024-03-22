@@ -2,14 +2,16 @@
 
 namespace App\Http\Integrations\Lastfm\Requests;
 
+use App\Http\Integrations\Lastfm\Contracts\RequiresSignature;
 use App\Models\Album;
 use App\Models\Song;
 use App\Models\User;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
+use Saloon\Http\Request;
 use Saloon\Traits\Body\HasFormBody;
 
-final class ScrobbleRequest extends SignedRequest implements HasBody
+final class ScrobbleRequest extends Request implements HasBody, RequiresSignature
 {
     use HasFormBody;
 
@@ -17,7 +19,6 @@ final class ScrobbleRequest extends SignedRequest implements HasBody
 
     public function __construct(private Song $song, private User $user, private int $timestamp)
     {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string
@@ -29,7 +30,6 @@ final class ScrobbleRequest extends SignedRequest implements HasBody
     protected function defaultBody(): array
     {
         $body = [
-            'api_key' => config('koel.lastfm.key'),
             'method' => 'track.scrobble',
             'artist' => $this->song->artist->name,
             'track' => $this->song->title,

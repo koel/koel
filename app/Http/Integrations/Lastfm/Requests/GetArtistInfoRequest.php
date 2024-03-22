@@ -2,7 +2,7 @@
 
 namespace App\Http\Integrations\Lastfm\Requests;
 
-use App\Http\Integrations\Concerns\FormatsLastFmText;
+use App\Http\Integrations\Lastfm\Concerns\FormatsLastFmText;
 use App\Models\Artist;
 use App\Values\ArtistInformation;
 use Saloon\Enums\Method;
@@ -28,7 +28,6 @@ final class GetArtistInfoRequest extends Request
     protected function defaultQuery(): array
     {
         return [
-            'api_key' => config('koel.lastfm.key'),
             'method' => 'artist.getInfo',
             'artist' => $this->artist->name,
             'autocorrect' => 1,
