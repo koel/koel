@@ -49,6 +49,6 @@
         <env name="BROADCAST_DRIVER" value="log"/>
         <env name="CACHE_MEDIA" value="true"/>
         <env name="MAIL_MAILER" value="log"/>
-        <ini name="memory_limit" value="512M"/>
+        <ini name="memory_limit" value="1024M"/>
     </php>
 </phpunit>
