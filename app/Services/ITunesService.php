@@ -25,7 +25,7 @@ class ITunesService
             $hash = md5(serialize($request->query()));
 
             return $this->cache->remember(
-                "itunes:track:$hash",
+                "itunes.track.$hash",
                 now()->addWeek(),
                 function () use ($request): ?string {
                     $response = $this->connector->send($request)->object();
