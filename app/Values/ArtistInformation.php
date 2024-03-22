@@ -2,13 +2,10 @@
 
 namespace App\Values;
 
-use App\Values\Concerns\FormatsLastFmText;
 use Illuminate\Contracts\Support\Arrayable;
 
 final class ArtistInformation implements Arrayable
 {
-    use FormatsLastFmText;
-
     public const JSON_STRUCTURE = [
         'url',
         'image',
@@ -28,17 +25,6 @@ final class ArtistInformation implements Arrayable
         array $bio = ['summary' => '', 'full' => '']
     ): self {
         return new self($url, $image, $bio);
-    }
-
-    public static function fromLastFmData(object $data): self
-    {
-        return self::make(
-            url: $data->url,
-            bio: [
-                'summary' => isset($data->bio) ? self::formatLastFmText($data->bio->summary) : '',
-                'full' => isset($data->bio) ? self::formatLastFmText($data->bio->content) : '',
-            ],
-        );
     }
 
     /** @return array<mixed> */
