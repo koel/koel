@@ -2,15 +2,16 @@
 
 namespace App\Http\Integrations\Lastfm\Requests;
 
+use App\Http\Integrations\Lastfm\Contracts\RequiresSignature;
 use Saloon\Enums\Method;
+use Saloon\Http\Request;
 
-final class GetSessionKeyRequest extends SignedRequest
+final class GetSessionKeyRequest extends Request implements RequiresSignature
 {
     protected Method $method = Method::GET;
 
     public function __construct(private string $token)
     {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string
@@ -22,7 +23,6 @@ final class GetSessionKeyRequest extends SignedRequest
     protected function defaultQuery(): array
     {
         return [
-            'api_key' => config('koel.lastfm.key'),
             'method' => 'auth.getSession',
             'token' => $this->token,
             'format' => 'json',

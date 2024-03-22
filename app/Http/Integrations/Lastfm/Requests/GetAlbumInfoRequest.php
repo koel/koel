@@ -2,7 +2,7 @@
 
 namespace App\Http\Integrations\Lastfm\Requests;
 
-use App\Http\Integrations\Concerns\FormatsLastFmText;
+use App\Http\Integrations\Lastfm\Concerns\FormatsLastFmText;
 use App\Models\Album;
 use App\Values\AlbumInformation;
 use Illuminate\Support\Arr;
@@ -29,7 +29,6 @@ final class GetAlbumInfoRequest extends Request
     protected function defaultQuery(): array
     {
         return [
-            'api_key' => config('koel.lastfm.key'),
             'method' => 'album.getInfo',
             'artist' => $this->album->artist->name,
             'album' => $this->album->name,
