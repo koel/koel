@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\ApiClients;
+namespace App\Http\Integrations\Spotify;
 
 use App\Exceptions\SpotifyIntegrationDisabledException;
 use App\Services\SpotifyService;
