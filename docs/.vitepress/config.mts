@@ -2,7 +2,7 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "Koel",
+  title: "koel",
   description: "The official documentation for Koel, the music streaming solution that works",
   head: [
     [
@@ -91,7 +91,11 @@ export default defineConfig({
       {
         text: 'Local Development',
         link: '/development'
-      }
+      },
+      {
+        text: 'Troubleshooting',
+        link: '/troubleshooting'
+      },
     ],
 
     socialLinks: [
