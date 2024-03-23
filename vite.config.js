@@ -7,7 +7,7 @@ import path from 'path'
 export default defineConfig({
   plugins: [
     vue(),
-    laravel.default({
+    laravel({
       input: [
         'resources/assets/js/app.ts',
         'resources/assets/js/remote/app.ts'
