@@ -85,7 +85,7 @@
     "test:e2e:ci": "kill-port 8080 && start-test 'php artisan serve --port=8080 --quiet' http-get://localhost:8080/api/ping 'cypress run --browser chromium'",
     "build": "vite build",
     "build-demo": "cross-env VITE_KOEL_ENV=demo vite build",
-    "dev": "kill-port 8000 && start-test 'php artisan serve --port=8000 --quiet' 'http://127.0.0.1:8000/api/ping' 'vite'",
+    "dev": "php artisan serve",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
