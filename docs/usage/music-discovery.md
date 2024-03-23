@@ -1,15 +1,25 @@
 # Music Discovery
 
-There are several ways for Koel to discover your media files. 
-You can manually scan for songs, configure a watcher, host your files with Amazon S3, or upload files directly via the web interface.
+There are several ways for Koel to discover your media files. In the most common scenario, you will have a directory on your server where you store your music files.
+You can let Koel know where this directory is (the "media path") via the [web interface](#scan-via-the-web-interface) or the [CLI](../cli-commands#koel-storage-local).
+
+:::danger Keep media out of Koel’s directory
+Do NOT place your media files inside Koel’s directory. Though technically possible, doing so will make upgrading, downgrading, and reinstalling Koel much more tedious.
+:::
+
+Once the media path is set, you can scan for songs (either manually or [using a cron job](../cli-commands#command-scheduling)), configure a watcher, or upload files directly via the web interface.
+
+:::tip Cloud Storage
+With [Koel Plus](../plus/what-is-koel-plus), you can also use cloud storage services like Amazon S3 or Dropbox to store your media files. Refer to [Storage Support](../plus/storage-support) for more details.
+:::
 
 ## Scan via the Web interface
 
 :::warning Not for large libraries
-Scanning via the web interface is vulnerable to HTTP timeouts, so if you have a decent-sized library, opt for other methods instead.
+Scanning via the web interface is vulnerable to HTTP timeouts and memory limit, so if you have a decent-sized library, opt for other methods instead.
 :::
 
-Upload your songs into a readable directory on your server – preferably outside your web root dir – and configure Koel to scan and sync it by setting a "media path" under Manage → Settings.
+Upload your songs into a readable directory on your server and configure Koel to scan and sync it by setting a "media path" under Manage → Settings.
 
 ![Settings Screen](../assets/img/settings.webp)
 
@@ -46,7 +56,7 @@ A better approach is to use Laravel’s built-in scheduler. See [Command Schedul
 
 ## Upload via the Web Interface
 You can upload songs directly as an admin by clicking the "Upload" sidebar menu item or just drag and drop files and folders into the web interface.
-Note that if you’re not using a cloud storage (available with Koel Plus), you will need to set the media path first, 
+Note that if you’re not using a cloud storage (available with Koel Plus), you will need to set the media path first,
 as the files will be uploaded into the `%media_path%/__KOEL__UPLOADS__` directory.
 
 Depending on how big your files are, you may want to set `upload_max_filesize` and `post_max_size` in your `php.ini` correspondingly, or uploading may fail with a `Payload too large` error.
@@ -114,7 +124,7 @@ Starting from version v3.0.0, Koel can work seamlessly with Amazon S3 with the h
 
 ### Supports and Requirements
 
-As of current, only `mp3`, `ogg`, `m4a`, and `flac` files are supported. 
+As of current, only `mp3`, `ogg`, `m4a`, and `flac` files are supported.
 
 ### Step-by-Step Installation
 
