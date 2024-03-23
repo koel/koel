@@ -55,7 +55,7 @@ class InitCommand extends Command
 
         try {
             $this->clearCaches();
-            $this->dumpAutoloads();
+            $this->composerInstall();
             $this->loadEnvFile();
             $this->maybeGenerateAppKey();
             $this->maybeSetUpDatabase();
@@ -110,10 +110,10 @@ class InitCommand extends Command
         });
     }
 
-    private function dumpAutoloads(): void
+    private function composerInstall(): void
     {
-        $this->components->task('Dumping autoloads (be patient!)', static function (): void {
-            self::runOkOrThrow('composer dump-autoload --no-interaction --optimize --quiet');
+        $this->components->task('Installing packages (be patient!)', static function (): void {
+            self::runOkOrThrow('composer install --no-interaction --quiet');
         });
     }
 
