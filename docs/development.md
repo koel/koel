@@ -1,30 +1,37 @@
 # Local Development
 
-Koel is built with Laravel and Vue.js, and as such, it requires a PHP environment to run. 
-There are multiple ways to set up a PHP development environment, but if you're on macOS, 
-the easiest way is probably to use [Laravel Herd](https://herd.laravel.com/). 
+## Koel
+
+Koel is built with Laravel and Vue.js, and as such, it requires a PHP environment to run.
+There are multiple ways to set up a PHP development environment, but if you're on macOS,
+the easiest way is probably to use [Laravel Herd](https://herd.laravel.com/).
 You will also need [Node.js](https://nodejs.org/) and [Yarn](https://yarnpkg.com/) to build the client application.
 For more requirements, refer to the [Requirements section](./guide/getting-started#requirements).
 
 ### Running the Local Webserver
 
-Start both the PHP server and the client application in one go with `yarn dev`, which uses [`start-server-and-test`](https://github.com/bahmutov/start-server-and-test) to manage both [vite](https://vitest.dev/) and Laravel:
+First, clone the repository and install the dependencies:
+
+```bash
+git clone https://github/com/koel/koel.git
+cd koel
+composer install
+yarn install
+```
+
+You can now start the development server with `yarn dev`, which is simply a wrapper around `php artisan serve`:
 
 ```bash
 yarn dev
-  vite v2.9.13 dev server running at:
+  $ php artisan serve
 
-  > Local: http://localhost:3000/
-  > Network: use `--host` to expose
+     INFO  Server running on [http://127.0.0.1:8000].
 
-  ready in 761ms.
-
-  Laravel v9.22.1
-
-  > APP_URL: http://localhost:8000
+    Press Ctrl+C to stop the server
 ```
 
 A development version of Koel should now be available at `http://localhost:8000` with full HMR support.
+Every change you make to the client application will be reflected in the browser immediately.
 
 ### Testing, Linting, Static Analysis, etc.
 
@@ -44,7 +51,20 @@ yarn test            # Unit testing
 yarn lint            # Lint
 ```
 
-### Ask for Help
+## Koel Docs
 
-If you're stuck, the [issue page](https://github.com/koel/koel/issues) on GitHub is a good place to ask for help.
+Of course, you are welcome to contribute to Koel Docs (this documentation) as well!
+Koel’s documentation is built with [VitePress](https://vitepress.dev/) is stored under the `docs` directory in the same repository as Koel.
+To start the VitePress instance, use the following command:
+
+```bash
+yarn docs:dev
+  vitepress v1.0.0
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+  ➜  press h to show help
+```
+
+The documentation should now be available at `http://localhost:5173`.
 
