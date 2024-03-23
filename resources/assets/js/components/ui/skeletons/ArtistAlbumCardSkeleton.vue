@@ -26,7 +26,7 @@ const props = withDefaults(defineProps<{ layout?: ArtistAlbumCardLayout }>(), { 
 
   aside {
     aspect-ratio: 1/1;
-    border-radius: 50%;
+    border-radius: 8px;
   }
 
   footer {

@@ -5,7 +5,7 @@
   <GlobalEventListeners />
   <OfflineNotification v-if="!online" />
 
-  <div v-if="layout === 'main'" id="main" @dragend="onDragEnd" @dragover="onDragOver" @drop="onDrop">
+  <div v-if="layout === 'main' && initialized" id="main" @dragend="onDragEnd" @dragover="onDragOver" @drop="onDrop">
     <Hotkeys />
     <MainWrapper />
     <AppFooter />
@@ -112,12 +112,14 @@ onMounted(async () => {
   document.documentElement.classList.add(navigator.userAgent.includes('Mac') ? 'mac' : 'non-mac')
 })
 
+const initialized = ref(false)
+
 const init = async () => {
   overlay.value!.show({ message: 'Just a little patience…' })
 
   try {
     await commonStore.init()
-    await nextTick()
+    initialized.value = true
 
     await requestNotificationPermission()
 
