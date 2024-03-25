@@ -79,7 +79,7 @@ const {
   playSelected,
   applyFilter,
   onScrollBreakpoint
-} = useSongList(toRef(queueStore.state, 'songs'), { reorderable: true, sortable: false })
+} = useSongList(toRef(queueStore.state, 'songs'), { type: 'Queue' }, { reorderable: true, sortable: false })
 
 const { SongListControls, config } = useSongListControls('Queue')
 

@@ -35,6 +35,7 @@ More themes are to be added in the future, along with the ability to create your
 
 Koel allows you to set a couple of preferences:
 
+* Whether playing a song should trigger continuous playback of the entire playlist, album, artist, or genre
 * Whether to show a notification whenever a new song starts playing
 * Whether to confirm before closing Koel’s browser tab
 * Whether to show a translucent, blurred overlay of the current album’s art

@@ -87,7 +87,7 @@ const {
   onPressEnter,
   playSelected,
   onScrollBreakpoint
-} = useSongList(toRef(songStore.state, 'songs'), { sortable: true })
+} = useSongList(toRef(songStore.state, 'songs'), { type: 'Songs' }, { sortable: true })
 
 const { SongListControls, config } = useSongListControls('Songs')
 

@@ -90,11 +90,11 @@
         @click="onClick(item, $event)"
         @dragleave="onDragLeave"
         @dragstart="onDragStart(item, $event)"
-        @dragenter.prevent="onDragEnter"
         @dragover.prevent="onDragOver"
         @drop.prevent="onDrop(item, $event)"
         @dragend.prevent="onDragEnd"
         @contextmenu.prevent="openContextMenu(item, $event)"
+        @play="onSongPlay(item.song)"
       />
     </VirtualScroller>
   </div>
@@ -106,10 +106,13 @@ import isMobile from 'ismobilejs'
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons'
 import { computed, nextTick, onMounted, Ref, ref, watch } from 'vue'
 import { eventBus, requireInjection } from '@/utils'
+import { preferenceStore, queueStore } from '@/stores'
 import { useDraggable, useDroppable } from '@/composables'
+import { playbackService } from '@/services'
 import {
   SelectedSongsKey,
   SongListConfigKey,
+  SongListContextKey,
   SongListFilterKeywordsKey,
   SongListSortFieldKey,
   SongListSortOrderKey,
@@ -137,6 +140,7 @@ const [selectedSongs, setSelectedSongs] = requireInjection<[Ref<Song[]>, Closure
 const [sortField, setSortField] = requireInjection<[Ref<SongListSortField>, Closure]>(SongListSortFieldKey)
 const [sortOrder, setSortOrder] = requireInjection<[Ref<SortOrder>, Closure]>(SongListSortOrderKey)
 const [config] = requireInjection<[Partial<SongListConfig>]>(SongListConfigKey, [{}])
+const [context] = requireInjection<[SongListContext]>(SongListContextKey)
 
 const filterKeywords = requireInjection(SongListFilterKeywordsKey, ref(''))
 
@@ -144,6 +148,12 @@ const wrapper = ref<HTMLElement>()
 const lastSelectedRow = ref<SongRow>()
 const sortFields = ref<SongListSortField[]>([])
 const songRows = ref<SongRow[]>([])
+
+const shouldTriggerContinuousPlayback = computed(() => {
+  return preferenceStore.continuous_playback
+    && typeof context.type !== 'undefined'
+    && ['Playlist', 'Album', 'Artist', 'Genre'].includes(context.type)
+})
 
 watch(
   songRows,
@@ -293,7 +303,6 @@ const onDragOver = throttle((event: DragEvent) => {
   if (!config.reorderable) return
 
   if (acceptsDrop(event)) {
-    // console.log(event)
     const target = event.target as HTMLElement
     const rect = target.getBoundingClientRect()
     const midPoint = rect.top + rect.height / 2
@@ -303,17 +312,6 @@ const onDragOver = throttle((event: DragEvent) => {
 
   return false
 }, 50)
-
-const onDragEnter = (event: DragEvent) => {
-  if (!config.reorderable) return
-
-  if (acceptsDrop(event)) {
-
-    // ;(event.target as HTMLElement).closest('.song-item')?.classList.add('droppable')
-  }
-
-  return false
-}
 
 const onDrop = (row: SongRow, event: DragEvent) => {
   if (!config.reorderable || !getDroppedData(event) || !selectedSongs.value.length) {
@@ -363,6 +361,16 @@ const openContextMenu = async (row: SongRow, event: MouseEvent) => {
   }
 
   eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', event, selectedSongs.value)
+}
+
+const onSongPlay = (song: Song) => {
+  if (shouldTriggerContinuousPlayback.value) {
+    queueStore.replaceQueueWith(getAllSongsWithSort())
+  } else {
+    queueStore.queueIfNotQueued(song)
+  }
+
+  playbackService.play(song)
 }
 
 defineExpose({

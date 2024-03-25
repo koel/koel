@@ -268,6 +268,7 @@ interface UserPreferences extends Record<string, any> {
   show_now_playing_notification: boolean
   repeat_mode: RepeatMode
   confirm_before_closing: boolean
+  continuous_playback: boolean
   equalizer: EqualizerPreset,
   artists_view_mode: ArtistAlbumViewMode | null,
   albums_view_mode: ArtistAlbumViewMode | null,
@@ -404,6 +405,11 @@ interface SongListConfig {
   reorderable: boolean
   collaborative: boolean
   hasCustomSort: boolean
+}
+
+type SongListContext = {
+  entity?: Playlist | Album | Artist | Genre,
+  type?: Extract<ScreenName, 'Songs' | 'Album' | 'Artist' | 'Playlist' | 'Favorites' | 'RecentlyPlayed' | 'Queue' | 'Genre' | 'Search.Songs'>
 }
 
 type SongListSortField =

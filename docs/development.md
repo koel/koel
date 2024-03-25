@@ -19,15 +19,20 @@ composer install
 yarn install
 ```
 
-You can now start the development server with `yarn dev`, which is simply a wrapper around `php artisan serve`:
+You can now start the development server with `yarn dev`:
 
 ```bash
-yarn dev
-  $ php artisan serve
+$ yarn dev
 
-     INFO  Server running on [http://127.0.0.1:8000].
+  VITE v5.1.6  ready in 1549 ms
 
-    Press Ctrl+C to stop the server
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+  ➜  press h + enter to show help
+
+  LARAVEL v9.52.0  plugin v1.0.2
+
+  ➜  APP_URL: http://localhost:8000
 ```
 
 A development version of Koel should now be available at `http://localhost:8000` with full HMR support.

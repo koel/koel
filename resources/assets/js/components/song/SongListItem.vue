@@ -41,8 +41,6 @@
 <script lang="ts" setup>
 import { faSquareUpRight } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
-import { playbackService } from '@/services'
-import { queueStore } from '@/stores'
 import { requireInjection, secondsToHis } from '@/utils'
 import { useAuthorization, useKoelPlus } from '@/composables'
 import { SongListConfigKey } from '@/symbols'
@@ -60,19 +58,16 @@ const { isPlus } = useKoelPlus()
 const props = defineProps<{ item: SongRow }>()
 const { item } = toRefs(props)
 
+const emit = defineEmits<{ (e: 'play', song: Song): void }>()
+
 const song = computed<Song | CollaborativeSong>(() => item.value.song)
 const playing = computed(() => ['Playing', 'Paused'].includes(song.value.playback_state!))
 const external = computed(() => isPlus.value && song.value.owner_id !== currentUser.value?.id)
 const fmtLength = secondsToHis(song.value.length)
 
-const collaborator = computed<Pick<User, 'name' | 'avatar'>>(() => {
-  return (song.value as CollaborativeSong).collaboration.user;
-})
+const collaborator = computed<Pick<User, 'name' | 'avatar'>>(() => (song.value as CollaborativeSong).collaboration.user)
 
-const play = () => {
-  queueStore.queueIfNotQueued(song.value)
-  playbackService.play(song.value)
-}
+const play = () => emit('play', song.value)
 </script>
 
 <style lang="scss">
