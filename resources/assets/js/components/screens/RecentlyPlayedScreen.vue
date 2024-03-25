@@ -67,7 +67,7 @@ const {
   playSelected,
   applyFilter,
   onScrollBreakpoint
-} = useSongList(recentlyPlayedSongs, { sortable: false })
+} = useSongList(recentlyPlayedSongs, { type: 'RecentlyPlayed' }, { sortable: false })
 
 const { SongListControls, config } = useSongListControls('RecentlyPlayed')
 

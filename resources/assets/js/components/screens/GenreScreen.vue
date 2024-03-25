@@ -70,7 +70,7 @@ const {
   onPressEnter,
   playSelected,
   onScrollBreakpoint
-} = useSongList(ref<Song[]>([]))
+} = useSongList(ref<Song[]>([]), { type: 'Genre' })
 
 const { SongListControls, config } = useSongListControls('Genre')
 

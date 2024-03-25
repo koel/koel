@@ -58,7 +58,7 @@ const {
   applyFilter,
   sort,
   onScrollBreakpoint
-} = useSongList(toRef(searchStore.state, 'songs'))
+} = useSongList(toRef(searchStore.state, 'songs'), { type: 'Search.Songs' })
 
 const { SongListControls, config } = useSongListControls('Search.Songs')
 const decodedQ = computed(() => decodeURIComponent(q.value))

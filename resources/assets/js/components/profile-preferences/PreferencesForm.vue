@@ -6,6 +6,12 @@
         Make uploaded songs public by default
       </label>
     </div>
+    <div class="form-row">
+      <label>
+        <CheckBox v-model="preferences.continuous_playback" name="continuous_playback" />
+        Playing a song triggers continuous playback of the entire playlist, album, artist, or genre
+      </label>
+    </div>
     <div v-if="isPhone" class="form-row">
       <label>
         <CheckBox v-model="preferences.show_now_playing_notification" name="notify" />

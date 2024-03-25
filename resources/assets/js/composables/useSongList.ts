@@ -9,6 +9,7 @@ import { useRouter } from '@/composables'
 import {
   SelectedSongsKey,
   SongListConfigKey,
+  SongListContextKey,
   SongListFilterKeywordsKey,
   SongListSortFieldKey,
   SongListSortOrderKey,
@@ -21,10 +22,12 @@ import ThumbnailStack from '@/components/ui/ThumbnailStack.vue'
 
 export const useSongList = (
   songs: Ref<Song[]>,
+  context: SongListContext = {},
   config: Partial<SongListConfig> = { sortable: true, reorderable: false, collaborative: false, hasCustomSort: false }
 ) => {
   const filterKeywords = ref('')
   config = reactive(config)
+  context = reactive(context)
   const { isCurrentScreen, go } = useRouter()
 
   const songList = ref<InstanceType<typeof SongList>>()
@@ -111,6 +114,7 @@ export const useSongList = (
   provideReadonly(SongsKey, songs, false)
   provideReadonly(SelectedSongsKey, selectedSongs, false)
   provideReadonly(SongListConfigKey, config)
+  provideReadonly(SongListContextKey, context)
   provideReadonly(SongListSortFieldKey, sortField)
   provideReadonly(SongListSortOrderKey, sortOrder)
 
@@ -122,6 +126,7 @@ export const useSongList = (
     ThumbnailStack,
     songs,
     config,
+    context,
     headerLayout,
     sortField,
     sortOrder,

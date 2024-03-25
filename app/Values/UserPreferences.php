@@ -16,6 +16,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
         'show_album_art_overlay' => 'boolean',
         'lyrics_zoom_level' => 'integer',
         'make_uploads_public' => 'boolean',
+        'continuous_playback' => 'boolean',
     ];
 
     private const CUSTOMIZABLE_KEYS = [
@@ -34,6 +35,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
         'lyrics_zoom_level',
         'visualizer',
         'active_extra_panel_tab',
+        'continuous_playback',
     ];
 
     private const ALL_KEYS = self::CUSTOMIZABLE_KEYS + ['lastfm_session_key'];
@@ -51,6 +53,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
         public bool $showAlbumArtOverlay,
         public bool $makeUploadsPublic,
         public bool $supportBarNoBugging,
+        public bool $continuousPlayback,
         public int $lyricsZoomLevel,
         public string $visualizer,
         public ?string $activeExtraPanelTab,
@@ -77,6 +80,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
             showAlbumArtOverlay: $data['show_album_art_overlay'] ?? true,
             makeUploadsPublic: $data['make_uploads_public'] ?? false,
             supportBarNoBugging: $data['support_bar_no_bugging'] ?? false,
+            continuousPlayback: $data['continuous_playback'] ?? false,
             lyricsZoomLevel: $data['lyrics_zoom_level'] ?? 1,
             visualizer: $data['visualizer'] ?? 'default',
             activeExtraPanelTab: $data['active_extra_panel_tab'] ?? null,
@@ -133,6 +137,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
             'lyrics_zoom_level' => $this->lyricsZoomLevel,
             'visualizer' => $this->visualizer,
             'active_extra_panel_tab' => $this->activeExtraPanelTab,
+            'continuous_playback' => $this->continuousPlayback,
         ];
     }
 

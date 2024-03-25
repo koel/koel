@@ -101,6 +101,7 @@ const {
   selectedSongs,
   showingControls,
   isPhone,
+  context,
   sortField,
   onPressEnter,
   playAll,
@@ -109,7 +110,7 @@ const {
   onScrollBreakpoint,
   sort: baseSort,
   config: listConfig
-} = useSongList(ref<Song[] | CollaborativeSong[]>([]))
+} = useSongList(ref<Song[] | CollaborativeSong[]>([]), { type: 'Playlist' })
 
 const { SongListControls, config: controlsConfig } = useSongListControls('Playlist')
 const { removeSongsFromPlaylist } = usePlaylistManagement()
@@ -165,6 +166,7 @@ watch(playlistId, async id => {
   sortField.value = null
 
   playlist.value = playlistStore.byId(id)
+  context.entity = playlist.value
 
   // reset this config value to its default to not cause rows to be mal-rendered
   listConfig.collaborative = false

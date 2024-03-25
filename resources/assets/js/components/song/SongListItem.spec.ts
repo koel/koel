@@ -1,7 +1,5 @@
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
-import { queueStore } from '@/stores'
-import { playbackService } from '@/services'
 import { screen } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import SongListItem from './SongListItem.vue'
@@ -41,15 +39,10 @@ new class extends UnitTestCase {
       expect(html()).toMatchSnapshot()
     })
 
-    it('plays on double click', async () => {
-      const queueMock = this.mock(queueStore, 'queueIfNotQueued')
-      const playMock = this.mock(playbackService, 'play')
-      this.renderComponent()
-
+    it('emits play event on double click', async () => {
+      const { emitted } = this.renderComponent()
       await this.user.dblClick(screen.getByTestId('song-item'))
-
-      expect(queueMock).toHaveBeenCalledWith(row.song)
-      expect(playMock).toHaveBeenCalledWith(row.song)
+      expect(emitted().play).toBeTruthy()
     })
   }
 }

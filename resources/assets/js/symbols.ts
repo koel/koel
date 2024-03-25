@@ -18,5 +18,6 @@ export const SongListConfigKey: ReadonlyInjectionKey<Partial<SongListConfig>> = 
 export const SongListSortFieldKey: ReadonlyInjectionKey<Ref<SongListSortField>> = Symbol('SongListSortField')
 export const SongListSortOrderKey: ReadonlyInjectionKey<Ref<SortOrder>> = Symbol('SongListSortOrder')
 export const SongListFilterKeywordsKey: InjectionKey<Ref<string>> = Symbol('SongListFilterKeywords')
+export const SongListContextKey: InjectionKey<Ref<SongListContext>> = Symbol('SongListContext')
 
 export const ModalContextKey: InjectionKey<Ref<Record<string, any>>> = Symbol('ModalContext')

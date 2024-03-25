@@ -121,6 +121,7 @@ const {
   songList,
   showingControls,
   isPhone,
+  context,
   duration,
   sort,
   onPressEnter,
@@ -128,7 +129,7 @@ const {
   playSelected,
   applyFilter,
   onScrollBreakpoint
-} = useSongList(songs)
+} = useSongList(songs, { type: 'Artist' })
 
 const { SongListControls, config } = useSongListControls('Artist')
 
@@ -157,6 +158,8 @@ watch(artistId, async id => {
       artistStore.resolve(id),
       songStore.fetchForArtist(id)
     ])
+
+    context.entity = artist.value
   } catch (error) {
     logger.error(error)
     showErrorDialog('Failed to load artist. Please try again.', 'Error')

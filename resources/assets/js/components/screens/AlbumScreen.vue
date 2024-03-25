@@ -112,11 +112,11 @@ const { showErrorDialog } = useDialogBox()
 const { getRouteParam, go, onScreenActivated } = useRouter()
 
 const albumId = ref<number>()
-const album = ref<Album>()
+const album = ref<Album | undefined>()
 const songs = ref<Song[]>([])
 const loading = ref(false)
-let otherAlbums = ref<Album[]>()
-let info = ref<ArtistInfo | null>()
+let otherAlbums = ref<Album[] | undefined>()
+let info = ref<ArtistInfo | undefined>()
 
 const {
   SongList,
@@ -126,13 +126,14 @@ const {
   showingControls,
   isPhone,
   duration,
+  context,
   sort,
   onPressEnter,
   playAll,
   playSelected,
   applyFilter,
   onScrollBreakpoint
-} = useSongList(songs)
+} = useSongList(songs, { type: 'Album' })
 
 const { SongListControls, config } = useSongListControls('Album')
 
@@ -168,6 +169,8 @@ watch(albumId, async id => {
       albumStore.resolve(id),
       songStore.fetchForAlbum(id)
     ])
+
+    context.entity = album.value
 
     sort('track')
   } catch (error) {

@@ -20,7 +20,8 @@ export const defaultPreferences: UserPreferences = {
   theme: null,
   visualizer: 'default',
   active_extra_panel_tab: null,
-  make_uploads_public: false
+  make_uploads_public: false,
+  continuous_playback: false
 }
 
 const preferenceStore = {

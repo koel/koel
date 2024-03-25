@@ -3,7 +3,14 @@ import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { arrayify } from '@/utils'
-import { SelectedSongsKey, SongListConfigKey, SongListSortFieldKey, SongListSortOrderKey, SongsKey } from '@/symbols'
+import {
+  SelectedSongsKey,
+  SongListConfigKey,
+  SongListContextKey,
+  SongListSortFieldKey,
+  SongListSortOrderKey,
+  SongsKey
+} from '@/symbols'
 import { screen } from '@testing-library/vue'
 import SongList from './SongList.vue'
 
@@ -15,6 +22,9 @@ new class extends UnitTestCase {
     config: Partial<SongListConfig> = {
       sortable: true,
       reorderable: true
+    },
+    context: SongListContext = {
+      type: 'Album',
     },
     selectedSongs: Song[] = [],
     sortField: SongListSortField = 'title',
@@ -38,10 +48,11 @@ new class extends UnitTestCase {
         },
         provide: {
           [<symbol>SongsKey]: [ref(songs)],
-          [<symbol>SelectedSongsKey]: [ref(selectedSongs), value => (selectedSongs = value)],
+          [<symbol>SelectedSongsKey]: [ref(selectedSongs), (value: Song[]) => (selectedSongs = value)],
           [<symbol>SongListConfigKey]: [config],
-          [<symbol>SongListSortFieldKey]: [sortFieldRef, value => (sortFieldRef.value = value)],
-          [<symbol>SongListSortOrderKey]: [sortOrderRef, value => (sortOrderRef.value = value)]
+          [<symbol>SongListContextKey]: [context],
+          [<symbol>SongListSortFieldKey]: [sortFieldRef, (value: SongListSortField) => (sortFieldRef.value = value)],
+          [<symbol>SongListSortOrderKey]: [sortOrderRef, (value: SortOrder) => (sortOrderRef.value = value)]
         }
       }
     })
