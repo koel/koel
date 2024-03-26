@@ -107,8 +107,8 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
     try {
       switch (getDragType(event)) {
         case 'playlist':
-          return playlistStore
-            .byId(event.dataTransfer!.getData('application/x-koel.playlist')) as T | undefined
+          const id = String(JSON.parse(event.dataTransfer!.getData('application/x-koel.playlist')))
+          return (playlistStore.byId(id)) as T | undefined
         default:
           return
       }
