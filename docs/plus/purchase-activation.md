@@ -2,17 +2,18 @@
 
 ## Pricing
 
-Koel Plus employs a super simple pricing model: a __one-time__ payment of {{ config.plus.price }}.
+Koel Plus employs a super simple pricing model: You set your own price starting at {{ config.plus.price }}, __one time__.
 You read that right: no subscription, no recurring payments, no hidden fees, no per- or additional-seat costs — I hate those bullshit as much as you do.
 Pay __once__, and you get all current _and_ future updates at no extra fee, forever.
+
+::: tip
+If the price is still too steep for you, [let me know](mailto:me@phanan.net), and we can work something out.
+Also, if you’re a current or past sponsor ❤️, you’re eligible for a discount.
+:::
 
 ## Purchase
 
 <a class="lemonsqueezy-button" :href="config.plus.purchaseUrl">Click here</a> to purchase Koel Plus.
-
-<div class="info custom-block" style="padding-top: 8px">
-❤️  If you’re a current or past sponsor, <a href="mailto:me@phanan.net">reach out</a> for a discount code. ❤️
-</div>
 
 ## Activation
 
