@@ -45,11 +45,13 @@ class PlaylistFolderServiceTest extends TestCase
 
     public function testAddPlaylistsToFolder(): void
     {
+        $user = create_user();
+
         /** @var Collection|array<array-key, Playlist> $playlists */
-        $playlists = Playlist::factory()->count(3)->create();
+        $playlists = Playlist::factory()->for($user)->count(3)->create();
 
         /** @var PlaylistFolder $folder */
-        $folder = PlaylistFolder::factory()->create();
+        $folder = PlaylistFolder::factory()->for($user)->create();
 
         $this->service->addPlaylistsToFolder($folder, $playlists->pluck('id')->all());
 
@@ -62,12 +64,13 @@ class PlaylistFolderServiceTest extends TestCase
         $folder = PlaylistFolder::factory()->create();
 
         /** @var Collection|array<array-key, Playlist> $playlists */
-        $playlists = Playlist::factory()->count(3)->for($folder, 'folder')->create();
+        $playlists = Playlist::factory()->count(3)->create();
+        $folder->playlists()->attach($playlists->pluck('id')->all());
 
-        $this->service->movePlaylistsToRootLevel($playlists->pluck('id')->all());
+        $this->service->movePlaylistsToRootLevel($folder, $playlists->pluck('id')->all());
 
         self::assertCount(0, $folder->playlists);
 
-        $playlists->each(static fn (Playlist $playlist) => self::assertNull($playlist->refresh()->folder_id));
+        $playlists->each(static fn (Playlist $playlist) => self::assertNull($playlist->refresh()->getFolder()));
     }
 }

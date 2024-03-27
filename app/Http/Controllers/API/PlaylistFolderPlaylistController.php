@@ -28,7 +28,7 @@ class PlaylistFolderPlaylistController extends Controller
     {
         $this->authorize('own', $playlistFolder);
 
-        $this->service->movePlaylistsToRootLevel(Arr::wrap($request->playlists));
+        $this->service->movePlaylistsToRootLevel($playlistFolder, Arr::wrap($request->playlists));
 
         return response()->noContent();
     }

@@ -42,7 +42,7 @@ class PlaylistTest extends TestCase
 
         self::assertSame('Foo Bar', $playlist->name);
         self::assertTrue($playlist->ownedBy($user));
-        self::assertNull($playlist->folder_id);
+        self::assertNull($playlist->getFolder());
         self::assertEqualsCanonicalizing($songs->pluck('id')->all(), $playlist->songs->pluck('id')->all());
     }
 
@@ -73,7 +73,7 @@ class PlaylistTest extends TestCase
         self::assertTrue($playlist->ownedBy($user));
         self::assertTrue($playlist->is_smart);
         self::assertCount(1, $playlist->rule_groups);
-        self::assertNull($playlist->folder_id);
+        self::assertNull($playlist->getFolder());
         self::assertTrue($rule->equals($playlist->rule_groups[0]->rules[0]));
     }
 
