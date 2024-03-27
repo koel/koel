@@ -31,6 +31,11 @@ return new class extends Migration
         });
 
         DB::table('playlists')->whereNotNull('folder_id')->get()->each(static function ($playlist): void {
+            // There might be some data inconsistency, so we need to check if the folder exists first.
+            if (DB::table('playlist_folders')->find($playlist->folder_id) === null) {
+                return;
+            }
+
             DB::table('playlist_playlist_folder')->insert([
                 'folder_id' => $playlist->folder_id,
                 'playlist_id' => $playlist->id,
@@ -39,7 +44,7 @@ return new class extends Migration
 
         Schema::table('playlists', static function (Blueprint $table): void {
             if (DB::getDriverName() !== 'sqlite') {
-                $table->dropForeign('playlists_folder_id_foreign');
+                $table->dropForeign(['folder_id']);
             }
 
             $table->dropColumn('folder_id');
