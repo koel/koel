@@ -15,7 +15,7 @@
       <Icon v-else-if="isFavoriteList(list)" :icon="faHeart" class="text-maroon" fixed-width />
       <Icon v-else-if="list.is_smart" :icon="faWandMagicSparkles" fixed-width />
       <Icon v-else-if="list.is_collaborative" :icon="faUsers" fixed-width />
-      <Icon v-else :icon="faFileLines" fixed-width />
+      <ListMusic v-else :size="16" />
       <span>{{ list.name }}</span>
     </a>
   </li>
@@ -24,11 +24,11 @@
 <script lang="ts" setup>
 import {
   faClockRotateLeft,
-  faFileLines,
   faHeart,
   faUsers,
   faWandMagicSparkles
 } from '@fortawesome/free-solid-svg-icons'
+import { ListMusic } from 'lucide-vue-next'
 import { computed, ref, toRefs } from 'vue'
 import { eventBus } from '@/utils'
 import { favoriteStore } from '@/stores'

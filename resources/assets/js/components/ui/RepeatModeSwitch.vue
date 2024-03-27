@@ -7,16 +7,13 @@
     type="button"
     @click.prevent="changeMode"
   >
-    <FontAwesomeLayers>
-      <Icon :icon="faRepeat" />
-      <FontAwesomeLayersText v-if="mode === 'REPEAT_ONE'" counter value="1" />
-    </FontAwesomeLayers>
+    <Repeat1 v-if="mode === 'REPEAT_ONE'" :size="16" />
+    <Repeat v-else :size="16" />
   </button>
 </template>
 
 <script lang="ts" setup>
-import { FontAwesomeLayers, FontAwesomeLayersText } from '@fortawesome/vue-fontawesome'
-import { faRepeat } from '@fortawesome/free-solid-svg-icons'
+import { Repeat, Repeat1 } from 'lucide-vue-next'
 import { computed, toRef } from 'vue'
 import { playbackService } from '@/services'
 import { preferenceStore } from '@/stores'
