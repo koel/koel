@@ -3,9 +3,9 @@
 Powered by [Laravel Scout](https://github.com/laravel/scout), Koel provides an instant search feature that performs full-text,
 fuzzy searches against your music collection and returns the most relevant results as you type.
 
-<video controls playsinline>
-  <source src="../assets/videos/search.webm" type="video/webm"/>
+<video controls playsinline poster="../assets/videos/search-poster.webp">
   <source src="../assets/videos/search.mp4" type="video/mp4"/>
+  <source src="../assets/videos/search.webm" type="video/webm"/>
 </video>
 
 ## Configuration
