@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Http\Resources\PlaylistFolderResource;
+use App\Models\Playlist;
 use App\Models\PlaylistFolder;
 use Tests\TestCase;
 
@@ -72,5 +73,69 @@ class PlaylistFolderTest extends TestCase
             ->assertForbidden();
 
         self::assertModelExists($folder);
+    }
+
+    public function testMovingPlaylistToFolder(): void
+    {
+        /** @var PlaylistFolder $folder */
+        $folder = PlaylistFolder::factory()->create();
+
+        /** @var Playlist $playlist */
+        $playlist = Playlist::factory()->for($folder->user)->create();
+        self::assertNull($playlist->getFolderId($folder->user));
+
+        $this->postAs("api/playlist-folders/$folder->id/playlists", ['playlists' => [$playlist->id]], $folder->user)
+            ->assertSuccessful();
+
+        self::assertTrue($playlist->fresh()->getFolder($folder->user)->is($folder));
+    }
+
+    public function testUnauthorizedMovingPlaylistToFolderIsNotAllowed(): void
+    {
+        /** @var PlaylistFolder $folder */
+        $folder = PlaylistFolder::factory()->create();
+
+        /** @var Playlist $playlist */
+        $playlist = Playlist::factory()->for($folder->user)->create();
+        self::assertNull($playlist->getFolderId($folder->user));
+
+        $this->postAs("api/playlist-folders/$folder->id/playlists", ['playlists' => [$playlist->id]])
+            ->assertUnprocessable();
+
+        self::assertNull($playlist->fresh()->getFolder($folder->user));
+    }
+
+    public function testMovingPlaylistToRootLevel(): void
+    {
+        /** @var PlaylistFolder $folder */
+        $folder = PlaylistFolder::factory()->create();
+
+        /** @var Playlist $playlist */
+        $playlist = Playlist::factory()->for($folder->user)->create();
+
+        $folder->playlists()->attach($playlist->id);
+        self::assertTrue($playlist->refresh()->getFolder($folder->user)->is($folder));
+
+        $this->deleteAs("api/playlist-folders/$folder->id/playlists", ['playlists' => [$playlist->id]], $folder->user)
+            ->assertSuccessful();
+
+        self::assertNull($playlist->fresh()->getFolder($folder->user));
+    }
+
+    public function testUnauthorizedMovingPlaylistToRootLevelIsNotAllowed(): void
+    {
+        /** @var PlaylistFolder $folder */
+        $folder = PlaylistFolder::factory()->create();
+
+        /** @var Playlist $playlist */
+        $playlist = Playlist::factory()->for($folder->user)->create();
+
+        $folder->playlists()->attach($playlist->id);
+        self::assertTrue($playlist->refresh()->getFolder($folder->user)->is($folder));
+
+        $this->deleteAs("api/playlist-folders/$folder->id/playlists", ['playlists' => [$playlist->id]])
+            ->assertUnprocessable();
+
+        self::assertTrue($playlist->refresh()->getFolder($folder->user)->is($folder));
     }
 }

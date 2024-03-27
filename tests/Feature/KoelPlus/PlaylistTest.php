@@ -39,7 +39,7 @@ class PlaylistTest extends PlusTestCase
         self::assertTrue($playlist->ownedBy($user));
         self::assertTrue($playlist->is_smart);
         self::assertCount(1, $playlist->rule_groups);
-        self::assertNull($playlist->folder_id);
+        self::assertNull($playlist->getFolderId());
         self::assertTrue($rule->equals($playlist->rule_groups[0]->rules[0]));
         self::assertTrue($playlist->own_songs_only);
     }

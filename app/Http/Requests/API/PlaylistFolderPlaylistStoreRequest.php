@@ -3,7 +3,7 @@
 namespace App\Http\Requests\API;
 
 use App\Models\Playlist;
-use App\Rules\AllPlaylistsBelongTo;
+use App\Rules\AllPlaylistsAreAccessibleBy;
 use Illuminate\Validation\Rule;
 
 /**
@@ -18,7 +18,7 @@ class PlaylistFolderPlaylistStoreRequest extends Request
             'playlists' => [
                 'required',
                 'array',
-                new AllPlaylistsBelongTo($this->user()),
+                new AllPlaylistsAreAccessibleBy($this->user()),
                 Rule::exists(Playlist::class, 'id'),
             ],
         ];

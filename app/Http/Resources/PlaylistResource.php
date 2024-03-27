@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Playlist;
+use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PlaylistResource extends JsonResource
@@ -27,11 +28,14 @@ class PlaylistResource extends JsonResource
     /** @return array<mixed> */
     public function toArray($request): array
     {
+        /** @var User $user */
+        $user = $request->user() ?? $this->playlist->user;
+
         return [
             'type' => 'playlists',
             'id' => $this->playlist->id,
             'name' => $this->playlist->name,
-            'folder_id' => $this->playlist->folder_id,
+            'folder_id' => $this->playlist->getFolderId($user),
             'user_id' => $this->playlist->user_id,
             'is_smart' => $this->playlist->is_smart,
             'is_collaborative' => $this->playlist->is_collaborative,

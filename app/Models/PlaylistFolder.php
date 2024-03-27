@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
 /**
@@ -31,9 +31,9 @@ class PlaylistFolder extends Model
         static::creating(static fn (self $folder) => $folder->id = Str::uuid()->toString());
     }
 
-    public function playlists(): HasMany
+    public function playlists(): BelongsToMany
     {
-        return $this->hasMany(Playlist::class, 'folder_id');
+        return $this->belongsToMany(Playlist::class, null, 'folder_id');
     }
 
     public function user(): BelongsTo

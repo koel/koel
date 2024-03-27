@@ -47,8 +47,9 @@ class PlaylistService
                     'name' => $name,
                     'rules' => $ruleGroups,
                     'own_songs_only' => $ownSongsOnly,
-                    'folder_id' => $folder?->id,
                 ]);
+
+                $folder?->playlists()->attach($playlist);
 
                 if (!$playlist->is_smart && $songs) {
                     $playlist->addSongs($songs, $user);
@@ -77,9 +78,10 @@ class PlaylistService
         $playlist->update([
             'name' => $name,
             'rules' => $ruleGroups,
-            'folder_id' => $folder?->id,
             'own_songs_only' => $ownSongsOnly,
         ]);
+
+        $folder?->playlists()->syncWithoutDetaching($playlist);
 
         return $playlist;
     }
