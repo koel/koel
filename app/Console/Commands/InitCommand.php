@@ -85,8 +85,8 @@ class InitCommand extends Command
             );
         }
 
-        if (Setting::get('media_path')) {
-            $this->info('You can now set up the storage with `php artisan koel:storage`.');
+        if (!Setting::get('media_path')) {
+            $this->info('You can set up the storage with `php artisan koel:storage`.');
         }
 
         $this->info('Again, visit 📙 ' . config('koel.misc.docs_url') . ' for more tips and tweaks.');
