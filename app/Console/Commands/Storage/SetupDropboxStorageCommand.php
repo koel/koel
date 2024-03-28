@@ -55,7 +55,7 @@ class SetupDropboxStorageCommand extends Command
         $accessCode = $this->ask('Enter the access code');
 
         $response = Http::asForm()
-            ->withBasicAuth($appKey, $appSecret)
+            ->withBasicAuth($config['DROPBOX_APP_KEY'], $config['DROPBOX_APP_SECRET'])
             ->post('https://api.dropboxapi.com/oauth2/token', [
                 'code' => $accessCode,
                 'grant_type' => 'authorization_code',

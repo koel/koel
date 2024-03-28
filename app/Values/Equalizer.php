@@ -9,7 +9,7 @@ use Throwable;
 final class Equalizer implements Arrayable
 {
     /** @param array<int>|null $gains */
-    private function __construct(public ?string $name, public int $preamp, public array $gains)
+    private function __construct(public ?string $name, public ?int $preamp, public ?array $gains)
     {
     }
 

@@ -6,6 +6,7 @@ use App\Models\Album;
 use App\Models\Song;
 use App\Services\MediaMetadataService;
 use Mockery;
+use Mockery\MockInterface;
 use Tests\PlusTestCase;
 
 use function Tests\create_admin;
@@ -13,6 +14,8 @@ use function Tests\create_user;
 
 class AlbumCoverTest extends PlusTestCase
 {
+    private MediaMetadataService|MockInterface $mediaMetadataService;
+
     public function setUp(): void
     {
         parent::setUp();

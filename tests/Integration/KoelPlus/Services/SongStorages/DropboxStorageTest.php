@@ -40,7 +40,7 @@ class DropboxStorageTest extends PlusTestCase
         $this->client = $this->mock(Client::class);
         $this->filesystem = $this->mock(DropboxFilesystem::class);
 
-        $this->filesystem->allows('getAdapter')->andReturns(
+        $this->filesystem->allows('getAdapter')->andReturn(
             Mockery::mock(DropboxAdapter::class, ['getClient' => $this->client])
         );
 

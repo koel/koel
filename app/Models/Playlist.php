@@ -63,7 +63,8 @@ class Playlist extends Model
 
     public function songs(): BelongsToMany
     {
-        return $this->belongsToMany(Song::class)->withTimestamps()
+        return $this->belongsToMany(Song::class)
+            ->withTimestamps()
             ->withPivot('position')
             ->orderByPivot('position');
     }
@@ -160,7 +161,7 @@ class Playlist extends Model
     public function addSongs(Collection|Song|array $songs, ?User $collaborator = null): void
     {
         $collaborator ??= $this->user;
-        $maxPosition = $this->songs()->max('position') ?? 0;
+        $maxPosition = $this->songs()->getQuery()->max('position') ?? 0;
 
         if (!is_array($songs)) {
             $songs = Collection::wrap($songs)->pluck('id')->all();
