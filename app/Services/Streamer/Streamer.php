@@ -39,7 +39,7 @@ class Streamer
             SongStorageTypes::LOCAL, '' => app(LocalStreamerAdapter::class),
             SongStorageTypes::S3, SongStorageTypes::S3_LAMBDA => app(S3CompatibleStreamerAdapter::class),
             SongStorageTypes::DROPBOX => app(DropboxStreamerAdapter::class),
-            default => throw UnsupportedSongStorageTypeException::make($this->song->storage),
+            default => throw UnsupportedSongStorageTypeException::create($this->song->storage),
         };
     }
 

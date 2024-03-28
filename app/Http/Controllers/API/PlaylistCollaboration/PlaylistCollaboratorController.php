@@ -15,7 +15,6 @@ use Illuminate\Http\Response;
 
 class PlaylistCollaboratorController extends Controller
 {
-    /** @param User $user */
     public function __construct(private PlaylistCollaborationService $service, private UserRepository $userRepository)
     {
     }

@@ -11,7 +11,7 @@ class UnsupportedSongStorageTypeException extends Exception
         parent::__construct("Unsupported song storage type: $storageType");
     }
 
-    public function create(string $storageType): self
+    public static function create(string $storageType): self
     {
         return new self($storageType);
     }
