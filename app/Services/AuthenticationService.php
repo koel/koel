@@ -35,6 +35,11 @@ class AuthenticationService
             $user->save();
         }
 
+        return $this->logUserIn($user);
+    }
+
+    public function logUserIn(User $user): CompositeToken
+    {
         return $this->tokenManager->createCompositeToken($user);
     }
 
@@ -46,6 +51,11 @@ class AuthenticationService
     public function trySendResetPasswordLink(string $email): bool
     {
         return $this->passwordBroker->sendResetLink(['email' => $email]) === Password::RESET_LINK_SENT;
+    }
+
+    public function generatePasswordResetToken(User $user): string
+    {
+        return $this->passwordBroker->createToken($user);
     }
 
     public function tryResetPasswordUsingBroker(string $email, string $password, string $token): bool

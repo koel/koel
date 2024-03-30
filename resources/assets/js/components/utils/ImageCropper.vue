@@ -27,13 +27,12 @@ const props = withDefaults(defineProps<{
   source?: string | null
   config?: {
     minWidth: number
-    maxWidth: number
+    maxWidth?: number
   }
 }>(), {
   source: null,
   config: () => ({
-    minWidth: 192,
-    maxWidth: 480
+    minWidth: 192
   })
 })
 

@@ -5,6 +5,10 @@
     </header>
 
     <main>
+      <AlertBox v-if="user.sso_provider" type="info">
+        This user logs in via SSO by {{ user.sso_provider }}.<br>
+      </AlertBox>
+
       <div class="form-row">
         <label>
           Name
@@ -14,10 +18,17 @@
       <div class="form-row">
         <label>
           Email
-          <input v-model="updateData.email" name="email" required title="Email" type="email">
+          <input
+            v-model="updateData.email"
+            :readonly="user.sso_provider"
+            name="email"
+            required
+            title="Email"
+            type="email"
+          >
         </label>
       </div>
-      <div class="form-row">
+      <div v-if="!user.sso_provider" class="form-row">
         <label>
           Password
           <input
@@ -56,6 +67,7 @@ import { useDialogBox, useMessageToaster, useModal, useOverlay } from '@/composa
 import Btn from '@/components/ui/Btn.vue'
 import TooltipIcon from '@/components/ui/TooltipIcon.vue'
 import CheckBox from '@/components/ui/CheckBox.vue'
+import AlertBox from '@/components/ui/AlertBox.vue'
 
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()

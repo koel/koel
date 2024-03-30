@@ -23,10 +23,7 @@ const { get: lsGet, set: lsSet, remove: lsRemove } = useLocalStorage(false) // a
 
 export const authService = {
   async login (email: string, password: string) {
-    const token = await http.post<CompositeToken>('me', { email, password })
-
-    this.setAudioToken(token['audio-token'])
-    this.setApiToken(token.token)
+    this.setTokensUsingCompositeToken(await http.post<CompositeToken>('me', { email, password }))
   },
 
   async logout () {
@@ -47,6 +44,11 @@ export const authService = {
   },
 
   setApiToken: (token: string) => lsSet(API_TOKEN_STORAGE_KEY, token),
+
+  setTokensUsingCompositeToken (compositeToken: CompositeToken) {
+    this.setApiToken(compositeToken.token)
+    this.setAudioToken(compositeToken['audio-token'])
+  },
 
   destroy: () => {
     lsRemove(API_TOKEN_STORAGE_KEY)

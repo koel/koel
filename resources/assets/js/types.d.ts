@@ -55,10 +55,13 @@ interface Constructable<T> {
   new (...args: any): T
 }
 
+type SSOProvider = 'Google' | 'Facebook'
+
 interface Window {
   BASE_URL: string
   MAILER_CONFIGURED: boolean
   IS_DEMO: boolean
+  SSO_PROVIDERS: SSOProvider[] // not supporting Facebook yet, though
 
   readonly PUSHER_APP_KEY: string
   readonly PUSHER_APP_CLUSTER: string
@@ -292,6 +295,8 @@ interface User {
   password?: string
   preferences?: UserPreferences
   avatar: string
+  sso_provider: SSOProvider | null
+  sso_id: string | null
 }
 
 interface Settings {

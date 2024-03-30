@@ -34,8 +34,9 @@ class ProfileController extends Controller
     {
         static::disableInDemo(Response::HTTP_NO_CONTENT);
 
-        throw_unless(
-            $this->hash->check($request->current_password, $this->user->password),
+        // If the user is not using SSO, we need to verify their current password.
+        throw_if(
+            !$this->user->is_sso && !$this->hash->check($request->current_password, $this->user->password),
             ValidationException::withMessages(['current_password' => 'Invalid current password'])
         );
 

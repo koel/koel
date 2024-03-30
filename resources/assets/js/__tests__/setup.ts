@@ -6,6 +6,7 @@ declare global {
   interface Window {
     BASE_URL: string
     MAILER_CONFIGURED: boolean
+    SSO_PROVIDERS: string[]
     createLemonSqueezy: () => void
   }
 
@@ -50,6 +51,7 @@ HTMLDialogElement.prototype.close = vi.fn(function mock () {
 
 window.BASE_URL = 'http://test/'
 window.MAILER_CONFIGURED = true
+window.SSO_PROVIDERS = []
 
 window.createLemonSqueezy = vi.fn()
 

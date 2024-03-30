@@ -68,3 +68,9 @@ export const gravatar = (email: string, size = 192) => {
   const hash = md5(email.trim().toLowerCase())
   return `https://www.gravatar.com/avatar/${hash}?s=${size}&d=robohash`
 }
+
+export const openPopup = (url: string, name: string, width: number, height: number, parent: Window) => {
+  const y = parent.top!.outerHeight / 2 + parent.top!.screenY - (height / 2)
+  const x = parent.top!.outerWidth / 2 + parent.top!.screenX - (width / 2)
+  return parent.open(url, name, `toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${width}, height=${height}, top=${y}, left=${x}`)
+}

@@ -47,5 +47,21 @@ new class extends UnitTestCase {
       expect(screen.queryByText('Forgot password?')).toBeNull()
       window.MAILER_CONFIGURED = true
     })
+
+    it('shows Google login button', async () => {
+      window.SSO_PROVIDERS = ['Google']
+
+      const { html } = this.render(LoginFrom, {
+        global: {
+          stubs: {
+            GoogleLoginButton: this.stub('google-login-button')
+          }
+        }
+      })
+
+      expect(html()).toMatchSnapshot()
+
+      window.SSO_PROVIDERS = []
+    })
   }
 }
