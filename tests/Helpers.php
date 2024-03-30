@@ -14,6 +14,11 @@ function create_admin(array $attributes = []): User
     return User::factory()->admin()->create($attributes);
 }
 
+function create_user_prospect(array $attributes = []): User
+{
+    return User::factory()->prospect()->create($attributes);
+}
+
 function test_path(string $path = ''): string
 {
     return base_path('tests' . DIRECTORY_SEPARATOR . ltrim($path, DIRECTORY_SEPARATOR));

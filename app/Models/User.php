@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Casts\UserPreferencesCast;
+use App\Facades\License;
 use App\Values\UserPreferences;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\PersonalAccessToken;
 
@@ -24,6 +26,7 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @property string $name
  * @property string $email
  * @property string $password
+ * @property-read bool $has_custom_avatar
  * @property-read string $avatar
  * @property Collection|array<array-key, Playlist> $playlists
  * @property Collection|array<array-key, PlaylistFolder> $playlist_folders
@@ -34,6 +37,9 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @property ?Carbon $invited_at
  * @property-read bool $is_prospect
  * @property Collection|array<array-key, Playlist> $collaboratedPlaylists
+ * @property ?string $sso_provider
+ * @property ?string $sso_id
+ * @property bool $is_sso
  */
 class User extends Authenticatable
 {
@@ -80,13 +86,27 @@ class User extends Authenticatable
         return Attribute::get(function (): string {
             $avatar = Arr::get($this->attributes, 'avatar');
 
+            if (Str::startsWith($avatar, ['http://', 'https://'])) {
+                return $avatar;
+            }
+
             return $avatar ? user_avatar_url($avatar) : gravatar($this->email);
         });
+    }
+
+    protected function hasCustomAvatar(): Attribute
+    {
+        return Attribute::get(fn (): bool => (bool) $this->attributes['avatar']);
     }
 
     protected function isProspect(): Attribute
     {
         return Attribute::get(fn (): bool => (bool) $this->invitation_token);
+    }
+
+    protected function isSso(): Attribute
+    {
+        return Attribute::get(fn (): bool => License::isPlus() && $this->sso_provider);
     }
 
     /**

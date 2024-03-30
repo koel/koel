@@ -24,17 +24,24 @@
       </a>
     </form>
 
+    <div v-if="ssoProviders.length" v-show="!showingForgotPasswordForm" class="sso">
+      <GoogleLoginButton v-if="ssoProviders.includes('Google')" @error="onSSOError" @success="onSSOSuccess" />
+    </div>
+
     <ForgotPasswordForm v-if="showingForgotPasswordForm" @cancel="showingForgotPasswordForm = false" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { authService } from '@/services'
+import { authService, CompositeToken } from '@/services'
+import { logger } from '@/utils'
+import { useMessageToaster, useRouter } from '@/composables'
 
 import Btn from '@/components/ui/Btn.vue'
 import PasswordField from '@/components/ui/PasswordField.vue'
 import ForgotPasswordForm from '@/components/auth/ForgotPasswordForm.vue'
+import GoogleLoginButton from '@/components/auth/sso/GoogleLoginButton.vue'
 
 const DEMO_ACCOUNT = {
   email: 'demo@koel.dev',
@@ -42,6 +49,7 @@ const DEMO_ACCOUNT = {
 }
 
 const canResetPassword = window.MAILER_CONFIGURED && !window.IS_DEMO
+const ssoProviders = window.SSO_PROVIDERS || []
 
 const email = ref(window.IS_DEMO ? DEMO_ACCOUNT.email : '')
 const password = ref(window.IS_DEMO ? DEMO_ACCOUNT.password : '')
@@ -65,6 +73,16 @@ const login = async () => {
     failed.value = true
     window.setTimeout(() => (failed.value = false), 2000)
   }
+}
+
+const onSSOError = (error: any) => {
+  logger.error('SSO error: ', error)
+  useMessageToaster().toastError('Login failed. Please try again.')
+}
+
+const onSSOSuccess = (token: CompositeToken) => {
+  authService.setTokensUsingCompositeToken(token)
+  emit('loggedin')
 }
 </script>
 
@@ -94,13 +112,23 @@ const login = async () => {
 }
 
 .login-wrapper {
-  @include vertical-center();
+  min-height: 100vh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: center;
+}
 
-  height: 100vh;
+.sso {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
 }
 
 form {
-  width: 280px;
+  width: 276px;
   padding: 1.8rem;
   background: rgba(255, 255, 255, .08);
   border-radius: .6rem;
@@ -125,7 +153,8 @@ form {
     font-size: .95rem;
   }
 
-  @media only screen and (max-width: 414px) {
+  @media only screen and (max-width: 480px) {
+    width: 100vw;
     border: 0;
     background: transparent;
   }

@@ -49,6 +49,10 @@ const requestResetPasswordLink = async () => {
 form {
   min-width: 480px;
 
+  @media screen and (max-width: 480px) {
+    min-width: 100%;
+  }
+
   h1 {
     margin-bottom: .75rem;
   }
@@ -56,13 +60,26 @@ form {
   > div {
     display: flex;
 
+    @media screen and (max-width: 480px) {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
     input {
       flex: 1;
       border-radius: var(--border-radius-input) 0 0 var(--border-radius-input);
+
+      @media screen and (max-width: 480px) {
+        border-radius: var(--border-radius-input);
+      }
     }
 
     [type=submit] {
       border-radius: 0 var(--border-radius-input) var(--border-radius-input) 0;
+
+      @media screen and (max-width: 480px) {
+        border-radius: var(--border-radius-input);
+      }
     }
   }
 }

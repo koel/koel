@@ -1,5 +1,6 @@
 <?php
 
+use App\Facades\License;
 use Illuminate\Support\Facades\File as FileFacade;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -105,4 +106,24 @@ function gravatar(string $email, int $size = 192): string
 function mailer_configured(): bool
 {
     return config('mail.default') && !in_array(config('mail.default'), ['log', 'array'], true);
+}
+
+/** @return array<string> */
+function collect_sso_providers(): array
+{
+    if (License::isCommunity()) {
+        return [];
+    }
+
+    $providers = [];
+
+    if (
+        config('services.google.client_id')
+        && config('services.google.client_secret')
+        && config('services.google.hd')
+    ) {
+        $providers[] = 'Google';
+    }
+
+    return $providers;
 }

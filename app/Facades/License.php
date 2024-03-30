@@ -2,6 +2,7 @@
 
 namespace App\Facades;
 
+use App\Exceptions\KoelPlusRequiredException;
 use Illuminate\Support\Facades\Facade;
 
 /**
@@ -11,6 +12,11 @@ use Illuminate\Support\Facades\Facade;
  */
 class License extends Facade
 {
+    public static function requirePlus(): void
+    {
+        throw_unless(static::isPlus(), KoelPlusRequiredException::class);
+    }
+
     protected static function getFacadeAccessor(): string
     {
         return 'License';

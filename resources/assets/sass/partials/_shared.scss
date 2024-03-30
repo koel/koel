@@ -69,8 +69,8 @@ textarea,
     display: block;
   }
 
-  &[disabled] {
-    opacity: .5;
+  &[disabled], &[readonly] {
+    background: rgba(255, 255, 255, .7);
     cursor: not-allowed;
   }
 

@@ -126,7 +126,7 @@ form {
     width: 100%;
   }
 
-  @media only screen and (max-width: 414px) {
+  @media only screen and (max-width: 480px) {
     border: 0;
     background: transparent;
   }

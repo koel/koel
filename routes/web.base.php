@@ -9,8 +9,10 @@ use App\Http\Controllers\Download\DownloadPlaylistController;
 use App\Http\Controllers\Download\DownloadSongsController;
 use App\Http\Controllers\LastfmController;
 use App\Http\Controllers\PlayController;
+use App\Http\Controllers\SSO\GoogleCallbackController;
 use App\Http\Controllers\ViewSongOnITunesController;
 use Illuminate\Support\Facades\Route;
+use Laravel\Socialite\Facades\Socialite;
 
 Route::middleware('web')->group(static function (): void {
     Route::get('/', static fn () => view('index'));
@@ -27,6 +29,9 @@ Route::middleware('web')->group(static function (): void {
             Route::get('itunes/song/{album}', ViewSongOnITunesController::class)->name('iTunes.viewSong');
         }
     });
+
+    Route::get('auth/google/redirect', static fn () => Socialite::driver('google')->redirect());
+    Route::get('auth/google/callback', GoogleCallbackController::class);
 
     Route::get('dropbox/authorize', AuthorizeDropboxController::class)->name('dropbox.authorize');
 

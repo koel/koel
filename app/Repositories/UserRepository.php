@@ -1,8 +1,11 @@
 <?php
 
+/** @noinspection PhpIncompatibleReturnTypeInspection */
+
 namespace App\Repositories;
 
 use App\Models\User;
+use Laravel\Socialite\Contracts\User as SocialiteUser;
 
 class UserRepository extends Repository
 {
@@ -13,6 +16,15 @@ class UserRepository extends Repository
 
     public function findOneByEmail(string $email): ?User
     {
-        return User::query()->where('email', $email)->first();
+        return User::query()->firstWhere('email', $email);
+    }
+
+    public function findOneBySocialiteUser(SocialiteUser $socialiteUser, string $provider): ?User
+    {
+        // we prioritize the SSO ID over the email address, but still resort to the latter
+        return User::query()->firstWhere([
+            'sso_id' => $socialiteUser->getId(),
+            'sso_provider' => $provider,
+        ]) ?? $this->findOneByEmail($socialiteUser->getEmail());
     }
 }

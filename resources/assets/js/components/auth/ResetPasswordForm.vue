@@ -44,8 +44,9 @@ const submit = async () => {
   try {
     loading.value = true
     await authService.resetPassword(email.value, password.value, token.value)
-    toastSuccess('Password updated. Please log in with your new password.')
-    setTimeout(() => go('/', true), 3000)
+    toastSuccess('Password set.')
+    await authService.login(email.value, password.value)
+    setTimeout(() => go('/', true))
   } catch (err: any) {
     toastError(err.response?.data?.message || 'Failed to set new password. Please try again.')
   } finally {
@@ -73,6 +74,11 @@ form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+
+  @media screen and (max-width: 480px) {
+    width: 100vw;
+    background: transparent;
+  }
 
   .help {
     display: block;

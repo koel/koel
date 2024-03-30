@@ -1,8 +1,12 @@
 <template>
   <form data-testid="update-profile-form" @submit.prevent="update">
+    <AlertBox v-if="currentUser.sso_provider">
+      You’re logging in via Single Sign On provided by <strong>{{ currentUser.sso_provider }}</strong>.
+      You can still update your name and avatar here.
+    </AlertBox>
     <div class="profile form-row">
       <div class="left">
-        <div class="form-row">
+        <div v-if="!currentUser.sso_provider" class="form-row">
           <label>
             Current Password
             <input
@@ -20,7 +24,7 @@
         <div class="form-row">
           <label>
             Name
-            <input id="inputProfileName" v-model="profile.name" name="name" required type="text" data-testid="name">
+            <input id="inputProfileName" v-model="profile.name" data-testid="name" name="name" required type="text">
           </label>
         </div>
 
@@ -28,13 +32,18 @@
           <label>
             Email Address
             <input
-              id="inputProfileEmail" v-model="profile.email" name="email" required type="email"
+              id="inputProfileEmail"
+              v-model="profile.email"
+              :readonly="currentUser.sso_provider"
               data-testid="email"
+              name="email"
+              required
+              type="email"
             >
           </label>
         </div>
 
-        <div class="form-row">
+        <div v-if="!currentUser.sso_provider" class="form-row">
           <label>
             New Password
             <PasswordField
@@ -65,14 +74,14 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
-import { userStore } from '@/stores'
 import { authService, UpdateCurrentProfileData } from '@/services'
 import { logger, parseValidationError } from '@/utils'
-import { useDialogBox, useMessageToaster } from '@/composables'
+import { useDialogBox, useMessageToaster, useAuthorization } from '@/composables'
 
 import Btn from '@/components/ui/Btn.vue'
 import PasswordField from '@/components/ui/PasswordField.vue'
 import EditableProfileAvatar from '@/components/profile-preferences/EditableProfileAvatar.vue'
+import AlertBox from '@/components/ui/AlertBox.vue'
 
 const { toastSuccess } = useMessageToaster()
 const { showErrorDialog } = useDialogBox()
@@ -81,11 +90,13 @@ const profile = ref<UpdateCurrentProfileData>({} as UpdateCurrentProfileData)
 
 const isDemo = window.IS_DEMO
 
+const { currentUser } = useAuthorization()
+
 onMounted(() => {
   profile.value = {
-    name: userStore.current.name,
-    email: userStore.current.email,
-    avatar: userStore.current.avatar,
+    name: currentUser.value.name,
+    email: currentUser.value.email,
+    avatar: currentUser.value.avatar,
     current_password: null
   }
 })
@@ -117,6 +128,10 @@ const update = async () => {
 form {
   width: 66%;
 
+  @media (max-width: 1024px) {
+    width: 100%;
+  }
+
   input {
     width: 100%;
   }
@@ -126,8 +141,16 @@ form {
     align-items: flex-start;
     gap: 2.5rem;
 
+    @media (max-width: 1024px) {
+      flex-direction: column;
+    }
+
     .left {
       width: 50%;
+
+      @media (max-width: 1024px) {
+        width: 100%;
+      }
     }
   }
 }

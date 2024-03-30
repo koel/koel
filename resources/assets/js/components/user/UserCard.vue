@@ -7,12 +7,20 @@
         <span v-if="user.name" class="name">{{ user.name }}</span>
         <span v-else class="name anonymous">Anonymous</span>
         <Icon v-if="isCurrentUser" :icon="faCircleCheck" class="you text-highlight" title="This is you!" />
-        <icon
+        <Icon
           v-if="user.is_admin"
           :icon="faShield"
           class="is-admin text-blue"
           title="User has admin privileges"
         />
+        <img
+          v-if="user.sso_provider === 'Google'"
+          title="Google SSO"
+          :src="googleLogo"
+          alt="Google"
+          width="14"
+          height="14"
+        >
       </h1>
 
       <p class="email text-secondary">{{ user.email }}</p>
@@ -33,6 +41,7 @@
 </template>
 
 <script lang="ts" setup>
+import googleLogo from '@/../img/logos/google.svg'
 import { faCircleCheck, faShield } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
 import { userStore } from '@/stores'
@@ -114,10 +123,9 @@ const revokeInvite = async () => {
   h1 {
     font-size: 1rem;
     font-weight: var(--font-weight-normal);
-
-    > * + * {
-      margin-left: .5rem
-    }
+    display: flex;
+    align-items: center;
+    gap: .5rem
   }
 
   .actions {
