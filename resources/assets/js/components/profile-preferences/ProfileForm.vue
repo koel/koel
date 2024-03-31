@@ -1,7 +1,12 @@
 <template>
   <form data-testid="update-profile-form" @submit.prevent="update">
     <AlertBox v-if="currentUser.sso_provider">
-      You’re logging in via Single Sign On provided by <strong>{{ currentUser.sso_provider }}</strong>.
+      <template v-if="currentUser.sso_provider === 'Reverse Proxy'">
+        You’re authenticated by a reverse proxy.
+      </template>
+      <template v-else>
+        You’re logging in via Single Sign On provided by <strong>{{ currentUser.sso_provider }}</strong>.
+      </template>
       You can still update your name and avatar here.
     </AlertBox>
     <div class="profile form-row">

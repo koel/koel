@@ -85,6 +85,12 @@ const onUserLoggedIn = async () => {
 }
 
 onMounted(async () => {
+  // If the user is authenticated via a proxy, we have the token in the window object.
+  // Simply forward it to the authService and continue with the normal flow.
+  if (window.AUTH_TOKEN) {
+    authService.setTokensUsingCompositeToken(window.AUTH_TOKEN)
+  }
+
   // The app has just been initialized, check if we can get the user data with an already existing token
   if (authService.hasApiToken()) {
     await init()

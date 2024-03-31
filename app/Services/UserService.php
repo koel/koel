@@ -6,11 +6,10 @@ use App\Exceptions\UserProspectUpdateDeniedException;
 use App\Facades\License;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use App\Values\SSOUser;
 use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
-use Laravel\Socialite\Contracts\User as SocialiteUser;
-use Webmozart\Assert\Assert;
 
 class UserService
 {
@@ -33,7 +32,7 @@ class UserService
     ): User {
         if ($ssoProvider) {
             License::requirePlus();
-            Assert::oneOf($ssoProvider, ['Google']);
+            SSOUser::assertValidProvider($ssoProvider);
         }
 
         return User::query()->create([
@@ -47,31 +46,30 @@ class UserService
         ]);
     }
 
-    public function createOrUpdateUserFromSocialiteUser(SocialiteUser $socialiteUser, string $provider): User
+    public function createOrUpdateUserFromSSO(SSOUser $ssoUser): User
     {
         License::requirePlus();
-        Assert::oneOf($provider, ['Google']);
 
-        $existingUser = $this->repository->findOneBySocialiteUser($socialiteUser, $provider);
+        $existingUser = $this->repository->findOneBySSO($ssoUser);
 
         if ($existingUser) {
             $existingUser->update([
-                'avatar' => $existingUser->has_custom_avatar ? $existingUser->avatar : $socialiteUser->getAvatar(),
-                'sso_id' => $socialiteUser->getId(),
-                'sso_provider' => $provider,
+                'avatar' => $existingUser->has_custom_avatar ? $existingUser->avatar : $ssoUser->avatar,
+                'sso_id' => $ssoUser->id,
+                'sso_provider' => $ssoUser->provider,
             ]);
 
             return $existingUser;
         }
 
         return $this->createUser(
-            name: $socialiteUser->getName(),
-            email: $socialiteUser->getEmail(),
+            name: $ssoUser->name,
+            email: $ssoUser->email,
             plainTextPassword: '',
             isAdmin: false,
-            avatar: $socialiteUser->getAvatar(),
-            ssoId: $socialiteUser->getId(),
-            ssoProvider: $provider
+            avatar: $ssoUser->avatar,
+            ssoId: $ssoUser->id,
+            ssoProvider: $ssoUser->provider,
         );
     }
 

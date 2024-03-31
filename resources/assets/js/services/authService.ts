@@ -11,11 +11,6 @@ export interface UpdateCurrentProfileData {
   new_password?: string
 }
 
-export interface CompositeToken {
-  'audio-token': string
-  'token': string
-}
-
 const API_TOKEN_STORAGE_KEY = 'api-token'
 const AUDIO_TOKEN_STORAGE_KEY = 'audio-token'
 

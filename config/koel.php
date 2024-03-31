@@ -141,6 +141,13 @@ return [
 
     'sync_log_level' => env('SYNC_LOG_LEVEL', 'error'),
 
+    'proxy_auth' => [
+        'enabled' => env('PROXY_AUTH_ENABLED', false),
+        'user_header' => env('PROXY_AUTH_USER_HEADER', 'remote-user'),
+        'preferred_name_header' => env('PROXY_AUTH_PREFERRED_NAME_HEADER', 'remote-preferred-name'),
+        'allow_list' => array_map(static fn ($entry) => trim($entry), explode(',', env('PROXY_AUTH_ALLOW_LIST', ''))),
+    ],
+
     'misc' => [
         'home_url' => 'https://koel.dev',
         'docs_url' => 'https://docs.koel.dev',
