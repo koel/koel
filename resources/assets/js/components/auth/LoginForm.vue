@@ -34,9 +34,9 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { authService, CompositeToken } from '@/services'
+import { authService } from '@/services'
 import { logger } from '@/utils'
-import { useMessageToaster, useRouter } from '@/composables'
+import { useMessageToaster } from '@/composables'
 
 import Btn from '@/components/ui/Btn.vue'
 import PasswordField from '@/components/ui/PasswordField.vue'

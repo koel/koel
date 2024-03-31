@@ -7,6 +7,7 @@ use App\Http\Controllers\Download\DownloadArtistController;
 use App\Http\Controllers\Download\DownloadFavoritesController;
 use App\Http\Controllers\Download\DownloadPlaylistController;
 use App\Http\Controllers\Download\DownloadSongsController;
+use App\Http\Controllers\IndexController;
 use App\Http\Controllers\LastfmController;
 use App\Http\Controllers\PlayController;
 use App\Http\Controllers\SSO\GoogleCallbackController;
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 
 Route::middleware('web')->group(static function (): void {
-    Route::get('/', static fn () => view('index'));
+    Route::get('/', IndexController::class);
 
     Route::get('remote', static fn () => view('remote'));
 

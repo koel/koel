@@ -55,13 +55,19 @@ interface Constructable<T> {
   new (...args: any): T
 }
 
-type SSOProvider = 'Google' | 'Facebook'
+interface CompositeToken {
+  'audio-token': string
+  token: string
+}
+
+type SSOProvider = 'Google' | 'Reverse Proxy'
 
 interface Window {
   BASE_URL: string
   MAILER_CONFIGURED: boolean
   IS_DEMO: boolean
-  SSO_PROVIDERS: SSOProvider[] // not supporting Facebook yet, though
+  SSO_PROVIDERS: SSOProvider[]
+  AUTH_TOKEN: CompositeToken | null
 
   readonly PUSHER_APP_KEY: string
   readonly PUSHER_APP_CLUSTER: string
