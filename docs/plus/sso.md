@@ -1,7 +1,7 @@
 # Single Sign-On
 
 Apart from the default authentication mechanism with email and password, users can also log in to Koel Plus via Single Sign-On (SSO).
-The only supported SSO provider as of current is Google, with more to come in the future.
+As of current, the only supported SSO provider is Google, with more to come in the future.
 
 ## Google
 
@@ -33,9 +33,9 @@ Clicking on the Google button will open a new window where you can log in with y
 ## User Management
 
 When a user logs in via SSO for the first time, a new user account will be created in Koel with the email address, name, avatar, and the SSO ID obtained from the SSO provider.
-If, however, there's already an existing user with the same email address , Koel will merge the two accounts with a sensible strategy.
+If, however, there's already an existing user with the same email address , Koel will merge the two accounts with a sensible merging strategy.
 
-SSO users can update their name and avatar, but not their email address. Also, a new user created via SSO will not have a password set, and will not be able to log in via the email+password method.
+SSO users can update their name and avatar, but not their email address. Furthermore, a new user created via SSO does not have a password set and won't be able to log in via the email+password method.
 
 <script lang="ts" setup>
 import googleOauth from '../assets/img/plus/google-oauth.webp'

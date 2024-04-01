@@ -10,7 +10,7 @@ Do NOT place your media files inside Koel’s directory. Though technically poss
 Once the media path is set, you can scan for songs (either manually or [using a cron job](../cli-commands#command-scheduling)), configure a watcher, or upload files directly via the web interface.
 
 :::tip Cloud Storage
-With [Koel Plus](../plus/what-is-koel-plus), you can also use cloud storage services like Amazon S3 or Dropbox to store your media files. Refer to [Storage Support](../plus/storage-support) for more details.
+With [Koel Plus](../plus/what-is-koel-plus), you can also use cloud storage services like Amazon S3 or Dropbox to store your media files. Refer to [Storage Support](../plus/cloud-storage-support) for more details.
 :::
 
 ## Scan via the Web interface
@@ -105,7 +105,7 @@ You can now verify that it works by `tail -f storage/logs/laravel.log` while mak
 ## Integration with AWS Lambda
 
 :::warning Deprecated
-Though still functional, this method is deprecated in favor of configuring S3 as a [cloud storage](../plus/storage-support).
+Though still functional, this method is deprecated in favor of configuring S3 as a [cloud storage](../plus/cloud-storage-support).
 :::
 
 Starting from version v3.0.0, Koel can work seamlessly with Amazon S3 with the help of the [official Koel-AWS package](https://github.com/koel/koel-aws). This allows you to run Koel in your server and have all media files hosted on S3.

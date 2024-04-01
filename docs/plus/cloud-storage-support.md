@@ -1,6 +1,6 @@
-# Storage Support
+# Cloud Storage Support
 
-In addition to storing your music on the same server as Koel’s installation via the `local` storage driver, 
+In addition to storing your music on the same server as Koel’s installation via the `local` storage driver,
 Koel Plus offers several different file storage options, including Amazon S3, S3-compatible services, Dropbox, and likely more in the future.
 This page will guide you through the process of setting up these storage options.
 
@@ -77,7 +77,7 @@ AWS_BUCKET=koel
 
 ### Cloudflare R2
 
-[Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/) is yet another excellent choice for an S3-compatible service. 
+[Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/) is yet another excellent choice for an S3-compatible service.
 The setup is pretty much similar to the above:
 
 <CaptionedImage :src="r2CreateBucket" alt="Create CF R2 bucket screen">Create a Cloudflare R2 bucket</CaptionedImage>
@@ -105,10 +105,10 @@ Koel Plus also supports using Dropbox as a storage driver, although the setup is
     <CaptionedImage :src="dropboxAppSettings" alt="Dropbox app permissions">Set sufficient app permissions</CaptionedImage>
 2. Under your Dropbox app's Settings tab, make a note of the "App key" and "App secret" values. Now, from the root folder of your Koel installation, run the following command:
     ```bash
-    php artisan koel:storage:dropbox 
+    php artisan koel:storage:dropbox
     ```
     You'll be prompted to enter the "App key" and "App secret" values obtained earlier.
-3. Koel will generate a URL for you to visit and authorize the Dropbox app. Afterward, you'll receive an access code. 
+3. Koel will generate a URL for you to visit and authorize the Dropbox app. Afterward, you'll receive an access code.
 4. Enter the access code back into the command line's prompt. Koel will then finalize the setup automatically and start using Dropbox as its storage.
 
 Now when you upload music files to Koel, they'll be stored in your Dropbox app's folder.
