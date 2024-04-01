@@ -5,7 +5,7 @@
         You’re authenticated by a reverse proxy.
       </template>
       <template v-else>
-        You’re logging in via Single Sign On provided by <strong>{{ currentUser.sso_provider }}</strong>.
+        You’re logging in via single sign-on provided by <strong>{{ currentUser.sso_provider }}</strong>.
       </template>
       You can still update your name and avatar here.
     </AlertBox>

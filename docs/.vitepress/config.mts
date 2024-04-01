@@ -74,6 +74,7 @@ export default defineConfig({
           { text: 'Purchase & Activation', link: '/plus/purchase-activation' },
           { text: 'Storage Support', link: '/plus/storage-support' },
           { text: 'Collaboration', link: '/plus/collaboration' },
+          { text: 'Single Sign-On', link: '/plus/sso' },
         ]
       },
       {
