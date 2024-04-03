@@ -1,11 +1,11 @@
 <template>
   <section class="text-secondary">
-    <h1>
+    <h3>
       <span class="lastfm-icon">
         <Icon :icon="faLastfm" />
       </span>
       Last.fm Integration
-    </h1>
+    </h3>
 
     <div v-if="useLastfm" data-testid="lastfm-integrated">
       <p>Last.fm integration is enabled. Koel will attempt to retrieve album and artist information from Last.fm.</p>

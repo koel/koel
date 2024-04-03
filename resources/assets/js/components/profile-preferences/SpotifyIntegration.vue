@@ -1,11 +1,11 @@
 <template>
   <section class="text-secondary">
-    <h1>
+    <h3>
       <span class="spotify-icon">
         <Icon :icon="faSpotify" />
       </span>
       Spotify Integration
-    </h1>
+    </h3>
 
     <div v-if="useSpotify">
       <p>

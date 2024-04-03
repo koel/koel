@@ -9,6 +9,7 @@ use App\Values\CompositeToken;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Passwords\PasswordBroker;
 use Illuminate\Hashing\HashManager;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Password;
 
 class AuthenticationService
@@ -69,5 +70,13 @@ class AuthenticationService
         });
 
         return $status === Password::PASSWORD_RESET;
+    }
+
+    public function generateOneTimeToken(User $user): string
+    {
+        $token = bin2hex(random_bytes(16));
+        Cache::set("one-time-token.$user->id", $token, 60 * 10);
+
+        return $token;
     }
 }

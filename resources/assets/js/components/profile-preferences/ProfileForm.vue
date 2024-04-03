@@ -131,12 +131,6 @@ const update = async () => {
 
 <style lang="scss" scoped>
 form {
-  width: 66%;
-
-  @media (max-width: 1024px) {
-    width: 100%;
-  }
-
   input {
     width: 100%;
   }
