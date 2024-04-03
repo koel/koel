@@ -3,35 +3,121 @@
     <ScreenHeader>Profile &amp; Preferences</ScreenHeader>
 
     <div class="main-scroll-wrap">
-      <ProfileForm />
-      <ThemeList />
-      <PreferencesForm />
-      <SpotifyIntegration />
-      <LastfmIntegration />
+      <main class="tabs">
+        <div class="clear" role="tablist">
+          <button
+            role="tab"
+            :aria-selected="currentTab === 'profile'"
+            aria-controls="profilePaneProfile"
+            @click.prevent="currentTab = 'profile'"
+          >
+            Profile
+          </button>
+          <button
+            role="tab"
+            :aria-selected="currentTab === 'preferences'"
+            aria-controls="profilePanePreferences"
+            @click.prevent="currentTab = 'preferences'"
+          >
+            Preferences
+          </button>
+          <button
+            role="tab"
+            :aria-selected="currentTab === 'themes'"
+            aria-controls="profilePaneThemes"
+            @click.prevent="currentTab = 'themes'"
+          >
+            Themes
+          </button>
+          <button
+            role="tab"
+            :aria-selected="currentTab === 'integrations'"
+            aria-controls="profilePaneIntegrations"
+            @click.prevent="currentTab = 'integrations'"
+          >
+            Integrations
+          </button>
+          <button
+            role="tab"
+            :aria-selected="currentTab === 'qr'"
+            aria-controls="profilePaneQr"
+            @click.prevent="currentTab = 'qr'"
+          >
+            <QrCodeIcon :size="16" />
+          </button>
+        </div>
+
+        <div class="panes">
+          <div
+            v-show="currentTab === 'profile'"
+            id="profilePaneProfile"
+            role="tabpanel"
+            aria-labelledby="profilePaneProfile"
+            tabindex="0"
+          >
+            <ProfileForm />
+          </div>
+
+          <div
+            v-if="currentTab === 'preferences'"
+            id="profilePanePreferences"
+            role="tabpanel"
+            aria-labelledby="profilePanePreferences"
+            tabindex="0"
+          >
+            <PreferencesForm />
+          </div>
+
+          <div
+            v-if="currentTab === 'themes'"
+            id="profilePaneThemes"
+            role="tabpanel"
+            tabindex="0"
+            aria-labelledby="profilePaneThemes"
+          >
+            <ThemeList />
+          </div>
+
+          <div
+            v-if="currentTab === 'integrations'"
+            id="profilePaneIntegrations"
+            role="tabpanel"
+            tabindex="0"
+            aria-labelledby="profilePaneIntegrations"
+          >
+            <Integrations />
+          </div>
+
+          <div
+            v-if="currentTab === 'qr'"
+            id="profilePaneQr"
+            role="tabpanel"
+            aria-labelledby="profilePaneQr"
+            tabindex="0"
+          >
+            <QRLogin />
+          </div>
+        </div>
+      </main>
     </div>
   </section>
 </template>
 
 <script lang="ts" setup>
+import { ref, watch } from 'vue'
+import { QrCodeIcon } from 'lucide-vue-next'
+import { useLocalStorage } from '@/composables'
+
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ProfileForm from '@/components/profile-preferences/ProfileForm.vue'
-import SpotifyIntegration from '@/components/profile-preferences/SpotifyIntegration.vue'
-import LastfmIntegration from '@/components/profile-preferences/LastfmIntegration.vue'
 import PreferencesForm from '@/components/profile-preferences/PreferencesForm.vue'
 import ThemeList from '@/components/profile-preferences/ThemeList.vue'
+import Integrations from '@/components/profile-preferences/Integrations.vue'
+import QRLogin from '@/components/profile-preferences/QRLogin.vue'
+
+const { get, set } = useLocalStorage()
+
+const currentTab = ref(get<'profile' | 'preferences' | 'themes' | 'integrations' | 'qr'>('profileScreenTab', 'profile'))
+
+watch(currentTab, tab => set('profileScreenTab', tab))
 </script>
-
-<style lang="scss">
-#profileWrapper {
-  .main-scroll-wrap > * + * {
-    margin-top: 1.75rem;
-    padding-top: 1.75rem;
-    border-top: 1px solid var(--color-background-secondary);
-  }
-
-  .main-scroll-wrap h1 {
-    font-size: 1.85rem;
-    margin-bottom: 1.25rem;
-  }
-}
-</style>

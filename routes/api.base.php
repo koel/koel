@@ -23,6 +23,7 @@ use App\Http\Controllers\API\FetchSongsForQueueController;
 use App\Http\Controllers\API\ForgotPasswordController;
 use App\Http\Controllers\API\GenreController;
 use App\Http\Controllers\API\GenreSongController;
+use App\Http\Controllers\API\GetOneTimeTokenController;
 use App\Http\Controllers\API\LambdaSongController as S3SongController;
 use App\Http\Controllers\API\LikeMultipleSongsController;
 use App\Http\Controllers\API\MovePlaylistSongsController;
@@ -73,6 +74,7 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
     Route::post('invitations/accept', [UserInvitationController::class, 'accept']);
 
     Route::middleware('auth')->group(static function (): void {
+        Route::get('one-time-token', GetOneTimeTokenController::class);
         Route::post('broadcasting/auth', static function (Request $request) {
             $pusher = new Pusher(
                 config('broadcasting.connections.pusher.key'),

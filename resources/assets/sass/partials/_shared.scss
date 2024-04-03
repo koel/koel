@@ -180,13 +180,15 @@ label {
 
   [role=tablist] {
     border-bottom: 2px solid rgba(255, 255, 255, .1);
+    padding: 0 1.25rem;
     display: flex;
+    gap: 0.3rem;
 
     [role=tab] {
+      position: relative;
       padding: .7rem 1.3rem;
-      margin-right: 0.2rem;
-      border-radius: 0;
-      opacity: .5;
+      border-radius: 4px 4px 0 0;
+      opacity: .7;
       background: rgba(255, 255, 255, .05);
       text-transform: uppercase;
       color: var(--color-text-secondary);
@@ -196,11 +198,8 @@ label {
         background: rgba(255, 255, 255, .1);
       }
 
-      &:first-child {
-        margin-left: 1.25rem;
-      }
-
       &[aria-selected=true] {
+        transition: none;
         color: var(--color-text-primary);
         background: rgba(255, 255, 255, .1);
         opacity: 1;

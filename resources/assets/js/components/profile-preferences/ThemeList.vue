@@ -1,6 +1,5 @@
 <template>
   <section>
-    <h1>Theme</h1>
     <ul class="themes">
       <li v-for="theme in themes" :key="theme.id" data-testid="theme-card">
         <ThemeCard :key="theme.id" :theme="theme" @selected="setTheme" />
@@ -24,11 +23,15 @@ const setTheme = (theme: Theme) => themeStore.setTheme(theme)
 .themes {
   display: grid;
   grid-auto-rows: 8rem;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: auto auto auto;
   grid-gap: .75rem 1rem;
 
-  @media only screen and (max-width: 667px) {
-    grid-template-columns: 1fr;
+  @media only screen and (max-width: 768px) {
+    grid-template-columns: auto auto;
+  }
+
+  @media only screen and (max-width: 480px) {
+    grid-template-columns: auto;
   }
 }
 </style>
