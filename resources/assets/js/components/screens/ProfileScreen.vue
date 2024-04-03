@@ -104,16 +104,17 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue'
 import { QrCodeIcon } from 'lucide-vue-next'
+import { defineAsyncComponent, ref, watch } from 'vue'
 import { useLocalStorage } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
-import ProfileForm from '@/components/profile-preferences/ProfileForm.vue'
-import PreferencesForm from '@/components/profile-preferences/PreferencesForm.vue'
-import ThemeList from '@/components/profile-preferences/ThemeList.vue'
-import Integrations from '@/components/profile-preferences/Integrations.vue'
-import QRLogin from '@/components/profile-preferences/QRLogin.vue'
+
+const ProfileForm = defineAsyncComponent(() => import('@/components/profile-preferences/ProfileForm.vue'))
+const PreferencesForm = defineAsyncComponent(() => import('@/components/profile-preferences/PreferencesForm.vue'))
+const ThemeList = defineAsyncComponent(() => import('@/components/profile-preferences/ThemeList.vue'))
+const Integrations = defineAsyncComponent(() => import('@/components/profile-preferences/Integrations.vue'))
+const QRLogin = defineAsyncComponent(() => import('@/components/profile-preferences/QRLogin.vue'))
 
 const { get, set } = useLocalStorage()
 

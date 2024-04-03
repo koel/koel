@@ -32,11 +32,12 @@ final class SSOUser
     public static function fromProxyAuthRequest(Request $request): self
     {
         $identifier = $request->header(config('koel.proxy_auth.user_header'));
+        $email = filter_var($identifier, FILTER_VALIDATE_EMAIL) ?: "$identifier@reverse.proxy";
 
         return new self(
             provider: 'Reverse Proxy',
             id: $identifier,
-            email: "$identifier@reverse-proxy",
+            email: $email,
             name: $request->header(config('koel.proxy_auth.preferred_name_header')) ?: $identifier,
             avatar: null,
         );
