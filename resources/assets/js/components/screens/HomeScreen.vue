@@ -2,7 +2,7 @@
   <section id="homeWrapper">
     <ScreenHeader layout="collapsed">{{ greeting }}</ScreenHeader>
 
-    <div v-koel-overflow-fade class="main-scroll-wrap" @scroll="scrolling">
+    <div v-koel-overflow-fade class="main-scroll-wrap">
       <ScreenEmptyState v-if="libraryEmpty">
         <template #icon>
           <Icon :icon="faVolumeOff" />

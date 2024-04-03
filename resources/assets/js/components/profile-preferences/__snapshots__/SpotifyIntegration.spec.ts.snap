@@ -2,7 +2,7 @@
 
 exports[`renders proper content with Spotify integration status false, current user admin status false 1`] = `
 <section data-v-49dda1f9="" class="text-secondary">
-  <h1 data-v-49dda1f9=""><span data-v-49dda1f9="" class="spotify-icon"><br data-v-49dda1f9="" data-testid="Icon" icon="[object Object]"></span> Spotify Integration </h1>
+  <h3 data-v-49dda1f9=""><span data-v-49dda1f9="" class="spotify-icon"><br data-v-49dda1f9="" data-testid="Icon" icon="[object Object]"></span> Spotify Integration </h3>
   <div data-v-49dda1f9="">
     <p data-v-49dda1f9=""> Spotify integration is not enabled.
       <!--v-if-->
@@ -13,7 +13,7 @@ exports[`renders proper content with Spotify integration status false, current u
 
 exports[`renders proper content with Spotify integration status false, current user admin status true 1`] = `
 <section data-v-49dda1f9="" class="text-secondary">
-  <h1 data-v-49dda1f9=""><span data-v-49dda1f9="" class="spotify-icon"><br data-v-49dda1f9="" data-testid="Icon" icon="[object Object]"></span> Spotify Integration </h1>
+  <h3 data-v-49dda1f9=""><span data-v-49dda1f9="" class="spotify-icon"><br data-v-49dda1f9="" data-testid="Icon" icon="[object Object]"></span> Spotify Integration </h3>
   <div data-v-49dda1f9="">
     <p data-v-49dda1f9=""> Spotify integration is not enabled. <span data-v-49dda1f9="" data-testid="spotify-admin-instruction"> Check <a data-v-49dda1f9="" href="https://docs.koel.dev/service-integrations#spotify" class="text-highlight" target="_blank"> Documentation </a> for instructions. </span></p>
   </div>
@@ -22,7 +22,7 @@ exports[`renders proper content with Spotify integration status false, current u
 
 exports[`renders proper content with Spotify integration status true, current user admin status false 1`] = `
 <section data-v-49dda1f9="" class="text-secondary">
-  <h1 data-v-49dda1f9=""><span data-v-49dda1f9="" class="spotify-icon"><br data-v-49dda1f9="" data-testid="Icon" icon="[object Object]"></span> Spotify Integration </h1>
+  <h3 data-v-49dda1f9=""><span data-v-49dda1f9="" class="spotify-icon"><br data-v-49dda1f9="" data-testid="Icon" icon="[object Object]"></span> Spotify Integration </h3>
   <div data-v-49dda1f9="">
     <p data-v-49dda1f9=""> Spotify integration is enabled. Koel will attempt to retrieve album arts and artist images from Spotify when a song is played, if needed. </p>
   </div>
@@ -31,7 +31,7 @@ exports[`renders proper content with Spotify integration status true, current us
 
 exports[`renders proper content with Spotify integration status true, current user admin status true 1`] = `
 <section data-v-49dda1f9="" class="text-secondary">
-  <h1 data-v-49dda1f9=""><span data-v-49dda1f9="" class="spotify-icon"><br data-v-49dda1f9="" data-testid="Icon" icon="[object Object]"></span> Spotify Integration </h1>
+  <h3 data-v-49dda1f9=""><span data-v-49dda1f9="" class="spotify-icon"><br data-v-49dda1f9="" data-testid="Icon" icon="[object Object]"></span> Spotify Integration </h3>
   <div data-v-49dda1f9="">
     <p data-v-49dda1f9=""> Spotify integration is enabled. Koel will attempt to retrieve album arts and artist images from Spotify when a song is played, if needed. </p>
   </div>

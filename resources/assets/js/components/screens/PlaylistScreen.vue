@@ -70,8 +70,8 @@
 <script lang="ts" setup>
 import { faFile } from '@fortawesome/free-regular-svg-icons'
 import { differenceBy } from 'lodash'
-import { computed, reactive, ref, toRef, watch } from 'vue'
-import { arrayify, eventBus, logger, pluralize } from '@/utils'
+import { ref, toRef, watch } from 'vue'
+import { eventBus, logger, pluralize } from '@/utils'
 import { commonStore, playlistStore, songStore } from '@/stores'
 import { downloadService, playlistCollaborationService } from '@/services'
 import { usePlaylistManagement, useRouter, useSongList, useAuthorization, useSongListControls } from '@/composables'
