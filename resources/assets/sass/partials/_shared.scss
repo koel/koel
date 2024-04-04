@@ -173,12 +173,11 @@ label {
 }
 
 .tabs {
-  display: flex;
-  flex-direction: column;
   min-height: 100%;
   position: relative;
 
   [role=tablist] {
+    overflow: auto;
     border-bottom: 2px solid rgba(255, 255, 255, .1);
     padding: 0 1.25rem;
     display: flex;
@@ -209,7 +208,6 @@ label {
 
   .panes {
     padding: 1.25rem;
-    flex: 1;
   }
 }
 
