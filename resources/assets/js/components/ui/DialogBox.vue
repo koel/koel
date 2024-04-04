@@ -72,7 +72,7 @@ const confirm = async (message: string, title: string = '') => show('confirm', m
 defineExpose({ success, info, warning, error, confirm })
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .dialog {
   --dialog-bg-color: #fff;
   --dialog-fg-color: #333;

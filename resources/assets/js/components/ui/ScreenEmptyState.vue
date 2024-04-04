@@ -11,7 +11,7 @@
   </div>
 </template>
 
-<style lang="scss">
+<style lang="postcss">
 .screen-empty-state {
   display: flex;
   place-content: center;
@@ -23,7 +23,7 @@
 
   > div {
     max-width: 75%;
-    padding: 0 2rem var(--header-height); // visually more balanced
+    padding: 0 2rem var(--header-height); /* visually more balanced */
     margin: auto 0;
 
     @media only screen and (max-width: 768px) {

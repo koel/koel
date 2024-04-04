@@ -41,7 +41,7 @@ const value = computed({
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .view-modes {
   display: flex;
   width: 64px;

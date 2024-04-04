@@ -56,7 +56,7 @@ onMounted(() => {
 onBeforeUnmount(() => observer.unobserve(scroller.value!))
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .virtual-scroller {
   will-change: transform;
   overflow: scroll;

@@ -14,7 +14,7 @@ exports[`renders 1`] = `
     <div class="form-row"><label for="inputSettingsPath">Media Path</label>
       <p id="mediaPathHelp" class="help"> The <em>absolute</em> path to the server directory containing your media. Koel will scan this directory for songs and extract any available information.<br> Scanning may take a while, especially if you have a lot of songs, so be patient. </p><input id="inputSettingsPath" aria-describedby="mediaPathHelp" name="media_path" type="text">
     </div>
-    <div class="form-row"><button data-v-e368fe26="" type="submit">Scan</button></div>
+    <div class="form-row"><button data-v-e368fe26="" class="inset-when-pressed" type="submit">Scan</button></div>
   </form>
 </section>
 `;

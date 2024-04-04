@@ -1,5 +1,5 @@
 <template>
-  <div class="reset-password-wrapper">
+  <div class="reset-password-wrapper vertical-center">
     <form v-if="validPayload" @submit.prevent="submit">
       <h1 class="font-size-1.5">Set New Password</h1>
       <div>
@@ -55,10 +55,8 @@ const submit = async () => {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
 .reset-password-wrapper {
-  @include vertical-center;
-
   height: 100vh;
 }
 

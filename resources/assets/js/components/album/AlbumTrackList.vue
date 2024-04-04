@@ -1,13 +1,13 @@
 <template>
-  <section class="track-listing">
-    <h1>Track Listing</h1>
+  <article class="track-listing">
+    <h3>Track Listing</h3>
 
     <ul class="tracks">
       <li v-for="(track, index) in tracks" :key="index" data-testid="album-track-item">
         <TrackListItem :album="album" :track="track" />
       </li>
     </ul>
-  </section>
+  </article>
 </template>
 
 <script lang="ts" setup>
@@ -28,12 +28,11 @@ provide(SongsKey, songs)
 onMounted(async () => songs.value = await songStore.fetchForAlbum(album.value))
 </script>
 
-<style lang="scss" scoped>
-section {
-  h1 {
+<style lang="postcss" scoped>
+article {
+  h3 {
     font-size: 1.4rem;
-    margin-bottom: 0;
-    display: block;
+    margin-bottom: 1rem;
   }
 
   ul {

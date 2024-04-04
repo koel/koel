@@ -216,7 +216,7 @@ exports[`edits a single song 1`] = `
       </div>
     </div>
   </main>
-  <footer data-v-d70eb300=""><button data-v-e368fe26="" data-v-d70eb300="" type="submit">Update</button><button data-v-e368fe26="" data-v-d70eb300="" class="btn-cancel" white="">Cancel</button></footer>
+  <footer data-v-d70eb300=""><button data-v-e368fe26="" data-v-d70eb300="" class="inset-when-pressed" type="submit">Update</button><button data-v-e368fe26="" data-v-d70eb300="" class="inset-when-pressed btn-cancel" white="">Cancel</button></footer>
 </form>
 `;
 
@@ -436,6 +436,6 @@ exports[`edits multiple songs 1`] = `
       <!--v-if-->
     </div>
   </main>
-  <footer data-v-d70eb300=""><button data-v-e368fe26="" data-v-d70eb300="" type="submit">Update</button><button data-v-e368fe26="" data-v-d70eb300="" class="btn-cancel" white="">Cancel</button></footer>
+  <footer data-v-d70eb300=""><button data-v-e368fe26="" data-v-d70eb300="" class="inset-when-pressed" type="submit">Update</button><button data-v-e368fe26="" data-v-d70eb300="" class="inset-when-pressed btn-cancel" white="">Cancel</button></footer>
 </form>
 `;

@@ -17,7 +17,7 @@ const value = computed({
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 input {
   width: 140px !important;
 }

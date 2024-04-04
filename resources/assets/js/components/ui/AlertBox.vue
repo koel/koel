@@ -24,7 +24,7 @@ const props = withDefaults(defineProps<{ type?: 'default' | 'info' | 'danger' | 
 })
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
 .alert-box {
   padding: 1rem;
   border-radius: 5px;
@@ -34,8 +34,10 @@ const props = withDefaults(defineProps<{ type?: 'default' | 'info' | 'danger' | 
   gap: 1rem;
   background-color: rgba(255, 255, 255, .1);
 
-  // though setting margins in components is not recommended, it's safe to assume that an alert box will be used
-  // in a context where this margin is desired
+  /*
+    though setting margins in components is not recommended, it's safe to assume that an alert box will be used
+    in a context where this margin is desired
+   */
   margin-bottom: 1.5rem;
 
   .text {

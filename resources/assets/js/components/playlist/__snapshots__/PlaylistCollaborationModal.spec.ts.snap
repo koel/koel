@@ -14,6 +14,6 @@ exports[`renders the modal 1`] = `
       <div data-v-886145d2="" class="collaborators-wrapper"><br data-v-886145d2="" data-testid="CollaboratorList" playlist="[object Object]"></div>
     </section>
   </main>
-  <footer data-v-886145d2=""><button data-v-e368fe26="" data-v-886145d2="">Close</button></footer>
+  <footer data-v-886145d2=""><button data-v-e368fe26="" data-v-886145d2="" class="inset-when-pressed">Close</button></footer>
 </div>
 `;

@@ -70,7 +70,7 @@ const removeCollaborator = async (collaborator: PlaylistCollaborator) => {
 onMounted(async () => await fetchCollaborators())
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
 ul {
   display: flex;
   width: 100%;

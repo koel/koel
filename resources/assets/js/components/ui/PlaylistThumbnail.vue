@@ -83,7 +83,7 @@ const onDrop = async (event: DragEvent) => {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
 .cover {
   position: relative;
   width: 100%;

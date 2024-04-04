@@ -9,7 +9,7 @@
 const width = Math.random() * 100 + 80
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .skeleton {
   display: flex;
   border-radius: 999rem;

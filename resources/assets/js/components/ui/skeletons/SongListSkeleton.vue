@@ -42,7 +42,7 @@
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .skeleton {
   .song-list-header {
     background: var(--color-bg-secondary);

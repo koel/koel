@@ -129,7 +129,7 @@ const update = async () => {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 form {
   input {
     width: 100%;

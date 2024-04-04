@@ -60,7 +60,7 @@ eventBus.on('PLAY_YOUTUBE_VIDEO', payload => {
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 :deep(#player) {
   height: 100%;
   flex: 1;

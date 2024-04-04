@@ -52,7 +52,7 @@ import doLogo from '../../assets/img/sponsors/do.svg'
 import whatTheDiffLogo from '../../assets/img/sponsors/what-the-diff.svg'
 </script>
 
-<style lang="scss">
+<style lang="postcss">
 div.sponsors {
   border-left: 1px solid var(--vp-c-divider);
   padding-left: 16px;

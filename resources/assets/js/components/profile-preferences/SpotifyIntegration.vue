@@ -36,9 +36,9 @@ const { currentUser, isAdmin } = useAuthorization();
 const { useSpotify } = useThirdPartyServices();
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
 .spotify-icon {
   margin-right: .4rem;
-  color: #1db954; // Spotify green
+  color: #1db954; /* Spotify green */
 }
 </style>

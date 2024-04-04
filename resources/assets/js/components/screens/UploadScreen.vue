@@ -102,7 +102,7 @@ const retryAll = () => uploadService.retryAll()
 const removeFailedEntries = () => uploadService.removeFailed()
 </script>
 
-<style lang="scss">
+<style lang="postcss">
 #uploadWrapper {
   .upload-panel {
     position: relative;

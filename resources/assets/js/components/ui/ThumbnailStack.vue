@@ -25,7 +25,7 @@ const displayedThumbnails = computed(() => {
 const layout = computed<'single' | 'tiles'>(() => displayedThumbnails.value.length < 4 ? 'single' : 'tiles')
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .thumbnail-stack {
   aspect-ratio: 1/1;
   display: grid;
@@ -39,7 +39,7 @@ const layout = computed<'single' | 'tiles'>(() => displayedThumbnails.value.leng
 
   span {
     display: block;
-    will-change: transform; // fix anti-aliasing problem with background images
+    will-change: transform; /* fix anti-aliasing problem with background images */
     width: 100%;
     height: 100%;
     background-size: cover;

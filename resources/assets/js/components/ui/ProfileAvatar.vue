@@ -18,7 +18,7 @@ import UserAvatar from '@/components/user/UserAvatar.vue'
 const { currentUser } = useAuthorization()
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 img {
   padding: 2px;
   border: 1px solid rgba(255, 255, 255, .1);

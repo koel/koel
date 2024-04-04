@@ -62,7 +62,7 @@ onMounted(() => {
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .extra-controls {
   display: flex;
   justify-content: flex-end;

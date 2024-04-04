@@ -55,7 +55,7 @@ const play = () => {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 article {
   display: flex;
   gap: 12px;
@@ -103,7 +103,7 @@ article {
     }
   }
 
-  // show the thumbnail's playback control on the whole card focus and hover
+  /* show the thumbnail's playback control on the whole card focus and hover */
   &:hover :deep(.cover), &:focus :deep(.cover) {
     .control {
       display: flex;

@@ -42,7 +42,7 @@ watch(preferenceStore.initialized, initialized => {
 }, { immediate: true })
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .support-bar {
   background: var(--color-bg-primary);
   font-size: .9rem;

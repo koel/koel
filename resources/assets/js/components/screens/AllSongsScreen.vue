@@ -168,10 +168,10 @@ onScreenActivated('Songs', async () => {
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .controls {
   width: 100%;
-  min-height: 32px; // prevent shrinking causing the jumping effect
+  min-height: 32px; /* prevent shrinking causing the jumping effect */
   display: flex;
   justify-content: space-between;
   align-items: center;

@@ -31,7 +31,7 @@ if (theme.value.thumbnailUrl) {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .theme {
   height: 100%;
   background-position: center;

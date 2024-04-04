@@ -14,7 +14,7 @@
 const props = withDefaults(defineProps<{ layout?: ArtistAlbumCardLayout }>(), { layout: 'full' })
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .skeleton {
   display: flex;
   flex-direction: column;

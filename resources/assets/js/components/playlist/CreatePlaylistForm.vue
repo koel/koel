@@ -98,7 +98,7 @@ const maybeClose = async () => {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 form {
   min-width: 100%;
 }

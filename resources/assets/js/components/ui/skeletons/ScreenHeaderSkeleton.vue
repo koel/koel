@@ -10,7 +10,7 @@
   </header>
 </template>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .skeleton {
   display: flex;
   align-items: flex-end;

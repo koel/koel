@@ -36,7 +36,7 @@ const playPrev = async () => await playbackService.playPrev()
 const playNext = async () => await playbackService.playNext()
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .playback-controls {
   flex: 1;
   display: flex;

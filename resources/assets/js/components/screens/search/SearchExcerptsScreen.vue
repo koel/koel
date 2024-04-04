@@ -123,7 +123,7 @@ eventBus.on('SEARCH_KEYWORDS_CHANGED', async _q => {
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .results > section {
   margin-bottom: 3em;
 }

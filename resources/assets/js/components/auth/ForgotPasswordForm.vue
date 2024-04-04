@@ -45,7 +45,7 @@ const requestResetPasswordLink = async () => {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
 form {
   min-width: 480px;
 

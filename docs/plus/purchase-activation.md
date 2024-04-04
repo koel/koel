@@ -69,7 +69,7 @@ onMounted(() => {
 })
 </script>
 
-<style lang="scss" module>
+<style lang="postcss" module>
 ol img {
   margin: 1.2rem 0;
 }

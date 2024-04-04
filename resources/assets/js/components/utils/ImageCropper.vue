@@ -49,7 +49,7 @@ const cancel = () => emits('cancel')
 </script>
 
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
 .cropper-wrapper {
   width: 100%;
   height: 100%;

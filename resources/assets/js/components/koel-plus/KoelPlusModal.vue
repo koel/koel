@@ -55,7 +55,7 @@ const hideActivateLicenseForm = () => (showingActivateLicenseForm.value = false)
 onMounted(() => window.createLemonSqueezy?.())
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
 .plus {
   max-width: 480px;
   display: flex;

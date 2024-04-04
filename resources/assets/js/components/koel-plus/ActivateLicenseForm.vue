@@ -40,7 +40,7 @@ const validateLicenseKey = async () => {
 </script>
 
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
 form {
   display: flex;
   align-items: stretch;

@@ -99,7 +99,7 @@ const maybeClose = async () => {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .help {
   margin-top: .75rem;
 }

@@ -10,8 +10,8 @@
 <script lang="ts" setup>
 </script>
 
-<style lang="scss">
-// can't be scoped as it would be overridden by the plyr css
+<style lang="postcss">
+/* can't be scoped as it would be overridden by the plyr css */
 .plyr {
   width: 100%;
   height: 4px;

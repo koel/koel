@@ -29,7 +29,7 @@ const props = withDefaults(defineProps<{
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 header.screen-header {
   --transition-duration: .3s;
 

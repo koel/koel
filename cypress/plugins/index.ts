@@ -11,6 +11,6 @@
 
 export default (on: () => void, config: Record<string, unknown>): Record<string, unknown> => {
   return Object.assign({}, config, {
-    supportFile: 'cypress/support/index.ts'
+    supportFile: 'cypress/support/main.ts'
   })
 }

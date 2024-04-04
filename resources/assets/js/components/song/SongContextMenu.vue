@@ -10,7 +10,7 @@
     </template>
     <li class="has-sub">
       Add To
-      <ul class="menu submenu menu-add-to">
+      <ul class="menu submenu menu-add-to context-menu">
         <template v-if="queue.length">
           <li v-if="currentSong" @click="queueSongsAfterCurrent">After Current Song</li>
           <li @click="queueSongsToBottom">Bottom of Queue</li>
@@ -224,7 +224,7 @@ eventBus.on('SONG_CONTEXT_MENU_REQUESTED', async ({ pageX, pageY }, _songs) => {
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 ul.playlists {
   position: relative;
   max-height: 192px;

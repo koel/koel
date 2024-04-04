@@ -76,7 +76,7 @@ const showInviteUserForm = () => eventBus.emit('MODAL_SHOW_INVITE_USER_FORM')
 onMounted(async () => await userStore.fetch())
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .users {
   display: flex;
   flex-direction: column;

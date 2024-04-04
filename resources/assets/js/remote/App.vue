@@ -55,7 +55,7 @@
       </main>
     </template>
 
-    <div v-else class="login-wrapper">
+    <div v-else class="login-wrapper vertical-center">
       <LoginForm @loggedin="onUserLoggedIn" />
     </div>
   </div>
@@ -206,9 +206,7 @@ onMounted(async () => {
 })
 </script>
 
-<style lang="scss">
-@import "#/remote.scss";
-
+<style lang="postcss">
 body, html {
   height: 100vh;
   position: relative;
@@ -222,8 +220,6 @@ body, html {
     display: flex;
     min-height: 100vh;
     flex-direction: column;
-
-    @include vertical-center();
   }
 
   .loader {

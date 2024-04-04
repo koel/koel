@@ -61,7 +61,7 @@ eventBus.on('FOCUS_SEARCH_FIELD', () => {
 })
 </script>
 
-<style lang="scss">
+<style lang="postcss">
 #searchForm {
   display: flex;
   align-items: stretch;

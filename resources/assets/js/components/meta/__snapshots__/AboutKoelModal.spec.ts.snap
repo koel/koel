@@ -12,6 +12,6 @@ exports[`renders 1`] = `
     <!--v-if--><br data-v-6b5b01a9="" data-testid="sponsor-list">
     <p data-v-6b5b01a9=""> Loving Koel? Please consider supporting its development via <a data-v-6b5b01a9="" href="https://github.com/users/phanan/sponsorship" rel="noopener" target="_blank">GitHub Sponsors</a> and/or <a data-v-6b5b01a9="" href="https://opencollective.com/koel" rel="noopener" target="_blank">OpenCollective</a>. </p>
   </main>
-  <footer data-v-6b5b01a9=""><button data-v-e368fe26="" data-v-6b5b01a9="" data-testid="close-modal-btn" red="" rounded="">Close</button></footer>
+  <footer data-v-6b5b01a9=""><button data-v-e368fe26="" data-v-6b5b01a9="" class="inset-when-pressed" data-testid="close-modal-btn" red="" rounded="">Close</button></footer>
 </div>
 `;

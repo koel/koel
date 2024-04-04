@@ -21,7 +21,7 @@ const value = computed({
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 label {
   font-size: 1rem;
   display: inline-block;

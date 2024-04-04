@@ -90,7 +90,7 @@ const revokeInvite = async () => {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .user-card {
   padding: 10px;
   display: flex;

@@ -77,7 +77,7 @@ const onCancel = () => (cropperSource.value = null)
 </script>
 
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
 .avatar {
   --w: 105px;
   outline: rgba(255, 255, 255, .1) solid 3px;

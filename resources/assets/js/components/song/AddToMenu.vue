@@ -82,7 +82,7 @@ const {
 watch(songs, () => songs.value.length || close())
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .add-to {
   width: 100%;
   max-width: 256px;

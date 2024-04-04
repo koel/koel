@@ -29,7 +29,7 @@ const readableMode = computed(() => mode.value
 const changeMode = () => playbackService.rotateRepeatMode()
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .fa-layers-counter {
   transform: none;
   font-size: .45rem;

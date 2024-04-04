@@ -9,7 +9,7 @@ const props = defineProps<{ user: Pick<User, 'name' | 'avatar'> }>()
 const { user } = toRefs(props)
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
 img {
   border-radius: 50%;
   aspect-ratio: 1/1;
