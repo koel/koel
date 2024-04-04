@@ -380,7 +380,7 @@ defineExpose({
 onMounted(() => render())
 </script>
 
-<style lang="scss">
+<style lang="postcss">
 .song-list-wrap {
   position: relative;
   display: flex;
@@ -395,7 +395,7 @@ onMounted(() => render())
   .song-list-header {
     background: var(--color-bg-secondary);
     display: flex;
-    z-index: 2; // fix stack-context related issue when e.g., footer would cover the sort context menu
+    z-index: 2; /* fix stack-context related issue when e.g., footer would cover the sort context menu */
   }
 
   &.dragging .song-item * {

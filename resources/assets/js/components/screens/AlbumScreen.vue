@@ -1,5 +1,5 @@
 <template>
-  <section v-if="album" id="albumWrapper">
+  <section v-if="album" id="albumWrapper" class="artist-album-info-wrapper">
     <ScreenHeaderSkeleton v-if="loading" />
 
     <ScreenHeader v-if="!loading && album" :layout="songs.length === 0 ? 'collapsed' : headerLayout">
@@ -67,14 +67,14 @@
 
       <div v-show="activeTab === 'OtherAlbums'" class="albums-pane" data-testid="albums-pane">
         <template v-if="otherAlbums">
-          <ul v-if="otherAlbums.length" v-koel-overflow-fade class="as-list">
+          <ul v-if="otherAlbums.length" v-koel-overflow-fade class="as-list artist-album-wrapper">
             <li v-for="a in otherAlbums" :key="a.id">
               <AlbumCard :album="a" layout="compact" />
             </li>
           </ul>
           <p v-else class="none text-secondary">No other albums by {{ album.artist_name }} found in the library.</p>
         </template>
-        <ul v-else class="as-list">
+        <ul v-else class="as-list artist-album-wrapper">
           <li v-for="i in 12" :key="i">
             <AlbumCardSkeleton layout="compact" />
           </li>
@@ -186,9 +186,3 @@ onScreenActivated('Album', () => (albumId.value = parseInt(getRouteParam('id')!)
 // if the current album has been deleted, go back to the list
 eventBus.on('SONGS_UPDATED', () => albumStore.byId(albumId.value!) || go('albums'))
 </script>
-
-<style lang="scss" scoped>
-#albumWrapper {
-  @include artist-album-info-wrapper();
-}
-</style>

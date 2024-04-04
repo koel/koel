@@ -15,7 +15,7 @@ import Sponsors from '../components/Sponsors.vue'
 const { Layout: BaseLayout } = DefaultTheme
 </script>
 
-<style lang="scss">
+<style lang="postcss">
 .aside-outline-after {
   margin-top: 1.5rem;
 }

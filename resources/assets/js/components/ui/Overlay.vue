@@ -37,7 +37,7 @@ const onCancel = () => state.dismissible && hide()
 defineExpose({ show, hide })
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 dialog {
   border: 0;
   padding: 0;

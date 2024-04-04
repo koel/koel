@@ -43,7 +43,7 @@ const { currentUser } = useAuthorization()
 const emit = defineEmits<{ (e: 'remove'): void }>()
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
 li {
   display: flex;
   align-items: center;

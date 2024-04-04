@@ -1,5 +1,5 @@
 <template>
-  <button ref="button">
+  <button ref="button" class="inset-when-pressed">
     <slot>Click me</slot>
   </button>
 </template>
@@ -14,7 +14,7 @@ defineExpose({
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 button {
   background: var(--color-blue);
   color: var(--color-text-primary);
@@ -38,8 +38,6 @@ button {
     font-size: .9rem;
     padding: .4rem .7rem;
   }
-
-  @include inset-when-pressed();
 
   &[green] {
     background-color: var(--color-green);

@@ -22,7 +22,7 @@
       ref="listEl"
       v-koel-overflow-fade
       :class="`as-${viewMode}`"
-      class="artists main-scroll-wrap"
+      class="artists main-scroll-wrap artist-album-wrapper"
       data-testid="artist-list"
     >
       <template v-if="showSkeletons">
@@ -95,11 +95,3 @@ useRouter().onScreenActivated('Artists', async () => {
   }
 })
 </script>
-
-<style lang="scss">
-#artistsWrapper {
-  .artists {
-    @include artist-album-wrapper();
-  }
-}
-</style>

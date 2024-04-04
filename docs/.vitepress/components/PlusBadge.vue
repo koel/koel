@@ -5,7 +5,7 @@
 <script lang="ts" setup>
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
 span {
   display: inline-block;
 

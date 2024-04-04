@@ -282,7 +282,7 @@ const submit = async () => {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 form {
   max-width: 540px;
 

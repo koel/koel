@@ -1,5 +1,5 @@
 <template>
-  <section v-if="artist" id="artistWrapper">
+  <section v-if="artist" id="artistWrapper" class="artist-album-info-wrapper">
     <ScreenHeaderSkeleton v-if="loading" />
 
     <ScreenHeader v-if="!loading && artist" :layout="songs.length === 0 ? 'collapsed' : headerLayout">
@@ -65,12 +65,12 @@
       </div>
 
       <div v-show="activeTab === 'Albums'" class="albums-pane">
-        <ul v-if="albums" v-koel-overflow-fade class="as-list">
+        <ul v-if="albums" v-koel-overflow-fade class="as-list artist-album-wrapper">
           <li v-for="album in albums" :key="album.id">
             <AlbumCard :album="album" layout="compact" />
           </li>
         </ul>
-        <ul v-else class="as-list">
+        <ul v-else class="as-list artist-album-wrapper">
           <li v-for="i in 12" :key="i">
             <AlbumCardSkeleton layout="compact" />
           </li>
@@ -175,11 +175,3 @@ onScreenActivated('Artist', () => (artistId.value = parseInt(getRouteParam('id')
 // if the current artist has been deleted, go back to the list
 eventBus.on('SONGS_UPDATED', () => artistStore.byId(artist.value!.id) || go('artists'))
 </script>
-
-<style lang="scss" scoped>
-@import "#/partials/_mixins.scss";
-
-#artistWrapper {
-  @include artist-album-info-wrapper();
-}
-</style>

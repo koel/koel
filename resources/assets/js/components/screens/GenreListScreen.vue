@@ -73,7 +73,7 @@ onMounted(async () => {
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .genres {
   text-align: center;
 
@@ -120,12 +120,34 @@ onMounted(async () => {
     }
   }
 
-  @for $i from 0 through 5 {
-    .level-#{$i} {
-      $zoom: 1 + $i * .4;
-      --unit: #{$zoom}rem;
-      opacity: .8 + $i * .04;
-    }
+  .level-0 {
+    --unit: 1rem;
+    opacity: .8;
+  }
+
+  .level-1 {
+    --unit: 1.4rem;
+    opacity: .84;
+  }
+
+  .level-2 {
+    --unit: 1.8rem;
+    opacity: .88;
+  }
+
+  .level-3 {
+    --unit: 2.2rem;
+    opacity: .92;
+  }
+
+  .level-4 {
+    --unit: 2.6rem;
+    opacity: .96;
+  }
+
+  .level-5 {
+    --unit: 3rem;
+    opacity: 1;
   }
 }
 </style>

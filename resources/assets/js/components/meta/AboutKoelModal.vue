@@ -105,7 +105,7 @@ onMounted(async () => {
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .about {
   text-align: center;
   max-width: 480px;

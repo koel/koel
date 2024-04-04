@@ -19,7 +19,7 @@ const themes = toRef(themeStore.state, 'themes')
 const setTheme = (theme: Theme) => themeStore.setTheme(theme)
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .themes {
   display: grid;
   grid-auto-rows: 8rem;

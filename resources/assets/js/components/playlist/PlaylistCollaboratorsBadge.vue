@@ -23,7 +23,7 @@ const displayedCollaborators = computed(() => collaborators.value.slice(0, 3))
 const remainderCount = computed(() => collaborators.value.length - displayedCollaborators.value.length)
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
 div {
   display: inline-block;
   vertical-align: middle;

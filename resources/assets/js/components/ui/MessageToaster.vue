@@ -32,7 +32,7 @@ const error = (content: string, timeout?: number) => addMessage('danger', conten
 defineExpose({ info, success, warning, error })
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 ul {
   position: fixed;
   z-index: 9999;

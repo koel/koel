@@ -60,7 +60,7 @@ watch(zoomLevel, level => {
 onMounted(() => setFontSize())
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .content {
   position: relative;
 

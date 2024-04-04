@@ -30,7 +30,7 @@ const themes: Theme[] = [
 </script>
 
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 div .theme + .theme {
   margin-left: -100%;
 }

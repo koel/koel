@@ -40,7 +40,7 @@ const onDrop = async (event: DragEvent) => {
 const close = () => emit('close')
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .drop-zone {
   height: 256px;
   max-height: 66vh;

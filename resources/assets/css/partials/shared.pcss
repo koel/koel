@@ -23,8 +23,6 @@ h1, h2, h3, h4, h5, h6, blockquote {
 
 body,
 html {
-  @include themed-background();
-
   color: var(--color-text-primary);
   font-family: var(--font-family);
   font-size: 13px;
@@ -130,11 +128,6 @@ a {
   }
 }
 
-.ir {
-  color: transparent;
-  font: 0/0 serif;
-}
-
 .control {
   cursor: pointer;
   color: var(--color-text-secondary);
@@ -174,6 +167,8 @@ label {
 
 .tabs {
   min-height: 100%;
+  display: flex;
+  flex-direction: column;
   position: relative;
 
   [role=tablist] {
@@ -182,6 +177,7 @@ label {
     padding: 0 1.25rem;
     display: flex;
     gap: 0.3rem;
+    min-height: 36px;
 
     [role=tab] {
       position: relative;
@@ -344,7 +340,6 @@ label {
 .context-menu,
 .submenu,
 menu {
-  @include context-menu();
   position: fixed;
 
   @keyframes subMenuHoverHelp {

@@ -91,7 +91,7 @@ useRouter().onScreenActivated('Home', async () => {
 })
 </script>
 
-<style lang="scss">
+<style lang="postcss">
 #homeWrapper {
   .two-cols {
     display: grid;
@@ -127,7 +127,7 @@ useRouter().onScreenActivated('Home', async () => {
 
   li {
     overflow: hidden;
-    padding: 1px; // make space for focus outline
+    padding: 1px; /* make space for focus outline */
   }
 
   @media only screen and (max-width: 768px) {

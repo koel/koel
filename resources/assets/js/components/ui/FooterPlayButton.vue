@@ -53,7 +53,7 @@ const initiatePlayback = async () => {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 button {
   width: 3rem !important;
   border-radius: 50%;

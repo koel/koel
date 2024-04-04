@@ -53,7 +53,7 @@ const requestContextMenu = () => {
 }
 </script>
 
-<style lang="scss">
+<style lang="postcss">
 #playlists {
   h1 {
     display: flex;
@@ -67,7 +67,7 @@ const requestContextMenu = () => {
       position: relative;
 
       &::before {
-        // increase clickable area
+        /* increase clickable area */
         content: '';
         position: absolute;
         width: 28px;

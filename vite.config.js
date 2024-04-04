@@ -18,15 +18,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './resources/assets/js'),
-      '#': path.resolve(__dirname, './resources/assets/sass'),
       '@modules': path.resolve(__dirname, './node_modules')
-    }
-  },
-  css: {
-    preprocessorOptions: {
-      scss: {
-        additionalData: '@import "#/partials/_mixins.scss";'
-      }
     }
   },
   test: {

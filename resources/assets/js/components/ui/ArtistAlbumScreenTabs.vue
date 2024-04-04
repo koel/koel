@@ -12,7 +12,7 @@
 <script lang="ts" setup>
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 :deep(.tabs) {
   display: flex;
   flex-direction: column;
@@ -69,8 +69,6 @@
 
 :deep(.albums-pane) {
   > ul {
-    @include artist-album-wrapper();
-
     padding: 1.8rem;
     overflow: auto;
   }

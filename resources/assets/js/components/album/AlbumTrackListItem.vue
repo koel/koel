@@ -47,7 +47,7 @@ const play = () => {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .track-list-item {
   display: flex;
   flex: 1;

@@ -64,7 +64,7 @@ watchThrottled(volumeManager.volume, volume => {
 onMounted(() => volumeManager.init(inputEl.value!, preferenceStore.volume))
 </script>
 
-<style lang="scss">
+<style lang="postcss" scoped>
 #volume {
   position: relative;
   display: flex;
@@ -77,7 +77,7 @@ onMounted(() => volumeManager.init(inputEl.value!, preferenceStore.volume))
     border-radius: 4px;
     position: relative;
 
-    // increase click area
+    /* increase click area */
     &::before {
       position: absolute;
       content: ' ';

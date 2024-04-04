@@ -15,7 +15,7 @@ import LastfmIntegration from '@/components/profile-preferences/LastfmIntegratio
 import SpotifyIntegration from '@/components/profile-preferences/SpotifyIntegration.vue'
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
 .integrations {
   > article + article {
     margin-top: 2rem;

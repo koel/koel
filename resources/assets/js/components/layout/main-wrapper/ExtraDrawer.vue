@@ -123,7 +123,7 @@ const logout = () => eventBus.emit('LOG_OUT')
 onMounted(() => isMobile.any || (activeTab.value = preferenceStore.active_extra_panel_tab))
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 aside {
   display: flex;
   flex-direction: row-reverse;
@@ -132,7 +132,12 @@ aside {
   z-index: 2;
 
   @media screen and (max-width: 768px) {
-    @include themed-background();
+    background-color: var(--color-bg-primary);
+    background-image: var(--bg-image);
+    background-attachment: var(--bg-attachment);
+    background-size: var(--bg-size);
+    background-position: var(--bg-position);
+
     flex-direction: column;
     position: fixed;
     top: 0;
@@ -152,7 +157,7 @@ aside {
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
 
   @media (hover: none) {
-    // Enable scroll with momentum on touch devices
+    /* Enable scroll with momentum on touch devices */
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
   }
@@ -219,6 +224,7 @@ aside {
     &:hover, &.active {
       opacity: 1;
       color: var(--color-text-primary);
+      background: rgba(255, 255, 255, .1);
     }
 
     &:active {

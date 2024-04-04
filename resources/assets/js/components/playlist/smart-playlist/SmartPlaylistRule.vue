@@ -113,7 +113,7 @@ const onInput = () => {
 const removeRule = () => emit('remove')
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .row {
   display: flex;
   gap: .5rem;

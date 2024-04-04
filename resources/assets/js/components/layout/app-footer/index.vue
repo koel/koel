@@ -99,7 +99,7 @@ watch(isFullscreen, fullscreen => {
 eventBus.on('FULLSCREEN_TOGGLE', () => toggleFullscreen())
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 footer {
   background-color: var(--color-bg-secondary);
   background-size: 0;

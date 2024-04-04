@@ -10,7 +10,7 @@
   </article>
 </template>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .skeleton {
   display: flex;
   gap: 12px;

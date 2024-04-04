@@ -76,7 +76,7 @@ const freeUp = () => {
 onBeforeUnmount(() => freeUp())
 </script>
 
-<style lang="scss">
+<style lang="postcss">
 #vizContainer {
   .viz {
     height: 100%;

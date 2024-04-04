@@ -77,9 +77,9 @@ const disconnect = async () => {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .lastfm-icon {
-  color: #d31f27; // Last.fm red
+  color: #d31f27; /* Last.fm red */
   margin-right: .4rem;
 }
 

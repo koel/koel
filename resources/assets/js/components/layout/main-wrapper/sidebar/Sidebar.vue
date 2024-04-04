@@ -130,7 +130,7 @@ eventBus.on('TOGGLE_SIDEBAR', () => (mobileShowing.value = !mobileShowing.value)
   .on('PLAY_YOUTUBE_VIDEO', _ => (youTubePlaying.value = true))
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 nav {
   position: relative;
   width: var(--sidebar-width);
@@ -176,7 +176,7 @@ nav {
     overflow-y: auto;
 
     @media (hover: none) {
-      // Enable scroll with momentum on touch devices
+      /* Enable scroll with momentum on touch devices */
       overflow-y: scroll;
       -webkit-overflow-scrolling: touch;
     }
@@ -256,7 +256,7 @@ nav {
     }
   }
 
-  :deep(li li a) { // submenu items
+  :deep(li li a) { /* submenu items */
     padding-left: 11px;
 
     &:active {
@@ -287,7 +287,12 @@ nav {
   }
 
   @media screen and (max-width: 768px) {
-    @include themed-background();
+    background-color: var(--color-bg-primary);
+    background-image: var(--bg-image);
+    background-attachment: var(--bg-attachment);
+    background-size: var(--bg-size);
+    background-position: var(--bg-position);
+
     transform: translateX(-100vw);
     transition: transform .2s ease-in-out;
 

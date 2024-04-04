@@ -48,7 +48,7 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 const close = () => emit('close')
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .collaboration-modal {
   max-width: 640px;
 }

@@ -23,7 +23,7 @@ const loginWithGoogle = async () => {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
 button {
   opacity: .5;
 

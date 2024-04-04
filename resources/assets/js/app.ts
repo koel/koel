@@ -4,6 +4,7 @@ import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome
 import { RouterKey } from '@/symbols'
 import { routes } from '@/config'
 import Router from '@/router'
+import '@/../css/app.pcss'
 import App from './App.vue'
 
 createApp(App)

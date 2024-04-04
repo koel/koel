@@ -1,10 +1,22 @@
-@mixin vertical-center() {
+@import './vendor/reset.pcss';
+@import './partials/vars.pcss';
+@import './partials/hack.pcss';
+
+@import '@modules/nouislider/distribute/nouislider.min.css';
+@import './vendor/plyr.pcss';
+@import './vendor/nprogress.pcss';
+
+@import './partials/skeleton.pcss';
+@import './partials/tooltip.pcss';
+@import './partials/shared.pcss';
+
+.vertical-center {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-@mixin artist-album-wrapper() {
+.artist-album-wrapper {
   display: grid !important;
   gap: 16px;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -24,9 +36,11 @@
   }
 }
 
-@mixin artist-album-info-wrapper() {
+.artist-album-info-wrapper {
   .loading {
-    @include vertical-center();
+    display: flex;
+    align-items: center;
+    justify-content: center;
     height: 100%;
   }
 
@@ -62,12 +76,13 @@
   }
 }
 
-@mixin artist-album-info() {
+.artist-album-info {
   color: var(--color-text-secondary);
 
   h1 {
-    @include vertical-center();
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-weight: var(--font-weight-thin);
     line-height: 2.8rem;
     margin-bottom: 16px;
@@ -154,13 +169,13 @@
   }
 }
 
-@mixin inset-when-pressed() {
+.inset-when-pressed {
   &:not([disabled]):active {
     box-shadow: inset 0 10px 10px -10px rgba(0, 0, 0, .6);
   }
 }
 
-@mixin context-menu() {
+.context-menu {
   padding: .4rem 0;
   width: max-content;
   min-width: 144px;
@@ -179,7 +194,7 @@
   }
 }
 
-@mixin themed-background() {
+.themed-background, body, html {
   background-color: var(--color-bg-primary);
   background-image: var(--bg-image);
   background-attachment: var(--bg-attachment);

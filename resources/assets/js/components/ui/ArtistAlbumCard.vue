@@ -39,7 +39,7 @@ const onDragStart = (e: DragEvent) => emit('dragstart', e)
 const onContextMenu = (e: MouseEvent) => emit('contextmenu', e)
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .item {
   position: relative;
   max-width: 256px;

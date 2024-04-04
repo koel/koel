@@ -24,7 +24,7 @@ onMounted(() => {
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 button {
   &.fade-enter, &.fade-leave-to {
     opacity: 0;

@@ -86,7 +86,7 @@ const onSSOSuccess = (token: CompositeToken) => {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 /**
  * I like to move it move it
  * I like to move it move it

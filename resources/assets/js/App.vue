@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, nextTick, onMounted, provide, ref, watch } from 'vue'
+import { defineAsyncComponent, onMounted, provide, ref, watch } from 'vue'
 import { useOnline } from '@vueuse/core'
 import { commonStore, preferenceStore as preferences, queueStore } from '@/stores'
 import { authService, socketListener, socketService, uploadService } from '@/services'
@@ -160,9 +160,7 @@ provide(MessageToasterKey, toaster)
 provide(CurrentSongKey, currentSong)
 </script>
 
-<style lang="scss">
-@import "#/app.scss";
-
+<style lang="postcss">
 #dragGhost {
   display: inline-block;
   background: var(--color-green);

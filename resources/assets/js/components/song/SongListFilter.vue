@@ -51,7 +51,7 @@ const maybeClose = () => {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 form {
   display: flex;
   border: 1px solid rgba(255, 255, 255, .1);

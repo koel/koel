@@ -19,7 +19,7 @@ defineOptions({
 })
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
 img {
   opacity: 0.8;
 

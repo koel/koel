@@ -12,7 +12,7 @@
 import { faSlash, faWifi } from '@fortawesome/free-solid-svg-icons'
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .offline {
   color: #ed5135;
   width: 144px;

@@ -78,7 +78,7 @@ onMounted(async () => {
 })
 </script>
 
-<style lang="scss">
+<style lang="postcss">
 #mainContent {
   flex: 1;
   position: relative;
@@ -113,7 +113,7 @@ onMounted(async () => {
       place-content: start;
 
       @media (hover: none) {
-        // Enable scroll with momentum on touch devices
+        /* Enable scroll with momentum on touch devices */
         overflow-y: scroll;
         -webkit-overflow-scrolling: touch;
       }
@@ -122,7 +122,7 @@ onMounted(async () => {
 
   @media screen and (max-width: 768px) {
     > section {
-      // Leave some space for the "Back to top" button
+      /* Leave some space for the "Back to top" button */
       .main-scroll-wrap {
         padding-bottom: 64px;
       }

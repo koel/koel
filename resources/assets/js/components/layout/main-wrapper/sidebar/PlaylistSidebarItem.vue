@@ -127,7 +127,7 @@ onRouteChanged(route => {
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .playlist {
   user-select: none;
 

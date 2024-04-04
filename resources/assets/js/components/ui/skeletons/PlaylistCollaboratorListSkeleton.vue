@@ -7,7 +7,7 @@
 <script setup lang="ts">
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
 .wrapper {
   display: flex;
   flex-direction: column;

@@ -1,5 +1,5 @@
 <template>
-  <article :class="mode" class="album-info" data-testid="album-info">
+  <article :class="mode" class="album-info artist-album-info" data-testid="album-info">
     <h1 v-if="mode === 'aside'" class="name">
       <span>{{ album.name }}</span>
       <button :title="`Play all songs in ${album.name}`" class="control" type="button" @click.prevent="play">
@@ -68,17 +68,3 @@ const play = async () => {
   go('queue')
 }
 </script>
-
-<style lang="scss" scoped>
-.album-info {
-  @include artist-album-info();
-
-  .track-listing {
-    margin-top: 2rem;
-
-    :deep(h1) {
-      margin-bottom: 1.2rem;
-    }
-  }
-}
-</style>

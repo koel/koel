@@ -33,7 +33,7 @@ const onDragStart = (event: DragEvent) => {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .song-info {
   padding: 0 1.5rem;
   display: flex;

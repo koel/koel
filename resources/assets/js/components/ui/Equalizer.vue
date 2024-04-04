@@ -125,7 +125,7 @@ const close = () => emit('close')
 onMounted(() => createSliders())
 </script>
 
-<style lang="scss">
+<style lang="postcss">
 #equalizer {
   user-select: none;
   width: 100%;

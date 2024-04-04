@@ -1,5 +1,5 @@
 <template>
-  <div class="invitation-wrapper">
+  <div class="invitation-wrapper vertical-center">
     <form v-if="userProspect" autocomplete="off" @submit.prevent="submit">
       <header>
         Welcome to Koel! To accept the invitation, fill in the form below and click that button.
@@ -92,10 +92,8 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
 .invitation-wrapper {
-  @include vertical-center();
-
   display: flex;
   height: 100vh;
   flex-direction: column;

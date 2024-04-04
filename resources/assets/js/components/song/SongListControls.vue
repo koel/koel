@@ -89,7 +89,7 @@
       </BtnGroup>
     </div>
 
-    <div ref="addToMenu" v-koel-clickaway="closeAddToMenu" class="menu-wrapper">
+    <div ref="addToMenu" v-koel-clickaway="closeAddToMenu" class="menu-wrapper context-menu">
       <AddToMenu :config="config.addTo" :songs="selectedSongs" @closing="closeAddToMenu" />
     </div>
   </div>
@@ -175,7 +175,7 @@ onBeforeUnmount(() => {
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .song-list-controls {
   position: relative;
 
@@ -186,8 +186,6 @@ onBeforeUnmount(() => {
   }
 
   .menu-wrapper {
-    @include context-menu();
-
     padding: 0;
     display: none;
   }

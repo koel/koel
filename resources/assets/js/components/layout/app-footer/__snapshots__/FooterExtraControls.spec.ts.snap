@@ -3,7 +3,7 @@
 exports[`renders 1`] = `
 <div data-v-8bf5fe81="" class="extra-controls" data-testid="other-controls">
   <div data-v-8bf5fe81="" class="wrapper"><button data-v-8bf5fe81="" class="visualizer-btn" data-testid="toggle-visualizer-btn" title="Toggle visualizer"><br data-v-8bf5fe81="" data-testid="Icon" icon="[object Object]"></button>
-    <!--v-if--><span data-v-8bf5fe81="" id="volume" class="volume muted"><span role="button" tabindex="0" title="Unmute"><br data-testid="Icon" icon="[object Object]" fixed-width=""></span><span role="button" tabindex="0" title="Mute" style="display: none;"><br data-testid="Icon" icon="[object Object]" fixed-width=""></span><input class="plyr__volume" max="10" role="slider" step="0.1" title="Volume" type="range"></span>
+    <!--v-if--><span data-v-c7afcfc4="" data-v-8bf5fe81="" id="volume" class="volume muted"><span data-v-c7afcfc4="" role="button" tabindex="0" title="Unmute"><br data-v-c7afcfc4="" data-testid="Icon" icon="[object Object]" fixed-width=""></span><span data-v-c7afcfc4="" role="button" tabindex="0" title="Mute" style="display: none;"><br data-v-c7afcfc4="" data-testid="Icon" icon="[object Object]" fixed-width=""></span><input data-v-c7afcfc4="" class="plyr__volume" max="10" role="slider" step="0.1" title="Volume" type="range"></span>
     <!--v-if-->
   </div>
 </div>

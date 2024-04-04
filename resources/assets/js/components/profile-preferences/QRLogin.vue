@@ -37,7 +37,7 @@ onMounted(() => {
 })
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
 img {
   margin-top: 1.5rem;
   display: block;

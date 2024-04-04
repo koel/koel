@@ -91,7 +91,7 @@ const confirmThenSave = async () => {
 }
 </script>
 
-<style lang="scss">
+<style lang="postcss">
 #settingsWrapper {
   input[type="text"] {
     width: 50%;

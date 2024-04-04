@@ -13,7 +13,7 @@ defineOptions({
   </figure>
 </template>
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
 figure {
   margin: 1.5rem 0;
   overflow: hidden;

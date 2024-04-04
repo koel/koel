@@ -85,7 +85,7 @@ eventBus.on('MODAL_SHOW_ABOUT_KOEL', () => (activeModalName.value = 'about-koel'
   .on('MODAL_SHOW_EQUALIZER', () => (activeModalName.value = 'equalizer'))
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 dialog {
   border: 0;
   padding: 0;

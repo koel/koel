@@ -28,7 +28,7 @@ const value = computed({
 const toggleReveal = () => (type.value = type.value === 'password' ? 'text' : 'password')
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
 div {
   position: relative;
 }

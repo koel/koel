@@ -15,7 +15,7 @@ import downloadedScreenshot from '../../assets/img/mobile/downloaded.webp'
 </script>
 
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 div {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

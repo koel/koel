@@ -70,11 +70,11 @@ const collaborator = computed<Pick<User, 'name' | 'avatar'>>(() => (song.value a
 const play = () => emit('play', song.value)
 </script>
 
-<style lang="scss">
+<style lang="postcss">
 .song-item {
   color: var(--color-text-secondary);
   border-bottom: 1px solid var(--color-bg-secondary);
-  max-width: 100% !important; // overriding .item
+  max-width: 100% !important; /* overriding .item */
   height: 64px;
   display: flex;
   align-items: center;

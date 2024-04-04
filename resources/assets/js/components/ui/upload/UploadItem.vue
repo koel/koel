@@ -37,7 +37,7 @@ const remove = () => uploadService.remove(file.value)
 const retry = () => uploadService.retry(file.value)
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .upload-item {
   position: relative;
   margin-bottom: 5px;

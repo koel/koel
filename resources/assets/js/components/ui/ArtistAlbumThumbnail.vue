@@ -133,7 +133,7 @@ const onDrop = async (event: DragEvent) => {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .cover {
   position: relative;
   width: 100%;
@@ -189,7 +189,7 @@ const onDrop = async (event: DragEvent) => {
       display: flex;
       justify-content: center;
       align-items: center;
-      padding-left: 4%; // to balance the play icon
+      padding-left: 4%; /* to balance the play icon */
       pointer-events: none;
 
       @media (hover: none) {
@@ -242,6 +242,6 @@ const onDrop = async (event: DragEvent) => {
 }
 
 .compact .icon {
-  font-size: .3rem; // to control the size of the icon
+  font-size: .3rem; /* to control the size of the icon */
 }
 </style>

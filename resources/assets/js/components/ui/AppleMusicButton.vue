@@ -24,7 +24,7 @@ const props = defineProps<{ url: string }>()
 const { url } = toRefs(props)
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 a {
   display: inline-block;
   border-radius: 3px;

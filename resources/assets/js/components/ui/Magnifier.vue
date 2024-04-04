@@ -1,9 +1,9 @@
 <template>
   <span>
-    <button title="Zoom out" type="button" @click.prevent="$emit('out')">
+    <button class="inset-when-pressed" title="Zoom out" type="button" @click.prevent="$emit('out')">
       <Icon :icon="faSearchMinus" />
     </button>
-    <button title="Zoom in" type="button" @click.prevent="$emit('in')">
+    <button class="inset-when-pressed" title="Zoom in" type="button" @click.prevent="$emit('in')">
       <Icon :icon="faSearchPlus" />
     </button>
   </span>
@@ -15,14 +15,12 @@ import { faSearchMinus, faSearchPlus } from '@fortawesome/free-solid-svg-icons'
 const emit = defineEmits<{ (e: 'in' | 'out'): void }>()
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 span {
   display: flex;
   transition: .2s;
 
   button {
-    @include inset-when-pressed();
-
     background: var(--color-bg-primary);
     border: 1px solid rgba(255, 255, 255, .2);
     opacity: .8;

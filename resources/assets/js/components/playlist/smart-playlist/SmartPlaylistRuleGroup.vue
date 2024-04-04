@@ -54,7 +54,7 @@ const removeRule = (rule: SmartPlaylistRule) => {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .rule-group {
   margin-bottom: 1rem;
   padding-bottom: .5rem;

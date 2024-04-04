@@ -114,7 +114,7 @@ eventBus.on('CONTEXT_MENU_OPENED', target => target === el.value || close())
 defineExpose({ open, close, shown })
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 nav {
   user-select: none;
 

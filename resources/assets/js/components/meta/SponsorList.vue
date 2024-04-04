@@ -15,7 +15,7 @@
 <script lang="ts" setup>
 import sponsors from '@/sponsors'</script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .sponsors {
   display: flex;
   align-items: center;

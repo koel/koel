@@ -26,7 +26,7 @@ const play = () => {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 a {
   display: flex;
   gap: 10px;

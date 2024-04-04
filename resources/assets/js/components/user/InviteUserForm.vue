@@ -102,7 +102,7 @@ const maybeClose = async () => {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 textarea {
   min-height: 8rem !important;
 }

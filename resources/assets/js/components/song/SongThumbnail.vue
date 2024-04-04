@@ -51,7 +51,7 @@ const changeSongState = () => {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .cover {
   width: 48px;
   min-width: 48px;

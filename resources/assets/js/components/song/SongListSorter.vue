@@ -3,7 +3,7 @@
     <button ref="button" title="Sort" @click.stop="trigger">
       <Icon :icon="faSort" />
     </button>
-    <menu ref="menu" v-koel-clickaway="hide">
+    <menu ref="menu" v-koel-clickaway="hide" class="context-menu">
       <li
         v-for="item in menuItems"
         :key="item.label"
@@ -91,7 +91,7 @@ onMounted(() => menu.value && setup())
 onBeforeUnmount(() => teardown())
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 button {
   width: 100%;
 

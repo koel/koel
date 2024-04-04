@@ -17,12 +17,12 @@ import ExtraDrawer from '@/components/layout/main-wrapper/ExtraDrawer.vue'
 const ModalWrapper = defineAsyncComponent(() => import('@/components/layout/ModalWrapper.vue'))
 </script>
 
-<style lang="scss">
+<style lang="postcss">
 #mainWrapper {
   position: relative;
   display: flex;
   flex: 1;
-  height: 0; // fix a flex-box bug https://github.com/philipwalton/flexbugs/issues/197#issuecomment-378908438
+  height: 0; /* fix a flex-box bug https://github.com/philipwalton/flexbugs/issues/197#issuecomment-378908438 */
   overflow: hidden;
 }
 </style>

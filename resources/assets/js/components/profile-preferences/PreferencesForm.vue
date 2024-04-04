@@ -50,7 +50,7 @@ const isPhone = isMobile.phone
 const { isPlus } = useKoelPlus()
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 label {
   font-size: 1rem;
 }

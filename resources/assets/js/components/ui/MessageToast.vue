@@ -48,7 +48,7 @@ onMounted(() => {
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .message {
   border-radius: 4px 0 0 4px;
   cursor: pointer;

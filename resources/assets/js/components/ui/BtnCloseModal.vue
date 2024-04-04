@@ -10,7 +10,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons'
 defineEmits<{ (e: 'click'): void }>()
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 button {
   display: flex;
   place-content: center;

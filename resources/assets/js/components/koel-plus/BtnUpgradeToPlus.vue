@@ -1,5 +1,5 @@
 <template>
-  <a href class="upgrade-to-plus-btn" @click.prevent="openModal">
+  <a href class="upgrade-to-plus-btn inset-when-pressed" @click.prevent="openModal">
     <Icon :icon="faPlus" fixed-width />
     Upgrade to Plus
   </a>
@@ -12,10 +12,8 @@ import { eventBus } from '@/utils'
 const openModal = () => eventBus.emit('MODAL_SHOW_KOEL_PLUS')
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
 a.upgrade-to-plus-btn {
-  @include inset-when-pressed();
-
   background: linear-gradient(97.78deg, #671ce4 17.5%, #c62be8 113.39%);
   border-radius: 5px;
   border-style: solid;
@@ -26,7 +24,7 @@ a.upgrade-to-plus-btn {
   }
 
   &:active {
-    padding: .65rem 1rem; // prevent layout jump in sidebar
+    padding: .65rem 1rem; /* prevent layout jump in sidebar */
   }
 }
 </style>

@@ -7,7 +7,7 @@
 <script lang="ts" setup>
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .smart-playlist-form {
   width: 560px;
   max-height: calc(100vh - 4rem);

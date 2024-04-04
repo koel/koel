@@ -50,7 +50,7 @@ watch(song, () => {
 }, { immediate: true })
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .youtube-extra-wrapper {
   overflow-x: hidden;
 

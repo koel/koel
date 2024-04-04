@@ -107,7 +107,7 @@ const onContextMenu = (event: MouseEvent) => eventBus.emit(
 )
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 li.playlist-folder {
   position: relative;
 

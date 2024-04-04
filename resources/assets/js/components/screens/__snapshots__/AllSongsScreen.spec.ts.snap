@@ -14,11 +14,11 @@ exports[`renders 1`] = `
       </div>
       <div data-v-8ea4eaa5="" data-v-5691beb5-s="" class="controls">
         <div data-v-d396e0d2="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="song-list-controls" data-testid="song-list-controls">
-          <div data-v-d396e0d2="" class="wrapper"><span data-v-e884c19a="" data-v-d396e0d2="" class="btn-group" uppercased=""><button data-v-e368fe26="" data-v-d396e0d2="" class="btn-shuffle-all" data-testid="btn-shuffle-all" orange="" title="Shuffle all. Press Alt/⌥ to change mode."><br data-v-d396e0d2="" data-testid="Icon" icon="[object Object]" fixed-width=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
+          <div data-v-d396e0d2="" class="wrapper"><span data-v-e884c19a="" data-v-d396e0d2="" class="btn-group" uppercased=""><button data-v-e368fe26="" data-v-d396e0d2="" class="inset-when-pressed btn-shuffle-all" data-testid="btn-shuffle-all" orange="" title="Shuffle all. Press Alt/⌥ to change mode."><br data-v-d396e0d2="" data-testid="Icon" icon="[object Object]" fixed-width=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
             <!--v-if-->
             <!--v-if-->
           </div>
-          <div data-v-d396e0d2="" class="menu-wrapper">
+          <div data-v-d396e0d2="" class="menu-wrapper context-menu">
             <div data-v-42061e3e="" data-v-d396e0d2="" class="add-to" data-testid="add-to-menu" tabindex="0">
               <section data-v-42061e3e="" class="existing-playlists">
                 <p data-v-42061e3e="">Add 0 songs to</p>
@@ -26,7 +26,7 @@ exports[`renders 1`] = `
                   <li data-v-42061e3e="" data-testid="queue" tabindex="0">Queue</li>
                   <li data-v-42061e3e="" class="favorites" data-testid="add-to-favorites" tabindex="0"> Favorites </li>
                 </ul>
-              </section><button data-v-e368fe26="" data-v-42061e3e="" transparent="">New Playlist…</button>
+              </section><button data-v-e368fe26="" data-v-42061e3e="" class="inset-when-pressed" transparent="">New Playlist…</button>
             </div>
           </div>
         </div>
@@ -51,11 +51,11 @@ exports[`renders in Plus edition 1`] = `
       </div>
       <div data-v-8ea4eaa5="" data-v-5691beb5-s="" class="controls">
         <div data-v-d396e0d2="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="song-list-controls" data-testid="song-list-controls">
-          <div data-v-d396e0d2="" class="wrapper"><span data-v-e884c19a="" data-v-d396e0d2="" class="btn-group" uppercased=""><button data-v-e368fe26="" data-v-d396e0d2="" class="btn-shuffle-all" data-testid="btn-shuffle-all" orange="" title="Shuffle all. Press Alt/⌥ to change mode."><br data-v-d396e0d2="" data-testid="Icon" icon="[object Object]" fixed-width=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
+          <div data-v-d396e0d2="" class="wrapper"><span data-v-e884c19a="" data-v-d396e0d2="" class="btn-group" uppercased=""><button data-v-e368fe26="" data-v-d396e0d2="" class="inset-when-pressed btn-shuffle-all" data-testid="btn-shuffle-all" orange="" title="Shuffle all. Press Alt/⌥ to change mode."><br data-v-d396e0d2="" data-testid="Icon" icon="[object Object]" fixed-width=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
             <!--v-if-->
             <!--v-if-->
           </div>
-          <div data-v-d396e0d2="" class="menu-wrapper">
+          <div data-v-d396e0d2="" class="menu-wrapper context-menu">
             <div data-v-42061e3e="" data-v-d396e0d2="" class="add-to" data-testid="add-to-menu" tabindex="0">
               <section data-v-42061e3e="" class="existing-playlists">
                 <p data-v-42061e3e="">Add 0 songs to</p>
@@ -63,7 +63,7 @@ exports[`renders in Plus edition 1`] = `
                   <li data-v-42061e3e="" data-testid="queue" tabindex="0">Queue</li>
                   <li data-v-42061e3e="" class="favorites" data-testid="add-to-favorites" tabindex="0"> Favorites </li>
                 </ul>
-              </section><button data-v-e368fe26="" data-v-42061e3e="" transparent="">New Playlist…</button>
+              </section><button data-v-e368fe26="" data-v-42061e3e="" class="inset-when-pressed" transparent="">New Playlist…</button>
             </div>
           </div>
         </div><label data-v-8ea4eaa5="" data-v-5691beb5-s="" class="own-songs-toggle text-secondary"><span data-v-b5259680="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class=""><input data-v-b5259680="" type="checkbox"></span><span data-v-8ea4eaa5="" data-v-5691beb5-s="">Own songs only</span></label>

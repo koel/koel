@@ -4,7 +4,7 @@
   </span>
 </template>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .btn-group {
   --radius: 5px;
 
