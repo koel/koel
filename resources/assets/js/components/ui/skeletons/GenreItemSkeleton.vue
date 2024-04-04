@@ -1,31 +1,13 @@
 <template>
-  <article class="skeleton pulse" :style="{ width: `${width}px` }">
-    <span class="name" />
-    <span class="count pulse" />
+  <article
+    class="skeleton pulse flex rounded-md overflow-hidden h-[1.2rem] m-1 p-4 flex-shrink-0"
+    :style="{ width: `${width}px` }"
+  >
+    <span class="flex-1" />
+    <span class="aspect-[1.2/1] rounded-full pulse" />
   </article>
 </template>
 
 <script lang="ts" setup>
 const width = Math.random() * 100 + 80
 </script>
-
-<style lang="postcss" scoped>
-.skeleton {
-  display: flex;
-  border-radius: 999rem;
-  overflow: hidden;
-  height: 28px;
-  margin: .4rem;
-  padding: 4px;
-  flex-shrink: 0;
-
-  .name {
-    flex: 1;
-  }
-
-  .count {
-    aspect-ratio: 1.2/1;
-    border-radius: 9999rem;
-  }
-}
-</style>

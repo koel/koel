@@ -1,51 +1,11 @@
 <template>
-  <article class="skeleton">
-    <aside class="pulse" />
-    <main>
-      <div class="details">
-        <h3 class="pulse" />
-        <p class="pulse" />
+  <article class="skeleton flex gap-4 p-3 rounded items-center border border-k-border">
+    <aside class="w-[48px] aspect-square rounded pulse" />
+    <main class="flex items-start flex-1 gap-4">
+      <div class="flex flex-1 flex-col gap-2">
+        <h3 class="w-2/3 h-[1.2rem] pulse" />
+        <p class="w-1/3 h-[1.2rem] pulse" />
       </div>
     </main>
   </article>
 </template>
-
-<style lang="postcss" scoped>
-.skeleton {
-  display: flex;
-  gap: 12px;
-  padding: 8px 12px 8px 8px;
-  border-radius: 5px;
-  align-items: center;
-  border: 1px solid var(--color-bg-secondary);
-
-  aside {
-    width: 48px;
-    aspect-ratio: 1/1;
-    border-radius: 50%;
-  }
-
-  main {
-    flex: 1;
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-
-    .details {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    h3, p {
-      width: 66%;
-      height: 1.2em;
-    }
-
-    p {
-      width: 33%;
-    }
-  }
-}
-</style>

@@ -3,6 +3,7 @@
     v-koel-tooltip.top
     :class="{ active: mode !== 'NO_REPEAT' }"
     :title="`Change repeat mode (current: ${readableMode})`"
+    class="opacity-30"
     data-testid="repeat-mode-switch"
     type="button"
     @click.prevent="changeMode"
@@ -30,21 +31,7 @@ const changeMode = () => playbackService.rotateRepeatMode()
 </script>
 
 <style lang="postcss" scoped>
-.fa-layers-counter {
-  transform: none;
-  font-size: .45rem;
-  font-weight: bold;
-  right: 2px;
-  top: 2px;
-  color: currentColor;
-  background: transparent;
-}
-
-button {
-  opacity: .3;
-}
-
 .active {
-  opacity: 1;
+  @apply opacity-70;
 }
 </style>

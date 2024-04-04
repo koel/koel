@@ -1,42 +1,40 @@
 <template>
-  <div class="invitation-wrapper vertical-center">
-    <form v-if="userProspect" autocomplete="off" @submit.prevent="submit">
-      <header>
+  <div class="flex items-center justify-center h-screen flex-col">
+    <form
+      v-if="userProspect"
+      autocomplete="off"
+      class="w-full sm:w-[320px] p-7 sm:bg-white/10 rounded-lg flex flex-col space-y-5"
+      @submit.prevent="submit"
+    >
+      <header class="mb-4">
         Welcome to Koel! To accept the invitation, fill in the form below and click that button.
       </header>
 
-      <div class="form-row">
-        <label>
-          Your email
-          <input type="text" :value="userProspect.email" disabled>
-        </label>
-      </div>
+      <FormRow>
+        <template #label>Your email</template>
+        <TextInput v-model="userProspect.email" disabled />
+      </FormRow>
 
-      <div class="form-row">
-        <label>
-          Your name
-          <input
-            v-model="name"
-            v-koel-focus
-            data-testid="name"
-            placeholder="Erm… Bruce Dickinson?"
-            required
-            type="text"
-          >
-        </label>
-      </div>
+      <FormRow>
+        <template #label>Your name</template>
+        <TextInput
+          v-model="name"
+          v-koel-focus
+          data-testid="name"
+          placeholder="Erm… Bruce Dickinson?"
+          required
+        />
+      </FormRow>
 
-      <div class="form-row">
-        <label>
-          Password
-          <PasswordField v-model="password" data-testid="password" required />
-          <small>Min. 10 characters. Should be a mix of characters, numbers, and symbols.</small>
-        </label>
-      </div>
+      <FormRow>
+        <template #label>Password</template>
+        <PasswordField v-model="password" data-testid="password" required />
+        <template #help>Min. 10 characters. Should be a mix of characters, numbers, and symbols.</template>
+      </FormRow>
 
-      <div class="form-row">
+      <FormRow>
         <Btn type="submit" :disabled="loading">Accept &amp; Log In</Btn>
-      </div>
+      </FormRow>
     </form>
 
     <p v-if="!validToken">Invalid or expired invite.</p>
@@ -47,14 +45,15 @@
 import { onMounted, ref } from 'vue'
 import { invitationService } from '@/services'
 import { useDialogBox, useRouter } from '@/composables'
-
-import Btn from '@/components/ui/Btn.vue'
-import PasswordField from '@/components/ui/PasswordField.vue'
-
 import { parseValidationError } from '@/utils'
 
+import Btn from '@/components/ui/form/Btn.vue'
+import PasswordField from '@/components/ui/form/PasswordField.vue'
+import TextInput from '@/components/ui/form/TextInput.vue'
+import FormRow from '@/components/ui/form/FormRow.vue'
+
 const { showErrorDialog } = useDialogBox()
-const { getRouteParam, go } = useRouter()
+const { getRouteParam } = useRouter()
 
 const name = ref('')
 const password = ref('')
@@ -91,42 +90,3 @@ onMounted(async () => {
   }
 })
 </script>
-
-<style scoped lang="postcss">
-.invitation-wrapper {
-  display: flex;
-  height: 100vh;
-  flex-direction: column;
-  justify-content: center;
-}
-
-header {
-  margin-bottom: 1.2rem;
-}
-
-small {
-  margin-top: .8rem;
-  font-size: .9rem;
-  display: block;
-  line-height: 1.4;
-  color: var(--color-text-secondary);
-}
-
-form {
-  width: 320px;
-  padding: 1.8rem;
-  background: rgba(255, 255, 255, .08);
-  border-radius: .6rem;
-  display: flex;
-  flex-direction: column;
-
-  input {
-    width: 100%;
-  }
-
-  @media only screen and (max-width: 480px) {
-    border: 0;
-    background: transparent;
-  }
-}
-</style>

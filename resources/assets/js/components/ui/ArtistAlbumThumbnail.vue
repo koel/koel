@@ -1,13 +1,21 @@
 <template>
-  <span
+  <div
     :class="{ droppable }"
     :style="{ backgroundImage: `url(${defaultCover})` }"
-    class="cover"
+    class="cover relative w-full aspect-square bg-no-repeat bg-cover bg-center overflow-hidden rounded-md
+    after:block after:pt-[100%]"
     data-testid="album-artist-thumbnail"
   >
-    <img v-koel-hide-broken-icon :alt="entity.name" :src="image" class="pointer-events-none" loading="lazy">
+    <img
+      v-koel-hide-broken-icon
+      :alt="entity.name"
+      :src="image"
+      class="w-full h-full object-cover absolute left-0 top-0 pointer-events-none
+      before:absolute before:w-full before:h-full before:opacity-0 before:z-[1] before-top-0"
+      loading="lazy"
+    >
     <a
-      class="control control-play"
+      class="control control-play h-full w-full absolute flex justify-center items-center"
       role="button"
       @click.prevent="playOrQueue"
       @dragenter.prevent="onDragEnter"
@@ -16,18 +24,21 @@
       @dragover.prevent
     >
       <span class="hidden">{{ buttonLabel }}</span>
-      <span class="icon" />
+      <span
+        class="icon opacity-0 w-1/2 h-1/2 flex justify-center items-center pointer-events-none pl-[4%] rounded-full
+        after:w-full after:h-full"
+      />
     </a>
-  </span>
+  </div>
 </template>
 
 <script lang="ts" setup>
 import { orderBy } from 'lodash'
-import { computed, ref, toRef, toRefs } from 'vue'
-import { albumStore, artistStore, queueStore, songStore, userStore } from '@/stores'
+import { computed, ref, toRefs } from 'vue'
+import { albumStore, artistStore, queueStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
 import { defaultCover, logger } from '@/utils'
-import { useAuthorization, useMessageToaster, useRouter, useKoelPlus, useFileReader } from '@/composables'
+import { usePolicies, useMessageToaster, useRouter, useFileReader } from '@/composables'
 import { acceptedImageTypes } from '@/config'
 
 const { toastSuccess } = useMessageToaster()
@@ -37,11 +48,9 @@ const props = defineProps<{ entity: Album | Artist }>()
 const { entity } = toRefs(props)
 
 const droppable = ref(false)
-const user = toRef(userStore.state, 'current')
 
-const { isAdmin } = useAuthorization()
-const { isPlus } = useKoelPlus()
 const { toastError } = useMessageToaster()
+const { currentUserCan } = usePolicies()
 
 const forAlbum = computed(() => entity.value.type === 'albums')
 const sortFields = computed(() => forAlbum.value ? ['disc', 'track'] : ['album_id', 'disc', 'track'])
@@ -57,7 +66,7 @@ const buttonLabel = computed(() => forAlbum.value
   : `Play all songs by ${entity.value.name}`
 )
 
-const allowsUpload = computed(() => isAdmin.value || isPlus.value) // for Plus, the logic is handled in the backend
+const allowsUpload = currentUserCan.changeAlbumOrArtistThumbnails()
 
 const playOrQueue = async (event: MouseEvent) => {
   const songs = forAlbum.value
@@ -74,7 +83,7 @@ const playOrQueue = async (event: MouseEvent) => {
   go('queue')
 }
 
-const onDragEnter = () => (droppable.value = allowsUpload.value)
+const onDragEnter = () => (droppable.value = allowsUpload)
 const onDragLeave = () => (droppable.value = false)
 
 const validImageDropEvent = (event: DragEvent) => {
@@ -96,7 +105,7 @@ const validImageDropEvent = (event: DragEvent) => {
 const onDrop = async (event: DragEvent) => {
   droppable.value = false
 
-  if (!allowsUpload.value) {
+  if (!allowsUpload) {
     return
   }
 
@@ -118,7 +127,7 @@ const onDrop = async (event: DragEvent) => {
       }
     })
   } catch (e: any) {
-    const message = e?.response?.data?.message ?? 'Unknown error.'
+    const message = e.response.data?.message || 'Unknown error.'
     toastError(`Failed to upload: ${message}`)
 
     // restore the backup image
@@ -134,114 +143,47 @@ const onDrop = async (event: DragEvent) => {
 </script>
 
 <style lang="postcss" scoped>
-.cover {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1/1;
-  display: block;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center center;
-  border-radius: 5px;
-  overflow: hidden;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
+.icon {
+  @apply bg-k-bg-primary text-k-highlight no-hover:opacity-100;
 
   &::after {
-    content: "";
-    display: block;
-    padding-top: 100%;
+    @apply bg-k-highlight;
+
+    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M361 215C375.3 223.8 384 239.3 384 256C384 272.7 375.3 288.2 361 296.1L73.03 472.1C58.21 482 39.66 482.4 24.52 473.9C9.377 465.4 0 449.4 0 432V80C0 62.64 9.377 46.63 24.52 38.13C39.66 29.64 58.21 29.99 73.03 39.04L361 215z"/></svg>');
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: 40%;
   }
-
+}
+article {
   .control {
-    height: 100%;
-    width: 100%;
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    &::before {
-      position: absolute;
-      content: "";
-      width: 100%;
-      height: 100%;
-      top: 0;
-      background: rgba(0, 0, 0, .3);
-      opacity: 0;
-      z-index: 1;
-    }
-
-    .icon {
-      background-color: var(--color-bg-primary);
-      color: var(--color-highlight);
-      opacity: 0;
-      border-radius: 50%;
-      width: 50%;
-      height: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding-left: 4%; /* to balance the play icon */
-      pointer-events: none;
-
-      @media (hover: none) {
-        opacity: 1;
-      }
-
-      &::after {
-        content: '';
-        width: 100%;
-        height: 100%;
-        background: var(--color-highlight);
-
-        mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M361 215C375.3 223.8 384 239.3 384 256C384 272.7 375.3 288.2 361 296.1L73.03 472.1C58.21 482 39.66 482.4 24.52 473.9C9.377 465.4 0 449.4 0 432V80C0 62.64 9.377 46.63 24.52 38.13C39.66 29.64 58.21 29.99 73.03 39.04L361 215z"/></svg>');
-        -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M361 215C375.3 223.8 384 239.3 384 256C384 272.7 375.3 288.2 361 296.1L73.03 472.1C58.21 482 39.66 482.4 24.52 473.9C9.377 465.4 0 449.4 0 432V80C0 62.64 9.377 46.63 24.52 38.13C39.66 29.64 58.21 29.99 73.03 39.04L361 215z"/></svg>');
-        mask-repeat: no-repeat;
-        -webkit-mask-repeat: no-repeat;
-        mask-position: center;
-        -webkit-mask-position: center;
-        mask-size: 40%;
-        -webkit-mask-size: 40%;
-      }
-    }
-
     &:hover, &:focus {
       &::before, .icon {
-        transition: .3s opacity;
-        opacity: 1;
+        @apply transition-opacity duration-300 opacity-100;
       }
     }
 
     &:active {
       &::before {
-        background: rgba(0, 0, 0, .5);
+        @apply bg-black/50;
       }
 
       .icon {
-        transform: scale(.9);
+        @apply scale-90;
       }
     }
   }
 
   &.droppable {
-    border: 2px dotted rgba(255, 255, 255, 1);
-    filter: brightness(0.4);
+    @apply border-2 border-dotted border-white brightness-50;
 
     .control {
-      opacity: 0;
+      @apply opacity-0;
     }
   }
 }
 
 .compact .icon {
-  font-size: .3rem; /* to control the size of the icon */
+  @apply text-[.3rem]; /* to control the size of the icon */
 }
 </style>

@@ -1,11 +1,11 @@
 <template>
   <span>
-    <Btn v-if="shouldShowInviteButton" green small @click.prevent="inviteCollaborators">Invite</Btn>
-    <span v-if="justCreatedInviteLink" class="text-secondary copied">
-      <Icon :icon="faCheckCircle" class="text-green" />
+    <Btn v-if="shouldShowInviteButton" success small @click.prevent="inviteCollaborators">Invite</Btn>
+    <span v-if="justCreatedInviteLink" class="text-k-text-secondary text-[0.95rem]">
+      <Icon :icon="faCheckCircle" class="text-k-success mr-1" />
       Link copied to clipboard!
     </span>
-    <Icon v-if="creatingInviteLink" :icon="faCircleNotch" class="text-green" spin />
+    <Icon v-if="creatingInviteLink" :icon="faCircleNotch" class="text-k-success" spin />
   </span>
 </template>
 
@@ -15,7 +15,7 @@ import { computed, ref, toRefs } from 'vue'
 import { copyText } from '@/utils'
 import { playlistCollaborationService } from '@/services'
 
-import Btn from '@/components/ui/Btn.vue'
+import Btn from '@/components/ui/form/Btn.vue'
 
 const props = defineProps<{ playlist: Playlist }>()
 const { playlist } = toRefs(props)
@@ -36,13 +36,3 @@ const inviteCollaborators = async () => {
   }
 }
 </script>
-
-<style scoped lang="postcss">
-.copied {
-  font-size: .95rem;
-}
-
-svg {
-  margin-right: .25rem;
-}
-</style>

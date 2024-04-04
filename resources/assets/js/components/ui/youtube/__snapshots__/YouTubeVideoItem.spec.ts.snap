@@ -1,0 +1,10 @@
+// Vitest Snapshot v1
+
+exports[`renders 1`] = `
+<a data-v-8c072ad7="" href="https://youtu.be/cLgJQ8Zj3AA" data-testid="youtube-search-result" class="tw-flex tw-gap-3" role="button"><img data-v-8c072ad7="" class="tw-self-start" alt="Guess what it is" src="https://i.ytimg.com/an_webp/cLgJQ8Zj3AA/mqdefault_6s.webp" width="90">
+  <aside data-v-8c072ad7="" class="tw-space-y-1">
+    <h3 data-v-8c072ad7="" class="tw-text-lg">Guess what it is</h3>
+    <p data-v-8c072ad7="" class="tw-text-[0.9rem]">From the LA Opening Gala 2014: John Williams Celebration</p>
+  </aside>
+</a>
+`;

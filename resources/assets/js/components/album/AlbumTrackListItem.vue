@@ -1,14 +1,14 @@
 <template>
   <div
-    class="track-list-item"
+    class="track-list-item flex flex-1 gap-1"
     :class="{ active, available: matchedSong }"
     :title="tooltip"
     tabindex="0"
     @click="play"
   >
-    <span class="title">{{ track.title }}</span>
+    <span class="flex-1">{{ track.title }}</span>
     <AppleMusicButton v-if="useAppleMusic && !matchedSong" :url="iTunesUrl" />
-    <span class="length">{{ fmtLength }}</span>
+    <span class="w-14 text-right opacity-50">{{ fmtLength }}</span>
   </div>
 </template>
 
@@ -49,32 +49,17 @@ const play = () => {
 
 <style lang="postcss" scoped>
 .track-list-item {
-  display: flex;
-  flex: 1;
-  gap: 4px;
-
   &:focus, &.active {
     span.title {
-      color: var(--color-highlight);
+      @apply text-k-highlight;
     }
   }
 
-  .title {
-    flex: 1;
-  }
-
-  .length {
-    flex: 0 0 44px;
-    text-align: right;
-    opacity: .5;
-  }
-
   &.available {
-    color: var(--color-text-primary);
-    cursor: pointer;
+    @apply cursor-pointer text-k-text-primary;
 
     &:hover {
-      color: var(--color-highlight);
+      @apply text-k-highlight;
     }
   }
 }

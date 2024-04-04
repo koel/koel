@@ -1,74 +1,76 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-<section data-v-8ea4eaa5="" id="songsWrapper">
-  <header data-v-5691beb5="" data-v-8ea4eaa5="" class="screen-header expanded">
-    <aside data-v-5691beb5="" class="thumbnail-wrapper">
-      <div data-v-55bfc268="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="thumbnail-stack single" style="background-image: url(undefined/resources/assets/img/covers/default.svg);"><span data-v-55bfc268="" data-testid="thumbnail"></span></div>
+<section data-v-dcfb8776="" data-v-8ea4eaa5="" class="tw-max-h-full tw-min-h-full tw-w-full tw-flex tw-flex-col tw-transform-gpu">
+  <header data-v-5691beb5="" data-v-8ea4eaa5="" class="screen-header tw-min-h-0 md:tw-min-h-full tw-flex tw-items-end tw-flex-shrink-0 tw-relative tw-content-stretch tw-leading-normal tw-p-6 expanded">
+    <aside data-v-5691beb5="" class="thumbnail-wrapper tw-hidden md:tw-block tw-overflow-hidden tw-w-0 tw-rounded-md">
+      <article data-v-55bfc268="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="single thumbnail-stack tw-aspect-square tw-overflow-hidden tw-grid tw-bg-cover tw-bg-no-repeat" style="background-image: url(undefined/resources/assets/img/covers/default.svg);"><span data-v-55bfc268="" class="tw-block tw-will-change-transform tw-w-full tw-h-full tw-bg-cover tw-bg-no-repeat" data-testid="thumbnail"></span></article>
     </aside>
-    <main data-v-5691beb5="">
-      <div data-v-5691beb5="" class="heading-wrapper">
-        <h1 data-v-5691beb5="" class="name"> All Songs
+    <main data-v-5691beb5="" class="tw-flex tw-flex-1 tw-gap-5 tw-items-center tw-overflow-hidden">
+      <div data-v-5691beb5="" class="tw-w-full tw-flex-1 tw-overflow-hidden">
+        <h1 data-v-5691beb5="" class="name tw-overflow-hidden tw-whitespace-nowrap tw-text-ellipsis tw-mr-4 tw-font-thin md:tw-font-bold tw-my-0 tw-leading-tight"> All Songs
           <!--v-if-->
-        </h1><span data-v-5691beb5="" class="meta text-secondary"><span data-v-8ea4eaa5="" data-v-5691beb5-s="">420 songs</span><span data-v-8ea4eaa5="" data-v-5691beb5-s="">10 sec</span></span>
+        </h1><span data-v-5691beb5="" class="meta text-secondary tw-hidden tw-text-[0.9rem] tw-leading-loose"><span data-v-8ea4eaa5="" data-v-5691beb5-s="">420 songs</span><span data-v-8ea4eaa5="" data-v-5691beb5-s="">10 sec</span></span>
       </div>
-      <div data-v-8ea4eaa5="" data-v-5691beb5-s="" class="controls">
-        <div data-v-d396e0d2="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="song-list-controls" data-testid="song-list-controls">
-          <div data-v-d396e0d2="" class="wrapper"><span data-v-e884c19a="" data-v-d396e0d2="" class="btn-group" uppercased=""><button data-v-e368fe26="" data-v-d396e0d2="" class="inset-when-pressed btn-shuffle-all" data-testid="btn-shuffle-all" orange="" title="Shuffle all. Press Alt/⌥ to change mode."><br data-v-d396e0d2="" data-testid="Icon" icon="[object Object]" fixed-width=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
+      <div data-v-8ea4eaa5="" data-v-5691beb5-s="" class="controls tw-w-full tw-min-h-[32px] tw-flex tw-justify-between tw-items-center tw-gap-4">
+        <div data-v-8ea4eaa5="" data-v-5691beb5-s="" class="tw-relative" data-testid="song-list-controls">
+          <div class="tw-flex tw-gap-2 tw-flex-wrap"><span data-v-cf9b67d8="" class="btn-group tw-inline-block tw-relative tw-flex-nowrap" uppercased=""><button data-v-8943c846="" class="inset-when-pressed tw-text-base tw-px-4 tw-py-2 tw-rounded tw-cursor-pointer btn-shuffle-all" data-testid="btn-shuffle-all" orange="" title="Shuffle all. Press Alt/⌥ to change mode."><br data-testid="Icon" icon="[object Object]" fixed-width=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
             <!--v-if-->
             <!--v-if-->
           </div>
-          <div data-v-d396e0d2="" class="menu-wrapper context-menu">
-            <div data-v-42061e3e="" data-v-d396e0d2="" class="add-to" data-testid="add-to-menu" tabindex="0">
+          <div class="context-menu tw-p-0 tw-hidden">
+            <div data-v-42061e3e="" class="add-to tw-w-full tw-max-w-64 tw-min-w-48 tw-p-3 tw-space-y-3" data-testid="add-to-menu" tabindex="0">
               <section data-v-42061e3e="" class="existing-playlists">
-                <p data-v-42061e3e="">Add 0 songs to</p>
-                <ul data-v-42061e3e="">
+                <p data-v-42061e3e="" class="tw-mb-2 tw-text-[0.9rem]">Add 0 songs to</p>
+                <ul data-v-42061e3e="" class="tw-relative tw-max-h-48 tw-overflow-y-scroll tw-space-y-1.5">
                   <li data-v-42061e3e="" data-testid="queue" tabindex="0">Queue</li>
                   <li data-v-42061e3e="" class="favorites" data-testid="add-to-favorites" tabindex="0"> Favorites </li>
                 </ul>
-              </section><button data-v-e368fe26="" data-v-42061e3e="" class="inset-when-pressed" transparent="">New Playlist…</button>
+              </section><button data-v-8943c846="" data-v-42061e3e="" class="inset-when-pressed tw-text-base tw-px-4 tw-py-2 tw-rounded tw-cursor-pointer !tw-w-full !tw-border !tw-border-solid !tw-border-white/20" transparent=""> New Playlist… </button>
             </div>
           </div>
         </div>
         <!--v-if-->
       </div>
     </main>
-  </header><br data-v-8ea4eaa5="" data-testid="song-list">
+  </header>
+  <main data-v-dcfb8776="" class="tw-overflow-scroll tw-flex tw-flex-col tw-b-16 md:tw-b-6 tw-p-6 tw-flex-1 tw-place-content-start"><br data-v-8ea4eaa5="" data-testid="song-list" class="-tw-m-6"></main>
 </section>
 `;
 
 exports[`renders in Plus edition 1`] = `
-<section data-v-8ea4eaa5="" id="songsWrapper">
-  <header data-v-5691beb5="" data-v-8ea4eaa5="" class="screen-header expanded">
-    <aside data-v-5691beb5="" class="thumbnail-wrapper">
-      <div data-v-55bfc268="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="thumbnail-stack single" style="background-image: url(undefined/resources/assets/img/covers/default.svg);"><span data-v-55bfc268="" data-testid="thumbnail"></span></div>
+<section data-v-dcfb8776="" data-v-8ea4eaa5="" class="tw-max-h-full tw-min-h-full tw-w-full tw-flex tw-flex-col tw-transform-gpu">
+  <header data-v-5691beb5="" data-v-8ea4eaa5="" class="screen-header tw-min-h-0 md:tw-min-h-full tw-flex tw-items-end tw-flex-shrink-0 tw-relative tw-content-stretch tw-leading-normal tw-p-6 expanded">
+    <aside data-v-5691beb5="" class="thumbnail-wrapper tw-hidden md:tw-block tw-overflow-hidden tw-w-0 tw-rounded-md">
+      <article data-v-55bfc268="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="single thumbnail-stack tw-aspect-square tw-overflow-hidden tw-grid tw-bg-cover tw-bg-no-repeat" style="background-image: url(undefined/resources/assets/img/covers/default.svg);"><span data-v-55bfc268="" class="tw-block tw-will-change-transform tw-w-full tw-h-full tw-bg-cover tw-bg-no-repeat" data-testid="thumbnail"></span></article>
     </aside>
-    <main data-v-5691beb5="">
-      <div data-v-5691beb5="" class="heading-wrapper">
-        <h1 data-v-5691beb5="" class="name"> All Songs
+    <main data-v-5691beb5="" class="tw-flex tw-flex-1 tw-gap-5 tw-items-center tw-overflow-hidden">
+      <div data-v-5691beb5="" class="tw-w-full tw-flex-1 tw-overflow-hidden">
+        <h1 data-v-5691beb5="" class="name tw-overflow-hidden tw-whitespace-nowrap tw-text-ellipsis tw-mr-4 tw-font-thin md:tw-font-bold tw-my-0 tw-leading-tight"> All Songs
           <!--v-if-->
-        </h1><span data-v-5691beb5="" class="meta text-secondary"><span data-v-8ea4eaa5="" data-v-5691beb5-s="">420 songs</span><span data-v-8ea4eaa5="" data-v-5691beb5-s="">10 sec</span></span>
+        </h1><span data-v-5691beb5="" class="meta text-secondary tw-hidden tw-text-[0.9rem] tw-leading-loose"><span data-v-8ea4eaa5="" data-v-5691beb5-s="">420 songs</span><span data-v-8ea4eaa5="" data-v-5691beb5-s="">10 sec</span></span>
       </div>
-      <div data-v-8ea4eaa5="" data-v-5691beb5-s="" class="controls">
-        <div data-v-d396e0d2="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="song-list-controls" data-testid="song-list-controls">
-          <div data-v-d396e0d2="" class="wrapper"><span data-v-e884c19a="" data-v-d396e0d2="" class="btn-group" uppercased=""><button data-v-e368fe26="" data-v-d396e0d2="" class="inset-when-pressed btn-shuffle-all" data-testid="btn-shuffle-all" orange="" title="Shuffle all. Press Alt/⌥ to change mode."><br data-v-d396e0d2="" data-testid="Icon" icon="[object Object]" fixed-width=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
+      <div data-v-8ea4eaa5="" data-v-5691beb5-s="" class="controls tw-w-full tw-min-h-[32px] tw-flex tw-justify-between tw-items-center tw-gap-4">
+        <div data-v-8ea4eaa5="" data-v-5691beb5-s="" class="tw-relative" data-testid="song-list-controls">
+          <div class="tw-flex tw-gap-2 tw-flex-wrap"><span data-v-cf9b67d8="" class="btn-group tw-inline-block tw-relative tw-flex-nowrap" uppercased=""><button data-v-8943c846="" class="inset-when-pressed tw-text-base tw-px-4 tw-py-2 tw-rounded tw-cursor-pointer btn-shuffle-all" data-testid="btn-shuffle-all" orange="" title="Shuffle all. Press Alt/⌥ to change mode."><br data-testid="Icon" icon="[object Object]" fixed-width=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
             <!--v-if-->
             <!--v-if-->
           </div>
-          <div data-v-d396e0d2="" class="menu-wrapper context-menu">
-            <div data-v-42061e3e="" data-v-d396e0d2="" class="add-to" data-testid="add-to-menu" tabindex="0">
+          <div class="context-menu tw-p-0 tw-hidden">
+            <div data-v-42061e3e="" class="add-to tw-w-full tw-max-w-64 tw-min-w-48 tw-p-3 tw-space-y-3" data-testid="add-to-menu" tabindex="0">
               <section data-v-42061e3e="" class="existing-playlists">
-                <p data-v-42061e3e="">Add 0 songs to</p>
-                <ul data-v-42061e3e="">
+                <p data-v-42061e3e="" class="tw-mb-2 tw-text-[0.9rem]">Add 0 songs to</p>
+                <ul data-v-42061e3e="" class="tw-relative tw-max-h-48 tw-overflow-y-scroll tw-space-y-1.5">
                   <li data-v-42061e3e="" data-testid="queue" tabindex="0">Queue</li>
                   <li data-v-42061e3e="" class="favorites" data-testid="add-to-favorites" tabindex="0"> Favorites </li>
                 </ul>
-              </section><button data-v-e368fe26="" data-v-42061e3e="" class="inset-when-pressed" transparent="">New Playlist…</button>
+              </section><button data-v-8943c846="" data-v-42061e3e="" class="inset-when-pressed tw-text-base tw-px-4 tw-py-2 tw-rounded tw-cursor-pointer !tw-w-full !tw-border !tw-border-solid !tw-border-white/20" transparent=""> New Playlist… </button>
             </div>
           </div>
-        </div><label data-v-8ea4eaa5="" data-v-5691beb5-s="" class="own-songs-toggle text-secondary"><span data-v-b5259680="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class=""><input data-v-b5259680="" type="checkbox"></span><span data-v-8ea4eaa5="" data-v-5691beb5-s="">Own songs only</span></label>
+        </div><label data-v-8ea4eaa5="" data-v-5691beb5-s="" class="text-secondary tw-inline-flex tw-items-center tw-text-base"><span data-v-bf5853cb="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="tw-relative tw-align-bottom tw-inline-block tw-w-[32px] tw-h-[20px] tw-bg-gray-300 tw-rounded-full tw-shadow-inner tw-cursor-pointer tw-transition-all tw-duration-200 tw-ease-in-out tw-mr-2 after:tw-h-[16px] after:tw-aspect-square after:tw-absolute after:tw-bg-white after:tw-top-[2px] after:tw-left-[2px] after:tw-rounded-full after:tw-transition-left after:tw-duration-200 after:tw-ease-in-out"><input data-v-bf5853cb="" type="checkbox" class="tw-hidden"></span><span data-v-8ea4eaa5="" data-v-5691beb5-s="">Own songs only</span></label>
       </div>
     </main>
-  </header><br data-v-8ea4eaa5="" data-testid="song-list">
+  </header>
+  <main data-v-dcfb8776="" class="tw-overflow-scroll tw-flex tw-flex-col tw-b-16 md:tw-b-6 tw-p-6 tw-flex-1 tw-place-content-start"><br data-v-8ea4eaa5="" data-testid="song-list" class="-tw-m-6"></main>
 </section>
 `;

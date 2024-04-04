@@ -17,11 +17,12 @@ abstract class CloudStorage extends SongStorage
 {
     public function __construct(protected FileScanner $scanner)
     {
-        parent::__construct();
     }
 
     protected function scanUploadedFile(UploadedFile $file, User $uploader): ScanResult
     {
+        self::assertSupported();
+
         // Can't scan the uploaded file directly, as it apparently causes some misbehavior during idv3 tag reading.
         // Instead, we copy the file to the tmp directory and scan it from there.
         $tmpDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'koel_tmp';
@@ -42,6 +43,8 @@ abstract class CloudStorage extends SongStorage
 
     public function copyToLocal(Song $song): string
     {
+        self::assertSupported();
+
         $tmpDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'koel_tmp';
         File::ensureDirectoryExists($tmpDir);
 

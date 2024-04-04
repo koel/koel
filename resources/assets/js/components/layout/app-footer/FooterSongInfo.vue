@@ -2,13 +2,18 @@
   <div
     :class="{ playing: song?.playback_state === 'Playing' }"
     :draggable="draggable"
-    class="song-info"
+    class="song-info px-6 py-0 flex items-center content-start w-[84px] md:w-80 gap-5"
     @dragstart="onDragStart"
   >
-    <span :style="{ backgroundImage: `url('${cover}')` }" class="album-thumb" />
-    <div v-if="song" class="meta">
-      <h3 class="title">{{ song.title }}</h3>
-      <a :href="`/#/artist/${song.artist_id}`" class="artist">{{ song.artist_name }}</a>
+    <span class="album-thumb block h-[55%] md:h-3/4 aspect-square rounded-full bg-cover" />
+    <div v-if="song" class="meta overflow-hidden hidden md:block">
+      <h3 class="title text-ellipsis overflow-hidden whitespace-nowrap">{{ song.title }}</h3>
+      <a
+        class="artist text-ellipsis overflow-hidden whitespace-nowrap block text-[0.9rem] !text-k-text-secondary hover:!text-k-accent"
+        :href="`/#/artist/${song.artist_id}`"
+      >
+        {{ song.artist_name }}
+      </a>
     </div>
   </div>
 </template>
@@ -24,6 +29,7 @@ const { startDragging } = useDraggable('songs')
 const song = requireInjection(CurrentSongKey, ref())
 
 const cover = computed(() => song.value?.album_cover || defaultCover)
+const coverBackgroundImage = computed(() => `url(${ cover.value })`)
 const draggable = computed(() => Boolean(song.value))
 
 const onDragStart = (event: DragEvent) => {
@@ -35,82 +41,35 @@ const onDragStart = (event: DragEvent) => {
 
 <style lang="postcss" scoped>
 .song-info {
-  padding: 0 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  width: 320px;
-  gap: 1rem;
-
   :fullscreen & {
-    padding-left: 0;
-  }
-
-  @media screen and (max-width: 768px) {
-    width: 84px;
+    @apply pl-0;
   }
 
   .album-thumb {
-    display: block;
-    height: 75%;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background-size: cover;
-
-    @media screen and (max-width: 768px) {
-      height: 55%;
-    }
+    background-image: v-bind(coverBackgroundImage);
 
     :fullscreen & {
-      height: 5rem;
+      @apply h-20;
     }
   }
 
   .meta {
-    overflow: hidden;
-
-    > * {
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
-    }
-
-    @media screen and (max-width: 768px) {
-      display: none;
-    }
-
     :fullscreen & {
-      margin-top: -18rem;
-      transform-origin: left bottom;
-      position: absolute;
-      overflow: hidden;
+      @apply -mt-72 origin-bottom-left absolute overflow-hidden;
 
       .title {
-        font-size: 3rem;
-        margin-bottom: .4rem;
-        line-height: 1.2;
-        font-weight: var(--font-weight-bold);
+        @apply text-5xl mb-[0.4rem] font-bold;
       }
 
       .artist {
-        font-size: 1.6rem;
-        width: fit-content;
-        line-height: 1.2;
+        @apply text-3xl w-fit;
       }
     }
   }
 
-  .artist {
-    display: block;
-    font-size: .9rem;
-  }
-
   &.playing .album-thumb {
+    @apply motion-reduce:animate-none;
     animation: spin 30s linear infinite;
-
-    @media (prefers-reduced-motion) {
-      animation: none;
-    }
   }
 }
 

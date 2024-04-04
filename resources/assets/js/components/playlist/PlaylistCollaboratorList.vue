@@ -1,13 +1,13 @@
 <template>
   <ListSkeleton v-if="loading" />
-  <ul v-else>
+  <ul v-else class="w-full space-y-3">
     <ListItem
-      is="li"
       v-for="collaborator in collaborators"
-      :role="collaborator.id === playlist.user_id ? 'owner' : 'contributor'"
+      :key="collaborator.id"
+      :collaborator="collaborator"
       :manageable="currentUserIsOwner"
       :removable="currentUserIsOwner && collaborator.id !== playlist.user_id"
-      :collaborator="collaborator"
+      :role="collaborator.id === playlist.user_id ? 'owner' : 'contributor'"
       @remove="removeCollaborator(collaborator)"
     />
   </ul>
@@ -69,13 +69,3 @@ const removeCollaborator = async (collaborator: PlaylistCollaborator) => {
 
 onMounted(async () => await fetchCollaborators())
 </script>
-
-<style scoped lang="postcss">
-ul {
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  margin: 1rem 0;
-  gap: .5rem;
-}
-</style>

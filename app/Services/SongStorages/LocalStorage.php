@@ -21,11 +21,12 @@ final class LocalStorage extends SongStorage
 {
     public function __construct(private FileScanner $scanner)
     {
-        parent::__construct();
     }
 
     public function storeUploadedFile(UploadedFile $file, User $uploader): Song
     {
+        self::assertSupported();
+
         $uploadDirectory = $this->getUploadDirectory($uploader);
         $targetFileName = $this->getTargetFileName($file, $uploader);
 

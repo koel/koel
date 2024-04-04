@@ -1,14 +1,26 @@
 <template>
-  <div :style="{ backgroundImage: `url(${defaultCover})` }" class="cover">
+  <div
+    :style="{ backgroundImage: `url(${defaultCover})` }"
+    class="song-thumbnail group w-[48px] min-w-[48px] aspect-square bg-cover relative rounded overflow-hidden flex
+    items-center justify-center
+    before:absolute before:w-full before:h-full before:pointer-events-none before:z-[1]
+    before:left-0 before:top-0 before:bg-black before:opacity-0 hover:before:opacity-70"
+  >
     <img
       v-koel-hide-broken-icon
       :alt="song.album_name"
       :src="song.album_cover"
-      class="pointer-events-none"
+      class="w-full h-full object-cover absolute left-0 top-0 pointer-events-none"
       loading="lazy"
     >
-    <a :title="title" class="control" role="button" @click.prevent="changeSongState">
-      <Icon :icon="song.playback_state === 'Playing' ? faPause : faPlay" class="text-highlight" />
+    <a
+      :title="title"
+      class="w-7 h-7 text-base z-[1] text-k-text-primary duration-300 justify-center
+      items-center rounded-full bg-black/50 pl-0.5 flex opacity-0 group-hover:opacity-100"
+      role="button"
+      @click.prevent="changeSongState"
+    >
+      <Icon :icon="song.playback_state === 'Playing' ? faPause : faPlay" class="text-k-highlight" />
     </a>
   </div>
 </template>
@@ -50,62 +62,3 @@ const changeSongState = () => {
   }
 }
 </script>
-
-<style lang="postcss" scoped>
-.cover {
-  width: 48px;
-  min-width: 48px;
-  aspect-ratio: 1/1;
-  background-size: cover;
-  position: relative;
-  border-radius: 4px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-
-  &::before {
-    content: " ";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    background: #000;
-    opacity: 0;
-    z-index: 1;
-
-    @media (hover: none) {
-      opacity: .7;
-    }
-  }
-
-  .control {
-    border-radius: 50%;
-    width: 28px;
-    height: 28px;
-    background: rgba(0, 0, 0, .5);
-    font-size: 1rem;
-    z-index: 1;
-    display: none;
-    color: var(--color-text-primary);
-    transition: .3s;
-    justify-content: center;
-    align-items: center;
-
-    @media (hover: none) {
-      display: flex;
-    }
-  }
-}
-</style>

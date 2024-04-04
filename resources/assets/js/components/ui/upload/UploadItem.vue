@@ -1,16 +1,23 @@
 <template>
-  <div :class="cssClass" :title="file.message" class="upload-item">
-    <span :style="{ width: `${file.progress}%` }" class="progress" />
-    <span class="details">
-      <span class="name">{{ file.name }}</span>
-      <span class="controls">
-        <span v-if="file.status === 'Errored'" v-koel-tooltip.left :title="file.message" class="info">
+  <div
+    :class="cssClass"
+    :title="file.message"
+    class="upload-item relative rounded min-h-[32px] overflow-hidden bg-k-bg-secondary"
+  >
+    <span
+      :style="{ width: `${file.progress}%` }"
+      class="absolute h-full top-0 left-0 z-0 duration-200 ease-out bg-k-highlight"
+    />
+    <span class="details z-10 absolute h-full w-full flex items-center content-between">
+      <span class="name px-4 flex-1">{{ file.name }}</span>
+      <span class="flex items-center">
+        <span v-if="file.status === 'Errored'" v-koel-tooltip.left :title="file.message" class="info !px-3">
           <Icon :icon="faInfoCircle" :title="file.message" />
         </span>
-        <Btn v-if="canRetry" icon-only title="Retry" transparent unrounded @click="retry">
+        <Btn v-if="canRetry" icon-only title="Retry" transparent unrounded class="!px-3" @click="retry">
           <Icon :icon="faRotateBack" />
         </Btn>
-        <Btn v-if="canRemove" icon-only title="Remove" transparent unrounded @click="remove">
+        <Btn v-if="canRemove" icon-only title="Remove" transparent unrounded class="!px-3" @click="remove">
           <Icon :icon="faTrashCan" />
         </Btn>
       </span>
@@ -24,7 +31,7 @@ import { faInfoCircle, faRotateBack, faTrashCan } from '@fortawesome/free-solid-
 import { computed, defineAsyncComponent, toRefs } from 'vue'
 import { UploadFile, uploadService } from '@/services'
 
-const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
+const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 
 const props = defineProps<{ file: UploadFile }>()
 const { file } = toRefs(props)
@@ -38,68 +45,19 @@ const retry = () => uploadService.retry(file.value)
 </script>
 
 <style lang="postcss" scoped>
-.upload-item {
-  position: relative;
-  margin-bottom: 5px;
-  border-radius: 3px;
-  min-height: 32px;
-  overflow: hidden;
-  background: var(--color-bg-secondary);
+.uploaded {
+  @apply bg-k-success;
 
   .progress {
-    position: absolute;
-    height: 100%;
-    top: 0;
-    left: 0;
-    background: var(--color-highlight);
-    z-index: 0;
-    transition: .3s ease-out;
+    @apply bg-transparent;
   }
+}
 
-  &.uploaded {
-    background: var(--color-green);
+.errored {
+  @apply bg-k-danger;
 
-    .progress {
-      background: transparent;
-    }
-  }
-
-  &.errored {
-    background: var(--color-red);
-
-    .progress {
-      background: transparent;
-    }
-  }
-
-  .details {
-    z-index: 1;
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    .name {
-      padding: 0 12px;
-    }
-
-    .info {
-      padding: 0 8px;
-    }
-  }
-
-  .controls {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    padding: 0 2px;
-  }
-
-  button {
-    padding: 8px 8px;
-    background: rgba(0, 0, 0, .1);
+  .progress {
+    @apply bg-transparent;
   }
 }
 </style>

@@ -1,10 +1,10 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-<article data-v-22adf296="" id="lyrics">
-  <div data-v-22adf296="" class="content">
-    <div data-v-22adf296=""><pre data-v-22adf296="" style="font-size: 1rem;">Foo bar baz qux</pre><span data-v-fcc3eddd="" data-v-22adf296="" class="magnifier"><button data-v-fcc3eddd="" class="inset-when-pressed" title="Zoom out" type="button"><br data-v-fcc3eddd="" data-testid="Icon" icon="[object Object]"></button><button data-v-fcc3eddd="" class="inset-when-pressed" title="Zoom in" type="button"><br data-v-fcc3eddd="" data-testid="Icon" icon="[object Object]"></button></span></div>
+<article data-v-22adf296="">
+  <main data-v-22adf296="" class="tw-relative">
+    <div data-v-22adf296=""><pre data-v-22adf296="" class="tw-font-sans tw-whitespace-pre-wrap tw-leading-relaxed">Foo bar baz qux</pre><span data-v-22adf296="" class="magnifier-wrapper tw-opacity-0 tw-absolute tw-top-0 tw-right-0 hover:!tw-opacity-100"><span data-v-fcc3eddd="" data-v-22adf296="" class="tw-flex tw-transition-opacity tw-duration-200"><button data-v-fcc3eddd="" class="inset-when-pressed tw-rounded-l tw-border-r-0" title="Zoom out" type="button"><br data-v-fcc3eddd="" data-testid="Icon" icon="[object Object]"></button><button data-v-fcc3eddd="" class="inset-when-pressed tw-rounded-r" title="Zoom in" type="button"><br data-v-fcc3eddd="" data-testid="Icon" icon="[object Object]"></button></span></span></div>
     <!--v-if-->
-  </div>
+  </main>
 </article>
 `;

@@ -1,3 +1,3 @@
 // Vitest Snapshot v1
 
-exports[`renders and functions 1`] = `<span data-v-fcc3eddd=""><button data-v-fcc3eddd="" class="inset-when-pressed" title="Zoom out" type="button"><br data-v-fcc3eddd="" data-testid="Icon" icon="[object Object]"></button><button data-v-fcc3eddd="" class="inset-when-pressed" title="Zoom in" type="button"><br data-v-fcc3eddd="" data-testid="Icon" icon="[object Object]"></button></span>`;
+exports[`renders and functions 1`] = `<span data-v-fcc3eddd="" class="tw-flex tw-transition-opacity tw-duration-200"><button data-v-fcc3eddd="" class="inset-when-pressed tw-rounded-l tw-border-r-0" title="Zoom out" type="button"><br data-v-fcc3eddd="" data-testid="Icon" icon="[object Object]"></button><button data-v-fcc3eddd="" class="inset-when-pressed tw-rounded-r" title="Zoom in" type="button"><br data-v-fcc3eddd="" data-testid="Icon" icon="[object Object]"></button></span>`;

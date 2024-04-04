@@ -1,12 +1,23 @@
 <template>
-  <form data-testid="forgot-password-form" @submit.prevent="requestResetPasswordLink">
-    <h1 class="font-size-1.5">Forgot Password</h1>
+  <form
+    class="min-w-full sm:min-w-[480px] sm:bg-white/10 p-7 rounded-xl"
+    data-testid="forgot-password-form"
+    @submit.prevent="requestResetPasswordLink"
+  >
+    <h1 class="text-2xl mb-4">Forgot Password</h1>
 
-    <div>
-      <input v-model="email" placeholder="Your email address" required type="email">
-      <Btn :disabled="loading" type="submit">Reset Password</Btn>
-      <Btn :disabled="loading" class="text-secondary" transparent @click="cancel">Cancel</Btn>
-    </div>
+    <FormRow>
+      <div class="flex flex-col gap-3 sm:flex-row sm:gap-0 sm:content-stretch">
+        <TextInput
+          v-model="email"
+          placeholder="Your email address"
+          required type="email"
+          class="flex-1 sm:rounded-l sm:rounded-r-none"
+        />
+        <Btn :disabled="loading" type="submit" class="sm:rounded-l-none sm:rounded-r">Reset Password</Btn>
+        <Btn :disabled="loading" class="!text-k-text-secondary" transparent @click="cancel">Cancel</Btn>
+      </div>
+    </FormRow>
   </form>
 </template>
 
@@ -15,7 +26,9 @@ import { ref } from 'vue'
 import { authService } from '@/services'
 import { useMessageToaster } from '@/composables'
 
-import Btn from '@/components/ui/Btn.vue'
+import Btn from '@/components/ui/form/Btn.vue'
+import TextInput from '@/components/ui/form/TextInput.vue'
+import FormRow from '@/components/ui/form/FormRow.vue'
 
 const { toastSuccess, toastError } = useMessageToaster()
 
@@ -37,50 +50,10 @@ const requestResetPasswordLink = async () => {
     if (err.response.status === 404) {
       toastError('No user with this email address found.')
     } else {
-      toastError('An unknown error occurred.')
+      toastError(err.response.data?.message || 'An unknown error occurred.')
     }
   } finally {
     loading.value = false
   }
 }
 </script>
-
-<style scoped lang="postcss">
-form {
-  min-width: 480px;
-
-  @media screen and (max-width: 480px) {
-    min-width: 100%;
-  }
-
-  h1 {
-    margin-bottom: .75rem;
-  }
-
-  > div {
-    display: flex;
-
-    @media screen and (max-width: 480px) {
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    input {
-      flex: 1;
-      border-radius: var(--border-radius-input) 0 0 var(--border-radius-input);
-
-      @media screen and (max-width: 480px) {
-        border-radius: var(--border-radius-input);
-      }
-    }
-
-    [type=submit] {
-      border-radius: 0 var(--border-radius-input) var(--border-radius-input) 0;
-
-      @media screen and (max-width: 480px) {
-        border-radius: var(--border-radius-input);
-      }
-    }
-  }
-}
-</style>

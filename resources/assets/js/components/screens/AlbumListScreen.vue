@@ -1,11 +1,13 @@
 <template>
-  <section id="albumsWrapper">
-    <ScreenHeader layout="collapsed">
-      Albums
-      <template #controls>
-        <ViewModeSwitch v-model="viewMode" />
-      </template>
-    </ScreenHeader>
+  <ScreenBase>
+    <template #header>
+      <ScreenHeader layout="collapsed">
+        Albums
+        <template #controls>
+          <ViewModeSwitch v-model="viewMode" />
+        </template>
+      </ScreenHeader>
+    </template>
 
     <ScreenEmptyState v-if="libraryEmpty">
       <template #icon>
@@ -17,23 +19,18 @@
       </span>
     </ScreenEmptyState>
 
-    <div
-      v-else
-      ref="listEl"
-      v-koel-overflow-fade
-      :class="`as-${viewMode}`"
-      class="albums main-scroll-wrap artist-album-wrapper"
-      data-testid="album-list"
-    >
-      <template v-if="showSkeletons">
-        <AlbumCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
-      </template>
-      <template v-else>
-        <AlbumCard v-for="album in albums" :key="album.id" :album="album" :layout="itemLayout" />
-        <ToTopButton />
-      </template>
+    <div v-else ref="gridContainer" v-koel-overflow-fade class="-m-6 overflow-auto">
+      <AlbumGrid :view-mode="viewMode" data-testid="album-grid">
+        <template v-if="showSkeletons">
+          <AlbumCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
+        </template>
+        <template v-else>
+          <AlbumCard v-for="album in albums" :key="album.id" :album="album" :layout="itemLayout" />
+          <ToTopButton />
+        </template>
+      </AlbumGrid>
     </div>
-  </section>
+  </ScreenBase>
 </template>
 
 <script lang="ts" setup>
@@ -48,17 +45,19 @@ import AlbumCardSkeleton from '@/components/ui/skeletons/ArtistAlbumCardSkeleton
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
+import ScreenBase from '@/components/screens/ScreenBase.vue'
+import AlbumGrid from '@/components/ui/album-artist/AlbumOrArtistGrid.vue'
 
 const { isAdmin } = useAuthorization()
 
-const listEl = ref<HTMLElement | null>(null)
+const gridContainer = ref<HTMLDivElement>()
 const viewMode = ref<ArtistAlbumViewMode>('thumbnails')
 const albums = toRef(albumStore.state, 'albums')
 
 const {
   ToTopButton,
   makeScrollable
-} = useInfiniteScroll(listEl, async () => await fetchAlbums())
+} = useInfiniteScroll(gridContainer, async () => await fetchAlbums())
 
 watch(viewMode, () => (preferences.albums_view_mode = viewMode.value))
 

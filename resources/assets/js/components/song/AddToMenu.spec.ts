@@ -5,7 +5,7 @@ import factory from '@/__tests__/factory'
 import { favoriteStore, playlistStore, queueStore } from '@/stores'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { arrayify, eventBus } from '@/utils'
-import Btn from '@/components/ui/Btn.vue'
+import Btn from '@/components/ui/form/Btn.vue'
 import AddToMenu from './AddToMenu.vue'
 
 let songs: Song[]

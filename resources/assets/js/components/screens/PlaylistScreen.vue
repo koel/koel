@@ -1,46 +1,49 @@
 <template>
-  <section v-if="playlist" id="playlistWrapper">
-    <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout" :disabled="loading">
-      {{ playlist.name }}
-      <ControlsToggle v-if="songs.length" v-model="showingControls" />
+  <ScreenBase v-if="playlist">
+    <template #header>
+      <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout" :disabled="loading">
+        {{ playlist.name }}
+        <ControlsToggle v-if="songs.length" v-model="showingControls" />
 
-      <template #thumbnail>
-        <PlaylistThumbnail :playlist="playlist">
-          <ThumbnailStack v-if="!playlist.cover" :thumbnails="thumbnails" />
-        </PlaylistThumbnail>
-      </template>
+        <template #thumbnail>
+          <PlaylistThumbnail :playlist="playlist">
+            <ThumbnailStack v-if="!playlist.cover" :thumbnails="thumbnails" />
+          </PlaylistThumbnail>
+        </template>
 
-      <template v-if="songs.length || playlist.is_collaborative" #meta>
-        <CollaboratorsBadge v-if="collaborators.length" :collaborators="collaborators" />
-        <span>{{ pluralize(songs, 'song') }}</span>
-        <span>{{ duration }}</span>
-        <a
-          v-if="allowDownload"
-          role="button"
-          title="Download all songs in playlist"
-          @click.prevent="download"
-        >
-          Download All
-        </a>
-      </template>
+        <template v-if="songs.length || playlist.is_collaborative" #meta>
+          <CollaboratorsBadge v-if="collaborators.length" :collaborators="collaborators" />
+          <span>{{ pluralize(songs, 'song') }}</span>
+          <span>{{ duration }}</span>
+          <a
+            v-if="allowDownload"
+            role="button"
+            title="Download all songs in playlist"
+            @click.prevent="download"
+          >
+            Download All
+          </a>
+        </template>
 
-      <template #controls>
-        <SongListControls
-          v-if="!isPhone || showingControls"
-          :config="controlsConfig"
-          @delete-playlist="destroy"
-          @filter="applyFilter"
-          @play-all="playAll"
-          @play-selected="playSelected"
-          @refresh="fetchDetails(true)"
-        />
-      </template>
-    </ScreenHeader>
+        <template #controls>
+          <SongListControls
+            v-if="!isPhone || showingControls"
+            :config="controlsConfig"
+            @delete-playlist="destroy"
+            @filter="applyFilter"
+            @play-all="playAll"
+            @play-selected="playSelected"
+            @refresh="fetchDetails(true)"
+          />
+        </template>
+      </ScreenHeader>
+    </template>
 
-    <SongListSkeleton v-show="loading" />
+    <SongListSkeleton v-show="loading" class="-m-6" />
     <SongList
       v-if="!loading && songs.length"
       ref="songList"
+      class="-m-6"
       @sort="sort"
       @press:delete="removeSelected"
       @press:enter="onPressEnter"
@@ -64,7 +67,7 @@
         </span>
       </template>
     </ScreenEmptyState>
-  </section>
+  </ScreenBase>
 </template>
 
 <script lang="ts" setup>
@@ -81,6 +84,7 @@ import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 import CollaboratorsBadge from '@/components/playlist/PlaylistCollaboratorsBadge.vue'
 import PlaylistThumbnail from '@/components/ui/PlaylistThumbnail.vue'
+import ScreenBase from '@/components/screens/ScreenBase.vue'
 
 const { currentUser } = useAuthorization()
 const { triggerNotFound, getRouteParam, onScreenActivated } = useRouter()

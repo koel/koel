@@ -1,10 +1,10 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-<article data-v-f01bdc56="" class="item full" draggable="true" tabindex="0" title="Led Zeppelin"><br data-v-f01bdc56="" data-testid="thumbnail" entity="[object Object]">
-  <footer data-v-f01bdc56="">
-    <div data-v-f01bdc56="" class="name"><a href="#/artist/42" class="text-normal" data-testid="name">Led Zeppelin</a></div>
-    <p data-v-f01bdc56="" class="meta"><a title="Shuffle all songs by Led Zeppelin" class="shuffle-artist" role="button"> Shuffle </a><a title="Download all songs by Led Zeppelin" class="download-artist" role="button"> Download </a></p>
+<article data-v-f01bdc56="" class="item tw-relative tw-flex md:tw-max-w-full tw-max-w-[256px] tw-border tw-p-5 tw-rounded-lg tw-flex-col tw-gap-5 tw-transition tw-border-color tw-duration-200 full" draggable="true" tabindex="0" title="Led Zeppelin"><br data-v-f01bdc56="" data-testid="thumbnail" entity="[object Object]">
+  <footer data-v-f01bdc56="" class="tw-flex tw-flex-1 tw-flex-col tw-gap-1.5 tw-overflow-hidden">
+    <div data-v-f01bdc56="" class="name tw-flex tw-flex-col tw-gap-2 tw-whitespace-nowrap"><a href="#/artist/42" class="text-normal" data-testid="name">Led Zeppelin</a></div>
+    <p data-v-f01bdc56="" class="meta tw-text-[0.9rem] tw-flex tw-gap-1.5 tw-opacity-70 hover:tw-opacity-100"><a title="Shuffle all songs by Led Zeppelin" class="shuffle-artist" role="button"> Shuffle </a><a title="Download all songs by Led Zeppelin" class="download-artist" role="button"> Download </a></p>
   </footer>
 </article>
 `;

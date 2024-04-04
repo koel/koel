@@ -1,6 +1,7 @@
-@import './vendor/reset.pcss';
 @import './partials/vars.pcss';
 @import './partials/hack.pcss';
+
+@import './partials/mixins.pcss';
 
 @import '@modules/nouislider/distribute/nouislider.min.css';
 @import './vendor/plyr.pcss';
@@ -8,196 +9,33 @@
 
 @import './partials/skeleton.pcss';
 @import './partials/tooltip.pcss';
+@import './partials/context-menu.pcss';
 @import './partials/shared.pcss';
 
-.vertical-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-.artist-album-wrapper {
-  display: grid !important;
-  gap: 16px;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-
-  &.as-list {
-    gap: 0.7em 1em;
-    align-content: start;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-
-    @media only screen and (max-width: 667px) {
-      display: block;
-
-      >*+* {
-        margin-top: .7rem;
-      }
-    }
-  }
-}
-
-.artist-album-info-wrapper {
-  .loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
+@layer utilities {
+  .fade-top {
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black var(--fade-size));
+    mask-image: linear-gradient(to bottom, transparent, black var(--fade-size));
   }
 
-  .info-wrapper {
-    color: var(--color-text-secondary);
-    position: absolute;
-    top: 0;
-    left: 0;
-    background: var(--color-bg-primary);
-    width: 100%;
-    height: 100%;
-    z-index: 2;
-
-    .inner {
-      overflow: auto;
-      height: 100%;
-      padding: 24px 24px 48px;
-
-      @media only screen and (max-width: 768px) {
-        padding: 16px;
-      }
-    }
-
-    .close-modal {
-      display: none;
-    }
-
-    &:hover {
-      .close-modal {
-        display: block;
-      }
-    }
-  }
-}
-
-.artist-album-info {
-  color: var(--color-text-secondary);
-
-  h1 {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: var(--font-weight-thin);
-    line-height: 2.8rem;
-    margin-bottom: 16px;
-
-    &.name {
-      font-size: 2rem;
-      margin-bottom: 2rem;
-    }
-
-    span {
-      flex: 1;
-      margin-right: 12px;
-    }
-
-    a {
-      font-size: 14px;
-
-      &:hover {
-        color: var(--color-highlight);
-      }
-    }
+  .fade-bottom {
+    -webkit-mask-image: linear-gradient(to top, transparent, black var(--fade-size));
+    mask-image: linear-gradient(to top, transparent, black var(--fade-size));
   }
 
-  .bio,
-  .wiki {
-    margin: 16px 0;
+  .fade-top.fade-bottom {
+    -webkit-mask: linear-gradient(to bottom, transparent, black var(--fade-size)) top,
+    linear-gradient(to top, transparent, black var(--fade-size)) bottom;
+    -webkit-mask-size: 100% 51%;
+    -webkit-mask-repeat: no-repeat;
+
+    mask: linear-gradient(to bottom, transparent, black var(--fade-size)) top,
+    linear-gradient(to top, transparent, black var(--fade-size)) bottom;
+    mask-size: 100% 51%;
+    mask-repeat: no-repeat;
   }
-
-  .more {
-    margin-top: .75rem;
-    border-radius: .23rem;
-    background: var(--color-blue);
-    color: var(--color-text-primary);
-    padding: .3rem .6rem;
-    display: inline-block;
-    text-transform: uppercase;
-    font-size: .8rem;
-  }
-
-  .cover,
-  .cool-guys-posing {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-
-  footer {
-    margin-top: 24px;
-    font-size: .9rem;
-    text-align: right;
-
-    a {
-      color: var(--color-text-primary);
-      font-weight: var(--font-weight-normal);
-
-      &:hover {
-        color: var(--color-text-secondary);
-      }
-    }
-  }
-
-  &.full {
-    .cover {
-      width: 300px;
-      max-width: 100%;
-      float: left;
-      margin: 0 16px 16px 0;
-    }
-
-    .bio,
-    .wiki {
-      margin-top: 0;
-    }
-
-    h1.name {
-      font-size: 2.4rem;
-
-      a.shuffle {
-        display: none;
-      }
-    }
-  }
-}
-
-.inset-when-pressed {
-  &:not([disabled]):active {
-    box-shadow: inset 0 10px 10px -10px rgba(0, 0, 0, .6);
-  }
-}
-
-.context-menu {
-  padding: .4rem 0;
-  width: max-content;
-  min-width: 144px;
-  background-color: var(--color-bg-context-menu);
-  position: fixed;
-  border-radius: 4px;
-  z-index: 1001;
-  filter: drop-shadow(0 5px 15px rgba(0, 0, 0, .5));
-
-  :deep(.arrow) {
-    background-color: var(--color-bg-context-menu);
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    transform: rotate(45deg);
-  }
-}
-
-.themed-background, body, html {
-  background-color: var(--color-bg-primary);
-  background-image: var(--bg-image);
-  background-attachment: var(--bg-attachment);
-  background-size: var(--bg-size);
-  background-position: var(--bg-position);
 }

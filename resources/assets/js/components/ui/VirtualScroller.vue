@@ -1,7 +1,12 @@
 <template>
-  <div ref="scroller" v-koel-overflow-fade class="virtual-scroller" @scroll.passive="onScroll">
-    <div :style="{ height: `${totalHeight}px` }">
-      <div :style="{ transform: `translateY(${offsetY}px)`}">
+  <div
+    ref="scroller"
+    v-koel-overflow-fade
+    class="virtual-scroller will-change-transform overflow-scroll"
+    @scroll.passive="onScroll"
+  >
+    <div class="will-change-transform overflow-hidden" :style="{ height: `${totalHeight}px` }">
+      <div class="will-change-transform" :style="{ transform: `translateY(${offsetY}px)`}">
         <slot v-for="item in renderedItems" :item="item" />
       </div>
     </div>
@@ -58,24 +63,12 @@ onBeforeUnmount(() => observer.unobserve(scroller.value!))
 
 <style lang="postcss" scoped>
 .virtual-scroller {
-  will-change: transform;
-  overflow: scroll;
-
   @supports (scrollbar-gutter: stable) {
     overflow: auto;
     scrollbar-gutter: stable;
 
     @media (hover: none) {
       scrollbar-gutter: auto;
-    }
-  }
-
-  > div {
-    overflow: hidden;
-    will-change: transform;
-
-    > div {
-      will-change: transform;
     }
   }
 }

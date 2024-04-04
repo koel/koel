@@ -5,7 +5,13 @@
   <GlobalEventListeners />
   <OfflineNotification v-if="!online" />
 
-  <div v-if="layout === 'main' && initialized" id="main" @dragend="onDragEnd" @dragover="onDragOver" @drop="onDrop">
+  <main
+    v-if="layout === 'main' && initialized"
+    class="absolute md:relative top-0 h-full md:h-screen pt-k-header-height md:pt-0 w-full md:w-auto flex flex-col justify-end"
+    @dragend="onDragEnd"
+    @dragover="onDragOver"
+    @drop="onDrop"
+  >
     <Hotkeys />
     <MainWrapper />
     <AppFooter />
@@ -17,7 +23,7 @@
     <PlaylistFolderContextMenu />
     <CreateNewPlaylistContextMenu />
     <DropZone v-show="showDropZone" @close="showDropZone = false" />
-  </div>
+  </main>
 
   <LoginForm v-if="layout === 'auth'" @loggedin="onUserLoggedIn" />
 
@@ -31,10 +37,10 @@ import { useOnline } from '@vueuse/core'
 import { commonStore, preferenceStore as preferences, queueStore } from '@/stores'
 import { authService, socketListener, socketService, uploadService } from '@/services'
 import { CurrentSongKey, DialogBoxKey, MessageToasterKey, OverlayKey } from '@/symbols'
-import { useRouter } from '@/composables'
+import { useRouter, useOverlay } from '@/composables'
 
 import DialogBox from '@/components/ui/DialogBox.vue'
-import MessageToaster from '@/components/ui/MessageToaster.vue'
+import MessageToaster from '@/components/ui/message-toaster/MessageToaster.vue'
 import Overlay from '@/components/ui/Overlay.vue'
 import OfflineNotification from '@/components/ui/OfflineNotification.vue'
 
@@ -53,7 +59,7 @@ const ArtistContextMenu = defineAsyncComponent(() => import('@/components/artist
 const PlaylistContextMenu = defineAsyncComponent(() => import('@/components/playlist/PlaylistContextMenu.vue'))
 const PlaylistFolderContextMenu = defineAsyncComponent(() => import('@/components/playlist/PlaylistFolderContextMenu.vue'))
 const SongContextMenu = defineAsyncComponent(() => import('@/components/song/SongContextMenu.vue'))
-const CreateNewPlaylistContextMenu = defineAsyncComponent(() => import('@/components/playlist/CreateNewPlaylistContextMenu.vue'))
+const CreateNewPlaylistContextMenu = defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistContextMenu.vue'))
 const SupportKoel = defineAsyncComponent(() => import('@/components/meta/SupportKoel.vue'))
 const DropZone = defineAsyncComponent(() => import('@/components/ui/upload/DropZone.vue'))
 const AcceptInvitation = defineAsyncComponent(() => import('@/components/invitation/AcceptInvitation.vue'))
@@ -121,7 +127,7 @@ onMounted(async () => {
 const initialized = ref(false)
 
 const init = async () => {
-  overlay.value!.show({ message: 'Just a little patience…' })
+  useOverlay(overlay).showOverlay({ message: 'Just a little patience…' })
 
   try {
     await commonStore.init()
@@ -141,7 +147,7 @@ const init = async () => {
     layout.value = 'auth'
     throw err
   } finally {
-    overlay.value!.hide()
+    useOverlay(overlay).hideOverlay()
   }
 }
 
@@ -162,50 +168,11 @@ provide(CurrentSongKey, currentSong)
 
 <style lang="postcss">
 #dragGhost {
-  display: inline-block;
-  background: var(--color-green);
-  padding: .8rem;
-  border-radius: .3rem;
-  color: var(--color-text-primary);
-  font-family: var(--font-family);
-  font-size: 1rem;
-  font-weight: var(--font-weight-light);
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: -1;
-
-  @media (hover: none) {
-    display: none;
-  }
+  @apply inline-block py-2 px-3 rounded-md text-base font-sans fixed top-0 left-0 z-[-1] bg-k-success
+  text-k-text-primary no-hover:hidden;
 }
 
 #copyArea {
-  position: absolute;
-  left: -9999px;
-  width: 1px;
-  height: 1px;
-  bottom: 1px;
-
-  @media (hover: none) {
-    display: none;
-  }
-}
-
-#main {
-  display: flex;
-  height: 100vh;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-
-#main {
-  @media screen and (max-width: 768px) {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    top: 0;
-    padding-top: var(--header-height);
-  }
+  @apply absolute -left-full bottom-px w-px h-px no-hover:hidden;
 }
 </style>

@@ -27,6 +27,8 @@ final class DropboxStorage extends CloudStorage
 
     public function storeUploadedFile(UploadedFile $file, User $uploader): Song
     {
+        self::assertSupported();
+
         return DB::transaction(function () use ($file, $uploader): Song {
             $result = $this->scanUploadedFile($file, $uploader);
             $song = $this->scanner->getSong();
@@ -71,16 +73,20 @@ final class DropboxStorage extends CloudStorage
 
     public function getSongPresignedUrl(Song $song): string
     {
+        self::assertSupported();
+
         return $this->filesystem->temporaryUrl($song->storage_metadata->getPath());
     }
 
-    public function supported(): bool
+    protected function supported(): bool
     {
         return SongStorageTypes::supported(SongStorageTypes::DROPBOX);
     }
 
     public function delete(Song $song, bool $backup = false): void
     {
+        self::assertSupported();
+
         $path = $song->storage_metadata->getPath();
 
         if ($backup) {

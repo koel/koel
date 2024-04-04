@@ -18,7 +18,7 @@ final class PlaylistCollaborator implements Arrayable
 
     public static function fromUser(User $user): self
     {
-        return new self($user->id, $user->name, gravatar($user->email));
+        return new self($user->id, $user->name, $user->avatar);
     }
 
     /** @return array<mixed> */

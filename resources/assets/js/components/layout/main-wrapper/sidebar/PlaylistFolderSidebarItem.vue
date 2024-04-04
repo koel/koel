@@ -1,31 +1,42 @@
 <template>
   <li
-    class="playlist-folder"
     :class="{ droppable }"
-    tabindex="0"
+    class="playlist-folder relative"
     draggable="true"
+    tabindex="0"
     @dragleave="onDragLeave"
     @dragover="onDragOver"
     @dragstart="onDragStart"
     @drop="onDrop"
   >
-    <a @click.prevent="toggle" @contextmenu.prevent="onContextMenu">
-      <Icon :icon="opened ? faFolderOpen : faFolder" fixed-width />
-      <span>{{ folder.name }}</span>
-    </a>
+    <ul>
+      <SidebarItem @click="toggle" @contextmenu.prevent="onContextMenu">
+        <template #icon>
+          <Icon :icon="opened ? faFolderOpen : faFolder" fixed-width />
+        </template>
+        {{ folder.name }}
+      </SidebarItem>
 
-    <ul v-if="playlistsInFolder.length" v-show="opened">
-      <PlaylistSidebarItem v-for="playlist in playlistsInFolder" :key="playlist.id" :list="playlist" class="sub-item" />
+      <li v-if="playlistsInFolder.length" v-show="opened">
+        <ul>
+          <PlaylistSidebarItem
+            v-for="playlist in playlistsInFolder"
+            :key="playlist.id"
+            :list="playlist"
+            class="pl-4"
+          />
+        </ul>
+      </li>
+
+      <li
+        v-if="opened"
+        :class="droppableOnHatch && 'droppable'"
+        class="hatch absolute bottom-0 w-full h-1"
+        @dragover="onDragOverHatch"
+        @dragleave.prevent="onDragLeaveHatch"
+        @drop.prevent="onDropOnHatch"
+      />
     </ul>
-
-    <div
-      v-if="opened"
-      :class="droppableOnHatch && 'droppable'"
-      class="hatch"
-      @dragover="onDragOverHatch"
-      @dragleave.prevent="onDragLeaveHatch"
-      @drop.prevent="onDropOnHatch"
-    />
   </li>
 </template>
 
@@ -36,7 +47,8 @@ import { playlistFolderStore, playlistStore } from '@/stores'
 import { eventBus } from '@/utils'
 import { useDraggable, useDroppable } from '@/composables'
 
-import PlaylistSidebarItem from '@/components/layout/main-wrapper/sidebar/PlaylistSidebarItem.vue'
+import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
+import SidebarItem from './SidebarItem.vue'
 
 const props = defineProps<{ folder: PlaylistFolder }>()
 const { folder } = toRefs(props)
@@ -108,28 +120,11 @@ const onContextMenu = (event: MouseEvent) => eventBus.emit(
 </script>
 
 <style lang="postcss" scoped>
-li.playlist-folder {
-  position: relative;
+.droppable {
+  @apply ring-1 ring-offset-0 ring-k-accent rounded-md cursor-copy;
+}
 
-  a {
-    color: var(--color-text-secondary);
-  }
-
-  &.droppable {
-    box-shadow: inset 0 0 0 1px var(--color-accent);
-    border-radius: 4px;
-    cursor: copy;
-  }
-
-  .hatch {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: .5rem;
-
-    &.droppable {
-      border-bottom: 3px solid var(--color-highlight);
-    }
-  }
+.hatch.droppable {
+  @apply border-b-[3px] border-k-highlight;
 }
 </style>

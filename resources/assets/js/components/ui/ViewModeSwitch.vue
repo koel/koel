@@ -1,5 +1,5 @@
 <template>
-  <span class="view-modes">
+  <span class="flex w-[64px] border border-solid border-white/20 rounded-md overflow-hidden mt-[0.5rem] md:mt-0">
     <label
       v-koel-tooltip
       :class="{ active: value === 'thumbnails' }"
@@ -42,30 +42,11 @@ const value = computed({
 </script>
 
 <style lang="postcss" scoped>
-.view-modes {
-  display: flex;
-  width: 64px;
-  border: 1px solid rgba(255, 255, 255, .2);
-  border-radius: 5px;
-  overflow: hidden;
+label {
+  @apply w-1/2 flex items-center justify-center h-[2rem] mb-0 cursor-pointer;
 
-  label {
-    width: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 2rem;
-    margin-bottom: 0;
-    cursor: pointer;
-
-    &.active {
-      background: var(--color-text-primary);
-      color: var(--color-bg-primary);
-    }
-  }
-
-  @media only screen and (max-width: 768px) {
-    margin-top: 8px;
+  &.active {
+    @apply bg-k-text-primary text-k-bg-primary;
   }
 }
 </style>

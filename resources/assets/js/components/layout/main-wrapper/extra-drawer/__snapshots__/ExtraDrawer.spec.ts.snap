@@ -1,0 +1,15 @@
+// Vitest Snapshot v1
+
+exports[`renders without a current song 1`] = `
+<aside data-v-847f0b60="" class="tw-fixed sm:tw-relative tw-top-0 tw-w-screen md:tw-w-auto tw-flex tw-flex-col md:tw-flex-row-reverse tw-z-[2]">
+  <div data-v-847f0b60="" class="controls tw-flex md:tw-flex-col tw-justify-between tw-items-center md:tw-w-[64px] md:tw-py-6 tw:tw-px-0 tw-bg-black/5 md:tw-border-l tw-border-solid md:tw-border-l-white/5 md:tw-border-b-0 md:tw-shadow-none tw-z-[2] tw-w-screen tw-flex-row tw-border-b tw-border-b-white/5 tw-border-l-0 tw-shadow-xl tw-py-0 tw-px-6 header-height">
+    <div data-v-847f0b60="" class="btn-group"><button data-v-5e31283f="" data-v-847f0b60="" class="tw-flex tw-items-center tw-justify-center tw-h-[42px] tw-aspect-square tw-rounded-full tw-bg-none md:tw-bg-black/30 tw-text-xl tw-opacity-70 tw-transition-opacity tw-duration-200 tw-ease-in-out tw-text-current tw-cursor-pointer hover:active-state active:tw-scale-90 tw-block md:tw-hidden" type="button"><br data-testid="Icon" icon="[object Object]"></button>
+      <!--v-if-->
+    </div>
+    <div data-v-847f0b60="" class="btn-group"><button data-v-5e31283f="" data-v-847f0b60="" class="tw-flex tw-items-center tw-justify-center tw-h-[42px] tw-aspect-square tw-rounded-full tw-bg-none md:tw-bg-black/30 tw-text-xl tw-opacity-70 tw-transition-opacity tw-duration-200 tw-ease-in-out tw-text-current tw-cursor-pointer hover:active-state active:tw-scale-90" type="button" title="About Koel"><br data-testid="Icon" icon="[object Object]">
+        <!--v-if-->
+      </button><button data-v-5e31283f="" data-v-847f0b60="" class="tw-flex tw-items-center tw-justify-center tw-h-[42px] tw-aspect-square tw-rounded-full tw-bg-none md:tw-bg-black/30 tw-text-xl tw-opacity-70 tw-transition-opacity tw-duration-200 tw-ease-in-out tw-text-current tw-cursor-pointer hover:active-state active:tw-scale-90" type="button" title="Log out"><br data-testid="Icon" icon="[object Object]"></button><br data-v-847f0b60="" data-testid="stub"></div>
+  </div>
+  <!--v-if-->
+</aside>
+`;

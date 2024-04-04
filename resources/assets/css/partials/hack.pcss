@@ -6,9 +6,7 @@
  * Make elements draggable in old WebKit
  */
 [draggable] {
-  user-select: none;
-  -khtml-user-drag: element;
-  -webkit-user-drag: element;
+  @apply select-none;
 }
 
 /**
@@ -16,44 +14,38 @@
  */
 html.non-mac {
   ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+    @apply w-[10px] h-[10px];
   }
 
   ::-webkit-scrollbar-button {
-    width: 0px;
-    height: 0px;
+    @apply w-0 h-0;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: var(--color-bg-primary);
-    border: 1px solid rgba(255, 255, 255, .2);
-    border-radius: 50px;
+    @apply bg-k-bg-primary border border-white/20 rounded-[50px];
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #303030;
+    @apply bg-[#303030];
   }
 
   ::-webkit-scrollbar-thumb:active {
-    background: var(--color-bg-primary);
+    @apply bg-k-bg-primary;
   }
 
   ::-webkit-scrollbar-track {
-    background: var(--color-bg-primary);
-    border: 0px none var(--color-text-primary);
-    border-radius: 50px;
+    @apply bg-k-bg-primary border-0 rounded-[50px];
   }
 
   ::-webkit-scrollbar-track:hover {
-    background: var(--color-bg-primary);
+    @apply bg-k-bg-primary;
   }
 
   ::-webkit-scrollbar-track:active {
-    background: #333333;
+    @apply bg-[#333];
   }
 
   ::-webkit-scrollbar-corner {
-    background: transparent;
+    @apply bg-transparent;
   }
 }

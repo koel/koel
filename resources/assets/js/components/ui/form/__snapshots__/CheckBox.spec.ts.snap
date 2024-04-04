@@ -1,0 +1,5 @@
+// Vitest Snapshot v1
+
+exports[`renders checked state 1`] = `<span data-v-bf5853cb="" class="checked tw-relative tw-align-bottom tw-inline-block tw-w-[32px] tw-h-[20px] tw-bg-gray-300 tw-rounded-full tw-shadow-inner tw-cursor-pointer tw-transition-all tw-duration-200 tw-ease-in-out tw-mr-2 after:tw-h-[16px] after:tw-aspect-square after:tw-absolute after:tw-bg-white after:tw-top-[2px] after:tw-left-[2px] after:tw-rounded-full after:tw-transition-left after:tw-duration-200 after:tw-ease-in-out"><input data-v-bf5853cb="" type="checkbox" class="tw-hidden"></span>`;
+
+exports[`renders unchecked state 1`] = `<span data-v-bf5853cb="" class="tw-relative tw-align-bottom tw-inline-block tw-w-[32px] tw-h-[20px] tw-bg-gray-300 tw-rounded-full tw-shadow-inner tw-cursor-pointer tw-transition-all tw-duration-200 tw-ease-in-out tw-mr-2 after:tw-h-[16px] after:tw-aspect-square after:tw-absolute after:tw-bg-white after:tw-top-[2px] after:tw-left-[2px] after:tw-rounded-full after:tw-transition-left after:tw-duration-200 after:tw-ease-in-out"><input data-v-bf5853cb="" type="checkbox" class="tw-hidden"></span>`;

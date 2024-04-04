@@ -1,5 +1,8 @@
 <template>
-  <section id="mainContent">
+  <section
+    id="mainContent"
+    class="flex-1 relative overflow-hidden"
+  >
     <!--
       Most of the views are render-expensive and have their own UI states (viewport/scroll position), e.g. the song
       lists), so we use v-show.
@@ -73,60 +76,5 @@ const screen = ref<ScreenName>('Home')
 
 onRouteChanged(route => (screen.value = route.screen))
 
-onMounted(async () => {
-  screen.value = getCurrentScreen()
-})
+onMounted(() => (screen.value = getCurrentScreen()))
 </script>
-
-<style lang="postcss">
-#mainContent {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-
-  > section {
-    max-height: 100%;
-    min-height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-
-    .main-scroll-wrap {
-      overflow: scroll;
-      display: flex;
-      flex-direction: column;
-      padding: 1.5rem;
-
-      @supports (scrollbar-gutter: stable) {
-        overflow: auto;
-        scrollbar-gutter: stable;
-
-        @media (hover: none) {
-          scrollbar-gutter: auto;
-        }
-      }
-
-      flex: 1;
-      -ms-overflow-style: -ms-autohiding-scrollbar;
-      place-content: start;
-
-      @media (hover: none) {
-        /* Enable scroll with momentum on touch devices */
-        overflow-y: scroll;
-        -webkit-overflow-scrolling: touch;
-      }
-    }
-  }
-
-  @media screen and (max-width: 768px) {
-    > section {
-      /* Leave some space for the "Back to top" button */
-      .main-scroll-wrap {
-        padding-bottom: 64px;
-      }
-    }
-  }
-}
-</style>

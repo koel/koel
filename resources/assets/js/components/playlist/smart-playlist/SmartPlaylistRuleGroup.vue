@@ -1,26 +1,38 @@
 <template>
-  <div class="rule-group" data-testid="smart-playlist-rule-group">
-    <div class="group-banner">
-      <span v-if="isFirstGroup">
-        Include songs that match <strong>all</strong> of these criteria
+  <div class="relative p-4 rounded-md border border-white/15">
+    <h4 class="mb-3">
+      <span>
+        <template v-if="isFirstGroup">
+          Include songs that match <strong>all</strong> of these criteria
+        </template>
+        <template v-else>
+          or <strong>all</strong> of these criteria
+        </template>
       </span>
-      <span v-else>
-        or <strong>all</strong> of these criteria
-      </span>
+    </h4>
+
+    <div class="space-y-2 mb-2">
+      <Rule
+        v-for="rule in mutatedGroup.rules"
+        :key="rule.id"
+        :rule="rule"
+        @input="onRuleChanged"
+        @remove="removeRule(rule)"
+      />
     </div>
 
-    <Rule
-      v-for="rule in mutatedGroup.rules"
-      :key="rule.id"
-      :rule="rule"
-      @input="onRuleChanged"
-      @remove="removeRule(rule)"
-    />
-
-    <Btn class="btn-add-rule" green small uppercase @click.prevent="addRule">
-      <Icon :icon="faPlus" />
-      Rule
-    </Btn>
+    <div class="text-center absolute w-full left-0 -mt-[2px]">
+      <Btn
+        title="Remove this rule"
+        class="aspect-square scale-75 hover:scale-90 active:scale-[80%]"
+        rounded
+        success
+        small
+        @click.prevent="addRule"
+      >
+        <Icon :icon="faPlus" />
+      </Btn>
+    </div>
   </div>
 </template>
 
@@ -32,7 +44,7 @@ import { playlistStore } from '@/stores'
 const props = defineProps<{ group: SmartPlaylistRuleGroup, isFirstGroup: boolean }>()
 const { group, isFirstGroup } = toRefs(props)
 
-const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
+const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 const Rule = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/SmartPlaylistRule.vue'))
 
 const mutatedGroup = reactive<SmartPlaylistRuleGroup>(JSON.parse(JSON.stringify(group.value)))
@@ -53,19 +65,3 @@ const removeRule = (rule: SmartPlaylistRule) => {
   notifyParentForUpdate()
 }
 </script>
-
-<style lang="postcss" scoped>
-.rule-group {
-  margin-bottom: 1rem;
-  padding-bottom: .5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, .1);
-
-  > * + * {
-    margin-bottom: .5rem;
-  }
-}
-
-.group-banner {
-  margin-bottom: 1rem;
-}
-</style>

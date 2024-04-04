@@ -1,34 +1,37 @@
 <template>
-  <section id="queueWrapper">
-    <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
-      Current Queue
-      <ControlsToggle v-model="showingControls" />
+  <ScreenBase>
+    <template #header>
+      <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
+        Current Queue
+        <ControlsToggle v-model="showingControls" />
 
-      <template #thumbnail>
-        <ThumbnailStack :thumbnails="thumbnails" />
-      </template>
+        <template #thumbnail>
+          <ThumbnailStack :thumbnails="thumbnails" />
+        </template>
 
-      <template v-if="songs.length" #meta>
-        <span>{{ pluralize(songs, 'song') }}</span>
-        <span>{{ duration }}</span>
-      </template>
+        <template v-if="songs.length" #meta>
+          <span>{{ pluralize(songs, 'song') }}</span>
+          <span>{{ duration }}</span>
+        </template>
 
-      <template #controls>
-        <SongListControls
-          v-if="songs.length && (!isPhone || showingControls)"
-          :config="config"
-          @filter="applyFilter"
-          @clear-queue="clearQueue"
-          @play-all="playAll"
-          @play-selected="playSelected"
-        />
-      </template>
-    </ScreenHeader>
+        <template #controls>
+          <SongListControls
+            v-if="songs.length && (!isPhone || showingControls)"
+            :config="config"
+            @filter="applyFilter"
+            @clear-queue="clearQueue"
+            @play-all="playAll"
+            @play-selected="playSelected"
+          />
+        </template>
+      </ScreenHeader>
+    </template>
 
-    <SongListSkeleton v-if="loading" />
+    <SongListSkeleton v-if="loading" class="-m-6" />
     <SongList
       v-if="songs.length"
       ref="songList"
+      class="-m-6"
       @reorder="onReorder"
       @press:delete="removeSelected"
       @press:enter="onPressEnter"
@@ -46,7 +49,7 @@
         <a class="start" @click.prevent="shuffleSome">playing some random songs</a>?
       </span>
     </ScreenEmptyState>
-  </section>
+  </ScreenBase>
 </template>
 
 <script lang="ts" setup>
@@ -60,6 +63,7 @@ import { useDialogBox, useRouter, useSongList, useSongListControls } from '@/com
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
+import ScreenBase from '@/components/screens/ScreenBase.vue'
 
 const { go, onScreenActivated } = useRouter()
 const { showErrorDialog } = useDialogBox()

@@ -1,13 +1,15 @@
 <template>
-  <div class="reset-password-wrapper vertical-center">
-    <form v-if="validPayload" @submit.prevent="submit">
-      <h1 class="font-size-1.5">Set New Password</h1>
-      <div>
-        <label>
-          <PasswordField v-model="password" minlength="10" placeholder="New password" required />
-          <span class="help">Min. 10 characters. Should be a mix of characters, numbers, and symbols.</span>
-        </label>
-      </div>
+  <div class="flex items-center justify-center h-screen">
+    <form
+      v-if="validPayload"
+      class="flex flex-col gap-3 sm:w-[480px] sm:bg-white/10 sm:rounded-lg p-7"
+      @submit.prevent="submit"
+    >
+      <h1 class="text-2xl mb-2">Set New Password</h1>
+      <label>
+        <PasswordField v-model="password" minlength="10" placeholder="New password" required />
+        <span class="help block mt-4">Min. 10 characters. Should be a mix of characters, numbers, and symbols.</span>
+      </label>
       <div>
         <Btn :disabled="loading" type="submit">Save</Btn>
       </div>
@@ -21,8 +23,8 @@ import { authService } from '@/services'
 import { base64Decode } from '@/utils'
 import { useMessageToaster, useRouter } from '@/composables'
 
-import PasswordField from '@/components/ui/PasswordField.vue'
-import Btn from '@/components/ui/Btn.vue'
+import PasswordField from '@/components/ui/form/PasswordField.vue'
+import Btn from '@/components/ui/form/Btn.vue'
 
 const { getRouteParam, go } = useRouter()
 const { toastSuccess, toastError } = useMessageToaster()
@@ -48,39 +50,9 @@ const submit = async () => {
     await authService.login(email.value, password.value)
     setTimeout(() => go('/', true))
   } catch (err: any) {
-    toastError(err.response?.data?.message || 'Failed to set new password. Please try again.')
+    toastError(err.response.data?.message || 'Failed to set new password. Please try again.')
   } finally {
     loading.value = false
   }
 }
 </script>
-
-<style scoped lang="postcss">
-.reset-password-wrapper {
-  height: 100vh;
-}
-
-h1 {
-  margin-bottom: .75rem;
-}
-
-form {
-  width: 480px;
-  background: rgba(255, 255, 255, .08);
-  border-radius: .6rem;
-  padding: 1.8rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-
-  @media screen and (max-width: 480px) {
-    width: 100vw;
-    background: transparent;
-  }
-
-  .help {
-    display: block;
-    margin-top: .8rem;
-  }
-}
-</style>

@@ -1,23 +1,33 @@
 // Vitest Snapshot v1
 
 exports[`edits a single song 1`] = `
-<form data-v-d70eb300="">
-  <header data-v-d70eb300=""><span data-v-d70eb300="" class="cover" style="background-image: url(http://test/album.jpg);"></span>
-    <div data-v-d70eb300="" class="meta">
+<form data-v-d70eb300="" class="tw-max-w-[540px]">
+  <header data-v-d70eb300="" class="tw-gap-4"><img data-v-d70eb300="" alt="" src="http://test/album.jpg" class="tw-w-[84px] tw-aspect-square tw-object-cover tw-object-center tw-rounded-md">
+    <div data-v-d70eb300="" class="tw-flex-1 tw-flex tw-flex-col tw-justify-center">
       <h1 data-v-d70eb300="" class="">Rocket to Heaven</h1>
       <h2 data-v-d70eb300="" data-testid="displayed-artist-name" class="">Led Zeppelin</h2>
       <h2 data-v-d70eb300="" data-testid="displayed-album-name" class="">IV</h2>
     </div>
   </header>
-  <main data-v-d70eb300="" class="tabs">
+  <main data-v-d70eb300="" class="tabs tw-mt-4 !tw-p-0">
     <div data-v-d70eb300="" class="clear" role="tablist"><button data-v-d70eb300="" id="editSongTabDetails" aria-selected="true" aria-controls="editSongPanelDetails" role="tab" type="button"> Details </button><button data-v-d70eb300="" id="editSongTabLyrics" aria-selected="false" aria-controls="editSongPanelLyrics" data-testid="edit-song-lyrics-tab" role="tab" type="button"> Lyrics </button></div>
     <div data-v-d70eb300="" class="panes">
-      <div data-v-d70eb300="" id="editSongPanelDetails" aria-labelledby="editSongTabDetails" role="tabpanel" tabindex="0">
-        <div data-v-d70eb300="" class="form-row"><label data-v-d70eb300=""> Title <input data-v-d70eb300="" data-testid="title-input" name="title" title="Title" type="text"></label></div>
-        <div data-v-d70eb300="" class="form-row cols"><label data-v-d70eb300=""> Artist <input data-v-d70eb300="" placeholder="" data-testid="artist-input" name="artist" type="text"></label><label data-v-d70eb300=""> Album Artist <input data-v-d70eb300="" placeholder="" data-testid="albumArtist-input" name="album_artist" type="text"></label></div>
-        <div data-v-d70eb300="" class="form-row"><label data-v-d70eb300=""> Album <input data-v-d70eb300="" placeholder="" data-testid="album-input" name="album" type="text"></label></div>
-        <div data-v-d70eb300="" class="form-row cols"><label data-v-d70eb300=""> Track <input data-v-d70eb300="" placeholder="" data-testid="track-input" min="1" name="track" type="number"></label><label data-v-d70eb300=""> Disc <input data-v-d70eb300="" placeholder="" data-testid="disc-input" min="1" name="disc" type="number"></label></div>
-        <div data-v-d70eb300="" class="form-row cols"><label data-v-d70eb300=""> Genre <input data-v-d70eb300="" placeholder="" data-testid="genre-input" name="genre" type="text" list="genres"><datalist data-v-d70eb300="" id="genres">
+      <div data-v-d70eb300="" id="editSongPanelDetails" aria-labelledby="editSongTabDetails" role="tabpanel" class="tw-space-y-3" tabindex="0"><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Title</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="text" data-testid="title-input" name="title" title="Title">
+          <!--v-if-->
+        </label>
+        <div data-v-d70eb300="" class="tw-grid tw-gap-3 tw-grid-cols-2"><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Artist</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="text" placeholder="" data-testid="artist-input" name="artist">
+            <!--v-if-->
+          </label><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Album Artist</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="text" placeholder="" data-testid="albumArtist-input" name="album_artist">
+            <!--v-if-->
+          </label></div><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Album</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="text" placeholder="" data-testid="album-input" name="album">
+          <!--v-if-->
+        </label>
+        <div data-v-d70eb300="" class="tw-grid tw-gap-3 tw-grid-cols-2"><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Track</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="number" placeholder="" data-testid="track-input" min="1" name="track">
+            <!--v-if-->
+          </label><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Disc</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="number" placeholder="" data-testid="disc-input" min="1" name="disc">
+            <!--v-if-->
+          </label></div>
+        <div data-v-d70eb300="" class="tw-grid tw-gap-3 tw-grid-cols-2"><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Genre</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="text" placeholder="" data-testid="genre-input" name="genre" list="genres"><datalist data-v-d70eb300="" id="genres">
               <option data-v-d70eb300="" value="Blues"></option>
               <option data-v-d70eb300="" value="Classic Rock"></option>
               <option data-v-d70eb300="" value="Country"></option>
@@ -209,37 +219,51 @@ exports[`edits a single song 1`] = `
               <option data-v-d70eb300="" value="Dubstep"></option>
               <option data-v-d70eb300="" value="Garage Rock"></option>
               <option data-v-d70eb300="" value="Psybient"></option>
-            </datalist></label><label data-v-d70eb300=""> Year <input data-v-d70eb300="" placeholder="" data-testid="year-input" name="year" type="number"></label></div>
+            </datalist>
+            <!--v-if-->
+          </label><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Year</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="number" placeholder="" data-testid="year-input" name="year">
+            <!--v-if-->
+          </label></div>
       </div>
-      <div data-v-d70eb300="" id="editSongPanelLyrics" aria-labelledby="editSongTabLyrics" role="tabpanel" tabindex="0" style="display: none;">
-        <div data-v-d70eb300="" class="form-row"><textarea data-v-d70eb300="" data-testid="lyrics-input" name="lyrics" title="Lyrics"></textarea></div>
-      </div>
+      <div data-v-d70eb300="" id="editSongPanelLyrics" aria-labelledby="editSongTabLyrics" role="tabpanel" tabindex="0" style="display: none;"><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]">
+          <!--v-if--><textarea data-v-2d5f8323="" data-v-d70eb300="" class="tw-px-4 tw-w-full tw-min-h-48 tw-text-base tw-py-2.5 tw-rounded" data-testid="lyrics-input" name="lyrics" title="Lyrics"></textarea>
+          <!--v-if-->
+        </label></div>
     </div>
   </main>
-  <footer data-v-d70eb300=""><button data-v-e368fe26="" data-v-d70eb300="" class="inset-when-pressed" type="submit">Update</button><button data-v-e368fe26="" data-v-d70eb300="" class="inset-when-pressed btn-cancel" white="">Cancel</button></footer>
+  <footer data-v-d70eb300=""><button data-v-8943c846="" data-v-d70eb300="" class="inset-when-pressed tw-text-base tw-px-4 tw-py-2 tw-rounded tw-cursor-pointer" type="submit">Update</button><button data-v-8943c846="" data-v-d70eb300="" class="inset-when-pressed tw-text-base tw-px-4 tw-py-2 tw-rounded tw-cursor-pointer btn-cancel" white="">Cancel</button></footer>
 </form>
 `;
 
 exports[`edits multiple songs 1`] = `
-<form data-v-d70eb300="">
-  <header data-v-d70eb300=""><span data-v-d70eb300="" class="cover" style="background-image: url(undefined/resources/assets/img/covers/default.svg);"></span>
-    <div data-v-d70eb300="" class="meta">
+<form data-v-d70eb300="" class="tw-max-w-[540px]">
+  <header data-v-d70eb300="" class="tw-gap-4"><img data-v-d70eb300="" alt="" src="undefined/resources/assets/img/covers/default.svg" class="tw-w-[84px] tw-aspect-square tw-object-cover tw-object-center tw-rounded-md">
+    <div data-v-d70eb300="" class="tw-flex-1 tw-flex tw-flex-col tw-justify-center">
       <h1 data-v-d70eb300="" class="mixed">3 songs selected</h1>
       <h2 data-v-d70eb300="" data-testid="displayed-artist-name" class="mixed">Mixed Artists</h2>
       <h2 data-v-d70eb300="" data-testid="displayed-album-name" class="mixed">Mixed Albums</h2>
     </div>
   </header>
-  <main data-v-d70eb300="" class="tabs">
+  <main data-v-d70eb300="" class="tabs tw-mt-4 !tw-p-0">
     <div data-v-d70eb300="" class="clear" role="tablist"><button data-v-d70eb300="" id="editSongTabDetails" aria-selected="true" aria-controls="editSongPanelDetails" role="tab" type="button"> Details </button>
       <!--v-if-->
     </div>
     <div data-v-d70eb300="" class="panes">
-      <div data-v-d70eb300="" id="editSongPanelDetails" aria-labelledby="editSongTabDetails" role="tabpanel" tabindex="0">
+      <div data-v-d70eb300="" id="editSongPanelDetails" aria-labelledby="editSongTabDetails" role="tabpanel" class="tw-space-y-3" tabindex="0">
         <!--v-if-->
-        <div data-v-d70eb300="" class="form-row cols"><label data-v-d70eb300=""> Artist <input data-v-d70eb300="" placeholder="Leave unchanged" data-testid="artist-input" name="artist" type="text"></label><label data-v-d70eb300=""> Album Artist <input data-v-d70eb300="" placeholder="Leave unchanged" data-testid="albumArtist-input" name="album_artist" type="text"></label></div>
-        <div data-v-d70eb300="" class="form-row"><label data-v-d70eb300=""> Album <input data-v-d70eb300="" placeholder="Leave unchanged" data-testid="album-input" name="album" type="text"></label></div>
-        <div data-v-d70eb300="" class="form-row cols"><label data-v-d70eb300=""> Track <input data-v-d70eb300="" placeholder="Leave unchanged" data-testid="track-input" min="1" name="track" type="number"></label><label data-v-d70eb300=""> Disc <input data-v-d70eb300="" placeholder="Leave unchanged" data-testid="disc-input" min="1" name="disc" type="number"></label></div>
-        <div data-v-d70eb300="" class="form-row cols"><label data-v-d70eb300=""> Genre <input data-v-d70eb300="" placeholder="Leave unchanged" data-testid="genre-input" name="genre" type="text" list="genres"><datalist data-v-d70eb300="" id="genres">
+        <div data-v-d70eb300="" class="tw-grid tw-gap-3 tw-grid-cols-2"><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Artist</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="text" placeholder="Leave unchanged" data-testid="artist-input" name="artist">
+            <!--v-if-->
+          </label><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Album Artist</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="text" placeholder="Leave unchanged" data-testid="albumArtist-input" name="album_artist">
+            <!--v-if-->
+          </label></div><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Album</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="text" placeholder="Leave unchanged" data-testid="album-input" name="album">
+          <!--v-if-->
+        </label>
+        <div data-v-d70eb300="" class="tw-grid tw-gap-3 tw-grid-cols-2"><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Track</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="number" placeholder="Leave unchanged" data-testid="track-input" min="1" name="track">
+            <!--v-if-->
+          </label><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Disc</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="number" placeholder="Leave unchanged" data-testid="disc-input" min="1" name="disc">
+            <!--v-if-->
+          </label></div>
+        <div data-v-d70eb300="" class="tw-grid tw-gap-3 tw-grid-cols-2"><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Genre</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="text" placeholder="Leave unchanged" data-testid="genre-input" name="genre" list="genres"><datalist data-v-d70eb300="" id="genres">
               <option data-v-d70eb300="" value="Blues"></option>
               <option data-v-d70eb300="" value="Classic Rock"></option>
               <option data-v-d70eb300="" value="Country"></option>
@@ -431,11 +455,15 @@ exports[`edits multiple songs 1`] = `
               <option data-v-d70eb300="" value="Dubstep"></option>
               <option data-v-d70eb300="" value="Garage Rock"></option>
               <option data-v-d70eb300="" value="Psybient"></option>
-            </datalist></label><label data-v-d70eb300=""> Year <input data-v-d70eb300="" placeholder="Leave unchanged" data-testid="year-input" name="year" type="number"></label></div>
+            </datalist>
+            <!--v-if-->
+          </label><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Year</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="number" placeholder="Leave unchanged" data-testid="year-input" name="year">
+            <!--v-if-->
+          </label></div>
       </div>
       <!--v-if-->
     </div>
   </main>
-  <footer data-v-d70eb300=""><button data-v-e368fe26="" data-v-d70eb300="" class="inset-when-pressed" type="submit">Update</button><button data-v-e368fe26="" data-v-d70eb300="" class="inset-when-pressed btn-cancel" white="">Cancel</button></footer>
+  <footer data-v-d70eb300=""><button data-v-8943c846="" data-v-d70eb300="" class="inset-when-pressed tw-text-base tw-px-4 tw-py-2 tw-rounded tw-cursor-pointer" type="submit">Update</button><button data-v-8943c846="" data-v-d70eb300="" class="inset-when-pressed tw-text-base tw-px-4 tw-py-2 tw-rounded tw-cursor-pointer btn-cancel" white="">Cancel</button></footer>
 </form>
 `;

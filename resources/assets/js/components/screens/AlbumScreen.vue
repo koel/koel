@@ -1,44 +1,46 @@
 <template>
-  <section v-if="album" id="albumWrapper" class="artist-album-info-wrapper">
-    <ScreenHeaderSkeleton v-if="loading" />
+  <ScreenBase v-if="album">
+    <template #header>
+      <ScreenHeaderSkeleton v-if="loading" />
 
-    <ScreenHeader v-if="!loading && album" :layout="songs.length === 0 ? 'collapsed' : headerLayout">
-      {{ album.name }}
-      <ControlsToggle v-model="showingControls" />
+      <ScreenHeader v-if="!loading && album" :layout="songs.length === 0 ? 'collapsed' : headerLayout">
+        {{ album.name }}
+        <ControlsToggle v-model="showingControls" />
 
-      <template #thumbnail>
-        <AlbumThumbnail :entity="album" />
-      </template>
+        <template #thumbnail>
+          <AlbumThumbnail :entity="album" />
+        </template>
 
-      <template #meta>
-        <a v-if="isNormalArtist" :href="`#/artist/${album.artist_id}`" class="artist">{{ album.artist_name }}</a>
-        <span v-else class="nope">{{ album.artist_name }}</span>
-        <span>{{ pluralize(songs, 'song') }}</span>
-        <span>{{ duration }}</span>
+        <template #meta>
+          <a v-if="isNormalArtist" :href="`#/artist/${album.artist_id}`" class="artist">{{ album.artist_name }}</a>
+          <span v-else class="nope">{{ album.artist_name }}</span>
+          <span>{{ pluralize(songs, 'song') }}</span>
+          <span>{{ duration }}</span>
 
-        <a
-          v-if="allowDownload"
-          class="download"
-          role="button"
-          title="Download all songs in album"
-          @click.prevent="download"
-        >
-          Download All
-        </a>
-      </template>
+          <a
+            v-if="allowDownload"
+            class="download"
+            role="button"
+            title="Download all songs in album"
+            @click.prevent="download"
+          >
+            Download All
+          </a>
+        </template>
 
-      <template #controls>
-        <SongListControls
-          v-if="songs.length && (!isPhone || showingControls)"
-          :config="config"
-          @filter="applyFilter"
-          @play-all="playAll"
-          @play-selected="playSelected"
-        />
-      </template>
-    </ScreenHeader>
+        <template #controls>
+          <SongListControls
+            v-if="songs.length && (!isPhone || showingControls)"
+            :config="config"
+            @filter="applyFilter"
+            @play-all="playAll"
+            @play-selected="playSelected"
+          />
+        </template>
+      </ScreenHeader>
+    </template>
 
-    <ScreenTabs>
+    <ScreenTabs class="-m-6">
       <template #header>
         <label :class="{ active: activeTab === 'Songs' }">
           Songs
@@ -67,25 +69,23 @@
 
       <div v-show="activeTab === 'OtherAlbums'" class="albums-pane" data-testid="albums-pane">
         <template v-if="otherAlbums">
-          <ul v-if="otherAlbums.length" v-koel-overflow-fade class="as-list artist-album-wrapper">
-            <li v-for="a in otherAlbums" :key="a.id">
-              <AlbumCard :album="a" layout="compact" />
-            </li>
-          </ul>
-          <p v-else class="none text-secondary">No other albums by {{ album.artist_name }} found in the library.</p>
+          <AlbumGrid v-if="otherAlbums.length" v-koel-overflow-fade view-mode="list">
+            <AlbumCard v-for="otherAlbum in otherAlbums" :key="otherAlbum.id" layout="compact" :album="otherAlbum" />
+          </AlbumGrid>
+          <p v-else class="text-k-text-secondary p-6">
+            No other albums by {{ album.artist_name }} found in the library.
+          </p>
         </template>
-        <ul v-else class="as-list artist-album-wrapper">
-          <li v-for="i in 12" :key="i">
-            <AlbumCardSkeleton layout="compact" />
-          </li>
-        </ul>
+        <AlbumGrid v-else view-mode="list">
+          <AlbumCardSkeleton v-for="i in 6" :key="i" layout="compact" />
+        </AlbumGrid>
       </div>
 
       <div v-show="activeTab === 'Info'" v-if="useLastfm && album" class="info-pane">
         <AlbumInfo :album="album" mode="full" />
       </div>
     </ScreenTabs>
-  </section>
+  </ScreenBase>
 </template>
 
 <script lang="ts" setup>
@@ -100,6 +100,8 @@ import AlbumThumbnail from '@/components/ui/ArtistAlbumThumbnail.vue'
 import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 import ScreenTabs from '@/components/ui/ArtistAlbumScreenTabs.vue'
+import ScreenBase from '@/components/screens/ScreenBase.vue'
+import AlbumGrid from '@/components/ui/album-artist/AlbumOrArtistGrid.vue'
 
 type Tab = 'Songs' | 'OtherAlbums' | 'Info'
 const activeTab = ref<Tab>('Songs')

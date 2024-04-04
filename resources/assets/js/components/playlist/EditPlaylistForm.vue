@@ -5,27 +5,26 @@
     </header>
 
     <main>
-      <div class="form-row cols">
-        <label class="name">
-          Name
-          <input
+      <FormRow :cols="2">
+        <FormRow>
+          <template #label>Name</template>
+          <TextInput
             v-model="name"
             v-koel-focus
             name="name"
             placeholder="Playlist name"
             required
             title="Playlist name"
-            type="text"
-          >
-        </label>
-        <label class="folder">
-          Folder
-          <select v-model="folderId">
+          />
+        </FormRow>
+        <FormRow>
+          <template #label>Folder</template>
+          <SelectBox v-model="folderId">
             <option :value="null" />
             <option v-for="folder in folders" :key="folder.id" :value="folder.id">{{ folder.name }}</option>
-          </select>
-        </label>
-      </div>
+          </SelectBox>
+        </FormRow>
+      </FormRow>
     </main>
 
     <footer>
@@ -41,7 +40,10 @@ import { logger } from '@/utils'
 import { playlistFolderStore, playlistStore } from '@/stores'
 import { useDialogBox, useMessageToaster, useModal, useOverlay } from '@/composables'
 
-import Btn from '@/components/ui/Btn.vue'
+import Btn from '@/components/ui/form/Btn.vue'
+import TextInput from '@/components/ui/form/TextInput.vue'
+import FormRow from '@/components/ui/form/FormRow.vue'
+import SelectBox from '@/components/ui/form/SelectBox.vue'
 
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()

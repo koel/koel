@@ -1,30 +1,36 @@
 <template>
-  <div class="login-wrapper">
+  <div class="flex items-center justify-center min-h-screen my-0 mx-auto flex-col gap-5">
     <form
       v-show="!showingForgotPasswordForm"
+      class="w-full sm:w-[288px] sm:border duration-500 p-7 rounded-xl border-transparent sm:bg-white/10 space-y-3"
       :class="{ error: failed }"
       data-testid="login-form"
       @submit.prevent="login"
     >
-      <div class="logo">
-        <img alt="Koel's logo" src="@/../img/logo.svg" width="156">
+      <div class="text-center mb-8">
+        <img class="inline-block" alt="Koel's logo" src="@/../img/logo.svg" width="156">
       </div>
 
-      <input v-model="email" autofocus placeholder="Email Address" required type="email">
-      <PasswordField v-model="password" placeholder="Password" required />
+      <FormRow>
+        <TextInput v-model="email" autofocus placeholder="Email Address" required type="email" />
+      </FormRow>
 
-      <Btn type="submit">Log In</Btn>
-      <a
-        v-if="canResetPassword"
-        class="reset-password"
-        role="button"
-        @click.prevent="showForgotPasswordForm"
-      >
-        Forgot password?
-      </a>
+      <FormRow>
+        <PasswordField v-model="password" placeholder="Password" required />
+      </FormRow>
+
+      <FormRow>
+        <Btn type="submit">Log In</Btn>
+      </FormRow>
+
+      <FormRow v-if="canResetPassword">
+        <a class="text-right text-[.95rem] text-k-text-secondary" role="button" @click.prevent="showForgotPasswordForm">
+          Forgot password?
+        </a>
+      </FormRow>
     </form>
 
-    <div v-if="ssoProviders.length" v-show="!showingForgotPasswordForm" class="sso">
+    <div v-if="ssoProviders.length" v-show="!showingForgotPasswordForm" class="flex gap-3 items-center">
       <GoogleLoginButton v-if="ssoProviders.includes('Google')" @error="onSSOError" @success="onSSOSuccess" />
     </div>
 
@@ -38,10 +44,12 @@ import { authService } from '@/services'
 import { logger } from '@/utils'
 import { useMessageToaster } from '@/composables'
 
-import Btn from '@/components/ui/Btn.vue'
-import PasswordField from '@/components/ui/PasswordField.vue'
+import Btn from '@/components/ui/form/Btn.vue'
+import PasswordField from '@/components/ui/form/PasswordField.vue'
 import ForgotPasswordForm from '@/components/auth/ForgotPasswordForm.vue'
 import GoogleLoginButton from '@/components/auth/sso/GoogleLoginButton.vue'
+import TextInput from '@/components/ui/form/TextInput.vue'
+import FormRow from '@/components/ui/form/FormRow.vue'
 
 const DEMO_ACCOUNT = {
   email: 'demo@koel.dev',
@@ -111,52 +119,10 @@ const onSSOSuccess = (token: CompositeToken) => {
   }
 }
 
-.login-wrapper {
-  min-height: 100vh;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  justify-content: center;
-  align-items: center;
-}
-
-.sso {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-}
-
 form {
-  width: 276px;
-  padding: 1.8rem;
-  background: rgba(255, 255, 255, .08);
-  border-radius: .6rem;
-  border: 1px solid transparent;
-  transition: .5s;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-
   &.error {
-    border-color: var(--color-red);
+    @apply border-red-500;
     animation: shake .5s;
-  }
-
-  .logo {
-    text-align: center;
-  }
-
-  .reset-password {
-    display: block;
-    text-align: right;
-    font-size: .95rem;
-  }
-
-  @media only screen and (max-width: 480px) {
-    width: 100vw;
-    border: 0;
-    background: transparent;
   }
 }
 </style>

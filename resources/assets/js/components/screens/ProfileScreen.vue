@@ -1,106 +1,79 @@
 <template>
-  <section id="profileWrapper">
-    <ScreenHeader>Profile &amp; Preferences</ScreenHeader>
+  <ScreenBase>
+    <template #header>
+      <ScreenHeader>Profile &amp; Preferences</ScreenHeader>
+    </template>
 
-    <div class="main-scroll-wrap">
-      <main class="tabs">
-        <div class="clear" role="tablist">
-          <button
-            role="tab"
-            :aria-selected="currentTab === 'profile'"
-            aria-controls="profilePaneProfile"
-            @click.prevent="currentTab = 'profile'"
-          >
-            Profile
-          </button>
-          <button
-            role="tab"
-            :aria-selected="currentTab === 'preferences'"
-            aria-controls="profilePanePreferences"
-            @click.prevent="currentTab = 'preferences'"
-          >
-            Preferences
-          </button>
-          <button
-            role="tab"
-            :aria-selected="currentTab === 'themes'"
-            aria-controls="profilePaneThemes"
-            @click.prevent="currentTab = 'themes'"
-          >
-            Themes
-          </button>
-          <button
-            role="tab"
-            :aria-selected="currentTab === 'integrations'"
-            aria-controls="profilePaneIntegrations"
-            @click.prevent="currentTab = 'integrations'"
-          >
-            Integrations
-          </button>
-          <button
-            role="tab"
-            :aria-selected="currentTab === 'qr'"
-            aria-controls="profilePaneQr"
-            @click.prevent="currentTab = 'qr'"
-          >
-            <QrCodeIcon :size="16" />
-          </button>
-        </div>
+    <Tabs class="-mx-6">
+      <TabList>
+        <TabButton
+          :selected="currentTab === 'profile'"
+          aria-controls="profilePaneProfile"
+          @click="currentTab = 'profile'"
+        >
+          Profile
+        </TabButton>
+        <TabButton
+          :selected="currentTab === 'preferences'"
+          aria-controls="profilePanePreferences"
+          @click="currentTab = 'preferences'"
+        >
+          Preferences
+        </TabButton>
+        <TabButton
+          :selected="currentTab === 'themes'"
+          aria-controls="profilePaneThemes"
+          @click="currentTab = 'themes'"
+        >
+          Themes
+        </TabButton>
+        <TabButton
+          :selected="currentTab === 'integrations'"
+          aria-controls="profilePaneIntegrations"
+          @click="currentTab = 'integrations'"
+        >
+          Integrations
+        </TabButton>
+        <TabButton
+          :selected="currentTab === 'qr'"
+          aria-controls="profilePaneQr"
+          @click="currentTab = 'qr'"
+        >
+          <QrCodeIcon :size="16" />
+        </TabButton>
+      </TabList>
 
-        <div class="panes">
-          <div
-            v-show="currentTab === 'profile'"
-            id="profilePaneProfile"
-            role="tabpanel"
-            aria-labelledby="profilePaneProfile"
-            tabindex="0"
-          >
-            <ProfileForm />
-          </div>
+      <TabPanelContainer>
+        <TabPanel v-show="currentTab === 'profile'" id="profilePaneProfile" aria-labelledby="profilePaneProfile">
+          <ProfileForm />
+        </TabPanel>
 
-          <div
-            v-if="currentTab === 'preferences'"
-            id="profilePanePreferences"
-            role="tabpanel"
-            aria-labelledby="profilePanePreferences"
-            tabindex="0"
-          >
-            <PreferencesForm />
-          </div>
+        <TabPanel
+          v-if="currentTab === 'preferences'"
+          id="profilePanePreferences"
+          aria-labelledby="profilePanePreferences"
+        >
+          <PreferencesForm />
+        </TabPanel>
 
-          <div
-            v-if="currentTab === 'themes'"
-            id="profilePaneThemes"
-            role="tabpanel"
-            tabindex="0"
-            aria-labelledby="profilePaneThemes"
-          >
-            <ThemeList />
-          </div>
+        <TabPanel v-if="currentTab === 'themes'" id="profilePaneThemes" aria-labelledby="profilePaneThemes">
+          <ThemeList />
+        </TabPanel>
 
-          <div
-            v-if="currentTab === 'integrations'"
-            id="profilePaneIntegrations"
-            role="tabpanel"
-            tabindex="0"
-            aria-labelledby="profilePaneIntegrations"
-          >
-            <Integrations />
-          </div>
+        <TabPanel
+          v-if="currentTab === 'integrations'"
+          id="profilePaneIntegrations"
+          aria-labelledby="profilePaneIntegrations"
+        >
+          <Integrations />
+        </TabPanel>
 
-          <div
-            v-if="currentTab === 'qr'"
-            id="profilePaneQr"
-            role="tabpanel"
-            aria-labelledby="profilePaneQr"
-            tabindex="0"
-          >
-            <QRLogin />
-          </div>
-        </div>
-      </main>
-    </div>
-  </section>
+        <TabPanel v-if="currentTab === 'qr'" id="profilePaneQr" aria-labelledby="profilePaneQr">
+          <QRLogin />
+        </TabPanel>
+      </TabPanelContainer>
+    </Tabs>
+  </ScreenBase>
 </template>
 
 <script lang="ts" setup>
@@ -109,6 +82,12 @@ import { defineAsyncComponent, ref, watch } from 'vue'
 import { useLocalStorage } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
+import ScreenBase from '@/components/screens/ScreenBase.vue'
+import TabButton from '@/components/ui/tabs/TabButton.vue'
+import TabList from '@/components/ui/tabs/TabList.vue'
+import TabPanelContainer from '@/components/ui/tabs/TabPanelContainer.vue'
+import TabPanel from '@/components/ui/tabs/TabPanel.vue'
+import Tabs from '@/components/ui/tabs/Tabs.vue'
 
 const ProfileForm = defineAsyncComponent(() => import('@/components/profile-preferences/ProfileForm.vue'))
 const PreferencesForm = defineAsyncComponent(() => import('@/components/profile-preferences/PreferencesForm.vue'))

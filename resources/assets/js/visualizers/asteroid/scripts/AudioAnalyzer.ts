@@ -11,6 +11,7 @@ export class AudioAnalyzer {
   private readonly frequencyBinCount: number
 
   // [!] this can't be read-only regardless of IDE's suggestion
+  // noinspection TypeScriptFieldCanBeMadeReadonly
   private audioBuffer: Uint8Array
 
   private analyzer: AnalyserNode

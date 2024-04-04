@@ -1,10 +1,22 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-<div data-v-0b0f87ea="" class="login-wrapper">
-  <form data-v-0b0f87ea="" class="" data-testid="login-form">
-    <div data-v-0b0f87ea="" class="logo"><img data-v-0b0f87ea="" alt="Koel's logo" src="undefined/resources/assets/img/logo.svg" width="156"></div><input data-v-0b0f87ea="" autofocus="" placeholder="Email Address" required="" type="email">
-    <div data-v-a2893005="" data-v-0b0f87ea=""><input data-v-a2893005="" type="password" placeholder="Password" required=""><button data-v-a2893005="" type="button"><br data-v-a2893005="" data-testid="Icon" icon="[object Object]"></button></div><button data-v-e368fe26="" data-v-0b0f87ea="" class="inset-when-pressed" type="submit">Log In</button><a data-v-0b0f87ea="" class="reset-password" role="button"> Forgot password? </a>
+<div data-v-0b0f87ea="" class="vertical-center tw-min-h-screen tw-my-0 tw-mx-auto tw-flex-col tw-gap-5">
+  <form data-v-0b0f87ea="" class="sm:tw-w-[288px] sm:tw-border tw-duration-500 tw-p-7 tw-rounded-xl tw-border-transparent sm:tw-bg-white/10 tw-space-y-3" data-testid="login-form">
+    <div data-v-0b0f87ea="" class="tw-text-center tw-mb-8"><img data-v-0b0f87ea="" class="tw-inline-block" alt="Koel's logo" src="undefined/resources/assets/img/logo.svg" width="156"></div><label data-v-0b0f87ea="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]">
+      <!--v-if--><input data-v-2ca3bb69="" data-v-0b0f87ea="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="email" autofocus="" placeholder="Email Address" required="">
+      <!--v-if-->
+    </label><label data-v-0b0f87ea="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]">
+      <!--v-if-->
+      <div data-v-e732892f="" data-v-0b0f87ea="" class="tw-relative"><input data-v-2ca3bb69="" data-v-e732892f="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded tw-w-full" type="password" placeholder="Password" required=""><button data-v-e732892f="" type="button" class="tw-absolute tw-p-2.5 tw-right-0 tw-top-0"><br data-v-e732892f="" data-testid="Icon" icon="[object Object]"></button></div>
+      <!--v-if-->
+    </label><label data-v-0b0f87ea="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]">
+      <!--v-if--><button data-v-8943c846="" data-v-0b0f87ea="" class="inset-when-pressed tw-text-base tw-px-4 tw-py-2 tw-rounded tw-cursor-pointer" type="submit">Log In</button>
+      <!--v-if-->
+    </label><label data-v-0b0f87ea="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]">
+      <!--v-if--><a data-v-0b0f87ea="" class="tw-text-right tw-text-[.95rem]" role="button"> Forgot password? </a>
+      <!--v-if-->
+    </label>
   </form>
   <!--v-if-->
   <!--v-if-->
@@ -12,12 +24,24 @@ exports[`renders 1`] = `
 `;
 
 exports[`shows Google login button 1`] = `
-<div data-v-0b0f87ea="" class="login-wrapper">
-  <form data-v-0b0f87ea="" class="" data-testid="login-form">
-    <div data-v-0b0f87ea="" class="logo"><img data-v-0b0f87ea="" alt="Koel's logo" src="undefined/resources/assets/img/logo.svg" width="156"></div><input data-v-0b0f87ea="" autofocus="" placeholder="Email Address" required="" type="email">
-    <div data-v-a2893005="" data-v-0b0f87ea=""><input data-v-a2893005="" type="password" placeholder="Password" required=""><button data-v-a2893005="" type="button"><br data-v-a2893005="" data-testid="Icon" icon="[object Object]"></button></div><button data-v-e368fe26="" data-v-0b0f87ea="" class="inset-when-pressed" type="submit">Log In</button><a data-v-0b0f87ea="" class="reset-password" role="button"> Forgot password? </a>
+<div data-v-0b0f87ea="" class="vertical-center tw-min-h-screen tw-my-0 tw-mx-auto tw-flex-col tw-gap-5">
+  <form data-v-0b0f87ea="" class="sm:tw-w-[288px] sm:tw-border tw-duration-500 tw-p-7 tw-rounded-xl tw-border-transparent sm:tw-bg-white/10 tw-space-y-3" data-testid="login-form">
+    <div data-v-0b0f87ea="" class="tw-text-center tw-mb-8"><img data-v-0b0f87ea="" class="tw-inline-block" alt="Koel's logo" src="undefined/resources/assets/img/logo.svg" width="156"></div><label data-v-0b0f87ea="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]">
+      <!--v-if--><input data-v-2ca3bb69="" data-v-0b0f87ea="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="email" autofocus="" placeholder="Email Address" required="">
+      <!--v-if-->
+    </label><label data-v-0b0f87ea="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]">
+      <!--v-if-->
+      <div data-v-e732892f="" data-v-0b0f87ea="" class="tw-relative"><input data-v-2ca3bb69="" data-v-e732892f="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded tw-w-full" type="password" placeholder="Password" required=""><button data-v-e732892f="" type="button" class="tw-absolute tw-p-2.5 tw-right-0 tw-top-0"><br data-v-e732892f="" data-testid="Icon" icon="[object Object]"></button></div>
+      <!--v-if-->
+    </label><label data-v-0b0f87ea="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]">
+      <!--v-if--><button data-v-8943c846="" data-v-0b0f87ea="" class="inset-when-pressed tw-text-base tw-px-4 tw-py-2 tw-rounded tw-cursor-pointer" type="submit">Log In</button>
+      <!--v-if-->
+    </label><label data-v-0b0f87ea="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]">
+      <!--v-if--><a data-v-0b0f87ea="" class="tw-text-right tw-text-[.95rem]" role="button"> Forgot password? </a>
+      <!--v-if-->
+    </label>
   </form>
-  <div data-v-0b0f87ea="" class="sso"><br data-v-0b0f87ea="" data-testid="google-login-button"></div>
+  <div data-v-0b0f87ea="" class="tw-flex tw-gap-3 tw-items-center"><br data-v-0b0f87ea="" data-testid="google-login-button"></div>
   <!--v-if-->
 </div>
 `;

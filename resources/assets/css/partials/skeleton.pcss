@@ -1,15 +1,15 @@
 .skeleton {
   .pulse, &.pulse {
+    @apply bg-white/5;
     animation: skeleton-pulse 2s infinite;
-    background-color: rgba(255, 255, 255, .05);
   }
 
   @keyframes skeleton-pulse {
     0%, 100% {
-      opacity: 0;
+      @apply opacity-0;
     }
     50% {
-      opacity: 1;
+      @apply opacity-100;
     }
   }
 }

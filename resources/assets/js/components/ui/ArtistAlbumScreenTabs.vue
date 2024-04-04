@@ -9,76 +9,47 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-</script>
-
 <style lang="postcss" scoped>
 :deep(.tabs) {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  flex: 1;
-  color: var(--color-text-secondary);
+  @apply flex flex-col overflow-hidden flex-1 text-k-text-secondary;
 }
 
 :deep(header) {
-  display: flex;
-  background: rgba(0, 0, 0, 0.05);
-  overflow: hidden;
-  flex-shrink: 0;
-  border-bottom: 1px solid rgba(255, 255, 255, .04);
+  @apply flex bg-white/5 overflow-hidden flex-shrink-0 border-b-white/5;
 
   label {
-    font-size: 1rem;
-    position: relative;
-    padding: 1rem 1.8rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    border-radius: 0;
-    opacity: .5;
-    cursor: pointer;
-    transition: opacity .2s ease-in-out;
+    @apply text-base relative uppercase tracking-wider opacity-50 cursor-pointer;
+    @apply transition-opacity duration-200 ease-in-out px-7 py-4 rounded-none;
 
     &:hover {
-      opacity: .8;
+      @apply opacity-80;
     }
 
     &.active {
-      opacity: 1;
+      @apply opacity-100;
     }
 
     input {
-      display: none;
+      @apply hidden;
     }
   }
 }
 
-:deep(main) {
-  display: flex;
-  flex-direction: column;
-  overflow: auto;
-  flex: 1;
-}
-
-:deep(.songs-pane), :deep(.albums-pane) {
-  display: flex;
-  flex-direction: column;
-  overflow: auto;
-  flex: 1;
+:deep(:is(main, .songs-pane, .albums-pane)) {
+  @apply flex flex-col flex-1 overflow-auto;
 }
 
 :deep(.albums-pane) {
   > ul {
-    padding: 1.8rem;
-    overflow: auto;
+    @apply p-7 overflow-auto;
   }
 
   .none {
-    padding: 1rem 1.8rem;
+    @apply px-7 py-4;
   }
 }
 
 :deep(.info-pane) {
-  padding: 1.8rem;
+  @apply p-7;
 }
 </style>

@@ -1,10 +1,10 @@
 <template>
-  <article class="text-secondary">
+  <article class="text-k-text-secondary">
     Instead of using a password, you can scan the QR code below to log in to
-    <a href="https://koel.dev/#mobile" target="_blank" class="text-highlight">Koel Player</a>
+    <a href="https://koel.dev/#mobile" target="_blank" class="text-k-highlight">Koel Player</a>
     on your mobile device.<br>
     The QR code will refresh every 10 minutes.
-    <img :src="qrCodeUrl" alt="QR Code" width="192" height="192">
+    <img class="mt-4 rounded-4" :src="qrCodeUrl" alt="QR Code" width="192" height="192">
   </article>
 </template>
 
@@ -36,11 +36,3 @@ onMounted(() => {
   resetOneTimeToken()
 })
 </script>
-
-<style scoped lang="postcss">
-img {
-  margin-top: 1.5rem;
-  display: block;
-  border-radius: 8px;
-}
-</style>

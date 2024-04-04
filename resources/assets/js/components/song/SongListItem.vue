@@ -1,23 +1,25 @@
 <template>
-  <div
+  <article
     :class="{ playing, external, selected: item.selected }"
-    class="song-item"
+    class="song-item text-k-text-secondary border-b border-k-border !max-w-full h-[64px] flex
+    items-center transition-[background-color,_box-shadow] ease-in-out duration-200
+    focus:rounded-md focus focus-within:rounded-md focus:ring-inset focus:ring-1 focus:!ring-k-accent
+    focus-within:ring-inset focus-within:ring-1 focus-within:!ring-k-accent
+    hover:bg-white/5 hover:ring-inset hover:ring-1 hover:ring-white/10 hover:rounded-md"
     data-testid="song-item"
     tabindex="0"
     @dblclick.prevent.stop="play"
   >
     <span class="track-number">
       <SoundBars v-if="song.playback_state === 'Playing'" />
-      <span v-else class="text-secondary">{{ song.track || '' }}</span>
+      <span v-else class="text-k-text-secondary">{{ song.track || '' }}</span>
     </span>
     <span class="thumbnail">
       <SongThumbnail :song="song" />
     </span>
-    <span class="title-artist">
-      <span class="title text-primary">
-        <span v-if="external" class="external-mark">
-          <Icon :icon="faSquareUpRight" />
-        </span>
+    <span class="title-artist flex flex-col gap-2 overflow-hidden">
+      <span class="title text-k-text-primary !flex gap-2 items-center">
+        <ExternalMark v-if="external" class="!inline-block" />
         {{ song.title }}
       </span>
       <span class="artist">
@@ -35,11 +37,10 @@
     <span class="extra">
       <LikeButton :song="song" />
     </span>
-  </div>
+  </article>
 </template>
 
 <script lang="ts" setup>
-import { faSquareUpRight } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
 import { requireInjection, secondsToHis } from '@/utils'
 import { useAuthorization, useKoelPlus } from '@/composables'
@@ -49,6 +50,7 @@ import LikeButton from '@/components/song/SongLikeButton.vue'
 import SoundBars from '@/components/ui/SoundBars.vue'
 import SongThumbnail from '@/components/song/SongThumbnail.vue'
 import UserAvatar from '@/components/user/UserAvatar.vue'
+import ExternalMark from '@/components/ui/ExternalMark.vue'
 
 const [config] = requireInjection<[Partial<SongListConfig>]>(SongListConfigKey, [{}])
 
@@ -70,72 +72,34 @@ const collaborator = computed<Pick<User, 'name' | 'avatar'>>(() => (song.value a
 const play = () => emit('play', song.value)
 </script>
 
-<style lang="postcss">
-.song-item {
-  color: var(--color-text-secondary);
-  border-bottom: 1px solid var(--color-bg-secondary);
-  max-width: 100% !important; /* overriding .item */
-  height: 64px;
-  display: flex;
-  align-items: center;
-  transition: background-color .2s ease-in-out, box-shadow .2s ease-in-out;
+<style lang="postcss" scoped>
+article {
+  &.droppable {
+    @apply relative transition-none after:absolute after:w-full after:h-[3px] after:rounded after:bg-k-success after:top-0;
 
-  &:focus, &:focus-within {
-    box-shadow: 0 0 1px 1px var(--color-accent) inset !important;
-    border-radius: 4px;
-  }
-
-  .external-mark {
-    display: inline-block !important;
-    vertical-align: bottom;
-    margin-right: .2rem;
-    opacity: .5;
-  }
-
-  @media (hover: none) {
-    .cover {
-      .control {
-        display: flex;
-      }
-
-      &::before {
-        opacity: .7;
-      }
+    &.dragover-bottom {
+      @apply after:top-auto after:bottom-0;
     }
   }
 
-  &:hover {
-    background: rgba(255, 255, 255, .05);
-    box-shadow: 0 0 1px 1px rgba(255, 255, 255, .1) inset;
-    border-radius: 5px;
-  }
-
   &.selected {
-    background-color: rgba(255, 255, 255, .08);
+    @apply bg-white/10;
   }
 
   &.playing {
     .title, .track-number, .favorite {
-      color: var(--color-accent) !important;
+      @apply text-k-accent !important;
     }
   }
 
   .title-artist {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    overflow: hidden;
-
     span {
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      display: block;
+      @apply overflow-hidden whitespace-nowrap text-ellipsis block;
     }
   }
 
   button {
-    color: currentColor;
+    @apply text-current;
   }
 }
 </style>

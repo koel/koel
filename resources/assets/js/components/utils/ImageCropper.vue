@@ -1,6 +1,6 @@
 <template>
-  <div class="cropper-wrapper">
-    <div>
+  <div class="w-full h-full fixed top-0 left-0 flex items-center justify-center z-[99] bg-black/70">
+    <div class="relative max-w-full max-h-full rounded-md flex">
       <Cropper
         ref="cropper"
         :src="source"
@@ -8,9 +8,9 @@
         :min-width="config.minWidth"
         :max-width="config.maxWidth"
       />
-      <div class="controls">
-        <Btn type="button" green @click.prevent="crop">Crop</Btn>
-        <Btn type="button" red @click.prevent="cancel">Cancel</Btn>
+      <div class="fixed top-6 right-6 flex flex-1 gap-2">
+        <Btn success @click.prevent="crop">Crop</Btn>
+        <Btn transparent @click.prevent="emits('cancel')">Cancel</Btn>
       </div>
     </div>
   </div>
@@ -21,7 +21,7 @@ import { ref, toRefs } from 'vue'
 import { Cropper } from 'vue-advanced-cropper'
 import 'vue-advanced-cropper/dist/style.css'
 
-import Btn from '@/components/ui/Btn.vue'
+import Btn from '@/components/ui/form/Btn.vue'
 
 const props = withDefaults(defineProps<{
   source?: string | null
@@ -45,38 +45,4 @@ const emits = defineEmits<{
 }>()
 
 const crop = () => emits('crop', cropper.value?.getResult().canvas.toDataURL())
-const cancel = () => emits('cancel')
 </script>
-
-
-<style scoped lang="postcss">
-.cropper-wrapper {
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 99;
-  background: rgba(0, 0, 0, .5);
-
-  > div {
-    position: relative;
-    max-width: 100%;
-    max-height: 100%;
-    border-radius: 5px;
-    display: flex;
-  }
-
-  .controls {
-    position: fixed;
-    right: 1.5rem;
-    top: 1.5rem;
-    display: flex;
-    gap: .5rem;
-    flex: 1;
-  }
-}
-</style>

@@ -20,6 +20,8 @@ class S3CompatibleStorage extends CloudStorage
 
     public function storeUploadedFile(UploadedFile $file, User $uploader): Song
     {
+        self::assertSupported();
+
         return DB::transaction(function () use ($file, $uploader): Song {
             $result = $this->scanUploadedFile($file, $uploader);
             $song = $this->scanner->getSong();
@@ -40,11 +42,15 @@ class S3CompatibleStorage extends CloudStorage
 
     public function getSongPresignedUrl(Song $song): string
     {
+        self::assertSupported();
+
         return Storage::disk('s3')->temporaryUrl($song->storage_metadata->getPath(), now()->addHour());
     }
 
     public function delete(Song $song, bool $backup = false): void
     {
+        self::assertSupported();
+
         $disk = Storage::disk('s3');
         $path = $song->storage_metadata->getPath();
 
@@ -61,7 +67,7 @@ class S3CompatibleStorage extends CloudStorage
         Storage::disk('s3')->delete('test.txt');
     }
 
-    public function supported(): bool
+    protected function supported(): bool
     {
         return SongStorageTypes::supported(SongStorageTypes::S3);
     }

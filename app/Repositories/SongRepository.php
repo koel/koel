@@ -190,6 +190,7 @@ class SongRepository extends Repository
                             'collaborators.id as collaborator_id',
                             'collaborators.name as collaborator_name',
                             'collaborators.email as collaborator_email',
+                            'collaborators.avatar as collaborator_avatar',
                             'playlist_song.created_at as added_at'
                         );
             })

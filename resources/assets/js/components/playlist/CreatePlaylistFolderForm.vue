@@ -5,16 +5,15 @@
     </header>
 
     <main>
-      <div class="form-row">
-        <input
+      <FormRow>
+        <TextInput
           v-model="name"
           v-koel-focus
           name="name"
           placeholder="Folder name"
           required
-          type="text"
-        >
-      </div>
+        />
+      </FormRow>
     </main>
 
     <footer>
@@ -30,7 +29,9 @@ import { playlistFolderStore } from '@/stores'
 import { logger } from '@/utils'
 import { useDialogBox, useMessageToaster, useOverlay } from '@/composables'
 
-import Btn from '@/components/ui/Btn.vue'
+import Btn from '@/components/ui/form/Btn.vue'
+import TextInput from '@/components/ui/form/TextInput.vue'
+import FormRow from '@/components/ui/form/FormRow.vue'
 
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()

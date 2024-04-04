@@ -1,17 +1,18 @@
 <template>
   <div>
-    <button ref="button" title="Sort" @click.stop="trigger">
+    <button ref="button" title="Sort" class="w-full focus:text-k-highlight" @click.stop="trigger">
       <Icon :icon="faSort" />
     </button>
-    <menu ref="menu" v-koel-clickaway="hide" class="context-menu">
+    <menu ref="menu" v-koel-clickaway="hide" class="context-menu normal-case tracking-normal">
       <li
         v-for="item in menuItems"
         :key="item.label"
         :class="item.field === field && 'active'"
+        class="cursor-pointer flex justify-between"
         @click="sort(item.field)"
       >
         <span>{{ item.label }}</span>
-        <span class="icon">
+        <span class="icon hidden">
           <Icon v-if="field === 'position'" :icon="faCheck" />
           <Icon v-else-if="order === 'asc'" :icon="faArrowDown" />
           <Icon v-else :icon="faArrowUp" />
@@ -92,35 +93,11 @@ onBeforeUnmount(() => teardown())
 </script>
 
 <style lang="postcss" scoped>
-button {
-  width: 100%;
+.active {
+  @apply bg-k-highlight text-k-text-primary;
 
-  &:focus {
-    color: var(--color-highlight);
-  }
-}
-
-menu {
-  text-transform: none;
-  letter-spacing: 0;
-
-  li {
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-
-    .icon {
-      display: none;
-    }
-
-    &.active {
-      background: var(--color-highlight);
-      color: var(--color-text-primary);
-
-      .icon {
-        display: block;
-      }
-    }
+  .icon {
+    @apply block;
   }
 }
 </style>

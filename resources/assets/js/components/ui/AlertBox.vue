@@ -1,11 +1,14 @@
 <template>
-  <div class="alert-box" :class="`alert-box-${props.type}`">
+  <div
+    class="alert-box flex items-center gap-4 bg-white/10 mb-6 p-4 rounded-md text-k-text-primary"
+    :class="`alert-box-${props.type}`"
+  >
     <Icon v-if="props.type === 'info' || props.type === 'default'" :icon="faInfoCircle" />
     <Icon v-if="props.type === 'danger'" :icon="faExclamationCircle" />
     <Icon v-if="props.type === 'success'" :icon="faCheckCircle" />
     <Icon v-if="props.type === 'warning'" :icon="faExclamationTriangle" />
 
-    <div class="text">
+    <div class="flex-1">
       <slot />
     </div>
   </div>
@@ -26,38 +29,20 @@ const props = withDefaults(defineProps<{ type?: 'default' | 'info' | 'danger' | 
 
 <style scoped lang="postcss">
 .alert-box {
-  padding: 1rem;
-  border-radius: 5px;
-  color: var(--color-text-primary);
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  background-color: rgba(255, 255, 255, .1);
-
-  /*
-    though setting margins in components is not recommended, it's safe to assume that an alert box will be used
-    in a context where this margin is desired
-   */
-  margin-bottom: 1.5rem;
-
-  .text {
-    flex: 1;
-  }
-
   &-info {
-    background-color: rgb(59 130 246);
+    @apply bg-blue-500;
   }
 
   &-success {
-    background-color: rgb(16 185 129);
+    @apply bg-green-600;
   }
 
   &-warning {
-    background-color: rgb(249 115 22);
+    @apply bg-orange-500;
   }
 
   &-danger {
-    background-color: rgb(185 28 28);
+    @apply bg-red-500;
   }
 }
 </style>

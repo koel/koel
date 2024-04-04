@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { playlistStore } from '@/stores'
 
-import Btn from '@/components/ui/Btn.vue'
+import Btn from '@/components/ui/form/Btn.vue'
 import FormBase from '@/components/playlist/smart-playlist/SmartPlaylistFormBase.vue'
 import RuleGroup from '@/components/playlist/smart-playlist/SmartPlaylistRuleGroup.vue'
 import SoundBars from '@/components/ui/SoundBars.vue'

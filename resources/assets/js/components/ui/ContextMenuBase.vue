@@ -6,7 +6,7 @@
     v-koel-focus
     :class="extraClass"
     :style="{ top: `${top}px`, left: `${left}px` }"
-    class="menu context-menu"
+    class="menu context-menu select-none"
     tabindex="0"
     @contextmenu.prevent
     @keydown.esc="close"
@@ -116,15 +116,11 @@ defineExpose({ open, close, shown })
 
 <style lang="postcss" scoped>
 nav {
-  user-select: none;
+  :deep(.has-sub) {
+    @apply after:absolute after:right-0 after:top-0 after:z-[2] after:opacity-0;
+  }
 
   :deep(.has-sub)::after {
-    position: absolute;
-    content: '';
-    right: 0;
-    top: 0;
-    z-index: 2;
-    opacity: 0;
     width: v-bind(safeAreaWidth);
     height: v-bind(safeAreaHeight);
     clip-path: v-bind(safeAreaClipPath);
