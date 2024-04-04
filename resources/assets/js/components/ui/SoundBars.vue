@@ -1,27 +1,13 @@
 <template>
-  <i>
-    <span />
-    <span />
-    <span />
+  <i class="relative flex gap-1 content-between w-[13px] aspect-square">
+    <span v-for="i in 3" :key="i" />
   </i>
 </template>
 
 <style lang="postcss" scoped>
-i {
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  width: 13px;
-  height: 13px;
-}
-
 span {
-  width: 3px;
-  height: 100%;
-  background-color: currentColor;
-  border-radius: 9999px;
+  @apply w-[3px] h-full bg-current rounded-full origin-bottom;
   animation: bounce 2.2s ease-out infinite alternate;
-  transform-origin: bottom;
 
   &:nth-of-type(2) {
     animation-delay: -2.2s;

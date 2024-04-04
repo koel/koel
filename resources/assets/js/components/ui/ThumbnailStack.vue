@@ -1,17 +1,25 @@
 <template>
-  <div class="thumbnail-stack" :class="layout" :style="{ backgroundImage: `url(${defaultCover})` }">
+  <article
+    :class="layout"
+    :style="{ backgroundImage: `url(${defaultCover})` }"
+    class="thumbnail-stack aspect-square overflow-hidden grid bg-cover bg-no-repeat"
+  >
     <span
       v-for="thumbnail in displayedThumbnails"
+      :key="thumbnail"
       :style="{ backgroundImage: `url(${thumbnail}`}"
+      class="block will-change-transform w-full h-full bg-cover bg-no-repeat"
       data-testid="thumbnail"
     />
-  </div>
+  </article>
 </template>
 
 <script lang="ts" setup>
 import { take } from 'lodash'
 import { computed, toRefs } from 'vue'
 import { defaultCover } from '@/utils'
+
+const defaultBackgroundImage = `url(${ defaultCover })`
 
 const props = defineProps<{ thumbnails: string[] }>()
 const { thumbnails } = toRefs(props)
@@ -26,24 +34,11 @@ const layout = computed<'single' | 'tiles'>(() => displayedThumbnails.value.leng
 </script>
 
 <style lang="postcss" scoped>
-.thumbnail-stack {
-  aspect-ratio: 1/1;
-  display: grid;
-  overflow: hidden;
-  background-size: cover;
-  background-repeat: no-repeat;
+article {
+  background-image: v-bind(defaultBackgroundImage);
 
   &.tiles {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  span {
-    display: block;
-    will-change: transform; /* fix anti-aliasing problem with background images */
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-repeat: no-repeat;
+    @apply grid-cols-2;
   }
 }
 </style>

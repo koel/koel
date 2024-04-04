@@ -1,7 +1,3 @@
 // Vitest Snapshot v1
 
-exports[`renders 1`] = `
-<div data-v-1467c50f="" class="theme" style="background-color: rgb(255, 0, 0);" title="Set current theme to Sample" role="button">
-  <div data-v-1467c50f="" class="name">Sample</div>
-</div>
-`;
+exports[`renders 1`] = `<article data-v-1467c50f="" class="theme tw-h-[96px] tw-bg-center tw-bg-cover tw-relative tw-cursor-pointer tw-rounded-lg tw-overflow-hidden tw-border-2 tw-border-solid tw-border-white/10 tw-transition tw-duration-300 tw-hover:tw-border-white/50]" style="background-color: rgb(255, 0, 0);" title="Set current theme to Sample"><button data-v-1467c50f="" type="button" class="tw-opacity-0 hover:tw-opacity-100 tw-absolute tw-h-full tw-w-full tw-top-0 tw-left-0 tw-flex tw-items-center tw-justify-center tw-text-lg tw-transition-opacity tw-bg-black/20">Sample</button></article>`;

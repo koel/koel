@@ -1,6 +1,6 @@
 import { expect, it, vi } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { fireEvent, screen, waitFor } from '@testing-library/vue'
+import { fireEvent, screen } from '@testing-library/vue'
 import { socketService, volumeManager } from '@/services'
 import Volume from './VolumeSlider.vue'
 import { preferenceStore } from '@/stores'

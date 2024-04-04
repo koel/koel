@@ -1,36 +1,36 @@
 <template>
-  <section id="homeWrapper">
-    <ScreenHeader layout="collapsed">{{ greeting }}</ScreenHeader>
+  <ScreenBase id="homeWrapper">
+    <template #header>
+      <ScreenHeader layout="collapsed">{{ greeting }}</ScreenHeader>
+    </template>
 
-    <div v-koel-overflow-fade class="main-scroll-wrap">
-      <ScreenEmptyState v-if="libraryEmpty">
-        <template #icon>
-          <Icon :icon="faVolumeOff" />
-        </template>
-        No songs found.
-        <span class="secondary d-block">
-          {{ isAdmin ? 'Have you set up your library yet?' : 'Contact your administrator to set up your library.' }}
-        </span>
-      </ScreenEmptyState>
-
-      <template v-else>
-        <div class="two-cols">
-          <MostPlayedSongs data-testid="most-played-songs" :loading="loading" />
-          <RecentlyPlayedSongs data-testid="recently-played-songs" :loading="loading" />
-        </div>
-
-        <div class="two-cols">
-          <RecentlyAddedAlbums data-testid="recently-added-albums" :loading="loading" />
-          <RecentlyAddedSongs data-testid="recently-added-songs" :loading="loading" />
-        </div>
-
-        <MostPlayedArtists data-testid="most-played-artists" :loading="loading" />
-        <MostPlayedAlbums data-testid="most-played-albums" :loading="loading" />
-
-        <BtnScrollToTop />
+    <ScreenEmptyState v-if="libraryEmpty">
+      <template #icon>
+        <Icon :icon="faVolumeOff" />
       </template>
+      No songs found.
+      <span class="secondary d-block">
+        {{ isAdmin ? 'Have you set up your library yet?' : 'Contact your administrator to set up your library.' }}
+      </span>
+    </ScreenEmptyState>
+
+    <div v-else class="space-y-12">
+      <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-8 md:gap-4">
+        <MostPlayedSongs data-testid="most-played-songs" :loading="loading" />
+        <RecentlyPlayedSongs data-testid="recently-played-songs" :loading="loading" />
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-8 md:gap-4">
+        <RecentlyAddedAlbums data-testid="recently-added-albums" :loading="loading" />
+        <RecentlyAddedSongs data-testid="recently-added-songs" :loading="loading" />
+      </div>
+
+      <MostPlayedArtists data-testid="most-played-artists" :loading="loading" />
+      <MostPlayedAlbums data-testid="most-played-albums" :loading="loading" />
+
+      <BtnScrollToTop />
     </div>
-  </section>
+  </ScreenBase>
 </template>
 
 <script lang="ts" setup>
@@ -50,6 +50,7 @@ import MostPlayedAlbums from '@/components/screens/home/MostPlayedAlbums.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import BtnScrollToTop from '@/components/ui/BtnScrollToTop.vue'
+import ScreenBase from '@/components/screens/ScreenBase.vue'
 
 const { isAdmin } = useAuthorization()
 const { showErrorDialog } = useDialogBox()
@@ -90,50 +91,3 @@ useRouter().onScreenActivated('Home', async () => {
   }
 })
 </script>
-
-<style lang="postcss">
-#homeWrapper {
-  .two-cols {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-gap: .7em 1em;
-  }
-
-  .recent {
-    h1 button {
-      float: right;
-      padding: 6px 10px;
-      margin-top: -3px;
-    }
-  }
-
-  ol {
-    display: grid;
-    grid-gap: .7em 1em;
-    align-content: start;
-  }
-
-  .main-scroll-wrap {
-    section:not(:last-of-type) {
-      margin-bottom: 48px;
-    }
-
-    h1 {
-      font-size: 1.4rem;
-      margin: 0 0 1.8rem;
-      font-weight: var(--font-weight-thin);
-    }
-  }
-
-  li {
-    overflow: hidden;
-    padding: 1px; /* make space for focus outline */
-  }
-
-  @media only screen and (max-width: 768px) {
-    .two-cols {
-      grid-template-columns: 1fr;
-    }
-  }
-}
-</style>

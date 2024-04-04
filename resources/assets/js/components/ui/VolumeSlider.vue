@@ -1,30 +1,16 @@
 <template>
-  <span id="volume" class="volume" :class="level">
-    <span
-      v-show="level === 'muted'"
-      v-koel-tooltip.top
-      role="button"
-      tabindex="0"
-      title="Unmute"
-      @click="unmute"
-    >
+  <span id="volume" :class="level" class="hidden md:flex relative items-center gap-2">
+    <FooterExtraControlBtn v-show="level === 'muted'" tabindex="0" title="Unmute" @click="unmute">
       <Icon :icon="faVolumeMute" fixed-width />
-    </span>
+    </FooterExtraControlBtn>
 
-    <span
-      v-show="level !== 'muted'"
-      v-koel-tooltip.top
-      role="button"
-      tabindex="0"
-      title="Mute"
-      @click="mute"
-    >
+    <FooterExtraControlBtn v-show="level !== 'muted'" tabindex="0" title="Mute" @click="mute">
       <Icon :icon="level === 'discreet' ? faVolumeLow : faVolumeHigh" fixed-width />
-    </span>
+    </FooterExtraControlBtn>
 
     <input
       ref="inputEl"
-      class="plyr__volume"
+      class="plyr__volume !w-[120px] before:absolute before:left-0 before:right-0 before:top-[-12px] before:bottom-[-12px]"
       max="10"
       role="slider"
       step="0.1"
@@ -41,6 +27,7 @@ import { computed, onMounted, ref } from 'vue'
 import { socketService, volumeManager } from '@/services'
 import { preferenceStore } from '@/stores'
 import { watchThrottled } from '@vueuse/core'
+import FooterExtraControlBtn from '@/components/layout/app-footer/FooterButton.vue'
 
 const inputEl = ref<HTMLInputElement>()
 
@@ -66,34 +53,14 @@ onMounted(() => volumeManager.init(inputEl.value!, preferenceStore.volume))
 
 <style lang="postcss" scoped>
 #volume {
-  position: relative;
-  display: flex;
-  align-items: center;
-
   [type=range] {
-    margin: 0 0 0 8px;
-    width: 120px;
-    height: 4px;
-    border-radius: 4px;
-    position: relative;
-
-    /* increase click area */
-    &::before {
-      position: absolute;
-      content: ' ';
-      left: 0;
-      right: 0;
-      top: -12px;
-      bottom: -12px;
-    }
-
     &::-webkit-slider-thumb {
-      background: var(--color-text-secondary);
+      @apply bg-k-text-secondary;
     }
 
     &:hover {
       &::-webkit-slider-thumb {
-        background: var(--color-text-primary);
+        @apply bg-k-text-primary;
       }
     }
   }
@@ -101,14 +68,9 @@ onMounted(() => volumeManager.init(inputEl.value!, preferenceStore.volume))
   &.muted {
     [type=range] {
       &::-webkit-slider-thumb {
-        background: transparent;
-        box-shadow: none;
+        @apply bg-transparent shadow-none;
       }
     }
-  }
-
-  @media only screen and (max-width: 768px) {
-    display: none !important;
   }
 }
 </style>

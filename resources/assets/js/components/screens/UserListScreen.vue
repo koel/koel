@@ -1,42 +1,47 @@
 <template>
-  <section id="usersWrapper">
-    <ScreenHeader layout="collapsed">
-      Users
-      <ControlsToggle v-model="showingControls" />
+  <ScreenBase>
+    <template #header>
+      <ScreenHeader layout="collapsed">
+        Users
+        <ControlsToggle v-model="showingControls" />
 
-      <template #controls>
-        <BtnGroup v-if="showingControls || !isPhone" uppercased>
-          <Btn class="btn-add" green @click="showAddUserForm">
-            <Icon :icon="faPlus" />
-            Add
-          </Btn>
-          <Btn v-if="canInvite" class="btn-invite" orange @click="showInviteUserForm">Invite</Btn>
-        </BtnGroup>
-      </template>
-    </ScreenHeader>
+        <template #controls>
+          <BtnGroup v-if="showingControls || !isPhone" uppercased>
+            <Btn success @click="showAddUserForm">
+              <Icon :icon="faPlus" />
+              Add
+            </Btn>
+            <Btn v-if="canInvite" highlight @click="showInviteUserForm">Invite</Btn>
+          </BtnGroup>
+        </template>
+      </ScreenHeader>
+    </template>
 
-    <div v-koel-overflow-fade class="main-scroll-wrap">
-      <ul class="users">
-        <li v-for="user in users" :key="user.id">
+    <ul class="space-y-3">
+      <li v-for="user in users" :key="user.id">
+        <UserCard :user="user" />
+      </li>
+    </ul>
+
+    <template v-if="prospects.length">
+      <h2
+        class="px-0 pt-6 pb-3 uppercase tracking-widest text-center relative flex justify-center text-k-text-secondary"
+        data-testid="prospects-heading"
+      >
+        <i class="invited-heading-decoration" />
+        <span class="px-4 py-1 relative rounded-md border border-k-text-secondary">
+          Invited
+        </span>
+        <i class="invited-heading-decoration" />
+      </h2>
+
+      <ul class="space-y-3">
+        <li v-for="user in prospects" :key="user.id">
           <UserCard :user="user" />
         </li>
       </ul>
-
-      <template v-if="prospects.length">
-        <h2 class="invited-heading" data-testid="prospects-heading">
-          <i />
-          <span>Invited</span>
-          <i />
-        </h2>
-
-        <ul class="users">
-          <li v-for="user in prospects" :key="user.id">
-            <UserCard :user="user" />
-          </li>
-        </ul>
-      </template>
-    </div>
-  </section>
+    </template>
+  </ScreenBase>
 </template>
 
 <script lang="ts" setup>
@@ -45,14 +50,15 @@ import isMobile from 'ismobilejs'
 import { computed, defineAsyncComponent, onMounted, ref, toRef } from 'vue'
 import { userStore } from '@/stores'
 import { eventBus } from '@/utils'
-import {useAuthorization} from '@/composables'
+import { useAuthorization } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ControlsToggle from '@/components/ui/ScreenControlsToggle.vue'
 import UserCard from '@/components/user/UserCard.vue'
-import BtnGroup from '@/components/ui/BtnGroup.vue'
+import BtnGroup from '@/components/ui/form/BtnGroup.vue'
+import ScreenBase from '@/components/screens/ScreenBase.vue'
 
-const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
+const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 
 const { currentUser } = useAuthorization()
 
@@ -77,53 +83,8 @@ onMounted(async () => await userStore.fetch())
 </script>
 
 <style lang="postcss" scoped>
-.users {
-  display: flex;
-  flex-direction: column;
-  gap: .5rem;
-}
-
-.invited-heading {
-  margin: 2rem 0 1rem;
-  text-transform: uppercase;
-  letter-spacing: .1rem;
-  color: var(--color-text-secondary);
-  text-align: center;
-  position: relative;
-  display: flex;
-  justify-content: center;
-
-  i {
-    position: relative;
-    flex: 1;
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: var(--color-text-secondary);
-      opacity: .2;
-    }
-  }
-
-  span {
-    padding: 0.2rem .8rem;
-    position: relative;
-
-    &::before {
-      border: 1px solid var(--color-text-secondary);
-      opacity: .2;
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border-radius: 5px;
-    }
-  }
+.invited-heading-decoration {
+  @apply relative flex-1 before:absolute before:top-1/2;
+  @apply before:left-0 before:right-0 before:h-px before:opacity-20 before:bg-k-text-secondary;
 }
 </style>

@@ -1,15 +1,19 @@
 <template>
-  <header class="screen-header" :class="[ layout, disabled ? 'disabled' : '' ]">
-    <aside class="thumbnail-wrapper">
+  <header
+    class="screen-header min-h-0 md:min-h-full flex items-end flex-shrink-0 relative content-stretch leading-normal p-6
+    border-b border-b-k-bg-secondary"
+    :class="[ layout, disabled ? 'disabled' : '' ]"
+  >
+    <aside v-if="$slots.thumbnail" class="thumbnail-wrapper hidden md:block overflow-hidden w-0 rounded-md">
       <slot name="thumbnail" />
     </aside>
 
-    <main>
-      <div class="heading-wrapper">
-        <h1 class="name">
+    <main class="flex flex-1 gap-5 items-center overflow-hidden">
+      <div class="w-full flex-1 overflow-hidden">
+        <h1 class="name overflow-hidden whitespace-nowrap text-ellipsis mr-4 font-thin md:font-bold my-0 leading-tight">
           <slot />
         </h1>
-        <span class="meta text-secondary">
+        <span v-if="$slots.meta" class="meta text-k-text-secondary hidden text-[0.9rem] leading-loose">
           <slot name="meta" />
         </span>
       </div>
@@ -20,7 +24,7 @@
 </template>
 
 <script lang="ts" setup>
-const props = withDefaults(defineProps<{
+withDefaults(defineProps<{
   layout?: ScreenHeaderLayout,
   disabled?: boolean,
 }>(), {
@@ -31,132 +35,62 @@ const props = withDefaults(defineProps<{
 
 <style lang="postcss" scoped>
 header.screen-header {
-  --transition-duration: .3s;
+  --transition-duration: 300ms;
 
   @media (prefers-reduced-motion) {
     --transition-duration: 0;
   }
 
-  display: flex;
-  align-items: flex-end;
-  flex-shrink: 0;
-  border-bottom: 1px solid var(--color-bg-secondary);
-  position: relative;
-  align-content: stretch;
-  line-height: normal;
-  padding: 1.8rem;
-
   &.disabled {
-    opacity: .5;
-    cursor: not-allowed;
+    @apply opacity-50 cursor-not-allowed;
 
     *, *::before, *::after {
-      pointer-events: none;
+      @apply pointer-events-none;
     }
   }
 
   &.expanded {
     .thumbnail-wrapper {
-      margin-right: 1.5rem;
-      width: 192px;
+      @apply mr-6 w-[192px];
 
       > * {
-        transform: scale(1);
+        @apply scale-100;
       }
     }
 
     .meta {
-      display: block;
-      margin-top: .2rem;
+      @apply block;
     }
 
     main {
-      flex-direction: column;
-      align-items: flex-start;
+      @apply flex-col items-start;
     }
   }
 
   .thumbnail-wrapper {
-    overflow: hidden;
-    display: block;
-    width: 0;
     transition: width var(--transition-duration);
-    border-radius: 5px;
 
     > * {
-      transform: scale(0);
-      transform-origin: bottom left;
+      @apply scale-0 origin-bottom-left;
       transition: transform var(--transition-duration), width var(--transition-duration);
     }
 
     &:empty {
-      display: none;
+      @apply hidden;
     }
-  }
-
-  main {
-    flex: 1;
-    display: flex;
-    gap: 1.5rem;
-    align-items: center;
-    overflow: hidden;
   }
 
   h1.name {
     font-size: clamp(1.8rem, 3vw, 4rem);
-    font-weight: var(--font-weight-bold);
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    margin-right: 1.5rem;
-  }
-
-  .heading-wrapper {
-    width: 100%;
-    overflow: hidden;
-    flex: 1;
   }
 
   .meta {
-    display: none;
-    font-size: .9rem;
-    line-height: 2;
-    font-weight: var(--font-weight-light);
-
     a {
-      color: var(--color-text-primary);
-
-      &:hover {
-        color: var(--color-highlight);
-      }
+      @apply text-k-text-primary hover:text-k-highlight;
     }
 
     > :slotted(* + *) {
-      margin-left: .2rem;
-      display: inline-block;
-
-      &::before {
-        content: '•';
-        margin-right: .2rem;
-        color: var(--color-text-secondary);
-        font-weight: unset;
-      }
-    }
-  }
-
-  @media (max-width: 768px) {
-    min-height: 0;
-
-    .thumbnail-wrapper {
-      display: none;
-    }
-
-    h1.name {
-      font-weight: var(--font-weight-thin);
-    }
-
-    .meta {
-      display: none;
+      @apply ml-1 inline-block before:content-['•'] before:mr-1 before:text-k-text-secondary;
     }
   }
 }

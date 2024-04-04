@@ -24,6 +24,7 @@ export default [
     id: 'violet',
     thumbnailColor: '#31094e',
     properties: {
+      '--color-bg-secondary': '#360f52',
       '--color-bg-primary': '#31094e',
       '--color-highlight': '#c23de5'
     }
@@ -32,6 +33,7 @@ export default [
     id: 'oak',
     thumbnailColor: '#560d25',
     properties: {
+      '--color-bg-secondary': '#5a132a',
       '--color-bg-primary': '#560d25',
       '--color-highlight': '#fd4b67'
     }
@@ -40,6 +42,7 @@ export default [
     id: 'slate',
     thumbnailColor: '#29434e',
     properties: {
+      '--color-bg-secondary': '#2e4752',
       '--color-bg-primary': '#29434e',
       '--color-highlight': '#6c8b99'
     }
@@ -48,6 +51,7 @@ export default [
     id: 'madison',
     thumbnailColor: '#0e3463',
     properties: {
+      '--color-bg-secondary': '#143967',
       '--color-bg-primary': '#0e3463',
       '--color-bg-highlight': '#fbab18'
     }
@@ -56,6 +60,7 @@ export default [
     id: 'astronaut',
     thumbnailColor: '#2a3074',
     properties: {
+      '--color-bg-secondary': '#2f3577',
       '--color-bg-primary': '#2a3074',
       '--color-highlight': '#7a78dd'
     }
@@ -64,6 +69,7 @@ export default [
     id: 'chocolate',
     thumbnailColor: '#3f2724',
     properties: {
+      '--color-bg-secondary': '#442c29',
       '--color-bg-primary': '#3f2724',
       '--color-highlight': '#d96759'
     }
@@ -72,6 +78,7 @@ export default [
     id: 'laura',
     thumbnailColor: '#126673',
     properties: {
+      '--color-bg-secondary': '#186a76',
       '--color-bg-primary': '#126673',
       '--color-highlight': 'rgba(10, 244, 255, .64)'
     }
@@ -84,6 +91,7 @@ export default [
       '--color-highlight': '#ed5135',
       '--color-accent': '#f4944f',
       '--bg-image': `url(${bgDawn})`,
+      '--color-bg-secondary': 'rgba(255, 255, 255, .025)',
       '--color-bg-primary': '#1e2747',
       '--bg-position': 'center bottom'
     }
@@ -94,6 +102,7 @@ export default [
     thumbnailColor: '#7d083b',
     thumbnailUrl: bgRosePetal,
     properties: {
+      '--color-bg-secondary': 'rgba(255, 255, 255, .025)',
       '--color-bg-primary': '#7d083b',
       '--bg-image': `url(${bgRosePetal})`
     }
@@ -104,6 +113,7 @@ export default [
     thumbnailColor: '#44115c',
     thumbnailUrl: bgPurpleWaves,
     properties: {
+      '--color-bg-secondary': 'rgba(255, 255, 255, .025)',
       '--color-bg-primary': '#44115c',
       '--bg-image': `url(${bgPurpleWaves})`
     }
@@ -113,6 +123,7 @@ export default [
     thumbnailColor: '#ad0937',
     thumbnailUrl: thumbPopCulture,
     properties: {
+      '--color-bg-secondary': 'rgba(255, 255, 255, .025)',
       '--color-bg-primary': '#ad0937',
       '--color-highlight': 'rgba(234, 208, 110, .9)',
       '--bg-image': `url(${bgPopCulture})`
@@ -124,6 +135,7 @@ export default [
     thumbnailColor: '#0f0f03',
     thumbnailUrl: thumbJungle,
     properties: {
+      '--color-bg-secondary': 'rgba(255, 255, 255, .025)',
       '--color-bg-primary': '#0f0f03',
       '--color-highlight': '#4f9345',
       '--bg-image': `url(${bgJungle})`
@@ -135,6 +147,7 @@ export default [
     thumbnailColor: '#0e2656',
     thumbnailUrl: thumbMountains,
     properties: {
+      '--color-bg-secondary': 'rgba(255, 255, 255, .025)',
       '--color-bg-primary': '#0e2656',
       '--color-highlight': '#6488c3',
       '--bg-image': `url(${bgMountains})`
@@ -146,6 +159,7 @@ export default [
     thumbnailColor: '#06090c',
     thumbnailUrl: thumbPines,
     properties: {
+      '--color-bg-secondary': 'rgba(255, 255, 255, .025)',
       '--color-bg-primary': '#06090c',
       '--color-highlight': '#5984b9',
       '--bg-image': `url(${bgPines})`
@@ -156,6 +170,7 @@ export default [
     thumbnailColor: '#031724',
     thumbnailUrl: thumbNemo,
     properties: {
+      '--color-bg-secondary': 'rgba(255, 255, 255, .025)',
       '--color-bg-primary': '#031724',
       '--color-highlight': '#2896b8',
       '--bg-image': `url(${bgNemo})`
@@ -167,6 +182,7 @@ export default [
     thumbnailColor: '#000',
     thumbnailUrl: thumbCat,
     properties: {
+      '--color-bg-secondary': 'rgba(255, 255, 255, .025)',
       '--color-bg-primary': '#000',
       '--color-highlight': '#d26c37',
       '--bg-image': `url(${bgCat})`,

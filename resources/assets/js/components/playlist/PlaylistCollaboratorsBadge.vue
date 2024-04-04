@@ -1,11 +1,11 @@
 <template>
-  <div>
-    <ul>
-      <li v-for="user in displayedCollaborators" :key="user.id">
-        <UserAvatar :user="user" width="24" />
+  <div class="inline-block align-middle">
+    <ul class="align-middle -space-x-2">
+      <li v-for="user in displayedCollaborators" :key="user.id" class="inline-block align-baseline">
+        <UserAvatar :user="user" width="24" class="border border-white/30" />
       </li>
     </ul>
-    <span v-if="remainderCount" class="more">
+    <span v-if="remainderCount" class="ml-2">
       +{{ remainderCount }} more
     </span>
   </div>
@@ -22,28 +22,3 @@ const { collaborators } = toRefs(props)
 const displayedCollaborators = computed(() => collaborators.value.slice(0, 3))
 const remainderCount = computed(() => collaborators.value.length - displayedCollaborators.value.length)
 </script>
-
-<style scoped lang="postcss">
-div {
-  display: inline-block;
-  vertical-align: middle;
-}
-
-ul {
-  display: inline-block;
-  vertical-align: middle;
-}
-
-li {
-  display: inline-block;
-  vertical-align: middle;
-}
-
-li + li {
-  margin-left: -.3rem;
-}
-
-.more {
-  margin-left: .3rem;
-}
-</style>

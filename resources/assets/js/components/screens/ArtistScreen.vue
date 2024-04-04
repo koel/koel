@@ -1,43 +1,45 @@
 <template>
-  <section v-if="artist" id="artistWrapper" class="artist-album-info-wrapper">
-    <ScreenHeaderSkeleton v-if="loading" />
+  <ScreenBase v-if="artist">
+    <template #header>
+      <ScreenHeaderSkeleton v-if="loading" />
 
-    <ScreenHeader v-if="!loading && artist" :layout="songs.length === 0 ? 'collapsed' : headerLayout">
-      {{ artist.name }}
-      <ControlsToggle v-model="showingControls" />
+      <ScreenHeader v-if="!loading && artist" :layout="songs.length === 0 ? 'collapsed' : headerLayout">
+        {{ artist.name }}
+        <ControlsToggle v-model="showingControls" />
 
-      <template #thumbnail>
-        <ArtistThumbnail :entity="artist" />
-      </template>
+        <template #thumbnail>
+          <ArtistThumbnail :entity="artist" />
+        </template>
 
-      <template #meta>
-        <span>{{ pluralize(albumCount, 'album') }}</span>
-        <span>{{ pluralize(songs, 'song') }}</span>
-        <span>{{ duration }}</span>
+        <template #meta>
+          <span>{{ pluralize(albumCount, 'album') }}</span>
+          <span>{{ pluralize(songs, 'song') }}</span>
+          <span>{{ duration }}</span>
 
-        <a
-          v-if="allowDownload"
-          class="download"
-          role="button"
-          title="Download all songs by this artist"
-          @click.prevent="download"
-        >
-          Download All
-        </a>
-      </template>
+          <a
+            v-if="allowDownload"
+            class="download"
+            role="button"
+            title="Download all songs by this artist"
+            @click.prevent="download"
+          >
+            Download All
+          </a>
+        </template>
 
-      <template #controls>
-        <SongListControls
-          v-if="songs.length && (!isPhone || showingControls)"
-          :config="config"
-          @filter="applyFilter"
-          @play-all="playAll"
-          @play-selected="playSelected"
-        />
-      </template>
-    </ScreenHeader>
+        <template #controls>
+          <SongListControls
+            v-if="songs.length && (!isPhone || showingControls)"
+            :config="config"
+            @filter="applyFilter"
+            @play-all="playAll"
+            @play-selected="playSelected"
+          />
+        </template>
+      </ScreenHeader>
+    </template>
 
-    <ScreenTabs>
+    <ScreenTabs class="-m-6">
       <template #header>
         <label :class="{ active: activeTab === 'Songs' }">
           Songs
@@ -65,23 +67,21 @@
       </div>
 
       <div v-show="activeTab === 'Albums'" class="albums-pane">
-        <ul v-if="albums" v-koel-overflow-fade class="as-list artist-album-wrapper">
-          <li v-for="album in albums" :key="album.id">
-            <AlbumCard :album="album" layout="compact" />
-          </li>
-        </ul>
-        <ul v-else class="as-list artist-album-wrapper">
-          <li v-for="i in 12" :key="i">
-            <AlbumCardSkeleton layout="compact" />
-          </li>
-        </ul>
+        <AlbumOrArtistGrid v-koel-overflow-fade view-mode="list">
+          <template v-if="albums">
+            <AlbumCard v-for="album in albums" :key="album.id" :album="album" layout="compact" />
+          </template>
+          <template v-else>
+            <AlbumCardSkeleton v-for="i in 6" :key="i" layout="compact" />
+          </template>
+        </AlbumOrArtistGrid>
       </div>
 
       <div v-show="activeTab === 'Info'" v-if="useLastfm && artist" class="info-pane">
         <ArtistInfo :artist="artist" mode="full" />
       </div>
     </ScreenTabs>
-  </section>
+  </ScreenBase>
 </template>
 
 <script lang="ts" setup>
@@ -96,6 +96,8 @@ import ArtistThumbnail from '@/components/ui/ArtistAlbumThumbnail.vue'
 import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 import ScreenTabs from '@/components/ui/ArtistAlbumScreenTabs.vue'
+import ScreenBase from '@/components/screens/ScreenBase.vue'
+import AlbumOrArtistGrid from '@/components/ui/album-artist/AlbumOrArtistGrid.vue'
 
 const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/ArtistInfo.vue'))
 const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCard.vue'))
@@ -112,7 +114,6 @@ const artist = ref<Artist>()
 const songs = ref<Song[]>([])
 const loading = ref(false)
 let albums = ref<Album[] | undefined>()
-let info = ref<ArtistInfo | undefined | null>()
 
 const {
   SongList,

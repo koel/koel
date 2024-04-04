@@ -1,8 +1,7 @@
 <template>
-  <div
+  <article
     :class="{ droppable }"
-    :style="{ backgroundImage: `url(${playlist.cover || defaultCover})` }"
-    class="cover"
+    class="cover relative w-full aspect-square block rounded-md overflow-hidden bg-no-repeat bg-cover bg-center"
     data-testid="playlist-thumbnail"
     @dragenter.prevent="onDragEnter"
     @dragleave.prevent="onDragLeave"
@@ -12,7 +11,7 @@
     <div class="pointer-events-none">
       <slot />
     </div>
-  </div>
+  </article>
 </template>
 
 <script setup lang="ts">
@@ -31,6 +30,8 @@ const user = toRef(userStore.state, 'current')
 const { isAdmin } = useAuthorization()
 const { isPlus } = useKoelPlus()
 const { toastError } = useMessageToaster()
+
+const backgroundImage = computed(() => `url(${playlist.value.cover || defaultCover })`)
 
 const allowsUpload = computed(() => isAdmin.value || isPlus.value)
 const onDragEnter = () => (droppable.value = allowsUpload.value)
@@ -71,8 +72,8 @@ const onDrop = async (event: DragEvent) => {
       playlist.value.cover = url
       await playlistStore.uploadCover(playlist.value, url)
     })
-  } catch (e) {
-    const message = e?.response?.data?.message ?? 'Unknown error.'
+  } catch (e: any) {
+    const message = e.response.data?.message || 'Unknown error.'
     toastError(`Failed to upload: ${message}`)
 
     // restore the backup image
@@ -84,24 +85,15 @@ const onDrop = async (event: DragEvent) => {
 </script>
 
 <style scoped lang="postcss">
-.cover {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1/1;
-  display: block;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center center;
-  border-radius: 5px;
-  overflow: hidden;
+article {
+  background-image: v-bind(backgroundImage);
 
   &.droppable {
-    border: 2px dotted rgba(255, 255, 255, 1);
-    filter: brightness(0.4);
+    @apply border-2 border-dotted border-white brightness-50;
   }
 
   .thumbnail-stack {
-    pointer-events: none;
+    @apply pointer-events-none;
   }
 }
 </style>

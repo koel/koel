@@ -1,9 +1,9 @@
 <template>
-  <div class="add-to" data-testid="add-to-menu" tabindex="0">
+  <div class="add-to w-full max-w-[256px] min-w-[200px] p-3 space-y-3" data-testid="add-to-menu" tabindex="0">
     <section class="existing-playlists">
-      <p>Add {{ pluralize(songs, 'song') }} to</p>
+      <p class="mb-2 text-[0.9rem]">Add {{ pluralize(songs, 'song') }} to</p>
 
-      <ul v-koel-overflow-fade>
+      <ul v-koel-overflow-fade class="relative max-h-48 overflow-y-scroll space-y-1.5">
         <template v-if="config.queue">
           <template v-if="queue.length">
             <li
@@ -46,7 +46,13 @@
       </ul>
     </section>
 
-    <Btn transparent @click.prevent="addSongsToNewPlaylist">New Playlist…</Btn>
+    <Btn
+      class="!w-full !border !border-solid !border-white/20"
+      transparent
+      @click.prevent="addSongsToNewPlaylist"
+    >
+      New Playlist…
+    </Btn>
   </div>
 </template>
 
@@ -56,7 +62,7 @@ import { pluralize } from '@/utils'
 import { playlistStore, queueStore } from '@/stores'
 import { useSongMenuMethods } from '@/composables'
 
-import Btn from '@/components/ui/Btn.vue'
+import Btn from '@/components/ui/form/Btn.vue'
 
 const props = defineProps<{ songs: Song[], config: AddToMenuConfig }>()
 const { songs, config } = toRefs(props)
@@ -83,56 +89,8 @@ watch(songs, () => songs.value.length || close())
 </script>
 
 <style lang="postcss" scoped>
-.add-to {
-  width: 100%;
-  max-width: 256px;
-  min-width: 196px;
-  padding: .75rem;
-
-  > * + * {
-    margin-top: 1rem;
-  }
-
-  p {
-    margin-bottom: .5rem;
-    font-size: .9rem;
-  }
-
-  .new-playlist {
-    margin-top: .5rem;
-  }
-
-  ul {
-    position: relative;
-    max-height: 12rem;
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
-
-    > li + li {
-      margin-top: .3rem;
-    }
-  }
-
-  li {
-    height: 2.25rem;
-    line-height: 2.25rem;
-    padding: 0 .75rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    border-radius: 3px;
-    background: rgba(255, 255, 255, .05);
-    cursor: pointer;
-
-    &:hover {
-      background: var(--color-highlight);
-      color: var(--color-text-primary);
-    }
-  }
-
-  button {
-    width: 100%;
-    border: 1px solid rgba(255, 255, 255, .2);
-  }
+li {
+  @apply h-9 leading-9 py-0 px-3 whitespace-nowrap overflow-hidden text-ellipsis rounded bg-white/5 cursor-pointer
+    hover:bg-k-highlight hover:text-k-text-primary;
 }
 </style>

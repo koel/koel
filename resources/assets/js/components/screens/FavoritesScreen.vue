@@ -1,43 +1,46 @@
 <template>
-  <section id="favoritesWrapper">
-    <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
-      Songs You Love
-      <ControlsToggle v-model="showingControls" />
+  <ScreenBase>
+    <template #header>
+      <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
+        Songs You Love
+        <ControlsToggle v-model="showingControls" />
 
-      <template #thumbnail>
-        <ThumbnailStack :thumbnails="thumbnails" />
-      </template>
+        <template #thumbnail>
+          <ThumbnailStack :thumbnails="thumbnails" />
+        </template>
 
-      <template v-if="songs.length" #meta>
-        <span>{{ pluralize(songs, 'song') }}</span>
-        <span>{{ duration }}</span>
+        <template v-if="songs.length" #meta>
+          <span>{{ pluralize(songs, 'song') }}</span>
+          <span>{{ duration }}</span>
 
-        <a
-          v-if="allowDownload"
-          class="download"
-          role="button"
-          title="Download all songs in playlist"
-          @click.prevent="download"
-        >
-          Download All
-        </a>
-      </template>
+          <a
+            v-if="allowDownload"
+            class="download"
+            role="button"
+            title="Download all songs in playlist"
+            @click.prevent="download"
+          >
+            Download All
+          </a>
+        </template>
 
-      <template #controls>
-        <SongListControls
-          v-if="songs.length && (!isPhone || showingControls)"
-          :config="config"
-          @filter="applyFilter"
-          @play-all="playAll"
-          @play-selected="playSelected"
-        />
-      </template>
-    </ScreenHeader>
+        <template #controls>
+          <SongListControls
+            v-if="songs.length && (!isPhone || showingControls)"
+            :config="config"
+            @filter="applyFilter"
+            @play-all="playAll"
+            @play-selected="playSelected"
+          />
+        </template>
+      </ScreenHeader>
+    </template>
 
-    <SongListSkeleton v-if="loading" />
+    <SongListSkeleton v-if="loading" class="-m-6" />
     <SongList
       v-if="songs.length"
       ref="songList"
+      class="-m-6"
       @sort="sort"
       @press:delete="removeSelected"
       @press:enter="onPressEnter"
@@ -55,7 +58,7 @@
         icon to mark a song as favorite.
       </span>
     </ScreenEmptyState>
-  </section>
+  </ScreenBase>
 </template>
 
 <script lang="ts" setup>
@@ -70,6 +73,7 @@ import { nextTick, ref, toRef } from 'vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
+import ScreenBase from '@/components/screens/ScreenBase.vue'
 
 const {
   SongList,

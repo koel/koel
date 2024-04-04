@@ -9,24 +9,18 @@
     @dragstart="onDragStart"
   >
     <template #name>
-      <a :href="`#/album/${album.id}`" class="text-normal" data-testid="name">{{ album.name }}</a>
+      <a :href="`#/album/${album.id}`" class="font-medium" data-testid="name">{{ album.name }}</a>
       <a v-if="isStandardArtist" :href="`#/artist/${album.artist_id}`">{{ album.artist_name }}</a>
-      <span v-else class="text-secondary">{{ album.artist_name }}</span>
+      <span v-else class="text-k-text-secondary">{{ album.artist_name }}</span>
     </template>
 
     <template #meta>
-      <a
-        :title="`Shuffle all songs in the album ${album.name}`"
-        class="shuffle-album"
-        role="button"
-        @click.prevent="shuffle"
-      >
+      <a :title="`Shuffle all songs in the album ${album.name}`" role="button" @click.prevent="shuffle">
         Shuffle
       </a>
       <a
         v-if="allowDownload"
         :title="`Download all songs in the album ${album.name}`"
-        class="download-album"
         role="button"
         @click.prevent="download"
       >

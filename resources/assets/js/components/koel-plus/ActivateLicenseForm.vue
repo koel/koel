@@ -1,15 +1,15 @@
 <template>
-  <form class="license-form" @submit.prevent="validateLicenseKey">
-    <input
+  <form class="license-form flex items-stretch" @submit.prevent="validateLicenseKey">
+    <TextInput
       v-model="licenseKey"
       v-koel-focus
-      type="text"
+      :disabled="loading"
+      class="!rounded-r-none"
       name="license"
       placeholder="Enter your license key"
       required
-      :disabled="loading"
-    >
-    <Btn blue type="submit" :disabled="loading">Activate</Btn>
+    />
+    <Btn :disabled="loading" class="!rounded-l-none" type="submit">Activate</Btn>
   </form>
 </template>
 <script setup lang="ts">
@@ -18,7 +18,8 @@ import { plusService } from '@/services'
 import { forceReloadWindow, logger } from '@/utils'
 import { useDialogBox } from '@/composables'
 
-import Btn from '@/components/ui/Btn.vue'
+import Btn from '@/components/ui/form/Btn.vue'
+import TextInput from '@/components/ui/form/TextInput.vue'
 
 const { showSuccessDialog, showErrorDialog } = useDialogBox()
 const licenseKey = ref('')
@@ -38,23 +39,3 @@ const validateLicenseKey = async () => {
   }
 }
 </script>
-
-
-<style scoped lang="postcss">
-form {
-  display: flex;
-  align-items: stretch;
-
-  &:has(:focus) {
-    outline: 4px solid rgba(255, 255, 255, 0);
-  }
-
-  input {
-    border-radius: 4px 0 0 4px;
-  }
-
-  button {
-    border-radius: 0 4px 4px 0;
-  }
-}
-</style>

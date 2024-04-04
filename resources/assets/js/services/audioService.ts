@@ -2,9 +2,9 @@ import { equalizerStore } from '@/stores'
 import { frequencies } from '@/config'
 import { dbToGain } from '@/utils'
 
-interface Band {
+export interface Band {
   label: string
-  filter: BiquadFilterNode
+  node: BiquadFilterNode
   db: number
 }
 
@@ -55,7 +55,7 @@ export const audioService = {
       prevFilter = filter
 
       this.bands.push({
-        filter,
+        node: filter,
         label: String(frequency).replace('000', 'K'),
         db: config.gains[i]
       })
@@ -74,7 +74,6 @@ export const audioService = {
   },
 
   changeFilterGain (node: BiquadFilterNode, db: number) {
-    this.bands.find(({ filter }) => filter === node)!.db = db
     node.gain.value = dbToGain(db)
   },
 

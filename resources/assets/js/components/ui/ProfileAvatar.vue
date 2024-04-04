@@ -7,7 +7,11 @@
     href="/#/profile"
     title="Profile and preferences"
   >
-    <UserAvatar :user="currentUser" width="40" />
+    <UserAvatar
+      :user="currentUser"
+      class="p-0.5 border border-solid border-white/10 transition duration-200 ease-in-out hover:border-white/30 active:scale-95"
+      width="40"
+    />
   </a>
 </template>
 
@@ -17,19 +21,3 @@ import UserAvatar from '@/components/user/UserAvatar.vue'
 
 const { currentUser } = useAuthorization()
 </script>
-
-<style lang="postcss" scoped>
-img {
-  padding: 2px;
-  border: 1px solid rgba(255, 255, 255, .1);
-  transition: border .2s ease-in-out;
-
-  &:hover {
-    border-color: rgba(255, 255, 255, .3);
-  }
-
-  &:active {
-    transform: scale(.95);
-  }
-}
-</style>

@@ -1,15 +1,15 @@
 // Vitest Snapshot v1
 
 exports[`renders with current song 1`] = `
-<div data-v-91ed60f7="" class="playing song-info" draggable="true"><span data-v-91ed60f7="" style="background-image: url(https://via.placeholder.com/150);" class="album-thumb"></span>
-  <div data-v-91ed60f7="" class="meta">
-    <h3 data-v-91ed60f7="" class="title">Fahrstuhl zum Mond</h3><a data-v-91ed60f7="" href="/#/artist/10" class="artist">Led Zeppelin</a>
+<div data-v-91ed60f7="" class="playing song-info tw-px-6 tw-py-0 tw-flex tw-items-center tw-content-start tw-w-[84px] md:tw-w-80 tw-gap-5" draggable="true"><span data-v-91ed60f7="" class="album-thumb tw-block tw-h-[55%] md:tw-h-3/4 tw-aspect-square tw-rounded-full tw-bg-cover"></span>
+  <div data-v-91ed60f7="" class="meta tw-overflow-hidden tw-hidden md:tw-block">
+    <h3 data-v-91ed60f7="" class="title tw-text-ellipsis tw-overflow-hidden tw-whitespace-nowrap">Fahrstuhl zum Mond</h3><a data-v-91ed60f7="" class="artist tw-text-ellipsis tw-overflow-hidden tw-whitespace-nowrap tw-block tw-text-[0.9rem]" href="/#/artist/10">Led Zeppelin</a>
   </div>
 </div>
 `;
 
 exports[`renders with no current song 1`] = `
-<div data-v-91ed60f7="" class="song-info" draggable="false"><span data-v-91ed60f7="" style="background-image: url(undefined/resources/assets/img/covers/default.svg);" class="album-thumb"></span>
+<div data-v-91ed60f7="" class="song-info tw-px-6 tw-py-0 tw-flex tw-items-center tw-content-start tw-w-[84px] md:tw-w-80 tw-gap-5" draggable="false"><span data-v-91ed60f7="" class="album-thumb tw-block tw-h-[55%] md:tw-h-3/4 tw-aspect-square tw-rounded-full tw-bg-cover"></span>
   <!--v-if-->
 </div>
 `;

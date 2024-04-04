@@ -1,5 +1,10 @@
 <template>
-  <dialog ref="dialog" class="text-primary bg-primary" @cancel.prevent>
+  <dialog
+    ref="dialog"
+    class="text-k-text-primary border-0 p-0 rounded-md min-w-[calc(100vm_-_24px)] md:min-w-[460px]
+    max-w-[calc(100vw_-_24px)] bg-k-bg-primary overflow-visible backdrop:bg-black/70"
+    @cancel.prevent
+  >
     <Component :is="modalNameToComponentMap[activeModalName]" v-if="activeModalName" @close="close" />
   </dialog>
 </template>
@@ -23,7 +28,7 @@ const modalNameToComponentMap = {
   'playlist-collaboration': defineAsyncComponent(() => import('@/components/playlist/PlaylistCollaborationModal.vue')),
   'about-koel': defineAsyncComponent(() => import('@/components/meta/AboutKoelModal.vue')),
   'koel-plus': defineAsyncComponent(() => import('@/components/koel-plus/KoelPlusModal.vue')),
-  'equalizer': defineAsyncComponent(() => import('@/components/ui/Equalizer.vue'))
+  'equalizer': defineAsyncComponent(() => import('@/components/ui/equalizer/Equalizer.vue'))
 }
 
 type ModalName = keyof typeof modalNameToComponentMap
@@ -87,62 +92,22 @@ eventBus.on('MODAL_SHOW_ABOUT_KOEL', () => (activeModalName.value = 'about-koel'
 
 <style lang="postcss" scoped>
 dialog {
-  border: 0;
-  padding: 0;
-  border-radius: 4px;
-  min-width: 460px;
-  max-width: calc(100vw - 24px);
-  overflow: visible;
-
-  @media screen and (max-width: 768px) {
-    min-width: calc(100vw - 24px);
-  }
-
-  &::backdrop {
-    background: rgba(0, 0, 0, 0.7);
-  }
-
   :deep(form), :deep(>div) {
-    position: relative;
+    @apply relative;
 
     > header, > main, > footer {
-      padding: 1.2rem;
+      @apply px-6 py-5;
     }
 
     > footer {
-      margin-top: 0;
-      background: rgba(0, 0, 0, 0.1);
-      border-top: 1px solid rgba(255, 255, 255, .05);
-    }
-
-    [type=text], [type=number], [type=email], [type=password], [type=url], [type=date], textarea, select {
-      width: 100%;
-      max-width: 100%;
-      height: 32px;
-    }
-
-    .warning {
-      color: var(--color-red);
-    }
-
-    textarea {
-      min-height: 192px;
-    }
-
-    > footer {
-      button + button {
-        margin-left: .5rem;
-      }
+      @apply mt-0 bg-black/10 border-t border-white/5 space-x-2;
     }
 
     > header {
-      display: flex;
-      background: var(--color-bg-secondary);
+      @apply flex bg-k-bg-secondary;
 
       h1 {
-        font-size: 1.8rem;
-        line-height: 2.2rem;
-        margin-bottom: .3rem;
+        @apply text-3xl leading-normal overflow-hidden text-ellipsis whitespace-nowrap;
       }
     }
   }

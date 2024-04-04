@@ -1,32 +1,41 @@
 <template>
-  <section id="songResultsWrapper">
-    <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
-      Songs for <span class="text-thin">{{ decodedQ }}</span>
-      <ControlsToggle v-model="showingControls" />
+  <ScreenBase>
+    <template #header>
+      <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
+        Songs for <span class="text-thin">{{ decodedQ }}</span>
+        <ControlsToggle v-model="showingControls" />
 
-      <template #thumbnail>
-        <ThumbnailStack :thumbnails="thumbnails" />
-      </template>
+        <template #thumbnail>
+          <ThumbnailStack :thumbnails="thumbnails" />
+        </template>
 
-      <template v-if="songs.length" #meta>
-        <span>{{ pluralize(songs, 'song') }}</span>
-        <span>{{ duration }}</span>
-      </template>
+        <template v-if="songs.length" #meta>
+          <span>{{ pluralize(songs, 'song') }}</span>
+          <span>{{ duration }}</span>
+        </template>
 
-      <template #controls>
-        <SongListControls
-          v-if="songs.length && (!isPhone || showingControls)"
-          :config="config"
-          @filter="applyFilter"
-          @play-all="playAll"
-          @play-selected="playSelected"
-        />
-      </template>
-    </ScreenHeader>
+        <template #controls>
+          <SongListControls
+            v-if="songs.length && (!isPhone || showingControls)"
+            :config="config"
+            @filter="applyFilter"
+            @play-all="playAll"
+            @play-selected="playSelected"
+          />
+        </template>
+      </ScreenHeader>
+    </template>
 
-    <SongListSkeleton v-if="loading" />
-    <SongList v-else ref="songList" @sort="sort" @press:enter="onPressEnter" @scroll-breakpoint="onScrollBreakpoint" />
-  </section>
+    <SongListSkeleton v-if="loading" class="-m-6" />
+    <SongList
+      v-else
+      ref="songList"
+      class="-m-6"
+      @sort="sort"
+      @press:enter="onPressEnter"
+      @scroll-breakpoint="onScrollBreakpoint"
+    />
+  </ScreenBase>
 </template>
 
 <script lang="ts" setup>
@@ -37,6 +46,7 @@ import { pluralize } from '@/utils'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
+import ScreenBase from '@/components/screens/ScreenBase.vue'
 
 const { getRouteParam } = useRouter()
 const q = ref('')

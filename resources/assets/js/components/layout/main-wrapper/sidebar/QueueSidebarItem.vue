@@ -2,12 +2,14 @@
   <SidebarItem
     screen="Queue"
     href="#/queue"
-    :icon="faListOl"
     :class="droppable && 'droppable'"
     @dragleave="onQueueDragLeave"
     @dragover.prevent="onQueueDragOver"
     @drop="onQueueDrop"
   >
+    <template #icon>
+      <Icon :icon="faListOl" fixed-width />
+    </template>
     Current Queue
   </SidebarItem>
 </template>

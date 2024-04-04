@@ -4,44 +4,22 @@
  * > The included CSS file is pretty minimal... in fact, feel free to scrap it and make your own!
  */
 #nprogress {
-  pointer-events: none;
+  @apply pointer-events-none;
 
   .bar {
-    display: none;
+    @apply hidden;
   }
 
   /* Fancy blur effect */
   .peg {
-    display: none;
+    @apply hidden;
   }
 
   .spinner {
-    display: block;
-    position: fixed;
-    z-index: 9999;
-    top: 15px;
-    right: 13px;
+    @apply block fixed z-[9999] top-[15px] right-[13px];
   }
 
   .spinner-icon {
-    width: 18px;
-    height: 18px;
-    box-sizing: border-box;
-
-    border: solid 2px transparent;
-    border-top-color: var(--color-highlight);
-    border-left-color: var(--color-highlight);
-    border-radius: 50%;
-
-    animation: nprogress-spinner 400ms linear infinite;
-  }
-}
-
-@keyframes nprogress-spinner {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
+    @apply w-[18px] aspect-square border-2 border-transparent border-t-k-highlight border-l-k-highlight rounded-full animate-spin;
   }
 }

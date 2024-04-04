@@ -1,33 +1,37 @@
 <template>
   <article
     :class="{ playing: song.playback_state === 'Playing' || song.playback_state === 'Paused' }"
+    class="group flex gap-3 py-2 pl-2.5 pr-3 rounded-md items-center bg-k-bg-secondary border border-k-border
+    hover:border-white/15 transition-[border-color] duration-200 ease-in-out
+    focus:ring-1 focus:ring-k-accent focus-within:ring-1 focus-within:ring-k-accent"
     draggable="true"
     tabindex="0"
     @dragstart="onDragStart"
     @contextmenu.prevent="requestContextMenu"
     @dblclick.prevent="play"
   >
-    <SongThumbnail :song="song" />
-    <main>
-      <div class="details">
-        <h3>
-          <span v-if="external" class="external-mark">
-            <Icon :icon="faSquareUpRight" />
-          </span>
+    <span>
+      <SongThumbnail :song="song" />
+    </span>
+    <main class="flex-1 flex items-start">
+      <div class="flex-1 space-y-1 overflow-hidden">
+        <h3 class="flex gap-2 overflow-hidden text-ellipsis whitespace-nowrap">
+          <ExternalMark v-if="external" />
           {{ song.title }}
         </h3>
-        <p class="by text-secondary">
-          <a :href="`#/artist/${song.artist_id}`">{{ song.artist_name }}</a>
+        <p class="text-k-text-secondary text-[0.9rem] opacity-80">
+          <a :href="`#/artist/${song.artist_id}`" class="!text-k-text-primary hover:!text-k-accent">
+            {{ song.artist_name }}
+          </a>
           - {{ pluralize(song.play_count, 'play') }}
         </p>
       </div>
-      <LikeButton :song="song" />
+      <LikeButton :song="song" class="opacity-0 text-k-text-secondary group-hover:opacity-100" />
     </main>
   </article>
 </template>
 
 <script lang="ts" setup>
-import {faSquareUpRight} from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
 import { eventBus, pluralize } from '@/utils'
 import { queueStore } from '@/stores'
@@ -36,6 +40,7 @@ import { useAuthorization, useDraggable, useKoelPlus } from '@/composables'
 
 import SongThumbnail from '@/components/song/SongThumbnail.vue'
 import LikeButton from '@/components/song/SongLikeButton.vue'
+import ExternalMark from '@/components/ui/ExternalMark.vue'
 
 const props = defineProps<{ song: Song }>()
 const { song } = toRefs(props)
@@ -57,102 +62,15 @@ const play = () => {
 
 <style lang="postcss" scoped>
 article {
-  display: flex;
-  gap: 12px;
-  padding: 8px 12px 8px 8px;
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-bg-secondary);
-  border-radius: 5px;
-  align-items: center;
-  transition: border-color .2s ease-in-out;
-
-  &:focus, &:focus-within {
-    box-shadow: 0 0 1px 1px var(--color-accent);
-  }
-
   &.playing {
-    color: var(--color-accent);
-  }
-
-  button {
-    color: var(--color-text-secondary);
-    opacity: 0;
-  }
-
-  &:hover {
-    border-color: rgba(255, 255, 255, .15);
-
-    button {
-      opacity: 1;
-    }
-  }
-
-  @media (hover: none) {
-    button {
-      opacity: 1;
-    }
-
-    :deep(.cover) {
-      .control {
-        display: flex;
-      }
-
-      &::before {
-        opacity: .7;
-      }
-    }
+    @apply text-k-accent;
   }
 
   /* show the thumbnail's playback control on the whole card focus and hover */
-  &:hover :deep(.cover), &:focus :deep(.cover) {
-    .control {
-      display: flex;
-    }
-
+  &:hover :deep(.song-thumbnail), &:focus :deep(.song-thumbnail) {
     &::before {
-      opacity: .7;
+      @apply opacity-70;
     }
-  }
-
-  main {
-    flex: 1 1 auto;
-    min-width: 0;
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-
-    .by {
-      font-size: .9rem;
-      opacity: .8;
-
-      a {
-        color: var(--color-text-primary);
-
-        &:hover {
-          color: var(--color-accent);
-        }
-      }
-    }
-
-    .details {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      overflow: hidden;
-
-      .external-mark {
-        margin-right: .2rem;
-        opacity: .5;
-      }
-    }
-  }
-
-  h3 {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    width: 100%;
   }
 }
 </style>

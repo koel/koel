@@ -1,8 +1,9 @@
 import { Ref } from 'vue'
 import { useInfiniteScroll as baseUseInfiniteScroll } from '@vueuse/core'
+
 import ToTopButton from '@/components/ui/BtnScrollToTop.vue'
 
-export const useInfiniteScroll = (el: Ref<HTMLElement | null>, loadMore: Closure) => {
+export const useInfiniteScroll = (el: Ref<HTMLElement | undefined>, loadMore: Closure) => {
   baseUseInfiniteScroll(el, loadMore, { distance: 32 })
 
   let tries = 0

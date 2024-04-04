@@ -1,36 +1,12 @@
 .tooltip {
-  opacity: 0;
-  color: rgba(255, 255, 255, .8);
-  width: max-content;
-  position: absolute;
-  top: 0;
-  left: 0;
-  background: #111;
-  padding: 5px 12px;
-  border-radius: 4px;
-  pointer-events: none;
-  filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, .3));
-  z-index: 9999;
+  @apply opacity-0 text-white/80 w-max absolute top-0 left-0 bg-black px-3 py-2 rounded-md pointer-events-none
+  drop-shadow z-[9999] no-hover:hidden;
 
   &.show {
-    opacity: 1;
-    transition: opacity .5s ease-in-out;
-    transition-delay: .3s;
+    @apply opacity-100 transition-opacity duration-500 ease-in-out;
   }
 
   &-arrow {
-    position: absolute;
-    background: #111;
-    width: 8px;
-    height: 8px;
-    transform: rotate(45deg);
-  }
-
-  @media (hover: none) {
-    display: none !important;
-  }
-
-  @media screen and (max-width: 768px) {
-    display: none !important;
+    @apply absolute bg-black w-[8px] aspect-square rotate-45;
   }
 }

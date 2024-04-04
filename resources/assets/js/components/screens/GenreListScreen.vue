@@ -1,6 +1,8 @@
 <template>
-  <section id="genresWrapper">
-    <ScreenHeader layout="collapsed">Genres</ScreenHeader>
+  <ScreenBase>
+    <template #header>
+      <ScreenHeader layout="collapsed">Genres</ScreenHeader>
+    </template>
 
     <ScreenEmptyState v-if="libraryEmpty">
       <template #icon>
@@ -12,25 +14,32 @@
       </span>
     </ScreenEmptyState>
 
-    <div v-else class="main-scroll-wrap">
-      <ul v-if="genres" class="genres">
-        <li v-for="genre in genres" :key="genre.name" :class="`level-${getLevel(genre)}`">
-          <a
-            :href="`/#/genres/${encodeURIComponent(genre.name)}`"
-            :title="`${genre.name}: ${pluralize(genre.song_count, 'song')}`"
-          >
-            <span class="name">{{ genre.name }}</span>
-            <span class="count">{{ genre.song_count }}</span>
-          </a>
-        </li>
-      </ul>
-      <ul v-else class="genres">
-        <li v-for="i in 20" :key="i">
-          <GenreItemSkeleton />
-        </li>
-      </ul>
-    </div>
-  </section>
+    <ul v-if="genres" class="genres text-center">
+      <li
+        v-for="genre in genres"
+        :key="genre.name"
+        :class="`level-${getLevel(genre)}`"
+        class="rounded-[0.5em] inline-block m-1.5 align-middle overflow-hidden"
+      >
+        <a
+          class="bg-white/15 inline-flex items-center justify-center !text-k-text-secondary
+          transition-colors duration-200 ease-in-out hover:!text-k-text-primary hover:bg-k-highlight"
+          :href="`/#/genres/${encodeURIComponent(genre.name)}`"
+          :title="`${genre.name}: ${pluralize(genre.song_count, 'song')}`"
+        >
+          <span class="name bg-white/5 px-[0.5em] py-[0.2em] leading-normal">{{ genre.name }}</span>
+          <span class="count items-center px-[0.5em] py-[0.2em]">
+            {{ genre.song_count }}
+          </span>
+        </a>
+      </li>
+    </ul>
+    <ul v-else class="genres">
+      <li v-for="i in 20" :key="i">
+        <GenreItemSkeleton />
+      </li>
+    </ul>
+  </ScreenBase>
 </template>
 
 <script lang="ts" setup>
@@ -44,6 +53,7 @@ import { useAuthorization } from '@/composables'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import GenreItemSkeleton from '@/components/ui/skeletons/GenreItemSkeleton.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
+import ScreenBase from '@/components/screens/ScreenBase.vue'
 
 const { isAdmin } = useAuthorization()
 
@@ -75,79 +85,42 @@ onMounted(async () => {
 
 <style lang="postcss" scoped>
 .genres {
-  text-align: center;
-
   li {
-    display: inline-block;
-    border-radius: 999rem;
-    margin: .2rem;
     font-size: var(--unit);
-    transition: opacity .2s ease-in-out, transform .2s ease-in-out;
-    vertical-align: middle;
 
-    &:hover {
-      transform: scale(1.1);
-      opacity: 1;
-    }
-
-    a {
-      background: rgba(255, 255, 255, .03);
-      display: inline-flex;
-      padding: calc(var(--unit) / 4) calc(var(--unit) / 4) calc(var(--unit) / 4) calc(var(--unit));
-      gap: 12px;
-      align-items: center;
-      border-radius: 999rem;
-      transition: background-color .2s ease-in-out, color .2s ease-in-out;
-
-      &:hover {
-        color: var(--color-text-primary);
-        background: var(--color-highlight);
-      }
-
-      &:active {
-        transform: translateX(2px) translateY(2px);
-      }
-    }
-
-    .count {
-      padding: calc(var(--unit) - 1rem) calc(var(--unit) / 2);
-      background: rgba(255, 255, 255, .1);
-      border-radius: 999rem;
-      font-size: calc(var(--unit) * 2 / 3);
-      box-shadow: 0 0 5px 0 rgba(0, 0, 0, .3);
-      min-width: calc(var(--unit) * 1.5);
-      text-align: center;
+    &:active {
+      @apply scale-95;
     }
   }
 
   .level-0 {
     --unit: 1rem;
-    opacity: .8;
+    @apply opacity-80;
   }
 
   .level-1 {
     --unit: 1.4rem;
-    opacity: .84;
+    @apply opacity-[84%];
   }
 
   .level-2 {
     --unit: 1.8rem;
-    opacity: .88;
+    @apply opacity-[88%];
   }
 
   .level-3 {
     --unit: 2.2rem;
-    opacity: .92;
+    @apply opacity-[92%];
   }
 
   .level-4 {
     --unit: 2.6rem;
-    opacity: .96;
+    @apply opacity-[96%];
   }
 
   .level-5 {
     --unit: 3rem;
-    opacity: 1;
+    @apply opacity-100;
   }
 }
 </style>

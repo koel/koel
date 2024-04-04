@@ -1,11 +1,13 @@
 <template>
-  <section id="artistsWrapper">
-    <ScreenHeader layout="collapsed">
-      Artists
-      <template #controls>
-        <ViewModeSwitch v-model="viewMode" />
-      </template>
-    </ScreenHeader>
+  <ScreenBase>
+    <template #header>
+      <ScreenHeader layout="collapsed">
+        Artists
+        <template #controls>
+          <ViewModeSwitch v-model="viewMode" />
+        </template>
+      </ScreenHeader>
+    </template>
 
     <ScreenEmptyState v-if="libraryEmpty">
       <template #icon>
@@ -17,23 +19,18 @@
       </span>
     </ScreenEmptyState>
 
-    <div
-      v-else
-      ref="listEl"
-      v-koel-overflow-fade
-      :class="`as-${viewMode}`"
-      class="artists main-scroll-wrap artist-album-wrapper"
-      data-testid="artist-list"
-    >
-      <template v-if="showSkeletons">
-        <ArtistCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
-      </template>
-      <template v-else>
-        <ArtistCard v-for="artist in artists" :key="artist.id" :artist="artist" :layout="itemLayout" />
-        <ToTopButton />
-      </template>
+    <div v-else ref="gridContainer" v-koel-overflow-fade class="-m-6 overflow-auto">
+      <ArtistGrid :view-mode="viewMode" data-testid="artist-list">
+        <template v-if="showSkeletons">
+          <ArtistCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
+        </template>
+        <template v-else>
+          <ArtistCard v-for="artist in artists" :key="artist.id" :artist="artist" :layout="itemLayout" />
+          <ToTopButton />
+        </template>
+      </ArtistGrid>
     </div>
-  </section>
+  </ScreenBase>
 </template>
 
 <script lang="ts" setup>
@@ -48,17 +45,19 @@ import ArtistCardSkeleton from '@/components/ui/skeletons/ArtistAlbumCardSkeleto
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
+import ScreenBase from '@/components/screens/ScreenBase.vue'
+import ArtistGrid from '@/components/ui/album-artist/AlbumOrArtistGrid.vue'
 
 const { isAdmin } = useAuthorization()
 
-const listEl = ref<HTMLElement | null>(null)
+const gridContainer = ref<HTMLDivElement>()
 const viewMode = ref<ArtistAlbumViewMode>('thumbnails')
 const artists = toRef(artistStore.state, 'artists')
 
 const {
   ToTopButton,
   makeScrollable
-} = useInfiniteScroll(listEl, async () => await fetchArtists())
+} = useInfiniteScroll(gridContainer, async () => await fetchArtists())
 
 watch(viewMode, () => preferences.artists_view_mode = viewMode.value)
 
@@ -87,9 +86,9 @@ useRouter().onScreenActivated('Artists', async () => {
 
     try {
       await makeScrollable()
-    } catch (error) {
+    } catch (error: any) {
       logger.error(error)
-      useMessageToaster().toastError('Failed to load artists.')
+      useMessageToaster().toastError(error.response.data?.message || 'Failed to load artists.')
       initialized = false
     }
   }

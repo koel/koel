@@ -1,35 +1,40 @@
 <template>
-  <section id="settingsWrapper">
-    <ScreenHeader>Settings</ScreenHeader>
+  <ScreenBase>
+    <template #header>
+      <ScreenHeader>Settings</ScreenHeader>
+    </template>
 
-    <p v-if="storageDriver !== 'local'" class="cloud-warn text-secondary">
+    <p v-if="storageDriver !== 'local'" class="textk-text-secondary">
       Since you’re not using a cloud storage, there’s no need to set a media path.
     </p>
 
-    <form v-else class="main-scroll-wrap" @submit.prevent="confirmThenSave">
-      <div class="form-row">
-        <label for="inputSettingsPath">Media Path</label>
+    <form v-else class="space-y-6" @submit.prevent="confirmThenSave">
+      <FormRow>
+        <template #label>Media Path</template>
 
-        <p id="mediaPathHelp" class="help">
-          The <em>absolute</em> path to the server directory containing your media.
-          Koel will scan this directory for songs and extract any available information.<br>
-          Scanning may take a while, especially if you have a lot of songs, so be patient.
-        </p>
+        <template #help>
+          <span id="mediaPathHelp">
+            The <em>absolute</em> path to the server directory containing your media.
+            Koel will scan this directory for songs and extract any available information.<br>
+            Scanning may take a while, especially if you have a lot of songs, so be patient.
+          </span>
+        </template>
 
-        <input
-          id="inputSettingsPath"
+        <TextInput
           v-model="mediaPath"
           aria-describedby="mediaPathHelp"
           name="media_path"
-          type="text"
-        >
-      </div>
+          class="w-full md:!w-2/3"
+        />
+      </FormRow>
 
-      <div class="form-row">
-        <Btn type="submit">Scan</Btn>
-      </div>
+      <FormRow>
+        <div>
+          <Btn type="submit">Scan</Btn>
+        </div>
+      </FormRow>
     </form>
-  </section>
+  </ScreenBase>
 </template>
 
 <script lang="ts" setup>
@@ -39,7 +44,10 @@ import { forceReloadWindow, parseValidationError } from '@/utils'
 import { useDialogBox, useMessageToaster, useOverlay, useRouter } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
-import Btn from '@/components/ui/Btn.vue'
+import Btn from '@/components/ui/form/Btn.vue'
+import TextInput from '@/components/ui/form/TextInput.vue'
+import ScreenBase from '@/components/screens/ScreenBase.vue'
+import FormRow from '@/components/ui/form/FormRow.vue'
 
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog, showErrorDialog } = useDialogBox()
@@ -90,22 +98,3 @@ const confirmThenSave = async () => {
   }
 }
 </script>
-
-<style lang="postcss">
-#settingsWrapper {
-  input[type="text"] {
-    width: 50%;
-    margin-top: 1rem;
-  }
-
-  @media only screen and (max-width: 667px) {
-    input[type="text"] {
-      width: 100%;
-    }
-  }
-
-  .cloud-warn {
-    padding: 1.8rem;
-  }
-}
-</style>

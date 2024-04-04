@@ -10,7 +10,7 @@
     </template>
     <li class="has-sub">
       Add To
-      <ul class="menu submenu menu-add-to context-menu">
+      <ul class="submenu menu-add-to context-menu">
         <template v-if="queue.length">
           <li v-if="currentSong" @click="queueSongsAfterCurrent">After Current Song</li>
           <li @click="queueSongsToBottom">Bottom of Queue</li>
@@ -23,7 +23,7 @@
         </template>
         <li v-if="normalPlaylists.length" class="separator" />
         <template class="d-block">
-          <ul v-if="normalPlaylists.length" v-koel-overflow-fade class="playlists">
+          <ul v-if="normalPlaylists.length" v-koel-overflow-fade class="relative max-h-48 overflow-y-auto">
             <li v-for="p in normalPlaylists" :key="p.id" @click="addSongsToExistingPlaylist(p)">{{ p.name }}</li>
           </ul>
         </template>
@@ -48,7 +48,7 @@
       <li v-for="action in visibilityActions" :key="action.label" @click="action.handler">{{ action.label }}</li>
     </template>
 
-    <li v-if="canModify" @click="openEditForm">Edit…</li>
+    <li v-if="canEditSongs" @click="openEditForm">Edit…</li>
     <li v-if="allowsDownload" @click="download">Download</li>
     <li v-if="onlyOneSongSelected && canBeShared" @click="copyUrl">Copy Shareable URL</li>
 
@@ -57,7 +57,7 @@
       <li @click="removeFromPlaylist">Remove from Playlist</li>
     </template>
 
-    <template v-if="canModify">
+    <template v-if="canEditSongs">
       <li class="separator" />
       <li @click="deleteFromFilesystem">Delete from Filesystem</li>
     </template>
@@ -70,20 +70,19 @@ import { arrayify, copyText, eventBus, pluralize } from '@/utils'
 import { commonStore, favoriteStore, playlistStore, queueStore, songStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 import {
-  useAuthorization,
   useContextMenu,
   useDialogBox,
   useKoelPlus,
   useMessageToaster,
   usePlaylistManagement,
   useRouter,
-  useSongMenuMethods
+  useSongMenuMethods,
+  usePolicies
 } from '@/composables'
 
 const { toastSuccess, toastError, toastWarning } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { go, getRouteParam, isCurrentScreen } = useRouter()
-const { isAdmin, currentUser } = useAuthorization()
 const { base, ContextMenuBase, open, close, trigger } = useContextMenu()
 const { removeSongsFromPlaylist } = usePlaylistManagement()
 const { isPlus } = useKoelPlus()
@@ -104,10 +103,9 @@ const allowsDownload = toRef(commonStore.state, 'allows_download')
 const queue = toRef(queueStore.state, 'songs')
 const currentSong = toRef(queueStore, 'current')
 
-const canModify = computed(() => {
-  if (isPlus.value) return songs.value.every(({ owner_id }) => owner_id === currentUser.value?.id)
-  return isAdmin.value
-})
+const { currentUserCan } = usePolicies()
+
+const canEditSongs = currentUserCan.editSong(songs.value)
 
 const onlyOneSongSelected = computed(() => songs.value.length === 1)
 const firstSongPlaying = computed(() => songs.value.length ? songs.value[0].playback_state === 'Playing' : false)
@@ -137,10 +135,7 @@ const makePrivate = () => trigger(async () => {
 const canBeShared = computed(() => !isPlus.value || songs.value[0].is_public)
 
 const visibilityActions = computed(() => {
-  if (!isPlus.value) return []
-
-  // If some songs don't belong to the current user, no actions are available.
-  if (songs.value.some(({ owner_id }) => owner_id !== currentUser.value?.id)) return []
+  if (!canEditSongs) return []
 
   const visibilities = Array.from(new Set(songs.value.map(song => song.is_public)))
 
@@ -223,11 +218,3 @@ eventBus.on('SONG_CONTEXT_MENU_REQUESTED', async ({ pageX, pageY }, _songs) => {
   await open(pageY, pageX)
 })
 </script>
-
-<style lang="postcss" scoped>
-ul.playlists {
-  position: relative;
-  max-height: 192px;
-  overflow-y: auto;
-}
-</style>

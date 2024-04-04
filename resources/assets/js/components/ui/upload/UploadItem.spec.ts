@@ -2,7 +2,7 @@ import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { screen } from '@testing-library/vue'
 import { UploadFile, uploadService, UploadStatus } from '@/services'
-import Btn from '@/components/ui/Btn.vue'
+import Btn from '@/components/ui/form/Btn.vue'
 import UploadItem from './UploadItem.vue'
 
 let file: UploadFile

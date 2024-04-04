@@ -1,7 +1,7 @@
 import { DeepReadonly, InjectionKey, Ref } from 'vue'
 import Overlay from '@/components/ui/Overlay.vue'
 import DialogBox from '@/components/ui/DialogBox.vue'
-import MessageToaster from '@/components/ui/MessageToaster.vue'
+import MessageToaster from '@/components/ui/message-toaster/MessageToaster.vue'
 import Router from '@/router'
 
 export type ReadonlyInjectionKey<T> = InjectionKey<[Readonly<T> | DeepReadonly<T>, Closure]>

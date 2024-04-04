@@ -1,7 +1,6 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { preferenceStore } from '@/stores'
-import { volumeManager, http } from '@/services'
+import { volumeManager } from '@/services'
 
 let input: HTMLInputElement
 

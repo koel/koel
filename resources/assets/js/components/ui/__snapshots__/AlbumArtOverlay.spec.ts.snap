@@ -1,5 +1,5 @@
 // Vitest Snapshot v1
 
-exports[`displays nothing if fetching fails 1`] = `<div data-v-e7775cad="" style="background-image: none;" class="pointer-events-none" data-testid="album-art-overlay"></div>`;
+exports[`displays nothing if fetching fails 1`] = `<div style="background-image: none;" class="tw-pointer-events-none tw-fixed tw-z-[1000] tw-overflow-hidden tw-opacity-10 tw-bg-cover tw-bg-center tw-top-0 tw-left-0 tw-h-full tw-w-full" data-testid="album-art-overlay"></div>`;
 
-exports[`fetches and displays the album thumbnail 1`] = `<div data-v-e7775cad="" style="background-image: url(http://test/thumb.jpg);" class="pointer-events-none" data-testid="album-art-overlay"></div>`;
+exports[`fetches and displays the album thumbnail 1`] = `<div style="background-image: url(http://test/thumb.jpg);" class="tw-pointer-events-none tw-fixed tw-z-[1000] tw-overflow-hidden tw-opacity-10 tw-bg-cover tw-bg-center tw-top-0 tw-left-0 tw-h-full tw-w-full" data-testid="album-art-overlay"></div>`;

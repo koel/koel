@@ -1,15 +1,15 @@
 <template>
   <footer
-    id="mainFooter"
     ref="root"
+    class="flex flex-col relative z-20 bg-k-bg-secondary h-k-footer-height"
     @contextmenu.prevent="requestContextMenu"
     @mousemove="showControls"
   >
     <AudioPlayer v-show="song" />
 
-    <div class="fullscreen-backdrop" :style="styles" />
+    <div class="fullscreen-backdrop hidden" />
 
-    <div class="wrapper">
+    <div class="wrapper relative flex flex-1">
       <SongInfo />
       <PlaybackControls />
       <ExtraControls />
@@ -47,12 +47,9 @@ watch(song, async () => {
   artist.value = await artistStore.resolve(song.value.artist_id)
 })
 
-const styles = computed(() => {
+const backgroundBackgroundImage = computed(() => {
   const src = artist.value?.image ?? song.value?.album_cover
-
-  return {
-    backgroundImage: src ? `url(${src})` : 'none'
-  }
+  return src ? `url(${src})` : 'none'
 })
 
 const initPlaybackRelatedServices = async () => {
@@ -89,7 +86,7 @@ const { isFullscreen, toggle: toggleFullscreen } = useFullscreen(root)
 
 watch(isFullscreen, fullscreen => {
   if (fullscreen) {
-    setupControlHidingTimer()
+    // setupControlHidingTimer()
     root.value?.classList.remove('hide-controls')
   } else {
     window.clearTimeout(hideControlsTimeout)
@@ -101,84 +98,47 @@ eventBus.on('FULLSCREEN_TOGGLE', () => toggleFullscreen())
 
 <style lang="postcss" scoped>
 footer {
-  background-color: var(--color-bg-secondary);
-  background-size: 0;
-  height: var(--footer-height);
-  display: flex;
   box-shadow: 0 0 30px 20px rgba(0, 0, 0, .2);
-  flex-direction: column;
-  position: relative;
-  z-index: 3;
-
-  .wrapper {
-    position: relative;
-    display: flex;
-    flex: 1;
-  }
 
   .fullscreen-backdrop {
-    display: none;
+    background-image: v-bind(backgroundBackgroundImage);
   }
 
   &:fullscreen {
     padding: calc(100vh - 9rem) 5vw 0;
-    background: none;
+    @apply bg-none;
 
     &.hide-controls :not(.fullscreen-backdrop) {
-      transition: opacity 2s ease-in-out;
-      opacity: 0;
+      transition: opacity 2s ease-in-out !important; /* overriding all children's custom transition, if any */
+      @apply opacity-0;
     }
 
     .wrapper {
-      z-index: 3;
+      @apply z-[3]
     }
 
     &::before {
-      background-color: #000;
+      @apply bg-black bg-repeat absolute top-0 left-0 opacity-50 z-[1] pointer-events-none -m-[20rem];
+      content: '';
       background-image: linear-gradient(135deg, #111 25%, transparent 25%),
       linear-gradient(225deg, #111 25%, transparent 25%),
       linear-gradient(45deg, #111 25%, transparent 25%),
       linear-gradient(315deg, #111 25%, rgba(255, 255, 255, 0) 25%);
       background-position: 6px 0, 6px 0, 0 0, 0 0;
       background-size: 6px 6px;
-      background-repeat: repeat;
-      content: '';
-      position: absolute;
       width: calc(100% + 40rem);
       height: calc(100% + 40rem);
-      top: 0;
-      left: 0;
-      opacity: .5;
-      z-index: 1;
-      pointer-events: none;
-      margin: -20rem;
       transform: rotate(10deg);
     }
 
     &::after {
       background-image: linear-gradient(0deg, rgba(0, 0, 0, 1) 0%, rgba(255, 255, 255, 0) 30vh);
       content: '';
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      z-index: 1;
-      pointer-events: none;
+      @apply absolute w-full h-full top-0 left-0 z-[1] pointer-events-none;
     }
 
     .fullscreen-backdrop {
-      filter: saturate(.2);
-      display: block;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: top center;
+      @apply saturate-[0.2] block absolute top-0 left-0 w-full h-full z-0 bg-cover bg-no-repeat bg-top;
     }
   }
 }

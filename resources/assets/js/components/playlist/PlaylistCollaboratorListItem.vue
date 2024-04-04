@@ -1,23 +1,26 @@
 <template>
-  <li>
+  <li
+    class="flex items-center justify-center w-full gap-3 py-2 px-3 rounded-md transition-colors duration-200 ease-in-out
+    bg-k-bg-secondary border border-k-border hover:border hover:border-white/15"
+  >
     <span class="avatar">
       <UserAvatar :user="collaborator" width="32" />
     </span>
-    <span class="name">
+    <span class="flex-1">
       {{ collaborator.name }}
       <Icon
         v-if="collaborator.id === currentUser.id"
         :icon="faCircleCheck"
-        class="you text-highlight"
+        class="text-k-highlight ml-1"
         title="This is you!"
       />
     </span>
-    <span class="role text-secondary">
+    <span class="role text-k-text-secondary text-right flex-[0_0_104px] uppercase">
       <span v-if="role === 'owner'" class="owner">Owner</span>
       <span v-else class="contributor">Contributor</span>
     </span>
-    <span v-if="manageable" class="actions">
-      <Btn v-if="removable" small red @click.prevent="emit('remove')">Remove</Btn>
+    <span v-if="manageable" class="actions flex-[0_0_72px] text-right">
+      <Btn v-if="removable" small danger @click.prevent="emit('remove')">Remove</Btn>
     </span>
   </li>
 </template>
@@ -26,7 +29,7 @@
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons'
 import { toRefs } from 'vue'
 
-import Btn from '@/components/ui/Btn.vue'
+import Btn from '@/components/ui/form/Btn.vue'
 import UserAvatar from '@/components/user/UserAvatar.vue'
 import { useAuthorization } from '@/composables'
 
@@ -44,57 +47,15 @@ const emit = defineEmits<{ (e: 'remove'): void }>()
 </script>
 
 <style scoped lang="postcss">
-li {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  gap: 1rem;
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-bg-secondary);
-  padding: .5rem .8rem;
-  border-radius: 5px;
-  transition: border-color .2s ease-in-out;
+span {
+  @apply inline-block min-w-0 leading-normal;
+}
 
-  &:hover {
-    border-color: rgba(255, 255, 255, .15);
-  }
+.role span {
+  @apply px-2 py-1 rounded-md border border-white/20;
+}
 
-  .you {
-    margin-left: .5rem;
-  }
-
-  span {
-    display: inline-block;
-    min-width: 0;
-    line-height: 1;
-  }
-
-  .name {
-    flex: 1;
-  }
-
-  .role {
-    text-align: right;
-    flex: 0 0 104px;
-    text-transform: uppercase;
-
-    span {
-      padding: 3px 4px;
-      border-radius: 4px;
-      border: 1px solid rgba(255, 255, 255, .2);
-    }
-  }
-
-  .actions {
-    flex: 0 0 72px;
-    text-align: right;
-  }
-
-  &:only-child {
-    .actions:not(:has(button)) {
-      display: none;
-    }
-  }
+&:only-child .actions:not(:has(button)) {
+  @apply hidden;
 }
 </style>

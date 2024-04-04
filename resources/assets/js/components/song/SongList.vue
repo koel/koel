@@ -1,14 +1,17 @@
 <template>
   <div
     ref="wrapper"
-    class="song-list-wrap"
+    class="song-list-wrap relative flex flex-col flex-1 overflow-auto py-0 px-3 md:p-0"
     data-testid="song-list"
     tabindex="0"
     @keydown.delete.prevent.stop="handleDelete"
     @keydown.enter.prevent.stop="handleEnter"
     @keydown.a.prevent="handleA"
   >
-    <div :class="config.sortable ? 'sortable' : 'unsortable'" class="song-list-header">
+    <div
+      :class="config.sortable ? 'sortable' : 'unsortable'"
+      class="song-list-header flex z-[2] bg-k-bg-secondary"
+    >
       <span
         class="track-number"
         data-testid="header-track-number"
@@ -18,8 +21,8 @@
       >
         #
         <template v-if="config.sortable">
-          <Icon v-if="sortField === 'track' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight" />
-          <Icon v-if="sortField === 'track' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight" />
+          <Icon v-if="sortField === 'track' && sortOrder === 'asc'" :icon="faCaretDown" class="text-k-highlight" />
+          <Icon v-if="sortField === 'track' && sortOrder === 'desc'" :icon="faCaretUp" class="text-k-highlight" />
         </template>
       </span>
       <span
@@ -31,8 +34,8 @@
       >
         Title
         <template v-if="config.sortable">
-          <Icon v-if="sortField === 'title' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight" />
-          <Icon v-if="sortField === 'title' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight" />
+          <Icon v-if="sortField === 'title' && sortOrder === 'asc'" :icon="faCaretDown" class="text-k-highlight" />
+          <Icon v-if="sortField === 'title' && sortOrder === 'desc'" :icon="faCaretUp" class="text-k-highlight" />
         </template>
       </span>
       <span
@@ -44,8 +47,8 @@
       >
         Album
         <template v-if="config.sortable">
-          <Icon v-if="sortField === 'album_name' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight" />
-          <Icon v-if="sortField === 'album_name' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight" />
+          <Icon v-if="sortField === 'album_name' && sortOrder === 'asc'" :icon="faCaretDown" class="text-k-highlight" />
+          <Icon v-if="sortField === 'album_name' && sortOrder === 'desc'" :icon="faCaretUp" class="text-k-highlight" />
         </template>
       </span>
       <template v-if="config.collaborative">
@@ -61,8 +64,8 @@
       >
         Time
         <template v-if="config.sortable">
-          <Icon v-if="sortField === 'length' && sortOrder === 'asc'" :icon="faCaretDown" class="text-highlight" />
-          <Icon v-if="sortField === 'length' && sortOrder === 'desc'" :icon="faCaretUp" class="text-highlight" />
+          <Icon v-if="sortField === 'length' && sortOrder === 'asc'" :icon="faCaretDown" class="text-k-highlight" />
+          <Icon v-if="sortField === 'length' && sortOrder === 'desc'" :icon="faCaretUp" class="text-k-highlight" />
         </template>
       </span>
       <span class="extra">
@@ -382,132 +385,60 @@ onMounted(() => render())
 
 <style lang="postcss">
 .song-list-wrap {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  overflow: auto;
-  flex: 1;
-
-  @media screen and (max-width: 768px) {
-    padding: 0 12px;
-  }
-
-  .song-list-header {
-    background: var(--color-bg-secondary);
-    display: flex;
-    z-index: 2; /* fix stack-context related issue when e.g., footer would cover the sort context menu */
+  .virtual-scroller {
+    @apply flex-1;
   }
 
   &.dragging .song-item * {
-    pointer-events: none;
-  }
-
-  .droppable {
-    position: relative;
-    transition: none;
-
-    &::after {
-      content: '';
-      position: absolute;
-      width: 100%;
-      height: 3px;
-      border-radius: 3px;
-      background: var(--color-green);
-      top: 0;
-    }
-
-    &.dragover-bottom::after {
-      top: auto;
-      bottom: 0;
-    }
+    @apply pointer-events-none;
   }
 
   .song-list-header > span, .song-item > span {
-    text-align: left;
-    padding: 8px;
-    vertical-align: middle;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
+    @apply text-left p-2 align-middle text-ellipsis overflow-hidden whitespace-nowrap;
 
     &.time {
-      flex-basis: 64px;
-      overflow: visible;
+      @apply basis-16 overflow-visible;
     }
 
     &.track-number {
-      flex-basis: 66px;
-      padding-left: 24px;
+      @apply basis-16 pl-6;
     }
 
     &.album {
-      flex-basis: 27%;
+      @apply basis-[27%];
     }
 
     &.collaborator {
-      flex-basis: 72px;
-      text-align: center;
+      @apply basis-[72px] text-center;
     }
 
     &.added-at {
-      flex-basis: 144px;
-      text-align: left;
+      @apply basis-36 text-left;
     }
 
     &.extra {
-      flex-basis: 36px;
-      text-align: center;
+      @apply basis-12 text-center;
     }
 
     &.play {
-      display: none;
-
-      @media (hover: none) {
-        display: block;
-      }
+      @apply hidden no-hover:block;
     }
 
     &.title-artist {
-      flex: 1;
+      @apply flex-1;
     }
   }
 
   .song-list-header {
-    color: var(--color-text-secondary);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    cursor: pointer;
+    @apply tracking-widest uppercase cursor-pointer text-k-text-secondary;
 
     .extra {
-      padding-left: 0;
-      padding-right: 0;
+      @apply px-0;
     }
   }
 
   .unsortable span {
-    cursor: default;
-  }
-
-  .scroller {
-    overflow: auto;
-    position: absolute;
-    top: 35px;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
-
-    .item-container {
-      position: absolute;
-      left: 0;
-      right: 0;
-      min-height: 200%;
-    }
-
-    .item {
-      margin-bottom: 0;
-    }
+    @apply cursor-default;
   }
 
   @media only screen and (max-width: 768px) {
@@ -544,10 +475,6 @@ onMounted(() => render())
         padding-right: 12px;
       }
     }
-  }
-
-  .virtual-scroller {
-    flex: 1;
   }
 }
 </style>

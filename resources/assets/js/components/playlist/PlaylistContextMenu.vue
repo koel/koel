@@ -8,27 +8,27 @@
       <li @click="showCollaborationModal">Collaborate…</li>
       <li class="separator" />
     </template>
-    <li v-if="ownedByCurrentUser" @click="edit">Edit…</li>
-    <li v-if="ownedByCurrentUser" @click="destroy">Delete</li>
+    <li v-if="canEditPlaylist" @click="edit">Edit…</li>
+    <li v-if="canEditPlaylist" @click="destroy">Delete</li>
   </ContextMenuBase>
 </template>
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
-import { copyText, eventBus } from '@/utils'
-import { useAuthorization, useContextMenu, useMessageToaster, useKoelPlus, useRouter } from '@/composables'
-import { playbackService, playlistCollaborationService } from '@/services'
+import { eventBus } from '@/utils'
+import { usePolicies, useContextMenu, useMessageToaster, useKoelPlus, useRouter } from '@/composables'
+import { playbackService } from '@/services'
 import { songStore, queueStore } from '@/stores'
 
 const { base, ContextMenuBase, open, trigger } = useContextMenu()
 const { go } = useRouter()
 const { toastWarning, toastSuccess } = useMessageToaster()
 const { isPlus } = useKoelPlus()
-const { currentUser } = useAuthorization()
+const { currentUserCan } = usePolicies()
 
 const playlist = ref<Playlist>()
 
-const ownedByCurrentUser = computed(() => playlist.value?.user_id === currentUser.value?.id)
+const canEditPlaylist = computed(() => currentUserCan.editPlaylist(playlist.value!))
 const canShowCollaboration = computed(() => isPlus.value && !playlist.value?.is_smart)
 
 const edit = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist.value!))

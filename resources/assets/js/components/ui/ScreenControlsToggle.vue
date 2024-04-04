@@ -1,8 +1,8 @@
 <template>
-  <label v-if="isMobile.phone" class="text-highlight">
-    <input v-model="value" type="checkbox">
+  <label v-if="isMobile.phone" class="text-k-highlight text-base inline-block ml-2">
+    <input v-model="value" class="hidden" type="checkbox">
     <Icon :icon="value ? faCaretUp : faCaretDown" class="toggle" />
-    <span>Toggle the song list controls</span>
+    <span class="hidden">Toggle the song list controls</span>
   </label>
 </template>
 
@@ -20,15 +20,3 @@ const value = computed({
   set: value => emit('update:modelValue', value)
 })
 </script>
-
-<style lang="postcss" scoped>
-label {
-  font-size: 1rem;
-  display: inline-block;
-  margin-left: 4px;
-}
-
-input, span {
-  display: none;
-}
-</style>

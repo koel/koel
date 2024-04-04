@@ -1,13 +1,17 @@
 <template>
-  <div v-if="shown" class="support-bar" data-testid="support-bar">
-    <p>
+  <div
+    v-if="shown"
+    class="bg-k-bg-primary text-[0.9rem] px-6 py-4 flex text-k-text-secondary z-10 space-x-3"
+    data-testid="support-bar"
+  >
+    <p class="flex-1">
       Loving Koel? Please consider supporting its development via
       <a href="https://github.com/users/phanan/sponsorship" rel="noopener" target="_blank">GitHub Sponsors</a>
       and/or
       <a href="https://opencollective.com/koel" rel="noopener" target="_blank">OpenCollective</a>.
     </p>
     <button type="button" @click.prevent="close">Hide</button>
-    <span class="sep" />
+    <span class="block after:content-['•'] after:block" />
     <button type="button" @click.prevent="stopBugging">
       Don't bug me again
     </button>
@@ -43,46 +47,11 @@ watch(preferenceStore.initialized, initialized => {
 </script>
 
 <style lang="postcss" scoped>
-.support-bar {
-  background: var(--color-bg-primary);
-  font-size: .9rem;
-  padding: .75rem 1rem;
-  display: flex;
-  color: rgba(255, 255, 255, .6);
-  z-index: 9;
+a {
+  @apply text-k-text-primary hover:text-k-accent;
+}
 
-  > * + * {
-    margin-left: 1rem;
-  }
-
-  p {
-    flex: 1;
-  }
-
-  a {
-    color: var(--color-text-primary);
-
-    &:hover {
-      color: var(--color-highlight);
-    }
-  }
-
-  .sep {
-    display: block;
-
-    &::after {
-      content: '•';
-      display: block;
-    }
-  }
-
-  button {
-    color: var(--color-text-primary);
-    font-size: .9rem;
-
-    &:hover {
-      color: var(--color-highlight);
-    }
-  }
+button {
+  @apply text-k-text-primary text-[0.9rem] hover:text-k-accent;
 }
 </style>

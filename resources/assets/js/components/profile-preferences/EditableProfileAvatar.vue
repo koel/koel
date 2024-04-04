@@ -1,17 +1,20 @@
 <template>
-  <div class="avatar">
-    <UserAvatar v-if="profile.avatar" :user="profile" style="width: var(--w)" />
+  <div class="avatar-width ring-4 ring-white mt-8 rounded-full relative overflow-hidden aspect-square">
+    <UserAvatar v-if="profile.avatar" :user="profile" class="avatar-width" />
 
-    <div class="buttons">
-      <button class="upload" title="Pick a new avatar" type="button" @click.prevent="openFileDialog">
+    <div
+      class="absolute top-0 rounded-full w-full aspect-square flex items-center justify-center gap-2 pt-[50%]
+      bg-black/50 opacity-0 hover:opacity-100 transition-opacity duration-300"
+    >
+      <button class="control" title="Pick a new avatar" type="button" @click.prevent="openFileDialog">
         <Icon :icon="faUpload" />
       </button>
 
-      <button v-if="avatarChanged" class="reset" title="Reset avatar" type="button" @click.prevent="resetAvatar">
+      <button v-if="avatarChanged" class="control" title="Reset avatar" type="button" @click.prevent="resetAvatar">
         <Icon :icon="faRefresh" />
       </button>
 
-      <button v-else class="remove" title="Remove avatar" type="button" @click.prevent="removeAvatar">
+      <button v-else class="control" title="Remove avatar" type="button" @click.prevent="removeAvatar">
         <Icon :icon="faTimes" />
       </button>
     </div>
@@ -21,12 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  faRefresh,
-  faTimes,
-  faUpload
-} from '@fortawesome/free-solid-svg-icons'
-import 'vue-advanced-cropper/dist/style.css'
+import { faRefresh, faTimes, faUpload } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRefs } from 'vue'
 import { useFileDialog } from '@vueuse/core'
 import { userStore } from '@/stores'
@@ -39,11 +37,13 @@ import ImageCropper from '@/components/utils/ImageCropper.vue'
 const props = defineProps<{ profile: Pick<User, 'name' | 'avatar'> }>()
 const { profile } = toRefs(props)
 
-const { open: openFileDialog, onChange, reset } = useFileDialog({
+const { open, onChange } = useFileDialog({
   accept: 'image/*',
   multiple: false,
   reset: true
 })
+
+const openFileDialog = () => open()
 
 const cropperSource = ref<string | null>(null)
 
@@ -76,78 +76,16 @@ const onCrop = (result: string) => {
 const onCancel = () => (cropperSource.value = null)
 </script>
 
-
 <style scoped lang="postcss">
-.avatar {
-  --w: 105px;
-  outline: rgba(255, 255, 255, .1) solid 3px;
-  margin-top: 2rem;
-  border-radius: 50%;
-  position: relative;
-  overflow: hidden;
-  background: rgba(0, 0, 0, .1);
-  aspect-ratio: 1 / 1;
-  width: var(--w);
+@tailwind utilities;
 
-  .buttons {
-    position: absolute;
-    top: 0;
-    border-radius: 50%;
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    display: flex;
-    place-items: center;
-    justify-content: center;
-    gap: .5rem;
-    padding-top: 50%;
-    opacity: 0;
-    transition: opacity .3s;
-
-    button {
-      background: rgba(0, 0, 0, .3);
-      width: 28px;
-      aspect-ratio: 1 / 1;
-      border-radius: 50%;
-      padding: 2px 4px;
-
-      &:hover {
-        background: rgba(0, 0, 0, .7);
-      }
-    }
-
-    &:hover {
-      opacity: 1;
-    }
+@layer utilities {
+  .control {
+    @apply bg-black/5 w-[28px] aspect-square rounded-full px-2 py-1 hover:bg-black/70;
   }
 
-  .cropper-wrapper {
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 99;
-    background: rgba(0, 0, 0, .5);
-
-    > div {
-      position: relative;
-      max-width: 100%;
-      max-height: 100%;
-      border-radius: 5px;
-      display: flex;
-    }
-
-    .controls {
-      position: fixed;
-      right: 1.5rem;
-      top: 1.5rem;
-      display: flex;
-      gap: .5rem;
-      flex: 1;
-    }
+  .avatar-width {
+    @apply w-[105px]
   }
 }
 </style>

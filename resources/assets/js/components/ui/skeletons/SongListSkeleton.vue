@@ -43,87 +43,69 @@
 </template>
 
 <style lang="postcss" scoped>
-.skeleton {
-  .song-list-header {
-    background: var(--color-bg-secondary);
-    height: 35px;
-    display: flex;
+.song-list-header {
+  @apply h-[35px] flex bg-k-bg-secondary;
+}
+
+.song-item {
+  @apply flex h-[64px] border-b border-k-border;
+}
+
+.song-list-header span span, .pulse {
+  @apply inline-block h-[1.2rem] rounded-full w-4/5;
+}
+
+.song-list-header span span {
+  @apply bg-white/10 w-2/5;
+}
+
+span:not(.text) {
+  @apply p-[8px] align-middle;
+}
+
+.track-number {
+  @apply basis-[66px] pl-[24px];
+}
+
+.thumbnail {
+  @apply block w-[48px] aspect-square rounded;
+}
+
+.title {
+  @apply flex items-center gap-3 flex-1;
+}
+
+.artist {
+  @apply basis-[23%];
+}
+
+.album {
+  @apply basis-[27%];
+}
+
+.time {
+  @apply basis-[96px];
+}
+
+.favorite {
+  @apply basis-[36px];
+}
+
+@media screen and (max-width: 768px) {
+  span {
+    @apply hidden;
   }
 
-  .song-item {
-    display: flex;
-    border-bottom: 1px solid var(--color-bg-secondary);
-    height: 64px;
+  .title, .artist {
+    @apply flex;
   }
 
-  .song-list-header span span, .pulse {
-    display: inline-block;
-    height: 1.2rem;
-    border-radius: 999px;
-    width: 80%;
+  .artist .text {
+    @apply w-full;
   }
 
-  .song-list-header span span {
-    background: rgba(255, 255, 255, .1);
-    width: 40%;
-  }
-
-  span:not(.text) {
-    padding: 8px;
-    vertical-align: middle;
-  }
-
-  .track-number {
-    flex-basis: 66px;
-    padding-left: 24px;
-  }
-
-  .thumbnail {
-    display: block;
-    width: 48px;
-    height: 48px;
-    border-radius: 5px;
-  }
-
-  .title {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .artist {
-    flex-basis: 23%;
-  }
-
-  .album {
-    flex-basis: 27%;
-  }
-
-  .time {
-    flex-basis: 96px;
-  }
-
-  .favorite {
-    flex-basis: 36px;
-  }
-
-  @media screen and (max-width: 768px) {
-    span {
-      display: none;
-    }
-
-    .title, .artist {
-      display: flex;
-    }
-
-    .artist .text {
-      width: 100%;
-    }
-
-    .song-list-header, .song-item {
-      padding: 0 16px;
-    }
+  .song-list-header, .song-item {
+    @apply py-0 px-[16px];
   }
 }
 </style>

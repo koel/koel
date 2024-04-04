@@ -1,5 +1,10 @@
 <template>
-  <button title="Log in with Google" type="button" @click.prevent="loginWithGoogle">
+  <button
+    class="opacity-50 hover:opacity-100"
+    title="Log in with Google"
+    type="button"
+    @click.prevent="loginWithGoogle"
+  >
     <img :src="googleLogo" alt="Google Logo" width="32" height="32">
   </button>
 </template>
@@ -22,13 +27,3 @@ const loginWithGoogle = async () => {
   }
 }
 </script>
-
-<style scoped lang="postcss">
-button {
-  opacity: .5;
-
-  &:hover {
-    opacity: 1;
-  }
-}
-</style>

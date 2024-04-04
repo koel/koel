@@ -1,6 +1,6 @@
 <template>
   <article
-    class="item"
+    class="relative flex max-w-full md:max-w-[256px] border p-5 rounded-lg flex-col gap-5 transition border-color duration-200"
     :class="layout"
     draggable="true"
     tabindex="0"
@@ -8,12 +8,13 @@
     @dragstart="onDragStart"
     @contextmenu.prevent="onContextMenu"
   >
-    <AlbumArtistThumbnail :entity="entity" />
-    <footer>
-      <div class="name">
+    <Thumbnail :entity="entity" />
+
+    <footer class="flex flex-1 flex-col gap-1.5 overflow-hidden">
+      <div class="name flex flex-col gap-2 whitespace-nowrap">
         <slot name="name" />
       </div>
-      <p class="meta">
+      <p class="meta text-[0.9rem] flex gap-1.5 opacity-70 hover:opacity-100">
         <slot name="meta" />
       </p>
     </footer>
@@ -21,12 +22,14 @@
 </template>
 
 <script lang="ts" setup>
-import AlbumArtistThumbnail from '@/components/ui/ArtistAlbumThumbnail.vue'
+import Thumbnail from '@/components/ui/ArtistAlbumThumbnail.vue'
+import { toRefs } from 'vue'
 
-const props = withDefaults(
-  defineProps<{ layout?: ArtistAlbumCardLayout, entity: Artist | Album }>(),
-  { layout: 'full' }
-)
+const props = withDefaults(defineProps<{ layout?: ArtistAlbumCardLayout, entity: Artist | Album }>(), {
+  layout: 'full'
+})
+
+const { layout } = toRefs(props)
 
 const emit = defineEmits<{
   (e: 'dblclick'): void,
@@ -40,89 +43,39 @@ const onContextMenu = (e: MouseEvent) => emit('contextmenu', e)
 </script>
 
 <style lang="postcss" scoped>
-.item {
-  position: relative;
-  max-width: 256px;
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-bg-secondary);
-  padding: 16px;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  transition: border-color .2s ease-in-out;
-
-  &:hover {
-    border-color: rgba(255, 255, 255, .15);
-  }
+article {
+  @apply bg-k-bg-secondary border border-k-border hover:border-white/15;
 
   .name {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    white-space: nowrap;
-
     &:deep(a) {
-      color: var(--color-text-primary);
-      overflow: hidden;
-      text-overflow: ellipsis;
+      @apply overflow-hidden text-ellipsis text-k-text-primary;
     }
 
     &:deep(a:hover), &:deep(a:active), &:deep(a:focus) {
-      color: var(--color-accent);
+      @apply text-k-accent;
     }
   }
 
   &:focus, &:focus-within {
-    box-shadow: 0 0 1px 1px var(--color-accent);
+    @apply ring-1 ring-k-accent;
   }
 
   &.compact {
-    gap: 1rem;
-    flex-direction: row;
-    align-items: center;
-    max-width: 100%;
-    padding: 10px;
-    border-radius: 5px;
+    @apply flex-row gap-4 max-w-full p-3 rounded-md items-center;
 
     .cover {
-      width: 80px;
-      border-radius: 5px;
+      @apply w-[80px] rounded-md;
     }
-  }
-
-  footer {
-    flex: 1;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    gap: .4rem;
   }
 
   .meta {
-    font-size: .9rem;
-    display: flex;
-    gap: .3rem;
-    opacity: .7;
-
     :deep(a) {
       & + a {
         &::before {
-          content: '•';
-          margin-right: .2rem;
-          color: var(--color-text-secondary);
-          font-weight: unset;
+          @apply mr-0.5 content-['•'] text-k-text-secondary;
         }
       }
     }
-
-    &:hover {
-      opacity: 1;
-    }
-  }
-
-  @media only screen and (max-width: 768px) {
-    max-width: 100%;
   }
 }
 </style>

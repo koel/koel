@@ -1,38 +1,30 @@
 <template>
-  <div class="extra-controls" data-testid="other-controls">
-    <div class="wrapper">
-      <button
-        v-koel-tooltip.top
-        class="visualizer-btn"
+  <div class="extra-controls flex justify-end relative md:w-[320px] px-8 py-0">
+    <div class="flex justify-end items-center gap-6">
+      <FooterBtn
+        class="visualizer-btn hidden md:!block"
         data-testid="toggle-visualizer-btn"
         title="Toggle visualizer"
         @click.prevent="toggleVisualizer"
       >
         <Icon :icon="faBolt" />
-      </button>
+      </FooterBtn>
 
-      <button
+      <FooterBtn
         v-if="useEqualizer"
-        v-koel-tooltip.top
         :class="{ active: showEqualizer }"
         class="equalizer"
         title="Show equalizer"
-        type="button"
         @click.prevent="showEqualizer"
       >
         <Icon :icon="faSliders" />
-      </button>
+      </FooterBtn>
 
       <VolumeSlider />
 
-      <button
-        v-if="isFullscreenSupported()"
-        v-koel-tooltip.top
-        :title="fullscreenButtonTitle"
-        @click.prevent="toggleFullscreen"
-      >
+      <FooterBtn v-if="isFullscreenSupported()" :title="fullscreenButtonTitle" @click.prevent="toggleFullscreen">
         <Icon :icon="isFullscreen ? faCompress : faExpand" />
-      </button>
+      </FooterBtn>
     </div>
   </div>
 </template>
@@ -44,6 +36,7 @@ import { eventBus, isAudioContextSupported as useEqualizer, isFullscreenSupporte
 import { useRouter } from '@/composables'
 
 import VolumeSlider from '@/components/ui/VolumeSlider.vue'
+import FooterBtn from '@/components/layout/app-footer/FooterButton.vue'
 
 const isFullscreen = ref(false)
 const fullscreenButtonTitle = computed(() => (isFullscreen.value ? 'Exit fullscreen mode' : 'Enter fullscreen mode'))
@@ -64,44 +57,13 @@ onMounted(() => {
 
 <style lang="postcss" scoped>
 .extra-controls {
-  display: flex;
-  justify-content: flex-end;
-  position: relative;
-  width: 320px;
-  color: var(--color-text-secondary);
-  padding: 0 2rem;
-
   :fullscreen & {
-    padding-right: 0;
-  }
-
-  .wrapper {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 1.5rem;
-  }
-
-  button {
-    color: currentColor;
-    transition: color 0.2s ease-in-out;
-
-    &:hover {
-      color: var(--color-text-primary);
-    }
-  }
-
-  @media only screen and (max-width: 768px) {
-    width: auto;
-
-    .visualizer-btn {
-      display: none;
-    }
+    @apply pr-0;
   }
 
   :fullscreen & {
     .visualizer-btn {
-      display: none;
+      @apply hidden;
     }
   }
 }

@@ -1,0 +1,8 @@
+// Vitest Snapshot v1
+
+exports[`renders 1`] = `
+<article data-v-4706720e="" class="success tw-rounded-l-md tw-cursor-pointer tw-flex tw-items-stretch tw-opacity-90 tw-transition-transform tw-duration-300" title="Click to dismiss">
+  <aside data-v-4706720e="" class="tw-flex tw-items-center tw-px-3 tw-py-0 tw-bg-black/10"><br data-v-4706720e="" data-testid="Icon" icon="[object Object]" class="icon"><br data-v-4706720e="" data-testid="Icon" icon="[object Object]" class="icon-dismiss"></aside>
+  <main data-v-4706720e="" class="tw-flex-1 tw-py-2 tw-pl-3 tw-pr-4"></main>
+</article>
+`;

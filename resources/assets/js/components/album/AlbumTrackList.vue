@@ -1,9 +1,14 @@
 <template>
-  <article class="track-listing">
-    <h3>Track Listing</h3>
+  <article>
+    <h3 class="text-2xl mb-3">Track Listing</h3>
 
-    <ul class="tracks">
-      <li v-for="(track, index) in tracks" :key="index" data-testid="album-track-item">
+    <ul>
+      <li
+        v-for="(track, index) in tracks"
+        :key="index"
+        data-testid="album-track-item"
+        class="flex p-2 before:w-7 before:opacity-50"
+      >
         <TrackListItem :album="album" :track="track" />
       </li>
     </ul>
@@ -29,30 +34,19 @@ onMounted(async () => songs.value = await songStore.fetchForAlbum(album.value))
 </script>
 
 <style lang="postcss" scoped>
-article {
-  h3 {
-    font-size: 1.4rem;
-    margin-bottom: 1rem;
+ul {
+  counter-reset: trackCounter;
+}
+
+li {
+  counter-increment: trackCounter;
+
+  &::before {
+    content: counter(trackCounter);
   }
 
-  ul {
-    counter-reset: trackCounter;
-  }
-
-  li {
-    counter-increment: trackCounter;
-    display: flex;
-    padding: 8px;
-
-    &::before {
-      content: counter(trackCounter);
-      flex: 0 0 24px;
-      opacity: .5;
-    }
-
-    &:nth-child(even) {
-      background: rgba(255, 255, 255, 0.05);
-    }
+  &:nth-child(even) {
+    background: rgba(255, 255, 255, 0.05);
   }
 }
 </style>

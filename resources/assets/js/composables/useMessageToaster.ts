@@ -1,7 +1,7 @@
 import { Ref } from 'vue'
 import { MessageToasterKey } from '@/symbols'
 import { requireInjection } from '@/utils'
-import MessageToaster from '@/components/ui/MessageToaster.vue'
+import MessageToaster from '@/components/ui/message-toaster/MessageToaster.vue'
 
 let toaster: Ref<InstanceType<typeof MessageToaster>>
 

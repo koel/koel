@@ -1,39 +1,52 @@
 <template>
-  <div class="row" data-testid="smart-playlist-rule-row">
-    <Btn class="remove-rule" red title="Remove this rule" @click.prevent="removeRule">
-      <Icon :icon="faTrashCan" />
-    </Btn>
+  <FormRow>
+    <div class="w-full flex gap-2 relative">
+      <SelectBox v-model="selectedModel" name="model[]">
+        <option v-for="m in models" :key="m.name" :value="m">{{ m.label }}</option>
+      </SelectBox>
 
-    <select v-model="selectedModel" name="model[]">
-      <option v-for="m in models" :key="m.name" :value="m">{{ m.label }}</option>
-    </select>
+      <SelectBox v-model="selectedOperator" name="operator[]">
+        <option v-for="option in availableOperators" :key="option.operator" :value="option">{{ option.label }}</option>
+      </SelectBox>
 
-    <select v-model="selectedOperator" name="operator[]">
-      <option v-for="option in availableOperators" :key="option.operator" :value="option">{{ option.label }}</option>
-    </select>
+      <span class="inline-flex flex-1 items-center gap-3">
+        <RuleInput
+          v-for="input in availableInputs"
+          :key="input.id"
+          v-model="input.value"
+          :type="(selectedOperator?.type || selectedModel?.type)!"
+          :value="input.value"
+          class="!flex-1"
+          @update:model-value="onInput"
+        />
 
-    <span class="value-wrapper">
-      <RuleInput
-        v-for="input in availableInputs"
-        :key="input.id"
-        v-model="input.value"
-        :type="(selectedOperator?.type || selectedModel?.type)!"
-        :value="input.value"
-        @update:model-value="onInput"
-      />
+        <span v-if="valueSuffix" class="suffix">{{ valueSuffix }}</span>
+      </span>
 
-      <span v-if="valueSuffix" class="suffix">{{ valueSuffix }}</span>
-    </span>
-  </div>
+      <Btn
+        class="absolute -right-[14px] aspect-square top-1 scale-[60%] hover:scale-75 active:scale-[60%]"
+        danger
+        rounded
+        small
+        title="Remove this rule"
+        @click.prevent="removeRule"
+      >
+        <Icon :icon="faMinus" />
+      </Btn>
+    </div>
+  </FormRow>
 </template>
 
 <script lang="ts" setup>
-import { faTrashCan } from '@fortawesome/free-solid-svg-icons'
+import { faMinus } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, ref, toRefs, watch } from 'vue'
 import models from '@/config/smart-playlist/models'
 import inputTypes from '@/config/smart-playlist/inputTypes'
 
-const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
+import FormRow from '@/components/ui/form/FormRow.vue'
+import SelectBox from '@/components/ui/form/SelectBox.vue'
+import Btn from '@/components/ui/form/Btn.vue'
+
 const RuleInput = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/SmartPlaylistRuleInput.vue'))
 
 const props = defineProps<{ rule: SmartPlaylistRule }>()
@@ -112,25 +125,3 @@ const onInput = () => {
 
 const removeRule = () => emit('remove')
 </script>
-
-<style lang="postcss" scoped>
-.row {
-  display: flex;
-  gap: .5rem;
-}
-
-.value-wrapper {
-  flex: 1;
-  display: inline-flex;
-  place-items: center;
-  gap: .5rem;
-
-  input {
-    flex: 1;
-  }
-}
-
-select, input {
-  margin-top: 0 !important;
-}
-</style>

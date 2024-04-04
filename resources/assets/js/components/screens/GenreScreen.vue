@@ -1,33 +1,36 @@
 <template>
-  <section id="genreWrapper">
-    <ScreenHeader v-if="genre" :layout="headerLayout">
-      Genre: <span class="text-thin">{{ decodeURIComponent(name!) }}</span>
-      <ControlsToggle v-if="songs.length" v-model="showingControls" />
+  <ScreenBase>
+    <template #header>
+      <ScreenHeader v-if="genre" :layout="headerLayout">
+        Genre: <span class="text-thin">{{ decodeURIComponent(name!) }}</span>
+        <ControlsToggle v-if="songs.length" v-model="showingControls" />
 
-      <template #thumbnail>
-        <ThumbnailStack :thumbnails="thumbnails" />
-      </template>
+        <template #thumbnail>
+          <ThumbnailStack :thumbnails="thumbnails" />
+        </template>
 
-      <template v-if="genre" #meta>
-        <span>{{ pluralize(genre.song_count, 'song') }}</span>
-        <span>{{ duration }}</span>
-      </template>
+        <template v-if="genre" #meta>
+          <span>{{ pluralize(genre.song_count, 'song') }}</span>
+          <span>{{ duration }}</span>
+        </template>
 
-      <template #controls>
-        <SongListControls
-          v-if="!isPhone || showingControls"
-          :config="config"
-          @play-all="playAll"
-          @play-selected="playSelected"
-        />
-      </template>
-    </ScreenHeader>
-    <ScreenHeaderSkeleton v-else />
+        <template #controls>
+          <SongListControls
+            v-if="!isPhone || showingControls"
+            :config="config"
+            @play-all="playAll"
+            @play-selected="playSelected"
+          />
+        </template>
+      </ScreenHeader>
+      <ScreenHeaderSkeleton v-else />
+    </template>
 
-    <SongListSkeleton v-if="showSkeletons" />
+    <SongListSkeleton v-if="showSkeletons" class="-m-6" />
     <SongList
       v-else
       ref="songList"
+      class="-m-6"
       @sort="sort"
       @press:enter="onPressEnter"
       @scroll-breakpoint="onScrollBreakpoint"
@@ -41,7 +44,7 @@
 
       No songs in this genre.
     </ScreenEmptyState>
-  </section>
+  </ScreenBase>
 </template>
 
 <script lang="ts" setup>
@@ -56,6 +59,7 @@ import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
+import ScreenBase from '@/components/screens/ScreenBase.vue'
 
 const {
   SongList,

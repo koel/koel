@@ -1,60 +1,31 @@
 <template>
-  <div class="screen-empty-state" data-testid="screen-empty-state">
-    <div>
-      <span class="jumbo-icon">
+  <article
+    class="relative flex place-content-center place-items-center flex-1 text-white/50"
+    data-testid="screen-empty-state"
+  >
+    <div class="md:max-w-3/4 px-6 pt-0 mx-auto flex flex-col items-center pb-k-header-height">
+      <span class="jumbo-icon block text-[6rem] mb-4 opacity-70">
         <slot name="icon">☕️</slot>
       </span>
-      <div class="text">
+      <div class="text text-center text-3xl font-light flex flex-col gap-2">
         <slot>Placeholder text goes here.</slot>
       </div>
     </div>
-  </div>
+  </article>
 </template>
 
 <style lang="postcss">
-.screen-empty-state {
-  display: flex;
-  place-content: center;
-  place-items: center;
-  flex: 1;
-  text-align: center;
-  color: rgba(255, 255, 255, .5);
-  position: relative;
+.text {
+  a {
+    @apply text-white/80;
 
-  > div {
-    max-width: 75%;
-    padding: 0 2rem var(--header-height); /* visually more balanced */
-    margin: auto 0;
-
-    @media only screen and (max-width: 768px) {
-      max-width: 100%;
+    &:hover {
+      @apply text-white;
     }
   }
 
-  .jumbo-icon {
-    display: block;
-    font-size: 6em;
-    margin-bottom: 1.5rem;
-    opacity: .7;
-  }
-
-  .text {
-    font-size: 2rem;
-    font-weight: 200;
-    line-height: 1.3;
-
-    a {
-      color: rgba(255, 255, 255, .8);
-
-      &:hover {
-        color: rgba(255, 255, 255, 1);
-      }
-    }
-
-    .secondary {
-      margin-top: .2rem;
-      font-size: 1.5rem;
-    }
+  .secondary {
+    @apply text-2xl font-thin;
   }
 }
 </style>

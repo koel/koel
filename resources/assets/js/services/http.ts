@@ -1,4 +1,4 @@
-import Axios, { AxiosInstance, Method } from 'axios'
+import Axios, { AxiosInstance, Method, AxiosRequestConfig, AxiosError, AxiosResponse } from 'axios'
 import NProgress from 'nprogress'
 import { eventBus } from '@/utils'
 import { authService } from '@/services'
@@ -54,14 +54,14 @@ class Http {
     })
 
     // Intercept the request to make sure the token is injected into the header.
-    this.client.interceptors.request.use(config => {
+    this.client.interceptors.request.use((config: AxiosRequestConfig) => {
       this.silent || this.showLoadingIndicator()
       config.headers.Authorization = `Bearer ${authService.getApiToken()}`
       return config
     })
 
     // Intercept the response and…
-    this.client.interceptors.response.use(response => {
+    this.client.interceptors.response.use((response: AxiosResponse) => {
       this.silent || this.hideLoadingIndicator()
       this.silent = false
 
@@ -71,7 +71,7 @@ class Http {
       token && authService.setApiToken(token)
 
       return response
-    }, error => {
+    }, (error: AxiosError) => {
       this.silent || this.hideLoadingIndicator()
       this.silent = false
 

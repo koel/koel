@@ -6,6 +6,7 @@ use App\Http\Integrations\YouTube\Requests\SearchVideosRequest;
 use App\Http\Integrations\YouTube\YouTubeConnector;
 use App\Models\Song;
 use Illuminate\Cache\Repository as Cache;
+use Throwable;
 
 class YouTubeService
 {
@@ -27,10 +28,14 @@ class YouTubeService
         $request = new SearchVideosRequest($song, $pageToken);
         $hash = md5(serialize($request->query()->all()));
 
-        return $this->cache->remember(
-            "youtube.$hash",
-            now()->addWeek(),
-            fn () => $this->connector->send($request)->object()
-        );
+        try {
+            return $this->cache->remember(
+                "youtube.$hash",
+                now()->addWeek(),
+                fn () => $this->connector->send($request)->object()
+            );
+        } catch (Throwable) {
+            return null;
+        }
     }
 }

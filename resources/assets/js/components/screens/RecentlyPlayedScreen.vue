@@ -1,32 +1,40 @@
 <template>
-  <section id="recentlyPlayedWrapper">
-    <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
-      Recently Played
-      <ControlsToggle v-model="showingControls" />
+  <ScreenBase>
+    <template #header>
+      <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
+        Recently Played
+        <ControlsToggle v-model="showingControls" />
 
-      <template #thumbnail>
-        <ThumbnailStack :thumbnails="thumbnails" />
-      </template>
+        <template #thumbnail>
+          <ThumbnailStack :thumbnails="thumbnails" />
+        </template>
 
-      <template v-if="songs.length" #meta>
-        <span>{{ pluralize(songs, 'song') }}</span>
-        <span>{{ duration }}</span>
-      </template>
+        <template v-if="songs.length" #meta>
+          <span>{{ pluralize(songs, 'song') }}</span>
+          <span>{{ duration }}</span>
+        </template>
 
-      <template #controls>
-        <SongListControls
-          v-if="songs.length && (!isPhone || showingControls)"
-          :config="config"
-          @filter="applyFilter"
-          @play-all="playAll"
-          @play-selected="playSelected"
-        />
-      </template>
-    </ScreenHeader>
+        <template #controls>
+          <SongListControls
+            v-if="songs.length && (!isPhone || showingControls)"
+            :config="config"
+            @filter="applyFilter"
+            @play-all="playAll"
+            @play-selected="playSelected"
+          />
+        </template>
+      </ScreenHeader>
+    </template>
 
-    <SongListSkeleton v-if="loading" />
+    <SongListSkeleton v-if="loading" class="-m-6" />
 
-    <SongList v-if="songs.length" ref="songList" @press:enter="onPressEnter" @scroll-breakpoint="onScrollBreakpoint" />
+    <SongList
+      v-if="songs.length"
+      ref="songList"
+      class="-m-6"
+      @press:enter="onPressEnter"
+      @scroll-breakpoint="onScrollBreakpoint"
+    />
 
     <ScreenEmptyState v-else>
       <template #icon>
@@ -35,7 +43,7 @@
       No songs recently played.
       <span class="secondary d-block">Start playing to populate this playlist.</span>
     </ScreenEmptyState>
-  </section>
+  </ScreenBase>
 </template>
 
 <script lang="ts" setup>
@@ -48,6 +56,7 @@ import { ref, toRef } from 'vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
+import ScreenBase from '@/components/screens/ScreenBase.vue'
 
 const recentlyPlayedSongs = toRef(recentlyPlayedStore.state, 'songs')
 

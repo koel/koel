@@ -1,8 +1,13 @@
 <template>
-  <button type="button" :class="playing ? 'playing' : 'stopped'" title="Play or resume" @click.prevent="toggle">
+  <FooterButton
+    :title="playing ? 'Pause' : 'Play or resume'"
+    class="!w-[3rem] rounded-full border-2 border-solid aspect-square !transition-transform hover:scale-125 !text-2xl
+    has-[.icon-play]:indent-[0.23rem]"
+    @click.prevent="toggle"
+  >
     <Icon v-if="playing" :icon="faPause" />
-    <Icon v-else :icon="faPlay" />
-  </button>
+    <Icon v-else :icon="faPlay" class="icon-play" />
+  </FooterButton>
 </template>
 
 <script lang="ts" setup>
@@ -13,6 +18,7 @@ import { commonStore, favoriteStore, queueStore, recentlyPlayedStore, songStore 
 import { requireInjection } from '@/utils'
 import { useRouter } from '@/composables'
 import { CurrentSongKey } from '@/symbols'
+import FooterButton from '@/components/layout/app-footer/FooterButton.vue'
 
 const { getCurrentScreen, getRouteParam, go } = useRouter()
 const song = requireInjection(CurrentSongKey, ref())
@@ -52,20 +58,3 @@ const initiatePlayback = async () => {
   go('queue')
 }
 </script>
-
-<style lang="postcss" scoped>
-button {
-  width: 3rem !important;
-  border-radius: 50%;
-  border: 2px solid currentColor;
-
-  &.stopped {
-    text-indent: 0.2rem;
-  }
-
-  &:hover {
-    border-color: var(--color-text-primary) !important;
-    transform: scale(1.2);
-  }
-}
-</style>

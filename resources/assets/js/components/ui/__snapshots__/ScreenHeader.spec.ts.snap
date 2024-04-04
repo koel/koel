@@ -1,11 +1,11 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-<header data-v-5691beb5="" class="screen-header expanded">
-  <aside data-v-5691beb5="" class="thumbnail-wrapper"><img data-v-5691beb5-s="" src="https://placekitten.com/200/300"></aside>
-  <main data-v-5691beb5="">
-    <div data-v-5691beb5="" class="heading-wrapper">
-      <h1 data-v-5691beb5="" class="name">This Header</h1><span data-v-5691beb5="" class="meta text-secondary"><p data-v-5691beb5-s="">Some meta</p></span>
+<header data-v-5691beb5="" class="screen-header tw-min-h-0 md:tw-min-h-full tw-flex tw-items-end tw-flex-shrink-0 tw-relative tw-content-stretch tw-leading-normal tw-p-6 expanded">
+  <aside data-v-5691beb5="" class="thumbnail-wrapper tw-hidden md:tw-block tw-overflow-hidden tw-w-0 tw-rounded-md"><img data-v-5691beb5-s="" src="https://placekitten.com/200/300"></aside>
+  <main data-v-5691beb5="" class="tw-flex tw-flex-1 tw-gap-5 tw-items-center tw-overflow-hidden">
+    <div data-v-5691beb5="" class="tw-w-full tw-flex-1 tw-overflow-hidden">
+      <h1 data-v-5691beb5="" class="name tw-overflow-hidden tw-whitespace-nowrap tw-text-ellipsis tw-mr-4 tw-font-thin md:tw-font-bold tw-my-0 tw-leading-tight">This Header</h1><span data-v-5691beb5="" class="meta text-secondary tw-hidden tw-text-[0.9rem] tw-leading-loose"><p data-v-5691beb5-s="">Some meta</p></span>
     </div>
     <nav data-v-5691beb5-s="">Some controls</nav>
   </main>

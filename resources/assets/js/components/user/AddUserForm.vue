@@ -4,40 +4,33 @@
       <h1>Add New User</h1>
     </header>
 
-    <main>
-      <div class="form-row">
-        <label>
-          Name
-          <input v-model="newUser.name" v-koel-focus name="name" required title="Name" type="text">
-        </label>
-      </div>
-      <div class="form-row">
-        <label>
-          Email
-          <input v-model="newUser.email" name="email" required title="Email" type="email">
-        </label>
-      </div>
-      <div class="form-row">
-        <label>
-          Password
-          <input
-            v-model="newUser.password"
-            autocomplete="new-password"
-            name="password"
-            required
-            title="Password"
-            type="password"
-          >
-        </label>
-        <p class="help">Min. 10 characters. Should be a mix of characters, numbers, and symbols.</p>
-      </div>
-      <div class="form-row">
-        <label>
-          <CheckBox v-model="newUser.is_admin" name="is_admin" />
-          User is an admin
+    <main class="space-y-5">
+      <FormRow>
+        <template #label>Name</template>
+        <TextInput v-model="newUser.name" v-koel-focus name="name" required title="Name" />
+      </FormRow>
+      <FormRow>
+        <template #label>Email</template>
+        <TextInput v-model="newUser.email" name="email" required title="Email" type="email" />
+      </FormRow>
+      <FormRow>
+        <template #label>Password</template>
+        <TextInput
+          v-model="newUser.password"
+          autocomplete="new-password"
+          name="password"
+          required
+          title="Password"
+          type="password"
+        />
+        <template #help>Min. 10 characters. Should be a mix of characters, numbers, and symbols.</template>
+      </FormRow>
+      <FormRow>
+        <div>
+          <CheckBox v-model="newUser.is_admin" name="is_admin" /> User is an admin
           <TooltipIcon title="Admins can perform administrative tasks like managing users and uploading songs." />
-        </label>
-      </div>
+        </div>
+      </FormRow>
     </main>
 
     <footer>
@@ -54,9 +47,11 @@ import { CreateUserData, userStore } from '@/stores'
 import { parseValidationError } from '@/utils'
 import { useDialogBox, useMessageToaster, useOverlay } from '@/composables'
 
-import Btn from '@/components/ui/Btn.vue'
+import Btn from '@/components/ui/form/Btn.vue'
 import TooltipIcon from '@/components/ui/TooltipIcon.vue'
-import CheckBox from '@/components/ui/CheckBox.vue'
+import CheckBox from '@/components/ui/form/CheckBox.vue'
+import TextInput from '@/components/ui/form/TextInput.vue'
+import FormRow from '@/components/ui/form/FormRow.vue'
 
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
@@ -98,9 +93,3 @@ const maybeClose = async () => {
   await showConfirmDialog('Discard all changes?') && close()
 }
 </script>
-
-<style lang="postcss" scoped>
-.help {
-  margin-top: .75rem;
-}
-</style>
