@@ -24,17 +24,17 @@ use LogicException;
  * @property bool $is_smart
  * @property int $user_id
  * @property User $user
- * @property Collection|array<array-key, Song> $songs
+ * @property Collection<array-key, Song> $songs
  * @property array<string> $song_ids
  * @property ?SmartPlaylistRuleGroupCollection $rule_groups
  * @property ?SmartPlaylistRuleGroupCollection $rules
  * @property Carbon $created_at
  * @property bool $own_songs_only
- * @property Collection|array<array-key, User> $collaborators
+ * @property Collection<array-key, User> $collaborators
  * @property-read bool $is_collaborative
  * @property-read ?string $cover The playlist cover's URL
  * @property-read ?string $cover_path
- * @property-read Collection|array<array-key, PlaylistFolder> $folders
+ * @property-read Collection<array-key, PlaylistFolder> $folders
  */
 class Playlist extends Model
 {
@@ -180,7 +180,7 @@ class Playlist extends Model
     }
 
     /**
-     * @param Collection|array<array-key, Song>|Song|array<string> $songs
+     * @param Collection<array-key, Song>|Song|array<string> $songs
      */
     public function removeSongs(Collection|Song|array $songs): void
     {

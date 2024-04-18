@@ -86,7 +86,7 @@ class PlaylistService
         return $playlist;
     }
 
-    /** @return Collection<Song>|array<array-key, Song> */
+    /** @return Collection<array-key, Song> */
     public function addSongsToPlaylist(Playlist $playlist, Collection|Song|array $songs, User $user): Collection
     {
         return DB::transaction(function () use ($playlist, $songs, $user) {

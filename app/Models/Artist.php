@@ -21,7 +21,7 @@ use Laravel\Scout\Searchable;
  * @property string|null $image Public URL to the artist's image
  * @property bool $is_unknown If the artist is Unknown Artist
  * @property bool $is_various If the artist is Various Artist
- * @property Collection $songs
+ * @property Collection<array-key, Song> $songs
  * @property bool $has_image If the artist has a (non-default) image
  * @property string|null $image_path Absolute path to the artist's image
  * @property float|string $length Total length of the artist's songs in seconds (dynamically calculated)
@@ -29,7 +29,7 @@ use Laravel\Scout\Searchable;
  * @property string|int $song_count Total number of songs by the artist (dynamically calculated)
  * @property string|int $album_count Total number of albums by the artist (dynamically calculated)
  * @property Carbon $created_at
- * @property Collection|array<array-key, Album> $albums
+ * @property Collection<array-key, Album> $albums
  */
 class Artist extends Model
 {

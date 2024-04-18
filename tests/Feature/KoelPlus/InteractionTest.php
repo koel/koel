@@ -2,8 +2,12 @@
 
 namespace Tests\Feature\KoelPlus;
 
+use App\Events\MultipleSongsLiked;
+use App\Events\MultipleSongsUnliked;
+use App\Events\SongLikeToggled;
 use App\Models\Song;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Event;
 use Tests\PlusTestCase;
 
 use function Tests\create_user;
@@ -12,7 +16,7 @@ class InteractionTest extends PlusTestCase
 {
     public function testPolicyForRegisterPlay(): void
     {
-        $this->withoutEvents();
+        Event::fake(SongLikeToggled::class);
 
         $owner = create_user();
 
@@ -37,7 +41,7 @@ class InteractionTest extends PlusTestCase
 
     public function testPolicyForToggleLike(): void
     {
-        $this->withoutEvents();
+        Event::fake(SongLikeToggled::class);
 
         $owner = create_user();
 
@@ -62,7 +66,7 @@ class InteractionTest extends PlusTestCase
 
     public function testPolicyForBatchLike(): void
     {
-        $this->withoutEvents();
+        Event::fake(MultipleSongsLiked::class);
 
         $owner = create_user();
 
@@ -92,7 +96,7 @@ class InteractionTest extends PlusTestCase
 
     public function testPolicyForBatchUnlike(): void
     {
-        $this->withoutEvents();
+        Event::fake(MultipleSongsUnliked::class);
 
         $owner = create_user();
 

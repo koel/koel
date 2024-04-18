@@ -83,7 +83,7 @@ class LastfmService implements MusicEncyclopedia
     }
 
     /**
-     * @param Collection|array<array-key, Song> $songs
+     * @param Collection<array-key, Song> $songs
      */
     public function batchToggleLoveTracks(Collection $songs, User $user, bool $love): void
     {

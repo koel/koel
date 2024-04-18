@@ -3,10 +3,12 @@
 namespace Tests\Feature;
 
 use App\Events\MultipleSongsLiked;
+use App\Events\PlaybackStarted;
 use App\Events\SongLikeToggled;
 use App\Models\Interaction;
 use App\Models\Song;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 use function Tests\create_user;
@@ -15,7 +17,7 @@ class InteractionTest extends TestCase
 {
     public function testIncreasePlayCount(): void
     {
-        $this->withoutEvents();
+        Event::fake(PlaybackStarted::class);
 
         $user = create_user();
 
@@ -41,7 +43,7 @@ class InteractionTest extends TestCase
 
     public function testToggleLike(): void
     {
-        $this->expectsEvents(SongLikeToggled::class);
+        Event::fake(SongLikeToggled::class);
 
         $user = create_user();
 
@@ -63,15 +65,17 @@ class InteractionTest extends TestCase
             'song_id' => $song->id,
             'liked' => 0,
         ]);
+
+        Event::assertDispatched(SongLikeToggled::class);
     }
 
     public function testToggleLikeBatch(): void
     {
-        $this->expectsEvents(MultipleSongsLiked::class);
+        Event::fake(MultipleSongsLiked::class);
 
         $user = create_user();
 
-        /** @var Collection|array<Song> $songs */
+        /** @var Collection<Song> $songs */
         $songs = Song::factory(2)->create();
         $songIds = $songs->pluck('id')->all();
 
@@ -94,5 +98,7 @@ class InteractionTest extends TestCase
                 'liked' => 0,
             ]);
         }
+
+        Event::assertDispatched(MultipleSongsLiked::class);
     }
 }

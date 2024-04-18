@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
  * @property string $id
  * @property string $name
  * @property User $user
- * @property Collection|array<array-key, Playlist> $playlists
+ * @property Collection<array-key, Playlist> $playlists
  * @property int $user_id
  * @property Carbon $created_at
  */

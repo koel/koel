@@ -14,7 +14,7 @@ class AuthController extends Controller
 {
     use ThrottlesLogins;
 
-    public function __construct(private AuthenticationService $auth)
+    public function __construct(private readonly AuthenticationService $auth)
     {
     }
 
@@ -33,7 +33,7 @@ class AuthController extends Controller
         }
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): Response
     {
         attempt(fn () => $this->auth->logoutViaBearerToken($request->bearerToken()));
 

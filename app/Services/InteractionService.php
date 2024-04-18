@@ -50,9 +50,9 @@ class InteractionService
     /**
      * Like several songs at once as a user.
      *
-     * @param array<array-key, Song>|Collection $songs
+     * @param Collection<array-key, Song> $songs
      *
-     * @return array<Interaction>|Collection The array of Interaction objects
+     * @return Collection<array-key, Interaction> The array of Interaction objects
      */
     public function likeMany(Collection $songs, User $user): Collection
     {

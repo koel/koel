@@ -38,7 +38,7 @@ abstract class Repository implements RepositoryInterface
         return $this->model->find($id);
     }
 
-    /** @return Collection|array<array-key, Model> */
+    /** @return Collection<array-key, Model> */
     public function getMany(array $ids, bool $inThatOrder = false): Collection
     {
         $models = $this->model::query()->find($ids);
@@ -46,7 +46,7 @@ abstract class Repository implements RepositoryInterface
         return $inThatOrder ? $models->orderByArray($ids) : $models;
     }
 
-    /** @return Collection|array<array-key, Model> */
+    /** @return Collection<array-key, Model> */
     public function getAll(): Collection
     {
         return $this->model->all();

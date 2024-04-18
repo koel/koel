@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Album;
 use App\Models\Artist;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 class LibraryManager
@@ -12,10 +11,7 @@ class LibraryManager
     /**
      * Delete albums and artists that have no songs.
      *
-     * @return array{
-     *     albums: Collection<array-key, Album>,
-     *     artists: Collection<array-key, Artist>,
-     *  }
+     * @return array<mixed>
      */
     public function prune(bool $dryRun = false): array
     {

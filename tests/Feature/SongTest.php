@@ -31,7 +31,7 @@ class SongTest extends TestCase
 
     public function testDelete(): void
     {
-        /** @var Collection|array<array-key, Song> $songs */
+        /** @var Collection<array-key, Song> $songs */
         $songs = Song::factory(3)->create();
 
         $this->deleteAs('api/songs', ['songs' => $songs->pluck('id')->all()], create_admin())
@@ -42,7 +42,7 @@ class SongTest extends TestCase
 
     public function testUnauthorizedDelete(): void
     {
-        /** @var Collection|array<array-key, Song> $songs */
+        /** @var Collection<array-key, Song> $songs */
         $songs = Song::factory(3)->create();
 
         $this->deleteAs('api/songs', ['songs' => $songs->pluck('id')->all()])
@@ -128,7 +128,7 @@ class SongTest extends TestCase
         ], create_admin())
             ->assertOk();
 
-        /** @var Collection|array<array-key, Song> $songs */
+        /** @var Collection<array-key, Song> $songs */
         $songs = Song::query()->whereIn('id', $songIds)->get();
 
         // All of these songs must now belong to a new album and artist set
@@ -150,7 +150,7 @@ class SongTest extends TestCase
 
     public function testMultipleUpdateCreatingNewAlbumsAndArtists(): void
     {
-        /** @var array<array-key, Song>|Collection $originalSongs */
+        /** @var Collection<array-key, Song> $originalSongs */
         $originalSongs = Song::factory(3)->create();
         $originalSongIds = $originalSongs->pluck('id')->all();
         $originalAlbumNames = $originalSongs->pluck('album.name')->all();
@@ -168,7 +168,7 @@ class SongTest extends TestCase
         ], create_admin())
             ->assertOk();
 
-        /** @var array<array-key, Song>|Collection $songs */
+        /** @var Collection<array-key, Song> $songs */
         $songs = Song::query()->whereIn('id', $originalSongIds)->get()->orderByArray($originalSongIds);
 
         // Even though the album name doesn't change, a new artist should have been created

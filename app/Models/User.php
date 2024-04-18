@@ -28,15 +28,15 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @property string $password
  * @property-read bool $has_custom_avatar
  * @property-read string $avatar
- * @property Collection|array<array-key, Playlist> $playlists
- * @property Collection|array<array-key, PlaylistFolder> $playlist_folders
+ * @property Collection<array-key, Playlist> $playlists
+ * @property Collection<array-key, PlaylistFolder> $playlist_folders
  * @property PersonalAccessToken $currentAccessToken
  * @property ?Carbon $invitation_accepted_at
  * @property ?User $invitedBy
  * @property ?string $invitation_token
  * @property ?Carbon $invited_at
  * @property-read bool $is_prospect
- * @property Collection|array<array-key, Playlist> $collaboratedPlaylists
+ * @property Collection<array-key, Playlist> $collaboratedPlaylists
  * @property ?string $sso_provider
  * @property ?string $sso_id
  * @property bool $is_sso

@@ -18,7 +18,7 @@ class LikeMultipleSongsController extends Controller
         InteractionService $interactionService,
         Authenticatable $user
     ) {
-        /** @var Collection|array<array-key, Song> $songs */
+        /** @var Collection<array-key, Song> $songs */
         $songs = Song::query()->findMany($request->songs);
         $songs->each(fn (Song $song) => $this->authorize('access', $song));
 

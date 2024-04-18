@@ -10,12 +10,12 @@ use Illuminate\Database\Query\JoinClause;
 
 class ArtistBuilder extends Builder
 {
-    public function isStandard(): static
+    public function isStandard(): self
     {
         return $this->whereNotIn('artists.id', [Artist::UNKNOWN_ID, Artist::VARIOUS_ID]);
     }
 
-    public function accessibleBy(User $user): static
+    public function accessibleBy(User $user): self
     {
         if (License::isCommunity()) {
             // With the Community license, all artists are accessible by all users.

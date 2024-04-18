@@ -87,7 +87,7 @@ final class S3LambdaStorage extends S3CompatibleStorage
         $song->delete();
     }
 
-    protected function supported(): bool
+    public function supported(): bool
     {
         return SongStorageTypes::supported(SongStorageTypes::S3_LAMBDA);
     }

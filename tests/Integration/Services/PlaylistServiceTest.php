@@ -39,7 +39,7 @@ class PlaylistServiceTest extends TestCase
 
     public function testCreatePlaylistWithSongs(): void
     {
-        /** @var array<array-key, Song>|Collection $songs */
+        /** @var Collection<array-key, Song> $songs */
         $songs = Song::factory(3)->create();
 
         $user = create_user();
@@ -239,7 +239,7 @@ class PlaylistServiceTest extends TestCase
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
 
-        /** @var Collection|array<array-key, Song> $songs */
+        /** @var Collection<array-key, Song> $songs */
         $songs = Song::factory(4)->create();
         $ids = $songs->pluck('id')->all();
         $playlist->addSongs($songs);

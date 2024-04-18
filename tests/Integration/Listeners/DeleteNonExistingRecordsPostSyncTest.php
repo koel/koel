@@ -36,7 +36,7 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
 
     public function testHandle(): void
     {
-        /** @var Collection|array<Song> $songs */
+        /** @var Collection|array<array-key, Song> $songs */
         $songs = Song::factory(4)->create();
 
         self::assertCount(4, Song::all());

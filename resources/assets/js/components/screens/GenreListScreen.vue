@@ -34,8 +34,8 @@
         </a>
       </li>
     </ul>
-    <ul v-else class="genres">
-      <li v-for="i in 20" :key="i">
+    <ul v-else class="text-center">
+      <li v-for="i in 20" :key="i" class="inline-block">
         <GenreItemSkeleton />
       </li>
     </ul>
