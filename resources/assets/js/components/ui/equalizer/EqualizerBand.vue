@@ -66,46 +66,69 @@ defineExpose({
 <style lang="postcss">
 /* overriding the global noUi import, don't scope */
 /* also, don't use Tailwind here as it will mess things up */
+/* and wrap the styles in a class to ensure cascading for built assets */
+article {
+  .noUi {
+    &-connect {
+      background: none;
+      box-shadow: none;
 
-.noUi {
-  &-connect {
-    background: none;
-    box-shadow: none;
+      &::after {
+        content: " ";
+        position: absolute;
+        width: 2px;
+        height: 100%;
+        top: 0;
+        left: 7px;
+      }
+    }
 
-    &::after {
-      content: " ";
-      position: absolute;
-      width: 2px;
-      height: 100%;
-      top: 0;
-      left: 7px;
+    &-touch-area {
+      cursor: ns-resize;
+    }
+
+    &-target {
+      background: transparent;
+      border-radius: 0;
+      border: 0;
+      box-shadow: none;
+      width: 16px;
+
+      &::after {
+        content: " ";
+        position: absolute;
+        width: 2px;
+        height: 100%;
+        background: linear-gradient(to bottom, var(--color-highlight) 0%, var(--color-highlight) 36%, var(--color-success) 100%);
+        background-size: 2px;
+        top: 0;
+        left: 7px;
+      }
+    }
+
+    &-handle {
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      cursor: pointer;
+
+      &::before, &::after {
+        display: none;
+      }
+    }
+
+    &-vertical {
+      .noUi-handle {
+        width: 16px;
+        height: 6px;
+        left: -16px;
+        border-radius: 9999px;
+        top: 0;
+      }
     }
   }
 
-  &-touch-area {
-    cursor: ns-resize;
-  }
-
-  &-target {
-    background: transparent;
-    border-radius: 0;
-    border: 0;
-    box-shadow: none;
-    width: 16px;
-
-    &::after {
-      content: " ";
-      position: absolute;
-      width: 2px;
-      height: 100%;
-      background: linear-gradient(to bottom, var(--color-highlight) 0%, var(--color-highlight) 36%, var(--color-success) 100%);
-      background-size: 2px;
-      top: 0;
-      left: 7px;
-    }
-  }
-
-  &-handle {
+  .noUi-handle {
     border: 0;
     border-radius: 0;
     box-shadow: none;
@@ -114,27 +137,6 @@ defineExpose({
     &::before, &::after {
       display: none;
     }
-  }
-
-  &-vertical {
-    .noUi-handle {
-      width: 16px;
-      height: 6px;
-      left: -16px;
-      border-radius: 9999px;
-      top: 0;
-    }
-  }
-}
-
-.noUi-handle {
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-  cursor: pointer;
-
-  &::before, &::after {
-    display: none;
   }
 }
 </style>
