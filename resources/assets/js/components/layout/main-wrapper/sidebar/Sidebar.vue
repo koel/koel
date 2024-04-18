@@ -10,7 +10,7 @@
       <SearchForm />
     </section>
 
-    <section v-koel-overflow-fade class="py-0 px-6 overflow-y-auto space-y-8">
+    <section v-koel-overflow-fade class="py-0 overflow-y-auto space-y-8">
       <SidebarYourMusicSection />
       <SidebarPlaylistsSection />
       <SidebarManageSection v-if="showManageSection" />

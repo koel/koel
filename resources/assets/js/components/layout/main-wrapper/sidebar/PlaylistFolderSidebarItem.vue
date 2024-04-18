@@ -23,7 +23,7 @@
             v-for="playlist in playlistsInFolder"
             :key="playlist.id"
             :list="playlist"
-            class="pl-4"
+            class="pl-10"
           />
         </ul>
       </li>
