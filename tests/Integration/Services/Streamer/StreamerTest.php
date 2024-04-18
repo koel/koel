@@ -69,7 +69,7 @@ class StreamerTest extends TestCase
     }
 
     /** @return array<mixed> */
-    public function provideStreamConfigData(): array
+    public static function provideStreamConfigData(): array
     {
         return [
             PhpStreamerAdapter::class => [null, PhpStreamerAdapter::class],

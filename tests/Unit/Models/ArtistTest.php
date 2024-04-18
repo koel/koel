@@ -25,7 +25,7 @@ class ArtistTest extends TestCase
     }
 
     /** @return array<mixed> */
-    public function provideEmptyNames(): array
+    public static function provideEmptyNames(): array
     {
         return [
             [''],

@@ -9,7 +9,7 @@ use Throwable;
 class ValidSmartPlaylistRulePayloadTest extends TestCase
 {
     /** @return array<mixed> */
-    public function provideInvalidPayloads(): array
+    public static function provideInvalidPayloads(): array
     {
         return [
             'invalid format' => ['foo'],
@@ -99,7 +99,7 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
     }
 
     /** @return array<mixed> */
-    public function provideValidPayloads(): array
+    public static function provideValidPayloads(): array
     {
         return [
             'one rule' => [

@@ -20,7 +20,7 @@ class AlbumThumbnailTest extends TestCase
     }
 
     /** @return array<mixed> */
-    public function provideAlbumThumbnailData(): array
+    public static function provideAlbumThumbnailData(): array
     {
         return [['http://localhost/img/covers/foo_thumbnail.jpg'], [null]];
     }
