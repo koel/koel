@@ -22,10 +22,10 @@ class PlaylistSongController extends Controller
 {
     /** @param User $user */
     public function __construct(
-        private SongRepository $songRepository,
-        private PlaylistService $playlistService,
-        private SmartPlaylistService $smartPlaylistService,
-        private ?Authenticatable $user
+        private readonly SongRepository $songRepository,
+        private readonly PlaylistService $playlistService,
+        private readonly SmartPlaylistService $smartPlaylistService,
+        private readonly ?Authenticatable $user
     ) {
     }
 
@@ -49,7 +49,9 @@ class PlaylistSongController extends Controller
 
         $songs = $this->songRepository->getMany(ids: $request->songs, scopedUser: $this->user);
 
-        return self::createResourceCollection($this->playlistService->addSongsToPlaylist($playlist, $songs, $this->user));
+        return self::createResourceCollection(
+            $this->playlistService->addSongsToPlaylist($playlist, $songs, $this->user)
+        );
     }
 
     private static function createResourceCollection(Collection $songs): ResourceCollection

@@ -10,7 +10,7 @@ final class GetSessionKeyRequest extends Request implements RequiresSignature
 {
     protected Method $method = Method::GET;
 
-    public function __construct(private string $token)
+    public function __construct(private readonly string $token)
     {
     }
 

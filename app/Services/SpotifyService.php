@@ -9,7 +9,7 @@ use Illuminate\Support\Arr;
 
 class SpotifyService
 {
-    public function __construct(private SpotifyClient $client)
+    public function __construct(private readonly SpotifyClient $client)
     {
     }
 

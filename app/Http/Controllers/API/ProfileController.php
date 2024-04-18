@@ -18,10 +18,10 @@ class ProfileController extends Controller
 {
     /** @param User $user */
     public function __construct(
-        private Hasher $hash,
-        private UserService $userService,
-        private TokenManager $tokenManager,
-        private ?Authenticatable $user
+        private readonly Hasher $hash,
+        private readonly UserService $userService,
+        private readonly TokenManager $tokenManager,
+        private readonly ?Authenticatable $user
     ) {
     }
 

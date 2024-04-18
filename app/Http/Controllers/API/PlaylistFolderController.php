@@ -14,8 +14,10 @@ use Illuminate\Contracts\Auth\Authenticatable;
 class PlaylistFolderController extends Controller
 {
     /** @param User $user */
-    public function __construct(private PlaylistFolderService $service, private ?Authenticatable $user)
-    {
+    public function __construct(
+        private readonly PlaylistFolderService $service,
+        private readonly ?Authenticatable $user
+    ) {
     }
 
     public function index()

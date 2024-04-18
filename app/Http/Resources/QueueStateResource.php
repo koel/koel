@@ -15,7 +15,7 @@ class QueueStateResource extends JsonResource
         'playback_position',
     ];
 
-    public function __construct(private QueueState $state)
+    public function __construct(private readonly QueueState $state)
     {
         parent::__construct($state);
     }

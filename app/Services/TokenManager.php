@@ -10,7 +10,7 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 class TokenManager
 {
-    public function __construct(private Cache $cache)
+    public function __construct(private readonly Cache $cache)
     {
     }
 

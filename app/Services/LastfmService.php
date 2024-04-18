@@ -22,7 +22,7 @@ use Illuminate\Support\Collection;
 
 class LastfmService implements MusicEncyclopedia
 {
-    public function __construct(private LastfmConnector $connector, private Cache $cache)
+    public function __construct(private readonly LastfmConnector $connector, private readonly Cache $cache)
     {
     }
 

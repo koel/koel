@@ -11,7 +11,7 @@ use Throwable;
 
 class ProxyAuthService
 {
-    public function __construct(private UserService $userService)
+    public function __construct(private readonly UserService $userService)
     {
     }
 

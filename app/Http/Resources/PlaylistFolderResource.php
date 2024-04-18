@@ -15,7 +15,7 @@ class PlaylistFolderResource extends JsonResource
         'created_at',
     ];
 
-    public function __construct(private PlaylistFolder $folder)
+    public function __construct(private readonly PlaylistFolder $folder)
     {
         parent::__construct($folder);
     }

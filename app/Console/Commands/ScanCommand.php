@@ -30,15 +30,17 @@ class ScanCommand extends Command
     private ?string $mediaPath;
     private ProgressBar $progressBar;
 
-    public function __construct(private MediaScanner $mediaScanner, private UserRepository $userRepository)
-    {
+    public function __construct(
+        private readonly MediaScanner $scanner,
+        private readonly UserRepository $userRepository
+    ) {
         parent::__construct();
 
-        $this->mediaScanner->on('paths-gathered', function (array $paths): void {
+        $this->scanner->on('paths-gathered', function (array $paths): void {
             $this->progressBar = new ProgressBar($this->output, count($paths));
         });
 
-        $this->mediaScanner->on('progress', [$this, 'onScanProgress']);
+        $this->scanner->on('progress', [$this, 'onScanProgress']);
     }
 
     protected function configure(): void
@@ -88,7 +90,7 @@ class ScanCommand extends Command
             $this->components->info('Ignoring tag(s): ' . implode(', ', $config->ignores));
         }
 
-        $results = $this->mediaScanner->scan($config);
+        $results = $this->scanner->scan($config);
 
         $this->newLine(2);
         $this->components->info('Scanning completed!');
@@ -112,7 +114,7 @@ class ScanCommand extends Command
      */
     private function scanSingleRecord(string $record, ScanConfiguration $config): void
     {
-        $this->mediaScanner->scanWatchRecord(new InotifyWatchRecord($record), $config);
+        $this->scanner->scanWatchRecord(new InotifyWatchRecord($record), $config);
     }
 
     public function onScanProgress(ScanResult $result): void
@@ -129,7 +131,7 @@ class ScanCommand extends Command
             $result->isSuccess() => "<fg=green>OK</>",
             $result->isSkipped() => "<fg=yellow>SKIPPED</>",
             $result->isError() => "<fg=red>ERROR</>",
-            default => throw new RuntimeException("Unknown scan result type: {$result->type}")
+            default => throw new RuntimeException("Unknown scan result type: {$result->type->value}")
         });
 
         if ($result->isError()) {

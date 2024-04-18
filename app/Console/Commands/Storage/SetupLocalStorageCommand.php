@@ -13,7 +13,7 @@ class SetupLocalStorageCommand extends Command
     protected $signature = 'koel:storage:local';
     protected $description = 'Set up the local storage for Koel';
 
-    public function __construct(private DotenvEditor $dotenvEditor)
+    public function __construct(private readonly DotenvEditor $dotenvEditor)
     {
         parent::__construct();
     }

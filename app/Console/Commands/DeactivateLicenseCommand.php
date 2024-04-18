@@ -11,14 +11,14 @@ class DeactivateLicenseCommand extends Command
     protected $signature = 'koel:license:deactivate';
     protected $description = 'Deactivate the currently active Koel Plus license';
 
-    public function __construct(private LicenseServiceInterface $plusService)
+    public function __construct(private readonly LicenseServiceInterface $licenseService)
     {
         parent::__construct();
     }
 
     public function handle(): int
     {
-        $status = $this->plusService->getStatus();
+        $status = $this->licenseService->getStatus();
 
         if ($status->hasNoLicense()) {
             $this->components->warn('No active Plus license found.');
@@ -35,7 +35,7 @@ class DeactivateLicenseCommand extends Command
         $this->components->info('Deactivating your license…');
 
         try {
-            $this->plusService->deactivate($status->license);
+            $this->licenseService->deactivate($status->license);
             $this->components->info('Koel Plus has been deactivated. Plus features are now disabled.');
 
             return self::SUCCESS;

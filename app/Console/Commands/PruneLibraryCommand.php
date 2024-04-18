@@ -10,7 +10,7 @@ class PruneLibraryCommand extends Command
     protected $signature = 'koel:prune';
     protected $description = 'Remove empty artists and albums';
 
-    public function __construct(private LibraryManager $libraryManager)
+    public function __construct(private readonly LibraryManager $libraryManager)
     {
         parent::__construct();
     }

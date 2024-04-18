@@ -17,8 +17,11 @@ final class ScrobbleRequest extends Request implements HasBody, RequiresSignatur
 
     protected Method $method = Method::POST;
 
-    public function __construct(private Song $song, private User $user, private int $timestamp)
-    {
+    public function __construct(
+        private readonly Song $song,
+        private readonly User $user,
+        private readonly int $timestamp
+    ) {
     }
 
     public function resolveEndpoint(): string

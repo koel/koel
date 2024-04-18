@@ -7,7 +7,7 @@ use Illuminate\Contracts\Cache\Repository as Cache;
 
 class ApplicationInformationService
 {
-    public function __construct(private Client $client, private Cache $cache)
+    public function __construct(private readonly Client $client, private readonly Cache $cache)
     {
     }
 

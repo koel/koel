@@ -17,7 +17,7 @@ class UserProspectResource extends JsonResource
         'is_prospect',
     ];
 
-    public function __construct(private User $user)
+    public function __construct(private readonly User $user)
     {
         parent::__construct($user);
     }

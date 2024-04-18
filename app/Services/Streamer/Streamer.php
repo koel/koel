@@ -19,8 +19,11 @@ class Streamer
 {
     private StreamerAdapter $adapter;
 
-    public function __construct(private Song $song, ?StreamerAdapter $adapter = null, private array $config = [])
-    {
+    public function __construct(
+        private readonly Song $song,
+        ?StreamerAdapter $adapter = null,
+        private readonly array $config = []
+    ) {
         // Turn off error reporting to make sure our stream isn't interfered.
         @error_reporting(0);
 

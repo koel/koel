@@ -9,7 +9,7 @@ use Saloon\Repositories\Body\FormBodyRepository;
 
 final class LastfmAuthenticator implements Authenticator
 {
-    public function __construct(private string $key, private string $secret)
+    public function __construct(private readonly string $key, private readonly string $secret)
     {
     }
 

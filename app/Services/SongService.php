@@ -18,9 +18,9 @@ use Throwable;
 class SongService
 {
     public function __construct(
-        private SongRepository $songRepository,
-        private SongStorage $songStorage,
-        private LoggerInterface $logger
+        private readonly SongRepository $songRepository,
+        private readonly SongStorage $songStorage,
+        private readonly LoggerInterface $logger
     ) {
     }
 

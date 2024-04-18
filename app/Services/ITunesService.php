@@ -9,7 +9,7 @@ use Illuminate\Cache\Repository as Cache;
 
 class ITunesService
 {
-    public function __construct(private ITunesConnector $connector, private Cache $cache)
+    public function __construct(private readonly ITunesConnector $connector, private readonly Cache $cache)
     {
     }
 

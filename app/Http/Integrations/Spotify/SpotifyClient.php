@@ -13,8 +13,11 @@ use SpotifyWebAPI\SpotifyWebAPI;
  */
 class SpotifyClient
 {
-    public function __construct(public SpotifyWebAPI $wrapped, private ?Session $session, private Cache $cache)
-    {
+    public function __construct(
+        public SpotifyWebAPI $wrapped,
+        private readonly ?Session $session,
+        private readonly Cache $cache
+    ) {
         if (SpotifyService::enabled()) {
             $this->wrapped->setOptions(['return_assoc' => true]);
             attempt(fn () => $this->setAccessToken());
