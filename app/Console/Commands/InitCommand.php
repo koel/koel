@@ -70,7 +70,7 @@ class InitCommand extends Command
 
             $this->components->error("Oops! Koel installation or upgrade didn't finish successfully.");
             $this->components->error('Please check the error log at storage/logs/laravel.log and try again.');
-            $this->components->error('You can also visit ' . config('koel.misc.docs_url') . ' for other options.');
+            $this->components->error('For further troubleshooting, visit https://docs.koel.dev/troubleshooting.');
             $this->components->error('😥 Sorry for this. You deserve better.');
 
             return self::FAILURE;
