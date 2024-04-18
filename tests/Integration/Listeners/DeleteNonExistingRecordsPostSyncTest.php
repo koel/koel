@@ -2,12 +2,12 @@
 
 namespace Tests\Integration\Listeners;
 
+use App\Enums\SongStorageType;
 use App\Events\MediaScanCompleted;
 use App\Listeners\DeleteNonExistingRecordsPostScan;
 use App\Models\Song;
 use App\Values\ScanResult;
 use App\Values\ScanResultCollection;
-use App\Values\SongStorageTypes;
 use Illuminate\Database\Eloquent\Collection;
 use Tests\TestCase;
 
@@ -24,8 +24,8 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
 
     public function testHandleDoesNotDeleteCloudEntries(): void
     {
-        collect(SongStorageTypes::ALL_TYPES)
-            ->filter(static fn ($type) => $type !== SongStorageTypes::LOCAL)
+        collect(SongStorageType::cases())
+            ->filter(static fn ($type) => $type !== SongStorageType::LOCAL)
             ->each(function ($type): void {
                 $song = Song::factory()->create(['storage' => $type]);
                 $this->listener->handle(new MediaScanCompleted(ScanResultCollection::create()));

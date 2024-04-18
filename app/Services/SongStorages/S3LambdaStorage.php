@@ -2,6 +2,7 @@
 
 namespace App\Services\SongStorages;
 
+use App\Enums\SongStorageType;
 use App\Exceptions\MethodNotImplementedException;
 use App\Exceptions\SongPathNotFoundException;
 use App\Models\Album;
@@ -11,7 +12,6 @@ use App\Models\User;
 use App\Repositories\SongRepository;
 use App\Repositories\UserRepository;
 use App\Services\MediaMetadataService;
-use App\Values\SongStorageTypes;
 use Illuminate\Http\UploadedFile;
 
 /**
@@ -71,7 +71,7 @@ final class S3LambdaStorage extends S3CompatibleStorage
             'mtime' => time(),
             'owner_id' => $user->id,
             'is_public' => true,
-            'storage' => SongStorageTypes::S3_LAMBDA,
+            'storage' => SongStorageType::S3_LAMBDA,
         ]);
 
         return $song;
@@ -89,7 +89,7 @@ final class S3LambdaStorage extends S3CompatibleStorage
 
     public function supported(): bool
     {
-        return SongStorageTypes::supported(SongStorageTypes::S3_LAMBDA);
+        return SongStorageType::S3_LAMBDA->supported();
     }
 
     public function delete(Song $song, bool $backup = false): void

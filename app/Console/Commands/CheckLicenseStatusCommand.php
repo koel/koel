@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\LicenseStatus;
 use App\Services\License\Contracts\LicenseServiceInterface;
-use App\Values\LicenseStatus;
 use Illuminate\Console\Command;
 use Throwable;
 
@@ -25,7 +25,7 @@ class CheckLicenseStatusCommand extends Command
             $status = $this->licenseService->getStatus(checkCache: false);
 
             switch ($status->status) {
-                case LicenseStatus::STATUS_VALID:
+                case LicenseStatus::VALID:
                     $this->output->success('You have a valid Koel Plus license. All Plus features are enabled.');
                     $this->components->twoColumnDetail('License Key', $status->license->short_key);
 
@@ -38,14 +38,14 @@ class CheckLicenseStatusCommand extends Command
                     $this->newLine();
                     break;
 
-                case LicenseStatus::STATUS_NO_LICENSE:
+                case LicenseStatus::NO_LICENSE:
                     $this->components->info(
-                        'No license found. You can purchase one at https://store.koel.dev/checkout/buy/'
+                        'No license found. You can purchase one at https://store.koel.dev'
                         . config('lemonsqueezy.plus_product_id')
                     );
                     break;
 
-                case LicenseStatus::STATUS_INVALID:
+                case LicenseStatus::INVALID:
                     $this->components->error('Your license is invalid. Plus features will not be available.');
                     break;
 

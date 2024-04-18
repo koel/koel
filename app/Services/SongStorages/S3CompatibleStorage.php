@@ -2,10 +2,10 @@
 
 namespace App\Services\SongStorages;
 
+use App\Enums\SongStorageType;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\FileScanner;
-use App\Values\SongStorageTypes;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -31,7 +31,7 @@ class S3CompatibleStorage extends CloudStorage
 
             $song->update([
                 'path' => "s3://$this->bucket/$key",
-                'storage' => SongStorageTypes::S3,
+                'storage' => SongStorageType::S3,
             ]);
 
             File::delete($result->path);
@@ -69,6 +69,6 @@ class S3CompatibleStorage extends CloudStorage
 
     public function supported(): bool
     {
-        return SongStorageTypes::supported(SongStorageTypes::S3);
+        return SongStorageType::S3->supported();
     }
 }
