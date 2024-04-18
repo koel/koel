@@ -2,52 +2,45 @@
 
 namespace App\Values;
 
-use Exception;
-use Webmozart\Assert\Assert;
+use App\Enums\ScanResultType;
 
 final class ScanResult
 {
-    public const TYPE_SUCCESS = 1;
-    public const TYPE_ERROR = 2;
-    public const TYPE_SKIPPED = 3;
-
-    private function __construct(public string $path, public int $type, public ?string $error = null)
-    {
-        Assert::oneOf($type, [
-            ScanResult::TYPE_SUCCESS,
-            ScanResult::TYPE_ERROR,
-            ScanResult::TYPE_SKIPPED,
-        ]);
+    private function __construct(
+        public string $path,
+        private readonly ScanResultType $type,
+        public ?string $error = null
+    ) {
     }
 
     public static function success(string $path): self
     {
-        return new self($path, self::TYPE_SUCCESS, null);
+        return new self($path, ScanResultType::SUCCESS, null);
     }
 
     public static function skipped(string $path): self
     {
-        return new self($path, self::TYPE_SKIPPED, null);
+        return new self($path, ScanResultType::SKIPPED, null);
     }
 
     public static function error(string $path, ?string $error = null): self
     {
-        return new self($path, self::TYPE_ERROR, $error);
+        return new self($path, ScanResultType::ERROR, $error);
     }
 
     public function isSuccess(): bool
     {
-        return $this->type === self::TYPE_SUCCESS;
+        return $this->type === ScanResultType::SUCCESS;
     }
 
     public function isSkipped(): bool
     {
-        return $this->type === self::TYPE_SKIPPED;
+        return $this->type === ScanResultType::SKIPPED;
     }
 
     public function isError(): bool
     {
-        return $this->type === self::TYPE_ERROR;
+        return $this->type === ScanResultType::ERROR;
     }
 
     public function isValid(): bool
@@ -57,15 +50,8 @@ final class ScanResult
 
     public function __toString(): string
     {
-        $type = match ($this->type) {
-            self::TYPE_SUCCESS => 'Success',
-            self::TYPE_ERROR => 'Error',
-            self::TYPE_SKIPPED => 'Skipped',
-            default => throw new Exception('Invalid type'),
-        };
+        $name = $this->type->value . ': ' . $this->path;
 
-        $str = $type . ': ' . $this->path;
-
-        return $this->isError() ? $str . ' - ' . $this->error : $str;
+        return $this->isError() ? $name . ' - ' . $this->error : $name;
     }
 }
