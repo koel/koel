@@ -3,13 +3,13 @@
 namespace App\Models;
 
 use App\Builders\SongBuilder;
+use App\Enums\SongStorageType;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
 use App\Values\SongStorageMetadata\Contracts\SongStorageMetadata;
 use App\Values\SongStorageMetadata\DropboxMetadata;
 use App\Values\SongStorageMetadata\LegacyS3Metadata;
 use App\Values\SongStorageMetadata\LocalMetadata;
 use App\Values\SongStorageMetadata\S3CompatibleMetadata;
-use App\Values\SongStorageTypes;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -45,7 +45,7 @@ use Throwable;
  * @property bool $is_public
  * @property User $owner
  * @property-read SongStorageMetadata $storage_metadata
- * @property ?string $storage
+ * @property SongStorageType $storage
  *
  * // The following are only available for collaborative playlists
  * @property-read ?string $collaborator_email The email of the user who added the song to the playlist
@@ -79,14 +79,6 @@ class Song extends Model
     protected static function booted(): void
     {
         static::creating(static fn (self $song) => $song->id = Str::uuid()->toString());
-
-        static::saving(static function (self $song): void {
-            if ($song->storage === '') {
-                $song->storage = SongStorageTypes::LOCAL;
-            }
-
-            SongStorageTypes::assertValidType($song->storage);
-        });
     }
 
     public static function query(): SongBuilder
@@ -160,21 +152,33 @@ class Song extends Model
         return new Attribute(get: $normalizer, set: $normalizer);
     }
 
+    protected function storage(): Attribute
+    {
+        return new Attribute(
+            get: static fn (?string $raw) => SongStorageType::tryFrom($raw) ?? SongStorageType::LOCAL,
+            set: static function (SongStorageType|string|null $type) {
+                $type = $type instanceof SongStorageType ? $type : SongStorageType::tryFrom($type);
+
+                return $type->value;
+            }
+        );
+    }
+
     protected function storageMetadata(): Attribute
     {
         return new Attribute(
             get: function (): SongStorageMetadata {
                 try {
                     switch ($this->storage) {
-                        case 's3':
+                        case SongStorageType::S3:
                             preg_match('/^s3:\\/\\/(.*)\\/(.*)/', $this->path, $matches);
                             return S3CompatibleMetadata::make($matches[1], $matches[2]);
 
-                        case 's3-legacy':
+                        case SongStorageType::S3_LAMBDA:
                             preg_match('/^s3:\\/\\/(.*)\\/(.*)/', $this->path, $matches);
                             return LegacyS3Metadata::make($matches[1], $matches[2]);
 
-                        case 'dropbox':
+                        case SongStorageType::DROPBOX:
                             preg_match('/^dropbox:\\/\\/(.*)/', $this->path, $matches);
                             return DropboxMetadata::make($matches[1]);
 

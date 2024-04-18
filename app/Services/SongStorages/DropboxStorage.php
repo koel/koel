@@ -2,11 +2,11 @@
 
 namespace App\Services\SongStorages;
 
+use App\Enums\SongStorageType;
 use App\Filesystems\DropboxFilesystem;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\FileScanner;
-use App\Values\SongStorageTypes;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -38,7 +38,7 @@ final class DropboxStorage extends CloudStorage
 
             $song->update([
                 'path' => "dropbox://$key",
-                'storage' => SongStorageTypes::DROPBOX,
+                'storage' => SongStorageType::DROPBOX,
             ]);
 
             File::delete($result->path);
@@ -80,7 +80,7 @@ final class DropboxStorage extends CloudStorage
 
     public function supported(): bool
     {
-        return SongStorageTypes::supported(SongStorageTypes::DROPBOX);
+        return SongStorageType::DROPBOX->supported();
     }
 
     public function delete(Song $song, bool $backup = false): void

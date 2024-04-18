@@ -2,6 +2,7 @@
 
 namespace App\Services\SongStorages;
 
+use App\Enums\SongStorageType;
 use App\Exceptions\MediaPathNotSetException;
 use App\Exceptions\SongUploadFailedException;
 use App\Models\Setting;
@@ -9,7 +10,6 @@ use App\Models\Song;
 use App\Models\User;
 use App\Services\FileScanner;
 use App\Values\ScanConfiguration;
-use App\Values\SongStorageTypes;
 use Exception;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
@@ -92,7 +92,7 @@ final class LocalStorage extends SongStorage
 
     public function supported(): bool
     {
-        return SongStorageTypes::supported(SongStorageTypes::LOCAL);
+        return SongStorageType::LOCAL->supported();
     }
 
     public function delete(Song $song, bool $backup = false): void

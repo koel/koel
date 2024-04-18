@@ -2,6 +2,7 @@
 
 namespace Tests\Integration\Services\Streamer;
 
+use App\Enums\SongStorageType;
 use App\Exceptions\KoelPlusRequiredException;
 use App\Models\Song;
 use App\Services\Streamer\Adapters\LocalStreamerAdapter;
@@ -11,8 +12,6 @@ use App\Services\Streamer\Adapters\TranscodingStreamerAdapter;
 use App\Services\Streamer\Adapters\XAccelRedirectStreamerAdapter;
 use App\Services\Streamer\Adapters\XSendFileStreamerAdapter;
 use App\Services\Streamer\Streamer;
-use App\Values\SongStorageTypes;
-use Exception;
 use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
@@ -22,28 +21,25 @@ class StreamerTest extends TestCase
 {
     public function testResolveAdapters(): void
     {
-        collect(SongStorageTypes::ALL_TYPES)
-            ->each(function (?string $type): void {
+        collect(SongStorageType::cases())
+            ->each(function (SongStorageType $type): void {
                 /** @var Song $song */
                 $song = Song::factory()->make(['storage' => $type]);
 
                 switch ($type) {
-                    case SongStorageTypes::S3:
-                    case SongStorageTypes::DROPBOX:
+                    case SongStorageType::S3:
+                    case SongStorageType::DROPBOX:
                         $this->expectException(KoelPlusRequiredException::class);
                         new Streamer($song);
                         break;
 
-                    case SongStorageTypes::S3_LAMBDA:
+                    case SongStorageType::S3_LAMBDA:
                         self::assertInstanceOf(S3CompatibleStreamerAdapter::class, (new Streamer($song))->getAdapter());
                         break;
 
-                    case SongStorageTypes::LOCAL:
+                    case SongStorageType::LOCAL:
                         self::assertInstanceOf(LocalStreamerAdapter::class, (new Streamer($song))->getAdapter());
                         break;
-
-                    default:
-                        throw new Exception("Unhandled storage type: $type");
                 }
             });
     }
