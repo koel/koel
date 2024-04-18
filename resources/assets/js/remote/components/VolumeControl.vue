@@ -66,48 +66,48 @@ onMounted(() => {
     display: inline-block;
     text-align: center;
   }
+
+  .noUi-target {
+    background: var(--color-text-primary);
+    border-radius: 4px;
+    border: 0;
+    box-shadow: none;
+    left: 7px;
+  }
+
+  .noUi-base {
+    height: calc(100% - 16px);
+    border-radius: 4px;
+  }
+
+  .noUi-vertical {
+    width: 8px;
+  }
+
+  .noUi-vertical .noUi-handle {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 0;
+    left: -12px;
+    top: 0;
+    background: var(--color-highlight);
+    box-shadow: none;
+
+    &::after, &::before {
+      display: none;
+    }
+  }
+
+  .noUi-connect {
+    background: transparent;
+    box-shadow: none;
+  }
 }
 
 #volumeSlider {
   height: 80px;
   position: absolute;
   bottom: calc(50% + 26px);
-}
-
-.noUi-target {
-  background: var(--color-text-primary);
-  border-radius: 4px;
-  border: 0;
-  box-shadow: none;
-  left: 7px;
-}
-
-.noUi-base {
-  height: calc(100% - 16px);
-  border-radius: 4px;
-}
-
-.noUi-vertical {
-  width: 8px;
-}
-
-.noUi-vertical .noUi-handle {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 0;
-  left: -12px;
-  top: 0;
-  background: var(--color-highlight);
-  box-shadow: none;
-
-  &::after, &::before {
-    display: none;
-  }
-}
-
-.noUi-connect {
-  background: transparent;
-  box-shadow: none;
 }
 </style>
