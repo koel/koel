@@ -52,7 +52,7 @@ class PlaylistTest extends TestCase
 
         $rule = SmartPlaylistRule::make([
             'model' => 'artist.name',
-            'operator' => SmartPlaylistRule::OPERATOR_IS,
+            'operator' => 'is',
             'value' => ['Bob Dylan'],
         ]);
 
@@ -87,7 +87,7 @@ class PlaylistTest extends TestCase
                     'rules' => [
                         SmartPlaylistRule::make([
                             'model' => 'artist.name',
-                            'operator' => SmartPlaylistRule::OPERATOR_IS,
+                            'operator' => 'is',
                             'value' => ['Bob Dylan'],
                         ])->toArray(),
                     ],
