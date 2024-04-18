@@ -12,7 +12,7 @@ class PlaylistCollaborationTokenResource extends JsonResource
         'token',
     ];
 
-    public function __construct(private PlaylistCollaborationToken $token)
+    public function __construct(private readonly PlaylistCollaborationToken $token)
     {
         parent::__construct($token);
     }

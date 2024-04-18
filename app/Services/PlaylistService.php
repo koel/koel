@@ -18,7 +18,7 @@ use Webmozart\Assert\Assert;
 
 class PlaylistService
 {
-    public function __construct(private SongRepository $songRepository)
+    public function __construct(private readonly SongRepository $songRepository)
     {
     }
 

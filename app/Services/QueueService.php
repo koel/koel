@@ -9,7 +9,7 @@ use App\Values\QueueState as QueueStateDTO;
 
 class QueueService
 {
-    public function __construct(private SongRepository $songRepository)
+    public function __construct(private readonly SongRepository $songRepository)
     {
     }
 

@@ -15,7 +15,7 @@ final class GetArtistInfoRequest extends Request
 
     protected Method $method = Method::GET;
 
-    public function __construct(private Artist $artist)
+    public function __construct(private readonly Artist $artist)
     {
     }
 

@@ -17,7 +17,7 @@ class InteractionResource extends JsonResource
         'play_count',
     ];
 
-    public function __construct(private Interaction $interaction)
+    public function __construct(private readonly Interaction $interaction)
     {
         parent::__construct($interaction);
     }

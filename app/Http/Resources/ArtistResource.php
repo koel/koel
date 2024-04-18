@@ -34,7 +34,7 @@ class ArtistResource extends JsonResource
         ],
     ];
 
-    public function __construct(private Artist $artist)
+    public function __construct(private readonly Artist $artist)
     {
         parent::__construct($artist);
     }

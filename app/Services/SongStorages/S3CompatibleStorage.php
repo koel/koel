@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Storage;
 
 class S3CompatibleStorage extends CloudStorage
 {
-    public function __construct(protected FileScanner $scanner, private string $bucket)
+    public function __construct(protected FileScanner $scanner, private readonly string $bucket)
     {
         parent::__construct($scanner);
     }

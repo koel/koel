@@ -12,9 +12,9 @@ use Illuminate\Cache\Repository as Cache;
 class MediaInformationService
 {
     public function __construct(
-        private MusicEncyclopedia $encyclopedia,
-        private MediaMetadataService $mediaMetadataService,
-        private Cache $cache
+        private readonly MusicEncyclopedia $encyclopedia,
+        private readonly MediaMetadataService $mediaMetadataService,
+        private readonly Cache $cache
     ) {
     }
 

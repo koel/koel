@@ -15,10 +15,10 @@ use Illuminate\Support\Facades\Password;
 class AuthenticationService
 {
     public function __construct(
-        private UserRepository $userRepository,
-        private TokenManager $tokenManager,
-        private HashManager $hash,
-        private PasswordBroker $passwordBroker
+        private readonly UserRepository $userRepository,
+        private readonly TokenManager $tokenManager,
+        private readonly HashManager $hash,
+        private readonly PasswordBroker $passwordBroker
     ) {
     }
 

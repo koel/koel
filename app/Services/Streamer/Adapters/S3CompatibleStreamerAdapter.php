@@ -9,7 +9,7 @@ use Illuminate\Routing\Redirector;
 
 class S3CompatibleStreamerAdapter implements StreamerAdapter
 {
-    public function __construct(private S3CompatibleStorage $storage)
+    public function __construct(private readonly S3CompatibleStorage $storage)
     {
     }
 

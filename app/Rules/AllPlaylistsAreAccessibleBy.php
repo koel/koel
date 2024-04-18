@@ -9,7 +9,7 @@ use Illuminate\Support\Arr;
 
 final class AllPlaylistsAreAccessibleBy implements Rule
 {
-    public function __construct(private User $user)
+    public function __construct(private readonly User $user)
     {
     }
 

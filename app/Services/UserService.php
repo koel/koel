@@ -14,9 +14,9 @@ use Illuminate\Support\Str;
 class UserService
 {
     public function __construct(
-        private UserRepository $repository,
-        private Hasher $hash,
-        private ImageWriter $imageWriter
+        private readonly UserRepository $repository,
+        private readonly Hasher $hash,
+        private readonly ImageWriter $imageWriter
     ) {
     }
 

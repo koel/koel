@@ -8,7 +8,7 @@ use Spatie\FlysystemDropbox\DropboxAdapter;
 
 class DropboxFilesystem extends Filesystem
 {
-    public function __construct(private DropboxAdapter $adapter)
+    public function __construct(private readonly DropboxAdapter $adapter)
     {
         parent::__construct($adapter, ['case_sensitive' => false]);
     }

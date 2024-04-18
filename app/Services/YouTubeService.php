@@ -10,7 +10,7 @@ use Throwable;
 
 class YouTubeService
 {
-    public function __construct(private YouTubeConnector $connector, private Cache $cache)
+    public function __construct(private readonly YouTubeConnector $connector, private readonly Cache $cache)
     {
     }
 

@@ -20,7 +20,7 @@ class PlaylistResource extends JsonResource
         'created_at',
     ];
 
-    public function __construct(private Playlist $playlist)
+    public function __construct(private readonly Playlist $playlist)
     {
         parent::__construct($playlist);
     }

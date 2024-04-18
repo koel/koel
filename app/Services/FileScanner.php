@@ -28,12 +28,12 @@ class FileScanner
     private ?string $syncError = null;
 
     public function __construct(
-        private getID3 $getID3,
-        private MediaMetadataService $mediaMetadataService,
-        private SongRepository $songRepository,
-        private SimpleLrcReader $lrcReader,
-        private Cache $cache,
-        private Finder $finder
+        private readonly getID3 $getID3,
+        private readonly MediaMetadataService $mediaMetadataService,
+        private readonly SongRepository $songRepository,
+        private readonly SimpleLrcReader $lrcReader,
+        private readonly Cache $cache,
+        private readonly Finder $finder
     ) {
     }
 

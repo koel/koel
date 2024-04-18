@@ -36,7 +36,7 @@ class AlbumResource extends JsonResource
         ],
     ];
 
-    public function __construct(private Album $album)
+    public function __construct(private readonly Album $album)
     {
         parent::__construct($album);
     }

@@ -9,7 +9,7 @@ use App\Repositories\AlbumRepository;
 
 class AlbumController extends Controller
 {
-    public function __construct(private AlbumRepository $repository)
+    public function __construct(private readonly AlbumRepository $repository)
     {
     }
 

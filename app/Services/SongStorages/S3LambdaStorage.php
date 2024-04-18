@@ -21,9 +21,9 @@ use Illuminate\Http\UploadedFile;
 final class S3LambdaStorage extends S3CompatibleStorage
 {
     public function __construct( // @phpcs:ignore
-        private MediaMetadataService $mediaMetadataService,
-        private SongRepository $songRepository,
-        private UserRepository $userRepository
+        private readonly MediaMetadataService $mediaMetadataService,
+        private readonly SongRepository $songRepository,
+        private readonly UserRepository $userRepository
     ) {
     }
 

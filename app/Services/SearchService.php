@@ -19,9 +19,9 @@ class SearchService
     public const DEFAULT_MAX_SONG_RESULT_COUNT = 500;
 
     public function __construct(
-        private SongRepository $songRepository,
-        private AlbumRepository $albumRepository,
-        private ArtistRepository $artistRepository
+        private readonly SongRepository $songRepository,
+        private readonly AlbumRepository $albumRepository,
+        private readonly ArtistRepository $artistRepository
     ) {
     }
 

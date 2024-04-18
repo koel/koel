@@ -11,7 +11,7 @@ class ActivateLicenseCommand extends Command
     protected $signature = 'koel:license:activate {key : The license key to activate.}';
     protected $description = 'Activate a Koel Plus license';
 
-    public function __construct(private LicenseServiceInterface $licenseService)
+    public function __construct(private readonly LicenseServiceInterface $licenseService)
     {
         parent::__construct();
     }

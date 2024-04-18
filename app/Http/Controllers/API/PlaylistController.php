@@ -23,10 +23,10 @@ class PlaylistController extends Controller
 {
     /** @param User $user */
     public function __construct(
-        private PlaylistService $playlistService,
-        private PlaylistRepository $playlistRepository,
-        private PlaylistFolderRepository $folderRepository,
-        private ?Authenticatable $user
+        private readonly PlaylistService $playlistService,
+        private readonly PlaylistRepository $playlistRepository,
+        private readonly PlaylistFolderRepository $folderRepository,
+        private readonly ?Authenticatable $user
     ) {
     }
 

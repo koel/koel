@@ -22,11 +22,11 @@ class MediaScanner
     private array $events = [];
 
     public function __construct(
-        private SettingRepository $settingRepository,
-        private SongRepository $songRepository,
-        private FileScanner $fileScanner,
-        private Finder $finder,
-        private LoggerInterface $logger
+        private readonly SettingRepository $settingRepository,
+        private readonly SongRepository $songRepository,
+        private readonly FileScanner $fileScanner,
+        private readonly Finder $finder,
+        private readonly LoggerInterface $logger
     ) {
     }
 

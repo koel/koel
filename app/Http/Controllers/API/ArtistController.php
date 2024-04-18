@@ -9,7 +9,7 @@ use App\Repositories\ArtistRepository;
 
 class ArtistController extends Controller
 {
-    public function __construct(private ArtistRepository $repository)
+    public function __construct(private readonly ArtistRepository $repository)
     {
     }
 

@@ -11,7 +11,7 @@ use Illuminate\Support\Arr;
 
 class PlaylistFolderPlaylistController extends Controller
 {
-    public function __construct(private PlaylistFolderService $service)
+    public function __construct(private readonly PlaylistFolderService $service)
     {
     }
 

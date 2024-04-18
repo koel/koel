@@ -14,7 +14,7 @@ class PlaylistCollaboratorResource extends JsonResource
         'avatar',
     ];
 
-    public function __construct(private PlaylistCollaborator $collaborator)
+    public function __construct(private readonly PlaylistCollaborator $collaborator)
     {
         parent::__construct($collaborator);
     }

@@ -11,7 +11,7 @@ class GetTrackRequest extends Request
 {
     protected Method $method = Method::GET;
 
-    public function __construct(private string $trackName, private Album $album)
+    public function __construct(private readonly string $trackName, private readonly Album $album)
     {
     }
 

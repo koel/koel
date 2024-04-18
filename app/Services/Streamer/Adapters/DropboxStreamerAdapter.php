@@ -9,7 +9,7 @@ use Illuminate\Routing\Redirector;
 
 class DropboxStreamerAdapter implements StreamerAdapter
 {
-    public function __construct(private DropboxStorage $storage)
+    public function __construct(private readonly DropboxStorage $storage)
     {
     }
 

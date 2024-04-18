@@ -8,7 +8,7 @@ final class ScanResult
 {
     private function __construct(
         public string $path,
-        private readonly ScanResultType $type,
+        public ScanResultType $type,
         public ?string $error = null
     ) {
     }

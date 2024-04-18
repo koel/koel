@@ -15,8 +15,10 @@ use Illuminate\Http\Response;
 
 class PlaylistCollaboratorController extends Controller
 {
-    public function __construct(private PlaylistCollaborationService $service, private UserRepository $userRepository)
-    {
+    public function __construct(
+        private readonly PlaylistCollaborationService $service,
+        private readonly UserRepository $userRepository
+    ) {
     }
 
     public function index(Playlist $playlist)

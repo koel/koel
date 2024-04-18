@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 
 class UserInvitationService
 {
-    public function __construct(private Hash $hash, private UserRepository $userRepository)
+    public function __construct(private readonly Hash $hash, private readonly UserRepository $userRepository)
     {
     }
 

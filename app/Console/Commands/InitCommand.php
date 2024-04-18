@@ -32,10 +32,10 @@ class InitCommand extends Command
     private bool $adminSeeded = false;
 
     public function __construct(
-        private Hash $hash,
-        private DotenvEditor $dotenvEditor,
-        private DB $db,
-        private LoggerInterface $logger
+        private readonly Hash $hash,
+        private readonly DotenvEditor $dotenvEditor,
+        private readonly DB $db,
+        private readonly LoggerInterface $logger
     ) {
         parent::__construct();
     }

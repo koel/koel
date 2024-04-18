@@ -14,7 +14,7 @@ class GenreResource extends JsonResource
         'length',
     ];
 
-    public function __construct(private Genre $genre)
+    public function __construct(private readonly Genre $genre)
     {
         parent::__construct($genre);
     }

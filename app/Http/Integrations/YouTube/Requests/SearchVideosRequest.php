@@ -10,7 +10,7 @@ class SearchVideosRequest extends Request
 {
     protected Method $method = Method::GET;
 
-    public function __construct(private Song $song, private string $pageToken = '')
+    public function __construct(private readonly Song $song, private readonly string $pageToken = '')
     {
     }
 

@@ -17,13 +17,11 @@ use Illuminate\Http\Response;
 
 class UserInvitationController extends Controller
 {
-    /**
-     * @param User $invitor
-     */
+    /** @param User $invitor */
     public function __construct(
-        private UserInvitationService $invitationService,
-        private AuthenticationService $auth,
-        private ?Authenticatable $invitor
+        private readonly UserInvitationService $invitationService,
+        private readonly AuthenticationService $auth,
+        private readonly ?Authenticatable $invitor
     ) {
     }
 

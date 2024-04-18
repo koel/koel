@@ -23,12 +23,12 @@ class SongController extends Controller
 {
     /** @param User $user */
     public function __construct(
-        private SongService $songService,
-        private SongRepository $songRepository,
-        private AlbumRepository $albumRepository,
-        private ArtistRepository $artistRepository,
-        private LibraryManager $libraryManager,
-        private ?Authenticatable $user
+        private readonly SongService $songService,
+        private readonly SongRepository $songRepository,
+        private readonly AlbumRepository $albumRepository,
+        private readonly ArtistRepository $artistRepository,
+        private readonly LibraryManager $libraryManager,
+        private readonly ?Authenticatable $user
     ) {
     }
 

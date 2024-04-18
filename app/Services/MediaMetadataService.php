@@ -10,8 +10,10 @@ use Illuminate\Support\Str;
 
 class MediaMetadataService
 {
-    public function __construct(private SpotifyService $spotifyService, private ImageWriter $imageWriter)
-    {
+    public function __construct(
+        private readonly SpotifyService $spotifyService,
+        private readonly ImageWriter $imageWriter
+    ) {
     }
 
     public function tryDownloadAlbumCover(Album $album): void

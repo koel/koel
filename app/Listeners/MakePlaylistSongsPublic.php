@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class MakePlaylistSongsPublic implements ShouldQueue
 {
-    public function __construct(private PlaylistService $service)
+    public function __construct(private readonly PlaylistService $service)
     {
     }
 

@@ -17,7 +17,7 @@ class SetupDropboxStorageCommand extends Command
     protected $signature = 'koel:storage:dropbox';
     protected $description = 'Set up Dropbox as the storage driver for Koel';
 
-    public function __construct(private DotenvEditor $dotenvEditor)
+    public function __construct(private readonly DotenvEditor $dotenvEditor)
     {
         parent::__construct();
     }

@@ -21,7 +21,7 @@ use Throwable;
 
 class LicenseService implements LicenseServiceInterface
 {
-    public function __construct(private LemonSqueezyConnector $connector, private string $hashSalt)
+    public function __construct(private readonly LemonSqueezyConnector $connector, private readonly string $hashSalt)
     {
     }
 

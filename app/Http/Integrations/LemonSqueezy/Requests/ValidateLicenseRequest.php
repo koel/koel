@@ -14,7 +14,7 @@ class ValidateLicenseRequest extends Request implements HasBody
 
     protected Method $method = Method::POST;
 
-    public function __construct(private License $license)
+    public function __construct(private readonly License $license)
     {
     }
 

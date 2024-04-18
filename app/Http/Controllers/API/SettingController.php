@@ -13,8 +13,10 @@ use Illuminate\Contracts\Auth\Authenticatable;
 class SettingController extends Controller
 {
     /** @param User $user */
-    public function __construct(private MediaScanner $mediaSyncService, private ?Authenticatable $user)
-    {
+    public function __construct(
+        private readonly MediaScanner $mediaSyncService,
+        private readonly ?Authenticatable $user
+    ) {
     }
 
     public function update(SettingRequest $request)

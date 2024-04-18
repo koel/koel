@@ -14,8 +14,10 @@ use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
-    public function __construct(private UserRepository $userRepository, private UserService $userService)
-    {
+    public function __construct(
+        private readonly UserRepository $userRepository,
+        private readonly UserService $userService
+    ) {
     }
 
     public function index()
