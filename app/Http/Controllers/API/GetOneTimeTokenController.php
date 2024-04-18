@@ -9,7 +9,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 
 class GetOneTimeTokenController extends Controller
 {
-    /** @var User $user */
+    /** @param User $user */
     public function __invoke(AuthenticationService $auth, Authenticatable $user)
     {
         return response()->json(['token' => $auth->generateOneTimeToken($user)]);

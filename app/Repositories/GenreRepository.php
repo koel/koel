@@ -19,10 +19,10 @@ class GenreRepository
             ->groupBy('genre')
             ->orderBy('genre')
             ->get()
-            ->transform(static fn (object $record): Genre => Genre::make(
-                name: $record->genre ?: Genre::NO_GENRE,
-                songCount: $record->song_count,
-                length: $record->length
+            ->transform(static fn (object $record): Genre => Genre::make( // @phpstan-ignore-line
+                name: $record->genre ?: Genre::NO_GENRE, // @phpstan-ignore-line
+                songCount: $record->song_count, // @phpstan-ignore-line
+                length: $record->length // @phpstan-ignore-line
             ));
     }
 

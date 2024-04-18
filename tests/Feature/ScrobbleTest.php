@@ -14,8 +14,6 @@ class ScrobbleTest extends TestCase
 {
     public function testLastfmScrobble(): void
     {
-        $this->withoutEvents();
-
         $user = create_user();
 
         /** @var Song $song */

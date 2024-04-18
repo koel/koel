@@ -23,7 +23,7 @@ use Laravel\Scout\Searchable;
  * @property string $name Name of the album
  * @property Artist $artist The album's artist
  * @property int $artist_id
- * @property Collection $songs
+ * @property Collection<array-key, Song> $songs
  * @property bool $is_unknown If the album is the Unknown Album
  * @property string|null $thumbnail_name The file name of the album's thumbnail
  * @property string|null $thumbnail_path The full path to the thumbnail.

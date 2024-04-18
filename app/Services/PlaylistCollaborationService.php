@@ -49,7 +49,7 @@ class PlaylistCollaborationService
         return $collaborationToken->playlist;
     }
 
-    /** @return Collection|array<array-key, PlaylistCollaborator> */
+    /** @return Collection<array-key, PlaylistCollaborator> */
     public function getCollaborators(Playlist $playlist): Collection
     {
         return $playlist->collaborators->unless(

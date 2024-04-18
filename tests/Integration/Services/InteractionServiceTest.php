@@ -9,6 +9,7 @@ use App\Models\Interaction;
 use App\Models\Song;
 use App\Services\InteractionService;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 use function Tests\create_user;
@@ -36,7 +37,7 @@ class InteractionServiceTest extends TestCase
 
     public function testToggleLike(): void
     {
-        $this->expectsEvents(SongLikeToggled::class);
+        Event::fake(SongLikeToggled::class);
 
         /** @var Interaction $interaction */
         $interaction = Interaction::factory()->create();
@@ -45,11 +46,12 @@ class InteractionServiceTest extends TestCase
         $this->interactionService->toggleLike($interaction->song, $interaction->user);
 
         self::assertNotSame($currentLiked, $interaction->refresh()->liked);
+        Event::assertDispatched(SongLikeToggled::class);
     }
 
     public function testLikeMultipleSongs(): void
     {
-        $this->expectsEvents(MultipleSongsLiked::class);
+        Event::fake(MultipleSongsLiked::class);
 
         /** @var Collection $songs */
         $songs = Song::factory(2)->create();
@@ -66,11 +68,13 @@ class InteractionServiceTest extends TestCase
 
             self::assertTrue($interaction->liked);
         });
+
+        Event::assertDispatched(MultipleSongsLiked::class);
     }
 
     public function testUnlikeMultipleSongs(): void
     {
-        $this->expectsEvents(MultipleSongsUnliked::class);
+        Event::fake(MultipleSongsUnliked::class);
         $user = create_user();
 
         /** @var Collection $interactions */
@@ -81,5 +85,7 @@ class InteractionServiceTest extends TestCase
         $interactions->each(static function (Interaction $interaction): void {
             self::assertFalse($interaction->refresh()->liked);
         });
+
+        Event::assertDispatched(MultipleSongsUnliked::class);
     }
 }

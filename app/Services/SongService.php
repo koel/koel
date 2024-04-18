@@ -24,7 +24,7 @@ class SongService
     ) {
     }
 
-    /** @return Collection|array<array-key, Song> */
+    /** @return Collection<array-key, Song> */
     public function updateSongs(array $ids, SongUpdateData $data): Collection
     {
         if (count($ids) === 1) {
@@ -96,7 +96,7 @@ class SongService
     {
         if (License::isPlus()) {
             /**
-             * @var Collection|array<array-key, Song> $collaborativeSongs
+             * @var Collection<array-key, Song> $collaborativeSongs
              * Songs that are in collaborative playlists and can't be marked as private as a result
              */
             $collaborativeSongs = Song::query()
@@ -128,7 +128,7 @@ class SongService
         DB::transaction(function () use ($ids): void {
             $shouldBackUp = config('koel.backup_on_delete');
 
-            /** @var Collection|array<array-key, Song> $songs */
+            /** @var Collection<array-key, Song> $songs */
             $songs = Song::query()->findMany($ids);
 
             Song::destroy($ids);

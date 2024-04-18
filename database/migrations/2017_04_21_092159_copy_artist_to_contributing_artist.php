@@ -8,7 +8,7 @@ class CopyArtistToContributingArtist extends Migration
 {
     public function up(): void
     {
-        /** @var Collection|array<array-key, Song> $songs */
+        /** @var Collection<array-key, Song> $songs */
         $songs = Song::with('album', 'album.artist')->get();
 
         $songs->each(static function (Song $song): void {

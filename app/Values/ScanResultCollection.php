@@ -11,25 +11,25 @@ final class ScanResultCollection extends Collection
         return new self();
     }
 
-    /** @return Collection|array<array-key, ScanResult> */
+    /** @return Collection<array-key, ScanResult> */
     public function valid(): Collection
     {
         return $this->filter(static fn (ScanResult $result): bool => $result->isValid());
     }
 
-    /** @return Collection|array<array-key, ScanResult> */
+    /** @return Collection<array-key, ScanResult> */
     public function success(): Collection
     {
         return $this->filter(static fn (ScanResult $result): bool => $result->isSuccess());
     }
 
-    /** @return Collection|array<array-key, ScanResult> */
+    /** @return Collection<array-key, ScanResult> */
     public function skipped(): Collection
     {
         return $this->filter(static fn (ScanResult $result): bool => $result->isSkipped());
     }
 
-    /** @return Collection|array<array-key, ScanResult> */
+    /** @return Collection<array-key, ScanResult> */
     public function error(): Collection
     {
         return $this->filter(static fn (ScanResult $result): bool => $result->isError());

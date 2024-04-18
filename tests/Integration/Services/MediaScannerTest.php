@@ -13,6 +13,7 @@ use App\Values\ScanConfiguration;
 use App\Values\WatchRecord\InotifyWatchRecord;
 use getID3;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Event;
 use Mockery;
 use Tests\TestCase;
 
@@ -37,10 +38,12 @@ class MediaScannerTest extends TestCase
 
     public function testScan(): void
     {
-        $this->expectsEvents(MediaScanCompleted::class);
+        Event::fake(MediaScanCompleted::class);
 
         $owner = create_admin();
         $this->scanner->scan(ScanConfiguration::make(owner: $owner));
+
+        Event::assertDispatched(MediaScanCompleted::class);
 
         // Standard mp3 files under root path should be recognized
         self::assertDatabaseHas(Song::class, [
@@ -92,8 +95,6 @@ class MediaScannerTest extends TestCase
 
     public function testModifiedFileIsRescanned(): void
     {
-        $this->expectsEvents(MediaScanCompleted::class);
-
         $config = ScanConfiguration::make(owner: create_admin());
         $this->scanner->scan($config);
 
@@ -108,7 +109,7 @@ class MediaScannerTest extends TestCase
 
     public function testRescanWithoutForceDoesNotResetData(): void
     {
-        $this->expectsEvents(MediaScanCompleted::class);
+        Event::fake(MediaScanCompleted::class);
 
         $config = ScanConfiguration::make(owner: create_admin());
 
@@ -131,7 +132,7 @@ class MediaScannerTest extends TestCase
 
     public function testForceScanResetsData(): void
     {
-        $this->expectsEvents(MediaScanCompleted::class);
+        Event::fake(MediaScanCompleted::class);
 
         $owner = create_admin();
         $this->scanner->scan(ScanConfiguration::make(owner: $owner));
@@ -156,7 +157,7 @@ class MediaScannerTest extends TestCase
 
     public function testScanWithIgnoredTags(): void
     {
-        $this->expectsEvents(MediaScanCompleted::class);
+        Event::fake(MediaScanCompleted::class);
 
         $owner = create_admin();
         $this->scanner->scan(ScanConfiguration::make(owner: $owner));
@@ -179,7 +180,7 @@ class MediaScannerTest extends TestCase
 
     public function testScanAllTagsForNewFilesRegardlessOfIgnoredOption(): void
     {
-        $this->expectsEvents(MediaScanCompleted::class);
+        Event::fake(MediaScanCompleted::class);
 
         $owner = create_admin();
         $this->scanner->scan(ScanConfiguration::make(owner: $owner));
@@ -229,7 +230,7 @@ class MediaScannerTest extends TestCase
 
     public function testScanDeletedDirectoryViaWatch(): void
     {
-        $this->expectsEvents(MediaScanCompleted::class);
+        Event::fake(MediaScanCompleted::class);
 
         $config = ScanConfiguration::make(owner: create_admin());
 

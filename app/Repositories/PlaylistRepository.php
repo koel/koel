@@ -9,7 +9,7 @@ use Illuminate\Support\Collection;
 
 class PlaylistRepository extends Repository
 {
-    /** @return array<array-key, Playlist>|Collection<Playlist> */
+    /** @return Collection<array-key, Playlist> */
     public function getAllAccessibleByUser(User $user): Collection
     {
         $ownPlaylists = Playlist::query()

@@ -13,7 +13,6 @@ use Illuminate\Database\Schema\Builder;
 use Illuminate\Database\SQLiteConnection;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Validation\Factory as Validator;
 use SpotifyWebAPI\Session as SpotifySession;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,14 +20,14 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(Builder $schema, DatabaseManager $db, Validator $validator): void
+    public function boot(Builder $schema, DatabaseManager $db): void
     {
         // Fix utf8mb4-related error starting from Laravel 5.4
         $schema->defaultStringLength(191);
 
         // Enable on delete cascade for sqlite connections
         if ($db->connection() instanceof SQLiteConnection) {
-            $db->statement($db->raw('PRAGMA foreign_keys = ON'));
+            $db->statement($db->raw('PRAGMA foreign_keys = ON')->getValue($db->getQueryGrammar()));
         }
 
         // disable wrapping JSON resource in a `data` key

@@ -11,9 +11,9 @@ interface RepositoryInterface
 
     public function findOne($id): ?Model;
 
-    /** @return Collection|array<Model> */
+    /** @return Collection<Model> */
     public function getMany(array $ids, bool $inThatOrder = false): Collection;
 
-    /** @return Collection|array<Model> */
+    /** @return Collection<Model> */
     public function getAll(): Collection;
 }

@@ -32,7 +32,7 @@ class SongBuilder extends Builder
         'albums.name',
     ];
 
-    public function inDirectory(string $path): static
+    public function inDirectory(string $path): self
     {
         // Make sure the path ends with a directory separator.
         $path = rtrim(trim($path), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
@@ -40,7 +40,7 @@ class SongBuilder extends Builder
         return $this->where('path', 'LIKE', "$path%");
     }
 
-    public function withMetaFor(User $user, bool $requiresInteractions = false): static
+    public function withMetaFor(User $user, bool $requiresInteractions = false): self
     {
         $joinClosure = static function (JoinClause $join) use ($user): void {
             $join->on('interactions.song_id', '=', 'songs.id')->where('interactions.user_id', $user->id);
@@ -65,7 +65,7 @@ class SongBuilder extends Builder
             );
     }
 
-    public function accessibleBy(User $user, bool $withTableName = true): static
+    public function accessibleBy(User $user, bool $withTableName = true): self
     {
         if (License::isCommunity()) {
             // In the Community Edition, all songs are accessible by all users.
@@ -78,7 +78,7 @@ class SongBuilder extends Builder
         });
     }
 
-    public function sort(string $column, string $direction): static
+    public function sort(string $column, string $direction): self
     {
         $column = self::normalizeSortColumn($column);
 
@@ -105,7 +105,7 @@ class SongBuilder extends Builder
             : $column;
     }
 
-    public function storedOnCloud(): static
+    public function storedOnCloud(): self
     {
         return $this->whereNotNull('storage')
             ->where('storage', '!=', '');

@@ -10,12 +10,12 @@ use Illuminate\Database\Query\JoinClause;
 
 class AlbumBuilder extends Builder
 {
-    public function isStandard(): static
+    public function isStandard(): self
     {
         return $this->whereNot('albums.id', Album::UNKNOWN_ID);
     }
 
-    public function accessibleBy(User $user): static
+    public function accessibleBy(User $user): self
     {
         if (License::isCommunity()) {
             // With the Community license, all albums are accessible by all users.

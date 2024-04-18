@@ -18,7 +18,7 @@ class UserInvitationService
     {
     }
 
-    /** @return Collection|array<array-key, User> */
+    /** @return Collection<array-key, User> */
     public function invite(array $emails, bool $isAdmin, User $invitor): Collection
     {
         return DB::transaction(function () use ($emails, $isAdmin, $invitor) {

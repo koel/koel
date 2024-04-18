@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Collection as BaseCollection;
 
 class ArtistRepository extends Repository
 {
@@ -43,7 +44,7 @@ class ArtistRepository extends Repository
     }
 
     /** @return Collection|array<array-key, Artist> */
-    public function getMany(array $ids, bool $inThatOrder = false, ?User $user = null): Collection
+    public function getMany(array $ids, bool $inThatOrder = false, ?User $user = null): Collection | BaseCollection
     {
         $artists = Artist::query()
             ->isStandard()

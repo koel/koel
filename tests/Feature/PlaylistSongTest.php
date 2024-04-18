@@ -62,7 +62,7 @@ class PlaylistSongTest extends TestCase
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
 
-        /** @var Collection|array<array-key, Song> $songs */
+        /** @var Collection<array-key, Song> $songs */
         $songs = Song::factory(2)->create();
 
         $this->postAs("api/playlists/$playlist->id/songs", ['songs' => $songs->pluck('id')->all()], $playlist->user)
@@ -78,7 +78,7 @@ class PlaylistSongTest extends TestCase
 
         $toRemainSongs = Song::factory(5)->create();
 
-        /** @var Collection|array<array-key, Song> $toBeRemovedSongs */
+        /** @var Collection<array-key, Song> $toBeRemovedSongs */
         $toBeRemovedSongs = Song::factory(2)->create();
 
         $playlist->addSongs($toRemainSongs->merge($toBeRemovedSongs));

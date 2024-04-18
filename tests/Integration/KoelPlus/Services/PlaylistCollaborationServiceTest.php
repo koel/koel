@@ -10,6 +10,7 @@ use App\Exceptions\PlaylistCollaborationTokenExpiredException;
 use App\Models\Playlist;
 use App\Models\PlaylistCollaborationToken;
 use App\Services\PlaylistCollaborationService;
+use Illuminate\Support\Facades\Event;
 use Tests\PlusTestCase;
 
 use function Tests\create_user;
@@ -49,7 +50,7 @@ class PlaylistCollaborationServiceTest extends PlusTestCase
 
     public function testAcceptUsingToken(): void
     {
-        $this->expectsEvents(NewPlaylistCollaboratorJoined::class);
+        Event::fake(NewPlaylistCollaboratorJoined::class);
 
         /** @var PlaylistCollaborationToken $token */
         $token = PlaylistCollaborationToken::factory()->create();
@@ -59,12 +60,13 @@ class PlaylistCollaborationServiceTest extends PlusTestCase
         $this->service->acceptUsingToken($token->token, $user);
 
         self::assertTrue($token->refresh()->playlist->collaborators->contains($user));
+        Event::assertDispatched(NewPlaylistCollaboratorJoined::class);
     }
 
     public function testFailsToAcceptExpiredToken(): void
     {
         $this->expectException(PlaylistCollaborationTokenExpiredException::class);
-        $this->doesntExpectEvents(NewPlaylistCollaboratorJoined::class);
+        Event::fake(NewPlaylistCollaboratorJoined::class);
 
         /** @var PlaylistCollaborationToken $token */
         $token = PlaylistCollaborationToken::factory()->create();
@@ -75,6 +77,7 @@ class PlaylistCollaborationServiceTest extends PlusTestCase
         $this->service->acceptUsingToken($token->token, $user);
 
         self::assertFalse($token->refresh()->playlist->collaborators->contains($user));
+        Event::assertNotDispatched(NewPlaylistCollaboratorJoined::class);
     }
 
     public function testGetCollaborators(): void

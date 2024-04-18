@@ -17,8 +17,8 @@ final class DropboxStorage extends CloudStorage
 {
     public function __construct(
         protected FileScanner $scanner,
-        private DropboxFilesystem $filesystem,
-        private array $config
+        private readonly DropboxFilesystem $filesystem,
+        private readonly array $config
     ) {
         parent::__construct($scanner);
 
@@ -78,7 +78,7 @@ final class DropboxStorage extends CloudStorage
         return $this->filesystem->temporaryUrl($song->storage_metadata->getPath());
     }
 
-    protected function supported(): bool
+    public function supported(): bool
     {
         return SongStorageTypes::supported(SongStorageTypes::DROPBOX);
     }

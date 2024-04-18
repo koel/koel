@@ -47,7 +47,7 @@ class PlaylistFolderServiceTest extends TestCase
     {
         $user = create_user();
 
-        /** @var Collection|array<array-key, Playlist> $playlists */
+        /** @var Collection<array-key, Playlist> $playlists */
         $playlists = Playlist::factory()->for($user)->count(3)->create();
 
         /** @var PlaylistFolder $folder */
@@ -63,7 +63,7 @@ class PlaylistFolderServiceTest extends TestCase
         /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->create();
 
-        /** @var Collection|array<array-key, Playlist> $playlists */
+        /** @var Collection<array-key, Playlist> $playlists */
         $playlists = Playlist::factory()->count(3)->create();
         $folder->playlists()->attach($playlists->pluck('id')->all());
 
