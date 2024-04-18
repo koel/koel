@@ -30,7 +30,7 @@ class AlbumTest extends TestCase
     }
 
     /** @return array<mixed> */
-    public function provideEmptyAlbumNames(): array
+    public static function provideEmptyAlbumNames(): array
     {
         return [
             [''],

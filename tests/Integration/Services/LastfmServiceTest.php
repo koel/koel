@@ -170,7 +170,7 @@ class LastfmServiceTest extends TestCase
     }
 
     /** @return array<mixed> */
-    public function provideToggleLoveTrackData(): array
+    public static function provideToggleLoveTrackData(): array
     {
         return [[true, 'track.love'], [false, 'track.unlove']];
     }

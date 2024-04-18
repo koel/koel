@@ -1,54 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    bootstrap="bootstrap/autoload.php" colors="true"
-    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
->
-    <coverage processUncoveredFiles="true">
-        <include>
-            <directory suffix=".php">./app/</directory>
-        </include>
-        <exclude>
-            <directory>./app/Console</directory>
-            <directory>./app/Events</directory>
-            <directory>./app/Exceptions</directory>
-            <directory>./app/Facades</directory>
-            <directory>./app/Http/Requests</directory>
-            <directory>./app/Models</directory>
-            <directory>./app/Policies</directory>
-            <directory>./app/Providers</directory>
-            <directory>./app/Repositories</directory>
-        </exclude>
-    </coverage>
-    <testsuites>
-        <testsuite name="feature">
-            <directory suffix="Test.php">./tests/Feature</directory>
-        </testsuite>
-        <testsuite name="unit">
-            <directory suffix="Test.php">./tests/Unit</directory>
-        </testsuite>
-        <testsuite name="integration">
-            <directory suffix="Test.php">./tests/Integration</directory>
-        </testsuite>
-    </testsuites>
-    <php>
-        <env name="APP_ENV" value="testing"/>
-        <env name="APP_URL" value="http://localhost/"/>
-        <env name="APP_KEY" value="16efa6c23c2e8c705826b0e66778fbe7"/>
-        <env name="STORAGE_DRIVER" value="local"/>
-        <env name="CACHE_DRIVER" value="array"/>
-        <env name="SCOUT_DRIVER" value="tntsearch"/> <!-- "database" driver doesn't support SQLite -->
-        <env name="SESSION_DRIVER" value="array"/>
-        <env name="QUEUE_DRIVER" value="sync"/>
-        <env name="DB_CONNECTION" value="sqlite"/>
-        <env name="LASTFM_API_KEY" value="foo"/>
-        <env name="LASTFM_API_SECRET" value="bar"/>
-        <env name="SPOTIFY_CLIENT_ID" value=""/>
-        <env name="SPOTIFY_CLIENT_SECRET" value=""/> <!-- Spotify integration during tests must be opt-in -->
-        <env name="YOUTUBE_API_KEY" value="foo"/>
-        <env name="BROADCAST_DRIVER" value="log"/>
-        <env name="CACHE_MEDIA" value="true"/>
-        <env name="MAIL_MAILER" value="log"/>
-        <ini name="memory_limit" value="1024M"/>
-    </php>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="bootstrap/autoload.php" colors="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd" cacheDirectory=".phpunit.cache">
+  <testsuites>
+    <testsuite name="feature">
+      <directory suffix="Test.php">./tests/Feature</directory>
+    </testsuite>
+    <testsuite name="unit">
+      <directory suffix="Test.php">./tests/Unit</directory>
+    </testsuite>
+    <testsuite name="integration">
+      <directory suffix="Test.php">./tests/Integration</directory>
+    </testsuite>
+  </testsuites>
+  <php>
+    <env name="APP_ENV" value="testing"/>
+    <env name="APP_URL" value="http://localhost/"/>
+    <env name="APP_KEY" value="16efa6c23c2e8c705826b0e66778fbe7"/>
+    <env name="STORAGE_DRIVER" value="local"/>
+    <env name="CACHE_DRIVER" value="array"/>
+      <!-- "database" driver doesn't support SQLite -->
+    <env name="SCOUT_DRIVER" value="tntsearch"/>
+    <env name="SESSION_DRIVER" value="array"/>
+    <env name="QUEUE_DRIVER" value="sync"/>
+    <env name="DB_CONNECTION" value="sqlite"/>
+    <env name="LASTFM_API_KEY" value="foo"/>
+    <env name="LASTFM_API_SECRET" value="bar"/>
+      <!-- Spotify integration during tests must be opt-in -->
+    <env name="SPOTIFY_CLIENT_ID" value=""/>
+    <env name="SPOTIFY_CLIENT_SECRET" value=""/>
+    <env name="YOUTUBE_API_KEY" value="foo"/>
+    <env name="BROADCAST_DRIVER" value="log"/>
+    <env name="CACHE_MEDIA" value="true"/>
+    <env name="MAIL_MAILER" value="log"/>
+    <ini name="memory_limit" value="1024M"/>
+  </php>
+  <source>
+    <include>
+      <directory suffix=".php">./app/</directory>
+    </include>
+    <exclude>
+      <directory>./app/Console</directory>
+      <directory>./app/Events</directory>
+      <directory>./app/Exceptions</directory>
+      <directory>./app/Facades</directory>
+      <directory>./app/Http/Requests</directory>
+      <directory>./app/Models</directory>
+      <directory>./app/Policies</directory>
+      <directory>./app/Providers</directory>
+      <directory>./app/Repositories</directory>
+    </exclude>
+  </source>
 </phpunit>
