@@ -17,7 +17,7 @@ class PlaylistTest extends PlusTestCase
 
         $rule = SmartPlaylistRule::make([
             'model' => 'artist.name',
-            'operator' => SmartPlaylistRule::OPERATOR_IS,
+            'operator' => 'is',
             'value' => ['Bob Dylan'],
         ]);
 
