@@ -20,9 +20,13 @@ If you receive an error, the first step is to take a look at `storage/logs/larav
 Next, look at the browser console for any JavaScript errors.
 While you're at it, check the network tab for any failed requests and try disabling the network cache.
 
-Also, try clearing the cache and recompiling the front-end assets. Below are a couple of commands that might help in this area:
+Also, try clearing the cache, reinstalling dependencies, and recompiling the front-end assets.
+Below are a couple of commands that might help in this area:
 
 ```bash
+# Remove Composer vendor/ directory and reinstall the packages
+rm -rf vendor && composer install
+
 # Clear node_modules, re-install, and re-build the front-end assets
 rm -rf node_modules && yarn install && yarn build
 
