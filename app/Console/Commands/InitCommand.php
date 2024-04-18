@@ -12,6 +12,7 @@ use Illuminate\Database\DatabaseManager as DB;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Str;
 use Jackiedo\DotenvEditor\DotenvEditor;
 use Psr\Log\LoggerInterface;
@@ -330,8 +331,7 @@ class InitCommand extends Command
 
     private static function runOkOrThrow(string $command): void
     {
-        passthru($command, $status);
-        throw_if((bool) $status, InstallationFailedException::class);
+        throw_unless(Process::forever()->run($command)->successful(), InstallationFailedException::class);
     }
 
     private function setMediaPathFromEnvFile(): void
