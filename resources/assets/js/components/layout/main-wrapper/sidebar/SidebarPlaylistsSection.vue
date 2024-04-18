@@ -5,7 +5,7 @@
       <CreatePlaylistContextMenuButton />
     </SidebarSectionHeader>
 
-    <ul v-koel-overflow-fade class="max-h-96">
+    <ul v-koel-overflow-fade class="max-h-[300px] overflow-y-auto">
       <PlaylistSidebarItem :list="{ name: 'Favorites', songs: favorites }" />
       <PlaylistSidebarItem :list="{ name: 'Recently Played', songs: [] }" />
       <PlaylistFolderSidebarItem v-for="folder in folders" :key="folder.id" :folder="folder" />
