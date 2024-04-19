@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Services\AuthenticationService;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
@@ -31,6 +32,20 @@ class AuthTest extends TestCase
             'password' => 'wrong-secret',
         ])
             ->assertUnauthorized();
+    }
+
+    public function testLoginViaOneTimeToken(): void
+    {
+        $user = create_user();
+        $authService = app(AuthenticationService::class);
+        $token = $authService->generateOneTimeToken($user);
+
+        $this->post('api/me/otp', ['token' => $token])
+            ->assertOk()
+            ->assertJsonStructure([
+                'token',
+                'audio-token',
+            ]);
     }
 
     public function testLogOut(): void

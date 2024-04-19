@@ -65,6 +65,8 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
     Route::get('ping', static fn () => null);
 
     Route::post('me', [AuthController::class, 'login'])->name('auth.login');
+    Route::post('me/otp', [AuthController::class, 'loginUsingOneTimeToken']);
+
     Route::delete('me', [AuthController::class, 'logout']);
 
     Route::post('forgot-password', ForgotPasswordController::class);
