@@ -1,5 +1,5 @@
 <template>
-  <form class="min-w-full" @submit.prevent="submit" @keydown.esc="maybeClose">
+  <form class="md:w-[480px] w-full" @submit.prevent="submit" @keydown.esc="maybeClose">
     <header>
       <h1>
         New Playlist

@@ -1,6 +1,6 @@
 <template>
-  <div class="playback-controls flex flex-1 flex-col place-content-center place-items-center">
-    <div class="flex items-center justify-center gap-5 md:gap-12">
+  <div class="playback-controls flex flex-1 flex-col justify-center">
+    <div class="flex items-center justify-between md:justify-center gap-5 md:gap-12 px-4 md:px-0">
       <LikeButton v-if="song" :song="song" class="text-base" />
       <button v-else type="button" /> <!-- a placeholder to maintain the asymmetric layout -->
 

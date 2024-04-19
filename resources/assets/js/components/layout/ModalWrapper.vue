@@ -1,8 +1,7 @@
 <template>
   <dialog
     ref="dialog"
-    class="text-k-text-primary border-0 p-0 rounded-md min-w-[calc(100vm_-_24px)] md:min-w-[460px]
-    max-w-[calc(100vw_-_24px)] bg-k-bg-primary overflow-visible backdrop:bg-black/70"
+    class="text-k-text-primary min-w-full md:min-w-[480px] border-0 p-0 rounded-md bg-k-bg-primary overflow-visible backdrop:bg-black/70"
     @cancel.prevent
   >
     <Component :is="modalNameToComponentMap[activeModalName]" v-if="activeModalName" @close="close" />

@@ -116,6 +116,7 @@ nav {
 
   @media screen and (max-width: 768px) {
     @mixin themed-background;
+    z-index: 999;
 
     transform: translateX(-100vw);
     transition: transform .2s ease-in-out;
