@@ -20,7 +20,7 @@ const oneTimeToken = ref('')
 watch(oneTimeToken, () => {
   qrCodeData.value = base64Encode(JSON.stringify({
     token: oneTimeToken.value,
-    url: window.BASE_URL
+    host: window.BASE_URL
   }))
 })
 
