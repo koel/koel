@@ -1,5 +1,5 @@
 <template>
-  <div class="smart-playlist-form w-[560px]">
+  <div class="smart-playlist-form md:w-[560px]">
     <slot />
   </div>
 </template>

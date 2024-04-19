@@ -1,5 +1,5 @@
 <template>
-  <div class="extra-controls flex justify-end relative md:w-[320px] px-8 py-0">
+  <div class="extra-controls flex justify-end relative md:w-[320px] px-6 md:px-8 py-0">
     <div class="flex justify-end items-center gap-6">
       <FooterBtn
         class="visualizer-btn hidden md:!block"

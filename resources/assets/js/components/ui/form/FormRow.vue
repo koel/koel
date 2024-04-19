@@ -25,13 +25,13 @@ const props = withDefaults(defineProps<{ cols?: number }>(), { cols: 1 })
 const columnClass = computed(() => {
   switch (props.cols) {
     case 1:
-      return ''
+      return 'grid-cols-1'
     case 2:
-      return 'grid-cols-2'
+      return 'md:grid-cols-2'
     case 3:
-      return 'grid-cols-3'
+      return 'md:grid-cols-3'
     case 4:
-      return 'grid-cols-4'
+      return 'md:grid-cols-4'
     default:
       throw new Error('Only 1-4 columns are supported')
   }
