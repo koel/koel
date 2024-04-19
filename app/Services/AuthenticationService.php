@@ -74,9 +74,17 @@ class AuthenticationService
 
     public function generateOneTimeToken(User $user): string
     {
-        $token = bin2hex(random_bytes(16));
-        Cache::set("one-time-token.$user->id", $token, 60 * 10);
+        $token = bin2hex(random_bytes(12));
+        Cache::set("one-time-token.$token", encrypt($user->id), 60 * 10);
 
         return $token;
+    }
+
+    public function loginViaOneTimeToken(string $token): CompositeToken
+    {
+        /** @var User $user */
+        $user = $this->userRepository->getOne(decrypt(Cache::get("one-time-token.$token")));
+
+        return $this->logUserIn($user);
     }
 }
