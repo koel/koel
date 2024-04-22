@@ -42,7 +42,7 @@ const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showErrorDialog, showConfirmDialog } = useDialogBox()
 
-const emailsEl = ref<HTMLTextAreaElement>()
+const emailsEl = ref<InstanceType<typeof TextArea>>()
 const rawEmails = ref('')
 const isAdmin = ref(false)
 
@@ -64,14 +64,14 @@ const submit = async () => {
   })
 
   if (validEmails.length !== emailEntries.length) {
-    emailsEl.value!.setCustomValidity('One or some of the emails you entered are invalid.')
-    emailsEl.value!.reportValidity()
+    emailsEl.value!.el?.setCustomValidity('One or some of the emails you entered are invalid.')
+    emailsEl.value!.el?.reportValidity()
     return
   }
 
   if (validEmails.length === 0) {
-    emailsEl.value!.setCustomValidity('Please enter at least one email address.')
-    emailsEl.value!.reportValidity()
+    emailsEl.value!.el?.setCustomValidity('Please enter at least one email address.')
+    emailsEl.value!.el?.reportValidity()
     return
   }
 

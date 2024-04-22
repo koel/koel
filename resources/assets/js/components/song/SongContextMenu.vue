@@ -105,8 +105,7 @@ const currentSong = toRef(queueStore, 'current')
 
 const { currentUserCan } = usePolicies()
 
-const canEditSongs = currentUserCan.editSong(songs.value)
-
+const canEditSongs = computed(() => currentUserCan.editSong(songs.value))
 const onlyOneSongSelected = computed(() => songs.value.length === 1)
 const firstSongPlaying = computed(() => songs.value.length ? songs.value[0].playback_state === 'Playing' : false)
 const normalPlaylists = computed(() => playlists.value.filter(({ is_smart }) => !is_smart))
@@ -135,9 +134,9 @@ const makePrivate = () => trigger(async () => {
 const canBeShared = computed(() => !isPlus.value || songs.value[0].is_public)
 
 const visibilityActions = computed(() => {
-  if (!canEditSongs) return []
+  if (!canEditSongs.value) return []
 
-  const visibilities = Array.from(new Set(songs.value.map(song => song.is_public)))
+  const visibilities = Array.from(new Set(songs.value.map(song => song.is_public ? 'public' : 'private')))
 
   if (visibilities.length === 2) {
     return [
@@ -152,7 +151,7 @@ const visibilityActions = computed(() => {
     ]
   }
 
-  return visibilities[0]
+  return visibilities[0] === 'public'
     ? [{ label: 'Mark as Private', handler: makePrivate }]
     : [{ label: 'Unmark as Private', handler: makePublic }]
 })

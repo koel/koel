@@ -1,9 +1,9 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-<article class="tw-relative tw-flex tw-place-content-center tw-place-items-center tw-flex-1 tw-text-white/50" data-testid="screen-empty-state">
-  <div class="md:tw-max-w-3/4 tw-px-6 tw-pt-0 tw-mx-auto tw-flex tw-flex-col tw-items-center"><span class="jumbo-icon tw-block tw-text-[6rem] tw-mb-4 tw-opacity-70"><i class="my-icon"></i></span>
-    <div class="text tw-text-center tw-text-3xl tw-font-light tw-flex tw-flex-col tw-gap-2">Nothing here</div>
+<article class="relative flex place-content-center place-items-center flex-1 text-white/50" data-testid="screen-empty-state">
+  <div class="md:max-w-3/4 px-6 pt-0 mx-auto flex flex-col items-center pb-k-header-height"><span class="jumbo-icon block text-[6rem] mb-4 opacity-70"><i class="my-icon"></i></span>
+    <div class="text text-center text-3xl font-light flex flex-col gap-2">Nothing here</div>
   </div>
 </article>
 `;

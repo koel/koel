@@ -33,7 +33,7 @@
       </FormRow>
 
       <FormRow>
-        <Btn type="submit" :disabled="loading">Accept &amp; Log In</Btn>
+        <Btn :disabled="loading" data-testid="submit" type="submit">Accept &amp; Log In</Btn>
       </FormRow>
     </form>
 

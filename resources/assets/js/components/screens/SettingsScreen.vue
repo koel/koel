@@ -23,14 +23,15 @@
         <TextInput
           v-model="mediaPath"
           aria-describedby="mediaPathHelp"
-          name="media_path"
           class="w-full md:!w-2/3"
+          name="media_path"
+          placeholder="/path/to/your/music"
         />
       </FormRow>
 
       <FormRow>
         <div>
-          <Btn type="submit">Scan</Btn>
+          <Btn data-testid="submit" type="submit">Scan</Btn>
         </div>
       </FormRow>
     </form>

@@ -17,8 +17,8 @@ new class extends UnitTestCase {
       settingStore.state.media_path = ''
       this.render(SettingsScreen)
 
-      await this.type(screen.getByLabelText('Media Path'), '/media')
-      await this.user.click(screen.getByRole('button', { name: 'Scan' }))
+      await this.type(screen.getByPlaceholderText('/path/to/your/music'), '/media')
+      await this.user.click(screen.getByTestId('submit'))
 
       await waitFor(() => {
         expect(updateMock).toHaveBeenCalledWith({ media_path: '/media' })
@@ -34,8 +34,8 @@ new class extends UnitTestCase {
       settingStore.state.media_path = '/old'
       this.render(SettingsScreen)
 
-      await this.type(screen.getByLabelText('Media Path'), '/new')
-      await this.user.click(screen.getByRole('button', { name: 'Scan' }))
+      await this.type(screen.getByPlaceholderText('/path/to/your/music'), '/new')
+      await this.user.click(screen.getByTestId('submit'))
 
       await waitFor(() => {
         expect(updateMock).not.toHaveBeenCalled()

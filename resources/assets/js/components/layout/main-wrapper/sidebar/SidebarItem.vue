@@ -3,6 +3,7 @@
     :class="current && 'current'"
     class="relative before:right-0 px-6 before:top-1/4 before:w-[4px] before:h-1/2 before:absolute before:rounded-full
     before:transition-[box-shadow,_background-color] before:ease-in-out before:duration-500"
+    data-testid="sidebar-item"
   >
     <a
       :href="props.href"

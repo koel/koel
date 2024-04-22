@@ -8,6 +8,7 @@ new class extends UnitTestCase {
   protected test () {
     it('resets password', async () => {
       const resetMock = this.mock(authService, 'resetPassword').mockResolvedValue(null)
+      const loginMock = this.mock(authService, 'login').mockResolvedValue(null)
 
       await this.router.activateRoute({
         path: '_',
@@ -19,6 +20,7 @@ new class extends UnitTestCase {
       await this.user.click(screen.getByRole('button', { name: 'Save' }))
 
       expect(resetMock).toHaveBeenCalledWith('foo@bar.com', 'new-password', 'my-token')
+      expect(loginMock).toHaveBeenCalledWith('foo@bar.com', 'new-password')
     })
   }
 }

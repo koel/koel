@@ -30,7 +30,7 @@ new class extends UnitTestCase {
 
       await this.user.type(screen.getByTestId('name'), 'Bruce Dickinson')
       await this.user.type(screen.getByTestId('password'), 'top-secret')
-      await this.user.click(screen.getByRole('button', { name: 'Accept & Log In' }))
+      await this.user.click(screen.getByTestId('submit'))
 
       expect(acceptMock).toHaveBeenCalledWith('my-token', 'Bruce Dickinson', 'top-secret')
     })

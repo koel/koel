@@ -10,7 +10,7 @@ new class extends UnitTestCase {
 
     await this.type(screen.getByPlaceholderText('Email Address'), 'john@doe.com')
     await this.type(screen.getByPlaceholderText('Password'), 'secret')
-    await this.user.click(screen.getByRole('button', { name: 'Log In' }))
+    await this.user.click(screen.getByTestId('submit'))
 
     expect(loginMock).toHaveBeenCalledWith('john@doe.com', 'secret')
 

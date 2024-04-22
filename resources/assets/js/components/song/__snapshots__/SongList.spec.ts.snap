@@ -1,8 +1,8 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-<div class="song-list-wrap tw-relative tw-flex tw-flex-col tw-flex-1 tw-overflow-auto tw-py-0 tw-px-3 md:tw-p-0" data-testid="song-list" tabindex="0">
-  <div class="sortable song-list-header tw-flex tw-z-[2] tw-bg-[var(--color-bg-secondary)]"><span class="track-number" data-testid="header-track-number" role="button" title="Sort by track number"> # <!--v-if--><!--v-if--></span><span class="title-artist" data-testid="header-title" role="button" title="Sort by title"> Title <br data-testid="Icon" icon="[object Object]" class="text-highlight"><!--v-if--></span><span class="album" data-testid="header-album" role="button" title="Sort by album"> Album <!--v-if--><!--v-if--></span>
+<div class="song-list-wrap relative flex flex-col flex-1 overflow-auto py-0 px-3 md:p-0" data-testid="song-list" tabindex="0">
+  <div class="sortable song-list-header flex z-[2] bg-k-bg-secondary"><span class="track-number" data-testid="header-track-number" role="button" title="Sort by track number"> # <!--v-if--><!--v-if--></span><span class="title-artist" data-testid="header-title" role="button" title="Sort by title"> Title <br data-testid="Icon" icon="[object Object]" class="text-k-highlight"><!--v-if--></span><span class="album" data-testid="header-album" role="button" title="Sort by album"> Album <!--v-if--><!--v-if--></span>
     <!--v-if--><span class="time" data-testid="header-length" role="button" title="Sort by song duration"> Time <!--v-if--><!--v-if--></span><span class="extra"><br data-testid="song-list-sorter" field="title" order="asc"></span>
   </div><br data-testid="virtual-scroller" item-height="64" items="[object Object],[object Object],[object Object],[object Object],[object Object]">
 </div>

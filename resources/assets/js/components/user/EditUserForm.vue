@@ -31,6 +31,7 @@
           autocomplete="new-password"
           name="password"
           placeholder="Leave blank for no changes"
+          title="Password"
           type="password"
         />
         <template #help>Min. 10 characters. Should be a mix of characters, numbers, and symbols.</template>
