@@ -74,6 +74,12 @@ interface Window {
 
   readonly MediaMetadata: Constructable<Record<string, any>>
   createLemonSqueezy?: () => Closure
+
+  LemonSqueezy: {
+    Url: {
+      Open: (url: string) => void
+    }
+  }
 }
 
 interface FileSystemDirectoryReader {
