@@ -9,6 +9,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { uuid } from '@/utils'
+
 import MessageToast from '@/components/ui/message-toaster/MessageToast.vue'
 
 const messages = ref<ToastMessage[]>([])

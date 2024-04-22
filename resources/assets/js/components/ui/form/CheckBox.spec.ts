@@ -16,7 +16,7 @@ new class extends UnitTestCase {
     it('emits the input event', async () => {
       const { emitted } = this.render(CheckBox)
 
-      await this.user.click(screen.getByRole('checkbox'))
+      await this.trigger(screen.getByRole('checkbox'), 'click')
 
       expect(emitted()['update:modelValue']).toBeTruthy()
     })
