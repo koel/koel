@@ -32,7 +32,7 @@ const value = computed({
 })
 
 /**
- * Since watching the value and update the slider UI proves to be not performant,
+ * Since watching the value and updating the slider UI proves to be not performant,
  * we defined an explicit method to update the UI and expose it so that the
  * parent component (Equalizer) can call it when resetting the preset.
  */

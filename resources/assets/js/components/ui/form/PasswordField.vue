@@ -1,7 +1,12 @@
 <template>
   <div class="relative">
-    <TextInput v-model="value" :type="type" class="w-full" v-bind="$attrs" />
-    <button class="absolute p-2.5 right-0 top-0 text-k-bg-primary" type="button" @click.prevent="toggleReveal">
+    <TextInput v-model="value" :type="type" class="w-full" data-testid="input" v-bind="$attrs" />
+    <button
+      class="absolute p-2.5 right-0 top-0 text-k-bg-primary"
+      type="button"
+      data-testid="toggle"
+      @click.prevent="toggleReveal"
+    >
       <Icon v-if="type === 'password'" :icon="faEye" />
       <Icon v-else :icon="faEyeSlash" />
     </button>

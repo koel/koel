@@ -4,6 +4,7 @@
     :class="layout"
     draggable="true"
     tabindex="0"
+    data-testid="artist-album-card"
     @dblclick="onDblClick"
     @dragstart="onDragStart"
     @contextmenu.prevent="onContextMenu"

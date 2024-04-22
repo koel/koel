@@ -1,6 +1,6 @@
 import isMobile from 'ismobilejs'
 import { isObject, mergeWith } from 'lodash'
-import { cleanup, render, RenderOptions } from '@testing-library/vue'
+import { cleanup, createEvent, fireEvent, render, RenderOptions } from '@testing-library/vue'
 import { afterEach, beforeEach, vi } from 'vitest'
 import { defineComponent, nextTick } from 'vue'
 import { commonStore, userStore } from '@/stores'
@@ -12,6 +12,7 @@ import { routes } from '@/config'
 import Router from '@/router'
 import userEvent from '@testing-library/user-event'
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup'
+import { EventType } from '@testing-library/dom/types/events'
 
 // A deep-merge function that
 // - supports symbols as keys (_.merge doesn't)
@@ -182,6 +183,10 @@ export default abstract class UnitTestCase {
   protected async type (element: HTMLElement, value: string) {
     await this.user.clear(element)
     await this.user.type(element, value)
+  }
+
+  protected async trigger(element: HTMLElement, key: EventType | string, options?: {}) {
+    await fireEvent(element, createEvent[key](element, options))
   }
 
   protected abstract test ()
