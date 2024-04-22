@@ -51,7 +51,7 @@ const showingActivateLicenseForm = ref(false)
 
 const openPurchaseOverlay = () => {
   close()
-  LemonSqueezy.Url.Open(checkoutUrl.value) // @ts-ignore
+  window.LemonSqueezy.Url.Open(checkoutUrl.value)
 }
 
 const showActivateLicenseForm = () => (showingActivateLicenseForm.value = true)

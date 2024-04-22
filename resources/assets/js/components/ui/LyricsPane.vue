@@ -26,7 +26,7 @@
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, ref, toRefs, watch } from 'vue'
 import { cr2lf, eventBus } from '@/utils'
-import { useKoelPlus, usePolicies } from '@/composables'
+import { usePolicies } from '@/composables'
 import { preferenceStore as preferences } from '@/stores'
 
 const Magnifier = defineAsyncComponent(() => import('@/components/ui/Magnifier.vue'))
