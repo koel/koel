@@ -29,7 +29,7 @@ new class extends UnitTestCase {
         path: '_'
       })
 
-      expect(screen.getByRole('link').classList.contains('active')).toBe(true)
+      expect(screen.getByTestId('sidebar-item').classList.contains('current')).toBe(true)
     })
   }
 }

@@ -1,33 +1,33 @@
 // Vitest Snapshot v1
 
 exports[`edits a single song 1`] = `
-<form data-v-d70eb300="" class="tw-max-w-[540px]">
-  <header data-v-d70eb300="" class="tw-gap-4"><img data-v-d70eb300="" alt="" src="http://test/album.jpg" class="tw-w-[84px] tw-aspect-square tw-object-cover tw-object-center tw-rounded-md">
-    <div data-v-d70eb300="" class="tw-flex-1 tw-flex tw-flex-col tw-justify-center">
+<form data-v-d70eb300="" class="max-w-[540px]">
+  <header data-v-d70eb300="" class="gap-4"><img data-v-d70eb300="" alt="" src="http://test/album.jpg" class="w-[84px] aspect-square object-cover object-center rounded-md">
+    <div data-v-d70eb300="" class="flex-1 flex flex-col justify-center overflow-hidden">
       <h1 data-v-d70eb300="" class="">Rocket to Heaven</h1>
       <h2 data-v-d70eb300="" data-testid="displayed-artist-name" class="">Led Zeppelin</h2>
       <h2 data-v-d70eb300="" data-testid="displayed-album-name" class="">IV</h2>
     </div>
   </header>
-  <main data-v-d70eb300="" class="tabs tw-mt-4 !tw-p-0">
-    <div data-v-d70eb300="" class="clear" role="tablist"><button data-v-d70eb300="" id="editSongTabDetails" aria-selected="true" aria-controls="editSongPanelDetails" role="tab" type="button"> Details </button><button data-v-d70eb300="" id="editSongTabLyrics" aria-selected="false" aria-controls="editSongPanelLyrics" data-testid="edit-song-lyrics-tab" role="tab" type="button"> Lyrics </button></div>
-    <div data-v-d70eb300="" class="panes">
-      <div data-v-d70eb300="" id="editSongPanelDetails" aria-labelledby="editSongTabDetails" role="tabpanel" class="tw-space-y-3" tabindex="0"><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Title</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="text" data-testid="title-input" name="title" title="Title">
+  <div data-v-d70eb300="" class="min-h-full flex flex-col relative mt-4">
+    <nav data-v-d70eb300="" role="tablist" class="overflow-auto border-b-[2px] border-b-white/10 px-6 py-0 flex gap-1 min-h-[36px]"><button data-v-d70eb300="" aria-selected="true" role="tab" type="button" class="cursor-pointer relative px-5 py-3 rounded-t-md opacity-70 bg-white/5 uppercase text-k-text-secondary duration-200 hover:bg-white/10 aria-selected:transition-none aria-selected:text-k-text-primary aria-selected:bg-white/10 aria-selected:opacity-100" id="editSongTabDetails" aria-controls="editSongPanelDetails"> Details </button><button data-v-d70eb300="" aria-selected="false" role="tab" type="button" class="cursor-pointer relative px-5 py-3 rounded-t-md opacity-70 bg-white/5 uppercase text-k-text-secondary duration-200 hover:bg-white/10 aria-selected:transition-none aria-selected:text-k-text-primary aria-selected:bg-white/10 aria-selected:opacity-100" id="editSongTabLyrics" aria-controls="editSongPanelLyrics" data-testid="edit-song-lyrics-tab"> Lyrics </button></nav>
+    <div data-v-d70eb300="" class="p-6 overflow-auto">
+      <div data-v-d70eb300="" role="tabpanel" tabindex="0" id="editSongPanelDetails" aria-labelledby="editSongTabDetails" class="space-y-5"><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Title</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="text" data-testid="title-input" name="title" title="Title">
           <!--v-if-->
         </label>
-        <div data-v-d70eb300="" class="tw-grid tw-gap-3 tw-grid-cols-2"><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Artist</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="text" placeholder="" data-testid="artist-input" name="artist">
+        <div data-v-d70eb300="" class="grid gap-3 md:grid-cols-2"><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Artist</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="text" placeholder="" data-testid="artist-input" name="artist">
             <!--v-if-->
-          </label><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Album Artist</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="text" placeholder="" data-testid="albumArtist-input" name="album_artist">
+          </label><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Album Artist</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="text" placeholder="" data-testid="albumArtist-input" name="album_artist">
             <!--v-if-->
-          </label></div><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Album</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="text" placeholder="" data-testid="album-input" name="album">
+          </label></div><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Album</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="text" placeholder="" data-testid="album-input" name="album">
           <!--v-if-->
         </label>
-        <div data-v-d70eb300="" class="tw-grid tw-gap-3 tw-grid-cols-2"><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Track</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="number" placeholder="" data-testid="track-input" min="1" name="track">
+        <div data-v-d70eb300="" class="grid gap-3 md:grid-cols-2"><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Track</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="number" placeholder="" data-testid="track-input" min="1" name="track">
             <!--v-if-->
-          </label><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Disc</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="number" placeholder="" data-testid="disc-input" min="1" name="disc">
+          </label><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Disc</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="number" placeholder="" data-testid="disc-input" min="1" name="disc">
             <!--v-if-->
           </label></div>
-        <div data-v-d70eb300="" class="tw-grid tw-gap-3 tw-grid-cols-2"><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Genre</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="text" placeholder="" data-testid="genre-input" name="genre" list="genres"><datalist data-v-d70eb300="" id="genres">
+        <div data-v-d70eb300="" class="grid gap-3 md:grid-cols-2"><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Genre</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="text" placeholder="" data-testid="genre-input" name="genre" list="genres"><datalist data-v-d70eb300="" id="genres">
               <option data-v-d70eb300="" value="Blues"></option>
               <option data-v-d70eb300="" value="Classic Rock"></option>
               <option data-v-d70eb300="" value="Country"></option>
@@ -221,49 +221,49 @@ exports[`edits a single song 1`] = `
               <option data-v-d70eb300="" value="Psybient"></option>
             </datalist>
             <!--v-if-->
-          </label><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Year</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="number" placeholder="" data-testid="year-input" name="year">
+          </label><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Year</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="number" placeholder="" data-testid="year-input" name="year">
             <!--v-if-->
           </label></div>
       </div>
-      <div data-v-d70eb300="" id="editSongPanelLyrics" aria-labelledby="editSongTabLyrics" role="tabpanel" tabindex="0" style="display: none;"><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]">
-          <!--v-if--><textarea data-v-2d5f8323="" data-v-d70eb300="" class="tw-px-4 tw-w-full tw-min-h-48 tw-text-base tw-py-2.5 tw-rounded" data-testid="lyrics-input" name="lyrics" title="Lyrics"></textarea>
+      <div data-v-d70eb300="" role="tabpanel" tabindex="0" id="editSongPanelLyrics" aria-labelledby="editSongTabLyrics" style="display: none;"><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]">
+          <!--v-if--><textarea data-v-d70eb300="" class="px-4 w-full min-h-48 text-base py-2.5 rounded text-k-text-input bg-k-bg-input" data-testid="lyrics-input" name="lyrics" title="Lyrics"></textarea>
           <!--v-if-->
         </label></div>
     </div>
-  </main>
-  <footer data-v-d70eb300=""><button data-v-8943c846="" data-v-d70eb300="" class="inset-when-pressed tw-text-base tw-px-4 tw-py-2 tw-rounded tw-cursor-pointer" type="submit">Update</button><button data-v-8943c846="" data-v-d70eb300="" class="inset-when-pressed tw-text-base tw-px-4 tw-py-2 tw-rounded tw-cursor-pointer btn-cancel" white="">Cancel</button></footer>
+  </div>
+  <footer data-v-d70eb300=""><button data-v-8943c846="" data-v-d70eb300="" class="text-base text-k-text-primary bg-k-primary px-4 py-2.5 rounded cursor-pointer" type="submit">Update</button><button data-v-8943c846="" data-v-d70eb300="" class="text-base text-k-text-primary bg-k-primary px-4 py-2.5 rounded cursor-pointer btn-cancel" type="button" white="">Cancel</button></footer>
 </form>
 `;
 
 exports[`edits multiple songs 1`] = `
-<form data-v-d70eb300="" class="tw-max-w-[540px]">
-  <header data-v-d70eb300="" class="tw-gap-4"><img data-v-d70eb300="" alt="" src="undefined/resources/assets/img/covers/default.svg" class="tw-w-[84px] tw-aspect-square tw-object-cover tw-object-center tw-rounded-md">
-    <div data-v-d70eb300="" class="tw-flex-1 tw-flex tw-flex-col tw-justify-center">
+<form data-v-d70eb300="" class="max-w-[540px]">
+  <header data-v-d70eb300="" class="gap-4"><img data-v-d70eb300="" alt="" src="undefined/resources/assets/img/covers/default.svg" class="w-[84px] aspect-square object-cover object-center rounded-md">
+    <div data-v-d70eb300="" class="flex-1 flex flex-col justify-center overflow-hidden">
       <h1 data-v-d70eb300="" class="mixed">3 songs selected</h1>
       <h2 data-v-d70eb300="" data-testid="displayed-artist-name" class="mixed">Mixed Artists</h2>
       <h2 data-v-d70eb300="" data-testid="displayed-album-name" class="mixed">Mixed Albums</h2>
     </div>
   </header>
-  <main data-v-d70eb300="" class="tabs tw-mt-4 !tw-p-0">
-    <div data-v-d70eb300="" class="clear" role="tablist"><button data-v-d70eb300="" id="editSongTabDetails" aria-selected="true" aria-controls="editSongPanelDetails" role="tab" type="button"> Details </button>
+  <div data-v-d70eb300="" class="min-h-full flex flex-col relative mt-4">
+    <nav data-v-d70eb300="" role="tablist" class="overflow-auto border-b-[2px] border-b-white/10 px-6 py-0 flex gap-1 min-h-[36px]"><button data-v-d70eb300="" aria-selected="true" role="tab" type="button" class="cursor-pointer relative px-5 py-3 rounded-t-md opacity-70 bg-white/5 uppercase text-k-text-secondary duration-200 hover:bg-white/10 aria-selected:transition-none aria-selected:text-k-text-primary aria-selected:bg-white/10 aria-selected:opacity-100" id="editSongTabDetails" aria-controls="editSongPanelDetails"> Details </button>
       <!--v-if-->
-    </div>
-    <div data-v-d70eb300="" class="panes">
-      <div data-v-d70eb300="" id="editSongPanelDetails" aria-labelledby="editSongTabDetails" role="tabpanel" class="tw-space-y-3" tabindex="0">
+    </nav>
+    <div data-v-d70eb300="" class="p-6 overflow-auto">
+      <div data-v-d70eb300="" role="tabpanel" tabindex="0" id="editSongPanelDetails" aria-labelledby="editSongTabDetails" class="space-y-5">
         <!--v-if-->
-        <div data-v-d70eb300="" class="tw-grid tw-gap-3 tw-grid-cols-2"><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Artist</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="text" placeholder="Leave unchanged" data-testid="artist-input" name="artist">
+        <div data-v-d70eb300="" class="grid gap-3 md:grid-cols-2"><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Artist</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="text" placeholder="Leave unchanged" data-testid="artist-input" name="artist">
             <!--v-if-->
-          </label><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Album Artist</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="text" placeholder="Leave unchanged" data-testid="albumArtist-input" name="album_artist">
+          </label><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Album Artist</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="text" placeholder="Leave unchanged" data-testid="albumArtist-input" name="album_artist">
             <!--v-if-->
-          </label></div><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Album</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="text" placeholder="Leave unchanged" data-testid="album-input" name="album">
+          </label></div><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Album</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="text" placeholder="Leave unchanged" data-testid="album-input" name="album">
           <!--v-if-->
         </label>
-        <div data-v-d70eb300="" class="tw-grid tw-gap-3 tw-grid-cols-2"><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Track</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="number" placeholder="Leave unchanged" data-testid="track-input" min="1" name="track">
+        <div data-v-d70eb300="" class="grid gap-3 md:grid-cols-2"><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Track</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="number" placeholder="Leave unchanged" data-testid="track-input" min="1" name="track">
             <!--v-if-->
-          </label><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Disc</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="number" placeholder="Leave unchanged" data-testid="disc-input" min="1" name="disc">
+          </label><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Disc</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="number" placeholder="Leave unchanged" data-testid="disc-input" min="1" name="disc">
             <!--v-if-->
           </label></div>
-        <div data-v-d70eb300="" class="tw-grid tw-gap-3 tw-grid-cols-2"><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Genre</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="text" placeholder="Leave unchanged" data-testid="genre-input" name="genre" list="genres"><datalist data-v-d70eb300="" id="genres">
+        <div data-v-d70eb300="" class="grid gap-3 md:grid-cols-2"><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Genre</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="text" placeholder="Leave unchanged" data-testid="genre-input" name="genre" list="genres"><datalist data-v-d70eb300="" id="genres">
               <option data-v-d70eb300="" value="Blues"></option>
               <option data-v-d70eb300="" value="Classic Rock"></option>
               <option data-v-d70eb300="" value="Country"></option>
@@ -457,13 +457,13 @@ exports[`edits multiple songs 1`] = `
               <option data-v-d70eb300="" value="Psybient"></option>
             </datalist>
             <!--v-if-->
-          </label><label data-v-d70eb300="" class="tw-flex tw-flex-col tw-gap-2 tw-text-[1.1rem]"><span>Year</span><input data-v-2ca3bb69="" data-v-d70eb300="" class="tw-text-base tw-w-full tw-px-4 tw-py-2.5 tw-rounded" type="number" placeholder="Leave unchanged" data-testid="year-input" name="year">
+          </label><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Year</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="number" placeholder="Leave unchanged" data-testid="year-input" name="year">
             <!--v-if-->
           </label></div>
       </div>
       <!--v-if-->
     </div>
-  </main>
-  <footer data-v-d70eb300=""><button data-v-8943c846="" data-v-d70eb300="" class="inset-when-pressed tw-text-base tw-px-4 tw-py-2 tw-rounded tw-cursor-pointer" type="submit">Update</button><button data-v-8943c846="" data-v-d70eb300="" class="inset-when-pressed tw-text-base tw-px-4 tw-py-2 tw-rounded tw-cursor-pointer btn-cancel" white="">Cancel</button></footer>
+  </div>
+  <footer data-v-d70eb300=""><button data-v-8943c846="" data-v-d70eb300="" class="text-base text-k-text-primary bg-k-primary px-4 py-2.5 rounded cursor-pointer" type="submit">Update</button><button data-v-8943c846="" data-v-d70eb300="" class="text-base text-k-text-primary bg-k-primary px-4 py-2.5 rounded cursor-pointer btn-cancel" type="button" white="">Cancel</button></footer>
 </form>
 `;

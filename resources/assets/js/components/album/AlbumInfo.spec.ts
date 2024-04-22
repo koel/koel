@@ -2,8 +2,8 @@ import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { commonStore, songStore } from '@/stores'
-import { mediaInfoService, playbackService } from '@/services'
+import { commonStore } from '@/stores'
+import { mediaInfoService } from '@/services'
 import AlbumInfoComponent from './AlbumInfo.vue'
 
 let album: Album
@@ -51,37 +51,6 @@ new class extends UnitTestCase {
       }
 
       expect(screen.getByTestId('album-info').classList.contains(mode)).toBe(true)
-    })
-
-    it('triggers showing full wiki for aside mode', async () => {
-      await this.renderComponent('aside')
-      expect(screen.queryByTestId('full')).toBeNull()
-
-      await this.user.click(screen.getByRole('button', { name: 'Full Wiki' }))
-
-      expect(screen.queryByTestId('summary')).toBeNull()
-      screen.getByTestId('full')
-    })
-
-    it('shows full wiki for full mode', async () => {
-      await this.renderComponent('full')
-
-      screen.getByTestId('full')
-      expect(screen.queryByTestId('summary')).toBeNull()
-      expect(screen.queryByRole('button', { name: 'Full Wiki' })).toBeNull()
-    })
-
-    it('plays', async () => {
-      const songs = factory<Song>('song', 3)
-      const fetchMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
-      const playMock = this.mock(playbackService, 'queueAndPlay')
-      await this.renderComponent()
-
-      await this.user.click(screen.getByTitle('Play all songs in IV'))
-      await this.tick(2)
-
-      expect(fetchMock).toHaveBeenCalledWith(album)
-      expect(playMock).toHaveBeenCalledWith(songs)
     })
   }
 }

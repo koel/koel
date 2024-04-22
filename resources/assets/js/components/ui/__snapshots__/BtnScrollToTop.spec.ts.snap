@@ -1,3 +1,3 @@
 // Vitest Snapshot v1
 
-exports[`renders 1`] = `<transition-stub data-v-7be58792="" name="fade" appear="false" persisted="true" css="true"><button data-v-7be58792="" title="Scroll to top" class="sm:tw-hidden tw-block tw-fixed tw-right-[1.8rem] tw-z-20 tw-opacity-100 tw-duration-500 tw-transition-opacity tw-rounded-full tw-py-2 tw-px-4 tw-bg-black/50" type="button" style="display: none;"><br data-v-7be58792="" data-testid="Icon" icon="[object Object]">&nbsp; Top </button></transition-stub>`;
+exports[`renders 1`] = `<transition-stub data-v-7be58792="" name="fade" appear="false" persisted="true" css="true"><button data-v-7be58792="" title="Scroll to top" class="sm:hidden block fixed right-[1.8rem] z-20 opacity-100 duration-500 transition-opacity rounded-full py-2 px-4 bg-black/50" type="button" style="display: none;"><br data-v-7be58792="" data-testid="Icon" icon="[object Object]">&nbsp; Top </button></transition-stub>`;

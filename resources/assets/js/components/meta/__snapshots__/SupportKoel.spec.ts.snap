@@ -1,7 +1,7 @@
 // Vitest Snapshot v1
 
 exports[`shows after a delay 1`] = `
-<div data-v-c8ee2518="" class="support-bar" data-testid="support-bar">
-  <p data-v-c8ee2518=""> Loving Koel? Please consider supporting its development via <a data-v-c8ee2518="" href="https://github.com/users/phanan/sponsorship" rel="noopener" target="_blank">GitHub Sponsors</a> and/or <a data-v-c8ee2518="" href="https://opencollective.com/koel" rel="noopener" target="_blank">OpenCollective</a>. </p><button data-v-c8ee2518="" type="button">Hide</button><span data-v-c8ee2518="" class="sep"></span><button data-v-c8ee2518="" type="button"> Don't bug me again </button>
+<div data-v-c8ee2518="" class="bg-k-bg-primary text-[0.9rem] px-6 py-4 flex text-k-text-secondary z-10 space-x-3" data-testid="support-bar">
+  <p data-v-c8ee2518="" class="flex-1"> Loving Koel? Please consider supporting its development via <a data-v-c8ee2518="" href="https://github.com/users/phanan/sponsorship" rel="noopener" target="_blank">GitHub Sponsors</a> and/or <a data-v-c8ee2518="" href="https://opencollective.com/koel" rel="noopener" target="_blank">OpenCollective</a>. </p><button data-v-c8ee2518="" type="button">Hide</button><span data-v-c8ee2518="" class="block after:content-['•'] after:block"></span><button data-v-c8ee2518="" type="button"> Don't bug me again </button>
 </div>
 `;

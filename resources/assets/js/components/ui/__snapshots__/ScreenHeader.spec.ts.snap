@@ -1,11 +1,11 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-<header data-v-5691beb5="" class="screen-header tw-min-h-0 md:tw-min-h-full tw-flex tw-items-end tw-flex-shrink-0 tw-relative tw-content-stretch tw-leading-normal tw-p-6 expanded">
-  <aside data-v-5691beb5="" class="thumbnail-wrapper tw-hidden md:tw-block tw-overflow-hidden tw-w-0 tw-rounded-md"><img data-v-5691beb5-s="" src="https://placekitten.com/200/300"></aside>
-  <main data-v-5691beb5="" class="tw-flex tw-flex-1 tw-gap-5 tw-items-center tw-overflow-hidden">
-    <div data-v-5691beb5="" class="tw-w-full tw-flex-1 tw-overflow-hidden">
-      <h1 data-v-5691beb5="" class="name tw-overflow-hidden tw-whitespace-nowrap tw-text-ellipsis tw-mr-4 tw-font-thin md:tw-font-bold tw-my-0 tw-leading-tight">This Header</h1><span data-v-5691beb5="" class="meta text-secondary tw-hidden tw-text-[0.9rem] tw-leading-loose"><p data-v-5691beb5-s="">Some meta</p></span>
+<header data-v-5691beb5="" class="screen-header min-h-0 md:min-h-full flex items-end flex-shrink-0 relative content-stretch leading-normal p-6 border-b border-b-k-bg-secondary expanded">
+  <aside data-v-5691beb5="" class="thumbnail-wrapper hidden md:block overflow-hidden w-0 rounded-md"><img data-v-5691beb5-s="" src="https://placekitten.com/200/300"></aside>
+  <main data-v-5691beb5="" class="flex flex-1 gap-5 items-center overflow-hidden">
+    <div data-v-5691beb5="" class="w-full flex-1 overflow-hidden">
+      <h1 data-v-5691beb5="" class="name overflow-hidden whitespace-nowrap text-ellipsis mr-4 font-thin md:font-bold my-0 leading-tight">This Header</h1><span data-v-5691beb5="" class="meta text-k-text-secondary hidden text-[0.9rem] leading-loose"><p data-v-5691beb5-s="">Some meta</p></span>
     </div>
     <nav data-v-5691beb5-s="">Some controls</nav>
   </main>

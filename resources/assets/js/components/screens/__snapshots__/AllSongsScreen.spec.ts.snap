@@ -1,32 +1,32 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-<section data-v-dcfb8776="" data-v-8ea4eaa5="" class="tw-max-h-full tw-min-h-full tw-w-full tw-flex tw-flex-col tw-transform-gpu">
-  <header data-v-5691beb5="" data-v-8ea4eaa5="" class="screen-header tw-min-h-0 md:tw-min-h-full tw-flex tw-items-end tw-flex-shrink-0 tw-relative tw-content-stretch tw-leading-normal tw-p-6 expanded">
-    <aside data-v-5691beb5="" class="thumbnail-wrapper tw-hidden md:tw-block tw-overflow-hidden tw-w-0 tw-rounded-md">
-      <article data-v-55bfc268="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="single thumbnail-stack tw-aspect-square tw-overflow-hidden tw-grid tw-bg-cover tw-bg-no-repeat" style="background-image: url(undefined/resources/assets/img/covers/default.svg);"><span data-v-55bfc268="" class="tw-block tw-will-change-transform tw-w-full tw-h-full tw-bg-cover tw-bg-no-repeat" data-testid="thumbnail"></span></article>
+<section data-v-dcfb8776="" data-v-8ea4eaa5="" class="max-h-full min-h-full w-full flex flex-col transform-gpu">
+  <header data-v-5691beb5="" data-v-8ea4eaa5="" class="screen-header min-h-0 md:min-h-full flex items-end flex-shrink-0 relative content-stretch leading-normal p-6 border-b border-b-k-bg-secondary expanded">
+    <aside data-v-5691beb5="" class="thumbnail-wrapper hidden md:block overflow-hidden w-0 rounded-md">
+      <article data-v-55bfc268="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="single thumbnail-stack aspect-square overflow-hidden grid bg-cover bg-no-repeat" style="background-image: url(undefined/resources/assets/img/covers/default.svg);"><span data-v-55bfc268="" class="block will-change-transform w-full h-full bg-cover bg-no-repeat" data-testid="thumbnail"></span></article>
     </aside>
-    <main data-v-5691beb5="" class="tw-flex tw-flex-1 tw-gap-5 tw-items-center tw-overflow-hidden">
-      <div data-v-5691beb5="" class="tw-w-full tw-flex-1 tw-overflow-hidden">
-        <h1 data-v-5691beb5="" class="name tw-overflow-hidden tw-whitespace-nowrap tw-text-ellipsis tw-mr-4 tw-font-thin md:tw-font-bold tw-my-0 tw-leading-tight"> All Songs
+    <main data-v-5691beb5="" class="flex flex-1 gap-5 items-center overflow-hidden">
+      <div data-v-5691beb5="" class="w-full flex-1 overflow-hidden">
+        <h1 data-v-5691beb5="" class="name overflow-hidden whitespace-nowrap text-ellipsis mr-4 font-thin md:font-bold my-0 leading-tight"> All Songs
           <!--v-if-->
-        </h1><span data-v-5691beb5="" class="meta text-secondary tw-hidden tw-text-[0.9rem] tw-leading-loose"><span data-v-8ea4eaa5="" data-v-5691beb5-s="">420 songs</span><span data-v-8ea4eaa5="" data-v-5691beb5-s="">10 sec</span></span>
+        </h1><span data-v-5691beb5="" class="meta text-k-text-secondary hidden text-[0.9rem] leading-loose"><span data-v-8ea4eaa5="" data-v-5691beb5-s="">420 songs</span><span data-v-8ea4eaa5="" data-v-5691beb5-s="">10 sec</span></span>
       </div>
-      <div data-v-8ea4eaa5="" data-v-5691beb5-s="" class="controls tw-w-full tw-min-h-[32px] tw-flex tw-justify-between tw-items-center tw-gap-4">
-        <div data-v-8ea4eaa5="" data-v-5691beb5-s="" class="tw-relative" data-testid="song-list-controls">
-          <div class="tw-flex tw-gap-2 tw-flex-wrap"><span data-v-cf9b67d8="" class="btn-group tw-inline-block tw-relative tw-flex-nowrap" uppercased=""><button data-v-8943c846="" class="inset-when-pressed tw-text-base tw-px-4 tw-py-2 tw-rounded tw-cursor-pointer btn-shuffle-all" data-testid="btn-shuffle-all" orange="" title="Shuffle all. Press Alt/⌥ to change mode."><br data-testid="Icon" icon="[object Object]" fixed-width=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
+      <div data-v-8ea4eaa5="" data-v-5691beb5-s="" class="controls w-full min-h-[32px] flex justify-between items-center gap-4">
+        <div data-v-8ea4eaa5="" data-v-5691beb5-s="" class="relative" data-testid="song-list-controls">
+          <div class="flex gap-2 flex-wrap"><span data-v-cf9b67d8="" class="btn-group inline-block relative flex-nowrap" uppercased=""><button data-v-8943c846="" class="text-base text-k-text-primary bg-k-primary px-4 py-2.5 rounded cursor-pointer btn-shuffle-all" type="button" data-testid="btn-shuffle-all" highlight="" title="Shuffle all. Press Alt/⌥ to change mode."><br data-testid="Icon" icon="[object Object]" fixed-width=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
             <!--v-if-->
             <!--v-if-->
           </div>
-          <div class="context-menu tw-p-0 tw-hidden">
-            <div data-v-42061e3e="" class="add-to tw-w-full tw-max-w-64 tw-min-w-48 tw-p-3 tw-space-y-3" data-testid="add-to-menu" tabindex="0">
+          <div class="context-menu p-0 hidden">
+            <div data-v-42061e3e="" class="add-to w-full max-w-[256px] min-w-[200px] p-3 space-y-3" data-testid="add-to-menu" tabindex="0">
               <section data-v-42061e3e="" class="existing-playlists">
-                <p data-v-42061e3e="" class="tw-mb-2 tw-text-[0.9rem]">Add 0 songs to</p>
-                <ul data-v-42061e3e="" class="tw-relative tw-max-h-48 tw-overflow-y-scroll tw-space-y-1.5">
+                <p data-v-42061e3e="" class="mb-2 text-[0.9rem]">Add 0 songs to</p>
+                <ul data-v-42061e3e="" class="relative max-h-48 overflow-y-scroll space-y-1.5">
                   <li data-v-42061e3e="" data-testid="queue" tabindex="0">Queue</li>
                   <li data-v-42061e3e="" class="favorites" data-testid="add-to-favorites" tabindex="0"> Favorites </li>
                 </ul>
-              </section><button data-v-8943c846="" data-v-42061e3e="" class="inset-when-pressed tw-text-base tw-px-4 tw-py-2 tw-rounded tw-cursor-pointer !tw-w-full !tw-border !tw-border-solid !tw-border-white/20" transparent=""> New Playlist… </button>
+              </section><button data-v-8943c846="" data-v-42061e3e="" class="text-base text-k-text-primary bg-k-primary px-4 py-2.5 rounded cursor-pointer !w-full !border !border-solid !border-white/20" type="button" transparent=""> New Playlist… </button>
             </div>
           </div>
         </div>
@@ -34,43 +34,43 @@ exports[`renders 1`] = `
       </div>
     </main>
   </header>
-  <main data-v-dcfb8776="" class="tw-overflow-scroll tw-flex tw-flex-col tw-b-16 md:tw-b-6 tw-p-6 tw-flex-1 tw-place-content-start"><br data-v-8ea4eaa5="" data-testid="song-list" class="-tw-m-6"></main>
+  <main data-v-dcfb8776="" class="overflow-scroll flex flex-col b-16 md:b-6 p-6 flex-1 place-content-start"><br data-v-8ea4eaa5="" data-testid="song-list" class="-m-6"></main>
 </section>
 `;
 
 exports[`renders in Plus edition 1`] = `
-<section data-v-dcfb8776="" data-v-8ea4eaa5="" class="tw-max-h-full tw-min-h-full tw-w-full tw-flex tw-flex-col tw-transform-gpu">
-  <header data-v-5691beb5="" data-v-8ea4eaa5="" class="screen-header tw-min-h-0 md:tw-min-h-full tw-flex tw-items-end tw-flex-shrink-0 tw-relative tw-content-stretch tw-leading-normal tw-p-6 expanded">
-    <aside data-v-5691beb5="" class="thumbnail-wrapper tw-hidden md:tw-block tw-overflow-hidden tw-w-0 tw-rounded-md">
-      <article data-v-55bfc268="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="single thumbnail-stack tw-aspect-square tw-overflow-hidden tw-grid tw-bg-cover tw-bg-no-repeat" style="background-image: url(undefined/resources/assets/img/covers/default.svg);"><span data-v-55bfc268="" class="tw-block tw-will-change-transform tw-w-full tw-h-full tw-bg-cover tw-bg-no-repeat" data-testid="thumbnail"></span></article>
+<section data-v-dcfb8776="" data-v-8ea4eaa5="" class="max-h-full min-h-full w-full flex flex-col transform-gpu">
+  <header data-v-5691beb5="" data-v-8ea4eaa5="" class="screen-header min-h-0 md:min-h-full flex items-end flex-shrink-0 relative content-stretch leading-normal p-6 border-b border-b-k-bg-secondary expanded">
+    <aside data-v-5691beb5="" class="thumbnail-wrapper hidden md:block overflow-hidden w-0 rounded-md">
+      <article data-v-55bfc268="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="single thumbnail-stack aspect-square overflow-hidden grid bg-cover bg-no-repeat" style="background-image: url(undefined/resources/assets/img/covers/default.svg);"><span data-v-55bfc268="" class="block will-change-transform w-full h-full bg-cover bg-no-repeat" data-testid="thumbnail"></span></article>
     </aside>
-    <main data-v-5691beb5="" class="tw-flex tw-flex-1 tw-gap-5 tw-items-center tw-overflow-hidden">
-      <div data-v-5691beb5="" class="tw-w-full tw-flex-1 tw-overflow-hidden">
-        <h1 data-v-5691beb5="" class="name tw-overflow-hidden tw-whitespace-nowrap tw-text-ellipsis tw-mr-4 tw-font-thin md:tw-font-bold tw-my-0 tw-leading-tight"> All Songs
+    <main data-v-5691beb5="" class="flex flex-1 gap-5 items-center overflow-hidden">
+      <div data-v-5691beb5="" class="w-full flex-1 overflow-hidden">
+        <h1 data-v-5691beb5="" class="name overflow-hidden whitespace-nowrap text-ellipsis mr-4 font-thin md:font-bold my-0 leading-tight"> All Songs
           <!--v-if-->
-        </h1><span data-v-5691beb5="" class="meta text-secondary tw-hidden tw-text-[0.9rem] tw-leading-loose"><span data-v-8ea4eaa5="" data-v-5691beb5-s="">420 songs</span><span data-v-8ea4eaa5="" data-v-5691beb5-s="">10 sec</span></span>
+        </h1><span data-v-5691beb5="" class="meta text-k-text-secondary hidden text-[0.9rem] leading-loose"><span data-v-8ea4eaa5="" data-v-5691beb5-s="">420 songs</span><span data-v-8ea4eaa5="" data-v-5691beb5-s="">10 sec</span></span>
       </div>
-      <div data-v-8ea4eaa5="" data-v-5691beb5-s="" class="controls tw-w-full tw-min-h-[32px] tw-flex tw-justify-between tw-items-center tw-gap-4">
-        <div data-v-8ea4eaa5="" data-v-5691beb5-s="" class="tw-relative" data-testid="song-list-controls">
-          <div class="tw-flex tw-gap-2 tw-flex-wrap"><span data-v-cf9b67d8="" class="btn-group tw-inline-block tw-relative tw-flex-nowrap" uppercased=""><button data-v-8943c846="" class="inset-when-pressed tw-text-base tw-px-4 tw-py-2 tw-rounded tw-cursor-pointer btn-shuffle-all" data-testid="btn-shuffle-all" orange="" title="Shuffle all. Press Alt/⌥ to change mode."><br data-testid="Icon" icon="[object Object]" fixed-width=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
+      <div data-v-8ea4eaa5="" data-v-5691beb5-s="" class="controls w-full min-h-[32px] flex justify-between items-center gap-4">
+        <div data-v-8ea4eaa5="" data-v-5691beb5-s="" class="relative" data-testid="song-list-controls">
+          <div class="flex gap-2 flex-wrap"><span data-v-cf9b67d8="" class="btn-group inline-block relative flex-nowrap" uppercased=""><button data-v-8943c846="" class="text-base text-k-text-primary bg-k-primary px-4 py-2.5 rounded cursor-pointer btn-shuffle-all" type="button" data-testid="btn-shuffle-all" highlight="" title="Shuffle all. Press Alt/⌥ to change mode."><br data-testid="Icon" icon="[object Object]" fixed-width=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
             <!--v-if-->
             <!--v-if-->
           </div>
-          <div class="context-menu tw-p-0 tw-hidden">
-            <div data-v-42061e3e="" class="add-to tw-w-full tw-max-w-64 tw-min-w-48 tw-p-3 tw-space-y-3" data-testid="add-to-menu" tabindex="0">
+          <div class="context-menu p-0 hidden">
+            <div data-v-42061e3e="" class="add-to w-full max-w-[256px] min-w-[200px] p-3 space-y-3" data-testid="add-to-menu" tabindex="0">
               <section data-v-42061e3e="" class="existing-playlists">
-                <p data-v-42061e3e="" class="tw-mb-2 tw-text-[0.9rem]">Add 0 songs to</p>
-                <ul data-v-42061e3e="" class="tw-relative tw-max-h-48 tw-overflow-y-scroll tw-space-y-1.5">
+                <p data-v-42061e3e="" class="mb-2 text-[0.9rem]">Add 0 songs to</p>
+                <ul data-v-42061e3e="" class="relative max-h-48 overflow-y-scroll space-y-1.5">
                   <li data-v-42061e3e="" data-testid="queue" tabindex="0">Queue</li>
                   <li data-v-42061e3e="" class="favorites" data-testid="add-to-favorites" tabindex="0"> Favorites </li>
                 </ul>
-              </section><button data-v-8943c846="" data-v-42061e3e="" class="inset-when-pressed tw-text-base tw-px-4 tw-py-2 tw-rounded tw-cursor-pointer !tw-w-full !tw-border !tw-border-solid !tw-border-white/20" transparent=""> New Playlist… </button>
+              </section><button data-v-8943c846="" data-v-42061e3e="" class="text-base text-k-text-primary bg-k-primary px-4 py-2.5 rounded cursor-pointer !w-full !border !border-solid !border-white/20" type="button" transparent=""> New Playlist… </button>
             </div>
           </div>
-        </div><label data-v-8ea4eaa5="" data-v-5691beb5-s="" class="text-secondary tw-inline-flex tw-items-center tw-text-base"><span data-v-bf5853cb="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="tw-relative tw-align-bottom tw-inline-block tw-w-[32px] tw-h-[20px] tw-bg-gray-300 tw-rounded-full tw-shadow-inner tw-cursor-pointer tw-transition-all tw-duration-200 tw-ease-in-out tw-mr-2 after:tw-h-[16px] after:tw-aspect-square after:tw-absolute after:tw-bg-white after:tw-top-[2px] after:tw-left-[2px] after:tw-rounded-full after:tw-transition-left after:tw-duration-200 after:tw-ease-in-out"><input data-v-bf5853cb="" type="checkbox" class="tw-hidden"></span><span data-v-8ea4eaa5="" data-v-5691beb5-s="">Own songs only</span></label>
+        </div><label data-v-8ea4eaa5="" data-v-5691beb5-s="" class="text-k-text-secondary inline-flex items-center text-base"><span data-v-8ea4eaa5="" data-v-5691beb5-s="" class="relative align-bottom inline-block w-[32px] h-[20px] bg-gray-300 rounded-full shadow-inner cursor-pointer transition-all duration-200 ease-in-out mr-2 after:h-[16px] after:aspect-square after:absolute after:bg-white after:top-[2px] after:left-[2px] after:rounded-full after:transition-left after:duration-200 after:ease-in-out has-[:checked]:bg-k-highlight has-[:checked]:after:left-[14px]"><input type="checkbox" class="hidden"></span><span data-v-8ea4eaa5="" data-v-5691beb5-s="">Own songs only</span></label>
       </div>
     </main>
   </header>
-  <main data-v-dcfb8776="" class="tw-overflow-scroll tw-flex tw-flex-col tw-b-16 md:tw-b-6 tw-p-6 tw-flex-1 tw-place-content-start"><br data-v-8ea4eaa5="" data-testid="song-list" class="-tw-m-6"></main>
+  <main data-v-dcfb8776="" class="overflow-scroll flex flex-col b-16 md:b-6 p-6 flex-1 place-content-start"><br data-v-8ea4eaa5="" data-testid="song-list" class="-m-6"></main>
 </section>
 `;

@@ -15,7 +15,7 @@ new class extends UnitTestCase {
 
       await this.type(screen.getByRole('textbox', { name: 'Name' }), 'John Doe')
       await this.type(screen.getByRole('textbox', { name: 'Email' }), 'john@doe.com')
-      await this.type(screen.getByLabelText('Password'), 'secret-password')
+      await this.type(screen.getByTitle('Password'), 'secret-password')
       await this.user.click(screen.getByRole('checkbox'))
       await this.user.click(screen.getByRole('button', { name: 'Save' }))
 
