@@ -29,15 +29,17 @@
 
   <AcceptInvitation v-if="layout === 'invitation'" />
   <ResetPasswordForm v-if="layout === 'reset-password'" />
+
+  <AppInitializer v-if="initializing" @success="onInitSuccess" @error="onInitError" />
 </template>
 
 <script lang="ts" setup>
 import { defineAsyncComponent, onMounted, provide, ref, watch } from 'vue'
 import { useOnline } from '@vueuse/core'
-import { commonStore, preferenceStore as preferences, queueStore } from '@/stores'
-import { authService, socketListener, socketService, uploadService } from '@/services'
+import { queueStore } from '@/stores'
+import { authService } from '@/services'
 import { CurrentSongKey, DialogBoxKey, MessageToasterKey, OverlayKey } from '@/symbols'
-import { useRouter, useOverlay } from '@/composables'
+import { useRouter } from '@/composables'
 
 import DialogBox from '@/components/ui/DialogBox.vue'
 import MessageToaster from '@/components/ui/message-toaster/MessageToaster.vue'
@@ -50,6 +52,7 @@ import AppFooter from '@/components/layout/app-footer/index.vue'
 
 // GlobalEventListener must NOT be lazy-loaded, so that it can handle LOG_OUT event properly.
 import GlobalEventListeners from '@/components/utils/GlobalEventListeners.vue'
+import AppInitializer from '@/components/utils/AppInitializer.vue'
 
 const Hotkeys = defineAsyncComponent(() => import('@/components/utils/HotkeyListener.vue'))
 const LoginForm = defineAsyncComponent(() => import('@/components/auth/LoginForm.vue'))
@@ -76,18 +79,28 @@ const layout = ref<'main' | 'auth' | 'invitation' | 'reset-password'>()
 const { isCurrentScreen, getCurrentScreen, resolveRoute } = useRouter()
 const online = useOnline()
 
-/**
- * Request for notification permission if it's not provided and the user is OK with notifications.
- */
-const requestNotificationPermission = async () => {
-  if (preferences.show_now_playing_notification && window.Notification && window.Notification.permission !== 'granted') {
-    preferences.show_now_playing_notification = await window.Notification.requestPermission() === 'denied'
-  }
+const initializing = ref(false)
+const initialized = ref(false)
+
+const triggerAppInitialization = () => (initializing.value = true)
+
+const onUserLoggedIn = () => {
+  layout.value = 'main'
+  triggerAppInitialization()
 }
 
-const onUserLoggedIn = async () => {
+const onInitSuccess = async () => {
+  initializing.value = false
+  initialized.value = true
+
+  // call resolveRoute() after init() so that the onResolve hooks can use the stores
+  await resolveRoute()
   layout.value = 'main'
-  await init()
+}
+
+const onInitError = () => {
+  initializing.value = false
+  layout.value = 'auth'
 }
 
 onMounted(async () => {
@@ -99,57 +112,27 @@ onMounted(async () => {
 
   // The app has just been initialized, check if we can get the user data with an already existing token
   if (authService.hasApiToken()) {
-    await init()
+    triggerAppInitialization()
+    return
+  }
 
-    // call resolveRoute() after init() so that the onResolve hooks can use the stores
-    await resolveRoute()
-    layout.value = 'main'
-  } else {
-    await resolveRoute()
+  await resolveRoute()
 
-    switch (getCurrentScreen()) {
-      case 'Invitation.Accept':
-        layout.value = 'invitation'
-        break
-      case 'Password.Reset':
-        layout.value = 'reset-password'
-        break
-      default:
-        layout.value = 'auth'
-    }
+  switch (getCurrentScreen()) {
+    case 'Invitation.Accept':
+      layout.value = 'invitation'
+      break
+    case 'Password.Reset':
+      layout.value = 'reset-password'
+      break
+    default:
+      layout.value = 'auth'
   }
 
   // Add an ugly mac/non-mac class for OS-targeting styles.
   // I'm crying inside.
   document.documentElement.classList.add(navigator.userAgent.includes('Mac') ? 'mac' : 'non-mac')
 })
-
-const initialized = ref(false)
-
-const init = async () => {
-  useOverlay(overlay).showOverlay({ message: 'Just a little patience…' })
-
-  try {
-    await commonStore.init()
-    initialized.value = true
-
-    await requestNotificationPermission()
-
-    window.addEventListener('beforeunload', (e: BeforeUnloadEvent) => {
-      if (uploadService.shouldWarnUponWindowUnload() || preferences.confirm_before_closing) {
-        e.preventDefault()
-        e.returnValue = ''
-      }
-    })
-
-    await socketService.init() && socketListener.listen()
-  } catch (err) {
-    layout.value = 'auth'
-    throw err
-  } finally {
-    useOverlay(overlay).hideOverlay()
-  }
-}
 
 const onDragOver = (e: DragEvent) => {
   showDropZone.value = Boolean(e.dataTransfer?.types.includes('Files')) && !isCurrentScreen('Upload')
