@@ -33,7 +33,7 @@
             :is-first-group="index === 0"
             @input="onGroupChanged"
           />
-          <Btn class="btn-add-group" success small title="Add a new group" uppercase @click.prevent="addGroup">
+          <Btn class="btn-add-group" small success title="Add a new group" uppercase @click.prevent="addGroup">
             <Icon :icon="faPlus" />
             Group
           </Btn>
@@ -41,7 +41,8 @@
 
         <div v-if="isPlus" class="form-row">
           <label class="text-k-text-secondary">
-            <CheckBox v-model="mutablePlaylist.own_songs_only" /> Only include songs from my own library
+            <CheckBox v-model="mutablePlaylist.own_songs_only" />
+            Only include songs from my own library
           </label>
         </div>
       </main>
@@ -77,7 +78,7 @@ import SelectBox from '@/components/ui/form/SelectBox.vue'
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
-const {isPlus} = useKoelPlus()
+const { isPlus } = useKoelPlus()
 
 const playlist = useModal().getFromContext<Playlist>('playlist')
 const folders = toRef(playlistFolderStore.state, 'folders')

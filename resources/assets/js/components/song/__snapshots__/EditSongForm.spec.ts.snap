@@ -2,32 +2,32 @@
 
 exports[`edits a single song 1`] = `
 <form data-v-d70eb300="" class="max-w-[540px]">
-  <header data-v-d70eb300="" class="gap-4"><img data-v-d70eb300="" alt="" src="http://test/album.jpg" class="w-[84px] aspect-square object-cover object-center rounded-md">
+  <header data-v-d70eb300="" class="gap-4"><img data-v-d70eb300="" src="http://test/album.jpg" alt="" class="w-[84px] aspect-square object-cover object-center rounded-md">
     <div data-v-d70eb300="" class="flex-1 flex flex-col justify-center overflow-hidden">
       <h1 data-v-d70eb300="" class="">Rocket to Heaven</h1>
-      <h2 data-v-d70eb300="" data-testid="displayed-artist-name" class="">Led Zeppelin</h2>
-      <h2 data-v-d70eb300="" data-testid="displayed-album-name" class="">IV</h2>
+      <h2 data-v-d70eb300="" class="" data-testid="displayed-artist-name">Led Zeppelin</h2>
+      <h2 data-v-d70eb300="" class="" data-testid="displayed-album-name">IV</h2>
     </div>
   </header>
   <div data-v-d70eb300="" class="min-h-full flex flex-col relative mt-4">
-    <nav data-v-d70eb300="" role="tablist" class="overflow-auto border-b-[2px] border-b-white/10 px-6 py-0 flex gap-1 min-h-[36px]"><button data-v-d70eb300="" aria-selected="true" role="tab" type="button" class="cursor-pointer relative px-5 py-3 rounded-t-md opacity-70 bg-white/5 uppercase text-k-text-secondary duration-200 hover:bg-white/10 aria-selected:transition-none aria-selected:text-k-text-primary aria-selected:bg-white/10 aria-selected:opacity-100" id="editSongTabDetails" aria-controls="editSongPanelDetails"> Details </button><button data-v-d70eb300="" aria-selected="false" role="tab" type="button" class="cursor-pointer relative px-5 py-3 rounded-t-md opacity-70 bg-white/5 uppercase text-k-text-secondary duration-200 hover:bg-white/10 aria-selected:transition-none aria-selected:text-k-text-primary aria-selected:bg-white/10 aria-selected:opacity-100" id="editSongTabLyrics" aria-controls="editSongPanelLyrics" data-testid="edit-song-lyrics-tab"> Lyrics </button></nav>
+    <nav data-v-d70eb300="" class="overflow-auto border-b-[2px] border-b-white/10 px-6 py-0 flex gap-1 min-h-[36px]" role="tablist"><button data-v-d70eb300="" aria-selected="true" class="cursor-pointer relative px-5 py-3 rounded-t-md opacity-70 bg-white/5 uppercase text-k-text-secondary duration-200 hover:bg-white/10 aria-selected:transition-none aria-selected:text-k-text-primary aria-selected:bg-white/10 aria-selected:opacity-100" role="tab" type="button" id="editSongTabDetails" aria-controls="editSongPanelDetails"> Details </button><button data-v-d70eb300="" aria-selected="false" class="cursor-pointer relative px-5 py-3 rounded-t-md opacity-70 bg-white/5 uppercase text-k-text-secondary duration-200 hover:bg-white/10 aria-selected:transition-none aria-selected:text-k-text-primary aria-selected:bg-white/10 aria-selected:opacity-100" role="tab" type="button" id="editSongTabLyrics" aria-controls="editSongPanelLyrics" data-testid="edit-song-lyrics-tab"> Lyrics </button></nav>
     <div data-v-d70eb300="" class="p-6 overflow-auto">
       <div data-v-d70eb300="" role="tabpanel" tabindex="0" id="editSongPanelDetails" aria-labelledby="editSongTabDetails" class="space-y-5"><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Title</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="text" data-testid="title-input" name="title" title="Title">
           <!--v-if-->
         </label>
-        <div data-v-d70eb300="" class="grid gap-3 md:grid-cols-2"><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Artist</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="text" placeholder="" data-testid="artist-input" name="artist">
+        <div data-v-d70eb300="" class="md:grid-cols-2 grid gap-3"><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Artist</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="text" placeholder="" data-testid="artist-input" name="artist">
             <!--v-if-->
           </label><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Album Artist</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="text" placeholder="" data-testid="albumArtist-input" name="album_artist">
             <!--v-if-->
           </label></div><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Album</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="text" placeholder="" data-testid="album-input" name="album">
           <!--v-if-->
         </label>
-        <div data-v-d70eb300="" class="grid gap-3 md:grid-cols-2"><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Track</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="number" placeholder="" data-testid="track-input" min="1" name="track">
+        <div data-v-d70eb300="" class="md:grid-cols-2 grid gap-3"><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Track</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="number" placeholder="" data-testid="track-input" min="1" name="track">
             <!--v-if-->
           </label><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Disc</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="number" placeholder="" data-testid="disc-input" min="1" name="disc">
             <!--v-if-->
           </label></div>
-        <div data-v-d70eb300="" class="grid gap-3 md:grid-cols-2"><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Genre</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="text" placeholder="" data-testid="genre-input" name="genre" list="genres"><datalist data-v-d70eb300="" id="genres">
+        <div data-v-d70eb300="" class="md:grid-cols-2 grid gap-3"><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Genre</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="text" placeholder="" data-testid="genre-input" list="genres" name="genre"><datalist data-v-d70eb300="" id="genres">
               <option data-v-d70eb300="" value="Blues"></option>
               <option data-v-d70eb300="" value="Classic Rock"></option>
               <option data-v-d70eb300="" value="Country"></option>
@@ -237,33 +237,33 @@ exports[`edits a single song 1`] = `
 
 exports[`edits multiple songs 1`] = `
 <form data-v-d70eb300="" class="max-w-[540px]">
-  <header data-v-d70eb300="" class="gap-4"><img data-v-d70eb300="" alt="" src="undefined/resources/assets/img/covers/default.svg" class="w-[84px] aspect-square object-cover object-center rounded-md">
+  <header data-v-d70eb300="" class="gap-4"><img data-v-d70eb300="" src="undefined/resources/assets/img/covers/default.svg" alt="" class="w-[84px] aspect-square object-cover object-center rounded-md">
     <div data-v-d70eb300="" class="flex-1 flex flex-col justify-center overflow-hidden">
       <h1 data-v-d70eb300="" class="mixed">3 songs selected</h1>
-      <h2 data-v-d70eb300="" data-testid="displayed-artist-name" class="mixed">Mixed Artists</h2>
-      <h2 data-v-d70eb300="" data-testid="displayed-album-name" class="mixed">Mixed Albums</h2>
+      <h2 data-v-d70eb300="" class="mixed" data-testid="displayed-artist-name">Mixed Artists</h2>
+      <h2 data-v-d70eb300="" class="mixed" data-testid="displayed-album-name">Mixed Albums</h2>
     </div>
   </header>
   <div data-v-d70eb300="" class="min-h-full flex flex-col relative mt-4">
-    <nav data-v-d70eb300="" role="tablist" class="overflow-auto border-b-[2px] border-b-white/10 px-6 py-0 flex gap-1 min-h-[36px]"><button data-v-d70eb300="" aria-selected="true" role="tab" type="button" class="cursor-pointer relative px-5 py-3 rounded-t-md opacity-70 bg-white/5 uppercase text-k-text-secondary duration-200 hover:bg-white/10 aria-selected:transition-none aria-selected:text-k-text-primary aria-selected:bg-white/10 aria-selected:opacity-100" id="editSongTabDetails" aria-controls="editSongPanelDetails"> Details </button>
+    <nav data-v-d70eb300="" class="overflow-auto border-b-[2px] border-b-white/10 px-6 py-0 flex gap-1 min-h-[36px]" role="tablist"><button data-v-d70eb300="" aria-selected="true" class="cursor-pointer relative px-5 py-3 rounded-t-md opacity-70 bg-white/5 uppercase text-k-text-secondary duration-200 hover:bg-white/10 aria-selected:transition-none aria-selected:text-k-text-primary aria-selected:bg-white/10 aria-selected:opacity-100" role="tab" type="button" id="editSongTabDetails" aria-controls="editSongPanelDetails"> Details </button>
       <!--v-if-->
     </nav>
     <div data-v-d70eb300="" class="p-6 overflow-auto">
       <div data-v-d70eb300="" role="tabpanel" tabindex="0" id="editSongPanelDetails" aria-labelledby="editSongTabDetails" class="space-y-5">
         <!--v-if-->
-        <div data-v-d70eb300="" class="grid gap-3 md:grid-cols-2"><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Artist</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="text" placeholder="Leave unchanged" data-testid="artist-input" name="artist">
+        <div data-v-d70eb300="" class="md:grid-cols-2 grid gap-3"><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Artist</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="text" placeholder="Leave unchanged" data-testid="artist-input" name="artist">
             <!--v-if-->
           </label><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Album Artist</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="text" placeholder="Leave unchanged" data-testid="albumArtist-input" name="album_artist">
             <!--v-if-->
           </label></div><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Album</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="text" placeholder="Leave unchanged" data-testid="album-input" name="album">
           <!--v-if-->
         </label>
-        <div data-v-d70eb300="" class="grid gap-3 md:grid-cols-2"><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Track</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="number" placeholder="Leave unchanged" data-testid="track-input" min="1" name="track">
+        <div data-v-d70eb300="" class="md:grid-cols-2 grid gap-3"><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Track</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="number" placeholder="Leave unchanged" data-testid="track-input" min="1" name="track">
             <!--v-if-->
           </label><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Disc</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="number" placeholder="Leave unchanged" data-testid="disc-input" min="1" name="disc">
             <!--v-if-->
           </label></div>
-        <div data-v-d70eb300="" class="grid gap-3 md:grid-cols-2"><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Genre</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="text" placeholder="Leave unchanged" data-testid="genre-input" name="genre" list="genres"><datalist data-v-d70eb300="" id="genres">
+        <div data-v-d70eb300="" class="md:grid-cols-2 grid gap-3"><label data-v-d70eb300="" class="flex flex-col gap-2 text-[1.1rem]"><span>Genre</span><input data-v-d70eb300="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="text" placeholder="Leave unchanged" data-testid="genre-input" list="genres" name="genre"><datalist data-v-d70eb300="" id="genres">
               <option data-v-d70eb300="" value="Blues"></option>
               <option data-v-d70eb300="" value="Classic Rock"></option>
               <option data-v-d70eb300="" value="Country"></option>

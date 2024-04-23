@@ -13,7 +13,7 @@
   </ul>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { sortBy } from 'lodash'
 import { computed, onMounted, ref, Ref, toRefs } from 'vue'
 import { useAuthorization, useDialogBox, useErrorHandler } from '@/composables'

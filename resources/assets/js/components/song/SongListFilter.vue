@@ -4,16 +4,16 @@
     class="flex border rounded-md overflow-hidden border-solid border-white/10 focus-within:bg-black/10 focus-within:border-white/40"
     @submit.prevent
   >
-    <Btn v-koel-tooltip title="Filter" unrounded transparent @click.prevent="toggleInput">
+    <Btn v-koel-tooltip title="Filter" transparent unrounded @click.prevent="toggleInput">
       <Icon :icon="faFilter" fixed-width />
     </Btn>
     <TextInput
       v-show="showingInput"
       ref="input"
       v-model="keywords"
-      type="search"
-      placeholder="Keywords"
       class="!text-k-text-primary !bg-transparent !rounded-none !pl-0 !h-[unset] placeholder:text-white/50"
+      placeholder="Keywords"
+      type="search"
     />
   </form>
 </template>

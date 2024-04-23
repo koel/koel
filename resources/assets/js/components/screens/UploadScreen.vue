@@ -44,10 +44,10 @@
             or click here to select songs
             <input
               :accept="acceptAttribute"
+              class="absolute opacity-0 w-full h-full z-[2] cursor-pointer left-0 top-0"
               multiple
               name="file[]"
               type="file"
-              class="absolute opacity-0 w-full h-full z-[2] cursor-pointer left-0 top-0"
               @change="onFileInputChange"
             >
           </a>

@@ -5,19 +5,6 @@ import { faHome } from '@fortawesome/free-solid-svg-icons'
 import SidebarItem from './SidebarItem.vue'
 
 new class extends UnitTestCase {
-  private renderComponent () {
-    return this.render(SidebarItem, {
-      props: {
-        icon: faHome,
-        href: '#',
-        screen: 'Home'
-      },
-      slots: {
-        default: 'Home'
-      }
-    })
-  }
-
   protected test () {
     it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
 
@@ -30,6 +17,19 @@ new class extends UnitTestCase {
       })
 
       expect(screen.getByTestId('sidebar-item').classList.contains('current')).toBe(true)
+    })
+  }
+
+  private renderComponent () {
+    return this.render(SidebarItem, {
+      props: {
+        icon: faHome,
+        href: '#',
+        screen: 'Home'
+      },
+      slots: {
+        default: 'Home'
+      }
     })
   }
 }

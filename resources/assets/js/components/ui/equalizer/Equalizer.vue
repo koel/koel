@@ -1,8 +1,8 @@
 <template>
   <div class="select-none w-full flex flex-col" tabindex="0" @keydown.esc="close">
     <header>
-      <SelectBox v-model="selectedPresetName" title="Select equalizer" class="!bg-black/30 !text-white">
-        <option disabled :value="null">Preset</option>
+      <SelectBox v-model="selectedPresetName" class="!bg-black/30 !text-white" title="Select equalizer">
+        <option :value="null" disabled>Preset</option>
         <option v-for="preset in presets" :key="preset.name!" :value="preset.name">{{ preset.name }}</option>
       </SelectBox>
     </header>
@@ -21,8 +21,8 @@
 
         <EqualizerBand
           v-for="band in bands"
-          ref="filterBandEls"
           :key="band.label"
+          ref="filterBandEls"
           v-model="band.db"
           @commit="save"
           @update:model-value="changeFilterGain(band)"

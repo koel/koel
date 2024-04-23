@@ -5,19 +5,19 @@
     </template>
 
     <ul class="menu">
-      <SidebarItem v-if="isAdmin" screen="Settings" href="#/settings">
+      <SidebarItem v-if="isAdmin" href="#/settings" screen="Settings">
         <template #icon>
           <Icon :icon="faTools" fixed-width />
         </template>
         Settings
       </SidebarItem>
-      <SidebarItem v-if="allowsUpload" screen="Upload" href="#/upload">
+      <SidebarItem v-if="allowsUpload" href="#/upload" screen="Upload">
         <template #icon>
           <Icon :icon="faUpload" fixed-width />
         </template>
         Upload
       </SidebarItem>
-      <SidebarItem v-if="isAdmin" screen="Users" href="#/users">
+      <SidebarItem v-if="isAdmin" href="#/users" screen="Users">
         <template #icon>
           <Icon :icon="faUsers" fixed-width />
         </template>
@@ -26,7 +26,7 @@
     </ul>
   </SidebarSection>
 </template>
-<script setup lang="ts">
+<script lang="ts" setup>
 import { faTools, faUpload, faUsers } from '@fortawesome/free-solid-svg-icons'
 import { useAuthorization, useUpload } from '@/composables'
 

@@ -10,21 +10,6 @@ new class extends UnitTestCase {
     super.beforeEach(() => this.mock(artistStore, 'paginate'))
   }
 
-  private async renderComponent () {
-    artistStore.state.artists = factory<Artist>('artist', 9)
-
-    const rendered = this.render(ArtistListScreen, {
-      global: {
-        stubs: {
-          ArtistCard: this.stub('artist-card')
-        }
-      }
-    })
-
-    await this.router.activateRoute({ path: 'artists', screen: 'Artists' })
-    return rendered
-  }
-
   protected test () {
     it('renders', async () => {
       await this.renderComponent()
@@ -55,5 +40,20 @@ new class extends UnitTestCase {
       await this.user.click(screen.getByRole('radio', { name: 'View as thumbnails' }))
       await waitFor(() => expect(screen.getByTestId('artist-list').classList.contains(`as-thumbnails`)).toBe(true))
     })
+  }
+
+  private async renderComponent () {
+    artistStore.state.artists = factory<Artist>('artist', 9)
+
+    const rendered = this.render(ArtistListScreen, {
+      global: {
+        stubs: {
+          ArtistCard: this.stub('artist-card')
+        }
+      }
+    })
+
+    await this.router.activateRoute({ path: 'artists', screen: 'Artists' })
+    return rendered
   }
 }

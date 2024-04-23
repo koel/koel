@@ -9,6 +9,25 @@ import SongCard from './SongCard.vue'
 let song: Song
 
 new class extends UnitTestCase {
+  protected test () {
+    it('has a thumbnail and a like button', () => {
+      this.renderComponent()
+      screen.getByTestId('thumbnail')
+      screen.getByTestId('like-button')
+    })
+
+    it('queues and plays on double-click', async () => {
+      const queueMock = this.mock(queueStore, 'queueIfNotQueued')
+      const playMock = this.mock(playbackService, 'play')
+      this.renderComponent()
+
+      await this.user.dblClick(screen.getByRole('article'))
+
+      expect(queueMock).toHaveBeenCalledWith(song)
+      expect(playMock).toHaveBeenCalledWith(song)
+    })
+  }
+
   private renderComponent (playbackState: PlaybackState = 'Stopped') {
     song = factory<Song>('song', {
       playback_state: playbackState,
@@ -27,25 +46,6 @@ new class extends UnitTestCase {
           LikeButton: this.stub('like-button')
         }
       }
-    })
-  }
-
-  protected test () {
-    it('has a thumbnail and a like button', () => {
-      this.renderComponent()
-      screen.getByTestId('thumbnail')
-      screen.getByTestId('like-button')
-    })
-
-    it('queues and plays on double-click', async () => {
-      const queueMock = this.mock(queueStore, 'queueIfNotQueued')
-      const playMock = this.mock(playbackService, 'play')
-      this.renderComponent()
-
-      await this.user.dblClick(screen.getByRole('article'))
-
-      expect(queueMock).toHaveBeenCalledWith(song)
-      expect(playMock).toHaveBeenCalledWith(song)
     })
   }
 }

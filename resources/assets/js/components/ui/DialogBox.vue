@@ -1,8 +1,8 @@
 <template>
   <dialog
     ref="dialog"
-    class="rounded-md shadow-xl border-0 p-0 min-w-[320px] max-w-[calc(100vw - 40px)] backdrop:bg-black/50"
     :class="`${type}`"
+    class="rounded-md shadow-xl border-0 p-0 min-w-[320px] max-w-[calc(100vw - 40px)] backdrop:bg-black/50"
   >
     <div class="flex gap-5 py-6 px-7">
       <aside>
@@ -22,7 +22,7 @@
     </div>
 
     <footer class="flex justify-end gap-2 px-6 py-4">
-      <Btn v-if="showCancelButton" name="cancel" class="!bg-gray-100 !text-gray-600" @click.prevent="cancel">
+      <Btn v-if="showCancelButton" class="!bg-gray-100 !text-gray-600" name="cancel" @click.prevent="cancel">
         Cancel
       </Btn>
       <Btn name="ok">OK</Btn>

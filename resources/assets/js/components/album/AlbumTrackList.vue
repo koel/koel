@@ -6,8 +6,8 @@
       <li
         v-for="(track, index) in tracks"
         :key="index"
-        data-testid="album-track-item"
         class="flex p-2 before:w-7 before:opacity-50"
+        data-testid="album-track-item"
       >
         <TrackListItem :album="album" :track="track" />
       </li>

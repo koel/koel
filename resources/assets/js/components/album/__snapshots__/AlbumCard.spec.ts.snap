@@ -1,7 +1,7 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-<article data-v-f01bdc56="" class="relative flex max-w-full md:max-w-[256px] border p-5 rounded-lg flex-col gap-5 transition border-color duration-200 full" draggable="true" tabindex="0" data-testid="artist-album-card" title="IV by Led Zeppelin">
+<article data-v-f01bdc56="" class="full relative flex max-w-full md:max-w-[256px] border p-5 rounded-lg flex-col gap-5 transition border-color duration-200" data-testid="artist-album-card" draggable="true" tabindex="0" title="IV by Led Zeppelin">
   <div data-v-a14c1d10="" data-v-f01bdc56="" class="cover relative w-full aspect-square bg-no-repeat bg-cover bg-center overflow-hidden rounded-md after:block after:pt-[100%]" style="background-image: url(undefined/resources/assets/img/covers/default.svg);" data-testid="album-artist-thumbnail"><img data-v-a14c1d10="" alt="IV" src="http://loremflickr.com/640/480" class="w-full h-full object-cover absolute left-0 top-0 pointer-events-none before:absolute before:w-full before:h-full before:opacity-0 before:z-[1] before-top-0" loading="lazy"><a data-v-a14c1d10="" class="control control-play h-full w-full absolute flex justify-center items-center" role="button"><span data-v-a14c1d10="" class="hidden">Play all songs in the album IV</span><span data-v-a14c1d10="" class="icon opacity-0 w-1/2 h-1/2 flex justify-center items-center pointer-events-none pl-[4%] rounded-full after:w-full after:h-full"></span></a></div>
   <footer data-v-f01bdc56="" class="flex flex-1 flex-col gap-1.5 overflow-hidden">
     <div data-v-f01bdc56="" class="name flex flex-col gap-2 whitespace-nowrap"><a href="#/album/42" class="font-medium" data-testid="name">IV</a><a href="#/artist/17">Led Zeppelin</a></div>

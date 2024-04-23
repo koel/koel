@@ -28,7 +28,7 @@
         Last.fm integration is not enabled.
         <span v-if="isAdmin" data-testid="lastfm-admin-instruction">
           Check
-          <a href="https://docs.koel.dev/service-integrations#last-fm" class="text-k-highlight" target="_blank">
+          <a class="text-k-highlight" href="https://docs.koel.dev/service-integrations#last-fm" target="_blank">
             Documentation
           </a>
           for instructions.

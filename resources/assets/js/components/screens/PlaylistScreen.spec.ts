@@ -10,25 +10,6 @@ import PlaylistScreen from './PlaylistScreen.vue'
 let playlist: Playlist
 
 new class extends UnitTestCase {
-  private async renderComponent (songs: Song[]) {
-    playlist = playlist || factory<Playlist>('playlist')
-    playlistStore.init([playlist])
-    playlist.songs = songs
-
-    const fetchMock = this.mock(songStore, 'fetchForPlaylist').mockResolvedValue(songs)
-
-    const rendered = this.render(PlaylistScreen)
-
-    await this.router.activateRoute({
-      path: `playlists/${playlist.id}`,
-      screen: 'Playlist'
-    }, { id: playlist.id })
-
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith(playlist, false))
-
-    return { rendered, fetchMock }
-  }
-
   protected test () {
     it('renders the playlist', async () => {
       await this.renderComponent(factory<Song>('song', 10))
@@ -74,5 +55,24 @@ new class extends UnitTestCase {
 
       expect(fetchMock).toHaveBeenCalledWith(playlist, true)
     })
+  }
+
+  private async renderComponent (songs: Song[]) {
+    playlist = playlist || factory<Playlist>('playlist')
+    playlistStore.init([playlist])
+    playlist.songs = songs
+
+    const fetchMock = this.mock(songStore, 'fetchForPlaylist').mockResolvedValue(songs)
+
+    const rendered = this.render(PlaylistScreen)
+
+    await this.router.activateRoute({
+      path: `playlists/${playlist.id}`,
+      screen: 'Playlist'
+    }, { id: playlist.id })
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith(playlist, false))
+
+    return { rendered, fetchMock }
   }
 }

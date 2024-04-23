@@ -16,9 +16,9 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { eventBus } from '@/utils'
-import { usePolicies, useContextMenu, useMessageToaster, useKoelPlus, useRouter } from '@/composables'
+import { useContextMenu, useKoelPlus, useMessageToaster, usePolicies, useRouter } from '@/composables'
 import { playbackService } from '@/services'
-import { songStore, queueStore } from '@/stores'
+import { queueStore, songStore } from '@/stores'
 
 const { base, ContextMenuBase, open, trigger } = useContextMenu()
 const { go } = useRouter()

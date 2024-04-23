@@ -2,8 +2,8 @@
   <footer
     ref="root"
     class="flex flex-col relative z-20 bg-k-bg-secondary h-k-footer-height"
-    @contextmenu.prevent="requestContextMenu"
     @mousemove="showControls"
+    @contextmenu.prevent="requestContextMenu"
   >
     <AudioPlayer v-show="song" />
 

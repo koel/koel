@@ -1,7 +1,7 @@
 <template>
   <ScreenBase v-if="playlist">
     <template #header>
-      <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout" :disabled="loading">
+      <ScreenHeader :disabled="loading" :layout="songs.length === 0 ? 'collapsed' : headerLayout">
         {{ playlist.name }}
         <ControlsToggle v-if="songs.length" v-model="showingControls" />
 
@@ -29,11 +29,11 @@
           <SongListControls
             v-if="!isPhone || showingControls"
             :config="controlsConfig"
-            @delete-playlist="destroy"
             @filter="applyFilter"
+            @refresh="fetchDetails(true)"
+            @delete-playlist="destroy"
             @play-all="playAll"
             @play-selected="playSelected"
-            @refresh="fetchDetails(true)"
           />
         </template>
       </ScreenHeader>
@@ -44,11 +44,11 @@
       v-if="!loading && songs.length"
       ref="songList"
       class="-m-6"
+      @reorder="onReorder"
       @sort="sort"
       @press:delete="removeSelected"
       @press:enter="onPressEnter"
       @scroll-breakpoint="onScrollBreakpoint"
-      @reorder="onReorder"
     />
 
     <ScreenEmptyState v-if="!songs.length && !loading">
@@ -78,12 +78,12 @@ import { eventBus, pluralize } from '@/utils'
 import { commonStore, playlistStore, songStore } from '@/stores'
 import { downloadService, playlistCollaborationService } from '@/services'
 import {
+  useAuthorization,
+  useErrorHandler,
   usePlaylistManagement,
   useRouter,
   useSongList,
-  useAuthorization,
-  useSongListControls,
-  useErrorHandler
+  useSongListControls
 } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'

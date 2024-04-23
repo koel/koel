@@ -5,32 +5,32 @@
     </template>
 
     <ul class="menu">
-      <SidebarItem screen="Home" href="#/home">
+      <SidebarItem href="#/home" screen="Home">
         <template #icon>
           <Icon :icon="faHome" fixed-width />
         </template>
         Home
       </SidebarItem>
       <QueueSidebarItem />
-      <SidebarItem screen="Songs" href="#/songs">
+      <SidebarItem href="#/songs" screen="Songs">
         <template #icon>
           <Icon :icon="faMusic" fixed-width />
         </template>
         All Songs
       </SidebarItem>
-      <SidebarItem screen="Albums" href="#/albums">
+      <SidebarItem href="#/albums" screen="Albums">
         <template #icon>
           <Icon :icon="faCompactDisc" fixed-width />
         </template>
         Albums
       </SidebarItem>
-      <SidebarItem screen="Artists" href="#/artists">
+      <SidebarItem href="#/artists" screen="Artists">
         <template #icon>
           <Icon :icon="faMicrophone" fixed-width />
         </template>
         Artists
       </SidebarItem>
-      <SidebarItem screen="Genres" href="#/genres">
+      <SidebarItem href="#/genres" screen="Genres">
         <template #icon>
           <Icon :icon="faTags" fixed-width />
         </template>
@@ -43,7 +43,7 @@
   </SidebarSection>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { faCompactDisc, faHome, faMicrophone, faMusic, faTags } from '@fortawesome/free-solid-svg-icons'
 import { unescape } from 'lodash'
 import { ref } from 'vue'

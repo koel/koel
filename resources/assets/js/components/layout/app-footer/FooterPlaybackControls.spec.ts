@@ -8,6 +8,29 @@ import { screen } from '@testing-library/vue'
 import FooterPlaybackControls from './FooterPlaybackControls.vue'
 
 new class extends UnitTestCase {
+  protected test () {
+    it('renders without a current song', () => expect(this.renderComponent(null).html()).toMatchSnapshot())
+    it('renders with a current song', () => expect(this.renderComponent().html()).toMatchSnapshot())
+
+    it('plays the previous song', async () => {
+      const playMock = this.mock(playbackService, 'playPrev')
+      this.renderComponent()
+
+      await this.user.click(screen.getByRole('button', { name: 'Play previous song' }))
+
+      expect(playMock).toHaveBeenCalled()
+    })
+
+    it('plays the next song', async () => {
+      const playMock = this.mock(playbackService, 'playNext')
+      this.renderComponent()
+
+      await this.user.click(screen.getByRole('button', { name: 'Play next song' }))
+
+      expect(playMock).toHaveBeenCalled()
+    })
+  }
+
   private renderComponent (song?: Song | null) {
     if (song === undefined) {
       song = factory<Song>('song', {
@@ -30,29 +53,6 @@ new class extends UnitTestCase {
           [<symbol>CurrentSongKey]: ref(song)
         }
       }
-    })
-  }
-
-  protected test () {
-    it('renders without a current song', () => expect(this.renderComponent(null).html()).toMatchSnapshot())
-    it('renders with a current song', () => expect(this.renderComponent().html()).toMatchSnapshot())
-
-    it('plays the previous song', async () => {
-      const playMock = this.mock(playbackService, 'playPrev')
-      this.renderComponent()
-
-      await this.user.click(screen.getByRole('button', { name: 'Play previous song' }))
-
-      expect(playMock).toHaveBeenCalled()
-    })
-
-    it('plays the next song', async () => {
-      const playMock = this.mock(playbackService, 'playNext')
-      this.renderComponent()
-
-      await this.user.click(screen.getByRole('button', { name: 'Play next song' }))
-
-      expect(playMock).toHaveBeenCalled()
     })
   }
 }

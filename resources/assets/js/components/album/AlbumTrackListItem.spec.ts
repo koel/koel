@@ -9,6 +9,23 @@ import { ref } from 'vue'
 import AlbumTrackListItem from './AlbumTrackListItem.vue'
 
 new class extends UnitTestCase {
+  protected test () {
+    it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
+
+    it('plays', async () => {
+      const matchedSong = factory<Song>('song')
+      const queueMock = this.mock(queueStore, 'queueIfNotQueued')
+      const playMock = this.mock(playbackService, 'play')
+
+      this.renderComponent(matchedSong)
+
+      await this.user.click(screen.getByTitle('Click to play'))
+
+      expect(queueMock).toHaveBeenNthCalledWith(1, matchedSong)
+      expect(playMock).toHaveBeenNthCalledWith(1, matchedSong)
+    })
+  }
+
   private renderComponent (matchedSong?: Song) {
     const songsToMatchAgainst = factory<Song>('song', 10)
     const album = factory<Album>('album')
@@ -35,22 +52,5 @@ new class extends UnitTestCase {
     expect(matchMock).toHaveBeenCalledWith('Fahrstuhl to Heaven', songsToMatchAgainst)
 
     return rendered
-  }
-
-  protected test () {
-    it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
-
-    it('plays', async () => {
-      const matchedSong = factory<Song>('song')
-      const queueMock = this.mock(queueStore, 'queueIfNotQueued')
-      const playMock = this.mock(playbackService, 'play')
-
-      this.renderComponent(matchedSong)
-
-      await this.user.click(screen.getByTitle('Click to play'))
-
-      expect(queueMock).toHaveBeenNthCalledWith(1, matchedSong)
-      expect(playMock).toHaveBeenNthCalledWith(1, matchedSong)
-    })
   }
 }

@@ -5,22 +5,6 @@ import factory from '@/__tests__/factory'
 import Component from './PlaylistCollaboratorListItem.vue'
 
 new class extends UnitTestCase {
-  private renderComponent (props: {
-    collaborator: PlaylistCollaborator,
-    removable: boolean,
-    manageable: boolean,
-    role: 'owner' | 'contributor'
-  }) {
-    return this.render(Component, {
-      props,
-      global: {
-        stubs: {
-          UserAvatar: this.stub('UserAvatar')
-        }
-      }
-    })
-  }
-
   protected test () {
     it('does not show a badge when current user is not the collaborator', async () => {
       const currentUser = factory<User>('user')
@@ -86,6 +70,22 @@ new class extends UnitTestCase {
       await this.user.click(screen.getByRole('button', { name: 'Remove' }))
 
       expect(emitted('remove')).toBeTruthy()
+    })
+  }
+
+  private renderComponent (props: {
+    collaborator: PlaylistCollaborator,
+    removable: boolean,
+    manageable: boolean,
+    role: 'owner' | 'contributor'
+  }) {
+    return this.render(Component, {
+      props,
+      global: {
+        stubs: {
+          UserAvatar: this.stub('UserAvatar')
+        }
+      }
     })
   }
 }

@@ -22,10 +22,10 @@
         class="rounded-[0.5em] inline-block m-1.5 align-middle overflow-hidden"
       >
         <a
-          class="bg-white/15 inline-flex items-center justify-center !text-k-text-secondary
-          transition-colors duration-200 ease-in-out hover:!text-k-text-primary hover:bg-k-highlight"
           :href="`/#/genres/${encodeURIComponent(genre.name)}`"
           :title="`${genre.name}: ${pluralize(genre.song_count, 'song')}`"
+          class="bg-white/15 inline-flex items-center justify-center !text-k-text-secondary
+          transition-colors duration-200 ease-in-out hover:!text-k-text-primary hover:bg-k-highlight"
         >
           <span class="name bg-white/5 px-[0.5em] py-[0.2em] leading-normal">{{ genre.name }}</span>
           <span class="count items-center px-[0.5em] py-[0.2em]">

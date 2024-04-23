@@ -7,21 +7,6 @@ import SongListItem from './SongListItem.vue'
 let row: SongRow
 
 new class extends UnitTestCase {
-  private renderComponent (song?: Song) {
-    song = song ?? factory<Song>('song')
-
-    row = {
-      song,
-      selected: false
-    }
-
-    return this.render(SongListItem, {
-      props: {
-        item: row
-      }
-    })
-  }
-
   protected test () {
     it('renders', async () => {
       const song = factory<Song>('song', {
@@ -43,6 +28,21 @@ new class extends UnitTestCase {
       const { emitted } = this.renderComponent()
       await this.user.dblClick(screen.getByTestId('song-item'))
       expect(emitted().play).toBeTruthy()
+    })
+  }
+
+  private renderComponent (song?: Song) {
+    song = song ?? factory<Song>('song')
+
+    row = {
+      song,
+      selected: false
+    }
+
+    return this.render(SongListItem, {
+      props: {
+        item: row
+      }
     })
   }
 }

@@ -17,7 +17,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { authService } from '@/services'
 import { base64Decode } from '@/utils'

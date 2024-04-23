@@ -27,13 +27,7 @@
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue'
 import { eventBus } from '@/utils'
-import {
-  useAuthorization,
-  useKoelPlus,
-  useRouter,
-  useUpload,
-  useLocalStorage
-} from '@/composables'
+import { useAuthorization, useKoelPlus, useLocalStorage, useRouter, useUpload } from '@/composables'
 
 import SidebarPlaylistsSection from './SidebarPlaylistsSection.vue'
 import SearchForm from '@/components/ui/SearchForm.vue'

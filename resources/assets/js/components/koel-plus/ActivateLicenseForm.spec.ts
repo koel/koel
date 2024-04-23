@@ -5,10 +5,6 @@ import { plusService } from '@/services'
 import Form from './ActivateLicenseForm.vue'
 
 new class extends UnitTestCase {
-  private renderComponent () {
-    return this.render(Form )
-  }
-
   protected test () {
     it('activates license', async () => {
       this.renderComponent()
@@ -18,5 +14,9 @@ new class extends UnitTestCase {
       await this.user.click(screen.getByText('Activate'))
       expect(activateMock).toHaveBeenCalledWith('my-license-key')
     })
+  }
+
+  private renderComponent () {
+    return this.render(Form)
   }
 }

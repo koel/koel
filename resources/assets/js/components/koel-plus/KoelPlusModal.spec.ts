@@ -5,10 +5,6 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import Modal from './KoelPlusModal.vue'
 
 new class extends UnitTestCase {
-  private renderComponent () {
-    return this.render(Modal)
-  }
-
   protected test () {
     it('shows button to purchase Koel Plus', async () => {
       commonStore.state.koel_plus.product_id = '42'
@@ -28,5 +24,9 @@ new class extends UnitTestCase {
       await this.user.click(screen.getByText('I have a license key'))
       screen.getByTestId('activateForm')
     })
+  }
+
+  private renderComponent () {
+    return this.render(Modal)
   }
 }

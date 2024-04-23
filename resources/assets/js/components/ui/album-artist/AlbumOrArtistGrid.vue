@@ -4,7 +4,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { toRefs } from 'vue'
 
 const props = withDefaults(defineProps<{ viewMode?: ArtistAlbumViewMode }>(), {
@@ -14,7 +14,7 @@ const props = withDefaults(defineProps<{ viewMode?: ArtistAlbumViewMode }>(), {
 const { viewMode } = toRefs(props)
 </script>
 
-<style scoped lang="postcss">
+<style lang="postcss" scoped>
 div {
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }

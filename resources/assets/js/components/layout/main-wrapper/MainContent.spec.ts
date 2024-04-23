@@ -9,6 +9,24 @@ import AlbumArtOverlay from '@/components/ui/AlbumArtOverlay.vue'
 import MainContent from './MainContent.vue'
 
 new class extends UnitTestCase {
+  protected test () {
+    it('has a translucent overlay per album', async () => {
+      this.mock(albumStore, 'fetchThumbnail').mockResolvedValue('http://test/foo.jpg')
+
+      this.renderComponent()
+
+      await waitFor(() => screen.getByTestId('album-art-overlay'))
+    })
+
+    it('does not have a translucent over if configured not so', async () => {
+      preferenceStore.state.show_album_art_overlay = false
+
+      this.renderComponent()
+
+      await waitFor(() => expect(screen.queryByTestId('album-art-overlay')).toBeNull())
+    })
+  }
+
   private renderComponent () {
     return this.render(MainContent, {
       global: {
@@ -30,24 +48,6 @@ new class extends UnitTestCase {
           Visualizer: this.stub('visualizer')
         }
       }
-    })
-  }
-
-  protected test () {
-    it('has a translucent overlay per album', async () => {
-      this.mock(albumStore, 'fetchThumbnail').mockResolvedValue('http://test/foo.jpg')
-
-      this.renderComponent()
-
-      await waitFor(() => screen.getByTestId('album-art-overlay'))
-    })
-
-    it('does not have a translucent over if configured not so', async () => {
-      preferenceStore.state.show_album_art_overlay = false
-
-      this.renderComponent()
-
-      await waitFor(() => expect(screen.queryByTestId('album-art-overlay')).toBeNull())
     })
   }
 }

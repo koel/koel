@@ -18,7 +18,7 @@
   </ExcerptResultBlock>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { toRefs } from 'vue'
 
 import ArtistCard from '@/components/artist/ArtistCard.vue'
@@ -33,7 +33,7 @@ const props = withDefaults(defineProps<{ artists?: Artist[], searching?: boolean
 const { artists, searching } = toRefs(props)
 </script>
 
-<style scoped lang="postcss">
+<style lang="postcss" scoped>
 .results {
   @apply grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3;
 }

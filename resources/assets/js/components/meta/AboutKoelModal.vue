@@ -8,7 +8,7 @@
   >
     <main class="p-6">
       <div class="mb-4">
-        <img alt="Koel's logo" src="@/../img/logo.svg" width="128" class="inline-block">
+        <img alt="Koel's logo" class="inline-block" src="@/../img/logo.svg" width="128">
       </div>
 
       <div class="current-version">
@@ -57,7 +57,7 @@
     </main>
 
     <footer>
-      <Btn data-testid="close-modal-btn" danger rounded @click.prevent="close">Close</Btn>
+      <Btn danger data-testid="close-modal-btn" rounded @click.prevent="close">Close</Btn>
     </footer>
   </div>
 </template>

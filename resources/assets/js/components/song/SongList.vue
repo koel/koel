@@ -71,8 +71,8 @@
       <span class="extra">
         <SongListSorter
           v-if="config.sortable"
-          :has-custom-sort="config.hasCustomSort"
           :field="sortField"
+          :has-custom-sort="config.hasCustomSort"
           :order="sortOrder"
           @sort="sort"
         />
@@ -93,11 +93,11 @@
         @click="onClick(item, $event)"
         @dragleave="onDragLeave"
         @dragstart="onDragStart(item, $event)"
+        @play="onSongPlay(item.song)"
         @dragover.prevent="onDragOver"
         @drop.prevent="onDrop(item, $event)"
         @dragend.prevent="onDragEnd"
         @contextmenu.prevent="openContextMenu(item, $event)"
-        @play="onSongPlay(item.song)"
       />
     </VirtualScroller>
   </div>

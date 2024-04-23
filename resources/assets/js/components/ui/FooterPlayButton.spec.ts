@@ -10,16 +10,6 @@ import { commonStore, favoriteStore, queueStore, recentlyPlayedStore, songStore 
 import FooterPlayButton from './FooterPlayButton.vue'
 
 new class extends UnitTestCase {
-  private renderComponent (currentSong: Song | null = null) {
-    return this.render(FooterPlayButton, {
-      global: {
-        provide: {
-          [<symbol>CurrentSongKey]: ref(currentSong)
-        }
-      }
-    })
-  }
-
   protected test () {
     it('toggles the playback of current song', async () => {
       const toggleMock = this.mock(playbackService, 'toggle')
@@ -30,7 +20,7 @@ new class extends UnitTestCase {
       expect(toggleMock).toHaveBeenCalled()
     })
 
-    it.each<[ScreenName, MethodOf<typeof songStore>, string|number]>([
+    it.each<[ScreenName, MethodOf<typeof songStore>, string | number]>([
       ['Album', 'fetchForAlbum', 42],
       ['Artist', 'fetchForArtist', 42],
       ['Playlist', 'fetchForPlaylist', '71d8cd40-20d4-4b17-b460-d30fe5bb7b66']
@@ -125,6 +115,16 @@ new class extends UnitTestCase {
         expect(playMock).not.toHaveBeenCalled()
         expect(goMock).not.toHaveBeenCalled()
       })
+    })
+  }
+
+  private renderComponent (currentSong: Song | null = null) {
+    return this.render(FooterPlayButton, {
+      global: {
+        provide: {
+          [<symbol>CurrentSongKey]: ref(currentSong)
+        }
+      }
     })
   }
 }

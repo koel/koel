@@ -4,19 +4,6 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import MessageToast from './MessageToast.vue'
 
 new class extends UnitTestCase {
-  private renderComponent () {
-    return this.render(MessageToast, {
-      props: {
-        message: {
-          id: 101,
-          type: 'success',
-          message: 'Everything is fine',
-          timeout: 5
-        }
-      }
-    })
-  }
-
   protected test () {
     it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
 
@@ -35,6 +22,19 @@ new class extends UnitTestCase {
       expect(emitted().dismiss).toBeTruthy()
 
       vi.useRealTimers()
+    })
+  }
+
+  private renderComponent () {
+    return this.render(MessageToast, {
+      props: {
+        message: {
+          id: 101,
+          type: 'success',
+          message: 'Everything is fine',
+          timeout: 5
+        }
+      }
     })
   }
 }

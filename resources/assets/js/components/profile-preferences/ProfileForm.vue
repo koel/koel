@@ -17,11 +17,11 @@
           <TextInput
             v-model="profile.current_password"
             v-koel-focus
+            data-testid="currentPassword"
             name="current_password"
             placeholder="Required to update your profile"
             required
             type="password"
-            data-testid="currentPassword"
           />
         </FormRow>
 
@@ -73,7 +73,7 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 import { authService, UpdateCurrentProfileData } from '@/services'
-import { useMessageToaster, useAuthorization, useErrorHandler } from '@/composables'
+import { useAuthorization, useErrorHandler, useMessageToaster } from '@/composables'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import PasswordField from '@/components/ui/form/PasswordField.vue'

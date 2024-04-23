@@ -46,6 +46,7 @@ defineExpose({ show, hide })
 <style lang="postcss" scoped>
 dialog {
   /* since the texts are placed directly on a dark backdrop, the colors should be a bit washed out */
+
   &.error {
     @apply text-red-400;
   }

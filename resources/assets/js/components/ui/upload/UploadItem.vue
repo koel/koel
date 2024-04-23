@@ -11,10 +11,10 @@
         <span v-if="file.status === 'Errored'" v-koel-tooltip.left :title="file.message" class="info !px-3">
           <Icon :icon="faInfoCircle" :title="file.message" />
         </span>
-        <Btn v-if="canRetry" icon-only title="Retry" transparent unrounded class="!px-3" @click="retry">
+        <Btn v-if="canRetry" class="!px-3" icon-only title="Retry" transparent unrounded @click="retry">
           <Icon :icon="faRotateBack" />
         </Btn>
-        <Btn v-if="canRemove" icon-only title="Remove" transparent unrounded class="!px-3" @click="remove">
+        <Btn v-if="canRemove" class="!px-3" icon-only title="Remove" transparent unrounded @click="remove">
           <Icon :icon="faTrashCan" />
         </Btn>
       </span>

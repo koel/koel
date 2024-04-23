@@ -12,25 +12,6 @@ import EditSongForm from './EditSongForm.vue'
 let songs: Song[]
 
 new class extends UnitTestCase {
-  private async renderComponent (_songs: Song | Song[], initialTab: EditSongFormTabName = 'details') {
-    songs = arrayify(_songs)
-
-    const rendered = this.render(EditSongForm, {
-      global: {
-        provide: {
-          [<symbol>ModalContextKey]: [ref({
-            songs,
-            initialTab
-          })]
-        }
-      }
-    })
-
-    await this.tick()
-
-    return rendered
-  }
-
   protected test () {
     it('edits a single song', async () => {
       const updateMock = this.mock(songStore, 'update')
@@ -121,5 +102,24 @@ new class extends UnitTestCase {
       expect(screen.getByTestId('displayed-artist-name').textContent).toBe('Led Zeppelin')
       expect(screen.getByTestId('displayed-album-name').textContent).toBe('IV')
     })
+  }
+
+  private async renderComponent (_songs: Song | Song[], initialTab: EditSongFormTabName = 'details') {
+    songs = arrayify(_songs)
+
+    const rendered = this.render(EditSongForm, {
+      global: {
+        provide: {
+          [<symbol>ModalContextKey]: [ref({
+            songs,
+            initialTab
+          })]
+        }
+      }
+    })
+
+    await this.tick()
+
+    return rendered
   }
 }

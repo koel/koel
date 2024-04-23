@@ -3,7 +3,7 @@ import { requireInjection } from '@/utils'
 import { OverlayKey } from '@/symbols'
 import Overlay from '@/components/ui/Overlay.vue'
 
-export const useOverlay = (overlay?:  Ref<InstanceType<typeof Overlay>> | null) => {
+export const useOverlay = (overlay?: Ref<InstanceType<typeof Overlay>> | null) => {
   overlay = overlay || requireInjection(OverlayKey)
 
   return {

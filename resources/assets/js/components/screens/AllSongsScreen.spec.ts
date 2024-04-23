@@ -16,32 +16,6 @@ new class extends UnitTestCase {
     this.be()
   }
 
-  private async renderComponent () {
-    const fetchMock = this.mock(songStore, 'paginate').mockResolvedValue(2)
-
-    this.router.$currentRoute.value = {
-      screen: 'Songs',
-      path: '/songs'
-    }
-
-    const rendered = this.render(AllSongsScreen, {
-      global: {
-        stubs: {
-          SongList: this.stub('song-list')
-        }
-      }
-    })
-
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith({
-      sort: 'title',
-      order: 'asc',
-      page: 1,
-      own_songs_only: false
-    }))
-
-    return [rendered, fetchMock] as const
-  }
-
   protected test () {
     it('renders', async () => {
       const [{ html }] = await this.renderComponent()
@@ -77,5 +51,31 @@ new class extends UnitTestCase {
         own_songs_only: true
       }))
     })
+  }
+
+  private async renderComponent () {
+    const fetchMock = this.mock(songStore, 'paginate').mockResolvedValue(2)
+
+    this.router.$currentRoute.value = {
+      screen: 'Songs',
+      path: '/songs'
+    }
+
+    const rendered = this.render(AllSongsScreen, {
+      global: {
+        stubs: {
+          SongList: this.stub('song-list')
+        }
+      }
+    })
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith({
+      sort: 'title',
+      order: 'asc',
+      page: 1,
+      own_songs_only: false
+    }))
+
+    return [rendered, fetchMock] as const
   }
 }

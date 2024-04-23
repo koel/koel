@@ -1,8 +1,8 @@
 <template>
   <header
+    :class="[ layout, disabled ? 'disabled' : '' ]"
     class="screen-header min-h-0 md:min-h-full flex items-end flex-shrink-0 relative content-stretch leading-normal p-6
     border-b border-b-k-bg-secondary"
-    :class="[ layout, disabled ? 'disabled' : '' ]"
   >
     <aside v-if="$slots.thumbnail" class="thumbnail-wrapper hidden md:block overflow-hidden w-0 rounded-md">
       <slot name="thumbnail" />

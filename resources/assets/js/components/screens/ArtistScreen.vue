@@ -43,15 +43,15 @@
       <template #header>
         <label :class="{ active: activeTab === 'Songs' }">
           Songs
-          <input v-model="activeTab" type="radio" name="tab" value="Songs">
+          <input v-model="activeTab" name="tab" type="radio" value="Songs">
         </label>
         <label :class="{ active: activeTab === 'Albums' }">
           Albums
-          <input v-model="activeTab" type="radio" name="tab" value="Albums">
+          <input v-model="activeTab" name="tab" type="radio" value="Albums">
         </label>
         <label v-if="useLastfm" :class="{ active: activeTab === 'Info' }">
           Information
-          <input v-model="activeTab" type="radio" name="tab" value="Info">
+          <input v-model="activeTab" name="tab" type="radio" value="Info">
         </label>
       </template>
 
@@ -77,7 +77,7 @@
         </AlbumOrArtistGrid>
       </div>
 
-      <div v-show="activeTab === 'Info'" v-if="useLastfm && artist" class="info-pane">
+      <div v-if="useLastfm && artist" v-show="activeTab === 'Info'" class="info-pane">
         <ArtistInfo :artist="artist" mode="full" />
       </div>
     </ScreenTabs>
@@ -89,13 +89,7 @@ import { computed, defineAsyncComponent, ref, toRef, watch } from 'vue'
 import { eventBus, pluralize } from '@/utils'
 import { albumStore, artistStore, commonStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
-import {
-  useErrorHandler,
-  useRouter,
-  useSongList,
-  useSongListControls,
-  useThirdPartyServices
-} from '@/composables'
+import { useErrorHandler, useRouter, useSongList, useSongListControls, useThirdPartyServices } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ArtistThumbnail from '@/components/ui/ArtistAlbumThumbnail.vue'

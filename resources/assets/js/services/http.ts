@@ -1,4 +1,4 @@
-import Axios, { AxiosInstance, Method, AxiosRequestConfig, AxiosError, AxiosResponse } from 'axios'
+import Axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, Method } from 'axios'
 import NProgress from 'nprogress'
 import { eventBus } from '@/utils'
 import { authService } from '@/services'
@@ -7,43 +7,6 @@ class Http {
   client: AxiosInstance
 
   private silent = false
-
-  private showLoadingIndicator () {
-    NProgress.start()
-  }
-
-  private hideLoadingIndicator () {
-    NProgress.done(true)
-  }
-
-  public request<T> (method: Method, url: string, data: Record<string, any> = {}, onUploadProgress?: any) {
-    return this.client.request({
-      url,
-      data,
-      method,
-      onUploadProgress
-    }) as Promise<{ data: T }>
-  }
-
-  public async get<T> (url: string) {
-    return (await this.request<T>('get', url)).data
-  }
-
-  public async post<T> (url: string, data: Record<string, any> = {}, onUploadProgress?: any) {
-    return (await this.request<T>('post', url, data, onUploadProgress)).data
-  }
-
-  public async put<T> (url: string, data: Record<string, any>) {
-    return (await this.request<T>('put', url, data)).data
-  }
-
-  public async patch<T> (url: string, data: Record<string, any>) {
-    return (await this.request<T>('patch', url, data)).data
-  }
-
-  public async delete<T> (url: string, data: Record<string, any> = {}) {
-    return (await this.request<T>('delete', url, data)).data
-  }
 
   constructor () {
     this.client = Axios.create({
@@ -91,6 +54,43 @@ class Http {
   public get silently () {
     this.silent = true
     return this
+  }
+
+  public request<T> (method: Method, url: string, data: Record<string, any> = {}, onUploadProgress?: any) {
+    return this.client.request({
+      url,
+      data,
+      method,
+      onUploadProgress
+    }) as Promise<{ data: T }>
+  }
+
+  public async get<T> (url: string) {
+    return (await this.request<T>('get', url)).data
+  }
+
+  public async post<T> (url: string, data: Record<string, any> = {}, onUploadProgress?: any) {
+    return (await this.request<T>('post', url, data, onUploadProgress)).data
+  }
+
+  public async put<T> (url: string, data: Record<string, any>) {
+    return (await this.request<T>('put', url, data)).data
+  }
+
+  public async patch<T> (url: string, data: Record<string, any>) {
+    return (await this.request<T>('patch', url, data)).data
+  }
+
+  public async delete<T> (url: string, data: Record<string, any> = {}) {
+    return (await this.request<T>('delete', url, data)).data
+  }
+
+  private showLoadingIndicator () {
+    NProgress.start()
+  }
+
+  private hideLoadingIndicator () {
+    NProgress.done(true)
   }
 }
 

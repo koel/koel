@@ -30,7 +30,7 @@
   <AcceptInvitation v-if="layout === 'invitation'" />
   <ResetPasswordForm v-if="layout === 'reset-password'" />
 
-  <AppInitializer v-if="authenticated" @success="onInitSuccess" @error="onInitError" />
+  <AppInitializer v-if="authenticated" @error="onInitError" @success="onInitSuccess" />
 </template>
 
 <script lang="ts" setup>
@@ -151,7 +151,7 @@ provide(CurrentSongKey, currentSong)
 
 <style lang="postcss">
 #dragGhost {
-  @apply inline-block py-2 px-3 rounded-md text-base font-sans fixed top-0 left-0 z-[-1] bg-k-success
+  @apply inline-block py-2 pl-8 pr-3 rounded-md text-base font-sans fixed top-0 left-0 z-[-1] bg-k-success
   text-k-text-primary no-hover:hidden;
 }
 

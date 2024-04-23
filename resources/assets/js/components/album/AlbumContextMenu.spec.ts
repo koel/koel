@@ -11,18 +11,6 @@ import AlbumContextMenu from './AlbumContextMenu.vue'
 let album: Album
 
 new class extends UnitTestCase {
-  private async renderComponent (_album?: Album) {
-    album = _album || factory<Album>('album', {
-      name: 'IV'
-    })
-
-    const rendered = this.render(AlbumContextMenu)
-    eventBus.emit('ALBUM_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, album)
-    await this.tick(2)
-
-    return rendered
-  }
-
   protected test () {
     it('renders', async () => expect((await this.renderComponent()).html()).toMatchSnapshot())
 
@@ -93,5 +81,17 @@ new class extends UnitTestCase {
 
       expect(mock).toHaveBeenCalledWith(`artist/${album.artist_id}`)
     })
+  }
+
+  private async renderComponent (_album?: Album) {
+    album = _album || factory<Album>('album', {
+      name: 'IV'
+    })
+
+    const rendered = this.render(AlbumContextMenu)
+    eventBus.emit('ALBUM_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, album)
+    await this.tick(2)
+
+    return rendered
   }
 }

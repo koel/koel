@@ -1,8 +1,8 @@
 <template>
   <div class="plus text-k-text-secondary max-w-[480px] flex flex-col items-center" data-testid="koel-plus" tabindex="0">
     <img
-      class="-mt-[48px] rounded-full border-[6px] border-white"
       alt="Koel Plus"
+      class="-mt-[48px] rounded-full border-[6px] border-white"
       src="@/../img/koel-plus.svg"
       width="96"
     >
@@ -30,12 +30,12 @@
     </main>
 
     <footer class="w-full text-center bg-black/20">
-      <Btn data-testid="close-modal-btn" danger rounded @click.prevent="close">Close</Btn>
+      <Btn danger data-testid="close-modal-btn" rounded @click.prevent="close">Close</Btn>
     </footer>
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 import { useKoelPlus } from '@/composables'
 

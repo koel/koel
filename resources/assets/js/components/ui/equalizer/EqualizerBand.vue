@@ -7,7 +7,7 @@
   </article>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue'
 import noUiSlider from 'nouislider'
 

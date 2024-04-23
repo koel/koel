@@ -41,7 +41,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 import { invitationService } from '@/services'
 import { useErrorHandler, useRouter } from '@/composables'

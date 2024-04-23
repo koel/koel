@@ -2,7 +2,7 @@
 
 exports[`renders 1`] = `
 <section data-v-dcfb8776="" class="max-h-full min-h-full w-full flex flex-col transform-gpu">
-  <header data-v-5691beb5="" class="screen-header min-h-0 md:min-h-full flex items-end flex-shrink-0 relative content-stretch leading-normal p-6 border-b border-b-k-bg-secondary expanded">
+  <header data-v-5691beb5="" class="expanded screen-header min-h-0 md:min-h-full flex items-end flex-shrink-0 relative content-stretch leading-normal p-6 border-b border-b-k-bg-secondary">
     <!--v-if-->
     <main data-v-5691beb5="" class="flex flex-1 gap-5 items-center overflow-hidden">
       <div data-v-5691beb5="" class="w-full flex-1 overflow-hidden">

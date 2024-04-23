@@ -3,7 +3,7 @@
     class="h-[18vh] w-screen flex justify-around items-center border-t border-solid border-t-white/10 py-4 text-[5vmin]"
   >
     <a class="has-[.yep]:text-k-love" @click.prevent="toggleFavorite">
-      <Icon :icon="song.liked ? faHeart : faEmptyHeart" :class="song.liked && 'yep'" />
+      <Icon :class="song.liked && 'yep'" :icon="song.liked ? faHeart : faEmptyHeart" />
     </a>
 
     <a class="text-[6vmin]" @click="playPrev">
@@ -15,7 +15,7 @@
       items-center justify-center has-[.paused]:pl-[4px]"
       @click.prevent="togglePlayback"
     >
-      <Icon :icon="playing ? faPause : faPlay" :class="playing || 'paused'" />
+      <Icon :class="playing || 'paused'" :icon="playing ? faPause : faPlay" />
     </a>
 
     <a class="text-[6vmin]" @click.prevent="playNext">
@@ -26,14 +26,8 @@
   </footer>
 </template>
 
-<script setup lang="ts">
-import {
-  faHeart,
-  faPause,
-  faPlay,
-  faStepBackward,
-  faStepForward,
-} from '@fortawesome/free-solid-svg-icons'
+<script lang="ts" setup>
+import { faHeart, faPause, faPlay, faStepBackward, faStepForward, } from '@fortawesome/free-solid-svg-icons'
 import { faHeart as faEmptyHeart } from '@fortawesome/free-regular-svg-icons'
 import { computed, toRefs } from 'vue'
 import { socketService } from '@/services'
@@ -59,7 +53,7 @@ const playNext = () => socketService.broadcast('SOCKET_PLAY_NEXT')
 const playPrev = () => socketService.broadcast('SOCKET_PLAY_PREV')
 </script>
 
-<style scoped lang="postcss">
+<style lang="postcss" scoped>
 a {
   @apply text-k-text-primary active:opacity-80;
 }

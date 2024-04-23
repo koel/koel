@@ -5,6 +5,22 @@ import { playlistCollaborationService } from '@/services'
 import Component from './PlaylistCollaboratorList.vue'
 
 new class extends UnitTestCase {
+  protected test () {
+    it('renders', async () => {
+      const playlist = factory<Playlist>('playlist', {
+        is_collaborative: true
+      })
+
+      const fetchMock = this.mock(playlistCollaborationService, 'fetchCollaborators').mockResolvedValue(
+        factory<PlaylistCollaborator>('playlist-collaborator', 5)
+      )
+
+      const { html } = await this.be().renderComponent(playlist)
+      expect(fetchMock).toHaveBeenCalledWith(playlist)
+      expect(html()).toMatchSnapshot()
+    })
+  }
+
   private async renderComponent (playlist: Playlist) {
     const rendered = this.render(Component, {
       props: {
@@ -20,21 +36,5 @@ new class extends UnitTestCase {
     await this.tick(2)
 
     return rendered
-  }
-
-  protected test () {
-    it('renders', async () => {
-      const playlist = factory<Playlist>('playlist', {
-        is_collaborative: true
-      })
-
-      const fetchMock = this.mock(playlistCollaborationService, 'fetchCollaborators').mockResolvedValue(
-        factory<PlaylistCollaborator>('playlist-collaborator', 5)
-      )
-
-      const { html } = await this.be().renderComponent(playlist)
-      expect(fetchMock).toHaveBeenCalledWith(playlist)
-      expect(html()).toMatchSnapshot()
-    })
   }
 }

@@ -5,11 +5,11 @@
     type="button"
     @click.prevent="loginWithGoogle"
   >
-    <img :src="googleLogo" alt="Google Logo" width="32" height="32">
+    <img :src="googleLogo" alt="Google Logo" height="32" width="32">
   </button>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import googleLogo from '@/../img/logos/google.svg'
 import { openPopup } from '@/utils'
 

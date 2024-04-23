@@ -1,6 +1,6 @@
 <template>
   <span>
-    <Btn v-if="shouldShowInviteButton" success small @click.prevent="inviteCollaborators">Invite</Btn>
+    <Btn v-if="shouldShowInviteButton" small success @click.prevent="inviteCollaborators">Invite</Btn>
     <span v-if="justCreatedInviteLink" class="text-k-text-secondary text-[0.95rem]">
       <Icon :icon="faCheckCircle" class="text-k-success mr-1" />
       Link copied to clipboard!
@@ -9,7 +9,7 @@
   </span>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { faCheckCircle, faCircleNotch } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRefs } from 'vue'
 import { copyText } from '@/utils'

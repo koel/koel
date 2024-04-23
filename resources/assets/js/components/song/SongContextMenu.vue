@@ -75,9 +75,9 @@ import {
   useKoelPlus,
   useMessageToaster,
   usePlaylistManagement,
+  usePolicies,
   useRouter,
-  useSongMenuMethods,
-  usePolicies
+  useSongMenuMethods
 } from '@/composables'
 
 const { toastSuccess, toastError, toastWarning } = useMessageToaster()

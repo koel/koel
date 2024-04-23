@@ -20,12 +20,12 @@
       <span v-else class="contributor">Contributor</span>
     </span>
     <span v-if="manageable" class="actions flex-[0_0_72px] text-right">
-      <Btn v-if="removable" small danger @click.prevent="emit('remove')">Remove</Btn>
+      <Btn v-if="removable" danger small @click.prevent="emit('remove')">Remove</Btn>
     </span>
   </li>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons'
 import { toRefs } from 'vue'
 
@@ -46,7 +46,7 @@ const { currentUser } = useAuthorization()
 const emit = defineEmits<{ (e: 'remove'): void }>()
 </script>
 
-<style scoped lang="postcss">
+<style lang="postcss" scoped>
 span {
   @apply inline-block min-w-0 leading-normal;
 }

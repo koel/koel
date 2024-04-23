@@ -31,7 +31,7 @@
       <span class="collaborator">
         <UserAvatar :user="collaborator" width="24" />
       </span>
-      <span class="added-at" :title="song.collaboration.added_at">{{ song.collaboration.fmt_added_at }}</span>
+      <span :title="song.collaboration.added_at" class="added-at">{{ song.collaboration.fmt_added_at }}</span>
     </template>
     <span class="time">{{ fmtLength }}</span>
     <span class="extra">

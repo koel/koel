@@ -1,7 +1,7 @@
 <template>
   <div
-    class="alert-box flex items-center gap-4 bg-white/10 mb-6 p-4 rounded-md text-k-text-primary"
     :class="`alert-box-${props.type}`"
+    class="alert-box flex items-center gap-4 bg-white/10 mb-6 p-4 rounded-md text-k-text-primary"
   >
     <Icon v-if="props.type === 'info' || props.type === 'default'" :icon="faInfoCircle" />
     <Icon v-if="props.type === 'danger'" :icon="faExclamationCircle" />
@@ -14,7 +14,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import {
   faCheckCircle,
   faExclamationCircle,
@@ -27,7 +27,7 @@ const props = withDefaults(defineProps<{ type?: 'default' | 'info' | 'danger' | 
 })
 </script>
 
-<style scoped lang="postcss">
+<style lang="postcss" scoped>
 .alert-box {
   &-info {
     @apply bg-blue-500;

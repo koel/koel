@@ -15,7 +15,7 @@
   </article>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { toRefs } from 'vue'
 import { defaultCover } from '@/utils'
 
@@ -24,7 +24,7 @@ const { song } = toRefs(props)
 </script>
 
 
-<style scoped lang="postcss">
+<style lang="postcss" scoped>
 p {
   @apply max-w-[90%] mx-auto overflow-hidden text-ellipsis whitespace-nowrap leading-[1.3];
 }

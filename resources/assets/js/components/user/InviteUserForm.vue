@@ -7,7 +7,7 @@
     <main class="space-y-5">
       <FormRow>
         <template #label>Emails</template>
-        <TextArea ref="emailsEl" v-model="rawEmails" name="emails" class="!min-h-[8rem]" required title="Emails" />
+        <TextArea ref="emailsEl" v-model="rawEmails" class="!min-h-[8rem]" name="emails" required title="Emails" />
         <template #help>To invite multiple users, input one email per line.</template>
       </FormRow>
       <FormRow>

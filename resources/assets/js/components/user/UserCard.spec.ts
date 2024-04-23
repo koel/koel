@@ -10,14 +10,6 @@ import { invitationService } from '@/services'
 import UserCard from './UserCard.vue'
 
 new class extends UnitTestCase {
-  private renderComponent (user: User) {
-    return this.render(UserCard, {
-      props: {
-        user
-      }
-    })
-  }
-
   protected test () {
     it('has different behaviors for current user', () => {
       const user = factory<User>('user')
@@ -77,7 +69,7 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByRole('button', { name: 'Revoke' }))
 
-      expect (revokeMock).toHaveBeenCalledWith(prospect)
+      expect(revokeMock).toHaveBeenCalledWith(prospect)
     })
 
     it('does not revoke invite for prospects if not confirmed', async () => {
@@ -89,6 +81,14 @@ new class extends UnitTestCase {
       await this.user.click(screen.getByRole('button', { name: 'Revoke' }))
 
       expect(revokeMock).not.toHaveBeenCalled()
+    })
+  }
+
+  private renderComponent (user: User) {
+    return this.render(UserCard, {
+      props: {
+        user
+      }
     })
   }
 }

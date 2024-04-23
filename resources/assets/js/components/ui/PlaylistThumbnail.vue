@@ -14,7 +14,7 @@
   </article>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { computed, ref, toRefs } from 'vue'
 import { defaultCover } from '@/utils'
 import { playlistStore } from '@/stores'
@@ -29,7 +29,7 @@ const droppable = ref(false)
 const { isAdmin } = useAuthorization()
 const { isPlus } = useKoelPlus()
 
-const backgroundImage = computed(() => `url(${playlist.value.cover || defaultCover })`)
+const backgroundImage = computed(() => `url(${playlist.value.cover || defaultCover})`)
 
 const allowsUpload = computed(() => isAdmin.value || isPlus.value)
 const onDragEnter = () => (droppable.value = allowsUpload.value)
@@ -78,7 +78,7 @@ const onDrop = async (event: DragEvent) => {
 }
 </script>
 
-<style scoped lang="postcss">
+<style lang="postcss" scoped>
 article {
   background-image: v-bind(backgroundImage);
 

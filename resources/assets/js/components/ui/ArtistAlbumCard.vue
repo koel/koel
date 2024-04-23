@@ -1,10 +1,10 @@
 <template>
   <article
-    class="relative flex max-w-full md:max-w-[256px] border p-5 rounded-lg flex-col gap-5 transition border-color duration-200"
     :class="layout"
+    class="relative flex max-w-full md:max-w-[256px] border p-5 rounded-lg flex-col gap-5 transition border-color duration-200"
+    data-testid="artist-album-card"
     draggable="true"
     tabindex="0"
-    data-testid="artist-album-card"
     @dblclick="onDblClick"
     @dragstart="onDragStart"
     @contextmenu.prevent="onContextMenu"

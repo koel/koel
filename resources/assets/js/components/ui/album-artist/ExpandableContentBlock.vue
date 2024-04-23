@@ -4,13 +4,13 @@
       <slot />
     </div>
 
-    <Btn v-if="!showingFull" small class="mt-4" @click.prevent="showingFull = true">
+    <Btn v-if="!showingFull" class="mt-4" small @click.prevent="showingFull = true">
       Read More
     </Btn>
   </article>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref } from 'vue'
 
 import Btn from '@/components/ui/form/Btn.vue'

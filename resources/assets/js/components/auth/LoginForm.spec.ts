@@ -6,18 +6,6 @@ import { logger } from '@/utils'
 import LoginFrom from './LoginForm.vue'
 
 new class extends UnitTestCase {
-  private async submitForm (loginMock: Mock) {
-    const rendered = this.render(LoginFrom)
-
-    await this.type(screen.getByPlaceholderText('Email Address'), 'john@doe.com')
-    await this.type(screen.getByPlaceholderText('Password'), 'secret')
-    await this.user.click(screen.getByTestId('submit'))
-
-    expect(loginMock).toHaveBeenCalledWith('john@doe.com', 'secret')
-
-    return rendered
-  }
-
   protected test () {
     it('renders', () => expect(this.render(LoginFrom).html()).toMatchSnapshot())
 
@@ -66,5 +54,17 @@ new class extends UnitTestCase {
 
       window.SSO_PROVIDERS = []
     })
+  }
+
+  private async submitForm (loginMock: Mock) {
+    const rendered = this.render(LoginFrom)
+
+    await this.type(screen.getByPlaceholderText('Email Address'), 'john@doe.com')
+    await this.type(screen.getByPlaceholderText('Password'), 'secret')
+    await this.user.click(screen.getByTestId('submit'))
+
+    expect(loginMock).toHaveBeenCalledWith('john@doe.com', 'secret')
+
+    return rendered
   }
 }

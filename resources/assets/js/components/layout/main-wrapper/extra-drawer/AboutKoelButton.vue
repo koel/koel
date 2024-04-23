@@ -13,7 +13,7 @@
   </ExtraDrawerButton>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import { eventBus } from '@/utils'
 import { useNewVersionNotification } from '@/composables'

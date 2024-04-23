@@ -43,6 +43,26 @@ export default class Router {
     addEventListener('popstate', () => this.resolve(), true)
   }
 
+  public static go (path: string | number, reload = false) {
+    if (typeof path === 'number') {
+      history.go(path)
+      return
+    }
+
+    if (!path.startsWith('/')) {
+      path = `/${path}`
+    }
+
+    if (!path.startsWith('/#')) {
+      path = `/#${path}`
+    }
+
+    path = path.substring(1, path.length)
+    location.assign(`${location.origin}${location.pathname}${path}`)
+
+    reload && forceReloadWindow()
+  }
+
   public async resolve () {
     if (!location.hash || location.hash === '#/' || location.hash === '#!/') {
       return Router.go(this.homeRoute.path)
@@ -67,6 +87,14 @@ export default class Router {
     return this.activateRoute(route, params)
   }
 
+  public triggerNotFound = async () => await this.activateRoute(this.notFoundRoute)
+  public onRouteChanged = (handler: RouteChangedHandler) => this.routeChangedHandlers.push(handler)
+
+  public async activateRoute (route: Route, params: RouteParams = {}) {
+    this.$currentRoute.value = route
+    this.$currentRoute.value.params = params
+  }
+
   private tryMatchRoute () {
     if (!this.cache.has(location.hash)) {
       for (let i = 0; i < this.routes.length; i++) {
@@ -87,33 +115,5 @@ export default class Router {
     }
 
     return this.cache.get(location.hash)
-  }
-
-  public triggerNotFound = async () => await this.activateRoute(this.notFoundRoute)
-  public onRouteChanged = (handler: RouteChangedHandler) => this.routeChangedHandlers.push(handler)
-
-  public async activateRoute (route: Route, params: RouteParams = {}) {
-    this.$currentRoute.value = route
-    this.$currentRoute.value.params = params
-  }
-
-  public static go (path: string | number, reload = false) {
-    if (typeof path === 'number') {
-      history.go(path)
-      return
-    }
-
-    if (!path.startsWith('/')) {
-      path = `/${path}`
-    }
-
-    if (!path.startsWith('/#')) {
-      path = `/#${path}`
-    }
-
-    path = path.substring(1, path.length)
-    location.assign(`${location.origin}${location.pathname}${path}`)
-
-    reload && forceReloadWindow()
   }
 }

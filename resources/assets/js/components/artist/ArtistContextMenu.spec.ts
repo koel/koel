@@ -11,18 +11,6 @@ import ArtistContextMenu from './ArtistContextMenu.vue'
 let artist: Artist
 
 new class extends UnitTestCase {
-  private async renderComponent (_artist?: Artist) {
-    artist = _artist || factory<Artist>('artist', {
-      name: 'Accept'
-    })
-
-    const rendered = this.render(ArtistContextMenu)
-    eventBus.emit('ARTIST_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, artist)
-    await this.tick(2)
-
-    return rendered
-  }
-
   protected test () {
     it('renders', async () => expect((await this.renderComponent()).html()).toMatchSnapshot())
 
@@ -90,5 +78,17 @@ new class extends UnitTestCase {
       expect(screen.queryByText('Go to Artist')).toBeNull()
       expect(screen.queryByText('Download')).toBeNull()
     })
+  }
+
+  private async renderComponent (_artist?: Artist) {
+    artist = _artist || factory<Artist>('artist', {
+      name: 'Accept'
+    })
+
+    const rendered = this.render(ArtistContextMenu)
+    eventBus.emit('ARTIST_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, artist)
+    await this.tick(2)
+
+    return rendered
   }
 }

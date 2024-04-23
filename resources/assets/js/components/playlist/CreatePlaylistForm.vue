@@ -3,7 +3,7 @@
     <header>
       <h1>
         New Playlist
-        <span v-if="songs.length" data-testid="from-songs" class="text-k-text-secondary">
+        <span v-if="songs.length" class="text-k-text-secondary" data-testid="from-songs">
           from {{ pluralize(songs, 'song') }}
         </span>
       </h1>

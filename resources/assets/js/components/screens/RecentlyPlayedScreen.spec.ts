@@ -6,6 +6,22 @@ import { screen, waitFor } from '@testing-library/vue'
 import RecentlyPlayedScreen from './RecentlyPlayedScreen.vue'
 
 new class extends UnitTestCase {
+  protected test () {
+    it('displays the songs', async () => {
+      await this.renderComponent(factory<Song>('song', 3))
+
+      screen.getByTestId('song-list')
+      expect(screen.queryByTestId('screen-empty-state')).toBeNull()
+    })
+
+    it('displays the empty state', async () => {
+      await this.renderComponent([])
+
+      expect(screen.queryByTestId('song-list')).toBeNull()
+      screen.getByTestId('screen-empty-state')
+    })
+  }
+
   private async renderComponent (songs: Song[]) {
     recentlyPlayedStore.state.songs = songs
     const fetchMock = this.mock(recentlyPlayedStore, 'fetch')
@@ -21,21 +37,5 @@ new class extends UnitTestCase {
     await this.router.activateRoute({ path: 'recently-played', screen: 'RecentlyPlayed' })
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalled())
-  }
-
-  protected test () {
-    it('displays the songs', async () => {
-      await this.renderComponent(factory<Song>('song', 3))
-
-      screen.getByTestId('song-list')
-      expect(screen.queryByTestId('screen-empty-state')).toBeNull()
-    })
-
-    it('displays the empty state', async () => {
-      await this.renderComponent([])
-
-      expect(screen.queryByTestId('song-list')).toBeNull()
-      screen.getByTestId('screen-empty-state')
-    })
   }
 }

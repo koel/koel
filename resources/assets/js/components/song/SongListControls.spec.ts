@@ -8,32 +8,6 @@ import { screen } from '@testing-library/vue'
 import SongListControls from './SongListControls.vue'
 
 new class extends UnitTestCase {
-  private renderComponent (selectedSongCount = 1, configOverrides: Partial<SongListControlsConfig> = {}) {
-    const songs = factory<Song>('song', 5)
-    const config: SongListControlsConfig = merge({
-      addTo: {
-        queue: true,
-        favorites: true
-      },
-      clearQueue: true,
-      deletePlaylist: true,
-      refresh: true,
-      filter: true
-    }, configOverrides)
-
-    return this.render(SongListControls, {
-      global: {
-        provide: {
-          [<symbol>SongsKey]: [ref(songs)],
-          [<symbol>SelectedSongsKey]: [ref(take(songs, selectedSongCount))]
-        }
-      },
-      props: {
-        config
-      }
-    })
-  }
-
   protected test () {
     it.each([[0], [1]])('shuffles all if %s songs are selected', async (selectedCount: number) => {
       const { emitted } = this.renderComponent(selectedCount)
@@ -85,6 +59,32 @@ new class extends UnitTestCase {
       await this.user.click(screen.getByTitle('Delete this playlist'))
 
       expect(emitted().deletePlaylist).toBeTruthy()
+    })
+  }
+
+  private renderComponent (selectedSongCount = 1, configOverrides: Partial<SongListControlsConfig> = {}) {
+    const songs = factory<Song>('song', 5)
+    const config: SongListControlsConfig = merge({
+      addTo: {
+        queue: true,
+        favorites: true
+      },
+      clearQueue: true,
+      deletePlaylist: true,
+      refresh: true,
+      filter: true
+    }, configOverrides)
+
+    return this.render(SongListControls, {
+      global: {
+        provide: {
+          [<symbol>SongsKey]: [ref(songs)],
+          [<symbol>SelectedSongsKey]: [ref(take(songs, selectedSongCount))]
+        }
+      },
+      props: {
+        config
+      }
     })
   }
 }

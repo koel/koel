@@ -15,28 +15,6 @@ new class extends UnitTestCase {
     this.beAdmin()
   }
 
-  private async renderComponent (users: User[] = []) {
-    if (users.length === 0) {
-      users = factory<User>('user', 6)
-    }
-
-    const fetchMock = this.mock(http, 'get').mockResolvedValue(users)
-
-    this.render(UserListScreen, {
-      global: {
-        stubs: {
-          Btn,
-          BtnGroup,
-          UserCard: this.stub('user-card')
-        }
-      }
-    })
-
-    expect(fetchMock).toHaveBeenCalledWith('users')
-
-    await this.tick(2)
-  }
-
   protected test () {
     it('displays a list of users', async () => {
       await this.renderComponent()
@@ -70,5 +48,27 @@ new class extends UnitTestCase {
 
       expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_INVITE_USER_FORM')
     })
+  }
+
+  private async renderComponent (users: User[] = []) {
+    if (users.length === 0) {
+      users = factory<User>('user', 6)
+    }
+
+    const fetchMock = this.mock(http, 'get').mockResolvedValue(users)
+
+    this.render(UserListScreen, {
+      global: {
+        stubs: {
+          Btn,
+          BtnGroup,
+          UserCard: this.stub('user-card')
+        }
+      }
+    })
+
+    expect(fetchMock).toHaveBeenCalledWith('users')
+
+    await this.tick(2)
   }
 }
