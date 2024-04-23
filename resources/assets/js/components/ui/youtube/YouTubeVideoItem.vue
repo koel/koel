@@ -1,12 +1,12 @@
 <template>
   <a
     :href="url"
-    data-testid="youtube-search-result"
     class="flex gap-3 !text-k-text-secondary hover:!text-k-text-primary focus:!text-k-text-primary active:!text-k-text-primary"
+    data-testid="youtube-search-result"
     role="button"
     @click.prevent="play"
   >
-    <img class="self-start" :alt="video.snippet.title" :src="video.snippet.thumbnails.default.url" width="90">
+    <img :alt="video.snippet.title" :src="video.snippet.thumbnails.default.url" class="self-start" width="90">
     <aside class="space-y-1">
       <h3 class="text-lg">{{ unescape(video.snippet.title) }}</h3>
       <p class="text-[0.9rem]">{{ video.snippet.description }}</p>

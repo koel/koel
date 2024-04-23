@@ -9,14 +9,6 @@ const theme: Theme = {
 }
 
 new class extends UnitTestCase {
-  private renderComponent () {
-    return this.render(ThemeCard, {
-      props: {
-        theme
-      }
-    })
-  }
-
   protected test () {
     it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
 
@@ -26,6 +18,14 @@ new class extends UnitTestCase {
       await this.user.click(screen.getByRole('button', { name: 'Sample' }))
 
       expect(emitted().selected[0]).toEqual([theme])
+    })
+  }
+
+  private renderComponent () {
+    return this.render(ThemeCard, {
+      props: {
+        theme
+      }
     })
   }
 }

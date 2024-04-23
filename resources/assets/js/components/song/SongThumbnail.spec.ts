@@ -9,20 +9,6 @@ import SongThumbnail from '@/components/song/SongThumbnail.vue'
 let song: Song
 
 new class extends UnitTestCase {
-  private renderComponent (playbackState: PlaybackState = 'Stopped') {
-    song = factory<Song>('song', {
-      playback_state: playbackState,
-      play_count: 10,
-      title: 'Foo bar'
-    })
-
-    return this.render(SongThumbnail, {
-      props: {
-        song
-      }
-    })
-  }
-
   protected test () {
     it.each<[PlaybackState, string, MethodOf<typeof playbackService>]>([
       ['Stopped', 'Play', 'play'],
@@ -36,6 +22,20 @@ new class extends UnitTestCase {
       await this.user.click(screen.getByRole('button', { name }))
 
       expect(playbackMock).toHaveBeenCalled()
+    })
+  }
+
+  private renderComponent (playbackState: PlaybackState = 'Stopped') {
+    song = factory<Song>('song', {
+      playback_state: playbackState,
+      play_count: 10,
+      title: 'Foo bar'
+    })
+
+    return this.render(SongThumbnail, {
+      props: {
+        song
+      }
     })
   }
 }

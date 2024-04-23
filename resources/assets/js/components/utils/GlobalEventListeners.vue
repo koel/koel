@@ -2,7 +2,7 @@
   <slot />
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { useDialogBox, useMessageToaster, useRouter } from '@/composables'
 import { onMounted } from 'vue'
 import { eventBus, forceReloadWindow } from '@/utils'

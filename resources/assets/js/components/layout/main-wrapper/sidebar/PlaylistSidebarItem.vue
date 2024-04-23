@@ -22,12 +22,7 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  faClockRotateLeft,
-  faHeart,
-  faUsers,
-  faWandMagicSparkles
-} from '@fortawesome/free-solid-svg-icons'
+import { faClockRotateLeft, faHeart, faUsers, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
 import { ListMusic } from 'lucide-vue-next'
 import { computed, ref, toRefs } from 'vue'
 import { eventBus } from '@/utils'

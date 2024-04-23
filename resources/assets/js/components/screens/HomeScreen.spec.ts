@@ -7,11 +7,6 @@ import { screen } from '@testing-library/vue'
 import HomeScreen from './HomeScreen.vue'
 
 new class extends UnitTestCase {
-  private async renderComponent () {
-    this.render(HomeScreen)
-    await this.router.activateRoute({ path: 'home', screen: 'Home' })
-  }
-
   protected test () {
     it('renders an empty state if no songs found', async () => {
       commonStore.state.song_length = 0
@@ -53,5 +48,10 @@ new class extends UnitTestCase {
       expect(initMock).toHaveBeenCalled()
       expect(refreshMock).toHaveBeenCalled()
     })
+  }
+
+  private async renderComponent () {
+    this.render(HomeScreen)
+    await this.router.activateRoute({ path: 'home', screen: 'Home' })
   }
 }

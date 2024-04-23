@@ -8,28 +8,6 @@ import UploadItem from './UploadItem.vue'
 let file: UploadFile
 
 new class extends UnitTestCase {
-  private renderComponent (status: UploadStatus) {
-    file = {
-      status,
-      file: new File([], 'sample.mp3'),
-      id: 'x-file',
-      message: '',
-      name: 'Sample Track',
-      progress: 42
-    }
-
-    return this.render(UploadItem, {
-      props: {
-        file
-      },
-      global: {
-        stubs: {
-          Btn
-        }
-      }
-    })
-  }
-
   protected test () {
     it('renders', () => expect(this.renderComponent('Canceled').html()).toMatchSnapshot())
 
@@ -53,6 +31,28 @@ new class extends UnitTestCase {
       await this.user.click(screen.getByRole('button', { name: 'Remove' }))
 
       expect(mock).toHaveBeenCalled()
+    })
+  }
+
+  private renderComponent (status: UploadStatus) {
+    file = {
+      status,
+      file: new File([], 'sample.mp3'),
+      id: 'x-file',
+      message: '',
+      name: 'Sample Track',
+      progress: 42
+    }
+
+    return this.render(UploadItem, {
+      props: {
+        file
+      },
+      global: {
+        stubs: {
+          Btn
+        }
+      }
     })
   }
 }

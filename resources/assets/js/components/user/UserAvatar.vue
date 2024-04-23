@@ -7,7 +7,7 @@
   >
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { toRefs } from 'vue'
 
 const props = defineProps<{ user: Pick<User, 'name' | 'avatar'> }>()

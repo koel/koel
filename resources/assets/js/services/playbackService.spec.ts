@@ -18,29 +18,8 @@ import {
 } from '@/stores'
 
 new class extends UnitTestCase {
-  private setupEnvironment () {
-    document.body.innerHTML = `
-  <div class="plyr">
-    <audio crossorigin="anonymous" controls/>
-  </div>
-  `
-
-    window.AudioContext = vi.fn().mockImplementation(() => ({
-      createMediaElementSource: vi.fn(noop)
-    }))
-  }
-
   protected beforeEach () {
     super.beforeEach(() => this.setupEnvironment())
-  }
-
-  private setCurrentSong (song?: Song) {
-    song = reactive(song || factory<Song>('song', {
-      playback_state: 'Playing'
-    }))
-
-    queueStore.state.songs = reactive([song])
-    return song
   }
 
   protected test () {
@@ -406,5 +385,26 @@ new class extends UnitTestCase {
 
       expect(playMock).toHaveBeenCalledWith(songs[0])
     })
+  }
+
+  private setupEnvironment () {
+    document.body.innerHTML = `
+  <div class="plyr">
+    <audio crossorigin="anonymous" controls/>
+  </div>
+  `
+
+    window.AudioContext = vi.fn().mockImplementation(() => ({
+      createMediaElementSource: vi.fn(noop)
+    }))
+  }
+
+  private setCurrentSong (song?: Song) {
+    song = reactive(song || factory<Song>('song', {
+      playback_state: 'Playing'
+    }))
+
+    queueStore.state.songs = reactive([song])
+    return song
   }
 }

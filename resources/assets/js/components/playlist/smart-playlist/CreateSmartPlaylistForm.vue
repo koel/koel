@@ -28,7 +28,7 @@
             :is-first-group="index === 0"
             @input="onGroupChanged"
           />
-          <Btn class="btn-add-group" success small title="Add a new group" uppercase @click.prevent="addGroup">
+          <Btn class="btn-add-group" small success title="Add a new group" uppercase @click.prevent="addGroup">
             <Icon :icon="faPlus" />
             Group
           </Btn>
@@ -55,7 +55,8 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { ref, toRef } from 'vue'
 import { playlistFolderStore, playlistStore } from '@/stores'
 import {
-  useDialogBox, useErrorHandler,
+  useDialogBox,
+  useErrorHandler,
   useKoelPlus,
   useMessageToaster,
   useModal,

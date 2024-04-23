@@ -1,9 +1,8 @@
-import { Route } from '@/router'
+import Router, { Route } from '@/router'
 import { userStore } from '@/stores'
 import { cache, playlistCollaborationService } from '@/services'
 import { useUpload } from '@/composables'
 import { logger } from '@/utils'
-import Router from '@/router'
 
 const UUID_REGEX = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 

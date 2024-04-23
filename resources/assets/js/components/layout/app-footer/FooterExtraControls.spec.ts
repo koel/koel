@@ -5,17 +5,6 @@ import { eventBus } from '@/utils'
 import FooterExtraControls from './FooterExtraControls.vue'
 
 new class extends UnitTestCase {
-  private renderComponent () {
-    return this.render(FooterExtraControls, {
-      global: {
-        stubs: {
-          Equalizer: this.stub('Equalizer'),
-          Volume: this.stub('Volume')
-        }
-      }
-    })
-  }
-
   protected test () {
     it('renders', () => {
       this.setReadOnlyProperty(document, 'fullscreenEnabled', undefined)
@@ -30,6 +19,17 @@ new class extends UnitTestCase {
       await this.user.click(screen.getByTitle('Enter fullscreen mode'))
 
       expect(emitMock).toHaveBeenCalledWith('FULLSCREEN_TOGGLE')
+    })
+  }
+
+  private renderComponent () {
+    return this.render(FooterExtraControls, {
+      global: {
+        stubs: {
+          Equalizer: this.stub('Equalizer'),
+          Volume: this.stub('Volume')
+        }
+      }
     })
   }
 }

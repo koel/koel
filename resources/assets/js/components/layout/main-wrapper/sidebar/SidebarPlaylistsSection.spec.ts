@@ -8,17 +8,6 @@ import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
 import PlaylistFolderSidebarItem from './PlaylistFolderSidebarItem.vue'
 
 new class extends UnitTestCase {
-  private renderComponent () {
-    this.render(SidebarPlaylistsSection, {
-      global: {
-        stubs: {
-          PlaylistSidebarItem,
-          PlaylistFolderSidebarItem
-        }
-      }
-    })
-  }
-
   protected test () {
     it('displays orphan playlists', () => {
       playlistStore.state.playlists = [
@@ -42,6 +31,17 @@ new class extends UnitTestCase {
 
       this.renderComponent()
       ;['Foo Folder', 'Bar Folder'].forEach(text => screen.getByText(text))
+    })
+  }
+
+  private renderComponent () {
+    this.render(SidebarPlaylistsSection, {
+      global: {
+        stubs: {
+          PlaylistSidebarItem,
+          PlaylistFolderSidebarItem
+        }
+      }
     })
   }
 }

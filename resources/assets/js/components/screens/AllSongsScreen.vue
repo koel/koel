@@ -67,11 +67,12 @@ import { pluralize, secondsToHumanReadable } from '@/utils'
 import { commonStore, queueStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
 import {
+  useErrorHandler,
   useKoelPlus,
+  useLocalStorage,
   useRouter,
   useSongList,
-  useSongListControls,
-  useLocalStorage, useErrorHandler
+  useSongListControls
 } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'

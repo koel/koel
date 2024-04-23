@@ -9,7 +9,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { orderBy } from 'lodash'
 import { onMounted, ref } from 'vue'
 import { http } from '@/services'
@@ -26,7 +26,7 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped lang="postcss">
+<style lang="postcss" scoped>
 li&:last-child {
   &::before {
     content: ', and '

@@ -5,8 +5,8 @@
     class="virtual-scroller will-change-transform overflow-scroll"
     @scroll.passive="onScroll"
   >
-    <div class="will-change-transform overflow-hidden" :style="{ height: `${totalHeight}px` }">
-      <div class="will-change-transform" :style="{ transform: `translateY(${offsetY}px)`}">
+    <div :style="{ height: `${totalHeight}px` }" class="will-change-transform overflow-hidden">
+      <div :style="{ transform: `translateY(${offsetY}px)`}" class="will-change-transform">
         <slot v-for="item in renderedItems" :item="item" />
       </div>
     </div>

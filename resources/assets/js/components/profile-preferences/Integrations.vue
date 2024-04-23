@@ -9,7 +9,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import LastfmIntegration from '@/components/profile-preferences/LastfmIntegration.vue'
 import SpotifyIntegration from '@/components/profile-preferences/SpotifyIntegration.vue'
 </script>

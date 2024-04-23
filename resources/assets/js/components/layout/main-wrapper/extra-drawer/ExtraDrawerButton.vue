@@ -9,7 +9,7 @@
   </button>
 </template>
 
-<style scoped lang="postcss">
+<style lang="postcss" scoped>
 @tailwind utilities;
 
 @layer utilities {

@@ -19,19 +19,6 @@ new class extends UnitTestCase {
     })
   }
 
-  private renderComponent () {
-    return this.render(ArtistCard, {
-      props: {
-        artist
-      },
-      global: {
-        stubs: {
-          AlbumArtistThumbnail: this.stub('thumbnail')
-        }
-      }
-    })
-  }
-
   protected test () {
     it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
 
@@ -70,6 +57,19 @@ new class extends UnitTestCase {
       await this.trigger(screen.getByTestId('artist-album-card'), 'contextMenu')
 
       expect(emitMock).toHaveBeenCalledWith('ARTIST_CONTEXT_MENU_REQUESTED', expect.any(MouseEvent), artist)
+    })
+  }
+
+  private renderComponent () {
+    return this.render(ArtistCard, {
+      props: {
+        artist
+      },
+      global: {
+        stubs: {
+          AlbumArtistThumbnail: this.stub('thumbnail')
+        }
+      }
     })
   }
 }

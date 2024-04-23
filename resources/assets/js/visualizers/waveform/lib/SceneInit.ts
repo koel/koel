@@ -1,11 +1,11 @@
 import * as THREE from 'three'
 
 export default class SceneInit {
+  public scene: THREE.Scene
   private readonly fov: number
   private container: HTMLElement
   private readonly camera: THREE.PerspectiveCamera
   private clock: THREE.Clock
-  public scene: THREE.Scene
   private renderer: THREE.WebGLRenderer
   private uniforms: any
   private readonly onWindowResize: () => void

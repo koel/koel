@@ -19,7 +19,7 @@ import { take } from 'lodash'
 import { computed, toRefs } from 'vue'
 import { defaultCover } from '@/utils'
 
-const defaultBackgroundImage = `url(${ defaultCover })`
+const defaultBackgroundImage = `url(${defaultCover})`
 
 const props = defineProps<{ thumbnails: string[] }>()
 const { thumbnails } = toRefs(props)

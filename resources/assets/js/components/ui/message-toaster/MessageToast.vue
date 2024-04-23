@@ -4,9 +4,9 @@
     class="group rounded-l-md cursor-pointer flex items-stretch opacity-90 transition-transform duration-300 origin-right
     hover:opacity-100 hover:scale-110"
     title="Click to dismiss"
+    @click="dismiss"
     @mouseenter="cancelAutoDismiss"
     @mouseleave="setAutoDismiss"
-    @click="dismiss"
   >
     <aside class="flex items-center px-3 py-0 bg-black/10">
       <Icon :icon="typeIcon" class="group-hover:hidden" />

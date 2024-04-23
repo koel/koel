@@ -10,26 +10,6 @@ import AlbumCard from './AlbumCard.vue'
 let album: Album
 
 new class extends UnitTestCase {
-  private renderComponent () {
-    album = factory<Album>('album', {
-      id: 42,
-      name: 'IV',
-      artist_id: 17,
-      artist_name: 'Led Zeppelin'
-    })
-
-    return this.render(AlbumCard, {
-      props: {
-        album
-      },
-      global: {
-        stubs: {
-          AlbumArtistThumbnail: this.stub('thumbnail')
-        }
-      }
-    })
-  }
-
   protected test () {
     it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
 
@@ -68,6 +48,26 @@ new class extends UnitTestCase {
       await this.trigger(screen.getByTestId('artist-album-card'), 'contextMenu')
 
       expect(emitMock).toHaveBeenCalledWith('ALBUM_CONTEXT_MENU_REQUESTED', expect.any(MouseEvent), album)
+    })
+  }
+
+  private renderComponent () {
+    album = factory<Album>('album', {
+      id: 42,
+      name: 'IV',
+      artist_id: 17,
+      artist_name: 'Led Zeppelin'
+    })
+
+    return this.render(AlbumCard, {
+      props: {
+        album
+      },
+      global: {
+        stubs: {
+          AlbumArtistThumbnail: this.stub('thumbnail')
+        }
+      }
     })
   }
 }

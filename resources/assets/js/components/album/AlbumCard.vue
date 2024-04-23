@@ -2,8 +2,8 @@
   <ArtistAlbumCard
     v-if="showing"
     :entity="album"
-    :title="`${album.name} by ${album.artist_name}`"
     :layout="layout"
+    :title="`${album.name} by ${album.artist_name}`"
     @contextmenu="requestContextMenu"
     @dblclick="shuffle"
     @dragstart="onDragStart"

@@ -4,7 +4,7 @@ import { commonStore } from '@/stores'
 import { acceptedMediaTypes } from '@/config'
 import { UploadFile, uploadService } from '@/services'
 import { getAllFileEntries, pluralize } from '@/utils'
-import { useMessageToaster, useRouter, usePolicies } from '@/composables'
+import { useMessageToaster, usePolicies, useRouter } from '@/composables'
 
 export const useUpload = () => {
   const { toastSuccess, toastWarning } = useMessageToaster()

@@ -16,17 +16,17 @@
 
     <div v-else class="space-y-12">
       <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-8 md:gap-4">
-        <MostPlayedSongs data-testid="most-played-songs" :loading="loading" />
-        <RecentlyPlayedSongs data-testid="recently-played-songs" :loading="loading" />
+        <MostPlayedSongs :loading="loading" data-testid="most-played-songs" />
+        <RecentlyPlayedSongs :loading="loading" data-testid="recently-played-songs" />
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-8 md:gap-4">
-        <RecentlyAddedAlbums data-testid="recently-added-albums" :loading="loading" />
-        <RecentlyAddedSongs data-testid="recently-added-songs" :loading="loading" />
+        <RecentlyAddedAlbums :loading="loading" data-testid="recently-added-albums" />
+        <RecentlyAddedSongs :loading="loading" data-testid="recently-added-songs" />
       </div>
 
-      <MostPlayedArtists data-testid="most-played-artists" :loading="loading" />
-      <MostPlayedAlbums data-testid="most-played-albums" :loading="loading" />
+      <MostPlayedArtists :loading="loading" data-testid="most-played-artists" />
+      <MostPlayedAlbums :loading="loading" data-testid="most-played-albums" />
 
       <BtnScrollToTop />
     </div>

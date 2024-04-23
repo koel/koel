@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios'
 import { logger, parseValidationError } from '@/utils'
-import { useMessageToaster, useDialogBox } from '@/composables'
+import { useDialogBox, useMessageToaster } from '@/composables'
 
 export interface StatusMessageMap {
   [key: AxiosResponse['status']]: string | Closure
@@ -12,13 +12,15 @@ export const useErrorHandler = (driver: ErrorMessageDriver = 'toast') => {
   const { toastError } = useMessageToaster()
   const { showErrorDialog } = useDialogBox()
 
-  const showGenericError = () => {
+  const showError = (message: string) => {
     if (driver === 'toast') {
-      toastError('An unknown error occurred.')
+      toastError(message)
     } else {
-      showErrorDialog('An unknown error occurred.')
+      showErrorDialog(message)
     }
   }
+
+  const showGenericError = () => showError('An unknown error occurred.')
 
   const handleHttpError = (error: unknown, statusMessageMap: StatusMessageMap = {}) => {
     logger.error(error)
@@ -27,7 +29,7 @@ export const useErrorHandler = (driver: ErrorMessageDriver = 'toast') => {
       return showGenericError()
     }
 
-    if (!error.response?.status || !statusMessageMap.hasOwnProperty(error.response.status)) {
+    if (!error.response?.status || !Object.prototype.hasOwnProperty.call(statusMessageMap, error.response.status)) {
       showError('An unknown error occurred.')
       return
     }
@@ -42,14 +44,6 @@ export const useErrorHandler = (driver: ErrorMessageDriver = 'toast') => {
       showError(messageOrClosure)
     } else {
       return messageOrClosure()
-    }
-  }
-
-  const showError = (message: string) => {
-    if (driver === 'toast') {
-      toastError(message)
-    } else {
-      showErrorDialog(message)
     }
   }
 

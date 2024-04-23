@@ -9,8 +9,8 @@
     <div v-if="song" class="meta overflow-hidden hidden md:block">
       <h3 class="title text-ellipsis overflow-hidden whitespace-nowrap">{{ song.title }}</h3>
       <a
-        class="artist text-ellipsis overflow-hidden whitespace-nowrap block text-[0.9rem] !text-k-text-secondary hover:!text-k-accent"
         :href="`/#/artist/${song.artist_id}`"
+        class="artist text-ellipsis overflow-hidden whitespace-nowrap block text-[0.9rem] !text-k-text-secondary hover:!text-k-accent"
       >
         {{ song.artist_name }}
       </a>
@@ -29,7 +29,7 @@ const { startDragging } = useDraggable('songs')
 const song = requireInjection(CurrentSongKey, ref())
 
 const cover = computed(() => song.value?.album_cover || defaultCover)
-const coverBackgroundImage = computed(() => `url(${ cover.value })`)
+const coverBackgroundImage = computed(() => `url(${cover.value})`)
 const draggable = computed(() => Boolean(song.value))
 
 const onDragStart = (event: DragEvent) => {

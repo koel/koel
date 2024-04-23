@@ -1,18 +1,18 @@
 <template>
   <form class="max-w-[540px]" @submit.prevent="submit" @keydown.esc="maybeClose">
     <header class="gap-4">
-      <img alt="" :src="coverUrl" class="w-[84px] aspect-square object-cover object-center rounded-md">
+      <img :src="coverUrl" alt="" class="w-[84px] aspect-square object-cover object-center rounded-md">
       <div class="flex-1 flex flex-col justify-center overflow-hidden">
         <h1 :class="{ mixed: !editingOnlyOneSong }">{{ displayedTitle }}</h1>
         <h2
-          data-testid="displayed-artist-name"
           :class="{ mixed: !allSongsAreFromSameArtist && !formData.artist_name }"
+          data-testid="displayed-artist-name"
         >
           {{ displayedArtistName }}
         </h2>
         <h2
-          data-testid="displayed-album-name"
           :class="{ mixed: !allSongsAreInSameAlbum && !formData.album_name }"
+          data-testid="displayed-album-name"
         >
           {{ displayedAlbumName }}
         </h2>
@@ -117,8 +117,8 @@
                 v-model="formData.genre"
                 :placeholder="inputPlaceholder"
                 data-testid="genre-input"
-                name="genre"
                 list="genres"
+                name="genre"
               />
               <datalist id="genres">
                 <option v-for="genre in genres" :key="genre" :value="genre" />

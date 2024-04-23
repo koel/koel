@@ -12,7 +12,7 @@
   </span>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import noUISlider from 'nouislider'
 import { socketService } from '@/services'
 import { faVolumeHigh, faVolumeMute } from '@fortawesome/free-solid-svg-icons'

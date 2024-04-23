@@ -4,6 +4,6 @@
   </span>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { faSquareUpRight } from '@fortawesome/free-solid-svg-icons'
 </script>

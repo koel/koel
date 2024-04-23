@@ -57,8 +57,8 @@
       <div
         v-show="activeTab === 'YouTube'"
         id="extraPanelYouTube"
-        data-testid="extra-drawer-youtube"
         aria-labelledby="extraTabYouTube"
+        data-testid="extra-drawer-youtube"
         role="tabpanel"
         tabindex="0"
       >

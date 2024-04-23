@@ -19,7 +19,7 @@
   </article>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { toRefs } from 'vue'
 
 const props = withDefaults(defineProps<{ mode?: MediaInfoDisplayMode }>(), { mode: 'aside' })

@@ -1,4 +1,4 @@
-import { it, expect } from 'vitest'
+import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { ref } from 'vue'
@@ -7,8 +7,8 @@ import Modal from './PlaylistCollaborationModal.vue'
 
 new class extends UnitTestCase {
   protected test () {
-    it ('renders the modal', async () => {
-      const { html } =  this.render(Modal, {
+    it('renders the modal', async () => {
+      const { html } = this.render(Modal, {
         global: {
           provide: {
             [<symbol>ModalContextKey]: [ref({ playlist: factory<Playlist>('playlist') })]

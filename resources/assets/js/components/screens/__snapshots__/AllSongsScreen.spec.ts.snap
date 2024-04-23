@@ -2,7 +2,7 @@
 
 exports[`renders 1`] = `
 <section data-v-dcfb8776="" data-v-8ea4eaa5="" class="max-h-full min-h-full w-full flex flex-col transform-gpu">
-  <header data-v-5691beb5="" data-v-8ea4eaa5="" class="screen-header min-h-0 md:min-h-full flex items-end flex-shrink-0 relative content-stretch leading-normal p-6 border-b border-b-k-bg-secondary expanded">
+  <header data-v-5691beb5="" data-v-8ea4eaa5="" class="expanded screen-header min-h-0 md:min-h-full flex items-end flex-shrink-0 relative content-stretch leading-normal p-6 border-b border-b-k-bg-secondary">
     <aside data-v-5691beb5="" class="thumbnail-wrapper hidden md:block overflow-hidden w-0 rounded-md">
       <article data-v-55bfc268="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="single thumbnail-stack aspect-square overflow-hidden grid bg-cover bg-no-repeat" style="background-image: url(undefined/resources/assets/img/covers/default.svg);"><span data-v-55bfc268="" class="block will-change-transform w-full h-full bg-cover bg-no-repeat" data-testid="thumbnail"></span></article>
     </aside>
@@ -40,7 +40,7 @@ exports[`renders 1`] = `
 
 exports[`renders in Plus edition 1`] = `
 <section data-v-dcfb8776="" data-v-8ea4eaa5="" class="max-h-full min-h-full w-full flex flex-col transform-gpu">
-  <header data-v-5691beb5="" data-v-8ea4eaa5="" class="screen-header min-h-0 md:min-h-full flex items-end flex-shrink-0 relative content-stretch leading-normal p-6 border-b border-b-k-bg-secondary expanded">
+  <header data-v-5691beb5="" data-v-8ea4eaa5="" class="expanded screen-header min-h-0 md:min-h-full flex items-end flex-shrink-0 relative content-stretch leading-normal p-6 border-b border-b-k-bg-secondary">
     <aside data-v-5691beb5="" class="thumbnail-wrapper hidden md:block overflow-hidden w-0 rounded-md">
       <article data-v-55bfc268="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="single thumbnail-stack aspect-square overflow-hidden grid bg-cover bg-no-repeat" style="background-image: url(undefined/resources/assets/img/covers/default.svg);"><span data-v-55bfc268="" class="block will-change-transform w-full h-full bg-cover bg-no-repeat" data-testid="thumbnail"></span></article>
     </aside>
@@ -67,7 +67,7 @@ exports[`renders in Plus edition 1`] = `
               </section><button data-v-8943c846="" data-v-42061e3e="" class="text-base text-k-text-primary bg-k-primary px-4 py-2.5 rounded cursor-pointer !w-full !border !border-solid !border-white/20" type="button" transparent=""> New Playlist… </button>
             </div>
           </div>
-        </div><label data-v-8ea4eaa5="" data-v-5691beb5-s="" class="text-k-text-secondary inline-flex items-center text-base"><span data-v-8ea4eaa5="" data-v-5691beb5-s="" class="relative align-bottom inline-block w-[32px] h-[20px] bg-gray-300 rounded-full shadow-inner cursor-pointer transition-all duration-200 ease-in-out mr-2 after:h-[16px] after:aspect-square after:absolute after:bg-white after:top-[2px] after:left-[2px] after:rounded-full after:transition-left after:duration-200 after:ease-in-out has-[:checked]:bg-k-highlight has-[:checked]:after:left-[14px]"><input type="checkbox" class="hidden"></span><span data-v-8ea4eaa5="" data-v-5691beb5-s="">Own songs only</span></label>
+        </div><label data-v-8ea4eaa5="" data-v-5691beb5-s="" class="text-k-text-secondary inline-flex items-center text-base"><span data-v-8ea4eaa5="" data-v-5691beb5-s="" class="relative align-bottom inline-block w-[32px] h-[20px] bg-gray-300 rounded-full shadow-inner cursor-pointer transition-all duration-200 ease-in-out mr-2 after:h-[16px] after:aspect-square after:absolute after:bg-white after:top-[2px] after:left-[2px] after:rounded-full after:transition-left after:duration-200 after:ease-in-out has-[:checked]:bg-k-highlight has-[:checked]:after:left-[14px]"><input class="hidden" type="checkbox"></span><span data-v-8ea4eaa5="" data-v-5691beb5-s="">Own songs only</span></label>
       </div>
     </main>
   </header>

@@ -17,9 +17,9 @@ new class extends UnitTestCase {
       })
 
       await this.router.activateRoute({
-          path: '_',
-          screen: 'Invitation.Accept'
-        }, {
+        path: '_',
+        screen: 'Invitation.Accept'
+      }, {
         token: 'my-token'
       })
 

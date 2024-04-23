@@ -11,44 +11,6 @@ import AlbumScreen from './AlbumScreen.vue'
 let album: Album
 
 new class extends UnitTestCase {
-  private async renderComponent () {
-    commonStore.state.uses_last_fm = true
-
-    album = factory<Album>('album', {
-      id: 42,
-      name: 'Led Zeppelin IV',
-      artist_id: 123,
-      artist_name: 'Led Zeppelin'
-    })
-
-    const resolveAlbumMock = this.mock(albumStore, 'resolve').mockResolvedValue(album)
-
-    const songs = factory<Song>('song', 13)
-    const fetchSongsMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
-
-    await this.router.activateRoute({
-      path: 'albums/42',
-      screen: 'Album'
-    }, { id: '42' })
-
-    this.render(AlbumScreen, {
-      global: {
-        stubs: {
-          SongList: this.stub('song-list'),
-          AlbumCard: this.stub('album-card'),
-          AlbumInfo: this.stub('album-info')
-        }
-      }
-    })
-
-    await waitFor(() => {
-      expect(resolveAlbumMock).toHaveBeenCalledWith(album.id)
-      expect(fetchSongsMock).toHaveBeenCalledWith(album.id)
-    })
-
-    await this.tick(2)
-  }
-
   protected test () {
     it('downloads', async () => {
       const downloadMock = this.mock(downloadService, 'fromAlbum')
@@ -90,5 +52,43 @@ new class extends UnitTestCase {
         expect(screen.getAllByTestId('album-card')).toHaveLength(3) // current album is excluded
       })
     })
+  }
+
+  private async renderComponent () {
+    commonStore.state.uses_last_fm = true
+
+    album = factory<Album>('album', {
+      id: 42,
+      name: 'Led Zeppelin IV',
+      artist_id: 123,
+      artist_name: 'Led Zeppelin'
+    })
+
+    const resolveAlbumMock = this.mock(albumStore, 'resolve').mockResolvedValue(album)
+
+    const songs = factory<Song>('song', 13)
+    const fetchSongsMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
+
+    await this.router.activateRoute({
+      path: 'albums/42',
+      screen: 'Album'
+    }, { id: '42' })
+
+    this.render(AlbumScreen, {
+      global: {
+        stubs: {
+          SongList: this.stub('song-list'),
+          AlbumCard: this.stub('album-card'),
+          AlbumInfo: this.stub('album-info')
+        }
+      }
+    })
+
+    await waitFor(() => {
+      expect(resolveAlbumMock).toHaveBeenCalledWith(album.id)
+      expect(fetchSongsMock).toHaveBeenCalledWith(album.id)
+    })
+
+    await this.tick(2)
   }
 }

@@ -2,13 +2,13 @@
   <div class="flex items-center justify-center min-h-screen my-0 mx-auto flex-col gap-5">
     <form
       v-show="!showingForgotPasswordForm"
-      class="w-full sm:w-[288px] sm:border duration-500 p-7 rounded-xl border-transparent sm:bg-white/10 space-y-3"
       :class="{ error: failed }"
+      class="w-full sm:w-[288px] sm:border duration-500 p-7 rounded-xl border-transparent sm:bg-white/10 space-y-3"
       data-testid="login-form"
       @submit.prevent="login"
     >
       <div class="text-center mb-8">
-        <img class="inline-block" alt="Koel's logo" src="@/../img/logo.svg" width="156">
+        <img alt="Koel's logo" class="inline-block" src="@/../img/logo.svg" width="156">
       </div>
 
       <FormRow>
@@ -20,7 +20,7 @@
       </FormRow>
 
       <FormRow>
-        <Btn type="submit" data-testid="submit">Log In</Btn>
+        <Btn data-testid="submit" type="submit">Log In</Btn>
       </FormRow>
 
       <FormRow v-if="canResetPassword">

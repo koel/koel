@@ -19,11 +19,11 @@
         />
         <img
           v-if="user.sso_provider === 'Google'"
-          title="Google SSO"
           :src="googleLogo"
           alt="Google"
-          width="14"
           height="14"
+          title="Google SSO"
+          width="14"
         >
       </h3>
 

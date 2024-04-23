@@ -1,5 +1,5 @@
 <template>
-  <TransitionGroup name="toast" tag="ul" class="fixed z-[9999] right-0 top-3 flex flex-col items-end gap-2">
+  <TransitionGroup class="fixed z-[9999] right-0 top-3 flex flex-col items-end gap-2" name="toast" tag="ul">
     <li v-for="message in messages" :key="message.id">
       <MessageToast :message="message" @dismiss="removeMessage(message)" />
     </li>

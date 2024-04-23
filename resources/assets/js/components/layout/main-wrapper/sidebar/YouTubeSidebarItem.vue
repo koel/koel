@@ -1,5 +1,5 @@
 <template>
-  <SidebarItem screen="YouTube" href="#/youtube">
+  <SidebarItem href="#/youtube" screen="YouTube">
     <template #icon>
       <Icon :icon="faYoutube" fixed-width />
     </template>

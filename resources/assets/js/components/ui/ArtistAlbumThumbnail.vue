@@ -38,7 +38,7 @@ import { computed, ref, toRefs } from 'vue'
 import { albumStore, artistStore, queueStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
 import { defaultCover } from '@/utils'
-import { usePolicies, useMessageToaster, useRouter, useFileReader, useErrorHandler } from '@/composables'
+import { useErrorHandler, useFileReader, useMessageToaster, usePolicies, useRouter } from '@/composables'
 import { acceptedImageTypes } from '@/config'
 
 const { toastSuccess } = useMessageToaster()
@@ -150,6 +150,7 @@ const onDrop = async (event: DragEvent) => {
     mask-size: 40%;
   }
 }
+
 article {
   .control {
     &:hover, &:focus {
@@ -179,6 +180,7 @@ article {
 }
 
 .compact .icon {
-  @apply text-[.3rem]; /* to control the size of the icon */
+  @apply text-[.3rem];
+  /* to control the size of the icon */
 }
 </style>

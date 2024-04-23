@@ -10,18 +10,18 @@
       <div class="flex flex-col gap-3 sm:flex-row sm:gap-0 sm:content-stretch">
         <TextInput
           v-model="email"
-          placeholder="Your email address"
-          required type="email"
           class="flex-1 sm:rounded-l sm:rounded-r-none"
+          placeholder="Your email address" required
+          type="email"
         />
-        <Btn :disabled="loading" type="submit" class="sm:rounded-l-none sm:rounded-r">Reset Password</Btn>
+        <Btn :disabled="loading" class="sm:rounded-l-none sm:rounded-r" type="submit">Reset Password</Btn>
         <Btn :disabled="loading" class="!text-k-text-secondary" transparent @click="cancel">Cancel</Btn>
       </div>
     </FormRow>
   </form>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref } from 'vue'
 import { authService } from '@/services'
 import { useErrorHandler, useMessageToaster } from '@/composables'

@@ -15,7 +15,7 @@
   </label>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons'
 
@@ -34,7 +34,7 @@ defineExpose({
 })
 </script>
 
-<style scoped lang="postcss">
+<style lang="postcss" scoped>
 select {
   background: none; /* remove background AND the dropdown arrow. Tailwind doesn't have a way to do this. */
 }

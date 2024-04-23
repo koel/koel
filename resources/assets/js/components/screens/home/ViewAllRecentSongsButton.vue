@@ -4,7 +4,7 @@
   </Btn>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { useRouter } from '@/composables'
 
 import Btn from '@/components/ui/form/Btn.vue'
@@ -13,6 +13,6 @@ const { go } = useRouter()
 const goToRecentlyPlayedScreen = () => go('recently-played')
 </script>
 
-<style scoped lang="postcss">
+<style lang="postcss" scoped>
 
 </style>

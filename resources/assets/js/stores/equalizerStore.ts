@@ -10,18 +10,18 @@ export const equalizerStore = {
    * Get the current equalizer config.
    */
   getConfig () {
-    let config: EqualizerPreset|undefined
+    let config: EqualizerPreset | undefined
 
     if (this.isCustom(preferences.equalizer)) return preferences.equalizer
 
     if (preferences.equalizer.name !== null) {
-       config = this.getPresetByName(preferences.equalizer.name)
+      config = this.getPresetByName(preferences.equalizer.name)
     }
 
     return config || presets[0]
   },
 
-  isCustom(preset: any) {
+  isCustom (preset: any) {
     return typeof preset === 'object'
       && preset !== null
       && preset.name === null

@@ -16,21 +16,6 @@ new class extends UnitTestCase {
     super.beforeEach(() => queueStore.state.songs = [])
   }
 
-  private async renderComponent (_songs?: Song | Song[]) {
-    songs = arrayify(_songs || factory<Song>('song', 5))
-
-    const rendered = this.render(SongContextMenu)
-    eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, songs)
-    await this.tick(2)
-
-    return rendered
-  }
-
-  private fillQueue () {
-    queueStore.state.songs = factory<Song>('song', 5)
-    queueStore.state.songs[2].playback_state = 'Playing'
-  }
-
   protected test () {
     it('queues and plays', async () => {
       const queueMock = this.mock(queueStore, 'queueIfNotQueued')
@@ -395,5 +380,20 @@ new class extends UnitTestCase {
       expect(screen.queryByText('Unmark as Private')).toBeNull()
       expect(screen.queryByText('Mark as Private')).toBeNull()
     })
+  }
+
+  private async renderComponent (_songs?: Song | Song[]) {
+    songs = arrayify(_songs || factory<Song>('song', 5))
+
+    const rendered = this.render(SongContextMenu)
+    eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, songs)
+    await this.tick(2)
+
+    return rendered
+  }
+
+  private fillQueue () {
+    queueStore.state.songs = factory<Song>('song', 5)
+    queueStore.state.songs[2].playback_state = 'Playing'
   }
 }

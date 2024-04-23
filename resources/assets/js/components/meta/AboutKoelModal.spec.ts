@@ -6,16 +6,6 @@ import { screen, waitFor } from '@testing-library/vue'
 import AboutKoelModel from './AboutKoelModal.vue'
 
 new class extends UnitTestCase {
-  private renderComponent () {
-    return this.render(AboutKoelModel, {
-      global: {
-        stubs: {
-          SponsorList: this.stub('sponsor-list')
-        }
-      }
-    })
-  }
-
   protected test () {
     it('renders', async () => {
       commonStore.state.current_version = 'v0.0.0'
@@ -42,6 +32,16 @@ new class extends UnitTestCase {
       })
 
       window.IS_DEMO = false
+    })
+  }
+
+  private renderComponent () {
+    return this.render(AboutKoelModel, {
+      global: {
+        stubs: {
+          SponsorList: this.stub('sponsor-list')
+        }
+      }
     })
   }
 }

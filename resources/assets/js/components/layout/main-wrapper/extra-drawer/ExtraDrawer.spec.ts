@@ -9,32 +9,6 @@ import { eventBus } from '@/utils'
 import ExtraDrawer from './ExtraDrawer.vue'
 
 new class extends UnitTestCase {
-  private renderComponent (songRef: Ref<Song | null> = ref(null)): [RenderResult, Mock, Mock] {
-    const artist = factory<Artist>('artist')
-    const resolveArtistMock = this.mock(artistStore, 'resolve').mockResolvedValue(artist)
-
-    const album = factory<Album>('album')
-    const resolveAlbumMock = this.mock(albumStore, 'resolve').mockResolvedValue(album)
-
-    const rendered = this.render(ExtraDrawer, {
-      global: {
-        stubs: {
-          ProfileAvatar: this.stub(),
-          LyricsPane: this.stub('lyrics'),
-          AlbumInfo: this.stub('album-info'),
-          ArtistInfo: this.stub('artist-info'),
-          YouTubeVideoList: this.stub('youtube-video-list'),
-          ExtraPanelTabHeader: this.stub()
-        },
-        provide: {
-          [<symbol>CurrentSongKey]: songRef
-        }
-      }
-    })
-
-    return [rendered, resolveArtistMock, resolveAlbumMock]
-  }
-
   protected test () {
     it('renders without a current song', () => expect(this.renderComponent()[0].html()).toMatchSnapshot())
 
@@ -89,5 +63,31 @@ new class extends UnitTestCase {
 
       expect(emitMock).toHaveBeenCalledWith('LOG_OUT')
     })
+  }
+
+  private renderComponent (songRef: Ref<Song | null> = ref(null)): [RenderResult, Mock, Mock] {
+    const artist = factory<Artist>('artist')
+    const resolveArtistMock = this.mock(artistStore, 'resolve').mockResolvedValue(artist)
+
+    const album = factory<Album>('album')
+    const resolveAlbumMock = this.mock(albumStore, 'resolve').mockResolvedValue(album)
+
+    const rendered = this.render(ExtraDrawer, {
+      global: {
+        stubs: {
+          ProfileAvatar: this.stub(),
+          LyricsPane: this.stub('lyrics'),
+          AlbumInfo: this.stub('album-info'),
+          ArtistInfo: this.stub('artist-info'),
+          YouTubeVideoList: this.stub('youtube-video-list'),
+          ExtraPanelTabHeader: this.stub()
+        },
+        provide: {
+          [<symbol>CurrentSongKey]: songRef
+        }
+      }
+    })
+
+    return [rendered, resolveArtistMock, resolveAlbumMock]
   }
 }

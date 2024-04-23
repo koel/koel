@@ -3,10 +3,10 @@
     <div class="relative max-w-full max-h-full rounded-md flex">
       <Cropper
         ref="cropper"
+        :max-width="config.maxWidth"
+        :min-width="config.minWidth"
         :src="source"
         :stencil-props="{ aspectRatio: 1 }"
-        :min-width="config.minWidth"
-        :max-width="config.maxWidth"
       />
       <div class="fixed top-6 right-6 flex flex-1 gap-2">
         <Btn success @click.prevent="crop">Crop</Btn>
@@ -16,7 +16,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref, toRefs } from 'vue'
 import { Cropper } from 'vue-advanced-cropper'
 import 'vue-advanced-cropper/dist/style.css'

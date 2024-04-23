@@ -4,7 +4,7 @@
     after:h-[16px] after:aspect-square after:absolute after:bg-white after:top-[2px] after:left-[2px] after:rounded-full after:transition-left after:duration-200 after:ease-in-out
     has-[:checked]:bg-k-highlight has-[:checked]:after:left-[14px]"
   >
-    <input v-bind="$attrs" v-model="value" :checked="value" type="checkbox" class="hidden">
+    <input v-model="value" :checked="value" class="hidden" type="checkbox" v-bind="$attrs">
   </span>
 </template>
 

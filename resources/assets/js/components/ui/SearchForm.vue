@@ -1,10 +1,10 @@
 <template>
   <form
     id="searchForm"
-    role="search"
     class="text-k-text-secondary flex items-stretch border overflow-hidden gap-2 pl-4 pr-0 py-0 rounded-md
     border-solid border-transparent bg-black/20 focus-within:border-white/20 focus-within:bg-black/50
     transition-[border,_background-color] duration-200 ease-in-out"
+    role="search"
     @submit.prevent="onSubmit"
   >
     <span class="hidden md:flex opacity-70 items-center">
@@ -17,16 +17,16 @@
       :class="{ dirty: q }"
       :placeholder="placeholder"
       autocorrect="false"
+      class="w-full rounded-none h-[36px] !bg-transparent !text-k-text-primary !placeholder:text-white/50"
       name="q"
       required
       spellcheck="false"
       type="search"
-      class="w-full rounded-none h-[36px] !bg-transparent !text-k-text-primary !placeholder:text-white/50"
       @focus="maybeGoToSearchScreen"
       @input="onInput"
     />
 
-    <button type="submit" title="Search" class="block md:hidden py-0 px-4 bg-white/5 rounded-none">
+    <button class="block md:hidden py-0 px-4 bg-white/5 rounded-none" title="Search" type="submit">
       <Icon :icon="faSearch" />
     </button>
   </form>

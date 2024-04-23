@@ -7,10 +7,6 @@ import { MessageToasterStub } from '@/__tests__/stubs'
 import ProfileForm from './ProfileForm.vue'
 
 new class extends UnitTestCase {
-  private renderComponent (user: User) {
-    return this.be(user).render(ProfileForm)
-  }
-
   protected test () {
     it('updates profile', async () => {
       const updateMock = this.mock(authService, 'updateProfile')
@@ -36,5 +32,9 @@ new class extends UnitTestCase {
 
       expect(alertMock).toHaveBeenCalledWith('Profile updated.')
     })
+  }
+
+  private renderComponent (user: User) {
+    return this.be(user).render(ProfileForm)
   }
 }

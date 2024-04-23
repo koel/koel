@@ -4,23 +4,12 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import { eventBus } from '@/utils'
 import factory from '@/__tests__/factory'
 import { screen, waitFor } from '@testing-library/vue'
-import { songStore, userStore } from '@/stores'
+import { queueStore, songStore, userStore } from '@/stores'
 import { playbackService } from '@/services'
-import { queueStore } from '@/stores'
 import { MessageToasterStub } from '@/__tests__/stubs'
 import PlaylistContextMenu from './PlaylistContextMenu.vue'
 
 new class extends UnitTestCase {
-  private async renderComponent (playlist: Playlist, user: User | null = null) {
-    userStore.state.current = user || factory<User>('user', {
-      id: playlist.user_id
-    })
-
-    this.render(PlaylistContextMenu)
-    eventBus.emit('PLAYLIST_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, playlist)
-    await this.tick(2)
-  }
-
   protected test () {
     it('edits a standard playlist', async () => {
       const playlist = factory<Playlist>('playlist')
@@ -163,5 +152,15 @@ new class extends UnitTestCase {
 
       expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_PLAYLIST_COLLABORATION', playlist)
     })
+  }
+
+  private async renderComponent (playlist: Playlist, user: User | null = null) {
+    userStore.state.current = user || factory<User>('user', {
+      id: playlist.user_id
+    })
+
+    this.render(PlaylistContextMenu)
+    eventBus.emit('PLAYLIST_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, playlist)
+    await this.tick(2)
   }
 }

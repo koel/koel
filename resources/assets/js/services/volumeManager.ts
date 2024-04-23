@@ -1,9 +1,9 @@
 import { ref } from 'vue'
 
 export class VolumeManager {
+  public volume = ref(0)
   private input!: HTMLInputElement
   private originalVolume = 0
-  public volume = ref(0)
 
   public init (input: HTMLInputElement, initialVolume: number) {
     this.input = input

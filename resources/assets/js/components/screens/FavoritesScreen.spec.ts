@@ -6,15 +6,6 @@ import { favoriteStore } from '@/stores'
 import FavoritesScreen from './FavoritesScreen.vue'
 
 new class extends UnitTestCase {
-  private async renderComponent () {
-    const fetchMock = this.mock(favoriteStore, 'fetch')
-    this.render(FavoritesScreen)
-
-    await this.router.activateRoute({ path: 'favorites', screen: 'Favorites' })
-
-    await waitFor(() => expect(fetchMock).toHaveBeenCalled())
-  }
-
   protected test () {
     it('renders a list of favorites', async () => {
       favoriteStore.state.songs = factory<Song>('song', 13)
@@ -33,5 +24,14 @@ new class extends UnitTestCase {
       screen.getByTestId('screen-empty-state')
       expect(screen.queryByTestId('song-list')).toBeNull()
     })
+  }
+
+  private async renderComponent () {
+    const fetchMock = this.mock(favoriteStore, 'fetch')
+    this.render(FavoritesScreen)
+
+    await this.router.activateRoute({ path: 'favorites', screen: 'Favorites' })
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalled())
   }
 }

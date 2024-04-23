@@ -22,16 +22,6 @@ new class extends UnitTestCase {
     })
   }
 
-  private async renderComponent () {
-    preferenceStore.initialized.value = true
-    const rendered = this.render(SupportKoel)
-
-    vi.advanceTimersByTime(30 * 60 * 1000)
-    await this.tick()
-
-    return rendered
-  }
-
   protected test () {
     it('shows after a delay', async () => expect((await this.renderComponent()).html()).toMatchSnapshot())
 
@@ -60,5 +50,15 @@ new class extends UnitTestCase {
       expect(await screen.queryByTestId('support-bar')).toBeNull()
       expect(preferenceStore.state.support_bar_no_bugging).toBe(true)
     })
+  }
+
+  private async renderComponent () {
+    preferenceStore.initialized.value = true
+    const rendered = this.render(SupportKoel)
+
+    vi.advanceTimersByTime(30 * 60 * 1000)
+    await this.tick()
+
+    return rendered
   }
 }

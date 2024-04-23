@@ -11,32 +11,6 @@ let album: Album
 let artist: Artist
 
 new class extends UnitTestCase {
-  private renderForAlbum () {
-    album = factory<Album>('album', {
-      name: 'IV',
-      cover: 'https://test/album.jpg'
-    })
-
-    return this.render(Thumbnail, {
-      props: {
-        entity: album
-      }
-    })
-  }
-
-  private renderForArtist () {
-    artist = factory<Artist>('artist', {
-      name: 'Led Zeppelin',
-      image: 'https://test/blimp.jpg'
-    })
-
-    return this.render(Thumbnail, {
-      props: {
-        entity: artist
-      }
-    })
-  }
-
   protected test () {
     it('renders for album', () => {
       expect(this.renderForAlbum().html()).toMatchSnapshot()
@@ -104,6 +78,32 @@ new class extends UnitTestCase {
         expect(fetchMock).toHaveBeenCalledWith(artist)
         expect(queueMock).toHaveBeenCalledWith(orderBy(songs, ['album_id', 'disc', 'track']))
       })
+    })
+  }
+
+  private renderForAlbum () {
+    album = factory<Album>('album', {
+      name: 'IV',
+      cover: 'https://test/album.jpg'
+    })
+
+    return this.render(Thumbnail, {
+      props: {
+        entity: album
+      }
+    })
+  }
+
+  private renderForArtist () {
+    artist = factory<Artist>('artist', {
+      name: 'Led Zeppelin',
+      image: 'https://test/blimp.jpg'
+    })
+
+    return this.render(Thumbnail, {
+      props: {
+        entity: artist
+      }
     })
   }
 }

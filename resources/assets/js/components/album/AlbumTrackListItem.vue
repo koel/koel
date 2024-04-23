@@ -1,8 +1,8 @@
 <template>
   <div
-    class="track-list-item flex flex-1 gap-1"
     :class="{ active, available: matchedSong }"
     :title="tooltip"
+    class="track-list-item flex flex-1 gap-1"
     tabindex="0"
     @click="play"
   >

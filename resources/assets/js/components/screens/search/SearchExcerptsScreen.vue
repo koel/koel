@@ -8,7 +8,7 @@
     </template>
 
     <div v-if="q" class="space-y-8">
-      <SongResultsBlock :query="q" :songs="excerpt.songs" :searching="searching" data-testid="song-excerpts" />
+      <SongResultsBlock :query="q" :searching="searching" :songs="excerpt.songs" data-testid="song-excerpts" />
       <ArtistResultsBlock :artists="excerpt.artists" :searching="searching" data-testid="artist-excerpts" />
       <AlbumResultsBlock :albums="excerpt.albums" :searching="searching" data-testid="album-excerpts" />
     </div>

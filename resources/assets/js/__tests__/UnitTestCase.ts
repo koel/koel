@@ -27,10 +27,18 @@ const deepMerge = (first: object, second: object) => {
   })
 }
 
+const setPropIfNotExists = (obj: object | null, prop: any, value: any) => {
+  if (!obj) return
+
+  if (!Object.prototype.hasOwnProperty.call(obj, prop)) {
+    obj[prop] = value
+  }
+}
+
 export default abstract class UnitTestCase {
-  private backupMethods = new Map()
   protected router: Router
   protected user: UserEvent
+  private backupMethods = new Map()
 
   public constructor () {
     this.router = new Router(routes)
@@ -108,37 +116,6 @@ export default abstract class UnitTestCase {
     }, this.supplyRequiredProvides(options)))
   }
 
-  private supplyRequiredProvides (options: RenderOptions) {
-    options.global = options.global || {}
-    options.global.provide = options.global.provide || {}
-
-    // @ts-ignore
-    if (!options.global.provide?.hasOwnProperty(DialogBoxKey)) {
-      // @ts-ignore
-      options.global.provide[DialogBoxKey] = DialogBoxStub
-    }
-
-    // @ts-ignore
-    if (!options.global.provide?.hasOwnProperty(MessageToasterKey)) {
-      // @ts-ignore
-      options.global.provide[MessageToasterKey] = MessageToasterStub
-    }
-
-    // @ts-ignore
-    if (!options.global.provide.hasOwnProperty(OverlayKey)) {
-      // @ts-ignore
-      options.global.provide[OverlayKey] = OverlayStub
-    }
-
-    // @ts-ignore
-    if (!options.global.provide.hasOwnProperty(RouterKey)) {
-      // @ts-ignore
-      options.global.provide[RouterKey] = this.router
-    }
-
-    return options
-  }
-
   protected enablePlusEdition () {
     commonStore.state.koel_plus = {
       active: true,
@@ -189,9 +166,21 @@ export default abstract class UnitTestCase {
     await this.user.type(element, value)
   }
 
-  protected async trigger(element: HTMLElement, key: EventType | string, options?: {}) {
+  protected async trigger (element: HTMLElement, key: EventType | string, options?: {}) {
     await fireEvent(element, createEvent[key](element, options))
   }
 
   protected abstract test ()
+
+  private supplyRequiredProvides (options: RenderOptions) {
+    options.global = options.global || {}
+    options.global.provide = options.global.provide || {}
+
+    setPropIfNotExists(options.global.provide, DialogBoxKey, DialogBoxStub)
+    setPropIfNotExists(options.global.provide, MessageToasterKey, MessageToasterStub)
+    setPropIfNotExists(options.global.provide, OverlayKey, OverlayStub)
+    setPropIfNotExists(options.global.provide, RouterKey, this.router)
+
+    return options
+  }
 }

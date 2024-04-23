@@ -2,9 +2,9 @@ import * as THREE from 'three'
 
 export class ThreeSharedRenderer {
   public readonly camera: THREE.PerspectiveCamera
-  private timer: number
   public renderer!: THREE.WebGLRenderer
   public container: HTMLElement
+  private timer: number
   private readonly resizeHandler: () => void
 
   constructor (container: HTMLElement) {

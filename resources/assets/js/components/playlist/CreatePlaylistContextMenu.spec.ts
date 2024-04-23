@@ -7,12 +7,6 @@ import { Events } from '@/config'
 import CreateNewPlaylistContextMenu from './CreatePlaylistContextMenu.vue'
 
 new class extends UnitTestCase {
-  private async renderComponent () {
-    this.render(CreateNewPlaylistContextMenu)
-    eventBus.emit('CREATE_NEW_PLAYLIST_CONTEXT_MENU_REQUESTED', { top: 420, left: 42 })
-    await this.tick(2)
-  }
-
   protected test () {
     it.each<[string, keyof Events]>([
       ['playlist-context-menu-create-simple', 'MODAL_SHOW_CREATE_PLAYLIST_FORM'],
@@ -24,5 +18,11 @@ new class extends UnitTestCase {
       await this.user.click(screen.getByTestId(id))
       await waitFor(() => expect(emitMock).toHaveBeenCalledWith(eventName))
     })
+  }
+
+  private async renderComponent () {
+    this.render(CreateNewPlaylistContextMenu)
+    eventBus.emit('CREATE_NEW_PLAYLIST_CONTEXT_MENU_REQUESTED', { top: 420, left: 42 })
+    await this.tick(2)
   }
 }

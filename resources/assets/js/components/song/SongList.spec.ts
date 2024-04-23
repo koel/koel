@@ -17,6 +17,38 @@ import SongList from './SongList.vue'
 let songs: Song[]
 
 new class extends UnitTestCase {
+  protected test () {
+    it('renders', async () => {
+      const { html } = await this.renderComponent(factory<Song>('song', 5))
+      expect(html()).toMatchSnapshot()
+    })
+
+    it.each<[SongListSortField, string]>([
+      ['track', 'header-track-number'],
+      ['title', 'header-title'],
+      ['album_name', 'header-album'],
+      ['length', 'header-length']
+    ])('sorts by %s upon %s clicked', async (field, testId) => {
+      const { emitted } = await this.renderComponent(factory<Song>('song', 5))
+
+      await this.user.click(screen.getByTestId(testId))
+      expect(emitted().sort[0]).toEqual([field, 'desc'])
+
+      await this.user.click(screen.getByTestId(testId))
+      expect(emitted().sort[1]).toEqual([field, 'asc'])
+    })
+
+    it('cannot be sorted if configured so', async () => {
+      const { emitted } = await this.renderComponent(factory<Song>('song', 5), {
+        sortable: false,
+        reorderable: true
+      })
+
+      await this.user.click(screen.getByTestId('header-track-number'))
+      expect(emitted().sort).toBeUndefined()
+    })
+  }
+
   private async renderComponent (
     _songs: Song | Song[],
     config: Partial<SongListConfig> = {
@@ -55,38 +87,6 @@ new class extends UnitTestCase {
           [<symbol>SongListSortOrderKey]: [sortOrderRef, (value: SortOrder) => (sortOrderRef.value = value)]
         }
       }
-    })
-  }
-
-  protected test () {
-    it('renders', async () => {
-      const { html } = await this.renderComponent(factory<Song>('song', 5))
-      expect(html()).toMatchSnapshot()
-    })
-
-    it.each<[SongListSortField, string]>([
-      ['track', 'header-track-number'],
-      ['title', 'header-title'],
-      ['album_name', 'header-album'],
-      ['length', 'header-length']
-    ])('sorts by %s upon %s clicked', async (field, testId) => {
-      const { emitted } = await this.renderComponent(factory<Song>('song', 5))
-
-      await this.user.click(screen.getByTestId(testId))
-      expect(emitted().sort[0]).toEqual([field, 'desc'])
-
-      await this.user.click(screen.getByTestId(testId))
-      expect(emitted().sort[1]).toEqual([field, 'asc'])
-    })
-
-    it('cannot be sorted if configured so', async () => {
-      const { emitted } = await this.renderComponent(factory<Song>('song', 5), {
-        sortable: false,
-        reorderable: true
-      })
-
-      await this.user.click(screen.getByTestId('header-track-number'))
-      expect(emitted().sort).toBeUndefined()
     })
   }
 }

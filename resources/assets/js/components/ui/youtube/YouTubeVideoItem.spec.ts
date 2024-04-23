@@ -7,6 +7,19 @@ import YouTubeVideoItem from './YouTubeVideoItem.vue'
 let video: YouTubeVideo
 
 new class extends UnitTestCase {
+  protected test () {
+    it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
+
+    it('plays', async () => {
+      const mock = this.mock(youTubeService, 'play')
+      this.renderComponent()
+
+      await this.user.click(screen.getByRole('button'))
+
+      expect(mock).toHaveBeenCalledWith(video)
+    })
+  }
+
   private renderComponent () {
     video = {
       id: {
@@ -26,19 +39,6 @@ new class extends UnitTestCase {
       props: {
         video
       }
-    })
-  }
-
-  protected test () {
-    it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
-
-    it('plays', async () => {
-      const mock = this.mock(youTubeService, 'play')
-      this.renderComponent()
-
-      await this.user.click(screen.getByRole('button'))
-
-      expect(mock).toHaveBeenCalledWith(video)
     })
   }
 }

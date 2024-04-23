@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button ref="button" title="Sort" class="w-full focus:text-k-highlight" @click.stop="trigger">
+    <button ref="button" class="w-full focus:text-k-highlight" title="Sort" @click.stop="trigger">
       <Icon :icon="faSort" />
     </button>
     <menu ref="menu" v-koel-clickaway="hide" class="context-menu normal-case tracking-normal">

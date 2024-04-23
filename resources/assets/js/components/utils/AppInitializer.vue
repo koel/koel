@@ -2,7 +2,7 @@
   <slot />
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { onMounted } from 'vue'
 import { useErrorHandler, useOverlay } from '@/composables'
 import { commonStore, preferenceStore as preferences } from '@/stores'
@@ -51,6 +51,6 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped lang="postcss">
+<style lang="postcss" scoped>
 
 </style>

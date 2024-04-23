@@ -12,7 +12,7 @@
     </span>
   </label>
 
-  <div v-else class="grid gap-3" :class="columnClass">
+  <div v-else :class="columnClass" class="grid gap-3">
     <slot />
   </div>
 </template>

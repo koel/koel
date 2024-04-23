@@ -25,6 +25,38 @@ class PlaybackService {
   private repeatModes: RepeatMode[] = ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE']
   private initialized = false
 
+  public get isTranscoding () {
+    return isMobile.any && preferences.transcode_on_mobile
+  }
+
+  /**
+   * The next song in the queue.
+   * If we're in REPEAT_ALL mode and there's no next song, just get the first song.
+   */
+  public get next () {
+    if (queueStore.next) {
+      return queueStore.next
+    }
+
+    if (preferences.repeat_mode === 'REPEAT_ALL') {
+      return queueStore.first
+    }
+  }
+
+  /**
+   * The previous song in the queue.
+   * If we're in REPEAT_ALL mode and there's no prev song, get the last song.
+   */
+  public get previous () {
+    if (queueStore.previous) {
+      return queueStore.previous
+    }
+
+    if (preferences.repeat_mode === 'REPEAT_ALL') {
+      return queueStore.last
+    }
+  }
+
   public init (plyrWrapper: HTMLElement) {
     if (this.initialized) return
 
@@ -89,15 +121,6 @@ class PlaybackService {
     await this.restart()
   }
 
-  private async setNowPlayingMeta(song: Song) {
-    document.title = `${song.title} ♫ Koel`
-    this.player.media.setAttribute('title', `${song.artist_name} - ${song.title}`)
-
-    if (isAudioContextSupported) {
-      await audioService.context.resume()
-    }
-  }
-
   public showNotification (song: Song) {
     if (preferences.show_now_playing_notification) {
       try {
@@ -130,16 +153,6 @@ class PlaybackService {
     })
   }
 
-  // Record the UNIX timestamp the song starts playing, for scrobbling purpose
-  private recordStartTime (song: Song) {
-    song.play_start_time = Math.floor(Date.now() / 1000)
-    song.play_count_registered = false
-  }
-
-  private broadcastSong (song: Song) {
-    socketService.broadcast('SOCKET_SONG', song)
-  }
-
   public async restart () {
     const song = queueStore.current!
 
@@ -164,38 +177,6 @@ class PlaybackService {
     } catch (error: unknown) {
       // convert this into a warning, as an error will cause Cypress to fail the tests entirely
       logger.warn(error)
-    }
-  }
-
-  public get isTranscoding () {
-    return isMobile.any && preferences.transcode_on_mobile
-  }
-
-  /**
-   * The next song in the queue.
-   * If we're in REPEAT_ALL mode and there's no next song, just get the first song.
-   */
-  public get next () {
-    if (queueStore.next) {
-      return queueStore.next
-    }
-
-    if (preferences.repeat_mode === 'REPEAT_ALL') {
-      return queueStore.first
-    }
-  }
-
-  /**
-   * The previous song in the queue.
-   * If we're in REPEAT_ALL mode and there's no prev song, get the last song.
-   */
-  public get previous () {
-    if (queueStore.previous) {
-      return queueStore.previous
-    }
-
-    if (preferences.repeat_mode === 'REPEAT_ALL') {
-      return queueStore.last
     }
   }
 
@@ -326,6 +307,25 @@ class PlaybackService {
 
   public async playFirstInQueue () {
     queueStore.all.length && await this.play(queueStore.first)
+  }
+
+  private async setNowPlayingMeta (song: Song) {
+    document.title = `${song.title} ♫ Koel`
+    this.player.media.setAttribute('title', `${song.artist_name} - ${song.title}`)
+
+    if (isAudioContextSupported) {
+      await audioService.context.resume()
+    }
+  }
+
+  // Record the UNIX timestamp the song starts playing, for scrobbling purpose
+  private recordStartTime (song: Song) {
+    song.play_start_time = Math.floor(Date.now() / 1000)
+    song.play_count_registered = false
+  }
+
+  private broadcastSong (song: Song) {
+    socketService.broadcast('SOCKET_SONG', song)
   }
 
   private setMediaSessionActionHandlers () {

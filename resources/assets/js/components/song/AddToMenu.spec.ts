@@ -16,23 +16,6 @@ const config: AddToMenuConfig = {
 }
 
 new class extends UnitTestCase {
-  private renderComponent (customConfig: Partial<AddToMenuConfig> = {}) {
-    songs = factory<Song>('song', 5)
-
-    return this.render(AddToMenu, {
-      props: {
-        songs,
-        config: Object.assign(clone(config), customConfig),
-        showing: true
-      },
-      global: {
-        stubs: {
-          Btn
-        }
-      }
-    })
-  }
-
   protected test () {
     it('renders', () => {
       playlistStore.state.playlists = [
@@ -94,6 +77,23 @@ new class extends UnitTestCase {
       await this.user.click(screen.getByText('New Playlist…'))
 
       expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_CREATE_PLAYLIST_FORM', null, songs)
+    })
+  }
+
+  private renderComponent (customConfig: Partial<AddToMenuConfig> = {}) {
+    songs = factory<Song>('song', 5)
+
+    return this.render(AddToMenu, {
+      props: {
+        songs,
+        config: Object.assign(clone(config), customConfig),
+        showing: true
+      },
+      global: {
+        stubs: {
+          Btn
+        }
+      }
     })
   }
 }

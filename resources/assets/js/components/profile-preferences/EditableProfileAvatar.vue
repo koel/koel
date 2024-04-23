@@ -23,7 +23,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { faRefresh, faTimes, faUpload } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRefs } from 'vue'
 import { useFileDialog } from '@vueuse/core'
@@ -76,7 +76,7 @@ const onCrop = (result: string) => {
 const onCancel = () => (cropperSource.value = null)
 </script>
 
-<style scoped lang="postcss">
+<style lang="postcss" scoped>
 @tailwind utilities;
 
 @layer utilities {

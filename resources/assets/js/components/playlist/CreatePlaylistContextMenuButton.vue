@@ -9,7 +9,7 @@
   </button>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons'
 import { eventBus } from '@/utils'
 

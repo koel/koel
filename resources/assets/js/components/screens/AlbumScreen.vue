@@ -44,15 +44,15 @@
       <template #header>
         <label :class="{ active: activeTab === 'Songs' }">
           Songs
-          <input v-model="activeTab" type="radio" name="tab" value="Songs">
+          <input v-model="activeTab" name="tab" type="radio" value="Songs">
         </label>
         <label :class="{ active: activeTab === 'OtherAlbums' }">
           Other Albums
-          <input v-model="activeTab" type="radio" name="tab" value="OtherAlbums">
+          <input v-model="activeTab" name="tab" type="radio" value="OtherAlbums">
         </label>
         <label v-if="useLastfm" :class="{ active: activeTab === 'Info' }">
           Information
-          <input v-model="activeTab" type="radio" name="tab" value="Info">
+          <input v-model="activeTab" name="tab" type="radio" value="Info">
         </label>
       </template>
 
@@ -70,7 +70,7 @@
       <div v-show="activeTab === 'OtherAlbums'" class="albums-pane" data-testid="albums-pane">
         <template v-if="otherAlbums">
           <AlbumGrid v-if="otherAlbums.length" v-koel-overflow-fade view-mode="list">
-            <AlbumCard v-for="otherAlbum in otherAlbums" :key="otherAlbum.id" layout="compact" :album="otherAlbum" />
+            <AlbumCard v-for="otherAlbum in otherAlbums" :key="otherAlbum.id" :album="otherAlbum" layout="compact" />
           </AlbumGrid>
           <p v-else class="text-k-text-secondary p-6">
             No other albums by {{ album.artist_name }} found in the library.
@@ -81,7 +81,7 @@
         </AlbumGrid>
       </div>
 
-      <div v-show="activeTab === 'Info'" v-if="useLastfm && album" class="info-pane">
+      <div v-if="useLastfm && album" v-show="activeTab === 'Info'" class="info-pane">
         <AlbumInfo :album="album" mode="full" />
       </div>
     </ScreenTabs>

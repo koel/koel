@@ -4,14 +4,6 @@ import BtnGroup from './BtnGroup.vue'
 import Btn from './Btn.vue'
 
 new class extends UnitTestCase {
-  private renderButtonToSlot (text: string) {
-    return this.render(Btn, {
-      slots: {
-        default: text
-      }
-    }).html()
-  }
-
   protected test () {
     it('renders', () => {
       expect(this.render(BtnGroup, {
@@ -20,5 +12,13 @@ new class extends UnitTestCase {
         }
       }).html()).toMatchSnapshot()
     })
+  }
+
+  private renderButtonToSlot (text: string) {
+    return this.render(Btn, {
+      slots: {
+        default: text
+      }
+    }).html()
   }
 }

@@ -9,6 +9,20 @@ import ArtistInfoComponent from './ArtistInfo.vue'
 let artist: Artist
 
 new class extends UnitTestCase {
+  protected test () {
+    it.each<[MediaInfoDisplayMode]>([['aside'], ['full']])('renders in %s mode', async (mode) => {
+      await this.renderComponent(mode)
+
+      if (mode === 'aside') {
+        screen.getByTestId('thumbnail')
+      } else {
+        expect(screen.queryByTestId('thumbnail')).toBeNull()
+      }
+
+      expect(screen.getByTestId('artist-info').classList.contains(mode)).toBe(true)
+    })
+  }
+
   private async renderComponent (mode: MediaInfoDisplayMode = 'aside', info?: ArtistInfo) {
     commonStore.state.uses_last_fm = true
     info = info ?? factory<ArtistInfo>('artist-info')
@@ -32,19 +46,5 @@ new class extends UnitTestCase {
     expect(fetchMock).toHaveBeenCalledWith(artist)
 
     return rendered
-  }
-
-  protected test () {
-    it.each<[MediaInfoDisplayMode]>([['aside'], ['full']])('renders in %s mode', async (mode) => {
-      await this.renderComponent(mode)
-
-      if (mode === 'aside') {
-        screen.getByTestId('thumbnail')
-      } else {
-        expect(screen.queryByTestId('thumbnail')).toBeNull()
-      }
-
-      expect(screen.getByTestId('artist-info').classList.contains(mode)).toBe(true)
-    })
   }
 }

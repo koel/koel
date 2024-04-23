@@ -19,8 +19,8 @@
         v-if="info.tracks?.length"
         :album="album"
         :tracks="info.tracks"
-        data-testid="album-info-tracks"
         class="mt-8"
+        data-testid="album-info-tracks"
       />
     </template>
 

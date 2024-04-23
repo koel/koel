@@ -4,13 +4,13 @@
     justify-center z-10 text-k-text-secondary bg-k-bg-secondary border-[1.5px] border-white/20 cursor-pointer
     hover:text-k-text-primary hover:bg-k-bg-secondary"
   >
-    <input v-model="value" type="checkbox" class="hidden">
+    <input v-model="value" class="hidden" type="checkbox">
     <Icon v-if="value" :icon="faAngleLeft" />
     <Icon v-else :icon="faAngleRight" />
   </label>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import { computed } from 'vue'
 

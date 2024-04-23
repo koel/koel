@@ -1,5 +1,5 @@
 <template>
-  <article class="skeleton flex flex-col gap-3 p-5 rounded-lg max-w-[256px] border border-k-border" :class="layout">
+  <article :class="layout" class="skeleton flex flex-col gap-3 p-5 rounded-lg max-w-[256px] border border-k-border">
     <aside class="aspect-square rounded-lg pulse" />
 
     <footer class="flex flex-col flex-1 gap-3">

@@ -7,18 +7,6 @@ import { playbackService } from '@/services'
 import QueueScreen from './QueueScreen.vue'
 
 new class extends UnitTestCase {
-  private renderComponent (songs: Song[]) {
-    queueStore.state.songs = songs
-
-    this.render(QueueScreen, {
-      global: {
-        stubs: {
-          SongList: this.stub('song-list')
-        }
-      }
-    })
-  }
-
   protected test () {
     it('renders the queue', () => {
       this.renderComponent(factory<Song>('song', 3))
@@ -55,6 +43,18 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByTitle('Shuffle all. Press Alt/⌥ to change mode.'))
       await waitFor(() => expect(playMock).toHaveBeenCalledWith(songs, true))
+    })
+  }
+
+  private renderComponent (songs: Song[]) {
+    queueStore.state.songs = songs
+
+    this.render(QueueScreen, {
+      global: {
+        stubs: {
+          SongList: this.stub('song-list')
+        }
+      }
     })
   }
 }

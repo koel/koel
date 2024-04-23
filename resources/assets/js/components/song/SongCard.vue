@@ -67,6 +67,7 @@ article {
   }
 
   /* show the thumbnail's playback control on the whole card focus and hover */
+
   &:hover :deep(.song-thumbnail), &:focus :deep(.song-thumbnail) {
     &::before {
       @apply opacity-70;

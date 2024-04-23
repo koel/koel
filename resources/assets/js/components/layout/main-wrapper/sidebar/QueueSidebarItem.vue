@@ -1,11 +1,11 @@
 <template>
   <SidebarItem
-    screen="Queue"
-    href="#/queue"
     :class="droppable && 'droppable'"
+    href="#/queue"
+    screen="Queue"
     @dragleave="onQueueDragLeave"
-    @dragover.prevent="onQueueDragOver"
     @drop="onQueueDrop"
+    @dragover.prevent="onQueueDragOver"
   >
     <template #icon>
       <Icon :icon="faListOl" fixed-width />
@@ -39,7 +39,7 @@ const onQueueDrop = async (event: DragEvent) => {
 
   if (songs.length) {
     queueStore.queue(songs)
-    toastSuccess(`Added ${ pluralize(songs, 'song') } to queue.`)
+    toastSuccess(`Added ${pluralize(songs, 'song')} to queue.`)
   } else {
     toastWarning('No applicable songs to queue.')
   }
