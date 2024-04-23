@@ -54,9 +54,8 @@
 <script lang="ts" setup>
 import { isEqual } from 'lodash'
 import { reactive, watch } from 'vue'
-import { logger, parseValidationError } from '@/utils'
 import { UpdateUserData, userStore } from '@/stores'
-import { useDialogBox, useMessageToaster, useModal, useOverlay } from '@/composables'
+import { useDialogBox, useErrorHandler, useMessageToaster, useModal, useOverlay } from '@/composables'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import TooltipIcon from '@/components/ui/TooltipIcon.vue'
@@ -67,7 +66,7 @@ import FormRow from '@/components/ui/form/FormRow.vue'
 
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
-const { showConfirmDialog, showErrorDialog } = useDialogBox()
+const { showConfirmDialog } = useDialogBox()
 
 const user = useModal().getFromContext<User>('user')
 
@@ -91,10 +90,8 @@ const submit = async () => {
     await userStore.update(user, updateData)
     toastSuccess('User profile updated.')
     close()
-  } catch (error: any) {
-    const msg = error.response.status === 422 ? parseValidationError(error.response.data)[0] : 'Unknown error.'
-    showErrorDialog(msg, 'Error')
-    logger.error(error)
+  } catch (error: unknown) {
+    useErrorHandler('dialog').handleHttpError(error)
   } finally {
     hideOverlay()
   }

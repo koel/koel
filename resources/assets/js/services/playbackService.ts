@@ -109,10 +109,10 @@ class PlaybackService {
         notification.onclick = () => window.focus()
 
         window.setTimeout(() => notification.close(), 5000)
-      } catch (e) {
+      } catch (error: unknown) {
         // Notification fails.
         // @link https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification
-        logger.error(e)
+        logger.error(error)
       }
     }
 
@@ -151,7 +151,7 @@ class PlaybackService {
         song: song.id,
         position: 0
       })
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(error)
     }
 
@@ -161,7 +161,7 @@ class PlaybackService {
       await this.player.media.play()
       navigator.mediaSession && (navigator.mediaSession.playbackState = 'playing')
       this.showNotification(song)
-    } catch (error) {
+    } catch (error: unknown) {
       // convert this into a warning, as an error will cause Cypress to fail the tests entirely
       logger.warn(error)
     }
@@ -276,7 +276,7 @@ class PlaybackService {
 
     try {
       await this.player.media.play()
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(error)
     }
 
@@ -386,7 +386,7 @@ class PlaybackService {
             song: currentSong.id,
             position: Math.ceil(media.currentTime)
           })
-        } catch (error) {
+        } catch (error: unknown) {
           logger.error(error)
         }
       }

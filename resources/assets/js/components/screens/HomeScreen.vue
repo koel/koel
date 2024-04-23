@@ -37,9 +37,9 @@
 import { faVolumeOff } from '@fortawesome/free-solid-svg-icons'
 import { sample } from 'lodash'
 import { computed, ref } from 'vue'
-import { eventBus, logger } from '@/utils'
+import { eventBus } from '@/utils'
 import { commonStore, overviewStore, userStore } from '@/stores'
-import { useAuthorization, useDialogBox, useRouter } from '@/composables'
+import { useAuthorization, useErrorHandler, useRouter } from '@/composables'
 
 import MostPlayedSongs from '@/components/screens/home/MostPlayedSongs.vue'
 import RecentlyPlayedSongs from '@/components/screens/home/RecentlyPlayedSongs.vue'
@@ -53,7 +53,6 @@ import BtnScrollToTop from '@/components/ui/BtnScrollToTop.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 
 const { isAdmin } = useAuthorization()
-const { showErrorDialog } = useDialogBox()
 
 const greetings = [
   'Oh hai!',
@@ -82,9 +81,8 @@ useRouter().onScreenActivated('Home', async () => {
     try {
       await overviewStore.init()
       initialized = true
-    } catch (e) {
-      showErrorDialog('Failed to load home screen data. Please try again.', 'Error')
-      logger.error(e)
+    } catch (error: unknown) {
+      useErrorHandler('dialog').handleHttpError(error)
     } finally {
       loading.value = false
     }

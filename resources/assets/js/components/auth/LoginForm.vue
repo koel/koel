@@ -77,8 +77,9 @@ const login = async () => {
     password.value = ''
 
     emit('loggedin')
-  } catch (err) {
+  } catch (error: unknown) {
     failed.value = true
+    logger.error(error)
     window.setTimeout(() => (failed.value = false), 2000)
   }
 }

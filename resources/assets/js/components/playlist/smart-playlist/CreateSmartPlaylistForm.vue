@@ -54,9 +54,8 @@
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { ref, toRef } from 'vue'
 import { playlistFolderStore, playlistStore } from '@/stores'
-import { logger } from '@/utils'
 import {
-  useDialogBox,
+  useDialogBox, useErrorHandler,
   useKoelPlus,
   useMessageToaster,
   useModal,
@@ -81,7 +80,7 @@ const {
 
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
-const { showConfirmDialog, showErrorDialog } = useDialogBox()
+const { showConfirmDialog } = useDialogBox()
 const { go } = useRouter()
 const { isPlus } = useKoelPlus()
 
@@ -121,9 +120,8 @@ const submit = async () => {
     close()
     toastSuccess(`Playlist "${playlist.name}" created.`)
     go(`playlist/${playlist.id}`)
-  } catch (error) {
-    showErrorDialog('Something went wrong. Please try again.', 'Error')
-    logger.error(error)
+  } catch (error: unknown) {
+    useErrorHandler('dialog').handleHttpError(error)
   } finally {
     hideOverlay()
   }

@@ -27,7 +27,7 @@ export const playlistStore = {
         try {
           this.setupSmartPlaylist(playlist)
           this.state.playlists.push(playlist)
-        } catch (error) {
+        } catch (error: unknown) {
           logger.warn(`Failed to setup smart playlist "${playlist.name}".`, error)
         }
       }

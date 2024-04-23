@@ -51,6 +51,7 @@ export type ServerValidationError = {
   message: string
   errors: Record<string, string[]>
 }
+
 /**
  * Parse the validation error from the server into a flattened array of messages.
  */

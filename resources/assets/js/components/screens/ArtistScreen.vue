@@ -86,10 +86,16 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, ref, toRef, watch } from 'vue'
-import { eventBus, logger, pluralize } from '@/utils'
+import { eventBus, pluralize } from '@/utils'
 import { albumStore, artistStore, commonStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
-import { useDialogBox, useRouter, useSongList, useSongListControls, useThirdPartyServices } from '@/composables'
+import {
+  useErrorHandler,
+  useRouter,
+  useSongList,
+  useSongListControls,
+  useThirdPartyServices
+} from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ArtistThumbnail from '@/components/ui/ArtistAlbumThumbnail.vue'
@@ -106,7 +112,6 @@ const AlbumCardSkeleton = defineAsyncComponent(() => import('@/components/ui/ske
 type Tab = 'Songs' | 'Albums' | 'Info'
 const activeTab = ref<Tab>('Songs')
 
-const { showErrorDialog } = useDialogBox()
 const { getRouteParam, go, onScreenActivated } = useRouter()
 
 const artistId = ref<number>()
@@ -161,9 +166,8 @@ watch(artistId, async id => {
     ])
 
     context.entity = artist.value
-  } catch (error) {
-    logger.error(error)
-    showErrorDialog('Failed to load artist. Please try again.', 'Error')
+  } catch (error: unknown) {
+    useErrorHandler('dialog').handleHttpError(error)
   } finally {
     loading.value = false
   }

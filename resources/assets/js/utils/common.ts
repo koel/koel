@@ -20,7 +20,7 @@ export const forceReloadWindow = (): void => {
 export const copyText = async (text: string) => {
   try {
     await navigator.clipboard.writeText(text)
-  } catch (e) {
+  } catch (error: unknown) {
     let copyArea = document.querySelector<HTMLTextAreaElement>('#copyArea')
 
     if (!copyArea) {

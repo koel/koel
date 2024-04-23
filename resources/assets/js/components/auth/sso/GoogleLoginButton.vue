@@ -22,7 +22,7 @@ const loginWithGoogle = async () => {
   try {
     window.onmessage = (msg: MessageEvent) => emit('success', msg.data)
     openPopup('/auth/google/redirect', 'Google Login', 768, 640, window)
-  } catch (error: any) {
+  } catch (error: unknown) {
     emit('error', error)
   }
 }

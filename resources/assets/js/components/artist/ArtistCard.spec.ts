@@ -5,6 +5,7 @@ import { downloadService, playbackService } from '@/services'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { commonStore, songStore } from '@/stores'
 import ArtistCard from './ArtistCard.vue'
+import { eventBus } from '@/utils'
 
 let artist: Artist
 
@@ -61,6 +62,14 @@ new class extends UnitTestCase {
 
       expect(fetchMock).toHaveBeenCalledWith(artist)
       expect(playMock).toHaveBeenCalledWith(songs, true)
+    })
+
+    it('requests context menu', async () => {
+      this.renderComponent()
+      const emitMock = this.mock(eventBus, 'emit')
+      await this.trigger(screen.getByTestId('artist-album-card'), 'contextMenu')
+
+      expect(emitMock).toHaveBeenCalledWith('ARTIST_CONTEXT_MENU_REQUESTED', expect.any(MouseEvent), artist)
     })
   }
 }

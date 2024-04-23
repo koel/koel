@@ -18,7 +18,7 @@ const thumbnailUrl = ref<String | null>(null)
 watchEffect(async () => {
   try {
     thumbnailUrl.value = await albumStore.fetchThumbnail(album.value)
-  } catch (e) {
+  } catch (error: unknown) {
     thumbnailUrl.value = null
   }
 })

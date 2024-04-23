@@ -21,7 +21,7 @@
 import { computed, ref } from 'vue'
 import { authService } from '@/services'
 import { base64Decode } from '@/utils'
-import { useMessageToaster, useRouter } from '@/composables'
+import { useErrorHandler, useMessageToaster, useRouter } from '@/composables'
 
 import PasswordField from '@/components/ui/form/PasswordField.vue'
 import Btn from '@/components/ui/form/Btn.vue'
@@ -38,7 +38,7 @@ const validPayload = computed(() => email.value && token.value)
 
 try {
   [email.value, token.value] = base64Decode(decodeURIComponent(getRouteParam('payload')!)).split('|')
-} catch (err) {
+} catch (error: unknown) {
   toastError('Invalid reset password link.')
 }
 
@@ -49,8 +49,8 @@ const submit = async () => {
     toastSuccess('Password set.')
     await authService.login(email.value, password.value)
     setTimeout(() => go('/', true))
-  } catch (err: any) {
-    toastError(err.response.data?.message || 'Failed to set new password. Please try again.')
+  } catch (error: unknown) {
+    useErrorHandler().handleHttpError(error)
   } finally {
     loading.value = false
   }

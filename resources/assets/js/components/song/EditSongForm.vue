@@ -166,9 +166,9 @@
 <script lang="ts" setup>
 import { computed, reactive, ref } from 'vue'
 import { isEqual } from 'lodash'
-import { defaultCover, eventBus, logger, pluralize } from '@/utils'
+import { defaultCover, eventBus, pluralize } from '@/utils'
 import { songStore, SongUpdateData } from '@/stores'
-import { useDialogBox, useMessageToaster, useModal, useOverlay } from '@/composables'
+import { useDialogBox, useErrorHandler, useMessageToaster, useModal, useOverlay } from '@/composables'
 import { genres } from '@/config'
 
 import Btn from '@/components/ui/form/Btn.vue'
@@ -183,7 +183,7 @@ import TabPanelContainer from '@/components/ui/tabs/TabPanelContainer.vue'
 
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
-const { showConfirmDialog, showErrorDialog } = useDialogBox()
+const { showConfirmDialog } = useDialogBox()
 const { getFromContext } = useModal()
 
 const songs = getFromContext<Song[]>('songs')
@@ -260,9 +260,8 @@ const submit = async () => {
     toastSuccess(`Updated ${pluralize(songs, 'song')}.`)
     eventBus.emit('SONGS_UPDATED')
     close()
-  } catch (error) {
-    showErrorDialog('Something went wrong. Please try again.', 'Error')
-    logger.error(error)
+  } catch (error: unknown) {
+    useErrorHandler('dialog').handleHttpError(error)
   } finally {
     hideOverlay()
   }

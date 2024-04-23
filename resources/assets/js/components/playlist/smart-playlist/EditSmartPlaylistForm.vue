@@ -59,8 +59,16 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { reactive, toRef } from 'vue'
 import { cloneDeep, isEqual } from 'lodash'
 import { playlistFolderStore, playlistStore } from '@/stores'
-import { eventBus, logger } from '@/utils'
-import { useDialogBox, useKoelPlus, useMessageToaster, useModal, useOverlay, useSmartPlaylistForm } from '@/composables'
+import { eventBus } from '@/utils'
+import {
+  useDialogBox,
+  useErrorHandler,
+  useKoelPlus,
+  useMessageToaster,
+  useModal,
+  useOverlay,
+  useSmartPlaylistForm
+} from '@/composables'
 import CheckBox from '@/components/ui/form/CheckBox.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
@@ -68,13 +76,11 @@ import SelectBox from '@/components/ui/form/SelectBox.vue'
 
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
-const { showConfirmDialog, showErrorDialog } = useDialogBox()
+const { showConfirmDialog } = useDialogBox()
 const {isPlus} = useKoelPlus()
 
 const playlist = useModal().getFromContext<Playlist>('playlist')
-
 const folders = toRef(playlistFolderStore.state, 'folders')
-
 const mutablePlaylist = reactive(cloneDeep(playlist))
 
 const isPristine = () => isEqual(mutablePlaylist.rules, playlist.rules)
@@ -112,9 +118,8 @@ const submit = async () => {
     toastSuccess(`Playlist "${playlist.name}" updated.`)
     eventBus.emit('PLAYLIST_UPDATED', playlist)
     close()
-  } catch (error) {
-    showErrorDialog('Something went wrong. Please try again.', 'Error')
-    logger.error(error)
+  } catch (error: unknown) {
+    useErrorHandler('dialog').handleHttpError(error)
   } finally {
     hideOverlay()
   }

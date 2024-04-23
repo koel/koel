@@ -72,8 +72,8 @@ export const songStore = {
     if (!song) {
       try {
         song = this.syncWithVault(await http.get<Song>(`songs/${id}`))[0]
-      } catch (e) {
-        logger.error(e)
+      } catch (error: unknown) {
+        logger.error(error)
       }
     }
 

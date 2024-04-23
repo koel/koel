@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { useOverlay } from '@/composables'
+import { useErrorHandler, useOverlay } from '@/composables'
 import { commonStore, preferenceStore as preferences } from '@/stores'
 import { socketListener, socketService, uploadService } from '@/services'
 
@@ -42,9 +42,9 @@ onMounted(async () => {
     await socketService.init() && socketListener.listen()
 
     emits('success')
-  } catch (err) {
-    emits('error', err)
-    throw err
+  } catch (error: unknown) {
+    useErrorHandler().handleHttpError(error)
+    emits('error', error)
   } finally {
     hideOverlay()
   }

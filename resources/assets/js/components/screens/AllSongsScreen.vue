@@ -63,16 +63,15 @@
 <script lang="ts" setup>
 import { faVolumeOff } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRef, watch } from 'vue'
-import { logger, pluralize, secondsToHumanReadable } from '@/utils'
+import { pluralize, secondsToHumanReadable } from '@/utils'
 import { commonStore, queueStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
 import {
-  useMessageToaster,
   useKoelPlus,
   useRouter,
   useSongList,
   useSongListControls,
-  useLocalStorage
+  useLocalStorage, useErrorHandler
 } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -101,7 +100,6 @@ const {
 
 const { SongListControls, config } = useSongListControls('Songs')
 
-const { toastError } = useMessageToaster()
 const { go, onScreenActivated } = useRouter()
 const { isPlus } = useKoelPlus()
 const { get: lsGet, set: lsSet } = useLocalStorage()
@@ -152,8 +150,7 @@ const fetchSongs = async () => {
       own_songs_only: ownSongsOnly.value
     })
   } catch (error: any) {
-    toastError(error.response.data?.message || 'Failed to load songs.')
-    logger.error(error)
+    useErrorHandler().handleHttpError(error)
   } finally {
     loading.value = false
   }

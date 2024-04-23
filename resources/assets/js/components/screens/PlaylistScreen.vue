@@ -74,10 +74,17 @@
 import { faFile } from '@fortawesome/free-regular-svg-icons'
 import { differenceBy } from 'lodash'
 import { ref, toRef, watch } from 'vue'
-import { eventBus, logger, pluralize } from '@/utils'
+import { eventBus, pluralize } from '@/utils'
 import { commonStore, playlistStore, songStore } from '@/stores'
 import { downloadService, playlistCollaborationService } from '@/services'
-import { usePlaylistManagement, useRouter, useSongList, useAuthorization, useSongListControls } from '@/composables'
+import {
+  usePlaylistManagement,
+  useRouter,
+  useSongList,
+  useAuthorization,
+  useSongListControls,
+  useErrorHandler
+} from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -141,8 +148,8 @@ const fetchDetails = async (refresh = false) => {
 
     sortField.value ??= (playlist.value?.is_smart ? 'title' : 'position')
     sort(sortField.value, 'asc')
-  } catch (e) {
-    logger.error(e)
+  } catch (error: unknown) {
+    useErrorHandler().handleHttpError(error)
   } finally {
     loading.value = false
   }

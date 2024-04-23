@@ -15,21 +15,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, toRef, toRefs } from 'vue'
-import { defaultCover, logger } from '@/utils'
-import { playlistStore, userStore } from '@/stores'
-import { useAuthorization, useFileReader, useKoelPlus, useMessageToaster } from '@/composables'
+import { computed, ref, toRefs } from 'vue'
+import { defaultCover } from '@/utils'
+import { playlistStore } from '@/stores'
+import { useAuthorization, useErrorHandler, useFileReader, useKoelPlus } from '@/composables'
 import { acceptedImageTypes } from '@/config'
 
 const props = defineProps<{ playlist: Playlist }>()
 const { playlist } = toRefs(props)
 
 const droppable = ref(false)
-const user = toRef(userStore.state, 'current')
 
 const { isAdmin } = useAuthorization()
 const { isPlus } = useKoelPlus()
-const { toastError } = useMessageToaster()
 
 const backgroundImage = computed(() => `url(${playlist.value.cover || defaultCover })`)
 
@@ -72,14 +70,10 @@ const onDrop = async (event: DragEvent) => {
       playlist.value.cover = url
       await playlistStore.uploadCover(playlist.value, url)
     })
-  } catch (e: any) {
-    const message = e.response.data?.message || 'Unknown error.'
-    toastError(`Failed to upload: ${message}`)
-
+  } catch (error: unknown) {
     // restore the backup image
     playlist.value.cover = backupImage
-
-    logger.error(e)
+    useErrorHandler().handleHttpError(error)
   }
 }
 </script>

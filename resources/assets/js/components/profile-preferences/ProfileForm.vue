@@ -73,8 +73,7 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 import { authService, UpdateCurrentProfileData } from '@/services'
-import { logger, parseValidationError } from '@/utils'
-import { useDialogBox, useMessageToaster, useAuthorization } from '@/composables'
+import { useMessageToaster, useAuthorization, useErrorHandler } from '@/composables'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import PasswordField from '@/components/ui/form/PasswordField.vue'
@@ -84,13 +83,9 @@ import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 
 const { toastSuccess } = useMessageToaster()
-const { showErrorDialog } = useDialogBox()
-
-const profile = ref<UpdateCurrentProfileData>({} as UpdateCurrentProfileData)
-
-const isDemo = window.IS_DEMO
-
 const { currentUser } = useAuthorization()
+const profile = ref<UpdateCurrentProfileData>({} as UpdateCurrentProfileData)
+const isDemo = window.IS_DEMO
 
 onMounted(() => {
   profile.value = {
@@ -116,10 +111,8 @@ const update = async () => {
     profile.value.current_password = null
     delete profile.value.new_password
     toastSuccess('Profile updated.')
-  } catch (error: any) {
-    const msg = error.response.status === 422 ? parseValidationError(error.response.data)[0] : 'Unknown error.'
-    await showErrorDialog(msg, 'Error')
-    logger.log(error)
+  } catch (error: unknown) {
+    useErrorHandler('dialog').handleHttpError(error)
   }
 }
 </script>

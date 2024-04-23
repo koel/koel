@@ -19,9 +19,8 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { logger } from '@/utils'
 import { playlistFolderStore } from '@/stores'
-import { useDialogBox, useMessageToaster, useModal, useOverlay } from '@/composables'
+import { useDialogBox, useErrorHandler, useMessageToaster, useModal, useOverlay } from '@/composables'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
@@ -29,7 +28,7 @@ import FormRow from '@/components/ui/form/FormRow.vue'
 
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
-const { showConfirmDialog, showErrorDialog } = useDialogBox()
+const { showConfirmDialog } = useDialogBox()
 const folder = useModal().getFromContext<PlaylistFolder>('folder')
 
 const name = ref(folder.name)
@@ -41,9 +40,8 @@ const submit = async () => {
     await playlistFolderStore.rename(folder, name.value)
     toastSuccess('Playlist folder renamed.')
     close()
-  } catch (error) {
-    showErrorDialog('Something went wrong. Please try again.', 'Error')
-    logger.error(error)
+  } catch (error: unknown) {
+    useErrorHandler('dialog').handleHttpError(error)
   } finally {
     hideOverlay()
   }

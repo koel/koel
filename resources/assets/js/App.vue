@@ -30,7 +30,7 @@
   <AcceptInvitation v-if="layout === 'invitation'" />
   <ResetPasswordForm v-if="layout === 'reset-password'" />
 
-  <AppInitializer v-if="initializing" @success="onInitSuccess" @error="onInitError" />
+  <AppInitializer v-if="authenticated" @success="onInitSuccess" @error="onInitError" />
 </template>
 
 <script lang="ts" setup>
@@ -79,10 +79,10 @@ const layout = ref<'main' | 'auth' | 'invitation' | 'reset-password'>()
 const { isCurrentScreen, getCurrentScreen, resolveRoute } = useRouter()
 const online = useOnline()
 
-const initializing = ref(false)
+const authenticated = ref(false)
 const initialized = ref(false)
 
-const triggerAppInitialization = () => (initializing.value = true)
+const triggerAppInitialization = () => (authenticated.value = true)
 
 const onUserLoggedIn = () => {
   layout.value = 'main'
@@ -90,7 +90,7 @@ const onUserLoggedIn = () => {
 }
 
 const onInitSuccess = async () => {
-  initializing.value = false
+  authenticated.value = false
   initialized.value = true
 
   // call resolveRoute() after init() so that the onResolve hooks can use the stores
@@ -99,7 +99,7 @@ const onInitSuccess = async () => {
 }
 
 const onInitError = () => {
-  initializing.value = false
+  authenticated.value = false
   layout.value = 'auth'
 }
 

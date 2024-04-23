@@ -50,8 +50,8 @@ import { faCircleCheck, faShield } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
 import { userStore } from '@/stores'
 import { invitationService } from '@/services'
-import { useAuthorization, useDialogBox, useMessageToaster, useRouter } from '@/composables'
-import { eventBus, parseValidationError } from '@/utils'
+import { useAuthorization, useDialogBox, useErrorHandler, useMessageToaster, useRouter } from '@/composables'
+import { eventBus } from '@/utils'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import UserAvatar from '@/components/user/UserAvatar.vue'
@@ -60,7 +60,7 @@ const props = defineProps<{ user: User }>()
 const { user } = toRefs(props)
 
 const { toastSuccess } = useMessageToaster()
-const { showConfirmDialog, showErrorDialog } = useDialogBox()
+const { showConfirmDialog } = useDialogBox()
 const { go } = useRouter()
 
 const { currentUser } = useAuthorization()
@@ -82,14 +82,10 @@ const revokeInvite = async () => {
   try {
     await invitationService.revoke(user.value)
     toastSuccess(`Invitation for ${user.value.email} revoked.`)
-  } catch (err: any) {
-    if (err.response.status === 404) {
-      showErrorDialog('Cannot revoke the invite. Maybe it has been accepted?', 'Revocation Failed')
-      return
-    }
-
-    const msg = err.response.status === 422 ? parseValidationError(err.response.data)[0] : 'Unknown error.'
-    showErrorDialog(msg, 'Error')
+  } catch (error: unknown) {
+    useErrorHandler('dialog').handleHttpError(error, {
+      404: 'Cannot revoke the invite. Maybe it has been accepted?'
+    })
   }
 }
 </script>

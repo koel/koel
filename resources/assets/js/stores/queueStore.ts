@@ -149,8 +149,8 @@ export const queueStore = {
   saveState () {
     try {
       http.silently.put('queue/state', { songs: this.state.songs.map(({ id }) => id) })
-    } catch (e) {
-      logger.error(e)
+    } catch (error: unknown) {
+      logger.error(error)
     }
   }
 }

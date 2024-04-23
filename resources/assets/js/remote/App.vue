@@ -69,8 +69,8 @@ const init = async () => {
         state.song = data.song || null
         connected.value = true
       })
-  } catch (e) {
-    logger.error(e)
+  } catch (error: unknown) {
+    logger.error(error)
     authenticated.value = false
   }
 }

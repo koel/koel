@@ -41,8 +41,8 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { commonStore, settingStore } from '@/stores'
-import { forceReloadWindow, parseValidationError } from '@/utils'
-import { useDialogBox, useMessageToaster, useOverlay, useRouter } from '@/composables'
+import { forceReloadWindow, } from '@/utils'
+import { useDialogBox, useErrorHandler, useMessageToaster, useOverlay, useRouter } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import Btn from '@/components/ui/form/Btn.vue'
@@ -51,7 +51,7 @@ import ScreenBase from '@/components/screens/ScreenBase.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 
 const { toastSuccess } = useMessageToaster()
-const { showConfirmDialog, showErrorDialog } = useDialogBox()
+const { showConfirmDialog } = useDialogBox()
 const { go } = useRouter()
 const { showOverlay, hideOverlay } = useOverlay()
 
@@ -81,9 +81,8 @@ const save = async () => {
     // Make sure we're back to home first.
     go('home')
     forceReloadWindow()
-  } catch (err: any) {
-    const msg = err.response.status === 422 ? parseValidationError(err.response.data)[0] : 'Unknown error.'
-    showErrorDialog(msg, 'Error')
+  } catch (error: unknown) {
+    useErrorHandler('dialog').handleHttpError(error)
   } finally {
     hideOverlay()
   }

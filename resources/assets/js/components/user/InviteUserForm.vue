@@ -7,7 +7,7 @@
     <main class="space-y-5">
       <FormRow>
         <template #label>Emails</template>
-        <TextArea ref="emailsEl" v-model="rawEmails" name="emails" required title="Emails" />
+        <TextArea ref="emailsEl" v-model="rawEmails" name="emails" class="!min-h-[8rem]" required title="Emails" />
         <template #help>To invite multiple users, input one email per line.</template>
       </FormRow>
       <FormRow>
@@ -28,8 +28,7 @@
 
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
-import { parseValidationError } from '@/utils'
-import { useDialogBox, useMessageToaster, useOverlay } from '@/composables'
+import { useDialogBox, useErrorHandler, useMessageToaster, useOverlay } from '@/composables'
 import { invitationService } from '@/services'
 
 import Btn from '@/components/ui/form/Btn.vue'
@@ -40,7 +39,7 @@ import FormRow from '@/components/ui/form/FormRow.vue'
 
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
-const { showErrorDialog, showConfirmDialog } = useDialogBox()
+const { showConfirmDialog } = useDialogBox()
 
 const emailsEl = ref<InstanceType<typeof TextArea>>()
 const rawEmails = ref('')
@@ -81,9 +80,8 @@ const submit = async () => {
     await invitationService.invite(validEmails, isAdmin.value)
     toastSuccess(`Invitation${validEmails.length === 1 ? '' : 's'} sent.`)
     close()
-  } catch (err: any) {
-    const msg = err.response.status === 422 ? parseValidationError(err.response.data)[0] : 'Unknown error.'
-    showErrorDialog(msg, 'Error')
+  } catch (error: unknown) {
+    useErrorHandler('dialog').handleHttpError(error)
   } finally {
     hideOverlay()
   }
@@ -101,14 +99,3 @@ const maybeClose = async () => {
   await showConfirmDialog('Discard all changes?') && close()
 }
 </script>
-
-<style lang="postcss" scoped>
-textarea {
-  min-height: 8rem !important;
-}
-
-small.help {
-  margin: .75rem 0 .5rem;
-  display: block;
-}
-</style>

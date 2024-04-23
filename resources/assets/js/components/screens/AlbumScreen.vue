@@ -90,10 +90,10 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, ref, toRef, watch } from 'vue'
-import { eventBus, logger, pluralize } from '@/utils'
+import { eventBus, pluralize } from '@/utils'
 import { albumStore, artistStore, commonStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
-import { useDialogBox, useRouter, useSongList, useSongListControls } from '@/composables'
+import { useErrorHandler, useRouter, useSongList, useSongListControls } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import AlbumThumbnail from '@/components/ui/ArtistAlbumThumbnail.vue'
@@ -110,7 +110,6 @@ const AlbumInfo = defineAsyncComponent(() => import('@/components/album/AlbumInf
 const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCard.vue'))
 const AlbumCardSkeleton = defineAsyncComponent(() => import('@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'))
 
-const { showErrorDialog } = useDialogBox()
 const { getRouteParam, go, onScreenActivated } = useRouter()
 
 const albumId = ref<number>()
@@ -175,9 +174,8 @@ watch(albumId, async id => {
     context.entity = album.value
 
     sort('track')
-  } catch (error) {
-    logger.error(error)
-    showErrorDialog('Failed to load album. Please try again.', 'Error')
+  } catch (error: unknown) {
+    useErrorHandler('dialog').handleHttpError(error)
   } finally {
     loading.value = false
   }

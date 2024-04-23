@@ -37,20 +37,18 @@ import { orderBy } from 'lodash'
 import { computed, ref, toRefs } from 'vue'
 import { albumStore, artistStore, queueStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
-import { defaultCover, logger } from '@/utils'
-import { usePolicies, useMessageToaster, useRouter, useFileReader } from '@/composables'
+import { defaultCover } from '@/utils'
+import { usePolicies, useMessageToaster, useRouter, useFileReader, useErrorHandler } from '@/composables'
 import { acceptedImageTypes } from '@/config'
 
 const { toastSuccess } = useMessageToaster()
 const { go } = useRouter()
+const { currentUserCan } = usePolicies()
 
 const props = defineProps<{ entity: Album | Artist }>()
 const { entity } = toRefs(props)
 
 const droppable = ref(false)
-
-const { toastError } = useMessageToaster()
-const { currentUserCan } = usePolicies()
 
 const forAlbum = computed(() => entity.value.type === 'albums')
 const sortFields = computed(() => forAlbum.value ? ['disc', 'track'] : ['album_id', 'disc', 'track'])
@@ -126,10 +124,7 @@ const onDrop = async (event: DragEvent) => {
         await artistStore.uploadImage(entity.value as Artist, url)
       }
     })
-  } catch (e: any) {
-    const message = e.response.data?.message || 'Unknown error.'
-    toastError(`Failed to upload: ${message}`)
-
+  } catch (error: unknown) {
     // restore the backup image
     if (forAlbum.value) {
       (entity.value as Album).cover = backupImage!
@@ -137,7 +132,7 @@ const onDrop = async (event: DragEvent) => {
       (entity.value as Artist).image = backupImage!
     }
 
-    logger.error(e)
+    useErrorHandler().handleHttpError(error)
   }
 }
 </script>

@@ -44,16 +44,15 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { invitationService } from '@/services'
-import { useDialogBox, useRouter } from '@/composables'
-import { parseValidationError } from '@/utils'
+import { useErrorHandler, useRouter } from '@/composables'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import PasswordField from '@/components/ui/form/PasswordField.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 
-const { showErrorDialog } = useDialogBox()
 const { getRouteParam } = useRouter()
+const { handleHttpError } = useErrorHandler('dialog')
 
 const name = ref('')
 const password = ref('')
@@ -68,9 +67,8 @@ const submit = async () => {
     loading.value = true
     await invitationService.accept(token, name.value, password.value)
     window.location.href = '/'
-  } catch (err: any) {
-    const msg = err.response.status === 422 ? parseValidationError(err.response.data)[0] : 'Unknown error.'
-    showErrorDialog(msg, 'Error')
+  } catch (error: unknown) {
+    handleHttpError(error)
   } finally {
     loading.value = false
   }
@@ -79,14 +77,8 @@ const submit = async () => {
 onMounted(async () => {
   try {
     userProspect.value = await invitationService.getUserProspect(token)
-  } catch (err: any) {
-    if (err.response?.status === 404) {
-      validToken.value = false
-      return
-    }
-
-    const msg = err.response?.status === 422 ? parseValidationError(err.response?.data)[0] : 'Unknown error.'
-    showErrorDialog(msg, 'Error')
+  } catch (error: unknown) {
+    handleHttpError(error, { 404: () => (validToken.value = false) })
   }
 })
 </script>
