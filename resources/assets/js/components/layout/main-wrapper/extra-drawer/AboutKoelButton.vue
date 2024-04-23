@@ -8,6 +8,7 @@
     <span
       v-if="shouldNotifyNewVersion"
       class="absolute w-[10px] aspect-square right-px top-px rounded-full bg-k-highlight"
+      data-testid="new-version-indicator"
     />
   </ExtraDrawerButton>
 </template>

@@ -30,6 +30,9 @@ import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 
+const { handleHttpError } = useErrorHandler()
+const { toastSuccess } = useMessageToaster()
+
 const emit = defineEmits<{ (e: 'cancel'): void }>()
 const email = ref('')
 const loading = ref(false)
@@ -43,9 +46,9 @@ const requestResetPasswordLink = async () => {
   try {
     loading.value = true
     await authService.requestResetPasswordLink(email.value)
-    useMessageToaster().toastSuccess('Password reset link sent. Please check your email.')
+    toastSuccess('Password reset link sent. Please check your email.')
   } catch (error: unknown) {
-    useErrorHandler().handleHttpError(error, { 404: 'No user with this email address found.' })
+    handleHttpError(error, { 404: 'No user with this email address found.' })
   } finally {
     loading.value = false
   }

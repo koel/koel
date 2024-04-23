@@ -36,16 +36,18 @@
         </template>
         Genres
       </SidebarItem>
-      <YouTubeSidebarItem v-show="showYouTube" />
+      <YouTubeSidebarItem v-if="youtubeVideoTitle" data-testid="youtube">
+        {{ youtubeVideoTitle }}
+      </YouTubeSidebarItem>
     </ul>
   </SidebarSection>
 </template>
 
 <script setup lang="ts">
 import { faCompactDisc, faHome, faMicrophone, faMusic, faTags } from '@fortawesome/free-solid-svg-icons'
-import { computed, ref } from 'vue'
+import { unescape } from 'lodash'
+import { ref } from 'vue'
 import { eventBus } from '@/utils'
-import { useThirdPartyServices } from '@/composables'
 
 import SidebarSection from '@/components/layout/main-wrapper/sidebar/SidebarSection.vue'
 import SidebarSectionHeader from '@/components/layout/main-wrapper/sidebar/SidebarSectionHeader.vue'
@@ -53,10 +55,7 @@ import SidebarItem from '@/components/layout/main-wrapper/sidebar/SidebarItem.vu
 import QueueSidebarItem from '@/components/layout/main-wrapper/sidebar/QueueSidebarItem.vue'
 import YouTubeSidebarItem from '@/components/layout/main-wrapper/sidebar/YouTubeSidebarItem.vue'
 
-const { useYouTube } = useThirdPartyServices()
+const youtubeVideoTitle = ref<string | null>(null)
 
-const youTubePlaying = ref(false)
-const showYouTube = computed(() => useYouTube.value && youTubePlaying.value)
-
-eventBus.on('PLAY_YOUTUBE_VIDEO', () => (youTubePlaying.value = true))
+eventBus.on('PLAY_YOUTUBE_VIDEO', payload => (youtubeVideoTitle.value = unescape(payload.title)))
 </script>

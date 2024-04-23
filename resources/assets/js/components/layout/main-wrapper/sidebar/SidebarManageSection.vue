@@ -11,7 +11,7 @@
         </template>
         Settings
       </SidebarItem>
-      <SidebarItem screen="Upload" href="#/upload">
+      <SidebarItem v-if="allowsUpload" screen="Upload" href="#/upload">
         <template #icon>
           <Icon :icon="faUpload" fixed-width />
         </template>
@@ -28,11 +28,12 @@
 </template>
 <script setup lang="ts">
 import { faTools, faUpload, faUsers } from '@fortawesome/free-solid-svg-icons'
-import { useAuthorization } from '@/composables'
+import { useAuthorization, useUpload } from '@/composables'
 
 import SidebarSection from '@/components/layout/main-wrapper/sidebar/SidebarSection.vue'
 import SidebarSectionHeader from '@/components/layout/main-wrapper/sidebar/SidebarSectionHeader.vue'
 import SidebarItem from '@/components/layout/main-wrapper/sidebar/SidebarItem.vue'
 
 const { isAdmin } = useAuthorization()
+const { allowsUpload } = useUpload()
 </script>

@@ -1,0 +1,10 @@
+// Vitest Snapshot v1
+
+exports[`renders the credits 1`] = `
+<div data-v-7d3b4fcd="" class="max-h-[9rem] overflow-auto" data-testid="demo-credits"> Music by <ul data-v-7d3b4fcd="" class="inline">
+    <li data-v-7d3b4fcd="" class="inline"><a data-v-7d3b4fcd="" href="https://bar.com" target="_blank">Bar</a></li>
+    <li data-v-7d3b4fcd="" class="inline"><a data-v-7d3b4fcd="" href="https://foo.com" target="_blank">Foo</a></li>
+    <li data-v-7d3b4fcd="" class="inline"><a data-v-7d3b4fcd="" href="https://something-else.net" target="_blank">Something Else</a></li>
+  </ul>
+</div>
+`;

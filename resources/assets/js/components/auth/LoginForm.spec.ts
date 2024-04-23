@@ -2,6 +2,7 @@ import { screen, waitFor } from '@testing-library/vue'
 import { expect, it, Mock } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { authService } from '@/services'
+import { logger } from '@/utils'
 import LoginFrom from './LoginForm.vue'
 
 new class extends UnitTestCase {
@@ -25,12 +26,14 @@ new class extends UnitTestCase {
     })
 
     it('fails to log in', async () => {
-      const mock = this.mock(authService, 'login').mockRejectedValue(new Error('Unauthenticated'))
+      const mock = this.mock(authService, 'login').mockRejectedValue('Unauthenticated')
+      const logMock = this.mock(logger, 'error')
       const { emitted } = await this.submitForm(mock)
       await this.tick()
 
       expect(emitted().loggedin).toBeFalsy()
       expect(screen.getByTestId('login-form').classList.contains('error')).toBe(true)
+      expect(logMock).toHaveBeenCalledWith('Unauthenticated')
     })
 
     it('shows forgot password form', async () => {
