@@ -95,8 +95,8 @@ export const routes: Route[] = [
         const playlist = await playlistCollaborationService.acceptInvite(params.id)
         Router.go(`/playlist/${playlist.id}`, true)
         return true
-      } catch (e) {
-        logger.error(e)
+      } catch (error: unknown) {
+        logger.error(error)
         return false
       }
     }

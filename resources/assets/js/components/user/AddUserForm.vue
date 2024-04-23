@@ -44,8 +44,7 @@
 import { isEqual } from 'lodash'
 import { reactive } from 'vue'
 import { CreateUserData, userStore } from '@/stores'
-import { parseValidationError } from '@/utils'
-import { useDialogBox, useMessageToaster, useOverlay } from '@/composables'
+import { useDialogBox, useErrorHandler, useMessageToaster, useOverlay } from '@/composables'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import TooltipIcon from '@/components/ui/TooltipIcon.vue'
@@ -55,7 +54,7 @@ import FormRow from '@/components/ui/form/FormRow.vue'
 
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
-const { showErrorDialog, showConfirmDialog } = useDialogBox()
+const { showConfirmDialog } = useDialogBox()
 
 const emptyUserData: CreateUserData = {
   name: '',
@@ -73,9 +72,8 @@ const submit = async () => {
     await userStore.store(newUser)
     toastSuccess(`New user "${newUser.name}" created.`)
     close()
-  } catch (err: any) {
-    const msg = err.response.status === 422 ? parseValidationError(err.response.data)[0] : 'Unknown error.'
-    showErrorDialog(msg, 'Error')
+  } catch (error: unknown) {
+    useErrorHandler('dialog').handleHttpError(error)
   } finally {
     hideOverlay()
   }

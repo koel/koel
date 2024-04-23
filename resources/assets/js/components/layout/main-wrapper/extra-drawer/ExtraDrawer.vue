@@ -72,8 +72,8 @@
 import isMobile from 'ismobilejs'
 import { defineAsyncComponent, onMounted, ref, watch } from 'vue'
 import { albumStore, artistStore, preferenceStore } from '@/stores'
-import { useThirdPartyServices } from '@/composables'
-import { logger, requireInjection } from '@/utils'
+import { useErrorHandler, useThirdPartyServices } from '@/composables'
+import { requireInjection } from '@/utils'
 import { CurrentSongKey } from '@/symbols'
 
 import ProfileAvatar from '@/components/ui/ProfileAvatar.vue'
@@ -103,8 +103,8 @@ const fetchSongInfo = async (_song: Song) => {
   try {
     artist.value = await artistStore.resolve(_song.artist_id)
     album.value = await albumStore.resolve(_song.album_id)
-  } catch (error) {
-    logger.log('Failed to fetch media information', error)
+  } catch (error: unknown) {
+    useErrorHandler().handleHttpError(error)
   }
 }
 

@@ -1,10 +1,10 @@
 import { playlistStore } from '@/stores'
-import { eventBus, logger, pluralize } from '@/utils'
-import { useDialogBox, useMessageToaster } from '@/composables'
+import { eventBus, pluralize } from '@/utils'
+import { useErrorHandler, useMessageToaster } from '@/composables'
 
 export const usePlaylistManagement = () => {
+  const { handleHttpError } = useErrorHandler('dialog')
   const { toastSuccess } = useMessageToaster()
-  const { showErrorDialog } = useDialogBox()
 
   const addSongsToPlaylist = async (playlist: Playlist, songs: Song[]) => {
     if (playlist.is_smart || songs.length === 0) return
@@ -13,9 +13,8 @@ export const usePlaylistManagement = () => {
       await playlistStore.addSongs(playlist, songs)
       eventBus.emit('PLAYLIST_UPDATED', playlist)
       toastSuccess(`Added ${pluralize(songs, 'song')} into "${playlist.name}."`)
-    } catch (error) {
-      logger.error(error)
-      showErrorDialog('Something went wrong. Please try again.', 'Error')
+    } catch (error: unknown) {
+      handleHttpError(error)
     }
   }
 
@@ -26,9 +25,8 @@ export const usePlaylistManagement = () => {
       await playlistStore.removeSongs(playlist, songs)
       eventBus.emit('PLAYLIST_SONGS_REMOVED', playlist, songs)
       toastSuccess(`Removed ${pluralize(songs, 'song')} from "${playlist.name}."`)
-    } catch (error) {
-      logger.error(error)
-      showErrorDialog('Something went wrong. Please try again.', 'Error')
+    } catch (error: unknown) {
+      handleHttpError(error)
     }
   }
 

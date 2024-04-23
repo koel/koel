@@ -55,10 +55,10 @@
 <script lang="ts" setup>
 import { faCoffee } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRef } from 'vue'
-import { logger, pluralize } from '@/utils'
+import { pluralize } from '@/utils'
 import { commonStore, queueStore, songStore } from '@/stores'
 import { cache, playbackService } from '@/services'
-import { useDialogBox, useRouter, useSongList, useSongListControls } from '@/composables'
+import { useErrorHandler, useRouter, useSongList, useSongListControls } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -66,7 +66,6 @@ import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 
 const { go, onScreenActivated } = useRouter()
-const { showErrorDialog } = useDialogBox()
 
 const {
   SongList,
@@ -100,9 +99,8 @@ const shuffleSome = async () => {
     loading.value = true
     await queueStore.fetchRandom()
     await playbackService.playFirstInQueue()
-  } catch (e) {
-    showErrorDialog('Failed to fetch songs to play. Please try again.', 'Error')
-    logger.error(e)
+  } catch (error: unknown) {
+    useErrorHandler('dialog').handleHttpError(error)
   } finally {
     loading.value = false
   }
@@ -141,9 +139,8 @@ onScreenActivated('Queue', async () => {
     if (!song) {
       throw new Error('Song not found')
     }
-  } catch (e) {
-    showErrorDialog('Song not found. Please double check and try again.', 'Error')
-    logger.error(e)
+  } catch (error: unknown) {
+    useErrorHandler('dialog').handleHttpError(error)
     return
   } finally {
     cache.remove('song-to-queue')

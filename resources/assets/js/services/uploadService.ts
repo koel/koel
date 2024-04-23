@@ -3,6 +3,7 @@ import { reactive } from 'vue'
 import { http } from '@/services'
 import { albumStore, commonStore, overviewStore, songStore } from '@/stores'
 import { logger } from '@/utils'
+import axios from 'axios'
 
 interface UploadResult {
   song: Song
@@ -92,10 +93,16 @@ export const uploadService = {
       this.proceed() // upload the next file
 
       window.setTimeout(() => this.remove(file), 1000)
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error(error)
-      file.message = `Upload failed: ${error.response?.data?.message || 'Unknown error'}`
       file.status = 'Errored'
+
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        file.message = `Upload failed: ${error.response.data.message}`
+      } else {
+        file.message = 'Upload failed: Unknown error.'
+      }
+
       this.proceed() // upload the next file
     }
   },

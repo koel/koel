@@ -16,9 +16,9 @@
 <script setup lang="ts">
 import { sortBy } from 'lodash'
 import { computed, onMounted, ref, Ref, toRefs } from 'vue'
-import { useAuthorization, useDialogBox } from '@/composables'
+import { useAuthorization, useDialogBox, useErrorHandler } from '@/composables'
 import { playlistCollaborationService } from '@/services'
-import { eventBus, logger } from '@/utils'
+import { eventBus } from '@/utils'
 
 import ListSkeleton from '@/components/ui/skeletons/PlaylistCollaboratorListSkeleton.vue'
 import ListItem from '@/components/playlist/PlaylistCollaboratorListItem.vue'
@@ -62,8 +62,8 @@ const removeCollaborator = async (collaborator: PlaylistCollaborator) => {
     collaborators.value = collaborators.value.filter(({ id }) => id !== collaborator.id)
     await playlistCollaborationService.removeCollaborator(playlist.value, collaborator)
     eventBus.emit('PLAYLIST_COLLABORATOR_REMOVED', playlist.value)
-  } catch (e) {
-    logger.error(e)
+  } catch (error: unknown) {
+    useErrorHandler().handleHttpError(error)
   }
 }
 

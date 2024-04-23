@@ -97,8 +97,8 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
 
     try {
       return JSON.parse(event.dataTransfer?.getData(`application/x-koel.${type}`)!)
-    } catch (e) {
-      logger.warn('Failed to parse dropped data', e)
+    } catch (error: unknown) {
+      logger.warn('Failed to parse dropped data', error)
       return null
     }
   }
@@ -112,7 +112,7 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
         default:
           return
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(error, event)
     }
   }
@@ -141,7 +141,7 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
         default:
           throw new Error(`Unknown drag type: ${type}`)
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(error, event)
       return <Song[]>[]
     }

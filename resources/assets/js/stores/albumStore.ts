@@ -71,8 +71,8 @@ export const albumStore = {
         album = this.syncWithVault(
           await cache.remember<Album>(['album', id], async () => await http.get<Album>(`albums/${id}`))
         )[0]
-      } catch (e) {
-        logger.error(e)
+      } catch (error: unknown) {
+        logger.error(error)
       }
     }
 

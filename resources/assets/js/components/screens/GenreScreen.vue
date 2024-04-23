@@ -50,10 +50,10 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import { faTags } from '@fortawesome/free-solid-svg-icons'
-import { eventBus, logger, pluralize, secondsToHumanReadable } from '@/utils'
+import { eventBus, pluralize, secondsToHumanReadable } from '@/utils'
 import { playbackService } from '@/services'
 import { genreStore, songStore } from '@/stores'
-import { useDialogBox, useRouter, useSongList, useSongListControls } from '@/composables'
+import { useErrorHandler, useRouter, useSongList, useSongListControls } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -78,7 +78,6 @@ const {
 
 const { SongListControls, config } = useSongListControls('Genre')
 
-const { showErrorDialog } = useDialogBox()
 const { getRouteParam, go, onRouteChanged } = useRouter()
 
 let sortField: SongListSortField = 'title'
@@ -122,9 +121,8 @@ const fetch = async () => {
 
     page.value = fetched.nextPage
     songs.value.push(...fetched.songs)
-  } catch (e) {
-    showErrorDialog('Failed to fetch genre details or genre was not found.', 'Error')
-    logger.error(e)
+  } catch (error: unknown) {
+    useErrorHandler('dialog').handleHttpError(error)
   } finally {
     loading.value = false
   }

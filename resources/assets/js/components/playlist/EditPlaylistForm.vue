@@ -36,9 +36,8 @@
 
 <script lang="ts" setup>
 import { ref, toRef } from 'vue'
-import { logger } from '@/utils'
 import { playlistFolderStore, playlistStore } from '@/stores'
-import { useDialogBox, useMessageToaster, useModal, useOverlay } from '@/composables'
+import { useDialogBox, useErrorHandler, useMessageToaster, useModal, useOverlay } from '@/composables'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
@@ -47,7 +46,7 @@ import SelectBox from '@/components/ui/form/SelectBox.vue'
 
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
-const { showConfirmDialog, showErrorDialog } = useDialogBox()
+const { showConfirmDialog } = useDialogBox()
 const playlist = useModal().getFromContext<Playlist>('playlist')
 
 const name = ref(playlist.name)
@@ -68,9 +67,8 @@ const submit = async () => {
 
     toastSuccess('Playlist updated.')
     close()
-  } catch (error) {
-    showErrorDialog('Something went wrong. Please try again.', 'Error')
-    logger.error(error)
+  } catch (error: unknown) {
+    useErrorHandler('dialog').handleHttpError(error)
   } finally {
     hideOverlay()
   }

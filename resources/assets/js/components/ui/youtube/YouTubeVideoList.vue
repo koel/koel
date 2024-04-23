@@ -16,7 +16,7 @@
 <script lang="ts" setup>
 import { defineAsyncComponent, ref, toRefs, watch } from 'vue'
 import { youTubeService } from '@/services'
-import { logger } from '@/utils'
+import { useErrorHandler } from '@/composables'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 const YouTubeVideo = defineAsyncComponent(() => import('@/components/ui/youtube/YouTubeVideoItem.vue'))
@@ -36,8 +36,8 @@ const loadMore = async () => {
     const result = await youTubeService.searchVideosBySong(song.value, nextPageToken)
     nextPageToken = result.nextPageToken
     videos.value.push(...result.items)
-  } catch (err) {
-    logger.error(err)
+  } catch (error: unknown) {
+    useErrorHandler().handleHttpError(error)
   } finally {
     loading.value = false
   }

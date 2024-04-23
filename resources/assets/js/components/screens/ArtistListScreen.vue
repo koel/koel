@@ -37,8 +37,7 @@
 import { faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRef, watch } from 'vue'
 import { artistStore, commonStore, preferenceStore as preferences } from '@/stores'
-import { useAuthorization, useInfiniteScroll, useMessageToaster, useRouter } from '@/composables'
-import { logger } from '@/utils'
+import { useAuthorization, useErrorHandler, useInfiniteScroll, useRouter } from '@/composables'
 
 import ArtistCard from '@/components/artist/ArtistCard.vue'
 import ArtistCardSkeleton from '@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'
@@ -86,10 +85,9 @@ useRouter().onScreenActivated('Artists', async () => {
 
     try {
       await makeScrollable()
-    } catch (error: any) {
-      logger.error(error)
-      useMessageToaster().toastError(error.response.data?.message || 'Failed to load artists.')
+    } catch (error: unknown) {
       initialized = false
+      useErrorHandler().handleHttpError(error)
     }
   }
 })

@@ -57,9 +57,9 @@ const render = async (viz: Visualizer) => {
 
   try {
     destroyVisualizer = await viz.init(el.value!)
-  } catch (e) {
+  } catch (error: unknown) {
     // in e.g., DOM testing, the call will fail due to the lack of proper API support
-    logger.warn('Failed to initialize visualizer', e)
+    logger.warn('Failed to initialize visualizer', error)
   }
 }
 

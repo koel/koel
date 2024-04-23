@@ -35,8 +35,8 @@
 <script lang="ts" setup>
 import { ref, toRef } from 'vue'
 import { playlistFolderStore, playlistStore } from '@/stores'
-import { logger, pluralize } from '@/utils'
-import { useDialogBox, useMessageToaster, useModal, useOverlay, useRouter } from '@/composables'
+import { pluralize } from '@/utils'
+import { useDialogBox, useErrorHandler, useMessageToaster, useModal, useOverlay, useRouter } from '@/composables'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
@@ -45,7 +45,7 @@ import SelectBox from '@/components/ui/form/SelectBox.vue'
 
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
-const { showConfirmDialog, showErrorDialog } = useDialogBox()
+const { showConfirmDialog } = useDialogBox()
 const { go } = useRouter()
 const { getFromContext } = useModal()
 
@@ -70,9 +70,8 @@ const submit = async () => {
     close()
     toastSuccess(`Playlist "${playlist.name}" created.`)
     go(`playlist/${playlist.id}`)
-  } catch (error) {
-    showErrorDialog('Something went wrong. Please try again.', 'Error')
-    logger.error(error)
+  } catch (error: unknown) {
+    useErrorHandler('dialog').handleHttpError(error)
   } finally {
     hideOverlay()
   }

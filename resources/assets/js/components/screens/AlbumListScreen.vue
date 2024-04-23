@@ -37,8 +37,7 @@
 import { faCompactDisc } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRef, watch } from 'vue'
 import { albumStore, commonStore, preferenceStore as preferences } from '@/stores'
-import { useAuthorization, useInfiniteScroll, useMessageToaster, useRouter } from '@/composables'
-import { logger } from '@/utils'
+import { useAuthorization, useErrorHandler, useInfiniteScroll, useRouter } from '@/composables'
 
 import AlbumCard from '@/components/album/AlbumCard.vue'
 import AlbumCardSkeleton from '@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'
@@ -54,10 +53,7 @@ const gridContainer = ref<HTMLDivElement>()
 const viewMode = ref<ArtistAlbumViewMode>('thumbnails')
 const albums = toRef(albumStore.state, 'albums')
 
-const {
-  ToTopButton,
-  makeScrollable
-} = useInfiniteScroll(gridContainer, async () => await fetchAlbums())
+const { ToTopButton, makeScrollable } = useInfiniteScroll(gridContainer, async () => await fetchAlbums())
 
 watch(viewMode, () => (preferences.albums_view_mode = viewMode.value))
 
@@ -87,10 +83,9 @@ useRouter().onScreenActivated('Albums', async () => {
 
     try {
       await makeScrollable()
-    } catch (error) {
-      logger.error(error)
-      useMessageToaster().toastError('Failed to load albums.')
+    } catch (error: unknown) {
       initialized = false
+      useErrorHandler().handleHttpError(error)
     }
   }
 })
