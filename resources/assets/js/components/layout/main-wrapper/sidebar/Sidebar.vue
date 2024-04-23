@@ -2,7 +2,7 @@
   <nav
     v-koel-clickaway="closeIfMobile"
     :class="{ collapsed: !expanded, 'tmp-showing': tmpShowing, showing: mobileShowing }"
-    class="flex flex-col pb-4 fixed md:relative w-full md:w-k-sidebar-width z-10"
+    class="flex flex-col fixed md:relative w-full md:w-k-sidebar-width z-10"
     @mouseenter="onMouseEnter"
     @mouseleave="onMouseLeave"
   >
@@ -10,7 +10,7 @@
       <SearchForm />
     </section>
 
-    <section v-koel-overflow-fade class="py-0 overflow-y-auto space-y-8">
+    <section v-koel-overflow-fade class="pt-2 pb-10 overflow-y-auto space-y-8">
       <SidebarYourMusicSection />
       <SidebarPlaylistsSection />
       <SidebarManageSection v-if="showManageSection" />
