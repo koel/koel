@@ -35,7 +35,7 @@ const current = ref(false)
 const { onRouteChanged } = useRouter()
 
 if (screen) {
-  onRouteChanged(route => current.value = route.screen === props.screen)
+  onRouteChanged(route => (current.value = route.screen === props.screen))
 }
 </script>
 

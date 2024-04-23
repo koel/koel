@@ -147,6 +147,8 @@ export default abstract class UnitTestCase {
       customer_email: 'Koel Plus',
       product_id: 'koel-plus',
     }
+
+    return this
   }
 
   protected disablePlusEdition () {
@@ -157,6 +159,8 @@ export default abstract class UnitTestCase {
       customer_email: '',
       product_id: '',
     }
+
+    return this
   }
 
   protected stub (testId = 'stub') {
