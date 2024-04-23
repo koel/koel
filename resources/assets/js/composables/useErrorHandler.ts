@@ -1,6 +1,6 @@
-import { useMessageToaster, useDialogBox } from '@/composables'
 import axios, { AxiosResponse } from 'axios'
 import { logger, parseValidationError } from '@/utils'
+import { useMessageToaster, useDialogBox } from '@/composables'
 
 export interface StatusMessageMap {
   [key: AxiosResponse['status']]: string | Closure
@@ -20,10 +20,7 @@ export const useErrorHandler = (driver: ErrorMessageDriver = 'toast') => {
     }
   }
 
-  const handleHttpError = (
-    error: unknown,
-    statusMessageMap: StatusMessageMap = {}
-  ) => {
+  const handleHttpError = (error: unknown, statusMessageMap: StatusMessageMap = {}) => {
     logger.error(error)
 
     if (!axios.isAxiosError(error)) {
@@ -35,14 +32,16 @@ export const useErrorHandler = (driver: ErrorMessageDriver = 'toast') => {
       return
     }
 
-    if (error.response?.status === 422) {
+    if (error.response.status === 422) {
       return showError(parseValidationError(error.response.data)[0])
     }
 
-    if (typeof statusMessageMap[error.response!.status!] === 'string') {
-      showError(statusMessageMap[error.response!.status!]) // @ts-ignore
+    const messageOrClosure = statusMessageMap[error.response.status]
+
+    if (typeof messageOrClosure === 'string') {
+      showError(messageOrClosure)
     } else {
-      return statusMessageMap[error.response!.status!]() // @ts-ignore
+      return messageOrClosure()
     }
   }
 
@@ -56,7 +55,6 @@ export const useErrorHandler = (driver: ErrorMessageDriver = 'toast') => {
 
   return {
     handleHttpError,
-    parseValidationError,
     showGenericError
   }
 }
