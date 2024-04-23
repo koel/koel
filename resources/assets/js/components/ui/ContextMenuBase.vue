@@ -5,7 +5,6 @@
     v-koel-clickaway="close"
     v-koel-focus
     :class="extraClass"
-    :style="{ top: `${top}px`, left: `${left}px` }"
     class="menu context-menu select-none"
     tabindex="0"
     @contextmenu.prevent
@@ -26,8 +25,8 @@ const { extraClass } = toRefs(props)
 
 const el = ref<HTMLElement>()
 const shown = ref(false)
-const top = ref(0)
-const left = ref(0)
+const top = ref('0')
+const left = ref('0')
 
 const preventOffScreen = async (element: HTMLElement, isSubmenu = false) => {
   const { bottom, right } = element.getBoundingClientRect()
@@ -88,8 +87,8 @@ const initSubmenus = () => {
 }
 
 const open = async (t = 0, l = 0) => {
-  top.value = t
-  left.value = l
+  top.value = `${t}px`
+  left.value = `${l}px`
   shown.value = true
 
   await nextTick()
@@ -116,6 +115,9 @@ defineExpose({ open, close, shown })
 
 <style lang="postcss" scoped>
 nav {
+  top: v-bind(top);
+  left: v-bind(left);
+
   :deep(.has-sub) {
     @apply after:absolute after:right-0 after:top-0 after:z-[2] after:opacity-0;
   }
