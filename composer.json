@@ -78,7 +78,8 @@
     "post-install-cmd": [
       "@php artisan clear-compiled",
       "@php artisan cache:clear",
-      "@php -r \"if (!file_exists('.env')) copy('.env.example', '.env');\""
+      "@php -r \"if (!file_exists('.env')) copy('.env.example', '.env');\"",
+      "@php -r \"if (!file_exists('./public/.htaccess')) copy('.htaccess.example', './public/.htaccess');\""
     ],
     "pre-update-cmd": [
       "@php artisan clear-compiled"
