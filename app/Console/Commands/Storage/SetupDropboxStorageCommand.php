@@ -78,9 +78,7 @@ class SetupDropboxStorageCommand extends Command
         $this->comment('Uploading a test file to make sure everything is working...');
 
         try {
-            /** @var DropboxStorage $storage */
-            $storage = app(DropboxStorage::class);
-            $storage->testSetup();
+            app(DropboxStorage::class)->testSetup();
         } catch (Throwable $e) {
             $this->error('Failed to upload test file: ' . $e->getMessage() . '.');
             $this->comment('Please make sure the app has the correct permissions and try again.');

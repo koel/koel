@@ -44,7 +44,6 @@ class UserInvitationService
 
     private function inviteOne(string $email, bool $isAdmin, User $invitor): User
     {
-        /** @var User $invitee */
         $invitee = User::query()->create([
             'name' => '',
             'email' => $email,

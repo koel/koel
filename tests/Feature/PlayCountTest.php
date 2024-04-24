@@ -16,7 +16,6 @@ class PlayCountTest extends TestCase
     {
         Event::fake(PlaybackStarted::class);
 
-        /** @var Interaction $interaction */
         $interaction = Interaction::factory()->create([
             'play_count' => 10,
         ]);
@@ -38,9 +37,7 @@ class PlayCountTest extends TestCase
     {
         Event::fake(PlaybackStarted::class);
 
-        /** @var Song $song */
         $song = Song::factory()->create();
-
         $user = create_user();
 
         $this->postAs('/api/interaction/play', ['song' => $song->id], $user)
@@ -52,7 +49,6 @@ class PlayCountTest extends TestCase
                 'play_count',
             ]);
 
-        /** @var Interaction $interaction */
         $interaction = Interaction::query()
             ->where('song_id', $song->id)
             ->where('user_id', $user->id)

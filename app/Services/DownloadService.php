@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Enums\SongStorageType;
 use App\Models\Song;
 use App\Models\SongZipArchive;
-use App\Services\SongStorages\CloudStorage;
 use App\Services\SongStorages\DropboxStorage;
 use App\Services\SongStorages\S3CompatibleStorage;
 use Illuminate\Support\Collection;
@@ -37,13 +36,11 @@ class DownloadService
 
         switch ($song->storage) {
             case SongStorageType::DROPBOX:
-                /** @var CloudStorage $cloudStorage */
                 $cloudStorage = app(DropboxStorage::class);
                 break;
 
             case SongStorageType::S3:
             case SongStorageType::S3_LAMBDA:
-                /** @var CloudStorage $cloudStorage */
                 $cloudStorage = app(S3CompatibleStorage::class);
                 break;
 

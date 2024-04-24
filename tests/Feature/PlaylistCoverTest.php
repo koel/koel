@@ -23,7 +23,6 @@ class PlaylistCoverTest extends TestCase
 
     public function testUploadCover(): void
     {
-        /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
         self::assertNull($playlist->cover);
 
@@ -38,7 +37,6 @@ class PlaylistCoverTest extends TestCase
 
     public function testUploadCoverNotAllowedForNonOwner(): void
     {
-        /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
 
         $this->mediaMetadataService->shouldNotReceive('writePlaylistCover');

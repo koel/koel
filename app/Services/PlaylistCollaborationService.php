@@ -31,7 +31,6 @@ class PlaylistCollaborationService
 
     public function acceptUsingToken(string $token, User $user): Playlist
     {
-        /** @var PlaylistCollaborationToken $collaborationToken */
         $collaborationToken = PlaylistCollaborationToken::query()->where('token', $token)->firstOrFail();
 
         throw_if($collaborationToken->expired, PlaylistCollaborationTokenExpiredException::class);

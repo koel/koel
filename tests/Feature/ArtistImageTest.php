@@ -23,7 +23,6 @@ class ArtistImageTest extends TestCase
 
     public function testUpdate(): void
     {
-        /** @var Artist $artist */
         $artist = Artist::factory()->create();
 
         $this->mediaMetadataService

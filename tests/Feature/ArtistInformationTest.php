@@ -15,7 +15,6 @@ class ArtistInformationTest extends TestCase
         config(['koel.lastfm.key' => 'foo']);
         config(['koel.lastfm.secret' => 'geheim']);
 
-        /** @var Artist $artist */
         $artist = Artist::factory()->create();
 
         $lastfm = self::mock(MediaInformationService::class);
@@ -39,10 +38,7 @@ class ArtistInformationTest extends TestCase
         config(['koel.lastfm.key' => null]);
         config(['koel.lastfm.secret' => null]);
 
-        /** @var Artist $artist */
-        $artist = Artist::factory()->create();
-
-        $this->getAs('api/artists/' . $artist->id . '/information')
+        $this->getAs('api/artists/' . Artist::factory()->create()->id . '/information')
             ->assertJsonStructure(ArtistInformation::JSON_STRUCTURE);
     }
 }

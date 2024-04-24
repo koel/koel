@@ -17,7 +17,6 @@ class FetchOverviewController extends Controller
         AlbumRepository $albumRepository,
         ArtistRepository $artistRepository
     ) {
-
         return response()->json([
             'most_played_songs' => SongResource::collection($songRepository->getMostPlayed()),
             'recently_played_songs' => SongResource::collection($songRepository->getRecentlyPlayed()),

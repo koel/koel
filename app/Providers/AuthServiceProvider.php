@@ -17,12 +17,9 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         Auth::viaRequest('token-via-query-parameter', static function (Request $request): ?User {
-            /** @var TokenManager $tokenManager */
-            $tokenManager = app(TokenManager::class);
-
             $token = $request->get('api_token') ?: $request->get('t');
 
-            return $tokenManager->getUserFromPlainTextToken($token ?: '');
+            return  app(TokenManager::class)->getUserFromPlainTextToken($token ?: '');
         });
 
         $this->setPasswordDefaultRules();

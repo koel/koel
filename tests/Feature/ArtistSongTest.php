@@ -11,7 +11,6 @@ class ArtistSongTest extends TestCase
 {
     public function testIndex(): void
     {
-        /** @var Artist $artist */
         $artist = Artist::factory()->create();
 
         Song::factory(5)->for($artist)->create();

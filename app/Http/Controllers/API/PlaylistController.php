@@ -9,7 +9,6 @@ use App\Http\Requests\API\PlaylistStoreRequest;
 use App\Http\Requests\API\PlaylistUpdateRequest;
 use App\Http\Resources\PlaylistResource;
 use App\Models\Playlist;
-use App\Models\PlaylistFolder;
 use App\Models\User;
 use App\Repositories\PlaylistFolderRepository;
 use App\Repositories\PlaylistRepository;
@@ -40,7 +39,6 @@ class PlaylistController extends Controller
         $folder = null;
 
         if ($request->folder_id) {
-            /** @var PlaylistFolder $folder */
             $folder = $this->folderRepository->getOne($request->folder_id);
             $this->authorize('own', $folder);
         }
@@ -68,7 +66,6 @@ class PlaylistController extends Controller
         $folder = null;
 
         if ($request->folder_id) {
-            /** @var PlaylistFolder $folder */
             $folder = $this->folderRepository->getOne($request->folder_id);
             $this->authorize('own', $folder);
         }

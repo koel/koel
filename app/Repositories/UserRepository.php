@@ -7,6 +7,9 @@ namespace App\Repositories;
 use App\Models\User;
 use App\Values\SSOUser;
 
+/**
+ * @extends Repository<User>
+ */
 class UserRepository extends Repository
 {
     public function getDefaultAdminUser(): User

@@ -24,7 +24,6 @@ class AuthenticationService
 
     public function login(string $email, string $password): CompositeToken
     {
-        /** @var User|null $user */
         $user = $this->userRepository->getFirstWhere('email', $email);
 
         if (!$user || !$this->hash->check($password, $user->password)) {
@@ -82,9 +81,6 @@ class AuthenticationService
 
     public function loginViaOneTimeToken(string $token): CompositeToken
     {
-        /** @var User $user */
-        $user = $this->userRepository->getOne(decrypt(Cache::get("one-time-token.$token")));
-
-        return $this->logUserIn($user);
+        return $this->logUserIn($this->userRepository->getOne(decrypt(Cache::get("one-time-token.$token"))));
     }
 }

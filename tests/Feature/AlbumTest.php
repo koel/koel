@@ -18,10 +18,7 @@ class AlbumTest extends TestCase
 
     public function testShow(): void
     {
-        /** @var Album $album */
-        $album = Album::factory()->create();
-
-        $this->getAs('api/albums/' . $album->id)
+        $this->getAs('api/albums/' . Album::factory()->create()->id)
             ->assertJsonStructure(AlbumResource::JSON_STRUCTURE);
     }
 }

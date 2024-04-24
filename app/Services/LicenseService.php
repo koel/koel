@@ -75,7 +75,6 @@ class LicenseService implements LicenseServiceInterface
             return Cache::get('license_status');
         }
 
-        /** @var ?License $license */
         $license = License::query()->latest()->first();
 
         if (!$license) {

@@ -168,7 +168,6 @@ class ScanCommand extends Command
         $specifiedOwner = $this->option('owner');
 
         if ($specifiedOwner) {
-            /** @var User $user */
             $user = User::findOr($specifiedOwner, function () use ($specifiedOwner): void {
                 $this->components->error("User with ID $specifiedOwner does not exist.");
                 exit(self::INVALID);
