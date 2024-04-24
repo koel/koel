@@ -11,7 +11,15 @@ import { favoriteStore, queueStore } from '@/stores'
 const onKeyStroke = (key: KeyFilter, callback: (e: KeyboardEvent) => void) => {
   baseOnKeyStroke(key, e => {
     if (e.altKey || e.ctrlKey || e.metaKey) return
-    if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
+
+    if (e.target instanceof HTMLInputElement
+      || e.target instanceof HTMLTextAreaElement
+      || e.target instanceof HTMLButtonElement
+    ) return
+
+    const role = (e.target as HTMLElement).getAttribute('role')
+    if (role === 'button' || role === 'checkbox') return
+
     e.preventDefault()
     callback(e)
   })
