@@ -15,7 +15,6 @@ class AlbumInformationTest extends TestCase
         config(['koel.lastfm.key' => 'foo']);
         config(['koel.lastfm.secret' => 'geheim']);
 
-        /** @var Album $album */
         $album = Album::factory()->create();
 
         $lastfm = self::mock(MediaInformationService::class);
@@ -51,10 +50,7 @@ class AlbumInformationTest extends TestCase
         config(['koel.lastfm.key' => null]);
         config(['koel.lastfm.secret' => null]);
 
-        /** @var Album $album */
-        $album = Album::factory()->create();
-
-        $this->getAs('api/albums/' . $album->id . '/information')
+        $this->getAs('api/albums/' . Album::factory()->create()->id . '/information')
             ->assertJsonStructure(AlbumInformation::JSON_STRUCTURE);
     }
 }

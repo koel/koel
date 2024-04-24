@@ -29,18 +29,14 @@ class DownloadTest extends TestCase
 
     public function testNonLoggedInUserCannotDownload(): void
     {
-        /** @var Song $song */
-        $song = Song::factory()->create();
-
         $this->downloadService->shouldNotReceive('getDownloadablePath');
 
-        $this->get("download/songs?songs[]=$song->id")
+        $this->get('download/songs?songs[]=' . Song::factory()->create()->id)
             ->assertUnauthorized();
     }
 
     public function testDownloadOneSong(): void
     {
-        /** @var Song $song */
         $song = Song::factory()->create();
         $user = create_user();
 
@@ -58,7 +54,6 @@ class DownloadTest extends TestCase
 
     public function testDownloadMultipleSongs(): void
     {
-        /** @var array<Song>|Collection $songs */
         $songs = Song::factory(2)->create();
         $user = create_user();
 
@@ -81,7 +76,6 @@ class DownloadTest extends TestCase
 
     public function testDownloadAlbum(): void
     {
-        /** @var Album $album */
         $album = Album::factory()->create();
         $songs = Song::factory(3)->for($album)->create();
         $user = create_user();
@@ -102,7 +96,6 @@ class DownloadTest extends TestCase
 
     public function testDownloadArtist(): void
     {
-        /** @var Artist $artist */
         $artist = Artist::factory()->create();
         $songs = Song::factory(3)->for($artist)->create();
         $user = create_user();
@@ -128,7 +121,6 @@ class DownloadTest extends TestCase
 
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->for($user)->create();
-
         $playlist->addSongs($songs);
 
         $this->downloadService
@@ -147,11 +139,9 @@ class DownloadTest extends TestCase
 
     public function testNonOwnerCannotDownloadPlaylist(): void
     {
-        /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
-        $user = create_user();
 
-        $this->get("download/playlist/{$playlist->id}?api_token=" . $user->createToken('Koel')->plainTextToken)
+        $this->get("download/playlist/{$playlist->id}?api_token=" . create_user()->createToken('Koel')->plainTextToken)
             ->assertForbidden();
     }
 

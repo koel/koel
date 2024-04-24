@@ -8,7 +8,6 @@ use App\Exceptions\NotAPlaylistCollaboratorException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\PlaylistCollaboration\PlaylistCollaboratorDestroyRequest;
 use App\Models\Playlist;
-use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\PlaylistCollaborationService;
 use Illuminate\Http\Response;
@@ -32,7 +31,6 @@ class PlaylistCollaboratorController extends Controller
     {
         $this->authorize('own', $playlist);
 
-        /** @var User $collaborator */
         $collaborator = $this->userRepository->getOne($request->collaborator);
 
         try {

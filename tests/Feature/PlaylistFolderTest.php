@@ -33,7 +33,6 @@ class PlaylistFolderTest extends TestCase
 
     public function testUpdate(): void
     {
-        /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->create(['name' => 'Metal']);
 
         $this->patchAs('api/playlist-folders/' . $folder->id, ['name' => 'Classical'], $folder->user)
@@ -44,7 +43,6 @@ class PlaylistFolderTest extends TestCase
 
     public function testUnauthorizedUpdate(): void
     {
-        /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->create(['name' => 'Metal']);
 
         $this->patchAs('api/playlist-folders/' . $folder->id, ['name' => 'Classical'])
@@ -55,7 +53,6 @@ class PlaylistFolderTest extends TestCase
 
     public function testDelete(): void
     {
-        /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->create();
 
         $this->deleteAs('api/playlist-folders/' . $folder->id, ['name' => 'Classical'], $folder->user)

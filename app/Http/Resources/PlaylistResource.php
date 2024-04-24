@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use App\Models\Playlist;
-use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PlaylistResource extends JsonResource
@@ -28,7 +27,6 @@ class PlaylistResource extends JsonResource
     /** @return array<mixed> */
     public function toArray($request): array
     {
-        /** @var User $user */
         $user = $request->user() ?? $this->playlist->user;
 
         return [

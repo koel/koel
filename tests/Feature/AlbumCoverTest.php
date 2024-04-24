@@ -24,7 +24,6 @@ class AlbumCoverTest extends TestCase
 
     public function testUpdate(): void
     {
-        /** @var Album $album */
         $album = Album::factory()->create();
 
         $this->mediaMetadataService
@@ -38,7 +37,6 @@ class AlbumCoverTest extends TestCase
 
     public function testUpdateNotAllowedForNormalUsers(): void
     {
-        /** @var Album $album */
         $album = Album::factory()->create();
 
         $this->mediaMetadataService->shouldNotReceive('writeAlbumCover');

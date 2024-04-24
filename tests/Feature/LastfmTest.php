@@ -7,7 +7,6 @@ use App\Services\TokenManager;
 use Laravel\Sanctum\NewAccessToken;
 use Laravel\Sanctum\PersonalAccessToken;
 use Mockery;
-use Mockery\MockInterface;
 use Tests\TestCase;
 
 use function Tests\create_user;
@@ -28,7 +27,6 @@ class LastfmTest extends TestCase
         $user = create_user();
         $token = $user->createToken('Koel')->plainTextToken;
 
-        /** @var NewAccessToken|MockInterface $temporaryToken */
         $temporaryToken = Mockery::mock(NewAccessToken::class);
         $temporaryToken->plainTextToken = 'tmp-token';
 

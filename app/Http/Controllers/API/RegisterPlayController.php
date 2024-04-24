@@ -19,7 +19,6 @@ class RegisterPlayController extends Controller
         InteractionService $interactionService,
         ?Authenticatable $user
     ) {
-        /** @var Song $song */
         $song = Song::query()->findOrFail($request->song);
         $this->authorize('access', $song);
 

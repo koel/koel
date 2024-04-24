@@ -11,6 +11,9 @@ use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
 
+/**
+ * @extends Repository<Album>
+ */
 class AlbumRepository extends Repository
 {
     /** @return Collection|array<array-key, Album> */
@@ -29,7 +32,6 @@ class AlbumRepository extends Repository
     /** @return Collection|array<array-key, Album> */
     public function getMostPlayed(int $count = 6, ?User $user = null): Collection
     {
-        /** @var ?User $user */
         $user ??= $this->auth->user();
 
         return Album::query()

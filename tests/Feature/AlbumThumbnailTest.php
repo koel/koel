@@ -28,7 +28,6 @@ class AlbumThumbnailTest extends TestCase
     /** @dataProvider provideAlbumThumbnailData */
     public function testGetAlbumThumbnail(?string $thumbnailUrl): void
     {
-        /** @var Album $createdAlbum */
         $createdAlbum = Album::factory()->create();
 
         $this->mediaMetadataService

@@ -15,7 +15,6 @@ class QueueService
 
     public function getQueueState(User $user): QueueStateDTO
     {
-        /** @var QueueState $state */
         $state = QueueState::query()->where('user_id', $user->id)->firstOrCreate([
             'user_id' => $user->id,
         ], [

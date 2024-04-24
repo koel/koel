@@ -25,7 +25,6 @@ class CreateVariousArtists extends Migration
 
         Artist::unguard();
 
-        /** @var Artist|null $existingArtist */
         $existingArtist = Artist::query()->find(Artist::VARIOUS_ID);
 
         if ($existingArtist) {
@@ -35,7 +34,6 @@ class CreateVariousArtists extends Migration
 
             // There's an existing artist with that special ID, but it's not our Various Artist
             // We move it to the end of the table.
-            /** @var Artist $latestArtist */
             $latestArtist = Artist::query()->orderByDesc('id')->first();
             $existingArtist->id = $latestArtist->id + 1;
             $existingArtist->save();

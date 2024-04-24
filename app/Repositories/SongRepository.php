@@ -13,6 +13,7 @@ use App\Values\Genre;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Collection;
 
+/** @extends Repository<Song> */
 class SongRepository extends Repository
 {
     private const DEFAULT_QUEUE_LIMIT = 500;
@@ -22,7 +23,7 @@ class SongRepository extends Repository
         return Song::query()->where('path', $path)->first();
     }
 
-    /** @return Collection|array<Song> */
+    /** @return Collection|array<array-key, Song> */
     public function getAllStoredOnCloud(): Collection
     {
         return Song::query()->storedOnCloud()->get();
@@ -31,7 +32,6 @@ class SongRepository extends Repository
     /** @return Collection|array<array-key, Song> */
     public function getRecentlyAdded(int $count = 10, ?User $scopedUser = null): Collection
     {
-        /** @var ?User $scopedUser */
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
@@ -45,7 +45,6 @@ class SongRepository extends Repository
     /** @return Collection|array<array-key, Song> */
     public function getMostPlayed(int $count = 7, ?User $scopedUser = null): Collection
     {
-        /** @var ?User $scopedUser */
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
@@ -60,7 +59,6 @@ class SongRepository extends Repository
     /** @return Collection|array<array-key, Song> */
     public function getRecentlyPlayed(int $count = 7, ?User $scopedUser = null): Collection
     {
-        /** @var ?User $scopedUser */
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
@@ -78,7 +76,6 @@ class SongRepository extends Repository
         ?User $scopedUser = null,
         int $perPage = 50
     ): Paginator {
-        /** @var ?User $scopedUser */
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
@@ -96,7 +93,6 @@ class SongRepository extends Repository
         ?User $scopedUser = null,
         int $perPage = 50
     ): Paginator {
-        /** @var ?User $scopedUser */
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
@@ -114,7 +110,6 @@ class SongRepository extends Repository
         int $limit = self::DEFAULT_QUEUE_LIMIT,
         ?User $scopedUser = null,
     ): Collection {
-        /** @var ?User $scopedUser */
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
@@ -128,7 +123,6 @@ class SongRepository extends Repository
     /** @return Collection|array<array-key, Song> */
     public function getFavorites(?User $scopedUser = null): Collection
     {
-        /** @var ?User $scopedUser */
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
@@ -141,7 +135,6 @@ class SongRepository extends Repository
     /** @return Collection|array<array-key, Song> */
     public function getByAlbum(Album $album, ?User $scopedUser = null): Collection
     {
-        /** @var ?User $scopedUser */
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
@@ -157,7 +150,6 @@ class SongRepository extends Repository
     /** @return Collection|array<array-key, Song> */
     public function getByArtist(Artist $artist, ?User $scopedUser = null): Collection
     {
-        /** @var ?User $scopedUser */
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
@@ -175,7 +167,6 @@ class SongRepository extends Repository
     /** @return Collection|array<array-key, Song> */
     public function getByStandardPlaylist(Playlist $playlist, ?User $scopedUser = null): Collection
     {
-        /** @var ?User $scopedUser */
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
@@ -202,7 +193,6 @@ class SongRepository extends Repository
     /** @return Collection|array<array-key, Song> */
     public function getRandom(int $limit, ?User $scopedUser = null): Collection
     {
-        /** @var ?User $scopedUser */
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
@@ -216,7 +206,6 @@ class SongRepository extends Repository
     /** @return Collection|array<array-key, Song> */
     public function getMany(array $ids, bool $inThatOrder = false, ?User $scopedUser = null): Collection
     {
-        /** @var ?User $scopedUser */
         $scopedUser ??= $this->auth->user();
 
         $songs = Song::query()
@@ -235,7 +224,6 @@ class SongRepository extends Repository
      */
     public function getManyInCollaborativeContext(array $ids, ?User $scopedUser = null): Collection
     {
-        /** @var ?User $scopedUser */
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
@@ -260,7 +248,6 @@ class SongRepository extends Repository
     /** @param string $id */
     public function getOne($id, ?User $scopedUser = null): Song
     {
-        /** @var ?User $scopedUser */
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
@@ -272,7 +259,6 @@ class SongRepository extends Repository
     /** @param string $id */
     public function findOne($id, ?User $scopedUser = null): ?Song
     {
-        /** @var ?User $scopedUser */
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
@@ -294,7 +280,6 @@ class SongRepository extends Repository
     /** @return Collection|array<array-key, Song> */
     public function getRandomByGenre(string $genre, int $limit, ?User $scopedUser = null): Collection
     {
-        /** @var ?User $scopedUser */
         $scopedUser ??= $this->auth->user();
 
         return Song::query()

@@ -7,6 +7,7 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
+/** @template T of Model */
 abstract class Repository implements RepositoryInterface
 {
     private string $modelClass;
@@ -28,17 +29,19 @@ abstract class Repository implements RepositoryInterface
         return preg_replace('/(.+)\\\\Repositories\\\\(.+)Repository$/m', '$1\Models\\\$2', static::class);
     }
 
+    /** @return T */
     public function getOne($id): Model
     {
-        return $this->model->findOrFail($id);
+        return $this->model::query()->findOrFail($id);
     }
 
+    /** @return T|null */
     public function findOne($id): ?Model
     {
-        return $this->model->find($id);
+        return $this->model::query()->find($id);
     }
 
-    /** @return Collection<array-key, Model> */
+    /** @return array<array-key, T>|Collection<array-key, T> */
     public function getMany(array $ids, bool $inThatOrder = false): Collection
     {
         $models = $this->model::query()->find($ids);
@@ -46,19 +49,15 @@ abstract class Repository implements RepositoryInterface
         return $inThatOrder ? $models->orderByArray($ids) : $models;
     }
 
-    /** @return Collection<array-key, Model> */
+    /** @return array<array-key, T>|Collection<array-key, T> */
     public function getAll(): Collection
     {
-        return $this->model->all();
+        return $this->model::all();
     }
 
+    /** @return T|null  */
     public function getFirstWhere(...$params): ?Model
     {
-        return $this->model->firstWhere(...$params);
-    }
-
-    public function getModelClass(): string
-    {
-        return $this->modelClass;
+        return $this->model::query()->firstWhere(...$params);
     }
 }

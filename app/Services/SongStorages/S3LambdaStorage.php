@@ -60,8 +60,7 @@ final class S3LambdaStorage extends S3CompatibleStorage
             $this->mediaMetadataService->writeAlbumCover($album, base64_decode($cover['data'], true));
         }
 
-        /** @var Song $song */
-        $song = Song::query()->updateOrCreate(['path' => $path], [
+        return Song::query()->updateOrCreate(['path' => $path], [
             'album_id' => $album->id,
             'artist_id' => $artist->id,
             'title' => $title,
@@ -73,8 +72,6 @@ final class S3LambdaStorage extends S3CompatibleStorage
             'is_public' => true,
             'storage' => SongStorageType::S3_LAMBDA,
         ]);
-
-        return $song;
     }
 
     public function deleteSongEntry(string $bucket, string $key): void

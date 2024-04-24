@@ -7,7 +7,6 @@ use App\Events\PlaybackStarted;
 use App\Events\SongLikeToggled;
 use App\Models\Interaction;
 use App\Models\Song;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
@@ -20,9 +19,8 @@ class InteractionTest extends TestCase
         Event::fake(PlaybackStarted::class);
 
         $user = create_user();
-
-        /** @var Song $song */
         $song = Song::factory()->create();
+
         $this->postAs('api/interaction/play', ['song' => $song->id], $user);
 
         self::assertDatabaseHas(Interaction::class, [
@@ -46,9 +44,8 @@ class InteractionTest extends TestCase
         Event::fake(SongLikeToggled::class);
 
         $user = create_user();
-
-        /** @var Song $song */
         $song = Song::factory()->create();
+
         $this->postAs('api/interaction/like', ['song' => $song->id], $user);
 
         self::assertDatabaseHas(Interaction::class, [
@@ -74,8 +71,6 @@ class InteractionTest extends TestCase
         Event::fake(MultipleSongsLiked::class);
 
         $user = create_user();
-
-        /** @var Collection<Song> $songs */
         $songs = Song::factory(2)->create();
         $songIds = $songs->pluck('id')->all();
 

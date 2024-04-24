@@ -42,7 +42,6 @@ class PlaylistService
 
         return DB::transaction(
             static function () use ($name, $user, $songs, $folder, $ruleGroups, $ownSongsOnly): Playlist {
-                /** @var Playlist $playlist */
                 $playlist = $user->playlists()->create([
                     'name' => $name,
                     'rules' => $ruleGroups,

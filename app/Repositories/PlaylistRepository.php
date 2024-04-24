@@ -7,6 +7,7 @@ use App\Models\Playlist;
 use App\Models\User;
 use Illuminate\Support\Collection;
 
+/** @extends Repository<Playlist> */
 class PlaylistRepository extends Repository
 {
     /** @return Collection<array-key, Playlist> */

@@ -7,7 +7,6 @@ use App\Http\Requests\API\ToggleLikeSongRequest;
 use App\Http\Resources\InteractionResource;
 use App\Models\Song;
 use App\Models\User;
-use App\Repositories\SongRepository;
 use App\Services\InteractionService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
@@ -16,7 +15,6 @@ class ToggleLikeSongController extends Controller
     /** @param User $user */
     public function __invoke(
         ToggleLikeSongRequest $request,
-        SongRepository $songRepository,
         InteractionService $interactionService,
         ?Authenticatable $user
     ) {

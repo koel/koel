@@ -11,12 +11,12 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection as BaseCollection;
 
+/** @extends Repository<Artist> */
 class ArtistRepository extends Repository
 {
     /** @return Collection|array<array-key, Artist> */
     public function getMostPlayed(int $count = 6, ?User $user = null): Collection
     {
-        /** @var ?User $user */
         $user ??= auth()->user();
 
         return Artist::query()
@@ -44,7 +44,7 @@ class ArtistRepository extends Repository
     }
 
     /** @return Collection|array<array-key, Artist> */
-    public function getMany(array $ids, bool $inThatOrder = false, ?User $user = null): Collection | BaseCollection
+    public function getMany(array $ids, bool $inThatOrder = false, ?User $user = null): Collection|BaseCollection
     {
         $artists = Artist::query()
             ->isStandard()

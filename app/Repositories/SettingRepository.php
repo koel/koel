@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Setting;
 
+/** @extends Repository<Setting> */
 class SettingRepository extends Repository
 {
     /** @return array<mixed> */
