@@ -61,7 +61,7 @@ class ScanCommand extends Command
         $this->mediaPath = $this->getMediaPath();
 
         $config = ScanConfiguration::make(
-            owner:  $this->getOwner(),
+            owner: $this->getOwner(),
             // When scanning via CLI, the songs should be public by default, unless explicitly specified otherwise.
             makePublic: !$this->option('private'),
             ignores: collect($this->option('ignore'))->sort()->values()->all(),

@@ -78,7 +78,7 @@ class MediaScanner
         return iterator_to_array(
             $this->finder->create()
                 ->ignoreUnreadableDirs()
-                ->ignoreDotFiles((bool)config('koel.ignore_dot_files')) // https://github.com/koel/koel/issues/450
+                ->ignoreDotFiles((bool) config('koel.ignore_dot_files')) // https://github.com/koel/koel/issues/450
                 ->files()
                 ->followLinks()
                 ->name('/\.(mp3|wav|ogg|m4a|flac|opus)$/i')

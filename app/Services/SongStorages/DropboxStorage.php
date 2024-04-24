@@ -68,7 +68,7 @@ final class DropboxStorage extends CloudStorage
             now()->addSeconds($response->json('expires_in') - 60) // 60 seconds buffer
         );
 
-        return  $response->json('access_token');
+        return $response->json('access_token');
     }
 
     public function getSongPresignedUrl(Song $song): string
