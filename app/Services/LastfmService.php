@@ -74,7 +74,7 @@ class LastfmService implements MusicEncyclopedia
 
     public function scrobble(Song $song, User $user, int $timestamp): void
     {
-         attempt(fn () => $this->connector->send(new ScrobbleRequest($song, $user, $timestamp)));
+        attempt(fn () => $this->connector->send(new ScrobbleRequest($song, $user, $timestamp)));
     }
 
     public function toggleLoveTrack(Song $song, User $user, bool $love): void

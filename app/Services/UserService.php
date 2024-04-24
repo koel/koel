@@ -42,7 +42,7 @@ class UserService
             'is_admin' => $isAdmin,
             'sso_id' => $ssoId,
             'sso_provider' => $ssoProvider,
-            'avatar' =>  $avatar ? $this->createNewAvatar($avatar) : null,
+            'avatar' => $avatar ? $this->createNewAvatar($avatar) : null,
         ]);
     }
 
