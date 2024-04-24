@@ -11,7 +11,7 @@
       v-show="showingInput"
       ref="input"
       v-model="keywords"
-      class="!text-k-text-primary !bg-transparent !rounded-none !pl-0 !h-[unset] placeholder:text-white/50"
+      class="!text-k-text-primary !bg-transparent !rounded-none !pl-0 !h-[unset] placeholder:text-white/50 focus-visible:outline-0"
       placeholder="Keywords"
       type="search"
     />

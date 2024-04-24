@@ -2,7 +2,7 @@
   <a
     v-if="currentUser"
     v-koel-tooltip.left
-    class="view-profile"
+    class="view-profile rounded-full"
     data-testid="view-profile-link"
     href="/#/profile"
     title="Profile and preferences"
