@@ -51,4 +51,12 @@
   :root {
     --fade-size: 3rem;
   }
+
+  button, [role=button] {
+    @apply touch-manipulation select-none cursor-pointer focus-visible:outline-1 focus-visible:outline-k-accent;
+  }
+
+  * {
+    @apply focus-visible:ring-0 focus-visible:outline-1 focus-visible:outline-k-accent;
+  }
 }
