@@ -12,6 +12,7 @@ use App\Services\Streamer\Adapters\TranscodingStreamerAdapter;
 use App\Services\Streamer\Adapters\XAccelRedirectStreamerAdapter;
 use App\Services\Streamer\Adapters\XSendFileStreamerAdapter;
 use App\Services\Streamer\Streamer;
+use Exception;
 use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
@@ -40,6 +41,9 @@ class StreamerTest extends TestCase
                     case SongStorageType::LOCAL:
                         self::assertInstanceOf(LocalStreamerAdapter::class, (new Streamer($song))->getAdapter());
                         break;
+
+                    default:
+                        throw new Exception('Storage type uncovered by tests.');
                 }
             });
     }

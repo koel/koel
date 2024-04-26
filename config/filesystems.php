@@ -44,6 +44,7 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),
+            'throw' => true,
         ],
 
         'ftp' => [
@@ -58,6 +59,7 @@ return [
             // 'passive'  => true,
             // 'ssl'      => true,
             // 'timeout'  => 30,
+            'throw' => true,
         ],
 
         's3' => [
@@ -76,6 +78,19 @@ return [
             'app_key' => env('DROPBOX_APP_KEY'),
             'app_secret' => env('DROPBOX_APP_SECRET'),
             'refresh_token' => env('DROPBOX_REFRESH_TOKEN'),
+        ],
+
+        'sftp' => [
+            'driver' => 'sftp',
+            'host' => env('SFTP_HOST'),
+            'root' => rtrim(env('SFTP_ROOT'), '/\\'),
+
+            'username' => env('SFTP_USERNAME'),
+            'password' => env('SFTP_PASSWORD'),
+
+            'privateKey' => env('SFTP_PRIVATE_KEY'),
+            'passphrase' => env('SFTP_PASSPHRASE'),
+            'throw' => true,
         ],
 
         'rackspace' => [

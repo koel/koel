@@ -24,11 +24,6 @@ class S3CompatibleStorageTest extends PlusTestCase
         $this->file = UploadedFile::fromFile(test_path('songs/full.mp3'), 'song.mp3'); //@phpstan-ignore-line
     }
 
-    public function testSupported(): void
-    {
-        self::assertTrue($this->service->supported());
-    }
-
     public function testStoreUploadedFile(): void
     {
         self::assertEquals(0, Song::query()->where('storage', 's3')->count());

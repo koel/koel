@@ -6,6 +6,7 @@ use App\Enums\SongStorageType;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\FileScanner;
+use App\Services\SongStorages\Concerns\DeletesUsingFilesystem;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\Storage;
 
 class S3CompatibleStorage extends CloudStorage
 {
+    use DeletesUsingFilesystem;
+
     public function __construct(protected FileScanner $scanner, private readonly string $bucket)
     {
         parent::__construct($scanner);
@@ -23,7 +26,7 @@ class S3CompatibleStorage extends CloudStorage
         self::assertSupported();
 
         return DB::transaction(function () use ($file, $uploader): Song {
-            $result = $this->scanUploadedFile($file, $uploader);
+            $result = $this->scanUploadedFile($this->scanner, $file, $uploader);
             $song = $this->scanner->getSong();
             $key = $this->generateStorageKey($file->getClientOriginalName(), $uploader);
 
@@ -50,15 +53,7 @@ class S3CompatibleStorage extends CloudStorage
     public function delete(Song $song, bool $backup = false): void
     {
         self::assertSupported();
-
-        $disk = Storage::disk('s3');
-        $path = $song->storage_metadata->getPath();
-
-        if ($backup) {
-            $disk->move($path, "backup/$path");
-        }
-
-        $disk->delete($song->storage_metadata->getPath());
+        $this->deleteUsingFileSystem(Storage::disk('s3'), $song, $backup);
     }
 
     public function testSetup(): void
@@ -67,8 +62,8 @@ class S3CompatibleStorage extends CloudStorage
         Storage::disk('s3')->delete('test.txt');
     }
 
-    public function supported(): bool
+    protected function getStorageType(): SongStorageType
     {
-        return SongStorageType::S3->supported();
+        return SongStorageType::S3;
     }
 }

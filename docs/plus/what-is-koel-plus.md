@@ -7,7 +7,7 @@ Koel Plus is the premium version of Koel. It offers additional features and enha
 - **Multi-library Support**: In Koel Plus, each user has their own library, which they populate by uploading their own music.
 - **Music Sharing**: By default, uploaded music is private to the user who uploaded it. However, users can choose to share their music with others by marking songs as public.
 - **[Collaboration](./collaboration)**: Users can invite others to collaborate on their playlists, allowing them to add, remove, and reorder songs.
-- **[Cloud Storage Support](./cloud-storage-support)**: In addition to local storage, Koel Plus supports cloud storage services like Amazon S3 (or any S3-compatible service) and Dropbox.
+- **[Cloud Storage Support](./cloud-storage-support)**: In addition to local storage, Koel Plus supports remote and cloud storage drivers like SFTP, Amazon S3 (or any S3-compatible service), and Dropbox.
 - **[Single Sign-On (SSO) Support](./sso)**: Users can log into Koel Plus using their existing credentials from another service like Google.
 
 Other features are being planned or actively developed, for example:

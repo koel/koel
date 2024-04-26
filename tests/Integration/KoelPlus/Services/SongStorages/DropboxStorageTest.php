@@ -49,13 +49,6 @@ class DropboxStorageTest extends PlusTestCase
         $this->file = UploadedFile::fromFile(test_path('songs/full.mp3'), 'song.mp3'); //@phpstan-ignore-line
     }
 
-    public function testSupported(): void
-    {
-        $this->client->allows('setAccessToken');
-
-        self::assertTrue(app(DropboxStorage::class)->supported());
-    }
-
     public function testStoreUploadedFile(): void
     {
         $this->client->shouldReceive('setAccessToken')->with('free-bird')->once();

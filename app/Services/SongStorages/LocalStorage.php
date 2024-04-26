@@ -19,7 +19,7 @@ use function Functional\memoize;
 
 final class LocalStorage extends SongStorage
 {
-    public function __construct(private FileScanner $scanner)
+    public function __construct(private readonly FileScanner $scanner)
     {
     }
 
@@ -90,11 +90,6 @@ final class LocalStorage extends SongStorage
         return substr(sha1(uniqid()), 0, 6);
     }
 
-    public function supported(): bool
-    {
-        return SongStorageType::LOCAL->supported();
-    }
-
     public function delete(Song $song, bool $backup = false): void
     {
         $path = $song->storage_metadata->getPath();
@@ -104,5 +99,10 @@ final class LocalStorage extends SongStorage
         }
 
         throw_unless(File::delete($path), new Exception("Failed to delete song file: $path"));
+    }
+
+    protected function getStorageType(): SongStorageType
+    {
+        return SongStorageType::LOCAL;
     }
 }

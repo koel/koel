@@ -2,9 +2,7 @@
 
 namespace App\Values\SongStorageMetadata;
 
-use App\Values\SongStorageMetadata\Contracts\SongStorageMetadata;
-
-class DropboxMetadata implements SongStorageMetadata
+final class DropboxMetadata extends SongStorageMetadata
 {
     private function __construct(public string $path)
     {
@@ -12,7 +10,7 @@ class DropboxMetadata implements SongStorageMetadata
 
     public static function make(string $key): self
     {
-        return new static($key);
+        return new self($key);
     }
 
     public function getPath(): string

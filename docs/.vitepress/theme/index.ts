@@ -7,7 +7,7 @@ import MobileAppScreenshots from '../components/MobileAppScreenshots.vue'
 import PlusBadge from '../components/PlusBadge.vue'
 import CaptionedImage from '../components/CaptionedImage.vue'
 import Layout from '../layout/Layout.vue'
-import './custom.scss'
+import './custom.pcss'
 
 export default {
   Layout,

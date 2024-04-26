@@ -123,9 +123,4 @@ class S3LambdaStorageTest extends TestCase
 
         self::assertModelMissing($song);
     }
-
-    public function testSupported(): void
-    {
-        self::assertTrue($this->storage->supported());
-    }
 }
