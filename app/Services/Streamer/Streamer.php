@@ -8,6 +8,7 @@ use App\Models\Song;
 use App\Services\Streamer\Adapters\DropboxStreamerAdapter;
 use App\Services\Streamer\Adapters\LocalStreamerAdapter;
 use App\Services\Streamer\Adapters\S3CompatibleStreamerAdapter;
+use App\Services\Streamer\Adapters\SftpStreamerAdapter;
 use App\Services\Streamer\Adapters\StreamerAdapter;
 use App\Services\Streamer\Adapters\TranscodingStreamerAdapter;
 use Illuminate\Support\Arr;
@@ -16,17 +17,15 @@ use Illuminate\Support\Str;
 
 class Streamer
 {
-    private StreamerAdapter $adapter;
-
     public function __construct(
         private readonly Song $song,
-        ?StreamerAdapter $adapter = null,
+        private ?StreamerAdapter $adapter = null,
         private readonly array $config = []
     ) {
         // Turn off error reporting to make sure our stream isn't interfered.
         @error_reporting(0);
 
-        $this->adapter = $adapter ?? $this->resolveAdapter();
+        $this->adapter ??= $this->resolveAdapter();
     }
 
     private function resolveAdapter(): StreamerAdapter
@@ -39,6 +38,7 @@ class Streamer
 
         return match ($this->song->storage) {
             SongStorageType::LOCAL => app(LocalStreamerAdapter::class),
+            SongStorageType::SFTP => app(SftpStreamerAdapter::class),
             SongStorageType::S3, SongStorageType::S3_LAMBDA => app(S3CompatibleStreamerAdapter::class),
             SongStorageType::DROPBOX => app(DropboxStreamerAdapter::class),
         };

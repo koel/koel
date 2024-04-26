@@ -5,11 +5,12 @@ namespace App\Models;
 use App\Builders\SongBuilder;
 use App\Enums\SongStorageType;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
-use App\Values\SongStorageMetadata\Contracts\SongStorageMetadata;
 use App\Values\SongStorageMetadata\DropboxMetadata;
-use App\Values\SongStorageMetadata\LegacyS3Metadata;
 use App\Values\SongStorageMetadata\LocalMetadata;
 use App\Values\SongStorageMetadata\S3CompatibleMetadata;
+use App\Values\SongStorageMetadata\S3LambdaMetadata;
+use App\Values\SongStorageMetadata\SftpMetadata;
+use App\Values\SongStorageMetadata\SongStorageMetadata;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -170,13 +171,17 @@ class Song extends Model
             get: function (): SongStorageMetadata {
                 try {
                     switch ($this->storage) {
+                        case SongStorageType::SFTP:
+                            preg_match('/^sftp:\\/\\/(.*)/', $this->path, $matches);
+                            return SftpMetadata::make($matches[1]);
+
                         case SongStorageType::S3:
                             preg_match('/^s3:\\/\\/(.*)\\/(.*)/', $this->path, $matches);
                             return S3CompatibleMetadata::make($matches[1], $matches[2]);
 
                         case SongStorageType::S3_LAMBDA:
                             preg_match('/^s3:\\/\\/(.*)\\/(.*)/', $this->path, $matches);
-                            return LegacyS3Metadata::make($matches[1], $matches[2]);
+                            return S3LambdaMetadata::make($matches[1], $matches[2]);
 
                         case SongStorageType::DROPBOX:
                             preg_match('/^dropbox:\\/\\/(.*)/', $this->path, $matches);

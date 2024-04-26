@@ -2,15 +2,15 @@
 
 namespace App\Values\SongStorageMetadata;
 
-final class LocalMetadata extends SongStorageMetadata
+final class SftpMetadata extends SongStorageMetadata
 {
     private function __construct(public string $path)
     {
     }
 
-    public static function make(string $path): self
+    public static function make(string $key): self
     {
-        return new self($path);
+        return new self($key);
     }
 
     public function getPath(): string

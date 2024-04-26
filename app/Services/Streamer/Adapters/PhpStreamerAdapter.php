@@ -3,45 +3,14 @@
 namespace App\Services\Streamer\Adapters;
 
 use App\Models\Song;
-use DaveRandom\Resume\FileResource;
-use DaveRandom\Resume\InvalidRangeHeaderException;
-use DaveRandom\Resume\NonExistentFileException;
-use DaveRandom\Resume\RangeSet;
-use DaveRandom\Resume\ResourceServlet;
-use DaveRandom\Resume\SendFileFailureException;
-use DaveRandom\Resume\UnreadableFileException;
-use DaveRandom\Resume\UnsatisfiableRangeException;
-use Symfony\Component\HttpFoundation\Response;
-
-use function DaveRandom\Resume\get_request_header;
+use App\Services\Streamer\Adapters\Concerns\StreamsLocalPath;
 
 class PhpStreamerAdapter extends LocalStreamerAdapter
 {
+    use StreamsLocalPath;
+
     public function stream(Song $song, array $config = []): void
     {
-        try {
-            $path = $song->storage_metadata->getPath();
-            $rangeHeader = get_request_header('Range');
-
-            // On Safari, "Range" header value can be "bytes=0-1" which breaks streaming.
-            $rangeHeader = $rangeHeader === 'bytes=0-1' ? 'bytes=0-' : $rangeHeader;
-
-            $rangeSet = RangeSet::createFromHeader($rangeHeader);
-            $resource = new FileResource($path, mime_content_type($path));
-            (new ResourceServlet($resource))->sendResource($rangeSet);
-        } catch (InvalidRangeHeaderException) {
-            abort(Response::HTTP_BAD_REQUEST);
-        } catch (UnsatisfiableRangeException) {
-            abort(Response::HTTP_REQUESTED_RANGE_NOT_SATISFIABLE);
-        } catch (NonExistentFileException) {
-            abort(Response::HTTP_NOT_FOUND);
-        } catch (UnreadableFileException) {
-            abort(Response::HTTP_INTERNAL_SERVER_ERROR);
-        } catch (SendFileFailureException $e) {
-            abort_unless(headers_sent(), Response::HTTP_INTERNAL_SERVER_ERROR);
-            echo "An error occurred while attempting to send the requested resource: {$e->getMessage()}";
-        }
-
-        exit;
+        $this->streamLocalPath($song->storage_metadata->getPath());
     }
 }

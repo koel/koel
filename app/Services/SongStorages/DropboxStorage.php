@@ -7,6 +7,7 @@ use App\Filesystems\DropboxFilesystem;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\FileScanner;
+use App\Services\SongStorages\Concerns\DeletesUsingFilesystem;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +16,8 @@ use Illuminate\Support\Facades\Http;
 
 final class DropboxStorage extends CloudStorage
 {
+    use DeletesUsingFilesystem;
+
     public function __construct(
         protected FileScanner $scanner,
         private readonly DropboxFilesystem $filesystem,
@@ -30,7 +33,7 @@ final class DropboxStorage extends CloudStorage
         self::assertSupported();
 
         return DB::transaction(function () use ($file, $uploader): Song {
-            $result = $this->scanUploadedFile($file, $uploader);
+            $result = $this->scanUploadedFile($this->scanner, $file, $uploader);
             $song = $this->scanner->getSong();
             $key = $this->generateStorageKey($file->getClientOriginalName(), $uploader);
 
@@ -78,27 +81,20 @@ final class DropboxStorage extends CloudStorage
         return $this->filesystem->temporaryUrl($song->storage_metadata->getPath());
     }
 
-    public function supported(): bool
-    {
-        return SongStorageType::DROPBOX->supported();
-    }
-
     public function delete(Song $song, bool $backup = false): void
     {
         self::assertSupported();
-
-        $path = $song->storage_metadata->getPath();
-
-        if ($backup) {
-            $this->filesystem->move($path, "backup/$path");
-        }
-
-        $this->filesystem->delete($path);
+        $this->deleteUsingFileSystem($this->filesystem, $song, $backup);
     }
 
     public function testSetup(): void
     {
         $this->filesystem->write('test.txt', 'Koel test file.');
         $this->filesystem->delete('test.txt');
+    }
+
+    protected function getStorageType(): SongStorageType
+    {
+        return SongStorageType::DROPBOX;
     }
 }

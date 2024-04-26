@@ -9,14 +9,15 @@ enum SongStorageType: string
     case S3 = 's3';
     case S3_LAMBDA = 's3-lambda';
     case DROPBOX = 'dropbox';
+    case SFTP = 'sftp';
     case LOCAL = '';
 
     public function supported(): bool
     {
-        if ($this === self::LOCAL || $this === self::S3_LAMBDA) {
+        if (License::isPlus()) {
             return true;
         }
 
-        return License::isPlus();
+        return $this === self::LOCAL || $this === self::S3_LAMBDA;
     }
 }

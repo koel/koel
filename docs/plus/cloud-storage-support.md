@@ -1,7 +1,7 @@
 # Cloud Storage Support
 
-In addition to storing your music on the same server as Koel’s installation via the `local` storage driver,
-Koel Plus offers several different file storage options, including Amazon S3, S3-compatible services, Dropbox, and likely more in the future.
+In addition to storing your music on the same server as Koel’s installation via the `local` storage drivers,
+Koel Plus offers several different file storage options, including SFTP, Amazon S3, S3-compatible services, Dropbox, and likely more in the future.
 This page will guide you through the process of setting up these storage options.
 
 :::warning Warning
@@ -12,6 +12,32 @@ Though possible, changing storage drivers _after_ you've already stored files is
 The screenshots and instructions on this page may not be 100% up-to-date as 3rd-party services' UI may change.
 The general idea, however, should remain the same.
 :::
+
+## SFTP
+
+To use SFTP as your storage driver, you need to have an SFTP server set up and running. Many cloud hosting providers offer SFTP access to their storage services.
+To enable SFTP storage support in Koel, you need to provide the following configuration in your `.env` file:
+
+```
+STORAGE_DRIVER=sftp
+
+SFTP_HOST=
+SFTP_PORT=
+
+# The absolute path of the directory to store the media files on the SFTP server.
+# Make sure the directory exists and is writable by the SFTP user.
+SFTP_ROOT=
+
+# You can use either a username/password pair…
+SFTP_USERNAME=
+SFTP_PASSWORD=
+
+# …or private key authentication:
+SFTP_PRIVATE_KEY=
+SFTP_PASSPHRASE=
+```
+
+After reloading, Koel will start using SFTP as its storage driver. You can now upload your music files to your SFTP server directly from Koel’s web interface.
 
 ## Amazon S3 and Compatible Services
 

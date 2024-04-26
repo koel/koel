@@ -7,6 +7,7 @@ use App\Models\Song;
 use App\Models\SongZipArchive;
 use App\Services\SongStorages\DropboxStorage;
 use App\Services\SongStorages\S3CompatibleStorage;
+use App\Services\SongStorages\SftpStorage;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 
@@ -32,6 +33,10 @@ class DownloadService
 
         if ($song->storage === SongStorageType::LOCAL) {
             return File::exists($song->path) ? $song->path : null;
+        }
+
+        if ($song->storage === SongStorageType::SFTP) {
+            return app(SftpStorage::class)->copyToLocal($song);
         }
 
         switch ($song->storage) {

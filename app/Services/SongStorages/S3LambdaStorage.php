@@ -84,13 +84,13 @@ final class S3LambdaStorage extends S3CompatibleStorage
         $song->delete();
     }
 
-    public function supported(): bool
-    {
-        return SongStorageType::S3_LAMBDA->supported();
-    }
-
     public function delete(Song $song, bool $backup = false): void
     {
         throw new MethodNotImplementedException('Lambda storage does not support deleting from filesystem.');
+    }
+
+    protected function getStorageType(): SongStorageType
+    {
+        return SongStorageType::S3_LAMBDA;
     }
 }
