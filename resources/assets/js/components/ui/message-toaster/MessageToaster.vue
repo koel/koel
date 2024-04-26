@@ -1,16 +1,23 @@
 <template>
-  <TransitionGroup class="fixed z-[9999] right-0 top-3 flex flex-col items-end gap-2" name="toast" tag="ul">
-    <li v-for="message in messages" :key="message.id">
-      <MessageToast :message="message" @dismiss="removeMessage(message)" />
-    </li>
-  </TransitionGroup>
+  <div ref="root" class="popover">
+    <TransitionGroup class="flex flex-col items-end gap-2" name="toast" tag="ul">
+      <li v-for="message in messages" :key="message.id">
+        <MessageToast :message="message" @dismiss="removeMessage(message)" />
+      </li>
+    </TransitionGroup>
+  </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { uuid } from '@/utils'
 
 import MessageToast from '@/components/ui/message-toaster/MessageToast.vue'
+
+const root = ref<HTMLDivElement & {
+  popover?: 'manual' | 'auto',
+  showPopover?: () => void
+}>()
 
 const messages = ref<ToastMessage[]>([])
 
@@ -30,10 +37,21 @@ const success = (content: string, timeout?: number) => addMessage('success', con
 const warning = (content: string, timeout?: number) => addMessage('warning', content, timeout)
 const error = (content: string, timeout?: number) => addMessage('danger', content, timeout)
 
+onMounted(() => {
+  if (!root.value) return
+  root.value.popover = 'manual'
+  root.value.showPopover?.()
+})
+
 defineExpose({ info, success, warning, error })
 </script>
 
 <style lang="postcss" scoped>
+.popover, .popover:popover-open {
+  inset: unset;
+  @apply fixed top-3 right-0 p-0 bg-transparent m-0 overflow-visible border-0 backdrop:bg-transparent;
+}
+
 .toast-enter-active {
   @apply opacity-100 transition-all duration-200 ease-in;
 }
