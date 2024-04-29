@@ -1,4 +1,4 @@
-import { reactive } from 'vue'
+import { reactive, watch } from 'vue'
 import { http } from '@/services'
 import { songStore } from '@/stores/songStore'
 import { albumStore } from '@/stores/albumStore'
@@ -15,7 +15,7 @@ export const overviewStore = {
     mostPlayedArtists: [] as Artist[]
   }),
 
-  async init () {
+  async fetch () {
     const resource = await http.get<{
       most_played_songs: Song[],
       most_played_albums: Album[],
@@ -36,13 +36,10 @@ export const overviewStore = {
 
     recentlyPlayedStore.excerptState.songs = songStore.syncWithVault(resource.recently_played_songs)
 
-    this.refresh()
+    this.refreshPlayStats()
   },
 
-  refresh () {
-    // @since v6.2.3
-    // To keep things simple, we only refresh the song stats.
-    // All album/artist stats are simply ignored.
+  refreshPlayStats () {
     this.state.mostPlayedSongs = songStore.getMostPlayed(7)
     this.state.recentlyPlayed = recentlyPlayedStore.excerptState.songs.filter(
       ({ deleted, play_count }) => !deleted && play_count > 0

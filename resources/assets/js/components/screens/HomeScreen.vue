@@ -72,14 +72,15 @@ const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 const loading = ref(false)
 let initialized = false
 
-eventBus.on('SONGS_DELETED', () => overviewStore.refresh())
-  .on('SONGS_UPDATED', () => overviewStore.refresh())
+eventBus.on('SONGS_DELETED', () => overviewStore.fetch())
+  .on('SONGS_UPDATED', () => overviewStore.fetch())
+  .on('SONG_UPLOADED', () => overviewStore.fetch())
 
 useRouter().onScreenActivated('Home', async () => {
   if (!initialized) {
     loading.value = true
     try {
-      await overviewStore.init()
+      await overviewStore.fetch()
       initialized = true
     } catch (error: unknown) {
       useErrorHandler('dialog').handleHttpError(error)

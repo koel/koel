@@ -188,7 +188,7 @@ new class extends UnitTestCase {
     })
 
     it('watches play count tracking', async () => {
-      const refreshMock = this.mock(overviewStore, 'refresh')
+      const refreshMock = this.mock(overviewStore, 'refreshPlayStats')
 
       const song = reactive(factory<Song>('song', {
         album_id: 10,

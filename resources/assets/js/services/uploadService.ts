@@ -1,9 +1,9 @@
+import axios from 'axios'
 import { without } from 'lodash'
 import { reactive } from 'vue'
 import { http } from '@/services'
-import { albumStore, commonStore, overviewStore, songStore } from '@/stores'
-import { logger } from '@/utils'
-import axios from 'axios'
+import { albumStore, commonStore, songStore } from '@/stores'
+import { eventBus, logger } from '@/utils'
 
 interface UploadResult {
   song: Song
@@ -88,7 +88,7 @@ export const uploadService = {
       songStore.syncWithVault(result.song)
       albumStore.syncWithVault(result.album)
       commonStore.state.song_length += 1
-      overviewStore.refresh()
+      eventBus.emit('SONG_UPLOADED', result.song)
 
       this.proceed() // upload the next file
 

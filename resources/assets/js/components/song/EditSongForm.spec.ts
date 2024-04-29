@@ -5,7 +5,7 @@ import { arrayify, eventBus } from '@/utils'
 import { ModalContextKey } from '@/symbols'
 import { ref } from 'vue'
 import { screen } from '@testing-library/vue'
-import { songStore } from '@/stores'
+import { songStore, SongUpdateResult } from '@/stores'
 import { MessageToasterStub } from '@/__tests__/stubs'
 import EditSongForm from './EditSongForm.vue'
 
@@ -14,7 +14,17 @@ let songs: Song[]
 new class extends UnitTestCase {
   protected test () {
     it('edits a single song', async () => {
-      const updateMock = this.mock(songStore, 'update')
+      const result: SongUpdateResult = {
+        albums: [],
+        artists: [],
+        removed: {
+          albums: [],
+          artists: []
+        },
+        songs: []
+      }
+
+      const updateMock = this.mock(songStore, 'update').mockResolvedValue(result)
       const emitMock = this.mock(eventBus, 'emit')
       const alertMock = this.mock(MessageToasterStub.value, 'success')
 
@@ -53,11 +63,21 @@ new class extends UnitTestCase {
       })
 
       expect(alertMock).toHaveBeenCalledWith('Updated 1 song.')
-      expect(emitMock).toHaveBeenCalledWith('SONGS_UPDATED')
+      expect(emitMock).toHaveBeenCalledWith('SONGS_UPDATED', result)
     })
 
     it('edits multiple songs', async () => {
-      const updateMock = this.mock(songStore, 'update')
+      const result: SongUpdateResult = {
+        albums: [],
+        artists: [],
+        removed: {
+          albums: [],
+          artists: []
+        },
+        songs: []
+      }
+
+      const updateMock = this.mock(songStore, 'update').mockResolvedValue(result)
       const emitMock = this.mock(eventBus, 'emit')
       const alertMock = this.mock(MessageToasterStub.value, 'success')
 
@@ -88,7 +108,7 @@ new class extends UnitTestCase {
       })
 
       expect(alertMock).toHaveBeenCalledWith('Updated 3 songs.')
-      expect(emitMock).toHaveBeenCalledWith('SONGS_UPDATED')
+      expect(emitMock).toHaveBeenCalledWith('SONGS_UPDATED', result)
     })
 
     it('displays artist name if all songs have the same artist', async () => {

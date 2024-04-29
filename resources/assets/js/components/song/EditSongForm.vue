@@ -256,9 +256,9 @@ const submit = async () => {
   showOverlay()
 
   try {
-    await songStore.update(songs, formData)
+    const result = await songStore.update(songs, formData)
     toastSuccess(`Updated ${pluralize(songs, 'song')}.`)
-    eventBus.emit('SONGS_UPDATED')
+    eventBus.emit('SONGS_UPDATED', result)
     close()
   } catch (error: unknown) {
     useErrorHandler('dialog').handleHttpError(error)

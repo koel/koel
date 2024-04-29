@@ -23,7 +23,7 @@ new class extends UnitTestCase {
       const songSyncMock = this.mock(songStore, 'syncWithVault')
       const albumSyncMock = this.mock(albumStore, 'syncWithVault')
       const artistSyncMock = this.mock(artistStore, 'syncWithVault')
-      const refreshMock = this.mock(overviewStore, 'refresh')
+      const refreshMock = this.mock(overviewStore, 'refreshPlayStats')
 
       const mostPlayedSongs = factory<Song>('song', 7)
       const mostPlayedAlbums = factory<Album>('album', 6)
@@ -41,7 +41,7 @@ new class extends UnitTestCase {
         recently_played_songs: recentlyPlayedSongs
       })
 
-      await overviewStore.init()
+      await overviewStore.fetch()
 
       expect(getMock).toHaveBeenCalledWith('overview')
       expect(songSyncMock).toHaveBeenNthCalledWith(1, mostPlayedSongs)
@@ -60,7 +60,7 @@ new class extends UnitTestCase {
       const mostPlayedSongsMock = this.mock(songStore, 'getMostPlayed', mostPlayedSongs)
       recentlyPlayedStore.excerptState.songs = recentlyPlayedSongs
 
-      overviewStore.refresh()
+      overviewStore.refreshPlayStats()
 
       expect(mostPlayedSongsMock).toHaveBeenCalled()
 

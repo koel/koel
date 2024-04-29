@@ -1,4 +1,5 @@
 import { Ref } from 'vue'
+import { SongUpdateResult } from '@/stores'
 
 export interface Events {
   LOG_OUT: () => void
@@ -37,8 +38,9 @@ export interface Events {
   PLAYLIST_UPDATED: (playlist: Playlist) => void
   PLAYLIST_COLLABORATOR_REMOVED: (playlist: Playlist) => void
 
-  SONGS_UPDATED: () => void
+  SONGS_UPDATED: (result: SongUpdateResult) => void
   SONGS_DELETED: (songs: Song[]) => void
+  SONG_UPLOADED: (song: Song) => void
 
   SOCKET_TOGGLE_PLAYBACK: () => void
   SOCKET_TOGGLE_FAVORITE: () => void
