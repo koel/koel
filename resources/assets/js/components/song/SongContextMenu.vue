@@ -19,7 +19,7 @@
         <li v-else @click="queueSongsToBottom">Queue</li>
         <template v-if="!isFavoritesScreen">
           <li class="separator" />
-          <li @click="addSongsToFavorite">Favorites</li>
+          <li @click="addSongsToFavorites">Favorites</li>
         </template>
         <li v-if="normalPlaylists.length" class="separator" />
         <template class="d-block">
@@ -93,7 +93,7 @@ const {
   queueSongsAfterCurrent,
   queueSongsToBottom,
   queueSongsToTop,
-  addSongsToFavorite,
+  addSongsToFavorites,
   addSongsToExistingPlaylist,
   addSongsToNewPlaylist
 } = useSongMenuMethods(songs, close)

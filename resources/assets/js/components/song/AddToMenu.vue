@@ -28,7 +28,7 @@
           class="favorites"
           data-testid="add-to-favorites"
           tabindex="0"
-          @click="addSongsToFavorite"
+          @click="addSongsToFavorites"
         >
           Favorites
         </li>
@@ -80,7 +80,7 @@ const {
   queueSongsAfterCurrent,
   queueSongsToBottom,
   queueSongsToTop,
-  addSongsToFavorite,
+  addSongsToFavorites,
   addSongsToExistingPlaylist,
   addSongsToNewPlaylist
 } = useSongMenuMethods(songs, close)
