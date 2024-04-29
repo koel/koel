@@ -3,7 +3,7 @@ import { inject, InjectionKey, isRef, provide, readonly, shallowReadonly } from 
 import { ReadonlyInjectionKey } from '@/symbols'
 import { logger, md5 } from '@/utils'
 
-export const use = <T> (value: T, cb: (arg: T) => void) => {
+export const use = <T> (value: T | undefined | null, cb: (arg: T) => void) => {
   if (typeof value === 'undefined' || value === null) {
     return
   }

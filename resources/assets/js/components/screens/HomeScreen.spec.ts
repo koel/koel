@@ -10,20 +10,20 @@ new class extends UnitTestCase {
   protected test () {
     it('renders an empty state if no songs found', async () => {
       commonStore.state.song_length = 0
-      this.mock(overviewStore, 'init')
+      this.mock(overviewStore, 'fetch')
 
-      await this.render(HomeScreen)
+      this.render(HomeScreen)
 
       screen.getByTestId('screen-empty-state')
     })
 
     it('renders overview components if applicable', async () => {
       commonStore.state.song_length = 100
-      const initMock = this.mock(overviewStore, 'init')
+      const fetchOverviewMock = this.mock(overviewStore, 'fetch')
 
       await this.renderComponent()
 
-      expect(initMock).toHaveBeenCalled()
+      expect(fetchOverviewMock).toHaveBeenCalled()
 
       ;[
         'most-played-songs',
@@ -37,16 +37,14 @@ new class extends UnitTestCase {
       expect(screen.queryByTestId('screen-empty-state')).toBeNull()
     })
 
-    it.each<[keyof Events]>([['SONGS_UPDATED'], ['SONGS_DELETED']])
+    it.each<[keyof Events]>([['SONGS_UPDATED'], ['SONGS_DELETED'], ['SONG_UPLOADED']])
     ('refreshes the overviews on %s event', async eventName => {
-      const initMock = this.mock(overviewStore, 'init')
-      const refreshMock = this.mock(overviewStore, 'refresh')
+      const fetchOverviewMock = this.mock(overviewStore, 'fetch')
       await this.renderComponent()
 
       eventBus.emit(eventName)
 
-      expect(initMock).toHaveBeenCalled()
-      expect(refreshMock).toHaveBeenCalled()
+      expect(fetchOverviewMock).toHaveBeenCalled()
     })
   }
 

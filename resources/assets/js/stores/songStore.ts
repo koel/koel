@@ -111,18 +111,20 @@ export const songStore = {
   }),
 
   async update (songsToUpdate: Song[], data: SongUpdateData) {
-    const { songs, artists, albums, removed } = await http.put<SongUpdateResult>('songs', {
+    const result = await http.put<SongUpdateResult>('songs', {
       data,
       songs: songsToUpdate.map(song => song.id)
     })
 
-    this.syncWithVault(songs)
+    this.syncWithVault(result.songs)
 
-    albumStore.syncWithVault(albums)
-    artistStore.syncWithVault(artists)
+    albumStore.syncWithVault(result.albums)
+    artistStore.syncWithVault(result.artists)
 
-    albumStore.removeByIds(removed.albums.map(album => album.id))
-    artistStore.removeByIds(removed.artists.map(artist => artist.id))
+    albumStore.removeByIds(result.removed.albums.map(album => album.id))
+    artistStore.removeByIds(result.removed.artists.map(artist => artist.id))
+
+    return result
   },
 
   getSourceUrl: (song: Song) => {
@@ -151,7 +153,7 @@ export const songStore = {
   },
 
   watchPlayCount: (song: Song) => {
-    watch(() => song.play_count, () => overviewStore.refresh())
+    watch(() => song.play_count, () => overviewStore.refreshPlayStats())
   },
 
   ensureNotDeleted: (songs: Song | Song[]) => arrayify(songs).filter(({ deleted }) => !deleted),
