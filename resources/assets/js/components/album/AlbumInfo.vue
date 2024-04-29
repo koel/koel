@@ -36,7 +36,7 @@ import { defineAsyncComponent, ref, toRefs, watch } from 'vue'
 import { mediaInfoService } from '@/services'
 import { useThirdPartyServices } from '@/composables'
 
-import AlbumThumbnail from '@/components/ui/ArtistAlbumThumbnail.vue'
+import AlbumThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
 import AlbumArtistInfo from '@/components/ui/album-artist/AlbumOrArtistInfo.vue'
 import ExpandableContentBlock from '@/components/ui/album-artist/ExpandableContentBlock.vue'
 

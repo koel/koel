@@ -26,7 +26,7 @@ import { ref, toRefs, watch } from 'vue'
 import { mediaInfoService } from '@/services'
 import { useThirdPartyServices } from '@/composables'
 
-import ArtistThumbnail from '@/components/ui/ArtistAlbumThumbnail.vue'
+import ArtistThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
 import AlbumArtistInfo from '@/components/ui/album-artist/AlbumOrArtistInfo.vue'
 import ExpandableContentBlock from '@/components/ui/album-artist/ExpandableContentBlock.vue'
 

@@ -1,5 +1,5 @@
 <template>
-  <ArtistAlbumCard
+  <BaseCard
     v-if="showing"
     :entity="artist"
     :layout="layout"
@@ -19,7 +19,7 @@
         Download
       </a>
     </template>
-  </ArtistAlbumCard>
+  </BaseCard>
 </template>
 
 <script lang="ts" setup>
@@ -29,7 +29,7 @@ import { artistStore, commonStore, songStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 import { useDraggable, useRouter } from '@/composables'
 
-import ArtistAlbumCard from '@/components/ui/ArtistAlbumCard.vue'
+import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
 
 const { go } = useRouter()
 const { startDragging } = useDraggable('artist')
