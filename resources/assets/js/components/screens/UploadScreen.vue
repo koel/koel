@@ -91,7 +91,14 @@ const droppable = ref(false)
 const hasUploadFailures = computed(() => files.value.filter(({ status }) => status === 'Errored').length > 0)
 
 const onDragEnter = () => (droppable.value = allowsUpload.value)
-const onDragLeave = () => (droppable.value = false)
+
+const onDragLeave = (e: MouseEvent) => {
+  if ((e.currentTarget as Node)?.contains?.(e.relatedTarget as Node)) {
+    return
+  }
+
+  droppable.value = false
+}
 
 const onFileInputChange = (event: Event) => {
   const selectedFileList = (event.target as HTMLInputElement).files
@@ -109,3 +116,9 @@ const onDrop = async (event: DragEvent) => {
 const retryAll = () => uploadService.retryAll()
 const removeFailedEntries = () => uploadService.removeFailed()
 </script>
+
+<style lang="postcss" scoped>
+.droppable {
+  @apply border-2 border-dashed border-white/40 bg-black/20 rounded-3xl;
+}
+</style>

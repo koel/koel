@@ -9,6 +9,7 @@
     v-if="layout === 'main' && initialized"
     class="absolute md:relative top-0 h-full md:h-screen pt-k-header-height md:pt-0 w-full md:w-auto flex flex-col justify-end"
     @dragend="onDragEnd"
+    @dragleave="onDragLeave"
     @dragover="onDragOver"
     @drop="onDrop"
   >
@@ -141,6 +142,15 @@ const onDragOver = (e: DragEvent) => {
 watch(() => queueStore.current, song => (currentSong.value = song))
 
 const onDragEnd = () => (showDropZone.value = false)
+
+const onDragLeave = (e: MouseEvent) => {
+  if ((e.currentTarget as Node)?.contains?.(e.relatedTarget as Node)) {
+    return
+  }
+
+  showDropZone.value = false
+}
+
 const onDrop = () => (showDropZone.value = false)
 
 provide(OverlayKey, overlay)
