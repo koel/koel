@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts" setup>
-import Thumbnail from '@/components/ui/ArtistAlbumThumbnail.vue'
+import Thumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
 import { toRefs } from 'vue'
 
 const props = withDefaults(defineProps<{ layout?: ArtistAlbumCardLayout, entity: Artist | Album }>(), {
@@ -64,7 +64,7 @@ article {
   &.compact {
     @apply flex-row gap-4 max-w-full p-3 rounded-md items-center;
 
-    .cover {
+    .thumbnail {
       @apply w-[80px] rounded-md;
     }
   }

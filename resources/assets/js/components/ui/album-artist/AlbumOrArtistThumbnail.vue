@@ -2,7 +2,7 @@
   <div
     :class="{ droppable }"
     :style="{ backgroundImage: `url(${defaultCover})` }"
-    class="cover relative w-full aspect-square bg-no-repeat bg-cover bg-center overflow-hidden rounded-md
+    class="thumbnail relative w-full aspect-square bg-no-repeat bg-cover bg-center overflow-hidden rounded-md
     after:block after:pt-[100%]"
     data-testid="album-artist-thumbnail"
   >
@@ -151,7 +151,7 @@ const onDrop = async (event: DragEvent) => {
   }
 }
 
-article {
+.thumbnail {
   .control {
     &:hover, &:focus {
       &::before, .icon {
