@@ -51,6 +51,7 @@
     "@typescript-eslint/eslint-plugin": "^5.22.0",
     "@typescript-eslint/parser": "^4.11.1",
     "@vitejs/plugin-vue": "^5.0.4",
+    "@vueuse/components": "^10.9.0",
     "@vueuse/core": "^10.9.0",
     "@vueuse/integrations": "^10.9.0",
     "add": "^2.0.6",

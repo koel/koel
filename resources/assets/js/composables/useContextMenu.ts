@@ -1,8 +1,8 @@
 import { ref } from 'vue'
-import ContextMenuBase from '@/components/ui/ContextMenuBase.vue'
+import ContextMenu from '@/components/ui/ContextMenu.vue'
 
 export const useContextMenu = () => {
-  const base = ref<InstanceType<typeof ContextMenuBase>>()
+  const base = ref<InstanceType<typeof ContextMenu>>()
 
   const open = async (top: number, left: number) => await base.value?.open(top, left)
   const close = () => base.value?.close()
@@ -13,7 +13,7 @@ export const useContextMenu = () => {
   }
 
   return {
-    ContextMenuBase,
+    ContextMenu,
     base,
     open,
     close,

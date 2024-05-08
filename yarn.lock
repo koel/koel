@@ -1108,6 +1108,15 @@
   resolved "https://registry.yarnpkg.com/@vue/test-utils/-/test-utils-2.2.4.tgz#2aa8159cc1f55e5e14d9c1642818e28d6f9d636b"
   integrity sha512-1JjLduJ84bFcuCt/1YLTNyktYeUHS/zA0u8iTmF6w6ul1K/nSvyKu/MC47YjdpZ4lI/hn7FH31B22kfz62e9wA==
 
+"@vueuse/components@^10.9.0":
+  version "10.9.0"
+  resolved "https://registry.yarnpkg.com/@vueuse/components/-/components-10.9.0.tgz#5c1011e0511b68e4d94f5d545343f86d2a7e3044"
+  integrity sha512-BHQpA0yIi3y7zKa1gYD0FUzLLkcRTqVhP8smnvsCK6GFpd94Nziq1XVPD7YpFeho0k5BzbBiNZF7V/DpkJ967A==
+  dependencies:
+    "@vueuse/core" "10.9.0"
+    "@vueuse/shared" "10.9.0"
+    vue-demi ">=0.14.7"
+
 "@vueuse/core@10.9.0", "@vueuse/core@^10.7.2", "@vueuse/core@^10.9.0":
   version "10.9.0"
   resolved "https://registry.yarnpkg.com/@vueuse/core/-/core-10.9.0.tgz#7d779a95cf0189de176fee63cee4ba44b3c85d64"

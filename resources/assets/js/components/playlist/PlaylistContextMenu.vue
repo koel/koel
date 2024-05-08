@@ -1,5 +1,5 @@
 <template>
-  <ContextMenuBase ref="base">
+  <ContextMenu ref="base">
     <li @click="play">Play</li>
     <li @click="shuffle">Shuffle</li>
     <li @click="addToQueue">Add to Queue</li>
@@ -10,7 +10,7 @@
     </template>
     <li v-if="canEditPlaylist" @click="edit">Edit…</li>
     <li v-if="canEditPlaylist" @click="destroy">Delete</li>
-  </ContextMenuBase>
+  </ContextMenu>
 </template>
 
 <script lang="ts" setup>
@@ -20,7 +20,7 @@ import { useContextMenu, useKoelPlus, useMessageToaster, usePolicies, useRouter 
 import { playbackService } from '@/services'
 import { queueStore, songStore } from '@/stores'
 
-const { base, ContextMenuBase, open, trigger } = useContextMenu()
+const { base, ContextMenu, open, trigger } = useContextMenu()
 const { go } = useRouter()
 const { toastWarning, toastSuccess } = useMessageToaster()
 const { isPlus } = useKoelPlus()

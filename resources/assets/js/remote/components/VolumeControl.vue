@@ -1,11 +1,8 @@
 <template>
   <span class="volume">
-    <span
-      v-show="showingVolumeSlider"
-      id="volumeSlider"
-      ref="volumeSlider"
-      v-koel-clickaway="closeVolumeSlider"
-    />
+    <OnClickOutside @trigger="closeVolumeSlider">
+      <span v-show="showingVolumeSlider" id="volumeSlider" ref="volumeSlider" />
+    </OnClickOutside>
     <span class="icon" @click.stop="toggleVolumeSlider">
       <Icon :icon="muted ? faVolumeMute : faVolumeHigh" fixed-width />
     </span>
@@ -13,10 +10,11 @@
 </template>
 
 <script lang="ts" setup>
-import noUISlider from 'nouislider'
-import { socketService } from '@/services'
 import { faVolumeHigh, faVolumeMute } from '@fortawesome/free-solid-svg-icons'
+import noUISlider from 'nouislider'
+import { OnClickOutside } from '@vueuse/components'
 import { inject, onMounted, ref, watch } from 'vue'
+import { socketService } from '@/services'
 import { RemoteState } from '@/remote/types'
 
 const DEFAULT_VOLUME = 7

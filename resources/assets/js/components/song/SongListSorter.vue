@@ -3,27 +3,30 @@
     <button ref="button" class="w-full focus:text-k-highlight" title="Sort" @click.stop="trigger">
       <Icon :icon="faSort" />
     </button>
-    <menu ref="menu" v-koel-clickaway="hide" class="context-menu normal-case tracking-normal">
-      <li
-        v-for="item in menuItems"
-        :key="item.label"
-        :class="item.field === field && 'active'"
-        class="cursor-pointer flex justify-between"
-        @click="sort(item.field)"
-      >
-        <span>{{ item.label }}</span>
-        <span class="icon hidden">
+    <OnClickOutside @trigger="hide">
+      <menu ref="menu" class="context-menu normal-case tracking-normal">
+        <li
+          v-for="item in menuItems"
+          :key="item.label"
+          :class="item.field === field && 'active'"
+          class="cursor-pointer flex justify-between"
+          @click="sort(item.field)"
+        >
+          <span>{{ item.label }}</span>
+          <span class="icon hidden">
           <Icon v-if="field === 'position'" :icon="faCheck" />
           <Icon v-else-if="order === 'asc'" :icon="faArrowDown" />
           <Icon v-else :icon="faArrowUp" />
         </span>
-      </li>
-    </menu>
+        </li>
+      </menu>
+    </OnClickOutside>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { faArrowDown, faArrowUp, faCheck, faSort } from '@fortawesome/free-solid-svg-icons'
+import { OnClickOutside } from '@vueuse/components'
 import { computed, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
 import { useFloatingUi } from '@/composables'
 

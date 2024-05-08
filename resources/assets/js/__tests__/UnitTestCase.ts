@@ -103,7 +103,6 @@ export default abstract class UnitTestCase {
     return render(component, deepMerge({
       global: {
         directives: {
-          'koel-clickaway': {},
           'koel-focus': {},
           'koel-tooltip': {},
           'koel-hide-broken-icon': {},

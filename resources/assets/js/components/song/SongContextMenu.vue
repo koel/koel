@@ -1,5 +1,5 @@
 <template>
-  <ContextMenuBase ref="base" data-testid="song-context-menu" extra-class="song-menu">
+  <ContextMenu ref="base" data-testid="song-context-menu" extra-class="song-menu">
     <template v-if="onlyOneSongSelected">
       <li @click.stop.prevent="doPlayback">
         <span v-if="firstSongPlaying">Pause</span>
@@ -61,7 +61,7 @@
       <li class="separator" />
       <li @click="deleteFromFilesystem">Delete from Filesystem</li>
     </template>
-  </ContextMenuBase>
+  </ContextMenu>
 </template>
 
 <script lang="ts" setup>
@@ -83,7 +83,7 @@ import {
 const { toastSuccess, toastError, toastWarning } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { go, getRouteParam, isCurrentScreen } = useRouter()
-const { base, ContextMenuBase, open, close, trigger } = useContextMenu()
+const { base, ContextMenu, open, close, trigger } = useContextMenu()
 const { removeSongsFromPlaylist } = usePlaylistManagement()
 const { isPlus } = useKoelPlus()
 

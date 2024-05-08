@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import { clickaway, focus, hideBrokenIcon, overflowFade, tooltip } from '@/directives'
+import { focus, hideBrokenIcon, overflowFade, tooltip } from '@/directives'
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome'
 import { RouterKey } from '@/symbols'
 import { routes } from '@/config'
@@ -12,7 +12,6 @@ createApp(App)
   .component('Icon', FontAwesomeIcon)
   .component('IconLayers', FontAwesomeLayers)
   .directive('koel-focus', focus)
-  .directive('koel-clickaway', clickaway)
   .directive('koel-tooltip', tooltip)
   .directive('koel-hide-broken-icon', hideBrokenIcon)
   .directive('koel-overflow-fade', overflowFade)
@@ -24,4 +23,4 @@ createApp(App)
    */
   .mount('#app')
 
-navigator.serviceWorker?.register('./sw.js')
+navigator.serviceWorker.register('./sw.js')
