@@ -90,15 +90,18 @@
       </BtnGroup>
     </div>
 
-    <div ref="addToMenu" v-koel-clickaway="closeAddToMenu" class="context-menu p-0 hidden">
-      <AddToMenu :config="config.addTo" :songs="selectedSongs" @closing="closeAddToMenu" />
-    </div>
+    <OnClickOutside @trigger="closeAddToMenu">
+      <div ref="addToMenu" class="context-menu p-0 hidden">
+        <AddToMenu :config="config.addTo" :songs="selectedSongs" @closing="closeAddToMenu" />
+      </div>
+    </OnClickOutside>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { faPlay, faRandom, faRotateRight, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, Ref, ref, toRef, watch } from 'vue'
+import { OnClickOutside } from '@vueuse/components'
 import { SelectedSongsKey, SongsKey } from '@/symbols'
 import { requireInjection } from '@/utils'
 import { useFloatingUi } from '@/composables'

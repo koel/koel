@@ -1,22 +1,24 @@
 <template>
-  <nav
-    v-if="shown"
-    ref="el"
-    v-koel-clickaway="close"
-    v-koel-focus
-    :class="extraClass"
-    class="menu context-menu select-none"
-    tabindex="0"
-    @contextmenu.prevent
-    @keydown.esc="close"
-  >
-    <ul>
-      <slot>Menu items go here.</slot>
-    </ul>
-  </nav>
+  <OnClickOutside @trigger="close">
+    <nav
+      v-if="shown"
+      ref="el"
+      v-koel-focus
+      :class="extraClass"
+      class="menu context-menu select-none"
+      tabindex="0"
+      @contextmenu.prevent
+      @keydown.esc="close"
+    >
+      <ul>
+        <slot>Menu items go here.</slot>
+      </ul>
+    </nav>
+  </OnClickOutside>
 </template>
 
 <script lang="ts" setup>
+import { OnClickOutside } from '@vueuse/components'
 import { nextTick, ref, toRefs } from 'vue'
 import { eventBus, logger } from '@/utils'
 

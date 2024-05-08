@@ -1,23 +1,25 @@
 <template>
-  <div
-    v-if="allowsUpload && mediaPathSetUp"
-    v-koel-clickaway="close"
-    :class="{ droppable }"
-    class="drop-zone h-[256px] max-h-[66vh] aspect-square outline-4 outline-dashed outline-gray-300
-    fixed z-10 top-0 left-0 rounded-3xl bg-black/40 flex flex-col-reverse items-center justify-center
-    overflow-hidden duration-200"
-    @dragleave="onDropLeave"
-    @dragover="onDragOver"
-    @drop="onDrop"
-  >
-    <h3 class="text-3xl mt-4 font-extralight">Drop to upload</h3>
-    <Icon :icon="faUpload" size="6x" />
-  </div>
+  <OnClickOutside @trigger="close">
+    <div
+      v-if="allowsUpload && mediaPathSetUp"
+      :class="{ droppable }"
+      class="drop-zone h-[256px] max-h-[66vh] aspect-square outline-4 outline-dashed outline-gray-300
+      fixed z-10 top-0 left-0 rounded-3xl bg-black/40 flex flex-col-reverse items-center justify-center
+      overflow-hidden duration-200"
+      @dragleave="onDropLeave"
+      @dragover="onDragOver"
+      @drop="onDrop"
+    >
+      <h3 class="text-3xl mt-4 font-extralight">Drop to upload</h3>
+      <Icon :icon="faUpload" size="6x" />
+    </div>
+  </OnClickOutside>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
 import { faUpload } from '@fortawesome/free-solid-svg-icons'
+import { ref } from 'vue'
+import { OnClickOutside } from '@vueuse/components'
 import { useUpload } from '@/composables'
 
 const { allowsUpload, mediaPathSetUp, handleDropEvent } = useUpload()

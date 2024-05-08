@@ -64,7 +64,7 @@ import { useSongMenuMethods } from '@/composables'
 
 import Btn from '@/components/ui/form/Btn.vue'
 
-const props = defineProps<{ songs: Song[], config: AddToMenuConfig }>()
+const props = defineProps<{ songs: Readonly<Song[]>, config: AddToMenuConfig }>()
 const { songs, config } = toRefs(props)
 
 const queue = toRef(queueStore.state, 'songs')

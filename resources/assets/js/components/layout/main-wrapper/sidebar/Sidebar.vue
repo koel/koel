@@ -1,31 +1,33 @@
 <template>
-  <nav
-    v-koel-clickaway="closeIfMobile"
-    :class="{ collapsed: !expanded, 'tmp-showing': tmpShowing, showing: mobileShowing }"
-    class="flex flex-col fixed md:relative w-full md:w-k-sidebar-width z-10"
-    @mouseenter="onMouseEnter"
-    @mouseleave="onMouseLeave"
-  >
-    <section class="search-wrapper p-6">
-      <SearchForm />
-    </section>
+  <OnClickOutside @trigger="closeIfMobile">
+    <nav
+      :class="{ collapsed: !expanded, 'tmp-showing': tmpShowing, showing: mobileShowing }"
+      class="flex flex-col fixed md:relative w-full md:w-k-sidebar-width z-10"
+      @mouseenter="onMouseEnter"
+      @mouseleave="onMouseLeave"
+    >
+      <section class="search-wrapper p-6">
+        <SearchForm />
+      </section>
 
-    <section v-koel-overflow-fade class="pt-2 pb-10 overflow-y-auto space-y-8">
-      <SidebarYourMusicSection />
-      <SidebarPlaylistsSection />
-      <SidebarManageSection v-if="showManageSection" />
-    </section>
+      <section v-koel-overflow-fade class="pt-2 pb-10 overflow-y-auto space-y-8">
+        <SidebarYourMusicSection />
+        <SidebarPlaylistsSection />
+        <SidebarManageSection v-if="showManageSection" />
+      </section>
 
-    <section v-if="!isPlus && isAdmin" class="p-6">
-      <BtnUpgradeToPlus />
-    </section>
+      <section v-if="!isPlus && isAdmin" class="p-6">
+        <BtnUpgradeToPlus />
+      </section>
 
-    <SidebarToggleButton v-model="expanded" />
-  </nav>
+      <SidebarToggleButton v-model="expanded" />
+    </nav>
+  </OnClickOutside>
 </template>
 
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue'
+import { OnClickOutside } from '@vueuse/components'
 import { eventBus } from '@/utils'
 import { useAuthorization, useKoelPlus, useLocalStorage, useRouter, useUpload } from '@/composables'
 

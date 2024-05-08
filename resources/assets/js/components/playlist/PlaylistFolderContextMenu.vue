@@ -1,5 +1,5 @@
 <template>
-  <ContextMenuBase ref="base">
+  <ContextMenu ref="base">
     <template v-if="folder">
       <template v-if="playable">
         <li @click="play">Play All</li>
@@ -12,7 +12,7 @@
       <li @click="rename">Rename</li>
       <li @click="destroy">Delete</li>
     </template>
-  </ContextMenuBase>
+  </ContextMenu>
 </template>
 
 <script lang="ts" setup>
@@ -22,7 +22,7 @@ import { playlistStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
 import { useContextMenu, useMessageToaster, useRouter } from '@/composables'
 
-const { base, ContextMenuBase, open, trigger } = useContextMenu()
+const { base, ContextMenu, open, trigger } = useContextMenu()
 const { go } = useRouter()
 const { toastWarning } = useMessageToaster()
 

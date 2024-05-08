@@ -1,5 +1,5 @@
 <template>
-  <ContextMenuBase ref="base" data-testid="artist-context-menu" extra-class="artist-menu">
+  <ContextMenu ref="base" data-testid="artist-context-menu" extra-class="artist-menu">
     <template v-if="artist">
       <li @click="play">Play All</li>
       <li @click="shuffle">Shuffle All</li>
@@ -12,7 +12,7 @@
         <li @click="download">Download</li>
       </template>
     </template>
-  </ContextMenuBase>
+  </ContextMenu>
 </template>
 
 <script lang="ts" setup>
@@ -23,7 +23,7 @@ import { useContextMenu, useRouter } from '@/composables'
 import { eventBus } from '@/utils'
 
 const { go } = useRouter()
-const { base, ContextMenuBase, open, trigger } = useContextMenu()
+const { base, ContextMenu, open, trigger } = useContextMenu()
 
 const artist = ref<Artist>()
 const allowDownload = toRef(commonStore.state, 'allows_download')
