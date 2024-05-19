@@ -26,6 +26,8 @@ class PlaylistFolder extends Model
     protected $keyType = 'string';
     protected $guarded = ['id'];
 
+    protected $with = ['user'];
+
     protected static function booted(): void
     {
         static::creating(static fn (self $folder) => $folder->id = Str::uuid()->toString());

@@ -5,7 +5,7 @@
         Upload Media
 
         <template #controls>
-          <BtnGroup v-if="hasUploadFailures" uppercased>
+          <BtnGroup v-if="hasUploadFailures" uppercase>
             <Btn data-testid="upload-retry-all-btn" success @click="retryAll">
               <Icon :icon="faRotateRight" />
               Retry All

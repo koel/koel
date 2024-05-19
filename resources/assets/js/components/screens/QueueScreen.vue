@@ -10,7 +10,7 @@
         </template>
 
         <template v-if="songs.length" #meta>
-          <span>{{ pluralize(songs, 'song') }}</span>
+          <span>{{ pluralize(songs, 'item') }}</span>
           <span>{{ duration }}</span>
         </template>
 
@@ -76,13 +76,13 @@ const {
   songList,
   duration,
   thumbnails,
-  selectedSongs,
+  selectedPlayables,
   showingControls,
   isPhone,
   playSelected,
   applyFilter,
   onScrollBreakpoint
-} = useSongList(toRef(queueStore.state, 'songs'), { type: 'Queue' }, { reorderable: true, sortable: false })
+} = useSongList(toRef(queueStore.state, 'playables'), { type: 'Queue' }, { reorderable: true, sortable: false })
 
 const { SongListControls, config } = useSongListControls('Queue')
 
@@ -112,32 +112,32 @@ const clearQueue = () => {
 }
 
 const removeSelected = () => {
-  if (!selectedSongs.value.length) return
+  if (!selectedPlayables.value.length) return
 
   const currentSongId = queueStore.current?.id
-  queueStore.unqueue(selectedSongs.value)
+  queueStore.unqueue(selectedPlayables.value)
 
-  if (currentSongId && selectedSongs.value.find(({ id }) => id === currentSongId)) {
+  if (currentSongId && selectedPlayables.value.find(({ id }) => id === currentSongId)) {
     playbackService.playNext()
   }
 }
 
-const onPressEnter = () => selectedSongs.value.length && playbackService.play(selectedSongs.value[0])
-const onReorder = (target: Song, type: MoveType) => queueStore.move(selectedSongs.value, target, type)
+const onPressEnter = () => selectedPlayables.value.length && playbackService.play(selectedPlayables.value[0])
+const onReorder = (target: Playable, type: MoveType) => queueStore.move(selectedPlayables.value, target, type)
 
 onScreenActivated('Queue', async () => {
   if (!cache.get('song-to-queue')) {
     return
   }
 
-  let song: Song | undefined
+  let song: Playable | undefined
 
   try {
     loading.value = true
     song = await songStore.resolve(cache.get('song-to-queue')!)
 
     if (!song) {
-      throw new Error('Song not found')
+      throw 'Song not found'
     }
   } catch (error: unknown) {
     useErrorHandler('dialog').handleHttpError(error)

@@ -4,7 +4,7 @@ import factory from '@/__tests__/factory'
 import { queueStore, songStore } from '@/stores'
 import { playbackService } from '@/services'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { SongsKey } from '@/symbols'
+import { PlayablesKey } from '@/symbols'
 import { ref } from 'vue'
 import AlbumTrackListItem from './AlbumTrackListItem.vue'
 
@@ -44,7 +44,7 @@ new class extends UnitTestCase {
       },
       global: {
         provide: {
-          [<symbol>SongsKey]: ref(songsToMatchAgainst)
+          [<symbol>PlayablesKey]: ref(songsToMatchAgainst)
         }
       }
     })

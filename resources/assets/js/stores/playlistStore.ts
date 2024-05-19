@@ -64,7 +64,7 @@ export const playlistStore = {
   async store (
     name: string,
     data: Partial<Pick<Playlist, 'rules' | 'folder_id' | 'own_songs_only'>> = {},
-    songs: Song[] = []
+    songs: Playable[] = []
   ) {
     const requestData: CreatePlaylistRequestData = {
       name,
@@ -90,13 +90,13 @@ export const playlistStore = {
     this.state.playlists = differenceBy(this.state.playlists, [playlist], 'id')
   },
 
-  async addSongs (playlist: Playlist, songs: Song[]) {
+  async addContent (playlist: Playlist, playables: Playable[]) {
     if (playlist.is_smart) {
       return playlist
     }
 
     const updatedSongs = await http.post<Song[]>(`playlists/${playlist.id}/songs`, {
-      songs: songs.map(song => song.id)
+      songs: playables.map(song => song.id)
     })
 
     songStore.syncWithVault(updatedSongs)
@@ -105,12 +105,12 @@ export const playlistStore = {
     return playlist
   },
 
-  removeSongs: async (playlist: Playlist, songs: Song[]) => {
+  removeContent: async (playlist: Playlist, playables: Playable[]) => {
     if (playlist.is_smart) {
       return playlist
     }
 
-    await http.delete(`playlists/${playlist.id}/songs`, { songs: songs.map(song => song.id) })
+    await http.delete(`playlists/${playlist.id}/songs`, { songs: playables.map(song => song.id) })
     cache.remove(['playlist.songs', playlist.id])
 
     return playlist
@@ -165,7 +165,7 @@ export const playlistStore = {
     return orderBy(playlists, ['is_smart', 'name'], ['desc', 'asc'])
   },
 
-  moveSongsInPlaylist: async (playlist: Playlist, songs: Song | Song[], target: Song, type: MoveType) => {
+  moveItemsInPlaylist: async (playlist: Playlist, songs: MaybeArray<Playable>, target: Playable, type: MoveType) => {
     const orderHash = JSON.stringify(playlist.songs?.map(({ id }) => id))
     playlist.songs?.splice(0, playlist.songs.length, ...moveItemsInList(playlist.songs, songs, target, type))
 

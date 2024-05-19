@@ -4,7 +4,7 @@ import { screen } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import SongListItem from './SongListItem.vue'
 
-let row: SongRow
+let row: PlayableRow
 
 new class extends UnitTestCase {
   protected test () {
@@ -35,7 +35,7 @@ new class extends UnitTestCase {
     song = song ?? factory<Song>('song')
 
     row = {
-      song,
+      playable: song,
       selected: false
     }
 

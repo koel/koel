@@ -3,8 +3,8 @@ import { authService } from '@/services'
 import { arrayify } from '@/utils'
 
 export const downloadService = {
-  fromSongs (songs: Song | Song[]) {
-    const query = arrayify(songs).reduce((q, song) => `songs[]=${song.id}&${q}`, '')
+  fromPlayables (playables: MaybeArray<Playable>) {
+    const query = arrayify(playables).reduce((q, playable) => `songs[]=${playable.id}&${q}`, '')
     this.trigger(`songs?${query}`)
   },
 
@@ -36,9 +36,6 @@ export const downloadService = {
     const sep = uri.includes('?') ? '&' : '?'
     const url = `${window.BASE_URL}download/${uri}${sep}t=${authService.getAudioToken()}`
 
-    const iframe = document.createElement('iframe')
-    iframe.style.display = 'none'
-    iframe.setAttribute('src', url)
-    document.body.appendChild(iframe)
+    open(url)
   }
 }

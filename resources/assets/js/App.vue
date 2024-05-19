@@ -39,7 +39,7 @@ import { defineAsyncComponent, onMounted, provide, ref, watch } from 'vue'
 import { useOnline } from '@vueuse/core'
 import { queueStore } from '@/stores'
 import { authService } from '@/services'
-import { CurrentSongKey, DialogBoxKey, MessageToasterKey, OverlayKey } from '@/symbols'
+import { CurrentPlayableKey, DialogBoxKey, MessageToasterKey, OverlayKey } from '@/symbols'
 import { useRouter } from '@/composables'
 
 import DialogBox from '@/components/ui/DialogBox.vue'
@@ -62,7 +62,7 @@ const AlbumContextMenu = defineAsyncComponent(() => import('@/components/album/A
 const ArtistContextMenu = defineAsyncComponent(() => import('@/components/artist/ArtistContextMenu.vue'))
 const PlaylistContextMenu = defineAsyncComponent(() => import('@/components/playlist/PlaylistContextMenu.vue'))
 const PlaylistFolderContextMenu = defineAsyncComponent(() => import('@/components/playlist/PlaylistFolderContextMenu.vue'))
-const SongContextMenu = defineAsyncComponent(() => import('@/components/song/SongContextMenu.vue'))
+const SongContextMenu = defineAsyncComponent(() => import('@/components/song/PlayableContextMenu.vue'))
 const CreateNewPlaylistContextMenu = defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistContextMenu.vue'))
 const SupportKoel = defineAsyncComponent(() => import('@/components/meta/SupportKoel.vue'))
 const DropZone = defineAsyncComponent(() => import('@/components/ui/upload/DropZone.vue'))
@@ -72,7 +72,7 @@ const ResetPasswordForm = defineAsyncComponent(() => import('@/components/auth/R
 const overlay = ref<InstanceType<typeof Overlay>>()
 const dialog = ref<InstanceType<typeof DialogBox>>()
 const toaster = ref<InstanceType<typeof MessageToaster>>()
-const currentSong = ref<Song>()
+const currentSong = ref<Playable>()
 const showDropZone = ref(false)
 
 const layout = ref<'main' | 'auth' | 'invitation' | 'reset-password'>()
@@ -156,7 +156,7 @@ const onDrop = () => (showDropZone.value = false)
 provide(OverlayKey, overlay)
 provide(DialogBoxKey, dialog)
 provide(MessageToasterKey, toaster)
-provide(CurrentSongKey, currentSong)
+provide(CurrentPlayableKey, currentSong)
 </script>
 
 <style lang="postcss">

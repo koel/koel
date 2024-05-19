@@ -2,27 +2,26 @@
 
 namespace App\Rules;
 
-use Illuminate\Contracts\Validation\Rule;
+use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\File;
 
-class MediaPath implements Rule
+class MediaPath implements ValidationRule
 {
-    public function passes($attribute, $value): bool
+    public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+        $passes = false;
+
         if (config('koel.storage_driver') === 'local') {
-            return $value && File::isDirectory($value) && File::isReadable($value);
+            $passes = $value && File::isDirectory($value) && File::isReadable($value);
         }
 
-        // Setting a media path is not required for non-local storage drivers.
-        return false;
-    }
-
-    public function message(): string
-    {
-        if (config('koel.storage_driver') === 'local') {
-            return 'Media path is required for local storage.';
+        if (!$passes) {
+            $fail(
+                config('koel.storage_driver') === 'local'
+                    ? 'Media path is required for local storage.'
+                    : 'Media path is not required for non-local storage.'
+            );
         }
-
-        return 'Media path is not required for non-local storage.';
     }
 }

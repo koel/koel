@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\API;
 
+use App\Enums\MediaType;
 use App\Models\Song;
 use Illuminate\Validation\Rule;
 
@@ -12,7 +13,7 @@ class DeleteSongsRequest extends Request
     public function rules(): array
     {
         return [
-            'songs' => ['required', 'array', Rule::exists(Song::class, 'id')],
+            'songs' => ['required', 'array', Rule::exists(Song::class, 'id')->where('type', MediaType::SONG)],
         ];
     }
 }

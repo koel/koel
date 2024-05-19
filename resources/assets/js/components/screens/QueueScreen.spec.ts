@@ -47,7 +47,7 @@ new class extends UnitTestCase {
   }
 
   private renderComponent (songs: Song[]) {
-    queueStore.state.songs = songs
+    queueStore.state.playables = songs
 
     this.render(QueueScreen, {
       global: {

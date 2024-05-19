@@ -2,7 +2,7 @@
   <ScreenBase>
     <template #header>
       <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
-        Songs for <span class="text-thin">{{ decodedQ }}</span>
+        Results for <span class="font-thin">{{ decodedQ }}</span>
         <ControlsToggle v-model="showingControls" />
 
         <template #thumbnail>
@@ -10,7 +10,7 @@
         </template>
 
         <template v-if="songs.length" #meta>
-          <span>{{ pluralize(songs, 'song') }}</span>
+          <span>{{ pluralize(songs, 'item') }}</span>
           <span>{{ duration }}</span>
         </template>
 

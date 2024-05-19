@@ -13,7 +13,7 @@
 
         <template #meta>
           <span>{{ pluralize(albumCount, 'album') }}</span>
-          <span>{{ pluralize(songs, 'song') }}</span>
+          <span>{{ pluralize(songs, 'item') }}</span>
           <span>{{ duration }}</span>
 
           <a

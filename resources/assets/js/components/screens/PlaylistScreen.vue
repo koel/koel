@@ -13,7 +13,7 @@
 
         <template v-if="songs.length || playlist.is_collaborative" #meta>
           <CollaboratorsBadge v-if="collaborators.length" :collaborators="collaborators" />
-          <span>{{ pluralize(songs, 'song') }}</span>
+          <span>{{ pluralize(songs, 'item') }}</span>
           <span>{{ duration }}</span>
           <a
             v-if="allowDownload"
@@ -109,7 +109,7 @@ const {
   songList,
   duration,
   thumbnails,
-  selectedSongs,
+  selectedPlayables,
   showingControls,
   isPhone,
   context,
@@ -124,7 +124,7 @@ const {
 } = useSongList(ref<Song[] | CollaborativeSong[]>([]), { type: 'Playlist' })
 
 const { SongListControls, config: controlsConfig } = useSongListControls('Playlist')
-const { removeSongsFromPlaylist } = usePlaylistManagement()
+const { removeFromPlaylist } = usePlaylistManagement()
 
 const allowDownload = toRef(commonStore.state, 'allows_download')
 
@@ -132,7 +132,7 @@ const destroy = () => eventBus.emit('PLAYLIST_DELETE', playlist.value!)
 const download = () => downloadService.fromPlaylist(playlist.value!)
 const editPlaylist = () => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist.value!)
 
-const removeSelected = async () => await removeSongsFromPlaylist(playlist.value!, selectedSongs.value)
+const removeSelected = async () => await removeFromPlaylist(playlist.value!, selectedPlayables.value)
 let collaborators = ref<PlaylistCollaborator[]>([])
 
 const fetchDetails = async (refresh = false) => {
@@ -155,7 +155,7 @@ const fetchDetails = async (refresh = false) => {
   }
 }
 
-const sort = (field: SongListSortField | null, order: SortOrder) => {
+const sort = (field: MaybeArray<PlayableListSortField> | null, order: SortOrder) => {
   listConfig.reorderable = field === 'position'
 
   if (field !== 'position') {
@@ -166,8 +166,8 @@ const sort = (field: SongListSortField | null, order: SortOrder) => {
   songs.value = playlist.value!.songs!
 }
 
-const onReorder = (target: Song, type: MoveType) => {
-  playlistStore.moveSongsInPlaylist(playlist.value!, selectedSongs.value, target, type)
+const onReorder = (target: Playable, type: MoveType) => {
+  playlistStore.moveItemsInPlaylist(playlist.value!, selectedPlayables.value, target, type)
 }
 
 watch(playlistId, async id => {
@@ -197,7 +197,7 @@ onScreenActivated('Playlist', () => (playlistId.value = getRouteParam('id')!))
 eventBus
   .on('PLAYLIST_UPDATED', async ({ id }) => id === playlistId.value && await fetchDetails())
   .on('PLAYLIST_COLLABORATOR_REMOVED', async ({ id }) => id === playlistId.value && await fetchDetails())
-  .on('PLAYLIST_SONGS_REMOVED', async ({ id }, removed) => {
+  .on('PLAYLIST_CONTENT_REMOVED', async ({ id }, removed) => {
     if (id !== playlistId.value) return
     songs.value = differenceBy(songs.value, removed, 'id')
   })

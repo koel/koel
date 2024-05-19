@@ -51,7 +51,6 @@ const submit = async () => {
     toastSuccess(`Playlist folder "${folder.name}" created.`)
   } catch (error: unknown) {
     useErrorHandler('dialog').handleHttpError(error)
-    logger.error(error)
   } finally {
     hideOverlay()
   }

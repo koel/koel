@@ -3,17 +3,15 @@
 namespace App\Rules;
 
 use App\Values\UserPreferences;
-use Illuminate\Contracts\Validation\Rule;
+use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
 
-class CustomizableUserPreference implements Rule
+class CustomizableUserPreference implements ValidationRule
 {
-    public function passes($attribute, $value): bool
+    public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        return UserPreferences::customizable($value);
-    }
-
-    public function message(): string
-    {
-        return 'Invalid or uncustomizable user preference key.';
+        if (!UserPreferences::customizable($value)) {
+            $fail('Invalid or uncustomizable user preference key.');
+        }
     }
 }

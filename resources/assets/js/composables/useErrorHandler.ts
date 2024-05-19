@@ -32,7 +32,15 @@ export const useErrorHandler = (driver: ErrorMessageDriver = 'toast') => {
 
     const messageOrClosure = statusMessageMap[error.response.status]
 
-    return typeof messageOrClosure === 'string' ? showError(messageOrClosure) : messageOrClosure()
+    if (messageOrClosure) {
+      return typeof messageOrClosure === 'string' ? showError(messageOrClosure) : messageOrClosure()
+    }
+
+    if (error.response.data.message) {
+      return showError(error.response.data.message)
+    }
+
+    return showGenericError()
   }
 
   return {

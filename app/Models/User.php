@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Casts\UserPreferencesCast;
 use App\Facades\License;
+use App\Models\Podcast\Podcast;
+use App\Models\Podcast\PodcastUserPivot;
 use App\Values\UserPreferences;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -40,6 +42,7 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @property ?string $sso_provider
  * @property ?string $sso_id
  * @property bool $is_sso
+ * @property Collection<array-key, Podcast> $podcast
  */
 class User extends Authenticatable
 {
@@ -66,6 +69,13 @@ class User extends Authenticatable
         return $this->hasMany(Playlist::class);
     }
 
+    public function podcasts(): BelongsToMany
+    {
+        return $this->belongsToMany(Podcast::class)
+            ->using(PodcastUserPivot::class)
+            ->withTimestamps();
+    }
+
     public function collaboratedPlaylists(): BelongsToMany
     {
         return $this->belongsToMany(Playlist::class, 'playlist_collaborators')->withTimestamps();
@@ -79,6 +89,11 @@ class User extends Authenticatable
     public function interactions(): HasMany
     {
         return $this->hasMany(Interaction::class);
+    }
+
+    public function subscribedToPodcast(Podcast $podcast): bool
+    {
+        return $this->podcasts()->where('podcast_id', $podcast->id)->exists();
     }
 
     protected function avatar(): Attribute

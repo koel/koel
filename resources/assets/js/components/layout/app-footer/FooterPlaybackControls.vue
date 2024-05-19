@@ -24,14 +24,14 @@ import { faStepBackward, faStepForward } from '@fortawesome/free-solid-svg-icons
 import { ref } from 'vue'
 import { playbackService } from '@/services'
 import { requireInjection } from '@/utils'
-import { CurrentSongKey } from '@/symbols'
+import { CurrentPlayableKey } from '@/symbols'
 
 import RepeatModeSwitch from '@/components/ui/RepeatModeSwitch.vue'
 import LikeButton from '@/components/song/SongLikeButton.vue'
 import PlayButton from '@/components/ui/FooterPlayButton.vue'
 import FooterBtn from '@/components/layout/app-footer/FooterButton.vue'
 
-const song = requireInjection(CurrentSongKey, ref())
+const song = requireInjection(CurrentPlayableKey, ref())
 
 const playPrev = async () => await playbackService.playPrev()
 const playNext = async () => await playbackService.playNext()

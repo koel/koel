@@ -53,8 +53,8 @@ class FetchInitialDataController extends Controller
             'latest_version' => $user->is_admin
                 ? $applicationInformationService->getLatestVersionNumber()
                 : koel_version(),
-            'song_count' => $songRepository->count(),
-            'song_length' => $songRepository->getTotalLength(),
+            'song_count' => $songRepository->countSongs(),
+            'song_length' => $songRepository->getTotalSongLength(),
             'queue_state' => QueueStateResource::make($queueService->getQueueState($user)),
             'koel_plus' => [
                 'active' => $licenseStatus->isValid(),

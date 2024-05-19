@@ -14,7 +14,7 @@
         <template #meta>
           <a v-if="isNormalArtist" :href="`#/artist/${album.artist_id}`" class="artist">{{ album.artist_name }}</a>
           <span v-else class="nope">{{ album.artist_name }}</span>
-          <span>{{ pluralize(songs, 'song') }}</span>
+          <span>{{ pluralize(songs, 'item') }}</span>
           <span>{{ duration }}</span>
 
           <a

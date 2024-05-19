@@ -1,21 +1,19 @@
 import { reactive } from 'vue'
 import { differenceBy, unionBy } from 'lodash'
-import { arrayify, logger, moveItemsInList } from '@/utils'
+import { arrayify, isSong, logger, moveItemsInList } from '@/utils'
 import { http } from '@/services'
 import { songStore } from '@/stores'
 
 export const queueStore = {
-  state: reactive<{ songs: Song[] }>({
-    songs: []
+  state: reactive<{ playables: Playable[] }>({
+    playables: []
   }),
-
-  i: 0,
 
   init (savedState: QueueState) {
     // don't set this.all here, as it would trigger saving state
-    this.state.songs = songStore.syncWithVault(savedState.songs)
+    this.state.playables = songStore.syncWithVault(savedState.songs)
 
-    if (!this.state.songs.length) {
+    if (!this.state.playables.length) {
       return
     }
 
@@ -27,11 +25,12 @@ export const queueStore = {
   },
 
   get all () {
-    return this.state.songs
+    return this.state.playables
   },
 
-  set all (songs: Song[]) {
-    this.state.songs = songStore.syncWithVault(songs)
+  set all (playables: Playable[]) {
+    this.state.playables = playables
+    songStore.syncWithVault(playables.filter(isSong))
     this.saveState()
   },
 
@@ -43,57 +42,57 @@ export const queueStore = {
     return this.all[this.all.length - 1]
   },
 
-  contains (song: Song) {
-    return this.all.includes(reactive(song))
+  contains (playable: Playable) {
+    return this.all.includes(reactive(playable))
   },
 
   /**
    * Add song(s) to the end of the current queue.
    */
-  queue (songs: Song | Song[]) {
-    this.unqueue(songs)
-    this.all = unionBy(this.all, arrayify(songs), 'id')
+  queue (playables: MaybeArray<Playable>) {
+    this.unqueue(playables)
+    this.all = unionBy(this.all, arrayify(playables), 'id')
   },
 
-  queueIfNotQueued (song: Song) {
-    if (!this.contains(song)) {
-      this.queueAfterCurrent(song)
+  queueIfNotQueued (playable: Playable) {
+    if (!this.contains(playable)) {
+      this.queueAfterCurrent(playable)
     }
   },
 
-  queueToTop (songs: Song | Song[]) {
-    this.all = unionBy(arrayify(songs), this.all, 'id')
+  queueToTop (playables: MaybeArray<Playable>) {
+    this.all = unionBy(arrayify(playables), this.all, 'id')
   },
 
-  replaceQueueWith (songs: Song | Song[]) {
-    this.all = arrayify(songs)
+  replaceQueueWith (playables: MaybeArray<Playable>) {
+    this.all = arrayify(playables)
   },
 
-  queueAfterCurrent (songs: Song | Song[]) {
-    songs = arrayify(songs)
+  queueAfterCurrent (playables: MaybeArray<Playable>) {
+    playables = arrayify(playables)
 
     if (!this.current || !this.all.length) {
-      return this.queue(songs)
+      return this.queue(playables)
     }
 
     // First we unqueue the songs to make sure there are no duplicates.
-    this.unqueue(songs)
+    this.unqueue(playables)
 
     const head = this.all.splice(0, this.indexOf(this.current) + 1)
-    this.all = head.concat(reactive(songs), this.all)
+    this.all = head.concat(reactive(playables), this.all)
   },
 
-  unqueue (songs: Song | Song[]) {
-    songs = arrayify(songs)
-    songs.forEach(song => (song.playback_state = 'Stopped'))
-    this.all = differenceBy(this.all, songs, 'id')
+  unqueue (playables: Playable | Playable[]) {
+    playables = arrayify(playables)
+    playables.forEach(song => (song.playback_state = 'Stopped'))
+    this.all = differenceBy(this.all, playables, 'id')
   },
 
   /**
    * Move some songs to after a target.
    */
-  move (songs: Song | Song[], target: Song, type: MoveType) {
-    this.state.songs = moveItemsInList(this.state.songs, songs, target, type)
+  move (playables: Playable | Playable[], target: Playable, type: MoveType) {
+    this.state.playables = moveItemsInList(this.state.playables, playables, target, type)
     this.saveState()
   },
 
@@ -105,11 +104,11 @@ export const queueStore = {
    * Clear the queue without saving the state.
    */
   clearSilently () {
-    this.state.songs = []
+    this.state.playables = []
   },
 
-  indexOf (song: Song) {
-    return this.all.indexOf(reactive(song))
+  indexOf (playable: Playable) {
+    return this.all.indexOf(reactive(playable))
   },
 
   get next () {
@@ -141,14 +140,14 @@ export const queueStore = {
     return this.all
   },
 
-  async fetchInOrder (sortField: SongListSortField, order: SortOrder, limit = 500) {
+  async fetchInOrder (sortField: PlayableListSortField, order: SortOrder, limit = 500) {
     this.all = await http.get<Song[]>(`queue/fetch?order=${order}&sort=${sortField}&limit=${limit}`)
     return this.all
   },
 
   saveState () {
     try {
-      http.silently.put('queue/state', { songs: this.state.songs.map(({ id }) => id) })
+      http.silently.put('queue/state', { songs: this.state.playables.map(({ id }) => id) })
     } catch (error: unknown) {
       logger.error(error)
     }

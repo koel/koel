@@ -3,6 +3,7 @@
 namespace Tests;
 
 use App\Models\User;
+use Illuminate\Support\Facades\File;
 
 function create_user(array $attributes = []): User
 {
@@ -26,5 +27,5 @@ function test_path(string $path = ''): string
 
 function read_as_data_url(string $path): string
 {
-    return 'data:' . mime_content_type($path) . ';base64,' . base64_encode(file_get_contents($path));
+    return 'data:' . mime_content_type($path) . ';base64,' . base64_encode(File::get($path));
 }

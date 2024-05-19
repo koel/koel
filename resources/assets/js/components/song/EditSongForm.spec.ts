@@ -21,7 +21,7 @@ new class extends UnitTestCase {
           albums: [],
           artists: []
         },
-        songs: []
+        playables: []
       }
 
       const updateMock = this.mock(songStore, 'update').mockResolvedValue(result)
@@ -74,7 +74,7 @@ new class extends UnitTestCase {
           albums: [],
           artists: []
         },
-        songs: []
+        playables: []
       }
 
       const updateMock = this.mock(songStore, 'update').mockResolvedValue(result)

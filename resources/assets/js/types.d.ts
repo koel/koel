@@ -55,6 +55,8 @@ interface Constructable<T> {
   new (...args: any): T
 }
 
+type MaybeArray<T> = T | T[]
+
 interface CompositeToken {
   'audio-token': string
   token: string
@@ -144,9 +146,24 @@ interface Album {
   created_at: string
 }
 
-interface Song {
-  type: 'songs'
+interface Playable {
+  type: 'songs' | 'episodes'
   readonly id: string
+  title: string
+  readonly length: number
+  play_count_registered?: boolean
+  play_count: number
+  play_start_time?: number
+  genre: string
+  preloaded?: boolean
+  playback_state?: PlaybackState
+  liked: boolean
+  fmt_length?: string
+  created_at: string
+}
+
+interface Song extends Playable {
+  type: 'songs'
   readonly owner_id: User['id'],
   album_id: Album['id']
   album_name: Album['name']
@@ -155,23 +172,22 @@ interface Song {
   artist_name: Artist['name']
   album_artist_id: Artist['id']
   album_artist_name: Artist['name']
-  title: string
-  readonly length: number
   track: number | null
   disc: number | null
-  genre: string
   year: number | null
   lyrics: string
-  play_count_registered?: boolean
-  preloaded?: boolean
-  playback_state?: PlaybackState
-  play_count: number
-  liked: boolean
-  play_start_time?: number
-  fmt_length?: string
-  created_at: string
   is_public: boolean
   deleted?: boolean
+}
+
+interface Episode extends Playable {
+  type: 'episodes'
+  episode_link: string | null
+  episode_description: string
+  episode_image: string
+  podcast_id: string
+  podcast_title: string
+  podcast_author: string
 }
 
 interface CollaborativeSong extends Song {
@@ -184,8 +200,8 @@ interface CollaborativeSong extends Song {
 
 interface QueueState {
   type: 'queue-states'
-  songs: Song[]
-  current_song: Song | null
+  songs: Playable[]
+  current_song: Playable | null
   playback_position: number
 }
 
@@ -257,10 +273,26 @@ interface Playlist {
   rules: SmartPlaylistRuleGroup[]
   own_songs_only: boolean
   cover: string | null
-  songs?: Song[]
+  songs?: Playable[]
 }
 
 type PlaylistLike = Playlist | FavoriteList | RecentlyPlayedList
+
+interface Podcast {
+  readonly type: 'podcasts'
+  readonly id: string
+  readonly title: string
+  readonly url: string
+  readonly link: string
+  readonly image: string
+  readonly description: string
+  readonly author: string
+  readonly subscribed_at: string
+  readonly state: {
+    current_episode: Song['id'] | null
+    progresses: Record<Song['id'], number>
+  }
+}
 
 interface YouTubeVideo {
   readonly id: {
@@ -339,8 +371,8 @@ type OverlayState = {
   message: string
 }
 
-interface SongRow {
-  song: Song
+interface PlayableRow {
+  playable: Playable
   selected: boolean
 }
 
@@ -371,6 +403,9 @@ declare type ScreenName =
   | 'Genre'
   | 'Playlist'
   | 'Upload'
+  | 'Podcasts'
+  | 'Podcast'
+  | 'Episode'
   | 'Search.Excerpt'
   | 'Search.Songs'
   | 'Invitation.Accept'
@@ -417,20 +452,21 @@ type ArtistAlbumViewMode = 'list' | 'thumbnails'
 
 type RepeatMode = 'NO_REPEAT' | 'REPEAT_ALL' | 'REPEAT_ONE'
 
-interface SongListConfig {
+interface PlayableListConfig {
   sortable: boolean
   reorderable: boolean
   collaborative: boolean
   hasCustomSort: boolean
 }
 
-type SongListContext = {
+type PlayableListContext = {
   entity?: Playlist | Album | Artist | Genre,
   type?: Extract<ScreenName, 'Songs' | 'Album' | 'Artist' | 'Playlist' | 'Favorites' | 'RecentlyPlayed' | 'Queue' | 'Genre' | 'Search.Songs'>
 }
 
-type SongListSortField =
+type PlayableListSortField =
   keyof Pick<Song, 'track' | 'disc' | 'title' | 'album_name' | 'length' | 'artist_name' | 'created_at'>
+  | keyof Pick<Episode, 'podcast_author' | 'podcast_title'>
   | 'position'
 
 type SortOrder = 'asc' | 'desc'

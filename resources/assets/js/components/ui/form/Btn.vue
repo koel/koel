@@ -1,15 +1,27 @@
 <template>
   <button
+    v-if="tag === 'button'"
     ref="button"
     class="text-base text-k-text-primary bg-k-primary px-4 py-2.5 rounded cursor-pointer"
     type="button"
   >
     <slot>Click me</slot>
   </button>
+  <a
+    v-else
+    ref="button"
+    class="text-base text-k-text-primary bg-k-primary px-4 py-2.5 rounded cursor-pointer"
+  >
+    <slot>Click me</slot>
+  </a>
 </template>
 
 <script lang="ts" setup>
 import { ref } from 'vue'
+
+withDefaults(defineProps<{ tag?: 'button' | 'a' }>(), {
+  tag: 'button'
+})
 
 const button = ref<HTMLButtonElement>()
 
@@ -19,7 +31,9 @@ defineExpose({
 </script>
 
 <style lang="postcss" scoped>
-button {
+button, a {
+  @apply text-k-text-primary !important;
+
   &:not([disabled]):hover {
     box-shadow: inset 0 0 0 10rem rgba(0, 0, 0, .1);
   }
@@ -59,6 +73,7 @@ button {
   &[transparent] {
     @apply bg-transparent;
   }
+
 
   &[rounded] {
     @apply rounded-full;

@@ -109,6 +109,18 @@ export const routes: Route[] = [
     screen: 'Genre'
   },
   {
+    path: '/podcasts',
+    screen: 'Podcasts',
+  },
+  {
+    path: `/podcasts/(?<id>${UUID_REGEX})`,
+    screen: 'Podcast',
+  },
+  {
+    path: '/episodes/(?<id>\.+)',
+    screen: 'Episode',
+  },
+  {
     path: '/visualizer',
     screen: 'Visualizer'
   },

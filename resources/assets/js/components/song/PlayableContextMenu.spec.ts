@@ -7,13 +7,13 @@ import { screen, waitFor } from '@testing-library/vue'
 import { downloadService, playbackService } from '@/services'
 import { favoriteStore, playlistStore, queueStore, songStore } from '@/stores'
 import { DialogBoxStub, MessageToasterStub } from '@/__tests__/stubs'
-import SongContextMenu from './SongContextMenu.vue'
+import PlayableContextMenu from './PlayableContextMenu.vue'
 
 let songs: Song[]
 
 new class extends UnitTestCase {
   protected beforeEach () {
-    super.beforeEach(() => queueStore.state.songs = [])
+    super.beforeEach(() => queueStore.state.playables = [])
   }
 
   protected test () {
@@ -66,7 +66,7 @@ new class extends UnitTestCase {
     })
 
     it('downloads', async () => {
-      const downloadMock = this.mock(downloadService, 'fromSongs')
+      const downloadMock = this.mock(downloadService, 'fromPlayables')
       await this.renderComponent()
 
       await this.user.click(screen.getByText('Download'))
@@ -179,7 +179,7 @@ new class extends UnitTestCase {
 
     it('lists and adds to existing playlist', async () => {
       playlistStore.state.playlists = factory<Playlist>('playlist', 3)
-      const addMock = this.mock(playlistStore, 'addSongs')
+      const addMock = this.mock(playlistStore, 'addContent')
       this.mock(MessageToasterStub.value, 'success')
       await this.renderComponent()
 
@@ -210,7 +210,7 @@ new class extends UnitTestCase {
 
       await this.renderComponent()
 
-      const removeSongsMock = this.mock(playlistStore, 'removeSongs')
+      const removeSongsMock = this.mock(playlistStore, 'removeContent')
       const emitMock = this.mock(eventBus, 'emit')
 
       await this.user.click(screen.getByText('Remove from Playlist'))
@@ -385,15 +385,15 @@ new class extends UnitTestCase {
   private async renderComponent (_songs?: Song | Song[]) {
     songs = arrayify(_songs || factory<Song>('song', 5))
 
-    const rendered = this.render(SongContextMenu)
-    eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, songs)
+    const rendered = this.render(PlayableContextMenu)
+    eventBus.emit('PLAYABLE_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, songs)
     await this.tick(2)
 
     return rendered
   }
 
   private fillQueue () {
-    queueStore.state.songs = factory<Song>('song', 5)
-    queueStore.state.songs[2].playback_state = 'Playing'
+    queueStore.state.playables = factory<Song>('song', 5)
+    queueStore.state.playables[2].playback_state = 'Playing'
   }
 }

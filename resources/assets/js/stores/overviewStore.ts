@@ -34,14 +34,14 @@ export const overviewStore = {
     this.state.recentlyAddedSongs = songStore.syncWithVault(resource.recently_added_songs)
     this.state.recentlyAddedAlbums = albumStore.syncWithVault(resource.recently_added_albums)
 
-    recentlyPlayedStore.excerptState.songs = songStore.syncWithVault(resource.recently_played_songs)
+    recentlyPlayedStore.excerptState.playables = songStore.syncWithVault(resource.recently_played_songs)
 
     this.refreshPlayStats()
   },
 
   refreshPlayStats () {
     this.state.mostPlayedSongs = songStore.getMostPlayed(7)
-    this.state.recentlyPlayed = recentlyPlayedStore.excerptState.songs.filter(
+    this.state.recentlyPlayed = recentlyPlayedStore.excerptState.playables.filter(
       ({ deleted, play_count }) => !deleted && play_count > 0
     )
   }

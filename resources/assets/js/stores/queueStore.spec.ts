@@ -11,7 +11,7 @@ new class extends UnitTestCase {
   protected beforeEach () {
     super.beforeEach(() => {
       songs = factory<Song>('song', 3)
-      queueStore.state.songs = reactive(songs)
+      queueStore.state.playables = reactive(songs)
     })
   }
 
@@ -71,32 +71,32 @@ new class extends UnitTestCase {
       const putMock = this.mock(http, 'put')
       queueStore.clear()
 
-      expect(queueStore.state.songs).toHaveLength(0)
+      expect(queueStore.state.playables).toHaveLength(0)
       expect(putMock).toHaveBeenCalledWith('queue/state', { songs: [] })
     })
 
     it.each<[PlaybackState]>([['Playing'], ['Paused']])('identifies the current song by %s state', state => {
-      queueStore.state.songs[1].playback_state = state
-      expect(queueStore.current).toEqual(queueStore.state.songs[1])
+      queueStore.state.playables[1].playback_state = state
+      expect(queueStore.current).toEqual(queueStore.state.playables[1])
     })
 
     it('gets the next song in queue', () => {
-      queueStore.state.songs[1].playback_state = 'Playing'
-      expect(queueStore.next).toEqual(queueStore.state.songs[2])
+      queueStore.state.playables[1].playback_state = 'Playing'
+      expect(queueStore.next).toEqual(queueStore.state.playables[2])
     })
 
     it('returns undefined as next song if at end of queue', () => {
-      queueStore.state.songs[2].playback_state = 'Playing'
+      queueStore.state.playables[2].playback_state = 'Playing'
       expect(queueStore.next).toBeUndefined()
     })
 
     it('gets the previous song in queue', () => {
-      queueStore.state.songs[1].playback_state = 'Playing'
-      expect(queueStore.previous).toEqual(queueStore.state.songs[0])
+      queueStore.state.playables[1].playback_state = 'Playing'
+      expect(queueStore.previous).toEqual(queueStore.state.playables[0])
     })
 
     it('returns undefined as previous song if at beginning of queue', () => {
-      queueStore.state.songs[0].playback_state = 'Playing'
+      queueStore.state.playables[0].playback_state = 'Playing'
       expect(queueStore.previous).toBeUndefined()
     })
 

@@ -40,8 +40,8 @@ new class extends UnitTestCase {
       ['to top', 'queue-top', 'queueToTop'],
       ['to bottom', 'queue-bottom', 'queue']
     ])('queues songs %s', async (_: string, testId: string, queueMethod: MethodOf<typeof queueStore>) => {
-      queueStore.state.songs = factory<Song>('song', 5)
-      queueStore.state.songs[2].playback_state = 'Playing'
+      queueStore.state.playables = factory<Song>('song', 5)
+      queueStore.state.playables[2].playback_state = 'Playing'
 
       const mock = this.mock(queueStore, queueMethod)
       this.renderComponent()
@@ -61,7 +61,7 @@ new class extends UnitTestCase {
     })
 
     it('adds songs to existing playlist', async () => {
-      const mock = this.mock(playlistStore, 'addSongs')
+      const mock = this.mock(playlistStore, 'addContent')
       playlistStore.state.playlists = factory<Playlist>('playlist', 3)
       this.renderComponent()
 

@@ -4,7 +4,7 @@
       <h1>
         New Playlist
         <span v-if="songs.length" class="text-k-text-secondary" data-testid="from-songs">
-          from {{ pluralize(songs, 'song') }}
+          from {{ pluralize(songs, 'item') }}
         </span>
       </h1>
     </header>

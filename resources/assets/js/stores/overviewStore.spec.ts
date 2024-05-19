@@ -58,7 +58,7 @@ new class extends UnitTestCase {
       const recentlyPlayedSongs = factory<Song>('song', 9)
 
       const mostPlayedSongsMock = this.mock(songStore, 'getMostPlayed', mostPlayedSongs)
-      recentlyPlayedStore.excerptState.songs = recentlyPlayedSongs
+      recentlyPlayedStore.excerptState.playables = recentlyPlayedSongs
 
       overviewStore.refreshPlayStats()
 

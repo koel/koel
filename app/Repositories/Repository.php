@@ -36,9 +36,21 @@ abstract class Repository implements RepositoryInterface
     }
 
     /** @return T|null */
+    public function findOneBy(array $params): ?Model
+    {
+        return $this->model::query()->where($params)->first();
+    }
+
+    /** @return T|null */
     public function findOne($id): ?Model
     {
         return $this->model::query()->find($id);
+    }
+
+    /** @return T */
+    public function getOneBy(array $params): Model
+    {
+        return $this->model::query()->where($params)->firstOrFail();
     }
 
     /** @return array<array-key, T>|Collection<array-key, T> */

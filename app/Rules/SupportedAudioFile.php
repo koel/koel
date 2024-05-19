@@ -2,20 +2,19 @@
 
 namespace App\Rules;
 
+use Closure;
 use getID3;
-use Illuminate\Contracts\Validation\Rule;
-use Illuminate\Http\UploadedFile;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Arr;
 use Webmozart\Assert\Assert;
 
-class SupportedAudioFile implements Rule
+class SupportedAudioFile implements ValidationRule
 {
     private const SUPPORTED_FORMATS = ['mp3', 'aac', 'ogg', 'flac', 'wav'];
 
-    /** @param UploadedFile $value */
-    public function passes($attribute, $value): bool
+    public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        return attempt(static function () use ($value) {
+        $passes = attempt(static function () use ($value) {
             Assert::oneOf(
                 Arr::get((new getID3())->analyze($value->getRealPath()), 'fileformat'),
                 self::SUPPORTED_FORMATS
@@ -23,10 +22,9 @@ class SupportedAudioFile implements Rule
 
             return true;
         }, false) ?? false;
-    }
 
-    public function message(): string
-    {
-        return 'Unsupported audio file';
+        if (!$passes) {
+            $fail('Unsupported audio file');
+        }
     }
 }

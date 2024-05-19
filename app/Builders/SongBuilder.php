@@ -2,6 +2,7 @@
 
 namespace App\Builders;
 
+use App\Enums\MediaType;
 use App\Facades\License;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,6 +22,8 @@ class SongBuilder extends Builder
         'disc' => 'songs.disc',
         'artist_name' => 'artists.name',
         'album_name' => 'albums.name',
+        'podcast_title' => 'podcasts.title',
+        'podcast_author' => 'podcasts.author',
     ];
 
     private const VALID_SORT_COLUMNS = [
@@ -30,6 +33,8 @@ class SongBuilder extends Builder
         'songs.created_at',
         'artists.name',
         'albums.name',
+        'podcasts.title',
+        'podcasts.author',
     ];
 
     public function inDirectory(string $path): self
@@ -43,7 +48,7 @@ class SongBuilder extends Builder
     public function withMetaFor(User $user, bool $requiresInteractions = false): self
     {
         $joinClosure = static function (JoinClause $join) use ($user): void {
-            $join->on('interactions.song_id', '=', 'songs.id')->where('interactions.user_id', $user->id);
+            $join->on('interactions.song_id', 'songs.id')->where('interactions.user_id', $user->id);
         };
 
         return $this
@@ -53,8 +58,8 @@ class SongBuilder extends Builder
                 static fn (self $query) => $query->join('interactions', $joinClosure),
                 static fn (self $query) => $query->leftJoin('interactions', $joinClosure)
             )
-            ->join('albums', 'songs.album_id', '=', 'albums.id')
-            ->join('artists', 'songs.artist_id', '=', 'artists.id')
+            ->leftJoin('albums', 'songs.album_id', 'albums.id')
+            ->leftJoin('artists', 'songs.artist_id', 'artists.id')
             ->distinct('songs.id')
             ->select(
                 'songs.*',
@@ -78,14 +83,15 @@ class SongBuilder extends Builder
         });
     }
 
-    public function sort(string $column, string $direction): self
+    private function sortByOneColumn(string $column, string $direction): self
     {
         $column = self::normalizeSortColumn($column);
 
         Assert::oneOf($column, self::VALID_SORT_COLUMNS);
         Assert::oneOf(strtolower($direction), ['asc', 'desc']);
 
-        return $this->orderBy($column, $direction)
+        return $this
+            ->orderBy($column, $direction)
             ->when($column === 'artists.name', static fn (self $query) => $query->orderBy('albums.name')
                 ->orderBy('songs.disc')
                 ->orderBy('songs.track')
@@ -96,6 +102,17 @@ class SongBuilder extends Builder
                 ->orderBy('songs.title'))
             ->when($column === 'track', static fn (self $query) => $query->orderBy('songs.disc')
                 ->orderBy('songs.track'));
+    }
+
+    public function sort(array $columns, string $direction): self
+    {
+        $this->leftJoin('podcasts', 'songs.podcast_id', 'podcasts.id');
+
+        foreach ($columns as $column) {
+            $this->sortByOneColumn($column, $direction);
+        }
+
+        return $this;
     }
 
     private static function normalizeSortColumn(string $column): string
@@ -109,5 +126,10 @@ class SongBuilder extends Builder
     {
         return $this->whereNotNull('storage')
             ->where('storage', '!=', '');
+    }
+
+    public function typeOf(MediaType $type): self
+    {
+        return $this->where('songs.type', $type->value);
     }
 }

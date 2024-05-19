@@ -10,7 +10,7 @@
         </template>
 
         <template v-if="songs.length" #meta>
-          <span>{{ pluralize(songs, 'song') }}</span>
+          <span>{{ pluralize(songs, 'item') }}</span>
           <span>{{ duration }}</span>
         </template>
 
@@ -58,7 +58,7 @@ import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 
-const recentlyPlayedSongs = toRef(recentlyPlayedStore.state, 'songs')
+const recentlyPlayedSongs = toRef(recentlyPlayedStore.state, 'playables')
 
 const {
   SongList,

@@ -7,13 +7,13 @@ use App\Models\User;
 use Illuminate\Contracts\Console\Kernel as Artisan;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\DB;
+use Tests\TestCase;
 
 use function Tests\test_path;
 
 trait CreatesApplication
 {
     protected string $mediaPath;
-    private Kernel $artisan;
     protected string $baseUrl = 'http://localhost';
     public static bool $migrated = false;
 
@@ -27,18 +27,17 @@ trait CreatesApplication
         /** @var Kernel $artisan */
         $artisan = $app->make(Artisan::class);
 
-        $this->artisan = $artisan;
-        $this->artisan->bootstrap();
+        $artisan->bootstrap();
 
         // Unless the DB is stored in memory, we need to migrate the DB only once for the whole test suite.
-        if (!CreatesApplication::$migrated || DB::connection()->getDatabaseName() === ':memory:') {
-            $this->artisan->call('migrate');
+        if (!TestCase::$migrated || DB::connection()->getDatabaseName() === ':memory:') {
+            $artisan->call('migrate');
 
             if (!User::query()->count()) {
-                $this->artisan->call('db:seed');
+                $artisan->call('db:seed');
             }
 
-            CreatesApplication::$migrated = true;
+            TestCase::$migrated = true;
         }
 
         return $app;

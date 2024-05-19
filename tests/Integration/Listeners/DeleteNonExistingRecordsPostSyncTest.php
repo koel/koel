@@ -2,6 +2,7 @@
 
 namespace Tests\Integration\Listeners;
 
+use App\Enums\MediaType;
 use App\Enums\SongStorageType;
 use App\Events\MediaScanCompleted;
 use App\Listeners\DeleteNonExistingRecordsPostScan;
@@ -32,6 +33,13 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
 
                 self::assertModelExists($song);
             });
+    }
+
+    public function testHandleDoesNotDeleteEpisodes(): void
+    {
+        $episode = Song::factory()->create(['type' => MediaType::PODCAST_EPISODE]);
+        $this->listener->handle(new MediaScanCompleted(ScanResultCollection::create()));
+        self::assertModelExists($episode);
     }
 
     public function testHandle(): void

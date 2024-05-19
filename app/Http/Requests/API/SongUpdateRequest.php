@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\API;
 
+use App\Enums\MediaType;
 use App\Models\Song;
 use Illuminate\Validation\Rule;
 
@@ -16,7 +17,7 @@ class SongUpdateRequest extends Request
     {
         return [
             'data' => 'required|array',
-            'songs' => ['required', 'array', Rule::exists(Song::class, 'id')],
+            'songs' => ['required', 'array', Rule::exists(Song::class, 'id')->where('type', MediaType::SONG)],
         ];
     }
 }

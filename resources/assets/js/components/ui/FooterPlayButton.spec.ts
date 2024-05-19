@@ -5,7 +5,7 @@ import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { playbackService } from '@/services'
 import { screen, waitFor } from '@testing-library/vue'
-import { CurrentSongKey } from '@/symbols'
+import { CurrentPlayableKey } from '@/symbols'
 import { commonStore, favoriteStore, queueStore, recentlyPlayedStore, songStore } from '@/stores'
 import FooterPlayButton from './FooterPlayButton.vue'
 
@@ -122,7 +122,7 @@ new class extends UnitTestCase {
     return this.render(FooterPlayButton, {
       global: {
         provide: {
-          [<symbol>CurrentSongKey]: ref(currentSong)
+          [<symbol>CurrentPlayableKey]: ref(currentSong)
         }
       }
     })

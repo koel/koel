@@ -1,5 +1,5 @@
 import select from 'select'
-import { noop } from '@/utils'
+import { isSong, noop } from '@/utils'
 import defaultCover from '@/../img/covers/default.svg'
 
 export { defaultCover }
@@ -34,4 +34,8 @@ export const copyText = async (text: string) => {
     select(copyArea)
     document.execCommand('copy')
   }
+}
+
+export const getPlayableProp = <T>(playable: Playable, songKey: keyof Song, episodeKey: keyof Episode): T => {
+  return isSong(playable) ? playable[songKey] : playable[episodeKey]
 }

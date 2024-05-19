@@ -47,6 +47,8 @@ class Album extends Model
     protected $hidden = ['updated_at'];
     protected $casts = ['artist_id' => 'integer'];
 
+    protected $with = ['artist'];
+
     /** @deprecated */
     protected $appends = ['is_compilation'];
 

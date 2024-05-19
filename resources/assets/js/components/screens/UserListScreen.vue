@@ -6,7 +6,7 @@
         <ControlsToggle v-model="showingControls" />
 
         <template #controls>
-          <BtnGroup v-if="showingControls || !isPhone" uppercased>
+          <BtnGroup v-if="showingControls || !isPhone" uppercase>
             <Btn success @click="showAddUserForm">
               <Icon :icon="faPlus" />
               Add

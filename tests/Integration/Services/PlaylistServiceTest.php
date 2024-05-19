@@ -196,7 +196,7 @@ class PlaylistServiceTest extends TestCase
         $playlist->addSongs(Song::factory(3)->create());
         $songs = Song::factory(2)->create();
 
-        $addedSongs = $this->service->addSongsToPlaylist($playlist, $songs, $playlist->user);
+        $addedSongs = $this->service->addPlayablesToPlaylist($playlist, $songs, $playlist->user);
         $playlist->refresh();
 
         self::assertCount(2, $addedSongs);
@@ -218,7 +218,7 @@ class PlaylistServiceTest extends TestCase
 
         $songs = Song::factory(2)->create(['is_public' => false]);
 
-        $this->service->addSongsToPlaylist($playlist, $songs, $user);
+        $this->service->addPlayablesToPlaylist($playlist, $songs, $user);
 
         $songs->each(static fn (Song $song) => self::assertTrue($song->refresh()->is_public));
     }

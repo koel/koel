@@ -1,5 +1,5 @@
 <template>
-  <span class="btn-group inline-block relative flex-nowrap">
+  <span class="btn-group inline-flex relative flex-nowrap">
     <slot />
   </span>
 </template>
@@ -24,7 +24,7 @@
     }
   }
 
-  &[uppercased] :deep(button) {
+  &[uppercase] :deep(button) {
     @apply uppercase;
   }
 }

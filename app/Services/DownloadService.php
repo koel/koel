@@ -8,6 +8,7 @@ use App\Models\SongZipArchive;
 use App\Services\SongStorages\DropboxStorage;
 use App\Services\SongStorages\S3CompatibleStorage;
 use App\Services\SongStorages\SftpStorage;
+use App\Values\Podcast\EpisodePlayable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 
@@ -29,6 +30,16 @@ class DownloadService
     {
         if (!$song->storage->supported()) {
             return null;
+        }
+
+        if ($song->isEpisode()) {
+            $playable = EpisodePlayable::retrieveForEpisode($song);
+
+            if (!$playable?->valid()) {
+                $playable = EpisodePlayable::createForEpisode($song);
+            }
+
+            return $playable->path;
         }
 
         if ($song->storage === SongStorageType::LOCAL) {

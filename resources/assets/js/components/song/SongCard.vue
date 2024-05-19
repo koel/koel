@@ -1,6 +1,6 @@
 <template>
   <article
-    :class="{ playing: song.playback_state === 'Playing' || song.playback_state === 'Paused' }"
+    :class="{ playing: playable.playback_state === 'Playing' || playable.playback_state === 'Paused' }"
     class="group flex gap-3 py-2 pl-2.5 pr-3 rounded-md items-center bg-k-bg-secondary border border-k-border
     hover:border-white/15 transition-[border-color] duration-200 ease-in-out
     focus:ring-1 focus:ring-k-accent focus-within:ring-1 focus-within:ring-k-accent"
@@ -11,29 +11,42 @@
     @dblclick.prevent="play"
   >
     <span>
-      <SongThumbnail :song="song" />
+      <SongThumbnail :song="playable" />
     </span>
-    <main class="flex-1 flex items-start">
+    <main class="flex-1 flex items-start overflow-hidden gap-2">
       <div class="flex-1 space-y-1 overflow-hidden">
-        <h3 class="flex gap-2 overflow-hidden text-ellipsis whitespace-nowrap">
+        <h3 class="flex gap-2 w-full overflow-hidden">
           <ExternalMark v-if="external" />
-          {{ song.title }}
+          <span class="flex-1 block overflow-hidden text-ellipsis whitespace-nowrap">
+            {{ playable.title }}
+          </span>
         </h3>
-        <p class="text-k-text-secondary text-[0.9rem] opacity-80">
-          <a :href="`#/artist/${song.artist_id}`" class="!text-k-text-primary hover:!text-k-accent">
-            {{ song.artist_name }}
+        <p class="text-k-text-secondary text-[0.9rem] opacity-80 overflow-hidden">
+          <a
+            v-if="isSong(playable)"
+            :href="`#/artist/${playable.artist_id}`"
+            class="!text-k-text-primary hover:!text-k-accent"
+          >
+            {{ playable.artist_name }}
           </a>
-          - {{ pluralize(song.play_count, 'play') }}
+          <a
+            v-if="isEpisode(playable)"
+            :href="`#/podcasts/${playable.podcast_id}`"
+            class="!text-k-text-primary hover:!text-k-accent"
+          >
+            {{ playable.podcast_title }}
+          </a>
+          - {{ pluralize(playable.play_count, 'play') }}
         </p>
       </div>
-      <LikeButton :song="song" class="opacity-0 text-k-text-secondary group-hover:opacity-100" />
+      <LikeButton :song="playable" class="opacity-0 text-k-text-secondary group-hover:opacity-100" />
     </main>
   </article>
 </template>
 
 <script lang="ts" setup>
 import { computed, toRefs } from 'vue'
-import { eventBus, pluralize } from '@/utils'
+import { eventBus, isEpisode, isSong, pluralize } from '@/utils'
 import { queueStore } from '@/stores'
 import { playbackService } from '@/services'
 import { useAuthorization, useDraggable, useKoelPlus } from '@/composables'
@@ -42,22 +55,26 @@ import SongThumbnail from '@/components/song/SongThumbnail.vue'
 import LikeButton from '@/components/song/SongLikeButton.vue'
 import ExternalMark from '@/components/ui/ExternalMark.vue'
 
-const props = defineProps<{ song: Song }>()
-const { song } = toRefs(props)
+const props = defineProps<{ playable: Playable }>()
+const { playable } = toRefs(props)
 
 const { isPlus } = useKoelPlus()
 const { currentUser } = useAuthorization()
-const { startDragging } = useDraggable('songs')
+const { startDragging } = useDraggable('playables')
 
-const external = computed(() => isPlus.value && song.value.owner_id !== currentUser.value?.id)
+const external = computed(() => {
+  if (!isSong(playable.value)) return false
+  return isPlus.value && playable.value.owner_id !== currentUser.value?.id
+})
 
-const requestContextMenu = (event: MouseEvent) => eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', event, song.value)
-const onDragStart = (event: DragEvent) => startDragging(event, [song.value])
+const requestContextMenu = (event: MouseEvent) => eventBus.emit(
+  'PLAYABLE_CONTEXT_MENU_REQUESTED',
+  event,
+  playable.value
+)
 
-const play = () => {
-  queueStore.queueIfNotQueued(song.value)
-  playbackService.play(song.value)
-}
+const onDragStart = (event: DragEvent) => startDragging(event, [playable.value])
+const play = () => playbackService.play(playable.value)
 </script>
 
 <style lang="postcss" scoped>

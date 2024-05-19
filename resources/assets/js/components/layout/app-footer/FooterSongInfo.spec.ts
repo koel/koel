@@ -2,7 +2,7 @@ import { expect, it } from 'vitest'
 import { ref } from 'vue'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { CurrentSongKey } from '@/symbols'
+import { CurrentPlayableKey } from '@/symbols'
 import FooterSongInfo from './FooterSongInfo.vue'
 
 new class extends UnitTestCase {
@@ -21,7 +21,7 @@ new class extends UnitTestCase {
       expect(this.render(FooterSongInfo, {
         global: {
           provide: {
-            [<symbol>CurrentSongKey]: ref(song)
+            [<symbol>CurrentPlayableKey]: ref(song)
           }
         }
       }).html()).toMatchSnapshot()

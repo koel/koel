@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\QueueState;
+use App\Models\Song;
 use App\Models\User;
 use App\Repositories\SongRepository;
 use App\Values\QueueState as QueueStateDTO;
@@ -39,12 +40,12 @@ class QueueService
         ]);
     }
 
-    public function updatePlaybackStatus(User $user, string $songId, int $position): void
+    public function updatePlaybackStatus(User $user, Song $song, int $position): void
     {
         QueueState::query()->updateOrCreate([
             'user_id' => $user->id,
         ], [
-            'current_song_id' => $songId,
+            'current_song_id' => $song->id,
             'playback_position' => $position,
         ]);
     }

@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { CurrentSongKey } from '@/symbols'
+import { CurrentPlayableKey } from '@/symbols'
 import { playbackService } from '@/services'
 import { screen } from '@testing-library/vue'
 import FooterPlaybackControls from './FooterPlaybackControls.vue'
@@ -50,7 +50,7 @@ new class extends UnitTestCase {
           PlayButton: this.stub('PlayButton')
         },
         provide: {
-          [<symbol>CurrentSongKey]: ref(song)
+          [<symbol>CurrentPlayableKey]: ref(song)
         }
       }
     })
