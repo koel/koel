@@ -2,6 +2,7 @@
 
 namespace App\Models\Concerns;
 
+use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
@@ -17,14 +18,18 @@ trait SupportsDeleteWhereValueNotIn
     /**
      * Deletes all records whose certain value is not in an array.
      */
-    public static function deleteWhereValueNotIn(array $values, ?string $field = null): void
-    {
+    public static function deleteWhereValueNotIn(
+        array $values,
+        ?string $field = null,
+        ?Closure $queryModifier = null
+    ): void {
         $field ??= (new static())->getKeyName();
+        $queryModifier ??= static fn (Builder $builder) => $builder;
 
         $maxChunkSize = DB::getDriverName() === 'sqlite' ? 999 : 65_535;
 
         if (count($values) <= $maxChunkSize) {
-            static::query()->whereNotIn($field, $values)->delete();
+            $queryModifier(static::query())->whereNotIn($field, $values)->delete();
 
             return;
         }
@@ -33,7 +38,7 @@ trait SupportsDeleteWhereValueNotIn
         $deletableIds = array_diff($allIds, $values);
 
         if (count($deletableIds) < $maxChunkSize) {
-            static::query()->whereIn($field, $deletableIds)->delete();
+            $queryModifier(static::query())->whereIn($field, $deletableIds)->delete();
 
             return;
         }

@@ -4,17 +4,17 @@ import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { arrayify } from '@/utils'
 import {
-  SelectedSongsKey,
-  SongListConfigKey,
-  SongListContextKey,
-  SongListSortFieldKey,
+  SelectedPlayablesKey,
+  PlayableListConfigKey,
+  PlayableListContextKey,
+  PlayableListSortFieldKey,
   SongListSortOrderKey,
-  SongsKey
+  PlayablesKey
 } from '@/symbols'
 import { screen } from '@testing-library/vue'
 import SongList from './SongList.vue'
 
-let songs: Song[]
+let songs: Playable[]
 
 new class extends UnitTestCase {
   protected test () {
@@ -23,7 +23,7 @@ new class extends UnitTestCase {
       expect(html()).toMatchSnapshot()
     })
 
-    it.each<[SongListSortField, string]>([
+    it.each<[PlayableListSortField, string]>([
       ['track', 'header-track-number'],
       ['title', 'header-title'],
       ['album_name', 'header-album'],
@@ -50,16 +50,16 @@ new class extends UnitTestCase {
   }
 
   private async renderComponent (
-    _songs: Song | Song[],
-    config: Partial<SongListConfig> = {
+    _songs: MaybeArray<Playable>,
+    config: Partial<PlayableListConfig> = {
       sortable: true,
       reorderable: true
     },
-    context: SongListContext = {
+    context: PlayableListContext = {
       type: 'Album',
     },
-    selectedSongs: Song[] = [],
-    sortField: SongListSortField = 'title',
+    selectedPlayables: Playable[] = [],
+    sortField: PlayableListSortField = 'title',
     sortOrder: SortOrder = 'asc'
   ) {
     songs = arrayify(_songs)
@@ -79,11 +79,11 @@ new class extends UnitTestCase {
           SongListSorter: this.stub('song-list-sorter')
         },
         provide: {
-          [<symbol>SongsKey]: [ref(songs)],
-          [<symbol>SelectedSongsKey]: [ref(selectedSongs), (value: Song[]) => (selectedSongs = value)],
-          [<symbol>SongListConfigKey]: [config],
-          [<symbol>SongListContextKey]: [context],
-          [<symbol>SongListSortFieldKey]: [sortFieldRef, (value: SongListSortField) => (sortFieldRef.value = value)],
+          [<symbol>PlayablesKey]: [ref(songs)],
+          [<symbol>SelectedPlayablesKey]: [ref(selectedPlayables), (value: Song[]) => (selectedPlayables = value)],
+          [<symbol>PlayableListConfigKey]: [config],
+          [<symbol>PlayableListContextKey]: [context],
+          [<symbol>PlayableListSortFieldKey]: [sortFieldRef, (value: PlayableListSortField) => (sortFieldRef.value = value)],
           [<symbol>SongListSortOrderKey]: [sortOrderRef, (value: SortOrder) => (sortOrderRef.value = value)]
         }
       }

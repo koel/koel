@@ -3,10 +3,12 @@
 namespace App\Repositories;
 
 use App\Builders\SongBuilder;
+use App\Enums\MediaType;
 use App\Facades\License;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Playlist;
+use App\Models\Podcast\Podcast;
 use App\Models\Song;
 use App\Models\User;
 use App\Values\Genre;
@@ -35,6 +37,7 @@ class SongRepository extends Repository
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
+            ->typeOf(MediaType::SONG)
             ->accessibleBy($scopedUser)
             ->withMetaFor($scopedUser)
             ->latest()
@@ -48,6 +51,7 @@ class SongRepository extends Repository
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
+            ->typeOf(MediaType::SONG)
             ->accessibleBy($scopedUser)
             ->withMetaFor($scopedUser, requiresInteractions: true)
             ->where('interactions.play_count', '>', 0)
@@ -70,7 +74,7 @@ class SongRepository extends Repository
     }
 
     public function getForListing(
-        string $sortColumn,
+        array $sortColumns,
         string $sortDirection,
         bool $ownSongsOnly = false,
         ?User $scopedUser = null,
@@ -79,16 +83,17 @@ class SongRepository extends Repository
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
+            ->typeOf(MediaType::SONG)
             ->accessibleBy($scopedUser)
             ->withMetaFor($scopedUser)
             ->when($ownSongsOnly, static fn (SongBuilder $query) => $query->where('songs.owner_id', $scopedUser->id))
-            ->sort($sortColumn, $sortDirection)
+            ->sort($sortColumns, $sortDirection)
             ->simplePaginate($perPage);
     }
 
     public function getByGenre(
         string $genre,
-        string $sortColumn,
+        array $sortColumns,
         string $sortDirection,
         ?User $scopedUser = null,
         int $perPage = 50
@@ -99,13 +104,13 @@ class SongRepository extends Repository
             ->accessibleBy($scopedUser)
             ->withMetaFor($scopedUser)
             ->where('genre', $genre)
-            ->sort($sortColumn, $sortDirection)
+            ->sort($sortColumns, $sortDirection)
             ->simplePaginate($perPage);
     }
 
     /** @return Collection|array<array-key, Song> */
     public function getForQueue(
-        string $sortColumn,
+        array $sortColumns,
         string $sortDirection,
         int $limit = self::DEFAULT_QUEUE_LIMIT,
         ?User $scopedUser = null,
@@ -115,7 +120,7 @@ class SongRepository extends Repository
         return Song::query()
             ->accessibleBy($scopedUser)
             ->withMetaFor($scopedUser)
-            ->sort($sortColumn, $sortDirection)
+            ->sort($sortColumns, $sortDirection)
             ->limit($limit)
             ->get();
     }
@@ -196,6 +201,7 @@ class SongRepository extends Repository
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
+            ->typeOf(MediaType::SONG)
             ->accessibleBy($scopedUser)
             ->withMetaFor($scopedUser)
             ->inRandomOrder()
@@ -267,14 +273,20 @@ class SongRepository extends Repository
             ->find($id);
     }
 
-    public function count(?User $scopedUser = null): int
+    public function countSongs(?User $scopedUser = null): int
     {
-        return Song::query()->accessibleBy($scopedUser ?? auth()->user())->count();
+        return Song::query()
+            ->typeOf(MediaType::SONG)
+            ->accessibleBy($scopedUser ?? auth()->user())
+            ->count();
     }
 
-    public function getTotalLength(?User $scopedUser = null): float
+    public function getTotalSongLength(?User $scopedUser = null): float
     {
-        return Song::query()->accessibleBy($scopedUser ?? auth()->user())->sum('length');
+        return Song::query()
+            ->typeOf(MediaType::SONG)
+            ->accessibleBy($scopedUser ?? auth()->user())
+            ->sum('length');
     }
 
     /** @return Collection|array<array-key, Song> */
@@ -289,5 +301,17 @@ class SongRepository extends Repository
             ->limit($limit)
             ->inRandomOrder()
             ->get();
+    }
+
+    /** @return array<string> */
+    public function getEpisodeGuidsByPodcast(Podcast $podcast): array
+    {
+        return $podcast->episodes()->pluck('episode_guid')->toArray();
+    }
+
+    /** @return Collection<Song> */
+    public function getEpisodesByPodcast(Podcast $podcast): Collection
+    {
+        return $podcast->episodes;
     }
 }

@@ -2,7 +2,7 @@ import isMobile from 'ismobilejs'
 import slugify from 'slugify'
 import { merge, orderBy, sumBy, take, unionBy, uniqBy } from 'lodash'
 import { reactive, watch } from 'vue'
-import { arrayify, logger, secondsToHumanReadable, use } from '@/utils'
+import { arrayify, isSong, logger, secondsToHumanReadable, use } from '@/utils'
 import { authService, cache, http } from '@/services'
 import { albumStore, artistStore, commonStore, overviewStore, playlistStore, preferenceStore } from '@/stores'
 
@@ -30,40 +30,43 @@ export interface SongUpdateResult {
 }
 
 export interface SongListPaginateParams extends Record<string, any> {
-  sort: SongListSortField
+  sort: MaybeArray<PlayableListSortField>
   order: SortOrder
   page: number
   own_songs_only: boolean
 }
 
 export interface GenreSongListPaginateParams extends Record<string, any> {
-  sort: SongListSortField
+  sort: MaybeArray<PlayableListSortField>
   order: SortOrder
   page: number
 }
 
 export const songStore = {
-  vault: new Map<Song['id'], Song>(),
+  vault: new Map<Playable['id'], Playable>(),
 
   state: reactive({
-    songs: [] as Song[]
+    songs: [] as Playable[]
   }),
 
-  getFormattedLength: (songs: Song | Song[]) => secondsToHumanReadable(sumBy(arrayify(songs), 'length')),
+  getFormattedLength: (songs: Playable | Playable[]) => secondsToHumanReadable(sumBy(arrayify(songs), 'length')),
 
   byId (id: string) {
     const song = this.vault.get(id)
-    return song?.deleted ? undefined : song
+
+    if (!song) return
+    if (isSong(song) && song.deleted) return
+    return song
   },
 
   byIds (ids: string[]) {
-    const songs = [] as Song[]
-    ids.forEach(id => use(this.byId(id), song => songs.push(song!)))
-    return songs
+    const playables: Playable[] = []
+    ids.forEach(id => use(this.byId(id), song => playables.push(song!)))
+    return playables
   },
 
   byAlbum (album: Album) {
-    return Array.from(this.vault.values()).filter(({ album_id }) => album_id === album.id)
+    return Array.from(this.vault.values()).filter(playable => isSong(playable) && playable.album_id === album.id)
   },
 
   async resolve (id: string) {
@@ -97,20 +100,30 @@ export const songStore = {
   },
 
   /**
-   * Increase a play count for a song.
+   * Increase a play count for a playable.
    */
-  registerPlay: async (song: Song) => {
-    const interaction = await http.silently.post<Interaction>('interaction/play', { song: song.id })
+  registerPlay: async (playable: Playable) => {
+    const interaction = await http.silently.post<Interaction>('interaction/play', { song: playable.id })
 
     // Use the data from the server to make sure we don't miss a play from another device.
-    song.play_count = interaction.play_count
+    playable.play_count = interaction.play_count
   },
 
-  scrobble: async (song: Song) => await http.silently.post(`songs/${song.id}/scrobble`, {
-    timestamp: song.play_start_time
-  }),
+  scrobble: async (song: Song) => {
+    if (!isSong(song)) {
+      throw 'Scrobble is only supported for songs.'
+    }
+
+    return await http.silently.post(`songs/${song.id}/scrobble`, {
+      timestamp: song.play_start_time
+    })
+  },
 
   async update (songsToUpdate: Song[], data: SongUpdateData) {
+    if (songsToUpdate.some(song => !isSong(song))) {
+      throw 'Only songs can be updated.'
+    }
+
     const result = await http.put<SongUpdateResult>('songs', {
       data,
       songs: songsToUpdate.map(song => song.id)
@@ -127,16 +140,16 @@ export const songStore = {
     return result
   },
 
-  getSourceUrl: (song: Song) => {
+  getSourceUrl: (playable: Playable) => {
     return isMobile.any && preferenceStore.transcode_on_mobile
-      ? `${commonStore.state.cdn_url}play/${song.id}/1/128?t=${authService.getAudioToken()}`
-      : `${commonStore.state.cdn_url}play/${song.id}?t=${authService.getAudioToken()}`
+      ? `${commonStore.state.cdn_url}play/${playable.id}/1/128?t=${authService.getAudioToken()}`
+      : `${commonStore.state.cdn_url}play/${playable.id}?t=${authService.getAudioToken()}`
   },
 
   getShareableUrl: (song: Song) => `${window.BASE_URL}#/song/${song.id}`,
 
-  syncWithVault (songs: Song | Song[]) {
-    return arrayify(songs).map(song => {
+  syncWithVault (playables: Playable | Playable[]) {
+    return arrayify(playables).map(song => {
       let local = this.byId(song.id)
 
       if (local) {
@@ -152,8 +165,8 @@ export const songStore = {
     })
   },
 
-  watchPlayCount: (song: Song) => {
-    watch(() => song.play_count, () => overviewStore.refreshPlayStats())
+  watchPlayCount: (playable: Playable) => {
+    watch(() => playable.play_count, () => overviewStore.refreshPlayStats())
   },
 
   ensureNotDeleted: (songs: Song | Song[]) => arrayify(songs).filter(({ deleted }) => !deleted),
@@ -203,6 +216,19 @@ export const songStore = {
     return uniqBy(songs, 'id')
   },
 
+  async fetchForPodcast (podcast: Podcast | string, refresh = false) {
+    const id = typeof podcast === 'string' ? podcast : podcast.id
+
+    if (refresh) {
+      cache.remove(['podcast.episodes', id])
+    }
+
+    return await cache.remember<Episode[]>(
+      [`podcast.episodes`, id],
+      async () => this.syncWithVault(await http.get<Episode[]>(`podcasts/${id}/episodes${refresh ? '?refresh=1' : ''}`))
+    )
+  },
+
   async paginateForGenre (genre: Genre | Genre['name'], params: GenreSongListPaginateParams) {
     const name = typeof genre === 'string' ? genre : genre.name
     const resource = await http.get<PaginatorResource>(`genres/${name}/songs?${new URLSearchParams(params).toString()}`)
@@ -229,7 +255,9 @@ export const songStore = {
   getMostPlayed (count: number) {
     return take(
       orderBy(
-        Array.from(this.vault.values()).filter(({ deleted, play_count }) => !deleted && play_count > 0),
+        Array
+          .from(this.vault.values())
+          .filter(playable => isSong(playable) && !playable.deleted && playable.play_count > 0),
         'play_count',
         'desc'
       ),
@@ -249,20 +277,28 @@ export const songStore = {
   },
 
   async publicize (songs: Song[]) {
+    if (songs.some(song => !isSong(song))) {
+      throw 'This action is only supported for songs.'
+    }
+
     await http.put('songs/publicize', {
       songs: songs.map(song => song.id)
     })
 
-    songs.forEach(song => song.is_public = true)
+    songs.forEach(song => (song.is_public = true));
   },
 
   async privatize (songs: Song[]) {
+    if (songs.some(song => !isSong(song))) {
+      throw 'This action is only supported for songs.'
+    }
+
     const privatizedIds = await http.put<Song['id'][]>('songs/privatize', {
       songs: songs.map(({ id }) => id)
     })
 
     privatizedIds.forEach(id => {
-      const song = this.byId(id)
+      const song = this.byId(id) as Song
       song && (song.is_public = false)
     })
 

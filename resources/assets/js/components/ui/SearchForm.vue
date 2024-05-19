@@ -18,7 +18,7 @@
       :placeholder="placeholder"
       autocorrect="false"
       class="w-full rounded-none h-[36px] !bg-transparent !text-k-text-primary !placeholder:text-white/50
-      focus-visible:outline-0"
+      focus-visible:outline-0 !px-2"
       name="q"
       required
       spellcheck="false"

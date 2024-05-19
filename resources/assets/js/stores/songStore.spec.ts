@@ -106,7 +106,7 @@ new class extends UnitTestCase {
       const songs = factory<Song>('song', 3)
 
       const result: SongUpdateResult = {
-        songs: factory<Song>('song', 3),
+        playables: factory<Song>('song', 3),
         albums: factory<Album>('album', 2),
         artists: factory<Artist>('artist', 2),
         removed: {

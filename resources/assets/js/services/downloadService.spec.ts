@@ -8,7 +8,7 @@ new class extends UnitTestCase {
   protected test () {
     it('downloads songs', () => {
       const mock = this.mock(downloadService, 'trigger')
-      downloadService.fromSongs([factory<Song>('song', { id: 'foo' }), factory<Song>('song', { id: 'bar' })])
+      downloadService.fromPlayables([factory<Song>('song', { id: 'foo' }), factory<Song>('song', { id: 'bar' })])
 
       expect(mock).toHaveBeenCalledWith('songs?songs[]=bar&songs[]=foo&')
     })

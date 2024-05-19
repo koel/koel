@@ -1,7 +1,7 @@
 <template>
   <article
     :class="{ playing, external, selected: item.selected }"
-    class="song-item text-k-text-secondary border-b border-k-border !max-w-full h-[64px] flex
+    class="song-item group text-k-text-secondary border-b border-k-border !max-w-full h-[64px] flex
     items-center transition-[background-color,_box-shadow] ease-in-out duration-200
     focus:rounded-md focus focus-within:rounded-md focus:ring-inset focus:ring-1 focus:!ring-k-accent
     focus-within:ring-inset focus-within:ring-1 focus-within:!ring-k-accent
@@ -12,9 +12,12 @@
   >
     <span class="track-number">
       <SoundBars v-if="song.playback_state === 'Playing'" />
-      <span v-else class="text-k-text-secondary">{{ song.track || '' }}</span>
+      <span v-else class="text-k-text-secondary">
+        <Icon :icon="faPodcast" v-if="isEpisode(song)" />
+        <template v-else>{{ song.track || '' }}</template>
+      </span>
     </span>
-    <span class="thumbnail">
+    <span class="thumbnail leading-none">
       <SongThumbnail :song="song" />
     </span>
     <span class="title-artist flex flex-col gap-2 overflow-hidden">
@@ -22,11 +25,9 @@
         <ExternalMark v-if="external" class="!inline-block" />
         {{ song.title }}
       </span>
-      <span class="artist">
-        {{ song.artist_name }}
-      </span>
+      <span class="artist">{{ artist }}</span>
     </span>
-    <span class="album">{{ song.album_name }}</span>
+    <span class="album">{{ album }}</span>
     <template v-if="config.collaborative">
       <span class="collaborator">
         <UserAvatar :user="collaborator" width="24" />
@@ -41,10 +42,11 @@
 </template>
 
 <script lang="ts" setup>
+import { faPodcast } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
-import { requireInjection, secondsToHis } from '@/utils'
+import { getPlayableProp, isEpisode, isSong, requireInjection, secondsToHis } from '@/utils'
 import { useAuthorization, useKoelPlus } from '@/composables'
-import { SongListConfigKey } from '@/symbols'
+import { PlayableListConfigKey } from '@/symbols'
 
 import LikeButton from '@/components/song/SongLikeButton.vue'
 import SoundBars from '@/components/ui/SoundBars.vue'
@@ -52,20 +54,27 @@ import SongThumbnail from '@/components/song/SongThumbnail.vue'
 import UserAvatar from '@/components/user/UserAvatar.vue'
 import ExternalMark from '@/components/ui/ExternalMark.vue'
 
-const [config] = requireInjection<[Partial<SongListConfig>]>(SongListConfigKey, [{}])
+const [config] = requireInjection<[Partial<PlayableListConfig>]>(PlayableListConfigKey, [{}])
 
 const { currentUser } = useAuthorization()
 const { isPlus } = useKoelPlus()
 
-const props = defineProps<{ item: SongRow }>()
+const props = defineProps<{ item: PlayableRow }>()
 const { item } = toRefs(props)
 
-const emit = defineEmits<{ (e: 'play', song: Song): void }>()
+const emit = defineEmits<{ (e: 'play', playable: Playable): void }>()
 
-const song = computed<Song | CollaborativeSong>(() => item.value.song)
+const song = computed<Playable | CollaborativeSong>(() => item.value.playable)
 const playing = computed(() => ['Playing', 'Paused'].includes(song.value.playback_state!))
-const external = computed(() => isPlus.value && song.value.owner_id !== currentUser.value?.id)
+
+const external = computed(() => {
+  if (!isSong(song.value)) return false
+  return isPlus.value && song.value.owner_id !== currentUser.value?.id
+})
+
 const fmtLength = secondsToHis(song.value.length)
+const artist = computed(() => getPlayableProp(song.value, 'artist_name', 'podcast_author'))
+const album = computed(() => getPlayableProp(song.value, 'album_name', 'podcast_title'))
 
 const collaborator = computed<Pick<User, 'name' | 'avatar'>>(() => (song.value as CollaborativeSong).collaboration.user)
 

@@ -34,6 +34,10 @@ use App\Http\Controllers\API\PlaylistController;
 use App\Http\Controllers\API\PlaylistFolderController;
 use App\Http\Controllers\API\PlaylistFolderPlaylistController;
 use App\Http\Controllers\API\PlaylistSongController;
+use App\Http\Controllers\API\Podcast\FetchEpisodeController;
+use App\Http\Controllers\API\Podcast\PodcastController;
+use App\Http\Controllers\API\Podcast\PodcastEpisodeController;
+use App\Http\Controllers\API\Podcast\UnsubscribeFromPodcastController;
 use App\Http\Controllers\API\PrivatizeSongsController;
 use App\Http\Controllers\API\ProfileController;
 use App\Http\Controllers\API\PublicizeSongsController;
@@ -193,6 +197,12 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::post('playlists/collaborators/accept', AcceptPlaylistCollaborationInviteController::class);
         Route::get('playlists/{playlist}/collaborators', [PlaylistCollaboratorController::class, 'index']);
         Route::delete('playlists/{playlist}/collaborators', [PlaylistCollaboratorController::class, 'destroy']);
+
+        // Podcast routes
+        Route::apiResource('podcasts', PodcastController::class);
+        Route::get('episodes/{episode}', FetchEpisodeController::class);
+        Route::apiResource('podcasts.episodes', PodcastEpisodeController::class);
+        Route::delete('podcasts/{podcast}/subscriptions', UnsubscribeFromPodcastController::class);
     });
 
     // Object-storage (S3) routes

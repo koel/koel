@@ -4,7 +4,7 @@ import { RenderResult, screen, waitFor } from '@testing-library/vue'
 import factory from '@/__tests__/factory'
 import { albumStore, artistStore, commonStore, preferenceStore } from '@/stores'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { CurrentSongKey } from '@/symbols'
+import { CurrentPlayableKey } from '@/symbols'
 import { eventBus } from '@/utils'
 import ExtraDrawer from './ExtraDrawer.vue'
 
@@ -83,7 +83,7 @@ new class extends UnitTestCase {
           ExtraPanelTabHeader: this.stub()
         },
         provide: {
-          [<symbol>CurrentSongKey]: songRef
+          [<symbol>CurrentPlayableKey]: songRef
         }
       }
     })

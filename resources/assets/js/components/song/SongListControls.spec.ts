@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { SelectedSongsKey, SongsKey } from '@/symbols'
+import { SelectedPlayablesKey, PlayablesKey } from '@/symbols'
 import { screen } from '@testing-library/vue'
 import SongListControls from './SongListControls.vue'
 
@@ -78,8 +78,8 @@ new class extends UnitTestCase {
     return this.render(SongListControls, {
       global: {
         provide: {
-          [<symbol>SongsKey]: [ref(songs)],
-          [<symbol>SelectedSongsKey]: [ref(take(songs, selectedSongCount))]
+          [<symbol>PlayablesKey]: [ref(songs)],
+          [<symbol>SelectedPlayablesKey]: [ref(take(songs, selectedSongCount))]
         }
       },
       props: {

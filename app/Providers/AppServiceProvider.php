@@ -9,6 +9,7 @@ use App\Services\LicenseService;
 use App\Services\NullMusicEncyclopedia;
 use App\Services\SpotifyService;
 use Illuminate\Database\DatabaseManager;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Builder;
 use Illuminate\Database\SQLiteConnection;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -24,6 +25,8 @@ class AppServiceProvider extends ServiceProvider
     {
         // Fix utf8mb4-related error starting from Laravel 5.4
         $schema->defaultStringLength(191);
+
+        Model::preventLazyLoading(!app()->isProduction());
 
         // Enable on delete cascade for sqlite connections
         if ($db->connection() instanceof SQLiteConnection) {

@@ -15,7 +15,7 @@
       <Icon v-else-if="isFavoriteList(list)" :icon="faHeart" class="text-k-love" fixed-width />
       <Icon v-else-if="list.is_smart" :icon="faWandMagicSparkles" fixed-width />
       <Icon v-else-if="list.is_collaborative" :icon="faUsers" fixed-width />
-      <ListMusic v-else :size="16" />
+      <ListMusicIcon v-else :size="16" />
     </template>
     {{ list.name }}
   </SidebarItem>
@@ -23,7 +23,7 @@
 
 <script lang="ts" setup>
 import { faClockRotateLeft, faHeart, faUsers, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
-import { ListMusic } from 'lucide-vue-next'
+import { ListMusicIcon } from 'lucide-vue-next'
 import { computed, ref, toRefs } from 'vue'
 import { eventBus } from '@/utils'
 import { favoriteStore } from '@/stores'
@@ -33,11 +33,11 @@ import SidebarItem from '@/components/layout/main-wrapper/sidebar/SidebarItem.vu
 
 const { onRouteChanged } = useRouter()
 const { startDragging } = useDraggable('playlist')
-const { acceptsDrop, resolveDroppedSongs } = useDroppable(['songs', 'album', 'artist'])
+const { acceptsDrop, resolveDroppedItems } = useDroppable(['playables', 'album', 'artist'])
 
 const droppable = ref(false)
 
-const { addSongsToPlaylist } = usePlaylistManagement()
+const { addToPlaylist } = usePlaylistManagement()
 
 const props = defineProps<{ list: PlaylistLike }>()
 const { list } = toRefs(props)
@@ -90,14 +90,14 @@ const onDrop = async (event: DragEvent) => {
   if (!contentEditable.value) return false
   if (!acceptsDrop(event)) return false
 
-  const songs = await resolveDroppedSongs(event)
+  const playables = await resolveDroppedItems(event)
 
-  if (!songs?.length) return false
+  if (!playables?.length) return false
 
   if (isFavoriteList(list.value)) {
-    await favoriteStore.like(songs)
+    await favoriteStore.like(playables)
   } else if (isPlaylist(list.value)) {
-    await addSongsToPlaylist(list.value, songs)
+    await addToPlaylist(list.value, playables)
   }
 
   return false

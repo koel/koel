@@ -2,7 +2,7 @@
   <ScreenBase>
     <template #header>
       <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
-        Songs You Love
+        Your Favorites
         <ControlsToggle v-model="showingControls" />
 
         <template #thumbnail>
@@ -10,7 +10,7 @@
         </template>
 
         <template v-if="songs.length" #meta>
-          <span>{{ pluralize(songs, 'song') }}</span>
+          <span>{{ pluralize(songs, 'item') }}</span>
           <span>{{ duration }}</span>
 
           <a
@@ -84,7 +84,7 @@ const {
   songList,
   duration,
   thumbnails,
-  selectedSongs,
+  selectedPlayables,
   showingControls,
   isPhone,
   onPressEnter,
@@ -100,7 +100,7 @@ const { SongListControls, config } = useSongListControls('Favorites')
 const allowDownload = toRef(commonStore.state, 'allows_download')
 
 const download = () => downloadService.fromFavorites()
-const removeSelected = () => selectedSongs.value.length && favoriteStore.unlike(selectedSongs.value)
+const removeSelected = () => selectedPlayables.value.length && favoriteStore.unlike(selectedPlayables.value)
 
 let initialized = false
 const loading = ref(false)

@@ -1,17 +1,10 @@
 <template>
   <SidebarSection>
     <template #header>
-      <SidebarSectionHeader>Your Music</SidebarSectionHeader>
+      <SidebarSectionHeader>Your Library</SidebarSectionHeader>
     </template>
 
     <ul class="menu">
-      <SidebarItem href="#/home" screen="Home">
-        <template #icon>
-          <Icon :icon="faHome" fixed-width />
-        </template>
-        Home
-      </SidebarItem>
-      <QueueSidebarItem />
       <SidebarItem href="#/songs" screen="Songs">
         <template #icon>
           <Icon :icon="faMusic" fixed-width />
@@ -39,12 +32,18 @@
       <YouTubeSidebarItem v-if="youtubeVideoTitle" data-testid="youtube">
         {{ youtubeVideoTitle }}
       </YouTubeSidebarItem>
+      <SidebarItem href="#/podcasts" screen="Podcasts">
+        <template #icon>
+          <Icon :icon="faPodcast" fixed-width />
+        </template>
+        Podcasts
+      </SidebarItem>
     </ul>
   </SidebarSection>
 </template>
 
 <script lang="ts" setup>
-import { faCompactDisc, faHome, faMicrophone, faMusic, faTags } from '@fortawesome/free-solid-svg-icons'
+import { faCompactDisc, faMicrophone, faMusic, faTags, faPodcast } from '@fortawesome/free-solid-svg-icons'
 import { unescape } from 'lodash'
 import { ref } from 'vue'
 import { eventBus } from '@/utils'
@@ -52,7 +51,6 @@ import { eventBus } from '@/utils'
 import SidebarSection from '@/components/layout/main-wrapper/sidebar/SidebarSection.vue'
 import SidebarSectionHeader from '@/components/layout/main-wrapper/sidebar/SidebarSectionHeader.vue'
 import SidebarItem from '@/components/layout/main-wrapper/sidebar/SidebarItem.vue'
-import QueueSidebarItem from '@/components/layout/main-wrapper/sidebar/QueueSidebarItem.vue'
 import YouTubeSidebarItem from '@/components/layout/main-wrapper/sidebar/YouTubeSidebarItem.vue'
 
 const youtubeVideoTitle = ref<string | null>(null)

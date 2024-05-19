@@ -2,10 +2,12 @@
 
 namespace App\Listeners;
 
+use App\Enums\MediaType;
 use App\Events\MediaScanCompleted;
 use App\Models\Song;
 use App\Repositories\SongRepository;
 use App\Values\ScanResult;
+use Illuminate\Database\Eloquent\Builder;
 
 class DeleteNonExistingRecordsPostScan
 {
@@ -21,6 +23,8 @@ class DeleteNonExistingRecordsPostScan
             ->merge($this->songRepository->getAllStoredOnCloud()->pluck('path'))
             ->toArray();
 
-        Song::deleteWhereValueNotIn($paths, 'path');
+        Song::deleteWhereValueNotIn($paths, 'path', static function (Builder $builder): Builder {
+            return $builder->where('type', MediaType::SONG);
+        });
     }
 }

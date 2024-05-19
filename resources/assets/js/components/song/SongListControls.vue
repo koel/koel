@@ -1,10 +1,10 @@
 <template>
   <div class="relative" data-testid="song-list-controls">
     <div class="flex gap-2 flex-wrap">
-      <BtnGroup uppercased>
+      <BtnGroup uppercase>
         <template v-if="altPressed">
           <Btn
-            v-if="selectedSongs.length < 2 && songs.length"
+            v-if="selectedPlayables.length < 2 && playables.length"
             v-koel-tooltip.bottom
             class="btn-play-all"
             highlight
@@ -16,7 +16,7 @@
           </Btn>
 
           <Btn
-            v-if="selectedSongs.length > 1"
+            v-if="selectedPlayables.length > 1"
             v-koel-tooltip.bottom
             class="btn-play-selected"
             highlight
@@ -30,7 +30,7 @@
 
         <template v-else>
           <Btn
-            v-if="selectedSongs.length < 2 && songs.length"
+            v-if="selectedPlayables.length < 2 && playables.length"
             v-koel-tooltip.bottom
             class="btn-shuffle-all"
             data-testid="btn-shuffle-all"
@@ -43,7 +43,7 @@
           </Btn>
 
           <Btn
-            v-if="selectedSongs.length > 1"
+            v-if="selectedPlayables.length > 1"
             v-koel-tooltip.bottom
             class="btn-shuffle-selected"
             data-testid="btn-shuffle-selected"
@@ -85,14 +85,14 @@
         </Btn>
       </BtnGroup>
 
-      <BtnGroup v-if="config.filter && songs.length">
+      <BtnGroup v-if="config.filter && playables.length">
         <SongListFilter @change="filter" />
       </BtnGroup>
     </div>
 
     <OnClickOutside @trigger="closeAddToMenu">
       <div ref="addToMenu" class="context-menu p-0 hidden">
-        <AddToMenu :config="config.addTo" :songs="selectedSongs" @closing="closeAddToMenu" />
+        <AddToMenu :config="config.addTo" :playables="selectedPlayables" @closing="closeAddToMenu" />
       </div>
     </OnClickOutside>
   </div>
@@ -102,7 +102,7 @@
 import { faPlay, faRandom, faRotateRight, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, Ref, ref, toRef, watch } from 'vue'
 import { OnClickOutside } from '@vueuse/components'
-import { SelectedSongsKey, SongsKey } from '@/symbols'
+import { SelectedPlayablesKey, PlayablesKey } from '@/symbols'
 import { requireInjection } from '@/utils'
 import { useFloatingUi } from '@/composables'
 
@@ -115,15 +115,15 @@ const SongListFilter = defineAsyncComponent(() => import('@/components/song/Song
 const props = defineProps<{ config: SongListControlsConfig }>()
 const config = toRef(props, 'config')
 
-const [songs] = requireInjection<[Ref<Song[]>]>(SongsKey)
-const [selectedSongs] = requireInjection(SelectedSongsKey)
+const [playables] = requireInjection<[Ref<Playable[]>]>(PlayablesKey)
+const [selectedPlayables] = requireInjection(SelectedPlayablesKey)
 
 const addToButton = ref<InstanceType<typeof Btn>>()
 const addToMenu = ref<HTMLDivElement>()
 const showingAddToMenu = ref(false)
 const altPressed = ref(false)
 
-const showAddToButton = computed(() => Boolean(selectedSongs.value.length))
+const showAddToButton = computed(() => Boolean(selectedPlayables.value.length))
 
 const emit = defineEmits<{
   (e: 'playAll' | 'playSelected', shuffle: boolean): void,

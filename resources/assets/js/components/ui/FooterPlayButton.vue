@@ -17,11 +17,11 @@ import { playbackService } from '@/services'
 import { commonStore, favoriteStore, queueStore, recentlyPlayedStore, songStore } from '@/stores'
 import { requireInjection } from '@/utils'
 import { useRouter } from '@/composables'
-import { CurrentSongKey } from '@/symbols'
+import { CurrentPlayableKey } from '@/symbols'
 import FooterButton from '@/components/layout/app-footer/FooterButton.vue'
 
 const { getCurrentScreen, getRouteParam, go } = useRouter()
-const song = requireInjection(CurrentSongKey, ref())
+const song = requireInjection(CurrentPlayableKey, ref())
 
 const libraryEmpty = computed(() => commonStore.state.song_count === 0)
 const playing = computed(() => song.value?.playback_state === 'Playing')

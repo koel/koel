@@ -11,7 +11,7 @@
     >
       <div class="btn-group">
         <SidebarMenuToggleButton />
-        <ExtraDrawerTabHeader v-if="song" v-model="activeTab" />
+        <ExtraDrawerTabHeader v-if="songPlaying" v-model="activeTab" />
       </div>
 
       <div class="btn-group">
@@ -21,7 +21,7 @@
       </div>
     </div>
 
-    <div v-if="song" v-show="activeTab" class="panes py-8 px-6 overflow-auto bg-k-bg-secondary">
+    <div v-if="songPlaying" v-show="activeTab" class="panes py-8 px-6 overflow-auto bg-k-bg-secondary">
       <div
         v-show="activeTab === 'Lyrics'"
         id="extraPanelLyrics"
@@ -29,7 +29,7 @@
         role="tabpanel"
         tabindex="0"
       >
-        <LyricsPane :song="song" />
+        <LyricsPane :song="playable" />
       </div>
 
       <div
@@ -62,7 +62,7 @@
         role="tabpanel"
         tabindex="0"
       >
-        <YouTubeVideoList v-if="useYouTube && song" :song="song" />
+        <YouTubeVideoList v-if="shouldShowYouTubeTab" :song="playable as Song" />
       </div>
     </div>
   </aside>
@@ -70,11 +70,11 @@
 
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
-import { defineAsyncComponent, onMounted, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue'
 import { albumStore, artistStore, preferenceStore } from '@/stores'
 import { useErrorHandler, useThirdPartyServices } from '@/composables'
-import { requireInjection } from '@/utils'
-import { CurrentSongKey } from '@/symbols'
+import { isSong, requireInjection } from '@/utils'
+import { CurrentPlayableKey } from '@/symbols'
 
 import ProfileAvatar from '@/components/ui/ProfileAvatar.vue'
 import SidebarMenuToggleButton from '@/components/ui/SidebarMenuToggleButton.vue'
@@ -89,26 +89,33 @@ const ExtraDrawerTabHeader = defineAsyncComponent(() => import('./ExtraDrawerTab
 
 const { useYouTube } = useThirdPartyServices()
 
-const song = requireInjection(CurrentSongKey, ref(undefined))
+const playable = requireInjection(CurrentPlayableKey, ref(undefined))
 const activeTab = ref<ExtraPanelTab | null>(null)
 
 const artist = ref<Artist>()
 const album = ref<Album>()
 
-const fetchSongInfo = async (_song: Song) => {
-  song.value = _song
+const songPlaying = computed(() => playable.value && isSong(playable.value))
+const shouldShowYouTubeTab = computed(() => useYouTube && songPlaying.value)
+
+const fetchSongInfo = async (song: Song) => {
+  playable.value = song
   artist.value = undefined
   album.value = undefined
 
   try {
-    artist.value = await artistStore.resolve(_song.artist_id)
-    album.value = await albumStore.resolve(_song.album_id)
+    artist.value = await artistStore.resolve(song.artist_id)
+    album.value = await albumStore.resolve(song.album_id)
   } catch (error: unknown) {
     useErrorHandler().handleHttpError(error)
   }
 }
 
-watch(song, song => song && fetchSongInfo(song), { immediate: true })
+watch(playable, song => {
+  if (!song || !isSong(song)) return
+  fetchSongInfo(song)
+}, { immediate: true })
+
 watch(activeTab, tab => (preferenceStore.active_extra_panel_tab = tab))
 
 const onProfileLinkClick = () => isMobile.any && (activeTab.value = null)

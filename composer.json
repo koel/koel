@@ -41,7 +41,9 @@
     "laravel/socialite": "^5.12",
     "laravel/ui": "^4.5",
     "nunomaduro/collision": "^7.10",
-    "league/flysystem-sftp-v3": "^3.0"
+    "league/flysystem-sftp-v3": "^3.0",
+    "saloonphp/xml-wrangler": "^1.2",
+    "phanan/poddle": "^1.0"
   },
   "require-dev": {
     "mockery/mockery": "~1.0",

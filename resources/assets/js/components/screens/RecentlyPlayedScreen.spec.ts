@@ -23,7 +23,7 @@ new class extends UnitTestCase {
   }
 
   private async renderComponent (songs: Song[]) {
-    recentlyPlayedStore.state.songs = songs
+    recentlyPlayedStore.state.playables = songs
     const fetchMock = this.mock(recentlyPlayedStore, 'fetch')
 
     this.render(RecentlyPlayedScreen, {

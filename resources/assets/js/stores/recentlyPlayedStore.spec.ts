@@ -15,11 +15,11 @@ new class extends UnitTestCase {
 
       expect(getMock).toHaveBeenCalledWith('songs/recently-played')
       expect(syncMock).toHaveBeenCalledWith(songs)
-      expect(recentlyPlayedStore.state.songs).toEqual(songs)
+      expect(recentlyPlayedStore.state.playables).toEqual(songs)
     })
 
     it('fetches when attempting to add a new song and the state is empty', async () => {
-      recentlyPlayedStore.state.songs = []
+      recentlyPlayedStore.state.playables = []
       const songs = factory<Song>('song', 3)
       const fetchMock = this.mock(recentlyPlayedStore, 'fetch').mockResolvedValue(songs)
 
@@ -34,13 +34,13 @@ new class extends UnitTestCase {
       const exceptSongs = songs.slice(0, 7)
 
       // We don't want to keep the reference to the original songs
-      recentlyPlayedStore.state.songs = JSON.parse(JSON.stringify(songs))
-      recentlyPlayedStore.excerptState.songs = JSON.parse(JSON.stringify(exceptSongs))
+      recentlyPlayedStore.state.playables = JSON.parse(JSON.stringify(songs))
+      recentlyPlayedStore.excerptState.playables = JSON.parse(JSON.stringify(exceptSongs))
 
       await recentlyPlayedStore.add(newSong)
 
-      expect(recentlyPlayedStore.state.songs).toEqual([newSong, ...songs])
-      expect(recentlyPlayedStore.excerptState.songs).toEqual([newSong, ...songs.slice(0, 6)])
+      expect(recentlyPlayedStore.state.playables).toEqual([newSong, ...songs])
+      expect(recentlyPlayedStore.excerptState.playables).toEqual([newSong, ...songs.slice(0, 6)])
     })
 
     it('deduplicates when adding a song to the state', async () => {
@@ -49,13 +49,13 @@ new class extends UnitTestCase {
       const exceptSongs = songs.slice(0, 7)
 
       // We don't want to keep the reference to the original songs
-      recentlyPlayedStore.state.songs = JSON.parse(JSON.stringify(songs))
-      recentlyPlayedStore.excerptState.songs = JSON.parse(JSON.stringify(exceptSongs))
+      recentlyPlayedStore.state.playables = JSON.parse(JSON.stringify(songs))
+      recentlyPlayedStore.excerptState.playables = JSON.parse(JSON.stringify(exceptSongs))
 
       await recentlyPlayedStore.add(newSong)
 
-      expect(recentlyPlayedStore.state.songs).toEqual([newSong, songs[0], ...songs.slice(2)])
-      expect(recentlyPlayedStore.excerptState.songs).toEqual([newSong, songs[0], ...songs.slice(2, 7)])
+      expect(recentlyPlayedStore.state.playables).toEqual([newSong, songs[0], ...songs.slice(2)])
+      expect(recentlyPlayedStore.excerptState.playables).toEqual([newSong, songs[0], ...songs.slice(2, 7)])
     })
   }
 }

@@ -5,7 +5,7 @@
     @mousemove="showControls"
     @contextmenu.prevent="requestContextMenu"
   >
-    <AudioPlayer v-show="song" />
+    <AudioPlayer v-show="playable" />
 
     <div class="fullscreen-backdrop hidden" />
 
@@ -20,18 +20,18 @@
 <script lang="ts" setup>
 import { throttle } from 'lodash'
 import { computed, nextTick, ref, watch } from 'vue'
-import { eventBus, isAudioContextSupported, requireInjection } from '@/utils'
-import { CurrentSongKey } from '@/symbols'
+import { eventBus, isAudioContextSupported, isSong, requireInjection } from '@/utils'
+import { CurrentPlayableKey } from '@/symbols'
 import { artistStore, preferenceStore } from '@/stores'
 import { audioService, playbackService } from '@/services'
+import { useFullscreen } from '@vueuse/core'
 
 import AudioPlayer from '@/components/layout/app-footer/AudioPlayer.vue'
 import SongInfo from '@/components/layout/app-footer/FooterSongInfo.vue'
 import ExtraControls from '@/components/layout/app-footer/FooterExtraControls.vue'
 import PlaybackControls from '@/components/layout/app-footer/FooterPlaybackControls.vue'
-import { useFullscreen } from '@vueuse/core'
 
-const song = requireInjection(CurrentSongKey, ref())
+const playable = requireInjection(CurrentPlayableKey, ref())
 let hideControlsTimeout: number
 
 const root = ref<HTMLElement>()
@@ -39,16 +39,21 @@ const artist = ref<Artist>()
 
 const requestContextMenu = (event: MouseEvent) => {
   if (document.fullscreenElement) return
-  song.value && eventBus.emit('SONG_CONTEXT_MENU_REQUESTED', event, song.value)
+  playable.value && eventBus.emit('PLAYABLE_CONTEXT_MENU_REQUESTED', event, playable.value)
 }
 
-watch(song, async () => {
-  if (!song.value) return
-  artist.value = await artistStore.resolve(song.value.artist_id)
+watch(playable, async () => {
+  if (!playable.value) return
+
+  if (isSong(playable.value)) {
+    artist.value = await artistStore.resolve(playable.value.artist_id)
+  }
 })
 
-const backgroundBackgroundImage = computed(() => {
-  const src = artist.value?.image ?? song.value?.album_cover
+const appBackgroundImage = computed(() => {
+  if (!playable.value || !isSong(playable.value)) return 'none'
+
+  const src = artist.value?.image ?? playable.value.album_cover
   return src ? `url(${src})` : 'none'
 })
 
@@ -86,7 +91,7 @@ const { isFullscreen, toggle: toggleFullscreen } = useFullscreen(root)
 
 watch(isFullscreen, fullscreen => {
   if (fullscreen) {
-    // setupControlHidingTimer()
+    setupControlHidingTimer()
     root.value?.classList.remove('hide-controls')
   } else {
     window.clearTimeout(hideControlsTimeout)
@@ -101,7 +106,7 @@ footer {
   box-shadow: 0 0 30px 20px rgba(0, 0, 0, .2);
 
   .fullscreen-backdrop {
-    background-image: v-bind(backgroundBackgroundImage);
+    background-image: v-bind(appBackgroundImage);
   }
 
   &:fullscreen {

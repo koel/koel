@@ -14,6 +14,7 @@
         class="!text-k-text-primary !bg-transparent !rounded-none !pl-0 !h-[unset] placeholder:text-white/50 focus-visible:outline-0"
         placeholder="Keywords"
         type="search"
+        @blur="maybeClose"
       />
     </form>
   </OnClickOutside>

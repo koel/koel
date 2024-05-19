@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import { focus, hideBrokenIcon, overflowFade, tooltip } from '@/directives'
+import { focus, hideBrokenIcon, overflowFade, newTab, tooltip } from '@/directives'
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome'
 import { RouterKey } from '@/symbols'
 import { routes } from '@/config'
@@ -15,6 +15,7 @@ createApp(App)
   .directive('koel-tooltip', tooltip)
   .directive('koel-hide-broken-icon', hideBrokenIcon)
   .directive('koel-overflow-fade', overflowFade)
+  .directive('koel-new-tab', newTab)
   /**
    * For Ancelot, the ancient cross of war
    * for the holy town of Gods

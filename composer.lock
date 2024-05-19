@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "964433231b2e294b86a53fae4e5297c0",
+    "content-hash": "5ff48b398ac9a12844b16bb4be322ea3",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -228,6 +228,80 @@
                 "source": "https://github.com/aws/aws-sdk-php/tree/3.304.7"
             },
             "time": "2024-04-18T18:12:29+00:00"
+        },
+        {
+            "name": "azjezz/psl",
+            "version": "2.9.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/azjezz/psl.git",
+                "reference": "1ade4f1a99fe07a8e06f8dee596609aa07585422"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/azjezz/psl/zipball/1ade4f1a99fe07a8e06f8dee596609aa07585422",
+                "reference": "1ade4f1a99fe07a8e06f8dee596609aa07585422",
+                "shasum": ""
+            },
+            "require": {
+                "ext-bcmath": "*",
+                "ext-intl": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "ext-sodium": "*",
+                "php": "~8.1.0 || ~8.2.0 || ~8.3.0",
+                "revolt/event-loop": "^1.0.1"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.22.0",
+                "php-coveralls/php-coveralls": "^2.6.0",
+                "php-standard-library/psalm-plugin": "^2.2.1",
+                "phpbench/phpbench": "^1.2.14",
+                "phpunit/phpunit": "^9.6.10",
+                "roave/infection-static-analysis-plugin": "^1.32.0",
+                "squizlabs/php_codesniffer": "^3.7.2",
+                "vimeo/psalm": "^5.13.1"
+            },
+            "suggest": {
+                "php-standard-library/psalm-plugin": "Psalm integration"
+            },
+            "type": "library",
+            "extra": {
+                "thanks": {
+                    "name": "hhvm/hsl",
+                    "url": "https://github.com/hhvm/hsl"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/bootstrap.php"
+                ],
+                "psr-4": {
+                    "Psl\\": "src/Psl"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "azjezz",
+                    "email": "azjezz@protonmail.com"
+                }
+            ],
+            "description": "PHP Standard Library",
+            "support": {
+                "issues": "https://github.com/azjezz/psl/issues",
+                "source": "https://github.com/azjezz/psl/tree/2.9.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/azjezz",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-04-05T05:18:37+00:00"
         },
         {
             "name": "brick/math",
@@ -4577,6 +4651,72 @@
             "time": "2024-04-05T21:00:10+00:00"
         },
         {
+            "name": "phanan/poddle",
+            "version": "v1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phanan/poddle.git",
+                "reference": "9c0e62914b8c8ba0c3994e774f128dc32980f667"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phanan/poddle/zipball/9c0e62914b8c8ba0c3994e774f128dc32980f667",
+                "reference": "9c0e62914b8c8ba0c3994e774f128dc32980f667",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7.8",
+                "illuminate/collections": "^10.48",
+                "illuminate/http": "^10.48",
+                "illuminate/support": "^10.48",
+                "php": ">=8.1",
+                "saloonphp/xml-wrangler": "^1.2"
+            },
+            "require-dev": {
+                "larastan/larastan": "^2.9",
+                "laravel/pint": "^1.15",
+                "laravel/tinker": "^2.9",
+                "orchestra/testbench": "*",
+                "phpunit/phpunit": ">=10.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PhanAn\\Poddle\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Phan An",
+                    "email": "me@phanan.net"
+                }
+            ],
+            "description": "Parse podcast feeds with PHP following PSP-1 Podcast RSS Standard",
+            "keywords": [
+                "feed",
+                "parser",
+                "podcast",
+                "psp-1",
+                "rss",
+                "xml"
+            ],
+            "support": {
+                "issues": "https://github.com/phanan/poddle/issues",
+                "source": "https://github.com/phanan/poddle/tree/v1.0.3"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/phanan",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-05-30T07:36:14+00:00"
+        },
+        {
             "name": "php-http/client-common",
             "version": "2.7.1",
             "source": {
@@ -5901,6 +6041,78 @@
             "time": "2023-11-08T05:53:05+00:00"
         },
         {
+            "name": "revolt/event-loop",
+            "version": "v1.0.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/revoltphp/event-loop.git",
+                "reference": "25de49af7223ba039f64da4ae9a28ec2d10d0254"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/revoltphp/event-loop/zipball/25de49af7223ba039f64da4ae9a28ec2d10d0254",
+                "reference": "25de49af7223ba039f64da4ae9a28ec2d10d0254",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1"
+            },
+            "require-dev": {
+                "ext-json": "*",
+                "jetbrains/phpstorm-stubs": "^2019.3",
+                "phpunit/phpunit": "^9",
+                "psalm/phar": "^5.15"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Revolt\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Aaron Piotrowski",
+                    "email": "aaron@trowski.com"
+                },
+                {
+                    "name": "Cees-Jan Kiewiet",
+                    "email": "ceesjank@gmail.com"
+                },
+                {
+                    "name": "Christian Lück",
+                    "email": "christian@clue.engineering"
+                },
+                {
+                    "name": "Niklas Keller",
+                    "email": "me@kelunik.com"
+                }
+            ],
+            "description": "Rock-solid event loop for concurrent PHP applications.",
+            "keywords": [
+                "async",
+                "asynchronous",
+                "concurrency",
+                "event",
+                "event-loop",
+                "non-blocking",
+                "scheduler"
+            ],
+            "support": {
+                "issues": "https://github.com/revoltphp/event-loop/issues",
+                "source": "https://github.com/revoltphp/event-loop/tree/v1.0.6"
+            },
+            "time": "2023-11-30T05:34:44+00:00"
+        },
+        {
             "name": "saloonphp/laravel-plugin",
             "version": "v3.5.0",
             "source": {
@@ -6048,6 +6260,142 @@
                 }
             ],
             "time": "2024-04-08T11:53:06+00:00"
+        },
+        {
+            "name": "saloonphp/xml-wrangler",
+            "version": "v1.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/saloonphp/xml-wrangler.git",
+                "reference": "87d0c57687ca0abc2c1195cc76c866b18d634561"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/saloonphp/xml-wrangler/zipball/87d0c57687ca0abc2c1195cc76c866b18d634561",
+                "reference": "87d0c57687ca0abc2c1195cc76c866b18d634561",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "php": "^8.1",
+                "spatie/array-to-xml": "^3.2",
+                "veewee/xml": "^2.11.2"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.5",
+                "guzzlehttp/guzzle": "^7.8",
+                "illuminate/collections": "^10.30",
+                "pestphp/pest": "^2.24",
+                "phpstan/phpstan": "^1.9",
+                "psr/http-message": "^2.0",
+                "saloonphp/saloon": "^3.0",
+                "spatie/ray": "^1.33"
+            },
+            "suggest": {
+                "illuminate/collections": "Used for the collect and lazyCollect methods when reading XML."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Saloon\\XmlWrangler\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sam Carré",
+                    "email": "29132017+Sammyjo20@users.noreply.github.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Easily Read & Write XML in PHP",
+            "homepage": "https://github.com/saloonphp/xml-wrangler",
+            "support": {
+                "issues": "https://github.com/saloonphp/xml-wrangler/issues",
+                "source": "https://github.com/saloonphp/xml-wrangler/tree/v1.2.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sammyjo20",
+                    "type": "github"
+                },
+                {
+                    "url": "https://ko-fi.com/sammyjo20",
+                    "type": "ko_fi"
+                }
+            ],
+            "time": "2023-12-05T13:09:03+00:00"
+        },
+        {
+            "name": "spatie/array-to-xml",
+            "version": "3.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/array-to-xml.git",
+                "reference": "f56b220fe2db1ade4c88098d83413ebdfc3bf876"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/array-to-xml/zipball/f56b220fe2db1ade4c88098d83413ebdfc3bf876",
+                "reference": "f56b220fe2db1ade4c88098d83413ebdfc3bf876",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.2",
+                "pestphp/pest": "^1.21",
+                "spatie/pest-plugin-snapshots": "^1.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\ArrayToXml\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://freek.dev",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Convert an array to xml",
+            "homepage": "https://github.com/spatie/array-to-xml",
+            "keywords": [
+                "array",
+                "convert",
+                "xml"
+            ],
+            "support": {
+                "source": "https://github.com/spatie/array-to-xml/tree/3.3.0"
+            },
+            "funding": [
+                {
+                    "url": "https://spatie.be/open-source/support-us",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-05-01T10:20:27+00:00"
         },
         {
             "name": "spatie/dropbox-api",
@@ -8695,6 +9043,83 @@
                 "source": "https://github.com/tijsverkoyen/CssToInlineStyles/tree/v2.2.7"
             },
             "time": "2023-12-08T13:03:43+00:00"
+        },
+        {
+            "name": "veewee/xml",
+            "version": "2.14.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/veewee/xml.git",
+                "reference": "143c5655c3af11b187157af16340ee69a244e633"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/veewee/xml/zipball/143c5655c3af11b187157af16340ee69a244e633",
+                "reference": "143c5655c3af11b187157af16340ee69a244e633",
+                "shasum": ""
+            },
+            "require": {
+                "azjezz/psl": "^2.0.3",
+                "ext-dom": "*",
+                "ext-libxml": "*",
+                "ext-xml": "*",
+                "ext-xmlreader": "*",
+                "ext-xmlwriter": "*",
+                "ext-xsl": "*",
+                "php": "~8.1.0 || ~8.2.0 || ~8.3.0",
+                "webmozart/assert": "^1.10"
+            },
+            "require-dev": {
+                "php-standard-library/psalm-plugin": "^2.2",
+                "symfony/finder": "^6.1",
+                "veewee/composer-run-parallel": "^1.0.0",
+                "vimeo/psalm": "^5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/bootstrap.php"
+                ],
+                "psr-4": {
+                    "VeeWee\\Xml\\": "src/Xml"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Toon Verwerft",
+                    "email": "toonverwerft@gmail.com"
+                }
+            ],
+            "description": "XML without worries",
+            "keywords": [
+                "Xpath",
+                "array-to-xml",
+                "dom",
+                "dom-manipulation",
+                "reader",
+                "writer",
+                "xml",
+                "xml-to-array",
+                "xml_decode",
+                "xml_encode",
+                "xsd",
+                "xslt"
+            ],
+            "support": {
+                "issues": "https://github.com/veewee/xml/issues",
+                "source": "https://github.com/veewee/xml/tree/2.14.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/veewee",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-01-14T12:13:42+00:00"
         },
         {
             "name": "vlucas/phpdotenv",

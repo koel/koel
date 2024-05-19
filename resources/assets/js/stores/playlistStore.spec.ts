@@ -116,7 +116,7 @@ new class extends UnitTestCase {
       const postMock = this.mock(http, 'post').mockResolvedValue(playlist)
       const removeMock = this.mock(cache, 'remove')
 
-      await playlistStore.addSongs(playlist, songs)
+      await playlistStore.addContent(playlist, songs)
 
       expect(postMock).toHaveBeenCalledWith(`playlists/${playlist.id}/songs`, {
         songs: songs.map(song => song.id)
@@ -131,7 +131,7 @@ new class extends UnitTestCase {
       const deleteMock = this.mock(http, 'delete').mockResolvedValue(playlist)
       const removeMock = this.mock(cache, 'remove')
 
-      await playlistStore.removeSongs(playlist, songs)
+      await playlistStore.removeContent(playlist, songs)
 
       expect(deleteMock).toHaveBeenCalledWith(`playlists/${playlist.id}/songs`, {
         songs: songs.map(song => song.id)
@@ -144,10 +144,10 @@ new class extends UnitTestCase {
       const playlist = factory.states('smart')<Playlist>('playlist')
       const postMock = this.mock(http, 'post')
 
-      await playlistStore.addSongs(playlist, factory<Song>('song', 3))
+      await playlistStore.addContent(playlist, factory<Song>('song', 3))
       expect(postMock).not.toHaveBeenCalled()
 
-      await playlistStore.removeSongs(playlist, factory<Song>('song', 3))
+      await playlistStore.removeContent(playlist, factory<Song>('song', 3))
       expect(postMock).not.toHaveBeenCalled()
     })
 

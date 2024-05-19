@@ -5,10 +5,12 @@ namespace App\Services;
 use App\Builders\SongBuilder;
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Podcast\Podcast;
 use App\Models\Song;
 use App\Models\User;
 use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
+use App\Repositories\PodcastRepository;
 use App\Repositories\SongRepository;
 use App\Values\ExcerptSearchResult;
 use Illuminate\Support\Collection;
@@ -21,7 +23,8 @@ class SearchService
     public function __construct(
         private readonly SongRepository $songRepository,
         private readonly AlbumRepository $albumRepository,
-        private readonly ArtistRepository $artistRepository
+        private readonly ArtistRepository $artistRepository,
+        private readonly PodcastRepository $podcastRepository
     ) {
     }
 
@@ -33,13 +36,23 @@ class SearchService
         $scopedUser ??= auth()->user();
 
         return ExcerptSearchResult::make(
-            $this->songRepository->getMany(
+            songs: $this->songRepository->getMany(
                 ids: Song::search($keywords)->get()->take($count)->pluck('id')->all(),
                 inThatOrder: true,
                 scopedUser: $scopedUser
             ),
-            $this->artistRepository->getMany(Artist::search($keywords)->get()->take($count)->pluck('id')->all(), true),
-            $this->albumRepository->getMany(Album::search($keywords)->get()->take($count)->pluck('id')->all(), true),
+            artists: $this->artistRepository->getMany(
+                ids: Artist::search($keywords)->get()->take($count)->pluck('id')->all(),
+                inThatOrder: true
+            ),
+            albums: $this->albumRepository->getMany(
+                ids: Album::search($keywords)->get()->take($count)->pluck('id')->all(),
+                inThatOrder: true
+            ),
+            podcasts: $this->podcastRepository->getMany(
+                ids: Podcast::search($keywords)->get()->take($count)->pluck('id')->all(),
+                inThatOrder: true
+            ),
         );
     }
 

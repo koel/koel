@@ -50,7 +50,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import { faTags } from '@fortawesome/free-solid-svg-icons'
-import { eventBus, pluralize, secondsToHumanReadable } from '@/utils'
+import { arrayify, eventBus, pluralize, secondsToHumanReadable } from '@/utils'
 import { playbackService } from '@/services'
 import { genreStore, songStore } from '@/stores'
 import { useErrorHandler, useRouter, useSongList, useSongListControls } from '@/composables'
@@ -80,7 +80,7 @@ const { SongListControls, config } = useSongListControls('Genre')
 
 const { getRouteParam, go, onRouteChanged } = useRouter()
 
-let sortField: SongListSortField = 'title'
+let sortField: MaybeArray<PlayableListSortField> = 'title'
 let sortOrder: SortOrder = 'asc'
 
 const randomSongCount = 500
@@ -93,7 +93,7 @@ const moreSongsAvailable = computed(() => page.value !== null)
 const showSkeletons = computed(() => loading.value && songs.value.length === 0)
 const duration = computed(() => secondsToHumanReadable(genre.value?.length ?? 0))
 
-const sort = async (field: SongListSortField, order: SortOrder) => {
+const sort = async (field: MaybeArray<PlayableListSortField>, order: SortOrder) => {
   page.value = 1
   songs.value = []
   sortField = field
@@ -108,7 +108,7 @@ const fetch = async () => {
   loading.value = true
 
   try {
-    let fetched
+    let fetched: { songs: Playable[]; nextPage: number | null }
 
     [genre.value, fetched] = await Promise.all([
       genreStore.fetchOne(name.value!),

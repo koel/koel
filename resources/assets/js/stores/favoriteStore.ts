@@ -6,27 +6,27 @@ import { songStore } from '@/stores'
 
 export const favoriteStore = {
   state: reactive({
-    songs: [] as Song[]
+    songs: [] as Playable[]
   }),
 
-  async toggleOne (song: Song) {
+  async toggleOne (playable: Playable) {
     // Don't wait for the HTTP response to update the status, just toggle right away.
     // This may cause a minor problem if the request fails somehow, but do we care?
-    song.liked = !song.liked
-    song.liked ? this.add(song) : this.remove(song)
+    playable.liked = !playable.liked
+    playable.liked ? this.add(playable) : this.remove(playable)
 
-    await http.post<Song>('interaction/like', { song: song.id })
+    await http.post<Song>('interaction/like', { song: playable.id })
   },
 
-  add (songs: Song | Song[]) {
+  add (songs: MaybeArray<Playable>) {
     this.state.songs = unionBy(this.state.songs, arrayify(songs), 'id')
   },
 
-  remove (songs: Song | Song[]) {
+  remove (songs: MaybeArray<Playable>) {
     this.state.songs = differenceBy(this.state.songs, arrayify(songs), 'id')
   },
 
-  async like (songs: Song[]) {
+  async like (songs: Playable[]) {
     // Don't wait for the HTTP response to update the status, just set them to Liked right away.
     // This may cause a minor problem if the request fails somehow, but do we care?
     songs.forEach(song => (song.liked = true))
@@ -35,7 +35,7 @@ export const favoriteStore = {
     await http.post('interaction/batch/like', { songs: songs.map(song => song.id) })
   },
 
-  async unlike (songs: Song[]) {
+  async unlike (songs: Playable[]) {
     songs.forEach(song => (song.liked = false))
     this.remove(songs)
 
@@ -43,7 +43,7 @@ export const favoriteStore = {
   },
 
   async fetch () {
-    this.state.songs = songStore.syncWithVault(await http.get<Song[]>('songs/favorite'))
+    this.state.songs = songStore.syncWithVault(await http.get<Playable[]>('songs/favorite'))
     return this.state.songs
   }
 }

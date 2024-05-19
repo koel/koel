@@ -3,8 +3,11 @@
 namespace App\Models;
 
 use App\Builders\SongBuilder;
+use App\Casts\Podcast\EpisodeMetadataCast;
+use App\Enums\MediaType;
 use App\Enums\SongStorageType;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
+use App\Models\Podcast\Podcast;
 use App\Values\SongStorageMetadata\DropboxMetadata;
 use App\Values\SongStorageMetadata\LocalMetadata;
 use App\Values\SongStorageMetadata\S3CompatibleMetadata;
@@ -20,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
+use PhanAn\Poddle\Values\EpisodeMetadata;
 use Throwable;
 
 /**
@@ -27,8 +31,8 @@ use Throwable;
  * @property string $title
  * @property Album $album
  * @property User $uploader
- * @property Artist $artist
- * @property Artist $album_artist
+ * @property ?Artist $artist
+ * @property ?Artist $album_artist
  * @property float $length
  * @property string $lyrics
  * @property int $track
@@ -53,6 +57,12 @@ use Throwable;
  * @property-read ?string $collaborator_name The name of the user who added the song to the playlist
  * @property-read ?int $collaborator_id The ID of the user who added the song to the playlist
  * @property-read ?string $added_at The date the song was added to the playlist
+ * @property MediaType $type
+ *
+ * // Podcast episode properties
+ * @property ?EpisodeMetadata $episode_metadata
+ * @property ?string $episode_guid
+ * @property ?Podcast $podcast
  */
 class Song extends Model
 {
@@ -73,13 +83,20 @@ class Song extends Model
         'track' => 'int',
         'disc' => 'int',
         'is_public' => 'bool',
+        'type' => MediaType::class,
+        'episode_metadata' => EpisodeMetadataCast::class,
     ];
+
+    protected $with = ['album', 'artist', 'podcast'];
 
     protected $keyType = 'string';
 
     protected static function booted(): void
     {
-        static::creating(static fn (self $song) => $song->id = Str::uuid()->toString());
+        static::creating(static function (self $song): void {
+            $song->type ??= MediaType::SONG;
+            $song->id ??= Str::uuid()->toString();
+        });
     }
 
     public static function query(): SongBuilder
@@ -107,9 +124,14 @@ class Song extends Model
         return $this->belongsTo(Album::class);
     }
 
-    public function album_artist(): BelongsTo // @phpcs:ignore
+    protected function albumArtist(): Attribute
     {
-        return $this->album->artist();
+        return Attribute::get(fn () => $this->album?->artist);
+    }
+
+    public function podcast(): BelongsTo
+    {
+        return $this->belongsTo(Podcast::class);
     }
 
     public function playlists(): BelongsToMany
@@ -132,6 +154,10 @@ class Song extends Model
 
     public function accessibleBy(User $user): bool
     {
+        if ($this->isEpisode()) {
+            return $user->subscribedToPodcast($this->podcast);
+        }
+
         return $this->is_public || $this->ownedBy($user);
     }
 
@@ -208,13 +234,23 @@ class Song extends Model
         $array = [
             'id' => $this->id,
             'title' => $this->title,
+            'type' => $this->type->value,
         ];
 
-        if (!$this->artist->is_unknown && !$this->artist->is_various) {
+        if ($this->episode_metadata?->description) {
+            $array['episode_description'] = $this->episode_metadata->description;
+        }
+
+        if ($this->artist && !$this->artist->is_unknown && !$this->artist->is_various) {
             $array['artist'] = $this->artist->name;
         }
 
         return $array;
+    }
+
+    public function isEpisode(): bool
+    {
+        return $this->type === MediaType::PODCAST_EPISODE;
     }
 
     public function __toString(): string

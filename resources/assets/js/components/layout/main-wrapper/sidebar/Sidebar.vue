@@ -1,12 +1,18 @@
 <template>
-  <OnClickOutside @trigger="closeIfMobile">
     <nav
+      ref="root"
       :class="{ collapsed: !expanded, 'tmp-showing': tmpShowing, showing: mobileShowing }"
       class="flex flex-col fixed md:relative w-full md:w-k-sidebar-width z-10"
       @mouseenter="onMouseEnter"
       @mouseleave="onMouseLeave"
     >
-      <section class="search-wrapper p-6">
+      <section class="home-search-block p-6 flex gap-2">
+        <a
+          class="bg-black/20 flex items-center px-3.5 rounded-md !text-k-text-secondary hover:!text-k-text-primary"
+          href="#/home"
+        >
+          <Icon :icon="faHome" fixed-width />
+        </a>
         <SearchForm />
       </section>
 
@@ -22,19 +28,19 @@
 
       <SidebarToggleButton v-model="expanded" />
     </nav>
-  </OnClickOutside>
 </template>
 
 <script lang="ts" setup>
+import { faHome } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, watch } from 'vue'
-import { OnClickOutside } from '@vueuse/components'
+import { onClickOutside } from '@vueuse/core'
 import { eventBus } from '@/utils'
 import { useAuthorization, useKoelPlus, useLocalStorage, useRouter, useUpload } from '@/composables'
 
 import SidebarPlaylistsSection from './SidebarPlaylistsSection.vue'
 import SearchForm from '@/components/ui/SearchForm.vue'
 import BtnUpgradeToPlus from '@/components/koel-plus/BtnUpgradeToPlus.vue'
-import SidebarYourMusicSection from './SidebarYourMusicSection.vue'
+import SidebarYourMusicSection from './SidebarYourLibrarySection.vue'
 import SidebarManageSection from './SidebarManageSection.vue'
 import SidebarToggleButton from '@/components/layout/main-wrapper/sidebar/SidebarToggleButton.vue'
 
@@ -44,13 +50,13 @@ const { allowsUpload } = useUpload()
 const { isPlus } = useKoelPlus()
 const { get: lsGet, set: lsSet } = useLocalStorage()
 
+const root = ref<HTMLElement>()
 const mobileShowing = ref(false)
 const expanded = ref(!lsGet('sidebar-collapsed', false))
+
 watch(expanded, value => lsSet('sidebar-collapsed', !value))
 
 const showManageSection = computed(() => isAdmin.value || allowsUpload.value)
-
-const closeIfMobile = () => (mobileShowing.value = false)
 
 let tmpShowingHandler: number | undefined
 const tmpShowing = ref(false)
@@ -77,6 +83,8 @@ const onMouseLeave = (e: MouseEvent) => {
   tmpShowing.value = false
 }
 
+// Not using the <OnClickOutside> component because it'd mess up the overflow/scrolling behavior
+onClickOutside(root, () => (mobileShowing.value = false))
 onRouteChanged(_ => (mobileShowing.value = false))
 
 /**
@@ -106,6 +114,10 @@ nav {
 
       > *:not(.btn-toggle) {
         @apply block;
+      }
+
+      > .home-search-block {
+        @apply flex;
       }
     }
   }

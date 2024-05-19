@@ -1,44 +1,40 @@
 <template>
-  <div
+  <button
     :style="{ backgroundImage: `url(${defaultCover})` }"
-    class="song-thumbnail group w-[48px] min-w-[48px] aspect-square bg-cover relative rounded overflow-hidden flex
-    items-center justify-center
-    before:absolute before:w-full before:h-full before:pointer-events-none before:z-[1]
-    before:left-0 before:top-0 before:bg-black before:opacity-0 hover:before:opacity-70"
+    :title="title"
+    class="song-thumbnail w-[48px] aspect-square bg-cover relative rounded overflow-hidden active:scale-95"
+    @click.prevent="playOrPause"
   >
     <img
       v-koel-hide-broken-icon
-      :alt="song.album_name"
-      :src="song.album_cover"
-      class="w-full h-full object-cover absolute left-0 top-0 pointer-events-none"
+      alt="Cover image"
+      :src="src"
+      class="w-full aspect-square object-cover"
       loading="lazy"
     >
-    <a
-      :title="title"
-      class="w-7 h-7 text-base z-[1] text-k-text-primary duration-300 justify-center
-      items-center rounded-full bg-black/50 pl-0.5 flex opacity-0 group-hover:opacity-100"
-      role="button"
-      @click.prevent="changeSongState"
+    <span class="absolute top-0 left-0 w-full h-full group-hover:bg-black/40 z-10" />
+    <span
+      class="absolute flex opacity-0 items-center justify-center w-[24px] aspect-square rounded-full top-1/2
+        left-1/2 -translate-x-1/2 -translate-y-1/2 bg-k-highlight group-hover:opacity-100 duration-500 transition z-20"
     >
-      <Icon :icon="song.playback_state === 'Playing' ? faPause : faPlay" class="text-k-highlight" />
-    </a>
-  </div>
+      <Icon v-if="song.playback_state === 'Playing'" :icon="faPause" class="text-white" />
+      <Icon v-else :icon="faPlay" class="text-white ml-0.5" />
+    </span>
+  </button>
 </template>
 
 <script lang="ts" setup>
 import { computed, toRefs } from 'vue'
 import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
-import { defaultCover } from '@/utils'
+import { defaultCover, getPlayableProp } from '@/utils'
 import { playbackService } from '@/services'
-import { queueStore } from '@/stores'
 
-const props = defineProps<{ song: Song }>()
+const props = defineProps<{ song: Playable }>()
 const { song } = toRefs(props)
 
-const play = () => {
-  queueStore.queueIfNotQueued(song.value)
-  playbackService.play(song.value)
-}
+const src = computed(() => getPlayableProp<string>(song.value, 'album_cover', 'episode_image'))
+
+const play = () => playbackService.play(song.value)
 
 const title = computed(() => {
   if (song.value.playback_state === 'Playing') {
@@ -52,7 +48,7 @@ const title = computed(() => {
   return 'Play'
 })
 
-const changeSongState = () => {
+const playOrPause = () => {
   if (song.value.playback_state === 'Stopped') {
     play()
   } else if (song.value.playback_state === 'Paused') {

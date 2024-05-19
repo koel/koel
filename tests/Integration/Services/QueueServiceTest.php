@@ -33,8 +33,8 @@ class QueueServiceTest extends TestCase
 
         $dto = $this->service->getQueueState($state->user);
 
-        self::assertEqualsCanonicalizing($state->song_ids, $dto->songs->pluck('id')->toArray());
-        self::assertSame($currentSong->id, $dto->currentSong->id);
+        self::assertEqualsCanonicalizing($state->song_ids, $dto->playables->pluck('id')->toArray());
+        self::assertSame($currentSong->id, $dto->currentPlayable->id);
         self::assertSame(123, $dto->playbackPosition);
     }
 
@@ -79,7 +79,7 @@ class QueueServiceTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create();
 
-        $this->service->updatePlaybackStatus($state->user, $song->id, 123);
+        $this->service->updatePlaybackStatus($state->user, $song, 123);
         $state->refresh();
 
         self::assertSame($song->id, $state->current_song_id);

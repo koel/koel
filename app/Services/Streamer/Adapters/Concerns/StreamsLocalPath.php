@@ -16,7 +16,7 @@ use function DaveRandom\Resume\get_request_header;
 
 trait StreamsLocalPath
 {
-    private function streamLocalPath(string $path): string
+    private function streamLocalPath(string $path): never
     {
         try {
             $rangeHeader = get_request_header('Range');

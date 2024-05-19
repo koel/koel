@@ -315,7 +315,7 @@ new class extends UnitTestCase {
 
     it('plays first in queue if toggled when there is no current song', async () => {
       playbackService.init(document.querySelector('.plyr')!)
-      queueStore.state.songs = []
+      queueStore.state.playables = []
       const playFirstInQueueMock = this.mock(playbackService, 'playFirstInQueue')
 
       await playbackService.toggle()
@@ -377,7 +377,7 @@ new class extends UnitTestCase {
       playbackService.init(document.querySelector('.plyr')!)
 
       const songs = factory<Song>('song', 5)
-      queueStore.state.songs = songs
+      queueStore.state.playables = songs
       this.setReadOnlyProperty(queueStore, 'first', songs[0])
       const playMock = this.mock(playbackService, 'play')
 
@@ -404,7 +404,7 @@ new class extends UnitTestCase {
       playback_state: 'Playing'
     }))
 
-    queueStore.state.songs = reactive([song])
+    queueStore.state.playables = reactive([song])
     return song
   }
 }

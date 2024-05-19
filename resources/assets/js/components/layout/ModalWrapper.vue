@@ -25,6 +25,7 @@ const modalNameToComponentMap = {
   'create-playlist-folder-form': defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistFolderForm.vue')),
   'edit-playlist-folder-form': defineAsyncComponent(() => import('@/components/playlist/EditPlaylistFolderForm.vue')),
   'playlist-collaboration': defineAsyncComponent(() => import('@/components/playlist/PlaylistCollaborationModal.vue')),
+  'add-podcast-form': defineAsyncComponent(() => import('@/components/podcast/AddPodcastForm.vue')),
   'about-koel': defineAsyncComponent(() => import('@/components/meta/AboutKoelModal.vue')),
   'koel-plus': defineAsyncComponent(() => import('@/components/koel-plus/KoelPlusModal.vue')),
   'equalizer': defineAsyncComponent(() => import('@/components/ui/equalizer/Equalizer.vue'))
@@ -85,6 +86,9 @@ eventBus.on('MODAL_SHOW_ABOUT_KOEL', () => (activeModalName.value = 'about-koel'
   .on('MODAL_SHOW_PLAYLIST_COLLABORATION', playlist => {
     context.value = { playlist }
     activeModalName.value = 'playlist-collaboration'
+  })
+  .on('MODAL_SHOW_ADD_PODCAST_FORM', () => {
+    activeModalName.value = 'add-podcast-form'
   })
   .on('MODAL_SHOW_EQUALIZER', () => (activeModalName.value = 'equalizer'))
 </script>

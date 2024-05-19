@@ -1,7 +1,7 @@
 <template>
   <article
     :class="layout"
-    class="relative flex max-w-full md:max-w-[256px] border p-5 rounded-lg flex-col gap-5 transition border-color duration-200"
+    class="relative group flex max-w-full md:max-w-[256px] border p-5 rounded-lg flex-col gap-5 transition border-color duration-200"
     data-testid="artist-album-card"
     draggable="true"
     tabindex="0"
@@ -9,7 +9,9 @@
     @dragstart="onDragStart"
     @contextmenu.prevent="onContextMenu"
   >
-    <Thumbnail :entity="entity" />
+    <slot name="thumbnail">
+      <Thumbnail v-if="!isPodcast" :entity="entity as Album|Artist" />
+    </slot>
 
     <footer class="flex flex-1 flex-col gap-1.5 overflow-hidden">
       <div class="name flex flex-col gap-2 whitespace-nowrap">
@@ -24,11 +26,13 @@
 
 <script lang="ts" setup>
 import Thumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
-import { toRefs } from 'vue'
+import { computed, toRefs } from 'vue'
 
-const props = withDefaults(defineProps<{ layout?: ArtistAlbumCardLayout, entity: Artist | Album }>(), {
+const props = withDefaults(defineProps<{ layout?: ArtistAlbumCardLayout, entity: Artist | Album | Podcast }>(), {
   layout: 'full'
 })
+
+const isPodcast = computed(() => props.entity.type === 'podcasts')
 
 const { layout } = toRefs(props)
 
@@ -47,13 +51,19 @@ const onContextMenu = (e: MouseEvent) => emit('contextmenu', e)
 article {
   @apply bg-k-bg-secondary border border-k-border hover:border-white/15;
 
+  &.full {
+    :deep(.play-icon) {
+      @apply scale-[3];
+    }
+  }
+
   .name {
     &:deep(a) {
       @apply overflow-hidden text-ellipsis text-k-text-primary;
-    }
 
-    &:deep(a:hover), &:deep(a:active), &:deep(a:focus) {
-      @apply text-k-accent;
+      &:is(:hover, :active, :focus) {
+        @apply text-k-accent;
+      }
     }
   }
 

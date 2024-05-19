@@ -107,7 +107,7 @@ const { get: lsGet, set: lsSet } = useLocalStorage()
 
 let initialized = false
 const loading = ref(false)
-let sortField: SongListSortField = 'title' // @todo get from query string
+let sortField: PlayableListSortField = 'title' // @todo get from query string
 let sortOrder: SortOrder = 'asc'
 
 const page = ref<number | null>(1)
@@ -124,7 +124,7 @@ watch(ownSongsOnly, async value => {
   await fetchSongs()
 })
 
-const sort = async (field: SongListSortField, order: SortOrder) => {
+const sort = async (field: PlayableListSortField, order: SortOrder) => {
   page.value = 1
   songStore.state.songs = []
   sortField = field

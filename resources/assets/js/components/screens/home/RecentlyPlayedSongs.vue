@@ -13,7 +13,7 @@
     <template v-else>
       <ol v-if="songs.length" class="space-y-3">
         <li v-for="song in songs" :key="song.id">
-          <SongCard :song="song" />
+          <SongCard :playable="song" />
         </li>
       </ol>
       <p v-else class="text-k-text-secondary">No songs played as of late.</p>

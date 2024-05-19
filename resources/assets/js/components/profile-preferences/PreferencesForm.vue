@@ -9,7 +9,7 @@
     <FormRow>
       <div>
         <CheckBox v-model="preferences.continuous_playback" name="continuous_playback" />
-        Playing a song triggers continuous playback of the entire playlist, album, artist, or genre
+        Playing a song or episode triggers continuous playback of the entire playlist, album, artist, genre, or podcast
       </div>
     </FormRow>
     <FormRow v-if="isPhone">

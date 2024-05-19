@@ -1,10 +1,10 @@
 <template>
   <ExcerptResultBlock>
     <template #header>
-      Songs
+      {{ headingText }}
 
       <Btn
-        v-if="songs.length && !searching"
+        v-if="playables.length && !searching"
         data-testid="view-all-songs-btn"
         highlight
         rounded
@@ -21,9 +21,9 @@
       </li>
     </ul>
     <template v-else>
-      <ul v-if="songs.length" class="results">
-        <li v-for="song in songs" :key="song.id">
-          <SongCard :song="song" />
+      <ul v-if="playables.length" class="results">
+        <li v-for="playable in playables" :key="playable.id">
+          <SongCard :playable="playable" />
         </li>
       </ul>
       <p v-else>None found.</p>
@@ -32,21 +32,33 @@
 </template>
 
 <script lang="ts" setup>
-import { toRefs } from 'vue'
+import { computed, toRefs } from 'vue'
 import { useRouter } from '@/composables'
+import { getPlayableCollectionContentType } from '@/utils'
 
 import SongCardSkeleton from '@/components/ui/skeletons/SongCardSkeleton.vue'
 import ExcerptResultBlock from '@/components/screens/search/ExcerptResultBlock.vue'
 import SongCard from '@/components/song/SongCard.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 
-const props = withDefaults(defineProps<{ songs?: Song[], query?: string, searching?: boolean }>(), {
-  songs: () => [],
+const props = withDefaults(defineProps<{ playables?: Playable[], query?: string, searching?: boolean }>(), {
+  playables: () => [],
   query: '',
   searching: false,
 })
 
-const { songs, query, searching } = toRefs(props)
+const headingText = computed(() => {
+  switch (getPlayableCollectionContentType(props.playables)) {
+    case 'episodes':
+      return 'Episodes'
+    case 'songs':
+      return 'Songs'
+    default:
+      return 'Songs & Episodes'
+  }
+})
+
+const { playables, query, searching } = toRefs(props)
 const { go } = useRouter()
 
 const goToSongResults = () => go(`search/songs/?q=${query.value}`)

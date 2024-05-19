@@ -1,8 +1,8 @@
-import { arrayify, logger, pluralize } from '@/utils'
+import { arrayify, getPlayableProp, logger, pluralize } from '@/utils'
 import { albumStore, artistStore, playlistFolderStore, playlistStore, songStore } from '@/stores'
 
-type Draggable = Song | Song[] | Album | Artist | Playlist | PlaylistFolder
-const draggableTypes = <const>['songs', 'album', 'artist', 'playlist', 'playlist-folder']
+type Draggable = MaybeArray<Playable> | Album | Artist | Playlist | PlaylistFolder
+const draggableTypes = <const>['playables', 'album', 'artist', 'playlist', 'playlist-folder']
 type DraggableType = typeof draggableTypes[number]
 
 const createGhostDragImage = (event: DragEvent, text: string): void => {
@@ -39,9 +39,11 @@ export const useDraggable = (type: DraggableType) => {
     let data: any
 
     switch (type) {
-      case 'songs':
-        dragged = arrayify(<Song>dragged)
-        text = dragged.length === 1 ? `${dragged[0].title} by ${dragged[0].artist_name}` : pluralize(dragged, 'song')
+      case 'playables':
+        dragged = arrayify(<Playable>dragged)
+        text = dragged.length === 1
+          ? `${dragged[0].title} by ${ getPlayableProp(dragged[0], 'artist_name', 'podcast_author')}`
+          : pluralize(dragged, 'item')
 
         data = dragged.map(song => song.id)
         break
@@ -120,11 +122,11 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
   const resolveDroppedSongs = async (event: DragEvent) => {
     try {
       const type = getDragType(event)
-      if (!type) return <Song[]>[]
+      if (!type) return <Playable[]>[]
 
       const data = getDroppedData(event)
       switch (type) {
-        case 'songs':
+        case 'playables':
           return songStore.byIds(<string[]>data)
         case 'album':
           const album = await albumStore.resolve(<number>data)
@@ -139,7 +141,7 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
           const folder = playlistFolderStore.byId(<string>data)
           return folder ? await songStore.fetchForPlaylistFolder(folder) : <Song[]>[]
         default:
-          throw new Error(`Unknown drag type: ${type}`)
+          throw `Unknown drag type: ${type}`
       }
     } catch (error: unknown) {
       logger.error(error, event)
@@ -151,6 +153,6 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
     acceptsDrop,
     getDroppedData,
     resolveDroppedValue,
-    resolveDroppedSongs
+    resolveDroppedItems: resolveDroppedSongs
   }
 }

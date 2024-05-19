@@ -1,19 +1,19 @@
 import { differenceBy, orderBy, sampleSize, take, throttle } from 'lodash'
 import isMobile from 'ismobilejs'
-import { computed, provide, reactive, Ref, ref } from 'vue'
+import { computed, provide, reactive, Ref, ref, watch } from 'vue'
 import { playbackService } from '@/services'
 import { queueStore, songStore } from '@/stores'
-import { eventBus, provideReadonly } from '@/utils'
+import { arrayify, eventBus, getPlayableProp, provideReadonly } from '@/utils'
 import { useRouter } from '@/composables'
 
 import {
-  SelectedSongsKey,
-  SongListConfigKey,
-  SongListContextKey,
+  SelectedPlayablesKey,
+  PlayableListConfigKey,
+  PlayableListContextKey,
   SongListFilterKeywordsKey,
-  SongListSortFieldKey,
+  PlayableListSortFieldKey,
   SongListSortOrderKey,
-  SongsKey
+  PlayablesKey
 } from '@/symbols'
 
 import ControlsToggle from '@/components/ui/ScreenControlsToggle.vue'
@@ -21,9 +21,14 @@ import SongList from '@/components/song/SongList.vue'
 import ThumbnailStack from '@/components/ui/ThumbnailStack.vue'
 
 export const useSongList = (
-  songs: Ref<Song[]>,
-  context: SongListContext = {},
-  config: Partial<SongListConfig> = { sortable: true, reorderable: false, collaborative: false, hasCustomSort: false }
+  playables: Ref<Playable[]>,
+  context: PlayableListContext = {},
+  config: Partial<PlayableListConfig> = {
+    sortable: true,
+    reorderable: false,
+    collaborative: false,
+    hasCustomSort: false
+  }
 ) => {
   const filterKeywords = ref('')
   config = reactive(config)
@@ -33,7 +38,7 @@ export const useSongList = (
   const songList = ref<InstanceType<typeof SongList>>()
 
   const isPhone = isMobile.phone
-  const selectedSongs = ref<Song[]>([])
+  const selectedPlayables = ref<Playable[]>([])
   const showingControls = ref(false)
   const headerLayout = ref<ScreenHeaderLayout>('expanded')
 
@@ -41,46 +46,48 @@ export const useSongList = (
     headerLayout.value = direction === 'down' ? 'collapsed' : 'expanded'
   }
 
-  const duration = computed(() => songStore.getFormattedLength(songs.value))
+  const duration = computed(() => songStore.getFormattedLength(playables.value))
 
   const thumbnails = computed(() => {
-    const songsWithCover = songs.value.filter(({ album_cover }) => album_cover)
-    const sampleCovers = sampleSize(songsWithCover, 20).map(({ album_cover }) => album_cover)
+    const playablesWithCover = playables.value.filter(p => getPlayableProp<string>(p, 'album_cover', 'episode_image'))
+
+    const sampleCovers = sampleSize(playablesWithCover, 20)
+      .map(p => getPlayableProp<string>(p, 'album_cover', 'episode_image'))
+
     return take(Array.from(new Set(sampleCovers)), 4)
   })
 
-  const getSongsToPlay = (): Song[] => songList.value!.getAllSongsWithSort()
+  const getPlayablesToPlay = () => songList.value!.getAllPlayablesWithSort()
 
   const playAll = (shuffle: boolean) => {
-    playbackService.queueAndPlay(getSongsToPlay(), shuffle)
+    playbackService.queueAndPlay(getPlayablesToPlay(), shuffle)
     go('queue')
   }
 
-  const playSelected = (shuffle: boolean) => playbackService.queueAndPlay(selectedSongs.value, shuffle)
+  const playSelected = (shuffle: boolean) => playbackService.queueAndPlay(selectedPlayables.value, shuffle)
 
   const applyFilter = throttle((keywords: string) => (filterKeywords.value = keywords), 200)
 
   const onPressEnter = async (event: KeyboardEvent) => {
-    if (selectedSongs.value.length === 1) {
-      queueStore.queueIfNotQueued(selectedSongs.value[0])
-      await playbackService.play(selectedSongs.value[0])
+    if (selectedPlayables.value.length === 1) {
+      await playbackService.play(selectedPlayables.value[0])
       return
     }
 
-    //  • Only Enter: Queue songs to bottom
-    //  • Shift+Enter: Queues song to top
-    //  • Cmd/Ctrl+Enter: Queues song to bottom and play the first selected song
-    //  • Cmd/Ctrl+Shift+Enter: Queue songs to top and play the first queued song
-    event.shiftKey ? queueStore.queueToTop(selectedSongs.value) : queueStore.queue(selectedSongs.value)
+    //  • Only Enter: Queue to bottom
+    //  • Shift+Enter: Queues to top
+    //  • Cmd/Ctrl+Enter: Queues to bottom and play the first selected item
+    //  • Cmd/Ctrl+Shift+Enter: Queue to top and play the first queued item
+    event.shiftKey ? queueStore.queueToTop(selectedPlayables.value) : queueStore.queue(selectedPlayables.value)
 
     if (event.ctrlKey || event.metaKey) {
-      await playbackService.play(selectedSongs.value[0])
+      await playbackService.play(selectedPlayables.value[0])
     }
 
     go('queue')
   }
 
-  const sortField = ref<SongListSortField | null>(((): SongListSortField | null => {
+  const sortField = ref<MaybeArray<PlayableListSortField> | null>((() => {
     if (!config.sortable) return null
     if (isCurrentScreen('Artist', 'Album')) return 'track'
     if (isCurrentScreen('Search.Songs', 'Queue', 'RecentlyPlayed')) return null
@@ -89,33 +96,33 @@ export const useSongList = (
 
   const sortOrder = ref<SortOrder>('asc')
 
-  const sort = (by: SongListSortField | null = sortField.value, order: SortOrder = sortOrder.value) => {
+  const sort = (by: MaybeArray<PlayableListSortField> | null = sortField.value, order: SortOrder = sortOrder.value) => {
     if (!config.sortable) return
     if (!by) return
 
     sortField.value = by
     sortOrder.value = order
 
-    let sortFields: SongListSortField[] = [by]
+    let sortFields: PlayableListSortField[] = arrayify(by)
 
     if (by === 'track') {
       sortFields = ['disc', 'track', 'title']
-    } else if (by === 'album_name') {
+    } else if (sortFields.includes('album_name') && !sortFields.includes('disc')) {
       sortFields.push('artist_name', 'disc', 'track', 'title')
-    } else if (by === 'artist_name') {
+    } else if (sortFields.includes('artist_name') && !sortFields.includes('disc')) {
       sortFields.push('album_name', 'disc', 'track', 'title')
     }
 
-    songs.value = orderBy(songs.value, sortFields, order)
+    playables.value = orderBy(playables.value, sortFields, order)
   }
 
-  eventBus.on('SONGS_DELETED', deletedSongs => (songs.value = differenceBy(songs.value, deletedSongs, 'id')))
+  eventBus.on('SONGS_DELETED', deletedSongs => (playables.value = differenceBy(playables.value, deletedSongs, 'id')))
 
-  provideReadonly(SongsKey, songs, false)
-  provideReadonly(SelectedSongsKey, selectedSongs, false)
-  provideReadonly(SongListConfigKey, config)
-  provideReadonly(SongListContextKey, context)
-  provideReadonly(SongListSortFieldKey, sortField)
+  provideReadonly(PlayablesKey, playables, false)
+  provideReadonly(SelectedPlayablesKey, selectedPlayables, false)
+  provideReadonly(PlayableListConfigKey, config)
+  provideReadonly(PlayableListContextKey, context)
+  provideReadonly(PlayableListSortFieldKey, sortField)
   provideReadonly(SongListSortOrderKey, sortOrder)
 
   provide(SongListFilterKeywordsKey, filterKeywords)
@@ -124,7 +131,7 @@ export const useSongList = (
     SongList,
     ControlsToggle,
     ThumbnailStack,
-    songs,
+    songs: playables,
     config,
     context,
     headerLayout,
@@ -133,7 +140,7 @@ export const useSongList = (
     duration,
     thumbnails,
     songList,
-    selectedSongs,
+    selectedPlayables,
     showingControls,
     isPhone,
     onPressEnter,

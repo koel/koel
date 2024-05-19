@@ -24,7 +24,7 @@ import { ref, watch } from 'vue'
 import type { YouTubePlayer } from 'youtube-player/dist/types'
 import { eventBus, requireInjection, use } from '@/utils'
 import { playbackService } from '@/services'
-import { CurrentSongKey } from '@/symbols'
+import { CurrentPlayableKey } from '@/symbols'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -48,7 +48,7 @@ const getPlayer = () => {
   return player
 }
 
-const currentSong = requireInjection(CurrentSongKey)
+const currentSong = requireInjection(CurrentPlayableKey)
 
 /**
  * Pause video playback when a song is played/resumed.

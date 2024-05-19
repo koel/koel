@@ -5,30 +5,36 @@
         <span v-if="firstSongPlaying">Pause</span>
         <span v-else>Play</span>
       </li>
-      <li @click="viewAlbumDetails(songs[0].album_id)">Go to Album</li>
-      <li @click="viewArtistDetails(songs[0].artist_id)">Go to Artist</li>
+      <template v-if="isSong(playables[0])">
+        <li @click="viewAlbum(playables[0])">Go to Album</li>
+        <li @click="viewArtist(playables[0])">Go to Artist</li>
+      </template>
+      <template v-else>
+        <li @click="viewPodcast(playables[0] as Episode)">Go to Podcast</li>
+        <li @click="viewEpisode(playables[0] as Episode)">See Episode Description</li>
+      </template>
     </template>
     <li class="has-sub">
       Add To
       <ul class="submenu menu-add-to context-menu">
         <template v-if="queue.length">
-          <li v-if="currentSong" @click="queueSongsAfterCurrent">After Current Song</li>
-          <li @click="queueSongsToBottom">Bottom of Queue</li>
-          <li @click="queueSongsToTop">Top of Queue</li>
+          <li v-if="currentSong" @click="queueAfterCurrent">After Current</li>
+          <li @click="queueToBottom">Bottom of Queue</li>
+          <li @click="queueToTop">Top of Queue</li>
         </template>
-        <li v-else @click="queueSongsToBottom">Queue</li>
+        <li v-else @click="queueToBottom">Queue</li>
         <template v-if="!isFavoritesScreen">
           <li class="separator" />
-          <li @click="addSongsToFavorites">Favorites</li>
+          <li @click="addToFavorites">Favorites</li>
         </template>
         <li v-if="normalPlaylists.length" class="separator" />
         <template class="d-block">
           <ul v-if="normalPlaylists.length" v-koel-overflow-fade class="relative max-h-48 overflow-y-auto">
-            <li v-for="p in normalPlaylists" :key="p.id" @click="addSongsToExistingPlaylist(p)">{{ p.name }}</li>
+            <li v-for="p in normalPlaylists" :key="p.id" @click="addToExistingPlaylist(p)">{{ p.name }}</li>
           </ul>
         </template>
         <li class="separator" />
-        <li @click="addSongsToNewPlaylist">New Playlist…</li>
+        <li @click="addToNewPlaylist">New Playlist…</li>
       </ul>
     </li>
 
@@ -54,7 +60,7 @@
 
     <template v-if="canBeRemovedFromPlaylist">
       <li class="separator" />
-      <li @click="removeFromPlaylist">Remove from Playlist</li>
+      <li @click="removePlayablesFromPlaylist">Remove from Playlist</li>
     </template>
 
     <template v-if="canEditSongs">
@@ -66,7 +72,7 @@
 
 <script lang="ts" setup>
 import { computed, ref, toRef } from 'vue'
-import { arrayify, copyText, eventBus, pluralize } from '@/utils'
+import { arrayify, getPlayableCollectionContentType, copyText, eventBus, isSong, pluralize } from '@/utils'
 import { commonStore, favoriteStore, playlistStore, queueStore, songStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 import {
@@ -74,71 +80,83 @@ import {
   useDialogBox,
   useKoelPlus,
   useMessageToaster,
+  usePlayableMenuMethods,
   usePlaylistManagement,
   usePolicies,
-  useRouter,
-  useSongMenuMethods
+  useRouter
 } from '@/composables'
 
 const { toastSuccess, toastError, toastWarning } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { go, getRouteParam, isCurrentScreen } = useRouter()
 const { base, ContextMenu, open, close, trigger } = useContextMenu()
-const { removeSongsFromPlaylist } = usePlaylistManagement()
+const { removeFromPlaylist } = usePlaylistManagement()
 const { isPlus } = useKoelPlus()
 
-const songs = ref<Song[]>([])
+const playables = ref<Playable[]>([])
 
 const {
-  queueSongsAfterCurrent,
-  queueSongsToBottom,
-  queueSongsToTop,
-  addSongsToFavorites,
-  addSongsToExistingPlaylist,
-  addSongsToNewPlaylist
-} = useSongMenuMethods(songs, close)
+  queueAfterCurrent,
+  queueToBottom,
+  queueToTop,
+  addToFavorites,
+  addToExistingPlaylist,
+  addToNewPlaylist
+} = usePlayableMenuMethods(playables, close)
 
 const playlists = toRef(playlistStore.state, 'playlists')
 const allowsDownload = toRef(commonStore.state, 'allows_download')
-const queue = toRef(queueStore.state, 'songs')
+const queue = toRef(queueStore.state, 'playables')
 const currentSong = toRef(queueStore, 'current')
 
 const { currentUserCan } = usePolicies()
 
-const canEditSongs = computed(() => currentUserCan.editSong(songs.value))
-const onlyOneSongSelected = computed(() => songs.value.length === 1)
-const firstSongPlaying = computed(() => songs.value.length ? songs.value[0].playback_state === 'Playing' : false)
+const canEditSongs = computed(() => contentType.value === 'songs' && currentUserCan.editSong(playables.value as Song[]))
+const onlyOneSongSelected = computed(() => playables.value.length === 1)
+const firstSongPlaying = computed(() => playables.value.length ? playables.value[0].playback_state === 'Playing' : false)
 const normalPlaylists = computed(() => playlists.value.filter(({ is_smart }) => !is_smart))
 
 const makePublic = () => trigger(async () => {
-  await songStore.publicize(songs.value)
-  toastSuccess(`Unmarked ${pluralize(songs.value, 'song')} as private.`)
+  if (contentType.value !== 'songs') {
+    throw 'Only songs can be marked as public or private'
+  }
+
+  await songStore.publicize(playables.value as Song[])
+  toastSuccess(`Unmarked ${pluralize(playables.value, 'song')} as private.`)
 })
 
 const makePrivate = () => trigger(async () => {
-  const privatizedIds = await songStore.privatize(songs.value)
+  if (contentType.value !== 'songs') {
+    throw 'Only songs can be marked as public or private'
+  }
+
+  const privatizedIds = await songStore.privatize(playables.value as Song[])
 
   if (!privatizedIds.length) {
     toastError('Songs cannot be marked as private if they’part of a collaborative playlist.')
     return
   }
 
-  if (privatizedIds.length < songs.value.length) {
+  if (privatizedIds.length < playables.value.length) {
     toastWarning('Some songs cannot be marked as private as they’re part of a collaborative playlist.')
     return
   }
 
-  toastSuccess(`Marked ${pluralize(songs.value, 'song')} as private.`)
+  toastSuccess(`Marked ${pluralize(playables.value, 'song')} as private.`)
 })
 
-const canBeShared = computed(() => !isPlus.value || songs.value[0].is_public)
+const canBeShared = computed(() => !isPlus.value || (isSong(playables.value[0]) && playables.value[0].is_public))
+const contentType = computed(() => getPlayableCollectionContentType(playables.value))
 
 const visibilityActions = computed(() => {
-  if (!canEditSongs.value) return []
+  if (contentType.value !== 'songs' || !canEditSongs.value) return []
 
-  const visibilities = Array.from(new Set(songs.value.map(song => song.is_public ? 'public' : 'private')))
+  const visibilities = new Set(playables.value.map((song => (song as Song).is_public
+      ? 'public'
+      : 'private'
+  )))
 
-  if (visibilities.length === 2) {
+  if (visibilities.size === 2) {
     return [
       {
         label: 'Unmark as Private',
@@ -166,9 +184,9 @@ const isQueueScreen = computed(() => isCurrentScreen('Queue'))
 const isFavoritesScreen = computed(() => isCurrentScreen('Favorites'))
 
 const doPlayback = () => trigger(() => {
-  if (!songs.value.length) return
+  if (!playables.value.length) return
 
-  switch (songs.value[0].playback_state) {
+  switch (playables.value[0].playback_state) {
     case 'Playing':
       playbackService.pause()
       break
@@ -178,42 +196,43 @@ const doPlayback = () => trigger(() => {
       break
 
     default:
-      queueStore.queueIfNotQueued(songs.value[0])
-      playbackService.play(songs.value[0])
+      playbackService.play(playables.value[0])
       break
   }
 })
 
-const openEditForm = () => trigger(() => songs.value.length && eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', songs.value))
-const viewAlbumDetails = (albumId: number) => trigger(() => go(`album/${albumId}`))
-const viewArtistDetails = (artistId: number) => trigger(() => go(`artist/${artistId}`))
-const download = () => trigger(() => downloadService.fromSongs(songs.value))
+const openEditForm = () => trigger(() => playables.value.length && eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', playables.value))
+const viewAlbum = (song: Song) => trigger(() => go(`album/${song.album_id}`))
+const viewArtist = (song: Song) => trigger(() => go(`artist/${song.artist_id}`))
+const viewPodcast = (episode: Episode) => trigger(() => go(`podcasts/${episode.podcast_id}`))
+const viewEpisode = (episode: Episode) => trigger(() => go(`episodes/${episode.id}`))
+const download = () => trigger(() => downloadService.fromPlayables(playables.value))
 
-const removeFromPlaylist = () => trigger(async () => {
+const removePlayablesFromPlaylist = () => trigger(async () => {
   const playlist = playlistStore.byId(getRouteParam('id')!)
   if (!playlist) return
 
-  await removeSongsFromPlaylist(playlist, songs.value)
+  await removeFromPlaylist(playlist, playables.value)
 })
 
-const removeFromQueue = () => trigger(() => queueStore.unqueue(songs.value))
-const removeFromFavorites = () => trigger(() => favoriteStore.unlike(songs.value))
+const removeFromQueue = () => trigger(() => queueStore.unqueue(playables.value))
+const removeFromFavorites = () => trigger(() => favoriteStore.unlike(playables.value))
 
 const copyUrl = () => trigger(async () => {
-  await copyText(songStore.getShareableUrl(songs.value[0]))
+  await copyText(songStore.getShareableUrl(playables.value[0] as Song))
   toastSuccess('URL copied to clipboard.')
 })
 
 const deleteFromFilesystem = () => trigger(async () => {
   if (await showConfirmDialog('Delete selected song(s) from the filesystem? This action is NOT reversible!')) {
-    await songStore.deleteFromFilesystem(songs.value)
-    toastSuccess(`Deleted ${pluralize(songs.value, 'song')} from the filesystem.`)
-    eventBus.emit('SONGS_DELETED', songs.value)
+    await songStore.deleteFromFilesystem(playables.value as Song[])
+    toastSuccess(`Deleted ${pluralize(playables.value, 'song')} from the filesystem.`)
+    eventBus.emit('SONGS_DELETED', playables.value as Song[])
   }
 })
 
-eventBus.on('SONG_CONTEXT_MENU_REQUESTED', async ({ pageX, pageY }, _songs) => {
-  songs.value = arrayify(_songs)
+eventBus.on('PLAYABLE_CONTEXT_MENU_REQUESTED', async ({ pageX, pageY }, _songs) => {
+  playables.value = arrayify(_songs)
   await open(pageY, pageX)
 })
 </script>

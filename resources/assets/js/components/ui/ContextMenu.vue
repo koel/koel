@@ -5,7 +5,7 @@
       ref="el"
       v-koel-focus
       :class="extraClass"
-      class="menu context-menu select-none"
+      class="menu context-menu select-none shadow"
       tabindex="0"
       @contextmenu.prevent
       @keydown.esc="close"

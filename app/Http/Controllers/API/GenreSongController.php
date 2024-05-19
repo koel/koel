@@ -24,7 +24,7 @@ class GenreSongController extends Controller
         return SongResource::collection(
             $repository->getByGenre(
                 $genre === Genre::NO_GENRE ? '' : $genre,
-                $request->sort ?: 'songs.title',
+                $request->sort ? explode(',', $request->sort) : ['songs.title'],
                 $request->order ?: 'asc',
                 $user
             )

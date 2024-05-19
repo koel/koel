@@ -10,11 +10,11 @@ new class extends UnitTestCase {
     super.beforeEach(() => {
       searchStore.state = reactive({
         excerpt: {
-          songs: [],
+          playables: [],
           albums: [],
           artists: []
         },
-        songs: []
+        playables: []
       })
     })
   }
@@ -22,7 +22,7 @@ new class extends UnitTestCase {
   protected test () {
     it('performs an excerpt search', async () => {
       const result: ExcerptSearchResult = {
-        songs: factory<Song>('song', 3),
+        playables: factory<Song>('song', 3),
         albums: factory<Album>('album', 3),
         artists: factory<Artist>('artist', 3)
       }

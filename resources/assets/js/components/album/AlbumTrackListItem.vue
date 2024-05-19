@@ -18,7 +18,7 @@ import { queueStore, songStore } from '@/stores'
 import { authService, playbackService } from '@/services'
 import { useThirdPartyServices } from '@/composables'
 import { requireInjection, secondsToHis } from '@/utils'
-import { SongsKey } from '@/symbols'
+import { PlayablesKey } from '@/symbols'
 
 const AppleMusicButton = defineAsyncComponent(() => import('@/components/ui/AppleMusicButton.vue'))
 
@@ -27,7 +27,7 @@ const { album, track } = toRefs(props)
 
 const { useAppleMusic } = useThirdPartyServices()
 
-const songsToMatchAgainst = requireInjection<Ref<Song[]>>(SongsKey)
+const songsToMatchAgainst = requireInjection<Ref<Song[]>>(PlayablesKey)
 
 const matchedSong = computed(() => songStore.match(track.value.title, songsToMatchAgainst.value))
 const tooltip = computed(() => matchedSong.value ? 'Click to play' : '')
@@ -39,12 +39,7 @@ const iTunesUrl = computed(() => {
   return `${window.BASE_URL}itunes/song/${album.value.id}?q=${encodeURIComponent(track.value.title)}&api_token=${authService.getApiToken()}`
 })
 
-const play = () => {
-  if (matchedSong.value) {
-    queueStore.queueIfNotQueued(matchedSong.value)
-    playbackService.play(matchedSong.value)
-  }
-}
+const play = () => matchedSong.value && playbackService.play(matchedSong.value)
 </script>
 
 <style lang="postcss" scoped>

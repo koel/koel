@@ -79,7 +79,7 @@ final class SongScanInformation implements Arrayable
     {
         $keys = Arr::wrap($keys);
 
-        for ($i = 0; $i < count($keys); ++$i) {
+        for ($i = 0, $j = count($keys); $i < $j; ++$i) {
             $value = Arr::get($arr, $keys[$i] . '.0');
 
             if ($value) {
