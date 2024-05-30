@@ -2096,16 +2096,16 @@
         },
         {
             "name": "james-heinrich/getid3",
-            "version": "v1.9.23",
+            "version": "1.9.23",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JamesHeinrich/getID3.git",
-                "reference": "06c7482532ff2b3f9111b011d880ca6699c8542b"
+                "reference": "d0e347f9d501d184436b1c3dc35d0e7dbfada614"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JamesHeinrich/getID3/zipball/06c7482532ff2b3f9111b011d880ca6699c8542b",
-                "reference": "06c7482532ff2b3f9111b011d880ca6699c8542b",
+                "url": "https://api.github.com/repos/JamesHeinrich/getID3/zipball/d0e347f9d501d184436b1c3dc35d0e7dbfada614",
+                "reference": "d0e347f9d501d184436b1c3dc35d0e7dbfada614",
                 "shasum": ""
             },
             "require": {
