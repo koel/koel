@@ -36,7 +36,6 @@ return new class extends Migration
             $table->string('podcast_id', 36)->nullable();
             $table->string('episode_guid')->nullable()->unique();
             $table->json('episode_metadata')->nullable();
-            $table->string('type')->default('song')->index();
 
             $table->foreign('podcast_id')->references('id')->on('podcasts')->cascadeOnDelete();
         });

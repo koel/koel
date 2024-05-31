@@ -2,7 +2,6 @@
 
 namespace App\Builders;
 
-use App\Enums\PlayableType;
 use App\Facades\License;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -128,8 +127,8 @@ class SongBuilder extends Builder
             ->where('storage', '!=', '');
     }
 
-    public function typeOf(PlayableType $type): self
+    public function onlySongs(): self
     {
-        return $this->where('songs.type', $type->value);
+        return $this->whereNull('songs.podcast_id');
     }
 }

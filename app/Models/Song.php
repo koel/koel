@@ -56,11 +56,12 @@ use Throwable;
  * @property-read ?string $collaborator_name The name of the user who added the song to the playlist
  * @property-read ?int $collaborator_id The ID of the user who added the song to the playlist
  * @property-read ?string $added_at The date the song was added to the playlist
- * @property PlayableType $type
+ * @property-read PlayableType $type
  *
  * // Podcast episode properties
  * @property ?EpisodeMetadata $episode_metadata
  * @property ?string $episode_guid
+ * @property ?string $podcast_id
  * @property ?Podcast $podcast
  */
 class Song extends Model
@@ -82,7 +83,6 @@ class Song extends Model
         'track' => 'int',
         'disc' => 'int',
         'is_public' => 'bool',
-        'type' => PlayableType::class,
         'episode_metadata' => EpisodeMetadataCast::class,
     ];
 
@@ -93,7 +93,6 @@ class Song extends Model
     protected static function booted(): void
     {
         static::creating(static function (self $song): void {
-            $song->type ??= PlayableType::SONG;
             $song->id ??= Str::uuid()->toString();
         });
     }
@@ -141,6 +140,11 @@ class Song extends Model
     public function interactions(): HasMany
     {
         return $this->hasMany(Interaction::class);
+    }
+
+    protected function type(): Attribute
+    {
+        return Attribute::get(fn () => $this->podcast_id ? PlayableType::PODCAST_EPISODE : PlayableType::SONG);
     }
 
     protected function title(): Attribute

@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\API;
 
-use App\Enums\PlayableType;
 use App\Models\Song;
 use Illuminate\Validation\Rule;
 
@@ -12,12 +11,12 @@ use Illuminate\Validation\Rule;
  */
 class SongUpdateRequest extends Request
 {
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function rules(): array
     {
         return [
             'data' => 'required|array',
-            'songs' => ['required', 'array', Rule::exists(Song::class, 'id')->where('type', PlayableType::SONG)],
+            'songs' => ['required', 'array', Rule::exists(Song::class, 'id')->whereNull('podcast_id')],
         ];
     }
 }

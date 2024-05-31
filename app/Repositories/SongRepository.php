@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Builders\SongBuilder;
-use App\Enums\PlayableType;
 use App\Facades\License;
 use App\Models\Album;
 use App\Models\Artist;
@@ -37,7 +36,7 @@ class SongRepository extends Repository
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
-            ->typeOf(PlayableType::SONG)
+            ->onlySongs()
             ->accessibleBy($scopedUser)
             ->withMetaFor($scopedUser)
             ->latest()
@@ -51,7 +50,7 @@ class SongRepository extends Repository
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
-            ->typeOf(PlayableType::SONG)
+            ->onlySongs()
             ->accessibleBy($scopedUser)
             ->withMetaFor($scopedUser, requiresInteractions: true)
             ->where('interactions.play_count', '>', 0)
@@ -83,7 +82,7 @@ class SongRepository extends Repository
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
-            ->typeOf(PlayableType::SONG)
+            ->onlySongs()
             ->accessibleBy($scopedUser)
             ->withMetaFor($scopedUser)
             ->when($ownSongsOnly, static fn (SongBuilder $query) => $query->where('songs.owner_id', $scopedUser->id))
@@ -201,7 +200,7 @@ class SongRepository extends Repository
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
-            ->typeOf(PlayableType::SONG)
+            ->onlySongs()
             ->accessibleBy($scopedUser)
             ->withMetaFor($scopedUser)
             ->inRandomOrder()
@@ -276,7 +275,7 @@ class SongRepository extends Repository
     public function countSongs(?User $scopedUser = null): int
     {
         return Song::query()
-            ->typeOf(PlayableType::SONG)
+            ->onlySongs()
             ->accessibleBy($scopedUser ?? auth()->user())
             ->count();
     }
@@ -284,7 +283,7 @@ class SongRepository extends Repository
     public function getTotalSongLength(?User $scopedUser = null): float
     {
         return Song::query()
-            ->typeOf(PlayableType::SONG)
+            ->onlySongs()
             ->accessibleBy($scopedUser ?? auth()->user())
             ->sum('length');
     }
