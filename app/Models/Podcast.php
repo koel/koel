@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Builders\PodcastBuilder;
 use App\Casts\Podcast\CategoriesCast;
 use App\Casts\Podcast\PodcastMetadataCast;
-use App\Enums\PlayableType;
 use App\Models\Song as Episode;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -87,6 +86,7 @@ class Podcast extends Model
     {
         return $this->episodes()->create([
             'title' => $dto->title,
+            'lyrics' => '',
             'path' => $dto->enclosure->url,
             'created_at' => $dto->metadata->pubDate ?: now(),
             'episode_metadata' => $dto->metadata,
@@ -94,7 +94,6 @@ class Podcast extends Model
             'length' => $dto->metadata->duration ?? 0,
             'mtime' => time(),
             'is_public' => true,
-            'type' => PlayableType::PODCAST_EPISODE,
         ]);
     }
 

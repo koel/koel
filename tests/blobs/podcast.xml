@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+     xmlns:atom="http://www.w3.org/2005/Atom"
+     xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+     xmlns:podcast="https://podcastindex.org/namespace/1.0">
+
+    <channel>
+        <title>Podcast Feed Parser</title>
+        <link>https://github.com/phanan/podcast-feed-parser</link>
+        <description><![CDATA[Parse podcast feeds with PHP following PSP-1 Podcast RSS Standard]]></description>
+        <lastBuildDate>Thu, 02 May 2024 06:44:38 +0000</lastBuildDate>
+
+        <image>
+            <url>https://github.com/phanan.png</url>
+            <title>Phan An</title>
+            <link>https://phanan.net</link>
+        </image>
+        <atom:link rel="self" type="application/rss+xml" title="Podcast Feed Parser" href="https://phanan.net"/>
+        <language>en-US</language>
+        <generator>Rice Cooker</generator>
+        <copyright>Phan An © 2024</copyright>
+        <itunes:author>Phan An (phanan)</itunes:author>
+        <itunes:type>episodic</itunes:type>
+        <itunes:category text="News">
+            <itunes:category text="Tech News"/>
+        </itunes:category>
+
+        <itunes:image href="https://github.com/phanan.png"/>
+        <itunes:block>no</itunes:block>
+        <itunes:explicit>no</itunes:explicit>
+
+        <podcast:funding url="https://github.com/sponsors/phanan">Sponsor me on GitHub</podcast:funding>
+        <podcast:funding url="https://opencollective.com/koel">My other Open Collective</podcast:funding>
+
+        <podcast:txt>naj3eEZaWVVY9a38uhX8FekACyhtqP4JN</podcast:txt>
+        <podcast:txt purpose="verify">S6lpp-7ZCn8-dZfGc-OoyaG</podcast:txt>
+
+        <item>
+            <itunes:episodeType>trailer</itunes:episodeType>
+            <itunes:title>Hiking Treks Trailer</itunes:title>
+            <description><![CDATA[The Sunset Explorers share tips, techniques and recommendations for great hikes]]></description>
+            <enclosure
+                length="498537"
+                type="audio/mpeg"
+                url="http://example.com/podcasts/everything/AllAboutEverythingEpisode4.mp3"
+            />
+            <guid>D03EEC9B-B1B4-475B-92C8-54F853FA2A22</guid>
+            <pubDate>Tue, 8 Jan 2019 01:15:00 GMT</pubDate>
+            <itunes:duration>1079</itunes:duration>
+            <itunes:explicit>false</itunes:explicit>
+        </item>
+        <item>
+            <itunes:episodeType>full</itunes:episodeType>
+            <itunes:episode>4</itunes:episode>
+            <itunes:season>2</itunes:season>
+            <title>S02 EP04 Mt. Hood, Oregon</title>
+            <description>
+                Tips for trekking around the tallest mountain in Oregon
+            </description>
+            <enclosure
+                length="8727310"
+                type="audio/x-m4a"
+                url="http://example.com/podcasts/everything/mthood.m4a"
+            />
+            <guid>22BCFEBF-44FB-4A19-8229-7AC678629F57</guid>
+            <pubDate>Tue, 07 May 2019 12:00:00 GMT</pubDate>
+            <itunes:duration>1024</itunes:duration>
+            <itunes:explicit>false</itunes:explicit>
+        </item>
+        <item>
+            <itunes:episodeType>full</itunes:episodeType>
+            <itunes:episode>3</itunes:episode>
+            <itunes:season>2</itunes:season>
+            <title>S02 EP03 Bouldering Around Boulder</title>
+            <description>
+                We explore fun walks to climbing areas about the beautiful Colorado city of Boulder.
+            </description>
+            <itunes:image
+                href="http://example.com/podcasts/everything/AllAboutEverything/Episode2.jpg"
+            />
+            <link>href="http://example.com/podcasts/everything/</link>
+            <enclosure
+                length="5650889"
+                type="video/mp4"
+                url="http://example.com/podcasts/boulder.mp4"
+            />
+            <guid>BE486CAA-B3D5-4FB0-8298-EFEBE71C5982</guid>
+            <pubDate>Tue, 30 Apr 2019 13:00:00 EST</pubDate>
+            <itunes:duration>3627</itunes:duration>
+            <itunes:explicit>false</itunes:explicit>
+        </item>
+        <item>
+            <itunes:episodeType>full</itunes:episodeType>
+            <itunes:episode>2</itunes:episode>
+            <itunes:season>2</itunes:season>
+            <title>S02 EP02 Caribou Mountain, Maine</title>
+            <description>
+                Put your fitness to the test with this invigorating hill climb.
+            </description>
+            <itunes:image
+                href="http://example.com/podcasts/everything/AllAboutEverything/Episode3.jpg"
+            />
+            <enclosure
+                length="5650889"
+                type="audio/x-m4v"
+                url="http://example.com/podcasts/everything/caribou.m4v"
+            />
+            <guid>142FAFE9-B1DF-4F6D-BAA8-79BDBAF653A9</guid>
+            <pubDate>Tue, 23 May 2019 02:00:00 -0700</pubDate>
+            <itunes:duration>2434</itunes:duration>
+            <itunes:explicit>false</itunes:explicit>
+        </item>
+        <item>
+            <itunes:episodeType>full</itunes:episodeType>
+            <itunes:episode>4</itunes:episode>
+            <itunes:season>1</itunes:season>
+            <title>S01 EP04 Kuliouou Ridge Trail</title>
+            <description>
+                Oahu, Hawaii, has some picturesque hikes and this is one of the best!
+            </description>
+            <enclosure
+                length="498537"
+                type="audio/mpeg"
+                url="http://example.com/podcasts/everything/AllAboutEverythingEpisode4.mp3"
+            />
+            <guid>B5FCEB80-317C-4CD0-A84B-807065B43FB9</guid>
+            <pubDate>Tue, 27 Nov 2018 01:15:00 +0000</pubDate>
+            <itunes:duration>929</itunes:duration>
+            <itunes:explicit>false</itunes:explicit>
+        </item>
+        <item>
+            <itunes:episodeType>full</itunes:episodeType>
+            <itunes:episode>3</itunes:episode>
+            <itunes:season>1</itunes:season>
+            <title>S01 EP03 Blood Mountain Loop</title>
+            <description>
+                Hiking the Appalachian Trail and Freeman Trail in Georgia
+            </description>
+            <enclosure
+                length="498537"
+                type="audio/mpeg"
+                url="http://example.com/podcasts/everything/AllAboutEverythingEpisode4.mp3"
+            />
+            <guid>F0C5D763-ED85-4449-9C09-81FEBDF6F126</guid>
+            <pubDate>Tue, 23 Oct 2018 01:15:00 +0000</pubDate>
+            <itunes:duration>1440</itunes:duration>
+            <itunes:explicit>false</itunes:explicit>
+        </item>
+        <item>
+            <itunes:episodeType>full</itunes:episodeType>
+            <itunes:episode>2</itunes:episode>
+            <itunes:season>1</itunes:season>
+            <title>S01 EP02 Garden of the Gods Wilderness</title>
+            <description>
+                Wilderness Area Garden of the Gods in Illinois is a delightful spot for
+                an extended hike.
+            </description>
+            <enclosure
+                length="498537"
+                type="audio/mpeg"
+                url="http://example.com/podcasts/everything/AllAboutEverythingEpisode4.mp3"
+            />
+            <guid>821DD0B2-571D-4DFD-8E11-556E8C1EFE6A</guid>
+            <pubDate>Tue, 18 Sep 2018 01:15:00 +0000</pubDate>
+            <itunes:duration>839</itunes:duration>
+            <itunes:explicit>false</itunes:explicit>
+        </item>
+        <item>
+            <itunes:episodeType>full</itunes:episodeType>
+            <itunes:episode>1</itunes:episode>
+            <itunes:season>1</itunes:season>
+            <title>S01 EP01 Upper Priest Lake Trail to Continental Creek Trail</title>
+            <description>
+                We check out this powerfully scenic hike following the river in the Idaho
+                Panhandle National Forests.
+            </description>
+            <enclosure
+                length="498537"
+                type="audio/mpeg"
+                url="http://example.com/podcasts/everything/AllAboutEverythingEpisode4.mp3"
+            />
+            <guid>EABDA7EE-1AC6-4B60-9E11-6B3F30B72F87</guid>
+            <pubDate>Tue, 14 Aug 2018 01:15:00 +0000</pubDate>
+            <itunes:duration>1399</itunes:duration>
+            <itunes:explicit>false</itunes:explicit>
+        </item>
+    </channel>
+</rss>

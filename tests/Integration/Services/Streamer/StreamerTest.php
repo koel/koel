@@ -7,6 +7,7 @@ use App\Exceptions\KoelPlusRequiredException;
 use App\Models\Song;
 use App\Services\Streamer\Adapters\LocalStreamerAdapter;
 use App\Services\Streamer\Adapters\PhpStreamerAdapter;
+use App\Services\Streamer\Adapters\PodcastStreamerAdapter;
 use App\Services\Streamer\Adapters\S3CompatibleStreamerAdapter;
 use App\Services\Streamer\Adapters\TranscodingStreamerAdapter;
 use App\Services\Streamer\Adapters\XAccelRedirectStreamerAdapter;
@@ -97,5 +98,14 @@ class StreamerTest extends TestCase
         self::assertInstanceOf($expectedClass, (new Streamer($song))->getAdapter());
 
         config(['koel.streaming.method' => null]);
+    }
+
+    public function testResolvePodcastAdapter(): void
+    {
+        /** @var Song $song */
+        $song = Song::factory()->asEpisode()->create();
+        $streamer = new Streamer($song);
+
+        self::assertInstanceOf(PodcastStreamerAdapter::class, $streamer->getAdapter());
     }
 }

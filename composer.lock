@@ -4652,16 +4652,16 @@
         },
         {
             "name": "phanan/poddle",
-            "version": "v1.0.3",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phanan/poddle.git",
-                "reference": "9c0e62914b8c8ba0c3994e774f128dc32980f667"
+                "reference": "55f0cb603fb3e91001deda4f6c328cd620ed52f3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phanan/poddle/zipball/9c0e62914b8c8ba0c3994e774f128dc32980f667",
-                "reference": "9c0e62914b8c8ba0c3994e774f128dc32980f667",
+                "url": "https://api.github.com/repos/phanan/poddle/zipball/55f0cb603fb3e91001deda4f6c328cd620ed52f3",
+                "reference": "55f0cb603fb3e91001deda4f6c328cd620ed52f3",
                 "shasum": ""
             },
             "require": {
@@ -4670,12 +4670,14 @@
                 "illuminate/http": "^10.48",
                 "illuminate/support": "^10.48",
                 "php": ">=8.1",
+                "psr/http-client": "^1.0",
                 "saloonphp/xml-wrangler": "^1.2"
             },
             "require-dev": {
                 "larastan/larastan": "^2.9",
                 "laravel/pint": "^1.15",
                 "laravel/tinker": "^2.9",
+                "mockery/mockery": "^1.6",
                 "orchestra/testbench": "*",
                 "phpunit/phpunit": ">=10.5"
             },
@@ -4706,7 +4708,7 @@
             ],
             "support": {
                 "issues": "https://github.com/phanan/poddle/issues",
-                "source": "https://github.com/phanan/poddle/tree/v1.0.3"
+                "source": "https://github.com/phanan/poddle/tree/v1.1.0"
             },
             "funding": [
                 {
@@ -4714,7 +4716,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-05-30T07:36:14+00:00"
+            "time": "2024-05-31T07:36:55+00:00"
         },
         {
             "name": "php-http/client-common",

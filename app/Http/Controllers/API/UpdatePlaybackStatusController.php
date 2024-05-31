@@ -21,6 +21,8 @@ class UpdatePlaybackStatusController extends Controller
         Authenticatable $user
     ) {
         $song = $songRepository->getOne($request->song, $user);
+        $this->authorize('access', $song);
+
         $queueService->updatePlaybackStatus($user, $song, $request->position);
 
         if ($song->isEpisode()) {

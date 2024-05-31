@@ -20,13 +20,16 @@ use Illuminate\Support\Facades\Log;
 use PhanAn\Poddle\Poddle;
 use PhanAn\Poddle\Values\Episode as EpisodeValue;
 use PhanAn\Poddle\Values\EpisodeCollection;
+use Psr\Http\Client\ClientInterface;
 use Throwable;
+use Webmozart\Assert\Assert;
 
 class PodcastService
 {
     public function __construct(
         private readonly PodcastRepository $podcastRepository,
-        private readonly SongRepository $songRepository
+        private readonly SongRepository $songRepository,
+        private ?ClientInterface $client = null,
     ) {
     }
 
@@ -48,7 +51,7 @@ class PodcastService
         }
 
         try {
-            $parser = Poddle::fromUrl($url, 5 * 60);
+            $parser = $this->createParser($url);
             $channel = $parser->getChannel();
 
             return DB::transaction(function () use ($url, $podcast, $parser, $channel, $user) {
@@ -82,7 +85,7 @@ class PodcastService
 
     public function refreshPodcast(Podcast $podcast): Podcast
     {
-        $parser = Poddle::fromUrl($podcast->url);
+        $parser = $this->createParser($podcast->url);
         $channel = $parser->getChannel();
 
         $podcast->update([
@@ -102,8 +105,9 @@ class PodcastService
             ?? $parser->xmlReader->value('rss.channel.lastBuildDate')?->first();
 
         if ($pubDate && Carbon::createFromFormat(Carbon::RFC1123, $pubDate)->isBefore($podcast->last_synced_at)) {
-            // The pubDate/lastBuildDate value indicates that there's no new content since last check
-            return $podcast->refresh();
+            // The pubDate/lastBuildDate value indicates that there's no new content since last check.
+            // We'll simply return the podcast.
+            return $podcast;
         }
 
         $this->synchronizeEpisodes($podcast, $parser->getEpisodes(true));
@@ -133,6 +137,8 @@ class PodcastService
 
     public function updateEpisodeProgress(User $user, Episode $episode, int $position): void
     {
+        Assert::true($user->subscribedToPodcast($episode->podcast));
+
         /** @var PodcastUserPivot $subscription */
         $subscription = $episode->podcast->subscribers->sole('id', $user->id)->pivot;
 
@@ -145,7 +151,7 @@ class PodcastService
 
     public function unsubscribeUserFromPodcast(User $user, Podcast $podcast): void
     {
-        $podcast->subscribers()->detach($user);
+        $user->unsubscribeFromPodcast($podcast);
     }
 
     public function isPodcastObsolete(Podcast $podcast): bool
@@ -166,7 +172,7 @@ class PodcastService
     }
 
     /**
-     * Get a directly streamable (CORS-friendly) from a given URL by following redirects if necessary.
+     * Get a directly streamable (CORS-friendly) URL by following redirects if necessary.
      */
     public function getStreamableUrl(string|Episode $url, ?Client $client = null, string $method = 'OPTIONS'): ?string
     {
@@ -174,7 +180,7 @@ class PodcastService
             $url = $url->path;
         }
 
-        $client ??= new Client();
+        $client ??= $this->client ?? new Client();
 
         try {
             $response = $client->request($method, $url, [
@@ -188,24 +194,24 @@ class PodcastService
 
             $redirects = Arr::wrap($response->getHeader(RedirectMiddleware::HISTORY_HEADER));
 
-            // If there were redirects, we make the CORS check on the last URL, as it
-            // would be the one eventually used by the browser.
-            if ($redirects) {
-                return $this->getStreamableUrl(Arr::last($redirects), $client);
-            }
-
             // Sometimes the podcast server disallows OPTIONS requests. We'll try again with a HEAD request.
             if ($response->getStatusCode() >= 400 && $response->getStatusCode() < 500 && $method !== 'HEAD') {
                 return $this->getStreamableUrl($url, $client, 'HEAD');
             }
 
             if (in_array('*', Arr::wrap($response->getHeader('Access-Control-Allow-Origin')), true)) {
-                return $url;
+                // If there were redirects, the last one is the final URL.
+                return $redirects ? Arr::last($redirects) : $url;
             }
 
             return null;
         } catch (Throwable) {
             return null;
         }
+    }
+
+    private function createParser(string $url): Poddle
+    {
+        return Poddle::fromUrl($url, 5 * 60, $this->client);
     }
 }

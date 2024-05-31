@@ -102,6 +102,11 @@ class User extends Authenticatable
         $this->podcasts()->attach($podcast);
     }
 
+    public function unsubscribeFromPodcast(Podcast $podcast): void
+    {
+        $this->podcasts()->detach($podcast);
+    }
+
     protected function avatar(): Attribute
     {
         return Attribute::get(function (): string {
