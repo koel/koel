@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Podcast\Podcast;
+use App\Models\Podcast;
 use App\Services\PodcastService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;

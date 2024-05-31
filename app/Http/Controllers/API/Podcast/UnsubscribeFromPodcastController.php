@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API\Podcast;
 
 use App\Http\Controllers\Controller;
-use App\Models\Podcast\Podcast;
+use App\Models\Podcast;
 use App\Models\User;
 use App\Services\PodcastService;
 use Illuminate\Contracts\Auth\Authenticatable;

@@ -7,7 +7,7 @@ use App\Exceptions\PlaylistBothSongsAndRulesProvidedException;
 use App\Facades\License;
 use App\Models\Playlist;
 use App\Models\PlaylistFolder as Folder;
-use App\Models\Song;
+use App\Models\Song as Playable;
 use App\Models\User;
 use App\Repositories\SongRepository;
 use App\Values\SmartPlaylistRuleGroupCollection;
@@ -26,7 +26,7 @@ class PlaylistService
         string $name,
         User $user,
         ?Folder $folder = null,
-        array $songs = [],
+        array $playables = [],
         ?SmartPlaylistRuleGroupCollection $ruleGroups = null,
         bool $ownSongsOnly = false
     ): Playlist {
@@ -34,14 +34,14 @@ class PlaylistService
             Assert::true($folder->ownedBy($user), 'The playlist folder does not belong to the user');
         }
 
-        throw_if($songs && $ruleGroups, new PlaylistBothSongsAndRulesProvidedException());
+        throw_if($playables && $ruleGroups, new PlaylistBothSongsAndRulesProvidedException());
 
         throw_if($ownSongsOnly && (!$ruleGroups || !License::isPlus()), new InvalidArgumentException(
             '"Own songs only" option only works with smart playlists and Plus license.'
         ));
 
         return DB::transaction(
-            static function () use ($name, $user, $songs, $folder, $ruleGroups, $ownSongsOnly): Playlist {
+            static function () use ($name, $user, $playables, $folder, $ruleGroups, $ownSongsOnly): Playlist {
                 $playlist = $user->playlists()->create([
                     'name' => $name,
                     'rules' => $ruleGroups,
@@ -50,8 +50,8 @@ class PlaylistService
 
                 $folder?->playlists()->attach($playlist);
 
-                if (!$playlist->is_smart && $songs) {
-                    $playlist->addSongs($songs, $user);
+                if (!$playlist->is_smart && $playables) {
+                    $playlist->addPlayables($playables, $user);
                 }
 
                 return $playlist;
@@ -85,37 +85,44 @@ class PlaylistService
         return $playlist;
     }
 
-    /** @return Collection<array-key, Song> */
-    public function addSongsToPlaylist(Playlist $playlist, Collection|Song|array $songs, User $user): Collection
-    {
-        return DB::transaction(function () use ($playlist, $songs, $user) {
-            $songs = Collection::wrap($songs);
-            $playlist->addSongs($songs->filter(static fn ($song): bool => !$playlist->songs->contains($song)), $user);
+    /** @return Collection<array-key, Playable> */
+    public function addPlayablesToPlaylist(
+        Playlist $playlist,
+        Collection|Playable|array $playables,
+        User $user
+    ): Collection {
+        return DB::transaction(function () use ($playlist, $playables, $user) {
+            $playables = Collection::wrap($playables);
+
+            $playlist->addPlayables(
+                $playables->filter(static fn ($song): bool => !$playlist->songs->contains($song)),
+                $user
+            );
 
             // if the playlist is collaborative, make the songs public
             if ($playlist->is_collaborative) {
-                $this->makePlaylistSongsPublic($playlist);
+                $this->makePlaylistContentPublic($playlist);
             }
 
             // we want a fresh copy of the songs with the possibly updated visibility
             return $this->songRepository->getManyInCollaborativeContext(
-                ids: $songs->pluck('id')->all(),
+                ids: $playables->pluck('id')->all(),
                 scopedUser: $user
             );
         });
     }
 
-    public function removeSongsFromPlaylist(Playlist $playlist, Collection|Song|array $songs): void
+    public function removePlayablesFromPlaylist(Playlist $playlist, Collection|Playable|array $playables): void
     {
-        $playlist->removeSongs($songs);
+        $playlist->removePlayables($playables);
     }
 
-    public function makePlaylistSongsPublic(Playlist $playlist): void
+    public function makePlaylistContentPublic(Playlist $playlist): void
     {
         $playlist->songs()->where('is_public', false)->update(['is_public' => true]);
     }
 
-    public function moveSongsInPlaylist(Playlist $playlist, array $movingIds, string $target, string $type): void
+    public function movePlayablesInPlaylist(Playlist $playlist, array $movingIds, string $target, string $type): void
     {
         Assert::oneOf($type, ['before', 'after']);
         throw_if($playlist->is_smart, OperationNotApplicableForSmartPlaylistException::class);

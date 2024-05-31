@@ -37,6 +37,8 @@ class SftpStorageTest extends PlusTestCase
 
     public function testStoringWithVisibilityPreference(): void
     {
+        Storage::fake('sftp');
+
         $user = create_user();
 
         $user->preferences->makeUploadsPublic = true;

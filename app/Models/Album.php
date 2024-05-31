@@ -147,7 +147,7 @@ class Album extends Model
         return Attribute::get(fn () => $this->artist_id === Artist::VARIOUS_ID);
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function toSearchableArray(): array
     {
         $array = [

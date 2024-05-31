@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\Podcast\Podcast;
+use App\Models\Podcast;
 use App\Models\User;
 use Illuminate\Support\Collection;
 
@@ -26,7 +26,7 @@ class PodcastRepository extends Repository
     }
 
     /** @return Collection<Podcast> */
-    public function getMany(array $ids, bool $inThatOrder = false, ?User $user = null): Collection
+    public function getMany(array $ids, bool $preserveOrder = false, ?User $user = null): Collection
     {
         $podcasts = Podcast::query()
             ->subscribedBy($user ?? $this->auth->user())
@@ -35,6 +35,6 @@ class PodcastRepository extends Repository
             ->distinct()
             ->get('podcasts.*');
 
-        return $inThatOrder ? $podcasts->orderByArray($ids) : $podcasts;
+        return $preserveOrder ? $podcasts->orderByArray($ids) : $podcasts;
     }
 }

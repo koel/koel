@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\Enums\MediaType;
+use App\Enums\PlayableType;
 use App\Events\MediaScanCompleted;
 use App\Models\Song;
 use App\Repositories\SongRepository;
@@ -24,7 +24,7 @@ class DeleteNonExistingRecordsPostScan
             ->toArray();
 
         Song::deleteWhereValueNotIn($paths, 'path', static function (Builder $builder): Builder {
-            return $builder->where('type', MediaType::SONG);
+            return $builder->where('type', PlayableType::SONG);
         });
     }
 }

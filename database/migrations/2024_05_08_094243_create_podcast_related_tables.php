@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('podcast', static function (Blueprint $table): void {
+        Schema::create('podcasts', static function (Blueprint $table): void {
             $table->string('id', 36)->primary();
             $table->string('url')->unique()->comment('The URL to the podcast feed')->unique();
             $table->string('link')->comment('The link to the podcast website');
@@ -25,7 +25,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::table('podcast', static function (Blueprint $table): void {
+        Schema::table('podcasts', static function (Blueprint $table): void {
             $table->foreign('added_by')->references('id')->on('users')->nullOnDelete();
         });
 
@@ -38,7 +38,7 @@ return new class extends Migration
             $table->json('episode_metadata')->nullable();
             $table->string('type')->default('song')->index();
 
-            $table->foreign('podcast_id')->references('id')->on('podcast')->cascadeOnDelete();
+            $table->foreign('podcast_id')->references('id')->on('podcasts')->cascadeOnDelete();
         });
 
         Schema::create('podcast_user', static function (Blueprint $table): void {
@@ -51,7 +51,7 @@ return new class extends Migration
 
         Schema::table('podcast_user', static function (Blueprint $table): void {
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
-            $table->foreign('podcast_id')->references('id')->on('podcast')->cascadeOnDelete();
+            $table->foreign('podcast_id')->references('id')->on('podcasts')->cascadeOnDelete();
         });
     }
 };

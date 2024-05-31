@@ -13,7 +13,7 @@ class MovePlaylistSongsController extends Controller
     {
         $this->authorize('collaborate', $playlist);
 
-        $service->moveSongsInPlaylist($playlist, $request->songs, $request->target, $request->type);
+        $service->movePlayablesInPlaylist($playlist, $request->songs, $request->target, $request->type);
 
         return response()->noContent();
     }

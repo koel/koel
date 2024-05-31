@@ -4,10 +4,9 @@ namespace App\Models;
 
 use App\Builders\SongBuilder;
 use App\Casts\Podcast\EpisodeMetadataCast;
-use App\Enums\MediaType;
+use App\Enums\PlayableType;
 use App\Enums\SongStorageType;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
-use App\Models\Podcast\Podcast;
 use App\Values\SongStorageMetadata\DropboxMetadata;
 use App\Values\SongStorageMetadata\LocalMetadata;
 use App\Values\SongStorageMetadata\S3CompatibleMetadata;
@@ -57,7 +56,7 @@ use Throwable;
  * @property-read ?string $collaborator_name The name of the user who added the song to the playlist
  * @property-read ?int $collaborator_id The ID of the user who added the song to the playlist
  * @property-read ?string $added_at The date the song was added to the playlist
- * @property MediaType $type
+ * @property PlayableType $type
  *
  * // Podcast episode properties
  * @property ?EpisodeMetadata $episode_metadata
@@ -83,7 +82,7 @@ class Song extends Model
         'track' => 'int',
         'disc' => 'int',
         'is_public' => 'bool',
-        'type' => MediaType::class,
+        'type' => PlayableType::class,
         'episode_metadata' => EpisodeMetadataCast::class,
     ];
 
@@ -94,7 +93,7 @@ class Song extends Model
     protected static function booted(): void
     {
         static::creating(static function (self $song): void {
-            $song->type ??= MediaType::SONG;
+            $song->type ??= PlayableType::SONG;
             $song->id ??= Str::uuid()->toString();
         });
     }
@@ -250,7 +249,7 @@ class Song extends Model
 
     public function isEpisode(): bool
     {
-        return $this->type === MediaType::PODCAST_EPISODE;
+        return $this->type === PlayableType::PODCAST_EPISODE;
     }
 
     public function __toString(): string

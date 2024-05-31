@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\Enums\MediaType;
+use App\Enums\PlayableType;
 use App\Events\SongLikeToggled;
 use App\Services\LastfmService;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -16,7 +16,7 @@ class LoveTrackOnLastfm implements ShouldQueue
     public function handle(SongLikeToggled $event): void
     {
         if (
-            $event->interaction->song->type !== MediaType::SONG
+            $event->interaction->song->type !== PlayableType::SONG
             || !LastfmService::enabled()
             || !$event->interaction->user->preferences->lastFmSessionKey
             || $event->interaction->song->artist->is_unknown

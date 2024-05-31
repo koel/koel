@@ -3,9 +3,8 @@
 namespace App\Models;
 
 use App\Casts\UserPreferencesCast;
+use App\Exceptions\UserAlreadySubscribedToPodcast;
 use App\Facades\License;
-use App\Models\Podcast\Podcast;
-use App\Models\Podcast\PodcastUserPivot;
 use App\Values\UserPreferences;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -94,6 +93,13 @@ class User extends Authenticatable
     public function subscribedToPodcast(Podcast $podcast): bool
     {
         return $this->podcasts()->where('podcast_id', $podcast->id)->exists();
+    }
+
+    public function subscribeToPodcast(Podcast $podcast): void
+    {
+        throw_if($this->subscribedToPodcast($podcast), UserAlreadySubscribedToPodcast::make($this, $podcast));
+
+        $this->podcasts()->attach($podcast);
     }
 
     protected function avatar(): Attribute

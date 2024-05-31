@@ -95,7 +95,8 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
     public function testInvalidCases($value): void
     {
         $this->expectException(Throwable::class);
-        self::assertFalse((new ValidSmartPlaylistRulePayload())->passes('rules', $value));
+        (new ValidSmartPlaylistRulePayload())->validate('rules', $value, static fn ($foo) => $foo);
+        self::addToAssertionCount(1);
     }
 
     /** @return array<mixed> */
@@ -182,6 +183,7 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
     /** @dataProvider provideValidPayloads */
     public function testValidCases($value): void
     {
-        self::assertTrue((new ValidSmartPlaylistRulePayload())->passes('rules', $value));
+        (new ValidSmartPlaylistRulePayload())->validate('rules', $value, static fn ($foo) => $foo);
+        self::addToAssertionCount(1);
     }
 }

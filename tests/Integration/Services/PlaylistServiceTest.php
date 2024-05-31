@@ -193,7 +193,7 @@ class PlaylistServiceTest extends TestCase
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
-        $playlist->addSongs(Song::factory(3)->create());
+        $playlist->addPlayables(Song::factory(3)->create());
         $songs = Song::factory(2)->create();
 
         $addedSongs = $this->service->addPlayablesToPlaylist($playlist, $songs, $playlist->user);
@@ -203,6 +203,37 @@ class PlaylistServiceTest extends TestCase
         self::assertCount(5, $playlist->songs);
         self::assertEqualsCanonicalizing($addedSongs->pluck('id')->all(), $songs->pluck('id')->all());
         $songs->each(static fn (Song $song) => self::assertTrue($playlist->songs->contains($song)));
+    }
+
+    public function testAddEpisodesToPlaylist(): void
+    {
+        /** @var Playlist $playlist */
+        $playlist = Playlist::factory()->create();
+        $playlist->addPlayables(Song::factory(3)->create());
+        $episodes = Song::factory(2)->asEpisode()->create();
+
+        $addedEpisodes = $this->service->addPlayablesToPlaylist($playlist, $episodes, $playlist->user);
+        $playlist->refresh();
+
+        self::assertCount(2, $addedEpisodes);
+        self::assertCount(5, $playlist->songs);
+        self::assertEqualsCanonicalizing($addedEpisodes->pluck('id')->all(), $episodes->pluck('id')->all());
+    }
+
+    public function testAddMixOfSongsAndEpisodesToPlaylist(): void
+    {
+        /** @var Playlist $playlist */
+        $playlist = Playlist::factory()->create();
+        $playlist->addPlayables(Song::factory(3)->create());
+        $playables = Song::factory(2)->asEpisode()->create()
+            ->merge(Song::factory(2)->create());
+
+        $addedEpisodes = $this->service->addPlayablesToPlaylist($playlist, $playables, $playlist->user);
+        $playlist->refresh();
+
+        self::assertCount(4, $addedEpisodes);
+        self::assertCount(7, $playlist->songs);
+        self::assertEqualsCanonicalizing($addedEpisodes->pluck('id')->all(), $playables->pluck('id')->all());
     }
 
     public function testPrivateSongsAreMadePublicWhenAddedToCollaborativePlaylist(): void
@@ -227,9 +258,9 @@ class PlaylistServiceTest extends TestCase
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
-        $playlist->addSongs(Song::factory(2)->create(['is_public' => false]));
+        $playlist->addPlayables(Song::factory(2)->create(['is_public' => false]));
 
-        $this->service->makePlaylistSongsPublic($playlist);
+        $this->service->makePlaylistContentPublic($playlist);
 
         $playlist->songs->each(static fn (Song $song) => self::assertTrue($song->is_public));
     }
@@ -242,20 +273,20 @@ class PlaylistServiceTest extends TestCase
         /** @var Collection<array-key, Song> $songs */
         $songs = Song::factory(4)->create();
         $ids = $songs->pluck('id')->all();
-        $playlist->addSongs($songs);
+        $playlist->addPlayables($songs);
 
-        $this->service->moveSongsInPlaylist($playlist, [$ids[2], $ids[3]], $ids[0], 'after');
+        $this->service->movePlayablesInPlaylist($playlist, [$ids[2], $ids[3]], $ids[0], 'after');
         self::assertSame([$ids[0], $ids[2], $ids[3], $ids[1]], $playlist->refresh()->songs->pluck('id')->all());
 
-        $this->service->moveSongsInPlaylist($playlist, [$ids[0]], $ids[3], 'before');
+        $this->service->movePlayablesInPlaylist($playlist, [$ids[0]], $ids[3], 'before');
         self::assertSame([$ids[2], $ids[0], $ids[3], $ids[1]], $playlist->refresh()->songs->pluck('id')->all());
 
         // move to the first position
-        $this->service->moveSongsInPlaylist($playlist, [$ids[0], $ids[1]], $ids[2], 'before');
+        $this->service->movePlayablesInPlaylist($playlist, [$ids[0], $ids[1]], $ids[2], 'before');
         self::assertSame([$ids[0], $ids[1], $ids[2], $ids[3]], $playlist->refresh()->songs->pluck('id')->all());
 
         // move to the last position
-        $this->service->moveSongsInPlaylist($playlist, [$ids[0], $ids[1]], $ids[3], 'after');
+        $this->service->movePlayablesInPlaylist($playlist, [$ids[0], $ids[1]], $ids[3], 'after');
         self::assertSame([$ids[2], $ids[3], $ids[0], $ids[1]], $playlist->refresh()->songs->pluck('id')->all());
     }
 }

@@ -44,7 +44,7 @@ class ArtistRepository extends Repository
     }
 
     /** @return Collection|array<array-key, Artist> */
-    public function getMany(array $ids, bool $inThatOrder = false, ?User $user = null): Collection|BaseCollection
+    public function getMany(array $ids, bool $preserveOrder = false, ?User $user = null): Collection|BaseCollection
     {
         $artists = Artist::query()
             ->isStandard()
@@ -54,7 +54,7 @@ class ArtistRepository extends Repository
             ->distinct()
             ->get('artists.*');
 
-        return $inThatOrder ? $artists->orderByArray($ids) : $artists;
+        return $preserveOrder ? $artists->orderByArray($ids) : $artists;
     }
 
     public function paginate(?User $user = null): Paginator

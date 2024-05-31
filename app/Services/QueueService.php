@@ -25,7 +25,7 @@ class QueueService
         $currentSong = $state->current_song_id ? $this->songRepository->findOne($state->current_song_id, $user) : null;
 
         return QueueStateDTO::make(
-            $this->songRepository->getMany(ids: $state->song_ids, inThatOrder: true, scopedUser: $user),
+            $this->songRepository->getMany(ids: $state->song_ids, preserveOrder: true, scopedUser: $user),
             $currentSong,
             $state->playback_position ?? 0
         );

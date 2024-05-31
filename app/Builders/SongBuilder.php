@@ -2,7 +2,7 @@
 
 namespace App\Builders;
 
-use App\Enums\MediaType;
+use App\Enums\PlayableType;
 use App\Facades\License;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -128,7 +128,7 @@ class SongBuilder extends Builder
             ->where('storage', '!=', '');
     }
 
-    public function typeOf(MediaType $type): self
+    public function typeOf(PlayableType $type): self
     {
         return $this->where('songs.type', $type->value);
     }

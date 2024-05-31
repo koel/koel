@@ -14,6 +14,6 @@ class MakePlaylistSongsPublic implements ShouldQueue
 
     public function handle(NewPlaylistCollaboratorJoined $event): void
     {
-        $this->service->makePlaylistSongsPublic($event->token->playlist);
+        $this->service->makePlaylistContentPublic($event->token->playlist);
     }
 }
