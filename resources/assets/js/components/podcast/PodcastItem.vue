@@ -4,7 +4,7 @@
     class="flex gap-5 p-5 rounded-lg border border-white/5 hover:bg-white/10 bg-white/5 !text-k-text-primary !hover:text-k-text-primary"
     :href="`#/podcasts/${podcast.id}`"
   >
-    <aside class="hidden md:flex-[0_0_128px]">
+    <aside class="hidden md:block md:flex-[0_0_128px]">
       <img :src="podcast.image" alt="Podcast image" class="w-[128px] aspect-square object-cover rounded-lg" />
     </aside>
     <main class="flex-1">
