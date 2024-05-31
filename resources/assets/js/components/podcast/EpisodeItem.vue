@@ -9,7 +9,7 @@
   >
     <Icon :icon="faBookmark" size="xl" class="absolute -top-1 right-3 text-k-accent" v-if="isCurrentEpisode" />
     <button
-      class="hidden md:flex-[0_0_128px] relative overflow-hidden rounded-lg active:scale-95"
+      class="hidden md:block md:flex-[0_0_128px] relative overflow-hidden rounded-lg active:scale-95"
       role="button"
       @click.prevent="playOrPause"
     >
