@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Podcast\Podcast;
-use App\Models\Podcast\PodcastUserPivot;
+use App\Models\Podcast;
+use App\Models\PodcastUserPivot;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;

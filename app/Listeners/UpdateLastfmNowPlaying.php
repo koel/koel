@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\Enums\MediaType;
+use App\Enums\PlayableType;
 use App\Events\PlaybackStarted;
 use App\Services\LastfmService;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -18,7 +18,7 @@ class UpdateLastfmNowPlaying implements ShouldQueue
         if (
             !LastfmService::enabled()
             || !$event->user->preferences->lastFmSessionKey
-            || $event->song->type !== MediaType::SONG
+            || $event->song->type !== PlayableType::SONG
             || $event->song->artist?->is_unknown
         ) {
             return;

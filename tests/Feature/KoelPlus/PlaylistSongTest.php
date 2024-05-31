@@ -15,7 +15,7 @@ class PlaylistSongTest extends PlusTestCase
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
-        $playlist->addSongs(Song::factory()->public()->count(3)->create());
+        $playlist->addPlayables(Song::factory()->public()->count(3)->create());
 
         $collaborator = create_user();
         $playlist->addCollaborator($collaborator);
@@ -30,11 +30,11 @@ class PlaylistSongTest extends PlusTestCase
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
-        $playlist->addSongs(Song::factory()->public()->count(3)->create());
+        $playlist->addPlayables(Song::factory()->public()->count(3)->create());
 
         /** @var Song $privateSong */
         $privateSong = Song::factory()->private()->create();
-        $playlist->addSongs($privateSong);
+        $playlist->addPlayables($privateSong);
 
         $collaborator = create_user();
         $playlist->addCollaborator($collaborator);
@@ -68,7 +68,7 @@ class PlaylistSongTest extends PlusTestCase
         $collaborator = create_user();
         $playlist->addCollaborator($collaborator);
         $songs = Song::factory()->for($collaborator, 'owner')->count(3)->create();
-        $playlist->addSongs($songs);
+        $playlist->addPlayables($songs);
 
         $this->deleteAs("api/playlists/$playlist->id/songs", ['songs' => $songs->pluck('id')->all()], $collaborator)
             ->assertSuccessful();

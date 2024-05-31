@@ -54,11 +54,11 @@ abstract class Repository implements RepositoryInterface
     }
 
     /** @return array<array-key, T>|Collection<array-key, T> */
-    public function getMany(array $ids, bool $inThatOrder = false): Collection
+    public function getMany(array $ids, bool $preserveOrder = false): Collection
     {
         $models = $this->model::query()->find($ids);
 
-        return $inThatOrder ? $models->orderByArray($ids) : $models;
+        return $preserveOrder ? $models->orderByArray($ids) : $models;
     }
 
     /** @return array<array-key, T>|Collection<array-key, T> */

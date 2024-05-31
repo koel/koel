@@ -16,7 +16,7 @@ class PlaylistSongTest extends TestCase
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
-        $playlist->addSongs(Song::factory(5)->create());
+        $playlist->addPlayables(Song::factory(5)->create());
 
         $this->getAs("api/playlists/$playlist->id/songs", $playlist->user)
             ->assertJsonStructure(['*' => SongResource::JSON_STRUCTURE]);
@@ -51,7 +51,7 @@ class PlaylistSongTest extends TestCase
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->for(create_user())->create();
-        $playlist->addSongs(Song::factory(5)->create());
+        $playlist->addPlayables(Song::factory(5)->create());
 
         $this->getAs("api/playlists/$playlist->id/songs")
             ->assertForbidden();
@@ -81,7 +81,7 @@ class PlaylistSongTest extends TestCase
         /** @var Collection<array-key, Song> $toBeRemovedSongs */
         $toBeRemovedSongs = Song::factory(2)->create();
 
-        $playlist->addSongs($toRemainSongs->merge($toBeRemovedSongs));
+        $playlist->addPlayables($toRemainSongs->merge($toBeRemovedSongs));
 
         self::assertCount(7, $playlist->songs);
 

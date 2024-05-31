@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Models\Podcast;
+namespace App\Models;
 
 use App\Builders\PodcastBuilder;
 use App\Casts\Podcast\CategoriesCast;
 use App\Casts\Podcast\PodcastMetadataCast;
-use App\Enums\MediaType;
+use App\Enums\PlayableType;
 use App\Models\Song as Episode;
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -36,6 +36,7 @@ use PhanAn\Poddle\Values\Episode as EpisodeDTO;
  */
 class Podcast extends Model
 {
+    use HasFactory;
     use Searchable;
 
     protected $hidden = ['created_at', 'updated_at'];
@@ -56,7 +57,7 @@ class Podcast extends Model
 
     protected static function booted(): void
     {
-        static::creating(static fn (self $podcast) => $podcast->id = Str::uuid()->toString());
+        static::creating(static fn (self $podcast) => $podcast->id ??= Str::uuid()->toString());
     }
 
     public static function query(): PodcastBuilder
@@ -93,7 +94,7 @@ class Podcast extends Model
             'length' => $dto->metadata->duration ?? 0,
             'mtime' => time(),
             'is_public' => true,
-            'type' => MediaType::PODCAST_EPISODE,
+            'type' => PlayableType::PODCAST_EPISODE,
         ]);
     }
 

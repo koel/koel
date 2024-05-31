@@ -52,7 +52,7 @@ class AlbumRepository extends Repository
     }
 
     /** @return Collection|array<array-key, Album> */
-    public function getMany(array $ids, bool $inThatOrder = false, ?User $user = null): Collection
+    public function getMany(array $ids, bool $preserveOrder = false, ?User $user = null): Collection
     {
         $albums = Album::query()
             ->isStandard()
@@ -62,7 +62,7 @@ class AlbumRepository extends Repository
             ->distinct()
             ->get('albums.*');
 
-        return $inThatOrder ? $albums->orderByArray($ids) : $albums;
+        return $preserveOrder ? $albums->orderByArray($ids) : $albums;
     }
 
     /** @return Collection|array<array-key, Album> */

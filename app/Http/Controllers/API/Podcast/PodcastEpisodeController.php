@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API\Podcast;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SongResource;
-use App\Models\Podcast\Podcast;
+use App\Models\Podcast;
 use App\Repositories\SongRepository;
 use App\Services\PodcastService;
 

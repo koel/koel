@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Podcast;
+namespace App\Models;
 
 use App\Casts\Podcast\PodcastStateCast;
 use App\Values\Podcast\PodcastState;

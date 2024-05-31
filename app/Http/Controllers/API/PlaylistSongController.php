@@ -50,7 +50,7 @@ class PlaylistSongController extends Controller
         $songs = $this->songRepository->getMany(ids: $request->songs, scopedUser: $this->user);
 
         return self::createResourceCollection(
-            $this->playlistService->addSongsToPlaylist($playlist, $songs, $this->user)
+            $this->playlistService->addPlayablesToPlaylist($playlist, $songs, $this->user)
         );
     }
 
@@ -66,7 +66,7 @@ class PlaylistSongController extends Controller
         abort_if($playlist->is_smart, Response::HTTP_FORBIDDEN, 'Smart playlist content is automatically generated');
 
         $this->authorize('collaborate', $playlist);
-        $this->playlistService->removeSongsFromPlaylist($playlist, $request->songs);
+        $this->playlistService->removePlayablesFromPlaylist($playlist, $request->songs);
 
         return response()->noContent();
     }

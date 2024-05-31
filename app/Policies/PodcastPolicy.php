@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\Podcast\Podcast;
+use App\Models\Podcast;
 use App\Models\User;
 
 class PodcastPolicy

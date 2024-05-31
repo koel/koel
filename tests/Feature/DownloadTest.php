@@ -121,7 +121,7 @@ class DownloadTest extends TestCase
 
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->for($user)->create();
-        $playlist->addSongs($songs);
+        $playlist->addPlayables($songs);
 
         $this->downloadService
             ->shouldReceive('getDownloadablePath')

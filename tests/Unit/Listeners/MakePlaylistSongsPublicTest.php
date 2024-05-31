@@ -22,7 +22,7 @@ class MakePlaylistSongsPublicTest extends TestCase
 
         $service = Mockery::mock(PlaylistService::class);
 
-        $service->shouldReceive('makePlaylistSongsPublic')
+        $service->shouldReceive('makePlaylistContentPublic')
             ->with($token->playlist)
             ->once();
 

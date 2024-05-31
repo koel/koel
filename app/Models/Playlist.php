@@ -158,7 +158,7 @@ class Playlist extends Model
     /**
      * @param Collection|array<array-key, Song>|Song|array<string> $songs
      */
-    public function addSongs(Collection|Song|array $songs, ?User $collaborator = null): void
+    public function addPlayables(Collection|Song|array $songs, ?User $collaborator = null): void
     {
         $collaborator ??= $this->user;
         $maxPosition = $this->songs()->getQuery()->max('position') ?? 0;
@@ -182,7 +182,7 @@ class Playlist extends Model
     /**
      * @param Collection<array-key, Song>|Song|array<string> $songs
      */
-    public function removeSongs(Collection|Song|array $songs): void
+    public function removePlayables(Collection|Song|array $songs): void
     {
         if (!is_array($songs)) {
             $songs = Collection::wrap($songs)->pluck('id')->all();

@@ -14,6 +14,7 @@ use App\Services\Streamer\Adapters\XSendFileStreamerAdapter;
 use App\Services\Streamer\Streamer;
 use Exception;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 use function Tests\test_path;
@@ -22,6 +23,9 @@ class StreamerTest extends TestCase
 {
     public function testResolveAdapters(): void
     {
+        // prevent real HTTP calls from being made e.g. from DropboxStorage
+        Http::fake();
+
         collect(SongStorageType::cases())
             ->each(function (SongStorageType $type): void {
                 /** @var Song $song */

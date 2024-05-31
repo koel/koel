@@ -4,8 +4,8 @@ namespace App\Services;
 
 use App\Exceptions\FailedToParsePodcastFeedException;
 use App\Exceptions\UserAlreadySubscribedToPodcast;
-use App\Models\Podcast\Podcast;
-use App\Models\Podcast\PodcastUserPivot;
+use App\Models\Podcast;
+use App\Models\PodcastUserPivot;
 use App\Models\Song as Episode;
 use App\Models\User;
 use App\Repositories\PodcastRepository;
@@ -125,9 +125,7 @@ class PodcastService
 
     private function subscribeUserToPodcast(User $user, Podcast $podcast): void
     {
-        throw_if($user->subscribedToPodcast($podcast), UserAlreadySubscribedToPodcast::make($user, $podcast));
-
-        $podcast->subscribers()->attach($user);
+        $user->subscribeToPodcast($podcast);
 
         // Refreshing so that $podcast->subscribers are updated
         $podcast->refresh();

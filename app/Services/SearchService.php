@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Builders\SongBuilder;
 use App\Models\Album;
 use App\Models\Artist;
-use App\Models\Podcast\Podcast;
+use App\Models\Podcast;
 use App\Models\Song;
 use App\Models\User;
 use App\Repositories\AlbumRepository;
@@ -38,20 +38,20 @@ class SearchService
         return ExcerptSearchResult::make(
             songs: $this->songRepository->getMany(
                 ids: Song::search($keywords)->get()->take($count)->pluck('id')->all(),
-                inThatOrder: true,
+                preserveOrder: true,
                 scopedUser: $scopedUser
             ),
             artists: $this->artistRepository->getMany(
                 ids: Artist::search($keywords)->get()->take($count)->pluck('id')->all(),
-                inThatOrder: true
+                preserveOrder: true
             ),
             albums: $this->albumRepository->getMany(
                 ids: Album::search($keywords)->get()->take($count)->pluck('id')->all(),
-                inThatOrder: true
+                preserveOrder: true
             ),
             podcasts: $this->podcastRepository->getMany(
                 ids: Podcast::search($keywords)->get()->take($count)->pluck('id')->all(),
-                inThatOrder: true
+                preserveOrder: true
             ),
         );
     }

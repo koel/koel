@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Podcast\PodcastStoreRequest;
 use App\Http\Resources\PodcastResource;
 use App\Http\Resources\PodcastResourceCollection;
-use App\Models\Podcast\Podcast;
+use App\Models\Podcast;
 use App\Models\User;
 use App\Repositories\PodcastRepository;
 use App\Services\PodcastService;

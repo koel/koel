@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\PlayableType;
 use App\Models\Album;
 use App\Models\Song;
 use App\Models\User;
@@ -39,5 +40,10 @@ class SongFactory extends Factory
     public function private(): self
     {
         return $this->state(fn () => ['is_public' => false]); // @phpcs:ignore
+    }
+
+    public function asEpisode(): self
+    {
+        return $this->state(fn () => ['type' => PlayableType::PODCAST_EPISODE]); // @phpcs:ignore
     }
 }

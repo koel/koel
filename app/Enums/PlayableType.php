@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum MediaType: string
+enum PlayableType: string
 {
     case SONG = 'song';
     case PODCAST_EPISODE = 'episode';

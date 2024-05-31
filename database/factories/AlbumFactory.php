@@ -10,7 +10,7 @@ class AlbumFactory extends Factory
 {
     protected $model = Album::class;
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function definition(): array
     {
         return [

@@ -3,12 +3,12 @@
 namespace App\Repositories;
 
 use App\Builders\SongBuilder;
-use App\Enums\MediaType;
+use App\Enums\PlayableType;
 use App\Facades\License;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Playlist;
-use App\Models\Podcast\Podcast;
+use App\Models\Podcast;
 use App\Models\Song;
 use App\Models\User;
 use App\Values\Genre;
@@ -37,7 +37,7 @@ class SongRepository extends Repository
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
-            ->typeOf(MediaType::SONG)
+            ->typeOf(PlayableType::SONG)
             ->accessibleBy($scopedUser)
             ->withMetaFor($scopedUser)
             ->latest()
@@ -51,7 +51,7 @@ class SongRepository extends Repository
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
-            ->typeOf(MediaType::SONG)
+            ->typeOf(PlayableType::SONG)
             ->accessibleBy($scopedUser)
             ->withMetaFor($scopedUser, requiresInteractions: true)
             ->where('interactions.play_count', '>', 0)
@@ -83,7 +83,7 @@ class SongRepository extends Repository
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
-            ->typeOf(MediaType::SONG)
+            ->typeOf(PlayableType::SONG)
             ->accessibleBy($scopedUser)
             ->withMetaFor($scopedUser)
             ->when($ownSongsOnly, static fn (SongBuilder $query) => $query->where('songs.owner_id', $scopedUser->id))
@@ -201,7 +201,7 @@ class SongRepository extends Repository
         $scopedUser ??= $this->auth->user();
 
         return Song::query()
-            ->typeOf(MediaType::SONG)
+            ->typeOf(PlayableType::SONG)
             ->accessibleBy($scopedUser)
             ->withMetaFor($scopedUser)
             ->inRandomOrder()
@@ -210,7 +210,7 @@ class SongRepository extends Repository
     }
 
     /** @return Collection|array<array-key, Song> */
-    public function getMany(array $ids, bool $inThatOrder = false, ?User $scopedUser = null): Collection
+    public function getMany(array $ids, bool $preserveOrder = false, ?User $scopedUser = null): Collection
     {
         $scopedUser ??= $this->auth->user();
 
@@ -220,7 +220,7 @@ class SongRepository extends Repository
             ->whereIn('songs.id', $ids)
             ->get();
 
-        return $inThatOrder ? $songs->orderByArray($ids) : $songs;
+        return $preserveOrder ? $songs->orderByArray($ids) : $songs;
     }
 
     /**
@@ -276,7 +276,7 @@ class SongRepository extends Repository
     public function countSongs(?User $scopedUser = null): int
     {
         return Song::query()
-            ->typeOf(MediaType::SONG)
+            ->typeOf(PlayableType::SONG)
             ->accessibleBy($scopedUser ?? auth()->user())
             ->count();
     }
@@ -284,7 +284,7 @@ class SongRepository extends Repository
     public function getTotalSongLength(?User $scopedUser = null): float
     {
         return Song::query()
-            ->typeOf(MediaType::SONG)
+            ->typeOf(PlayableType::SONG)
             ->accessibleBy($scopedUser ?? auth()->user())
             ->sum('length');
     }
