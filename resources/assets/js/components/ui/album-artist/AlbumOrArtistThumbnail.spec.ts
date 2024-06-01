@@ -21,7 +21,7 @@ new class extends UnitTestCase {
     })
 
     it('plays album', async () => {
-      const songs = factory<Song>('song', 10)
+      const songs = factory('song', 10)
       const fetchMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
       this.renderForAlbum()
@@ -35,7 +35,7 @@ new class extends UnitTestCase {
     })
 
     it('queues album', async () => {
-      const songs = factory<Song>('song', 10)
+      const songs = factory('song', 10)
       const fetchMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
       const queueMock = this.mock(queueStore, 'queue')
       this.renderForAlbum()
@@ -51,7 +51,7 @@ new class extends UnitTestCase {
     })
 
     it('plays artist', async () => {
-      const songs = factory<Song>('song', 10)
+      const songs = factory('song', 10)
       const fetchMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
       this.renderForArtist()
@@ -65,7 +65,7 @@ new class extends UnitTestCase {
     })
 
     it('queues artist', async () => {
-      const songs = factory<Song>('song', 10)
+      const songs = factory('song', 10)
       const fetchMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
       const queueMock = this.mock(queueStore, 'queue')
       this.renderForArtist()
@@ -82,7 +82,7 @@ new class extends UnitTestCase {
   }
 
   private renderForAlbum () {
-    album = factory<Album>('album', {
+    album = factory('album', {
       name: 'IV',
       cover: 'https://test/album.jpg'
     })
@@ -95,7 +95,7 @@ new class extends UnitTestCase {
   }
 
   private renderForArtist () {
-    artist = factory<Artist>('artist', {
+    artist = factory('artist', {
       name: 'Led Zeppelin',
       image: 'https://test/blimp.jpg'
     })

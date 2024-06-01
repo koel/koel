@@ -63,7 +63,7 @@ new class extends UnitTestCase {
   }
 
   private renderComponent (selectedSongCount = 1, configOverrides: Partial<SongListControlsConfig> = {}) {
-    const songs = factory<Song>('song', 5)
+    const songs = factory('song', 5)
     const config: SongListControlsConfig = merge({
       addTo: {
         queue: true,

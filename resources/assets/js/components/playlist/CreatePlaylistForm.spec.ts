@@ -10,8 +10,8 @@ import CreatePlaylistForm from './CreatePlaylistForm.vue'
 new class extends UnitTestCase {
   protected test () {
     it('creates playlist with no songs', async () => {
-      const folder = factory<PlaylistFolder>('playlist-folder')
-      const storeMock = this.mock(playlistStore, 'store').mockResolvedValue(factory<Playlist>('playlist'))
+      const folder = factory('playlist-folder')
+      const storeMock = this.mock(playlistStore, 'store').mockResolvedValue(factory('playlist'))
 
       this.render(CreatePlaylistForm, {
         global: {
@@ -32,9 +32,9 @@ new class extends UnitTestCase {
     })
 
     it('creates playlist with songs', async () => {
-      const songs = factory<Song>('song', 3)
-      const folder = factory<PlaylistFolder>('playlist-folder')
-      const storeMock = this.mock(playlistStore, 'store').mockResolvedValue(factory<Playlist>('playlist'))
+      const songs = factory('song', 3)
+      const folder = factory('playlist-folder')
+      const storeMock = this.mock(playlistStore, 'store').mockResolvedValue(factory('playlist'))
 
       this.render(CreatePlaylistForm, {
         global: {

@@ -12,7 +12,7 @@ let artist: Artist
 new class extends UnitTestCase {
   protected beforeEach () {
     super.beforeEach(() => {
-      artist = factory<Artist>('artist', {
+      artist = factory('artist', {
         id: 42,
         name: 'Led Zeppelin'
       })
@@ -38,7 +38,7 @@ new class extends UnitTestCase {
     })
 
     it('shuffles', async () => {
-      const songs = factory<Song>('song', 16)
+      const songs = factory('song', 16)
       const fetchMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 

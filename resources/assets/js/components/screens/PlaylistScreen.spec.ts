@@ -12,7 +12,7 @@ let playlist: Playlist
 new class extends UnitTestCase {
   protected test () {
     it('renders the playlist', async () => {
-      await this.renderComponent(factory<Song>('song', 10))
+      await this.renderComponent(factory('song', 10))
 
       await waitFor(() => {
         screen.getByTestId('song-list')
@@ -31,7 +31,7 @@ new class extends UnitTestCase {
 
     it('downloads the playlist', async () => {
       const downloadMock = this.mock(downloadService, 'fromPlaylist')
-      await this.renderComponent(factory<Song>('song', 10))
+      await this.renderComponent(factory('song', 10))
 
       await this.tick(2)
       await this.user.click(screen.getByRole('button', { name: 'Download All' }))
@@ -58,7 +58,7 @@ new class extends UnitTestCase {
   }
 
   private async renderComponent (songs: Song[]) {
-    playlist = playlist || factory<Playlist>('playlist')
+    playlist = playlist || factory('playlist')
     playlistStore.init([playlist])
     playlist.songs = songs
 

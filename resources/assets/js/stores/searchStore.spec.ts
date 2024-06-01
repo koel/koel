@@ -22,9 +22,9 @@ new class extends UnitTestCase {
   protected test () {
     it('performs an excerpt search', async () => {
       const result: ExcerptSearchResult = {
-        playables: factory<Song>('song', 3),
-        albums: factory<Album>('album', 3),
-        artists: factory<Artist>('artist', 3)
+        playables: factory('song', 3),
+        albums: factory('album', 3),
+        artists: factory('artist', 3)
       }
 
       const getMock = this.mock(http, 'get').mockResolvedValue(result)
@@ -45,7 +45,7 @@ new class extends UnitTestCase {
     })
 
     it('performs a song search', async () => {
-      const songs = factory<Song>('song', 3)
+      const songs = factory('song', 3)
 
       const getMock = this.mock(http, 'get').mockResolvedValue(songs)
       const syncMock = this.mock(songStore, 'syncWithVault', songs)
@@ -59,7 +59,7 @@ new class extends UnitTestCase {
     })
 
     it('resets the song result state', () => {
-      searchStore.state.songs = factory<Song>('song', 3)
+      searchStore.state.songs = factory('song', 3)
       searchStore.resetSongResultState()
       expect(searchStore.state.songs).toEqual([])
     })

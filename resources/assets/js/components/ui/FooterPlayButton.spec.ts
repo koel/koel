@@ -13,7 +13,7 @@ new class extends UnitTestCase {
   protected test () {
     it('toggles the playback of current song', async () => {
       const toggleMock = this.mock(playbackService, 'toggle')
-      this.renderComponent(factory<Song>('song'))
+      this.renderComponent(factory('song'))
 
       await this.user.click(screen.getByRole('button'))
 
@@ -26,7 +26,7 @@ new class extends UnitTestCase {
       ['Playlist', 'fetchForPlaylist', '71d8cd40-20d4-4b17-b460-d30fe5bb7b66']
     ])('initiates playback for %s screen', async (screenName, fetchMethod, id) => {
       commonStore.state.song_count = 10
-      const songs = factory<Song>('song', 3)
+      const songs = factory('song', 3)
       const fetchMock = this.mock(songStore, fetchMethod).mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
       const goMock = this.mock(Router, 'go')
@@ -55,7 +55,7 @@ new class extends UnitTestCase {
       ['RecentlyPlayed', recentlyPlayedStore, 'fetch']
     ])('initiates playback for %s screen', async (screenName, store, fetchMethod) => {
       commonStore.state.song_count = 10
-      const songs = factory<Song>('song', 3)
+      const songs = factory('song', 3)
       const fetchMock = this.mock(store, fetchMethod).mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
       const goMock = this.mock(Router, 'go')
@@ -77,7 +77,7 @@ new class extends UnitTestCase {
 
     it.each<[ScreenName]>([['Queue'], ['Songs'], ['Albums']])('initiates playback %s screen', async screenName => {
       commonStore.state.song_count = 10
-      const songs = factory<Song>('song', 3)
+      const songs = factory('song', 3)
       const fetchMock = this.mock(queueStore, 'fetchRandom').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
       const goMock = this.mock(Router, 'go')

@@ -12,7 +12,7 @@ new class extends UnitTestCase {
     super.beforeEach(cb)
     commonStore.state.song_count = 420
     commonStore.state.song_length = 123_456
-    songStore.state.songs = factory<Song>('song', 20)
+    songStore.state.songs = factory('song', 20)
     this.be()
   }
 

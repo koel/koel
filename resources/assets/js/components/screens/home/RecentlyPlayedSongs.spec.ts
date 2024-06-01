@@ -9,7 +9,7 @@ import RecentlyPlayedSongs from './RecentlyPlayedSongs.vue'
 new class extends UnitTestCase {
   protected test () {
     it('displays the songs', () => {
-      overviewStore.state.recentlyPlayed = factory<Song>('song', 6)
+      overviewStore.state.recentlyPlayed = factory('song', 6)
       expect(this.render(RecentlyPlayedSongs, {
         global: {
           stubs: {

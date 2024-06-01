@@ -18,7 +18,7 @@ export const states: Record<string, (faker: Faker) => Omit<Partial<Playlist>, 't
   smart: _ => ({
     is_smart: true,
     rules: [
-      factory<SmartPlaylistRuleGroup>('smart-playlist-rule-group')
+      factory('smart-playlist-rule-group')
     ]
   }),
   orphan: _ => ({

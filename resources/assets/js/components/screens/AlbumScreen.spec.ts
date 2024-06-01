@@ -40,7 +40,7 @@ new class extends UnitTestCase {
     })
 
     it('shows other albums from the same artist', async () => {
-      const albums = factory<Album>('album', 3)
+      const albums = factory('album', 3)
       albums.push(album)
       const fetchMock = this.mock(albumStore, 'fetchForArtist').mockResolvedValue(albums)
       await this.renderComponent()
@@ -57,7 +57,7 @@ new class extends UnitTestCase {
   private async renderComponent () {
     commonStore.state.uses_last_fm = true
 
-    album = factory<Album>('album', {
+    album = factory('album', {
       id: 42,
       name: 'Led Zeppelin IV',
       artist_id: 123,
@@ -66,7 +66,7 @@ new class extends UnitTestCase {
 
     const resolveAlbumMock = this.mock(albumStore, 'resolve').mockResolvedValue(album)
 
-    const songs = factory<Song>('song', 13)
+    const songs = factory('song', 13)
     const fetchSongsMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
 
     await this.router.activateRoute({

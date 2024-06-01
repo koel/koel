@@ -11,9 +11,9 @@ new class extends UnitTestCase {
   protected test () {
     it('displays orphan playlists', () => {
       playlistStore.state.playlists = [
-        factory.states('orphan')<Playlist>('playlist', { name: 'Foo Playlist' }),
-        factory.states('orphan')<Playlist>('playlist', { name: 'Bar Playlist' }),
-        factory.states('smart', 'orphan')<Playlist>('playlist', { name: 'Smart Playlist' })
+        factory.states('orphan')('playlist', { name: 'Foo Playlist' }),
+        factory.states('orphan')('playlist', { name: 'Bar Playlist' }),
+        factory.states('smart', 'orphan')('playlist', { name: 'Smart Playlist' })
       ]
 
       this.renderComponent()
@@ -25,8 +25,8 @@ new class extends UnitTestCase {
 
     it('displays playlist folders', () => {
       playlistFolderStore.state.folders = [
-        factory<PlaylistFolder>('playlist-folder', { name: 'Foo Folder' }),
-        factory<PlaylistFolder>('playlist-folder', { name: 'Bar Folder' })
+        factory('playlist-folder', { name: 'Foo Folder' }),
+        factory('playlist-folder', { name: 'Bar Folder' })
       ]
 
       this.renderComponent()

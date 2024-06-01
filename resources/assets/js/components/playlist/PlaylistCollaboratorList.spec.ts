@@ -7,12 +7,12 @@ import Component from './PlaylistCollaboratorList.vue'
 new class extends UnitTestCase {
   protected test () {
     it('renders', async () => {
-      const playlist = factory<Playlist>('playlist', {
+      const playlist = factory('playlist', {
         is_collaborative: true
       })
 
       const fetchMock = this.mock(playlistCollaborationService, 'fetchCollaborators').mockResolvedValue(
-        factory<PlaylistCollaborator>('playlist-collaborator', 5)
+        factory('playlist-collaborator', 5)
       )
 
       const { html } = await this.be().renderComponent(playlist)

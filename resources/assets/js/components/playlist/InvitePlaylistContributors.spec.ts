@@ -10,7 +10,7 @@ new class extends UnitTestCase {
     it('works', async () => {
       this.mock(playlistCollaborationService, 'createInviteLink').mockResolvedValue('http://localhost:3000/invite/1234')
       const writeTextMock = this.mock(navigator.clipboard, 'writeText')
-      const playlist = factory<Playlist>('playlist')
+      const playlist = factory('playlist')
 
       this.render(Component, {
         props: {

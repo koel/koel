@@ -24,7 +24,7 @@ new class extends UnitTestCase {
     })
 
     it('displays a list of user prospects', async () => {
-      const users = [...factory.states('prospect')<User>('user', 2), ...factory<User>('user', 3)]
+      const users = [...factory.states('prospect')('user', 2), ...factory('user', 3)]
       await this.renderComponent(users)
 
       expect(screen.getAllByTestId('user-card')).toHaveLength(5)
@@ -52,7 +52,7 @@ new class extends UnitTestCase {
 
   private async renderComponent (users: User[] = []) {
     if (users.length === 0) {
-      users = factory<User>('user', 6)
+      users = factory('user', 6)
     }
 
     const fetchMock = this.mock(http, 'get').mockResolvedValue(users)

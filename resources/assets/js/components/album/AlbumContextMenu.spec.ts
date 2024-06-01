@@ -15,7 +15,7 @@ new class extends UnitTestCase {
     it('renders', async () => expect((await this.renderComponent()).html()).toMatchSnapshot())
 
     it('plays all', async () => {
-      const songs = factory<Song>('song', 10)
+      const songs = factory('song', 10)
       const fetchMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 
@@ -28,7 +28,7 @@ new class extends UnitTestCase {
     })
 
     it('shuffles all', async () => {
-      const songs = factory<Song>('song', 10)
+      const songs = factory('song', 10)
       const fetchMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 
@@ -66,7 +66,7 @@ new class extends UnitTestCase {
     })
 
     it('does not have an option to download or go to Unknown Album and Artist', async () => {
-      await this.renderComponent(factory.states('unknown')<Album>('album'))
+      await this.renderComponent(factory.states('unknown')('album'))
 
       expect(screen.queryByText('Go to Album')).toBeNull()
       expect(screen.queryByText('Go to Artist')).toBeNull()
@@ -84,7 +84,7 @@ new class extends UnitTestCase {
   }
 
   private async renderComponent (_album?: Album) {
-    album = _album || factory<Album>('album', {
+    album = _album || factory('album', {
       name: 'IV'
     })
 

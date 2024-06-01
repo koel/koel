@@ -14,8 +14,8 @@ new class extends UnitTestCase {
     })
 
     it('shuffles all songs without fetching if genre has <= 500 songs', async () => {
-      const genre = factory<Genre>('genre', { song_count: 10 })
-      const songs = factory<Song>('song', 10)
+      const genre = factory('genre', { song_count: 10 })
+      const songs = factory('song', 10)
       const playbackMock = this.mock(playbackService, 'queueAndPlay')
 
       await this.renderComponent(genre, songs)
@@ -26,8 +26,8 @@ new class extends UnitTestCase {
     })
 
     it('fetches and shuffles all songs if genre has > 500 songs', async () => {
-      const genre = factory<Genre>('genre', { song_count: 501 })
-      const songs = factory<Song>('song', 10) // we don't really need to generate 501 songs
+      const genre = factory('genre', { song_count: 501 })
+      const songs = factory('song', 10) // we don't really need to generate 501 songs
       const playbackMock = this.mock(playbackService, 'queueAndPlay')
       const fetchMock = this.mock(songStore, 'fetchRandomForGenre').mockResolvedValue(songs)
 
@@ -43,12 +43,12 @@ new class extends UnitTestCase {
   }
 
   private async renderComponent (genre?: Genre, songs?: Song[]) {
-    genre = genre || factory<Genre>('genre')
+    genre = genre || factory('genre')
 
     const fetchGenreMock = this.mock(genreStore, 'fetchOne').mockResolvedValue(genre)
     const paginateMock = this.mock(songStore, 'paginateForGenre').mockResolvedValue({
       nextPage: 2,
-      songs: songs || factory<Song>('song', 13)
+      songs: songs || factory('song', 13)
     })
 
     await this.router.activateRoute({

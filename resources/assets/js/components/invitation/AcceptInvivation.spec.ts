@@ -9,7 +9,7 @@ new class extends UnitTestCase {
   protected test () {
     it('accepts invitation', async () => {
       const getProspectMock = this.mock(invitationService, 'getUserProspect')
-        .mockResolvedValue(factory.states('prospect')<User>('user'))
+        .mockResolvedValue(factory.states('prospect')('user'))
 
       const acceptMock = this.mock(invitationService, 'accept').mockResolvedValue({
         token: 'my-api-token',

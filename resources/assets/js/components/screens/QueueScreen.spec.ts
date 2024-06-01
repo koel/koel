@@ -9,7 +9,7 @@ import QueueScreen from './QueueScreen.vue'
 new class extends UnitTestCase {
   protected test () {
     it('renders the queue', () => {
-      this.renderComponent(factory<Song>('song', 3))
+      this.renderComponent(factory('song', 3))
 
       expect(screen.queryByTestId('song-list')).toBeTruthy()
       expect(screen.queryByTestId('screen-empty-state')).toBeNull()
@@ -37,7 +37,7 @@ new class extends UnitTestCase {
     })
 
     it('Shuffles all', async () => {
-      const songs = factory<Song>('song', 3)
+      const songs = factory('song', 3)
       this.renderComponent(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 

@@ -29,7 +29,7 @@ new class extends UnitTestCase {
     })
 
     it('invites users', async () => {
-      const prospects = factory.states('prospect')<User>('user', 2)
+      const prospects = factory.states('prospect')('user', 2)
       const addMock = this.mock(userStore, 'add')
       const postMock = this.mock(http, 'post').mockResolvedValue(prospects)
 
@@ -44,7 +44,7 @@ new class extends UnitTestCase {
     })
 
     it('revokes an invitation', async () => {
-      const user = factory.states('prospect')<User>('user')
+      const user = factory.states('prospect')('user')
       const removeMock = this.mock(userStore, 'remove')
       const deleteMock = this.mock(http, 'delete')
 

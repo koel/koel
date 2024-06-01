@@ -7,9 +7,9 @@ import Component from './PlaylistCollaboratorListItem.vue'
 new class extends UnitTestCase {
   protected test () {
     it('does not show a badge when current user is not the collaborator', async () => {
-      const currentUser = factory<User>('user')
+      const currentUser = factory('user')
       this.be(currentUser).renderComponent({
-        collaborator: factory<PlaylistCollaborator>('playlist-collaborator', { id: currentUser.id + 1 }),
+        collaborator: factory('playlist-collaborator', { id: currentUser.id + 1 }),
         removable: true,
         manageable: true,
         role: 'owner'
@@ -19,9 +19,9 @@ new class extends UnitTestCase {
     })
 
     it('shows a badge when current user is the collaborator', async () => {
-      const currentUser = factory<User>('user')
+      const currentUser = factory('user')
       this.be(currentUser).renderComponent({
-        collaborator: factory<PlaylistCollaborator>('playlist-collaborator',
+        collaborator: factory('playlist-collaborator',
           {
             id: currentUser.id,
             name: currentUser.name,
@@ -37,7 +37,7 @@ new class extends UnitTestCase {
     })
 
     it('shows the role', async () => {
-      const collaborator = factory<PlaylistCollaborator>('playlist-collaborator')
+      const collaborator = factory('playlist-collaborator')
 
       this.be().renderComponent({
         collaborator,
@@ -59,7 +59,7 @@ new class extends UnitTestCase {
     })
 
     it('emits the remove event when the remove button is clicked', async () => {
-      const collaborator = factory<PlaylistCollaborator>('playlist-collaborator')
+      const collaborator = factory('playlist-collaborator')
       const { emitted } = this.be().renderComponent({
         collaborator,
         removable: true,

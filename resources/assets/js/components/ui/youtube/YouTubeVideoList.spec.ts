@@ -10,14 +10,14 @@ import YouTubeVideoList from './YouTubeVideoList.vue'
 new class extends UnitTestCase {
   protected test () {
     it('functions', async () => {
-      const song = factory<Song>('song')
+      const song = factory('song')
 
       const searchMock = this.mock(youTubeService, 'searchVideosBySong').mockResolvedValueOnce({
         nextPageToken: 'foo',
-        items: factory<YouTubeVideo>('video', 5)
+        items: factory('video', 5)
       }).mockResolvedValueOnce({
         nextPageToken: 'bar',
-        items: factory<YouTubeVideo>('video', 3)
+        items: factory('video', 3)
       })
 
       this.render(YouTubeVideoList, {

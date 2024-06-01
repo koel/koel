@@ -10,9 +10,9 @@ new class extends UnitTestCase {
     it('renders the list of genres and their song counts', async () => {
       // ensure there's no duplicated names
       const genres = [
-        factory<Genre>('genre', { name: 'Rock', song_count: 10 }),
-        factory<Genre>('genre', { name: 'Pop', song_count: 20 }),
-        factory<Genre>('genre', { name: 'Jazz', song_count: 30 })
+        factory('genre', { name: 'Rock', song_count: 10 }),
+        factory('genre', { name: 'Pop', song_count: 20 }),
+        factory('genre', { name: 'Jazz', song_count: 30 })
       ]
 
       const fetchMock = this.mock(genreStore, 'fetchAll').mockResolvedValue(genres)

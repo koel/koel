@@ -1,5 +1,10 @@
 <template>
-  <div class="collaboration-modal max-w-[640px]" tabindex="0" @keydown.esc="close">
+  <div
+    class="collaboration-modal max-w-[640px]"
+    tabindex="0"
+    @keydown.esc="close"
+    data-testid="playlist-collaboration"
+  >
     <header>
       <h1>Playlist Collaboration</h1>
     </header>

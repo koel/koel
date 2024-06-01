@@ -28,7 +28,7 @@ new class extends UnitTestCase {
       const emitMock = this.mock(eventBus, 'emit')
       const alertMock = this.mock(MessageToasterStub.value, 'success')
 
-      const { html } = await this.renderComponent(factory<Song>('song', {
+      const { html } = await this.renderComponent(factory('song', {
         title: 'Rocket to Heaven',
         artist_name: 'Led Zeppelin',
         album_name: 'IV',
@@ -81,7 +81,7 @@ new class extends UnitTestCase {
       const emitMock = this.mock(eventBus, 'emit')
       const alertMock = this.mock(MessageToasterStub.value, 'success')
 
-      const { html } = await this.renderComponent(factory<Song>('song', 3))
+      const { html } = await this.renderComponent(factory('song', 3))
 
       expect(html()).toMatchSnapshot()
       expect(screen.queryByTestId('title-input')).toBeNull()
@@ -112,7 +112,7 @@ new class extends UnitTestCase {
     })
 
     it('displays artist name if all songs have the same artist', async () => {
-      await this.renderComponent(factory<Song>('song', 4, {
+      await this.renderComponent(factory('song', 4, {
         artist_id: 1000,
         artist_name: 'Led Zeppelin',
         album_id: 1001,

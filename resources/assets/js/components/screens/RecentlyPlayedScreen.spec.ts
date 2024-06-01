@@ -8,7 +8,7 @@ import RecentlyPlayedScreen from './RecentlyPlayedScreen.vue'
 new class extends UnitTestCase {
   protected test () {
     it('displays the songs', async () => {
-      await this.renderComponent(factory<Song>('song', 3))
+      await this.renderComponent(factory('song', 3))
 
       screen.getByTestId('song-list')
       expect(screen.queryByTestId('screen-empty-state')).toBeNull()

@@ -33,7 +33,7 @@ new class extends UnitTestCase {
 
   private renderComponent (song?: Song | null) {
     if (song === undefined) {
-      song = factory<Song>('song', {
+      song = factory('song', {
         id: '00000000-0000-0000-0000-000000000000',
         title: 'Fahrstuhl to Heaven',
         artist_name: 'Led Zeppelin',

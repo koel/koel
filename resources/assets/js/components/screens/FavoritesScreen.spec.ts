@@ -8,7 +8,7 @@ import FavoritesScreen from './FavoritesScreen.vue'
 new class extends UnitTestCase {
   protected test () {
     it('renders a list of favorites', async () => {
-      favoriteStore.state.songs = factory<Song>('song', 13)
+      favoriteStore.state.songs = factory('song', 13)
       await this.renderComponent()
 
       await waitFor(() => {

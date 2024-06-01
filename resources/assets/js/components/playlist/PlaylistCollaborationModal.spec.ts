@@ -11,7 +11,7 @@ new class extends UnitTestCase {
       const { html } = this.render(Modal, {
         global: {
           provide: {
-            [<symbol>ModalContextKey]: [ref({ playlist: factory<Playlist>('playlist') })]
+            [<symbol>ModalContextKey]: [ref({ playlist: factory('playlist') })]
           },
           stubs: {
             InviteCollaborators: this.stub('InviteCollaborators'),

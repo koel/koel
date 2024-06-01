@@ -11,7 +11,7 @@ new class extends UnitTestCase {
     it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
 
     it('provides a button to add lyrics if current user is admin', async () => {
-      const song = factory<Song>('song', { lyrics: null })
+      const song = factory('song', { lyrics: null })
 
       const mock = this.mock(eventBus, 'emit')
       this.beAdmin().renderComponent(song)
@@ -22,13 +22,13 @@ new class extends UnitTestCase {
     })
 
     it('does not have a button to add lyrics if current user is not an admin', async () => {
-      this.be().renderComponent(factory<Song>('song', { lyrics: null }))
+      this.be().renderComponent(factory('song', { lyrics: null }))
       expect(screen.queryByRole('button', { name: 'Click here' })).toBeNull()
     })
   }
 
   private renderComponent (song?: Song) {
-    song = song || factory<Song>('song', {
+    song = song || factory('song', {
       lyrics: 'Foo bar baz qux'
     })
 

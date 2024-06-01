@@ -10,7 +10,7 @@ let songs: Song[]
 new class extends UnitTestCase {
   protected beforeEach () {
     super.beforeEach(() => {
-      songs = factory<Song>('song', 3)
+      songs = factory('song', 3)
       queueStore.state.playables = reactive(songs)
     })
   }
@@ -23,7 +23,7 @@ new class extends UnitTestCase {
     it('returns the last queued song', () => expect(queueStore.last).toEqual(songs[2]))
 
     it('queues to bottom', () => {
-      const song = factory<Song>('song')
+      const song = factory('song')
       const putMock = this.mock(http, 'put')
       queueStore.queue(song)
 
@@ -33,7 +33,7 @@ new class extends UnitTestCase {
     })
 
     it('queues to top', () => {
-      const song = factory<Song>('song')
+      const song = factory('song')
       const putMock = this.mock(http, 'put')
       queueStore.queueToTop(song)
 
@@ -43,7 +43,7 @@ new class extends UnitTestCase {
     })
 
     it('replaces the whole queue', () => {
-      const newSongs = factory<Song>('song', 2)
+      const newSongs = factory('song', 2)
       const putMock = this.mock(http, 'put')
       queueStore.replaceQueueWith(newSongs)
 
@@ -101,7 +101,7 @@ new class extends UnitTestCase {
     })
 
     it('fetches random songs to queue', async () => {
-      const songs = factory<Song>('song', 3)
+      const songs = factory('song', 3)
       const getMock = this.mock(http, 'get').mockResolvedValue(songs)
       const syncMock = this.mock(songStore, 'syncWithVault', songs)
       const putMock = this.mock(http, 'put')
@@ -115,7 +115,7 @@ new class extends UnitTestCase {
     })
 
     it('fetches random songs to queue with a custom order', async () => {
-      const songs = factory<Song>('song', 3)
+      const songs = factory('song', 3)
       const getMock = this.mock(http, 'get').mockResolvedValue(songs)
       const syncMock = this.mock(songStore, 'syncWithVault', songs)
       const putMock = this.mock(http, 'put')

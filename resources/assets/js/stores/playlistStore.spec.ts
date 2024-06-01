@@ -69,7 +69,7 @@ new class extends UnitTestCase {
     })
 
     it('sets up a smart playlist with properly unserialized rules', () => {
-      const playlist = factory<Playlist>('playlist', {
+      const playlist = factory('playlist', {
         is_smart: true,
         rules: serializedRuleGroups as unknown as SmartPlaylistRuleGroup[]
       })
@@ -80,9 +80,9 @@ new class extends UnitTestCase {
     })
 
     it('stores a playlist', async () => {
-      const songs = factory<Song>('song', 3)
-      const playlist = factory<Playlist>('playlist')
-      const folder = factory<PlaylistFolder>('playlist-folder')
+      const songs = factory('song', 3)
+      const playlist = factory('playlist')
+      const folder = factory('playlist-folder')
       const postMock = this.mock(http, 'post').mockResolvedValue(playlist)
       this.mock(playlistStore, 'serializeSmartPlaylistRulesForStorage', null)
 
@@ -99,9 +99,9 @@ new class extends UnitTestCase {
     })
 
     it('deletes a playlist', async () => {
-      const playlist = factory<Playlist>('playlist')
+      const playlist = factory('playlist')
       const deleteMock = this.mock(http, 'delete')
-      playlistStore.state.playlists = [factory<Playlist>('playlist'), playlist]
+      playlistStore.state.playlists = [factory('playlist'), playlist]
 
       await playlistStore.delete(playlist)
 
@@ -111,8 +111,8 @@ new class extends UnitTestCase {
     })
 
     it('adds songs to a playlist', async () => {
-      const playlist = factory<Playlist>('playlist')
-      const songs = factory<Song>('song', 3)
+      const playlist = factory('playlist')
+      const songs = factory('song', 3)
       const postMock = this.mock(http, 'post').mockResolvedValue(playlist)
       const removeMock = this.mock(cache, 'remove')
 
@@ -126,8 +126,8 @@ new class extends UnitTestCase {
     })
 
     it('removes songs from a playlist', async () => {
-      const playlist = factory<Playlist>('playlist')
-      const songs = factory<Song>('song', 3)
+      const playlist = factory('playlist')
+      const songs = factory('song', 3)
       const deleteMock = this.mock(http, 'delete').mockResolvedValue(playlist)
       const removeMock = this.mock(cache, 'remove')
 
@@ -141,20 +141,20 @@ new class extends UnitTestCase {
     })
 
     it('does not modify a smart playlist content', async () => {
-      const playlist = factory.states('smart')<Playlist>('playlist')
+      const playlist = factory.states('smart')('playlist')
       const postMock = this.mock(http, 'post')
 
-      await playlistStore.addContent(playlist, factory<Song>('song', 3))
+      await playlistStore.addContent(playlist, factory('song', 3))
       expect(postMock).not.toHaveBeenCalled()
 
-      await playlistStore.removeContent(playlist, factory<Song>('song', 3))
+      await playlistStore.removeContent(playlist, factory('song', 3))
       expect(postMock).not.toHaveBeenCalled()
     })
 
     it('updates a standard playlist', async () => {
-      const playlist = factory<Playlist>('playlist')
+      const playlist = factory('playlist')
       playlistStore.state.playlists = [playlist]
-      const folder = factory<PlaylistFolder>('playlist-folder')
+      const folder = factory('playlist-folder')
 
       const putMock = this.mock(http, 'put').mockResolvedValue(playlist)
 
@@ -170,9 +170,9 @@ new class extends UnitTestCase {
     })
 
     it('updates a smart playlist', async () => {
-      const playlist = factory.states('smart')<Playlist>('playlist')
+      const playlist = factory.states('smart')('playlist')
       playlistStore.state.playlists = [playlist]
-      const rules = factory<SmartPlaylistRuleGroup>('smart-playlist-rule-group', 2)
+      const rules = factory('smart-playlist-rule-group', 2)
       const serializeMock = this.mock(playlistStore, 'serializeSmartPlaylistRulesForStorage', ['Whatever'])
       const putMock = this.mock(http, 'put').mockResolvedValue(playlist)
       const removeMock = this.mock(cache, 'remove')
@@ -191,7 +191,7 @@ new class extends UnitTestCase {
     })
 
     it('uploads a cover for a playlist', async () => {
-      const playlist = factory<Playlist>('playlist')
+      const playlist = factory('playlist')
       playlistStore.state.playlists = [playlist]
       const putMock = this.mock(http, 'put').mockResolvedValue({ cover_url: 'http://test/cover.jpg' })
 

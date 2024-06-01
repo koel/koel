@@ -6,7 +6,7 @@ import ProfileAvatar from './ProfileAvatar.vue'
 new class extends UnitTestCase {
   protected test () {
     it('renders', () => {
-      const user = factory<User>('user', {
+      const user = factory('user', {
         name: 'John Doe',
         avatar: 'https://example.com/avatar.jpg'
       })

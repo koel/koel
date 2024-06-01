@@ -15,7 +15,7 @@ new class extends UnitTestCase {
     it('renders', async () => expect((await this.renderComponent()).html()).toMatchSnapshot())
 
     it('plays all', async () => {
-      const songs = factory<Song>('song', 10)
+      const songs = factory('song', 10)
       const fetchMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 
@@ -28,7 +28,7 @@ new class extends UnitTestCase {
     })
 
     it('shuffles all', async () => {
-      const songs = factory<Song>('song', 10)
+      const songs = factory('song', 10)
       const fetchMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 
@@ -66,14 +66,14 @@ new class extends UnitTestCase {
     })
 
     it('does not have an option to download or go to Unknown Artist', async () => {
-      await this.renderComponent(factory.states('unknown')<Artist>('artist'))
+      await this.renderComponent(factory.states('unknown')('artist'))
 
       expect(screen.queryByText('Go to Artist')).toBeNull()
       expect(screen.queryByText('Download')).toBeNull()
     })
 
     it('does not have an option to download or go to Various Artist', async () => {
-      await this.renderComponent(factory.states('various')<Artist>('artist'))
+      await this.renderComponent(factory.states('various')('artist'))
 
       expect(screen.queryByText('Go to Artist')).toBeNull()
       expect(screen.queryByText('Download')).toBeNull()
@@ -81,7 +81,7 @@ new class extends UnitTestCase {
   }
 
   private async renderComponent (_artist?: Artist) {
-    artist = _artist || factory<Artist>('artist', {
+    artist = _artist || factory('artist', {
       name: 'Accept'
     })
 

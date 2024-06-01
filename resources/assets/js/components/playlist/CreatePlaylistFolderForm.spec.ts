@@ -9,7 +9,7 @@ new class extends UnitTestCase {
   protected test () {
     it('submits', async () => {
       const storeMock = this.mock(playlistFolderStore, 'store')
-        .mockResolvedValue(factory<PlaylistFolder>('playlist-folder'))
+        .mockResolvedValue(factory('playlist-folder'))
 
       this.render(CreatePlaylistFolderForm)
 

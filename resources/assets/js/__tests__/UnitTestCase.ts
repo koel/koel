@@ -71,12 +71,13 @@ export default abstract class UnitTestCase {
   }
 
   protected be (user?: User) {
-    userStore.state.current = user || factory<User>('user')
+    userStore.state.current = user || factory('user')
     return this
   }
 
   protected beAdmin () {
-    return this.be(factory.states('admin')<User>('user'))
+    factory.states('admin')('user')
+    return this.be(factory.states('admin')('user'))
   }
 
   protected mock<T, M extends MethodOf<Required<T>>> (obj: T, methodName: M, implementation?: any) {

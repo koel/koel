@@ -11,7 +11,7 @@ new class extends UnitTestCase {
 
   protected test () {
     it('sets preferences and saves the state', () => {
-      const user = factory<User>('user')
+      const user = factory('user')
       user.preferences = defaultPreferences
       const mock = this.mock(http, 'patch')
       preferenceStore.set('volume', 5)

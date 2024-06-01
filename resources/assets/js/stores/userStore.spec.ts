@@ -4,7 +4,7 @@ import factory from '@/__tests__/factory'
 import { http } from '@/services'
 import { CreateUserData, UpdateUserData, userStore } from '.'
 
-const currentUser = factory<User>('user', {
+const currentUser = factory('user', {
   id: 1,
   name: 'John Doe',
   email: 'john@doe.com',
@@ -26,7 +26,7 @@ new class extends UnitTestCase {
     })
 
     it('syncs with vault', () => {
-      const user = factory<User>('user')
+      const user = factory('user')
 
       expect(userStore.syncWithVault(user)).toEqual([user])
       expect(userStore.vault.size).toBe(2)
@@ -34,7 +34,7 @@ new class extends UnitTestCase {
     })
 
     it('fetches users', async () => {
-      const users = factory<User>('user', 3)
+      const users = factory('user', 3)
       const getMock = this.mock(http, 'get').mockResolvedValue(users)
 
       await userStore.fetch()
@@ -44,7 +44,7 @@ new class extends UnitTestCase {
     })
 
     it('gets user by id', () => {
-      const user = factory<User>('user', { id: 2 })
+      const user = factory('user', { id: 2 })
       userStore.syncWithVault(user)
 
       expect(userStore.byId(2)).toEqual(user)
@@ -58,7 +58,7 @@ new class extends UnitTestCase {
         email: 'jane@doe.com'
       }
 
-      const user = factory<User>('user', data)
+      const user = factory('user', data)
       const postMock = this.mock(http, 'post').mockResolvedValue(user)
 
       expect(await userStore.store(data)).toEqual(user)
@@ -68,7 +68,7 @@ new class extends UnitTestCase {
     })
 
     it('updates a user', async () => {
-      const user = factory<User>('user', { id: 2 })
+      const user = factory('user', { id: 2 })
       userStore.state.users.push(...userStore.syncWithVault(user))
 
       const data: UpdateUserData = {
@@ -90,7 +90,7 @@ new class extends UnitTestCase {
     it('deletes a user', async () => {
       const deleteMock = this.mock(http, 'delete')
 
-      const user = factory<User>('user', { id: 2 })
+      const user = factory('user', { id: 2 })
       userStore.state.users.push(...userStore.syncWithVault(user))
       expect(userStore.vault.has(2)).toBe(true)
 
