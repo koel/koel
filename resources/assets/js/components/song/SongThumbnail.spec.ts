@@ -26,7 +26,7 @@ new class extends UnitTestCase {
   }
 
   private renderComponent (playbackState: PlaybackState = 'Stopped') {
-    song = factory<Song>('song', {
+    song = factory('song', {
       playback_state: playbackState,
       play_count: 10,
       title: 'Foo bar'

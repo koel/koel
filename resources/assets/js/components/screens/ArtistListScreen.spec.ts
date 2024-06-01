@@ -43,7 +43,7 @@ new class extends UnitTestCase {
   }
 
   private async renderComponent () {
-    artistStore.state.artists = factory<Artist>('artist', 9)
+    artistStore.state.artists = factory('artist', 9)
 
     const rendered = this.render(ArtistListScreen, {
       global: {

@@ -56,13 +56,13 @@ new class extends UnitTestCase {
     })
 
     it('updates profile', async () => {
-      userStore.state.current = factory<User>('user', {
+      userStore.state.current = factory('user', {
         id: 1,
         name: 'John Doe',
         email: 'john@doe.com'
       })
 
-      const updated = factory<User>('user', {
+      const updated = factory('user', {
         id: 1,
         name: 'Jane Doe',
         email: 'jane@doe.com'

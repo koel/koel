@@ -43,7 +43,7 @@ new class extends UnitTestCase {
   }
 
   private async renderComponent () {
-    albumStore.state.albums = factory<Album>('album', 9)
+    albumStore.state.albums = factory('album', 9)
 
     this.render(AlbumListScreen, {
       global: {

@@ -13,7 +13,7 @@ new class extends UnitTestCase {
     it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
 
     it('plays', async () => {
-      const matchedSong = factory<Song>('song')
+      const matchedSong = factory('song')
       const queueMock = this.mock(queueStore, 'queueIfNotQueued')
       const playMock = this.mock(playbackService, 'play')
 
@@ -27,10 +27,10 @@ new class extends UnitTestCase {
   }
 
   private renderComponent (matchedSong?: Song) {
-    const songsToMatchAgainst = factory<Song>('song', 10)
-    const album = factory<Album>('album')
+    const songsToMatchAgainst = factory('song', 10)
+    const album = factory('album')
 
-    const track = factory<AlbumTrack>('album-track', {
+    const track = factory('album-track', {
       title: 'Fahrstuhl to Heaven',
       length: 280
     })

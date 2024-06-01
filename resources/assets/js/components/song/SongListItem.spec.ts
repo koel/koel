@@ -9,7 +9,7 @@ let row: PlayableRow
 new class extends UnitTestCase {
   protected test () {
     it('renders', async () => {
-      const song = factory<Song>('song', {
+      const song = factory('song', {
         title: 'Test Song',
         album_name: 'Test Album',
         artist_name: 'Test Artist',
@@ -32,7 +32,7 @@ new class extends UnitTestCase {
   }
 
   private renderComponent (song?: Song) {
-    song = song ?? factory<Song>('song')
+    song = song ?? factory('song')
 
     row = {
       playable: song,

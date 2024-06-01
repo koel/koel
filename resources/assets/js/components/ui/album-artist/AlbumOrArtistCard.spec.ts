@@ -9,7 +9,7 @@ new class extends UnitTestCase {
     it('emits events on user actions', async () => {
       const { emitted } = this.render(ArtistAlbumCard, {
         props: {
-          entity: factory<Album>('album')
+          entity: factory('album')
         }
       })
 

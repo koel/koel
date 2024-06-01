@@ -14,21 +14,21 @@ import { arrayify, eventBus, provideReadonly } from '@/utils'
 import { ModalContextKey } from '@/symbols'
 
 const modalNameToComponentMap = {
-  'create-playlist-form': defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistForm.vue')),
-  'edit-playlist-form': defineAsyncComponent(() => import('@/components/playlist/EditPlaylistForm.vue')),
-  'create-smart-playlist-form': defineAsyncComponent(() => import('@/components/playlist/smart-playlist/CreateSmartPlaylistForm.vue')),
-  'edit-smart-playlist-form': defineAsyncComponent(() => import('@/components/playlist/smart-playlist/EditSmartPlaylistForm.vue')),
-  'add-user-form': defineAsyncComponent(() => import('@/components/user/AddUserForm.vue')),
-  'edit-user-form': defineAsyncComponent(() => import('@/components/user/EditUserForm.vue')),
-  'invite-user-form': defineAsyncComponent(() => import('@/components/user/InviteUserForm.vue')),
-  'edit-song-form': defineAsyncComponent(() => import('@/components/song/EditSongForm.vue')),
-  'create-playlist-folder-form': defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistFolderForm.vue')),
-  'edit-playlist-folder-form': defineAsyncComponent(() => import('@/components/playlist/EditPlaylistFolderForm.vue')),
-  'playlist-collaboration': defineAsyncComponent(() => import('@/components/playlist/PlaylistCollaborationModal.vue')),
-  'add-podcast-form': defineAsyncComponent(() => import('@/components/podcast/AddPodcastForm.vue')),
   'about-koel': defineAsyncComponent(() => import('@/components/meta/AboutKoelModal.vue')),
+  'add-podcast-form': defineAsyncComponent(() => import('@/components/podcast/AddPodcastForm.vue')),
+  'add-user-form': defineAsyncComponent(() => import('@/components/user/AddUserForm.vue')),
+  'create-playlist-folder-form': defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistFolderForm.vue')),
+  'create-playlist-form': defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistForm.vue')),
+  'create-smart-playlist-form': defineAsyncComponent(() => import('@/components/playlist/smart-playlist/CreateSmartPlaylistForm.vue')),
+  'edit-playlist-folder-form': defineAsyncComponent(() => import('@/components/playlist/EditPlaylistFolderForm.vue')),
+  'edit-playlist-form': defineAsyncComponent(() => import('@/components/playlist/EditPlaylistForm.vue')),
+  'edit-smart-playlist-form': defineAsyncComponent(() => import('@/components/playlist/smart-playlist/EditSmartPlaylistForm.vue')),
+  'edit-song-form': defineAsyncComponent(() => import('@/components/song/EditSongForm.vue')),
+  'edit-user-form': defineAsyncComponent(() => import('@/components/user/EditUserForm.vue')),
+  'equalizer': defineAsyncComponent(() => import('@/components/ui/equalizer/Equalizer.vue')),
+  'invite-user-form': defineAsyncComponent(() => import('@/components/user/InviteUserForm.vue')),
   'koel-plus': defineAsyncComponent(() => import('@/components/koel-plus/KoelPlusModal.vue')),
-  'equalizer': defineAsyncComponent(() => import('@/components/ui/equalizer/Equalizer.vue'))
+  'playlist-collaboration': defineAsyncComponent(() => import('@/components/playlist/PlaylistCollaborationModal.vue'))
 }
 
 type ModalName = keyof typeof modalNameToComponentMap

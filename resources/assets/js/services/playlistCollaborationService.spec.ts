@@ -7,7 +7,7 @@ import { playlistCollaborationService as service } from './playlistCollaboration
 new class extends UnitTestCase {
   protected test () {
     it('creates invite link', async () => {
-      const playlist = factory<Playlist>('playlist', { is_smart: false })
+      const playlist = factory('playlist', { is_smart: false })
       const postMock = this.mock(http, 'post').mockResolvedValue({ token: 'abc123' })
 
       const link = await service.createInviteLink(playlist)
@@ -17,7 +17,7 @@ new class extends UnitTestCase {
     })
 
     it('throws if trying to create invite link for smart playlist', async () => {
-      const playlist = factory<Playlist>('playlist', { is_smart: true })
+      const playlist = factory('playlist', { is_smart: true })
 
       await expect(service.createInviteLink(playlist)).rejects.toThrow('Smart playlists are not collaborative.')
     })
@@ -31,8 +31,8 @@ new class extends UnitTestCase {
     })
 
     it('fetches collaborators', async () => {
-      const playlist = factory<Playlist>('playlist')
-      const collaborators = factory<PlaylistCollaborator[]>('playlist-collaborator', 2)
+      const playlist = factory('playlist')
+      const collaborators = factory('playlist-collaborator', 2)
       const getMock = this.mock(http, 'get').mockResolvedValue(collaborators)
 
       const received = await service.fetchCollaborators(playlist)
@@ -42,8 +42,8 @@ new class extends UnitTestCase {
     })
 
     it('removes collaborator', async () => {
-      const playlist = factory<Playlist>('playlist')
-      const collaborator = factory<PlaylistCollaborator>('playlist-collaborator')
+      const playlist = factory('playlist')
+      const collaborator = factory('playlist-collaborator')
       const deleteMock = this.mock(http, 'delete').mockResolvedValue({})
       const removeCacheMock = this.mock(cache, 'remove')
 

@@ -154,7 +154,6 @@ interface Playable {
   play_count_registered?: boolean
   play_count: number
   play_start_time?: number
-  genre: string
   preloaded?: boolean
   playback_state?: PlaybackState
   liked: boolean
@@ -172,6 +171,7 @@ interface Song extends Playable {
   artist_name: Artist['name']
   album_artist_id: Artist['id']
   album_artist_name: Artist['name']
+  genre: string
   track: number | null
   disc: number | null
   year: number | null

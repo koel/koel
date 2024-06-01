@@ -19,9 +19,9 @@ new class extends UnitTestCase {
   protected test () {
     it('renders', () => {
       playlistStore.state.playlists = [
-        factory<Playlist>('playlist', { name: 'Foo' }),
-        factory<Playlist>('playlist', { name: 'Bar' }),
-        factory<Playlist>('playlist', { name: 'Baz' })
+        factory('playlist', { name: 'Foo' }),
+        factory('playlist', { name: 'Bar' }),
+        factory('playlist', { name: 'Baz' })
       ]
 
       expect(this.renderComponent().html()).toMatchSnapshot()
@@ -40,7 +40,7 @@ new class extends UnitTestCase {
       ['to top', 'queue-top', 'queueToTop'],
       ['to bottom', 'queue-bottom', 'queue']
     ])('queues songs %s', async (_: string, testId: string, queueMethod: MethodOf<typeof queueStore>) => {
-      queueStore.state.playables = factory<Song>('song', 5)
+      queueStore.state.playables = factory('song', 5)
       queueStore.state.playables[2].playback_state = 'Playing'
 
       const mock = this.mock(queueStore, queueMethod)
@@ -62,7 +62,7 @@ new class extends UnitTestCase {
 
     it('adds songs to existing playlist', async () => {
       const mock = this.mock(playlistStore, 'addContent')
-      playlistStore.state.playlists = factory<Playlist>('playlist', 3)
+      playlistStore.state.playlists = factory('playlist', 3)
       this.renderComponent()
 
       await this.user.click(screen.getAllByTestId('add-to-playlist')[1])
@@ -81,7 +81,7 @@ new class extends UnitTestCase {
   }
 
   private renderComponent (customConfig: Partial<AddToMenuConfig> = {}) {
-    songs = factory<Song>('song', 5)
+    songs = factory('song', 5)
 
     return this.render(AddToMenu, {
       props: {

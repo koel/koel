@@ -31,7 +31,7 @@ new class extends UnitTestCase {
     return this.render(MainContent, {
       global: {
         provide: {
-          [<symbol>CurrentPlayableKey]: ref(factory<Song>('song'))
+          [<symbol>CurrentPlayableKey]: ref(factory('song'))
         },
         stubs: {
           AlbumArtOverlay,

@@ -29,10 +29,10 @@ new class extends UnitTestCase {
     commonStore.state.uses_last_fm = true
 
     if (info === undefined) {
-      info = factory<AlbumInfo>('album-info')
+      info = factory('album-info')
     }
 
-    album = factory<Album>('album', { name: 'IV' })
+    album = factory('album', { name: 'IV' })
     const fetchMock = this.mock(mediaInfoService, 'fetchForAlbum').mockResolvedValue(info)
 
     const rendered = this.render(AlbumInfoComponent, {

@@ -12,7 +12,7 @@ import PlaylistFolderContextMenu from './PlaylistFolderContextMenu.vue'
 new class extends UnitTestCase {
   protected test () {
     it('renames', async () => {
-      const folder = factory<PlaylistFolder>('playlist-folder')
+      const folder = factory('playlist-folder')
       await this.renderComponent(folder)
       const emitMock = this.mock(eventBus, 'emit')
 
@@ -22,7 +22,7 @@ new class extends UnitTestCase {
     })
 
     it('deletes', async () => {
-      const folder = factory<PlaylistFolder>('playlist-folder')
+      const folder = factory('playlist-folder')
       await this.renderComponent(folder)
       const emitMock = this.mock(eventBus, 'emit')
 
@@ -33,7 +33,7 @@ new class extends UnitTestCase {
 
     it('plays', async () => {
       const folder = this.createPlayableFolder()
-      const songs = factory<Song>('song', 3)
+      const songs = factory('song', 3)
       const fetchMock = this.mock(songStore, 'fetchForPlaylistFolder').mockResolvedValue(songs)
       const queueMock = this.mock(playbackService, 'queueAndPlay')
       const goMock = this.mock(Router, 'go')
@@ -70,7 +70,7 @@ new class extends UnitTestCase {
 
     it('shuffles', async () => {
       const folder = this.createPlayableFolder()
-      const songs = factory<Song>('song', 3)
+      const songs = factory('song', 3)
       const fetchMock = this.mock(songStore, 'fetchForPlaylistFolder').mockResolvedValue(songs)
       const queueMock = this.mock(playbackService, 'queueAndPlay')
       const goMock = this.mock(Router, 'go')
@@ -86,7 +86,7 @@ new class extends UnitTestCase {
     })
 
     it('does not show shuffle option if folder is empty', async () => {
-      const folder = factory<PlaylistFolder>('playlist-folder')
+      const folder = factory('playlist-folder')
       await this.renderComponent(folder)
 
       expect(screen.queryByText('Shuffle All')).toBeNull()
@@ -121,8 +121,8 @@ new class extends UnitTestCase {
   }
 
   private createPlayableFolder () {
-    const folder = factory<PlaylistFolder>('playlist-folder')
-    this.mock(playlistStore, 'byFolder', factory<Playlist>('playlist', 3, { folder_id: folder.id }))
+    const folder = factory('playlist-folder')
+    this.mock(playlistStore, 'byFolder', factory('playlist', 3, { folder_id: folder.id }))
     return folder
   }
 }

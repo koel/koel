@@ -25,12 +25,12 @@ new class extends UnitTestCase {
       const artistSyncMock = this.mock(artistStore, 'syncWithVault')
       const refreshMock = this.mock(overviewStore, 'refreshPlayStats')
 
-      const mostPlayedSongs = factory<Song>('song', 7)
-      const mostPlayedAlbums = factory<Album>('album', 6)
-      const mostPlayedArtists = factory<Artist>('artist', 6)
-      const recentlyAddedSongs = factory<Song>('song', 9)
-      const recentlyAddedAlbums = factory<Album>('album', 6)
-      const recentlyPlayedSongs = factory<Song>('song', 9)
+      const mostPlayedSongs = factory('song', 7)
+      const mostPlayedAlbums = factory('album', 6)
+      const mostPlayedArtists = factory('artist', 6)
+      const recentlyAddedSongs = factory('song', 9)
+      const recentlyAddedAlbums = factory('album', 6)
+      const recentlyPlayedSongs = factory('song', 9)
 
       const getMock = this.mock(http, 'get').mockResolvedValueOnce({
         most_played_songs: mostPlayedSongs,
@@ -54,8 +54,8 @@ new class extends UnitTestCase {
     })
 
     it('refreshes the store', () => {
-      const mostPlayedSongs = factory<Song>('song', 7)
-      const recentlyPlayedSongs = factory<Song>('song', 9)
+      const mostPlayedSongs = factory('song', 7)
+      const recentlyPlayedSongs = factory('song', 9)
 
       const mostPlayedSongsMock = this.mock(songStore, 'getMostPlayed', mostPlayedSongs)
       recentlyPlayedStore.excerptState.playables = recentlyPlayedSongs

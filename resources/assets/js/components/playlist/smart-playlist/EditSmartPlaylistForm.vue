@@ -1,5 +1,5 @@
 <template>
-  <FormBase>
+  <FormBase data-testid="edit-smart-playlist-form">
     <form @submit.prevent="submit" @keydown.esc="maybeClose">
       <header>
         <h1>Edit Smart Playlist</h1>

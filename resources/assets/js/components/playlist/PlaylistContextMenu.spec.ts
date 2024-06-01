@@ -12,7 +12,7 @@ import PlaylistContextMenu from './PlaylistContextMenu.vue'
 new class extends UnitTestCase {
   protected test () {
     it('edits a standard playlist', async () => {
-      const playlist = factory<Playlist>('playlist')
+      const playlist = factory('playlist')
       await this.renderComponent(playlist)
       const emitMock = this.mock(eventBus, 'emit')
 
@@ -22,7 +22,7 @@ new class extends UnitTestCase {
     })
 
     it('edits a smart playlist', async () => {
-      const playlist = factory.states('smart')<Playlist>('playlist')
+      const playlist = factory.states('smart')('playlist')
       await this.renderComponent(playlist)
       const emitMock = this.mock(eventBus, 'emit')
 
@@ -32,7 +32,7 @@ new class extends UnitTestCase {
     })
 
     it('deletes a playlist', async () => {
-      const playlist = factory<Playlist>('playlist')
+      const playlist = factory('playlist')
       await this.renderComponent(playlist)
       const emitMock = this.mock(eventBus, 'emit')
 
@@ -42,8 +42,8 @@ new class extends UnitTestCase {
     })
 
     it('plays', async () => {
-      const playlist = factory<Playlist>('playlist')
-      const songs = factory<Song>('song', 3)
+      const playlist = factory('playlist')
+      const songs = factory('song', 3)
       const fetchMock = this.mock(songStore, 'fetchForPlaylist').mockResolvedValue(songs)
       const queueMock = this.mock(playbackService, 'queueAndPlay')
       const goMock = this.mock(Router, 'go')
@@ -59,7 +59,7 @@ new class extends UnitTestCase {
     })
 
     it('warns if attempting to play an empty playlist', async () => {
-      const playlist = factory<Playlist>('playlist')
+      const playlist = factory('playlist')
       const fetchMock = this.mock(songStore, 'fetchForPlaylist').mockResolvedValue([])
       const queueMock = this.mock(playbackService, 'queueAndPlay')
       const goMock = this.mock(Router, 'go')
@@ -78,8 +78,8 @@ new class extends UnitTestCase {
     })
 
     it('shuffles', async () => {
-      const playlist = factory<Playlist>('playlist')
-      const songs = factory<Song>('song', 3)
+      const playlist = factory('playlist')
+      const songs = factory('song', 3)
       const fetchMock = this.mock(songStore, 'fetchForPlaylist').mockResolvedValue(songs)
       const queueMock = this.mock(playbackService, 'queueAndPlay')
       const goMock = this.mock(Router, 'go')
@@ -95,7 +95,7 @@ new class extends UnitTestCase {
     })
 
     it('warns if attempting to shuffle an empty playlist', async () => {
-      const playlist = factory<Playlist>('playlist')
+      const playlist = factory('playlist')
       const fetchMock = this.mock(songStore, 'fetchForPlaylist').mockResolvedValue([])
       const queueMock = this.mock(playbackService, 'queueAndPlay')
       const goMock = this.mock(Router, 'go')
@@ -114,8 +114,8 @@ new class extends UnitTestCase {
     })
 
     it('queues', async () => {
-      const playlist = factory<Playlist>('playlist')
-      const songs = factory<Song>('song', 3)
+      const playlist = factory('playlist')
+      const songs = factory('song', 3)
       const fetchMock = this.mock(songStore, 'fetchForPlaylist').mockResolvedValue(songs)
       const queueMock = this.mock(queueStore, 'queueAfterCurrent')
       const toastMock = this.mock(MessageToasterStub.value, 'success')
@@ -131,8 +131,8 @@ new class extends UnitTestCase {
     })
 
     it('does not have an option to edit or delete if the playlist is not owned by the current user', async () => {
-      const user = factory<User>('user')
-      const playlist = factory<Playlist>('playlist', {
+      const user = factory('user')
+      const playlist = factory('playlist', {
         user_id: user.id + 1
       })
 
@@ -144,7 +144,7 @@ new class extends UnitTestCase {
 
     it('opens collaboration form', async () => {
       this.enablePlusEdition()
-      const playlist = factory<Playlist>('playlist')
+      const playlist = factory('playlist')
       await this.renderComponent(playlist)
       const emitMock = this.mock(eventBus, 'emit')
 
@@ -155,7 +155,7 @@ new class extends UnitTestCase {
   }
 
   private async renderComponent (playlist: Playlist, user: User | null = null) {
-    userStore.state.current = user || factory<User>('user', {
+    userStore.state.current = user || factory('user', {
       id: playlist.user_id
     })
 

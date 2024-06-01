@@ -14,14 +14,14 @@ new class extends UnitTestCase {
   protected async renderComponent () {
     commonStore.state.uses_last_fm = true
 
-    artist = factory<Artist>('artist', {
+    artist = factory('artist', {
       id: 42,
       name: 'Led Zeppelin',
     })
 
     const resolveArtistMock = this.mock(artistStore, 'resolve').mockResolvedValue(artist)
 
-    const songs = factory<Song>('song', 13)
+    const songs = factory('song', 13)
     const fetchSongsMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
 
     await this.router.activateRoute({

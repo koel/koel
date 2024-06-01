@@ -14,13 +14,13 @@ new class extends UnitTestCase {
 
   protected test () {
     it('gets an artist by ID', () => {
-      const artist = factory<Artist>('artist')
+      const artist = factory('artist')
       artistStore.vault.set(artist.id, artist)
       expect(artistStore.byId(artist.id)).toEqual(artist)
     })
 
     it('removes artists by IDs', () => {
-      const artists = factory<Artist>('artist', 3)
+      const artists = factory('artist', 3)
       artists.forEach(artist => artistStore.vault.set(artist.id, artist))
       artistStore.state.artists = artists
 
@@ -33,29 +33,29 @@ new class extends UnitTestCase {
     })
 
     it('identifies an unknown artist', () => {
-      const artist = factory.states('unknown')<Artist>('artist')
+      const artist = factory.states('unknown')('artist')
 
       expect(artistStore.isUnknown(artist)).toBe(true)
       expect(artistStore.isUnknown(artist.id)).toBe(true)
-      expect(artistStore.isUnknown(factory<Artist>('artist'))).toBe(false)
+      expect(artistStore.isUnknown(factory('artist'))).toBe(false)
     })
 
     it('identifies the various artist', () => {
-      const artist = factory.states('various')<Artist>('artist')
+      const artist = factory.states('various')('artist')
 
       expect(artistStore.isVarious(artist)).toBe(true)
       expect(artistStore.isVarious(artist.id)).toBe(true)
-      expect(artistStore.isVarious(factory<Artist>('artist'))).toBe(false)
+      expect(artistStore.isVarious(factory('artist'))).toBe(false)
     })
 
     it('identifies a standard artist', () => {
-      expect(artistStore.isStandard(factory.states('unknown')<Artist>('artist'))).toBe(false)
-      expect(artistStore.isStandard(factory.states('various')<Artist>('artist'))).toBe(false)
-      expect(artistStore.isStandard(factory<Artist>('artist'))).toBe(true)
+      expect(artistStore.isStandard(factory.states('unknown')('artist'))).toBe(false)
+      expect(artistStore.isStandard(factory.states('various')('artist'))).toBe(false)
+      expect(artistStore.isStandard(factory('artist'))).toBe(true)
     })
 
     it('syncs artists with the vault', () => {
-      const artist = factory<Artist>('artist', { name: 'Led Zeppelin' })
+      const artist = factory('artist', { name: 'Led Zeppelin' })
 
       artistStore.syncWithVault(artist)
       expect(artistStore.vault.get(artist.id)).toEqual(artist)
@@ -68,7 +68,7 @@ new class extends UnitTestCase {
     })
 
     it('uploads an image for an artist', async () => {
-      const artist = factory<Artist>('artist')
+      const artist = factory('artist')
       artistStore.syncWithVault(artist)
       const putMock = this.mock(http, 'put').mockResolvedValue({ image_url: 'http://test/img.jpg' })
 
@@ -80,7 +80,7 @@ new class extends UnitTestCase {
     })
 
     it('resolves an artist', async () => {
-      const artist = factory<Artist>('artist')
+      const artist = factory('artist')
       const getMock = this.mock(http, 'get').mockResolvedValueOnce(artist)
 
       expect(await artistStore.resolve(artist.id)).toEqual(artist)
@@ -92,7 +92,7 @@ new class extends UnitTestCase {
     })
 
     it('paginates', async () => {
-      const artists = factory<Artist>('artist', 3)
+      const artists = factory('artist', 3)
 
       this.mock(http, 'get').mockResolvedValueOnce({
         data: artists,

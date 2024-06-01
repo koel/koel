@@ -20,7 +20,7 @@ new class extends UnitTestCase {
     it('queues and plays', async () => {
       const queueMock = this.mock(queueStore, 'queueIfNotQueued')
       const playMock = this.mock(playbackService, 'play')
-      const song = factory<Song>('song', { playback_state: 'Stopped' })
+      const song = factory('song', { playback_state: 'Stopped' })
       await this.renderComponent(song)
 
       await this.user.click(screen.getByText('Play'))
@@ -31,7 +31,7 @@ new class extends UnitTestCase {
 
     it('pauses playback', async () => {
       const pauseMock = this.mock(playbackService, 'pause')
-      await this.renderComponent(factory<Song>('song', { playback_state: 'Playing' }))
+      await this.renderComponent(factory('song', { playback_state: 'Playing' }))
 
       await this.user.click(screen.getByText('Pause'))
 
@@ -40,7 +40,7 @@ new class extends UnitTestCase {
 
     it('resumes playback', async () => {
       const resumeMock = this.mock(playbackService, 'resume')
-      await this.renderComponent(factory<Song>('song', { playback_state: 'Paused' }))
+      await this.renderComponent(factory('song', { playback_state: 'Paused' }))
 
       await this.user.click(screen.getByText('Play'))
 
@@ -49,7 +49,7 @@ new class extends UnitTestCase {
 
     it('goes to album details screen', async () => {
       const goMock = this.mock(Router, 'go')
-      await this.renderComponent(factory<Song>('song'))
+      await this.renderComponent(factory('song'))
 
       await this.user.click(screen.getByText('Go to Album'))
 
@@ -58,7 +58,7 @@ new class extends UnitTestCase {
 
     it('goes to artist details screen', async () => {
       const goMock = this.mock(Router, 'go')
-      await this.renderComponent(factory<Song>('song'))
+      await this.renderComponent(factory('song'))
 
       await this.user.click(screen.getByText('Go to Artist'))
 
@@ -178,7 +178,7 @@ new class extends UnitTestCase {
     })
 
     it('lists and adds to existing playlist', async () => {
-      playlistStore.state.playlists = factory<Playlist>('playlist', 3)
+      playlistStore.state.playlists = factory('playlist', 3)
       const addMock = this.mock(playlistStore, 'addContent')
       this.mock(MessageToasterStub.value, 'success')
       await this.renderComponent()
@@ -191,8 +191,8 @@ new class extends UnitTestCase {
     })
 
     it('does not list smart playlists', async () => {
-      playlistStore.state.playlists = factory<Playlist>('playlist', 3)
-      playlistStore.state.playlists.push(factory.states('smart')<Playlist>('playlist', { name: 'My Smart Playlist' }))
+      playlistStore.state.playlists = factory('playlist', 3)
+      playlistStore.state.playlists.push(factory.states('smart')('playlist', { name: 'My Smart Playlist' }))
 
       await this.renderComponent()
 
@@ -200,7 +200,7 @@ new class extends UnitTestCase {
     })
 
     it('removes from playlist', async () => {
-      const playlist = factory<Playlist>('playlist')
+      const playlist = factory('playlist')
       playlistStore.state.playlists.push(playlist)
 
       await this.router.activateRoute({
@@ -248,21 +248,21 @@ new class extends UnitTestCase {
     })
 
     it('has an option to copy shareable URL in Community edition', async () => {
-      await this.renderComponent(factory<Song>('song'))
+      await this.renderComponent(factory('song'))
       screen.getByText('Copy Shareable URL')
     })
 
     it('has an option to copy shareable URL if song is public in Plus edition', async () => {
       this.enablePlusEdition()
 
-      await this.renderComponent(factory<Song>('song', { is_public: true }))
+      await this.renderComponent(factory('song', { is_public: true }))
       screen.getByText('Copy Shareable URL')
     })
 
     it('does not have an option to share if song is private in Plus edition', async () => {
       this.enablePlusEdition()
 
-      await this.renderComponent(factory<Song>('song', { is_public: false }))
+      await this.renderComponent(factory('song', { is_public: false }))
       expect(screen.queryByText('Copy Shareable URL')).toBeNull()
     })
 
@@ -303,8 +303,8 @@ new class extends UnitTestCase {
     it('makes songs private', async () => {
       this.enablePlusEdition()
 
-      const user = factory<User>('user')
-      const songs = factory<Song>('song', 5, {
+      const user = factory('user')
+      const songs = factory('song', 5, {
         is_public: true,
         owner_id: user.id
       })
@@ -320,8 +320,8 @@ new class extends UnitTestCase {
     it('makes songs public', async () => {
       this.enablePlusEdition()
 
-      const user = factory<User>('user')
-      const songs = factory<Song>('song', 5, {
+      const user = factory('user')
+      const songs = factory('song', 5, {
         is_public: false,
         owner_id: user.id
       })
@@ -337,9 +337,9 @@ new class extends UnitTestCase {
     it('does not have an option to make songs public or private if current user is not owner', async () => {
       this.enablePlusEdition()
 
-      const user = factory<User>('user')
-      const owner = factory<User>('user')
-      const songs = factory<Song>('song', 5, {
+      const user = factory('user')
+      const owner = factory('user')
+      const songs = factory('song', 5, {
         is_public: false,
         owner_id: owner.id
       })
@@ -353,11 +353,11 @@ new class extends UnitTestCase {
     it('has both options to make public and private if songs have mixed visibilities', async () => {
       this.enablePlusEdition()
 
-      const owner = factory<User>('user')
-      const songs = factory<Song>('song', 2, {
+      const owner = factory('user')
+      const songs = factory('song', 2, {
         is_public: false,
         owner_id: owner.id
-      }).concat(...factory<Song>('song', 3, {
+      }).concat(...factory('song', 3, {
         is_public: true,
         owner_id: owner.id
       }))
@@ -369,8 +369,8 @@ new class extends UnitTestCase {
     })
 
     it('does not have an option to make songs public or private or Community edition', async () => {
-      const owner = factory<User>('user')
-      const songs = factory<Song>('song', 5, {
+      const owner = factory('user')
+      const songs = factory('song', 5, {
         is_public: false,
         owner_id: owner.id
       })
@@ -383,7 +383,7 @@ new class extends UnitTestCase {
   }
 
   private async renderComponent (_songs?: Song | Song[]) {
-    songs = arrayify(_songs || factory<Song>('song', 5))
+    songs = arrayify(_songs || factory('song', 5))
 
     const rendered = this.render(PlayableContextMenu)
     eventBus.emit('PLAYABLE_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, songs)
@@ -393,7 +393,7 @@ new class extends UnitTestCase {
   }
 
   private fillQueue () {
-    queueStore.state.playables = factory<Song>('song', 5)
+    queueStore.state.playables = factory('song', 5)
     queueStore.state.playables[2].playback_state = 'Playing'
   }
 }

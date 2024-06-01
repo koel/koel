@@ -12,7 +12,7 @@ new class extends UnitTestCase {
       const updateMock = this.mock(authService, 'updateProfile')
       const alertMock = this.mock(MessageToasterStub.value, 'success')
 
-      this.renderComponent(factory<User>('user', {
+      this.renderComponent(factory('user', {
         avatar: 'https://gravatar.com/foo'
       }))
 

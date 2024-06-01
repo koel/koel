@@ -12,7 +12,7 @@ new class extends UnitTestCase {
       ['Like Foo by Bar', false]
     ])('%s', async (name: string, liked: boolean) => {
       const mock = this.mock(favoriteStore, 'toggleOne')
-      const song = factory<Song>('song', {
+      const song = factory('song', {
         liked,
         title: 'Foo',
         artist_name: 'Bar'

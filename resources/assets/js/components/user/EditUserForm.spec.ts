@@ -14,7 +14,7 @@ new class extends UnitTestCase {
       const updateMock = this.mock(userStore, 'update')
       const alertMock = this.mock(MessageToasterStub.value, 'success')
 
-      const user = ref(factory<User>('user', { name: 'John Doe' }))
+      const user = ref(factory('user', { name: 'John Doe' }))
 
       this.render(EditUserForm, {
         global: {

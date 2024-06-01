@@ -30,7 +30,7 @@ new class extends UnitTestCase {
     })
 
     it('shuffles', async () => {
-      const songs = factory<Song>('song', 10)
+      const songs = factory('song', 10)
       const fetchMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
       const shuffleMock = this.mock(playbackService, 'queueAndPlay').mockResolvedValue(void 0)
       this.renderComponent()
@@ -52,7 +52,7 @@ new class extends UnitTestCase {
   }
 
   private renderComponent () {
-    album = factory<Album>('album', {
+    album = factory('album', {
       id: 42,
       name: 'IV',
       artist_id: 17,

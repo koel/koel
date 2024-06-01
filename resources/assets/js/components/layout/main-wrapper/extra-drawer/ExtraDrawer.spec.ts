@@ -14,7 +14,7 @@ new class extends UnitTestCase {
 
     it('sets the active tab to the preference', async () => {
       preferenceStore.active_extra_panel_tab = 'YouTube'
-      this.renderComponent(ref(factory<Song>('song')))
+      this.renderComponent(ref(factory('song')))
       const tab = screen.getByTestId<HTMLElement>('extra-drawer-youtube')
 
       expect(tab.style.display).toBe('none')
@@ -25,7 +25,7 @@ new class extends UnitTestCase {
     it('fetches info for the current song', async () => {
       commonStore.state.uses_you_tube = true
 
-      const song = factory<Song>('song')
+      const song = factory('song')
       const songRef = ref<Song | null>(null)
 
       const [, resolveArtistMock, resolveAlbumMock] = this.renderComponent(songRef)
@@ -66,10 +66,10 @@ new class extends UnitTestCase {
   }
 
   private renderComponent (songRef: Ref<Song | null> = ref(null)): [RenderResult, Mock, Mock] {
-    const artist = factory<Artist>('artist')
+    const artist = factory('artist')
     const resolveArtistMock = this.mock(artistStore, 'resolve').mockResolvedValue(artist)
 
-    const album = factory<Album>('album')
+    const album = factory('album')
     const resolveAlbumMock = this.mock(albumStore, 'resolve').mockResolvedValue(album)
 
     const rendered = this.render(ExtraDrawer, {

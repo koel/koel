@@ -25,8 +25,8 @@ new class extends UnitTestCase {
 
   private async renderComponent (mode: MediaInfoDisplayMode = 'aside', info?: ArtistInfo) {
     commonStore.state.uses_last_fm = true
-    info = info ?? factory<ArtistInfo>('artist-info')
-    artist = factory<Artist>('artist', { name: 'Led Zeppelin' })
+    info = info ?? factory('artist-info')
+    artist = factory('artist', { name: 'Led Zeppelin' })
 
     const fetchMock = this.mock(mediaInfoService, 'fetchForArtist').mockResolvedValue(info)
 
