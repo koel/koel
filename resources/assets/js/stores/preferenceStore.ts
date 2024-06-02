@@ -25,6 +25,7 @@ export const defaultPreferences: UserPreferences = {
 }
 
 const preferenceStore = {
+  _temporary: false,
   initialized: ref(false),
 
   state: reactive<UserPreferences>(defaultPreferences),
@@ -53,14 +54,28 @@ const preferenceStore = {
     if (this.state[key] === value) return
 
     this.state[key] = value
-    http.silently.patch('me/preferences', { key, value })
+
+    if (!this._temporary) {
+      http.silently.patch('me/preferences', { key, value })
+    } else {
+      this._temporary = false
+    }
   },
 
   get (key: string) {
     return this.state?.[key]
+  },
+
+  // Calling preferenceStore.temporary.volume = 7 won't trigger saving.
+  // This is useful in tests as it doesn't create stray HTTP requests.
+  get temporary () {
+    this._temporary = true
+    return this as unknown as ExportedType
   }
 }
 
-const exported = preferenceStore as unknown as Omit<typeof preferenceStore, 'setupProxy'> & UserPreferences
+type ExportedType = Omit<typeof preferenceStore, 'setupProxy' | '_temporary'> & UserPreferences
+
+const exported = preferenceStore as unknown as ExportedType
 
 export { exported as preferenceStore }
