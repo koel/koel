@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
-import { queueStore, songStore } from '@/stores'
+import { songStore } from '@/stores'
 import { playbackService } from '@/services'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { PlayablesKey } from '@/symbols'
@@ -14,15 +14,13 @@ new class extends UnitTestCase {
 
     it('plays', async () => {
       const matchedSong = factory('song')
-      const queueMock = this.mock(queueStore, 'queueIfNotQueued')
       const playMock = this.mock(playbackService, 'play')
 
       this.renderComponent(matchedSong)
 
       await this.user.click(screen.getByTitle('Click to play'))
 
-      expect(queueMock).toHaveBeenNthCalledWith(1, matchedSong)
-      expect(playMock).toHaveBeenNthCalledWith(1, matchedSong)
+      expect(playMock).toHaveBeenCalledWith(matchedSong)
     })
   }
 

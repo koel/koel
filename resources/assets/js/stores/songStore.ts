@@ -45,11 +45,11 @@ export interface GenreSongListPaginateParams extends Record<string, any> {
 export const songStore = {
   vault: new Map<Playable['id'], Playable>(),
 
-  state: reactive({
-    songs: [] as Playable[]
+  state: reactive<{ songs: Playable[] }>({
+    songs: []
   }),
 
-  getFormattedLength: (songs: Playable | Playable[]) => secondsToHumanReadable(sumBy(arrayify(songs), 'length')),
+  getFormattedLength: (playables: MaybeArray<Playable>) => secondsToHumanReadable(sumBy(arrayify(playables), 'length')),
 
   byId (id: string) {
     const song = this.vault.get(id)
@@ -70,17 +70,17 @@ export const songStore = {
   },
 
   async resolve (id: string) {
-    let song = this.byId(id)
+    let playable = this.byId(id)
 
-    if (!song) {
+    if (!playable) {
       try {
-        song = this.syncWithVault(await http.get<Song>(`songs/${id}`))[0]
+        playable = this.syncWithVault(await http.get<Playable>(`songs/${id}`))[0]
       } catch (error: unknown) {
         logger.error(error)
       }
     }
 
-    return song
+    return playable
   },
 
   /**
@@ -146,9 +146,9 @@ export const songStore = {
       : `${commonStore.state.cdn_url}play/${playable.id}?t=${authService.getAudioToken()}`
   },
 
-  getShareableUrl: (song: Song) => `${window.BASE_URL}#/song/${song.id}`,
+  getShareableUrl: (song: Playable) => `${window.BASE_URL}#/song/${song.id}`,
 
-  syncWithVault (playables: Playable | Playable[]) {
+  syncWithVault (playables: MaybeArray<Playable>) {
     return arrayify(playables).map(song => {
       let local = this.byId(song.id)
 
@@ -169,7 +169,7 @@ export const songStore = {
     watch(() => playable.play_count, () => overviewStore.refreshPlayStats())
   },
 
-  ensureNotDeleted: (songs: Song | Song[]) => arrayify(songs).filter(({ deleted }) => !deleted),
+  ensureNotDeleted: (songs: MaybeArray<Song>) => arrayify(songs).filter(({ deleted }) => !deleted),
 
   async fetchForAlbum (album: Album | number) {
     const id = typeof album === 'number' ? album : album.id
@@ -201,19 +201,19 @@ export const songStore = {
       async () => this.syncWithVault(await http.get<Song[]>(`playlists/${id}/songs`))
     ))
 
-    playlistStore.byId(id)!.songs = songs
+    playlistStore.byId(id)!.playables = songs
 
     return songs
   },
 
   async fetchForPlaylistFolder (folder: PlaylistFolder) {
-    const songs: Song[] = []
+    const playables: Playable[] = []
 
     for await (const playlist of playlistStore.byFolder(folder)) {
-      songs.push(...await songStore.fetchForPlaylist(playlist))
+      playables.push(...await songStore.fetchForPlaylist(playlist))
     }
 
-    return uniqBy(songs, 'id')
+    return uniqBy(playables, 'id')
   },
 
   async fetchForPodcast (podcast: Podcast | string, refresh = false) {

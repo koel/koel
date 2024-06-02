@@ -241,7 +241,7 @@ new class extends UnitTestCase {
       expect(getMock).toHaveBeenCalledWith('playlists/966268ea-935d-4f63-a84e-180385376a78/songs')
       expect(syncMock).toHaveBeenCalledWith(songs)
       expect(fetched).toEqual(songs)
-      expect(playlist.songs).toEqual(songs)
+      expect(playlist.playables).toEqual(songs)
     })
 
     it('fetches for playlist with cache', async () => {
@@ -256,7 +256,7 @@ new class extends UnitTestCase {
 
       expect(getMock).not.toHaveBeenCalled()
       expect(fetched).toEqual(songs)
-      expect(playlist.songs).toEqual(songs)
+      expect(playlist.playables).toEqual(songs)
     })
 
     it('fetches for playlist discarding cache', async () => {
@@ -271,7 +271,7 @@ new class extends UnitTestCase {
 
       expect(getMock).toHaveBeenCalled()
       expect(cache.get(['playlist.songs', playlist.id])).toEqual([])
-      expect(playlist.songs).toEqual([])
+      expect(playlist.playables).toEqual([])
     })
 
     it('paginates', async () => {

@@ -1,4 +1,4 @@
 export interface RemoteState {
-  song: Song | null
+  song: Playable | null
   volume: number
 }

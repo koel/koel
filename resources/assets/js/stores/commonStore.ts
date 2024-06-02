@@ -30,7 +30,7 @@ const initialState = {
   song_length: 0,
   queue_state: {
     type: 'queue-states',
-    songs: [],
+    playables: [],
     current_song: null,
     playback_position: 0
   } as QueueState

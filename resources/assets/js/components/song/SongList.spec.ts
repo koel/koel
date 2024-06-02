@@ -80,7 +80,7 @@ new class extends UnitTestCase {
         },
         provide: {
           [<symbol>PlayablesKey]: [ref(songs)],
-          [<symbol>SelectedPlayablesKey]: [ref(selectedPlayables), (value: Song[]) => (selectedPlayables = value)],
+          [<symbol>SelectedPlayablesKey]: [ref(selectedPlayables), (value: Playable[]) => (selectedPlayables = value)],
           [<symbol>PlayableListConfigKey]: [config],
           [<symbol>PlayableListContextKey]: [context],
           [<symbol>PlayableListSortFieldKey]: [sortFieldRef, (value: PlayableListSortField) => (sortFieldRef.value = value)],

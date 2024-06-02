@@ -8,7 +8,7 @@ import { arrayify, eventBus } from '@/utils'
 import Btn from '@/components/ui/form/Btn.vue'
 import AddToMenu from './AddToMenu.vue'
 
-let songs: Song[]
+let playables: Playable[]
 
 const config: AddToMenuConfig = {
   queue: true,
@@ -48,7 +48,7 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByTestId(testId))
 
-      expect(mock).toHaveBeenCalledWith(songs)
+      expect(mock).toHaveBeenCalledWith(playables)
     })
 
     it('adds songs to Favorites', async () => {
@@ -57,7 +57,7 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByTestId('add-to-favorites'))
 
-      expect(mock).toHaveBeenCalledWith(songs)
+      expect(mock).toHaveBeenCalledWith(playables)
     })
 
     it('adds songs to existing playlist', async () => {
@@ -67,7 +67,7 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getAllByTestId('add-to-playlist')[1])
 
-      expect(mock).toHaveBeenCalledWith(playlistStore.state.playlists[1], songs)
+      expect(mock).toHaveBeenCalledWith(playlistStore.state.playlists[1], playables)
     })
 
     it('creates playlist from selected songs', async () => {
@@ -76,16 +76,16 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByText('New Playlist…'))
 
-      expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_CREATE_PLAYLIST_FORM', null, songs)
+      expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_CREATE_PLAYLIST_FORM', null, playables)
     })
   }
 
   private renderComponent (customConfig: Partial<AddToMenuConfig> = {}) {
-    songs = factory('song', 5)
+    playables = factory('song', 5)
 
     return this.render(AddToMenu, {
       props: {
-        songs,
+        playables,
         config: Object.assign(clone(config), customConfig),
         showing: true
       },

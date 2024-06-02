@@ -82,7 +82,7 @@ export const queueStore = {
     this.all = head.concat(reactive(playables), this.all)
   },
 
-  unqueue (playables: Playable | Playable[]) {
+  unqueue (playables: MaybeArray<Playable>) {
     playables = arrayify(playables)
     playables.forEach(song => (song.playback_state = 'Stopped'))
     this.all = differenceBy(this.all, playables, 'id')
@@ -91,7 +91,7 @@ export const queueStore = {
   /**
    * Move some songs to after a target.
    */
-  move (playables: Playable | Playable[], target: Playable, type: MoveType) {
+  move (playables: MaybeArray<Playable>, target: Playable, type: MoveType) {
     this.state.playables = moveItemsInList(this.state.playables, playables, target, type)
     this.saveState()
   },

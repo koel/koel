@@ -124,7 +124,7 @@ new class extends UnitTestCase {
     })
   }
 
-  private async renderComponent (_songs: Song | Song[], initialTab: EditSongFormTabName = 'details') {
+  private async renderComponent (_songs: MaybeArray<Song>, initialTab: EditSongFormTabName = 'details') {
     songs = arrayify(_songs)
 
     const rendered = this.render(EditSongForm, {

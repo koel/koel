@@ -34,7 +34,7 @@ import { socketService } from '@/services'
 
 import VolumeControl from '@/remote/components/VolumeControl.vue'
 
-const props = defineProps<{ song: Song }>()
+const props = defineProps<{ song: Playable }>()
 const { song } = toRefs(props)
 
 const toggleFavorite = () => {

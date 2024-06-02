@@ -6,7 +6,7 @@ import { favoriteStore } from '.'
 
 new class extends UnitTestCase {
   protected beforeEach () {
-    super.beforeEach(() => (favoriteStore.state.songs = []))
+    super.beforeEach(() => (favoriteStore.state.playables = []))
   }
 
   protected test () {
@@ -31,18 +31,18 @@ new class extends UnitTestCase {
     it('adds songs', () => {
       const songs = factory('song', 3)
       favoriteStore.add(songs)
-      expect(favoriteStore.state.songs).toEqual(songs)
+      expect(favoriteStore.state.playables).toEqual(songs)
 
       // doesn't duplicate songs
       favoriteStore.add(songs[0])
-      expect(favoriteStore.state.songs).toEqual(songs)
+      expect(favoriteStore.state.playables).toEqual(songs)
     })
 
     it('removes songs', () => {
       const songs = factory('song', 3)
-      favoriteStore.state.songs = songs
+      favoriteStore.state.playables = songs
       favoriteStore.remove(songs)
-      expect(favoriteStore.state.songs).toEqual([])
+      expect(favoriteStore.state.playables).toEqual([])
     })
 
     it('likes several songs', async () => {
@@ -74,7 +74,7 @@ new class extends UnitTestCase {
       await favoriteStore.fetch()
 
       expect(getMock).toHaveBeenCalledWith('songs/favorite')
-      expect(favoriteStore.state.songs).toEqual(songs)
+      expect(favoriteStore.state.playables).toEqual(songs)
     })
   }
 }

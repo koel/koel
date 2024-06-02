@@ -151,12 +151,12 @@ const contentType = computed(() => getPlayableCollectionContentType(playables.va
 const visibilityActions = computed(() => {
   if (contentType.value !== 'songs' || !canEditSongs.value) return []
 
-  const visibilities = new Set(playables.value.map((song => (song as Song).is_public
+  const visibilities = Array.from(new Set((playables.value as Song[]).map((song => song.is_public
       ? 'public'
       : 'private'
-  )))
+  ))))
 
-  if (visibilities.size === 2) {
+  if (visibilities.length === 2) {
     return [
       {
         label: 'Unmark as Private',
@@ -201,7 +201,12 @@ const doPlayback = () => trigger(() => {
   }
 })
 
-const openEditForm = () => trigger(() => playables.value.length && eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', playables.value))
+const openEditForm = () => trigger(() =>
+  playables.value.length
+  && contentType.value === 'songs'
+  && eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', playables.value as Song[])
+)
+
 const viewAlbum = (song: Song) => trigger(() => go(`album/${song.album_id}`))
 const viewArtist = (song: Song) => trigger(() => go(`artist/${song.artist_id}`))
 const viewPodcast = (episode: Episode) => trigger(() => go(`podcasts/${episode.podcast_id}`))
@@ -219,7 +224,7 @@ const removeFromQueue = () => trigger(() => queueStore.unqueue(playables.value))
 const removeFromFavorites = () => trigger(() => favoriteStore.unlike(playables.value))
 
 const copyUrl = () => trigger(async () => {
-  await copyText(songStore.getShareableUrl(playables.value[0] as Song))
+  await copyText(songStore.getShareableUrl(playables.value[0]))
   toastSuccess('URL copied to clipboard.')
 })
 

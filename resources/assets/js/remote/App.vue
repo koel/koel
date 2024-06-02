@@ -1,7 +1,7 @@
 <template>
   <div :class="{ 'standalone' : inStandaloneMode }" class="h-screen bg-k-bg-primary">
     <template v-if="authenticated">
-      <AlbumArtOverlay v-if="showAlbumArtOverlay && state.song" :album="state.song.album_id" />
+      <AlbumArtOverlay v-if="showAlbumArtOverlay && state.song && isSong(state.song)" :album="state.song.album_id" />
 
       <main class="h-screen flex flex-col items-center justify-between text-center relative z-[1]">
         <template v-if="connected">
@@ -26,7 +26,7 @@
 import { authService, socketService } from '@/services'
 import { preferenceStore, userStore } from '@/stores'
 import { defineAsyncComponent, onMounted, provide, reactive, ref, toRef } from 'vue'
-import { logger } from '@/utils'
+import { isSong, logger } from '@/utils'
 import { RemoteState } from '@/remote/types'
 
 const SongDetails = defineAsyncComponent(() => import('@/remote/components/SongDetails.vue'))
@@ -50,7 +50,7 @@ const onUserLoggedIn = async () => {
 
 const state = reactive<RemoteState>({
   volume: 0,
-  song: null as Song | null
+  song: null as Playable | null
 })
 
 provide('state', state)
@@ -64,7 +64,7 @@ const init = async () => {
       .listen('SOCKET_SONG', song => (state.song = song))
       .listen('SOCKET_PLAYBACK_STOPPED', () => state.song && (state.song.playback_state = 'Stopped'))
       .listen('SOCKET_VOLUME_CHANGED', (volume: number) => state.volume = volume)
-      .listen('SOCKET_STATUS', (data: { song?: Song, volume: number }) => {
+      .listen('SOCKET_STATUS', (data: { song?: Playable, volume: number }) => {
         state.volume = data.volume || 0
         state.song = data.song || null
         connected.value = true

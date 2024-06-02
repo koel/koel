@@ -20,7 +20,7 @@ new class extends UnitTestCase {
         liked: true
       })
 
-      const { html } = await this.renderComponent(song)
+      const { html } = this.renderComponent(song)
       expect(html()).toMatchSnapshot()
     })
 
@@ -31,11 +31,11 @@ new class extends UnitTestCase {
     })
   }
 
-  private renderComponent (song?: Song) {
-    song = song ?? factory('song')
+  private renderComponent (playable?: Playable) {
+    playable = playable ?? factory('song')
 
     row = {
-      playable: song,
+      playable,
       selected: false
     }
 

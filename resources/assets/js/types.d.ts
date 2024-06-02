@@ -190,7 +190,7 @@ interface Episode extends Playable {
   podcast_author: string
 }
 
-interface CollaborativeSong extends Song {
+interface CollaborativeSong extends Playable {
   collaboration: {
     user: PlaylistCollaborator
     added_at: string | null
@@ -243,12 +243,12 @@ type SmartPlaylistInputTypes = Record<SmartPlaylistModel['type'], SmartPlaylistO
 
 type FavoriteList = {
   name: 'Favorites'
-  songs: Song[]
+  playables: Playable[]
 }
 
 type RecentlyPlayedList = {
   name: 'Recently Played'
-  songs: Song[]
+  playables: Playable[]
 }
 
 interface PlaylistFolder {
@@ -273,7 +273,7 @@ interface Playlist {
   rules: SmartPlaylistRuleGroup[]
   own_songs_only: boolean
   cover: string | null
-  songs?: Playable[]
+  playables?: Playable[]
 }
 
 type PlaylistLike = Playlist | FavoriteList | RecentlyPlayedList
@@ -289,8 +289,8 @@ interface Podcast {
   readonly author: string
   readonly subscribed_at: string
   readonly state: {
-    current_episode: Song['id'] | null
-    progresses: Record<Song['id'], number>
+    current_episode: Playable['id'] | null
+    progresses: Record<Playable['id'], number>
   }
 }
 
@@ -327,6 +327,7 @@ interface UserPreferences extends Record<string, any> {
   visualizer?: Visualizer['id'] | null
   active_extra_panel_tab: ExtraPanelTab | null
   make_uploads_public: boolean
+  lastfm_session_key?: string
 }
 
 interface User {
@@ -350,7 +351,7 @@ interface Settings {
 interface Interaction {
   type: 'interactions'
   readonly id: number
-  readonly song_id: Song['id']
+  readonly song_id: Playable['id']
   liked: boolean
   play_count: number
 }

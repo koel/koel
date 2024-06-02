@@ -93,7 +93,7 @@ const {
   applyFilter,
   onScrollBreakpoint,
   sort
-} = useSongList(toRef(favoriteStore.state, 'songs'), { type: 'Favorites' })
+} = useSongList(toRef(favoriteStore.state, 'playables'), { type: 'Favorites' })
 
 const { SongListControls, config } = useSongListControls('Favorites')
 

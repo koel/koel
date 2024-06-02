@@ -11,19 +11,19 @@
     @dblclick.prevent.stop="play"
   >
     <span class="track-number">
-      <SoundBars v-if="song.playback_state === 'Playing'" />
+      <SoundBars v-if="playable.playback_state === 'Playing'" />
       <span v-else class="text-k-text-secondary">
-        <Icon :icon="faPodcast" v-if="isEpisode(song)" />
-        <template v-else>{{ song.track || '' }}</template>
+        <template v-if="isSong(playable)">{{ playable.track || '' }}</template>
+        <Icon :icon="faPodcast" v-else />
       </span>
     </span>
     <span class="thumbnail leading-none">
-      <SongThumbnail :song="song" />
+      <SongThumbnail :playable="playable" />
     </span>
     <span class="title-artist flex flex-col gap-2 overflow-hidden">
       <span class="title text-k-text-primary !flex gap-2 items-center">
         <ExternalMark v-if="external" class="!inline-block" />
-        {{ song.title }}
+        {{ playable.title }}
       </span>
       <span class="artist">{{ artist }}</span>
     </span>
@@ -32,11 +32,11 @@
       <span class="collaborator">
         <UserAvatar :user="collaborator" width="24" />
       </span>
-      <span :title="song.collaboration.added_at" class="added-at">{{ song.collaboration.fmt_added_at }}</span>
+      <span :title="playable.collaboration.added_at" class="added-at">{{ playable.collaboration.fmt_added_at }}</span>
     </template>
     <span class="time">{{ fmtLength }}</span>
     <span class="extra">
-      <LikeButton :song="song" />
+      <LikeButton :playable="playable" />
     </span>
   </article>
 </template>
@@ -64,21 +64,23 @@ const { item } = toRefs(props)
 
 const emit = defineEmits<{ (e: 'play', playable: Playable): void }>()
 
-const song = computed<Playable | CollaborativeSong>(() => item.value.playable)
-const playing = computed(() => ['Playing', 'Paused'].includes(song.value.playback_state!))
+const playable = computed<Playable | CollaborativeSong>(() => item.value.playable)
+const playing = computed(() => ['Playing', 'Paused'].includes(playable.value.playback_state!))
 
 const external = computed(() => {
-  if (!isSong(song.value)) return false
-  return isPlus.value && song.value.owner_id !== currentUser.value?.id
+  if (!isSong(playable.value)) return false
+  return isPlus.value && playable.value.owner_id !== currentUser.value?.id
 })
 
-const fmtLength = secondsToHis(song.value.length)
-const artist = computed(() => getPlayableProp(song.value, 'artist_name', 'podcast_author'))
-const album = computed(() => getPlayableProp(song.value, 'album_name', 'podcast_title'))
+const fmtLength = secondsToHis(playable.value.length)
+const artist = computed(() => getPlayableProp(playable.value, 'artist_name', 'podcast_author'))
+const album = computed(() => getPlayableProp(playable.value, 'album_name', 'podcast_title'))
 
-const collaborator = computed<Pick<User, 'name' | 'avatar'>>(() => (song.value as CollaborativeSong).collaboration.user)
+const collaborator = computed<Pick<User, 'name' | 'avatar'>>(
+  () => (playable.value as CollaborativeSong).collaboration.user
+)
 
-const play = () => emit('play', song.value)
+const play = () => emit('play', playable.value)
 </script>
 
 <style lang="postcss" scoped>

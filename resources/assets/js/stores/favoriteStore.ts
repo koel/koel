@@ -5,8 +5,8 @@ import { arrayify } from '@/utils'
 import { songStore } from '@/stores'
 
 export const favoriteStore = {
-  state: reactive({
-    songs: [] as Playable[]
+  state: reactive<{ playables: Playable[] }>({
+    playables: []
   }),
 
   async toggleOne (playable: Playable) {
@@ -15,15 +15,15 @@ export const favoriteStore = {
     playable.liked = !playable.liked
     playable.liked ? this.add(playable) : this.remove(playable)
 
-    await http.post<Song>('interaction/like', { song: playable.id })
+    await http.post<Playable>('interaction/like', { song: playable.id })
   },
 
   add (songs: MaybeArray<Playable>) {
-    this.state.songs = unionBy(this.state.songs, arrayify(songs), 'id')
+    this.state.playables = unionBy(this.state.playables, arrayify(songs), 'id')
   },
 
   remove (songs: MaybeArray<Playable>) {
-    this.state.songs = differenceBy(this.state.songs, arrayify(songs), 'id')
+    this.state.playables = differenceBy(this.state.playables, arrayify(songs), 'id')
   },
 
   async like (songs: Playable[]) {
@@ -43,7 +43,7 @@ export const favoriteStore = {
   },
 
   async fetch () {
-    this.state.songs = songStore.syncWithVault(await http.get<Playable[]>('songs/favorite'))
-    return this.state.songs
+    this.state.playables = songStore.syncWithVault(await http.get<Playable[]>('songs/favorite'))
+    return this.state.playables
   }
 }

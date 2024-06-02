@@ -119,7 +119,7 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
     }
   }
 
-  const resolveDroppedSongs = async (event: DragEvent) => {
+  const resolveDroppedItems = async (event: DragEvent) => {
     try {
       const type = getDragType(event)
       if (!type) return <Playable[]>[]
@@ -153,6 +153,6 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
     acceptsDrop,
     getDroppedData,
     resolveDroppedValue,
-    resolveDroppedItems: resolveDroppedSongs
+    resolveDroppedItems
   }
 }

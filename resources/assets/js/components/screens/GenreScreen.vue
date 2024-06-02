@@ -50,7 +50,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import { faTags } from '@fortawesome/free-solid-svg-icons'
-import { arrayify, eventBus, pluralize, secondsToHumanReadable } from '@/utils'
+import { eventBus, pluralize, secondsToHumanReadable } from '@/utils'
 import { playbackService } from '@/services'
 import { genreStore, songStore } from '@/stores'
 import { useErrorHandler, useRouter, useSongList, useSongListControls } from '@/composables'

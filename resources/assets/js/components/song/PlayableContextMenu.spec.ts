@@ -7,9 +7,9 @@ import { screen, waitFor } from '@testing-library/vue'
 import { downloadService, playbackService } from '@/services'
 import { favoriteStore, playlistStore, queueStore, songStore } from '@/stores'
 import { DialogBoxStub, MessageToasterStub } from '@/__tests__/stubs'
-import PlayableContextMenu from './PlayableContextMenu.vue'
+import Component from './PlayableContextMenu.vue'
 
-let songs: Song[]
+let playables: Playable[]
 
 new class extends UnitTestCase {
   protected beforeEach () {
@@ -17,15 +17,13 @@ new class extends UnitTestCase {
   }
 
   protected test () {
-    it('queues and plays', async () => {
-      const queueMock = this.mock(queueStore, 'queueIfNotQueued')
+    it('plays', async () => {
       const playMock = this.mock(playbackService, 'play')
       const song = factory('song', { playback_state: 'Stopped' })
       await this.renderComponent(song)
 
       await this.user.click(screen.getByText('Play'))
 
-      expect(queueMock).toHaveBeenCalledWith(song)
       expect(playMock).toHaveBeenCalledWith(song)
     })
 
@@ -49,20 +47,22 @@ new class extends UnitTestCase {
 
     it('goes to album details screen', async () => {
       const goMock = this.mock(Router, 'go')
-      await this.renderComponent(factory('song'))
+      const song = factory('song')
+      await this.renderComponent(song)
 
       await this.user.click(screen.getByText('Go to Album'))
 
-      expect(goMock).toHaveBeenCalledWith(`album/${songs[0].album_id}`)
+      expect(goMock).toHaveBeenCalledWith(`album/${song.album_id}`)
     })
 
     it('goes to artist details screen', async () => {
       const goMock = this.mock(Router, 'go')
-      await this.renderComponent(factory('song'))
+      const song = factory('song')
+      await this.renderComponent(song)
 
       await this.user.click(screen.getByText('Go to Artist'))
 
-      expect(goMock).toHaveBeenCalledWith(`artist/${songs[0].artist_id}`)
+      expect(goMock).toHaveBeenCalledWith(`artist/${song.artist_id}`)
     })
 
     it('downloads', async () => {
@@ -71,7 +71,7 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByText('Download'))
 
-      expect(downloadMock).toHaveBeenCalledWith(songs)
+      expect(downloadMock).toHaveBeenCalledWith(playables)
     })
 
     it('queues', async () => {
@@ -80,17 +80,17 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByText('Queue'))
 
-      expect(queueMock).toHaveBeenCalledWith(songs)
+      expect(queueMock).toHaveBeenCalledWith(playables)
     })
 
-    it('queues after current song', async () => {
+    it('queues after current', async () => {
       this.fillQueue()
       const queueMock = this.mock(queueStore, 'queueAfterCurrent')
       await this.renderComponent()
 
-      await this.user.click(screen.getByText('After Current Song'))
+      await this.user.click(screen.getByText('After Current'))
 
-      expect(queueMock).toHaveBeenCalledWith(songs)
+      expect(queueMock).toHaveBeenCalledWith(playables)
     })
 
     it('queues to bottom', async () => {
@@ -100,7 +100,7 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByText('Bottom of Queue'))
 
-      expect(queueMock).toHaveBeenCalledWith(songs)
+      expect(queueMock).toHaveBeenCalledWith(playables)
     })
 
     it('queues to top', async () => {
@@ -110,7 +110,7 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByText('Top of Queue'))
 
-      expect(queueMock).toHaveBeenCalledWith(songs)
+      expect(queueMock).toHaveBeenCalledWith(playables)
     })
 
     it('removes from queue', async () => {
@@ -126,7 +126,7 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByText('Remove from Queue'))
 
-      expect(removeMock).toHaveBeenCalledWith(songs)
+      expect(removeMock).toHaveBeenCalledWith(playables)
     })
 
     it('does not show "Remove from Queue" when not on Queue screen', async () => {
@@ -148,7 +148,7 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByText('Favorites'))
 
-      expect(likeMock).toHaveBeenCalledWith(songs)
+      expect(likeMock).toHaveBeenCalledWith(playables)
     })
 
     it('does not have an option to add to favorites for Favorites screen', async () => {
@@ -157,7 +157,7 @@ new class extends UnitTestCase {
         screen: 'Favorites'
       })
 
-      this.renderComponent()
+      await this.renderComponent()
 
       expect(screen.queryByText('Favorites')).toBeNull()
     })
@@ -174,7 +174,7 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByText('Remove from Favorites'))
 
-      expect(unlikeMock).toHaveBeenCalledWith(songs)
+      expect(unlikeMock).toHaveBeenCalledWith(playables)
     })
 
     it('lists and adds to existing playlist', async () => {
@@ -187,7 +187,7 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByText(playlistStore.state.playlists[0].name))
 
-      expect(addMock).toHaveBeenCalledWith(playlistStore.state.playlists[0], songs)
+      expect(addMock).toHaveBeenCalledWith(playlistStore.state.playlists[0], playables)
     })
 
     it('does not list smart playlists', async () => {
@@ -210,14 +210,14 @@ new class extends UnitTestCase {
 
       await this.renderComponent()
 
-      const removeSongsMock = this.mock(playlistStore, 'removeContent')
+      const removeContentMock = this.mock(playlistStore, 'removeContent')
       const emitMock = this.mock(eventBus, 'emit')
 
       await this.user.click(screen.getByText('Remove from Playlist'))
 
       await waitFor(() => {
-        expect(removeSongsMock).toHaveBeenCalledWith(playlist, songs)
-        expect(emitMock).toHaveBeenCalledWith('PLAYLIST_SONGS_REMOVED', playlist, songs)
+        expect(removeContentMock).toHaveBeenCalledWith(playlist, playables)
+        expect(emitMock).toHaveBeenCalledWith('PLAYLIST_CONTENT_REMOVED', playlist, playables)
       })
     })
 
@@ -239,7 +239,7 @@ new class extends UnitTestCase {
       const emitMock = this.mock(eventBus, 'emit')
       await this.user.click(screen.getByText('Edit…'))
 
-      expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_SONG_FORM', songs)
+      expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_SONG_FORM', playables)
     })
 
     it('does not allow edit songs if current user is not admin', async () => {
@@ -278,9 +278,9 @@ new class extends UnitTestCase {
 
       await waitFor(() => {
         expect(confirmMock).toHaveBeenCalled()
-        expect(deleteMock).toHaveBeenCalledWith(songs)
+        expect(deleteMock).toHaveBeenCalledWith(playables)
         expect(toasterMock).toHaveBeenCalledWith('Deleted 5 songs from the filesystem.')
-        expect(emitMock).toHaveBeenCalledWith('SONGS_DELETED', songs)
+        expect(emitMock).toHaveBeenCalledWith('SONGS_DELETED', playables)
       })
     })
 
@@ -297,7 +297,7 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByText('New Playlist…'))
 
-      expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_CREATE_PLAYLIST_FORM', null, songs)
+      expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_CREATE_PLAYLIST_FORM', null, playables)
     })
 
     it('makes songs private', async () => {
@@ -382,11 +382,11 @@ new class extends UnitTestCase {
     })
   }
 
-  private async renderComponent (_songs?: Song | Song[]) {
-    songs = arrayify(_songs || factory('song', 5))
+  private async renderComponent (_playables?: MaybeArray<Playable>) {
+    playables = arrayify(_playables || factory('song', 5))
 
-    const rendered = this.render(PlayableContextMenu)
-    eventBus.emit('PLAYABLE_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, songs)
+    const rendered = this.render(Component)
+    eventBus.emit('PLAYABLE_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, playables)
     await this.tick(2)
 
     return rendered

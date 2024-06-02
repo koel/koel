@@ -68,20 +68,20 @@ const {
   applyFilter,
   sort,
   onScrollBreakpoint
-} = useSongList(toRef(searchStore.state, 'songs'), { type: 'Search.Songs' })
+} = useSongList(toRef(searchStore.state, 'playables'), { type: 'Search.Songs' })
 
 const { SongListControls, config } = useSongListControls('Search.Songs')
 const decodedQ = computed(() => decodeURIComponent(q.value))
 const loading = ref(false)
 
-searchStore.resetSongResultState()
+searchStore.resetPlayableResultState()
 
 onMounted(async () => {
   q.value = getRouteParam('q') || ''
   if (!q.value) return
 
   loading.value = true
-  await searchStore.songSearch(q.value)
+  await searchStore.playableSearch(q.value)
   loading.value = false
 })
 </script>

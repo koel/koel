@@ -9,7 +9,7 @@ import CreatePlaylistForm from './CreatePlaylistForm.vue'
 
 new class extends UnitTestCase {
   protected test () {
-    it('creates playlist with no songs', async () => {
+    it('creates playlist with no playables', async () => {
       const folder = factory('playlist-folder')
       const storeMock = this.mock(playlistStore, 'store').mockResolvedValue(factory('playlist'))
 
@@ -21,7 +21,7 @@ new class extends UnitTestCase {
         }
       })
 
-      expect(screen.queryByTestId('from-songs')).toBeNull()
+      expect(screen.queryByTestId('from-playables')).toBeNull()
 
       await this.type(screen.getByPlaceholderText('Playlist name'), 'My playlist')
       await this.user.click(screen.getByRole('button', { name: 'Save' }))
@@ -31,15 +31,15 @@ new class extends UnitTestCase {
       }, [])
     })
 
-    it('creates playlist with songs', async () => {
-      const songs = factory('song', 3)
+    it('creates playlist with playables', async () => {
+      const playables = factory('song', 3)
       const folder = factory('playlist-folder')
       const storeMock = this.mock(playlistStore, 'store').mockResolvedValue(factory('playlist'))
 
       this.render(CreatePlaylistForm, {
         global: {
           provide: {
-            [<symbol>ModalContextKey]: [ref({ folder, songs })]
+            [<symbol>ModalContextKey]: [ref({ folder, playables })]
           }
         }
       })
@@ -51,7 +51,7 @@ new class extends UnitTestCase {
 
       expect(storeMock).toHaveBeenCalledWith('My playlist', {
         folder_id: folder.id
-      }, songs)
+      }, playables)
     })
   }
 }

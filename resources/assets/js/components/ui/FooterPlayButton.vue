@@ -31,30 +31,30 @@ const toggle = async () => song.value ? playbackService.toggle() : initiatePlayb
 const initiatePlayback = async () => {
   if (libraryEmpty.value) return
 
-  let songs: Song[]
+  let playables: Playable[]
 
   switch (getCurrentScreen()) {
     case 'Album':
-      songs = await songStore.fetchForAlbum(parseInt(getRouteParam('id')!))
+      playables = await songStore.fetchForAlbum(parseInt(getRouteParam('id')!))
       break
     case 'Artist':
-      songs = await songStore.fetchForArtist(parseInt(getRouteParam('id')!))
+      playables = await songStore.fetchForArtist(parseInt(getRouteParam('id')!))
       break
     case 'Playlist':
-      songs = await songStore.fetchForPlaylist(getRouteParam('id')!)
+      playables = await songStore.fetchForPlaylist(getRouteParam('id')!)
       break
     case 'Favorites':
-      songs = await favoriteStore.fetch()
+      playables = await favoriteStore.fetch()
       break
     case 'RecentlyPlayed':
-      songs = await recentlyPlayedStore.fetch()
+      playables = await recentlyPlayedStore.fetch()
       break
     default:
-      songs = await queueStore.fetchRandom()
+      playables = await queueStore.fetchRandom()
       break
   }
 
-  playbackService.queueAndPlay(songs)
+  playbackService.queueAndPlay(playables)
   go('queue')
 }
 </script>

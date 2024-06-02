@@ -1,6 +1,6 @@
 <template>
   <FooterExtraControlBtn :title="title" @click.stop="toggleLike">
-    <Icon v-if="song.liked" :icon="faHeart" />
+    <Icon v-if="playable.liked" :icon="faHeart" />
     <Icon v-else :icon="faEmptyHeart" />
   </FooterExtraControlBtn>
 </template>
@@ -13,10 +13,10 @@ import { favoriteStore } from '@/stores'
 
 import FooterExtraControlBtn from '@/components/layout/app-footer/FooterButton.vue'
 
-const props = defineProps<{ song: Playable }>()
-const { song } = toRefs(props)
+const props = defineProps<{ playable: Playable }>()
+const { playable } = toRefs(props)
 
-const title = computed(() => song.value.liked ? 'Unlike' : 'Like')
+const title = computed(() => playable.value.liked ? 'Unlike' : 'Like')
 
-const toggleLike = () => favoriteStore.toggleOne(song.value)
+const toggleLike = () => favoriteStore.toggleOne(playable.value)
 </script>
