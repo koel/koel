@@ -6,11 +6,11 @@ import { downloadService } from './downloadService'
 
 new class extends UnitTestCase {
   protected test () {
-    it('downloads songs', () => {
+    it('downloads playables', () => {
       const mock = this.mock(downloadService, 'trigger')
       downloadService.fromPlayables([factory('song', { id: 'bar' })])
 
-      expect(mock).toHaveBeenCalledWith('songs?songs[]=bar&songs[]=foo&')
+      expect(mock).toHaveBeenCalledWith('songs?songs[]=bar&')
     })
 
     it('downloads all by artist', () => {
@@ -36,11 +36,11 @@ new class extends UnitTestCase {
       expect(mock).toHaveBeenCalledWith(`playlist/${playlist.id}`)
     })
 
-    it.each<[Song[], boolean]>([[[], false], [factory('song', 5), true]])(
+    it.each<[Playable[], boolean]>([[[], false], [factory('song', 5), true]])(
       'downloads favorites if available',
       (songs, triggered) => {
         const mock = this.mock(downloadService, 'trigger')
-        favoriteStore.state.songs = songs
+        favoriteStore.state.playables = songs
 
         downloadService.fromFavorites()
 

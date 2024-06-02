@@ -4,7 +4,7 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import { commonStore, queueStore } from '@/stores'
 import { screen, waitFor } from '@testing-library/vue'
 import { playbackService } from '@/services'
-import QueueScreen from './QueueScreen.vue'
+import Component from './QueueScreen.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -46,10 +46,10 @@ new class extends UnitTestCase {
     })
   }
 
-  private renderComponent (songs: Song[]) {
-    queueStore.state.playables = songs
+  private renderComponent (playables: Playable[]) {
+    queueStore.state.playables = playables
 
-    this.render(QueueScreen, {
+    this.render(Component, {
       global: {
         stubs: {
           SongList: this.stub('song-list')

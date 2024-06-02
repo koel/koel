@@ -3,8 +3,8 @@
     <header>
       <h1>
         New Playlist
-        <span v-if="songs.length" class="text-k-text-secondary" data-testid="from-songs">
-          from {{ pluralize(songs, 'item') }}
+        <span v-if="playables.length" class="text-k-text-secondary" data-testid="from-playables">
+          from {{ pluralize(playables, noun) }}
         </span>
       </h1>
     </header>
@@ -33,9 +33,9 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, toRef } from 'vue'
+import { computed, ref, toRef } from 'vue'
 import { playlistFolderStore, playlistStore } from '@/stores'
-import { pluralize } from '@/utils'
+import { getPlayableCollectionContentType, pluralize } from '@/utils'
 import { useDialogBox, useErrorHandler, useMessageToaster, useModal, useOverlay, useRouter } from '@/composables'
 
 import Btn from '@/components/ui/form/Btn.vue'
@@ -50,7 +50,7 @@ const { go } = useRouter()
 const { getFromContext } = useModal()
 
 const targetFolder = getFromContext<PlaylistFolder | null>('folder') ?? null
-const songs = getFromContext<Song[]>('songs') ?? []
+const playables = getFromContext<Playable[]>('playables') ?? []
 
 const folderId = ref(targetFolder?.id)
 const name = ref('')
@@ -59,13 +59,24 @@ const folders = toRef(playlistFolderStore.state, 'folders')
 const emit = defineEmits<{ (e: 'close'): void }>()
 const close = () => emit('close')
 
+const noun = computed(() => {
+  switch (getPlayableCollectionContentType(playables)) {
+    case 'songs':
+      return 'song'
+    case 'episodes':
+      return 'song'
+    default:
+      return 'item'
+  }
+})
+
 const submit = async () => {
   showOverlay()
 
   try {
     const playlist = await playlistStore.store(name.value, {
       folder_id: folderId.value
-    }, songs)
+    }, playables)
 
     close()
     toastSuccess(`Playlist "${playlist.name}" created.`)

@@ -50,18 +50,18 @@ new class extends UnitTestCase {
       const getMock = this.mock(http, 'get').mockResolvedValue(songs)
       const syncMock = this.mock(songStore, 'syncWithVault', songs)
 
-      await searchStore.songSearch('test')
+      await searchStore.playableSearch('test')
 
       expect(getMock).toHaveBeenCalledWith('search/songs?q=test')
       expect(syncMock).toHaveBeenCalledWith(songs)
 
-      expect(searchStore.state.songs).toEqual(songs)
+      expect(searchStore.state.playables).toEqual(songs)
     })
 
     it('resets the song result state', () => {
-      searchStore.state.songs = factory('song', 3)
-      searchStore.resetSongResultState()
-      expect(searchStore.state.songs).toEqual([])
+      searchStore.state.playables = factory('song', 3)
+      searchStore.resetPlayableResultState()
+      expect(searchStore.state.playables).toEqual([])
     })
   }
 }

@@ -1,5 +1,6 @@
 <template>
   <aside
+    v-if="playable"
     :class="{ 'showing-pane': activeTab }"
     class="fixed sm:relative top-0 w-screen md:w-auto flex flex-col md:flex-row-reverse z-[2] text-k-text-secondary"
   >
@@ -62,7 +63,7 @@
         role="tabpanel"
         tabindex="0"
       >
-        <YouTubeVideoList v-if="shouldShowYouTubeTab" :song="playable as Song" />
+        <YouTubeVideoList v-if="shouldShowYouTubeTab" :song="playable" />
       </div>
     </div>
   </aside>
@@ -70,7 +71,7 @@
 
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
-import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, onMounted, ref, Ref, watch } from 'vue'
 import { albumStore, artistStore, preferenceStore } from '@/stores'
 import { useErrorHandler, useThirdPartyServices } from '@/composables'
 import { isSong, requireInjection } from '@/utils'
@@ -89,7 +90,7 @@ const ExtraDrawerTabHeader = defineAsyncComponent(() => import('./ExtraDrawerTab
 
 const { useYouTube } = useThirdPartyServices()
 
-const playable = requireInjection(CurrentPlayableKey, ref(undefined))
+const playable = requireInjection(CurrentPlayableKey, ref(undefined)) as Ref<Song | undefined>
 const activeTab = ref<ExtraPanelTab | null>(null)
 
 const artist = ref<Artist>()

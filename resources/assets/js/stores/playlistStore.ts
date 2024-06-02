@@ -8,7 +8,7 @@ import { songStore } from '@/stores/songStore'
 
 type CreatePlaylistRequestData = {
   name: Playlist['name']
-  songs: Song['id'][]
+  songs: Playable['id'][]
   rules?: SmartPlaylistRuleGroup[]
   folder_id?: PlaylistFolder['name']
   own_songs_only?: boolean
@@ -95,11 +95,11 @@ export const playlistStore = {
       return playlist
     }
 
-    const updatedSongs = await http.post<Song[]>(`playlists/${playlist.id}/songs`, {
+    const updatedPlayables = await http.post<Playable[]>(`playlists/${playlist.id}/songs`, {
       songs: playables.map(song => song.id)
     })
 
-    songStore.syncWithVault(updatedSongs)
+    songStore.syncWithVault(updatedPlayables)
     cache.remove(['playlist.songs', playlist.id])
 
     return playlist
@@ -166,10 +166,14 @@ export const playlistStore = {
   },
 
   moveItemsInPlaylist: async (playlist: Playlist, songs: MaybeArray<Playable>, target: Playable, type: MoveType) => {
-    const orderHash = JSON.stringify(playlist.songs?.map(({ id }) => id))
-    playlist.songs?.splice(0, playlist.songs.length, ...moveItemsInList(playlist.songs, songs, target, type))
+    const orderHash = JSON.stringify(playlist.playables?.map(({ id }) => id))
+    playlist.playables?.splice(
+      0,
+      playlist.playables.length,
+      ...moveItemsInList(playlist.playables, songs, target, type)
+    )
 
-    if (orderHash !== JSON.stringify(playlist.songs?.map(({ id }) => id))) {
+    if (orderHash !== JSON.stringify(playlist.playables?.map(({ id }) => id))) {
       await http.silently.post(`playlists/${playlist.id}/songs/move`, {
         songs: arrayify(songs).map(({ id }) => id),
         target: target.id,

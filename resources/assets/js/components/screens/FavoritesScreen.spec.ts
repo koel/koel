@@ -8,7 +8,7 @@ import FavoritesScreen from './FavoritesScreen.vue'
 new class extends UnitTestCase {
   protected test () {
     it('renders a list of favorites', async () => {
-      favoriteStore.state.songs = factory('song', 13)
+      favoriteStore.state.playables = factory('song', 13)
       await this.renderComponent()
 
       await waitFor(() => {
@@ -18,7 +18,7 @@ new class extends UnitTestCase {
     })
 
     it('shows empty state', async () => {
-      favoriteStore.state.songs = []
+      favoriteStore.state.playables = []
       await this.renderComponent()
 
       screen.getByTestId('screen-empty-state')

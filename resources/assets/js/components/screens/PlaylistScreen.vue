@@ -121,7 +121,7 @@ const {
   onScrollBreakpoint,
   sort: baseSort,
   config: listConfig
-} = useSongList(ref<Song[] | CollaborativeSong[]>([]), { type: 'Playlist' })
+} = useSongList(ref<Playable[] | CollaborativeSong[]>([]), { type: 'Playlist' })
 
 const { SongListControls, config: controlsConfig } = useSongListControls('Playlist')
 const { removeFromPlaylist } = usePlaylistManagement()
@@ -163,7 +163,7 @@ const sort = (field: MaybeArray<PlayableListSortField> | null, order: SortOrder)
   }
 
   // To sort by position, we simply re-assign the songs array from the playlist, which maintains the original order.
-  songs.value = playlist.value!.songs!
+  songs.value = playlist.value!.playables!
 }
 
 const onReorder = (target: Playable, type: MoveType) => {

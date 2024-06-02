@@ -57,10 +57,10 @@ new class extends UnitTestCase {
     })
   }
 
-  private async renderComponent (songs: Song[]) {
+  private async renderComponent (songs: Playable[]) {
     playlist = playlist || factory('playlist')
     playlistStore.init([playlist])
-    playlist.songs = songs
+    playlist.playables = songs
 
     const fetchMock = this.mock(songStore, 'fetchForPlaylist').mockResolvedValue(songs)
 

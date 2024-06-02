@@ -6,8 +6,6 @@ import { eventBus } from '@/utils'
 import Sidebar from './Sidebar.vue'
 
 const standardItems = [
-  'Home',
-  'Current Queue',
   'All Songs',
   'Albums',
   'Artists',

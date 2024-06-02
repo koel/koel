@@ -1,26 +1,26 @@
+import factory from '@/__tests__/factory'
 import { reactive } from 'vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { expect, it } from 'vitest'
-import factory from 'factoria'
 import { http } from '@/services'
 import { queueStore, songStore } from '.'
 
-let songs: Song[]
+let playables: Playable[]
 
 new class extends UnitTestCase {
   protected beforeEach () {
     super.beforeEach(() => {
-      songs = factory('song', 3)
-      queueStore.state.playables = reactive(songs)
+      playables = factory('song', 3)
+      queueStore.state.playables = reactive(playables)
     })
   }
 
   protected test () {
-    it('returns all queued songs', () => expect(queueStore.all).toEqual(songs))
+    it('returns all queued songs', () => expect(queueStore.all).toEqual(playables))
 
-    it('returns the first queued song', () => expect(queueStore.first).toEqual(songs[0]))
+    it('returns the first queued song', () => expect(queueStore.first).toEqual(playables[0]))
 
-    it('returns the last queued song', () => expect(queueStore.last).toEqual(songs[2]))
+    it('returns the last queued song', () => expect(queueStore.last).toEqual(playables[2]))
 
     it('queues to bottom', () => {
       const song = factory('song')
@@ -53,17 +53,17 @@ new class extends UnitTestCase {
 
     it('removes a song from queue', () => {
       const putMock = this.mock(http, 'put')
-      queueStore.unqueue(songs[1])
+      queueStore.unqueue(playables[1])
 
-      expect(queueStore.all).toEqual([songs[0], songs[2]])
+      expect(queueStore.all).toEqual([playables[0], playables[2]])
       expect(putMock).toHaveBeenCalledWith('queue/state', { songs: queueStore.all.map(song => song.id) })
     })
 
     it('removes multiple songs from queue', () => {
       const putMock = this.mock(http, 'put')
-      queueStore.unqueue([songs[1], songs[0]])
+      queueStore.unqueue([playables[1], playables[0]])
 
-      expect(queueStore.all).toEqual([songs[2]])
+      expect(queueStore.all).toEqual([playables[2]])
       expect(putMock).toHaveBeenCalledWith('queue/state', { songs: queueStore.all.map(song => song.id) })
     })
 

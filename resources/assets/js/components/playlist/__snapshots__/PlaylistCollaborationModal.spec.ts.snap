@@ -1,7 +1,7 @@
 // Vitest Snapshot v1
 
 exports[`renders the modal 1`] = `
-<div data-v-886145d2="" class="collaboration-modal max-w-[640px]" tabindex="0">
+<div data-v-886145d2="" class="collaboration-modal max-w-[640px]" tabindex="0" data-testid="playlist-collaboration">
   <header data-v-886145d2="">
     <h1 data-v-886145d2="">Playlist Collaboration</h1>
   </header>

@@ -78,11 +78,11 @@ new class extends UnitTestCase {
 
     it('scrobbles if current song ends', () => {
       commonStore.state.uses_last_fm = true
-      userStore.state.current = reactive(factory('user', {
+      userStore.state.current = factory('user', {
         preferences: {
           lastfm_session_key: 'foo'
         }
-      }))
+      })
 
       playbackService.init(document.querySelector('.plyr')!)
       const scrobbleMock = this.mock(songStore, 'scrobble')
@@ -399,7 +399,7 @@ new class extends UnitTestCase {
     }))
   }
 
-  private setCurrentSong (song?: Song) {
+  private setCurrentSong (song?: Playable) {
     song = reactive(song || factory('song', {
       playback_state: 'Playing'
     }))

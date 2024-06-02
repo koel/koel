@@ -6,8 +6,8 @@
     </SidebarSectionHeader>
 
     <ul>
-      <PlaylistSidebarItem :list="{ name: 'Favorites', songs: favorites }" />
-      <PlaylistSidebarItem :list="{ name: 'Recently Played', songs: [] }" />
+      <PlaylistSidebarItem :list="{ name: 'Favorites', playables: favorites }" />
+      <PlaylistSidebarItem :list="{ name: 'Recently Played', playables: [] }" />
       <PlaylistFolderSidebarItem v-for="folder in folders" :key="folder.id" :folder="folder" />
       <PlaylistSidebarItem v-for="playlist in orphanPlaylists" :key="playlist.id" :list="playlist" />
     </ul>
@@ -26,7 +26,7 @@ import SidebarSection from '@/components/layout/main-wrapper/sidebar/SidebarSect
 
 const folders = toRef(playlistFolderStore.state, 'folders')
 const playlists = toRef(playlistStore.state, 'playlists')
-const favorites = toRef(favoriteStore.state, 'songs')
+const favorites = toRef(favoriteStore.state, 'playables')
 
 const orphanPlaylists = computed(() => playlists.value.filter(({ folder_id }) => {
   if (folder_id === null) return true

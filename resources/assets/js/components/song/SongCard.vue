@@ -11,7 +11,7 @@
     @dblclick.prevent="play"
   >
     <span>
-      <SongThumbnail :song="playable" />
+      <SongThumbnail :playable="playable" />
     </span>
     <main class="flex-1 flex items-start overflow-hidden gap-2">
       <div class="flex-1 space-y-1 overflow-hidden">
@@ -39,7 +39,7 @@
           - {{ pluralize(playable.play_count, 'play') }}
         </p>
       </div>
-      <LikeButton :song="playable" class="opacity-0 text-k-text-secondary group-hover:opacity-100" />
+      <LikeButton :playable="playable" class="opacity-0 text-k-text-secondary group-hover:opacity-100" />
     </main>
   </article>
 </template>
@@ -47,7 +47,6 @@
 <script lang="ts" setup>
 import { computed, toRefs } from 'vue'
 import { eventBus, isEpisode, isSong, pluralize } from '@/utils'
-import { queueStore } from '@/stores'
 import { playbackService } from '@/services'
 import { useAuthorization, useDraggable, useKoelPlus } from '@/composables'
 

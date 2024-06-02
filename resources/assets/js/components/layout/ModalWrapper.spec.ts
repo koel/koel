@@ -8,7 +8,7 @@ import ModalWrapper from './ModalWrapper.vue'
 
 new class extends UnitTestCase {
   protected test () {
-    it.each<[string, keyof Events, User | Song[] | Playlist | PlaylistFolder | undefined]>([
+    it.each<[string, keyof Events, User | Playable[] | Playlist | PlaylistFolder | undefined]>([
       ['add-user-form', 'MODAL_SHOW_ADD_USER_FORM', undefined],
       ['invite-user-form', 'MODAL_SHOW_INVITE_USER_FORM', undefined],
       ['edit-user-form', 'MODAL_SHOW_EDIT_USER_FORM', factory('user')],

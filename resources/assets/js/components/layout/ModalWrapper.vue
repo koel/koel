@@ -50,10 +50,10 @@ eventBus.on('MODAL_SHOW_ABOUT_KOEL', () => (activeModalName.value = 'about-koel'
   .on('MODAL_SHOW_KOEL_PLUS', () => (activeModalName.value = 'koel-plus'))
   .on('MODAL_SHOW_ADD_USER_FORM', () => (activeModalName.value = 'add-user-form'))
   .on('MODAL_SHOW_INVITE_USER_FORM', () => (activeModalName.value = 'invite-user-form'))
-  .on('MODAL_SHOW_CREATE_PLAYLIST_FORM', (folder, songs) => {
+  .on('MODAL_SHOW_CREATE_PLAYLIST_FORM', (folder, playables?) => {
     context.value = {
       folder,
-      songs: songs ? arrayify(songs) : []
+      playables: playables ? arrayify(playables) : []
     }
 
     activeModalName.value = 'create-playlist-form'

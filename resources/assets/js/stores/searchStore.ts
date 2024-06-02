@@ -1,6 +1,6 @@
 import { reactive } from 'vue'
 import { http } from '@/services'
-import { albumStore, artistStore, podcastStore, songStore } from '@/stores'
+import { albumStore, artistStore, songStore } from '@/stores'
 
 type ExcerptState = {
   playables: Playable[]
@@ -24,7 +24,7 @@ export const searchStore = {
       artists: [],
       podcasts: []
     } as ExcerptState,
-    songs: [] as Playable[]
+    playables: [] as Playable[]
   }),
 
   async excerptSearch (q: string) {
@@ -36,11 +36,11 @@ export const searchStore = {
     this.state.excerpt.podcasts = result.podcasts
   },
 
-  async songSearch (q: string) {
-    this.state.songs = songStore.syncWithVault(await http.get<Song[]>(`search/songs?q=${q}`))
+  async playableSearch (q: string) {
+    this.state.playables = songStore.syncWithVault(await http.get<Playable[]>(`search/songs?q=${q}`))
   },
 
-  resetSongResultState () {
-    this.state.songs = []
+  resetPlayableResultState () {
+    this.state.playables = []
   }
 }

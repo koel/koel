@@ -54,7 +54,7 @@ import DOMPurify from 'dompurify'
 import { orderBy } from 'lodash'
 import { faBookmark, faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, toRefs } from 'vue'
-import { eventBus, secondsToHis } from '@/utils'
+import { eventBus, secondsToHumanReadable } from '@/utils'
 import { useDraggable } from '@/composables'
 import { formatTimeAgo } from '@vueuse/core'
 import { playbackService } from '@/services'
@@ -84,9 +84,9 @@ const publicationDateForHumans = computed(() => {
 const currentPosition = computed(() => podcast.value.state.progresses[episode.value.id] || 0)
 
 const timeLeft = computed(() => {
-  if (currentPosition.value === 0) return secondsToHis(episode.value.length)
+  if (currentPosition.value === 0) return secondsToHumanReadable(episode.value.length)
   const secondsLeft = episode.value.length - currentPosition.value
-  return secondsLeft === 0 ? 0 : secondsToHis(secondsLeft)
+  return secondsLeft === 0 ? 0 : secondsToHumanReadable(secondsLeft)
 })
 
 const shouldShowProgress = computed(() => timeLeft.value !== 0 && episode.value.length && currentPosition.value)

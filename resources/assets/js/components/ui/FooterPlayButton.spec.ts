@@ -118,11 +118,11 @@ new class extends UnitTestCase {
     })
   }
 
-  private renderComponent (currentSong: Song | null = null) {
+  private renderComponent (currentPlayable: Playable | null = null) {
     return this.render(FooterPlayButton, {
       global: {
         provide: {
-          [<symbol>CurrentPlayableKey]: ref(currentSong)
+          [<symbol>CurrentPlayableKey]: ref(currentPlayable)
         }
       }
     })

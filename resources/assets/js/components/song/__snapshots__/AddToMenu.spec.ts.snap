@@ -3,7 +3,7 @@
 exports[`renders 1`] = `
 <div data-v-42061e3e="" class="add-to w-full max-w-[256px] min-w-[200px] p-3 space-y-3" data-testid="add-to-menu" tabindex="0" showing="true">
   <section data-v-42061e3e="" class="existing-playlists">
-    <p data-v-42061e3e="" class="mb-2 text-[0.9rem]">Add 5 songs to</p>
+    <p data-v-42061e3e="" class="mb-2 text-[0.9rem]">Add 5 items to</p>
     <ul data-v-42061e3e="" class="relative max-h-48 overflow-y-scroll space-y-1.5">
       <li data-v-42061e3e="" data-testid="queue" tabindex="0">Queue</li>
       <li data-v-42061e3e="" class="favorites" data-testid="add-to-favorites" tabindex="0"> Favorites </li>
