@@ -50,17 +50,17 @@
 </template>
 
 <script setup lang="ts">
-import { faBookmark, faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
 import DOMPurify from 'dompurify'
-import { computed, toRefs } from 'vue'
+import { orderBy } from 'lodash'
+import { faBookmark, faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
+import { computed, defineAsyncComponent, toRefs } from 'vue'
 import { eventBus, secondsToHis } from '@/utils'
 import { useDraggable } from '@/composables'
 import { formatTimeAgo } from '@vueuse/core'
 import { playbackService } from '@/services'
-
-import EpisodeProgress from '@/components/podcast/EpisodeProgress.vue'
 import { preferenceStore as preferences, queueStore, songStore as episodeStore } from '@/stores'
-import { orderBy } from 'lodash'
+
+const EpisodeProgress = defineAsyncComponent(() => import('@/components/podcast/EpisodeProgress.vue'))
 
 const props = defineProps<{ episode: Episode, podcast: Podcast }>()
 const { episode, podcast } = toRefs(props)
