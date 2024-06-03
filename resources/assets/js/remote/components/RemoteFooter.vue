@@ -2,7 +2,7 @@
   <footer class="h-[18vh] w-screen flex justify-around items-center border-t border-solid border-t-white/10 py-4">
     <button
       class="text-[5vmin] has-[.yep]:text-k-love"
-      data-testid="btn-toggle-like"
+      data-testid="btn-toggle-favorite"
       @click.prevent="toggleFavorite"
     >
       <Icon :class="playable.liked && 'yep'" :icon="playable.liked ? faHeart : faEmptyHeart" />
