@@ -1,28 +1,31 @@
 <template>
-  <footer
-    class="h-[18vh] w-screen flex justify-around items-center border-t border-solid border-t-white/10 py-4 text-[5vmin]"
-  >
-    <a class="has-[.yep]:text-k-love" @click.prevent="toggleFavorite">
-      <Icon :class="song.liked && 'yep'" :icon="song.liked ? faHeart : faEmptyHeart" />
-    </a>
+  <footer class="h-[18vh] w-screen flex justify-around items-center border-t border-solid border-t-white/10 py-4">
+    <button
+      class="text-[5vmin] has-[.yep]:text-k-love"
+      data-testid="btn-toggle-like"
+      @click.prevent="toggleFavorite"
+    >
+      <Icon :class="playable.liked && 'yep'" :icon="playable.liked ? faHeart : faEmptyHeart" />
+    </button>
 
-    <a class="text-[6vmin]" @click="playPrev">
+    <button class="text-[6vmin]" data-testid="btn-play-prev" @click.prevent="playPrev">
       <Icon :icon="faStepBackward" />
-    </a>
+    </button>
 
-    <a
+    <button
       class="text-[7vmin] w-[16vmin] aspect-square border border-solid border-k-text-primary rounded-full flex
       items-center justify-center has-[.paused]:pl-[4px]"
+      data-testid="btn-toggle-playback"
       @click.prevent="togglePlayback"
     >
       <Icon :class="playing || 'paused'" :icon="playing ? faPause : faPlay" />
-    </a>
+    </button>
 
-    <a class="text-[6vmin]" @click.prevent="playNext">
+    <button class="text-[6vmin]" data-testid="btn-play-next" @click.prevent="playNext">
       <Icon :icon="faStepForward" />
-    </a>
+    </button>
 
-    <VolumeControl />
+    <VolumeControl class="text-[5vmin]" />
   </footer>
 </template>
 
@@ -34,18 +37,18 @@ import { socketService } from '@/services'
 
 import VolumeControl from '@/remote/components/VolumeControl.vue'
 
-const props = defineProps<{ song: Playable }>()
-const { song } = toRefs(props)
+const props = defineProps<{ playable: Playable }>()
+const { playable } = toRefs(props)
 
 const toggleFavorite = () => {
-  song.value.liked = !song.value.liked
+  playable.value.liked = !playable.value.liked
   socketService.broadcast('SOCKET_TOGGLE_FAVORITE')
 }
 
-const playing = computed(() => song.value.playback_state === 'Playing')
+const playing = computed(() => playable.value.playback_state === 'Playing')
 
 const togglePlayback = () => {
-  song.value.playback_state = song.value.playback_state === 'Playing' ? 'Paused' : 'Playing'
+  playable.value.playback_state = playable.value.playback_state === 'Playing' ? 'Paused' : 'Playing'
   socketService.broadcast('SOCKET_TOGGLE_PLAYBACK')
 }
 
