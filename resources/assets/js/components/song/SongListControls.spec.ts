@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { SelectedPlayablesKey, PlayablesKey } from '@/symbols'
+import { PlayablesKey, SelectedPlayablesKey } from '@/symbols'
 import { screen } from '@testing-library/vue'
 import SongListControls from './SongListControls.vue'
 

@@ -14,7 +14,7 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, Ref, toRefs } from 'vue'
-import { queueStore, songStore } from '@/stores'
+import { songStore } from '@/stores'
 import { authService, playbackService } from '@/services'
 import { useThirdPartyServices } from '@/composables'
 import { requireInjection, secondsToHis } from '@/utils'

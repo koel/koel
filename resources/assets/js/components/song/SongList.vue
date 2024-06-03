@@ -118,12 +118,12 @@ import { preferenceStore as preferences, queueStore } from '@/stores'
 import { useDraggable, useDroppable } from '@/composables'
 import { playbackService } from '@/services'
 import {
-  PlayablesKey,
-  SelectedPlayablesKey,
   PlayableListConfigKey,
   PlayableListContextKey,
-  SongListFilterKeywordsKey,
   PlayableListSortFieldKey,
+  PlayablesKey,
+  SelectedPlayablesKey,
+  SongListFilterKeywordsKey,
   SongListSortOrderKey
 } from '@/symbols'
 

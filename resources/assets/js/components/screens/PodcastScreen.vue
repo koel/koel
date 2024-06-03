@@ -77,7 +77,7 @@ import { orderBy } from 'lodash'
 import { faExternalLink, faPause, faPlay, faRotateRight, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { useDialogBox, useErrorHandler, useRouter } from '@/composables'
-import { songStore as episodeStore, podcastStore, queueStore } from '@/stores'
+import { podcastStore, queueStore, songStore as episodeStore } from '@/stores'
 import { playbackService } from '@/services'
 import { isEpisode } from '@/utils'
 

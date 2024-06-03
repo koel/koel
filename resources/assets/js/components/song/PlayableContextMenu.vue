@@ -72,7 +72,7 @@
 
 <script lang="ts" setup>
 import { computed, ref, toRef } from 'vue'
-import { arrayify, getPlayableCollectionContentType, copyText, eventBus, isSong, pluralize } from '@/utils'
+import { arrayify, copyText, eventBus, getPlayableCollectionContentType, isSong, pluralize } from '@/utils'
 import { commonStore, favoriteStore, playlistStore, queueStore, songStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 import {
