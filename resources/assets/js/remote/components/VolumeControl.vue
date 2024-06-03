@@ -28,9 +28,7 @@ const closeVolumeSlider = () => (showingVolumeSlider.value = false)
 
 const state = inject<RemoteState>('state')
 
-watch(() => state?.volume, volume => {
-  volumeSlider.value?.noUiSlider?.set(volume || DEFAULT_VOLUME)
-})
+watch(() => state?.volume, volume => volumeSlider.value?.noUiSlider?.set(volume || DEFAULT_VOLUME))
 
 onMounted(() => {
   noUISlider.create(volumeSlider.value!, {

@@ -1,0 +1,25 @@
+// Vitest Snapshot v1
+
+exports[`renders a song 1`] = `
+<article data-v-4daf3e78="" class="flex-1 flex flex-col items-center justify-around w-screen"><img data-v-4daf3e78="" src="https://cover.site/fotd.jpg" class="my-0 mx-auto w-[calc(70vw_+_4px)] aspect-square rounded-full border-2 border-solid border-k-text-primary object-center object-cover" alt="Cover art">
+  <div data-v-4daf3e78="" class="w-full flex flex-col justify-around px-6">
+    <div data-v-4daf3e78="">
+      <p data-v-4daf3e78="" class="text-[6vmin] font-bold mx-auto mb-4">Afraid to Shoot Strangers</p>
+      <p data-v-4daf3e78="" class="text-[5vmin] mb-2 opacity-50">Iron Maiden</p>
+      <p data-v-4daf3e78="" class="text-[4vmin] opacity-50">Fear of the Dark</p>
+    </div>
+  </div>
+</article>
+`;
+
+exports[`renders an episode 1`] = `
+<article data-v-4daf3e78="" class="flex-1 flex flex-col items-center justify-around w-screen"><img data-v-4daf3e78="" src="https://cover.site/pod.jpg" class="my-0 mx-auto w-[calc(70vw_+_4px)] aspect-square rounded-full border-2 border-solid border-k-text-primary object-center object-cover" alt="Cover art">
+  <div data-v-4daf3e78="" class="w-full flex flex-col justify-around px-6">
+    <div data-v-4daf3e78="">
+      <p data-v-4daf3e78="" class="text-[6vmin] font-bold mx-auto mb-4">Brahms Piano Concerto No. 1</p>
+      <p data-v-4daf3e78="" class="text-[5vmin] mb-2 opacity-50">Some random dudes</p>
+      <p data-v-4daf3e78="" class="text-[4vmin] opacity-50">The Sticky Notes podcast</p>
+    </div>
+  </div>
+</article>
+`;
