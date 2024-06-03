@@ -40,9 +40,9 @@
       <h3 class="text-xl" :title="episode.title">{{ episode.title }}</h3>
       <div class="description text-k-text-secondary mt-3 line-clamp-3" v-html="description" />
     </div>
-    <div class="md:flex-[0_0_96px] text-sm text-k-text-secondary flex md:flex-col items-center justify-center">
+    <div class="md:flex-[0_0_122px] text-sm text-k-text-secondary flex md:flex-col items-center justify-center w-full">
       <span class="block md:mb-2">{{ timeLeft ? timeLeft : 'Played' }}</span>
-      <div class="px-4 w-full">
+      <div class="px-4 flex-1 md:flex-grow-0 md:w-full">
         <EpisodeProgress v-if="shouldShowProgress" :episode="episode" :position="currentPosition" />
       </div>
     </div>
@@ -86,7 +86,7 @@ const currentPosition = computed(() => podcast.value.state.progresses[episode.va
 const timeLeft = computed(() => {
   if (currentPosition.value === 0) return secondsToHumanReadable(episode.value.length)
   const secondsLeft = episode.value.length - currentPosition.value
-  return secondsLeft === 0 ? 0 : secondsToHumanReadable(secondsLeft)
+  return secondsLeft === 0 ? 0 : `${secondsToHumanReadable(secondsLeft)} left`
 })
 
 const shouldShowProgress = computed(() => timeLeft.value !== 0 && episode.value.length && currentPosition.value)
