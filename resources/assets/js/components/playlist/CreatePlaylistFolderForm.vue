@@ -26,7 +26,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { playlistFolderStore } from '@/stores'
-import { logger } from '@/utils'
 import { useDialogBox, useErrorHandler, useMessageToaster, useOverlay } from '@/composables'
 
 import Btn from '@/components/ui/form/Btn.vue'

@@ -44,7 +44,7 @@
 <script lang="ts" setup>
 import { faPodcast } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
-import { getPlayableProp, isEpisode, isSong, requireInjection, secondsToHis } from '@/utils'
+import { getPlayableProp, isSong, requireInjection, secondsToHis } from '@/utils'
 import { useAuthorization, useKoelPlus } from '@/composables'
 import { PlayableListConfigKey } from '@/symbols'
 

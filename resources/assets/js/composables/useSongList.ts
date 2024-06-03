@@ -1,19 +1,19 @@
 import { differenceBy, orderBy, sampleSize, take, throttle } from 'lodash'
 import isMobile from 'ismobilejs'
-import { computed, provide, reactive, Ref, ref, watch } from 'vue'
+import { computed, provide, reactive, Ref, ref } from 'vue'
 import { playbackService } from '@/services'
 import { queueStore, songStore } from '@/stores'
 import { arrayify, eventBus, getPlayableProp, provideReadonly } from '@/utils'
 import { useRouter } from '@/composables'
 
 import {
-  SelectedPlayablesKey,
   PlayableListConfigKey,
   PlayableListContextKey,
-  SongListFilterKeywordsKey,
   PlayableListSortFieldKey,
-  SongListSortOrderKey,
-  PlayablesKey
+  PlayablesKey,
+  SelectedPlayablesKey,
+  SongListFilterKeywordsKey,
+  SongListSortOrderKey
 } from '@/symbols'
 
 import ControlsToggle from '@/components/ui/ScreenControlsToggle.vue'

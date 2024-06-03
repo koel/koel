@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts" setup>
-import { faListOl, faBolt, faCompress, faExpand, faSliders } from '@fortawesome/free-solid-svg-icons'
+import { faBolt, faCompress, faExpand, faSliders } from '@fortawesome/free-solid-svg-icons'
 import { computed, onMounted, ref } from 'vue'
 import { eventBus, isAudioContextSupported as useEqualizer, isFullscreenSupported } from '@/utils'
 import { useRouter } from '@/composables'

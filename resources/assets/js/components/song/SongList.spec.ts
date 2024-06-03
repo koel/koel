@@ -4,12 +4,12 @@ import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { arrayify } from '@/utils'
 import {
-  SelectedPlayablesKey,
   PlayableListConfigKey,
   PlayableListContextKey,
   PlayableListSortFieldKey,
-  SongListSortOrderKey,
-  PlayablesKey
+  PlayablesKey,
+  SelectedPlayablesKey,
+  SongListSortOrderKey
 } from '@/symbols'
 import { screen } from '@testing-library/vue'
 import SongList from './SongList.vue'

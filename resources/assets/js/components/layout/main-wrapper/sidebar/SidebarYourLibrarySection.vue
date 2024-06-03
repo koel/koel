@@ -43,7 +43,7 @@
 </template>
 
 <script lang="ts" setup>
-import { faCompactDisc, faMicrophone, faMusic, faTags, faPodcast } from '@fortawesome/free-solid-svg-icons'
+import { faCompactDisc, faMicrophone, faMusic, faPodcast, faTags } from '@fortawesome/free-solid-svg-icons'
 import { unescape } from 'lodash'
 import { ref } from 'vue'
 import { eventBus } from '@/utils'

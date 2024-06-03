@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import { focus, hideBrokenIcon, overflowFade, newTab, tooltip } from '@/directives'
+import { focus, hideBrokenIcon, newTab, overflowFade, tooltip } from '@/directives'
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome'
 import { RouterKey } from '@/symbols'
 import { routes } from '@/config'

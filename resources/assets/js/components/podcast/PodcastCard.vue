@@ -19,7 +19,6 @@
 
 <script lang="ts" setup>
 import { toRefs } from 'vue'
-import { eventBus } from '@/utils'
 import { useRouter } from '@/composables'
 
 import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
