@@ -457,7 +457,7 @@ interface PlayableListConfig {
   sortable: boolean
   reorderable: boolean
   collaborative: boolean
-  hasCustomSort: boolean
+  hasCustomOrderSort: boolean
 }
 
 type PlayableListContext = {

@@ -27,7 +27,7 @@ export const useSongList = (
     sortable: true,
     reorderable: false,
     collaborative: false,
-    hasCustomSort: false
+    hasCustomOrderSort: false
   }
 ) => {
   const filterKeywords = ref('')
