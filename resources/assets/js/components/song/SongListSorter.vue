@@ -8,7 +8,7 @@
         <li
           v-for="item in menuItems"
           :key="item.label"
-          :class="isCurrentField(item.field) && 'active'"
+          :class="currentlySortedBy(item.field) && 'active'"
           class="cursor-pointer flex justify-between"
           @click="sort(item.field)"
         >
@@ -30,28 +30,28 @@ import { faArrowDown, faArrowUp, faCheck, faSort } from '@fortawesome/free-solid
 import { OnClickOutside } from '@vueuse/components'
 import { computed, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
 import { useFloatingUi } from '@/composables'
-import { arrayify } from '@/utils'
+import { arrayify, getPlayableCollectionContentType } from '@/utils'
 
 const props = withDefaults(defineProps<{
-  field?: MaybeArray<PlayableListSortField>
+  field?: MaybeArray<PlayableListSortField> // the current field(s) being sorted by
   order?: SortOrder
-  hasCustomSort?: boolean
-  contentType?: 'songs' | 'episodes' | 'mixed'
+  hasCustomOrderSort?: boolean // whether to provide "custom order" sort (like for playlists)
+  contentType?: ReturnType<typeof getPlayableCollectionContentType>
 }>(), {
   field: 'title',
   order: 'asc',
-  hasCustomSort: false,
+  hasCustomOrderSort: false,
   contentType: 'songs'
 })
 
-const { field, order, hasCustomSort, contentType } = toRefs(props)
+const { field, order, hasCustomOrderSort, contentType } = toRefs(props)
 
 const emit = defineEmits<{ (e: 'sort', field: MaybeArray<PlayableListSortField>): void }>()
 
 const button = ref<HTMLButtonElement>()
 const menu = ref<HTMLDivElement>()
 
-const menuItems = computed<{ label: string, field: MaybeArray<PlayableListSortField> }[]>(() => {
+const menuItems = computed(() => {
   type MenuItems = { label: string, field: MaybeArray<PlayableListSortField> }
 
   const title: MenuItems = { label: 'Title', field: 'title' }
@@ -69,12 +69,12 @@ const menuItems = computed<{ label: string, field: MaybeArray<PlayableListSortFi
   let items: MenuItems[] = [title, album, artist, track, time, dateAdded]
 
   if (contentType.value === 'episodes') {
-    items = [title, author, podcast, time, dateAdded]
+    items = [title, podcast, author, time, dateAdded]
   } else if (contentType.value === 'mixed') {
     items = [title, albumOrPodcast, artistOrAuthor, time, dateAdded]
   }
 
-  if (hasCustomSort.value) {
+  if (hasCustomOrderSort.value) {
     items.push(customOrder)
   }
 
@@ -92,7 +92,7 @@ const sort = (field: MaybeArray<PlayableListSortField>) => {
   hide()
 }
 
-const isCurrentField = (field: MaybeArray<PlayableListSortField>) => isEqual(arrayify(field), arrayify(props.field))
+const currentlySortedBy = (field: MaybeArray<PlayableListSortField>) => isEqual(arrayify(field), arrayify(props.field))
 
 onMounted(() => menu.value && setup())
 onBeforeUnmount(() => teardown())

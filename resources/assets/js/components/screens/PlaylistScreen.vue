@@ -185,7 +185,7 @@ watch(playlistId, async id => {
   if (playlist.value) {
     await fetchDetails()
     listConfig.collaborative = playlist.value.is_collaborative
-    listConfig.hasCustomSort = !playlist.value.is_smart
+    listConfig.hasCustomOrderSort = !playlist.value.is_smart
     controlsConfig.deletePlaylist = playlist.value.user_id === currentUser.value?.id
   } else {
     await triggerNotFound()

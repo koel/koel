@@ -75,7 +75,7 @@
         <SongListSorter
           v-if="config.sortable"
           :field="sortField"
-          :has-custom-sort="config.hasCustomSort"
+          :has-custom-order-sort="config.hasCustomOrderSort"
           :order="sortOrder"
           :content-type="contentType"
           @sort="sort"
