@@ -52,9 +52,9 @@ export interface Events {
   SOCKET_PLAY_PREV: () => void
   SOCKET_PLAYBACK_STOPPED: () => void
   SOCKET_GET_STATUS: () => void
-  SOCKET_STATUS: (data: { song?: Playable, volume: number }) => void
-  SOCKET_GET_CURRENT_SONG: () => void
-  SOCKET_SONG: (song: Playable) => void
+  SOCKET_STATUS: (data: { playable?: Playable, volume: number }) => void
+  SOCKET_GET_CURRENT_PLAYABLE: () => void
+  SOCKET_PLAYABLE: (playable: Playable) => void
   SOCKET_SET_VOLUME: (volume: number) => void
   SOCKET_VOLUME_CHANGED: (volume: number) => void
 }
