@@ -193,12 +193,12 @@ class Playlist extends Model
 
     protected function isCollaborative(): Attribute
     {
-        return Attribute::get(fn (): bool => !$this->is_smart &&
-            LicenseFacade::isPlus()
+        return Attribute::get(fn (): bool => !$this->is_smart
+            && LicenseFacade::isPlus()
             && $this->collaborators->isNotEmpty());
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function toSearchableArray(): array
     {
         return [
