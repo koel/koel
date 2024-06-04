@@ -99,6 +99,19 @@ function gravatar(string $email, int $size = 192): string
     return sprintf("https://www.gravatar.com/avatar/%s?s=$size&d=robohash", md5(Str::lower($email)));
 }
 
+function avatar_or_gravatar(?string $avatar, string $email): string
+{
+    if (!$avatar) {
+        return gravatar($email);
+    }
+
+    if (Str::startsWith($avatar, ['http://', 'https://'])) {
+        return $avatar;
+    }
+
+    return user_avatar_url($avatar);
+}
+
 /**
  * A quick check to determine if a mailer is configured.
  * This is not bulletproof but should work in most cases.
