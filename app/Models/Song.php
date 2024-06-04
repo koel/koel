@@ -4,6 +4,9 @@ namespace App\Models;
 
 use App\Builders\SongBuilder;
 use App\Casts\Podcast\EpisodeMetadataCast;
+use App\Casts\SongLyricsCast;
+use App\Casts\SongStorageCast;
+use App\Casts\SongTitleCast;
 use App\Enums\PlayableType;
 use App\Enums\SongStorageType;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
@@ -79,11 +82,14 @@ class Song extends Model
     protected $hidden = ['updated_at', 'path', 'mtime'];
 
     protected $casts = [
+        'title' => SongTitleCast::class,
+        'lyrics' => SongLyricsCast::class,
         'length' => 'float',
         'mtime' => 'int',
         'track' => 'int',
         'disc' => 'int',
         'is_public' => 'bool',
+        'storage' => SongStorageCast::class,
         'episode_metadata' => EpisodeMetadataCast::class,
     ];
 
@@ -148,14 +154,6 @@ class Song extends Model
         return Attribute::get(fn () => $this->podcast_id ? PlayableType::PODCAST_EPISODE : PlayableType::SONG);
     }
 
-    protected function title(): Attribute
-    {
-        return new Attribute(
-            get: fn (?string $value) => $value ?: pathinfo($this->path, PATHINFO_FILENAME),
-            set: static fn (string $value) => html_entity_decode($value)
-        );
-    }
-
     public function accessibleBy(User $user): bool
     {
         if ($this->isEpisode()) {
@@ -168,31 +166,6 @@ class Song extends Model
     public function ownedBy(User $user): bool
     {
         return $this->owner_id === $user->id;
-    }
-
-    protected function lyrics(): Attribute
-    {
-        $normalizer = static function (?string $value): string {
-            // Since we're displaying the lyrics using <pre>, replace breaks with newlines and strip all tags.
-            $value = strip_tags(preg_replace('#<br\s*/?>#i', PHP_EOL, $value));
-
-            // also remove the timestamps that often come with LRC files
-            return preg_replace('/\[\d{2}:\d{2}.\d{2}]\s*/m', '', $value);
-        };
-
-        return new Attribute(get: $normalizer, set: $normalizer);
-    }
-
-    protected function storage(): Attribute
-    {
-        return new Attribute(
-            get: static fn (?string $raw) => SongStorageType::tryFrom($raw) ?? SongStorageType::LOCAL,
-            set: static function (SongStorageType|string|null $type) {
-                $type = $type instanceof SongStorageType ? $type : SongStorageType::tryFrom($type);
-
-                return $type->value;
-            }
-        );
     }
 
     protected function storageMetadata(): Attribute

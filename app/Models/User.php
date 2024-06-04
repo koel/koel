@@ -40,7 +40,7 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @property ?string $sso_provider
  * @property ?string $sso_id
  * @property bool $is_sso
- * @property Collection<array-key, Podcast> $podcast
+ * @property Collection<array-key, Podcast> $podcasts
  */
 class User extends Authenticatable
 {

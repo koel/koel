@@ -9,11 +9,6 @@ use Illuminate\Support\Collection;
 /** @extends Repository<Podcast> */
 class PodcastRepository extends Repository
 {
-    public function __construct()
-    {
-        parent::__construct(Podcast::class);
-    }
-
     public function findOneByUrl(string $url): ?Podcast
     {
         return $this->findOneBy(['url' => $url]);
