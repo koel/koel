@@ -47,10 +47,10 @@ class PlaylistSongController extends Controller
 
         $this->authorize('collaborate', $playlist);
 
-        $songs = $this->songRepository->getMany(ids: $request->songs, scopedUser: $this->user);
+        $playables = $this->songRepository->getMany(ids: $request->songs, scopedUser: $this->user);
 
         return self::createResourceCollection(
-            $this->playlistService->addPlayablesToPlaylist($playlist, $songs, $this->user)
+            $this->playlistService->addPlayablesToPlaylist($playlist, $playables, $this->user)
         );
     }
 

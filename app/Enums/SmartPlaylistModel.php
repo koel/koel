@@ -19,6 +19,10 @@ enum SmartPlaylistModel: string
     public function toColumnName(): string
     {
         return match ($this) {
+            self::TITLE => 'songs.title',
+            self::LENGTH => 'songs.length',
+            self::GENRE => 'songs.genre',
+            self::YEAR => 'songs.year',
             self::ALBUM_NAME => 'albums.name',
             self::ARTIST_NAME => 'artists.name',
             self::DATE_ADDED => 'songs.created_at',

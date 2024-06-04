@@ -54,6 +54,7 @@ use Throwable;
  * // The following are only available for collaborative playlists
  * @property-read ?string $collaborator_email The email of the user who added the song to the playlist
  * @property-read ?string $collaborator_name The name of the user who added the song to the playlist
+ * @property-read ?string $collaborator_avatar The avatar of the user who added the song to the playlist
  * @property-read ?int $collaborator_id The ID of the user who added the song to the playlist
  * @property-read ?string $added_at The date the song was added to the playlist
  * @property-read PlayableType $type
