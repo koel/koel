@@ -24,7 +24,7 @@ class CollaborativeSongResource extends SongResource
                     PlaylistCollaborator::make(
                         $this->song->collaborator_id,
                         $this->song->collaborator_name,
-                        gravatar($this->song->collaborator_email),
+                        avatar_or_gravatar($this->song->collaborator_avatar, $this->song->collaborator_email),
                     ),
                 ),
                 'added_at' => $this->song->added_at,

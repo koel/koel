@@ -16,7 +16,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\PersonalAccessToken;
 
@@ -109,20 +108,12 @@ class User extends Authenticatable
 
     protected function avatar(): Attribute
     {
-        return Attribute::get(function (): string {
-            $avatar = Arr::get($this->attributes, 'avatar');
-
-            if (Str::startsWith($avatar, ['http://', 'https://'])) {
-                return $avatar;
-            }
-
-            return $avatar ? user_avatar_url($avatar) : gravatar($this->email);
-        });
+        return Attribute::get(fn (): string => avatar_or_gravatar(Arr::get($this->attributes, 'avatar'), $this->email));
     }
 
     protected function hasCustomAvatar(): Attribute
     {
-        return Attribute::get(fn (): bool => (bool) $this->attributes['avatar']);
+        return Attribute::get(fn (): bool => (bool) Arr::get($this->attributes, 'avatar'));
     }
 
     protected function isProspect(): Attribute
