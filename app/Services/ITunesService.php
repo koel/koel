@@ -5,11 +5,11 @@ namespace App\Services;
 use App\Http\Integrations\iTunes\ITunesConnector;
 use App\Http\Integrations\iTunes\Requests\GetTrackRequest;
 use App\Models\Album;
-use Illuminate\Cache\Repository as Cache;
+use Illuminate\Support\Facades\Cache;
 
 class ITunesService
 {
-    public function __construct(private readonly ITunesConnector $connector, private readonly Cache $cache)
+    public function __construct(private readonly ITunesConnector $connector)
     {
     }
 
@@ -24,7 +24,7 @@ class ITunesService
             $request = new GetTrackRequest($trackName, $album);
             $hash = md5(serialize($request->query()));
 
-            return $this->cache->remember(
+            return Cache::remember(
                 "itunes.track.$hash",
                 now()->addWeek(),
                 function () use ($request): ?string {

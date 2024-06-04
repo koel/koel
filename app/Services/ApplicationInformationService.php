@@ -3,11 +3,11 @@
 namespace App\Services;
 
 use GuzzleHttp\Client;
-use Illuminate\Contracts\Cache\Repository as Cache;
+use Illuminate\Support\Facades\Cache;
 
 class ApplicationInformationService
 {
-    public function __construct(private readonly Client $client, private readonly Cache $cache)
+    public function __construct(private readonly Client $client)
     {
     }
 
@@ -17,7 +17,7 @@ class ApplicationInformationService
     public function getLatestVersionNumber(): string
     {
         return attempt(function () {
-            return $this->cache->remember('latestKoelVersion', now()->addDay(), function (): string {
+            return Cache::remember('latestKoelVersion', now()->addDay(), function (): string {
                 return json_decode($this->client->get('https://api.github.com/repos/koel/koel/tags')->getBody())[0]
                     ->name;
             });

@@ -205,7 +205,7 @@ class Song extends Model
         return "s3://$bucket/$key";
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function toSearchableArray(): array
     {
         $array = [

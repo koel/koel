@@ -12,15 +12,14 @@ use App\Values\SongUpdateData;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Psr\Log\LoggerInterface;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class SongService
 {
     public function __construct(
         private readonly SongRepository $songRepository,
-        private readonly SongStorage $songStorage,
-        private readonly LoggerInterface $logger
+        private readonly SongStorage $songStorage
     ) {
     }
 
@@ -40,12 +39,10 @@ class SongService
 
         return DB::transaction(function () use ($ids, $data): Collection {
             return collect($ids)->reduce(function (Collection $updated, string $id) use ($data): Collection {
-                /** @var Song|null $song */
-                $song = Song::with('album', 'album.artist', 'artist')->find($id);
-
-                if ($song) {
-                    $updated->push($this->updateSong($song, clone $data));
-                }
+                optional(
+                    Song::query()->with('album.artist')->find($id),
+                    fn (Song $song) => $updated->push($this->updateSong($song, clone $data))
+                );
 
                 return $updated;
             }, collect());
@@ -95,9 +92,9 @@ class SongService
     public function markSongsAsPrivate(Collection $songs): array
     {
         if (License::isPlus()) {
+            // Songs that are in collaborative playlists can't be marked as private.
             /**
              * @var Collection<array-key, Song> $collaborativeSongs
-             * Songs that are in collaborative playlists and can't be marked as private as a result
              */
             $collaborativeSongs = Song::query()
                 ->whereIn('songs.id', $songs->pluck('id'))
@@ -124,11 +121,9 @@ class SongService
     public function deleteSongs(array|string $ids): void
     {
         $ids = Arr::wrap($ids);
+        $shouldBackUp = config('koel.backup_on_delete');
 
-        DB::transaction(function () use ($ids): void {
-            $shouldBackUp = config('koel.backup_on_delete');
-
-            /** @var Collection<array-key, Song> $songs */
+        DB::transaction(function () use ($ids, $shouldBackUp): void {
             $songs = Song::query()->findMany($ids);
 
             Song::destroy($ids);
@@ -137,7 +132,7 @@ class SongService
                 try {
                     $this->songStorage->delete($song, $shouldBackUp);
                 } catch (Throwable $e) {
-                    $this->logger->error('Failed to remove song file', [
+                    Log::error('Failed to remove song file', [
                         'path' => $song->path,
                         'exception' => $e,
                     ]);

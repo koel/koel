@@ -8,8 +8,8 @@ use App\Repositories\UserRepository;
 use App\Values\CompositeToken;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Passwords\PasswordBroker;
-use Illuminate\Hashing\HashManager;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 
 class AuthenticationService
@@ -17,21 +17,20 @@ class AuthenticationService
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly TokenManager $tokenManager,
-        private readonly HashManager $hash,
         private readonly PasswordBroker $passwordBroker
     ) {
     }
 
     public function login(string $email, string $password): CompositeToken
     {
-        $user = $this->userRepository->getFirstWhere('email', $email);
+        $user = $this->userRepository->findFirstWhere('email', $email);
 
-        if (!$user || !$this->hash->check($password, $user->password)) {
+        if (!$user || !Hash::check($password, $user->password)) {
             throw new InvalidCredentialsException();
         }
 
-        if ($this->hash->needsRehash($user->password)) {
-            $user->password = $this->hash->make($password);
+        if (Hash::needsRehash($user->password)) {
+            $user->password = Hash::make($password);
             $user->save();
         }
 
@@ -62,8 +61,8 @@ class AuthenticationService
             'token' => $token,
         ];
 
-        $status = $this->passwordBroker->reset($credentials, function (User $user, string $password): void {
-            $user->password = $this->hash->make($password);
+        $status = $this->passwordBroker->reset($credentials, static function (User $user, string $password): void {
+            $user->password = Hash::make($password);
             $user->save();
             event(new PasswordReset($user));
         });

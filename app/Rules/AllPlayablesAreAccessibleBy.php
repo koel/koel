@@ -14,11 +14,7 @@ class AllPlayablesAreAccessibleBy implements ValidationRule
     {
     }
 
-    /**
-     * Run the validation rule.
-     *
-     * @param array<string> $value
-     */
+    /** @param array<string> $value */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $ids = array_unique(Arr::wrap($value));
