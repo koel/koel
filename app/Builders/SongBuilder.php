@@ -69,17 +69,28 @@ class SongBuilder extends Builder
             );
     }
 
-    public function accessibleBy(User $user, bool $withTableName = true): self
+    public function accessibleBy(User $user): self
     {
         if (License::isCommunity()) {
             // In the Community Edition, all songs are accessible by all users.
             return $this;
         }
 
-        return $this->where(static function (Builder $query) use ($user, $withTableName): void {
-            $query->where(($withTableName ? 'songs.' : '') . 'is_public', true)
-                ->orWhere(($withTableName ? 'songs.' : '') . 'owner_id', $user->id);
-        });
+        // We want to alias both podcasts and podcast_user tables to avoid possible conflicts with other joins.
+        return $this->leftJoin('podcasts as podcasts_a11y', 'songs.podcast_id', 'podcasts_a11y.id')
+            ->leftJoin('podcast_user as podcast_user_a11y', static function (JoinClause $join) use ($user): void {
+                $join->on('podcasts_a11y.id', 'podcast_user_a11y.podcast_id')
+                    ->where('podcast_user_a11y.user_id', $user->id);
+            })
+            ->where(static function (Builder $query) use ($user): void {
+                // Songs must be public or owned by the user.
+                $query->where('songs.is_public', true)
+                    ->orWhere('songs.owner_id', $user->id);
+            })->whereNot(static function (Builder $query): void {
+                // Episodes must belong to a podcast that the user is not subscribed to.
+                $query->whereNotNull('songs.podcast_id')
+                    ->whereNull('podcast_user_a11y.podcast_id');
+            });
     }
 
     private function sortByOneColumn(string $column, string $direction): self
