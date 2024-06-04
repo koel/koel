@@ -10,8 +10,8 @@ use App\Values\ScanConfiguration;
 use App\Values\ScanResult;
 use App\Values\SongScanInformation;
 use getID3;
-use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 
@@ -32,7 +32,6 @@ class FileScanner
         private readonly MediaMetadataService $mediaMetadataService,
         private readonly SongRepository $songRepository,
         private readonly SimpleLrcReader $lrcReader,
-        private readonly Cache $cache,
         private readonly Finder $finder
     ) {
     }
@@ -43,7 +42,7 @@ class FileScanner
 
         $this->filePath = $file->getRealPath();
         $this->song = $this->songRepository->findOneByPath($this->filePath);
-        $this->fileModifiedTime = Helper::getModifiedTime($file);
+        $this->fileModifiedTime = get_mtime($file);
 
         return $this;
     }
@@ -137,7 +136,7 @@ class FileScanner
     private function getCoverFileUnderSameDirectory(): ?string
     {
         // As directory scanning can be expensive, we cache and reuse the result.
-        return $this->cache->remember(md5($this->filePath . '_cover'), now()->addDay(), function (): ?string {
+        return Cache::remember(md5($this->filePath . '_cover'), now()->addDay(), function (): ?string {
             $matches = array_keys(
                 iterator_to_array(
                     $this->finder->create()

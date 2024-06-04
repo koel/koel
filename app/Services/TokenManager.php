@@ -4,16 +4,12 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Values\CompositeToken;
-use Illuminate\Cache\Repository as Cache;
+use Illuminate\Support\Facades\Cache;
 use Laravel\Sanctum\NewAccessToken;
 use Laravel\Sanctum\PersonalAccessToken;
 
 class TokenManager
 {
-    public function __construct(private readonly Cache $cache)
-    {
-    }
-
     public function createToken(User $user, array $abilities = ['*']): NewAccessToken
     {
         return $user->createToken(config('app.name'), $abilities);
@@ -26,7 +22,7 @@ class TokenManager
             audio: $this->createToken($user, ['audio'])
         );
 
-        $this->cache->rememberForever("app.composite-tokens.$token->apiToken", static fn () => $token->audioToken);
+        Cache::forever("app.composite-tokens.$token->apiToken", $token->audioToken);
 
         return $token;
     }
@@ -34,11 +30,11 @@ class TokenManager
     public function deleteCompositionToken(string $plainTextApiToken): void
     {
         /** @var string $audioToken */
-        $audioToken = $this->cache->get("app.composite-tokens.$plainTextApiToken");
+        $audioToken = Cache::get("app.composite-tokens.$plainTextApiToken");
 
         if ($audioToken) {
             self::deleteTokenByPlainTextToken($audioToken);
-            $this->cache->forget("app.composite-tokens.$plainTextApiToken");
+            Cache::forget("app.composite-tokens.$plainTextApiToken");
         }
 
         self::deleteTokenByPlainTextToken($plainTextApiToken);

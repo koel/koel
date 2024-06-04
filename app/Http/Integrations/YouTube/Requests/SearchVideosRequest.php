@@ -19,7 +19,7 @@ class SearchVideosRequest extends Request
         return '/search';
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     protected function defaultQuery(): array
     {
         $q = $this->song->title;

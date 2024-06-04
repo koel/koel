@@ -7,7 +7,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
-use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
@@ -24,7 +23,7 @@ class ApplicationInformationServiceTest extends TestCase
         ]);
 
         $client = new Client(['handler' => HandlerStack::create($mock)]);
-        $service = new ApplicationInformationService($client, app(Cache::class));
+        $service = new ApplicationInformationService($client);
 
         self::assertSame($latestVersion, $service->getLatestVersionNumber());
         self::assertSame($latestVersion, cache()->get('latestKoelVersion'));

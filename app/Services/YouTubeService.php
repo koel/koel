@@ -5,12 +5,12 @@ namespace App\Services;
 use App\Http\Integrations\YouTube\Requests\SearchVideosRequest;
 use App\Http\Integrations\YouTube\YouTubeConnector;
 use App\Models\Song;
-use Illuminate\Cache\Repository as Cache;
+use Illuminate\Support\Facades\Cache;
 use Throwable;
 
 class YouTubeService
 {
-    public function __construct(private readonly YouTubeConnector $connector, private readonly Cache $cache)
+    public function __construct(private readonly YouTubeConnector $connector)
     {
     }
 
@@ -29,7 +29,7 @@ class YouTubeService
         $hash = md5(serialize($request->query()->all()));
 
         try {
-            return $this->cache->remember(
+            return Cache::remember(
                 "youtube.$hash",
                 now()->addWeek(),
                 fn () => $this->connector->send($request)->object()

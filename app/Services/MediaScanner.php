@@ -11,7 +11,7 @@ use App\Values\ScanConfiguration;
 use App\Values\ScanResult;
 use App\Values\ScanResultCollection;
 use App\Values\WatchRecord\Contracts\WatchRecordInterface;
-use Psr\Log\LoggerInterface;
+use Illuminate\Support\Facades\Log;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 use Throwable;
@@ -25,8 +25,7 @@ class MediaScanner
         private readonly SettingRepository $settingRepository,
         private readonly SongRepository $songRepository,
         private readonly FileScanner $fileScanner,
-        private readonly Finder $finder,
-        private readonly LoggerInterface $logger
+        private readonly Finder $finder
     ) {
     }
 
@@ -88,7 +87,7 @@ class MediaScanner
 
     public function scanWatchRecord(WatchRecordInterface $record, ScanConfiguration $config): void
     {
-        $this->logger->info("New watch record received: '{$record->getPath()}'");
+        Log::info("New watch record received: '{$record->getPath()}'");
 
         if ($record->isFile()) {
             $this->scanFileRecord($record, $config);
@@ -100,7 +99,7 @@ class MediaScanner
     private function scanFileRecord(WatchRecordInterface $record, ScanConfiguration $config): void
     {
         $path = $record->getPath();
-        $this->logger->info("'$path' is a file.");
+        Log::info("'$path' is a file.");
 
         if ($record->isDeleted()) {
             $this->handleDeletedFileRecord($path);
@@ -112,7 +111,7 @@ class MediaScanner
     private function scanDirectoryRecord(WatchRecordInterface $record, ScanConfiguration $config): void
     {
         $path = $record->getPath();
-        $this->logger->info("'$path' is a directory.");
+        Log::info("'$path' is a directory.");
 
         if ($record->isDeleted()) {
             $this->handleDeletedDirectoryRecord($path);
@@ -138,9 +137,9 @@ class MediaScanner
 
         if ($song) {
             $song->delete();
-            $this->logger->info("$path deleted.");
+            Log::info("$path deleted.");
         } else {
-            $this->logger->info("$path doesn't exist in our database--skipping.");
+            Log::info("$path doesn't exist in our database--skipping.");
         }
     }
 
@@ -149,9 +148,9 @@ class MediaScanner
         $result = $this->fileScanner->setFile($path)->scan($config);
 
         if ($result->isSuccess()) {
-            $this->logger->info("Scanned $path");
+            Log::info("Scanned $path");
         } else {
-            $this->logger->info("Failed to scan $path. Maybe an invalid file?");
+            Log::info("Failed to scan $path. Maybe an invalid file?");
         }
     }
 
@@ -160,9 +159,9 @@ class MediaScanner
         $count = Song::query()->inDirectory($path)->delete();
 
         if ($count) {
-            $this->logger->info("Deleted $count song(s) under $path");
+            Log::info("Deleted $count song(s) under $path");
         } else {
-            $this->logger->info("$path is empty--no action needed.");
+            Log::info("$path is empty--no action needed.");
         }
     }
 
@@ -178,7 +177,7 @@ class MediaScanner
             }
         }
 
-        $this->logger->info("Scanned all song(s) under $path");
+        Log::info("Scanned all song(s) under $path");
 
         event(new MediaScanCompleted($scanResults));
     }

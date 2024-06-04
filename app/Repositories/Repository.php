@@ -68,7 +68,7 @@ abstract class Repository implements RepositoryInterface
     }
 
     /** @return T|null  */
-    public function getFirstWhere(...$params): ?Model
+    public function findFirstWhere(...$params): ?Model
     {
         return $this->model::query()->firstWhere(...$params);
     }

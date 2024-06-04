@@ -7,20 +7,16 @@ use App\Facades\License;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Values\SSOUser;
-use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class UserService
 {
-    public function __construct(
-        private readonly UserRepository $repository,
-        private readonly Hasher $hash,
-        private readonly ImageWriter $imageWriter
-    ) {
+    public function __construct(private readonly UserRepository $repository, private readonly ImageWriter $imageWriter)
+    {
     }
 
-    /** @noinspection PhpIncompatibleReturnTypeInspection */
     public function createUser(
         string $name,
         string $email,
@@ -38,7 +34,7 @@ class UserService
         return User::query()->create([
             'name' => $name,
             'email' => $email,
-            'password' => $plainTextPassword ? $this->hash->make($plainTextPassword) : '',
+            'password' => $plainTextPassword ? Hash::make($plainTextPassword) : '',
             'is_admin' => $isAdmin,
             'sso_id' => $ssoId,
             'sso_provider' => $ssoProvider,
@@ -94,7 +90,7 @@ class UserService
             $user->update([
                 'name' => $name,
                 'email' => $email,
-                'password' => $password ? $this->hash->make($password) : $user->password,
+                'password' => $password ? Hash::make($password) : $user->password,
                 'is_admin' => $isAdmin ?? $user->is_admin,
                 'avatar' => $avatar ? $this->createNewAvatar($avatar, $user) : null,
             ]);

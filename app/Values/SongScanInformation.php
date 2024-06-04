@@ -4,7 +4,6 @@ namespace App\Values;
 
 use App\Models\Album;
 use App\Models\Artist;
-use App\Services\Helper;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 
@@ -71,7 +70,7 @@ final class SongScanInformation implements Arrayable
             length: (float) Arr::get($info, 'playtime_seconds'),
             cover: $cover,
             path: $path,
-            mTime: Helper::getModifiedTime($path)
+            mTime: get_mtime($path)
         );
     }
 

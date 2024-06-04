@@ -6,15 +6,15 @@ use App\Exceptions\InvitationNotFoundException;
 use App\Mail\UserInvite;
 use App\Models\User;
 use App\Repositories\UserRepository;
-use Illuminate\Contracts\Hashing\Hasher as Hash;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class UserInvitationService
 {
-    public function __construct(private readonly Hash $hash, private readonly UserRepository $userRepository)
+    public function __construct(private readonly UserRepository $userRepository)
     {
     }
 
@@ -26,15 +26,13 @@ class UserInvitationService
         });
     }
 
-    /** @throws InvitationNotFoundException */
     public function getUserProspectByToken(string $token): User
     {
-        return User::query()->where('invitation_token', $token)->firstOr(static function (): void {
+        return User::query()->where('invitation_token', $token)->firstOr(static function (): never {
             throw new InvitationNotFoundException();
         });
     }
 
-    /** @throws InvitationNotFoundException */
     public function revokeByEmail(string $email): void
     {
         $user = $this->userRepository->findOneByEmail($email);
@@ -59,14 +57,13 @@ class UserInvitationService
         return $invitee;
     }
 
-    /** @throws InvitationNotFoundException */
     public function accept(string $token, string $name, string $password): User
     {
         $user = $this->getUserProspectByToken($token);
 
-        $user->update([
+        $user->update(attributes: [
             'name' => $name,
-            'password' => $this->hash->make($password),
+            'password' => Hash::make($password),
             'invitation_token' => null,
             'invitation_accepted_at' => now(),
         ]);
