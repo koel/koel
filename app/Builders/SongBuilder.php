@@ -36,6 +36,8 @@ class SongBuilder extends Builder
         'podcasts.author',
     ];
 
+    private User $user;
+
     public function inDirectory(string $path): self
     {
         // Make sure the path ends with a directory separator.
@@ -44,10 +46,10 @@ class SongBuilder extends Builder
         return $this->where('path', 'LIKE', "$path%");
     }
 
-    public function withMetaFor(User $user, bool $requiresInteractions = false): self
+    public function withMeta(bool $requiresInteractions = false): self
     {
-        $joinClosure = static function (JoinClause $join) use ($user): void {
-            $join->on('interactions.song_id', 'songs.id')->where('interactions.user_id', $user->id);
+        $joinClosure = function (JoinClause $join): void {
+            $join->on('interactions.song_id', 'songs.id')->where('interactions.user_id', $this->user->id);
         };
 
         return $this
@@ -69,7 +71,7 @@ class SongBuilder extends Builder
             );
     }
 
-    public function accessibleBy(User $user): self
+    public function accessible(): self
     {
         if (License::isCommunity()) {
             // In the Community Edition, all songs are accessible by all users.
@@ -78,14 +80,14 @@ class SongBuilder extends Builder
 
         // We want to alias both podcasts and podcast_user tables to avoid possible conflicts with other joins.
         return $this->leftJoin('podcasts as podcasts_a11y', 'songs.podcast_id', 'podcasts_a11y.id')
-            ->leftJoin('podcast_user as podcast_user_a11y', static function (JoinClause $join) use ($user): void {
+            ->leftJoin('podcast_user as podcast_user_a11y', function (JoinClause $join): void {
                 $join->on('podcasts_a11y.id', 'podcast_user_a11y.podcast_id')
-                    ->where('podcast_user_a11y.user_id', $user->id);
+                    ->where('podcast_user_a11y.user_id', $this->user->id);
             })
-            ->where(static function (Builder $query) use ($user): void {
+            ->where(function (Builder $query): void {
                 // Songs must be public or owned by the user.
                 $query->where('songs.is_public', true)
-                    ->orWhere('songs.owner_id', $user->id);
+                    ->orWhere('songs.owner_id', $this->user->id);
             })->whereNot(static function (Builder $query): void {
                 // Episodes must belong to a podcast that the user is not subscribed to.
                 $query->whereNotNull('songs.podcast_id')
@@ -138,8 +140,10 @@ class SongBuilder extends Builder
             ->where('storage', '!=', '');
     }
 
-    public function onlySongs(): self
+    public function forUser(User $user): self
     {
-        return $this->whereNull('songs.podcast_id');
+        $this->user = $user;
+
+        return $this;
     }
 }

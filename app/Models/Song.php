@@ -104,9 +104,16 @@ class Song extends Model
         });
     }
 
-    public static function query(): SongBuilder
+    public static function query(?PlayableType $type = null, ?User $user = null): SongBuilder
     {
-        return parent::query();
+        return parent::query()
+            ->when($type, static function (SongBuilder $query) use ($type): void {
+                match ($type) {
+                    PlayableType::SONG => $query->whereNull('songs.podcast_id'),
+                    PlayableType::PODCAST_EPISODE => $query->whereNotNull('songs.podcast_id'),
+                };
+            })
+            ->when($user, static fn (SongBuilder $query) => $query->forUser($user));
     }
 
     public function owner(): BelongsTo
