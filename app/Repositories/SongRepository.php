@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Builders\SongBuilder;
+use App\Enums\PlayableType;
 use App\Facades\License;
 use App\Models\Album;
 use App\Models\Artist;
@@ -33,12 +34,9 @@ class SongRepository extends Repository
     /** @return Collection|array<array-key, Song> */
     public function getRecentlyAdded(int $count = 10, ?User $scopedUser = null): Collection
     {
-        $scopedUser ??= $this->auth->user();
-
-        return Song::query()
-            ->onlySongs()
-            ->accessibleBy($scopedUser)
-            ->withMetaFor($scopedUser)
+        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
+            ->accessible()
+            ->withMeta()
             ->latest()
             ->limit($count)
             ->get();
@@ -47,12 +45,9 @@ class SongRepository extends Repository
     /** @return Collection|array<array-key, Song> */
     public function getMostPlayed(int $count = 7, ?User $scopedUser = null): Collection
     {
-        $scopedUser ??= $this->auth->user();
-
-        return Song::query()
-            ->onlySongs()
-            ->accessibleBy($scopedUser)
-            ->withMetaFor($scopedUser, requiresInteractions: true)
+        return Song::query(user: $scopedUser ?? $this->auth->user())
+            ->accessible()
+            ->withMeta(requiresInteractions: true)
             ->where('interactions.play_count', '>', 0)
             ->orderByDesc('interactions.play_count')
             ->limit($count)
@@ -62,11 +57,9 @@ class SongRepository extends Repository
     /** @return Collection|array<array-key, Song> */
     public function getRecentlyPlayed(int $count = 7, ?User $scopedUser = null): Collection
     {
-        $scopedUser ??= $this->auth->user();
-
-        return Song::query()
-            ->accessibleBy($scopedUser)
-            ->withMetaFor($scopedUser, requiresInteractions: true)
+        return Song::query(user: $scopedUser ?? $this->auth->user())
+            ->accessible()
+            ->withMeta(requiresInteractions: true)
             ->orderByDesc('interactions.last_played_at')
             ->limit($count)
             ->get();
@@ -81,10 +74,9 @@ class SongRepository extends Repository
     ): Paginator {
         $scopedUser ??= $this->auth->user();
 
-        return Song::query()
-            ->onlySongs()
-            ->accessibleBy($scopedUser)
-            ->withMetaFor($scopedUser)
+        return Song::query(type: PlayableType::SONG, user: $scopedUser)
+            ->accessible()
+            ->withMeta()
             ->when($ownSongsOnly, static fn (SongBuilder $query) => $query->where('songs.owner_id', $scopedUser->id))
             ->sort($sortColumns, $sortDirection)
             ->simplePaginate($perPage);
@@ -97,11 +89,9 @@ class SongRepository extends Repository
         ?User $scopedUser = null,
         int $perPage = 50
     ): Paginator {
-        $scopedUser ??= $this->auth->user();
-
-        return Song::query()
-            ->accessibleBy($scopedUser)
-            ->withMetaFor($scopedUser)
+        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
+            ->accessible()
+            ->withMeta()
             ->where('genre', $genre)
             ->sort($sortColumns, $sortDirection)
             ->simplePaginate($perPage);
@@ -114,11 +104,9 @@ class SongRepository extends Repository
         int $limit = self::DEFAULT_QUEUE_LIMIT,
         ?User $scopedUser = null,
     ): Collection {
-        $scopedUser ??= $this->auth->user();
-
-        return Song::query()
-            ->accessibleBy($scopedUser)
-            ->withMetaFor($scopedUser)
+        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
+            ->accessible()
+            ->withMeta()
             ->sort($sortColumns, $sortDirection)
             ->limit($limit)
             ->get();
@@ -127,11 +115,9 @@ class SongRepository extends Repository
     /** @return Collection|array<array-key, Song> */
     public function getFavorites(?User $scopedUser = null): Collection
     {
-        $scopedUser ??= $this->auth->user();
-
-        return Song::query()
-            ->accessibleBy($scopedUser)
-            ->withMetaFor($scopedUser)
+        return Song::query(user: $scopedUser ?? $this->auth->user())
+            ->accessible()
+            ->withMeta()
             ->where('interactions.liked', true)
             ->get();
     }
@@ -139,11 +125,9 @@ class SongRepository extends Repository
     /** @return Collection|array<array-key, Song> */
     public function getByAlbum(Album $album, ?User $scopedUser = null): Collection
     {
-        $scopedUser ??= $this->auth->user();
-
-        return Song::query()
-            ->accessibleBy($scopedUser)
-            ->withMetaFor($scopedUser)
+        return Song::query(user: $scopedUser ?? $this->auth->user())
+            ->accessible()
+            ->withMeta()
             ->where('album_id', $album->id)
             ->orderBy('songs.disc')
             ->orderBy('songs.track')
@@ -154,11 +138,9 @@ class SongRepository extends Repository
     /** @return Collection|array<array-key, Song> */
     public function getByArtist(Artist $artist, ?User $scopedUser = null): Collection
     {
-        $scopedUser ??= $this->auth->user();
-
-        return Song::query()
-            ->accessibleBy($scopedUser)
-            ->withMetaFor($scopedUser)
+        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
+            ->accessible()
+            ->withMeta()
             ->where('songs.artist_id', $artist->id)
             ->orWhere('albums.artist_id', $artist->id)
             ->orderBy('albums.name')
@@ -171,11 +153,9 @@ class SongRepository extends Repository
     /** @return Collection|array<array-key, Song> */
     public function getByStandardPlaylist(Playlist $playlist, ?User $scopedUser = null): Collection
     {
-        $scopedUser ??= $this->auth->user();
-
-        return Song::query()
-            ->accessibleBy($scopedUser)
-            ->withMetaFor($scopedUser)
+        return Song::query(user: $scopedUser ?? $this->auth->user())
+            ->accessible()
+            ->withMeta()
             ->leftJoin('playlist_song', 'songs.id', '=', 'playlist_song.song_id')
             ->leftJoin('playlists', 'playlists.id', '=', 'playlist_song.playlist_id')
             ->when(License::isPlus(), static function (SongBuilder $query): SongBuilder {
@@ -197,12 +177,9 @@ class SongRepository extends Repository
     /** @return Collection|array<array-key, Song> */
     public function getRandom(int $limit, ?User $scopedUser = null): Collection
     {
-        $scopedUser ??= $this->auth->user();
-
-        return Song::query()
-            ->onlySongs()
-            ->accessibleBy($scopedUser)
-            ->withMetaFor($scopedUser)
+        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
+            ->accessible()
+            ->withMeta()
             ->inRandomOrder()
             ->limit($limit)
             ->get();
@@ -211,11 +188,9 @@ class SongRepository extends Repository
     /** @return Collection|array<array-key, Song> */
     public function getMany(array $ids, bool $preserveOrder = false, ?User $scopedUser = null): Collection
     {
-        $scopedUser ??= $this->auth->user();
-
-        $songs = Song::query()
-            ->accessibleBy($scopedUser)
-            ->withMetaFor($scopedUser)
+        $songs = Song::query(user: $scopedUser ?? $this->auth->user())
+            ->accessible()
+            ->withMeta()
             ->whereIn('songs.id', $ids)
             ->get();
 
@@ -229,11 +204,9 @@ class SongRepository extends Repository
      */
     public function getManyInCollaborativeContext(array $ids, ?User $scopedUser = null): Collection
     {
-        $scopedUser ??= $this->auth->user();
-
-        return Song::query()
-            ->accessibleBy($scopedUser)
-            ->withMetaFor($scopedUser)
+        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
+            ->accessible()
+            ->withMeta()
             ->when(License::isPlus(), static function (SongBuilder $query): SongBuilder {
                 return
                     $query->leftJoin('playlist_song', 'songs.id', '=', 'playlist_song.song_id')
@@ -253,49 +226,41 @@ class SongRepository extends Repository
     /** @param string $id */
     public function getOne($id, ?User $scopedUser = null): Song
     {
-        $scopedUser ??= $this->auth->user();
-
-        return Song::query()
-            ->accessibleBy($scopedUser)
-            ->withMetaFor($scopedUser)
+        return Song::query(user: $scopedUser ?? $this->auth->user())
+            ->accessible()
+            ->withMeta()
             ->findOrFail($id);
     }
 
     /** @param string $id */
     public function findOne($id, ?User $scopedUser = null): ?Song
     {
-        $scopedUser ??= $this->auth->user();
-
-        return Song::query()
-            ->accessibleBy($scopedUser)
-            ->withMetaFor($scopedUser ?? $this->auth->user())
+        return Song::query(user: $scopedUser ?? $this->auth->user())
+            ->accessible()
+            ->withMeta()
             ->find($id);
     }
 
     public function countSongs(?User $scopedUser = null): int
     {
-        return Song::query()
-            ->onlySongs()
-            ->accessibleBy($scopedUser ?? auth()->user())
+        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
+            ->accessible()
             ->count();
     }
 
     public function getTotalSongLength(?User $scopedUser = null): float
     {
-        return Song::query()
-            ->onlySongs()
-            ->accessibleBy($scopedUser ?? auth()->user())
+        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
+            ->accessible()
             ->sum('length');
     }
 
     /** @return Collection|array<array-key, Song> */
     public function getRandomByGenre(string $genre, int $limit, ?User $scopedUser = null): Collection
     {
-        $scopedUser ??= $this->auth->user();
-
-        return Song::query()
-            ->accessibleBy($scopedUser)
-            ->withMetaFor($scopedUser)
+        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
+            ->accessible()
+            ->withMeta()
             ->where('genre', $genre === Genre::NO_GENRE ? '' : $genre)
             ->limit($limit)
             ->inRandomOrder()

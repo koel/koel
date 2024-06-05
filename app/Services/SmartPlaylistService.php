@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Builders\SongBuilder;
+use App\Enums\PlayableType;
 use App\Exceptions\NonSmartPlaylistException;
 use App\Facades\License;
 use App\Models\Playlist;
@@ -20,10 +21,9 @@ class SmartPlaylistService
     {
         throw_unless($playlist->is_smart, NonSmartPlaylistException::create($playlist));
 
-        $query = Song::query()
-            ->onlySongs()
-            ->withMetaFor($user ?? $playlist->user)
-            ->when(License::isPlus(), static fn (SongBuilder $query) => $query->accessibleBy($user))
+        $query = Song::query(type: PlayableType::SONG, user: $user ?? $playlist->user)
+            ->withMeta()
+            ->when(License::isPlus(), static fn (SongBuilder $query) => $query->accessible())
             ->when(
                 $playlist->own_songs_only && License::isPlus(),
                 static fn (SongBuilder $query) => $query->where('songs.owner_id', $playlist->user_id)

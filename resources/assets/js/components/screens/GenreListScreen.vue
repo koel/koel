@@ -48,7 +48,7 @@ import { maxBy, minBy } from 'lodash'
 import { computed, onMounted, ref } from 'vue'
 import { commonStore, genreStore } from '@/stores'
 import { pluralize } from '@/utils'
-import { useAuthorization } from '@/composables'
+import { useAuthorization, useErrorHandler } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import GenreItemSkeleton from '@/components/ui/skeletons/GenreItemSkeleton.vue'
@@ -56,6 +56,7 @@ import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 
 const { isAdmin } = useAuthorization()
+const { handleHttpError }  = useErrorHandler()
 
 const genres = ref<Genre[]>()
 
@@ -77,9 +78,17 @@ const getLevel = (genre: Genre) => {
   return index === -1 ? 5 : index
 }
 
+const fetchGenres = async () => {
+  try {
+    genres.value = await genreStore.fetchAll()
+  } catch (error: unknown) {
+    handleHttpError(error)
+  }
+}
+
 onMounted(async () => {
   if (libraryEmpty.value) return
-  genres.value = await genreStore.fetchAll()
+  await fetchGenres()
 })
 </script>
 

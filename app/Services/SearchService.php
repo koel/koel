@@ -63,9 +63,12 @@ class SearchService
         int $limit = self::DEFAULT_MAX_SONG_RESULT_COUNT
     ): Collection {
         return Song::search($keywords)
-            ->query(static function (SongBuilder $builder) use ($scopedUser, $limit): void {
-                $builder->withMetaFor($scopedUser ?? auth()->user())->limit($limit);
-            })
+            ->query(
+                static fn (SongBuilder $builder) => $builder
+                    ->forUser($scopedUser ?? auth()->user())
+                    ->withMeta()
+                    ->limit($limit)
+            )
             ->get();
     }
 }
