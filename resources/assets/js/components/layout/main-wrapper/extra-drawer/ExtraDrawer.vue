@@ -1,6 +1,5 @@
 <template>
   <aside
-    v-if="playable"
     :class="{ 'showing-pane': activeTab }"
     class="fixed sm:relative top-0 w-screen md:w-auto flex flex-col md:flex-row-reverse z-[2] text-k-text-secondary"
   >
@@ -30,7 +29,7 @@
         role="tabpanel"
         tabindex="0"
       >
-        <LyricsPane :song="playable" />
+        <LyricsPane v-if="playable" :song="playable" />
       </div>
 
       <div
@@ -63,7 +62,7 @@
         role="tabpanel"
         tabindex="0"
       >
-        <YouTubeVideoList v-if="shouldShowYouTubeTab" :song="playable" />
+        <YouTubeVideoList v-if="shouldShowYouTubeTab && playable" :song="playable" />
       </div>
     </div>
   </aside>
