@@ -13,7 +13,7 @@
         >
           <Icon :icon="faHome" fixed-width />
         </a>
-        <SearchForm />
+        <SearchForm class="flex-1" />
       </section>
 
       <section v-koel-overflow-fade class="pt-2 pb-10 overflow-y-auto space-y-8">
@@ -91,7 +91,10 @@ onRouteChanged(_ => (mobileShowing.value = false))
  * Listen to toggle sidebar event to show or hide the sidebar.
  * This should only be triggered on a mobile device.
  */
-eventBus.on('TOGGLE_SIDEBAR', () => (mobileShowing.value = !mobileShowing.value))
+eventBus.on('TOGGLE_SIDEBAR', () => {
+  console.log(mobileShowing.value)
+  mobileShowing.value = !mobileShowing.value
+})
 </script>
 
 <style lang="postcss" scoped>
