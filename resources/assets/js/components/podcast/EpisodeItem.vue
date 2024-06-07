@@ -111,7 +111,7 @@ const playOrPause = async () => {
     queueStore.replaceQueueWith(orderBy(await episodeStore.fetchForPodcast(podcast.value.id), 'created_at'))
   }
 
-  playbackService.play(episode.value, currentPosition.value >= episode.value.length ? 0 : currentPosition.value)
+  await playbackService.play(episode.value, currentPosition.value >= episode.value.length ? 0 : currentPosition.value)
 }
 </script>
 

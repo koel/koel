@@ -48,12 +48,12 @@ const title = computed(() => {
   return 'Play'
 })
 
-const playOrPause = () => {
+const playOrPause = async () => {
   if (playable.value.playback_state === 'Stopped') {
     // @todo play at the right playback position for Episodes
-    play()
+    await play()
   } else if (playable.value.playback_state === 'Paused') {
-    playbackService.resume()
+    await playbackService.resume()
   } else {
     playbackService.pause()
   }
