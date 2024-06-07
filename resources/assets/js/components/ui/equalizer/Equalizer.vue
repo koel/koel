@@ -82,7 +82,7 @@ watch(selectedPresetName, value => {
 const loadPreset = async (preset: EqualizerPreset) => {
   applyingPreset = true
   preampGain.value = preset.preamp
-  preampBandEl.value.updateSliderValue(preset.preamp)
+  preampBandEl.value?.updateSliderValue(preset.preamp)
 
   preset.gains.forEach((gain, i) => {
     bands[i].db = gain

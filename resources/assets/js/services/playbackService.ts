@@ -131,6 +131,8 @@ class PlaybackService {
       this.player.seek(position)
       await this.resume()
     }
+
+    this.setMediaSessionActionHandlers()
   }
 
   public showNotification (playable: Playable) {

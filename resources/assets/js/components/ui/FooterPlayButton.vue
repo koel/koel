@@ -54,7 +54,7 @@ const initiatePlayback = async () => {
       break
   }
 
-  playbackService.queueAndPlay(playables)
+  await playbackService.queueAndPlay(playables)
   go('queue')
 }
 </script>

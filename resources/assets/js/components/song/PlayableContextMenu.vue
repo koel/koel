@@ -183,7 +183,7 @@ const canBeRemovedFromPlaylist = computed(() => {
 const isQueueScreen = computed(() => isCurrentScreen('Queue'))
 const isFavoritesScreen = computed(() => isCurrentScreen('Favorites'))
 
-const doPlayback = () => trigger(() => {
+const doPlayback = () => trigger(async () => {
   if (!playables.value.length) return
 
   switch (playables.value[0].playback_state) {
@@ -192,11 +192,11 @@ const doPlayback = () => trigger(() => {
       break
 
     case 'Paused':
-      playbackService.resume()
+      await playbackService.resume()
       break
 
     default:
-      playbackService.play(playables.value[0])
+      await playbackService.play(playables.value[0])
       break
   }
 })

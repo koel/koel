@@ -389,12 +389,12 @@ const openContextMenu = async (row: PlayableRow, event: MouseEvent) => {
   eventBus.emit('PLAYABLE_CONTEXT_MENU_REQUESTED', event, selectedPlayables.value)
 }
 
-const onPlay = (playable: Playable) => {
+const onPlay = async (playable: Playable) => {
   if (shouldTriggerContinuousPlayback.value) {
     queueStore.replaceQueueWith(getAllPlayablesWithSort())
   }
 
-  playbackService.play(playable)
+  await playbackService.play(playable)
 }
 
 defineExpose({
