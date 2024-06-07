@@ -179,14 +179,14 @@ const playButtonLabel = computed(() => {
   return inProgress.value ? 'Continue' : 'Start Listening'
 })
 
-const playOrPause = () => {
+const playOrPause = async () => {
   if (podcastPlaying.value) {
     playbackService.pause()
     return
   }
 
   if (currentPlayingItemIsPartOfPodcast.value) {
-    playbackService.resume()
+    await playbackService.resume()
     return
   }
 
@@ -194,13 +194,13 @@ const playOrPause = () => {
     const currentEpisode = episodes.value?.find(episode => episode.id === podcast.value?.state.current_episode)
     if (!currentEpisode) return
 
-    playbackService.play(currentEpisode, podcast.value?.state.progresses[currentEpisode.id] || 0)
+    await playbackService.play(currentEpisode, podcast.value?.state.progresses[currentEpisode.id] || 0)
     return
   }
 
   if (!episodes.value?.length) return
   queueStore.replaceQueueWith(orderBy(episodes.value, 'created_at'))
-  playbackService.playFirstInQueue()
+  await playbackService.playFirstInQueue()
 }
 
 const refresh = async () => {
