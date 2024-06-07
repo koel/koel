@@ -149,13 +149,13 @@ export const songStore = {
   getShareableUrl: (song: Playable) => `${window.BASE_URL}#/song/${song.id}`,
 
   syncWithVault (playables: MaybeArray<Playable>) {
-    return arrayify(playables).map(song => {
-      let local = this.byId(song.id)
+    return arrayify(playables).map(playable => {
+      let local = this.byId(playable.id)
 
       if (local) {
-        merge(local, song)
+        merge(local, playable)
       } else {
-        local = reactive(song)
+        local = reactive(playable)
         local.playback_state = 'Stopped'
         this.watchPlayCount(local)
         this.vault.set(local.id, local)

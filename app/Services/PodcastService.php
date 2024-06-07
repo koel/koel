@@ -17,6 +17,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use PhanAn\Poddle\Poddle;
 use PhanAn\Poddle\Values\Episode as EpisodeValue;
 use PhanAn\Poddle\Values\EpisodeCollection;
@@ -118,13 +119,38 @@ class PodcastService
     private function synchronizeEpisodes(Podcast $podcast, EpisodeCollection $episodeCollection): void
     {
         $existingEpisodeGuids = $this->songRepository->getEpisodeGuidsByPodcast($podcast);
+        $records = [];
+        $ids = [];
 
         /** @var EpisodeValue $episodeValue */
         foreach ($episodeCollection as $episodeValue) {
             if (!in_array($episodeValue->guid->value, $existingEpisodeGuids, true)) {
-                $podcast->addEpisodeByDTO($episodeValue);
+                $id = Str::uuid()->toString();
+                $ids[] = $id;
+                $records[] = [
+                    'id' => $id,
+                    'podcast_id' => $podcast->id,
+                    'title' => $episodeValue->title,
+                    'lyrics' => '',
+                    'path' => $episodeValue->enclosure->url,
+                    'created_at' => $episodeValue->metadata->pubDate ?: now(),
+                    'updated_at' => $episodeValue->metadata->pubDate ?: now(),
+                    'episode_metadata' => $episodeValue->metadata->toJson(),
+                    'episode_guid' => $episodeValue->guid,
+                    'length' => $episodeValue->metadata->duration ?? 0,
+                    'mtime' => time(),
+                    'is_public' => true,
+                ];
             }
         }
+
+        // We use insert() instead of $podcast->episodes()->createMany() for better performance,
+        // as the latter would trigger a separate query for each episode.
+        Episode::insert($records);
+
+        // Since insert() doesn't trigger model events, Scout operations will not be called.
+        // We have to manually update the search index.
+        Episode::query()->whereIn('id', $ids)->searchable();
     }
 
     private function subscribeUserToPodcast(User $user, Podcast $podcast): void
