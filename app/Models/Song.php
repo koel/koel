@@ -99,9 +99,7 @@ class Song extends Model
 
     protected static function booted(): void
     {
-        static::creating(static function (self $song): void {
-            $song->id ??= Str::uuid()->toString();
-        });
+        static::creating(static fn (Song $song) => $song->id ??= Str::uuid()->toString());
     }
 
     public static function query(?PlayableType $type = null, ?User $user = null): SongBuilder

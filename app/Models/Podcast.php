@@ -16,7 +16,6 @@ use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 use PhanAn\Poddle\Values\CategoryCollection;
 use PhanAn\Poddle\Values\ChannelMetadata;
-use PhanAn\Poddle\Values\Episode as EpisodeDTO;
 
 /**
  * @property-read string $id
@@ -80,21 +79,6 @@ class Podcast extends Model
             ->using(PodcastUserPivot::class)
             ->withPivot('state')
             ->withTimestamps();
-    }
-
-    public function addEpisodeByDTO(EpisodeDTO $dto): Episode
-    {
-        return $this->episodes()->create([
-            'title' => $dto->title,
-            'lyrics' => '',
-            'path' => $dto->enclosure->url,
-            'created_at' => $dto->metadata->pubDate ?: now(),
-            'episode_metadata' => $dto->metadata,
-            'episode_guid' => $dto->guid,
-            'length' => $dto->metadata->duration ?? 0,
-            'mtime' => time(),
-            'is_public' => true,
-        ]);
     }
 
     /** @return array<mixed> */
