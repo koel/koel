@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Playlist;
+use App\Models\Podcast;
 use App\Models\Song;
 use Illuminate\Console\Command;
 
@@ -15,6 +16,7 @@ class ImportSearchableEntitiesCommand extends Command
         Album::class,
         Artist::class,
         Playlist::class,
+        Podcast::class,
     ];
 
     protected $signature = 'koel:search:import';
