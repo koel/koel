@@ -11,8 +11,8 @@ use Illuminate\Support\Collection;
 abstract class Repository implements RepositoryInterface
 {
     private string $modelClass;
-    protected Model $model;
     protected Guard $auth;
+    public Model $model;
 
     public function __construct(?string $modelClass = null)
     {
