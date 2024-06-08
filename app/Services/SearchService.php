@@ -11,9 +11,12 @@ use App\Models\User;
 use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
 use App\Repositories\PodcastRepository;
+use App\Repositories\Repository;
 use App\Repositories\SongRepository;
 use App\Values\ExcerptSearchResult;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class SearchService
 {
@@ -30,30 +33,33 @@ class SearchService
 
     public function excerptSearch(
         string $keywords,
-        ?User $scopedUser = null,
         int $count = self::DEFAULT_EXCERPT_RESULT_COUNT
     ): ExcerptSearchResult {
-        $scopedUser ??= auth()->user();
-
         return ExcerptSearchResult::make(
-            songs: $this->songRepository->getMany(
-                ids: Song::search($keywords)->get()->take($count)->pluck('id')->all(),
-                preserveOrder: true,
-                scopedUser: $scopedUser
-            ),
-            artists: $this->artistRepository->getMany(
-                ids: Artist::search($keywords)->get()->take($count)->pluck('id')->all(),
-                preserveOrder: true
-            ),
-            albums: $this->albumRepository->getMany(
-                ids: Album::search($keywords)->get()->take($count)->pluck('id')->all(),
-                preserveOrder: true
-            ),
-            podcasts: $this->podcastRepository->getMany(
-                ids: Podcast::search($keywords)->get()->take($count)->pluck('id')->all(),
-                preserveOrder: true
-            ),
+            self::excerptScoutSearch($keywords, $count, $this->songRepository),
+            self::excerptScoutSearch($keywords, $count, $this->artistRepository),
+            self::excerptScoutSearch($keywords, $count, $this->albumRepository),
+            self::excerptScoutSearch($keywords, $count, $this->podcastRepository),
         );
+    }
+
+    /**
+     * @param SongRepository|AlbumRepository|ArtistRepository|PodcastRepository $repository
+     *
+     * @return Collection|array<array-key, Song|Artist|Album|Podcast>
+     */
+    private static function excerptScoutSearch(string $keywords, int $count, Repository $repository): Collection
+    {
+        try {
+            return $repository->getMany(
+                ids: $repository->model::search($keywords)->get()->take($count)->pluck('id')->all(),
+                preserveOrder: true,
+            );
+        } catch (Throwable $e) {
+            Log::error('Scout search failed', ['exception' => $e]);
+
+            return new Collection();
+        }
     }
 
     /** @return Collection|array<array-key, Song> */

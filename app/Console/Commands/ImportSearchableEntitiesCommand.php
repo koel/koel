@@ -25,10 +25,6 @@ class ImportSearchableEntitiesCommand extends Command
     public function handle(): int
     {
         foreach (self::SEARCHABLE_ENTITIES as $entity) {
-            if (!class_exists($entity)) {
-                continue;
-            }
-
             $this->call('scout:import', ['model' => $entity]);
         }
 
