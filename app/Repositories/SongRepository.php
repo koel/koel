@@ -37,7 +37,7 @@ class SongRepository extends Repository
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
             ->accessible()
             ->withMeta()
-            ->latest()
+            ->latest('songs.created_at')
             ->limit($count)
             ->get();
     }
