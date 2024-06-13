@@ -10,7 +10,15 @@
     <main class="flex-1">
       <header>
         <h3 class="text-3xl font-bold">{{ podcast.title }}</h3>
-        <p class="mt-2">{{ podcast.author }}</p>
+        <p class="mt-2">
+          {{ podcast.author }}
+          <template v-if="lastPlayedAt"> •
+            <span class="opacity-70">
+              Last played
+              <time :datetime="podcast.last_played_at" :title="podcast.last_played_at">{{ lastPlayedAt }}</time>
+            </span>
+          </template>
+        </p>
       </header>
       <div class="description text-k-text-secondary mt-3 line-clamp-3" v-html="description" v-koel-new-tab />
     </main>
@@ -20,10 +28,16 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import DOMPurify from 'dompurify'
+import { formatTimeAgo } from '@vueuse/core'
 
 const { podcast } = defineProps<{ podcast: Podcast }>()
 
 const description = computed(() => DOMPurify.sanitize(podcast.description))
+
+const lastPlayedAt = computed(() => podcast.state.current_episode
+  ? formatTimeAgo(new Date(podcast.last_played_at))
+  : null
+)
 </script>
 
 <style scoped lang="postcss">

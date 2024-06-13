@@ -21,8 +21,8 @@
       >
         #
         <template v-if="config.sortable">
-          <Icon v-if="sortField === 'track' && sortOrder === 'asc'" :icon="faCaretDown" class="text-k-highlight" />
-          <Icon v-if="sortField === 'track' && sortOrder === 'desc'" :icon="faCaretUp" class="text-k-highlight" />
+          <Icon v-if="sortField === 'track' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
+          <Icon v-if="sortField === 'track' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
         </template>
       </span>
       <span
@@ -34,8 +34,8 @@
       >
         Title
         <template v-if="config.sortable">
-          <Icon v-if="sortField === 'title' && sortOrder === 'asc'" :icon="faCaretDown" class="text-k-highlight" />
-          <Icon v-if="sortField === 'title' && sortOrder === 'desc'" :icon="faCaretUp" class="text-k-highlight" />
+          <Icon v-if="sortField === 'title' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
+          <Icon v-if="sortField === 'title' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
         </template>
       </span>
       <span
@@ -50,8 +50,8 @@
         <template v-else>Album <span class="opacity-50">/</span> Podcast</template>
 
         <span v-if="config.sortable" class="ml-2">
-          <Icon v-if="sortingByAlbumOrPodcast && sortOrder === 'asc'" :icon="faCaretDown" class="text-k-highlight" />
-          <Icon v-if="sortingByAlbumOrPodcast && sortOrder === 'desc'" :icon="faCaretUp" class="text-k-highlight" />
+          <Icon v-if="sortingByAlbumOrPodcast && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
+          <Icon v-if="sortingByAlbumOrPodcast && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
         </span>
       </span>
       <template v-if="config.collaborative">
@@ -67,8 +67,8 @@
       >
         Time
         <template v-if="config.sortable">
-          <Icon v-if="sortField === 'length' && sortOrder === 'asc'" :icon="faCaretDown" class="text-k-highlight" />
-          <Icon v-if="sortField === 'length' && sortOrder === 'desc'" :icon="faCaretUp" class="text-k-highlight" />
+          <Icon v-if="sortField === 'length' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
+          <Icon v-if="sortField === 'length' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
         </template>
       </span>
       <span class="extra">
@@ -127,9 +127,9 @@ import {
   SongListSortOrderKey
 } from '@/symbols'
 
-import VirtualScroller from '@/components/ui/VirtualScroller.vue'
 import SongListItem from '@/components/song/SongListItem.vue'
 import SongListSorter from '@/components/song/SongListSorter.vue'
+import VirtualScroller from '@/components/ui/VirtualScroller.vue'
 
 const { startDragging } = useDraggable('playables')
 const { getDroppedData, acceptsDrop } = useDroppable(['playables'])
