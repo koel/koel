@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
  * @property Carbon $created_at
+ * @property Carbon $updated_at
  * @property PodcastState $state
  */
 class PodcastUserPivot extends Pivot

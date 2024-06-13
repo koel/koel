@@ -17,7 +17,7 @@ class PodcastRepository extends Repository
     /** @return Collection<Podcast> */
     public function getAllByUser(User $user): Collection
     {
-        return $user->podcasts;
+        return $user->podcasts()->orderByPivot('updated_at', 'desc')->get();
     }
 
     /** @return Collection<Podcast> */

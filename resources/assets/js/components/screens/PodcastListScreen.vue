@@ -6,6 +6,7 @@
 
         <template #controls>
           <div class="flex gap-2" v-if="!loading">
+            <PodcastListSorter :field="sortParams.field" :order="sortParams.order" @sort="sort" />
             <ListFilter @change="onFilterChanged" />
             <BtnGroup uppercase>
               <Btn @click.prevent="requestAddPodcastForm" highlight>
@@ -40,25 +41,31 @@
 import Fuse from 'fuse.js'
 import { faAdd, faPodcast } from '@fortawesome/free-solid-svg-icons'
 import { orderBy } from 'lodash'
-import { computed, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { eventBus } from '@/utils'
 import { useErrorHandler, useRouter } from '@/composables'
 import { podcastStore } from '@/stores'
 
-import ScreenHeader from '@/components/ui/ScreenHeader.vue'
-import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
-import ScreenBase from '@/components/screens/ScreenBase.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'
-import PodcastItem from '@/components/podcast/PodcastItem.vue'
 import ListFilter from '@/components/song/SongListFilter.vue'
+import PodcastItem from '@/components/podcast/PodcastItem.vue'
 import PodcastItemSkeleton from '@/components/ui/skeletons/PodcastItemSkeleton.vue'
+import PodcastListSorter from '@/components/podcast/PodcastListSorter.vue'
+import ScreenBase from '@/components/screens/ScreenBase.vue'
+import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
+import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 
 const { onScreenActivated } = useRouter()
 
 let initialized = false
 const loading = ref(false)
 const keywords = ref('')
+
+const sortParams = reactive<{ field: PodcastListSortField, order: SortOrder }>({
+  field: 'last_played_at',
+  order: 'desc'
+})
 
 let fuse: Fuse<Podcast> | null = null
 
@@ -87,12 +94,17 @@ const podcasts = computed(() => {
     list = fuse?.search(keywords.value).map(result => result.item) || []
   }
 
-  return orderBy(list, 'subscribed_at', 'desc')
+  return orderBy(list, sortParams.field, sortParams.order)
 })
 
 const onFilterChanged = (q: string) => (keywords.value = q)
 
 const requestAddPodcastForm = () => eventBus.emit('MODAL_SHOW_ADD_PODCAST_FORM')
+
+const sort = (field: SortField) => {
+  sortParams.field = field
+  sortParams.order = sortParams.order === 'asc' ? 'desc' : 'asc'
+}
 
 onScreenActivated('Podcasts', async () => {
   if (!initialized) {

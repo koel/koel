@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <article>
     <button ref="button" class="w-full focus:text-k-highlight" title="Sort" @click.stop="trigger">
       <Icon :icon="faSort" />
     </button>
@@ -15,13 +15,13 @@
           <span>{{ item.label }}</span>
           <span class="icon hidden ml-3">
           <Icon v-if="field === 'position'" :icon="faCheck" />
-          <Icon v-else-if="order === 'asc'" :icon="faArrowDown" />
-          <Icon v-else :icon="faArrowUp" />
+          <Icon v-else-if="order === 'asc'" :icon="faArrowUp" />
+          <Icon v-else :icon="faArrowDown" />
         </span>
         </li>
       </menu>
     </OnClickOutside>
-  </div>
+  </article>
 </template>
 
 <script lang="ts" setup>
@@ -52,8 +52,7 @@ const button = ref<HTMLButtonElement>()
 const menu = ref<HTMLDivElement>()
 
 const menuItems = computed(() => {
-  type MenuItems = { label: string, field: MaybeArray<PlayableListSortField> }
-
+type MenuItems = { label: string, field: MaybeArray<PlayableListSortField> }
   const title: MenuItems = { label: 'Title', field: 'title' }
   const artist: MenuItems = { label: 'Artist', field: 'artist_name' }
   const author: MenuItems = { label: 'Author', field: 'podcast_author' }

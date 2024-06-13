@@ -288,6 +288,7 @@ interface Podcast {
   readonly description: string
   readonly author: string
   readonly subscribed_at: string
+  readonly last_played_at: string
   readonly state: {
     current_episode: Playable['id'] | null
     progresses: Record<Playable['id'], number>
@@ -469,6 +470,8 @@ type PlayableListSortField =
   keyof Pick<Song, 'track' | 'disc' | 'title' | 'album_name' | 'length' | 'artist_name' | 'created_at'>
   | keyof Pick<Episode, 'podcast_author' | 'podcast_title'>
   | 'position'
+
+type PodcastListSortField =  keyof Pick<Podcast, 'title' | 'last_played_at' | 'subscribed_at' | 'author'>
 
 type SortOrder = 'asc' | 'desc'
 type MoveType = 'before' | 'after'

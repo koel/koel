@@ -52,6 +52,7 @@ class PodcastResource extends JsonResource
             /** @var PodcastUserPivot $pivot */
             $pivot = $this->podcast->subscribers->sole('id', $user->id)->pivot;
             $data['subscribed_at'] = $pivot->created_at;
+            $data['last_played_at'] = $pivot->updated_at;
             $data['state'] = $pivot->state->toArray();
         }
 
