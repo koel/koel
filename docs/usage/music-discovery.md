@@ -69,11 +69,13 @@ In order to start using the feature, follow these steps:
 
 ### 1. Install `inotify` Tools
 
-On CentOS for example, you can run this shell command:
+`inotify` is a Linux API that provides a mechanism for monitoring file system events and can be installed via your package manager.
+For example, you can install it on Ubuntu with:
 
 ``` bash
-sudo yum --enablerepo=epel -y install inotify-tools
+sudo apt-get install inotify-tools
 ```
+
 ### 2. Set Up a Watcher Script
 
 Now you need to set up a watcher script to run `inotifywait` and send the output to `koel:scan` artisan command. For example, you can create a sample `watch` file in Koel’s root directory with this content:
