@@ -4,6 +4,7 @@
     class="relative before:right-0 px-6 before:top-1/4 before:w-[4px] before:h-1/2 before:absolute before:rounded-full
     before:transition-[box-shadow,_background-color] before:ease-in-out before:duration-500"
     data-testid="sidebar-item"
+    @click="onClick"
   >
     <a
       :href="props.href"
@@ -24,6 +25,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { useRouter } from '@/composables'
+import { eventBus } from '@/utils'
 
 const props = withDefaults(defineProps<{ href?: string | undefined; screen?: ScreenName | undefined }>(), {
   href: undefined,
@@ -33,6 +35,8 @@ const props = withDefaults(defineProps<{ href?: string | undefined; screen?: Scr
 const current = ref(false)
 
 const { onRouteChanged } = useRouter()
+
+const onClick = () => eventBus.emit('TOGGLE_SIDEBAR')
 
 if (screen) {
   onRouteChanged(route => (current.value = route.screen === props.screen))

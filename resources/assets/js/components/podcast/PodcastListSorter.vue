@@ -32,8 +32,8 @@
 <script setup lang="ts">
 import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons'
 import { OnClickOutside } from '@vueuse/components'
-import { useFloatingUi } from '@/composables'
 import { computed, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
+import { useFloatingUi } from '@/composables'
 
 const props = withDefaults(defineProps<{
   field?: PodcastListSortField
@@ -63,7 +63,7 @@ const items: { label: string, field: PodcastListSortField }[] = [
   { label: 'Author', field: 'author' }
 ]
 
-const currentFieldLabel = computed(() => items.find(item => item.field === activeField.value).label)
+const currentFieldLabel = computed(() => items.find(item => item.field === activeField.value)?.label)
 
 const sort = (field: MaybeArray<PodcastListSortField>) => {
   emit('sort', field)
