@@ -1,9 +1,10 @@
 <template>
   <article class="text-k-text-secondary">
     Instead of using a password, you can scan the QR code below to log in to
-    <a class="text-k-highlight" href="https://koel.dev/#mobile" target="_blank">Koel Player</a>
+    <a href="https://koel.dev/#mobile" target="_blank">Koel Player</a>
     on your mobile device.<br>
     The QR code will refresh every 10 minutes.
+    <a role="button" @click.prevent="resetOneTimeToken">Refresh now</a>
     <img :src="qrCodeUrl" alt="QR Code" class="mt-4 rounded-4" height="192" width="192">
   </article>
 </template>
@@ -29,10 +30,17 @@ const qrCodeUrl = useQRCode(qrCodeData, {
   height: window.devicePixelRatio === 1 ? 196 : 384
 })
 
-const resetOneTimeToken = async () => (oneTimeToken.value = await authService.getOneTimeToken())
+let oneTimeTokenTimeout: number | null = null
 
-onMounted(() => {
-  window.setInterval(resetOneTimeToken, 60 * 10 * 1000)
-  resetOneTimeToken()
-})
+const resetOneTimeToken = async () => {
+  oneTimeToken.value = await authService.getOneTimeToken()
+
+  if (oneTimeTokenTimeout) {
+    window.clearTimeout(oneTimeTokenTimeout)
+  }
+
+  oneTimeTokenTimeout = window.setTimeout(resetOneTimeToken, 60 * 10 * 1000)
+}
+
+onMounted(() => resetOneTimeToken())
 </script>
