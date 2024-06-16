@@ -48,6 +48,11 @@ These preferences are saved immediately upon change and synced across all of you
 
 If your Koel installation is [integrated](../service-integrations) with any external services, such as Last.fm or Spotify, you can see their statuses here along with the ability to connect or disconnect them when applicable.
 
+## QR Code Authentication
+
+This tab displays a QR code that you can scan to log in to [Koel Player](../mobile-apps.md) on your phone without having to manually enter your credentials.
+The code refreshes every ten minutes, but you can also manually refresh it.
+
 <script lang="ts" setup>
 import uploadIcon from '../assets/icons/upload.svg'
 import timesIcon from '../assets/icons/times.svg'
