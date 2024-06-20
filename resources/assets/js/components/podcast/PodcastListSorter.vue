@@ -45,7 +45,7 @@ const props = withDefaults(defineProps<{
 
 const { field: activeField, order } = toRefs(props)
 
-const emit = defineEmits<{ (e: 'sort', field: MaybeArray<PodcastListSortField>): void }>()
+const emit = defineEmits<{ (e: 'sort', field: PodcastListSortField): void }>()
 
 const button = ref<HTMLButtonElement>()
 const menu = ref<HTMLDivElement>()
@@ -65,7 +65,7 @@ const items: { label: string, field: PodcastListSortField }[] = [
 
 const currentFieldLabel = computed(() => items.find(item => item.field === activeField.value)?.label)
 
-const sort = (field: MaybeArray<PodcastListSortField>) => {
+const sort = (field: PodcastListSortField) => {
   emit('sort', field)
   hide()
 }
