@@ -108,14 +108,13 @@
 </template>
 
 <script lang="ts" setup>
-import Fuse from 'fuse.js'
 import { findIndex, findLastIndex, throttle } from 'lodash'
 import isMobile from 'ismobilejs'
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons'
 import { computed, nextTick, onMounted, Ref, ref, watch } from 'vue'
 import { arrayify, eventBus, getPlayableCollectionContentType, requireInjection } from '@/utils'
 import { preferenceStore as preferences, queueStore } from '@/stores'
-import { useDraggable, useDroppable } from '@/composables'
+import { useDraggable, useDroppable, useFuzzySearch } from '@/composables'
 import { playbackService } from '@/services'
 import {
   PlayableListConfigKey,
@@ -151,12 +150,20 @@ const [config] = requireInjection<[Partial<PlayableListConfig>]>(PlayableListCon
 const [context] = requireInjection<[PlayableListContext]>(PlayableListContextKey)
 
 const filterKeywords = requireInjection(SongListFilterKeywordsKey, ref(''))
-let fuse: Fuse<PlayableRow> | null = null
 
 const wrapper = ref<HTMLElement>()
 const lastSelectedRow = ref<PlayableRow>()
 const sortFields = ref<PlayableListSortField[]>([])
 const rows = ref<PlayableRow[]>([])
+
+const { search } = useFuzzySearch(rows, [
+  'playable.title',
+  'playable.artist_name',
+  'playable.album_name',
+  'playable.podcast_title',
+  'playable.podcast_author',
+  'playable.episode_description'
+])
 
 const shouldTriggerContinuousPlayback = computed(() => {
   return preferences.continuous_playback
@@ -177,28 +184,7 @@ watch(
   { deep: true }
 )
 
-watch(rows, () => {
-  fuse = new Fuse(rows.value, {
-    keys: [
-      'playable.title',
-      'playable.artist_name',
-      'playable.album_name',
-      'playable.podcast_title',
-      'playable.podcast_author',
-      'playable.episode_description'
-    ]
-  })
-}, { immediate: true })
-
-const filteredRows = computed<PlayableRow[]>(() => {
-  const keywords = filterKeywords.value.trim()
-
-  if (!keywords) {
-    return rows.value
-  }
-
-  return fuse?.search(keywords).map(result => result.item) || []
-})
+const filteredRows = computed(() => search(filterKeywords.value))
 
 let lastScrollTop = 0
 

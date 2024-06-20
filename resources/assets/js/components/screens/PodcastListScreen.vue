@@ -38,12 +38,11 @@
 </template>
 
 <script setup lang="ts">
-import Fuse from 'fuse.js'
 import { faAdd, faPodcast } from '@fortawesome/free-solid-svg-icons'
 import { orderBy } from 'lodash'
 import { computed, reactive, ref } from 'vue'
 import { eventBus } from '@/utils'
-import { useErrorHandler, useRouter } from '@/composables'
+import { useErrorHandler, useFuzzySearch, useRouter } from '@/composables'
 import { podcastStore } from '@/stores'
 
 import Btn from '@/components/ui/form/Btn.vue'
@@ -57,6 +56,7 @@ import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 
 const { onScreenActivated } = useRouter()
+const fuzzy = useFuzzySearch<Podcast>([], ['title', 'description', 'author'])
 
 let initialized = false
 const loading = ref(false)
@@ -67,8 +67,6 @@ const sortParams = reactive<{ field: PodcastListSortField, order: SortOrder }>({
   order: 'desc'
 })
 
-let fuse: Fuse<Podcast> | null = null
-
 const noPodcasts = computed(() => !loading.value && podcasts.value.length === 0)
 
 const init = async () => {
@@ -77,9 +75,7 @@ const init = async () => {
   loading.value = true
 
   try {
-    fuse = new Fuse(await podcastStore.fetchAll(), {
-      keys: ['title', 'description', 'author']
-    })
+    fuzzy.setDocuments(await podcastStore.fetchAll())
   } catch (error: any) {
     useErrorHandler().handleHttpError(error)
   } finally {
@@ -87,21 +83,13 @@ const init = async () => {
   }
 }
 
-const podcasts = computed(() => {
-  let list = podcastStore.state.podcasts
-
-  if (keywords.value) {
-    list = fuse?.search(keywords.value).map(result => result.item) || []
-  }
-
-  return orderBy(list, sortParams.field, sortParams.order)
-})
+const podcasts = computed(() => orderBy(fuzzy.search(keywords.value), sortParams.field, sortParams.order))
 
 const onFilterChanged = (q: string) => (keywords.value = q)
 
 const requestAddPodcastForm = () => eventBus.emit('MODAL_SHOW_ADD_PODCAST_FORM')
 
-const sort = (field: SortField) => {
+const sort = (field: PodcastListSortField) => {
   sortParams.field = field
   sortParams.order = sortParams.order === 'asc' ? 'desc' : 'asc'
 }
