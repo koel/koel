@@ -39,7 +39,7 @@ class RouteServiceProvider extends ServiceProvider
         $version = app()->runningUnitTests() ? env('X_API_VERSION') : request()->header('X-Api-Version');
 
         if ($version) {
-            Assert::oneOf($version, ['v6']);
+            Assert::oneOf($version, ['v6', 'v7']);
         }
 
         return $version;
