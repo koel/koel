@@ -4652,16 +4652,16 @@
         },
         {
             "name": "phanan/poddle",
-            "version": "v1.1.0",
+            "version": "v1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phanan/poddle.git",
-                "reference": "55f0cb603fb3e91001deda4f6c328cd620ed52f3"
+                "reference": "153895007c201c2d776b089860d30a45c53bf1ca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phanan/poddle/zipball/55f0cb603fb3e91001deda4f6c328cd620ed52f3",
-                "reference": "55f0cb603fb3e91001deda4f6c328cd620ed52f3",
+                "url": "https://api.github.com/repos/phanan/poddle/zipball/153895007c201c2d776b089860d30a45c53bf1ca",
+                "reference": "153895007c201c2d776b089860d30a45c53bf1ca",
                 "shasum": ""
             },
             "require": {
@@ -4708,7 +4708,7 @@
             ],
             "support": {
                 "issues": "https://github.com/phanan/poddle/issues",
-                "source": "https://github.com/phanan/poddle/tree/v1.1.0"
+                "source": "https://github.com/phanan/poddle/tree/v1.1.1"
             },
             "funding": [
                 {
@@ -4716,7 +4716,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-05-31T07:36:55+00:00"
+            "time": "2024-06-21T13:33:09+00:00"
         },
         {
             "name": "php-http/client-common",
