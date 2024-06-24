@@ -83,7 +83,11 @@ const init = async () => {
   }
 }
 
-const podcasts = computed(() => orderBy(fuzzy.search(keywords.value), sortParams.field, sortParams.order))
+const podcasts = computed(() => orderBy(
+  keywords.value ? fuzzy.search(keywords.value) : podcastStore.state.podcasts,
+  sortParams.field,
+  sortParams.order
+))
 
 const onFilterChanged = (q: string) => (keywords.value = q)
 

@@ -60,7 +60,6 @@
         <SongList
           v-else
           ref="songList"
-          @sort="sort"
           @press:enter="onPressEnter"
           @scroll-breakpoint="onScrollBreakpoint"
         />
@@ -123,7 +122,6 @@ const {
   isPhone,
   context,
   duration,
-  sort,
   onPressEnter,
   playAll,
   playSelected,

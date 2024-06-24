@@ -86,7 +86,7 @@
     <VirtualScroller
       v-slot="{ item }: { item: PlayableRow }"
       :item-height="64"
-      :items="filteredRows"
+      :items="rows"
       @scroll="onScroll"
       @scrolled-to-end="$emit('scrolled-to-end')"
     >
@@ -108,13 +108,13 @@
 </template>
 
 <script lang="ts" setup>
-import { findIndex, findLastIndex, throttle } from 'lodash'
+import { findIndex, findLastIndex, sortBy, throttle } from 'lodash'
 import isMobile from 'ismobilejs'
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons'
 import { computed, nextTick, onMounted, Ref, ref, watch } from 'vue'
 import { arrayify, eventBus, getPlayableCollectionContentType, requireInjection } from '@/utils'
 import { preferenceStore as preferences, queueStore } from '@/stores'
-import { useDraggable, useDroppable, useFuzzySearch } from '@/composables'
+import { useDraggable, useDroppable } from '@/composables'
 import { playbackService } from '@/services'
 import {
   PlayableListConfigKey,
@@ -122,7 +122,6 @@ import {
   PlayableListSortFieldKey,
   PlayablesKey,
   SelectedPlayablesKey,
-  SongListFilterKeywordsKey,
   SongListSortOrderKey
 } from '@/symbols'
 
@@ -142,28 +141,17 @@ const emit = defineEmits<{
   (e: 'scrolled-to-end'): void,
 }>()
 
-const [items] = requireInjection<[Ref<Playable[]>]>(PlayablesKey)
+const [playables] = requireInjection<[Ref<Playable[]>]>(PlayablesKey)
 const [selectedPlayables, setSelectedPlayables] = requireInjection<[Ref<Playable[]>, Closure]>(SelectedPlayablesKey)
 const [sortField, setSortField] = requireInjection<[Ref<MaybeArray<PlayableListSortField>>, Closure]>(PlayableListSortFieldKey)
 const [sortOrder, setSortOrder] = requireInjection<[Ref<SortOrder>, Closure]>(SongListSortOrderKey)
 const [config] = requireInjection<[Partial<PlayableListConfig>]>(PlayableListConfigKey, [{}])
 const [context] = requireInjection<[PlayableListContext]>(PlayableListContextKey)
 
-const filterKeywords = requireInjection(SongListFilterKeywordsKey, ref(''))
-
 const wrapper = ref<HTMLElement>()
 const lastSelectedRow = ref<PlayableRow>()
 const sortFields = ref<PlayableListSortField[]>([])
 const rows = ref<PlayableRow[]>([])
-
-const { search } = useFuzzySearch(rows, [
-  'playable.title',
-  'playable.artist_name',
-  'playable.album_name',
-  'playable.podcast_title',
-  'playable.podcast_author',
-  'playable.episode_description'
-])
 
 const shouldTriggerContinuousPlayback = computed(() => {
   return preferences.continuous_playback
@@ -183,8 +171,6 @@ watch(
   () => setSelectedPlayables(rows.value.filter(({ selected }) => selected).map(({ playable }) => playable)),
   { deep: true }
 )
-
-const filteredRows = computed(() => search(filterKeywords.value))
 
 let lastScrollTop = 0
 
@@ -210,7 +196,7 @@ const generateRows = () => {
   // selected playable manually.
   const selectedIds = selectedPlayables.value.map(playable => playable.id)
 
-  return items.value.map<PlayableRow>(playable => ({
+  return playables.value.map<PlayableRow>(playable => ({
     playable,
     selected: selectedIds.includes(playable.id)
   }))
@@ -233,7 +219,7 @@ const render = () => {
   rows.value = generateRows()
 }
 
-watch(items, () => render(), { deep: true })
+watch(playables, () => render(), { deep: true })
 
 const handleDelete = () => {
   emit('press:delete')
@@ -245,9 +231,6 @@ const handleEnter = (event: KeyboardEvent) => {
   clearSelection()
 }
 
-/**
- * Select all (filtered) rows in the current list.
- */
 const selectAllRows = () => rows.value.forEach(row => (row.selected = true))
 const clearSelection = () => rows.value.forEach(row => (row.selected = false))
 const handleA = (event: KeyboardEvent) => (event.ctrlKey || event.metaKey) && selectAllRows()

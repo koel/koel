@@ -31,7 +31,6 @@
       v-else
       ref="songList"
       class="-m-6"
-      @sort="sort"
       @press:enter="onPressEnter"
       @scroll-breakpoint="onScrollBreakpoint"
     />
@@ -66,7 +65,6 @@ const {
   playAll,
   playSelected,
   applyFilter,
-  sort,
   onScrollBreakpoint
 } = useSongList(toRef(searchStore.state, 'playables'), { type: 'Search.Songs' })
 
