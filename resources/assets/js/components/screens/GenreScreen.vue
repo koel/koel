@@ -31,7 +31,7 @@
       v-else
       ref="songList"
       class="-m-6"
-      @sort="sort"
+      @sort="fetchWithSort"
       @press:enter="onPressEnter"
       @scroll-breakpoint="onScrollBreakpoint"
       @scrolled-to-end="fetch"
@@ -74,7 +74,7 @@ const {
   onPressEnter,
   playSelected,
   onScrollBreakpoint
-} = useSongList(ref<Song[]>([]), { type: 'Genre' })
+} = useSongList(ref<Song[]>([]), { type: 'Genre' }, { sortable: true, filterable: false })
 
 const { SongListControls, config } = useSongListControls('Genre')
 
@@ -93,7 +93,7 @@ const moreSongsAvailable = computed(() => page.value !== null)
 const showSkeletons = computed(() => loading.value && songs.value.length === 0)
 const duration = computed(() => secondsToHumanReadable(genre.value?.length ?? 0))
 
-const sort = async (field: MaybeArray<PlayableListSortField>, order: SortOrder) => {
+const fetchWithSort = async (field: MaybeArray<PlayableListSortField>, order: SortOrder) => {
   page.value = 1
   songs.value = []
   sortField = field

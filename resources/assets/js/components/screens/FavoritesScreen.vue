@@ -41,7 +41,6 @@
       v-if="songs.length"
       ref="songList"
       class="-m-6"
-      @sort="sort"
       @press:delete="removeSelected"
       @press:enter="onPressEnter"
       @scroll-breakpoint="onScrollBreakpoint"
@@ -92,7 +91,6 @@ const {
   playSelected,
   applyFilter,
   onScrollBreakpoint,
-  sort
 } = useSongList(toRef(favoriteStore.state, 'playables'), { type: 'Favorites' })
 
 const { SongListControls, config } = useSongListControls('Favorites')
@@ -109,8 +107,6 @@ const fetchSongs = async () => {
   loading.value = true
   await favoriteStore.fetch()
   loading.value = false
-  await nextTick()
-  sort()
 }
 
 useRouter().onScreenActivated('Favorites', async () => {

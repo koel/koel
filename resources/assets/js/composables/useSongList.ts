@@ -4,7 +4,7 @@ import { computed, provide, reactive, Ref, ref } from 'vue'
 import { playbackService } from '@/services'
 import { queueStore, songStore } from '@/stores'
 import { arrayify, eventBus, getPlayableProp, provideReadonly } from '@/utils'
-import { useRouter } from '@/composables'
+import { useFuzzySearch, useRouter } from '@/composables'
 
 import {
   PlayableListConfigKey,
@@ -24,6 +24,7 @@ export const useSongList = (
   playables: Ref<Playable[]>,
   context: PlayableListContext = {},
   config: Partial<PlayableListConfig> = {
+    filterable: true,
     sortable: true,
     reorderable: false,
     collaborative: false,
@@ -33,7 +34,17 @@ export const useSongList = (
   const filterKeywords = ref('')
   config = reactive(config)
   context = reactive(context)
+
   const { isCurrentScreen, go } = useRouter()
+
+  const fuzzy = config.filterable ? useFuzzySearch(playables, [
+      'title',
+      'artist_name',
+      'album_name',
+      'podcast_title',
+      'podcast_author',
+      'episode_description'
+    ]) : null
 
   const songList = ref<InstanceType<typeof SongList>>()
 
@@ -68,6 +79,35 @@ export const useSongList = (
 
   const applyFilter = throttle((keywords: string) => (filterKeywords.value = keywords), 200)
 
+  const filteredPlayables = computed(() => {
+    if (!fuzzy) return playables.value
+
+    return sortField.value
+      ? orderBy(fuzzy.search(filterKeywords.value), extendedSortFields.value!, sortOrder.value)
+      : fuzzy.search(filterKeywords.value)
+  })
+
+  /**
+   * Extends the sort fields based on the current field(s) to cater to relevant fields.
+   * For example, sorting by track should take into account the disc number and the title.
+   * Similarly, sorting by album name should also include the artist name, disc number, track number, and title, etc.
+   */
+  const extendedSortFields = computed(() => {
+    if (!sortField.value) return null
+
+    let extended: PlayableListSortField[] = arrayify(sortField.value)
+
+    if (sortField.value === 'track') {
+      extended = ['disc', 'track', 'title']
+    } else if (sortField.value.includes('album_name') && !sortField.value.includes('disc')) {
+      extended.push('artist_name', 'disc', 'track', 'title')
+    } else if (sortField.value.includes('artist_name') && !sortField.value.includes('disc')) {
+      extended.push('album_name', 'disc', 'track', 'title')
+    }
+
+    return extended
+  })
+
   const onPressEnter = async (event: KeyboardEvent) => {
     if (selectedPlayables.value.length === 1) {
       await playbackService.play(selectedPlayables.value[0])
@@ -97,28 +137,15 @@ export const useSongList = (
   const sortOrder = ref<SortOrder>('asc')
 
   const sort = (by: MaybeArray<PlayableListSortField> | null = sortField.value, order: SortOrder = sortOrder.value) => {
-    if (!config.sortable) return
-    if (!by) return
-
+    // To sort a song list, we simply set the sort field and order.
+    // The list will be sorted automatically by the computed property.
     sortField.value = by
     sortOrder.value = order
-
-    let sortFields: PlayableListSortField[] = arrayify(by)
-
-    if (by === 'track') {
-      sortFields = ['disc', 'track', 'title']
-    } else if (sortFields.includes('album_name') && !sortFields.includes('disc')) {
-      sortFields.push('artist_name', 'disc', 'track', 'title')
-    } else if (sortFields.includes('artist_name') && !sortFields.includes('disc')) {
-      sortFields.push('album_name', 'disc', 'track', 'title')
-    }
-
-    playables.value = orderBy(playables.value, sortFields, order)
   }
 
   eventBus.on('SONGS_DELETED', deletedSongs => (playables.value = differenceBy(playables.value, deletedSongs, 'id')))
 
-  provideReadonly(PlayablesKey, playables, false)
+  provideReadonly(PlayablesKey, filteredPlayables, false)
   provideReadonly(SelectedPlayablesKey, selectedPlayables, false)
   provideReadonly(PlayableListConfigKey, config)
   provideReadonly(PlayableListContextKey, context)

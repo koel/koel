@@ -455,6 +455,7 @@ type ArtistAlbumViewMode = 'list' | 'thumbnails'
 type RepeatMode = 'NO_REPEAT' | 'REPEAT_ALL' | 'REPEAT_ONE'
 
 interface PlayableListConfig {
+  filterable: boolean
   sortable: boolean
   reorderable: boolean
   collaborative: boolean
