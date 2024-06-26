@@ -4,10 +4,10 @@
     <ul>
       <li>
         <SponsorLogo
-          :logo="renderLogo"
-          name="Render"
-          slogan="Cloud Hosting for Developers"
-          url="https://render.com"
+          :logo="keycdnLogo"
+          name="KeyCDN"
+          slogan="Content Delivery Made Easy"
+          url="https://www.keycdn.com/?a=11519"
         />
       </li>
       <li>
@@ -20,20 +20,18 @@
       </li>
       <li>
         <SponsorLogo
-          :logo="keycdnLogo"
-          class="h-[32px]"
-          name="KeyCDN"
-          slogan="Content Delivery Made Easy"
-          url="https://www.keycdn.com/?a=11519"
+          :logo="whatTheDiffLogo"
+          name="What The Diff"
+          slogan="AI powered changelog generation"
+          url="https://whatthediff.ai"
         />
       </li>
       <li>
         <SponsorLogo
-          :logo="whatTheDiffLogo"
-          class="h-[22px]"
-          name="What The Diff"
-          slogan="AI powered changelog generation"
-          url="https://whatthediff.ai"
+          :logo="rayLogo"
+          name="Ray"
+          slogan="Understand and fix bugs faster with Ray"
+          url="https://myray.app"
         />
       </li>
       <li>
@@ -46,9 +44,9 @@
 <script lang="ts" setup>
 import SponsorLogo from './SponsorLogo.vue'
 
-import keycdnLogo from '../../assets/img/sponsors/keycdn.svg'
-import renderLogo from '../../assets/img/sponsors/render.svg'
 import doLogo from '../../assets/img/sponsors/do.svg'
+import keycdnLogo from '../../assets/img/sponsors/keycdn.svg'
+import rayLogo from '../../assets/img/sponsors/ray.svg'
 import whatTheDiffLogo from '../../assets/img/sponsors/what-the-diff.svg'
 </script>
 
