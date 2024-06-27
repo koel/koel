@@ -15,10 +15,10 @@ class SongStorageCast implements CastsAttributes
     }
 
     /** @param SongStorageType|string|null $value */
-    public function set(Model $model, string $key, mixed $value, array $attributes): string
+    public function set(Model $model, string $key, mixed $value, array $attributes): ?string
     {
         $type = $value instanceof SongStorageType ? $value : SongStorageType::tryFrom($value);
 
-        return $type->value;
+        return $type?->value;
     }
 }

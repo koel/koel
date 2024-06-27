@@ -47,6 +47,14 @@ class SongFactory extends Factory
         return $this->state(fn () => [ // @phpcs:ignore
             'podcast_id' => Podcast::factory(),
             'is_public' => true,
+            'artist_id' => null,
+            'owner_id' => null,
+            'album_id' => null,
+            'storage' => null,
+            'path' => $this->faker->url(),
+            'lyrics' => '',
+            'track' => null,
+            'disc' => 0,
         ]);
     }
 }

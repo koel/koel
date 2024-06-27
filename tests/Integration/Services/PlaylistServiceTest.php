@@ -4,6 +4,7 @@ namespace Tests\Integration\Services;
 
 use App\Models\Playlist;
 use App\Models\PlaylistFolder;
+use App\Models\Podcast;
 use App\Models\Song;
 use App\Services\PlaylistService;
 use App\Values\SmartPlaylistRuleGroupCollection;
@@ -210,7 +211,11 @@ class PlaylistServiceTest extends TestCase
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
         $playlist->addPlayables(Song::factory(3)->create());
-        $episodes = Song::factory(2)->asEpisode()->create();
+
+        $podcast = Podcast::factory()->create();
+        $episodes = Song::factory(2)->asEpisode()->for($podcast)->create();
+
+        $playlist->user->subscribeToPodcast($podcast);
 
         $addedEpisodes = $this->service->addPlayablesToPlaylist($playlist, $episodes, $playlist->user);
         $playlist->refresh();
