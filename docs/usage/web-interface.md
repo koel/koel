@@ -30,7 +30,7 @@ like the artist or album's information when [configured](../service-integrations
 On any screen with a song list (a "song-list screen") you can:
 
 * Sort the list by clicking on the column headers
-* Filter the list by typing in the filter box (marked with <InterfaceIcon :src="filterIcon" />)
+* Filter the list by typing in the filter box (marked with <InterfaceIcon :src="filterIcon" alt="Filter" />)
 * Select a song by clicking on it. To select multiple songs, hold down <kbd>Shift</kbd> or <kbd>Ctrl/Cmd</kbd> while clicking.
 * Drag and drop one or more songs to reorder them when applicable
 * Drag and drop one or more songs to applicable menu items to the left to perform actions like adding to a playlist, queueing, or marking them as favorite
@@ -44,7 +44,7 @@ Play a song by double-clicking on it or pressing <kbd>Enter</kbd> on either a so
 Queue a song (or multiple songs) by right-clicking and choose one of the Queue options, or by dragging and dropping it
 into the queue menu item.
 
-You can use the dedicated button (with the <InterfaceIcon :src="shuffleIcon" /> icon) to shuffle the current list or the selected songs.
+You can use the dedicated button (with the <InterfaceIcon :src="shuffleIcon" alt="Shuffle" /> icon) to shuffle the current list or the selected songs.
 To play in order instead of shuffling, hold down <kbd>Alt/Option</kbd> while clicking the button.
 
 When a song is playing, you can control playback using the buttons at the bottom of the screen as well as
@@ -54,19 +54,19 @@ rewind/fast-forward the song by clicking and dragging the progress bar.
 
 From the same area, you also can:
 
-* <InterfaceIcon :src="heartIcon" /> like/unlike the current song
-* <InterfaceIcon :src="volumeIcon" /> control the volume
-* <InterfaceIcon :src="repeatIcon" /> switch between repeat modes
-* <InterfaceIcon :src="slidersIcon" /> show the equalizer
-* <InterfaceIcon :src="boltIcon" /> show the visualizer
-* <InterfaceIcon :src="expandIcon" /> toggle full-screen mode
+* <InterfaceIcon :src="heartIcon" alt="Heart" /> like/unlike the current song
+* <InterfaceIcon :src="volumeIcon" alt="Volume" /> control the volume
+* <InterfaceIcon :src="repeatIcon" alt="Repeat" /> switch between repeat modes
+* <InterfaceIcon :src="slidersIcon" alt="Sliders" /> show the equalizer
+* <InterfaceIcon :src="boltIcon" alt="Bolt" /> show the visualizer
+* <InterfaceIcon :src="expandIcon" alt="Expand" /> toggle full-screen mode
 
 Right-clicking the footer area brings up context menu for the currently playing song.
 
 ## Creating and Managing Playlists
 
 Koel supports creating an unlimited number of playlists as well as organizing them into folders.
-Start by clicking the <InterfaceIcon :src="plusIcon" /> button next to the "Playlists" header in the navigation bar. You'll be provided with three options:
+Start by clicking the <InterfaceIcon :src="plusIcon" alt="Add" /> button next to the "Playlists" header in the navigation bar. You'll be provided with three options:
 
 * "New Playlist…" brings up a dialog to create a standard playlist
 * "New Smart Playlist…" brings up a dialog to create a smart playlist
@@ -149,13 +149,13 @@ or a textarea.
 With a browser that supports [MediaSession](https://developer.mozilla.org/en-US/docs/Web/API/MediaSession) — basically, all modern browsers — you can control Koel using hardware media keys without even having Koel _or the browser_ focused.
 
 <script lang="ts" setup>
-import shuffleIcon from '../assets/icons/shuffle.svg'
-import filterIcon from '../assets/icons/filter.svg'
 import boltIcon from '../assets/icons/bolt.svg'
 import expandIcon from '../assets/icons/expand.svg'
+import filterIcon from '../assets/icons/filter.svg'
 import heartIcon from '../assets/icons/heart.svg'
+import plusIcon from '../assets/icons/plus-circle.svg'
 import repeatIcon from '../assets/icons/repeat.svg'
+import shuffleIcon from '../assets/icons/shuffle.svg'
 import slidersIcon from '../assets/icons/sliders.svg'
 import volumeIcon from '../assets/icons/volume.svg'
-import plusIcon from '../assets/icons/plus.svg'
 </script>

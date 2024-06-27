@@ -62,6 +62,7 @@ export default defineConfig({
           { text: 'Instant Search', link: '/usage/search' },
           { text: 'Themes', link: '/usage/themes' },
           { text: 'Artist, Album, & Playlist Arts', link: '/usage/artist-album-playlist-arts' },
+          { text: 'Podcasts', link: '/usage/podcasts' },
           { text: 'User Management', link: '/usage/user-management' },
           { text: 'Profile & Preferences', link: '/usage/profile-preferences' },
           { text: 'Remote Controller', link: '/usage/remote-controller' },

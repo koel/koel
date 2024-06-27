@@ -4,7 +4,7 @@ outline: [2, 3]
 
 # CLI Commands
 
-Koel comes with a set of handy CLI commands to help you manage your installation. 
+Koel comes with a set of handy CLI commands to help you manage your installation.
 These commands are available via Laravel’s `artisan` command line interface.
 
 You can run `php artisan list` from your Koel installation directory and pipe the output to `grep` to filter out those under the `koel` namespace:
@@ -17,6 +17,7 @@ php artisan list | grep koel
   koel:license:activate       Activate a Koel Plus license
   koel:license:deactivate     Deactivate the currently active Koel Plus license
   koel:license:status         Check the current Koel Plus license status
+  koel:podcasts:sync          Synchronize podcasts.
   koel:prune                  Remove empty artists and albums
   ...
 ```
@@ -89,6 +90,16 @@ Check the current Koel Plus license status.
 
 ```bash
 php artisan koel:license:status
+```
+
+### `koel:podcasts:sync`
+
+Synchronize podcasts.
+
+#### Usage
+
+```bash
+php artisan koel:podcasts:sync
 ```
 
 ### `koel:prune`
@@ -188,7 +199,7 @@ php artisan koel:tags:collect
 ## Command Scheduling
 
 Some of the commands, such as `koel:scan` and `koel:prune`, can be scheduled to run at regular intervals.
-Koel uses Laravel’s built-in scheduler to manage this. 
+Koel uses Laravel’s built-in scheduler to manage this.
 
 In order to set up the scheduler, you need to add the following cron entry to your server:
 
@@ -196,7 +207,7 @@ In order to set up the scheduler, you need to add the following cron entry to yo
 * * * * * cd /path-to-koel-installation && php artisan schedule:run >> /dev/null 2>&1
 ```
 
-This will run the scheduler every minute, which will then run any scheduled commands as needed. 
-By default, `koel:scan` and `koel:prune` are set to run every day at midnight.
+This will run the scheduler every minute, which will then run any scheduled commands as needed.
+By default, `koel:scan`, `koel:prune`, and `koel:podcasts:sync` are set to run every day at midnight.
 
 Though you can still manually set up cron jobs for individual commands, the scheduler is the recommended approach to command scheduling in Koel, as it will automatically cover any commands that may be added in the future.
