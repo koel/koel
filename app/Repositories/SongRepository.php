@@ -204,7 +204,7 @@ class SongRepository extends Repository
      */
     public function getManyInCollaborativeContext(array $ids, ?User $scopedUser = null): Collection
     {
-        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
+        return Song::query(user: $scopedUser ?? $this->auth->user())
             ->accessible()
             ->withMeta()
             ->when(License::isPlus(), static function (SongBuilder $query): SongBuilder {
