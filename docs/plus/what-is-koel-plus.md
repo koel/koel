@@ -9,10 +9,10 @@ Koel Plus is the premium version of Koel. It offers additional features and enha
 - **[Collaboration](./collaboration)**: Users can invite others to collaborate on their playlists, allowing them to add, remove, and reorder songs.
 - **[Cloud Storage Support](./cloud-storage-support)**: In addition to local storage, Koel Plus supports remote and cloud storage drivers like SFTP, Amazon S3 (or any S3-compatible service), and Dropbox.
 - **[Single Sign-On (SSO) Support](./sso)**: Users can log into Koel Plus using their existing credentials from another service like Google.
+- **[Authentication via Proxy-Authorization Header](./proxy-auth)**: Seamlessly log in users who are already authenticated via a proxy server, allowing Koel to be used in a corporate environment.
 
 Other features are being planned or actively developed, for example:
 
-- **Authentication via Proxy-Authorization Header**: Seamlessly log in users who are already authenticated via a proxy server, allowing Koel to be used in a corporate environment.
 - **Refined Roles & Permissions**: Create custom roles and assign them to users, controlling what they can and cannot do.
 - **Custom Themes**: Allow users to customize the look and feel of Koel in addition to the built-in themes.
 
