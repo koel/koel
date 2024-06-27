@@ -35,6 +35,7 @@ If you have Koel's [command scheduler](../cli-commands.md#command-scheduling) se
 You can also update a podcast's episodes manually from the web interface by clicking the <InterfaceIcon :src="refreshIcon" alt="Refresh" /> button on the podcast's page.
 
 <script lang="ts" setup>
+import plusIcon from '../assets/icons/plus.svg'
 import refreshIcon from '../assets/icons/refresh.svg'
 </script>
 
