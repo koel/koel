@@ -76,6 +76,7 @@ export default defineConfig({
           { text: 'Cloud Storage Support', link: '/plus/cloud-storage-support' },
           { text: 'Collaboration', link: '/plus/collaboration' },
           { text: 'Single Sign-On', link: '/plus/sso' },
+          { text: 'Proxy Authentication', link: '/plus/proxy-auth' },
         ]
       },
       {
