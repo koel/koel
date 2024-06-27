@@ -49,7 +49,7 @@ export default defineConfig({
       {
         text: 'Introduction',
         items: [
-          { text: 'What is Koel?',  link: '/guide/what-is-koel' },
+          { text: 'What Is Koel?',  link: '/guide/what-is-koel' },
           { text: 'Getting Started', link: '/guide/getting-started' },
         ]
       },
@@ -71,7 +71,7 @@ export default defineConfig({
       {
         text: 'Koel Plus',
         items: [
-          { text: 'What is Koel Plus?', link: '/plus/what-is-koel-plus' },
+          { text: 'What Is Koel Plus?', link: '/plus/what-is-koel-plus' },
           { text: 'Purchase & Activation', link: '/plus/purchase-activation' },
           { text: 'Cloud Storage Support', link: '/plus/cloud-storage-support' },
           { text: 'Collaboration', link: '/plus/collaboration' },
