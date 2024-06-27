@@ -2,7 +2,7 @@
 
 <br>
 
-# What is Koel?
+# What Is Koel?
 
 A complete music streaming solution that hosts and streams your own music collection, Koel (also stylized as koel, with a lowercase k) is designed to be:
 

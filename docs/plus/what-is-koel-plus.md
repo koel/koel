@@ -1,4 +1,4 @@
-# What is Koel Plus?
+# What Is Koel Plus?
 
 ## Introduction
 
