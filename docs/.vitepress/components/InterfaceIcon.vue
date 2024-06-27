@@ -1,11 +1,13 @@
 <template>
   <span>
-    <img class="inline border-0 rounded-0" :src="src">
+    <img class="inline border-0 rounded-0" v-bind="$attrs">
   </span>
 </template>
 
 <script lang="ts" setup>
-defineProps<{ src: string }>()
+defineOptions({
+  inheritAttrs: false
+})
 </script>
 
 <style scoped>
