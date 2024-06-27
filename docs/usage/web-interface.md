@@ -50,15 +50,16 @@ To play in order instead of shuffling, hold down <kbd>Alt/Option</kbd> while cli
 When a song is playing, you can control playback using the buttons at the bottom of the screen as well as
 rewind/fast-forward the song by clicking and dragging the progress bar.
 
-![Footer controls](../assets/img/interface/footer.webp)
+![Footer controls](../assets/img/interface/footer.avif)
 
 From the same area, you also can:
 
 * <InterfaceIcon :src="heartIcon" alt="Heart" /> like/unlike the current song
-* <InterfaceIcon :src="volumeIcon" alt="Volume" /> control the volume
 * <InterfaceIcon :src="repeatIcon" alt="Repeat" /> switch between repeat modes
-* <InterfaceIcon :src="slidersIcon" alt="Sliders" /> show the equalizer
+* <InterfaceIcon :src="queueIcon" alt="Queue" /> toggle the Queue screen
 * <InterfaceIcon :src="boltIcon" alt="Bolt" /> show the visualizer
+* <InterfaceIcon :src="slidersIcon" alt="Sliders" /> show the equalizer
+* <InterfaceIcon :src="volumeIcon" alt="Volume" /> control the volume
 * <InterfaceIcon :src="expandIcon" alt="Expand" /> toggle full-screen mode
 
 Right-clicking the footer area brings up context menu for the currently playing song.
@@ -131,6 +132,7 @@ Koel has a number of keyboard shortcuts to make it easier to navigate and contro
 Note that these shortcuts are only triggered when the focus is not on an input field (including the volume control and the music track)
 or a textarea.
 
+* <kbd>q</kbd> toggle the Queue screen
 * <kbd>f</kbd> puts the focus into the search box and triggers the instant search screen
 * <kbd>Enter</kbd> plays a song. If multiple songs are being selected, <kbd>Enter</kbd> adds them to the bottom of the queue, <kbd>Shift</kbd>+<kbd>Enter</kbd> queues them to top. Adding a <kbd>Cmd</kbd> or <kbd>Ctrl</kbd> into the combo plays the first selected song right away.
 * <kbd>Space</kbd> toggles playback
@@ -154,6 +156,7 @@ import expandIcon from '../assets/icons/expand.svg'
 import filterIcon from '../assets/icons/filter.svg'
 import heartIcon from '../assets/icons/heart.svg'
 import plusIcon from '../assets/icons/plus-circle.svg'
+import queueIcon from '../assets/icons/queue.svg'
 import repeatIcon from '../assets/icons/repeat.svg'
 import shuffleIcon from '../assets/icons/shuffle.svg'
 import slidersIcon from '../assets/icons/sliders.svg'
