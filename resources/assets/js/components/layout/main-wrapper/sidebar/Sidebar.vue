@@ -1,7 +1,7 @@
 <template>
     <nav
       :class="{ collapsed: !expanded, 'tmp-showing': tmpShowing, showing: mobileShowing }"
-      class="flex flex-col fixed md:relative w-full md:w-k-sidebar-width z-10"
+      class="group flex flex-col fixed md:relative w-full md:w-k-sidebar-width z-10"
       @mouseenter="onMouseEnter"
       @mouseleave="onMouseLeave"
     >
@@ -20,7 +20,11 @@
         <BtnUpgradeToPlus />
       </section>
 
-      <SidebarToggleButton v-model="expanded" />
+      <SidebarToggleButton
+        class="opacity-0 group-hover:opacity-100 transition"
+        v-model="expanded"
+        :class="expanded || 'opacity-100'"
+      />
     </nav>
 </template>
 
