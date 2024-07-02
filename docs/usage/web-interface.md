@@ -42,7 +42,7 @@ To search globally for songs, artists, and albums, see [Instant Search](./search
 
 Play a song by double-clicking on it or pressing <kbd>Enter</kbd> on either a song list row or a song card.
 Queue a song (or multiple songs) by right-clicking and choose one of the Queue options, or by dragging and dropping it
-into the queue menu item.
+into the Queue icon <InterfaceIcon :src="queueIcon" /> in the footer.
 
 You can use the dedicated button (with the <InterfaceIcon :src="shuffleIcon" alt="Shuffle" /> icon) to shuffle the current list or the selected songs.
 To play in order instead of shuffling, hold down <kbd>Alt/Option</kbd> while clicking the button.
