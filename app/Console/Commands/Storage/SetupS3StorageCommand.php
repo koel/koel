@@ -27,7 +27,7 @@ class SetupS3StorageCommand extends Command
             return self::FAILURE;
         }
 
-        $this->components->info('Setting up Dropbox as the storage driver for Koel.');
+        $this->components->info('Setting up S3 or an S3-compatible service as the storage driver for Koel.');
         $this->components->warn('Changing the storage configuration can cause irreversible data loss.');
         $this->components->warn('Consider backing up your data before proceeding.');
 
