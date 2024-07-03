@@ -47,12 +47,12 @@ Solution: Add or set `BROADCAST_DRIVER=log` in your `.env` file. This will instr
 
 ### You receive an "Unknown error" when scanning using the web interface
 
-Solution: Try scanning from the command line with php artisan koel:sync. Most of the time, you should receive a more detailed, easier to debug, message.
-Refer to [Music Discovery](usage/music-discovery) for more details.
+Solution: Try scanning from the command line with `php artisan koel:sync`. Most of the time, you should receive a more detailed, easier to debug, message.
+See also: [Music Discovery](usage/music-discovery).
 
 ### You receive an `Integrity constraint violation: 1062 Duplicate entry for key 'artists_name_unique'` error when scanning
 
-Solution: Set your database and table collation to utf8_unicode_ci.
+Solution: Set your database and table collation to `utf8_unicode_ci`.
 
 ### You receive an &lt;input random strings here&gt; error when running `yarn`
 
@@ -60,7 +60,7 @@ Solution: This most likely has little to do with Koel but more with your node/np
 
 ### Song stops playing, and you receive a `Failed to load resource: net::ERR_CONTENT_LENGTH_MISMATCH` error
 
-Solution: This may sometimes happen with the native php streaming method. Check [Streaming Music](usage/streaming) for alternatives.
+Solution: This may sometimes happen with the native PHP streaming method. Check [Streaming Music](usage/streaming) for alternatives.
 
 ## Reinstalling Koel
 
