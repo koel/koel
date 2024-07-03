@@ -249,7 +249,8 @@ class InitCommand extends Command
             try {
                 // Make sure the config cache is cleared before another attempt.
                 Artisan::call('config:clear', ['--quiet' => true]);
-                $this->db->reconnect()->getPdo();
+                $this->db->reconnect();
+                $this->db->getDoctrineSchemaManager()->listTables();
 
                 break;
             } catch (Throwable $e) {
