@@ -22,16 +22,23 @@ class StorageCommand extends Command
             $this->components->twoColumnDetail('Media path', Setting::get('media_path') ?: '<not set>');
         }
 
-        $storageChoices = ['local' => 'This server'];
-
         if (License::isPlus()) {
-            $storageChoices['s3'] = 'Amazon S3 or compatible services (DO Spaces, Cloudflare R2, etc.)';
-            $storageChoices['dropbox'] = 'Dropbox';
+            $choices = [
+                'local' => 'This server',
+                's3' => 'Amazon S3 or compatible services (DO Spaces, Cloudflare R2, etc.)',
+                'dropbox' => 'Dropbox',
+            ];
+
+            $driver = $this->choice(
+                'Where do you want to store your media files?',
+                $choices,
+                config('koel.storage_driver')
+            );
+        } else {
+            $driver = 'local';
         }
 
-        $storageDriver = $this->choice('Where do you store your media files?', $storageChoices);
-
-        if ($this->call("koel:storage:$storageDriver") === self::SUCCESS) {
+        if ($this->call("koel:storage:$driver") === self::SUCCESS) {
             $this->output->success('Storage has been set up.');
 
             return self::SUCCESS;
