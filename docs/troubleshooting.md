@@ -62,11 +62,6 @@ Solution: This most likely has little to do with Koel but more with your node/np
 
 Solution: This may sometimes happen with the native php streaming method. Check [Streaming Music](usage/streaming) for alternatives.
 
-### Next song doesn't play if your mobile device is locked
-
-Solution: This is a limitation for mobile browsers, at least for iOS.
-There's no known solution at the moment, but you can try using the [mobile app](mobile-apps) instead.
-
 ## Reinstalling Koel
 
 In the worst case scenario, you can always reinstall Koel. Although Koel doesn't provide a built-in way to reinstall itself, you can do so manually by following these steps:
