@@ -32,7 +32,7 @@ class SetupLocalStorageCommand extends Command
 
         $this->components->info('Local storage has been set up.');
 
-        if ($this->components->confirm('Would you want to initialize a scan now?')) {
+        if ($this->components->confirm('Would you want to initialize a scan now?', true)) {
             $this->call('koel:scan');
         }
 
