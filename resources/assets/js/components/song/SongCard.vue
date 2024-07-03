@@ -10,7 +10,7 @@
     @contextmenu.prevent="requestContextMenu"
     @dblclick.prevent="play"
   >
-    <span>
+    <span class="leading-none">
       <SongThumbnail :playable="playable" />
     </span>
     <main class="flex-1 flex items-start overflow-hidden gap-2">
