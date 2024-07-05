@@ -42,7 +42,7 @@ export const useDraggable = (type: DraggableType) => {
       case 'playables':
         dragged = arrayify(<Playable>dragged)
         text = dragged.length === 1
-          ? `${dragged[0].title} by ${ getPlayableProp(dragged[0], 'artist_name', 'podcast_author')}`
+          ? `${dragged[0].title} by ${getPlayableProp(dragged[0], 'artist_name', 'podcast_author')}`
           : pluralize(dragged, 'item')
 
         data = dragged.map(song => song.id)
@@ -110,7 +110,7 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
       switch (getDragType(event)) {
         case 'playlist':
           const id = String(JSON.parse(event.dataTransfer!.getData('application/x-koel.playlist')))
-          return (playlistStore.byId(id)) as T | undefined
+          return playlistStore.byId(id) as T | undefined
         default:
           return
       }

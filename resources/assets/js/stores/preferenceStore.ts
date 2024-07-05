@@ -62,7 +62,7 @@ const preferenceStore = {
     }
   },
 
-  get (key: string) {
+  get (key: keyof UserPreferences) {
     return this.state?.[key]
   },
 

@@ -7,30 +7,30 @@ const UNKNOWN_ARTIST_ID = 1
 const VARIOUS_ARTISTS_ID = 2
 
 export const artistStore = {
-  vault: new Map<number, UnwrapNestedRefs<Artist>>(),
+  vault: new Map<Artist['id'], Artist>(),
 
   state: reactive({
     artists: [] as Artist[]
   }),
 
-  byId (id: number) {
+  byId (id: Artist['id']) {
     return this.vault.get(id)
   },
 
-  removeByIds (ids: number[]) {
+  removeByIds (ids: Artist['id'][]) {
     this.state.artists = differenceBy(this.state.artists, ids.map(id => this.byId(id)), 'id')
     ids.forEach(id => this.vault.delete(id))
   },
 
-  isVarious: (artist: Artist | number) => (typeof artist === 'number')
+  isVarious: (artist: Artist | Artist['id']) => (typeof artist === 'number')
     ? artist === VARIOUS_ARTISTS_ID
     : artist.id === VARIOUS_ARTISTS_ID,
 
-  isUnknown: (artist: Artist | number) => (typeof artist === 'number')
+  isUnknown: (artist: Artist | Artist['id']) => (typeof artist === 'number')
     ? artist === UNKNOWN_ARTIST_ID
     : artist.id === UNKNOWN_ARTIST_ID,
 
-  isStandard (artist: Artist | number) {
+  isStandard (artist: Artist | Artist['id']) {
     return !this.isVarious(artist) && !this.isUnknown(artist)
   },
 
@@ -43,7 +43,7 @@ export const artistStore = {
     return artist.image
   },
 
-  syncWithVault (artists: Artist | Artist[]) {
+  syncWithVault (artists: MaybeArray<Artist>) {
     return arrayify(artists).map(artist => {
       let local = this.vault.get(artist.id)
       local = local ? Object.assign(local, artist) : reactive(artist)
@@ -53,7 +53,7 @@ export const artistStore = {
     })
   },
 
-  async resolve (id: number) {
+  async resolve (id: Artist['id']) {
     let artist = this.byId(id)
 
     if (!artist) {

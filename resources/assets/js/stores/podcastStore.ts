@@ -6,11 +6,11 @@ export const podcastStore = {
     podcasts: [] as Podcast[]
   }),
 
-  byId (id: string) {
+  byId (id: Podcast['id']) {
     return this.state.podcasts.find(podcast => podcast.id === id)
   },
 
-  async resolve (id: string) {
+  async resolve (id: Podcast['id']) {
     return this.byId(id) ?? await this.fetchOne(id)
   },
 
@@ -26,7 +26,7 @@ export const podcastStore = {
     return this.state.podcasts
   },
 
-  async fetchOne (id: string) {
+  async fetchOne (id: Podcast['id']) {
     this.state.podcasts.push(await http.get<Podcast>(`podcasts/${id}`))
     return this.byId(id)!
   },

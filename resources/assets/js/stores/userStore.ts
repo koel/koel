@@ -18,14 +18,14 @@ export interface UpdateUserData extends UserFormData {
 }
 
 export const userStore = {
-  vault: new Map<number, User>(),
+  vault: new Map<User['id'], User>(),
 
   state: reactive({
     users: [] as User[],
     current: null as unknown as User
   }),
 
-  syncWithVault (users: User | User[]) {
+  syncWithVault (users: MaybeArray<User>) {
     return arrayify(users).map(user => {
       let local = this.byId(user.id)
       local = reactive(local ? merge(local, user) : user)
@@ -44,7 +44,7 @@ export const userStore = {
     this.state.users = this.syncWithVault(await http.get<User[]>('users'))
   },
 
-  byId (id: number) {
+  byId (id: User['id']) {
     return this.vault.get(id)
   },
 
@@ -58,7 +58,7 @@ export const userStore = {
     return this.byId(user.id)
   },
 
-  add (user: User | User[]) {
+  add (user: MaybeArray<User>) {
     this.state.users.push(...this.syncWithVault(user))
   },
 

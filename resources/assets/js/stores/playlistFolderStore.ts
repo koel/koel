@@ -12,7 +12,7 @@ export const playlistFolderStore = {
     this.state.folders = this.sort(reactive(folders))
   },
 
-  byId (id: string) {
+  byId (id: PlaylistFolder['id']) {
     return this.state.folders.find(folder => folder.id === id)
   },
 

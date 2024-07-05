@@ -51,15 +51,15 @@ export const songStore = {
 
   getFormattedLength: (playables: MaybeArray<Playable>) => secondsToHumanReadable(sumBy(arrayify(playables), 'length')),
 
-  byId (id: string) {
-    const song = this.vault.get(id)
+  byId (id: Playable['id']) {
+    const playable = this.vault.get(id)
 
-    if (!song) return
-    if (isSong(song) && song.deleted) return
-    return song
+    if (!playable) return
+    if (isSong(playable) && playable.deleted) return
+    return playable
   },
 
-  byIds (ids: string[]) {
+  byIds (ids: Playable['id'][]) {
     const playables: Playable[] = []
     ids.forEach(id => use(this.byId(id), song => playables.push(song!)))
     return playables
@@ -70,7 +70,7 @@ export const songStore = {
       .filter(playable => isSong(playable) && playable.album_id === album.id) as Song[]
   },
 
-  async resolve (id: string) {
+  async resolve (id: Playable['id']) {
     let playable = this.byId(id)
 
     if (!playable) {
@@ -172,7 +172,7 @@ export const songStore = {
 
   ensureNotDeleted: (songs: MaybeArray<Song>) => arrayify(songs).filter(({ deleted }) => !deleted),
 
-  async fetchForAlbum (album: Album | number) {
+  async fetchForAlbum (album: Album | Album['id']) {
     const id = typeof album === 'number' ? album : album.id
 
     return this.ensureNotDeleted(await cache.remember<Song[]>(
@@ -181,7 +181,7 @@ export const songStore = {
     ))
   },
 
-  async fetchForArtist (artist: Artist | number) {
+  async fetchForArtist (artist: Artist | Artist['id']) {
     const id = typeof artist === 'number' ? artist : artist.id
 
     return this.ensureNotDeleted(await cache.remember<Song[]>(
@@ -217,7 +217,7 @@ export const songStore = {
     return uniqBy(playables, 'id')
   },
 
-  async fetchForPodcast (podcast: Podcast | string, refresh = false) {
+  async fetchForPodcast (podcast: Podcast | Podcast['id'], refresh = false) {
     const id = typeof podcast === 'string' ? podcast : podcast.id
 
     if (refresh) {

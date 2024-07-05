@@ -44,11 +44,11 @@ export const themeStore = {
     return this.state.themes.find(theme => theme.id === id)
   },
 
-  getDefaultTheme (): Theme {
+  getDefaultTheme () {
     return this.getThemeById('classic')!
   },
 
-  applyThemeFromPreference (): void {
+  applyThemeFromPreference () {
     const theme = preferences.theme
       ? (this.getThemeById(preferences.theme) ?? this.getDefaultTheme())
       : this.getDefaultTheme()
