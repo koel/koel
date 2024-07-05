@@ -70,7 +70,7 @@ export const artistStore = {
   },
 
   async paginate (page: number) {
-    const resource = await http.get<PaginatorResource>(`artists?page=${page}`)
+    const resource = await http.get<PaginatorResource<Artist>>(`artists?page=${page}`)
     this.state.artists = unionBy(this.state.artists, this.syncWithVault(resource.data), 'id')
 
     return resource.links.next ? ++resource.meta.current_page : null

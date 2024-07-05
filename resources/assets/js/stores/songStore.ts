@@ -66,7 +66,8 @@ export const songStore = {
   },
 
   byAlbum (album: Album) {
-    return Array.from(this.vault.values()).filter(playable => isSong(playable) && playable.album_id === album.id)
+    return Array.from(this.vault.values())
+      .filter(playable => isSong(playable) && playable.album_id === album.id) as Song[]
   },
 
   async resolve (id: string) {
@@ -231,7 +232,11 @@ export const songStore = {
 
   async paginateForGenre (genre: Genre | Genre['name'], params: GenreSongListPaginateParams) {
     const name = typeof genre === 'string' ? genre : genre.name
-    const resource = await http.get<PaginatorResource>(`genres/${name}/songs?${new URLSearchParams(params).toString()}`)
+
+    const resource = await http.get<PaginatorResource<Song>>(
+      `genres/${name}/songs?${new URLSearchParams(params).toString()}`
+    )
+
     const songs = this.syncWithVault(resource.data)
 
     return {
@@ -246,7 +251,7 @@ export const songStore = {
   },
 
   async paginate (params: SongListPaginateParams) {
-    const resource = await http.get<PaginatorResource>(`songs?${new URLSearchParams(params).toString()}`)
+    const resource = await http.get<PaginatorResource<Song>>(`songs?${new URLSearchParams(params).toString()}`)
     this.state.songs = unionBy(this.state.songs, this.syncWithVault(resource.data), 'id')
 
     return resource.links.next ? ++resource.meta.current_page : null

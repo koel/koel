@@ -479,8 +479,8 @@ type MoveType = 'before' | 'after'
 
 type MethodOf<T> = { [K in keyof T]: T[K] extends Closure ? K : never; }[keyof T]
 
-interface PaginatorResource {
-  data: any[]
+interface PaginatorResource<T> {
+  data: T[]
   links: {
     next: string | null
   }
