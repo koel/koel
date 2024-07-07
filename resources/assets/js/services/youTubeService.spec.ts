@@ -7,7 +7,7 @@ import { youTubeService } from './youTubeService'
 new class extends UnitTestCase {
   protected test () {
     it('plays a video', () => {
-      const video = factory<YouTubeVideo>('video', {
+      const video = factory('video', {
         id: {
           videoId: 'foo'
         },

@@ -2,9 +2,11 @@
 
 namespace App\Repositories;
 
-use App\Repositories\Traits\ByCurrentUser;
+use App\Models\PlaylistFolder;
 
+/**
+ * @extends Repository<PlaylistFolder>
+ */
 class PlaylistFolderRepository extends Repository
 {
-    use ByCurrentUser;
 }

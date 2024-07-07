@@ -1,8 +1,9 @@
+import axios from 'axios'
 import { without } from 'lodash'
 import { reactive } from 'vue'
 import { http } from '@/services'
-import { albumStore, commonStore, overviewStore, songStore } from '@/stores'
-import { logger } from '@/utils'
+import { albumStore, commonStore, songStore } from '@/stores'
+import { eventBus, logger } from '@/utils'
 
 interface UploadResult {
   song: Song
@@ -56,11 +57,11 @@ export const uploadService = {
   },
 
   getUploadingFiles () {
-    return this.state.files.filter(file => file.status === 'Uploading')
+    return this.state.files.filter(({ status }) => status === 'Uploading')
   },
 
   getUploadCandidate () {
-    return this.state.files.find(file => file.status === 'Ready')
+    return this.state.files.find(({ status }) => status === 'Ready')
   },
 
   shouldWarnUponWindowUnload () {
@@ -87,15 +88,21 @@ export const uploadService = {
       songStore.syncWithVault(result.song)
       albumStore.syncWithVault(result.album)
       commonStore.state.song_length += 1
-      overviewStore.refresh()
+      eventBus.emit('SONG_UPLOADED', result.song)
 
       this.proceed() // upload the next file
 
       window.setTimeout(() => this.remove(file), 1000)
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error(error)
-      file.message = `Upload failed: ${error.response?.data?.message || 'Unknown error'}`
       file.status = 'Errored'
+
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        file.message = `Upload failed: ${error.response.data.message}`
+      } else {
+        file.message = 'Upload failed: Unknown error.'
+      }
+
       this.proceed() // upload the next file
     }
   },
@@ -117,6 +124,6 @@ export const uploadService = {
   },
 
   removeFailed () {
-    this.state.files = this.state.files.filter(file => file.status !== 'Errored')
+    this.state.files = this.state.files.filter(({ status }) => status !== 'Errored')
   }
 }

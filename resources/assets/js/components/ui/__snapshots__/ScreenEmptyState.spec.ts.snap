@@ -1,9 +1,9 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-<div class="screen-empty-state" data-testid="screen-empty-state">
-  <div><span class="jumbo-icon"><i class="my-icon"></i></span>
-    <div class="text">Nothing here</div>
+<article class="relative flex place-content-center place-items-center flex-1 text-white/50" data-testid="screen-empty-state">
+  <div class="md:max-w-3/4 px-6 pt-0 mx-auto flex flex-col items-center pb-k-header-height"><span class="jumbo-icon block text-[6rem] mb-4 opacity-70"><i class="my-icon"></i></span>
+    <div class="text text-center text-3xl font-light flex flex-col gap-2">Nothing here</div>
   </div>
-</div>
+</article>
 `;

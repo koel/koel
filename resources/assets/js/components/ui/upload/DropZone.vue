@@ -1,24 +1,30 @@
 <template>
-  <div
-    v-if="allowsUpload && mediaPathSetUp"
-    :class="{ droppable }"
-    class="drop-zone"
-    @dragleave="onDropLeave"
-    @dragover="onDragOver"
-    @drop="onDrop"
-  >
-    <Icon :icon="faUpload" size="6x" />
-    <h3>Drop to upload</h3>
-  </div>
+  <OnClickOutside @trigger="close">
+    <div
+      v-if="allowsUpload && mediaPathSetUp"
+      :class="{ droppable }"
+      class="drop-zone h-[256px] max-h-[66vh] aspect-square outline-4 outline-dashed outline-gray-300
+      fixed z-10 top-0 left-0 rounded-3xl bg-black/40 flex flex-col-reverse items-center justify-center
+      overflow-hidden duration-200"
+      @dragleave="onDropLeave"
+      @dragover="onDragOver"
+      @drop="onDrop"
+    >
+      <h3 class="text-3xl mt-4 font-extralight">Drop to upload</h3>
+      <Icon :icon="faUpload" size="6x" />
+    </div>
+  </OnClickOutside>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
 import { faUpload } from '@fortawesome/free-solid-svg-icons'
+import { ref } from 'vue'
+import { OnClickOutside } from '@vueuse/components'
 import { useUpload } from '@/composables'
 
 const { allowsUpload, mediaPathSetUp, handleDropEvent } = useUpload()
 
+const emit = defineEmits<{ (e: 'close'): void }>()
 const droppable = ref(false)
 
 const onDropLeave = () => (droppable.value = false)
@@ -34,39 +40,16 @@ const onDrop = async (event: DragEvent) => {
   droppable.value = false
   await handleDropEvent(event)
 }
+
+const close = () => emit('close')
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .drop-zone {
-  height: 256px;
-  max-height: 66vh;
-  aspect-ratio: 1/1;
-  outline: 3px dashed #ccc;
-  position: fixed;
-  z-index: 9;
   transform: translate(calc(50vw - 50%), calc(50vh - 50%));
-  top: 0;
-  left: 0;
-  border-radius: 2rem;
-  background: rgba(0, 0, 0, .4);
-  display: flex;
-  align-content: center;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-  overflow: hidden;
-  transition: 0.2s;
-
-  h3 {
-    font-size: 2rem;
-    font-weight: var(--font-weight-thin);
-    margin-top: 1rem;
-  }
 
   &.droppable {
-    height: 384px;
-    outline: 3px dashed #fff;
-    background: rgba(0, 0, 0, .9);
+    @apply h-[384px] outline-white bg-black/90;
     box-shadow: 0 0 0 999rem rgba(0, 0, 0, .7);
   }
 }

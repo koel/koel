@@ -1,5 +1,5 @@
 <template>
-  <ContextMenuBase ref="base" data-testid="album-context-menu" extra-class="album-menu">
+  <ContextMenu ref="base" data-testid="album-context-menu" extra-class="album-menu">
     <template v-if="album">
       <li @click="play">Play All</li>
       <li @click="shuffle">Shuffle All</li>
@@ -11,7 +11,7 @@
         <li @click="download">Download</li>
       </template>
     </template>
-  </ContextMenuBase>
+  </ContextMenu>
 </template>
 
 <script lang="ts" setup>
@@ -22,10 +22,10 @@ import { useContextMenu, useRouter } from '@/composables'
 import { eventBus } from '@/utils'
 
 const { go } = useRouter()
-const { base, ContextMenuBase, open, trigger } = useContextMenu()
+const { base, ContextMenu, open, trigger } = useContextMenu()
 
 const album = ref<Album>()
-const allowDownload = toRef(commonStore.state, 'allow_download')
+const allowDownload = toRef(commonStore.state, 'allows_download')
 
 const isStandardAlbum = computed(() => !albumStore.isUnknown(album.value!))
 
@@ -47,8 +47,8 @@ const viewAlbumDetails = () => trigger(() => go(`album/${album.value!.id}`))
 const viewArtistDetails = () => trigger(() => go(`artist/${album.value!.artist_id}`))
 const download = () => trigger(() => downloadService.fromAlbum(album.value!))
 
-eventBus.on('ALBUM_CONTEXT_MENU_REQUESTED', async (e, _album) => {
+eventBus.on('ALBUM_CONTEXT_MENU_REQUESTED', async ({ pageX, pageY }, _album) => {
   album.value = _album
-  await open(e.pageY, e.pageX)
+  await open(pageY, pageX)
 })
 </script>

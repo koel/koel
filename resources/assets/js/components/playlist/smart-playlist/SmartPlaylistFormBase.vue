@@ -1,5 +1,5 @@
 <template>
-  <div class="smart-playlist-form">
+  <div class="smart-playlist-form md:w-[560px]">
     <slot />
   </div>
 </template>
@@ -7,19 +7,13 @@
 <script lang="ts" setup>
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .smart-playlist-form {
-  width: 560px;
+  max-height: calc(100vh - 4rem);
 }
 
-:slotted(label.folder) {
-  flex: .6;
-}
-
-:slotted(.rules) {
-  background: rgba(0, 0, 0, .1);
-  border: 1px solid rgba(255, 255, 255, .1);
-  padding: .75rem;
-  border-radius: .3rem;
+:slotted(form) {
+  max-height: calc(100vh - 4rem);
+  @apply flex flex-col overflow-auto;
 }
 </style>

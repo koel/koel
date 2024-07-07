@@ -1,16 +1,14 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { preferenceStore } from '@/stores'
-import { volumeManager } from '@/services/volumeManager'
+import { volumeManager } from '@/services'
 
 let input: HTMLInputElement
 
 new class extends UnitTestCase {
-  protected beforeEach (cb?: Closure) {
+  protected beforeEach () {
     super.beforeEach(() => {
-      preferenceStore.volume = 5
       input = document.createElement('input')
-      volumeManager.init(input)
+      volumeManager.init(input, 5)
     })
   }
 
@@ -21,20 +19,17 @@ new class extends UnitTestCase {
       volumeManager.set(4.2)
       expect(volumeManager.volume.value).toEqual(4.2)
       expect(input.value).toEqual('4.2')
-      expect(preferenceStore.volume).toEqual(4.2)
     })
 
     it('mutes', () => {
       volumeManager.mute()
       expect(volumeManager.volume.value).toEqual(0)
       expect(input.value).toEqual('0')
-
-      // muting should not persist
-      expect(preferenceStore.volume).toEqual(5)
     })
 
     it('unmutes', () => {
-      preferenceStore.volume = 7
+      volumeManager.set(7)
+      volumeManager.mute()
       volumeManager.unmute()
       expect(volumeManager.volume.value).toEqual(7)
       expect(input.value).toEqual('7')

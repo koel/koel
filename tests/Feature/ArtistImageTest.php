@@ -2,12 +2,13 @@
 
 namespace Tests\Feature;
 
-use App\Events\LibraryChanged;
 use App\Models\Artist;
-use App\Models\User;
 use App\Services\MediaMetadataService;
 use Mockery;
 use Mockery\MockInterface;
+use Tests\TestCase;
+
+use function Tests\create_admin;
 
 class ArtistImageTest extends TestCase
 {
@@ -22,19 +23,14 @@ class ArtistImageTest extends TestCase
 
     public function testUpdate(): void
     {
-        $this->expectsEvents(LibraryChanged::class);
-
-        /** @var User $admin */
-        $admin = User::factory()->admin()->create();
-
-        Artist::factory()->create(['id' => 9999]);
+        $artist = Artist::factory()->create();
 
         $this->mediaMetadataService
             ->shouldReceive('writeArtistImage')
             ->once()
-            ->with(Mockery::on(static fn (Artist $artist) => $artist->id === 9999), 'Foo', 'jpeg');
+            ->with(Mockery::on(static fn (Artist $target) => $target->is($artist)), 'data:image/jpeg;base64,Rm9v');
 
-        $this->putAs('api/artist/9999/image', ['image' => 'data:image/jpeg;base64,Rm9v'], $admin)
+        $this->putAs("api/artist/$artist->id/image", ['image' => 'data:image/jpeg;base64,Rm9v'], create_admin())
             ->assertOk();
     }
 
@@ -42,9 +38,7 @@ class ArtistImageTest extends TestCase
     {
         Artist::factory()->create(['id' => 9999]);
 
-        $this->mediaMetadataService
-            ->shouldReceive('writeArtistImage')
-            ->never();
+        $this->mediaMetadataService->shouldNotReceive('writeArtistImage');
 
         $this->putAs('api/artist/9999/image', ['image' => 'data:image/jpeg;base64,Rm9v'])
             ->assertForbidden();

@@ -1,0 +1,41 @@
+@import './partials/vars.pcss';
+@import './partials/hack.pcss';
+
+@import './partials/mixins.pcss';
+
+@import '@modules/nouislider/distribute/nouislider.min.css';
+@import './vendor/plyr.pcss';
+@import './vendor/nprogress.pcss';
+
+@import './partials/skeleton.pcss';
+@import './partials/tooltip.pcss';
+@import './partials/context-menu.pcss';
+@import './partials/shared.pcss';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .fade-top {
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black var(--fade-size));
+    mask-image: linear-gradient(to bottom, transparent, black var(--fade-size));
+  }
+
+  .fade-bottom {
+    -webkit-mask-image: linear-gradient(to top, transparent, black var(--fade-size));
+    mask-image: linear-gradient(to top, transparent, black var(--fade-size));
+  }
+
+  .fade-top.fade-bottom {
+    -webkit-mask: linear-gradient(to bottom, transparent, black var(--fade-size)) top,
+    linear-gradient(to top, transparent, black var(--fade-size)) bottom;
+    -webkit-mask-size: 100% 51%;
+    -webkit-mask-repeat: no-repeat;
+
+    mask: linear-gradient(to bottom, transparent, black var(--fade-size)) top,
+    linear-gradient(to top, transparent, black var(--fade-size)) bottom;
+    mask-size: 100% 51%;
+    mask-repeat: no-repeat;
+  }
+}

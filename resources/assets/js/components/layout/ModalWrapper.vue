@@ -1,5 +1,9 @@
 <template>
-  <dialog ref="dialog" class="text-primary bg-primary" @cancel.prevent>
+  <dialog
+    ref="dialog"
+    class="text-k-text-primary min-w-full md:min-w-[480px] border-0 p-0 rounded-md bg-k-bg-primary overflow-visible backdrop:bg-black/70"
+    @cancel.prevent
+  >
     <Component :is="modalNameToComponentMap[activeModalName]" v-if="activeModalName" @close="close" />
   </dialog>
 </template>
@@ -10,18 +14,21 @@ import { arrayify, eventBus, provideReadonly } from '@/utils'
 import { ModalContextKey } from '@/symbols'
 
 const modalNameToComponentMap = {
-  'create-playlist-form': defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistForm.vue')),
-  'edit-playlist-form': defineAsyncComponent(() => import('@/components/playlist/EditPlaylistForm.vue')),
-  'create-smart-playlist-form': defineAsyncComponent(() => import('@/components/playlist/smart-playlist/CreateSmartPlaylistForm.vue')),
-  'edit-smart-playlist-form': defineAsyncComponent(() => import('@/components/playlist/smart-playlist/EditSmartPlaylistForm.vue')),
-  'add-user-form': defineAsyncComponent(() => import('@/components/user/AddUserForm.vue')),
-  'edit-user-form': defineAsyncComponent(() => import('@/components/user/EditUserForm.vue')),
-  'invite-user-form': defineAsyncComponent(() => import('@/components/user/InviteUserForm.vue')),
-  'edit-song-form': defineAsyncComponent(() => import('@/components/song/EditSongForm.vue')),
-  'create-playlist-folder-form': defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistFolderForm.vue')),
-  'edit-playlist-folder-form': defineAsyncComponent(() => import('@/components/playlist/EditPlaylistFolderForm.vue')),
   'about-koel': defineAsyncComponent(() => import('@/components/meta/AboutKoelModal.vue')),
-  'equalizer': defineAsyncComponent(() => import('@/components/ui/Equalizer.vue'))
+  'add-podcast-form': defineAsyncComponent(() => import('@/components/podcast/AddPodcastForm.vue')),
+  'add-user-form': defineAsyncComponent(() => import('@/components/user/AddUserForm.vue')),
+  'create-playlist-folder-form': defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistFolderForm.vue')),
+  'create-playlist-form': defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistForm.vue')),
+  'create-smart-playlist-form': defineAsyncComponent(() => import('@/components/playlist/smart-playlist/CreateSmartPlaylistForm.vue')),
+  'edit-playlist-folder-form': defineAsyncComponent(() => import('@/components/playlist/EditPlaylistFolderForm.vue')),
+  'edit-playlist-form': defineAsyncComponent(() => import('@/components/playlist/EditPlaylistForm.vue')),
+  'edit-smart-playlist-form': defineAsyncComponent(() => import('@/components/playlist/smart-playlist/EditSmartPlaylistForm.vue')),
+  'edit-song-form': defineAsyncComponent(() => import('@/components/song/EditSongForm.vue')),
+  'edit-user-form': defineAsyncComponent(() => import('@/components/user/EditUserForm.vue')),
+  'equalizer': defineAsyncComponent(() => import('@/components/ui/equalizer/Equalizer.vue')),
+  'invite-user-form': defineAsyncComponent(() => import('@/components/user/InviteUserForm.vue')),
+  'koel-plus': defineAsyncComponent(() => import('@/components/koel-plus/KoelPlusModal.vue')),
+  'playlist-collaboration': defineAsyncComponent(() => import('@/components/playlist/PlaylistCollaborationModal.vue'))
 }
 
 type ModalName = keyof typeof modalNameToComponentMap
@@ -40,12 +47,13 @@ const close = () => {
 }
 
 eventBus.on('MODAL_SHOW_ABOUT_KOEL', () => (activeModalName.value = 'about-koel'))
+  .on('MODAL_SHOW_KOEL_PLUS', () => (activeModalName.value = 'koel-plus'))
   .on('MODAL_SHOW_ADD_USER_FORM', () => (activeModalName.value = 'add-user-form'))
   .on('MODAL_SHOW_INVITE_USER_FORM', () => (activeModalName.value = 'invite-user-form'))
-  .on('MODAL_SHOW_CREATE_PLAYLIST_FORM', (folder, songs) => {
+  .on('MODAL_SHOW_CREATE_PLAYLIST_FORM', (folder, playables?) => {
     context.value = {
       folder,
-      songs: songs ? arrayify(songs) : []
+      playables: playables ? arrayify(playables) : []
     }
 
     activeModalName.value = 'create-playlist-form'
@@ -75,64 +83,34 @@ eventBus.on('MODAL_SHOW_ABOUT_KOEL', () => (activeModalName.value = 'about-koel'
     context.value = { folder }
     activeModalName.value = 'edit-playlist-folder-form'
   })
+  .on('MODAL_SHOW_PLAYLIST_COLLABORATION', playlist => {
+    context.value = { playlist }
+    activeModalName.value = 'playlist-collaboration'
+  })
+  .on('MODAL_SHOW_ADD_PODCAST_FORM', () => {
+    activeModalName.value = 'add-podcast-form'
+  })
   .on('MODAL_SHOW_EQUALIZER', () => (activeModalName.value = 'equalizer'))
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 dialog {
-  border: 0;
-  padding: 0;
-  border-radius: 4px;
-  min-width: 460px;
-  max-width: calc(100vw - 24px);
-
-  @media screen and (max-width: 768px) {
-    min-width: calc(100vw - 24px);
-  }
-
-  &::backdrop {
-    background: rgba(0, 0, 0, 0.7);
-  }
-
-  :deep(form) {
-    position: relative;
+  :deep(form), :deep(>div) {
+    @apply relative;
 
     > header, > main, > footer {
-      padding: 1.2rem;
+      @apply px-6 py-5;
     }
 
     > footer {
-      margin-top: 0;
-    }
-
-    [type=text], [type=number], [type=email], [type=password], [type=url], [type=date], textarea, select {
-      width: 100%;
-      max-width: 100%;
-      height: 32px;
-    }
-
-    .warning {
-      color: var(--color-red);
-    }
-
-    textarea {
-      min-height: 192px;
-    }
-
-    > footer {
-      button + button {
-        margin-left: .5rem;
-      }
+      @apply mt-0 bg-black/10 border-t border-white/5 space-x-2;
     }
 
     > header {
-      display: flex;
-      background: var(--color-bg-secondary);
+      @apply flex bg-k-bg-secondary;
 
       h1 {
-        font-size: 1.8rem;
-        line-height: 2.2rem;
-        margin-bottom: .3rem;
+        @apply text-3xl leading-normal overflow-hidden text-ellipsis whitespace-nowrap;
       }
     }
   }

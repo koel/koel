@@ -6,6 +6,7 @@ use App\Models\Album;
 use App\Services\MediaMetadataService;
 use Mockery;
 use Mockery\MockInterface;
+use Tests\TestCase;
 
 class AlbumThumbnailTest extends TestCase
 {
@@ -19,7 +20,7 @@ class AlbumThumbnailTest extends TestCase
     }
 
     /** @return array<mixed> */
-    public function provideAlbumThumbnailData(): array
+    public static function provideAlbumThumbnailData(): array
     {
         return [['http://localhost/img/covers/foo_thumbnail.jpg'], [null]];
     }
@@ -27,7 +28,6 @@ class AlbumThumbnailTest extends TestCase
     /** @dataProvider provideAlbumThumbnailData */
     public function testGetAlbumThumbnail(?string $thumbnailUrl): void
     {
-        /** @var Album $createdAlbum */
         $createdAlbum = Album::factory()->create();
 
         $this->mediaMetadataService
@@ -38,7 +38,7 @@ class AlbumThumbnailTest extends TestCase
             }))
             ->andReturn($thumbnailUrl);
 
-        $response = $this->getAs("api/album/{$createdAlbum->id}/thumbnail");
+        $response = $this->getAs("api/albums/{$createdAlbum->id}/thumbnail");
         $response->assertJson(['thumbnailUrl' => $thumbnailUrl]);
     }
 }

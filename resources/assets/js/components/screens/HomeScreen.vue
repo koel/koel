@@ -1,45 +1,45 @@
 <template>
-  <section id="homeWrapper">
-    <ScreenHeader layout="collapsed">{{ greeting }}</ScreenHeader>
+  <ScreenBase id="homeWrapper">
+    <template #header>
+      <ScreenHeader layout="collapsed">{{ greeting }}</ScreenHeader>
+    </template>
 
-    <div v-koel-overflow-fade class="main-scroll-wrap" @scroll="scrolling">
-      <ScreenEmptyState v-if="libraryEmpty">
-        <template #icon>
-          <Icon :icon="faVolumeOff" />
-        </template>
-        No songs found.
-        <span class="secondary d-block">
-          {{ isAdmin ? 'Have you set up your library yet?' : 'Contact your administrator to set up your library.' }}
-        </span>
-      </ScreenEmptyState>
-
-      <template v-else>
-        <div class="two-cols">
-          <MostPlayedSongs data-testid="most-played-songs" :loading="loading" />
-          <RecentlyPlayedSongs data-testid="recently-played-songs" :loading="loading" />
-        </div>
-
-        <div class="two-cols">
-          <RecentlyAddedAlbums data-testid="recently-added-albums" :loading="loading" />
-          <RecentlyAddedSongs data-testid="recently-added-songs" :loading="loading" />
-        </div>
-
-        <MostPlayedArtists data-testid="most-played-artists" :loading="loading" />
-        <MostPlayedAlbums data-testid="most-played-albums" :loading="loading" />
-
-        <ToTopButton />
+    <ScreenEmptyState v-if="libraryEmpty">
+      <template #icon>
+        <Icon :icon="faVolumeOff" />
       </template>
+      No songs found.
+      <span class="secondary d-block">
+        {{ isAdmin ? 'Have you set up your library yet?' : 'Contact your administrator to set up your library.' }}
+      </span>
+    </ScreenEmptyState>
+
+    <div v-else class="space-y-12">
+      <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-8 md:gap-4">
+        <MostPlayedSongs :loading="loading" data-testid="most-played-songs" />
+        <RecentlyPlayedSongs :loading="loading" data-testid="recently-played-songs" />
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-8 md:gap-4">
+        <RecentlyAddedAlbums :loading="loading" data-testid="recently-added-albums" />
+        <RecentlyAddedSongs :loading="loading" data-testid="recently-added-songs" />
+      </div>
+
+      <MostPlayedArtists :loading="loading" data-testid="most-played-artists" />
+      <MostPlayedAlbums :loading="loading" data-testid="most-played-albums" />
+
+      <BtnScrollToTop />
     </div>
-  </section>
+  </ScreenBase>
 </template>
 
 <script lang="ts" setup>
 import { faVolumeOff } from '@fortawesome/free-solid-svg-icons'
 import { sample } from 'lodash'
 import { computed, ref } from 'vue'
-import { eventBus, logger, noop } from '@/utils'
+import { eventBus } from '@/utils'
 import { commonStore, overviewStore, userStore } from '@/stores'
-import { useAuthorization, useDialogBox, useInfiniteScroll, useRouter } from '@/composables'
+import { useAuthorization, useErrorHandler, useRouter } from '@/composables'
 
 import MostPlayedSongs from '@/components/screens/home/MostPlayedSongs.vue'
 import RecentlyPlayedSongs from '@/components/screens/home/RecentlyPlayedSongs.vue'
@@ -49,10 +49,10 @@ import MostPlayedArtists from '@/components/screens/home/MostPlayedArtists.vue'
 import MostPlayedAlbums from '@/components/screens/home/MostPlayedAlbums.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
+import BtnScrollToTop from '@/components/ui/BtnScrollToTop.vue'
+import ScreenBase from '@/components/screens/ScreenBase.vue'
 
-const { ToTopButton, scrolling } = useInfiniteScroll(() => noop())
 const { isAdmin } = useAuthorization()
-const { showErrorDialog } = useDialogBox()
 
 const greetings = [
   'Oh hai!',
@@ -72,68 +72,21 @@ const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 const loading = ref(false)
 let initialized = false
 
-eventBus.on('SONGS_DELETED', () => overviewStore.refresh())
-  .on('SONGS_UPDATED', () => overviewStore.refresh())
+eventBus.on('SONGS_DELETED', () => overviewStore.fetch())
+  .on('SONGS_UPDATED', () => overviewStore.fetch())
+  .on('SONG_UPLOADED', () => overviewStore.fetch())
 
 useRouter().onScreenActivated('Home', async () => {
   if (!initialized) {
     loading.value = true
     try {
-      await overviewStore.init()
+      await overviewStore.fetch()
       initialized = true
-    } catch (e) {
-      showErrorDialog('Failed to load home screen data. Please try again.', 'Error')
-      logger.error(e)
+    } catch (error: unknown) {
+      useErrorHandler('dialog').handleHttpError(error)
     } finally {
       loading.value = false
     }
   }
 })
 </script>
-
-<style lang="scss">
-#homeWrapper {
-  .two-cols {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-gap: .7em 1em;
-  }
-
-  .recent {
-    h1 button {
-      float: right;
-      padding: 6px 10px;
-      margin-top: -3px;
-    }
-  }
-
-  ol {
-    display: grid;
-    grid-gap: .7em 1em;
-    align-content: start;
-  }
-
-  .main-scroll-wrap {
-    section:not(:last-of-type) {
-      margin-bottom: 48px;
-    }
-
-    h1 {
-      font-size: 1.4rem;
-      margin: 0 0 1.8rem;
-      font-weight: var(--font-weight-thin);
-    }
-  }
-
-  li {
-    overflow: hidden;
-    padding: 1px; // make space for focus outline
-  }
-
-  @media only screen and (max-width: 768px) {
-    .two-cols {
-      grid-template-columns: 1fr;
-    }
-  }
-}
-</style>

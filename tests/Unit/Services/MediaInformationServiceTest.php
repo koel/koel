@@ -4,13 +4,12 @@ namespace Tests\Unit\Services;
 
 use App\Models\Album;
 use App\Models\Artist;
+use App\Services\Contracts\MusicEncyclopedia;
 use App\Services\LastfmService;
 use App\Services\MediaInformationService;
 use App\Services\MediaMetadataService;
-use App\Services\MusicEncyclopedia;
 use App\Values\AlbumInformation;
 use App\Values\ArtistInformation;
-use Illuminate\Cache\Repository as Cache;
 use Mockery;
 use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
@@ -29,11 +28,7 @@ class MediaInformationServiceTest extends TestCase
         $this->encyclopedia = Mockery::mock(LastfmService::class);
         $this->mediaMetadataService = Mockery::mock(MediaMetadataService::class);
 
-        $this->mediaInformationService = new MediaInformationService(
-            $this->encyclopedia,
-            $this->mediaMetadataService,
-            app(Cache::class)
-        );
+        $this->mediaInformationService = new MediaInformationService($this->encyclopedia, $this->mediaMetadataService);
     }
 
     public function testGetAlbumInformation(): void

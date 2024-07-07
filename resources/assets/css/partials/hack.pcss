@@ -1,0 +1,71 @@
+/**
+ * ALL YOUR DIRTY UGLY HACKS ARE BELONG TO US.
+ */
+
+/**
+ * Make elements draggable in old WebKit
+ */
+[draggable] {
+  @apply select-none;
+}
+
+/**
+ * Make webkit scrollbars a bit more good looking on non-mac systems.
+ */
+html.non-mac {
+  ::-webkit-scrollbar {
+    @apply w-[10px] h-[10px];
+  }
+
+  ::-webkit-scrollbar-button {
+    @apply w-0 h-0;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-k-bg-primary border border-white/20 rounded-[50px];
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-[#303030];
+  }
+
+  ::-webkit-scrollbar-thumb:active {
+    @apply bg-k-bg-primary;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-k-bg-primary border-0 rounded-[50px];
+  }
+
+  ::-webkit-scrollbar-track:hover {
+    @apply bg-k-bg-primary;
+  }
+
+  ::-webkit-scrollbar-track:active {
+    @apply bg-[#333];
+  }
+
+  ::-webkit-scrollbar-corner {
+    @apply bg-transparent;
+  }
+}
+
+/**
+ * "Fix" the autofill color by applying an inset box-shadow, since user agent style sheets
+ * of many browsers use !important in their :-webkit-autofill style declarations,
+ * making them non-overridable by normal means.
+ * @see https://developer.mozilla.org/en-US/docs/Web/CSS/:autofill
+ */
+input:autofill,
+input:autofill:hover,
+input:autofill:focus,
+textarea:autofill,
+textarea:autofill:hover,
+textarea:autofill:focus,
+select:autofill,
+select:autofill:hover,
+select:autofill:focus {
+  -webkit-text-fill-color: var(--color-text-input);
+  box-shadow: 0 0 0 1000px var(--color-bg-input) inset;
+  transition: background-color 9999s ease-in-out 0s;
+}

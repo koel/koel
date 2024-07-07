@@ -2,10 +2,11 @@
 
 namespace Tests\Feature\ObjectStorage;
 
-use App\Events\LibraryChanged;
 use App\Models\Song;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Tests\Feature\TestCase;
+use Tests\TestCase;
+
+use function Tests\create_admin;
 
 class S3Test extends TestCase
 {
@@ -16,6 +17,9 @@ class S3Test extends TestCase
         parent::setUp();
 
         $this->disableMiddlewareForAllTests();
+
+        // ensure there's a default admin user
+        create_admin();
     }
 
     public function testStoringASong(): void
@@ -31,7 +35,7 @@ class S3Test extends TestCase
                 'duration' => 10,
                 'track' => 5,
             ],
-        ]);
+        ])->assertSuccessful();
 
         /** @var Song $song */
         $song = Song::query()->where('path', 's3://koel/sample.mp3')->firstOrFail();
@@ -46,8 +50,6 @@ class S3Test extends TestCase
 
     public function testRemovingASong(): void
     {
-        $this->expectsEvents(LibraryChanged::class);
-
         Song::factory()->create([
             'path' => 's3://koel/sample.mp3',
         ]);

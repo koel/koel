@@ -40,15 +40,15 @@ export const themeStore = {
     this.state.themes.forEach(t => (t.selected = t.id === theme.id))
   },
 
-  getThemeById (id: string) {
+  getThemeById (id: Theme['id']) {
     return this.state.themes.find(theme => theme.id === id)
   },
 
-  getDefaultTheme (): Theme {
+  getDefaultTheme () {
     return this.getThemeById('classic')!
   },
 
-  applyThemeFromPreference (): void {
+  applyThemeFromPreference () {
     const theme = preferences.theme
       ? (this.getThemeById(preferences.theme) ?? this.getDefaultTheme())
       : this.getDefaultTheme()

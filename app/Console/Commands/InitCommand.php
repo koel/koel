@@ -2,16 +2,17 @@
 
 namespace App\Console\Commands;
 
-use App\Console\Commands\Traits\AskForPassword;
+use App\Console\Commands\Concerns\AskForPassword;
 use App\Exceptions\InstallationFailedException;
 use App\Models\Setting;
 use App\Models\User;
-use App\Services\MediaCacheService;
 use Illuminate\Console\Command;
-use Illuminate\Contracts\Console\Kernel as Artisan;
 use Illuminate\Contracts\Hashing\Hasher as Hash;
 use Illuminate\Database\DatabaseManager as DB;
 use Illuminate\Encryption\Encrypter;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Str;
 use Jackiedo\DotenvEditor\DotenvEditor;
 use Psr\Log\LoggerInterface;
@@ -26,18 +27,16 @@ class InitCommand extends Command
     private const DEFAULT_ADMIN_PASSWORD = 'KoelIsCool';
     private const NON_INTERACTION_MAX_DATABASE_ATTEMPT_COUNT = 10;
 
-    protected $signature = 'koel:init {--no-assets}';
+    protected $signature = 'koel:init {--no-assets : Do not compile front-end assets}';
     protected $description = 'Install or upgrade Koel';
 
     private bool $adminSeeded = false;
 
     public function __construct(
-        private MediaCacheService $mediaCacheService,
-        private Artisan $artisan,
-        private Hash $hash,
-        private DotenvEditor $dotenvEditor,
-        private DB $db,
-        private LoggerInterface $logger
+        private readonly Hash $hash,
+        private readonly DotenvEditor $dotenvEditor,
+        private readonly DB $db,
+        private readonly LoggerInterface $logger
     ) {
         parent::__construct();
     }
@@ -57,6 +56,7 @@ class InitCommand extends Command
 
         try {
             $this->clearCaches();
+            $this->composerInstall();
             $this->loadEnvFile();
             $this->maybeGenerateAppKey();
             $this->maybeSetUpDatabase();
@@ -70,7 +70,7 @@ class InitCommand extends Command
 
             $this->components->error("Oops! Koel installation or upgrade didn't finish successfully.");
             $this->components->error('Please check the error log at storage/logs/laravel.log and try again.');
-            $this->components->error('You can also visit ' . config('koel.misc.docs_url') . ' for other options.');
+            $this->components->error('For further troubleshooting, visit https://docs.koel.dev/troubleshooting.');
             $this->components->error('😥 Sorry for this. You deserve better.');
 
             return self::FAILURE;
@@ -86,8 +86,8 @@ class InitCommand extends Command
             );
         }
 
-        if (Setting::get('media_path')) {
-            $this->info('You can also scan for media now with `php artisan koel:sync`.');
+        if (!Setting::get('media_path')) {
+            $this->info('You can set up the storage with `php artisan koel:storage`.');
         }
 
         $this->info('Again, visit 📙 ' . config('koel.misc.docs_url') . ' for more tips and tweaks.');
@@ -105,20 +105,27 @@ class InitCommand extends Command
 
     private function clearCaches(): void
     {
-        $this->components->task('Clearing caches', function (): void {
-            $this->artisan->call('config:clear');
-            $this->artisan->call('cache:clear');
+        $this->components->task('Clearing caches', static function (): void {
+            Artisan::call('config:clear', ['--quiet' => true]);
+            Artisan::call('cache:clear', ['--quiet' => true]);
+        });
+    }
+
+    private function composerInstall(): void
+    {
+        $this->components->task('Installing packages (be patient!)', static function (): void {
+            self::runOkOrThrow('composer install --no-interaction --quiet');
         });
     }
 
     private function loadEnvFile(): void
     {
-        if (!file_exists(base_path('.env'))) {
+        if (!File::exists(base_path('.env'))) {
             $this->components->task('Copying .env file', static function (): void {
-                copy(base_path('.env.example'), base_path('.env'));
+                File::copy(base_path('.env.example'), base_path('.env'));
             });
         } else {
-            $this->components->info('.env file exists -- skipping');
+            $this->components->task('.env file exists -- skipping');
         }
 
         $this->dotenvEditor->load(base_path('.env'));
@@ -137,8 +144,7 @@ class InitCommand extends Command
             }
         });
 
-        $this->newLine();
-        $this->components->info('Using app key: ' . Str::limit($key, 16));
+        $this->components->task('Using app key: ' . Str::limit($key, 16));
     }
 
     /**
@@ -174,10 +180,7 @@ class InitCommand extends Command
             $config['DB_PASSWORD'] = (string) $this->ask('DB password');
         }
 
-        foreach ($config as $key => $value) {
-            $this->dotenvEditor->setKey($key, $value);
-        }
-
+        $this->dotenvEditor->setKeys($config);
         $this->dotenvEditor->save();
 
         // Set the config so that the next DB attempt uses refreshed credentials
@@ -220,12 +223,11 @@ class InitCommand extends Command
         if (!User::query()->count()) {
             $this->setUpAdminAccount();
 
-            $this->components->task('Seeding data', function (): void {
-                $this->artisan->call('db:seed', ['--force' => true]);
+            $this->components->task('Seeding data', static function (): void {
+                Artisan::call('db:seed', ['--force' => true, '--quiet' => true]);
             });
         } else {
-            $this->newLine();
-            $this->components->info('Data already seeded -- skipping');
+            $this->components->task('Data already seeded -- skipping');
         }
     }
 
@@ -246,8 +248,9 @@ class InitCommand extends Command
 
             try {
                 // Make sure the config cache is cleared before another attempt.
-                $this->artisan->call('config:clear');
-                $this->db->reconnect()->getPdo();
+                Artisan::call('config:clear', ['--quiet' => true]);
+                $this->db->reconnect();
+                $this->db->getDoctrineSchemaManager()->listTables();
 
                 break;
             } catch (Throwable $e) {
@@ -274,12 +277,9 @@ class InitCommand extends Command
 
     private function migrateDatabase(): void
     {
-        $this->components->task('Migrating database', function (): void {
-            $this->artisan->call('migrate', ['--force' => true]);
+        $this->components->task('Migrating database', static function (): void {
+            Artisan::call('migrate', ['--force' => true, '--quiet' => true]);
         });
-
-        // Clear the media cache, just in case we did any media-related migration
-        $this->mediaCacheService->clear();
     }
 
     private function maybeSetMediaPath(): void
@@ -295,7 +295,8 @@ class InitCommand extends Command
         }
 
         $this->newLine();
-        $this->info('The absolute path to your media directory. If this is skipped (left blank) now, you can set it later via the web interface.'); // @phpcs-ignore-line
+        $this->info('The absolute path to your media directory. You can leave it blank and set it later via the web interface.'); // @phpcs-ignore-line
+        $this->info('If you plan to use Koel with a cloud provider (S3 or Dropbox), you can also skip this.');
 
         while (true) {
             $path = $this->ask('Media path', config('koel.media_path'));
@@ -320,16 +321,18 @@ class InitCommand extends Command
             return;
         }
 
+        $this->newLine();
         $this->components->info('Now to front-end stuff');
-
-        $runOkOrThrow = static function (string $command): void {
-            passthru($command, $status);
-            throw_if((bool) $status, InstallationFailedException::class);
-        };
-
-        $runOkOrThrow('yarn install --colors');
+        $this->components->info('Installing npm dependencies');
+        $this->newLine();
+        self::runOkOrThrow('yarn install --colors');
         $this->components->info('Compiling assets');
-        $runOkOrThrow('yarn build');
+        self::runOkOrThrow('yarn run --colors build');
+    }
+
+    private static function runOkOrThrow(string $command): void
+    {
+        throw_unless(Process::forever()->run($command)->successful(), InstallationFailedException::class);
     }
 
     private function setMediaPathFromEnvFile(): void
@@ -349,7 +352,7 @@ class InitCommand extends Command
 
     private static function isValidMediaPath(string $path): bool
     {
-        return is_dir($path) && is_readable($path);
+        return File::isDirectory($path) && File::isReadable($path);
     }
 
     /**

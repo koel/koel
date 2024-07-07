@@ -1,0 +1,19 @@
+// Vitest Snapshot v1
+
+exports[`renders the modal 1`] = `
+<div data-v-886145d2="" class="collaboration-modal max-w-[640px]" tabindex="0" data-testid="playlist-collaboration">
+  <header data-v-886145d2="">
+    <h1 data-v-886145d2="">Playlist Collaboration</h1>
+  </header>
+  <main data-v-886145d2="">
+    <p data-v-886145d2="" class="text-k-text-secondary"> Collaborative playlists allow multiple users to contribute. <br data-v-886145d2=""> Note: Songs added to a collaborative playlist are made accessible to all users, and you cannot mark a song as private if it’s still part of a collaborative playlist. </p>
+    <section data-v-886145d2="" class="space-y-5">
+      <h2 data-v-886145d2="" class="flex text-xl mt-6 mb-1 items-center"><span data-v-886145d2="" class="flex-1">Current Collaborators</span>
+        <!--v-if-->
+      </h2>
+      <div data-v-886145d2="" class="collaborators-wrapper overflow-auto"><br data-v-886145d2="" data-testid="CollaboratorList" playlist="[object Object]"></div>
+    </section>
+  </main>
+  <footer data-v-886145d2=""><button data-v-8943c846="" data-v-886145d2="" class="text-base text-k-text-primary bg-k-primary px-4 py-2.5 rounded cursor-pointer" type="button">Close</button></footer>
+</div>
+`;

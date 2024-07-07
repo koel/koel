@@ -1,38 +1,32 @@
 <template>
-  <div class="extra-controls" data-testid="other-controls">
-    <div class="wrapper">
-      <button
-        v-koel-tooltip.top
-        class="visualizer-btn"
+  <div class="extra-controls flex justify-end relative md:w-[420px] px-6 md:px-8 py-0">
+    <div class="flex justify-end items-center gap-6">
+      <FooterQueueIcon />
+
+      <FooterBtn
+        class="visualizer-btn hidden md:!block"
         data-testid="toggle-visualizer-btn"
         title="Toggle visualizer"
         @click.prevent="toggleVisualizer"
       >
-        <Icon :icon="faBolt" />
-      </button>
+        <Icon :icon="faBolt" fixed-width />
+      </FooterBtn>
 
-      <button
+      <FooterBtn
         v-if="useEqualizer"
-        v-koel-tooltip.top
         :class="{ active: showEqualizer }"
         class="equalizer"
         title="Show equalizer"
-        type="button"
         @click.prevent="showEqualizer"
       >
-        <Icon :icon="faSliders" />
-      </button>
+        <Icon :icon="faSliders" fixed-width />
+      </FooterBtn>
 
-      <Volume />
+      <VolumeSlider />
 
-      <button
-        v-if="isFullscreenSupported()"
-        v-koel-tooltip.top
-        :title="fullscreenButtonTitle"
-        @click.prevent="toggleFullscreen"
-      >
-        <Icon :icon="isFullscreen ? faCompress : faExpand" />
-      </button>
+      <FooterBtn v-if="isFullscreenSupported()" :title="fullscreenButtonTitle" @click.prevent="toggleFullscreen">
+        <Icon :icon="isFullscreen ? faCompress : faExpand" fixed-width />
+      </FooterBtn>
     </div>
   </div>
 </template>
@@ -43,7 +37,9 @@ import { computed, onMounted, ref } from 'vue'
 import { eventBus, isAudioContextSupported as useEqualizer, isFullscreenSupported } from '@/utils'
 import { useRouter } from '@/composables'
 
-import Volume from '@/components/ui/Volume.vue'
+import VolumeSlider from '@/components/ui/VolumeSlider.vue'
+import FooterBtn from '@/components/layout/app-footer/FooterButton.vue'
+import FooterQueueIcon from '@/components/layout/app-footer/FooterQueueButton.vue'
 
 const isFullscreen = ref(false)
 const fullscreenButtonTitle = computed(() => (isFullscreen.value ? 'Exit fullscreen mode' : 'Enter fullscreen mode'))
@@ -52,7 +48,6 @@ const { go, isCurrentScreen } = useRouter()
 
 const showEqualizer = () => eventBus.emit('MODAL_SHOW_EQUALIZER')
 const toggleFullscreen = () => eventBus.emit('FULLSCREEN_TOGGLE')
-
 const toggleVisualizer = () => go(isCurrentScreen('Visualizer') ? -1 : 'visualizer')
 
 onMounted(() => {
@@ -62,46 +57,15 @@ onMounted(() => {
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .extra-controls {
-  display: flex;
-  justify-content: flex-end;
-  position: relative;
-  width: 320px;
-  color: var(--color-text-secondary);
-  padding: 0 2rem;
-
   :fullscreen & {
-    padding-right: 0;
-  }
-
-  .wrapper {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 1.5rem;
-  }
-
-  button {
-    color: currentColor;
-    transition: color 0.2s ease-in-out;
-
-    &:hover {
-      color: var(--color-text-primary);
-    }
-  }
-
-  @media only screen and (max-width: 768px) {
-    width: auto;
-
-    .visualizer-btn {
-      display: none;
-    }
+    @apply pr-0;
   }
 
   :fullscreen & {
     .visualizer-btn {
-      display: none;
+      @apply hidden;
     }
   }
 }

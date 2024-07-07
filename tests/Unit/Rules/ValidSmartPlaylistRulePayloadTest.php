@@ -9,7 +9,7 @@ use Throwable;
 class ValidSmartPlaylistRulePayloadTest extends TestCase
 {
     /** @return array<mixed> */
-    public function provideInvalidPayloads(): array
+    public static function provideInvalidPayloads(): array
     {
         return [
             'invalid format' => ['foo'],
@@ -94,12 +94,13 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
     /** @dataProvider provideInvalidPayloads */
     public function testInvalidCases($value): void
     {
-        self::expectException(Throwable::class);
-        self::assertFalse((new ValidSmartPlaylistRulePayload())->passes('rules', $value));
+        $this->expectException(Throwable::class);
+        (new ValidSmartPlaylistRulePayload())->validate('rules', $value, static fn ($foo) => $foo);
+        self::addToAssertionCount(1);
     }
 
     /** @return array<mixed> */
-    public function provideValidPayloads(): array
+    public static function provideValidPayloads(): array
     {
         return [
             'one rule' => [
@@ -182,6 +183,7 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
     /** @dataProvider provideValidPayloads */
     public function testValidCases($value): void
     {
-        self::assertTrue((new ValidSmartPlaylistRulePayload())->passes('rules', $value));
+        (new ValidSmartPlaylistRulePayload())->validate('rules', $value, static fn ($foo) => $foo);
+        self::addToAssertionCount(1);
     }
 }

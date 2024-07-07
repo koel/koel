@@ -1,36 +1,26 @@
 <template>
-  <div class="sponsors">
+  <div
+    class="flex items-center flex-wrap justify-center gap-x-2 gap-y-4 p-4 bg-black/10
+    rounded-md border border-white/5"
+  >
     <a
       v-for="sponsor in sponsors"
       :key="sponsor.url"
       :href="sponsor.url"
       :title="sponsor.description"
+      class="opacity-70 hover:opacity-100"
       target="_blank"
     >
-      <img :alt="sponsor.description" :src="sponsor.logo.src" :style="sponsor.logo.style">
+      <img
+        :alt="sponsor.description"
+        :src="sponsor.logo.src"
+        :style="sponsor.logo.style"
+        class="brightness-[10] h-[32px]"
+      >
     </a>
   </div>
 </template>
 
 <script lang="ts" setup>
-import sponsors from '@/sponsors'</script>
-
-<style lang="scss" scoped>
-.sponsors {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: center;
-  row-gap: 4px;
-  column-gap: 16px;
-  padding: 8px;
-  background: rgba(0, 0, 0, .1);
-  border-radius: 5px;
-  border: 1px solid rgba(255, 255, 255, .05);
-
-  img {
-    filter: brightness(10);
-    height: 32px;
-  }
-}
-</style>
+import sponsors from '@/sponsors'
+</script>

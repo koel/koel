@@ -2,22 +2,10 @@ import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { screen } from '@testing-library/vue'
 import { faHome } from '@fortawesome/free-solid-svg-icons'
-import SidebarItem from './SidebarItem.vue'
+import Component from './SidebarItem.vue'
+import { eventBus } from '@/utils'
 
 new class extends UnitTestCase {
-  private renderComponent () {
-    return this.render(SidebarItem, {
-      props: {
-        icon: faHome,
-        href: '#',
-        screen: 'Home'
-      },
-      slots: {
-        default: 'Home'
-      }
-    })
-  }
-
   protected test () {
     it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
 
@@ -29,7 +17,28 @@ new class extends UnitTestCase {
         path: '_'
       })
 
-      expect(screen.getByRole('link').classList.contains('active')).toBe(true)
+      expect(screen.getByTestId('sidebar-item').classList.contains('current')).toBe(true)
+    })
+
+    it ('emits the sidebar toggle event when clicked', async () => {
+      const mock  = this.mock(eventBus, 'emit')
+      this.renderComponent()
+      await this.user.click(screen.getByTestId('sidebar-item'))
+
+      expect(mock).toHaveBeenCalledWith('TOGGLE_SIDEBAR')
+    })
+  }
+
+  private renderComponent () {
+    return this.render(Component, {
+      props: {
+        icon: faHome,
+        href: '#',
+        screen: 'Home'
+      },
+      slots: {
+        default: 'Home'
+      }
     })
   }
 }

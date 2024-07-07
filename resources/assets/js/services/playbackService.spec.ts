@@ -18,29 +18,8 @@ import {
 } from '@/stores'
 
 new class extends UnitTestCase {
-  private setupEnvironment () {
-    document.body.innerHTML = `
-  <div class="plyr">
-    <audio crossorigin="anonymous" controls/>
-  </div>
-  `
-
-    window.AudioContext = vi.fn().mockImplementation(() => ({
-      createMediaElementSource: vi.fn(noop)
-    }))
-  }
-
   protected beforeEach () {
     super.beforeEach(() => this.setupEnvironment())
-  }
-
-  private setCurrentSong (song?: Song) {
-    song = reactive(song || factory<Song>('song', {
-      playback_state: 'Playing'
-    }))
-
-    queueStore.state.songs = reactive([song])
-    return song
   }
 
   protected test () {
@@ -62,7 +41,7 @@ new class extends UnitTestCase {
     ])(
       'when playCountRegistered is %s, isTranscoding is %s, current media time is %d, media duration is %d, then registerPlay() should be call %d times',
       (playCountRegistered, isTranscoding, currentTime, duration, numberOfCalls) => {
-        const song = factory<Song>('song', {
+        const song = factory('song', {
           play_count_registered: playCountRegistered,
           playback_state: 'Playing'
         })
@@ -98,12 +77,12 @@ new class extends UnitTestCase {
     })
 
     it('scrobbles if current song ends', () => {
-      commonStore.state.use_last_fm = true
-      userStore.state.current = reactive(factory<User>('user', {
+      commonStore.state.uses_last_fm = true
+      userStore.state.current = factory('user', {
         preferences: {
           lastfm_session_key: 'foo'
         }
-      }))
+      })
 
       playbackService.init(document.querySelector('.plyr')!)
       const scrobbleMock = this.mock(songStore, 'scrobble')
@@ -114,8 +93,8 @@ new class extends UnitTestCase {
     it.each<[RepeatMode, number, number]>([['REPEAT_ONE', 1, 0], ['NO_REPEAT', 0, 1], ['REPEAT_ALL', 0, 1]])(
       'when song ends, if repeat mode is %s then restart() is called %d times and playNext() is called %d times',
       (repeatMode, restartCalls, playNextCalls) => {
-        commonStore.state.use_last_fm = false // so that no scrobbling is made unnecessarily
-        preferences.repeatMode = repeatMode
+        commonStore.state.uses_last_fm = false // so that no scrobbling is made unnecessarily
+        preferences.repeat_mode = repeatMode
         playbackService.init(document.querySelector('.plyr')!)
         const restartMock = this.mock(playbackService, 'restart')
         const playNextMock = this.mock(playbackService, 'playNext')
@@ -136,7 +115,7 @@ new class extends UnitTestCase {
       (preloaded, isTranscoding, currentTime, duration, numberOfCalls) => {
         this.mock(playbackService, 'registerPlay')
 
-        this.setReadOnlyProperty(queueStore, 'next', factory<Song>('song', { preloaded }))
+        this.setReadOnlyProperty(queueStore, 'next', factory('song', { preloaded }))
         this.setReadOnlyProperty(playbackService, 'isTranscoding', isTranscoding)
         playbackService.init(document.querySelector('.plyr')!)
 
@@ -157,7 +136,7 @@ new class extends UnitTestCase {
     it('registers play', () => {
       const recentlyPlayedStoreAddMock = this.mock(recentlyPlayedStore, 'add')
       const registerPlayMock = this.mock(songStore, 'registerPlay')
-      const song = factory<Song>('song')
+      const song = factory('song')
 
       playbackService.registerPlay(song)
 
@@ -176,7 +155,7 @@ new class extends UnitTestCase {
 
       const createElementMock = this.mock(document, 'createElement', audioElement)
       this.mock(songStore, 'getSourceUrl').mockReturnValue('/foo?token=o5afd')
-      const song = factory<Song>('song')
+      const song = factory('song')
 
       playbackService.preload(song)
 
@@ -219,10 +198,10 @@ new class extends UnitTestCase {
       ['REPEAT_ONE', 'NO_REPEAT']
     ])('it switches from repeat mode %s to repeat mode %s', (fromMode, toMode) => {
       playbackService.init(document.querySelector('.plyr')!)
-      preferences.repeatMode = fromMode
-      playbackService.changeRepeatMode()
+      preferences.repeat_mode = fromMode
+      playbackService.rotateRepeatMode()
 
-      expect(preferences.repeatMode).toEqual(toMode)
+      expect(preferences.repeat_mode).toEqual(toMode)
     })
 
     it('restarts song if playPrev is triggered after 5 seconds', async () => {
@@ -243,7 +222,7 @@ new class extends UnitTestCase {
       const stopMock = this.mock(playbackService, 'stop')
       this.setReadOnlyProperty(playbackService.player!.media, 'currentTime', 4)
       this.setReadOnlyProperty(playbackService, 'previous', undefined)
-      preferences.repeatMode = 'NO_REPEAT'
+      preferences.repeat_mode = 'NO_REPEAT'
 
       await playbackService.playPrev()
 
@@ -267,7 +246,7 @@ new class extends UnitTestCase {
       playbackService.init(document.querySelector('.plyr')!)
 
       this.setReadOnlyProperty(playbackService, 'next', undefined)
-      preferences.repeatMode = 'NO_REPEAT'
+      preferences.repeat_mode = 'NO_REPEAT'
       const stopMock = this.mock(playbackService, 'stop')
 
       await playbackService.playNext()
@@ -319,7 +298,7 @@ new class extends UnitTestCase {
     })
 
     it('resumes playback', async () => {
-      const song = this.setCurrentSong(factory<Song>('song', {
+      const song = this.setCurrentSong(factory('song', {
         playback_state: 'Paused'
       }))
 
@@ -336,7 +315,7 @@ new class extends UnitTestCase {
 
     it('plays first in queue if toggled when there is no current song', async () => {
       playbackService.init(document.querySelector('.plyr')!)
-      queueStore.state.songs = []
+      queueStore.state.playables = []
       const playFirstInQueueMock = this.mock(playbackService, 'playFirstInQueue')
 
       await playbackService.toggle()
@@ -350,7 +329,7 @@ new class extends UnitTestCase {
     ])('%ss playback if toggled when current song playback state is %s', async (action, playbackState) => {
       playbackService.init(document.querySelector('.plyr')!)
 
-      this.setCurrentSong(factory<Song>('song', { playback_state: playbackState }))
+      this.setCurrentSong(factory('song', { playback_state: playbackState }))
       const actionMock = this.mock(playbackService, action)
       await playbackService.toggle()
 
@@ -360,7 +339,7 @@ new class extends UnitTestCase {
     it('queues and plays songs without shuffling', async () => {
       playbackService.init(document.querySelector('.plyr')!)
 
-      const songs = factory<Song>('song', 5)
+      const songs = factory('song', 5)
       const replaceQueueMock = this.mock(queueStore, 'replaceQueueWith')
       const playMock = this.mock(playbackService, 'play')
       const firstSongInQueue = songs[0]
@@ -378,8 +357,8 @@ new class extends UnitTestCase {
     it('queues and plays songs with shuffling', async () => {
       playbackService.init(document.querySelector('.plyr')!)
 
-      const songs = factory<Song>('song', 5)
-      const shuffledSongs = factory<Song>('song', 5)
+      const songs = factory('song', 5)
+      const shuffledSongs = factory('song', 5)
       const replaceQueueMock = this.mock(queueStore, 'replaceQueueWith')
       const playMock = this.mock(playbackService, 'play')
       const firstSongInQueue = songs[0]
@@ -397,8 +376,8 @@ new class extends UnitTestCase {
     it('plays first song in queue', async () => {
       playbackService.init(document.querySelector('.plyr')!)
 
-      const songs = factory<Song>('song', 5)
-      queueStore.state.songs = songs
+      const songs = factory('song', 5)
+      queueStore.state.playables = songs
       this.setReadOnlyProperty(queueStore, 'first', songs[0])
       const playMock = this.mock(playbackService, 'play')
 
@@ -406,5 +385,26 @@ new class extends UnitTestCase {
 
       expect(playMock).toHaveBeenCalledWith(songs[0])
     })
+  }
+
+  private setupEnvironment () {
+    document.body.innerHTML = `
+  <div class="plyr">
+    <audio crossorigin="anonymous" controls/>
+  </div>
+  `
+
+    window.AudioContext = vi.fn().mockImplementation(() => ({
+      createMediaElementSource: vi.fn(noop)
+    }))
+  }
+
+  private setCurrentSong (song?: Playable) {
+    song = reactive(song || factory('song', {
+      playback_state: 'Playing'
+    }))
+
+    queueStore.state.playables = reactive([song])
+    return song
   }
 }

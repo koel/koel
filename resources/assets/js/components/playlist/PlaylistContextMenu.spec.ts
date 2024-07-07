@@ -1,23 +1,18 @@
+import Router from '@/router'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { eventBus } from '@/utils'
 import factory from '@/__tests__/factory'
 import { screen, waitFor } from '@testing-library/vue'
-import { songStore } from '@/stores'
+import { queueStore, songStore, userStore } from '@/stores'
 import { playbackService } from '@/services'
 import { MessageToasterStub } from '@/__tests__/stubs'
 import PlaylistContextMenu from './PlaylistContextMenu.vue'
 
 new class extends UnitTestCase {
-  private async renderComponent (playlist: Playlist) {
-    this.render(PlaylistContextMenu)
-    eventBus.emit('PLAYLIST_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, playlist)
-    await this.tick(2)
-  }
-
   protected test () {
     it('edits a standard playlist', async () => {
-      const playlist = factory<Playlist>('playlist')
+      const playlist = factory('playlist')
       await this.renderComponent(playlist)
       const emitMock = this.mock(eventBus, 'emit')
 
@@ -27,7 +22,7 @@ new class extends UnitTestCase {
     })
 
     it('edits a smart playlist', async () => {
-      const playlist = factory.states('smart')<Playlist>('playlist')
+      const playlist = factory.states('smart')('playlist')
       await this.renderComponent(playlist)
       const emitMock = this.mock(eventBus, 'emit')
 
@@ -37,7 +32,7 @@ new class extends UnitTestCase {
     })
 
     it('deletes a playlist', async () => {
-      const playlist = factory<Playlist>('playlist')
+      const playlist = factory('playlist')
       await this.renderComponent(playlist)
       const emitMock = this.mock(eventBus, 'emit')
 
@@ -47,11 +42,11 @@ new class extends UnitTestCase {
     })
 
     it('plays', async () => {
-      const playlist = factory<Playlist>('playlist')
-      const songs = factory<Song>('song', 3)
+      const playlist = factory('playlist')
+      const songs = factory('song', 3)
       const fetchMock = this.mock(songStore, 'fetchForPlaylist').mockResolvedValue(songs)
       const queueMock = this.mock(playbackService, 'queueAndPlay')
-      const goMock = this.mock(this.router, 'go')
+      const goMock = this.mock(Router, 'go')
       await this.renderComponent(playlist)
 
       await this.user.click(screen.getByText('Play'))
@@ -64,10 +59,10 @@ new class extends UnitTestCase {
     })
 
     it('warns if attempting to play an empty playlist', async () => {
-      const playlist = factory<Playlist>('playlist')
+      const playlist = factory('playlist')
       const fetchMock = this.mock(songStore, 'fetchForPlaylist').mockResolvedValue([])
       const queueMock = this.mock(playbackService, 'queueAndPlay')
-      const goMock = this.mock(this.router, 'go')
+      const goMock = this.mock(Router, 'go')
       const warnMock = this.mock(MessageToasterStub.value, 'warning')
 
       await this.renderComponent(playlist)
@@ -83,11 +78,11 @@ new class extends UnitTestCase {
     })
 
     it('shuffles', async () => {
-      const playlist = factory<Playlist>('playlist')
-      const songs = factory<Song>('song', 3)
+      const playlist = factory('playlist')
+      const songs = factory('song', 3)
       const fetchMock = this.mock(songStore, 'fetchForPlaylist').mockResolvedValue(songs)
       const queueMock = this.mock(playbackService, 'queueAndPlay')
-      const goMock = this.mock(this.router, 'go')
+      const goMock = this.mock(Router, 'go')
       await this.renderComponent(playlist)
 
       await this.user.click(screen.getByText('Shuffle'))
@@ -100,10 +95,10 @@ new class extends UnitTestCase {
     })
 
     it('warns if attempting to shuffle an empty playlist', async () => {
-      const playlist = factory<Playlist>('playlist')
+      const playlist = factory('playlist')
       const fetchMock = this.mock(songStore, 'fetchForPlaylist').mockResolvedValue([])
       const queueMock = this.mock(playbackService, 'queueAndPlay')
-      const goMock = this.mock(this.router, 'go')
+      const goMock = this.mock(Router, 'go')
       const warnMock = this.mock(MessageToasterStub.value, 'warning')
 
       await this.renderComponent(playlist)
@@ -117,5 +112,55 @@ new class extends UnitTestCase {
         expect(warnMock).toHaveBeenCalledWith('The playlist is empty.')
       })
     })
+
+    it('queues', async () => {
+      const playlist = factory('playlist')
+      const songs = factory('song', 3)
+      const fetchMock = this.mock(songStore, 'fetchForPlaylist').mockResolvedValue(songs)
+      const queueMock = this.mock(queueStore, 'queueAfterCurrent')
+      const toastMock = this.mock(MessageToasterStub.value, 'success')
+      await this.renderComponent(playlist)
+
+      await this.user.click(screen.getByText('Add to Queue'))
+
+      await waitFor(() => {
+        expect(fetchMock).toHaveBeenCalledWith(playlist)
+        expect(queueMock).toHaveBeenCalledWith(songs)
+        expect(toastMock).toHaveBeenCalledWith('Playlist added to queue.')
+      })
+    })
+
+    it('does not have an option to edit or delete if the playlist is not owned by the current user', async () => {
+      const user = factory('user')
+      const playlist = factory('playlist', {
+        user_id: user.id + 1
+      })
+
+      await this.renderComponent(playlist, user)
+
+      expect(screen.queryByText('Edit…')).toBeNull()
+      expect(screen.queryByText('Delete')).toBeNull()
+    })
+
+    it('opens collaboration form', async () => {
+      this.enablePlusEdition()
+      const playlist = factory('playlist')
+      await this.renderComponent(playlist)
+      const emitMock = this.mock(eventBus, 'emit')
+
+      await this.user.click(screen.getByText('Collaborate…'))
+
+      expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_PLAYLIST_COLLABORATION', playlist)
+    })
+  }
+
+  private async renderComponent (playlist: Playlist, user: User | null = null) {
+    userStore.state.current = user || factory('user', {
+      id: playlist.user_id
+    })
+
+    this.render(PlaylistContextMenu)
+    eventBus.emit('PLAYLIST_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, playlist)
+    await this.tick(2)
   }
 }

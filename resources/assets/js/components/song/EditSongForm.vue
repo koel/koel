@@ -1,181 +1,160 @@
 <template>
-  <form @submit.prevent="submit" @keydown.esc="maybeClose">
-    <header>
-      <span class="cover" :style="{ backgroundImage: `url(${coverUrl})` }" />
-      <div class="meta">
+  <form class="max-w-[540px]" @submit.prevent="submit" @keydown.esc="maybeClose">
+    <header class="gap-4">
+      <img :src="coverUrl" alt="" class="w-[84px] aspect-square object-cover object-center rounded-md">
+      <div class="flex-1 flex flex-col justify-center overflow-hidden">
         <h1 :class="{ mixed: !editingOnlyOneSong }">{{ displayedTitle }}</h1>
         <h2
-          data-testid="displayed-artist-name"
           :class="{ mixed: !allSongsAreFromSameArtist && !formData.artist_name }"
+          data-testid="displayed-artist-name"
         >
           {{ displayedArtistName }}
         </h2>
         <h2
-          data-testid="displayed-album-name"
           :class="{ mixed: !allSongsAreInSameAlbum && !formData.album_name }"
+          data-testid="displayed-album-name"
         >
           {{ displayedAlbumName }}
         </h2>
       </div>
     </header>
 
-    <main class="tabs">
-      <div class="clear" role="tablist">
-        <button
+    <Tabs class="mt-4">
+      <TabList>
+        <TabButton
           id="editSongTabDetails"
-          :aria-selected="currentTab === 'details'"
+          :selected="currentTab === 'details'"
           aria-controls="editSongPanelDetails"
-          role="tab"
-          type="button"
-          @click.prevent="currentTab = 'details'"
+          @click="currentTab = 'details'"
         >
           Details
-        </button>
-        <button
+        </TabButton>
+        <TabButton
           v-if="editingOnlyOneSong"
           id="editSongTabLyrics"
-          :aria-selected="currentTab === 'lyrics'"
+          :selected="currentTab === 'lyrics'"
           aria-controls="editSongPanelLyrics"
           data-testid="edit-song-lyrics-tab"
-          role="tab"
-          type="button"
-          @click.prevent="currentTab = 'lyrics'"
+          @click="currentTab = 'lyrics'"
         >
           Lyrics
-        </button>
-      </div>
+        </TabButton>
+      </TabList>
 
-      <div class="panes">
-        <div
+      <TabPanelContainer>
+        <TabPanel
           v-show="currentTab === 'details'"
           id="editSongPanelDetails"
           aria-labelledby="editSongTabDetails"
-          role="tabpanel"
-          tabindex="0"
+          class="space-y-5"
         >
-          <div v-if="editingOnlyOneSong" class="form-row">
-            <label>
-              Title
-              <input
-                v-model="formData.title"
-                v-koel-focus
-                data-testid="title-input"
-                name="title"
-                title="Title"
-                type="text"
-              >
-            </label>
-          </div>
+          <FormRow v-if="editingOnlyOneSong">
+            <template #label>Title</template>
+            <TextInput v-model="formData.title" v-koel-focus data-testid="title-input" name="title" title="Title" />
+          </FormRow>
 
-          <div class="form-row cols">
-            <label>
-              Artist
-              <input
+          <FormRow :cols="2">
+            <FormRow>
+              <template #label>Artist</template>
+              <TextInput
                 v-model="formData.artist_name"
                 :placeholder="inputPlaceholder"
                 data-testid="artist-input"
                 name="artist"
-                type="text"
-              >
-            </label>
-            <label>
-              Album Artist
-              <input
+              />
+            </FormRow>
+
+            <FormRow>
+              <template #label>Album Artist</template>
+              <TextInput
                 v-model="formData.album_artist_name"
                 :placeholder="inputPlaceholder"
                 data-testid="albumArtist-input"
                 name="album_artist"
-                type="text"
-              >
-            </label>
-          </div>
+              />
+            </FormRow>
+          </FormRow>
 
-          <div class="form-row">
-            <label>
-              Album
-              <input
-                v-model="formData.album_name"
-                :placeholder="inputPlaceholder"
-                data-testid="album-input"
-                name="album"
-                type="text"
-              >
-            </label>
-          </div>
+          <FormRow>
+            <template #label>Album</template>
+            <TextInput
+              v-model="formData.album_name"
+              :placeholder="inputPlaceholder"
+              data-testid="album-input"
+              name="album"
+            />
+          </FormRow>
 
-          <div class="form-row cols">
-            <label>
-              Track
-              <input
+          <FormRow :cols="2">
+            <FormRow>
+              <template #label>Track</template>
+              <TextInput
                 v-model="formData.track"
                 :placeholder="inputPlaceholder"
                 data-testid="track-input"
                 min="1"
                 name="track"
                 type="number"
-              >
-            </label>
-            <label>
-              Disc
-              <input
+              />
+            </FormRow>
+            <FormRow>
+              <template #label>Disc</template>
+              <TextInput
                 v-model="formData.disc"
                 :placeholder="inputPlaceholder"
                 data-testid="disc-input"
                 min="1"
                 name="disc"
                 type="number"
-              >
-            </label>
-          </div>
+              />
+            </FormRow>
+          </FormRow>
 
-          <div class="form-row cols">
-            <label>
-              Genre
-              <input
+          <FormRow :cols="2">
+            <FormRow>
+              <template #label>Genre</template>
+              <TextInput
                 v-model="formData.genre"
                 :placeholder="inputPlaceholder"
                 data-testid="genre-input"
-                name="genre"
-                type="text"
                 list="genres"
-              >
+                name="genre"
+              />
               <datalist id="genres">
                 <option v-for="genre in genres" :key="genre" :value="genre" />
               </datalist>
-            </label>
-            <label>
-              Year
-              <input
+            </FormRow>
+            <FormRow>
+              <template #label>Year</template>
+              <TextInput
                 v-model="formData.year"
                 :placeholder="inputPlaceholder"
                 data-testid="year-input"
                 name="year"
                 type="number"
-              >
-            </label>
-          </div>
-        </div>
+              />
+            </FormRow>
+          </FormRow>
+        </TabPanel>
 
-        <div
+        <TabPanel
           v-if="editingOnlyOneSong"
           v-show="currentTab === 'lyrics'"
           id="editSongPanelLyrics"
           aria-labelledby="editSongTabLyrics"
-          role="tabpanel"
-          tabindex="0"
         >
-          <div class="form-row">
-            <textarea
+          <FormRow>
+            <TextArea
               v-model="formData.lyrics"
               v-koel-focus
               data-testid="lyrics-input"
               name="lyrics"
               title="Lyrics"
             />
-          </div>
-        </div>
-      </div>
-    </main>
+          </FormRow>
+        </TabPanel>
+      </TabPanelContainer>
+    </Tabs>
 
     <footer>
       <Btn type="submit">Update</Btn>
@@ -187,16 +166,24 @@
 <script lang="ts" setup>
 import { computed, reactive, ref } from 'vue'
 import { isEqual } from 'lodash'
-import { defaultCover, eventBus, logger, pluralize } from '@/utils'
+import { defaultCover, eventBus, pluralize } from '@/utils'
 import { songStore, SongUpdateData } from '@/stores'
-import { useDialogBox, useMessageToaster, useModal, useOverlay } from '@/composables'
+import { useDialogBox, useErrorHandler, useMessageToaster, useModal, useOverlay } from '@/composables'
 import { genres } from '@/config'
 
-import Btn from '@/components/ui/Btn.vue'
+import Btn from '@/components/ui/form/Btn.vue'
+import TextInput from '@/components/ui/form/TextInput.vue'
+import TextArea from '@/components/ui/form/TextArea.vue'
+import FormRow from '@/components/ui/form/FormRow.vue'
+import Tabs from '@/components/ui/tabs/Tabs.vue'
+import TabList from '@/components/ui/tabs/TabList.vue'
+import TabButton from '@/components/ui/tabs/TabButton.vue'
+import TabPanel from '@/components/ui/tabs/TabPanel.vue'
+import TabPanelContainer from '@/components/ui/tabs/TabPanelContainer.vue'
 
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
-const { showConfirmDialog, showErrorDialog } = useDialogBox()
+const { showConfirmDialog } = useDialogBox()
 const { getFromContext } = useModal()
 
 const songs = getFromContext<Song[]>('songs')
@@ -269,45 +256,20 @@ const submit = async () => {
   showOverlay()
 
   try {
-    await songStore.update(songs, formData)
+    const result = await songStore.update(songs, formData)
     toastSuccess(`Updated ${pluralize(songs, 'song')}.`)
-    eventBus.emit('SONGS_UPDATED')
+    eventBus.emit('SONGS_UPDATED', result)
     close()
-  } catch (error) {
-    showErrorDialog('Something went wrong. Please try again.', 'Error')
-    logger.error(error)
+  } catch (error: unknown) {
+    useErrorHandler('dialog').handleHttpError(error)
   } finally {
     hideOverlay()
   }
 }
 </script>
 
-<style lang="scss" scoped>
-form {
-  max-width: 540px;
-
-  > main {
-    margin-top: 1.125rem;
-    padding: 0 !important;
-  }
-
-  > header {
-    gap: 1.2rem;
-
-    .cover {
-      flex: 0 0 84px;
-      height: 84px;
-      background-size: cover;
-      border-radius: 5px;
-    }
-
-    .meta {
-      flex: 1;
-
-      .mixed {
-        opacity: .5;
-      }
-    }
-  }
+<style lang="postcss" scoped>
+.mixed {
+  @apply opacity-50;
 }
 </style>

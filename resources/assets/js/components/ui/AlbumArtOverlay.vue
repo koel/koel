@@ -1,5 +1,9 @@
 <template>
-  <div :style="{ backgroundImage: thumbnailUrl ? `url(${thumbnailUrl})` : 'none' }" data-testid="album-art-overlay" />
+  <div
+    :style="{ backgroundImage: thumbnailUrl ? `url(${thumbnailUrl})` : 'none' }"
+    class="pointer-events-none fixed z-[1000] overflow-hidden opacity-10 bg-cover bg-center top-0 left-0 h-full w-full"
+    data-testid="album-art-overlay"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -14,24 +18,8 @@ const thumbnailUrl = ref<String | null>(null)
 watchEffect(async () => {
   try {
     thumbnailUrl.value = await albumStore.fetchThumbnail(album.value)
-  } catch (e) {
+  } catch (error: unknown) {
     thumbnailUrl.value = null
   }
 })
 </script>
-
-<style scoped>
-div {
-  position: fixed;
-  opacity: .1;
-  z-index: 10000;
-  overflow: hidden;
-  background-size: cover;
-  background-position: center;
-  pointer-events: none;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-</style>

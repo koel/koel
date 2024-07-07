@@ -8,12 +8,12 @@ new class extends UnitTestCase {
     it.each<[boolean, boolean]>([[false, false], [false, true], [true, false], [true, true]])
     ('renders proper content with Spotify integration status %s, current user admin status %s',
       (useSpotify, isAdmin) => {
-        commonStore.state.use_spotify = useSpotify
+        commonStore.state.uses_spotify = useSpotify
 
         if (isAdmin) {
-          this.actingAsAdmin()
+          this.beAdmin()
         } else {
-          this.actingAs()
+          this.be()
         }
 
         expect(this.render(SpotifyIntegration).html()).toMatchSnapshot();

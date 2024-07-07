@@ -1,32 +1,15 @@
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
-import { queueStore } from '@/stores'
-import { playbackService } from '@/services'
 import { screen } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import SongListItem from './SongListItem.vue'
 
-let row: SongRow
+let row: PlayableRow
 
 new class extends UnitTestCase {
-  private renderComponent (song?: Song) {
-    song = song ?? factory<Song>('song')
-
-    row = {
-      song,
-      selected: false
-    }
-
-    return this.render(SongListItem, {
-      props: {
-        item: row
-      }
-    })
-  }
-
   protected test () {
     it('renders', async () => {
-      const song = factory<Song>('song', {
+      const song = factory('song', {
         title: 'Test Song',
         album_name: 'Test Album',
         artist_name: 'Test Artist',
@@ -37,19 +20,29 @@ new class extends UnitTestCase {
         liked: true
       })
 
-      const { html } = await this.renderComponent(song)
+      const { html } = this.renderComponent(song)
       expect(html()).toMatchSnapshot()
     })
 
-    it('plays on double click', async () => {
-      const queueMock = this.mock(queueStore, 'queueIfNotQueued')
-      const playMock = this.mock(playbackService, 'play')
-      this.renderComponent()
-
+    it('emits play event on double click', async () => {
+      const { emitted } = this.renderComponent()
       await this.user.dblClick(screen.getByTestId('song-item'))
+      expect(emitted().play).toBeTruthy()
+    })
+  }
 
-      expect(queueMock).toHaveBeenCalledWith(row.song)
-      expect(playMock).toHaveBeenCalledWith(row.song)
+  private renderComponent (playable?: Playable) {
+    playable = playable ?? factory('song')
+
+    row = {
+      playable,
+      selected: false
+    }
+
+    return this.render(SongListItem, {
+      props: {
+        item: row
+      }
     })
   }
 }

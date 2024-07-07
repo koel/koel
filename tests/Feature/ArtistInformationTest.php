@@ -6,24 +6,15 @@ use App\Models\Artist;
 use App\Services\MediaInformationService;
 use App\Values\ArtistInformation;
 use Mockery;
+use Tests\TestCase;
 
 class ArtistInformationTest extends TestCase
 {
-    private const JSON_STRUCTURE = [
-        'url',
-        'image',
-        'bio' => [
-            'summary',
-            'full',
-        ],
-    ];
-
     public function testGet(): void
     {
         config(['koel.lastfm.key' => 'foo']);
         config(['koel.lastfm.secret' => 'geheim']);
 
-        /** @var Artist $artist */
         $artist = Artist::factory()->create();
 
         $lastfm = self::mock(MediaInformationService::class);
@@ -39,7 +30,7 @@ class ArtistInformationTest extends TestCase
             ));
 
         $this->getAs('api/artists/' . $artist->id . '/information')
-            ->assertJsonStructure(self::JSON_STRUCTURE);
+            ->assertJsonStructure(ArtistInformation::JSON_STRUCTURE);
     }
 
     public function testGetWithoutLastfmStillReturnsValidStructure(): void
@@ -47,10 +38,7 @@ class ArtistInformationTest extends TestCase
         config(['koel.lastfm.key' => null]);
         config(['koel.lastfm.secret' => null]);
 
-        /** @var Artist $artist */
-        $artist = Artist::factory()->create();
-
-        $this->getAs('api/artists/' . $artist->id . '/information')
-            ->assertJsonStructure(self::JSON_STRUCTURE);
+        $this->getAs('api/artists/' . Artist::factory()->create()->id . '/information')
+            ->assertJsonStructure(ArtistInformation::JSON_STRUCTURE);
     }
 }

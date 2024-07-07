@@ -1,0 +1,25 @@
+{
+  "deactivated": true,
+  "error": null,
+  "license_key": {
+    "id": 1,
+    "status": "active",
+    "key": "38b1460a-5104-4067-a91d-77b872934d51",
+    "activation_limit": 5,
+    "activation_usage": 0,
+    "created_at": "2021-03-25 11:10:18",
+    "expires_at": null
+  },
+  "meta": {
+    "store_id": 42,
+    "order_id": 2,
+    "order_item_id": 3,
+    "product_id": 4,
+    "product_name": "Koel Plus",
+    "variant_id": 5,
+    "variant_name": "Default",
+    "customer_id": 6,
+    "customer_name": "Luke Skywalker",
+    "customer_email": "luke@skywalker.com"
+  }
+}

@@ -11,7 +11,7 @@ use Illuminate\Support\Arr;
 
 class PlaylistFolderPlaylistController extends Controller
 {
-    public function __construct(private PlaylistFolderService $service)
+    public function __construct(private readonly PlaylistFolderService $service)
     {
     }
 
@@ -28,7 +28,7 @@ class PlaylistFolderPlaylistController extends Controller
     {
         $this->authorize('own', $playlistFolder);
 
-        $this->service->movePlaylistsToRootLevel(Arr::wrap($request->playlists));
+        $this->service->movePlaylistsToRootLevel($playlistFolder, Arr::wrap($request->playlists));
 
         return response()->noContent();
     }

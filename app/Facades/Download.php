@@ -6,7 +6,8 @@ use App\Models\Song;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static string fromSong(Song $song)
+ * @method static string getLocalPath(Song $song)
+ * @see \App\Services\DownloadService
  */
 class Download extends Facade
 {

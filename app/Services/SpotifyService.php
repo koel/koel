@@ -2,14 +2,14 @@
 
 namespace App\Services;
 
+use App\Http\Integrations\Spotify\SpotifyClient;
 use App\Models\Album;
 use App\Models\Artist;
-use App\Services\ApiClients\SpotifyClient;
 use Illuminate\Support\Arr;
 
 class SpotifyService
 {
-    public function __construct(private SpotifyClient $client)
+    public function __construct(private readonly SpotifyClient $client)
     {
     }
 
@@ -45,7 +45,7 @@ class SpotifyService
         }
 
         return Arr::get(
-            $this->client->search("{$album->name} artist:{$album->artist->name}", 'album', ['limit' => 1]),
+            $this->client->search("$album->name artist:{$album->artist->name}", 'album', ['limit' => 1]),
             'albums.items.0.images.0.url'
         );
     }

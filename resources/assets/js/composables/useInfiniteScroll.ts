@@ -1,24 +1,16 @@
-import { ref } from 'vue'
+import { Ref } from 'vue'
+import { useInfiniteScroll as baseUseInfiniteScroll } from '@vueuse/core'
+
 import ToTopButton from '@/components/ui/BtnScrollToTop.vue'
 
-export const useInfiniteScroll = (loadMore: Closure) => {
-  const scroller = ref<HTMLElement>()
-
-  const scrolling = (event: UIEvent) => {
-    const target = event.target as HTMLElement
-
-    // Here we check if the user has scrolled to the end of the wrapper (or 32px to the end).
-    // If that's true, load more items.
-    if (target.scrollTop + target.clientHeight >= target.scrollHeight - 32) {
-      loadMore()
-    }
-  }
+export const useInfiniteScroll = (el: Ref<HTMLElement | undefined>, loadMore: Closure) => {
+  baseUseInfiniteScroll(el, loadMore, { distance: 32 })
 
   let tries = 0
   const MAX_TRIES = 5
 
   const makeScrollable = async () => {
-    const container = scroller.value
+    const container = el.value
 
     if (!container) {
       window.setTimeout(() => makeScrollable(), 200)
@@ -34,8 +26,6 @@ export const useInfiniteScroll = (loadMore: Closure) => {
 
   return {
     ToTopButton,
-    scroller,
-    scrolling,
     makeScrollable
   }
 }

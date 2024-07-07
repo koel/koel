@@ -2,26 +2,31 @@
 
 namespace App\Repositories;
 
+use App\Builders\AlbumBuilder;
+use App\Facades\License;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\User;
-use App\Repositories\Traits\Searchable;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
 
+/**
+ * @extends Repository<Album>
+ */
 class AlbumRepository extends Repository
 {
-    use Searchable;
-
     /** @return Collection|array<array-key, Album> */
-    public function getRecentlyAdded(int $count = 6): Collection
+    public function getRecentlyAdded(int $count = 6, ?User $user = null): Collection
     {
         return Album::query()
             ->isStandard()
-            ->latest('created_at')
+            ->accessibleBy($user ?? $this->auth->user())
+            ->groupBy('albums.id')
+            ->distinct()
+            ->latest('albums.created_at')
             ->limit($count)
-            ->get();
+            ->get('albums.*');
     }
 
     /** @return Collection|array<array-key, Album> */
@@ -30,31 +35,58 @@ class AlbumRepository extends Repository
         $user ??= $this->auth->user();
 
         return Album::query()
-            ->leftJoin('songs', 'albums.id', 'songs.album_id')
-            ->leftJoin('interactions', static function (JoinClause $join) use ($user): void {
+            ->isStandard()
+            ->accessibleBy($user)
+            ->unless(
+                License::isPlus(), // if the license is Plus, accessibleBy() would have already joined with `songs`
+                static fn (AlbumBuilder $query) => $query->leftJoin('songs', 'albums.id', 'songs.album_id')
+            )
+            ->join('interactions', static function (JoinClause $join) use ($user): void {
                 $join->on('songs.id', 'interactions.song_id')->where('interactions.user_id', $user->id);
             })
-            ->isStandard()
+            ->groupBy('albums.id')
+            ->distinct()
             ->orderByDesc('play_count')
             ->limit($count)
             ->get('albums.*');
     }
 
     /** @return Collection|array<array-key, Album> */
-    public function getByArtist(Artist $artist): Collection
+    public function getMany(array $ids, bool $preserveOrder = false, ?User $user = null): Collection
     {
-        return Album::query()
-            ->where('artist_id', $artist->id)
-            ->orWhereIn('id', $artist->songs()->pluck('album_id'))
-            ->orderBy('name')
-            ->get();
+        $albums = Album::query()
+            ->isStandard()
+            ->accessibleBy($user ?? auth()->user())
+            ->whereIn('albums.id', $ids)
+            ->groupBy('albums.id')
+            ->distinct()
+            ->get('albums.*');
+
+        return $preserveOrder ? $albums->orderByArray($ids) : $albums;
     }
 
-    public function paginate(): Paginator
+    /** @return Collection|array<array-key, Album> */
+    public function getByArtist(Artist $artist, ?User $user = null): Collection
     {
         return Album::query()
+            ->accessibleBy($user ?? $this->auth->user())
+            ->where('albums.artist_id', $artist->id)
+            ->orWhereIn('albums.id', $artist->songs()->pluck('album_id'))
+            ->orderBy('albums.name')
+            ->groupBy('albums.id')
+            ->distinct()
+            ->get('albums.*');
+    }
+
+    public function paginate(?User $user = null): Paginator
+    {
+        return Album::query()
+            ->accessibleBy($user ?? $this->auth->user())
             ->isStandard()
-            ->orderBy('name')
+            ->orderBy('albums.name')
+            ->groupBy('albums.id')
+            ->distinct()
+            ->select('albums.*')
             ->simplePaginate(21);
     }
 }

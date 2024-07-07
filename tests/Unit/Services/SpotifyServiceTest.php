@@ -2,14 +2,17 @@
 
 namespace Tests\Unit\Services;
 
+use App\Http\Integrations\Spotify\SpotifyClient;
 use App\Models\Album;
 use App\Models\Artist;
-use App\Services\ApiClients\SpotifyClient;
 use App\Services\SpotifyService;
+use Illuminate\Support\Facades\File;
 use Mockery;
 use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
 use Tests\TestCase;
+
+use function Tests\test_path;
 
 class SpotifyServiceTest extends TestCase
 {
@@ -76,7 +79,7 @@ class SpotifyServiceTest extends TestCase
     /** @return array<mixed> */
     private static function parseFixture(string $name): array
     {
-        return json_decode(file_get_contents(__DIR__ . '/../../blobs/spotify/' . $name), true);
+        return json_decode(File::get(test_path("blobs/spotify/$name")), true);
     }
 
     protected function tearDown(): void

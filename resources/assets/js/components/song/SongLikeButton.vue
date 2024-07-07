@@ -1,8 +1,8 @@
 <template>
-  <button :title="title" type="button" @click.stop="toggleLike">
-    <Icon v-if="song.liked" :icon="faHeart" />
+  <FooterExtraControlBtn :title="title" @click.stop="toggleLike">
+    <Icon v-if="playable.liked" :icon="faHeart" />
     <Icon v-else :icon="faEmptyHeart" />
-  </button>
+  </FooterExtraControlBtn>
 </template>
 
 <script lang="ts" setup>
@@ -11,10 +11,12 @@ import { faHeart as faEmptyHeart } from '@fortawesome/free-regular-svg-icons'
 import { computed, toRefs } from 'vue'
 import { favoriteStore } from '@/stores'
 
-const props = defineProps<{ song: Song }>()
-const { song } = toRefs(props)
+import FooterExtraControlBtn from '@/components/layout/app-footer/FooterButton.vue'
 
-const title = computed(() => `${song.value.liked ? 'Unlike' : 'Like'} ${song.value.title} by ${song.value.artist_name}`)
+const props = defineProps<{ playable: Playable }>()
+const { playable } = toRefs(props)
 
-const toggleLike = () => favoriteStore.toggleOne(song.value)
+const title = computed(() => playable.value.liked ? 'Unlike' : 'Like')
+
+const toggleLike = () => favoriteStore.toggleOne(playable.value)
 </script>

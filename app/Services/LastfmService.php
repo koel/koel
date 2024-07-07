@@ -2,20 +2,27 @@
 
 namespace App\Services;
 
+use App\Http\Integrations\Lastfm\LastfmConnector;
+use App\Http\Integrations\Lastfm\Requests\GetAlbumInfoRequest;
+use App\Http\Integrations\Lastfm\Requests\GetArtistInfoRequest;
+use App\Http\Integrations\Lastfm\Requests\GetSessionKeyRequest;
+use App\Http\Integrations\Lastfm\Requests\ScrobbleRequest;
+use App\Http\Integrations\Lastfm\Requests\ToggleLoveTrackRequest;
+use App\Http\Integrations\Lastfm\Requests\UpdateNowPlayingRequest;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Models\User;
-use App\Services\ApiClients\LastfmClient;
+use App\Services\Contracts\MusicEncyclopedia;
 use App\Values\AlbumInformation;
 use App\Values\ArtistInformation;
-use GuzzleHttp\Promise\Promise;
-use GuzzleHttp\Promise\Utils;
+use Generator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class LastfmService implements MusicEncyclopedia
 {
-    public function __construct(private LastfmClient $client)
+    public function __construct(private readonly LastfmConnector $connector)
     {
     }
 
@@ -37,93 +44,69 @@ class LastfmService implements MusicEncyclopedia
 
     public function getArtistInformation(Artist $artist): ?ArtistInformation
     {
-        return attempt_if(static::enabled(), function () use ($artist): ?ArtistInformation {
-            $name = urlencode($artist->name);
-            $response = $this->client->get("?method=artist.getInfo&autocorrect=1&artist=$name&format=json");
+        if ($artist->is_unknown || $artist->is_various) {
+            return null;
+        }
 
-            return isset($response?->artist) ? ArtistInformation::fromLastFmData($response->artist) : null;
+        return attempt_if(static::enabled(), function () use ($artist): ?ArtistInformation {
+            return Cache::remember(
+                "lastfm.artist.$artist->id",
+                now()->addWeek(),
+                fn () => $this->connector->send(new GetArtistInfoRequest($artist))->dto()
+            );
         });
     }
 
     public function getAlbumInformation(Album $album): ?AlbumInformation
     {
+        if ($album->is_unknown || $album->artist->is_unknown) {
+            return null;
+        }
+
         return attempt_if(static::enabled(), function () use ($album): ?AlbumInformation {
-            $albumName = urlencode($album->name);
-            $artistName = urlencode($album->artist->name);
-
-            $response = $this->client
-                ->get("?method=album.getInfo&autocorrect=1&album=$albumName&artist=$artistName&format=json");
-
-            return isset($response?->album) ? AlbumInformation::fromLastFmData($response->album) : null;
+            return Cache::remember(
+                "lastfm.album.$album->id",
+                now()->addWeek(),
+                fn () => $this->connector->send(new GetAlbumInfoRequest($album))->dto()
+            );
         });
     }
 
     public function scrobble(Song $song, User $user, int $timestamp): void
     {
-        $params = [
-            'artist' => $song->artist->name,
-            'track' => $song->title,
-            'timestamp' => $timestamp,
-            'sk' => $user->lastfm_session_key,
-            'method' => 'track.scrobble',
-        ];
-
-        if ($song->album->name !== Album::UNKNOWN_NAME) {
-            $params['album'] = $song->album->name;
-        }
-
-        attempt(fn () => $this->client->post('/', $params, false));
+        attempt(fn () => $this->connector->send(new ScrobbleRequest($song, $user, $timestamp)));
     }
 
     public function toggleLoveTrack(Song $song, User $user, bool $love): void
     {
-        attempt(fn () => $this->client->post('/', [
-            'track' => $song->title,
-            'artist' => $song->artist->name,
-            'sk' => $user->lastfm_session_key,
-            'method' => $love ? 'track.love' : 'track.unlove',
-        ], false));
+        attempt(fn () => $this->connector->send(new ToggleLoveTrackRequest($song, $user, $love)));
     }
 
     /**
-     * @param Collection|array<array-key, Song> $songs
+     * @param Collection<array-key, Song> $songs
      */
     public function batchToggleLoveTracks(Collection $songs, User $user, bool $love): void
     {
-        $promises = $songs->map(
-            function (Song $song) use ($user, $love): Promise {
-                return $this->client->postAsync('/', [
-                    'track' => $song->title,
-                    'artist' => $song->artist->name,
-                    'sk' => $user->lastfm_session_key,
-                    'method' => $love ? 'track.love' : 'track.unlove',
-                ], false);
+        $generatorCallback = static function () use ($songs, $user, $love): Generator {
+            foreach ($songs as $song) {
+                yield new ToggleLoveTrackRequest($song, $user, $love);
             }
-        );
+        };
 
-        attempt(static fn () => Utils::unwrap($promises));
+        $this->connector
+            ->pool($generatorCallback)
+            ->send()
+            ->wait();
     }
 
     public function updateNowPlaying(Song $song, User $user): void
     {
-        $params = [
-            'artist' => $song->artist->name,
-            'track' => $song->title,
-            'duration' => $song->length,
-            'sk' => $user->lastfm_session_key,
-            'method' => 'track.updateNowPlaying',
-        ];
-
-        if ($song->album->name !== Album::UNKNOWN_NAME) {
-            $params['album'] = $song->album->name;
-        }
-
-        attempt(fn () => $this->client->post('/', $params, false));
+        attempt(fn () => $this->connector->send(new UpdateNowPlayingRequest($song, $user)));
     }
 
     public function getSessionKey(string $token): ?string
     {
-        return $this->client->getSessionKey($token);
+        return object_get($this->connector->send(new GetSessionKeyRequest($token))->object(), 'session.key');
     }
 
     public function setUserSessionKey(User $user, ?string $sessionKey): void

@@ -2,12 +2,15 @@
 
 namespace Tests\Unit\Listeners;
 
-use App\Events\MediaSyncCompleted;
+use App\Events\MediaScanCompleted;
 use App\Listeners\WriteSyncLog;
-use App\Values\SyncResult;
-use App\Values\SyncResultCollection;
+use App\Values\ScanResult;
+use App\Values\ScanResultCollection;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\File;
 use Tests\TestCase;
+
+use function Tests\test_path;
 
 class WriteSyncLogTest extends TestCase
 {
@@ -25,7 +28,7 @@ class WriteSyncLogTest extends TestCase
 
     protected function tearDown(): void
     {
-        @unlink(storage_path('logs/sync-20210102-123456.log'));
+        File::delete(storage_path('logs/sync-20210102-123456.log'));
         config(['koel.sync_log_level' => $this->originalLogLevel]);
 
         parent::tearDown();
@@ -39,7 +42,7 @@ class WriteSyncLogTest extends TestCase
 
         self::assertStringEqualsFile(
             storage_path('logs/sync-20210102-123456.log'),
-            file_get_contents(__DIR__ . '/../../blobs/sync-log-all.log')
+            File::get(test_path('blobs/sync-log-all.log'))
         );
     }
 
@@ -51,18 +54,18 @@ class WriteSyncLogTest extends TestCase
 
         self::assertStringEqualsFile(
             storage_path('logs/sync-20210102-123456.log'),
-            file_get_contents(__DIR__ . '/../../blobs/sync-log-error.log')
+            File::get(test_path('blobs/sync-log-error.log'))
         );
     }
 
-    private static function createSyncCompleteEvent(): MediaSyncCompleted
+    private static function createSyncCompleteEvent(): MediaScanCompleted
     {
-        $resultCollection = SyncResultCollection::create()
-            ->add(SyncResult::success('/media/foo.mp3'))
-            ->add(SyncResult::error('/media/baz.mp3', 'Something went wrong'))
-            ->add(SyncResult::error('/media/qux.mp3', 'Something went horribly wrong'))
-            ->add(SyncResult::skipped('/media/bar.mp3'));
+        $resultCollection = ScanResultCollection::create()
+            ->add(ScanResult::success('/media/foo.mp3'))
+            ->add(ScanResult::error('/media/baz.mp3', 'Something went wrong'))
+            ->add(ScanResult::error('/media/qux.mp3', 'Something went horribly wrong'))
+            ->add(ScanResult::skipped('/media/bar.mp3'));
 
-        return new MediaSyncCompleted($resultCollection);
+        return new MediaScanCompleted($resultCollection);
     }
 }

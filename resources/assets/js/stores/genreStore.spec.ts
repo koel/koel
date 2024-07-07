@@ -7,14 +7,14 @@ import { genreStore } from '@/stores/genreStore'
 new class extends UnitTestCase {
   protected test () {
     it('fetches all genres', async () => {
-      const genres = factory<Genre>('genre', 3)
+      const genres = factory('genre', 3)
       this.mock(http, 'get').mockResolvedValue(genres)
 
       expect(await genreStore.fetchAll()).toEqual(genres)
     })
 
     it('fetches a single genre', async () => {
-      const genre = factory<Genre>('genre')
+      const genre = factory('genre')
       this.mock(http, 'get').mockResolvedValue(genre)
 
       expect(await genreStore.fetchOne(genre.name)).toEqual(genre)

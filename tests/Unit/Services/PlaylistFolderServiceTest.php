@@ -4,10 +4,11 @@ namespace Tests\Unit\Services;
 
 use App\Models\Playlist;
 use App\Models\PlaylistFolder;
-use App\Models\User;
 use App\Services\PlaylistFolderService;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
+
+use function Tests\create_user;
 
 class PlaylistFolderServiceTest extends TestCase
 {
@@ -22,8 +23,7 @@ class PlaylistFolderServiceTest extends TestCase
 
     public function testCreate(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         self::assertCount(0, $user->playlist_folders);
 
@@ -45,11 +45,13 @@ class PlaylistFolderServiceTest extends TestCase
 
     public function testAddPlaylistsToFolder(): void
     {
-        /** @var Collection|array<array-key, Playlist> $playlists */
-        $playlists = Playlist::factory()->count(3)->create();
+        $user = create_user();
+
+        /** @var Collection<array-key, Playlist> $playlists */
+        $playlists = Playlist::factory()->for($user)->count(3)->create();
 
         /** @var PlaylistFolder $folder */
-        $folder = PlaylistFolder::factory()->create();
+        $folder = PlaylistFolder::factory()->for($user)->create();
 
         $this->service->addPlaylistsToFolder($folder, $playlists->pluck('id')->all());
 
@@ -61,13 +63,14 @@ class PlaylistFolderServiceTest extends TestCase
         /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->create();
 
-        /** @var Collection|array<array-key, Playlist> $playlists */
-        $playlists = Playlist::factory()->count(3)->for($folder, 'folder')->create();
+        /** @var Collection<array-key, Playlist> $playlists */
+        $playlists = Playlist::factory()->count(3)->create();
+        $folder->playlists()->attach($playlists->pluck('id')->all());
 
-        $this->service->movePlaylistsToRootLevel($playlists->pluck('id')->all());
+        $this->service->movePlaylistsToRootLevel($folder, $playlists->pluck('id')->all());
 
         self::assertCount(0, $folder->playlists);
 
-        $playlists->each(static fn (Playlist $playlist) => self::assertNull($playlist->refresh()->folder_id));
+        $playlists->each(static fn (Playlist $playlist) => self::assertNull($playlist->refresh()->getFolder()));
     }
 }

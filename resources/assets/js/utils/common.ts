@@ -1,5 +1,5 @@
 import select from 'select'
-import { noop } from '@/utils'
+import { isSong, noop } from '@/utils'
 import defaultCover from '@/../img/covers/default.svg'
 
 export { defaultCover }
@@ -17,22 +17,25 @@ export const forceReloadWindow = (): void => {
   window.location.reload()
 }
 
-export const copyText = (text: string): void => {
-  let copyArea = document.querySelector<HTMLTextAreaElement>('#copyArea')
+export const copyText = async (text: string) => {
+  try {
+    await navigator.clipboard.writeText(text)
+  } catch (error: unknown) {
+    let copyArea = document.querySelector<HTMLTextAreaElement>('#copyArea')
 
-  if (!copyArea) {
-    copyArea = document.createElement('textarea')
-    copyArea.id = 'copyArea'
-    document.body.appendChild(copyArea)
+    if (!copyArea) {
+      copyArea = document.createElement('textarea')
+      copyArea.id = 'copyArea'
+      document.body.appendChild(copyArea)
+    }
+
+    copyArea.style.top = `${window.scrollY || document.documentElement.scrollTop}px`
+    copyArea.value = text
+    select(copyArea)
+    document.execCommand('copy')
   }
-
-  copyArea.style.top = `${window.scrollY || document.documentElement.scrollTop}px`
-  copyArea.value = text
-  select(copyArea)
-  document.execCommand('copy')
 }
 
-export const isDemo = () => {
-  // can't use one-liner as it would break production build with an "Unexpected token" error
-  return import.meta.env.VITE_KOEL_ENV === 'demo'
+export const getPlayableProp = <T>(playable: Playable, songKey: keyof Song, episodeKey: keyof Episode): T => {
+  return isSong(playable) ? playable[songKey] : playable[episodeKey]
 }

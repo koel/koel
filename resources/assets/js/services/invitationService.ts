@@ -1,16 +1,19 @@
-import { http } from '@/services'
+import { authService, CompositeToken, http } from '@/services'
 import { userStore } from '@/stores'
 
 export const invitationService = {
   getUserProspect: async (token: string) => await http.get<User>(`invitations?token=${token}`),
 
   async accept (token: string, name: string, password: string) {
-    await http.post<User>('invitations/accept', { token, name, password })
+    const compositeToken = await http.post<CompositeToken>('invitations/accept', { token, name, password })
+
+    authService.setAudioToken(compositeToken['audio-token'])
+    authService.setApiToken(compositeToken.token)
   },
 
   invite: async (emails: string[], isAdmin: boolean) => {
     const users = await http.post<User[]>('invitations', { emails, is_admin: isAdmin })
-    users.forEach(user => userStore.add(user))
+    userStore.add(users)
   },
 
   revoke: async (user: User) => {

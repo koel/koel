@@ -1,30 +1,32 @@
 <template>
-  <article id="lyrics">
-    <div class="content">
+  <article>
+    <main class="relative">
       <template v-if="song">
         <div v-show="song.lyrics">
-          <pre ref="lyricsContainer">{{ lyrics }}</pre>
-          <Magnifier class="magnifier" @in="zoomLevel++" @out="zoomLevel--" />
+          <pre class="font-sans whitespace-pre-wrap leading-relaxed">{{ lyrics }}</pre>
+          <span class="magnifier-wrapper opacity-0 absolute top-0 right-0 hover:!opacity-100">
+            <Magnifier @in="zoomIn" @out="zoomOut" />
+          </span>
         </div>
-        <p v-if="song.id && !song.lyrics" class="none text-secondary">
-          <template v-if="isAdmin">
+        <p v-if="song.id && !song.lyrics" class="text-k-text-secondary">
+          <template v-if="canUpdateLyrics">
             No lyrics found.
-            <button class="text-highlight" type="button" @click.prevent="showEditSongForm">
+            <a role="button" @click.prevent="showEditSongForm">
               Click here
-            </button>
+            </a>
             to add lyrics.
           </template>
           <span v-else>No lyrics available. Are you listening to Bach?</span>
         </p>
       </template>
-    </div>
+    </main>
   </article>
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, onMounted, ref, toRefs, watch } from 'vue'
-import { eventBus } from '@/utils'
-import { useAuthorization } from '@/composables'
+import { computed, defineAsyncComponent, ref, toRefs, watch } from 'vue'
+import { cr2lf, eventBus } from '@/utils'
+import { usePolicies } from '@/composables'
 import { preferenceStore as preferences } from '@/stores'
 
 const Magnifier = defineAsyncComponent(() => import('@/components/ui/Magnifier.vue'))
@@ -32,60 +34,33 @@ const Magnifier = defineAsyncComponent(() => import('@/components/ui/Magnifier.v
 const props = defineProps<{ song: Song }>()
 const { song } = toRefs(props)
 
-const { isAdmin } = useAuthorization()
+const { currentUserCan } = usePolicies()
 
-const lyricsContainer = ref<HTMLElement>()
-const zoomLevel = ref(preferences.lyricsZoomLevel || 1)
+const canUpdateLyrics = currentUserCan.editSong(song.value)
+const zoomLevel = ref(preferences.lyrics_zoom_level || 1)
 
+const lyrics = computed(() => cr2lf(song.value.lyrics))
+const fontSize = computed(() => `${1 + (zoomLevel.value - 1) * 0.2}rem`)
+
+const zoomIn = () => (zoomLevel.value = Math.min(zoomLevel.value + 1, 8))
+const zoomOut = () => (zoomLevel.value = Math.max(zoomLevel.value - 1, -2))
 const showEditSongForm = () => eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', song.value, 'lyrics')
 
-const lyrics = computed(() => {
-  // This trick converts CRs (\r) to LF (\n) using JavaScript's implicit DOM-writing behavior
-  const div = document.createElement('div')
-  div.innerHTML = song.value.lyrics
-  return div.innerHTML
-})
-
-const setFontSize = () => {
-  if (lyricsContainer.value) {
-    lyricsContainer.value.style.fontSize = `${1 + (zoomLevel.value - 1) * 0.2}rem`
-  }
-}
-
-watch(zoomLevel, level => {
-  setFontSize()
-  preferences.lyricsZoomLevel = level
-})
-
-onMounted(() => setFontSize())
+watch(zoomLevel, level => (preferences.lyrics_zoom_level = level), { immediate: true })
 </script>
 
-<style lang="scss" scoped>
-.content {
-  position: relative;
-
-  .magnifier {
-    opacity: 0;
-    position: absolute;
-    top: 0;
-    right: 0;
-
-    @media (hover: none) {
-      opacity: 1;
-    }
+<style lang="postcss" scoped>
+main {
+  .magnifier-wrapper {
+    @apply no-hover:opacity-100;
   }
 
-  &:hover .magnifier {
-    opacity: .5;
-
-    &:hover {
-      opacity: 1;
-    }
+  &:hover .magnifier-wrapper {
+    @apply opacity-50;
   }
 }
 
 pre {
-  white-space: pre-wrap;
-  line-height: 1.7;
+  font-size: v-bind(fontSize);
 }
 </style>

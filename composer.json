@@ -1,5 +1,5 @@
 {
-  "name": "phanan/koel",
+  "name": "koel/koel",
   "description": "Personal audio streaming service that works.",
   "keywords": [
     "audio",
@@ -9,44 +9,52 @@
   "license": "MIT",
   "type": "project",
   "require": {
-    "php": ">=8.0",
-    "laravel/framework": "^9.0",
+    "php": ">=8.1",
+    "laravel/framework": "^10.0",
     "james-heinrich/getid3": "^1.9",
-    "guzzlehttp/guzzle": "^7.0.1",
-    "aws/aws-sdk-php-laravel": "^3.1",
-    "pusher/pusher-php-server": "^4.0",
+    "guzzlehttp/guzzle": "^7.2",
+    "pusher/pusher-php-server": "^7.0",
     "predis/predis": "~1.0",
-    "jackiedo/dotenv-editor": "^2.0",
+    "jackiedo/dotenv-editor": "^2.1",
     "ext-exif": "*",
     "ext-gd": "*",
     "ext-fileinfo": "*",
     "ext-json": "*",
     "ext-SimpleXML": "*",
     "daverandom/resume": "^0.0.3",
-    "laravel/helpers": "^1.0",
+    "laravel/helpers": "^1.7",
     "intervention/image": "^2.5",
     "doctrine/dbal": "^3.0",
     "lstrojny/functional-php": "^1.14",
-    "teamtnt/laravel-scout-tntsearch-driver": "^11.1",
+    "teamtnt/laravel-scout-tntsearch-driver": "^14.0",
     "algolia/algoliasearch-client-php": "^3.3",
-    "laravel/ui": "^3.2",
     "webmozart/assert": "^1.10",
-    "laravel/sanctum": "^2.15",
-    "laravel/scout": "^9.4",
-    "nunomaduro/collision": "^6.2",
+    "laravel/sanctum": "^3.3",
+    "laravel/scout": "^10.0",
     "jwilsson/spotify-web-api-php": "^5.2",
     "meilisearch/meilisearch-php": "^0.24.0",
-    "http-interop/http-factory-guzzle": "^1.2"
+    "http-interop/http-factory-guzzle": "^1.2",
+    "league/flysystem-aws-s3-v3": "^3.0",
+    "spatie/flysystem-dropbox": "^3.0",
+    "saloonphp/saloon": "^3.8",
+    "saloonphp/laravel-plugin": "^3.0",
+    "laravel/socialite": "^5.12",
+    "laravel/ui": "^4.5",
+    "nunomaduro/collision": "^7.10",
+    "league/flysystem-sftp-v3": "^3.0",
+    "saloonphp/xml-wrangler": "^1.2",
+    "phanan/poddle": "^1.0",
+    "spatie/laravel-ray": "^1.36"
   },
   "require-dev": {
     "mockery/mockery": "~1.0",
-    "phpunit/phpunit": "^9.0",
+    "phpunit/phpunit": "^10.1",
     "php-mock/php-mock-mockery": "^1.3",
-    "dms/phpunit-arraysubset-asserts": "^0.2.1",
+    "dms/phpunit-arraysubset-asserts": "^0.5.0",
     "fakerphp/faker": "^1.13",
     "slevomat/coding-standard": "^7.0",
-    "nunomaduro/larastan": "^2.1",
-    "laravel/tinker": "^2.7"
+    "laravel/tinker": "^2.9",
+    "larastan/larastan": "^2.9"
   },
   "suggest": {
     "ext-zip": "Allow downloading multiple songs as Zip archives"
@@ -57,8 +65,6 @@
     ],
     "psr-4": {
       "App\\": "app/",
-      "Tests\\": "tests/",
-      "Database\\Factories\\": "database/factories/",
       "Database\\Seeders\\": "database/seeders/"
     },
     "files": [
@@ -68,6 +74,13 @@
   "autoload-dev": {
     "classmap": [
       "tests/TestCase.php"
+    ],
+    "psr-4": {
+      "Tests\\": "tests/",
+      "Database\\Factories\\": "database/factories/"
+    },
+    "files": [
+      "tests/Helpers.php"
     ]
   },
   "scripts": {

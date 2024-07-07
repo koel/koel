@@ -2,9 +2,17 @@
 
 namespace Tests\Feature;
 
+use App\Http\Resources\AlbumResource;
+use App\Http\Resources\ArtistResource;
+use App\Http\Resources\PodcastResource;
+use App\Http\Resources\SongResource;
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Podcast;
 use App\Models\Song;
+use Tests\TestCase;
+
+use function Tests\create_user;
 
 class ExcerptSearchTest extends TestCase
 {
@@ -19,11 +27,17 @@ class ExcerptSearchTest extends TestCase
         Album::factory()->create(['name' => 'Foo Number Five']);
         Album::factory(4)->create();
 
-        $this->getAs('api/search?q=foo')
+        $user = create_user();
+        /** @var Podcast $podcast */
+        $podcast = Podcast::factory()->create(['title' => 'Foo Podcast']);
+        $user->subscribeToPodcast($podcast);
+
+        $this->getAs('api/search?q=foo', $user)
             ->assertJsonStructure([
-                'songs' => ['*' => SongTest::JSON_STRUCTURE],
-                'artists' => ['*' => ArtistTest::JSON_STRUCTURE],
-                'albums' => ['*' => AlbumTest::JSON_STRUCTURE],
+                'songs' => ['*' => SongResource::JSON_STRUCTURE],
+                'podcasts' => ['*' => PodcastResource::JSON_STRUCTURE],
+                'artists' => ['*' => ArtistResource::JSON_STRUCTURE],
+                'albums' => ['*' => AlbumResource::JSON_STRUCTURE],
             ]);
     }
 }

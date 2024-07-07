@@ -1,7 +1,10 @@
-import { eventBus } from '@/utils'
-import { Route } from '@/router'
+import Router, { Route } from '@/router'
 import { userStore } from '@/stores'
-import { localStorageService } from '@/services'
+import { cache, playlistCollaborationService } from '@/services'
+import { useUpload } from '@/composables'
+import { logger } from '@/utils'
+
+const UUID_REGEX = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 export const routes: Route[] = [
   {
@@ -47,7 +50,7 @@ export const routes: Route[] = [
   {
     path: '/upload',
     screen: 'Upload',
-    onResolve: () => userStore.current?.is_admin
+    onResolve: () => useUpload().allowsUpload.value
   },
   {
     path: '/settings',
@@ -80,8 +83,22 @@ export const routes: Route[] = [
     screen: 'Artist'
   },
   {
-    path: '/playlist/(?<id>\\d+)',
+    path: `/playlist/(?<id>${UUID_REGEX})`,
     screen: 'Playlist'
+  },
+  {
+    path: `/playlist/collaborate/(?<id>${UUID_REGEX})`,
+    screen: 'Blank',
+    onResolve: async params => {
+      try {
+        const playlist = await playlistCollaborationService.acceptInvite(params.id)
+        Router.go(`/playlist/${playlist.id}`, true)
+        return true
+      } catch (error: unknown) {
+        logger.error(error)
+        return false
+      }
+    }
   },
   {
     path: '/genres',
@@ -92,20 +109,36 @@ export const routes: Route[] = [
     screen: 'Genre'
   },
   {
+    path: '/podcasts',
+    screen: 'Podcasts',
+  },
+  {
+    path: `/podcasts/(?<id>${UUID_REGEX})`,
+    screen: 'Podcast',
+  },
+  {
+    path: '/episodes/(?<id>\.+)',
+    screen: 'Episode',
+  },
+  {
     path: '/visualizer',
     screen: 'Visualizer'
   },
   {
-    path: '/song/(?<id>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})',
+    path: `/song/(?<id>${UUID_REGEX})`,
     screen: 'Queue',
     redirect: () => 'queue',
     onResolve: params => {
-      localStorageService.set('song-to-queue', params.id)
+      cache.set('song-to-queue', params.id)
       return true
     }
   },
   {
-    path: '/invitation/accept/(?<token>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})',
+    path: `/invitation/accept/(?<token>${UUID_REGEX})`,
     screen: 'Invitation.Accept'
+  },
+  {
+    path: `/reset-password/(?<payload>[a-zA-Z0-9\\+/=]+)`,
+    screen: 'Password.Reset'
   }
 ]

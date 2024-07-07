@@ -3,7 +3,21 @@
 namespace App\Models;
 
 use App\Builders\SongBuilder;
+use App\Casts\Podcast\EpisodeMetadataCast;
+use App\Casts\SongLyricsCast;
+use App\Casts\SongStorageCast;
+use App\Casts\SongTitleCast;
+use App\Enums\PlayableType;
+use App\Enums\SongStorageType;
+use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
+use App\Values\SongStorageMetadata\DropboxMetadata;
+use App\Values\SongStorageMetadata\LocalMetadata;
+use App\Values\SongStorageMetadata\S3CompatibleMetadata;
+use App\Values\SongStorageMetadata\S3LambdaMetadata;
+use App\Values\SongStorageMetadata\SftpMetadata;
+use App\Values\SongStorageMetadata\SongStorageMetadata;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,13 +26,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
+use PhanAn\Poddle\Values\EpisodeMetadata;
+use Throwable;
 
 /**
  * @property string $path
  * @property string $title
- * @property Album $album
- * @property Artist $artist
- * @property Artist $album_artist
+ * @property ?Album $album
+ * @property User $uploader
+ * @property ?Artist $artist
+ * @property ?Artist $album_artist
  * @property float $length
  * @property string $lyrics
  * @property int $track
@@ -32,7 +49,25 @@ use Laravel\Scout\Searchable;
  * @property ?bool $liked Whether the song is liked by the current user (dynamically calculated)
  * @property ?int $play_count The number of times the song has been played by the current user (dynamically calculated)
  * @property Carbon $created_at
- * @property array<mixed> $s3_params
+ * @property int $owner_id
+ * @property bool $is_public
+ * @property User $owner
+ * @property-read SongStorageMetadata $storage_metadata
+ * @property SongStorageType $storage
+ *
+ * // The following are only available for collaborative playlists
+ * @property-read ?string $collaborator_email The email of the user who added the song to the playlist
+ * @property-read ?string $collaborator_name The name of the user who added the song to the playlist
+ * @property-read ?string $collaborator_avatar The avatar of the user who added the song to the playlist
+ * @property-read ?int $collaborator_id The ID of the user who added the song to the playlist
+ * @property-read ?string $added_at The date the song was added to the playlist
+ * @property-read PlayableType $type
+ *
+ * // Podcast episode properties
+ * @property ?EpisodeMetadata $episode_metadata
+ * @property ?string $episode_guid
+ * @property ?string $podcast_id
+ * @property ?Podcast $podcast
  */
 class Song extends Model
 {
@@ -48,22 +83,40 @@ class Song extends Model
     protected $hidden = ['updated_at', 'path', 'mtime'];
 
     protected $casts = [
+        'title' => SongTitleCast::class,
+        'lyrics' => SongLyricsCast::class,
         'length' => 'float',
         'mtime' => 'int',
         'track' => 'int',
         'disc' => 'int',
+        'is_public' => 'bool',
+        'storage' => SongStorageCast::class,
+        'episode_metadata' => EpisodeMetadataCast::class,
     ];
+
+    protected $with = ['album', 'artist', 'podcast'];
 
     protected $keyType = 'string';
 
     protected static function booted(): void
     {
-        static::creating(static fn (self $song) => $song->id = Str::uuid()->toString());
+        static::creating(static fn (Song $song) => $song->id ??= Str::uuid()->toString());
     }
 
-    public static function query(): SongBuilder
+    public static function query(?PlayableType $type = null, ?User $user = null): SongBuilder
     {
-        return parent::query();
+        return parent::query()
+            ->when($type, static fn (Builder $query) => match ($type) { // @phpstan-ignore-line phpcs:ignore
+                PlayableType::SONG => $query->whereNull('songs.podcast_id'),
+                PlayableType::PODCAST_EPISODE => $query->whereNotNull('songs.podcast_id'),
+                default => $query,
+            })
+            ->when($user, static fn (SongBuilder $query) => $query->forUser($user)); // @phpstan-ignore-line
+    }
+
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function newEloquentBuilder($query): SongBuilder
@@ -81,9 +134,14 @@ class Song extends Model
         return $this->belongsTo(Album::class);
     }
 
-    public function album_artist(): BelongsTo // @phpcs:ignore
+    protected function albumArtist(): Attribute
     {
-        return $this->album->artist();
+        return Attribute::get(fn () => $this->album?->artist);
+    }
+
+    public function podcast(): BelongsTo
+    {
+        return $this->belongsTo(Podcast::class);
     }
 
     public function playlists(): BelongsToMany
@@ -96,38 +154,55 @@ class Song extends Model
         return $this->hasMany(Interaction::class);
     }
 
-    protected function title(): Attribute
+    protected function type(): Attribute
+    {
+        return Attribute::get(fn () => $this->podcast_id ? PlayableType::PODCAST_EPISODE : PlayableType::SONG);
+    }
+
+    public function accessibleBy(User $user): bool
+    {
+        if ($this->isEpisode()) {
+            return $user->subscribedToPodcast($this->podcast);
+        }
+
+        return $this->is_public || $this->ownedBy($user);
+    }
+
+    public function ownedBy(User $user): bool
+    {
+        return $this->owner_id === $user->id;
+    }
+
+    protected function storageMetadata(): Attribute
     {
         return new Attribute(
-            get: fn (?string $value) => $value ?: pathinfo($this->path, PATHINFO_FILENAME),
-            set: static fn (string $value) => html_entity_decode($value)
-        );
-    }
+            get: function (): SongStorageMetadata {
+                try {
+                    switch ($this->storage) {
+                        case SongStorageType::SFTP:
+                            preg_match('/^sftp:\\/\\/(.*)/', $this->path, $matches);
+                            return SftpMetadata::make($matches[1]);
 
-    protected function lyrics(): Attribute
-    {
-        $normalizer = static function (?string $value): string {
-            // Since we're displaying the lyrics using <pre>, replace breaks with newlines and strip all tags.
-            $value = strip_tags(preg_replace('#<br\s*/?>#i', PHP_EOL, $value));
+                        case SongStorageType::S3:
+                            preg_match('/^s3:\\/\\/(.*)\\/(.*)/', $this->path, $matches);
+                            return S3CompatibleMetadata::make($matches[1], $matches[2]);
 
-            // also remove the timestamps that often come with LRC files
-            return preg_replace('/\[\d{2}:\d{2}.\d{2}]\s*/m', '', $value);
-        };
+                        case SongStorageType::S3_LAMBDA:
+                            preg_match('/^s3:\\/\\/(.*)\\/(.*)/', $this->path, $matches);
+                            return S3LambdaMetadata::make($matches[1], $matches[2]);
 
-        return new Attribute(get: $normalizer, set: $normalizer);
-    }
+                        case SongStorageType::DROPBOX:
+                            preg_match('/^dropbox:\\/\\/(.*)/', $this->path, $matches);
+                            return DropboxMetadata::make($matches[1]);
 
-    protected function s3Params(): Attribute
-    {
-        return Attribute::get(function (): ?array {
-            if (!preg_match('/^s3:\\/\\/(.*)/', $this->path, $matches)) {
-                return null;
+                        default:
+                            return LocalMetadata::make($this->path);
+                    }
+                } catch (Throwable) {
+                    return LocalMetadata::make($this->path);
+                }
             }
-
-            [$bucket, $key] = explode('/', $matches[1], 2);
-
-            return compact('bucket', 'key');
-        });
+        );
     }
 
     public static function getPathFromS3BucketAndKey(string $bucket, string $key): string
@@ -135,19 +210,29 @@ class Song extends Model
         return "s3://$bucket/$key";
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function toSearchableArray(): array
     {
         $array = [
             'id' => $this->id,
             'title' => $this->title,
+            'type' => $this->type->value,
         ];
 
-        if (!$this->artist->is_unknown && !$this->artist->is_various) {
+        if ($this->episode_metadata?->description) {
+            $array['episode_description'] = $this->episode_metadata->description;
+        }
+
+        if ($this->artist && !$this->artist->is_unknown && !$this->artist->is_various) {
             $array['artist'] = $this->artist->name;
         }
 
         return $array;
+    }
+
+    public function isEpisode(): bool
+    {
+        return $this->type === PlayableType::PODCAST_EPISODE;
     }
 
     public function __toString(): string

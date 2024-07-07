@@ -1,6 +1,12 @@
 <template>
-  <a :href="url" target="_blank" title="Preview and buy this song on Apple Music">
+  <a
+    :href="url"
+    class="rounded px-2 py-0 bg-white/10 h-6 flex items-center hover:itunes-gradient focus:itunes-gradient"
+    target="_blank"
+    title="Preview and buy this song on Apple Music"
+  >
     <svg
+      class="fill-k-text-primary"
       height="10"
       role="presentation"
       viewBox="0 0 83 20"
@@ -24,25 +30,18 @@ const props = defineProps<{ url: string }>()
 const { url } = toRefs(props)
 </script>
 
-<style lang="scss" scoped>
-a {
-  display: inline-block;
-  border-radius: 3px;
-  padding: 0 5px;
-  background: rgba(255, 255, 255, .1);
-  height: 20px;
-  line-height: 20px;
+<style lang="postcss" scoped>
+@tailwind utilities;
 
-  svg {
-    fill: var(--color-text-primary)
-  }
-
-  &:hover, &:focus {
+@layer utilities {
+  .itunes-gradient {
     background: linear-gradient(27deg, #fe5c52 0%, #c74bd5 50%, #2daaff 100%);
   }
+}
 
+a {
   &:active {
-    box-shadow: inset 0px 5px 5px -5px #000;
+    box-shadow: inset 0 5px 5px -5px #000;
   }
 }
 </style>

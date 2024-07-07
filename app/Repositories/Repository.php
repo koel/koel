@@ -2,15 +2,17 @@
 
 namespace App\Repositories;
 
+use App\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
+/** @template T of Model */
 abstract class Repository implements RepositoryInterface
 {
     private string $modelClass;
-    protected Model $model;
     protected Guard $auth;
+    public Model $model;
 
     public function __construct(?string $modelClass = null)
     {
@@ -27,37 +29,47 @@ abstract class Repository implements RepositoryInterface
         return preg_replace('/(.+)\\\\Repositories\\\\(.+)Repository$/m', '$1\Models\\\$2', static::class);
     }
 
+    /** @return T */
     public function getOne($id): Model
     {
-        return $this->model->findOrFail($id);
+        return $this->model::query()->findOrFail($id);
     }
 
+    /** @return T|null */
+    public function findOneBy(array $params): ?Model
+    {
+        return $this->model::query()->where($params)->first();
+    }
+
+    /** @return T|null */
     public function findOne($id): ?Model
     {
-        return $this->model->find($id);
+        return $this->model::query()->find($id);
     }
 
-    /** @return Collection|array<array-key, Model> */
-    public function getMany(array $ids, bool $inThatOrder = false): Collection
+    /** @return T */
+    public function getOneBy(array $params): Model
+    {
+        return $this->model::query()->where($params)->firstOrFail();
+    }
+
+    /** @return array<array-key, T>|Collection<array-key, T> */
+    public function getMany(array $ids, bool $preserveOrder = false): Collection
     {
         $models = $this->model::query()->find($ids);
 
-        return $inThatOrder ? $models->orderByArray($ids) : $models;
+        return $preserveOrder ? $models->orderByArray($ids) : $models;
     }
 
-    /** @return Collection|array<array-key, Model> */
+    /** @return array<array-key, T>|Collection<array-key, T> */
     public function getAll(): Collection
     {
-        return $this->model->all();
+        return $this->model::all();
     }
 
-    public function getFirstWhere(...$params): ?Model
+    /** @return T|null  */
+    public function findFirstWhere(...$params): ?Model
     {
-        return $this->model->firstWhere(...$params);
-    }
-
-    public function getModelClass(): string
-    {
-        return $this->modelClass;
+        return $this->model::query()->firstWhere(...$params);
     }
 }

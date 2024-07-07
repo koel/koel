@@ -2,45 +2,57 @@
 
 namespace Tests\Integration\Listeners;
 
-use App\Events\MediaSyncCompleted;
-use App\Listeners\DeleteNonExistingRecordsPostSync;
+use App\Enums\SongStorageType;
+use App\Events\MediaScanCompleted;
+use App\Listeners\DeleteNonExistingRecordsPostScan;
 use App\Models\Song;
-use App\Values\SyncResult;
-use App\Values\SyncResultCollection;
+use App\Values\ScanResult;
+use App\Values\ScanResultCollection;
 use Illuminate\Database\Eloquent\Collection;
 use Tests\TestCase;
 
 class DeleteNonExistingRecordsPostSyncTest extends TestCase
 {
-    private DeleteNonExistingRecordsPostSync $listener;
+    private DeleteNonExistingRecordsPostScan $listener;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->listener = app(DeleteNonExistingRecordsPostSync::class);
+        $this->listener = app(DeleteNonExistingRecordsPostScan::class);
     }
 
-    public function testHandleDoesNotDeleteS3Entries(): void
+    public function testHandleDoesNotDeleteCloudEntries(): void
     {
-        $song = Song::factory()->create(['path' => 's3://do-not/delete-me.mp3']);
-        $this->listener->handle(new MediaSyncCompleted(SyncResultCollection::create()));
+        collect(SongStorageType::cases())
+            ->filter(static fn ($type) => $type !== SongStorageType::LOCAL)
+            ->each(function ($type): void {
+                $song = Song::factory()->create(['storage' => $type]);
+                $this->listener->handle(new MediaScanCompleted(ScanResultCollection::create()));
 
-        self::assertModelExists($song);
+                self::assertModelExists($song);
+            });
+    }
+
+    public function testHandleDoesNotDeleteEpisodes(): void
+    {
+        $episode = Song::factory()->asEpisode()->create();
+        $this->listener->handle(new MediaScanCompleted(ScanResultCollection::create()));
+        self::assertModelExists($episode);
     }
 
     public function testHandle(): void
     {
-        /** @var Collection|array<Song> $songs */
+        /** @var Collection|array<array-key, Song> $songs */
         $songs = Song::factory(4)->create();
 
         self::assertCount(4, Song::all());
 
-        $syncResult = SyncResultCollection::create();
-        $syncResult->add(SyncResult::success($songs[0]->path));
-        $syncResult->add(SyncResult::skipped($songs[3]->path));
+        $syncResult = ScanResultCollection::create();
+        $syncResult->add(ScanResult::success($songs[0]->path));
+        $syncResult->add(ScanResult::skipped($songs[3]->path));
 
-        $this->listener->handle(new MediaSyncCompleted($syncResult));
+        $this->listener->handle(new MediaScanCompleted($syncResult));
 
         self::assertModelExists($songs[0]);
         self::assertModelExists($songs[3]);

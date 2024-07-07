@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Playlist;
 use App\Models\PlaylistFolder;
 use App\Models\User;
 
@@ -22,11 +21,11 @@ class PlaylistFolderService
 
     public function addPlaylistsToFolder(PlaylistFolder $folder, array $playlistIds): void
     {
-        Playlist::query()->whereIn('id', $playlistIds)->update(['folder_id' => $folder->id]);
+        $folder->playlists()->attach($playlistIds);
     }
 
-    public function movePlaylistsToRootLevel(array $playlistIds): void
+    public function movePlaylistsToRootLevel(PlaylistFolder $folder, array $playlistIds): void
     {
-        Playlist::query()->whereIn('id', $playlistIds)->update(['folder_id' => null]);
+        $folder->playlists()->detach($playlistIds);
     }
 }

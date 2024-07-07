@@ -1,8 +1,8 @@
 <template>
-  <li
-    ref="el"
-    :class="{ droppable }"
-    class="playlist"
+  <SidebarItem
+    :class="{ current, droppable }"
+    :href="url"
+    class="playlist select-none"
     draggable="true"
     @contextmenu="onContextMenu"
     @dragleave="onDragLeave"
@@ -10,30 +10,34 @@
     @dragstart="onDragStart"
     @drop="onDrop"
   >
-    <a :class="{ active }" :href="url">
-      <Icon v-if="isRecentlyPlayedList(list)" :icon="faClockRotateLeft" class="text-green" fixed-width />
-      <Icon v-else-if="isFavoriteList(list)" :icon="faHeart" class="text-maroon" fixed-width />
+    <template #icon>
+      <Icon v-if="isRecentlyPlayedList(list)" :icon="faClockRotateLeft" class="text-k-success" fixed-width />
+      <Icon v-else-if="isFavoriteList(list)" :icon="faHeart" class="text-k-love" fixed-width />
       <Icon v-else-if="list.is_smart" :icon="faWandMagicSparkles" fixed-width />
-      <Icon v-else :icon="faFileLines" fixed-width />
-      <span>{{ list.name }}</span>
-    </a>
-  </li>
+      <Icon v-else-if="list.is_collaborative" :icon="faUsers" fixed-width />
+      <ListMusicIcon v-else :size="16" />
+    </template>
+    {{ list.name }}
+  </SidebarItem>
 </template>
 
 <script lang="ts" setup>
-import { faClockRotateLeft, faFileLines, faHeart, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
+import { faClockRotateLeft, faHeart, faUsers, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
+import { ListMusicIcon } from 'lucide-vue-next'
 import { computed, ref, toRefs } from 'vue'
 import { eventBus } from '@/utils'
 import { favoriteStore } from '@/stores'
 import { useDraggable, useDroppable, usePlaylistManagement, useRouter } from '@/composables'
 
+import SidebarItem from '@/components/layout/main-wrapper/sidebar/SidebarItem.vue'
+
 const { onRouteChanged } = useRouter()
 const { startDragging } = useDraggable('playlist')
-const { acceptsDrop, resolveDroppedSongs } = useDroppable(['songs', 'album', 'artist'])
+const { acceptsDrop, resolveDroppedItems } = useDroppable(['playables', 'album', 'artist'])
 
 const droppable = ref(false)
 
-const { addSongsToPlaylist } = usePlaylistManagement()
+const { addToPlaylist } = usePlaylistManagement()
 
 const props = defineProps<{ list: PlaylistLike }>()
 const { list } = toRefs(props)
@@ -42,7 +46,7 @@ const isPlaylist = (list: PlaylistLike): list is Playlist => 'id' in list
 const isFavoriteList = (list: PlaylistLike): list is FavoriteList => list.name === 'Favorites'
 const isRecentlyPlayedList = (list: PlaylistLike): list is RecentlyPlayedList => list.name === 'Recently Played'
 
-const active = ref(false)
+const current = ref(false)
 
 const url = computed(() => {
   if (isPlaylist(list.value)) return `#/playlist/${list.value.id}`
@@ -86,14 +90,14 @@ const onDrop = async (event: DragEvent) => {
   if (!contentEditable.value) return false
   if (!acceptsDrop(event)) return false
 
-  const songs = await resolveDroppedSongs(event)
+  const playables = await resolveDroppedItems(event)
 
-  if (!songs?.length) return false
+  if (!playables?.length) return false
 
   if (isFavoriteList(list.value)) {
-    await favoriteStore.like(songs)
+    await favoriteStore.like(playables)
   } else if (isPlaylist(list.value)) {
-    await addSongsToPlaylist(list.value, songs)
+    await addToPlaylist(list.value, playables)
   }
 
   return false
@@ -102,38 +106,26 @@ const onDrop = async (event: DragEvent) => {
 onRouteChanged(route => {
   switch (route.screen) {
     case 'Favorites':
-      active.value = isFavoriteList(list.value)
+      current.value = isFavoriteList(list.value)
       break
 
     case 'RecentlyPlayed':
-      active.value = isRecentlyPlayedList(list.value)
+      current.value = isRecentlyPlayedList(list.value)
       break
 
     case 'Playlist':
-      active.value = (list.value as Playlist).id === parseInt(route.params!.id)
+      current.value = (list.value as Playlist).id === route.params!.id
       break
 
     default:
-      active.value = false
+      current.value = false
       break
   }
 })
 </script>
 
-<style lang="scss" scoped>
-.playlist {
-  user-select: none;
-
-  &.droppable {
-    box-shadow: inset 0 0 0 1px var(--color-accent);
-    border-radius: 4px;
-    cursor: copy;
-  }
-
-  :deep(a) {
-    span {
-      pointer-events: none;
-    }
-  }
+<style lang="postcss" scoped>
+.droppable {
+  @apply ring-1 ring-offset-0 ring-k-accent rounded-md cursor-copy;
 }
 </style>

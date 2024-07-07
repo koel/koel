@@ -3,15 +3,16 @@
 namespace App\Providers;
 
 use App\Events\LibraryChanged;
-use App\Events\MediaSyncCompleted;
+use App\Events\MediaScanCompleted;
+use App\Events\MultipleSongsLiked;
+use App\Events\MultipleSongsUnliked;
+use App\Events\NewPlaylistCollaboratorJoined;
 use App\Events\PlaybackStarted;
 use App\Events\SongLikeToggled;
-use App\Events\SongsBatchLiked;
-use App\Events\SongsBatchUnliked;
-use App\Listeners\ClearMediaCache;
-use App\Listeners\DeleteNonExistingRecordsPostSync;
+use App\Listeners\DeleteNonExistingRecordsPostScan;
 use App\Listeners\LoveMultipleTracksOnLastfm;
 use App\Listeners\LoveTrackOnLastfm;
+use App\Listeners\MakePlaylistSongsPublic;
 use App\Listeners\PruneLibrary;
 use App\Listeners\UnloveMultipleTracksOnLastfm;
 use App\Listeners\UpdateLastfmNowPlaying;
@@ -27,11 +28,11 @@ class EventServiceProvider extends BaseServiceProvider
             LoveTrackOnLastfm::class,
         ],
 
-        SongsBatchLiked::class => [
+        MultipleSongsLiked::class => [
             LoveMultipleTracksOnLastfm::class,
         ],
 
-        SongsBatchUnliked::class => [
+        MultipleSongsUnliked::class => [
             UnloveMultipleTracksOnLastfm::class,
         ],
 
@@ -41,12 +42,15 @@ class EventServiceProvider extends BaseServiceProvider
 
         LibraryChanged::class => [
             PruneLibrary::class,
-            ClearMediaCache::class,
         ],
 
-        MediaSyncCompleted::class => [
-            DeleteNonExistingRecordsPostSync::class,
+        MediaScanCompleted::class => [
+            DeleteNonExistingRecordsPostScan::class,
             WriteSyncLog::class,
+        ],
+
+        NewPlaylistCollaboratorJoined::class => [
+            MakePlaylistSongsPublic::class,
         ],
     ];
 

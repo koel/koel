@@ -17,7 +17,7 @@ new class extends UnitTestCase {
   protected test () {
     it('requests context menu if is playlist', async () => {
       const emitMock = this.mock(eventBus, 'emit')
-      const playlist = factory<Playlist>('playlist')
+      const playlist = factory('playlist')
       this.renderComponent(playlist)
 
       await fireEvent.contextMenu(screen.getByRole('listitem'))

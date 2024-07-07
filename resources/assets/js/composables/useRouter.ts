@@ -21,7 +21,7 @@ export const useRouter = () => {
     getCurrentScreen,
     isCurrentScreen,
     onScreenActivated,
-    go: router.go.bind(router),
+    go: Router.go,
     onRouteChanged: router.onRouteChanged.bind(router),
     resolveRoute: router.resolve.bind(router),
     triggerNotFound: router.triggerNotFound.bind(router)

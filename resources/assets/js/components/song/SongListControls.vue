@@ -1,13 +1,14 @@
 <template>
-  <div ref="el" class="song-list-controls" data-testid="song-list-controls">
-    <div class="wrapper">
-      <BtnGroup uppercased>
+  <div class="relative" data-testid="song-list-controls">
+    <div class="flex gap-2 flex-wrap">
+      <BtnGroup uppercase>
         <template v-if="altPressed">
           <Btn
-            v-if="selectedSongs.length < 2 && songs.length"
+            v-if="selectedPlayables.length < 2 && playables.length"
+            v-koel-tooltip.bottom
             class="btn-play-all"
-            orange
-            title="Play all songs"
+            highlight
+            title="Play all. Press Alt/⌥ to change mode."
             @click.prevent="playAll"
           >
             <Icon :icon="faPlay" fixed-width />
@@ -15,10 +16,11 @@
           </Btn>
 
           <Btn
-            v-if="selectedSongs.length > 1"
+            v-if="selectedPlayables.length > 1"
+            v-koel-tooltip.bottom
             class="btn-play-selected"
-            orange
-            title="Play selected songs"
+            highlight
+            title="Play selected. Press Alt/⌥ to change mode."
             @click.prevent="playSelected"
           >
             <Icon :icon="faPlay" fixed-width />
@@ -28,11 +30,12 @@
 
         <template v-else>
           <Btn
-            v-if="selectedSongs.length < 2 && songs.length"
+            v-if="selectedPlayables.length < 2 && playables.length"
+            v-koel-tooltip.bottom
             class="btn-shuffle-all"
             data-testid="btn-shuffle-all"
-            orange
-            title="Shuffle all songs"
+            highlight
+            title="Shuffle all. Press Alt/⌥ to change mode."
             @click.prevent="shuffle"
           >
             <Icon :icon="faRandom" fixed-width />
@@ -40,11 +43,12 @@
           </Btn>
 
           <Btn
-            v-if="selectedSongs.length > 1"
+            v-if="selectedPlayables.length > 1"
+            v-koel-tooltip.bottom
             class="btn-shuffle-selected"
             data-testid="btn-shuffle-selected"
-            orange
-            title="Shuffle selected songs"
+            highlight
+            title="Shuffle selected. Press Alt/⌥ to change mode."
             @click.prevent="shuffleSelected"
           >
             <Icon :icon="faRandom" fixed-width />
@@ -55,16 +59,17 @@
         <Btn
           v-if="showAddToButton"
           ref="addToButton"
-          green @click.prevent.stop="toggleAddToMenu"
+          success
+          @click.prevent.stop="toggleAddToMenu"
         >
           {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
         </Btn>
 
-        <Btn v-if="config.clearQueue" red title="Clear current queue" @click.prevent="clearQueue">Clear</Btn>
+        <Btn v-if="config.clearQueue" danger title="Clear current queue" @click.prevent="clearQueue">Clear</Btn>
       </BtnGroup>
 
       <BtnGroup v-if="config.refresh || config.deletePlaylist">
-        <Btn v-if="config.refresh" v-koel-tooltip green title="Refresh" @click.prevent="refresh">
+        <Btn v-if="config.refresh" v-koel-tooltip success title="Refresh" @click.prevent="refresh">
           <Icon :icon="faRotateRight" fixed-width />
         </Btn>
 
@@ -72,7 +77,7 @@
           v-if="config.deletePlaylist"
           v-koel-tooltip
           class="del btn-delete-playlist"
-          red
+          danger
           title="Delete this playlist"
           @click.prevent="deletePlaylist"
         >
@@ -80,42 +85,45 @@
         </Btn>
       </BtnGroup>
 
-      <BtnGroup v-if="config.filter && songs.length">
+      <BtnGroup v-if="config.filter && playables.length">
         <SongListFilter @change="filter" />
       </BtnGroup>
     </div>
 
-    <div ref="addToMenu" v-koel-clickaway="closeAddToMenu" class="menu-wrapper">
-      <AddToMenu :config="config.addTo" :songs="selectedSongs" @closing="closeAddToMenu" />
-    </div>
+    <OnClickOutside @trigger="closeAddToMenu">
+      <div ref="addToMenu" class="context-menu p-0 hidden">
+        <AddToMenu :config="config.addTo" :playables="selectedPlayables" @closing="closeAddToMenu" />
+      </div>
+    </OnClickOutside>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { faPlay, faRandom, faRotateRight, faTrashCan } from '@fortawesome/free-solid-svg-icons'
-import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, Ref, ref, watch } from 'vue'
-import { SelectedSongsKey, SongsKey } from '@/symbols'
+import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, Ref, ref, toRef, watch } from 'vue'
+import { OnClickOutside } from '@vueuse/components'
+import { PlayablesKey, SelectedPlayablesKey } from '@/symbols'
 import { requireInjection } from '@/utils'
-import { useFloatingUi, useSongListControls } from '@/composables'
+import { useFloatingUi } from '@/composables'
 
 import AddToMenu from '@/components/song/AddToMenu.vue'
-import Btn from '@/components/ui/Btn.vue'
-import BtnGroup from '@/components/ui/BtnGroup.vue'
+import Btn from '@/components/ui/form/Btn.vue'
+import BtnGroup from '@/components/ui/form/BtnGroup.vue'
 
 const SongListFilter = defineAsyncComponent(() => import('@/components/song/SongListFilter.vue'))
 
-const config = useSongListControls().getSongListControlsConfig()
+const props = defineProps<{ config: SongListControlsConfig }>()
+const config = toRef(props, 'config')
 
-const [songs] = requireInjection<[Ref<Song[]>]>(SongsKey)
-const [selectedSongs] = requireInjection(SelectedSongsKey)
+const [playables] = requireInjection<[Ref<Playable[]>]>(PlayablesKey)
+const [selectedPlayables] = requireInjection(SelectedPlayablesKey)
 
-const el = ref<HTMLElement>()
 const addToButton = ref<InstanceType<typeof Btn>>()
 const addToMenu = ref<HTMLDivElement>()
 const showingAddToMenu = ref(false)
 const altPressed = ref(false)
 
-const showAddToButton = computed(() => Boolean(selectedSongs.value.length))
+const showAddToButton = computed(() => Boolean(selectedPlayables.value.length))
 
 const emit = defineEmits<{
   (e: 'playAll' | 'playSelected', shuffle: boolean): void,
@@ -169,22 +177,3 @@ onBeforeUnmount(() => {
   usedFloatingUi?.teardown()
 })
 </script>
-
-<style lang="scss" scoped>
-.song-list-controls {
-  position: relative;
-
-  .wrapper {
-    display: flex;
-    gap: .5rem;
-    flex-wrap: wrap;
-  }
-
-  .menu-wrapper {
-    @include context-menu();
-
-    padding: 0;
-    display: none;
-  }
-}
-</style>

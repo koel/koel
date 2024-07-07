@@ -1,22 +1,28 @@
 <template>
-  <dialog ref="dialog" class="dialog" :class="`dialog-${type}`">
-    <main>
+  <dialog
+    ref="dialog"
+    :class="`${type}`"
+    class="rounded-md shadow-xl border-0 p-0 min-w-[320px] max-w-[calc(100vw - 40px)] backdrop:bg-black/50"
+  >
+    <div class="flex gap-5 py-6 px-7">
       <aside>
-        <Icon v-if="type === 'info'" :icon="faInfo" />
-        <Icon v-if="type === 'success'" :icon="faCheck" />
-        <Icon v-if="type === 'warning'" :icon="faTriangleExclamation" />
-        <Icon v-if="type === 'danger'" :icon="faExclamation" />
-        <Icon v-if="type === 'confirm'" :icon="faQuestion" />
+        <i class="text-lg w-[2.3rem] aspect-square flex justify-center items-center rounded-full">
+          <Icon v-if="type === 'info'" :icon="faInfo" />
+          <Icon v-if="type === 'success'" :icon="faCheck" />
+          <Icon v-if="type === 'warning'" :icon="faTriangleExclamation" />
+          <Icon v-if="type === 'danger'" :icon="faExclamation" />
+          <Icon v-if="type === 'confirm'" :icon="faQuestion" />
+        </i>
       </aside>
 
-      <div class="content">
-        <h3 v-if="title" class="title">{{ title }}</h3>
-        <div class="message">{{ message }}</div>
-      </div>
-    </main>
+      <main>
+        <h3 v-if="title" class="text-2xl mb-4">{{ title }}</h3>
+        <div class="mt-2">{{ message }}</div>
+      </main>
+    </div>
 
-    <footer>
-      <Btn v-if="showCancelButton" name="cancel" @click.prevent="cancel">Cancel</Btn>
+    <footer class="flex justify-end gap-2 px-6 py-4">
+      <Btn v-if="showCancelButton" gray name="cancel" @click.prevent="cancel">Cancel</Btn>
       <Btn name="ok">OK</Btn>
     </footer>
   </dialog>
@@ -25,7 +31,7 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { faCheck, faExclamation, faInfo, faQuestion, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons'
-import Btn from '@/components/ui/Btn.vue'
+import Btn from '@/components/ui/form/Btn.vue'
 
 type DialogType = 'info' | 'success' | 'warning' | 'danger' | 'confirm'
 
@@ -72,8 +78,8 @@ const confirm = async (message: string, title: string = '') => show('confirm', m
 defineExpose({ success, info, warning, error, confirm })
 </script>
 
-<style lang="scss" scoped>
-.dialog {
+<style lang="postcss" scoped>
+dialog {
   --dialog-bg-color: #fff;
   --dialog-fg-color: #333;
   --dialog-footer-bg-color: rgba(0, 0, 0, .05);
@@ -86,78 +92,29 @@ defineExpose({ success, info, warning, error, confirm })
 
   background: var(--dialog-bg-color);
   color: var(--dialog-fg-color);
-  border-radius: 5px;
-  box-shadow: 0 5px 15px 3px rgba(0, 0, 0, .2);
-  border: 0;
-  padding: 0;
-  min-width: 320px;
-  max-width: calc(100vw - 40px);
-
-  &::backdrop {
-    background: rgba(0, 0, 0, 0.7);
-  }
-
-  main {
-    display: flex;
-    padding: 1.5rem 1.7rem;
-    gap: 1.2rem;
-
-    .title {
-      font-size: 1.4rem;
-      margin-bottom: 1rem;
-    }
-
-    .message {
-      margin-top: .5rem;
-    }
-  }
 
   footer {
-    display: flex;
-    justify-content: flex-end;
-    padding: 1rem 1.5rem;
-    gap: .5rem;
     background: var(--dialog-footer-bg-color);
-
-    [name=cancel] {
-      background: #fefefe;
-      color: #333;
-    }
   }
 
-  aside {
-    font-size: 1.1rem;
-    width: 2.3rem;
-    height: 2.3rem;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  &.info aside i {
+    @apply bg-blue-100 text-blue-600;
   }
 
-  &-info aside {
-    background-color: rgb(219 234 254);
-    color: rgb(59 130 246);
+  &.success aside i {
+    @apply bg-green-100 text-green-600;
   }
 
-  &-success aside {
-    background-color: rgb(209 250 229);
-    color: rgb(16 185 129);
+  &.confirm aside i {
+    @apply bg-purple-100 text-purple-700;
   }
 
-  &-confirm aside {
-    background-color: rgb(237 233 254);
-    color: rgb(139 92 246);
+  &.warning aside i {
+    @apply bg-orange-100 text-orange-600;
   }
 
-  &-warning aside {
-    background-color: rgb(255 237 213);
-    color: rgb(249 115 22);
-  }
-
-  &-danger aside {
-    background-color: rgb(254 202 202);
-    color: rgb(185 28 28);
+  &.danger aside i {
+    @apply bg-red-300 text-red-800;
   }
 }
 </style>

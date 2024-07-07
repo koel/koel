@@ -1,33 +1,38 @@
 <template>
-  <section id="youtubeWrapper">
-    <ScreenHeader layout="collapsed">{{ title }}</ScreenHeader>
+  <ScreenBase>
+    <template #header>
+      <ScreenHeader layout="collapsed">{{ title }}</ScreenHeader>
+    </template>
 
-    <div id="player">
-      <ScreenEmptyState data-testid="youtube-placeholder">
-        <template #icon>
-          <Icon :icon="faYoutube" />
-        </template>
-        YouTube videos will be played here.
-        <span class="d-block instruction">Start a video playback from the right sidebar.</span>
-      </ScreenEmptyState>
-    </div>
-  </section>
+    <ScreenEmptyState v-if="!showingVideo" data-testid="youtube-placeholder">
+      <template #icon>
+        <Icon :icon="faYoutube" />
+      </template>
+      YouTube videos will be played here.
+      <span class="secondary">Start a video playback from the right sidebar.</span>
+    </ScreenEmptyState>
+
+    <div id="player" />
+  </ScreenBase>
 </template>
 
 <script lang="ts" setup>
+import { unescape } from 'lodash'
 import { faYoutube } from '@fortawesome/free-brands-svg-icons'
 import createYouTubePlayer from 'youtube-player'
 import { ref, watch } from 'vue'
 import type { YouTubePlayer } from 'youtube-player/dist/types'
 import { eventBus, requireInjection, use } from '@/utils'
 import { playbackService } from '@/services'
-import { CurrentSongKey } from '@/symbols'
+import { CurrentPlayableKey } from '@/symbols'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
+import ScreenBase from '@/components/screens/ScreenBase.vue'
 
 let player: YouTubePlayer
 const title = ref('YouTube Video')
+const showingVideo = ref(false)
 
 const getPlayer = () => {
   if (!player) {
@@ -43,7 +48,7 @@ const getPlayer = () => {
   return player
 }
 
-const currentSong = requireInjection(CurrentSongKey)
+const currentSong = requireInjection(CurrentPlayableKey)
 
 /**
  * Pause video playback when a song is played/resumed.
@@ -51,7 +56,8 @@ const currentSong = requireInjection(CurrentSongKey)
 watch(() => currentSong.value?.playback_state, state => state === 'Playing' && player?.pauseVideo())
 
 eventBus.on('PLAY_YOUTUBE_VIDEO', payload => {
-  title.value = payload.title
+  showingVideo.value = true
+  title.value = unescape(payload.title)
 
   use(getPlayer(), player => {
     player.loadVideoById(payload.id)
@@ -60,15 +66,9 @@ eventBus.on('PLAY_YOUTUBE_VIDEO', payload => {
 })
 </script>
 
-<style lang="scss" scoped>
-:deep(#player) {
-  height: 100%;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-
-  .instruction {
-    font-size: 1.5rem;
-  }
+<style lang="postcss" scoped>
+:deep(iframe#player) {
+  /* this is the iframe created by the YouTubePlayer plugin, not the div element! */
+  @apply -m-6 w-auto h-auto flex-1 flex flex-col;
 }
 </style>

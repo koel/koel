@@ -1,24 +1,33 @@
 <template>
-  <form id="searchForm" role="search" @submit.prevent="onSubmit">
-    <span class="icon">
+  <form
+    id="searchForm"
+    class="text-k-text-secondary flex items-stretch border overflow-hidden gap-2 pl-4 pr-0 py-0 rounded-md
+    border-solid border-transparent bg-black/20 focus-within:border-white/20 focus-within:bg-black/50
+    transition-[border,_background-color] duration-200 ease-in-out"
+    role="search"
+    @submit.prevent="onSubmit"
+  >
+    <span class="hidden md:flex opacity-70 items-center">
       <Icon :icon="faSearch" />
     </span>
 
-    <input
+    <TextInput
       ref="input"
       v-model="q"
       :class="{ dirty: q }"
       :placeholder="placeholder"
       autocorrect="false"
+      class="w-full rounded-none h-[36px] !bg-transparent !text-k-text-primary !placeholder:text-white/50
+      focus-visible:outline-0 !px-2"
       name="q"
       required
       spellcheck="false"
       type="search"
       @focus="maybeGoToSearchScreen"
       @input="onInput"
-    >
+    />
 
-    <button type="submit" title="Search">
+    <button class="block md:hidden py-0 px-4 bg-white/5 rounded-none" title="Search" type="submit">
       <Icon :icon="faSearch" />
     </button>
   </form>
@@ -31,12 +40,13 @@ import { ref } from 'vue'
 import { debounce } from 'lodash'
 import { eventBus } from '@/utils'
 import { useRouter } from '@/composables'
+import TextInput from '@/components/ui/form/TextInput.vue'
 
 const placeholder = isMobile.any ? 'Search' : 'Press F to search'
 
 const { go } = useRouter()
 
-const input = ref<HTMLInputElement>()
+const input = ref<InstanceType<typeof TextInput>>()
 const q = ref('')
 
 let onInput = () => {
@@ -56,60 +66,7 @@ const onSubmit = () => {
 const maybeGoToSearchScreen = () => isMobile.any || go('search')
 
 eventBus.on('FOCUS_SEARCH_FIELD', () => {
-  input.value?.focus()
-  input.value?.select()
+  input.value?.el?.focus()
+  input.value?.el?.select()
 })
 </script>
-
-<style lang="scss">
-#searchForm {
-  display: flex;
-  align-items: stretch;
-  color: var(--color-text-secondary);
-  background: rgba(0, 0, 0, .2);
-  border: 1px solid transparent;
-  border-radius: 5px;
-  transition: border .3s ease-in-out, .3s background-color ease-in-out;
-  overflow: hidden;
-  padding: 0 0 0 1rem;
-  gap: .5rem;
-
-  .icon {
-    display: flex;
-    align-items: center;
-    opacity: .7;
-
-    @media screen and (max-width: 768px) {
-      display: none;
-    }
-  }
-
-  button {
-    display: none;
-    padding: 0 1.2rem;
-    background: rgba(255, 255, 255, .05);
-    border-radius: 0;
-
-    @media screen and (max-width: 768px) {
-      display: block;
-    }
-  }
-
-  &:focus-within {
-    border: 1px solid rgba(255, 255, 255, .2);
-    background: rgba(0, 0, 0, .5);
-  }
-
-  input[type="search"] {
-    width: 100%;
-    border-radius: 0;
-    height: 36px;
-    color: var(--color-text-primary);
-    background-color: transparent;
-
-    &::placeholder {
-      color: rgba(255, 255, 255, .5);
-    }
-  }
-}
-</style>

@@ -1,0 +1,12 @@
+.tooltip {
+  @apply opacity-0 text-white/80 w-max absolute top-0 left-0 bg-black px-3 py-2 rounded-md pointer-events-none
+  drop-shadow z-[9999] no-hover:hidden;
+
+  &.show {
+    @apply opacity-100 transition-opacity duration-500 ease-in-out;
+  }
+
+  &-arrow {
+    @apply absolute bg-black w-[8px] aspect-square rotate-45;
+  }
+}

@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'storage_driver' => env('STORAGE_DRIVER', 'local'),
+
     'media_path' => env('MEDIA_PATH'),
 
     // The *relative* path to the directory to store album covers and thumbnails, *with* a trailing slash.
@@ -8,6 +10,12 @@ return [
 
     // The *relative* path to the directory to store artist images, *with* a trailing slash.
     'artist_image_dir' => 'img/artists/',
+
+    // The *relative* path to the directory to store playlist covers, *with* a trailing slash.
+    'playlist_cover_dir' => 'img/playlists/',
+
+    // The *relative* path to the directory to store user avatars, *with* a trailing slash.
+    'user_avatar_dir' => 'img/avatars/',
 
     /*
     |--------------------------------------------------------------------------
@@ -107,7 +115,7 @@ return [
     */
 
     'download' => [
-        'allow' => env('ALLOW_DOWNLOAD', true),
+        'allow' => env('allows_download', true),
     ],
 
     /*
@@ -132,6 +140,13 @@ return [
     'backup_on_delete' => env('BACKUP_ON_DELETE', true),
 
     'sync_log_level' => env('SYNC_LOG_LEVEL', 'error'),
+
+    'proxy_auth' => [
+        'enabled' => env('PROXY_AUTH_ENABLED', false),
+        'user_header' => env('PROXY_AUTH_USER_HEADER', 'remote-user'),
+        'preferred_name_header' => env('PROXY_AUTH_PREFERRED_NAME_HEADER', 'remote-preferred-name'),
+        'allow_list' => array_map(static fn ($entry) => trim($entry), explode(',', env('PROXY_AUTH_ALLOW_LIST', ''))),
+    ],
 
     'misc' => [
         'home_url' => 'https://koel.dev',

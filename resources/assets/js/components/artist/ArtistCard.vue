@@ -1,5 +1,5 @@
 <template>
-  <ArtistAlbumCard
+  <BaseCard
     v-if="showing"
     :entity="artist"
     :layout="layout"
@@ -9,28 +9,17 @@
     @dragstart="onDragStart"
   >
     <template #name>
-      <a :href="`#/artist/${artist.id}`" class="text-normal" data-testid="name">{{ artist.name }}</a>
+      <a :href="`#/artist/${artist.id}`" class="font-medium" data-testid="name">{{ artist.name }}</a>
     </template>
     <template #meta>
-      <a
-        :title="`Shuffle all songs by ${artist.name}`"
-        class="shuffle-artist"
-        role="button"
-        @click.prevent="shuffle"
-      >
+      <a :title="`Shuffle all songs by ${artist.name}`" role="button" @click.prevent="shuffle">
         Shuffle
       </a>
-      <a
-        v-if="allowDownload"
-        :title="`Download all songs by ${artist.name}`"
-        class="download-artist"
-        role="button"
-        @click.prevent="download"
-      >
+      <a v-if="allowDownload" :title="`Download all songs by ${artist.name}`" role="button" @click.prevent="download">
         Download
       </a>
     </template>
-  </ArtistAlbumCard>
+  </BaseCard>
 </template>
 
 <script lang="ts" setup>
@@ -40,7 +29,7 @@ import { artistStore, commonStore, songStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 import { useDraggable, useRouter } from '@/composables'
 
-import ArtistAlbumCard from '@/components/ui/ArtistAlbumCard.vue'
+import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
 
 const { go } = useRouter()
 const { startDragging } = useDraggable('artist')
@@ -48,7 +37,7 @@ const { startDragging } = useDraggable('artist')
 const props = withDefaults(defineProps<{ artist: Artist, layout?: ArtistAlbumCardLayout }>(), { layout: 'full' })
 const { artist, layout } = toRefs(props)
 
-const allowDownload = toRef(commonStore.state, 'allow_download')
+const allowDownload = toRef(commonStore.state, 'allows_download')
 
 const showing = computed(() => artistStore.isStandard(artist.value))
 

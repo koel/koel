@@ -3,36 +3,44 @@ import { http } from '@/services'
 import { albumStore, artistStore, songStore } from '@/stores'
 
 type ExcerptState = {
-  songs: Song[],
-  albums: Album[],
+  playables: Playable[]
+  albums: Album[]
   artists: Artist[]
+  podcasts: Podcast[]
 }
 
-export type ExcerptSearchResult = ExcerptState
+export type ExcerptSearchResult = {
+  songs: Playable[] // backward compatibility
+  albums: Album[]
+  artists: Artist[]
+  podcasts: Podcast[]
+}
 
 export const searchStore = {
   state: reactive({
     excerpt: {
-      songs: [],
+      playables: [],
       albums: [],
-      artists: []
+      artists: [],
+      podcasts: []
     } as ExcerptState,
-    songs: [] as Song[]
+    playables: [] as Playable[]
   }),
 
   async excerptSearch (q: string) {
     const result = await http.get<ExcerptSearchResult>(`search?q=${q}`)
 
-    this.state.excerpt.songs = songStore.syncWithVault(result.songs)
+    this.state.excerpt.playables = songStore.syncWithVault(result.songs)
     this.state.excerpt.albums = albumStore.syncWithVault(result.albums)
     this.state.excerpt.artists = artistStore.syncWithVault(result.artists)
+    this.state.excerpt.podcasts = result.podcasts
   },
 
-  async songSearch (q: string) {
-    this.state.songs = songStore.syncWithVault(await http.get<Song[]>(`search/songs?q=${q}`))
+  async playableSearch (q: string) {
+    this.state.playables = songStore.syncWithVault(await http.get<Playable[]>(`search/songs?q=${q}`))
   },
 
-  resetSongResultState () {
-    this.state.songs = []
+  resetPlayableResultState () {
+    this.state.playables = []
   }
 }

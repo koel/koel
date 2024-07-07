@@ -1,39 +1,33 @@
 <template>
-  <ArtistAlbumCard
+  <BaseCard
     v-if="showing"
     :entity="album"
-    :title="`${album.name} by ${album.artist_name}`"
     :layout="layout"
+    :title="`${album.name} by ${album.artist_name}`"
     @contextmenu="requestContextMenu"
     @dblclick="shuffle"
     @dragstart="onDragStart"
   >
     <template #name>
-      <a :href="`#/album/${album.id}`" class="text-normal" data-testid="name">{{ album.name }}</a>
+      <a :href="`#/album/${album.id}`" class="font-medium" data-testid="name">{{ album.name }}</a>
       <a v-if="isStandardArtist" :href="`#/artist/${album.artist_id}`">{{ album.artist_name }}</a>
-      <span v-else class="text-secondary">{{ album.artist_name }}</span>
+      <span v-else class="text-k-text-secondary">{{ album.artist_name }}</span>
     </template>
 
     <template #meta>
-      <a
-        :title="`Shuffle all songs in the album ${album.name}`"
-        class="shuffle-album"
-        role="button"
-        @click.prevent="shuffle"
-      >
+      <a :title="`Shuffle all songs in the album ${album.name}`" role="button" @click.prevent="shuffle">
         Shuffle
       </a>
       <a
         v-if="allowDownload"
         :title="`Download all songs in the album ${album.name}`"
-        class="download-album"
         role="button"
         @click.prevent="download"
       >
         Download
       </a>
     </template>
-  </ArtistAlbumCard>
+  </BaseCard>
 </template>
 
 <script lang="ts" setup>
@@ -43,7 +37,7 @@ import { albumStore, artistStore, commonStore, songStore } from '@/stores'
 import { downloadService, playbackService } from '@/services'
 import { useDraggable, useRouter } from '@/composables'
 
-import ArtistAlbumCard from '@/components/ui/ArtistAlbumCard.vue'
+import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
 
 const { go } = useRouter()
 const { startDragging } = useDraggable('album')
@@ -51,7 +45,7 @@ const { startDragging } = useDraggable('album')
 const props = withDefaults(defineProps<{ album: Album, layout?: ArtistAlbumCardLayout }>(), { layout: 'full' })
 const { album, layout } = toRefs(props)
 
-const allowDownload = toRef(commonStore.state, 'allow_download')
+const allowDownload = toRef(commonStore.state, 'allows_download')
 
 const isStandardArtist = computed(() => artistStore.isStandard(album.value.artist_id))
 const showing = computed(() => !albumStore.isUnknown(album.value))

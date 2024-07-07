@@ -10,9 +10,9 @@ import EditPlaylistForm from './EditPlaylistForm.vue'
 new class extends UnitTestCase {
   protected test () {
     it('submits', async () => {
-      playlistFolderStore.state.folders = factory<PlaylistFolder>('playlist-folder', 3)
+      playlistFolderStore.state.folders = factory('playlist-folder', 3)
 
-      const playlist = factory<Playlist>('playlist', {
+      const playlist = factory('playlist', {
         name: 'My playlist',
         folder_id: playlistFolderStore.state.folders[0].id
       })

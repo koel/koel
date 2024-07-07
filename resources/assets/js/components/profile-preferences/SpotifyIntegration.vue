@@ -1,11 +1,11 @@
 <template>
-  <section class="text-secondary">
-    <h1>
-      <span class="spotify-icon">
+  <section class="text-k-text-secondary">
+    <h3 class="text-2xl mb-2">
+      <span class="mr-2 text-[#1db954]">
         <Icon :icon="faSpotify" />
       </span>
       Spotify Integration
-    </h1>
+    </h3>
 
     <div v-if="useSpotify">
       <p>
@@ -17,12 +17,11 @@
       <p>
         Spotify integration is not enabled.
         <span v-if="isAdmin" data-testid="spotify-admin-instruction">
-          Visit
-          <a href="https://docs.koel.dev/3rd-party.html#spotify" class="text-highlight" target="_blank">Koel’s Wiki</a>
-          for a quick how-to.
-        </span>
-        <span v-else data-testid="spotify-user-instruction">
-          Try politely asking an administrator to enable it.
+          Check
+          <a href="https://docs.koel.dev/service-integrations#spotify" target="_blank">
+            Documentation
+          </a>
+          for instructions.
         </span>
       </p>
     </div>
@@ -31,15 +30,8 @@
 
 <script lang="ts" setup>
 import { faSpotify } from '@fortawesome/free-brands-svg-icons'
-import { useAuthorization, useThirdPartyServices } from '@/composables';
+import { useAuthorization, useThirdPartyServices } from '@/composables'
 
-const { currentUser, isAdmin } = useAuthorization();
-const { useSpotify } = useThirdPartyServices();
+const { isAdmin } = useAuthorization()
+const { useSpotify } = useThirdPartyServices()
 </script>
-
-<style scoped lang="scss">
-.spotify-icon {
-  margin-right: .4rem;
-  color: #1db954; // Spotify green
-}
-</style>

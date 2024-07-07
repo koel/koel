@@ -2,8 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Tests\TestCase;
+
+use function Tests\create_user;
+use function Tests\read_as_data_url;
+use function Tests\test_path;
 
 class ProfileTest extends TestCase
 {
@@ -18,8 +22,7 @@ class ProfileTest extends TestCase
 
     public function testUpdateProfileWithoutNewPassword(): void
     {
-        /** @var User $user */
-        $user =  User::factory()->create(['password' => Hash::make('secret')]);
+        $user = create_user(['password' => Hash::make('secret')]);
 
         $this->putAs('api/me', [
             'name' => 'Foo',
@@ -36,8 +39,7 @@ class ProfileTest extends TestCase
 
     public function testUpdateProfileWithNewPassword(): void
     {
-        /** @var User $user */
-        $user =  User::factory()->create(['password' => Hash::make('secret')]);
+        $user = create_user(['password' => Hash::make('secret')]);
 
         $token = $this->putAs('api/me', [
             'name' => 'Foo',
@@ -54,5 +56,43 @@ class ProfileTest extends TestCase
         self::assertSame('Foo', $user->name);
         self::assertSame('bar@baz.com', $user->email);
         self::assertTrue(Hash::check('new-secret', $user->password));
+    }
+
+    public function testUpdateProfileWithAvatar(): void
+    {
+        $user = create_user(['password' => Hash::make('secret')]);
+        self::assertNull($user->getRawOriginal('avatar'));
+
+        $this->putAs('api/me', [
+            'name' => 'Foo',
+            'email' => 'bar@baz.com',
+            'current_password' => 'secret',
+            'avatar' => read_as_data_url(test_path('blobs/cover.png')),
+        ], $user)
+            ->assertOk();
+
+        $user->refresh();
+
+        self::assertFileExists(user_avatar_path($user->getRawOriginal('avatar')));
+    }
+
+    public function testUpdateProfileRemovingAvatar(): void
+    {
+        $user = create_user([
+            'password' => Hash::make('secret'),
+            'email' => 'foo@bar.com',
+            'avatar' => 'foo.jpg',
+        ]);
+
+        $this->putAs('api/me', [
+            'name' => 'Foo',
+            'email' => 'foo@bar.com',
+            'current_password' => 'secret',
+        ], $user)
+            ->assertOk();
+
+        $user->refresh();
+
+        self::assertNull($user->getRawOriginal('avatar'));
     }
 }

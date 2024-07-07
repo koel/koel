@@ -2,28 +2,27 @@
 
 namespace Tests\Feature;
 
+use App\Http\Resources\UserProspectResource;
 use App\Mail\UserInvite;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use Mail;
+use Tests\TestCase;
+
+use function Tests\create_admin;
 
 class UserInvitationTest extends TestCase
 {
-    private const JSON_STRUCTURE = ['id', 'name', 'email', 'is_admin'];
-
     public function testInvite(): void
     {
         Mail::fake();
 
-        /** @var User $admin */
-        $admin = User::factory()->admin()->create();
-
         $this->postAs('api/invitations', [
             'emails' => ['foo@bar.io', 'bar@baz.ai'],
             'is_admin' => true,
-        ], $admin)
+        ], create_admin())
             ->assertSuccessful()
-            ->assertJsonStructure(['*' => self::JSON_STRUCTURE]);
+            ->assertJsonStructure(['*' => UserProspectResource::JSON_STRUCTURE]);
 
         Mail::assertQueued(UserInvite::class, 2);
     }
@@ -32,12 +31,7 @@ class UserInvitationTest extends TestCase
     {
         Mail::fake();
 
-        /** @var User $admin */
-        $admin = User::factory()->create();
-
-        $this->postAs('api/invitations', [
-            'emails' => ['foo@bar.io', 'bar@baz.ai'],
-        ], $admin)
+        $this->postAs('api/invitations', ['emails' => ['foo@bar.io', 'bar@baz.ai']])
             ->assertForbidden();
 
         Mail::assertNothingQueued();
@@ -49,17 +43,14 @@ class UserInvitationTest extends TestCase
 
         $this->get("api/invitations?token=$prospect->invitation_token")
             ->assertSuccessful()
-            ->assertJsonStructure(self::JSON_STRUCTURE);
+            ->assertJsonStructure(UserProspectResource::JSON_STRUCTURE);
     }
 
     public function testRevoke(): void
     {
-        /** @var User $admin */
-        $admin = User::factory()->admin()->create();
-
         $prospect = self::createProspect();
 
-        $this->deleteAs('api/invitations', ['email' => $prospect->email], $admin)
+        $this->deleteAs('api/invitations', ['email' => $prospect->email], create_admin())
             ->assertSuccessful();
 
         self::assertModelMissing($prospect);
@@ -94,10 +85,7 @@ class UserInvitationTest extends TestCase
 
     private static function createProspect(): User
     {
-        /** @var User $admin */
-        $admin = User::factory()->admin()->create();
-
-        return User::factory()->for($admin, 'invitedBy')->create([
+        return User::factory()->for(create_admin(), 'invitedBy')->create([
             'invitation_token' => Str::uuid()->toString(),
             'invited_at' => now(),
         ]);

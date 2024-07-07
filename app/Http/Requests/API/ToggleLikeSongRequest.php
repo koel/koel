@@ -2,11 +2,14 @@
 
 namespace App\Http\Requests\API;
 
-use App\Models\Song;
-
-/**
- * @property Song $song
- */
+/** @property-read string $song */
 class ToggleLikeSongRequest extends Request
 {
+    /** @return array<mixed> */
+    public function rules(): array
+    {
+        return [
+            'song' => 'required|exists:songs,id',
+        ];
+    }
 }

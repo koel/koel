@@ -1,10 +1,47 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-<div data-v-0b0f87ea="" class="login-wrapper">
-  <form data-v-0b0f87ea="" class="" data-testid="login-form">
-    <div data-v-0b0f87ea="" class="logo"><img data-v-0b0f87ea="" alt="Koel's logo" src="undefined/resources/assets/img/logo.svg" width="156"></div><input data-v-0b0f87ea="" autofocus="" placeholder="Email Address" required="" type="email">
-    <div data-v-a2893005="" data-v-0b0f87ea=""><input data-v-a2893005="" type="password" placeholder="Password" required=""><button data-v-a2893005="" type="button"><br data-v-a2893005="" data-testid="Icon" icon="[object Object]"></button></div><button data-v-e368fe26="" data-v-0b0f87ea="" type="submit">Log In</button>
+<div data-v-0b0f87ea="" class="flex items-center justify-center min-h-screen my-0 mx-auto flex-col gap-5">
+  <form data-v-0b0f87ea="" class="w-full sm:w-[288px] sm:border duration-500 p-7 rounded-xl border-transparent sm:bg-white/10 space-y-3" data-testid="login-form">
+    <div data-v-0b0f87ea="" class="text-center mb-8"><img data-v-0b0f87ea="" alt="Koel's logo" class="inline-block" src="undefined/resources/assets/img/logo.svg" width="156"></div><label data-v-0b0f87ea="" class="flex flex-col gap-2 text-[1.1rem]">
+      <!--v-if--><input data-v-0b0f87ea="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="email" autofocus="" placeholder="Email Address" required="">
+      <!--v-if-->
+    </label><label data-v-0b0f87ea="" class="flex flex-col gap-2 text-[1.1rem]">
+      <!--v-if-->
+      <div data-v-0b0f87ea="" class="relative"><input class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900 w-full" type="password" data-testid="input" placeholder="Password" required=""><button class="absolute p-2.5 right-0 top-0 text-k-bg-primary" data-testid="toggle" type="button"><br data-testid="Icon" icon="[object Object]"></button></div>
+      <!--v-if-->
+    </label><label data-v-0b0f87ea="" class="flex flex-col gap-2 text-[1.1rem]">
+      <!--v-if--><button data-v-8943c846="" data-v-0b0f87ea="" class="text-base text-k-text-primary bg-k-primary px-4 py-2.5 rounded cursor-pointer" type="submit" data-testid="submit">Log In</button>
+      <!--v-if-->
+    </label><label data-v-0b0f87ea="" class="flex flex-col gap-2 text-[1.1rem]">
+      <!--v-if--><a data-v-0b0f87ea="" class="text-right text-[.95rem] text-k-text-secondary" role="button"> Forgot password? </a>
+      <!--v-if-->
+    </label>
   </form>
+  <!--v-if-->
+  <!--v-if-->
+</div>
+`;
+
+exports[`shows Google login button 1`] = `
+<div data-v-0b0f87ea="" class="flex items-center justify-center min-h-screen my-0 mx-auto flex-col gap-5">
+  <form data-v-0b0f87ea="" class="w-full sm:w-[288px] sm:border duration-500 p-7 rounded-xl border-transparent sm:bg-white/10 space-y-3" data-testid="login-form">
+    <div data-v-0b0f87ea="" class="text-center mb-8"><img data-v-0b0f87ea="" alt="Koel's logo" class="inline-block" src="undefined/resources/assets/img/logo.svg" width="156"></div><label data-v-0b0f87ea="" class="flex flex-col gap-2 text-[1.1rem]">
+      <!--v-if--><input data-v-0b0f87ea="" class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900" type="email" autofocus="" placeholder="Email Address" required="">
+      <!--v-if-->
+    </label><label data-v-0b0f87ea="" class="flex flex-col gap-2 text-[1.1rem]">
+      <!--v-if-->
+      <div data-v-0b0f87ea="" class="relative"><input class="block text-base w-full px-4 py-2.5 rounded bg-k-bg-input text-k-text-input read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900 w-full" type="password" data-testid="input" placeholder="Password" required=""><button class="absolute p-2.5 right-0 top-0 text-k-bg-primary" data-testid="toggle" type="button"><br data-testid="Icon" icon="[object Object]"></button></div>
+      <!--v-if-->
+    </label><label data-v-0b0f87ea="" class="flex flex-col gap-2 text-[1.1rem]">
+      <!--v-if--><button data-v-8943c846="" data-v-0b0f87ea="" class="text-base text-k-text-primary bg-k-primary px-4 py-2.5 rounded cursor-pointer" type="submit" data-testid="submit">Log In</button>
+      <!--v-if-->
+    </label><label data-v-0b0f87ea="" class="flex flex-col gap-2 text-[1.1rem]">
+      <!--v-if--><a data-v-0b0f87ea="" class="text-right text-[.95rem] text-k-text-secondary" role="button"> Forgot password? </a>
+      <!--v-if-->
+    </label>
+  </form>
+  <div data-v-0b0f87ea="" class="flex gap-3 items-center"><br data-v-0b0f87ea="" data-testid="google-login-button"></div>
+  <!--v-if-->
 </div>
 `;

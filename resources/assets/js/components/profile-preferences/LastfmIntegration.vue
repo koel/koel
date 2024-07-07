@@ -1,11 +1,11 @@
 <template>
-  <section class="text-secondary">
-    <h1>
-      <span class="lastfm-icon">
+  <section class="text-k-text-secondary">
+    <h3 class="text-2xl mb-2">
+      <span class="mr-2 text-[var(--lastfm-color)]">
         <Icon :icon="faLastfm" />
       </span>
       Last.fm Integration
-    </h1>
+    </h3>
 
     <div v-if="useLastfm" data-testid="lastfm-integrated">
       <p>Last.fm integration is enabled. Koel will attempt to retrieve album and artist information from Last.fm.</p>
@@ -15,29 +15,23 @@
       <p v-else>You can also connect your Last.fm account here.</p>
       <p>
         Connecting Koel and your Last.fm account enables such exciting features as
-        <a
-          class="text-highlight"
-          href="https://www.last.fm/about/trackmymusic"
-          rel="noopener"
-          target="_blank"
-        >scrobbling</a>.
+        <a href="https://www.last.fm/about/trackmymusic" rel="noopener" target="_blank">scrobbling</a>.
       </p>
-      <div class="buttons">
-        <Btn class="connect" @click.prevent="connect">
-          {{ connected ? 'Reconnect' : 'Connect' }}
-        </Btn>
-
+      <div class="buttons mt-4 space-x-2">
+        <Btn class="!bg-[var(--lastfm-color)]" @click.prevent="connect">{{ connected ? 'Reconnect' : 'Connect' }}</Btn>
         <Btn v-if="connected" class="disconnect" gray @click.prevent="disconnect">Disconnect</Btn>
       </div>
     </div>
 
     <div v-else data-testid="lastfm-not-integrated">
       <p>
-        Last.fm integration is not enabled on this installation of Koel.
+        Last.fm integration is not enabled.
         <span v-if="isAdmin" data-testid="lastfm-admin-instruction">
-          Visit
-          <a href="https://docs.koel.dev/3rd-party.html#last-fm" class="text-highlight" target="_blank">Koel’s Wiki</a>
-          for a quick how-to.
+          Check
+          <a class="text-k-highlight" href="https://docs.koel.dev/service-integrations#last-fm" target="_blank">
+            Documentation
+          </a>
+          for instructions.
         </span>
         <span v-else data-testid="lastfm-user-instruction">
           Try politely asking an administrator to enable it.
@@ -54,7 +48,7 @@ import { authService, http } from '@/services'
 import { forceReloadWindow } from '@/utils'
 import { useAuthorization, useThirdPartyServices } from '@/composables'
 
-const Btn = defineAsyncComponent(() => import('@/components/ui/Btn.vue'))
+const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 
 const { currentUser, isAdmin } = useAuthorization()
 const { useLastfm } = useThirdPartyServices()
@@ -78,21 +72,8 @@ const disconnect = async () => {
 }
 </script>
 
-<style lang="scss" scoped>
-.lastfm-icon {
-  color: #d31f27; // Last.fm red
-  margin-right: .4rem;
-}
-
-.buttons {
-  margin-top: 1.25rem;
-
-  > * + * {
-    margin-left: 0.5rem;
-  }
-
-  .connect {
-    background: #d31f27;
-  }
+<style lang="postcss" scoped>
+section {
+  --lastfm-color: #d31f27;
 }
 </style>

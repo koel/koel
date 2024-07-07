@@ -1,5 +1,5 @@
 includes:
-    - ./vendor/nunomaduro/larastan/extension.neon
+    - ./vendor/larastan/larastan/extension.neon
 
 parameters:
     paths:
@@ -27,6 +27,10 @@ parameters:
         - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Factories\\Factory::#'
         - '#expects App\\Models\\User\|null, Illuminate\\Database\\Eloquent\\Collection\|Illuminate\\Database\\Eloquent\\Model given#'
         - '#Method App\\Models\\.*::query\(\) should return App\\Builders\\.*Builder but returns Illuminate\\Database\\Eloquent\\Builder<Illuminate\\Database\\Eloquent\\Model>#'
+        - '#Parameter \#1 \$callback of method Illuminate\\Support\\Collection<int,Illuminate\\Database\\Eloquent\\Model>::each\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)#'
+        - '#Access to an undefined property Illuminate\\Database\\Eloquent\\Model::#'
+        - '#Unknown parameter \$(type|user) in call to static method App\\Models\\Song::query\(\)#'
+
 
     excludePaths:
         - ./routes/console.php

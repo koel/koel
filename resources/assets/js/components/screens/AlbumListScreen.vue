@@ -1,11 +1,13 @@
 <template>
-  <section id="albumsWrapper">
-    <ScreenHeader layout="collapsed">
-      Albums
-      <template #controls>
-        <ViewModeSwitch v-model="viewMode" />
-      </template>
-    </ScreenHeader>
+  <ScreenBase>
+    <template #header>
+      <ScreenHeader layout="collapsed">
+        Albums
+        <template #controls>
+          <ViewModeSwitch v-model="viewMode" />
+        </template>
+      </ScreenHeader>
+    </template>
 
     <ScreenEmptyState v-if="libraryEmpty">
       <template #icon>
@@ -17,52 +19,43 @@
       </span>
     </ScreenEmptyState>
 
-    <div
-      v-else
-      ref="scroller"
-      v-koel-overflow-fade
-      :class="`as-${viewMode}`"
-      class="albums main-scroll-wrap"
-      data-testid="album-list"
-      @scroll="scrolling"
-    >
-      <template v-if="showSkeletons">
-        <AlbumCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
-      </template>
-      <template v-else>
-        <AlbumCard v-for="album in albums" :key="album.id" :album="album" :layout="itemLayout" />
-        <ToTopButton />
-      </template>
+    <div v-else ref="gridContainer" v-koel-overflow-fade class="-m-6 overflow-auto">
+      <AlbumGrid :view-mode="viewMode" data-testid="album-grid">
+        <template v-if="showSkeletons">
+          <AlbumCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
+        </template>
+        <template v-else>
+          <AlbumCard v-for="album in albums" :key="album.id" :album="album" :layout="itemLayout" />
+          <ToTopButton />
+        </template>
+      </AlbumGrid>
     </div>
-  </section>
+  </ScreenBase>
 </template>
 
 <script lang="ts" setup>
 import { faCompactDisc } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRef, watch } from 'vue'
 import { albumStore, commonStore, preferenceStore as preferences } from '@/stores'
-import { useAuthorization, useInfiniteScroll, useMessageToaster, useRouter } from '@/composables'
-import { logger } from '@/utils'
+import { useAuthorization, useErrorHandler, useInfiniteScroll, useRouter } from '@/composables'
 
 import AlbumCard from '@/components/album/AlbumCard.vue'
 import AlbumCardSkeleton from '@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
+import ScreenBase from '@/components/screens/ScreenBase.vue'
+import AlbumGrid from '@/components/ui/album-artist/AlbumOrArtistGrid.vue'
 
 const { isAdmin } = useAuthorization()
 
+const gridContainer = ref<HTMLDivElement>()
 const viewMode = ref<ArtistAlbumViewMode>('thumbnails')
 const albums = toRef(albumStore.state, 'albums')
 
-const {
-  ToTopButton,
-  scroller,
-  scrolling,
-  makeScrollable
-} = useInfiniteScroll(async () => await fetchAlbums())
+const { ToTopButton, makeScrollable } = useInfiniteScroll(gridContainer, async () => await fetchAlbums())
 
-watch(viewMode, () => (preferences.albumsViewMode = viewMode.value))
+watch(viewMode, () => (preferences.albums_view_mode = viewMode.value))
 
 let initialized = false
 const loading = ref(false)
@@ -85,25 +78,15 @@ useRouter().onScreenActivated('Albums', async () => {
   if (libraryEmpty.value) return
 
   if (!initialized) {
-    viewMode.value = preferences.albumsViewMode || 'thumbnails'
+    viewMode.value = preferences.albums_view_mode || 'thumbnails'
     initialized = true
 
     try {
       await makeScrollable()
-    } catch (error) {
-      logger.error(error)
-      useMessageToaster().toastError('Failed to load albums.')
+    } catch (error: unknown) {
       initialized = false
+      useErrorHandler().handleHttpError(error)
     }
   }
 })
 </script>
-
-<style lang="scss">
-#albumsWrapper {
-  .albums {
-    @include artist-album-wrapper();
-  }
-}
-</style>
-`

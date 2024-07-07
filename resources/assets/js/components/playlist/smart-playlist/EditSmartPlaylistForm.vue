@@ -1,32 +1,31 @@
 <template>
-  <FormBase>
+  <FormBase data-testid="edit-smart-playlist-form">
     <form @submit.prevent="submit" @keydown.esc="maybeClose">
       <header>
         <h1>Edit Smart Playlist</h1>
       </header>
 
-      <main>
-        <div class="form-row cols">
-          <label class="name">
-            Name
-            <input
+      <main class="space-y-5">
+        <FormRow :cols="2">
+          <FormRow>
+            <template #label>Name</template>
+            <TextInput
               v-model="mutablePlaylist.name"
               v-koel-focus name="name"
               placeholder="Playlist name"
               required
-              type="text"
-            >
-          </label>
-          <label class="folder">
-            Folder
-            <select v-model="mutablePlaylist.folder_id">
+            />
+          </FormRow>
+          <FormRow>
+            <template #label>Folder</template>
+            <SelectBox v-model="mutablePlaylist.folder_id">
               <option :value="null" />
               <option v-for="folder in folders" :key="folder.id" :value="folder.id">{{ folder.name }}</option>
-            </select>
-          </label>
-        </div>
+            </SelectBox>
+          </FormRow>
+        </FormRow>
 
-        <div class="form-row rules">
+        <div v-koel-overflow-fade class="group-container space-y-5 overflow-auto max-h-[480px]">
           <RuleGroup
             v-for="(group, index) in mutablePlaylist.rules"
             :key="group.id"
@@ -34,9 +33,17 @@
             :is-first-group="index === 0"
             @input="onGroupChanged"
           />
-          <Btn class="btn-add-group" green small title="Add a new group" uppercase @click.prevent="addGroup">
+          <Btn class="btn-add-group" small success title="Add a new group" uppercase @click.prevent="addGroup">
             <Icon :icon="faPlus" />
+            Group
           </Btn>
+        </div>
+
+        <div v-if="isPlus" class="form-row">
+          <label class="text-k-text-secondary">
+            <CheckBox v-model="mutablePlaylist.own_songs_only" />
+            Only include songs from my own library
+          </label>
         </div>
       </main>
 
@@ -50,19 +57,31 @@
 
 <script lang="ts" setup>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { reactive, toRef, watch } from 'vue'
+import { reactive, toRef } from 'vue'
 import { cloneDeep, isEqual } from 'lodash'
 import { playlistFolderStore, playlistStore } from '@/stores'
-import { eventBus, logger } from '@/utils'
-import { useDialogBox, useMessageToaster, useModal, useOverlay, useSmartPlaylistForm } from '@/composables'
+import { eventBus } from '@/utils'
+import {
+  useDialogBox,
+  useErrorHandler,
+  useKoelPlus,
+  useMessageToaster,
+  useModal,
+  useOverlay,
+  useSmartPlaylistForm
+} from '@/composables'
+import CheckBox from '@/components/ui/form/CheckBox.vue'
+import TextInput from '@/components/ui/form/TextInput.vue'
+import FormRow from '@/components/ui/form/FormRow.vue'
+import SelectBox from '@/components/ui/form/SelectBox.vue'
 
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
-const { showConfirmDialog, showErrorDialog } = useDialogBox()
+const { showConfirmDialog } = useDialogBox()
+const { isPlus } = useKoelPlus()
+
 const playlist = useModal().getFromContext<Playlist>('playlist')
-
 const folders = toRef(playlistFolderStore.state, 'folders')
-
 const mutablePlaylist = reactive(cloneDeep(playlist))
 
 const isPristine = () => isEqual(mutablePlaylist.rules, playlist.rules)
@@ -100,9 +119,8 @@ const submit = async () => {
     toastSuccess(`Playlist "${playlist.name}" updated.`)
     eventBus.emit('PLAYLIST_UPDATED', playlist)
     close()
-  } catch (error) {
-    showErrorDialog('Something went wrong. Please try again.', 'Error')
-    logger.error(error)
+  } catch (error: unknown) {
+    useErrorHandler('dialog').handleHttpError(error)
   } finally {
     hideOverlay()
   }

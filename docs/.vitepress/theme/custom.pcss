@@ -1,0 +1,80 @@
+:root {
+  --vp-c-brand-1: #e541b6;
+  --vp-c-brand-2: #d80693;
+}
+
+.vp-doc {
+  kbd {
+    background-color: var(--vp-code-bg);
+    font-size: var(--vp-code-font-size);
+    border-bottom: 1px solid var(--vp-code-bg);
+    padding: 3px 6px;
+    border-radius: 4px;
+  }
+
+  h4 {
+    margin-top: 1.2rem;
+  }
+
+  h4 + ol, h4 + ul {
+    padding-left: 2.5rem;
+  }
+
+  img, video, figure {
+    border-radius: .375rem;
+    display: block;
+    outline: 1px solid rgba(99, 102, 241, .25);
+  }
+
+  .border-0 {
+    outline: 0;
+  }
+
+  .rounded {
+    border-radius: .25rem;
+
+    &-0 {
+      border-radius: 0;
+    }
+
+    &-sm {
+      border-radius: .2rem;
+    }
+
+    &-md {
+      border-radius: .375rem;
+    }
+
+    &-lg {
+      border-radius: .5rem;
+    }
+
+    &-xl {
+      border-radius: .75rem;
+    }
+
+    &-2xl {
+      border-radius: 1rem;
+    }
+
+    &-3xl {
+      border-radius: 1.5rem;
+    }
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  .inline {
+    display: inline;
+  }
+
+  .flex {
+    display: flex;
+  }
+
+  .relative {
+    position: relative;
+  }
+}

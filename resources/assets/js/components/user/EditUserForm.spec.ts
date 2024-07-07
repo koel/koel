@@ -14,7 +14,7 @@ new class extends UnitTestCase {
       const updateMock = this.mock(userStore, 'update')
       const alertMock = this.mock(MessageToasterStub.value, 'success')
 
-      const user = ref(factory<User>('user', { name: 'John Doe' }))
+      const user = ref(factory('user', { name: 'John Doe' }))
 
       this.render(EditUserForm, {
         global: {
@@ -25,7 +25,7 @@ new class extends UnitTestCase {
       })
 
       await this.type(screen.getByRole('textbox', { name: 'Name' }), 'Jane Doe')
-      await this.type(screen.getByLabelText('Password'), 'new-password-duck')
+      await this.type(screen.getByTitle('Password'), 'new-password-duck')
       await this.user.click(screen.getByRole('button', { name: 'Update' }))
 
       await waitFor(() => {

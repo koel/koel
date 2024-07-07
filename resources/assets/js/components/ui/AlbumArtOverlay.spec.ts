@@ -7,20 +7,6 @@ import AlbumArtOverlay from './AlbumArtOverlay.vue'
 let albumId: number
 
 new class extends UnitTestCase {
-  private async renderComponent () {
-    albumId = 42
-
-    const rendered = this.render(AlbumArtOverlay, {
-      props: {
-        album: albumId
-      }
-    })
-
-    await this.tick()
-
-    return rendered
-  }
-
   protected test () {
     it('fetches and displays the album thumbnail', async () => {
       const fetchMock = this.mock(albumStore, 'fetchThumbnail').mockResolvedValue('http://test/thumb.jpg')
@@ -43,5 +29,19 @@ new class extends UnitTestCase {
         expect(html()).toMatchSnapshot()
       })
     })
+  }
+
+  private async renderComponent () {
+    albumId = 42
+
+    const rendered = this.render(AlbumArtOverlay, {
+      props: {
+        album: albumId
+      }
+    })
+
+    await this.tick()
+
+    return rendered
   }
 }

@@ -1,53 +1,71 @@
 <template>
-  <section id="settingsWrapper">
-    <ScreenHeader>Settings</ScreenHeader>
+  <ScreenBase>
+    <template #header>
+      <ScreenHeader>Settings</ScreenHeader>
+    </template>
 
-    <form class="main-scroll-wrap" @submit.prevent="confirmThenSave">
-      <div class="form-row">
-        <label for="inputSettingsPath">Media Path</label>
+    <p v-if="storageDriver !== 'local'" class="textk-text-secondary">
+      Since you’re not using a cloud storage, there’s no need to set a media path.
+    </p>
 
-        <p id="mediaPathHelp" class="help">
-          The <em>absolute</em> path to the server directory containing your media.
-          Koel will scan this directory for songs and extract any available information.<br>
-          Scanning may take a while, especially if you have a lot of songs, so be patient.
-        </p>
+    <form v-else class="space-y-6" @submit.prevent="confirmThenSave">
+      <FormRow>
+        <template #label>Media Path</template>
 
-        <input
-          id="inputSettingsPath"
+        <template #help>
+          <span id="mediaPathHelp">
+            The <em>absolute</em> path to the server directory containing your media.
+            Koel will scan this directory for songs and extract any available information.<br>
+            Scanning may take a while, especially if you have a lot of songs, so be patient.
+          </span>
+        </template>
+
+        <TextInput
           v-model="mediaPath"
           aria-describedby="mediaPathHelp"
+          class="w-full md:!w-2/3"
           name="media_path"
-          type="text"
-        >
-      </div>
+          placeholder="/path/to/your/music"
+        />
+      </FormRow>
 
-      <div class="form-row">
-        <Btn type="submit">Scan</Btn>
-      </div>
+      <FormRow>
+        <div>
+          <Btn data-testid="submit" type="submit">Scan</Btn>
+        </div>
+      </FormRow>
     </form>
-  </section>
+  </ScreenBase>
 </template>
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
-import { settingStore } from '@/stores'
-import { forceReloadWindow, parseValidationError } from '@/utils'
-import { useDialogBox, useMessageToaster, useOverlay, useRouter } from '@/composables'
+import { commonStore, settingStore } from '@/stores'
+import { forceReloadWindow, } from '@/utils'
+import { useDialogBox, useErrorHandler, useMessageToaster, useOverlay, useRouter } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
-import Btn from '@/components/ui/Btn.vue'
+import Btn from '@/components/ui/form/Btn.vue'
+import TextInput from '@/components/ui/form/TextInput.vue'
+import ScreenBase from '@/components/screens/ScreenBase.vue'
+import FormRow from '@/components/ui/form/FormRow.vue'
 
 const { toastSuccess } = useMessageToaster()
-const { showConfirmDialog, showErrorDialog } = useDialogBox()
+const { showConfirmDialog } = useDialogBox()
 const { go } = useRouter()
 const { showOverlay, hideOverlay } = useOverlay()
 
+const storageDriver = ref(commonStore.state.storage_driver)
 const mediaPath = ref(settingStore.state.media_path)
 const originalMediaPath = mediaPath.value
 
 const shouldWarn = computed(() => {
   // Warn the user if the media path is not empty and about to change.
   if (!originalMediaPath || !mediaPath.value) {
+    return false
+  }
+
+  if (storageDriver.value !== 'local') {
     return false
   }
 
@@ -63,9 +81,8 @@ const save = async () => {
     // Make sure we're back to home first.
     go('home')
     forceReloadWindow()
-  } catch (err: any) {
-    const msg = err.response.status === 422 ? parseValidationError(err.response.data)[0] : 'Unknown error.'
-    showErrorDialog(msg, 'Error')
+  } catch (error: unknown) {
+    useErrorHandler('dialog').handleHttpError(error)
   } finally {
     hideOverlay()
   }
@@ -73,26 +90,11 @@ const save = async () => {
 
 const confirmThenSave = async () => {
   if (shouldWarn.value) {
-    await showConfirmDialog('Changing the media path will essentially remove all existing data – songs, artists, \
-          albums, favorites, everything – and empty your playlists! Sure you want to proceed?', 'Confirm')
+    await showConfirmDialog('Changing the media path will essentially remove all existing local data – songs, artists, \
+          albums, favorites, etc. Sure you want to proceed?', 'Confirm')
     && await save()
   } else {
     await save()
   }
 }
 </script>
-
-<style lang="scss">
-#settingsWrapper {
-  input[type="text"] {
-    width: 50%;
-    margin-top: 1rem;
-  }
-
-  @media only screen and (max-width: 667px) {
-    input[type="text"] {
-      width: 100%;
-    }
-  }
-}
-</style>

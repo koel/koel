@@ -10,11 +10,11 @@ new class extends UnitTestCase {
     super.beforeEach(() => {
       searchStore.state = reactive({
         excerpt: {
-          songs: [],
+          playables: [],
           albums: [],
           artists: []
         },
-        songs: []
+        playables: []
       })
     })
   }
@@ -22,9 +22,9 @@ new class extends UnitTestCase {
   protected test () {
     it('performs an excerpt search', async () => {
       const result: ExcerptSearchResult = {
-        songs: factory<Song>('song', 3),
-        albums: factory<Album>('album', 3),
-        artists: factory<Artist>('artist', 3)
+        playables: factory('song', 3),
+        albums: factory('album', 3),
+        artists: factory('artist', 3)
       }
 
       const getMock = this.mock(http, 'get').mockResolvedValue(result)
@@ -45,23 +45,23 @@ new class extends UnitTestCase {
     })
 
     it('performs a song search', async () => {
-      const songs = factory<Song>('song', 3)
+      const songs = factory('song', 3)
 
       const getMock = this.mock(http, 'get').mockResolvedValue(songs)
       const syncMock = this.mock(songStore, 'syncWithVault', songs)
 
-      await searchStore.songSearch('test')
+      await searchStore.playableSearch('test')
 
       expect(getMock).toHaveBeenCalledWith('search/songs?q=test')
       expect(syncMock).toHaveBeenCalledWith(songs)
 
-      expect(searchStore.state.songs).toEqual(songs)
+      expect(searchStore.state.playables).toEqual(songs)
     })
 
     it('resets the song result state', () => {
-      searchStore.state.songs = factory<Song>('song', 3)
-      searchStore.resetSongResultState()
-      expect(searchStore.state.songs).toEqual([])
+      searchStore.state.playables = factory('song', 3)
+      searchStore.resetPlayableResultState()
+      expect(searchStore.state.playables).toEqual([])
     })
   }
 }

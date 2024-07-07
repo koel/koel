@@ -1,3 +1,0 @@
-// Vitest Snapshot v1
-
-exports[`renders 1`] = `<span data-v-e884c19a="" class="btn-group"><button data-v-e368fe26="">Green</button><button data-v-e368fe26="">Orange</button><button data-v-e368fe26="">Blue</button></span>`;

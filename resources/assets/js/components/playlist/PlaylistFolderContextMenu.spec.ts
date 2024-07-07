@@ -1,3 +1,4 @@
+import Router from '@/router'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { eventBus } from '@/utils'
@@ -9,15 +10,9 @@ import { MessageToasterStub } from '@/__tests__/stubs'
 import PlaylistFolderContextMenu from './PlaylistFolderContextMenu.vue'
 
 new class extends UnitTestCase {
-  private async renderComponent (folder: PlaylistFolder) {
-    this.render(PlaylistFolderContextMenu)
-    eventBus.emit('PLAYLIST_FOLDER_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, folder)
-    await this.tick(2)
-  }
-
   protected test () {
     it('renames', async () => {
-      const folder = factory<PlaylistFolder>('playlist-folder')
+      const folder = factory('playlist-folder')
       await this.renderComponent(folder)
       const emitMock = this.mock(eventBus, 'emit')
 
@@ -27,7 +22,7 @@ new class extends UnitTestCase {
     })
 
     it('deletes', async () => {
-      const folder = factory<PlaylistFolder>('playlist-folder')
+      const folder = factory('playlist-folder')
       await this.renderComponent(folder)
       const emitMock = this.mock(eventBus, 'emit')
 
@@ -38,10 +33,10 @@ new class extends UnitTestCase {
 
     it('plays', async () => {
       const folder = this.createPlayableFolder()
-      const songs = factory<Song>('song', 3)
+      const songs = factory('song', 3)
       const fetchMock = this.mock(songStore, 'fetchForPlaylistFolder').mockResolvedValue(songs)
       const queueMock = this.mock(playbackService, 'queueAndPlay')
-      const goMock = this.mock(this.router, 'go')
+      const goMock = this.mock(Router, 'go')
       await this.renderComponent(folder)
 
       await this.user.click(screen.getByText('Play All'))
@@ -58,7 +53,7 @@ new class extends UnitTestCase {
 
       const fetchMock = this.mock(songStore, 'fetchForPlaylistFolder').mockResolvedValue([])
       const queueMock = this.mock(playbackService, 'queueAndPlay')
-      const goMock = this.mock(this.router, 'go')
+      const goMock = this.mock(Router, 'go')
       const warnMock = this.mock(MessageToasterStub.value, 'warning')
 
       await this.renderComponent(folder)
@@ -75,10 +70,10 @@ new class extends UnitTestCase {
 
     it('shuffles', async () => {
       const folder = this.createPlayableFolder()
-      const songs = factory<Song>('song', 3)
+      const songs = factory('song', 3)
       const fetchMock = this.mock(songStore, 'fetchForPlaylistFolder').mockResolvedValue(songs)
       const queueMock = this.mock(playbackService, 'queueAndPlay')
-      const goMock = this.mock(this.router, 'go')
+      const goMock = this.mock(Router, 'go')
       await this.renderComponent(folder)
 
       await this.user.click(screen.getByText('Shuffle All'))
@@ -91,7 +86,7 @@ new class extends UnitTestCase {
     })
 
     it('does not show shuffle option if folder is empty', async () => {
-      const folder = factory<PlaylistFolder>('playlist-folder')
+      const folder = factory('playlist-folder')
       await this.renderComponent(folder)
 
       expect(screen.queryByText('Shuffle All')).toBeNull()
@@ -103,7 +98,7 @@ new class extends UnitTestCase {
 
       const fetchMock = this.mock(songStore, 'fetchForPlaylistFolder').mockResolvedValue([])
       const queueMock = this.mock(playbackService, 'queueAndPlay')
-      const goMock = this.mock(this.router, 'go')
+      const goMock = this.mock(Router, 'go')
       const warnMock = this.mock(MessageToasterStub.value, 'warning')
 
       await this.renderComponent(folder)
@@ -119,9 +114,15 @@ new class extends UnitTestCase {
     })
   }
 
+  private async renderComponent (folder: PlaylistFolder) {
+    this.render(PlaylistFolderContextMenu)
+    eventBus.emit('PLAYLIST_FOLDER_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, folder)
+    await this.tick(2)
+  }
+
   private createPlayableFolder () {
-    const folder = factory<PlaylistFolder>('playlist-folder')
-    this.mock(playlistStore, 'byFolder', factory<Playlist>('playlist', 3, { folder_id: folder.id }))
+    const folder = factory('playlist-folder')
+    this.mock(playlistStore, 'byFolder', factory('playlist', 3, { folder_id: folder.id }))
     return folder
   }
 }

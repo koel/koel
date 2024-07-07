@@ -1,11 +1,13 @@
 <template>
-  <section id="artistsWrapper">
-    <ScreenHeader layout="collapsed">
-      Artists
-      <template #controls>
-        <ViewModeSwitch v-model="viewMode" />
-      </template>
-    </ScreenHeader>
+  <ScreenBase>
+    <template #header>
+      <ScreenHeader layout="collapsed">
+        Artists
+        <template #controls>
+          <ViewModeSwitch v-model="viewMode" />
+        </template>
+      </ScreenHeader>
+    </template>
 
     <ScreenEmptyState v-if="libraryEmpty">
       <template #icon>
@@ -17,52 +19,46 @@
       </span>
     </ScreenEmptyState>
 
-    <div
-      v-else
-      ref="scroller"
-      v-koel-overflow-fade
-      :class="`as-${viewMode}`"
-      class="artists main-scroll-wrap"
-      data-testid="artist-list"
-      @scroll="scrolling"
-    >
-      <template v-if="showSkeletons">
-        <ArtistCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
-      </template>
-      <template v-else>
-        <ArtistCard v-for="artist in artists" :key="artist.id" :artist="artist" :layout="itemLayout" />
-        <ToTopButton />
-      </template>
+    <div v-else ref="gridContainer" v-koel-overflow-fade class="-m-6 overflow-auto">
+      <ArtistGrid :view-mode="viewMode" data-testid="artist-list">
+        <template v-if="showSkeletons">
+          <ArtistCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
+        </template>
+        <template v-else>
+          <ArtistCard v-for="artist in artists" :key="artist.id" :artist="artist" :layout="itemLayout" />
+          <ToTopButton />
+        </template>
+      </ArtistGrid>
     </div>
-  </section>
+  </ScreenBase>
 </template>
 
 <script lang="ts" setup>
 import { faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRef, watch } from 'vue'
 import { artistStore, commonStore, preferenceStore as preferences } from '@/stores'
-import { useAuthorization, useInfiniteScroll, useMessageToaster, useRouter } from '@/composables'
-import { logger } from '@/utils'
+import { useAuthorization, useErrorHandler, useInfiniteScroll, useRouter } from '@/composables'
 
 import ArtistCard from '@/components/artist/ArtistCard.vue'
 import ArtistCardSkeleton from '@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
+import ScreenBase from '@/components/screens/ScreenBase.vue'
+import ArtistGrid from '@/components/ui/album-artist/AlbumOrArtistGrid.vue'
 
 const { isAdmin } = useAuthorization()
 
+const gridContainer = ref<HTMLDivElement>()
 const viewMode = ref<ArtistAlbumViewMode>('thumbnails')
 const artists = toRef(artistStore.state, 'artists')
 
 const {
   ToTopButton,
-  scroller,
-  scrolling,
   makeScrollable
-} = useInfiniteScroll(async () => await fetchArtists())
+} = useInfiniteScroll(gridContainer, async () => await fetchArtists())
 
-watch(viewMode, () => preferences.artistsViewMode = viewMode.value)
+watch(viewMode, () => preferences.artists_view_mode = viewMode.value)
 
 let initialized = false
 const loading = ref(false)
@@ -84,24 +80,15 @@ const fetchArtists = async () => {
 useRouter().onScreenActivated('Artists', async () => {
   if (libraryEmpty.value) return
   if (!initialized) {
-    viewMode.value = preferences.artistsViewMode || 'thumbnails'
+    viewMode.value = preferences.artists_view_mode || 'thumbnails'
     initialized = true
 
     try {
       await makeScrollable()
-    } catch (error) {
-      logger.error(error)
-      useMessageToaster().toastError('Failed to load artists.')
+    } catch (error: unknown) {
       initialized = false
+      useErrorHandler().handleHttpError(error)
     }
   }
 })
 </script>
-
-<style lang="scss">
-#artistsWrapper {
-  .artists {
-    @include artist-album-wrapper();
-  }
-}
-</style>

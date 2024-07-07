@@ -33,4 +33,11 @@ return [
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
     ],
+
+    'google' => [
+        'client_id' => env('SSO_GOOGLE_CLIENT_ID'),
+        'client_secret' => env('SSO_GOOGLE_CLIENT_SECRET'),
+        'redirect' => '/auth/google/callback',
+        'hd' => env('SSO_GOOGLE_HOSTED_DOMAIN'),
+    ],
 ];

@@ -2,35 +2,27 @@
 
 namespace Tests;
 
-use App\Models\Album;
-use App\Models\Artist;
-use App\Models\Song;
+use App\Facades\License;
+use App\Services\License\CommunityLicenseService;
 use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Illuminate\Testing\TestResponse;
-use ReflectionClass;
+use Illuminate\Support\Facades\File;
 use Tests\Traits\CreatesApplication;
-use Tests\Traits\SandboxesTests;
+use Tests\Traits\MakesHttpRequests;
 
 abstract class TestCase extends BaseTestCase
 {
     use ArraySubsetAsserts;
     use CreatesApplication;
     use DatabaseTransactions;
-    use SandboxesTests;
+    use MakesHttpRequests;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        TestResponse::macro('log', function (string $file = 'test-response.json'): TestResponse {
-            /** @var TestResponse $this */
-            file_put_contents(storage_path('logs/' . $file), $this->getContent());
-
-            return $this;
-        });
-
+        License::swap($this->app->make(CommunityLicenseService::class));
         self::createSandbox();
     }
 
@@ -41,26 +33,24 @@ abstract class TestCase extends BaseTestCase
         parent::tearDown();
     }
 
-    protected static function createSampleMediaSet(): void
+    private static function createSandbox(): void
     {
-        /** @var Artist $artist */
-        $artist = Artist::factory()->create();
+        config([
+            'koel.album_cover_dir' => 'sandbox/img/covers/',
+            'koel.artist_image_dir' => 'sandbox/img/artists/',
+            'koel.playlist_cover_dir' => 'sandbox/img/playlists/',
+            'koel.user_avatar_dir' => 'sandbox/img/avatars/',
+        ]);
 
-        /** @var array<Album> $albums */
-        $albums = Album::factory(3)->for($artist)->create();
-
-        // 7-15 songs per albums
-        foreach ($albums as $album) {
-            Song::factory(random_int(7, 15))->for($artist)->for($album)->create();
-        }
+        File::ensureDirectoryExists(public_path(config('koel.album_cover_dir')));
+        File::ensureDirectoryExists(public_path(config('koel.artist_image_dir')));
+        File::ensureDirectoryExists(public_path(config('koel.playlist_cover_dir')));
+        File::ensureDirectoryExists(public_path(config('koel.user_avatar_dir')));
+        File::ensureDirectoryExists(public_path('sandbox/media/'));
     }
 
-    protected static function getNonPublicProperty($object, string $property): mixed
+    private static function destroySandbox(): void
     {
-        $reflection = new ReflectionClass($object);
-        $property = $reflection->getProperty($property);
-        $property->setAccessible(true);
-
-        return $property->getValue($object);
+        File::deleteDirectory(public_path('sandbox'));
     }
 }

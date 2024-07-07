@@ -1,6 +1,6 @@
 import isMobile from 'ismobilejs'
 import { isObject, mergeWith } from 'lodash'
-import { cleanup, render, RenderOptions } from '@testing-library/vue'
+import { cleanup, createEvent, fireEvent, render, RenderOptions } from '@testing-library/vue'
 import { afterEach, beforeEach, vi } from 'vitest'
 import { defineComponent, nextTick } from 'vue'
 import { commonStore, userStore } from '@/stores'
@@ -12,6 +12,7 @@ import { routes } from '@/config'
 import Router from '@/router'
 import userEvent from '@testing-library/user-event'
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup'
+import { EventType } from '@testing-library/dom/types/events'
 
 // A deep-merge function that
 // - supports symbols as keys (_.merge doesn't)
@@ -26,10 +27,18 @@ const deepMerge = (first: object, second: object) => {
   })
 }
 
+const setPropIfNotExists = (obj: object | null, prop: any, value: any) => {
+  if (!obj) return
+
+  if (!Object.prototype.hasOwnProperty.call(obj, prop)) {
+    obj[prop] = value
+  }
+}
+
 export default abstract class UnitTestCase {
-  private backupMethods = new Map()
   protected router: Router
   protected user: UserEvent
+  private backupMethods = new Map()
 
   public constructor () {
     this.router = new Router(routes)
@@ -44,29 +53,31 @@ export default abstract class UnitTestCase {
   protected beforeEach (cb?: Closure) {
     beforeEach(() => {
       commonStore.state.song_length = 10
-      commonStore.state.allow_download = true
-      commonStore.state.use_i_tunes = true
+      commonStore.state.allows_download = true
+      commonStore.state.uses_i_tunes = true
       cb && cb()
     })
   }
 
   protected afterEach (cb?: Closure) {
     afterEach(() => {
+      isMobile.any = false
       commonStore.state.song_length = 10
       cleanup()
       this.restoreAllMocks()
-      isMobile.any = false
+      this.disablePlusEdition()
       cb && cb()
     })
   }
 
-  protected actingAs (user?: User) {
-    userStore.state.current = user || factory<User>('user')
+  protected be (user?: User) {
+    userStore.state.current = user || factory('user')
     return this
   }
 
-  protected actingAsAdmin () {
-    return this.actingAs(factory.states('admin')<User>('user'))
+  protected beAdmin () {
+    factory.states('admin')('user')
+    return this.be(factory.states('admin')('user'))
   }
 
   protected mock<T, M extends MethodOf<Required<T>>> (obj: T, methodName: M, implementation?: any) {
@@ -93,7 +104,6 @@ export default abstract class UnitTestCase {
     return render(component, deepMerge({
       global: {
         directives: {
-          'koel-clickaway': {},
           'koel-focus': {},
           'koel-tooltip': {},
           'koel-hide-broken-icon': {},
@@ -106,35 +116,28 @@ export default abstract class UnitTestCase {
     }, this.supplyRequiredProvides(options)))
   }
 
-  private supplyRequiredProvides (options: RenderOptions) {
-    options.global = options.global || {}
-    options.global.provide = options.global.provide || {}
-
-    // @ts-ignore
-    if (!options.global.provide?.hasOwnProperty(DialogBoxKey)) {
-      // @ts-ignore
-      options.global.provide[DialogBoxKey] = DialogBoxStub
+  protected enablePlusEdition () {
+    commonStore.state.koel_plus = {
+      active: true,
+      short_key: '****-XXXX',
+      customer_name: 'John Doe',
+      customer_email: 'Koel Plus',
+      product_id: 'koel-plus',
     }
 
-    // @ts-ignore
-    if (!options.global.provide?.hasOwnProperty(MessageToasterKey)) {
-      // @ts-ignore
-      options.global.provide[MessageToasterKey] = MessageToasterStub
+    return this
+  }
+
+  protected disablePlusEdition () {
+    commonStore.state.koel_plus = {
+      active: false,
+      short_key: '',
+      customer_name: '',
+      customer_email: '',
+      product_id: '',
     }
 
-    // @ts-ignore
-    if (!options.global.provide.hasOwnProperty(OverlayKey)) {
-      // @ts-ignore
-      options.global.provide[OverlayKey] = OverlayStub
-    }
-
-    // @ts-ignore
-    if (!options.global.provide.hasOwnProperty(RouterKey)) {
-      // @ts-ignore
-      options.global.provide[RouterKey] = this.router
-    }
-
-    return options
+    return this
   }
 
   protected stub (testId = 'stub') {
@@ -163,5 +166,21 @@ export default abstract class UnitTestCase {
     await this.user.type(element, value)
   }
 
+  protected async trigger (element: HTMLElement, key: EventType | string, options?: {}) {
+    await fireEvent(element, createEvent[key](element, options))
+  }
+
   protected abstract test ()
+
+  private supplyRequiredProvides (options: RenderOptions) {
+    options.global = options.global || {}
+    options.global.provide = options.global.provide || {}
+
+    setPropIfNotExists(options.global.provide, DialogBoxKey, DialogBoxStub)
+    setPropIfNotExists(options.global.provide, MessageToasterKey, MessageToasterStub)
+    setPropIfNotExists(options.global.provide, OverlayKey, OverlayStub)
+    setPropIfNotExists(options.global.provide, RouterKey, this.router)
+
+    return options
+  }
 }

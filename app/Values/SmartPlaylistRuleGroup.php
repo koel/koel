@@ -14,11 +14,15 @@ final class SmartPlaylistRuleGroup implements Arrayable
         Assert::uuid($id);
     }
 
-    public static function create(array $array): self
+    public static function make(array $array): self
     {
         return new self(
             id: Arr::get($array, 'id'),
-            rules: collect(Arr::get($array, 'rules', []))->transform([SmartPlaylistRule::class, 'create']),
+            rules: collect(Arr::get($array, 'rules', []))->transform(
+                static function (array|SmartPlaylistRule $rule): SmartPlaylistRule {
+                    return $rule instanceof SmartPlaylistRule ? $rule : SmartPlaylistRule::make($rule);
+                }
+            ),
         );
     }
 

@@ -1,0 +1,15 @@
+.skeleton {
+  .pulse, &.pulse {
+    @apply bg-white/5;
+    animation: skeleton-pulse 2s infinite;
+  }
+
+  @keyframes skeleton-pulse {
+    0%, 100% {
+      @apply opacity-0;
+    }
+    50% {
+      @apply opacity-100;
+    }
+  }
+}

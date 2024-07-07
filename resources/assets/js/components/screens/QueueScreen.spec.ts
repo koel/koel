@@ -4,24 +4,12 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import { commonStore, queueStore } from '@/stores'
 import { screen, waitFor } from '@testing-library/vue'
 import { playbackService } from '@/services'
-import QueueScreen from './QueueScreen.vue'
+import Component from './QueueScreen.vue'
 
 new class extends UnitTestCase {
-  private renderComponent (songs: Song[]) {
-    queueStore.state.songs = songs
-
-    this.render(QueueScreen, {
-      global: {
-        stubs: {
-          SongList: this.stub('song-list')
-        }
-      }
-    })
-  }
-
   protected test () {
     it('renders the queue', () => {
-      this.renderComponent(factory<Song>('song', 3))
+      this.renderComponent(factory('song', 3))
 
       expect(screen.queryByTestId('song-list')).toBeTruthy()
       expect(screen.queryByTestId('screen-empty-state')).toBeNull()
@@ -49,12 +37,24 @@ new class extends UnitTestCase {
     })
 
     it('Shuffles all', async () => {
-      const songs = factory<Song>('song', 3)
+      const songs = factory('song', 3)
       this.renderComponent(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 
-      await this.user.click(screen.getByTitle('Shuffle all songs'))
+      await this.user.click(screen.getByTitle('Shuffle all. Press Alt/⌥ to change mode.'))
       await waitFor(() => expect(playMock).toHaveBeenCalledWith(songs, true))
+    })
+  }
+
+  private renderComponent (playables: Playable[]) {
+    queueStore.state.playables = playables
+
+    this.render(Component, {
+      global: {
+        stubs: {
+          SongList: this.stub('song-list')
+        }
+      }
     })
   }
 }

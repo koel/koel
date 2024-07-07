@@ -7,8 +7,28 @@ import LyricsPane from './LyricsPane.vue'
 import Magnifier from '@/components/ui/Magnifier.vue'
 
 new class extends UnitTestCase {
+  protected test () {
+    it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
+
+    it('provides a button to add lyrics if current user is admin', async () => {
+      const song = factory('song', { lyrics: null })
+
+      const mock = this.mock(eventBus, 'emit')
+      this.beAdmin().renderComponent(song)
+
+      await this.user.click(screen.getByRole('button', { name: 'Click here' }))
+
+      expect(mock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_SONG_FORM', song, 'lyrics')
+    })
+
+    it('does not have a button to add lyrics if current user is not an admin', async () => {
+      this.be().renderComponent(factory('song', { lyrics: null }))
+      expect(screen.queryByRole('button', { name: 'Click here' })).toBeNull()
+    })
+  }
+
   private renderComponent (song?: Song) {
-    song = song || factory<Song>('song', {
+    song = song || factory('song', {
       lyrics: 'Foo bar baz qux'
     })
 
@@ -21,26 +41,6 @@ new class extends UnitTestCase {
           Magnifier
         }
       }
-    })
-  }
-
-  protected test () {
-    it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
-
-    it('provides a button to add lyrics if current user is admin', async () => {
-      const song = factory<Song>('song', { lyrics: null })
-
-      const mock = this.mock(eventBus, 'emit')
-      this.actingAsAdmin().renderComponent(song)
-
-      await this.user.click(screen.getByRole('button', { name: 'Click here' }))
-
-      expect(mock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_SONG_FORM', song, 'lyrics')
-    })
-
-    it('does not have a button to add lyrics if current user is not an admin', async () => {
-      this.actingAs().renderComponent(factory<Song>('song', { lyrics: null }))
-      expect(screen.queryByRole('button', { name: 'Click here' })).toBeNull()
     })
   }
 }

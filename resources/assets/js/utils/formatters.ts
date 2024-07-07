@@ -51,6 +51,7 @@ export type ServerValidationError = {
   message: string
   errors: Record<string, string[]>
 }
+
 /**
  * Parse the validation error from the server into a flattened array of messages.
  */
@@ -68,6 +69,15 @@ export const parseValidationError = (error: ServerValidationError) => {
  * Turn <br> into new line characters.
  */
 export const br2nl = (str: string) => str ? str.replace(/<br\s*\/?>/gi, '\n') : ''
+
+/**
+ * Turn carriage returns (\r) to line feeds (\n) using JavaScript's implicit DOM-writing behavior
+ */
+export const cr2lf = (str: string) => {
+  const div = document.createElement('div')
+  div.innerHTML = str
+  return div.innerHTML
+}
 
 export const slugToTitle = (slug: string, separator = '-') => {
   let title = slug.split(separator).map(w => w.charAt(0).toUpperCase() + w.substring(1).toLowerCase()).join(' ')

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Builders\ArtistBuilder;
 use App\Facades\Util;
+use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\File;
 use Laravel\Scout\Searchable;
 
 /**
@@ -19,7 +21,7 @@ use Laravel\Scout\Searchable;
  * @property string|null $image Public URL to the artist's image
  * @property bool $is_unknown If the artist is Unknown Artist
  * @property bool $is_various If the artist is Various Artist
- * @property Collection $songs
+ * @property Collection<array-key, Song> $songs
  * @property bool $has_image If the artist has a (non-default) image
  * @property string|null $image_path Absolute path to the artist's image
  * @property float|string $length Total length of the artist's songs in seconds (dynamically calculated)
@@ -27,7 +29,7 @@ use Laravel\Scout\Searchable;
  * @property string|int $song_count Total number of songs by the artist (dynamically calculated)
  * @property string|int $album_count Total number of albums by the artist (dynamically calculated)
  * @property Carbon $created_at
- * @property Collection|array<array-key, Album> $albums
+ * @property Collection<array-key, Album> $albums
  */
 class Artist extends Model
 {
@@ -116,7 +118,7 @@ class Artist extends Model
         return Attribute::get(function (): bool {
             $image = Arr::get($this->attributes, 'image');
 
-            return $image && (app()->runningUnitTests() || file_exists(artist_image_path($image)));
+            return $image && (app()->runningUnitTests() || File::exists(artist_image_path($image)));
         });
     }
 

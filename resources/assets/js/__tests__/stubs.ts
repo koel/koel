@@ -1,7 +1,7 @@
 import { Ref, ref } from 'vue'
 import { noop } from '@/utils'
 
-import MessageToaster from '@/components/ui/MessageToaster.vue'
+import MessageToaster from '@/components/ui/message-toaster/MessageToaster.vue'
 import DialogBox from '@/components/ui/DialogBox.vue'
 import Overlay from '@/components/ui/Overlay.vue'
 

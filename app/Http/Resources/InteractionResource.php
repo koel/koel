@@ -7,7 +7,17 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class InteractionResource extends JsonResource
 {
-    public function __construct(private Interaction $interaction)
+    public const JSON_STRUCTURE = [
+        'type',
+        'id',
+        'songId',
+        'song_id',
+        'liked',
+        'playCount',
+        'play_count',
+    ];
+
+    public function __construct(private readonly Interaction $interaction)
     {
         parent::__construct($interaction);
     }

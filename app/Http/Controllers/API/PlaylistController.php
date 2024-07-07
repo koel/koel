@@ -3,14 +3,15 @@
 namespace App\Http\Controllers\API;
 
 use App\Exceptions\PlaylistBothSongsAndRulesProvidedException;
+use App\Facades\License;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\PlaylistStoreRequest;
 use App\Http\Requests\API\PlaylistUpdateRequest;
 use App\Http\Resources\PlaylistResource;
 use App\Models\Playlist;
-use App\Models\PlaylistFolder;
 use App\Models\User;
 use App\Repositories\PlaylistFolderRepository;
+use App\Repositories\PlaylistRepository;
 use App\Services\PlaylistService;
 use App\Values\SmartPlaylistRuleGroupCollection;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -21,15 +22,16 @@ class PlaylistController extends Controller
 {
     /** @param User $user */
     public function __construct(
-        private PlaylistService $playlistService,
-        private PlaylistFolderRepository $folderRepository,
-        private ?Authenticatable $user
+        private readonly PlaylistService $playlistService,
+        private readonly PlaylistRepository $playlistRepository,
+        private readonly PlaylistFolderRepository $folderRepository,
+        private readonly ?Authenticatable $user
     ) {
     }
 
     public function index()
     {
-        return PlaylistResource::collection($this->user->playlists);
+        return PlaylistResource::collection($this->playlistRepository->getAllAccessibleByUser($this->user));
     }
 
     public function store(PlaylistStoreRequest $request)
@@ -37,7 +39,6 @@ class PlaylistController extends Controller
         $folder = null;
 
         if ($request->folder_id) {
-            /** @var PlaylistFolder $folder */
             $folder = $this->folderRepository->getOne($request->folder_id);
             $this->authorize('own', $folder);
         }
@@ -48,7 +49,8 @@ class PlaylistController extends Controller
                 $this->user,
                 $folder,
                 Arr::wrap($request->songs),
-                $request->rules ? SmartPlaylistRuleGroupCollection::create(Arr::wrap($request->rules)) : null
+                $request->rules ? SmartPlaylistRuleGroupCollection::create(Arr::wrap($request->rules)) : null,
+                $request->own_songs_only && $request->rules && License::isPlus()
             );
 
             return PlaylistResource::make($playlist);
@@ -64,7 +66,6 @@ class PlaylistController extends Controller
         $folder = null;
 
         if ($request->folder_id) {
-            /** @var PlaylistFolder $folder */
             $folder = $this->folderRepository->getOne($request->folder_id);
             $this->authorize('own', $folder);
         }
@@ -74,7 +75,8 @@ class PlaylistController extends Controller
                 $playlist,
                 $request->name,
                 $folder,
-                $request->rules ? SmartPlaylistRuleGroupCollection::create(Arr::wrap($request->rules)) : null
+                $request->rules ? SmartPlaylistRuleGroupCollection::create(Arr::wrap($request->rules)) : null,
+                $request->own_songs_only && $request->rules && License::isPlus()
             )
         );
     }

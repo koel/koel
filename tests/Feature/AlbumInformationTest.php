@@ -6,31 +6,15 @@ use App\Models\Album;
 use App\Services\MediaInformationService;
 use App\Values\AlbumInformation;
 use Mockery;
+use Tests\TestCase;
 
 class AlbumInformationTest extends TestCase
 {
-    private const JSON_STRUCTURE = [
-        'url',
-        'cover',
-        'wiki' => [
-            'summary',
-            'full',
-        ],
-        'tracks' => [
-            '*' => [
-                'title',
-                'length',
-                'url',
-            ],
-        ],
-    ];
-
     public function testGet(): void
     {
         config(['koel.lastfm.key' => 'foo']);
         config(['koel.lastfm.secret' => 'geheim']);
 
-        /** @var Album $album */
         $album = Album::factory()->create();
 
         $lastfm = self::mock(MediaInformationService::class);
@@ -58,7 +42,7 @@ class AlbumInformationTest extends TestCase
             ));
 
         $this->getAs('api/albums/' . $album->id . '/information')
-            ->assertJsonStructure(self::JSON_STRUCTURE);
+            ->assertJsonStructure(AlbumInformation::JSON_STRUCTURE);
     }
 
     public function testGetWithoutLastfmStillReturnsValidStructure(): void
@@ -66,10 +50,7 @@ class AlbumInformationTest extends TestCase
         config(['koel.lastfm.key' => null]);
         config(['koel.lastfm.secret' => null]);
 
-        /** @var Album $album */
-        $album = Album::factory()->create();
-
-        $this->getAs('api/albums/' . $album->id . '/information')
-            ->assertJsonStructure(self::JSON_STRUCTURE);
+        $this->getAs('api/albums/' . Album::factory()->create()->id . '/information')
+            ->assertJsonStructure(AlbumInformation::JSON_STRUCTURE);
     }
 }

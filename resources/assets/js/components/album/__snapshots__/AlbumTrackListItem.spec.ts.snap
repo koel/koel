@@ -1,7 +1,7 @@
 // Vitest Snapshot v1
 
 exports[`renders 1`] = `
-<div data-v-da281390="" class="track-list-item" title="" tabindex="0"><span data-v-da281390="" class="title">Fahrstuhl to Heaven</span>
-  <!----><span data-v-da281390="" class="length">04:40</span>
+<div data-v-da281390="" class="track-list-item flex flex-1 gap-1" title="" tabindex="0"><span data-v-da281390="" class="flex-1">Fahrstuhl to Heaven</span>
+  <!----><span data-v-da281390="" class="w-14 text-right opacity-50">04:40</span>
 </div>
 `;

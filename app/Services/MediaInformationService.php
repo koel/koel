@@ -4,16 +4,16 @@ namespace App\Services;
 
 use App\Models\Album;
 use App\Models\Artist;
+use App\Services\Contracts\MusicEncyclopedia;
 use App\Values\AlbumInformation;
 use App\Values\ArtistInformation;
-use Illuminate\Cache\Repository as Cache;
+use Illuminate\Support\Facades\Cache;
 
 class MediaInformationService
 {
     public function __construct(
-        private MusicEncyclopedia $encyclopedia,
-        private MediaMetadataService $mediaMetadataService,
-        private Cache $cache
+        private readonly MusicEncyclopedia $encyclopedia,
+        private readonly MediaMetadataService $mediaMetadataService
     ) {
     }
 
@@ -23,20 +23,16 @@ class MediaInformationService
             return null;
         }
 
-        if ($this->cache->has('album.info.' . $album->id)) {
-            return $this->cache->get('album.info.' . $album->id);
-        }
+        return Cache::remember("album.info.$album->id", now()->addWeek(), function () use ($album): AlbumInformation {
+            $info = $this->encyclopedia->getAlbumInformation($album) ?: AlbumInformation::make();
 
-        $info = $this->encyclopedia->getAlbumInformation($album) ?: AlbumInformation::make();
+            attempt_unless($album->has_cover, function () use ($info, $album): void {
+                $this->mediaMetadataService->tryDownloadAlbumCover($album);
+                $info->cover = $album->cover;
+            });
 
-        attempt_unless($album->has_cover, function () use ($info, $album): void {
-            $this->mediaMetadataService->tryDownloadAlbumCover($album);
-            $info->cover = $album->cover;
+            return $info;
         });
-
-        $this->cache->put('album.info.' . $album->id, $info, now()->addWeek());
-
-        return $info;
     }
 
     public function getArtistInformation(Artist $artist): ?ArtistInformation
@@ -45,19 +41,19 @@ class MediaInformationService
             return null;
         }
 
-        if ($this->cache->has('artist.info.' . $artist->id)) {
-            return $this->cache->get('artist.info.' . $artist->id);
-        }
+        return Cache::remember(
+            "artist.info.$artist->id",
+            now()->addWeek(),
+            function () use ($artist): ArtistInformation {
+                $info = $this->encyclopedia->getArtistInformation($artist) ?: ArtistInformation::make();
 
-        $info = $this->encyclopedia->getArtistInformation($artist) ?: ArtistInformation::make();
+                attempt_unless($artist->has_image, function () use ($artist, $info): void {
+                    $this->mediaMetadataService->tryDownloadArtistImage($artist);
+                    $info->image = $artist->image;
+                });
 
-        attempt_unless($artist->has_image, function () use ($artist, $info): void {
-            $this->mediaMetadataService->tryDownloadArtistImage($artist);
-            $info->image = $artist->image;
-        });
-
-        $this->cache->put('artist.info.' . $artist->id, $info, now()->addWeek());
-
-        return $info;
+                return $info;
+            }
+        );
     }
 }

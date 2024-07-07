@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Builders\AlbumBuilder;
+use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -11,17 +12,18 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\File;
 use Laravel\Scout\Searchable;
 
 /**
- * @property string $cover The album cover's file name
+ * @property string $cover The album cover's URL
  * @property string|null $cover_path The absolute path to the cover file
  * @property bool $has_cover If the album has a non-default cover image
  * @property int $id
  * @property string $name Name of the album
  * @property Artist $artist The album's artist
  * @property int $artist_id
- * @property Collection $songs
+ * @property Collection<array-key, Song> $songs
  * @property bool $is_unknown If the album is the Unknown Album
  * @property string|null $thumbnail_name The file name of the album's thumbnail
  * @property string|null $thumbnail_path The full path to the thumbnail.
@@ -44,6 +46,8 @@ class Album extends Model
     protected $guarded = ['id'];
     protected $hidden = ['updated_at'];
     protected $casts = ['artist_id' => 'integer'];
+
+    protected $with = ['artist'];
 
     /** @deprecated */
     protected $appends = ['is_compilation'];
@@ -93,7 +97,7 @@ class Album extends Model
     protected function hasCover(): Attribute
     {
         return Attribute::get(fn (): bool => $this->cover_path
-            && (app()->runningUnitTests() || file_exists($this->cover_path)));
+            && (app()->runningUnitTests() || File::exists($this->cover_path)));
     }
 
     protected function coverPath(): Attribute
@@ -143,7 +147,7 @@ class Album extends Model
         return Attribute::get(fn () => $this->artist_id === Artist::VARIOUS_ID);
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function toSearchableArray(): array
     {
         $array = [

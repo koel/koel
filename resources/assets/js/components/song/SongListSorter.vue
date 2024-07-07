@@ -1,64 +1,84 @@
 <template>
-  <div>
-    <button ref="button" title="Sort" @click.stop="trigger">
+  <article>
+    <button ref="button" class="w-full focus:text-k-highlight" title="Sort" @click.stop="trigger">
       <Icon :icon="faSort" />
     </button>
-    <menu ref="menu" v-koel-clickaway="hide">
-      <li
-        v-for="item in menuItems"
-        :key="item.label"
-        :class="item.field === field && 'active'"
-        @click="sort(item.field)"
-      >
-        <span>{{ item.label }}</span>
-        <span class="icon">
-          <Icon v-if="order === 'asc'" :icon="faArrowDown" />
-          <Icon v-else :icon="faArrowUp" />
+    <OnClickOutside @trigger="hide">
+      <menu ref="menu" class="context-menu normal-case tracking-normal">
+        <li
+          v-for="item in menuItems"
+          :key="item.label"
+          :class="currentlySortedBy(item.field) && 'active'"
+          class="cursor-pointer flex justify-between"
+          @click="sort(item.field)"
+        >
+          <span>{{ item.label }}</span>
+          <span class="icon hidden ml-3">
+          <Icon v-if="field === 'position'" :icon="faCheck" />
+          <Icon v-else-if="order === 'asc'" :icon="faArrowUp" />
+          <Icon v-else :icon="faArrowDown" />
         </span>
-      </li>
-    </menu>
-  </div>
+        </li>
+      </menu>
+    </OnClickOutside>
+  </article>
 </template>
 
 <script lang="ts" setup>
-import { faArrowDown, faArrowUp, faSort } from '@fortawesome/free-solid-svg-icons'
-import { onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
+import { isEqual } from 'lodash'
+import { faArrowDown, faArrowUp, faCheck, faSort } from '@fortawesome/free-solid-svg-icons'
+import { OnClickOutside } from '@vueuse/components'
+import { computed, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
 import { useFloatingUi } from '@/composables'
+import { arrayify, getPlayableCollectionContentType } from '@/utils'
 
-const props = defineProps<{ field?: SongListSortField, order?: SortOrder }>()
-const { field, order } = toRefs(props)
+const props = withDefaults(defineProps<{
+  field?: MaybeArray<PlayableListSortField> // the current field(s) being sorted by
+  order?: SortOrder
+  hasCustomOrderSort?: boolean // whether to provide "custom order" sort (like for playlists)
+  contentType?: ReturnType<typeof getPlayableCollectionContentType>
+}>(), {
+  field: 'title',
+  order: 'asc',
+  hasCustomOrderSort: false,
+  contentType: 'songs'
+})
 
-const emit = defineEmits<{ (e: 'sort', field: SongListSortField): void }>()
+const { field, order, hasCustomOrderSort, contentType } = toRefs(props)
+
+const emit = defineEmits<{ (e: 'sort', field: MaybeArray<PlayableListSortField>): void }>()
 
 const button = ref<HTMLButtonElement>()
 const menu = ref<HTMLDivElement>()
 
-const menuItems: { label: string, field: SongListSortField }[] = [
-  {
-    label: 'Title',
-    field: 'title'
-  },
-  {
-    label: 'Artist',
-    field: 'artist_name'
-  },
-  {
-    label: 'Album',
-    field: 'album_name'
-  },
-  {
-    label: 'Track & Disc',
-    field: 'track'
-  },
-  {
-    label: 'Time',
-    field: 'length'
-  },
-  {
-    label: 'Date Added',
-    field: 'created_at'
+const menuItems = computed(() => {
+type MenuItems = { label: string, field: MaybeArray<PlayableListSortField> }
+  const title: MenuItems = { label: 'Title', field: 'title' }
+  const artist: MenuItems = { label: 'Artist', field: 'artist_name' }
+  const author: MenuItems = { label: 'Author', field: 'podcast_author' }
+  const artistOrAuthor: MenuItems = { label: 'Artist or Author', field: ['artist_name', 'podcast_author'] }
+  const album: MenuItems = { label: 'Album', field: 'album_name' }
+  const track: MenuItems = { label: 'Track & Disc', field: 'track' }
+  const time: MenuItems = { label: 'Time', field: 'length' }
+  const dateAdded: MenuItems = { label: 'Date Added', field: 'created_at' }
+  const podcast: MenuItems = { label: 'Podcast', field: 'podcast_title' }
+  const albumOrPodcast: MenuItems = { label: 'Album or Podcast', field: ['album_name', 'podcast_title'] }
+  const customOrder: MenuItems = { label: 'Custom Order', field: 'position' }
+
+  let items: MenuItems[] = [title, album, artist, track, time, dateAdded]
+
+  if (contentType.value === 'episodes') {
+    items = [title, podcast, author, time, dateAdded]
+  } else if (contentType.value === 'mixed') {
+    items = [title, albumOrPodcast, artistOrAuthor, time, dateAdded]
   }
-]
+
+  if (hasCustomOrderSort.value) {
+    items.push(customOrder)
+  }
+
+  return items
+})
 
 const { setup, teardown, trigger, hide } = useFloatingUi(button, menu, {
   placement: 'bottom-end',
@@ -66,45 +86,23 @@ const { setup, teardown, trigger, hide } = useFloatingUi(button, menu, {
   autoTrigger: false
 })
 
-const sort = (field: SongListSortField) => {
+const sort = (field: MaybeArray<PlayableListSortField>) => {
   emit('sort', field)
   hide()
 }
+
+const currentlySortedBy = (field: MaybeArray<PlayableListSortField>) => isEqual(arrayify(field), arrayify(props.field))
 
 onMounted(() => menu.value && setup())
 onBeforeUnmount(() => teardown())
 </script>
 
-<style lang="scss" scoped>
-button {
-  width: 100%;
+<style lang="postcss" scoped>
+.active {
+  @apply bg-k-highlight text-k-text-primary;
 
-  &:focus {
-    color: var(--color-highlight);
-  }
-}
-
-menu {
-  text-transform: none;
-  letter-spacing: 0;
-
-  li {
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-
-    .icon {
-      display: none;
-    }
-
-    &.active {
-      background: var(--color-highlight);
-      color: var(--color-text-primary);
-
-      .icon {
-        display: block;
-      }
-    }
+  .icon {
+    @apply block;
   }
 }
 </style>

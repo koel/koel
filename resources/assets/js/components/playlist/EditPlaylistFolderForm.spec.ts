@@ -10,7 +10,7 @@ import EditPlaylistFolderForm from './EditPlaylistFolderForm.vue'
 new class extends UnitTestCase {
   protected test () {
     it('submits', async () => {
-      const folder = factory<PlaylistFolder>('playlist-folder', { name: 'My folder' })
+      const folder = factory('playlist-folder', { name: 'My folder' })
       const renameMock = this.mock(playlistFolderStore, 'rename')
       this.render(EditPlaylistFolderForm, {
         global: {

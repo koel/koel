@@ -1,3 +1,4 @@
+import Router from '@/router'
 import { screen, waitFor } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
@@ -11,16 +12,16 @@ let artist: Artist
 
 new class extends UnitTestCase {
   protected async renderComponent () {
-    commonStore.state.use_last_fm = true
+    commonStore.state.uses_last_fm = true
 
-    artist = factory<Artist>('artist', {
+    artist = factory('artist', {
       id: 42,
       name: 'Led Zeppelin',
     })
 
     const resolveArtistMock = this.mock(artistStore, 'resolve').mockResolvedValue(artist)
 
-    const songs = factory<Song>('song', 13)
+    const songs = factory('song', 13)
     const fetchSongsMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
 
     await this.router.activateRoute({
@@ -57,7 +58,7 @@ new class extends UnitTestCase {
     })
 
     it('goes back to list if artist is deleted', async () => {
-      const goMock = this.mock(this.router, 'go')
+      const goMock = this.mock(Router, 'go')
       const byIdMock = this.mock(artistStore, 'byId', null)
       await this.renderComponent()
 

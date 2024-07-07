@@ -1,26 +1,26 @@
 <template>
-  <div class="add-to" data-testid="add-to-menu" tabindex="0">
+  <div class="add-to w-full max-w-[256px] min-w-[200px] p-3 space-y-3" data-testid="add-to-menu" tabindex="0">
     <section class="existing-playlists">
-      <p>Add {{ pluralize(songs, 'song') }} to</p>
+      <p class="mb-2 text-[0.9rem]">Add {{ pluralize(playables, 'item') }} to</p>
 
-      <ul v-koel-overflow-fade>
+      <ul v-koel-overflow-fade class="relative max-h-48 overflow-y-scroll space-y-1.5">
         <template v-if="config.queue">
           <template v-if="queue.length">
             <li
-              v-if="currentSong"
+              v-if="currentPlayable"
               class="queue-after-current"
               data-testid="queue-after-current"
               tabindex="0"
-              @click="queueSongsAfterCurrent"
+              @click="queueAfterCurrent"
             >
-              After Current Song
+              After Current
             </li>
-            <li class="bottom-queue" data-testid="queue-bottom" tabindex="0" @click="queueSongsToBottom">
+            <li class="bottom-queue" data-testid="queue-bottom" tabindex="0" @click="queueToBottom">
               Bottom of Queue
             </li>
-            <li class="top-queue" data-testid="queue-top" tabindex="0" @click="queueSongsToTop">Top of Queue</li>
+            <li class="top-queue" data-testid="queue-top" tabindex="0" @click="queueToTop">Top of Queue</li>
           </template>
-          <li v-else data-testid="queue" tabindex="0" @click="queueSongsToBottom">Queue</li>
+          <li v-else data-testid="queue" tabindex="0" @click="queueToBottom">Queue</li>
         </template>
 
         <li
@@ -28,7 +28,7 @@
           class="favorites"
           data-testid="add-to-favorites"
           tabindex="0"
-          @click="addSongsToFavorite"
+          @click="addToFavorites"
         >
           Favorites
         </li>
@@ -39,100 +39,58 @@
           class="playlist"
           data-testid="add-to-playlist"
           tabindex="0"
-          @click="addSongsToExistingPlaylist(playlist)"
+          @click="addToExistingPlaylist(playlist)"
         >
           {{ playlist.name }}
         </li>
       </ul>
     </section>
 
-    <Btn transparent @click.prevent="addSongsToNewPlaylist">New Playlist…</Btn>
+    <Btn
+      class="!w-full !border !border-solid !border-white/20"
+      transparent
+      @click.prevent="addToNewPlaylist"
+    >
+      New Playlist…
+    </Btn>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, toRef, toRefs, watch } from 'vue'
+import { computed, toRef, toRefs, watch } from 'vue'
 import { pluralize } from '@/utils'
 import { playlistStore, queueStore } from '@/stores'
-import { useSongMenuMethods } from '@/composables'
+import { usePlayableMenuMethods } from '@/composables'
 
-import Btn from '@/components/ui/Btn.vue'
+import Btn from '@/components/ui/form/Btn.vue'
 
-const props = defineProps<{ songs: Song[], config: AddToMenuConfig }>()
-const { songs, config } = toRefs(props)
+const props = defineProps<{ playables: Playable[], config: AddToMenuConfig }>()
+const { playables, config } = toRefs(props)
 
-const queue = toRef(queueStore.state, 'songs')
-const currentSong = queueStore.current
+const queue = toRef(queueStore.state, 'playables')
+const currentPlayable = queueStore.current
 
 const allPlaylists = toRef(playlistStore.state, 'playlists')
-const playlists = computed(() => allPlaylists.value.filter(playlist => !playlist.is_smart))
+const playlists = computed(() => allPlaylists.value.filter(({ is_smart }) => !is_smart))
 
 const emit = defineEmits<{ (e: 'closing'): void }>()
 const close = () => emit('closing')
 
 const {
-  queueSongsAfterCurrent,
-  queueSongsToBottom,
-  queueSongsToTop,
-  addSongsToFavorite,
-  addSongsToExistingPlaylist,
-  addSongsToNewPlaylist
-} = useSongMenuMethods(songs, close)
+  queueAfterCurrent,
+  queueToBottom,
+  queueToTop,
+  addToFavorites,
+  addToExistingPlaylist,
+  addToNewPlaylist
+} = usePlayableMenuMethods(playables, close)
 
-watch(songs, () => songs.value.length || close())
+watch(playables, () => playables.value.length || close())
 </script>
 
-<style lang="scss" scoped>
-.add-to {
-  width: 100%;
-  max-width: 256px;
-  min-width: 196px;
-  padding: .75rem;
-
-  > * + * {
-    margin-top: 1rem;
-  }
-
-  p {
-    margin-bottom: .5rem;
-    font-size: .9rem;
-  }
-
-  .new-playlist {
-    margin-top: .5rem;
-  }
-
-  ul {
-    position: relative;
-    max-height: 12rem;
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
-
-    > li + li {
-      margin-top: .3rem;
-    }
-  }
-
-  li {
-    height: 2.25rem;
-    line-height: 2.25rem;
-    padding: 0 .75rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    border-radius: 3px;
-    background: rgba(255, 255, 255, .05);
-    cursor: pointer;
-
-    &:hover {
-      background: var(--color-highlight);
-      color: var(--color-text-primary);
-    }
-  }
-
-  button {
-    width: 100%;
-    border: 1px solid rgba(255, 255, 255, .2);
-  }
+<style lang="postcss" scoped>
+li {
+  @apply h-9 leading-9 py-0 px-3 whitespace-nowrap overflow-hidden text-ellipsis rounded bg-white/5 cursor-pointer
+  hover:bg-k-highlight hover:text-k-text-primary;
 }
 </style>

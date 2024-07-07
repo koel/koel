@@ -4,12 +4,16 @@ namespace App\Services;
 
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Playlist;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 class MediaMetadataService
 {
-    public function __construct(private SpotifyService $spotifyService, private ImageWriter $imageWriter)
-    {
+    public function __construct(
+        private readonly SpotifyService $spotifyService,
+        private readonly ImageWriter $imageWriter
+    ) {
     }
 
     public function tryDownloadAlbumCover(Album $album): void
@@ -25,16 +29,10 @@ class MediaMetadataService
      * @param string $source Path, URL, or even binary data. See https://image.intervention.io/v2/api/make.
      * @param string|null $destination The destination path. Automatically generated if empty.
      */
-    public function writeAlbumCover(
-        Album $album,
-        string $source,
-        string $extension = 'png',
-        ?string $destination = '',
-        bool $cleanUp = true
-    ): void {
-        attempt(function () use ($album, $source, $extension, $destination, $cleanUp): void {
-            $extension = trim(strtolower($extension), '. ');
-            $destination = $destination ?: $this->generateAlbumCoverPath($extension);
+    public function writeAlbumCover(Album $album, string $source, ?string $destination = '', bool $cleanUp = true): void
+    {
+        attempt(function () use ($album, $source, $destination, $cleanUp): void {
+            $destination = $destination ?: $this->generateAlbumCoverPath();
             $this->imageWriter->write($destination, $source);
 
             if ($cleanUp) {
@@ -62,31 +60,48 @@ class MediaMetadataService
     public function writeArtistImage(
         Artist $artist,
         string $source,
-        string $extension = 'png',
         ?string $destination = '',
         bool $cleanUp = true
     ): void {
-        attempt(function () use ($artist, $source, $extension, $destination, $cleanUp): void {
-            $extension = trim(strtolower($extension), '. ');
-            $destination = $destination ?: $this->generateArtistImagePath($extension);
+        attempt(function () use ($artist, $source, $destination, $cleanUp): void {
+            $destination = $destination ?: $this->generateArtistImagePath();
             $this->imageWriter->write($destination, $source);
 
             if ($cleanUp && $artist->has_image) {
-                @unlink($artist->image_path);
+                File::delete($artist->image_path);
             }
 
             $artist->update(['image' => basename($destination)]);
         });
     }
 
-    private function generateAlbumCoverPath(string $extension): string
+    public function writePlaylistCover(Playlist $playlist, string $source): void
     {
-        return album_cover_path(sprintf('%s.%s', sha1(Str::uuid()), trim($extension, '.')));
+        attempt(function () use ($playlist, $source): void {
+            $destination = $this->generatePlaylistCoverPath();
+            $this->imageWriter->write($destination, $source);
+
+            if ($playlist->cover_path) {
+                File::delete($playlist->cover_path);
+            }
+
+            $playlist->update(['cover' => basename($destination)]);
+        });
     }
 
-    private function generateArtistImagePath(string $extension): string
+    private function generateAlbumCoverPath(): string
     {
-        return artist_image_path(sprintf('%s.%s', sha1(Str::uuid()), trim($extension, '.')));
+        return album_cover_path(sprintf('%s.webp', sha1(Str::uuid())));
+    }
+
+    private function generateArtistImagePath(): string
+    {
+        return artist_image_path(sprintf('%s.webp', sha1(Str::uuid())));
+    }
+
+    private function generatePlaylistCoverPath(): string
+    {
+        return playlist_cover_path(sprintf('%s.webp', sha1(Str::uuid())));
     }
 
     /**
@@ -99,7 +114,7 @@ class MediaMetadataService
             return null;
         }
 
-        if (!file_exists($album->thumbnail_path)) {
+        if (!File::exists($album->thumbnail_path)) {
             $this->createThumbnailForAlbum($album);
         }
 
@@ -117,7 +132,7 @@ class MediaMetadataService
             return;
         }
 
-        @unlink($album->cover_path);
-        @unlink($album->thumbnail_path);
+        File::delete($album->cover_path);
+        File::delete($album->thumbnail_path);
     }
 }

@@ -10,20 +10,6 @@ new class extends UnitTestCase {
     super.beforeEach(() => this.mock(albumStore, 'paginate'))
   }
 
-  private async renderComponent () {
-    albumStore.state.albums = factory<Album>('album', 9)
-
-    this.render(AlbumListScreen, {
-      global: {
-        stubs: {
-          AlbumCard: this.stub('album-card')
-        }
-      }
-    })
-
-    await this.router.activateRoute({ path: 'albums', screen: 'Albums' })
-  }
-
   protected test () {
     it('renders', async () => {
       await this.renderComponent()
@@ -38,21 +24,35 @@ new class extends UnitTestCase {
     })
 
     it.each<[ArtistAlbumViewMode]>([['list'], ['thumbnails']])('sets layout from preferences', async (mode) => {
-      preferenceStore.albumsViewMode = mode
+      preferenceStore.albums_view_mode = mode
 
       await this.renderComponent()
 
-      await waitFor(() => expect(screen.getByTestId('album-list').classList.contains(`as-${mode}`)).toBe(true))
+      await waitFor(() => expect(screen.getByTestId('album-grid').classList.contains(`as-${mode}`)).toBe(true))
     })
 
     it('switches layout', async () => {
       await this.renderComponent()
 
       await this.user.click(screen.getByRole('radio', { name: 'View as list' }))
-      await waitFor(() => expect(screen.getByTestId('album-list').classList.contains(`as-list`)).toBe(true))
+      await waitFor(() => expect(screen.getByTestId('album-grid').classList.contains(`as-list`)).toBe(true))
 
       await this.user.click(screen.getByRole('radio', { name: 'View as thumbnails' }))
-      await waitFor(() => expect(screen.getByTestId('album-list').classList.contains(`as-thumbnails`)).toBe(true))
+      await waitFor(() => expect(screen.getByTestId('album-grid').classList.contains(`as-thumbnails`)).toBe(true))
     })
+  }
+
+  private async renderComponent () {
+    albumStore.state.albums = factory('album', 9)
+
+    this.render(AlbumListScreen, {
+      global: {
+        stubs: {
+          AlbumCard: this.stub('album-card')
+        }
+      }
+    })
+
+    await this.router.activateRoute({ path: 'albums', screen: 'Albums' })
   }
 }

@@ -1,29 +1,37 @@
 <template>
-  <form v-koel-clickaway="maybeClose" @submit.prevent>
-    <Btn v-koel-tooltip title="Filter" unrounded transparent @click.prevent="toggleInput">
-      <Icon :icon="faFilter" fixed-width />
-    </Btn>
-    <input
-      v-show="showingInput"
-      ref="input"
-      v-model="keywords"
-      type="search"
-      placeholder="Keywords"
-      class="text-secondary"
+  <OnClickOutside @trigger="maybeClose">
+    <form
+      class="flex border rounded-md overflow-hidden border-solid border-white/10 focus-within:bg-black/10 focus-within:border-white/40"
+      @submit.prevent
     >
-  </form>
+      <Btn v-koel-tooltip title="Filter" transparent unrounded @click.prevent="toggleInput">
+        <Icon :icon="faFilter" fixed-width />
+      </Btn>
+      <TextInput
+        v-show="showingInput"
+        ref="input"
+        v-model="keywords"
+        class="!text-k-text-primary !bg-transparent !rounded-none !pl-0 !h-[unset] placeholder:text-white/50 focus-visible:outline-0"
+        placeholder="Keywords"
+        type="search"
+        @blur="maybeClose"
+      />
+    </form>
+  </OnClickOutside>
 </template>
 
 <script lang="ts" setup>
 import { faFilter } from '@fortawesome/free-solid-svg-icons'
+import { OnClickOutside } from '@vueuse/components'
 import { nextTick, ref, watch } from 'vue'
 
-import Btn from '@/components/ui/Btn.vue'
+import Btn from '@/components/ui/form/Btn.vue'
+import TextInput from '@/components/ui/form/TextInput.vue'
 
 const emit = defineEmits<{ (event: 'change', value: string): void }>()
 
 const showingInput = ref(false)
-const input = ref<HTMLInputElement>()
+const input = ref<InstanceType<typeof TextInput>>()
 const keywords = ref('')
 
 watch(keywords, value => emit('change', value))
@@ -33,11 +41,11 @@ const toggleInput = () => {
 
   if (showingInput.value) {
     nextTick(() => {
-      input.value?.focus()
-      input.value?.select()
+      input.value?.el?.focus()
+      input.value?.el?.select()
     })
   } else {
-    input.value?.blur()
+    input.value?.el?.blur()
     keywords.value = ''
   }
 }
@@ -46,32 +54,7 @@ const maybeClose = () => {
   if (keywords.value.trim() !== '') return
 
   showingInput.value = false
-  input.value?.blur()
+  input.value?.el?.blur()
   keywords.value = ''
 }
 </script>
-
-<style lang="scss" scoped>
-form {
-  display: flex;
-  border: 1px solid rgba(255, 255, 255, .1);
-  border-radius: 4px;
-  overflow: hidden;
-
-  input {
-    background-color: transparent;
-    border-radius: 0;
-    padding-left: 0;
-    height: unset;
-
-    &::placeholder {
-      color: rgba(255, 255, 255, .5);
-    }
-  }
-
-  &:focus-within {
-    background: rgba(0, 0, 0, .1);
-    border-color: rgba(255, 255, 255, .4);
-  }
-}
-</style>

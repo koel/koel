@@ -2,7 +2,7 @@ import { expect, it } from 'vitest'
 import { ref } from 'vue'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { CurrentSongKey } from '@/symbols'
+import { CurrentPlayableKey } from '@/symbols'
 import FooterSongInfo from './FooterSongInfo.vue'
 
 new class extends UnitTestCase {
@@ -10,7 +10,7 @@ new class extends UnitTestCase {
     it('renders with no current song', () => expect(this.render(FooterSongInfo).html()).toMatchSnapshot())
 
     it('renders with current song', () => {
-      const song = factory<Song>('song', {
+      const song = factory('song', {
         title: 'Fahrstuhl zum Mond',
         album_cover: 'https://via.placeholder.com/150',
         playback_state: 'Playing',
@@ -21,7 +21,7 @@ new class extends UnitTestCase {
       expect(this.render(FooterSongInfo, {
         global: {
           provide: {
-            [<symbol>CurrentSongKey]: ref(song)
+            [<symbol>CurrentPlayableKey]: ref(song)
           }
         }
       }).html()).toMatchSnapshot()

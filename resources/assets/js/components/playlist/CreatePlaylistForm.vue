@@ -1,39 +1,28 @@
 <template>
-  <form @submit.prevent="submit" @keydown.esc="maybeClose">
+  <form class="md:w-[480px] w-full" @submit.prevent="submit" @keydown.esc="maybeClose">
     <header>
       <h1>
         New Playlist
-        <span
-          v-if="songs.length"
-          data-testid="from-songs"
-          class="text-secondary"
-        >
-          from {{ pluralize(songs, 'song') }}
+        <span v-if="playables.length" class="text-k-text-secondary" data-testid="from-playables">
+          from {{ pluralize(playables, noun) }}
         </span>
       </h1>
     </header>
 
     <main>
-      <div class="form-row cols">
-        <label class="name">
-          Name
-          <input
-            v-model="name"
-            v-koel-focus
-            name="name"
-            placeholder="Playlist name"
-            required
-            type="text"
-          >
-        </label>
-        <label class="folder">
-          Folder
-          <select v-model="folderId">
+      <FormRow :cols="2">
+        <FormRow>
+          <template #label>Name</template>
+          <TextInput v-model="name" v-koel-focus name="name" placeholder="Playlist name" required />
+        </FormRow>
+        <FormRow>
+          <template #label>Folder</template>
+          <SelectBox v-model="folderId">
             <option :value="null" />
             <option v-for="folder in folders" :key="folder.id" :value="folder.id">{{ folder.name }}</option>
-          </select>
-        </label>
-      </div>
+          </SelectBox>
+        </FormRow>
+      </FormRow>
     </main>
 
     <footer>
@@ -44,21 +33,24 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, toRef } from 'vue'
+import { computed, ref, toRef } from 'vue'
 import { playlistFolderStore, playlistStore } from '@/stores'
-import { logger, pluralize } from '@/utils'
-import { useDialogBox, useMessageToaster, useModal, useOverlay, useRouter } from '@/composables'
+import { getPlayableCollectionContentType, pluralize } from '@/utils'
+import { useDialogBox, useErrorHandler, useMessageToaster, useModal, useOverlay, useRouter } from '@/composables'
 
-import Btn from '@/components/ui/Btn.vue'
+import Btn from '@/components/ui/form/Btn.vue'
+import TextInput from '@/components/ui/form/TextInput.vue'
+import FormRow from '@/components/ui/form/FormRow.vue'
+import SelectBox from '@/components/ui/form/SelectBox.vue'
 
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
-const { showConfirmDialog, showErrorDialog } = useDialogBox()
+const { showConfirmDialog } = useDialogBox()
 const { go } = useRouter()
 const { getFromContext } = useModal()
 
 const targetFolder = getFromContext<PlaylistFolder | null>('folder') ?? null
-const songs = getFromContext<Song[]>('songs') ?? []
+const playables = getFromContext<Playable[]>('playables') ?? []
 
 const folderId = ref(targetFolder?.id)
 const name = ref('')
@@ -67,20 +59,30 @@ const folders = toRef(playlistFolderStore.state, 'folders')
 const emit = defineEmits<{ (e: 'close'): void }>()
 const close = () => emit('close')
 
+const noun = computed(() => {
+  switch (getPlayableCollectionContentType(playables)) {
+    case 'songs':
+      return 'song'
+    case 'episodes':
+      return 'song'
+    default:
+      return 'item'
+  }
+})
+
 const submit = async () => {
   showOverlay()
 
   try {
     const playlist = await playlistStore.store(name.value, {
       folder_id: folderId.value
-    }, songs)
+    }, playables)
 
     close()
     toastSuccess(`Playlist "${playlist.name}" created.`)
     go(`playlist/${playlist.id}`)
-  } catch (error) {
-    showErrorDialog('Something went wrong. Please try again.', 'Error')
-    logger.error(error)
+  } catch (error: unknown) {
+    useErrorHandler('dialog').handleHttpError(error)
   } finally {
     hideOverlay()
   }
@@ -97,13 +99,3 @@ const maybeClose = async () => {
   await showConfirmDialog('Discard all changes?') && close()
 }
 </script>
-
-<style lang="scss" scoped>
-form {
-  width: 540px;
-}
-
-label.folder {
-  flex: .6;
-}
-</style>

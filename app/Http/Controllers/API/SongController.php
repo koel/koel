@@ -23,12 +23,12 @@ class SongController extends Controller
 {
     /** @param User $user */
     public function __construct(
-        private SongService $songService,
-        private SongRepository $songRepository,
-        private AlbumRepository $albumRepository,
-        private ArtistRepository $artistRepository,
-        private LibraryManager $libraryManager,
-        private ?Authenticatable $user
+        private readonly SongService $songService,
+        private readonly SongRepository $songRepository,
+        private readonly AlbumRepository $albumRepository,
+        private readonly ArtistRepository $artistRepository,
+        private readonly LibraryManager $libraryManager,
+        private readonly ?Authenticatable $user
     ) {
     }
 
@@ -36,21 +36,25 @@ class SongController extends Controller
     {
         return SongResource::collection(
             $this->songRepository->getForListing(
-                $request->sort ?: 'songs.title',
-                $request->order ?: 'asc',
-                $this->user
+                sortColumns: $request->sort ? explode(',', $request->sort) : ['songs.title'],
+                sortDirection: $request->order ?: 'asc',
+                ownSongsOnly: $request->boolean('own_songs_only'),
+                scopedUser: $this->user
             )
         );
     }
 
     public function show(Song $song)
     {
-        return SongResource::make($this->songRepository->getOne($song->id));
+        $this->authorize('access', $song);
+
+        return SongResource::make($this->songRepository->getOne($song->id, $this->user));
     }
 
     public function update(SongUpdateRequest $request)
     {
-        $this->authorize('admin', $this->user);
+        // Don't use SongRepository::findMany() because it'd be already catered to the current user.
+        Song::query()->findMany($request->songs)->each(fn (Song $song) => $this->authorize('edit', $song));
 
         $updatedSongs = $this->songService->updateSongs($request->songs, SongUpdateData::fromRequest($request));
         $albums = $this->albumRepository->getMany($updatedSongs->pluck('album_id')->toArray());
@@ -72,7 +76,8 @@ class SongController extends Controller
 
     public function destroy(DeleteSongsRequest $request)
     {
-        $this->authorize('admin', $this->user);
+        // Don't use SongRepository::findMany() because it'd be already catered to the current user.
+        Song::query()->findMany($request->songs)->each(fn (Song $song) => $this->authorize('delete', $song));
 
         $this->songService->deleteSongs($request->songs);
 

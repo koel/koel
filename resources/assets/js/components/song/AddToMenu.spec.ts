@@ -5,10 +5,10 @@ import factory from '@/__tests__/factory'
 import { favoriteStore, playlistStore, queueStore } from '@/stores'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { arrayify, eventBus } from '@/utils'
-import Btn from '@/components/ui/Btn.vue'
+import Btn from '@/components/ui/form/Btn.vue'
 import AddToMenu from './AddToMenu.vue'
 
-let songs: Song[]
+let playables: Playable[]
 
 const config: AddToMenuConfig = {
   queue: true,
@@ -16,29 +16,12 @@ const config: AddToMenuConfig = {
 }
 
 new class extends UnitTestCase {
-  private renderComponent (customConfig: Partial<AddToMenuConfig> = {}) {
-    songs = factory<Song>('song', 5)
-
-    return this.render(AddToMenu, {
-      props: {
-        songs,
-        config: Object.assign(clone(config), customConfig),
-        showing: true
-      },
-      global: {
-        stubs: {
-          Btn
-        }
-      }
-    })
-  }
-
   protected test () {
     it('renders', () => {
       playlistStore.state.playlists = [
-        factory<Playlist>('playlist', { name: 'Foo' }),
-        factory<Playlist>('playlist', { name: 'Bar' }),
-        factory<Playlist>('playlist', { name: 'Baz' })
+        factory('playlist', { name: 'Foo' }),
+        factory('playlist', { name: 'Bar' }),
+        factory('playlist', { name: 'Baz' })
       ]
 
       expect(this.renderComponent().html()).toMatchSnapshot()
@@ -57,15 +40,15 @@ new class extends UnitTestCase {
       ['to top', 'queue-top', 'queueToTop'],
       ['to bottom', 'queue-bottom', 'queue']
     ])('queues songs %s', async (_: string, testId: string, queueMethod: MethodOf<typeof queueStore>) => {
-      queueStore.state.songs = factory<Song>('song', 5)
-      queueStore.state.songs[2].playback_state = 'Playing'
+      queueStore.state.playables = factory('song', 5)
+      queueStore.state.playables[2].playback_state = 'Playing'
 
       const mock = this.mock(queueStore, queueMethod)
       this.renderComponent()
 
       await this.user.click(screen.getByTestId(testId))
 
-      expect(mock).toHaveBeenCalledWith(songs)
+      expect(mock).toHaveBeenCalledWith(playables)
     })
 
     it('adds songs to Favorites', async () => {
@@ -74,17 +57,17 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByTestId('add-to-favorites'))
 
-      expect(mock).toHaveBeenCalledWith(songs)
+      expect(mock).toHaveBeenCalledWith(playables)
     })
 
     it('adds songs to existing playlist', async () => {
-      const mock = this.mock(playlistStore, 'addSongs')
-      playlistStore.state.playlists = factory<Playlist>('playlist', 3)
+      const mock = this.mock(playlistStore, 'addContent')
+      playlistStore.state.playlists = factory('playlist', 3)
       this.renderComponent()
 
       await this.user.click(screen.getAllByTestId('add-to-playlist')[1])
 
-      expect(mock).toHaveBeenCalledWith(playlistStore.state.playlists[1], songs)
+      expect(mock).toHaveBeenCalledWith(playlistStore.state.playlists[1], playables)
     })
 
     it('creates playlist from selected songs', async () => {
@@ -93,7 +76,24 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByText('New Playlist…'))
 
-      expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_CREATE_PLAYLIST_FORM', null, songs)
+      expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_CREATE_PLAYLIST_FORM', null, playables)
+    })
+  }
+
+  private renderComponent (customConfig: Partial<AddToMenuConfig> = {}) {
+    playables = factory('song', 5)
+
+    return this.render(AddToMenu, {
+      props: {
+        playables,
+        config: Object.assign(clone(config), customConfig),
+        showing: true
+      },
+      global: {
+        stubs: {
+          Btn
+        }
+      }
     })
   }
 }

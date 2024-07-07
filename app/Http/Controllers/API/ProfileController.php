@@ -7,17 +7,21 @@ use App\Http\Requests\API\ProfileUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\TokenManager;
+use App\Services\UserService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Hashing\Hasher;
+use Illuminate\Http\Response;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class ProfileController extends Controller
 {
     /** @param User $user */
     public function __construct(
-        private Hasher $hash,
-        private TokenManager $tokenManager,
-        private ?Authenticatable $user
+        private readonly Hasher $hash,
+        private readonly UserService $userService,
+        private readonly TokenManager $tokenManager,
+        private readonly ?Authenticatable $user
     ) {
     }
 
@@ -28,24 +32,23 @@ class ProfileController extends Controller
 
     public function update(ProfileUpdateRequest $request)
     {
-        if (config('koel.misc.demo')) {
-            return response()->noContent();
-        }
+        static::disableInDemo(Response::HTTP_NO_CONTENT);
 
-        throw_unless(
-            $this->hash->check($request->current_password, $this->user->password),
+        // If the user is not using SSO, we need to verify their current password.
+        throw_if(
+            !$this->user->is_sso && !$this->hash->check($request->current_password, $this->user->password),
             ValidationException::withMessages(['current_password' => 'Invalid current password'])
         );
 
-        $data = $request->only('name', 'email');
+        $user = $this->userService->updateUser(
+            user: $this->user,
+            name: $request->name,
+            email: $request->email,
+            password: $request->new_password,
+            avatar: Str::startsWith($request->avatar, 'data:') ? $request->avatar : null
+        );
 
-        if ($request->new_password) {
-            $data['password'] = $this->hash->make($request->new_password);
-        }
-
-        $this->user->update($data);
-
-        $response = UserResource::make($this->user)->response();
+        $response = UserResource::make($user)->response();
 
         if ($request->new_password) {
             $response->header(

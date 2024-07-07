@@ -2,15 +2,18 @@
 
 namespace Tests\Feature;
 
+use App\Http\Resources\SongResource;
 use App\Models\QueueState;
 use App\Models\Song;
-use App\Models\User;
+use Tests\TestCase;
+
+use function Tests\create_user;
 
 class QueueTest extends TestCase
 {
     public const QUEUE_STATE_JSON_STRUCTURE = [
         'current_song',
-        'songs' => ['*' => SongTest::JSON_STRUCTURE],
+        'songs' => ['*' => SongResource::JSON_STRUCTURE],
         'playback_position',
     ];
 
@@ -34,8 +37,7 @@ class QueueTest extends TestCase
 
     public function testUpdateStateWithoutExistingState(): void
     {
-        /** @var User $user */
-        $user = User::factory()->create();
+        $user = create_user();
 
         self::assertDatabaseMissing(QueueState::class, ['user_id' => $user->id]);
 
@@ -80,11 +82,11 @@ class QueueTest extends TestCase
         Song::factory(10)->create();
 
         $this->getAs('api/queue/fetch?order=rand&limit=5')
-            ->assertJsonStructure(['*' => SongTest::JSON_STRUCTURE])
+            ->assertJsonStructure(['*' => SongResource::JSON_STRUCTURE])
             ->assertJsonCount(5, '*');
 
         $this->getAs('api/queue/fetch?order=asc&sort=title&limit=5')
-            ->assertJsonStructure(['*' => SongTest::JSON_STRUCTURE])
+            ->assertJsonStructure(['*' => SongResource::JSON_STRUCTURE])
             ->assertJsonCount(5, '*');
     }
 }

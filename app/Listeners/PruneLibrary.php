@@ -6,7 +6,7 @@ use App\Services\LibraryManager;
 
 class PruneLibrary
 {
-    public function __construct(private LibraryManager $libraryManager)
+    public function __construct(private readonly LibraryManager $libraryManager)
     {
     }
 

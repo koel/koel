@@ -13,7 +13,7 @@ export const useFloatingUi = (
   floating: HTMLElement | Ref<HTMLElement | undefined>,
   config: Partial<Config> = {}
 ) => {
-  const extractRef = <T extends HTMLElement | Ref<HTMLElement | undefined>>(ref: T): HTMLElement => {
+  const extractRef = <T extends HTMLElement | Ref<HTMLElement | undefined>> (ref: T): HTMLElement => {
     if (isRef(ref) && !ref.value) {
       throw new TypeError('Reference element is not defined')
     }

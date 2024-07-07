@@ -30,4 +30,13 @@ class UserFactory extends Factory
     {
         return $this->state(fn () => ['is_admin' => true]); // @phpcs:ignore
     }
+
+    public function prospect(): self
+    {
+        return $this->state(fn () => [ // @phpcs:ignore
+            'invitation_token' => Str::random(),
+            'invited_at' => now(),
+            'invited_by_id' => User::factory()->admin(),
+        ]);
+    }
 }

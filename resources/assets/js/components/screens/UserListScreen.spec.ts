@@ -4,31 +4,15 @@ import factory from '@/__tests__/factory'
 import { screen } from '@testing-library/vue'
 import { http } from '@/services'
 import { eventBus } from '@/utils'
-import Btn from '@/components/ui/Btn.vue'
-import BtnGroup from '@/components/ui/BtnGroup.vue'
+import Btn from '@/components/ui/form/Btn.vue'
+import BtnGroup from '@/components/ui/form/BtnGroup.vue'
 import UserListScreen from './UserListScreen.vue'
 
 new class extends UnitTestCase {
-  private async renderComponent (users: User[] = []) {
-    if (users.length === 0) {
-      users = factory<User>('user', 6)
-    }
+  protected beforeEach (cb?: Closure) {
+    super.beforeEach(cb);
 
-    const fetchMock = this.mock(http, 'get').mockResolvedValue(users)
-
-    this.render(UserListScreen, {
-      global: {
-        stubs: {
-          Btn,
-          BtnGroup,
-          UserCard: this.stub('user-card')
-        }
-      }
-    })
-
-    expect(fetchMock).toHaveBeenCalledWith('users')
-
-    await this.tick(2)
+    this.beAdmin()
   }
 
   protected test () {
@@ -40,7 +24,7 @@ new class extends UnitTestCase {
     })
 
     it('displays a list of user prospects', async () => {
-      const users = [...factory.states('prospect')<User>('user', 2), ...factory<User>('user', 3)]
+      const users = [...factory.states('prospect')('user', 2), ...factory('user', 3)]
       await this.renderComponent(users)
 
       expect(screen.getAllByTestId('user-card')).toHaveLength(5)
@@ -64,5 +48,27 @@ new class extends UnitTestCase {
 
       expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_INVITE_USER_FORM')
     })
+  }
+
+  private async renderComponent (users: User[] = []) {
+    if (users.length === 0) {
+      users = factory('user', 6)
+    }
+
+    const fetchMock = this.mock(http, 'get').mockResolvedValue(users)
+
+    this.render(UserListScreen, {
+      global: {
+        stubs: {
+          Btn,
+          BtnGroup,
+          UserCard: this.stub('user-card')
+        }
+      }
+    })
+
+    expect(fetchMock).toHaveBeenCalledWith('users')
+
+    await this.tick(2)
   }
 }

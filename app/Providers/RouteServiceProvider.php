@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Webmozart\Assert\Assert;
 
@@ -25,7 +26,7 @@ class RouteServiceProvider extends ServiceProvider
         $apiVersion = self::getApiVersion();
         $routeFile = $apiVersion ? base_path(sprintf('routes/%s.%s.php', $type, $apiVersion)) : null;
 
-        if ($routeFile && file_exists($routeFile)) {
+        if ($routeFile && File::exists($routeFile)) {
             Route::group([], $routeFile);
         }
     }
@@ -38,7 +39,7 @@ class RouteServiceProvider extends ServiceProvider
         $version = app()->runningUnitTests() ? env('X_API_VERSION') : request()->header('X-Api-Version');
 
         if ($version) {
-            Assert::oneOf($version, ['v6']);
+            Assert::oneOf($version, ['v6', 'v7']);
         }
 
         return $version;

@@ -2,15 +2,17 @@
 
 namespace Tests\Integration\Services;
 
+use App\Events\MultipleSongsLiked;
+use App\Events\MultipleSongsUnliked;
 use App\Events\SongLikeToggled;
-use App\Events\SongsBatchLiked;
-use App\Events\SongsBatchUnliked;
 use App\Models\Interaction;
 use App\Models\Song;
-use App\Models\User;
 use App\Services\InteractionService;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
+
+use function Tests\create_user;
 
 class InteractionServiceTest extends TestCase
 {
@@ -35,7 +37,7 @@ class InteractionServiceTest extends TestCase
 
     public function testToggleLike(): void
     {
-        $this->expectsEvents(SongLikeToggled::class);
+        Event::fake(SongLikeToggled::class);
 
         /** @var Interaction $interaction */
         $interaction = Interaction::factory()->create();
@@ -44,19 +46,18 @@ class InteractionServiceTest extends TestCase
         $this->interactionService->toggleLike($interaction->song, $interaction->user);
 
         self::assertNotSame($currentLiked, $interaction->refresh()->liked);
+        Event::assertDispatched(SongLikeToggled::class);
     }
 
     public function testLikeMultipleSongs(): void
     {
-        $this->expectsEvents(SongsBatchLiked::class);
+        Event::fake(MultipleSongsLiked::class);
 
         /** @var Collection $songs */
         $songs = Song::factory(2)->create();
+        $user = create_user();
 
-        /** @var User $user */
-        $user = User::factory()->create();
-
-        $this->interactionService->batchLike($songs->pluck('id')->all(), $user);
+        $this->interactionService->likeMany($songs, $user);
 
         $songs->each(static function (Song $song) use ($user): void {
             /** @var Interaction $interaction */
@@ -67,22 +68,24 @@ class InteractionServiceTest extends TestCase
 
             self::assertTrue($interaction->liked);
         });
+
+        Event::assertDispatched(MultipleSongsLiked::class);
     }
 
     public function testUnlikeMultipleSongs(): void
     {
-        $this->expectsEvents(SongsBatchUnliked::class);
-
-        /** @var User $user */
-        $user = User::factory()->create();
+        Event::fake(MultipleSongsUnliked::class);
+        $user = create_user();
 
         /** @var Collection $interactions */
         $interactions = Interaction::factory(3)->for($user)->create(['liked' => true]);
 
-        $this->interactionService->batchUnlike($interactions->pluck('song.id')->all(), $user);
+        $this->interactionService->unlikeMany($interactions->map(static fn (Interaction $i) => $i->song), $user);
 
         $interactions->each(static function (Interaction $interaction): void {
             self::assertFalse($interaction->refresh()->liked);
         });
+
+        Event::assertDispatched(MultipleSongsUnliked::class);
     }
 }

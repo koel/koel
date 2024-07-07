@@ -2,25 +2,28 @@
 
 namespace App\Services;
 
-use App\Events\LibraryChanged;
+use App\Facades\License;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Repositories\SongRepository;
+use App\Services\SongStorages\SongStorage;
 use App\Values\SongUpdateData;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Psr\Log\LoggerInterface;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class SongService
 {
-    public function __construct(private SongRepository $songRepository, private LoggerInterface $logger)
-    {
+    public function __construct(
+        private readonly SongRepository $songRepository,
+        private readonly SongStorage $songStorage
+    ) {
     }
 
-    /** @return Collection|array<array-key, Song> */
+    /** @return Collection<array-key, Song> */
     public function updateSongs(array $ids, SongUpdateData $data): Collection
     {
         if (count($ids) === 1) {
@@ -36,12 +39,10 @@ class SongService
 
         return DB::transaction(function () use ($ids, $data): Collection {
             return collect($ids)->reduce(function (Collection $updated, string $id) use ($data): Collection {
-                /** @var Song|null $song */
-                $song = Song::with('album', 'album.artist', 'artist')->find($id);
-
-                if ($song) {
-                    $updated->push($this->updateSong($song, clone $data));
-                }
+                optional(
+                    Song::query()->with('album.artist')->find($id),
+                    fn (Song $song) => $updated->push($this->updateSong($song, clone $data)) // @phpstan-ignore-line
+                );
 
                 return $updated;
             }, collect());
@@ -82,37 +83,61 @@ class SongService
         return $this->songRepository->getOne($song->id);
     }
 
+    public function markSongsAsPublic(Collection $songs): void
+    {
+        Song::query()->whereIn('id', $songs->pluck('id'))->update(['is_public' => true]);
+    }
+
+    /** @return array<string> IDs of songs that are marked as private */
+    public function markSongsAsPrivate(Collection $songs): array
+    {
+        if (License::isPlus()) {
+            // Songs that are in collaborative playlists can't be marked as private.
+            /**
+             * @var Collection<array-key, Song> $collaborativeSongs
+             */
+            $collaborativeSongs = Song::query()
+                ->whereIn('songs.id', $songs->pluck('id'))
+                ->join('playlist_song', 'songs.id', '=', 'playlist_song.song_id')
+                ->join('playlist_collaborators', 'playlist_song.playlist_id', '=', 'playlist_collaborators.playlist_id')
+                ->select('songs.id')
+                ->distinct()
+                ->pluck('songs.id')
+                ->all();
+
+            $applicableSongIds = $songs->whereNotIn('id', $collaborativeSongs)->pluck('id')->all();
+        } else {
+            $applicableSongIds = $songs->pluck('id')->all();
+        }
+
+        Song::query()->whereIn('id', $applicableSongIds)->update(['is_public' => false]);
+
+        return $applicableSongIds;
+    }
+
     /**
      * @param array<string>|string $ids
      */
     public function deleteSongs(array|string $ids): void
     {
         $ids = Arr::wrap($ids);
+        $shouldBackUp = config('koel.backup_on_delete');
 
-        DB::transaction(function () use ($ids): void {
-            $shouldBackUp = config('koel.backup_on_delete');
-
-            /** @var Collection|array<array-key, Song> $songs */
+        DB::transaction(function () use ($ids, $shouldBackUp): void {
             $songs = Song::query()->findMany($ids);
 
             Song::destroy($ids);
 
             $songs->each(function (Song $song) use ($shouldBackUp): void {
                 try {
-                    if ($shouldBackUp) {
-                        rename($song->path, $song->path . '.bak');
-                    } else {
-                        unlink($song->path);
-                    }
+                    $this->songStorage->delete($song, $shouldBackUp);
                 } catch (Throwable $e) {
-                    $this->logger->error('Failed to remove song file', [
+                    Log::error('Failed to remove song file', [
                         'path' => $song->path,
                         'exception' => $e,
                     ]);
                 }
             });
-
-            event(new LibraryChanged());
         });
     }
 }

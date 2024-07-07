@@ -1,29 +1,37 @@
 <template>
-  <section id="genreWrapper">
-    <ScreenHeader v-if="genre" :layout="headerLayout">
-      Genre: <span class="text-thin">{{ decodeURIComponent(name!) }}</span>
-      <ControlsToggle v-if="songs.length" v-model="showingControls" />
+  <ScreenBase>
+    <template #header>
+      <ScreenHeader v-if="genre" :layout="headerLayout">
+        Genre: <span class="text-thin">{{ decodeURIComponent(name!) }}</span>
+        <ControlsToggle v-if="songs.length" v-model="showingControls" />
 
-      <template #thumbnail>
-        <ThumbnailStack :thumbnails="thumbnails" />
-      </template>
+        <template #thumbnail>
+          <ThumbnailStack :thumbnails="thumbnails" />
+        </template>
 
-      <template v-if="genre" #meta>
-        <span>{{ pluralize(genre.song_count, 'song') }}</span>
-        <span>{{ duration }}</span>
-      </template>
+        <template v-if="genre" #meta>
+          <span>{{ pluralize(genre.song_count, 'song') }}</span>
+          <span>{{ duration }}</span>
+        </template>
 
-      <template #controls>
-        <SongListControls v-if="!isPhone || showingControls" @play-all="playAll" @play-selected="playSelected" />
-      </template>
-    </ScreenHeader>
-    <ScreenHeaderSkeleton v-else />
+        <template #controls>
+          <SongListControls
+            v-if="!isPhone || showingControls"
+            :config="config"
+            @play-all="playAll"
+            @play-selected="playSelected"
+          />
+        </template>
+      </ScreenHeader>
+      <ScreenHeaderSkeleton v-else />
+    </template>
 
-    <SongListSkeleton v-if="showSkeletons" />
+    <SongListSkeleton v-if="showSkeletons" class="-m-6" />
     <SongList
       v-else
       ref="songList"
-      @sort="sort"
+      class="-m-6"
+      @sort="fetchWithSort"
       @press:enter="onPressEnter"
       @scroll-breakpoint="onScrollBreakpoint"
       @scrolled-to-end="fetch"
@@ -36,25 +44,25 @@
 
       No songs in this genre.
     </ScreenEmptyState>
-  </section>
+  </ScreenBase>
 </template>
 
 <script lang="ts" setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import { faTags } from '@fortawesome/free-solid-svg-icons'
-import { eventBus, logger, pluralize, secondsToHumanReadable } from '@/utils'
+import { eventBus, pluralize, secondsToHumanReadable } from '@/utils'
 import { playbackService } from '@/services'
 import { genreStore, songStore } from '@/stores'
-import { useDialogBox, useRouter, useSongList } from '@/composables'
+import { useErrorHandler, useRouter, useSongList, useSongListControls } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
+import ScreenBase from '@/components/screens/ScreenBase.vue'
 
 const {
   SongList,
-  SongListControls,
   ControlsToggle,
   ThumbnailStack,
   headerLayout,
@@ -66,12 +74,13 @@ const {
   onPressEnter,
   playSelected,
   onScrollBreakpoint
-} = useSongList(ref<Song[]>([]))
+} = useSongList(ref<Song[]>([]), { type: 'Genre' }, { sortable: true, filterable: false })
 
-const { showErrorDialog } = useDialogBox()
+const { SongListControls, config } = useSongListControls('Genre')
+
 const { getRouteParam, go, onRouteChanged } = useRouter()
 
-let sortField: SongListSortField = 'title'
+let sortField: MaybeArray<PlayableListSortField> = 'title'
 let sortOrder: SortOrder = 'asc'
 
 const randomSongCount = 500
@@ -84,7 +93,7 @@ const moreSongsAvailable = computed(() => page.value !== null)
 const showSkeletons = computed(() => loading.value && songs.value.length === 0)
 const duration = computed(() => secondsToHumanReadable(genre.value?.length ?? 0))
 
-const sort = async (field: SongListSortField, order: SortOrder) => {
+const fetchWithSort = async (field: MaybeArray<PlayableListSortField>, order: SortOrder) => {
   page.value = 1
   songs.value = []
   sortField = field
@@ -99,18 +108,21 @@ const fetch = async () => {
   loading.value = true
 
   try {
-    let fetched
+    let fetched: { songs: Playable[]; nextPage: number | null }
 
     [genre.value, fetched] = await Promise.all([
       genreStore.fetchOne(name.value!),
-      songStore.paginateForGenre(name.value!, sortField, sortOrder, page.value!)
+      songStore.paginateForGenre(name.value!, {
+        sort: sortField,
+        order: sortOrder,
+        page: page.value!,
+      })
     ])
 
     page.value = fetched.nextPage
     songs.value.push(...fetched.songs)
-  } catch (e) {
-    showErrorDialog('Failed to fetch genre details or genre was not found.', 'Error')
-    logger.error(e)
+  } catch (error: unknown) {
+    useErrorHandler('dialog').handleHttpError(error)
   } finally {
     loading.value = false
   }

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Events\LibraryChanged;
 use App\Exceptions\MediaPathNotSetException;
 use App\Exceptions\SongUploadFailedException;
 use App\Http\Controllers\Controller;
@@ -12,7 +11,7 @@ use App\Http\Resources\SongResource;
 use App\Models\User;
 use App\Repositories\AlbumRepository;
 use App\Repositories\SongRepository;
-use App\Services\UploadService;
+use App\Services\SongStorages\SongStorage;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Response;
 
@@ -20,18 +19,17 @@ class UploadController extends Controller
 {
     /** @param User $user */
     public function __invoke(
-        UploadService $uploadService,
+        SongStorage $storage,
         AlbumRepository $albumRepository,
         SongRepository $songRepository,
         UploadRequest $request,
         Authenticatable $user
     ) {
-        $this->authorize('admin', User::class);
+        $this->authorize('upload', User::class);
 
         try {
-            $song = $songRepository->getOne($uploadService->handleUploadedFile($request->file)->id);
-
-            event(new LibraryChanged());
+            // @todo decouple Song from storage, as storages should not be responsible for creating a song.
+            $song = $songRepository->getOne($storage->storeUploadedFile($request->file, $user)->id, $user);
 
             return response()->json([
                 'song' => SongResource::make($song),

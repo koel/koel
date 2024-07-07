@@ -1,0 +1,25 @@
+/**
+ * A stripped-down style of NProgress.
+ * Heck, rstacruz (the author) even said:
+ * > The included CSS file is pretty minimal... in fact, feel free to scrap it and make your own!
+ */
+#nprogress {
+  @apply pointer-events-none;
+
+  .bar {
+    @apply hidden;
+  }
+
+  /* Fancy blur effect */
+  .peg {
+    @apply hidden;
+  }
+
+  .spinner {
+    @apply block fixed z-[9999] top-[15px] right-[13px];
+  }
+
+  .spinner-icon {
+    @apply w-[18px] aspect-square border-2 border-transparent border-t-k-highlight border-l-k-highlight rounded-full animate-spin;
+  }
+}

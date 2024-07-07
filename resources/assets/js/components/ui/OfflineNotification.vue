@@ -1,41 +1,25 @@
 <template>
-  <div class="offline">
-    <IconLayers fixed-width>
-      <Icon :icon="faWifi" fixed-width size="xl" />
-      <Icon :icon="faSlash" fixed-width size="lg" transform="up-2" />
-    </IconLayers>
-    <span class="text">You’re offline.</span>
-  </div>
+  <article
+    v-if="!dismissed"
+    class="text-orange-600 p-4 bg-white rounded-md flex items-center justify-center
+    gap-3 fixed z-[10000] left-6 shadow-lg cursor-pointer"
+    title="Click to dismiss"
+    @click="dismissed = true"
+  >
+    <WifiOff :size="20" />
+    <span class="text-gray-800">You’re offline.</span>
+  </article>
 </template>
 
 <script lang="ts" setup>
-import { faSlash, faWifi } from '@fortawesome/free-solid-svg-icons'
+import { WifiOff } from 'lucide-vue-next'
+import { ref } from 'vue'
+
+const dismissed = ref(false)
 </script>
 
-<style lang="scss" scoped>
-.offline {
-  color: #ed5135;
-  width: 144px;
-  height: 42px;
-  background: #fff;
-  border-radius: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  position: fixed;
-  z-index: 10000;
-  left: 1.6rem;
-
+<style lang="postcss" scoped>
+article {
   bottom: calc(var(--footer-height) + 1.2rem);
-  box-shadow: 0 2px 30px rgba(0, 0, 0, .3);
-}
-
-.text {
-  color: #222;
-}
-
-.fa-slash {
-  filter: drop-shadow(0 2px 0 #fff);
 }
 </style>

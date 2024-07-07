@@ -3,40 +3,53 @@ import isMobile from 'ismobilejs'
 import { computed, provide, reactive, Ref, ref } from 'vue'
 import { playbackService } from '@/services'
 import { queueStore, songStore } from '@/stores'
-import { eventBus, provideReadonly } from '@/utils'
-import { useRouter } from '@/composables'
+import { arrayify, eventBus, getPlayableProp, provideReadonly } from '@/utils'
+import { useFuzzySearch, useRouter } from '@/composables'
 
 import {
-  SelectedSongsKey,
-  SongListConfigKey,
+  PlayableListConfigKey,
+  PlayableListContextKey,
+  PlayableListSortFieldKey,
+  PlayablesKey,
+  SelectedPlayablesKey,
   SongListFilterKeywordsKey,
-  SongListSortFieldKey,
-  SongListSortOrderKey,
-  SongsKey
+  SongListSortOrderKey
 } from '@/symbols'
 
 import ControlsToggle from '@/components/ui/ScreenControlsToggle.vue'
 import SongList from '@/components/song/SongList.vue'
-import SongListControls from '@/components/song/SongListControls.vue'
 import ThumbnailStack from '@/components/ui/ThumbnailStack.vue'
 
 export const useSongList = (
-  songs: Ref<Song[]>,
-  config: Partial<SongListConfig> = { sortable: true, reorderable: true }
+  playables: Ref<Playable[]>,
+  context: PlayableListContext = {},
+  config: Partial<PlayableListConfig> = {
+    filterable: true,
+    sortable: true,
+    reorderable: false,
+    collaborative: false,
+    hasCustomOrderSort: false
+  }
 ) => {
   const filterKeywords = ref('')
   config = reactive(config)
-  const { isCurrentScreen, go, onRouteChanged } = useRouter()
+  context = reactive(context)
 
-  onRouteChanged(route => {
-    config.reorderable = route.screen === 'Queue'
-    config.sortable = !['Queue', 'RecentlyPlayed', 'Search.Songs'].includes(route.screen)
-  })
+  const { isCurrentScreen, go } = useRouter()
+
+  const fuzzy = config.filterable ? useFuzzySearch(playables, [
+      'title',
+      'artist_name',
+      'album_name',
+      'podcast_title',
+      'podcast_author',
+      'episode_description'
+    ]) : null
 
   const songList = ref<InstanceType<typeof SongList>>()
 
   const isPhone = isMobile.phone
-  const selectedSongs = ref<Song[]>([])
+  const selectedPlayables = ref<Playable[]>([])
   const showingControls = ref(false)
   const headerLayout = ref<ScreenHeaderLayout>('expanded')
 
@@ -44,46 +57,77 @@ export const useSongList = (
     headerLayout.value = direction === 'down' ? 'collapsed' : 'expanded'
   }
 
-  const duration = computed(() => songStore.getFormattedLength(songs.value))
+  const duration = computed(() => songStore.getFormattedLength(playables.value))
 
   const thumbnails = computed(() => {
-    const songsWithCover = songs.value.filter(song => song.album_cover)
-    const sampleCovers = sampleSize(songsWithCover, 20).map(song => song.album_cover)
+    const playablesWithCover = playables.value.filter(p => getPlayableProp<string>(p, 'album_cover', 'episode_image'))
+
+    const sampleCovers = sampleSize(playablesWithCover, 20)
+      .map(p => getPlayableProp<string>(p, 'album_cover', 'episode_image'))
+
     return take(Array.from(new Set(sampleCovers)), 4)
   })
 
-  const getSongsToPlay = (): Song[] => songList.value!.getAllSongsWithSort()
+  const getPlayablesToPlay = () => songList.value!.getAllPlayablesWithSort()
 
   const playAll = (shuffle: boolean) => {
-    playbackService.queueAndPlay(getSongsToPlay(), shuffle)
+    playbackService.queueAndPlay(getPlayablesToPlay(), shuffle)
     go('queue')
   }
 
-  const playSelected = (shuffle: boolean) => playbackService.queueAndPlay(selectedSongs.value, shuffle)
+  const playSelected = (shuffle: boolean) => playbackService.queueAndPlay(selectedPlayables.value, shuffle)
 
   const applyFilter = throttle((keywords: string) => (filterKeywords.value = keywords), 200)
 
+  const filteredPlayables = computed(() => {
+    if (!fuzzy) return playables.value
+
+    return sortField.value
+      ? orderBy(fuzzy.search(filterKeywords.value), extendedSortFields.value!, sortOrder.value)
+      : fuzzy.search(filterKeywords.value)
+  })
+
+  /**
+   * Extends the sort fields based on the current field(s) to cater to relevant fields.
+   * For example, sorting by track should take into account the disc number and the title.
+   * Similarly, sorting by album name should also include the artist name, disc number, track number, and title, etc.
+   */
+  const extendedSortFields = computed(() => {
+    if (!sortField.value) return null
+
+    let extended: PlayableListSortField[] = arrayify(sortField.value)
+
+    if (sortField.value === 'track') {
+      extended = ['disc', 'track', 'title']
+    } else if (sortField.value.includes('album_name') && !sortField.value.includes('disc')) {
+      extended.push('artist_name', 'disc', 'track', 'title')
+    } else if (sortField.value.includes('artist_name') && !sortField.value.includes('disc')) {
+      extended.push('album_name', 'disc', 'track', 'title')
+    }
+
+    return extended
+  })
+
   const onPressEnter = async (event: KeyboardEvent) => {
-    if (selectedSongs.value.length === 1) {
-      queueStore.queueIfNotQueued(selectedSongs.value[0])
-      await playbackService.play(selectedSongs.value[0])
+    if (selectedPlayables.value.length === 1) {
+      await playbackService.play(selectedPlayables.value[0])
       return
     }
 
-    //  • Only Enter: Queue songs to bottom
-    //  • Shift+Enter: Queues song to top
-    //  • Cmd/Ctrl+Enter: Queues song to bottom and play the first selected song
-    //  • Cmd/Ctrl+Shift+Enter: Queue songs to top and play the first queued song
-    event.shiftKey ? queueStore.queueToTop(selectedSongs.value) : queueStore.queue(selectedSongs.value)
+    //  • Only Enter: Queue to bottom
+    //  • Shift+Enter: Queues to top
+    //  • Cmd/Ctrl+Enter: Queues to bottom and play the first selected item
+    //  • Cmd/Ctrl+Shift+Enter: Queue to top and play the first queued item
+    event.shiftKey ? queueStore.queueToTop(selectedPlayables.value) : queueStore.queue(selectedPlayables.value)
 
     if (event.ctrlKey || event.metaKey) {
-      await playbackService.play(selectedSongs.value[0])
+      await playbackService.play(selectedPlayables.value[0])
     }
 
     go('queue')
   }
 
-  const sortField = ref<SongListSortField | null>(((): SongListSortField | null => {
+  const sortField = ref<MaybeArray<PlayableListSortField> | null>((() => {
     if (!config.sortable) return null
     if (isCurrentScreen('Artist', 'Album')) return 'track'
     if (isCurrentScreen('Search.Songs', 'Queue', 'RecentlyPlayed')) return null
@@ -92,49 +136,38 @@ export const useSongList = (
 
   const sortOrder = ref<SortOrder>('asc')
 
-  const sort = (by: SongListSortField | null = sortField.value, order: SortOrder = sortOrder.value) => {
-    if (!config.sortable) return
-    if (!by) return
-
+  const sort = (by: MaybeArray<PlayableListSortField> | null = sortField.value, order: SortOrder = sortOrder.value) => {
+    // To sort a song list, we simply set the sort field and order.
+    // The list will be sorted automatically by the computed property.
     sortField.value = by
     sortOrder.value = order
-
-    let sortFields: SongListSortField[] = [by]
-
-    if (by === 'track') {
-      sortFields = ['disc', 'track', 'title']
-    } else if (by === 'album_name') {
-      sortFields.push('artist_name', 'disc', 'track', 'title')
-    } else if (by === 'artist_name') {
-      sortFields.push('album_name', 'disc', 'track', 'title')
-    }
-
-    songs.value = orderBy(songs.value, sortFields, order)
   }
 
-  eventBus.on('SONGS_DELETED', deletedSongs => (songs.value = differenceBy(songs.value, deletedSongs, 'id')))
+  eventBus.on('SONGS_DELETED', deletedSongs => (playables.value = differenceBy(playables.value, deletedSongs, 'id')))
 
-  provideReadonly(SongsKey, songs, false)
-  provideReadonly(SelectedSongsKey, selectedSongs, false)
-  provideReadonly(SongListConfigKey, config)
-  provideReadonly(SongListSortFieldKey, sortField)
+  provideReadonly(PlayablesKey, filteredPlayables, false)
+  provideReadonly(SelectedPlayablesKey, selectedPlayables, false)
+  provideReadonly(PlayableListConfigKey, config)
+  provideReadonly(PlayableListContextKey, context)
+  provideReadonly(PlayableListSortFieldKey, sortField)
   provideReadonly(SongListSortOrderKey, sortOrder)
 
   provide(SongListFilterKeywordsKey, filterKeywords)
 
   return {
     SongList,
-    SongListControls,
     ControlsToggle,
     ThumbnailStack,
-    songs,
+    songs: playables,
+    config,
+    context,
     headerLayout,
     sortField,
     sortOrder,
     duration,
     thumbnails,
     songList,
-    selectedSongs,
+    selectedPlayables,
     showingControls,
     isPhone,
     onPressEnter,

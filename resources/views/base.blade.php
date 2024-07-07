@@ -17,6 +17,10 @@
     <link rel="icon" href="{{ static_url('img/icon.png') }}">
     <link rel="apple-touch-icon" href="{{ static_url('img/icon.png') }}">
 
+    @unless(License::isPlus())
+    <script src="https://app.lemonsqueezy.com/js/lemon.js" defer></script>
+    @endunless
+
     <script>
         // Work around for "global is not defined" error with local-storage.js
         window.global = window
@@ -29,6 +33,8 @@
 
 <script>
     window.BASE_URL = @json(asset(''));
+    window.IS_DEMO = @json(config('koel.misc.demo'));
+
     window.PUSHER_APP_KEY = @json(config('broadcasting.connections.pusher.key'));
     window.PUSHER_APP_CLUSTER = @json(config('broadcasting.connections.pusher.options.cluster'));
 </script>

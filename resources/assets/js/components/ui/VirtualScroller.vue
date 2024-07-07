@@ -1,10 +1,13 @@
 <template>
-  <div ref="scroller" v-koel-overflow-fade class="virtual-scroller" @scroll.passive="onScroll">
-    <div :style="{ height: `${totalHeight}px` }">
-      <div :style="{ transform: `translateY(${offsetY}px)`}">
-        <template v-for="item in renderedItems">
-          <slot :item="item" />
-        </template>
+  <div
+    ref="scroller"
+    v-koel-overflow-fade
+    class="virtual-scroller will-change-transform overflow-scroll"
+    @scroll.passive="onScroll"
+  >
+    <div :style="{ height: `${totalHeight}px` }" class="will-change-transform overflow-hidden">
+      <div :style="{ transform: `translateY(${offsetY}px)`}" class="will-change-transform items-wrapper">
+        <slot v-for="item in renderedItems" :item="item" />
       </div>
     </div>
   </div>
@@ -58,26 +61,14 @@ onMounted(() => {
 onBeforeUnmount(() => observer.unobserve(scroller.value!))
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .virtual-scroller {
-  will-change: transform;
-  overflow: scroll;
-
   @supports (scrollbar-gutter: stable) {
     overflow: auto;
     scrollbar-gutter: stable;
 
     @media (hover: none) {
       scrollbar-gutter: auto;
-    }
-  }
-
-  > div {
-    overflow: hidden;
-    will-change: transform;
-
-    > div {
-      will-change: transform;
     }
   }
 }
