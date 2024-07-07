@@ -212,6 +212,7 @@ class PlaylistServiceTest extends TestCase
         $playlist = Playlist::factory()->create();
         $playlist->addPlayables(Song::factory(3)->create());
 
+        /** @var Podcast $podcast */
         $podcast = Podcast::factory()->create();
         $episodes = Song::factory(2)->asEpisode()->for($podcast)->create();
 

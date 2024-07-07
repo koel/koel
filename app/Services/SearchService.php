@@ -52,7 +52,7 @@ class SearchService
     {
         try {
             return $repository->getMany(
-                ids: $repository->model::search($keywords)->get()->take($count)->pluck('id')->all(),
+                ids: $repository->model::search($keywords)->get()->take($count)->pluck('id')->all(), // @phpstan-ignore-line
                 preserveOrder: true,
             );
         } catch (Throwable $e) {

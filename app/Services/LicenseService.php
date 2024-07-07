@@ -21,8 +21,9 @@ use Throwable;
 
 class LicenseService implements LicenseServiceInterface
 {
-    public function __construct(private readonly LemonSqueezyConnector $connector, private readonly string $hashSalt)
+    public function __construct(private readonly LemonSqueezyConnector $connector, private ?string $hashSalt = null)
     {
+        $this->hashSalt ??= config('app.key');
     }
 
     public function activate(string $key): License

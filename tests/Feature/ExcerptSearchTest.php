@@ -28,7 +28,9 @@ class ExcerptSearchTest extends TestCase
         Album::factory(4)->create();
 
         $user = create_user();
-        $user->subscribeToPodcast(Podcast::factory()->create(['title' => 'Foo Podcast']));
+        /** @var Podcast $podcast */
+        $podcast = Podcast::factory()->create(['title' => 'Foo Podcast']);
+        $user->subscribeToPodcast($podcast);
 
         $this->getAs('api/search?q=foo', $user)
             ->assertJsonStructure([

@@ -29,6 +29,7 @@ parameters:
         - '#Method App\\Models\\.*::query\(\) should return App\\Builders\\.*Builder but returns Illuminate\\Database\\Eloquent\\Builder<Illuminate\\Database\\Eloquent\\Model>#'
         - '#Parameter \#1 \$callback of method Illuminate\\Support\\Collection<int,Illuminate\\Database\\Eloquent\\Model>::each\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)#'
         - '#Access to an undefined property Illuminate\\Database\\Eloquent\\Model::#'
+        - '#Unknown parameter \$(type|user) in call to static method App\\Models\\Song::query\(\)#'
 
 
     excludePaths:

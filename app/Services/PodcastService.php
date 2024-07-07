@@ -13,6 +13,7 @@ use App\Repositories\SongRepository;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\RedirectMiddleware;
+use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -56,6 +57,7 @@ class PodcastService
             $channel = $parser->getChannel();
 
             return DB::transaction(function () use ($url, $podcast, $parser, $channel, $user) {
+                /** @var Podcast $podcast */
                 $podcast = Podcast::query()->create([
                     'url' => $url,
                     'title' => $channel->title,
@@ -102,8 +104,8 @@ class PodcastService
             'last_synced_at' => now(),
         ]);
 
-        $pubDate = $parser->xmlReader->value('rss.channel.pubDate')?->first()
-            ?? $parser->xmlReader->value('rss.channel.lastBuildDate')?->first();
+        $pubDate = $parser->xmlReader->value('rss.channel.pubDate')->first()
+            ?? $parser->xmlReader->value('rss.channel.lastBuildDate')->first();
 
         if ($pubDate && Carbon::createFromFormat(Carbon::RFC1123, $pubDate)->isBefore($podcast->last_synced_at)) {
             // The pubDate/lastBuildDate value indicates that there's no new content since last check.
@@ -150,7 +152,7 @@ class PodcastService
 
         // Since insert() doesn't trigger model events, Scout operations will not be called.
         // We have to manually update the search index.
-        Episode::query()->whereIn('id', $ids)->searchable();
+        Episode::query()->whereIn('id', $ids)->searchable(); // @phpstan-ignore-line
     }
 
     private function subscribeUserToPodcast(User $user, Podcast $podcast): void
@@ -206,16 +208,16 @@ class PodcastService
             $url = $url->path;
         }
 
-        $client ??= $this->client ?? new Client();
+        $client ??= new Client();
 
         try {
             $response = $client->request($method, $url, [
-                'headers' => [
+                RequestOptions::HEADERS => [
                     'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4.1 Safari/605.1.15', // @phpcs-ignore-line
                     'Origin' => '*',
                 ],
-                'http_errors' => false,
-                'allow_redirects' => ['track_redirects' => true],
+                RequestOptions::HTTP_ERRORS => false,
+                RequestOptions::ALLOW_REDIRECTS => ['track_redirects' => true],
             ]);
 
             $redirects = Arr::wrap($response->getHeader(RedirectMiddleware::HISTORY_HEADER));

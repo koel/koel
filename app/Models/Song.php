@@ -17,6 +17,7 @@ use App\Values\SongStorageMetadata\S3LambdaMetadata;
 use App\Values\SongStorageMetadata\SftpMetadata;
 use App\Values\SongStorageMetadata\SongStorageMetadata;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -31,7 +32,7 @@ use Throwable;
 /**
  * @property string $path
  * @property string $title
- * @property Album $album
+ * @property ?Album $album
  * @property User $uploader
  * @property ?Artist $artist
  * @property ?Artist $album_artist
@@ -105,13 +106,12 @@ class Song extends Model
     public static function query(?PlayableType $type = null, ?User $user = null): SongBuilder
     {
         return parent::query()
-            ->when($type, static function (SongBuilder $query) use ($type): void {
-                match ($type) {
-                    PlayableType::SONG => $query->whereNull('songs.podcast_id'),
-                    PlayableType::PODCAST_EPISODE => $query->whereNotNull('songs.podcast_id'),
-                };
+            ->when($type, static fn (Builder $query) => match ($type) { // @phpstan-ignore-line phpcs:ignore
+                PlayableType::SONG => $query->whereNull('songs.podcast_id'),
+                PlayableType::PODCAST_EPISODE => $query->whereNotNull('songs.podcast_id'),
+                default => $query,
             })
-            ->when($user, static fn (SongBuilder $query) => $query->forUser($user));
+            ->when($user, static fn (SongBuilder $query) => $query->forUser($user)); // @phpstan-ignore-line
     }
 
     public function owner(): BelongsTo

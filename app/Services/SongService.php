@@ -41,7 +41,7 @@ class SongService
             return collect($ids)->reduce(function (Collection $updated, string $id) use ($data): Collection {
                 optional(
                     Song::query()->with('album.artist')->find($id),
-                    fn (Song $song) => $updated->push($this->updateSong($song, clone $data))
+                    fn (Song $song) => $updated->push($this->updateSong($song, clone $data)) // @phpstan-ignore-line
                 );
 
                 return $updated;

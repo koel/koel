@@ -18,7 +18,7 @@ use PhanAn\Poddle\Values\CategoryCollection;
 use PhanAn\Poddle\Values\ChannelMetadata;
 
 /**
- * @property-read string $id
+ * @property string $id
  * @property string $url
  * @property string $title
  * @property string $description

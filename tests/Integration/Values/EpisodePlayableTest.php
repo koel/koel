@@ -1,6 +1,6 @@
 <?php
 
-namespace Integration\Values;
+namespace Tests\Integration\Values;
 
 use App\Models\Song;
 use App\Values\Podcast\EpisodePlayable;
@@ -16,6 +16,7 @@ class EpisodePlayableTest extends TestCase
             'https://example.com/episode.mp3' => Http::response('foo'),
         ]);
 
+        /** @var Song $episode */
         $episode = Song::factory()->asEpisode()->create([
             'path' => 'https://example.com/episode.mp3',
         ]);
