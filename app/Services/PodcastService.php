@@ -91,6 +91,17 @@ class PodcastService
         $parser = $this->createParser($podcast->url);
         $channel = $parser->getChannel();
 
+        $pubDate = $parser->xmlReader->value('rss.channel.pubDate')->first()
+            ?? $parser->xmlReader->value('rss.channel.lastBuildDate')->first();
+
+        if ($pubDate && Carbon::createFromFormat(Carbon::RFC1123, $pubDate)->isBefore($podcast->last_synced_at)) {
+            // The pubDate/lastBuildDate value indicates that there's no new content since last check.
+            // We'll simply return the podcast.
+            return $podcast;
+        }
+
+        $this->synchronizeEpisodes($podcast, $parser->getEpisodes(true));
+
         $podcast->update([
             'title' => $channel->title,
             'description' => $channel->description,
@@ -103,17 +114,6 @@ class PodcastService
             'metadata' => $channel->metadata,
             'last_synced_at' => now(),
         ]);
-
-        $pubDate = $parser->xmlReader->value('rss.channel.pubDate')->first()
-            ?? $parser->xmlReader->value('rss.channel.lastBuildDate')->first();
-
-        if ($pubDate && Carbon::createFromFormat(Carbon::RFC1123, $pubDate)->isBefore($podcast->last_synced_at)) {
-            // The pubDate/lastBuildDate value indicates that there's no new content since last check.
-            // We'll simply return the podcast.
-            return $podcast;
-        }
-
-        $this->synchronizeEpisodes($podcast, $parser->getEpisodes(true));
 
         return $podcast->refresh();
     }
