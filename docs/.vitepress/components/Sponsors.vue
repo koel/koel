@@ -59,7 +59,7 @@ div.sponsors {
   h3 {
     font-size: 14px;
     font-weight: bold;
-    margin-bottom: 1rem;
+    margin-bottom: .75rem;
   }
 
   ul {
@@ -67,11 +67,11 @@ div.sponsors {
   }
 
   ul li + li {
-    margin-top: .75rem;
+    margin-top: .5rem;
   }
 
   .your-logo {
-    margin-top: 1.5rem;
+    margin-top: 1rem;
     display: block;
     text-align: center;
     border-radius: 5px;

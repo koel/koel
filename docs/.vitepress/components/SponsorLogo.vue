@@ -20,14 +20,32 @@ defineOptions({
 </script>
 
 <style scoped lang="postcss">
-img {
-  opacity: 0.8;
+a {
+  display: block;
+  padding: .5rem .7rem;
+  background: rgba(0, 0, 0, .05);
+  border-radius: 4px;
 
   &:hover {
-    opacity: 1;
+    background: rgba(0, 0, 0, .1);
   }
 }
-.dark img {
-  filter: grayscale(1) invert(1);
+
+.dark {
+  a {
+    background: rgba(255, 255, 255, .2);
+
+    img {
+      filter: grayscale(1) invert(1);
+    }
+
+    &:hover {
+      background: #fff;
+
+      img {
+        filter: none;
+      }
+    }
+  }
 }
 </style>
