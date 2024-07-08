@@ -30,7 +30,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [ 14, 16, 17, 18 ] # 15 conflicts with @typescript-eslint/eslint-plugin@5
+        node-version: [ 18, 20, 21, 22 ]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
