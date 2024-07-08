@@ -359,13 +359,15 @@ class PlaybackService {
     navigator.mediaSession.setActionHandler('previoustrack', () => this.playPrev())
     navigator.mediaSession.setActionHandler('nexttrack', () => this.playNext())
 
-    navigator.mediaSession.setActionHandler('seekbackward', details => {
-      this.player.media.currentTime -= (details.seekOffset || 10)
-    })
+    if (!isMobile.apple) {
+      navigator.mediaSession.setActionHandler('seekbackward', details => {
+        this.player.media.currentTime -= (details.seekOffset || 10)
+      })
 
-    navigator.mediaSession.setActionHandler('seekforward', details => {
-      this.player.media.currentTime += (details.seekOffset || 10)
-    })
+      navigator.mediaSession.setActionHandler('seekforward', details => {
+        this.player.media.currentTime += (details.seekOffset || 10)
+      })
+    }
 
     navigator.mediaSession.setActionHandler('seekto', details => {
       if (details.fastSeek && 'fastSeek' in this.player.media) {
