@@ -14,31 +14,33 @@
       </span>
     </ScreenEmptyState>
 
-    <ul v-if="genres" class="genres text-center">
-      <li
-        v-for="genre in genres"
-        :key="genre.name"
-        :class="`level-${getLevel(genre)}`"
-        class="rounded-[0.5em] inline-block m-1.5 align-middle overflow-hidden"
-      >
-        <a
-          :href="`/#/genres/${encodeURIComponent(genre.name)}`"
-          :title="`${genre.name}: ${pluralize(genre.song_count, 'song')}`"
-          class="bg-white/15 inline-flex items-center justify-center !text-k-text-secondary
-          transition-colors duration-200 ease-in-out hover:!text-k-text-primary hover:bg-k-highlight"
+    <template v-else>
+      <ul v-if="genres" class="genres text-center">
+        <li
+          v-for="genre in genres"
+          :key="genre.name"
+          :class="`level-${getLevel(genre)}`"
+          class="rounded-[0.5em] inline-block m-1.5 align-middle overflow-hidden"
         >
-          <span class="name bg-white/5 px-[0.5em] py-[0.2em] leading-normal">{{ genre.name }}</span>
-          <span class="count items-center px-[0.5em] py-[0.2em]">
+          <a
+            :href="`/#/genres/${encodeURIComponent(genre.name)}`"
+            :title="`${genre.name}: ${pluralize(genre.song_count, 'song')}`"
+            class="bg-white/15 inline-flex items-center justify-center !text-k-text-secondary
+          transition-colors duration-200 ease-in-out hover:!text-k-text-primary hover:bg-k-highlight"
+          >
+            <span class="name bg-white/5 px-[0.5em] py-[0.2em] leading-normal">{{ genre.name }}</span>
+            <span class="count items-center px-[0.5em] py-[0.2em]">
             {{ genre.song_count }}
           </span>
-        </a>
-      </li>
-    </ul>
-    <ul v-else class="text-center">
-      <li v-for="i in 20" :key="i" class="inline-block">
-        <GenreItemSkeleton />
-      </li>
-    </ul>
+          </a>
+        </li>
+      </ul>
+      <ul v-else class="text-center">
+        <li v-for="i in 20" :key="i" class="inline-block">
+          <GenreItemSkeleton />
+        </li>
+      </ul>
+    </template>
   </ScreenBase>
 </template>
 
@@ -56,7 +58,7 @@ import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 
 const { isAdmin } = useAuthorization()
-const { handleHttpError }  = useErrorHandler()
+const { handleHttpError } = useErrorHandler()
 
 const genres = ref<Genre[]>()
 
