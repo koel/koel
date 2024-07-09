@@ -56,7 +56,6 @@ class InitCommand extends Command
 
         try {
             $this->clearCaches();
-            $this->composerInstall();
             $this->loadEnvFile();
             $this->maybeGenerateAppKey();
             $this->maybeSetUpDatabase();
@@ -108,13 +107,6 @@ class InitCommand extends Command
         $this->components->task('Clearing caches', static function (): void {
             Artisan::call('config:clear', ['--quiet' => true]);
             Artisan::call('cache:clear', ['--quiet' => true]);
-        });
-    }
-
-    private function composerInstall(): void
-    {
-        $this->components->task('Installing packages (be patient!)', static function (): void {
-            self::runOkOrThrow('composer install --no-interaction --quiet');
         });
     }
 
