@@ -27,8 +27,6 @@ return new class extends Migration {
                 'is_public' => true,
                 'owner_id' => $firstAdmin->id,
             ]);
-
-            $table->unsignedInteger('owner_id')->nullable(false)->change();
         });
     }
 };
