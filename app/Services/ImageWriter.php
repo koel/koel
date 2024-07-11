@@ -15,7 +15,7 @@ class ImageWriter
 
     public function __construct(private readonly ImageManager $imageManager)
     {
-        $this->supportedFormat = static::getSupportedFormat();
+        $this->supportedFormat = self::getSupportedFormat();
     }
 
     private static function getSupportedFormat(): string
