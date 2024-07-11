@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-        Playlist::query()->get()->each(static function (Playlist $playlist): void {
+        DB::table('playlists')->get()->each(static function ($playlist): void {
             DB::table('playlist_song')->where('playlist_id', $playlist->id)->update([
                 'user_id' => $playlist->user_id,
                 'created_at' => now(),
