@@ -61,7 +61,7 @@ class SongBuilder extends Builder
             )
             ->leftJoin('albums', 'songs.album_id', 'albums.id')
             ->leftJoin('artists', 'songs.artist_id', 'artists.id')
-            ->distinct('songs.id')
+            ->distinct()
             ->select(
                 'songs.*',
                 'albums.name',
