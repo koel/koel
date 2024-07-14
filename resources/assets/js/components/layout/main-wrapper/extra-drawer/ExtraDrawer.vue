@@ -96,7 +96,7 @@ const artist = ref<Artist>()
 const album = ref<Album>()
 
 const songPlaying = computed(() => playable.value && isSong(playable.value))
-const shouldShowYouTubeTab = computed(() => useYouTube && songPlaying.value)
+const shouldShowYouTubeTab = computed(() => useYouTube.value && songPlaying.value)
 
 const fetchSongInfo = async (song: Song) => {
   playable.value = song
