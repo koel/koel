@@ -60,6 +60,7 @@ class SongRepository extends Repository
         return Song::query(user: $scopedUser ?? $this->auth->user())
             ->accessible()
             ->withMeta(requiresInteractions: true)
+            ->addSelect('interactions.last_played_at')
             ->orderByDesc('interactions.last_played_at')
             ->limit($count)
             ->get();
