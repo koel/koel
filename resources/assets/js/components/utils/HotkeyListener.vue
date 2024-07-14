@@ -9,7 +9,7 @@ import { playbackService, socketService, volumeManager } from '@/services'
 import { favoriteStore, queueStore } from '@/stores'
 import { useRouter } from '@/composables'
 
-const { go } = useRouter()
+const { isCurrentScreen, go } = useRouter()
 
 const onKeyStroke = (key: KeyFilter, callback: (e: KeyboardEvent) => void) => {
   baseOnKeyStroke(key, e => {
@@ -33,7 +33,7 @@ onKeyStroke('j', () => playbackService.playNext())
 onKeyStroke('k', () => playbackService.playPrev())
 onKeyStroke(' ', () => playbackService.toggle())
 onKeyStroke('r', () => playbackService.rotateRepeatMode())
-onKeyStroke('q', () => go('queue'))
+onKeyStroke('q', () => go(isCurrentScreen('Queue') ? -1 : 'queue'))
 
 onKeyStroke('ArrowRight', () => playbackService.seekBy(10))
 onKeyStroke('ArrowLeft', () => playbackService.seekBy(-10))
