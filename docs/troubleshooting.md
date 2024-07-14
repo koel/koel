@@ -62,6 +62,11 @@ Solution: This most likely has little to do with Koel but more with your node/np
 
 Solution: This may sometimes happen with the native PHP streaming method. Check [Streaming Music](usage/streaming) for alternatives.
 
+### You receive a `Multiple licenses found` warning when running `koel:license:status` command
+
+Solution: Koel Plus only requires one license key. If it detects more than one key in the database, the warning will be issued.
+Most of the time this shouldn't cause any problem, but if you're experiencing issues, try emptying the `licenses` table and re-activating your license key.
+
 ## Reinstalling Koel
 
 In the worst case scenario, you can always reinstall Koel. Although Koel doesn't provide a built-in way to reinstall itself, you can do so manually by following these steps:

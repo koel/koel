@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Enums\LicenseStatus;
+use App\Models\License;
 use App\Services\License\Contracts\LicenseServiceInterface;
 use Illuminate\Console\Command;
 use Throwable;
@@ -20,6 +21,10 @@ class CheckLicenseStatusCommand extends Command
     public function handle(): int
     {
         $this->components->info('Checking your Koel Plus license status…');
+
+        if (License::count() > 1) {
+            $this->components->warn('Multiple licenses found. This can cause unexpected behaviors.');
+        }
 
         try {
             $status = $this->licenseService->getStatus(checkCache: false);
