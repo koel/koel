@@ -44,11 +44,11 @@ class AlbumRepository extends Repository
             ->join('interactions', static function (JoinClause $join) use ($user): void {
                 $join->on('songs.id', 'interactions.song_id')->where('interactions.user_id', $user->id);
             })
-            ->groupBy('albums.id')
+            ->groupBy('albums.id', 'play_count')
             ->distinct()
             ->orderByDesc('play_count')
             ->limit($count)
-            ->get('albums.*');
+            ->get(['albums.*', 'play_count']);
     }
 
     /** @return Collection|array<array-key, Album> */

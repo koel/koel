@@ -40,7 +40,7 @@ class ArtistRepository extends Repository
             ->distinct()
             ->orderByDesc('play_count')
             ->limit($count)
-            ->get('artists.*');
+            ->get(['artists.*', 'play_count']);
     }
 
     /** @return Collection|array<array-key, Artist> */
