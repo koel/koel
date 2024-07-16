@@ -34,6 +34,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Trusted hosts
+    |--------------------------------------------------------------------------
+    |
+    | An array of (Koel server) hostnames accepted to access Koel.
+    | An empty array allows access to Koel with any hostname.
+    | Example: ['localhost', '192.168.0.1', 'yourdomain.com']
+    |
+    */
+
+    'trusted_hosts' => explode(',', env('TRUSTED_HOSTS', '')),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |

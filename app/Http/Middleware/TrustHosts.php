@@ -11,8 +11,6 @@ class TrustHosts extends IlluminateTrustHost
      */
     public function hosts(): array
     {
-        return [
-            $this->allSubdomainsOfApplicationUrl(),
-        ];
+        return config('app.trusted_hosts');
     }
 }
