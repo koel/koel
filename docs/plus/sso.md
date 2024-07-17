@@ -26,7 +26,7 @@ SSO_GOOGLE_HOSTED_DOMAIN=your-koel.com
 
 Save the `.env` file and reload Koel. You should now see a "Log in with Google" button on the login page:
 
-<img src="../assets/img/plus/login-form-google.webp" loading="lazy" style="max-width: 324px" alt="Google login button">
+<img src="../assets/img/plus/login-form-google.webp" loading="lazy" style="width: 324px" alt="Google login button">
 
 Clicking on the Google button will open a new window where you can log in with your Google account (make sure to allow pop-ups if you have a pop-up blocker enabled).
 

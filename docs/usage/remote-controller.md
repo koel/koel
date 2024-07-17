@@ -25,7 +25,7 @@ You can access the remote controller by visiting `https://<your-koel-domain>/rem
 You can pin the remote controller to your phone's home screen for quick access.
 :::
 
-The remote controller will scan for an active Koel instance. 
+The remote controller will scan for an active Koel instance.
 If found, it will connect to it and allow you to control the playback as well as like/unlike the current song and adjust the volume.
 
 

@@ -50,7 +50,7 @@ In addition, you cannot mark a song as private if it's still part of a collabora
 To set up or manage collaboration on a playlist, you need to be the playlist's owner. From the sidebar, right-click on the playlist and choose "Collaborate…" from the context menu.
 The "Playlist Collaboration" modal should appear.
 
-<img src="../assets/img/plus/collab.webp" loading="lazy" style="max-width: 640px" alt="Collaboration modal">
+![Collaboration modal](../assets/img/plus/collab.webp)
 
 To invite more collaborators, click the "Invite" button. A link will be generated and copied to your clipboard. Share this link with the users you want to collaborate with. They can then paste the link in their browser to join the playlist.
 

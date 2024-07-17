@@ -47,7 +47,7 @@ To verify that Koel Plus is activated, reload the web app if you haven't done so
 Afterward, trigger the About Koel modal by clicking the <InterfaceIcon :src="iconInfo" /> icon in the bottom-right corner of the screen.
 You should see the information about your Koel Plus license in the modal.
 
-<img loading="lazy" src="../assets/img/plus/about-plus.webp" style="max-width: 480px" alt="About modal with Plus">
+<img loading="lazy" src="../assets/img/plus/about-plus.webp" style="width: 480px" alt="About modal with Plus">
 
 ## Deactivation
 
