@@ -30,7 +30,7 @@ rm -rf vendor && composer install
 # Clear node_modules, re-install, and re-build the front-end assets
 rm -rf node_modules && yarn install && yarn build
 
-# Clear the Laravel cache
+# Clear the Laravel cache. This command is automatically run after `composer install`.
 php artisan cache:clear
 
 # Clear the Laravel config cache

@@ -94,7 +94,6 @@ cd <KOEL_ROOT_DIR>
 git pull
 git checkout latest
 composer install
-php artisan cache:clear
 php artisan koel:init
 ```
 
