@@ -26,6 +26,17 @@ In order to get help on a specific command, run `php artisan <command> -h`.
 
 ## Available Commands
 
+:::warning Warning
+Always run commands as your web server user (e.g. `www-data` or `nginx`), **never** as `root`.
+Otherwise, Koel might encounter issues with file permissions (e.g. with cache and storage files) and you might end up with a broken installation.
+
+With the Docker installation, for example, run the command as the `www-data` user:
+
+```bash
+docker exec --user www-data <container_name_for_koel> php artisan <command>
+```
+:::
+
 ### `koel:admin:change-password`
 
 Change a user's password.
@@ -201,7 +212,8 @@ php artisan koel:tags:collect
 Some of the commands, such as `koel:scan` and `koel:prune`, can be scheduled to run at regular intervals.
 Koel uses Laravel’s built-in scheduler to manage this.
 
-In order to set up the scheduler, you need to add the following cron entry to your server:
+In order to set up the scheduler, you need to add the following cron entry into the crontab of the webserver user (for example,
+if it's `www-data`, run `sudo crontab -u www-data -e`):
 
 ```bash
 * * * * * cd /path-to-koel-installation && php artisan schedule:run >> /dev/null 2>&1

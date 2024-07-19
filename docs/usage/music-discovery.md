@@ -30,6 +30,17 @@ All popular audio formats (`.mp3`, `.ogg`, `.aac`, `.m4a`, `.opus`, and `.flac`)
 
 You can also scan from the CLI with the artisan `koel:scan` command. This method is faster, without a time or library-size limit, and provides useful feedbacks.
 
+:::warning Warning
+Always run `koel:scan` as well as any other commands as your web server user (e.g. `www-data` or `nginx`), **never** as `root`.
+Otherwise, Koel might encounter issues with file permissions (e.g. with cache and storage files) and you might end up with a broken installation.
+
+With the Docker installation, for example, run the command as the `www-data` user:
+
+```bash
+docker exec --user www-data <container_name_for_koel> php artisan koel:scan
+```
+:::
+
 ```bash
 php artisan koel:scan
 
