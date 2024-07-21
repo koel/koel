@@ -43,7 +43,7 @@ If you're still stuck, check below for a couple of common issues and their solut
 
 ### You run into a permission issue
 
-Solution: Make sure your web server has the necessary permissions to read/write to critical folders like `storage` and `bootstrap/cache`.
+Solution: Make sure your web server has the necessary permissions to _recursively_ read/write to critical folders like `storage`. `bootstrap/cache`, and `public`.
 Also, remember to run artisan commands as your web server user (e.g. `www-data` or `nginx`), **never** as `root`, as these commands might create files that your web server user must have access to.
 If you use the Docker installation, for example, run the scan command as the `www-data` user as follows:
 
