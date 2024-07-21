@@ -41,6 +41,16 @@ If you're still stuck, check below for a couple of common issues and their solut
 
 ## Common Issues
 
+### You run into a permission issue
+
+Solution: Make sure your web server has the necessary permissions to read/write to critical folders like `storage` and `bootstrap/cache`.
+Also, remember to run artisan commands as your web server user (e.g. `www-data` or `nginx`), **never** as `root`, as these commands might create files that your web server user must have access to.
+If you use the Docker installation, for example, run the scan command as the `www-data` user as follows:
+
+```bash
+docker exec --user www-data <container_name_for_koel> php artisan koel:scan
+```
+
 ### You receive a `Class 'Pusher' not found` error
 
 Solution: Add or set `BROADCAST_DRIVER=log` in your `.env` file. This will instruct Laravel to use `log` as the default broadcast driver instead.
