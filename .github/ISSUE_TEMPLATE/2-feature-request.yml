@@ -1,0 +1,18 @@
+name: 💡Feature request
+description: Request a new feature or improvement.
+title: "[FR]: "
+assignees:
+  - phanan
+body:
+  - type: textarea
+    id: desc
+    attributes:
+      label: Description
+      description: A clear and concise description of the new feature or improvement.
+    validations:
+      required: true
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: Additional information
+      description: Any other information you think might be helpful, e.g. the motivation behind the feature, the benefits it brings, or examples of how it's been implemented elsewhere.

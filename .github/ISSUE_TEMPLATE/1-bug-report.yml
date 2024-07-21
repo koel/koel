@@ -1,0 +1,72 @@
+name: 🐛 Bug Report
+description: File a bug report.
+title: "[Bug]: "
+assignees:
+  - phanan
+body:
+  - type: checkboxes
+    id: read-troubleshooting-guide
+    attributes:
+      label: Read the Troubleshooting guide.
+      description: Please confirm that you've read and followed the [Troubleshooting guide](https://docs.koel.dev/troubleshooting) before filing this bug report.
+      options:
+        - label: I have read and followed the Troubleshooting guide
+          required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      description: How do you trigger this bug? Please provide a step-by-step guide.
+      value: |
+        1.
+        2.
+        3.
+        ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What actually happened?
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Relevant logs found in `storage/logs/laravel.log` and/or browser console.
+  - type: input
+    id: koel-version
+    attributes:
+      label: Koel version
+    validations:
+      required: true
+  - type: dropdown
+    id: installation-method
+    attributes:
+      label: How did you install Koel?
+      options:
+        - Compiled from source
+        - Pre-compiled tar/zip archive
+        - Official Docker image
+        - Other (please specify in Additional information)
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: Additional information
+      description: Any other information you think might be helpful.
+      value: |
+        - **Server OS**:
+        - **PHP version**:
+        - **Database**:
+        - **Node version**:
+        - **Browser & device**:
+        - **Additional context**:
