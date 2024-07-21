@@ -21,7 +21,7 @@ body:
         1.
         2.
         3.
-        ...
+        4. ...
     validations:
       required: true
   - type: textarea
@@ -58,6 +58,8 @@ body:
         - Pre-compiled tar/zip archive
         - Official Docker image
         - Other (please specify in Additional information)
+    validations:
+      required: true
   - type: textarea
     id: additional-info
     attributes:
