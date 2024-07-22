@@ -143,9 +143,13 @@ php artisan koel:sync [options] # Alias, deprecated
 | `I`, `--ignore=` | The comma-separated tags to ignore (exclude) from scanning. Valid tags are `title`, `album`,`artist`, `albumartist`, `track`, `disc`, `year`, `genre`, `lyrics`, and `cover`. |
 | `F`, `--force`   | Force re-scanning even unchanged files.                                                                                                                                       |
 
+### `koel:scheduler:install`
+
+Install the command scheduler. Refer to [Command Scheduling](#command-scheduling) for more information.
+
 ### `koel:search:import`
 
-Import all searchable entities with Scout. See [Instant Search](./usage/search) for more information.
+Import all searchable entities with Scout. Refer to [Instant Search](./usage/search) for more information.
 
 #### Usage
 
@@ -210,16 +214,22 @@ php artisan koel:tags:collect
 ## Command Scheduling
 
 Some of the commands, such as `koel:scan` and `koel:prune`, can be scheduled to run at regular intervals.
-Koel uses Laravel’s built-in scheduler to manage this.
+Instead of setting up individual cron jobs, you can use Koel’s built-in scheduler to automatically handle the commands for you.
 
-In order to set up the scheduler, you need to add the following cron entry into the crontab of the webserver user (for example,
-if it's `www-data`, run `sudo crontab -u www-data -e`):
+To set up the scheduler, run the `koel:scheduler:install` command as the web server user (e.g. `www-data` or `nginx`):
+
+```bash
+php artisan koel:scheduler:install
+```
+
+Alternatively, you can manually add the following cron entry into the crontab of the webserver user (for example, if it's `www-data`, run `sudo crontab -u www-data -e`):
 
 ```bash
 * * * * * cd /path-to-koel-installation && php artisan schedule:run >> /dev/null 2>&1
 ```
 
-This will run the scheduler every minute, which will then run any scheduled commands as needed.
+Either way, the scheduler will run every minute once installed, executing any scheduled commands as needed.
 By default, `koel:scan`, `koel:prune`, and `koel:podcasts:sync` are set to run every day at midnight.
 
-Though you can still manually set up cron jobs for individual commands, the scheduler is the recommended approach to command scheduling in Koel, as it will automatically cover any commands that may be added in the future.
+Though you can still manually set up cron jobs for individual commands, the scheduler is the recommended approach to do command scheduling in Koel,
+as it will automatically cover any commands that may be added in the future.

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "306146627425d3042b82f1cd347237c8",
+    "content-hash": "9da46e14c758c109ce78f30cbaa63a09",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -9589,6 +9589,53 @@
                 }
             ],
             "time": "2023-07-17T10:34:14+00:00"
+        },
+        {
+            "name": "tiben/crontab-manager",
+            "version": "v1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/TiBeN/CrontabManager.git",
+                "reference": "79ade7bfc895c4594905a2554d7a82f6567aabf3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/TiBeN/CrontabManager/zipball/79ade7bfc895c4594905a2554d7a82f6567aabf3",
+                "reference": "79ade7bfc895c4594905a2554d7a82f6567aabf3",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">= 5.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.36|^5.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "TiBeN\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Benjamin Legendre",
+                    "email": "legendre.benjamin@gmail.com"
+                }
+            ],
+            "description": "A library for managing linux cron jobs.",
+            "keywords": [
+                "crontab",
+                "scheduling"
+            ],
+            "support": {
+                "issues": "https://github.com/TiBeN/CrontabManager/issues",
+                "source": "https://github.com/TiBeN/CrontabManager/tree/v1.4.0"
+            },
+            "time": "2023-05-02T16:54:54+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",

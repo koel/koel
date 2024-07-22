@@ -44,7 +44,8 @@
     "league/flysystem-sftp-v3": "^3.0",
     "saloonphp/xml-wrangler": "^1.2",
     "phanan/poddle": "^1.0",
-    "spatie/laravel-ray": "^1.36"
+    "spatie/laravel-ray": "^1.36",
+    "tiben/crontab-manager": "*"
   },
   "require-dev": {
     "mockery/mockery": "~1.0",

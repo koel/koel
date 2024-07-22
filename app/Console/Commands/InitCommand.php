@@ -7,15 +7,15 @@ use App\Exceptions\InstallationFailedException;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Console\Command;
-use Illuminate\Contracts\Hashing\Hasher as Hash;
-use Illuminate\Database\DatabaseManager as DB;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Str;
 use Jackiedo\DotenvEditor\DotenvEditor;
-use Psr\Log\LoggerInterface;
 use Throwable;
 
 class InitCommand extends Command
@@ -32,12 +32,8 @@ class InitCommand extends Command
 
     private bool $adminSeeded = false;
 
-    public function __construct(
-        private readonly Hash $hash,
-        private readonly DotenvEditor $dotenvEditor,
-        private readonly DB $db,
-        private readonly LoggerInterface $logger
-    ) {
+    public function __construct(private readonly DotenvEditor $dotenvEditor)
+    {
         parent::__construct();
     }
 
@@ -64,8 +60,9 @@ class InitCommand extends Command
             $this->maybeSetMediaPath();
             $this->maybeCompileFrontEndAssets();
             $this->dotenvEditor->save();
+            $this->tryInstallingScheduler();
         } catch (Throwable $e) {
-            $this->logger->error($e);
+            Log::error($e);
 
             $this->components->error("Oops! Koel installation or upgrade didn't finish successfully.");
             $this->components->error('Please check the error log at storage/logs/laravel.log and try again.');
@@ -92,7 +89,7 @@ class InitCommand extends Command
         $this->info('Again, visit 📙 ' . config('koel.misc.docs_url') . ' for more tips and tweaks.');
 
         $this->info(
-            "Feeling generous and want to support Koel's development? Check out "
+            "Feeling generous and want to support Koel’s development? Check out "
             . config('koel.misc.sponsor_github_url')
             . ' 🤗'
         );
@@ -202,7 +199,7 @@ class InitCommand extends Command
             User::query()->create([
                 'name' => self::DEFAULT_ADMIN_NAME,
                 'email' => self::DEFAULT_ADMIN_EMAIL,
-                'password' => $this->hash->make(self::DEFAULT_ADMIN_PASSWORD),
+                'password' => Hash::make(self::DEFAULT_ADMIN_PASSWORD),
                 'is_admin' => true,
             ]);
 
@@ -241,12 +238,12 @@ class InitCommand extends Command
             try {
                 // Make sure the config cache is cleared before another attempt.
                 Artisan::call('config:clear', ['--quiet' => true]);
-                $this->db->reconnect();
-                $this->db->getDoctrineSchemaManager()->listTables();
+                DB::reconnect();
+                DB::getDoctrineSchemaManager()->listTables();
 
                 break;
             } catch (Throwable $e) {
-                $this->logger->error($e);
+                Log::error($e);
 
                 // We only try to update credentials if running in interactive mode.
                 // Otherwise, we require admin intervention to fix them.
@@ -347,11 +344,26 @@ class InitCommand extends Command
         return File::isDirectory($path) && File::isReadable($path);
     }
 
-    /**
-     * Generate a random key for the application.
-     */
     private function generateRandomKey(): string
     {
         return 'base64:' . base64_encode(Encrypter::generateKey($this->laravel['config']['app.cipher']));
+    }
+
+    private function tryInstallingScheduler(): void
+    {
+        if (PHP_OS_FAMILY === 'Windows' || PHP_OS_FAMILY === 'Unknown') {
+            return;
+        }
+
+        $this->components->info('Trying to install Koel scheduler…');
+
+        if (Artisan::call('koel:scheduler:install') !== self::SUCCESS) {
+            $this->components->warn(
+                'Failed to install scheduler. ' .
+                'Please install manually: https://docs.koel.dev/cli-commands#command-scheduling'
+            );
+        } else {
+            $this->components->info('Koel scheduler installed successfully.');
+        }
     }
 }
