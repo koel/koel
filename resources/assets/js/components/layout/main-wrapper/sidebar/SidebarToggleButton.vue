@@ -1,6 +1,6 @@
 <template>
   <label
-    class="btn-toggle no-hover:flex hidden md:flex w-[24px] aspect-square absolute rounded-full -right-[12px] top-[27px]
+    class="btn-toggle hidden md:flex w-[24px] aspect-square absolute rounded-full -right-[12px] top-[27px]
     items-center justify-center z-10 text-k-text-secondary bg-k-bg-secondary border-[1.5px] border-white/20 cursor-pointer
     hover:text-k-text-primary hover:bg-k-highlight"
   >

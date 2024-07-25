@@ -21,7 +21,7 @@
       </section>
 
       <SidebarToggleButton
-        class="opacity-0 no-hover:opacity-100 group-hover:opacity-100 transition"
+        class="opacity-0 no-hover:hidden group-hover:opacity-100 transition"
         v-model="expanded"
         :class="expanded || 'opacity-100'"
       />
