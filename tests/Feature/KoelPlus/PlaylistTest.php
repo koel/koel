@@ -60,4 +60,15 @@ class PlaylistTest extends PlusTestCase
 
         self::assertTrue($playlist->own_songs_only);
     }
+
+    public function testCollaboratorCannotChangePlaylistName(): void
+    {
+        /** @var Playlist $playlist */
+        $playlist = Playlist::factory()->create();
+        $collaborator = create_user();
+        $playlist->addCollaborator($collaborator);
+
+        $this->putAs("api/playlists/$playlist->id", ['name' => 'Nope'], $collaborator)
+            ->assertForbidden();
+    }
 }

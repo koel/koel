@@ -26,12 +26,12 @@ const { playlist } = toRefs(props)
 
 const droppable = ref(false)
 
-const { isAdmin } = useAuthorization()
+const { isAdmin, currentUser } = useAuthorization()
 const { isPlus } = useKoelPlus()
 
 const backgroundImage = computed(() => `url(${playlist.value.cover || defaultCover})`)
 
-const allowsUpload = computed(() => isAdmin.value || isPlus.value)
+const allowsUpload = computed(() => (isAdmin.value || isPlus.value) && playlist.value.user_id === currentUser.value.id)
 const onDragEnter = () => (droppable.value = allowsUpload.value)
 const onDragLeave = () => (droppable.value = false)
 
