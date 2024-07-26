@@ -19,4 +19,15 @@ class PlaylistCoverTest extends PlusTestCase
         $this->putAs("api/playlists/$playlist->id/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], $collaborator)
             ->assertForbidden();
     }
+
+    public function testCollaboratorCannotDeleteCover(): void
+    {
+        /** @var Playlist $playlist */
+        $playlist = Playlist::factory()->create();
+        $collaborator = create_user();
+        $playlist->addCollaborator($collaborator);
+
+        $this->deleteAs("api/playlists/$playlist->id/cover", [], $collaborator)
+            ->assertForbidden();
+    }
 }
