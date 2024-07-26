@@ -1,15 +1,27 @@
 <template>
   <article
-    :class="{ droppable }"
     class="cover relative w-full aspect-square block rounded-md overflow-hidden bg-no-repeat bg-cover bg-center"
     data-testid="playlist-thumbnail"
-    @dragenter.prevent="onDragEnter"
-    @dragleave.prevent="onDragLeave"
-    @drop.prevent="onDrop"
-    @dragover.prevent
   >
-    <div class="pointer-events-none">
-      <slot />
+    <slot />
+    <div
+      v-if="canEditPlaylist"
+      class="absolute inset-0 w-full h-full bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-200
+             flex items-center justify-center"
+    >
+      <div class="border border-1.5 border-white/20 rounded-md overflow-hidden">
+        <button class="p-2 hover:bg-black/50" title="Upload cover image" @click.prevent="uploadCover">
+          <Icon :icon="faUpload" class="text-white text-xl" fixed-width />
+        </button>
+        <button
+          v-if="playlist.cover"
+          class="p-2 hover:bg-black/30"
+          title="Remove cover image"
+          @click.prevent="removeCover"
+        >
+          <Icon :icon="faTrash" class="text-white text-xl" fixed-width />
+        </button>
+      </div>
     </div>
   </article>
 </template>
@@ -18,73 +30,54 @@
 import { computed, ref, toRefs } from 'vue'
 import { defaultCover } from '@/utils'
 import { playlistStore } from '@/stores'
-import { useAuthorization, useErrorHandler, useFileReader, useKoelPlus } from '@/composables'
-import { acceptedImageTypes } from '@/config'
+import { useErrorHandler, useFileReader, useKoelPlus, usePolicies } from '@/composables'
+import { faTrash, faUpload } from '@fortawesome/free-solid-svg-icons'
 
 const props = defineProps<{ playlist: Playlist }>()
 const { playlist } = toRefs(props)
 
-const droppable = ref(false)
-
-const { isAdmin, currentUser } = useAuthorization()
+const { currentUserCan } = usePolicies()
 const { isPlus } = useKoelPlus()
 
+const canEditPlaylist = computed(() => currentUserCan.editPlaylist(playlist.value!))
 const backgroundImage = computed(() => `url(${playlist.value.cover || defaultCover})`)
 
-const allowsUpload = computed(() => (isAdmin.value || isPlus.value) && playlist.value.user_id === currentUser.value.id)
-const onDragEnter = () => (droppable.value = allowsUpload.value)
-const onDragLeave = () => (droppable.value = false)
+const uploadCover = () => {
+  const input = document.createElement('input')
+  input.setAttribute('type', 'file')
+  input.setAttribute('accept', 'image/*')
 
-const validImageDropEvent = (event: DragEvent) => {
-  if (!event.dataTransfer || !event.dataTransfer.items) {
-    return false
-  }
+  input.addEventListener('change', async () => {
+    const file = input.files?.[0]
 
-  if (event.dataTransfer.items.length !== 1) {
-    return false
-  }
+    if (!file) {
+      return
+    }
 
-  if (event.dataTransfer.items[0].kind !== 'file') {
-    return false
-  }
+    const backupImage = playlist.value.cover
 
-  return acceptedImageTypes.includes(event.dataTransfer.items[0].getAsFile()!.type)
+    try {
+      useFileReader().readAsDataUrl(file, async url => {
+        playlist.value!.cover = url
+        await playlistStore.uploadCover(playlist.value, url)
+        toastSuccess('Playlist cover updated.')
+      })
+    } catch (error: unknown) {
+      // restore the backup image
+      playlist.value.cover = backupImage
+      useErrorHandler().handleHttpError(error)
+    }
+  })
+
+  input.dispatchEvent(new MouseEvent('click'))
 }
 
-const onDrop = async (event: DragEvent) => {
-  droppable.value = false
-
-  if (!allowsUpload.value) {
-    return
-  }
-
-  if (!validImageDropEvent(event)) {
-    return
-  }
-
-  const backupImage = playlist.value.cover
-
-  try {
-    useFileReader().readAsDataUrl(event.dataTransfer!.files[0], async url => {
-      // Replace the image right away to create an "instant" effect
-      playlist.value.cover = url
-      await playlistStore.uploadCover(playlist.value, url)
-    })
-  } catch (error: unknown) {
-    // restore the backup image
-    playlist.value.cover = backupImage
-    useErrorHandler().handleHttpError(error)
-  }
-}
+const removeCover = async () => await playlistStore.removeCover(playlist.value)
 </script>
 
 <style lang="postcss" scoped>
 article {
   background-image: v-bind(backgroundImage);
-
-  &.droppable {
-    @apply border-2 border-dotted border-white brightness-50;
-  }
 
   .thumbnail-stack {
     @apply pointer-events-none;

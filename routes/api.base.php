@@ -31,6 +31,7 @@ use App\Http\Controllers\API\PlaylistCollaboration\AcceptPlaylistCollaborationIn
 use App\Http\Controllers\API\PlaylistCollaboration\CreatePlaylistCollaborationTokenController;
 use App\Http\Controllers\API\PlaylistCollaboration\PlaylistCollaboratorController;
 use App\Http\Controllers\API\PlaylistController;
+use App\Http\Controllers\API\PlaylistCoverController;
 use App\Http\Controllers\API\PlaylistFolderController;
 use App\Http\Controllers\API\PlaylistFolderPlaylistController;
 use App\Http\Controllers\API\PlaylistSongController;
@@ -57,7 +58,6 @@ use App\Http\Controllers\API\UpdateUserPreferenceController;
 use App\Http\Controllers\API\UploadAlbumCoverController;
 use App\Http\Controllers\API\UploadArtistImageController;
 use App\Http\Controllers\API\UploadController;
-use App\Http\Controllers\API\UploadPlaylistCoverController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\UserInvitationController;
 use App\Models\Song;
@@ -174,7 +174,8 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::put('albums/{album}/cover', UploadAlbumCoverController::class);
         Route::get('albums/{album}/thumbnail', FetchAlbumThumbnailController::class);
         Route::put('artists/{artist}/image', UploadArtistImageController::class);
-        Route::put('playlists/{playlist}/cover', UploadPlaylistCoverController::class);
+        Route::put('playlists/{playlist}/cover', [PlaylistCoverController::class, 'update']);
+        Route::delete('playlists/{playlist}/cover', [PlaylistCoverController::class, 'destroy']);
         // deprecated routes
         Route::put('album/{album}/cover', UploadAlbumCoverController::class);
         Route::get('album/{album}/thumbnail', FetchAlbumThumbnailController::class);

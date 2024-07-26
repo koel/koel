@@ -6,10 +6,12 @@
     <template v-if="canShowCollaboration">
       <li class="separator" />
       <li @click="showCollaborationModal">Collaborate…</li>
-      <li class="separator" />
     </template>
-    <li v-if="canEditPlaylist" @click="edit">Edit…</li>
-    <li v-if="canEditPlaylist" @click="destroy">Delete</li>
+    <template v-if="canEditPlaylist">
+      <li class="separator" />
+      <li @click="edit">Edit…</li>
+      <li @click="destroy">Delete</li>
+    </template>
   </ContextMenu>
 </template>
 

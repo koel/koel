@@ -195,5 +195,10 @@ export const playlistStore = {
     this.byId(playlist.id)!.cover = playlist.cover
 
     return playlist.cover
+  },
+
+  async removeCover (playlist: Playlist) {
+    playlist.cover = null
+    await http.delete(`playlists/${playlist.id}/cover`)
   }
 }

@@ -135,4 +135,12 @@ class MediaMetadataService
         File::delete($album->cover_path);
         File::delete($album->thumbnail_path);
     }
+
+    public function deletePlaylistCover(Playlist $playlist): void
+    {
+        if ($playlist->cover_path) {
+            File::delete($playlist->cover_path);
+            $playlist->update(['cover' => null]);
+        }
+    }
 }
