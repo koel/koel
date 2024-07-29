@@ -63,9 +63,10 @@ php artisan koel:init [options]
 ```
 
 #### Options
-| Name          | Description                     |
-|---------------|---------------------------------|
-| `--no-assets` | Do not compile front-end assets |
+| Name             | Description                     |
+|------------------|---------------------------------|
+| `--no-assets`    | Do not compile front-end assets |
+| `--no-scheduler` | Do not install scheduler        |
 
 ### `koel:license:activate`
 
