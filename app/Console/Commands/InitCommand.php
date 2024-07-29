@@ -27,7 +27,7 @@ class InitCommand extends Command
     private const DEFAULT_ADMIN_PASSWORD = 'KoelIsCool';
     private const NON_INTERACTION_MAX_DATABASE_ATTEMPT_COUNT = 10;
 
-    protected $signature = 'koel:init {--no-assets : Do not compile front-end assets}';
+    protected $signature = 'koel:init {--no-assets : Do not compile front-end assets} {--no-scheduler : Do not install scheduler}';
     protected $description = 'Install or upgrade Koel';
 
     private bool $adminSeeded = false;
@@ -352,6 +352,10 @@ class InitCommand extends Command
     private function tryInstallingScheduler(): void
     {
         if (PHP_OS_FAMILY === 'Windows' || PHP_OS_FAMILY === 'Unknown') {
+            return;
+        }
+
+        if ((bool) $this->option('no-scheduler')) {
             return;
         }
 
