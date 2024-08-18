@@ -10,7 +10,9 @@
       py-0 px-6 h-k-header-height"
     >
       <div class="btn-group">
-        <SidebarMenuToggleButton />
+        <ExtraDrawerButton @click.prevent="expandSidebar">
+          <Icon :icon="faBars" fixed-width />
+        </ExtraDrawerButton>
         <ExtraDrawerTabHeader v-if="songPlaying" v-model="activeTab" />
       </div>
 
@@ -70,16 +72,17 @@
 
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
+import { faBars } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, onMounted, ref, Ref, watch } from 'vue'
 import { albumStore, artistStore, preferenceStore } from '@/stores'
 import { useErrorHandler, useThirdPartyServices } from '@/composables'
-import { isSong, requireInjection } from '@/utils'
+import { eventBus, isSong, requireInjection } from '@/utils'
 import { CurrentPlayableKey } from '@/symbols'
 
 import ProfileAvatar from '@/components/ui/ProfileAvatar.vue'
-import SidebarMenuToggleButton from '@/components/ui/SidebarMenuToggleButton.vue'
 import AboutKoelButton from '@/components/layout/main-wrapper/extra-drawer/AboutKoelButton.vue'
 import LogoutButton from '@/components/layout/main-wrapper/extra-drawer/LogoutButton.vue'
+import ExtraDrawerButton from '@/components/layout/main-wrapper/extra-drawer/ExtraDrawerButton.vue'
 
 const LyricsPane = defineAsyncComponent(() => import('@/components/ui/LyricsPane.vue'))
 const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/ArtistInfo.vue'))
@@ -119,6 +122,7 @@ watch(playable, song => {
 watch(activeTab, tab => (preferenceStore.active_extra_panel_tab = tab))
 
 const onProfileLinkClick = () => isMobile.any && (activeTab.value = null)
+const expandSidebar = () => eventBus.emit('TOGGLE_SIDEBAR')
 
 onMounted(() => isMobile.any || (activeTab.value = preferenceStore.active_extra_panel_tab))
 </script>

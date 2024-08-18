@@ -20,8 +20,8 @@ new class extends UnitTestCase {
       expect(screen.getByTestId('sidebar-item').classList.contains('current')).toBe(true)
     })
 
-    it ('emits the sidebar toggle event when clicked', async () => {
-      const mock  = this.mock(eventBus, 'emit')
+    it('emits the sidebar toggle event when clicked', async () => {
+      const mock = this.mock(eventBus, 'emit')
       this.renderComponent()
       await this.user.click(screen.getByTestId('sidebar-item'))
 

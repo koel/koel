@@ -1,45 +1,55 @@
 <template>
-    <nav
-      :class="{ collapsed: !expanded, 'tmp-showing': tmpShowing, showing: mobileShowing }"
-      class="group flex flex-col fixed md:relative w-full md:w-k-sidebar-width z-10"
-      @mouseenter="onMouseEnter"
-      @mouseleave="onMouseLeave"
-    >
-      <section class="home-search-block p-6 flex gap-2">
-        <HomeButton />
-        <SearchForm class="flex-1" />
-      </section>
+  <nav
+    :class="{ collapsed: !expanded, 'tmp-showing': tmpShowing, showing: mobileShowing }"
+    class="group left-0 top-0 flex flex-col fixed h-full w-full md:relative md:w-k-sidebar-width z-[999] md:z-10"
+    @mouseenter="onMouseEnter"
+    @mouseleave="onMouseLeave"
+  >
+    <section class="btn-collapse-block flex md:hidden items-center border-b border-b-white/5 h-k-header-height px-6">
+      <div class="bg-white/5 rounded-full">
+        <ExtraDrawerButton @click.prevent="collapseSidebar">
+          <Icon :icon="faTimes" fixed-width />
+        </ExtraDrawerButton>
+      </div>
+    </section>
 
-      <section v-koel-overflow-fade class="pt-2 pb-10 overflow-y-auto space-y-8">
-        <SidebarYourMusicSection />
-        <SidebarPlaylistsSection />
-        <SidebarManageSection v-if="showManageSection" />
-      </section>
+    <section class="home-search-block p-6 flex gap-2">
+      <HomeButton />
+      <SearchForm class="flex-1" />
+    </section>
 
-      <section v-if="!isPlus && isAdmin" class="p-6 flex-1 flex flex-col-reverse">
-        <BtnUpgradeToPlus />
-      </section>
+    <section v-koel-overflow-fade class="pt-2 pb-10 overflow-y-auto space-y-8">
+      <SidebarYourMusicSection />
+      <SidebarPlaylistsSection />
+      <SidebarManageSection v-if="showManageSection" />
+    </section>
 
-      <SidebarToggleButton
-        class="opacity-0 no-hover:hidden group-hover:opacity-100 transition"
-        v-model="expanded"
-        :class="expanded || 'opacity-100'"
-      />
-    </nav>
+    <section v-if="!isPlus && isAdmin" class="p-6 flex-1 flex flex-col-reverse">
+      <BtnUpgradeToPlus />
+    </section>
+
+    <SidebarToggleButton
+      class="opacity-0 no-hover:hidden group-hover:opacity-100 transition"
+      v-model="expanded"
+      :class="expanded || 'opacity-100'"
+    />
+  </nav>
 </template>
 
 <script lang="ts" setup>
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, watch } from 'vue'
 import { eventBus } from '@/utils'
 import { useAuthorization, useKoelPlus, useLocalStorage, useRouter, useUpload } from '@/composables'
 
-import SidebarPlaylistsSection from './SidebarPlaylistsSection.vue'
-import SearchForm from '@/components/ui/SearchForm.vue'
 import BtnUpgradeToPlus from '@/components/koel-plus/BtnUpgradeToPlus.vue'
-import SidebarYourMusicSection from './SidebarYourLibrarySection.vue'
-import SidebarManageSection from './SidebarManageSection.vue'
-import SidebarToggleButton from '@/components/layout/main-wrapper/sidebar/SidebarToggleButton.vue'
+import ExtraDrawerButton from '@/components/layout/main-wrapper/extra-drawer/ExtraDrawerButton.vue'
 import HomeButton from '@/components/layout/main-wrapper/sidebar/HomeButton.vue'
+import SearchForm from '@/components/ui/SearchForm.vue'
+import SidebarManageSection from './SidebarManageSection.vue'
+import SidebarPlaylistsSection from './SidebarPlaylistsSection.vue'
+import SidebarToggleButton from '@/components/layout/main-wrapper/sidebar/SidebarToggleButton.vue'
+import SidebarYourMusicSection from './SidebarYourLibrarySection.vue'
 
 const { onRouteChanged } = useRouter()
 const { isAdmin } = useAuthorization()
@@ -81,6 +91,8 @@ const onMouseLeave = (e: MouseEvent) => {
 
 onRouteChanged(_ => (mobileShowing.value = false))
 
+const collapseSidebar = () => (mobileShowing.value = false)
+
 /**
  * Listen to toggle sidebar event to show or hide the sidebar.
  * This should only be triggered on a mobile device.
@@ -104,9 +116,9 @@ nav {
     }
 
     &.tmp-showing {
-      @apply absolute h-screen z-50 bg-k-bg-primary w-k-sidebar-width shadow-2xl;
+      @apply fixed h-screen bg-k-bg-primary w-k-sidebar-width shadow-2xl z-[999];
 
-      > *:not(.btn-toggle) {
+      > *:not(.btn-toggle, .btn-collapse-block) {
         @apply block;
       }
 
@@ -118,11 +130,9 @@ nav {
 
   @media screen and (max-width: 768px) {
     @mixin themed-background;
-    z-index: 999;
 
     transform: translateX(-100vw);
     transition: transform .2s ease-in-out;
-    height: calc(100vh - var(--header-height));
 
     &.showing {
       transform: translateX(0);
