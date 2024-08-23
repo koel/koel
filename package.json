@@ -39,6 +39,8 @@
     "youtube-player": "^3.0.4"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.4.0",
+    "@commitlint/config-conventional": "^19.2.2",
     "@faker-js/faker": "^6.2.0",
     "@floating-ui/dom": "^1.0.3",
     "@testing-library/user-event": "^14.4.3",
@@ -69,7 +71,7 @@
     "eslint-plugin-vue": "^8.7.1",
     "events": "^3.3.0",
     "factoria": "^4.0.0",
-    "husky": "^4.2.5",
+    "husky": "^9.1.5",
     "jest-serializer-vue": "^2.0.2",
     "js-md5": "^0.8.3",
     "jsdom": "^19.0.0",
@@ -101,12 +103,8 @@
     "dev": "kill-port 8000 && start-test 'php artisan serve --port=8000 --quiet' 'http://127.0.0.1:8000/api/ping' 'vite'",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
+    "docs:preview": "vitepress preview docs",
+    "prepare": "husky"
   },
   "lint-staged": {
     "**/*.php": [
