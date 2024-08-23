@@ -14,14 +14,5 @@
 <style lang="postcss" scoped>
 main {
   -ms-overflow-style: -ms-autohiding-scrollbar;
-
-  @supports (scrollbar-gutter: stable) {
-    overflow: auto;
-    scrollbar-gutter: stable;
-
-    @media (hover: none) {
-      scrollbar-gutter: auto;
-    }
-  }
 }
 </style>
