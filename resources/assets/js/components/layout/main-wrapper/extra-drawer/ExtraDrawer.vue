@@ -10,7 +10,7 @@
       py-0 px-6 h-k-header-height"
     >
       <div class="btn-group">
-        <ExtraDrawerButton @click.prevent="expandSidebar">
+        <ExtraDrawerButton class="md:hidden" @click.prevent="expandSidebar">
           <Icon :icon="faBars" fixed-width />
         </ExtraDrawerButton>
         <ExtraDrawerTabHeader v-if="songPlaying" v-model="activeTab" />
