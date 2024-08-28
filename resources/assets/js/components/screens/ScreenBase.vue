@@ -14,6 +14,5 @@
 <style lang="postcss" scoped>
 main {
   -ms-overflow-style: -ms-autohiding-scrollbar;
-  overflow: hidden;
 }
 </style>
