@@ -104,11 +104,12 @@ You can also edit multiple songs at once, in which case the changes will be appl
 ## Downloading Songs
 
 If `ALLOW_DOWNLOAD` is set to `true` (the default value) in your `.env` file, you can download a song by right-clicking on it and choosing "Download."
-You can also download several songs, all songs from an album, all songs by an artist, or a whole playlist, though it might be resource-intensive for large collections.
 
-:::tip `zip-ext` required
-Downloading multiple songs requires the [`zip` extension](https://www.php.net/manual/en/book.zip.php) to be installed and enabled in your PHP environment.
-Koel will silently fail if this requirement is not met.
+You can also download several songs, all songs from an album, all songs by an artist, or a whole playlist as a zip file via the "Download" buttons found on according screens or context menus.
+This feature requires the [`zip` extension](https://www.php.net/manual/en/book.zip.php) to be installed and enabled on the server.
+
+:::warning Resource Intensive
+Downloading a large number of songs at once (or a big playlist) can be resource-intensive, may take a long time, or even (silently) fail.
 :::
 
 ## Deleting Songs
