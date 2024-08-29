@@ -18,7 +18,7 @@
           <span>{{ duration }}</span>
 
           <a
-            v-if="allowDownload"
+            v-if="downloadable"
             class="download"
             role="button"
             title="Download all songs in album"
@@ -125,6 +125,7 @@ const {
   songList,
   showingControls,
   isPhone,
+  downloadable,
   duration,
   context,
   sort,
@@ -138,7 +139,6 @@ const {
 const { SongListControls, config } = useSongListControls('Album')
 
 const useLastfm = toRef(commonStore.state, 'uses_last_fm')
-const allowDownload = toRef(commonStore.state, 'allows_download')
 
 const isNormalArtist = computed(() => {
   if (!album.value) return true

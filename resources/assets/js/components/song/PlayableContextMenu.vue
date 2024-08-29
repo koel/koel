@@ -55,7 +55,7 @@
     </template>
 
     <li v-if="canEditSongs" @click="openEditForm">Edit…</li>
-    <li v-if="allowsDownload" @click="download">Download</li>
+    <li v-if="downloadable" @click="download">Download</li>
     <li v-if="onlyOneSongSelected && canBeShared" @click="copyUrl">Copy Shareable URL</li>
 
     <template v-if="canBeRemovedFromPlaylist">
@@ -105,7 +105,14 @@ const {
 } = usePlayableMenuMethods(playables, close)
 
 const playlists = toRef(playlistStore.state, 'playlists')
-const allowsDownload = toRef(commonStore.state, 'allows_download')
+
+const downloadable = computed(() => {
+  if (!commonStore.state.allows_download) return false
+
+  // If multiple playables are selected, make sure zip extension is available on the server
+  return playables.value.length === 1 || commonStore.state.supports_batch_downloading
+})
+
 const queue = toRef(queueStore.state, 'playables')
 const currentSong = toRef(queueStore, 'current')
 

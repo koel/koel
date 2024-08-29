@@ -2,7 +2,7 @@ import { differenceBy, orderBy, sampleSize, take, throttle } from 'lodash'
 import isMobile from 'ismobilejs'
 import { computed, provide, reactive, Ref, ref } from 'vue'
 import { playbackService } from '@/services'
-import { queueStore, songStore } from '@/stores'
+import { commonStore, queueStore, songStore } from '@/stores'
 import { arrayify, eventBus, getPlayableProp, provideReadonly } from '@/utils'
 import { useFuzzySearch, useRouter } from '@/composables'
 
@@ -58,6 +58,12 @@ export const useSongList = (
   }
 
   const duration = computed(() => songStore.getFormattedLength(playables.value))
+
+  const downloadable = computed(() => {
+    if (!commonStore.state.allows_download) return false
+    if (playables.value.length === 0) return false
+    return playables.value.length === 1 || commonStore.state.supports_batch_downloading
+  })
 
   const thumbnails = computed(() => {
     const playablesWithCover = playables.value.filter(p => getPlayableProp<string>(p, 'album_cover', 'episode_image'))
@@ -161,6 +167,7 @@ export const useSongList = (
     songs: playables,
     config,
     context,
+    downloadable,
     headerLayout,
     sortField,
     sortOrder,

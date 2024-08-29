@@ -14,10 +14,10 @@
           <span>{{ duration }}</span>
 
           <a
-            v-if="allowDownload"
+            v-if="downloadable"
             class="download"
             role="button"
-            title="Download all songs in playlist"
+            title="Download all favorites"
             @click.prevent="download"
           >
             Download All
@@ -64,10 +64,10 @@
 import { faHeartBroken } from '@fortawesome/free-solid-svg-icons'
 import { faHeart } from '@fortawesome/free-regular-svg-icons'
 import { pluralize } from '@/utils'
-import { commonStore, favoriteStore } from '@/stores'
+import { favoriteStore } from '@/stores'
 import { downloadService } from '@/services'
 import { useRouter, useSongList, useSongListControls } from '@/composables'
-import { nextTick, ref, toRef } from 'vue'
+import { ref, toRef } from 'vue'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -82,6 +82,7 @@ const {
   songs,
   songList,
   duration,
+  downloadable,
   thumbnails,
   selectedPlayables,
   showingControls,
@@ -90,12 +91,10 @@ const {
   playAll,
   playSelected,
   applyFilter,
-  onScrollBreakpoint,
+  onScrollBreakpoint
 } = useSongList(toRef(favoriteStore.state, 'playables'), { type: 'Favorites' })
 
 const { SongListControls, config } = useSongListControls('Favorites')
-
-const allowDownload = toRef(commonStore.state, 'allows_download')
 
 const download = () => downloadService.fromFavorites()
 const removeSelected = () => selectedPlayables.value.length && favoriteStore.unlike(selectedPlayables.value)

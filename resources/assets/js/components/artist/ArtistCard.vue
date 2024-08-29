@@ -37,6 +37,7 @@ const { startDragging } = useDraggable('artist')
 const props = withDefaults(defineProps<{ artist: Artist, layout?: ArtistAlbumCardLayout }>(), { layout: 'full' })
 const { artist, layout } = toRefs(props)
 
+// We're not checking for supports_batch_downloading here, as the number of songs by the artist is not yet known.
 const allowDownload = toRef(commonStore.state, 'allows_download')
 
 const showing = computed(() => artistStore.isStandard(artist.value))

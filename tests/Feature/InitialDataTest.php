@@ -35,6 +35,7 @@ class InitialDataTest extends TestCase
                 'customer_email',
                 'product_id',
             ],
+            'supports_batch_downloading',
         ]);
     }
 }

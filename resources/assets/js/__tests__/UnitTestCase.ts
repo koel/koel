@@ -55,6 +55,7 @@ export default abstract class UnitTestCase {
       commonStore.state.song_length = 10
       commonStore.state.allows_download = true
       commonStore.state.uses_i_tunes = true
+      commonStore.state.supports_batch_downloading = true
       cb && cb()
     })
   }

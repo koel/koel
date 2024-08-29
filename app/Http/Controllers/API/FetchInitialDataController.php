@@ -45,6 +45,7 @@ class FetchInitialDataController extends Controller
             'uses_you_tube' => YouTubeService::enabled(),
             'uses_i_tunes' => $iTunesService->used(),
             'allows_download' => config('koel.download.allow'),
+            'supports_batch_downloading' => extension_loaded('zip'),
             'media_path_set' => (bool) $settingRepository->getByKey('media_path'),
             'supports_transcoding' => config('koel.streaming.ffmpeg_path')
                 && is_executable(config('koel.streaming.ffmpeg_path')),

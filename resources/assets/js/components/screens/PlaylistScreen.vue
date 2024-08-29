@@ -16,7 +16,7 @@
           <span>{{ pluralize(songs, 'item') }}</span>
           <span>{{ duration }}</span>
           <a
-            v-if="allowDownload"
+            v-if="downloadable"
             role="button"
             title="Download all songs in playlist"
             @click.prevent="download"
@@ -73,7 +73,7 @@
 <script lang="ts" setup>
 import { faFile } from '@fortawesome/free-regular-svg-icons'
 import { differenceBy } from 'lodash'
-import { ref, toRef, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { eventBus, pluralize } from '@/utils'
 import { commonStore, playlistStore, songStore } from '@/stores'
 import { downloadService, playlistCollaborationService } from '@/services'
@@ -108,6 +108,7 @@ const {
   songs,
   songList,
   duration,
+  downloadable,
   thumbnails,
   selectedPlayables,
   showingControls,
@@ -125,8 +126,6 @@ const {
 
 const { SongListControls, config: controlsConfig } = useSongListControls('Playlist')
 const { removeFromPlaylist } = usePlaylistManagement()
-
-const allowDownload = toRef(commonStore.state, 'allows_download')
 
 const destroy = () => eventBus.emit('PLAYLIST_DELETE', playlist.value!)
 const download = () => downloadService.fromPlaylist(playlist.value!)

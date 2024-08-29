@@ -33,7 +33,8 @@ const initialState = {
     songs: [],
     current_song: null,
     playback_position: 0
-  } as QueueState
+  } as QueueState,
+  supports_batch_downloading: false
 }
 
 type CommonStoreState = typeof initialState

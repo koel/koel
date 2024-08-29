@@ -17,7 +17,7 @@
           <span>{{ duration }}</span>
 
           <a
-            v-if="allowDownload"
+            v-if="downloadable"
             class="download"
             role="button"
             title="Download all songs by this artist"
@@ -122,6 +122,7 @@ const {
   isPhone,
   context,
   duration,
+  downloadable,
   onPressEnter,
   playAll,
   playSelected,
@@ -132,7 +133,6 @@ const {
 const { SongListControls, config } = useSongListControls('Artist')
 
 const { useLastfm } = useThirdPartyServices()
-const allowDownload = toRef(commonStore.state, 'allows_download')
 
 const albumCount = computed(() => {
   const albums = new Set()
