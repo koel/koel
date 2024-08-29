@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="lacai.org">
+<ruleset name="koel">
     <config name="installed_paths" value="../../slevomat/coding-standard"/>
 
     <file>./app</file>
