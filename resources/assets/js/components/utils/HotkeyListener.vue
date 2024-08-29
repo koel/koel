@@ -34,6 +34,7 @@ onKeyStroke('k', () => playbackService.playPrev())
 onKeyStroke(' ', () => playbackService.toggle())
 onKeyStroke('r', () => playbackService.rotateRepeatMode())
 onKeyStroke('q', () => go(isCurrentScreen('Queue') ? -1 : 'queue'))
+onKeyStroke('h', () => go('home'))
 
 onKeyStroke('ArrowRight', () => playbackService.seekBy(10))
 onKeyStroke('ArrowLeft', () => playbackService.seekBy(-10))
