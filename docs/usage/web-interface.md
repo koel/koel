@@ -134,7 +134,7 @@ Note that these shortcuts are only triggered when the focus is not on an input f
 or a textarea.
 
 * <kbd>h</kbd> shows the Home screen
-* <kbd>q</kbd> toggle the Queue screen
+* <kbd>q</kbd> toggles the Queue screen
 * <kbd>f</kbd> puts the focus into the search box and triggers the [instant search](search.md) screen
 * <kbd>Enter</kbd> plays a song. If multiple songs are being selected, <kbd>Enter</kbd> adds them to the bottom of the queue, <kbd>Shift</kbd>+<kbd>Enter</kbd> queues them to top. Adding a <kbd>Cmd</kbd> or <kbd>Ctrl</kbd> into the combo plays the first selected song right away.
 * <kbd>Space</kbd> toggles playback
