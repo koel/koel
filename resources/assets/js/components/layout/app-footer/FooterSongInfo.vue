@@ -43,7 +43,7 @@ const artistOrPodcastName = computed(() => {
   return getPlayableProp(song.value, 'artist_name', 'podcast_title')
 })
 
-const coverBackgroundImage = computed(() => `url(${cover.value})`)
+const coverBackgroundImage = computed(() => `url(${cover.value ?? defaultCover})`)
 const draggable = computed(() => Boolean(song.value))
 
 const onDragStart = (event: DragEvent) => {
