@@ -69,6 +69,7 @@ class ReleaseCommand extends Command
             'pull',
             'merge master',
             'push',
+            'checkout master',
         ];
 
         foreach ($gitCommands as $command) {
