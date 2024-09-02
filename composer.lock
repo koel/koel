@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9da46e14c758c109ce78f30cbaa63a09",
+    "content-hash": "518f509cd591617642652600dccb90c6",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -2635,16 +2635,16 @@
         },
         {
             "name": "laravel/prompts",
-            "version": "v0.1.19",
+            "version": "v0.1.25",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/prompts.git",
-                "reference": "0ab75ac3434d9f610c5691758a6146a3d1940c18"
+                "reference": "7b4029a84c37cb2725fc7f011586e2997040bc95"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/prompts/zipball/0ab75ac3434d9f610c5691758a6146a3d1940c18",
-                "reference": "0ab75ac3434d9f610c5691758a6146a3d1940c18",
+                "url": "https://api.github.com/repos/laravel/prompts/zipball/7b4029a84c37cb2725fc7f011586e2997040bc95",
+                "reference": "7b4029a84c37cb2725fc7f011586e2997040bc95",
                 "shasum": ""
             },
             "require": {
@@ -2684,11 +2684,12 @@
             "license": [
                 "MIT"
             ],
+            "description": "Add beautiful and user-friendly forms to your command-line applications.",
             "support": {
                 "issues": "https://github.com/laravel/prompts/issues",
-                "source": "https://github.com/laravel/prompts/tree/v0.1.19"
+                "source": "https://github.com/laravel/prompts/tree/v0.1.25"
             },
-            "time": "2024-04-16T14:20:35+00:00"
+            "time": "2024-08-12T22:06:33+00:00"
         },
         {
             "name": "laravel/sanctum",
@@ -10910,6 +10911,65 @@
                 "source": "https://github.com/phar-io/version/tree/3.2.1"
             },
             "time": "2022-02-21T01:04:05+00:00"
+        },
+        {
+            "name": "phlak/semver",
+            "version": "5.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PHLAK/SemVer.git",
+                "reference": "3c4db3a7953ac414b947c183548b6a5b825da738"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PHLAK/SemVer/zipball/3c4db3a7953ac414b947c183548b6a5b825da738",
+                "reference": "3c4db3a7953ac414b947c183548b6a5b825da738",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0 || ^8.1 || ^8.2 || 8.3"
+            },
+            "require-dev": {
+                "phlak/coding-standards": "^2.0",
+                "phpstan/phpstan": "^1.11",
+                "phpunit/phpunit": "^9.0 || ^10.0",
+                "yoast/phpunit-polyfills": "^2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/Support/helpers.php"
+                ],
+                "psr-4": {
+                    "PHLAK\\SemVer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Kankiewicz",
+                    "email": "Chris@ChrisKankiewicz.com"
+                }
+            ],
+            "description": "Semantic versioning helper library",
+            "support": {
+                "issues": "https://github.com/PHLAK/SemVer/issues",
+                "source": "https://github.com/PHLAK/SemVer/tree/5.0.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/PHLAK",
+                    "type": "github"
+                },
+                {
+                    "url": "https://paypal.me/ChrisKankiewicz",
+                    "type": "paypal"
+                }
+            ],
+            "time": "2024-08-02T16:57:17+00:00"
         },
         {
             "name": "php-mock/php-mock",
