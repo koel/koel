@@ -24,10 +24,22 @@
         Confirm before closing Koel
       </div>
     </FormRow>
-    <FormRow v-if="isPhone">
+    <FormRow v-if="showTranscodingOption">
       <div>
-        <CheckBox v-model="preferences.transcode_on_mobile" name="transcode_on_mobile" />
-        Convert and play media at 128kbps on mobile
+        <CheckBox
+          v-model="preferences.transcode_on_mobile"
+          data-testid="transcode_on_mobile"
+          name="transcode_on_mobile"
+        />
+        Convert and play media at
+        <select
+          v-model="preferences.transcode_quality"
+          :disabled="!preferences.transcode_on_mobile"
+          class="appearance-auto rounded"
+        >
+          <option v-for="quality in [64, 96, 128, 192, 256, 320]" :value="quality" :key="quality">{{ quality }}</option>
+        </select>
+        kbps on mobile
       </div>
     </FormRow>
     <FormRow>
@@ -41,7 +53,8 @@
 
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
-import { preferenceStore as preferences } from '@/stores'
+import { computed } from 'vue'
+import { commonStore, preferenceStore as preferences } from '@/stores'
 import { useKoelPlus } from '@/composables'
 
 import CheckBox from '@/components/ui/form/CheckBox.vue'
@@ -49,6 +62,8 @@ import FormRow from '@/components/ui/form/FormRow.vue'
 
 const isPhone = isMobile.phone
 const { isPlus } = useKoelPlus()
+
+const showTranscodingOption = computed(() => isPhone && commonStore.state.supports_transcoding)
 </script>
 
 <style lang="postcss" scoped>

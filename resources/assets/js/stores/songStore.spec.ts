@@ -106,7 +106,7 @@ new class extends UnitTestCase {
       const songs = factory('song', 3)
 
       const result: SongUpdateResult = {
-        playables: factory('song', 3),
+        songs: factory('song', 3),
         albums: factory('album', 2),
         artists: factory('artist', 2),
         removed: {
@@ -162,7 +162,7 @@ new class extends UnitTestCase {
 
       isMobile.any = true
       preferenceStore.transcode_on_mobile = true
-      expect(songStore.getSourceUrl(song)).toBe('http://test/play/foo/1/128?t=hadouken')
+      expect(songStore.getSourceUrl(song)).toBe('http://test/play/foo/1?t=hadouken')
     })
 
     it('gets shareable URL', () => {

@@ -39,7 +39,7 @@ Koel allows you to set a couple of preferences:
 * Whether to show a notification whenever a new song starts playing
 * Whether to confirm before closing Koel’s browser tab
 * Whether to show a translucent, blurred overlay of the current album’s art
-* Whether to transcode music on the fly (mobile only, useful if you have a slow network connection)
+* Whether to transcode music to a lower bitrate (mobile only, useful if you have a slow connection)
 * Whether to set your uploaded music as public by default <PlusBadge />
 
 These preferences are saved immediately upon change and synced across all of your devices.

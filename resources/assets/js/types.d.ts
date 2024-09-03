@@ -321,6 +321,7 @@ interface UserPreferences extends Record<string, any> {
   artists_view_mode: ArtistAlbumViewMode | null,
   albums_view_mode: ArtistAlbumViewMode | null,
   transcode_on_mobile: boolean
+  transcode_quality: number
   support_bar_no_bugging: boolean
   show_album_art_overlay: boolean
   lyrics_zoom_level: number | null

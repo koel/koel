@@ -56,6 +56,7 @@ export default abstract class UnitTestCase {
       commonStore.state.allows_download = true
       commonStore.state.uses_i_tunes = true
       commonStore.state.supports_batch_downloading = true
+      commonStore.state.supports_transcoding = true
       cb && cb()
     })
   }

@@ -3,3 +3,5 @@
 exports[`displays nothing if fetching fails 1`] = `<div style="background-image: none;" class="pointer-events-none fixed z-[1000] overflow-hidden opacity-10 bg-cover bg-center top-0 left-0 h-full w-full" data-testid="album-art-overlay"></div>`;
 
 exports[`fetches and displays the album thumbnail 1`] = `<div style="background-image: url(http://test/thumb.jpg);" class="pointer-events-none fixed z-[1000] overflow-hidden opacity-10 bg-cover bg-center top-0 left-0 h-full w-full" data-testid="album-art-overlay"></div>`;
+
+exports[`fetches and displays the album thumbnail 2`] = `<div style="background-image: url(&quot;http://test/thumb.jpg&quot;);" class="pointer-events-none fixed z-[1000] overflow-hidden opacity-10 bg-cover bg-center top-0 left-0 h-full w-full" data-testid="album-art-overlay"></div>`;

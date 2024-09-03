@@ -13,6 +13,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
         'show_now_playing_notification' => 'boolean',
         'confirm_before_closing' => 'boolean',
         'transcode_on_mobile' => 'boolean',
+        'transcode_quality' => 'integer',
         'show_album_art_overlay' => 'boolean',
         'lyrics_zoom_level' => 'integer',
         'make_uploads_public' => 'boolean',
@@ -29,6 +30,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
         'show_now_playing_notification',
         'confirm_before_closing',
         'transcode_on_mobile',
+        'transcode_quality',
         'show_album_art_overlay',
         'make_uploads_public',
         'support_bar_no_bugging',
@@ -50,6 +52,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
         public bool $showNowPlayingNotification,
         public bool $confirmBeforeClosing,
         public bool $transcodeOnMobile,
+        public int $transcodeQuality,
         public bool $showAlbumArtOverlay,
         public bool $makeUploadsPublic,
         public bool $supportBarNoBugging,
@@ -63,6 +66,10 @@ final class UserPreferences implements Arrayable, JsonSerializable
         Assert::oneOf($this->artistsViewMode, ['list', 'thumbnails']);
         Assert::oneOf($this->albumsViewMode, ['list', 'thumbnails']);
         Assert::oneOf($this->activeExtraPanelTab, [null, 'Lyrics', 'Artist', 'Album', 'YouTube']);
+
+        if (!in_array($this->transcodeQuality, [64, 96, 128, 192, 256, 320], true)) {
+            $this->transcodeQuality = 128;
+        }
     }
 
     public static function fromArray(array $data): self
@@ -77,6 +84,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
             showNowPlayingNotification: $data['show_now_playing_notification'] ?? true,
             confirmBeforeClosing: $data['confirm_before_closing'] ?? false,
             transcodeOnMobile: $data['transcode_on_mobile'] ?? true,
+            transcodeQuality: $data['transcode_quality'] ?? 128,
             showAlbumArtOverlay: $data['show_album_art_overlay'] ?? true,
             makeUploadsPublic: $data['make_uploads_public'] ?? false,
             supportBarNoBugging: $data['support_bar_no_bugging'] ?? false,
@@ -126,6 +134,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
             'confirm_before_closing' => $this->confirmBeforeClosing,
             'show_album_art_overlay' => $this->showAlbumArtOverlay,
             'transcode_on_mobile' => $this->transcodeOnMobile,
+            'transcode_quality' => $this->transcodeQuality,
             'make_uploads_public' => $this->makeUploadsPublic,
             'lastfm_session_key' => $this->lastFmSessionKey,
             'support_bar_no_bugging' => $this->supportBarNoBugging,

@@ -37,7 +37,7 @@ Route::middleware('web')->group(static function (): void {
     Route::get('dropbox/authorize', AuthorizeDropboxController::class)->name('dropbox.authorize');
 
     Route::middleware('audio.auth')->group(static function (): void {
-        Route::get('play/{song}/{transcode?}/{bitrate?}', PlayController::class)->name('song.play');
+        Route::get('play/{song}/{transcode?}', PlayController::class)->name('song.play');
 
         if (config('koel.download.allow')) {
             Route::prefix('download')->group(static function (): void {

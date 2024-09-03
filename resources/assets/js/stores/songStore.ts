@@ -143,7 +143,7 @@ export const songStore = {
 
   getSourceUrl: (playable: Playable) => {
     return isMobile.any && preferenceStore.transcode_on_mobile
-      ? `${commonStore.state.cdn_url}play/${playable.id}/1/128?t=${authService.getAudioToken()}`
+      ? `${commonStore.state.cdn_url}play/${playable.id}/1?t=${authService.getAudioToken()}`
       : `${commonStore.state.cdn_url}play/${playable.id}?t=${authService.getAudioToken()}`
   },
 

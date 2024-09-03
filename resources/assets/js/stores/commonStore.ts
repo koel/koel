@@ -34,7 +34,8 @@ const initialState = {
     current_song: null,
     playback_position: 0
   } as QueueState,
-  supports_batch_downloading: false
+  supports_batch_downloading: false,
+  supports_transcoding: false
 }
 
 type CommonStoreState = typeof initialState
