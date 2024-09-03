@@ -25,12 +25,15 @@ final class EpisodePlayable implements Arrayable, Jsonable
         return File::isReadable($this->path) && $this->checksum === md5_file($this->path);
     }
 
-    public static function retrieveForEpisode(Episode $episode): ?self
+    public static function getForEpisode(Episode $episode): ?self
     {
-        return Cache::get("episode-playable.$episode->id");
+        /** @var self|null $cached */
+        $cached = Cache::get("episode-playable.$episode->id");
+
+        return $cached?->valid() ? $cached : self::createForEpisode($episode);
     }
 
-    public static function createForEpisode(Episode $episode): self
+    private static function createForEpisode(Episode $episode): self
     {
         $dir = sys_get_temp_dir() . '/koel-episodes';
         $file = sprintf('%s/%s.mp3', $dir, $episode->id);

@@ -33,13 +33,7 @@ class DownloadService
         }
 
         if ($song->isEpisode()) {
-            $playable = EpisodePlayable::retrieveForEpisode($song);
-
-            if (!$playable?->valid()) {
-                $playable = EpisodePlayable::createForEpisode($song);
-            }
-
-            return $playable->path;
+            return EpisodePlayable::getForEpisode($song)->path;
         }
 
         if ($song->storage === SongStorageType::LOCAL) {

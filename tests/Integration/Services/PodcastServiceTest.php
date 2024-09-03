@@ -8,11 +8,11 @@ use App\Models\PodcastUserPivot;
 use App\Models\Song;
 use App\Services\PodcastService;
 use GuzzleHttp\Client;
-use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\Http;
+use Psr\Http\Client\ClientInterface;
 use Tests\TestCase;
 
 use function Tests\create_user;

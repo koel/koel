@@ -27,12 +27,6 @@ class PodcastStreamerAdapter implements StreamerAdapter
             return response()->redirectTo($streamableUrl);
         }
 
-        $playable = EpisodePlayable::retrieveForEpisode($song);
-
-        if (!$playable?->valid()) {
-            $playable = EpisodePlayable::createForEpisode($song);
-        }
-
-        $this->streamLocalPath($playable->path);
+        $this->streamLocalPath(EpisodePlayable::getForEpisode($song)->path);
     }
 }

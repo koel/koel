@@ -21,12 +21,17 @@ class EpisodePlayableTest extends TestCase
             'path' => 'https://example.com/episode.mp3',
         ]);
 
-        $playable = EpisodePlayable::createForEpisode($episode);
+        $playable = EpisodePlayable::getForEpisode($episode);
+
+        Http::assertSentCount(1);
         self::assertSame('acbd18db4cc2f85cedef654fccc4a4d8', $playable->checksum);
 
         self::assertTrue(Cache::has("episode-playable.$episode->id"));
 
-        $retrieved = EpisodePlayable::retrieveForEpisode($episode);
+        $retrieved = EpisodePlayable::getForEpisode($episode);
+
+        // No extra HTTP request should be made.
+        Http::assertSentCount(1);
         self::assertSame($playable, $retrieved);
         self::assertTrue($retrieved->valid());
 
