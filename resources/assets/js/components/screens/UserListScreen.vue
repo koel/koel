@@ -3,10 +3,9 @@
     <template #header>
       <ScreenHeader layout="collapsed">
         Users
-        <ControlsToggle v-model="showingControls" />
 
         <template #controls>
-          <BtnGroup v-if="showingControls || !isPhone" uppercase>
+          <BtnGroup uppercase>
             <Btn success @click="showAddUserForm">
               <Icon :icon="faPlus" />
               Add
@@ -72,8 +71,6 @@ const users = computed(() => allUsers
 
 const prospects = computed(() => allUsers.value.filter(({ is_prospect }) => is_prospect))
 
-const isPhone = isMobile.phone
-const showingControls = ref(false)
 const canInvite = window.MAILER_CONFIGURED
 
 const showAddUserForm = () => eventBus.emit('MODAL_SHOW_ADD_USER_FORM')
