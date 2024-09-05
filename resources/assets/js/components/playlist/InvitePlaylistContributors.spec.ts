@@ -9,7 +9,6 @@ new class extends UnitTestCase {
   protected test () {
     it('works', async () => {
       this.mock(playlistCollaborationService, 'createInviteLink').mockResolvedValue('http://localhost:3000/invite/1234')
-      const writeTextMock = this.mock(navigator.clipboard, 'writeText')
       const playlist = factory('playlist')
 
       this.render(Component, {
@@ -21,7 +20,7 @@ new class extends UnitTestCase {
       await this.user.click(screen.getByText('Invite'))
 
       await waitFor(async () => {
-        expect(writeTextMock).toHaveBeenCalledWith('http://localhost:3000/invite/1234')
+        expect(navigator.clipboard.writeText).toHaveBeenCalledWith('http://localhost:3000/invite/1234')
         screen.getByText('Link copied to clipboard!')
       })
     })

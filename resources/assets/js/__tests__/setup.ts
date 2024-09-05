@@ -56,3 +56,9 @@ window.SSO_PROVIDERS = []
 window.createLemonSqueezy = vi.fn()
 
 Axios.defaults.adapter = vi.fn()
+
+Object.assign(navigator, {
+  clipboard: {
+    writeText: vi.fn()
+  }
+})
