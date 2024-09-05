@@ -15,7 +15,7 @@ export const useUpload = () => {
     return commonStore.state.storage_driver !== 'local' || commonStore.state.media_path_set
   })
 
-  const allowsUpload = computed(() => currentUserCan.uploadSongs() && !isMobile.phone)
+  const allowsUpload = computed(() => currentUserCan.uploadSongs())
 
   const fileEntryToFile = async (entry: FileSystemEntry) => new Promise<File>(resolve => entry.file(resolve))
 
