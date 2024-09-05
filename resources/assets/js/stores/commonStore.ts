@@ -6,7 +6,7 @@ import { playlistFolderStore, playlistStore, preferenceStore, queueStore, settin
 const initialState = {
   allows_download: false,
   cdn_url: '',
-  current_user: undefined as unknown as User,
+  current_user: null! as User,
   current_version: '',
   koel_plus: {
     active: false,
@@ -47,7 +47,10 @@ export const commonStore = {
     Object.assign(this.state, await http.get<CommonStoreState>('data'))
 
     // Always disable YouTube integration on mobile.
-    this.state.uses_you_tube = this.state.uses_you_tube && !isMobile.phone
+    this.state.uses_you_tube = this.state.uses_you_tube && !isMobile.any
+
+    // Only enable transcoding on mobile
+    this.state.supports_transcoding = this.state.supports_transcoding && isMobile.any
 
     userStore.init(this.state.current_user)
     preferenceStore.init(this.state.current_user.preferences)

@@ -11,11 +11,11 @@ export interface Band {
 export const audioService = {
   unlocked: false,
 
-  context: null as unknown as AudioContext,
-  source: null as unknown as MediaElementAudioSourceNode,
-  element: null as unknown as HTMLMediaElement,
-  preampGainNode: null as unknown as GainNode,
-  analyzer: null as unknown as AnalyserNode,
+  context: null! as AudioContext,
+  source: null! as MediaElementAudioSourceNode,
+  element: null! as HTMLMediaElement,
+  preampGainNode: null! as GainNode,
+  analyzer: null! as AnalyserNode,
 
   bands: [] as Band[],
 

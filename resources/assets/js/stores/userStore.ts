@@ -22,7 +22,7 @@ export const userStore = {
 
   state: reactive({
     users: [] as User[],
-    current: null as unknown as User
+    current: null! as User
   }),
 
   syncWithVault (users: MaybeArray<User>) {

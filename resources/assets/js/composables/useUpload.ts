@@ -1,4 +1,3 @@
-import isMobile from 'ismobilejs'
 import { computed } from 'vue'
 import { commonStore } from '@/stores'
 import { acceptedMediaTypes } from '@/config'
