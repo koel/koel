@@ -14,6 +14,7 @@ export const defaultPreferences: UserPreferences = {
   artists_view_mode: null,
   albums_view_mode: null,
   transcode_on_mobile: false,
+  transcode_quality: 128,
   support_bar_no_bugging: false,
   show_album_art_overlay: true,
   lyrics_zoom_level: 1,

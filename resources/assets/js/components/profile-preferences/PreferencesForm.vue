@@ -12,13 +12,13 @@
         Playing a song or episode triggers continuous playback of the entire playlist, album, artist, genre, or podcast
       </div>
     </FormRow>
-    <FormRow v-if="isPhone">
+    <FormRow v-if="onMobile">
       <div>
         <CheckBox v-model="preferences.show_now_playing_notification" name="notify" />
         Show “Now Playing” notification
       </div>
     </FormRow>
-    <FormRow v-if="!isPhone">
+    <FormRow v-if="!onMobile">
       <div>
         <CheckBox v-model="preferences.confirm_before_closing" name="confirm_closing" />
         Confirm before closing Koel
@@ -53,17 +53,17 @@
 
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
-import { computed } from 'vue'
+import { toRef } from 'vue'
 import { commonStore, preferenceStore as preferences } from '@/stores'
 import { useKoelPlus } from '@/composables'
 
 import CheckBox from '@/components/ui/form/CheckBox.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 
-const isPhone = isMobile.phone
+const onMobile = isMobile.any
 const { isPlus } = useKoelPlus()
 
-const showTranscodingOption = computed(() => isPhone && commonStore.state.supports_transcoding)
+const showTranscodingOption = toRef(commonStore.state, 'supports_transcoding')
 </script>
 
 <style lang="postcss" scoped>
