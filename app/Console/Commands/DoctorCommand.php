@@ -184,7 +184,7 @@ class DoctorCommand extends Command
             $connector = app(YouTubeConnector::class);
 
             /** @var Song $artist */
-            $song = Song::factory()->forArtist(['name' => 'Pink Floyd'])->make(['title' => 'Comfortably Numb']);
+            $song = Song::factory()->forArtist(['name' => 'Pink Floyd'])->make(['title' => 'Comfortably Numb']); // @phpstan-ignore-line
 
             try {
                 $object = $connector->send(new SearchVideosRequest($song))->object();
@@ -208,10 +208,13 @@ class DoctorCommand extends Command
             Cache::forget(SpotifyClient::ACCESS_TOKEN_CACHE_KEY);
 
             try {
-                $image = $service->tryGetArtistImage(Artist::factory()->make([
+                /** @var Artist $artist */
+                $artist = Artist::factory()->make([
                     'id' => 999,
                     'name' => 'Pink Floyd',
-                ]));
+                ]);
+
+                $image = $service->tryGetArtistImage($artist);
 
                 if (!$image) {
                     throw new Exception('No result returned.');
