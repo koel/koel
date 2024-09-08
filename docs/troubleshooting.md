@@ -49,7 +49,7 @@ php artisan koel:doctor
 This command will check your environment and configuration for common issues (file/folder permissions, storage setup, server configuration, etc.) and provide you with a report.
 An example output might look like this:
 
-![Koel's homepage](../assets/img/doctor.webp)
+![Koel Doctor](./assets/img/doctor.webp)
 
 If you're still stuck, check below for a couple of common issues and their solutions.
 
