@@ -101,7 +101,18 @@ final class LocalStorage extends SongStorage
         throw_unless(File::delete($path), new Exception("Failed to delete song file: $path"));
     }
 
-    protected function getStorageType(): SongStorageType
+    public function testSetup(): void
+    {
+        $mediaPath = Setting::get('media_path');
+
+        if (File::isReadable($mediaPath) && File::isWritable($mediaPath)) {
+            return;
+        }
+
+        throw new Exception("The media path $mediaPath is not readable or writable.");
+    }
+
+    public function getStorageType(): SongStorageType
     {
         return SongStorageType::LOCAL;
     }

@@ -62,7 +62,7 @@ class S3CompatibleStorage extends CloudStorage
         Storage::disk('s3')->delete('test.txt');
     }
 
-    protected function getStorageType(): SongStorageType
+    public function getStorageType(): SongStorageType
     {
         return SongStorageType::S3;
     }

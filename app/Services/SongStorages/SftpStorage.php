@@ -74,12 +74,18 @@ final class SftpStorage extends SongStorage
         return $localPath;
     }
 
+    public function testSetup(): void
+    {
+        Storage::disk('sftp')->put('test.txt', 'Koel test file');
+        Storage::disk('sftp')->delete('test.txt');
+    }
+
     private function generateRemotePath(string $filename, User $uploader): string
     {
         return sprintf('%s__%s__%s', $uploader->id, Str::lower(Ulid::generate()), $filename);
     }
 
-    protected function getStorageType(): SongStorageType
+    public function getStorageType(): SongStorageType
     {
         return SongStorageType::SFTP;
     }

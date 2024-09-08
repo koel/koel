@@ -42,7 +42,7 @@ class InstallSchedulerCommand extends Command
         return self::SUCCESS;
     }
 
-    private static function schedulerInstalled(CrontabRepository $crontab): bool
+    public static function schedulerInstalled(CrontabRepository $crontab): bool
     {
         return (bool) $crontab->findJobByRegex('/artisan schedule:run/');
     }

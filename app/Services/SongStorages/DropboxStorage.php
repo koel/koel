@@ -93,7 +93,7 @@ final class DropboxStorage extends CloudStorage
         $this->filesystem->delete('test.txt');
     }
 
-    protected function getStorageType(): SongStorageType
+    public function getStorageType(): SongStorageType
     {
         return SongStorageType::DROPBOX;
     }

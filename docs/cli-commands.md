@@ -13,6 +13,7 @@ You can run `php artisan list` from your Koel installation directory and pipe th
 php artisan list | grep koel
  koel
   koel:admin:change-password  Change a user's password
+  koel:doctor                 Check Koel setup
   koel:init                   Install or upgrade Koel
   koel:license:activate       Activate a Koel Plus license
   koel:license:deactivate     Deactivate the currently active Koel Plus license
@@ -51,6 +52,16 @@ php artisan koel:admin:change-password [<email>]
 | Name    | Description                                                  |
 |---------|--------------------------------------------------------------|
 | `email` | The user's email. If empty, will get the default admin user. |
+
+### `koel:doctor`
+
+Check Koel setup.
+
+#### Usage
+
+```bash
+php artisan koel:doctor
+```
 
 ### `koel:init`
 

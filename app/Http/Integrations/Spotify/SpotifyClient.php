@@ -13,6 +13,8 @@ use SpotifyWebAPI\SpotifyWebAPI;
  */
 class SpotifyClient
 {
+    public const ACCESS_TOKEN_CACHE_KEY = 'spotify.access_token';
+
     public function __construct(
         public SpotifyWebAPI $wrapped,
         private readonly ?Session $session,
@@ -26,14 +28,14 @@ class SpotifyClient
 
     private function setAccessToken(): void
     {
-        $token = $this->cache->get('spotify.access_token');
+        $token = $this->cache->get(self::ACCESS_TOKEN_CACHE_KEY);
 
         if (!$token) {
             $this->session->requestCredentialsToken();
             $token = $this->session->getAccessToken();
 
             // Spotify's tokens expire after 1 hour, so we'll cache them with some buffer to an extra call.
-            $this->cache->put('spotify.access_token', $token, 59 * 60);
+            $this->cache->put(self::ACCESS_TOKEN_CACHE_KEY, $token, 59 * 60);
         }
 
         $this->wrapped->setAccessToken($token);
