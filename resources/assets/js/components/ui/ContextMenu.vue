@@ -1,10 +1,10 @@
 <template>
-  <OnClickOutside @trigger="close">
     <nav
       v-if="shown"
       ref="el"
       v-koel-focus
       :class="extraClass"
+      :style="{ top, left, bottom, right }"
       class="menu context-menu select-none shadow"
       tabindex="0"
       @contextmenu.prevent
@@ -14,12 +14,11 @@
         <slot>Menu items go here.</slot>
       </ul>
     </nav>
-  </OnClickOutside>
 </template>
 
 <script lang="ts" setup>
-import { OnClickOutside } from '@vueuse/components'
 import { nextTick, ref, toRefs } from 'vue'
+import { onClickOutside } from '@vueuse/core'
 import { eventBus, logger } from '@/utils'
 
 const props = defineProps<{ extraClass?: string }>()
@@ -29,6 +28,8 @@ const el = ref<HTMLElement>()
 const shown = ref(false)
 const top = ref('0')
 const left = ref('0')
+const bottom = ref('auto')
+const right = ref('auto')
 
 const preventOffScreen = async (element: HTMLElement, isSubmenu = false) => {
   const { bottom, right } = element.getBoundingClientRect()
@@ -65,7 +66,12 @@ const initSubmenus = () => {
     }
 
     item.addEventListener('mouseenter', async () => {
+      submenu.style.top = '0'
+      submenu.style.left = '100%'
+      submenu.style.bottom = 'auto'
+      submenu.style.right = 'auto'
       submenu.style.display = 'block'
+
       await nextTick()
       await preventOffScreen(submenu, true)
     })
@@ -91,6 +97,8 @@ const initSubmenus = () => {
 const open = async (t = 0, l = 0) => {
   top.value = `${t}px`
   left.value = `${l}px`
+  bottom.value = 'auto'
+  right.value = 'auto'
   shown.value = true
 
   await nextTick()
@@ -109,6 +117,8 @@ const open = async (t = 0, l = 0) => {
 
 const close = () => (shown.value = false)
 
+onClickOutside(el, close)
+
 // ensure there's only one context menu at any time
 eventBus.on('CONTEXT_MENU_OPENED', target => target === el.value || close())
 
@@ -117,9 +127,6 @@ defineExpose({ open, close, shown })
 
 <style lang="postcss" scoped>
 nav {
-  top: v-bind(top);
-  left: v-bind(left);
-
   :deep(.has-sub) {
     @apply after:absolute after:right-0 after:top-0 after:z-[2] after:opacity-0;
   }
