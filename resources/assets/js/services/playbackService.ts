@@ -17,7 +17,7 @@ import { audioService, http, socketService, volumeManager } from '@/services'
 import { useEpisodeProgressTracking } from '@/composables'
 
 /**
- * The number of seconds before the current song ends to start preload the next one.
+ * The number of seconds before the current playable ends to start preload the next one.
  */
 const PRELOAD_BUFFER = 30
 
@@ -31,8 +31,8 @@ class PlaybackService {
   }
 
   /**
-   * The next song in the queue.
-   * If we're in REPEAT_ALL mode and there's no next song, just get the first song.
+   * The next item in the queue.
+   * If we're in REPEAT_ALL mode and there's no next item, just get the first item.
    */
   public get next () {
     if (queueStore.next) {
@@ -45,8 +45,8 @@ class PlaybackService {
   }
 
   /**
-   * The previous song in the queue.
-   * If we're in REPEAT_ALL mode and there's no prev song, get the last song.
+   * The previous item in the queue.
+   * If we're in REPEAT_ALL mode and there's no prev item, get the last item.
    */
   public get previous () {
     if (queueStore.previous) {
@@ -100,7 +100,7 @@ class PlaybackService {
 
     queueStore.queueIfNotQueued(playable)
 
-    // If for any reason (most likely a bug), the requested song has been deleted, just attempt the next song.
+    // If for any reason (most likely a bug), the requested song has been deleted, just attempt the next item in queue.
     if (isSong(playable) && playable.deleted) {
       logger.warn('Attempted to play a deleted song', playable)
 
@@ -124,7 +124,7 @@ class PlaybackService {
     this.player.media.src = songStore.getSourceUrl(playable)
 
     if (position === 0) {
-      // We'll just "restart" playing the song, which will handle notification, scrobbling etc.
+      // We'll just "restart" playing the item, which will handle notification, scrobbling etc.
       // Fixes #898
       await this.restart()
     } else {
@@ -177,7 +177,7 @@ class PlaybackService {
     const playable = queueStore.current!
 
     this.recordStartTime(playable)
-    this.broadcastSong(playable)
+    this.broadcast(playable)
 
     try {
       http.silently.put('queue/playback-status', {
@@ -211,11 +211,11 @@ class PlaybackService {
   }
 
   /**
-   * Play the prev song in the queue, if one is found.
-   * If the prev song is not found and the current mode is NO_REPEAT, we stop completely.
+   * Play the prev item the queue, if one is found.
+   * If there's no prev item and the current mode is NO_REPEAT, we stop completely.
    */
   public async playPrev () {
-    // If the song's duration is greater than 5 seconds, and we've passed 5 seconds into it,
+    // If the item's duration is greater than 5 seconds, and we've passed 5 seconds into it,
     // restart playing instead.
     if (this.player.media.currentTime > 5 && queueStore.current!.length > 5) {
       this.player.restart()
@@ -231,8 +231,8 @@ class PlaybackService {
   }
 
   /**
-   * Play the next song in the queue, if one is found.
-   * If the next song is not found and the current mode is NO_REPEAT, we stop completely.
+   * Play the next item in the queue, if one is found.
+   * If there's no next item and the current mode is NO_REPEAT, we stop completely.
    */
   public async playNext () {
     if (!this.next && preferences.repeat_mode === 'NO_REPEAT') {
@@ -263,16 +263,16 @@ class PlaybackService {
   }
 
   public async resume () {
-    const song = queueStore.current!
+    const playable = queueStore.current!
 
     if (!this.player.media.src) {
       // on first load when the queue is loaded from saved state, the player's src is empty
       // we need to properly set it as well as any kind of playback metadata
-      this.player.media.src = songStore.getSourceUrl(song)
+      this.player.media.src = songStore.getSourceUrl(playable)
       this.player.seek(commonStore.state.queue_state.playback_position);
 
       await this.setNowPlayingMeta(queueStore.current!)
-      this.recordStartTime(song)
+      this.recordStartTime(playable)
     }
 
     try {
@@ -284,7 +284,7 @@ class PlaybackService {
     queueStore.current!.playback_state = 'Playing'
     navigator.mediaSession && (navigator.mediaSession.playbackState = 'playing')
 
-    this.broadcastSong(song)
+    this.broadcast(playable)
   }
 
   public async toggle () {
@@ -346,7 +346,7 @@ class PlaybackService {
     song.play_count_registered = false
   }
 
-  private broadcastSong (playable: Playable) {
+  private broadcast (playable: Playable) {
     socketService.broadcast('SOCKET_SONG', playable)
   }
 
@@ -395,15 +395,15 @@ class PlaybackService {
     })
 
     let timeUpdateHandler = () => {
-      const currentSong = queueStore.current
+      const currentPlayable = queueStore.current
 
-      if (!currentSong) return
+      if (!currentPlayable) return
 
-      if (!currentSong.play_count_registered && !this.isTranscoding) {
-        // if we've passed 25% of the song, it's safe to say the song has been "played".
+      if (!currentPlayable.play_count_registered && !this.isTranscoding) {
+        // if we've passed 25% of the playable, it's safe to say it has been "played".
         // Refer to https://github.com/koel/koel/issues/1087
         if (!media.duration || media.currentTime * 4 >= media.duration) {
-          this.registerPlay(currentSong)
+          this.registerPlay(currentPlayable)
         }
       }
 
@@ -411,27 +411,27 @@ class PlaybackService {
         // every 5 seconds, we save the current playback position to the server
         try {
           http.silently.put('queue/playback-status', {
-            song: currentSong.id,
+            song: currentPlayable.id,
             position: Math.ceil(media.currentTime)
           })
         } catch (error: unknown) {
           logger.error(error)
         }
 
-        // if the current song is an episode, we emit an event to update the progress on the client side as well
-        if (isEpisode(currentSong)) {
-          eventBus.emit('EPISODE_PROGRESS_UPDATED', currentSong, Math.ceil(media.currentTime))
+        // if the current item is an episode, we emit an event to update the progress on the client side as well
+        if (isEpisode(currentPlayable)) {
+          eventBus.emit('EPISODE_PROGRESS_UPDATED', currentPlayable, Math.ceil(media.currentTime))
         }
       }
 
-      const nextSong = queueStore.next
+      const nextPlayable = queueStore.next
 
-      if (!nextSong || nextSong.preloaded || this.isTranscoding) {
+      if (!nextPlayable || nextPlayable.preloaded || this.isTranscoding) {
         return
       }
 
       if (media.duration && media.currentTime + PRELOAD_BUFFER > media.duration) {
-        this.preload(nextSong)
+        this.preload(nextPlayable)
       }
     }
 
