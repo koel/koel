@@ -20,27 +20,28 @@ use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\PersonalAccessToken;
 
 /**
- * @property UserPreferences $preferences
- * @property int $id
- * @property bool $is_admin
- * @property string $name
- * @property string $email
- * @property string $password
- * @property-read bool $has_custom_avatar
- * @property-read string $avatar
- * @property Collection<array-key, Playlist> $playlists
- * @property Collection<array-key, PlaylistFolder> $playlist_folders
- * @property PersonalAccessToken $currentAccessToken
  * @property ?Carbon $invitation_accepted_at
+ * @property ?Carbon $invited_at
  * @property ?User $invitedBy
  * @property ?string $invitation_token
- * @property ?Carbon $invited_at
- * @property-read bool $is_prospect
  * @property Collection<array-key, Playlist> $collaboratedPlaylists
- * @property ?string $sso_provider
- * @property ?string $sso_id
- * @property bool $is_sso
+ * @property Collection<array-key, Playlist> $playlists
+ * @property Collection<array-key, PlaylistFolder> $playlist_folders
  * @property Collection<array-key, Podcast> $podcasts
+ * @property PersonalAccessToken $currentAccessToken
+ * @property UserPreferences $preferences
+ * @property bool $is_admin
+ * @property int $id
+ * @property string $email
+ * @property string $name
+ * @property string $password
+ * @property-read ?string $sso_id
+ * @property-read ?string $sso_provider
+ * @property-read bool $connected_to_lastfm Whether the user is connected to Last.fm
+ * @property-read bool $has_custom_avatar
+ * @property-read bool $is_prospect
+ * @property-read bool $is_sso
+ * @property-read string $avatar
  */
 class User extends Authenticatable
 {
@@ -126,11 +127,8 @@ class User extends Authenticatable
         return Attribute::get(fn (): bool => License::isPlus() && $this->sso_provider);
     }
 
-    /**
-     * Determine if the user is connected to Last.fm.
-     */
-    public function connectedToLastfm(): bool
+    protected function connectedToLastfm(): Attribute
     {
-        return (bool) $this->preferences->lastFmSessionKey;
+        return Attribute::get(fn (): bool => (bool) $this->preferences->lastFmSessionKey);
     }
 }

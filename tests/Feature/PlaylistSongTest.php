@@ -68,7 +68,7 @@ class PlaylistSongTest extends TestCase
         $this->postAs("api/playlists/$playlist->id/songs", ['songs' => $songs->pluck('id')->all()], $playlist->user)
             ->assertSuccessful();
 
-        self::assertEqualsCanonicalizing($songs->pluck('id')->all(), $playlist->songs->pluck('id')->all());
+        self::assertEqualsCanonicalizing($songs->pluck('id')->all(), $playlist->playables->pluck('id')->all());
     }
 
     public function testRemoveSongsFromPlaylist(): void
@@ -83,7 +83,7 @@ class PlaylistSongTest extends TestCase
 
         $playlist->addPlayables($toRemainSongs->merge($toBeRemovedSongs));
 
-        self::assertCount(7, $playlist->songs);
+        self::assertCount(7, $playlist->playables);
 
         $this->deleteAs(
             "api/playlists/$playlist->id/songs",
@@ -94,7 +94,7 @@ class PlaylistSongTest extends TestCase
 
         $playlist->refresh();
 
-        self::assertEqualsCanonicalizing($toRemainSongs->pluck('id')->all(), $playlist->songs->pluck('id')->all());
+        self::assertEqualsCanonicalizing($toRemainSongs->pluck('id')->all(), $playlist->playables->pluck('id')->all());
     }
 
     public function testNonOwnerCannotModifyPlaylist(): void

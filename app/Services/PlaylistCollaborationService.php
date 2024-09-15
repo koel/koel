@@ -65,7 +65,7 @@ class PlaylistCollaborationService
 
         DB::transaction(static function () use ($playlist, $user): void {
             $playlist->collaborators()->detach($user);
-            $playlist->songs()->wherePivot('user_id', $user->id)->detach();
+            $playlist->playables()->wherePivot('user_id', $user->id)->detach();
         });
     }
 }

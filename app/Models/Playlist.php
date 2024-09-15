@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Casts\SmartPlaylistRulesCast;
 use App\Facades\License as LicenseFacade;
+use App\Models\Song as Playable;
 use App\Values\SmartPlaylistRuleGroupCollection;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -16,7 +17,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
-use LogicException;
 
 /**
  * @property string $id
@@ -24,8 +24,7 @@ use LogicException;
  * @property bool $is_smart
  * @property int $user_id
  * @property User $user
- * @property Collection<array-key, Song> $songs
- * @property array<string> $song_ids
+ * @property Collection<array-key, Playable> $playables
  * @property ?SmartPlaylistRuleGroupCollection $rule_groups
  * @property ?SmartPlaylistRuleGroupCollection $rules
  * @property Carbon $created_at
@@ -61,9 +60,9 @@ class Playlist extends Model
         });
     }
 
-    public function songs(): BelongsToMany
+    public function playables(): BelongsToMany
     {
-        return $this->belongsToMany(Song::class)
+        return $this->belongsToMany(Playable::class)
             ->withTimestamps()
             ->withPivot('position')
             ->orderByPivot('position');
@@ -98,13 +97,6 @@ class Playlist extends Model
     {
         // aliasing the attribute to avoid confusion
         return Attribute::get(fn () => $this->rules);
-    }
-
-    public function songIds(): Attribute
-    {
-        throw_if($this->is_smart, new LogicException('Smart playlist contents are generated dynamically.'));
-
-        return Attribute::get(fn () => $this->songs->pluck('id')->all());
     }
 
     protected function cover(): Attribute
@@ -156,39 +148,39 @@ class Playlist extends Model
     }
 
     /**
-     * @param Collection|array<array-key, Song>|Song|array<string> $songs
+     * @param Collection|array<array-key, Playable>|Playable|array<string> $playables
      */
-    public function addPlayables(Collection|Song|array $songs, ?User $collaborator = null): void
+    public function addPlayables(Collection|Playable|array $playables, ?User $collaborator = null): void
     {
         $collaborator ??= $this->user;
-        $maxPosition = $this->songs()->getQuery()->max('position') ?? 0;
+        $maxPosition = $this->playables()->getQuery()->max('position') ?? 0;
 
-        if (!is_array($songs)) {
-            $songs = Collection::wrap($songs)->pluck('id')->all();
+        if (!is_array($playables)) {
+            $playables = Collection::wrap($playables)->pluck('id')->all();
         }
 
         $data = [];
 
-        foreach ($songs as $song) {
-            $data[$song] = [
+        foreach ($playables as $playable) {
+            $data[$playable] = [
                 'position' => ++$maxPosition,
                 'user_id' => $collaborator->id,
             ];
         }
 
-        $this->songs()->attach($data);
+        $this->playables()->attach($data);
     }
 
     /**
-     * @param Collection<array-key, Song>|Song|array<string> $songs
+     * @param Collection<array-key, Playable>|Playable|array<string> $playables
      */
-    public function removePlayables(Collection|Song|array $songs): void
+    public function removePlayables(Collection|Playable|array $playables): void
     {
-        if (!is_array($songs)) {
-            $songs = Collection::wrap($songs)->pluck('id')->all();
+        if (!is_array($playables)) {
+            $playables = Collection::wrap($playables)->pluck('id')->all();
         }
 
-        $this->songs()->detach($songs);
+        $this->playables()->detach($playables);
     }
 
     protected function isCollaborative(): Attribute

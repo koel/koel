@@ -50,7 +50,7 @@ class PlaylistServiceTest extends TestCase
         self::assertSame('foo', $playlist->name);
         self::assertTrue($user->is($playlist->user));
         self::assertFalse($playlist->is_smart);
-        self::assertEqualsCanonicalizing($playlist->songs->pluck('id')->all(), $songs->pluck('id')->all());
+        self::assertEqualsCanonicalizing($playlist->playables->pluck('id')->all(), $songs->pluck('id')->all());
     }
 
     public function testCreateSmartPlaylist(): void
@@ -201,9 +201,9 @@ class PlaylistServiceTest extends TestCase
         $playlist->refresh();
 
         self::assertCount(2, $addedSongs);
-        self::assertCount(5, $playlist->songs);
+        self::assertCount(5, $playlist->playables);
         self::assertEqualsCanonicalizing($addedSongs->pluck('id')->all(), $songs->pluck('id')->all());
-        $songs->each(static fn (Song $song) => self::assertTrue($playlist->songs->contains($song)));
+        $songs->each(static fn (Song $song) => self::assertTrue($playlist->playables->contains($song)));
     }
 
     public function testAddEpisodesToPlaylist(): void
@@ -222,7 +222,7 @@ class PlaylistServiceTest extends TestCase
         $playlist->refresh();
 
         self::assertCount(2, $addedEpisodes);
-        self::assertCount(5, $playlist->songs);
+        self::assertCount(5, $playlist->playables);
         self::assertEqualsCanonicalizing($addedEpisodes->pluck('id')->all(), $episodes->pluck('id')->all());
     }
 
@@ -238,7 +238,7 @@ class PlaylistServiceTest extends TestCase
         $playlist->refresh();
 
         self::assertCount(4, $addedEpisodes);
-        self::assertCount(7, $playlist->songs);
+        self::assertCount(7, $playlist->playables);
         self::assertEqualsCanonicalizing($addedEpisodes->pluck('id')->all(), $playables->pluck('id')->all());
     }
 
@@ -268,7 +268,7 @@ class PlaylistServiceTest extends TestCase
 
         $this->service->makePlaylistContentPublic($playlist);
 
-        $playlist->songs->each(static fn (Song $song) => self::assertTrue($song->is_public));
+        $playlist->playables->each(static fn (Song $song) => self::assertTrue($song->is_public));
     }
 
     public function testMoveSongsInPlaylist(): void
@@ -282,17 +282,17 @@ class PlaylistServiceTest extends TestCase
         $playlist->addPlayables($songs);
 
         $this->service->movePlayablesInPlaylist($playlist, [$ids[2], $ids[3]], $ids[0], 'after');
-        self::assertSame([$ids[0], $ids[2], $ids[3], $ids[1]], $playlist->refresh()->songs->pluck('id')->all());
+        self::assertSame([$ids[0], $ids[2], $ids[3], $ids[1]], $playlist->refresh()->playables->pluck('id')->all());
 
         $this->service->movePlayablesInPlaylist($playlist, [$ids[0]], $ids[3], 'before');
-        self::assertSame([$ids[2], $ids[0], $ids[3], $ids[1]], $playlist->refresh()->songs->pluck('id')->all());
+        self::assertSame([$ids[2], $ids[0], $ids[3], $ids[1]], $playlist->refresh()->playables->pluck('id')->all());
 
         // move to the first position
         $this->service->movePlayablesInPlaylist($playlist, [$ids[0], $ids[1]], $ids[2], 'before');
-        self::assertSame([$ids[0], $ids[1], $ids[2], $ids[3]], $playlist->refresh()->songs->pluck('id')->all());
+        self::assertSame([$ids[0], $ids[1], $ids[2], $ids[3]], $playlist->refresh()->playables->pluck('id')->all());
 
         // move to the last position
         $this->service->movePlayablesInPlaylist($playlist, [$ids[0], $ids[1]], $ids[3], 'after');
-        self::assertSame([$ids[2], $ids[3], $ids[0], $ids[1]], $playlist->refresh()->songs->pluck('id')->all());
+        self::assertSame([$ids[2], $ids[3], $ids[0], $ids[1]], $playlist->refresh()->playables->pluck('id')->all());
     }
 }

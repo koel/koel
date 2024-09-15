@@ -95,7 +95,7 @@ class PlaylistService
             $playables = Collection::wrap($playables);
 
             $playlist->addPlayables(
-                $playables->filter(static fn ($song): bool => !$playlist->songs->contains($song)),
+                $playables->filter(static fn ($song): bool => !$playlist->playables->contains($song)),
                 $user
             );
 
@@ -119,7 +119,7 @@ class PlaylistService
 
     public function makePlaylistContentPublic(Playlist $playlist): void
     {
-        $playlist->songs()->where('is_public', false)->update(['is_public' => true]);
+        $playlist->playables()->where('is_public', false)->update(['is_public' => true]);
     }
 
     public function movePlayablesInPlaylist(Playlist $playlist, array $movingIds, string $target, string $type): void
@@ -128,11 +128,11 @@ class PlaylistService
         throw_if($playlist->is_smart, OperationNotApplicableForSmartPlaylistException::class);
 
         DB::transaction(static function () use ($playlist, $movingIds, $target, $type): void {
-            $targetPosition = $playlist->songs()->wherePivot('song_id', $target)->value('position');
+            $targetPosition = $playlist->playables()->wherePivot('song_id', $target)->value('position');
             $insertPosition = $type === 'before' ? $targetPosition : $targetPosition + 1;
 
             // create a "gap" for the moving songs by incrementing the position of the songs after the target
-            $playlist->songs()
+            $playlist->playables()
                 ->newPivotQuery()
                 ->where('position', $type === 'before' ? '>=' : '>', $targetPosition)
                 ->whereNotIn('song_id', $movingIds)
@@ -144,7 +144,7 @@ class PlaylistService
                 $values[$id] = ['position' => $insertPosition++];
             }
 
-            $playlist->songs()->syncWithoutDetaching($values);
+            $playlist->playables()->syncWithoutDetaching($values);
         });
     }
 }

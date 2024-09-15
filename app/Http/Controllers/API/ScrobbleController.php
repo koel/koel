@@ -14,7 +14,7 @@ class ScrobbleController extends Controller
     /** @param User $user */
     public function __invoke(ScrobbleRequest $request, Song $song, Authenticatable $user)
     {
-        if (!$song->artist->is_unknown && $user->connectedToLastfm()) {
+        if (!$song->artist->is_unknown && $user->connected_to_lastfm) {
             ScrobbleJob::dispatch($user, $song, $request->timestamp);
         }
 

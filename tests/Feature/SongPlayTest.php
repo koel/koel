@@ -75,7 +75,7 @@ class SongPlayTest extends TestCase
             ->shouldReceive('stream')
             ->once();
 
-        $this->get("play/$song->id/1/128?t=$token->audioToken")
+        $this->get("play/$song->id/1?t=$token->audioToken")
             ->assertOk();
     }
 }

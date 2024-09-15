@@ -43,7 +43,7 @@ class PlaylistTest extends TestCase
         self::assertSame('Foo Bar', $playlist->name);
         self::assertTrue($playlist->ownedBy($user));
         self::assertNull($playlist->getFolder());
-        self::assertEqualsCanonicalizing($songs->pluck('id')->all(), $playlist->songs->pluck('id')->all());
+        self::assertEqualsCanonicalizing($songs->pluck('id')->all(), $playlist->playables->pluck('id')->all());
     }
 
     public function testCreatingSmartPlaylist(): void

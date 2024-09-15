@@ -58,7 +58,7 @@ class PlaylistSongTest extends PlusTestCase
             ->assertSuccessful();
 
         $playlist->refresh();
-        $songs->each(static fn (Song $song) => self::assertTrue($playlist->songs->contains($song)));
+        $songs->each(static fn (Song $song) => self::assertTrue($playlist->playables->contains($song)));
     }
 
     public function testCollaboratorCanRemoveSongs(): void
@@ -74,6 +74,6 @@ class PlaylistSongTest extends PlusTestCase
             ->assertSuccessful();
 
         $playlist->refresh();
-        $songs->each(static fn (Song $song) => self::assertFalse($playlist->songs->contains($song)));
+        $songs->each(static fn (Song $song) => self::assertFalse($playlist->playables->contains($song)));
     }
 }
