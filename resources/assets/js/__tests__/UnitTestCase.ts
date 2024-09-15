@@ -45,6 +45,10 @@ export default abstract class UnitTestCase {
     this.mock(http, 'request') // prevent actual HTTP requests from being made
     this.user = userEvent.setup({ delay: null }) // @see https://github.com/testing-library/user-event/issues/833
 
+    this.setReadOnlyProperty(navigator, 'clipboard', {
+      writeText: vi.fn()
+    })
+
     this.beforeEach()
     this.afterEach()
     this.test()
