@@ -31,7 +31,7 @@ class MediaMetadataService
      */
     public function writeAlbumCover(Album $album, string $source, ?string $destination = '', bool $cleanUp = true): void
     {
-        attempt(function () use ($album, $source, $destination, $cleanUp): void {
+        rescue(function () use ($album, $source, $destination, $cleanUp): void {
             $destination = $destination ?: $this->generateAlbumCoverPath();
             $this->imageWriter->write($destination, $source);
 
@@ -63,7 +63,7 @@ class MediaMetadataService
         ?string $destination = '',
         bool $cleanUp = true
     ): void {
-        attempt(function () use ($artist, $source, $destination, $cleanUp): void {
+        rescue(function () use ($artist, $source, $destination, $cleanUp): void {
             $destination = $destination ?: $this->generateArtistImagePath();
             $this->imageWriter->write($destination, $source);
 
@@ -77,7 +77,7 @@ class MediaMetadataService
 
     public function writePlaylistCover(Playlist $playlist, string $source): void
     {
-        attempt(function () use ($playlist, $source): void {
+        rescue(function () use ($playlist, $source): void {
             $destination = $this->generatePlaylistCoverPath();
             $this->imageWriter->write($destination, $source);
 

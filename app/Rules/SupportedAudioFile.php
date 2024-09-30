@@ -14,14 +14,14 @@ class SupportedAudioFile implements ValidationRule
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $passes = attempt(static function () use ($value) {
+        $passes = rescue(static function () use ($value) {
             Assert::oneOf(
                 Arr::get((new getID3())->analyze($value->getRealPath()), 'fileformat'),
                 self::SUPPORTED_FORMATS
             );
 
             return true;
-        }, false) ?? false;
+        }) ?? false;
 
         if (!$passes) {
             $fail('Unsupported audio file');

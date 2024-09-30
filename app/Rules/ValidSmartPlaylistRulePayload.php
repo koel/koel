@@ -11,7 +11,7 @@ class ValidSmartPlaylistRulePayload implements ValidationRule
 {
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $passes = (bool) attempt(static fn () => SmartPlaylistRuleGroupCollection::create(Arr::wrap($value)));
+        $passes = (bool) rescue(static fn () => SmartPlaylistRuleGroupCollection::create(Arr::wrap($value)));
 
         if (!$passes) {
             $fail('Invalid smart playlist rules');

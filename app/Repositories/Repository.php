@@ -21,7 +21,7 @@ abstract class Repository implements RepositoryInterface
 
         // This instantiation may fail during a console command if e.g. APP_KEY is empty,
         // rendering the whole installation failing.
-        attempt(fn () => $this->auth = app(Guard::class), false);
+        rescue(fn () => $this->auth = app(Guard::class));
     }
 
     private static function guessModelClass(): string
