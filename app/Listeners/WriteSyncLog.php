@@ -18,7 +18,7 @@ class WriteSyncLog
             ? $event->results->map($transformer)
             : $event->results->error()->map($transformer);
 
-        attempt(static function () use ($messages): void {
+        rescue(static function () use ($messages): void {
             $file = storage_path('logs/sync-' . now()->format('Ymd-His') . '.log');
             File::put($file, implode(PHP_EOL, $messages->toArray()));
         });

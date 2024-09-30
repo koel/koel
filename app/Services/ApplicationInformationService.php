@@ -16,7 +16,7 @@ class ApplicationInformationService
      */
     public function getLatestVersionNumber(): string
     {
-        return attempt(function () {
+        return rescue(function () {
             return Cache::remember('latestKoelVersion', now()->addDay(), function (): string {
                 return json_decode($this->client->get('https://api.github.com/repos/koel/koel/tags')->getBody())[0]
                     ->name;
