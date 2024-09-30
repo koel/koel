@@ -44,7 +44,7 @@ jobs:
       - name: Run tests
         run: composer coverage
       - name: Upload logs if broken
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: logs
