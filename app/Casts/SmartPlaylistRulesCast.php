@@ -9,11 +9,9 @@ class SmartPlaylistRulesCast implements CastsAttributes
 {
     public function get($model, string $key, $value, array $attributes): ?SmartPlaylistRuleGroupCollection
     {
-        if (!$value) {
-            return null;
-        }
-
-        return attempt(static fn () => SmartPlaylistRuleGroupCollection::create(json_decode($value, true)));
+        return $value
+            ? rescue(static fn () => SmartPlaylistRuleGroupCollection::create(json_decode($value, true)))
+            : null;
     }
 
     public function set($model, string $key, $value, array $attributes): ?string

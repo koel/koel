@@ -57,7 +57,7 @@ class AuthController extends Controller
 
     public function logout(Request $request): Response
     {
-        attempt(fn () => $this->auth->logoutViaBearerToken($request->bearerToken()));
+        rescue(fn () => $this->auth->logoutViaBearerToken($request->bearerToken()));
 
         return response()->noContent();
     }

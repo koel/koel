@@ -20,7 +20,7 @@ class ITunesService
 
     public function getTrackUrl(string $trackName, Album $album): ?string
     {
-        return attempt(function () use ($trackName, $album): ?string {
+        return rescue(function () use ($trackName, $album): ?string {
             $request = new GetTrackRequest($trackName, $album);
             $hash = md5(serialize($request->query()));
 

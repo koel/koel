@@ -2,7 +2,6 @@
 
 use App\Facades\License;
 use Illuminate\Support\Facades\File as FileFacade;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 /**
@@ -64,34 +63,14 @@ function koel_version(): string
     return trim(FileFacade::get(base_path('.version')));
 }
 
-/**
- * @throws Throwable
- */
-function attempt(callable $callback, bool $log = true, bool $throw = false): mixed
+function rescue_if($condition, callable $callback): mixed
 {
-    try {
-        return $callback();
-    } catch (Throwable $e) {
-        if (app()->runningUnitTests() || $throw) {
-            throw $e;
-        }
-
-        if ($log) {
-            Log::error('Failed attempt', ['error' => $e]);
-        }
-
-        return null;
-    }
+    return value($condition) ? rescue($callback) : null;
 }
 
-function attempt_if($condition, callable $callback, bool $log = true): mixed
+function rescue_unless($condition, callable $callback): mixed
 {
-    return value($condition) ? attempt($callback, $log) : null;
-}
-
-function attempt_unless($condition, callable $callback, bool $log = true): mixed
-{
-    return !value($condition) ? attempt($callback, $log) : null;
+    return !value($condition) ? rescue($callback) : null;
 }
 
 function gravatar(string $email, int $size = 192): string
@@ -146,5 +125,5 @@ function get_mtime(string|SplFileInfo $file): int
     $file = is_string($file) ? new SplFileInfo($file) : $file;
 
     // Workaround for #344, where getMTime() fails for certain files with Unicode names on Windows.
-    return attempt(static fn () => $file->getMTime()) ?? time();
+    return rescue(static fn () => $file->getMTime()) ?? time();
 }

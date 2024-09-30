@@ -3,8 +3,8 @@
 namespace Tests\Unit\Rules;
 
 use App\Rules\ValidSmartPlaylistRulePayload;
+use Exception;
 use Tests\TestCase;
-use Throwable;
 
 class ValidSmartPlaylistRulePayloadTest extends TestCase
 {
@@ -94,9 +94,10 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
     /** @dataProvider provideInvalidPayloads */
     public function testInvalidCases($value): void
     {
-        $this->expectException(Throwable::class);
-        (new ValidSmartPlaylistRulePayload())->validate('rules', $value, static fn ($foo) => $foo);
-        self::addToAssertionCount(1);
+        $this->expectExceptionMessage('Invalid smart playlist rules');
+
+        $fail = static fn (string $message) => throw new Exception($message);
+        (new ValidSmartPlaylistRulePayload())->validate('rules', $value, $fail);
     }
 
     /** @return array<mixed> */

@@ -11,7 +11,7 @@ return new class extends Migration {
         Schema::table('songs', static function (Blueprint $table): void {
             // This migration is actually to fix a mistake that the original one was deleted.
             // Therefore, we just "try" it and ignore on error.
-            attempt_if(Schema::hasColumn('songs', 'contributing_artist_id'), static function () use ($table): void {
+            rescue_if(Schema::hasColumn('songs', 'contributing_artist_id'), static function () use ($table): void {
                 Schema::disableForeignKeyConstraints();
 
                 if (DB::getDriverName() !== 'sqlite') { // @phpstan-ignore-line
@@ -20,7 +20,7 @@ return new class extends Migration {
 
                 $table->dropColumn('contributing_artist_id');
                 Schema::enableForeignKeyConstraints();
-            }, false);
+            });
         });
     }
 };

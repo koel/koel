@@ -111,7 +111,7 @@ class FileScanner
      */
     private function tryGenerateAlbumCover(Album $album, ?array $coverData): void
     {
-        attempt(function () use ($album, $coverData): void {
+        rescue(function () use ($album, $coverData): void {
             // If the album has no cover, we try to get the cover image from existing tag data
             if ($coverData) {
                 $this->mediaMetadataService->writeAlbumCover($album, $coverData['data']);
@@ -125,7 +125,7 @@ class FileScanner
             if ($cover) {
                 $this->mediaMetadataService->writeAlbumCover($album, $cover);
             }
-        }, false);
+        });
     }
 
     /**
@@ -157,7 +157,7 @@ class FileScanner
 
     private static function isImage(string $path): bool
     {
-        return attempt(static fn () => (bool) exif_imagetype($path)) ?? false;
+        return rescue(static fn () => (bool) exif_imagetype($path)) ?? false;
     }
 
     /**

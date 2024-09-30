@@ -12,6 +12,6 @@ class AlbumObserver
             return;
         }
 
-        attempt(static fn () => unlink($album->cover_path));
+        rescue(static fn () => unlink($album->cover_path));
     }
 }
