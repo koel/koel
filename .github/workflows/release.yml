@@ -43,31 +43,12 @@ jobs:
           tar -zcf /tmp/koel-${{ steps.get_version.outputs.VERSION }}.tar.gz koel/
       - name: Create release
         id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v2
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: ${{ steps.get_version.outputs.VERSION }}
-          release_name: ${{ steps.get_version.outputs.VERSION }}
           draft: true
           prerelease: false
-      - name: Upload release asset zip
-        id: upload-release-asset-zip
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: /tmp/koel-${{ steps.get_version.outputs.VERSION }}.zip
-          asset_name: koel-${{ steps.get_version.outputs.VERSION }}.zip
-          asset_content_type: application/zip
-      - name: Upload release asset gzip
-        id: upload-release-asset-gzip
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: /tmp/koel-${{ steps.get_version.outputs.VERSION }}.tar.gz
-          asset_name: koel-${{ steps.get_version.outputs.VERSION }}.tar.gz
-          asset_content_type: application/gzip
+          files: |
+            /tmp/koel-${{ steps.get_version.outputs.VERSION }}.zip
+            /tmp/koel-${{ steps.get_version.outputs.VERSION }}.tar.gz
