@@ -39,24 +39,28 @@ class PlaylistService
         throw_if($ownSongsOnly && (!$ruleGroups || !License::isPlus()), new InvalidArgumentException(
             '"Own songs only" option only works with smart playlists and Plus license.'
         ));
+        
+        DB::beginTransaction();
+        try {
+            $playlist = $user->playlists()->create([
+                'name' => $name,
+                'rules' => $ruleGroups,
+                'own_songs_only' => $ownSongsOnly,
+            ]);
 
-        return DB::transaction(
-            static function () use ($name, $user, $playables, $folder, $ruleGroups, $ownSongsOnly): Playlist {
-                $playlist = $user->playlists()->create([
-                    'name' => $name,
-                    'rules' => $ruleGroups,
-                    'own_songs_only' => $ownSongsOnly,
-                ]);
+            $folder?->playlists()->attach($playlist);
 
-                $folder?->playlists()->attach($playlist);
-
-                if (!$playlist->is_smart && $playables) {
-                    $playlist->addPlayables($playables, $user);
-                }
-
-                return $playlist;
+            if (!$playlist->is_smart && $playables) {
+                $playlist->addPlayables($playables, $user);
             }
-        );
+
+            DB::commit();
+
+            return $playlist;
+          } catch (\Throwable $th) {
+             DB::rollback();
+             throw $e;
+         }
     }
 
     public function updatePlaylist(
