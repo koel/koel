@@ -109,12 +109,14 @@ class User extends Authenticatable
 
     protected function avatar(): Attribute
     {
-        return Attribute::get(fn (): string => avatar_or_gravatar(Arr::get($this->attributes, 'avatar'), $this->email));
+        return Attribute::get(fn (): string => avatar_or_gravatar(Arr::get($this->attributes, 'avatar'), $this->email))
+            ->shouldCache();
     }
 
     protected function hasCustomAvatar(): Attribute
     {
-        return Attribute::get(fn (): bool => (bool) Arr::get($this->attributes, 'avatar'));
+        return Attribute::get(fn (): bool => (bool) Arr::get($this->attributes, 'avatar'))
+            ->shouldCache();
     }
 
     protected function isProspect(): Attribute
@@ -124,11 +126,11 @@ class User extends Authenticatable
 
     protected function isSso(): Attribute
     {
-        return Attribute::get(fn (): bool => License::isPlus() && $this->sso_provider);
+        return Attribute::get(fn (): bool => License::isPlus() && $this->sso_provider)->shouldCache();
     }
 
     protected function connectedToLastfm(): Attribute
     {
-        return Attribute::get(fn (): bool => (bool) $this->preferences->lastFmSessionKey);
+        return Attribute::get(fn (): bool => (bool) $this->preferences->lastFmSessionKey)->shouldCache();
     }
 }

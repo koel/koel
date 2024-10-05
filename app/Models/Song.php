@@ -134,11 +134,6 @@ class Song extends Model
         return $this->belongsTo(Album::class);
     }
 
-    protected function albumArtist(): Attribute
-    {
-        return Attribute::get(fn () => $this->album?->artist);
-    }
-
     public function podcast(): BelongsTo
     {
         return $this->belongsTo(Podcast::class);
@@ -152,6 +147,11 @@ class Song extends Model
     public function interactions(): HasMany
     {
         return $this->hasMany(Interaction::class);
+    }
+
+    protected function albumArtist(): Attribute
+    {
+        return Attribute::get(fn () => $this->album?->artist)->shouldCache();
     }
 
     protected function type(): Attribute
@@ -175,7 +175,7 @@ class Song extends Model
 
     protected function storageMetadata(): Attribute
     {
-        return new Attribute(
+        return (new Attribute(
             get: function (): SongStorageMetadata {
                 try {
                     switch ($this->storage) {
@@ -202,7 +202,7 @@ class Song extends Model
                     return LocalMetadata::make($this->path);
                 }
             }
-        );
+        ))->shouldCache();
     }
 
     public static function getPathFromS3BucketAndKey(string $bucket, string $key): string
