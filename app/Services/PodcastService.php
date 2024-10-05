@@ -148,7 +148,7 @@ class PodcastService
 
         // We use insert() instead of $podcast->episodes()->createMany() for better performance,
         // as the latter would trigger a separate query for each episode.
-        Episode::insert($records);
+        Episode::query()->insert($records);
 
         // Since insert() doesn't trigger model events, Scout operations will not be called.
         // We have to manually update the search index.
@@ -190,7 +190,7 @@ class PodcastService
         }
 
         try {
-            $lastModified = Http::send('HEAD', $podcast->url)->header('Last-Modified');
+            $lastModified = Http::head($podcast->url)->header('Last-Modified');
 
             return $lastModified
                 && Carbon::createFromFormat(Carbon::RFC1123, $lastModified)->isAfter($podcast->last_synced_at);
@@ -204,10 +204,7 @@ class PodcastService
      */
     public function getStreamableUrl(string|Episode $url, ?Client $client = null, string $method = 'OPTIONS'): ?string
     {
-        if (!is_string($url)) {
-            $url = $url->path;
-        }
-
+        $url = $url instanceof Episode ? $url->path : $url;
         $client ??= new Client();
 
         try {
