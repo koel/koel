@@ -74,7 +74,7 @@
 import { faFile } from '@fortawesome/free-regular-svg-icons'
 import { differenceBy } from 'lodash'
 import { computed, ref, watch } from 'vue'
-import { eventBus, pluralize } from '@/utils'
+import { eventBus, pluralize, localStorage } from '@/utils'
 import { commonStore, playlistStore, songStore } from '@/stores'
 import { downloadService, playlistCollaborationService } from '@/services'
 import {
@@ -146,7 +146,9 @@ const fetchDetails = async (refresh = false) => {
     ])
 
     sortField.value ??= (playlist.value?.is_smart ? 'title' : 'position')
-    sort(sortField.value, 'asc')
+
+    const overwriteSort = false;
+    sort(sortField.value, 'asc', overwriteSort)
   } catch (error: unknown) {
     useErrorHandler().handleHttpError(error)
   } finally {
@@ -154,7 +156,20 @@ const fetchDetails = async (refresh = false) => {
   }
 }
 
-const sort = (field: MaybeArray<PlayableListSortField> | null, order: SortOrder) => {
+const sort = (
+  field: MaybeArray<PlayableListSortField> | null, 
+  order: SortOrder, 
+  overwriteSort: boolean = true
+) => {  
+  if (overwriteSort) {
+    localStorage.setItem('koelPlaylistSortDefault', { field, order })
+  }
+
+  if (localStorage?.getItem('koelPlaylistSortDefault')) {
+    const { field, order } = localStorage.getItem('koelPlaylistSortDefault')
+    return baseSort(field, order)
+  }
+
   listConfig.reorderable = field === 'position'
 
   if (field !== 'position') {

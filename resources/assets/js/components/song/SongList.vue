@@ -86,7 +86,7 @@
     <VirtualScroller
       v-slot="{ item }: { item: PlayableRow }"
       :item-height="64"
-      :items="rows"
+      :items="sortedRows"
       @scroll="onScroll"
       @scrolled-to-end="$emit('scrolled-to-end')"
     >
@@ -112,7 +112,7 @@ import { findIndex, findLastIndex, sortBy, throttle } from 'lodash'
 import isMobile from 'ismobilejs'
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons'
 import { computed, nextTick, onMounted, Ref, ref, watch } from 'vue'
-import { arrayify, eventBus, getPlayableCollectionContentType, requireInjection } from '@/utils'
+import { arrayify, eventBus, getPlayableCollectionContentType, requireInjection, localStorage } from '@/utils'
 import { preferenceStore as preferences, queueStore } from '@/stores'
 import { useDraggable, useDroppable } from '@/composables'
 import { playbackService } from '@/services'
@@ -365,6 +365,15 @@ const onPlay = async (playable: Playable) => {
 
   await playbackService.play(playable)
 }
+
+const sortedRows = computed(() => {
+  const locallyStoredSortDetails = localStorage.getItem('koelPlaylistSortDefault');
+
+  const sortField = locallyStoredSortDetails?.field ?? 'position';
+  const sortOrder = locallyStoredSortDetails?.order ?? 'asc';
+
+  return sortBy(rows.value, [sortField, sortOrder]);
+})
 
 defineExpose({
   getAllPlayablesWithSort
