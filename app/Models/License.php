@@ -36,11 +36,11 @@ class License extends Model
 
     protected function shortKey(): Attribute
     {
-        return Attribute::get(fn (): string => '****-' . Str::afterLast($this->key, '-'));
+        return Attribute::get(fn (): string => '****-' . Str::afterLast($this->key, '-'))->shouldCache();
     }
 
     protected function activatedAt(): Attribute
     {
-        return Attribute::get(fn () => $this->instance->createdAt);
+        return Attribute::get(fn () => $this->instance->createdAt)->shouldCache();
     }
 }

@@ -90,7 +90,7 @@ class Playlist extends Model
 
     protected function isSmart(): Attribute
     {
-        return Attribute::get(fn (): bool => (bool) $this->rule_groups?->isNotEmpty());
+        return Attribute::get(fn (): bool => (bool) $this->rule_groups?->isNotEmpty())->shouldCache();
     }
 
     protected function ruleGroups(): Attribute
@@ -101,7 +101,7 @@ class Playlist extends Model
 
     protected function cover(): Attribute
     {
-        return Attribute::get(static fn (?string $value): ?string => playlist_cover_url($value));
+        return Attribute::get(static fn (?string $value): ?string => playlist_cover_url($value))->shouldCache();
     }
 
     protected function coverPath(): Attribute
@@ -110,7 +110,7 @@ class Playlist extends Model
             $cover = Arr::get($this->attributes, 'cover');
 
             return $cover ? playlist_cover_path($cover) : null;
-        });
+        })->shouldCache();
     }
 
     public function ownedBy(User $user): bool
@@ -185,9 +185,9 @@ class Playlist extends Model
 
     protected function isCollaborative(): Attribute
     {
-        return Attribute::get(fn (): bool => !$this->is_smart
-            && LicenseFacade::isPlus()
-            && $this->collaborators->isNotEmpty());
+        return Attribute::get(
+            fn (): bool => !$this->is_smart && LicenseFacade::isPlus() && $this->collaborators->isNotEmpty()
+        )->shouldCache();
     }
 
     /** @inheritdoc */

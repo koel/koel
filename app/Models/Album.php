@@ -96,8 +96,9 @@ class Album extends Model
 
     protected function hasCover(): Attribute
     {
-        return Attribute::get(fn (): bool => $this->cover_path
-            && (app()->runningUnitTests() || File::exists($this->cover_path)));
+        return Attribute::get(
+            fn (): bool => $this->cover_path && (app()->runningUnitTests() || File::exists($this->cover_path))
+        )->shouldCache();
     }
 
     protected function coverPath(): Attribute
@@ -106,7 +107,7 @@ class Album extends Model
             $cover = Arr::get($this->attributes, 'cover');
 
             return $cover ? album_cover_path($cover) : null;
-        });
+        })->shouldCache();
     }
 
     /**
@@ -115,7 +116,7 @@ class Album extends Model
      */
     protected function name(): Attribute
     {
-        return Attribute::get(static fn (string $value) => html_entity_decode($value));
+        return Attribute::get(static fn (string $value) => html_entity_decode($value))->shouldCache();
     }
 
     protected function thumbnailName(): Attribute
@@ -128,17 +129,19 @@ class Album extends Model
             $parts = pathinfo($this->cover_path);
 
             return sprintf('%s_thumb.%s', $parts['filename'], $parts['extension']);
-        });
+        })->shouldCache();
     }
 
     protected function thumbnailPath(): Attribute
     {
-        return Attribute::get(fn () => $this->thumbnail_name ? album_cover_path($this->thumbnail_name) : null);
+        return Attribute::get(fn () => $this->thumbnail_name ? album_cover_path($this->thumbnail_name) : null)
+            ->shouldCache();
     }
 
     protected function thumbnail(): Attribute
     {
-        return Attribute::get(fn () => $this->thumbnail_name ? album_cover_url($this->thumbnail_name) : null);
+        return Attribute::get(fn () => $this->thumbnail_name ? album_cover_url($this->thumbnail_name) : null)
+            ->shouldCache();
     }
 
     /** @deprecated Only here for backward compat with mobile apps */

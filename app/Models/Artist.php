@@ -97,7 +97,8 @@ class Artist extends Model
      */
     protected function name(): Attribute
     {
-        return Attribute::get(static fn (string $value): string => html_entity_decode($value) ?: self::UNKNOWN_NAME);
+        return Attribute::get(static fn (string $value): string => html_entity_decode($value) ?: self::UNKNOWN_NAME)
+            ->shouldCache();
     }
 
     /**
@@ -105,12 +106,13 @@ class Artist extends Model
      */
     protected function image(): Attribute
     {
-        return Attribute::get(static fn (?string $value): ?string => artist_image_url($value));
+        return Attribute::get(static fn (?string $value): ?string => artist_image_url($value))->shouldCache();
     }
 
     protected function imagePath(): Attribute
     {
-        return Attribute::get(fn (): ?string => artist_image_path(Arr::get($this->attributes, 'image')));
+        return Attribute::get(fn (): ?string => artist_image_path(Arr::get($this->attributes, 'image')))
+            ->shouldCache();
     }
 
     protected function hasImage(): Attribute
@@ -119,7 +121,7 @@ class Artist extends Model
             $image = Arr::get($this->attributes, 'image');
 
             return $image && (app()->runningUnitTests() || File::exists(artist_image_path($image)));
-        });
+        })->shouldCache();
     }
 
     /** @return array<mixed> */
