@@ -157,7 +157,8 @@ const fetchDetails = async (refresh = false) => {
   }
 }
 
-const { get: lsGet, set: lsSet } = useLocalStorage()
+const useLsAuthorization = false;
+const { get: lsGet, set: lsSet } = useLocalStorage(useLsAuthorization)
 
 interface PlaylistSort {
   field: MaybeArray<PlayableListSortField> | null;
