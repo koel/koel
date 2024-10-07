@@ -110,6 +110,10 @@ article {
     }
   }
 
+  .plays {
+    min-width: 3.5rem;
+  }
+
   button {
     @apply text-current;
   }
