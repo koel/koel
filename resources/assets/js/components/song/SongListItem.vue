@@ -35,9 +35,7 @@
       <span :title="playable.collaboration.added_at" class="added-at">{{ playable.collaboration.fmt_added_at }}</span>
     </template>
     <span class="time">{{ fmtLength }}</span>
-    <span class="plays" :data-testid="`play-count-${playable.id}`">
-      {{ humanReadablePlayCount(playable.play_count) }}
-    </span>
+    <span class="plays">{{ humanReadablePlayCount(playable.play_count) }}</span>
     <span class="extra">
       <LikeButton :playable="playable" />
     </span>
