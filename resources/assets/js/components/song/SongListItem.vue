@@ -37,9 +37,7 @@
     <span class="time">{{ fmtLength }}</span>
     <span
       v-if="isSong(playable)"
-      v-koel-tooltip.top
       class="plays"
-      :title="`${playable.play_count} ${playable.play_count === 1 ? 'play' : 'plays'}`"
     >
       {{ localePlayCount }}
     </span>
