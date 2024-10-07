@@ -369,7 +369,9 @@ const onPlay = async (playable: Playable) => {
 const { get: lsGet } = useLocalStorage()
 
 const sortedRows = computed(() => {
-  const locallyStoredSortDetails = lsGet('koelPlaylistSortDefault');
+  const playlistId = context.entity?.id
+
+  const locallyStoredSortDetails = lsGet(`koelPlaylistSortDefaultForId_${playlistId}`);
 
   const sortField = locallyStoredSortDetails?.field ?? 'position';
   const sortOrder = locallyStoredSortDetails?.order ?? 'asc';

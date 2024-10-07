@@ -171,10 +171,10 @@ const sort = (
   overwriteSort: boolean = true
 ) => {
   if (overwriteSort) {
-    lsSet('koelPlaylistSortDefault', { field, order });
+    lsSet(`koelPlaylistSortDefaultForId_${playlistId.value}`, { field, order });
   }
 
-  const storedSort = lsGet<PlaylistSort>('koelPlaylistSortDefault');
+  const storedSort = lsGet<PlaylistSort>(`koelPlaylistSortDefaultForId_${playlistId.value}`);
 
   if (storedSort) {
     const { field: storedField, order: storedOrder } = storedSort;
