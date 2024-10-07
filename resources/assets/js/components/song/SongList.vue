@@ -114,7 +114,7 @@ import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons'
 import { computed, nextTick, onMounted, Ref, ref, watch } from 'vue'
 import { arrayify, eventBus, getPlayableCollectionContentType, requireInjection, localStorage } from '@/utils'
 import { preferenceStore as preferences, queueStore } from '@/stores'
-import { useDraggable, useDroppable } from '@/composables'
+import { useDraggable, useDroppable, useLocalStorage } from '@/composables'
 import { playbackService } from '@/services'
 import {
   PlayableListConfigKey,
@@ -366,8 +366,10 @@ const onPlay = async (playable: Playable) => {
   await playbackService.play(playable)
 }
 
+const { get: lsGet } = useLocalStorage()
+
 const sortedRows = computed(() => {
-  const locallyStoredSortDetails = localStorage.getItem('koelPlaylistSortDefault');
+  const locallyStoredSortDetails = lsGet('koelPlaylistSortDefault');
 
   const sortField = locallyStoredSortDetails?.field ?? 'position';
   const sortOrder = locallyStoredSortDetails?.order ?? 'asc';

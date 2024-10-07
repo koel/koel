@@ -74,7 +74,7 @@
 import { faFile } from '@fortawesome/free-regular-svg-icons'
 import { differenceBy } from 'lodash'
 import { computed, ref, watch } from 'vue'
-import { eventBus, pluralize, localStorage } from '@/utils'
+import { eventBus, pluralize } from '@/utils'
 import { commonStore, playlistStore, songStore } from '@/stores'
 import { downloadService, playlistCollaborationService } from '@/services'
 import {
@@ -83,7 +83,8 @@ import {
   usePlaylistManagement,
   useRouter,
   useSongList,
-  useSongListControls
+  useSongListControls,
+  useLocalStorage
 } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -156,29 +157,37 @@ const fetchDetails = async (refresh = false) => {
   }
 }
 
+const { get: lsGet, set: lsSet } = useLocalStorage()
+
+interface PlaylistSort {
+  field: MaybeArray<PlayableListSortField> | null;
+  order: SortOrder;
+}
+
 const sort = (
   field: MaybeArray<PlayableListSortField> | null, 
   order: SortOrder, 
   overwriteSort: boolean = true
-) => {  
+) => {
   if (overwriteSort) {
-    localStorage.setItem('koelPlaylistSortDefault', { field, order })
+    lsSet('koelPlaylistSortDefault', { field, order });
   }
 
-  if (localStorage?.getItem('koelPlaylistSortDefault')) {
-    const { field, order } = localStorage.getItem('koelPlaylistSortDefault')
-    return baseSort(field, order)
+  const storedSort = lsGet<PlaylistSort>('koelPlaylistSortDefault');
+
+  if (storedSort) {
+    const { field: storedField, order: storedOrder } = storedSort;
+    return baseSort(storedField, storedOrder);
   }
 
-  listConfig.reorderable = field === 'position'
+  listConfig.reorderable = field === 'position';
 
   if (field !== 'position') {
-    return baseSort(field, order)
+    return baseSort(field, order);
   }
 
-  // To sort by position, we simply re-assign the songs array from the playlist, which maintains the original order.
-  songs.value = playlist.value!.playables!
-}
+  songs.value = playlist.value!.playables!;
+};
 
 const onReorder = (target: Playable, type: MoveType) => {
   playlistStore.moveItemsInPlaylist(playlist.value!, selectedPlayables.value, target, type)
