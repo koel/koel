@@ -74,7 +74,7 @@
 
       <span
         v-if="contentType === 'songs'"
-        data-testid="header-play-count"
+        class="plays"
         role="button"
         title="Sort by play count"
         @click="sort('play_count')"
@@ -466,8 +466,8 @@ onMounted(() => render())
       width: 200%;
     }
 
-    .song-item :is(.track-number, .album, .time, .added-at),
-    .song-list-header :is(.track-number, .album, .time, .added-at) {
+    .song-item :is(.track-number, .album, .time, .added-at, .plays),
+    .song-list-header :is(.track-number, .album, .time, .added-at, .plays) {
       display: none;
     }
 
