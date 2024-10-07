@@ -83,7 +83,8 @@ import {
   usePlaylistManagement,
   useRouter,
   useSongList,
-  useSongListControls
+  useSongListControls,
+  useLocalStorage
 } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -146,7 +147,9 @@ const fetchDetails = async (refresh = false) => {
     ])
 
     sortField.value ??= (playlist.value?.is_smart ? 'title' : 'position')
-    sort(sortField.value, 'asc')
+
+    const overwriteSort = false;
+    sort(sortField.value, 'asc', overwriteSort)
   } catch (error: unknown) {
     useErrorHandler().handleHttpError(error)
   } finally {
@@ -154,16 +157,38 @@ const fetchDetails = async (refresh = false) => {
   }
 }
 
-const sort = (field: MaybeArray<PlayableListSortField> | null, order: SortOrder) => {
-  listConfig.reorderable = field === 'position'
+const useLsAuthorization = false;
+const { get: lsGet, set: lsSet } = useLocalStorage(useLsAuthorization)
 
-  if (field !== 'position') {
-    return baseSort(field, order)
+interface PlaylistSort {
+  field: MaybeArray<PlayableListSortField> | null;
+  order: SortOrder;
+}
+
+const sort = (
+  field: MaybeArray<PlayableListSortField> | null, 
+  order: SortOrder, 
+  overwriteSort: boolean = true
+) => {
+  if (overwriteSort) {
+    lsSet(`koelPlaylistSortDefaultForId_${playlistId.value}`, { field, order });
   }
 
-  // To sort by position, we simply re-assign the songs array from the playlist, which maintains the original order.
-  songs.value = playlist.value!.playables!
-}
+  const storedSort = lsGet<PlaylistSort>(`koelPlaylistSortDefaultForId_${playlistId.value}`);
+
+  if (storedSort) {
+    const { field: storedField, order: storedOrder } = storedSort;
+    return baseSort(storedField, storedOrder);
+  }
+
+  listConfig.reorderable = field === 'position';
+
+  if (field !== 'position') {
+    return baseSort(field, order);
+  }
+
+  songs.value = playlist.value!.playables!;
+};
 
 const onReorder = (target: Playable, type: MoveType) => {
   playlistStore.moveItemsInPlaylist(playlist.value!, selectedPlayables.value, target, type)
