@@ -14,7 +14,7 @@
       <SoundBars v-if="playable.playback_state === 'Playing'" />
       <span v-else class="text-k-text-secondary">
         <template v-if="isSong(playable)">{{ playable.track || '' }}</template>
-        <Icon :icon="faPodcast" v-else />
+        <Icon v-else :icon="faPodcast" />
       </span>
     </span>
     <span class="thumbnail leading-none">
@@ -27,7 +27,7 @@
       </span>
       <span class="artist">{{ artist }}</span>
     </span>
-    <span class="album">{{ album }}</span>
+    <span class="album">{{ album }}</span>    
     <template v-if="config.collaborative">
       <span class="collaborator">
         <UserAvatar :user="collaborator" width="24" />
@@ -35,6 +35,7 @@
       <span :title="playable.collaboration.added_at" class="added-at">{{ playable.collaboration.fmt_added_at }}</span>
     </template>
     <span class="time">{{ fmtLength }}</span>
+    <span class="plays"> {{ playable.play_count }}</span>
     <span class="extra">
       <LikeButton :playable="playable" />
     </span>
