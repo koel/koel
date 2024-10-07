@@ -29,24 +29,45 @@ class SongService
         if (count($ids) === 1) {
             // If we're only updating one song, an empty non-required should be converted to the default values.
             // This allows the user to clear those fields.
-            $data->disc = $data->disc ?: 1;
-            $data->track = $data->track ?: 0;
-            $data->lyrics = $data->lyrics ?: '';
-            $data->year = $data->year ?: null;
-            $data->genre = $data->genre ?: '';
-            $data->albumArtistName = $data->albumArtistName ?: $data->artistName;
+            $this->setSingleTrackData($data);
         }
-
+        
         return DB::transaction(function () use ($ids, $data): Collection {
-            return collect($ids)->reduce(function (Collection $updated, string $id) use ($data): Collection {
-                optional(
-                    Song::query()->with('album.artist')->find($id),
-                    fn (Song $song) => $updated->push($this->updateSong($song, clone $data)) // @phpstan-ignore-line
-                );
+            $multiSong = count($ids) > 1;
+            $noTrackUpdate = $multiSong && !$data->track;
 
-                return $updated;
-            }, collect());
+            return collect($ids)
+                ->reduce(function (Collection $updated, string $id) use ($data, $noTrackUpdate): Collection {
+                    $foundSong = Song::query()->with('album.artist')->find($id);
+
+                    if ($noTrackUpdate) {
+                        $data->track = $foundSong->track;
+                    }
+        
+                    optional(
+                        $foundSong,
+                        fn (Song $song) => $updated->push($this->updateSong($song, clone $data)) // @phpstan-ignore-line
+                    );
+        
+                    if ($noTrackUpdate) {
+                        $data->track = null;
+                    }
+        
+                    return $updated;
+                }, collect());
         });
+    }
+
+    private function setSingleTrackData(SongUpdateData $data): object
+    {
+        $data->disc = $data->disc ?: 1;
+        $data->track = $data->track ?: 0;
+        $data->lyrics = $data->lyrics ?: '';
+        $data->year = $data->year ?: null;
+        $data->genre = $data->genre ?: '';
+        $data->albumArtistName = $data->albumArtistName ?: $data->artistName;
+
+        return $data;
     }
 
     private function updateSong(Song $song, SongUpdateData $data): Song
