@@ -35,7 +35,9 @@
       <span :title="playable.collaboration.added_at" class="added-at">{{ playable.collaboration.fmt_added_at }}</span>
     </template>
     <span class="time">{{ fmtLength }}</span>
-    <span class="plays"> {{ playable.play_count }}</span>
+    <span class="plays" :data-testid="`play-count-${playable.id}`">
+      {{ humanReadablePlayCount(playable.play_count) }}
+    </span>
     <span class="extra">
       <LikeButton :playable="playable" />
     </span>
@@ -48,6 +50,7 @@ import { computed, toRefs } from 'vue'
 import { getPlayableProp, isSong, requireInjection, secondsToHis } from '@/utils'
 import { useAuthorization, useKoelPlus } from '@/composables'
 import { PlayableListConfigKey } from '@/symbols'
+import { humanReadablePlayCount } from '@/utils'
 
 import LikeButton from '@/components/song/SongLikeButton.vue'
 import SoundBars from '@/components/ui/SoundBars.vue'
