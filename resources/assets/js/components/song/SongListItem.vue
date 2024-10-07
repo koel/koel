@@ -35,8 +35,13 @@
       <span :title="playable.collaboration.added_at" class="added-at">{{ playable.collaboration.fmt_added_at }}</span>
     </template>
     <span class="time">{{ fmtLength }}</span>
-    <span v-if="isSong(playable)" class="plays">
-      {{ humanReadablePlayCount(playable.play_count) }}
+    <span
+      v-if="isSong(playable)"
+      v-koel-tooltip.top
+      class="plays"
+      :title="`${playable.play_count} ${playable.play_count === 1 ? 'play' : 'plays'}`"
+    >
+      {{ localePlayCount }}
     </span>
     <span class="extra">
       <LikeButton :playable="playable" />
@@ -83,6 +88,8 @@ const album = computed(() => getPlayableProp(playable.value, 'album_name', 'podc
 const collaborator = computed<Pick<User, 'name' | 'avatar'>>(
   () => (playable.value as CollaborativeSong).collaboration.user
 )
+
+const localePlayCount = computed(() => playable.value.play_count.toLocaleString());
 
 const play = () => emit('play', playable.value)
 </script>

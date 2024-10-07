@@ -31,33 +31,5 @@ new class extends UnitTestCase {
     ])('takes %d elements from %d position', (count, position, result) => {
       expect(limitBy(['a', 'b', 'c', 'd'], count, position)).toEqual(result)
     })
-
-    it('humanReadablePlayCount returns correct value for 0', () => {
-      expect(humanReadablePlayCount(0)).toBe('0')
-    })
-  
-    it('humanReadablePlayCount returns correct value for 1', () => {
-      expect(humanReadablePlayCount(1)).toBe('1')
-    })
-  
-    it('humanReadablePlayCount returns correct value for 100', () => {
-      expect(humanReadablePlayCount(100)).toBe('100')
-    })
-  
-    it('humanReadablePlayCount returns correct value for 1000', () => {
-      expect(humanReadablePlayCount(1000)).toBe('1k')
-    })
-  
-    it('humanReadablePlayCount returns correct value for 100000', () => {
-      expect(humanReadablePlayCount(100000)).toBe('100k')
-    })
-  
-    it('humanReadablePlayCount returns correct value for 1000000', () => {
-      expect(humanReadablePlayCount(1000000)).toBe('1M')
-    })
-  
-    it('humanReadablePlayCount returns correct value for 100000000', () => {
-      expect(humanReadablePlayCount(100000000)).toBe('100M')
-    })
   }
 }
