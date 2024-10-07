@@ -74,3 +74,13 @@ export const openPopup = (url: string, name: string, width: number, height: numb
   const x = parent.top!.outerWidth / 2 + parent.top!.screenX - (width / 2)
   return parent.open(url, name, `toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${width}, height=${height}, top=${y}, left=${x}`)
 }
+
+export const humanReadablePlayCount = (num: number) => {
+  if (num >= 1_000_000) {
+    return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+  }
+  if (num >= 1000) {
+    return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+  }
+  return num.toLocaleString();
+}
