@@ -87,7 +87,13 @@ const collaborator = computed<Pick<User, 'name' | 'avatar'>>(
   () => (playable.value as CollaborativeSong).collaboration.user
 )
 
-const localePlayCount = computed(() => playable.value.play_count.toLocaleString());
+const localePlayCount = computed(() => {
+  const playCount = playable.value.play_count;
+
+  if (playCount > 999999) return humanReadablePlayCount(playCount);
+
+  return playCount.toLocaleString()
+});
 
 const play = () => emit('play', playable.value)
 </script>
@@ -119,7 +125,7 @@ article {
   }
 
   .plays {
-    min-width: 3.5rem;
+    min-width: 5.5rem;
   }
 
   button {
