@@ -59,6 +59,5 @@ new class extends UnitTestCase {
     it('humanReadablePlayCount returns correct value for 100000000', () => {
       expect(humanReadablePlayCount(100000000)).toBe('100M')
     })
-  
   }
 }
