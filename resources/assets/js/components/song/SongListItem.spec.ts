@@ -17,7 +17,8 @@ new class extends UnitTestCase {
         playback_state: 'Playing',
         track: 12,
         album_cover: 'https://example.com/cover.jpg',
-        liked: true
+        liked: true,
+        play_count: 10
       })
 
       const { html } = this.renderComponent(song)

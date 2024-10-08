@@ -469,7 +469,7 @@ type PlayableListContext = {
 }
 
 type PlayableListSortField =
-  keyof Pick<Song, 'track' | 'disc' | 'title' | 'album_name' | 'length' | 'artist_name' | 'created_at'>
+  keyof Pick<Song, 'track' | 'disc' | 'title' | 'album_name' | 'length' | 'artist_name' | 'play_count' | 'created_at'>
   | keyof Pick<Episode, 'podcast_author' | 'podcast_title'>
   | 'position'
 

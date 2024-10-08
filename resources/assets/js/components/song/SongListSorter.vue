@@ -14,10 +14,10 @@
         >
           <span>{{ item.label }}</span>
           <span class="icon hidden ml-3">
-          <Icon v-if="field === 'position'" :icon="faCheck" />
-          <Icon v-else-if="order === 'asc'" :icon="faArrowUp" />
-          <Icon v-else :icon="faArrowDown" />
-        </span>
+            <Icon v-if="field === 'position'" :icon="faCheck" />
+            <Icon v-else-if="order === 'asc'" :icon="faArrowUp" />
+            <Icon v-else :icon="faArrowDown" />
+          </span>
         </li>
       </menu>
     </OnClickOutside>
@@ -60,6 +60,7 @@ type MenuItems = { label: string, field: MaybeArray<PlayableListSortField> }
   const album: MenuItems = { label: 'Album', field: 'album_name' }
   const track: MenuItems = { label: 'Track & Disc', field: 'track' }
   const time: MenuItems = { label: 'Time', field: 'length' }
+  const playCount: MenuItems = { label: 'Play Count', field: 'play_count' }
   const dateAdded: MenuItems = { label: 'Date Added', field: 'created_at' }
   const podcast: MenuItems = { label: 'Podcast', field: 'podcast_title' }
   const albumOrPodcast: MenuItems = { label: 'Album or Podcast', field: ['album_name', 'podcast_title'] }
@@ -71,6 +72,10 @@ type MenuItems = { label: string, field: MaybeArray<PlayableListSortField> }
     items = [title, podcast, author, time, dateAdded]
   } else if (contentType.value === 'mixed') {
     items = [title, albumOrPodcast, artistOrAuthor, time, dateAdded]
+  }
+
+  if (contentType.value === 'songs') {
+    items.push(playCount)
   }
 
   if (hasCustomOrderSort.value) {

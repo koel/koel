@@ -14,7 +14,7 @@
       <SoundBars v-if="playable.playback_state === 'Playing'" />
       <span v-else class="text-k-text-secondary">
         <template v-if="isSong(playable)">{{ playable.track || '' }}</template>
-        <Icon :icon="faPodcast" v-else />
+        <Icon v-else :icon="faPodcast" />
       </span>
     </span>
     <span class="thumbnail leading-none">
@@ -27,7 +27,7 @@
       </span>
       <span class="artist">{{ artist }}</span>
     </span>
-    <span class="album">{{ album }}</span>
+    <span class="album">{{ album }}</span>    
     <template v-if="config.collaborative">
       <span class="collaborator">
         <UserAvatar :user="collaborator" width="24" />
@@ -35,6 +35,12 @@
       <span :title="playable.collaboration.added_at" class="added-at">{{ playable.collaboration.fmt_added_at }}</span>
     </template>
     <span class="time">{{ fmtLength }}</span>
+    <span
+      v-if="isSong(playable)"
+      class="plays"
+    >
+      {{ localePlayCount }}
+    </span>
     <span class="extra">
       <LikeButton :playable="playable" />
     </span>
@@ -47,6 +53,7 @@ import { computed, toRefs } from 'vue'
 import { getPlayableProp, isSong, requireInjection, secondsToHis } from '@/utils'
 import { useAuthorization, useKoelPlus } from '@/composables'
 import { PlayableListConfigKey } from '@/symbols'
+import { humanReadablePlayCount } from '@/utils'
 
 import LikeButton from '@/components/song/SongLikeButton.vue'
 import SoundBars from '@/components/ui/SoundBars.vue'
@@ -80,6 +87,14 @@ const collaborator = computed<Pick<User, 'name' | 'avatar'>>(
   () => (playable.value as CollaborativeSong).collaboration.user
 )
 
+const localePlayCount = computed(() => {
+  const playCount = playable.value.play_count;
+
+  if (playCount > 999999) return humanReadablePlayCount(playCount);
+
+  return playCount.toLocaleString()
+});
+
 const play = () => emit('play', playable.value)
 </script>
 
@@ -107,6 +122,10 @@ article {
     span {
       @apply overflow-hidden whitespace-nowrap text-ellipsis block;
     }
+  }
+
+  .plays {
+    min-width: 5.5rem;
   }
 
   button {
