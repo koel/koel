@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Events\LibraryChanged;
 use App\Events\MediaScanCompleted;
+use App\Jobs\ScanSongsJob;
 use App\Models\Song;
 use App\Repositories\SettingRepository;
 use App\Repositories\SongRepository;
@@ -21,6 +22,8 @@ class MediaScanner
     /** @var array<array-key, callable> */
     private array $events = [];
 
+    private const SONG_JOB_CHUNK_COUNT = 500;
+
     public function __construct(
         private readonly SettingRepository $settingRepository,
         private readonly SongRepository $songRepository,
@@ -29,7 +32,7 @@ class MediaScanner
     ) {
     }
 
-    public function scan(ScanConfiguration $config): ScanResultCollection
+    public function scan(ScanConfiguration $config): ?ScanResultCollection
     {
         /** @var string $mediaPath */
         $mediaPath = $this->settingRepository->getByKey('media_path');
@@ -43,6 +46,27 @@ class MediaScanner
             $this->events['paths-gathered']($songPaths);
         }
 
+        $shouldChunk = count($songPaths) > self::SONG_JOB_CHUNK_COUNT;
+
+        if (!$shouldChunk) {
+            $results = $this->processSongs($songPaths, $config, $results);
+
+            $this->dispatchCompletedEvents($results);
+        } else {
+            logger("processing into jobs");
+            $results = $this->processIntoJobs($songPaths, $config);
+
+            return null;
+        }
+
+        return $results;
+    }
+
+    public function processSongs(
+        array $songPaths,
+        ScanConfiguration $config,
+        ScanResultCollection $results
+    ): ScanResultCollection {
         foreach ($songPaths as $path) {
             try {
                 $result = $this->fileScanner->setFile($path)->scan($config);
@@ -50,19 +74,35 @@ class MediaScanner
                 $result = ScanResult::error($path, 'Possible invalid file');
             }
 
-            $results->add($result);
-
             if (isset($this->events['progress'])) {
                 $this->events['progress']($result);
             }
         }
 
+        return $results;
+    }
+
+    private function processIntoJobs(
+        array $songPaths,
+        ScanConfiguration $config,
+    ): ScanResultCollection {
+        $filePaths = array_map(static fn ($file) => $file->getRealPath(), $songPaths);
+
+        $chunks = array_chunk($filePaths, self::SONG_JOB_CHUNK_COUNT);
+    
+        foreach ($chunks as $chunk) {
+            $results = ScanSongsJob::dispatch($chunk, $config);
+        }
+
+        return $results;
+    }
+
+    public function dispatchCompletedEvents(ScanResultCollection $results): void
+    {
         event(new MediaScanCompleted($results));
 
         // Trigger LibraryChanged, so that PruneLibrary handler is fired to prune the lib.
         event(new LibraryChanged());
-
-        return $results;
     }
 
     /**
