@@ -73,6 +73,8 @@ class MediaScanner
                 $result = ScanResult::error($path, 'Possible invalid file');
             }
 
+            $results->add($result);
+
             if (isset($this->events['progress'])) {
                 $this->events['progress']($result);
             }
