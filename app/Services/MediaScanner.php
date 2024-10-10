@@ -32,7 +32,7 @@ class MediaScanner
     ) {
     }
 
-    public function scan(ScanConfiguration $config): ?ScanResultCollection
+    public function scan(ScanConfiguration $config): ScanResultCollection
     {
         /** @var string $mediaPath */
         $mediaPath = $this->settingRepository->getByKey('media_path');
@@ -53,9 +53,7 @@ class MediaScanner
 
             $this->dispatchCompletedEvents($results);
         } else {
-            $results = $this->processIntoJobs($songPaths, $config);
-
-            return null;
+            return $this->processIntoJobs($songPaths, $config);
         }
 
         return $results;
