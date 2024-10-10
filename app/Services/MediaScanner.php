@@ -53,7 +53,6 @@ class MediaScanner
 
             $this->dispatchCompletedEvents($results);
         } else {
-            logger("processing into jobs");
             $results = $this->processIntoJobs($songPaths, $config);
 
             return null;
