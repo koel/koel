@@ -27,10 +27,11 @@ class ScanSongsJob implements ShouldQueue
         $this->config = $config;
     }
 
-    public function handle(MediaScanner $scanner): void
+    public function handle(MediaScanner $scanner): ScanResultCollection
     {
         $results = ScanResultCollection::create();
         $results = $scanner->processSongs($this->songs, $this->config, $results);
         $scanner->dispatchCompletedEvents($results);
+        return $results;
     }
 }
