@@ -85,7 +85,7 @@
 
     <VirtualScroller
       v-slot="{ item }: { item: PlayableRow }"
-      :item-height="64"
+      :item-height="84"
       :items="rows"
       @scroll="onScroll"
       @scrolled-to-end="$emit('scrolled-to-end')"
@@ -94,6 +94,7 @@
         :key="item.playable.id"
         :item="item"
         draggable="true"
+        :show-disc="showDiscLabel(item.playable)"
         @click="onClick(item, $event)"
         @dragleave="onDragLeave"
         @dragstart="onDragStart(item, $event)"
@@ -102,7 +103,11 @@
         @drop.prevent="onDrop(item, $event)"
         @dragend.prevent="onDragEnd"
         @contextmenu.prevent="openContextMenu(item, $event)"
-      />
+      >
+        <!-- <template v-if="showDiscLabel(item)" #disc>
+          <p class="moomin">Disc {{ item.playable.disc }}</p>
+        </template> -->
+      </SongListItem>
     </VirtualScroller>
   </div>
 </template>
@@ -365,6 +370,28 @@ const onPlay = async (playable: Playable) => {
 
   await playbackService.play(playable)
 }
+
+const discIndexMap = computed(() => {
+  const map: { [key: number]: number } = {};
+  rows.value.forEach((row, index) => {
+    const { disc } = row.playable;
+    if (!Object.values(map).includes(disc)) {
+      map[index] = disc;
+    }
+  });
+  return map;
+});
+
+const noOrOneDiscOnly = computed(() => Object.keys(discIndexMap.value).length <= 1);
+
+const showDiscLabel = (row: Playable) => {
+  if (noOrOneDiscOnly.value) {
+    return false;
+  }
+
+  const index = findIndex(rows.value, ({ playable }) => playable.id === row.id);
+  return discIndexMap.value[index] !== undefined;
+};
 
 defineExpose({
   getAllPlayablesWithSort

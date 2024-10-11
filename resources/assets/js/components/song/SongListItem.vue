@@ -1,44 +1,48 @@
 <template>
-  <article
-    :class="{ playing, external, selected: item.selected }"
-    class="song-item group text-k-text-secondary border-b border-k-border !max-w-full h-[64px] flex
+  <div>
+    <p v-if="showDisc" class="moomin">Disc {{ item.playable.disc }}</p>
+
+    <article
+      :class="{ playing, external, selected: item.selected }"
+      class="song-item group text-k-text-secondary border-b border-k-border !max-w-full h-[64px] flex
     items-center transition-[background-color,_box-shadow] ease-in-out duration-200
     focus:rounded-md focus focus-within:rounded-md focus:ring-inset focus:ring-1 focus:!ring-k-accent
     focus-within:ring-inset focus-within:ring-1 focus-within:!ring-k-accent
     hover:bg-white/5 hover:ring-inset hover:ring-1 hover:ring-white/10 hover:rounded-md"
-    data-testid="song-item"
-    tabindex="0"
-    @dblclick.prevent.stop="play"
-  >
-    <span class="track-number">
-      <SoundBars v-if="playable.playback_state === 'Playing'" />
-      <span v-else class="text-k-text-secondary">
-        <template v-if="isSong(playable)">{{ playable.track || '' }}</template>
-        <Icon :icon="faPodcast" v-else />
+      data-testid="song-item"
+      tabindex="0"
+      @dblclick.prevent.stop="play"
+    >
+      <span class="track-number">
+        <SoundBars v-if="playable.playback_state === 'Playing'" />
+        <span v-else class="text-k-text-secondary">
+          <template v-if="isSong(playable)">{{ playable.track || '' }}</template>
+          <Icon v-else :icon="faPodcast" />
+        </span>
       </span>
-    </span>
-    <span class="thumbnail leading-none">
-      <SongThumbnail :playable="playable" />
-    </span>
-    <span class="title-artist flex flex-col gap-2 overflow-hidden">
-      <span class="title text-k-text-primary !flex gap-2 items-center">
-        <ExternalMark v-if="external" class="!inline-block" />
-        {{ playable.title }}
+      <span class="thumbnail leading-none">
+        <SongThumbnail :playable="playable" />
       </span>
-      <span class="artist">{{ artist }}</span>
-    </span>
-    <span class="album">{{ album }}</span>
-    <template v-if="config.collaborative">
-      <span class="collaborator">
-        <UserAvatar :user="collaborator" width="24" />
+      <span class="title-artist flex flex-col gap-2 overflow-hidden">
+        <span class="title text-k-text-primary !flex gap-2 items-center">
+          <ExternalMark v-if="external" class="!inline-block" />
+          {{ playable.title }}
+        </span>
+        <span class="artist">{{ artist }}</span>
       </span>
-      <span :title="playable.collaboration.added_at" class="added-at">{{ playable.collaboration.fmt_added_at }}</span>
-    </template>
-    <span class="time">{{ fmtLength }}</span>
-    <span class="extra">
-      <LikeButton :playable="playable" />
-    </span>
-  </article>
+      <span class="album">{{ album }}</span>
+      <template v-if="config.collaborative">
+        <span class="collaborator">
+          <UserAvatar :user="collaborator" width="24" />
+        </span>
+        <span :title="playable.collaboration.added_at" class="added-at">{{ playable.collaboration.fmt_added_at }}</span>
+      </template>
+      <span class="time">{{ fmtLength }}</span>
+      <span class="extra">
+        <LikeButton :playable="playable" />
+      </span>
+    </article>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -59,7 +63,7 @@ const [config] = requireInjection<[Partial<PlayableListConfig>]>(PlayableListCon
 const { currentUser } = useAuthorization()
 const { isPlus } = useKoelPlus()
 
-const props = defineProps<{ item: PlayableRow }>()
+const props = defineProps<{ item: PlayableRow, showDisc: boolean }>()
 const { item } = toRefs(props)
 
 const emit = defineEmits<{ (e: 'play', playable: Playable): void }>()
