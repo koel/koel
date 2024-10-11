@@ -380,8 +380,9 @@ const discIndexMap = computed(() => {
 
 const noOrOneDiscOnly = computed(() => Object.keys(discIndexMap.value).length <= 1);
 const sortingByTrack = computed(() => sortField.value === 'track');
+const inAlbumContext = computed(() => context.type === 'Album');
 
-const noDiscLabel = computed(() => noOrOneDiscOnly.value || !sortingByTrack.value);
+const noDiscLabel = computed(() => noOrOneDiscOnly.value || !sortingByTrack.value || !inAlbumContext.value);
 
 const showDiscLabel = (row: Playable) => {
   if (noDiscLabel.value) {
