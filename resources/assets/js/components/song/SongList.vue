@@ -85,7 +85,7 @@
 
     <VirtualScroller
       v-slot="{ item }: { item: PlayableRow }"
-      :item-height="84"
+      :item-height="calculatedItemHeight"
       :items="rows"
       @scroll="onScroll"
       @scrolled-to-end="$emit('scrolled-to-end')"
@@ -381,12 +381,10 @@ const discIndexMap = computed(() => {
 const noOrOneDiscOnly = computed(() => Object.keys(discIndexMap.value).length <= 1);
 const sortingByTrack = computed(() => sortField.value === 'track');
 
-const showDiscLabel = (row: Playable) => {
-  if (noOrOneDiscOnly.value) {
-    return false;
-  }
+const noDiscLabel = computed(() => noOrOneDiscOnly.value || !sortingByTrack.value);
 
-  if (!sortingByTrack.value) {
+const showDiscLabel = (row: Playable) => {
+  if (noDiscLabel.value) {
     return false;
   }
 
@@ -394,6 +392,20 @@ const showDiscLabel = (row: Playable) => {
   return discIndexMap.value[index] !== undefined;
 };
 
+const standardSongItemHeight = 64;
+const discNumberHeight = 32.5
+
+const calculatedItemHeight = computed(() => {
+  if (noDiscLabel.value) return standardSongItemHeight;
+
+  const discCount = Object.keys(discIndexMap.value).length;
+  const totalAdditionalPixels = discCount * discNumberHeight;
+
+  const totalHeight = (rows.value.length * standardSongItemHeight) + totalAdditionalPixels;
+  const averageHeight = totalHeight / rows.value.length;
+
+  return averageHeight;
+});
 defineExpose({
   getAllPlayablesWithSort
 })

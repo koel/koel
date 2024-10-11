@@ -1,6 +1,11 @@
 <template>
   <div>
-    <p v-if="showDisc" class="moomin">DISC {{ item.playable.disc }}</p>
+    <p
+      v-if="showDisc"
+      class="title text-k-text-primary !flex gap-2 p-2"
+    >
+      DISC {{ item.playable.disc }}
+    </p>
 
     <article
       :class="{ playing, external, selected: item.selected }"
@@ -47,7 +52,7 @@
 
 <script lang="ts" setup>
 import { faPodcast } from '@fortawesome/free-solid-svg-icons'
-import { computed, toRefs } from 'vue'
+import { computed, toRefs, withDefaults } from 'vue'
 import { getPlayableProp, isSong, requireInjection, secondsToHis } from '@/utils'
 import { useAuthorization, useKoelPlus } from '@/composables'
 import { PlayableListConfigKey } from '@/symbols'
@@ -63,7 +68,10 @@ const [config] = requireInjection<[Partial<PlayableListConfig>]>(PlayableListCon
 const { currentUser } = useAuthorization()
 const { isPlus } = useKoelPlus()
 
-const props = defineProps<{ item: PlayableRow, showDisc: boolean }>()
+const props = withDefaults(defineProps<{ item: PlayableRow, showDisc: boolean }>(), {
+  showDisc: false
+});
+
 const { item } = toRefs(props)
 
 const emit = defineEmits<{ (e: 'play', playable: Playable): void }>()
