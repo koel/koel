@@ -385,9 +385,7 @@ const inAlbumContext = computed(() => context.type === 'Album');
 const noDiscLabel = computed(() => noOrOneDiscOnly.value || !sortingByTrack.value || !inAlbumContext.value);
 
 const showDiscLabel = (row: Playable) => {
-  if (noDiscLabel.value) {
-    return false;
-  }
+  if (noDiscLabel.value) return false;
 
   const index = findIndex(rows.value, ({ playable }) => playable.id === row.id);
   return discIndexMap.value[index] !== undefined;
