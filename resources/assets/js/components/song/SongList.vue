@@ -103,11 +103,7 @@
         @drop.prevent="onDrop(item, $event)"
         @dragend.prevent="onDragEnd"
         @contextmenu.prevent="openContextMenu(item, $event)"
-      >
-        <!-- <template v-if="showDiscLabel(item)" #disc>
-          <p class="moomin">Disc {{ item.playable.disc }}</p>
-        </template> -->
-      </SongListItem>
+      />
     </VirtualScroller>
   </div>
 </template>
@@ -383,9 +379,14 @@ const discIndexMap = computed(() => {
 });
 
 const noOrOneDiscOnly = computed(() => Object.keys(discIndexMap.value).length <= 1);
+const sortingByTrack = computed(() => sortField.value === 'track');
 
 const showDiscLabel = (row: Playable) => {
   if (noOrOneDiscOnly.value) {
+    return false;
+  }
+
+  if (!sortingByTrack.value) {
     return false;
   }
 

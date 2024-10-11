@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p v-if="showDisc" class="moomin">Disc {{ item.playable.disc }}</p>
+    <p v-if="showDisc" class="moomin">DISC {{ item.playable.disc }}</p>
 
     <article
       :class="{ playing, external, selected: item.selected }"
