@@ -29,9 +29,20 @@ new class extends UnitTestCase {
       await this.user.dblClick(screen.getByTestId('song-item'))
       expect(emitted().play).toBeTruthy()
     })
+
+    it('renders disc info when showDisc is true', async () => {
+      const song = factory('song', {
+        disc: 2,
+        title: 'Test Song'
+      })
+      
+      const showDisc = true
+      const { getByText } = this.renderComponent(song, showDisc)
+      expect(getByText('DISC 2')).to.exist
+    })    
   }
 
-  private renderComponent (playable?: Playable) {
+  private renderComponent (playable?: Playable, showDisc = false) {
     playable = playable ?? factory('song')
 
     row = {
@@ -41,7 +52,8 @@ new class extends UnitTestCase {
 
     return this.render(SongListItem, {
       props: {
-        item: row
+        item: row,
+        showDisc
       }
     })
   }

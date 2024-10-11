@@ -1,11 +1,11 @@
 <template>
   <div>
-    <p
-      v-if="showDisc"
+    <h4
+      v-if="showDisc && item.playable.disc"
       class="title text-k-text-primary !flex gap-2 p-2"
     >
       DISC {{ item.playable.disc }}
-    </p>
+    </h4>
 
     <article
       :class="{ playing, external, selected: item.selected }"
