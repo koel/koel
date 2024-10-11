@@ -392,7 +392,7 @@ const showDiscLabel = (row: Playable) => {
 };
 
 const standardSongItemHeight = 64;
-const discNumberHeight = 32.5
+const discNumberHeight = 32.5;
 
 const calculatedItemHeight = computed(() => {
   if (noDiscLabel.value) return standardSongItemHeight;
@@ -405,6 +405,7 @@ const calculatedItemHeight = computed(() => {
 
   return averageHeight;
 });
+
 defineExpose({
   getAllPlayablesWithSort
 })
