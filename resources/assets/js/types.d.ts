@@ -158,6 +158,7 @@ interface Playable {
   playback_state?: PlaybackState
   liked: boolean
   fmt_length?: string
+  begin_at_seconds?: number
   created_at: string
 }
 

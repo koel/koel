@@ -363,7 +363,9 @@ const onPlay = async (playable: Playable) => {
     queueStore.replaceQueueWith(getAllPlayablesWithSort())
   }
 
-  await playbackService.play(playable)
+  const position = playable.begin_at_seconds ?? 0
+
+  await playbackService.play(playable, position);
 }
 
 defineExpose({

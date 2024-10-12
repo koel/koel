@@ -146,6 +146,7 @@
                 min="0"
                 name="start_second"
                 type="number"
+                @update:model-value="handleBeginAtSecondsUpdate"
               />
             </div>
           </formrow>
@@ -265,6 +266,12 @@ const maybeClose = async () => {
   }
 
   await showConfirmDialog('Discard all changes?') && close()
+}
+
+const handleBeginAtSecondsUpdate = (value: string) => {
+  if (value === '') {
+    formData.begin_at_seconds = null
+  }
 }
 
 const submit = async () => {
