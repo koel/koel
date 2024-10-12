@@ -178,6 +178,7 @@ interface Song extends Playable {
   lyrics: string
   is_public: boolean
   deleted?: boolean
+  begin_at_seconds?: number
 }
 
 interface Episode extends Playable {
