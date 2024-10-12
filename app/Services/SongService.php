@@ -35,6 +35,7 @@ class SongService
             $data->year = $data->year ?: null;
             $data->genre = $data->genre ?: '';
             $data->albumArtistName = $data->albumArtistName ?: $data->artistName;
+            $data->begin_at_seconds = $data->begin_at_seconds ?: 0;
         }
 
         return DB::transaction(function () use ($ids, $data): Collection {
@@ -77,6 +78,7 @@ class SongService
         $song->disc = $data->disc;
         $song->genre = $data->genre;
         $song->year = $data->year;
+        $song->begin_at_seconds = $data->begin_at_seconds;
 
         $song->push();
 

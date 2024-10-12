@@ -17,7 +17,7 @@ export type SongUpdateData = {
   year?: number | null
   genre?: string
   visibility?: 'public' | 'private' | 'unchanged'
-  begin_in_seconds?: number
+  begin_at_seconds?: number
 }
 
 export interface SongUpdateResult {

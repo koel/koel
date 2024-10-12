@@ -135,6 +135,20 @@
               />
             </FormRow>
           </FormRow>
+
+          <FormRow>
+            <template #label>Start track at seconds (optional)</template>
+            <div class="flex gap-2">
+              <TextInput
+                v-model="formData.begin_at_seconds"
+                :placeholder="inputPlaceholder"
+                data-testid="start-second-input"
+                min="0"
+                name="start_second"
+                type="number"
+              />
+            </div>
+          </formrow>
         </TabPanel>
 
         <TabPanel
@@ -210,7 +224,8 @@ const formData = reactive<SongUpdateData>({
   track: allSongsShareSameValue('track') && songs[0].track !== 0 ? songs[0].track : null,
   disc: allSongsShareSameValue('disc') && songs[0].disc !== 0 ? songs[0].disc : null,
   year: allSongsShareSameValue('year') ? songs[0].year : null,
-  genre: allSongsShareSameValue('genre') ? songs[0].genre : ''
+  genre: allSongsShareSameValue('genre') ? songs[0].genre : '',
+  begin_at_seconds: allSongsShareSameValue('begin_at_seconds') ? songs[0].begin_at_seconds : null,
 })
 
 // If the album artist(s) is the same as the artist(s), we set the form value as empty to not confuse the user
