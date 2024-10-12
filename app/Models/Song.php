@@ -37,6 +37,7 @@ use Throwable;
  * @property ?Artist $artist
  * @property ?Artist $album_artist
  * @property float $length
+ * @property ?int $begin_at_seconds
  * @property string $lyrics
  * @property int $track
  * @property int $disc
@@ -86,6 +87,7 @@ class Song extends Model
         'title' => SongTitleCast::class,
         'lyrics' => SongLyricsCast::class,
         'length' => 'float',
+        'begin_at_seconds' => 'int',
         'mtime' => 'int',
         'track' => 'int',
         'disc' => 'int',
