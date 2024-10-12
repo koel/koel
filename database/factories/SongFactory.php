@@ -20,6 +20,7 @@ class SongFactory extends Factory
             'artist_id' => static fn (array $attributes) => Album::find($attributes['album_id'])->artist_id, // @phpstan-ignore-line
             'title' => $this->faker->sentence,
             'length' => $this->faker->randomFloat(2, 10, 500),
+            'begin_at_seconds' => 0,
             'track' => random_int(1, 20),
             'disc' => random_int(1, 5),
             'lyrics' => $this->faker->paragraph(),
