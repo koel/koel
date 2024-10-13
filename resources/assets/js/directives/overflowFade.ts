@@ -1,4 +1,4 @@
-import { Directive } from 'vue'
+import type { Directive } from 'vue'
 import { useIntersectionObserver } from '@vueuse/core'
 
 const toggleClasses = (el: HTMLElement) => {
@@ -10,5 +10,5 @@ export const overflowFade: Directive = {
   mounted: async (el: HTMLElement) => {
     useIntersectionObserver(el, ([{ isIntersecting }]) => isIntersecting && toggleClasses(el))
     el.addEventListener('scroll', () => requestAnimationFrame(() => toggleClasses(el)))
-  }
+  },
 }

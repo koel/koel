@@ -26,7 +26,7 @@ const { go, isCurrentScreen } = useRouter()
 const { toastWarning, toastSuccess } = useMessageToaster()
 
 const { acceptsDrop, resolveDroppedItems } = useDroppable(
-  ['playables', 'album', 'artist', 'playlist', 'playlist-folder']
+  ['playables', 'album', 'artist', 'playlist', 'playlist-folder'],
 )
 
 const droppable = ref(false)

@@ -7,7 +7,7 @@ import Component from './QRLogin.vue'
 new class extends UnitTestCase {
   protected beforeEach () {
     vi.mock('@vueuse/integrations/useQRCode', () => ({
-      useQRCode: () => 'data:image/png;base64,my-qr-code'
+      useQRCode: () => 'data:image/png;base64,my-qr-code',
     }))
   }
 

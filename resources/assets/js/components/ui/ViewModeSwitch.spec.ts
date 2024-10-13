@@ -7,8 +7,8 @@ new class extends UnitTestCase {
     it.each<[ArtistAlbumViewMode]>([['thumbnails'], ['list']])('renders %s mode', mode => {
       expect(this.render(ViewModeSwitch, {
         props: {
-          modelValue: mode
-        }
+          modelValue: mode,
+        },
       }).html()).toMatchSnapshot()
     })
   }

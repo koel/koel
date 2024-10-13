@@ -83,7 +83,7 @@ import {
   usePlayableMenuMethods,
   usePlaylistManagement,
   usePolicies,
-  useRouter
+  useRouter,
 } from '@/composables'
 
 const { toastSuccess, toastError, toastWarning } = useMessageToaster()
@@ -101,13 +101,15 @@ const {
   queueToTop,
   addToFavorites,
   addToExistingPlaylist,
-  addToNewPlaylist
+  addToNewPlaylist,
 } = usePlayableMenuMethods(playables, close)
 
 const playlists = toRef(playlistStore.state, 'playlists')
 
 const downloadable = computed(() => {
-  if (!commonStore.state.allows_download) return false
+  if (!commonStore.state.allows_download) {
+    return false
+  }
 
   // If multiple playables are selected, make sure zip extension is available on the server
   return playables.value.length === 1 || commonStore.state.supports_batch_downloading
@@ -118,14 +120,16 @@ const currentSong = toRef(queueStore, 'current')
 
 const { currentUserCan } = usePolicies()
 
+const contentType = computed(() => getPlayableCollectionContentType(playables.value))
 const canEditSongs = computed(() => contentType.value === 'songs' && currentUserCan.editSong(playables.value as Song[]))
 const onlyOneSongSelected = computed(() => playables.value.length === 1)
 const firstSongPlaying = computed(() => playables.value.length ? playables.value[0].playback_state === 'Playing' : false)
 const normalPlaylists = computed(() => playlists.value.filter(({ is_smart }) => !is_smart))
+const canBeShared = computed(() => !isPlus.value || (isSong(playables.value[0]) && playables.value[0].is_public))
 
 const makePublic = () => trigger(async () => {
   if (contentType.value !== 'songs') {
-    throw 'Only songs can be marked as public or private'
+    throw new Error('Only songs can be marked as public or private')
   }
 
   await songStore.publicize(playables.value as Song[])
@@ -134,13 +138,13 @@ const makePublic = () => trigger(async () => {
 
 const makePrivate = () => trigger(async () => {
   if (contentType.value !== 'songs') {
-    throw 'Only songs can be marked as public or private'
+    throw new Error('Only songs can be marked as public or private')
   }
 
   const privatizedIds = await songStore.privatize(playables.value as Song[])
 
   if (!privatizedIds.length) {
-    toastError('Songs cannot be marked as private if they’part of a collaborative playlist.')
+    toastError('Songs cannot be marked as private if they’re part of a collaborative playlist.')
     return
   }
 
@@ -152,27 +156,26 @@ const makePrivate = () => trigger(async () => {
   toastSuccess(`Marked ${pluralize(playables.value, 'song')} as private.`)
 })
 
-const canBeShared = computed(() => !isPlus.value || (isSong(playables.value[0]) && playables.value[0].is_public))
-const contentType = computed(() => getPlayableCollectionContentType(playables.value))
-
 const visibilityActions = computed(() => {
-  if (contentType.value !== 'songs' || !canEditSongs.value) return []
+  if (contentType.value !== 'songs' || !canEditSongs.value) {
+    return []
+  }
 
-  const visibilities = Array.from(new Set((playables.value as Song[]).map((song => song.is_public
-      ? 'public'
-      : 'private'
-  ))))
+  const visibilities = Array.from(new Set((playables.value as Song[]).map(song => song.is_public
+    ? 'public'
+    : 'private',
+  )))
 
   if (visibilities.length === 2) {
     return [
       {
         label: 'Unmark as Private',
-        handler: makePublic
+        handler: makePublic,
       },
       {
         label: 'Mark as Private',
-        handler: makePrivate
-      }
+        handler: makePrivate,
+      },
     ]
   }
 
@@ -182,7 +185,9 @@ const visibilityActions = computed(() => {
 })
 
 const canBeRemovedFromPlaylist = computed(() => {
-  if (!isCurrentScreen('Playlist')) return false
+  if (!isCurrentScreen('Playlist')) {
+    return false
+  }
   const playlist = playlistStore.byId(getRouteParam('id')!)
   return playlist && !playlist.is_smart
 })
@@ -191,7 +196,9 @@ const isQueueScreen = computed(() => isCurrentScreen('Queue'))
 const isFavoritesScreen = computed(() => isCurrentScreen('Favorites'))
 
 const doPlayback = () => trigger(async () => {
-  if (!playables.value.length) return
+  if (!playables.value.length) {
+    return
+  }
 
   switch (playables.value[0].playback_state) {
     case 'Playing':
@@ -211,7 +218,7 @@ const doPlayback = () => trigger(async () => {
 const openEditForm = () => trigger(() =>
   playables.value.length
   && contentType.value === 'songs'
-  && eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', playables.value as Song[])
+  && eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', playables.value as Song[]),
 )
 
 const viewAlbum = (song: Song) => trigger(() => go(`album/${song.album_id}`))
@@ -222,7 +229,9 @@ const download = () => trigger(() => downloadService.fromPlayables(playables.val
 
 const removePlayablesFromPlaylist = () => trigger(async () => {
   const playlist = playlistStore.byId(getRouteParam('id')!)
-  if (!playlist) return
+  if (!playlist) {
+    return
+  }
 
   await removeFromPlaylist(playlist, playables.value)
 })

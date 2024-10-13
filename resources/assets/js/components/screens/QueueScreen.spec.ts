@@ -36,7 +36,7 @@ new class extends UnitTestCase {
       })
     })
 
-    it('Shuffles all', async () => {
+    it('shuffles all', async () => {
       const songs = factory('song', 3)
       this.renderComponent(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
@@ -52,9 +52,9 @@ new class extends UnitTestCase {
     this.render(Component, {
       global: {
         stubs: {
-          SongList: this.stub('song-list')
-        }
-      }
+          SongList: this.stub('song-list'),
+        },
+      },
     })
   }
 }

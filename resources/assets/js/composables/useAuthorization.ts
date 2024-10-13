@@ -7,6 +7,6 @@ export const useAuthorization = () => {
 
   return {
     currentUser,
-    isAdmin
+    isAdmin,
   }
 }

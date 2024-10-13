@@ -41,8 +41,8 @@
         <a href="https://github.com/phanan" rel="noopener" target="_blank">Phan An</a>
         and quite a few
         <a href="https://github.com/koel/core/graphs/contributors" rel="noopener" target="_blank">awesome</a>&nbsp;<a
-        href="https://github.com/koel/koel/graphs/contributors" rel="noopener" target="_blank"
-      >contributors</a>.
+          href="https://github.com/koel/koel/graphs/contributors" rel="noopener" target="_blank"
+        >contributors</a>.
       </p>
 
       <CreditsBlock v-if="isDemo" />
@@ -71,17 +71,18 @@ import Btn from '@/components/ui/form/Btn.vue'
 import BtnUpgradeToPlus from '@/components/koel-plus/BtnUpgradeToPlus.vue'
 import CreditsBlock from '@/components/meta/CreditsBlock.vue'
 
+const emit = defineEmits<{ (e: 'close'): void }>()
+
 const {
   shouldNotifyNewVersion,
   currentVersion,
   latestVersion,
-  latestVersionReleaseUrl
+  latestVersionReleaseUrl,
 } = useNewVersionNotification()
 
 const { isPlus, license } = useKoelPlus()
 const { isAdmin } = useAuthorization()
 
-const emit = defineEmits<{ (e: 'close'): void }>()
 const close = () => emit('close')
 
 const showPlusModal = () => {
@@ -89,7 +90,7 @@ const showPlusModal = () => {
   eventBus.emit('MODAL_SHOW_KOEL_PLUS')
 }
 
-const isDemo = window.IS_DEMO;
+const isDemo = window.IS_DEMO
 </script>
 
 <style lang="postcss" scoped>

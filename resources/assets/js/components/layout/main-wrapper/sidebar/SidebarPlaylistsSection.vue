@@ -29,7 +29,9 @@ const playlists = toRef(playlistStore.state, 'playlists')
 const favorites = toRef(favoriteStore.state, 'playables')
 
 const orphanPlaylists = computed(() => playlists.value.filter(({ folder_id }) => {
-  if (folder_id === null) return true
+  if (folder_id === null) {
+    return true
+  }
 
   // if the playlist's folder is not found, it's an orphan
   // this can happen if the playlist belongs to another user (collaborative playlist)

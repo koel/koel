@@ -85,7 +85,7 @@ new class extends UnitTestCase {
 
   private async renderComponent (_album?: Album) {
     album = _album || factory('album', {
-      name: 'IV'
+      name: 'IV',
     })
 
     const rendered = this.render(AlbumContextMenu)

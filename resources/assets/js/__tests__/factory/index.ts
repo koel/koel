@@ -1,4 +1,5 @@
-import factoria, { Factoria } from 'factoria'
+import type { Factoria } from 'factoria'
+import factoria from 'factoria'
 import artistFactory, { states as artistStates } from '@/__tests__/factory/artistFactory'
 import songFactory, { states as songStates } from '@/__tests__/factory/songFactory'
 import albumFactory, { states as albumStates } from '@/__tests__/factory/albumFactory'
@@ -16,26 +17,26 @@ import genreFactory from '@/__tests__/factory/genreFactory'
 import playlistCollaboratorFactory from '@/__tests__/factory/playlistCollaboratorFactory'
 import episodeFactory from '@/__tests__/factory/episodeFactory'
 import podcastFactory from '@/__tests__/factory/podcastFactory'
-import { Faker } from '@faker-js/faker'
+import type { Faker } from '@faker-js/faker'
 
-type ModelToTypeMap = {
-  artist: Artist
+interface ModelToTypeMap {
+  'artist': Artist
   'artist-info': ArtistInfo
-  album: Album
+  'album': Album
   'album-track': AlbumTrack
   'album-info': AlbumInfo
-  song: Song
-  interaction: Interaction
-  genre: Genre
-  video: YouTubeVideo
+  'song': Song
+  'interaction': Interaction
+  'genre': Genre
+  'video': YouTubeVideo
   'smart-playlist-rule': SmartPlaylistRule
   'smart-playlist-rule-group': SmartPlaylistRuleGroup
-  playlist: Playlist
+  'playlist': Playlist
   'playlist-folder': PlaylistFolder
-  user: User
+  'user': User
   'playlist-collaborator': PlaylistCollaborator
-  episode: Episode
-  podcast: Podcast
+  'episode': Episode
+  'podcast': Podcast
 }
 
 type Model = keyof ModelToTypeMap
@@ -44,30 +45,30 @@ type Overrides<M extends Model> = Factoria.Overrides<ModelToTypeMap[M]>
 const define = <M extends Model>(
   model: M,
   handle: (faker: Faker) => Overrides<M>,
-  states?: Record<string, Factoria.StateDefinition>
+  states?: Record<string, Factoria.StateDefinition>,
 ) => factoria.define(model, handle, states)
 
-function factory <M extends Model>(
+function factory<M extends Model> (
   model: M,
   overrides?: Overrides<M>
 ): ModelToTypeMap[M]
 
-function factory <M extends Model>(
+function factory<M extends Model> (
   model: M,
   count: 1,
   overrides?: Overrides<M>
 ): ModelToTypeMap[M]
 
-function factory <M extends Model>(
+function factory<M extends Model> (
   model: M,
   count: number,
   overrides?: Overrides<M>
 ): ModelToTypeMap[M][]
 
-function factory <M extends Model>(
+function factory<M extends Model> (
   model: M,
-  count: number|Overrides<M> = 1,
-  overrides?: Overrides<M>
+  count: number | Overrides<M> = 1,
+  overrides?: Overrides<M>,
 ) {
   return typeof count === 'number'
     ? count === 1 ? factoria(model, overrides) : factoria(model, count, overrides)

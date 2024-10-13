@@ -9,11 +9,11 @@ new class extends UnitTestCase {
     it('plays a video', () => {
       const video = factory('video', {
         id: {
-          videoId: 'foo'
+          videoId: 'foo',
         },
         snippet: {
-          title: 'Bar'
-        }
+          title: 'Bar',
+        },
       })
 
       const emitMock = this.mock(eventBus, 'emit')

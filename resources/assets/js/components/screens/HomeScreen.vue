@@ -63,7 +63,7 @@ const greetings = [
   'Sup, %s?',
   'How’s life, %s?',
   'How’s your day, %s?',
-  'How have you been, %s?'
+  'How have you been, %s?',
 ]
 
 const greeting = computed(() => userStore.current ? sample(greetings)!.replace('%s', userStore.current.name) : '')

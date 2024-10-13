@@ -7,7 +7,7 @@ import factory from '@/__tests__/factory'
 
 new class extends UnitTestCase {
   protected test () {
-    it('adds a new podcast', async() => {
+    it('adds a new podcast', async () => {
       const storeMock = this.mock(podcastStore, 'store').mockResolvedValue(factory('podcast'))
       this.render(Component)
       await this.type(screen.getByPlaceholderText('https://example.com/feed.xml'), 'https://foo.bar/feed.xml')

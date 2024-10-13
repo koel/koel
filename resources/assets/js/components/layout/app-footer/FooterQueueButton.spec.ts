@@ -17,7 +17,7 @@ new class extends UnitTestCase {
     it('goes back if current screen is Queue', async () => {
       this.router.$currentRoute.value = {
         screen: 'Queue',
-        path: '/queue'
+        path: '/queue',
       }
 
       const goMock = this.mock(Router, 'go')

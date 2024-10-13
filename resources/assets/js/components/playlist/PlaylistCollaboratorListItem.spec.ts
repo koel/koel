@@ -12,7 +12,7 @@ new class extends UnitTestCase {
         collaborator: factory('playlist-collaborator', { id: currentUser.id + 1 }),
         removable: true,
         manageable: true,
-        role: 'owner'
+        role: 'owner',
       })
 
       expect(screen.queryByTitle('This is you!')).toBeNull()
@@ -21,16 +21,14 @@ new class extends UnitTestCase {
     it('shows a badge when current user is the collaborator', async () => {
       const currentUser = factory('user')
       this.be(currentUser).renderComponent({
-        collaborator: factory('playlist-collaborator',
-          {
-            id: currentUser.id,
-            name: currentUser.name,
-            avatar: currentUser.avatar
-          }
-        ),
+        collaborator: factory('playlist-collaborator', {
+          id: currentUser.id,
+          name: currentUser.name,
+          avatar: currentUser.avatar,
+        }),
         removable: true,
         manageable: true,
-        role: 'owner'
+        role: 'owner',
       })
 
       screen.getByTitle('This is you!')
@@ -43,7 +41,7 @@ new class extends UnitTestCase {
         collaborator,
         removable: true,
         manageable: true,
-        role: 'owner'
+        role: 'owner',
       })
 
       screen.getByText('Owner')
@@ -52,7 +50,7 @@ new class extends UnitTestCase {
         collaborator,
         removable: true,
         manageable: true,
-        role: 'contributor'
+        role: 'contributor',
       })
 
       screen.getByText('Contributor')
@@ -64,7 +62,7 @@ new class extends UnitTestCase {
         collaborator,
         removable: true,
         manageable: true,
-        role: 'owner'
+        role: 'owner',
       })
 
       await this.user.click(screen.getByRole('button', { name: 'Remove' }))
@@ -74,18 +72,18 @@ new class extends UnitTestCase {
   }
 
   private renderComponent (props: {
-    collaborator: PlaylistCollaborator,
-    removable: boolean,
-    manageable: boolean,
+    collaborator: PlaylistCollaborator
+    removable: boolean
+    manageable: boolean
     role: 'owner' | 'contributor'
   }) {
     return this.render(Component, {
       props,
       global: {
         stubs: {
-          UserAvatar: this.stub('UserAvatar')
-        }
-      }
+          UserAvatar: this.stub('UserAvatar'),
+        },
+      },
     })
   }
 }

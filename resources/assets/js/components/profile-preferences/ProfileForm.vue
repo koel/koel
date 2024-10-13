@@ -72,7 +72,8 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
-import { authService, UpdateCurrentProfileData } from '@/services'
+import type { UpdateCurrentProfileData } from '@/services'
+import { authService } from '@/services'
 import { useAuthorization, useErrorHandler, useMessageToaster } from '@/composables'
 
 import Btn from '@/components/ui/form/Btn.vue'
@@ -92,13 +93,13 @@ onMounted(() => {
     name: currentUser.value.name,
     email: currentUser.value.email,
     avatar: currentUser.value.avatar,
-    current_password: null
+    current_password: null,
   }
 })
 
 const update = async () => {
   if (!profile.value) {
-    throw Error()
+    throw new Error('Profile data is missing.')
   }
 
   if (isDemo) {

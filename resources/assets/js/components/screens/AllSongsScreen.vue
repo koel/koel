@@ -72,7 +72,7 @@ import {
   useLocalStorage,
   useRouter,
   useSongList,
-  useSongListControls
+  useSongListControls,
 } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -96,7 +96,7 @@ const {
   isPhone,
   onPressEnter,
   playSelected,
-  onScrollBreakpoint
+  onScrollBreakpoint,
 } = useSongList(toRef(songStore.state, 'songs'), { type: 'Songs' }, { filterable: false, sortable: true })
 
 const { SongListControls, config } = useSongListControls('Songs')
@@ -116,30 +116,10 @@ const showSkeletons = computed(() => loading.value && songs.value.length === 0)
 
 const ownSongsOnly = ref(isPlus.value ? Boolean(lsGet('own-songs-only')) : false)
 
-watch(ownSongsOnly, async value => {
-  lsSet('own-songs-only', value)
-  page.value = 1
-  songStore.state.songs = []
-
-  await fetchSongs()
-})
-
-const sort = async (field: MaybeArray<PlayableListSortField>, order: SortOrder) => {
-  page.value = 1
-  songStore.state.songs = []
-  sortField = field
-  sortOrder = order
-
-  await fetchSongs()
-}
-
-const showSongsFromOthers = async () => {
-  ownSongsOnly.value = false
-  await fetchSongs()
-}
-
 const fetchSongs = async () => {
-  if (!moreSongsAvailable.value || loading.value) return
+  if (!moreSongsAvailable.value || loading.value) {
+    return
+  }
 
   loading.value = true
 
@@ -148,7 +128,7 @@ const fetchSongs = async () => {
       sort: sortField,
       order: sortOrder,
       page: page.value!,
-      own_songs_only: ownSongsOnly.value
+      own_songs_only: ownSongsOnly.value,
     })
   } catch (error: any) {
     useErrorHandler().handleHttpError(error)
@@ -166,6 +146,28 @@ const playAll = async (shuffle: boolean) => {
 
   go('queue')
   await playbackService.playFirstInQueue()
+}
+
+const sort = async (field: MaybeArray<PlayableListSortField>, order: SortOrder) => {
+  page.value = 1
+  songStore.state.songs = []
+  sortField = field
+  sortOrder = order
+
+  await fetchSongs()
+}
+
+watch(ownSongsOnly, async value => {
+  lsSet('own-songs-only', value)
+  page.value = 1
+  songStore.state.songs = []
+
+  await fetchSongs()
+})
+
+const showSongsFromOthers = async () => {
+  ownSongsOnly.value = false
+  await fetchSongs()
 }
 
 onScreenActivated('Songs', async () => {

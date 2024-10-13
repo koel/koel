@@ -11,9 +11,9 @@ new class extends UnitTestCase {
       expect(this.render(MostPlayedSongs, {
         global: {
           stubs: {
-            SongCard: this.stub('song-card')
-          }
-        }
+            SongCard: this.stub('song-card'),
+          },
+        },
       }).getAllByTestId('song-card')).toHaveLength(6)
     })
   }

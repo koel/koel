@@ -70,21 +70,25 @@ const isCurrentUser = computed(() => user.value.id === currentUser.value.id)
 const edit = () => isCurrentUser.value ? go('profile') : eventBus.emit('MODAL_SHOW_EDIT_USER_FORM', user.value)
 
 const destroy = async () => {
-  if (!await showConfirmDialog(`Unperson ${user.value.name}?`)) return
+  if (!await showConfirmDialog(`Unperson ${user.value.name}?`)) {
+    return
+  }
 
   await userStore.destroy(user.value)
   toastSuccess(`User "${user.value.name}" deleted.`)
 }
 
 const revokeInvite = async () => {
-  if (!await showConfirmDialog(`Revoke the invite for ${user.value.email}?`)) return
+  if (!await showConfirmDialog(`Revoke the invite for ${user.value.email}?`)) {
+    return
+  }
 
   try {
     await invitationService.revoke(user.value)
     toastSuccess(`Invitation for ${user.value.email} revoked.`)
   } catch (error: unknown) {
     useErrorHandler('dialog').handleHttpError(error, {
-      404: 'Cannot revoke the invite. Maybe it has been accepted?'
+      404: 'Cannot revoke the invite. Maybe it has been accepted?',
     })
   }
 }

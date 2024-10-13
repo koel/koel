@@ -7,16 +7,16 @@ new class extends UnitTestCase {
   private renderComponent (playable: Playable) {
     return this.render(Component, {
       props: {
-        playable
+        playable,
       },
       global: {
         provide: {
           state: {
             playable,
-            volume: 7
-          }
-        }
-      }
+            volume: 7,
+          },
+        },
+      },
     })
   }
 
@@ -26,7 +26,7 @@ new class extends UnitTestCase {
         title: 'Afraid to Shoot Strangers',
         album_name: 'Fear of the Dark',
         artist_name: 'Iron Maiden',
-        album_cover: 'https://cover.site/fotd.jpg'
+        album_cover: 'https://cover.site/fotd.jpg',
       }))
 
       expect(html()).toMatchSnapshot()
@@ -37,7 +37,7 @@ new class extends UnitTestCase {
         title: 'Brahms Piano Concerto No. 1',
         podcast_title: 'The Sticky Notes podcast',
         podcast_author: 'Some random dudes',
-        episode_image: 'https://cover.site/pod.jpg'
+        episode_image: 'https://cover.site/pod.jpg',
       }))
 
       expect(html()).toMatchSnapshot()

@@ -23,7 +23,7 @@ new class extends UnitTestCase {
     it.each<[ScreenName, MethodOf<typeof songStore>, string | number]>([
       ['Album', 'fetchForAlbum', 42],
       ['Artist', 'fetchForArtist', 42],
-      ['Playlist', 'fetchForPlaylist', '71d8cd40-20d4-4b17-b460-d30fe5bb7b66']
+      ['Playlist', 'fetchForPlaylist', '71d8cd40-20d4-4b17-b460-d30fe5bb7b66'],
     ])('initiates playback for %s screen', async (screenName, fetchMethod, id) => {
       commonStore.state.song_count = 10
       const songs = factory('song', 3)
@@ -33,7 +33,7 @@ new class extends UnitTestCase {
 
       await this.router.activateRoute({
         screen: screenName,
-        path: '_'
+        path: '_',
       }, { id: String(id) })
 
       this.renderComponent()
@@ -49,10 +49,10 @@ new class extends UnitTestCase {
     it.each<[
       ScreenName,
         typeof favoriteStore | typeof recentlyPlayedStore,
-      MethodOf<typeof favoriteStore | typeof recentlyPlayedStore>
+        MethodOf<typeof favoriteStore | typeof recentlyPlayedStore>,
     ]>([
       ['Favorites', favoriteStore, 'fetch'],
-      ['RecentlyPlayed', recentlyPlayedStore, 'fetch']
+      ['RecentlyPlayed', recentlyPlayedStore, 'fetch'],
     ])('initiates playback for %s screen', async (screenName, store, fetchMethod) => {
       commonStore.state.song_count = 10
       const songs = factory('song', 3)
@@ -62,7 +62,7 @@ new class extends UnitTestCase {
 
       await this.router.activateRoute({
         screen: screenName,
-        path: '_'
+        path: '_',
       })
 
       this.renderComponent()
@@ -84,7 +84,7 @@ new class extends UnitTestCase {
 
       await this.router.activateRoute({
         screen: screenName,
-        path: '_'
+        path: '_',
       })
 
       this.renderComponent()
@@ -105,7 +105,7 @@ new class extends UnitTestCase {
 
       await this.router.activateRoute({
         screen: 'Songs',
-        path: '_'
+        path: '_',
       })
 
       this.renderComponent()
@@ -122,9 +122,9 @@ new class extends UnitTestCase {
     return this.render(FooterPlayButton, {
       global: {
         provide: {
-          [<symbol>CurrentPlayableKey]: ref(currentPlayable)
-        }
-      }
+          [<symbol>CurrentPlayableKey]: ref(currentPlayable),
+        },
+      },
     })
   }
 }

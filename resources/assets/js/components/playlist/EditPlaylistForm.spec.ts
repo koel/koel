@@ -14,7 +14,7 @@ new class extends UnitTestCase {
 
       const playlist = factory('playlist', {
         name: 'My playlist',
-        folder_id: playlistFolderStore.state.folders[0].id
+        folder_id: playlistFolderStore.state.folders[0].id,
       })
 
       playlistStore.state.playlists = [playlist]
@@ -24,9 +24,9 @@ new class extends UnitTestCase {
       this.render(EditPlaylistForm, {
         global: {
           provide: {
-            [<symbol>ModalContextKey]: [ref({ playlist })]
-          }
-        }
+            [<symbol>ModalContextKey]: [ref({ playlist })],
+          },
+        },
       })
 
       await this.type(screen.getByPlaceholderText('Playlist name'), 'Your playlist')
@@ -35,7 +35,7 @@ new class extends UnitTestCase {
       await waitFor(() => {
         expect(updateMock).toHaveBeenCalledWith(playlist, {
           name: 'Your playlist',
-          folder_id: playlist.folder_id
+          folder_id: playlist.folder_id,
         })
       })
     })

@@ -10,7 +10,7 @@ new class extends UnitTestCase {
     it('accepts an invitation', async () => {
       const postMock = this.mock(http, 'post').mockResolvedValue({
         'audio-token': 'my-audio-token',
-        token: 'my-token',
+        'token': 'my-token',
       })
 
       const setAudioTokenMock = this.mock(authService, 'setAudioToken')

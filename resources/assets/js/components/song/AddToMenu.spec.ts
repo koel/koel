@@ -12,7 +12,7 @@ let playables: Playable[]
 
 const config: AddToMenuConfig = {
   queue: true,
-  favorites: true
+  favorites: true,
 }
 
 new class extends UnitTestCase {
@@ -21,7 +21,7 @@ new class extends UnitTestCase {
       playlistStore.state.playlists = [
         factory('playlist', { name: 'Foo' }),
         factory('playlist', { name: 'Bar' }),
-        factory('playlist', { name: 'Baz' })
+        factory('playlist', { name: 'Baz' }),
       ]
 
       expect(this.renderComponent().html()).toMatchSnapshot()
@@ -38,7 +38,7 @@ new class extends UnitTestCase {
     it.each<[string, string, MethodOf<typeof queueStore>]>([
       ['after current', 'queue-after-current', 'queueAfterCurrent'],
       ['to top', 'queue-top', 'queueToTop'],
-      ['to bottom', 'queue-bottom', 'queue']
+      ['to bottom', 'queue-bottom', 'queue'],
     ])('queues songs %s', async (_: string, testId: string, queueMethod: MethodOf<typeof queueStore>) => {
       queueStore.state.playables = factory('song', 5)
       queueStore.state.playables[2].playback_state = 'Playing'
@@ -87,13 +87,13 @@ new class extends UnitTestCase {
       props: {
         playables,
         config: Object.assign(clone(config), customConfig),
-        showing: true
+        showing: true,
       },
       global: {
         stubs: {
-          Btn
-        }
-      }
+          Btn,
+        },
+      },
     })
   }
 }

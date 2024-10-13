@@ -12,7 +12,7 @@ new class extends UnitTestCase {
 
       expect(emitted()['update:modelValue']).toStrictEqual([
         ['H'],
-        ['Hi']
+        ['Hi'],
       ])
     })
   }

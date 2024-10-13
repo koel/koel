@@ -5,7 +5,7 @@ import ThemeCard from './ThemeCard.vue'
 
 const theme: Theme = {
   id: 'sample',
-  thumbnailColor: '#f00'
+  thumbnailColor: '#f00',
 }
 
 new class extends UnitTestCase {
@@ -24,8 +24,8 @@ new class extends UnitTestCase {
   private renderComponent () {
     return this.render(ThemeCard, {
       props: {
-        theme
-      }
+        theme,
+      },
     })
   }
 }

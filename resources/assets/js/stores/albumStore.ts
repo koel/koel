@@ -1,4 +1,4 @@
-import { reactive, UnwrapNestedRefs } from 'vue'
+import { reactive } from 'vue'
 import { differenceBy, merge, unionBy } from 'lodash'
 import { cache, http } from '@/services'
 import { arrayify, logger } from '@/utils'
@@ -10,7 +10,7 @@ export const albumStore = {
   vault: new Map<Album['id'], Album>(),
 
   state: reactive({
-    albums: [] as Album[]
+    albums: [] as Album[],
   }),
 
   byId (id: Album['id']) {
@@ -26,7 +26,9 @@ export const albumStore = {
   },
 
   isUnknown: (album: Album | Album['id']) => {
-    if (typeof album === 'number') return album === UNKNOWN_ALBUM_ID
+    if (typeof album === 'number') {
+      return album === UNKNOWN_ALBUM_ID
+    }
     return album.id === UNKNOWN_ALBUM_ID
   },
 
@@ -69,7 +71,7 @@ export const albumStore = {
     if (!album) {
       try {
         album = this.syncWithVault(
-          await cache.remember<Album>(['album', id], async () => await http.get<Album>(`albums/${id}`))
+          await cache.remember<Album>(['album', id], async () => await http.get<Album>(`albums/${id}`)),
         )[0]
       } catch (error: unknown) {
         logger.error(error)
@@ -90,7 +92,7 @@ export const albumStore = {
     const id = typeof artist === 'number' ? artist : artist.id
 
     return this.syncWithVault(
-      await cache.remember<Album[]>(['artist-albums', id], async () => await http.get<Album[]>(`artists/${id}/albums`))
+      await cache.remember<Album[]>(['artist-albums', id], async () => await http.get<Album[]>(`artists/${id}/albums`)),
     )
-  }
+  },
 }

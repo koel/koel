@@ -9,7 +9,7 @@
     <main class="flex-1">
       <header>
         <h3 class="pulse w-2/3 mt-4 h-8" />
-        <p class="mt-2 pulse w-1/4 h-6"></p>
+        <p class="mt-2 pulse w-1/4 h-6" />
       </header>
       <div class="space-y-2 mt-3 ">
         <p class="pulse w-full h-4" />

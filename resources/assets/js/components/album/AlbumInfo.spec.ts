@@ -10,7 +10,7 @@ let album: Album
 
 new class extends UnitTestCase {
   protected test () {
-    it.each<[MediaInfoDisplayMode]>([['aside'], ['full']])('renders in %s mode', async (mode) => {
+    it.each<[MediaInfoDisplayMode]>([['aside'], ['full']])('renders in %s mode', async mode => {
       await this.renderComponent(mode)
 
       screen.getByTestId('album-info-tracks')
@@ -38,14 +38,14 @@ new class extends UnitTestCase {
     const rendered = this.render(AlbumInfoComponent, {
       props: {
         album,
-        mode
+        mode,
       },
       global: {
         stubs: {
           TrackList: this.stub(),
-          AlbumThumbnail: this.stub('thumbnail')
-        }
-      }
+          AlbumThumbnail: this.stub('thumbnail'),
+        },
+      },
     })
 
     await this.tick(1)

@@ -42,9 +42,10 @@ import { useKoelPlus } from '@/composables'
 import Btn from '@/components/ui/form/Btn.vue'
 import ActivateLicenseForm from '@/components/koel-plus/ActivateLicenseForm.vue'
 
+const emit = defineEmits<{ (e: 'close'): void }>()
+
 const { checkoutUrl } = useKoelPlus()
 
-const emit = defineEmits<{ (e: 'close'): void }>()
 const close = () => emit('close')
 
 const showingActivateLicenseForm = ref(false)

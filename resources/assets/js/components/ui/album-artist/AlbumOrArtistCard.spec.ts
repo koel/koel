@@ -9,8 +9,8 @@ new class extends UnitTestCase {
     it('emits events on user actions', async () => {
       const { emitted } = this.render(ArtistAlbumCard, {
         props: {
-          entity: factory('album')
-        }
+          entity: factory('album'),
+        },
       })
 
       const component = screen.getByTestId('artist-album-card')

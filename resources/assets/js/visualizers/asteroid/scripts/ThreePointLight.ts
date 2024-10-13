@@ -5,24 +5,24 @@ export class ThreePointLight {
   private readonly light: THREE.PerspectiveCamera
 
   constructor () {
-    this.shadowBuffer = new THREE.WebGLRenderTarget(2048., 2048.)
+    this.shadowBuffer = new THREE.WebGLRenderTarget(2048.0, 2048.0)
     this.shadowBuffer.depthBuffer = true
     this.shadowBuffer.depthTexture = new THREE.DepthTexture(0, 0)
 
-    this.light = new THREE.PerspectiveCamera(35., this.shadowBuffer.width / this.shadowBuffer.height, .1, 1000.)
-    this.light.lookAt(0., 0., 0.)
+    this.light = new THREE.PerspectiveCamera(35.0, this.shadowBuffer.width / this.shadowBuffer.height, 0.1, 1000.0)
+    this.light.lookAt(0.0, 0.0, 0.0)
   }
 
   ziggle (frame: number) {
-    const e = frame * 10.
+    const e = frame * 10.0
 
     this.light.position.copy(new THREE.Vector3(
       this.light.position.x * Math.sin(e),
       this.light.position.y,
-      this.light.position.z * Math.cos(e)
+      this.light.position.z * Math.cos(e),
     ))
 
-    this.light.lookAt(0., 0., 0.)
+    this.light.lookAt(0.0, 0.0, 0.0)
     this.light.updateProjectionMatrix()
   }
 

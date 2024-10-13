@@ -27,17 +27,16 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, toRefs } from 'vue'
+import { computed, toRefs } from 'vue'
 import { defaultCover } from '@/utils'
 import { playlistStore } from '@/stores'
-import { useErrorHandler, useFileReader, useKoelPlus, useMessageToaster, usePolicies } from '@/composables'
+import { useErrorHandler, useFileReader, useMessageToaster, usePolicies } from '@/composables'
 import { faTrash, faUpload } from '@fortawesome/free-solid-svg-icons'
 
 const props = defineProps<{ playlist: Playlist }>()
 const { playlist } = toRefs(props)
 
 const { currentUserCan } = usePolicies()
-const { isPlus } = useKoelPlus()
 const { toastSuccess } = useMessageToaster()
 
 const canEditPlaylist = computed(() => currentUserCan.editPlaylist(playlist.value!))

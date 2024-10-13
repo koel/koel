@@ -1,4 +1,4 @@
-import { Faker } from '@faker-js/faker'
+import type { Faker } from '@faker-js/faker'
 
 export default (faker: Faker): Podcast => {
   return {
@@ -14,7 +14,7 @@ export default (faker: Faker): Podcast => {
     created_at: faker.date.past().toISOString(),
     state: {
       current_episode: null,
-      progresses: {}
-    }
+      progresses: {},
+    },
   }
 }
