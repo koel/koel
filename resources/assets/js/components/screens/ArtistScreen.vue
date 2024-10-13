@@ -84,9 +84,9 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, ref, toRef, watch } from 'vue'
+import { computed, defineAsyncComponent, ref, watch } from 'vue'
 import { eventBus, pluralize } from '@/utils'
-import { albumStore, artistStore, commonStore, songStore } from '@/stores'
+import { albumStore, artistStore, songStore } from '@/stores'
 import { downloadService } from '@/services'
 import { useErrorHandler, useRouter, useSongList, useSongListControls, useThirdPartyServices } from '@/composables'
 
@@ -111,7 +111,7 @@ const artistId = ref<number>()
 const artist = ref<Artist>()
 const songs = ref<Song[]>([])
 const loading = ref(false)
-let albums = ref<Album[] | undefined>()
+const albums = ref<Album[] | undefined>()
 
 const {
   SongList,
@@ -127,7 +127,7 @@ const {
   playAll,
   playSelected,
   applyFilter,
-  onScrollBreakpoint
+  onScrollBreakpoint,
 } = useSongList(songs, { type: 'Artist' })
 
 const { SongListControls, config } = useSongListControls('Artist')
@@ -147,14 +147,16 @@ watch(activeTab, async tab => {
 })
 
 watch(artistId, async id => {
-  if (!id || loading.value) return
+  if (!id || loading.value) {
+    return
+  }
 
   loading.value = true
 
   try {
     [artist.value, songs.value] = await Promise.all([
       artistStore.resolve(id),
-      songStore.fetchForArtist(id)
+      songStore.fetchForArtist(id),
     ])
 
     context.entity = artist.value
@@ -167,7 +169,7 @@ watch(artistId, async id => {
 
 const download = () => downloadService.fromArtist(artist.value!)
 
-onScreenActivated('Artist', () => (artistId.value = parseInt(getRouteParam('id')!)))
+onScreenActivated('Artist', () => (artistId.value = Number.parseInt(getRouteParam('id')!)))
 
 // if the current artist has been deleted, go back to the list
 eventBus.on('SONGS_UPDATED', () => artistStore.byId(artist.value!.id) || go('artists'))

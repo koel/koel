@@ -29,19 +29,19 @@ new class extends UnitTestCase {
     playable = factory('song', {
       playback_state: playbackState,
       play_count: 10,
-      title: 'Foo bar'
+      title: 'Foo bar',
     })
 
     return this.render(SongCard, {
       props: {
-        playable
+        playable,
       },
       global: {
         stubs: {
           SongThumbnail: this.stub('thumbnail'),
-          LikeButton: this.stub('like-button')
-        }
-      }
+          LikeButton: this.stub('like-button'),
+        },
+      },
     })
   }
 }

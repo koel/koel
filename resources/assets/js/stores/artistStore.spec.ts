@@ -97,11 +97,11 @@ new class extends UnitTestCase {
       this.mock(http, 'get').mockResolvedValueOnce({
         data: artists,
         links: {
-          next: '/artists?page=2'
+          next: '/artists?page=2',
         },
         meta: {
-          current_page: 1
-        }
+          current_page: 1,
+        },
       })
 
       expect(await artistStore.paginate(1)).toEqual(2)

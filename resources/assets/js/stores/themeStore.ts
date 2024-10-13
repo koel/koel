@@ -13,15 +13,15 @@ export const themeStore = {
     '--bg-image': undefined,
     '--bg-position': undefined,
     '--bg-attachment': undefined,
-    '--bg-size': undefined
+    '--bg-size': undefined,
   } as Record<ThemeableProperty, string | undefined>,
 
   state: reactive({
-    themes
+    themes,
   }),
 
   init () {
-    for (let key in this.defaultProperties) {
+    for (const key in this.defaultProperties) {
       this.defaultProperties[key] = document.documentElement.style.getPropertyValue(key)
     }
 
@@ -30,9 +30,9 @@ export const themeStore = {
 
   setTheme (theme: Theme) {
     document.documentElement.setAttribute('data-theme', theme.id)
-    let properties = Object.assign(clone(this.defaultProperties), theme.properties ?? {})
+    const properties = Object.assign(clone(this.defaultProperties), theme.properties ?? {})
 
-    for (let key in properties) {
+    for (const key in properties) {
       document.documentElement.style.setProperty(key, properties[key])
     }
 
@@ -54,5 +54,5 @@ export const themeStore = {
       : this.getDefaultTheme()
 
     this.setTheme(theme)
-  }
+  },
 }

@@ -42,14 +42,14 @@ import { defineAsyncComponent, reactive, toRefs } from 'vue'
 import { playlistStore } from '@/stores'
 
 const props = defineProps<{ group: SmartPlaylistRuleGroup, isFirstGroup: boolean }>()
+const emit = defineEmits<{ (e: 'input', group: SmartPlaylistRuleGroup): void }>()
+
 const { group, isFirstGroup } = toRefs(props)
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 const Rule = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/SmartPlaylistRule.vue'))
 
 const mutatedGroup = reactive<SmartPlaylistRuleGroup>(JSON.parse(JSON.stringify(group.value)))
-
-const emit = defineEmits<{ (e: 'input', group: SmartPlaylistRuleGroup): void }>()
 
 const notifyParentForUpdate = () => emit('input', mutatedGroup)
 

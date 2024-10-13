@@ -26,12 +26,15 @@ import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 
+const emit = defineEmits<{ (e: 'close'): void }>()
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const folder = useModal().getFromContext<PlaylistFolder>('folder')
 
 const name = ref(folder.name)
+
+const close = () => emit('close')
 
 const submit = async () => {
   showOverlay()
@@ -46,9 +49,6 @@ const submit = async () => {
     hideOverlay()
   }
 }
-
-const emit = defineEmits<{ (e: 'close'): void }>()
-const close = () => emit('close')
 
 const maybeClose = async () => {
   if (name.value.trim() === folder.name) {

@@ -73,7 +73,8 @@
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
 import { faBars } from '@fortawesome/free-solid-svg-icons'
-import { computed, defineAsyncComponent, onMounted, ref, Ref, watch } from 'vue'
+import type { Ref } from 'vue'
+import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue'
 import { albumStore, artistStore, preferenceStore } from '@/stores'
 import { useErrorHandler, useThirdPartyServices } from '@/composables'
 import { eventBus, isSong, requireInjection } from '@/utils'
@@ -115,7 +116,9 @@ const fetchSongInfo = async (song: Song) => {
 }
 
 watch(playable, song => {
-  if (!song || !isSong(song)) return
+  if (!song || !isSong(song)) {
+    return
+  }
   fetchSongInfo(song)
 }, { immediate: true })
 
@@ -134,7 +137,7 @@ onMounted(() => isMobile.any || (activeTab.value = preferenceStore.active_extra_
 
 @layer utilities {
   .btn-group {
-    @apply flex md:flex-col justify-between items-center gap-1 md:gap-3
+    @apply flex md:flex-col justify-between items-center gap-1 md:gap-3;
   }
 }
 

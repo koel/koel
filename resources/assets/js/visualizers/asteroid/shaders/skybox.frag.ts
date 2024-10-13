@@ -1,5 +1,5 @@
-export const skyboxFrag =
-  `
+export const skyboxFrag
+  = `
 #define A 0.15
 #define B 0.50
 #define C 0.10
@@ -17,25 +17,25 @@ uniform bool u_show_cubemap;
 varying vec3 v_direction;
 
 vec3 Uncharted2Tonemap( vec3 x ){
-	return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F))-E/F;
+  return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F))-E/F;
 }
 
 void main( void ){
-	vec3 cube_a = pow( abs(textureCube( u_cubemap, v_direction ).rgb), vec3( 2.2 ) );
-	vec3 cube_b = pow( abs(textureCube( u_cubemap_b, v_direction ).rgb), vec3( 2.2 ) );
+  vec3 cube_a = pow( abs(textureCube( u_cubemap, v_direction ).rgb), vec3( 2.2 ) );
+  vec3 cube_b = pow( abs(textureCube( u_cubemap_b, v_direction ).rgb), vec3( 2.2 ) );
 
-	vec3 color 	= mix(cube_a, cube_b, cross_fader);
+  vec3 color   = mix(cube_a, cube_b, cross_fader);
 
-	// apply the tone-mapping
-	// color 		= Uncharted2Tonemap( color * u_exposure );
-	// white balance
-	// color		= color * ( 1. / Uncharted2Tonemap( vec3( 20. ) ) );
+  // apply the tone-mapping
+  // color     = Uncharted2Tonemap( color * u_exposure );
+  // white balance
+  // color    = color * ( 1. / Uncharted2Tonemap( vec3( 20. ) ) );
 
-	// gamma correction
-	// color = pow( color, vec3( 1. / u_gamma ) );
+  // gamma correction
+  // color = pow( color, vec3( 1. / u_gamma ) );
 
-	color *= u_show_cubemap ? 1. : 0.;
+  color *= u_show_cubemap ? 1. : 0.;
 
-	gl_FragColor = vec4( color, 1. );
+  gl_FragColor = vec4( color, 1. );
 }
 `

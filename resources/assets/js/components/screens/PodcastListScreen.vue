@@ -5,11 +5,11 @@
         Podcasts
 
         <template #controls>
-          <div class="flex gap-2" v-if="!loading">
+          <div v-if="!loading" class="flex gap-2">
             <PodcastListSorter :field="sortParams.field" :order="sortParams.order" @sort="sort" />
             <ListFilter @change="onFilterChanged" />
             <BtnGroup uppercase>
-              <Btn @click.prevent="requestAddPodcastForm" highlight>
+              <Btn highlight @click.prevent="requestAddPodcastForm">
                 <Icon :icon="faAdd" fixed-width />
               </Btn>
             </BtnGroup>
@@ -31,7 +31,7 @@
         <PodcastItemSkeleton v-for="i in 5" :key="i" />
       </template>
       <template v-else>
-        <PodcastItem v-for="podcast in podcasts" :podcast="podcast" :key="podcast.id" />
+        <PodcastItem v-for="podcast in podcasts" :key="podcast.id" :podcast="podcast" />
       </template>
     </div>
   </ScreenBase>
@@ -64,13 +64,21 @@ const keywords = ref('')
 
 const sortParams = reactive<{ field: PodcastListSortField, order: SortOrder }>({
   field: 'last_played_at',
-  order: 'desc'
+  order: 'desc',
 })
+
+const podcasts = computed(() => orderBy(
+  keywords.value ? fuzzy.search(keywords.value) : podcastStore.state.podcasts,
+  sortParams.field,
+  sortParams.order,
+))
 
 const noPodcasts = computed(() => !loading.value && podcasts.value.length === 0)
 
 const init = async () => {
-  if (loading.value) return
+  if (loading.value) {
+    return
+  }
 
   loading.value = true
 
@@ -82,12 +90,6 @@ const init = async () => {
     loading.value = false
   }
 }
-
-const podcasts = computed(() => orderBy(
-  keywords.value ? fuzzy.search(keywords.value) : podcastStore.state.podcasts,
-  sortParams.field,
-  sortParams.order
-))
 
 const onFilterChanged = (q: string) => (keywords.value = q)
 

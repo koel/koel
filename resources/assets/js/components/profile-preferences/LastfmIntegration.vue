@@ -63,7 +63,7 @@ const connected = computed(() => Boolean(currentUser.value.preferences!.lastfm_s
 const connect = () => window.open(
   `${window.BASE_URL}lastfm/connect?api_token=${authService.getApiToken()}`,
   '_blank',
-  'toolbar=no,titlebar=no,location=no,width=1024,height=640'
+  'toolbar=no,titlebar=no,location=no,width=1024,height=640',
 )
 
 const disconnect = async () => {

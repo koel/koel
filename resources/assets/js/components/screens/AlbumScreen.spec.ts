@@ -61,7 +61,7 @@ new class extends UnitTestCase {
       id: 42,
       name: 'Led Zeppelin IV',
       artist_id: 123,
-      artist_name: 'Led Zeppelin'
+      artist_name: 'Led Zeppelin',
     })
 
     const resolveAlbumMock = this.mock(albumStore, 'resolve').mockResolvedValue(album)
@@ -71,7 +71,7 @@ new class extends UnitTestCase {
 
     await this.router.activateRoute({
       path: 'albums/42',
-      screen: 'Album'
+      screen: 'Album',
     }, { id: '42' })
 
     this.render(AlbumScreen, {
@@ -79,9 +79,9 @@ new class extends UnitTestCase {
         stubs: {
           SongList: this.stub('song-list'),
           AlbumCard: this.stub('album-card'),
-          AlbumInfo: this.stub('album-info')
-        }
-      }
+          AlbumInfo: this.stub('album-info'),
+        },
+      },
     })
 
     await waitFor(() => {

@@ -68,13 +68,14 @@ import {
   useMessageToaster,
   useModal,
   useOverlay,
-  useSmartPlaylistForm
+  useSmartPlaylistForm,
 } from '@/composables'
 import CheckBox from '@/components/ui/form/CheckBox.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 import SelectBox from '@/components/ui/form/SelectBox.vue'
 
+const emit = defineEmits<{ (e: 'close'): void }>()
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
@@ -94,10 +95,9 @@ const {
   RuleGroup,
   collectedRuleGroups,
   addGroup,
-  onGroupChanged
+  onGroupChanged,
 } = useSmartPlaylistForm(mutablePlaylist.rules)
 
-const emit = defineEmits<{ (e: 'close'): void }>()
 const close = () => emit('close')
 
 const maybeClose = async () => {

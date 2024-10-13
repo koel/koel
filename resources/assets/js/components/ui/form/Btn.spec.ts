@@ -7,8 +7,8 @@ new class extends UnitTestCase {
     it('renders', () => {
       expect(this.render(Btn, {
         slots: {
-          default: 'Click Me Nao'
-        }
+          default: 'Click Me Nao',
+        },
       }).html()).toMatchSnapshot()
     })
   }

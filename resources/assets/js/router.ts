@@ -1,11 +1,12 @@
-import { ref, Ref, watch } from 'vue'
+import type { Ref } from 'vue'
+import { ref, watch } from 'vue'
 import { forceReloadWindow } from '@/utils'
 
 type RouteParams = Record<string, string>
 type ResolveHook = (params: RouteParams) => Promise<boolean | void> | boolean | void
 type RedirectHook = (params: RouteParams) => Route | string
 
-export type Route = {
+export interface Route {
   path: string
   screen: ScreenName
   params?: RouteParams
@@ -36,8 +37,8 @@ export default class Router {
       (newValue, oldValue) => this.routeChangedHandlers.forEach(async handler => await handler(newValue, oldValue)),
       {
         deep: true,
-        immediate: true
-      }
+        immediate: true,
+      },
     )
 
     addEventListener('popstate', () => this.resolve(), true)
@@ -106,7 +107,7 @@ export default class Router {
 
           this.cache.set(location.hash, {
             route,
-            params: Object.assign(Object.fromEntries(searchParams.entries()), matches.groups || {})
+            params: Object.assign(Object.fromEntries(searchParams.entries()), matches.groups || {}),
           })
 
           break

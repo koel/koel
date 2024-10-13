@@ -1,6 +1,6 @@
 <template>
   <header
-    :class="[ layout, disabled ? 'disabled' : '' ]"
+    :class="[layout, disabled ? 'disabled' : '']"
     class="screen-header min-h-0 md:min-h-full flex items-end flex-shrink-0 relative content-stretch leading-normal p-6
     border-b border-b-k-bg-secondary"
   >
@@ -25,11 +25,11 @@
 
 <script lang="ts" setup>
 withDefaults(defineProps<{
-  layout?: ScreenHeaderLayout,
-  disabled?: boolean,
+  layout?: ScreenHeaderLayout
+  disabled?: boolean
 }>(), {
   layout: 'expanded',
-  disabled: false
+  disabled: false,
 })
 </script>
 
@@ -44,7 +44,9 @@ header.screen-header {
   &.disabled {
     @apply opacity-50 cursor-not-allowed;
 
-    *, *::before, *::after {
+    *,
+    *::before,
+    *::after {
       @apply pointer-events-none;
     }
   }
@@ -72,7 +74,9 @@ header.screen-header {
 
     > * {
       @apply scale-0 origin-bottom-left;
-      transition: transform var(--transition-duration), width var(--transition-duration);
+      transition:
+        transform var(--transition-duration),
+        width var(--transition-duration);
     }
 
     &:empty {

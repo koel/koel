@@ -133,7 +133,7 @@ new class extends UnitTestCase {
     it('does not have an option to edit or delete if the playlist is not owned by the current user', async () => {
       const user = factory('user')
       const playlist = factory('playlist', {
-        user_id: user.id + 1
+        user_id: user.id + 1,
       })
 
       await this.renderComponent(playlist, user)
@@ -156,7 +156,7 @@ new class extends UnitTestCase {
 
   private async renderComponent (playlist: Playlist, user: User | null = null) {
     userStore.state.current = user || factory('user', {
-      id: playlist.user_id
+      id: playlist.user_id,
     })
 
     this.render(PlaylistContextMenu)

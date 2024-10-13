@@ -51,7 +51,9 @@ const toggleInput = () => {
 }
 
 const maybeClose = () => {
-  if (keywords.value.trim() !== '') return
+  if (keywords.value.trim() !== '') {
+    return
+  }
 
   showingInput.value = false
   input.value?.el?.blur()

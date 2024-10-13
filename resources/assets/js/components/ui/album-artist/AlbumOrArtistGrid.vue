@@ -8,7 +8,7 @@
 import { toRefs } from 'vue'
 
 const props = withDefaults(defineProps<{ viewMode?: ArtistAlbumViewMode }>(), {
-  viewMode: 'thumbnails'
+  viewMode: 'thumbnails',
 })
 
 const { viewMode } = toRefs(props)

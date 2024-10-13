@@ -14,10 +14,10 @@
         >
           <span>{{ item.label }}</span>
           <span class="icon hidden ml-3">
-          <Icon v-if="field === 'position'" :icon="faCheck" />
-          <Icon v-else-if="order === 'asc'" :icon="faArrowUp" />
-          <Icon v-else :icon="faArrowDown" />
-        </span>
+            <Icon v-if="field === 'position'" :icon="faCheck" />
+            <Icon v-else-if="order === 'asc'" :icon="faArrowUp" />
+            <Icon v-else :icon="faArrowDown" />
+          </span>
         </li>
       </menu>
     </OnClickOutside>
@@ -30,7 +30,8 @@ import { faArrowDown, faArrowUp, faCheck, faSort } from '@fortawesome/free-solid
 import { OnClickOutside } from '@vueuse/components'
 import { computed, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
 import { useFloatingUi } from '@/composables'
-import { arrayify, getPlayableCollectionContentType } from '@/utils'
+import type { getPlayableCollectionContentType } from '@/utils'
+import { arrayify } from '@/utils'
 
 const props = withDefaults(defineProps<{
   field?: MaybeArray<PlayableListSortField> // the current field(s) being sorted by
@@ -41,18 +42,21 @@ const props = withDefaults(defineProps<{
   field: 'title',
   order: 'asc',
   hasCustomOrderSort: false,
-  contentType: 'songs'
+  contentType: 'songs',
 })
 
-const { field, order, hasCustomOrderSort, contentType } = toRefs(props)
-
 const emit = defineEmits<{ (e: 'sort', field: MaybeArray<PlayableListSortField>): void }>()
+
+const { field, order, hasCustomOrderSort, contentType } = toRefs(props)
 
 const button = ref<HTMLButtonElement>()
 const menu = ref<HTMLDivElement>()
 
 const menuItems = computed(() => {
-type MenuItems = { label: string, field: MaybeArray<PlayableListSortField> }
+  interface MenuItems {
+    label: string
+    field: MaybeArray<PlayableListSortField>
+  }
   const title: MenuItems = { label: 'Title', field: 'title' }
   const artist: MenuItems = { label: 'Artist', field: 'artist_name' }
   const author: MenuItems = { label: 'Author', field: 'podcast_author' }
@@ -83,7 +87,7 @@ type MenuItems = { label: string, field: MaybeArray<PlayableListSortField> }
 const { setup, teardown, trigger, hide } = useFloatingUi(button, menu, {
   placement: 'bottom-end',
   useArrow: false,
-  autoTrigger: false
+  autoTrigger: false,
 })
 
 const sort = (field: MaybeArray<PlayableListSortField>) => {

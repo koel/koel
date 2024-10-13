@@ -1,8 +1,8 @@
 import * as THREE from 'three'
-import { ThreeSharedRenderer } from './ThreeSharedRenderer'
-import { ThreePBR } from './ThreePBR'
-import { ThreePointLight } from './ThreePointLight'
-import { AudioAnalyzer } from './AudioAnalyzer'
+import type { ThreeSharedRenderer } from './ThreeSharedRenderer'
+import type { ThreePBR } from './ThreePBR'
+import type { ThreePointLight } from './ThreePointLight'
+import type { AudioAnalyzer } from './AudioAnalyzer'
 import { nx, nx3js, ny, ny3js, nz, nz3js, px, px3js, py, py3js, pz, pz3js, rect } from '../assets'
 import { blobFrag, blobVert, skyboxFrag, skyboxVert } from '../shaders'
 
@@ -75,39 +75,40 @@ export class NoiseBlob {
   }
 
   initShader () {
-    const screenRes = 'vec2( ' + this.w.toFixed(1) + ', ' + this.h.toFixed(1) + ')'
+    const screenRes = `vec2( ${this.w.toFixed(1)}, ${this.h.toFixed(1)})`
 
     const load = (_vert, _frag) => new THREE.ShaderMaterial({
       defines: {
-        SCREEN_RES: screenRes
+        SCREEN_RES: screenRes,
       },
       uniforms: {
         u_t: { value: 0 },
         u_is_init: { value: false },
-        u_audio_high: { value: 0. },
-        u_audio_mid: { value: 0. },
-        u_audio_bass: { value: 0. },
-        u_audio_level: { value: 0. },
-        u_audio_history: { value: 0. }
+        u_audio_high: { value: 0.0 },
+        u_audio_mid: { value: 0.0 },
+        u_audio_bass: { value: 0.0 },
+        u_audio_level: { value: 0.0 },
+        u_audio_history: { value: 0.0 },
       },
       vertexShader: _vert,
-      fragmentShader: _frag
+      fragmentShader: _frag,
     })
 
     this.shaderCubeMap = new THREE.ShaderMaterial(
       {
         defines: {
-          SCREEN_RES: screenRes
+          SCREEN_RES: screenRes,
         },
         uniforms: {
           u_cubemap: { value: this.cubeMap },
           u_cubemap_b: { value: this.cubeMapB },
-          u_exposure: { value: 2. },
-          u_gamma: { value: 2.2 }
+          u_exposure: { value: 2.0 },
+          u_gamma: { value: 2.2 },
         },
         vertexShader: skyboxVert,
-        fragmentShader: skyboxFrag
-      })
+        fragmentShader: skyboxFrag,
+      },
+    )
 
     this.shaderMesh = load(blobVert, blobFrag)
     this.shaderWire = load(blobVert, blobFrag)
@@ -141,7 +142,7 @@ export class NoiseBlob {
     shadowMatrix.identity()
     shadowMatrix.multiplyMatrices(
       this.light.getLight().projectionMatrix,
-      this.light.getLight().modelViewMatrix
+      this.light.getLight().modelViewMatrix,
     )
 
     this.shaderMesh.uniforms.u_light_pos = { value: lightPosition }
@@ -177,7 +178,7 @@ export class NoiseBlob {
   }
 
   initScene () {
-    const _sphere_size = .7
+    const _sphere_size = 0.7
     const _geom = new THREE.SphereGeometry(_sphere_size, 128, 128)
     const _geom_lowres = new THREE.SphereGeometry(_sphere_size, 64, 64)
 
@@ -221,17 +222,23 @@ export class NoiseBlob {
 
   initCubeMap () {
     this.cubeMap = new THREE.CubeTextureLoader().load([
-      px3js, nx3js,
-      py3js, ny3js,
-      pz3js, nz3js
+      px3js,
+      nx3js,
+      py3js,
+      ny3js,
+      pz3js,
+      nz3js,
     ])
 
     this.cubeMap.format = THREE.RGBAFormat
 
     this.cubeMapB = new THREE.CubeTextureLoader().load([
-      px, nx,
-      py, ny,
-      pz, nz
+      px,
+      nx,
+      py,
+      ny,
+      pz,
+      nz,
     ])
 
     this.cubeMapB.format = THREE.RGBAFormat
@@ -245,7 +252,7 @@ export class NoiseBlob {
   }
 
   updateCubeMap () {
-    const crossFader = 0.
+    const crossFader = 0.0
     this.shaderMesh.uniforms.cross_fader = { value: crossFader }
     this.shaderCubeMap.uniforms.cross_fader = { value: crossFader }
 
@@ -262,7 +269,7 @@ export class NoiseBlob {
       this.shaderPopWire,
       this.shaderPopPointsOut,
       this.shaderPopWireOut,
-      this.shaderShadow
+      this.shaderShadow,
     ]
 
     for (let i = 0; i < shaders.length; i++) {
@@ -289,8 +296,8 @@ export class NoiseBlob {
   }
 
   setRetina () {
-    this.w *= .5
-    this.h *= .5
+    this.w *= 0.5
+    this.h *= 0.5
   }
 
   setPBR (pbr: ThreePBR) {

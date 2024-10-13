@@ -14,12 +14,12 @@ const emit = defineEmits<{ (e: 'update:modelValue', value: any): void }>()
 
 const value = computed({
   get: () => props.modelValue,
-  set: value => emit('update:modelValue', value)
+  set: value => emit('update:modelValue', value),
 })
 
 const el = ref<HTMLTextAreaElement>()
 
 defineExpose({
-  el
+  el,
 })
 </script>

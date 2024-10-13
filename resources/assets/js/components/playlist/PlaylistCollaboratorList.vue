@@ -15,7 +15,8 @@
 
 <script lang="ts" setup>
 import { sortBy } from 'lodash'
-import { computed, onMounted, ref, Ref, toRefs } from 'vue'
+import type { Ref } from 'vue'
+import { computed, onMounted, ref, toRefs } from 'vue'
 import { useAuthorization, useDialogBox, useErrorHandler } from '@/composables'
 import { playlistCollaborationService } from '@/services'
 import { eventBus } from '@/utils'
@@ -29,7 +30,7 @@ const { playlist } = toRefs(props)
 const { currentUser } = useAuthorization()
 const { showConfirmDialog } = useDialogBox()
 
-let collaborators: Ref<PlaylistCollaborator[]> = ref([])
+const collaborators: Ref<PlaylistCollaborator[]> = ref([])
 const loading = ref(false)
 
 const currentUserIsOwner = computed(() => currentUser.value?.id === playlist.value.user_id)
@@ -41,10 +42,14 @@ const fetchCollaborators = async () => {
     collaborators.value = sortBy(
       await playlistCollaborationService.fetchCollaborators(playlist.value),
       ({ id }) => {
-        if (id === currentUser.value.id) return 0
-        if (id === playlist.value.user_id) return 1
+        if (id === currentUser.value.id) {
+          return 0
+        }
+        if (id === playlist.value.user_id) {
+          return 1
+        }
         return 2
-      }
+      },
     )
   } finally {
     loading.value = false
@@ -53,10 +58,12 @@ const fetchCollaborators = async () => {
 
 const removeCollaborator = async (collaborator: PlaylistCollaborator) => {
   const deadSure = await showConfirmDialog(
-    `Remove ${collaborator.name} as a collaborator? This will remove their contributions as well.`
+    `Remove ${collaborator.name} as a collaborator? This will remove their contributions as well.`,
   )
 
-  if (!deadSure) return
+  if (!deadSure) {
+    return
+  }
 
   try {
     collaborators.value = collaborators.value.filter(({ id }) => id !== collaborator.id)

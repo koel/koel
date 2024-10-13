@@ -2,7 +2,7 @@ const DEFAULT_EXPIRATION_TIME = 1000 * 60 * 60 * 24 // 1 day
 
 export class Cache {
   private storage = new Map<any, {
-    expires: number,
+    expires: number
     value: any
   }>()
 
@@ -21,7 +21,7 @@ export class Cache {
   public set (key: any, value: any, seconds: number = DEFAULT_EXPIRATION_TIME) {
     this.storage.set(Cache.normalizeKey(key), {
       value,
-      expires: Date.now() + seconds * 1000
+      expires: Date.now() + seconds * 1000,
     })
   }
 
@@ -32,7 +32,9 @@ export class Cache {
   public miss (key: any) {
     key = Cache.normalizeKey(key)
 
-    if (!this.storage.has(key)) return true
+    if (!this.storage.has(key)) {
+      return true
+    }
     const { expires } = this.storage.get(key)!
 
     if (expires < Date.now()) {

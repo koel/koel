@@ -2,8 +2,8 @@
   <div
     class="collaboration-modal max-w-[640px]"
     tabindex="0"
-    @keydown.esc="close"
     data-testid="playlist-collaboration"
+    @keydown.esc="close"
   >
     <header>
       <h1>Playlist Collaboration</h1>
@@ -41,12 +41,12 @@ import Btn from '@/components/ui/form/Btn.vue'
 import InviteCollaborators from '@/components/playlist/InvitePlaylistCollaborators.vue'
 import CollaboratorList from '@/components/playlist/PlaylistCollaboratorList.vue'
 
+const emit = defineEmits<{ (e: 'close'): void }>()
 const playlist = useModal().getFromContext<Playlist>('playlist')
 const { currentUser } = useAuthorization()
 
 const canManageCollaborators = computed(() => currentUser.value?.id === playlist.user_id)
 
-const emit = defineEmits<{ (e: 'close'): void }>()
 const close = () => emit('close')
 </script>
 

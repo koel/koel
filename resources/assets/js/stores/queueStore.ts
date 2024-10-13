@@ -6,7 +6,7 @@ import { songStore } from '@/stores'
 
 export const queueStore = {
   state: reactive<{ playables: Playable[] }>({
-    playables: []
+    playables: [],
   }),
 
   init (savedState: QueueState) {
@@ -151,5 +151,5 @@ export const queueStore = {
     } catch (error: unknown) {
       logger.error(error)
     }
-  }
+  },
 }

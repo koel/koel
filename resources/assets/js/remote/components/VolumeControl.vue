@@ -15,7 +15,7 @@ import noUISlider from 'nouislider'
 import { OnClickOutside } from '@vueuse/components'
 import { inject, onMounted, ref, watch } from 'vue'
 import { socketService } from '@/services'
-import { RemoteState } from '@/remote/types'
+import type { RemoteState } from '@/remote/types'
 
 const DEFAULT_VOLUME = 7
 
@@ -36,7 +36,7 @@ onMounted(() => {
     connect: [true, false],
     start: state?.volume || DEFAULT_VOLUME,
     range: { min: 0, max: 10 },
-    direction: 'rtl'
+    direction: 'rtl',
   })
 
   if (!volumeSlider.value?.noUiSlider) {
@@ -49,9 +49,7 @@ onMounted(() => {
     socketService.broadcast('SOCKET_SET_VOLUME', volume)
   })
 })
-
 </script>
-
 
 <style lang="postcss">
 .volume {
@@ -90,7 +88,8 @@ onMounted(() => {
     background: var(--color-highlight);
     box-shadow: none;
 
-    &::after, &::before {
+    &::after,
+    &::before {
       display: none;
     }
   }

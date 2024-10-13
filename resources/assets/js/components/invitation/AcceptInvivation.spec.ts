@@ -12,15 +12,15 @@ new class extends UnitTestCase {
         .mockResolvedValue(factory.states('prospect')('user'))
 
       const acceptMock = this.mock(invitationService, 'accept').mockResolvedValue({
-        token: 'my-api-token',
-        'audio-token': 'my-audio-token'
+        'token': 'my-api-token',
+        'audio-token': 'my-audio-token',
       })
 
       await this.router.activateRoute({
         path: '_',
-        screen: 'Invitation.Accept'
+        screen: 'Invitation.Accept',
       }, {
-        token: 'my-token'
+        token: 'my-token',
       })
 
       this.render(AcceptInvitation)

@@ -20,5 +20,5 @@ export const $ = {
 
       this.scrollTo(el, to, duration - 10)
     }, 10)
-  }
+  },
 }

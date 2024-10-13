@@ -1,7 +1,8 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { screen } from '@testing-library/vue'
-import { UploadFile, uploadService, UploadStatus } from '@/services'
+import type { UploadFile, UploadStatus } from '@/services'
+import { uploadService } from '@/services'
 import Btn from '@/components/ui/form/Btn.vue'
 import UploadItem from './UploadItem.vue'
 
@@ -23,7 +24,8 @@ new class extends UnitTestCase {
     it.each<[UploadStatus]>([
       ['Uploaded'],
       ['Errored'],
-      ['Canceled']]
+      ['Canceled'],
+    ],
     )('allows removal if not uploading', async status => {
       const mock = this.mock(uploadService, 'remove')
       this.renderComponent(status)
@@ -41,18 +43,18 @@ new class extends UnitTestCase {
       id: 'x-file',
       message: '',
       name: 'Sample Track',
-      progress: 42
+      progress: 42,
     }
 
     return this.render(UploadItem, {
       props: {
-        file
+        file,
       },
       global: {
         stubs: {
-          Btn
-        }
-      }
+          Btn,
+        },
+      },
     })
   }
 }

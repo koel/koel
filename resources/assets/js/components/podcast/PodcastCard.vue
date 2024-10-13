@@ -3,8 +3,8 @@
     :entity="podcast"
     :layout="layout"
     :title="`${podcast.title} by ${podcast.author}`"
-    @click="goToPodcast"
     class="cursor-pointer"
+    @click="goToPodcast"
   >
     <template #name>
       <a :href="`#/podcasts/${podcast.id}`" class="font-medium" data-testid="title">{{ podcast.title }}</a>
@@ -12,7 +12,7 @@
     </template>
 
     <template #thumbnail>
-      <img :src="podcast.image" class="aspect-square w-[80px] object-cover rounded-lg" alt="Podcast image" />
+      <img :src="podcast.image" class="aspect-square w-[80px] object-cover rounded-lg" alt="Podcast image">
     </template>
   </BaseCard>
 </template>

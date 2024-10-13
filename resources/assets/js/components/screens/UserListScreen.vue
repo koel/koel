@@ -45,14 +45,12 @@
 
 <script lang="ts" setup>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import isMobile from 'ismobilejs'
-import { computed, defineAsyncComponent, onMounted, ref, toRef } from 'vue'
+import { computed, defineAsyncComponent, onMounted, toRef } from 'vue'
 import { userStore } from '@/stores'
 import { eventBus } from '@/utils'
 import { useAuthorization } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
-import ControlsToggle from '@/components/ui/ScreenControlsToggle.vue'
 import UserCard from '@/components/user/UserCard.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
@@ -66,7 +64,7 @@ const allUsers = toRef(userStore.state, 'users')
 const users = computed(() => allUsers
   .value
   .filter(({ is_prospect }) => !is_prospect)
-  .sort((a, b) => a.id === currentUser.value.id ? -1 : b.id === currentUser.value.id ? 1 : a.name.localeCompare(b.name))
+  .sort((a, b) => a.id === currentUser.value.id ? -1 : b.id === currentUser.value.id ? 1 : a.name.localeCompare(b.name)),
 )
 
 const prospects = computed(() => allUsers.value.filter(({ is_prospect }) => is_prospect))

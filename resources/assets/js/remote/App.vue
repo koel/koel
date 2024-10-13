@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ 'standalone' : inStandaloneMode }" class="h-screen bg-k-bg-primary">
+  <div :class="{ standalone: inStandaloneMode }" class="h-screen bg-k-bg-primary">
     <template v-if="authenticated">
       <AlbumArtOverlay v-if="showAlbumArtOverlay" :album="(state.playable as Song).album_id" />
 
@@ -38,6 +38,13 @@ const LoginForm = defineAsyncComponent(() => import('@/components/auth/LoginForm
 const authenticated = ref(false)
 const connected = ref(false)
 
+const state = reactive<RemoteState>({
+  playable: null,
+  volume: 0,
+})
+
+provide('state', state)
+
 const showAlbumArtOverlay = computed(() => {
   return preferenceStore.show_album_art_overlay
     && state.playable
@@ -45,20 +52,8 @@ const showAlbumArtOverlay = computed(() => {
 })
 
 const inStandaloneMode = ref(
-  (window.navigator as any).standalone || window.matchMedia('(display-mode: standalone)').matches
+  (window.navigator as any).standalone || window.matchMedia('(display-mode: standalone)').matches,
 )
-
-const onUserLoggedIn = async () => {
-  authenticated.value = true
-  await init()
-}
-
-const state = reactive<RemoteState>({
-  playable: null,
-  volume: 0
-})
-
-provide('state', state)
 
 const init = async () => {
   try {
@@ -78,6 +73,11 @@ const init = async () => {
     logger.error(error)
     authenticated.value = false
   }
+}
+
+const onUserLoggedIn = async () => {
+  authenticated.value = true
+  await init()
 }
 
 onMounted(async () => {

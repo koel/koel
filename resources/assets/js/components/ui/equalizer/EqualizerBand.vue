@@ -12,23 +12,23 @@ import { computed, onMounted, ref } from 'vue'
 import noUiSlider from 'nouislider'
 
 const props = withDefaults(defineProps<{
-  type?: 'preamp' | 'gain',
+  type?: 'preamp' | 'gain'
   modelValue?: number
 }>(), {
   type: 'gain',
-  modelValue: 0
+  modelValue: 0,
 })
-
-const sliderEl = ref<EqualizerBandElement>()
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: number): void
   (e: 'commit')
 }>()
 
+const sliderEl = ref<EqualizerBandElement>()
+
 const value = computed({
   get: () => props.modelValue,
-  set: value => emit('update:modelValue', value)
+  set: value => emit('update:modelValue', value),
 })
 
 /**
@@ -48,18 +48,18 @@ onMounted(() => {
     start: value.value,
     range: { min: -20, max: 20 },
     orientation: 'vertical',
-    direction: 'rtl'
+    direction: 'rtl',
   })
 
   sliderEl.value!.noUiSlider.on('slide', (values, handle) => {
-    emit('update:modelValue', parseFloat(values[handle]))
+    emit('update:modelValue', Number.parseFloat(values[handle]))
   })
 
   sliderEl.value!.noUiSlider.on('change', () => emit('commit'))
 })
 
 defineExpose({
-  updateSliderValue
+  updateSliderValue,
 })
 </script>
 
@@ -74,7 +74,7 @@ article {
       box-shadow: none;
 
       &::after {
-        content: " ";
+        content: ' ';
         position: absolute;
         width: 2px;
         height: 100%;
@@ -95,11 +95,16 @@ article {
       width: 16px;
 
       &::after {
-        content: " ";
+        content: ' ';
         position: absolute;
         width: 2px;
         height: 100%;
-        background: linear-gradient(to bottom, var(--color-highlight) 0%, var(--color-highlight) 36%, var(--color-success) 100%);
+        background: linear-gradient(
+          to bottom,
+          var(--color-highlight) 0%,
+          var(--color-highlight) 36%,
+          var(--color-success) 100%
+        );
         background-size: 2px;
         top: 0;
         left: 7px;
@@ -112,7 +117,8 @@ article {
       box-shadow: none;
       cursor: pointer;
 
-      &::before, &::after {
+      &::before,
+      &::after {
         display: none;
       }
     }
@@ -134,7 +140,8 @@ article {
     box-shadow: none;
     cursor: pointer;
 
-    &::before, &::after {
+    &::before,
+    &::after {
       display: none;
     }
   }

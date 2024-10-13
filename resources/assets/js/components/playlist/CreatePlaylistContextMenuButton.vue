@@ -18,7 +18,7 @@ const requestContextMenu = (e: MouseEvent) => {
 
   eventBus.emit('CREATE_NEW_PLAYLIST_CONTEXT_MENU_REQUESTED', {
     top: bottom,
-    left: right
+    left: right,
   })
 }
 </script>

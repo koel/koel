@@ -37,7 +37,7 @@
           :disabled="!preferences.transcode_on_mobile"
           class="appearance-auto rounded"
         >
-          <option v-for="quality in [64, 96, 128, 192, 256, 320]" :value="quality" :key="quality">{{ quality }}</option>
+          <option v-for="quality in [64, 96, 128, 192, 256, 320]" :key="quality" :value="quality">{{ quality }}</option>
         </select>
         kbps on mobile
       </div>

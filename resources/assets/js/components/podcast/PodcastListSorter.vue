@@ -20,7 +20,7 @@
         >
           <span>{{ item.label }}</span>
           <span v-if="currentlySortedBy(item.field)" class="opacity-80">
-            <Icon class="" v-if="order === 'asc'" :icon="faArrowUp" />
+            <Icon v-if="order === 'asc'" class="" :icon="faArrowUp" />
             <Icon v-else :icon="faArrowDown" />
           </span>
         </li>
@@ -43,9 +43,9 @@ const props = withDefaults(defineProps<{
   order: 'asc',
 })
 
-const { field: activeField, order } = toRefs(props)
-
 const emit = defineEmits<{ (e: 'sort', field: PodcastListSortField): void }>()
+
+const { field: activeField, order } = toRefs(props)
 
 const button = ref<HTMLButtonElement>()
 const menu = ref<HTMLDivElement>()
@@ -53,14 +53,14 @@ const menu = ref<HTMLDivElement>()
 const { setup, teardown, trigger, hide } = useFloatingUi(button, menu, {
   placement: 'bottom-end',
   useArrow: false,
-  autoTrigger: false
+  autoTrigger: false,
 })
 
 const items: { label: string, field: PodcastListSortField }[] = [
   { label: 'Last played', field: 'last_played_at' },
   { label: 'Subscribed', field: 'subscribed_at' },
   { label: 'Title', field: 'title' },
-  { label: 'Author', field: 'author' }
+  { label: 'Author', field: 'author' },
 ]
 
 const currentFieldLabel = computed(() => items.find(item => item.field === activeField.value)?.label)

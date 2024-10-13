@@ -19,18 +19,17 @@ declare global {
 
 expect.addSnapshotSerializer(vueSnapshotSerializer)
 
-global.ResizeObserver = global.ResizeObserver ||
-  vi.fn().mockImplementation(() => ({
-    disconnect: vi.fn(),
-    observe: vi.fn(),
-    unobserve: vi.fn()
-  }))
+globalThis.ResizeObserver = globalThis.ResizeObserver
+|| vi.fn().mockImplementation(() => ({
+  disconnect: vi.fn(),
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+}))
 
-
-global.LemonSqueezy = {
+globalThis.LemonSqueezy = {
   Url: {
-    Open: vi.fn()
-  }
+    Open: vi.fn(),
+  },
 }
 
 HTMLMediaElement.prototype.load = vi.fn()

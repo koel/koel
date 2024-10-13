@@ -2,13 +2,14 @@ import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { http } from '@/services'
-import { CreateUserData, UpdateUserData, userStore } from '.'
+import type { CreateUserData, UpdateUserData } from '.'
+import { userStore } from '.'
 
 const currentUser = factory('user', {
   id: 1,
   name: 'John Doe',
   email: 'john@doe.com',
-  is_admin: true
+  is_admin: true,
 })
 
 new class extends UnitTestCase {
@@ -55,7 +56,7 @@ new class extends UnitTestCase {
         is_admin: false,
         password: 'bratwurst',
         name: 'Jane Doe',
-        email: 'jane@doe.com'
+        email: 'jane@doe.com',
       }
 
       const user = factory('user', data)
@@ -75,7 +76,7 @@ new class extends UnitTestCase {
         is_admin: true,
         password: 'bratwurst',
         name: 'Jane Doe',
-        email: 'jane@doe.com'
+        email: 'jane@doe.com',
       }
 
       const updated = { ...user, ...data }

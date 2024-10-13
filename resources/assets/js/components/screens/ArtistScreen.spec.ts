@@ -26,7 +26,7 @@ new class extends UnitTestCase {
 
     await this.router.activateRoute({
       path: 'artists/42',
-      screen: 'Artist'
+      screen: 'Artist',
     }, { id: '42' })
 
     this.render(ArtistScreen, {
@@ -34,9 +34,9 @@ new class extends UnitTestCase {
         stubs: {
           ArtistInfo: this.stub('artist-info'),
           SongList: this.stub('song-list'),
-          AlbumCard: this.stub('album-card')
-        }
-      }
+          AlbumCard: this.stub('album-card'),
+        },
+      },
     })
 
     await waitFor(() => {

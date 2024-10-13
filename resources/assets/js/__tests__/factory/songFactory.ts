@@ -27,12 +27,12 @@ const generate = (partOfCompilation = false): Song => {
     liked: faker.datatype.boolean(),
     is_public: faker.datatype.boolean(),
     created_at: faker.date.past().toISOString(),
-    playback_state: 'Stopped'
+    playback_state: 'Stopped',
   }
 }
 
 export default (): Song => generate()
 
 export const states: Record<string, Partial<Song>> = {
-  partOfCompilation: generate(true)
+  partOfCompilation: generate(true),
 }

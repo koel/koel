@@ -1,9 +1,10 @@
 import Fuse from 'fuse.js'
-import { isRef, Ref, watch } from 'vue'
+import type { Ref } from 'vue'
+import { isRef, watch } from 'vue'
 
 type Path<T> = T extends object ? {
   [K in keyof T]:
-  `${Exclude<K, symbol>}${"" | `.${Path<T[K]>}`}`
+  `${Exclude<K, symbol>}${'' | `.${Path<T[K]>}`}`
 }[keyof T] : never
 
 export const useFuzzySearch = <T> (items: T[] | Ref<T[]>, keys: Path<T>[] | string[]) => {
@@ -25,12 +26,13 @@ export const useFuzzySearch = <T> (items: T[] | Ref<T[]>, keys: Path<T>[] | stri
   const search = (query: string | null) => {
     query = query?.trim() ?? null
 
-    return query ? fuse.search(query).map(result => result.item)
+    return query
+      ? fuse.search(query).map(result => result.item)
       : isRef(documents) ? documents.value : documents
   }
 
   return {
     search,
-    setDocuments
+    setDocuments,
   }
 }

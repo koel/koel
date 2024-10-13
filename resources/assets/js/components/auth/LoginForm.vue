@@ -51,9 +51,11 @@ import GoogleLoginButton from '@/components/auth/sso/GoogleLoginButton.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 
+const emit = defineEmits<{ (e: 'loggedin'): void }>()
+
 const DEMO_ACCOUNT = {
   email: 'demo@koel.dev',
-  password: 'demo'
+  password: 'demo',
 }
 
 const canResetPassword = window.MAILER_CONFIGURED && !window.IS_DEMO
@@ -65,8 +67,6 @@ const failed = ref(false)
 const showingForgotPasswordForm = ref(false)
 
 const showForgotPasswordForm = () => (showingForgotPasswordForm.value = true)
-
-const emit = defineEmits<{ (e: 'loggedin'): void }>()
 
 const login = async () => {
   try {
@@ -103,10 +103,12 @@ const onSSOSuccess = (token: CompositeToken) => {
  * You like to - move it!
  */
 @keyframes shake {
-  8%, 41% {
+  8%,
+  41% {
     transform: translateX(-10px);
   }
-  25%, 58% {
+  25%,
+  58% {
     transform: translateX(10px);
   }
   75% {
@@ -115,7 +117,8 @@ const onSSOSuccess = (token: CompositeToken) => {
   92% {
     transform: translateX(5px);
   }
-  0%, 100% {
+  0%,
+  100% {
     transform: translateX(0);
   }
 }
@@ -123,7 +126,7 @@ const onSSOSuccess = (token: CompositeToken) => {
 form {
   &.error {
     @apply border-red-500;
-    animation: shake .5s;
+    animation: shake 0.5s;
   }
 }
 </style>

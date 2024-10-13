@@ -1,5 +1,5 @@
 import { TypedEmitter } from 'tiny-typed-emitter'
-import { Events } from '@/config'
+import type { Events } from '@/config'
 
 const eventBus = new TypedEmitter<Events>()
 eventBus.setMaxListeners(100)

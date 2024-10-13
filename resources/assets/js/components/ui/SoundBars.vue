@@ -24,7 +24,7 @@ span {
   }
 
   40% {
-    transform: scaleY(.7);
+    transform: scaleY(0.7);
   }
 
   60% {

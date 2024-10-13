@@ -14,7 +14,7 @@ import {
   queueStore,
   recentlyPlayedStore,
   songStore,
-  userStore
+  userStore,
 } from '@/stores'
 
 new class extends UnitTestCase {
@@ -37,13 +37,13 @@ new class extends UnitTestCase {
       [false, false, 100, 400, 1],
       [true, false, 100, 400, 0],
       [false, true, 100, 400, 0],
-      [false, false, 100, 500, 0]
+      [false, false, 100, 500, 0],
     ])(
       'when playCountRegistered is %s, isTranscoding is %s, current media time is %d, media duration is %d, then registerPlay() should be call %d times',
       (playCountRegistered, isTranscoding, currentTime, duration, numberOfCalls) => {
         const song = factory('song', {
           play_count_registered: playCountRegistered,
-          playback_state: 'Playing'
+          playback_state: 'Playing',
         })
 
         this.setCurrentSong(song)
@@ -65,9 +65,10 @@ new class extends UnitTestCase {
         expect(registerPlayMock).toHaveBeenCalledTimes(numberOfCalls)
         expect(putMock).toHaveBeenCalledWith('queue/playback-status', {
           song: song.id,
-          position: currentTime
+          position: currentTime,
         })
-      })
+      },
+    )
 
     it('plays next song if current song is errored', () => {
       playbackService.init(document.querySelector('.plyr')!)
@@ -80,8 +81,8 @@ new class extends UnitTestCase {
       commonStore.state.uses_last_fm = true
       userStore.state.current = factory('user', {
         preferences: {
-          lastfm_session_key: 'foo'
-        }
+          lastfm_session_key: 'foo',
+        },
       })
 
       playbackService.init(document.querySelector('.plyr')!)
@@ -103,13 +104,14 @@ new class extends UnitTestCase {
 
         expect(restartMock).toHaveBeenCalledTimes(restartCalls)
         expect(playNextMock).toHaveBeenCalledTimes(playNextCalls)
-      })
+      },
+    )
 
     it.each([
       [false, true, 300, 310, 0],
       [true, false, 300, 310, 0],
       [false, false, 300, 400, 0],
-      [false, false, 300, 310, 1]
+      [false, false, 300, 310, 1],
     ])(
       'when next song preloaded is %s, isTranscoding is %s, current media time is %d, media duration is %d, then preload() should be called %d times',
       (preloaded, isTranscoding, currentTime, duration, numberOfCalls) => {
@@ -130,7 +132,7 @@ new class extends UnitTestCase {
         mediaElement.dispatchEvent(new Event('timeupdate'))
 
         expect(preloadMock).toHaveBeenCalledTimes(numberOfCalls)
-      }
+      },
     )
 
     it('registers play', () => {
@@ -150,7 +152,7 @@ new class extends UnitTestCase {
 
       const audioElement = {
         setAttribute: vi.fn(),
-        load: vi.fn()
+        load: vi.fn(),
       }
 
       const createElementMock = this.mock(document, 'createElement', audioElement)
@@ -195,7 +197,7 @@ new class extends UnitTestCase {
     it.each<[RepeatMode, RepeatMode]>([
       ['NO_REPEAT', 'REPEAT_ALL'],
       ['REPEAT_ALL', 'REPEAT_ONE'],
-      ['REPEAT_ONE', 'NO_REPEAT']
+      ['REPEAT_ONE', 'NO_REPEAT'],
     ])('it switches from repeat mode %s to repeat mode %s', (fromMode, toMode) => {
       playbackService.init(document.querySelector('.plyr')!)
       preferences.repeat_mode = fromMode
@@ -299,7 +301,7 @@ new class extends UnitTestCase {
 
     it('resumes playback', async () => {
       const song = this.setCurrentSong(factory('song', {
-        playback_state: 'Paused'
+        playback_state: 'Paused',
       }))
 
       const playMock = this.mock(window.HTMLMediaElement.prototype, 'play')
@@ -325,7 +327,7 @@ new class extends UnitTestCase {
 
     it.each<[MethodOf<typeof playbackService>, PlaybackState]>([
       ['resume', 'Paused'],
-      ['pause', 'Playing']
+      ['pause', 'Playing'],
     ])('%ss playback if toggled when current song playback state is %s', async (action, playbackState) => {
       playbackService.init(document.querySelector('.plyr')!)
 
@@ -395,13 +397,13 @@ new class extends UnitTestCase {
   `
 
     window.AudioContext = vi.fn().mockImplementation(() => ({
-      createMediaElementSource: vi.fn(noop)
+      createMediaElementSource: vi.fn(noop),
     }))
   }
 
   private setCurrentSong (song?: Playable) {
     song = reactive(song || factory('song', {
-      playback_state: 'Playing'
+      playback_state: 'Playing',
     }))
 
     queueStore.state.playables = reactive([song])

@@ -7,8 +7,8 @@ new class extends UnitTestCase {
     it('renders', () => {
       expect(this.render(AppleMusicButton, {
         props: {
-          url: 'https://music.apple.com/buy-nao'
-        }
+          url: 'https://music.apple.com/buy-nao',
+        },
       }).html()).toMatchSnapshot()
     })
   }

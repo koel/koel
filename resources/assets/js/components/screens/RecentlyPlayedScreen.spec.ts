@@ -29,9 +29,9 @@ new class extends UnitTestCase {
     this.render(RecentlyPlayedScreen, {
       global: {
         stubs: {
-          SongList: this.stub('song-list')
-        }
-      }
+          SongList: this.stub('song-list'),
+        },
+      },
     })
 
     await this.router.activateRoute({ path: 'recently-played', screen: 'RecentlyPlayed' })

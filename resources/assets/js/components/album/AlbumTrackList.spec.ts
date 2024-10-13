@@ -14,8 +14,8 @@ new class extends UnitTestCase {
       this.render(AlbumTrackList, {
         props: {
           album,
-          tracks: factory('album-track', 3)
-        }
+          tracks: factory('album-track', 3),
+        },
       })
 
       await this.tick()

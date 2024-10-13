@@ -39,9 +39,9 @@ new class extends UnitTestCase {
     return this.render(AboutKoelModel, {
       global: {
         stubs: {
-          SponsorList: this.stub('sponsor-list')
-        }
-      }
+          SponsorList: this.stub('sponsor-list'),
+        },
+      },
     })
   }
 }

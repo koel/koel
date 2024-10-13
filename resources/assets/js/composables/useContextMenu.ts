@@ -17,6 +17,6 @@ export const useContextMenu = () => {
     base,
     open,
     close,
-    trigger
+    trigger,
   }
 }

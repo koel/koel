@@ -3,7 +3,8 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import { reactive } from 'vue'
 import factory from '@/__tests__/factory'
 import { http } from '@/services'
-import { albumStore, artistStore, ExcerptSearchResult, searchStore, songStore } from '.'
+import type { ExcerptSearchResult } from '.'
+import { albumStore, artistStore, searchStore, songStore } from '.'
 
 new class extends UnitTestCase {
   protected beforeEach () {
@@ -12,9 +13,9 @@ new class extends UnitTestCase {
         excerpt: {
           playables: [],
           albums: [],
-          artists: []
+          artists: [],
         },
-        playables: []
+        playables: [],
       })
     })
   }
@@ -24,7 +25,7 @@ new class extends UnitTestCase {
       const result: ExcerptSearchResult = {
         playables: factory('song', 3),
         albums: factory('album', 3),
-        artists: factory('artist', 3)
+        artists: factory('artist', 3),
       }
 
       const getMock = this.mock(http, 'get').mockResolvedValue(result)
