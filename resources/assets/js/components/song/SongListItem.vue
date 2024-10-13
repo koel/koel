@@ -27,7 +27,7 @@
       </span>
       <span class="artist">{{ artist }}</span>
     </span>
-    <span class="album">{{ album }}</span>    
+    <span class="album">{{ album }}</span>
     <template v-if="config.collaborative">
       <span class="collaborator">
         <UserAvatar :user="collaborator" width="24" />
