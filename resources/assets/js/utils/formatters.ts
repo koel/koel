@@ -47,7 +47,7 @@ export const secondsToHis = (total: number) => {
   return parts.join(':')
 }
 
-export type ServerValidationError = {
+export interface ServerValidationError {
   message: string
   errors: Record<string, string[]>
 }
@@ -80,7 +80,7 @@ export const cr2lf = (str: string) => {
 }
 
 export const slugToTitle = (slug: string, separator = '-') => {
-  let title = slug.split(separator).map(w => w.charAt(0).toUpperCase() + w.substring(1).toLowerCase()).join(' ')
+  const title = slug.split(separator).map(w => w.charAt(0).toUpperCase() + w.substring(1).toLowerCase()).join(' ')
   return title.replace(/\s+/g, ' ').trim()
 }
 

@@ -17,7 +17,7 @@ new class extends UnitTestCase {
         playback_state: 'Playing',
         track: 12,
         album_cover: 'https://example.com/cover.jpg',
-        liked: true
+        liked: true,
       })
 
       const { html } = this.renderComponent(song)
@@ -36,13 +36,13 @@ new class extends UnitTestCase {
 
     row = {
       playable,
-      selected: false
+      selected: false,
     }
 
     return this.render(SongListItem, {
       props: {
-        item: row
-      }
+        item: row,
+      },
     })
   }
 }

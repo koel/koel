@@ -82,12 +82,12 @@ defineExpose({ success, info, warning, error, confirm })
 dialog {
   --dialog-bg-color: #fff;
   --dialog-fg-color: #333;
-  --dialog-footer-bg-color: rgba(0, 0, 0, .05);
+  --dialog-footer-bg-color: rgba(0, 0, 0, 0.05);
 
   @media (prefers-color-scheme: dark) {
     --dialog-bg-color: rgb(38 38 38);
     --dialog-fg-color: #eee;
-    --dialog-footer-bg-color: rgba(255, 255, 255, .02);
+    --dialog-footer-bg-color: rgba(255, 255, 255, 0.02);
   }
 
   background: var(--dialog-bg-color);

@@ -75,13 +75,13 @@ const {
   playAll,
   playSelected,
   applyFilter,
-  onScrollBreakpoint
+  onScrollBreakpoint,
 } = useSongList(recentlyPlayedSongs, { type: 'RecentlyPlayed' }, { sortable: false })
 
 const { SongListControls, config } = useSongListControls('RecentlyPlayed')
 
 let initialized = false
-let loading = ref(false)
+const loading = ref(false)
 
 useRouter().onScreenActivated('RecentlyPlayed', async () => {
   if (!initialized) {

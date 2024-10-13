@@ -1,10 +1,10 @@
-import { Faker } from '@faker-js/faker'
+import type { Faker } from '@faker-js/faker'
 
 export default (faker: Faker): ArtistInfo => ({
   image: faker.image.imageUrl(),
   bio: {
     summary: faker.lorem.sentence(),
-    full: faker.lorem.sentences(4)
+    full: faker.lorem.sentences(4),
   },
-  url: faker.internet.url()
+  url: faker.internet.url(),
 })

@@ -20,9 +20,10 @@ import { computed, toRefs } from 'vue'
 import { youTubeService } from '@/services'
 import { useRouter } from '@/composables'
 
+const props = defineProps<{ video: YouTubeVideo }>()
+
 const { go } = useRouter()
 
-const props = defineProps<{ video: YouTubeVideo }>()
 const { video } = toRefs(props)
 
 const url = computed(() => `https://youtu.be/${video.value.id.videoId}`)

@@ -22,15 +22,18 @@ import { ref } from 'vue'
 import { OnClickOutside } from '@vueuse/components'
 import { useUpload } from '@/composables'
 
+const emit = defineEmits<{ (e: 'close'): void }>()
+
 const { allowsUpload, mediaPathSetUp, handleDropEvent } = useUpload()
 
-const emit = defineEmits<{ (e: 'close'): void }>()
 const droppable = ref(false)
 
 const onDropLeave = () => (droppable.value = false)
 
 const onDragOver = (event: DragEvent) => {
-  if (!event.dataTransfer?.types.includes('Files')) return false
+  if (!event.dataTransfer?.types.includes('Files')) {
+    return false
+  }
   event.preventDefault()
   droppable.value = true
 }
@@ -50,7 +53,7 @@ const close = () => emit('close')
 
   &.droppable {
     @apply h-[384px] outline-white bg-black/90;
-    box-shadow: 0 0 0 999rem rgba(0, 0, 0, .7);
+    box-shadow: 0 0 0 999rem rgba(0, 0, 0, 0.7);
   }
 }
 </style>

@@ -1,6 +1,7 @@
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { expect, it } from 'vitest'
-import { authService, http, UpdateCurrentProfileData } from '@/services'
+import type { UpdateCurrentProfileData } from '@/services'
+import { authService, http } from '@/services'
 import { useLocalStorage } from '@/composables'
 import factory from '@/__tests__/factory'
 import { userStore } from '@/stores'
@@ -33,7 +34,7 @@ new class extends UnitTestCase {
     it('logs in', async () => {
       const postMock = this.mock(http, 'post').mockResolvedValue({
         'audio-token': 'foo',
-        token: 'bar'
+        'token': 'bar',
       })
 
       await authService.login('john@doe.com', 'curry-wurst')
@@ -59,13 +60,13 @@ new class extends UnitTestCase {
       userStore.state.current = factory('user', {
         id: 1,
         name: 'John Doe',
-        email: 'john@doe.com'
+        email: 'john@doe.com',
       })
 
       const updated = factory('user', {
         id: 1,
         name: 'Jane Doe',
-        email: 'jane@doe.com'
+        email: 'jane@doe.com',
       })
 
       const putMock = this.mock(http, 'put').mockResolvedValue(updated)
@@ -73,7 +74,7 @@ new class extends UnitTestCase {
       const data: UpdateCurrentProfileData = {
         current_password: 'curry-wurst',
         name: 'Jane Doe',
-        email: 'jane@doe.com'
+        email: 'jane@doe.com',
       }
 
       await authService.updateProfile(data)

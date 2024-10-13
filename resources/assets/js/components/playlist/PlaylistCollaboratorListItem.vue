@@ -34,16 +34,15 @@ import UserAvatar from '@/components/user/UserAvatar.vue'
 import { useAuthorization } from '@/composables'
 
 const props = defineProps<{
-  collaborator: PlaylistCollaborator,
-  removable: boolean,
-  manageable: boolean,
+  collaborator: PlaylistCollaborator
+  removable: boolean
+  manageable: boolean
   role: 'owner' | 'contributor'
 }>()
 
+const emit = defineEmits<{ (e: 'remove'): void }>()
 const { collaborator, removable, role } = toRefs(props)
 const { currentUser } = useAuthorization()
-
-const emit = defineEmits<{ (e: 'remove'): void }>()
 </script>
 
 <style lang="postcss" scoped>

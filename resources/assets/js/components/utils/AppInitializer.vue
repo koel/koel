@@ -8,12 +8,12 @@ import { useErrorHandler, useOverlay } from '@/composables'
 import { commonStore, preferenceStore as preferences } from '@/stores'
 import { socketListener, socketService, uploadService } from '@/services'
 
-const { showOverlay, hideOverlay } = useOverlay()
-
 const emits = defineEmits<{
-  (e: 'success'): void,
-  (e: 'error', err: unknown): void,
+  (e: 'success'): void
+  (e: 'error', err: unknown): void
 }>()
+
+const { showOverlay, hideOverlay } = useOverlay()
 
 /**
  * Request for notification permission if it's not provided and the user is OK with notifications.

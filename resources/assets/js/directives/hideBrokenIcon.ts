@@ -1,4 +1,4 @@
-import { Directive } from 'vue'
+import type { Directive } from 'vue'
 
 export const hideBrokenIcon: Directive = {
   mounted: async (el: HTMLImageElement) => {
@@ -8,5 +8,5 @@ export const hideBrokenIcon: Directive = {
     // and the error event will not be triggered.
     // We'll work around by explicitly setting the src to an empty string, which will trigger the error.
     el.src = el.src || ''
-  }
+  },
 }

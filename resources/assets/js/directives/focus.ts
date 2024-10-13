@@ -1,5 +1,5 @@
-import { Directive } from 'vue'
+import type { Directive } from 'vue'
 
 export const focus: Directive = {
-  mounted: (el: HTMLElement) => el.focus()
+  mounted: (el: HTMLElement) => el.focus(),
 }

@@ -7,7 +7,7 @@
     <span
       v-for="thumbnail in displayedThumbnails"
       :key="thumbnail"
-      :style="{ backgroundImage: `url(${thumbnail}`}"
+      :style="{ backgroundImage: `url(${thumbnail}` }"
       class="block will-change-transform w-full h-full bg-cover bg-no-repeat"
       data-testid="thumbnail"
     />
@@ -19,13 +19,14 @@ import { take } from 'lodash'
 import { computed, toRefs } from 'vue'
 import { defaultCover } from '@/utils'
 
+const props = defineProps<{ thumbnails: string[] }>()
+
 const defaultBackgroundImage = `url(${defaultCover})`
 
-const props = defineProps<{ thumbnails: string[] }>()
 const { thumbnails } = toRefs(props)
 
 const displayedThumbnails = computed(() => {
-  return thumbnails.value.length == 0
+  return thumbnails.value.length === 0
     ? [defaultCover]
     : (thumbnails.value.length < 4 ? [thumbnails.value[0]] : take(thumbnails.value, 4)).map(url => url || defaultCover)
 })

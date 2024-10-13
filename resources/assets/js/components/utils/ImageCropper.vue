@@ -32,17 +32,16 @@ const props = withDefaults(defineProps<{
 }>(), {
   source: null,
   config: () => ({
-    minWidth: 192
-  })
+    minWidth: 192,
+  }),
 })
-
-const { source, config } = toRefs(props)
-const cropper = ref<typeof Cropper>()
 
 const emits = defineEmits<{
   (e: 'crop', result: string): void
   (e: 'cancel'): void
 }>()
+const { source, config } = toRefs(props)
+const cropper = ref<typeof Cropper>()
 
 const crop = () => emits('crop', cropper.value?.getResult().canvas.toDataURL())
 </script>

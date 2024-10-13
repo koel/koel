@@ -11,7 +11,7 @@ new class extends UnitTestCase {
       const getMock = this.mock(http, 'get').mockResolvedValue([
         { name: 'Foo', url: 'https://foo.com' },
         { name: 'Bar', url: 'https://bar.com' },
-        { name: 'Something Else', url: 'https://something-else.net' }
+        { name: 'Something Else', url: 'https://something-else.net' },
       ])
 
       const { html } = this.render(CreditsBlock)

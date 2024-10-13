@@ -62,14 +62,16 @@ const { currentUser } = useAuthorization()
 const { startDragging } = useDraggable('playables')
 
 const external = computed(() => {
-  if (!isSong(playable.value)) return false
+  if (!isSong(playable.value)) {
+    return false
+  }
   return isPlus.value && playable.value.owner_id !== currentUser.value?.id
 })
 
 const requestContextMenu = (event: MouseEvent) => eventBus.emit(
   'PLAYABLE_CONTEXT_MENU_REQUESTED',
   event,
-  playable.value
+  playable.value,
 )
 
 const onDragStart = (event: DragEvent) => startDragging(event, [playable.value])
@@ -84,7 +86,8 @@ article {
 
   /* show the thumbnail's playback control on the whole card focus and hover */
 
-  &:hover :deep(.song-thumbnail), &:focus :deep(.song-thumbnail) {
+  &:hover :deep(.song-thumbnail),
+  &:focus :deep(.song-thumbnail) {
     &::before {
       @apply opacity-70;
     }

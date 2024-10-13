@@ -28,7 +28,7 @@ export interface UploadFile {
 
 export const uploadService = {
   state: reactive({
-    files: [] as UploadFile[]
+    files: [] as UploadFile[],
   }),
 
   simultaneousUploads: 5,
@@ -125,5 +125,5 @@ export const uploadService = {
 
   removeFailed () {
     this.state.files = this.state.files.filter(({ status }) => status !== 'Errored')
-  }
+  },
 }

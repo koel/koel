@@ -44,6 +44,7 @@ import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 import SelectBox from '@/components/ui/form/SelectBox.vue'
 
+const emit = defineEmits<{ (e: 'close'): void }>()
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
@@ -53,7 +54,6 @@ const name = ref(playlist.name)
 const folderId = ref(playlist.folder_id)
 const folders = toRef(playlistFolderStore.state, 'folders')
 
-const emit = defineEmits<{ (e: 'close'): void }>()
 const close = () => emit('close')
 
 const submit = async () => {
@@ -62,7 +62,7 @@ const submit = async () => {
   try {
     await playlistStore.update(playlist, {
       name: name.value,
-      folder_id: folderId.value
+      folder_id: folderId.value,
     })
 
     toastSuccess('Playlist updated.')
@@ -92,6 +92,6 @@ form {
 }
 
 label.folder {
-  flex: .6;
+  flex: 0.6;
 }
 </style>

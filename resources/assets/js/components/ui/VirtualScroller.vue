@@ -6,7 +6,7 @@
     @scroll.passive="onScroll"
   >
     <div :style="{ height: `${totalHeight}px` }" class="will-change-transform overflow-hidden">
-      <div :style="{ transform: `translateY(${offsetY}px)`}" class="will-change-transform items-wrapper">
+      <div :style="{ transform: `translateY(${offsetY}px)` }" class="will-change-transform items-wrapper">
         <slot v-for="item in renderedItems" :item="item" />
       </div>
     </div>
@@ -17,17 +17,17 @@
 import { computed, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
 
 const props = defineProps<{ items: any[], itemHeight: number }>()
+const emit = defineEmits<{
+  (e: 'scrolledToEnd'): void
+  (e: 'scroll', event: Event): void
+}>()
+
 const { items, itemHeight } = toRefs(props)
 
 const scroller = ref<HTMLElement>()
 const scrollerHeight = ref(0)
 const renderAhead = 5
 const scrollTop = ref(0)
-
-const emit = defineEmits<{
-  (e: 'scrolled-to-end'): void,
-  (e: 'scroll', event: Event): void
-}>()
 
 const totalHeight = computed(() => items.value.length * itemHeight.value)
 const startPosition = computed(() => Math.max(0, Math.floor(scrollTop.value / itemHeight.value) - renderAhead))
@@ -42,12 +42,14 @@ const renderedItems = computed(() => {
 const onScroll = (e: Event) => requestAnimationFrame(() => {
   scrollTop.value = (e.target as HTMLElement).scrollTop
 
-  if (!scroller.value) return
+  if (!scroller.value) {
+    return
+  }
 
   emit('scroll', e)
 
   if (scroller.value.scrollTop + scroller.value.clientHeight + itemHeight.value >= scroller.value.scrollHeight) {
-    emit('scrolled-to-end')
+    emit('scrolledToEnd')
   }
 })
 

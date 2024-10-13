@@ -73,9 +73,9 @@
 <script lang="ts" setup>
 import { faFile } from '@fortawesome/free-regular-svg-icons'
 import { differenceBy } from 'lodash'
-import { computed, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { eventBus, pluralize } from '@/utils'
-import { commonStore, playlistStore, songStore } from '@/stores'
+import { playlistStore, songStore } from '@/stores'
 import { downloadService, playlistCollaborationService } from '@/services'
 import {
   useAuthorization,
@@ -83,7 +83,7 @@ import {
   usePlaylistManagement,
   useRouter,
   useSongList,
-  useSongListControls
+  useSongListControls,
 } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -121,38 +121,11 @@ const {
   applyFilter,
   onScrollBreakpoint,
   sort: baseSort,
-  config: listConfig
+  config: listConfig,
 } = useSongList(ref<Playable[] | CollaborativeSong[]>([]), { type: 'Playlist' })
 
 const { SongListControls, config: controlsConfig } = useSongListControls('Playlist')
 const { removeFromPlaylist } = usePlaylistManagement()
-
-const destroy = () => eventBus.emit('PLAYLIST_DELETE', playlist.value!)
-const download = () => downloadService.fromPlaylist(playlist.value!)
-const editPlaylist = () => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist.value!)
-
-const removeSelected = async () => await removeFromPlaylist(playlist.value!, selectedPlayables.value)
-let collaborators = ref<PlaylistCollaborator[]>([])
-
-const fetchDetails = async (refresh = false) => {
-  if (loading.value) return
-
-  try {
-    [songs.value, collaborators.value] = await Promise.all([
-      songStore.fetchForPlaylist(playlist.value!, refresh),
-      playlist.value!.is_collaborative
-        ? playlistCollaborationService.fetchCollaborators(playlist.value!)
-        : Promise.resolve<PlaylistCollaborator[]>([])
-    ])
-
-    sortField.value ??= (playlist.value?.is_smart ? 'title' : 'position')
-    sort(sortField.value, 'asc')
-  } catch (error: unknown) {
-    useErrorHandler().handleHttpError(error)
-  } finally {
-    loading.value = false
-  }
-}
 
 const sort = (field: MaybeArray<PlayableListSortField> | null, order: SortOrder) => {
   listConfig.reorderable = field === 'position'
@@ -165,12 +138,43 @@ const sort = (field: MaybeArray<PlayableListSortField> | null, order: SortOrder)
   songs.value = playlist.value!.playables!
 }
 
+const destroy = () => eventBus.emit('PLAYLIST_DELETE', playlist.value!)
+const download = () => downloadService.fromPlaylist(playlist.value!)
+const editPlaylist = () => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist.value!)
+
+const removeSelected = async () => await removeFromPlaylist(playlist.value!, selectedPlayables.value)
+const collaborators = ref<PlaylistCollaborator[]>([])
+
+const fetchDetails = async (refresh = false) => {
+  if (loading.value) {
+    return
+  }
+
+  try {
+    [songs.value, collaborators.value] = await Promise.all([
+      songStore.fetchForPlaylist(playlist.value!, refresh),
+      playlist.value!.is_collaborative
+        ? playlistCollaborationService.fetchCollaborators(playlist.value!)
+        : Promise.resolve<PlaylistCollaborator[]>([]),
+    ])
+
+    sortField.value ??= (playlist.value?.is_smart ? 'title' : 'position')
+    sort(sortField.value, 'asc')
+  } catch (error: unknown) {
+    useErrorHandler().handleHttpError(error)
+  } finally {
+    loading.value = false
+  }
+}
+
 const onReorder = (target: Playable, type: MoveType) => {
   playlistStore.moveItemsInPlaylist(playlist.value!, selectedPlayables.value, target, type)
 }
 
 watch(playlistId, async id => {
-  if (!id) return
+  if (!id) {
+    return
+  }
 
   // sort field will be determined later by the playlist's type
   sortField.value = null
@@ -197,7 +201,9 @@ eventBus
   .on('PLAYLIST_UPDATED', async ({ id }) => id === playlistId.value && await fetchDetails())
   .on('PLAYLIST_COLLABORATOR_REMOVED', async ({ id }) => id === playlistId.value && await fetchDetails())
   .on('PLAYLIST_CONTENT_REMOVED', async ({ id }, removed) => {
-    if (id !== playlistId.value) return
+    if (id !== playlistId.value) {
+      return
+    }
     songs.value = differenceBy(songs.value, removed, 'id')
   })
 </script>

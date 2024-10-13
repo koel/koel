@@ -19,7 +19,7 @@ export default class SceneInit {
       this.fov,
       this.container.clientWidth / this.container.clientHeight,
       1,
-      1000
+      1000,
     )
 
     this.camera.position.z = 128
@@ -29,22 +29,22 @@ export default class SceneInit {
 
     this.uniforms = {
       u_time: { type: 'f', value: 1.0 },
-      colorB: { type: 'vec3', value: new THREE.Color(0xfff000) },
-      colorA: { type: 'vec3', value: new THREE.Color(0xffffff) }
+      colorB: { type: 'vec3', value: new THREE.Color(0xFFF000) },
+      colorA: { type: 'vec3', value: new THREE.Color(0xFFFFFF) },
     }
 
     this.renderer = new THREE.WebGLRenderer({
-      antialias: true
+      antialias: true,
     })
 
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight)
     container.appendChild(this.renderer.domElement)
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7)
+    const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.7)
     ambientLight.castShadow = false
     this.scene.add(ambientLight)
 
-    const spotLight = new THREE.SpotLight(0xffffff, 0.55)
+    const spotLight = new THREE.SpotLight(0xFFFFFF, 0.55)
     spotLight.castShadow = true
     spotLight.position.set(0, 80, 10)
     this.scene.add(spotLight)

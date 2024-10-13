@@ -9,19 +9,19 @@ import { preferenceStore } from '@/stores'
 new class extends UnitTestCase {
   private renderComponent (episode: Episode, podcast?: Podcast) {
     podcast = podcast || factory('podcast', {
-      id: episode.id
+      id: episode.id,
     })
 
     this.render(Component, {
       props: {
         episode,
-        podcast
+        podcast,
       },
       global: {
         stubs: {
-          EpisodeProgress: this.stub('episode-progress-stub')
-        }
-      }
+          EpisodeProgress: this.stub('episode-progress-stub'),
+        },
+      },
     })
   }
 
@@ -31,7 +31,7 @@ new class extends UnitTestCase {
 
       this.renderComponent(factory('episode', {
         id: 'foo',
-        playback_state: 'Playing'
+        playback_state: 'Playing',
       }))
 
       await this.user.click(screen.getByRole('button'))
@@ -44,7 +44,7 @@ new class extends UnitTestCase {
 
       this.renderComponent(factory('episode', {
         id: 'foo',
-        playback_state: 'Paused'
+        playback_state: 'Paused',
       }))
 
       await this.user.click(screen.getByRole('button'))
@@ -53,12 +53,13 @@ new class extends UnitTestCase {
     })
 
     it.each([[600, 50, 50], [600, 650, 0], [600, null, 0]])(
-      'plays without continuous playback', async (episodeLength, currentPosition, startPlaybackPosition) => {
+      'plays without continuous playback',
+      async (episodeLength, currentPosition, startPlaybackPosition) => {
         preferenceStore.temporary.continuous_playback = false
         const playMock = this.mock(playbackService, 'play')
 
         const episode = factory('episode', {
-          length: episodeLength
+          length: episodeLength,
         })
 
         const podcast = factory('podcast', {
@@ -66,16 +67,16 @@ new class extends UnitTestCase {
           state: {
             current_episode: episode.id,
             progresses: {
-              [episode.id]: currentPosition
-            }
-          }
+              [episode.id]: currentPosition,
+            },
+          },
         })
 
         this.renderComponent(episode, podcast)
         await this.user.click(screen.getByRole('button'))
 
         expect(playMock).toHaveBeenCalledWith(episode, startPlaybackPosition)
-      }
+      },
     )
 
     it('plays from beginning if no saved progress', async () => {
@@ -90,7 +91,7 @@ new class extends UnitTestCase {
 
     it('shows progress bar if there is progress', async () => {
       const episode = factory('episode', {
-        length: 300
+        length: 300,
       })
 
       const podcast = factory('podcast', {
@@ -98,9 +99,9 @@ new class extends UnitTestCase {
         state: {
           current_episode: episode.id,
           progresses: {
-            [episode.id]: 100
-          }
-        }
+            [episode.id]: 100,
+          },
+        },
       })
 
       this.renderComponent(episode, podcast)

@@ -4,6 +4,9 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import { authService, cache, http } from '@/services'
+import type {
+  SongUpdateResult,
+} from '.'
 import {
   albumStore,
   artistStore,
@@ -12,7 +15,6 @@ import {
   playlistStore,
   preferenceStore,
   songStore,
-  SongUpdateResult
 } from '.'
 
 new class extends UnitTestCase {
@@ -46,7 +48,7 @@ new class extends UnitTestCase {
       expect(songStore.getFormattedLength(factory('song', { length: 123 }))).toBe('2 min 3 sec')
       expect(songStore.getFormattedLength([
         factory('song', { length: 122 }),
-        factory('song', { length: 123 })
+        factory('song', { length: 123 }),
       ])).toBe('4 min 5 sec')
     })
 
@@ -84,7 +86,7 @@ new class extends UnitTestCase {
 
       const postMock = this.mock(http, 'post').mockResolvedValueOnce(factory('interaction', {
         song_id: song.id,
-        play_count: 50
+        play_count: 50,
       }))
 
       await songStore.registerPlay(song)
@@ -115,15 +117,15 @@ new class extends UnitTestCase {
             artist_id: 3,
             name: 'Removed Album',
             cover: 'http://test/removed-album.jpg',
-            created_at: '2020-01-01'
+            created_at: '2020-01-01',
           }],
           artists: [{
             id: 42,
             name: 'Removed Artist',
             image: 'http://test/removed-artist.jpg',
-            created_at: '2020-01-01'
-          }]
-        }
+            created_at: '2020-01-01',
+          }],
+        },
       }
 
       const syncSongsMock = this.mock(songStore, 'syncWithVault')
@@ -135,15 +137,15 @@ new class extends UnitTestCase {
 
       await songStore.update(songs, {
         album_name: 'Updated Album',
-        artist_name: 'Updated Artist'
+        artist_name: 'Updated Artist',
       })
 
       expect(putMock).toHaveBeenCalledWith('songs', {
         data: {
           album_name: 'Updated Album',
-          artist_name: 'Updated Artist'
+          artist_name: 'Updated Artist',
         },
-        songs: songs.map(song => song.id)
+        songs: songs.map(song => song.id),
       })
 
       expect(syncSongsMock).toHaveBeenCalledWith(result.songs)
@@ -172,7 +174,7 @@ new class extends UnitTestCase {
 
     it('syncs with the vault', () => {
       const song = factory('song', {
-        playback_state: null
+        playback_state: null,
       })
 
       const watchPlayCountMock = this.mock(songStore, 'watchPlayCount')
@@ -194,7 +196,7 @@ new class extends UnitTestCase {
         album_id: 10,
         artist_id: 42,
         album_artist_id: 43,
-        play_count: 98
+        play_count: 98,
       }))
 
       songStore.watchPlayCount(song)
@@ -280,11 +282,11 @@ new class extends UnitTestCase {
       const getMock = this.mock(http, 'get').mockResolvedValueOnce({
         data: songs,
         links: {
-          next: 'http://test/api/v1/songs?page=3'
+          next: 'http://test/api/v1/songs?page=3',
         },
         meta: {
-          current_page: 2
-        }
+          current_page: 2,
+        },
       })
 
       const syncMock = this.mock(songStore, 'syncWithVault', reactive(songs))
@@ -293,7 +295,7 @@ new class extends UnitTestCase {
         page: 2,
         sort: 'title',
         order: 'desc',
-        own_songs_only: true
+        own_songs_only: true,
       })).toBe(3)
 
       expect(getMock).toHaveBeenCalledWith('songs?page=2&sort=title&order=desc&own_songs_only=true')
@@ -308,11 +310,11 @@ new class extends UnitTestCase {
       const getMock = this.mock(http, 'get').mockResolvedValueOnce({
         data: songs,
         links: {
-          next: 'http://test/api/v1/songs?page=3'
+          next: 'http://test/api/v1/songs?page=3',
         },
         meta: {
-          current_page: 2
-        }
+          current_page: 2,
+        },
       })
 
       const syncMock = this.mock(songStore, 'syncWithVault', reactiveSongs)
@@ -320,10 +322,10 @@ new class extends UnitTestCase {
       expect(await songStore.paginateForGenre('foo', {
         page: 2,
         sort: 'title',
-        order: 'desc'
+        order: 'desc',
       })).toEqual({
         songs: reactiveSongs,
-        nextPage: 3
+        nextPage: 3,
       })
 
       expect(getMock).toHaveBeenCalledWith('genres/foo/songs?page=2&sort=title&order=desc')

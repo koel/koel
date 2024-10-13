@@ -37,5 +37,5 @@ export const downloadService = {
     const url = `${window.BASE_URL}download/${uri}${sep}t=${authService.getAudioToken()}`
 
     open(url)
-  }
+  },
 }

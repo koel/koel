@@ -48,20 +48,20 @@ new class extends UnitTestCase {
     const fetchGenreMock = this.mock(genreStore, 'fetchOne').mockResolvedValue(genre)
     const paginateMock = this.mock(songStore, 'paginateForGenre').mockResolvedValue({
       nextPage: 2,
-      songs: songs || factory('song', 13)
+      songs: songs || factory('song', 13),
     })
 
     await this.router.activateRoute({
       path: `genres/${genre.name}`,
-      screen: 'Genre'
+      screen: 'Genre',
     }, { name: genre.name })
 
     const rendered = this.render(GenreScreen, {
       global: {
         stubs: {
-          SongList: this.stub('song-list')
-        }
-      }
+          SongList: this.stub('song-list'),
+        },
+      },
     })
 
     await waitFor(() => {
@@ -69,7 +69,7 @@ new class extends UnitTestCase {
       expect(paginateMock).toHaveBeenCalledWith(genre!.name, {
         sort: 'title',
         order: 'asc',
-        page: 1
+        page: 1,
       })
     })
 

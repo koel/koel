@@ -15,9 +15,9 @@ new class extends UnitTestCase {
       this.render(EditPlaylistFolderForm, {
         global: {
           provide: {
-            [<symbol>ModalContextKey]: [ref({ folder })]
-          }
-        }
+            [<symbol>ModalContextKey]: [ref({ folder })],
+          },
+        },
       })
 
       await this.type(screen.getByPlaceholderText('Folder name'), 'Your folder')

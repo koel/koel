@@ -8,8 +8,8 @@ new class extends UnitTestCase {
     it('renders', () => {
       expect(this.render(BtnGroup, {
         slots: {
-          default: ['Green', 'Orange', 'Blue'].map(text => this.renderButtonToSlot(text))
-        }
+          default: ['Green', 'Orange', 'Blue'].map(text => this.renderButtonToSlot(text)),
+        },
       }).html()).toMatchSnapshot()
     })
   }
@@ -17,8 +17,8 @@ new class extends UnitTestCase {
   private renderButtonToSlot (text: string) {
     return this.render(Btn, {
       slots: {
-        default: text
-      }
+        default: text,
+      },
     }).html()
   }
 }

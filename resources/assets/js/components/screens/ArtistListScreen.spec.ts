@@ -23,7 +23,7 @@ new class extends UnitTestCase {
       await waitFor(() => screen.getByTestId('screen-empty-state'))
     })
 
-    it.each<[ArtistAlbumViewMode]>([['list'], ['thumbnails']])('sets layout:%s from preferences', async (mode) => {
+    it.each<[ArtistAlbumViewMode]>([['list'], ['thumbnails']])('sets layout:%s from preferences', async mode => {
       preferenceStore.artists_view_mode = mode
 
       await this.renderComponent()
@@ -48,9 +48,9 @@ new class extends UnitTestCase {
     const rendered = this.render(ArtistListScreen, {
       global: {
         stubs: {
-          ArtistCard: this.stub('artist-card')
-        }
-      }
+          ArtistCard: this.stub('artist-card'),
+        },
+      },
     })
 
     await this.router.activateRoute({ path: 'artists', screen: 'Artists' })

@@ -1,7 +1,8 @@
 import { computed } from 'vue'
 import { commonStore } from '@/stores'
 import { acceptedMediaTypes } from '@/config'
-import { UploadFile, uploadService } from '@/services'
+import type { UploadFile } from '@/services'
+import { uploadService } from '@/services'
 import { getAllFileEntries, pluralize } from '@/utils'
 import { useMessageToaster, usePolicies, useRouter } from '@/composables'
 
@@ -27,7 +28,7 @@ export const useUpload = () => {
         id: `${file.name}-${file.size}`, // for simplicity, a file's identity is determined by its name and size
         status: 'Ready',
         name: file.name,
-        progress: 0
+        progress: 0,
       }))
 
     uploadService.queue(uploadCandidates)
@@ -56,6 +57,6 @@ export const useUpload = () => {
     mediaPathSetUp,
     allowsUpload,
     handleDropEvent,
-    queueFilesForUpload
+    queueFilesForUpload,
   }
 }

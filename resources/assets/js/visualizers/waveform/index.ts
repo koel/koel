@@ -8,21 +8,21 @@ export const init = (container: HTMLElement) => {
 
   const analyser = audioService.analyzer
   analyser.fftSize = 512
-  let dataArray = new Uint8Array(analyser.frequencyBinCount)
+  const dataArray = new Uint8Array(analyser.frequencyBinCount)
 
   const uniforms = {
     u_time: {
       type: 'f',
-      value: 1.0
+      value: 1.0,
     },
     u_amplitude: {
       type: 'f',
-      value: 3.0
+      value: 3.0,
     },
     u_data_arr: {
       type: 'float[64]',
-      value: dataArray
-    }
+      value: dataArray,
+    },
   }
 
   const planeGeometry = new THREE.PlaneGeometry(64, 64, 64, 64)
@@ -31,7 +31,7 @@ export const init = (container: HTMLElement) => {
     uniforms,
     vertexShader: shaders.vertex,
     fragmentShader: shaders.fragment,
-    wireframe: true
+    wireframe: true,
   })
 
   const planeMesh = new THREE.Mesh(planeGeometry, planeCustomMaterial)

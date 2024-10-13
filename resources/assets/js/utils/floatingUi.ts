@@ -1,10 +1,11 @@
-import { computePosition, ComputePositionConfig } from '@floating-ui/dom'
+import type { ComputePositionConfig } from '@floating-ui/dom'
+import { computePosition } from '@floating-ui/dom'
 
 export const updateFloatingUi = async (
   reference: HTMLElement,
   floating: HTMLElement,
   options: Partial<ComputePositionConfig>,
-  arrow?: HTMLElement
+  arrow?: HTMLElement,
 ) => {
   options.placement = options.placement || 'bottom'
   const { x, y, middlewareData } = await computePosition(reference, floating, options)
@@ -19,7 +20,7 @@ export const updateFloatingUi = async (
       top: 'bottom',
       right: 'left',
       bottom: 'top',
-      left: 'right'
+      left: 'right',
     }[options.placement.split('-')[0]]
 
     Object.assign(arrow.style, {
@@ -27,7 +28,7 @@ export const updateFloatingUi = async (
       top: arrowY != null ? `${arrowY}px` : '',
       right: '',
       bottom: '',
-      [staticSide!]: '-4px'
+      [staticSide!]: '-4px',
     })
   }
 }

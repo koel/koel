@@ -30,7 +30,7 @@ const allowDownload = toRef(commonStore.state, 'allows_download')
 
 const isStandardArtist = computed(() =>
   !artistStore.isUnknown(artist.value!)
-  && !artistStore.isVarious(artist.value!)
+  && !artistStore.isVarious(artist.value!),
 )
 
 const play = () => trigger(async () => {

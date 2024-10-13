@@ -1,6 +1,6 @@
 <template>
   <nav
-    :class="{ collapsed: !expanded, 'tmp-showing': tmpShowing, showing: mobileShowing }"
+    :class="{ 'collapsed': !expanded, 'tmp-showing': tmpShowing, 'showing': mobileShowing }"
     class="group left-0 top-0 flex flex-col fixed h-full w-full md:relative md:w-k-sidebar-width z-[999] md:z-10"
     @mouseenter="onMouseEnter"
     @mouseleave="onMouseLeave"
@@ -29,8 +29,8 @@
     </section>
 
     <SidebarToggleButton
-      class="opacity-0 no-hover:hidden group-hover:opacity-100 transition"
       v-model="expanded"
+      class="opacity-0 no-hover:hidden group-hover:opacity-100 transition"
       :class="expanded || 'opacity-100'"
     />
   </nav>
@@ -68,10 +68,14 @@ let tmpShowingHandler: number | undefined
 const tmpShowing = ref(false)
 
 const onMouseEnter = () => {
-  if (expanded.value) return;
+  if (expanded.value) {
+    return
+  }
 
   tmpShowingHandler = window.setTimeout(() => {
-    if (expanded.value) return
+    if (expanded.value) {
+      return
+    }
     tmpShowing.value = true
   }, 500)
 }
@@ -132,7 +136,7 @@ nav {
     @mixin themed-background;
 
     transform: translateX(-100vw);
-    transition: transform .2s ease-in-out;
+    transition: transform 0.2s ease-in-out;
 
     &.showing {
       transform: translateX(0);

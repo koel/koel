@@ -91,7 +91,7 @@ const {
   playAll,
   playSelected,
   applyFilter,
-  onScrollBreakpoint
+  onScrollBreakpoint,
 } = useSongList(toRef(favoriteStore.state, 'playables'), { type: 'Favorites' })
 
 const { SongListControls, config } = useSongListControls('Favorites')

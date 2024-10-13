@@ -11,13 +11,13 @@ new class extends UnitTestCase {
       const { html } = this.render(Modal, {
         global: {
           provide: {
-            [<symbol>ModalContextKey]: [ref({ playlist: factory('playlist') })]
+            [<symbol>ModalContextKey]: [ref({ playlist: factory('playlist') })],
           },
           stubs: {
             InviteCollaborators: this.stub('InviteCollaborators'),
-            CollaboratorList: this.stub('CollaboratorList')
-          }
-        }
+            CollaboratorList: this.stub('CollaboratorList'),
+          },
+        },
       })
 
       expect(html()).toMatchSnapshot()

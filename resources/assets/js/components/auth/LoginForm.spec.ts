@@ -1,5 +1,6 @@
 import { screen, waitFor } from '@testing-library/vue'
-import { expect, it, Mock } from 'vitest'
+import type { Mock } from 'vitest'
+import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { authService } from '@/services'
 import { logger } from '@/utils'
@@ -45,9 +46,9 @@ new class extends UnitTestCase {
       const { html } = this.render(LoginFrom, {
         global: {
           stubs: {
-            GoogleLoginButton: this.stub('google-login-button')
-          }
-        }
+            GoogleLoginButton: this.stub('google-login-button'),
+          },
+        },
       })
 
       expect(html()).toMatchSnapshot()

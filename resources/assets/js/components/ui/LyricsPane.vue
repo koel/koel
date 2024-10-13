@@ -29,9 +29,10 @@ import { cr2lf, eventBus } from '@/utils'
 import { usePolicies } from '@/composables'
 import { preferenceStore as preferences } from '@/stores'
 
+const props = defineProps<{ song: Song }>()
+
 const Magnifier = defineAsyncComponent(() => import('@/components/ui/Magnifier.vue'))
 
-const props = defineProps<{ song: Song }>()
 const { song } = toRefs(props)
 
 const { currentUserCan } = usePolicies()

@@ -37,6 +37,7 @@ import CheckBox from '@/components/ui/form/CheckBox.vue'
 import TextArea from '@/components/ui/form/TextArea.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 
+const emit = defineEmits<{ (e: 'close'): void }>()
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
@@ -51,6 +52,8 @@ watch(rawEmails, val => {
   emailEntries = val.trim().split('\n').map(email => email.trim()).filter(Boolean)
   emailEntries = [...new Set(emailEntries)]
 })
+
+const close = () => emit('close')
 
 const submit = async () => {
   const validEmails: string[] = []
@@ -86,9 +89,6 @@ const submit = async () => {
     hideOverlay()
   }
 }
-
-const emit = defineEmits<{ (e: 'close'): void }>()
-const close = () => emit('close')
 
 const maybeClose = async () => {
   if (emailEntries.length === 0 && !isAdmin.value) {

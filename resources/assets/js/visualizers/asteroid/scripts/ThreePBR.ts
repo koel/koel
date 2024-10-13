@@ -5,10 +5,10 @@ export class ThreePBR {
   private readonly normalMap: THREE.Texture
   private readonly roughnessMap: THREE.Texture
   private readonly metallicMap: THREE.Texture
-  private readonly normal = 1.
-  private readonly roughness = .0
-  private readonly metallic = 1.
-  private readonly exposure = 2.
+  private readonly normal = 1.0
+  private readonly roughness = 0.0
+  private readonly metallic = 1.0
+  private readonly exposure = 2.0
   private readonly gamma = 2.2
 
   constructor () {

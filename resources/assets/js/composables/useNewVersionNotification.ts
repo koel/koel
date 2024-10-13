@@ -20,6 +20,6 @@ export const useNewVersionNotification = () => {
     shouldNotifyNewVersion,
     currentVersion,
     latestVersion,
-    latestVersionReleaseUrl
+    latestVersionReleaseUrl,
   }
 }

@@ -1,5 +1,5 @@
 export * from './focus'
-export * from './tooltip'
-export * from './newTab'
 export * from './hideBrokenIcon'
+export * from './newTab'
 export * from './overflowFade'
+export * from './tooltip'

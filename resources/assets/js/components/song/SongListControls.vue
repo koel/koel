@@ -100,7 +100,8 @@
 
 <script lang="ts" setup>
 import { faPlay, faRandom, faRotateRight, faTrashCan } from '@fortawesome/free-solid-svg-icons'
-import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, Ref, ref, toRef, watch } from 'vue'
+import type { Ref } from 'vue'
+import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref, toRef, watch } from 'vue'
 import { OnClickOutside } from '@vueuse/components'
 import { PlayablesKey, SelectedPlayablesKey } from '@/symbols'
 import { requireInjection } from '@/utils'
@@ -110,9 +111,16 @@ import AddToMenu from '@/components/song/AddToMenu.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'
 
+const props = defineProps<{ config: SongListControlsConfig }>()
+
+const emit = defineEmits<{
+  (e: 'playAll' | 'playSelected', shuffle: boolean): void
+  (e: 'filter', keywords: string): void
+  (e: 'clearQueue' | 'deletePlaylist' | 'refresh'): void
+}>()
+
 const SongListFilter = defineAsyncComponent(() => import('@/components/song/SongListFilter.vue'))
 
-const props = defineProps<{ config: SongListControlsConfig }>()
 const config = toRef(props, 'config')
 
 const [playables] = requireInjection<[Ref<Playable[]>]>(PlayablesKey)
@@ -124,12 +132,6 @@ const showingAddToMenu = ref(false)
 const altPressed = ref(false)
 
 const showAddToButton = computed(() => Boolean(selectedPlayables.value.length))
-
-const emit = defineEmits<{
-  (e: 'playAll' | 'playSelected', shuffle: boolean): void,
-  (e: 'filter', keywords: string): void,
-  (e: 'clearQueue' | 'deletePlaylist' | 'refresh'): void,
-}>()
 
 const shuffle = () => emit('playAll', true)
 const shuffleSelected = () => emit('playSelected', true)

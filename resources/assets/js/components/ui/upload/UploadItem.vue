@@ -26,11 +26,13 @@
 import slugify from 'slugify'
 import { faInfoCircle, faRotateBack, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, toRefs } from 'vue'
-import { UploadFile, uploadService } from '@/services'
+import type { UploadFile } from '@/services'
+import { uploadService } from '@/services'
+
+const props = defineProps<{ file: UploadFile }>()
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 
-const props = defineProps<{ file: UploadFile }>()
 const { file } = toRefs(props)
 
 const canRetry = computed(() => file.value.status === 'Canceled' || file.value.status === 'Errored')

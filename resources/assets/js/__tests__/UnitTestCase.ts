@@ -1,6 +1,7 @@
 import isMobile from 'ismobilejs'
 import { isObject, mergeWith } from 'lodash'
-import { cleanup, createEvent, fireEvent, render, RenderOptions } from '@testing-library/vue'
+import type { RenderOptions } from '@testing-library/vue'
+import { cleanup, createEvent, fireEvent, render } from '@testing-library/vue'
 import { afterEach, beforeEach, vi } from 'vitest'
 import { defineComponent, nextTick } from 'vue'
 import { commonStore, userStore } from '@/stores'
@@ -11,8 +12,8 @@ import { DialogBoxStub, MessageToasterStub, OverlayStub } from '@/__tests__/stub
 import { routes } from '@/config'
 import Router from '@/router'
 import userEvent from '@testing-library/user-event'
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup'
-import { EventType } from '@testing-library/dom/types/events'
+import type { UserEvent } from '@testing-library/user-event/dist/types/setup/setup'
+import type { EventType } from '@testing-library/dom/types/events'
 
 // A deep-merge function that
 // - supports symbols as keys (_.merge doesn't)
@@ -20,7 +21,9 @@ import { EventType } from '@testing-library/dom/types/events'
 // Credit: https://stackoverflow.com/a/60598589/794641
 const deepMerge = (first: object, second: object) => {
   return mergeWith(first, second, (a, b) => {
-    if (!isObject(b)) return b
+    if (!isObject(b)) {
+      return b
+    }
 
     // @ts-ignore
     return Array.isArray(a) ? [...a, ...b] : { ...a, ...b }
@@ -28,7 +31,9 @@ const deepMerge = (first: object, second: object) => {
 }
 
 const setPropIfNotExists = (obj: object | null, prop: any, value: any) => {
-  if (!obj) return
+  if (!obj) {
+    return
+  }
 
   if (!Object.prototype.hasOwnProperty.call(obj, prop)) {
     obj[prop] = value
@@ -46,7 +51,7 @@ export default abstract class UnitTestCase {
     this.user = userEvent.setup({ delay: null }) // @see https://github.com/testing-library/user-event/issues/833
 
     this.setReadOnlyProperty(navigator, 'clipboard', {
-      writeText: vi.fn()
+      writeText: vi.fn(),
     })
 
     this.beforeEach()
@@ -113,12 +118,12 @@ export default abstract class UnitTestCase {
           'koel-focus': {},
           'koel-tooltip': {},
           'koel-hide-broken-icon': {},
-          'koel-overflow-fade': {}
+          'koel-overflow-fade': {},
         },
         components: {
-          Icon: this.stub('Icon')
-        }
-      }
+          Icon: this.stub('Icon'),
+        },
+      },
     }, this.supplyRequiredProvides(options)))
   }
 
@@ -148,7 +153,7 @@ export default abstract class UnitTestCase {
 
   protected stub (testId = 'stub') {
     return defineComponent({
-      template: `<br data-testid="${testId}"/>`
+      template: `<br data-testid="${testId}"/>`,
     })
   }
 
@@ -162,8 +167,8 @@ export default abstract class UnitTestCase {
     return Object.defineProperties(obj, {
       [prop]: {
         value,
-        configurable: true
-      }
+        configurable: true,
+      },
     })
   }
 
@@ -172,7 +177,7 @@ export default abstract class UnitTestCase {
     await this.user.type(element, value)
   }
 
-  protected async trigger (element: HTMLElement, key: EventType | string, options?: {}) {
+  protected async trigger (element: HTMLElement, key: EventType | string, options?: object = {}) {
     await fireEvent(element, createEvent[key](element, options))
   }
 

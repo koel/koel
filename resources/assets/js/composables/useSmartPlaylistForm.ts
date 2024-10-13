@@ -27,6 +27,6 @@ export const useSmartPlaylistForm = (initialRuleGroups: SmartPlaylistRuleGroup[]
     SoundBars,
     collectedRuleGroups,
     addGroup,
-    onGroupChanged
+    onGroupChanged,
   }
 }

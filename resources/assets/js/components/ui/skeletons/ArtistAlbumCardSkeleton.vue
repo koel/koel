@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts" setup>
-const props = withDefaults(defineProps<{ layout?: ArtistAlbumCardLayout }>(), { layout: 'full' })
+withDefaults(defineProps<{ layout?: ArtistAlbumCardLayout }>(), { layout: 'full' })
 </script>
 
 <style lang="postcss" scoped>

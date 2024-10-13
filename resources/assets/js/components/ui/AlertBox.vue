@@ -19,11 +19,11 @@ import {
   faCheckCircle,
   faExclamationCircle,
   faExclamationTriangle,
-  faInfoCircle
+  faInfoCircle,
 } from '@fortawesome/free-solid-svg-icons'
 
 const props = withDefaults(defineProps<{ type?: 'default' | 'info' | 'danger' | 'success' | 'warning' }>(), {
-  type: 'default'
+  type: 'default',
 })
 </script>
 
