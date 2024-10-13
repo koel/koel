@@ -14,10 +14,10 @@
         >
           <span>{{ item.label }}</span>
           <span class="icon hidden ml-3">
-            <Icon v-if="field === 'position'" :icon="faCheck" />
-            <Icon v-else-if="order === 'asc'" :icon="faArrowUp" />
-            <Icon v-else :icon="faArrowDown" />
-          </span>
+          <Icon v-if="field === 'position'" :icon="faCheck" />
+          <Icon v-else-if="order === 'asc'" :icon="faArrowUp" />
+          <Icon v-else :icon="faArrowDown" />
+        </span>
         </li>
       </menu>
     </OnClickOutside>
