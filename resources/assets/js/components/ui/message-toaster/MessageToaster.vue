@@ -15,7 +15,7 @@ import { uuid } from '@/utils'
 import MessageToast from '@/components/ui/message-toaster/MessageToast.vue'
 
 const root = ref<HTMLDivElement & {
-  popover?: 'manual' | 'auto',
+  popover?: 'manual' | 'auto'
   showPopover?: () => void
 }>()
 
@@ -26,7 +26,7 @@ const addMessage = (type: 'info' | 'success' | 'warning' | 'danger', content: st
     type,
     content,
     timeout,
-    id: uuid()
+    id: uuid(),
   })
 }
 
@@ -38,7 +38,9 @@ const warning = (content: string, timeout?: number) => addMessage('warning', con
 const error = (content: string, timeout?: number) => addMessage('danger', content, timeout)
 
 onMounted(() => {
-  if (!root.value) return
+  if (!root.value) {
+    return
+  }
   root.value.popover = 'manual'
   root.value.showPopover?.()
 })
@@ -47,7 +49,8 @@ defineExpose({ info, success, warning, error })
 </script>
 
 <style lang="postcss" scoped>
-.popover, .popover:popover-open {
+.popover,
+.popover:popover-open {
   inset: unset;
   @apply fixed top-3 right-0 p-0 bg-transparent m-0 overflow-visible border-0 backdrop:bg-transparent;
 }
@@ -60,7 +63,8 @@ defineExpose({ info, success, warning, error })
   @apply opacity-0 transition-all duration-200 ease-out;
 }
 
-.toast-enter-from, .toast-leave-to {
+.toast-enter-from,
+.toast-leave-to {
   @apply opacity-0;
   transform: translateX(100px);
 }

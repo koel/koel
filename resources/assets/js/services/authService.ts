@@ -63,5 +63,5 @@ export const authService = {
     return await http.post('reset-password', { email, password, token })
   },
 
-  getOneTimeToken: async () => (await http.get<{ token: string }>('one-time-token')).token
+  getOneTimeToken: async () => (await http.get<{ token: string }>('one-time-token')).token,
 }

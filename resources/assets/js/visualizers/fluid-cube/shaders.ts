@@ -7,16 +7,16 @@ export default {
   varying float v_frame;
   varying vec3 vv_pos;
   void main () {
-  	v_frame = u_frame;
-  	float pi = 3.141592653589793;
-  	float rad = u_frame / 2.0 / 180.0 * pi;
+    v_frame = u_frame;
+    float pi = 3.141592653589793;
+    float rad = u_frame / 2.0 / 180.0 * pi;
     int spectrumIndex = 12 + int(mod(a_pos.x + ${Math.floor(cubeSize / 2)}.0, ${cubeSize}.0) + mod(a_pos.y + ${Math.floor(cubeSize / 2)}.0, ${cubeSize ** 2}.0) + (a_pos.z + ${Math.floor(cubeSize / 2)}.0) / ${cubeSize ** 2}.0);
     float value = float(u_spectrumValue[spectrumIndex]) / 100.0;
-  	vec3 v_pos = a_pos;
+    vec3 v_pos = a_pos;
     vec3 t = vec3(1, 1, 1);
 
     vv_pos = v_pos;
-  	float dist = abs(${Math.floor(cubeSize / 2)}.0 - sqrt(vv_pos.x * vv_pos.x + vv_pos.y * vv_pos.y + vv_pos.z * vv_pos.z));
+    float dist = abs(${Math.floor(cubeSize / 2)}.0 - sqrt(vv_pos.x * vv_pos.x + vv_pos.y * vv_pos.y + vv_pos.z * vv_pos.z));
 
     t.x = v_pos.x * cos(rad) + v_pos.z * sin(rad);
     t.y = v_pos.y;
@@ -52,11 +52,11 @@ export default {
 
     v_pos.x /= u_res.x / u_res.y;
 
-  	gl_Position = vec4(v_pos.xy, 0.0, 1.0);
+    gl_Position = vec4(v_pos.xy, 0.0, 1.0);
     gl_PointSize = dist;
   }`,
   fragment: () => `
-	precision mediump float;
+  precision mediump float;
   uniform vec4 u_color;
   varying float v_frame;
   varying vec3 vv_pos;
@@ -103,8 +103,8 @@ export default {
       return hsl2rgb(vec3(h, s, l));
   }
   void main () {
-  	float dist = sqrt(vv_pos.x * vv_pos.x + vv_pos.y * vv_pos.y + vv_pos.z * vv_pos.z);
+    float dist = sqrt(vv_pos.x * vv_pos.x + vv_pos.y * vv_pos.y + vv_pos.z * vv_pos.z);
     float i_frame = mod(v_frame + dist * 20.0, 360.0);
-  	gl_FragColor = vec4(hsl2rgb((i_frame) / 360.0, 1.0, .5), 1.0);
-  }`
+    gl_FragColor = vec4(hsl2rgb((i_frame) / 360.0, 1.0, .5), 1.0);
+  }`,
 }

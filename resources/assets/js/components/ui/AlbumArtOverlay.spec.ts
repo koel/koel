@@ -20,7 +20,7 @@ new class extends UnitTestCase {
     })
 
     it('displays nothing if fetching fails', async () => {
-      const fetchMock = this.mock(albumStore, 'fetchThumbnail').mockRejectedValue(new Error())
+      const fetchMock = this.mock(albumStore, 'fetchThumbnail').mockRejectedValue(new Error('Failed to fetch'))
 
       const { html } = await this.renderComponent()
 
@@ -36,8 +36,8 @@ new class extends UnitTestCase {
 
     const rendered = this.render(AlbumArtOverlay, {
       props: {
-        album: albumId
-      }
+        album: albumId,
+      },
     })
 
     await this.tick()

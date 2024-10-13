@@ -1,4 +1,4 @@
-import { Ref } from 'vue'
+import type { Ref } from 'vue'
 import { useInfiniteScroll as baseUseInfiniteScroll } from '@vueuse/core'
 
 import ToTopButton from '@/components/ui/BtnScrollToTop.vue'
@@ -26,6 +26,6 @@ export const useInfiniteScroll = (el: Ref<HTMLElement | undefined>, loadMore: Cl
 
   return {
     ToTopButton,
-    makeScrollable
+    makeScrollable,
   }
 }

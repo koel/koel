@@ -56,21 +56,24 @@ import SongThumbnail from '@/components/song/SongThumbnail.vue'
 import UserAvatar from '@/components/user/UserAvatar.vue'
 import ExternalMark from '@/components/ui/ExternalMark.vue'
 
+const props = defineProps<{ item: PlayableRow }>()
+
+const emit = defineEmits<{ (e: 'play', playable: Playable): void }>()
+
 const [config] = requireInjection<[Partial<PlayableListConfig>]>(PlayableListConfigKey, [{}])
 
 const { currentUser } = useAuthorization()
 const { isPlus } = useKoelPlus()
 
-const props = defineProps<{ item: PlayableRow }>()
 const { item } = toRefs(props)
-
-const emit = defineEmits<{ (e: 'play', playable: Playable): void }>()
 
 const playable = computed<Playable | CollaborativeSong>(() => item.value.playable)
 const playing = computed(() => ['Playing', 'Paused'].includes(playable.value.playback_state!))
 
 const external = computed(() => {
-  if (!isSong(playable.value)) return false
+  if (!isSong(playable.value)) {
+    return false
+  }
   return isPlus.value && playable.value.owner_id !== currentUser.value?.id
 })
 
@@ -79,7 +82,7 @@ const artist = computed(() => getPlayableProp(playable.value, 'artist_name', 'po
 const album = computed(() => getPlayableProp(playable.value, 'album_name', 'podcast_title'))
 
 const collaborator = computed<Pick<User, 'name' | 'avatar'>>(
-  () => (playable.value as CollaborativeSong).collaboration.user
+  () => (playable.value as CollaborativeSong).collaboration.user,
 )
 
 const localePlayCount = computed(() => {
@@ -105,7 +108,9 @@ article {
   }
 
   &.playing {
-    .title, .track-number, .favorite {
+    .title,
+    .track-number,
+    .favorite {
       @apply text-k-accent !important;
     }
   }

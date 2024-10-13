@@ -10,7 +10,7 @@ declare module 'sketch-js' {
 }
 
 declare module 'youtube-player' {
-  import { YouTubePlayer } from 'youtube-player/dist/types'
+  import type { YouTubePlayer } from 'youtube-player/dist/types'
 
   function createYouTubePlayer (name: string, options: Record<string, any>): YouTubePlayer
 
@@ -20,15 +20,15 @@ declare module 'youtube-player' {
 interface Plyr {
   media: HTMLMediaElement
 
-  restart (): void
+  restart: () => void
 
-  play (): void
+  play: () => void
 
-  pause (): void
+  pause: () => void
 
-  seek (position: number): void
+  seek: (position: number) => void
 
-  setVolume (volume: number): void
+  setVolume: (volume: number) => void
 }
 
 declare module 'ismobilejs' {
@@ -59,7 +59,7 @@ type MaybeArray<T> = T | T[]
 
 interface CompositeToken {
   'audio-token': string
-  token: string
+  'token': string
 }
 
 type SSOProvider = 'Google' | 'Reverse Proxy'
@@ -85,7 +85,7 @@ interface Window {
 }
 
 interface FileSystemDirectoryReader {
-  readEntries (successCallback: Closure, errorCallback?: Closure): FileSystemEntry[]
+  readEntries: (successCallback: Closure, errorCallback?: Closure) => FileSystemEntry[]
 }
 
 interface FileSystemEntry {
@@ -95,9 +95,9 @@ interface FileSystemEntry {
   readonly fullPath: string
   readonly filesystem: FileSystem
 
-  createReader (): FileSystemDirectoryReader
+  createReader: () => FileSystemDirectoryReader
 
-  file (successCallback: Closure): void
+  file: (successCallback: Closure) => void
 }
 
 type MediaInfoDisplayMode = 'aside' | 'full'
@@ -128,7 +128,7 @@ interface ArtistInfo {
 }
 
 interface Artist {
-  type: 'artists',
+  type: 'artists'
   readonly id: number
   name: string
   image: string | null
@@ -163,7 +163,7 @@ interface Playable {
 
 interface Song extends Playable {
   type: 'songs'
-  readonly owner_id: User['id'],
+  readonly owner_id: User['id']
   album_id: Album['id']
   album_name: Album['name']
   album_cover: Album['cover']
@@ -241,12 +241,12 @@ interface SerializedSmartPlaylistRule {
 
 type SmartPlaylistInputTypes = Record<SmartPlaylistModel['type'], SmartPlaylistOperator[]>
 
-type FavoriteList = {
+interface FavoriteList {
   name: 'Favorites'
   playables: Playable[]
 }
 
-type RecentlyPlayedList = {
+interface RecentlyPlayedList {
   name: 'Recently Played'
   playables: Playable[]
 }
@@ -317,9 +317,9 @@ interface UserPreferences extends Record<string, any> {
   repeat_mode: RepeatMode
   confirm_before_closing: boolean
   continuous_playback: boolean
-  equalizer: EqualizerPreset,
-  artists_view_mode: ArtistAlbumViewMode | null,
-  albums_view_mode: ArtistAlbumViewMode | null,
+  equalizer: EqualizerPreset
+  artists_view_mode: ArtistAlbumViewMode | null
+  albums_view_mode: ArtistAlbumViewMode | null
   transcode_on_mobile: boolean
   transcode_quality: number
   support_bar_no_bugging: boolean
@@ -360,15 +360,15 @@ interface Interaction {
 
 interface EqualizerBandElement extends HTMLElement {
   noUiSlider: {
-    destroy (): void
-    on (eventName: 'change' | 'slide', handler: (value: string[], handle: number) => void): void
-    set (options: number | any[]): void
+    destroy: () => void
+    on: (eventName: 'change' | 'slide', handler: (value: string[], handle: number) => void) => void
+    set: (options: number | any[]) => void
   }
 
   isPreamp: boolean
 }
 
-type OverlayState = {
+interface OverlayState {
   dismissible: boolean
   type: 'loading' | 'success' | 'info' | 'warning' | 'error'
   message: string
@@ -463,8 +463,8 @@ interface PlayableListConfig {
   hasCustomOrderSort: boolean
 }
 
-type PlayableListContext = {
-  entity?: Playlist | Album | Artist | Genre,
+interface PlayableListContext {
+  entity?: Playlist | Album | Artist | Genre
   type?: Extract<ScreenName, 'Songs' | 'Album' | 'Artist' | 'Playlist' | 'Favorites' | 'RecentlyPlayed' | 'Queue' | 'Genre' | 'Search.Songs'>
 }
 
@@ -473,7 +473,7 @@ type PlayableListSortField =
   | keyof Pick<Episode, 'podcast_author' | 'podcast_title'>
   | 'position'
 
-type PodcastListSortField =  keyof Pick<Podcast, 'title' | 'last_played_at' | 'subscribed_at' | 'author'>
+type PodcastListSortField = keyof Pick<Podcast, 'title' | 'last_played_at' | 'subscribed_at' | 'author'>
 
 type SortOrder = 'asc' | 'desc'
 type MoveType = 'before' | 'after'
@@ -492,14 +492,14 @@ interface PaginatorResource<T> {
 
 type EditSongFormTabName = 'details' | 'lyrics' | 'visibility'
 
-type ToastMessage = {
+interface ToastMessage {
   id: string
   type: 'info' | 'success' | 'warning' | 'danger'
   content: string
   timeout: number // seconds
 }
 
-type Genre = {
+interface Genre {
   type: 'genres'
   name: string
   song_count: number
@@ -508,7 +508,7 @@ type Genre = {
 
 type ExtraPanelTab = 'Lyrics' | 'Artist' | 'Album' | 'YouTube'
 
-type Visualizer = {
+interface Visualizer {
   init: (container: HTMLElement) => Promise<Closure>
   id: string
   name: string

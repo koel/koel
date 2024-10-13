@@ -13,17 +13,17 @@ export const overviewStore = {
     recentlyAddedAlbums: [] as Album[],
     mostPlayedSongs: [] as Playable[],
     mostPlayedAlbums: [] as Album[],
-    mostPlayedArtists: [] as Artist[]
+    mostPlayedArtists: [] as Artist[],
   }),
 
   async fetch () {
     const resource = await http.get<{
-      most_played_songs: Playable[],
-      most_played_albums: Album[],
-      most_played_artists: Artist[],
-      recently_added_songs: Song[],
-      recently_added_albums: Album[],
-      recently_played_songs: Playable[],
+      most_played_songs: Playable[]
+      most_played_albums: Album[]
+      most_played_artists: Artist[]
+      recently_added_songs: Song[]
+      recently_added_albums: Album[]
+      recently_played_songs: Playable[]
     }>('overview')
 
     songStore.syncWithVault(resource.most_played_songs)
@@ -43,8 +43,10 @@ export const overviewStore = {
   refreshPlayStats () {
     this.state.mostPlayedSongs = songStore.getMostPlayed(7)
     this.state.recentlyPlayed = recentlyPlayedStore.excerptState.playables.filter(playable => {
-      if (isSong(playable) && playable.deleted) return false
+      if (isSong(playable) && playable.deleted) {
+        return false
+      }
       return playable.play_count > 0
     })
-  }
+  },
 }

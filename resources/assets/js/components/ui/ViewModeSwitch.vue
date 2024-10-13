@@ -37,7 +37,7 @@ const emit = defineEmits<{ (e: 'update:modelValue', value: ArtistAlbumViewMode):
 
 const value = computed({
   get: () => props.modelValue,
-  set: value => emit('update:modelValue', value)
+  set: value => emit('update:modelValue', value),
 })
 </script>
 

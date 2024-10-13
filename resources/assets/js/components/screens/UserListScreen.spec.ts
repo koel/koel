@@ -10,7 +10,7 @@ import UserListScreen from './UserListScreen.vue'
 
 new class extends UnitTestCase {
   protected beforeEach (cb?: Closure) {
-    super.beforeEach(cb);
+    super.beforeEach(cb)
 
     this.beAdmin()
   }
@@ -62,9 +62,9 @@ new class extends UnitTestCase {
         stubs: {
           Btn,
           BtnGroup,
-          UserCard: this.stub('user-card')
-        }
-      }
+          UserCard: this.stub('user-card'),
+        },
+      },
     })
 
     expect(fetchMock).toHaveBeenCalledWith('users')

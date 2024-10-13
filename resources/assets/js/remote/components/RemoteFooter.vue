@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts" setup>
-import { faHeart, faPause, faPlay, faStepBackward, faStepForward, } from '@fortawesome/free-solid-svg-icons'
+import { faHeart, faPause, faPlay, faStepBackward, faStepForward } from '@fortawesome/free-solid-svg-icons'
 import { faHeart as faEmptyHeart } from '@fortawesome/free-regular-svg-icons'
 import { computed, toRefs } from 'vue'
 import { socketService } from '@/services'

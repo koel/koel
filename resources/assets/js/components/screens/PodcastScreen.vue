@@ -8,7 +8,7 @@
         <template #thumbnail>
           <article class="relative aspect-square block rounded-md overflow-hidden" data-testid="podcast-thumbnail">
             <div class="pointer-events-none">
-              <img :src="podcast.image" alt="Podcast thumbnail" />
+              <img :src="podcast.image" alt="Podcast thumbnail">
             </div>
           </article>
         </template>
@@ -18,12 +18,12 @@
             <p class="text-2xl text-k-text-primary mb-1">{{ podcast.author }}</p>
             <div
               ref="descriptionEl"
+              v-koel-new-tab
               :class="{ 'cursor-pointer': description.overflown }"
               :title="descriptionTooltip"
               class="leading-5 line-clamp-3"
               @click="maybeExpandDescription"
               v-html="description.content"
-              v-koel-new-tab
             />
           </div>
         </template>
@@ -35,17 +35,17 @@
               {{ playButtonLabel }}
             </Btn>
             <BtnGroup uppercase>
-              <Btn v-if="episodes" success @click.prevent="refresh" v-koel-tooltip="'Refresh'">
+              <Btn v-if="episodes" v-koel-tooltip="'Refresh'" success @click.prevent="refresh">
                 <Icon :icon="faRotateRight" fixed-width />
               </Btn>
-              <Btn danger uppercase @click.prevent="unsubscribe" v-koel-tooltip="'Unsubscribe'">
+              <Btn v-koel-tooltip="'Unsubscribe'" danger uppercase @click.prevent="unsubscribe">
                 <Icon :icon="faTimes" fixed-width />
               </Btn>
             </BtnGroup>
 
             <ListFilter v-if="episodes?.length" @change="onFilterChanged" />
 
-            <Btn tag="a" gray :href="podcast.link" target="_blank" v-koel-tooltip="'Visit podcast website'">
+            <Btn v-koel-tooltip="'Visit podcast website'" tag="a" gray :href="podcast.link" target="_blank">
               <Icon :icon="faExternalLink" fixed-width />
             </Btn>
           </div>
@@ -59,12 +59,12 @@
       </template>
       <VirtualScroller
         v-if="episodes && podcast"
+        v-slot="{ item }: { item: Episode }"
         :item-height="161.5"
         :items="displayedEpisodes"
-        v-slot="{ item }: { item: Episode }"
         @scroll="onListScroll"
       >
-        <EpisodeItem :podcast="podcast" :episode="item" :key="item.id" />
+        <EpisodeItem :key="item.id" :podcast="podcast" :episode="item" />
       </VirtualScroller>
     </div>
   </ScreenBase>
@@ -77,7 +77,7 @@ import { orderBy } from 'lodash'
 import { faExternalLink, faPause, faPlay, faRotateRight, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { useDialogBox, useErrorHandler, useRouter } from '@/composables'
-import { podcastStore, queueStore, songStore as episodeStore } from '@/stores'
+import { songStore as episodeStore, podcastStore, queueStore } from '@/stores'
 import { playbackService } from '@/services'
 import { isEpisode } from '@/utils'
 
@@ -114,19 +114,21 @@ let fuse: Fuse<Episode> | null = null
 const fetchDetails = async () => {
   [podcast.value, episodes.value] = await Promise.all([
     podcastStore.resolve(podcastId.value!),
-    episodeStore.fetchForPodcast(podcastId.value!)
+    episodeStore.fetchForPodcast(podcastId.value!),
   ])
 }
 
 watch(podcastId, async id => {
-  if (!id || loading.value) return
+  if (!id || loading.value) {
+    return
+  }
 
   loading.value = true
 
   try {
     await fetchDetails()
     fuse = new Fuse(episodes.value!, {
-      keys: ['title', 'episode_description']
+      keys: ['title', 'episode_description'],
     })
 
     description.content = DOMPurify.sanitize(podcast.value?.description || '')
@@ -134,7 +136,7 @@ watch(podcastId, async id => {
     description.overflown = descriptionEl.value!.scrollHeight > descriptionEl.value!.clientHeight
   } catch (error: unknown) {
     useErrorHandler().handleHttpError(error, {
-      404: () => triggerNotFound()
+      404: () => triggerNotFound(),
     })
   } finally {
     loading.value = false
@@ -142,19 +144,27 @@ watch(podcastId, async id => {
 })
 
 const maybeExpandDescription = () => {
-  if (!description.overflown) return
+  if (!description.overflown) {
+    return
+  }
   description.expanded = !description.expanded
   descriptionEl.value!.classList.toggle('line-clamp-3')
 }
 
 const descriptionTooltip = computed(() => {
-  if (!description.overflown) return ''
+  if (!description.overflown) {
+    return ''
+  }
   return description.expanded ? 'Collapse' : 'Expand'
 })
 
 const displayedEpisodes = computed(() => {
-  if (!episodes.value) return []
-  if (!keywords.value) return episodes.value
+  if (!episodes.value) {
+    return []
+  }
+  if (!keywords.value) {
+    return episodes.value
+  }
 
   return fuse?.search(keywords.value)?.map(result => result.item) || []
 })
@@ -169,13 +179,19 @@ const currentPlayingItemIsPartOfPodcast = computed(() => {
 })
 
 const podcastPlaying = computed(() => {
-  if (!currentPlayingItemIsPartOfPodcast.value) return false
+  if (!currentPlayingItemIsPartOfPodcast.value) {
+    return false
+  }
   return queueStore.current!.playback_state === 'Playing'
 })
 
 const playButtonLabel = computed(() => {
-  if (headerLayout.value === 'collapsed') return ''
-  if (podcastPlaying.value) return ''
+  if (headerLayout.value === 'collapsed') {
+    return ''
+  }
+  if (podcastPlaying.value) {
+    return ''
+  }
   return inProgress.value ? 'Continue' : 'Start Listening'
 })
 
@@ -192,19 +208,25 @@ const playOrPause = async () => {
 
   if (inProgress.value) {
     const currentEpisode = episodes.value?.find(episode => episode.id === podcast.value?.state.current_episode)
-    if (!currentEpisode) return
+    if (!currentEpisode) {
+      return
+    }
 
     await playbackService.play(currentEpisode, podcast.value?.state.progresses[currentEpisode.id] || 0)
     return
   }
 
-  if (!episodes.value?.length) return
+  if (!episodes.value?.length) {
+    return
+  }
   queueStore.replaceQueueWith(orderBy(episodes.value, 'created_at'))
   await playbackService.playFirstInQueue()
 }
 
 const refresh = async () => {
-  if (loading.value) return
+  if (loading.value) {
+    return
+  }
   loading.value = true
 
   try {

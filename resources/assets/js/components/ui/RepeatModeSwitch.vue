@@ -24,7 +24,7 @@ const mode = toRef(preferenceStore.state, 'repeat_mode')
 const readableMode = computed(() => mode.value
   .split('_')
   .map(part => part[0].toUpperCase() + part.substring(1).toLowerCase())
-  .join(' ')
+  .join(' '),
 )
 
 const changeMode = () => playbackService.rotateRepeatMode()

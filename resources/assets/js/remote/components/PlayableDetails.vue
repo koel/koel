@@ -4,7 +4,7 @@
       :src="coverArt"
       class="my-0 mx-auto w-[calc(70vw_+_4px)] aspect-square rounded-full border-2 border-solid border-k-text-primary object-center object-cover"
       alt="Cover art"
-    />
+    >
     <div class="w-full flex flex-col justify-around px-6">
       <div>
         <p class="text-[6vmin] font-bold mx-auto mb-4">{{ playable.title }}</p>
@@ -27,7 +27,6 @@ const coverArt = computed(() => getPlayableProp<string>(playable.value, 'album_c
 const artist = computed(() => getPlayableProp(playable.value, 'artist_name', 'podcast_author'))
 const album = computed(() => getPlayableProp(playable.value, 'album_name', 'podcast_title'))
 </script>
-
 
 <style lang="postcss" scoped>
 p {

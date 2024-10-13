@@ -1,19 +1,19 @@
 <template>
-    <nav
-      v-if="shown"
-      ref="el"
-      v-koel-focus
-      :class="extraClass"
-      :style="{ top, left, bottom, right }"
-      class="menu context-menu select-none shadow"
-      tabindex="0"
-      @contextmenu.prevent
-      @keydown.esc="close"
-    >
-      <ul>
-        <slot>Menu items go here.</slot>
-      </ul>
-    </nav>
+  <nav
+    v-if="shown"
+    ref="el"
+    v-koel-focus
+    :class="extraClass"
+    :style="{ top, left, bottom, right }"
+    class="menu context-menu select-none shadow"
+    tabindex="0"
+    @contextmenu.prevent
+    @keydown.esc="close"
+  >
+    <ul>
+      <slot>Menu items go here.</slot>
+    </ul>
+  </nav>
 </template>
 
 <script lang="ts" setup>
@@ -79,8 +79,8 @@ const initSubmenus = () => {
     item.addEventListener('mousemove', async (e: MouseEvent) => {
       await nextTick()
       const rect = submenu.getBoundingClientRect()
-      safeAreaHeight.value = rect.height + 'px'
-      safeAreaWidth.value = rect.x - e.clientX + 'px'
+      safeAreaHeight.value = `${rect.height}px`
+      safeAreaWidth.value = `${rect.x - e.clientX}px`
       safeAreaClipPath.value = `polygon(100% 0, 0 ${e.clientY - rect.top}px, 100% 100%)`
     })
 

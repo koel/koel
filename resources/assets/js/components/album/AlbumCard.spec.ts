@@ -56,18 +56,18 @@ new class extends UnitTestCase {
       id: 42,
       name: 'IV',
       artist_id: 17,
-      artist_name: 'Led Zeppelin'
+      artist_name: 'Led Zeppelin',
     })
 
     return this.render(AlbumCard, {
       props: {
-        album
+        album,
       },
       global: {
         stubs: {
-          AlbumArtistThumbnail: this.stub('thumbnail')
-        }
-      }
+          AlbumArtistThumbnail: this.stub('thumbnail'),
+        },
+      },
     })
   }
 }

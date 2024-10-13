@@ -13,7 +13,7 @@ new class extends UnitTestCase {
     it.each<[PlaybackState, MethodOf<typeof playbackService>]>([
       ['Stopped', 'play'],
       ['Playing', 'pause'],
-      ['Paused', 'resume']
+      ['Paused', 'resume'],
     ])('if state is currently "%s", %ss', async (state, method) => {
       this.mock(queueStore, 'queueIfNotQueued')
       const playbackMock = this.mock(playbackService, method)
@@ -29,13 +29,13 @@ new class extends UnitTestCase {
     playable = factory('song', {
       playback_state: playbackState,
       play_count: 10,
-      title: 'Foo bar'
+      title: 'Foo bar',
     })
 
     return this.render(Component, {
       props: {
-        playable
-      }
+        playable,
+      },
     })
   }
 }

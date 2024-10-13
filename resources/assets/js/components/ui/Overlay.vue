@@ -29,7 +29,7 @@ const el = ref<HTMLDialogElement>()
 const state = reactive<OverlayState>({
   dismissible: false,
   type: 'loading',
-  message: ''
+  message: '',
 })
 
 const show = (options: Partial<OverlayState> = {}) => {

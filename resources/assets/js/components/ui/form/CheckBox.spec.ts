@@ -9,8 +9,8 @@ new class extends UnitTestCase {
 
     it('renders checked state', () => expect(this.render(CheckBox, {
       props: {
-        modelValue: true
-      }
+        modelValue: true,
+      },
     }).html()).toMatchSnapshot())
 
     it('emits the input event', async () => {

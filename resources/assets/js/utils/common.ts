@@ -1,5 +1,5 @@
 import select from 'select'
-import { isSong, noop } from '@/utils'
+import { isSong, logger, noop } from '@/utils'
 import defaultCover from '@/../img/covers/default.svg'
 
 export { defaultCover }
@@ -21,6 +21,8 @@ export const copyText = async (text: string) => {
   try {
     await navigator.clipboard.writeText(text)
   } catch (error: unknown) {
+    logger.warn('Failed to copy text to clipboard', error)
+
     let copyArea = document.querySelector<HTMLTextAreaElement>('#copyArea')
 
     if (!copyArea) {

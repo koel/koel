@@ -1,4 +1,4 @@
-import { reactive, UnwrapNestedRefs } from 'vue'
+import { reactive } from 'vue'
 import { differenceBy, unionBy } from 'lodash'
 import { cache, http } from '@/services'
 import { arrayify, logger } from '@/utils'
@@ -10,7 +10,7 @@ export const artistStore = {
   vault: new Map<Artist['id'], Artist>(),
 
   state: reactive({
-    artists: [] as Artist[]
+    artists: [] as Artist[],
   }),
 
   byId (id: Artist['id']) {
@@ -59,7 +59,7 @@ export const artistStore = {
     if (!artist) {
       try {
         artist = this.syncWithVault(
-          await cache.remember<Artist>(['artist', id], async () => await http.get<Artist>(`artists/${id}`))
+          await cache.remember<Artist>(['artist', id], async () => await http.get<Artist>(`artists/${id}`)),
         )[0]
       } catch (error: unknown) {
         logger.error(error)
@@ -74,5 +74,5 @@ export const artistStore = {
     this.state.artists = unionBy(this.state.artists, this.syncWithVault(resource.data), 'id')
 
     return resource.links.next ? ++resource.meta.current_page : null
-  }
+  },
 }

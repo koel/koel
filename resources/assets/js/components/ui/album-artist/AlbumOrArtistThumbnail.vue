@@ -38,11 +38,11 @@ import { useErrorHandler, useFileReader, useMessageToaster, usePolicies, useRout
 import { acceptedImageTypes } from '@/config'
 import { faPlay } from '@fortawesome/free-solid-svg-icons'
 
+const props = defineProps<{ entity: Album | Artist }>()
 const { toastSuccess } = useMessageToaster()
 const { go } = useRouter()
 const { currentUserCan } = usePolicies()
 
-const props = defineProps<{ entity: Album | Artist }>()
 const { entity } = toRefs(props)
 
 const droppable = ref(false)
@@ -58,7 +58,7 @@ const image = computed(() => {
 
 const buttonLabel = computed(() => forAlbum.value
   ? `Play all songs in the album ${entity.value.name}`
-  : `Play all songs by ${entity.value.name}`
+  : `Play all songs by ${entity.value.name}`,
 )
 
 const allowsUpload = currentUserCan.changeAlbumOrArtistThumbnails()

@@ -1,4 +1,5 @@
-import { authService, CompositeToken, http } from '@/services'
+import type { CompositeToken } from '@/services'
+import { authService, http } from '@/services'
 import { userStore } from '@/stores'
 
 export const invitationService = {
@@ -19,5 +20,5 @@ export const invitationService = {
   revoke: async (user: User) => {
     await http.delete(`invitations`, { email: user.email })
     userStore.remove(user)
-  }
+  },
 }

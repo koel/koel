@@ -14,7 +14,7 @@ new class extends UnitTestCase {
     super.beforeEach(() => {
       artist = factory('artist', {
         id: 42,
-        name: 'Led Zeppelin'
+        name: 'Led Zeppelin',
       })
     })
   }
@@ -63,13 +63,13 @@ new class extends UnitTestCase {
   private renderComponent () {
     return this.render(ArtistCard, {
       props: {
-        artist
+        artist,
       },
       global: {
         stubs: {
-          AlbumArtistThumbnail: this.stub('thumbnail')
-        }
-      }
+          AlbumArtistThumbnail: this.stub('thumbnail'),
+        },
+      },
     })
   }
 }

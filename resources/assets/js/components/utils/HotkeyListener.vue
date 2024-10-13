@@ -3,7 +3,8 @@
 </template>
 
 <script lang="ts" setup>
-import { KeyFilter, onKeyStroke as baseOnKeyStroke } from '@vueuse/core'
+import type { KeyFilter } from '@vueuse/core'
+import { onKeyStroke as baseOnKeyStroke } from '@vueuse/core'
 import { eventBus } from '@/utils'
 import { playbackService, socketService, volumeManager } from '@/services'
 import { favoriteStore, queueStore } from '@/stores'
@@ -13,15 +14,21 @@ const { isCurrentScreen, go } = useRouter()
 
 const onKeyStroke = (key: KeyFilter, callback: (e: KeyboardEvent) => void) => {
   baseOnKeyStroke(key, e => {
-    if (e.altKey || e.ctrlKey || e.metaKey) return
+    if (e.altKey || e.ctrlKey || e.metaKey) {
+      return
+    }
 
     if (e.target instanceof HTMLInputElement
       || e.target instanceof HTMLTextAreaElement
       || e.target instanceof HTMLButtonElement
-    ) return
+    ) {
+      return
+    }
 
     const role = (e.target as HTMLElement).getAttribute('role')
-    if (role === 'button' || role === 'checkbox') return
+    if (role === 'button' || role === 'checkbox') {
+      return
+    }
 
     e.preventDefault()
     callback(e)
@@ -43,7 +50,9 @@ onKeyStroke('ArrowDown', () => volumeManager.decrease())
 onKeyStroke('m', () => volumeManager.toggleMute())
 
 onKeyStroke('l', () => {
-  if (!queueStore.current) return
+  if (!queueStore.current) {
+    return
+  }
   favoriteStore.toggleOne(queueStore.current)
   socketService.broadcast('SOCKET_SONG', queueStore.current)
 })

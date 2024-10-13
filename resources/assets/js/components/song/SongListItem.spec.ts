@@ -37,13 +37,13 @@ new class extends UnitTestCase {
 
     row = {
       playable,
-      selected: false
+      selected: false,
     }
 
     return this.render(SongListItem, {
       props: {
-        item: row
-      }
+        item: row,
+      },
     })
   }
 }

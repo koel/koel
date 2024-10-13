@@ -30,8 +30,8 @@
           >
             <span class="name bg-white/5 px-[0.5em] py-[0.2em] leading-normal">{{ genre.name }}</span>
             <span class="count items-center px-[0.5em] py-[0.2em]">
-            {{ genre.song_count }}
-          </span>
+              {{ genre.song_count }}
+            </span>
           </a>
         </li>
       </ul>
@@ -76,7 +76,7 @@ const levels = computed(() => {
 })
 
 const getLevel = (genre: Genre) => {
-  const index = levels.value.findIndex((level) => genre.song_count <= level)
+  const index = levels.value.findIndex(level => genre.song_count <= level)
   return index === -1 ? 5 : index
 }
 
@@ -89,7 +89,9 @@ const fetchGenres = async () => {
 }
 
 onMounted(async () => {
-  if (libraryEmpty.value) return
+  if (libraryEmpty.value) {
+    return
+  }
   await fetchGenres()
 })
 </script>

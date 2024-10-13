@@ -2,7 +2,7 @@ import { it } from 'vitest'
 import { screen, waitFor } from '@testing-library/vue'
 import factory from '@/__tests__/factory'
 import { eventBus } from '@/utils'
-import { Events } from '@/config'
+import type { Events } from '@/config'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import ModalWrapper from './ModalWrapper.vue'
 
@@ -23,7 +23,7 @@ new class extends UnitTestCase {
       ['about-koel', 'MODAL_SHOW_ABOUT_KOEL', undefined],
       ['koel-plus', 'MODAL_SHOW_KOEL_PLUS', undefined],
       ['equalizer', 'MODAL_SHOW_EQUALIZER', undefined],
-      ['add-podcast-form', 'MODAL_SHOW_ADD_PODCAST_FORM', undefined]
+      ['add-podcast-form', 'MODAL_SHOW_ADD_PODCAST_FORM', undefined],
     ])('shows %s modal', async (modalName, eventName, eventParams?: any) => {
       this.render(ModalWrapper, {
         global: {
@@ -42,9 +42,9 @@ new class extends UnitTestCase {
             Equalizer: this.stub('equalizer'),
             InviteUserForm: this.stub('invite-user-form'),
             KoelPlus: this.stub('koel-plus'),
-            PlaylistCollaborationModal: this.stub('playlist-collaboration')
-          }
-        }
+            PlaylistCollaborationModal: this.stub('playlist-collaboration'),
+          },
+        },
       })
 
       eventBus.emit(eventName, eventParams)

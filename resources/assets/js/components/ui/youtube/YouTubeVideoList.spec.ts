@@ -14,22 +14,22 @@ new class extends UnitTestCase {
 
       const searchMock = this.mock(youTubeService, 'searchVideosBySong').mockResolvedValueOnce({
         nextPageToken: 'foo',
-        items: factory('video', 5)
+        items: factory('video', 5),
       }).mockResolvedValueOnce({
         nextPageToken: 'bar',
-        items: factory('video', 3)
+        items: factory('video', 3),
       })
 
       this.render(YouTubeVideoList, {
         props: {
-          song
+          song,
         },
         global: {
           stubs: {
             Btn,
-            YouTubeVideo
-          }
-        }
+            YouTubeVideo,
+          },
+        },
       })
 
       await waitFor(() => {

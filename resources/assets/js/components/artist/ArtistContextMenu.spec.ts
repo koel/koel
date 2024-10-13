@@ -82,7 +82,7 @@ new class extends UnitTestCase {
 
   private async renderComponent (_artist?: Artist) {
     artist = _artist || factory('artist', {
-      name: 'Accept'
+      name: 'Accept',
     })
 
     const rendered = this.render(ArtistContextMenu)

@@ -1,6 +1,7 @@
 import { isObject, without } from 'lodash'
-import { inject, InjectionKey, isRef, provide, readonly, shallowReadonly } from 'vue'
-import { ReadonlyInjectionKey } from '@/symbols'
+import type { InjectionKey } from 'vue'
+import { inject, isRef, provide, readonly, shallowReadonly } from 'vue'
+import type { ReadonlyInjectionKey } from '@/symbols'
 import { logger, md5 } from '@/utils'
 
 export const use = <T> (value: T | undefined | null, cb: (arg: T) => void) => {
@@ -34,17 +35,17 @@ export const requireInjection = <T> (key: InjectionKey<T>, defaultValue?: T) => 
   const value = inject(key, defaultValue)
 
   if (typeof value === 'undefined') {
-    throw new Error(`Missing injection: ${key.toString()}`)
+    throw new TypeError(`Missing injection: ${key.toString()}`)
   }
 
   return value
 }
 
-export const dbToGain = (db: number) => Math.pow(10, db / 20) || 0
+export const dbToGain = (db: number) => 10 ** (db / 20) || 0
 
 export const moveItemsInList = <T> (list: T[], items: T | T[], target: T, type: MoveType) => {
-  if (list.indexOf(target) === -1) {
-    throw 'Target not found in list'
+  if (!list.includes(target)) {
+    throw new Error('Target not found in list')
   }
 
   const subset = arrayify(items)
@@ -58,7 +59,7 @@ export const moveItemsInList = <T> (list: T[], items: T | T[], target: T, type: 
   }
 
   const updatedList = without(list, ...subset)
-  const targetIndex = updatedList.indexOf(target);
+  const targetIndex = updatedList.indexOf(target)
   updatedList.splice(type === 'before' ? targetIndex : targetIndex + 1, 0, ...subset)
 
   return updatedList

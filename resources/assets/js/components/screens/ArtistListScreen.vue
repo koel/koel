@@ -53,13 +53,6 @@ const gridContainer = ref<HTMLDivElement>()
 const viewMode = ref<ArtistAlbumViewMode>('thumbnails')
 const artists = toRef(artistStore.state, 'artists')
 
-const {
-  ToTopButton,
-  makeScrollable
-} = useInfiniteScroll(gridContainer, async () => await fetchArtists())
-
-watch(viewMode, () => preferences.artists_view_mode = viewMode.value)
-
 let initialized = false
 const loading = ref(false)
 const page = ref<number | null>(1)
@@ -70,15 +63,24 @@ const moreArtistsAvailable = computed(() => page.value !== null)
 const showSkeletons = computed(() => loading.value && artists.value.length === 0)
 
 const fetchArtists = async () => {
-  if (loading.value || !moreArtistsAvailable.value) return
+  if (loading.value || !moreArtistsAvailable.value) {
+    return
+  }
 
   loading.value = true
   page.value = await artistStore.paginate(page.value!)
   loading.value = false
 }
 
+const {
+  ToTopButton,
+  makeScrollable,
+} = useInfiniteScroll(gridContainer, async () => await fetchArtists())
+
 useRouter().onScreenActivated('Artists', async () => {
-  if (libraryEmpty.value) return
+  if (libraryEmpty.value) {
+    return
+  }
   if (!initialized) {
     viewMode.value = preferences.artists_view_mode || 'thumbnails'
     initialized = true
@@ -91,4 +93,6 @@ useRouter().onScreenActivated('Artists', async () => {
     }
   }
 })
+
+watch(viewMode, () => preferences.artists_view_mode = viewMode.value)
 </script>

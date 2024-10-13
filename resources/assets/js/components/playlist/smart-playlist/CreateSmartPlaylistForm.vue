@@ -62,7 +62,7 @@ import {
   useModal,
   useOverlay,
   useRouter,
-  useSmartPlaylistForm
+  useSmartPlaylistForm,
 } from '@/composables'
 
 import CheckBox from '@/components/ui/form/CheckBox.vue'
@@ -70,13 +70,15 @@ import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 import SelectBox from '@/components/ui/form/SelectBox.vue'
 
+const emit = defineEmits<{ (e: 'close'): void }>()
+
 const {
   Btn,
   FormBase,
   RuleGroup,
   collectedRuleGroups,
   addGroup,
-  onGroupChanged
+  onGroupChanged,
 } = useSmartPlaylistForm()
 
 const { showOverlay, hideOverlay } = useOverlay()
@@ -92,7 +94,6 @@ const folderId = ref(targetFolder?.id)
 const folders = toRef(playlistFolderStore.state, 'folders')
 const ownSongsOnly = ref(false)
 
-const emit = defineEmits<{ (e: 'close'): void }>()
 const close = () => emit('close')
 
 const isPristine = () => name.value === ''
@@ -115,7 +116,7 @@ const submit = async () => {
     const playlist = await playlistStore.store(name.value, {
       rules: collectedRuleGroups.value,
       folder_id: folderId.value,
-      own_songs_only: ownSongsOnly.value
+      own_songs_only: ownSongsOnly.value,
     })
 
     close()

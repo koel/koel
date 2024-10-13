@@ -38,7 +38,7 @@ const getPlayer = () => {
   if (!player) {
     player = createYouTubePlayer('player', {
       width: '100%',
-      height: '100%'
+      height: '100%',
     })
 
     // Pause song playback when video is played

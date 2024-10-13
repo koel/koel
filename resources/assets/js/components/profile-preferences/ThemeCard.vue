@@ -20,14 +20,13 @@ import { toRefs } from 'vue'
 import { slugToTitle } from '@/utils'
 
 const props = defineProps<{ theme: Theme }>()
+defineEmits<{ (e: 'selected', theme: Theme): void }>()
+
 const { theme } = toRefs(props)
-
-const emit = defineEmits<{ (e: 'selected', theme: Theme): void }>()
-
 const name = theme.value.name ? theme.value.name : slugToTitle(theme.value.id)
 
 const thumbnailStyles: Record<string, string> = {
-  'background-color': theme.value.thumbnailColor
+  'background-color': theme.value.thumbnailColor,
 }
 
 if (theme.value.thumbnailUrl) {

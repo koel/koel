@@ -65,7 +65,7 @@ const {
   playAll,
   playSelected,
   applyFilter,
-  onScrollBreakpoint
+  onScrollBreakpoint,
 } = useSongList(toRef(searchStore.state, 'playables'), { type: 'Search.Songs' })
 
 const { SongListControls, config } = useSongListControls('Search.Songs')
@@ -76,7 +76,9 @@ searchStore.resetPlayableResultState()
 
 onMounted(async () => {
   q.value = getRouteParam('q') || ''
-  if (!q.value) return
+  if (!q.value) {
+    return
+  }
 
   loading.value = true
   await searchStore.playableSearch(q.value)

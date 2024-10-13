@@ -16,9 +16,9 @@ new class extends UnitTestCase {
       this.render(CreatePlaylistForm, {
         global: {
           provide: {
-            [<symbol>ModalContextKey]: [ref({ folder })]
-          }
-        }
+            [<symbol>ModalContextKey]: [ref({ folder })],
+          },
+        },
       })
 
       expect(screen.queryByTestId('from-playables')).toBeNull()
@@ -27,7 +27,7 @@ new class extends UnitTestCase {
       await this.user.click(screen.getByRole('button', { name: 'Save' }))
 
       expect(storeMock).toHaveBeenCalledWith('My playlist', {
-        folder_id: folder.id
+        folder_id: folder.id,
       }, [])
     })
 
@@ -39,9 +39,9 @@ new class extends UnitTestCase {
       this.render(CreatePlaylistForm, {
         global: {
           provide: {
-            [<symbol>ModalContextKey]: [ref({ folder, playables })]
-          }
-        }
+            [<symbol>ModalContextKey]: [ref({ folder, playables })],
+          },
+        },
       })
 
       screen.getByText('from 3 songs')
@@ -50,7 +50,7 @@ new class extends UnitTestCase {
       await this.user.click(screen.getByRole('button', { name: 'Save' }))
 
       expect(storeMock).toHaveBeenCalledWith('My playlist', {
-        folder_id: folder.id
+        folder_id: folder.id,
       }, playables)
     })
   }

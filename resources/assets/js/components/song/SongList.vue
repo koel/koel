@@ -103,7 +103,7 @@
       :item-height="64"
       :items="rows"
       @scroll="onScroll"
-      @scrolled-to-end="$emit('scrolled-to-end')"
+      @scrolled-to-end="$emit('scrolledToEnd')"
     >
       <SongListItem
         :key="item.playable.id"
@@ -123,10 +123,11 @@
 </template>
 
 <script lang="ts" setup>
-import { findIndex, findLastIndex, sortBy, throttle } from 'lodash'
+import { findIndex, findLastIndex, throttle } from 'lodash'
 import isMobile from 'ismobilejs'
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons'
-import { computed, nextTick, onMounted, Ref, ref, watch } from 'vue'
+import type { Ref } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { arrayify, eventBus, getPlayableCollectionContentType, requireInjection } from '@/utils'
 import { preferenceStore as preferences, queueStore } from '@/stores'
 import { useDraggable, useDroppable } from '@/composables'
@@ -137,24 +138,24 @@ import {
   PlayableListSortFieldKey,
   PlayablesKey,
   SelectedPlayablesKey,
-  SongListSortOrderKey
+  SongListSortOrderKey,
 } from '@/symbols'
 
 import SongListItem from '@/components/song/SongListItem.vue'
 import SongListSorter from '@/components/song/SongListSorter.vue'
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
 
+const emit = defineEmits<{
+  (e: 'press:enter', event: KeyboardEvent): void
+  (e: 'press:delete'): void
+  (e: 'reorder', song: Playable, type: MoveType): void
+  (e: 'sort', field: MaybeArray<PlayableListSortField>, order: SortOrder): void
+  (e: 'scrollBreakpoint', direction: 'up' | 'down'): void
+  (e: 'scrolledToEnd'): void
+}>()
+
 const { startDragging } = useDraggable('playables')
 const { getDroppedData, acceptsDrop } = useDroppable(['playables'])
-
-const emit = defineEmits<{
-  (e: 'press:enter', event: KeyboardEvent): void,
-  (e: 'press:delete'): void,
-  (e: 'reorder', song: Playable, type: MoveType): void,
-  (e: 'sort', field: MaybeArray<PlayableListSortField>, order: SortOrder): void,
-  (e: 'scroll-breakpoint', direction: 'up' | 'down'): void,
-  (e: 'scrolled-to-end'): void,
-}>()
 
 const [playables] = requireInjection<[Ref<Playable[]>]>(PlayablesKey)
 const [selectedPlayables, setSelectedPlayables] = requireInjection<[Ref<Playable[]>, Closure]>(SelectedPlayablesKey)
@@ -181,10 +182,15 @@ const sortingByAlbumOrPodcast = computed(() => {
   return sortFields[0] === 'album_name' || sortFields[0] === 'podcast_title'
 })
 
+const selectAllRows = () => rows.value.forEach(row => (row.selected = true))
+const clearSelection = () => rows.value.forEach(row => (row.selected = false))
+const handleA = (event: KeyboardEvent) => (event.ctrlKey || event.metaKey) && selectAllRows()
+const getAllPlayablesWithSort = () => rows.value.map(row => row.playable)
+
 watch(
   rows,
   () => setSelectedPlayables(rows.value.filter(({ selected }) => selected).map(({ playable }) => playable)),
-  { deep: true }
+  { deep: true },
 )
 
 let lastScrollTop = 0
@@ -193,9 +199,9 @@ const onScroll = (e: Event) => {
   const scroller = e.target as HTMLElement
 
   if (scroller.scrollTop > 512 && lastScrollTop < 512) {
-    emit('scroll-breakpoint', 'down')
+    emit('scrollBreakpoint', 'down')
   } else if (scroller.scrollTop < 512 && lastScrollTop > 512) {
-    emit('scroll-breakpoint', 'up')
+    emit('scrollBreakpoint', 'up')
   }
 
   lastScrollTop = scroller.scrollTop
@@ -213,7 +219,7 @@ const generateRows = () => {
 
   return playables.value.map<PlayableRow>(playable => ({
     playable,
-    selected: selectedIds.includes(playable.id)
+    selected: selectedIds.includes(playable.id),
   }))
 }
 
@@ -237,19 +243,109 @@ const render = () => {
 watch(playables, () => render(), { deep: true })
 
 const handleDelete = () => {
-  emit('press:delete')
+  emit('press:delete') // eslint-disable-line vue/custom-event-name-casing
   clearSelection()
 }
 
 const handleEnter = (event: KeyboardEvent) => {
-  emit('press:enter', event)
+  emit('press:enter', event) // eslint-disable-line vue/custom-event-name-casing
   clearSelection()
 }
 
-const selectAllRows = () => rows.value.forEach(row => (row.selected = true))
-const clearSelection = () => rows.value.forEach(row => (row.selected = false))
-const handleA = (event: KeyboardEvent) => (event.ctrlKey || event.metaKey) && selectAllRows()
-const getAllPlayablesWithSort = () => rows.value.map(row => row.playable)
+const rowInSelectedRange = (row: PlayableRow) => {
+  if (!row.selected) {
+    return false
+  }
+
+  const index = findIndex(rows.value, ({ playable }) => playable.id === row.playable.id)
+  const firstSelectedIndex = Math.max(0, findIndex(rows.value, ({ selected }) => selected))
+  const lastSelectedIndex = Math.max(0, findLastIndex(rows.value, ({ selected }) => selected))
+
+  if (index < firstSelectedIndex || index > lastSelectedIndex) {
+    return false
+  }
+
+  for (let i = firstSelectedIndex; i <= lastSelectedIndex; ++i) {
+    if (!rows.value[i].selected) {
+      return false
+    }
+  }
+
+  return true
+}
+
+const onDragStart = async (row: PlayableRow, event: DragEvent) => {
+  // If the user is dragging an unselected row, clear the current selection.
+  if (!row.selected) {
+    clearSelection()
+    row.selected = true
+    await nextTick()
+  }
+
+  // Add "dragging" class to the wrapper so that we can disable pointer events on child elements.
+  // This prevents dragleave events from firing when the user drags the mouse over the child elements.
+  wrapper.value?.classList.add('dragging')
+
+  startDragging(event, selectedPlayables.value)
+}
+
+const onDragOver = throttle((event: DragEvent) => {
+  if (!config.reorderable) {
+    return
+  }
+
+  if (acceptsDrop(event)) {
+    const target = event.target as HTMLElement
+    const rect = target.getBoundingClientRect()
+    const midPoint = rect.top + rect.height / 2
+    target.classList.remove('dragover-top', 'dragover-bottom')
+    target.classList.add('droppable', event.clientY < midPoint ? 'dragover-top' : 'dragover-bottom')
+  }
+
+  return false
+}, 50)
+
+const onDragLeave = (event: DragEvent) => {
+  (event.target as HTMLElement).closest('.song-item')?.classList.remove('droppable', 'dragover-top', 'dragover-bottom')
+  return false
+}
+
+const onDrop = (row: PlayableRow, event: DragEvent) => {
+  if (!config.reorderable || !getDroppedData(event) || !selectedPlayables.value.length) {
+    wrapper.value?.classList.remove('dragging')
+    return onDragLeave(event)
+  }
+
+  wrapper.value?.classList.remove('dragging')
+
+  if (!rowInSelectedRange(row)) {
+    emit(
+      'reorder',
+      row.playable,
+      (event.target as HTMLElement).classList.contains('dragover-bottom') ? 'after' : 'before',
+    )
+  }
+
+  return onDragLeave(event)
+}
+
+const onDragEnd = () => wrapper.value?.classList.remove('dragging')
+
+const toggleRow = (row: PlayableRow) => {
+  row.selected = !row.selected
+  lastSelectedRow.value = row
+}
+
+const selectRowsBetween = (first: PlayableRow, second: PlayableRow) => {
+  const firstIndex = Math.max(0, findIndex(rows.value, row => row.playable.id === first.playable.id))
+  const secondIndex = Math.max(0, findIndex(rows.value, row => row.playable.id === second.playable.id))
+  const indexes = [firstIndex, secondIndex]
+  indexes.sort((a, b) => a - b)
+
+  for (let i = indexes[0]; i <= indexes[1]; ++i) {
+    rows.value[i].selected = true
+  }
+}
 
 const onClick = (row: PlayableRow, event: MouseEvent) => {
   // If we're on a touch device, or if Ctrl/Cmd key is pressed, just toggle selection.
@@ -274,93 +370,6 @@ const onClick = (row: PlayableRow, event: MouseEvent) => {
   }
 }
 
-const toggleRow = (row: PlayableRow) => {
-  row.selected = !row.selected
-  lastSelectedRow.value = row
-}
-
-const selectRowsBetween = (first: PlayableRow, second: PlayableRow) => {
-  const firstIndex = Math.max(0, findIndex(rows.value, row => row.playable.id === first.playable.id))
-  const secondIndex = Math.max(0, findIndex(rows.value, row => row.playable.id === second.playable.id))
-  const indexes = [firstIndex, secondIndex]
-  indexes.sort((a, b) => a - b)
-
-  for (let i = indexes[0]; i <= indexes[1]; ++i) {
-    rows.value[i].selected = true
-  }
-}
-
-const onDragStart = async (row: PlayableRow, event: DragEvent) => {
-  // If the user is dragging an unselected row, clear the current selection.
-  if (!row.selected) {
-    clearSelection()
-    row.selected = true
-    await nextTick()
-  }
-
-  // Add "dragging" class to the wrapper so that we can disable pointer events on child elements.
-  // This prevents dragleave events from firing when the user drags the mouse over the child elements.
-  wrapper.value?.classList.add('dragging')
-
-  startDragging(event, selectedPlayables.value)
-}
-
-const onDragOver = throttle((event: DragEvent) => {
-  if (!config.reorderable) return
-
-  if (acceptsDrop(event)) {
-    const target = event.target as HTMLElement
-    const rect = target.getBoundingClientRect()
-    const midPoint = rect.top + rect.height / 2
-    target.classList.remove('dragover-top', 'dragover-bottom')
-    target.classList.add('droppable', event.clientY < midPoint ? 'dragover-top' : 'dragover-bottom')
-  }
-
-  return false
-}, 50)
-
-const onDrop = (row: PlayableRow, event: DragEvent) => {
-  if (!config.reorderable || !getDroppedData(event) || !selectedPlayables.value.length) {
-    wrapper.value?.classList.remove('dragging')
-    return onDragLeave(event)
-  }
-
-  wrapper.value?.classList.remove('dragging')
-
-  if (!rowInSelectedRange(row)) {
-    emit(
-      'reorder',
-      row.playable,
-      (event.target as HTMLElement).classList.contains('dragover-bottom') ? 'after' : 'before'
-    )
-  }
-
-  return onDragLeave(event)
-}
-
-const onDragLeave = (event: DragEvent) => {
-  (event.target as HTMLElement).closest('.song-item')?.classList.remove('droppable', 'dragover-top', 'dragover-bottom')
-  return false
-}
-
-const onDragEnd = () => wrapper.value?.classList.remove('dragging')
-
-const rowInSelectedRange = (row: PlayableRow) => {
-  if (!row.selected) return false
-
-  const index = findIndex(rows.value, ({ playable }) => playable.id === row.playable.id)
-  const firstSelectedIndex = Math.max(0, findIndex(rows.value, ({ selected }) => selected))
-  const lastSelectedIndex = Math.max(0, findLastIndex(rows.value, ({ selected }) => selected))
-
-  if (index < firstSelectedIndex || index > lastSelectedIndex) return false
-
-  for (let i = firstSelectedIndex; i <= lastSelectedIndex; ++i) {
-    if (!rows.value[i].selected) return false
-  }
-
-  return true
-}
-
 const openContextMenu = async (row: PlayableRow, event: MouseEvent) => {
   if (!row.selected) {
     clearSelection()
@@ -382,7 +391,7 @@ const onPlay = async (playable: Playable) => {
 }
 
 defineExpose({
-  getAllPlayablesWithSort
+  getAllPlayablesWithSort,
 })
 
 onMounted(() => render())
@@ -398,7 +407,8 @@ onMounted(() => render())
     @apply pointer-events-none;
   }
 
-  .song-list-header > span, .song-item > span {
+  .song-list-header > span,
+  .song-item > span {
     @apply text-left p-2 align-middle text-ellipsis overflow-hidden whitespace-nowrap;
 
     &.time {

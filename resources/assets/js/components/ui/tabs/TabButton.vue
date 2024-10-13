@@ -15,7 +15,7 @@
 import { toRefs } from 'vue'
 
 const props = defineProps<{ selected: boolean }>()
-const { selected } = toRefs(props)
-
 const emit = defineEmits<{ (e: 'click'): void }>()
+
+const { selected } = toRefs(props)
 </script>

@@ -7,6 +7,6 @@ export const useFileReader = () => {
   }
 
   return {
-    readAsDataUrl
+    readAsDataUrl,
   }
 }

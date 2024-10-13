@@ -13,8 +13,8 @@ new class extends UnitTestCase {
 
       this.render(Component, {
         props: {
-          playlist
-        }
+          playlist,
+        },
       })
 
       await this.user.click(screen.getByText('Invite'))

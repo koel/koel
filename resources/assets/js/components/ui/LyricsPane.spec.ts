@@ -29,18 +29,18 @@ new class extends UnitTestCase {
 
   private renderComponent (song?: Song) {
     song = song || factory('song', {
-      lyrics: 'Foo bar baz qux'
+      lyrics: 'Foo bar baz qux',
     })
 
     return this.render(LyricsPane, {
       props: {
-        song
+        song,
       },
       global: {
         stubs: {
-          Magnifier
-        }
-      }
+          Magnifier,
+        },
+      },
     })
   }
 }

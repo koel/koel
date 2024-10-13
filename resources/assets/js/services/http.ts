@@ -1,4 +1,5 @@
-import Axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, Method } from 'axios'
+import type { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, Method } from 'axios'
+import Axios from 'axios'
 import NProgress from 'nprogress'
 import { eventBus } from '@/utils'
 import { authService } from '@/services'
@@ -12,8 +13,8 @@ class Http {
     this.client = Axios.create({
       baseURL: `${window.BASE_URL}api`,
       headers: {
-        'X-Api-Version': 'v6'
-      }
+        'X-Api-Version': 'v6',
+      },
     })
 
     // Intercept the request to make sure the token is injected into the header.
@@ -61,7 +62,7 @@ class Http {
       url,
       data,
       method,
-      onUploadProgress
+      onUploadProgress,
     }) as Promise<{ data: T }>
   }
 

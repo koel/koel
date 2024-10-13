@@ -1,4 +1,4 @@
-import { Faker } from '@faker-js/faker'
+import type { Faker } from '@faker-js/faker'
 
 export default (faker: Faker): Episode => {
   return {
@@ -15,6 +15,6 @@ export default (faker: Faker): Episode => {
     episode_image: faker.image.imageUrl(),
     podcast_id: faker.datatype.uuid(),
     podcast_title: faker.lorem.sentence(),
-    podcast_author: faker.name.findName()
+    podcast_author: faker.name.findName(),
   }
 }

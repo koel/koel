@@ -12,7 +12,7 @@ new class extends UnitTestCase {
 
       await this.router.activateRoute({
         path: '_',
-        screen: 'Password.Reset'
+        screen: 'Password.Reset',
       }, { payload: 'Zm9vQGJhci5jb218bXktdG9rZW4=' })
 
       this.render(ResetPasswordForm)

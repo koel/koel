@@ -1,17 +1,19 @@
-import { isRef, Ref } from 'vue'
-import { arrow as arrowMiddleware, autoUpdate, flip, offset, Placement } from '@floating-ui/dom'
+import type { Ref } from 'vue'
+import { isRef } from 'vue'
+import type { Placement } from '@floating-ui/dom'
+import { arrow as arrowMiddleware, autoUpdate, flip, offset } from '@floating-ui/dom'
 import { updateFloatingUi } from '@/utils'
 
-export type Config = {
-  placement: Placement,
-  useArrow: boolean,
-  autoTrigger: boolean,
+export interface Config {
+  placement: Placement
+  useArrow: boolean
+  autoTrigger: boolean
 }
 
 export const useFloatingUi = (
   reference: HTMLElement | Ref<HTMLElement | undefined>,
   floating: HTMLElement | Ref<HTMLElement | undefined>,
-  config: Partial<Config> = {}
+  config: Partial<Config> = {},
 ) => {
   const extractRef = <T extends HTMLElement | Ref<HTMLElement | undefined>> (ref: T): HTMLElement => {
     if (isRef(ref) && !ref.value) {
@@ -24,7 +26,7 @@ export const useFloatingUi = (
   const mergedConfig: Config = Object.assign({
     placement: 'bottom',
     useArrow: true,
-    autoTrigger: true
+    autoTrigger: true,
   }, config)
 
   let _cleanUp: Closure
@@ -40,7 +42,7 @@ export const useFloatingUi = (
 
     const middleware = [
       flip(),
-      offset(6)
+      offset(6),
     ]
 
     let arrow: HTMLElement
@@ -52,13 +54,13 @@ export const useFloatingUi = (
 
       middleware.push(arrowMiddleware({
         element: arrow,
-        padding: 6
+        padding: 6,
       }))
     }
 
     const update = async () => await updateFloatingUi(referenceElement, floatingElement, {
       placement: mergedConfig.placement,
-      middleware
+      middleware,
     }, arrow)
 
     _cleanUp = autoUpdate(referenceElement, floatingElement, update)
@@ -84,6 +86,6 @@ export const useFloatingUi = (
     teardown: () => _cleanUp(),
     show: () => _show(),
     hide: () => _hide(),
-    trigger: () => _trigger()
+    trigger: () => _trigger(),
   }
 }

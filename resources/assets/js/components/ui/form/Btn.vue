@@ -20,26 +20,27 @@
 import { ref } from 'vue'
 
 withDefaults(defineProps<{ tag?: 'button' | 'a' }>(), {
-  tag: 'button'
+  tag: 'button',
 })
 
 const button = ref<HTMLButtonElement>()
 
 defineExpose({
-  button
+  button,
 })
 </script>
 
 <style lang="postcss" scoped>
-button, a {
+button,
+a {
   @apply text-k-text-primary !important;
 
   &:not([disabled]):hover {
-    box-shadow: inset 0 0 0 10rem rgba(0, 0, 0, .1);
+    box-shadow: inset 0 0 0 10rem rgba(0, 0, 0, 0.1);
   }
 
   &:not([disabled]):active {
-    box-shadow: inset 0 10px 10px -10px rgba(0, 0, 0, .6);
+    box-shadow: inset 0 10px 10px -10px rgba(0, 0, 0, 0.6);
   }
 
   &[big] {
@@ -62,7 +63,8 @@ button, a {
     @apply bg-k-danger;
   }
 
-  &[grey], &[gray] {
+  &[grey],
+  &[gray] {
     @apply bg-k-bg-secondary;
   }
 
@@ -73,7 +75,6 @@ button, a {
   &[transparent] {
     @apply bg-transparent;
   }
-
 
   &[rounded] {
     @apply rounded-full;

@@ -30,10 +30,10 @@ import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 
+const emit = defineEmits<{ (e: 'cancel'): void }>()
 const { handleHttpError } = useErrorHandler()
 const { toastSuccess } = useMessageToaster()
 
-const emit = defineEmits<{ (e: 'cancel'): void }>()
 const email = ref('')
 const loading = ref(false)
 

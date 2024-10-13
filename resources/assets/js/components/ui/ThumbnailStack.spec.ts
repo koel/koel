@@ -12,9 +12,9 @@ new class extends UnitTestCase {
             'https://via.placeholder.com/150?foo',
             'https://via.placeholder.com/150?bar',
             'https://via.placeholder.com/150?baz',
-            'https://via.placeholder.com/150?qux'
-          ]
-        }
+            'https://via.placeholder.com/150?qux',
+          ],
+        },
       })
 
       expect(getAllByTestId('thumbnail')).toHaveLength(4)
@@ -25,9 +25,9 @@ new class extends UnitTestCase {
         props: {
           thumbnails: [
             'https://via.placeholder.com/150',
-            'https://via.placeholder.com/150?foo'
-          ]
-        }
+            'https://via.placeholder.com/150?foo',
+          ],
+        },
       })
 
       expect(getAllByTestId('thumbnail')).toHaveLength(1)

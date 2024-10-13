@@ -189,5 +189,5 @@ export const genres = [
   'G-Funk',
   'Dubstep',
   'Garage Rock',
-  'Psybient'
+  'Psybient',
 ]

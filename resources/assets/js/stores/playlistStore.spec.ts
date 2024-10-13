@@ -13,12 +13,12 @@ const ruleGroups: SmartPlaylistRuleGroup[] = [
         model: {
           name: 'artist.name',
           type: 'text',
-          label: 'Artist'
+          label: 'Artist',
         },
         operator: 'is',
-        value: ['Elvis Presley']
-      }
-    ]
+        value: ['Elvis Presley'],
+      },
+    ],
   },
   {
     id: '72f58da9-7350-488a-a1ee-c7c0edbfcc99',
@@ -28,13 +28,13 @@ const ruleGroups: SmartPlaylistRuleGroup[] = [
         model: {
           name: 'artist.name',
           type: 'text',
-          label: 'Artist'
+          label: 'Artist',
         },
         operator: 'is',
-        value: ['Queen']
-      }
-    ]
-  }
+        value: ['Queen'],
+      },
+    ],
+  },
 ]
 
 const serializedRuleGroups = [
@@ -45,9 +45,9 @@ const serializedRuleGroups = [
         id: '72f58da9-7350-488a-a1ee-c7c0edbfcc99',
         model: 'artist.name',
         operator: 'is',
-        value: ['Elvis Presley']
-      }
-    ]
+        value: ['Elvis Presley'],
+      },
+    ],
   },
   {
     id: '72f58da9-7350-488a-a1ee-c7c0edbfcc99',
@@ -56,10 +56,10 @@ const serializedRuleGroups = [
         id: '5d0e38c9-1eb3-40a1-b98e-23492ed01956',
         model: 'artist.name',
         operator: 'is',
-        value: ['Queen']
-      }
-    ]
-  }
+        value: ['Queen'],
+      },
+    ],
+  },
 ]
 
 new class extends UnitTestCase {
@@ -71,7 +71,7 @@ new class extends UnitTestCase {
     it('sets up a smart playlist with properly unserialized rules', () => {
       const playlist = factory('playlist', {
         is_smart: true,
-        rules: serializedRuleGroups as unknown as SmartPlaylistRuleGroup[]
+        rules: serializedRuleGroups as unknown as SmartPlaylistRuleGroup[],
       })
 
       playlistStore.setupSmartPlaylist(playlist)
@@ -91,7 +91,7 @@ new class extends UnitTestCase {
       expect(postMock).toHaveBeenCalledWith('playlists', {
         name: 'New Playlist',
         songs: songs.map(song => song.id),
-        folder_id: folder.id
+        folder_id: folder.id,
       })
 
       expect(playlistStore.state.playlists).toHaveLength(1)
@@ -119,7 +119,7 @@ new class extends UnitTestCase {
       await playlistStore.addContent(playlist, songs)
 
       expect(postMock).toHaveBeenCalledWith(`playlists/${playlist.id}/songs`, {
-        songs: songs.map(song => song.id)
+        songs: songs.map(song => song.id),
       })
 
       expect(removeMock).toHaveBeenCalledWith(['playlist.songs', playlist.id])
@@ -134,7 +134,7 @@ new class extends UnitTestCase {
       await playlistStore.removeContent(playlist, songs)
 
       expect(deleteMock).toHaveBeenCalledWith(`playlists/${playlist.id}/songs`, {
-        songs: songs.map(song => song.id)
+        songs: songs.map(song => song.id),
       })
 
       expect(removeMock).toHaveBeenCalledWith(['playlist.songs', playlist.id])
@@ -163,7 +163,7 @@ new class extends UnitTestCase {
       expect(putMock).toHaveBeenCalledWith(`playlists/${playlist.id}`, {
         name: 'Foo',
         rules: null,
-        folder_id: folder.id
+        folder_id: folder.id,
       })
 
       expect(playlist.name).toBe('Foo')
@@ -184,7 +184,7 @@ new class extends UnitTestCase {
       expect(putMock).toHaveBeenCalledWith(`playlists/${playlist.id}`, {
         name: 'Foo',
         rules: ['Whatever'],
-        folder_id: undefined
+        folder_id: undefined,
       })
 
       expect(removeMock).toHaveBeenCalledWith(['playlist.songs', playlist.id])

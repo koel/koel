@@ -13,16 +13,18 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, Ref, toRefs } from 'vue'
+import type { Ref } from 'vue'
+import { computed, defineAsyncComponent, toRefs } from 'vue'
 import { songStore } from '@/stores'
 import { authService, playbackService } from '@/services'
 import { useThirdPartyServices } from '@/composables'
 import { requireInjection, secondsToHis } from '@/utils'
 import { PlayablesKey } from '@/symbols'
 
+const props = defineProps<{ album: Album, track: AlbumTrack }>()
+
 const AppleMusicButton = defineAsyncComponent(() => import('@/components/ui/AppleMusicButton.vue'))
 
-const props = defineProps<{ album: Album, track: AlbumTrack }>()
 const { album, track } = toRefs(props)
 
 const { useAppleMusic } = useThirdPartyServices()
@@ -44,7 +46,8 @@ const play = () => matchedSong.value && playbackService.play(matchedSong.value)
 
 <style lang="postcss" scoped>
 .track-list-item {
-  &:focus, &.active {
+  &:focus,
+  &.active {
     span.title {
       @apply text-k-highlight;
     }

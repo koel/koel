@@ -9,7 +9,7 @@ new class extends UnitTestCase {
   protected beforeEach () {
     // Prevent actual HTTP requests from being made
     this.setReadOnlyProperty(http, 'silently', {
-      patch: vi.fn()
+      patch: vi.fn(),
     })
 
     super.beforeEach(() => vi.useFakeTimers())

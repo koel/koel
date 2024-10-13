@@ -29,7 +29,7 @@ export const init = (container: HTMLElement) => {
   isRetina && blob.setRetina()
 
   renderQueue = [
-    blob.update.bind(blob)
+    blob.update.bind(blob),
   ]
 
   update()
@@ -49,7 +49,7 @@ const update = () => {
   blob.updatePBR()
 
   // update pbr
-  pbr.exposure = 5. + 30. * analyzer.getLevel()
+  pbr.exposure = 5.0 + 30.0 * analyzer.getLevel()
 
   light.ziggle(renderer.getTimer())
   renderer.ziggleCam(renderer.getTimer())

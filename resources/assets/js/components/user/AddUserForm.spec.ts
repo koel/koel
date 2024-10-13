@@ -24,7 +24,7 @@ new class extends UnitTestCase {
           name: 'John Doe',
           email: 'john@doe.com',
           password: 'secret-password',
-          is_admin: true
+          is_admin: true,
         })
 
         expect(alertMock).toHaveBeenCalledWith('New user "John Doe" created.')

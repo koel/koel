@@ -81,7 +81,7 @@ const {
   isPhone,
   playSelected,
   applyFilter,
-  onScrollBreakpoint
+  onScrollBreakpoint,
 } = useSongList(toRef(queueStore.state, 'playables'), { type: 'Queue' }, { reorderable: true, sortable: false })
 
 const { SongListControls, config } = useSongListControls('Queue')
@@ -112,7 +112,9 @@ const clearQueue = () => {
 }
 
 const removeSelected = async () => {
-  if (!selectedPlayables.value.length) return
+  if (!selectedPlayables.value.length) {
+    return
+  }
 
   const currentSongId = queueStore.current?.id
   queueStore.unqueue(selectedPlayables.value)
@@ -137,7 +139,7 @@ onScreenActivated('Queue', async () => {
     song = await songStore.resolve(cache.get('song-to-queue')!)
 
     if (!song) {
-      throw 'Song not found'
+      throw new Error('Song not found')
     }
   } catch (error: unknown) {
     useErrorHandler('dialog').handleHttpError(error)

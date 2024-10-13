@@ -1,4 +1,5 @@
-import axios, { AxiosResponse } from 'axios'
+import type { AxiosResponse } from 'axios'
+import axios from 'axios'
 import { logger, parseValidationError } from '@/utils'
 import { useDialogBox, useMessageToaster } from '@/composables'
 
@@ -45,6 +46,6 @@ export const useErrorHandler = (driver: ErrorMessageDriver = 'toast') => {
 
   return {
     handleHttpError,
-    showGenericError
+    showGenericError,
   }
 }

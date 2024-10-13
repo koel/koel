@@ -4,7 +4,7 @@ import { merge } from 'lodash'
 
 export const settingStore = {
   state: reactive<Settings>({
-    media_path: ''
+    media_path: '',
   }),
 
   init (settings: Settings) {
@@ -14,5 +14,5 @@ export const settingStore = {
   async update (settings: Settings) {
     await http.put('settings', settings)
     merge(this.state, settings)
-  }
+  },
 }

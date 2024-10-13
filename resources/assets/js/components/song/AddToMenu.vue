@@ -65,6 +65,8 @@ import { usePlayableMenuMethods } from '@/composables'
 import Btn from '@/components/ui/form/Btn.vue'
 
 const props = defineProps<{ playables: Playable[], config: AddToMenuConfig }>()
+const emit = defineEmits<{ (e: 'closing'): void }>()
+
 const { playables, config } = toRefs(props)
 
 const queue = toRef(queueStore.state, 'playables')
@@ -73,7 +75,6 @@ const currentPlayable = queueStore.current
 const allPlaylists = toRef(playlistStore.state, 'playlists')
 const playlists = computed(() => allPlaylists.value.filter(({ is_smart }) => !is_smart))
 
-const emit = defineEmits<{ (e: 'closing'): void }>()
 const close = () => emit('closing')
 
 const {
@@ -82,7 +83,7 @@ const {
   queueToTop,
   addToFavorites,
   addToExistingPlaylist,
-  addToNewPlaylist
+  addToNewPlaylist,
 } = usePlayableMenuMethods(playables, close)
 
 watch(playables, () => playables.value.length || close())

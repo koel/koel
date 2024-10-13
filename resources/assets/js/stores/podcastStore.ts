@@ -3,7 +3,7 @@ import { http } from '@/services'
 
 export const podcastStore = {
   state: reactive({
-    podcasts: [] as Podcast[]
+    podcasts: [] as Podcast[],
   }),
 
   byId (id: Podcast['id']) {

@@ -10,7 +10,7 @@ let artist: Artist
 
 new class extends UnitTestCase {
   protected test () {
-    it.each<[MediaInfoDisplayMode]>([['aside'], ['full']])('renders in %s mode', async (mode) => {
+    it.each<[MediaInfoDisplayMode]>([['aside'], ['full']])('renders in %s mode', async mode => {
       await this.renderComponent(mode)
 
       if (mode === 'aside') {
@@ -33,13 +33,13 @@ new class extends UnitTestCase {
     const rendered = this.render(ArtistInfoComponent, {
       props: {
         artist,
-        mode
+        mode,
       },
       global: {
         stubs: {
-          ArtistThumbnail: this.stub('thumbnail')
-        }
-      }
+          ArtistThumbnail: this.stub('thumbnail'),
+        },
+      },
     })
 
     await this.tick(1)

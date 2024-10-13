@@ -51,7 +51,8 @@
   @apply flex h-[64px] border-b border-k-border;
 }
 
-.song-list-header span span, .pulse {
+.song-list-header span span,
+.pulse {
   @apply inline-block h-[1.2rem] rounded-full w-4/5;
 }
 
@@ -96,7 +97,8 @@ span:not(.text) {
     @apply hidden;
   }
 
-  .title, .artist {
+  .title,
+  .artist {
     @apply flex;
   }
 
@@ -104,7 +106,8 @@ span:not(.text) {
     @apply w-full;
   }
 
-  .song-list-header, .song-item {
+  .song-list-header,
+  .song-item {
     @apply py-0 px-[16px];
   }
 }
