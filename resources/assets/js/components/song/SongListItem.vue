@@ -70,7 +70,7 @@ const { isPlus } = useKoelPlus()
 
 const props = withDefaults(defineProps<{ item: PlayableRow, showDisc: boolean }>(), {
   showDisc: false
-});
+})
 
 const { item } = toRefs(props)
 

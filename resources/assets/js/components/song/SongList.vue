@@ -368,42 +368,43 @@ const onPlay = async (playable: Playable) => {
 }
 
 const discIndexMap = computed(() => {
-  const map: { [key: number]: number } = {};
+  const map: { [key: number]: number } = {}
   rows.value.forEach((row, index) => {
-    const { disc } = row.playable;
+    const { disc } = row.playable
     if (!Object.values(map).includes(disc)) {
-      map[index] = disc;
+      map[index] = disc
     }
-  });
-  return map;
+  })
+
+  return map
 });
 
-const noOrOneDiscOnly = computed(() => Object.keys(discIndexMap.value).length <= 1);
-const sortingByTrack = computed(() => sortField.value === 'track');
-const inAlbumContext = computed(() => context.type === 'Album');
+const noOrOneDiscOnly = computed(() => Object.keys(discIndexMap.value).length <= 1)
+const sortingByTrack = computed(() => sortField.value === 'track')
+const inAlbumContext = computed(() => context.type === 'Album')
 
-const noDiscLabel = computed(() => noOrOneDiscOnly.value || !sortingByTrack.value || !inAlbumContext.value);
+const noDiscLabel = computed(() => noOrOneDiscOnly.value || !sortingByTrack.value || !inAlbumContext.value)
 
 const showDiscLabel = (row: Playable) => {
-  if (noDiscLabel.value) return false;
+  if (noDiscLabel.value) return false
 
-  const index = findIndex(rows.value, ({ playable }) => playable.id === row.id);
-  return discIndexMap.value[index] !== undefined;
+  const index = findIndex(rows.value, ({ playable }) => playable.id === row.id)
+  return discIndexMap.value[index] !== undefined
 };
 
-const standardSongItemHeight = 64;
-const discNumberHeight = 32.5;
+const standardSongItemHeight = 64
+const discNumberHeight = 32.5
 
 const calculatedItemHeight = computed(() => {
-  if (noDiscLabel.value) return standardSongItemHeight;
+  if (noDiscLabel.value) return standardSongItemHeight
 
-  const discCount = Object.keys(discIndexMap.value).length;
-  const totalAdditionalPixels = discCount * discNumberHeight;
+  const discCount = Object.keys(discIndexMap.value).length
+  const totalAdditionalPixels = discCount * discNumberHeight
 
-  const totalHeight = (rows.value.length * standardSongItemHeight) + totalAdditionalPixels;
-  const averageHeight = totalHeight / rows.value.length;
+  const totalHeight = (rows.value.length * standardSongItemHeight) + totalAdditionalPixels
+  const averageHeight = totalHeight / rows.value.length
 
-  return averageHeight;
+  return averageHeight
 });
 
 defineExpose({
