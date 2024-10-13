@@ -77,8 +77,8 @@ export const openPopup = (url: string, name: string, width: number, height: numb
 
 export const humanReadablePlayCount = (num: number) => {
   if (num >= 1_000_000) {
-    return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+    return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M'
   }
 
-  return num.toLocaleString();
+  return num.toLocaleString()
 }

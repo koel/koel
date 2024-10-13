@@ -27,7 +27,7 @@
       </span>
       <span class="artist">{{ artist }}</span>
     </span>
-    <span class="album">{{ album }}</span>    
+    <span class="album">{{ album }}</span>
     <template v-if="config.collaborative">
       <span class="collaborator">
         <UserAvatar :user="collaborator" width="24" />
@@ -35,12 +35,7 @@
       <span :title="playable.collaboration.added_at" class="added-at">{{ playable.collaboration.fmt_added_at }}</span>
     </template>
     <span class="time">{{ fmtLength }}</span>
-    <span
-      v-if="isSong(playable)"
-      class="plays"
-    >
-      {{ localePlayCount }}
-    </span>
+    <span v-if="isSong(playable)" class="plays">{{ localePlayCount }}</span>
     <span class="extra">
       <LikeButton :playable="playable" />
     </span>
@@ -88,11 +83,8 @@ const collaborator = computed<Pick<User, 'name' | 'avatar'>>(
 )
 
 const localePlayCount = computed(() => {
-  const playCount = playable.value.play_count;
-
-  if (playCount > 999999) return humanReadablePlayCount(playCount);
-
-  return playCount.toLocaleString()
+  const playCount = playable.value.play_count
+  return (playCount > 999_999) ? humanReadablePlayCount(playCount) : playCount.toLocaleString()
 });
 
 const play = () => emit('play', playable.value)
