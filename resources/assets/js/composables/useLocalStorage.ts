@@ -21,6 +21,6 @@ export const useLocalStorage = (namespaced = true) => {
   return {
     get,
     set,
-    remove
+    remove,
   }
 }

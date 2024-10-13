@@ -28,7 +28,7 @@ const modalNameToComponentMap = {
   'equalizer': defineAsyncComponent(() => import('@/components/ui/equalizer/Equalizer.vue')),
   'invite-user-form': defineAsyncComponent(() => import('@/components/user/InviteUserForm.vue')),
   'koel-plus': defineAsyncComponent(() => import('@/components/koel-plus/KoelPlusModal.vue')),
-  'playlist-collaboration': defineAsyncComponent(() => import('@/components/playlist/PlaylistCollaborationModal.vue'))
+  'playlist-collaboration': defineAsyncComponent(() => import('@/components/playlist/PlaylistCollaborationModal.vue')),
 }
 
 type ModalName = keyof typeof modalNameToComponentMap
@@ -53,7 +53,7 @@ eventBus.on('MODAL_SHOW_ABOUT_KOEL', () => (activeModalName.value = 'about-koel'
   .on('MODAL_SHOW_CREATE_PLAYLIST_FORM', (folder, playables?) => {
     context.value = {
       folder,
-      playables: playables ? arrayify(playables) : []
+      playables: playables ? arrayify(playables) : [],
     }
 
     activeModalName.value = 'create-playlist-form'
@@ -74,7 +74,7 @@ eventBus.on('MODAL_SHOW_ABOUT_KOEL', () => (activeModalName.value = 'about-koel'
   .on('MODAL_SHOW_EDIT_SONG_FORM', (songs, initialTab: EditSongFormTabName = 'details') => {
     context.value = {
       initialTab,
-      songs: arrayify(songs)
+      songs: arrayify(songs),
     }
 
     activeModalName.value = 'edit-song-form'
@@ -95,10 +95,13 @@ eventBus.on('MODAL_SHOW_ABOUT_KOEL', () => (activeModalName.value = 'about-koel'
 
 <style lang="postcss" scoped>
 dialog {
-  :deep(form), :deep(>div) {
+  :deep(form),
+  :deep(> div) {
     @apply relative;
 
-    > header, > main, > footer {
+    > header,
+    > main,
+    > footer {
       @apply px-6 py-5;
     }
 

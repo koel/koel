@@ -1,6 +1,9 @@
-import { ref, Ref } from 'vue'
-import { expect, it, Mock } from 'vitest'
-import { RenderResult, screen, waitFor } from '@testing-library/vue'
+import type { Ref } from 'vue'
+import { ref } from 'vue'
+import type { Mock } from 'vitest'
+import { expect, it } from 'vitest'
+import type { RenderResult } from '@testing-library/vue'
+import { screen, waitFor } from '@testing-library/vue'
 import factory from '@/__tests__/factory'
 import { albumStore, artistStore, commonStore, preferenceStore } from '@/stores'
 import UnitTestCase from '@/__tests__/UnitTestCase'
@@ -80,12 +83,12 @@ new class extends UnitTestCase {
           AlbumInfo: this.stub('album-info'),
           ArtistInfo: this.stub('artist-info'),
           YouTubeVideoList: this.stub('youtube-video-list'),
-          ExtraPanelTabHeader: this.stub()
+          ExtraPanelTabHeader: this.stub(),
         },
         provide: {
-          [<symbol>CurrentPlayableKey]: songRef
-        }
-      }
+          [<symbol>CurrentPlayableKey]: songRef,
+        },
+      },
     })
 
     return [rendered, resolveArtistMock, resolveAlbumMock]

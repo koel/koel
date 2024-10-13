@@ -41,7 +41,7 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { commonStore, settingStore } from '@/stores'
-import { forceReloadWindow, } from '@/utils'
+import { forceReloadWindow } from '@/utils'
 import { useDialogBox, useErrorHandler, useMessageToaster, useOverlay, useRouter } from '@/composables'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -92,7 +92,7 @@ const confirmThenSave = async () => {
   if (shouldWarn.value) {
     await showConfirmDialog('Changing the media path will essentially remove all existing local data – songs, artists, \
           albums, favorites, etc. Sure you want to proceed?', 'Confirm')
-    && await save()
+          && await save()
   } else {
     await save()
   }

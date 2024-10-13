@@ -40,19 +40,19 @@ new class extends UnitTestCase {
         artist_id: 3,
         album_name: 'Led Zeppelin IV',
         album_id: 4,
-        liked: true
+        liked: true,
       })
     }
 
     return this.render(Component, {
       global: {
         stubs: {
-          PlayButton: this.stub('PlayButton')
+          PlayButton: this.stub('PlayButton'),
         },
         provide: {
-          [<symbol>CurrentPlayableKey]: ref(playable)
-        }
-      }
+          [<symbol>CurrentPlayableKey]: ref(playable),
+        },
+      },
     })
   }
 }

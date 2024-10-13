@@ -51,7 +51,7 @@ new class extends UnitTestCase {
 
       expect(deleteMock).toHaveBeenCalledWith(`playlists/${playlist.id}/collaborators`, {
         collaborator:
-        collaborator.id
+        collaborator.id,
       })
 
       expect(removeCacheMock).toHaveBeenCalledWith(['playlist.songs', playlist.id])

@@ -9,7 +9,7 @@ import {
   PlayableListSortFieldKey,
   PlayablesKey,
   SelectedPlayablesKey,
-  SongListSortOrderKey
+  SongListSortOrderKey,
 } from '@/symbols'
 import { screen } from '@testing-library/vue'
 import SongList from './SongList.vue'
@@ -27,7 +27,7 @@ new class extends UnitTestCase {
       ['track', 'header-track-number'],
       ['title', 'header-title'],
       ['album_name', 'header-album'],
-      ['length', 'header-length']
+      ['length', 'header-length'],
     ])('sorts by %s upon %s clicked', async (field, testId) => {
       const { emitted } = await this.renderComponent(factory('song', 5))
 
@@ -41,7 +41,7 @@ new class extends UnitTestCase {
     it('cannot be sorted if configured so', async () => {
       const { emitted } = await this.renderComponent(factory('song', 5), {
         sortable: false,
-        reorderable: true
+        reorderable: true,
       })
 
       await this.user.click(screen.getByTestId('header-track-number'))
@@ -53,14 +53,14 @@ new class extends UnitTestCase {
     _songs: MaybeArray<Playable>,
     config: Partial<PlayableListConfig> = {
       sortable: true,
-      reorderable: true
+      reorderable: true,
     },
     context: PlayableListContext = {
       type: 'Album',
     },
     selectedPlayables: Playable[] = [],
     sortField: PlayableListSortField = 'title',
-    sortOrder: SortOrder = 'asc'
+    sortOrder: SortOrder = 'asc',
   ) {
     songs = arrayify(_songs)
 
@@ -69,14 +69,14 @@ new class extends UnitTestCase {
 
     await this.router.activateRoute({
       screen: 'Songs',
-      path: '/songs'
+      path: '/songs',
     })
 
     return this.render(SongList, {
       global: {
         stubs: {
           VirtualScroller: this.stub('virtual-scroller'),
-          SongListSorter: this.stub('song-list-sorter')
+          SongListSorter: this.stub('song-list-sorter'),
         },
         provide: {
           [<symbol>PlayablesKey]: [ref(songs)],
@@ -84,9 +84,9 @@ new class extends UnitTestCase {
           [<symbol>PlayableListConfigKey]: [config],
           [<symbol>PlayableListContextKey]: [context],
           [<symbol>PlayableListSortFieldKey]: [sortFieldRef, (value: PlayableListSortField) => (sortFieldRef.value = value)],
-          [<symbol>SongListSortOrderKey]: [sortOrderRef, (value: SortOrder) => (sortOrderRef.value = value)]
-        }
-      }
+          [<symbol>SongListSortOrderKey]: [sortOrderRef, (value: SortOrder) => (sortOrderRef.value = value)],
+        },
+      },
     })
   }
 }

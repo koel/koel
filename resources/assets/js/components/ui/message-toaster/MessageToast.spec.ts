@@ -32,9 +32,9 @@ new class extends UnitTestCase {
           id: 101,
           type: 'success',
           message: 'Everything is fine',
-          timeout: 5
-        }
-      }
+          timeout: 5,
+        },
+      },
     })
   }
 }

@@ -8,9 +8,9 @@
       <FormRow>
         <template #label>Podcast feed URL</template>
         <TextInput
-          type="url"
           v-model="url"
           v-koel-focus
+          type="url"
           name="url"
           placeholder="https://example.com/feed.xml"
           required
@@ -34,13 +34,13 @@ import TextInput from '@/components/ui/form/TextInput.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 
+const emit = defineEmits<{ (e: 'close'): void }>()
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 
 const url = ref('')
 
-const emit = defineEmits<{ (e: 'close'): void }>()
 const close = () => emit('close')
 
 const submit = async () => {
@@ -52,7 +52,7 @@ const submit = async () => {
     toastSuccess(`Podcast "${podcast.title}" added.`)
   } catch (error: unknown) {
     useErrorHandler('dialog').handleHttpError(error, {
-      409: 'You have already subscribed to this podcast.'
+      409: 'You have already subscribed to this podcast.',
     })
   } finally {
     hideOverlay()

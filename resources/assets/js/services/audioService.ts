@@ -57,7 +57,7 @@ export const audioService = {
       this.bands.push({
         node: filter,
         label: String(frequency).replace('000', 'K'),
-        db: config.gains[i]
+        db: config.gains[i],
       })
     })
 
@@ -84,7 +84,9 @@ export const audioService = {
   unlockAudioContext () {
     ['touchend', 'touchstart', 'click'].forEach(event => {
       document.addEventListener(event, () => {
-        if (this.unlocked) return
+        if (this.unlocked) {
+          return
+        }
 
         const source = this.context.createBufferSource()
         source.buffer = this.context.createBuffer(1, 1, 22050)
@@ -93,8 +95,8 @@ export const audioService = {
 
         this.unlocked = true
       }, {
-        once: true
+        once: true,
       })
     })
-  }
+  },
 }

@@ -9,7 +9,7 @@ import {
   queueStore,
   recentlyPlayedStore,
   songStore,
-  userStore
+  userStore,
 } from '@/stores'
 
 import { arrayify, eventBus, getPlayableProp, isAudioContextSupported, isEpisode, isSong, logger } from '@/utils'
@@ -59,7 +59,9 @@ class PlaybackService {
   }
 
   public init (plyrWrapper: HTMLElement) {
-    if (this.initialized) return
+    if (this.initialized) {
+      return
+    }
 
     this.player = plyr.setup(plyrWrapper, { controls: [] })[0]
 
@@ -137,7 +139,7 @@ class PlaybackService {
 
   public showNotification (playable: Playable) {
     if (!isSong(playable) && !isEpisode(playable)) {
-      throw 'Invalid playable type.'
+      throw new Error('Invalid playable type.')
     }
 
     if (preferences.show_now_playing_notification) {
@@ -146,7 +148,7 @@ class PlaybackService {
           icon: getPlayableProp(playable, 'album_cover', 'episode_image'),
           body: isSong(playable)
             ? `${playable.album_name} – ${playable.artist_name}`
-            : playable.title
+            : playable.title,
         })
 
         notification.onclick = () => window.focus()
@@ -159,7 +161,9 @@ class PlaybackService {
       }
     }
 
-    if (!navigator.mediaSession) return
+    if (!navigator.mediaSession) {
+      return
+    }
 
     navigator.mediaSession.metadata = new MediaMetadata({
       title: playable.title,
@@ -168,8 +172,8 @@ class PlaybackService {
       artwork: [48, 64, 96, 128, 192, 256, 384, 512].map(d => ({
         src: getPlayableProp(playable, 'album_cover', 'episode_image'),
         sizes: `${d}x${d}`,
-        type: 'image/png'
-      }))
+        type: 'image/png',
+      })),
     })
   }
 
@@ -182,7 +186,7 @@ class PlaybackService {
     try {
       http.silently.put('queue/playback-status', {
         song: playable.id,
-        position: 0
+        position: 0,
       })
     } catch (error: unknown) {
       logger.error(error)
@@ -269,7 +273,7 @@ class PlaybackService {
       // on first load when the queue is loaded from saved state, the player's src is empty
       // we need to properly set it as well as any kind of playback metadata
       this.player.media.src = songStore.getSourceUrl(playable)
-      this.player.seek(commonStore.state.queue_state.playback_position);
+      this.player.seek(commonStore.state.queue_state.playback_position)
 
       await this.setNowPlayingMeta(queueStore.current!)
       this.recordStartTime(playable)
@@ -330,7 +334,7 @@ class PlaybackService {
     document.title = `${playable.title} ♫ Koel`
     this.player.media.setAttribute(
       'title',
-      isSong(playable) ? `${playable.artist_name} - ${playable.title}` : playable.title
+      isSong(playable) ? `${playable.artist_name} - ${playable.title}` : playable.title,
     )
 
     if (isAudioContextSupported) {
@@ -340,7 +344,9 @@ class PlaybackService {
 
   // Record the UNIX timestamp the song starts playing, for scrobbling purpose
   private recordStartTime (song: Playable) {
-    if (!isSong(song)) return
+    if (!isSong(song)) {
+      return
+    }
 
     song.play_start_time = Math.floor(Date.now() / 1000)
     song.play_count_registered = false
@@ -351,7 +357,9 @@ class PlaybackService {
   }
 
   private setMediaSessionActionHandlers () {
-    if (!navigator.mediaSession) return
+    if (!navigator.mediaSession) {
+      return
+    }
 
     navigator.mediaSession.setActionHandler('play', () => this.resume())
     navigator.mediaSession.setActionHandler('pause', () => this.pause())
@@ -397,7 +405,9 @@ class PlaybackService {
     let timeUpdateHandler = () => {
       const currentPlayable = queueStore.current
 
-      if (!currentPlayable) return
+      if (!currentPlayable) {
+        return
+      }
 
       if (!currentPlayable.play_count_registered && !this.isTranscoding) {
         // if we've passed 25% of the playable, it's safe to say it has been "played".
@@ -412,7 +422,7 @@ class PlaybackService {
         try {
           http.silently.put('queue/playback-status', {
             song: currentPlayable.id,
-            position: Math.ceil(media.currentTime)
+            position: Math.ceil(media.currentTime),
           })
         } catch (error: unknown) {
           logger.error(error)

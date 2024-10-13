@@ -40,7 +40,7 @@ const { profile } = toRefs(props)
 const { open, onChange } = useFileDialog({
   accept: 'image/*',
   multiple: false,
-  reset: true
+  reset: true,
 })
 
 const openFileDialog = () => open()
@@ -85,7 +85,7 @@ const onCancel = () => (cropperSource.value = null)
   }
 
   .avatar-width {
-    @apply w-[105px]
+    @apply w-[105px];
   }
 }
 </style>

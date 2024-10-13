@@ -13,13 +13,13 @@ new class extends UnitTestCase {
       const playable = factory('song', {
         liked,
         title: 'Foo',
-        artist_name: 'Bar'
+        artist_name: 'Bar',
       })
 
       this.render(Component, {
         props: {
-          playable
-        }
+          playable,
+        },
       })
 
       await this.user.click(screen.getByRole('button', { name }))

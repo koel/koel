@@ -87,8 +87,8 @@ new class extends UnitTestCase {
   private renderComponent (user: User) {
     return this.render(UserCard, {
       props: {
-        user
-      }
+        user,
+      },
     })
   }
 }

@@ -13,7 +13,7 @@ new class extends UnitTestCase {
       const alertMock = this.mock(MessageToasterStub.value, 'success')
 
       this.renderComponent(factory('user', {
-        avatar: 'https://gravatar.com/foo'
+        avatar: 'https://gravatar.com/foo',
       }))
 
       await this.type(screen.getByTestId('currentPassword'), 'old-password')
@@ -27,7 +27,7 @@ new class extends UnitTestCase {
         email: 'koel@example.com',
         current_password: 'old-password',
         new_password: 'new-password',
-        avatar: 'https://gravatar.com/foo'
+        avatar: 'https://gravatar.com/foo',
       })
 
       expect(alertMock).toHaveBeenCalledWith('Profile updated.')

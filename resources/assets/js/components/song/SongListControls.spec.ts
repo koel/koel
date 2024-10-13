@@ -67,24 +67,24 @@ new class extends UnitTestCase {
     const config: SongListControlsConfig = merge({
       addTo: {
         queue: true,
-        favorites: true
+        favorites: true,
       },
       clearQueue: true,
       deletePlaylist: true,
       refresh: true,
-      filter: true
+      filter: true,
     }, configOverrides)
 
     return this.render(SongListControls, {
       global: {
         provide: {
           [<symbol>PlayablesKey]: [ref(songs)],
-          [<symbol>SelectedPlayablesKey]: [ref(take(songs, selectedSongCount))]
-        }
+          [<symbol>SelectedPlayablesKey]: [ref(take(songs, selectedSongCount))],
+        },
       },
       props: {
-        config
-      }
+        config,
+      },
     })
   }
 }

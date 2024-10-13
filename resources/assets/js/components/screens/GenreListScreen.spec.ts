@@ -12,7 +12,7 @@ new class extends UnitTestCase {
       const genres = [
         factory('genre', { name: 'Rock', song_count: 10 }),
         factory('genre', { name: 'Pop', song_count: 20 }),
-        factory('genre', { name: 'Jazz', song_count: 30 })
+        factory('genre', { name: 'Jazz', song_count: 30 }),
       ]
 
       const fetchMock = this.mock(genreStore, 'fetchAll').mockResolvedValue(genres)

@@ -32,14 +32,18 @@ import FooterExtraControlBtn from '@/components/layout/app-footer/FooterButton.v
 const inputEl = ref<HTMLInputElement>()
 
 const level = computed(() => {
-  if (volumeManager.volume.value === 0) return 'muted'
-  if (volumeManager.volume.value < 3) return 'discreet'
+  if (volumeManager.volume.value === 0) {
+    return 'muted'
+  }
+  if (volumeManager.volume.value < 3) {
+    return 'discreet'
+  }
   return 'loud'
 })
 
 const mute = () => volumeManager.mute()
 const unmute = () => volumeManager.unmute()
-const setVolume = (e: Event) => volumeManager.set(parseFloat((e.target as HTMLInputElement).value))
+const setVolume = (e: Event) => volumeManager.set(Number.parseFloat((e.target as HTMLInputElement).value))
 
 // since changing volume can be frequent, we throttle the event to avoid too many "save preferences" API calls
 // and socket broadcasts
@@ -53,7 +57,7 @@ onMounted(() => volumeManager.init(inputEl.value!, preferenceStore.volume))
 
 <style lang="postcss" scoped>
 #volume {
-  [type=range] {
+  [type='range'] {
     &::-webkit-slider-thumb {
       @apply bg-k-text-secondary;
     }
@@ -66,7 +70,7 @@ onMounted(() => volumeManager.init(inputEl.value!, preferenceStore.volume))
   }
 
   &.muted {
-    [type=range] {
+    [type='range'] {
       &::-webkit-slider-thumb {
         @apply bg-transparent shadow-none;
       }

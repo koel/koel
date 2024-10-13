@@ -8,8 +8,8 @@ new class extends UnitTestCase {
       expect(this.render(ScreenEmptyState, {
         slots: {
           icon: '<i class="my-icon"/>',
-          default: 'Nothing here'
-        }
+          default: 'Nothing here',
+        },
       }).html()).toMatchSnapshot()
     })
   }

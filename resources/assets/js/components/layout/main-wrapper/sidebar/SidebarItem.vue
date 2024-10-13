@@ -27,9 +27,9 @@ import { ref } from 'vue'
 import { useRouter } from '@/composables'
 import { eventBus } from '@/utils'
 
-const props = withDefaults(defineProps<{ href?: string | undefined; screen?: ScreenName | undefined }>(), {
+const props = withDefaults(defineProps<{ href?: string | undefined, screen?: ScreenName | undefined }>(), {
   href: undefined,
-  screen: undefined
+  screen: undefined,
 })
 
 const current = ref(false)

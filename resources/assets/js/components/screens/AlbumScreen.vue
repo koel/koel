@@ -115,8 +115,8 @@ const albumId = ref<number>()
 const album = ref<Album | undefined>()
 const songs = ref<Song[]>([])
 const loading = ref(false)
-let otherAlbums = ref<Album[] | undefined>()
-let info = ref<ArtistInfo | undefined>()
+const otherAlbums = ref<Album[] | undefined>()
+const info = ref<ArtistInfo | undefined>()
 
 const {
   SongList,
@@ -133,7 +133,7 @@ const {
   playAll,
   playSelected,
   applyFilter,
-  onScrollBreakpoint
+  onScrollBreakpoint,
 } = useSongList(songs, { type: 'Album' })
 
 const { SongListControls, config } = useSongListControls('Album')
@@ -141,7 +141,9 @@ const { SongListControls, config } = useSongListControls('Album')
 const useLastfm = toRef(commonStore.state, 'uses_last_fm')
 
 const isNormalArtist = computed(() => {
-  if (!album.value) return true
+  if (!album.value) {
+    return true
+  }
   return !artistStore.isVarious(album.value.artist_id) && !artistStore.isUnknown(album.value.artist_id)
 })
 
@@ -155,7 +157,9 @@ watch(activeTab, async tab => {
 })
 
 watch(albumId, async id => {
-  if (!id || loading.value) return
+  if (!id || loading.value) {
+    return
+  }
 
   album.value = undefined
   info.value = undefined
@@ -167,7 +171,7 @@ watch(albumId, async id => {
   try {
     [album.value, songs.value] = await Promise.all([
       albumStore.resolve(id),
-      songStore.fetchForAlbum(id)
+      songStore.fetchForAlbum(id),
     ])
 
     context.entity = album.value
@@ -180,7 +184,7 @@ watch(albumId, async id => {
   }
 })
 
-onScreenActivated('Album', () => (albumId.value = parseInt(getRouteParam('id')!)))
+onScreenActivated('Album', () => (albumId.value = Number.parseInt(getRouteParam('id')!)))
 
 // if the current album has been deleted, go back to the list
 eventBus.on('SONGS_UPDATED', () => albumStore.byId(albumId.value!) || go('albums'))

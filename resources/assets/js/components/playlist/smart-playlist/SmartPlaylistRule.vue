@@ -47,9 +47,15 @@ import FormRow from '@/components/ui/form/FormRow.vue'
 import SelectBox from '@/components/ui/form/SelectBox.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 
+const props = defineProps<{ rule: SmartPlaylistRule }>()
+
+const emit = defineEmits<{
+  (e: 'input', rule: SmartPlaylistRule): void
+  (e: 'remove'): void
+}>()
+
 const RuleInput = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/SmartPlaylistRuleInput.vue'))
 
-const props = defineProps<{ rule: SmartPlaylistRule }>()
 const { rule } = toRefs(props)
 
 const mutatedRule = Object.assign({}, rule.value) as SmartPlaylistRule
@@ -78,8 +84,8 @@ if (!operator) {
 selectedOperator.value = operator
 
 const isOriginalOperatorSelected = computed(() => {
-  return selectedModel.value?.name === mutatedRule.model.name &&
-    selectedOperator.value?.operator === mutatedRule.operator
+  return selectedModel.value?.name === mutatedRule.model.name
+    && selectedOperator.value?.operator === mutatedRule.operator
 })
 
 const availableInputs = computed<{ id: string, value: any }[]>(() => {
@@ -92,7 +98,7 @@ const availableInputs = computed<{ id: string, value: any }[]>(() => {
   for (let i = 0, inputCount = selectedOperator.value.inputs || 1; i < inputCount; ++i) {
     inputs.push({
       id: `${mutatedRule.model.name}_${selectedOperator.value.operator}_${i}`,
-      value: isOriginalOperatorSelected.value ? mutatedRule.value[i] : ''
+      value: isOriginalOperatorSelected.value ? mutatedRule.value[i] : '',
     })
   }
 
@@ -109,17 +115,12 @@ watch(availableOperators, () => {
 
 const valueSuffix = computed(() => selectedOperator.value?.unit || selectedModel.value?.unit)
 
-const emit = defineEmits<{
-  (e: 'input', rule: SmartPlaylistRule): void,
-  (e: 'remove'): void
-}>()
-
 const onInput = () => {
   emit('input', {
     id: mutatedRule.id,
     model: selectedModel.value!,
-    operator: selectedOperator.value?.operator!,
-    value: availableInputs.value.map(input => input.value)
+    operator: selectedOperator.value!.operator,
+    value: availableInputs.value.map(input => input.value),
   })
 }
 

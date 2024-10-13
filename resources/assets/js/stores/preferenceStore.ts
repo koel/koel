@@ -9,7 +9,7 @@ export const defaultPreferences: UserPreferences = {
   equalizer: {
     name: 'Default',
     preamp: 0,
-    gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   },
   artists_view_mode: null,
   albums_view_mode: null,
@@ -22,7 +22,7 @@ export const defaultPreferences: UserPreferences = {
   visualizer: 'default',
   active_extra_panel_tab: null,
   make_uploads_public: false,
-  continuous_playback: false
+  continuous_playback: false,
 }
 
 const preferenceStore = {
@@ -46,13 +46,15 @@ const preferenceStore = {
       Object.defineProperty(this, key, {
         get: (): any => this.get(key),
         set: (value: any): void => this.set(key, value),
-        configurable: true
+        configurable: true,
       })
     })
   },
 
   set (key: keyof UserPreferences, value: any) {
-    if (this.state[key] === value) return
+    if (this.state[key] === value) {
+      return
+    }
 
     this.state[key] = value
 
@@ -72,7 +74,7 @@ const preferenceStore = {
   get temporary () {
     this._temporary = true
     return this as unknown as ExportedType
-  }
+  },
 }
 
 type ExportedType = Omit<typeof preferenceStore, 'setupProxy' | '_temporary'> & UserPreferences

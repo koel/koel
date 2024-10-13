@@ -13,7 +13,7 @@ const initialState = {
     short_key: null as string | null,
     customer_name: null as string | null,
     customer_email: null as string | null,
-    product_id: '' as string | null
+    product_id: '' as string | null,
   },
   latest_version: '',
   media_path_set: false,
@@ -32,10 +32,10 @@ const initialState = {
     type: 'queue-states',
     songs: [],
     current_song: null,
-    playback_position: 0
+    playback_position: 0,
   } as QueueState,
   supports_batch_downloading: false,
-  supports_transcoding: false
+  supports_transcoding: false,
 }
 
 type CommonStoreState = typeof initialState
@@ -61,5 +61,5 @@ export const commonStore = {
     themeStore.init()
 
     return this.state
-  }
+  },
 }

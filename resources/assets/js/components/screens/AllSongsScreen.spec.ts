@@ -48,7 +48,7 @@ new class extends UnitTestCase {
         sort: 'title',
         order: 'asc',
         page: 1,
-        own_songs_only: true
+        own_songs_only: true,
       }))
     })
   }
@@ -58,22 +58,22 @@ new class extends UnitTestCase {
 
     this.router.$currentRoute.value = {
       screen: 'Songs',
-      path: '/songs'
+      path: '/songs',
     }
 
     const rendered = this.render(AllSongsScreen, {
       global: {
         stubs: {
-          SongList: this.stub('song-list')
-        }
-      }
+          SongList: this.stub('song-list'),
+        },
+      },
     })
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalledWith({
       sort: 'title',
       order: 'asc',
       page: 1,
-      own_songs_only: false
+      own_songs_only: false,
     }))
 
     return [rendered, fetchMock] as const

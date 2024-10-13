@@ -10,7 +10,7 @@ export class ThreeSharedRenderer {
   constructor (container: HTMLElement) {
     this.container = container
 
-    this.camera = new THREE.PerspectiveCamera(45, this.container.clientWidth / this.container.clientHeight, .1, 100)
+    this.camera = new THREE.PerspectiveCamera(45, this.container.clientWidth / this.container.clientHeight, 0.1, 100)
     this.camera.position.z = 5
     this.camera.updateProjectionMatrix()
 
@@ -49,10 +49,10 @@ export class ThreeSharedRenderer {
       queue[i]()
     }
 
-    this.timer += .001
+    this.timer += 0.001
 
-    if (this.timer > 999999.) {
-      this.timer = 0.
+    if (this.timer > 999999.0) {
+      this.timer = 0.0
     }
   }
 
@@ -60,13 +60,14 @@ export class ThreeSharedRenderer {
     const e = frame
     const nLoc = new THREE.Vector3(
       Math.sin(e),
-      Math.cos(e * .9) * Math.sin(e * .7),
-      Math.cos(e)).normalize()
+      Math.cos(e * 0.9) * Math.sin(e * 0.7),
+      Math.cos(e),
+    ).normalize()
 
-    nLoc.multiplyScalar(8. + 2. * Math.sin(2. * e))
+    nLoc.multiplyScalar(8.0 + 2.0 * Math.sin(2.0 * e))
 
     this.camera.position.copy(nLoc)
-    this.camera.lookAt(0., 0., 0.)
+    this.camera.lookAt(0.0, 0.0, 0.0)
     this.camera.updateProjectionMatrix()
   }
 
@@ -75,7 +76,7 @@ export class ThreeSharedRenderer {
   }
 
   getTimer () {
-    return this.timer == undefined ? 0. : this.timer
+    return this.timer == undefined ? 0.0 : this.timer
   }
 
   getCamera () {

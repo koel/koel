@@ -14,7 +14,7 @@ new class extends UnitTestCase {
 
       await this.router.activateRoute({
         screen: 'Home',
-        path: '_'
+        path: '_',
       })
 
       expect(screen.getByTestId('sidebar-item').classList.contains('current')).toBe(true)
@@ -34,11 +34,11 @@ new class extends UnitTestCase {
       props: {
         icon: faHome,
         href: '#',
-        screen: 'Home'
+        screen: 'Home',
       },
       slots: {
-        default: 'Home'
-      }
+        default: 'Home',
+      },
     })
   }
 }

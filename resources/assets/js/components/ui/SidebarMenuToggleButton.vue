@@ -1,7 +1,7 @@
 <template>
   <ExtraDrawerButton class="block md:hidden" @click.prevent="toggleSidebar">
-    <Icon :icon="faTimes" v-if="sidebarExpanded" fixed-width />
-    <Icon :icon="faBars" v-else fixed-width />
+    <Icon v-if="sidebarExpanded" :icon="faTimes" fixed-width />
+    <Icon v-else :icon="faBars" fixed-width />
   </ExtraDrawerButton>
 </template>
 

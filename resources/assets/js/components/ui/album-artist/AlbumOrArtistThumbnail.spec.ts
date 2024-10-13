@@ -84,26 +84,26 @@ new class extends UnitTestCase {
   private renderForAlbum () {
     album = factory('album', {
       name: 'IV',
-      cover: 'https://test/album.jpg'
+      cover: 'https://test/album.jpg',
     })
 
     return this.render(Thumbnail, {
       props: {
-        entity: album
-      }
+        entity: album,
+      },
     })
   }
 
   private renderForArtist () {
     artist = factory('artist', {
       name: 'Led Zeppelin',
-      image: 'https://test/blimp.jpg'
+      image: 'https://test/blimp.jpg',
     })
 
     return this.render(Thumbnail, {
       props: {
-        entity: artist
-      }
+        entity: artist,
+      },
     })
   }
 }

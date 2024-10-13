@@ -9,8 +9,8 @@ new class extends UnitTestCase {
   renderComponent (list: PlaylistLike) {
     this.render(PlaylistSidebarItem, {
       props: {
-        list
-      }
+        list,
+      },
     })
   }
 
@@ -26,10 +26,10 @@ new class extends UnitTestCase {
     })
 
     it.each<FavoriteList['name'] | RecentlyPlayedList['name']>(['Favorites', 'Recently Played'])
-    ('does not request context menu if not playlist', async (name) => {
+    ('does not request context menu if not playlist', async name => { // eslint-disable-line no-unexpected-multiline
       const list: FavoriteList | RecentlyPlayedList = {
         name,
-        songs: []
+        songs: [],
       }
 
       const emitMock = this.mock(eventBus, 'emit')

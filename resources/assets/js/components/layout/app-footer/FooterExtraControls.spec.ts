@@ -27,9 +27,9 @@ new class extends UnitTestCase {
       global: {
         stubs: {
           Equalizer: this.stub('Equalizer'),
-          Volume: this.stub('Volume')
-        }
-      }
+          Volume: this.stub('Volume'),
+        },
+      },
     })
   }
 }

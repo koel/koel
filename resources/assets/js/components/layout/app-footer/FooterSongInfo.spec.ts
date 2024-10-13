@@ -15,15 +15,15 @@ new class extends UnitTestCase {
         album_cover: 'https://via.placeholder.com/150',
         playback_state: 'Playing',
         artist_id: 10,
-        artist_name: 'Led Zeppelin'
+        artist_name: 'Led Zeppelin',
       })
 
       expect(this.render(FooterSongInfo, {
         global: {
           provide: {
-            [<symbol>CurrentPlayableKey]: ref(song)
-          }
-        }
+            [<symbol>CurrentPlayableKey]: ref(song),
+          },
+        },
       }).html()).toMatchSnapshot()
     })
   }

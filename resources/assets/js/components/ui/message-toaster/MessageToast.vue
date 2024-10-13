@@ -23,10 +23,12 @@ import {
   faCircleExclamation,
   faCircleInfo,
   faTimesCircle,
-  faTriangleExclamation
+  faTriangleExclamation,
 } from '@fortawesome/free-solid-svg-icons'
 
 const props = defineProps<{ message: ToastMessage }>()
+const emit = defineEmits<{ (e: 'dismiss', message: ToastMessage): void }>()
+
 const { message } = toRefs(props)
 
 const typeIcon = computed(() => {
@@ -43,8 +45,6 @@ const typeIcon = computed(() => {
 })
 
 let timeoutHandler: number
-
-const emit = defineEmits<{ (e: 'dismiss', message: ToastMessage): void }>()
 
 const dismiss = () => {
   emit('dismiss', message.value)

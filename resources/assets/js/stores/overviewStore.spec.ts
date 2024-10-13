@@ -13,7 +13,7 @@ new class extends UnitTestCase {
         recentlyAddedAlbums: [],
         mostPlayedSongs: [],
         mostPlayedAlbums: [],
-        mostPlayedArtists: []
+        mostPlayedArtists: [],
       }
     })
   }
@@ -38,7 +38,7 @@ new class extends UnitTestCase {
         most_played_artists: mostPlayedArtists,
         recently_added_songs: recentlyAddedSongs,
         recently_added_albums: recentlyAddedAlbums,
-        recently_played_songs: recentlyPlayedSongs
+        recently_played_songs: recentlyPlayedSongs,
       })
 
       await overviewStore.fetch()

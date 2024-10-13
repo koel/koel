@@ -5,8 +5,8 @@ import SpotifyIntegration from './SpotifyIntegration.vue'
 
 new class extends UnitTestCase {
   protected test () {
-    it.each<[boolean, boolean]>([[false, false], [false, true], [true, false], [true, true]])
-    ('renders proper content with Spotify integration status %s, current user admin status %s',
+    it.each<[boolean, boolean]>([[false, false], [false, true], [true, false], [true, true]]) (
+      'renders proper content with Spotify integration status %s, current user admin status %s',
       (useSpotify, isAdmin) => {
         commonStore.state.uses_spotify = useSpotify
 
@@ -16,8 +16,8 @@ new class extends UnitTestCase {
           this.be()
         }
 
-        expect(this.render(SpotifyIntegration).html()).toMatchSnapshot();
-      }
+        expect(this.render(SpotifyIntegration).html()).toMatchSnapshot()
+      },
     )
   }
 }

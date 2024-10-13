@@ -1,5 +1,5 @@
-export const skyboxVert =
-  `
+export const skyboxVert
+  = `
 varying vec3 v_direction;
 void main(){
 	v_direction = position.xyz;

@@ -30,7 +30,7 @@ new class extends UnitTestCase {
 
     const track = factory('album-track', {
       title: 'Fahrstuhl to Heaven',
-      length: 280
+      length: 280,
     })
 
     const matchMock = this.mock(songStore, 'match', matchedSong)
@@ -38,13 +38,13 @@ new class extends UnitTestCase {
     const rendered = this.render(AlbumTrackListItem, {
       props: {
         album,
-        track
+        track,
       },
       global: {
         provide: {
-          [<symbol>PlayablesKey]: ref(songsToMatchAgainst)
-        }
-      }
+          [<symbol>PlayablesKey]: ref(songsToMatchAgainst),
+        },
+      },
     })
 
     expect(matchMock).toHaveBeenCalledWith('Fahrstuhl to Heaven', songsToMatchAgainst)

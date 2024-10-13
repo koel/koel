@@ -11,9 +11,9 @@ new class extends UnitTestCase {
       expect(this.render(RecentlyAddedAlbums, {
         global: {
           stubs: {
-            AlbumCard: this.stub('album-card')
-          }
-        }
+            AlbumCard: this.stub('album-card'),
+          },
+        },
       }).getAllByTestId('album-card')).toHaveLength(6)
     })
   }

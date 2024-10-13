@@ -67,7 +67,9 @@ const toggle = () => (opened.value = !opened.value)
 const onDragStart = (event: DragEvent) => startDragging(event, folder.value)
 
 const onDragOver = (event: DragEvent) => {
-  if (!acceptsDrop(event)) return false
+  if (!acceptsDrop(event)) {
+    return false
+  }
 
   event.preventDefault()
   droppable.value = true
@@ -79,12 +81,16 @@ const onDragLeave = () => (droppable.value = false)
 const onDrop = async (event: DragEvent) => {
   droppable.value = false
 
-  if (!acceptsDrop(event)) return false
+  if (!acceptsDrop(event)) {
+    return false
+  }
 
   event.preventDefault()
 
   const playlist = await resolveDroppedValue<Playlist>(event)
-  if (!playlist || playlist.folder_id === folder.value.id) return
+  if (!playlist || playlist.folder_id === folder.value.id) {
+    return
+  }
 
   await playlistFolderStore.addPlaylistToFolder(folder.value, playlist)
 }
@@ -92,7 +98,9 @@ const onDrop = async (event: DragEvent) => {
 const onDragLeaveHatch = () => (droppableOnHatch.value = false)
 
 const onDragOverHatch = (event: DragEvent) => {
-  if (!acceptsDrop(event)) return false
+  if (!acceptsDrop(event)) {
+    return false
+  }
 
   event.preventDefault()
   droppableOnHatch.value = true
@@ -105,7 +113,9 @@ const onDropOnHatch = async (event: DragEvent) => {
   const playlist = (await resolveDroppedValue<Playlist>(event))!
 
   // if the playlist isn't in the folder, don't do anything. The folder will handle the drop.
-  if (playlist.folder_id !== folder.value.id) return
+  if (playlist.folder_id !== folder.value.id) {
+    return
+  }
 
   // otherwise, the user is trying to remove the playlist from the folder.
   event.stopPropagation()
@@ -115,7 +125,7 @@ const onDropOnHatch = async (event: DragEvent) => {
 const onContextMenu = (event: MouseEvent) => eventBus.emit(
   'PLAYLIST_FOLDER_CONTEXT_MENU_REQUESTED',
   event,
-  folder.value
+  folder.value,
 )
 </script>
 

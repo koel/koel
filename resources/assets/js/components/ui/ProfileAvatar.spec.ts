@@ -8,7 +8,7 @@ new class extends UnitTestCase {
     it('renders', () => {
       const user = factory('user', {
         name: 'John Doe',
-        avatar: 'https://example.com/avatar.jpg'
+        avatar: 'https://example.com/avatar.jpg',
       })
 
       expect(this.be(user).render(ProfileAvatar).html()).toMatchSnapshot()

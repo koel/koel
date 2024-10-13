@@ -1,11 +1,12 @@
-import { reactive, UnwrapNestedRefs } from 'vue'
+import type { UnwrapNestedRefs } from 'vue'
+import { reactive } from 'vue'
 import { http } from '@/services'
 import { differenceBy, orderBy } from 'lodash'
 import { playlistStore } from '@/stores/playlistStore'
 
 export const playlistFolderStore = {
   state: reactive<{ folders: PlaylistFolder [] }>({
-    folders: []
+    folders: [],
   }),
 
   init (folders: PlaylistFolder[]) {
@@ -50,5 +51,5 @@ export const playlistFolderStore = {
     await http.delete(`playlist-folders/${folder.id}/playlists`, { playlists: [playlist.id] })
   },
 
-  sort: (folders: PlaylistFolder[] | UnwrapNestedRefs<PlaylistFolder>[]) => orderBy(folders, 'name')
+  sort: (folders: PlaylistFolder[] | UnwrapNestedRefs<PlaylistFolder>[]) => orderBy(folders, 'name'),
 }

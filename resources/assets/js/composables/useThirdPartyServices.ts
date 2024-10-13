@@ -6,6 +6,6 @@ export const useThirdPartyServices = () => {
     useLastfm: toRef(commonStore.state, 'uses_last_fm'),
     useYouTube: toRef(commonStore.state, 'uses_you_tube'),
     useAppleMusic: toRef(commonStore.state, 'uses_i_tunes'),
-    useSpotify: toRef(commonStore.state, 'uses_spotify')
+    useSpotify: toRef(commonStore.state, 'uses_spotify'),
   }
 }

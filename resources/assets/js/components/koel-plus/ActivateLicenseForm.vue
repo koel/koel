@@ -12,6 +12,7 @@
     <Btn :disabled="loading" class="!rounded-l-none" type="submit">Activate</Btn>
   </form>
 </template>
+
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { plusService } from '@/services'

@@ -29,7 +29,7 @@ const type = ref<'password' | 'text'>('password')
 
 const value = computed({
   get: () => props.modelValue,
-  set: value => emit('update:modelValue', value)
+  set: value => emit('update:modelValue', value),
 })
 
 const toggleReveal = () => (type.value = type.value === 'password' ? 'text' : 'password')

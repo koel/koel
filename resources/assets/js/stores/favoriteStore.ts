@@ -6,7 +6,7 @@ import { songStore } from '@/stores'
 
 export const favoriteStore = {
   state: reactive<{ playables: Playable[] }>({
-    playables: []
+    playables: [],
   }),
 
   async toggleOne (playable: Playable) {
@@ -45,5 +45,5 @@ export const favoriteStore = {
   async fetch () {
     this.state.playables = songStore.syncWithVault(await http.get<Playable[]>('songs/favorite'))
     return this.state.playables
-  }
+  },
 }

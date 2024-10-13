@@ -19,9 +19,9 @@ new class extends UnitTestCase {
       this.render(EditUserForm, {
         global: {
           provide: {
-            [<symbol>ModalContextKey]: [ref({ user })]
-          }
-        }
+            [<symbol>ModalContextKey]: [ref({ user })],
+          },
+        },
       })
 
       await this.type(screen.getByRole('textbox', { name: 'Name' }), 'Jane Doe')
@@ -33,7 +33,7 @@ new class extends UnitTestCase {
           name: 'Jane Doe',
           email: user.value.email,
           is_admin: user.value.is_admin,
-          password: 'new-password-duck'
+          password: 'new-password-duck',
         })
 
         expect(alertMock).toHaveBeenCalledWith('User profile updated.')

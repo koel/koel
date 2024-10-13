@@ -45,6 +45,7 @@ new class extends UnitTestCase {
         downloadService.fromFavorites()
 
         triggered ? expect(mock).toHaveBeenCalledWith('favorites') : expect(mock).not.toHaveBeenCalled()
-      })
+      },
+    )
   }
 }

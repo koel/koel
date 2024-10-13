@@ -10,28 +10,28 @@ new class extends UnitTestCase {
 
       ;['Title', 'Album', 'Artist', 'Track & Disc', 'Time', 'Date Added'].forEach(text => screen.getByText(text))
       ;['Podcast', 'Album or Podcast', 'Author', 'Artist or Author'].forEach(
-        text => expect(screen.queryByText(text)).toBeNull()
+        text => expect(screen.queryByText(text)).toBeNull(),
       )
     })
 
     it('contains proper items for episode-only lists', () => {
       this.render(Component, {
         props: {
-          contentType: 'episodes'
-        }
+          contentType: 'episodes',
+        },
       })
 
       ;['Title', 'Podcast', 'Author', 'Time', 'Date Added'].forEach(text => screen.getByText(text))
       ;['Album', 'Album or Podcast', 'Artist', 'Artist or Author'].forEach(
-        text => expect(screen.queryByText(text)).toBeNull()
+        text => expect(screen.queryByText(text)).toBeNull(),
       )
     })
 
     it('contains proper items for mixed-content lists', () => {
       this.render(Component, {
         props: {
-          contentType: 'mixed'
-        }
+          contentType: 'mixed',
+        },
       })
 
       ;['Title', 'Album or Podcast', 'Artist or Author', 'Date Added'].forEach(text => screen.getByText(text))
@@ -41,8 +41,8 @@ new class extends UnitTestCase {
     it('has custom order sort if so configured', () => {
       this.render(Component, {
         props: {
-          hasCustomOrderSort: true
-        }
+          hasCustomOrderSort: true,
+        },
       })
 
       screen.getByText('Custom Order')

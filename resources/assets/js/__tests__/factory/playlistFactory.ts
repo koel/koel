@@ -1,5 +1,5 @@
 import factory from 'factoria'
-import { Faker } from '@faker-js/faker'
+import type { Faker } from '@faker-js/faker'
 
 export default (faker: Faker): Playlist => ({
   type: 'playlists',
@@ -18,10 +18,10 @@ export const states: Record<string, (faker: Faker) => Omit<Partial<Playlist>, 't
   smart: _ => ({
     is_smart: true,
     rules: [
-      factory('smart-playlist-rule-group')
-    ]
+      factory('smart-playlist-rule-group'),
+    ],
   }),
   orphan: _ => ({
-    folder_id: null
-  })
+    folder_id: null,
+  }),
 }

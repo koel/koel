@@ -9,7 +9,7 @@ export const useRouter = () => {
 
   const getRouteParam = (name: string) => router.$currentRoute.value?.params?.[name]
   const getCurrentScreen = () => router.$currentRoute.value?.screen
-  const isCurrentScreen = (...screens: ScreenName[]) => screens.includes(router.$currentRoute.value?.screen!)
+  const isCurrentScreen = (...screens: ScreenName[]) => screens.includes(router.$currentRoute.value?.screen)
 
   const onScreenActivated = (screen: ScreenName, cb: Closure) => {
     isCurrentScreen(screen) && cb()
@@ -24,6 +24,6 @@ export const useRouter = () => {
     go: Router.go,
     onRouteChanged: router.onRouteChanged.bind(router),
     resolveRoute: router.resolve.bind(router),
-    triggerNotFound: router.triggerNotFound.bind(router)
+    triggerNotFound: router.triggerNotFound.bind(router),
   }
 }

@@ -1,5 +1,5 @@
-import { Ref } from 'vue'
-import { SongUpdateResult } from '@/stores'
+import type { Ref } from 'vue'
+import type { SongUpdateResult } from '@/stores'
 
 export interface Events {
   LOG_OUT: () => void
@@ -29,7 +29,7 @@ export interface Events {
   MODAL_SHOW_CREATE_PLAYLIST_FOLDER_FORM: () => void
   MODAL_SHOW_EDIT_PLAYLIST_FOLDER_FORM: (playlistFolder: PlaylistFolder) => void
   MODAL_SHOW_PLAYLIST_COLLABORATION: (playlist: Playlist) => void
-  MODAL_SHOW_ADD_PODCAST_FORM: () => void,
+  MODAL_SHOW_ADD_PODCAST_FORM: () => void
   MODAL_SHOW_ABOUT_KOEL: () => void
   MODAL_SHOW_KOEL_PLUS: () => void
   MODAL_SHOW_EQUALIZER: () => void

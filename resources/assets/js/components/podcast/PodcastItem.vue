@@ -5,7 +5,7 @@
     :href="`#/podcasts/${podcast.id}`"
   >
     <aside class="hidden md:block md:flex-[0_0_128px]">
-      <img :src="podcast.image" alt="Podcast image" class="w-[128px] aspect-square object-cover rounded-lg" />
+      <img :src="podcast.image" alt="Podcast image" class="w-[128px] aspect-square object-cover rounded-lg">
     </aside>
     <main class="flex-1">
       <header>
@@ -20,7 +20,7 @@
           </template>
         </p>
       </header>
-      <div class="description text-k-text-secondary mt-3 line-clamp-3" v-html="description" v-koel-new-tab />
+      <div v-koel-new-tab class="description text-k-text-secondary mt-3 line-clamp-3" v-html="description" />
     </main>
   </a>
 </template>
@@ -36,7 +36,7 @@ const description = computed(() => DOMPurify.sanitize(podcast.description))
 
 const lastPlayedAt = computed(() => podcast.state.current_episode
   ? formatTimeAgo(new Date(podcast.last_played_at))
-  : null
+  : null,
 )
 </script>
 

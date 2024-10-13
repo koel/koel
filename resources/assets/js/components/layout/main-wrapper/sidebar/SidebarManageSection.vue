@@ -26,6 +26,7 @@
     </ul>
   </SidebarSection>
 </template>
+
 <script lang="ts" setup>
 import { faTools, faUpload, faUsers } from '@fortawesome/free-solid-svg-icons'
 import { useAuthorization, useUpload } from '@/composables'

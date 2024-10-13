@@ -10,11 +10,11 @@ export const socketListener = {
       .listen('SOCKET_GET_STATUS', () => {
         socketService.broadcast('SOCKET_STATUS', {
           playable: queueStore.current,
-          volume: volumeManager.get()
+          volume: volumeManager.get(),
         })
       })
       .listen('SOCKET_GET_CURRENT_PLAYABLE', () => socketService.broadcast('SOCKET_PLAYABLE', queueStore.current))
       .listen('SOCKET_SET_VOLUME', (volume: number) => volumeManager.set(volume))
       .listen('SOCKET_TOGGLE_FAVORITE', () => queueStore.current && favoriteStore.toggleOne(queueStore.current))
-  }
+  },
 }

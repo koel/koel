@@ -13,7 +13,7 @@ new class extends UnitTestCase {
       playlistStore.state.playlists = [
         factory.states('orphan')('playlist', { name: 'Foo Playlist' }),
         factory.states('orphan')('playlist', { name: 'Bar Playlist' }),
-        factory.states('smart', 'orphan')('playlist', { name: 'Smart Playlist' })
+        factory.states('smart', 'orphan')('playlist', { name: 'Smart Playlist' }),
       ]
 
       this.renderComponent()
@@ -26,7 +26,7 @@ new class extends UnitTestCase {
     it('displays playlist folders', () => {
       playlistFolderStore.state.folders = [
         factory('playlist-folder', { name: 'Foo Folder' }),
-        factory('playlist-folder', { name: 'Bar Folder' })
+        factory('playlist-folder', { name: 'Bar Folder' }),
       ]
 
       this.renderComponent()
@@ -39,9 +39,9 @@ new class extends UnitTestCase {
       global: {
         stubs: {
           PlaylistSidebarItem,
-          PlaylistFolderSidebarItem
-        }
-      }
+          PlaylistFolderSidebarItem,
+        },
+      },
     })
   }
 }

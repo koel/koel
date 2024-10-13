@@ -2,45 +2,54 @@ const models: SmartPlaylistModel[] = [
   {
     name: 'title',
     type: 'text',
-    label: 'Title'
-  }, {
+    label: 'Title',
+  },
+  {
     name: 'album.name',
     type: 'text',
-    label: 'Album'
-  }, {
+    label: 'Album',
+  },
+  {
     name: 'artist.name',
     type: 'text',
-    label: 'Artist'
-  }, {
+    label: 'Artist',
+  },
+  {
     name: 'genre',
     type: 'text',
-    label: 'Genre'
-  }, {
+    label: 'Genre',
+  },
+  {
     name: 'year',
     type: 'number',
-    label: 'Year'
-  }, {
+    label: 'Year',
+  },
+  {
     name: 'interactions.play_count',
     type: 'number',
-    label: 'Play Count'
-  }, {
+    label: 'Play Count',
+  },
+  {
     name: 'interactions.last_played_at',
     type: 'date',
-    label: 'Last Played'
-  }, {
+    label: 'Last Played',
+  },
+  {
     name: 'length',
     type: 'number',
     label: 'Length',
-    unit: 'seconds'
-  }, {
+    unit: 'seconds',
+  },
+  {
     name: 'created_at',
     type: 'date',
-    label: 'Date Added'
-  }, {
+    label: 'Date Added',
+  },
+  {
     name: 'updated_at',
     type: 'date',
-    label: 'Date Modified'
-  }
+    label: 'Date Modified',
+  },
 ]
 
 export default models

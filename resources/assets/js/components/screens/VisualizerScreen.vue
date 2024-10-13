@@ -47,6 +47,11 @@ const selectedId = ref<Visualizer['id']>()
 
 const { isFullscreen, toggle: toggleFullscreen } = useFullscreen(container)
 
+const freeUp = () => {
+  destroyVisualizer?.()
+  el.value && (el.value.innerHTML = '')
+}
+
 const render = async (viz: Visualizer) => {
   if (!el.value) {
     await nextTick()
@@ -78,11 +83,6 @@ onMounted(() => {
     selectedId.value = 'default'
   }
 })
-
-const freeUp = () => {
-  destroyVisualizer?.()
-  el.value && (el.value.innerHTML = '')
-}
 
 onBeforeUnmount(() => freeUp())
 </script>

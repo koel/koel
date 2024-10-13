@@ -16,11 +16,11 @@ export const socketService = {
       authEndpoint: `${window.BASE_URL}api/broadcasting/auth`,
       auth: {
         headers: {
-          Authorization: `Bearer ${authService.getApiToken()}`
-        }
+          Authorization: `Bearer ${authService.getApiToken()}`,
+        },
       },
       cluster: window.PUSHER_APP_CLUSTER,
-      encrypted: true
+      encrypted: true,
     })
 
     this.channel = this.pusher.subscribe('private-koel')
@@ -36,5 +36,5 @@ export const socketService = {
   listen (eventName: string, cb: Closure) {
     this.channel?.bind(`client-${eventName}.${userStore.current.id}`, data => cb(data))
     return this
-  }
+  },
 }

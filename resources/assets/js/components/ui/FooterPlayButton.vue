@@ -26,19 +26,19 @@ const song = requireInjection(CurrentPlayableKey, ref())
 const libraryEmpty = computed(() => commonStore.state.song_count === 0)
 const playing = computed(() => song.value?.playback_state === 'Playing')
 
-const toggle = async () => song.value ? playbackService.toggle() : initiatePlayback()
-
 const initiatePlayback = async () => {
-  if (libraryEmpty.value) return
+  if (libraryEmpty.value) {
+    return
+  }
 
   let playables: Playable[]
 
   switch (getCurrentScreen()) {
     case 'Album':
-      playables = await songStore.fetchForAlbum(parseInt(getRouteParam('id')!))
+      playables = await songStore.fetchForAlbum(Number.parseInt(getRouteParam('id')!))
       break
     case 'Artist':
-      playables = await songStore.fetchForArtist(parseInt(getRouteParam('id')!))
+      playables = await songStore.fetchForArtist(Number.parseInt(getRouteParam('id')!))
       break
     case 'Playlist':
       playables = await songStore.fetchForPlaylist(getRouteParam('id')!)
@@ -57,4 +57,6 @@ const initiatePlayback = async () => {
   await playbackService.queueAndPlay(playables)
   go('queue')
 }
+
+const toggle = async () => song.value ? playbackService.toggle() : initiatePlayback()
 </script>

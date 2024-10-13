@@ -7,16 +7,16 @@ export const init = (container: HTMLElement) => {
   const uniforms = {
     u_time: {
       type: 'f',
-      value: 2.0
+      value: 2.0,
     },
     u_amplitude: {
       type: 'f',
-      value: 4.0
+      value: 4.0,
     },
     u_data_arr: {
       type: 'float[64]',
-      value: new Uint8Array()
-    }
+      value: new Uint8Array(),
+    },
   }
 
   const analyser = audioService.analyzer
@@ -28,10 +28,10 @@ export const init = (container: HTMLElement) => {
   const height = container.clientHeight
   const scene = new THREE.Scene()
 
-  const ambientLight = new THREE.AmbientLight(0xaaaaaa)
+  const ambientLight = new THREE.AmbientLight(0xAAAAAA)
   ambientLight.castShadow = false
 
-  const spotLight = new THREE.SpotLight(0xffffff)
+  const spotLight = new THREE.SpotLight(0xFFFFFF)
   spotLight.intensity = 0.9
   spotLight.position.set(-10, 40, 20)
   spotLight.castShadow = true
@@ -40,7 +40,7 @@ export const init = (container: HTMLElement) => {
     85,
     width / height,
     1,
-    1000
+    1000,
   )
   camera.position.z = 80
 
@@ -55,13 +55,13 @@ export const init = (container: HTMLElement) => {
     uniforms,
     vertexShader: shaders.vertex,
     fragmentShader: shaders.fragment,
-    wireframe: true
+    wireframe: true,
   })
 
   planeMeshParameters.forEach(item => {
     const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial)
 
-    if (item.rotation.x == undefined) {
+    if (item.rotation.x === undefined) {
       planeMesh.rotation.y = item.rotation.y
     } else {
       planeMesh.rotation.x = item.rotation.x

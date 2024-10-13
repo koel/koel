@@ -31,10 +31,10 @@ import { useDraggable, useRouter } from '@/composables'
 
 import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
 
+const props = withDefaults(defineProps<{ artist: Artist, layout?: ArtistAlbumCardLayout }>(), { layout: 'full' })
 const { go } = useRouter()
 const { startDragging } = useDraggable('artist')
 
-const props = withDefaults(defineProps<{ artist: Artist, layout?: ArtistAlbumCardLayout }>(), { layout: 'full' })
 const { artist, layout } = toRefs(props)
 
 // We're not checking for supports_batch_downloading here, as the number of songs by the artist is not yet known.
