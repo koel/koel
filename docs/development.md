@@ -19,20 +19,29 @@ composer install
 yarn install
 ```
 
-You can now start the development server with `yarn dev`:
+You can now start the development server with `composer dev`:
 
 ```bash
-$ yarn dev
+$ composer dev
 
-  VITE v5.1.6  ready in 1549 ms
-
-  ➜  Local:   http://localhost:5173/
-  ➜  Network: use --host to expose
-  ➜  press h + enter to show help
-
-  LARAVEL v9.52.0  plugin v1.0.2
-
-  ➜  APP_URL: http://localhost:8000
+> Composer\Config::disableProcessTimeout
+> npx concurrently -k -c "#93c5fd,#c4b5fd,#fdba74" "php artisan serve" "php artisan queue:listen --tries=1" "vite" --names=server,queue,vite --restart-tries=3
+[vite]
+[vite]   VITE v5.1.8  ready in 294 ms
+[vite]
+[vite]   ➜  Local:   http://localhost:5173/
+[vite]   ➜  Network: use --host to expose
+[queue]
+[queue]    INFO  Processing jobs from the [default] queue.
+[queue]
+[vite]
+[vite]   LARAVEL v10.48.8  plugin v1.0.2
+[vite]
+[vite]   ➜  APP_URL: http://localhost:8000
+[server]
+[server]    INFO  Server running on [http://127.0.0.1:8000].
+[server]
+[server]   Press Ctrl+C to stop the server
 ```
 
 A development version of Koel should now be available at `http://localhost:8000` with full HMR support.

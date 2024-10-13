@@ -113,7 +113,11 @@
     "coverage": "@php artisan test --coverage-clover=coverage.xml",
     "cs": "phpcs --standard=ruleset.xml",
     "cs:fix": "phpcbf --standard=ruleset.xml",
-    "analyze": "phpstan analyse --memory-limit 1G --configuration phpstan.neon.dist --ansi"
+    "analyze": "phpstan analyse --memory-limit 1G --configuration phpstan.neon.dist --ansi",
+    "dev": [
+      "Composer\\Config::disableProcessTimeout",
+      "npx concurrently -k -c \"#93c5fd,#c4b5fd,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"vite\" --names=server,queue,vite --restart-tries=3"
+    ]
   },
   "config": {
     "preferred-install": "dist",
