@@ -83,11 +83,8 @@ const collaborator = computed<Pick<User, 'name' | 'avatar'>>(
 )
 
 const localePlayCount = computed(() => {
-  const playCount = playable.value.play_count;
-
-  if (playCount > 999999) return humanReadablePlayCount(playCount);
-
-  return playCount.toLocaleString()
+  const playCount = playable.value.play_count
+  return (playCount > 999_999) ? humanReadablePlayCount(playCount) : playCount.toLocaleString()
 });
 
 const play = () => emit('play', playable.value)
