@@ -63,7 +63,9 @@ import SongThumbnail from '@/components/song/SongThumbnail.vue'
 import UserAvatar from '@/components/user/UserAvatar.vue'
 import ExternalMark from '@/components/ui/ExternalMark.vue'
 
-const props = defineProps<{ item: PlayableRow }>()
+const props = withDefaults(defineProps<{ item: PlayableRow, showDisc: boolean }>(), {
+  showDisc: false,
+})
 
 const emit = defineEmits<{ (e: 'play', playable: Playable): void }>()
 
@@ -71,10 +73,6 @@ const [config] = requireInjection<[Partial<PlayableListConfig>]>(PlayableListCon
 
 const { currentUser } = useAuthorization()
 const { isPlus } = useKoelPlus()
-
-const props = withDefaults(defineProps<{ item: PlayableRow, showDisc: boolean }>(), {
-  showDisc: false
-})
 
 const { item } = toRefs(props)
 

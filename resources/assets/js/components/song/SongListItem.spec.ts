@@ -33,13 +33,13 @@ new class extends UnitTestCase {
     it('renders disc info when showDisc is true', async () => {
       const song = factory('song', {
         disc: 2,
-        title: 'Test Song'
+        title: 'Test Song',
       })
-      
+
       const showDisc = true
       const { getByText } = this.renderComponent(song, showDisc)
-      expect(getByText('DISC 2')).to.exist
-    })    
+      expect(getByText('DISC 2')).toBeTruthy()
+    })
   }
 
   private renderComponent (playable?: Playable, showDisc = false) {
@@ -53,7 +53,7 @@ new class extends UnitTestCase {
     return this.render(SongListItem, {
       props: {
         item: row,
-        showDisc
+        showDisc,
       },
     })
   }
