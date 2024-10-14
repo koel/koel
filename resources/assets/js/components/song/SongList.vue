@@ -386,7 +386,7 @@ const discIndexMap = computed(() => {
   })
 
   return map
-});
+})
 
 const noOrOneDiscOnly = computed(() => Object.keys(discIndexMap.value).length <= 1)
 const sortingByTrack = computed(() => sortField.value === 'track')
@@ -395,17 +395,21 @@ const inAlbumContext = computed(() => context.type === 'Album')
 const noDiscLabel = computed(() => noOrOneDiscOnly.value || !sortingByTrack.value || !inAlbumContext.value)
 
 const showDiscLabel = (row: Playable) => {
-  if (noDiscLabel.value) return false
+  if (noDiscLabel.value) {
+    return false
+  }
 
   const index = findIndex(rows.value, ({ playable }) => playable.id === row.id)
   return discIndexMap.value[index] !== undefined
-};
+}
 
 const standardSongItemHeight = 64
 const discNumberHeight = 32.5
 
 const calculatedItemHeight = computed(() => {
-  if (noDiscLabel.value) return standardSongItemHeight
+  if (noDiscLabel.value) {
+    return standardSongItemHeight
+  }
 
   const discCount = Object.keys(discIndexMap.value).length
   const totalAdditionalPixels = discCount * discNumberHeight
@@ -414,7 +418,7 @@ const calculatedItemHeight = computed(() => {
   const averageHeight = totalHeight / rows.value.length
 
   return averageHeight
-});
+})
 
 defineExpose({
   getAllPlayablesWithSort,
