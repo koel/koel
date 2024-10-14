@@ -39,7 +39,7 @@
 
     <ScreenEmptyState v-if="!songs.length && !loading">
       <template #icon>
-        <Icon :icon="faTags" />
+        <GuitarIcon size="96" />
       </template>
 
       No songs in this genre.
@@ -49,7 +49,7 @@
 
 <script lang="ts" setup>
 import { computed, onMounted, ref, watch } from 'vue'
-import { faTags } from '@fortawesome/free-solid-svg-icons'
+import { GuitarIcon } from 'lucide-vue-next'
 import { eventBus, pluralize, secondsToHumanReadable } from '@/utils'
 import { playbackService } from '@/services'
 import { genreStore, songStore } from '@/stores'

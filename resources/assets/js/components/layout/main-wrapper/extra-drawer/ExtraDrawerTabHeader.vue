@@ -15,7 +15,7 @@
     title="Artist information"
     @click.prevent="toggleTab('Artist')"
   >
-    <Icon :icon="faMicrophone" fixed-width />
+    <MicVocalIcon size="18" />
   </ExtraDrawerButton>
   <ExtraDrawerButton
     id="extraTabAlbum"
@@ -39,10 +39,12 @@
 </template>
 
 <script lang="ts" setup>
-import { faCompactDisc, faFeather, faMicrophone } from '@fortawesome/free-solid-svg-icons'
+import { faCompactDisc, faFeather } from '@fortawesome/free-solid-svg-icons'
+import { MicVocalIcon } from 'lucide-vue-next'
 import { faYoutube } from '@fortawesome/free-brands-svg-icons'
 import { computed } from 'vue'
 import { useThirdPartyServices } from '@/composables'
+
 import ExtraDrawerButton from '@/components/layout/main-wrapper/extra-drawer/ExtraDrawerButton.vue'
 
 const props = withDefaults(defineProps<{ modelValue?: ExtraPanelTab | null }>(), {

@@ -8,7 +8,7 @@
       title="View as thumbnails"
     >
       <input v-model="value" class="hidden" name="view-mode" type="radio" value="thumbnails">
-      <Icon :icon="faThumbnailsHehe" />
+      <LayoutGridIcon size="16" />
       <span class="hidden">View as thumbnails</span>
     </label>
 
@@ -20,15 +20,14 @@
       title="View as list"
     >
       <input v-model="value" class="hidden" name="view-mode" type="radio" value="list">
-      <Icon :icon="faList" />
+      <LayoutListIcon size="16" />
       <span class="hidden">View as list</span>
     </label>
   </span>
 </template>
 
 <script lang="ts" setup>
-import { faMicrosoft as faThumbnailsHehe } from '@fortawesome/free-brands-svg-icons'
-import { faList } from '@fortawesome/free-solid-svg-icons'
+import { LayoutGridIcon, LayoutListIcon } from 'lucide-vue-next'
 import { computed } from 'vue'
 
 const props = withDefaults(defineProps<{ modelValue?: ArtistAlbumViewMode }>(), { modelValue: 'thumbnails' })
