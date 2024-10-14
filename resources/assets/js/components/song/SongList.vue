@@ -85,7 +85,7 @@
 
     <VirtualScroller
       v-slot="{ item }: { item: PlayableRow }"
-      :item-height="64"
+      :item-height="calculatedItemHeight"
       :items="rows"
       @scroll="onScroll"
       @scrolled-to-end="$emit('scrolledToEnd')"
@@ -94,6 +94,7 @@
         :key="item.playable.id"
         :item="item"
         draggable="true"
+        :show-disc="showDiscLabel(item.playable)"
         @click="onClick(item, $event)"
         @dragleave="onDragLeave"
         @dragstart="onDragStart(item, $event)"
@@ -374,6 +375,50 @@ const onPlay = async (playable: Playable) => {
 
   await playbackService.play(playable)
 }
+
+const discIndexMap = computed(() => {
+  const map: { [key: number]: number } = {}
+  rows.value.forEach((row, index) => {
+    const { disc } = row.playable
+    if (!Object.values(map).includes(disc)) {
+      map[index] = disc
+    }
+  })
+
+  return map
+})
+
+const noOrOneDiscOnly = computed(() => Object.keys(discIndexMap.value).length <= 1)
+const sortingByTrack = computed(() => sortField.value === 'track')
+const inAlbumContext = computed(() => context.type === 'Album')
+
+const noDiscLabel = computed(() => noOrOneDiscOnly.value || !sortingByTrack.value || !inAlbumContext.value)
+
+const showDiscLabel = (row: Playable) => {
+  if (noDiscLabel.value) {
+    return false
+  }
+
+  const index = findIndex(rows.value, ({ playable }) => playable.id === row.id)
+  return discIndexMap.value[index] !== undefined
+}
+
+const standardSongItemHeight = 64
+const discNumberHeight = 32.5
+
+const calculatedItemHeight = computed(() => {
+  if (noDiscLabel.value) {
+    return standardSongItemHeight
+  }
+
+  const discCount = Object.keys(discIndexMap.value).length
+  const totalAdditionalPixels = discCount * discNumberHeight
+
+  const totalHeight = (rows.value.length * standardSongItemHeight) + totalAdditionalPixels
+  const averageHeight = totalHeight / rows.value.length
+
+  return averageHeight
+})
 
 defineExpose({
   getAllPlayablesWithSort,
