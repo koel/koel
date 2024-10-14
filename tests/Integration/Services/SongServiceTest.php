@@ -28,15 +28,17 @@ class SongServiceTest extends TestCase
     {
         $song = Song::factory()->create();
 
-        $data = SongUpdateData::factory()->make([
-            'disc' => null,
-            'track' => null,
-            'lyrics' => null,
-            'year' => null,
-            'genre' => null,
-            'albumArtistName' => null,
-            'artistName' => 'Artist A',
-        ]);
+        $data = SongUpdateData::make(
+            title: null,
+            artistName: null,
+            albumName: null,
+            albumArtistName: 'Artist A',
+            track: null,
+            disc: 1,
+            genre: null,
+            year: null,
+            lyrics: null
+        );
 
         $expectedData = [
             'disc' => 1,
@@ -50,7 +52,7 @@ class SongServiceTest extends TestCase
         DB::shouldReceive('transaction')->andReturnUsing(static function ($callback) {
             return $callback();
         });
-        
+
         $updatedSongs = $this->service->updateSongs([$song->id], $data);
 
         $this->assertEquals(1, $updatedSongs->count());
@@ -69,23 +71,27 @@ class SongServiceTest extends TestCase
             'track' => 2,
         ]);
 
-        $data = SongUpdateData::factory()->make([
-            'disc' => 2,
-            'track' => 5,
-            'lyrics' => 'New lyrics',
-            'year' => 2023,
-            'genre' => 'Pop',
-            'albumArtistName' => 'New Album Artist',
-            'artistName' => 'Artist B',
-        ]);
+        $albumArtistName = 'New Album Artist';
+        $lyrics = 'Lyrics 2';
+        $data = SongUpdateData::make(
+            title: null,
+            artistName: 'Arist B',
+            albumName: null,
+            albumArtistName: $albumArtistName,
+            track: 5,
+            disc: 2,
+            genre: 'Pop',
+            year: 2023,
+            lyrics: $lyrics
+        );
 
         $expectedData = [
             'disc' => 2,
             'track' => 5,
-            'lyrics' => 'New lyrics',
+            'lyrics' => $lyrics,
             'year' => 2023,
             'genre' => 'Pop',
-            'albumArtistName' => 'New Album Artist',
+            'albumArtistName' => $albumArtistName,
         ];
 
         DB::shouldReceive('transaction')->andReturnUsing(static function ($callback) {
@@ -112,14 +118,18 @@ class SongServiceTest extends TestCase
         $lyrics = 'Lyrics';
         $genre = 'Genre';
 
-        $data = SongUpdateData::factory()->make([
-            'disc' => null,
-            'lyrics' => $lyrics,
-            'year' => null,
-            'track' => null,
-            'genre' => 'Genre',
-            'albumArtistName' => null,
-        ]);
+        $data = SongUpdateData::make(
+            title: null,
+            artistName: 'Artist',
+            albumName: null,
+            albumArtistName: null,
+            track: null,
+            disc: null,
+            genre: 'Genre',
+            year: null,
+            lyrics: $lyrics
+        );
+
 
         $expectedData1 = [
             'disc' => 1,

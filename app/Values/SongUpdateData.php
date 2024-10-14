@@ -3,14 +3,10 @@
 namespace App\Values;
 
 use App\Http\Requests\API\SongUpdateRequest;
-use Database\Factories\SongUpdateDataFactory;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 final class SongUpdateData implements Arrayable
 {
-    use HasFactory;
-
     private function __construct(
         public ?string $title,
         public ?string $artistName,
@@ -78,10 +74,5 @@ final class SongUpdateData implements Arrayable
             'year' => $this->year,
             'lyrics' => $this->lyrics,
         ];
-    }
-
-    protected static function newFactory(): SongUpdateDataFactory
-    {
-        return SongUpdateDataFactory::new();
     }
 }

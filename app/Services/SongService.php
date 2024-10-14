@@ -29,9 +29,14 @@ class SongService
         if (count($ids) === 1) {
             // If we're only updating one song, an empty non-required should be converted to the default values.
             // This allows the user to clear those fields.
-            $this->setSingleTrackData($data);
+            $data->disc = $data->disc ?: 1;
+            $data->track = $data->track ?: 0;
+            $data->lyrics = $data->lyrics ?: '';
+            $data->year = $data->year ?: null;
+            $data->genre = $data->genre ?: '';
+            $data->albumArtistName = $data->albumArtistName ?: $data->artistName;
         }
-        
+
         return DB::transaction(function () use ($ids, $data): Collection {
             $multiSong = count($ids) > 1;
             $noTrackUpdate = $multiSong && !$data->track;
@@ -43,16 +48,16 @@ class SongService
                     if ($noTrackUpdate) {
                         $data->track = $foundSong->track;
                     }
-        
+
                     optional(
                         $foundSong,
                         fn (Song $song) => $updated->push($this->updateSong($song, clone $data)) // @phpstan-ignore-line
                     );
-        
+
                     if ($noTrackUpdate) {
                         $data->track = null;
                     }
-        
+
                     return $updated;
                 }, collect());
         });
