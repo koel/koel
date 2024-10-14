@@ -87,7 +87,8 @@
     "yarn": "^1.22.22"
   },
   "scripts": {
-    "lint": "eslint ./resources/assets/js --fix",
+    "lint": "eslint ./resources/assets",
+    "lint:fix": "eslint ./resources/assets --fix",
     "test": "vitest",
     "test:unit": "vitest",
     "test:e2e": "kill-port 8080 && start-test dev http-get://localhost:8080/api/ping 'cypress open'",
@@ -104,7 +105,7 @@
     "**/*.php": [
       "composer cs"
     ],
-    "resources/assets/js/**/*.{ts,vue}": [
+    "resources/assets/**/*.{js,ts,css,pcss,vue}": [
       "eslint --fix"
     ],
     "cypress/**/*.ts": [

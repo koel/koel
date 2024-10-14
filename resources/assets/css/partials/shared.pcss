@@ -1,7 +1,13 @@
 @tailwind base;
 
 @layer base {
-  h1, h2, h3, h4, h5, h6, blockquote {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  blockquote {
     @apply text-balance;
   }
 
@@ -17,7 +23,8 @@
     @apply text-black/5;
   }
 
-  body, html {
+  body,
+  html {
     @mixin themed-background;
 
     font-family: var(--font-family);
@@ -26,12 +33,17 @@
     @apply text-k-text-primary font-light leading-6 overflow-hidden;
   }
 
-  input, select, button, textarea, .btn {
+  input,
+  select,
+  button,
+  textarea,
+  .btn {
     font-family: var(--font-family);
 
     @apply appearance-none border-0 outline-0 text-base font-light;
 
-    &:required, &:invalid {
+    &:required,
+    &:invalid {
       @apply shadow-none;
     }
 
@@ -43,7 +55,8 @@
   a {
     @apply no-underline text-k-text-primary cursor-pointer hover:text-k-accent focus:text-k-accent;
 
-    &:link, &:visited {
+    &:link,
+    &:visited {
       @apply text-k-accent;
     }
   }
@@ -52,7 +65,8 @@
     --fade-size: 3rem;
   }
 
-  button, [role=button] {
+  button,
+  [role='button'] {
     @apply touch-manipulation select-none cursor-pointer focus-visible:outline-1 focus-visible:outline-k-accent;
   }
 
