@@ -1,6 +1,6 @@
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { expect, it, vi } from 'vitest'
-import { arrayify, limitBy, use, humanReadablePlayCount } from './helpers'
+import { arrayify, humanReadablePlayCount, limitBy, use } from './helpers'
 
 new class extends UnitTestCase {
   protected test () {
@@ -35,27 +35,27 @@ new class extends UnitTestCase {
     it('humanReadablePlayCount returns correct value for 0', () => {
       expect(humanReadablePlayCount(0)).toBe('0')
     })
-  
+
     it('humanReadablePlayCount returns correct value for 1', () => {
       expect(humanReadablePlayCount(1)).toBe('1')
     })
-  
+
     it('humanReadablePlayCount returns correct value for 100', () => {
       expect(humanReadablePlayCount(100)).toBe('100')
     })
-  
+
     it('humanReadablePlayCount returns correct value for 1000', () => {
-      expect(humanReadablePlayCount(1000)).toBe('1k')
+      expect(humanReadablePlayCount(1000)).toBe('1,000')
     })
-  
+
     it('humanReadablePlayCount returns correct value for 100000', () => {
-      expect(humanReadablePlayCount(100000)).toBe('100k')
+      expect(humanReadablePlayCount(100000)).toBe('100,000')
     })
-  
+
     it('humanReadablePlayCount returns correct value for 1000000', () => {
       expect(humanReadablePlayCount(1000000)).toBe('1M')
     })
-  
+
     it('humanReadablePlayCount returns correct value for 100000000', () => {
       expect(humanReadablePlayCount(100000000)).toBe('100M')
     })
