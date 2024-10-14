@@ -19,13 +19,13 @@
       </SidebarItem>
       <SidebarItem href="#/artists" screen="Artists">
         <template #icon>
-          <Icon :icon="faMicrophone" fixed-width />
+          <MicVocalIcon size="16" />
         </template>
         Artists
       </SidebarItem>
       <SidebarItem href="#/genres" screen="Genres">
         <template #icon>
-          <Icon :icon="faTags" fixed-width />
+          <GuitarIcon size="16" />
         </template>
         Genres
       </SidebarItem>
@@ -43,7 +43,8 @@
 </template>
 
 <script lang="ts" setup>
-import { faCompactDisc, faMicrophone, faMusic, faPodcast, faTags } from '@fortawesome/free-solid-svg-icons'
+import { faCompactDisc, faMusic, faPodcast } from '@fortawesome/free-solid-svg-icons'
+import { GuitarIcon, MicVocalIcon } from 'lucide-vue-next'
 import { unescape } from 'lodash'
 import { ref } from 'vue'
 import { eventBus } from '@/utils'
