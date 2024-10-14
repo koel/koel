@@ -71,6 +71,21 @@
           <Icon v-if="sortField === 'length' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
         </template>
       </span>
+
+      <span
+        v-if="contentType === 'songs'"
+        class="plays"
+        role="button"
+        title="Sort by play count"
+        @click="sort('play_count')"
+      >
+        <template v-if="config.sortable">
+          Plays
+          <Icon v-if="sortField === 'play_count' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
+          <Icon v-if="sortField === 'play_count' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
+        </template>
+      </span>
+
       <span class="extra">
         <SongListSorter
           v-if="config.sortable"
@@ -461,8 +476,8 @@ onMounted(() => render())
       width: 200%;
     }
 
-    .song-item :is(.track-number, .album, .time, .added-at),
-    .song-list-header :is(.track-number, .album, .time, .added-at) {
+    .song-item :is(.track-number, .album, .time, .added-at, .plays),
+    .song-list-header :is(.track-number, .album, .time, .added-at, .plays) {
       display: none;
     }
 
