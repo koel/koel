@@ -10,7 +10,7 @@ class SettingRepository extends Repository
     /** @return array<mixed> */
     public function getAllAsKeyValueArray(): array
     {
-        return $this->model->pluck('value', 'key')->toArray();
+        return $this->modelClass::query()->pluck('value', 'key')->toArray();
     }
 
     public function getByKey(string $key): mixed
