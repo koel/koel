@@ -1,5 +1,5 @@
 <template>
-  <ExtraDrawerButton
+  <SideSheetButton
     id="extraTabLyrics"
     v-koel-tooltip.left
     :class="{ active: value === 'Lyrics' }"
@@ -7,8 +7,8 @@
     @click.prevent="toggleTab('Lyrics')"
   >
     <Icon :icon="faFeather" fixed-width />
-  </ExtraDrawerButton>
-  <ExtraDrawerButton
+  </SideSheetButton>
+  <SideSheetButton
     id="extraTabArtist"
     v-koel-tooltip.left
     :class="{ active: value === 'Artist' }"
@@ -16,8 +16,8 @@
     @click.prevent="toggleTab('Artist')"
   >
     <MicVocalIcon size="18" />
-  </ExtraDrawerButton>
-  <ExtraDrawerButton
+  </SideSheetButton>
+  <SideSheetButton
     id="extraTabAlbum"
     v-koel-tooltip.left
     :class="{ active: value === 'Album' }"
@@ -25,8 +25,8 @@
     @click.prevent="toggleTab('Album')"
   >
     <Icon :icon="faCompactDisc" fixed-width />
-  </ExtraDrawerButton>
-  <ExtraDrawerButton
+  </SideSheetButton>
+  <SideSheetButton
     v-if="useYouTube"
     id="extraTabYouTube"
     v-koel-tooltip.left
@@ -35,7 +35,7 @@
     @click.prevent="toggleTab('YouTube')"
   >
     <Icon :icon="faYoutube" fixed-width />
-  </ExtraDrawerButton>
+  </SideSheetButton>
 </template>
 
 <script lang="ts" setup>
@@ -45,7 +45,7 @@ import { faYoutube } from '@fortawesome/free-brands-svg-icons'
 import { computed } from 'vue'
 import { useThirdPartyServices } from '@/composables'
 
-import ExtraDrawerButton from '@/components/layout/main-wrapper/extra-drawer/ExtraDrawerButton.vue'
+import SideSheetButton from '@/components/layout/main-wrapper/side-sheet/SideSheetButton.vue'
 
 const props = withDefaults(defineProps<{ modelValue?: ExtraPanelTab | null }>(), {
   modelValue: null,
