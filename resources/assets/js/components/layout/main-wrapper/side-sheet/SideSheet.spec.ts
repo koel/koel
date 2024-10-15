@@ -9,7 +9,7 @@ import { albumStore, artistStore, commonStore, preferenceStore } from '@/stores'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { CurrentPlayableKey } from '@/symbols'
 import { eventBus } from '@/utils'
-import ExtraDrawer from './ExtraDrawer.vue'
+import Component from './SideSheet.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -18,7 +18,7 @@ new class extends UnitTestCase {
     it('sets the active tab to the preference', async () => {
       preferenceStore.active_extra_panel_tab = 'YouTube'
       this.renderComponent(ref(factory('song')))
-      const tab = screen.getByTestId<HTMLElement>('extra-drawer-youtube')
+      const tab = screen.getByTestId<HTMLElement>('side-sheet-youtube')
 
       expect(tab.style.display).toBe('none')
       await this.tick()
@@ -75,7 +75,7 @@ new class extends UnitTestCase {
     const album = factory('album')
     const resolveAlbumMock = this.mock(albumStore, 'resolve').mockResolvedValue(album)
 
-    const rendered = this.render(ExtraDrawer, {
+    const rendered = this.render(Component, {
       global: {
         stubs: {
           ProfileAvatar: this.stub(),

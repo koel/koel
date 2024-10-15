@@ -7,9 +7,9 @@
   >
     <section class="btn-collapse-block flex md:hidden items-center border-b border-b-white/5 h-k-header-height px-6">
       <div class="bg-white/5 rounded-full">
-        <ExtraDrawerButton @click.prevent="collapseSidebar">
+        <SideSheetButton @click.prevent="collapseSidebar">
           <Icon :icon="faTimes" fixed-width />
-        </ExtraDrawerButton>
+        </SideSheetButton>
       </div>
     </section>
 
@@ -43,9 +43,9 @@ import { eventBus } from '@/utils'
 import { useAuthorization, useKoelPlus, useLocalStorage, useRouter, useUpload } from '@/composables'
 
 import BtnUpgradeToPlus from '@/components/koel-plus/BtnUpgradeToPlus.vue'
-import ExtraDrawerButton from '@/components/layout/main-wrapper/extra-drawer/ExtraDrawerButton.vue'
 import HomeButton from '@/components/layout/main-wrapper/sidebar/HomeButton.vue'
 import SearchForm from '@/components/ui/SearchForm.vue'
+import SideSheetButton from '@/components/layout/main-wrapper/side-sheet/SideSheetButton.vue'
 import SidebarManageSection from './SidebarManageSection.vue'
 import SidebarPlaylistsSection from './SidebarPlaylistsSection.vue'
 import SidebarToggleButton from '@/components/layout/main-wrapper/sidebar/SidebarToggleButton.vue'

@@ -1,5 +1,5 @@
 <template>
-  <ExtraDrawerButton
+  <SideSheetButton
     v-koel-tooltip.left
     :title="shouldNotifyNewVersion ? 'New version available!' : 'About Koel'"
     @click.prevent="openAboutKoelModal"
@@ -10,7 +10,7 @@
       class="absolute w-[10px] aspect-square right-px top-px rounded-full bg-k-highlight"
       data-testid="new-version-indicator"
     />
-  </ExtraDrawerButton>
+  </SideSheetButton>
 </template>
 
 <script lang="ts" setup>
@@ -18,7 +18,7 @@ import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import { eventBus } from '@/utils'
 import { useNewVersionNotification } from '@/composables'
 
-import ExtraDrawerButton from '@/components/layout/main-wrapper/extra-drawer/ExtraDrawerButton.vue'
+import SideSheetButton from '@/components/layout/main-wrapper/side-sheet/SideSheetButton.vue'
 
 const { shouldNotifyNewVersion } = useNewVersionNotification()
 

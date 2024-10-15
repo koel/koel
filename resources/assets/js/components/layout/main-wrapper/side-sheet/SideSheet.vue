@@ -10,10 +10,10 @@
       py-0 px-6 h-k-header-height"
     >
       <div class="btn-group">
-        <ExtraDrawerButton class="md:hidden" @click.prevent="expandSidebar">
+        <SideSheetButton class="md:hidden" @click.prevent="expandSidebar">
           <Icon :icon="faBars" fixed-width />
-        </ExtraDrawerButton>
-        <ExtraDrawerTabHeader v-if="songPlaying" v-model="activeTab" />
+        </SideSheetButton>
+        <SideSheetTabHeader v-if="songPlaying" v-model="activeTab" />
       </div>
 
       <div class="btn-group">
@@ -60,7 +60,7 @@
         v-show="activeTab === 'YouTube'"
         id="extraPanelYouTube"
         aria-labelledby="extraTabYouTube"
-        data-testid="extra-drawer-youtube"
+        data-testid="side-sheet-youtube"
         role="tabpanel"
         tabindex="0"
       >
@@ -81,15 +81,15 @@ import { eventBus, isSong, requireInjection } from '@/utils'
 import { CurrentPlayableKey } from '@/symbols'
 
 import ProfileAvatar from '@/components/ui/ProfileAvatar.vue'
-import AboutKoelButton from '@/components/layout/main-wrapper/extra-drawer/AboutKoelButton.vue'
-import LogoutButton from '@/components/layout/main-wrapper/extra-drawer/LogoutButton.vue'
-import ExtraDrawerButton from '@/components/layout/main-wrapper/extra-drawer/ExtraDrawerButton.vue'
+import AboutKoelButton from '@/components/layout/main-wrapper/side-sheet/AboutKoelButton.vue'
+import LogoutButton from '@/components/layout/main-wrapper/side-sheet/LogoutButton.vue'
+import SideSheetButton from '@/components/layout/main-wrapper/side-sheet/SideSheetButton.vue'
 
 const LyricsPane = defineAsyncComponent(() => import('@/components/ui/LyricsPane.vue'))
 const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/ArtistInfo.vue'))
 const AlbumInfo = defineAsyncComponent(() => import('@/components/album/AlbumInfo.vue'))
 const YouTubeVideoList = defineAsyncComponent(() => import('@/components/ui/youtube/YouTubeVideoList.vue'))
-const ExtraDrawerTabHeader = defineAsyncComponent(() => import('./ExtraDrawerTabHeader.vue'))
+const SideSheetTabHeader = defineAsyncComponent(() => import('./SideSheetTabHeader.vue'))
 
 const { useYouTube } = useThirdPartyServices()
 
@@ -152,7 +152,7 @@ aside {
 }
 
 .panes {
-  @apply no-hover:overflow-y-auto w-k-extra-drawer-width;
+  @apply no-hover:overflow-y-auto w-k-side-sheet-width;
 
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
 
