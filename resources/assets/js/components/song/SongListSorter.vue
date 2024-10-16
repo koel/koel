@@ -29,9 +29,9 @@ import { isEqual } from 'lodash'
 import { faArrowDown, faArrowUp, faCheck, faSort } from '@fortawesome/free-solid-svg-icons'
 import { OnClickOutside } from '@vueuse/components'
 import { computed, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
-import { useFloatingUi } from '@/composables'
-import type { getPlayableCollectionContentType } from '@/utils'
-import { arrayify } from '@/utils'
+import { useFloatingUi } from '@/composables/useFloatingUi'
+import { arrayify } from '@/utils/helpers'
+import type { getPlayableCollectionContentType } from '@/utils/typeGuards'
 
 const props = withDefaults(defineProps<{
   field?: MaybeArray<PlayableListSortField> // the current field(s) being sorted by
@@ -57,6 +57,7 @@ const menuItems = computed(() => {
     label: string
     field: MaybeArray<PlayableListSortField>
   }
+
   const title: MenuItems = { label: 'Title', field: 'title' }
   const artist: MenuItems = { label: 'Artist', field: 'artist_name' }
   const author: MenuItems = { label: 'Author', field: 'podcast_author' }

@@ -1,7 +1,9 @@
 import { reactive } from 'vue'
 import { differenceBy, unionBy } from 'lodash'
-import { cache, http } from '@/services'
-import { arrayify, logger } from '@/utils'
+import { cache } from '@/services/cache'
+import { http } from '@/services/http'
+import { arrayify } from '@/utils/helpers'
+import { logger } from '@/utils/logger'
 
 const UNKNOWN_ARTIST_ID = 1
 const VARIOUS_ARTISTS_ID = 2

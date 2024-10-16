@@ -1,12 +1,12 @@
 import Router from '@/router'
 import { expect, it } from 'vitest'
-import factory from '@/__tests__/factory'
-import UnitTestCase from '@/__tests__/UnitTestCase'
 import { screen } from '@testing-library/vue'
-import { eventBus } from '@/utils'
-import { userStore } from '@/stores'
+import UnitTestCase from '@/__tests__/UnitTestCase'
+import factory from '@/__tests__/factory'
+import { eventBus } from '@/utils/eventBus'
+import { userStore } from '@/stores/userStore'
 import { DialogBoxStub } from '@/__tests__/stubs'
-import { invitationService } from '@/services'
+import { invitationService } from '@/services/invitationService'
 import UserCard from './UserCard.vue'
 
 new class extends UnitTestCase {

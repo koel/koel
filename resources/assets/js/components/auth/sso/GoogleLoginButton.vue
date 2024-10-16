@@ -11,7 +11,7 @@
 
 <script lang="ts" setup>
 import googleLogo from '@/../img/logos/google.svg'
-import { openPopup } from '@/utils'
+import { openPopup } from '@/utils/helpers'
 
 const emit = defineEmits<{
   (e: 'success', data: any): void

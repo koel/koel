@@ -1,4 +1,4 @@
-import { http } from '@/services'
+import { http } from '@/services/http'
 
 export const genreStore = {
   fetchAll: async () => await http.get<Genre[]>('genres'),

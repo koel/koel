@@ -1,5 +1,11 @@
-import { arrayify, getPlayableProp, logger, pluralize } from '@/utils'
-import { albumStore, artistStore, playlistFolderStore, playlistStore, songStore } from '@/stores'
+import { pluralize } from '@/utils/formatters'
+import { arrayify, getPlayableProp } from '@/utils/helpers'
+import { logger } from '@/utils/logger'
+import { albumStore } from '@/stores/albumStore'
+import { artistStore } from '@/stores/artistStore'
+import { playlistStore } from '@/stores/playlistStore'
+import { playlistFolderStore } from '@/stores/playlistFolderStore'
+import { songStore } from '@/stores/songStore'
 
 type Draggable = MaybeArray<Playable> | Album | Artist | Playlist | PlaylistFolder
 const draggableTypes = <const>['playables', 'album', 'artist', 'playlist', 'playlist-folder']

@@ -1,9 +1,9 @@
 import { screen, waitFor } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import AcceptInvitation from './AcceptInvitation.vue'
-import { invitationService } from '@/services'
 import factory from '@/__tests__/factory'
+import { invitationService } from '@/services/invitationService'
+import AcceptInvitation from './AcceptInvitation.vue'
 
 new class extends UnitTestCase {
   protected test () {

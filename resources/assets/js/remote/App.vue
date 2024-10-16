@@ -23,10 +23,13 @@
 </template>
 
 <script lang="ts" setup>
-import { authService, socketService } from '@/services'
-import { preferenceStore, userStore } from '@/stores'
 import { computed, defineAsyncComponent, onMounted, provide, reactive, ref } from 'vue'
-import { isSong, logger } from '@/utils'
+import { authService } from '@/services/authService'
+import { socketService } from '@/services/socketService'
+import { preferenceStore } from '@/stores/preferenceStore'
+import { userStore } from '@/stores/userStore'
+import { isSong } from '@/utils/typeGuards'
+import { logger } from '@/utils/logger'
 import type { RemoteState } from '@/remote/types'
 
 const PlayableDetails = defineAsyncComponent(() => import('@/remote/components/PlayableDetails.vue'))

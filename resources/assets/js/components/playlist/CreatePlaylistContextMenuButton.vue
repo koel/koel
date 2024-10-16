@@ -11,7 +11,7 @@
 
 <script lang="ts" setup>
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons'
-import { eventBus } from '@/utils'
+import { eventBus } from '@/utils/eventBus'
 
 const requestContextMenu = (e: MouseEvent) => {
   const { bottom, right } = (e.currentTarget as HTMLButtonElement).getBoundingClientRect()

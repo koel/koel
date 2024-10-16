@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { playlistStore } from '@/stores'
+import { playlistStore } from '@/stores/playlistStore'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import FormBase from '@/components/playlist/smart-playlist/SmartPlaylistFormBase.vue'

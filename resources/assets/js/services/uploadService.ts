@@ -1,9 +1,12 @@
 import axios from 'axios'
 import { without } from 'lodash'
 import { reactive } from 'vue'
-import { http } from '@/services'
-import { albumStore, commonStore, songStore } from '@/stores'
-import { eventBus, logger } from '@/utils'
+import { http } from '@/services/http'
+import { albumStore } from '@/stores/albumStore'
+import { commonStore } from '@/stores/commonStore'
+import { songStore } from '@/stores/songStore'
+import { eventBus } from '@/utils/eventBus'
+import { logger } from '@/utils/logger'
 
 interface UploadResult {
   song: Song

@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/vue'
-import { commonStore } from '@/stores'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
+import { commonStore } from '@/stores/commonStore'
 import Modal from './KoelPlusModal.vue'
 
 new class extends UnitTestCase {

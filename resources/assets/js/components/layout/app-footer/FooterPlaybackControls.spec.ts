@@ -1,10 +1,10 @@
 import { ref } from 'vue'
 import { expect, it } from 'vitest'
+import { screen } from '@testing-library/vue'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { CurrentPlayableKey } from '@/symbols'
-import { playbackService } from '@/services'
-import { screen } from '@testing-library/vue'
+import { playbackService } from '@/services/playbackService'
 import Component from './FooterPlaybackControls.vue'
 
 new class extends UnitTestCase {

@@ -1,11 +1,11 @@
+import { ref } from 'vue'
 import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
-import { songStore } from '@/stores'
-import { playbackService } from '@/services'
 import UnitTestCase from '@/__tests__/UnitTestCase'
+import { songStore } from '@/stores/songStore'
+import { playbackService } from '@/services/playbackService'
 import { PlayablesKey } from '@/symbols'
-import { ref } from 'vue'
 import AlbumTrackListItem from './AlbumTrackListItem.vue'
 
 new class extends UnitTestCase {

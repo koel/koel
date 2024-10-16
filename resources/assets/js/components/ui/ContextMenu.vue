@@ -19,7 +19,8 @@
 <script lang="ts" setup>
 import { nextTick, ref, toRefs } from 'vue'
 import { onClickOutside } from '@vueuse/core'
-import { eventBus, logger } from '@/utils'
+import { eventBus } from '@/utils/eventBus'
+import { logger } from '@/utils/logger'
 
 const props = defineProps<{ extraClass?: string }>()
 const { extraClass } = toRefs(props)

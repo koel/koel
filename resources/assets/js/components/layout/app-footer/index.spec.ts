@@ -1,8 +1,9 @@
 import { waitFor } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { playbackService, volumeManager } from '@/services'
-import { preferenceStore } from '@/stores'
+import { playbackService } from '@/services/playbackService'
+import { volumeManager } from '@/services/volumeManager'
+import { preferenceStore } from '@/stores/preferenceStore'
 import Component from './index.vue'
 
 new class extends UnitTestCase {

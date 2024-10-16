@@ -2,19 +2,22 @@ import isMobile from 'ismobilejs'
 import plyr from 'plyr'
 import { watch } from 'vue'
 import { shuffle, throttle } from 'lodash'
-
-import {
-  commonStore,
-  preferenceStore as preferences,
-  queueStore,
-  recentlyPlayedStore,
-  songStore,
-  userStore,
-} from '@/stores'
-
-import { arrayify, eventBus, getPlayableProp, isAudioContextSupported, isEpisode, isSong, logger } from '@/utils'
-import { audioService, http, socketService, volumeManager } from '@/services'
-import { useEpisodeProgressTracking } from '@/composables'
+import { commonStore } from '@/stores/commonStore'
+import { preferenceStore as preferences } from '@/stores/preferenceStore'
+import { queueStore } from '@/stores/queueStore'
+import { recentlyPlayedStore } from '@/stores/recentlyPlayedStore'
+import { songStore } from '@/stores/songStore'
+import { userStore } from '@/stores/userStore'
+import { logger } from '@/utils/logger'
+import { isEpisode, isSong } from '@/utils/typeGuards'
+import { arrayify, getPlayableProp } from '@/utils/helpers'
+import { eventBus } from '@/utils/eventBus'
+import { isAudioContextSupported } from '@/utils/supports'
+import { audioService } from '@/services/audioService'
+import { http } from '@/services/http'
+import { socketService } from '@/services/socketService'
+import { volumeManager } from '@/services/volumeManager'
+import { useEpisodeProgressTracking } from '@/composables/useEpisodeProgressTracking'
 
 /**
  * The number of seconds before the current playable ends to start preload the next one.

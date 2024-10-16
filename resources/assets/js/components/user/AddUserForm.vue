@@ -44,11 +44,15 @@
 <script lang="ts" setup>
 import { isEqual } from 'lodash'
 import { reactive } from 'vue'
-import type { CreateUserData } from '@/stores'
-import { userStore } from '@/stores'
-import { useDialogBox, useErrorHandler, useMessageToaster, useOverlay } from '@/composables'
+import type { CreateUserData } from '@/stores/userStore'
+import { userStore } from '@/stores/userStore'
+import { useDialogBox } from '@/composables/useDialogBox'
+import { useErrorHandler } from '@/composables/useErrorHandler'
+import { useMessageToaster } from '@/composables/useMessageToaster'
+import { useOverlay } from '@/composables/useOverlay'
 
 import Btn from '@/components/ui/form/Btn.vue'
+
 import TooltipIcon from '@/components/ui/TooltipIcon.vue'
 import CheckBox from '@/components/ui/form/CheckBox.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'

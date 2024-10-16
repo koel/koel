@@ -17,7 +17,7 @@
 
 <script lang="ts" setup>
 import { toRefs } from 'vue'
-import { slugToTitle } from '@/utils'
+import { slugToTitle } from '@/utils/formatters'
 
 const props = defineProps<{ theme: Theme }>()
 defineEmits<{ (e: 'selected', theme: Theme): void }>()

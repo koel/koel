@@ -20,7 +20,7 @@
 import { faUpload } from '@fortawesome/free-solid-svg-icons'
 import { ref } from 'vue'
 import { OnClickOutside } from '@vueuse/components'
-import { useUpload } from '@/composables'
+import { useUpload } from '@/composables/useUpload'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 

@@ -166,11 +166,17 @@
 <script lang="ts" setup>
 import { computed, reactive, ref } from 'vue'
 import { isEqual } from 'lodash'
-import { defaultCover, eventBus, pluralize } from '@/utils'
-import type { SongUpdateData } from '@/stores'
-import { songStore } from '@/stores'
-import { useDialogBox, useErrorHandler, useMessageToaster, useModal, useOverlay } from '@/composables'
-import { genres } from '@/config'
+import defaultCover from '@/../img/covers/default.svg'
+import { pluralize } from '@/utils/formatters'
+import { eventBus } from '@/utils/eventBus'
+import type { SongUpdateData } from '@/stores/songStore'
+import { songStore } from '@/stores/songStore'
+import { useDialogBox } from '@/composables/useDialogBox'
+import { useErrorHandler } from '@/composables/useErrorHandler'
+import { useMessageToaster } from '@/composables/useMessageToaster'
+import { useModal } from '@/composables/useModal'
+import { useOverlay } from '@/composables/useOverlay'
+import { genres } from '@/config/genres'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
@@ -183,6 +189,7 @@ import TabPanel from '@/components/ui/tabs/TabPanel.vue'
 import TabPanelContainer from '@/components/ui/tabs/TabPanelContainer.vue'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
+
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()

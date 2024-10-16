@@ -1,8 +1,8 @@
 import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
 import { screen, waitFor } from '@testing-library/vue'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import { MessageToasterStub } from '@/__tests__/stubs'
-import { invitationService } from '@/services'
+import { invitationService } from '@/services/invitationService'
 import InviteUserForm from './InviteUserForm.vue'
 
 new class extends UnitTestCase {

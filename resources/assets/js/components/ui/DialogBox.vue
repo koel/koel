@@ -31,6 +31,7 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { faCheck, faExclamation, faInfo, faQuestion, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons'
+
 import Btn from '@/components/ui/form/Btn.vue'
 
 type DialogType = 'info' | 'success' | 'warning' | 'danger' | 'confirm'

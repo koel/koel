@@ -1,8 +1,8 @@
-import factory from '@/__tests__/factory'
-import { playbackService } from '@/services'
 import { expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
+import factory from '@/__tests__/factory'
+import { playbackService } from '@/services/playbackService'
 import SongCard from './SongCard.vue'
 
 let playable: Playable

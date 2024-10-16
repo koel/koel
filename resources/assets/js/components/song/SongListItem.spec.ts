@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest'
-import factory from '@/__tests__/factory'
 import { screen } from '@testing-library/vue'
+import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import SongListItem from './SongListItem.vue'
 
@@ -38,7 +38,7 @@ new class extends UnitTestCase {
 
       const showDisc = true
       const { getByText } = this.renderComponent(song, showDisc)
-      expect(getByText('DISC 2')).toBeTruthy()
+      expect(getByText('Disc 2')).toBeTruthy()
     })
   }
 

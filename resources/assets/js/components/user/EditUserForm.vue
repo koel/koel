@@ -55,9 +55,13 @@
 <script lang="ts" setup>
 import { isEqual } from 'lodash'
 import { reactive, watch } from 'vue'
-import type { UpdateUserData } from '@/stores'
-import { userStore } from '@/stores'
-import { useDialogBox, useErrorHandler, useMessageToaster, useModal, useOverlay } from '@/composables'
+import type { UpdateUserData } from '@/stores/userStore'
+import { userStore } from '@/stores/userStore'
+import { useDialogBox } from '@/composables/useDialogBox'
+import { useErrorHandler } from '@/composables/useErrorHandler'
+import { useMessageToaster } from '@/composables/useMessageToaster'
+import { useModal } from '@/composables/useModal'
+import { useOverlay } from '@/composables/useOverlay'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import TooltipIcon from '@/components/ui/TooltipIcon.vue'
@@ -67,6 +71,7 @@ import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
+
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()

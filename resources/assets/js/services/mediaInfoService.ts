@@ -1,5 +1,8 @@
-import { cache, http } from '@/services'
-import { albumStore, artistStore, songStore } from '@/stores'
+import { cache } from '@/services/cache'
+import { http } from '@/services/http'
+import { albumStore } from '@/stores/albumStore'
+import { artistStore } from '@/stores/artistStore'
+import { songStore } from '@/stores/songStore'
 
 export const mediaInfoService = {
   async fetchForArtist (artist: Artist) {

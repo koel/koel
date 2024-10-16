@@ -17,8 +17,8 @@
 <script lang="ts" setup>
 import { unescape } from 'lodash'
 import { computed, toRefs } from 'vue'
-import { youTubeService } from '@/services'
-import { useRouter } from '@/composables'
+import { youTubeService } from '@/services/youTubeService'
+import { useRouter } from '@/composables/useRouter'
 
 const props = defineProps<{ video: YouTubeVideo }>()
 

@@ -12,10 +12,10 @@
 <script lang="ts" setup>
 import { faCheckCircle, faCircleNotch } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRefs } from 'vue'
-import { copyText } from '@/utils'
-import { playlistCollaborationService } from '@/services'
+import { playlistCollaborationService } from '@/services/playlistCollaborationService'
 
 import Btn from '@/components/ui/form/Btn.vue'
+import { copyText } from '@/utils/helpers'
 
 const props = defineProps<{ playlist: Playlist }>()
 const { playlist } = toRefs(props)

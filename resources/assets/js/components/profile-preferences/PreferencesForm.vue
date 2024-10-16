@@ -54,8 +54,9 @@
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
 import { toRef } from 'vue'
-import { commonStore, preferenceStore as preferences } from '@/stores'
-import { useKoelPlus } from '@/composables'
+import { commonStore } from '@/stores/commonStore'
+import { preferenceStore as preferences } from '@/stores/preferenceStore'
+import { useKoelPlus } from '@/composables/useKoelPlus'
 
 import CheckBox from '@/components/ui/form/CheckBox.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'

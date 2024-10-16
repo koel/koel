@@ -15,8 +15,8 @@
 
 <script lang="ts" setup>
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
-import { eventBus } from '@/utils'
-import { useNewVersionNotification } from '@/composables'
+import { eventBus } from '@/utils/eventBus'
+import { useNewVersionNotification } from '@/composables/useNewVersionNotification'
 
 import SideSheetButton from '@/components/layout/main-wrapper/side-sheet/SideSheetButton.vue'
 

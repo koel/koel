@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import shaders from './shaders'
 import planeMeshParameters from './planeMeshParameters'
-import { audioService } from '@/services'
+import { audioService } from '@/services/audioService'
 
 export const init = (container: HTMLElement) => {
   const uniforms = {

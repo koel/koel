@@ -1,8 +1,9 @@
 import { expect, it } from 'vitest'
-import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { http } from '@/services'
-import { recentlyPlayedStore, songStore } from '.'
+import factory from '@/__tests__/factory'
+import { http } from '@/services/http'
+import { recentlyPlayedStore } from '@/stores/recentlyPlayedStore'
+import { songStore } from '@/stores/songStore'
 
 new class extends UnitTestCase {
   protected test () {

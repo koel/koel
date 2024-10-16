@@ -1,10 +1,10 @@
+import { screen } from '@testing-library/vue'
 import { merge, take } from 'lodash'
 import { ref } from 'vue'
 import { expect, it } from 'vitest'
-import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
+import factory from '@/__tests__/factory'
 import { PlayablesKey, SelectedPlayablesKey } from '@/symbols'
-import { screen } from '@testing-library/vue'
 import SongListControls from './SongListControls.vue'
 
 new class extends UnitTestCase {

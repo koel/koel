@@ -1,4 +1,4 @@
-import { visualizers } from '@/config'
+import { visualizers } from '@/config/visualizers'
 
 export const visualizerStore = {
   get all () {

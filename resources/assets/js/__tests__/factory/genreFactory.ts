@@ -1,5 +1,5 @@
 import type { Faker } from '@faker-js/faker'
-import { genres } from '@/config'
+import { genres } from '@/config/genres'
 
 export default (faker: Faker): Genre => {
   return {

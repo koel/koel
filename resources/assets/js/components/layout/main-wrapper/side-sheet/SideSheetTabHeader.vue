@@ -43,7 +43,7 @@ import { faCompactDisc, faFeather } from '@fortawesome/free-solid-svg-icons'
 import { MicVocalIcon } from 'lucide-vue-next'
 import { faYoutube } from '@fortawesome/free-brands-svg-icons'
 import { computed } from 'vue'
-import { useThirdPartyServices } from '@/composables'
+import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 
 import SideSheetButton from '@/components/layout/main-wrapper/side-sheet/SideSheetButton.vue'
 

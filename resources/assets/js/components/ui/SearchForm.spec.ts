@@ -1,8 +1,8 @@
-import Router from '@/router'
+import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { screen } from '@testing-library/vue'
-import { eventBus } from '@/utils'
+import { eventBus } from '@/utils/eventBus'
+import Router from '@/router'
 import SearchForm from './SearchForm.vue'
 
 new class extends UnitTestCase {

@@ -43,8 +43,9 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
-import { invitationService } from '@/services'
-import { useErrorHandler, useRouter } from '@/composables'
+import { invitationService } from '@/services/invitationService'
+import { useErrorHandler } from '@/composables/useErrorHandler'
+import { useRouter } from '@/composables/useRouter'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import PasswordField from '@/components/ui/form/PasswordField.vue'

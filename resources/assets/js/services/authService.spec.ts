@@ -1,10 +1,11 @@
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { expect, it } from 'vitest'
-import type { UpdateCurrentProfileData } from '@/services'
-import { authService, http } from '@/services'
-import { useLocalStorage } from '@/composables'
 import factory from '@/__tests__/factory'
-import { userStore } from '@/stores'
+import type { UpdateCurrentProfileData } from '@/services/authService'
+import { authService } from '@/services/authService'
+import { http } from '@/services/http'
+import { useLocalStorage } from '@/composables/useLocalStorage'
+import { userStore } from '@/stores/userStore'
 
 new class extends UnitTestCase {
   protected test () {

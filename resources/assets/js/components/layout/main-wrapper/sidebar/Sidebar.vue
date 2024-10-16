@@ -39,8 +39,12 @@
 <script lang="ts" setup>
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, watch } from 'vue'
-import { eventBus } from '@/utils'
-import { useAuthorization, useKoelPlus, useLocalStorage, useRouter, useUpload } from '@/composables'
+import { eventBus } from '@/utils/eventBus'
+import { useAuthorization } from '@/composables/useAuthorization'
+import { useKoelPlus } from '@/composables/useKoelPlus'
+import { useLocalStorage } from '@/composables/useLocalStorage'
+import { useUpload } from '@/composables/useUpload'
+import { useRouter } from '@/composables/useRouter'
 
 import BtnUpgradeToPlus from '@/components/koel-plus/BtnUpgradeToPlus.vue'
 import HomeButton from '@/components/layout/main-wrapper/sidebar/HomeButton.vue'

@@ -1,10 +1,10 @@
 import { reactive } from 'vue'
-import { http } from '@/services'
+import { http } from '@/services/http'
 import { songStore } from '@/stores/songStore'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
-import { recentlyPlayedStore } from '@/stores'
-import { isSong } from '@/utils'
+import { recentlyPlayedStore } from '@/stores/recentlyPlayedStore'
+import { isSong } from '@/utils/typeGuards'
 
 export const overviewStore = {
   state: reactive({

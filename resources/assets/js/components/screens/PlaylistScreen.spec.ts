@@ -1,10 +1,11 @@
-import { expect, it } from 'vitest'
-import factory from '@/__tests__/factory'
-import UnitTestCase from '@/__tests__/UnitTestCase'
-import { eventBus } from '@/utils'
 import { screen, waitFor } from '@testing-library/vue'
-import { playlistStore, songStore } from '@/stores'
-import { downloadService } from '@/services'
+import { expect, it } from 'vitest'
+import UnitTestCase from '@/__tests__/UnitTestCase'
+import factory from '@/__tests__/factory'
+import { eventBus } from '@/utils/eventBus'
+import { playlistStore } from '@/stores/playlistStore'
+import { songStore } from '@/stores/songStore'
+import { downloadService } from '@/services/downloadService'
 import PlaylistScreen from './PlaylistScreen.vue'
 
 let playlist: Playlist

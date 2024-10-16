@@ -30,7 +30,8 @@
 
 <script lang="ts" setup>
 import { faSpotify } from '@fortawesome/free-brands-svg-icons'
-import { useAuthorization, useThirdPartyServices } from '@/composables'
+import { useAuthorization } from '@/composables/useAuthorization'
+import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 
 const { isAdmin } = useAuthorization()
 const { useSpotify } = useThirdPartyServices()

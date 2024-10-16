@@ -1,10 +1,13 @@
 import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
 import { reactive } from 'vue'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
-import { http } from '@/services'
-import type { ExcerptSearchResult } from '.'
-import { albumStore, artistStore, searchStore, songStore } from '.'
+import { http } from '@/services/http'
+import type { ExcerptSearchResult } from '@/stores/searchStore'
+import { albumStore } from '@/stores/albumStore'
+import { artistStore } from '@/stores/artistStore'
+import { searchStore } from '@/stores/searchStore'
+import { songStore } from '@/stores/songStore'
 
 new class extends UnitTestCase {
   protected beforeEach () {

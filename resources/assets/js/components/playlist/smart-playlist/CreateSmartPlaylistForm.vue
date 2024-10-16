@@ -53,17 +53,16 @@
 <script lang="ts" setup>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { ref, toRef } from 'vue'
-import { playlistFolderStore, playlistStore } from '@/stores'
-import {
-  useDialogBox,
-  useErrorHandler,
-  useKoelPlus,
-  useMessageToaster,
-  useModal,
-  useOverlay,
-  useRouter,
-  useSmartPlaylistForm,
-} from '@/composables'
+import { playlistFolderStore } from '@/stores/playlistFolderStore'
+import { playlistStore } from '@/stores/playlistStore'
+import { useDialogBox } from '@/composables/useDialogBox'
+import { useErrorHandler } from '@/composables/useErrorHandler'
+import { useMessageToaster } from '@/composables/useMessageToaster'
+import { useModal } from '@/composables/useModal'
+import { useOverlay } from '@/composables/useOverlay'
+import { useSmartPlaylistForm } from '@/composables/useSmartPlaylistForm'
+import { useRouter } from '@/composables/useRouter'
+import { useKoelPlus } from '@/composables/useKoelPlus'
 
 import CheckBox from '@/components/ui/form/CheckBox.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'

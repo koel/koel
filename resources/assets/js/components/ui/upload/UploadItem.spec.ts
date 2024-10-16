@@ -1,8 +1,8 @@
 import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
 import { screen } from '@testing-library/vue'
-import type { UploadFile, UploadStatus } from '@/services'
-import { uploadService } from '@/services'
+import UnitTestCase from '@/__tests__/UnitTestCase'
+import type { UploadFile, UploadStatus } from '@/services/uploadService'
+import { uploadService } from '@/services/uploadService'
 import Btn from '@/components/ui/form/Btn.vue'
 import UploadItem from './UploadItem.vue'
 

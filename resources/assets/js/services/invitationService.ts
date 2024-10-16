@@ -1,6 +1,7 @@
-import type { CompositeToken } from '@/services'
-import { authService, http } from '@/services'
-import { userStore } from '@/stores'
+import type { CompositeToken } from '@/services/authService'
+import { authService } from '@/services/authService'
+import { http } from '@/services/http'
+import { userStore } from '@/stores/userStore'
 
 export const invitationService = {
   getUserProspect: async (token: string) => await http.get<User>(`invitations?token=${token}`),

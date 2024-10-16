@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { commonStore } from '@/stores'
+import { commonStore } from '@/stores/commonStore'
 import AboutKoelButton from './AboutKoelButton.vue'
 
 new class extends UnitTestCase {

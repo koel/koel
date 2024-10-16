@@ -114,10 +114,13 @@ import isMobile from 'ismobilejs'
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons'
 import type { Ref } from 'vue'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
-import { arrayify, eventBus, getPlayableCollectionContentType, requireInjection } from '@/utils'
-import { preferenceStore as preferences, queueStore } from '@/stores'
-import { useDraggable, useDroppable } from '@/composables'
-import { playbackService } from '@/services'
+import { eventBus } from '@/utils/eventBus'
+import { arrayify, requireInjection } from '@/utils/helpers'
+import { getPlayableCollectionContentType } from '@/utils/typeGuards'
+import { preferenceStore as preferences } from '@/stores/preferenceStore'
+import { queueStore } from '@/stores/queueStore'
+import { useDraggable, useDroppable } from '@/composables/useDragAndDrop'
+import { playbackService } from '@/services/playbackService'
 import {
   PlayableListConfigKey,
   PlayableListContextKey,

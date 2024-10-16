@@ -1,5 +1,5 @@
-import { audioService } from '@/services'
-import { logger } from '@/utils'
+import { audioService } from '@/services/audioService'
+import { logger } from '@/utils/logger'
 import shaders from './shaders'
 
 export const init = async (container: HTMLElement) => {

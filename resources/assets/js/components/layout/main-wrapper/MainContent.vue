@@ -40,9 +40,11 @@
 
 <script lang="ts" setup>
 import { defineAsyncComponent, onMounted, ref, toRef } from 'vue'
-import { isSong, requireInjection } from '@/utils'
-import { preferenceStore } from '@/stores'
-import { useRouter, useThirdPartyServices } from '@/composables'
+import { isSong } from '@/utils/typeGuards'
+import { requireInjection } from '@/utils/helpers'
+import { preferenceStore } from '@/stores/preferenceStore'
+import { useRouter } from '@/composables/useRouter'
+import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 import { CurrentPlayableKey } from '@/symbols'
 
 import HomeScreen from '@/components/screens/HomeScreen.vue'

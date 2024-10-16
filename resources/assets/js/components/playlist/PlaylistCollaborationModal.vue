@@ -35,13 +35,15 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue'
-import { useAuthorization, useModal } from '@/composables'
+import { useAuthorization } from '@/composables/useAuthorization'
+import { useModal } from '@/composables/useModal'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import InviteCollaborators from '@/components/playlist/InvitePlaylistCollaborators.vue'
 import CollaboratorList from '@/components/playlist/PlaylistCollaboratorList.vue'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
+
 const playlist = useModal().getFromContext<Playlist>('playlist')
 const { currentUser } = useAuthorization()
 

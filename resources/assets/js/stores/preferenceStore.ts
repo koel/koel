@@ -1,5 +1,5 @@
 import { reactive, ref } from 'vue'
-import { http } from '@/services'
+import { http } from '@/services/http'
 
 export const defaultPreferences: UserPreferences = {
   volume: 7,

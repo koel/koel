@@ -1,8 +1,8 @@
 import { it } from 'vitest'
 import { screen, waitFor } from '@testing-library/vue'
 import factory from '@/__tests__/factory'
-import { eventBus } from '@/utils'
-import type { Events } from '@/config'
+import { eventBus } from '@/utils/eventBus'
+import type { Events } from '@/config/events'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import ModalWrapper from './ModalWrapper.vue'
 

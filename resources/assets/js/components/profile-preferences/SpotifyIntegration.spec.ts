@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { commonStore } from '@/stores'
-import SpotifyIntegration from './SpotifyIntegration.vue'
+import { commonStore } from '@/stores/commonStore'
+import Component from './SpotifyIntegration.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -16,7 +16,7 @@ new class extends UnitTestCase {
           this.be()
         }
 
-        expect(this.render(SpotifyIntegration).html()).toMatchSnapshot()
+        expect(this.render(Component).html()).toMatchSnapshot()
       },
     )
   }

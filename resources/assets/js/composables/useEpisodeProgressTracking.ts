@@ -1,5 +1,5 @@
-import { eventBus } from '@/utils'
-import { podcastStore } from '@/stores'
+import { eventBus } from '@/utils/eventBus'
+import { podcastStore } from '@/stores/podcastStore'
 
 let progressTrackedEpisode: Episode | null = null
 

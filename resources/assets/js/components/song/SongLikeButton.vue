@@ -9,7 +9,7 @@
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import { faHeart as faEmptyHeart } from '@fortawesome/free-regular-svg-icons'
 import { computed, toRefs } from 'vue'
-import { favoriteStore } from '@/stores'
+import { favoriteStore } from '@/stores/favoriteStore'
 
 import FooterExtraControlBtn from '@/components/layout/app-footer/FooterButton.vue'
 

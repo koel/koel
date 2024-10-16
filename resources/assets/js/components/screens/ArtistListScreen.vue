@@ -36,8 +36,13 @@
 <script lang="ts" setup>
 import { faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRef, watch } from 'vue'
-import { artistStore, commonStore, preferenceStore as preferences } from '@/stores'
-import { useAuthorization, useErrorHandler, useInfiniteScroll, useRouter } from '@/composables'
+import { preferenceStore as preferences } from '@/stores/preferenceStore'
+import { artistStore } from '@/stores/artistStore'
+import { commonStore } from '@/stores/commonStore'
+import { useRouter } from '@/composables/useRouter'
+import { useErrorHandler } from '@/composables/useErrorHandler'
+import { useInfiniteScroll } from '@/composables/useInfiniteScroll'
+import { useAuthorization } from '@/composables/useAuthorization'
 
 import ArtistCard from '@/components/artist/ArtistCard.vue'
 import ArtistCardSkeleton from '@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'

@@ -24,9 +24,11 @@
 <script lang="ts" setup>
 import { faVolumeHigh, faVolumeLow, faVolumeMute } from '@fortawesome/free-solid-svg-icons'
 import { computed, onMounted, ref } from 'vue'
-import { socketService, volumeManager } from '@/services'
-import { preferenceStore } from '@/stores'
 import { watchThrottled } from '@vueuse/core'
+import { socketService } from '@/services/socketService'
+import { volumeManager } from '@/services/volumeManager'
+import { preferenceStore } from '@/stores/preferenceStore'
+
 import FooterExtraControlBtn from '@/components/layout/app-footer/FooterButton.vue'
 
 const inputEl = ref<HTMLInputElement>()

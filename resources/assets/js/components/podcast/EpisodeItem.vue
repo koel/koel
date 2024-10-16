@@ -54,11 +54,14 @@ import DOMPurify from 'dompurify'
 import { orderBy } from 'lodash'
 import { faBookmark, faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, toRefs } from 'vue'
-import { eventBus, secondsToHumanReadable } from '@/utils'
-import { useDraggable } from '@/composables'
+import { eventBus } from '@/utils/eventBus'
+import { secondsToHumanReadable } from '@/utils/formatters'
+import { useDraggable } from '@/composables/useDragAndDrop'
 import { formatTimeAgo } from '@vueuse/core'
-import { playbackService } from '@/services'
-import { songStore as episodeStore, preferenceStore as preferences, queueStore } from '@/stores'
+import { playbackService } from '@/services/playbackService'
+import { songStore as episodeStore } from '@/stores/songStore'
+import { queueStore } from '@/stores/queueStore'
+import { preferenceStore as preferences } from '@/stores/preferenceStore'
 
 const props = defineProps<{ episode: Episode, podcast: Podcast }>()
 

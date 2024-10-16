@@ -1,8 +1,6 @@
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { expect, it } from 'vitest'
-import type {
-  ServerValidationError,
-} from './formatters'
+import type { ServerValidationError } from './formatters'
 import {
   br2nl,
   parseValidationError,

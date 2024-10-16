@@ -39,9 +39,11 @@
 
 <script lang="ts" setup>
 import { computed, onMounted, ref, toRef } from 'vue'
-import { searchStore } from '@/stores'
-import { useRouter, useSongList, useSongListControls } from '@/composables'
-import { pluralize } from '@/utils'
+import { searchStore } from '@/stores/searchStore'
+import { useSongList } from '@/composables/useSongList'
+import { useSongListControls } from '@/composables/useSongListControls'
+import { useRouter } from '@/composables/useRouter'
+import { pluralize } from '@/utils/formatters'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'

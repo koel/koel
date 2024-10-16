@@ -1,7 +1,8 @@
 import type { Ref } from 'vue'
-import { favoriteStore, queueStore } from '@/stores'
-import { usePlaylistManagement } from '@/composables'
-import { eventBus } from '@/utils'
+import { favoriteStore } from '@/stores/favoriteStore'
+import { queueStore } from '@/stores/queueStore'
+import { eventBus } from '@/utils/eventBus'
+import { usePlaylistManagement } from '@/composables/usePlaylistManagement'
 
 export const usePlayableMenuMethods = (playables: Ref<Playable[]>, close: Closure) => {
   const { addToPlaylist } = usePlaylistManagement()

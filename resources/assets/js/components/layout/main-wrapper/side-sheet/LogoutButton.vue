@@ -6,7 +6,7 @@
 
 <script lang="ts" setup>
 import { faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons'
-import { eventBus } from '@/utils'
+import { eventBus } from '@/utils/eventBus'
 
 import SideSheetButton from '@/components/layout/main-wrapper/side-sheet/SideSheetButton.vue'
 

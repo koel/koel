@@ -29,7 +29,7 @@ trait CreatesApplication
 
         $artisan->bootstrap();
 
-        // Unless the DB is stored in memory, we need to migrate the DB only once for the whole test suite.
+        // We need to migrate the DB only once for the whole test suite.
         if (!TestCase::$migrated || DB::connection()->getDatabaseName() === ':memory:') {
             $artisan->call('migrate');
 

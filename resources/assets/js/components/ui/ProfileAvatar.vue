@@ -16,7 +16,8 @@
 </template>
 
 <script lang="ts" setup>
-import { useAuthorization } from '@/composables'
+import { useAuthorization } from '@/composables/useAuthorization'
+
 import UserAvatar from '@/components/user/UserAvatar.vue'
 
 const { currentUser } = useAuthorization()

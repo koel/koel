@@ -1,8 +1,9 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
-import { authService, http } from '@/services'
-import { userStore } from '@/stores'
+import { authService } from '@/services/authService'
+import { http } from '@/services/http'
+import { userStore } from '@/stores/userStore'
 import { invitationService } from './invitationService'
 
 new class extends UnitTestCase {

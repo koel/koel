@@ -1,7 +1,7 @@
 import { merge } from 'lodash'
-import { http } from '@/services'
-import { userStore } from '@/stores'
-import { useLocalStorage } from '@/composables'
+import { http } from '@/services/http'
+import { userStore } from '@/stores/userStore'
+import { useLocalStorage } from '@/composables/useLocalStorage'
 
 export interface UpdateCurrentProfileData {
   current_password: string | null

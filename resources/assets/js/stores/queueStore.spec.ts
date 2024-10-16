@@ -1,9 +1,10 @@
-import factory from '@/__tests__/factory'
 import { reactive } from 'vue'
-import UnitTestCase from '@/__tests__/UnitTestCase'
 import { expect, it } from 'vitest'
-import { http } from '@/services'
-import { queueStore, songStore } from '.'
+import UnitTestCase from '@/__tests__/UnitTestCase'
+import factory from '@/__tests__/factory'
+import { http } from '@/services/http'
+import { songStore } from '@/stores/songStore'
+import { queueStore } from '@/stores/queueStore'
 
 let playables: Playable[]
 

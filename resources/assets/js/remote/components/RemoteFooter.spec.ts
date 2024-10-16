@@ -2,7 +2,7 @@ import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
-import { socketService } from '@/services'
+import { socketService } from '@/services/socketService'
 import Component from './RemoteFooter.vue'
 
 new class extends UnitTestCase {

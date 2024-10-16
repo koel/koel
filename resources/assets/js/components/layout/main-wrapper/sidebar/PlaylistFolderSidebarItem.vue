@@ -43,9 +43,10 @@
 <script lang="ts" setup>
 import { faFolder, faFolderOpen } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRefs } from 'vue'
-import { playlistFolderStore, playlistStore } from '@/stores'
-import { eventBus } from '@/utils'
-import { useDraggable, useDroppable } from '@/composables'
+import { playlistFolderStore } from '@/stores/playlistFolderStore'
+import { playlistStore } from '@/stores/playlistStore'
+import { eventBus } from '@/utils/eventBus'
+import { useDraggable, useDroppable } from '@/composables/useDragAndDrop'
 
 import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
 import SidebarItem from './SidebarItem.vue'

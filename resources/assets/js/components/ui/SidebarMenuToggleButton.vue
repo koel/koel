@@ -8,7 +8,7 @@
 <script lang="ts" setup>
 import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { ref } from 'vue'
-import { eventBus } from '@/utils'
+import { eventBus } from '@/utils/eventBus'
 
 import SideSheetButton from '@/components/layout/main-wrapper/side-sheet/SideSheetButton.vue'
 

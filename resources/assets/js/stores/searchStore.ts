@@ -1,6 +1,8 @@
 import { reactive } from 'vue'
-import { http } from '@/services'
-import { albumStore, artistStore, songStore } from '@/stores'
+import { http } from '@/services/http'
+import { albumStore } from '@/stores/albumStore'
+import { artistStore } from '@/stores/artistStore'
+import { songStore } from '@/stores/songStore'
 
 interface ExcerptState {
   playables: Playable[]
