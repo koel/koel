@@ -1,9 +1,9 @@
 import { expect, it } from 'vitest'
+import { screen } from '@testing-library/vue'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { commonStore } from '@/stores'
-import { screen } from '@testing-library/vue'
-import { mediaInfoService } from '@/services'
+import { commonStore } from '@/stores/commonStore'
+import { mediaInfoService } from '@/services/mediaInfoService'
 import ArtistInfoComponent from './ArtistInfo.vue'
 
 let artist: Artist

@@ -1,6 +1,6 @@
 import type { Ref } from 'vue'
 import { ref } from 'vue'
-import { noop } from '@/utils'
+import { noop } from '@/utils/helpers'
 
 import type MessageToaster from '@/components/ui/message-toaster/MessageToaster.vue'
 import type DialogBox from '@/components/ui/DialogBox.vue'

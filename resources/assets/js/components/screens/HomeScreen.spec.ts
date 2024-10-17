@@ -1,9 +1,10 @@
+import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { commonStore, overviewStore } from '@/stores'
-import type { Events } from '@/config'
-import { eventBus } from '@/utils'
-import { screen } from '@testing-library/vue'
+import { commonStore } from '@/stores/commonStore'
+import { overviewStore } from '@/stores/overviewStore'
+import type { Events } from '@/config/events'
+import { eventBus } from '@/utils/eventBus'
 import HomeScreen from './HomeScreen.vue'
 
 new class extends UnitTestCase {

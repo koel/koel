@@ -12,7 +12,7 @@
 <script lang="ts" setup>
 import { orderBy } from 'lodash'
 import { onMounted, ref } from 'vue'
-import { http } from '@/services'
+import { http } from '@/services/http'
 
 interface DemoCredits {
   name: string

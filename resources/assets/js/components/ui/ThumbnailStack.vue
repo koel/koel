@@ -17,7 +17,7 @@
 <script lang="ts" setup>
 import { take } from 'lodash'
 import { computed, toRefs } from 'vue'
-import { defaultCover } from '@/utils'
+import defaultCover from '@/../img/covers/default.svg'
 
 const props = defineProps<{ thumbnails: string[] }>()
 

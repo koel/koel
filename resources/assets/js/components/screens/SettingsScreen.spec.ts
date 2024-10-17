@@ -1,9 +1,9 @@
-import Router from '@/router'
+import { screen, waitFor } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { settingStore } from '@/stores'
-import { screen, waitFor } from '@testing-library/vue'
+import { settingStore } from '@/stores/settingStore'
 import { DialogBoxStub } from '@/__tests__/stubs'
+import Router from '@/router'
 import SettingsScreen from './SettingsScreen.vue'
 
 new class extends UnitTestCase {

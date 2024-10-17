@@ -25,9 +25,11 @@
 import { faClockRotateLeft, faHeart, faUsers, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
 import { ListMusicIcon } from 'lucide-vue-next'
 import { computed, ref, toRefs } from 'vue'
-import { eventBus } from '@/utils'
-import { favoriteStore } from '@/stores'
-import { useDraggable, useDroppable, usePlaylistManagement, useRouter } from '@/composables'
+import { eventBus } from '@/utils/eventBus'
+import { useRouter } from '@/composables/useRouter'
+import { favoriteStore } from '@/stores/favoriteStore'
+import { useDraggable, useDroppable } from '@/composables/useDragAndDrop'
+import { usePlaylistManagement } from '@/composables/usePlaylistManagement'
 
 import SidebarItem from '@/components/layout/main-wrapper/sidebar/SidebarItem.vue'
 

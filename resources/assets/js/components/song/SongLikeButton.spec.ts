@@ -1,8 +1,8 @@
-import { expect, it } from 'vitest'
-import factory from '@/__tests__/factory'
 import { screen } from '@testing-library/vue'
-import { favoriteStore } from '@/stores'
+import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
+import factory from '@/__tests__/factory'
+import { favoriteStore } from '@/stores/favoriteStore'
 import Component from './SongLikeButton.vue'
 
 new class extends UnitTestCase {

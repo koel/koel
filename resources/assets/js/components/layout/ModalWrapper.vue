@@ -10,7 +10,8 @@
 
 <script lang="ts" setup>
 import { defineAsyncComponent, ref, watch } from 'vue'
-import { arrayify, eventBus, provideReadonly } from '@/utils'
+import { arrayify, provideReadonly } from '@/utils/helpers'
+import { eventBus } from '@/utils/eventBus'
 import { ModalContextKey } from '@/symbols'
 
 const modalNameToComponentMap = {

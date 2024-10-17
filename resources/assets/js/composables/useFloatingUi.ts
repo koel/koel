@@ -2,7 +2,7 @@ import type { Ref } from 'vue'
 import { isRef } from 'vue'
 import type { Placement } from '@floating-ui/dom'
 import { arrow as arrowMiddleware, autoUpdate, flip, offset } from '@floating-ui/dom'
-import { updateFloatingUi } from '@/utils'
+import { updateFloatingUi } from '@/utils/floatingUi'
 
 export interface Config {
   placement: Placement

@@ -1,10 +1,13 @@
 import { computed } from 'vue'
-import { commonStore } from '@/stores'
-import { acceptedMediaTypes } from '@/config'
-import type { UploadFile } from '@/services'
-import { uploadService } from '@/services'
-import { getAllFileEntries, pluralize } from '@/utils'
-import { useMessageToaster, usePolicies, useRouter } from '@/composables'
+import { commonStore } from '@/stores/commonStore'
+import { acceptedMediaTypes } from '@/config/acceptedMediaTypes'
+import type { UploadFile } from '@/services/uploadService'
+import { uploadService } from '@/services/uploadService'
+import { getAllFileEntries } from '@/utils/directoryReader'
+import { pluralize } from '@/utils/formatters'
+import { useRouter } from '@/composables/useRouter'
+import { useMessageToaster } from '@/composables/useMessageToaster'
+import { usePolicies } from '@/composables/usePolicies'
 
 export const useUpload = () => {
   const { toastSuccess, toastWarning } = useMessageToaster()

@@ -2,9 +2,9 @@
   <div>
     <h4
       v-if="showDisc && item.playable.disc"
-      class="title text-k-text-primary !flex gap-2 p-2"
+      class="title text-k-text-primary !flex gap-2 p-2 uppercase"
     >
-      DISC {{ item.playable.disc }}
+      Disc {{ item.playable.disc }}
     </h4>
 
     <article
@@ -53,8 +53,11 @@
 <script lang="ts" setup>
 import { faPodcast } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs, withDefaults } from 'vue'
-import { getPlayableProp, isSong, requireInjection, secondsToHis } from '@/utils'
-import { useAuthorization, useKoelPlus } from '@/composables'
+import { getPlayableProp, requireInjection } from '@/utils/helpers'
+import { isSong } from '@/utils/typeGuards'
+import { secondsToHis } from '@/utils/formatters'
+import { useAuthorization } from '@/composables/useAuthorization'
+import { useKoelPlus } from '@/composables/useKoelPlus'
 import { PlayableListConfigKey } from '@/symbols'
 
 import LikeButton from '@/components/song/SongLikeButton.vue'

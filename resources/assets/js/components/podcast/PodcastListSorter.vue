@@ -33,7 +33,7 @@
 import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons'
 import { OnClickOutside } from '@vueuse/components'
 import { computed, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
-import { useFloatingUi } from '@/composables'
+import { useFloatingUi } from '@/composables/useFloatingUi'
 
 const props = withDefaults(defineProps<{
   field?: PodcastListSortField

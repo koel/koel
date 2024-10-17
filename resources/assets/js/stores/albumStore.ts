@@ -1,8 +1,10 @@
 import { reactive } from 'vue'
 import { differenceBy, merge, unionBy } from 'lodash'
-import { cache, http } from '@/services'
-import { arrayify, logger } from '@/utils'
-import { songStore } from '@/stores'
+import { cache } from '@/services/cache'
+import { http } from '@/services/http'
+import { arrayify } from '@/utils/helpers'
+import { logger } from '@/utils/logger'
+import { songStore } from '@/stores/songStore'
 
 const UNKNOWN_ALBUM_ID = 1
 

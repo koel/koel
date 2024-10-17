@@ -26,8 +26,8 @@
 import slugify from 'slugify'
 import { faInfoCircle, faRotateBack, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, toRefs } from 'vue'
-import type { UploadFile } from '@/services'
-import { uploadService } from '@/services'
+import type { UploadFile } from '@/services/uploadService'
+import { uploadService } from '@/services/uploadService'
 
 const props = defineProps<{ file: UploadFile }>()
 

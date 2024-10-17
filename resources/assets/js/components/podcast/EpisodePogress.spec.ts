@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import Component from './EpisodeProgress.vue'
 import factory from '@/__tests__/factory'
+import Component from './EpisodeProgress.vue'
 
 new class extends UnitTestCase {
   protected test () {

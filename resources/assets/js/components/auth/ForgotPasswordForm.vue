@@ -23,8 +23,9 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { authService } from '@/services'
-import { useErrorHandler, useMessageToaster } from '@/composables'
+import { authService } from '@/services/authService'
+import { useErrorHandler } from '@/composables/useErrorHandler'
+import { useMessageToaster } from '@/composables/useMessageToaster'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'

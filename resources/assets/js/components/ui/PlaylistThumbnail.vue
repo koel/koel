@@ -27,11 +27,14 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, toRefs } from 'vue'
-import { defaultCover } from '@/utils'
-import { playlistStore } from '@/stores'
-import { useErrorHandler, useFileReader, useMessageToaster, usePolicies } from '@/composables'
 import { faTrash, faUpload } from '@fortawesome/free-solid-svg-icons'
+import { computed, toRefs } from 'vue'
+import defaultCover from '@/../img/covers/default.svg'
+import { playlistStore } from '@/stores/playlistStore'
+import { useErrorHandler } from '@/composables/useErrorHandler'
+import { useFileReader } from '@/composables/useFileReader'
+import { useMessageToaster } from '@/composables/useMessageToaster'
+import { usePolicies } from '@/composables/usePolicies'
 
 const props = defineProps<{ playlist: Playlist }>()
 const { playlist } = toRefs(props)

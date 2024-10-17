@@ -28,8 +28,11 @@
 
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
-import { useDialogBox, useErrorHandler, useMessageToaster, useOverlay } from '@/composables'
-import { invitationService } from '@/services'
+import { invitationService } from '@/services/invitationService'
+import { useDialogBox } from '@/composables/useDialogBox'
+import { useErrorHandler } from '@/composables/useErrorHandler'
+import { useMessageToaster } from '@/composables/useMessageToaster'
+import { useOverlay } from '@/composables/useOverlay'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import TooltipIcon from '@/components/ui/TooltipIcon.vue'

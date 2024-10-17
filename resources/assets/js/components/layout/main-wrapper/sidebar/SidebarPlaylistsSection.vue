@@ -16,7 +16,9 @@
 
 <script lang="ts" setup>
 import { computed, toRef } from 'vue'
-import { favoriteStore, playlistFolderStore, playlistStore } from '@/stores'
+import { favoriteStore } from '@/stores/favoriteStore'
+import { playlistFolderStore } from '@/stores/playlistFolderStore'
+import { playlistStore } from '@/stores/playlistStore'
 
 import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
 import PlaylistFolderSidebarItem from './PlaylistFolderSidebarItem.vue'

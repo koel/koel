@@ -15,10 +15,12 @@
 <script lang="ts" setup>
 import type { Ref } from 'vue'
 import { computed, defineAsyncComponent, toRefs } from 'vue'
-import { songStore } from '@/stores'
-import { authService, playbackService } from '@/services'
-import { useThirdPartyServices } from '@/composables'
-import { requireInjection, secondsToHis } from '@/utils'
+import { songStore } from '@/stores/songStore'
+import { authService } from '@/services/authService'
+import { playbackService } from '@/services/playbackService'
+import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
+import { requireInjection } from '@/utils/helpers'
+import { secondsToHis } from '@/utils/formatters'
 import { PlayablesKey } from '@/symbols'
 
 const props = defineProps<{ album: Album, track: AlbumTrack }>()

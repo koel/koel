@@ -63,8 +63,10 @@
 </template>
 
 <script lang="ts" setup>
-import { useAuthorization, useKoelPlus, useNewVersionNotification } from '@/composables'
-import { eventBus } from '@/utils'
+import { useAuthorization } from '@/composables/useAuthorization'
+import { useKoelPlus } from '@/composables/useKoelPlus'
+import { useNewVersionNotification } from '@/composables/useNewVersionNotification'
+import { eventBus } from '@/utils/eventBus'
 
 import SponsorList from '@/components/meta/SponsorList.vue'
 import Btn from '@/components/ui/form/Btn.vue'

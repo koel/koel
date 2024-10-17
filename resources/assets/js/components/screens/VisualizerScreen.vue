@@ -33,8 +33,9 @@
 import { faUpRightFromSquare } from '@fortawesome/free-solid-svg-icons'
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useFullscreen } from '@vueuse/core'
-import { logger } from '@/utils'
-import { preferenceStore as preferences, visualizerStore } from '@/stores'
+import { logger } from '@/utils/logger'
+import { preferenceStore as preferences } from '@/stores/preferenceStore'
+import { visualizerStore } from '@/stores/visualizerStore'
 
 import SelectBox from '@/components/ui/form/SelectBox.vue'
 

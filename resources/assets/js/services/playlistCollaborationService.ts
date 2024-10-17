@@ -1,4 +1,5 @@
-import { cache, http } from '@/services'
+import { cache } from '@/services/cache'
+import { http } from '@/services/http'
 
 export const playlistCollaborationService = {
   async createInviteLink (playlist: Playlist) {

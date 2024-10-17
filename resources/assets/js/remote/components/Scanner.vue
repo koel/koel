@@ -16,7 +16,7 @@
 
 <script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue'
-import { socketService } from '@/services'
+import { socketService } from '@/services/socketService'
 
 const MAX_RETRIES = 10
 const connected = ref(false)

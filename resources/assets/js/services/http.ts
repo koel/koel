@@ -1,8 +1,8 @@
 import type { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, Method } from 'axios'
 import Axios from 'axios'
 import NProgress from 'nprogress'
-import { eventBus } from '@/utils'
-import { authService } from '@/services'
+import { eventBus } from '@/utils/eventBus'
+import { authService } from '@/services/authService'
 
 class Http {
   client: AxiosInstance

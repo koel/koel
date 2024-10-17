@@ -1,8 +1,8 @@
 import { expect, it } from 'vitest'
-import { preferenceStore } from '@/stores'
-import UnitTestCase from '@/__tests__/UnitTestCase'
 import { screen } from '@testing-library/vue'
-import { playbackService } from '@/services'
+import UnitTestCase from '@/__tests__/UnitTestCase'
+import { preferenceStore } from '@/stores/preferenceStore'
+import { playbackService } from '@/services/playbackService'
 import RepeatModeSwitch from './RepeatModeSwitch.vue'
 
 new class extends UnitTestCase {

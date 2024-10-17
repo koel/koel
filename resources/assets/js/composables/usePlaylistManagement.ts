@@ -1,6 +1,8 @@
-import { playlistStore } from '@/stores'
-import { eventBus, getPlayableCollectionContentType } from '@/utils'
-import { useErrorHandler, useMessageToaster } from '@/composables'
+import { playlistStore } from '@/stores/playlistStore'
+import { eventBus } from '@/utils/eventBus'
+import { getPlayableCollectionContentType } from '@/utils/typeGuards'
+import { useErrorHandler } from '@/composables/useErrorHandler'
+import { useMessageToaster } from '@/composables/useMessageToaster'
 
 export const usePlaylistManagement = () => {
   const { handleHttpError } = useErrorHandler('dialog')

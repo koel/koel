@@ -46,9 +46,9 @@
 <script lang="ts" setup>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, onMounted, toRef } from 'vue'
-import { userStore } from '@/stores'
-import { eventBus } from '@/utils'
-import { useAuthorization } from '@/composables'
+import { userStore } from '@/stores/userStore'
+import { eventBus } from '@/utils/eventBus'
+import { useAuthorization } from '@/composables/useAuthorization'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import UserCard from '@/components/user/UserCard.vue'

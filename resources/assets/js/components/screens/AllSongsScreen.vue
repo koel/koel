@@ -63,17 +63,17 @@
 <script lang="ts" setup>
 import { faVolumeOff } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRef, watch } from 'vue'
-import { pluralize, secondsToHumanReadable } from '@/utils'
-import { commonStore, queueStore, songStore } from '@/stores'
-import { playbackService } from '@/services'
-import {
-  useErrorHandler,
-  useKoelPlus,
-  useLocalStorage,
-  useRouter,
-  useSongList,
-  useSongListControls,
-} from '@/composables'
+import { pluralize, secondsToHumanReadable } from '@/utils/formatters'
+import { commonStore } from '@/stores/commonStore'
+import { queueStore } from '@/stores/queueStore'
+import { songStore } from '@/stores/songStore'
+import { playbackService } from '@/services/playbackService'
+import { useRouter } from '@/composables/useRouter'
+import { useErrorHandler } from '@/composables/useErrorHandler'
+import { useKoelPlus } from '@/composables/useKoelPlus'
+import { useLocalStorage } from '@/composables/useLocalStorage'
+import { useSongList } from '@/composables/useSongList'
+import { useSongListControls } from '@/composables/useSongListControls'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'

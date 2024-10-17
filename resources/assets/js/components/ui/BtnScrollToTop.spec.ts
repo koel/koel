@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
-import { $ } from '@/utils'
 import UnitTestCase from '@/__tests__/UnitTestCase'
+import { $ } from '@/utils/$'
 import BtnScrollToTop from './BtnScrollToTop.vue'
 
 new class extends UnitTestCase {

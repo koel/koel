@@ -1,5 +1,5 @@
 import { computed, toRef } from 'vue'
-import { userStore } from '@/stores'
+import { userStore } from '@/stores/userStore'
 
 export const useAuthorization = () => {
   const currentUser = toRef(userStore.state, 'current')

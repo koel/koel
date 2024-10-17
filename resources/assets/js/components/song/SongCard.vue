@@ -46,9 +46,13 @@
 
 <script lang="ts" setup>
 import { computed, toRefs } from 'vue'
-import { eventBus, isEpisode, isSong, pluralize } from '@/utils'
-import { playbackService } from '@/services'
-import { useAuthorization, useDraggable, useKoelPlus } from '@/composables'
+import { isEpisode, isSong } from '@/utils/typeGuards'
+import { eventBus } from '@/utils/eventBus'
+import { pluralize } from '@/utils/formatters'
+import { playbackService } from '@/services/playbackService'
+import { useAuthorization } from '@/composables/useAuthorization'
+import { useDraggable } from '@/composables/useDragAndDrop'
+import { useKoelPlus } from '@/composables/useKoelPlus'
 
 import SongThumbnail from '@/components/song/SongThumbnail.vue'
 import LikeButton from '@/components/song/SongLikeButton.vue'

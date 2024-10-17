@@ -20,9 +20,11 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
-import { defaultCover, getPlayableProp, isSong, requireInjection } from '@/utils'
+import defaultCover from '@/../img/covers/default.svg'
+import { getPlayableProp, requireInjection } from '@/utils/helpers'
+import { isSong } from '@/utils/typeGuards'
 import { CurrentPlayableKey } from '@/symbols'
-import { useDraggable } from '@/composables'
+import { useDraggable } from '@/composables/useDragAndDrop'
 
 const { startDragging } = useDraggable('playables')
 

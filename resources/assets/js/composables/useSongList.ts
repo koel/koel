@@ -2,10 +2,14 @@ import { differenceBy, orderBy, sampleSize, take, throttle } from 'lodash'
 import isMobile from 'ismobilejs'
 import type { Ref } from 'vue'
 import { computed, provide, reactive, ref } from 'vue'
-import { playbackService } from '@/services'
-import { commonStore, queueStore, songStore } from '@/stores'
-import { arrayify, eventBus, getPlayableProp, provideReadonly } from '@/utils'
-import { useFuzzySearch, useRouter } from '@/composables'
+import { playbackService } from '@/services/playbackService'
+import { commonStore } from '@/stores/commonStore'
+import { queueStore } from '@/stores/queueStore'
+import { songStore } from '@/stores/songStore'
+import { arrayify, getPlayableProp, provideReadonly } from '@/utils/helpers'
+import { eventBus } from '@/utils/eventBus'
+import { useFuzzySearch } from '@/composables/useFuzzySearch'
+import { useRouter } from '@/composables/useRouter'
 
 import {
   PlayableListConfigKey,

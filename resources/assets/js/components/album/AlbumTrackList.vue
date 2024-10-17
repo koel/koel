@@ -17,7 +17,7 @@
 
 <script lang="ts" setup>
 import { onMounted, provide, ref, toRefs } from 'vue'
-import { songStore } from '@/stores'
+import { songStore } from '@/stores/songStore'
 import { PlayablesKey } from '@/symbols'
 
 import TrackListItem from '@/components/album/AlbumTrackListItem.vue'

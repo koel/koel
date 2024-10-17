@@ -1,8 +1,9 @@
+import { screen } from '@testing-library/vue'
 import { ref } from 'vue'
 import { expect, it } from 'vitest'
-import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { arrayify } from '@/utils'
+import factory from '@/__tests__/factory'
+import { arrayify } from '@/utils/helpers'
 import {
   PlayableListConfigKey,
   PlayableListContextKey,
@@ -11,7 +12,6 @@ import {
   SelectedPlayablesKey,
   SongListSortOrderKey,
 } from '@/symbols'
-import { screen } from '@testing-library/vue'
 import SongList from './SongList.vue'
 
 let songs: Playable[]

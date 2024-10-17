@@ -10,7 +10,7 @@
 
 <script lang="ts" setup>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { eventBus } from '@/utils'
+import { eventBus } from '@/utils/eventBus'
 
 import Btn from '@/components/ui/form/Btn.vue'
 

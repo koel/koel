@@ -16,8 +16,8 @@
 <script lang="ts" setup>
 import { Repeat, Repeat1 } from 'lucide-vue-next'
 import { computed, toRef } from 'vue'
-import { playbackService } from '@/services'
-import { preferenceStore } from '@/stores'
+import { playbackService } from '@/services/playbackService'
+import { preferenceStore } from '@/stores/preferenceStore'
 
 const mode = toRef(preferenceStore.state, 'repeat_mode')
 

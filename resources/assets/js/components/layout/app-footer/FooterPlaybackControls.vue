@@ -22,8 +22,8 @@
 <script lang="ts" setup>
 import { faStepBackward, faStepForward } from '@fortawesome/free-solid-svg-icons'
 import { ref } from 'vue'
-import { playbackService } from '@/services'
-import { requireInjection } from '@/utils'
+import { playbackService } from '@/services/playbackService'
+import { requireInjection } from '@/utils/helpers'
 import { CurrentPlayableKey } from '@/symbols'
 
 import RepeatModeSwitch from '@/components/ui/RepeatModeSwitch.vue'

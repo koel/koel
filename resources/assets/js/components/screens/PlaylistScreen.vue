@@ -74,17 +74,18 @@
 import { faFile } from '@fortawesome/free-regular-svg-icons'
 import { differenceBy } from 'lodash'
 import { ref, watch } from 'vue'
-import { eventBus, pluralize } from '@/utils'
-import { playlistStore, songStore } from '@/stores'
-import { downloadService, playlistCollaborationService } from '@/services'
-import {
-  useAuthorization,
-  useErrorHandler,
-  usePlaylistManagement,
-  useRouter,
-  useSongList,
-  useSongListControls,
-} from '@/composables'
+import { eventBus } from '@/utils/eventBus'
+import { pluralize } from '@/utils/formatters'
+import { playlistStore } from '@/stores/playlistStore'
+import { songStore } from '@/stores/songStore'
+import { downloadService } from '@/services/downloadService'
+import { playlistCollaborationService } from '@/services/playlistCollaborationService'
+import { useRouter } from '@/composables/useRouter'
+import { useAuthorization } from '@/composables/useAuthorization'
+import { useErrorHandler } from '@/composables/useErrorHandler'
+import { usePlaylistManagement } from '@/composables/usePlaylistManagement'
+import { useSongList } from '@/composables/useSongList'
+import { useSongListControls } from '@/composables/useSongListControls'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'

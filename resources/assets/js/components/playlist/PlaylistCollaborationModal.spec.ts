@@ -1,7 +1,7 @@
+import { ref } from 'vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { ref } from 'vue'
 import { ModalContextKey } from '@/symbols'
 import Modal from './PlaylistCollaborationModal.vue'
 

@@ -1,10 +1,11 @@
+import { screen, waitFor } from '@testing-library/vue'
+import { expect, it } from 'vitest'
 import { orderBy } from 'lodash'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
-import { screen, waitFor } from '@testing-library/vue'
-import { queueStore, songStore } from '@/stores'
-import { playbackService } from '@/services'
+import { queueStore } from '@/stores/queueStore'
+import { songStore } from '@/stores/songStore'
+import { playbackService } from '@/services/playbackService'
 import Thumbnail from './AlbumOrArtistThumbnail.vue'
 
 let album: Album

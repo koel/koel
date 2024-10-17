@@ -1,6 +1,7 @@
 import type { Ref } from 'vue'
 import { ref, watch } from 'vue'
-import { forceReloadWindow } from '@/utils'
+
+import { forceReloadWindow } from '@/utils/helpers'
 
 type RouteParams = Record<string, string>
 type ResolveHook = (params: RouteParams) => Promise<boolean | void> | boolean | void

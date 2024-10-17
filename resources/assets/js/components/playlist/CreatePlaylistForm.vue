@@ -34,9 +34,16 @@
 
 <script lang="ts" setup>
 import { computed, ref, toRef } from 'vue'
-import { playlistFolderStore, playlistStore } from '@/stores'
-import { getPlayableCollectionContentType, pluralize } from '@/utils'
-import { useDialogBox, useErrorHandler, useMessageToaster, useModal, useOverlay, useRouter } from '@/composables'
+import { playlistFolderStore } from '@/stores/playlistFolderStore'
+import { playlistStore } from '@/stores/playlistStore'
+import { getPlayableCollectionContentType } from '@/utils/typeGuards'
+import { pluralize } from '@/utils/formatters'
+import { useRouter } from '@/composables/useRouter'
+import { useDialogBox } from '@/composables/useDialogBox'
+import { useErrorHandler } from '@/composables/useErrorHandler'
+import { useMessageToaster } from '@/composables/useMessageToaster'
+import { useModal } from '@/composables/useModal'
+import { useOverlay } from '@/composables/useOverlay'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
@@ -44,6 +51,7 @@ import FormRow from '@/components/ui/form/FormRow.vue'
 import SelectBox from '@/components/ui/form/SelectBox.vue'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
+
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()

@@ -1,11 +1,11 @@
 import { expect, it } from 'vitest'
+import { ref } from 'vue'
 import { screen } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { playlistStore } from '@/stores'
 import factory from '@/__tests__/factory'
-import { ref } from 'vue'
+import { playlistStore } from '@/stores/playlistStore'
 import { ModalContextKey } from '@/symbols'
-import CreatePlaylistForm from './CreatePlaylistForm.vue'
+import Component from './CreatePlaylistForm.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -13,7 +13,7 @@ new class extends UnitTestCase {
       const folder = factory('playlist-folder')
       const storeMock = this.mock(playlistStore, 'store').mockResolvedValue(factory('playlist'))
 
-      this.render(CreatePlaylistForm, {
+      this.render(Component, {
         global: {
           provide: {
             [<symbol>ModalContextKey]: [ref({ folder })],
@@ -36,7 +36,7 @@ new class extends UnitTestCase {
       const folder = factory('playlist-folder')
       const storeMock = this.mock(playlistStore, 'store').mockResolvedValue(factory('playlist'))
 
-      this.render(CreatePlaylistForm, {
+      this.render(Component, {
         global: {
           provide: {
             [<symbol>ModalContextKey]: [ref({ folder, playables })],

@@ -1,8 +1,8 @@
 import { reactive } from 'vue'
 import { differenceBy, unionBy } from 'lodash'
-import { http } from '@/services'
-import { arrayify } from '@/utils'
-import { songStore } from '@/stores'
+import { http } from '@/services/http'
+import { arrayify } from '@/utils/helpers'
+import { songStore } from '@/stores/songStore'
 
 export const favoriteStore = {
   state: reactive<{ playables: Playable[] }>({

@@ -1,8 +1,8 @@
 import { expect, it } from 'vitest'
-import factory from '@/__tests__/factory'
-import { http } from '@/services'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { defaultPreferences, preferenceStore } from '.'
+import factory from '@/__tests__/factory'
+import { http } from '@/services/http'
+import { defaultPreferences, preferenceStore } from '@/stores/preferenceStore'
 
 new class extends UnitTestCase {
   protected beforeEach () {

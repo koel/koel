@@ -47,7 +47,7 @@ import { faCompactDisc, faMusic, faPodcast } from '@fortawesome/free-solid-svg-i
 import { GuitarIcon, MicVocalIcon } from 'lucide-vue-next'
 import { unescape } from 'lodash'
 import { ref } from 'vue'
-import { eventBus } from '@/utils'
+import { eventBus } from '@/utils/eventBus'
 
 import SidebarSection from '@/components/layout/main-wrapper/sidebar/SidebarSection.vue'
 import SidebarSectionHeader from '@/components/layout/main-wrapper/sidebar/SidebarSectionHeader.vue'

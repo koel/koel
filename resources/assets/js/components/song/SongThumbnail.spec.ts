@@ -1,9 +1,9 @@
-import { expect, it } from 'vitest'
-import factory from '@/__tests__/factory'
-import UnitTestCase from '@/__tests__/UnitTestCase'
-import { playbackService } from '@/services'
 import { screen } from '@testing-library/vue'
-import { queueStore } from '@/stores'
+import { expect, it } from 'vitest'
+import UnitTestCase from '@/__tests__/UnitTestCase'
+import factory from '@/__tests__/factory'
+import { playbackService } from '@/services/playbackService'
+import { queueStore } from '@/stores/queueStore'
 import Component from './SongThumbnail.vue'
 
 let playable: Playable

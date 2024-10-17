@@ -1,8 +1,8 @@
-import { expect, it } from 'vitest'
-import factory from '@/__tests__/factory'
-import UnitTestCase from '@/__tests__/UnitTestCase'
-import { recentlyPlayedStore } from '@/stores'
 import { screen, waitFor } from '@testing-library/vue'
+import { expect, it } from 'vitest'
+import UnitTestCase from '@/__tests__/UnitTestCase'
+import factory from '@/__tests__/factory'
+import { recentlyPlayedStore } from '@/stores/recentlyPlayedStore'
 import RecentlyPlayedScreen from './RecentlyPlayedScreen.vue'
 
 new class extends UnitTestCase {

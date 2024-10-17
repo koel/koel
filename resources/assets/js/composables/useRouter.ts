@@ -1,6 +1,6 @@
 import { RouterKey } from '@/symbols'
-import { requireInjection } from '@/utils'
 import Router from '@/router'
+import { requireInjection } from '@/utils/helpers'
 
 let router: Router
 

@@ -23,8 +23,8 @@
 
 <script lang="ts" setup>
 import { ref, toRefs, watch } from 'vue'
-import { mediaInfoService } from '@/services'
-import { useThirdPartyServices } from '@/composables'
+import { mediaInfoService } from '@/services/mediaInfoService'
+import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 
 import ArtistThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
 import AlbumArtistInfo from '@/components/ui/album-artist/AlbumOrArtistInfo.vue'

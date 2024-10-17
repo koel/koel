@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import ArtistAlbumCard from './AlbumOrArtistCard.vue'
 import factory from '@/__tests__/factory'
+import ArtistAlbumCard from './AlbumOrArtistCard.vue'
 
 new class extends UnitTestCase {
   protected test () {

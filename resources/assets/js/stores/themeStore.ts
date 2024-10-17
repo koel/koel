@@ -1,6 +1,6 @@
 import { clone } from 'lodash'
 import { reactive } from 'vue'
-import { preferenceStore as preferences } from '@/stores'
+import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import themes from '@/themes'
 
 export const themeStore = {

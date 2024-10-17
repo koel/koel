@@ -89,10 +89,17 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, ref, toRef, watch } from 'vue'
-import { eventBus, pluralize } from '@/utils'
-import { albumStore, artistStore, commonStore, songStore } from '@/stores'
-import { downloadService } from '@/services'
-import { useErrorHandler, useRouter, useSongList, useSongListControls } from '@/composables'
+import { eventBus } from '@/utils/eventBus'
+import { pluralize } from '@/utils/formatters'
+import { albumStore } from '@/stores/albumStore'
+import { artistStore } from '@/stores/artistStore'
+import { commonStore } from '@/stores/commonStore'
+import { songStore } from '@/stores/songStore'
+import { downloadService } from '@/services/downloadService'
+import { useErrorHandler } from '@/composables/useErrorHandler'
+import { useSongList } from '@/composables/useSongList'
+import { useSongListControls } from '@/composables/useSongListControls'
+import { useRouter } from '@/composables/useRouter'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import AlbumThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'

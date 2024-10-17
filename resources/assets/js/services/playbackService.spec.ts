@@ -2,20 +2,18 @@ import { nextTick, reactive } from 'vue'
 import plyr from 'plyr'
 import lodash from 'lodash'
 import { expect, it, vi } from 'vitest'
-import { noop } from '@/utils'
-import factory from '@/__tests__/factory'
+import { noop } from '@/utils/helpers'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { http, socketService } from '@/services'
-import { playbackService } from './playbackService'
-
-import {
-  commonStore,
-  preferenceStore as preferences,
-  queueStore,
-  recentlyPlayedStore,
-  songStore,
-  userStore,
-} from '@/stores'
+import factory from '@/__tests__/factory'
+import { http } from '@/services/http'
+import { socketService } from '@/services/socketService'
+import { preferenceStore as preferences } from '@/stores/preferenceStore'
+import { queueStore } from '@/stores/queueStore'
+import { songStore } from '@/stores/songStore'
+import { userStore } from '@/stores/userStore'
+import { commonStore } from '@/stores/commonStore'
+import { recentlyPlayedStore } from '@/stores/recentlyPlayedStore'
+import { playbackService } from '@/services/playbackService'
 
 new class extends UnitTestCase {
   protected beforeEach () {

@@ -17,13 +17,14 @@
 </template>
 
 <script lang="ts" setup>
-import { unescape } from 'lodash'
 import { faYoutube } from '@fortawesome/free-brands-svg-icons'
+import { unescape } from 'lodash'
 import createYouTubePlayer from 'youtube-player'
 import { ref, watch } from 'vue'
 import type { YouTubePlayer } from 'youtube-player/dist/types'
-import { eventBus, requireInjection, use } from '@/utils'
-import { playbackService } from '@/services'
+import { eventBus } from '@/utils/eventBus'
+import { requireInjection, use } from '@/utils/helpers'
+import { playbackService } from '@/services/playbackService'
 import { CurrentPlayableKey } from '@/symbols'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'

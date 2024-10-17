@@ -35,8 +35,9 @@
 import { faBolt, faCompress, faExpand } from '@fortawesome/free-solid-svg-icons'
 import { AudioLinesIcon } from 'lucide-vue-next'
 import { computed, onMounted, ref } from 'vue'
-import { eventBus, isFullscreenSupported, isAudioContextSupported as useEqualizer } from '@/utils'
-import { useRouter } from '@/composables'
+import { eventBus } from '@/utils/eventBus'
+import { isFullscreenSupported, isAudioContextSupported as useEqualizer } from '@/utils/supports'
+import { useRouter } from '@/composables/useRouter'
 
 import VolumeSlider from '@/components/ui/VolumeSlider.vue'
 import FooterBtn from '@/components/layout/app-footer/FooterButton.vue'

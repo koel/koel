@@ -1,6 +1,6 @@
 import compareVersions from 'compare-versions'
 import { computed, toRef } from 'vue'
-import { commonStore } from '@/stores'
+import { commonStore } from '@/stores/commonStore'
 import { useAuthorization } from '@/composables/useAuthorization'
 
 export const useNewVersionNotification = () => {

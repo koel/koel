@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import SceneInit from './lib/SceneInit'
 import shaders from './lib/shaders'
-import { audioService } from '@/services'
+import { audioService } from '@/services/audioService'
 
 export const init = (container: HTMLElement) => {
   const sceneInit = new SceneInit(container)

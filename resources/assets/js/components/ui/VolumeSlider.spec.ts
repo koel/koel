@@ -1,9 +1,10 @@
 import { expect, it, vi } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
 import { fireEvent, screen } from '@testing-library/vue'
-import { socketService, volumeManager } from '@/services'
+import UnitTestCase from '@/__tests__/UnitTestCase'
+import { socketService } from '@/services/socketService'
+import { volumeManager } from '@/services/volumeManager'
+import { preferenceStore } from '@/stores/preferenceStore'
 import Volume from './VolumeSlider.vue'
-import { preferenceStore } from '@/stores'
 
 new class extends UnitTestCase {
   protected beforeEach () {

@@ -2,8 +2,8 @@ import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { commonStore } from '@/stores'
-import { mediaInfoService } from '@/services'
+import { commonStore } from '@/stores/commonStore'
+import { mediaInfoService } from '@/services/mediaInfoService'
 import AlbumInfoComponent from './AlbumInfo.vue'
 
 let album: Album
