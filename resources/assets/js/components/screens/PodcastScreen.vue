@@ -91,7 +91,7 @@ import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton
 import EpisodeItem from '@/components/podcast/EpisodeItem.vue'
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
 import Btn from '@/components/ui/form/Btn.vue'
-import ListFilter from '@/components/song/SongListFilter.vue'
+import ListFilter from '@/components/song/song-list/SongListFilter.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'
 import EpisodeItemSkeleton from '@/components/ui/skeletons/EpisodeItemSkeleton.vue'
 

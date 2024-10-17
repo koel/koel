@@ -2,23 +2,23 @@
   <div>
     <h4
       v-if="showDisc && item.playable.disc"
-      class="title text-k-text-primary !flex gap-2 p-2 uppercase"
+      class="title text-k-text-primary !flex gap-2 p-2 uppercase pl-5"
     >
       Disc {{ item.playable.disc }}
     </h4>
 
     <article
       :class="{ playing, external, selected: item.selected }"
-      class="song-item group text-k-text-secondary border-b border-k-border !max-w-full h-[64px] flex
-    items-center transition-[background-color,_box-shadow] ease-in-out duration-200
-    focus:rounded-md focus focus-within:rounded-md focus:ring-inset focus:ring-1 focus:!ring-k-accent
-    focus-within:ring-inset focus-within:ring-1 focus-within:!ring-k-accent
-    hover:bg-white/5 hover:ring-inset hover:ring-1 hover:ring-white/10 hover:rounded-md"
+      class="song-item group pl-5 text-k-text-secondary border-b border-k-border !max-w-full h-[64px] flex
+        items-center transition-[background-color,_box-shadow] ease-in-out duration-200
+        focus:rounded-md focus focus-within:rounded-md focus:ring-inset focus:ring-1 focus:!ring-k-accent
+        focus-within:ring-inset focus-within:ring-1 focus-within:!ring-k-accent
+        hover:bg-white/5 hover:ring-inset hover:ring-1 hover:ring-white/10 hover:rounded-md"
       data-testid="song-item"
       tabindex="0"
       @dblclick.prevent.stop="play"
     >
-      <span class="track-number">
+      <span v-if="shouldShowColumn('track')" class="track-number">
         <SoundBars v-if="playable.playback_state === 'Playing'" />
         <span v-else class="text-k-text-secondary">
           <template v-if="isSong(playable)">{{ playable.track || '' }}</template>
@@ -35,14 +35,14 @@
         </span>
         <span class="artist">{{ artist }}</span>
       </span>
-      <span class="album">{{ album }}</span>
+      <span v-if="shouldShowColumn('album')" class="album">{{ album }}</span>
       <template v-if="config.collaborative">
         <span class="collaborator">
           <UserAvatar :user="collaborator" width="24" />
         </span>
         <span :title="playable.collaboration.added_at" class="added-at">{{ playable.collaboration.fmt_added_at }}</span>
       </template>
-      <span class="time">{{ fmtLength }}</span>
+      <span v-if="shouldShowColumn('duration')" class="time">{{ fmtLength }}</span>
       <span class="extra">
         <LikeButton :playable="playable" />
       </span>
@@ -58,6 +58,7 @@ import { isSong } from '@/utils/typeGuards'
 import { secondsToHis } from '@/utils/formatters'
 import { useAuthorization } from '@/composables/useAuthorization'
 import { useKoelPlus } from '@/composables/useKoelPlus'
+import { usePlayableListColumnVisibility } from '@/composables/usePlayableListColumnVisibility'
 import { PlayableListConfigKey } from '@/symbols'
 
 import LikeButton from '@/components/song/SongLikeButton.vue'
@@ -76,6 +77,7 @@ const [config] = requireInjection<[Partial<PlayableListConfig>]>(PlayableListCon
 
 const { currentUser } = useAuthorization()
 const { isPlus } = useKoelPlus()
+const { shouldShowColumn } = usePlayableListColumnVisibility()
 
 const { item } = toRefs(props)
 
