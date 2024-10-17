@@ -15,7 +15,7 @@ use Illuminate\Support\Collection;
 abstract class Repository implements RepositoryInterface
 {
     /** @var class-string<T> $modelClass */
-    protected string $modelClass;
+    public string $modelClass;
 
     protected Guard $auth;
 
