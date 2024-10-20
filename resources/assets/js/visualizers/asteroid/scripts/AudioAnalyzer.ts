@@ -1,4 +1,4 @@
-import { audioService } from '@/services'
+import { audioService } from '@/services/audioService'
 
 export class AudioAnalyzer {
   private bass = 0.0

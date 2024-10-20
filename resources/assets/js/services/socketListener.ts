@@ -1,5 +1,8 @@
-import { playbackService, socketService, volumeManager } from '@/services'
-import { favoriteStore, queueStore } from '@/stores'
+import { playbackService } from '@/services/playbackService'
+import { socketService } from '@/services/socketService'
+import { volumeManager } from '@/services/volumeManager'
+import { favoriteStore } from '@/stores/favoriteStore'
+import { queueStore } from '@/stores/queueStore'
 
 export const socketListener = {
   listen: () => {

@@ -39,7 +39,7 @@
 <script lang="ts" setup>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { defineAsyncComponent, reactive, toRefs } from 'vue'
-import { playlistStore } from '@/stores'
+import { playlistStore } from '@/stores/playlistStore'
 
 const props = defineProps<{ group: SmartPlaylistRuleGroup, isFirstGroup: boolean }>()
 const emit = defineEmits<{ (e: 'input', group: SmartPlaylistRuleGroup): void }>()

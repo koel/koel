@@ -10,7 +10,7 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
-import { uuid } from '@/utils'
+import { uuid } from '@/utils/crypto'
 
 import MessageToast from '@/components/ui/message-toaster/MessageToast.vue'
 
@@ -41,6 +41,7 @@ onMounted(() => {
   if (!root.value) {
     return
   }
+
   root.value.popover = 'manual'
   root.value.showPopover?.()
 })

@@ -1,8 +1,9 @@
+import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
-import { expect, it } from 'vitest'
-import { cache, http } from '@/services'
-import { playlistStore } from '.'
+import { cache } from '@/services/cache'
+import { http } from '@/services/http'
+import { playlistStore } from '@/stores/playlistStore'
 
 const ruleGroups: SmartPlaylistRuleGroup[] = [
   {

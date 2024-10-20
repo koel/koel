@@ -72,19 +72,25 @@
 
 <script lang="ts" setup>
 import { computed, ref, toRef } from 'vue'
-import { arrayify, copyText, eventBus, getPlayableCollectionContentType, isSong, pluralize } from '@/utils'
-import { commonStore, favoriteStore, playlistStore, queueStore, songStore } from '@/stores'
-import { downloadService, playbackService } from '@/services'
-import {
-  useContextMenu,
-  useDialogBox,
-  useKoelPlus,
-  useMessageToaster,
-  usePlayableMenuMethods,
-  usePlaylistManagement,
-  usePolicies,
-  useRouter,
-} from '@/composables'
+import { pluralize } from '@/utils/formatters'
+import { eventBus } from '@/utils/eventBus'
+import { arrayify, copyText } from '@/utils/helpers'
+import { getPlayableCollectionContentType, isSong } from '@/utils/typeGuards'
+import { commonStore } from '@/stores/commonStore'
+import { favoriteStore } from '@/stores/favoriteStore'
+import { playlistStore } from '@/stores/playlistStore'
+import { queueStore } from '@/stores/queueStore'
+import { songStore } from '@/stores/songStore'
+import { downloadService } from '@/services/downloadService'
+import { playbackService } from '@/services/playbackService'
+import { useRouter } from '@/composables/useRouter'
+import { useMessageToaster } from '@/composables/useMessageToaster'
+import { useDialogBox } from '@/composables/useDialogBox'
+import { usePlaylistManagement } from '@/composables/usePlaylistManagement'
+import { usePlayableMenuMethods } from '@/composables/usePlayableMenuMethods'
+import { usePolicies } from '@/composables/usePolicies'
+import { useContextMenu } from '@/composables/useContextMenu'
+import { useKoelPlus } from '@/composables/useKoelPlus'
 
 const { toastSuccess, toastError, toastWarning } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()

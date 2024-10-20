@@ -19,7 +19,7 @@
 
 <script lang="ts" setup>
 import { toRefs } from 'vue'
-import { useRouter } from '@/composables'
+import { useRouter } from '@/composables/useRouter'
 
 import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
 

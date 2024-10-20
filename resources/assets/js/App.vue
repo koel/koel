@@ -37,10 +37,10 @@
 <script lang="ts" setup>
 import { defineAsyncComponent, onMounted, provide, ref, watch } from 'vue'
 import { useOnline } from '@vueuse/core'
-import { queueStore } from '@/stores'
-import { authService } from '@/services'
+import { queueStore } from '@/stores/queueStore'
+import { authService } from '@/services/authService'
 import { CurrentPlayableKey, DialogBoxKey, MessageToasterKey, OverlayKey } from '@/symbols'
-import { useRouter } from '@/composables'
+import { useRouter } from '@/composables/useRouter'
 
 import DialogBox from '@/components/ui/DialogBox.vue'
 import MessageToaster from '@/components/ui/message-toaster/MessageToaster.vue'

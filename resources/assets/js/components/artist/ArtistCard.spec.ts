@@ -1,11 +1,13 @@
 import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
-import { downloadService, playbackService } from '@/services'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { commonStore, songStore } from '@/stores'
+import { downloadService } from '@/services/downloadService'
+import { playbackService } from '@/services/playbackService'
+import { commonStore } from '@/stores/commonStore'
+import { songStore } from '@/stores/songStore'
+import { eventBus } from '@/utils/eventBus'
 import ArtistCard from './ArtistCard.vue'
-import { eventBus } from '@/utils'
 
 let artist: Artist
 

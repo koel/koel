@@ -1,9 +1,10 @@
+import { screen, waitFor } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { commonStore, queueStore } from '@/stores'
-import { screen, waitFor } from '@testing-library/vue'
-import { playbackService } from '@/services'
+import { commonStore } from '@/stores/commonStore'
+import { queueStore } from '@/stores/queueStore'
+import { playbackService } from '@/services/playbackService'
 import Component from './QueueScreen.vue'
 
 new class extends UnitTestCase {

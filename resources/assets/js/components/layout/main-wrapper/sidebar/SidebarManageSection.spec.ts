@@ -1,5 +1,5 @@
-import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
+import { screen } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import SidebarManageSection from './SidebarManageSection.vue'
 

@@ -1,10 +1,9 @@
 import { expect, it } from 'vitest'
 import { screen, waitFor } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { eventBus } from '@/utils'
-import type { Events } from '@/config'
-
-import CreateNewPlaylistContextMenu from './CreatePlaylistContextMenu.vue'
+import { eventBus } from '@/utils/eventBus'
+import type { Events } from '@/config/events'
+import Component from './CreatePlaylistContextMenu.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -21,7 +20,7 @@ new class extends UnitTestCase {
   }
 
   private async renderComponent () {
-    this.render(CreateNewPlaylistContextMenu)
+    this.render(Component)
     eventBus.emit('CREATE_NEW_PLAYLIST_CONTEXT_MENU_REQUESTED', { top: 420, left: 42 })
     await this.tick(2)
   }

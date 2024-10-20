@@ -5,10 +5,13 @@
 <script lang="ts" setup>
 import type { KeyFilter } from '@vueuse/core'
 import { onKeyStroke as baseOnKeyStroke } from '@vueuse/core'
-import { eventBus } from '@/utils'
-import { playbackService, socketService, volumeManager } from '@/services'
-import { favoriteStore, queueStore } from '@/stores'
-import { useRouter } from '@/composables'
+import { eventBus } from '@/utils/eventBus'
+import { playbackService } from '@/services/playbackService'
+import { socketService } from '@/services/socketService'
+import { volumeManager } from '@/services/volumeManager'
+import { favoriteStore } from '@/stores/favoriteStore'
+import { queueStore } from '@/stores/queueStore'
+import { useRouter } from '@/composables/useRouter'
 
 const { isCurrentScreen, go } = useRouter()
 

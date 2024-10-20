@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest'
-import factory from '@/__tests__/factory'
 import { screen } from '@testing-library/vue'
+import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import SongListItem from './SongListItem.vue'
 
@@ -18,7 +18,7 @@ new class extends UnitTestCase {
         track: 12,
         album_cover: 'https://example.com/cover.jpg',
         liked: true,
-        play_count: 10
+        play_count: 10,
       })
 
       const { html } = this.renderComponent(song)
@@ -30,9 +30,20 @@ new class extends UnitTestCase {
       await this.user.dblClick(screen.getByTestId('song-item'))
       expect(emitted().play).toBeTruthy()
     })
+
+    it('renders disc info when showDisc is true', async () => {
+      const song = factory('song', {
+        disc: 2,
+        title: 'Test Song',
+      })
+
+      const showDisc = true
+      const { getByText } = this.renderComponent(song, showDisc)
+      expect(getByText('Disc 2')).toBeTruthy()
+    })
   }
 
-  private renderComponent (playable?: Playable) {
+  private renderComponent (playable?: Playable, showDisc = false) {
     playable = playable ?? factory('song')
 
     row = {
@@ -43,6 +54,7 @@ new class extends UnitTestCase {
     return this.render(SongListItem, {
       props: {
         item: row,
+        showDisc,
       },
     })
   }

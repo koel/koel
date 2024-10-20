@@ -68,10 +68,10 @@
 import { faRotateRight, faTrashCan, faUpload, faWarning } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, ref, toRef } from 'vue'
 
-import { isDirectoryReadingSupported as canDropFolders } from '@/utils'
-import { acceptedMediaTypes } from '@/config'
-import { uploadService } from '@/services'
-import { useUpload } from '@/composables'
+import { isDirectoryReadingSupported as canDropFolders } from '@/utils/supports'
+import { acceptedMediaTypes } from '@/config/acceptedMediaTypes'
+import { uploadService } from '@/services/uploadService'
+import { useUpload } from '@/composables/useUpload'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'

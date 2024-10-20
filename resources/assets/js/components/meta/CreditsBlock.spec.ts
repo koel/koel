@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { http } from '@/services'
+import { http } from '@/services/http'
 import CreditsBlock from './CreditsBlock.vue'
 
 new class extends UnitTestCase {

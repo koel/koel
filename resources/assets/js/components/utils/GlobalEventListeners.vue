@@ -3,11 +3,15 @@
 </template>
 
 <script lang="ts" setup>
-import { useDialogBox, useMessageToaster, useRouter } from '@/composables'
 import { onMounted } from 'vue'
-import { eventBus, forceReloadWindow } from '@/utils'
-import { playlistFolderStore, playlistStore } from '@/stores'
-import { authService } from '@/services'
+import { useRouter } from '@/composables/useRouter'
+import { useMessageToaster } from '@/composables/useMessageToaster'
+import { useDialogBox } from '@/composables/useDialogBox'
+import { eventBus } from '@/utils/eventBus'
+import { playlistFolderStore } from '@/stores/playlistFolderStore'
+import { playlistStore } from '@/stores/playlistStore'
+import { authService } from '@/services/authService'
+import { forceReloadWindow } from '@/utils/helpers'
 
 let toastSuccess: ReturnType<typeof useMessageToaster>['toastSuccess']
 let showConfirmDialog: ReturnType<typeof useDialogBox>['showConfirmDialog']

@@ -36,8 +36,13 @@
 <script lang="ts" setup>
 import { faCompactDisc } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRef, watch } from 'vue'
-import { albumStore, commonStore, preferenceStore as preferences } from '@/stores'
-import { useAuthorization, useErrorHandler, useInfiniteScroll, useRouter } from '@/composables'
+import { albumStore } from '@/stores/albumStore'
+import { commonStore } from '@/stores/commonStore'
+import { preferenceStore as preferences } from '@/stores/preferenceStore'
+import { useRouter } from '@/composables/useRouter'
+import { useErrorHandler } from '@/composables/useErrorHandler'
+import { useInfiniteScroll } from '@/composables/useInfiniteScroll'
+import { useAuthorization } from '@/composables/useAuthorization'
 
 import AlbumCard from '@/components/album/AlbumCard.vue'
 import AlbumCardSkeleton from '@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'

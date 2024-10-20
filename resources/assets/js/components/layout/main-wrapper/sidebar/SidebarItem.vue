@@ -24,8 +24,8 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { useRouter } from '@/composables'
-import { eventBus } from '@/utils'
+import { useRouter } from '@/composables/useRouter'
+import { eventBus } from '@/utils/eventBus'
 
 const props = withDefaults(defineProps<{ href?: string | undefined, screen?: ScreenName | undefined }>(), {
   href: undefined,

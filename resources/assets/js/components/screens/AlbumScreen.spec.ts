@@ -1,11 +1,13 @@
-import Router from '@/router'
 import { screen, waitFor } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { albumStore, commonStore, songStore } from '@/stores'
-import { downloadService } from '@/services'
-import { eventBus } from '@/utils'
+import { albumStore } from '@/stores/albumStore'
+import { commonStore } from '@/stores/commonStore'
+import { songStore } from '@/stores/songStore'
+import { downloadService } from '@/services/downloadService'
+import { eventBus } from '@/utils/eventBus'
+import Router from '@/router'
 import AlbumScreen from './AlbumScreen.vue'
 
 let album: Album

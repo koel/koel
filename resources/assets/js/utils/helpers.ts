@@ -1,8 +1,11 @@
+import select from 'select'
 import { isObject, without } from 'lodash'
 import type { InjectionKey } from 'vue'
 import { inject, isRef, provide, readonly, shallowReadonly } from 'vue'
 import type { ReadonlyInjectionKey } from '@/symbols'
-import { logger, md5 } from '@/utils'
+import { logger } from '@/utils/logger'
+import { md5 } from '@/utils/crypto'
+import { isSong } from '@/utils/typeGuards'
 
 export const use = <T> (value: T | undefined | null, cb: (arg: T) => void) => {
   if (typeof value === 'undefined' || value === null) {
@@ -41,8 +44,6 @@ export const requireInjection = <T> (key: InjectionKey<T>, defaultValue?: T) => 
   return value
 }
 
-export const dbToGain = (db: number) => 10 ** (db / 20) || 0
-
 export const moveItemsInList = <T> (list: T[], items: T | T[], target: T, type: MoveType) => {
   if (!list.includes(target)) {
     throw new Error('Target not found in list')
@@ -78,8 +79,46 @@ export const openPopup = (url: string, name: string, width: number, height: numb
 
 export const humanReadablePlayCount = (num: number) => {
   if (num >= 1_000_000) {
-    return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M'
+    return `${(num / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`
   }
 
   return num.toLocaleString()
+}
+
+/**
+ * Force reloading window regardless of "Confirm before reload" setting.
+ * This is handy for certain cases, for example Last.fm connect/disconnect.
+ */
+export const forceReloadWindow = (): void => {
+  if (process.env.NODE_ENV === 'test') {
+    return
+  }
+
+  window.onbeforeunload = noop
+  window.location.reload()
+}
+
+export const copyText = async (text: string) => {
+  try {
+    await navigator.clipboard.writeText(text)
+  } catch (error: unknown) {
+    logger.warn('Failed to copy text to clipboard using navigator.clipboard.writeText()', error)
+
+    let copyArea = document.querySelector<HTMLTextAreaElement>('#copyArea')
+
+    if (!copyArea) {
+      copyArea = document.createElement('textarea')
+      copyArea.id = 'copyArea'
+      document.body.appendChild(copyArea)
+    }
+
+    copyArea.style.top = `${window.scrollY || document.documentElement.scrollTop}px`
+    copyArea.value = text
+    select(copyArea)
+    document.execCommand('copy')
+  }
+}
+
+export const getPlayableProp = <T> (playable: Playable, songKey: keyof Song, episodeKey: keyof Episode): T => {
+  return isSong(playable) ? playable[songKey] : playable[episodeKey]
 }

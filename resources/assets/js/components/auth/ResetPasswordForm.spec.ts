@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { authService } from '@/services'
+import { authService } from '@/services/authService'
 import ResetPasswordForm from './ResetPasswordForm.vue'
 
 new class extends UnitTestCase {

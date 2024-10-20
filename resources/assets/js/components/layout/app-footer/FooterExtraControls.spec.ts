@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
 import { screen } from '@testing-library/vue'
-import { eventBus } from '@/utils'
+import UnitTestCase from '@/__tests__/UnitTestCase'
+import { eventBus } from '@/utils/eventBus'
 import FooterExtraControls from './FooterExtraControls.vue'
 
 new class extends UnitTestCase {

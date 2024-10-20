@@ -1,7 +1,7 @@
 import Sketch from 'sketch-js'
-import { audioService } from '@/services'
 import { random, sample } from 'lodash'
-import { noop } from '@/utils'
+import { audioService } from '@/services/audioService'
+import { noop } from '@/utils/helpers'
 
 const NUM_PARTICLES = 128
 const NUM_BANDS = 128

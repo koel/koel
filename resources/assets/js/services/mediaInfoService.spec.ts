@@ -1,8 +1,10 @@
 import { expect, it } from 'vitest'
-import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { cache, http } from '@/services'
-import { albumStore, artistStore } from '@/stores'
+import factory from '@/__tests__/factory'
+import { cache } from '@/services/cache'
+import { http } from '@/services/http'
+import { albumStore } from '@/stores/albumStore'
+import { artistStore } from '@/stores/artistStore'
 import { mediaInfoService } from './mediaInfoService'
 
 new class extends UnitTestCase {

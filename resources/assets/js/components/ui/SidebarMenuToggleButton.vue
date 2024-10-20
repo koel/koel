@@ -1,16 +1,16 @@
 <template>
-  <ExtraDrawerButton class="block md:hidden" @click.prevent="toggleSidebar">
+  <SideSheetButton class="block md:hidden" @click.prevent="toggleSidebar">
     <Icon v-if="sidebarExpanded" :icon="faTimes" fixed-width />
     <Icon v-else :icon="faBars" fixed-width />
-  </ExtraDrawerButton>
+  </SideSheetButton>
 </template>
 
 <script lang="ts" setup>
 import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { ref } from 'vue'
-import { eventBus } from '@/utils'
+import { eventBus } from '@/utils/eventBus'
 
-import ExtraDrawerButton from '@/components/layout/main-wrapper/extra-drawer/ExtraDrawerButton.vue'
+import SideSheetButton from '@/components/layout/main-wrapper/side-sheet/SideSheetButton.vue'
 
 const sidebarExpanded = ref(false)
 

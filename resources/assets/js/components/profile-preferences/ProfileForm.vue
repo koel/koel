@@ -72,9 +72,11 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
-import type { UpdateCurrentProfileData } from '@/services'
-import { authService } from '@/services'
-import { useAuthorization, useErrorHandler, useMessageToaster } from '@/composables'
+import type { UpdateCurrentProfileData } from '@/services/authService'
+import { authService } from '@/services/authService'
+import { useAuthorization } from '@/composables/useAuthorization'
+import { useMessageToaster } from '@/composables/useMessageToaster'
+import { useErrorHandler } from '@/composables/useErrorHandler'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import PasswordField from '@/components/ui/form/PasswordField.vue'
@@ -85,6 +87,7 @@ import FormRow from '@/components/ui/form/FormRow.vue'
 
 const { toastSuccess } = useMessageToaster()
 const { currentUser } = useAuthorization()
+
 const profile = ref<UpdateCurrentProfileData>({} as UpdateCurrentProfileData)
 const isDemo = window.IS_DEMO
 

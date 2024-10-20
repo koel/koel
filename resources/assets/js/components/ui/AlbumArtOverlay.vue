@@ -8,8 +8,8 @@
 
 <script lang="ts" setup>
 import { ref, toRefs, watchEffect } from 'vue'
-import { albumStore } from '@/stores'
-import { logger } from '@/utils'
+import { albumStore } from '@/stores/albumStore'
+import { logger } from '@/utils/logger'
 
 const props = defineProps<{ album: number }>()
 const { album } = toRefs(props)

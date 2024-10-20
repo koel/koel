@@ -20,8 +20,8 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, ref, toRefs, watch } from 'vue'
-import { youTubeService } from '@/services'
-import { useErrorHandler } from '@/composables'
+import { youTubeService } from '@/services/youTubeService'
+import { useErrorHandler } from '@/composables/useErrorHandler'
 
 const props = defineProps<{ song: Song }>()
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))

@@ -14,7 +14,7 @@ import { faVolumeHigh, faVolumeMute } from '@fortawesome/free-solid-svg-icons'
 import noUISlider from 'nouislider'
 import { OnClickOutside } from '@vueuse/components'
 import { inject, onMounted, ref, watch } from 'vue'
-import { socketService } from '@/services'
+import { socketService } from '@/services/socketService'
 import type { RemoteState } from '@/remote/types'
 
 const DEFAULT_VOLUME = 7

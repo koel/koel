@@ -25,7 +25,7 @@ export default {
         'k-header-height': 'var(--header-height)',
         'k-footer-height': 'var(--footer-height)',
         'k-sidebar-width': 'var(--sidebar-width)',
-        'k-extra-drawer-width': 'var(--extra-drawer-width)',
+        'k-side-sheet-width': 'var(--side-sheet-width)',
       },
       screens: {
         'no-hover': {'raw': '(hover: none)'},

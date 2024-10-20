@@ -1,7 +1,13 @@
 import isMobile from 'ismobilejs'
 import { reactive } from 'vue'
-import { http } from '@/services'
-import { playlistFolderStore, playlistStore, preferenceStore, queueStore, settingStore, themeStore, userStore } from '.'
+import { http } from '@/services/http'
+import { playlistFolderStore } from '@/stores/playlistFolderStore'
+import { playlistStore } from '@/stores/playlistStore'
+import { preferenceStore } from '@/stores/preferenceStore'
+import { queueStore } from '@/stores/queueStore'
+import { settingStore } from '@/stores/settingStore'
+import { themeStore } from '@/stores/themeStore'
+import { userStore } from '@/stores/userStore'
 
 const initialState = {
   allows_download: false,

@@ -58,9 +58,10 @@
 
 <script lang="ts" setup>
 import { computed, toRef, toRefs, watch } from 'vue'
-import { pluralize } from '@/utils'
-import { playlistStore, queueStore } from '@/stores'
-import { usePlayableMenuMethods } from '@/composables'
+import { pluralize } from '@/utils/formatters'
+import { playlistStore } from '@/stores/playlistStore'
+import { queueStore } from '@/stores/queueStore'
+import { usePlayableMenuMethods } from '@/composables/usePlayableMenuMethods'
 
 import Btn from '@/components/ui/form/Btn.vue'
 

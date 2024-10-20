@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useRouter } from '@/composables'
+import { useRouter } from '@/composables/useRouter'
 
 import Btn from '@/components/ui/form/Btn.vue'
 

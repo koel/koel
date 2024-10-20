@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
-import { playlistCollaborationService } from '@/services'
+import { playlistCollaborationService } from '@/services/playlistCollaborationService'
 import Component from './PlaylistCollaboratorList.vue'
 
 new class extends UnitTestCase {

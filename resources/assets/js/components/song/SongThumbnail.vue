@@ -26,8 +26,9 @@
 <script lang="ts" setup>
 import { computed, toRefs } from 'vue'
 import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
-import { defaultCover, getPlayableProp } from '@/utils'
-import { playbackService } from '@/services'
+import defaultCover from '@/../img/covers/default.svg'
+import { playbackService } from '@/services/playbackService'
+import { getPlayableProp } from '@/utils/helpers'
 
 const props = defineProps<{ playable: Playable }>()
 const { playable } = toRefs(props)

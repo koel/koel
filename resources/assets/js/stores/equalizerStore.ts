@@ -1,5 +1,5 @@
-import { preferenceStore as preferences } from '@/stores'
-import { equalizerPresets as presets } from '@/config'
+import { preferenceStore as preferences } from '@/stores/preferenceStore'
+import { equalizerPresets as presets } from '@/config/audio'
 
 export const equalizerStore = {
   getPresetByName (name: string) {

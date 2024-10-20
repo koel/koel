@@ -44,9 +44,12 @@
 <script lang="ts" setup>
 import { faLastfm } from '@fortawesome/free-brands-svg-icons'
 import { computed, defineAsyncComponent } from 'vue'
-import { authService, http } from '@/services'
-import { forceReloadWindow } from '@/utils'
-import { useAuthorization, useThirdPartyServices } from '@/composables'
+import { authService } from '@/services/authService'
+import { http } from '@/services/http'
+
+import { useAuthorization } from '@/composables/useAuthorization'
+import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
+import { forceReloadWindow } from '@/utils/helpers'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 

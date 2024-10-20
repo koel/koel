@@ -1,9 +1,9 @@
 import { expect, it, vi } from 'vitest'
 import { screen } from '@testing-library/vue'
-import { preferenceStore } from '@/stores'
 import UnitTestCase from '@/__tests__/UnitTestCase'
+import { preferenceStore } from '@/stores/preferenceStore'
+import { http } from '@/services/http'
 import SupportKoel from './SupportKoel.vue'
-import { http } from '@/services'
 
 new class extends UnitTestCase {
   protected beforeEach () {

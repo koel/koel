@@ -1,7 +1,7 @@
 import type { Placement } from '@floating-ui/dom'
 import { arrow, autoUpdate, offset } from '@floating-ui/dom'
 import type { Directive, DirectiveBinding } from 'vue'
-import { updateFloatingUi } from '@/utils'
+import { updateFloatingUi } from '@/utils/floatingUi'
 
 type ElementWithTooltip = HTMLElement & {
   $tooltip?: HTMLDivElement

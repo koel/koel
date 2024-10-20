@@ -1,9 +1,10 @@
 import type { Route } from '@/router'
 import Router from '@/router'
-import { userStore } from '@/stores'
-import { cache, playlistCollaborationService } from '@/services'
-import { useUpload } from '@/composables'
-import { logger } from '@/utils'
+import { userStore } from '@/stores/userStore'
+import { cache } from '@/services/cache'
+import { playlistCollaborationService } from '@/services/playlistCollaborationService'
+import { useUpload } from '@/composables/useUpload'
+import { logger } from '@/utils/logger'
 
 const UUID_REGEX = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 

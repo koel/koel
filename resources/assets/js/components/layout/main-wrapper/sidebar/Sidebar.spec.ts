@@ -1,8 +1,8 @@
 import { it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
 import { screen } from '@testing-library/vue'
-import { commonStore } from '@/stores'
-import { eventBus } from '@/utils'
+import UnitTestCase from '@/__tests__/UnitTestCase'
+import { commonStore } from '@/stores/commonStore'
+import { eventBus } from '@/utils/eventBus'
 import Sidebar from './Sidebar.vue'
 
 const standardItems = [

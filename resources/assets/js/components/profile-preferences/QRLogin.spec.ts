@@ -1,7 +1,7 @@
 import { expect, it, vi } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
-import { authService } from '@/services'
 import { screen } from '@testing-library/vue'
+import UnitTestCase from '@/__tests__/UnitTestCase'
+import { authService } from '@/services/authService'
 import Component from './QRLogin.vue'
 
 new class extends UnitTestCase {

@@ -17,7 +17,8 @@
 
 <script lang="ts" setup>
 import { computed, toRefs } from 'vue'
-import { defaultCover, getPlayableProp } from '@/utils'
+import defaultCover from '@/../img/covers/default.svg'
+import { getPlayableProp } from '@/utils/helpers'
 
 const props = defineProps<{ playable: Playable }>()
 const { playable } = toRefs(props)

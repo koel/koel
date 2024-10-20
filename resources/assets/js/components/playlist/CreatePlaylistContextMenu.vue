@@ -9,9 +9,9 @@
 </template>
 
 <script lang="ts" setup>
-import { useContextMenu } from '@/composables'
-import { eventBus } from '@/utils'
-import type { Events } from '@/config'
+import { useContextMenu } from '@/composables/useContextMenu'
+import { eventBus } from '@/utils/eventBus'
+import type { Events } from '@/config/events'
 
 const { base, ContextMenu, open, trigger } = useContextMenu()
 

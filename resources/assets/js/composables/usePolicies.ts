@@ -1,5 +1,6 @@
-import { useAuthorization, useKoelPlus } from '@/composables'
-import { arrayify } from '@/utils'
+import { arrayify } from '@/utils/helpers'
+import { useAuthorization } from '@/composables/useAuthorization'
+import { useKoelPlus } from '@/composables/useKoelPlus'
 
 export const usePolicies = () => {
   const { currentUser, isAdmin } = useAuthorization()

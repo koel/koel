@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { plusService } from '@/services'
+import { plusService } from '@/services/plusService'
 import Form from './ActivateLicenseForm.vue'
 
 new class extends UnitTestCase {

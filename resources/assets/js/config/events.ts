@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import type { SongUpdateResult } from '@/stores'
+import type { SongUpdateResult } from '@/stores/songStore'
 
 export interface Events {
   LOG_OUT: () => void

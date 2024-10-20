@@ -13,11 +13,16 @@
 <script lang="ts" setup>
 import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref } from 'vue'
-import { playbackService } from '@/services'
-import { commonStore, favoriteStore, queueStore, recentlyPlayedStore, songStore } from '@/stores'
-import { requireInjection } from '@/utils'
-import { useRouter } from '@/composables'
+import { playbackService } from '@/services/playbackService'
+import { commonStore } from '@/stores/commonStore'
+import { favoriteStore } from '@/stores/favoriteStore'
+import { queueStore } from '@/stores/queueStore'
+import { recentlyPlayedStore } from '@/stores/recentlyPlayedStore'
+import { songStore } from '@/stores/songStore'
+import { useRouter } from '@/composables/useRouter'
+import { requireInjection } from '@/utils/helpers'
 import { CurrentPlayableKey } from '@/symbols'
+
 import FooterButton from '@/components/layout/app-footer/FooterButton.vue'
 
 const { getCurrentScreen, getRouteParam, go } = useRouter()

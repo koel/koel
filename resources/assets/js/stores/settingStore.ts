@@ -1,6 +1,6 @@
 import { reactive } from 'vue'
-import { http } from '@/services'
 import { merge } from 'lodash'
+import { http } from '@/services/http'
 
 export const settingStore = {
   state: reactive<Settings>({

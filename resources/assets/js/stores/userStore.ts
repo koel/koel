@@ -1,7 +1,7 @@
-import { differenceBy, merge } from 'lodash'
-import { http } from '@/services'
 import { reactive } from 'vue'
-import { arrayify } from '@/utils'
+import { differenceBy, merge } from 'lodash'
+import { http } from '@/services/http'
+import { arrayify } from '@/utils/helpers'
 
 interface UserFormData {
   name: string

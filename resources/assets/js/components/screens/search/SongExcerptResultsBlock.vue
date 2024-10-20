@@ -33,8 +33,8 @@
 
 <script lang="ts" setup>
 import { computed, toRefs } from 'vue'
-import { useRouter } from '@/composables'
-import { getPlayableCollectionContentType } from '@/utils'
+import { useRouter } from '@/composables/useRouter'
+import { getPlayableCollectionContentType } from '@/utils/typeGuards'
 
 import SongCardSkeleton from '@/components/ui/skeletons/SongCardSkeleton.vue'
 import ExcerptResultBlock from '@/components/screens/search/ExcerptResultBlock.vue'

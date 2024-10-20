@@ -6,7 +6,7 @@
 
     <ScreenEmptyState v-if="libraryEmpty">
       <template #icon>
-        <Icon :icon="faTags" />
+        <GuitarIcon size="96" />
       </template>
       No genres found.
       <span class="secondary d-block">
@@ -45,12 +45,14 @@
 </template>
 
 <script lang="ts" setup>
-import { faTags } from '@fortawesome/free-solid-svg-icons'
+import { GuitarIcon } from 'lucide-vue-next'
 import { maxBy, minBy } from 'lodash'
 import { computed, onMounted, ref } from 'vue'
-import { commonStore, genreStore } from '@/stores'
-import { pluralize } from '@/utils'
-import { useAuthorization, useErrorHandler } from '@/composables'
+import { commonStore } from '@/stores/commonStore'
+import { genreStore } from '@/stores/genreStore'
+import { pluralize } from '@/utils/formatters'
+import { useAuthorization } from '@/composables/useAuthorization'
+import { useErrorHandler } from '@/composables/useErrorHandler'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import GenreItemSkeleton from '@/components/ui/skeletons/GenreItemSkeleton.vue'

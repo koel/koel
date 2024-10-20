@@ -1,5 +1,5 @@
 import { toRef } from 'vue'
-import { commonStore } from '@/stores'
+import { commonStore } from '@/stores/commonStore'
 
 export const useThirdPartyServices = () => {
   return {

@@ -1,5 +1,6 @@
-import { cache, http } from '@/services'
-import { eventBus } from '@/utils'
+import { cache } from '@/services/cache'
+import { http } from '@/services/http'
+import { eventBus } from '@/utils/eventBus'
 
 interface YouTubeSearchResult {
   nextPageToken: string

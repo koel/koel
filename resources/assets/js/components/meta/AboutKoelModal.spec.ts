@@ -1,8 +1,8 @@
 import { expect, it } from 'vitest'
-import { commonStore } from '@/stores'
-import UnitTestCase from '@/__tests__/UnitTestCase'
-import { http } from '@/services'
 import { screen, waitFor } from '@testing-library/vue'
+import UnitTestCase from '@/__tests__/UnitTestCase'
+import { commonStore } from '@/stores/commonStore'
+import { http } from '@/services/http'
 import AboutKoelModel from './AboutKoelModal.vue'
 
 new class extends UnitTestCase {

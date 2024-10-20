@@ -5,7 +5,7 @@ export default config(
     formatters: true,
   },
   {
-    files: ['**/*.ts', '**/*.vue'],
+    files: ['resources/**/*.{js,ts,css,pcss,vue}'],
     rules: {
       'antfu/top-level-function': 'off',
       'curly': ['error', 'all'],
@@ -26,6 +26,8 @@ export default config(
   },
 ).prepend({
   ignores: [
+    'resources/assets/tsconfig.json',
+    'resources/assets/css/vendor/**',
     'resources/assets/js/visualizers/**',
   ]
 })

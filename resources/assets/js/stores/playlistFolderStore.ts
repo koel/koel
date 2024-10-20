@@ -1,6 +1,6 @@
 import type { UnwrapNestedRefs } from 'vue'
 import { reactive } from 'vue'
-import { http } from '@/services'
+import { http } from '@/services/http'
 import { differenceBy, orderBy } from 'lodash'
 import { playlistStore } from '@/stores/playlistStore'
 

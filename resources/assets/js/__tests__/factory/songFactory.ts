@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker'
-import { genres } from '@/config'
+import { genres } from '@/config/genres'
 
 const generate = (partOfCompilation = false): Song => {
   const artistId = faker.datatype.number({ min: 3 })

@@ -16,9 +16,11 @@
 <script setup lang="ts">
 import { faListOl } from '@fortawesome/free-solid-svg-icons'
 import { ref } from 'vue'
-import { useDroppable, useMessageToaster, useRouter } from '@/composables'
-import { queueStore } from '@/stores'
-import { pluralize } from '@/utils'
+import { useDroppable } from '@/composables/useDragAndDrop'
+import { useRouter } from '@/composables/useRouter'
+import { useMessageToaster } from '@/composables/useMessageToaster'
+import { queueStore } from '@/stores/queueStore'
+import { pluralize } from '@/utils/formatters'
 
 import FooterButton from '@/components/layout/app-footer/FooterButton.vue'
 

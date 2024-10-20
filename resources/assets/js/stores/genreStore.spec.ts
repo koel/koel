@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { http } from '@/services'
+import { http } from '@/services/http'
 import { genreStore } from '@/stores/genreStore'
 
 new class extends UnitTestCase {

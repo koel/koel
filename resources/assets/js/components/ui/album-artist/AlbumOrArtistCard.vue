@@ -25,8 +25,9 @@
 </template>
 
 <script lang="ts" setup>
-import Thumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
 import { computed, toRefs } from 'vue'
+
+import Thumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
 
 const props = withDefaults(defineProps<{ layout?: ArtistAlbumCardLayout, entity: Artist | Album | Podcast }>(), {
   layout: 'full',

@@ -15,12 +15,13 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { plusService } from '@/services'
-import { forceReloadWindow } from '@/utils'
-import { useDialogBox, useErrorHandler } from '@/composables'
+import { plusService } from '@/services/plusService'
+import { useDialogBox } from '@/composables/useDialogBox'
+import { useErrorHandler } from '@/composables/useErrorHandler'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
+import { forceReloadWindow } from '@/utils/helpers'
 
 const { showSuccessDialog } = useDialogBox()
 const licenseKey = ref('')

@@ -1,9 +1,9 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
-import { http } from '@/services'
-import type { CreateUserData, UpdateUserData } from '.'
-import { userStore } from '.'
+import { http } from '@/services/http'
+import type { CreateUserData, UpdateUserData } from '@/stores/userStore'
+import { userStore } from '@/stores/userStore'
 
 const currentUser = factory('user', {
   id: 1,

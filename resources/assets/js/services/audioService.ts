@@ -1,6 +1,7 @@
-import { equalizerStore } from '@/stores'
-import { frequencies } from '@/config'
-import { dbToGain } from '@/utils'
+import { equalizerStore } from '@/stores/equalizerStore'
+import { frequencies } from '@/config/audio'
+
+export const dbToGain = (db: number) => 10 ** (db / 20) || 0
 
 export interface Band {
   label: string

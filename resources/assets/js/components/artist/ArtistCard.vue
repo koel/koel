@@ -24,10 +24,14 @@
 
 <script lang="ts" setup>
 import { computed, toRef, toRefs } from 'vue'
-import { eventBus } from '@/utils'
-import { artistStore, commonStore, songStore } from '@/stores'
-import { downloadService, playbackService } from '@/services'
-import { useDraggable, useRouter } from '@/composables'
+import { eventBus } from '@/utils/eventBus'
+import { artistStore } from '@/stores/artistStore'
+import { commonStore } from '@/stores/commonStore'
+import { songStore } from '@/stores/songStore'
+import { downloadService } from '@/services/downloadService'
+import { playbackService } from '@/services/playbackService'
+import { useDraggable } from '@/composables/useDragAndDrop'
+import { useRouter } from '@/composables/useRouter'
 
 import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
 

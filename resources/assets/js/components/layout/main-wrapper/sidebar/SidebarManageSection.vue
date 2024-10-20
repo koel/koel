@@ -29,7 +29,8 @@
 
 <script lang="ts" setup>
 import { faTools, faUpload, faUsers } from '@fortawesome/free-solid-svg-icons'
-import { useAuthorization, useUpload } from '@/composables'
+import { useAuthorization } from '@/composables/useAuthorization'
+import { useUpload } from '@/composables/useUpload'
 
 import SidebarSection from '@/components/layout/main-wrapper/sidebar/SidebarSection.vue'
 import SidebarSectionHeader from '@/components/layout/main-wrapper/sidebar/SidebarSectionHeader.vue'

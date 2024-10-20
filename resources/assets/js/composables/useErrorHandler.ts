@@ -1,7 +1,9 @@
 import type { AxiosResponse } from 'axios'
 import axios from 'axios'
-import { logger, parseValidationError } from '@/utils'
-import { useDialogBox, useMessageToaster } from '@/composables'
+import { logger } from '@/utils/logger'
+import { parseValidationError } from '@/utils/formatters'
+import { useDialogBox } from '@/composables/useDialogBox'
+import { useMessageToaster } from '@/composables/useMessageToaster'
 
 export interface StatusMessageMap {
   [key: AxiosResponse['status']]: string | Closure

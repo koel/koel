@@ -29,14 +29,21 @@
 </template>
 
 <script lang="ts" setup>
+import { faPlay } from '@fortawesome/free-solid-svg-icons'
 import { orderBy } from 'lodash'
 import { computed, ref, toRefs } from 'vue'
-import { albumStore, artistStore, queueStore, songStore } from '@/stores'
-import { playbackService } from '@/services'
-import { defaultCover } from '@/utils'
-import { useErrorHandler, useFileReader, useMessageToaster, usePolicies, useRouter } from '@/composables'
-import { acceptedImageTypes } from '@/config'
-import { faPlay } from '@fortawesome/free-solid-svg-icons'
+import { albumStore } from '@/stores/albumStore'
+import { artistStore } from '@/stores/artistStore'
+import { queueStore } from '@/stores/queueStore'
+import { songStore } from '@/stores/songStore'
+import { playbackService } from '@/services/playbackService'
+import defaultCover from '@/../img/covers/default.svg'
+import { useRouter } from '@/composables/useRouter'
+import { useErrorHandler } from '@/composables/useErrorHandler'
+import { useFileReader } from '@/composables/useFileReader'
+import { useMessageToaster } from '@/composables/useMessageToaster'
+import { usePolicies } from '@/composables/usePolicies'
+import { acceptedImageTypes } from '@/config/acceptedImageTypes'
 
 const props = defineProps<{ entity: Album | Artist }>()
 const { toastSuccess } = useMessageToaster()

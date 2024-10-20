@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
 import { screen } from '@testing-library/vue'
+import UnitTestCase from '@/__tests__/UnitTestCase'
 import CheckBox from './CheckBox.vue'
 
 new class extends UnitTestCase {

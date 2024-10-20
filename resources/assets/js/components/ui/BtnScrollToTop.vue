@@ -17,7 +17,7 @@
 <script lang="ts" setup>
 import { faCircleUp } from '@fortawesome/free-solid-svg-icons'
 import { onMounted, ref } from 'vue'
-import { $ } from '@/utils'
+import { $ } from '@/utils/$'
 
 const el = ref<HTMLElement>()
 const showing = ref(false)

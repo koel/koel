@@ -20,7 +20,7 @@
 
 <script lang="ts" setup>
 import { toRef, toRefs } from 'vue'
-import { overviewStore } from '@/stores'
+import { overviewStore } from '@/stores/overviewStore'
 
 import SongCard from '@/components/song/SongCard.vue'
 import SongCardSkeleton from '@/components/ui/skeletons/SongCardSkeleton.vue'

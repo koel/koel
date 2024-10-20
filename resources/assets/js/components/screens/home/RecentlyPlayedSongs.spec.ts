@@ -1,9 +1,9 @@
-import Router from '@/router'
+import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
-import { overviewStore } from '@/stores'
-import { screen } from '@testing-library/vue'
+import { overviewStore } from '@/stores/overviewStore'
+import Router from '@/router'
 import RecentlyPlayedSongs from './RecentlyPlayedSongs.vue'
 
 new class extends UnitTestCase {

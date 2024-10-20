@@ -37,7 +37,7 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
-import { useKoelPlus } from '@/composables'
+import { useKoelPlus } from '@/composables/useKoelPlus'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import ActivateLicenseForm from '@/components/koel-plus/ActivateLicenseForm.vue'

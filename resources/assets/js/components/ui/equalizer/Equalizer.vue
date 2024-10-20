@@ -40,10 +40,10 @@
 
 <script lang="ts" setup>
 import { nextTick, onMounted, ref, watch } from 'vue'
-import { equalizerStore } from '@/stores'
-import type { Band } from '@/services'
-import { audioService } from '@/services'
-import { equalizerPresets as presets } from '@/config'
+import { equalizerStore } from '@/stores/equalizerStore'
+import type { Band } from '@/services/audioService'
+import { audioService } from '@/services/audioService'
+import { equalizerPresets as presets } from '@/config/audio'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import SelectBox from '@/components/ui/form/SelectBox.vue'

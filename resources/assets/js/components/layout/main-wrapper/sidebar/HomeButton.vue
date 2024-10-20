@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 import { faHome } from '@fortawesome/free-solid-svg-icons'
-import { eventBus } from '@/utils'
+import { eventBus } from '@/utils/eventBus'
 
 const onClick = () => eventBus.emit('TOGGLE_SIDEBAR')
 </script>

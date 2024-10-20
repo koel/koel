@@ -1,7 +1,7 @@
 import { reactive } from 'vue'
-import { http } from '@/services'
 import { remove } from 'lodash'
-import { songStore } from '@/stores'
+import { http } from '@/services/http'
+import { songStore } from '@/stores/songStore'
 
 const EXCERPT_COUNT = 7
 

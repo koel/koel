@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest'
-import { searchStore } from '@/stores'
 import UnitTestCase from '@/__tests__/UnitTestCase'
+import { searchStore } from '@/stores/searchStore'
 import SearchSongResultsScreen from './SearchSongResultsScreen.vue'
 
 new class extends UnitTestCase {

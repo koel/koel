@@ -1,7 +1,7 @@
-import { eventBus } from '@/utils'
-import factory from '@/__tests__/factory'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
+import factory from '@/__tests__/factory'
+import { eventBus } from '@/utils/eventBus'
 import { youTubeService } from './youTubeService'
 
 new class extends UnitTestCase {

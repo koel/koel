@@ -10,7 +10,7 @@
 
 <script lang="ts" setup>
 import { toRef } from 'vue'
-import { themeStore } from '@/stores'
+import { themeStore } from '@/stores/themeStore'
 
 import ThemeCard from '@/components/profile-preferences/ThemeCard.vue'
 

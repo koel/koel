@@ -20,7 +20,8 @@
 
 <script lang="ts" setup>
 import { toRef, toRefs } from 'vue'
-import { overviewStore } from '@/stores'
+import { overviewStore } from '@/stores/overviewStore'
+
 import ArtistCard from '@/components/artist/ArtistCard.vue'
 import ArtistCardSkeleton from '@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'
 import HomeScreenSection from '@/components/screens/home/HomeScreenBlock.vue'

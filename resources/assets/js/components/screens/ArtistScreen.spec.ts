@@ -1,11 +1,13 @@
-import Router from '@/router'
 import { screen, waitFor } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { artistStore, commonStore, songStore } from '@/stores'
-import { downloadService } from '@/services'
-import { eventBus } from '@/utils'
+import { artistStore } from '@/stores/artistStore'
+import { commonStore } from '@/stores/commonStore'
+import { songStore } from '@/stores/songStore'
+import { downloadService } from '@/services/downloadService'
+import { eventBus } from '@/utils/eventBus'
+import Router from '@/router'
 import ArtistScreen from './ArtistScreen.vue'
 
 let artist: Artist

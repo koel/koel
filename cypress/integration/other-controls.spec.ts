@@ -13,11 +13,11 @@ context('Other Controls', () => {
   })
 
   it('toggles the info panel', () => {
-    cy.findByTestId('extra-drawer').should('be.visible')
-    cy.findByTestId('toggle-extra-drawer-btn').as('btn').click()
-    cy.findByTestId('extra-drawer').should('not.be.visible')
-    cy.findByTestId('toggle-extra-drawer-btn').as('btn').click()
-    cy.findByTestId('extra-drawer').should('be.visible')
+    cy.findByTestId('side-sheet').should('be.visible')
+    cy.findByTestId('toggle-side-sheet-btn').as('btn').click()
+    cy.findByTestId('side-sheet').should('not.be.visible')
+    cy.findByTestId('toggle-side-sheet-btn').as('btn').click()
+    cy.findByTestId('side-sheet').should('be.visible')
   })
 
   it('toggles the "sound bars" icon when a song is played/paused', () => {

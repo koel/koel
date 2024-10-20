@@ -28,10 +28,10 @@
 <script lang="ts" setup>
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons'
 import { toRefs } from 'vue'
+import { useAuthorization } from '@/composables/useAuthorization'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import UserAvatar from '@/components/user/UserAvatar.vue'
-import { useAuthorization } from '@/composables'
 
 const props = defineProps<{
   collaborator: PlaylistCollaborator

@@ -2,10 +2,14 @@ import { differenceBy, orderBy, sampleSize, take, throttle } from 'lodash'
 import isMobile from 'ismobilejs'
 import type { Ref } from 'vue'
 import { computed, provide, reactive, ref } from 'vue'
-import { playbackService } from '@/services'
-import { commonStore, queueStore, songStore } from '@/stores'
-import { arrayify, eventBus, getPlayableProp, provideReadonly } from '@/utils'
-import { useFuzzySearch, useRouter } from '@/composables'
+import { playbackService } from '@/services/playbackService'
+import { commonStore } from '@/stores/commonStore'
+import { queueStore } from '@/stores/queueStore'
+import { songStore } from '@/stores/songStore'
+import { arrayify, getPlayableProp, provideReadonly } from '@/utils/helpers'
+import { eventBus } from '@/utils/eventBus'
+import { useFuzzySearch } from '@/composables/useFuzzySearch'
+import { useRouter } from '@/composables/useRouter'
 
 import {
   PlayableListConfigKey,
@@ -135,9 +139,22 @@ export const useSongList = (
       return playables.value
     }
 
-    return sortField.value
-      ? orderBy(fuzzy.search(filterKeywords.value), extendedSortFields.value!, sortOrder.value)
-      : fuzzy.search(filterKeywords.value)
+    const filtered = fuzzy.search(filterKeywords.value)
+
+    if (!sortField.value) {
+      return filtered
+    }
+
+    const sortFields = extendedSortFields.value!
+
+    if (sortFields[0] === 'disc' && sortFields.length > 1 && new Set(filtered.map(p => p.disc ?? null)).size === 1) {
+      // If we're sorting by disc and there's only one disc, we remove disc from the sort fields.
+      // Otherwise, the tracks will be sorted by disc number first, and since there's only one disc,
+      // the track order will remain the same through alternating between asc and desc.
+      sortFields.shift()
+    }
+
+    return orderBy(filtered, sortFields, sortOrder.value)
   })
 
   const onPressEnter = async (event: KeyboardEvent) => {

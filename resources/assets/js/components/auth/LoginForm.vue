@@ -40,9 +40,9 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { authService } from '@/services'
-import { logger } from '@/utils'
-import { useMessageToaster } from '@/composables'
+import { authService } from '@/services/authService'
+import { logger } from '@/utils/logger'
+import { useMessageToaster } from '@/composables/useMessageToaster'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import PasswordField from '@/components/ui/form/PasswordField.vue'

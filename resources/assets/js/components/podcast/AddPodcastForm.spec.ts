@@ -1,9 +1,9 @@
 import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { podcastStore } from '@/stores'
-import Component from './AddPodcastForm.vue'
 import factory from '@/__tests__/factory'
+import { podcastStore } from '@/stores/podcastStore'
+import Component from './AddPodcastForm.vue'
 
 new class extends UnitTestCase {
   protected test () {

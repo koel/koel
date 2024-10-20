@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { http } from '@/services'
+import { http } from '@/services/http'
 
 export const podcastStore = {
   state: reactive({
