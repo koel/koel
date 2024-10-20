@@ -65,6 +65,7 @@ const menuItems = computed(() => {
   const album: MenuItems = { label: 'Album', field: 'album_name' }
   const track: MenuItems = { label: 'Track & Disc', field: 'track' }
   const time: MenuItems = { label: 'Time', field: 'length' }
+  const playCount: MenuItems = { label: 'Play Count', field: 'play_count' }
   const dateAdded: MenuItems = { label: 'Date Added', field: 'created_at' }
   const podcast: MenuItems = { label: 'Podcast', field: 'podcast_title' }
   const albumOrPodcast: MenuItems = { label: 'Album or Podcast', field: ['album_name', 'podcast_title'] }
@@ -76,6 +77,10 @@ const menuItems = computed(() => {
     items = [title, podcast, author, time, dateAdded]
   } else if (contentType.value === 'mixed') {
     items = [title, albumOrPodcast, artistOrAuthor, time, dateAdded]
+  }
+
+  if (contentType.value === 'songs') {
+    items.push(playCount)
   }
 
   if (hasCustomOrderSort.value) {
