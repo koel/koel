@@ -8,6 +8,7 @@ use App\Models\Song as Playable;
 use App\Values\SmartPlaylistRuleGroupCollection;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,7 +16,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 
 /**
@@ -39,6 +39,7 @@ class Playlist extends Model
 {
     use Searchable;
     use HasFactory;
+    use HasUuids;
 
     protected $hidden = ['user_id', 'created_at', 'updated_at'];
     protected $guarded = [];
@@ -48,17 +49,8 @@ class Playlist extends Model
         'own_songs_only' => 'bool',
     ];
 
-    public $incrementing = false;
-    protected $keyType = 'string';
     protected $appends = ['is_smart'];
     protected $with = ['user', 'collaborators', 'folders'];
-
-    protected static function booted(): void
-    {
-        static::creating(static function (Playlist $playlist): void {
-            $playlist->id ??= Str::uuid()->toString();
-        });
-    }
 
     public function playables(): BelongsToMany
     {

@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Str;
 
 /**
  * @property string $id
@@ -21,17 +21,10 @@ use Illuminate\Support\Str;
 class PlaylistFolder extends Model
 {
     use HasFactory;
+    use HasUuids;
 
-    public $incrementing = false;
-    protected $keyType = 'string';
     protected $guarded = ['id'];
-
     protected $with = ['user'];
-
-    protected static function booted(): void
-    {
-        static::creating(static fn (self $folder) => $folder->id = Str::uuid()->toString());
-    }
 
     public function playlists(): BelongsToMany
     {

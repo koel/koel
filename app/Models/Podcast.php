@@ -8,11 +8,11 @@ use App\Casts\Podcast\PodcastMetadataCast;
 use App\Models\Song as Episode;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 use PhanAn\Poddle\Values\CategoryCollection;
 use PhanAn\Poddle\Values\ChannelMetadata;
@@ -35,14 +35,12 @@ use PhanAn\Poddle\Values\ChannelMetadata;
 class Podcast extends Model
 {
     use HasFactory;
+    use HasUuids;
     use Searchable;
 
     protected $hidden = ['created_at', 'updated_at'];
     protected $guarded = [];
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
+    protected $with = ['subscribers'];
 
     protected $casts = [
         'categories' => CategoriesCast::class,
@@ -50,13 +48,6 @@ class Podcast extends Model
         'last_synced_at' => 'datetime',
         'explicit' => 'boolean',
     ];
-
-    protected $with = ['subscribers'];
-
-    protected static function booted(): void
-    {
-        static::creating(static fn (self $podcast) => $podcast->id ??= Str::uuid()->toString());
-    }
 
     public static function query(): PodcastBuilder
     {
