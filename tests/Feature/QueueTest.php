@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Http\Resources\SongResource;
 use App\Models\QueueState;
 use App\Models\Song;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
@@ -17,13 +18,15 @@ class QueueTest extends TestCase
         'playback_position',
     ];
 
-    public function testGetEmptyState(): void
+    #[Test]
+    public function getEmptyState(): void
     {
         $this->getAs('api/queue/state')
             ->assertJsonStructure(self::QUEUE_STATE_JSON_STRUCTURE);
     }
 
-    public function testGetExistingState(): void
+    #[Test]
+    public function getExistingState(): void
     {
         /** @var QueueState $queueState */
         $queueState = QueueState::factory()->create([
@@ -35,7 +38,8 @@ class QueueTest extends TestCase
             ->assertJsonStructure(self::QUEUE_STATE_JSON_STRUCTURE);
     }
 
-    public function testUpdateStateWithoutExistingState(): void
+    #[Test]
+    public function updateStateWithoutExistingState(): void
     {
         $user = create_user();
 
@@ -51,7 +55,8 @@ class QueueTest extends TestCase
         self::assertEqualsCanonicalizing($songIds, $queue->song_ids);
     }
 
-    public function testUpdatePlaybackStatus(): void
+    #[Test]
+    public function updatePlaybackStatus(): void
     {
         /** @var QueueState $state */
         $state = QueueState::factory()->create();
@@ -77,7 +82,8 @@ class QueueTest extends TestCase
         self::assertSame(456, $state->playback_position);
     }
 
-    public function testFetchSongs(): void
+    #[Test]
+    public function fetchSongs(): void
     {
         Song::factory(10)->create();
 

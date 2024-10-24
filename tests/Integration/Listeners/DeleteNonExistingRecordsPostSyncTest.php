@@ -9,6 +9,7 @@ use App\Models\Song;
 use App\Values\ScanResult;
 use App\Values\ScanResultCollection;
 use Illuminate\Database\Eloquent\Collection;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class DeleteNonExistingRecordsPostSyncTest extends TestCase
@@ -22,7 +23,8 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
         $this->listener = app(DeleteNonExistingRecordsPostScan::class);
     }
 
-    public function testHandleDoesNotDeleteCloudEntries(): void
+    #[Test]
+    public function handleDoesNotDeleteCloudEntries(): void
     {
         collect(SongStorageType::cases())
             ->filter(static fn ($type) => $type !== SongStorageType::LOCAL)
@@ -34,14 +36,16 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
             });
     }
 
-    public function testHandleDoesNotDeleteEpisodes(): void
+    #[Test]
+    public function handleDoesNotDeleteEpisodes(): void
     {
         $episode = Song::factory()->asEpisode()->create();
         $this->listener->handle(new MediaScanCompleted(ScanResultCollection::create()));
         self::assertModelExists($episode);
     }
 
-    public function testHandle(): void
+    #[Test]
+    public function handle(): void
     {
         /** @var Collection|array<array-key, Song> $songs */
         $songs = Song::factory(4)->create();

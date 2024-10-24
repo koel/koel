@@ -7,13 +7,15 @@ use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
 
 class ForgotPasswordTest extends TestCase
 {
-    public function testSendResetPasswordRequest(): void
+    #[Test]
+    public function sendResetPasswordRequest(): void
     {
         $this->mock(AuthenticationService::class)
             ->shouldReceive('trySendResetPasswordLink')
@@ -24,7 +26,8 @@ class ForgotPasswordTest extends TestCase
             ->assertNoContent();
     }
 
-    public function testSendResetPasswordRequestFailed(): void
+    #[Test]
+    public function sendResetPasswordRequestFailed(): void
     {
         $this->mock(AuthenticationService::class)
             ->shouldReceive('trySendResetPasswordLink')
@@ -35,7 +38,8 @@ class ForgotPasswordTest extends TestCase
             ->assertNotFound();
     }
 
-    public function testResetPassword(): void
+    #[Test]
+    public function resetPassword(): void
     {
         Event::fake();
         $user = create_user();
@@ -50,7 +54,8 @@ class ForgotPasswordTest extends TestCase
         Event::assertDispatched(PasswordReset::class);
     }
 
-    public function testResetPasswordFailed(): void
+    #[Test]
+    public function resetPasswordFailed(): void
     {
         Event::fake();
         $user = create_user(['password' => Hash::make('old-password')]);

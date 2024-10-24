@@ -8,13 +8,15 @@ use App\Events\SongLikeToggled;
 use App\Models\Song;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
 use function Tests\create_user;
 
 class InteractionTest extends PlusTestCase
 {
-    public function testPolicyForRegisterPlay(): void
+    #[Test]
+    public function policyForRegisterPlay(): void
     {
         Event::fake(SongLikeToggled::class);
 
@@ -39,7 +41,8 @@ class InteractionTest extends PlusTestCase
             ->assertSuccessful();
     }
 
-    public function testPolicyForToggleLike(): void
+    #[Test]
+    public function policyForToggleLike(): void
     {
         Event::fake(SongLikeToggled::class);
 
@@ -64,7 +67,8 @@ class InteractionTest extends PlusTestCase
             ->assertSuccessful();
     }
 
-    public function testPolicyForBatchLike(): void
+    #[Test]
+    public function policyForBatchLike(): void
     {
         Event::fake(MultipleSongsLiked::class);
 
@@ -94,7 +98,8 @@ class InteractionTest extends PlusTestCase
             ->assertForbidden();
     }
 
-    public function testPolicyForBatchUnlike(): void
+    #[Test]
+    public function policyForBatchUnlike(): void
     {
         Event::fake(MultipleSongsUnliked::class);
 

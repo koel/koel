@@ -7,6 +7,7 @@ use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
@@ -22,7 +23,8 @@ class AuthenticationServiceTest extends TestCase
         $this->service = app(AuthenticationService::class);
     }
 
-    public function testTryResetPasswordUsingBroker(): void
+    #[Test]
+    public function tryResetPasswordUsingBroker(): void
     {
         Event::fake();
         $user = create_user();
@@ -36,7 +38,8 @@ class AuthenticationServiceTest extends TestCase
         Event::assertDispatched(PasswordReset::class);
     }
 
-    public function testTryResetPasswordUsingBrokerWithInvalidToken(): void
+    #[Test]
+    public function tryResetPasswordUsingBrokerWithInvalidToken(): void
     {
         Event::fake();
         $user = create_user(['password' => Hash::make('old-password')]);

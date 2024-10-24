@@ -4,6 +4,7 @@ namespace Tests\Feature\ObjectStorage;
 
 use App\Models\Song;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_admin;
@@ -22,7 +23,8 @@ class S3Test extends TestCase
         create_admin();
     }
 
-    public function testStoringASong(): void
+    #[Test]
+    public function storingASong(): void
     {
         $this->post('api/os/s3/song', [
             'bucket' => 'koel',
@@ -48,7 +50,8 @@ class S3Test extends TestCase
         self::assertSame(5, $song->track);
     }
 
-    public function testRemovingASong(): void
+    #[Test]
+    public function removingASong(): void
     {
         Song::factory()->create([
             'path' => 's3://koel/sample.mp3',

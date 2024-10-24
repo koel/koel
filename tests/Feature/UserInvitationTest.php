@@ -7,13 +7,15 @@ use App\Mail\UserInvite;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_admin;
 
 class UserInvitationTest extends TestCase
 {
-    public function testInvite(): void
+    #[Test]
+    public function invite(): void
     {
         Mail::fake();
 
@@ -27,7 +29,8 @@ class UserInvitationTest extends TestCase
         Mail::assertQueued(UserInvite::class, 2);
     }
 
-    public function testNonAdminCannotInvite(): void
+    #[Test]
+    public function nonAdminCannotInvite(): void
     {
         Mail::fake();
 
@@ -37,7 +40,8 @@ class UserInvitationTest extends TestCase
         Mail::assertNothingQueued();
     }
 
-    public function testGetProspect(): void
+    #[Test]
+    public function getProspect(): void
     {
         $prospect = self::createProspect();
 
@@ -46,7 +50,8 @@ class UserInvitationTest extends TestCase
             ->assertJsonStructure(UserProspectResource::JSON_STRUCTURE);
     }
 
-    public function testRevoke(): void
+    #[Test]
+    public function revoke(): void
     {
         $prospect = self::createProspect();
 
@@ -56,7 +61,8 @@ class UserInvitationTest extends TestCase
         self::assertModelMissing($prospect);
     }
 
-    public function testNonAdminCannotRevoke(): void
+    #[Test]
+    public function nonAdminCannotRevoke(): void
     {
         $prospect = self::createProspect();
 
@@ -66,7 +72,8 @@ class UserInvitationTest extends TestCase
         self::assertModelExists($prospect);
     }
 
-    public function testAccept(): void
+    #[Test]
+    public function accept(): void
     {
         $prospect = self::createProspect();
 

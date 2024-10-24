@@ -7,13 +7,15 @@ use App\Listeners\UpdateLastfmNowPlaying;
 use App\Models\Song;
 use App\Services\LastfmService;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
 
 class UpdateLastfmNowPlayingTest extends TestCase
 {
-    public function testUpdateNowPlayingStatus(): void
+    #[Test]
+    public function updateNowPlayingStatus(): void
     {
         $user = create_user();
 

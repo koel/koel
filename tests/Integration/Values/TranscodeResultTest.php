@@ -7,13 +7,15 @@ use App\Values\TranscodeResult;
 use Illuminate\Process\PendingProcess;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Process;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\test_path;
 
 class TranscodeResultTest extends TestCase
 {
-    public function testCreateAndRetrieve(): void
+    #[Test]
+    public function createAndRetrieve(): void
     {
         config(['koel.streaming.ffmpeg_path' => '/usr/bin/ffmpeg']);
         Process::fake();

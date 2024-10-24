@@ -5,13 +5,15 @@ namespace Tests\Feature\KoelPlus;
 use App\Http\Resources\CollaborativeSongResource;
 use App\Models\Playlist;
 use App\Models\Song;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
 use function Tests\create_user;
 
 class PlaylistSongTest extends PlusTestCase
 {
-    public function testGetSongsInCollaborativePlaylist(): void
+    #[Test]
+    public function getSongsInCollaborativePlaylist(): void
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
@@ -26,7 +28,8 @@ class PlaylistSongTest extends PlusTestCase
             ->assertJsonCount(3);
     }
 
-    public function testPrivateSongsDoNotShowUpInCollaborativePlaylist(): void
+    #[Test]
+    public function privateSongsDoNotShowUpInCollaborativePlaylist(): void
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
@@ -46,7 +49,8 @@ class PlaylistSongTest extends PlusTestCase
             ->assertJsonMissing(['id' => $privateSong->id]);
     }
 
-    public function testCollaboratorCanAddSongs(): void
+    #[Test]
+    public function collaboratorCanAddSongs(): void
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
@@ -61,7 +65,8 @@ class PlaylistSongTest extends PlusTestCase
         $songs->each(static fn (Song $song) => self::assertTrue($playlist->playables->contains($song)));
     }
 
-    public function testCollaboratorCanRemoveSongs(): void
+    #[Test]
+    public function collaboratorCanRemoveSongs(): void
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();

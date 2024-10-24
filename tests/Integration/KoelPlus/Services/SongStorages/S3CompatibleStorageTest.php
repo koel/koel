@@ -6,6 +6,7 @@ use App\Models\Song;
 use App\Services\SongStorages\S3CompatibleStorage;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
 use function Tests\create_user;
@@ -24,7 +25,8 @@ class S3CompatibleStorageTest extends PlusTestCase
         $this->file = UploadedFile::fromFile(test_path('songs/full.mp3'), 'song.mp3'); //@phpstan-ignore-line
     }
 
-    public function testStoreUploadedFile(): void
+    #[Test]
+    public function storeUploadedFile(): void
     {
         self::assertEquals(0, Song::query()->where('storage', 's3')->count());
 
@@ -35,7 +37,8 @@ class S3CompatibleStorageTest extends PlusTestCase
         self::assertEquals(1, Song::query()->where('storage', 's3')->count());
     }
 
-    public function testStoringWithVisibilityPreference(): void
+    #[Test]
+    public function storingWithVisibilityPreference(): void
     {
         $user = create_user();
 
@@ -51,7 +54,8 @@ class S3CompatibleStorageTest extends PlusTestCase
         self::assertFalse($this->service->storeUploadedFile($privateFile, $user)->is_public);
     }
 
-    public function testDelete(): void
+    #[Test]
+    public function deleteSong(): void
     {
         Storage::fake('s3');
 
@@ -62,7 +66,8 @@ class S3CompatibleStorageTest extends PlusTestCase
         Storage::disk('s3')->assertMissing($song->storage_metadata->getPath());
     }
 
-    public function testGetPresignedUrl(): void
+    #[Test]
+    public function getPresignedUrl(): void
     {
         Storage::fake('s3');
 

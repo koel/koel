@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use Illuminate\Support\Facades\Hash;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
@@ -11,7 +12,8 @@ use function Tests\test_path;
 
 class ProfileTest extends TestCase
 {
-    public function testUpdateProfileRequiresCurrentPassword(): void
+    #[Test]
+    public function updateProfileRequiresCurrentPassword(): void
     {
         $this->putAs('api/me', [
             'name' => 'Foo',
@@ -20,7 +22,8 @@ class ProfileTest extends TestCase
             ->assertUnprocessable();
     }
 
-    public function testUpdateProfileWithoutNewPassword(): void
+    #[Test]
+    public function updateProfileWithoutNewPassword(): void
     {
         $user = create_user(['password' => Hash::make('secret')]);
 
@@ -37,7 +40,8 @@ class ProfileTest extends TestCase
         self::assertTrue(Hash::check('secret', $user->password));
     }
 
-    public function testUpdateProfileWithNewPassword(): void
+    #[Test]
+    public function updateProfileWithNewPassword(): void
     {
         $user = create_user(['password' => Hash::make('secret')]);
 
@@ -58,7 +62,8 @@ class ProfileTest extends TestCase
         self::assertTrue(Hash::check('new-secret', $user->password));
     }
 
-    public function testUpdateProfileWithAvatar(): void
+    #[Test]
+    public function updateProfileWithAvatar(): void
     {
         $user = create_user(['password' => Hash::make('secret')]);
         self::assertNull($user->getRawOriginal('avatar'));
@@ -76,7 +81,8 @@ class ProfileTest extends TestCase
         self::assertFileExists(user_avatar_path($user->getRawOriginal('avatar')));
     }
 
-    public function testUpdateProfileRemovingAvatar(): void
+    #[Test]
+    public function updateProfileRemovingAvatar(): void
     {
         $user = create_user([
             'password' => Hash::make('secret'),

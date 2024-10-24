@@ -12,6 +12,7 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\Http;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Client\ClientInterface;
 use Tests\TestCase;
 
@@ -36,7 +37,8 @@ class PodcastServiceTest extends TestCase
         $this->service = app(PodcastService::class);
     }
 
-    public function testAddPodcast(): void
+    #[Test]
+    public function addPodcast(): void
     {
         $url = 'https://example.com/feed.xml';
         $user = create_user();
@@ -57,7 +59,8 @@ class PodcastServiceTest extends TestCase
         self::assertCount(8, $podcast->episodes);
     }
 
-    public function testSubscribeUserToPodcast(): void
+    #[Test]
+    public function subscribeUserToPodcast(): void
     {
         /** @var Podcast $podcast */
         $podcast = Podcast::factory()->create([
@@ -76,7 +79,8 @@ class PodcastServiceTest extends TestCase
         self::assertSame('My Cool Podcast', $podcast->fresh()->title);
     }
 
-    public function testResubscribeUserToPodcastThrows(): void
+    #[Test]
+    public function resubscribeUserToPodcastThrows(): void
     {
         self::expectException(UserAlreadySubscribedToPodcast::class);
 
@@ -91,7 +95,8 @@ class PodcastServiceTest extends TestCase
         $this->service->addPodcast('https://example.com/feed.xml', $user);
     }
 
-    public function testAddingRefreshesObsoletePodcast(): void
+    #[Test]
+    public function addingRefreshesObsoletePodcast(): void
     {
         self::expectException(UserAlreadySubscribedToPodcast::class);
 
@@ -117,7 +122,8 @@ class PodcastServiceTest extends TestCase
         self::assertSame('Podcast Feed Parser', $podcast->title);
     }
 
-    public function testUnsubscribeUserFromPodcast(): void
+    #[Test]
+    public function unsubscribeUserFromPodcast(): void
     {
         /** @var Podcast $podcast */
         $podcast = Podcast::factory()->create();
@@ -129,7 +135,8 @@ class PodcastServiceTest extends TestCase
         self::assertFalse($user->subscribedToPodcast($podcast));
     }
 
-    public function testPodcastNotObsoleteIfSyncedRecently(): void
+    #[Test]
+    public function podcastNotObsoleteIfSyncedRecently(): void
     {
         /** @var Podcast $podcast */
         $podcast = Podcast::factory()->create([
@@ -139,7 +146,8 @@ class PodcastServiceTest extends TestCase
         self::assertFalse($this->service->isPodcastObsolete($podcast));
     }
 
-    public function testPodcastObsoleteIfModifiedSinceLastSync(): void
+    #[Test]
+    public function podcastObsoleteIfModifiedSinceLastSync(): void
     {
         Http::fake([
             'https://example.com/feed.xml' => Http::response(headers: ['Last-Modified' => now()->toRfc1123String()]),
@@ -154,7 +162,8 @@ class PodcastServiceTest extends TestCase
         self::assertTrue($this->service->isPodcastObsolete($podcast));
     }
 
-    public function testUpdateEpisodeProgress(): void
+    #[Test]
+    public function updateEpisodeProgress(): void
     {
         /** @var Song $episode */
         $episode = Song::factory()->asEpisode()->create();
@@ -170,7 +179,8 @@ class PodcastServiceTest extends TestCase
         self::assertSame(123, $subscription->state->progresses[$episode->id]);
     }
 
-    public function testGetStreamableUrl(): void
+    #[Test]
+    public function getStreamableUrl(): void
     {
         $mock = new MockHandler([
             new Response(200, ['Access-Control-Allow-Origin' => '*']),
@@ -185,7 +195,8 @@ class PodcastServiceTest extends TestCase
         );
     }
 
-    public function testStreamableUrlNotAvailable(): void
+    #[Test]
+    public function streamableUrlNotAvailable(): void
     {
         $mock = new MockHandler([new Response(200, [])]);
 
@@ -195,7 +206,8 @@ class PodcastServiceTest extends TestCase
         self::assertNull($this->service->getStreamableUrl('https://example.com/episode.mp3', $client));
     }
 
-    public function testGetStreamableUrlFollowsRedirects(): void
+    #[Test]
+    public function getStreamableUrlFollowsRedirects(): void
     {
         $mock = new MockHandler([
             new Response(302, ['Location' => 'https://redir.example.com/track']),

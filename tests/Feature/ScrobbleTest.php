@@ -6,13 +6,15 @@ use App\Models\Song;
 use App\Models\User;
 use App\Services\LastfmService;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
 
 class ScrobbleTest extends TestCase
 {
-    public function testLastfmScrobble(): void
+    #[Test]
+    public function lastfmScrobble(): void
     {
         $user = create_user();
 

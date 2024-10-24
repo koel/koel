@@ -6,13 +6,15 @@ use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\User as GoogleUser;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
 use function Tests\create_user;
 
 class GoogleTest extends PlusTestCase
 {
-    public function testCallbackWithNewUser(): void
+    #[Test]
+    public function callbackWithNewUser(): void
     {
         $googleUser = Mockery::mock(GoogleUser::class, [
             'getEmail' => 'bruce@iron.com',
@@ -29,7 +31,8 @@ class GoogleTest extends PlusTestCase
         $response->assertViewHas('token');
     }
 
-    public function testCallbackWithExistingEmail(): void
+    #[Test]
+    public function callbackWithExistingEmail(): void
     {
         create_user(['email' => 'bruce@iron.com']);
 
@@ -48,7 +51,8 @@ class GoogleTest extends PlusTestCase
         $response->assertViewHas('token');
     }
 
-    public function testCallbackWithExistingSSOUser(): void
+    #[Test]
+    public function callbackWithExistingSSOUser(): void
     {
         create_user([
             'sso_provider' => 'Google',

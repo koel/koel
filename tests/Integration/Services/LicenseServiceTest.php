@@ -12,6 +12,7 @@ use App\Values\LicenseStatus;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
+use PHPUnit\Framework\Attributes\Test;
 use Saloon\Http\Faking\MockResponse;
 use Saloon\Laravel\Facades\Saloon;
 use Tests\TestCase;
@@ -29,7 +30,8 @@ class LicenseServiceTest extends TestCase
         $this->service = app(LicenseService::class);
     }
 
-    public function testActivateLicense(): void
+    #[Test]
+    public function activateLicense(): void
     {
         config(['lemonsqueezy.store_id' => 42]);
         $key = '38b1460a-5104-4067-a91d-77b872934d51';
@@ -63,7 +65,8 @@ class LicenseServiceTest extends TestCase
         });
     }
 
-    public function testActivateLicenseFailsBecauseOfIncorrectStoreId(): void
+    #[Test]
+    public function activateLicenseFailsBecauseOfIncorrectStoreId(): void
     {
         $this->expectException(FailedToActivateLicenseException::class);
         $this->expectExceptionMessage('This license key is not from Koel’s official store.');
@@ -80,7 +83,8 @@ class LicenseServiceTest extends TestCase
         $this->service->activate($key);
     }
 
-    public function testActivateLicenseFailsForInvalidLicenseKey(): void
+    #[Test]
+    public function activateLicenseFailsForInvalidLicenseKey(): void
     {
         $this->expectException(FailedToActivateLicenseException::class);
         $this->expectExceptionMessage('license_key not found');
@@ -95,7 +99,8 @@ class LicenseServiceTest extends TestCase
         $this->service->activate('invalid-key');
     }
 
-    public function testDeactivateLicense(): void
+    #[Test]
+    public function deactivateLicense(): void
     {
         /** @var License $license */
         $license = License::factory()->create();
@@ -122,7 +127,8 @@ class LicenseServiceTest extends TestCase
         });
     }
 
-    public function testDeactivateLicenseHandlesLeftoverRecords(): void
+    #[Test]
+    public function deactivateLicenseHandlesLeftoverRecords(): void
     {
         /** @var License $license */
         $license = License::factory()->create();
@@ -133,7 +139,8 @@ class LicenseServiceTest extends TestCase
         self::assertModelMissing($license);
     }
 
-    public function testDeactivateLicenseFails(): void
+    #[Test]
+    public function deactivateLicenseFails(): void
     {
         $this->expectExceptionMessage('Unprocessable Entity (422) Response: Something went horrible wrong');
 
@@ -150,7 +157,8 @@ class LicenseServiceTest extends TestCase
         $this->service->deactivate($license);
     }
 
-    public function testGetLicenseStatusFromCache(): void
+    #[Test]
+    public function getLicenseStatusFromCache(): void
     {
         Saloon::fake([]);
 
@@ -165,7 +173,8 @@ class LicenseServiceTest extends TestCase
         Saloon::assertNothingSent();
     }
 
-    public function testGetLicenseStatusWithNoLicenses(): void
+    #[Test]
+    public function getLicenseStatusWithNoLicenses(): void
     {
         Saloon::fake([]);
         License::query()->delete();
@@ -174,7 +183,8 @@ class LicenseServiceTest extends TestCase
         Saloon::assertNothingSent();
     }
 
-    public function testGetLicenseStatusValidatesWithApi(): void
+    #[Test]
+    public function getLicenseStatusValidatesWithApi(): void
     {
         /** @var License $license */
         $license = License::factory()->create();
@@ -200,7 +210,8 @@ class LicenseServiceTest extends TestCase
         });
     }
 
-    public function testGetLicenseStatusValidatesWithApiWithInvalidLicense(): void
+    #[Test]
+    public function getLicenseStatusValidatesWithApiWithInvalidLicense(): void
     {
         License::factory()->create();
 

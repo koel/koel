@@ -15,6 +15,7 @@ use getID3;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_admin;
@@ -36,7 +37,8 @@ class MediaScannerTest extends TestCase
         return realpath($this->mediaPath . $subPath);
     }
 
-    public function testScan(): void
+    #[Test]
+    public function scan(): void
     {
         Event::fake(MediaScanCompleted::class);
 
@@ -93,7 +95,8 @@ class MediaScannerTest extends TestCase
         self::assertSame('Cuckoo', $song->artist->name);
     }
 
-    public function testModifiedFileIsRescanned(): void
+    #[Test]
+    public function modifiedFileIsRescanned(): void
     {
         $config = ScanConfiguration::make(owner: create_admin());
         $this->scanner->scan($config);
@@ -107,7 +110,8 @@ class MediaScannerTest extends TestCase
         self::assertSame($time, $song->refresh()->mtime);
     }
 
-    public function testRescanWithoutForceDoesNotResetData(): void
+    #[Test]
+    public function rescanWithoutForceDoesNotResetData(): void
     {
         Event::fake(MediaScanCompleted::class);
 
@@ -130,7 +134,8 @@ class MediaScannerTest extends TestCase
         self::assertSame('Booom Wroooom', $song->lyrics);
     }
 
-    public function testForceScanResetsData(): void
+    #[Test]
+    public function forceScanResetsData(): void
     {
         Event::fake(MediaScanCompleted::class);
 
@@ -155,7 +160,8 @@ class MediaScannerTest extends TestCase
         self::assertSame($owner->id, $song->owner_id);
     }
 
-    public function testScanWithIgnoredTags(): void
+    #[Test]
+    public function scanWithIgnoredTags(): void
     {
         Event::fake(MediaScanCompleted::class);
 
@@ -178,7 +184,8 @@ class MediaScannerTest extends TestCase
         self::assertNotSame('Booom Wroooom', $song->lyrics);
     }
 
-    public function testScanAllTagsForNewFilesRegardlessOfIgnoredOption(): void
+    #[Test]
+    public function scanAllTagsForNewFilesRegardlessOfIgnoredOption(): void
     {
         Event::fake(MediaScanCompleted::class);
 
@@ -203,7 +210,8 @@ class MediaScannerTest extends TestCase
         );
     }
 
-    public function testScanAddedSongViaWatch(): void
+    #[Test]
+    public function scanAddedSongViaWatch(): void
     {
         $path = $this->path('/blank.mp3');
 
@@ -215,7 +223,8 @@ class MediaScannerTest extends TestCase
         self::assertDatabaseHas(Song::class, ['path' => $path]);
     }
 
-    public function testScanDeletedSongViaWatch(): void
+    #[Test]
+    public function scanDeletedSongViaWatch(): void
     {
         /** @var Song $song */
         $song = Song::factory()->create();
@@ -228,7 +237,8 @@ class MediaScannerTest extends TestCase
         self::assertModelMissing($song);
     }
 
-    public function testScanDeletedDirectoryViaWatch(): void
+    #[Test]
+    public function scanDeletedDirectoryViaWatch(): void
     {
         Event::fake(MediaScanCompleted::class);
 
@@ -242,7 +252,8 @@ class MediaScannerTest extends TestCase
         self::assertDatabaseMissing(Song::class, ['path' => $this->path('/subdir/back-in-black.mp3')]);
     }
 
-    public function testHtmlEntities(): void
+    #[Test]
+    public function htmlEntities(): void
     {
         $path = $this->path('/songs/blank.mp3');
         $analyzed = [
@@ -275,7 +286,8 @@ class MediaScannerTest extends TestCase
         self::assertSame('水谷広実', $info->title);
     }
 
-    public function testOptionallyIgnoreHiddenFiles(): void
+    #[Test]
+    public function optionallyIgnoreHiddenFiles(): void
     {
         $config = ScanConfiguration::make(owner: create_admin());
 

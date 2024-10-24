@@ -5,6 +5,7 @@ namespace Tests\Integration\Services;
 use App\Models\QueueState;
 use App\Models\Song;
 use App\Services\QueueService;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
@@ -20,7 +21,8 @@ class QueueServiceTest extends TestCase
         $this->service = app(QueueService::class);
     }
 
-    public function testGetQueueState(): void
+    #[Test]
+    public function getQueueState(): void
     {
         /** @var Song $currentSong */
         $currentSong = Song::factory()->create();
@@ -38,7 +40,8 @@ class QueueServiceTest extends TestCase
         self::assertSame(123, $dto->playbackPosition);
     }
 
-    public function testCreateQueueState(): void
+    #[Test]
+    public function createQueueState(): void
     {
         $user = create_user();
 
@@ -56,7 +59,8 @@ class QueueServiceTest extends TestCase
         self::assertSame(0, $queueState->playback_position);
     }
 
-    public function testUpdateQueueState(): void
+    #[Test]
+    public function updateQueueState(): void
     {
         /** @var QueueState $state */
         $state = QueueState::factory()->create();
@@ -71,7 +75,8 @@ class QueueServiceTest extends TestCase
         self::assertEquals(0, $state->playback_position);
     }
 
-    public function testUpdatePlaybackStatus(): void
+    #[Test]
+    public function updatePlaybackStatus(): void
     {
         /** @var QueueState $state */
         $state = QueueState::factory()->create();

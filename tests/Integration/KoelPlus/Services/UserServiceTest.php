@@ -8,6 +8,7 @@ use App\Values\SSOUser;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Two\User as SocialiteUser;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
 use function Tests\create_user;
@@ -23,7 +24,8 @@ class UserServiceTest extends PlusTestCase
         $this->service = app(UserService::class);
     }
 
-    public function testCreateUserViaSSOProvider(): void
+    #[Test]
+    public function createUserViaSSOProvider(): void
     {
         $user = $this->service->createUser(
             name: 'Bruce Dickinson',
@@ -41,7 +43,8 @@ class UserServiceTest extends PlusTestCase
         self::assertSame('https://lh3.googleusercontent.com/a/vatar', $user->avatar);
     }
 
-    public function testCreateUserFromSSO(): void
+    #[Test]
+    public function createUserFromSSO(): void
     {
         self::assertDatabaseMissing(User::class, ['email' => 'bruce@iron.com']);
 
@@ -63,7 +66,8 @@ class UserServiceTest extends PlusTestCase
         self::assertSame('https://lh3.googleusercontent.com/a/vatar', $user->avatar);
     }
 
-    public function testUpdateUserFromSSOId(): void
+    #[Test]
+    public function updateUserFromSSOId(): void
     {
         $user = create_user([
             'email' => 'bruce@iron.com',
@@ -88,7 +92,8 @@ class UserServiceTest extends PlusTestCase
         self::assertSame('Google', $user->sso_provider);
     }
 
-    public function testUpdateUserFromSSOEmail(): void
+    #[Test]
+    public function updateUserFromSSOEmail(): void
     {
         $user = create_user([
             'email' => 'bruce@iron.com',
@@ -111,7 +116,8 @@ class UserServiceTest extends PlusTestCase
         self::assertSame('Google', $user->sso_provider);
     }
 
-    public function testUpdateSSOUserCannotChangeProfileDetails(): void
+    #[Test]
+    public function updateSSOUserCannotChangeProfileDetails(): void
     {
         $user = create_user([
             'email' => 'bruce@iron.com',

@@ -7,6 +7,7 @@ use App\Models\Song;
 use App\Services\MediaMetadataService;
 use Mockery;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
 use function Tests\create_admin;
@@ -23,7 +24,8 @@ class ArtistImageTest extends PlusTestCase
         $this->mediaMetadataService = self::mock(MediaMetadataService::class);
     }
 
-    public function testNormalUserCanUploadImageIfOwningAllSongsInArtist(): void
+    #[Test]
+    public function normalUserCanUploadImageIfOwningAllSongsInArtist(): void
     {
         $user = create_user();
 
@@ -40,7 +42,8 @@ class ArtistImageTest extends PlusTestCase
             ->assertOk();
     }
 
-    public function testNormalUserCannotUploadImageIfNotOwningAllSongsInArtist(): void
+    #[Test]
+    public function normalUserCannotUploadImageIfNotOwningAllSongsInArtist(): void
     {
         $user = create_user();
 
@@ -57,7 +60,8 @@ class ArtistImageTest extends PlusTestCase
             ->assertForbidden();
     }
 
-    public function testAdminCanUploadImageEvenIfNotOwningAllSongsInArtist(): void
+    #[Test]
+    public function adminCanUploadImageEvenIfNotOwningAllSongsInArtist(): void
     {
         $user = create_user();
 

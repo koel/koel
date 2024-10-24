@@ -4,11 +4,13 @@ namespace Tests\Feature;
 
 use App\Http\Resources\ArtistResource;
 use App\Models\Artist;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ArtistTest extends TestCase
 {
-    public function testIndex(): void
+    #[Test]
+    public function index(): void
     {
         Artist::factory(10)->create();
 
@@ -16,7 +18,8 @@ class ArtistTest extends TestCase
             ->assertJsonStructure(ArtistResource::PAGINATION_JSON_STRUCTURE);
     }
 
-    public function testShow(): void
+    #[Test]
+    public function show(): void
     {
         $this->getAs('api/artists/' . Artist::factory()->create()->id)
             ->assertJsonStructure(ArtistResource::JSON_STRUCTURE);

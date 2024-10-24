@@ -8,6 +8,7 @@ use App\Models\Setting;
 use App\Services\SongStorages\LocalStorage;
 use Illuminate\Http\UploadedFile;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
@@ -24,7 +25,8 @@ class LocalStorageTest extends TestCase
         $this->service = app(LocalStorage::class);
     }
 
-    public function testStoreUploadedFileWithMediaPathNotSet(): void
+    #[Test]
+    public function storeUploadedFileWithMediaPathNotSet(): void
     {
         Setting::set('media_path', '');
 
@@ -32,7 +34,8 @@ class LocalStorageTest extends TestCase
         $this->service->storeUploadedFile(Mockery::mock(UploadedFile::class), create_user());
     }
 
-    public function testStoreUploadedFileFails(): void
+    #[Test]
+    public function storeUploadedFileFails(): void
     {
         Setting::set('media_path', public_path('sandbox/media'));
 
@@ -40,7 +43,8 @@ class LocalStorageTest extends TestCase
         $this->service->storeUploadedFile(UploadedFile::fake()->create('fake.mp3'), create_user());
     }
 
-    public function testStoreUploadedFile(): void
+    #[Test]
+    public function storeUploadedFile(): void
     {
         Setting::set('media_path', public_path('sandbox/media'));
         $user = create_user();
@@ -51,7 +55,8 @@ class LocalStorageTest extends TestCase
         self::assertSame(public_path("sandbox/media/__KOEL_UPLOADS_\${$user->id}__/full.mp3"), $song->path);
     }
 
-    public function testStoringWithVisibilityPreference(): void
+    #[Test]
+    public function storingWithVisibilityPreference(): void
     {
         $user = create_user();
         $user->preferences->makeUploadsPublic = true;

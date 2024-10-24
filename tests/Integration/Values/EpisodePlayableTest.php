@@ -6,11 +6,13 @@ use App\Models\Song;
 use App\Values\Podcast\EpisodePlayable;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class EpisodePlayableTest extends TestCase
 {
-    public function testCreateAndRetrieved(): void
+    #[Test]
+    public function createAndRetrieved(): void
     {
         Http::fake([
             'https://example.com/episode.mp3' => Http::response('foo'),

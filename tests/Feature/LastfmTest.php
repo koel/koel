@@ -7,13 +7,15 @@ use App\Services\TokenManager;
 use Laravel\Sanctum\NewAccessToken;
 use Laravel\Sanctum\PersonalAccessToken;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
 
 class LastfmTest extends TestCase
 {
-    public function testSetSessionKey(): void
+    #[Test]
+    public function setSessionKey(): void
     {
         $user = create_user();
         $this->postAs('api/lastfm/session-key', ['key' => 'foo'], $user)
@@ -22,7 +24,8 @@ class LastfmTest extends TestCase
         self::assertSame('foo', $user->refresh()->preferences->lastFmSessionKey);
     }
 
-    public function testConnectToLastfm(): void
+    #[Test]
+    public function connectToLastfm(): void
     {
         $user = create_user();
         $token = $user->createToken('Koel')->plainTextToken;
@@ -47,6 +50,7 @@ class LastfmTest extends TestCase
             );
     }
 
+    #[Test]
     public function testCallback(): void
     {
         $user = create_user();
@@ -71,7 +75,8 @@ class LastfmTest extends TestCase
         self::assertNull(PersonalAccessToken::findToken($token));
     }
 
-    public function testRetrieveAndStoreSessionKey(): void
+    #[Test]
+    public function retrieveAndStoreSessionKey(): void
     {
         $user = create_user();
 
@@ -96,7 +101,8 @@ class LastfmTest extends TestCase
         self::assertSame('my-session-key', $user->refresh()->preferences->lastFmSessionKey);
     }
 
-    public function testDisconnectUser(): void
+    #[Test]
+    public function disconnectUser(): void
     {
         $user = create_user();
         self::assertNotNull($user->preferences->lastFmSessionKey);

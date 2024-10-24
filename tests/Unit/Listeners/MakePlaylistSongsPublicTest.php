@@ -7,13 +7,15 @@ use App\Listeners\MakePlaylistSongsPublic;
 use App\Models\PlaylistCollaborationToken;
 use App\Services\PlaylistService;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
 
 class MakePlaylistSongsPublicTest extends TestCase
 {
-    public function testHandle(): void
+    #[Test]
+    public function handle(): void
     {
         $collaborator = create_user();
 

@@ -7,6 +7,7 @@ use App\Exceptions\SongUploadFailedException;
 use App\Models\Setting;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_admin;
@@ -23,7 +24,8 @@ class UploadTest extends TestCase
         $this->file = UploadedFile::fromFile(test_path('songs/full.mp3'), 'song.mp3'); //@phpstan-ignore-line
     }
 
-    public function testUnauthorizedPost(): void
+    #[Test]
+    public function unauthorizedPost(): void
     {
         Setting::set('media_path', '');
 
@@ -39,14 +41,16 @@ class UploadTest extends TestCase
         ];
     }
 
-    public function testUploadFailsIfMediaPathIsNotSet(): void
+    #[Test]
+    public function uploadFailsIfMediaPathIsNotSet(): void
     {
         Setting::set('media_path', '');
 
         $this->postAs('/api/upload', ['file' => $this->file], create_admin())->assertForbidden();
     }
 
-    public function testUploadSuccessful(): void
+    #[Test]
+    public function uploadSuccessful(): void
     {
         Setting::set('media_path', public_path('sandbox/media'));
 

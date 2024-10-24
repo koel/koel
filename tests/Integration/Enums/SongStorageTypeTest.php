@@ -3,11 +3,13 @@
 namespace Tests\Integration\Enums;
 
 use App\Enums\SongStorageType;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class SongStorageTypeTest extends TestCase
 {
-    public function testSupported(): void
+    #[Test]
+    public function supported(): void
     {
         self::assertTrue(SongStorageType::LOCAL->supported());
         self::assertTrue(SongStorageType::S3_LAMBDA->supported());

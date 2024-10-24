@@ -4,13 +4,15 @@ namespace Tests\Feature\KoelPlus;
 
 use App\Models\Playlist;
 use App\Models\PlaylistFolder;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
 use function Tests\create_user;
 
 class PlaylistFolderTest extends PlusTestCase
 {
-    public function testCollaboratorPuttingPlaylistIntoTheirFolder(): void
+    #[Test]
+    public function collaboratorPuttingPlaylistIntoTheirFolder(): void
     {
         $collaborator = create_user();
 
@@ -40,7 +42,8 @@ class PlaylistFolderTest extends PlusTestCase
         self::assertTrue($playlist->fresh()->getFolder($playlist->user)?->is($ownerFolder));
     }
 
-    public function testCollaboratorMovingPlaylistToRootLevel(): void
+    #[Test]
+    public function collaboratorMovingPlaylistToRootLevel(): void
     {
         $collaborator = create_user();
 

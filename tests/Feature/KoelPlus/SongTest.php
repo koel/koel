@@ -4,13 +4,15 @@ namespace Tests\Feature\KoelPlus;
 
 use App\Models\Song;
 use Illuminate\Support\Collection;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
 use function Tests\create_user;
 
 class SongTest extends PlusTestCase
 {
-    public function testWithOwnSongsOnlyOptionOn(): void
+    #[Test]
+    public function withOwnSongsOnlyOptionOn(): void
     {
         $user = create_user();
 
@@ -27,7 +29,8 @@ class SongTest extends PlusTestCase
             ->assertJsonFragment(['id' => $ownSongs[2]->id]);
     }
 
-    public function testWithOwnSongsOnlyOptionOffOrMissing(): void
+    #[Test]
+    public function withOwnSongsOnlyOptionOffOrMissing(): void
     {
         $user = create_user();
 
@@ -43,7 +46,8 @@ class SongTest extends PlusTestCase
             ->assertJsonCount(5, 'data');
     }
 
-    public function testShowSongPolicy(): void
+    #[Test]
+    public function showSongPolicy(): void
     {
         $user = create_user();
 
@@ -66,7 +70,8 @@ class SongTest extends PlusTestCase
         $this->getAs("api/songs/$externalUnownedSong->id", $user)->assertForbidden();
     }
 
-    public function testEditSongsPolicy(): void
+    #[Test]
+    public function editSongsPolicy(): void
     {
         $currentUser = create_user();
         $anotherUser = create_user();
@@ -103,7 +108,8 @@ class SongTest extends PlusTestCase
         ], $currentUser)->assertSuccessful();
     }
 
-    public function testDeleteSongsPolicy(): void
+    #[Test]
+    public function deleteSongsPolicy(): void
     {
         $currentUser = create_user();
         $anotherUser = create_user();
@@ -128,7 +134,8 @@ class SongTest extends PlusTestCase
             ->assertSuccessful();
     }
 
-    public function testPublicizeSongs(): void
+    #[Test]
+    public function publicizeSongs(): void
     {
         $user = create_user();
 
@@ -144,7 +151,8 @@ class SongTest extends PlusTestCase
         });
     }
 
-    public function testPrivatizeSongs(): void
+    #[Test]
+    public function privatizeSongs(): void
     {
         $user = create_user();
 
@@ -160,7 +168,8 @@ class SongTest extends PlusTestCase
         });
     }
 
-    public function testPublicizingOrPrivatizingSongsRequiresOwnership(): void
+    #[Test]
+    public function publicizingOrPrivatizingSongsRequiresOwnership(): void
     {
         $songs = Song::factory(3)->public()->create();
 

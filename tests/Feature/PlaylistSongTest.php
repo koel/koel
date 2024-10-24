@@ -6,13 +6,15 @@ use App\Http\Resources\SongResource;
 use App\Models\Playlist;
 use App\Models\Song;
 use Illuminate\Support\Collection;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
 
 class PlaylistSongTest extends TestCase
 {
-    public function testGetNormalPlaylist(): void
+    #[Test]
+    public function getNormalPlaylist(): void
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
@@ -22,7 +24,8 @@ class PlaylistSongTest extends TestCase
             ->assertJsonStructure(['*' => SongResource::JSON_STRUCTURE]);
     }
 
-    public function testGetSmartPlaylist(): void
+    #[Test]
+    public function getSmartPlaylist(): void
     {
         Song::factory()->create(['title' => 'A foo song']);
 
@@ -47,7 +50,8 @@ class PlaylistSongTest extends TestCase
             ->assertJsonStructure(['*' => SongResource::JSON_STRUCTURE]);
     }
 
-    public function testNonOwnerCannotAccessPlaylist(): void
+    #[Test]
+    public function nonOwnerCannotAccessPlaylist(): void
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->for(create_user())->create();
@@ -57,7 +61,8 @@ class PlaylistSongTest extends TestCase
             ->assertForbidden();
     }
 
-    public function testAddSongsToPlaylist(): void
+    #[Test]
+    public function addSongsToPlaylist(): void
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
@@ -71,7 +76,8 @@ class PlaylistSongTest extends TestCase
         self::assertEqualsCanonicalizing($songs->pluck('id')->all(), $playlist->playables->pluck('id')->all());
     }
 
-    public function testRemoveSongsFromPlaylist(): void
+    #[Test]
+    public function removeSongsFromPlaylist(): void
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
@@ -97,7 +103,8 @@ class PlaylistSongTest extends TestCase
         self::assertEqualsCanonicalizing($toRemainSongs->pluck('id')->all(), $playlist->playables->pluck('id')->all());
     }
 
-    public function testNonOwnerCannotModifyPlaylist(): void
+    #[Test]
+    public function nonOwnerCannotModifyPlaylist(): void
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->for(create_user())->create();
@@ -112,7 +119,8 @@ class PlaylistSongTest extends TestCase
             ->assertForbidden();
     }
 
-    public function testSmartPlaylistContentCannotBeModified(): void
+    #[Test]
+    public function smartPlaylistContentCannotBeModified(): void
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create([

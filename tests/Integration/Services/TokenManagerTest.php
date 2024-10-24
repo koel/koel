@@ -5,6 +5,7 @@ namespace Tests\Integration\Services;
 use App\Services\TokenManager;
 use Illuminate\Support\Facades\Cache;
 use Laravel\Sanctum\PersonalAccessToken;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
@@ -20,14 +21,16 @@ class TokenManagerTest extends TestCase
         $this->tokenManager = app(TokenManager::class);
     }
 
-    public function testCreateTokenWithAllAbilities(): void
+    #[Test]
+    public function createTokenWithAllAbilities(): void
     {
         $token = $this->tokenManager->createToken(create_user());
 
         self::assertTrue($token->accessToken->can('*'));
     }
 
-    public function testCreateTokenWithSpecificAbilities(): void
+    #[Test]
+    public function createTokenWithSpecificAbilities(): void
     {
         $token = $this->tokenManager->createToken(create_user(), ['audio']);
 
@@ -36,7 +39,8 @@ class TokenManagerTest extends TestCase
         self::assertFalse($token->accessToken->can('*'));
     }
 
-    public function testCreateCompositionToken(): void
+    #[Test]
+    public function createCompositionToken(): void
     {
         $token = $this->tokenManager->createCompositeToken(create_user());
 
@@ -50,7 +54,8 @@ class TokenManagerTest extends TestCase
         self::assertTrue($audioTokenInstance->is(PersonalAccessToken::findToken($cachedAudioToken)));
     }
 
-    public function testDeleteCompositionToken(): void
+    #[Test]
+    public function deleteCompositionToken(): void
     {
         $token = $this->tokenManager->createCompositeToken(create_user());
 
@@ -61,7 +66,8 @@ class TokenManagerTest extends TestCase
         self::assertNull(Cache::get("app.composite-tokens.$token->apiToken"));
     }
 
-    public function testDestroyTokens(): void
+    #[Test]
+    public function destroyTokens(): void
     {
         $user = create_user();
         $user->createToken('foo');
@@ -74,7 +80,8 @@ class TokenManagerTest extends TestCase
         self::assertSame(0, $user->tokens()->count());
     }
 
-    public function testDeleteTokenByPlainTextToken(): void
+    #[Test]
+    public function deleteTokenByPlainTextToken(): void
     {
         $token = $this->tokenManager->createToken(create_user());
         self::assertModelExists($token->accessToken);
@@ -84,7 +91,8 @@ class TokenManagerTest extends TestCase
         self::assertModelMissing($token->accessToken);
     }
 
-    public function testGetUserFromPlainTextToken(): void
+    #[Test]
+    public function getUserFromPlainTextToken(): void
     {
         $user = create_user();
         $token = $this->tokenManager->createToken($user);
@@ -92,7 +100,8 @@ class TokenManagerTest extends TestCase
         self::assertTrue($user->is($this->tokenManager->getUserFromPlainTextToken($token->plainTextToken)));
     }
 
-    public function testReplaceApiToken(): void
+    #[Test]
+    public function replaceApiToken(): void
     {
         $oldToken = $this->tokenManager->createToken(create_user());
         $newToken = $this->tokenManager->refreshApiToken($oldToken->plainTextToken);

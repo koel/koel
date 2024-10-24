@@ -4,13 +4,15 @@ namespace Tests\Feature\KoelPlus;
 
 use App\Models\Song;
 use Illuminate\Support\Collection;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
 use function Tests\create_user;
 
 class SongVisibilityTest extends PlusTestCase
 {
-    public function testMakingSongPublic(): void
+    #[Test]
+    public function makingSongPublic(): void
     {
         $currentUser = create_user();
         $anotherUser = create_user();
@@ -31,7 +33,8 @@ class SongVisibilityTest extends PlusTestCase
         $ownSongs->each(static fn (Song $song) => self::assertTrue($song->refresh()->is_public));
     }
 
-    public function testMakingSongPrivate(): void
+    #[Test]
+    public function makingSongPrivate(): void
     {
         $currentUser = create_user();
         $anotherUser = create_user();

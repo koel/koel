@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Mockery;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Test;
 use Spatie\Dropbox\Client;
 use Spatie\FlysystemDropbox\DropboxAdapter;
 use Tests\PlusTestCase;
@@ -49,7 +50,8 @@ class DropboxStorageTest extends PlusTestCase
         $this->file = UploadedFile::fromFile(test_path('songs/full.mp3'), 'song.mp3'); //@phpstan-ignore-line
     }
 
-    public function testStoreUploadedFile(): void
+    #[Test]
+    public function storeUploadedFile(): void
     {
         $this->client->shouldReceive('setAccessToken')->with('free-bird')->once();
 
@@ -72,7 +74,8 @@ class DropboxStorageTest extends PlusTestCase
         self::assertSame('free-bird', Cache::get('dropbox_access_token'));
     }
 
-    public function testAccessTokenCache(): void
+    #[Test]
+    public function accessTokenCache(): void
     {
         Cache::put('dropbox_access_token', 'cached-token', now()->addHour());
 
@@ -83,7 +86,8 @@ class DropboxStorageTest extends PlusTestCase
         Http::assertNothingSent();
     }
 
-    public function testGetSongPresignedUrl(): void
+    #[Test]
+    public function getSongPresignedUrl(): void
     {
         $this->client->allows('setAccessToken');
 

@@ -16,13 +16,16 @@ use App\Services\Streamer\Streamer;
 use Exception;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\test_path;
 
 class StreamerTest extends TestCase
 {
-    public function testResolveAdapters(): void
+    #[Test]
+    public function resolveAdapters(): void
     {
         // prevent real HTTP calls from being made e.g. from DropboxStorage
         Http::fake();
@@ -53,7 +56,8 @@ class StreamerTest extends TestCase
             });
     }
 
-    public function testResolveTranscodingAdapter(): void
+    #[Test]
+    public function resolveTranscodingAdapter(): void
     {
         config(['koel.streaming.transcode_flac' => true]);
 
@@ -66,7 +70,8 @@ class StreamerTest extends TestCase
         config(['koel.streaming.transcode_flac' => false]);
     }
 
-    public function testForceTranscodingAdapter(): void
+    #[Test]
+    public function forceTranscodingAdapter(): void
     {
         /** @var Song $song */
         $song = Song::factory()->make(['path' => test_path('songs/blank.mp3')]);
@@ -87,8 +92,9 @@ class StreamerTest extends TestCase
         ];
     }
 
-    /** @dataProvider provideStreamConfigData */
-    public function testResolveLocalAdapter(?string $config, string $expectedClass): void
+    #[DataProvider('provideStreamConfigData')]
+    #[Test]
+    public function resolveLocalAdapter(?string $config, string $expectedClass): void
     {
         config(['koel.streaming.method' => $config]);
 
@@ -100,7 +106,8 @@ class StreamerTest extends TestCase
         config(['koel.streaming.method' => null]);
     }
 
-    public function testResolvePodcastAdapter(): void
+    #[Test]
+    public function resolvePodcastAdapter(): void
     {
         /** @var Song $song */
         $song = Song::factory()->asEpisode()->create();

@@ -11,6 +11,7 @@ use App\Models\Playlist;
 use App\Models\PlaylistCollaborationToken;
 use App\Services\PlaylistCollaborationService;
 use Illuminate\Support\Facades\Event;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
 use function Tests\create_user;
@@ -26,7 +27,8 @@ class PlaylistCollaborationServiceTest extends PlusTestCase
         $this->service = app(PlaylistCollaborationService::class);
     }
 
-    public function testCreateToken(): void
+    #[Test]
+    public function createToken(): void
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
@@ -38,7 +40,8 @@ class PlaylistCollaborationServiceTest extends PlusTestCase
         self::assertSame($playlist->id, $token->playlist_id);
     }
 
-    public function testCreateTokenFailsIfPlaylistIsSmart(): void
+    #[Test]
+    public function createTokenFailsIfPlaylistIsSmart(): void
     {
         $this->expectException(OperationNotApplicableForSmartPlaylistException::class);
 
@@ -48,7 +51,8 @@ class PlaylistCollaborationServiceTest extends PlusTestCase
         $this->service->createToken($playlist);
     }
 
-    public function testAcceptUsingToken(): void
+    #[Test]
+    public function acceptUsingToken(): void
     {
         Event::fake(NewPlaylistCollaboratorJoined::class);
 
@@ -63,7 +67,8 @@ class PlaylistCollaborationServiceTest extends PlusTestCase
         Event::assertDispatched(NewPlaylistCollaboratorJoined::class);
     }
 
-    public function testFailsToAcceptExpiredToken(): void
+    #[Test]
+    public function failsToAcceptExpiredToken(): void
     {
         $this->expectException(PlaylistCollaborationTokenExpiredException::class);
         Event::fake(NewPlaylistCollaboratorJoined::class);
@@ -80,7 +85,8 @@ class PlaylistCollaborationServiceTest extends PlusTestCase
         Event::assertNotDispatched(NewPlaylistCollaboratorJoined::class);
     }
 
-    public function testGetCollaborators(): void
+    #[Test]
+    public function getCollaborators(): void
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
@@ -92,7 +98,8 @@ class PlaylistCollaborationServiceTest extends PlusTestCase
         self::assertEqualsCanonicalizing([$playlist->user_id, $user->id], $collaborators->pluck('id')->toArray());
     }
 
-    public function testRemoveCollaborator(): void
+    #[Test]
+    public function removeCollaborator(): void
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
@@ -106,7 +113,8 @@ class PlaylistCollaborationServiceTest extends PlusTestCase
         self::assertFalse($playlist->refresh()->hasCollaborator($user));
     }
 
-    public function testCannotRemoveNonExistingCollaborator(): void
+    #[Test]
+    public function cannotRemoveNonExistingCollaborator(): void
     {
         $this->expectException(NotAPlaylistCollaboratorException::class);
 
@@ -117,7 +125,8 @@ class PlaylistCollaborationServiceTest extends PlusTestCase
         $this->service->removeCollaborator($playlist, $user);
     }
 
-    public function testCannotRemoveOwner(): void
+    #[Test]
+    public function cannotRemoveOwner(): void
     {
         $this->expectException(CannotRemoveOwnerFromPlaylistException::class);
 

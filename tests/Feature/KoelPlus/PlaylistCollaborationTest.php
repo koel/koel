@@ -6,13 +6,15 @@ use App\Http\Resources\PlaylistCollaborationTokenResource;
 use App\Http\Resources\PlaylistResource;
 use App\Models\Playlist;
 use App\Models\PlaylistCollaborationToken;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
 use function Tests\create_user;
 
 class PlaylistCollaborationTest extends PlusTestCase
 {
-    public function testCreatePlaylistCollaborationToken(): void
+    #[Test]
+    public function createPlaylistCollaborationToken(): void
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
@@ -21,7 +23,8 @@ class PlaylistCollaborationTest extends PlusTestCase
             ->assertJsonStructure(PlaylistCollaborationTokenResource::JSON_STRUCTURE);
     }
 
-    public function testAcceptPlaylistCollaborationViaToken(): void
+    #[Test]
+    public function acceptPlaylistCollaborationViaToken(): void
     {
         /** @var PlaylistCollaborationToken $token */
         $token = PlaylistCollaborationToken::factory()->create();

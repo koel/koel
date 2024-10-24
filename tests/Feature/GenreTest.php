@@ -6,11 +6,13 @@ use App\Http\Resources\GenreResource;
 use App\Http\Resources\SongResource;
 use App\Models\Song;
 use App\Values\Genre;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class GenreTest extends TestCase
 {
-    public function testGetAllGenres(): void
+    #[Test]
+    public function getAllGenres(): void
     {
         Song::factory()->count(5)->create(['genre' => 'Rock']);
         Song::factory()->count(2)->create(['genre' => 'Pop']);
@@ -23,7 +25,8 @@ class GenreTest extends TestCase
             ->assertJsonFragment(['name' => Genre::NO_GENRE, 'song_count' => 10]);
     }
 
-    public function testGetOneGenre(): void
+    #[Test]
+    public function getOneGenre(): void
     {
         Song::factory()->count(5)->create(['genre' => 'Rock']);
 
@@ -32,12 +35,14 @@ class GenreTest extends TestCase
             ->assertJsonFragment(['name' => 'Rock', 'song_count' => 5]);
     }
 
-    public function testGetNonExistingGenreThrowsNotFound(): void
+    #[Test]
+    public function getNonExistingGenreThrowsNotFound(): void
     {
         $this->getAs('api/genres/NonExistingGenre')->assertNotFound();
     }
 
-    public function testPaginateSongsInGenre(): void
+    #[Test]
+    public function paginateSongsInGenre(): void
     {
         Song::factory()->count(5)->create(['genre' => 'Rock']);
 
@@ -45,7 +50,8 @@ class GenreTest extends TestCase
             ->assertJsonStructure(SongResource::PAGINATION_JSON_STRUCTURE);
     }
 
-    public function testGetRandomSongsInGenre(): void
+    #[Test]
+    public function getRandomSongsInGenre(): void
     {
         Song::factory()->count(5)->create(['genre' => 'Rock']);
 

@@ -8,13 +8,15 @@ use App\Events\SongLikeToggled;
 use App\Models\Interaction;
 use App\Models\Song;
 use Illuminate\Support\Facades\Event;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
 
 class InteractionTest extends TestCase
 {
-    public function testIncreasePlayCount(): void
+    #[Test]
+    public function increasePlayCount(): void
     {
         Event::fake(PlaybackStarted::class);
 
@@ -39,7 +41,8 @@ class InteractionTest extends TestCase
         ]);
     }
 
-    public function testToggleLike(): void
+    #[Test]
+    public function toggleLike(): void
     {
         Event::fake(SongLikeToggled::class);
 
@@ -66,7 +69,8 @@ class InteractionTest extends TestCase
         Event::assertDispatched(SongLikeToggled::class);
     }
 
-    public function testToggleLikeBatch(): void
+    #[Test]
+    public function toggleLikeBatch(): void
     {
         Event::fake(MultipleSongsLiked::class);
 

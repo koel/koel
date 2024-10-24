@@ -4,11 +4,13 @@ namespace Tests\Feature;
 
 use App\Http\Resources\SongResource;
 use App\Models\Song;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class SongSearchTest extends TestCase
 {
-    public function testSearch(): void
+    #[Test]
+    public function search(): void
     {
         Song::factory(10)->create(['title' => 'A Foo Song']);
 

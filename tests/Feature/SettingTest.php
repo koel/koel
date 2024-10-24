@@ -6,6 +6,7 @@ use App\Models\Setting;
 use App\Services\MediaScanner;
 use App\Values\ScanResultCollection;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_admin;
@@ -21,7 +22,8 @@ class SettingTest extends TestCase
         $this->mediaScanner = self::mock(MediaScanner::class);
     }
 
-    public function testSaveSettings(): void
+    #[Test]
+    public function saveSettings(): void
     {
         $this->mediaScanner->shouldReceive('scan')->once()
             ->andReturn(ScanResultCollection::create());
@@ -32,13 +34,15 @@ class SettingTest extends TestCase
         self::assertSame(__DIR__, Setting::get('media_path'));
     }
 
-    public function testNonAdminCannotSaveSettings(): void
+    #[Test]
+    public function nonAdminCannotSaveSettings(): void
     {
         $this->putAs('/api/settings', ['media_path' => __DIR__])
             ->assertForbidden();
     }
 
-    public function testMediaPathCannotBeSetForCloudStorage(): void
+    #[Test]
+    public function mediaPathCannotBeSetForCloudStorage(): void
     {
         config(['koel.storage_driver' => 's3']);
 

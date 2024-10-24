@@ -6,6 +6,8 @@ use App\Models\Album;
 use App\Services\MediaMetadataService;
 use Mockery;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class AlbumThumbnailTest extends TestCase
@@ -25,8 +27,9 @@ class AlbumThumbnailTest extends TestCase
         return [['http://localhost/img/covers/foo_thumbnail.jpg'], [null]];
     }
 
-    /** @dataProvider provideAlbumThumbnailData */
-    public function testGetAlbumThumbnail(?string $thumbnailUrl): void
+    #[DataProvider('provideAlbumThumbnailData')]
+    #[Test]
+    public function getAlbumThumbnail(?string $thumbnailUrl): void
     {
         $createdAlbum = Album::factory()->create();
 

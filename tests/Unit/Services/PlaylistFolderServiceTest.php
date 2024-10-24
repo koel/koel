@@ -6,6 +6,7 @@ use App\Models\Playlist;
 use App\Models\PlaylistFolder;
 use App\Services\PlaylistFolderService;
 use Illuminate\Support\Collection;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
@@ -21,7 +22,8 @@ class PlaylistFolderServiceTest extends TestCase
         $this->service = new PlaylistFolderService();
     }
 
-    public function testCreate(): void
+    #[Test]
+    public function create(): void
     {
         $user = create_user();
 
@@ -33,7 +35,8 @@ class PlaylistFolderServiceTest extends TestCase
         self::assertSame('Classical', $user->playlist_folders[0]->name);
     }
 
-    public function testUpdate(): void
+    #[Test]
+    public function update(): void
     {
         /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->create(['name' => 'Metal']);
@@ -43,7 +46,8 @@ class PlaylistFolderServiceTest extends TestCase
         self::assertSame('Classical', $folder->fresh()->name);
     }
 
-    public function testAddPlaylistsToFolder(): void
+    #[Test]
+    public function addPlaylistsToFolder(): void
     {
         $user = create_user();
 
@@ -58,7 +62,8 @@ class PlaylistFolderServiceTest extends TestCase
         self::assertCount(3, $folder->playlists);
     }
 
-    public function testMovePlaylistsToRootLevel(): void
+    #[Test]
+    public function movePlaylistsToRootLevel(): void
     {
         /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->create();

@@ -3,11 +3,13 @@
 namespace Tests\Unit\Models;
 
 use App\Models\Song;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class SongTest extends TestCase
 {
-    public function testRetrievedLyricsDoNotContainTimestamps(): void
+    #[Test]
+    public function retrievedLyricsDoNotContainTimestamps(): void
     {
         /** @var Song $song */
         $song = Song::factory()->create(['lyrics' => "[00:00.00]Line 1\n[00:01.00]Line 2\n[00:02.00]Line 3"]);

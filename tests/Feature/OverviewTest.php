@@ -6,13 +6,15 @@ use App\Http\Resources\AlbumResource;
 use App\Http\Resources\ArtistResource;
 use App\Http\Resources\SongResource;
 use App\Models\Interaction;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
 
 class OverviewTest extends TestCase
 {
-    public function testIndex(): void
+    #[Test]
+    public function index(): void
     {
         $user = create_user();
 

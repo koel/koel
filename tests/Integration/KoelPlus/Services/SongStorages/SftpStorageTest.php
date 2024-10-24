@@ -6,6 +6,7 @@ use App\Models\Song;
 use App\Services\SongStorages\SftpStorage;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
 use function Tests\create_user;
@@ -24,7 +25,8 @@ class SftpStorageTest extends PlusTestCase
         $this->file = UploadedFile::fromFile(test_path('songs/full.mp3'), 'song.mp3'); //@phpstan-ignore-line
     }
 
-    public function testStoreUploadedFile(): void
+    #[Test]
+    public function storeUploadedFile(): void
     {
         self::assertEquals(0, Song::query()->where('storage', 'sftp')->count());
 
@@ -35,7 +37,8 @@ class SftpStorageTest extends PlusTestCase
         self::assertEquals(1, Song::query()->where('storage', 'sftp')->count());
     }
 
-    public function testStoringWithVisibilityPreference(): void
+    #[Test]
+    public function storingWithVisibilityPreference(): void
     {
         Storage::fake('sftp');
 
@@ -53,7 +56,8 @@ class SftpStorageTest extends PlusTestCase
         self::assertFalse($this->service->storeUploadedFile($privateFile, $user)->is_public);
     }
 
-    public function testDelete(): void
+    #[Test]
+    public function deleteSong(): void
     {
         Storage::fake('sftp');
 
@@ -64,7 +68,8 @@ class SftpStorageTest extends PlusTestCase
         Storage::disk('sftp')->assertMissing($song->storage_metadata->getPath());
     }
 
-    public function testGetSongContent(): void
+    #[Test]
+    public function getSongContent(): void
     {
         /** @var Song $song */
         $song = Song::factory()->create();
@@ -75,7 +80,8 @@ class SftpStorageTest extends PlusTestCase
         self::assertEquals('binary-content', $this->service->getSongContent($song));
     }
 
-    public function testCopyToLocal(): void
+    #[Test]
+    public function copyToLocal(): void
     {
         /** @var Song $song */
         $song = Song::factory()->create();

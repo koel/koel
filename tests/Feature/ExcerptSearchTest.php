@@ -10,13 +10,15 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Podcast;
 use App\Models\Song;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
 
 class ExcerptSearchTest extends TestCase
 {
-    public function testSearch(): void
+    #[Test]
+    public function search(): void
     {
         Song::factory()->create(['title' => 'A Foo Song']);
         Song::factory(6)->create();
