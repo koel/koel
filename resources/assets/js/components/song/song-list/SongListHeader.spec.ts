@@ -1,30 +1,50 @@
+import { screen } from '@testing-library/vue'
 import { ref } from 'vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import factory from '@/__tests__/factory'
-import { arrayify } from '@/utils/helpers'
 import {
   PlayableListConfigKey,
   PlayableListContextKey,
   PlayableListSortFieldKey,
-  PlayablesKey,
   SelectedPlayablesKey,
   SongListSortOrderKey,
 } from '@/symbols'
-import SongList from './SongList.vue'
-
-let songs: Playable[]
+import Component from './SongListHeader.vue'
 
 new class extends UnitTestCase {
   protected test () {
     it('renders', async () => {
-      const { html } = await this.renderComponent(factory('song', 5))
+      const { html } = await this.renderComponent()
       expect(html()).toMatchSnapshot()
+    })
+
+    it.each<[PlayableListSortField, string]>([
+      ['track', 'header-track-number'],
+      ['title', 'header-title'],
+      ['album_name', 'header-album'],
+      ['length', 'header-length'],
+    ])('sorts by %s upon %s clicked', async (field, testId) => {
+      const { emitted } = await this.renderComponent()
+
+      await this.user.click(screen.getByTestId(testId))
+      expect(emitted().sort[0]).toEqual([field, 'desc'])
+
+      await this.user.click(screen.getByTestId(testId))
+      expect(emitted().sort[1]).toEqual([field, 'asc'])
+    })
+
+    it('cannot be sorted if configured so', async () => {
+      const { emitted } = await this.renderComponent({
+        sortable: false,
+        reorderable: true,
+      })
+
+      await this.user.click(screen.getByTestId('header-track-number'))
+      expect(emitted().sort).toBeUndefined()
     })
   }
 
   private async renderComponent (
-    _songs: MaybeArray<Playable>,
     config: Partial<PlayableListConfig> = {
       sortable: true,
       reorderable: true,
@@ -36,8 +56,6 @@ new class extends UnitTestCase {
     sortField: PlayableListSortField = 'title',
     sortOrder: SortOrder = 'asc',
   ) {
-    songs = arrayify(_songs)
-
     const sortFieldRef = ref(sortField)
     const sortOrderRef = ref(sortOrder)
 
@@ -46,15 +64,15 @@ new class extends UnitTestCase {
       path: '/songs',
     })
 
-    return this.render(SongList, {
+    return this.render(Component, {
+      props: {
+        contentType: 'songs',
+      },
       global: {
         stubs: {
-          VirtualScroller: this.stub('virtual-scroller'),
           SongListSorter: this.stub('song-list-sorter'),
-          SongListHeader: this.stub('song-list-header'),
         },
         provide: {
-          [<symbol>PlayablesKey]: [ref(songs)],
           [<symbol>SelectedPlayablesKey]: [ref(selectedPlayables), (value: Playable[]) => (selectedPlayables = value)],
           [<symbol>PlayableListConfigKey]: [config],
           [<symbol>PlayableListContextKey]: [context],
