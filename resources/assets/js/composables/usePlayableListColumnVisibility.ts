@@ -7,10 +7,12 @@ const visibleColumns: Ref<PlayableListColumnName[]> = ref([])
 
 export const usePlayableListColumnVisibility = () => {
   const collectVisibleColumns = () => {
-    const validColumns: PlayableListColumnName[] = ['title', 'artist', 'album', 'duration', 'play_count']
+    const validColumns: PlayableListColumnName[] = ['track', 'title', 'artist', 'album', 'duration', 'play_count']
+    const defaultColumns: PlayableListColumnName[] = ['track', 'title', 'artist', 'album', 'duration']
 
     try {
-      let columns = useLocalStorage().get<PlayableListColumnName[]>('playable-list-columns', [])!
+      let columns = useLocalStorage().get<PlayableListColumnName[]>('playable-list-columns', defaultColumns)!
+
       columns = columns.filter(column => validColumns.includes(column))
 
       // Ensure 'title' is always visible
@@ -18,7 +20,7 @@ export const usePlayableListColumnVisibility = () => {
       return Array.from(new Set(columns))
     } catch (error: unknown) {
       process.env.NODE_ENV !== 'test' && logger.error('Failed to load columns from local storage', error)
-      return ['title', 'artist', 'album', 'duration']
+      return defaultColumns
     }
   }
 

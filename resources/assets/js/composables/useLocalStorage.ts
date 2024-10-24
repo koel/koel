@@ -1,12 +1,11 @@
 import { useAuthorization } from '@/composables/useAuthorization'
 import { get as baseGet, remove as baseRemove, set as baseSet } from 'local-storage'
 
-export const useLocalStorage = (namespaced = true) => {
+export const useLocalStorage = (namespaced = true, user?: User = null) => {
   let namespace = ''
 
   if (namespaced) {
-    const { currentUser } = useAuthorization()
-    namespace = `${currentUser.value.id}::`
+    namespace = user ? `${user.id}::` : `${useAuthorization().currentUser.value.id}::`
   }
 
   const get = <T> (key: string, defaultValue: T | null = null): T | null => {

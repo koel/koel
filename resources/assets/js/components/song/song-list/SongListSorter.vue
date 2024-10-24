@@ -18,10 +18,11 @@
             @click.stop="item.visibilityToggleable && toggleColumn(item.column)"
           >
             <input
-              type="checkbox"
-              class="disabled:opacity-20 bg-white h-4 aspect-square rounded checked:border-white/75 checked:border-2 checked:bg-k-highlight"
-              :disabled="!item.visibilityToggleable"
               :checked="shouldShowColumn(item.column)"
+              :disabled="!item.visibilityToggleable"
+              :title="item.visibilityToggleable ? `Click to toggle the ${item.label} column` : ''"
+              class="disabled:opacity-20 bg-white h-4 aspect-square rounded checked:border-white/75 checked:border-2 checked:bg-k-highlight"
+              type="checkbox"
             >
           </label>
           <span class="flex-1 text-left">{{ item.label }}</span>
