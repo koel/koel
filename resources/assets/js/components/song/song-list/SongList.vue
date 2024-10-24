@@ -8,80 +8,7 @@
     @keydown.enter.prevent.stop="handleEnter"
     @keydown.a.prevent="handleA"
   >
-    <div
-      :class="config.sortable ? 'sortable' : 'unsortable'"
-      class="song-list-header flex z-[2] bg-k-bg-secondary"
-    >
-      <span
-        class="track-number"
-        data-testid="header-track-number"
-        role="button"
-        title="Sort by track number"
-        @click="sort('track')"
-      >
-        #
-        <template v-if="config.sortable">
-          <Icon v-if="sortField === 'track' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
-          <Icon v-if="sortField === 'track' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
-        </template>
-      </span>
-      <span
-        class="title-artist"
-        data-testid="header-title"
-        role="button"
-        title="Sort by title"
-        @click="sort('title')"
-      >
-        Title
-        <template v-if="config.sortable">
-          <Icon v-if="sortField === 'title' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
-          <Icon v-if="sortField === 'title' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
-        </template>
-      </span>
-      <span
-        class="album"
-        data-testid="header-album"
-        role="button"
-        :title="`Sort by ${contentType === 'episodes' ? 'podcast' : (contentType === 'songs' ? 'album' : 'album/podcast')}`"
-        @click="sort(contentType === 'episodes' ? 'podcast_title' : (contentType === 'songs' ? 'album_name' : ['album_name', 'podcast_title']))"
-      >
-        <template v-if="contentType === 'episodes'">Podcast</template>
-        <template v-else-if="contentType === 'songs'">Album</template>
-        <template v-else>Album <span class="opacity-50">/</span> Podcast</template>
-
-        <span v-if="config.sortable" class="ml-2">
-          <Icon v-if="sortingByAlbumOrPodcast && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
-          <Icon v-if="sortingByAlbumOrPodcast && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
-        </span>
-      </span>
-      <template v-if="config.collaborative">
-        <span class="collaborator">User</span>
-        <span class="added-at">Added</span>
-      </template>
-      <span
-        class="time"
-        data-testid="header-length"
-        role="button"
-        title="Sort by duration"
-        @click="sort('length')"
-      >
-        Time
-        <template v-if="config.sortable">
-          <Icon v-if="sortField === 'length' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
-          <Icon v-if="sortField === 'length' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
-        </template>
-      </span>
-      <span class="extra">
-        <SongListSorter
-          v-if="config.sortable"
-          :field="sortField"
-          :has-custom-order-sort="config.hasCustomOrderSort"
-          :order="sortOrder"
-          :content-type="contentType"
-          @sort="sort"
-        />
-      </span>
-    </div>
+    <SongListHeader :content-type="contentType" @sort="sort" />
 
     <VirtualScroller
       v-slot="{ item }: { item: PlayableRow }"
@@ -111,11 +38,10 @@
 <script lang="ts" setup>
 import { findIndex, findLastIndex, throttle } from 'lodash'
 import isMobile from 'ismobilejs'
-import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons'
 import type { Ref } from 'vue'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { eventBus } from '@/utils/eventBus'
-import { arrayify, requireInjection } from '@/utils/helpers'
+import { requireInjection } from '@/utils/helpers'
 import { getPlayableCollectionContentType } from '@/utils/typeGuards'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { queueStore } from '@/stores/queueStore'
@@ -127,12 +53,11 @@ import {
   PlayableListSortFieldKey,
   PlayablesKey,
   SelectedPlayablesKey,
-  SongListSortOrderKey,
 } from '@/symbols'
 
-import SongListItem from '@/components/song/SongListItem.vue'
-import SongListSorter from '@/components/song/SongListSorter.vue'
+import SongListItem from '@/components/song/song-list/SongListItem.vue'
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
+import SongListHeader from '@/components/song/song-list/SongListHeader.vue'
 
 const emit = defineEmits<{
   (e: 'press:enter', event: KeyboardEvent): void
@@ -148,8 +73,7 @@ const { getDroppedData, acceptsDrop } = useDroppable(['playables'])
 
 const [playables] = requireInjection<[Ref<Playable[]>]>(PlayablesKey)
 const [selectedPlayables, setSelectedPlayables] = requireInjection<[Ref<Playable[]>, Closure]>(SelectedPlayablesKey)
-const [sortField, setSortField] = requireInjection<[Ref<MaybeArray<PlayableListSortField>>, Closure]>(PlayableListSortFieldKey)
-const [sortOrder, setSortOrder] = requireInjection<[Ref<SortOrder>, Closure]>(SongListSortOrderKey)
+const [sortField] = requireInjection<[Ref<MaybeArray<PlayableListSortField>>, Closure]>(PlayableListSortFieldKey)
 const [config] = requireInjection<[Partial<PlayableListConfig>]>(PlayableListConfigKey, [{}])
 const [context] = requireInjection<[PlayableListContext]>(PlayableListContextKey)
 
@@ -165,11 +89,6 @@ const shouldTriggerContinuousPlayback = computed(() => {
 })
 
 const contentType = computed(() => getPlayableCollectionContentType(rows.value.map(({ playable }) => playable)))
-
-const sortingByAlbumOrPodcast = computed(() => {
-  const sortFields = arrayify(sortField.value)
-  return sortFields[0] === 'album_name' || sortFields[0] === 'podcast_title'
-})
 
 const selectAllRows = () => rows.value.forEach(row => (row.selected = true))
 const clearSelection = () => rows.value.forEach(row => (row.selected = false))
@@ -212,16 +131,9 @@ const generateRows = () => {
   }))
 }
 
-const sort = (field: MaybeArray<PlayableListSortField>) => {
-  // there are certain circumstances where sorting is simply disallowed, e.g. in Queue
-  if (!config.sortable) {
-    return
-  }
-
-  setSortField(field)
-  setSortOrder(sortOrder.value === 'asc' ? 'desc' : 'asc')
-
-  emit('sort', field, sortOrder.value)
+const sort = (field: MaybeArray<PlayableListSortField>, order: SortOrder) => {
+  // we simply pass the sort event from the header up to the parent component
+  emit('sort', field, order)
 }
 
 const render = () => {
@@ -418,9 +330,8 @@ const calculatedItemHeight = computed(() => {
   const totalAdditionalPixels = discCount * discNumberHeight
 
   const totalHeight = (rows.value.length * standardSongItemHeight) + totalAdditionalPixels
-  const averageHeight = totalHeight / rows.value.length
 
-  return averageHeight
+  return totalHeight / rows.value.length
 })
 
 defineExpose({
@@ -449,7 +360,7 @@ onMounted(() => render())
     }
 
     &.track-number {
-      @apply basis-16 pl-6;
+      @apply basis-16;
     }
 
     &.album {

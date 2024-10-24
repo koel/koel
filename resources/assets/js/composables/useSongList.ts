@@ -22,7 +22,7 @@ import {
 } from '@/symbols'
 
 import ControlsToggle from '@/components/ui/ScreenControlsToggle.vue'
-import SongList from '@/components/song/SongList.vue'
+import SongList from '@/components/song/song-list/SongList.vue'
 import ThumbnailStack from '@/components/ui/ThumbnailStack.vue'
 
 export const useSongList = (

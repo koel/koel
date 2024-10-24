@@ -1,7 +1,7 @@
 import { merge } from 'lodash'
 import { reactive } from 'vue'
 
-import SongListControls from '@/components/song/SongListControls.vue'
+import SongListControls from '@/components/song/song-list/SongListControls.vue'
 
 export const useSongListControls = (
   screen: ScreenName,

@@ -517,3 +517,5 @@ interface Visualizer {
     url: string
   }
 }
+
+type PlayableListColumnName = 'title' | 'album' | 'track' | 'duration' | 'created_at' | 'play_count'

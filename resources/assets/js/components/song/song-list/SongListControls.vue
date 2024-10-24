@@ -119,7 +119,7 @@ const emit = defineEmits<{
   (e: 'clearQueue' | 'deletePlaylist' | 'refresh'): void
 }>()
 
-const SongListFilter = defineAsyncComponent(() => import('@/components/song/SongListFilter.vue'))
+const SongListFilter = defineAsyncComponent(() => import('@/components/song/song-list/SongListFilter.vue'))
 
 const config = toRef(props, 'config')
 

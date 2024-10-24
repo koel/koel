@@ -1,4 +1,3 @@
-import { screen } from '@testing-library/vue'
 import { ref } from 'vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
@@ -21,31 +20,6 @@ new class extends UnitTestCase {
     it('renders', async () => {
       const { html } = await this.renderComponent(factory('song', 5))
       expect(html()).toMatchSnapshot()
-    })
-
-    it.each<[PlayableListSortField, string]>([
-      ['track', 'header-track-number'],
-      ['title', 'header-title'],
-      ['album_name', 'header-album'],
-      ['length', 'header-length'],
-    ])('sorts by %s upon %s clicked', async (field, testId) => {
-      const { emitted } = await this.renderComponent(factory('song', 5))
-
-      await this.user.click(screen.getByTestId(testId))
-      expect(emitted().sort[0]).toEqual([field, 'desc'])
-
-      await this.user.click(screen.getByTestId(testId))
-      expect(emitted().sort[1]).toEqual([field, 'asc'])
-    })
-
-    it('cannot be sorted if configured so', async () => {
-      const { emitted } = await this.renderComponent(factory('song', 5), {
-        sortable: false,
-        reorderable: true,
-      })
-
-      await this.user.click(screen.getByTestId('header-track-number'))
-      expect(emitted().sort).toBeUndefined()
     })
   }
 
@@ -77,6 +51,7 @@ new class extends UnitTestCase {
         stubs: {
           VirtualScroller: this.stub('virtual-scroller'),
           SongListSorter: this.stub('song-list-sorter'),
+          SongListHeader: this.stub('song-list-header'),
         },
         provide: {
           [<symbol>PlayablesKey]: [ref(songs)],

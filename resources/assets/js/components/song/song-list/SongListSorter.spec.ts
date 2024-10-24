@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
+import { useLocalStorage } from '@/composables/useLocalStorage'
 import Component from './SongListSorter.vue'
 
 new class extends UnitTestCase {
@@ -46,6 +47,40 @@ new class extends UnitTestCase {
       })
 
       screen.getByText('Custom Order')
+    })
+
+    it('has a checkbox to toggle the column visibility', async () => {
+      this.be().render(Component)
+
+      ;['Album', 'Track & Disc', 'Time'].forEach(text => screen.getByTitle(`Click to toggle the ${text} column`))
+
+      await this.user.click(screen.getByTitle('Click to toggle the Album column'))
+
+      expect(useLocalStorage().get('playable-list-columns')).toEqual(
+        <PlayableListColumnName[]>['track', 'title', 'artist', 'duration'],
+      )
+    })
+
+    it('gets the column visibility from local storage', async () => {
+      // ensure the localstorage is properly namespaced
+      this.be()
+
+      useLocalStorage().set('playable-list-columns', ['track'])
+      this.render(Component)
+
+      ;[{
+        title: 'Track & Disc',
+        checked: true,
+      }, {
+        title: 'Album',
+        checked: false,
+      }, {
+        title: 'Time',
+        checked: true,
+      }].forEach(({ title, checked }) => {
+        const el: HTMLInputElement = screen.getByTitle(`Click to toggle the ${title} column`)
+        expect(el.checked).toBe(checked)
+      })
     })
   }
 }

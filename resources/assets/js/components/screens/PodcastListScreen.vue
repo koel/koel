@@ -49,7 +49,7 @@ import { useFuzzySearch } from '@/composables/useFuzzySearch'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'
-import ListFilter from '@/components/song/SongListFilter.vue'
+import ListFilter from '@/components/song/song-list/SongListFilter.vue'
 import PodcastItem from '@/components/podcast/PodcastItem.vue'
 import PodcastItemSkeleton from '@/components/ui/skeletons/PodcastItemSkeleton.vue'
 import PodcastListSorter from '@/components/podcast/PodcastListSorter.vue'

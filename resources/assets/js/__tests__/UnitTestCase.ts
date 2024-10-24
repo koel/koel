@@ -82,13 +82,16 @@ export default abstract class UnitTestCase {
     })
   }
 
-  protected be (user?: User) {
+  protected auth (user?: User = null) {
+    return this.be(user)
+  }
+
+  protected be (user?: User = null) {
     userStore.state.current = user || factory('user')
     return this
   }
 
   protected beAdmin () {
-    factory.states('admin')('user')
     return this.be(factory.states('admin')('user'))
   }
 
