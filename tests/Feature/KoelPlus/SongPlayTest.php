@@ -6,6 +6,7 @@ use App\Models\Song;
 use App\Services\Streamer\Adapters\LocalStreamerAdapter;
 use App\Services\TokenManager;
 use App\Values\CompositeToken;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
 use function Tests\create_user;
@@ -13,7 +14,8 @@ use function Tests\test_path;
 
 class SongPlayTest extends PlusTestCase
 {
-    public function testPlayPublicUnownedSong(): void
+    #[Test]
+    public function playPublicUnownedSong(): void
     {
         /** @var CompositeToken $token */
         $token = app(TokenManager::class)->createCompositeToken(create_user());
@@ -31,7 +33,8 @@ class SongPlayTest extends PlusTestCase
             ->assertOk();
     }
 
-    public function testPlayPrivateOwnedSong(): void
+    #[Test]
+    public function playPrivateOwnedSong(): void
     {
         /** @var Song $song */
         $song = Song::factory()->private()->create([
@@ -49,7 +52,8 @@ class SongPlayTest extends PlusTestCase
             ->assertOk();
     }
 
-    public function testCannotPlayPrivateUnownedSong(): void
+    #[Test]
+    public function cannotPlayPrivateUnownedSong(): void
     {
         /** @var Song $song */
         $song = Song::factory()->private()->create([

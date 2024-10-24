@@ -6,6 +6,7 @@ use App\Models\Playlist;
 use App\Models\Song;
 use App\Services\SmartPlaylistService;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
 use function Tests\create_user;
@@ -21,7 +22,8 @@ class SmartPlaylistServiceTest extends PlusTestCase
         $this->service = app(SmartPlaylistService::class);
     }
 
-    public function testOwnSongsOnlyOption(): void
+    #[Test]
+    public function ownSongsOnlyOption(): void
     {
         $owner = create_user();
         $matches = Song::factory()->count(3)->for($owner, 'owner')->create(['title' => 'Foo Something']);

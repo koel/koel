@@ -8,6 +8,7 @@ use App\Services\Streamer\Adapters\TranscodingStreamerAdapter;
 use App\Services\TokenManager;
 use App\Values\CompositeToken;
 use Illuminate\Support\Facades\File;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
@@ -15,7 +16,8 @@ use function Tests\test_path;
 
 class SongPlayTest extends TestCase
 {
-    public function testPlay(): void
+    #[Test]
+    public function play(): void
     {
         $user = create_user();
 
@@ -35,7 +37,8 @@ class SongPlayTest extends TestCase
             ->assertOk();
     }
 
-    public function testTranscoding(): void
+    #[Test]
+    public function transcoding(): void
     {
         config(['koel.streaming.transcode_flac' => true]);
         $user = create_user();
@@ -61,7 +64,8 @@ class SongPlayTest extends TestCase
         config(['koel.streaming.transcode_flac' => false]);
     }
 
-    public function testForceTranscoding(): void
+    #[Test]
+    public function forceTranscoding(): void
     {
         $user = create_user();
 

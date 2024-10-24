@@ -11,11 +11,13 @@ use App\Services\Streamer\Adapters\SftpStreamerAdapter;
 use App\Services\Streamer\Streamer;
 use Exception;
 use Illuminate\Support\Facades\File;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
 class StreamerTest extends PlusTestCase
 {
-    public function testResolveAdapters(): void
+    #[Test]
+    public function resolveAdapters(): void
     {
         File::partialMock()->shouldReceive('mimeType')->andReturn('audio/mpeg');
 

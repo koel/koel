@@ -5,6 +5,7 @@ namespace Tests\Integration\Services;
 use App\Models\Album;
 use App\Services\MediaMetadataService;
 use Illuminate\Support\Facades\File;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\test_path;
@@ -18,7 +19,8 @@ class MediaMetadataServiceTest extends TestCase
         $this->cleanUp();
     }
 
-    public function testGetAlbumThumbnailUrl(): void
+    #[Test]
+    public function getAlbumThumbnailUrl(): void
     {
         File::copy(test_path('blobs/cover.png'), album_cover_path('album-cover-for-thumbnail-test.jpg'));
 
@@ -33,7 +35,8 @@ class MediaMetadataServiceTest extends TestCase
         self::assertFileExists(album_cover_path('album-cover-for-thumbnail-test_thumb.jpg'));
     }
 
-    public function testGetAlbumThumbnailUrlWithNoCover(): void
+    #[Test]
+    public function getAlbumThumbnailUrlWithNoCover(): void
     {
         /** @var Album $album */
         $album = Album::factory()->create(['cover' => '']);

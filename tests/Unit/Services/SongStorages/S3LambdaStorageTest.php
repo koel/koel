@@ -10,6 +10,7 @@ use App\Services\SongStorages\S3LambdaStorage;
 use Mockery;
 use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_admin;
@@ -35,7 +36,8 @@ class S3LambdaStorageTest extends TestCase
         );
     }
 
-    public function testCreateSongEntry(): void
+    #[Test]
+    public function createSongEntry(): void
     {
         $user = create_admin();
         $this->userRepository->shouldReceive('getDefaultAdminUser')
@@ -65,7 +67,8 @@ class S3LambdaStorageTest extends TestCase
         self::assertSame($user->id, $song->owner_id);
     }
 
-    public function testUpdateSongEntry(): void
+    #[Test]
+    public function updateSongEntry(): void
     {
         $user = create_admin();
 
@@ -106,7 +109,8 @@ class S3LambdaStorageTest extends TestCase
         self::assertSame($user->id, $song->owner_id);
     }
 
-    public function testDeleteSong(): void
+    #[Test]
+    public function deleteSong(): void
     {
         /** @var Song $song */
         $song = Song::factory()->create([

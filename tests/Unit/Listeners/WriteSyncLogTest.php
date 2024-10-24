@@ -8,6 +8,7 @@ use App\Values\ScanResult;
 use App\Values\ScanResultCollection;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\test_path;
@@ -34,7 +35,8 @@ class WriteSyncLogTest extends TestCase
         parent::tearDown();
     }
 
-    public function testHandleWithLogLevelAll(): void
+    #[Test]
+    public function handleWithLogLevelAll(): void
     {
         config(['koel.sync_log_level' => 'all']);
 
@@ -46,7 +48,8 @@ class WriteSyncLogTest extends TestCase
         );
     }
 
-    public function testHandleWithLogLevelError(): void
+    #[Test]
+    public function handleWithLogLevelError(): void
     {
         config(['koel.sync_log_level' => 'error']);
 

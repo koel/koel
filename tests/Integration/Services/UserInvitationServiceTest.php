@@ -9,6 +9,7 @@ use App\Services\UserInvitationService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_admin;
@@ -24,7 +25,8 @@ class UserInvitationServiceTest extends TestCase
         $this->service = app(UserInvitationService::class);
     }
 
-    public function testInvite(): void
+    #[Test]
+    public function invite(): void
     {
         Mail::fake();
 
@@ -45,7 +47,8 @@ class UserInvitationServiceTest extends TestCase
         Mail::assertQueued(UserInvite::class, 2);
     }
 
-    public function testGetUserProspectByToken(): void
+    #[Test]
+    public function getUserProspectByToken(): void
     {
         $token = Str::uuid()->toString();
         $user = create_admin();
@@ -58,13 +61,15 @@ class UserInvitationServiceTest extends TestCase
         self::assertTrue($this->service->getUserProspectByToken($token)->is($prospect));
     }
 
-    public function testGetUserProspectByTokenThrowsIfTokenNotFound(): void
+    #[Test]
+    public function getUserProspectByTokenThrowsIfTokenNotFound(): void
     {
         $this->expectException(InvitationNotFoundException::class);
         $this->service->getUserProspectByToken(Str::uuid()->toString());
     }
 
-    public function testRevokeByEmail(): void
+    #[Test]
+    public function revokeByEmail(): void
     {
         $user = create_admin();
 
@@ -79,7 +84,8 @@ class UserInvitationServiceTest extends TestCase
         self::assertModelMissing($prospect);
     }
 
-    public function testAccept(): void
+    #[Test]
+    public function accept(): void
     {
         $token = Str::uuid()->toString();
         $user = create_admin();

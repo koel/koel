@@ -11,6 +11,7 @@ use App\Services\DownloadService;
 use Illuminate\Support\Collection;
 use Mockery;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
@@ -27,7 +28,8 @@ class DownloadTest extends TestCase
         $this->downloadService = self::mock(DownloadService::class);
     }
 
-    public function testNonLoggedInUserCannotDownload(): void
+    #[Test]
+    public function nonLoggedInUserCannotDownload(): void
     {
         $this->downloadService->shouldNotReceive('getDownloadablePath');
 
@@ -35,7 +37,8 @@ class DownloadTest extends TestCase
             ->assertUnauthorized();
     }
 
-    public function testDownloadOneSong(): void
+    #[Test]
+    public function downloadOneSong(): void
     {
         $song = Song::factory()->create();
         $user = create_user();
@@ -52,7 +55,8 @@ class DownloadTest extends TestCase
             ->assertOk();
     }
 
-    public function testDownloadMultipleSongs(): void
+    #[Test]
+    public function downloadMultipleSongs(): void
     {
         $songs = Song::factory(2)->create();
         $user = create_user();
@@ -74,7 +78,8 @@ class DownloadTest extends TestCase
             ->assertOk();
     }
 
-    public function testDownloadAlbum(): void
+    #[Test]
+    public function downloadAlbum(): void
     {
         $album = Album::factory()->create();
         $songs = Song::factory(3)->for($album)->create();
@@ -94,7 +99,8 @@ class DownloadTest extends TestCase
             ->assertOk();
     }
 
-    public function testDownloadArtist(): void
+    #[Test]
+    public function downloadArtist(): void
     {
         $artist = Artist::factory()->create();
         $songs = Song::factory(3)->for($artist)->create();
@@ -114,7 +120,8 @@ class DownloadTest extends TestCase
             ->assertOk();
     }
 
-    public function testDownloadPlaylist(): void
+    #[Test]
+    public function downloadPlaylist(): void
     {
         $user = create_user();
         $songs = Song::factory(3)->create();
@@ -137,7 +144,8 @@ class DownloadTest extends TestCase
             ->assertOk();
     }
 
-    public function testNonOwnerCannotDownloadPlaylist(): void
+    #[Test]
+    public function nonOwnerCannotDownloadPlaylist(): void
     {
         $playlist = Playlist::factory()->create();
 
@@ -145,7 +153,8 @@ class DownloadTest extends TestCase
             ->assertForbidden();
     }
 
-    public function testDownloadFavorites(): void
+    #[Test]
+    public function downloadFavorites(): void
     {
         $user = create_user();
         $favorites = Interaction::factory(3)->for($user)->create(['liked' => true]);

@@ -6,11 +6,13 @@ use App\Models\Album;
 use App\Services\MediaInformationService;
 use App\Values\AlbumInformation;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class AlbumInformationTest extends TestCase
 {
-    public function testGet(): void
+    #[Test]
+    public function getInformation(): void
     {
         config(['koel.lastfm.key' => 'foo']);
         config(['koel.lastfm.secret' => 'geheim']);
@@ -45,7 +47,8 @@ class AlbumInformationTest extends TestCase
             ->assertJsonStructure(AlbumInformation::JSON_STRUCTURE);
     }
 
-    public function testGetWithoutLastfmStillReturnsValidStructure(): void
+    #[Test]
+    public function getWithoutLastfmStillReturnsValidStructure(): void
     {
         config(['koel.lastfm.key' => null]);
         config(['koel.lastfm.secret' => null]);

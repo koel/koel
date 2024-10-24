@@ -3,13 +3,15 @@
 namespace Tests\Integration\Casts;
 
 use App\Values\UserPreferences;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
 
 class UserPreferencesCastTest extends TestCase
 {
-    public function testCast(): void
+    #[Test]
+    public function cast(): void
     {
         $user = create_user([
             'preferences' => [

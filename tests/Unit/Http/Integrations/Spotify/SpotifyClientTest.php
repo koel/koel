@@ -8,6 +8,7 @@ use Illuminate\Cache\Repository as Cache;
 use Mockery;
 use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Test;
 use SpotifyWebAPI\Session as SpotifySession;
 use SpotifyWebAPI\SpotifyWebAPI;
 use Tests\TestCase;
@@ -34,7 +35,8 @@ class SpotifyClientTest extends TestCase
         $this->cache = Mockery::mock(Cache::class);
     }
 
-    public function testAccessTokenIsSetUponInitialization(): void
+    #[Test]
+    public function accessTokenIsSetUponInitialization(): void
     {
         $this->mockSetAccessToken();
 
@@ -42,7 +44,8 @@ class SpotifyClientTest extends TestCase
         self::addToAssertionCount(1);
     }
 
-    public function testAccessTokenIsRetrievedFromCacheWhenApplicable(): void
+    #[Test]
+    public function accessTokenIsRetrievedFromCacheWhenApplicable(): void
     {
         $this->wrapped->shouldReceive('setOptions')->with(['return_assoc' => true]);
         $this->cache->shouldReceive('get')->with('spotify.access_token')->andReturn('fake-access-token');
@@ -54,7 +57,8 @@ class SpotifyClientTest extends TestCase
         $this->client = new SpotifyClient($this->wrapped, $this->session, $this->cache);
     }
 
-    public function testCallForwarding(): void
+    #[Test]
+    public function callForwarding(): void
     {
         $this->mockSetAccessToken();
         $this->wrapped->shouldReceive('search')->with('foo', 'track')->andReturn('bar');
@@ -64,7 +68,8 @@ class SpotifyClientTest extends TestCase
         self::assertSame('bar', $this->client->search('foo', 'track'));
     }
 
-    public function testCallForwardingThrowsIfIntegrationIsDisabled(): void
+    #[Test]
+    public function callForwardingThrowsIfIntegrationIsDisabled(): void
     {
         config([
             'koel.spotify.client_id' => null,

@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Playlist;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
@@ -11,7 +12,8 @@ use function Tests\test_path;
 
 class PlaylistCoverTest extends TestCase
 {
-    public function testUploadCover(): void
+    #[Test]
+    public function uploadCover(): void
     {
         $playlist = Playlist::factory()->create();
         self::assertNull($playlist->cover);
@@ -26,7 +28,8 @@ class PlaylistCoverTest extends TestCase
         self::assertNotNull($playlist->refresh()->cover);
     }
 
-    public function testUploadCoverNotAllowedForNonOwner(): void
+    #[Test]
+    public function uploadCoverNotAllowedForNonOwner(): void
     {
         $playlist = Playlist::factory()->create();
 
@@ -34,7 +37,8 @@ class PlaylistCoverTest extends TestCase
             ->assertForbidden();
     }
 
-    public function testDeleteCover(): void
+    #[Test]
+    public function deleteCover(): void
     {
         $playlist = Playlist::factory()->create(['cover' => 'cover.jpg']);
 
@@ -44,7 +48,8 @@ class PlaylistCoverTest extends TestCase
         self::assertNull($playlist->refresh()->cover);
     }
 
-    public function testNonOwnerCannotDeleteCover(): void
+    #[Test]
+    public function nonOwnerCannotDeleteCover(): void
     {
         $playlist = Playlist::factory()->create(['cover' => 'cover.jpg']);
 

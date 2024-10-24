@@ -6,13 +6,15 @@ use App\Events\PlaybackStarted;
 use App\Models\Interaction;
 use App\Models\Song;
 use Illuminate\Support\Facades\Event;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
 
 class PlayCountTest extends TestCase
 {
-    public function testStoreExistingEntry(): void
+    #[Test]
+    public function storeExistingEntry(): void
     {
         Event::fake(PlaybackStarted::class);
 
@@ -33,7 +35,8 @@ class PlayCountTest extends TestCase
         Event::assertDispatched(PlaybackStarted::class);
     }
 
-    public function testStoreNewEntry(): void
+    #[Test]
+    public function storeNewEntry(): void
     {
         Event::fake(PlaybackStarted::class);
 

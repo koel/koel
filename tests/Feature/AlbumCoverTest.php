@@ -6,6 +6,7 @@ use App\Models\Album;
 use App\Services\MediaMetadataService;
 use Mockery;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_admin;
@@ -22,7 +23,8 @@ class AlbumCoverTest extends TestCase
         $this->mediaMetadataService = self::mock(MediaMetadataService::class);
     }
 
-    public function testUpdate(): void
+    #[Test]
+    public function update(): void
     {
         $album = Album::factory()->create();
 
@@ -35,7 +37,8 @@ class AlbumCoverTest extends TestCase
             ->assertOk();
     }
 
-    public function testUpdateNotAllowedForNormalUsers(): void
+    #[Test]
+    public function updateNotAllowedForNormalUsers(): void
     {
         $album = Album::factory()->create();
 

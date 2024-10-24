@@ -8,6 +8,7 @@ use App\Models\Song;
 use App\Services\YouTubeService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
+use PHPUnit\Framework\Attributes\Test;
 use Saloon\Http\Faking\MockResponse;
 use Saloon\Laravel\Saloon;
 use Tests\TestCase;
@@ -25,7 +26,8 @@ class YouTubeServiceTest extends TestCase
         $this->service = app(YouTubeService::class);
     }
 
-    public function testSearchVideosRelatedToSong(): void
+    #[Test]
+    public function searchVideosRelatedToSong(): void
     {
         /** @var Song $song */
         $song = Song::factory()->for(Artist::factory()->create(['name' => 'Slipknot']))->create(['title' => 'Snuff']);

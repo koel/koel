@@ -5,6 +5,7 @@ namespace Tests\Integration\Services;
 use App\Services\FileScanner;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\test_path;
@@ -20,7 +21,8 @@ class FileScannerTest extends TestCase
         $this->scanner = app(FileScanner::class);
     }
 
-    public function testGetFileInfo(): void
+    #[Test]
+    public function getFileInfo(): void
     {
         $info = $this->scanner->setFile(test_path('songs/full.mp3'))->getScanInformation();
 
@@ -50,7 +52,8 @@ class FileScannerTest extends TestCase
         self::assertEqualsWithDelta(10, $info->length, 0.1);
     }
 
-    public function testGetFileInfoVorbisCommentsFlac(): void
+    #[Test]
+    public function getFileInfoVorbisCommentsFlac(): void
     {
         $flacPath = test_path('songs/full-vorbis-comments.flac');
         $info = $this->scanner->setFile($flacPath)->getScanInformation();
@@ -79,14 +82,16 @@ class FileScannerTest extends TestCase
         self::assertEqualsWithDelta(10, $info->length, 0.1);
     }
 
-    public function testSongWithoutTitleHasFileNameAsTitle(): void
+    #[Test]
+    public function songWithoutTitleHasFileNameAsTitle(): void
     {
         $this->scanner->setFile(test_path('songs/blank.mp3'));
 
         self::assertSame('blank', $this->scanner->getScanInformation()->title);
     }
 
-    public function testIgnoreLrcFileIfEmbeddedLyricsAvailable(): void
+    #[Test]
+    public function ignoreLrcFileIfEmbeddedLyricsAvailable(): void
     {
         $base = sys_get_temp_dir() . '/' . Str::uuid();
         $mediaFile = $base . '.mp3';
@@ -97,7 +102,8 @@ class FileScannerTest extends TestCase
         self::assertSame("Foo\rbar", $this->scanner->setFile($mediaFile)->getScanInformation()->lyrics);
     }
 
-    public function testReadLrcFileIfEmbeddedLyricsNotAvailable(): void
+    #[Test]
+    public function readLrcFileIfEmbeddedLyricsNotAvailable(): void
     {
         $base = sys_get_temp_dir() . '/' . Str::uuid();
         $mediaFile = $base . '.mp3';

@@ -2,11 +2,13 @@
 
 namespace Tests\Feature;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class InitialDataTest extends TestCase
 {
-    public function testIndex(): void
+    #[Test]
+    public function index(): void
     {
         $this->getAs('/api/data')->assertJsonStructure([
             'settings',

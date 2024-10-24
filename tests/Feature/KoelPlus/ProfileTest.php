@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\KoelPlus;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
 use function Tests\create_user;
@@ -10,7 +11,8 @@ use function Tests\test_path;
 
 class ProfileTest extends PlusTestCase
 {
-    public function testUpdateSSOProfile(): void
+    #[Test]
+    public function updateSSOProfile(): void
     {
         $user = create_user([
             'sso_provider' => 'Google',

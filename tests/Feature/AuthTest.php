@@ -4,13 +4,15 @@ namespace Tests\Feature;
 
 use App\Services\AuthenticationService;
 use Illuminate\Support\Facades\Hash;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
 
 class AuthTest extends TestCase
 {
-    public function testLogIn(): void
+    #[Test]
+    public function logIn(): void
     {
         create_user([
             'email' => 'koel@koel.dev',
@@ -34,7 +36,8 @@ class AuthTest extends TestCase
             ->assertUnauthorized();
     }
 
-    public function testLoginViaOneTimeToken(): void
+    #[Test]
+    public function loginViaOneTimeToken(): void
     {
         $user = create_user();
         $authService = app(AuthenticationService::class);
@@ -48,7 +51,8 @@ class AuthTest extends TestCase
             ]);
     }
 
-    public function testLogOut(): void
+    #[Test]
+    public function logOut(): void
     {
         $user = create_user([
             'email' => 'koel@koel.dev',

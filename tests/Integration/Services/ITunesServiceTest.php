@@ -7,6 +7,7 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Services\ITunesService;
 use Illuminate\Support\Facades\Cache;
+use PHPUnit\Framework\Attributes\Test;
 use Saloon\Http\Faking\MockResponse;
 use Saloon\Laravel\Saloon;
 use Tests\TestCase;
@@ -22,7 +23,8 @@ class ITunesServiceTest extends TestCase
         $this->service = app(ITunesService::class);
     }
 
-    public function testConfiguration(): void
+    #[Test]
+    public function configuration(): void
     {
         config(['koel.itunes.enabled' => true]);
         self::assertTrue($this->service->used());
@@ -31,7 +33,8 @@ class ITunesServiceTest extends TestCase
         self::assertFalse($this->service->used());
     }
 
-    public function testGetTrackUrl(): void
+    #[Test]
+    public function getTrackUrl(): void
     {
         config(['koel.itunes.enabled' => true]);
         config(['koel.itunes.affiliate_id' => 'foo']);

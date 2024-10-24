@@ -6,6 +6,7 @@ use App\Exceptions\KoelPlusRequiredException;
 use App\Exceptions\UserProspectUpdateDeniedException;
 use App\Services\UserService;
 use Illuminate\Support\Facades\Hash;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_admin;
@@ -25,7 +26,8 @@ class UserServiceTest extends TestCase
         $this->service = app(UserService::class);
     }
 
-    public function testCreateUser(): void
+    #[Test]
+    public function createUser(): void
     {
         $user = $this->service->createUser(
             name: 'Bruce Dickinson',
@@ -41,7 +43,8 @@ class UserServiceTest extends TestCase
         self::assertFileExists(user_avatar_path($user->getRawOriginal('avatar')));
     }
 
-    public function testCreateUserWithEmptyAvatarHasGravatar(): void
+    #[Test]
+    public function createUserWithEmptyAvatarHasGravatar(): void
     {
         $user = $this->service->createUser(
             name: 'Bruce Dickinson',
@@ -56,7 +59,8 @@ class UserServiceTest extends TestCase
         self::assertStringStartsWith('https://www.gravatar.com/avatar/', $user->avatar);
     }
 
-    public function testCreateUserWithNoPassword(): void
+    #[Test]
+    public function createUserWithNoPassword(): void
     {
         $user = $this->service->createUser(
             name: 'Bruce Dickinson',
@@ -69,7 +73,8 @@ class UserServiceTest extends TestCase
         self::assertEmpty($user->password);
     }
 
-    public function testCreateSSOUserRequiresKoelPlus(): void
+    #[Test]
+    public function createSSOUserRequiresKoelPlus(): void
     {
         $this->expectException(KoelPlusRequiredException::class);
 
@@ -82,7 +87,8 @@ class UserServiceTest extends TestCase
         );
     }
 
-    public function testUpdateUser(): void
+    #[Test]
+    public function updateUser(): void
     {
         $user = create_user();
 
@@ -104,7 +110,8 @@ class UserServiceTest extends TestCase
         self::assertFileExists(user_avatar_path($user->getRawOriginal('avatar')));
     }
 
-    public function testUpdateUserWithoutSettingPasswordOrAdminStatus(): void
+    #[Test]
+    public function updateUserWithoutSettingPasswordOrAdminStatus(): void
     {
         $user = create_admin(['password' => Hash::make('TheTrooper')]);
 
@@ -122,7 +129,8 @@ class UserServiceTest extends TestCase
         self::assertTrue($user->is_admin);
     }
 
-    public function testUpdateProspectUserIsNotAllowed(): void
+    #[Test]
+    public function updateProspectUserIsNotAllowed(): void
     {
         $this->expectException(UserProspectUpdateDeniedException::class);
 

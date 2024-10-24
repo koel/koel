@@ -10,6 +10,7 @@ use App\Models\Song;
 use App\Services\InteractionService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
@@ -25,7 +26,8 @@ class InteractionServiceTest extends TestCase
         $this->interactionService = new InteractionService();
     }
 
-    public function testIncreasePlayCount(): void
+    #[Test]
+    public function increasePlayCount(): void
     {
         /** @var Interaction $interaction */
         $interaction = Interaction::factory()->create();
@@ -35,7 +37,8 @@ class InteractionServiceTest extends TestCase
         self::assertSame($currentCount + 1, $interaction->refresh()->play_count);
     }
 
-    public function testToggleLike(): void
+    #[Test]
+    public function toggleLike(): void
     {
         Event::fake(SongLikeToggled::class);
 
@@ -49,7 +52,8 @@ class InteractionServiceTest extends TestCase
         Event::assertDispatched(SongLikeToggled::class);
     }
 
-    public function testLikeMultipleSongs(): void
+    #[Test]
+    public function likeMultipleSongs(): void
     {
         Event::fake(MultipleSongsLiked::class);
 
@@ -72,7 +76,8 @@ class InteractionServiceTest extends TestCase
         Event::assertDispatched(MultipleSongsLiked::class);
     }
 
-    public function testUnlikeMultipleSongs(): void
+    #[Test]
+    public function unlikeMultipleSongs(): void
     {
         Event::fake(MultipleSongsUnliked::class);
         $user = create_user();

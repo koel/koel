@@ -7,11 +7,13 @@ use App\Listeners\LoveTrackOnLastfm;
 use App\Models\Interaction;
 use App\Services\LastfmService;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class LoveTrackOnLastFmTest extends TestCase
 {
-    public function testHandle(): void
+    #[Test]
+    public function handle(): void
     {
         /** @var Interaction $interaction */
         $interaction = Interaction::factory()->create();

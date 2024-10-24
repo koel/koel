@@ -5,11 +5,13 @@ namespace Tests\Feature;
 use App\Http\Resources\SongResource;
 use App\Models\Album;
 use App\Models\Song;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class AlbumSongTest extends TestCase
 {
-    public function testIndex(): void
+    #[Test]
+    public function index(): void
     {
         $album = Album::factory()->create();
 

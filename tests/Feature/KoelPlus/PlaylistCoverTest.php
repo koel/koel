@@ -3,13 +3,15 @@
 namespace Tests\Feature\KoelPlus;
 
 use App\Models\Playlist;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
 use function Tests\create_user;
 
 class PlaylistCoverTest extends PlusTestCase
 {
-    public function testCollaboratorCanNotUploadCover(): void
+    #[Test]
+    public function collaboratorCanNotUploadCover(): void
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
@@ -20,7 +22,8 @@ class PlaylistCoverTest extends PlusTestCase
             ->assertForbidden();
     }
 
-    public function testCollaboratorCannotDeleteCover(): void
+    #[Test]
+    public function collaboratorCannotDeleteCover(): void
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();

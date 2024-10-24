@@ -4,6 +4,7 @@ namespace Tests\Feature\KoelPlus;
 
 use App\Models\User;
 use Laravel\Sanctum\PersonalAccessToken;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
 use function Tests\create_user;
@@ -34,7 +35,8 @@ class ProxyAuthTest extends PlusTestCase
         parent::tearDown();
     }
 
-    public function testProxyAuthenticateNewUser(): void
+    #[Test]
+    public function proxyAuthenticateNewUser(): void
     {
         $response = $this->get('/', [
             'REMOTE_ADDR' => '192.168.1.127',
@@ -58,7 +60,8 @@ class ProxyAuthTest extends PlusTestCase
         ]);
     }
 
-    public function testProxyAuthenticateExistingUser(): void
+    #[Test]
+    public function proxyAuthenticateExistingUser(): void
     {
         $user = create_user([
             'sso_id' => '123456',
@@ -80,7 +83,8 @@ class ProxyAuthTest extends PlusTestCase
         self::assertTrue($user->is(PersonalAccessToken::findToken($token['token'])->tokenable));
     }
 
-    public function testProxyAuthenticateWithDisallowedIp(): void
+    #[Test]
+    public function proxyAuthenticateWithDisallowedIp(): void
     {
         $response = $this->get('/', [
             'REMOTE_ADDR' => '255.168.1.127',

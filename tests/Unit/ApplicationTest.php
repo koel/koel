@@ -2,11 +2,13 @@
 
 namespace Tests\Unit;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ApplicationTest extends TestCase
 {
-    public function testStaticUrlsWithoutCdnAreConstructedCorrectly(): void
+    #[Test]
+    public function staticUrlsWithoutCdnAreConstructedCorrectly(): void
     {
         config(['koel.cdn.url' => '']);
 
@@ -14,7 +16,8 @@ class ApplicationTest extends TestCase
         self::assertSame('http://localhost/foo.css', static_url('/foo.css '));
     }
 
-    public function testStaticUrlsWithCdnAreConstructedCorrectly(): void
+    #[Test]
+    public function staticUrlsWithCdnAreConstructedCorrectly(): void
     {
         config(['koel.cdn.url' => 'http://cdn.tld']);
 

@@ -10,6 +10,7 @@ use App\Models\Song;
 use App\Models\User;
 use App\Services\SmartPlaylistService;
 use Illuminate\Support\Collection;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_admin;
@@ -26,7 +27,8 @@ class SmartPlaylistServiceTest extends TestCase
         $this->service = app(SmartPlaylistService::class);
     }
 
-    public function testTitleIs(): void
+    #[Test]
+    public function titleIs(): void
     {
         $matches = Song::factory()->count(3)->create(['title' => 'Foo Something']);
         Song::factory()->count(3)->create(['title' => 'Bar Something']);
@@ -46,7 +48,8 @@ class SmartPlaylistServiceTest extends TestCase
         ]);
     }
 
-    public function testTitleIsNot(): void
+    #[Test]
+    public function titleIsNot(): void
     {
         $matches = Song::factory()->count(3)->create(['title' => 'Foo Something']);
         Song::factory()->count(3)->create(['title' => 'Bar Something']);
@@ -66,7 +69,8 @@ class SmartPlaylistServiceTest extends TestCase
         ]);
     }
 
-    public function testTitleContains(): void
+    #[Test]
+    public function titleContains(): void
     {
         $matches = Song::factory()->count(3)->create(['title' => 'Foo Something']);
         Song::factory()->count(3)->create(['title' => 'Foo Nothing']);
@@ -86,7 +90,8 @@ class SmartPlaylistServiceTest extends TestCase
         ]);
     }
 
-    public function testTitleDoesNotContain(): void
+    #[Test]
+    public function titleDoesNotContain(): void
     {
         $matches = Song::factory()->count(3)->create(['title' => 'Foo Something']);
         Song::factory()->count(3)->create(['title' => 'Foo Nothing']);
@@ -106,7 +111,8 @@ class SmartPlaylistServiceTest extends TestCase
         ]);
     }
 
-    public function testTitleBeginsWith(): void
+    #[Test]
+    public function titleBeginsWith(): void
     {
         $matches = Song::factory()->count(3)->create(['title' => 'Foo Something']);
         Song::factory()->count(3)->create(['title' => 'Bar Something']);
@@ -126,7 +132,8 @@ class SmartPlaylistServiceTest extends TestCase
         ]);
     }
 
-    public function testTitleEndsWith(): void
+    #[Test]
+    public function titleEndsWith(): void
     {
         $matches = Song::factory()->count(3)->create(['title' => 'Foo Something']);
         Song::factory()->count(3)->create(['title' => 'Foo Nothing']);
@@ -146,7 +153,8 @@ class SmartPlaylistServiceTest extends TestCase
         ]);
     }
 
-    public function testAlbumIs(): void
+    #[Test]
+    public function albumIs(): void
     {
         $albums = Album::factory()->count(2)->create(['name' => 'Foo Album']);
 
@@ -170,7 +178,8 @@ class SmartPlaylistServiceTest extends TestCase
         ]);
     }
 
-    public function testArtistIs(): void
+    #[Test]
+    public function artistIs(): void
     {
         $matches = Song::factory()
             ->count(3)
@@ -194,7 +203,8 @@ class SmartPlaylistServiceTest extends TestCase
         ]);
     }
 
-    public function testGenreIsOrContains(): void
+    #[Test]
+    public function genreIsOrContains(): void
     {
         $matches = Song::factory()->count(3)->create(['genre' => 'Foo Genre'])
             ->merge(Song::factory()->count(2)->create(['genre' => 'Bar Genre']));
@@ -227,7 +237,8 @@ class SmartPlaylistServiceTest extends TestCase
         ]);
     }
 
-    public function testYearIsGreaterThan(): void
+    #[Test]
+    public function yearIsGreaterThan(): void
     {
         $matches = Song::factory()->count(3)->create(['year' => 2030])
             ->merge(Song::factory()->count(2)->create(['year' => 2022]));
@@ -249,7 +260,8 @@ class SmartPlaylistServiceTest extends TestCase
         ]);
     }
 
-    public function testYearIsLessThan(): void
+    #[Test]
+    public function yearIsLessThan(): void
     {
         $matches = Song::factory()->count(3)->create(['year' => 1980])
             ->merge(Song::factory()->count(2)->create(['year' => 1978]));
@@ -271,7 +283,8 @@ class SmartPlaylistServiceTest extends TestCase
         ]);
     }
 
-    public function testYearIsBetween(): void
+    #[Test]
+    public function yearIsBetween(): void
     {
         $matches = Song::factory()->count(3)->create(['year' => 1980])
             ->merge(Song::factory()->count(2)->create(['year' => 1978]));
@@ -293,7 +306,8 @@ class SmartPlaylistServiceTest extends TestCase
         ]);
     }
 
-    public function testPlayCountIsGreaterThan(): void
+    #[Test]
+    public function playCountIsGreaterThan(): void
     {
         $user = create_user();
         $matches = Song::factory()->count(2)->create();
@@ -330,7 +344,8 @@ class SmartPlaylistServiceTest extends TestCase
         ], $user);
     }
 
-    public function testLastPlayedAtIsInLast(): void
+    #[Test]
+    public function lastPlayedAtIsInLast(): void
     {
         $user = create_user();
         $matches = Song::factory()->count(2)->create();
@@ -368,7 +383,8 @@ class SmartPlaylistServiceTest extends TestCase
         ], $user);
     }
 
-    public function testLastPlayedNotInLast(): void
+    #[Test]
+    public function lastPlayedNotInLast(): void
     {
         $user = create_user();
         $matches = Song::factory()->count(2)->create();
@@ -406,7 +422,8 @@ class SmartPlaylistServiceTest extends TestCase
         ], $user);
     }
 
-    public function testLastPlayedIs(): void
+    #[Test]
+    public function lastPlayedIs(): void
     {
         $user = create_user();
         $matches = Song::factory()->count(2)->create();
@@ -444,7 +461,8 @@ class SmartPlaylistServiceTest extends TestCase
         ], $user);
     }
 
-    public function testLengthIsGreaterThan(): void
+    #[Test]
+    public function lengthIsGreaterThan(): void
     {
         $matches = Song::factory()->count(3)->create(['length' => 300])
             ->merge(Song::factory()->count(2)->create(['length' => 200]));
@@ -466,7 +484,8 @@ class SmartPlaylistServiceTest extends TestCase
         ]);
     }
 
-    public function testLengthIsInBetween(): void
+    #[Test]
+    public function lengthIsInBetween(): void
     {
         $matches = Song::factory()->count(3)->create(['length' => 300])
             ->merge(Song::factory()->count(2)->create(['length' => 200]));
@@ -488,7 +507,8 @@ class SmartPlaylistServiceTest extends TestCase
         ]);
     }
 
-    public function testDateAddedInLast(): void
+    #[Test]
+    public function dateAddedInLast(): void
     {
         $matches = Song::factory()->count(3)->create(['created_at' => now()->subDays(2)])
             ->merge(Song::factory()->count(2)->create(['created_at' => now()->subDay()]))
@@ -511,7 +531,8 @@ class SmartPlaylistServiceTest extends TestCase
         ]);
     }
 
-    public function testDateAddedNotInLast(): void
+    #[Test]
+    public function dateAddedNotInLast(): void
     {
         $matches = Song::factory()->count(3)->create(['created_at' => now()->subDays(4)])
             ->merge(Song::factory()->count(2)->create(['created_at' => now()->subDays(5)]))

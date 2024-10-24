@@ -8,13 +8,15 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\File;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\test_path;
 
 class ApplicationInformationServiceTest extends TestCase
 {
-    public function testGetLatestVersionNumber(): void
+    #[Test]
+    public function getLatestVersionNumber(): void
     {
         $latestVersion = 'v1.1.2';
 

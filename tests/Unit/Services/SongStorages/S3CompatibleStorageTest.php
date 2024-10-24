@@ -5,11 +5,13 @@ namespace Tests\Unit\Services\SongStorages;
 use App\Exceptions\KoelPlusRequiredException;
 use App\Models\Song;
 use App\Services\SongStorages\S3CompatibleStorage;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class S3CompatibleStorageTest extends TestCase
 {
-    public function testSupported(): void
+    #[Test]
+    public function supported(): void
     {
         $this->expectException(KoelPlusRequiredException::class);
 

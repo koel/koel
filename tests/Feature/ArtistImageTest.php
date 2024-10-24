@@ -6,6 +6,7 @@ use App\Models\Artist;
 use App\Services\MediaMetadataService;
 use Mockery;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_admin;
@@ -21,7 +22,8 @@ class ArtistImageTest extends TestCase
         $this->mediaMetadataService = self::mock(MediaMetadataService::class);
     }
 
-    public function testUpdate(): void
+    #[Test]
+    public function update(): void
     {
         $artist = Artist::factory()->create();
 
@@ -34,7 +36,8 @@ class ArtistImageTest extends TestCase
             ->assertOk();
     }
 
-    public function testUpdateNotAllowedForNormalUsers(): void
+    #[Test]
+    public function updateNotAllowedForNormalUsers(): void
     {
         Artist::factory()->create(['id' => 9999]);
 

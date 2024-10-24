@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_admin;
@@ -11,7 +12,8 @@ use function Tests\create_user;
 
 class UserTest extends TestCase
 {
-    public function testNonAdminCannotCreateUser(): void
+    #[Test]
+    public function nonAdminCannotCreateUser(): void
     {
         $this->postAs('api/user', [
             'name' => 'Foo',
@@ -21,7 +23,8 @@ class UserTest extends TestCase
         ])->assertForbidden();
     }
 
-    public function testAdminCreatesUser(): void
+    #[Test]
+    public function adminCreatesUser(): void
     {
         $admin = create_admin();
 
@@ -42,7 +45,8 @@ class UserTest extends TestCase
         self::assertTrue($user->is_admin);
     }
 
-    public function testAdminUpdatesUser(): void
+    #[Test]
+    public function adminUpdatesUser(): void
     {
         $admin = create_admin();
         $user = create_admin(['password' => 'secret']);
@@ -63,7 +67,8 @@ class UserTest extends TestCase
         self::assertFalse($user->is_admin);
     }
 
-    public function testAdminDeletesUser(): void
+    #[Test]
+    public function adminDeletesUser(): void
     {
         $user = create_user();
 
@@ -71,7 +76,8 @@ class UserTest extends TestCase
         self::assertModelMissing($user);
     }
 
-    public function testSelfDeletionNotAllowed(): void
+    #[Test]
+    public function selfDeletionNotAllowed(): void
     {
         $admin = create_admin();
 

@@ -6,6 +6,7 @@ use App\Models\Playlist;
 use App\Services\PlaylistService;
 use App\Values\SmartPlaylistRuleGroupCollection;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
 use function Tests\create_user;
@@ -21,7 +22,8 @@ class PlaylistServiceTest extends PlusTestCase
         $this->service = app(PlaylistService::class);
     }
 
-    public function testCreatePlaylistWithOwnSongsOnlyOption(): void
+    #[Test]
+    public function createPlaylistWithOwnSongsOnlyOption(): void
     {
         $rules = SmartPlaylistRuleGroupCollection::create([
             [
@@ -51,7 +53,8 @@ class PlaylistServiceTest extends PlusTestCase
         self::assertTrue($playlist->own_songs_only);
     }
 
-    public function testOwnSongsOnlyOptionOnlyWorksWithSmartPlaylistsWhenCreate(): void
+    #[Test]
+    public function ownSongsOnlyOptionOnlyWorksWithSmartPlaylistsWhenCreate(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('"Own songs only" option only works with smart playlists and Plus license.');
@@ -63,7 +66,8 @@ class PlaylistServiceTest extends PlusTestCase
         );
     }
 
-    public function testOwnSongsOnlyOptionOnlyWorksWithSmartPlaylistsWhenUpdate(): void
+    #[Test]
+    public function ownSongsOnlyOptionOnlyWorksWithSmartPlaylistsWhenUpdate(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('"Own songs only" option only works with smart playlists and Plus license.');

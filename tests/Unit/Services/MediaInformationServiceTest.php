@@ -13,6 +13,7 @@ use App\Values\ArtistInformation;
 use Mockery;
 use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class MediaInformationServiceTest extends TestCase
@@ -31,7 +32,8 @@ class MediaInformationServiceTest extends TestCase
         $this->mediaInformationService = new MediaInformationService($this->encyclopedia, $this->mediaMetadataService);
     }
 
-    public function testGetAlbumInformation(): void
+    #[Test]
+    public function getAlbumInformation(): void
     {
         /** @var Album $album */
         $album = Album::factory()->create();
@@ -50,7 +52,8 @@ class MediaInformationServiceTest extends TestCase
         self::assertNotNull(cache()->get('album.info.' . $album->id));
     }
 
-    public function testGetAlbumInformationTriesDownloadingCover(): void
+    #[Test]
+    public function getAlbumInformationTriesDownloadingCover(): void
     {
         /** @var Album $album */
         $album = Album::factory()->create(['cover' => '']);
@@ -71,7 +74,8 @@ class MediaInformationServiceTest extends TestCase
         self::assertSame($info, $this->mediaInformationService->getAlbumInformation($album));
     }
 
-    public function testGetArtistInformation(): void
+    #[Test]
+    public function getArtistInformation(): void
     {
         /** @var Artist $artist */
         $artist = Artist::factory()->create();
@@ -92,7 +96,8 @@ class MediaInformationServiceTest extends TestCase
         self::assertNotNull(cache()->get('artist.info.' . $artist->id));
     }
 
-    public function testGetArtistInformationTriesDownloadingImage(): void
+    #[Test]
+    public function getArtistInformationTriesDownloadingImage(): void
     {
         /** @var Artist $artist */
         $artist = Artist::factory()->create(['image' => '']);

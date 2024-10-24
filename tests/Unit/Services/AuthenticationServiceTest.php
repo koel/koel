@@ -8,6 +8,7 @@ use App\Services\TokenManager;
 use Illuminate\Auth\Passwords\PasswordBroker;
 use Illuminate\Support\Facades\Password;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class AuthenticationServiceTest extends TestCase
@@ -32,7 +33,8 @@ class AuthenticationServiceTest extends TestCase
         );
     }
 
-    public function testTrySendResetPasswordLink(): void
+    #[Test]
+    public function trySendResetPasswordLink(): void
     {
         $this->passwordBroker
             ->shouldReceive('sendResetLink')

@@ -4,6 +4,7 @@ namespace Tests\Feature\KoelPlus;
 
 use App\Models\Song;
 use App\Services\DownloadService;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
 use function Tests\create_user;
@@ -11,7 +12,8 @@ use function Tests\test_path;
 
 class DownloadTest extends PlusTestCase
 {
-    public function testDownloadPolicy(): void
+    #[Test]
+    public function downloadPolicy(): void
     {
         $owner = create_user();
         $apiToken = $owner->createToken('Koel')->plainTextToken;

@@ -12,6 +12,8 @@ use App\Models\Artist;
 use App\Models\Song;
 use App\Services\LastfmService;
 use Illuminate\Support\Facades\File;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Saloon\Http\Faking\MockResponse;
 use Saloon\Laravel\Saloon;
 use Tests\TestCase;
@@ -35,7 +37,8 @@ class LastfmServiceTest extends TestCase
         $this->service = app(LastfmService::class);
     }
 
-    public function testGetArtistInformation(): void
+    #[Test]
+    public function getArtistInformation(): void
     {
         /** @var Artist $artist */
         $artist = Artist::factory()->make(['name' => 'Kamelot']);
@@ -67,7 +70,8 @@ class LastfmServiceTest extends TestCase
         ], $info->toArray());
     }
 
-    public function testGetArtistInformationForNonExistentArtist(): void
+    #[Test]
+    public function getArtistInformationForNonExistentArtist(): void
     {
         /** @var Artist $artist */
         $artist = Artist::factory()->make(['name' => 'bar']);
@@ -81,7 +85,8 @@ class LastfmServiceTest extends TestCase
         self::assertNull($this->service->getArtistInformation($artist));
     }
 
-    public function testGetAlbumInformation(): void
+    #[Test]
+    public function getAlbumInformation(): void
     {
         /** @var Album $album */
         $album = Album::factory()->for(Artist::factory()->create(['name' => 'Kamelot']))->create(['name' => 'Epica']);
@@ -126,7 +131,8 @@ class LastfmServiceTest extends TestCase
         ], $info->toArray());
     }
 
-    public function testGetAlbumInformationForNonExistentAlbum(): void
+    #[Test]
+    public function getAlbumInformationForNonExistentAlbum(): void
     {
         /** @var Album $album */
         $album = Album::factory()->for(Artist::factory()->create(['name' => 'Kamelot']))->create(['name' => 'Foo']);
@@ -140,7 +146,8 @@ class LastfmServiceTest extends TestCase
         self::assertNull($this->service->getAlbumInformation($album));
     }
 
-    public function testScrobble(): void
+    #[Test]
+    public function scrobble(): void
     {
         $user = create_user([
             'preferences' => [
@@ -175,8 +182,9 @@ class LastfmServiceTest extends TestCase
         return [[true, 'track.love'], [false, 'track.unlove']];
     }
 
-    /** @dataProvider provideToggleLoveTrackData */
-    public function testToggleLoveTrack(bool $love, string $method): void
+    #[DataProvider('provideToggleLoveTrackData')]
+    #[Test]
+    public function toggleLoveTrack(bool $love, string $method): void
     {
         $user = create_user([
             'preferences' => [
@@ -203,7 +211,8 @@ class LastfmServiceTest extends TestCase
         });
     }
 
-    public function testUpdateNowPlaying(): void
+    #[Test]
+    public function updateNowPlaying(): void
     {
         $user = create_user([
             'preferences' => [

@@ -5,6 +5,7 @@ namespace Tests\Feature\KoelPlus;
 use App\Models\Setting;
 use App\Models\Song;
 use Illuminate\Http\UploadedFile;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
 use function Tests\create_user;
@@ -22,7 +23,8 @@ class UploadTest extends PlusTestCase
         $this->file = UploadedFile::fromFile(test_path('songs/full.mp3'), 'song.mp3'); //@phpstan-ignore-line
     }
 
-    public function testUploads(): void
+    #[Test]
+    public function uploads(): void
     {
         $user = create_user();
 
