@@ -1,13 +1,7 @@
 <template>
   <div class="skeleton">
-    <div class="song-list-header">
-      <span class="track-number">
-        <span class="text" />
-      </span>
+    <div class="song-list-header h-[35px] flex bg-k-bg-secondary gap-4 px-4">
       <span class="title">
-        <span class="text" />
-      </span>
-      <span class="artist">
         <span class="text" />
       </span>
       <span class="album">
@@ -16,68 +10,43 @@
       <span class="time">
         <span class="text" />
       </span>
-      <span class="favorite" />
     </div>
-    <div v-for="i in 40" :key="i" class="song-item">
-      <span class="track-number">
-        <span class="text pulse" />
+    <div v-for="i in 40" :key="i" class="flex gap-4 px-4 py-3 border-b border-k-border">
+      <span class="title flex gap-3">
+        <span class="thumbnail block h-[48px] aspect-square rounded pulse" />
+        <span class="flex-1 flex-col space-y-2 content-center">
+          <span class="block h-5 rounded-full w-4/5 pulse" />
+          <span class="block h-5 rounded-full w-2/5 pulse" />
+        </span>
       </span>
-      <span class="title">
-        <span class="thumbnail pulse" />
-        <span class="text pulse" />
+      <span class="album flex-col content-center">
+        <span class="block h-5 w-3/5 rounded-full pulse" />
       </span>
-      <span class="artist">
-        <span class="text pulse" />
-      </span>
-      <span class="album">
-        <span class="text pulse" />
-      </span>
-      <span class="time">
-        <span class="text pulse" />
-      </span>
-      <span class="favorite">
-        <span class="text pulse" />
+      <span class="time flex-col content-center">
+        <span class="block h-5 w-3/5 rounded-full pulse" />
       </span>
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+</script>
 
 <style lang="postcss" scoped>
 .song-list-header {
   @apply h-[35px] flex bg-k-bg-secondary;
 }
 
-.song-item {
-  @apply flex h-[64px] border-b border-k-border;
-}
-
-.song-list-header span span,
-.pulse {
-  @apply inline-block h-[1.2rem] rounded-full w-4/5;
+.song-list-header > span {
+  @apply flex items-center;
 }
 
 .song-list-header span span {
-  @apply bg-white/10 w-2/5;
-}
-
-span:not(.text) {
-  @apply p-[8px] align-middle;
-}
-
-.track-number {
-  @apply basis-[66px] pl-[24px];
-}
-
-.thumbnail {
-  @apply block w-[48px] aspect-square rounded;
+  @apply block h-[1.2rem] rounded-full bg-white/10 w-2/5;
 }
 
 .title {
-  @apply flex items-center gap-3 flex-1;
-}
-
-.artist {
-  @apply basis-[23%];
+  @apply flex-1;
 }
 
 .album {
@@ -88,26 +57,17 @@ span:not(.text) {
   @apply basis-[96px];
 }
 
-.favorite {
-  @apply basis-[36px];
-}
-
 @media screen and (max-width: 768px) {
   span {
     @apply hidden;
   }
 
   .title,
-  .artist {
+  .album {
     @apply flex;
   }
 
-  .artist .text {
-    @apply w-full;
-  }
-
-  .song-list-header,
-  .song-item {
+  .song-list-header {
     @apply py-0 px-[16px];
   }
 }
