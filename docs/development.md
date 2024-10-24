@@ -68,7 +68,7 @@ yarn lint            # Lint
 ## Koel Docs
 
 Of course, you are welcome to contribute to Koel Docs (this documentation) as well!
-Koel’s documentation is built with [VitePress](https://vitepress.dev/) is stored under the `docs` directory in the same repository as Koel.
+Koel’s documentation is built with [VitePress](https://vitepress.dev/) and stored under the `docs` directory in the same repository as Koel.
 To start the VitePress instance, use the following command:
 
 ```bash
@@ -81,4 +81,5 @@ yarn docs:dev
 ```
 
 The documentation should now be available at `http://localhost:5173`.
+For more information on how to work with VitePress, check out its [official website](https://vitepress.dev/).
 
