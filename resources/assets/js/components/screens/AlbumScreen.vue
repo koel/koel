@@ -1,5 +1,5 @@
 <template>
-  <ScreenBase v-if="album">
+  <ScreenBase v-if="albumId">
     <template #header>
       <ScreenHeaderSkeleton v-if="loading" />
 
@@ -44,22 +44,22 @@
       <template #header>
         <label :class="{ active: activeTab === 'Songs' }">
           Songs
-          <input v-model="activeTab" name="tab" type="radio" value="Songs">
+          <input v-model="activeTab" :disabled="loading" name="tab" type="radio" value="Songs">
         </label>
         <label :class="{ active: activeTab === 'OtherAlbums' }">
           Other Albums
-          <input v-model="activeTab" name="tab" type="radio" value="OtherAlbums">
+          <input v-model="activeTab" :disabled="loading" name="tab" type="radio" value="OtherAlbums">
         </label>
         <label v-if="useLastfm" :class="{ active: activeTab === 'Info' }">
           Information
-          <input v-model="activeTab" name="tab" type="radio" value="Info">
+          <input v-model="activeTab" :disabled="loading" name="tab" type="radio" value="Info">
         </label>
       </template>
 
       <div v-show="activeTab === 'Songs'" class="songs-pane">
         <SongListSkeleton v-if="loading" />
         <SongList
-          v-else
+          v-if="!loading && album"
           ref="songList"
           @press:enter="onPressEnter"
           @scroll-breakpoint="onScrollBreakpoint"
