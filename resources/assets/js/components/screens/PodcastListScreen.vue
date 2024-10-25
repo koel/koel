@@ -23,7 +23,7 @@
         <Icon :icon="faPodcast" />
       </template>
       No podcasts found.
-      <span class="secondary d-block">Add a podcast to get started.</span>
+      <span class="secondary block">Add a podcast to get started.</span>
     </ScreenEmptyState>
 
     <div v-else v-koel-overflow-fade class="-m-6 p-6 overflow-auto space-y-3 min-h-full">

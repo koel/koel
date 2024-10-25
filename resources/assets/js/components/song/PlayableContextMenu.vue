@@ -28,7 +28,7 @@
           <li @click="addToFavorites">Favorites</li>
         </template>
         <li v-if="normalPlaylists.length" class="separator" />
-        <template class="d-block">
+        <template class="block">
           <ul v-if="normalPlaylists.length" v-koel-overflow-fade class="relative max-h-48 overflow-y-auto">
             <li v-for="p in normalPlaylists" :key="p.id" @click="addToExistingPlaylist(p)">{{ p.name }}</li>
           </ul>
