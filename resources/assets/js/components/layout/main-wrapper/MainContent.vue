@@ -39,9 +39,9 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, onMounted, ref, toRef } from 'vue'
+import { onMounted, ref, toRef } from 'vue'
 import { isSong } from '@/utils/typeGuards'
-import { requireInjection } from '@/utils/helpers'
+import { defineAsyncComponent, requireInjection } from '@/utils/helpers'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { useRouter } from '@/composables/useRouter'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
