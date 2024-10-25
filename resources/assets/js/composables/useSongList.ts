@@ -135,7 +135,7 @@ export const useSongList = (
   const applyFilter = throttle((keywords: string) => (filterKeywords.value = keywords), 200)
 
   const filteredPlayables = computed(() => {
-    if (!fuzzy) {
+    if (!fuzzy || !filterKeywords.value) {
       return playables.value
     }
 

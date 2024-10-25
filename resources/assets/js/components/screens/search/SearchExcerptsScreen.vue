@@ -19,7 +19,7 @@
         <Icon :icon="faSearch" />
       </template>
       Find songs, artists, and albums,
-      <span class="secondary d-block">all in one place.</span>
+      <span class="secondary block">all in one place.</span>
     </ScreenEmptyState>
   </ScreenBase>
 </template>

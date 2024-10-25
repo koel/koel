@@ -49,7 +49,7 @@
         Your library is empty.
         <a
           v-if="isPlus && ownSongsOnly"
-          class="d-block secondary"
+          class="block secondary"
           role="button"
           @click.prevent="showSongsFromOthers"
         >

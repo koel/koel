@@ -1,7 +1,7 @@
 <template>
-  <ScreenBase v-if="playlist">
+  <ScreenBase v-if="playlistId">
     <template #header>
-      <ScreenHeader :disabled="loading" :layout="songs.length === 0 ? 'collapsed' : headerLayout">
+      <ScreenHeader v-if="playlist" :disabled="loading" :layout="songs.length === 0 ? 'collapsed' : headerLayout">
         {{ playlist.name }}
         <ControlsToggle v-if="songs.length" v-model="showingControls" />
 
@@ -37,36 +37,41 @@
           />
         </template>
       </ScreenHeader>
+      <ScreenHeaderSkeleton v-else />
     </template>
 
-    <SongListSkeleton v-show="loading" class="-m-6" />
-    <SongList
-      v-if="!loading && songs.length"
-      ref="songList"
-      class="-m-6"
-      @reorder="onReorder"
-      @sort="sort"
-      @press:delete="removeSelected"
-      @press:enter="onPressEnter"
-      @scroll-breakpoint="onScrollBreakpoint"
-    />
+    <SongListSkeleton v-if="loading" class="-m-6" />
+    <template v-else>
+      <SongList
+        v-if="songs.length"
+        ref="songList"
+        class="-m-6"
+        @reorder="onReorder"
+        @sort="sort"
+        @press:delete="removeSelected"
+        @press:enter="onPressEnter"
+        @scroll-breakpoint="onScrollBreakpoint"
+      />
 
-    <ScreenEmptyState v-if="!songs.length && !loading">
-      <template #icon>
-        <Icon :icon="faFile" />
-      </template>
+      <ScreenEmptyState v-else>
+        <template #icon>
+          <Icon :icon="faFile" />
+        </template>
 
-      <template v-if="playlist?.is_smart">
-        No songs match the playlist's
-        <a @click.prevent="editPlaylist">criteria</a>.
-      </template>
-      <template v-else>
-        The playlist is currently empty.
-        <span class="d-block secondary">
-          Drag songs into its name in the sidebar or use the &quot;Add To…&quot; button to fill it up.
-        </span>
-      </template>
-    </ScreenEmptyState>
+        <template v-if="playlist?.is_smart">
+          <p>
+            No songs match the playlist's
+            <a class="inline" @click.prevent="editPlaylist">criteria</a>.
+          </p>
+        </template>
+        <template v-else>
+          The playlist is currently empty.
+          <span class="block secondary">
+            Drag songs into its name in the sidebar or use the &quot;Add To…&quot; button to fill it up.
+          </span>
+        </template>
+      </ScreenEmptyState>
+    </template>
   </ScreenBase>
 </template>
 
@@ -93,6 +98,7 @@ import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 import CollaboratorsBadge from '@/components/playlist/PlaylistCollaboratorsBadge.vue'
 import PlaylistThumbnail from '@/components/ui/PlaylistThumbnail.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
+import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
 
 const { currentUser } = useAuthorization()
 const { triggerNotFound, getRouteParam, onScreenActivated } = useRouter()
@@ -152,7 +158,9 @@ const fetchDetails = async (refresh = false) => {
   }
 
   try {
-    [songs.value, collaborators.value] = await Promise.all([
+    loading.value = true
+
+    ;[songs.value, collaborators.value] = await Promise.all([
       songStore.fetchForPlaylist(playlist.value!, refresh),
       playlist.value!.is_collaborative
         ? playlistCollaborationService.fetchCollaborators(playlist.value!)

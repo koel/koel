@@ -41,7 +41,7 @@
         <Icon :icon="faClock" />
       </template>
       No songs recently played.
-      <span class="secondary d-block">Start playing to populate this playlist.</span>
+      <span class="secondary block">Start playing to populate this playlist.</span>
     </ScreenEmptyState>
   </ScreenBase>
 </template>

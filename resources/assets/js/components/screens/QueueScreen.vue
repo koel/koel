@@ -44,7 +44,7 @@
       </template>
 
       No songs queued.
-      <span v-if="libraryNotEmpty" class="d-block secondary">
+      <span v-if="libraryNotEmpty" class="block secondary">
         How about
         <a class="start" @click.prevent="shuffleSome">playing some random songs</a>?
       </span>

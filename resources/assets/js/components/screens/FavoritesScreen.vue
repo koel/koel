@@ -51,7 +51,7 @@
         <Icon :icon="faHeartBroken" />
       </template>
       No favorites yet.
-      <span class="secondary d-block">
+      <span class="secondary block">
         Click the&nbsp;
         <Icon :icon="faHeart" />&nbsp;
         icon to mark a song as favorite.

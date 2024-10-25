@@ -14,7 +14,7 @@
         <Icon :icon="faMicrophoneSlash" />
       </template>
       No artists found.
-      <span class="secondary d-block">
+      <span class="secondary block">
         {{ isAdmin ? 'Have you set up your library yet?' : 'Contact your administrator to set up your library.' }}
       </span>
     </ScreenEmptyState>
