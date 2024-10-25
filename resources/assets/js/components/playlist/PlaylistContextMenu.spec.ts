@@ -56,7 +56,7 @@ new class extends UnitTestCase {
       await waitFor(() => {
         expect(fetchMock).toHaveBeenCalledWith(playlist)
         expect(queueMock).toHaveBeenCalledWith(songs)
-        expect(goMock).toHaveBeenCalledWith('queue')
+        expect(goMock).toHaveBeenCalledWith('/#/queue')
       })
     })
 
@@ -92,7 +92,7 @@ new class extends UnitTestCase {
       await waitFor(() => {
         expect(fetchMock).toHaveBeenCalledWith(playlist)
         expect(queueMock).toHaveBeenCalledWith(songs, true)
-        expect(goMock).toHaveBeenCalledWith('queue')
+        expect(goMock).toHaveBeenCalledWith('/#/queue')
       })
     })
 

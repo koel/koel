@@ -12,7 +12,9 @@
         </template>
 
         <template #meta>
-          <a v-if="isNormalArtist" :href="`#/artist/${album.artist_id}`" class="artist">{{ album.artist_name }}</a>
+          <a v-if="isNormalArtist" :href="url('artists.show', { id: album.artist_id })" class="artist">
+            {{ album.artist_name }}
+          </a>
           <span v-else class="nope">{{ album.artist_name }}</span>
           <span>{{ pluralize(songs, 'item') }}</span>
           <span>{{ duration }}</span>
@@ -116,7 +118,7 @@ const AlbumInfo = defineAsyncComponent(() => import('@/components/album/AlbumInf
 const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCard.vue'))
 const AlbumCardSkeleton = defineAsyncComponent(() => import('@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'))
 
-const { getRouteParam, go, onScreenActivated } = useRouter()
+const { getRouteParam, go, onScreenActivated, url } = useRouter()
 
 const albumId = ref<number>()
 const album = ref<Album | undefined>()
@@ -194,5 +196,5 @@ watch(albumId, async id => {
 onScreenActivated('Album', () => (albumId.value = Number.parseInt(getRouteParam('id')!)))
 
 // if the current album has been deleted, go back to the list
-eventBus.on('SONGS_UPDATED', () => albumStore.byId(albumId.value!) || go('albums'))
+eventBus.on('SONGS_UPDATED', () => albumStore.byId(albumId.value!) || go(url('albums.index')))
 </script>

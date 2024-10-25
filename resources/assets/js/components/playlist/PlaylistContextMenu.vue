@@ -28,7 +28,7 @@ import { queueStore } from '@/stores/queueStore'
 import { songStore } from '@/stores/songStore'
 
 const { base, ContextMenu, open, trigger } = useContextMenu()
-const { go } = useRouter()
+const { go, url } = useRouter()
 const { toastWarning, toastSuccess } = useMessageToaster()
 const { isPlus } = useKoelPlus()
 const { currentUserCan } = usePolicies()
@@ -46,7 +46,7 @@ const play = () => trigger(async () => {
 
   if (songs.length) {
     playbackService.queueAndPlay(songs)
-    go('queue')
+    go(url('queue'))
   } else {
     toastWarning('The playlist is empty.')
   }
@@ -57,7 +57,7 @@ const shuffle = () => trigger(async () => {
 
   if (songs.length) {
     playbackService.queueAndPlay(songs, true)
-    go('queue')
+    go(url('queue'))
   } else {
     toastWarning('The playlist is empty.')
   }

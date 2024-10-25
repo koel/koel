@@ -10,91 +10,111 @@ const UUID_REGEX = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
 
 export const routes: Route[] = [
   {
+    name: 'home',
     path: '/home',
     screen: 'Home',
   },
   {
+    name: '404',
     path: '/404',
     screen: '404',
   },
   {
+    name: 'queue',
     path: '/queue',
     screen: 'Queue',
   },
   {
+    name: 'songs.index',
     path: '/songs',
     screen: 'Songs',
   },
   {
+    name: 'albums.index',
     path: '/albums',
     screen: 'Albums',
   },
   {
+    name: 'artists.index',
     path: '/artists',
     screen: 'Artists',
   },
   {
+    name: 'favorites',
     path: '/favorites',
     screen: 'Favorites',
   },
   {
+    name: 'recently-played',
     path: '/recently-played',
     screen: 'RecentlyPlayed',
   },
   {
+    name: 'search',
     path: '/search',
     screen: 'Search.Excerpt',
   },
   {
+    name: 'search.songs',
     path: '/search/songs',
     screen: 'Search.Songs',
   },
   {
+    name: 'upload',
     path: '/upload',
     screen: 'Upload',
     onResolve: () => useUpload().allowsUpload.value,
   },
   {
+    name: 'settings',
     path: '/settings',
     screen: 'Settings',
     onResolve: () => userStore.current?.is_admin,
   },
   {
+    name: 'users.index',
     path: '/users',
     screen: 'Users',
     onResolve: () => userStore.current?.is_admin,
   },
   {
+    name: 'youtube',
     path: '/youtube',
     screen: 'YouTube',
   },
   {
+    name: 'profile',
     path: '/profile',
     screen: 'Profile',
   },
   {
+    name: 'visualizer',
     path: 'visualizer',
     screen: 'Visualizer',
   },
   {
-    path: '/album/(?<id>\\d+)',
+    name: 'albums.show',
+    path: '/albums/(?<id>\\d+)',
     screen: 'Album',
   },
   {
-    path: '/artist/(?<id>\\d+)',
+    name: 'artists.show',
+    path: '/artists/(?<id>\\d+)',
     screen: 'Artist',
   },
   {
-    path: `/playlist/(?<id>${UUID_REGEX})`,
+    name: 'playlists.show',
+    path: `/playlists/(?<id>${UUID_REGEX})`,
     screen: 'Playlist',
   },
   {
+    name: 'playlist.collaborate',
     path: `/playlist/collaborate/(?<id>${UUID_REGEX})`,
     screen: 'Blank',
     onResolve: async params => {
       try {
         const playlist = await playlistCollaborationService.acceptInvite(params.id)
-        Router.go(`/playlist/${playlist.id}`, true)
+        Router.go(Router.url('playlists.show', { id: playlist.id }), true)
         return true
       } catch (error: unknown) {
         logger.error(error)
@@ -103,31 +123,38 @@ export const routes: Route[] = [
     },
   },
   {
+    name: 'genres.index',
     path: '/genres',
     screen: 'Genres',
   },
   {
+    name: 'genres.show',
     path: '/genres/(?<name>\.+)',
     screen: 'Genre',
   },
   {
+    name: 'podcasts.index',
     path: '/podcasts',
     screen: 'Podcasts',
   },
   {
+    name: 'podcasts.show',
     path: `/podcasts/(?<id>${UUID_REGEX})`,
     screen: 'Podcast',
   },
   {
+    name: 'episodes.show',
     path: '/episodes/(?<id>\.+)',
     screen: 'Episode',
   },
   {
+    name: 'visualizer',
     path: '/visualizer',
     screen: 'Visualizer',
   },
   {
-    path: `/song/(?<id>${UUID_REGEX})`,
+    name: 'songs.queue',
+    path: `/songs/(?<id>${UUID_REGEX})`,
     screen: 'Queue',
     redirect: () => 'queue',
     onResolve: params => {
@@ -136,10 +163,12 @@ export const routes: Route[] = [
     },
   },
   {
+    name: 'invitation.accept',
     path: `/invitation/accept/(?<token>${UUID_REGEX})`,
     screen: 'Invitation.Accept',
   },
   {
+    name: 'password.reset',
     path: `/reset-password/(?<payload>[a-zA-Z0-9\\+/=]+)`,
     screen: 'Password.Reset',
   },

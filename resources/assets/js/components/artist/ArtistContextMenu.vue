@@ -26,7 +26,7 @@ import { useContextMenu } from '@/composables/useContextMenu'
 import { useRouter } from '@/composables/useRouter'
 import { eventBus } from '@/utils/eventBus'
 
-const { go } = useRouter()
+const { go, url } = useRouter()
 const { base, ContextMenu, open, trigger } = useContextMenu()
 
 const artist = ref<Artist>()
@@ -39,15 +39,15 @@ const isStandardArtist = computed(() =>
 
 const play = () => trigger(async () => {
   playbackService.queueAndPlay(await songStore.fetchForArtist(artist.value!))
-  go('queue')
+  go(url('queue'))
 })
 
 const shuffle = () => trigger(async () => {
   playbackService.queueAndPlay(await songStore.fetchForArtist(artist.value!), true)
-  go('queue')
+  go(url('queue'))
 })
 
-const viewArtistDetails = () => trigger(() => go(`artist/${artist.value!.id}`))
+const viewArtistDetails = () => trigger(() => go(url('artists.show', { id: artist.value!.id })))
 const download = () => trigger(() => downloadService.fromArtist(artist.value!))
 
 eventBus.on('ARTIST_CONTEXT_MENU_REQUESTED', async ({ pageX, pageY }, _artist) => {

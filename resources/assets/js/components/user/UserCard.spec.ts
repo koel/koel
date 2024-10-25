@@ -36,7 +36,7 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByRole('button', { name: 'Your Profile' }))
 
-      expect(mock).toHaveBeenCalledWith('profile')
+      expect(mock).toHaveBeenCalledWith('/#/profile')
     })
 
     it('deletes user if confirmed', async () => {

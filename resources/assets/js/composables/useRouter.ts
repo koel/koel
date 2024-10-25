@@ -25,5 +25,6 @@ export const useRouter = () => {
     onRouteChanged: router.onRouteChanged.bind(router),
     resolveRoute: router.resolve.bind(router),
     triggerNotFound: router.triggerNotFound.bind(router),
+    url: Router.url,
   }
 }

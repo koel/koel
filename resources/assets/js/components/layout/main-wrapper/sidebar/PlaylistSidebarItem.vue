@@ -1,7 +1,7 @@
 <template>
   <SidebarItem
     :class="{ current, droppable }"
-    :href="url"
+    :href="href"
     class="playlist select-none"
     draggable="true"
     @contextmenu="onContextMenu"
@@ -34,7 +34,7 @@ import { usePlaylistManagement } from '@/composables/usePlaylistManagement'
 import SidebarItem from '@/components/layout/main-wrapper/sidebar/SidebarItem.vue'
 
 const props = defineProps<{ list: PlaylistLike }>()
-const { onRouteChanged } = useRouter()
+const { onRouteChanged, url } = useRouter()
 const { startDragging } = useDraggable('playlist')
 const { acceptsDrop, resolveDroppedItems } = useDroppable(['playables', 'album', 'artist'])
 
@@ -50,15 +50,17 @@ const isRecentlyPlayedList = (list: PlaylistLike): list is RecentlyPlayedList =>
 
 const current = ref(false)
 
-const url = computed(() => {
+const href = computed(() => {
   if (isPlaylist(list.value)) {
-    return `#/playlist/${list.value.id}`
+    return url('playlists.show', { id: list.value.id })
   }
+
   if (isFavoriteList(list.value)) {
-    return '#/favorites'
+    return url('favorites')
   }
+
   if (isRecentlyPlayedList(list.value)) {
-    return '#/recently-played'
+    return url('recently-played')
   }
 
   throw new Error('Invalid playlist-like type.')

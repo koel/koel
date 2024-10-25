@@ -101,7 +101,7 @@ const {
 
 const { SongListControls, config } = useSongListControls('Songs')
 
-const { go, onScreenActivated } = useRouter()
+const { go, onScreenActivated, url } = useRouter()
 const { isPlus } = useKoelPlus()
 const { get: lsGet, set: lsSet } = useLocalStorage()
 
@@ -144,7 +144,7 @@ const playAll = async (shuffle: boolean) => {
     await queueStore.fetchInOrder(sortField, sortOrder)
   }
 
-  go('queue')
+  go(url('queue'))
   await playbackService.playFirstInQueue()
 }
 

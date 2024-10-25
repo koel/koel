@@ -11,7 +11,7 @@ new class extends UnitTestCase {
       this.render(Component)
 
       await this.user.click(screen.getByRole('button'))
-      expect(goMock).toHaveBeenCalledWith('queue')
+      expect(goMock).toHaveBeenCalledWith('/#/queue')
     })
 
     it('goes back if current screen is Queue', async () => {
