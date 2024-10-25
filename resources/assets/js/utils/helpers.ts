@@ -1,11 +1,13 @@
 import select from 'select'
 import { isObject, without } from 'lodash'
-import type { InjectionKey } from 'vue'
-import { inject, isRef, provide, readonly, shallowReadonly } from 'vue'
+import type { AsyncComponentLoader, Component, InjectionKey } from 'vue'
+import { defineAsyncComponent as baseDefineAsyncComponent, inject, isRef, provide, readonly, shallowReadonly } from 'vue'
 import type { ReadonlyInjectionKey } from '@/symbols'
 import { logger } from '@/utils/logger'
 import { md5 } from '@/utils/crypto'
 import { isSong } from '@/utils/typeGuards'
+
+import LoadingComponent from '@/components/ui/skeletons/Loading.vue'
 
 export const use = <T> (value: T | undefined | null, cb: (arg: T) => void) => {
   if (typeof value === 'undefined' || value === null) {
@@ -112,4 +114,11 @@ export const copyText = async (text: string) => {
 
 export const getPlayableProp = <T> (playable: Playable, songKey: keyof Song, episodeKey: keyof Episode): T => {
   return isSong(playable) ? playable[songKey] : playable[episodeKey]
+}
+
+export const defineAsyncComponent = (loader: AsyncComponentLoader, loadingComponent?: Component) => {
+  return baseDefineAsyncComponent({
+    loader,
+    loadingComponent: loadingComponent || LoadingComponent,
+  })
 }
