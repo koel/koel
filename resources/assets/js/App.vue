@@ -35,6 +35,7 @@
 </template>
 
 <script lang="ts" setup>
+import { defineAsyncComponent as defineAsyncComponentWithLoadingState } from '@/utils/helpers'
 import { defineAsyncComponent, onMounted, provide, ref, watch } from 'vue'
 import { useOnline } from '@vueuse/core'
 import { queueStore } from '@/stores/queueStore'
@@ -56,8 +57,8 @@ import GlobalEventListeners from '@/components/utils/GlobalEventListeners.vue'
 import AppInitializer from '@/components/utils/AppInitializer.vue'
 
 const Hotkeys = defineAsyncComponent(() => import('@/components/utils/HotkeyListener.vue'))
-const LoginForm = defineAsyncComponent(() => import('@/components/auth/LoginForm.vue'))
-const MainWrapper = defineAsyncComponent(() => import('@/components/layout/main-wrapper/index.vue'))
+const LoginForm = defineAsyncComponentWithLoadingState(() => import('@/components/auth/LoginForm.vue'))
+const MainWrapper = defineAsyncComponentWithLoadingState(() => import('@/components/layout/main-wrapper/index.vue'))
 const AlbumContextMenu = defineAsyncComponent(() => import('@/components/album/AlbumContextMenu.vue'))
 const ArtistContextMenu = defineAsyncComponent(() => import('@/components/artist/ArtistContextMenu.vue'))
 const PlaylistContextMenu = defineAsyncComponent(() => import('@/components/playlist/PlaylistContextMenu.vue'))
@@ -66,8 +67,8 @@ const SongContextMenu = defineAsyncComponent(() => import('@/components/song/Pla
 const CreateNewPlaylistContextMenu = defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistContextMenu.vue'))
 const SupportKoel = defineAsyncComponent(() => import('@/components/meta/SupportKoel.vue'))
 const DropZone = defineAsyncComponent(() => import('@/components/ui/upload/DropZone.vue'))
-const AcceptInvitation = defineAsyncComponent(() => import('@/components/invitation/AcceptInvitation.vue'))
-const ResetPasswordForm = defineAsyncComponent(() => import('@/components/auth/ResetPasswordForm.vue'))
+const AcceptInvitation = defineAsyncComponentWithLoadingState(() => import('@/components/invitation/AcceptInvitation.vue'))
+const ResetPasswordForm = defineAsyncComponentWithLoadingState(() => import('@/components/auth/ResetPasswordForm.vue'))
 
 const overlay = ref<InstanceType<typeof Overlay>>()
 const dialog = ref<InstanceType<typeof DialogBox>>()
