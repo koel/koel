@@ -84,20 +84,8 @@ interface Window {
   }
 }
 
-interface FileSystemDirectoryReader {
-  readEntries: (successCallback: Closure, errorCallback?: Closure) => FileSystemEntry[]
-}
-
 interface FileSystemEntry {
-  readonly isFile: boolean
-  readonly isDirectory: boolean
-  readonly name: string
-  readonly fullPath: string
-  readonly filesystem: FileSystem
-
   createReader: () => FileSystemDirectoryReader
-
-  file: (successCallback: Closure) => void
 }
 
 type MediaInfoDisplayMode = 'aside' | 'full'

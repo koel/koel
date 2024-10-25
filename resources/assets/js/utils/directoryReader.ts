@@ -35,7 +35,6 @@ async function getAllFileEntries (dataTransferItemList: DataTransferItemList) {
     if (entry.isFile) {
       fileEntries.push(entry)
     } else if (entry.isDirectory) {
-      // @ts-ignore
       queue.push(...await readAllDirectoryEntries(entry.createReader()))
     }
   }
