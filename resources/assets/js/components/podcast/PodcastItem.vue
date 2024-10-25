@@ -2,7 +2,7 @@
   <a
     data-testid="podcast-item"
     class="flex gap-5 p-5 rounded-lg border border-white/5 hover:bg-white/10 bg-white/5 !text-k-text-primary !hover:text-k-text-primary"
-    :href="`#/podcasts/${podcast.id}`"
+    :href="url('podcasts.show', { id: podcast.id })"
   >
     <aside class="hidden md:block md:flex-[0_0_128px]">
       <img :src="podcast.image" alt="Podcast image" class="w-[128px] aspect-square object-cover rounded-lg">
@@ -29,8 +29,11 @@
 import { computed } from 'vue'
 import DOMPurify from 'dompurify'
 import { formatTimeAgo } from '@vueuse/core'
+import { useRouter } from '@/composables/useRouter'
 
 const { podcast } = defineProps<{ podcast: Podcast }>()
+
+const { url } = useRouter()
 
 const description = computed(() => DOMPurify.sanitize(podcast.description))
 

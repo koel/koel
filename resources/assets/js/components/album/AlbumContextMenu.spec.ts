@@ -64,7 +64,7 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByText('Go to Album'))
 
-      expect(mock).toHaveBeenCalledWith(`album/${album.id}`)
+      expect(mock).toHaveBeenCalledWith(`/#/albums/${album.id}`)
     })
 
     it('does not have an option to download or go to Unknown Album and Artist', async () => {
@@ -81,7 +81,7 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByText('Go to Artist'))
 
-      expect(mock).toHaveBeenCalledWith(`artist/${album.artist_id}`)
+      expect(mock).toHaveBeenCalledWith(`/#/artists/${album.artist_id}`)
     })
   }
 

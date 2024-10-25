@@ -13,7 +13,6 @@ import { commonStore } from '@/stores/commonStore'
 import { userStore } from '@/stores/userStore'
 import { http } from '@/services/http'
 import { DialogBoxKey, MessageToasterKey, OverlayKey, RouterKey } from '@/symbols'
-import { routes } from '@/config/routes'
 import Router from '@/router'
 
 // A deep-merge function that
@@ -47,7 +46,7 @@ export default abstract class UnitTestCase {
   private backupMethods = new Map()
 
   public constructor () {
-    this.router = new Router(routes)
+    this.router = new Router()
     this.mock(http, 'request') // prevent actual HTTP requests from being made
     this.user = userEvent.setup({ delay: null }) // @see https://github.com/testing-library/user-event/issues/833
 
@@ -82,11 +81,11 @@ export default abstract class UnitTestCase {
     })
   }
 
-  protected auth (user?: User = null) {
+  protected auth (user?: User) {
     return this.be(user)
   }
 
-  protected be (user?: User = null) {
+  protected be (user?: User) {
     userStore.state.current = user || factory('user')
     return this
   }
@@ -181,7 +180,7 @@ export default abstract class UnitTestCase {
     await this.user.type(element, value)
   }
 
-  protected async trigger (element: HTMLElement, key: EventType | string, options?: object = {}) {
+  protected async trigger (element: HTMLElement, key: EventType | string, options: object = {}) {
     await fireEvent(element, createEvent[key](element, options))
   }
 

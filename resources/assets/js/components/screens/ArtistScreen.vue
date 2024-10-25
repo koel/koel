@@ -112,7 +112,7 @@ const AlbumCardSkeleton = defineAsyncComponent(() => import('@/components/ui/ske
 type Tab = 'Songs' | 'Albums' | 'Info'
 const activeTab = ref<Tab>('Songs')
 
-const { getRouteParam, go, onScreenActivated } = useRouter()
+const { getRouteParam, go, onScreenActivated, url } = useRouter()
 
 const artistId = ref<number>()
 const artist = ref<Artist>()
@@ -179,5 +179,5 @@ const download = () => downloadService.fromArtist(artist.value!)
 onScreenActivated('Artist', () => (artistId.value = Number.parseInt(getRouteParam('id')!)))
 
 // if the current artist has been deleted, go back to the list
-eventBus.on('SONGS_UPDATED', () => artistStore.byId(artist.value!.id) || go('artists'))
+eventBus.on('SONGS_UPDATED', () => artistStore.byId(artist.value!.id) || go(url('artists.index')))
 </script>

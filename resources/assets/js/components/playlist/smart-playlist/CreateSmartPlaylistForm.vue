@@ -83,7 +83,7 @@ const {
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
-const { go } = useRouter()
+const { go, url } = useRouter()
 const { isPlus } = useKoelPlus()
 
 const targetFolder = useModal().getFromContext<PlaylistFolder | null>('folder')
@@ -120,7 +120,7 @@ const submit = async () => {
 
     close()
     toastSuccess(`Playlist "${playlist.name}" created.`)
-    go(`playlist/${playlist.id}`)
+    go(url('playlists.show', { id: playlist.id }))
   } catch (error: unknown) {
     useErrorHandler('dialog').handleHttpError(error)
   } finally {

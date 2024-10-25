@@ -5,25 +5,25 @@
     </template>
 
     <ul class="menu">
-      <SidebarItem href="#/songs" screen="Songs">
+      <SidebarItem :href="url('songs.index')" screen="Songs">
         <template #icon>
           <Icon :icon="faMusic" fixed-width />
         </template>
         All Songs
       </SidebarItem>
-      <SidebarItem href="#/albums" screen="Albums">
+      <SidebarItem :href="url('albums.index')" screen="Albums">
         <template #icon>
           <Icon :icon="faCompactDisc" fixed-width />
         </template>
         Albums
       </SidebarItem>
-      <SidebarItem href="#/artists" screen="Artists">
+      <SidebarItem :href="url('artists.index')" screen="Artists">
         <template #icon>
           <MicVocalIcon size="16" />
         </template>
         Artists
       </SidebarItem>
-      <SidebarItem href="#/genres" screen="Genres">
+      <SidebarItem :href="url('genres.index')" screen="Genres">
         <template #icon>
           <GuitarIcon size="16" />
         </template>
@@ -32,7 +32,7 @@
       <YouTubeSidebarItem v-if="youtubeVideoTitle" data-testid="youtube">
         {{ youtubeVideoTitle }}
       </YouTubeSidebarItem>
-      <SidebarItem href="#/podcasts" screen="Podcasts">
+      <SidebarItem :href="url('podcasts.index')" screen="Podcasts">
         <template #icon>
           <Icon :icon="faPodcast" fixed-width />
         </template>
@@ -48,6 +48,7 @@ import { GuitarIcon, MicVocalIcon } from 'lucide-vue-next'
 import { unescape } from 'lodash'
 import { ref } from 'vue'
 import { eventBus } from '@/utils/eventBus'
+import { useRouter } from '@/composables/useRouter'
 
 import SidebarSection from '@/components/layout/main-wrapper/sidebar/SidebarSection.vue'
 import SidebarSectionHeader from '@/components/layout/main-wrapper/sidebar/SidebarSectionHeader.vue'
@@ -55,6 +56,7 @@ import SidebarItem from '@/components/layout/main-wrapper/sidebar/SidebarItem.vu
 import YouTubeSidebarItem from '@/components/layout/main-wrapper/sidebar/YouTubeSidebarItem.vue'
 
 const youtubeVideoTitle = ref<string | null>(null)
+const { url } = useRouter()
 
 eventBus.on('PLAY_YOUTUBE_VIDEO', payload => (youtubeVideoTitle.value = unescape(payload.title)))
 </script>

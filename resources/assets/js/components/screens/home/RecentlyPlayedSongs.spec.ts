@@ -25,7 +25,7 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByRole('button', { name: 'View All' }))
 
-      expect(mock).toHaveBeenCalledWith('recently-played')
+      expect(mock).toHaveBeenCalledWith('/#/recently-played')
     })
   }
 }

@@ -13,7 +13,7 @@ import { favoriteStore } from '@/stores/favoriteStore'
 import { queueStore } from '@/stores/queueStore'
 import { useRouter } from '@/composables/useRouter'
 
-const { isCurrentScreen, go } = useRouter()
+const { isCurrentScreen, go, url } = useRouter()
 
 const onKeyStroke = (key: KeyFilter, callback: (e: KeyboardEvent) => void) => {
   baseOnKeyStroke(key, e => {
@@ -43,8 +43,8 @@ onKeyStroke('j', () => playbackService.playNext())
 onKeyStroke('k', () => playbackService.playPrev())
 onKeyStroke(' ', () => playbackService.toggle())
 onKeyStroke('r', () => playbackService.rotateRepeatMode())
-onKeyStroke('q', () => go(isCurrentScreen('Queue') ? -1 : 'queue'))
-onKeyStroke('h', () => go('home'))
+onKeyStroke('q', () => go(isCurrentScreen('Queue') ? -1 : url('queue')))
+onKeyStroke('h', () => go(url('home')))
 
 onKeyStroke('ArrowRight', () => playbackService.seekBy(10))
 onKeyStroke('ArrowLeft', () => playbackService.seekBy(-10))

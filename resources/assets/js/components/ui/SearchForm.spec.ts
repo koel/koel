@@ -21,7 +21,7 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByRole('searchbox'))
 
-      expect(mock).toHaveBeenCalledWith('search')
+      expect(mock).toHaveBeenCalledWith('/#/search')
     })
 
     it('emits an event when search query is changed', async () => {
@@ -40,7 +40,7 @@ new class extends UnitTestCase {
       await this.type(screen.getByRole('searchbox'), 'hey')
       await this.user.click(screen.getByRole('button', { name: 'Search' }))
 
-      expect(goMock).toHaveBeenCalledWith('search')
+      expect(goMock).toHaveBeenCalledWith('/#/search')
     })
   }
 }

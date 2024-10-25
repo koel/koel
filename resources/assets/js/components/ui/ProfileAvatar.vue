@@ -4,7 +4,7 @@
     v-koel-tooltip.left
     class="view-profile rounded-full"
     data-testid="view-profile-link"
-    href="/#/profile"
+    :href="url('profile')"
     title="Profile and preferences"
   >
     <UserAvatar
@@ -17,8 +17,10 @@
 
 <script lang="ts" setup>
 import { useAuthorization } from '@/composables/useAuthorization'
+import { useRouter } from '@/composables/useRouter'
 
 import UserAvatar from '@/components/user/UserAvatar.vue'
 
+const { url } = useRouter()
 const { currentUser } = useAuthorization()
 </script>

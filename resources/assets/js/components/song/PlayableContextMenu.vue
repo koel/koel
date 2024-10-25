@@ -94,7 +94,7 @@ import { useKoelPlus } from '@/composables/useKoelPlus'
 
 const { toastSuccess, toastError, toastWarning } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
-const { go, getRouteParam, isCurrentScreen } = useRouter()
+const { go, getRouteParam, isCurrentScreen, url } = useRouter()
 const { base, ContextMenu, open, close, trigger } = useContextMenu()
 const { removeFromPlaylist } = usePlaylistManagement()
 const { isPlus } = useKoelPlus()
@@ -227,10 +227,10 @@ const openEditForm = () => trigger(() =>
   && eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', playables.value as Song[]),
 )
 
-const viewAlbum = (song: Song) => trigger(() => go(`album/${song.album_id}`))
-const viewArtist = (song: Song) => trigger(() => go(`artist/${song.artist_id}`))
-const viewPodcast = (episode: Episode) => trigger(() => go(`podcasts/${episode.podcast_id}`))
-const viewEpisode = (episode: Episode) => trigger(() => go(`episodes/${episode.id}`))
+const viewAlbum = (song: Song) => trigger(() => go(url('albums.show', { id: song.album_id })))
+const viewArtist = (song: Song) => trigger(() => go(url('artists.show', { id: song.artist_id })))
+const viewPodcast = (episode: Episode) => trigger(() => go(url('podcasts.show', { id: episode.podcast_id })))
+const viewEpisode = (episode: Episode) => trigger(() => go(url('episodes.show', { id: episode.id })))
 const download = () => trigger(() => downloadService.fromPlayables(playables.value))
 
 const removePlayablesFromPlaylist = () => trigger(async () => {

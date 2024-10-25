@@ -57,7 +57,7 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByText('Go to Album'))
 
-      expect(goMock).toHaveBeenCalledWith(`album/${song.album_id}`)
+      expect(goMock).toHaveBeenCalledWith(`/#/albums/${song.album_id}`)
     })
 
     it('goes to artist details screen', async () => {
@@ -67,7 +67,7 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByText('Go to Artist'))
 
-      expect(goMock).toHaveBeenCalledWith(`artist/${song.artist_id}`)
+      expect(goMock).toHaveBeenCalledWith(`/#/artists/${song.artist_id}`)
     })
 
     it('downloads', async () => {

@@ -25,7 +25,7 @@ import { CurrentPlayableKey } from '@/symbols'
 
 import FooterButton from '@/components/layout/app-footer/FooterButton.vue'
 
-const { getCurrentScreen, getRouteParam, go } = useRouter()
+const { getCurrentScreen, getRouteParam, go, url } = useRouter()
 const song = requireInjection(CurrentPlayableKey, ref())
 
 const libraryEmpty = computed(() => commonStore.state.song_count === 0)
@@ -60,7 +60,7 @@ const initiatePlayback = async () => {
   }
 
   await playbackService.queueAndPlay(playables)
-  go('queue')
+  go(url('queue'))
 }
 
 const toggle = async () => song.value ? playbackService.toggle() : initiatePlayback()

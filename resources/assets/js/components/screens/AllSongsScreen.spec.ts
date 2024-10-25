@@ -35,7 +35,7 @@ new class extends UnitTestCase {
       await waitFor(() => {
         expect(queueMock).toHaveBeenCalled()
         expect(playMock).toHaveBeenCalled()
-        expect(goMock).toHaveBeenCalledWith('queue')
+        expect(goMock).toHaveBeenCalledWith('/#/queue')
       })
     })
 

@@ -83,7 +83,7 @@ const {
 
 const { SongListControls, config } = useSongListControls('Genre')
 
-const { getRouteParam, go, onRouteChanged } = useRouter()
+const { getRouteParam, go, onRouteChanged, url } = useRouter()
 
 let sortField: MaybeArray<PlayableListSortField> = 'title'
 let sortOrder: SortOrder = 'asc'
@@ -164,7 +164,7 @@ const playAll = async () => {
     playbackService.queueAndPlay(await songStore.fetchRandomForGenre(genre.value!, randomSongCount))
   }
 
-  go('queue')
+  go(url('queue'))
 }
 
 onMounted(() => (name.value = getNameFromRoute()))

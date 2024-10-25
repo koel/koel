@@ -47,7 +47,7 @@ import { acceptedImageTypes } from '@/config/acceptedImageTypes'
 
 const props = defineProps<{ entity: Album | Artist }>()
 const { toastSuccess } = useMessageToaster()
-const { go } = useRouter()
+const { go, url } = useRouter()
 const { currentUserCan } = usePolicies()
 
 const { entity } = toRefs(props)
@@ -82,7 +82,7 @@ const playOrQueue = async (event: MouseEvent) => {
   }
 
   playbackService.queueAndPlay(songs)
-  go('queue')
+  go(url('queue'))
 }
 
 const onDragEnter = () => (droppable.value = allowsUpload)

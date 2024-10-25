@@ -55,7 +55,7 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
-const { go } = useRouter()
+const { go, url } = useRouter()
 const { getFromContext } = useModal()
 
 const targetFolder = getFromContext<PlaylistFolder | null>('folder') ?? null
@@ -88,7 +88,7 @@ const submit = async () => {
 
     close()
     toastSuccess(`Playlist "${playlist.name}" created.`)
-    go(`playlist/${playlist.id}`)
+    go(url('playlists.show', { id: playlist.id }))
   } catch (error: unknown) {
     useErrorHandler('dialog').handleHttpError(error)
   } finally {

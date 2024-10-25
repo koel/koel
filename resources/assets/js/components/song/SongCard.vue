@@ -24,14 +24,14 @@
         <p class="text-k-text-secondary text-[0.9rem] opacity-80 overflow-hidden">
           <a
             v-if="isSong(playable)"
-            :href="`#/artist/${playable.artist_id}`"
+            :href="url('artists.show', { id: playable.artist_id })"
             class="!text-k-text-primary hover:!text-k-accent"
           >
             {{ playable.artist_name }}
           </a>
           <a
             v-if="isEpisode(playable)"
-            :href="`#/podcasts/${playable.podcast_id}`"
+            :href="url('podcasts.show', { id: playable.podcast_id })"
             class="!text-k-text-primary hover:!text-k-accent"
           >
             {{ playable.podcast_title }}
@@ -53,6 +53,7 @@ import { playbackService } from '@/services/playbackService'
 import { useAuthorization } from '@/composables/useAuthorization'
 import { useDraggable } from '@/composables/useDragAndDrop'
 import { useKoelPlus } from '@/composables/useKoelPlus'
+import { useRouter } from '@/composables/useRouter'
 
 import SongThumbnail from '@/components/song/SongThumbnail.vue'
 import LikeButton from '@/components/song/SongLikeButton.vue'
@@ -64,6 +65,7 @@ const { playable } = toRefs(props)
 const { isPlus } = useKoelPlus()
 const { currentUser } = useAuthorization()
 const { startDragging } = useDraggable('playables')
+const { url } = useRouter()
 
 const external = computed(() => {
   if (!isSong(playable.value)) {

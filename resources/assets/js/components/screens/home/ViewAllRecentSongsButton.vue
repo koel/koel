@@ -9,8 +9,8 @@ import { useRouter } from '@/composables/useRouter'
 
 import Btn from '@/components/ui/form/Btn.vue'
 
-const { go } = useRouter()
-const goToRecentlyPlayedScreen = () => go('recently-played')
+const { go, url } = useRouter()
+const goToRecentlyPlayedScreen = () => go(url('recently-played'))
 </script>
 
 <style lang="postcss" scoped>

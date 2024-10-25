@@ -65,13 +65,13 @@ const { user } = toRefs(props)
 
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
-const { go } = useRouter()
+const { go, url } = useRouter()
 
 const { currentUser } = useAuthorization()
 
 const isCurrentUser = computed(() => user.value.id === currentUser.value.id)
 
-const edit = () => isCurrentUser.value ? go('profile') : eventBus.emit('MODAL_SHOW_EDIT_USER_FORM', user.value)
+const edit = () => isCurrentUser.value ? go(url('profile')) : eventBus.emit('MODAL_SHOW_EDIT_USER_FORM', user.value)
 
 const destroy = async () => {
   if (!await showConfirmDialog(`Unperson ${user.value.name}?`)) {

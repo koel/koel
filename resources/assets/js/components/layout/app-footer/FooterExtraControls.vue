@@ -46,11 +46,11 @@ import FooterQueueIcon from '@/components/layout/app-footer/FooterQueueButton.vu
 const isFullscreen = ref(false)
 const fullscreenButtonTitle = computed(() => (isFullscreen.value ? 'Exit fullscreen mode' : 'Enter fullscreen mode'))
 
-const { go, isCurrentScreen } = useRouter()
+const { go, isCurrentScreen, url } = useRouter()
 
 const showEqualizer = () => eventBus.emit('MODAL_SHOW_EQUALIZER')
 const toggleFullscreen = () => eventBus.emit('FULLSCREEN_TOGGLE')
-const toggleVisualizer = () => go(isCurrentScreen('Visualizer') ? -1 : 'visualizer')
+const toggleVisualizer = () => go(isCurrentScreen('Visualizer') ? -1 : url('visualizer'))
 
 onMounted(() => {
   document.addEventListener('fullscreenchange', () => {

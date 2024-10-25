@@ -64,7 +64,7 @@ new class extends UnitTestCase {
 
       await screen.getByText('Go to Artist').click()
 
-      expect(mock).toHaveBeenCalledWith(`artist/${artist.id}`)
+      expect(mock).toHaveBeenCalledWith(`/#/artists/${artist.id}`)
     })
 
     it('does not have an option to download or go to Unknown Artist', async () => {

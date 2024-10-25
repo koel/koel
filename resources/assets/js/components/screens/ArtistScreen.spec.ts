@@ -64,11 +64,19 @@ new class extends UnitTestCase {
       const byIdMock = this.mock(artistStore, 'byId', null)
       await this.renderComponent()
 
-      eventBus.emit('SONGS_UPDATED')
+      eventBus.emit('SONGS_UPDATED', {
+        songs: [],
+        artists: [],
+        albums: [],
+        removed: {
+          albums: [],
+          artists: [],
+        },
+      })
 
       await waitFor(() => {
         expect(byIdMock).toHaveBeenCalledWith(artist.id)
-        expect(goMock).toHaveBeenCalledWith('artists')
+        expect(goMock).toHaveBeenCalledWith('/#/artists')
       })
     })
 

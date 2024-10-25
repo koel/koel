@@ -9,8 +9,8 @@
     @dragstart="onDragStart"
   >
     <template #name>
-      <a :href="`#/album/${album.id}`" class="font-medium" data-testid="name">{{ album.name }}</a>
-      <a v-if="isStandardArtist" :href="`#/artist/${album.artist_id}`">{{ album.artist_name }}</a>
+      <a :href="url('albums.show', { id: album.id })" class="font-medium" data-testid="name">{{ album.name }}</a>
+      <a v-if="isStandardArtist" :href="url('artists.show', { id: album.artist_id })">{{ album.artist_name }}</a>
       <span v-else class="text-k-text-secondary">{{ album.artist_name }}</span>
     </template>
 
@@ -45,7 +45,7 @@ import { useRouter } from '@/composables/useRouter'
 import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
 
 const props = withDefaults(defineProps<{ album: Album, layout?: ArtistAlbumCardLayout }>(), { layout: 'full' })
-const { go } = useRouter()
+const { go, url } = useRouter()
 const { startDragging } = useDraggable('album')
 
 const { album, layout } = toRefs(props)
@@ -58,7 +58,7 @@ const showing = computed(() => !albumStore.isUnknown(album.value))
 
 const shuffle = async () => {
   playbackService.queueAndPlay(await songStore.fetchForAlbum(album.value), true /* shuffled */)
-  go('queue')
+  go(url('queue'))
 }
 
 const download = () => downloadService.fromAlbum(album.value)
