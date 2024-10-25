@@ -45,7 +45,7 @@ import TextInput from '@/components/ui/form/TextInput.vue'
 
 const placeholder = isMobile.any ? 'Search' : 'Press F to search'
 
-const { go } = useRouter()
+const { go, url } = useRouter()
 
 const input = ref<InstanceType<typeof TextInput>>()
 const q = ref('')
@@ -61,10 +61,10 @@ if (process.env.NODE_ENV !== 'test') {
 
 const onSubmit = () => {
   eventBus.emit('TOGGLE_SIDEBAR')
-  go('search')
+  go(url('search'))
 }
 
-const maybeGoToSearchScreen = () => isMobile.any || go('search')
+const maybeGoToSearchScreen = () => isMobile.any || go(url('search'))
 
 eventBus.on('FOCUS_SEARCH_FIELD', () => {
   input.value?.el?.focus()

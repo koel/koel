@@ -71,7 +71,7 @@ import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 
-const { go, onScreenActivated } = useRouter()
+const { go, onScreenActivated, url } = useRouter()
 
 const {
   SongList,
@@ -97,7 +97,7 @@ const libraryNotEmpty = computed(() => commonStore.state.song_count > 0)
 
 const playAll = async (shuffle = true) => {
   playbackService.queueAndPlay(songs.value, shuffle)
-  go('queue')
+  go(url('queue'))
 }
 
 const shuffleSome = async () => {

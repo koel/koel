@@ -22,7 +22,7 @@ new class extends UnitTestCase {
 
       await waitFor(() => {
         expect(updateMock).toHaveBeenCalledWith({ media_path: '/media' })
-        expect(goMock).toHaveBeenCalledWith('home')
+        expect(goMock).toHaveBeenCalledWith('/#/home', true)
       })
     })
 

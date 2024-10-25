@@ -23,7 +23,7 @@
           class="rounded-[0.5em] inline-block m-1.5 align-middle overflow-hidden"
         >
           <a
-            :href="`/#/genres/${encodeURIComponent(genre.name)}`"
+            :href="url('genres.show', { name: encodeURIComponent(genre.name) })"
             :title="`${genre.name}: ${pluralize(genre.song_count, 'song')}`"
             class="bg-white/15 inline-flex items-center justify-center !text-k-text-secondary
           transition-colors duration-200 ease-in-out hover:!text-k-text-primary hover:bg-k-highlight"
@@ -53,6 +53,7 @@ import { genreStore } from '@/stores/genreStore'
 import { pluralize } from '@/utils/formatters'
 import { useAuthorization } from '@/composables/useAuthorization'
 import { useErrorHandler } from '@/composables/useErrorHandler'
+import { useRouter } from '@/composables/useRouter'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import GenreItemSkeleton from '@/components/ui/skeletons/GenreItemSkeleton.vue'
@@ -61,6 +62,7 @@ import ScreenBase from '@/components/screens/ScreenBase.vue'
 
 const { isAdmin } = useAuthorization()
 const { handleHttpError } = useErrorHandler()
+const { url } = useRouter()
 
 const genres = ref<Genre[]>()
 

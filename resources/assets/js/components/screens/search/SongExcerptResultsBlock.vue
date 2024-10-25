@@ -59,9 +59,9 @@ const headingText = computed(() => {
 })
 
 const { playables, query, searching } = toRefs(props)
-const { go } = useRouter()
+const { go, url } = useRouter()
 
-const goToSongResults = () => go(`search/songs/?q=${query.value}`)
+const goToSongResults = () => go(`${url('search.songs')}/?q=${query.value}`)
 </script>
 
 <style lang="postcss" scoped>

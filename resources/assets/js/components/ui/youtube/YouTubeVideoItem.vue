@@ -1,6 +1,6 @@
 <template>
   <a
-    :href="url"
+    :href="href"
     class="flex gap-3 !text-k-text-secondary hover:!text-k-text-primary focus:!text-k-text-primary active:!text-k-text-primary"
     data-testid="youtube-search-result"
     role="button"
@@ -16,21 +16,20 @@
 
 <script lang="ts" setup>
 import { unescape } from 'lodash'
-import { computed, toRefs } from 'vue'
+import { toRefs } from 'vue'
 import { youTubeService } from '@/services/youTubeService'
 import { useRouter } from '@/composables/useRouter'
 
 const props = defineProps<{ video: YouTubeVideo }>()
-
-const { go } = useRouter()
-
 const { video } = toRefs(props)
 
-const url = computed(() => `https://youtu.be/${video.value.id.videoId}`)
+const { go, url } = useRouter()
+
+const href = `https://youtu.be/${video.value.id.videoId}`
 
 const play = () => {
   youTubeService.play(video.value)
-  go('youtube')
+  go(url('youtube'))
 }
 </script>
 

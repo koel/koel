@@ -161,7 +161,7 @@ export const songStore = {
       : `${commonStore.state.cdn_url}play/${playable.id}?t=${authService.getAudioToken()}`
   },
 
-  getShareableUrl: (song: Playable) => `${window.BASE_URL}#/song/${song.id}`,
+  getShareableUrl: (song: Playable) => `${window.BASE_URL}#/songs/${song.id}`,
 
   syncWithVault (playables: MaybeArray<Playable>) {
     return arrayify(playables).map(playable => {

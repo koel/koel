@@ -9,7 +9,7 @@
     @dragstart="onDragStart"
   >
     <template #name>
-      <a :href="`#/artist/${artist.id}`" class="font-medium" data-testid="name">{{ artist.name }}</a>
+      <a :href="url('artists.show', { id: artist.id })" class="font-medium" data-testid="name">{{ artist.name }}</a>
     </template>
     <template #meta>
       <a :title="`Shuffle all songs by ${artist.name}`" role="button" @click.prevent="shuffle">
@@ -36,7 +36,7 @@ import { useRouter } from '@/composables/useRouter'
 import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
 
 const props = withDefaults(defineProps<{ artist: Artist, layout?: ArtistAlbumCardLayout }>(), { layout: 'full' })
-const { go } = useRouter()
+const { go, url } = useRouter()
 const { startDragging } = useDraggable('artist')
 
 const { artist, layout } = toRefs(props)
@@ -48,7 +48,7 @@ const showing = computed(() => artistStore.isStandard(artist.value))
 
 const shuffle = async () => {
   playbackService.queueAndPlay(await songStore.fetchForArtist(artist.value), true /* shuffled */)
-  go('queue')
+  go(url('queue'))
 }
 
 const download = () => downloadService.fromArtist(artist.value)

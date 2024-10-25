@@ -7,7 +7,10 @@
         <h1 class="text-ellipsis overflow-hidden whitespace-nowrap" :title="episode.title">{{ episode.title }}</h1>
 
         <h2 class="text-2xl text-k-text-secondary">
-          <a :href="`/#/podcasts/${episode.podcast_id}`" class="!text-k-text-primary hover:!text-k-accent font-normal">
+          <a
+            :href="url('podcasts.show', { id: episode.podcast_id })"
+            class="!text-k-text-primary hover:!text-k-accent font-normal"
+          >
             {{ episode.podcast_title }}
           </a>
         </h2>
@@ -51,6 +54,7 @@
 <script setup lang="ts">
 import { faDownload, faExternalLink, faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
 import DOMPurify from 'dompurify'
+import { orderBy } from 'lodash'
 import { computed, ref, watch } from 'vue'
 import { songStore as episodeStore } from '@/stores/songStore'
 import { queueStore } from '@/stores/queueStore'
@@ -66,9 +70,8 @@ import ScreenBase from '@/components/screens/ScreenBase.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
-import { orderBy } from 'lodash'
 
-const { onScreenActivated, getRouteParam, triggerNotFound } = useRouter()
+const { onScreenActivated, getRouteParam, triggerNotFound, url } = useRouter()
 
 const loading = ref(false)
 const episodeId = ref<string>()

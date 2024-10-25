@@ -4,7 +4,7 @@
       <ScreenHeader>Settings</ScreenHeader>
     </template>
 
-    <p v-if="storageDriver !== 'local'" class="textk-text-secondary">
+    <p v-if="storageDriver !== 'local'" class="text-k-text-secondary">
       Since you’re not using a cloud storage, there’s no need to set a media path.
     </p>
 
@@ -53,11 +53,10 @@ import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
-import { forceReloadWindow } from '@/utils/helpers'
 
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
-const { go } = useRouter()
+const { go, url } = useRouter()
 const { showOverlay, hideOverlay } = useOverlay()
 
 const storageDriver = ref(commonStore.state.storage_driver)
@@ -84,8 +83,7 @@ const save = async () => {
     await settingStore.update({ media_path: mediaPath.value })
     toastSuccess('Settings saved.')
     // Make sure we're back to home first.
-    go('home')
-    forceReloadWindow()
+    go(url('home'), true)
   } catch (error: unknown) {
     useErrorHandler('dialog').handleHttpError(error)
   } finally {

@@ -3,7 +3,7 @@
     data-testid="episode-item"
     class="group relative flex flex-col md:flex-row gap-4 px-6 py-5 !text-k-text-primary hover:bg-white/10 duration-200"
     :class="isCurrentEpisode && 'current'"
-    :href="`/#/episodes/${episode.id}`"
+    :href="url('episodes.show', { id: episode.id })"
     @contextmenu.prevent="requestContextMenu"
     @dragstart="onDragStart"
   >
@@ -62,6 +62,7 @@ import { playbackService } from '@/services/playbackService'
 import { songStore as episodeStore } from '@/stores/songStore'
 import { queueStore } from '@/stores/queueStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
+import { useRouter } from '@/composables/useRouter'
 
 const props = defineProps<{ episode: Episode, podcast: Podcast }>()
 
@@ -70,6 +71,7 @@ const EpisodeProgress = defineAsyncComponent(() => import('@/components/podcast/
 const { episode, podcast } = toRefs(props)
 
 const { startDragging } = useDraggable('playables')
+const { url } = useRouter()
 
 const publicationDateForHumans = computed(() => {
   const publishedAt = new Date(episode.value.created_at)

@@ -25,23 +25,25 @@ import { getPlayableProp, requireInjection } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
 import { CurrentPlayableKey } from '@/symbols'
 import { useDraggable } from '@/composables/useDragAndDrop'
+import { useRouter } from '@/composables/useRouter'
 
 const { startDragging } = useDraggable('playables')
+const { url } = useRouter()
 
 const song = requireInjection(CurrentPlayableKey, ref())
 
 const cover = computed(() => {
-  if (!song.value) {
-    return defaultCover
-  }
-  return getPlayableProp(song.value, 'album_cover', 'episode_image')
+  return song.value ? getPlayableProp(song.value, 'album_cover', 'episode_image') : defaultCover
 })
 
 const artistOrPodcastUri = computed(() => {
   if (!song.value) {
     return ''
   }
-  return isSong(song.value) ? `#/artist/${song.value?.artist_id}` : `#/podcasts/${song.value.podcast_id}`
+
+  return isSong(song.value)
+    ? url('artists.show', { id: song.value?.artist_id })
+    : url('podcasts.show', { id: song.value?.podcast_id })
 })
 
 const artistOrPodcastName = computed(() => {

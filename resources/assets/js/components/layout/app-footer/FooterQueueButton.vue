@@ -24,7 +24,7 @@ import { pluralize } from '@/utils/formatters'
 
 import FooterButton from '@/components/layout/app-footer/FooterButton.vue'
 
-const { go, isCurrentScreen } = useRouter()
+const { go, isCurrentScreen, url } = useRouter()
 const { toastWarning, toastSuccess } = useMessageToaster()
 
 const { acceptsDrop, resolveDroppedItems } = useDroppable(
@@ -58,7 +58,7 @@ const onDrop = async (event: DragEvent) => {
   return false
 }
 
-const showQueue = () => go(isCurrentScreen('Queue') ? -1 : 'queue')
+const showQueue = () => go(isCurrentScreen('Queue') ? -1 : url('queue'))
 </script>
 
 <style lang="postcss" scoped>
