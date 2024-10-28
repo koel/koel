@@ -161,7 +161,7 @@ interface Song extends Playable {
   album_artist_name: Artist['name']
   genre: string
   track: number | null
-  disc: number | null
+  disc: number
   year: number | null
   lyrics: string
   is_public: boolean
