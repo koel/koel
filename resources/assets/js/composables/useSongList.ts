@@ -29,17 +29,20 @@ import ThumbnailStack from '@/components/ui/ThumbnailStack.vue'
 export const useSongList = (
   playables: Ref<Playable[]>,
   context: PlayableListContext = {},
-  config: Partial<PlayableListConfig> = {
+  config: Partial<PlayableListConfig> = {},
+) => {
+  const defaultConfig: PlayableListConfig = {
     filterable: true,
     sortable: true,
     reorderable: false,
     collaborative: false,
     hasCustomOrderSort: false,
-  },
-) => {
-  const filterKeywords = ref('')
-  config = reactive(config)
+  }
+
+  config = reactive({ ...defaultConfig, ...config })
   context = reactive(context)
+
+  const filterKeywords = ref('')
 
   const { isCurrentScreen, go, url } = useRouter()
 

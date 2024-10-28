@@ -294,7 +294,7 @@ const onPlay = async (playable: Playable) => {
 const discIndexMap = computed(() => {
   const map: { [key: number]: number } = {}
   rows.value.forEach((row, index) => {
-    const { disc } = row.playable
+    const { disc } = row.playable as Song
     if (!Object.values(map).includes(disc)) {
       map[index] = disc
     }
