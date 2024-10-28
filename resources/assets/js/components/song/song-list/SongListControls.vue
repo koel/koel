@@ -4,7 +4,7 @@
       <BtnGroup uppercase>
         <template v-if="altPressed">
           <Btn
-            v-if="selectedPlayables.length < 2 && playables.length"
+            v-if="selectedPlayables.length < 2 && filteredPlayables.length"
             v-koel-tooltip.bottom
             class="btn-play-all"
             highlight
@@ -30,7 +30,7 @@
 
         <template v-else>
           <Btn
-            v-if="selectedPlayables.length < 2 && playables.length"
+            v-if="selectedPlayables.length < 2 && filteredPlayables.length"
             v-koel-tooltip.bottom
             class="btn-shuffle-all"
             data-testid="btn-shuffle-all"
@@ -85,7 +85,7 @@
         </Btn>
       </BtnGroup>
 
-      <BtnGroup v-if="config.filter && playables.length">
+      <BtnGroup v-if="config.filter && allPlayables.length">
         <SongListFilter @change="filter" />
       </BtnGroup>
     </div>
@@ -103,7 +103,7 @@ import { faPlay, faRandom, faRotateRight, faTrashCan } from '@fortawesome/free-s
 import type { Ref } from 'vue'
 import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref, toRef, watch } from 'vue'
 import { OnClickOutside } from '@vueuse/components'
-import { PlayablesKey, SelectedPlayablesKey } from '@/symbols'
+import { FilteredPlayablesKey, PlayablesKey, SelectedPlayablesKey } from '@/symbols'
 import { requireInjection } from '@/utils/helpers'
 import { useFloatingUi } from '@/composables/useFloatingUi'
 
@@ -123,7 +123,8 @@ const SongListFilter = defineAsyncComponent(() => import('@/components/song/song
 
 const config = toRef(props, 'config')
 
-const [playables] = requireInjection<[Ref<Playable[]>]>(PlayablesKey)
+const [allPlayables] = requireInjection<[Ref<Playable[]>]>(PlayablesKey)
+const [filteredPlayables] = requireInjection<[Ref<Playable[]>]>(FilteredPlayablesKey)
 const [selectedPlayables] = requireInjection(SelectedPlayablesKey)
 
 const addToButton = ref<InstanceType<typeof Btn>>()

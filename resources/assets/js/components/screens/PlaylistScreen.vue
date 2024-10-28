@@ -194,6 +194,11 @@ watch(playlistId, async id => {
   // reset this config value to its default to not cause rows to be mal-rendered
   listConfig.collaborative = false
 
+  // Since this component is responsible for all playlists, reset these values
+  // so that they're not shared between lists
+  songs.value = []
+  selectedPlayables.value = []
+
   if (playlist.value) {
     await fetchDetails()
     listConfig.collaborative = playlist.value.is_collaborative

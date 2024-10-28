@@ -66,7 +66,7 @@ export default abstract class UnitTestCase {
       commonStore.state.uses_i_tunes = true
       commonStore.state.supports_batch_downloading = true
       commonStore.state.supports_transcoding = true
-      cb && cb()
+      cb?.()
     })
   }
 
@@ -77,7 +77,7 @@ export default abstract class UnitTestCase {
       cleanup()
       this.restoreAllMocks()
       this.disablePlusEdition()
-      cb && cb()
+      cb?.()
     })
   }
 
