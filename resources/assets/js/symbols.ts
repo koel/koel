@@ -11,7 +11,8 @@ export const OverlayKey: InjectionKey<Ref<InstanceType<typeof Overlay>>> = Symbo
 export const DialogBoxKey: InjectionKey<Ref<InstanceType<typeof DialogBox>>> = Symbol('DialogBox')
 export const MessageToasterKey: InjectionKey<Ref<InstanceType<typeof MessageToaster>>> = Symbol('MessageToaster')
 
-export const PlayablesKey: ReadonlyInjectionKey<Ref<Playable[]>> | InjectionKey<Ref<Playable[]>> = Symbol('Playables')
+export const PlayablesKey: ReadonlyInjectionKey<Ref<Playable[]>> | InjectionKey<Ref<Playable[]>> = Symbol('PlayablesKey')
+export const FilteredPlayablesKey: ReadonlyInjectionKey<Ref<Playable[]>> | InjectionKey<Ref<Playable[]>> = Symbol('FilteredPlayablesKey')
 export const CurrentPlayableKey: InjectionKey<Ref<Playable | undefined>> = Symbol('CurrentPlayable')
 export const SelectedPlayablesKey: ReadonlyInjectionKey<Ref<Playable[]>> = Symbol('SelectedPlayables')
 export const PlayableListConfigKey: ReadonlyInjectionKey<Partial<PlayableListConfig>> = Symbol('SongListConfig')

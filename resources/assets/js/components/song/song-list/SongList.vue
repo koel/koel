@@ -48,10 +48,10 @@ import { queueStore } from '@/stores/queueStore'
 import { useDraggable, useDroppable } from '@/composables/useDragAndDrop'
 import { playbackService } from '@/services/playbackService'
 import {
+  FilteredPlayablesKey,
   PlayableListConfigKey,
   PlayableListContextKey,
   PlayableListSortFieldKey,
-  PlayablesKey,
   SelectedPlayablesKey,
 } from '@/symbols'
 
@@ -71,7 +71,7 @@ const emit = defineEmits<{
 const { startDragging } = useDraggable('playables')
 const { getDroppedData, acceptsDrop } = useDroppable(['playables'])
 
-const [playables] = requireInjection<[Ref<Playable[]>]>(PlayablesKey)
+const [playables] = requireInjection<[Ref<Playable[]>]>(FilteredPlayablesKey)
 const [selectedPlayables, setSelectedPlayables] = requireInjection<[Ref<Playable[]>, Closure]>(SelectedPlayablesKey)
 const [sortField] = requireInjection<[Ref<MaybeArray<PlayableListSortField>>, Closure]>(PlayableListSortFieldKey)
 const [config] = requireInjection<[Partial<PlayableListConfig>]>(PlayableListConfigKey, [{}])

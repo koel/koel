@@ -4,10 +4,10 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { arrayify } from '@/utils/helpers'
 import {
+  FilteredPlayablesKey,
   PlayableListConfigKey,
   PlayableListContextKey,
   PlayableListSortFieldKey,
-  PlayablesKey,
   SelectedPlayablesKey,
   SongListSortOrderKey,
 } from '@/symbols'
@@ -54,7 +54,7 @@ new class extends UnitTestCase {
           SongListHeader: this.stub('song-list-header'),
         },
         provide: {
-          [<symbol>PlayablesKey]: [ref(songs)],
+          [<symbol>FilteredPlayablesKey]: [ref(songs)],
           [<symbol>SelectedPlayablesKey]: [ref(selectedPlayables), (value: Playable[]) => (selectedPlayables = value)],
           [<symbol>PlayableListConfigKey]: [config],
           [<symbol>PlayableListContextKey]: [context],

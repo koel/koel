@@ -12,6 +12,7 @@ import { useFuzzySearch } from '@/composables/useFuzzySearch'
 import { useRouter } from '@/composables/useRouter'
 
 import {
+  FilteredPlayablesKey,
   PlayableListConfigKey,
   PlayableListContextKey,
   PlayableListSortFieldKey,
@@ -40,7 +41,7 @@ export const useSongList = (
   config = reactive(config)
   context = reactive(context)
 
-  const { isCurrentScreen, go } = useRouter()
+  const { isCurrentScreen, go, url } = useRouter()
 
   const fuzzy = config.filterable
     ? useFuzzySearch(playables, [
@@ -64,12 +65,15 @@ export const useSongList = (
     if (!config.sortable) {
       return null
     }
+
     if (isCurrentScreen('Artist', 'Album')) {
       return 'track'
     }
+
     if (isCurrentScreen('Search.Songs', 'Queue', 'RecentlyPlayed')) {
       return null
     }
+
     return 'title'
   })())
 
@@ -108,9 +112,11 @@ export const useSongList = (
     if (!commonStore.state.allows_download) {
       return false
     }
+
     if (playables.value.length === 0) {
       return false
     }
+
     return playables.value.length === 1 || commonStore.state.supports_batch_downloading
   })
 
@@ -127,7 +133,7 @@ export const useSongList = (
 
   const playAll = (shuffle: boolean) => {
     playbackService.queueAndPlay(getPlayablesToPlay(), shuffle)
-    go('queue')
+    go(url('queue'))
   }
 
   const playSelected = (shuffle: boolean) => playbackService.queueAndPlay(selectedPlayables.value, shuffle)
@@ -185,7 +191,8 @@ export const useSongList = (
 
   eventBus.on('SONGS_DELETED', deletedSongs => (playables.value = differenceBy(playables.value, deletedSongs, 'id')))
 
-  provideReadonly(PlayablesKey, filteredPlayables, false)
+  provideReadonly(PlayablesKey, playables, false)
+  provideReadonly(FilteredPlayablesKey, filteredPlayables, false)
   provideReadonly(SelectedPlayablesKey, selectedPlayables, false)
   provideReadonly(PlayableListConfigKey, config)
   provideReadonly(PlayableListContextKey, context)
