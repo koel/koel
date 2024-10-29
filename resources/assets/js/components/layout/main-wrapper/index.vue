@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent } from 'vue'
+import { defineAsyncComponent } from '@/utils/helpers'
 
 import MainContent from '@/components/layout/main-wrapper/MainContent.vue'
 import SideBar from '@/components/layout/main-wrapper/sidebar/Sidebar.vue'

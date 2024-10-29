@@ -78,8 +78,9 @@
 
 <script lang="ts" setup>
 import { QrCodeIcon } from 'lucide-vue-next'
-import { defineAsyncComponent, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useLocalStorage } from '@/composables/useLocalStorage'
+import { defineAsyncComponent } from '@/utils/helpers'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'

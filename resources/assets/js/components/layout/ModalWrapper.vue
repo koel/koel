@@ -9,8 +9,8 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, ref, watch } from 'vue'
-import { arrayify, provideReadonly } from '@/utils/helpers'
+import { ref, watch } from 'vue'
+import { arrayify, defineAsyncComponent, provideReadonly } from '@/utils/helpers'
 import { eventBus } from '@/utils/eventBus'
 import { ModalContextKey } from '@/symbols'
 
