@@ -2,7 +2,7 @@ import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { useLocalStorage } from '@/composables/useLocalStorage'
-import Component from './SongListSorter.vue'
+import Component from './SongListHeaderActionMenu.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -13,6 +13,12 @@ new class extends UnitTestCase {
       ;['Podcast', 'Album or Podcast', 'Author', 'Artist or Author'].forEach(
         text => expect(screen.queryByText(text)).toBeNull(),
       )
+    })
+
+    it ('emits the sort event when an item is clicked', async () => {
+      const { emitted } = this.render(Component)
+      await this.user.click(screen.getByText('Title'))
+      expect(emitted().sort[0]).toEqual(['title'])
     })
 
     it('contains proper items for episode-only lists', () => {
@@ -47,6 +53,17 @@ new class extends UnitTestCase {
       })
 
       screen.getByText('Custom Order')
+    })
+
+    it('does not sort if the list is not sortable', async () => {
+      const { emitted } = this.render(Component, {
+        props: {
+          sortable: false,
+        },
+      })
+
+      await this.user.click(screen.getByText('Title'))
+      expect(emitted().sort).toBeUndefined()
     })
 
     it('has a checkbox to toggle the column visibility', async () => {

@@ -1,7 +1,8 @@
 <template>
   <article>
     <button ref="button" class="w-full focus:text-k-highlight" title="Sort" @click.stop="trigger">
-      <Icon :icon="faSort" />
+      <Icon v-if="sortable" :icon="faSort" />
+      <Icon v-else :icon="faEllipsis" />
     </button>
     <OnClickOutside @trigger="hide">
       <menu ref="menu" class="context-menu normal-case tracking-normal">
@@ -10,7 +11,7 @@
           :key="item.label"
           :class="currentlySortedBy(item.field) && 'active'"
           class="cursor-pointer flex justify-between !pl-3 hover:!bg-white/10"
-          @click="sort(item.field)"
+          @click="sortable && sort(item.field)"
         >
           <label
             v-if="shouldShowColumnVisibilityCheckboxes()"
@@ -39,7 +40,7 @@
 
 <script lang="ts" setup>
 import { isEqual } from 'lodash'
-import { faArrowDown, faArrowUp, faCheck, faSort } from '@fortawesome/free-solid-svg-icons'
+import { faArrowDown, faArrowUp, faCheck, faEllipsis, faSort } from '@fortawesome/free-solid-svg-icons'
 import { OnClickOutside } from '@vueuse/components'
 import { computed, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
 import { useFloatingUi } from '@/composables/useFloatingUi'
@@ -48,11 +49,13 @@ import type { getPlayableCollectionContentType } from '@/utils/typeGuards'
 import { usePlayableListColumnVisibility } from '@/composables/usePlayableListColumnVisibility'
 
 const props = withDefaults(defineProps<{
+  sortable?: boolean
   field?: MaybeArray<PlayableListSortField> // the current field(s) being sorted by
   order?: SortOrder
   hasCustomOrderSort?: boolean // whether to provide "custom order" sort (like for playlists)
   contentType?: ReturnType<typeof getPlayableCollectionContentType>
 }>(), {
+  sortable: true,
   field: 'title',
   order: 'asc',
   hasCustomOrderSort: false,
