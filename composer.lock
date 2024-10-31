@@ -4653,23 +4653,23 @@
         },
         {
             "name": "phanan/poddle",
-            "version": "v1.1.1",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phanan/poddle.git",
-                "reference": "153895007c201c2d776b089860d30a45c53bf1ca"
+                "reference": "a54aecc97a09062cdca6e6cb573039b8928c4eb9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phanan/poddle/zipball/153895007c201c2d776b089860d30a45c53bf1ca",
-                "reference": "153895007c201c2d776b089860d30a45c53bf1ca",
+                "url": "https://api.github.com/repos/phanan/poddle/zipball/a54aecc97a09062cdca6e6cb573039b8928c4eb9",
+                "reference": "a54aecc97a09062cdca6e6cb573039b8928c4eb9",
                 "shasum": ""
             },
             "require": {
                 "guzzlehttp/guzzle": "^7.8",
-                "illuminate/collections": "^10.48",
-                "illuminate/http": "^10.48",
-                "illuminate/support": "^10.48",
+                "illuminate/collections": "^10.48|^11.23",
+                "illuminate/http": "^10.48|^11.23",
+                "illuminate/support": "^10.48|^11.23",
                 "php": ">=8.1",
                 "psr/http-client": "^1.0",
                 "saloonphp/xml-wrangler": "^1.2"
@@ -4709,7 +4709,7 @@
             ],
             "support": {
                 "issues": "https://github.com/phanan/poddle/issues",
-                "source": "https://github.com/phanan/poddle/tree/v1.1.1"
+                "source": "https://github.com/phanan/poddle/tree/v1.2.0"
             },
             "funding": [
                 {
@@ -4717,7 +4717,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-06-21T13:33:09+00:00"
+            "time": "2024-10-30T04:06:42+00:00"
         },
         {
             "name": "php-http/client-common",
@@ -12921,7 +12921,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
@@ -12932,6 +12932,6 @@
         "ext-json": "*",
         "ext-simplexml": "*"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
 }
