@@ -25,6 +25,7 @@ class ReleaseCommand extends Command
 
     public function handle(): int
     {
+        self::ensureMainBranch();
         self::ensureCleanWorkingDirectory();
 
         $this->getCurrentVersion();
@@ -132,6 +133,17 @@ class ReleaseCommand extends Command
         $this->currentVersion = new Version(File::get(base_path('.version')));
 
         note('Current version: ' . $this->currentVersion->prefix());
+    }
+
+    private static function ensureMainBranch(): void
+    {
+        $branch = trim(Process::run('git branch --show-current')->output());
+
+        if ($branch !== 'master') {
+            error("You must be on the master branch to release a new version (Current branch: '$branch.')");
+
+            exit(self::FAILURE);
+        }
     }
 
     private static function ensureCleanWorkingDirectory(): void
