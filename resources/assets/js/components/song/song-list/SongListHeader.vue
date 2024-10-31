@@ -66,8 +66,8 @@
       </template>
     </span>
     <span class="extra">
-      <SongListSorter
-        v-if="config.sortable"
+      <ActionMenu
+        :sortable="config.sortable"
         :field="sortField"
         :has-custom-order-sort="config.hasCustomOrderSort"
         :order="sortOrder"
@@ -87,10 +87,10 @@ import { PlayableListConfigKey, PlayableListSortFieldKey, SongListSortOrderKey }
 import type { getPlayableCollectionContentType } from '@/utils/typeGuards'
 import { usePlayableListColumnVisibility } from '@/composables/usePlayableListColumnVisibility'
 
-import SongListSorter from '@/components/song/song-list/SongListSorter.vue'
+import ActionMenu from '@/components/song/song-list/SongListHeaderActionMenu.vue'
 
 withDefaults(defineProps<{
-  contentType?: ReturnType<getPlayableCollectionContentType>
+  contentType?: ReturnType<typeof getPlayableCollectionContentType>
 }>(), {
   contentType: 'songs',
 })

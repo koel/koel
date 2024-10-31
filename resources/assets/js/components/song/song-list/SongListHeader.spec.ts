@@ -70,7 +70,7 @@ new class extends UnitTestCase {
       },
       global: {
         stubs: {
-          SongListSorter: this.stub('song-list-sorter'),
+          ActionMenu: this.stub('song-list-header-action-menu'),
         },
         provide: {
           [<symbol>SelectedPlayablesKey]: [ref(selectedPlayables), (value: Playable[]) => (selectedPlayables = value)],
