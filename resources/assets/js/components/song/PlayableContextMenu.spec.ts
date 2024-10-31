@@ -305,6 +305,12 @@ new class extends UnitTestCase {
       expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_CREATE_PLAYLIST_FORM', null, playables)
     })
 
+    it('does not have the options to mark song as private or public in Community edition', async () => {
+      await this.renderComponent(factory('song'))
+      expect(screen.queryByText('Mark as Private')).toBeNull()
+      expect(screen.queryByText('Unmark as Private')).toBeNull()
+    })
+
     it('makes songs private', async () => {
       this.enablePlusEdition()
 

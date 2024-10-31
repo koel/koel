@@ -167,6 +167,10 @@ const visibilityActions = computed(() => {
     return []
   }
 
+  if (!isPlus.value) {
+    return []
+  }
+
   const visibilities = Array.from(new Set((playables.value as Song[]).map(song => song.is_public
     ? 'public'
     : 'private',
