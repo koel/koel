@@ -63,18 +63,6 @@ class SongService
         });
     }
 
-    private function setSingleTrackData(SongUpdateData $data): object
-    {
-        $data->disc = $data->disc ?: 1;
-        $data->track = $data->track ?: 0;
-        $data->lyrics = $data->lyrics ?: '';
-        $data->year = $data->year ?: null;
-        $data->genre = $data->genre ?: '';
-        $data->albumArtistName = $data->albumArtistName ?: $data->artistName;
-
-        return $data;
-    }
-
     private function updateSong(Song $song, SongUpdateData $data): Song
     {
         // for non-nullable fields, if the provided data is empty, use the existing value
