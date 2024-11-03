@@ -38,14 +38,28 @@ class SongService
         }
 
         return DB::transaction(function () use ($ids, $data): Collection {
-            return collect($ids)->reduce(function (Collection $updated, string $id) use ($data): Collection {
-                optional(
-                    Song::query()->with('album.artist')->find($id),
-                    fn (Song $song) => $updated->push($this->updateSong($song, clone $data)) // @phpstan-ignore-line
-                );
+            $multiSong = count($ids) > 1;
+            $noTrackUpdate = $multiSong && !$data->track;
 
-                return $updated;
-            }, collect());
+            return collect($ids)
+                ->reduce(function (Collection $updated, string $id) use ($data, $noTrackUpdate): Collection {
+                    $foundSong = Song::query()->with('album.artist')->find($id);
+
+                    if ($noTrackUpdate) {
+                        $data->track = $foundSong->track;
+                    }
+
+                    optional(
+                        $foundSong,
+                        fn (Song $song) => $updated->push($this->updateSong($song, clone $data)) // @phpstan-ignore-line
+                    );
+
+                    if ($noTrackUpdate) {
+                        $data->track = null;
+                    }
+
+                    return $updated;
+                }, collect());
         });
     }
 
