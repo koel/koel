@@ -82,7 +82,7 @@ return [
     | Spotify Integration
     |--------------------------------------------------------------------------
     |
-    | Spotify Integration requires client ID and secret. 
+    | Spotify Integration requires client ID and secret.
     |
     */
 
