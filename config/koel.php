@@ -79,10 +79,10 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Last.FM Integration
+    | Spotify Integration
     |--------------------------------------------------------------------------
     |
-    | See wiki on how to integrate with Last.FM
+    | Spotify Integration requires client ID and secret. 
     |
     */
 
