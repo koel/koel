@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\Podcast;
 
+use App\Attributes\DisabledInDemo;
 use App\Exceptions\UserAlreadySubscribedToPodcast;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Podcast\PodcastStoreRequest;
@@ -29,10 +30,9 @@ class PodcastController extends Controller
         return PodcastResourceCollection::make($this->podcastRepository->getAllByUser($this->user));
     }
 
+    #[DisabledInDemo]
     public function store(PodcastStoreRequest $request)
     {
-        self::disableInDemo();
-
         try {
             return PodcastResource::make($this->podcastService->addPodcast($request->url, $this->user));
         } catch (UserAlreadySubscribedToPodcast) {

@@ -101,4 +101,18 @@ class ProfileTest extends TestCase
 
         self::assertNull($user->getRawOriginal('avatar'));
     }
+
+    #[Test]
+    public function disabledInDemo(): void
+    {
+        config(['koel.misc.demo' => true]);
+        $user = create_user(['password' => Hash::make('secret')]);
+
+        $this->putAs('api/me', [
+            'name' => 'Foo',
+            'email' => 'bar@baz.com',
+            'current_password' => 'secret',
+        ], $user)
+            ->assertNoContent();
+    }
 }

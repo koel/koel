@@ -69,4 +69,25 @@ class ForgotPasswordTest extends TestCase
         self::assertTrue(Hash::check('old-password', $user->refresh()->password));
         Event::assertNotDispatched(PasswordReset::class);
     }
+
+    #[Test]
+    public function disabledInDemo(): void
+    {
+        config(['koel.misc.demo' => true]);
+
+        $user = create_user();
+
+        $this->post('/api/reset-password', [
+            'email' => $user->email,
+            'password' => 'new-password',
+            'token' =>  Password::createToken($user),
+        ])->assertForbidden();
+    }
+
+    public function tearDown(): void
+    {
+        config(['koel.misc.demo' => false]);
+
+        parent::tearDown();
+    }
 }
