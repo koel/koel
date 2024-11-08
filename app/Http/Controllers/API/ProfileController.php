@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Attributes\DisabledInDemo;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\ProfileUpdateRequest;
 use App\Http\Resources\UserResource;
@@ -30,10 +31,9 @@ class ProfileController extends Controller
         return UserResource::make($this->user);
     }
 
+    #[DisabledInDemo(Response::HTTP_NO_CONTENT)]
     public function update(ProfileUpdateRequest $request)
     {
-        static::disableInDemo(Response::HTTP_NO_CONTENT);
-
         // If the user is not using SSO, we need to verify their current password.
         throw_if(
             !$this->user->is_sso && !$this->hash->check($request->current_password, $this->user->password),
