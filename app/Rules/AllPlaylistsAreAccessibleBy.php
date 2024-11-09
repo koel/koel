@@ -22,7 +22,7 @@ final class AllPlaylistsAreAccessibleBy implements ValidationRule
             $accessiblePlaylists = $accessiblePlaylists->merge($this->user->collaboratedPlaylists);
         }
 
-        if (array_diff(Arr::wrap($value), $accessiblePlaylists->pluck('id')->toArray())) {
+        if (array_diff(Arr::wrap($value), $accessiblePlaylists->modelKeys())) {
             $fail(
                 License::isPlus()
                     ? 'Not all playlists are accessible by the user'

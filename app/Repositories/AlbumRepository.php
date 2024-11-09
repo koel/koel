@@ -8,8 +8,8 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\JoinClause;
-use Illuminate\Support\Collection;
 
 /**
  * @extends Repository<Album>

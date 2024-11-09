@@ -51,7 +51,7 @@ class UserTest extends TestCase
         $admin = create_admin();
         $user = create_admin(['password' => 'secret']);
 
-        $this->putAs("api/user/$user->id", [
+        $this->putAs("api/user/{$user->id}", [
             'name' => 'Foo',
             'email' => 'bar@baz.com',
             'password' => 'new-secret',
@@ -72,7 +72,7 @@ class UserTest extends TestCase
     {
         $user = create_user();
 
-        $this->deleteAs("api/user/$user->id", [], create_admin());
+        $this->deleteAs("api/user/{$user->id}", [], create_admin());
         self::assertModelMissing($user);
     }
 
@@ -81,7 +81,7 @@ class UserTest extends TestCase
     {
         $admin = create_admin();
 
-        $this->deleteAs("api/user/$admin->id", [], $admin)->assertForbidden();
+        $this->deleteAs("api/user/{$admin->id}", [], $admin)->assertForbidden();
         self::assertModelExists($admin);
     }
 }

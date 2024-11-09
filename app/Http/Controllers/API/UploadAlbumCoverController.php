@@ -15,7 +15,7 @@ class UploadAlbumCoverController extends Controller
         $this->authorize('update', $album);
         $metadataService->writeAlbumCover($album, $request->getFileContent());
 
-        Cache::delete("album.info.$album->id");
+        Cache::delete("album.info.{$album->id}");
 
         return response()->json(['cover_url' => $album->cover]);
     }

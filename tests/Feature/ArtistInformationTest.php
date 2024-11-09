@@ -31,7 +31,7 @@ class ArtistInformationTest extends TestCase
                 ],
             ));
 
-        $this->getAs('api/artists/' . $artist->id . '/information')
+        $this->getAs("api/artists/{$artist->id}/information")
             ->assertJsonStructure(ArtistInformation::JSON_STRUCTURE);
     }
 

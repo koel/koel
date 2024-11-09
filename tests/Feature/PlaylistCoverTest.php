@@ -19,7 +19,7 @@ class PlaylistCoverTest extends TestCase
         self::assertNull($playlist->cover);
 
         $this->putAs(
-            "api/playlists/$playlist->id/cover",
+            "api/playlists/{$playlist->id}/cover",
             ['cover' => read_as_data_url(test_path('blobs/cover.png'))],
             $playlist->user
         )
@@ -33,7 +33,11 @@ class PlaylistCoverTest extends TestCase
     {
         $playlist = Playlist::factory()->create();
 
-        $this->putAs("api/playlists/$playlist->id/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], create_user())
+        $this->putAs(
+            "api/playlists/{$playlist->id}/cover",
+            ['cover' => 'data:image/jpeg;base64,Rm9v'],
+            create_user()
+        )
             ->assertForbidden();
     }
 
@@ -42,7 +46,7 @@ class PlaylistCoverTest extends TestCase
     {
         $playlist = Playlist::factory()->create(['cover' => 'cover.jpg']);
 
-        $this->deleteAs("api/playlists/$playlist->id/cover", [], $playlist->user)
+        $this->deleteAs("api/playlists/{$playlist->id}/cover", [], $playlist->user)
             ->assertNoContent();
 
         self::assertNull($playlist->refresh()->cover);
@@ -53,7 +57,7 @@ class PlaylistCoverTest extends TestCase
     {
         $playlist = Playlist::factory()->create(['cover' => 'cover.jpg']);
 
-        $this->deleteAs("api/playlists/$playlist->id/cover", [], create_user())
+        $this->deleteAs("api/playlists/{$playlist->id}/cover", [], create_user())
             ->assertForbidden();
 
         self::assertSame('cover.jpg', $playlist->refresh()->getRawOriginal('cover'));

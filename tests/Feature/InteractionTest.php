@@ -76,7 +76,7 @@ class InteractionTest extends TestCase
 
         $user = create_user();
         $songs = Song::factory(2)->create();
-        $songIds = $songs->pluck('id')->all();
+        $songIds = $songs->modelKeys();
 
         $this->postAs('api/interaction/batch/like', ['songs' => $songIds], $user);
 

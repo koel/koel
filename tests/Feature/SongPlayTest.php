@@ -33,7 +33,7 @@ class SongPlayTest extends TestCase
             ->shouldReceive('stream')
             ->once();
 
-        $this->get("play/$song->id?t=$token->audioToken")
+        $this->get("play/{$song->id}?t=$token->audioToken")
             ->assertOk();
     }
 
@@ -58,7 +58,7 @@ class SongPlayTest extends TestCase
             ->shouldReceive('stream')
             ->once();
 
-        $this->get("play/$song->id?t=$token->audioToken")
+        $this->get("play/{$song->id}?t=$token->audioToken")
             ->assertOk();
 
         config(['koel.streaming.transcode_flac' => false]);
@@ -79,7 +79,7 @@ class SongPlayTest extends TestCase
             ->shouldReceive('stream')
             ->once();
 
-        $this->get("play/$song->id/1?t=$token->audioToken")
+        $this->get("play/{$song->id}/1?t=$token->audioToken")
             ->assertOk();
     }
 }

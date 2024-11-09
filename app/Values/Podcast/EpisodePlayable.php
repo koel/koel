@@ -28,7 +28,7 @@ final class EpisodePlayable implements Arrayable, Jsonable
     public static function getForEpisode(Episode $episode): ?self
     {
         /** @var self|null $cached */
-        $cached = Cache::get("episode-playable.$episode->id");
+        $cached = Cache::get("episode-playable.{$episode->id}");
 
         return $cached?->valid() ? $cached : self::createForEpisode($episode);
     }
@@ -44,7 +44,7 @@ final class EpisodePlayable implements Arrayable, Jsonable
         }
 
         $playable = new self($file, md5_file($file));
-        Cache::forever("episode-playable.$episode->id", $playable);
+        Cache::forever("episode-playable.{$episode->id}", $playable);
 
         return $playable;
     }

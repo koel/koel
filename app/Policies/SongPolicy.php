@@ -10,6 +10,7 @@ class SongPolicy
 {
     public function own(User $user, Song $song): bool
     {
+        // Do not use $song->owner->is($user) here, as it may trigger an extra query.
         return $song->owner_id === $user->id;
     }
 

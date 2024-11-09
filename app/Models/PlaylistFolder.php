@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
- * @property string $id
  * @property string $name
  * @property User $user
  * @property Collection<array-key, Playlist> $playlists
@@ -38,6 +37,6 @@ class PlaylistFolder extends Model
 
     public function ownedBy(User $user): bool
     {
-        return $this->user_id === $user->id;
+        return $this->user->is($user);
     }
 }

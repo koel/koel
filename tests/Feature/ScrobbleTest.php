@@ -30,7 +30,7 @@ class ScrobbleTest extends TestCase
             )
             ->once();
 
-        $this->postAs("/api/songs/$song->id/scrobble", ['timestamp' => 100], $user)
+        $this->postAs("/api/songs/{$song->id}/scrobble", ['timestamp' => 100], $user)
             ->assertNoContent();
     }
 }

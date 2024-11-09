@@ -28,7 +28,7 @@ class EpisodePlayableTest extends TestCase
         Http::assertSentCount(1);
         self::assertSame('acbd18db4cc2f85cedef654fccc4a4d8', $playable->checksum);
 
-        self::assertTrue(Cache::has("episode-playable.$episode->id"));
+        self::assertTrue(Cache::has("episode-playable.{$episode->id}"));
 
         $retrieved = EpisodePlayable::getForEpisode($episode);
 

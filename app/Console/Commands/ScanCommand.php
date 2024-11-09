@@ -173,7 +173,7 @@ class ScanCommand extends Command
                 exit(self::INVALID);
             });
 
-            $this->components->info("Setting owner to $user->name (ID $user->id).");
+            $this->components->info("Setting owner to $user->name (ID {$user->id}).");
 
             return $user;
         }
@@ -181,7 +181,7 @@ class ScanCommand extends Command
         $user = $this->userRepository->getDefaultAdminUser();
 
         $this->components->warn(
-            "No song owner specified. Setting the first admin ($user->name, ID $user->id) as owner."
+            "No song owner specified. Setting the first admin ($user->name, ID {$user->id}) as owner."
         );
 
         return $user;

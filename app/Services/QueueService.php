@@ -16,11 +16,12 @@ class QueueService
 
     public function getQueueState(User $user): QueueStateDTO
     {
-        $state = QueueState::query()->where('user_id', $user->id)->firstOrCreate([
-            'user_id' => $user->id,
-        ], [
-            'song_ids' => [],
-        ]);
+        $state = QueueState::query()
+            ->whereBelongsTo($user)
+            ->firstOrCreate(
+                ['user_id' => $user->id],
+                ['song_ids' => []],
+            );
 
         $currentSong = $state->current_song_id ? $this->songRepository->findOne($state->current_song_id, $user) : null;
 
@@ -33,11 +34,7 @@ class QueueService
 
     public function updateQueueState(User $user, array $songIds): void
     {
-        QueueState::query()->updateOrCreate([
-            'user_id' => $user->id,
-        ], [
-            'song_ids' => $songIds,
-        ]);
+        QueueState::query()->updateOrCreate(['user_id' => $user->id], ['song_ids' => $songIds]);
     }
 
     public function updatePlaybackStatus(User $user, Song $song, int $position): void

@@ -162,6 +162,7 @@ class Song extends Model
 
     public function ownedBy(User $user): bool
     {
+        // Do not use $song->owner->is($user) here, as it may trigger an extra query.
         return $this->owner_id === $user->id;
     }
 

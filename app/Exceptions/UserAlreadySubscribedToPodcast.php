@@ -10,6 +10,6 @@ final class UserAlreadySubscribedToPodcast extends Exception
 {
     public static function make(User $user, Podcast $podcast): self
     {
-        return new self("User $user->id has already subscribed to podcast $podcast->id");
+        return new self("User {$user->id} has already subscribed to podcast {$podcast->id}");
     }
 }

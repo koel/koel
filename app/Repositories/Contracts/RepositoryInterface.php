@@ -2,9 +2,8 @@
 
 namespace App\Repositories\Contracts;
 
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 
 /** @template T of Model */
 interface RepositoryInterface
@@ -25,7 +24,7 @@ interface RepositoryInterface
     public function getMany(array $ids, bool $preserveOrder = false): Collection;
 
     /** @return Collection<int, T> */
-    public function getAll(): EloquentCollection;
+    public function getAll(): Collection;
 
     /** @return T|null */
     public function findFirstWhere(...$params): ?Model;

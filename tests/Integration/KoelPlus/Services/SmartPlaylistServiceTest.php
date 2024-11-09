@@ -52,8 +52,8 @@ class SmartPlaylistServiceTest extends PlusTestCase
             ]);
 
         self::assertEqualsCanonicalizing(
-            $matches->pluck('id')->all(),
-            $this->service->getSongs($playlist, $owner)->pluck('id')->all()
+            $matches->modelKeys(),
+            $this->service->getSongs($playlist, $owner)->modelKeys()
         );
     }
 }
