@@ -6,7 +6,6 @@ use App\Events\MultipleSongsLiked;
 use App\Events\MultipleSongsUnliked;
 use App\Events\SongLikeToggled;
 use App\Models\Song;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
@@ -23,7 +22,6 @@ class InteractionTest extends PlusTestCase
         $owner = create_user();
 
         // Can't increase play count of a private song that doesn't belong to the user
-        /** @var Song $externalPrivateSong */
         $externalPrivateSong = Song::factory()->private()->create();
         $this->postAs('api/interaction/play', ['song' => $externalPrivateSong->id], $owner)
             ->assertForbidden();
@@ -75,26 +73,23 @@ class InteractionTest extends PlusTestCase
         $owner = create_user();
 
         // Can't batch like private songs that don't belong to the user
-        /** @var Collection $externalPrivateSongs */
         $externalPrivateSongs = Song::factory()->count(3)->private()->create();
-        $this->postAs('api/interaction/batch/like', ['songs' => $externalPrivateSongs->pluck('id')->all()], $owner)
+        $this->postAs('api/interaction/batch/like', ['songs' => $externalPrivateSongs->modelKeys()], $owner)
             ->assertForbidden();
 
         // Can batch like public songs that don't belong to the user
-        /** @var Collection $externalPublicSongs */
         $externalPublicSongs = Song::factory()->count(3)->public()->create();
-        $this->postAs('api/interaction/batch/like', ['songs' => $externalPublicSongs->pluck('id')->all()], $owner)
+        $this->postAs('api/interaction/batch/like', ['songs' => $externalPublicSongs->modelKeys()], $owner)
             ->assertSuccessful();
 
         // Can batch like private songs that belong to the user
-        /** @var Collection $ownPrivateSongs */
         $ownPrivateSongs = Song::factory()->count(3)->private()->for($owner, 'owner')->create();
-        $this->postAs('api/interaction/batch/like', ['songs' => $ownPrivateSongs->pluck('id')->all()], $owner)
+        $this->postAs('api/interaction/batch/like', ['songs' => $ownPrivateSongs->modelKeys()], $owner)
             ->assertSuccessful();
 
         // Can't batch like a mix of inaccessible and accessible songs
         $mixedSongs = $externalPrivateSongs->merge($externalPublicSongs);
-        $this->postAs('api/interaction/batch/like', ['songs' => $mixedSongs->pluck('id')->all()], $owner)
+        $this->postAs('api/interaction/batch/like', ['songs' => $mixedSongs->modelKeys()], $owner)
             ->assertForbidden();
     }
 
@@ -106,26 +101,23 @@ class InteractionTest extends PlusTestCase
         $owner = create_user();
 
         // Can't batch unlike private songs that don't belong to the user
-        /** @var Collection $externalPrivateSongs */
         $externalPrivateSongs = Song::factory()->count(3)->private()->create();
-        $this->postAs('api/interaction/batch/unlike', ['songs' => $externalPrivateSongs->pluck('id')->all()], $owner)
+        $this->postAs('api/interaction/batch/unlike', ['songs' => $externalPrivateSongs->modelKeys()], $owner)
             ->assertForbidden();
 
         // Can batch unlike public songs that don't belong to the user
-        /** @var Collection $externalPublicSongs */
         $externalPublicSongs = Song::factory()->count(3)->public()->create();
-        $this->postAs('api/interaction/batch/unlike', ['songs' => $externalPublicSongs->pluck('id')->all()], $owner)
+        $this->postAs('api/interaction/batch/unlike', ['songs' => $externalPublicSongs->modelKeys()], $owner)
             ->assertSuccessful();
 
         // Can batch unlike private songs that belong to the user
-        /** @var Collection $ownPrivateSongs */
         $ownPrivateSongs = Song::factory()->count(3)->private()->for($owner, 'owner')->create();
-        $this->postAs('api/interaction/batch/unlike', ['songs' => $ownPrivateSongs->pluck('id')->all()], $owner)
+        $this->postAs('api/interaction/batch/unlike', ['songs' => $ownPrivateSongs->modelKeys()], $owner)
             ->assertSuccessful();
 
         // Can't batch unlike a mix of inaccessible and accessible songs
         $mixedSongs = $externalPrivateSongs->merge($externalPublicSongs);
-        $this->postAs('api/interaction/batch/unlike', ['songs' => $mixedSongs->pluck('id')->all()], $owner)
+        $this->postAs('api/interaction/batch/unlike', ['songs' => $mixedSongs->modelKeys()], $owner)
             ->assertForbidden();
     }
 }

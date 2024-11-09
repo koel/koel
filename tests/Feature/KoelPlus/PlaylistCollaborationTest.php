@@ -19,7 +19,7 @@ class PlaylistCollaborationTest extends PlusTestCase
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
 
-        $this->postAs("api/playlists/$playlist->id/collaborators/invite", [], $playlist->user)
+        $this->postAs("api/playlists/{$playlist->id}/collaborators/invite", [], $playlist->user)
             ->assertJsonStructure(PlaylistCollaborationTokenResource::JSON_STRUCTURE);
     }
 

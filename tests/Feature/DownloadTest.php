@@ -8,7 +8,7 @@ use App\Models\Interaction;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Services\DownloadService;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
@@ -47,7 +47,7 @@ class DownloadTest extends TestCase
             ->shouldReceive('getDownloadablePath')
             ->once()
             ->with(Mockery::on(static function (Collection $retrievedSongs) use ($song) {
-                return $retrievedSongs->count() === 1 && $retrievedSongs->first()->id === $song->id;
+                return $retrievedSongs->count() === 1 && $retrievedSongs->first()->is($song);
             }))
             ->andReturn(test_path('songs/blank.mp3'));
 
@@ -65,7 +65,7 @@ class DownloadTest extends TestCase
             ->shouldReceive('getDownloadablePath')
             ->once()
             ->with(Mockery::on(static function (Collection $retrievedSongs) use ($songs): bool {
-                self::assertEqualsCanonicalizing($retrievedSongs->pluck('id')->all(), $songs->pluck('id')->all());
+                self::assertEqualsCanonicalizing($retrievedSongs->modelKeys(), $songs->modelKeys());
 
                 return true;
             }))
@@ -89,7 +89,7 @@ class DownloadTest extends TestCase
             ->shouldReceive('getDownloadablePath')
             ->once()
             ->with(Mockery::on(static function (Collection $retrievedSongs) use ($songs): bool {
-                self::assertEqualsCanonicalizing($retrievedSongs->pluck('id')->all(), $songs->pluck('id')->all());
+                self::assertEqualsCanonicalizing($retrievedSongs->modelKeys(), $songs->modelKeys());
 
                 return true;
             }))
@@ -110,7 +110,7 @@ class DownloadTest extends TestCase
             ->shouldReceive('getDownloadablePath')
             ->once()
             ->with(Mockery::on(static function (Collection $retrievedSongs) use ($songs): bool {
-                self::assertEqualsCanonicalizing($retrievedSongs->pluck('id')->all(), $songs->pluck('id')->all());
+                self::assertEqualsCanonicalizing($retrievedSongs->modelKeys(), $songs->modelKeys());
 
                 return true;
             }))
@@ -133,7 +133,7 @@ class DownloadTest extends TestCase
         $this->downloadService
             ->shouldReceive('getDownloadablePath')
             ->with(Mockery::on(static function (Collection $retrievedSongs) use ($songs): bool {
-                self::assertEqualsCanonicalizing($retrievedSongs->pluck('id')->all(), $songs->pluck('id')->all());
+                self::assertEqualsCanonicalizing($retrievedSongs->modelKeys(), $songs->modelKeys());
 
                 return true;
             }))
@@ -162,7 +162,7 @@ class DownloadTest extends TestCase
         $this->downloadService
             ->shouldReceive('getDownloadablePath')
             ->with(Mockery::on(static function (Collection $songs) use ($favorites): bool {
-                self::assertEqualsCanonicalizing($songs->pluck('id')->all(), $favorites->pluck('song_id')->all());
+                self::assertEqualsCanonicalizing($songs->modelKeys(), $favorites->pluck('song_id')->all());
 
                 return true;
             }))

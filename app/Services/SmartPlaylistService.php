@@ -12,7 +12,7 @@ use App\Models\User;
 use App\Values\SmartPlaylistRule as Rule;
 use App\Values\SmartPlaylistRuleGroup as RuleGroup;
 use App\Values\SmartPlaylistSqlElements as SqlElements;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
 
 class SmartPlaylistService
 {

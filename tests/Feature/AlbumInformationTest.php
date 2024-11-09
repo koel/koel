@@ -43,7 +43,7 @@ class AlbumInformationTest extends TestCase
                 ]
             ));
 
-        $this->getAs('api/albums/' . $album->id . '/information')
+        $this->getAs("api/albums/{$album->id}/information")
             ->assertJsonStructure(AlbumInformation::JSON_STRUCTURE);
     }
 

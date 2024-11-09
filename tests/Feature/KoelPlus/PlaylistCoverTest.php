@@ -18,7 +18,11 @@ class PlaylistCoverTest extends PlusTestCase
         $collaborator = create_user();
         $playlist->addCollaborator($collaborator);
 
-        $this->putAs("api/playlists/$playlist->id/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], $collaborator)
+        $this->putAs(
+            "api/playlists/{$playlist->id}/cover",
+            ['cover' => 'data:image/jpeg;base64,Rm9v'],
+            $collaborator
+        )
             ->assertForbidden();
     }
 
@@ -30,7 +34,7 @@ class PlaylistCoverTest extends PlusTestCase
         $collaborator = create_user();
         $playlist->addCollaborator($collaborator);
 
-        $this->deleteAs("api/playlists/$playlist->id/cover", [], $collaborator)
+        $this->deleteAs("api/playlists/{$playlist->id}/cover", [], $collaborator)
             ->assertForbidden();
     }
 }

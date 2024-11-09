@@ -15,7 +15,7 @@ class UploadArtistImageController extends Controller
         $this->authorize('update', $artist);
         $metadataService->writeArtistImage($artist, $request->getFileContent());
 
-        Cache::delete("artist.info.$artist->id");
+        Cache::delete("artist.info.{$artist->id}");
 
         return response()->json(['image_url' => $artist->image]);
     }

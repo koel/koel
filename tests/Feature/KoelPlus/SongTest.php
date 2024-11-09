@@ -3,7 +3,6 @@
 namespace Tests\Feature\KoelPlus;
 
 use App\Models\Song;
-use Illuminate\Support\Collection;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
@@ -18,7 +17,6 @@ class SongTest extends PlusTestCase
 
         Song::factory(2)->public()->create();
 
-        /** @var Collection<array-key, Song> $ownSongs */
         $ownSongs = Song::factory(3)->for($user, 'owner')->create();
 
         $this->getAs('api/songs?own_songs_only=true', $user)
@@ -55,19 +53,19 @@ class SongTest extends PlusTestCase
         $publicSong = Song::factory()->public()->create();
 
         // We can access public songs.
-        $this->getAs("api/songs/$publicSong->id", $user)->assertSuccessful();
+        $this->getAs("api/songs/{$publicSong->id}", $user)->assertSuccessful();
 
         /** @var Song $ownPrivateSong */
         $ownPrivateSong = Song::factory()->for($user, 'owner')->private()->create();
 
         // We can access our own private songs.
-        $this->getAs('api/songs/' . $ownPrivateSong->id, $user)->assertSuccessful();
+        $this->getAs("api/songs/{$ownPrivateSong->id}", $user)->assertSuccessful();
 
         /** @var Song $externalUnownedSong */
         $externalUnownedSong = Song::factory()->private()->create();
 
         // But we can't access private songs that are not ours.
-        $this->getAs("api/songs/$externalUnownedSong->id", $user)->assertForbidden();
+        $this->getAs("api/songs/{$externalUnownedSong->id}", $user)->assertForbidden();
     }
 
     #[Test]
@@ -76,12 +74,11 @@ class SongTest extends PlusTestCase
         $currentUser = create_user();
         $anotherUser = create_user();
 
-        /** @var Collection<Song> $externalUnownedSongs */
         $externalUnownedSongs = Song::factory(3)->for($anotherUser, 'owner')->private()->create();
 
         // We can't edit songs that are not ours.
         $this->putAs('api/songs', [
-            'songs' => $externalUnownedSongs->pluck('id')->toArray(),
+            'songs' => $externalUnownedSongs->modelKeys(),
             'data' => [
                 'title' => 'New Title',
             ],
@@ -91,7 +88,7 @@ class SongTest extends PlusTestCase
         $mixedSongs = $externalUnownedSongs->merge(Song::factory(2)->for($currentUser, 'owner')->create());
 
         $this->putAs('api/songs', [
-            'songs' => $mixedSongs->pluck('id')->toArray(),
+            'songs' => $mixedSongs->modelKeys(),
             'data' => [
                 'title' => 'New Title',
             ],
@@ -101,7 +98,7 @@ class SongTest extends PlusTestCase
         $ownSongs = Song::factory(3)->for($currentUser, 'owner')->create();
 
         $this->putAs('api/songs', [
-            'songs' => $ownSongs->pluck('id')->toArray(),
+            'songs' => $ownSongs->modelKeys(),
             'data' => [
                 'title' => 'New Title',
             ],
@@ -114,35 +111,33 @@ class SongTest extends PlusTestCase
         $currentUser = create_user();
         $anotherUser = create_user();
 
-        /** @var Collection<Song> $externalUnownedSongs */
         $externalUnownedSongs = Song::factory(3)->for($anotherUser, 'owner')->private()->create();
 
         // We can't delete songs that are not ours.
-        $this->deleteAs('api/songs', ['songs' => $externalUnownedSongs->pluck('id')->toArray()], $currentUser)
+        $this->deleteAs('api/songs', ['songs' => $externalUnownedSongs->modelKeys()], $currentUser)
             ->assertForbidden();
 
         // Even if some of the songs are owned by us, we still can't delete them.
         $mixedSongs = $externalUnownedSongs->merge(Song::factory(2)->for($currentUser, 'owner')->create());
 
-        $this->deleteAs('api/songs', ['songs' => $mixedSongs->pluck('id')->toArray()], $currentUser)
+        $this->deleteAs('api/songs', ['songs' => $mixedSongs->modelKeys()], $currentUser)
             ->assertForbidden();
 
         // But we can delete our own songs.
         $ownSongs = Song::factory(3)->for($currentUser, 'owner')->create();
 
-        $this->deleteAs('api/songs', ['songs' => $ownSongs->pluck('id')->toArray()], $currentUser)
+        $this->deleteAs('api/songs', ['songs' => $ownSongs->modelKeys()], $currentUser)
             ->assertSuccessful();
     }
 
     #[Test]
-    public function publicizeSongs(): void
+    public function markSongsAsPublic(): void
     {
         $user = create_user();
 
-        /** @var Song $songs */
         $songs = Song::factory(3)->for($user, 'owner')->private()->create();
 
-        $this->putAs('api/songs/publicize', ['songs' => $songs->pluck('id')->toArray()], $user)
+        $this->putAs('api/songs/publicize', ['songs' => $songs->modelKeys()], $user)
             ->assertSuccessful();
 
         $songs->each(static function (Song $song): void {
@@ -152,14 +147,13 @@ class SongTest extends PlusTestCase
     }
 
     #[Test]
-    public function privatizeSongs(): void
+    public function markSongsAsPrivate(): void
     {
         $user = create_user();
 
-        /** @var Song $songs */
         $songs = Song::factory(3)->for($user, 'owner')->public()->create();
 
-        $this->putAs('api/songs/privatize', ['songs' => $songs->pluck('id')->toArray()], $user)
+        $this->putAs('api/songs/privatize', ['songs' => $songs->modelKeys()], $user)
             ->assertSuccessful();
 
         $songs->each(static function (Song $song): void {
@@ -173,12 +167,12 @@ class SongTest extends PlusTestCase
     {
         $songs = Song::factory(3)->public()->create();
 
-        $this->putAs('api/songs/privatize', ['songs' => $songs->pluck('id')->toArray()])
+        $this->putAs('api/songs/privatize', ['songs' => $songs->modelKeys()])
             ->assertForbidden();
 
         $otherSongs = Song::factory(3)->private()->create();
 
-        $this->putAs('api/songs/publicize', ['songs' => $otherSongs->pluck('id')->toArray()])
+        $this->putAs('api/songs/publicize', ['songs' => $otherSongs->modelKeys()])
             ->assertForbidden();
     }
 }

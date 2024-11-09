@@ -32,18 +32,18 @@ class ArtistImageTest extends TestCase
             ->once()
             ->with(Mockery::on(static fn (Artist $target) => $target->is($artist)), 'data:image/jpeg;base64,Rm9v');
 
-        $this->putAs("api/artist/$artist->id/image", ['image' => 'data:image/jpeg;base64,Rm9v'], create_admin())
+        $this->putAs("api/artist/{$artist->id}/image", ['image' => 'data:image/jpeg;base64,Rm9v'], create_admin())
             ->assertOk();
     }
 
     #[Test]
     public function updateNotAllowedForNormalUsers(): void
     {
-        Artist::factory()->create(['id' => 9999]);
+        $artist = Artist::factory()->create();
 
         $this->mediaMetadataService->shouldNotReceive('writeArtistImage');
 
-        $this->putAs('api/artist/9999/image', ['image' => 'data:image/jpeg;base64,Rm9v'])
+        $this->putAs("api/artist/{$artist->id}/image", ['image' => 'data:image/jpeg;base64,Rm9v'])
             ->assertForbidden();
     }
 }

@@ -8,7 +8,7 @@ use App\Events\SongLikeToggled;
 use App\Models\Interaction;
 use App\Models\Song as Playable;
 use App\Models\User;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
 
 class InteractionService
 {
@@ -57,14 +57,20 @@ class InteractionService
     public function likeMany(Collection $playables, User $user): Collection
     {
         $interactions = $playables->map(static function (Playable $playable) use ($user): Interaction {
-            return tap(Interaction::query()->firstOrCreate([
-                'song_id' => $playable->id,
-                'user_id' => $user->id,
-            ]), static function (Interaction $interaction): void {
-                $interaction->play_count ??= 0;
-                $interaction->liked = true;
-                $interaction->save();
-            });
+            $interaction = Interaction::query()->whereBelongsTo($playable)->whereBelongsTo($user)->first();
+
+            if ($interaction) {
+                $interaction->update(['liked' => true]);
+            } else {
+                $interaction = Interaction::query()->create([
+                    'song_id' => $playable->id,
+                    'user_id' => $user->id,
+                    'play_count' => 0,
+                    'liked' => true,
+                ]);
+            }
+
+            return $interaction;
         });
 
         event(new MultipleSongsLiked($playables, $user));
@@ -80,8 +86,8 @@ class InteractionService
     public function unlikeMany(Collection $playables, User $user): void
     {
         Interaction::query()
-            ->whereIn('song_id', $playables->pluck('id')->all())
-            ->where('user_id', $user->id)
+            ->whereBelongsTo($playables)
+            ->whereBelongsTo($user)
             ->update(['liked' => false]);
 
         event(new MultipleSongsUnliked($playables, $user));

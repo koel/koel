@@ -45,13 +45,13 @@ class QueueTest extends TestCase
 
         self::assertDatabaseMissing(QueueState::class, ['user_id' => $user->id]);
 
-        $songIds = Song::factory(3)->create()->pluck('id')->toArray();
+        $songIds = Song::factory(3)->create()->modelKeys();
 
         $this->putAs('api/queue/state', ['songs' => $songIds], $user)
             ->assertNoContent();
 
         /** @var QueueState $queue */
-        $queue = QueueState::query()->where('user_id', $user->id)->firstOrFail();
+        $queue = QueueState::query()->whereBelongsTo($user)->firstOrFail();
         self::assertEqualsCanonicalizing($songIds, $queue->song_ids);
     }
 

@@ -9,7 +9,7 @@ use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\SmartPlaylistService;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -564,8 +564,8 @@ class SmartPlaylistServiceTest extends TestCase
         $playlist = Playlist::factory()->for($owner ?? create_admin())->create(['rules' => $rules]);
 
         self::assertEqualsCanonicalizing(
-            $matches->pluck('id')->all(),
-            $this->service->getSongs($playlist)->pluck('id')->all()
+            $matches->modelKeys(),
+            $this->service->getSongs($playlist)->modelKeys()
         );
     }
 }

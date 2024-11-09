@@ -50,7 +50,7 @@ class LastfmService implements MusicEncyclopedia
 
         return rescue_if(static::enabled(), function () use ($artist): ?ArtistInformation {
             return Cache::remember(
-                "lastfm.artist.$artist->id",
+                "lastfm.artist.{$artist->id}",
                 now()->addWeek(),
                 fn () => $this->connector->send(new GetArtistInfoRequest($artist))->dto()
             );
@@ -65,7 +65,7 @@ class LastfmService implements MusicEncyclopedia
 
         return rescue_if(static::enabled(), function () use ($album): ?AlbumInformation {
             return Cache::remember(
-                "lastfm.album.$album->id",
+                "lastfm.album.{$album->id}",
                 now()->addWeek(),
                 fn () => $this->connector->send(new GetAlbumInfoRequest($album))->dto()
             );

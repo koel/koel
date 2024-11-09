@@ -92,7 +92,7 @@ class User extends Authenticatable
 
     public function subscribedToPodcast(Podcast $podcast): bool
     {
-        return $this->podcasts()->where('podcast_id', $podcast->id)->exists();
+        return $this->podcasts()->whereKey($podcast)->exists();
     }
 
     public function subscribeToPodcast(Podcast $podcast): void

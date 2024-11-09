@@ -16,10 +16,10 @@ class SongVisibilityTest extends TestCase
         $owner = create_admin();
         Song::factory(3)->create();
 
-        $this->putAs('api/songs/publicize', ['songs' => Song::query()->pluck('id')->all()], $owner)
+        $this->putAs('api/songs/publicize', ['songs' => Song::query()->get()->modelKeys()], $owner)
             ->assertForbidden();
 
-        $this->putAs('api/songs/privatize', ['songs' => Song::query()->pluck('id')->all()], $owner)
+        $this->putAs('api/songs/privatize', ['songs' => Song::query()->get()->modelKeys()], $owner)
             ->assertForbidden();
     }
 }

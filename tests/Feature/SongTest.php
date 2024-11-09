@@ -35,10 +35,9 @@ class SongTest extends TestCase
     #[Test]
     public function destroy(): void
     {
-        /** @var Collection<array-key, Song> $songs */
         $songs = Song::factory(3)->create();
 
-        $this->deleteAs('api/songs', ['songs' => $songs->pluck('id')->all()], create_admin())
+        $this->deleteAs('api/songs', ['songs' => $songs->modelKeys()], create_admin())
             ->assertNoContent();
 
         $songs->each(fn (Song $song) => $this->assertModelMissing($song));
@@ -47,10 +46,9 @@ class SongTest extends TestCase
     #[Test]
     public function unauthorizedDelete(): void
     {
-        /** @var Collection<array-key, Song> $songs */
         $songs = Song::factory(3)->create();
 
-        $this->deleteAs('api/songs', ['songs' => $songs->pluck('id')->all()])
+        $this->deleteAs('api/songs', ['songs' => $songs->modelKeys()])
             ->assertForbidden();
 
         $songs->each(fn (Song $song) => $this->assertModelExists($song));
@@ -122,7 +120,7 @@ class SongTest extends TestCase
     #[Test]
     public function multipleUpdateNoCompilation(): void
     {
-        $songIds = Song::factory(3)->create()->pluck('id')->all();
+        $songIds = Song::factory(3)->create()->modelKeys();
 
         $this->putAs('/api/songs', [
             'songs' => $songIds,
@@ -159,9 +157,8 @@ class SongTest extends TestCase
     #[Test]
     public function multipleUpdateCreatingNewAlbumsAndArtists(): void
     {
-        /** @var Collection<array-key, Song> $originalSongs */
         $originalSongs = Song::factory(3)->create();
-        $originalSongIds = $originalSongs->pluck('id')->all();
+        $originalSongIds = $originalSongs->modelKeys();
         $originalAlbumNames = $originalSongs->pluck('album.name')->all();
         $originalAlbumIds = $originalSongs->pluck('album_id')->all();
 
@@ -177,7 +174,6 @@ class SongTest extends TestCase
         ], create_admin())
             ->assertOk();
 
-        /** @var Collection<array-key, Song> $songs */
         $songs = Song::query()->whereIn('id', $originalSongIds)->get()->orderByArray($originalSongIds);
 
         // Even though the album name doesn't change, a new artist should have been created
@@ -263,10 +259,7 @@ class SongTest extends TestCase
     {
         Song::factory(5)->create();
 
-        self::assertNotSame(0, Song::query()->count());
-        $ids = Song::query()->select('id')->get()->pluck('id')->all();
-
-        Song::deleteByChunk($ids, 1);
+        Song::deleteByChunk(Song::query()->get()->modelKeys(), 1);
 
         self::assertSame(0, Song::query()->count());
     }

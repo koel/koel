@@ -24,9 +24,9 @@ final class LicenseInstance implements Arrayable, Jsonable
     public static function fromJsonObject(object $json): self
     {
         return new self(
-            id: $json->id,
-            name: $json->name,
-            createdAt: Carbon::parse($json->created_at),
+            id: object_get($json, 'id'),
+            name: object_get($json, 'name'),
+            createdAt: Carbon::parse(object_get($json, 'created_at')),
         );
     }
 

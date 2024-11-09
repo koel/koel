@@ -49,7 +49,7 @@ class MediaInformationServiceTest extends TestCase
             ->shouldNotReceive('tryDownloadAlbumCover');
 
         self::assertSame($info, $this->mediaInformationService->getAlbumInformation($album));
-        self::assertNotNull(cache()->get('album.info.' . $album->id));
+        self::assertNotNull(cache()->get("album.info.{$album->id}"));
     }
 
     #[Test]
@@ -93,7 +93,7 @@ class MediaInformationServiceTest extends TestCase
             ->shouldNotReceive('tryDownloadArtistImage');
 
         self::assertSame($info, $this->mediaInformationService->getArtistInformation($artist));
-        self::assertNotNull(cache()->get('artist.info.' . $artist->id));
+        self::assertNotNull(cache()->get("artist.info.{$artist->id}"));
     }
 
     #[Test]

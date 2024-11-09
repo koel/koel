@@ -34,7 +34,7 @@ class ChangePasswordCommand extends Command
             return self::FAILURE;
         }
 
-        $this->comment("Changing the user's password (ID: $user->id, email: $user->email)");
+        $this->comment("Changing the user's password (ID: {$user->id}, email: $user->email)");
 
         $user->password = $this->hash->make($this->askForPassword());
         $user->save();

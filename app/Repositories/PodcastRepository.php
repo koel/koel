@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Podcast;
 use App\Models\User;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
 
 /** @extends Repository<Podcast> */
 class PodcastRepository extends Repository

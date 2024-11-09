@@ -22,7 +22,7 @@ class PlaylistFolderTest extends PlusTestCase
 
         /** @var PlaylistFolder $ownerFolder */
         $ownerFolder = PlaylistFolder::factory()->for($playlist->user)->create();
-        $ownerFolder->playlists()->attach($playlist->id);
+        $ownerFolder->playlists()->attach($playlist);
         self::assertTrue($playlist->refresh()->getFolder($playlist->user)?->is($ownerFolder));
 
         /** @var PlaylistFolder $collaboratorFolder */
@@ -30,7 +30,7 @@ class PlaylistFolderTest extends PlusTestCase
         self::assertNull($playlist->getFolder($collaborator));
 
         $this->postAs(
-            "api/playlist-folders/$collaboratorFolder->id/playlists",
+            "api/playlist-folders/{$collaboratorFolder->id}/playlists",
             ['playlists' => [$playlist->id]],
             $collaborator
         )
@@ -54,17 +54,17 @@ class PlaylistFolderTest extends PlusTestCase
 
         /** @var PlaylistFolder $ownerFolder */
         $ownerFolder = PlaylistFolder::factory()->for($playlist->user)->create();
-        $ownerFolder->playlists()->attach($playlist->id);
+        $ownerFolder->playlists()->attach($playlist);
         self::assertTrue($playlist->refresh()->getFolder($playlist->user)?->is($ownerFolder));
 
         /** @var PlaylistFolder $collaboratorFolder */
         $collaboratorFolder = PlaylistFolder::factory()->for($collaborator)->create();
 
-        $collaboratorFolder->playlists()->attach($playlist->id);
+        $collaboratorFolder->playlists()->attach($playlist);
         self::assertTrue($playlist->refresh()->getFolder($collaborator)?->is($collaboratorFolder));
 
         $this->deleteAs(
-            "api/playlist-folders/$collaboratorFolder->id/playlists",
+            "api/playlist-folders/{$collaboratorFolder->id}/playlists",
             ['playlists' => [$playlist->id]],
             $collaborator
         )

@@ -8,6 +8,7 @@ use App\Models\Song as Playable;
 use App\Values\SmartPlaylistRuleGroupCollection;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,16 +25,16 @@ use Laravel\Scout\Searchable;
  * @property bool $is_smart
  * @property int $user_id
  * @property User $user
- * @property Collection<array-key, Playable> $playables
  * @property ?SmartPlaylistRuleGroupCollection $rule_groups
  * @property ?SmartPlaylistRuleGroupCollection $rules
  * @property Carbon $created_at
+ * @property EloquentCollection<array-key, Playable> $playables
+ * @property EloquentCollection<array-key, User> $collaborators
  * @property bool $own_songs_only
- * @property Collection<array-key, User> $collaborators
- * @property-read bool $is_collaborative
  * @property-read ?string $cover The playlist cover's URL
  * @property-read ?string $cover_path
- * @property-read Collection<array-key, PlaylistFolder> $folders
+ * @property-read EloquentCollection<array-key, PlaylistFolder> $folders
+ * @property-read bool $is_collaborative
  */
 class Playlist extends Model
 {
@@ -107,7 +108,7 @@ class Playlist extends Model
 
     public function ownedBy(User $user): bool
     {
-        return $this->user_id === $user->id;
+        return $this->user->is($user);
     }
 
     public function inFolder(PlaylistFolder $folder): bool

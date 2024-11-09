@@ -29,7 +29,7 @@ class SongPlayTest extends PlusTestCase
             ->shouldReceive('stream')
             ->once();
 
-        $this->get("play/$song->id?t=$token->audioToken")
+        $this->get("play/{$song->id}?t=$token->audioToken")
             ->assertOk();
     }
 
@@ -48,7 +48,7 @@ class SongPlayTest extends PlusTestCase
             ->shouldReceive('stream')
             ->once();
 
-        $this->get("play/$song->id?t=$token->audioToken")
+        $this->get("play/{$song->id}?t=$token->audioToken")
             ->assertOk();
     }
 
@@ -63,7 +63,7 @@ class SongPlayTest extends PlusTestCase
         /** @var CompositeToken $token */
         $token = app(TokenManager::class)->createCompositeToken(create_user());
 
-        $this->get("play/$song->id?t=$token->audioToken")
+        $this->get("play/{$song->id}?t=$token->audioToken")
             ->assertForbidden();
     }
 }

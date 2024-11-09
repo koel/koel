@@ -66,8 +66,8 @@ class InteractionServiceTest extends TestCase
         $songs->each(static function (Song $song) use ($user): void {
             /** @var Interaction $interaction */
             $interaction = Interaction::query()
-                ->where('song_id', $song->id)
-                ->where('user_id', $user->id)
+                ->whereBelongsTo($song)
+                ->whereBelongsTo($user)
                 ->first();
 
             self::assertTrue($interaction->liked);
@@ -82,10 +82,9 @@ class InteractionServiceTest extends TestCase
         Event::fake(MultipleSongsUnliked::class);
         $user = create_user();
 
-        /** @var Collection $interactions */
         $interactions = Interaction::factory(3)->for($user)->create(['liked' => true]);
 
-        $this->interactionService->unlikeMany($interactions->map(static fn (Interaction $i) => $i->song), $user);
+        $this->interactionService->unlikeMany($interactions->map(static fn (Interaction $i) => $i->song), $user); // @phpstan-ignore-line
 
         $interactions->each(static function (Interaction $interaction): void {
             self::assertFalse($interaction->refresh()->liked);

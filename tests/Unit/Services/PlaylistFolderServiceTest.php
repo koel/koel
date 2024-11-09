@@ -5,7 +5,7 @@ namespace Tests\Unit\Services;
 use App\Models\Playlist;
 use App\Models\PlaylistFolder;
 use App\Services\PlaylistFolderService;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -57,7 +57,7 @@ class PlaylistFolderServiceTest extends TestCase
         /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->for($user)->create();
 
-        $this->service->addPlaylistsToFolder($folder, $playlists->pluck('id')->all());
+        $this->service->addPlaylistsToFolder($folder, $playlists->modelKeys());
 
         self::assertCount(3, $folder->playlists);
     }
@@ -70,9 +70,9 @@ class PlaylistFolderServiceTest extends TestCase
 
         /** @var Collection<array-key, Playlist> $playlists */
         $playlists = Playlist::factory()->count(3)->create();
-        $folder->playlists()->attach($playlists->pluck('id')->all());
+        $folder->playlists()->attach($playlists);
 
-        $this->service->movePlaylistsToRootLevel($folder, $playlists->pluck('id')->all());
+        $this->service->movePlaylistsToRootLevel($folder, $playlists->modelKeys());
 
         self::assertCount(0, $folder->playlists);
 

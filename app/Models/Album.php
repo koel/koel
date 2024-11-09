@@ -19,7 +19,6 @@ use Laravel\Scout\Searchable;
  * @property string $cover The album cover's URL
  * @property string|null $cover_path The absolute path to the cover file
  * @property bool $has_cover If the album has a non-default cover image
- * @property int $id
  * @property string $name Name of the album
  * @property Artist $artist The album's artist
  * @property int $artist_id

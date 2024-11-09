@@ -9,7 +9,7 @@ use App\Services\SongStorages\DropboxStorage;
 use App\Services\SongStorages\S3CompatibleStorage;
 use App\Services\SongStorages\SftpStorage;
 use App\Values\Podcast\EpisodePlayable;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\File;
 
 class DownloadService
@@ -17,7 +17,7 @@ class DownloadService
     public function getDownloadablePath(Collection $songs): ?string
     {
         if ($songs->count() === 1) {
-            return $this->getLocalPath($songs->first());
+            return $this->getLocalPath($songs->first()); // @phpstan-ignore-line
         }
 
         return (new SongZipArchive())

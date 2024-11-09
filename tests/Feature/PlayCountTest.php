@@ -22,7 +22,7 @@ class PlayCountTest extends TestCase
             'play_count' => 10,
         ]);
 
-        $this->postAs('/api/interaction/play', ['song' => $interaction->song->id], $interaction->user)
+        $this->postAs('/api/interaction/play', ['song' => $interaction->song_id], $interaction->user)
             ->assertJsonStructure([
                 'type',
                 'id',
@@ -53,8 +53,8 @@ class PlayCountTest extends TestCase
             ]);
 
         $interaction = Interaction::query()
-            ->where('song_id', $song->id)
-            ->where('user_id', $user->id)
+            ->whereBelongsTo($song)
+            ->whereBelongsTo($user)
             ->first();
 
         self::assertSame(1, $interaction->play_count);

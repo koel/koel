@@ -4,9 +4,8 @@ namespace App\Repositories;
 
 use App\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Contracts\Auth\Guard;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 
 /**
  * @template T of Model
@@ -68,9 +67,9 @@ abstract class Repository implements RepositoryInterface
     }
 
     /** @inheritDoc */ // @phpcs:ignore
-    public function getAll(): EloquentCollection
+    public function getAll(): Collection
     {
-        return $this->modelClass::all();
+        return $this->modelClass::all(); // @phpstan-ignore-line
     }
 
     /** @inheritDoc */

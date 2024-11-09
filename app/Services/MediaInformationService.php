@@ -23,16 +23,20 @@ class MediaInformationService
             return null;
         }
 
-        return Cache::remember("album.info.$album->id", now()->addWeek(), function () use ($album): AlbumInformation {
-            $info = $this->encyclopedia->getAlbumInformation($album) ?: AlbumInformation::make();
+        return Cache::remember(
+            "album.info.{$album->id}",
+            now()->addWeek(),
+            function () use ($album): AlbumInformation {
+                $info = $this->encyclopedia->getAlbumInformation($album) ?: AlbumInformation::make();
 
-            rescue_unless($album->has_cover, function () use ($info, $album): void {
-                $this->mediaMetadataService->tryDownloadAlbumCover($album);
-                $info->cover = $album->cover;
-            });
+                rescue_unless($album->has_cover, function () use ($info, $album): void {
+                    $this->mediaMetadataService->tryDownloadAlbumCover($album);
+                    $info->cover = $album->cover;
+                });
 
-            return $info;
-        });
+                return $info;
+            }
+        );
     }
 
     public function getArtistInformation(Artist $artist): ?ArtistInformation
@@ -42,7 +46,7 @@ class MediaInformationService
         }
 
         return Cache::remember(
-            "artist.info.$artist->id",
+            "artist.info.{$artist->id}",
             now()->addWeek(),
             function () use ($artist): ArtistInformation {
                 $info = $this->encyclopedia->getArtistInformation($artist) ?: ArtistInformation::make();

@@ -11,6 +11,7 @@ use App\Models\Song as Playable;
 use App\Models\User;
 use App\Repositories\SongRepository;
 use App\Values\SmartPlaylistRuleGroupCollection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
@@ -85,12 +86,12 @@ class PlaylistService
         return $playlist;
     }
 
-    /** @return Collection<array-key, Playable> */
+    /** @return EloquentCollection<array-key, Playable> */
     public function addPlayablesToPlaylist(
         Playlist $playlist,
         Collection|Playable|array $playables,
         User $user
-    ): Collection {
+    ): EloquentCollection {
         return DB::transaction(function () use ($playlist, $playables, $user) {
             $playables = Collection::wrap($playables);
 

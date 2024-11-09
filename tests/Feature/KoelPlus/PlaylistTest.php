@@ -52,7 +52,7 @@ class PlaylistTest extends PlusTestCase
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->smart()->create();
 
-        $this->putAs("api/playlists/$playlist->id", [
+        $this->putAs("api/playlists/{$playlist->id}", [
             'name' => 'Foo',
             'own_songs_only' => true,
             'rules' => $playlist->rules->toArray(),
@@ -72,7 +72,7 @@ class PlaylistTest extends PlusTestCase
         $collaborator = create_user();
         $playlist->addCollaborator($collaborator);
 
-        $this->putAs("api/playlists/$playlist->id", ['name' => 'Nope'], $collaborator)
+        $this->putAs("api/playlists/{$playlist->id}", ['name' => 'Nope'], $collaborator)
             ->assertForbidden();
     }
 }

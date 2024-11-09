@@ -8,7 +8,6 @@ use App\Models\Podcast;
 use App\Models\Song;
 use App\Services\PlaylistService;
 use App\Values\SmartPlaylistRuleGroupCollection;
-use Illuminate\Support\Collection;
 use InvalidArgumentException as BaseInvalidArgumentException;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
@@ -43,17 +42,15 @@ class PlaylistServiceTest extends TestCase
     #[Test]
     public function createPlaylistWithSongs(): void
     {
-        /** @var Collection<array-key, Song> $songs */
         $songs = Song::factory(3)->create();
-
         $user = create_user();
 
-        $playlist = $this->service->createPlaylist('foo', $user, null, $songs->pluck('id')->all());
+        $playlist = $this->service->createPlaylist('foo', $user, null, $songs->modelKeys());
 
         self::assertSame('foo', $playlist->name);
         self::assertTrue($user->is($playlist->user));
         self::assertFalse($playlist->is_smart);
-        self::assertEqualsCanonicalizing($playlist->playables->pluck('id')->all(), $songs->pluck('id')->all());
+        self::assertEqualsCanonicalizing($playlist->playables->modelKeys(), $songs->modelKeys());
     }
 
     #[Test]
@@ -213,7 +210,7 @@ class PlaylistServiceTest extends TestCase
 
         self::assertCount(2, $addedSongs);
         self::assertCount(5, $playlist->playables);
-        self::assertEqualsCanonicalizing($addedSongs->pluck('id')->all(), $songs->pluck('id')->all());
+        self::assertEqualsCanonicalizing($addedSongs->modelKeys(), $songs->modelKeys());
         $songs->each(static fn (Song $song) => self::assertTrue($playlist->playables->contains($song)));
     }
 
@@ -235,7 +232,7 @@ class PlaylistServiceTest extends TestCase
 
         self::assertCount(2, $addedEpisodes);
         self::assertCount(5, $playlist->playables);
-        self::assertEqualsCanonicalizing($addedEpisodes->pluck('id')->all(), $episodes->pluck('id')->all());
+        self::assertEqualsCanonicalizing($addedEpisodes->modelKeys(), $episodes->modelKeys());
     }
 
     #[Test]
@@ -252,7 +249,7 @@ class PlaylistServiceTest extends TestCase
 
         self::assertCount(4, $addedEpisodes);
         self::assertCount(7, $playlist->playables);
-        self::assertEqualsCanonicalizing($addedEpisodes->pluck('id')->all(), $playables->pluck('id')->all());
+        self::assertEqualsCanonicalizing($addedEpisodes->modelKeys(), $playables->modelKeys());
     }
 
     #[Test]
@@ -292,23 +289,22 @@ class PlaylistServiceTest extends TestCase
         /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create();
 
-        /** @var Collection<array-key, Song> $songs */
         $songs = Song::factory(4)->create();
-        $ids = $songs->pluck('id')->all();
+        $ids = $songs->modelKeys();
         $playlist->addPlayables($songs);
 
         $this->service->movePlayablesInPlaylist($playlist, [$ids[2], $ids[3]], $ids[0], 'after');
-        self::assertSame([$ids[0], $ids[2], $ids[3], $ids[1]], $playlist->refresh()->playables->pluck('id')->all());
+        self::assertSame([$ids[0], $ids[2], $ids[3], $ids[1]], $playlist->refresh()->playables->modelKeys());
 
         $this->service->movePlayablesInPlaylist($playlist, [$ids[0]], $ids[3], 'before');
-        self::assertSame([$ids[2], $ids[0], $ids[3], $ids[1]], $playlist->refresh()->playables->pluck('id')->all());
+        self::assertSame([$ids[2], $ids[0], $ids[3], $ids[1]], $playlist->refresh()->playables->modelKeys());
 
         // move to the first position
         $this->service->movePlayablesInPlaylist($playlist, [$ids[0], $ids[1]], $ids[2], 'before');
-        self::assertSame([$ids[0], $ids[1], $ids[2], $ids[3]], $playlist->refresh()->playables->pluck('id')->all());
+        self::assertSame([$ids[0], $ids[1], $ids[2], $ids[3]], $playlist->refresh()->playables->modelKeys());
 
         // move to the last position
         $this->service->movePlayablesInPlaylist($playlist, [$ids[0], $ids[1]], $ids[3], 'after');
-        self::assertSame([$ids[2], $ids[3], $ids[0], $ids[1]], $playlist->refresh()->playables->pluck('id')->all());
+        self::assertSame([$ids[2], $ids[3], $ids[0], $ids[1]], $playlist->refresh()->playables->modelKeys());
     }
 }
