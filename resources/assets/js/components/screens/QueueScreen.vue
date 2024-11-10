@@ -6,7 +6,7 @@
         <ControlsToggle v-model="showingControls" />
 
         <template #thumbnail>
-          <ThumbnailStack :thumbnails="thumbnails" />
+          <ThumbnailStack :thumbnails="thumbnails" :songs="songs" />
         </template>
 
         <template v-if="songs.length" #meta>
