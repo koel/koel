@@ -11,7 +11,7 @@ export class Cache {
   }
 
   public has (key: any) {
-    return this.hit(Cache.normalizeKey(key))
+    return this.hit(key)
   }
 
   public get<T> (key: any) {
@@ -26,7 +26,7 @@ export class Cache {
   }
 
   public hit (key: any) {
-    return !this.miss(Cache.normalizeKey(key))
+    return !this.miss(key)
   }
 
   public miss (key: any) {
@@ -35,6 +35,7 @@ export class Cache {
     if (!this.storage.has(key)) {
       return true
     }
+
     const { expires } = this.storage.get(key)!
 
     if (expires < Date.now()) {
@@ -50,8 +51,6 @@ export class Cache {
   }
 
   async remember<T> (key: any, resolver: Closure, seconds: number = DEFAULT_EXPIRATION_TIME) {
-    key = Cache.normalizeKey(key)
-
     this.hit(key) || this.set(key, await resolver(), seconds)
     return this.get<T>(key)
   }
