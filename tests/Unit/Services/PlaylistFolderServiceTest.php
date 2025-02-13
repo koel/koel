@@ -87,7 +87,7 @@ class PlaylistFolderServiceTest extends TestCase
     {
         $user = create_user();
 
-        /** @var PlaylistFolder $existingFolder */
+        /** @var PlaylistFolder $existingFolderFromAnotherUser */
         $existingFolderFromAnotherUser = PlaylistFolder::factory()->create();
 
         /** @var Playlist $playlist */
