@@ -63,6 +63,46 @@ class PlaylistFolderServiceTest extends TestCase
     }
 
     #[Test]
+    public function aPlaylistCannotBelongToMultipleFoldersByOneUser(): void
+    {
+        $user = create_user();
+
+        /** @var PlaylistFolder $existingFolder */
+        $existingFolder = PlaylistFolder::factory()->create();
+
+        /** @var Playlist $playlist */
+        $playlist = Playlist::factory()->for($user)->create();
+        $existingFolder->playlists()->attach($playlist);
+
+        /** @var PlaylistFolder $newFolder */
+        $newFolder = PlaylistFolder::factory()->for($user)->create();
+
+        $this->service->addPlaylistsToFolder($newFolder, [$playlist->id]);
+
+        self::assertSame(1, $playlist->refresh()->folders->count());
+    }
+
+    #[Test]
+    public function aPlaylistCanBelongToMultipleFoldersFromDifferentUsers(): void
+    {
+        $user = create_user();
+
+        /** @var PlaylistFolder $existingFolder */
+        $existingFolderFromAnotherUser = PlaylistFolder::factory()->create();
+
+        /** @var Playlist $playlist */
+        $playlist = Playlist::factory()->for($user)->create();
+        $existingFolderFromAnotherUser->playlists()->attach($playlist);
+
+        /** @var PlaylistFolder $newFolder */
+        $newFolder = PlaylistFolder::factory()->for($user)->create();
+
+        $this->service->addPlaylistsToFolder($newFolder, [$playlist->id]);
+
+        self::assertSame(2, $playlist->refresh()->folders->count());
+    }
+
+    #[Test]
     public function movePlaylistsToRootLevel(): void
     {
         /** @var PlaylistFolder $folder */
