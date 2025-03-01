@@ -37,6 +37,10 @@ a {
 
     img {
       filter: grayscale(1) invert(1);
+
+      &.no-inverse {
+        filter: grayscale(1);
+      }
     }
 
     &:hover {
