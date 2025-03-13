@@ -14,10 +14,6 @@ enum SongStorageType: string
 
     public function supported(): bool
     {
-        if (License::isPlus()) {
-            return true;
-        }
-
-        return $this === self::LOCAL || $this === self::S3_LAMBDA;
+        return ($this === self::LOCAL || $this === self::S3_LAMBDA) || License::isPlus();
     }
 }
