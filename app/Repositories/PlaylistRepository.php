@@ -26,7 +26,7 @@ class PlaylistRepository extends Repository
         $collaboratedPlaylists = Playlist::query()
             ->join('playlist_collaborators', 'playlists.id', '=', 'playlist_collaborators.playlist_id')
             ->where('playlist_collaborators.user_id', $user->id)
-            ->join('playlist_playlist_folder', 'playlists.id', '=', 'playlist_playlist_folder.playlist_id')
+            ->leftJoin('playlist_playlist_folder', 'playlists.id', '=', 'playlist_playlist_folder.playlist_id')
             ->groupBy('playlists.id')
             ->get(['playlists.*', 'playlist_playlist_folder.folder_id']);
 

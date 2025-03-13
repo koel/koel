@@ -6,6 +6,7 @@ use App\Http\Resources\PlaylistCollaborationTokenResource;
 use App\Http\Resources\PlaylistResource;
 use App\Models\Playlist;
 use App\Models\PlaylistCollaborationToken;
+use App\Models\PlaylistFolder;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
@@ -34,5 +35,30 @@ class PlaylistCollaborationTest extends PlusTestCase
             ->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
 
         self::assertTrue($token->playlist->hasCollaborator($user));
+    }
+
+    #[Test]
+    public function collaboratorsCanAccessSharedPlaylistAtRootLevel(): void
+    {
+        /** @var Playlist $playlist */
+        $playlist = Playlist::factory()->create();
+        $collaborator = create_user();
+
+        $playlist->addCollaborator($collaborator);
+
+        $this->getAs('/api/data', $collaborator)->assertJsonPath('playlists.0.id', $playlist->id);
+    }
+
+    #[Test]
+    public function collaboratorsCanAccessSharedPlaylistInFolder(): void
+    {
+        /** @var Playlist $playlist */
+        $playlist = Playlist::factory()->create();
+        $playlist->folders()->attach(PlaylistFolder::factory()->create());
+        $collaborator = create_user();
+
+        $playlist->addCollaborator($collaborator);
+
+        $this->getAs('/api/data', $collaborator)->assertJsonPath('playlists.0.id', $playlist->id);
     }
 }
