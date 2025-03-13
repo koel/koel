@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\DoctorResult;
 use App\Enums\SongStorageType;
 use App\Facades\License;
 use App\Http\Integrations\Lastfm\LastfmConnector;
@@ -57,8 +58,13 @@ class DoctorCommand extends Command
         }
 
         $this->checkFrameworkDirectoryPermissions();
-        $this->checkMediaStorage();
-        $this->checkDatabaseConnection();
+
+        if ($this->checkDatabaseConnection() === DoctorResult::SUCCESS) {
+            $this->checkMediaStorage();
+        } else {
+            $this->reportWarning('Storage type.', 'UNKNOWN');
+        }
+
         $this->checkFullTextSearch();
         $this->checkApiHealth();
         $this->checkFFMpeg();
@@ -296,14 +302,18 @@ class DoctorCommand extends Command
         }
     }
 
-    private function checkDatabaseConnection(): void
+    private function checkDatabaseConnection(): DoctorResult
     {
         try {
             User::query()->count('id');
             $this->reportSuccess('Checking database connection');
+
+            return DoctorResult::SUCCESS;
         } catch (Throwable $e) {
             $this->collectError($e);
             $this->reportError('Checking database connection');
+
+            return DoctorResult::ERROR;
         }
     }
 
