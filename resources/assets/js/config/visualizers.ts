@@ -44,4 +44,13 @@ export const visualizers: Visualizer[] = [
       url: 'https://github.com/jhugheswebdev/sound-equalizer-threejs',
     },
   },
+  {
+    id: 'butterchurn',
+    name: 'Butterchurn',
+    init: async container => (await import('@/visualizers/butterchurn')).initVisualizer(container),
+    credits: {
+      author: 'Jordan Berg (@jberg)',
+      url: 'https://github.com/jberg/butterchurn',
+    },
+  },
 ]
