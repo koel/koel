@@ -17,7 +17,5 @@ class XSendFileStreamerAdapter extends LocalStreamerAdapter
         header("X-Sendfile: $path");
         header("Content-Type: $contentType");
         header('Content-Disposition: inline; filename="' . basename($path) . '"');
-
-        exit;
     }
 }

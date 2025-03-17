@@ -16,6 +16,21 @@ use function Tests\test_path;
 
 class SongPlayTest extends TestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        // Start output buffering to prevent binary data from being sent to the console during tests
+        ob_start();
+    }
+
+    protected function tearDown(): void
+    {
+        ob_end_clean();
+
+        parent::tearDown();
+    }
+
     #[Test]
     public function play(): void
     {

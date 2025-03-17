@@ -48,6 +48,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 21
+      - run: yarn install && yarn build # Needed for Proxy Auth tests
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -67,7 +71,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: logs
+          name: unit-be-postgres-logs
           path: storage/logs
       - name: Upload coverage
         uses: codecov/codecov-action@v1
