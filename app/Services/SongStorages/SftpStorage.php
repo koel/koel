@@ -26,7 +26,7 @@ final class SftpStorage extends SongStorage
 
     public function storeUploadedFile(UploadedFile $file, User $uploader): Song
     {
-        self::assertSupported();
+        $this->assertSupported();
 
         return DB::transaction(function () use ($file, $uploader): Song {
             $result = $this->scanUploadedFile($this->scanner, $file, $uploader);
@@ -49,20 +49,20 @@ final class SftpStorage extends SongStorage
 
     public function delete(Song $song, bool $backup = false): void
     {
-        self::assertSupported();
+        $this->assertSupported();
         $this->deleteUsingFileSystem(Storage::disk('sftp'), $song, $backup);
     }
 
     public function getSongContent(Song $song): string
     {
-        self::assertSupported();
+        $this->assertSupported();
 
         return Storage::disk('sftp')->get($song->storage_metadata->getPath());
     }
 
     public function copyToLocal(Song $song): string
     {
-        self::assertSupported();
+        $this->assertSupported();
 
         $tmpDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'koel_tmp';
         File::ensureDirectoryExists($tmpDir);

@@ -40,6 +40,8 @@ class S3CompatibleStorageTest extends PlusTestCase
     #[Test]
     public function storingWithVisibilityPreference(): void
     {
+        Storage::fake('s3');
+
         $user = create_user();
 
         $user->preferences->makeUploadsPublic = true;

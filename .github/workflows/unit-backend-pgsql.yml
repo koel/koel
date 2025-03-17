@@ -61,10 +61,6 @@ jobs:
           composer-options: --prefer-dist
       - name: Generate app key
         run: php artisan key:generate --quiet
-      - name: Run code style checker
-        run: composer cs
-      - name: Run static analysis
-        run: composer analyze -- --no-progress
       - name: Run tests
         run: composer coverage
       - name: Upload logs if broken

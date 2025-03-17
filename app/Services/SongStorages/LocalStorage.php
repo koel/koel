@@ -25,7 +25,7 @@ final class LocalStorage extends SongStorage
 
     public function storeUploadedFile(UploadedFile $file, User $uploader): Song
     {
-        self::assertSupported();
+        $this->assertSupported();
 
         $uploadDirectory = $this->getUploadDirectory($uploader);
         $targetFileName = $this->getTargetFileName($file, $uploader);

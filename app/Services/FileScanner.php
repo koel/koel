@@ -12,6 +12,7 @@ use App\Values\SongScanInformation;
 use getID3;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
+use RuntimeException;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 
@@ -181,8 +182,12 @@ class FileScanner
         return $this->isFileNew() || $this->isFileChanged();
     }
 
-    public function getSong(): ?Song
+    public function getSong(): Song
     {
+        if (!$this->song) {
+            throw new RuntimeException('No song model is available.');
+        }
+
         return $this->song;
     }
 }

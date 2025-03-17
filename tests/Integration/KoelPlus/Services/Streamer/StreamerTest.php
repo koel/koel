@@ -12,10 +12,13 @@ use App\Services\Streamer\Streamer;
 use Exception;
 use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Integration\KoelPlus\Services\TestingDropboxStorage;
 use Tests\PlusTestCase;
 
 class StreamerTest extends PlusTestCase
 {
+    use TestingDropboxStorage;
+
     #[Test]
     public function resolveAdapters(): void
     {
@@ -25,6 +28,11 @@ class StreamerTest extends PlusTestCase
             ->each(static function (SongStorageType $type): void {
                 /** @var Song $song */
                 $song = Song::factory()->create(['storage' => $type]);
+
+                if ($type === SongStorageType::DROPBOX) {
+                    self::mockDropboxRefreshAccessTokenCall();
+                }
+
                 $streamer = new Streamer($song);
 
                 switch ($type) {
