@@ -24,7 +24,5 @@ class XAccelRedirectStreamerAdapter extends LocalStreamerAdapter
         header("X-Accel-Redirect: /media/$relativePath");
         header("Content-Type: $contentType");
         header('Content-Disposition: inline; filename="' . basename($path) . '"');
-
-        exit;
     }
 }

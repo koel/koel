@@ -6,7 +6,6 @@ use App\Models\Song as Episode;
 use App\Services\PodcastService;
 use App\Services\Streamer\Adapters\Concerns\StreamsLocalPath;
 use App\Values\Podcast\EpisodePlayable;
-use Illuminate\Http\RedirectResponse;
 use Webmozart\Assert\Assert;
 
 class PodcastStreamerAdapter implements StreamerAdapter
@@ -17,7 +16,8 @@ class PodcastStreamerAdapter implements StreamerAdapter
     {
     }
 
-    public function stream(Episode $song, array $config = []): RedirectResponse
+    /** @inheritDoc */
+    public function stream(Episode $song, array $config = [])
     {
         Assert::true($song->isEpisode());
 

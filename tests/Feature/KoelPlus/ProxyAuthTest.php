@@ -52,7 +52,7 @@ class ProxyAuthTest extends PlusTestCase
 
         self::assertNotNull(PersonalAccessToken::findToken($token['token']));
 
-        self::assertDatabaseHas(User::class, [
+        $this->assertDatabaseHas(User::class, [
             'email' => '123456@reverse.proxy',
             'name' => 'Bruce Dickinson',
             'sso_id' => '123456',

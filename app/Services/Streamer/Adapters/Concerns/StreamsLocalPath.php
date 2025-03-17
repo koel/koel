@@ -16,7 +16,7 @@ use function DaveRandom\Resume\get_request_header;
 
 trait StreamsLocalPath
 {
-    private function streamLocalPath(string $path): never
+    private function streamLocalPath(string $path): void
     {
         try {
             $rangeHeader = get_request_header('Range');
@@ -39,7 +39,5 @@ trait StreamsLocalPath
             abort_unless(headers_sent(), Response::HTTP_INTERNAL_SERVER_ERROR);
             echo "An error occurred while attempting to send the requested resource: {$e->getMessage()}";
         }
-
-        exit;
     }
 }
