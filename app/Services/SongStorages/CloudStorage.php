@@ -20,7 +20,7 @@ abstract class CloudStorage extends SongStorage
 
     public function copyToLocal(Song $song): string
     {
-        self::assertSupported();
+        $this->assertSupported();
 
         $tmpDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'koel_tmp';
         File::ensureDirectoryExists($tmpDir);

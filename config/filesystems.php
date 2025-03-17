@@ -75,9 +75,9 @@ return [
         ],
 
         'dropbox' => [
-            'app_key' => env('DROPBOX_APP_KEY'),
-            'app_secret' => env('DROPBOX_APP_SECRET'),
-            'refresh_token' => env('DROPBOX_REFRESH_TOKEN'),
+            'app_key' => env('DROPBOX_APP_KEY', ''),
+            'app_secret' => env('DROPBOX_APP_SECRET', ''),
+            'refresh_token' => env('DROPBOX_REFRESH_TOKEN', ''),
         ],
 
         'sftp' => [
@@ -85,8 +85,8 @@ return [
             'host' => env('SFTP_HOST'),
             'root' => rtrim(env('SFTP_ROOT') ?? '', '/\\'),
 
-            'username' => env('SFTP_USERNAME'),
-            'password' => env('SFTP_PASSWORD'),
+            'username' => env('SFTP_USERNAME', ''),
+            'password' => env('SFTP_PASSWORD', ''),
 
             'privateKey' => env('SFTP_PRIVATE_KEY'),
             'passphrase' => env('SFTP_PASSPHRASE'),

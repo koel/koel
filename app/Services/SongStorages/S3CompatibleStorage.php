@@ -16,14 +16,14 @@ class S3CompatibleStorage extends CloudStorage
 {
     use DeletesUsingFilesystem;
 
-    public function __construct(protected FileScanner $scanner, private readonly string $bucket)
+    public function __construct(protected FileScanner $scanner, private readonly ?string $bucket)
     {
         parent::__construct($scanner);
     }
 
     public function storeUploadedFile(UploadedFile $file, User $uploader): Song
     {
-        self::assertSupported();
+        $this->assertSupported();
 
         return DB::transaction(function () use ($file, $uploader): Song {
             $result = $this->scanUploadedFile($this->scanner, $file, $uploader);
@@ -45,14 +45,14 @@ class S3CompatibleStorage extends CloudStorage
 
     public function getSongPresignedUrl(Song $song): string
     {
-        self::assertSupported();
+        $this->assertSupported();
 
         return Storage::disk('s3')->temporaryUrl($song->storage_metadata->getPath(), now()->addHour());
     }
 
     public function delete(Song $song, bool $backup = false): void
     {
-        self::assertSupported();
+        $this->assertSupported();
         $this->deleteUsingFileSystem(Storage::disk('s3'), $song, $backup);
     }
 

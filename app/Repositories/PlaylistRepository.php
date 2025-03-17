@@ -16,7 +16,7 @@ class PlaylistRepository extends Repository
         $ownPlaylists = Playlist::query()
             ->where('playlists.user_id', $user->id)
             ->leftJoin('playlist_playlist_folder', 'playlists.id', '=', 'playlist_playlist_folder.playlist_id')
-            ->groupBy('playlists.id')
+            ->groupBy('playlists.id', 'playlist_playlist_folder.folder_id')
             ->get(['playlists.*', 'playlist_playlist_folder.folder_id']);
 
         if (License::isCommunity()) {
@@ -27,7 +27,7 @@ class PlaylistRepository extends Repository
             ->join('playlist_collaborators', 'playlists.id', '=', 'playlist_collaborators.playlist_id')
             ->where('playlist_collaborators.user_id', $user->id)
             ->leftJoin('playlist_playlist_folder', 'playlists.id', '=', 'playlist_playlist_folder.playlist_id')
-            ->groupBy('playlists.id')
+            ->groupBy('playlists.id', 'playlist_playlist_folder.folder_id')
             ->get(['playlists.*', 'playlist_playlist_folder.folder_id']);
 
         return $ownPlaylists->merge($collaboratedPlaylists);

@@ -29,7 +29,7 @@ final class S3LambdaStorage extends S3CompatibleStorage
 
     public function storeUploadedFile(UploadedFile $file, User $uploader): Song
     {
-        self::assertSupported();
+        $this->assertSupported();
 
         throw new MethodNotImplementedException('Lambda storage does not support uploading.');
     }
