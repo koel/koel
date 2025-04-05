@@ -78,12 +78,15 @@ class AlbumRepository extends Repository
             ->get('albums.*');
     }
 
-    public function paginate(?User $user = null): Paginator
+    public function paginate(?User $user = null, ?string $sortField = 'name'): Paginator
     {
+        $validSortFields = ['name', 'year'];
+        $sortField = in_array($sortField, $validSortFields, true) ? $sortField : 'name';
+
         return Album::query()
             ->accessibleBy($user ?? $this->auth->user())
             ->isStandard()
-            ->orderBy('albums.name')
+            ->orderBy("albums.$sortField")
             ->groupBy('albums.id')
             ->distinct()
             ->select('albums.*')
