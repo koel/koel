@@ -309,6 +309,7 @@ interface UserPreferences extends Record<string, any> {
   equalizer: EqualizerPreset
   artists_view_mode: ArtistAlbumViewMode | null
   albums_view_mode: ArtistAlbumViewMode | null
+  albums_sort_mode: AlbumSortMode | null
   transcode_on_mobile: boolean
   transcode_quality: number
   support_bar_no_bugging: boolean
@@ -441,6 +442,8 @@ interface Theme {
 }
 
 type ArtistAlbumViewMode = 'list' | 'thumbnails'
+
+type AlbumSortMode = 'name' | 'year'
 
 type RepeatMode = 'NO_REPEAT' | 'REPEAT_ALL' | 'REPEAT_ONE'
 

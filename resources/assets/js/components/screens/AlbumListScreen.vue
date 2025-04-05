@@ -5,6 +5,7 @@
         Albums
         <template #controls>
           <ViewModeSwitch v-model="viewMode" />
+          <AlbumSortModeSwitch v-model="sortMode" />
         </template>
       </ScreenHeader>
     </template>
@@ -48,6 +49,7 @@ import AlbumCard from '@/components/album/AlbumCard.vue'
 import AlbumCardSkeleton from '@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
+import AlbumSortModeSwitch from '@/components/ui/AlbumSortModeSwitch.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import AlbumGrid from '@/components/ui/album-artist/AlbumOrArtistGrid.vue'
@@ -56,9 +58,11 @@ const { isAdmin } = useAuthorization()
 
 const gridContainer = ref<HTMLDivElement>()
 const viewMode = ref<ArtistAlbumViewMode>('thumbnails')
+const sortMode = ref<AlbumSortMode>('name')
 const albums = toRef(albumStore.state, 'albums')
 
 let initialized = false
+let sortModeChanged = false
 const loading = ref(false)
 const page = ref<number | null>(1)
 
@@ -68,12 +72,16 @@ const moreAlbumsAvailable = computed(() => page.value !== null)
 const showSkeletons = computed(() => loading.value && albums.value.length === 0)
 
 const fetchAlbums = async () => {
-  if (loading.value || !moreAlbumsAvailable.value) {
+  if ((loading.value || !moreAlbumsAvailable.value) && !sortModeChanged) {
     return
+  } else if (sortModeChanged) {
+    page.value = 1
+    albums.value = []
+    sortModeChanged = false
   }
 
   loading.value = true
-  page.value = await albumStore.paginate(page.value!)
+  page.value = await albumStore.paginate(page.value!, { sortMode: sortMode.value })
   loading.value = false
 }
 
@@ -86,6 +94,7 @@ useRouter().onScreenActivated('Albums', async () => {
 
   if (!initialized) {
     viewMode.value = preferences.albums_view_mode || 'thumbnails'
+    sortMode.value = preferences.albums_sort_mode || 'name'
     initialized = true
 
     try {
@@ -98,4 +107,9 @@ useRouter().onScreenActivated('Albums', async () => {
 })
 
 watch(viewMode, () => (preferences.albums_view_mode = viewMode.value))
+watch(sortMode, async () => {
+  preferences.albums_sort_mode = sortMode.value
+  sortModeChanged = true
+  await fetchAlbums()
+})
 </script>
