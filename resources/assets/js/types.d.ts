@@ -131,6 +131,7 @@ interface Album {
   name: string
   cover: string
   thumbnail?: string | null
+  year: number | null
   created_at: string
 }
 
