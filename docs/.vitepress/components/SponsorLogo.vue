@@ -1,5 +1,5 @@
 <template>
-  <a :href="sponsor.url" :title="`${sponsor.name} – ${sponsor.slogan}`">
+  <a :href="sponsor.url" :title="`${sponsor.name} – ${sponsor.slogan}`" target="_blank">
     <img :alt="`${sponsor.name} logo`" :src="sponsor.logo" v-bind="$attrs">
   </a>
 </template>
@@ -15,7 +15,7 @@ interface Sponsor {
 const sponsor = defineProps<Sponsor>()
 
 defineOptions({
-  inheritAttrs: false
+  inheritAttrs: false,
 })
 </script>
 
