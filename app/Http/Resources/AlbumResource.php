@@ -14,6 +14,7 @@ class AlbumResource extends JsonResource
         'artist_id',
         'artist_name',
         'cover',
+        'year',
         'created_at',
     ];
 
@@ -51,6 +52,7 @@ class AlbumResource extends JsonResource
             'artist_id' => $this->album->artist_id,
             'artist_name' => $this->album->artist->name,
             'cover' => $this->album->cover,
+            'year' => $this->album->year,
             'created_at' => $this->album->created_at,
         ];
     }

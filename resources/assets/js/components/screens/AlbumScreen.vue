@@ -16,6 +16,7 @@
             {{ album.artist_name }}
           </a>
           <span v-else class="nope">{{ album.artist_name }}</span>
+          <span v-if="album.year">{{ album.year }}</span>
           <span>{{ pluralize(songs, 'item') }}</span>
           <span>{{ duration }}</span>
 

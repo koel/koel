@@ -26,6 +26,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
         'equalizer',
         'artists_view_mode',
         'albums_view_mode',
+        'albums_sort_mode',
         'theme',
         'show_now_playing_notification',
         'confirm_before_closing',
@@ -48,6 +49,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
         public Equalizer $equalizer,
         public string $artistsViewMode,
         public string $albumsViewMode,
+        public string $albumsSortMode,
         public string $theme,
         public bool $showNowPlayingNotification,
         public bool $confirmBeforeClosing,
@@ -64,6 +66,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
     ) {
         Assert::oneOf($this->repeatMode, ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE']);
         Assert::oneOf($this->artistsViewMode, ['list', 'thumbnails']);
+        Assert::oneOf($this->albumsSortMode, ['name', 'year']);
         Assert::oneOf($this->albumsViewMode, ['list', 'thumbnails']);
         Assert::oneOf($this->activeExtraPanelTab, [null, 'Lyrics', 'Artist', 'Album', 'YouTube']);
 
@@ -80,6 +83,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
             equalizer: isset($data['equalizer']) ? Equalizer::tryMake($data['equalizer']) : Equalizer::default(),
             artistsViewMode: $data['artists_view_mode'] ?? 'thumbnails',
             albumsViewMode: $data['albums_view_mode'] ?? 'thumbnails',
+            albumsSortMode: $data['albums_sort_mode'] ?? 'name',
             theme: $data['theme'] ?? 'classic',
             showNowPlayingNotification: $data['show_now_playing_notification'] ?? true,
             confirmBeforeClosing: $data['confirm_before_closing'] ?? false,
@@ -140,6 +144,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
             'support_bar_no_bugging' => $this->supportBarNoBugging,
             'artists_view_mode' => $this->artistsViewMode,
             'albums_view_mode' => $this->albumsViewMode,
+            'albums_sort_mode' => $this->albumsSortMode,
             'repeat_mode' => $this->repeatMode,
             'volume' => $this->volume,
             'equalizer' => $this->equalizer->toArray(),

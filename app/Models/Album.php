@@ -44,7 +44,7 @@ class Album extends Model
 
     protected $guarded = ['id'];
     protected $hidden = ['updated_at'];
-    protected $casts = ['artist_id' => 'integer'];
+    protected $casts = ['artist_id' => 'integer', 'year' => 'integer'];
 
     protected $with = ['artist'];
 
