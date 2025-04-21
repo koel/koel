@@ -14,11 +14,21 @@ import bgCat from '../img/themes/bg-cat.jpg'
 import thumbCat from '../img/themes/thumbnails/cat.jpg'
 import bgDawn from '../img/themes/bg-dawn.jpg'
 import thumbDawn from '../img/themes/thumbnails/dawn.jpg'
+import thumbMono from '../img/themes/thumbnails/mono.avif'
 
 export default [
   {
     id: 'classic',
     thumbnailColor: '#181818',
+  },
+  {
+    id: 'mono',
+    thumbnailColor: '#181818',
+    thumbnailUrl: thumbMono,
+    properties: {
+      '--font-family': 'ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace',
+      '--color-highlight': '#bc2e2e',
+    },
   },
   {
     id: 'violet',

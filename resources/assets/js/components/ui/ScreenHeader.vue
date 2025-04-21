@@ -13,7 +13,7 @@
         <h1 class="name overflow-hidden whitespace-nowrap text-ellipsis mr-4 font-thin md:font-bold my-0 leading-tight">
           <slot />
         </h1>
-        <span v-if="$slots.meta" class="meta text-k-text-secondary hidden text-[0.9rem] leading-loose">
+        <span v-if="$slots.meta" class="meta text-k-text-secondary hidden text-[0.9rem] leading-loose space-x-2">
           <slot name="meta" />
         </span>
       </div>

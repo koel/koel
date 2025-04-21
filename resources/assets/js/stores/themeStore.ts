@@ -14,6 +14,8 @@ export const themeStore = {
     '--bg-position': undefined,
     '--bg-attachment': undefined,
     '--bg-size': undefined,
+    '--font-family': undefined,
+    '--font-size': undefined,
   } as Record<ThemeableProperty, string | undefined>,
 
   state: reactive({

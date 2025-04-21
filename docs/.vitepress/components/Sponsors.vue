@@ -74,7 +74,6 @@ import followHeroLogo from '../../assets/img/sponsors/followhero.webp'
 div.sponsors {
   border-left: 1px solid var(--vp-c-divider);
   padding-left: 16px;
-  font-size: 13px;
 
   h3 {
     font-size: 14px;
