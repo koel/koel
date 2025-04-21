@@ -50,6 +50,8 @@ new class extends UnitTestCase {
         '--bg-position': '',
         '--bg-attachment': '',
         '--bg-size': '',
+        '--font-family': '',
+        '--font-size': '',
       })
 
       expect(applyMock).toHaveBeenCalled()
