@@ -91,6 +91,85 @@ Koel Plus only requires one license key. If it detects more than one key in the 
 Most of the time this shouldn't cause any problem, but if you're experiencing issues, try emptying the `licenses` table and re-activating your license key.
 :::
 
+## Some Errors I have encountered
+
+---
+
+**Symfony Exception**
+`Vite manifest not found at: /srv/koel/www/public/build/manifest.json (View: /srv/koel/www/resources/views/index.blade.php)`
+
+**Explanation**
+Vite needs to build its assets. This can be done by either executing 
+`npm run build` 
+or 
+`node /srv/koel/www/node_modules/vite/bin/vite.js build` 
+
+**Solution:**
+
+```bash
+sudo su -l koel
+cd /srv/koel/www
+npm install
+npm audit fix
+npm install # yes again
+npm run build
+```
+
+---
+
+***File does not exist at path /srv/koel/www/.version***
+copy it from github
+
+---
+
+***Database connection does not work? Using postgres?***
+
+here you will be greeted with the koel installation wizard over and over again
+
+   ```bash
+   ************************************
+   *     KOEL INSTALLATION WIZARD     *
+   ************************************
+
+   As a reminder, you can always install/upgrade manually following the guide at https://docs.koel.dev
+
+   Clearing caches ............................... 5ms DONE
+   .env file exists -- skipping .................. DONE
+   Retrieving app key ............................ 0ms DONE
+   Using app key: base64:uIq4Ft3m7.. ............. DONE
+
+   WARN  Cannot connect to the database. Let's set it up.
+
+   Your DB driver of choice [MySQL/MariaDB]:
+    [mysql     ] MySQL/MariaDB
+    [pgsql     ] PostgreSQL
+    [sqlsrv    ] SQL Server
+    [sqlite-e2e] SQLite
+   > pgsql
+
+   DB host:
+   > localhost
+
+   DB port (leave empty for default):
+   > 5432
+
+   DB name:
+   > koel
+
+   DB user:
+   > koel
+
+   DB password:
+   > *************************
+   ```
+
+
+Check if you installed 
+
+php-pgsql
+
+i.e. php-pgsql-0:8.3.20-1.fc42.remi.x86_64 on fedora 
+
 ## Reinstalling Koel
 
 In the worst case scenario, you can always reinstall Koel. Although Koel doesn't provide a built-in way to reinstall itself, you can do so manually by following these steps:
