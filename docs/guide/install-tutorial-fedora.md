@@ -192,7 +192,7 @@ Example config can be found here:
    Run Certbot to automatically configure SSL for your Koel domain:
 
    ```bash
-   sudo certbot --nginx -m koel@koel.example -d koel.example.com,www.koel.example.com
+   sudo certbot certonly --nginx -m koel@koel.example -d koel.example.com,www.koel.example.com
    ```
 
    After successfully obtaining the certificate, you should see:
