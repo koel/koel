@@ -1,6 +1,6 @@
 import { computed } from 'vue'
 import { commonStore } from '@/stores/commonStore'
-import { acceptedMediaTypes } from '@/config/acceptedMediaTypes'
+import { acceptsFile } from '@/utils/mediaHelper'
 import type { UploadFile } from '@/services/uploadService'
 import { uploadService } from '@/services/uploadService'
 import { getAllFileEntries } from '@/utils/directoryReader'
@@ -25,7 +25,7 @@ export const useUpload = () => {
 
   const queueFilesForUpload = (files: Array<File>) => {
     const uploadCandidates = files
-      .filter(({ type }) => acceptedMediaTypes.includes(type))
+      .filter(async file => await acceptsFile(file))
       .map((file): UploadFile => ({
         file,
         id: `${file.name}-${file.size}`, // for simplicity, a file's identity is determined by its name and size

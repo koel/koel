@@ -41,7 +41,7 @@ final class SongScanInformation implements Arrayable
 
         // If the song is explicitly marked as a compilation but there's no album artist name, use the umbrella
         // "Various Artists" artist.
-        if (self::getTag($tags, 'part_of_a_compilation') && !$albumArtistName) {
+        if (!$albumArtistName && self::getTag($tags, 'part_of_a_compilation')) {
             $albumArtistName = Artist::VARIOUS_NAME;
         }
 
@@ -76,10 +76,8 @@ final class SongScanInformation implements Arrayable
 
     private static function getTag(array $arr, string|array $keys, $default = ''): mixed
     {
-        $keys = Arr::wrap($keys);
-
-        for ($i = 0, $j = count($keys); $i < $j; ++$i) {
-            $value = Arr::get($arr, $keys[$i] . '.0');
+        foreach (Arr::wrap($keys) as $name) {
+            $value = Arr::get($arr, $name . '.0');
 
             if ($value) {
                 break;
