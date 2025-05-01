@@ -14,6 +14,7 @@ use App\Services\Streamer\Adapters\StreamerAdapter;
 use App\Services\Streamer\Adapters\TranscodingStreamerAdapter;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class Streamer
@@ -65,9 +66,25 @@ class Streamer
             return true;
         }
 
-        return Str::endsWith(File::mimeType($this->song->storage_metadata->getPath()), 'flac')
-            && config('koel.streaming.transcode_flac')
-            && self::hasValidFfmpegInstallation();
+        if (!self::hasValidFfmpegInstallation()) {
+            Log::warning('No FFmpeg installation available.');
+
+            return false;
+        }
+
+        $mimeType = File::mimeType($this->song->storage_metadata->getPath());
+
+        if (Str::endsWith($mimeType, 'flac') && config('koel.streaming.transcode_flac')) {
+            return true;
+        }
+
+        foreach (config('koel.supported_formats') as $format) {
+            if (Str::endsWith($mimeType, $format)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static function hasValidFfmpegInstallation(): bool

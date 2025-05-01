@@ -7,6 +7,7 @@ use App\Http\Resources\PlaylistFolderResource;
 use App\Http\Resources\PlaylistResource;
 use App\Http\Resources\QueueStateResource;
 use App\Http\Resources\UserResource;
+use App\Models\Setting;
 use App\Models\User;
 use App\Repositories\PlaylistRepository;
 use App\Repositories\SettingRepository;
@@ -46,7 +47,7 @@ class FetchInitialDataController extends Controller
             'uses_i_tunes' => $iTunesService->used(),
             'allows_download' => config('koel.download.allow'),
             'supports_batch_downloading' => extension_loaded('zip'),
-            'media_path_set' => (bool) $settingRepository->getByKey('media_path'),
+            'media_path_set' => (bool) Setting::get('media_path'),
             'supports_transcoding' => config('koel.streaming.ffmpeg_path')
                 && is_executable(config('koel.streaming.ffmpeg_path')),
             'cdn_url' => static_url(),

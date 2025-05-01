@@ -2,27 +2,25 @@
 
 namespace App\Services;
 
+use App\Enums\ScanEvent;
 use App\Events\LibraryChanged;
 use App\Events\MediaScanCompleted;
+use App\Models\Setting;
 use App\Models\Song;
-use App\Repositories\SettingRepository;
 use App\Repositories\SongRepository;
 use App\Values\ScanConfiguration;
-use App\Values\ScanResult;
 use App\Values\ScanResultCollection;
 use App\Values\WatchRecord\Contracts\WatchRecordInterface;
 use Illuminate\Support\Facades\Log;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
-use Throwable;
 
 class MediaScanner
 {
-    /** @var array<array-key, callable> */
+    /** @var array<string, callable> */
     private array $events = [];
 
     public function __construct(
-        private readonly SettingRepository $settingRepository,
         private readonly SongRepository $songRepository,
         private readonly FileScanner $fileScanner,
         private readonly Finder $finder
@@ -31,29 +29,22 @@ class MediaScanner
 
     public function scan(ScanConfiguration $config): ScanResultCollection
     {
-        /** @var string $mediaPath */
-        $mediaPath = $this->settingRepository->getByKey('media_path');
-
         $this->setSystemRequirements();
 
-        $results = ScanResultCollection::create();
-        $songPaths = $this->gatherFiles($mediaPath);
+        $songPaths = $this->gatherFiles((string) Setting::get('media_path'));
 
-        if (isset($this->events['paths-gathered'])) {
-            $this->events['paths-gathered']($songPaths);
+        if (isset($this->events[ScanEvent::PATHS_GATHERED->name])) {
+            $this->events[ScanEvent::PATHS_GATHERED->name]($songPaths);
         }
 
-        foreach ($songPaths as $path) {
-            try {
-                $result = $this->fileScanner->setFile($path)->scan($config);
-            } catch (Throwable) {
-                $result = ScanResult::error($path, 'Possible invalid file');
-            }
+        $results = ScanResultCollection::create();
 
+        foreach ($songPaths as $path) {
+            $result = $this->fileScanner->setFile($path)->scan($config);
             $results->add($result);
 
-            if (isset($this->events['progress'])) {
-                $this->events['progress']($result);
+            if (isset($this->events[ScanEvent::SCAN_PROGRESS->name])) {
+                $this->events[ScanEvent::SCAN_PROGRESS->name]($result);
             }
         }
 
@@ -74,13 +65,15 @@ class MediaScanner
      */
     private function gatherFiles(string $path): array
     {
+        $nameRegex = '/\.(' . implode('|', config('koel.supported_formats')) . ')$/i';
+
         return iterator_to_array(
-            $this->finder->create()
+            $this->finder::create()
                 ->ignoreUnreadableDirs()
                 ->ignoreDotFiles((bool) config('koel.ignore_dot_files')) // https://github.com/koel/koel/issues/450
                 ->files()
                 ->followLinks()
-                ->name('/\.(mp3|wav|ogg|m4a|flac|opus)$/i')
+                ->name($nameRegex)
                 ->in($path)
         );
     }
@@ -145,9 +138,7 @@ class MediaScanner
 
     private function handleNewOrModifiedFileRecord(string $path, ScanConfiguration $config): void
     {
-        $result = $this->fileScanner->setFile($path)->scan($config);
-
-        if ($result->isSuccess()) {
+        if ($this->fileScanner->setFile($path)->scan($config)->isSuccess()) {
             Log::info("Scanned $path");
         } else {
             Log::info("Failed to scan $path. Maybe an invalid file?");
@@ -170,11 +161,7 @@ class MediaScanner
         $scanResults = ScanResultCollection::create();
 
         foreach ($this->gatherFiles($path) as $file) {
-            try {
-                $scanResults->add($this->fileScanner->setFile($file)->scan($config));
-            } catch (Throwable) {
-                $scanResults->add(ScanResult::error($file->getRealPath(), 'Possible invalid file'));
-            }
+            $scanResults->add($this->fileScanner->setFile($file)->scan($config));
         }
 
         Log::info("Scanned all song(s) under $path");
@@ -182,8 +169,8 @@ class MediaScanner
         event(new MediaScanCompleted($scanResults));
     }
 
-    public function on(string $event, callable $callback): void
+    public function on(ScanEvent $event, callable $callback): void
     {
-        $this->events[$event] = $callback;
+        $this->events[$event->name] = $callback;
     }
 }
