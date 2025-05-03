@@ -1,0 +1,124 @@
+APP_NAME=Koel
+APP_ENV=production
+#APP_DEBUG=false
+APP_DEBUG=true
+APP_URL=https://koel.example/
+APP_KEY=
+
+# IMPORTANT: This value must present for `artisan koel:init` command to work.
+DB_CONNECTION=pgsql
+DB_HOST=localhost
+DB_PORT=5432
+DB_DATABASE=koel
+DB_USERNAME=koel
+DB_PASSWORD=**************************
+
+# The storage driver. Valid values are:
+# local: Store files on the server's local filesystem.
+STORAGE_DRIVER=local
+
+
+# The ABSOLUTE path to your media. This value can always be changed later via the web interface.
+# Required if you're using the local file system to store your media (STORAGE_DRIVER=local).
+MEDIA_PATH=/srv/koel/media
+
+
+# By default, Koel ignores dot files and folders. This greatly improves performance if your media
+# root have folders like .git or .cache. If by any chance your media files are under a dot folder,
+# set the following setting to false.
+IGNORE_DOT_FILES=true
+
+
+# The maximum scan time, in seconds. Increase this if you have a huge library.
+# Note: This setting doesn't have effect when scanning via koel:sync.
+APP_MAX_SCAN_TIME=600
+
+
+# The memory limit, in MB, used by the scanning process.
+# For example, if you want to set a memory limit of 2048MB, enter "2048" (without
+# quotes) here.
+MEMORY_LIMIT=1536
+
+
+# The streaming method.
+# Can be either 'php' (default), 'x-sendfile', or 'x-accel-redirect'
+# See https://docs.koel.dev/usage/streaming for more information.
+# Note: This setting doesn't have effect if the media needs transcoding (e.g. FLAC).
+# ##################################################
+# It's HIGHLY recommended to use 'x-sendfile' or 'x-accel-redirect' if
+# you plan to use the Koel mobile apps.
+# ##################################################
+STREAMING_METHOD=php
+
+
+# Full text search driver.
+# Koel supports all drivers supported by Laravel (see https://laravel.com/docs/9.x/scout).
+# Available drivers: 'tntsearch' (default), 'database', 'algolia' or 'meilisearch'.
+# For Algolia or MeiliSearch, you need to provide the corresponding credentials.
+SCOUT_DRIVER=tntsearch
+
+# To transcode FLAC to MP3 and stream it on the fly, make sure the following settings are sane.
+# If you don't want to transcode FLAC (i.e. to stream it as-is), set this to false.
+TRANSCODE_FLAC=false
+
+# The full path of ffmpeg binary.
+FFMPEG_PATH=/usr/local/bin/ffmpeg
+
+
+# The bit rate of the output mp3 stream. Higher value results in better quality,
+# but slower streaming and more bandwidth.
+OUTPUT_BIT_RATE=320
+
+# Whether to allow song downloading.
+# Note that if you're downloading more than one song, Koel will zip them up
+# using PHP's ZipArchive. So if the module isn't available in the current
+# environment, such a download will (silently) fail.
+ALLOW_DOWNLOAD=true
+
+
+# Whether to create a backup of a song when deleting it from the filesystem.
+BACKUP_ON_DELETE=true
+
+
+# Koel can be configured to authenticate users via a reverse proxy.
+# To enable this feature, set PROXY_AUTH_ENABLED to true and provide the necessary configuration below.
+PROXY_AUTH_ENABLED=false
+# The header name that contains the unique identifier for the user
+PROXY_AUTH_USER_HEADER=remote-user
+# The header name that contains the user's preferred, humanly-readable name
+PROXY_AUTH_PREFERRED_NAME_HEADER=remote-preferred-name
+# A comma-separated list of allowed proxy IPs or CIDRs, for example, 10.10.1.0/24 or 2001:0db8:/32
+# If empty, NO requests will be allowed (which means proxy authentication is disabled).
+PROXY_AUTH_ALLOW_LIST=
+
+
+# Sync logs can be found under storage/logs/. Valid options are:
+# all: Log everything (errored-, skipped-, and successfully processed file).
+# error: Log errors only. This is the default.
+SYNC_LOG_LEVEL=error
+
+
+# Koel attempts to detect if your website uses HTTPS and generates secure URLs accordingly.
+# If this attempt fails for any reason, you can force it by setting this value to true.
+FORCE_HTTPS=
+
+
+# The following settings are for Koel to send emails, for example to send user invitations and reset passwords.
+MAIL_FROM_ADDRESS="koel@koel.example"
+MAIL_FROM_NAME="${APP_NAME}"
+MAIL_MAILER=log
+MAIL_HOST=mailhog
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+
+
+# The variables below are Laravel-specific.
+# You can change them if you know what you're doing. Otherwise, just leave them as-is.
+BROADCAST_DRIVER=log
+CACHE_DRIVER=file
+FILESYSTEM_DISK=local
+QUEUE_CONNECTION=sync
+SESSION_DRIVER=file
+SESSION_LIFETIME=120

@@ -12,6 +12,9 @@ bower_components
 /CHANGE
 koel.db
 
+#private folders for notes configs etc
+private/
+
 ### Node ###
 # Logs
 *.log
