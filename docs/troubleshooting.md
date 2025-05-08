@@ -113,11 +113,13 @@ itself, you can do so manually by following these steps:
 
 1. Backup your database
 2. Have you backed up your database yet?
-3. No seriously, make sure you have a backup of your database
-4. Back up the `public/img` directory. This is where your album art, artist images, user avatars etc. are stored.
-5. Delete or empty the root Koel directory
-6. Follow the [installation guide](guide/getting-started#installation) to install Koel afresh
-7. Restore your database and the `public/img` directory
+3. No, seriously, make sure you have a backup of your database
+4. (Koel Plus only) [Deactivate](plus/purchase-activation.md#deactivation) your Koel Plus license
+5. Back up the `public/img` directory. This is where your album art, artist images, user avatars, etc. are stored.
+6. Delete or empty the root Koel directory
+7. Follow the [installation guide](guide/getting-started#installation) to install Koel afresh
+8. Restore your database and the `public/img` directory
+9. (Koel Plus only) [Reactivate](plus/purchase-activation.md#activation) your Koel Plus license
 
 By now you should have a fresh Koel installation with all your data intact and hopefully without the issue you were
 facing.
