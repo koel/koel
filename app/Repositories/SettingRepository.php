@@ -12,9 +12,4 @@ class SettingRepository extends Repository
     {
         return $this->modelClass::query()->pluck('value', 'key')->toArray();
     }
-
-    public function getByKey(string $key): mixed
-    {
-        return Setting::get($key);
-    }
 }

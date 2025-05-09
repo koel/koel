@@ -155,4 +155,7 @@ return [
         'sponsor_open_collective_url' => 'https://opencollective.com/koel',
         'demo' => env('KOEL_DEMO', false),
     ],
+
+    'supported_formats' => ['mp3', 'wav', 'ogg', 'm4a', 'flac', 'opus', 'aiff'],
+    'transcode_required_formats' => ['aiff'],
 ];

@@ -69,7 +69,7 @@ import { faRotateRight, faTrashCan, faUpload, faWarning } from '@fortawesome/fre
 import { computed, defineAsyncComponent, ref, toRef } from 'vue'
 
 import { isDirectoryReadingSupported as canDropFolders } from '@/utils/supports'
-import { acceptedMediaTypes } from '@/config/acceptedMediaTypes'
+import { acceptedMediaTypes } from '@/utils/mediaHelper'
 import { uploadService } from '@/services/uploadService'
 import { useUpload } from '@/composables/useUpload'
 

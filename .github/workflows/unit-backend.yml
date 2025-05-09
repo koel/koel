@@ -51,7 +51,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: unit-be-logs
+          name: unit-be-logs-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
           path: storage/logs
       - name: Upload coverage
         uses: codecov/codecov-action@v1

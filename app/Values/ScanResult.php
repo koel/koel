@@ -15,12 +15,12 @@ final class ScanResult
 
     public static function success(string $path): self
     {
-        return new self($path, ScanResultType::SUCCESS, null);
+        return new self($path, ScanResultType::SUCCESS);
     }
 
     public static function skipped(string $path): self
     {
-        return new self($path, ScanResultType::SKIPPED, null);
+        return new self($path, ScanResultType::SKIPPED);
     }
 
     public static function error(string $path, ?string $error = null): self

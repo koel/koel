@@ -1,9 +1,11 @@
 <template>
-  <div class="w-full pointer-events-none h-0.5 fixed z-50 top-0 left-0">
-    <div class="bg-k-highlight marquee absolute h-full w-1/3" />
-  </div>
-  <div class="w-full h-full skeleton p-4">
-    <div class="w-full h-full pulse rounded-md" />
+  <div>
+    <div class="w-full pointer-events-none h-0.5 fixed z-50 top-0 left-0">
+      <div class="bg-k-highlight marquee absolute h-full w-1/3" />
+    </div>
+    <div class="w-full h-full skeleton p-4">
+      <div class="w-full h-full pulse rounded-md" />
+    </div>
   </div>
 </template>
 

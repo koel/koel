@@ -52,7 +52,7 @@ declare module 'nouislider' {
 }
 
 interface Constructable<T> {
-  new (...args: any): T
+  new(...args: any): T
 }
 
 type MaybeArray<T> = T | T[]
@@ -431,6 +431,8 @@ type ThemeableProperty = '--color-text-primary'
   | '--bg-position'
   | '--bg-attachment'
   | '--bg-size'
+  | '--font-family'
+  | '--font-size'
 
 interface Theme {
   id: string
