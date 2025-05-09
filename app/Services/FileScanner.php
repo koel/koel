@@ -91,6 +91,8 @@ class FileScanner
             /** @var Album $album */
             $album = Arr::get($info, 'album') ? Album::getOrCreate($albumArtist, $info['album']) : $this->song->album;
 
+            $this->setAlbumReleaseYear($album, $info);
+
             if (!$album->has_cover && !in_array('cover', $config->ignores, true)) {
                 $this->tryGenerateAlbumCover($album, Arr::get($info, 'cover', []));
             }
@@ -111,6 +113,25 @@ class FileScanner
             return ScanResult::success($this->filePath);
         } catch (Throwable) {
             return ScanResult::error($this->filePath, 'Possible invalid file');
+        }
+    }
+
+    /**
+     * Try to set album's release year from song metadata if available.
+     *
+     * @param Album $album
+     * @param array<mixed> $songScanInfo
+     */
+    private function setAlbumReleaseYear(Album $album, array $songScanInfo): void
+    {
+        if ($album->year) {
+            return;
+        }
+
+        $year = Arr::get($songScanInfo, 'year');
+
+        if ($year && is_numeric($year)) {
+            $album->year = $year;
         }
     }
 
