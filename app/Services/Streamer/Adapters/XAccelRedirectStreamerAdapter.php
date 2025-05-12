@@ -4,6 +4,7 @@ namespace App\Services\Streamer\Adapters;
 
 use App\Models\Setting;
 use App\Models\Song;
+use App\Values\RequestedStreamingConfig;
 
 class XAccelRedirectStreamerAdapter extends LocalStreamerAdapter
 {
@@ -11,13 +12,13 @@ class XAccelRedirectStreamerAdapter extends LocalStreamerAdapter
      * Stream the current song using nginx's X-Accel-Redirect.
      * @link https://www.nginx.com/resources/wiki/start/topics/examples/xsendfile/
      */
-    public function stream(Song $song, array $config = []): void
+    public function stream(Song $song, ?RequestedStreamingConfig $config = null): void
     {
         $path = $song->storage_metadata->getPath();
         $contentType = 'audio/' . pathinfo($path, PATHINFO_EXTENSION);
         $relativePath = str_replace(Setting::get('media_path'), '', $path);
 
-        // We send our media_path value as a 'X-Media-Root' header to downstream (nginx)
+        // We send our media_path value as an 'X-Media-Root' header to downstream (nginx)
         // It will then be use as `alias` in X-Accel config location block.
         // See nginx.conf.example.
         header('X-Media-Root: ' . Setting::get('media_path'));

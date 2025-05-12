@@ -9,7 +9,6 @@ use App\Services\Streamer\Adapters\LocalStreamerAdapter;
 use App\Services\Streamer\Adapters\S3CompatibleStreamerAdapter;
 use App\Services\Streamer\Adapters\SftpStreamerAdapter;
 use App\Services\Streamer\Streamer;
-use Exception;
 use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Integration\KoelPlus\Services\TestingDropboxStorage;
@@ -54,7 +53,7 @@ class StreamerTest extends PlusTestCase
                         break;
 
                     default:
-                        throw new Exception('Storage type not covered by tests: ' . $type->value);
+                        self::fail("Storage type not covered by tests: $type->value");
                 }
             });
     }

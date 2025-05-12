@@ -52,7 +52,7 @@
 
 <script lang="ts" setup>
 import { faPodcast } from '@fortawesome/free-solid-svg-icons'
-import { computed, toRefs, withDefaults } from 'vue'
+import { computed, toRefs } from 'vue'
 import { getPlayableProp, requireInjection } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
 import { secondsToHis } from '@/utils/formatters'

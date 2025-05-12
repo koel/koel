@@ -12,7 +12,7 @@ use App\Services\Streamer\Adapters\S3CompatibleStreamerAdapter;
 use App\Services\Streamer\Adapters\SftpStreamerAdapter;
 use App\Services\Streamer\Adapters\StreamerAdapter;
 use App\Services\Streamer\Adapters\TranscodingStreamerAdapter;
-use Illuminate\Support\Arr;
+use App\Values\RequestedStreamingConfig;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -22,11 +22,8 @@ class Streamer
     public function __construct(
         private readonly Song $song,
         private ?StreamerAdapter $adapter = null,
-        private readonly array $config = []
+        private readonly ?RequestedStreamingConfig $config = null
     ) {
-        // Turn off error reporting to make sure our stream isn't interfered.
-        @error_reporting(0);
-
         $this->adapter ??= $this->resolveAdapter();
     }
 
@@ -52,6 +49,9 @@ class Streamer
 
     public function stream(): mixed
     {
+        // Turn off error reporting to make sure our stream isn't interfered.
+        @error_reporting(0);
+
         return $this->adapter->stream($this->song, $this->config);
     }
 
@@ -62,7 +62,7 @@ class Streamer
             return false;
         }
 
-        if (Arr::get($this->config, 'transcode', false)) {
+        if ($this->config?->transcode) {
             return true;
         }
 
@@ -78,7 +78,7 @@ class Streamer
             return true;
         }
 
-        foreach (config('koel.transcode_required_formats') as $format) {
+        foreach (config('koel.transcode_required_formats', []) as $format) {
             if (Str::endsWith($mimeType, $format)) {
                 return true;
             }

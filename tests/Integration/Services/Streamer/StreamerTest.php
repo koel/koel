@@ -13,7 +13,7 @@ use App\Services\Streamer\Adapters\TranscodingStreamerAdapter;
 use App\Services\Streamer\Adapters\XAccelRedirectStreamerAdapter;
 use App\Services\Streamer\Adapters\XSendFileStreamerAdapter;
 use App\Services\Streamer\Streamer;
-use Exception;
+use App\Values\RequestedStreamingConfig;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -27,7 +27,7 @@ class StreamerTest extends TestCase
     #[Test]
     public function resolveAdapters(): void
     {
-        // prevent real HTTP calls from being made e.g. from DropboxStorage
+        // prevent real HTTP calls from being made, e.g., from DropboxStorage
         Http::fake();
 
         collect(SongStorageType::cases())
@@ -51,35 +51,58 @@ class StreamerTest extends TestCase
                         break;
 
                     default:
-                        throw new Exception('Storage type uncovered by tests.');
+                        self::fail("Storage type not covered by tests: $type->value");
                 }
             });
     }
 
     #[Test]
-    public function resolveTranscodingAdapter(): void
+    public function doNotUseTranscodingAdapterToPlayFlacIfConfiguredSo(): void
     {
-        config(['koel.streaming.transcode_flac' => true]);
-
         File::partialMock()->shouldReceive('mimeType')->andReturn('audio/flac');
 
-        /** @var Song $song */
-        $song = Song::factory()->make(['path' => test_path('songs/blank.mp3')]);
-        self::assertInstanceOf(TranscodingStreamerAdapter::class, (new Streamer($song))->getAdapter());
-
+        $backup = config('koel.streaming.transcode_flac');
         config(['koel.streaming.transcode_flac' => false]);
+
+        /** @var Song $song */
+        $song = Song::factory()->create(['storage' => SongStorageType::LOCAL]);
+
+        $streamer = new Streamer($song, null);
+
+        self::assertInstanceOf(LocalStreamerAdapter::class, $streamer->getAdapter());
+
+        config(['koel.streaming.transcode_flac' => $backup]);
     }
 
     #[Test]
-    public function forceTranscodingAdapter(): void
+    public function useTranscodingAdapterToPlayFlacIfConfiguredSo(): void
     {
-        /** @var Song $song */
-        $song = Song::factory()->make(['path' => test_path('songs/blank.mp3')]);
+        File::partialMock()->shouldReceive('mimeType')->andReturn('audio/flac');
 
-        self::assertInstanceOf(
-            TranscodingStreamerAdapter::class,
-            (new Streamer($song, null, ['transcode' => true]))->getAdapter()
-        );
+        /** @var Song $song */
+        $song = Song::factory()->create(['storage' => SongStorageType::LOCAL]);
+
+        $streamer = new Streamer($song, null, RequestedStreamingConfig::make(transcode: true));
+
+        self::assertInstanceOf(TranscodingStreamerAdapter::class, $streamer->getAdapter());
+    }
+
+    #[Test]
+    public function useTranscodingAdapterIfSongMimeTypeRequiresTranscoding(): void
+    {
+        $backupConfig = config('koel.transcode_required_formats');
+        config(['koel.transcode_required_formats' => ['aiff']]);
+
+        File::partialMock()->shouldReceive('mimeType')->andReturn('audio/aiff');
+
+        /** @var Song $song */
+        $song = Song::factory()->create(['storage' => SongStorageType::LOCAL]);
+
+        $streamer = new Streamer($song, null);
+
+        self::assertInstanceOf(TranscodingStreamerAdapter::class, $streamer->getAdapter());
+
+        config(['koel.transcode_required_formats' => $backupConfig]);
     }
 
     /** @return array<mixed> */
