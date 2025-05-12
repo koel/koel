@@ -78,7 +78,7 @@ class Streamer
             return true;
         }
 
-        foreach (config('koel.supported_formats') as $format) {
+        foreach (config('koel.transcode_required_formats') as $format) {
             if (Str::endsWith($mimeType, $format)) {
                 return true;
             }
