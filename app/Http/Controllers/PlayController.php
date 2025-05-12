@@ -6,6 +6,7 @@ use App\Http\Requests\SongPlayRequest;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\Streamer\Streamer;
+use App\Values\RequestedStreamingConfig;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class PlayController extends Controller
@@ -15,10 +16,13 @@ class PlayController extends Controller
     {
         $this->authorize('access', $song);
 
-        return (new Streamer(song: $song, config: [
-            'transcode' => (bool) $transcode,
-            'bit_rate' => $user->preferences->transcodeQuality,
-            'start_time' => (float) $request->time,
-        ]))->stream();
+        return (new Streamer(
+            song: $song,
+            config: RequestedStreamingConfig::make(
+                transcode: (bool) $transcode,
+                bitRate: (int) filter_var($user->preferences->transcodeQuality, FILTER_SANITIZE_NUMBER_INT),
+                startTime: (float) $request->time
+            )
+        ))->stream();
     }
 }

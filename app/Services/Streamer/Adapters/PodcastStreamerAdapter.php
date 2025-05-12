@@ -6,6 +6,7 @@ use App\Models\Song as Episode;
 use App\Services\PodcastService;
 use App\Services\Streamer\Adapters\Concerns\StreamsLocalPath;
 use App\Values\Podcast\EpisodePlayable;
+use App\Values\RequestedStreamingConfig;
 use Webmozart\Assert\Assert;
 
 class PodcastStreamerAdapter implements StreamerAdapter
@@ -17,7 +18,7 @@ class PodcastStreamerAdapter implements StreamerAdapter
     }
 
     /** @inheritDoc */
-    public function stream(Episode $song, array $config = [])
+    public function stream(Episode $song, ?RequestedStreamingConfig $config = null)
     {
         Assert::true($song->isEpisode());
 
