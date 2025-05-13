@@ -101,12 +101,16 @@ class FileScanner
             $data['is_public'] = $config->makePublic;
 
             if ($this->isFileNew()) {
-                // Only set the owner if the song is new i.e. don't override the owner if the song is being updated.
+                // Only set the owner if the song is new, i.e., don't override the owner if the song is being updated.
                 $data['owner_id'] = $config->owner->id;
             }
 
             // @todo Decouple song creation from scanning.
             $this->song = Song::query()->updateOrCreate(['path' => $this->filePath], $data); // @phpstan-ignore-line
+
+            if (!$album->year && $this->song->year) {
+                $album->update(['year' => $this->song->year]);
+            }
 
             return ScanResult::success($this->filePath);
         } catch (Throwable) {
