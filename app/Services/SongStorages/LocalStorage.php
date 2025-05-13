@@ -13,6 +13,7 @@ use App\Values\ScanConfiguration;
 use Exception;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Throwable;
 
 use function Functional\memoize;
@@ -87,7 +88,7 @@ final class LocalStorage extends SongStorage
 
     private function getUniqueHash(): string
     {
-        return substr(sha1(uniqid()), 0, 6);
+        return Str::take(sha1(Str::uuid()), 6);
     }
 
     public function delete(Song $song, bool $backup = false): void
