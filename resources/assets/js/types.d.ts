@@ -132,6 +132,7 @@ interface Album {
   cover: string
   thumbnail?: string | null
   created_at: string
+  year: number | null
 }
 
 interface Playable {
@@ -308,6 +309,8 @@ interface UserPreferences extends Record<string, any> {
   equalizer: EqualizerPreset
   artists_view_mode: ArtistAlbumViewMode | null
   albums_view_mode: ArtistAlbumViewMode | null
+  albums_sort_field: AlbumListSortField
+  albums_sort_order: SortOrder
   transcode_on_mobile: boolean
   transcode_quality: number
   support_bar_no_bugging: boolean
@@ -464,6 +467,7 @@ type PlayableListSortField =
   | 'position'
 
 type PodcastListSortField = keyof Pick<Podcast, 'title' | 'last_played_at' | 'subscribed_at' | 'author'>
+type AlbumListSortField = keyof Pick<Album, 'name' | 'year' | 'artist_name'>
 
 type SortOrder = 'asc' | 'desc'
 type MoveType = 'before' | 'after'

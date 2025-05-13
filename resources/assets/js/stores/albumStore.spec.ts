@@ -86,7 +86,7 @@ new class extends UnitTestCase {
       expect(await albumStore.resolve(album.id)).toEqual(album)
       expect(getMock).toHaveBeenCalledWith(`albums/${album.id}`)
 
-      // next call shouldn't make another request
+      // the next call shouldn't make another request
       expect(await albumStore.resolve(album.id)).toEqual(album)
       expect(getMock).toHaveBeenCalledOnce()
     })
@@ -104,7 +104,12 @@ new class extends UnitTestCase {
         },
       })
 
-      expect(await albumStore.paginate(1)).toEqual(2)
+      expect(await albumStore.paginate({
+        sort: 'name',
+        order: 'asc',
+        page: 1,
+      })).toEqual(2)
+
       expect(albumStore.state.albums).toEqual(albums)
       expect(albumStore.vault.size).toBe(3)
     })
