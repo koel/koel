@@ -78,15 +78,15 @@ class AlbumRepository extends Repository
             ->get('albums.*');
     }
 
-    public function paginate(?User $user = null): Paginator
+    public function getForListing(string $sortColumn, string $sortDirection, ?User $user = null): Paginator
     {
         return Album::query()
             ->accessibleBy($user ?? $this->auth->user())
             ->isStandard()
-            ->orderBy('albums.name')
-            ->groupBy('albums.id')
+            ->sort($sortColumn, $sortDirection)
+            ->groupBy('albums.id', 'artists.name')
             ->distinct()
-            ->select('albums.*')
+            ->select('albums.*', 'artists.name as artist_name')
             ->simplePaginate(21);
     }
 }

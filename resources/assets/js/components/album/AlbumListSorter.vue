@@ -37,10 +37,10 @@ import { onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
 import { useBasicSorter } from '@/composables/useBasicSorter'
 
 const props = withDefaults(defineProps<{
-  field?: PodcastListSortField
+  field?: AlbumListSortField
   order?: SortOrder
 }>(), {
-  field: 'last_played_at',
+  field: 'name',
   order: 'asc',
 })
 
@@ -49,11 +49,10 @@ const { field, order } = toRefs(props)
 const button = ref<HTMLButtonElement>()
 const menu = ref<HTMLDivElement>()
 
-const items: { label: string, field: PodcastListSortField }[] = [
-  { label: 'Last played', field: 'last_played_at' },
-  { label: 'Subscribed', field: 'subscribed_at' },
-  { label: 'Title', field: 'title' },
-  { label: 'Author', field: 'author' },
+const items: { label: string, field: AlbumListSortField }[] = [
+  { label: 'Name', field: 'name' },
+  { label: 'Artist', field: 'artist_name' },
+  { label: 'Release Year', field: 'year' },
 ]
 
 const {
@@ -65,7 +64,7 @@ const {
   sort,
   isCurrentField,
   title,
-} = useBasicSorter<PodcastListSortField>(items, field, order, button, menu)
+} = useBasicSorter<AlbumListSortField>(items, field, order, button, menu)
 
 onMounted(() => setup())
 onBeforeUnmount(() => teardown())

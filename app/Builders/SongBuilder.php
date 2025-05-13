@@ -128,7 +128,7 @@ class SongBuilder extends Builder
 
     private static function normalizeSortColumn(string $column): string
     {
-        return key_exists($column, self::SORT_COLUMNS_NORMALIZE_MAP)
+        return array_key_exists($column, self::SORT_COLUMNS_NORMALIZE_MAP)
             ? self::SORT_COLUMNS_NORMALIZE_MAP[$column]
             : $column;
     }

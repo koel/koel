@@ -1,10 +1,12 @@
 <template>
-  <span class="flex w-[64px] border border-solid border-white/20 rounded-md overflow-hidden mt-[0.5rem] md:mt-0">
+  <span
+    class="flex w-[64px] h-9 border border-solid border-white/20 rounded-md overflow-hidden mt-[0.5rem] md:mt-0"
+  >
     <label
-      v-koel-tooltip
+      v-koel-tooltip.top
       :class="{ active: value === 'thumbnails' }"
       class="thumbnails"
-      data-testid="view-mode-thumbnail"
+      data-testid="view-mode-thumbnails"
       title="View as thumbnails"
     >
       <input v-model="value" class="hidden" name="view-mode" type="radio" value="thumbnails">
@@ -13,7 +15,7 @@
     </label>
 
     <label
-      v-koel-tooltip
+      v-koel-tooltip.top
       :class="{ active: value === 'list' }"
       class="list"
       data-testid="view-mode-list"
@@ -42,7 +44,7 @@ const value = computed({
 
 <style lang="postcss" scoped>
 label {
-  @apply w-1/2 flex items-center justify-center h-[2rem] mb-0 cursor-pointer;
+  @apply w-1/2 flex items-center justify-center h-full mb-0 cursor-pointer;
 
   &.active {
     @apply bg-k-text-primary text-k-bg-primary;

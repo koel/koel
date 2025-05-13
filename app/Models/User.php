@@ -60,7 +60,7 @@ class User extends Authenticatable
 
     public function invitedBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'invited_by_id');
+        return $this->belongsTo(__CLASS__, 'invited_by_id');
     }
 
     public function playlists(): HasMany

@@ -3,7 +3,6 @@
     <template #header>
       <ScreenHeader layout="collapsed">
         Podcasts
-
         <template #controls>
           <div v-if="!loading" class="flex gap-2">
             <PodcastListSorter :field="sortParams.field" :order="sortParams.order" @sort="sort" />
@@ -97,9 +96,9 @@ const onFilterChanged = (q: string) => (keywords.value = q)
 
 const requestAddPodcastForm = () => eventBus.emit('MODAL_SHOW_ADD_PODCAST_FORM')
 
-const sort = (field: PodcastListSortField) => {
+const sort = (field: PodcastListSortField, order: SortOrder) => {
+  sortParams.order = order
   sortParams.field = field
-  sortParams.order = sortParams.order === 'asc' ? 'desc' : 'asc'
 }
 
 onScreenActivated('Podcasts', async () => {

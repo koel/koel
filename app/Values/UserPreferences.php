@@ -26,6 +26,8 @@ final class UserPreferences implements Arrayable, JsonSerializable
         'equalizer',
         'artists_view_mode',
         'albums_view_mode',
+        'albums_sort_field',
+        'albums_sort_order',
         'theme',
         'show_now_playing_notification',
         'confirm_before_closing',
@@ -48,6 +50,8 @@ final class UserPreferences implements Arrayable, JsonSerializable
         public Equalizer $equalizer,
         public string $artistsViewMode,
         public string $albumsViewMode,
+        public string $albumsSortField,
+        public string $albumsSortOrder,
         public string $theme,
         public bool $showNowPlayingNotification,
         public bool $confirmBeforeClosing,
@@ -66,6 +70,8 @@ final class UserPreferences implements Arrayable, JsonSerializable
         Assert::oneOf($this->artistsViewMode, ['list', 'thumbnails']);
         Assert::oneOf($this->albumsViewMode, ['list', 'thumbnails']);
         Assert::oneOf($this->activeExtraPanelTab, [null, 'Lyrics', 'Artist', 'Album', 'YouTube']);
+        Assert::oneOf(strtolower($this->albumsSortOrder), ['asc', 'desc']);
+        Assert::oneOf($this->albumsSortField, ['name', 'artist_name', 'year']);
 
         if (!in_array($this->transcodeQuality, [64, 96, 128, 192, 256, 320], true)) {
             $this->transcodeQuality = 128;
@@ -80,6 +86,8 @@ final class UserPreferences implements Arrayable, JsonSerializable
             equalizer: isset($data['equalizer']) ? Equalizer::tryMake($data['equalizer']) : Equalizer::default(),
             artistsViewMode: $data['artists_view_mode'] ?? 'thumbnails',
             albumsViewMode: $data['albums_view_mode'] ?? 'thumbnails',
+            albumsSortField: $data['albums_sort_field'] ?? 'name',
+            albumsSortOrder: $data['albums_sort_order'] ?? 'asc',
             theme: $data['theme'] ?? 'classic',
             showNowPlayingNotification: $data['show_now_playing_notification'] ?? true,
             confirmBeforeClosing: $data['confirm_before_closing'] ?? false,
@@ -140,6 +148,8 @@ final class UserPreferences implements Arrayable, JsonSerializable
             'support_bar_no_bugging' => $this->supportBarNoBugging,
             'artists_view_mode' => $this->artistsViewMode,
             'albums_view_mode' => $this->albumsViewMode,
+            'albums_sort_field' => $this->albumsSortField,
+            'albums_sort_order' => $this->albumsSortOrder,
             'repeat_mode' => $this->repeatMode,
             'volume' => $this->volume,
             'equalizer' => $this->equalizer->toArray(),

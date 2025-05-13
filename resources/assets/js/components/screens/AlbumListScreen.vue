@@ -4,7 +4,10 @@
       <ScreenHeader layout="collapsed">
         Albums
         <template #controls>
-          <ViewModeSwitch v-model="viewMode" />
+          <div v-if="!loading" class="flex gap-2">
+            <AlbumListSorter :field="sortParams.field" :order="sortParams.order" @sort="sort" />
+            <ViewModeSwitch v-model="viewMode" />
+          </div>
         </template>
       </ScreenHeader>
     </template>
@@ -20,7 +23,7 @@
     </ScreenEmptyState>
 
     <div v-else ref="gridContainer" v-koel-overflow-fade class="-m-6 overflow-auto">
-      <AlbumGrid :view-mode="viewMode" data-testid="album-grid">
+      <AlbumGrid ref="albumGrid" :view-mode="viewMode" data-testid="album-grid">
         <template v-if="showSkeletons">
           <AlbumCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
         </template>
@@ -35,7 +38,7 @@
 
 <script lang="ts" setup>
 import { faCompactDisc } from '@fortawesome/free-solid-svg-icons'
-import { computed, ref, toRef, watch } from 'vue'
+import { computed, nextTick, reactive, ref, toRef, watch } from 'vue'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
@@ -51,12 +54,19 @@ import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import AlbumGrid from '@/components/ui/album-artist/AlbumOrArtistGrid.vue'
+import AlbumListSorter from '@/components/album/AlbumListSorter.vue'
 
 const { isAdmin } = useAuthorization()
 
 const gridContainer = ref<HTMLDivElement>()
+const albumGrid = ref<InstanceType<typeof AlbumGrid>>()
 const viewMode = ref<ArtistAlbumViewMode>('thumbnails')
 const albums = toRef(albumStore.state, 'albums')
+
+const sortParams = reactive<{ field: AlbumListSortField, order: SortOrder }>({
+  field: 'name',
+  order: 'asc',
+})
 
 let initialized = false
 const loading = ref(false)
@@ -73,11 +83,33 @@ const fetchAlbums = async () => {
   }
 
   loading.value = true
-  page.value = await albumStore.paginate(page.value!)
+
+  page.value = await albumStore.paginate({
+    page: page!.value || 1,
+    sort: sortParams.field,
+    order: sortParams.order,
+  })
+
   loading.value = false
 }
 
 const { ToTopButton, makeScrollable } = useInfiniteScroll(gridContainer, async () => await fetchAlbums())
+
+const resetState = async () => {
+  page.value = 1
+
+  albumStore.reset()
+  await albumGrid.value?.scrollToTop()
+}
+
+const sort = async (field: AlbumListSortField, order: SortOrder) => {
+  preferences.albums_sort_field = sortParams.field = field
+  preferences.albums_sort_order = sortParams.order = order
+
+  await resetState()
+  await nextTick()
+  await fetchAlbums()
+}
 
 useRouter().onScreenActivated('Albums', async () => {
   if (libraryEmpty.value) {
@@ -86,6 +118,9 @@ useRouter().onScreenActivated('Albums', async () => {
 
   if (!initialized) {
     viewMode.value = preferences.albums_view_mode || 'thumbnails'
+    sortParams.field = preferences.albums_sort_field
+    sortParams.order = preferences.albums_sort_order
+
     initialized = true
 
     try {

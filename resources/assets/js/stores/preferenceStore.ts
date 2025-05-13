@@ -13,6 +13,8 @@ export const defaultPreferences: UserPreferences = {
   },
   artists_view_mode: null,
   albums_view_mode: null,
+  albums_sort_field: 'name',
+  albums_sort_order: 'asc',
   transcode_on_mobile: false,
   transcode_quality: 128,
   support_bar_no_bugging: false,

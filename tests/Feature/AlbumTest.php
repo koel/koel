@@ -16,6 +16,12 @@ class AlbumTest extends TestCase
 
         $this->getAs('api/albums')
             ->assertJsonStructure(AlbumResource::PAGINATION_JSON_STRUCTURE);
+
+        $this->getAs('api/albums?sort=artist_name&order=asc')
+            ->assertJsonStructure(AlbumResource::PAGINATION_JSON_STRUCTURE);
+
+        $this->getAs('api/albums?sort=year&order=desc&page=2')
+            ->assertJsonStructure(AlbumResource::PAGINATION_JSON_STRUCTURE);
     }
 
     #[Test]

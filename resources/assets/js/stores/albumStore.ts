@@ -8,6 +8,12 @@ import { songStore } from '@/stores/songStore'
 
 const UNKNOWN_ALBUM_ID = 1
 
+export interface AlbumListPaginateParams extends Record<string, any> {
+  sort: AlbumListSortField
+  order: SortOrder
+  page: number
+}
+
 export const albumStore = {
   vault: new Map<Album['id'], Album>(),
 
@@ -83,8 +89,8 @@ export const albumStore = {
     return album
   },
 
-  async paginate (page: number) {
-    const resource = await http.get<PaginatorResource<Album>>(`albums?page=${page}`)
+  async paginate (params: AlbumListPaginateParams) {
+    const resource = await http.get<PaginatorResource<Album>>(`albums?${new URLSearchParams(params).toString()}`)
     this.state.albums = unionBy(this.state.albums, this.syncWithVault(resource.data), 'id')
 
     return resource.links.next ? ++resource.meta.current_page : null
@@ -96,5 +102,10 @@ export const albumStore = {
     return this.syncWithVault(
       await cache.remember<Album[]>(['artist-albums', id], async () => await http.get<Album[]>(`artists/${id}/albums`)),
     )
+  },
+
+  reset () {
+    this.vault.clear()
+    this.state.albums = []
   },
 }

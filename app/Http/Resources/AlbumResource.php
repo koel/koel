@@ -15,6 +15,7 @@ class AlbumResource extends JsonResource
         'artist_name',
         'cover',
         'created_at',
+        'year',
     ];
 
     public const PAGINATION_JSON_STRUCTURE = [
@@ -52,6 +53,7 @@ class AlbumResource extends JsonResource
             'artist_name' => $this->album->artist->name,
             'cover' => $this->album->cover,
             'created_at' => $this->album->created_at,
+            'year' => $this->album->year,
         ];
     }
 }

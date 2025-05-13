@@ -1,17 +1,32 @@
 <template>
-  <div :class="`as-${viewMode}`" class="grid gap-5 p-6">
+  <div ref="container" :class="`as-${viewMode}`" class="grid gap-5 p-6">
     <slot />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { toRefs } from 'vue'
+import { nextTick, ref, toRefs } from 'vue'
 
 const props = withDefaults(defineProps<{ viewMode?: ArtistAlbumViewMode }>(), {
   viewMode: 'thumbnails',
 })
 
+const container = ref<HTMLDivElement>()
+
 const { viewMode } = toRefs(props)
+
+const scrollToTop = async () => {
+  await nextTick()
+
+  container.value!.scrollTo({
+    top: 0,
+    behavior: 'smooth',
+  })
+}
+
+defineExpose({
+  scrollToTop,
+})
 </script>
 
 <style lang="postcss" scoped>
