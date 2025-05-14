@@ -80,8 +80,7 @@ easier to debug, message.
 See also: [Music Discovery](usage/music-discovery).
 :::
 
-::: details You receive an `Integrity constraint violation: 1062 Duplicate entry for key 'artists_name_unique'` error
-when scanning
+::: details You receive an `Integrity constraint violation: 1062 Duplicate entry for key 'artists_name_unique'` error when scanning
 Set your database and table collation to `utf8_unicode_ci` or `utf8mb4_unicode_ci`.
 :::
 
