@@ -12,7 +12,7 @@ class XAccelRedirectStreamerAdapter extends LocalStreamerAdapter
      * Stream the current song using nginx's X-Accel-Redirect.
      * @link https://www.nginx.com/resources/wiki/start/topics/examples/xsendfile/
      */
-    public function stream(Song $song, ?RequestedStreamingConfig $config = null): void
+    public function stream(Song $song, ?RequestedStreamingConfig $config = null): never
     {
         $path = $song->storage_metadata->getPath();
         $contentType = 'audio/' . pathinfo($path, PATHINFO_EXTENSION);
@@ -25,5 +25,8 @@ class XAccelRedirectStreamerAdapter extends LocalStreamerAdapter
         header("X-Accel-Redirect: /media/$relativePath");
         header("Content-Type: $contentType");
         header('Content-Disposition: inline; filename="' . basename($path) . '"');
+
+        // prevent PHP from sending stray headers
+        exit;
     }
 }

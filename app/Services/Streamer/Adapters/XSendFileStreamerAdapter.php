@@ -10,7 +10,7 @@ class XSendFileStreamerAdapter extends LocalStreamerAdapter
     /**
      * Stream the current song using Apache's x_sendfile module.
      */
-    public function stream(Song $song, ?RequestedStreamingConfig $config = null): void
+    public function stream(Song $song, ?RequestedStreamingConfig $config = null): never
     {
         $path = $song->storage_metadata->getPath();
         $contentType = 'audio/' . pathinfo($path, PATHINFO_EXTENSION);
@@ -18,5 +18,8 @@ class XSendFileStreamerAdapter extends LocalStreamerAdapter
         header("X-Sendfile: $path");
         header("Content-Type: $contentType");
         header('Content-Disposition: inline; filename="' . basename($path) . '"');
+
+        // prevent PHP from sending stray headers
+        exit;
     }
 }
