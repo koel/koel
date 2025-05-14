@@ -23,6 +23,9 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByTitle('Sort by Artist'))
       expect(emitted().sort[2]).toEqual(['artist_name', 'asc'])
+
+      await this.user.click(screen.getByTitle('Sort by Date Added'))
+      expect(emitted().sort[3]).toEqual(['created_at', 'asc'])
     })
   }
 }
