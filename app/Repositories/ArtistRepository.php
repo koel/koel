@@ -56,11 +56,12 @@ class ArtistRepository extends Repository
         return $preserveOrder ? $artists->orderByArray($ids) : $artists;
     }
 
-    public function paginate(?User $user = null): Paginator
+    public function getForListing(string $sortColumn, string $sortDirection, ?User $user = null): Paginator
     {
         return Artist::query()
             ->isStandard()
             ->accessibleBy($user ?? auth()->user())
+            ->sort($sortColumn, $sortDirection)
             ->groupBy('artists.id')
             ->distinct()
             ->orderBy('artists.name')

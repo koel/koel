@@ -23,7 +23,7 @@
     </ScreenEmptyState>
 
     <div v-else ref="gridContainer" v-koel-overflow-fade class="-m-6 overflow-auto">
-      <AlbumGrid ref="albumGrid" :view-mode="viewMode" data-testid="album-grid">
+      <AlbumGrid ref="grid" :view-mode="viewMode" data-testid="album-grid">
         <template v-if="showSkeletons">
           <AlbumCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
         </template>
@@ -65,7 +65,7 @@ import AlbumListSorter from '@/components/album/AlbumListSorter.vue'
 const { isAdmin } = useAuthorization()
 
 const gridContainer = ref<HTMLDivElement>()
-const albumGrid = ref<InstanceType<typeof AlbumGrid>>()
+const grid = ref<InstanceType<typeof AlbumGrid>>()
 const viewMode = ref<ArtistAlbumViewMode>('thumbnails')
 const albums = toRef(albumStore.state, 'albums')
 
@@ -105,7 +105,7 @@ const resetState = async () => {
   page.value = 1
 
   albumStore.reset()
-  await albumGrid.value?.scrollToTop()
+  await grid.value?.scrollToTop()
 }
 
 const sort = async (field: AlbumListSortField, order: SortOrder) => {

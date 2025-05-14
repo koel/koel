@@ -4,7 +4,10 @@
       <ScreenHeader layout="collapsed">
         Artists
         <template #controls>
-          <ViewModeSwitch v-model="viewMode" />
+          <div v-if="!loading" class="flex gap-2">
+            <ArtistListSorter :field="sortParams.field" :order="sortParams.order" @sort="sort" />
+            <ViewModeSwitch v-model="viewMode" />
+          </div>
         </template>
       </ScreenHeader>
     </template>
@@ -35,7 +38,7 @@
 
 <script lang="ts" setup>
 import { faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons'
-import { computed, ref, toRef, watch } from 'vue'
+import { computed, nextTick, reactive, ref, toRef, watch } from 'vue'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
@@ -51,12 +54,19 @@ import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import ArtistGrid from '@/components/ui/album-artist/AlbumOrArtistGrid.vue'
+import ArtistListSorter from '@/components/artist/ArtistListSorter.vue'
 
 const { isAdmin } = useAuthorization()
 
 const gridContainer = ref<HTMLDivElement>()
+const grid = ref<InstanceType<typeof ArtistGrid>>()
 const viewMode = ref<ArtistAlbumViewMode>('thumbnails')
 const artists = toRef(artistStore.state, 'artists')
+
+const sortParams = reactive<{ field: ArtistListSortField, order: SortOrder }>({
+  field: 'name',
+  order: 'asc',
+})
 
 let initialized = false
 const loading = ref(false)
@@ -73,7 +83,13 @@ const fetchArtists = async () => {
   }
 
   loading.value = true
-  page.value = await artistStore.paginate(page.value!)
+
+  page.value = await artistStore.paginate({
+    page: page!.value || 1,
+    sort: sortParams.field,
+    order: sortParams.order,
+  })
+
   loading.value = false
 }
 
@@ -81,6 +97,22 @@ const {
   ToTopButton,
   makeScrollable,
 } = useInfiniteScroll(gridContainer, async () => await fetchArtists())
+
+const resetState = async () => {
+  page.value = 1
+
+  artistStore.reset()
+  await grid.value?.scrollToTop()
+}
+
+const sort = async (field: ArtistListSortField, order: SortOrder) => {
+  preferences.albums_sort_field = sortParams.field = field
+  preferences.albums_sort_order = sortParams.order = order
+
+  await resetState()
+  await nextTick()
+  await fetchArtists()
+}
 
 useRouter().onScreenActivated('Artists', async () => {
   if (libraryEmpty.value) {
