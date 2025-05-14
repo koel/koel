@@ -8,7 +8,7 @@ import { songStore } from '@/stores/songStore'
 
 const UNKNOWN_ALBUM_ID = 1
 
-export interface AlbumListPaginateParams extends Record<string, any> {
+interface AlbumListPaginateParams extends Record<string, any> {
   sort: AlbumListSortField
   order: SortOrder
   page: number

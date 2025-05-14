@@ -8,6 +8,12 @@ import { logger } from '@/utils/logger'
 const UNKNOWN_ARTIST_ID = 1
 const VARIOUS_ARTISTS_ID = 2
 
+interface ArtistListPaginateParams extends Record<string, any> {
+  sort: ArtistListSortField
+  order: SortOrder
+  page: number
+}
+
 export const artistStore = {
   vault: new Map<Artist['id'], Artist>(),
 
@@ -71,10 +77,15 @@ export const artistStore = {
     return artist
   },
 
-  async paginate (page: number) {
-    const resource = await http.get<PaginatorResource<Artist>>(`artists?page=${page}`)
+  async paginate (params: ArtistListPaginateParams) {
+    const resource = await http.get<PaginatorResource<Artist>>(`artists?${new URLSearchParams(params).toString()}`)
     this.state.artists = unionBy(this.state.artists, this.syncWithVault(resource.data), 'id')
 
     return resource.links.next ? ++resource.meta.current_page : null
+  },
+
+  reset () {
+    this.vault.clear()
+    this.state.artists = []
   },
 }

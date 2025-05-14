@@ -468,6 +468,12 @@ type PlayableListSortField =
 
 type PodcastListSortField = keyof Pick<Podcast, 'title' | 'last_played_at' | 'subscribed_at' | 'author'>
 type AlbumListSortField = keyof Pick<Album, 'name' | 'year' | 'artist_name' | 'created_at'>
+type ArtistListSortField = keyof Pick<Artist, 'name' | 'created_at'>
+
+interface BasicListSorterDropDownItem<T extends PodcastListSortField | AlbumListSortField | ArtistListSortField> {
+  label: string
+  field: T
+}
 
 type SortOrder = 'asc' | 'desc'
 type MoveType = 'before' | 'after'
