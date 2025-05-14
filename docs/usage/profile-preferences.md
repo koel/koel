@@ -25,9 +25,10 @@ To remove your custom avatar and revert to using Gravatar, click the <InterfaceI
 
 ## Themes
 
-At the time of this writing, Koel comes with 17 themes built-in. You can activate a theme simply by clicking on it. The new theme will be applied immediately.
+Koel comes loaded with beautiful, handcrafted themes. You can activate a theme simply by clicking on it. The new theme
+will be applied immediately.
 
-![Theme selection](../assets/img/themes.webp)
+![Theme selection](../assets/img/themes.avif)
 
 More themes are to be added in the future, along with the ability to create your own theme.
 
