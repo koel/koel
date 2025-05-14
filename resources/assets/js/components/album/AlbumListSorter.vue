@@ -53,6 +53,7 @@ const items: { label: string, field: AlbumListSortField }[] = [
   { label: 'Name', field: 'name' },
   { label: 'Artist', field: 'artist_name' },
   { label: 'Release Year', field: 'year' },
+  { label: 'Date Added', field: 'created_at' },
 ]
 
 const {

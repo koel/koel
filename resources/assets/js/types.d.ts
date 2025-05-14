@@ -467,7 +467,7 @@ type PlayableListSortField =
   | 'position'
 
 type PodcastListSortField = keyof Pick<Podcast, 'title' | 'last_played_at' | 'subscribed_at' | 'author'>
-type AlbumListSortField = keyof Pick<Album, 'name' | 'year' | 'artist_name'>
+type AlbumListSortField = keyof Pick<Album, 'name' | 'year' | 'artist_name' | 'created_at'>
 
 type SortOrder = 'asc' | 'desc'
 type MoveType = 'before' | 'after'

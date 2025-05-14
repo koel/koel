@@ -14,12 +14,14 @@ class AlbumBuilder extends Builder
     public const SORT_COLUMNS_NORMALIZE_MAP = [
         'name' => 'albums.name',
         'year' => 'albums.year',
+        'created_at' => 'albums.created_at',
         'artist_name' => 'artists.name',
     ];
 
     private const VALID_SORT_COLUMNS = [
         'albums.name',
         'albums.year',
+        'albums.created_at',
         'artists.name',
     ];
 
