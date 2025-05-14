@@ -21,9 +21,8 @@ your media files. Refer to [Storage Support](../plus/cloud-storage-support) for 
 
 ## Supported Audio Formats
 
-As of current, these audio formats are supported: `.mp3`, `.ogg`, `.aac`, `.m4a`, `.opus`, `.flac`, and `.aiff` (
-experimental). Do note that, to support transcoding FLAC and AIFF files, you'll need
-proper [setup and configuration](streaming.md#transcoding).
+As of current, these audio formats are supported: `.mp3`, `.ogg`, `.aac`, `.m4a`, `.opus`, `.flac`, and `.aiff` (experimental).
+Do note that, to support transcoding FLAC and AIFF files, you'll need proper [setup and configuration](streaming.md#transcoding).
 
 ## Scan via the Web interface
 
