@@ -68,7 +68,13 @@
       <div v-show="activeTab === 'Albums'" class="albums-pane">
         <AlbumOrArtistGrid v-koel-overflow-fade view-mode="list">
           <template v-if="albums">
-            <AlbumCard v-for="album in albums" :key="album.id" :album="album" layout="compact" />
+            <AlbumCard
+              v-for="album in albums"
+              :key="album.id"
+              :album="album"
+              :show-release-year="true"
+              layout="compact"
+            />
           </template>
           <template v-else>
             <AlbumCardSkeleton v-for="i in 6" :key="i" layout="compact" />

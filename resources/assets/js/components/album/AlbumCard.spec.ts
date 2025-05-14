@@ -51,10 +51,21 @@ new class extends UnitTestCase {
 
       expect(emitMock).toHaveBeenCalledWith('ALBUM_CONTEXT_MENU_REQUESTED', expect.any(MouseEvent), album)
     })
+
+    it('shows release year', () => {
+      this.renderComponent(1971, true)
+      screen.getByText('1971')
+    })
+
+    it('does not show release year if not enabled via prop', () => {
+      this.renderComponent(1971)
+      expect(screen.queryByText('1971')).toBeNull()
+    })
   }
 
-  private renderComponent () {
+  private renderComponent (year: number | null = null, showReleaseYear = false) {
     album = factory('album', {
+      year,
       id: 42,
       name: 'IV',
       artist_id: 17,
@@ -64,6 +75,7 @@ new class extends UnitTestCase {
     return this.render(AlbumCard, {
       props: {
         album,
+        showReleaseYear,
       },
       global: {
         stubs: {

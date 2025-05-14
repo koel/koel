@@ -12,22 +12,26 @@
         </template>
 
         <template #meta>
-          <a v-if="isNormalArtist" :href="url('artists.show', { id: album.artist_id })" class="artist">
-            {{ album.artist_name }}
-          </a>
-          <span v-else class="nope">{{ album.artist_name }}</span>
-          <span>{{ pluralize(songs, 'item') }}</span>
-          <span>{{ duration }}</span>
+          <span class="flex meta-content">
+            <a v-if="isNormalArtist" :href="url('artists.show', { id: album.artist_id })" class="artist">
+              {{ album.artist_name }}
+            </a>
+            <span v-else class="text-k-text-primary">{{ album.artist_name }}</span>
+            <span v-if="album.year">{{ album.year }}</span>
+            <span>{{ pluralize(songs, 'song') }}</span>
+            <span>{{ duration }}</span>
 
-          <a
-            v-if="downloadable"
-            class="download"
-            role="button"
-            title="Download all songs in album"
-            @click.prevent="download"
-          >
-            Download All
-          </a>
+            <span v-if="downloadable">
+              <a
+                v-if="downloadable"
+                role="button"
+                title="Download all songs in album"
+                @click.prevent="download"
+              >
+                Download All
+              </a>
+            </span>
+          </span>
         </template>
 
         <template #controls>
@@ -198,3 +202,10 @@ onScreenActivated('Album', () => (albumId.value = Number.parseInt(getRouteParam(
 // if the current album has been deleted, go back to the list
 eventBus.on('SONGS_UPDATED', () => albumStore.byId(albumId.value!) || go(url('albums.index')))
 </script>
+
+<style lang="postcss" scoped>
+.meta-content > *:not(:first-child)::before {
+  content: '•';
+  margin: 0 0.25em;
+}
+</style>

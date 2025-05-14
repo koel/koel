@@ -9,9 +9,24 @@
     @dragstart="onDragStart"
   >
     <template #name>
-      <a :href="url('albums.show', { id: album.id })" class="font-medium" data-testid="name">{{ album.name }}</a>
-      <a v-if="isStandardArtist" :href="url('artists.show', { id: album.artist_id })">{{ album.artist_name }}</a>
-      <span v-else class="text-k-text-secondary">{{ album.artist_name }}</span>
+      <div class="flex gap-2 items-center">
+        <a :href="url('albums.show', { id: album.id })" class="font-medium flex-1" data-testid="name">
+          {{ album.name }}
+        </a>
+
+        <span
+          v-if="showReleaseYear && album.year"
+          :title="`Released in ${album.year}`"
+          class="text-sm text-k-text-primary rounded px-2 py-[2px] bg-white/10"
+        >
+          {{ album.year }}
+        </span>
+      </div>
+
+      <div class="space-x-2">
+        <a v-if="isStandardArtist" :href="url('artists.show', { id: album.artist_id })">{{ album.artist_name }}</a>
+        <span v-else class="text-k-text-secondary">{{ album.artist_name }}</span>
+      </div>
     </template>
 
     <template #meta>
@@ -44,11 +59,19 @@ import { useRouter } from '@/composables/useRouter'
 
 import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
 
-const props = withDefaults(defineProps<{ album: Album, layout?: ArtistAlbumCardLayout }>(), { layout: 'full' })
+const props = withDefaults(defineProps<{
+  album: Album
+  layout?: ArtistAlbumCardLayout
+  showReleaseYear?: boolean
+}>(), {
+  layout: 'full',
+  showReleaseYear: false,
+})
+
 const { go, url } = useRouter()
 const { startDragging } = useDraggable('album')
 
-const { album, layout } = toRefs(props)
+const { album, layout, showReleaseYear } = toRefs(props)
 
 // We're not checking for supports_batch_downloading here, as the number of songs on the album is not yet known.
 const allowDownload = toRef(commonStore.state, 'allows_download')

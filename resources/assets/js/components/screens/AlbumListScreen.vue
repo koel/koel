@@ -28,7 +28,13 @@
           <AlbumCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
         </template>
         <template v-else>
-          <AlbumCard v-for="album in albums" :key="album.id" :album="album" :layout="itemLayout" />
+          <AlbumCard
+            v-for="album in albums"
+            :key="album.id"
+            :album="album"
+            :layout="itemLayout"
+            :show-release-year="sortParams.field === 'year'"
+          />
           <ToTopButton />
         </template>
       </AlbumGrid>
