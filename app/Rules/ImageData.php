@@ -11,7 +11,7 @@ class ImageData implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $passes = rescue(static function () use ($value) {
-            return (bool) preg_match('/data:image\/(jpe?g|png|webp|gif)/i', Str::before($value, ';'));
+            return (bool) preg_match('/data:image\/(jpe?g|png|webp|gif|avif)/i', Str::before($value, ';'));
         }) ?? false;
 
         if (!$passes) {
