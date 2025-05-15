@@ -7,6 +7,9 @@ use App\Models\Album;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
+use function Tests\create_admin;
+use function Tests\create_user;
+
 class AlbumTest extends TestCase
 {
     #[Test]
@@ -32,5 +35,40 @@ class AlbumTest extends TestCase
     {
         $this->getAs('api/albums/' . Album::factory()->create()->id)
             ->assertJsonStructure(AlbumResource::JSON_STRUCTURE);
+    }
+
+    #[Test]
+    public function update(): void
+    {
+        $album = Album::factory()->create();
+
+        $this->putAs(
+            'api/albums/' . $album->id,
+            [
+                'name' => 'Updated Album Name',
+                'year' => 2023,
+            ],
+            create_admin()
+        )->assertJsonStructure(AlbumResource::JSON_STRUCTURE);
+
+        $album->refresh();
+
+        $this->assertEquals('Updated Album Name', $album->name);
+        $this->assertEquals(2023, $album->year);
+    }
+
+    #[Test]
+    public function nonAdminCannotUpdateAlbumInCommunityEdition(): void
+    {
+        $album = Album::factory()->create();
+
+        $this->putAs(
+            'api/albums/' . $album->id,
+            [
+                'name' => 'Updated Album Name',
+                'year' => 2023,
+            ],
+            create_user()
+        )->assertForbidden();
     }
 }

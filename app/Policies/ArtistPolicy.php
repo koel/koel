@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Facades\License;
 use App\Models\Artist;
-use App\Models\Song;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
@@ -12,6 +11,10 @@ class ArtistPolicy
 {
     public function update(User $user, Artist $artist): Response
     {
+        if ($artist->is_unknown || $artist->is_various) {
+            return Response::deny();
+        }
+
         if ($user->is_admin) {
             return Response::allow();
         }
@@ -20,8 +23,13 @@ class ArtistPolicy
             return Response::deny('This action is unauthorized.');
         }
 
-        return $artist->songs->every(static fn (Song $song) => $song->ownedBy($user))
+        return $user->isCoOwnerOfArtist($artist)
             ? Response::allow()
-            : Response::deny('Artist is not owned by the user.');
+            : Response::deny('Artist is neither owned nor co-owned by the user.');
+    }
+
+    public function edit(User $user, Artist $artist): Response
+    {
+        return $this->update($user, $artist);
     }
 }

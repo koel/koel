@@ -140,6 +140,7 @@ return [
         Intervention\Image\ImageServiceProvider::class,
 
         Laravel\Scout\ScoutServiceProvider::class,
+        OwenIt\Auditing\AuditingServiceProvider::class,
         TeamTNT\Scout\TNTSearchScoutServiceProvider::class,
 
         /*

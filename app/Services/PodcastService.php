@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Exceptions\FailedToParsePodcastFeedException;
-use App\Exceptions\UserAlreadySubscribedToPodcast;
+use App\Exceptions\UserAlreadySubscribedToPodcastException;
 use App\Models\Podcast;
 use App\Models\PodcastUserPivot;
 use App\Models\Song as Episode;
@@ -78,7 +78,7 @@ class PodcastService
 
                 return $podcast;
             });
-        } catch (UserAlreadySubscribedToPodcast $exception) {
+        } catch (UserAlreadySubscribedToPodcastException $exception) {
             throw $exception;
         } catch (Throwable $exception) {
             Log::error($exception);

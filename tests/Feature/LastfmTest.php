@@ -33,7 +33,7 @@ class LastfmTest extends TestCase
         $temporaryToken = Mockery::mock(NewAccessToken::class);
         $temporaryToken->plainTextToken = 'tmp-token';
 
-        $tokenManager = self::mock(TokenManager::class);
+        $tokenManager = $this->mock(TokenManager::class);
 
         $tokenManager->shouldReceive('getUserFromPlainTextToken')
             ->with($token)
@@ -89,7 +89,7 @@ class LastfmTest extends TestCase
 
         app()->instance(LastfmService::class, $lastfm);
 
-        $tokenManager = self::mock(TokenManager::class);
+        $tokenManager = $this->mock(TokenManager::class);
 
         $tokenManager->shouldReceive('getUserFromPlainTextToken')
             ->once()

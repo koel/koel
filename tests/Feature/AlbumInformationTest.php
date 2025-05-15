@@ -19,7 +19,7 @@ class AlbumInformationTest extends TestCase
 
         $album = Album::factory()->create();
 
-        $lastfm = self::mock(MediaInformationService::class);
+        $lastfm = $this->mock(MediaInformationService::class);
         $lastfm->shouldReceive('getAlbumInformation')
             ->with(Mockery::on(static fn (Album $a) => $a->is($album)))
             ->andReturn(AlbumInformation::make(

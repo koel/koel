@@ -19,7 +19,7 @@ class ArtistImageTest extends TestCase
     {
         parent::setUp();
 
-        $this->mediaMetadataService = self::mock(MediaMetadataService::class);
+        $this->mediaMetadataService = $this->mock(MediaMetadataService::class);
     }
 
     #[Test]

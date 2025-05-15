@@ -22,7 +22,8 @@ export const mediaInfoService = {
 
   async fetchForAlbum (album: Album) {
     album = albumStore.syncWithVault(album)[0]
-    const cacheKey = ['album.info', album.id]
+    const cacheKey = ['album.info', album.id, album.name]
+
     if (cache.has(cacheKey)) {
       return cache.get<AlbumInfo>(cacheKey)
     }

@@ -19,7 +19,7 @@ class SettingTest extends TestCase
     {
         parent::setUp();
 
-        $this->mediaScanner = self::mock(MediaScanner::class);
+        $this->mediaScanner = $this->mock(MediaScanner::class);
     }
 
     #[Test]

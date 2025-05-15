@@ -84,6 +84,10 @@ export const songStore = {
       .filter(playable => isSong(playable) && playable.album_id === album.id) as Song[]
   },
 
+  updateAlbumName (album: Album, name: string) {
+    this.byAlbum(album).forEach(song => (song.album_name = name))
+  },
+
   async resolve (id: Playable['id']) {
     let playable = this.byId(id)
 

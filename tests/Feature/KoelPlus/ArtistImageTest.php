@@ -21,11 +21,11 @@ class ArtistImageTest extends PlusTestCase
     {
         parent::setUp();
 
-        $this->mediaMetadataService = self::mock(MediaMetadataService::class);
+        $this->mediaMetadataService = $this->mock(MediaMetadataService::class);
     }
 
     #[Test]
-    public function normalUserCanUploadImageIfOwningAllSongsInArtist(): void
+    public function artistOwnerCanUploadImage(): void
     {
         $user = create_user();
 
@@ -43,7 +43,7 @@ class ArtistImageTest extends PlusTestCase
     }
 
     #[Test]
-    public function normalUserCannotUploadImageIfNotOwningAllSongsInArtist(): void
+    public function coOwnerCanUploadImage(): void
     {
         $user = create_user();
 
@@ -51,6 +51,27 @@ class ArtistImageTest extends PlusTestCase
         $artist = Artist::factory()->create();
         $artist->songs()->saveMany(Song::factory()->for($user, 'owner')->count(3)->create());
         $artist->songs()->save(Song::factory()->create());
+
+        self::assertTrue($user->isCoOwnerOfArtist($artist));
+
+        $this->mediaMetadataService
+            ->shouldReceive('writeArtistImage')
+            ->once()
+            ->with(Mockery::on(static fn (Artist $target) => $target->is($artist)), 'data:image/jpeg;base64,Rm9v');
+
+        $this->putAs("api/artists/{$artist->id}/image", ['image' => 'data:image/jpeg;base64,Rm9v'], $user)
+            ->assertOk();
+    }
+
+    #[Test]
+    public function nonOwnerOCoOwnerCannotUploadImage(): void
+    {
+        $user = create_user();
+
+        /** @var Artist $artist */
+        $artist = Artist::factory()->create();
+
+        self::assertFalse($user->isCoOwnerOfArtist($artist));
 
         $this->mediaMetadataService
             ->shouldReceive('writeArtistImage')
@@ -61,7 +82,7 @@ class ArtistImageTest extends PlusTestCase
     }
 
     #[Test]
-    public function adminCanUploadImageEvenIfNotOwningAllSongsInArtist(): void
+    public function adminCanAlwaysUploadImage(): void
     {
         $user = create_user();
 

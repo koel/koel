@@ -19,7 +19,7 @@ class ArtistInformationTest extends TestCase
 
         $artist = Artist::factory()->create();
 
-        $lastfm = self::mock(MediaInformationService::class);
+        $lastfm = $this->mock(MediaInformationService::class);
         $lastfm->shouldReceive('getArtistInformation')
             ->with(Mockery::on(static fn (Artist $a) => $a->is($artist)))
             ->andReturn(ArtistInformation::make(
