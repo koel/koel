@@ -28,7 +28,7 @@ class DownloadTest extends PlusTestCase
         /** @var Song $externalPublicSong */
         $externalPublicSong = Song::factory()->public()->create();
 
-        $downloadService = self::mock(DownloadService::class);
+        $downloadService = $this->mock(DownloadService::class);
         $downloadService->shouldReceive('getDownloadablePath')
             ->once()
             ->andReturn(test_path('songs/blank.mp3'));

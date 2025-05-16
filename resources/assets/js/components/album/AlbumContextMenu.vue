@@ -3,6 +3,9 @@
     <template v-if="album">
       <li @click="play">Play All</li>
       <li @click="shuffle">Shuffle All</li>
+      <template v-if="allowEdit">
+        <li @click="edit">Edit…</li>
+      </template>
       <li class="separator" />
       <li v-if="isStandardAlbum" @click="viewAlbumDetails">Go to Album</li>
       <li v-if="isStandardArtist" @click="viewArtistDetails">Go to Artist</li>
@@ -23,14 +26,17 @@ import { songStore } from '@/stores/songStore'
 import { downloadService } from '@/services/downloadService'
 import { playbackService } from '@/services/playbackService'
 import { useContextMenu } from '@/composables/useContextMenu'
+import { usePolicies } from '@/composables/usePolicies'
 import { useRouter } from '@/composables/useRouter'
 import { eventBus } from '@/utils/eventBus'
 
 const { go, url } = useRouter()
 const { base, ContextMenu, open, trigger } = useContextMenu()
+const { currentUserCan } = usePolicies()
 
 const album = ref<Album>()
 const allowDownload = toRef(commonStore.state, 'allows_download')
+const allowEdit = ref(false)
 
 const isStandardAlbum = computed(() => !albumStore.isUnknown(album.value!))
 
@@ -48,6 +54,8 @@ const shuffle = () => trigger(async () => {
   go(url('queue'))
 })
 
+const edit = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_ALBUM_FORM', album.value!))
+
 const viewAlbumDetails = () => trigger(() => go(url('albums.show', { id: album.value!.id })))
 const viewArtistDetails = () => trigger(() => go(url('artists.show', { id: album.value!.artist_id })))
 const download = () => trigger(() => downloadService.fromAlbum(album.value!))
@@ -55,5 +63,7 @@ const download = () => trigger(() => downloadService.fromAlbum(album.value!))
 eventBus.on('ALBUM_CONTEXT_MENU_REQUESTED', async ({ pageX, pageY }, _album) => {
   album.value = _album
   await open(pageY, pageX)
+
+  allowEdit.value = await currentUserCan.editAlbum(album.value)
 })
 </script>

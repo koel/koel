@@ -1,6 +1,8 @@
 import { arrayify } from '@/utils/helpers'
 import { useAuthorization } from '@/composables/useAuthorization'
 import { useKoelPlus } from '@/composables/useKoelPlus'
+import { resourcePermissionService } from '@/services/resourcePermissionService'
+import { albumStore } from '@/stores/albumStore'
 
 export const usePolicies = () => {
   const { currentUser, isAdmin } = useAuthorization()
@@ -11,18 +13,50 @@ export const usePolicies = () => {
       if (isAdmin.value) {
         return true
       }
+
       if (!isPlus.value) {
         return false
       }
+
       return arrayify(songs).every(song => song.owner_id === currentUser.value.id)
+    },
+
+    // alias
+    editSongs (songs: MaybeArray<Song>) {
+      return this.editSong(songs)
     },
 
     editPlaylist: (playlist: Playlist) => playlist.user_id === currentUser.value.id,
     uploadSongs: () => isAdmin.value || isPlus.value,
-    changeAlbumOrArtistThumbnails: () => isAdmin.value || isPlus.value, // for Plus, the logic is handled in the backend
-  }
 
-  currentUserCan.editSongs = currentUserCan.editSong
+    editAlbum: async (album: Album) => {
+      if (albumStore.isUnknown(album)) {
+        return false
+      }
+
+      if (isAdmin.value) {
+        return true
+      }
+
+      if (!isPlus.value) {
+        return false
+      }
+
+      return await resourcePermissionService.check('album', album.id, 'edit')
+    },
+
+    editArtist: async (artist: Artist) => {
+      if (isAdmin.value) {
+        return true
+      }
+
+      if (!isPlus.value) {
+        return false
+      }
+
+      return await resourcePermissionService.check('artist', artist.id, 'edit')
+    },
+  }
 
   return {
     currentUserCan,

@@ -18,6 +18,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Laravel\Scout\Searchable;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * @property string $id
@@ -36,11 +38,12 @@ use Laravel\Scout\Searchable;
  * @property-read EloquentCollection<array-key, PlaylistFolder> $folders
  * @property-read bool $is_collaborative
  */
-class Playlist extends Model
+class Playlist extends Model implements AuditableContract
 {
-    use Searchable;
+    use Auditable;
     use HasFactory;
     use HasUuids;
+    use Searchable;
 
     protected $hidden = ['user_id', 'created_at', 'updated_at'];
     protected $guarded = [];

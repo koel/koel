@@ -25,7 +25,7 @@ class DownloadTest extends TestCase
     {
         parent::setUp();
 
-        $this->downloadService = self::mock(DownloadService::class);
+        $this->downloadService = $this->mock(DownloadService::class);
     }
 
     #[Test]

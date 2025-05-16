@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
 use Laravel\Scout\Searchable;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * @property int $id
@@ -31,8 +33,9 @@ use Laravel\Scout\Searchable;
  * @property Carbon $created_at
  * @property Collection<array-key, Album> $albums
  */
-class Artist extends Model
+class Artist extends Model implements AuditableContract
 {
+    use Auditable;
     use HasFactory;
     use Searchable;
     use SupportsDeleteWhereValueNotIn;

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * @property string $key
@@ -11,8 +13,9 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @method static self find(string $key)
  */
-class Setting extends Model
+class Setting extends Model implements AuditableContract
 {
+    use Auditable;
     use HasFactory;
 
     protected $primaryKey = 'key';

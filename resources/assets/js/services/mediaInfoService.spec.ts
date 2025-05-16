@@ -46,8 +46,8 @@ new class extends UnitTestCase {
       await mediaInfoService.fetchForAlbum(album)
 
       expect(getMock).toHaveBeenCalledWith('albums/42/information')
-      expect(hasCacheMock).toHaveBeenCalledWith(['album.info', 42])
-      expect(setCacheMock).toHaveBeenCalledWith(['album.info', 42], albumInfo)
+      expect(hasCacheMock).toHaveBeenCalledWith(['album.info', 42, album.name])
+      expect(setCacheMock).toHaveBeenCalledWith(['album.info', 42, album.name], albumInfo)
       expect(album.cover).toBe(albumInfo.cover)
     })
 
@@ -57,9 +57,9 @@ new class extends UnitTestCase {
       const getCacheMock = this.mock(cache, 'get', albumInfo)
       const getMock = this.mock(http, 'get')
 
-      expect(await mediaInfoService.fetchForAlbum(factory('album', { id: 42 }))).toBe(albumInfo)
-      expect(hasCacheMock).toHaveBeenCalledWith(['album.info', 42])
-      expect(getCacheMock).toHaveBeenCalledWith(['album.info', 42])
+      expect(await mediaInfoService.fetchForAlbum(factory('album', { id: 42, name: 'Foo' }))).toBe(albumInfo)
+      expect(hasCacheMock).toHaveBeenCalledWith(['album.info', 42, 'Foo'])
+      expect(getCacheMock).toHaveBeenCalledWith(['album.info', 42, 'Foo'])
       expect(getMock).not.toHaveBeenCalled()
     })
   }

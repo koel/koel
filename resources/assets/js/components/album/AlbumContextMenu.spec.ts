@@ -83,6 +83,17 @@ new class extends UnitTestCase {
 
       expect(mock).toHaveBeenCalledWith(`/#/artists/${album.artist_id}`)
     })
+
+    it('requests edit form', async () => {
+      await this.renderComponent()
+      // for the "Edit…" menu item to show up
+      await this.tick()
+
+      const emitMock = this.mock(eventBus, 'emit')
+      await this.user.click(screen.getByText('Edit…'))
+
+      expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_ALBUM_FORM', album)
+    })
   }
 
   private async renderComponent (_album?: Album) {
@@ -90,7 +101,7 @@ new class extends UnitTestCase {
       name: 'IV',
     })
 
-    const rendered = this.render(AlbumContextMenu)
+    const rendered = this.beAdmin().render(AlbumContextMenu)
     eventBus.emit('ALBUM_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, album)
     await this.tick(2)
 

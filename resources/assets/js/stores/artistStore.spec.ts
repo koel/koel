@@ -104,7 +104,12 @@ new class extends UnitTestCase {
         },
       })
 
-      expect(await artistStore.paginate(1)).toEqual(2)
+      expect(await artistStore.paginate({
+        page: 1,
+        sort: 'name',
+        order: 'asc',
+      })).toEqual(2)
+
       expect(artistStore.state.artists).toEqual(artists)
       expect(artistStore.vault.size).toBe(3)
     })

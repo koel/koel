@@ -26,6 +26,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Scout\Searchable;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use PhanAn\Poddle\Values\EpisodeMetadata;
 use Throwable;
 
@@ -33,7 +35,6 @@ use Throwable;
  * @property string $path
  * @property string $title
  * @property ?Album $album
- * @property User $uploader
  * @property ?Artist $artist
  * @property ?Artist $album_artist
  * @property float $length
@@ -69,12 +70,13 @@ use Throwable;
  * @property ?string $podcast_id
  * @property ?Podcast $podcast
  */
-class Song extends Model
+class Song extends Model implements AuditableContract
 {
+    use Auditable;
     use HasFactory;
+    use HasUuids;
     use Searchable;
     use SupportsDeleteWhereValueNotIn;
-    use HasUuids;
 
     public const ID_REGEX = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
 

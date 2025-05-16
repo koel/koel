@@ -24,7 +24,7 @@ class MediaInformationService
         }
 
         return Cache::remember(
-            "album.info.{$album->id}",
+            "album.info.{$album->id}.{$album->name}",
             now()->addWeek(),
             function () use ($album): AlbumInformation {
                 $info = $this->encyclopedia->getAlbumInformation($album) ?: AlbumInformation::make();

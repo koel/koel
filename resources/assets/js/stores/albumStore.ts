@@ -8,6 +8,11 @@ import { songStore } from '@/stores/songStore'
 
 const UNKNOWN_ALBUM_ID = 1
 
+interface AlbumUpdateData {
+  name: string
+  year: number | null
+}
+
 interface AlbumListPaginateParams extends Record<string, any> {
   sort: AlbumListSortField
   order: SortOrder
@@ -64,6 +69,13 @@ export const albumStore = {
     this.byId(album.id)!.cover = album.cover
 
     return album.cover
+  },
+
+  async update (album: Album, data: AlbumUpdateData) {
+    const updated = await http.put<Album>(`albums/${album.id}`, data)
+    this.state.albums = unionBy(this.state.albums, this.syncWithVault(updated), 'id')
+
+    songStore.updateAlbumName(album, updated.name)
   },
 
   /**

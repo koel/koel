@@ -57,5 +57,5 @@ watch(album, async () => {
   if (useLastfm.value || useSpotify.value) {
     info.value = await mediaInfoService.fetchForAlbum(album.value)
   }
-}, { immediate: true })
+}, { immediate: true, deep: true })
 </script>

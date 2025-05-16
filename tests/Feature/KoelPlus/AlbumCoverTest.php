@@ -21,11 +21,11 @@ class AlbumCoverTest extends PlusTestCase
     {
         parent::setUp();
 
-        $this->mediaMetadataService = self::mock(MediaMetadataService::class);
+        $this->mediaMetadataService = $this->mock(MediaMetadataService::class);
     }
 
     #[Test]
-    public function normalUserCanUploadCoverIfOwningAllSongsInAlbum(): void
+    public function albumOwnerCanUploadCover(): void
     {
         $user = create_user();
 
@@ -43,7 +43,7 @@ class AlbumCoverTest extends PlusTestCase
     }
 
     #[Test]
-    public function normalUserCannotUploadCoverIfNotOwningAllSongsInAlbum(): void
+    public function albumCoOwnerCanUploadCover(): void
     {
         $user = create_user();
 
@@ -52,16 +52,35 @@ class AlbumCoverTest extends PlusTestCase
         $album->songs()->saveMany(Song::factory()->for($user, 'owner')->count(3)->create());
         $album->songs()->save(Song::factory()->create());
 
+        self::assertTrue($user->isCoOwnerOfAlbum($album));
+
         $this->mediaMetadataService
             ->shouldReceive('writeAlbumCover')
-            ->never();
+            ->once()
+            ->with(Mockery::on(static fn (Album $target) => $target->is($album)), 'data:image/jpeg;base64,Rm9v');
+
+        $this->putAs("api/albums/{$album->id}/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], $user)
+            ->assertOk();
+    }
+
+    #[Test]
+    public function nonOwnerOrCoOwnerCannotUploadCover(): void
+    {
+        $user = create_user();
+
+        /** @var Album $album */
+        $album = Album::factory()->create();
+
+        self::assertFalse($user->isCoOwnerOfAlbum($album));
+
+        $this->mediaMetadataService->shouldNotReceive('writeAlbumCover');
 
         $this->putAs("api/albums/{$album->id}/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], $user)
             ->assertForbidden();
     }
 
     #[Test]
-    public function adminCanUploadCoverEvenIfNotOwningAllSongsInAlbum(): void
+    public function adminCanAlwaysUploadCover(): void
     {
         $user = create_user();
 

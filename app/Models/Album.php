@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
 use Laravel\Scout\Searchable;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * @property string $cover The album cover's URL
@@ -34,8 +36,9 @@ use Laravel\Scout\Searchable;
  * @property int|string $song_count Total number of songs on the album (dynamically calculated)
  * @property ?int $year
  */
-class Album extends Model
+class Album extends Model implements AuditableContract
 {
+    use Auditable;
     use HasFactory;
     use Searchable;
     use SupportsDeleteWhereValueNotIn;

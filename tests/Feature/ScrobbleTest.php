@@ -21,7 +21,7 @@ class ScrobbleTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create();
 
-        self::mock(LastfmService::class)
+        $this->mock(LastfmService::class)
             ->shouldReceive('scrobble')
             ->with(
                 Mockery::on(static fn (Song $s) => $s->is($song)),

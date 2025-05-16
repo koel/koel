@@ -113,5 +113,25 @@ new class extends UnitTestCase {
       expect(albumStore.state.albums).toEqual(albums)
       expect(albumStore.vault.size).toBe(3)
     })
+
+    it('updates', async () => {
+      const album = factory('album', { name: 'IV' })
+      albumStore.syncWithVault(album)
+
+      const updateData = {
+        name: 'V',
+        year: 2010,
+      }
+
+      const putMock = this.mock(http, 'put').mockResolvedValueOnce({ ...album, ...updateData })
+      const updateAlbumNameMock = this.mock(songStore, 'updateAlbumName')
+
+      await albumStore.update(album, updateData)
+
+      expect(putMock).toHaveBeenCalledWith(`albums/${album.id}`, updateData)
+      expect(albumStore.vault.get(album.id)?.name).toBe(updateData.name)
+      expect(albumStore.vault.get(album.id)?.year).toBe(updateData.year)
+      expect(updateAlbumNameMock).toHaveBeenCalledWith(album, updateData.name)
+    })
   }
 }

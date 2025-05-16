@@ -8,6 +8,7 @@ use App\Http\Controllers\API\ArtistAlbumController;
 use App\Http\Controllers\API\ArtistController;
 use App\Http\Controllers\API\ArtistSongController;
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\CheckResourcePermissionController;
 use App\Http\Controllers\API\DisconnectFromLastfmController;
 use App\Http\Controllers\API\ExcerptSearchController;
 use App\Http\Controllers\API\FetchAlbumInformationController;
@@ -204,6 +205,9 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::get('episodes/{episode}', FetchEpisodeController::class);
         Route::apiResource('podcasts.episodes', PodcastEpisodeController::class);
         Route::delete('podcasts/{podcast}/subscriptions', UnsubscribeFromPodcastController::class);
+
+        // Resource permission routes
+        Route::get('permissions/{type}/{id}/{action}', CheckResourcePermissionController::class);
     });
 
     // Object-storage (S3) routes

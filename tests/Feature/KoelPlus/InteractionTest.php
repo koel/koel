@@ -22,6 +22,7 @@ class InteractionTest extends PlusTestCase
         $owner = create_user();
 
         // Can't increase play count of a private song that doesn't belong to the user
+        /** @var Song $externalPrivateSong */
         $externalPrivateSong = Song::factory()->private()->create();
         $this->postAs('api/interaction/play', ['song' => $externalPrivateSong->id], $owner)
             ->assertForbidden();

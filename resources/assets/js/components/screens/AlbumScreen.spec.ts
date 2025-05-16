@@ -62,6 +62,16 @@ new class extends UnitTestCase {
         expect(screen.getAllByTestId('album-card')).toHaveLength(3) // current album is excluded
       })
     })
+
+    it('requests edit form', async () => {
+      await this.renderComponent()
+
+      const emitMock = this.mock(eventBus, 'emit')
+
+      await this.user.click(screen.getByRole('button', { name: 'Edit' }))
+
+      expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_ALBUM_FORM', album)
+    })
   }
 
   private async renderComponent () {
@@ -84,7 +94,7 @@ new class extends UnitTestCase {
       screen: 'Album',
     }, { id: '42' })
 
-    this.render(AlbumScreen, {
+    this.beAdmin().render(AlbumScreen, {
       global: {
         stubs: {
           SongList: this.stub('song-list'),
@@ -99,6 +109,6 @@ new class extends UnitTestCase {
       expect(fetchSongsMock).toHaveBeenCalledWith(album.id)
     })
 
-    await this.tick(2)
+    await this.tick(3)
   }
 }

@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Casts\UserPreferencesCast;
-use App\Exceptions\UserAlreadySubscribedToPodcast;
+use App\Exceptions\UserAlreadySubscribedToPodcastException;
 use App\Facades\License;
 use App\Values\UserPreferences;
 use Carbon\Carbon;
@@ -18,6 +18,8 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\PersonalAccessToken;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * @property ?Carbon $invitation_accepted_at
@@ -43,8 +45,9 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @property-read bool $is_sso
  * @property-read string $avatar
  */
-class User extends Authenticatable
+class User extends Authenticatable implements AuditableContract
 {
+    use Auditable;
     use HasApiTokens;
     use HasFactory;
     use Notifiable;
@@ -52,6 +55,7 @@ class User extends Authenticatable
     protected $guarded = ['id'];
     protected $hidden = ['password', 'remember_token', 'created_at', 'updated_at', 'invitation_accepted_at'];
     protected $appends = ['avatar'];
+    protected array $auditExclude = ['password', 'remember_token', 'invitation_token'];
 
     protected $casts = [
         'is_admin' => 'bool',
@@ -97,7 +101,7 @@ class User extends Authenticatable
 
     public function subscribeToPodcast(Podcast $podcast): void
     {
-        throw_if($this->subscribedToPodcast($podcast), UserAlreadySubscribedToPodcast::make($this, $podcast));
+        throw_if($this->subscribedToPodcast($podcast), UserAlreadySubscribedToPodcastException::make($this, $podcast));
 
         $this->podcasts()->attach($podcast);
     }
@@ -132,5 +136,15 @@ class User extends Authenticatable
     protected function connectedToLastfm(): Attribute
     {
         return Attribute::get(fn (): bool => (bool) $this->preferences->lastFmSessionKey)->shouldCache();
+    }
+
+    public function isCoOwnerOfAlbum(Album $album): bool
+    {
+        return $album->songs->some(fn (Song $song) => $song->ownedBy($this));
+    }
+
+    public function isCoOwnerOfArtist(Artist $artist): bool
+    {
+        return $artist->songs->some(fn (Song $song) => $song->ownedBy($this));
     }
 }

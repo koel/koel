@@ -6,7 +6,7 @@ use App\Models\Podcast;
 use App\Models\User;
 use Exception;
 
-final class UserAlreadySubscribedToPodcast extends Exception
+final class UserAlreadySubscribedToPodcastException extends Exception
 {
     public static function make(User $user, Podcast $podcast): self
     {

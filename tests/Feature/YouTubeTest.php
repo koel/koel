@@ -17,7 +17,7 @@ class YouTubeTest extends TestCase
     {
         parent::setUp();
 
-        $this->youTubeService = self::mock(YouTubeService::class);
+        $this->youTubeService = $this->mock(YouTubeService::class);
     }
 
     #[Test]

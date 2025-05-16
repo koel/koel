@@ -68,7 +68,7 @@ const buttonLabel = computed(() => forAlbum.value
   : `Play all songs by ${entity.value.name}`,
 )
 
-const allowsUpload = currentUserCan.changeAlbumOrArtistThumbnails()
+const allowsUpload = ref(false)
 
 const playOrQueue = async (event: MouseEvent) => {
   const songs = forAlbum.value
@@ -85,7 +85,13 @@ const playOrQueue = async (event: MouseEvent) => {
   go(url('queue'))
 }
 
-const onDragEnter = () => (droppable.value = allowsUpload)
+const onDragEnter = async () => {
+  allowsUpload.value = forAlbum.value
+    ? await currentUserCan.editAlbum(entity.value as Album)
+    : await currentUserCan.editArtist(entity.value as Artist)
+
+  droppable.value = allowsUpload.value
+}
 
 const onDragLeave = (e: DragEvent) => {
   if ((e.currentTarget as Node)?.contains?.(e.relatedTarget as Node)) {
@@ -114,7 +120,7 @@ const validImageDropEvent = (event: DragEvent) => {
 const onDrop = async (event: DragEvent) => {
   droppable.value = false
 
-  if (!allowsUpload) {
+  if (!allowsUpload.value) {
     return
   }
 

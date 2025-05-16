@@ -22,14 +22,11 @@
             <span>{{ duration }}</span>
 
             <span v-if="downloadable">
-              <a
-                v-if="downloadable"
-                role="button"
-                title="Download all songs in album"
-                @click.prevent="download"
-              >
-                Download All
-              </a>
+              <a role="button" title="Download all songs in album" @click.prevent="download">Download All</a>
+            </span>
+
+            <span v-if="editable">
+              <a role="button" title="Edit album" @click.prevent="edit">Edit</a>
             </span>
           </span>
         </template>
@@ -103,6 +100,7 @@ import { commonStore } from '@/stores/commonStore'
 import { songStore } from '@/stores/songStore'
 import { downloadService } from '@/services/downloadService'
 import { useErrorHandler } from '@/composables/useErrorHandler'
+import { usePolicies } from '@/composables/usePolicies'
 import { useSongList } from '@/composables/useSongList'
 import { useSongListControls } from '@/composables/useSongListControls'
 import { useRouter } from '@/composables/useRouter'
@@ -123,6 +121,7 @@ const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCar
 const AlbumCardSkeleton = defineAsyncComponent(() => import('@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'))
 
 const { getRouteParam, go, onScreenActivated, url } = useRouter()
+const { currentUserCan } = usePolicies()
 
 const albumId = ref<number>()
 const album = ref<Album | undefined>()
@@ -130,6 +129,7 @@ const songs = ref<Song[]>([])
 const loading = ref(false)
 const otherAlbums = ref<Album[] | undefined>()
 const info = ref<ArtistInfo | undefined>()
+const editable = ref(false)
 
 const {
   SongList,
@@ -162,6 +162,8 @@ const isNormalArtist = computed(() => {
 
 const download = () => downloadService.fromAlbum(album.value!)
 
+const edit = () => eventBus.emit('MODAL_SHOW_EDIT_ALBUM_FORM', album.value!)
+
 watch(activeTab, async tab => {
   if (tab === 'OtherAlbums' && !otherAlbums.value) {
     const albums = await albumStore.fetchForArtist(album.value!.artist_id)
@@ -190,6 +192,8 @@ watch(albumId, async id => {
     context.entity = album.value
 
     sort('track')
+
+    editable.value = await currentUserCan.editAlbum(album.value!)
   } catch (error: unknown) {
     useErrorHandler('dialog').handleHttpError(error)
   } finally {
