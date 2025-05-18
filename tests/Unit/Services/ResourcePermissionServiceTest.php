@@ -4,10 +4,9 @@ namespace Tests\Unit\Services;
 
 use App\Enums\PermissionableResourceType;
 use App\Services\ResourcePermissionService;
-use Illuminate\Auth\Access\Gate;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Gate;
 use Mockery;
-use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -16,15 +15,13 @@ use function Tests\create_user;
 
 class ResourcePermissionServiceTest extends TestCase
 {
-    private Gate|MockInterface $gate;
     private ResourcePermissionService $service;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->gate = Mockery::mock(Gate::class);
-        $this->service = new ResourcePermissionService($this->gate);
+        $this->service = new ResourcePermissionService();
     }
 
     /**
@@ -45,13 +42,11 @@ class ResourcePermissionServiceTest extends TestCase
         $modelClass = $type->value;
         $subject = $modelClass::factory()->create(); // @phpstan-ignore-line
 
-        $this->gate
-            ->shouldReceive('forUser')
+        Gate::shouldReceive('forUser')
             ->with($user)
             ->andReturnSelf();
 
-        $this->gate
-            ->shouldReceive('allows')
+        Gate::shouldReceive('allows')
             ->with('edit', Mockery::on(static fn (Model $s) => $s->is($subject)))
             ->andReturn(true);
 
