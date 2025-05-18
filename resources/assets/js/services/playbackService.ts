@@ -103,7 +103,7 @@ class PlaybackService {
       useEpisodeProgressTracking().trackEpisode(playable)
     }
 
-    queueStore.queueIfNotQueued(playable)
+    queueStore.queueIfNotQueued(playable, 'after-current')
 
     // If for any reason (most likely a bug), the requested song has been deleted, just attempt the next item in queue.
     if (isSong(playable) && playable.deleted) {

@@ -55,6 +55,8 @@ use Throwable;
  * @property User $owner
  * @property-read SongStorageMetadata $storage_metadata
  * @property SongStorageType $storage
+ * @property ?string $folder_id
+ * @property ?Folder $folder
  *
  * // The following are only available for collaborative playlists
  * @property-read ?string $collaborator_email The email of the user who added the song to the playlist
@@ -131,6 +133,11 @@ class Song extends Model implements AuditableContract
     public function podcast(): BelongsTo
     {
         return $this->belongsTo(Podcast::class);
+    }
+
+    public function folder(): BelongsTo
+    {
+        return $this->belongsTo(Folder::class);
     }
 
     public function playlists(): BelongsToMany

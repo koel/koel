@@ -20,16 +20,16 @@
       <SongListItem
         :key="item.playable.id"
         :item="item"
-        draggable="true"
         :show-disc="showDiscLabel(item.playable)"
+        draggable="true"
         @click="onClick(item, $event)"
         @dragleave="onDragLeave"
         @dragstart="onDragStart(item, $event)"
         @play="onPlay(item.playable)"
+        @contextmenu.prevent="openContextMenu(item, $event)"
         @dragover.prevent="onDragOver"
         @drop.prevent="onDrop(item, $event)"
         @dragend.prevent="onDragEnd"
-        @contextmenu.prevent="openContextMenu(item, $event)"
       />
     </VirtualScroller>
   </div>
@@ -121,7 +121,7 @@ const onScroll = (e: Event) => {
  * maintain an array of "playable rows," each containing the playable itself and the "selected" flag.
  */
 const generateRows = () => {
-  // Since this method re-generates the playable wrappers, we need to keep track of  the
+  // Since this method re-generates the playable wrappers, we need to keep track of the
   // selected playable manually.
   const selectedIds = selectedPlayables.value.map(playable => playable.id)
 

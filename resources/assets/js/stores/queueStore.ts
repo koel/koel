@@ -56,9 +56,21 @@ export const queueStore = {
     this.all = unionBy(this.all, arrayify(playables), 'id')
   },
 
-  queueIfNotQueued (playable: Playable) {
-    if (!this.contains(playable)) {
-      this.queueAfterCurrent(playable)
+  queueIfNotQueued (playable: Playable, position: 'top' | 'bottom' | 'after-current' = 'after-current') {
+    if (this.contains(playable)) {
+      return
+    }
+
+    switch (position) {
+      case 'top':
+        this.queueToTop(playable)
+        break
+      case 'bottom':
+        this.queue(playable)
+        break
+      case 'after-current':
+        this.queueAfterCurrent(playable)
+        break
     }
   },
 

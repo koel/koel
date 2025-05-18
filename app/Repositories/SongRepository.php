@@ -7,13 +7,16 @@ use App\Enums\PlayableType;
 use App\Facades\License;
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Folder;
 use App\Models\Playlist;
 use App\Models\Podcast;
+use App\Models\Setting;
 use App\Models\Song;
 use App\Models\User;
 use App\Values\Genre;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Str;
 
 /** @extends Repository<Song> */
 class SongRepository extends Repository
@@ -138,6 +141,17 @@ class SongRepository extends Repository
             ->orderBy('songs.track')
             ->orderBy('songs.title')
             ->get();
+    }
+
+    public function paginateInFolder(?Folder $folder = null, ?User $scopedUser = null): Paginator
+    {
+        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
+            ->accessible()
+            ->withMeta()
+            ->when($folder, static fn (SongBuilder $query) => $query->where('folder_id', $folder->id)) // @phpstan-ignore-line
+            ->when(!$folder, static fn (SongBuilder $query) => $query->whereNull('folder_id'))
+            ->orderBy('songs.path')
+            ->simplePaginate(50);
     }
 
     /** @return Collection|array<array-key, Song> */
@@ -282,5 +296,73 @@ class SongRepository extends Repository
     public function getEpisodesByPodcast(Podcast $podcast): Collection
     {
         return $podcast->episodes;
+    }
+
+    /** @return Collection<Song> */
+    public function getUnderPaths(
+        array $paths,
+        int $limit = 500,
+        bool $random = false,
+        ?User $scopedUser = null
+    ): Collection {
+        $paths = self::normalizePaths($paths);
+
+        if (!$paths) {
+            return collect();
+        }
+
+        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
+            ->accessible()
+            ->withMeta()
+            ->where(static function (SongBuilder $query) use ($paths): void {
+                foreach ($paths as $path) {
+                    $query->orWhere('songs.path', 'LIKE', $path . '%');
+                }
+            })
+            ->when(!$random, static fn (SongBuilder $query): SongBuilder => $query->orderBy('songs.path'))
+            ->when($random, static fn (SongBuilder $query): SongBuilder => $query->inRandomOrder())
+            ->limit($limit)
+            ->get();
+    }
+
+    /** @return array<string> */
+    private static function normalizePaths(array $paths): array
+    {
+        $root = Setting::get('media_path');
+        $root = DIRECTORY_SEPARATOR . trim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR; # /var/www/media/
+
+        $normalizePath = static function (string $path) use ($root): string {
+            if (!$path) {
+                return $root;
+            }
+
+            $path = trim($path, DIRECTORY_SEPARATOR);
+
+            return $root . $path . DIRECTORY_SEPARATOR; # /var/www/media/foo/bar/
+        };
+
+        $removeSubpaths = static function (array $paths): array {
+            $result = [];
+
+            foreach ($paths as $path) {
+                $isSubpath = false;
+
+                foreach ($result as $parent) {
+                    if (Str::startsWith($path, $parent)) {
+                        $isSubpath = true;
+
+                        break;
+                    }
+                }
+
+                if (!$isSubpath) {
+                    $result[] = $path;
+                }
+            }
+
+            return $result;
+        };
+
+        return $removeSubpaths(array_map($normalizePath, $paths));
     }
 }

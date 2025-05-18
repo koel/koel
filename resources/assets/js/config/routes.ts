@@ -94,23 +94,35 @@ export const routes: Route[] = [
   },
   {
     name: 'albums.show',
-    path: '/albums/(?<id>\\d+)',
+    path: '/albums/:id',
     screen: 'Album',
+    constraints: {
+      id: '\\d+',
+    },
   },
   {
     name: 'artists.show',
-    path: '/artists/(?<id>\\d+)',
+    path: '/artists/:id',
     screen: 'Artist',
+    constraints: {
+      id: '\\d+',
+    },
   },
   {
     name: 'playlists.show',
-    path: `/playlists/(?<id>${UUID_REGEX})`,
+    path: '/playlists/:id',
     screen: 'Playlist',
+    constraints: {
+      id: UUID_REGEX,
+    },
   },
   {
     name: 'playlist.collaborate',
-    path: `/playlist/collaborate/(?<id>${UUID_REGEX})`,
+    path: '/playlist/collaborate/:id',
     screen: 'Blank',
+    constraints: {
+      id: UUID_REGEX,
+    },
     onResolve: async params => {
       try {
         const playlist = await playlistCollaborationService.acceptInvite(params.id)
@@ -129,7 +141,7 @@ export const routes: Route[] = [
   },
   {
     name: 'genres.show',
-    path: '/genres/(?<name>\.+)',
+    path: '/genres/:name',
     screen: 'Genre',
   },
   {
@@ -139,12 +151,15 @@ export const routes: Route[] = [
   },
   {
     name: 'podcasts.show',
-    path: `/podcasts/(?<id>${UUID_REGEX})`,
+    path: '/podcasts/:id',
     screen: 'Podcast',
+    constraints: {
+      id: UUID_REGEX,
+    },
   },
   {
     name: 'episodes.show',
-    path: '/episodes/(?<id>\.+)',
+    path: '/episodes/:id',
     screen: 'Episode',
   },
   {
@@ -154,8 +169,11 @@ export const routes: Route[] = [
   },
   {
     name: 'songs.queue',
-    path: `/songs/(?<id>${UUID_REGEX})`,
+    path: '/songs/:id',
     screen: 'Queue',
+    constraints: {
+      id: UUID_REGEX,
+    },
     redirect: () => 'queue',
     onResolve: params => {
       cache.set('song-to-queue', params.id)
@@ -164,12 +182,26 @@ export const routes: Route[] = [
   },
   {
     name: 'invitation.accept',
-    path: `/invitation/accept/(?<token>${UUID_REGEX})`,
+    path: '/invitation/accept/:token',
     screen: 'Invitation.Accept',
+    constraints: {
+      token: UUID_REGEX,
+    },
   },
   {
     name: 'password.reset',
-    path: `/reset-password/(?<payload>[a-zA-Z0-9\\+/=]+)`,
+    path: '/reset-password/:payload',
     screen: 'Password.Reset',
+    constraints: {
+      payload: '[a-zA-Z0-9\\+/=]+',
+    },
+  },
+  {
+    name: 'media-browser',
+    path: '/browse/:path?',
+    screen: 'MediaBrowser',
+    constraints: {
+      path: '.+',
+    },
   },
 ]

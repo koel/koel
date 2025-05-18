@@ -327,4 +327,9 @@ export const songStore = {
 
     return privatizedIds
   },
+
+  fetchForFolder () {
+    // fetch a MAX 500 songs from the folder and its subfolders
+    return []
+  },
 }

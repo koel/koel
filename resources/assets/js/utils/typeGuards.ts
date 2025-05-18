@@ -1,5 +1,5 @@
-export function isSong (playable: Playable): playable is Song {
-  return playable.type === 'songs'
+export function isSong (item: Playable | Folder): item is Song {
+  return item.type === 'songs'
 }
 
 export function isEpisode (playable: Playable): playable is Episode {

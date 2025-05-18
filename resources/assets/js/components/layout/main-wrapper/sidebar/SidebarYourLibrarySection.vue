@@ -38,17 +38,24 @@
         </template>
         Podcasts
       </SidebarItem>
+      <SidebarItem v-if="usesMediaBrowser" :href="url('media-browser')" screen="MediaBrowser">
+        <template #icon>
+          <Icon :icon="faFolderTree" fixed-width />
+        </template>
+        Media Browser
+      </SidebarItem>
     </ul>
   </SidebarSection>
 </template>
 
 <script lang="ts" setup>
-import { faCompactDisc, faMusic, faPodcast } from '@fortawesome/free-solid-svg-icons'
+import { faCompactDisc, faFolderTree, faMusic, faPodcast } from '@fortawesome/free-solid-svg-icons'
 import { GuitarIcon, MicVocalIcon } from 'lucide-vue-next'
 import { unescape } from 'lodash'
-import { ref } from 'vue'
+import { ref, toRef } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { useRouter } from '@/composables/useRouter'
+import { commonStore } from '@/stores/commonStore'
 
 import SidebarSection from '@/components/layout/main-wrapper/sidebar/SidebarSection.vue'
 import SidebarSectionHeader from '@/components/layout/main-wrapper/sidebar/SidebarSectionHeader.vue'
@@ -57,6 +64,8 @@ import YouTubeSidebarItem from '@/components/layout/main-wrapper/sidebar/YouTube
 
 const youtubeVideoTitle = ref<string | null>(null)
 const { url } = useRouter()
+
+const usesMediaBrowser = toRef(commonStore.state, 'uses_media_browser')
 
 eventBus.on('PLAY_YOUTUBE_VIDEO', payload => (youtubeVideoTitle.value = unescape(payload.title)))
 </script>

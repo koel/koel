@@ -11,9 +11,7 @@
         <p v-if="song.id && !song.lyrics" class="text-k-text-secondary">
           <template v-if="canUpdateLyrics">
             No lyrics found.
-            <a role="button" @click.prevent="showEditSongForm">
-              Click here
-            </a>
+            <a role="button" @click.prevent="showEditSongForm">Click here</a>
             to add lyrics.
           </template>
           <span v-else>No lyrics available. Are you listening to Bach?</span>

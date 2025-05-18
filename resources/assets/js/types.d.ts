@@ -402,6 +402,7 @@ declare type ScreenName =
   | 'Episode'
   | 'Search.Excerpt'
   | 'Search.Songs'
+  | 'MediaBrowser'
   | 'Invitation.Accept'
   | 'Password.Reset'
   | '404'
@@ -519,3 +520,16 @@ interface Visualizer {
 }
 
 type PlayableListColumnName = 'title' | 'album' | 'track' | 'duration' | 'created_at' | 'play_count'
+
+interface Folder {
+  id: string
+  parent_id: string | null
+  type: 'folders'
+  path: string
+  name: string
+}
+
+interface MediaRow {
+  item: Folder | Song
+  selected: boolean
+}

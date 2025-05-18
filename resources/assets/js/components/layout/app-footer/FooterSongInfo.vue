@@ -10,7 +10,7 @@
       <h3 class="title text-ellipsis overflow-hidden whitespace-nowrap">{{ song.title }}</h3>
       <a
         :href="artistOrPodcastUri"
-        class="artist text-ellipsis overflow-hidden whitespace-nowrap block text-[0.9rem] !text-k-text-secondary hover:!text-k-accent"
+        class="artist text-ellipsis overflow-hidden whitespace-nowrap block text-[0.9rem] text-k-text-secondary"
       >
         {{ artistOrPodcastName }}
       </a>

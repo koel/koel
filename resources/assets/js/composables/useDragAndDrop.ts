@@ -6,9 +6,12 @@ import { artistStore } from '@/stores/artistStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { songStore } from '@/stores/songStore'
+import { isSong } from '@/utils/typeGuards'
+import type { ResolvableData as MediaResolvableData } from '@/services/mediaBrowser'
+import { mediaBrowser } from '@/services/mediaBrowser'
 
-type Draggable = MaybeArray<Playable> | Album | Artist | Playlist | PlaylistFolder
-const draggableTypes = <const>['playables', 'album', 'artist', 'playlist', 'playlist-folder']
+type Draggable = MaybeArray<Playable> | Album | Artist | Playlist | PlaylistFolder | MaybeArray<Song | Folder>
+const draggableTypes = <const>['playables', 'album', 'artist', 'playlist', 'playlist-folder', 'browser-media']
 type DraggableType = typeof draggableTypes[number]
 
 const createGhostDragImage = (event: DragEvent, text: string): void => {
@@ -78,6 +81,16 @@ export const useDraggable = (type: DraggableType) => {
         data = dragged.id
         break
 
+      case 'browser-media':
+        dragged = arrayify(dragged as MaybeArray<Song | Folder>)
+        text = pluralize(dragged, 'item')
+
+        data = dragged.map<MediaResolvableData>(
+          item => isSong(item) ? { id: item.id, type: 'songs' } : { path: item.path, type: 'folders' },
+        )
+
+        break
+
       default:
         return
     }
@@ -113,7 +126,7 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
     }
   }
 
-  const resolveDroppedValue = async <T = Playlist> (event: DragEvent): Promise<T | undefined> => {
+  const resolveDroppedValue = async <T = Playlist>(event: DragEvent): Promise<T | undefined> => {
     try {
       switch (getDragType(event)) {
         case 'playlist':
@@ -129,11 +142,13 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
   const resolveDroppedItems = async (event: DragEvent) => {
     try {
       const type = getDragType(event)
+
       if (!type) {
         return <Playable[]>[]
       }
 
       const data = getDroppedData(event)
+
       switch (type) {
         case 'playables':
           return songStore.byIds(<string[]>data)
@@ -149,6 +164,8 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
         case 'playlist-folder':
           const folder = playlistFolderStore.byId(<string>data)
           return folder ? await songStore.fetchForPlaylistFolder(folder) : <Song[]>[]
+        case 'browser-media':
+          return await mediaBrowser.resolveSongsFromIdsAndFolderPaths(data)
         default:
           throw new Error(`Unknown drag type: ${type}`)
       }

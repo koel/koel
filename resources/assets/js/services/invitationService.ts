@@ -1,4 +1,3 @@
-import type { CompositeToken } from '@/services/authService'
 import { authService } from '@/services/authService'
 import { http } from '@/services/http'
 import { userStore } from '@/stores/userStore'

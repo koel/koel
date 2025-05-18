@@ -28,7 +28,7 @@ const { go, isCurrentScreen, url } = useRouter()
 const { toastWarning, toastSuccess } = useMessageToaster()
 
 const { acceptsDrop, resolveDroppedItems } = useDroppable(
-  ['playables', 'album', 'artist', 'playlist', 'playlist-folder'],
+  ['playables', 'album', 'artist', 'playlist', 'playlist-folder', 'browser-media'],
 )
 
 const droppable = ref(false)

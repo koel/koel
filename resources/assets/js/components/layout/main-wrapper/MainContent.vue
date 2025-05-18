@@ -23,6 +23,7 @@
     <SearchExcerptsScreen v-show="screen === 'Search.Excerpt'" />
     <GenreScreen v-show="screen === 'Genre'" />
     <PodcastListScreen v-show="screen === 'Podcasts'" />
+    <MediaBrowser v-if="useMediaBrowser" v-show="screen === 'MediaBrowser'" />
 
     <GenreListScreen v-if="screen === 'Genres'" />
     <SearchSongResultsScreen v-if="screen === 'Search.Songs'" />
@@ -59,6 +60,7 @@ import RecentlyPlayedScreen from '@/components/screens/RecentlyPlayedScreen.vue'
 import UploadScreen from '@/components/screens/UploadScreen.vue'
 import SearchExcerptsScreen from '@/components/screens/search/SearchExcerptsScreen.vue'
 import PodcastListScreen from '@/components/screens/PodcastListScreen.vue'
+import { commonStore } from '@/stores/commonStore'
 
 const UserListScreen = defineAsyncComponent(() => import('@/components/screens/UserListScreen.vue'))
 const AlbumArtOverlay = defineAsyncComponent(() => import('@/components/ui/AlbumArtOverlay.vue'))
@@ -73,6 +75,7 @@ const YouTubeScreen = defineAsyncComponent(() => import('@/components/screens/Yo
 const SearchSongResultsScreen = defineAsyncComponent(() => import('@/components/screens/search/SearchSongResultsScreen.vue'))
 const NotFoundScreen = defineAsyncComponent(() => import('@/components/screens/NotFoundScreen.vue'))
 const VisualizerScreen = defineAsyncComponent(() => import('@/components/screens/VisualizerScreen.vue'))
+const MediaBrowser = defineAsyncComponent(() => import('@/components/screens/MediaBrowserScreen.vue'))
 
 const { useYouTube } = useThirdPartyServices()
 const { onRouteChanged, getCurrentScreen } = useRouter()
@@ -85,4 +88,6 @@ const screen = ref<ScreenName>('Home')
 onRouteChanged(route => (screen.value = route.screen))
 
 onMounted(() => (screen.value = getCurrentScreen()))
+
+const useMediaBrowser = toRef(commonStore.state, 'uses_media_browser')
 </script>

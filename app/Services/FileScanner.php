@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\SongStorageType;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
@@ -32,6 +33,7 @@ class FileScanner
     public function __construct(
         private readonly getID3 $getID3,
         private readonly MediaMetadataService $mediaMetadataService,
+        private readonly MediaBrowser $browser,
         private readonly SongRepository $songRepository,
         private readonly SimpleLrcReader $lrcReader,
         private readonly Finder $finder
@@ -52,7 +54,12 @@ class FileScanner
     public function getScanInformation(): ?SongScanInformation
     {
         $raw = $this->getID3->analyze($this->filePath);
-        $this->syncError = Arr::get($raw, 'error.0') ?: (Arr::get($raw, 'playtime_seconds') ? null : 'Empty file');
+
+        if (Arr::get($raw, 'playtime_seconds')) {
+            $this->syncError = Arr::get($raw, 'error.0') ?: (null);
+        } else {
+            $this->syncError = Arr::get($raw, 'error.0') ?: 'Empty file';
+        }
 
         if ($this->syncError) {
             return null;
@@ -110,6 +117,10 @@ class FileScanner
 
             if (!$album->year && $this->song->year) {
                 $album->update(['year' => $this->song->year]);
+            }
+
+            if ($this->song->storage === SongStorageType::LOCAL) {
+                $this->browser->maybeCreateFolderStructureForSong($this->song);
             }
 
             return ScanResult::success($this->filePath);

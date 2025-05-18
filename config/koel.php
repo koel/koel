@@ -118,6 +118,10 @@ return [
         'allow' => env('ALLOW_DOWNLOAD', true),
     ],
 
+    'media_browser' => [
+        'enabled' => env('MEDIA_BROWSER_ENABLED', false),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Ignore Dot Files
