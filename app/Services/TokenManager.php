@@ -33,11 +33,11 @@ class TokenManager
         $audioToken = Cache::get("app.composite-tokens.$plainTextApiToken");
 
         if ($audioToken) {
-            self::deleteTokenByPlainTextToken($audioToken);
+            $this->deleteTokenByPlainTextToken($audioToken);
             Cache::forget("app.composite-tokens.$plainTextApiToken");
         }
 
-        self::deleteTokenByPlainTextToken($plainTextApiToken);
+        $this->deleteTokenByPlainTextToken($plainTextApiToken);
     }
 
     public function destroyTokens(User $user): void

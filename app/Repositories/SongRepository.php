@@ -10,18 +10,21 @@ use App\Models\Artist;
 use App\Models\Folder;
 use App\Models\Playlist;
 use App\Models\Podcast;
-use App\Models\Setting;
 use App\Models\Song;
 use App\Models\User;
 use App\Values\Genre;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Str;
 
 /** @extends Repository<Song> */
 class SongRepository extends Repository
 {
     private const DEFAULT_QUEUE_LIMIT = 500;
+
+    public function __construct(private readonly FolderRepository $folderRepository)
+    {
+        parent::__construct();
+    }
 
     public function findOneByPath(string $path): ?Song
     {
@@ -298,26 +301,29 @@ class SongRepository extends Repository
         return $podcast->episodes;
     }
 
-    /** @return Collection<Song> */
+    /** @return Collection<Song>|array<array-key, Song> */
     public function getUnderPaths(
         array $paths,
         int $limit = 500,
         bool $random = false,
         ?User $scopedUser = null
     ): Collection {
-        $paths = self::normalizePaths($paths);
+        $paths = array_map(static fn (string $path) => $path ? trim($path, DIRECTORY_SEPARATOR) : '', $paths);
 
         if (!$paths) {
-            return collect();
+            return Collection::empty();
         }
 
-        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
+        $hasRootPath = in_array('', $paths, true);
+        $scopedUser ??= $this->auth->user();
+
+        return Song::query(type: PlayableType::SONG, user: $scopedUser)
             ->accessible()
             ->withMeta()
-            ->where(static function (SongBuilder $query) use ($paths): void {
-                foreach ($paths as $path) {
-                    $query->orWhere('songs.path', 'LIKE', $path . '%');
-                }
+            // if the root path is included, we don't need to filter by folder
+            ->when(!$hasRootPath, function (SongBuilder $query) use ($paths, $scopedUser): void {
+                $folders = $this->folderRepository->getByPaths($paths, $scopedUser);
+                $query->whereIn('songs.folder_id', $folders->pluck('id'));
             })
             ->when(!$random, static fn (SongBuilder $query): SongBuilder => $query->orderBy('songs.path'))
             ->when($random, static fn (SongBuilder $query): SongBuilder => $query->inRandomOrder())
@@ -325,44 +331,21 @@ class SongRepository extends Repository
             ->get();
     }
 
-    /** @return array<string> */
-    private static function normalizePaths(array $paths): array
+    /**
+     * Fetch songs **directly** in a specific folder (or the media root if null).
+     * This does not include songs in subfolders.
+     *
+     * @return Collection<Song>|array<array-key, Song>
+     */
+    public function getInFolder(?Folder $folder = null, int $limit = 500, ?User $scopedUser = null): Collection
     {
-        $root = Setting::get('media_path');
-        $root = DIRECTORY_SEPARATOR . trim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR; # /var/www/media/
-
-        $normalizePath = static function (string $path) use ($root): string {
-            if (!$path) {
-                return $root;
-            }
-
-            $path = trim($path, DIRECTORY_SEPARATOR);
-
-            return $root . $path . DIRECTORY_SEPARATOR; # /var/www/media/foo/bar/
-        };
-
-        $removeSubpaths = static function (array $paths): array {
-            $result = [];
-
-            foreach ($paths as $path) {
-                $isSubpath = false;
-
-                foreach ($result as $parent) {
-                    if (Str::startsWith($path, $parent)) {
-                        $isSubpath = true;
-
-                        break;
-                    }
-                }
-
-                if (!$isSubpath) {
-                    $result[] = $path;
-                }
-            }
-
-            return $result;
-        };
-
-        return $removeSubpaths(array_map($normalizePath, $paths));
+        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
+            ->accessible()
+            ->withMeta()
+            ->limit($limit)
+            ->when($folder, static fn (SongBuilder $query) => $query->where('songs.folder_id', $folder->id)) // @phpstan-ignore-line
+            ->when(!$folder, static fn (SongBuilder $query) => $query->whereNull('songs.folder_id'))
+            ->orderBy('songs.path')
+            ->get();
     }
 }

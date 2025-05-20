@@ -36,7 +36,7 @@ import SidebarItem from '@/components/layout/main-wrapper/sidebar/SidebarItem.vu
 const props = defineProps<{ list: PlaylistLike }>()
 const { onRouteChanged, url } = useRouter()
 const { startDragging } = useDraggable('playlist')
-const { acceptsDrop, resolveDroppedItems } = useDroppable(['playables', 'album', 'artist'])
+const { acceptsDrop, resolveDroppedItems } = useDroppable(['playables', 'album', 'artist', 'browser-media'])
 
 const droppable = ref(false)
 

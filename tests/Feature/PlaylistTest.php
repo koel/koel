@@ -136,7 +136,7 @@ class PlaylistTest extends TestCase
 
         $this->deleteAs("api/playlists/{$playlist->id}", [], $playlist->user);
 
-        self::assertModelMissing($playlist);
+        $this->assertModelMissing($playlist);
     }
 
     #[Test]
@@ -146,6 +146,6 @@ class PlaylistTest extends TestCase
 
         $this->deleteAs("api/playlists/{$playlist->id}")->assertForbidden();
 
-        self::assertModelExists($playlist);
+        $this->assertModelExists($playlist);
     }
 }

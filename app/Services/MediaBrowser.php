@@ -2,8 +2,7 @@
 
 namespace App\Services;
 
-use App\Enums\SongStorageType;
-use App\Exceptions\LocalStorageRequiredException;
+use App\Exceptions\MediaBrowserNotSupportedException;
 use App\Exceptions\MediaPathNotSetException;
 use App\Facades\License;
 use App\Models\Folder;
@@ -16,39 +15,43 @@ class MediaBrowser
     /** @var array<string, Folder> */
     private static array $folderCache = [];
 
-    public static function enabled(): bool
+    private static ?string $mediaPath;
+
+    public static function used(): bool
     {
         return config('koel.media_browser.enabled') && License::isPlus();
     }
 
     /**
-     * @description Create a folder structure for the given song if it doesn't exist, and return the deepest folder.
+     * Create a folder structure for the given song if it doesn't exist, and return the deepest folder.
+     * For example, if the song's path is `/root/media/path/foo/bar/baz.mp3`, it will create the folders with paths
+     * "foo" and "foo/bar" if they don't exist, and return the folder with path "foo/bar".
+     * For efficiency, we also cache the folders and the media path to avoid multiple database queries.
+     * This is particularly useful when processing multiple songs in a batch (e.g., during scanning).
      */
-    public function maybeCreateFolderStructureForSong(Song $song, ?string $rootPath = null): ?Folder
+    public function maybeCreateFolderStructureForSong(Song $song): void
     {
-        throw_unless($song->storage === SongStorageType::LOCAL, LocalStorageRequiredException::class);
-
-        $rootPath ??= Setting::get('media_path');
+        throw_unless($song->storage->supportsFolderStructureExtraction(), MediaBrowserNotSupportedException::class);
 
         // The song is already in a folder, so we don't need to create one.
         if ($song->folder_id) {
-            return $song->folder;
+            return;
         }
 
-        throw_unless($rootPath, MediaPathNotSetException::class);
+        self::$mediaPath ??= Setting::get('media_path');
+
+        throw_unless(self::$mediaPath, MediaPathNotSetException::class);
 
         $parentId = null;
         $currentPath = '';
         $folder = null;
 
-        $relativePath = Str::after($song->path, $rootPath);
+        $relativePath = Str::after($song->path, self::$mediaPath);
         $folderPath = pathinfo($relativePath, PATHINFO_DIRNAME);
         $segments = explode(DIRECTORY_SEPARATOR, trim($folderPath, DIRECTORY_SEPARATOR));
 
-        if (!$segments) {
-            return null;
-        }
-
+        // For each segment in the folder path ('foo' and 'bar'), we will create a folder if it doesn't exist
+        // using the aggregated path (e.g., 'foo' and 'foo/bar').
         foreach ($segments as $segment) {
             if (!$segment) {
                 continue;
@@ -71,6 +74,15 @@ class MediaBrowser
             $parentId = $folder->id;
         }
 
-        return $folder;
+        if ($folder) {
+            $song->folder()->associate($folder);
+            $song->save();
+        }
+    }
+
+    public static function clearCache(): void
+    {
+        self::$folderCache = [];
+        self::$mediaPath = null;
     }
 }

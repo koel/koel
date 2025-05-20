@@ -2,15 +2,12 @@
 
 namespace Database\Factories;
 
-use App\Models\Interaction;
 use App\Models\Song;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class InteractionFactory extends Factory
 {
-    protected $model = Interaction::class;
-
     /** @return array<mixed> */
     public function definition(): array
     {

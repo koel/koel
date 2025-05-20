@@ -7,7 +7,6 @@ use App\Exceptions\CannotRemoveOwnerFromPlaylistException;
 use App\Exceptions\NotAPlaylistCollaboratorException;
 use App\Exceptions\OperationNotApplicableForSmartPlaylistException;
 use App\Exceptions\PlaylistCollaborationTokenExpiredException;
-use App\Facades\License;
 use App\Models\Playlist;
 use App\Models\PlaylistCollaborationToken;
 use App\Models\User;
@@ -19,7 +18,6 @@ class PlaylistCollaborationService
 {
     public function createToken(Playlist $playlist): PlaylistCollaborationToken
     {
-        License::requirePlus();
         throw_if($playlist->is_smart, OperationNotApplicableForSmartPlaylistException::class);
 
         return $playlist->collaborationTokens()->create();
@@ -27,7 +25,7 @@ class PlaylistCollaborationService
 
     public function acceptUsingToken(string $token, User $user): Playlist
     {
-        License::requirePlus();
+        /** @var PlaylistCollaborationToken $collaborationToken */
         $collaborationToken = PlaylistCollaborationToken::query()->where('token', $token)->firstOrFail();
 
         throw_if($collaborationToken->expired, PlaylistCollaborationTokenExpiredException::class);
@@ -48,8 +46,6 @@ class PlaylistCollaborationService
     /** @return Collection<array-key, PlaylistCollaborator> */
     public function getCollaborators(Playlist $playlist): Collection
     {
-        License::requirePlus();
-
         return $playlist->collaborators->unless(
             $playlist->collaborators->contains($playlist->user), // The owner is always a collaborator
             static fn (Collection $collaborators) => $collaborators->push($playlist->user)
@@ -59,7 +55,6 @@ class PlaylistCollaborationService
 
     public function removeCollaborator(Playlist $playlist, User $user): void
     {
-        License::requirePlus();
         throw_if($user->is($playlist->user), CannotRemoveOwnerFromPlaylistException::class);
         throw_if(!$playlist->hasCollaborator($user), NotAPlaylistCollaboratorException::class);
 

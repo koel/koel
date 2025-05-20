@@ -1,9 +1,17 @@
 <template>
   <ScreenBase>
     <template #header>
-      <ScreenHeader layout="collapsed">
-        <span>Media Browser</span>
-        <BreadCrumbs :path class="mt-2" />
+      <ScreenHeader :disabled="loading">
+        Media Browser
+
+        <template #meta>
+          <div class="flex items-center gap-2 mt-2">
+            <Breadcrumbs :path class="flex-1" />
+            <Btn transparent small title="Reload" @click.prevent="refresh">
+              <Icon :icon="faRotateRight" />
+            </Btn>
+          </div>
+        </template>
       </ScreenHeader>
     </template>
 
@@ -15,38 +23,66 @@
     </ScreenEmptyState>
 
     <div v-else class="-m-6 h-full min-h-full flex flex-col flex-1 overflow-auto">
-      <MediaBrowser :items="items" class="flex-1" @scrolled-to-end="onScrolledToEnd" />
+      <MediaListView
+        v-show="!shouldShowSkeleton"
+        :items
+        :path
+        :class="noContent || 'flex-1'"
+        @scrolled-to-end="onScrolledToEnd"
+      />
+
+      <MediaListViewSkeleton v-if="shouldShowSkeleton" />
+
+      <ScreenEmptyState v-if="noContent">
+        <template #icon>
+          <Icon :icon="faFolderOpen" class="text-k-text-primary" />
+        </template>
+        This folder is empty.
+      </ScreenEmptyState>
     </div>
   </ScreenBase>
 </template>
 
 <script lang="ts" setup>
+import { faRotateRight } from '@fortawesome/free-solid-svg-icons'
+import { faFolderOpen } from '@fortawesome/free-regular-svg-icons'
+import { pull } from 'lodash'
 import { computed, onMounted, ref } from 'vue'
 import { commonStore } from '@/stores/commonStore'
 import { useAuthorization } from '@/composables/useAuthorization'
 import { useRouter } from '@/composables/useRouter'
 import { mediaBrowser } from '@/services/mediaBrowser'
 import { useErrorHandler } from '@/composables/useErrorHandler'
+import { eventBus } from '@/utils/eventBus'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
-import BreadCrumbs from '@/components/song/media-browser/BreadCrumbs.vue'
-import MediaBrowser from '@/components/song/media-browser/MediaBrowser.vue'
+import Breadcrumbs from '@/components/song/media-browser/Breadcrumbs.vue'
+import MediaListView from '@/components/song/media-browser/MediaListView.vue'
+import MediaListViewSkeleton from '@/components/ui/skeletons/MediaListViewSkeleton.vue'
+import Btn from '@/components/ui/form/Btn.vue'
 
 const { isAdmin } = useAuthorization()
 const { onRouteChanged, getRouteParam } = useRouter()
 
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 
+const loading = ref(false)
 const path = ref<string>('')
-const getPathFromRoute = () => getRouteParam('path') || ''
 
-const parentFolder = computed(() => mediaBrowser.getParentFolder(path.value))
+const getPathFromRoute = () => getRouteParam('path') || ''
 
 const subfolders = ref<Folder[]>([])
 const songs = ref<Song[]>([])
-let nextPage: number | null = 1
+const nextPage = ref<number | null>(1)
+
+const parentFolder = computed(() => mediaBrowser.getParentFolder(path.value))
+const noContent = computed(() => !loading.value && !subfolders.value.length && !songs.value.length)
+
+const shouldShowSkeleton = computed(() => {
+  return loading.value && nextPage.value === 1
+})
 
 const items = computed(() => {
   const _items = [...subfolders.value, ...songs.value]
@@ -61,22 +97,20 @@ const items = computed(() => {
 const resetState = () => {
   subfolders.value = []
   songs.value = []
-  nextPage = 1
+  nextPage.value = 1
 }
 
-const loading = ref(false)
-
-const fetchContent = async () => {
-  if (loading.value || nextPage === null) {
+const fetchContent = async (forceRefresh = false) => {
+  if (loading.value || nextPage.value === null) {
     return
   }
 
   try {
     loading.value = true
-    const fetched = await mediaBrowser.browse(path.value, nextPage)
+    const fetched = await mediaBrowser.browse(path.value, nextPage.value, forceRefresh)
     subfolders.value = fetched.subfolders
     songs.value = [...songs.value, ...fetched.songs]
-    nextPage = fetched.nextPage
+    nextPage.value = fetched.nextPage
   } catch (e) {
     useErrorHandler().handleHttpError(e)
   } finally {
@@ -84,8 +118,13 @@ const fetchContent = async () => {
   }
 }
 
+const refresh = () => {
+  resetState()
+  fetchContent(true)
+}
+
 const onScrolledToEnd = () => {
-  if (nextPage !== null) {
+  if (nextPage.value !== null) {
     fetchContent()
   }
 }
@@ -98,6 +137,15 @@ onRouteChanged(async route => {
   path.value = getPathFromRoute()
   resetState()
   await fetchContent()
+})
+
+eventBus.on('SONGS_DELETED', async deletedSongs => {
+  pull(songs.value, ...deletedSongs)
+
+  if (!songs.value.length) {
+    resetState()
+    await fetchContent()
+  }
 })
 
 onMounted(async () => {

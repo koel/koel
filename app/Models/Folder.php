@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -23,6 +24,7 @@ use Illuminate\Support\Arr;
  */
 class Folder extends Model
 {
+    use HasFactory;
     use HasUuids;
 
     protected $guarded = [];
@@ -73,7 +75,7 @@ class Folder extends Model
             $matches = [];
             preg_match('/^__KOEL_UPLOADS_\$(\d+)__$/', $this->name, $matches);
 
-            return Arr::get($matches, 1);
+            return (int) Arr::get($matches, 1);
         })->shouldCache();
     }
 }

@@ -10,6 +10,7 @@ Koel Plus is the premium version of Koel. It offers additional features and enha
 - **[Cloud Storage Support](./cloud-storage-support)**: In addition to local storage, Koel Plus supports remote and cloud storage drivers like SFTP, Amazon S3 (or any S3-compatible service), and Dropbox.
 - **[Single Sign-On (SSO) Support](./sso)**: Users can log into Koel Plus using their existing credentials from another service like Google.
 - **[Authentication via Proxy-Authorization Header](./proxy-auth)**: Seamlessly log in users who are already authenticated via a proxy server, allowing Koel to be used in a corporate environment.
+- **[Media Browser](./media-browser)**: A file explorer-like interface that allows users to browse their music files directly, useful for libraries without proper ID3 tagging.
 
 Other features are being planned or actively developed, for example:
 

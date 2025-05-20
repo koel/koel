@@ -32,7 +32,7 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
                 $song = Song::factory()->create(['storage' => $type]);
                 $this->listener->handle(new MediaScanCompleted(ScanResultCollection::create()));
 
-                self::assertModelExists($song);
+                $this->assertModelExists($song);
             });
     }
 
@@ -41,7 +41,7 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
     {
         $episode = Song::factory()->asEpisode()->create();
         $this->listener->handle(new MediaScanCompleted(ScanResultCollection::create()));
-        self::assertModelExists($episode);
+        $this->assertModelExists($episode);
     }
 
     #[Test]
@@ -58,9 +58,9 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
 
         $this->listener->handle(new MediaScanCompleted($syncResult));
 
-        self::assertModelExists($songs[0]);
-        self::assertModelExists($songs[3]);
-        self::assertModelMissing($songs[1]);
-        self::assertModelMissing($songs[2]);
+        $this->assertModelExists($songs[0]);
+        $this->assertModelExists($songs[3]);
+        $this->assertModelMissing($songs[1]);
+        $this->assertModelMissing($songs[2]);
     }
 }

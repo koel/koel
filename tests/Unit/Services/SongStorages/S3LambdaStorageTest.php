@@ -125,6 +125,6 @@ class S3LambdaStorageTest extends TestCase
 
         $this->storage->deleteSongEntry('foo', 'bar');
 
-        self::assertModelMissing($song);
+        $this->assertModelMissing($song);
     }
 }

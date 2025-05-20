@@ -24,11 +24,13 @@ use App\Http\Controllers\API\FetchSongsForQueueController;
 use App\Http\Controllers\API\ForgotPasswordController;
 use App\Http\Controllers\API\GenreController;
 use App\Http\Controllers\API\GenreSongController;
-use App\Http\Controllers\API\GetFoldersUnderPathController;
 use App\Http\Controllers\API\GetOneTimeTokenController;
-use App\Http\Controllers\API\GetSongsUnderPathController;
 use App\Http\Controllers\API\LambdaSongController as S3SongController;
 use App\Http\Controllers\API\LikeMultipleSongsController;
+use App\Http\Controllers\API\MediaBrowser\FetchFolderSongsController;
+use App\Http\Controllers\API\MediaBrowser\FetchRecursiveFolderSongsController;
+use App\Http\Controllers\API\MediaBrowser\FetchSubfoldersController;
+use App\Http\Controllers\API\MediaBrowser\PaginateFolderSongsController;
 use App\Http\Controllers\API\MovePlaylistSongsController;
 use App\Http\Controllers\API\PlaylistCollaboration\AcceptPlaylistCollaborationInviteController;
 use App\Http\Controllers\API\PlaylistCollaboration\CreatePlaylistCollaborationTokenController;
@@ -48,7 +50,6 @@ use App\Http\Controllers\API\PublicizeSongsController;
 use App\Http\Controllers\API\QueueStateController;
 use App\Http\Controllers\API\RegisterPlayController;
 use App\Http\Controllers\API\ResetPasswordController;
-use App\Http\Controllers\API\ResolveSongsByFoldersController;
 use App\Http\Controllers\API\ScrobbleController;
 use App\Http\Controllers\API\SearchYouTubeController;
 use App\Http\Controllers\API\SetLastfmSessionKeyController;
@@ -125,7 +126,12 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::put('songs', [SongController::class, 'update']);
         Route::delete('songs', [SongController::class, 'destroy']);
 
-        Route::post('songs/by-folders', ResolveSongsByFoldersController::class);
+        // Fetch songs under several folder paths (may include multiple nested levels).
+        // This is a POST request because the folder paths may be long.
+        Route::post('songs/by-folders', FetchRecursiveFolderSongsController::class);
+
+        // Fetch songs **directly** in a specific folder path (or the media root if no path is specified)
+        Route::get('songs/in-folder', FetchFolderSongsController::class);
 
         Route::post('upload', UploadController::class);
 
@@ -215,8 +221,8 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::get('permissions/{type}/{id}/{action}', CheckResourcePermissionController::class);
 
         // Media browser routes
-        Route::get('browse/folders', GetFoldersUnderPathController::class);
-        Route::get('browse/songs', GetSongsUnderPathController::class);
+        Route::get('browse/folders', FetchSubfoldersController::class);
+        Route::get('browse/songs', PaginateFolderSongsController::class);
     });
 
     // Object-storage (S3) routes

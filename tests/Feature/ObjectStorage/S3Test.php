@@ -62,6 +62,6 @@ class S3Test extends TestCase
             'key' => 'sample.mp3',
         ]);
 
-        self::assertDatabaseMissing(Song::class, ['path' => 's3://koel/sample.mp3']);
+        $this->assertDatabaseMissing(Song::class, ['path' => 's3://koel/sample.mp3']);
     }
 }

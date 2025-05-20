@@ -43,7 +43,7 @@ class QueueTest extends TestCase
     {
         $user = create_user();
 
-        self::assertDatabaseMissing(QueueState::class, ['user_id' => $user->id]);
+        $this->assertDatabaseMissing(QueueState::class, ['user_id' => $user->id]);
 
         $songIds = Song::factory(3)->create()->modelKeys();
 

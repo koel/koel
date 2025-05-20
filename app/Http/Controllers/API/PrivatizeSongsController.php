@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Facades\License;
+use App\Attributes\RequiresPlus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\ChangeSongsVisibilityRequest;
 use App\Models\Song;
@@ -10,13 +10,12 @@ use App\Models\User;
 use App\Services\SongService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
+#[RequiresPlus]
 class PrivatizeSongsController extends Controller
 {
     /** @param User $user */
     public function __invoke(ChangeSongsVisibilityRequest $request, SongService $songService, Authenticatable $user)
     {
-        License::requirePlus();
-
         $songs = Song::query()->findMany($request->songs);
         $songs->each(fn ($song) => $this->authorize('own', $song));
 

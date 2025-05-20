@@ -2,13 +2,10 @@
 
 namespace Database\Factories;
 
-use App\Models\Setting;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class SettingFactory extends Factory
 {
-    protected $model = Setting::class;
-
     /** @return array<mixed> */
     public function definition(): array
     {

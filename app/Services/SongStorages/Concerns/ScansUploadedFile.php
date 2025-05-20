@@ -24,7 +24,8 @@ trait ScansUploadedFile
         $result = $scanner->setFile($tmpFile)
             ->scan(ScanConfiguration::make(
                 owner: $uploader,
-                makePublic: $uploader->preferences->makeUploadsPublic
+                makePublic: $uploader->preferences->makeUploadsPublic,
+                extractFolderStructure: $this->getStorageType()->supportsFolderStructureExtraction(),
             ));
 
         throw_if($result->isError(), new SongUploadFailedException($result->error));

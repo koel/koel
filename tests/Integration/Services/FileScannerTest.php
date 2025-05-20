@@ -4,6 +4,7 @@ namespace Tests\Integration\Services;
 
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Setting;
 use App\Models\Song;
 use App\Services\FileScanner;
 use App\Values\ScanConfiguration;
@@ -23,7 +24,15 @@ class FileScannerTest extends TestCase
     {
         parent::setUp();
 
+        Setting::set('media_path', test_path());
         $this->scanner = app(FileScanner::class);
+    }
+
+    protected function tearDown(): void
+    {
+        Setting::set('media_path', '');
+
+        parent::tearDown();
     }
 
     #[Test]
@@ -78,6 +87,9 @@ class FileScannerTest extends TestCase
         ], $song->getAttributes());
 
         self::assertSame(2015, $song->album->year);
+
+        // Ensure a folder is created for the song
+        self::assertNotNull($song->folder);
     }
 
     #[Test]

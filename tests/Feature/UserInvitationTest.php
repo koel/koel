@@ -58,7 +58,7 @@ class UserInvitationTest extends TestCase
         $this->deleteAs('api/invitations', ['email' => $prospect->email], create_admin())
             ->assertSuccessful();
 
-        self::assertModelMissing($prospect);
+        $this->assertModelMissing($prospect);
     }
 
     #[Test]
@@ -69,7 +69,7 @@ class UserInvitationTest extends TestCase
         $this->deleteAs('api/invitations', ['email' => $prospect->email])
             ->assertForbidden();
 
-        self::assertModelExists($prospect);
+        $this->assertModelExists($prospect);
     }
 
     #[Test]

@@ -83,7 +83,7 @@ import type { Ref } from 'vue'
 import { computed } from 'vue'
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons'
 import { arrayify, requireInjection } from '@/utils/helpers'
-import { PlayableListConfigKey, PlayableListSortFieldKey, SongListSortOrderKey } from '@/symbols'
+import { PlayableListConfigKey, PlayableListSortFieldKey, PlayableListSortOrderKey } from '@/symbols'
 import type { getPlayableCollectionContentType } from '@/utils/typeGuards'
 import { usePlayableListColumnVisibility } from '@/composables/usePlayableListColumnVisibility'
 
@@ -102,7 +102,7 @@ const emit = defineEmits<{
 const { shouldShowColumn } = usePlayableListColumnVisibility()
 
 const [sortField, setSortField] = requireInjection<[Ref<MaybeArray<PlayableListSortField>>, Closure]>(PlayableListSortFieldKey)
-const [sortOrder, setSortOrder] = requireInjection<[Ref<SortOrder>, Closure]>(SongListSortOrderKey)
+const [sortOrder, setSortOrder] = requireInjection<[Ref<SortOrder>, Closure]>(PlayableListSortOrderKey)
 const [config] = requireInjection<[Partial<PlayableListConfig>]>(PlayableListConfigKey, [{}])
 
 const sort = (field: MaybeArray<PlayableListSortField>) => {

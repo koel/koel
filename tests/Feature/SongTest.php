@@ -81,7 +81,7 @@ class SongTest extends TestCase
         $album = Album::query()->where('name', 'One by One')->first();
         self::assertNotNull($album);
 
-        self::assertDatabaseHas(Song::class, [
+        $this->assertDatabaseHas(Song::class, [
             'id' => $song->id,
             'album_id' => $album->id,
             'lyrics' => 'Lorem ipsum dolor sic amet.',
@@ -218,7 +218,7 @@ class SongTest extends TestCase
         /** @var Artist $artist */
         $artist = Artist::query()->where('name', 'John Cena')->first();
 
-        self::assertDatabaseHas(Song::class, [
+        $this->assertDatabaseHas(Song::class, [
             'id' => $song->id,
             'artist_id' => $artist->id,
             'album_id' => $album->id,

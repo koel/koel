@@ -1,14 +1,16 @@
-import { trim, unionBy } from 'lodash'
+import { trim } from 'lodash'
 import { http } from '@/services/http'
 import { songStore } from '@/stores/songStore'
 import { commonStore } from '@/stores/commonStore'
 import { cache } from '@/services/cache'
-import { md5 } from '@/utils/crypto'
-
-export type ResolvableData = Pick<Folder, 'type' | 'path'> | Pick<Song, 'type' | 'id'>
 
 export const mediaBrowser = {
-  async browse (path: string | null, page = 1) {
+  async browse (path: string | null, page = 1, forceRefresh = false) {
+    if (forceRefresh) {
+      cache.remove(['folder', path, 'folders'])
+      cache.remove(['folder', path, 'songs', page])
+    }
+
     const [folders, paginator] = await Promise.all([
       cache.remember<Folder[]>(
         ['folder', path, 'folders'],
@@ -27,7 +29,7 @@ export const mediaBrowser = {
     }
   },
 
-  getBreadcrumbs (path: string | null) {
+  generateBreadcrumbs (path: string | null) {
     const sep = commonStore.state.dir_separator
     path = path || ''
 
@@ -57,7 +59,7 @@ export const mediaBrowser = {
       return null
     }
 
-    const breadcrumbs = this.getBreadcrumbs(path)
+    const breadcrumbs = this.generateBreadcrumbs(path)
 
     if (breadcrumbs.length < 2) {
       return null
@@ -74,27 +76,19 @@ export const mediaBrowser = {
     }
   },
 
-  async resolveSongsFromIdsAndFolderPaths (data: Array<ResolvableData>, shuffle = false) {
-    const songData = data.filter(item => item.type === 'songs') as Array<Pick<Song, 'type' | 'id'>>
-    const songs = songStore.byIds(songData.map(item => item.id)) as Song[]
+  extractMediaReferences (items: (Song | Folder)[]) {
+    return items.map<MediaReference>(item => {
+      if (item.type === 'songs') {
+        return {
+          type: item.type,
+          id: item.id,
+        }
+      }
 
-    const folderData = data.filter(item => item.type === 'folders') as Array<Pick<Folder, 'type' | 'path'>>
-
-    if (!folderData.length) {
-      return songs
-    }
-
-    const folderPaths = folderData.map(item => item.path).sort()
-
-    // since paths can be long, we use a hash instead
-    const cacheKey = ['folders', md5(folderPaths.join(','))]
-
-    const fetcher = () => http.post<Song[]>(`songs/by-folders?shuffle=${shuffle}`, { paths: folderPaths })
-
-    const songsFromFolders = songStore.syncWithVault(
-      shuffle ? await fetcher() : await cache.remember<Song[]>(cacheKey, async () => await fetcher()),
-    )
-
-    return unionBy(songs, songsFromFolders as Song[], 'id')
+      return {
+        type: item.type,
+        path: item.path,
+      }
+    })
   },
 }

@@ -96,6 +96,9 @@ class LastfmTest extends TestCase
             ->with('my-token')
             ->andReturn($user);
 
+        $tokenManager->shouldReceive('deleteTokenByPlainTextToken')
+            ->once();
+
         $this->get('lastfm/callback?token=foo&api_token=my-token');
 
         self::assertSame('my-session-key', $user->refresh()->preferences->lastFmSessionKey);

@@ -2,24 +2,24 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "koel",
-  description: "The official documentation for Koel, the music streaming solution that works",
+  title: 'koel',
+  description: 'The official documentation for Koel, the music streaming solution that works',
   head: [
     [
       'script',
       {
         defer: 'defer',
-        src: 'https://app.lemonsqueezy.com/js/lemon.js'
-      }
+        src: 'https://app.lemonsqueezy.com/js/lemon.js',
+      },
     ],
-    ['link', { rel: 'icon', href: '/favicon.png', type: 'image/x-png' }]
+    ['link', { rel: 'icon', href: '/favicon.png', type: 'image/x-png' }],
   ],
   cleanUrls: true,
   markdown: {
     linkify: false,
     image: {
-      lazyLoading: true
-    }
+      lazyLoading: true,
+    },
   },
   themeConfig: {
     search: {
@@ -27,12 +27,12 @@ export default defineConfig({
       options: {
         appId: '2EQKL1O1UU',
         apiKey: 'e9d7b5be73f29af4030535a726ec7196',
-        indexName: 'koel'
-      }
+        indexName: 'koel',
+      },
     },
 
     outline: {
-      level: 'deep'
+      level: 'deep',
     },
 
     logo: '/logo.svg',
@@ -49,9 +49,9 @@ export default defineConfig({
       {
         text: 'Introduction',
         items: [
-          { text: 'What Is Koel?',  link: '/guide/what-is-koel' },
+          { text: 'What Is Koel?', link: '/guide/what-is-koel' },
           { text: 'Getting Started', link: '/guide/getting-started' },
-        ]
+        ],
       },
       {
         text: 'Usage',
@@ -66,7 +66,7 @@ export default defineConfig({
           { text: 'User Management', link: '/usage/user-management' },
           { text: 'Profile & Preferences', link: '/usage/profile-preferences' },
           { text: 'Remote Controller', link: '/usage/remote-controller' },
-        ]
+        ],
       },
       {
         text: 'Koel Plus',
@@ -77,32 +77,33 @@ export default defineConfig({
           { text: 'Collaboration', link: '/plus/collaboration' },
           { text: 'Single Sign-On', link: '/plus/sso' },
           { text: 'Proxy Authentication', link: '/plus/proxy-auth' },
-        ]
+          { text: 'Media Browser', link: '/plus/media-browser' },
+        ],
       },
       {
         text: 'Service Integrations',
-        link: '/service-integrations.md'
+        link: '/service-integrations.md',
       },
       {
         text: 'Mobile Apps',
-        link: '/mobile-apps'
+        link: '/mobile-apps',
       },
       {
         text: 'CLI Commands',
-        link: '/cli-commands'
+        link: '/cli-commands',
       },
       {
         text: 'Local Development',
-        link: '/development'
+        link: '/development',
       },
       {
         text: 'Troubleshooting',
-        link: '/troubleshooting'
+        link: '/troubleshooting',
       },
     ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/koel/koel' }
-    ]
-  }
+      { icon: 'github', link: 'https://github.com/koel/koel' },
+    ],
+  },
 })

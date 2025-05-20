@@ -11,7 +11,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 class ExtractFoldersCommand extends Command
 {
     protected $signature = 'koel:extract-folders';
-    protected $description = 'Extract folders from the song paths and store them in the database';
+    protected $description = 'Extract the folder structure from the existing song paths and store it in the database';
 
     private ProgressBar $progressBar;
 
@@ -47,20 +47,11 @@ class ExtractFoldersCommand extends Command
 
         $this->components->info('Extracting folders from the song paths...');
 
-        $songs->each(function (Song $song) use ($root): void {
-            $this->processSong($song, $root);
+        $songs->each(function (Song $song): void {
+            $this->browser->maybeCreateFolderStructureForSong($song);
             $this->progressBar->advance();
         });
 
         return self::SUCCESS;
-    }
-
-    private function processSong(Song $song, string $rootPath): void
-    {
-        $deepestFolder = $this->browser->maybeCreateFolderStructureForSong($song, $rootPath);
-
-        if ($deepestFolder) {
-            $song->folder()->associate($deepestFolder)->save();
-        }
     }
 }

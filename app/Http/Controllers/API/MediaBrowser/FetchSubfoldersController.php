@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\MediaBrowser;
 
+use App\Attributes\RequiresPlus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\FolderResource;
 use App\Repositories\FolderRepository;
 use App\Services\MediaBrowser;
 
-class GetFoldersUnderPathController extends Controller
+#[RequiresPlus]
+class FetchSubfoldersController extends Controller
 {
     public function __invoke(MediaBrowser $browser, FolderRepository $folderRepository)
     {

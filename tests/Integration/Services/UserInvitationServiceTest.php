@@ -81,7 +81,7 @@ class UserInvitationServiceTest extends TestCase
 
         $this->service->revokeByEmail($prospect->email);
 
-        self::assertModelMissing($prospect);
+        $this->assertModelMissing($prospect);
     }
 
     #[Test]

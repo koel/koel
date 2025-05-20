@@ -4,14 +4,11 @@ namespace Database\Factories;
 
 use App\Models\Album;
 use App\Models\Podcast;
-use App\Models\Song;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class SongFactory extends Factory
 {
-    protected $model = Song::class;
-
     /** @return array<mixed> */
     public function definition(): array
     {
@@ -23,10 +20,10 @@ class SongFactory extends Factory
             'track' => random_int(1, 20),
             'disc' => random_int(1, 5),
             'lyrics' => $this->faker->paragraph(),
-            'path' => '/tmp/' . uniqid() . '.mp3',
+            'path' => '/tmp/' . uniqid('', true) . '.mp3',
             'genre' => $this->faker->randomElement(['Rock', 'Pop', 'Jazz', 'Classical', 'Metal', 'Hip Hop', 'Rap']),
             'year' => $this->faker->year(),
-            'is_public' => $this->faker->boolean(),
+            'is_public' => true,
             'owner_id' => User::factory(),
             'mtime' => time(),
         ];

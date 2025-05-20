@@ -1,14 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\MediaBrowser;
 
+use App\Attributes\RequiresPlus;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\SongResource;
+use App\Http\Resources\SongFileResource;
 use App\Repositories\FolderRepository;
 use App\Repositories\SongRepository;
 use App\Services\MediaBrowser;
 
-class GetSongsUnderPathController extends Controller
+#[RequiresPlus]
+class PaginateFolderSongsController extends Controller
 {
     public function __invoke(
         MediaBrowser $browser,
@@ -21,6 +23,6 @@ class GetSongsUnderPathController extends Controller
             $this->authorize('browse', $folder);
         }
 
-        return SongResource::collection($songRepository->paginateInFolder($folder));
+        return SongFileResource::collection($songRepository->paginateInFolder($folder));
     }
 }

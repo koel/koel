@@ -52,7 +52,7 @@ declare module 'nouislider' {
 }
 
 interface Constructable<T> {
-  new(...args: any): T
+  new (...args: any): T
 }
 
 type MaybeArray<T> = T | T[]
@@ -166,6 +166,7 @@ interface Song extends Playable {
   year: number | null
   lyrics: string
   is_public: boolean
+  basename?: string
   deleted?: boolean
 }
 
@@ -522,9 +523,9 @@ interface Visualizer {
 type PlayableListColumnName = 'title' | 'album' | 'track' | 'duration' | 'created_at' | 'play_count'
 
 interface Folder {
+  type: 'folders'
   id: string
   parent_id: string | null
-  type: 'folders'
   path: string
   name: string
 }
@@ -533,3 +534,5 @@ interface MediaRow {
   item: Folder | Song
   selected: boolean
 }
+
+type MediaReference = Pick<Folder, 'type' | 'path'> | Pick<Song, 'type' | 'id'>

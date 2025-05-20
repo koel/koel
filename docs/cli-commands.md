@@ -63,6 +63,17 @@ Check Koel setup.
 php artisan koel:doctor
 ```
 
+### `koel:extract-folders`
+
+Extract the folder structure from the existing song paths and store it in the database.
+This command needs to be run only once. Subsequent scans will take care of this functionality automatically.
+
+#### Usage
+
+```bash
+php artisan koel:extract-folders
+```
+
 ### `koel:init`
 
 Install or upgrade Koel.

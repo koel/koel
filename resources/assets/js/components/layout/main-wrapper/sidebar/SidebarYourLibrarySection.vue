@@ -38,18 +38,13 @@
         </template>
         Podcasts
       </SidebarItem>
-      <SidebarItem v-if="usesMediaBrowser" :href="url('media-browser')" screen="MediaBrowser">
-        <template #icon>
-          <Icon :icon="faFolderTree" fixed-width />
-        </template>
-        Media Browser
-      </SidebarItem>
+      <MediaBrowserMenuItem v-if="usesMediaBrowser" />
     </ul>
   </SidebarSection>
 </template>
 
 <script lang="ts" setup>
-import { faCompactDisc, faFolderTree, faMusic, faPodcast } from '@fortawesome/free-solid-svg-icons'
+import { faCompactDisc, faMusic, faPodcast } from '@fortawesome/free-solid-svg-icons'
 import { GuitarIcon, MicVocalIcon } from 'lucide-vue-next'
 import { unescape } from 'lodash'
 import { ref, toRef } from 'vue'
@@ -61,6 +56,7 @@ import SidebarSection from '@/components/layout/main-wrapper/sidebar/SidebarSect
 import SidebarSectionHeader from '@/components/layout/main-wrapper/sidebar/SidebarSectionHeader.vue'
 import SidebarItem from '@/components/layout/main-wrapper/sidebar/SidebarItem.vue'
 import YouTubeSidebarItem from '@/components/layout/main-wrapper/sidebar/YouTubeSidebarItem.vue'
+import MediaBrowserMenuItem from '@/components/layout/main-wrapper/sidebar/MediaBrowserMenuItem.vue'
 
 const youtubeVideoTitle = ref<string | null>(null)
 const { url } = useRouter()

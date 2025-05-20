@@ -2,15 +2,12 @@
 
 namespace Database\Factories;
 
-use App\Models\Album;
 use App\Models\Artist;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 class AlbumFactory extends Factory
 {
-    protected $model = Album::class;
-
     /** @inheritdoc */
     public function definition(): array
     {

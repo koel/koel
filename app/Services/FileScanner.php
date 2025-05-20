@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Enums\SongStorageType;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
@@ -13,6 +12,7 @@ use App\Values\SongScanInformation;
 use getID3;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use RuntimeException;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
@@ -119,12 +119,17 @@ class FileScanner
                 $album->update(['year' => $this->song->year]);
             }
 
-            if ($this->song->storage === SongStorageType::LOCAL) {
+            if ($config->extractFolderStructure && $this->song->storage->supportsFolderStructureExtraction()) {
                 $this->browser->maybeCreateFolderStructureForSong($this->song);
             }
 
             return ScanResult::success($this->filePath);
-        } catch (Throwable) {
+        } catch (Throwable $e) {
+            Log::error('Error scanning file', [
+                'file' => $this->filePath,
+                'error' => $e,
+            ]);
+
             return ScanResult::error($this->filePath, 'Possible invalid file');
         }
     }
