@@ -365,4 +365,17 @@ class SongRepository extends Repository
 
         return $removeSubpaths(array_map($normalizePath, $paths));
     }
+
+    /** @return Collection<Song> */
+    public function getInFolder(?Folder $folder = null, int $limit = 500, ?User $scopedUser = null): Collection
+    {
+        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
+            ->accessible()
+            ->withMeta()
+            ->limit($limit)
+            ->when($folder, static fn (SongBuilder $query) => $query->where('songs.folder_id', $folder->id)) // @phpstan-ignore-line
+            ->when(!$folder, static fn (SongBuilder $query) => $query->whereNull('songs.folder_id'))
+            ->orderBy('songs.path')
+            ->get();
+    }
 }

@@ -1,0 +1,31 @@
+// Vitest Snapshot v1
+
+exports[`renders 1`] = `
+<ul data-v-24e897c9="" class="text-base">
+  <li data-v-24e897c9="" class="inline-block"><a data-v-24e897c9="" href="/#/browse" class="text-k-text-secondary font-normal">Library</a></li>
+</ul>
+`;
+
+exports[`renders 2`] = `
+<ul data-v-24e897c9="" class="text-base">
+  <li data-v-24e897c9="" class="inline-block"><a data-v-24e897c9="" href="/#/browse" class="text-k-text-secondary font-normal">Library</a></li>
+  <li data-v-24e897c9="" class="inline-block"><a data-v-24e897c9="" href="/#/browse/var" class="text-k-text-secondary font-normal">var</a></li>
+</ul>
+`;
+
+exports[`renders 3`] = `
+<ul data-v-24e897c9="" class="text-base">
+  <li data-v-24e897c9="" class="inline-block"><a data-v-24e897c9="" href="/#/browse" class="text-k-text-secondary font-normal">Library</a></li>
+  <li data-v-24e897c9="" class="inline-block"><a data-v-24e897c9="" href="/#/browse/var" class="text-k-text-secondary font-normal">var</a></li>
+  <li data-v-24e897c9="" class="inline-block"><a data-v-24e897c9="" href="/#/browse/var/media" class="text-k-text-secondary font-normal">media</a></li>
+</ul>
+`;
+
+exports[`renders 4`] = `
+<ul data-v-24e897c9="" class="text-base">
+  <li data-v-24e897c9="" class="inline-block"><a data-v-24e897c9="" href="/#/browse" class="text-k-text-secondary font-normal">Library</a></li>
+  <li data-v-24e897c9="" class="inline-block"><span data-v-24e897c9="">…</span></li>
+  <li data-v-24e897c9="" class="inline-block"><a data-v-24e897c9="" href="/#/browse/var/media/deep/nested" class="text-k-text-secondary font-normal">nested</a></li>
+  <li data-v-24e897c9="" class="inline-block"><a data-v-24e897c9="" href="/#/browse/var/media/deep/nested/path" class="text-k-text-secondary font-normal">path</a></li>
+</ul>
+`;

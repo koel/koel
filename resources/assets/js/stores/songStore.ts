@@ -5,6 +5,7 @@ import { reactive, watch } from 'vue'
 import { arrayify, use } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
 import { logger } from '@/utils/logger'
+import { md5 } from '@/utils/crypto'
 import { secondsToHumanReadable } from '@/utils/formatters'
 import { authService } from '@/services/authService'
 import { cache } from '@/services/cache'
@@ -67,9 +68,11 @@ export const songStore = {
     if (!playable) {
       return
     }
+
     if (isSong(playable) && playable.deleted) {
       return
     }
+
     return playable
   },
 
@@ -119,7 +122,7 @@ export const songStore = {
   },
 
   /**
-   * Increase a play count for a playable.
+   * Increase the play count for a playable.
    */
   registerPlay: async (playable: Playable) => {
     const interaction = await http.silently.post<Interaction>('interaction/play', { song: playable.id })
@@ -229,7 +232,7 @@ export const songStore = {
     const playables: Playable[] = []
 
     for await (const playlist of playlistStore.byFolder(folder)) {
-      playables.push(...await songStore.fetchForPlaylist(playlist))
+      playables.push(...await this.fetchForPlaylist(playlist))
     }
 
     return uniqBy(playables, 'id')
@@ -244,7 +247,9 @@ export const songStore = {
 
     return await cache.remember<Episode[]>(
       [`podcast.episodes`, id],
-      async () => this.syncWithVault(await http.get<Episode[]>(`podcasts/${id}/episodes${refresh ? '?refresh=1' : ''}`)),
+      async () => this.syncWithVault(
+        await http.get<Episode[]>(`podcasts/${id}/episodes${refresh ? '?refresh=1' : ''}`),
+      ),
     )
   },
 
@@ -290,7 +295,7 @@ export const songStore = {
 
   async deleteFromFilesystem (songs: Song[]) {
     const ids = songs.map(song => {
-      // Whenever a vault sync is requested (e.g. upon playlist/album/artist fetching)
+      // Whenever a vault sync is requested (e.g., upon playlist/album/artist fetching)
       // songs marked as "deleted" will be excluded.
       song.deleted = true
       return song.id
@@ -328,8 +333,31 @@ export const songStore = {
     return privatizedIds
   },
 
-  fetchForFolder () {
-    // fetch a MAX 500 songs from the folder and its subfolders
-    return []
+  async resolveFromMediaReferences (data: MediaReference[], shuffle = false) {
+    const songReferences = data.filter(item => item.type === 'songs') as Array<Pick<Song, 'type' | 'id'>>
+    const songs = this.byIds(songReferences.map(item => item.id)) as Song[]
+
+    const folderReferences = data.filter(item => item.type === 'folders') as Array<Pick<Folder, 'type' | 'path'>>
+
+    if (!folderReferences.length) {
+      return songs
+    }
+
+    const paths = folderReferences.map(item => item.path).sort()
+
+    // since paths can be long, we use a hash instead
+    const cacheKey = ['folders', md5(paths.join(''))]
+
+    const fetcher = () => http.post<Song[]>(`songs/by-folders?shuffle=${shuffle}`, { paths })
+
+    const songsFromFolders = this.syncWithVault(
+      shuffle ? await fetcher() : await cache.remember<Song[]>(cacheKey, async () => await fetcher()),
+    )
+
+    return unionBy(songs, songsFromFolders as Song[], 'id')
+  },
+
+  async fetchInFolder (path: string) {
+    return this.syncWithVault(await http.get<Song[]>(`songs/in-folder?path=${path}`))
   },
 }

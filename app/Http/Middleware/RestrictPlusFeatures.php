@@ -2,7 +2,8 @@
 
 namespace App\Http\Middleware;
 
-use App\Attributes\DisabledInDemo;
+use App\Attributes\RequiresPlus;
+use App\Facades\License;
 use App\Http\Middleware\Concerns\ChecksControllerAttributes;
 use Closure;
 use Illuminate\Http\Request;
@@ -10,7 +11,7 @@ use Illuminate\Support\Arr;
 use ReflectionAttribute;
 use Symfony\Component\HttpFoundation\Response;
 
-class HandleDemoMode
+class RestrictPlusFeatures
 {
     use ChecksControllerAttributes;
 
@@ -19,9 +20,9 @@ class HandleDemoMode
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (config('koel.misc.demo')) {
+        if (License::isCommunity()) {
             optional(
-                Arr::get(self::getAttributeUsageFromRequest($request, DisabledInDemo::class), 0),
+                Arr::get(self::getAttributeUsageFromRequest($request, RequiresPlus::class), 0),
                 static fn (ReflectionAttribute $attribute) => abort($attribute->newInstance()->code)
             );
         }

@@ -46,6 +46,7 @@ export const overviewStore = {
       if (isSong(playable) && playable.deleted) {
         return false
       }
+
       return playable.play_count > 0
     })
   },

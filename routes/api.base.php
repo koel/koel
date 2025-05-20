@@ -16,17 +16,18 @@ use App\Http\Controllers\API\FetchAlbumThumbnailController;
 use App\Http\Controllers\API\FetchArtistInformationController;
 use App\Http\Controllers\API\FetchDemoCreditsController;
 use App\Http\Controllers\API\FetchFavoriteSongsController;
+use App\Http\Controllers\API\FetchFoldersUnderPathController;
 use App\Http\Controllers\API\FetchInitialDataController;
 use App\Http\Controllers\API\FetchOverviewController;
 use App\Http\Controllers\API\FetchRandomSongsInGenreController;
 use App\Http\Controllers\API\FetchRecentlyPlayedSongController;
 use App\Http\Controllers\API\FetchSongsForQueueController;
+use App\Http\Controllers\API\FetchSongsInPathController;
+use App\Http\Controllers\API\FetchSongsUnderPathController;
 use App\Http\Controllers\API\ForgotPasswordController;
 use App\Http\Controllers\API\GenreController;
 use App\Http\Controllers\API\GenreSongController;
-use App\Http\Controllers\API\GetFoldersUnderPathController;
 use App\Http\Controllers\API\GetOneTimeTokenController;
-use App\Http\Controllers\API\GetSongsUnderPathController;
 use App\Http\Controllers\API\LambdaSongController as S3SongController;
 use App\Http\Controllers\API\LikeMultipleSongsController;
 use App\Http\Controllers\API\MovePlaylistSongsController;
@@ -125,7 +126,12 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::put('songs', [SongController::class, 'update']);
         Route::delete('songs', [SongController::class, 'destroy']);
 
+        // Fetch songs under several folder paths (may include multiple nested levels).
+        // This is a POST request because the folder paths may be long.
         Route::post('songs/by-folders', ResolveSongsByFoldersController::class);
+
+        // Fetch songs **directly** in a specific folder path (or the media root if no path is specified)
+        Route::get('songs/in-folder', FetchSongsInPathController::class);
 
         Route::post('upload', UploadController::class);
 
@@ -215,8 +221,8 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::get('permissions/{type}/{id}/{action}', CheckResourcePermissionController::class);
 
         // Media browser routes
-        Route::get('browse/folders', GetFoldersUnderPathController::class);
-        Route::get('browse/songs', GetSongsUnderPathController::class);
+        Route::get('browse/folders', FetchFoldersUnderPathController::class);
+        Route::get('browse/songs', FetchSongsUnderPathController::class);
     });
 
     // Object-storage (S3) routes

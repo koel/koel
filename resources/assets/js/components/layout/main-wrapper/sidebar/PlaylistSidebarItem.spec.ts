@@ -29,7 +29,7 @@ new class extends UnitTestCase {
     ('does not request context menu if not playlist', async name => { // eslint-disable-line no-unexpected-multiline
       const list: FavoriteList | RecentlyPlayedList = {
         name,
-        songs: [],
+        playables: [],
       }
 
       const emitMock = this.mock(eventBus, 'emit')

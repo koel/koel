@@ -15,11 +15,11 @@ import {
   FilteredPlayablesKey,
   PlayableListConfigKey,
   PlayableListContextKey,
+  PlayableListFilterKeywordsKey,
   PlayableListSortFieldKey,
+  PlayableListSortOrderKey,
   PlayablesKey,
   SelectedPlayablesKey,
-  SongListFilterKeywordsKey,
-  SongListSortOrderKey,
 } from '@/symbols'
 
 import ControlsToggle from '@/components/ui/ScreenControlsToggle.vue'
@@ -202,9 +202,9 @@ export const useSongList = (
   provideReadonly(PlayableListConfigKey, config)
   provideReadonly(PlayableListContextKey, context)
   provideReadonly(PlayableListSortFieldKey, sortField)
-  provideReadonly(SongListSortOrderKey, sortOrder)
+  provideReadonly(PlayableListSortOrderKey, sortOrder)
 
-  provide(SongListFilterKeywordsKey, filterKeywords)
+  provide(PlayableListFilterKeywordsKey, filterKeywords)
 
   return {
     SongList,

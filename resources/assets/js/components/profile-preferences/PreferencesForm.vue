@@ -9,7 +9,7 @@
     <FormRow>
       <div>
         <CheckBox v-model="preferences.continuous_playback" name="continuous_playback" />
-        Playing a song or episode triggers continuous playback of the entire playlist, album, artist, genre, or podcast
+        {{ continuousPlaybackLabel }}
       </div>
     </FormRow>
     <FormRow v-if="onMobile">
@@ -53,7 +53,7 @@
 
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
-import { toRef } from 'vue'
+import { computed, toRef } from 'vue'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useKoelPlus } from '@/composables/useKoelPlus'
@@ -65,6 +65,24 @@ const onMobile = isMobile.any
 const { isPlus } = useKoelPlus()
 
 const showTranscodingOption = toRef(commonStore.state, 'supports_transcoding')
+
+const continuousPlaybackLabel = computed(() => {
+  const types = [
+    'playlist',
+    'album',
+    'artist',
+    'genre',
+    'podcast',
+  ]
+
+  if (commonStore.state.uses_media_browser) {
+    types.push('folder')
+  }
+
+  types[types.length - 1] = `or ${types[types.length - 1]}`
+
+  return `Playing a song or episode triggers continuous playback of the entire ${types.join(', ')}`
+})
 </script>
 
 <style lang="postcss" scoped>

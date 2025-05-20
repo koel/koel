@@ -8,6 +8,7 @@ use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\ForceHttps;
 use App\Http\Middleware\HandleDemoMode;
 use App\Http\Middleware\ObjectStorageAuthenticate;
+use App\Http\Middleware\RestrictPlusFeatures;
 use App\Http\Middleware\ThrottleRequests;
 use App\Http\Middleware\TrimStrings;
 use App\Http\Middleware\TrustHosts;
@@ -49,11 +50,13 @@ class Kernel extends HttpKernel
             StartSession::class,
             VerifyCsrfToken::class,
             SubstituteBindings::class,
+            RestrictPlusFeatures::class,
             HandleDemoMode::class,
         ],
         'api' => [
             'throttle:60,1',
             SubstituteBindings::class,
+            RestrictPlusFeatures::class,
             HandleDemoMode::class,
         ],
     ];

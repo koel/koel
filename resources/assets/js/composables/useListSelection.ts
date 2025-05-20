@@ -1,10 +1,10 @@
 import type { Reactive, Ref } from 'vue'
 import { computed, ref } from 'vue'
-import { findIndex, get } from 'lodash'
+import { findIndex, findLastIndex, get } from 'lodash'
 
 type Selectable<T> = Reactive<T & { selected: boolean }>
 
-export const useListSelection = <T>(
+export const useListSelection = <T> (
   selectables: Ref<Array<Selectable<T>>>,
   idPath: string | ((s: Selectable<T>) => string) = 'item.id',
 ) => {
@@ -62,22 +62,56 @@ export const useListSelection = <T>(
     }
   }
 
+  const inSelectedRange = (selectable: Selectable<T>) => {
+    if (!isSelected(selectable)) {
+      return false
+    }
+
+    const index = findIndex(
+      selectables.value,
+      s => get(s, resolveIdPath(s)) === get(selectable, resolveIdPath(selectable)),
+    )
+
+    const firstSelectedIndex = Math.max(0, findIndex(selectables.value, isSelected))
+    const lastSelectedIndex = Math.max(0, findLastIndex(selectables.value, isSelected))
+
+    if (index < firstSelectedIndex || index > lastSelectedIndex) {
+      return false
+    }
+
+    for (let i = firstSelectedIndex; i <= lastSelectedIndex; ++i) {
+      if (!isSelected(selectables.value[i])) {
+        return false
+      }
+    }
+
+    return true
+  }
+
   const reapplySelection = () => {
     selectables.value.forEach(selectable => {
-      // Don't use select() here, as it will set lastSelected and case other side effects.
+      // Don't use select() here, as it will set lastSelected and cause other side effects.
       selectable.selected = selectedIds.has(get(selectable, resolveIdPath(selectable)))
     })
+  }
+
+  const selectAllWithKeyboard = (event: KeyboardEvent) => {
+    if (event.ctrlKey || event.metaKey) {
+      selectAll()
+    }
   }
 
   return {
     select,
     isSelected,
     selectAll,
+    selectAllWithKeyboard,
     deselectAll,
     clearSelection: deselectAll,
     toggleSelected,
     selectBetween,
     reapplySelection,
+    inSelectedRange,
     selected,
     lastSelected,
   }

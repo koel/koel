@@ -6,8 +6,8 @@ import {
   PlayableListConfigKey,
   PlayableListContextKey,
   PlayableListSortFieldKey,
+  PlayableListSortOrderKey,
   SelectedPlayablesKey,
-  SongListSortOrderKey,
 } from '@/symbols'
 import Component from './SongListHeader.vue'
 
@@ -77,7 +77,7 @@ new class extends UnitTestCase {
           [<symbol>PlayableListConfigKey]: [config],
           [<symbol>PlayableListContextKey]: [context],
           [<symbol>PlayableListSortFieldKey]: [sortFieldRef, (value: PlayableListSortField) => (sortFieldRef.value = value)],
-          [<symbol>SongListSortOrderKey]: [sortOrderRef, (value: SortOrder) => (sortOrderRef.value = value)],
+          [<symbol>PlayableListSortOrderKey]: [sortOrderRef, (value: SortOrder) => (sortOrderRef.value = value)],
         },
       },
     })

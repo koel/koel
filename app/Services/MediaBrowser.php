@@ -16,7 +16,7 @@ class MediaBrowser
     /** @var array<string, Folder> */
     private static array $folderCache = [];
 
-    public static function enabled(): bool
+    public static function used(): bool
     {
         return config('koel.media_browser.enabled') && License::isPlus();
     }
