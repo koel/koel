@@ -144,26 +144,28 @@ export const useSongList = (
   const applyFilter = throttle((keywords: string) => (filterKeywords.value = keywords), 200)
 
   const filteredPlayables = computed(() => {
-    if (!fuzzy || !filterKeywords.value) {
-      return playables.value
+    const filtered = fuzzy && filterKeywords.value ? fuzzy.search(filterKeywords.value) : playables.value
+
+    const collectSortFields = () => {
+      if (!sortField.value) {
+        return null
+      }
+
+      const fields = extendedSortFields.value!
+
+      if (fields[0] === 'disc' && fields.length > 1 && new Set(filtered.map(p => p.disc ?? null)).size === 1) {
+        // If we're sorting by disc and there's only one disc, we remove disc from the sort fields.
+        // Otherwise, the tracks will be sorted by disc number first, and since there's only one disc,
+        // the track order will remain the same through alternating between asc and desc.
+        fields.shift()
+      }
+
+      return fields
     }
 
-    const filtered = fuzzy.search(filterKeywords.value)
+    const sortFields = collectSortFields()
 
-    if (!sortField.value) {
-      return filtered
-    }
-
-    const sortFields = extendedSortFields.value!
-
-    if (sortFields[0] === 'disc' && sortFields.length > 1 && new Set(filtered.map(p => p.disc ?? null)).size === 1) {
-      // If we're sorting by disc and there's only one disc, we remove disc from the sort fields.
-      // Otherwise, the tracks will be sorted by disc number first, and since there's only one disc,
-      // the track order will remain the same through alternating between asc and desc.
-      sortFields.shift()
-    }
-
-    return orderBy(filtered, sortFields, sortOrder.value)
+    return sortFields ? orderBy(filtered, sortFields, sortOrder.value) : filtered
   })
 
   const onPressEnter = async (event: KeyboardEvent) => {
