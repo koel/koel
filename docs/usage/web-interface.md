@@ -105,7 +105,7 @@ As an admin (Community edition) or song owner (Koel Plus), you can edit a song's
 choosing "Edit…".
 A dialog will appear, allowing you to change the song's title, artist, album, genre, lyrics, and more.
 
-<img loading="lazy" src="../assets/img/interface/edit-song.webp" alt="Edit song" style="max-width: 480px">
+<img loading="lazy" src="../assets/img/interface/edit-song.webp" alt="Edit song" style="width: 480px">
 
 You can also edit multiple songs at once, in which case the changes will be applied to all of them.
 
