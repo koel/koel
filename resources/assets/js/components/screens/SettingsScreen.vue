@@ -5,7 +5,7 @@
     </template>
 
     <p v-if="storageDriver !== 'local'" class="text-k-text-secondary">
-      Since you’re not using a cloud storage, there’s no need to set a media path.
+      Since you’re not using the local storage, there’s no need to set a media path.
     </p>
 
     <form v-else class="space-y-6" @submit.prevent="confirmThenSave">
