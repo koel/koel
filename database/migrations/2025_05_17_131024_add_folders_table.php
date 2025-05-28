@@ -8,10 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (env('GITHUB_ACTIONS')) {
+            Schema::dropIfExists('folders'); // somehow MySQL yields an error but only on GitHub Actions
+        }
+
         Schema::create('folders', static function (Blueprint $table): void {
             $table->string('id', 36)->primary();
             $table->string('parent_id', 36)->nullable()->index();
-            $table->text('path')->unique();
+            // no need to set a unique index here, as indexing text columns or using long varchar is unnecessarily
+            // complicated across different database systems
+            $table->text('path');
         });
 
         Schema::table('folders', static function (Blueprint $table): void {
