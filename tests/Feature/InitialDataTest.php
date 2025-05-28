@@ -18,6 +18,7 @@ class InitialDataTest extends TestCase
             'uses_last_fm',
             'uses_you_tube',
             'uses_i_tunes',
+            'uses_media_browser',
             'allows_download',
             'supports_transcoding',
             'cdn_url',

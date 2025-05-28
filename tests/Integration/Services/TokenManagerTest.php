@@ -44,10 +44,10 @@ class TokenManagerTest extends TestCase
     {
         $token = $this->tokenManager->createCompositeToken(create_user());
 
-        self::assertModelExists(PersonalAccessToken::findToken($token->apiToken));
+        $this->assertModelExists(PersonalAccessToken::findToken($token->apiToken));
 
         $audioTokenInstance = PersonalAccessToken::findToken($token->audioToken);
-        self::assertModelExists($audioTokenInstance);
+        $this->assertModelExists($audioTokenInstance);
 
         /** @var string $cachedAudioToken */
         $cachedAudioToken = Cache::get("app.composite-tokens.$token->apiToken");
@@ -84,11 +84,11 @@ class TokenManagerTest extends TestCase
     public function deleteTokenByPlainTextToken(): void
     {
         $token = $this->tokenManager->createToken(create_user());
-        self::assertModelExists($token->accessToken);
+        $this->assertModelExists($token->accessToken);
 
         $this->tokenManager->deleteTokenByPlainTextToken($token->plainTextToken);
 
-        self::assertModelMissing($token->accessToken);
+        $this->assertModelMissing($token->accessToken);
     }
 
     #[Test]
@@ -106,7 +106,7 @@ class TokenManagerTest extends TestCase
         $oldToken = $this->tokenManager->createToken(create_user());
         $newToken = $this->tokenManager->refreshApiToken($oldToken->plainTextToken);
 
-        self::assertModelMissing($oldToken->accessToken);
-        self::assertModelExists($newToken->accessToken);
+        $this->assertModelMissing($oldToken->accessToken);
+        $this->assertModelExists($newToken->accessToken);
     }
 }

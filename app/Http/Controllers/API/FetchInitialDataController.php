@@ -16,6 +16,7 @@ use App\Services\ApplicationInformationService;
 use App\Services\ITunesService;
 use App\Services\LastfmService;
 use App\Services\License\Contracts\LicenseServiceInterface;
+use App\Services\MediaBrowser;
 use App\Services\QueueService;
 use App\Services\SpotifyService;
 use App\Services\YouTubeService;
@@ -46,6 +47,7 @@ class FetchInitialDataController extends Controller
             'uses_you_tube' => YouTubeService::enabled(),
             'uses_i_tunes' => $iTunesService->used(),
             'allows_download' => config('koel.download.allow'),
+            'uses_media_browser' => MediaBrowser::used(),
             'supports_batch_downloading' => extension_loaded('zip'),
             'media_path_set' => (bool) Setting::get('media_path'),
             'supports_transcoding' => config('koel.streaming.ffmpeg_path')
@@ -66,6 +68,7 @@ class FetchInitialDataController extends Controller
                 'product_id' => config('lemonsqueezy.product_id'),
             ],
             'storage_driver' => config('koel.storage_driver'),
+            'dir_separator' => DIRECTORY_SEPARATOR,
         ]);
     }
 }

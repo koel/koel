@@ -103,9 +103,9 @@ class PlaybackService {
       useEpisodeProgressTracking().trackEpisode(playable)
     }
 
-    queueStore.queueIfNotQueued(playable)
+    queueStore.queueIfNotQueued(playable, 'after-current')
 
-    // If for any reason (most likely a bug), the requested song has been deleted, just attempt the next item in queue.
+    // If for any reason (most likely a bug), the requested song has been deleted, attempt the next item in the queue.
     if (isSong(playable) && playable.deleted) {
       logger.warn('Attempted to play a deleted song', playable)
 
@@ -238,7 +238,7 @@ class PlaybackService {
   }
 
   /**
-   * Play the next item in the queue, if one is found.
+   * Play the next item in the queue if one is found.
    * If there's no next item and the current mode is NO_REPEAT, we stop completely.
    */
   public async playNext () {

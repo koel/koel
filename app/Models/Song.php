@@ -25,11 +25,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\File;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use PhanAn\Poddle\Values\EpisodeMetadata;
 use Throwable;
+use Webmozart\Assert\Assert;
 
 /**
  * @property string $path
@@ -55,6 +57,9 @@ use Throwable;
  * @property User $owner
  * @property-read SongStorageMetadata $storage_metadata
  * @property SongStorageType $storage
+ * @property ?string $folder_id
+ * @property ?Folder $folder
+ * @property ?string $basename
  *
  * // The following are only available for collaborative playlists
  * @property-read ?string $collaborator_email The email of the user who added the song to the playlist
@@ -133,6 +138,11 @@ class Song extends Model implements AuditableContract
         return $this->belongsTo(Podcast::class);
     }
 
+    public function folder(): BelongsTo
+    {
+        return $this->belongsTo(Folder::class);
+    }
+
     public function playlists(): BelongsToMany
     {
         return $this->belongsToMany(Playlist::class);
@@ -198,6 +208,15 @@ class Song extends Model implements AuditableContract
                 }
             }
         ))->shouldCache();
+    }
+
+    protected function basename(): Attribute
+    {
+        return Attribute::get(function () {
+            Assert::eq($this->type, PlayableType::SONG);
+
+            return File::basename($this->path);
+        });
     }
 
     public static function getPathFromS3BucketAndKey(string $bucket, string $key): string

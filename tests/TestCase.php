@@ -4,6 +4,7 @@ namespace Tests;
 
 use App\Facades\License;
 use App\Services\License\CommunityLicenseService;
+use App\Services\MediaBrowser;
 use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -29,6 +30,7 @@ abstract class TestCase extends BaseTestCase
     protected function tearDown(): void
     {
         self::destroySandbox();
+        MediaBrowser::clearCache();
 
         parent::tearDown();
     }

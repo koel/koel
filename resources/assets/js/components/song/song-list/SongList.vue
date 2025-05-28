@@ -6,7 +6,7 @@
     tabindex="0"
     @keydown.delete.prevent.stop="handleDelete"
     @keydown.enter.prevent.stop="handleEnter"
-    @keydown.a.prevent="handleA"
+    @keydown.a.prevent="selectAllWithKeyboard"
   >
     <SongListHeader :content-type="contentType" @sort="sort" />
 
@@ -20,32 +20,33 @@
       <SongListItem
         :key="item.playable.id"
         :item="item"
-        draggable="true"
         :show-disc="showDiscLabel(item.playable)"
+        draggable="true"
         @click="onClick(item, $event)"
         @dragleave="onDragLeave"
         @dragstart="onDragStart(item, $event)"
         @play="onPlay(item.playable)"
+        @contextmenu.prevent="openContextMenu(item, $event)"
         @dragover.prevent="onDragOver"
         @drop.prevent="onDrop(item, $event)"
         @dragend.prevent="onDragEnd"
-        @contextmenu.prevent="openContextMenu(item, $event)"
       />
     </VirtualScroller>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { findIndex, findLastIndex, throttle } from 'lodash'
+import { findIndex, throttle } from 'lodash'
 import isMobile from 'ismobilejs'
 import type { Ref } from 'vue'
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { requireInjection } from '@/utils/helpers'
 import { getPlayableCollectionContentType } from '@/utils/typeGuards'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { queueStore } from '@/stores/queueStore'
 import { useDraggable, useDroppable } from '@/composables/useDragAndDrop'
+import { useListSelection } from '@/composables/useListSelection'
 import { playbackService } from '@/services/playbackService'
 import {
   FilteredPlayablesKey,
@@ -78,9 +79,28 @@ const [config] = requireInjection<[Partial<PlayableListConfig>]>(PlayableListCon
 const [context] = requireInjection<[PlayableListContext]>(PlayableListContextKey)
 
 const wrapper = ref<HTMLElement>()
-const lastSelectedRow = ref<PlayableRow>()
 const sortFields = ref<PlayableListSortField[]>([])
-const rows = ref<PlayableRow[]>([])
+
+const rows = computed(() => {
+  return playables.value.map<PlayableRow>(playable => {
+    return reactive({
+      playable,
+      selected: false,
+    })
+  })
+})
+
+const {
+  select,
+  selectAllWithKeyboard,
+  clearSelection,
+  toggleSelected,
+  isSelected,
+  selectBetween,
+  inSelectedRange,
+  lastSelected,
+  selected,
+} = useListSelection(rows, 'playable.id')
 
 const shouldTriggerContinuousPlayback = computed(() => {
   return preferences.continuous_playback
@@ -90,14 +110,11 @@ const shouldTriggerContinuousPlayback = computed(() => {
 
 const contentType = computed(() => getPlayableCollectionContentType(rows.value.map(({ playable }) => playable)))
 
-const selectAllRows = () => rows.value.forEach(row => (row.selected = true))
-const clearSelection = () => rows.value.forEach(row => (row.selected = false))
-const handleA = (event: KeyboardEvent) => (event.ctrlKey || event.metaKey) && selectAllRows()
 const getAllPlayablesWithSort = () => rows.value.map(row => row.playable)
 
 watch(
-  rows,
-  () => setSelectedPlayables(rows.value.filter(({ selected }) => selected).map(({ playable }) => playable)),
+  selected,
+  () => setSelectedPlayables(selected.value.map(({ playable }) => playable)),
   { deep: true },
 )
 
@@ -115,22 +132,6 @@ const onScroll = (e: Event) => {
   lastScrollTop = scroller.scrollTop
 }
 
-/**
- * Since playable objects themselves are shared by all lists, we can't use them directly to
- * determine their selection status (selected/unselected). Therefore, for each list, we
- * maintain an array of "playable rows," each containing the playable itself and the "selected" flag.
- */
-const generateRows = () => {
-  // Since this method re-generates the playable wrappers, we need to keep track of  the
-  // selected playable manually.
-  const selectedIds = selectedPlayables.value.map(playable => playable.id)
-
-  return playables.value.map<PlayableRow>(playable => ({
-    playable,
-    selected: selectedIds.includes(playable.id),
-  }))
-}
-
 const sort = (field: MaybeArray<PlayableListSortField>, order: SortOrder) => {
   // we simply pass the sort event from the header up to the parent component
   emit('sort', field, order)
@@ -138,7 +139,6 @@ const sort = (field: MaybeArray<PlayableListSortField>, order: SortOrder) => {
 
 const render = () => {
   config.sortable || (sortFields.value = [])
-  rows.value = generateRows()
 }
 
 watch(playables, () => render(), { deep: true })
@@ -153,33 +153,11 @@ const handleEnter = (event: KeyboardEvent) => {
   clearSelection()
 }
 
-const rowInSelectedRange = (row: PlayableRow) => {
-  if (!row.selected) {
-    return false
-  }
-
-  const index = findIndex(rows.value, ({ playable }) => playable.id === row.playable.id)
-  const firstSelectedIndex = Math.max(0, findIndex(rows.value, ({ selected }) => selected))
-  const lastSelectedIndex = Math.max(0, findLastIndex(rows.value, ({ selected }) => selected))
-
-  if (index < firstSelectedIndex || index > lastSelectedIndex) {
-    return false
-  }
-
-  for (let i = firstSelectedIndex; i <= lastSelectedIndex; ++i) {
-    if (!rows.value[i].selected) {
-      return false
-    }
-  }
-
-  return true
-}
-
 const onDragStart = async (row: PlayableRow, event: DragEvent) => {
   // If the user is dragging an unselected row, clear the current selection.
-  if (!row.selected) {
+  if (!isSelected(row)) {
     clearSelection()
-    row.selected = true
+    select(row)
     await nextTick()
   }
 
@@ -219,7 +197,7 @@ const onDrop = (row: PlayableRow, event: DragEvent) => {
 
   wrapper.value?.classList.remove('dragging')
 
-  if (!rowInSelectedRange(row)) {
+  if (!inSelectedRange(row)) {
     emit(
       'reorder',
       row.playable,
@@ -232,51 +210,35 @@ const onDrop = (row: PlayableRow, event: DragEvent) => {
 
 const onDragEnd = () => wrapper.value?.classList.remove('dragging')
 
-const toggleRow = (row: PlayableRow) => {
-  row.selected = !row.selected
-  lastSelectedRow.value = row
-}
-
-const selectRowsBetween = (first: PlayableRow, second: PlayableRow) => {
-  const firstIndex = Math.max(0, findIndex(rows.value, row => row.playable.id === first.playable.id))
-  const secondIndex = Math.max(0, findIndex(rows.value, row => row.playable.id === second.playable.id))
-  const indexes = [firstIndex, secondIndex]
-  indexes.sort((a, b) => a - b)
-
-  for (let i = indexes[0]; i <= indexes[1]; ++i) {
-    rows.value[i].selected = true
-  }
-}
-
 const onClick = (row: PlayableRow, event: MouseEvent) => {
   // If we're on a touch device, or if Ctrl/Cmd key is pressed, just toggle selection.
   if (isMobile.any) {
-    toggleRow(row)
+    toggleSelected(row)
     return
   }
 
   if (event.ctrlKey || event.metaKey) {
-    toggleRow(row)
+    toggleSelected(row)
   }
 
   if (event.button === 0) {
     if (!(event.ctrlKey || event.metaKey || event.shiftKey)) {
       clearSelection()
-      toggleRow(row)
+      toggleSelected(row)
     }
 
-    if (event.shiftKey && lastSelectedRow.value) {
-      selectRowsBetween(lastSelectedRow.value, row)
+    if (event.shiftKey && lastSelected.value) {
+      selectBetween(lastSelected.value, row)
     }
   }
 }
 
 const openContextMenu = async (row: PlayableRow, event: MouseEvent) => {
-  if (!row.selected) {
+  if (!isSelected(row)) {
     clearSelection()
-    toggleRow(row)
+    toggleSelected(row)
 
-    // awaiting a next tick so that the selected items are collected properly
+    // await a next tick so that the selected items are collected properly
     await nextTick()
   }
 
@@ -293,6 +255,7 @@ const onPlay = async (playable: Playable) => {
 
 const discIndexMap = computed(() => {
   const map: { [key: number]: number } = {}
+
   rows.value.forEach((row, index) => {
     const { disc } = row.playable as Song
     if (!Object.values(map).includes(disc)) {

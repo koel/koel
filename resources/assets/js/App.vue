@@ -17,12 +17,13 @@
     <MainWrapper />
     <AppFooter />
     <SupportKoel />
-    <SongContextMenu />
+    <PlayableContextMenu />
     <AlbumContextMenu />
     <ArtistContextMenu />
     <PlaylistContextMenu />
     <PlaylistFolderContextMenu />
     <CreateNewPlaylistContextMenu />
+    <MediaBrowserContextMenu />
     <DropZone v-show="showDropZone" @close="showDropZone = false" />
   </main>
 
@@ -55,6 +56,7 @@ import AppFooter from '@/components/layout/app-footer/index.vue'
 // GlobalEventListener must NOT be lazy-loaded, so that it can handle LOG_OUT event properly.
 import GlobalEventListeners from '@/components/utils/GlobalEventListeners.vue'
 import AppInitializer from '@/components/utils/AppInitializer.vue'
+import MediaBrowserContextMenu from '@/components/media-browser/MediaBrowserContextMenu.vue'
 
 const Hotkeys = defineAsyncComponent(() => import('@/components/utils/HotkeyListener.vue'))
 const LoginForm = defineAsyncComponentWithLoadingState(() => import('@/components/auth/LoginForm.vue'))
@@ -63,7 +65,7 @@ const AlbumContextMenu = defineAsyncComponent(() => import('@/components/album/A
 const ArtistContextMenu = defineAsyncComponent(() => import('@/components/artist/ArtistContextMenu.vue'))
 const PlaylistContextMenu = defineAsyncComponent(() => import('@/components/playlist/PlaylistContextMenu.vue'))
 const PlaylistFolderContextMenu = defineAsyncComponent(() => import('@/components/playlist/PlaylistFolderContextMenu.vue'))
-const SongContextMenu = defineAsyncComponent(() => import('@/components/song/PlayableContextMenu.vue'))
+const PlayableContextMenu = defineAsyncComponent(() => import('@/components/song/PlayableContextMenu.vue'))
 const CreateNewPlaylistContextMenu = defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistContextMenu.vue'))
 const SupportKoel = defineAsyncComponent(() => import('@/components/meta/SupportKoel.vue'))
 const DropZone = defineAsyncComponent(() => import('@/components/ui/upload/DropZone.vue'))

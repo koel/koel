@@ -37,7 +37,7 @@ class UserServiceTest extends PlusTestCase
             ssoProvider: 'Google'
         );
 
-        self::assertModelExists($user);
+        $this->assertModelExists($user);
         self::assertSame('Google', $user->sso_provider);
         self::assertSame('123', $user->sso_id);
         self::assertSame('https://lh3.googleusercontent.com/a/vatar', $user->avatar);
@@ -46,7 +46,7 @@ class UserServiceTest extends PlusTestCase
     #[Test]
     public function createUserFromSSO(): void
     {
-        self::assertDatabaseMissing(User::class, ['email' => 'bruce@iron.com']);
+        $this->assertDatabaseMissing(User::class, ['email' => 'bruce@iron.com']);
 
         $socialiteUser = Mockery::mock(SocialiteUser::class, [
             'getId' => '123',
@@ -57,7 +57,7 @@ class UserServiceTest extends PlusTestCase
 
         $user = $this->service->createOrUpdateUserFromSSO(SSOUser::fromSocialite($socialiteUser, 'Google'));
 
-        self::assertModelExists($user);
+        $this->assertModelExists($user);
 
         self::assertSame('Google', $user->sso_provider);
         self::assertSame('Bruce Dickinson', $user->name);

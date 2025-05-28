@@ -2,15 +2,12 @@
 
 namespace Database\Factories;
 
-use App\Models\Podcast;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 class PodcastFactory extends Factory
 {
-    protected $model = Podcast::class;
-
     /** @inheritdoc */
     public function definition(): array
     {

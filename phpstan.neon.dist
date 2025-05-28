@@ -32,6 +32,7 @@ parameters:
         - '#Access to an undefined property Illuminate\\Database\\Eloquent\\Model::#'
         - '#Unknown parameter \$(type|user) in call to static method App\\Models\\Song::query\(\)#'
         - "#Called 'modelKeys' on Laravel collection, but could have been retrieved as a query#"
+        - '#expects App\\Models\\.*, Illuminate\\Database\\Eloquent\\Model given#'
 
 
     excludePaths:

@@ -11,25 +11,57 @@ export interface Route {
   name?: string
   path: string
   screen: ScreenName
+  constraints?: Record<string, string>
   params?: RouteParams
   redirect?: RedirectHook
   onResolve?: ResolveHook
+}
+
+interface CompiledRoute {
+  regex: RegExp
+  paramNames: string[]
+  originalRoute: Route
+}
+
+interface MatchedRoute {
+  originalRoute: Route
+  params: RouteParams
 }
 
 type RouteChangedHandler = (newRoute: Route, oldRoute: Route | undefined) => any
 
 export default class Router {
   public $currentRoute: Ref<Route>
+  private readonly compiledRoutes: CompiledRoute[]
 
   private readonly homeRoute: Route
   private readonly notFoundRoute: Route
   private routeChangedHandlers: RouteChangedHandler[] = []
-  private cache: Map<string, { route: Route, params: RouteParams }> = new Map()
+
+  compileRoute (route: Route): CompiledRoute {
+    const paramNames: string[] = []
+
+    const regexPath = route.path.replace(/\/:(\w+)\??/g, (match, key) => {
+      const constraint = route.constraints?.[key] ?? '[^/]+'
+      paramNames.push(key)
+      return match.endsWith('?')
+        ? `(?:/(?<${key}>${constraint}))?`
+        : `/(?<${key}>${constraint})`
+    })
+
+    return {
+      paramNames,
+      originalRoute: route,
+      regex: new RegExp(`^${regexPath}/?$`),
+    }
+  }
 
   constructor () {
     this.homeRoute = routes.find(({ screen }) => screen === 'Home')!
     this.notFoundRoute = routes.find(({ screen }) => screen === '404')!
     this.$currentRoute = ref(this.homeRoute)
+
+    this.compiledRoutes = routes.map(this.compileRoute)
 
     watch(
       this.$currentRoute,
@@ -68,8 +100,8 @@ export default class Router {
       return Router.go(this.homeRoute.path)
     }
 
-    const matched = this.tryMatchRoute()
-    const [route, params] = matched ? [matched.route, matched.params] : [null, null]
+    const matchedRoute = this.tryMatchRoute()
+    const [route, params] = matchedRoute ? [matchedRoute.originalRoute, matchedRoute.params] : [null, null]
 
     if (!route) {
       return this.triggerNotFound()
@@ -95,41 +127,49 @@ export default class Router {
     this.$currentRoute.value.params = params
   }
 
-  private tryMatchRoute () {
-    if (!this.cache.has(location.hash)) {
-      for (let i = 0; i < routes.length; i++) {
-        const route = routes[i]
-        const matches = location.hash.match(new RegExp(`^#!?${route.path}/?(?:\\?(.*))?$`))
+  private tryMatchRoute (): MatchedRoute | null {
+    const path = location.hash.replace(/^#?/, '')
 
-        if (matches) {
-          const searchParams = new URLSearchParams(new URL(location.href.replace('#/', '')).search)
+    for (const route of this.compiledRoutes) {
+      const match = path.match(route.regex)
 
-          this.cache.set(location.hash, {
-            route,
-            params: Object.assign(Object.fromEntries(searchParams.entries()), matches.groups || {}),
-          })
-
-          break
+      if (match) {
+        return {
+          originalRoute: route.originalRoute,
+          params: match.groups || {},
         }
       }
     }
 
-    return this.cache.get(location.hash)
+    return null
   }
 
   public static url (name: string, params: object = {}) {
     const route = routes.find(route => route.name === name)
 
     if (!route) {
-      throw new Error(`Route ${name} not found`)
+      throw new Error(`Route "${name}" not found`)
     }
 
     let path = route.path
 
-    // replace the params in the path with the actual values
-    Object.keys(params).forEach(key => {
-      path = path.replace(new RegExp(`\\(\\?<${key}>.*?\\)`), params[key])
+    path = path.replace(/:(\w+)\??/g, (_, key: string, offset: number, fullPath: string) => {
+      const isOptional = fullPath[offset + key.length + 1] === '?'
+      const value = params[key]
+
+      if (value !== undefined && value !== null) {
+        return value
+      }
+
+      if (isOptional) {
+        return ''
+      }
+
+      throw new Error(`Missing required param "${key}" for route "${name}"`)
     })
+
+    // Remove any accidental trailing slashes caused by optional segments
+    path = path.replace(/\/+$/, '') || '/'
 
     if (!path.startsWith('/')) {
       path = `/${path}`

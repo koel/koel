@@ -6,9 +6,10 @@ import { artistStore } from '@/stores/artistStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { songStore } from '@/stores/songStore'
+import { mediaBrowser } from '@/services/mediaBrowser'
 
-type Draggable = MaybeArray<Playable> | Album | Artist | Playlist | PlaylistFolder
-const draggableTypes = <const>['playables', 'album', 'artist', 'playlist', 'playlist-folder']
+type Draggable = MaybeArray<Playable> | Album | Artist | Playlist | PlaylistFolder | MaybeArray<Song | Folder>
+const draggableTypes = <const>['playables', 'album', 'artist', 'playlist', 'playlist-folder', 'browser-media']
 type DraggableType = typeof draggableTypes[number]
 
 const createGhostDragImage = (event: DragEvent, text: string): void => {
@@ -78,6 +79,13 @@ export const useDraggable = (type: DraggableType) => {
         data = dragged.id
         break
 
+      case 'browser-media':
+        dragged = arrayify(dragged as MaybeArray<Song | Folder>)
+        data = mediaBrowser.extractMediaReferences(dragged)
+        text = pluralize(dragged, 'item')
+
+        break
+
       default:
         return
     }
@@ -129,11 +137,13 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
   const resolveDroppedItems = async (event: DragEvent) => {
     try {
       const type = getDragType(event)
+
       if (!type) {
         return <Playable[]>[]
       }
 
       const data = getDroppedData(event)
+
       switch (type) {
         case 'playables':
           return songStore.byIds(<string[]>data)
@@ -149,6 +159,8 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
         case 'playlist-folder':
           const folder = playlistFolderStore.byId(<string>data)
           return folder ? await songStore.fetchForPlaylistFolder(folder) : <Song[]>[]
+        case 'browser-media':
+          return await songStore.resolveFromMediaReferences(data)
         default:
           throw new Error(`Unknown drag type: ${type}`)
       }

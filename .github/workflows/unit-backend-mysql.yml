@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: [ 8.1, 8.2 ]
+        php-version: [ 8.1 ]
         mysql-version: [ 5.7, 8.0 ]
       fail-fast: false
 

@@ -40,7 +40,7 @@ class MediaMetadataServiceTest extends TestCase
             ->with($album)
             ->andReturn('/dev/null/cover.jpg');
 
-        $this->imageWriter->shouldReceive('write')->once();
+        $this->imageWriter->shouldReceive('write')->twice(); // once for the cover, once for the thumbnail
 
         $this->mediaMetadataService->tryDownloadAlbumCover($album);
     }

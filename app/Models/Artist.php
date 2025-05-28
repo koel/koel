@@ -100,8 +100,7 @@ class Artist extends Model implements AuditableContract
      */
     protected function name(): Attribute
     {
-        return Attribute::get(static fn (string $value): string => html_entity_decode($value) ?: self::UNKNOWN_NAME)
-            ->shouldCache();
+        return Attribute::get(static fn (string $value): string => html_entity_decode($value) ?: self::UNKNOWN_NAME);
     }
 
     /**
@@ -109,13 +108,12 @@ class Artist extends Model implements AuditableContract
      */
     protected function image(): Attribute
     {
-        return Attribute::get(static fn (?string $value): ?string => artist_image_url($value))->shouldCache();
+        return Attribute::get(static fn (?string $value): ?string => artist_image_url($value));
     }
 
     protected function imagePath(): Attribute
     {
-        return Attribute::get(fn (): ?string => artist_image_path(Arr::get($this->attributes, 'image')))
-            ->shouldCache();
+        return Attribute::get(fn (): ?string => artist_image_path(Arr::get($this->attributes, 'image')));
     }
 
     protected function hasImage(): Attribute
@@ -124,7 +122,7 @@ class Artist extends Model implements AuditableContract
             $image = Arr::get($this->attributes, 'image');
 
             return $image && (app()->runningUnitTests() || File::exists(artist_image_path($image)));
-        })->shouldCache();
+        });
     }
 
     /** @return array<mixed> */

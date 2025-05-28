@@ -64,7 +64,7 @@ class PlaylistFolderTest extends TestCase
         $this->deleteAs("api/playlist-folders/{$folder->id}", ['name' => 'Classical'], $folder->user)
             ->assertNoContent();
 
-        self::assertModelMissing($folder);
+        $this->assertModelMissing($folder);
     }
 
     #[Test]
@@ -76,7 +76,7 @@ class PlaylistFolderTest extends TestCase
         $this->deleteAs("api/playlist-folders/{$folder->id}", ['name' => 'Classical'])
             ->assertForbidden();
 
-        self::assertModelExists($folder);
+        $this->assertModelExists($folder);
     }
 
     #[Test]

@@ -17,4 +17,14 @@ class SongStorageTypeTest extends TestCase
         self::assertFalse(SongStorageType::DROPBOX->supported());
         self::assertFalse(SongStorageType::S3->supported());
     }
+
+    #[Test]
+    public function supportsFolderStructureExtraction(): void
+    {
+        self::assertTrue(SongStorageType::LOCAL->supportsFolderStructureExtraction());
+        self::assertFalse(SongStorageType::S3_LAMBDA->supportsFolderStructureExtraction());
+        self::assertFalse(SongStorageType::SFTP->supportsFolderStructureExtraction());
+        self::assertFalse(SongStorageType::DROPBOX->supportsFolderStructureExtraction());
+        self::assertFalse(SongStorageType::S3->supportsFolderStructureExtraction());
+    }
 }

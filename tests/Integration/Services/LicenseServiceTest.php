@@ -114,7 +114,7 @@ class LicenseServiceTest extends TestCase
 
         $this->service->deactivate($license);
 
-        self::assertModelMissing($license);
+        $this->assertModelMissing($license);
         self::assertFalse(Cache::has('license_status'));
 
         Saloon::assertSent(static function (DeactivateLicenseRequest $request) use ($license): bool {
@@ -136,7 +136,7 @@ class LicenseServiceTest extends TestCase
 
         $this->service->deactivate($license);
 
-        self::assertModelMissing($license);
+        $this->assertModelMissing($license);
     }
 
     #[Test]

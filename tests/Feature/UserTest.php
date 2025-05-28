@@ -73,7 +73,7 @@ class UserTest extends TestCase
         $user = create_user();
 
         $this->deleteAs("api/user/{$user->id}", [], create_admin());
-        self::assertModelMissing($user);
+        $this->assertModelMissing($user);
     }
 
     #[Test]
@@ -82,6 +82,6 @@ class UserTest extends TestCase
         $admin = create_admin();
 
         $this->deleteAs("api/user/{$admin->id}", [], $admin)->assertForbidden();
-        self::assertModelExists($admin);
+        $this->assertModelExists($admin);
     }
 }

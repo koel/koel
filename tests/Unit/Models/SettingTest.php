@@ -13,7 +13,7 @@ class SettingTest extends TestCase
     {
         Setting::set('foo', 'bar');
 
-        self::assertDatabaseHas(Setting::class, [
+        $this->assertDatabaseHas(Setting::class, [
             'key' => 'foo',
             'value' => json_encode('bar'),
         ]);
@@ -29,7 +29,7 @@ class SettingTest extends TestCase
 
         Setting::set($settings);
 
-        self::assertDatabaseHas(Setting::class, [
+        $this->assertDatabaseHas(Setting::class, [
             'key' => 'foo',
             'value' => json_encode('bar'),
         ])->assertDatabaseHas(Setting::class, [

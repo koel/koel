@@ -18,6 +18,7 @@ use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
+ * @property int $id
  * @property string $cover The album cover's URL
  * @property ?string $cover_path The absolute path to the cover file
  * @property bool $has_cover If the album has a non-default cover image
@@ -101,7 +102,7 @@ class Album extends Model implements AuditableContract
     {
         return Attribute::get(
             fn (): bool => $this->cover_path && (app()->runningUnitTests() || File::exists($this->cover_path))
-        )->shouldCache();
+        );
     }
 
     protected function coverPath(): Attribute
@@ -110,7 +111,7 @@ class Album extends Model implements AuditableContract
             $cover = Arr::get($this->attributes, 'cover');
 
             return $cover ? album_cover_path($cover) : null;
-        })->shouldCache();
+        });
     }
 
     /**
@@ -137,14 +138,12 @@ class Album extends Model implements AuditableContract
 
     protected function thumbnailPath(): Attribute
     {
-        return Attribute::get(fn () => $this->thumbnail_name ? album_cover_path($this->thumbnail_name) : null)
-            ->shouldCache();
+        return Attribute::get(fn () => $this->thumbnail_name ? album_cover_path($this->thumbnail_name) : null);
     }
 
     protected function thumbnail(): Attribute
     {
-        return Attribute::get(fn () => $this->thumbnail_name ? album_cover_url($this->thumbnail_name) : null)
-            ->shouldCache();
+        return Attribute::get(fn () => $this->thumbnail_name ? album_cover_url($this->thumbnail_name) : null);
     }
 
     /** @deprecated Only here for backward compat with mobile apps */
