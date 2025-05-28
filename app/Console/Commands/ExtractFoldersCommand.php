@@ -52,6 +52,9 @@ class ExtractFoldersCommand extends Command
             $this->progressBar->advance();
         });
 
+        $this->progressBar->finish();
+        $this->output->success('Done!');
+
         return self::SUCCESS;
     }
 }
