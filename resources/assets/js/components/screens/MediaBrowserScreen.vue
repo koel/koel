@@ -47,7 +47,7 @@
 import { faRotateRight } from '@fortawesome/free-solid-svg-icons'
 import { faFolderOpen } from '@fortawesome/free-regular-svg-icons'
 import { pull } from 'lodash'
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { commonStore } from '@/stores/commonStore'
 import { useAuthorization } from '@/composables/useAuthorization'
 import { useRouter } from '@/composables/useRouter'
@@ -64,7 +64,7 @@ import MediaListViewSkeleton from '@/components/ui/skeletons/MediaListViewSkelet
 import Btn from '@/components/ui/form/Btn.vue'
 
 const { isAdmin } = useAuthorization()
-const { onRouteChanged, getRouteParam } = useRouter()
+const { onRouteChanged, getRouteParam, onScreenActivated } = useRouter()
 
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 
@@ -148,7 +148,7 @@ eventBus.on('SONGS_DELETED', async deletedSongs => {
   }
 })
 
-onMounted(async () => {
+onScreenActivated('MediaBrowser', async () => {
   path.value = getPathFromRoute()
   await fetchContent()
 })
