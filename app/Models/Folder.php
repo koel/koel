@@ -56,7 +56,6 @@ class Folder extends Model
 
     public function browsableBy(User $user): bool
     {
-        ray($this->is_uploads_folder, $this->uploader_id, $user->id);
         return !$this->is_uploads_folder || $this->uploader_id === $user->id;
     }
 
