@@ -127,3 +127,12 @@ function get_mtime(string|SplFileInfo $file): int
     // Workaround for #344, where getMTime() fails for certain files with Unicode names on Windows.
     return rescue(static fn () => $file->getMTime()) ?? time();
 }
+
+/**
+ * Simple, non-cryptographically secure hash function for strings.
+ * This is used for generating hashes for identifiers that do not require high security.
+ */
+function simple_hash(?string $string): string
+{
+    return md5("koel-hash:$string");
+}
