@@ -93,7 +93,7 @@ header.screen-header {
       @apply text-k-text-primary hover:text-k-highlight;
     }
 
-    > :slotted(* + *) {
+    > :slotted(*) + :slotted(*) {
       @apply ml-1 inline-block before:content-['•'] before:mr-1 before:text-k-text-secondary;
     }
   }
