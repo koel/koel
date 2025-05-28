@@ -14,11 +14,11 @@ export const mediaBrowser = {
     const [folders, paginator] = await Promise.all([
       cache.remember<Folder[]>(
         ['folder', path, 'folders'],
-        () => http.get<Folder[]>(`browse/folders/?path=${path ?? ''}`),
+        () => http.get<Folder[]>(`browse/folders?path=${path ?? ''}`),
       ),
       cache.remember<PaginatorResource<Song>>(
         ['folder', path, 'songs', page],
-        () => http.get<PaginatorResource<Song>>(`browse/songs/?path=${path ?? ''}&page=${page}`),
+        () => http.get<PaginatorResource<Song>>(`browse/songs?path=${path ?? ''}&page=${page}`),
       ),
     ])
 

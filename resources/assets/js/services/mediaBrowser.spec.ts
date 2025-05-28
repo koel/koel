@@ -33,8 +33,8 @@ new class extends UnitTestCase {
       const result = await mediaBrowser.browse(path, 2)
 
       expect(getMock).toBeCalledTimes(2)
-      expect(getMock).toHaveBeenNthCalledWith(1, `browse/folders/?path=${path}`)
-      expect(getMock).toHaveBeenNthCalledWith(2, `browse/songs/?path=${path}&page=2`)
+      expect(getMock).toHaveBeenNthCalledWith(1, `browse/folders?path=${path}`)
+      expect(getMock).toHaveBeenNthCalledWith(2, `browse/songs?path=${path}&page=2`)
       expect(syncWithVaultMock).toHaveBeenCalledWith(songs)
 
       expect(result).toEqual({
@@ -108,8 +108,8 @@ new class extends UnitTestCase {
       expect(removeCacheMock).toHaveBeenNthCalledWith(2, ['folder', path, 'songs', 2])
 
       expect(getMock).toBeCalledTimes(2)
-      expect(getMock).toHaveBeenNthCalledWith(1, `browse/folders/?path=${path}`)
-      expect(getMock).toHaveBeenNthCalledWith(2, `browse/songs/?path=${path}&page=2`)
+      expect(getMock).toHaveBeenNthCalledWith(1, `browse/folders?path=${path}`)
+      expect(getMock).toHaveBeenNthCalledWith(2, `browse/songs?path=${path}&page=2`)
       expect(syncWithVaultMock).toHaveBeenCalledWith(songs)
 
       expect(result).toEqual({
