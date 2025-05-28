@@ -21,6 +21,7 @@ use Illuminate\Support\Arr;
  * @property-read bool $is_uploads_folder Where the folder is the uploads folder by any user
  * @property-read ?int $uploader_id
  * @property ?string $parent_id
+ * @property string $hash
  */
 class Folder extends Model
 {
@@ -30,6 +31,13 @@ class Folder extends Model
     protected $guarded = [];
     public $timestamps = false;
     protected $appends = ['name'];
+
+    protected static function booted(): void
+    {
+        self::creating(static function (self $folder): void {
+            $folder->hash ??= simple_hash($folder->path);
+        });
+    }
 
     public function songs(): HasMany
     {
@@ -48,6 +56,7 @@ class Folder extends Model
 
     public function browsableBy(User $user): bool
     {
+        ray($this->is_uploads_folder, $this->uploader_id, $user->id);
         return !$this->is_uploads_folder || $this->uploader_id === $user->id;
     }
 

@@ -64,8 +64,11 @@ class MediaBrowser
             } else {
                 /** @var Folder $folder */
                 $folder = Folder::query()->firstOrCreate(
-                    ['path' => $currentPath],
-                    ['parent_id' => $parentId]
+                    ['hash' => simple_hash($currentPath)],
+                    [
+                        'parent_id' => $parentId,
+                        'path' => $currentPath,
+                    ],
                 );
 
                 self::$folderCache[$currentPath] = $folder;

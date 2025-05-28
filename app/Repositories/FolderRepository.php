@@ -9,15 +9,16 @@ use Illuminate\Database\Eloquent\Collection;
 /** @extends Repository<Folder> */
 class FolderRepository extends Repository
 {
-    /** @return Collection<Folder> */
-    private static function getOnlyBrowsable(Collection $folders, ?User $user = null): Collection
+    /** @return Collection<Folder>|array<array-key, Folder> */
+    private static function getOnlyBrowsable(Collection|Folder $folders, ?User $user = null): Collection
     {
-        return $folders->filter(static fn (Folder $folder) => $folder->browsableBy($user ?? auth()->user())); // @phpstan-ignore-line
+        return Collection::wrap($folders)
+            ->filter(static fn (Folder $folder) => $folder->browsableBy($user ?? auth()->user())); // @phpstan-ignore-line
     }
 
-    private static function sanitizePath(?string $path = null): ?string
+    private static function pathToHash(?string $path = null): string
     {
-        return $path ? trim($path, DIRECTORY_SEPARATOR) : $path;
+        return simple_hash($path ? trim($path, DIRECTORY_SEPARATOR) : $path);
     }
 
     /** @return Collection|array<array-key, Folder> */
@@ -27,29 +28,29 @@ class FolderRepository extends Repository
             return $folder->subfolders;
         }
 
-        return Folder::query()
-            ->whereNull('parent_id')
-            ->get()
-            ->filter(static fn (Collection|Folder $folders) => self::getOnlyBrowsable( // @phpstan-ignore-line
-                Collection::wrap($folders),
-                $scopedUser
-            ));
+        return self::getOnlyBrowsable(
+            Folder::query()
+                ->whereNull('parent_id')
+                ->get(),
+            $scopedUser
+        );
     }
 
     public function findByPath(?string $path = null): ?Folder
     {
-        return $this->findOneBy(['path' => self::sanitizePath($path)]);
+        return $this->findOneBy(['hash' => self::pathToHash($path)]);
     }
 
-    /** @return Collection<Folder> */
+    /** @return Collection|array<array-key, Folder> */
     public function getByPaths(array $paths, ?User $scopedUser = null): Collection
     {
-        return Folder::query()
-            ->whereIn('path', $paths)
-            ->get()
-            ->filter(static fn (Collection|Folder $folders) => self::getOnlyBrowsable( // @phpstan-ignore-line
-                Collection::wrap($folders),
-                $scopedUser
-            ));
+        $hashes = array_map(self::pathToHash(...), $paths);
+
+        return self::getOnlyBrowsable(
+            Folder::query()
+                ->whereIn('hash', $hashes)
+                ->get(),
+            $scopedUser
+        );
     }
 }
