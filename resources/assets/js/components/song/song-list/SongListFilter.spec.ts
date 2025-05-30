@@ -1,16 +1,45 @@
 import { expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
+import { ref } from 'vue'
+import { PlayableListFilterKeywordsKey } from '@/symbols'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import SongListFilter from './SongListFilter.vue'
 
 new class extends UnitTestCase {
   protected test () {
-    it('emit an event on input', async () => {
-      const { emitted } = this.render(SongListFilter)
+    it('mutates the injected reference', async () => {
+      const keywords = ref('')
 
-      await this.user.type(screen.getByPlaceholderText('Keywords'), 'cat')
+      this.render(SongListFilter, {
+        global: {
+          provide: {
+            [PlayableListFilterKeywordsKey]: keywords,
+          },
+        },
+      })
 
-      expect(emitted().change).toEqual([['c'], ['ca'], ['cat']])
+      await this.user.click(screen.getByTitle('Filter'))
+      await this.user.type(screen.getByPlaceholderText('Keywords'), 'sample')
+
+      expect(keywords.value).toBe('sample')
+    })
+
+    it('hides an empty text input on blur', async () => {
+      const keywords = ref('sample')
+
+      this.render(SongListFilter, {
+        global: {
+          provide: {
+            [PlayableListFilterKeywordsKey]: keywords,
+          },
+        },
+      })
+
+      const input = screen.getByPlaceholderText('Keywords')
+      await this.user.clear(input)
+      await this.user.type(input, '[Tab]')
+
+      expect(screen.queryByPlaceholderText('Keywords')).toBeNull()
     })
   }
 }

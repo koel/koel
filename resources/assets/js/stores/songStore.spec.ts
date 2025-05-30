@@ -7,13 +7,13 @@ import { authService } from '@/services/authService'
 import { cache } from '@/services/cache'
 import { http } from '@/services/http'
 import type { SongUpdateResult } from '@/stores/songStore'
+import { songStore } from '@/stores/songStore'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
 import { overviewStore } from '@/stores/overviewStore'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { playlistStore } from '@/stores/playlistStore'
-import { songStore } from '@/stores/songStore'
 
 new class extends UnitTestCase {
   protected afterEach () {

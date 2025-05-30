@@ -86,7 +86,7 @@
       </BtnGroup>
 
       <BtnGroup v-if="config.filter && allPlayables.length">
-        <SongListFilter @change="filter" />
+        <SongListFilter />
       </BtnGroup>
     </div>
 
@@ -125,7 +125,7 @@ const config = toRef(props, 'config')
 
 const [allPlayables] = requireInjection<[Ref<Playable[]>]>(PlayablesKey)
 const [filteredPlayables] = requireInjection<[Ref<Playable[]>]>(FilteredPlayablesKey)
-const [selectedPlayables] = requireInjection(SelectedPlayablesKey)
+const [selectedPlayables] = requireInjection<[Ref<Playable[]>]>(SelectedPlayablesKey)
 
 const addToButton = ref<InstanceType<typeof Btn>>()
 const addToMenu = ref<HTMLDivElement>()
@@ -141,7 +141,6 @@ const playSelected = () => emit('playSelected', false)
 const clearQueue = () => emit('clearQueue')
 const deletePlaylist = () => emit('deletePlaylist')
 const refresh = () => emit('refresh')
-const filter = (keywords: string) => emit('filter', keywords)
 const registerKeydown = (event: KeyboardEvent) => event.key === 'Alt' && (altPressed.value = true)
 const registerKeyup = (event: KeyboardEvent) => event.key === 'Alt' && (altPressed.value = false)
 

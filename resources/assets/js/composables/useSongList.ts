@@ -222,6 +222,7 @@ export const useSongList = (
     songList,
     selectedPlayables,
     showingControls,
+    filterKeywords,
     isPhone,
     onPressEnter,
     playAll,
