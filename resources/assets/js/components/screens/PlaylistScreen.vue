@@ -1,9 +1,12 @@
 <template>
   <ScreenBase v-if="playlistId">
     <template #header>
-      <ScreenHeader v-if="playlist" :disabled="loading" :layout="songs.length === 0 ? 'collapsed' : headerLayout">
+      <ScreenHeader
+        v-if="playlist" :disabled="loading"
+        :layout="allPlayables.length === 0 ? 'collapsed' : headerLayout"
+      >
         {{ playlist.name }}
-        <ControlsToggle v-if="songs.length" v-model="showingControls" />
+        <ControlsToggle v-if="filteredPlayables.length" v-model="showingControls" />
 
         <template #thumbnail>
           <PlaylistThumbnail :playlist="playlist">
@@ -11,14 +14,14 @@
           </PlaylistThumbnail>
         </template>
 
-        <template v-if="songs.length || playlist.is_collaborative" #meta>
+        <template v-if="filteredPlayables.length || playlist.is_collaborative" #meta>
           <CollaboratorsBadge v-if="collaborators.length" :collaborators="collaborators" />
-          <span>{{ pluralize(songs, 'item') }}</span>
+          <span>{{ pluralize(filteredPlayables, 'item') }}</span>
           <span>{{ duration }}</span>
           <a
             v-if="downloadable"
             role="button"
-            title="Download all songs in playlist"
+            title="Download all items in playlist"
             @click.prevent="download"
           >
             Download All
@@ -29,7 +32,6 @@
           <SongListControls
             v-if="!isPhone || showingControls"
             :config="controlsConfig"
-            @filter="applyFilter"
             @refresh="fetchDetails(true)"
             @delete-playlist="destroy"
             @play-all="playAll"
@@ -43,7 +45,7 @@
     <SongListSkeleton v-if="loading" class="-m-6" />
     <template v-else>
       <SongList
-        v-if="songs.length"
+        v-if="filteredPlayables.length"
         ref="songList"
         class="-m-6"
         @reorder="onReorder"
@@ -67,7 +69,7 @@
         <template v-else>
           The playlist is currently empty.
           <span class="block secondary">
-            Drag songs into its name in the sidebar or use the &quot;Add To…&quot; button to fill it up.
+            Drag content into its name in the sidebar or use the &quot;Add To…&quot; button to fill it up.
           </span>
         </template>
       </ScreenEmptyState>
@@ -100,8 +102,41 @@ import PlaylistThumbnail from '@/components/ui/PlaylistThumbnail.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
 
+type PlaylistPlayable = Playable | CollaborativeSong
+
+// Since this component is responsible for all playlists, we keep track of the state for each,
+// so that filter and sort settings are preserved when switching between them.
+// Playlists and content are (re)fetched (and cached) by the stores on demand, so we don't need to keep them in state.
+interface PlaylistScreenState {
+  filterKeywords: string
+  sortField: MaybeArray<PlayableListSortField> | null
+  sortOrder: SortOrder | null
+}
+
 const { currentUser } = useAuthorization()
 const { triggerNotFound, getRouteParam, onScreenActivated } = useRouter()
+
+const states = new Map<Playlist['id'], PlaylistScreenState>()
+
+const blankState = (): PlaylistScreenState => {
+  return {
+    filterKeywords: '',
+    sortField: null,
+    sortOrder: 'asc',
+  }
+}
+
+const getState = (id: string) => {
+  if (!states.has(id)) {
+    states.set(id, blankState())
+  }
+
+  return states.get(id)!
+}
+
+let currentState = blankState()
+const allPlayables = ref<PlaylistPlayable[]>([])
+const collaborators = ref<PlaylistCollaborator[]>([])
 
 const playlistId = ref<string>()
 const playlist = ref<Playlist>()
@@ -112,7 +147,7 @@ const {
   ControlsToggle,
   ThumbnailStack,
   headerLayout,
-  songs,
+  songs: filteredPlayables,
   songList,
   duration,
   downloadable,
@@ -121,28 +156,36 @@ const {
   showingControls,
   isPhone,
   context,
-  sortField,
+  filterKeywords,
   onPressEnter,
   playAll,
   playSelected,
-  applyFilter,
   onScrollBreakpoint,
   sort: baseSort,
   config: listConfig,
-} = useSongList(ref<Playable[] | CollaborativeSong[]>([]), { type: 'Playlist' })
+} = useSongList(allPlayables, { type: 'Playlist' })
 
 const { SongListControls, config: controlsConfig } = useSongListControls('Playlist')
 const { removeFromPlaylist } = usePlaylistManagement()
 
+watch(filterKeywords, keywords => {
+  // keep track of the keywords in the state
+  currentState.filterKeywords = keywords
+})
+
 const sort = (field: MaybeArray<PlayableListSortField> | null, order: SortOrder) => {
-  listConfig.reorderable = field === 'position'
+  currentState.sortField = field
+  currentState.sortOrder = order
 
-  if (field !== 'position') {
-    return baseSort(field, order)
+  // We always call the base sort function, which will handle the actual sorting logic.
+  // For the 'position' field, which actually doesn't use the base sort function, we call it anyway
+  // to properly keep track of sortField and sortOrder in useSongList, ensuring the UI reflects these correctly.
+  baseSort(field, order)
+
+  if (field === 'position') {
+    // To sort by position, we simply re-assign the songs array from the playlist, which maintains the original order.
+    allPlayables.value = playlist.value!.playables!
   }
-
-  // To sort by position, we simply re-assign the songs array from the playlist, which maintains the original order.
-  songs.value = playlist.value!.playables!
 }
 
 const destroy = () => eventBus.emit('PLAYLIST_DELETE', playlist.value!)
@@ -150,7 +193,6 @@ const download = () => downloadService.fromPlaylist(playlist.value!)
 const editPlaylist = () => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist.value!)
 
 const removeSelected = async () => await removeFromPlaylist(playlist.value!, selectedPlayables.value)
-const collaborators = ref<PlaylistCollaborator[]>([])
 
 const fetchDetails = async (refresh = false) => {
   if (loading.value) {
@@ -160,15 +202,12 @@ const fetchDetails = async (refresh = false) => {
   try {
     loading.value = true
 
-    ;[songs.value, collaborators.value] = await Promise.all([
+    ;[allPlayables.value, collaborators.value] = await Promise.all([
       songStore.fetchForPlaylist(playlist.value!, refresh),
       playlist.value!.is_collaborative
         ? playlistCollaborationService.fetchCollaborators(playlist.value!)
         : Promise.resolve<PlaylistCollaborator[]>([]),
     ])
-
-    sortField.value ??= (playlist.value?.is_smart ? 'title' : 'position')
-    sort(sortField.value, 'asc')
   } catch (error: unknown) {
     useErrorHandler().handleHttpError(error)
   } finally {
@@ -185,28 +224,36 @@ watch(playlistId, async id => {
     return
   }
 
-  // sort field will be determined later by the playlist's type
-  sortField.value = null
-
   playlist.value = playlistStore.byId(id)
+
+  if (!playlist.value) {
+    return await triggerNotFound()
+  }
+
   context.entity = playlist.value
 
   // reset this config value to its default to not cause rows to be mal-rendered
   listConfig.collaborative = false
 
-  // Since this component is responsible for all playlists, reset these values
-  // so that they're not shared between lists
-  songs.value = []
+  // Make sure this value isn't shared among different playlists.
   selectedPlayables.value = []
 
-  if (playlist.value) {
-    await fetchDetails()
-    listConfig.collaborative = playlist.value.is_collaborative
-    listConfig.hasCustomOrderSort = !playlist.value.is_smart
-    controlsConfig.deletePlaylist = playlist.value.user_id === currentUser.value?.id
-  } else {
-    await triggerNotFound()
-  }
+  currentState = getState(id)
+
+  // (re)apply the filter based on the current state's keywords
+  filterKeywords.value = currentState.filterKeywords
+
+  await fetchDetails()
+
+  listConfig.reorderable = currentState.sortField === 'position'
+  listConfig.collaborative = playlist.value.is_collaborative
+  listConfig.hasCustomOrderSort = !playlist.value.is_smart
+  controlsConfig.deletePlaylist = playlist.value.user_id === currentUser.value?.id
+
+  currentState.sortField ??= (playlist.value?.is_smart ? 'title' : 'position')
+  currentState.sortOrder ??= 'asc'
+
+  sort(currentState.sortField, currentState.sortOrder)
 })
 
 onScreenActivated('Playlist', () => (playlistId.value = getRouteParam('id')!))
@@ -218,6 +265,6 @@ eventBus
     if (id !== playlistId.value) {
       return
     }
-    songs.value = differenceBy(songs.value, removed, 'id')
+    allPlayables.value = differenceBy(allPlayables.value, removed, 'id')
   })
 </script>

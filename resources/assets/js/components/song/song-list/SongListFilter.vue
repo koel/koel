@@ -1,62 +1,54 @@
 <template>
-  <OnClickOutside @trigger="maybeClose">
+  <OnClickOutside @trigger="maybeHideInput">
     <form
       class="flex border rounded-md overflow-hidden border-solid border-white/10 focus-within:bg-black/10 focus-within:border-white/40"
       @submit.prevent
     >
-      <Btn v-koel-tooltip title="Filter" transparent unrounded @click.prevent="toggleInput">
+      <Btn v-koel-tooltip title="Filter" transparent unrounded @click.prevent="showInput">
         <Icon :icon="faFilter" fixed-width />
       </Btn>
       <TextInput
-        v-show="showingInput"
+        v-if="showingInput"
         ref="input"
         v-model="keywords"
         class="!text-k-text-primary !bg-transparent !rounded-none !pl-0 !h-[unset] placeholder:text-white/50 focus-visible:outline-0"
         placeholder="Keywords"
         type="search"
-        @blur="maybeClose"
+        @blur="inputting = false"
+        @focus="inputting = true"
       />
     </form>
   </OnClickOutside>
 </template>
 
 <script lang="ts" setup>
-import { faFilter } from '@fortawesome/free-solid-svg-icons'
 import { OnClickOutside } from '@vueuse/components'
-import { nextTick, ref, watch } from 'vue'
+import { faFilter } from '@fortawesome/free-solid-svg-icons'
+import { computed, nextTick, ref } from 'vue'
+import { requireInjection } from '@/utils/helpers'
+import { PlayableListFilterKeywordsKey } from '@/symbols'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 
-const emit = defineEmits<{ (event: 'change', value: string): void }>()
-
-const showingInput = ref(false)
 const input = ref<InstanceType<typeof TextInput>>()
-const keywords = ref('')
+const inputting = ref(false)
 
-watch(keywords, value => emit('change', value))
+const keywords = requireInjection(PlayableListFilterKeywordsKey, ref(''))
 
-const toggleInput = () => {
-  showingInput.value = !showingInput.value
+// We show the input if the user is currently typing in it, or if there are any keywords entered
+const showingInput = computed(() => inputting.value || keywords.value.trim())
 
-  if (showingInput.value) {
-    nextTick(() => {
-      input.value?.el?.focus()
-      input.value?.el?.select()
-    })
-  } else {
-    input.value?.el?.blur()
-    keywords.value = ''
-  }
+const maybeHideInput = () => {
+  inputting.value = false
 }
 
-const maybeClose = () => {
-  if (keywords.value.trim() !== '') {
-    return
-  }
+const showInput = () => {
+  inputting.value = true
 
-  showingInput.value = false
-  input.value?.el?.blur()
-  keywords.value = ''
+  nextTick(() => {
+    input.value?.el?.focus()
+    input.value?.el?.select()
+  })
 }
 </script>
