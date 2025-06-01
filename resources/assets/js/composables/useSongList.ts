@@ -144,7 +144,9 @@ export const useSongList = (
   const applyFilter = throttle((keywords: string) => (filterKeywords.value = keywords), 200)
 
   const filteredPlayables = computed(() => {
-    const filtered = fuzzy && filterKeywords.value ? fuzzy.search(filterKeywords.value) : playables.value
+    // This manually accesses playables.value, forcing Vue to properly track playables.value changes and re-compute.
+    const items = playables.value
+    const filtered = fuzzy && filterKeywords.value ? fuzzy.search(filterKeywords.value) : items
 
     const collectSortFields = () => {
       if (!sortField.value) {
@@ -210,7 +212,7 @@ export const useSongList = (
     SongList,
     ControlsToggle,
     ThumbnailStack,
-    songs: playables,
+    songs: filteredPlayables,
     config,
     context,
     downloadable,
