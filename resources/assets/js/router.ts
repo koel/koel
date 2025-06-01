@@ -128,15 +128,25 @@ export default class Router {
   }
 
   private tryMatchRoute (): MatchedRoute | null {
-    const path = location.hash.replace(/^#?/, '')
+    const hash = location.hash.replace(/^#?/, '')
+    const [path, queryString] = hash.split('?')
 
     for (const route of this.compiledRoutes) {
       const match = path.match(route.regex)
 
       if (match) {
+        const params = { ...match.groups }
+
+        if (queryString) {
+          const searchParams = new URLSearchParams(queryString)
+          for (const [key, value] of searchParams) {
+            params[key] = value
+          }
+        }
+
         return {
+          params,
           originalRoute: route.originalRoute,
-          params: match.groups || {},
         }
       }
     }
