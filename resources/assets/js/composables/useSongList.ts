@@ -13,9 +13,9 @@ import { useRouter } from '@/composables/useRouter'
 
 import {
   FilteredPlayablesKey,
+  FilterKeywordsKey,
   PlayableListConfigKey,
   PlayableListContextKey,
-  PlayableListFilterKeywordsKey,
   PlayableListSortFieldKey,
   PlayableListSortOrderKey,
   PlayablesKey,
@@ -206,7 +206,7 @@ export const useSongList = (
   provideReadonly(PlayableListSortFieldKey, sortField)
   provideReadonly(PlayableListSortOrderKey, sortOrder)
 
-  provide(PlayableListFilterKeywordsKey, filterKeywords)
+  provide(FilterKeywordsKey, filterKeywords)
 
   return {
     SongList,
