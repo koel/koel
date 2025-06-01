@@ -43,7 +43,7 @@
               </Btn>
             </BtnGroup>
 
-            <ListFilter v-if="episodes?.length" @change="onFilterChanged" />
+            <ListFilter v-if="episodes?.length" />
 
             <Btn v-koel-tooltip="'Visit podcast website'" tag="a" gray :href="podcast.link" target="_blank">
               <Icon :icon="faExternalLink" fixed-width />
@@ -71,11 +71,10 @@
 </template>
 
 <script setup lang="ts">
-import Fuse from 'fuse.js'
 import DOMPurify from 'dompurify'
 import { orderBy } from 'lodash'
 import { faExternalLink, faPause, faPlay, faRotateRight, faTimes } from '@fortawesome/free-solid-svg-icons'
-import { computed, nextTick, reactive, ref, watch } from 'vue'
+import { computed, nextTick, provide, reactive, ref, watch } from 'vue'
 import { useRouter } from '@/composables/useRouter'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { useErrorHandler } from '@/composables/useErrorHandler'
@@ -84,6 +83,8 @@ import { podcastStore } from '@/stores/podcastStore'
 import { queueStore } from '@/stores/queueStore'
 import { playbackService } from '@/services/playbackService'
 import { isEpisode } from '@/utils/typeGuards'
+import { useFuzzySearch } from '@/composables/useFuzzySearch'
+import { FilterKeywordsKey } from '@/symbols'
 
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -91,7 +92,7 @@ import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton
 import EpisodeItem from '@/components/podcast/EpisodeItem.vue'
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
 import Btn from '@/components/ui/form/Btn.vue'
-import ListFilter from '@/components/song/song-list/SongListFilter.vue'
+import ListFilter from '@/components/ui/ListFilter.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'
 import EpisodeItemSkeleton from '@/components/ui/skeletons/EpisodeItemSkeleton.vue'
 
@@ -113,7 +114,9 @@ const podcast = ref<Podcast>()
 const episodes = ref<Episode[]>()
 const keywords = ref('')
 
-let fuse: Fuse<Episode> | null = null
+provide(FilterKeywordsKey, keywords)
+
+const { search } = useFuzzySearch<Episode>(episodes, ['title', 'episode_description'])
 
 const fetchDetails = async () => {
   [podcast.value, episodes.value] = await Promise.all([
@@ -131,10 +134,6 @@ watch(podcastId, async id => {
 
   try {
     await fetchDetails()
-    fuse = new Fuse(episodes.value!, {
-      keys: ['title', 'episode_description'],
-    })
-
     description.content = DOMPurify.sanitize(podcast.value?.description || '')
     await nextTick()
     description.overflown = descriptionEl.value!.scrollHeight > descriptionEl.value!.clientHeight
@@ -166,11 +165,12 @@ const displayedEpisodes = computed(() => {
   if (!episodes.value) {
     return []
   }
+
   if (!keywords.value) {
     return episodes.value
   }
 
-  return fuse?.search(keywords.value)?.map(result => result.item) || []
+  return search(keywords.value)
 })
 
 const inProgress = computed(() => Boolean(podcast.value?.state.current_episode))
@@ -262,8 +262,6 @@ const onListScroll = (e: Event) => {
 
   lastScrollTop = scroller.scrollTop
 }
-
-const onFilterChanged = (q: string) => (keywords.value = q)
 
 onScreenActivated('Podcast', () => (podcastId.value = getRouteParam('id')!))
 </script>

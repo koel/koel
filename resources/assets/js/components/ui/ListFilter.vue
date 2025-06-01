@@ -26,7 +26,7 @@ import { OnClickOutside } from '@vueuse/components'
 import { faFilter } from '@fortawesome/free-solid-svg-icons'
 import { computed, nextTick, ref } from 'vue'
 import { requireInjection } from '@/utils/helpers'
-import { PlayableListFilterKeywordsKey } from '@/symbols'
+import { FilterKeywordsKey } from '@/symbols'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
@@ -34,7 +34,7 @@ import TextInput from '@/components/ui/form/TextInput.vue'
 const input = ref<InstanceType<typeof TextInput>>()
 const inputting = ref(false)
 
-const keywords = requireInjection(PlayableListFilterKeywordsKey, ref(''))
+const keywords = requireInjection(FilterKeywordsKey, ref(''))
 
 // We show the input if the user is currently typing in it, or if there are any keywords entered
 const showingInput = computed(() => inputting.value || keywords.value.trim())
