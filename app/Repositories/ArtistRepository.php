@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Facades\DB;
 
 /** @extends Repository<Artist> */
 class ArtistRepository extends Repository
@@ -28,18 +29,11 @@ class ArtistRepository extends Repository
             ->join('interactions', static function (JoinClause $join) use ($user): void {
                 $join->on('interactions.song_id', '=', 'songs.id')->where('interactions.user_id', $user->id);
             })
-            ->groupBy([
-                'artists.id',
-                'play_count',
-                'artists.name',
-                'artists.image',
-                'artists.created_at',
-                'artists.updated_at',
-            ])
-            ->distinct()
+            ->select('artists.*', DB::raw('SUM(interactions.play_count) as play_count'))
+            ->groupBy('artists.id')
             ->orderByDesc('play_count')
             ->limit($count)
-            ->get(['artists.*', 'play_count']);
+            ->get();
     }
 
     /** @return Collection|array<array-key, Artist> */
@@ -49,7 +43,6 @@ class ArtistRepository extends Repository
             ->isStandard()
             ->accessibleBy($user ?? auth()->user())
             ->whereIn('artists.id', $ids)
-            ->groupBy('artists.id')
             ->distinct()
             ->get('artists.*');
 
@@ -62,7 +55,6 @@ class ArtistRepository extends Repository
             ->isStandard()
             ->accessibleBy($user ?? auth()->user())
             ->sort($sortColumn, $sortDirection)
-            ->groupBy('artists.id')
             ->distinct()
             ->orderBy('artists.name')
             ->select('artists.*')

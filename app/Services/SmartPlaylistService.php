@@ -21,12 +21,14 @@ class SmartPlaylistService
     {
         throw_unless($playlist->is_smart, NonSmartPlaylistException::create($playlist));
 
-        $query = Song::query(type: PlayableType::SONG, user: $user ?? $playlist->user)
+        $user ??= $playlist->owner;
+
+        $query = Song::query(type: PlayableType::SONG, user: $user)
             ->withMeta()
             ->when(License::isPlus(), static fn (SongBuilder $query) => $query->accessible())
             ->when(
                 $playlist->own_songs_only && License::isPlus(),
-                static fn (SongBuilder $query) => $query->where('songs.owner_id', $playlist->user_id)
+                static fn (SongBuilder $query) => $query->where('songs.owner_id', $user->id)
             );
 
         $playlist->rule_groups->each(static function (RuleGroup $group, int $index) use ($query): void {

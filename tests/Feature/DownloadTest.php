@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Interaction;
-use App\Models\Playlist;
 use App\Models\Song;
 use App\Services\DownloadService;
 use Illuminate\Database\Eloquent\Collection;
@@ -14,6 +13,7 @@ use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
+use function Tests\create_playlist;
 use function Tests\create_user;
 use function Tests\test_path;
 
@@ -126,8 +126,7 @@ class DownloadTest extends TestCase
         $user = create_user();
         $songs = Song::factory(3)->create();
 
-        /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->for($user)->create();
+        $playlist = create_playlist(owner: $user);
         $playlist->addPlayables($songs);
 
         $this->downloadService
@@ -147,7 +146,7 @@ class DownloadTest extends TestCase
     #[Test]
     public function nonOwnerCannotDownloadPlaylist(): void
     {
-        $playlist = Playlist::factory()->create();
+        $playlist = create_playlist();
 
         $this->get("download/playlist/{$playlist->id}?api_token=" . create_user()->createToken('Koel')->plainTextToken)
             ->assertForbidden();

@@ -3,11 +3,11 @@
 namespace Tests\Feature\KoelPlus;
 
 use App\Http\Resources\CollaborativeSongResource;
-use App\Models\Playlist;
 use App\Models\Song;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
+use function Tests\create_playlist;
 use function Tests\create_user;
 
 class PlaylistSongTest extends PlusTestCase
@@ -15,8 +15,7 @@ class PlaylistSongTest extends PlusTestCase
     #[Test]
     public function getSongsInCollaborativePlaylist(): void
     {
-        /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->create();
+        $playlist = create_playlist();
         $playlist->addPlayables(Song::factory()->public()->count(3)->create());
 
         $collaborator = create_user();
@@ -31,8 +30,7 @@ class PlaylistSongTest extends PlusTestCase
     #[Test]
     public function privateSongsDoNotShowUpInCollaborativePlaylist(): void
     {
-        /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->create();
+        $playlist = create_playlist();
         $playlist->addPlayables(Song::factory()->public()->count(3)->create());
 
         /** @var Song $privateSong */
@@ -52,8 +50,7 @@ class PlaylistSongTest extends PlusTestCase
     #[Test]
     public function collaboratorCanAddSongs(): void
     {
-        /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->create();
+        $playlist = create_playlist();
         $collaborator = create_user();
         $playlist->addCollaborator($collaborator);
         $songs = Song::factory()->for($collaborator, 'owner')->count(3)->create();
@@ -68,8 +65,7 @@ class PlaylistSongTest extends PlusTestCase
     #[Test]
     public function collaboratorCanRemoveSongs(): void
     {
-        /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->create();
+        $playlist = create_playlist();
         $collaborator = create_user();
         $playlist->addCollaborator($collaborator);
         $songs = Song::factory()->for($collaborator, 'owner')->count(3)->create();

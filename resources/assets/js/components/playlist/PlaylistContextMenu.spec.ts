@@ -158,7 +158,7 @@ new class extends UnitTestCase {
 
   private async renderComponent (playlist: Playlist, user: User | null = null) {
     userStore.state.current = user || factory('user', {
-      id: playlist.user_id,
+      id: playlist.owner_id,
     })
 
     this.render(PlaylistContextMenu)

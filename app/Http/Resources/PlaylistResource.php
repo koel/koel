@@ -27,14 +27,15 @@ class PlaylistResource extends JsonResource
     /** @return array<mixed> */
     public function toArray($request): array
     {
-        $user = $request->user() ?? $this->playlist->user;
+        $user = $request->user() ?? $this->playlist->owner;
 
         return [
             'type' => 'playlists',
             'id' => $this->playlist->id,
             'name' => $this->playlist->name,
             'folder_id' => $this->playlist->getFolderId($user),
-            'user_id' => $this->playlist->user_id,
+            'user_id' => $this->playlist->owner->id, // backwards compatibility
+            'owner_id' => $this->playlist->owner->id,
             'is_smart' => $this->playlist->is_smart,
             'is_collaborative' => $this->playlist->is_collaborative,
             'rules' => $this->playlist->rules,

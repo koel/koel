@@ -2,13 +2,13 @@
 
 namespace Tests\Integration\KoelPlus\Services;
 
-use App\Models\Playlist;
 use App\Models\Song;
 use App\Services\SmartPlaylistService;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
+use function Tests\create_playlist;
 use function Tests\create_user;
 
 class SmartPlaylistServiceTest extends PlusTestCase
@@ -31,10 +31,8 @@ class SmartPlaylistServiceTest extends PlusTestCase
         Song::factory()->count(2)->create(['title' => 'Foo Something']);
         Song::factory()->count(3)->create(['title' => 'Bar Something']);
 
-        /** @var Playlist $playlist */
-        $playlist = Playlist::factory()
-            ->for($owner)
-            ->create([
+        $playlist = create_playlist(
+            attributes: [
                 'rules' =>  [
                     [
                         'id' => Str::uuid()->toString(),
@@ -49,7 +47,9 @@ class SmartPlaylistServiceTest extends PlusTestCase
                     ],
                 ],
                 'own_songs_only' => true,
-            ]);
+            ],
+            owner: $owner,
+        );
 
         self::assertEqualsCanonicalizing(
             $matches->modelKeys(),

@@ -5,7 +5,6 @@ namespace Tests\Integration\Services;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Interaction;
-use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\SmartPlaylistService;
@@ -14,6 +13,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_admin;
+use function Tests\create_playlist;
 use function Tests\create_user;
 
 class SmartPlaylistServiceTest extends TestCase
@@ -560,8 +560,7 @@ class SmartPlaylistServiceTest extends TestCase
         array $rules,
         ?User $owner = null,
     ): void {
-        /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->for($owner ?? create_admin())->create(['rules' => $rules]);
+        $playlist = create_playlist(['rules' => $rules], $owner ?? create_admin());
 
         self::assertEqualsCanonicalizing(
             $matches->modelKeys(),

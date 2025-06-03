@@ -248,7 +248,7 @@ watch(playlistId, async id => {
   listConfig.reorderable = currentState.sortField === 'position'
   listConfig.collaborative = playlist.value.is_collaborative
   listConfig.hasCustomOrderSort = !playlist.value.is_smart
-  controlsConfig.deletePlaylist = playlist.value.user_id === currentUser.value?.id
+  controlsConfig.deletePlaylist = playlist.value.owner_id === currentUser.value?.id
 
   currentState.sortField ??= (playlist.value?.is_smart ? 'title' : 'position')
   currentState.sortOrder ??= 'asc'

@@ -3,7 +3,7 @@ import type { Faker } from '@faker-js/faker'
 
 export default (faker: Faker): Playlist => ({
   type: 'playlists',
-  user_id: faker.datatype.number({ min: 1, max: 1000 }),
+  owner_id: faker.datatype.number({ min: 1, max: 1000 }),
   id: faker.datatype.uuid(),
   folder_id: faker.datatype.uuid(),
   name: faker.random.word(),

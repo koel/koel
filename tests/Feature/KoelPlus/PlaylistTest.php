@@ -8,6 +8,7 @@ use App\Values\SmartPlaylistRule;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
+use function Tests\create_playlist;
 use function Tests\create_user;
 
 class PlaylistTest extends PlusTestCase
@@ -49,14 +50,13 @@ class PlaylistTest extends PlusTestCase
     #[Test]
     public function updatePlaylistWithOwnSongsOnlyOption(): void
     {
-        /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->smart()->create();
+        $playlist = create_playlist(smart: true);
 
         $this->putAs("api/playlists/{$playlist->id}", [
             'name' => 'Foo',
             'own_songs_only' => true,
             'rules' => $playlist->rules->toArray(),
-        ], $playlist->user)
+        ], $playlist->owner)
             ->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
 
         $playlist->refresh();
@@ -67,8 +67,7 @@ class PlaylistTest extends PlusTestCase
     #[Test]
     public function collaboratorCannotChangePlaylistName(): void
     {
-        /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->create();
+        $playlist = create_playlist();
         $collaborator = create_user();
         $playlist->addCollaborator($collaborator);
 

@@ -25,7 +25,7 @@ class PlaylistCollaboratorController extends Controller
     {
         $this->authorize('collaborate', $playlist);
 
-        return $this->service->getCollaborators($playlist);
+        return $this->service->getCollaborators(playlist: $playlist, includingOwner: true);
     }
 
     public function destroy(Playlist $playlist, PlaylistCollaboratorDestroyRequest $request)

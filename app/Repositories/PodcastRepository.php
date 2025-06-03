@@ -26,7 +26,6 @@ class PodcastRepository extends Repository
         $podcasts = Podcast::query()
             ->subscribedBy($user ?? $this->auth->user())
             ->whereIn('podcasts.id', $ids)
-            ->groupBy('podcasts.id')
             ->distinct()
             ->get('podcasts.*');
 

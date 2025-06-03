@@ -114,7 +114,7 @@ class SongService
          */
         $collaborativeSongs = $songs->toQuery()
             ->join('playlist_song', 'songs.id', '=', 'playlist_song.song_id')
-            ->join('playlist_collaborators', 'playlist_song.playlist_id', '=', 'playlist_collaborators.playlist_id')
+            ->join('playlist_user', 'playlist_song.playlist_id', '=', 'playlist_user.playlist_id')
             ->select('songs.id')
             ->distinct()
             ->pluck('songs.id')

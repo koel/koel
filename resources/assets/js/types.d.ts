@@ -255,7 +255,7 @@ type PlaylistCollaborator = Pick<User, 'id' | 'name' | 'avatar'> & {
 interface Playlist {
   type: 'playlists'
   readonly id: string
-  readonly user_id: User['id']
+  readonly owner_id: User['id']
   name: string
   folder_id: PlaylistFolder['id'] | null
   is_smart: boolean

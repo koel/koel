@@ -44,18 +44,16 @@ class PlaylistCollaborationService
     }
 
     /** @return Collection<array-key, PlaylistCollaborator> */
-    public function getCollaborators(Playlist $playlist): Collection
+    public function getCollaborators(Playlist $playlist, bool $includingOwner = false): Collection
     {
-        return $playlist->collaborators->unless(
-            $playlist->collaborators->contains($playlist->user), // The owner is always a collaborator
-            static fn (Collection $collaborators) => $collaborators->push($playlist->user)
-        )
-            ->map(static fn (User $user) => PlaylistCollaborator::fromUser($user));
+        $collaborators = $includingOwner ? $playlist->users : $playlist->collaborators;
+
+        return $collaborators->map(static fn (User $user) => PlaylistCollaborator::fromUser($user));
     }
 
     public function removeCollaborator(Playlist $playlist, User $user): void
     {
-        throw_if($user->is($playlist->user), CannotRemoveOwnerFromPlaylistException::class);
+        throw_if($playlist->ownedBy($user), CannotRemoveOwnerFromPlaylistException::class);
         throw_if(!$playlist->hasCollaborator($user), NotAPlaylistCollaboratorException::class);
 
         DB::transaction(static function () use ($playlist, $user): void {
