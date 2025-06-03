@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
 use App\Values\SmartPlaylistRule;
 use App\Values\SmartPlaylistRuleGroup;
 use App\Values\SmartPlaylistRuleGroupCollection;
@@ -15,7 +14,6 @@ class PlaylistFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
             'name' => $this->faker->name,
             'rules' => null,
         ];

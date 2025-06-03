@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
@@ -25,12 +24,12 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property string $id
  * @property string $name
  * @property bool $is_smart
- * @property int $user_id
- * @property User $user
+ * @property User $owner
  * @property ?SmartPlaylistRuleGroupCollection $rule_groups
  * @property ?SmartPlaylistRuleGroupCollection $rules
  * @property Carbon $created_at
  * @property EloquentCollection<array-key, Playable> $playables
+ * @property EloquentCollection<array-key, User> $users
  * @property EloquentCollection<array-key, User> $collaborators
  * @property bool $own_songs_only
  * @property-read ?string $cover The playlist cover's URL
@@ -45,7 +44,7 @@ class Playlist extends Model implements AuditableContract
     use HasUuids;
     use Searchable;
 
-    protected $hidden = ['user_id', 'created_at', 'updated_at'];
+    protected $hidden = ['created_at', 'updated_at'];
     protected $guarded = [];
 
     protected $casts = [
@@ -54,7 +53,7 @@ class Playlist extends Model implements AuditableContract
     ];
 
     protected $appends = ['is_smart'];
-    protected $with = ['user', 'collaborators', 'folders'];
+    protected $with = ['users', 'collaborators', 'folders'];
 
     public function playables(): BelongsToMany
     {
@@ -64,9 +63,21 @@ class Playlist extends Model implements AuditableContract
             ->orderByPivot('position');
     }
 
-    public function user(): BelongsTo
+    public function users(): BelongsToMany
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsToMany(User::class)
+            ->withPivot('role', 'position')
+            ->withTimestamps();
+    }
+
+    protected function owner(): Attribute
+    {
+        return Attribute::get(fn () => $this->users()->wherePivot('role', 'owner')->sole())->shouldCache();
+    }
+
+    public function collaborators(): BelongsToMany
+    {
+        return $this->users()->wherePivot('role', 'collaborator');
     }
 
     public function folders(): BelongsToMany
@@ -77,11 +88,6 @@ class Playlist extends Model implements AuditableContract
     public function collaborationTokens(): HasMany
     {
         return $this->hasMany(PlaylistCollaborationToken::class);
-    }
-
-    public function collaborators(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class, 'playlist_collaborators')->withTimestamps();
     }
 
     protected function isSmart(): Attribute
@@ -111,7 +117,7 @@ class Playlist extends Model implements AuditableContract
 
     public function ownedBy(User $user): bool
     {
-        return $this->user->is($user);
+        return $this->owner->is($user);
     }
 
     public function inFolder(PlaylistFolder $folder): bool
@@ -122,7 +128,7 @@ class Playlist extends Model implements AuditableContract
     public function getFolder(?User $contextUser = null): ?PlaylistFolder
     {
         return $this->folders->firstWhere(
-            fn (PlaylistFolder $folder) => $folder->user->is($contextUser ?? $this->user)
+            fn (PlaylistFolder $folder) => $folder->user->is($contextUser ?? $this->owner)
         );
     }
 
@@ -134,7 +140,7 @@ class Playlist extends Model implements AuditableContract
     public function addCollaborator(User $user): void
     {
         if (!$this->hasCollaborator($user)) {
-            $this->collaborators()->attach($user);
+            $this->users()->attach($user, ['role' => 'collaborator']);
         }
     }
 
@@ -148,7 +154,7 @@ class Playlist extends Model implements AuditableContract
      */
     public function addPlayables(Collection|Playable|array $playables, ?User $collaborator = null): void
     {
-        $collaborator ??= $this->user;
+        $collaborator ??= $this->owner;
         $maxPosition = $this->playables()->getQuery()->max('position') ?? 0;
 
         if (!is_array($playables)) {

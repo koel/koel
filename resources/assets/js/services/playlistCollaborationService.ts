@@ -21,7 +21,7 @@ export const playlistCollaborationService = {
 
   async removeCollaborator (playlist: Playlist, collaborator: PlaylistCollaborator) {
     await http.delete(`playlists/${playlist.id}/collaborators`, { collaborator: collaborator.id })
-    // invalidate the playlist cache
+    // invalidate the playlist cache to ensure songs from the collaborator are removed
     cache.remove(['playlist.songs', playlist.id])
   },
 }

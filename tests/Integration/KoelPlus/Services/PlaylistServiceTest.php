@@ -2,13 +2,13 @@
 
 namespace Tests\Integration\KoelPlus\Services;
 
-use App\Models\Playlist;
 use App\Services\PlaylistService;
 use App\Values\SmartPlaylistRuleGroupCollection;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
+use function Tests\create_playlist;
 use function Tests\create_user;
 
 class PlaylistServiceTest extends PlusTestCase
@@ -49,7 +49,7 @@ class PlaylistServiceTest extends PlusTestCase
         );
 
         self::assertSame('foo', $playlist->name);
-        self::assertTrue($user->is($playlist->user));
+        self::assertTrue($user->is($playlist->owner));
         self::assertTrue($playlist->own_songs_only);
     }
 
@@ -72,8 +72,7 @@ class PlaylistServiceTest extends PlusTestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('"Own songs only" option only works with smart playlists and Plus license.');
 
-        /** @var Playlist */
-        $playlist = Playlist::factory()->create();
+        $playlist = create_playlist();
 
         $this->service->updatePlaylist(
             playlist: $playlist,

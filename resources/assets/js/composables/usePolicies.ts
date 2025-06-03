@@ -26,7 +26,7 @@ export const usePolicies = () => {
       return this.editSong(songs)
     },
 
-    editPlaylist: (playlist: Playlist) => playlist.user_id === currentUser.value.id,
+    editPlaylist: (playlist: Playlist) => playlist.owner_id === currentUser.value.id,
     uploadSongs: () => isAdmin.value || isPlus.value,
 
     editAlbum: async (album: Album) => {

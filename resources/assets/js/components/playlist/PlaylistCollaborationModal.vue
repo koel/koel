@@ -47,7 +47,7 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 const playlist = useModal().getFromContext<Playlist>('playlist')
 const { currentUser } = useAuthorization()
 
-const canManageCollaborators = computed(() => currentUser.value?.id === playlist.user_id)
+const canManageCollaborators = computed(() => currentUser.value?.id === playlist.owner_id)
 
 const close = () => emit('close')
 </script>

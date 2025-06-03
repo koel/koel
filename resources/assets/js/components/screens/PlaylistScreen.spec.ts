@@ -60,7 +60,7 @@ new class extends UnitTestCase {
 
   private async renderComponent (songs: Playable[]) {
     playlist = playlist || factory('playlist')
-    this.be(factory('user', { id: playlist.user_id }))
+    this.be(factory('user', { id: playlist.owner_id }))
 
     playlistStore.init([playlist])
     playlist.playables = songs

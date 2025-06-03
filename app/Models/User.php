@@ -67,21 +67,21 @@ class User extends Authenticatable implements AuditableContract
         return $this->belongsTo(__CLASS__, 'invited_by_id');
     }
 
-    public function playlists(): HasMany
+    public function playlists(): BelongsToMany
     {
-        return $this->hasMany(Playlist::class);
+        return $this->belongsToMany(Playlist::class)
+            ->withPivot('role', 'position')
+            ->withTimestamps();
     }
 
-    public function podcasts(): BelongsToMany
+    public function ownedPlaylists(): BelongsToMany
     {
-        return $this->belongsToMany(Podcast::class)
-            ->using(PodcastUserPivot::class)
-            ->withTimestamps();
+        return $this->playlists()->wherePivot('role', 'owner');
     }
 
     public function collaboratedPlaylists(): BelongsToMany
     {
-        return $this->belongsToMany(Playlist::class, 'playlist_collaborators')->withTimestamps();
+        return $this->playlists()->wherePivot('role', 'collaborator');
     }
 
     public function playlist_folders(): HasMany // @phpcs:ignore
@@ -92,6 +92,13 @@ class User extends Authenticatable implements AuditableContract
     public function interactions(): HasMany
     {
         return $this->hasMany(Interaction::class);
+    }
+
+    public function podcasts(): BelongsToMany
+    {
+        return $this->belongsToMany(Podcast::class)
+            ->using(PodcastUserPivot::class)
+            ->withTimestamps();
     }
 
     public function subscribedToPodcast(Podcast $podcast): bool

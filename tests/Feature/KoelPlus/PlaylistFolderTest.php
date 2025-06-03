@@ -2,11 +2,11 @@
 
 namespace Tests\Feature\KoelPlus;
 
-use App\Models\Playlist;
 use App\Models\PlaylistFolder;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
+use function Tests\create_playlist;
 use function Tests\create_user;
 
 class PlaylistFolderTest extends PlusTestCase
@@ -16,14 +16,13 @@ class PlaylistFolderTest extends PlusTestCase
     {
         $collaborator = create_user();
 
-        /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->create();
+        $playlist = create_playlist();
         $playlist->addCollaborator($collaborator);
 
         /** @var PlaylistFolder $ownerFolder */
-        $ownerFolder = PlaylistFolder::factory()->for($playlist->user)->create();
+        $ownerFolder = PlaylistFolder::factory()->for($playlist->owner)->create();
         $ownerFolder->playlists()->attach($playlist);
-        self::assertTrue($playlist->refresh()->getFolder($playlist->user)?->is($ownerFolder));
+        self::assertTrue($playlist->refresh()->getFolder($playlist->owner)?->is($ownerFolder));
 
         /** @var PlaylistFolder $collaboratorFolder */
         $collaboratorFolder = PlaylistFolder::factory()->for($collaborator)->create();
@@ -39,23 +38,21 @@ class PlaylistFolderTest extends PlusTestCase
         self::assertTrue($playlist->fresh()->getFolder($collaborator)?->is($collaboratorFolder));
 
         // Verify the playlist is in the owner's folder too
-        self::assertTrue($playlist->fresh()->getFolder($playlist->user)?->is($ownerFolder));
+        self::assertTrue($playlist->fresh()->getFolder($playlist->owner)?->is($ownerFolder));
     }
 
     #[Test]
     public function collaboratorMovingPlaylistToRootLevel(): void
     {
         $collaborator = create_user();
-
-        /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->create();
+        $playlist = create_playlist();
         $playlist->addCollaborator($collaborator);
-        self::assertNull($playlist->getFolder($playlist->user));
+        self::assertNull($playlist->getFolder($playlist->owner));
 
         /** @var PlaylistFolder $ownerFolder */
-        $ownerFolder = PlaylistFolder::factory()->for($playlist->user)->create();
+        $ownerFolder = PlaylistFolder::factory()->for($playlist->owner)->create();
         $ownerFolder->playlists()->attach($playlist);
-        self::assertTrue($playlist->refresh()->getFolder($playlist->user)?->is($ownerFolder));
+        self::assertTrue($playlist->refresh()->getFolder($playlist->owner)?->is($ownerFolder));
 
         /** @var PlaylistFolder $collaboratorFolder */
         $collaboratorFolder = PlaylistFolder::factory()->for($collaborator)->create();
@@ -72,6 +69,6 @@ class PlaylistFolderTest extends PlusTestCase
 
         self::assertNull($playlist->fresh()->getFolder($collaborator));
         // Verify the playlist is still in the owner's folder
-        self::assertTrue($playlist->getFolder($playlist->user)?->is($ownerFolder));
+        self::assertTrue($playlist->getFolder($playlist->owner)?->is($ownerFolder));
     }
 }

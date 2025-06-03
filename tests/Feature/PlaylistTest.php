@@ -9,6 +9,8 @@ use App\Values\SmartPlaylistRule;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
+use function Tests\create_playlist;
+use function Tests\create_playlists;
 use function Tests\create_user;
 
 class PlaylistTest extends TestCase
@@ -17,7 +19,7 @@ class PlaylistTest extends TestCase
     public function listing(): void
     {
         $user = create_user();
-        Playlist::factory()->for($user)->count(3)->create();
+        create_playlists(count: 3, owner: $user);
 
         $this->getAs('api/playlists', $user)
             ->assertJsonStructure(['*' => PlaylistResource::JSON_STRUCTURE])
@@ -112,9 +114,9 @@ class PlaylistTest extends TestCase
     #[Test]
     public function updatePlaylistName(): void
     {
-        $playlist = Playlist::factory()->create(['name' => 'Foo']);
+        $playlist = create_playlist(['name' => 'Foo']);
 
-        $this->putAs("api/playlists/{$playlist->id}", ['name' => 'Bar'], $playlist->user)
+        $this->putAs("api/playlists/{$playlist->id}", ['name' => 'Bar'], $playlist->owner)
             ->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
 
         self::assertSame('Bar', $playlist->refresh()->name);
@@ -123,7 +125,7 @@ class PlaylistTest extends TestCase
     #[Test]
     public function nonOwnerCannotUpdatePlaylist(): void
     {
-        $playlist = Playlist::factory()->create(['name' => 'Foo']);
+        $playlist = create_playlist(['name' => 'Foo']);
 
         $this->putAs("api/playlists/{$playlist->id}", ['name' => 'Qux'])->assertForbidden();
         self::assertSame('Foo', $playlist->refresh()->name);
@@ -132,9 +134,9 @@ class PlaylistTest extends TestCase
     #[Test]
     public function deletePlaylist(): void
     {
-        $playlist = Playlist::factory()->create();
+        $playlist = create_playlist();
 
-        $this->deleteAs("api/playlists/{$playlist->id}", [], $playlist->user);
+        $this->deleteAs("api/playlists/{$playlist->id}", [], $playlist->owner);
 
         $this->assertModelMissing($playlist);
     }
@@ -142,7 +144,7 @@ class PlaylistTest extends TestCase
     #[Test]
     public function nonOwnerCannotDeletePlaylist(): void
     {
-        $playlist = Playlist::factory()->create();
+        $playlist = create_playlist();
 
         $this->deleteAs("api/playlists/{$playlist->id}")->assertForbidden();
 

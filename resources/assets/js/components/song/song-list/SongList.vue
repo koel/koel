@@ -331,7 +331,7 @@ onMounted(() => render())
     }
 
     &.collaborator {
-      @apply basis-[72px] text-center;
+      @apply basis-[72px];
     }
 
     &.added-at {

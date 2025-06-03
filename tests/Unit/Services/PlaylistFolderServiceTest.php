@@ -5,10 +5,11 @@ namespace Tests\Unit\Services;
 use App\Models\Playlist;
 use App\Models\PlaylistFolder;
 use App\Services\PlaylistFolderService;
-use Illuminate\Database\Eloquent\Collection;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
+use function Tests\create_playlist;
+use function Tests\create_playlists;
 use function Tests\create_user;
 
 class PlaylistFolderServiceTest extends TestCase
@@ -50,9 +51,7 @@ class PlaylistFolderServiceTest extends TestCase
     public function addPlaylistsToFolder(): void
     {
         $user = create_user();
-
-        /** @var Collection<array-key, Playlist> $playlists */
-        $playlists = Playlist::factory()->for($user)->count(3)->create();
+        $playlists = create_playlists(count: 3, owner: $user);
 
         /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->for($user)->create();
@@ -70,8 +69,7 @@ class PlaylistFolderServiceTest extends TestCase
         /** @var PlaylistFolder $existingFolder */
         $existingFolder = PlaylistFolder::factory()->for($user)->create();
 
-        /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->for($user)->create();
+        $playlist = create_playlist(owner: $user);
         $existingFolder->playlists()->attach($playlist);
 
         /** @var PlaylistFolder $newFolder */
@@ -90,8 +88,7 @@ class PlaylistFolderServiceTest extends TestCase
         /** @var PlaylistFolder $existingFolderFromAnotherUser */
         $existingFolderFromAnotherUser = PlaylistFolder::factory()->create();
 
-        /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->for($user)->create();
+        $playlist = create_playlist(owner: $user);
         $existingFolderFromAnotherUser->playlists()->attach($playlist);
 
         /** @var PlaylistFolder $newFolder */
@@ -108,14 +105,13 @@ class PlaylistFolderServiceTest extends TestCase
         /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->create();
 
-        /** @var Collection<array-key, Playlist> $playlists */
-        $playlists = Playlist::factory()->count(3)->create();
+        $playlists = create_playlists(count: 3);
         $folder->playlists()->attach($playlists);
 
         $this->service->movePlaylistsToRootLevel($folder, $playlists->modelKeys());
 
         self::assertCount(0, $folder->playlists);
 
-        $playlists->each(static fn (Playlist $playlist) => self::assertNull($playlist->refresh()->getFolder()));
+        $playlists->each(static fn (Playlist $playlist) => self::assertNull($playlist->refresh()->getFolder())); // @phpstan-ignore-line
     }
 }

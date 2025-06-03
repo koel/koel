@@ -3,11 +3,11 @@
 namespace Tests\Feature;
 
 use App\Http\Resources\PlaylistFolderResource;
-use App\Models\Playlist;
 use App\Models\PlaylistFolder;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
+use function Tests\create_playlist;
 use function Tests\create_user;
 
 class PlaylistFolderTest extends TestCase
@@ -80,13 +80,12 @@ class PlaylistFolderTest extends TestCase
     }
 
     #[Test]
-    public function movingPlaylistToFolder(): void
+    public function movePlaylistToFolder(): void
     {
         /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->create();
 
-        /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->for($folder->user)->create();
+        $playlist = create_playlist(owner: $folder->user);
         self::assertNull($playlist->getFolderId($folder->user));
 
         $this->postAs(
@@ -105,8 +104,7 @@ class PlaylistFolderTest extends TestCase
         /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->create();
 
-        /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->for($folder->user)->create();
+        $playlist = create_playlist(owner: $folder->user);
         self::assertNull($playlist->getFolderId($folder->user));
 
         $this->postAs("api/playlist-folders/{$folder->id}/playlists", ['playlists' => [$playlist->id]])
@@ -116,13 +114,12 @@ class PlaylistFolderTest extends TestCase
     }
 
     #[Test]
-    public function movingPlaylistToRootLevel(): void
+    public function movePlaylistToRootLevel(): void
     {
         /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->create();
 
-        /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->for($folder->user)->create();
+        $playlist = create_playlist(owner: $folder->user);
 
         $folder->playlists()->attach($playlist);
         self::assertTrue($playlist->refresh()->getFolder($folder->user)->is($folder));
@@ -143,8 +140,7 @@ class PlaylistFolderTest extends TestCase
         /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->create();
 
-        /** @var Playlist $playlist */
-        $playlist = Playlist::factory()->for($folder->user)->create();
+        $playlist = create_playlist(owner: $folder->user);
 
         $folder->playlists()->attach($playlist);
         self::assertTrue($playlist->refresh()->getFolder($folder->user)->is($folder));

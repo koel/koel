@@ -6,8 +6,8 @@
       :key="collaborator.id"
       :collaborator="collaborator"
       :manageable="currentUserIsOwner"
-      :removable="currentUserIsOwner && collaborator.id !== playlist.user_id"
-      :role="collaborator.id === playlist.user_id ? 'owner' : 'contributor'"
+      :removable="currentUserIsOwner && collaborator.id !== playlist.owner_id"
+      :role="collaborator.id === playlist.owner_id ? 'owner' : 'contributor'"
       @remove="removeCollaborator(collaborator)"
     />
   </ul>
@@ -35,7 +35,7 @@ const { showConfirmDialog } = useDialogBox()
 const collaborators: Ref<PlaylistCollaborator[]> = ref([])
 const loading = ref(false)
 
-const currentUserIsOwner = computed(() => currentUser.value?.id === playlist.value.user_id)
+const currentUserIsOwner = computed(() => currentUser.value?.id === playlist.value.owner_id)
 
 const fetchCollaborators = async () => {
   loading.value = true
@@ -47,7 +47,7 @@ const fetchCollaborators = async () => {
         if (id === currentUser.value.id) {
           return 0
         }
-        if (id === playlist.value.user_id) {
+        if (id === playlist.value.owner_id) {
           return 1
         }
         return 2
