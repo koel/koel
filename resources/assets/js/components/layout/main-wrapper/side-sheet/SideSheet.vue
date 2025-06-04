@@ -42,7 +42,7 @@
         tabindex="0"
       >
         <ArtistInfo v-if="artist" :artist="artist" mode="aside" />
-        <span v-else>Loading…</span>
+        <SideSheetArtistAlbumInfoSkeleton v-else />
       </div>
 
       <div
@@ -53,7 +53,7 @@
         tabindex="0"
       >
         <AlbumInfo v-if="album" :album="album" mode="aside" />
-        <span v-else>Loading…</span>
+        <SideSheetArtistAlbumInfoSkeleton v-else />
       </div>
 
       <div
@@ -89,6 +89,7 @@ import ProfileAvatar from '@/components/ui/ProfileAvatar.vue'
 import AboutKoelButton from '@/components/layout/main-wrapper/side-sheet/AboutKoelButton.vue'
 import LogoutButton from '@/components/layout/main-wrapper/side-sheet/LogoutButton.vue'
 import SideSheetButton from '@/components/layout/main-wrapper/side-sheet/SideSheetButton.vue'
+import SideSheetArtistAlbumInfoSkeleton from '@/components/ui/skeletons/SideSheetArtistAlbumInfoSkeleton.vue'
 
 const LyricsPane = defineAsyncComponent(() => import('@/components/ui/LyricsPane.vue'))
 const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/ArtistInfo.vue'))
