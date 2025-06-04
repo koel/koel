@@ -326,7 +326,7 @@ interface UserPreferences extends Record<string, any> {
 
 interface User {
   type: 'users'
-  id: number
+  id: string
   name: string
   email: string
   is_admin: boolean

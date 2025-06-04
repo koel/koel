@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\PersonalAccessToken;
 use OwenIt\Auditing\Auditable;
@@ -34,6 +35,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property UserPreferences $preferences
  * @property bool $is_admin
  * @property int $id
+ * @property string $public_id
  * @property string $email
  * @property string $name
  * @property string $password
@@ -52,7 +54,7 @@ class User extends Authenticatable implements AuditableContract
     use HasFactory;
     use Notifiable;
 
-    protected $guarded = ['id'];
+    protected $guarded = ['id', 'public_id'];
     protected $hidden = ['password', 'remember_token', 'created_at', 'updated_at', 'invitation_accepted_at'];
     protected $appends = ['avatar'];
     protected array $auditExclude = ['password', 'remember_token', 'invitation_token'];
@@ -61,6 +63,13 @@ class User extends Authenticatable implements AuditableContract
         'is_admin' => 'bool',
         'preferences' => UserPreferencesCast::class,
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(static function (self $user): void {
+            $user->public_id ??= Str::uuid()->toString();
+        });
+    }
 
     public function invitedBy(): BelongsTo
     {

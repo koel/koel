@@ -1,4 +1,4 @@
-name: Backend Unit Tests
+name: Backend Unit Tests - SQLite
 on:
   pull_request:
     branches:
