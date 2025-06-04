@@ -2,7 +2,7 @@ import type { Faker } from '@faker-js/faker'
 
 export default (faker: Faker): User => ({
   type: 'users',
-  id: faker.datatype.number(),
+  id: faker.datatype.uuid(),
   name: faker.name.findName(),
   email: faker.internet.email(),
   password: faker.internet.password(),

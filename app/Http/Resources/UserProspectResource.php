@@ -27,7 +27,7 @@ class UserProspectResource extends JsonResource
     {
         return [
             'type' => 'users',
-            'id' => $this->user->id,
+            'id' => $this->user->public_id,
             'name' => $this->user->name,
             'email' => $this->user->email,
             'avatar' => $this->user->avatar,

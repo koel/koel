@@ -8,7 +8,7 @@ use function Tests\create_playlist;
 
 class PlaylistCollaborationTokenFactory extends Factory
 {
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function definition(): array
     {
         return [
