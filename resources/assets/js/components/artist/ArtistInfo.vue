@@ -3,7 +3,7 @@
     <template #header>{{ artist.name }}</template>
 
     <template #art>
-      <ArtistThumbnail :entity="artist" />
+      <ArtistThumbnail :entity="artist" class="group" />
     </template>
 
     <template v-if="info?.bio">
@@ -45,3 +45,9 @@ watch(artist, async () => {
   }
 }, { immediate: true })
 </script>
+
+<style lang="postcss" scoped>
+:deep(.play-icon) {
+  @apply scale-[4];
+}
+</style>
