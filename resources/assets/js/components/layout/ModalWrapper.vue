@@ -1,10 +1,15 @@
 <template>
   <dialog
     ref="dialog"
-    class="text-k-text-primary min-w-full md:min-w-[480px] border-0 p-0 rounded-md bg-k-bg-primary overflow-visible backdrop:bg-black/70"
-    @cancel.prevent
+    class="text-k-text-primary min-w-full md:min-w-[480px] border-0 p-0 rounded-md overflow-hidden bg-k-bg-primary backdrop:bg-black/70"
+    @close.prevent
   >
-    <Component :is="modalNameToComponentMap[activeModalName]" v-if="activeModalName" @close="close" />
+    <Component
+      :is="modalNameToComponentMap[activeModalName]"
+      v-if="activeModalName"
+      class="overflow-auto"
+      @close="close"
+    />
   </dialog>
 </template>
 
