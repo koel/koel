@@ -29,7 +29,10 @@
         <SongThumbnail :playable="playable" />
       </span>
       <span class="title-artist flex flex-col gap-2 overflow-hidden">
-        <span class="title text-k-text-primary !flex gap-2 items-center">{{ playable.title }}</span>
+        <span class="title text-k-text-primary !flex gap-2 items-center">
+          <ExternalMark v-if="external" class="!inline-block" />
+          {{ playable.title }}
+        </span>
         <span class="artist">{{ artist }}</span>
       </span>
       <span v-if="shouldShowColumn('album')" class="album">{{ album }}</span>
@@ -60,6 +63,7 @@ import LikeButton from '@/components/song/SongLikeButton.vue'
 import SoundBars from '@/components/ui/SoundBars.vue'
 import SongThumbnail from '@/components/song/SongThumbnail.vue'
 import UserAvatar from '@/components/user/UserAvatar.vue'
+import ExternalMark from '@/components/ui/ExternalMark.vue'
 
 const props = withDefaults(defineProps<{ item: PlayableRow, showDisc: boolean }>(), {
   showDisc: false,
@@ -75,6 +79,7 @@ const { item } = toRefs(props)
 
 const playable = computed<Playable | CollaborativeSong>(() => item.value.playable)
 const playing = computed(() => ['Playing', 'Paused'].includes(playable.value.playback_state!))
+const external = computed(() => isSong(playable.value) && playable.value.is_external)
 
 const fmtLength = secondsToHis(playable.value.length)
 const artist = computed(() => getPlayableProp(playable.value, 'artist_name', 'podcast_author'))

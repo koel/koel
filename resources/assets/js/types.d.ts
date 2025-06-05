@@ -166,6 +166,7 @@ interface Song extends Playable {
   year: number | null
   lyrics: string
   is_public: boolean
+  is_external: boolean
   basename?: string
   deleted?: boolean
 }

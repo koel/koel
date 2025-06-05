@@ -2,9 +2,12 @@
 
 namespace App\Http\Resources;
 
+use App\Facades\License;
 use App\Models\Song;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;
+
+use function Functional\memoize;
 
 class SongResource extends JsonResource
 {
@@ -50,7 +53,7 @@ class SongResource extends JsonResource
         ],
     ];
 
-    public function __construct(protected readonly Song $song)
+    public function __construct(protected Song $song)
     {
         parent::__construct($song);
     }
@@ -58,10 +61,13 @@ class SongResource extends JsonResource
     /** @inheritDoc */
     public function toArray($request): array
     {
+        $isPlus = memoize(static fn () => License::isPlus());
+        $user = memoize(static fn () => auth()->user());
+
         $data = [
             'type' => Str::plural($this->song->type->value),
             'id' => $this->song->id,
-            'owner_id' => $this->song->owner_id,
+            'owner_id' => $this->song->owner->public_id,
             'title' => $this->song->title,
             'lyrics' => $this->song->lyrics,
             'album_id' => $this->song->album?->id,
@@ -90,6 +96,10 @@ class SongResource extends JsonResource
                 'podcast_id' => $this->song->podcast->id,
                 'podcast_title' => $this->song->podcast->title,
                 'podcast_author' => $this->song->podcast->metadata->author,
+            ];
+        } else {
+            $data += [
+                'is_external' => $isPlus && !$this->song->ownedBy($user),
             ];
         }
 
