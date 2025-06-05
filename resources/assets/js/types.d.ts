@@ -319,7 +319,7 @@ interface UserPreferences extends Record<string, any> {
   lyrics_zoom_level: number | null
   theme?: Theme['id'] | null
   visualizer?: Visualizer['id'] | null
-  active_extra_panel_tab: ExtraPanelTab | null
+  active_extra_panel_tab: SideSheetTab | null
   make_uploads_public: boolean
   lastfm_session_key?: string
 }
@@ -508,7 +508,7 @@ interface Genre {
   length: number
 }
 
-type ExtraPanelTab = 'Lyrics' | 'Artist' | 'Album' | 'YouTube'
+type SideSheetTab = 'Lyrics' | 'Artist' | 'Album' | 'YouTube'
 
 interface Visualizer {
   init: (container: HTMLElement) => Promise<Closure>

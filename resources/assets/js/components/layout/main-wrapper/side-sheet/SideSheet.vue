@@ -3,7 +3,7 @@
     :class="{ 'showing-pane': activeTab }"
     class="fixed sm:relative top-0 w-screen md:w-auto flex flex-col md:flex-row-reverse z-[2] text-k-text-secondary"
   >
-    <div
+    <header
       class="controls flex md:flex-col justify-between items-center md:w-[64px] md:py-6 tw:px-0
       bg-black/5 md:border-l border-solid md:border-l-white/5 md:border-b-0 md:shadow-none
       z-[2] w-screen flex-row border-b border-b-white/5 border-l-0 shadow-xl
@@ -21,52 +21,51 @@
         <LogoutButton />
         <ProfileAvatar @click="onProfileLinkClick" />
       </div>
-    </div>
+    </header>
 
-    <div v-if="songPlaying" v-show="activeTab" class="panes py-8 px-6 overflow-auto bg-k-bg-secondary">
-      <div
-        v-show="activeTab === 'Lyrics'"
+    <main v-if="songPlaying" v-show="activeTab" class="panes py-8 px-6 overflow-auto bg-k-bg-secondary">
+      <SideSheetPanelLazyWrapper
         id="extraPanelLyrics"
+        :active="activeTab === 'Lyrics'"
+        :should-mount="shouldMountTab('Lyrics')"
         aria-labelledby="extraTabLyrics"
-        role="tabpanel"
-        tabindex="0"
+        data-testid="side-sheet-lyrics"
       >
         <LyricsPane v-if="playable" :song="playable" />
-      </div>
+      </SideSheetPanelLazyWrapper>
 
-      <div
-        v-show="activeTab === 'Artist'"
+      <SideSheetPanelLazyWrapper
         id="extraPanelArtist"
+        :active="activeTab === 'Artist'"
+        :should-mount="activatedTabs.includes('Artist')"
+        data-testid="side-sheet-artist"
         aria-labelledby="extraTabArtist"
-        role="tabpanel"
-        tabindex="0"
       >
-        <ArtistInfo v-if="artist" :artist="artist" mode="aside" />
+        <ArtistInfo v-if="artist && !loadingArtist" :artist="artist" mode="aside" />
         <SideSheetArtistAlbumInfoSkeleton v-else />
-      </div>
+      </SideSheetPanelLazyWrapper>
 
-      <div
-        v-show="activeTab === 'Album'"
+      <SideSheetPanelLazyWrapper
         id="extraPanelAlbum"
+        :active="activeTab === 'Album'"
+        :should-mount="activatedTabs.includes('Album')"
+        data-testid="side-sheet-album"
         aria-labelledby="extraTabAlbum"
-        role="tabpanel"
-        tabindex="0"
       >
-        <AlbumInfo v-if="album" :album="album" mode="aside" />
+        <AlbumInfo v-if="album && !loadingAlbum" :album="album" mode="aside" />
         <SideSheetArtistAlbumInfoSkeleton v-else />
-      </div>
+      </SideSheetPanelLazyWrapper>
 
-      <div
-        v-show="activeTab === 'YouTube'"
+      <SideSheetPanelLazyWrapper
         id="extraPanelYouTube"
+        :active="activeTab === 'YouTube'"
+        :should-mount="activatedTabs.includes('YouTube')"
         aria-labelledby="extraTabYouTube"
         data-testid="side-sheet-youtube"
-        role="tabpanel"
-        tabindex="0"
       >
         <YouTubeVideoList v-if="shouldShowYouTubeTab && playable" :song="playable" />
-      </div>
-    </div>
+      </SideSheetPanelLazyWrapper>
+    </main>
   </aside>
 </template>
 
@@ -78,7 +77,6 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { preferenceStore } from '@/stores/preferenceStore'
-import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 import { eventBus } from '@/utils/eventBus'
 import { isSong } from '@/utils/typeGuards'
@@ -89,35 +87,58 @@ import ProfileAvatar from '@/components/ui/ProfileAvatar.vue'
 import AboutKoelButton from '@/components/layout/main-wrapper/side-sheet/AboutKoelButton.vue'
 import LogoutButton from '@/components/layout/main-wrapper/side-sheet/LogoutButton.vue'
 import SideSheetButton from '@/components/layout/main-wrapper/side-sheet/SideSheetButton.vue'
+import SideSheetPanelLazyWrapper from '@/components/layout/main-wrapper/side-sheet/SideSheetPanelLazyWrapper.vue'
 import SideSheetArtistAlbumInfoSkeleton from '@/components/ui/skeletons/SideSheetArtistAlbumInfoSkeleton.vue'
+import SideSheetTabHeader from './SideSheetTabHeader.vue'
 
 const LyricsPane = defineAsyncComponent(() => import('@/components/ui/LyricsPane.vue'))
 const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/ArtistInfo.vue'))
 const AlbumInfo = defineAsyncComponent(() => import('@/components/album/AlbumInfo.vue'))
 const YouTubeVideoList = defineAsyncComponent(() => import('@/components/ui/youtube/YouTubeVideoList.vue'))
-const SideSheetTabHeader = defineAsyncComponent(() => import('./SideSheetTabHeader.vue'))
 
 const { useYouTube } = useThirdPartyServices()
 
 const playable = requireInjection(CurrentPlayableKey, ref(undefined)) as Ref<Song | undefined>
-const activeTab = ref<ExtraPanelTab | null>(null)
+const activeTab = ref<SideSheetTab | null>(null)
+const activatedTabs = ref<SideSheetTab[]>([])
 
 const artist = ref<Artist>()
 const album = ref<Album>()
+const loadingArtist = ref(false)
+const loadingAlbum = ref(false)
 
 const songPlaying = computed(() => playable.value && isSong(playable.value))
 const shouldShowYouTubeTab = computed(() => useYouTube.value && songPlaying.value)
 
-const fetchSongInfo = async (song: Song) => {
-  playable.value = song
-  artist.value = undefined
-  album.value = undefined
+const shouldMountTab = (tab: SideSheetTab) => activatedTabs.value.includes(tab)
 
-  try {
-    artist.value = await artistStore.resolve(song.artist_id)
-    album.value = await albumStore.resolve(song.album_id)
-  } catch (error: unknown) {
-    useErrorHandler().handleHttpError(error)
+const maybeResolveArtist = async () => {
+  if (!songPlaying.value || playable.value!.artist_id === artist.value?.id) {
+    return
+  }
+
+  loadingArtist.value = true
+  artist.value = await artistStore.resolve(playable.value!.artist_id)
+  loadingArtist.value = false
+}
+
+const maybeResolveAlbum = async () => {
+  if (!songPlaying.value || playable.value!.album_id === album.value?.id) {
+    return
+  }
+
+  loadingAlbum.value = true
+  album.value = await albumStore.resolve(playable.value!.album_id)
+  loadingAlbum.value = false
+}
+
+const maybeResolveArtistOrAlbum = (activeTab: SideSheetTab | null = null) => {
+  switch (activeTab) {
+    case 'Artist':
+      return maybeResolveArtist()
+    case 'Album':
+      return maybeResolveAlbum()
+    default:
   }
 }
 
@@ -125,15 +146,35 @@ watch(playable, song => {
   if (!song || !isSong(song)) {
     return
   }
-  fetchSongInfo(song)
+
+  playable.value = song
+  maybeResolveArtistOrAlbum(activeTab.value)
 }, { immediate: true })
 
-watch(activeTab, tab => (preferenceStore.active_extra_panel_tab = tab))
+watch(activeTab, tab => {
+  if (!tab) {
+    return
+  }
+
+  preferenceStore.active_extra_panel_tab = tab
+
+  if (!activatedTabs.value.includes(tab)) {
+    activatedTabs.value.push(tab)
+  }
+
+  maybeResolveArtistOrAlbum(tab)
+})
 
 const onProfileLinkClick = () => isMobile.any && (activeTab.value = null)
 const expandSidebar = () => eventBus.emit('TOGGLE_SIDEBAR')
 
-onMounted(() => isMobile.any || (activeTab.value = preferenceStore.active_extra_panel_tab))
+onMounted(() => {
+  if (isMobile.any) {
+    return
+  }
+
+  activeTab.value = preferenceStore.active_extra_panel_tab
+})
 </script>
 
 <style lang="postcss" scoped>
@@ -149,8 +190,6 @@ onMounted(() => isMobile.any || (activeTab.value = preferenceStore.active_extra_
 
 aside {
   @media screen and (max-width: 768px) {
-    @mixin themed-background;
-
     &.showing-pane {
       height: 100%;
     }

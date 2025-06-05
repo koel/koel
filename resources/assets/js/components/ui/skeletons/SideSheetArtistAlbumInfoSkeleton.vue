@@ -3,14 +3,10 @@
     <div class="h-8 pulse" />
     <div class="aspect-square rounded-lg pulse" />
 
-    <div class="flex flex-col gap-3">
-      <p class="h-5 pulse" />
-      <p class="h-5 pulse" />
-      <p class="h-5 pulse" />
-      <p class="h-5 w-1/3 pulse" />
-    </div>
+    <ParagraphSkeleton />
   </article>
 </template>
 
 <script setup lang="ts">
+import ParagraphSkeleton from '@/components/ui/skeletons/ParagraphSkeleton.vue'
 </script>
