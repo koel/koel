@@ -6,7 +6,9 @@
       <AlbumThumbnail :entity="album" class="group" />
     </template>
 
-    <template v-if="info">
+    <ParagraphSkeleton v-if="loading" />
+
+    <template v-if="!loading && info">
       <template v-if="info.wiki">
         <ExpandableContentBlock v-if="mode === 'aside'">
           <div v-html="info.wiki.full" />
@@ -24,7 +26,7 @@
       />
     </template>
 
-    <template v-if="info" #footer>
+    <template v-if="!loading && info" #footer>
       Data &copy;
       <a :href="info.url" rel="noopener" target="_blank">Last.fm</a>
     </template>
@@ -40,6 +42,7 @@ import { defineAsyncComponent } from '@/utils/helpers'
 import AlbumThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
 import AlbumArtistInfo from '@/components/ui/album-artist/AlbumOrArtistInfo.vue'
 import ExpandableContentBlock from '@/components/ui/album-artist/ExpandableContentBlock.vue'
+import ParagraphSkeleton from '@/components/ui/skeletons/ParagraphSkeleton.vue'
 
 const props = withDefaults(defineProps<{ album: Album, mode?: MediaInfoDisplayMode }>(), { mode: 'aside' })
 
@@ -49,13 +52,16 @@ const { album, mode } = toRefs(props)
 
 const { useLastfm, useSpotify } = useThirdPartyServices()
 
+const loading = ref(false)
 const info = ref<AlbumInfo | null>(null)
 
 watch(album, async () => {
   info.value = null
 
   if (useLastfm.value || useSpotify.value) {
+    loading.value = true
     info.value = await mediaInfoService.fetchForAlbum(album.value)
+    loading.value = false
   }
 }, { immediate: true, deep: true })
 </script>

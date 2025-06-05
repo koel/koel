@@ -61,7 +61,7 @@ const preferenceStore = {
     this.state[key] = value
 
     if (!this._temporary) {
-      http.silently.patch('me/preferences', { key, value })
+      this.update(key, value)
     } else {
       this._temporary = false
     }
@@ -69,6 +69,10 @@ const preferenceStore = {
 
   get (key: keyof UserPreferences) {
     return this.state?.[key]
+  },
+
+  update (key: keyof UserPreferences, value: any) {
+    http.silently.patch('me/preferences', { key, value })
   },
 
   // Calling preferenceStore.temporary.volume = 7 won't trigger saving.
@@ -79,7 +83,7 @@ const preferenceStore = {
   },
 }
 
-type ExportedType = Omit<typeof preferenceStore, 'setupProxy' | '_temporary'> & UserPreferences
+type ExportedType = Omit<typeof preferenceStore, 'setupProxy' | '_temporary' | 'update'> & UserPreferences
 
 const exported = preferenceStore as unknown as ExportedType
 

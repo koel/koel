@@ -1,8 +1,6 @@
 import type { Ref } from 'vue'
 import { ref } from 'vue'
-import type { Mock } from 'vitest'
 import { expect, it } from 'vitest'
-import type { RenderResult } from '@testing-library/vue'
 import { screen, waitFor } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
@@ -15,32 +13,69 @@ import { eventBus } from '@/utils/eventBus'
 import Component from './SideSheet.vue'
 
 new class extends UnitTestCase {
+  protected beforeEach (cb?: Closure) {
+    super.beforeEach(cb)
+
+    // disable getting and saving the preferences
+    this.mock(preferenceStore, 'update')
+  }
+
   protected test () {
-    it('renders without a current song', () => expect(this.renderComponent()[0].html()).toMatchSnapshot())
+    it('renders without a current song', () => expect(this.renderComponent().rendered.html()).toMatchSnapshot())
 
-    it('sets the active tab to the preference', async () => {
-      preferenceStore.active_extra_panel_tab = 'YouTube'
+    it('gets active tab from the preference', async () => {
+      preferenceStore.active_extra_panel_tab = 'Lyrics'
       this.renderComponent(ref(factory('song')))
-      const tab = screen.getByTestId<HTMLElement>('side-sheet-youtube')
-
-      expect(tab.style.display).toBe('none')
-      await this.tick()
-      expect(tab.style.display).toBe('')
-    })
-
-    it('fetches info for the current song', async () => {
-      commonStore.state.uses_you_tube = true
-
-      const song = factory('song')
-      const songRef = ref<Song | null>(null)
-
-      const [, resolveArtistMock, resolveAlbumMock] = this.renderComponent(songRef)
-      songRef.value = song
 
       await waitFor(() => {
-        expect(resolveArtistMock).toHaveBeenCalledWith(song.artist_id)
-        expect(resolveAlbumMock).toHaveBeenCalledWith(song.album_id)
-        ;['lyrics', 'album-info', 'artist-info', 'youtube-video-list'].forEach(id => screen.getByTestId(id))
+        expect(screen.getByTestId<HTMLElement>('side-sheet-lyrics').style.display).toBe('')
+      })
+    })
+
+    it('activates and sets active tab to the preference', async () => {
+      preferenceStore.active_extra_panel_tab = 'Lyrics'
+      this.renderComponent(ref(factory('song')))
+      await this.tick()
+      await this.user.click(screen.getByTestId('side-sheet-album-tab-header'))
+
+      await waitFor(() => {
+        expect(screen.getByTestId<HTMLElement>('side-sheet-lyrics').style.display).toBe('none')
+        expect(screen.getByTestId<HTMLElement>('side-sheet-album').style.display).toBe('')
+        expect(preferenceStore.active_extra_panel_tab).toBe('Album')
+      })
+    })
+
+    it('resolves album and fetches album info for the current song', async () => {
+      preferenceStore.active_extra_panel_tab = 'Album'
+
+      const songRef = ref<Song | null>(null)
+
+      const { resolveAlbumMock } = this.renderComponent(songRef)
+
+      // trigger the side sheet to show album info
+      songRef.value = factory('song')
+
+      await waitFor(() => {
+        screen.getByTestId('side-sheet-album')
+        screen.getByTestId('album-info')
+        expect(resolveAlbumMock).toHaveBeenCalledWith(songRef.value?.album_id)
+      })
+    })
+
+    it('resolves artist and fetches artist info for the current song', async () => {
+      preferenceStore.active_extra_panel_tab = 'Artist'
+
+      const songRef = ref<Song | null>(null)
+
+      const { resolveArtistMock } = this.renderComponent(songRef)
+
+      // trigger the side sheet to show artist info
+      songRef.value = factory('song')
+
+      await waitFor(() => {
+        screen.getByTestId('side-sheet-artist')
+        screen.getByTestId('artist-info')
+        expect(resolveArtistMock).toHaveBeenCalledWith(songRef.value?.artist_id)
       })
     })
 
@@ -71,7 +106,7 @@ new class extends UnitTestCase {
     })
   }
 
-  private renderComponent (songRef: Ref<Song | null> = ref(null)): [RenderResult, Mock, Mock] {
+  private renderComponent (songRef: Ref<Song | null> = ref(null)) {
     const artist = factory('artist')
     const resolveArtistMock = this.mock(artistStore, 'resolve').mockResolvedValue(artist)
 
@@ -81,12 +116,11 @@ new class extends UnitTestCase {
     const rendered = this.render(Component, {
       global: {
         stubs: {
-          ProfileAvatar: this.stub(),
+          ProfileAvatar: this.stub('profile-avatar'),
           LyricsPane: this.stub('lyrics'),
           AlbumInfo: this.stub('album-info'),
           ArtistInfo: this.stub('artist-info'),
           YouTubeVideoList: this.stub('youtube-video-list'),
-          ExtraPanelTabHeader: this.stub(),
         },
         provide: {
           [<symbol>CurrentPlayableKey]: songRef,
@@ -94,6 +128,10 @@ new class extends UnitTestCase {
       },
     })
 
-    return [rendered, resolveArtistMock, resolveAlbumMock]
+    return {
+      rendered,
+      resolveArtistMock,
+      resolveAlbumMock,
+    }
   }
 }

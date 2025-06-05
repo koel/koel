@@ -10,21 +10,21 @@ new class extends UnitTestCase {
       commonStore.state.uses_you_tube = false
       this.render(Component)
 
-      ;['Lyrics', 'Artist information', 'Album information'].forEach(name => screen.getByRole('button', { name }))
-      expect(screen.queryByRole('button', { name: 'Related YouTube videos' })).toBeNull()
+      ;['lyrics', 'artist', 'album'].forEach(name => screen.getByTestId(`side-sheet-${name}-tab-header`))
+      expect(screen.queryByTestId('side-sheet-youtube-tab-header')).toBeNull()
     })
 
     it('has a YouTube tab header if using YouTube', () => {
       commonStore.state.uses_you_tube = true
       this.render(Component)
 
-      screen.getByRole('button', { name: 'Related YouTube videos' })
+      screen.getByTestId('side-sheet-youtube-tab-header')
     })
 
     it('emits the selected tab value', async () => {
       const { emitted } = this.render(Component)
 
-      await this.user.click(screen.getByRole('button', { name: 'Lyrics' }))
+      await this.user.click(screen.getByTestId('side-sheet-lyrics-tab-header'))
 
       expect(emitted()['update:modelValue']).toEqual([['Lyrics']])
     })

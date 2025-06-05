@@ -9,7 +9,7 @@
       <Btn v-if="!loading" small @click.prevent="loadMore">Load More</Btn>
     </template>
 
-    <p v-if="loading">Loading…</p>
+    <YouTubeVideoListSkeleton v-if="loading" />
 
     <p v-if="somethingWrong">
       Failed to load videos.
@@ -26,6 +26,7 @@ import { useErrorHandler } from '@/composables/useErrorHandler'
 const props = defineProps<{ song: Song }>()
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 const YouTubeVideo = defineAsyncComponent(() => import('@/components/ui/youtube/YouTubeVideoItem.vue'))
+const YouTubeVideoListSkeleton = defineAsyncComponent(() => import('@/components/ui/skeletons/YouTubeVideoListSkeleton.vue'))
 
 const { song } = toRefs(props)
 
