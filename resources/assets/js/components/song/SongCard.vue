@@ -50,9 +50,7 @@ import { isEpisode, isSong } from '@/utils/typeGuards'
 import { eventBus } from '@/utils/eventBus'
 import { pluralize } from '@/utils/formatters'
 import { playbackService } from '@/services/playbackService'
-import { useAuthorization } from '@/composables/useAuthorization'
 import { useDraggable } from '@/composables/useDragAndDrop'
-import { useKoelPlus } from '@/composables/useKoelPlus'
 import { useRouter } from '@/composables/useRouter'
 
 import SongThumbnail from '@/components/song/SongThumbnail.vue'
@@ -62,17 +60,10 @@ import ExternalMark from '@/components/ui/ExternalMark.vue'
 const props = defineProps<{ playable: Playable }>()
 const { playable } = toRefs(props)
 
-const { isPlus } = useKoelPlus()
-const { currentUser } = useAuthorization()
 const { startDragging } = useDraggable('playables')
 const { url } = useRouter()
 
-const external = computed(() => {
-  if (!isSong(playable.value)) {
-    return false
-  }
-  return isPlus.value && playable.value.owner_id !== currentUser.value?.id
-})
+const external = computed(() => isSong(playable.value) && playable.value.is_external)
 
 const requestContextMenu = (event: MouseEvent) => eventBus.emit(
   'PLAYABLE_CONTEXT_MENU_REQUESTED',

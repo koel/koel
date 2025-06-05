@@ -36,7 +36,7 @@ class LicenseService implements LicenseServiceInterface
             }
 
             $license = $this->updateOrCreateLicenseFromApiResponseBody($result);
-            $this->cacheStatus(LicenseStatus::valid($license));
+            self::cacheStatus(LicenseStatus::valid($license));
 
             return $license;
         } catch (RequestException $e) {
@@ -76,6 +76,7 @@ class LicenseService implements LicenseServiceInterface
             return Cache::get('license_status');
         }
 
+        /** @var ?License $license */
         $license = License::query()->latest()->first();
 
         if (!$license) {

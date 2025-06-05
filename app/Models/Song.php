@@ -100,7 +100,7 @@ class Song extends Model implements AuditableContract
         'episode_metadata' => EpisodeMetadataCast::class,
     ];
 
-    protected $with = ['album', 'artist', 'podcast'];
+    protected $with = ['album', 'artist', 'podcast', 'owner'];
 
     public static function query(?PlayableType $type = null, ?User $user = null): SongBuilder
     {
@@ -174,8 +174,7 @@ class Song extends Model implements AuditableContract
 
     public function ownedBy(User $user): bool
     {
-        // Do not use $song->owner->is($user) here, as it may trigger an extra query.
-        return $this->owner_id === $user->id;
+        return $this->owner->id === $user->id;
     }
 
     protected function storageMetadata(): Attribute
