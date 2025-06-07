@@ -67,7 +67,6 @@ class SongResource extends JsonResource
         $data = [
             'type' => Str::plural($this->song->type->value),
             'id' => $this->song->id,
-            'owner_id' => $this->song->owner->public_id,
             'title' => $this->song->title,
             'lyrics' => $this->song->lyrics,
             'album_id' => $this->song->album?->id,
@@ -99,6 +98,7 @@ class SongResource extends JsonResource
             ];
         } else {
             $data += [
+                'owner_id' => $this->song->owner->public_id,
                 'is_external' => $isPlus && !$this->song->ownedBy($user),
             ];
         }
