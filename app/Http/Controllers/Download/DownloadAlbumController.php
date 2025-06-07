@@ -18,6 +18,6 @@ class DownloadAlbumController extends Controller
         DownloadService $service,
         Authenticatable $user
     ) {
-        return response()->download($service->getDownloadablePath($repository->getByAlbum($album, $user)));
+        return $service->getDownloadable($repository->getByAlbum($album, $user))?->toResponse();
     }
 }
