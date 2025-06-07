@@ -18,7 +18,7 @@ use Throwable;
 
 use function Functional\memoize;
 
-final class LocalStorage extends SongStorage
+class LocalStorage extends SongStorage
 {
     public function __construct(private readonly FileScanner $scanner)
     {

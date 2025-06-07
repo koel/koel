@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Symfony\Component\Uid\Ulid;
 
-final class SftpStorage extends SongStorage
+class SftpStorage extends SongStorage
 {
     use DeletesUsingFilesystem;
     use ScansUploadedFile;

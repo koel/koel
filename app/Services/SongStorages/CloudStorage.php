@@ -2,6 +2,7 @@
 
 namespace App\Services\SongStorages;
 
+use App\Enums\SongStorageType;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\FileScanner;
@@ -36,6 +37,16 @@ abstract class CloudStorage extends SongStorage
     protected function generateStorageKey(string $filename, User $uploader): string
     {
         return sprintf('%s__%s__%s', $uploader->id, Str::lower(Ulid::generate()), $filename);
+    }
+
+    public static function resolve(Song $song): ?static
+    {
+        return match ($song->storage) {
+            SongStorageType::S3_LAMBDA => app(S3LambdaStorage::class),
+            SongStorageType::S3 => app(S3CompatibleStorage::class),
+            SongStorageType::DROPBOX => app(DropboxStorage::class),
+            default => null,
+        };
     }
 
     abstract public function getSongPresignedUrl(Song $song): string;
