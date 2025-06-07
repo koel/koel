@@ -62,7 +62,7 @@ class SongPlayTest extends TestCase
         $token = app(TokenManager::class)->createCompositeToken($user);
 
         /** @var Song $song */
-        $song = Song::factory()->create(['path' => test_path('songs/blank.mp3')]);
+        $song = Song::factory()->create(['path' => '/tmp/blank.flac']);
 
         File::partialMock()
             ->shouldReceive('mimeType')
@@ -88,7 +88,7 @@ class SongPlayTest extends TestCase
         $token = app(TokenManager::class)->createCompositeToken($user);
 
         /** @var Song $song */
-        $song = Song::factory()->create(['path' => test_path('songs/blank.mp3')]);
+        $song = Song::factory()->create(['path' => '/var/songs/blank.mp3']);
 
         $this->mock(TranscodingStreamerAdapter::class)
             ->shouldReceive('stream')

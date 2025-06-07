@@ -6,6 +6,7 @@ use App\Facades\License;
 use App\Services\License\CommunityLicenseService;
 use App\Services\MediaBrowser;
 use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\File;
@@ -19,16 +20,26 @@ abstract class TestCase extends BaseTestCase
     use DatabaseTransactions;
     use MakesHttpRequests;
 
+    /**
+     * @var Filesystem The backup of the real filesystem instance, to restore after tests.
+     * This is necessary because we might be mocking the File facade in tests, and at the same time
+     * we delete test resources during suite's teardown.
+     */
+    private Filesystem $fileSystem;
+
     public function setUp(): void
     {
         parent::setUp();
 
         License::swap($this->app->make(CommunityLicenseService::class));
+        $this->fileSystem = File::getFacadeRoot();
+
         self::createSandbox();
     }
 
     protected function tearDown(): void
     {
+        File::swap($this->fileSystem);
         self::destroySandbox();
         MediaBrowser::clearCache();
 

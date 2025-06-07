@@ -14,7 +14,6 @@ use App\Services\Streamer\Adapters\XAccelRedirectStreamerAdapter;
 use App\Services\Streamer\Adapters\XSendFileStreamerAdapter;
 use App\Services\Streamer\Streamer;
 use App\Values\RequestedStreamingConfig;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -59,13 +58,14 @@ class StreamerTest extends TestCase
     #[Test]
     public function doNotUseTranscodingAdapterToPlayFlacIfConfiguredSo(): void
     {
-        File::partialMock()->shouldReceive('mimeType')->andReturn('audio/flac');
-
         $backup = config('koel.streaming.transcode_flac');
         config(['koel.streaming.transcode_flac' => false]);
 
         /** @var Song $song */
-        $song = Song::factory()->create(['storage' => SongStorageType::LOCAL]);
+        $song = Song::factory()->create([
+            'storage' => SongStorageType::LOCAL,
+            'path' => '/tmp/test.flac',
+        ]);
 
         $streamer = new Streamer($song, null);
 
@@ -77,8 +77,6 @@ class StreamerTest extends TestCase
     #[Test]
     public function useTranscodingAdapterToPlayFlacIfConfiguredSo(): void
     {
-        File::partialMock()->shouldReceive('mimeType')->andReturn('audio/flac');
-
         /** @var Song $song */
         $song = Song::factory()->create(['storage' => SongStorageType::LOCAL]);
 
@@ -93,10 +91,11 @@ class StreamerTest extends TestCase
         $backupConfig = config('koel.transcode_required_formats');
         config(['koel.transcode_required_formats' => ['aiff']]);
 
-        File::partialMock()->shouldReceive('mimeType')->andReturn('audio/aiff');
-
         /** @var Song $song */
-        $song = Song::factory()->create(['storage' => SongStorageType::LOCAL]);
+        $song = Song::factory()->create([
+            'storage' => SongStorageType::LOCAL,
+            'path' => '/tmp/test.aiff',
+        ]);
 
         $streamer = new Streamer($song, null);
 

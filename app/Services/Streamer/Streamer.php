@@ -12,10 +12,8 @@ use App\Services\Streamer\Adapters\S3CompatibleStreamerAdapter;
 use App\Services\Streamer\Adapters\SftpStreamerAdapter;
 use App\Services\Streamer\Adapters\StreamerAdapter;
 use App\Services\Streamer\Adapters\TranscodingStreamerAdapter;
+use App\Services\Transcoder;
 use App\Values\RequestedStreamingConfig;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 class Streamer
 {
@@ -35,7 +33,7 @@ class Streamer
             return app(PodcastStreamerAdapter::class);
         }
 
-        if ($this->shouldTranscode()) {
+        if ($this->config?->transcode || Transcoder::shouldTranscode($this->song)) {
             return app(TranscodingStreamerAdapter::class);
         }
 
@@ -53,43 +51,6 @@ class Streamer
         @error_reporting(0);
 
         return $this->adapter->stream($this->song, $this->config);
-    }
-
-    private function shouldTranscode(): bool
-    {
-        // We only transcode local files. "Remote" transcoding (e.g., from Dropbox) is not supported.
-        if ($this->song->storage !== SongStorageType::LOCAL) {
-            return false;
-        }
-
-        if ($this->config?->transcode) {
-            return true;
-        }
-
-        if (!self::hasValidFfmpegInstallation()) {
-            Log::warning('No FFmpeg installation available.');
-
-            return false;
-        }
-
-        $mimeType = File::mimeType($this->song->storage_metadata->getPath());
-
-        if (Str::endsWith($mimeType, 'flac') && config('koel.streaming.transcode_flac')) {
-            return true;
-        }
-
-        foreach (config('koel.transcode_required_formats', []) as $format) {
-            if (Str::endsWith($mimeType, $format)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static function hasValidFfmpegInstallation(): bool
-    {
-        return app()->runningUnitTests() || is_executable(config('koel.streaming.ffmpeg_path'));
     }
 
     public function getAdapter(): StreamerAdapter

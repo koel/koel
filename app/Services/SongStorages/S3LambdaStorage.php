@@ -18,7 +18,7 @@ use Illuminate\Http\UploadedFile;
  * The legacy storage implementation for Lambda and S3, to provide backward compatibility.
  * In this implementation, the songs are supposed to be uploaded to S3 directly.
  */
-final class S3LambdaStorage extends S3CompatibleStorage
+class S3LambdaStorage extends S3CompatibleStorage
 {
     public function __construct( // @phpcs:ignore
         private readonly MediaMetadataService $mediaMetadataService,

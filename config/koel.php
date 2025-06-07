@@ -160,6 +160,6 @@ return [
         'demo' => env('KOEL_DEMO', false),
     ],
 
-    'supported_formats' => ['mp3', 'wav', 'ogg', 'm4a', 'flac', 'opus', 'aiff'],
-    'transcode_required_formats' => ['aiff'],
+    'supported_formats' => ['mp3', 'wav', 'ogg', 'm4a', 'flac', 'opus', 'aiff', 'aif'],
+    'transcode_required_formats' => ['aiff', 'aif'],
 ];

@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 
-final class DropboxStorage extends CloudStorage
+class DropboxStorage extends CloudStorage
 {
     use DeletesUsingFilesystem;
 
