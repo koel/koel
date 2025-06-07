@@ -5,25 +5,54 @@ namespace App\Services;
 use App\Enums\SongStorageType;
 use App\Models\Song;
 use App\Models\SongZipArchive;
+use App\Services\SongStorages\CloudStorage;
 use App\Services\SongStorages\DropboxStorage;
 use App\Services\SongStorages\S3CompatibleStorage;
 use App\Services\SongStorages\SftpStorage;
+use App\Values\Downloadable;
 use App\Values\Podcast\EpisodePlayable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\File;
 
 class DownloadService
 {
-    public function getDownloadablePath(Collection $songs): ?string
+    public function getDownloadable(Collection $songs): ?Downloadable
     {
         if ($songs->count() === 1) {
-            return $this->getLocalPath($songs->first()); // @phpstan-ignore-line
+            return optional(
+                $this->getLocalPathOrDownloadableUrl($songs->first()), // @phpstan-ignore-line
+                static fn (string $url) => Downloadable::make($url)
+            );
         }
 
-        return (new SongZipArchive())
+        return Downloadable::make(
+            (new SongZipArchive())
             ->addSongs($songs)
             ->finish()
-            ->getPath();
+            ->getPath()
+        );
+    }
+
+    public function getLocalPathOrDownloadableUrl(Song $song): ?string
+    {
+        if (!$song->storage->supported()) {
+            return null;
+        }
+
+        if ($song->isEpisode()) {
+            // If the song is an episode, get the episode's media URL ("path").
+            return $song->path;
+        }
+
+        if ($song->storage === SongStorageType::LOCAL) {
+            return $song->path;
+        }
+
+        if ($song->storage === SongStorageType::SFTP) {
+            return app(SftpStorage::class)->copyToLocal($song);
+        }
+
+        return self::resolveCloudStorage($song)?->getSongPresignedUrl($song);
     }
 
     public function getLocalPath(Song $song): ?string
@@ -44,20 +73,15 @@ class DownloadService
             return app(SftpStorage::class)->copyToLocal($song);
         }
 
-        switch ($song->storage) {
-            case SongStorageType::DROPBOX:
-                $cloudStorage = app(DropboxStorage::class);
-                break;
+        return self::resolveCloudStorage($song)?->copyToLocal($song);
+    }
 
-            case SongStorageType::S3:
-            case SongStorageType::S3_LAMBDA:
-                $cloudStorage = app(S3CompatibleStorage::class);
-                break;
-
-            default:
-                return null;
-        }
-
-        return $cloudStorage->copyToLocal($song);
+    private static function resolveCloudStorage(Song $song): ?CloudStorage
+    {
+        return match ($song->storage) {
+            SongStorageType::DROPBOX => app(DropboxStorage::class),
+            SongStorageType::S3, SongStorageType::S3_LAMBDA => app(S3CompatibleStorage::class),
+            default => null,
+        };
     }
 }

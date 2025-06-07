@@ -22,12 +22,10 @@ class DownloadPlaylistController extends Controller
     ) {
         $this->authorize('download', $playlist);
 
-        return response()->download(
-            $download->getDownloadablePath(
-                $playlist->is_smart
-                    ? $smartPlaylistService->getSongs($playlist, $user)
-                    : $repository->getByStandardPlaylist($playlist, $user)
-            )
-        );
+        $songs = $playlist->is_smart
+            ? $smartPlaylistService->getSongs($playlist, $user)
+            : $repository->getByStandardPlaylist($playlist, $user);
+
+        return $download->getDownloadable($songs)?->toResponse();
     }
 }

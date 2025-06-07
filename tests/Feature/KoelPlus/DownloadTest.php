@@ -4,6 +4,7 @@ namespace Tests\Feature\KoelPlus;
 
 use App\Models\Song;
 use App\Services\DownloadService;
+use App\Values\Downloadable;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
@@ -29,9 +30,9 @@ class DownloadTest extends PlusTestCase
         $externalPublicSong = Song::factory()->public()->create();
 
         $downloadService = $this->mock(DownloadService::class);
-        $downloadService->shouldReceive('getDownloadablePath')
+        $downloadService->shouldReceive('getDownloadable')
             ->once()
-            ->andReturn(test_path('songs/blank.mp3'));
+            ->andReturn(Downloadable::make(test_path('songs/blank.mp3')));
 
         $this->get("download/songs?songs[]={$externalPublicSong->id}&api_token=" . $apiToken)
             ->assertOk();
@@ -39,9 +40,9 @@ class DownloadTest extends PlusTestCase
         // Can download a private song that belongs to the user
         /** @var Song $ownSong */
         $ownSong = Song::factory()->for($owner, 'owner')->private()->create();
-        $downloadService->shouldReceive('getDownloadablePath')
+        $downloadService->shouldReceive('getDownloadable')
             ->once()
-            ->andReturn(test_path('songs/blank.mp3'));
+            ->andReturn(Downloadable::make(test_path('songs/blank.mp3')));
         $this->get("download/songs?songs[]={$ownSong->id}&api_token=" . $apiToken)
             ->assertOk();
     }
