@@ -105,6 +105,9 @@ class DropboxStorageTest extends PlusTestCase
             ->with('song.mp3')
             ->andReturn('https://dropbox.com/song.mp3?token=123');
 
-        self::assertSame('https://dropbox.com/song.mp3?token=123', $service->getSongPresignedUrl($song));
+        self::assertSame(
+            'https://dropbox.com/song.mp3?token=123',
+            $service->getPresignedUrl($song->storage_metadata->getPath())
+        );
     }
 }

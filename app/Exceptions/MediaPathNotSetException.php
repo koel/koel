@@ -2,8 +2,8 @@
 
 namespace App\Exceptions;
 
-use Exception;
+use LogicException;
 
-class MediaPathNotSetException extends Exception
+class MediaPathNotSetException extends LogicException
 {
 }

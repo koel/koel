@@ -5,9 +5,7 @@ namespace App\Services;
 use App\Enums\SongStorageType;
 use App\Models\Song;
 use App\Models\SongZipArchive;
-use App\Services\SongStorages\CloudStorage;
-use App\Services\SongStorages\DropboxStorage;
-use App\Services\SongStorages\S3CompatibleStorage;
+use App\Services\SongStorages\CloudStorageFactory;
 use App\Services\SongStorages\SftpStorage;
 use App\Values\Downloadable;
 use App\Values\Podcast\EpisodePlayable;
@@ -16,6 +14,9 @@ use Illuminate\Support\Facades\File;
 
 class DownloadService
 {
+    /**
+     * @param Collection<Song>|array<array-key, Song> $songs
+     */
     public function getDownloadable(Collection $songs): ?Downloadable
     {
         if ($songs->count() === 1) {
@@ -52,7 +53,7 @@ class DownloadService
             return app(SftpStorage::class)->copyToLocal($song);
         }
 
-        return self::resolveCloudStorage($song)?->getSongPresignedUrl($song);
+        return CloudStorageFactory::make($song->storage)->getPresignedUrl($song->storage_metadata->getPath());
     }
 
     public function getLocalPath(Song $song): ?string
@@ -65,23 +66,19 @@ class DownloadService
             return EpisodePlayable::getForEpisode($song)->path;
         }
 
+        $location = $song->storage_metadata->getPath();
+
         if ($song->storage === SongStorageType::LOCAL) {
-            return File::exists($song->path) ? $song->path : null;
+            return File::exists($location) ? $location : null;
         }
 
         if ($song->storage === SongStorageType::SFTP) {
-            return app(SftpStorage::class)->copyToLocal($song);
+            /** @var SftpStorage $storage */
+            $storage = app(SftpStorage::class);
+
+            return $storage->copyToLocal($location);
         }
 
-        return self::resolveCloudStorage($song)?->copyToLocal($song);
-    }
-
-    private static function resolveCloudStorage(Song $song): ?CloudStorage
-    {
-        return match ($song->storage) {
-            SongStorageType::DROPBOX => app(DropboxStorage::class),
-            SongStorageType::S3, SongStorageType::S3_LAMBDA => app(S3CompatibleStorage::class),
-            default => null,
-        };
+        return CloudStorageFactory::make($song->storage)->copyToLocal($location);
     }
 }

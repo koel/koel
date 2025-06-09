@@ -117,7 +117,10 @@ class User extends Authenticatable implements AuditableContract
 
     public function subscribeToPodcast(Podcast $podcast): void
     {
-        throw_if($this->subscribedToPodcast($podcast), UserAlreadySubscribedToPodcastException::make($this, $podcast));
+        throw_if(
+            $this->subscribedToPodcast($podcast),
+            UserAlreadySubscribedToPodcastException::create($this, $podcast)
+        );
 
         $this->podcasts()->attach($podcast);
     }

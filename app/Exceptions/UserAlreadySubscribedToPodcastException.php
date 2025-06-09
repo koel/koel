@@ -8,7 +8,7 @@ use Exception;
 
 final class UserAlreadySubscribedToPodcastException extends Exception
 {
-    public static function make(User $user, Podcast $podcast): self
+    public static function create(User $user, Podcast $podcast): self
     {
         return new self("User {$user->id} has already subscribed to podcast {$podcast->id}");
     }

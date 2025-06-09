@@ -17,6 +17,6 @@ class SftpStreamerAdapter implements StreamerAdapter
 
     public function stream(Song $song, ?RequestedStreamingConfig $config = null): void
     {
-        $this->streamLocalPath($this->storage->copyToLocal($song));
+        $this->streamLocalPath($this->storage->copyToLocal($song->storage_metadata->getPath()));
     }
 }

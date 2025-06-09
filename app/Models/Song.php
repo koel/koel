@@ -248,6 +248,15 @@ class Song extends Model implements AuditableContract
         return $this->type === PlayableType::PODCAST_EPISODE;
     }
 
+    public function isStoredOnCloud(): bool
+    {
+        return in_array($this->storage, [
+            SongStorageType::S3,
+            SongStorageType::S3_LAMBDA,
+            SongStorageType::DROPBOX,
+        ], true);
+    }
+
     public function __toString(): string
     {
         return $this->id;

@@ -2,9 +2,9 @@
 
 namespace App\Exceptions;
 
-use Exception;
+use BadMethodCallException;
 
-class MethodNotImplementedException extends Exception
+class MethodNotImplementedException extends BadMethodCallException
 {
     public static function method(string $method): self
     {

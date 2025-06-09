@@ -29,8 +29,6 @@ class S3LambdaStorage extends S3CompatibleStorage
 
     public function storeUploadedFile(UploadedFile $file, User $uploader): Song
     {
-        $this->assertSupported();
-
         throw new MethodNotImplementedException('Lambda storage does not support uploading.');
     }
 
@@ -84,7 +82,7 @@ class S3LambdaStorage extends S3CompatibleStorage
         $song->delete();
     }
 
-    public function delete(Song $song, bool $backup = false): void
+    public function delete(string $location, bool $backup = false): void
     {
         throw new MethodNotImplementedException('Lambda storage does not support deleting from filesystem.');
     }

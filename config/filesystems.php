@@ -82,7 +82,7 @@ return [
 
         'sftp' => [
             'driver' => 'sftp',
-            'host' => env('SFTP_HOST'),
+            'host' => env('SFTP_HOST', ''),
             'root' => rtrim(env('SFTP_ROOT') ?? '', '/\\'),
 
             'username' => env('SFTP_USERNAME', ''),

@@ -21,6 +21,7 @@ class S3CompatibleStorageTest extends PlusTestCase
     {
         parent::setUp();
 
+        Storage::fake('s3');
         $this->service = app(S3CompatibleStorage::class);
         $this->file = UploadedFile::fromFile(test_path('songs/full.mp3'), 'song.mp3'); //@phpstan-ignore-line
     }
@@ -30,7 +31,6 @@ class S3CompatibleStorageTest extends PlusTestCase
     {
         self::assertEquals(0, Song::query()->where('storage', 's3')->count());
 
-        Storage::fake('s3');
         $song = $this->service->storeUploadedFile($this->file, create_user());
 
         Storage::disk('s3')->assertExists($song->storage_metadata->getPath());
@@ -40,8 +40,6 @@ class S3CompatibleStorageTest extends PlusTestCase
     #[Test]
     public function storingWithVisibilityPreference(): void
     {
-        Storage::fake('s3');
-
         $user = create_user();
 
         $user->preferences->makeUploadsPublic = true;
@@ -57,24 +55,31 @@ class S3CompatibleStorageTest extends PlusTestCase
     }
 
     #[Test]
-    public function deleteSong(): void
+    public function deleteWithNoBackup(): void
     {
-        Storage::fake('s3');
+        Storage::disk('s3')->put('full.mp3', 'fake content');
 
-        $song = $this->service->storeUploadedFile($this->file, create_user());
-        Storage::disk('s3')->assertExists($song->storage_metadata->getPath());
+        $this->service->delete('full.mp3');
 
-        $this->service->delete($song);
-        Storage::disk('s3')->assertMissing($song->storage_metadata->getPath());
+        Storage::disk('s3')->assertMissing('full.mp3');
+    }
+
+    #[Test]
+    public function deleteWithBackup(): void
+    {
+        Storage::disk('s3')->put('full.mp3', 'fake content');
+
+        $this->service->delete(location: 'full.mp3', backup: true);
+
+        Storage::disk('s3')->assertMissing('full.mp3');
+        Storage::disk('s3')->assertExists('backup/full.mp3.bak');
     }
 
     #[Test]
     public function getPresignedUrl(): void
     {
-        Storage::fake('s3');
-
         $song = $this->service->storeUploadedFile($this->file, create_user());
-        $url = $this->service->getSongPresignedUrl($song);
+        $url = $this->service->getPresignedUrl($song->storage_metadata->getPath());
 
         self::assertStringContainsString($song->storage_metadata->getPath(), $url);
     }

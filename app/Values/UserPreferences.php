@@ -92,7 +92,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
             showNowPlayingNotification: $data['show_now_playing_notification'] ?? true,
             confirmBeforeClosing: $data['confirm_before_closing'] ?? false,
             transcodeOnMobile: $data['transcode_on_mobile'] ?? true,
-            transcodeQuality: $data['transcode_quality'] ?? 128,
+            transcodeQuality: $data['transcode_quality'] ?? config('koel.streaming.bitrate'),
             showAlbumArtOverlay: $data['show_album_art_overlay'] ?? true,
             makeUploadsPublic: $data['make_uploads_public'] ?? false,
             supportBarNoBugging: $data['support_bar_no_bugging'] ?? false,

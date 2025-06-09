@@ -2,9 +2,9 @@
 
 namespace App\Exceptions;
 
-use Exception;
+use DomainException;
 
-class KoelPlusRequiredException extends Exception
+class KoelPlusRequiredException extends DomainException
 {
     public function __construct(string $message = 'This feature is only available in Koel Plus.')
     {

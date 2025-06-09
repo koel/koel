@@ -26,6 +26,7 @@ class UploadController extends Controller
         Authenticatable $user
     ) {
         $this->authorize('upload', User::class);
+        $storage->assertSupported();
 
         try {
             // @todo decouple Song from storage, as storages should not be responsible for creating a song.

@@ -2,7 +2,6 @@
 
 namespace App\Services\SongStorages\Concerns;
 
-use App\Models\Song;
 use Closure;
 use Illuminate\Contracts\Filesystem\Filesystem as IlluminateFilesystem;
 use Illuminate\Support\Facades\Log;
@@ -11,27 +10,24 @@ use Throwable;
 
 trait DeletesUsingFilesystem
 {
-    private function deleteUsingFileSystem(
+    private function deleteUsingFilesystem(
         Filesystem | IlluminateFilesystem $disk,
-        Song $song,
-        Closure|bool $backup
+        string $key,
+        bool|Closure $backup,
     ): void {
-        $path = $song->storage_metadata->getPath();
-
         try {
             if (is_callable($backup)) {
-                $backup($disk, $path);
+                $backup($disk, $key);
             } elseif ($backup) {
-                $disk->copy($path, "backup/$path");
+                $disk->copy($key, "backup/$key.bak");
             }
         } catch (Throwable $e) {
-            Log::error('Cannot backup song file', [
-                'song_id' => $song->id,
-                'path' => $path,
+            Log::error('Failed to backup file.', [
+                'key' => $key,
                 'error' => $e,
             ]);
         }
 
-        $disk->delete($path);
+        $disk->delete($key);
     }
 }
