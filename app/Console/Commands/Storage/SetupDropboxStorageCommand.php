@@ -73,12 +73,19 @@ class SetupDropboxStorageCommand extends Command
 
         $this->dotenvEditor->setKeys($config);
         $this->dotenvEditor->save();
-        Artisan::call('config:clear', ['--quiet' => true]);
+
+        config()->set('filesystems.disks.dropbox', [
+            'app_key' => $config['DROPBOX_APP_KEY'],
+            'app_secret' => $config['DROPBOX_APP_SECRET'],
+            'refresh_token' => $config['DROPBOX_REFRESH_TOKEN'],
+        ]);
 
         $this->comment('Uploading a test file to make sure everything is working...');
 
         try {
-            app(DropboxStorage::class)->testSetup();
+            /** @var DropboxStorage $storage */
+            $storage = app()->build(DropboxStorage::class); // build instead of make to avoid singleton issues
+            $storage->testSetup();
         } catch (Throwable $e) {
             $this->error('Failed to upload test file: ' . $e->getMessage() . '.');
             $this->comment('Please make sure the app has the correct permissions and try again.');
