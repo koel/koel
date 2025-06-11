@@ -41,7 +41,7 @@ abstract class CloudStorage extends SongStorage
 
     public static function resolve(Song $song): ?static
     {
-        return match ($song->storage) {
+        return match ($song->storage) { // @phpstan-ignore-line
             SongStorageType::S3_LAMBDA => app(S3LambdaStorage::class),
             SongStorageType::S3 => app(S3CompatibleStorage::class),
             SongStorageType::DROPBOX => app(DropboxStorage::class),

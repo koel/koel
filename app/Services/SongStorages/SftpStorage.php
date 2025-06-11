@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\FileScanner;
 use App\Services\SongStorages\Concerns\DeletesUsingFilesystem;
 use App\Services\SongStorages\Concerns\ScansUploadedFile;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -50,7 +51,12 @@ class SftpStorage extends SongStorage
     public function delete(Song $song, bool $backup = false): void
     {
         $this->assertSupported();
-        $this->deleteUsingFileSystem(Storage::disk('sftp'), $song, $backup);
+
+        $this->deleteUsingFileSystem(
+            Storage::disk('sftp'),
+            $song,
+            static fn (Filesystem $fs, string $path) => $fs->copy($path, "$path.bak"),
+        );
     }
 
     public function getSongContent(Song $song): string
