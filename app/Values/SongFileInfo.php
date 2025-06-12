@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Values;
+
+use App\Enums\SongStorageType;
+use App\Models\Song;
+
+class SongFileInfo
+{
+    private function __construct(public readonly string $location, public readonly SongStorageType $storage)
+    {
+    }
+
+    public static function make(string $location, SongStorageType $storage): self
+    {
+        return new self($location, $storage);
+    }
+
+    public static function fromSong(Song $song): self
+    {
+        return self::make($song->storage_metadata->getPath(), $song->storage);
+    }
+}

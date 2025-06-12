@@ -2,8 +2,8 @@
 
 namespace App\Exceptions;
 
-use Exception;
+use DomainException;
 
-class OperationNotApplicableForSmartPlaylistException extends Exception
+class OperationNotApplicableForSmartPlaylistException extends DomainException
 {
 }

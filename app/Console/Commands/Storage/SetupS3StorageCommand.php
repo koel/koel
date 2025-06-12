@@ -44,8 +44,12 @@ class SetupS3StorageCommand extends Command
 
         $this->comment('Uploading a test file to make sure everything is working...');
 
+        config('filesystems.disks.s3.bucket', $config['AWS_BUCKET']);
+
         try {
-            app(S3CompatibleStorage::class)->testSetup();
+            /** @var S3CompatibleStorage $storage */
+            $storage = app()->build(S3CompatibleStorage::class);
+            $storage->testSetup();
         } catch (Throwable $e) {
             $this->error('Failed to upload test file: ' . $e->getMessage() . '.');
             $this->comment('Please check your configuration and try again.');

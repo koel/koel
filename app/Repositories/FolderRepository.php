@@ -29,9 +29,7 @@ class FolderRepository extends Repository
         }
 
         return self::getOnlyBrowsable(
-            Folder::query()
-                ->whereNull('parent_id')
-                ->get(),
+            Folder::query()->whereNull('parent_id')->get(),
             $scopedUser
         );
     }
@@ -47,9 +45,7 @@ class FolderRepository extends Repository
         $hashes = array_map(self::pathToHash(...), $paths);
 
         return self::getOnlyBrowsable(
-            Folder::query()
-                ->whereIn('hash', $hashes)
-                ->get(),
+            Folder::query()->whereIn('hash', $hashes)->get(),
             $scopedUser
         );
     }

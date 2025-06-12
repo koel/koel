@@ -3,6 +3,8 @@
 namespace Tests;
 
 use App\Facades\License;
+use App\Helpers\Ulid;
+use App\Helpers\Uuid;
 use App\Services\License\CommunityLicenseService;
 use App\Services\MediaBrowser;
 use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
@@ -42,6 +44,9 @@ abstract class TestCase extends BaseTestCase
         File::swap($this->fileSystem);
         self::destroySandbox();
         MediaBrowser::clearCache();
+
+        Ulid::unfreeze();
+        Uuid::unfreeze();
 
         parent::tearDown();
     }

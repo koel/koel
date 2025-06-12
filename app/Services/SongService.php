@@ -3,24 +3,27 @@
 namespace App\Services;
 
 use App\Facades\License;
+use App\Jobs\DeleteSongFiles;
+use App\Jobs\DeleteTranscodeFiles;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
+use App\Models\Transcode;
 use App\Repositories\SongRepository;
-use App\Services\SongStorages\SongStorage;
+use App\Repositories\TranscodeRepository;
+use App\Values\SongFileInfo;
 use App\Values\SongUpdateData;
+use App\Values\TranscodeFileInfo;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Throwable;
 
 class SongService
 {
     public function __construct(
         private readonly SongRepository $songRepository,
-        private readonly SongStorage $songStorage
+        private readonly TranscodeRepository $transcodeRepository,
     ) {
     }
 
@@ -133,27 +136,24 @@ class SongService
     public function deleteSongs(array|string $ids): void
     {
         $ids = Arr::wrap($ids);
-        $shouldBackUp = config('koel.backup_on_delete');
 
-        DB::transaction(function () use ($ids, $shouldBackUp): void {
-            $songs = Song::query()->findMany($ids);
+        // Since song (and cascadingly, transcode) records will be deleted, we query them first and, if there are any,
+        // dispatch a job to delete their associated files.
+        $songFiles = Song::query()
+            ->findMany($ids)
+            ->map(static fn (Song $song) => SongFileInfo::fromSong($song)); // @phpstan-ignore-line
 
-            Song::destroy($ids);
+        $transcodeFiles = $this->transcodeRepository->findBySongIds($ids)
+            ->map(static fn (Transcode $transcode) => TranscodeFileInfo::fromTranscode($transcode)); // @phpstan-ignore-line
 
-            $songs->each(function (Song $song) use ($shouldBackUp): void {
-                try {
-                    $this->songStorage->delete($song, $shouldBackUp);
-                } catch (Throwable $e) {
-                    if (app()->runningUnitTests()) {
-                        return;
-                    }
+        if (Song::destroy($ids) === 0) {
+            return;
+        }
 
-                    Log::error('Failed to remove song file', [
-                        'path' => $song->path,
-                        'exception' => $e,
-                    ]);
-                }
-            });
-        });
+        DeleteSongFiles::dispatch($songFiles);
+
+        if ($transcodeFiles->isNotEmpty()) {
+            DeleteTranscodeFiles::dispatch($transcodeFiles);
+        }
     }
 }

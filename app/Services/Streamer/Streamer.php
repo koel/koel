@@ -12,8 +12,9 @@ use App\Services\Streamer\Adapters\S3CompatibleStreamerAdapter;
 use App\Services\Streamer\Adapters\SftpStreamerAdapter;
 use App\Services\Streamer\Adapters\StreamerAdapter;
 use App\Services\Streamer\Adapters\TranscodingStreamerAdapter;
-use App\Services\Transcoder;
 use App\Values\RequestedStreamingConfig;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class Streamer
 {
@@ -33,7 +34,7 @@ class Streamer
             return app(PodcastStreamerAdapter::class);
         }
 
-        if ($this->config?->transcode || Transcoder::shouldTranscode($this->song)) {
+        if ($this->config?->transcode || self::shouldTranscode($this->song)) {
             return app(TranscodingStreamerAdapter::class);
         }
 
@@ -56,5 +57,32 @@ class Streamer
     public function getAdapter(): StreamerAdapter
     {
         return $this->adapter;
+    }
+
+    /**
+     * Determine if the given song should be transcoded based on its format and the server's FFmpeg installation.
+     */
+    private static function shouldTranscode(Song $song): bool
+    {
+        if ($song->isEpisode()) {
+            return false;
+        }
+
+        if (!self::hasValidFfmpegInstallation()) {
+            return false;
+        }
+
+        $extension = Str::lower(File::extension($song->storage_metadata->getPath()));
+
+        if ($extension === 'flac' && config('koel.streaming.transcode_flac')) {
+            return true;
+        }
+
+        return in_array($extension, config('koel.transcode_required_formats', []), true);
+    }
+
+    private static function hasValidFfmpegInstallation(): bool
+    {
+        return app()->runningUnitTests() || is_executable(config('koel.streaming.ffmpeg_path'));
     }
 }

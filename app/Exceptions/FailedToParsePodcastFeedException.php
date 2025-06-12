@@ -2,18 +2,13 @@
 
 namespace App\Exceptions;
 
-use Exception;
+use RuntimeException;
 use Throwable;
 
-final class FailedToParsePodcastFeedException extends Exception
+final class FailedToParsePodcastFeedException extends RuntimeException
 {
-    private function __construct(string $url, Throwable $previous)
-    {
-        parent::__construct("Failed to parse the podcast feed at $url.", (int) $previous->getCode(), $previous);
-    }
-
     public static function create(string $url, Throwable $previous): self
     {
-        return new self($url, $previous);
+        return new self("Failed to parse the podcast feed at $url.", $previous->getCode(), $previous);
     }
 }

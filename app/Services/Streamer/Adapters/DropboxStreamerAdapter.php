@@ -16,6 +16,8 @@ class DropboxStreamerAdapter implements StreamerAdapter
 
     public function stream(Song $song, ?RequestedStreamingConfig $config = null): Redirector|RedirectResponse
     {
-        return redirect($this->storage->getSongPresignedUrl($song));
+        $this->storage->assertSupported();
+
+        return redirect($this->storage->getPresignedUrl($song->storage_metadata->getPath()));
     }
 }

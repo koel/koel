@@ -23,14 +23,12 @@ class S3CompatibleStorage extends CloudStorage
 
     public function storeUploadedFile(UploadedFile $file, User $uploader): Song
     {
-        $this->assertSupported();
-
         return DB::transaction(function () use ($file, $uploader): Song {
             $result = $this->scanUploadedFile($this->scanner, $file, $uploader);
             $song = $this->scanner->getSong();
             $key = $this->generateStorageKey($file->getClientOriginalName(), $uploader);
 
-            Storage::disk('s3')->put($key, File::get($result->path));
+            $this->uploadToStorage($key, $result->path);
 
             $song->update([
                 'path' => "s3://$this->bucket/$key",
@@ -43,17 +41,24 @@ class S3CompatibleStorage extends CloudStorage
         });
     }
 
-    public function getSongPresignedUrl(Song $song): string
+    public function getPresignedUrl(string $key): string
     {
-        $this->assertSupported();
-
-        return Storage::disk('s3')->temporaryUrl($song->storage_metadata->getPath(), now()->addHour());
+        return Storage::disk('s3')->temporaryUrl($key, now()->addHour());
     }
 
-    public function delete(Song $song, bool $backup = false): void
+    public function deleteFileWithKey(string $key, bool $backup = false): void
     {
-        $this->assertSupported();
-        $this->deleteUsingFileSystem(Storage::disk('s3'), $song, $backup);
+        $this->deleteUsingFilesystem(Storage::disk('s3'), $key, $backup);
+    }
+
+    public function delete(string $location, bool $backup = false): void
+    {
+        $this->deleteFileWithKey($location, $backup);
+    }
+
+    public function uploadToStorage(string $key, string $path): void
+    {
+        Storage::disk('s3')->put($key, File::get($path));
     }
 
     public function testSetup(): void

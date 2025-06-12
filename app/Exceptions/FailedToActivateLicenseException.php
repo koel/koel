@@ -2,11 +2,11 @@
 
 namespace App\Exceptions;
 
-use Exception;
+use RuntimeException;
 use Saloon\Exceptions\Request\RequestException;
 use Throwable;
 
-final class FailedToActivateLicenseException extends Exception
+final class FailedToActivateLicenseException extends RuntimeException
 {
     public static function fromThrowable(Throwable $e): self
     {

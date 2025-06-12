@@ -83,7 +83,7 @@ class SongZipArchive
     {
         // We use system's temp dir instead of storage_path() here, so that the generated files
         // can be cleaned up automatically after server reboot.
-        return sprintf('%s%skoel-download-%s.zip', sys_get_temp_dir(), DIRECTORY_SEPARATOR, Str::uuid()->toString());
+        return sprintf('%s/koel-download-%s.zip', sys_get_temp_dir(), Str::ulid());
     }
 
     public function getArchive(): ZipArchive

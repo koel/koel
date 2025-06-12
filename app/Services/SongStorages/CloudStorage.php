@@ -2,14 +2,11 @@
 
 namespace App\Services\SongStorages;
 
-use App\Enums\SongStorageType;
-use App\Models\Song;
+use App\Helpers\Ulid;
 use App\Models\User;
 use App\Services\FileScanner;
 use App\Services\SongStorages\Concerns\ScansUploadedFile;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
-use Symfony\Component\Uid\Ulid;
 
 abstract class CloudStorage extends SongStorage
 {
@@ -19,15 +16,13 @@ abstract class CloudStorage extends SongStorage
     {
     }
 
-    public function copyToLocal(Song $song): string
+    public function copyToLocal(string $key): string
     {
-        $this->assertSupported();
-
-        $tmpDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'koel_tmp';
+        $tmpDir = sys_get_temp_dir() . '/koel_tmp';
         File::ensureDirectoryExists($tmpDir);
 
-        $publicUrl = $this->getSongPresignedUrl($song);
-        $localPath = $tmpDir . DIRECTORY_SEPARATOR . basename($song->storage_metadata->getPath());
+        $publicUrl = $this->getPresignedUrl($key);
+        $localPath = $tmpDir . '/' . basename($key);
 
         File::copy($publicUrl, $localPath);
 
@@ -36,18 +31,12 @@ abstract class CloudStorage extends SongStorage
 
     protected function generateStorageKey(string $filename, User $uploader): string
     {
-        return sprintf('%s__%s__%s', $uploader->id, Str::lower(Ulid::generate()), $filename);
+        return sprintf('%s__%s__%s', $uploader->id, Ulid::generate(), $filename);
     }
 
-    public static function resolve(Song $song): ?static
-    {
-        return match ($song->storage) { // @phpstan-ignore-line
-            SongStorageType::S3_LAMBDA => app(S3LambdaStorage::class),
-            SongStorageType::S3 => app(S3CompatibleStorage::class),
-            SongStorageType::DROPBOX => app(DropboxStorage::class),
-            default => null,
-        };
-    }
+    abstract public function uploadToStorage(string $key, string $path): void;
 
-    abstract public function getSongPresignedUrl(Song $song): string;
+    abstract public function getPresignedUrl(string $key): string;
+
+    abstract public function deleteFileWithKey(string $key, bool $backup): void;
 }

@@ -3,17 +3,12 @@
 namespace App\Exceptions;
 
 use App\Enums\SongStorageType;
-use Exception;
+use InvalidArgumentException;
 
-class UnsupportedSongStorageTypeException extends Exception
+class UnsupportedSongStorageTypeException extends InvalidArgumentException
 {
-    private function __construct(SongStorageType $storageType)
-    {
-        parent::__construct("Unsupported song storage type: $storageType->value");
-    }
-
     public static function create(SongStorageType $storageType): self
     {
-        return new self($storageType);
+        return new self("Unsupported song storage type: $storageType->value");
     }
 }

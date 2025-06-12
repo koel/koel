@@ -14,11 +14,11 @@ abstract class SongStorage
 
     abstract public function storeUploadedFile(UploadedFile $file, User $uploader): Song;
 
-    abstract public function delete(Song $song, bool $backup = false): void;
+    abstract public function delete(string $location, bool $backup = false): void;
 
     abstract public function testSetup(): void;
 
-    protected function assertSupported(): void
+    public function assertSupported(): void
     {
         throw_unless(
             $this->getStorageType()->supported(),
