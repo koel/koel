@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Setting;
-use App\Services\MediaScanner;
+use App\Services\Scanner\MediaScanner;
 use App\Values\ScanResultCollection;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;

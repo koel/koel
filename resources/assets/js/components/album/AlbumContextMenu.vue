@@ -41,7 +41,7 @@ const allowEdit = ref(false)
 const isStandardAlbum = computed(() => !albumStore.isUnknown(album.value!))
 
 const isStandardArtist = computed(() => {
-  return !artistStore.isUnknown(album.value!.artist_id) && !artistStore.isVarious(album.value!.artist_id)
+  return !artistStore.isUnknown(album.value!.artist_name) && !artistStore.isVarious(album.value!.artist_name)
 })
 
 const play = () => trigger(async () => {

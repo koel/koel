@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
+use function Tests\create_user;
 use function Tests\test_path;
 
 class ArtistTest extends TestCase
@@ -18,14 +19,14 @@ class ArtistTest extends TestCase
         /** @var Artist $artist */
         $artist = Artist::factory()->create(['name' => 'Foo']);
 
-        self::assertTrue(Artist::getOrCreate('Foo')->is($artist));
+        self::assertTrue(Artist::getOrCreate($artist->user, 'Foo')->is($artist));
     }
 
     #[Test]
     public function newArtistIsCreatedWithName(): void
     {
         self::assertNull(Artist::query()->where('name', 'Foo')->first());
-        self::assertSame('Foo', Artist::getOrCreate('Foo')->name);
+        self::assertSame('Foo', Artist::getOrCreate(create_user(), 'Foo')->name);
     }
 
     /** @return array<mixed> */
@@ -43,15 +44,15 @@ class ArtistTest extends TestCase
     #[Test]
     public function gettingArtistWithEmptyNameReturnsUnknownArtist($name): void
     {
-        self::assertTrue(Artist::getOrCreate($name)->is_unknown);
+        self::assertTrue(Artist::getOrCreate(create_user(), $name)->is_unknown);
     }
 
     #[Test]
     public function artistsWithNameInUtf16EncodingAreRetrievedCorrectly(): void
     {
         $name = File::get(test_path('blobs/utf16'));
-        $artist = Artist::getOrCreate($name);
+        $artist = Artist::getOrCreate(create_user(), $name);
 
-        self::assertTrue(Artist::getOrCreate($name)->is($artist));
+        self::assertTrue(Artist::getOrCreate($artist->user, $name)->is($artist));
     }
 }

@@ -4,7 +4,6 @@ namespace Tests\Feature\KoelPlus;
 
 use App\Http\Resources\AlbumResource;
 use App\Models\Album;
-use App\Models\Song;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
@@ -14,15 +13,10 @@ use function Tests\create_user;
 class AlbumTest extends PlusTestCase
 {
     #[Test]
-    public function updateAsCoOwner(): void
+    public function updateAsOwner(): void
     {
         /** @var Album $album */
         $album = Album::factory()->create();
-
-        /** @var Song $song */
-        $song = Song::factory()->for($album)->create();
-
-        self::assertTrue($song->owner->isCoOwnerOfAlbum($album));
 
         $this->putAs(
             'api/albums/' . $album->id,
@@ -30,7 +24,7 @@ class AlbumTest extends PlusTestCase
                 'name' => 'Updated Album Name',
                 'year' => 2023,
             ],
-            $song->owner
+            $album->user
         )->assertJsonStructure(AlbumResource::JSON_STRUCTURE);
 
         $album->refresh();
@@ -40,13 +34,13 @@ class AlbumTest extends PlusTestCase
     }
 
     #[Test]
-    public function updateAsAdmin(): void
+    public function adminCannotUpdateIfNonOwner(): void
     {
         /** @var Album $album */
         $album = Album::factory()->create();
         $scaryBossMan = create_admin();
 
-        self::assertFalse($scaryBossMan->isCoOwnerOfAlbum($album));
+        self::assertFalse($album->belongsToUser($scaryBossMan));
 
         $this->putAs(
             'api/albums/' . $album->id,
@@ -55,12 +49,7 @@ class AlbumTest extends PlusTestCase
                 'year' => 2023,
             ],
             $scaryBossMan
-        )->assertJsonStructure(AlbumResource::JSON_STRUCTURE);
-
-        $album->refresh();
-
-        $this->assertEquals('Updated Album Name', $album->name);
-        $this->assertEquals(2023, $album->year);
+        )->assertForbidden();
     }
 
     #[Test]
@@ -70,7 +59,7 @@ class AlbumTest extends PlusTestCase
         $album = Album::factory()->create();
         $randomDude = create_user();
 
-        self::assertFalse($randomDude->isCoOwnerOfAlbum($album));
+        self::assertFalse($album->belongsToUser($randomDude));
 
         $this->putAs(
             'api/albums/' . $album->id,

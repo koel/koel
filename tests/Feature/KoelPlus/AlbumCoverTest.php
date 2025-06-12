@@ -3,7 +3,6 @@
 namespace Tests\Feature\KoelPlus;
 
 use App\Models\Album;
-use App\Models\Song;
 use App\Services\MediaMetadataService;
 use Mockery;
 use Mockery\MockInterface;
@@ -30,8 +29,7 @@ class AlbumCoverTest extends PlusTestCase
         $user = create_user();
 
         /** @var Album $album */
-        $album = Album::factory()->create();
-        $album->songs()->saveMany(Song::factory()->for($user, 'owner')->count(3)->create());
+        $album = Album::factory()->for($user)->create();
 
         $this->mediaMetadataService
             ->shouldReceive('writeAlbumCover')
@@ -43,35 +41,14 @@ class AlbumCoverTest extends PlusTestCase
     }
 
     #[Test]
-    public function albumCoOwnerCanUploadCover(): void
-    {
-        $user = create_user();
-
-        /** @var Album $album */
-        $album = Album::factory()->create();
-        $album->songs()->saveMany(Song::factory()->for($user, 'owner')->count(3)->create());
-        $album->songs()->save(Song::factory()->create());
-
-        self::assertTrue($user->isCoOwnerOfAlbum($album));
-
-        $this->mediaMetadataService
-            ->shouldReceive('writeAlbumCover')
-            ->once()
-            ->with(Mockery::on(static fn (Album $target) => $target->is($album)), 'data:image/jpeg;base64,Rm9v');
-
-        $this->putAs("api/albums/{$album->id}/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], $user)
-            ->assertOk();
-    }
-
-    #[Test]
-    public function nonOwnerOrCoOwnerCannotUploadCover(): void
+    public function nonOwnerCannotUploadCover(): void
     {
         $user = create_user();
 
         /** @var Album $album */
         $album = Album::factory()->create();
 
-        self::assertFalse($user->isCoOwnerOfAlbum($album));
+        self::assertFalse($album->belongsToUser($user));
 
         $this->mediaMetadataService->shouldNotReceive('writeAlbumCover');
 
@@ -80,20 +57,12 @@ class AlbumCoverTest extends PlusTestCase
     }
 
     #[Test]
-    public function adminCanAlwaysUploadCover(): void
+    public function evenAdminsCannotUploadCoverIfNotOwning(): void
     {
-        $user = create_user();
-
         /** @var Album $album */
         $album = Album::factory()->create();
-        $album->songs()->saveMany(Song::factory()->for($user, 'owner')->count(3)->create());
-
-        $this->mediaMetadataService
-            ->shouldReceive('writeAlbumCover')
-            ->once()
-            ->with(Mockery::on(static fn (Album $target) => $target->is($album)), 'data:image/jpeg;base64,Rm9v');
 
         $this->putAs("api/albums/{$album->id}/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], create_admin())
-            ->assertOk();
+            ->assertForbidden();
     }
 }

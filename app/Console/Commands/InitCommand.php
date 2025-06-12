@@ -11,7 +11,6 @@ use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Str;
@@ -22,9 +21,6 @@ class InitCommand extends Command
 {
     use AskForPassword;
 
-    private const DEFAULT_ADMIN_NAME = 'Koel';
-    private const DEFAULT_ADMIN_EMAIL = 'admin@koel.dev';
-    private const DEFAULT_ADMIN_PASSWORD = 'KoelIsCool';
     private const NON_INTERACTION_MAX_DATABASE_ATTEMPT_COUNT = 10;
 
     protected $signature =
@@ -79,7 +75,7 @@ class InitCommand extends Command
 
         if ($this->adminSeeded) {
             $this->info(
-                sprintf('Log in with email %s and password %s', self::DEFAULT_ADMIN_EMAIL, self::DEFAULT_ADMIN_PASSWORD)
+                sprintf('Log in with email %s and password %s', User::FIRST_ADMIN_EMAIL, User::FIRST_ADMIN_PASSWORD)
             );
         }
 
@@ -197,13 +193,7 @@ class InitCommand extends Command
     private function setUpAdminAccount(): void
     {
         $this->components->task('Creating default admin account', function (): void {
-            User::query()->create([
-                'name' => self::DEFAULT_ADMIN_NAME,
-                'email' => self::DEFAULT_ADMIN_EMAIL,
-                'password' => Hash::make(self::DEFAULT_ADMIN_PASSWORD),
-                'is_admin' => true,
-            ]);
-
+            User::firstAdmin();
             $this->adminSeeded = true;
         });
     }

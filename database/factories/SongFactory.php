@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\Album;
 use App\Models\Podcast;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class SongFactory extends Factory
@@ -14,7 +13,7 @@ class SongFactory extends Factory
     {
         return [
             'album_id' => Album::factory(),
-            'artist_id' => static fn (array $attributes) => Album::find($attributes['album_id'])->artist_id, // @phpstan-ignore-line
+            'artist_id' => static fn (array $attributes) => Album::query()->find($attributes['album_id'])->artist_id, // @phpstan-ignore-line
             'title' => $this->faker->sentence,
             'length' => $this->faker->randomFloat(2, 10, 500),
             'track' => random_int(1, 20),
@@ -24,7 +23,7 @@ class SongFactory extends Factory
             'genre' => $this->faker->randomElement(['Rock', 'Pop', 'Jazz', 'Classical', 'Metal', 'Hip Hop', 'Rap']),
             'year' => $this->faker->year(),
             'is_public' => true,
-            'owner_id' => User::factory(),
+            'owner_id' => static fn (array $attributes) => Album::query()->find($attributes['album_id'])->user_id, // @phpstan-ignore-line
             'mtime' => time(),
         ];
     }

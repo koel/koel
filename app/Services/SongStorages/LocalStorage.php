@@ -8,7 +8,7 @@ use App\Exceptions\SongUploadFailedException;
 use App\Models\Setting;
 use App\Models\Song;
 use App\Models\User;
-use App\Services\FileScanner;
+use App\Services\Scanner\FileScanner;
 use App\Values\ScanConfiguration;
 use Exception;
 use Illuminate\Http\UploadedFile;

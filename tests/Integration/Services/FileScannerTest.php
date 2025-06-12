@@ -6,7 +6,7 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Setting;
 use App\Models\Song;
-use App\Services\FileScanner;
+use App\Services\Scanner\FileScanner;
 use App\Values\ScanConfiguration;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;

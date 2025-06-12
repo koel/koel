@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Artist;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -10,8 +9,6 @@ class ArtistTableSeeder extends Seeder
 {
     public function run(): void
     {
-        Artist::query()->firstOrCreate(['id' => Artist::UNKNOWN_ID], ['name' => Artist::UNKNOWN_NAME]);
-
         self::maybeResetPgsqlSerialValue();
     }
 
