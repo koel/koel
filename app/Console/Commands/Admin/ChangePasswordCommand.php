@@ -26,7 +26,7 @@ class ChangePasswordCommand extends Command
 
         $user = $email
             ? $this->userRepository->findOneByEmail($email)
-            : $this->userRepository->getDefaultAdminUser();
+            : $this->userRepository->getFirstAdminUser();
 
         if (!$user) {
             $this->error('The user account cannot be found.');

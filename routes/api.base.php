@@ -97,7 +97,7 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
                 ]
             );
 
-            return $pusher->socket_auth($request->channel_name, $request->socket_id);
+            return $pusher->authorizeChannel($request->input('channel_name'), $request->input('socket_id'));
         })->name('broadcasting.auth');
 
         Route::get('overview', FetchOverviewController::class);
@@ -188,6 +188,7 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::put('artists/{artist}/image', UploadArtistImageController::class);
         Route::put('playlists/{playlist}/cover', [PlaylistCoverController::class, 'update']);
         Route::delete('playlists/{playlist}/cover', [PlaylistCoverController::class, 'destroy']);
+
         // deprecated routes
         Route::put('album/{album}/cover', UploadAlbumCoverController::class);
         Route::get('album/{album}/thumbnail', FetchAlbumThumbnailController::class);

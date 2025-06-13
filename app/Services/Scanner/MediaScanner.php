@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Scanner;
 
 use App\Enums\ScanEvent;
 use App\Events\LibraryChanged;

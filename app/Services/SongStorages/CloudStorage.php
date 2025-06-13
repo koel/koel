@@ -4,7 +4,7 @@ namespace App\Services\SongStorages;
 
 use App\Helpers\Ulid;
 use App\Models\User;
-use App\Services\FileScanner;
+use App\Services\Scanner\FileScanner;
 use App\Services\SongStorages\Concerns\ScansUploadedFile;
 use Illuminate\Support\Facades\File;
 

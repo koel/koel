@@ -42,7 +42,7 @@ class AlbumServiceTest extends TestCase
     public function rejectUpdatingUnknownAlbum(): void
     {
         /** @var Album $album */
-        $album = Album::query()->findOrFail(Album::UNKNOWN_ID);
+        $album = Album::factory()->create(['name' => Album::UNKNOWN_NAME]);
         $data = AlbumUpdateData::make(name: 'New Album Name', year: 2023);
 
         $this->expectException(InvalidArgumentException::class);

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\API\SettingRequest;
 use App\Models\Setting;
 use App\Models\User;
-use App\Services\MediaScanner;
+use App\Services\Scanner\MediaScanner;
 use App\Values\ScanConfiguration;
 use Illuminate\Contracts\Auth\Authenticatable;
 

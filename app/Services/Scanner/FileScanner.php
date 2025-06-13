@@ -1,11 +1,16 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Scanner;
 
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
+use App\Models\User;
 use App\Repositories\SongRepository;
+use App\Services\MediaBrowser;
+use App\Services\MediaMetadataService;
+use App\Services\Scanner\Contracts\ScannerCacheStrategy as CacheStrategy;
+use App\Services\SimpleLrcReader;
 use App\Values\ScanConfiguration;
 use App\Values\ScanResult;
 use App\Values\SongScanInformation;
@@ -36,7 +41,8 @@ class FileScanner
         private readonly MediaBrowser $browser,
         private readonly SongRepository $songRepository,
         private readonly SimpleLrcReader $lrcReader,
-        private readonly Finder $finder
+        private readonly Finder $finder,
+        private readonly CacheStrategy $cache,
     ) {
     }
 
@@ -73,6 +79,28 @@ class FileScanner
         return $info;
     }
 
+    private function resolveArtist(User $user, ?string $name): Artist
+    {
+        $name = trim($name);
+
+        return $this->cache->remember(
+            key: simple_hash("{$user->id}_{$name}"),
+            ttl: now()->addMinutes(30),
+            callback: static fn () => Artist::getOrCreate($user, $name)
+        );
+    }
+
+    private function resolveAlbum(Artist $artist, ?string $name): Album
+    {
+        $name = trim($name);
+
+        return $this->cache->remember(
+            key: simple_hash("{$artist->id}_{$name}"),
+            ttl: now()->addMinutes(30),
+            callback: static fn () => Album::getOrCreate($artist, $name)
+        );
+    }
+
     public function scan(ScanConfiguration $config): ScanResult
     {
         try {
@@ -91,12 +119,18 @@ class FileScanner
             }
 
             /** @var Artist $artist */
-            $artist = Arr::get($info, 'artist') ? Artist::getOrCreate($info['artist']) : $this->song->artist;
+            $artist = Arr::get($info, 'artist')
+                ? $this->resolveArtist($config->owner, $info['artist'])
+                : $this->song->artist;
 
-            $albumArtist = Arr::get($info, 'albumartist') ? Artist::getOrCreate($info['albumartist']) : $artist;
+            $albumArtist = Arr::get($info, 'albumartist')
+                ? $this->resolveArtist($config->owner, $info['albumartist'])
+                : $artist;
 
             /** @var Album $album */
-            $album = Arr::get($info, 'album') ? Album::getOrCreate($albumArtist, $info['album']) : $this->song->album;
+            $album = Arr::get($info, 'album')
+                ? $this->resolveAlbum($albumArtist, $info['album'])
+                : $this->song->album;
 
             if (!$album->has_cover && !in_array('cover', $config->ignores, true)) {
                 $this->tryGenerateAlbumCover($album, Arr::get($info, 'cover', []));

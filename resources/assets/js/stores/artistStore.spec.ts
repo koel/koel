@@ -36,7 +36,7 @@ new class extends UnitTestCase {
       const artist = factory.states('unknown')('artist')
 
       expect(artistStore.isUnknown(artist)).toBe(true)
-      expect(artistStore.isUnknown(artist.id)).toBe(true)
+      expect(artistStore.isUnknown(artist.name)).toBe(true)
       expect(artistStore.isUnknown(factory('artist'))).toBe(false)
     })
 
@@ -44,7 +44,7 @@ new class extends UnitTestCase {
       const artist = factory.states('various')('artist')
 
       expect(artistStore.isVarious(artist)).toBe(true)
-      expect(artistStore.isVarious(artist.id)).toBe(true)
+      expect(artistStore.isVarious(artist.name)).toBe(true)
       expect(artistStore.isVarious(factory('artist'))).toBe(false)
     })
 

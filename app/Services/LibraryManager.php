@@ -19,14 +19,14 @@ class LibraryManager
             $albumQuery = Album::query()
                 ->leftJoin('songs', 'songs.album_id', '=', 'albums.id')
                 ->whereNull('songs.album_id')
-                ->whereNotIn('albums.id', [Album::UNKNOWN_ID]);
+                ->whereNotIn('albums.name', [Album::UNKNOWN_NAME]);
 
             $artistQuery = Artist::query()
                 ->leftJoin('songs', 'songs.artist_id', '=', 'artists.id')
                 ->leftJoin('albums', 'albums.artist_id', '=', 'artists.id')
                 ->whereNull('songs.artist_id')
                 ->whereNull('albums.artist_id')
-                ->whereNotIn('artists.id', [Artist::UNKNOWN_ID, Artist::VARIOUS_ID]);
+                ->whereNotIn('artists.name', [Artist::UNKNOWN_NAME, Artist::VARIOUS_NAME]);
 
             $results = [
                 'albums' => $albumQuery->get('albums.*'),

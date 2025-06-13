@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\PersonalAccessToken;
@@ -54,6 +55,10 @@ class User extends Authenticatable implements AuditableContract
     use HasFactory;
     use Notifiable;
 
+    private const FIRST_ADMIN_NAME = 'Koel';
+    public const FIRST_ADMIN_EMAIL = 'admin@koel.dev';
+    public const FIRST_ADMIN_PASSWORD = 'KoelIsCool';
+
     protected $guarded = ['id', 'public_id'];
     protected $hidden = ['password', 'remember_token', 'created_at', 'updated_at', 'invitation_accepted_at'];
     protected $appends = ['avatar'];
@@ -69,6 +74,25 @@ class User extends Authenticatable implements AuditableContract
         static::creating(static function (self $user): void {
             $user->public_id ??= Str::uuid()->toString();
         });
+    }
+
+    /**
+     * The first admin user in the system.
+     * This user is created automatically if it does not exist (e.g., during installation or unit tests).
+     */
+    public static function firstAdmin(): static
+    {
+        return static::query()
+            ->where('is_admin', true)
+            ->oldest()
+            ->firstOr(static function (): User {
+                return static::query()->create([
+                    'is_admin' => true,
+                    'email' => self::FIRST_ADMIN_EMAIL,
+                    'name' => self::FIRST_ADMIN_NAME,
+                    'password' => Hash::make(self::FIRST_ADMIN_PASSWORD),
+                ]);
+            });
     }
 
     public function invitedBy(): BelongsTo
@@ -144,7 +168,7 @@ class User extends Authenticatable implements AuditableContract
 
     protected function isProspect(): Attribute
     {
-        return Attribute::get(fn (): bool => (bool) $this->invitation_token);
+        return Attribute::get(fn (): bool => (bool)$this->invitation_token);
     }
 
     protected function isSso(): Attribute
@@ -154,16 +178,6 @@ class User extends Authenticatable implements AuditableContract
 
     protected function connectedToLastfm(): Attribute
     {
-        return Attribute::get(fn (): bool => (bool) $this->preferences->lastFmSessionKey)->shouldCache();
-    }
-
-    public function isCoOwnerOfAlbum(Album $album): bool
-    {
-        return $album->songs->some(fn (Song $song) => $song->ownedBy($this));
-    }
-
-    public function isCoOwnerOfArtist(Artist $artist): bool
-    {
-        return $artist->songs->some(fn (Song $song) => $song->ownedBy($this));
+        return Attribute::get(fn (): bool => (bool)$this->preferences->lastFmSessionKey)->shouldCache();
     }
 }

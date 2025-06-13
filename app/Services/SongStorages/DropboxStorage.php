@@ -7,7 +7,7 @@ use App\Exceptions\SongUploadFailedException;
 use App\Filesystems\DropboxFilesystem;
 use App\Models\Song;
 use App\Models\User;
-use App\Services\FileScanner;
+use App\Services\Scanner\FileScanner;
 use App\Services\SongStorages\Concerns\DeletesUsingFilesystem;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;

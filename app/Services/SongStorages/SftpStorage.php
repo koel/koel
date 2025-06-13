@@ -6,7 +6,7 @@ use App\Enums\SongStorageType;
 use App\Exceptions\SongUploadFailedException;
 use App\Models\Song;
 use App\Models\User;
-use App\Services\FileScanner;
+use App\Services\Scanner\FileScanner;
 use App\Services\SongStorages\Concerns\DeletesUsingFilesystem;
 use App\Services\SongStorages\Concerns\ScansUploadedFile;
 use Closure;

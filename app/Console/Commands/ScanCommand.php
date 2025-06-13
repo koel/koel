@@ -5,8 +5,7 @@ namespace App\Console\Commands;
 use App\Enums\ScanEvent;
 use App\Models\Setting;
 use App\Models\User;
-use App\Repositories\UserRepository;
-use App\Services\MediaScanner;
+use App\Services\Scanner\MediaScanner;
 use App\Values\ScanConfiguration;
 use App\Values\ScanResult;
 use App\Values\WatchRecord\InotifyWatchRecord;
@@ -31,10 +30,8 @@ class ScanCommand extends Command
     private ?string $mediaPath;
     private ProgressBar $progressBar;
 
-    public function __construct(
-        private readonly MediaScanner $scanner,
-        private readonly UserRepository $userRepository
-    ) {
+    public function __construct(private readonly MediaScanner $scanner)
+    {
         parent::__construct();
 
         $this->scanner->on(ScanEvent::PATHS_GATHERED, function (array $paths): void {
@@ -169,7 +166,7 @@ class ScanCommand extends Command
         $specifiedOwner = $this->option('owner');
 
         if ($specifiedOwner) {
-            $user = User::findOr($specifiedOwner, function () use ($specifiedOwner): void {
+            $user = User::query()->findOr($specifiedOwner, function () use ($specifiedOwner): void {
                 $this->components->error("User with ID $specifiedOwner does not exist.");
                 exit(self::INVALID);
             });
@@ -179,7 +176,7 @@ class ScanCommand extends Command
             return $user;
         }
 
-        $user = $this->userRepository->getDefaultAdminUser();
+        $user = User::firstAdmin();
 
         $this->components->warn(
             "No song owner specified. Setting the first admin ($user->name, ID {$user->id}) as owner."

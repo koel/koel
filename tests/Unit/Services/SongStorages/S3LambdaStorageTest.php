@@ -40,7 +40,7 @@ class S3LambdaStorageTest extends TestCase
     public function createSongEntry(): void
     {
         $user = create_admin();
-        $this->userRepository->shouldReceive('getDefaultAdminUser')
+        $this->userRepository->shouldReceive('getFirstAdminUser')
             ->once()
             ->andReturn($user);
 
@@ -72,7 +72,7 @@ class S3LambdaStorageTest extends TestCase
     {
         $user = create_admin();
 
-        $this->userRepository->shouldReceive('getDefaultAdminUser')
+        $this->userRepository->shouldReceive('getFirstAdminUser')
             ->once()
             ->andReturn($user);
 

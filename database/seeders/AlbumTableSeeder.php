@@ -2,8 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Album;
-use App\Models\Artist;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -11,11 +9,6 @@ class AlbumTableSeeder extends Seeder
 {
     public function run(): void
     {
-        Album::query()->firstOrCreate(['id' => Album::UNKNOWN_ID], [
-            'artist_id' => Artist::UNKNOWN_ID,
-            'name' => Album::UNKNOWN_NAME,
-        ]);
-
         self::maybeResetPgsqlSerialValue();
     }
 

@@ -11,7 +11,7 @@ use Tests\TestCase;
 class AlbumTest extends TestCase
 {
     #[Test]
-    public function existingAlbumCanBeRetrievedUsingArtistAndName(): void
+    public function existingAlbumCanBeRetrievedUsingUserAndArtistAndName(): void
     {
         /** @var Album $album */
         $album = Album::factory()->create();
@@ -20,7 +20,7 @@ class AlbumTest extends TestCase
     }
 
     #[Test]
-    public function newAlbumIsAutomaticallyCreatedWithArtistAndName(): void
+    public function newAlbumIsAutomaticallyCreatedWithUserAndArtistAndName(): void
     {
         /** @var Artist $artist */
         $artist = Artist::factory()->create();

@@ -4,7 +4,7 @@ namespace App\Services\SongStorages\Concerns;
 
 use App\Exceptions\SongUploadFailedException;
 use App\Models\User;
-use App\Services\FileScanner;
+use App\Services\Scanner\FileScanner;
 use App\Values\ScanConfiguration;
 use App\Values\ScanResult;
 use Illuminate\Http\UploadedFile;

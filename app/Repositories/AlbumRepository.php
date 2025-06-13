@@ -2,8 +2,6 @@
 
 namespace App\Repositories;
 
-use App\Builders\AlbumBuilder;
-use App\Facades\License;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\User;
@@ -37,10 +35,7 @@ class AlbumRepository extends Repository
         return Album::query()
             ->isStandard()
             ->accessibleBy($user)
-            ->unless(
-                License::isPlus(), // if the license is Plus, accessibleBy() would have already joined with `songs`
-                static fn (AlbumBuilder $query) => $query->leftJoin('songs', 'albums.id', 'songs.album_id')
-            )
+            ->leftJoin('songs', 'albums.id', 'songs.album_id')
             ->join('interactions', static function (JoinClause $join) use ($user): void {
                 $join->on('songs.id', 'interactions.song_id')->where('interactions.user_id', $user->id);
             })

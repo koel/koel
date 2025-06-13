@@ -8,19 +8,27 @@ import { songStore } from '@/stores/songStore'
 import { downloadService } from '@/services/downloadService'
 import { eventBus } from '@/utils/eventBus'
 import Router from '@/router'
+import { resourcePermissionService } from '@/services/resourcePermissionService'
 import AlbumScreen from './AlbumScreen.vue'
 
 let album: Album
 
 new class extends UnitTestCase {
+  protected beforeEach () {
+    super.beforeEach(() => {
+      this.mock(resourcePermissionService, 'check').mockResolvedValue(true)
+    })
+  }
+
   protected test () {
     it('downloads', async () => {
       const downloadMock = this.mock(downloadService, 'fromAlbum')
       await this.renderComponent()
 
-      await this.user.click(screen.getByRole('button', { name: 'Download All' }))
-
-      expect(downloadMock).toHaveBeenCalledWith(album)
+      await waitFor(async () => {
+        await this.user.click(screen.getByRole('button', { name: 'Download All' }))
+        expect(downloadMock).toHaveBeenCalledWith(album)
+      })
     })
 
     it('goes back to list if album is deleted', async () => {
@@ -46,18 +54,19 @@ new class extends UnitTestCase {
 
     it('shows the song list', async () => {
       await this.renderComponent()
-      screen.getByTestId('song-list')
+      await waitFor(async () => screen.getByTestId('song-list'))
     })
 
     it('shows other albums from the same artist', async () => {
+      await this.renderComponent()
+
       const albums = factory('album', 3)
       albums.push(album)
       const fetchMock = this.mock(albumStore, 'fetchForArtist').mockResolvedValue(albums)
-      await this.renderComponent()
 
-      await this.user.click(screen.getByRole('radio', { name: 'Other Albums' }))
+      await waitFor(async () => {
+        await this.user.click(screen.getByRole('radio', { name: 'Other Albums' }))
 
-      await waitFor(() => {
         expect(fetchMock).toHaveBeenCalledWith(album.artist_id)
         expect(screen.getAllByTestId('album-card')).toHaveLength(3) // current album is excluded
       })
@@ -68,9 +77,10 @@ new class extends UnitTestCase {
 
       const emitMock = this.mock(eventBus, 'emit')
 
-      await this.user.click(screen.getByRole('button', { name: 'Edit' }))
-
-      expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_ALBUM_FORM', album)
+      await waitFor(async () => {
+        await this.user.click(screen.getByRole('button', { name: 'Edit' }))
+        expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_ALBUM_FORM', album)
+      })
     })
   }
 
@@ -108,7 +118,5 @@ new class extends UnitTestCase {
       expect(resolveAlbumMock).toHaveBeenCalledWith(album.id)
       expect(fetchSongsMock).toHaveBeenCalledWith(album.id)
     })
-
-    await this.tick(3)
   }
 }

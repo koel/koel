@@ -9,12 +9,12 @@ export default (faker: Faker): Album => {
     name: faker.lorem.sentence(),
     cover: faker.image.imageUrl(),
     created_at: faker.date.past().toISOString(),
+    year: faker.date.past().getFullYear(),
   }
 }
 
 export const states: Record<string, Omit<Partial<Album>, 'type'>> = {
   unknown: {
-    id: 1,
     name: 'Unknown Album',
     artist_id: 1,
     artist_name: 'Unknown Artist',

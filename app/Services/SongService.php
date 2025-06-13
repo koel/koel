@@ -83,8 +83,8 @@ class SongService
         $data->genre ??= $song->genre;
         $data->year ??= $song->year;
 
-        $albumArtist = Artist::getOrCreate($data->albumArtistName);
-        $artist = Artist::getOrCreate($data->artistName);
+        $albumArtist = Artist::getOrCreate($song->album_artist->user, $data->albumArtistName);
+        $artist = Artist::getOrCreate($song->artist->user, $data->artistName);
         $album = Album::getOrCreate($albumArtist, $data->albumName);
 
         $song->album_id = $album->id;

@@ -15,17 +15,17 @@ class ArtistPolicy
             return Response::deny();
         }
 
-        if ($user->is_admin) {
+        // For CE, if the user is an admin, they can update any artist.
+        if ($user->is_admin && License::isCommunity()) {
             return Response::allow();
         }
 
-        if (License::isCommunity()) {
-            return Response::deny('This action is unauthorized.');
+        // For Plus, only the owner of the artist can update it.
+        if ($artist->belongsToUser($user) && License::isPlus()) {
+            return Response::allow();
         }
 
-        return $user->isCoOwnerOfArtist($artist)
-            ? Response::allow()
-            : Response::deny('Artist is neither owned nor co-owned by the user.');
+        return Response::deny();
     }
 
     public function edit(User $user, Artist $artist): Response

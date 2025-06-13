@@ -13,7 +13,7 @@
 
         <template #meta>
           <span class="flex meta-content">
-            <a v-if="isNormalArtist" :href="url('artists.show', { id: album.artist_id })" class="artist">
+            <a v-if="isStandardArtist" :href="url('artists.show', { id: album.artist_id })" class="artist">
               {{ album.artist_name }}
             </a>
             <span v-else class="text-k-text-primary">{{ album.artist_name }}</span>
@@ -153,11 +153,12 @@ const { SongListControls, config } = useSongListControls('Album')
 
 const useLastfm = toRef(commonStore.state, 'uses_last_fm')
 
-const isNormalArtist = computed(() => {
+const isStandardArtist = computed(() => {
   if (!album.value) {
     return true
   }
-  return !artistStore.isVarious(album.value.artist_id) && !artistStore.isUnknown(album.value.artist_id)
+
+  return !artistStore.isVarious(album.value.artist_name) && !artistStore.isUnknown(album.value.artist_name)
 })
 
 const download = () => downloadService.fromAlbum(album.value!)

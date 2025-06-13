@@ -2,8 +2,6 @@
 
 namespace App\Repositories;
 
-use App\Builders\ArtistBuilder;
-use App\Facades\License;
 use App\Models\Artist;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -22,10 +20,7 @@ class ArtistRepository extends Repository
         return Artist::query()
             ->isStandard()
             ->accessibleBy($user)
-            ->unless(
-                License::isPlus(), // if the license is Plus, accessibleBy() would have already joined with `songs`
-                static fn (ArtistBuilder $query) => $query->leftJoin('songs', 'artists.id', 'songs.artist_id')
-            )
+            ->leftJoin('songs', 'artists.id', 'songs.artist_id')
             ->join('interactions', static function (JoinClause $join) use ($user): void {
                 $join->on('interactions.song_id', '=', 'songs.id')->where('interactions.user_id', $user->id);
             })

@@ -37,7 +37,6 @@ new class extends UnitTestCase {
       const album = factory.states('unknown')('album')
 
       expect(albumStore.isUnknown(album)).toBe(true)
-      expect(albumStore.isUnknown(album.id)).toBe(true)
       expect(albumStore.isUnknown(factory('album'))).toBe(false)
     })
 

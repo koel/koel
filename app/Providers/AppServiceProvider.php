@@ -8,6 +8,9 @@ use App\Services\LastfmService;
 use App\Services\License\Contracts\LicenseServiceInterface;
 use App\Services\LicenseService;
 use App\Services\NullMusicEncyclopedia;
+use App\Services\Scanner\Contracts\ScannerCacheStrategy as ScannerCacheStrategyContract;
+use App\Services\Scanner\ScannerCacheStrategy;
+use App\Services\Scanner\ScannerNoCacheStrategy;
 use App\Services\SpotifyService;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Eloquent\Model;
@@ -38,8 +41,8 @@ class AppServiceProvider extends ServiceProvider
                 : null;
         });
 
-        $this->app->bind(MusicEncyclopedia::class, function () {
-            return $this->app->get(LastfmService::enabled() ? LastfmService::class : NullMusicEncyclopedia::class);
+        $this->app->bind(MusicEncyclopedia::class, static function () {
+            return app(LastfmService::enabled() ? LastfmService::class : NullMusicEncyclopedia::class);
         });
 
         $this->app->bind(LicenseServiceInterface::class, LicenseService::class);
@@ -47,6 +50,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->when(LicenseService::class)
             ->needs('$hashSalt')
             ->give(config('app.key'));
+
+        $this->app->bind(ScannerCacheStrategyContract::class, static function () {
+            // Use a no-cache strategy for unit tests to ensure consistent results
+            return app()->runningUnitTests() ? app(ScannerNoCacheStrategy::class) : app(ScannerCacheStrategy::class);
+        });
 
         Route::bind('user', static fn (string $value) => User::query()->where('public_id', $value)->firstOrFail());
     }

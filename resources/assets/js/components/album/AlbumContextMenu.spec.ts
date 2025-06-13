@@ -9,6 +9,7 @@ import { playbackService } from '@/services/playbackService'
 import { commonStore } from '@/stores/commonStore'
 import { songStore } from '@/stores/songStore'
 import AlbumContextMenu from './AlbumContextMenu.vue'
+import { resourcePermissionService } from '@/services/resourcePermissionService'
 
 let album: Album
 
@@ -86,8 +87,9 @@ new class extends UnitTestCase {
 
     it('requests edit form', async () => {
       await this.renderComponent()
+
       // for the "Edit…" menu item to show up
-      await this.tick()
+      await this.tick(2)
 
       const emitMock = this.mock(eventBus, 'emit')
       await this.user.click(screen.getByText('Edit…'))
@@ -97,6 +99,8 @@ new class extends UnitTestCase {
   }
 
   private async renderComponent (_album?: Album) {
+    this.mock(resourcePermissionService, 'check').mockReturnValue(true)
+
     album = _album || factory('album', {
       name: 'IV',
     })
