@@ -184,7 +184,7 @@ class SongRepository extends Repository
                 return
                     $query->join('users as collaborators', 'playlist_song.user_id', '=', 'collaborators.id')
                         ->addSelect(
-                            'collaborators.id as collaborator_id',
+                            'collaborators.public_id as collaborator_public_id',
                             'collaborators.name as collaborator_name',
                             'collaborators.email as collaborator_email',
                             'collaborators.avatar as collaborator_avatar',
@@ -235,7 +235,7 @@ class SongRepository extends Repository
                         ->leftJoin('playlists', 'playlists.id', '=', 'playlist_song.playlist_id')
                         ->join('users as collaborators', 'playlist_song.user_id', '=', 'collaborators.id')
                         ->addSelect(
-                            'collaborators.id as collaborator_id',
+                            'collaborators.public_id as collaborator_public_id',
                             'collaborators.name as collaborator_name',
                             'collaborators.email as collaborator_email',
                             'playlist_song.created_at as added_at'

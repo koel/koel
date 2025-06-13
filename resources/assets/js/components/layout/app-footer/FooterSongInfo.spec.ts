@@ -14,7 +14,7 @@ new class extends UnitTestCase {
         title: 'Fahrstuhl zum Mond',
         album_cover: 'https://via.placeholder.com/150',
         playback_state: 'Playing',
-        artist_id: 10,
+        artist_id: 'led-zeppelin',
         artist_name: 'Led Zeppelin',
       })
 

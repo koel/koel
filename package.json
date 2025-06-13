@@ -49,7 +49,7 @@
     "@antfu/eslint-config": "^3.7.3",
     "@commitlint/cli": "^19.4.0",
     "@commitlint/config-conventional": "^19.2.2",
-    "@faker-js/faker": "^6.2.0",
+    "@faker-js/faker": "^9.8.0",
     "@floating-ui/dom": "^1.0.3",
     "@testing-library/user-event": "^14.4.3",
     "@testing-library/vue": "^6.6.1",

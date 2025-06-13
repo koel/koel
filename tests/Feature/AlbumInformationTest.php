@@ -43,7 +43,7 @@ class AlbumInformationTest extends TestCase
                 ]
             ));
 
-        $this->getAs("api/albums/{$album->id}/information")
+        $this->getAs("api/albums/{$album->public_id}/information")
             ->assertJsonStructure(AlbumInformation::JSON_STRUCTURE);
     }
 
@@ -53,7 +53,7 @@ class AlbumInformationTest extends TestCase
         config(['koel.lastfm.key' => null]);
         config(['koel.lastfm.secret' => null]);
 
-        $this->getAs('api/albums/' . Album::factory()->create()->id . '/information')
+        $this->getAs('api/albums/' . Album::factory()->create()->public_id . '/information')
             ->assertJsonStructure(AlbumInformation::JSON_STRUCTURE);
     }
 }

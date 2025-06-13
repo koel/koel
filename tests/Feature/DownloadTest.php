@@ -97,7 +97,7 @@ class DownloadTest extends TestCase
             }))
             ->andReturn(Downloadable::make(test_path('songs/blank.mp3')));
 
-        $this->get("download/album/{$album->id}?api_token=" . $user->createToken('Koel')->plainTextToken)
+        $this->get("download/album/{$album->public_id}?api_token=" . $user->createToken('Koel')->plainTextToken)
             ->assertOk();
     }
 
@@ -118,7 +118,7 @@ class DownloadTest extends TestCase
             }))
             ->andReturn(Downloadable::make(test_path('songs/blank.mp3')));
 
-        $this->get("download/artist/{$artist->id}?api_token=" . $user->createToken('Koel')->plainTextToken)
+        $this->get("download/artist/{$artist->public_id}?api_token=" . $user->createToken('Koel')->plainTextToken)
             ->assertOk();
     }
 

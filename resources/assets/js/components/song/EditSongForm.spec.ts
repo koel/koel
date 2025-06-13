@@ -17,13 +17,13 @@ new class extends UnitTestCase {
   protected test () {
     it('edits a single song', async () => {
       const result: SongUpdateResult = {
+        songs: [],
         albums: [],
         artists: [],
         removed: {
           albums: [],
           artists: [],
         },
-        playables: [],
       }
 
       const updateMock = this.mock(songStore, 'update').mockResolvedValue(result)
@@ -70,13 +70,13 @@ new class extends UnitTestCase {
 
     it('edits multiple songs', async () => {
       const result: SongUpdateResult = {
+        songs: [],
         albums: [],
         artists: [],
         removed: {
           albums: [],
           artists: [],
         },
-        playables: [],
       }
 
       const updateMock = this.mock(songStore, 'update').mockResolvedValue(result)
@@ -115,9 +115,9 @@ new class extends UnitTestCase {
 
     it('displays artist name if all songs have the same artist', async () => {
       await this.renderComponent(factory('song', 4, {
-        artist_id: 1000,
+        artist_id: 'led-zeppelin',
         artist_name: 'Led Zeppelin',
-        album_id: 1001,
+        album_id: 'iv',
         album_name: 'IV',
       }))
 

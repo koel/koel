@@ -37,9 +37,9 @@ new class extends UnitTestCase {
         id: '00000000-0000-0000-0000-000000000000',
         title: 'Fahrstuhl to Heaven',
         artist_name: 'Led Zeppelin',
-        artist_id: 3,
+        artist_id: 'led-zeppelin',
         album_name: 'Led Zeppelin IV',
-        album_id: 4,
+        album_id: 'iv',
         liked: true,
       })
     }

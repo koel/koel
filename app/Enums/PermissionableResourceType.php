@@ -10,7 +10,7 @@ enum PermissionableResourceType: string
 {
     case ALBUM = Album::class;
     case ARTIST = Artist::class;
-    
+
     public static function resolve(string $type): self
     {
         return match ($type) {

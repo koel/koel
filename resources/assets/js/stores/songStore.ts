@@ -194,7 +194,7 @@ export const songStore = {
   ensureNotDeleted: (songs: MaybeArray<Song>) => arrayify(songs).filter(({ deleted }) => !deleted),
 
   async fetchForAlbum (album: Album | Album['id']) {
-    const id = typeof album === 'number' ? album : album.id
+    const id = typeof album === 'string' ? album : album.id
 
     return this.ensureNotDeleted(await cache.remember<Song[]>(
       [`album.songs`, id],
@@ -203,7 +203,7 @@ export const songStore = {
   },
 
   async fetchForArtist (artist: Artist | Artist['id']) {
-    const id = typeof artist === 'number' ? artist : artist.id
+    const id = typeof artist === 'string' ? artist : artist.id
 
     return this.ensureNotDeleted(await cache.remember<Song[]>(
       [`artist.songs`, id],

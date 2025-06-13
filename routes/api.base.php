@@ -1,6 +1,7 @@
 <?php
 
 use App\Facades\YouTube;
+use App\Helpers\Uuid;
 use App\Http\Controllers\API\ActivateLicenseController;
 use App\Http\Controllers\API\AlbumController;
 use App\Http\Controllers\API\AlbumSongController;
@@ -65,7 +66,6 @@ use App\Http\Controllers\API\UploadArtistImageController;
 use App\Http\Controllers\API\UploadController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\UserInvitationController;
-use App\Models\Song;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Pusher\Pusher;
@@ -117,11 +117,11 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::apiResource('artists.albums', ArtistAlbumController::class);
         Route::apiResource('artists.songs', ArtistSongController::class);
 
-        Route::post('songs/{song}/scrobble', ScrobbleController::class)->where(['song' => Song::ID_REGEX]);
+        Route::post('songs/{song}/scrobble', ScrobbleController::class)->where(['song' => Uuid::REGEX]);
 
         Route::apiResource('songs', SongController::class)
             ->except('update', 'destroy')
-            ->where(['song' => Song::ID_REGEX]);
+            ->where(['song' => Uuid::REGEX]);
 
         Route::put('songs', [SongController::class, 'update']);
         Route::delete('songs', [SongController::class, 'destroy']);

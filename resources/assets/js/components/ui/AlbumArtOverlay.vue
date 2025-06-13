@@ -11,7 +11,7 @@ import { ref, toRefs, watchEffect } from 'vue'
 import { albumStore } from '@/stores/albumStore'
 import { logger } from '@/utils/logger'
 
-const props = defineProps<{ album: number }>()
+const props = defineProps<{ album: Album['id'] }>()
 const { album } = toRefs(props)
 
 const thumbnailUrl = ref<string | null>(null)

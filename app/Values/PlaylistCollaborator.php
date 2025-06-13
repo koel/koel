@@ -7,18 +7,18 @@ use Illuminate\Contracts\Support\Arrayable;
 
 final class PlaylistCollaborator implements Arrayable
 {
-    private function __construct(public int $id, public string $name, public string $avatar)
+    private function __construct(public string $publicId, public string $name, public string $avatar)
     {
     }
 
-    public static function make(int $id, string $name, string $avatar): self
+    public static function make(string $publicId, string $name, string $avatar): self
     {
-        return new self($id, $name, $avatar);
+        return new self($publicId, $name, $avatar);
     }
 
     public static function fromUser(User $user): self
     {
-        return new self($user->id, $user->name, $user->avatar);
+        return new self($user->public_id, $user->name, $user->avatar);
     }
 
     /** @return array<mixed> */
@@ -26,7 +26,7 @@ final class PlaylistCollaborator implements Arrayable
     {
         return [
             'type' => 'playlist_collaborators',
-            'id' => $this->id,
+            'id' => $this->publicId,
             'name' => $this->name,
             'avatar' => $this->avatar,
         ];

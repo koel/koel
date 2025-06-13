@@ -65,7 +65,7 @@ use Webmozart\Assert\Assert;
  * @property-read ?string $collaborator_email The email of the user who added the song to the playlist
  * @property-read ?string $collaborator_name The name of the user who added the song to the playlist
  * @property-read ?string $collaborator_avatar The avatar of the user who added the song to the playlist
- * @property-read ?int $collaborator_id The ID of the user who added the song to the playlist
+ * @property-read ?string $collaborator_public_id The public ID of the user who added the song to the playlist
  * @property-read ?string $added_at The date the song was added to the playlist
  * @property-read PlayableType $type
  *
@@ -82,8 +82,6 @@ class Song extends Model implements AuditableContract
     use HasUuids;
     use Searchable;
     use SupportsDeleteWhereValueNotIn;
-
-    public const ID_REGEX = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
 
     protected $guarded = [];
     protected $hidden = ['updated_at', 'path', 'mtime'];

@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Album;
+use App\Models\Artist;
 use App\Models\User;
 use App\Services\Contracts\MusicEncyclopedia;
 use App\Services\LastfmService;
@@ -57,6 +59,8 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Route::bind('user', static fn (string $value) => User::query()->where('public_id', $value)->firstOrFail());
+        Route::bind('artist', static fn (string $value) => Artist::query()->where('public_id', $value)->firstOrFail());
+        Route::bind('album', static fn (string $value) => Album::query()->where('public_id', $value)->firstOrFail());
     }
 
     public function register(): void

@@ -6,6 +6,8 @@ use Illuminate\Support\Str;
 
 class Uuid extends TestableIdentifier
 {
+    public const REGEX = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
+
     public static function generate(): string
     {
         return self::$frozenValue ?: Str::uuid()->toString();

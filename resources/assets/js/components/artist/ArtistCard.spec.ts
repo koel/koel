@@ -15,7 +15,7 @@ new class extends UnitTestCase {
   protected beforeEach () {
     super.beforeEach(() => {
       artist = factory('artist', {
-        id: 42,
+        id: 'led-zeppelin',
         name: 'Led Zeppelin',
       })
     })

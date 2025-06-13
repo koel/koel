@@ -123,7 +123,7 @@ const AlbumCardSkeleton = defineAsyncComponent(() => import('@/components/ui/ske
 const { getRouteParam, go, onScreenActivated, url } = useRouter()
 const { currentUserCan } = usePolicies()
 
-const albumId = ref<number>()
+const albumId = ref<Album['id']>()
 const album = ref<Album | undefined>()
 const songs = ref<Song[]>([])
 const loading = ref(false)
@@ -202,7 +202,7 @@ watch(albumId, async id => {
   }
 })
 
-onScreenActivated('Album', () => (albumId.value = Number.parseInt(getRouteParam('id')!)))
+onScreenActivated('Album', () => (albumId.value = getRouteParam('id')))
 
 // if the current album has been deleted, go back to the list
 eventBus.on('SONGS_UPDATED', () => albumStore.byId(albumId.value!) || go(url('albums.index')))

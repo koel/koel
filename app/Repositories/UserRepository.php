@@ -30,4 +30,9 @@ class UserRepository extends Repository
             'sso_provider' => $ssoUser->provider,
         ]) ?? $this->findOneByEmail($ssoUser->email);
     }
+
+    public function getOneByPublicId(string $publicId): User
+    {
+        return $this->getOneBy(['public_id' => $publicId]);
+    }
 }

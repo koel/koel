@@ -31,7 +31,7 @@ class ArtistInformationTest extends TestCase
                 ],
             ));
 
-        $this->getAs("api/artists/{$artist->id}/information")
+        $this->getAs("api/artists/{$artist->public_id}/information")
             ->assertJsonStructure(ArtistInformation::JSON_STRUCTURE);
     }
 
@@ -41,7 +41,7 @@ class ArtistInformationTest extends TestCase
         config(['koel.lastfm.key' => null]);
         config(['koel.lastfm.secret' => null]);
 
-        $this->getAs('api/artists/' . Artist::factory()->create()->id . '/information')
+        $this->getAs('api/artists/' . Artist::factory()->create()->public_id . '/information')
             ->assertJsonStructure(ArtistInformation::JSON_STRUCTURE);
     }
 }

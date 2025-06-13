@@ -2,6 +2,6 @@ import type { Faker } from '@faker-js/faker'
 
 export default (faker: Faker): PlaylistFolder => ({
   type: 'playlist-folders',
-  id: faker.datatype.uuid(),
-  name: faker.random.word(),
+  id: faker.string.uuid(),
+  name: faker.word.sample(),
 })

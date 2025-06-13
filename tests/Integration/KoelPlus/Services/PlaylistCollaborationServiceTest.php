@@ -9,6 +9,7 @@ use App\Exceptions\OperationNotApplicableForSmartPlaylistException;
 use App\Exceptions\PlaylistCollaborationTokenExpiredException;
 use App\Models\PlaylistCollaborationToken;
 use App\Services\PlaylistCollaborationService;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
@@ -90,7 +91,7 @@ class PlaylistCollaborationServiceTest extends PlusTestCase
 
         $collaborators = $this->service->getCollaborators(playlist: $playlist->refresh());
 
-        self::assertEqualsCanonicalizing([$user->id], $collaborators->pluck('id')->toArray());
+        self::assertEqualsCanonicalizing([$user->public_id], Arr::pluck($collaborators->toArray(), 'id'));
     }
 
     #[Test]
@@ -102,7 +103,10 @@ class PlaylistCollaborationServiceTest extends PlusTestCase
 
         $collaborators = $this->service->getCollaborators(playlist: $playlist->refresh(), includingOwner: true);
 
-        self::assertEqualsCanonicalizing([$playlist->owner->id, $user->id], $collaborators->pluck('id')->toArray());
+        self::assertEqualsCanonicalizing(
+            [$playlist->owner->public_id, $user->public_id],
+            Arr::pluck($collaborators->toArray(), 'id')
+        );
     }
 
     #[Test]

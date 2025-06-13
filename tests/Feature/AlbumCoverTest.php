@@ -33,7 +33,7 @@ class AlbumCoverTest extends TestCase
             ->once()
             ->with(Mockery::on(static fn (Album $target) => $target->is($album)), 'data:image/jpeg;base64,Rm9v');
 
-        $this->putAs("api/album/{$album->id}/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], create_admin())
+        $this->putAs("api/album/{$album->public_id}/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], create_admin())
             ->assertOk();
     }
 
@@ -44,7 +44,7 @@ class AlbumCoverTest extends TestCase
 
         $this->mediaMetadataService->shouldNotReceive('writeAlbumCover');
 
-        $this->putAs("api/album/{$album->id}/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], create_user())
+        $this->putAs("api/album/{$album->public_id}/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], create_user())
             ->assertForbidden();
     }
 }

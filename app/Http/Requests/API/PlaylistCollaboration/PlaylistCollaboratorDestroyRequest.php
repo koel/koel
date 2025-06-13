@@ -5,7 +5,7 @@ namespace App\Http\Requests\API\PlaylistCollaboration;
 use App\Http\Requests\API\Request;
 
 /**
- * @property-read int $collaborator
+ * @property-read string $collaborator The public ID of the user to remove as a collaborator.
  */
 class PlaylistCollaboratorDestroyRequest extends Request
 {
@@ -15,7 +15,7 @@ class PlaylistCollaboratorDestroyRequest extends Request
     public function rules(): array
     {
         return [
-            'collaborator' => 'required|exists:users,id',
+            'collaborator' => 'required|exists:users,public_id',
         ];
     }
 }

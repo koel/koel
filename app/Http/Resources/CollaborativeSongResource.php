@@ -22,7 +22,7 @@ class CollaborativeSongResource extends SongResource
             'collaboration' => [
                 'user' => PlaylistCollaboratorResource::make(
                     PlaylistCollaborator::make(
-                        $this->song->collaborator_id,
+                        $this->song->collaborator_public_id,
                         $this->song->collaborator_name,
                         avatar_or_gravatar($this->song->collaborator_avatar, $this->song->collaborator_email),
                     ),

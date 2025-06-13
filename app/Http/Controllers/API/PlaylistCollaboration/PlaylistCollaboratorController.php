@@ -32,7 +32,7 @@ class PlaylistCollaboratorController extends Controller
     {
         $this->authorize('own', $playlist);
 
-        $collaborator = $this->userRepository->getOne($request->collaborator);
+        $collaborator = $this->userRepository->getOneByPublicId($request->collaborator);
 
         try {
             $this->service->removeCollaborator($playlist, $collaborator);

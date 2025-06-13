@@ -6,9 +6,9 @@ import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
 import { songStore } from '@/stores/songStore'
 import { downloadService } from '@/services/downloadService'
+import { resourcePermissionService } from '@/services/resourcePermissionService'
 import { eventBus } from '@/utils/eventBus'
 import Router from '@/router'
-import { resourcePermissionService } from '@/services/resourcePermissionService'
 import AlbumScreen from './AlbumScreen.vue'
 
 let album: Album
@@ -88,9 +88,9 @@ new class extends UnitTestCase {
     commonStore.state.uses_last_fm = true
 
     album = factory('album', {
-      id: 42,
+      id: 'foo',
       name: 'Led Zeppelin IV',
-      artist_id: 123,
+      artist_id: 'bar',
       artist_name: 'Led Zeppelin',
     })
 
@@ -100,9 +100,9 @@ new class extends UnitTestCase {
     const fetchSongsMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
 
     await this.router.activateRoute({
-      path: 'albums/42',
+      path: 'albums/foo',
       screen: 'Album',
-    }, { id: '42' })
+    }, { id: 'foo' })
 
     this.beAdmin().render(AlbumScreen, {
       global: {
