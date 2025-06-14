@@ -15,16 +15,18 @@ new class extends UnitTestCase {
 
     it('downloads all by artist', () => {
       const mock = this.mock(downloadService, 'trigger')
-      downloadService.fromArtist(factory('artist', { id: 42 }))
+      const artist = factory('artist')
+      downloadService.fromArtist(artist)
 
-      expect(mock).toHaveBeenCalledWith('artist/42')
+      expect(mock).toHaveBeenCalledWith(`artist/${artist.id}`)
     })
 
     it('downloads all in album', () => {
       const mock = this.mock(downloadService, 'trigger')
-      downloadService.fromAlbum(factory('album', { id: 42 }))
+      const album = factory('album')
+      downloadService.fromAlbum(album)
 
-      expect(mock).toHaveBeenCalledWith('album/42')
+      expect(mock).toHaveBeenCalledWith(`album/${album.id}`)
     })
 
     it('downloads a playlist', () => {

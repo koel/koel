@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { authService } from '@/services/authService'
 import { logger } from '@/utils/logger'
 import { useMessageToaster } from '@/composables/useMessageToaster'
@@ -93,6 +93,12 @@ const onSSOSuccess = (token: CompositeToken) => {
   authService.setTokensUsingCompositeToken(token)
   emit('loggedin')
 }
+
+onMounted(() => {
+  if (authService.hasRedirect()) {
+    useMessageToaster().toastWarning('Please log in first.')
+  }
+})
 </script>
 
 <style lang="postcss" scoped>

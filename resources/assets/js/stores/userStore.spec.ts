@@ -6,7 +6,6 @@ import type { CreateUserData, UpdateUserData } from '@/stores/userStore'
 import { userStore } from '@/stores/userStore'
 
 const currentUser = factory('user', {
-  id: 1,
   name: 'John Doe',
   email: 'john@doe.com',
   is_admin: true,
@@ -45,10 +44,10 @@ new class extends UnitTestCase {
     })
 
     it('gets user by id', () => {
-      const user = factory('user', { id: 2 })
+      const user = factory('user')
       userStore.syncWithVault(user)
 
-      expect(userStore.byId(2)).toEqual(user)
+      expect(userStore.byId(user.id)).toEqual(user)
     })
 
     it('creates a user', async () => {
@@ -69,7 +68,7 @@ new class extends UnitTestCase {
     })
 
     it('updates a user', async () => {
-      const user = factory('user', { id: 2 })
+      const user = factory('user')
       userStore.state.users.push(...userStore.syncWithVault(user))
 
       const data: UpdateUserData = {
@@ -84,23 +83,23 @@ new class extends UnitTestCase {
 
       await userStore.update(user, data)
 
-      expect(putMock).toHaveBeenCalledWith('users/2', data)
-      expect(userStore.vault.get(2)).toEqual(updated)
+      expect(putMock).toHaveBeenCalledWith(`users/${user.id}`, data)
+      expect(userStore.vault.get(user.id)).toEqual(updated)
     })
 
     it('deletes a user', async () => {
       const deleteMock = this.mock(http, 'delete')
 
-      const user = factory('user', { id: 2 })
+      const user = factory('user')
       userStore.state.users.push(...userStore.syncWithVault(user))
-      expect(userStore.vault.has(2)).toBe(true)
+      expect(userStore.vault.has(user.id)).toBe(true)
 
       expect(await userStore.destroy(user))
 
-      expect(deleteMock).toHaveBeenCalledWith('users/2')
+      expect(deleteMock).toHaveBeenCalledWith(`users/${user.id}`)
       expect(userStore.vault.size).toBe(1)
       expect(userStore.state.users).toHaveLength(1)
-      expect(userStore.vault.has(2)).toBe(false)
+      expect(userStore.vault.has(user.id)).toBe(false)
     })
   }
 }

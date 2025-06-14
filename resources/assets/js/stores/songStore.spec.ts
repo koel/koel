@@ -51,10 +51,10 @@ new class extends UnitTestCase {
     })
 
     it('gets songs by album', () => {
-      const songs = reactive(factory('song', 2, { album_id: 3 }))
+      const songs = reactive(factory('song', 2, { album_id: 'iv' }))
       songStore.vault.set(songs[0].id, songs[0])
       songStore.vault.set(songs[1].id, songs[1])
-      const album = factory('album', { id: 3 })
+      const album = factory('album', { id: 'iv' })
 
       expect(songStore.byAlbum(album)).toEqual(songs)
     })
@@ -111,14 +111,14 @@ new class extends UnitTestCase {
         artists: factory('artist', 2),
         removed: {
           albums: [{
-            id: 10,
-            artist_id: 3,
+            id: 'iv',
+            artist_id: 'led-zeppelin',
             name: 'Removed Album',
             cover: 'http://test/removed-album.jpg',
             created_at: '2020-01-01',
           }],
           artists: [{
-            id: 42,
+            id: 'led-zeppelin',
             name: 'Removed Artist',
             image: 'http://test/removed-artist.jpg',
             created_at: '2020-01-01',
@@ -149,8 +149,8 @@ new class extends UnitTestCase {
       expect(syncSongsMock).toHaveBeenCalledWith(result.songs)
       expect(syncAlbumsMock).toHaveBeenCalledWith(result.albums)
       expect(syncArtistsMock).toHaveBeenCalledWith(result.artists)
-      expect(removeAlbumsMock).toHaveBeenCalledWith([10])
-      expect(removeArtistsMock).toHaveBeenCalledWith([42])
+      expect(removeAlbumsMock).toHaveBeenCalledWith(['iv'])
+      expect(removeArtistsMock).toHaveBeenCalledWith(['led-zeppelin'])
     })
 
     it('gets source URL', () => {
@@ -191,9 +191,6 @@ new class extends UnitTestCase {
       const refreshMock = this.mock(overviewStore, 'refreshPlayStats')
 
       const song = reactive(factory('song', {
-        album_id: 10,
-        artist_id: 42,
-        album_artist_id: 43,
         play_count: 98,
       }))
 
@@ -207,25 +204,25 @@ new class extends UnitTestCase {
 
     it('fetches for album', async () => {
       const songs = factory('song', 3)
-      const album = factory('album', { id: 42 })
+      const album = factory('album')
       const getMock = this.mock(http, 'get').mockResolvedValueOnce(songs)
       const syncMock = this.mock(songStore, 'syncWithVault', songs)
 
       await songStore.fetchForAlbum(album)
 
-      expect(getMock).toHaveBeenCalledWith('albums/42/songs')
+      expect(getMock).toHaveBeenCalledWith(`albums/${album.id}/songs`)
       expect(syncMock).toHaveBeenCalledWith(songs)
     })
 
     it('fetches for artist', async () => {
       const songs = factory('song', 3)
-      const artist = factory('artist', { id: 42 })
+      const artist = factory('artist')
       const getMock = this.mock(http, 'get').mockResolvedValueOnce(songs)
       const syncMock = this.mock(songStore, 'syncWithVault', songs)
 
       await songStore.fetchForArtist(artist)
 
-      expect(getMock).toHaveBeenCalledWith('artists/42/songs')
+      expect(getMock).toHaveBeenCalledWith(`artists/${artist.id}/songs`)
       expect(syncMock).toHaveBeenCalledWith(songs)
     })
 
