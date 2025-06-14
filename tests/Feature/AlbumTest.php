@@ -33,7 +33,7 @@ class AlbumTest extends TestCase
     #[Test]
     public function show(): void
     {
-        $this->getAs('api/albums/' . Album::factory()->create()->id)
+        $this->getAs('api/albums/' . Album::factory()->create()->public_id)
             ->assertJsonStructure(AlbumResource::JSON_STRUCTURE);
     }
 
@@ -43,7 +43,7 @@ class AlbumTest extends TestCase
         $album = Album::factory()->create();
 
         $this->putAs(
-            'api/albums/' . $album->id,
+            "api/albums/{$album->public_id}",
             [
                 'name' => 'Updated Album Name',
                 'year' => 2023,
@@ -63,7 +63,7 @@ class AlbumTest extends TestCase
         $album = Album::factory()->create();
 
         $this->putAs(
-            'api/albums/' . $album->id,
+            "api/albums/{$album->public_id}",
             [
                 'name' => 'Updated Album Name',
                 'year' => 2023,

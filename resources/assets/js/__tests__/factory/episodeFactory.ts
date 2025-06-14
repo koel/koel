@@ -3,18 +3,18 @@ import type { Faker } from '@faker-js/faker'
 export default (faker: Faker): Episode => {
   return {
     type: 'episodes',
-    id: faker.datatype.uuid(),
+    id: faker.string.uuid(),
     title: faker.lorem.sentence(),
-    length: faker.datatype.number(),
+    length: faker.number.int(),
     created_at: faker.date.past().toISOString(),
     playback_state: 'Stopped',
     liked: false,
     play_count: 0,
     episode_link: faker.internet.url(),
     episode_description: faker.lorem.paragraph(),
-    episode_image: faker.image.imageUrl(),
-    podcast_id: faker.datatype.uuid(),
+    episode_image: faker.image.url(),
+    podcast_id: faker.string.uuid(),
     podcast_title: faker.lorem.sentence(),
-    podcast_author: faker.name.findName(),
+    podcast_author: faker.person.fullName(),
   }
 }

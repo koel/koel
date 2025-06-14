@@ -5,7 +5,7 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import { logger } from '@/utils/logger'
 import AlbumArtOverlay from './AlbumArtOverlay.vue'
 
-let albumId: number
+let albumId: Album['id']
 
 new class extends UnitTestCase {
   protected test () {
@@ -34,7 +34,7 @@ new class extends UnitTestCase {
   }
 
   private async renderComponent () {
-    albumId = 42
+    albumId = 'foo'
 
     const rendered = this.render(AlbumArtOverlay, {
       props: {

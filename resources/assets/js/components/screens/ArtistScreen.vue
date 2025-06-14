@@ -120,7 +120,7 @@ const activeTab = ref<Tab>('Songs')
 
 const { getRouteParam, go, onScreenActivated, url } = useRouter()
 
-const artistId = ref<number>()
+const artistId = ref<Artist['id']>()
 const artist = ref<Artist>()
 const songs = ref<Song[]>([])
 const loading = ref(false)
@@ -182,7 +182,7 @@ watch(artistId, async id => {
 
 const download = () => downloadService.fromArtist(artist.value!)
 
-onScreenActivated('Artist', () => (artistId.value = Number.parseInt(getRouteParam('id')!)))
+onScreenActivated('Artist', () => (artistId.value = getRouteParam('id')))
 
 // if the current artist has been deleted, go back to the list
 eventBus.on('SONGS_UPDATED', () => artistStore.byId(artist.value!.id) || go(url('artists.index')))

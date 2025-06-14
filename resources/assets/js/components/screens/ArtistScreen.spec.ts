@@ -17,7 +17,7 @@ new class extends UnitTestCase {
     commonStore.state.uses_last_fm = true
 
     artist = factory('artist', {
-      id: 42,
+      id: 'foo',
       name: 'Led Zeppelin',
     })
 
@@ -27,9 +27,9 @@ new class extends UnitTestCase {
     const fetchSongsMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
 
     await this.router.activateRoute({
-      path: 'artists/42',
+      path: 'artists/foo',
       screen: 'Artist',
-    }, { id: '42' })
+    }, { id: 'foo' })
 
     this.render(ArtistScreen, {
       global: {

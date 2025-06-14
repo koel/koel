@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Builders\AlbumBuilder;
 use App\Helpers\Ulid;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
+use App\Models\Contracts\PermissionableResource;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -40,7 +41,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property string $name Name of the album
  * @property string $public_id The album's public ID (ULID)
  */
-class Album extends Model implements AuditableContract
+class Album extends Model implements AuditableContract, PermissionableResource
 {
     use Auditable;
     use HasFactory;
@@ -186,5 +187,10 @@ class Album extends Model implements AuditableContract
         }
 
         return $array;
+    }
+
+    public static function getPermissionableResourceIdentifier(): string
+    {
+        return 'public_id';
     }
 }

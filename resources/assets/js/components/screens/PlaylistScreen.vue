@@ -126,7 +126,7 @@ const blankState = (): PlaylistScreenState => {
   }
 }
 
-const getState = (id: string) => {
+const getState = (id: Playlist['id']) => {
   if (!states.has(id)) {
     states.set(id, blankState())
   }
@@ -138,7 +138,7 @@ let currentState = blankState()
 const allPlayables = ref<PlaylistPlayable[]>([])
 const collaborators = ref<PlaylistCollaborator[]>([])
 
-const playlistId = ref<string>()
+const playlistId = ref<Playlist['id']>()
 const playlist = ref<Playlist>()
 const loading = ref(false)
 

@@ -24,9 +24,9 @@ new class extends UnitTestCase {
       expect(toggleMock).toHaveBeenCalled()
     })
 
-    it.each<[ScreenName, MethodOf<typeof songStore>, string | number]>([
-      ['Album', 'fetchForAlbum', 42],
-      ['Artist', 'fetchForArtist', 42],
+    it.each<[ScreenName, MethodOf<typeof songStore>, Album['id'] | Artist['id'] | Playlist['id']]>([
+      ['Album', 'fetchForAlbum', 'foo'],
+      ['Artist', 'fetchForArtist', 'foo'],
       ['Playlist', 'fetchForPlaylist', '71d8cd40-20d4-4b17-b460-d30fe5bb7b66'],
     ])('initiates playback for %s screen', async (screenName, fetchMethod, id) => {
       commonStore.state.song_count = 10
@@ -38,7 +38,7 @@ new class extends UnitTestCase {
       await this.router.activateRoute({
         screen: screenName,
         path: '_',
-      }, { id: String(id) })
+      }, { id })
 
       this.renderComponent()
 

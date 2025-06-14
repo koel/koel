@@ -7,6 +7,7 @@ import { useUpload } from '@/composables/useUpload'
 import { logger } from '@/utils/logger'
 
 const UUID_REGEX = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+const ULID_REGEX = '[0-9A-Za-z]{26}'
 
 export const routes: Route[] = [
   {
@@ -97,7 +98,7 @@ export const routes: Route[] = [
     path: '/albums/:id',
     screen: 'Album',
     constraints: {
-      id: '\\d+',
+      id: ULID_REGEX,
     },
   },
   {
@@ -105,7 +106,7 @@ export const routes: Route[] = [
     path: '/artists/:id',
     screen: 'Artist',
     constraints: {
-      id: '\\d+',
+      id: ULID_REGEX,
     },
   },
   {

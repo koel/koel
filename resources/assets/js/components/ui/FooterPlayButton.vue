@@ -40,10 +40,10 @@ const initiatePlayback = async () => {
 
   switch (getCurrentScreen()) {
     case 'Album':
-      playables = await songStore.fetchForAlbum(Number.parseInt(getRouteParam('id')!))
+      playables = await songStore.fetchForAlbum(getRouteParam('id')!)
       break
     case 'Artist':
-      playables = await songStore.fetchForArtist(Number.parseInt(getRouteParam('id')!))
+      playables = await songStore.fetchForArtist(getRouteParam('id')!)
       break
     case 'Playlist':
       playables = await songStore.fetchForPlaylist(getRouteParam('id')!)

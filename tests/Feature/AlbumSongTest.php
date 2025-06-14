@@ -16,7 +16,7 @@ class AlbumSongTest extends TestCase
         $album = Album::factory()->create();
         Song::factory(5)->for($album)->create();
 
-        $this->getAs("api/albums/{$album->id}/songs")
+        $this->getAs("api/albums/{$album->public_id}/songs")
             ->assertJsonStructure(['*' => SongResource::JSON_STRUCTURE]);
     }
 }

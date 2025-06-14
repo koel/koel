@@ -134,9 +134,7 @@ new class extends UnitTestCase {
 
     it('does not have an option to edit or delete if the playlist is not owned by the current user', async () => {
       const user = factory('user')
-      const playlist = factory('playlist', {
-        user_id: user.id + 1,
-      })
+      const playlist = factory('playlist')
 
       await this.renderComponent(playlist, user)
 

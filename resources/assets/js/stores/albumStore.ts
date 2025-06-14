@@ -110,7 +110,7 @@ export const albumStore = {
   },
 
   async fetchForArtist (artist: Artist | Artist['id']) {
-    const id = typeof artist === 'number' ? artist : artist.id
+    const id = typeof artist === 'string' ? artist : artist.id
 
     return this.syncWithVault(
       await cache.remember<Album[]>(['artist-albums', id], async () => await http.get<Album[]>(`artists/${id}/albums`)),

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\PermissionableResourceType;
+use App\Models\Contracts\PermissionableResource;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
@@ -22,10 +23,17 @@ class ResourcePermissionService
     ): bool {
         Assert::inArray($action, self::VALID_ACTIONS);
 
-        /** @var class-string<Model> $modelClass */
+        return Gate::forUser($user ?? auth()->user())
+            ->allows($action, self::resolveResource($type, $id));
+    }
+
+    private static function resolveResource(
+        PermissionableResourceType $type,
+        int|string $id,
+    ): Model {
+        /** @var class-string<Model|PermissionableResource> $modelClass */
         $modelClass = $type->value;
 
-        return Gate::forUser($user ?? auth()->user())
-            ->allows($action, $modelClass::query()->findOrFail($id));
+        return $modelClass::query()->where($modelClass::getPermissionableResourceIdentifier(), $id)->firstOrFail(); // @phpstan-ignore-line
     }
 }

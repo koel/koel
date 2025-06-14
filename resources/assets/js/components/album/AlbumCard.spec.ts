@@ -66,10 +66,11 @@ new class extends UnitTestCase {
   private renderComponent (year: number | null = null, showReleaseYear = false) {
     album = factory('album', {
       year,
-      id: 42,
+      id: 'iv',
       name: 'IV',
-      artist_id: 17,
+      artist_id: 'led-zeppelin',
       artist_name: 'Led Zeppelin',
+      cover: 'https://example.com/cover.jpg',
     })
 
     return this.render(AlbumCard, {

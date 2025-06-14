@@ -3,11 +3,11 @@ import type { Faker } from '@faker-js/faker'
 export default (faker: Faker): Album => {
   return {
     type: 'albums',
-    artist_id: faker.datatype.number({ min: 3 }), // avoid Unknown and Various Artist by default
-    artist_name: faker.name.findName(),
-    id: faker.datatype.number({ min: 2 }), // avoid Unknown Album by default
+    artist_id: faker.string.ulid(),
+    artist_name: faker.person.fullName(),
+    id: faker.string.ulid(),
     name: faker.lorem.sentence(),
-    cover: faker.image.imageUrl(),
+    cover: faker.image.url(),
     created_at: faker.date.past().toISOString(),
     year: faker.date.past().getFullYear(),
   }
@@ -16,7 +16,6 @@ export default (faker: Faker): Album => {
 export const states: Record<string, Omit<Partial<Album>, 'type'>> = {
   unknown: {
     name: 'Unknown Album',
-    artist_id: 1,
     artist_name: 'Unknown Artist',
   },
 }

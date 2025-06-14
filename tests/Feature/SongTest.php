@@ -31,7 +31,7 @@ class SongTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create();
 
-        $this->getAs('api/songs/' . $song->id)->assertJsonStructure(SongResource::JSON_STRUCTURE);
+        $this->getAs("api/songs/{$song->id}")->assertJsonStructure(SongResource::JSON_STRUCTURE);
     }
 
     #[Test]

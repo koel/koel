@@ -8,8 +8,8 @@ import { downloadService } from '@/services/downloadService'
 import { playbackService } from '@/services/playbackService'
 import { commonStore } from '@/stores/commonStore'
 import { songStore } from '@/stores/songStore'
-import ArtistContextMenu from './ArtistContextMenu.vue'
 import { resourcePermissionService } from '@/services/resourcePermissionService'
+import ArtistContextMenu from './ArtistContextMenu.vue'
 
 let artist: Artist
 

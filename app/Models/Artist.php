@@ -7,6 +7,7 @@ use App\Facades\License;
 use App\Facades\Util;
 use App\Helpers\Ulid;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
+use App\Models\Contracts\PermissionableResource;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -39,7 +40,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property string|int $play_count Total number of times the artist has been played (dynamically calculated)
  * @property string|int $song_count Total number of songs by the artist (dynamically calculated)
  */
-class Artist extends Model implements AuditableContract
+class Artist extends Model implements AuditableContract, PermissionableResource
 {
     use Auditable;
     use HasFactory;
@@ -171,5 +172,10 @@ class Artist extends Model implements AuditableContract
             'id' => $this->id,
             'name' => $this->name,
         ];
+    }
+
+    public static function getPermissionableResourceIdentifier(): string
+    {
+        return 'public_id';
     }
 }

@@ -24,7 +24,7 @@ class PlaylistCollaboratorResource extends JsonResource
     {
         return [
             'type' => 'playlist-collaborators',
-            'id' => $this->collaborator->id,
+            'id' => $this->collaborator->publicId,
             'name' => $this->collaborator->name,
             'avatar' => $this->collaborator->avatar,
         ];

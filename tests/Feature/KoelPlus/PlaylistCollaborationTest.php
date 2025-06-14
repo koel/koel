@@ -37,6 +37,24 @@ class PlaylistCollaborationTest extends PlusTestCase
     }
 
     #[Test]
+    public function removeCollaborator(): void
+    {
+        $playlist = create_playlist();
+        $user = create_user();
+        $playlist->addCollaborator($user);
+
+        self::assertTrue($playlist->refresh()->hasCollaborator($user));
+
+        $this->deleteAs(
+            "api/playlists/{$playlist->id}/collaborators",
+            ['collaborator' => $user->public_id],
+            $playlist->owner,
+        );
+
+        self::assertFalse($playlist->refresh()->hasCollaborator($user));
+    }
+
+    #[Test]
     public function collaboratorsCanAccessSharedPlaylistAtRootLevel(): void
     {
         $playlist = create_playlist();
