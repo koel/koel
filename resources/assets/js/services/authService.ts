@@ -2,6 +2,7 @@ import { merge } from 'lodash'
 import { http } from '@/services/http'
 import { userStore } from '@/stores/userStore'
 import { useLocalStorage } from '@/composables/useLocalStorage'
+import { use } from '@/utils/helpers'
 
 export interface UpdateCurrentProfileData {
   current_password: string | null
@@ -13,12 +14,14 @@ export interface UpdateCurrentProfileData {
 
 const API_TOKEN_STORAGE_KEY = 'api-token'
 const AUDIO_TOKEN_STORAGE_KEY = 'audio-token'
+const REDIRECT_KEY = 'redirect'
 
 const { get: lsGet, set: lsSet, remove: lsRemove } = useLocalStorage(false) // authentication local storage data aren't namespaced
 
 export const authService = {
   async login (email: string, password: string) {
     this.setTokensUsingCompositeToken(await http.post<CompositeToken>('me', { email, password }))
+    this.maybeRedirect()
   },
 
   async logout () {
@@ -64,4 +67,13 @@ export const authService = {
   },
 
   getOneTimeToken: async () => (await http.get<{ token: string }>('one-time-token')).token,
+
+  setRedirect: (url?: string) => lsSet(REDIRECT_KEY, url || location.toString()),
+
+  hasRedirect: () => Boolean(lsGet(REDIRECT_KEY)),
+
+  maybeRedirect: () => use(lsGet<string | null>(REDIRECT_KEY), url => {
+    lsRemove(REDIRECT_KEY)
+    location.assign(url)
+  }),
 }

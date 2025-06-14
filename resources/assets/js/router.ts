@@ -154,7 +154,7 @@ export default class Router {
     return null
   }
 
-  public static url (name: string, params: object = {}) {
+  public static url (name: Route['name'], params: object = {}) {
     const route = routes.find(route => route.name === name)
 
     if (!route) {

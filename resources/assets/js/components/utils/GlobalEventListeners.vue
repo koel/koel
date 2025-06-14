@@ -39,6 +39,7 @@ eventBus.on('PLAYLIST_DELETE', async playlist => {
   }
 }).on('LOG_OUT', async () => {
   await authService.logout()
+  go('login')
   forceReloadWindow()
 })
 </script>
