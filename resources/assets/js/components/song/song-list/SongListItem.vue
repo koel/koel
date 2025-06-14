@@ -30,8 +30,8 @@
       </span>
       <span class="title-artist flex flex-col gap-2 overflow-hidden">
         <span class="title text-k-text-primary !flex gap-2 items-center">
-          <ExternalMark v-if="external" class="!inline-block" />
-          {{ playable.title }}
+          <ExternalMark v-if="external" />
+          <span class="flex-1">{{ playable.title }}</span>
         </span>
         <span class="artist">{{ artist }}</span>
       </span>
