@@ -30,7 +30,7 @@ class LastfmService implements MusicEncyclopedia
      */
     public static function used(): bool
     {
-        return (bool) config('koel.lastfm.key');
+        return (bool) config('koel.services.lastfm.key');
     }
 
     /**
@@ -38,7 +38,7 @@ class LastfmService implements MusicEncyclopedia
      */
     public static function enabled(): bool
     {
-        return config('koel.lastfm.key') && config('koel.lastfm.secret');
+        return config('koel.services.lastfm.key') && config('koel.services.lastfm.secret');
     }
 
     public function getArtistInformation(Artist $artist): ?ArtistInformation

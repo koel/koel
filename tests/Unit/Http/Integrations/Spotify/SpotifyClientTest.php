@@ -26,8 +26,8 @@ class SpotifyClientTest extends TestCase
         parent::setUp();
 
         config([
-            'koel.spotify.client_id' => 'fake-client-id',
-            'koel.spotify.client_secret' => 'fake-client-secret',
+            'koel.services.spotify.client_id' => 'fake-client-id',
+            'koel.services.spotify.client_secret' => 'fake-client-secret',
         ]);
 
         $this->session = Mockery::mock(SpotifySession::class);
@@ -72,8 +72,8 @@ class SpotifyClientTest extends TestCase
     public function callForwardingThrowsIfIntegrationIsDisabled(): void
     {
         config([
-            'koel.spotify.client_id' => null,
-            'koel.spotify.client_secret' => null,
+            'koel.services.spotify.client_id' => null,
+            'koel.services.spotify.client_secret' => null,
         ]);
 
         $this->expectException(SpotifyIntegrationDisabledException::class);
@@ -93,8 +93,8 @@ class SpotifyClientTest extends TestCase
     protected function tearDown(): void
     {
         config([
-            'koel.spotify.client_id' => null,
-            'koel.spotify.client_secret' => null,
+            'koel.services.spotify.client_id' => null,
+            'koel.services.spotify.client_secret' => null,
         ]);
 
         parent::tearDown();

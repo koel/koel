@@ -15,7 +15,7 @@ class ITunesService
 
     public static function used(): bool
     {
-        return (bool) config('koel.itunes.enabled');
+        return (bool) config('koel.services.itunes.enabled');
     }
 
     public function getTrackUrl(string $trackName, Album $album): ?string
@@ -37,7 +37,7 @@ class ITunesService
                     $trackUrl = $response->results[0]->trackViewUrl;
                     $connector = parse_url($trackUrl, PHP_URL_QUERY) ? '&' : '?';
 
-                    return $trackUrl . "{$connector}at=" . config('koel.itunes.affiliate_id');
+                    return $trackUrl . "{$connector}at=" . config('koel.services.itunes.affiliate_id');
                 }
             );
         });

@@ -39,7 +39,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(SpotifySession::class, static function () {
             return SpotifyService::enabled()
-                ? new SpotifySession(config('koel.spotify.client_id'), config('koel.spotify.client_secret'))
+                ? new SpotifySession(
+                    config('koel.services.spotify.client_id'),
+                    config('koel.services.spotify.client_secret'),
+                )
                 : null;
         });
 

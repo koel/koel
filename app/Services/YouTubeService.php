@@ -16,7 +16,7 @@ class YouTubeService
 
     public static function enabled(): bool
     {
-        return (bool) config('koel.youtube.key');
+        return (bool) config('koel.services.youtube.key');
     }
 
     public function searchVideosRelatedToSong(Song $song, string $pageToken = ''): ?object

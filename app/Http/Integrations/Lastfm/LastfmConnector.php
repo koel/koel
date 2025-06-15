@@ -12,11 +12,11 @@ class LastfmConnector extends Connector
 
     public function resolveBaseUrl(): string
     {
-        return config('koel.lastfm.endpoint');
+        return config('koel.services.lastfm.endpoint');
     }
 
     protected function defaultAuth(): LastfmAuthenticator
     {
-        return new LastfmAuthenticator(config('koel.lastfm.key'), config('koel.lastfm.secret'));
+        return new LastfmAuthenticator(config('koel.services.lastfm.key'), config('koel.services.lastfm.secret'));
     }
 }

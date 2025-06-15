@@ -14,8 +14,8 @@ class ArtistInformationTest extends TestCase
     #[Test]
     public function getInformation(): void
     {
-        config(['koel.lastfm.key' => 'foo']);
-        config(['koel.lastfm.secret' => 'geheim']);
+        config(['koel.services.lastfm.key' => 'foo']);
+        config(['koel.services.lastfm.secret' => 'geheim']);
 
         $artist = Artist::factory()->create();
 
@@ -38,8 +38,8 @@ class ArtistInformationTest extends TestCase
     #[Test]
     public function getWithoutLastfmStillReturnsValidStructure(): void
     {
-        config(['koel.lastfm.key' => null]);
-        config(['koel.lastfm.secret' => null]);
+        config(['koel.services.lastfm.key' => null]);
+        config(['koel.services.lastfm.secret' => null]);
 
         $this->getAs('api/artists/' . Artist::factory()->create()->public_id . '/information')
             ->assertJsonStructure(ArtistInformation::JSON_STRUCTURE);

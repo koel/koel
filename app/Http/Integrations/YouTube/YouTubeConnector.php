@@ -12,11 +12,11 @@ class YouTubeConnector extends Connector
 
     public function resolveBaseUrl(): string
     {
-        return config('koel.youtube.endpoint');
+        return config('koel.services.youtube.endpoint');
     }
 
     protected function defaultAuth(): QueryAuthenticator
     {
-        return new QueryAuthenticator('key', config('koel.youtube.key'));
+        return new QueryAuthenticator('key', config('koel.services.youtube.key'));
     }
 }

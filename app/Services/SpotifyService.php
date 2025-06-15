@@ -15,7 +15,7 @@ class SpotifyService
 
     public static function enabled(): bool
     {
-        return config('koel.spotify.client_id') && config('koel.spotify.client_secret');
+        return config('koel.services.spotify.client_id') && config('koel.services.spotify.client_secret');
     }
 
     public function tryGetArtistImage(Artist $artist): ?string

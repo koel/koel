@@ -34,7 +34,11 @@ class LastfmController extends Controller
             $this->tokenManager->createToken($this->currentUser)->plainTextToken
         ));
 
-        $url = sprintf('https://www.last.fm/api/auth/?api_key=%s&cb=%s', config('koel.lastfm.key'), $callbackUrl);
+        $url = sprintf(
+            'https://www.last.fm/api/auth/?api_key=%s&cb=%s',
+            config('koel.services.lastfm.key'),
+            $callbackUrl
+        );
 
         return redirect($url);
     }

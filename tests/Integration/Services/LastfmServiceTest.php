@@ -30,8 +30,8 @@ class LastfmServiceTest extends TestCase
         parent::setUp();
 
         config([
-            'koel.lastfm.key' => 'key',
-            'koel.lastfm.secret' => 'secret',
+            'koel.services.lastfm.key' => 'key',
+            'koel.services.lastfm.secret' => 'secret',
         ]);
 
         $this->service = app(LastfmService::class);

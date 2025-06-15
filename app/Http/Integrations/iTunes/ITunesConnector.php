@@ -11,6 +11,6 @@ class ITunesConnector extends Connector
 
     public function resolveBaseUrl(): string
     {
-        return config('koel.itunes.endpoint');
+        return config('koel.services.itunes.endpoint');
     }
 }

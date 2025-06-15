@@ -25,8 +25,8 @@ class SpotifyServiceTest extends TestCase
         parent::setUp();
 
         config([
-            'koel.spotify.client_id' => 'fake-client-id',
-            'koel.spotify.client_secret' => 'fake-client-secret',
+            'koel.services.spotify.client_id' => 'fake-client-id',
+            'koel.services.spotify.client_secret' => 'fake-client-secret',
         ]);
 
         $this->client = Mockery::mock(SpotifyClient::class);
@@ -50,7 +50,7 @@ class SpotifyServiceTest extends TestCase
     #[Test]
     public function tryGetArtistImageWhenServiceIsNotEnabled(): void
     {
-        config(['koel.spotify.client_id' => null]);
+        config(['koel.services.spotify.client_id' => null]);
 
         $this->client->shouldNotReceive('search');
 
@@ -74,7 +74,7 @@ class SpotifyServiceTest extends TestCase
     #[Test]
     public function tryGetAlbumImageWhenServiceIsNotEnabled(): void
     {
-        config(['koel.spotify.client_id' => null]);
+        config(['koel.services.spotify.client_id' => null]);
 
         $this->client->shouldNotReceive('search');
 
@@ -90,8 +90,8 @@ class SpotifyServiceTest extends TestCase
     protected function tearDown(): void
     {
         config([
-            'koel.spotify.client_id' => null,
-            'koel.spotify.client_secret' => null,
+            'koel.services.spotify.client_id' => null,
+            'koel.services.spotify.client_secret' => null,
         ]);
 
         parent::tearDown();
