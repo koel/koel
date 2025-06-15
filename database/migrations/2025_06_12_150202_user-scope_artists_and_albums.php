@@ -15,16 +15,17 @@ return new class extends Migration {
     {
         Schema::table('artists', static function (Blueprint $table): void {
             $table->string('public_id', 26)->unique()->nullable();
-            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->unsignedInteger('user_id')->nullable()->index();
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
 
             $table->unique(['name', 'user_id']);
         });
 
         Schema::table('albums', static function (Blueprint $table): void {
             $table->string('public_id', 26)->unique()->nullable();
-
             //Strictly saying we don't need user_id, but it's better for simplicity and performance.
-            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->unsignedInteger('user_id')->nullable()->index();
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
 
             $table->unique(['name', 'artist_id', 'user_id']);
         });
