@@ -12,9 +12,7 @@ abstract class TranscodingStrategy
     public function __construct(
         protected TranscodeRepository $transcodeRepository,
         protected Transcoder $transcoder,
-        protected ?string $rootDirectory = null,
     ) {
-        $this->rootDirectory ??= sys_get_temp_dir() . '/koel-transcodes';
     }
 
     protected function findTranscodeBySongAndBitRate(Song $song, int $bitRate): ?Transcode

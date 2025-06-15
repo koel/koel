@@ -53,6 +53,22 @@ php artisan koel:admin:change-password [<email>]
 |---------|--------------------------------------------------------------|
 | `email` | The user's email. If empty, will get the default admin user. |
 
+### `koel:clean-up-temp-files`
+
+Remove temporary files older than a certain age. Examples of temporary files include temporarily downloaded files,
+transcoded files, and so on.
+
+#### Usage
+
+```bash
+php artisan koel:clean-up-temp-files
+```
+
+#### Options
+| Name     | Description                                                                   |
+|----------|-------------------------------------------------------------------------------|
+| `--age=` | The age of temporary files to remove in minutes. Defaults to 1440 (one day).  |
+
 ### `koel:doctor`
 
 Check Koel setup.
@@ -236,7 +252,7 @@ php artisan koel:tags:collect
 
 ## Command Scheduling
 
-Some of the commands, such as `koel:scan` and `koel:prune`, can be scheduled to run at regular intervals.
+Some commands, such as `koel:scan`, `koel:prune`, and `koel:clean-up-temp-files` can be scheduled to run at regular intervals.
 Instead of setting up individual cron jobs, you can use Koel’s built-in scheduler to automatically handle the commands for you.
 
 To set up the scheduler, run the `koel:scheduler:install` command as the web server user (e.g. `www-data` or `nginx`):

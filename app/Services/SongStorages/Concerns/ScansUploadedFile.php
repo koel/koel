@@ -3,6 +3,7 @@
 namespace App\Services\SongStorages\Concerns;
 
 use App\Exceptions\SongUploadFailedException;
+use App\Helpers\Ulid;
 use App\Models\User;
 use App\Services\Scanner\FileScanner;
 use App\Values\ScanConfiguration;
@@ -15,8 +16,8 @@ trait ScansUploadedFile
     protected function scanUploadedFile(FileScanner $scanner, UploadedFile $file, User $uploader): ScanResult
     {
         // Can't scan the uploaded file directly, as it apparently causes some misbehavior during idv3 tag reading.
-        // Instead, we copy the file to the tmp directory and scan it from there.
-        $tmpDir = sys_get_temp_dir() . '/koel_tmp';
+        // Instead, we copy the file to a tmp directory and scan it from there.
+        $tmpDir = artifact_path('tmp/' . Ulid::generate());
         File::ensureDirectoryExists($tmpDir);
 
         $tmpFile = $file->move($tmpDir, $file->getClientOriginalName());

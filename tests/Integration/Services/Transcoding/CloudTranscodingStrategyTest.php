@@ -40,7 +40,7 @@ class CloudTranscodingStrategyTest extends TestCase
 
         $ulid = Ulid::freeze();
         $songPresignedUrl = 'https://s3.song.presigned.url/key.flac';
-        $tmpDestination = sprintf("%s/koel-transcodes/tmp/$ulid.m4a", sys_get_temp_dir());
+        $tmpDestination = artifact_path("tmp/$ulid.m4a", ensureDirectoryExists: false);
         $transcodeKey = "transcodes/128/$ulid.m4a";
         $transcodePresignedUrl = "https://s3.song.presigned.url/transcodes/128/$ulid.m4a";
 
@@ -61,6 +61,10 @@ class CloudTranscodingStrategyTest extends TestCase
         $this->transcoder
             ->shouldReceive('transcode')
             ->with($songPresignedUrl, $tmpDestination, 128)
+            ->once();
+
+        File::shouldReceive('ensureDirectoryExists')
+            ->with(dirname($tmpDestination))
             ->once();
 
         File::shouldReceive('hash')
@@ -98,6 +102,7 @@ class CloudTranscodingStrategyTest extends TestCase
         ]);
 
         $storage = $this->mock(S3CompatibleStorage::class);
+
         $storage->shouldReceive('getPresignedUrl')
             ->with('transcodes/128/some-ulid.m4a')
             ->andReturn('https://s3.song.presigned.url/transcodes/128/some-ulid.m4a');

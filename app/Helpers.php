@@ -1,7 +1,7 @@
 <?php
 
 use App\Facades\License;
-use Illuminate\Support\Facades\File as FileFacade;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 /**
@@ -58,9 +58,24 @@ function user_avatar_url(?string $fileName): ?string
     return $fileName ? static_url(config('koel.user_avatar_dir') . $fileName) : null;
 }
 
+function artifact_path(?string $subPath = null, $ensureDirectoryExists = true): string
+{
+    $path = Str::finish(config('koel.artifacts_path'), DIRECTORY_SEPARATOR);
+
+    if ($subPath) {
+        $path .= ltrim($subPath, DIRECTORY_SEPARATOR);
+    }
+
+    if ($ensureDirectoryExists) {
+        File::ensureDirectoryExists(dirname($path));
+    }
+
+    return $path;
+}
+
 function koel_version(): string
 {
-    return trim(FileFacade::get(base_path('.version')));
+    return trim(File::get(base_path('.version')));
 }
 
 function rescue_if($condition, callable $callback): mixed
