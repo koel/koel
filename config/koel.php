@@ -46,6 +46,8 @@ return [
         'method' => env('STREAMING_METHOD'),
         'ffmpeg_path' => env('FFMPEG_PATH'),
         'transcode_flac' => env('TRANSCODE_FLAC', true),
+        'supported_formats' => ['mp3', 'wav', 'ogg', 'm4a', 'flac', 'opus', 'aiff', 'aif'],
+        'transcode_required_formats' => ['aiff', 'aif'],
     ],
 
     /*
@@ -138,7 +140,6 @@ return [
         'endpoint' => 'https://itunes.apple.com/search',
     ],
 
-    'cache_media' => env('CACHE_MEDIA', true),
     'memory_limit' => env('MEMORY_LIMIT'),
     'force_https' => env('FORCE_HTTPS', false),
     'backup_on_delete' => env('BACKUP_ON_DELETE', true),
@@ -159,7 +160,4 @@ return [
         'sponsor_open_collective_url' => 'https://opencollective.com/koel',
         'demo' => env('KOEL_DEMO', false),
     ],
-
-    'supported_formats' => ['mp3', 'wav', 'ogg', 'm4a', 'flac', 'opus', 'aiff', 'aif'],
-    'transcode_required_formats' => ['aiff', 'aif'],
 ];

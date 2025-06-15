@@ -88,8 +88,8 @@ class StreamerTest extends TestCase
     #[Test]
     public function useTranscodingAdapterIfSongMimeTypeRequiresTranscoding(): void
     {
-        $backupConfig = config('koel.transcode_required_formats');
-        config(['koel.transcode_required_formats' => ['aiff']]);
+        $backupConfig = config('koel.streaming.transcode_required_formats');
+        config(['koel.streaming.transcode_required_formats' => ['aiff']]);
 
         /** @var Song $song */
         $song = Song::factory()->create([
@@ -101,7 +101,7 @@ class StreamerTest extends TestCase
 
         self::assertInstanceOf(TranscodingStreamerAdapter::class, $streamer->getAdapter());
 
-        config(['koel.transcode_required_formats' => $backupConfig]);
+        config(['koel.streaming.transcode_required_formats' => $backupConfig]);
     }
 
     /** @return array<mixed> */

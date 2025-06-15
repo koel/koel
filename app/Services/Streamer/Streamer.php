@@ -78,7 +78,7 @@ class Streamer
             return true;
         }
 
-        return in_array($extension, config('koel.transcode_required_formats', []), true);
+        return in_array($extension, config('koel.streaming.transcode_required_formats', []), true);
     }
 
     private static function hasValidFfmpegInstallation(): bool

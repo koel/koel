@@ -15,7 +15,7 @@ class SupportedAudioFile implements ValidationRule
         $passes = rescue(static function () use ($value) {
             Assert::oneOf(
                 Arr::get((new getID3())->analyze($value->getRealPath()), 'fileformat'),
-                config('koel.supported_formats')
+                config('koel.streaming.supported_formats')
             );
 
             return true;
