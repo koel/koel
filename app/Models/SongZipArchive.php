@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Facades\Download;
+use App\Helpers\Ulid;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use RuntimeException;
@@ -81,9 +82,7 @@ class SongZipArchive
 
     private static function generateRandomArchivePath(): string
     {
-        // We use system's temp dir instead of storage_path() here, so that the generated files
-        // can be cleaned up automatically after server reboot.
-        return sprintf('%s/koel-download-%s.zip', sys_get_temp_dir(), Str::ulid());
+        return artifact_path(sprintf('tmp/%s.zip', Ulid::generate()));
     }
 
     public function getArchive(): ZipArchive

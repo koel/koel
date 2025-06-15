@@ -31,7 +31,7 @@ class CloudTranscodingStrategy extends TranscodingStrategy
      */
     private function createTranscode(CloudStorage $storage, Song $song, int $bitRate): Transcode
     {
-        $tmpDestination = "$this->rootDirectory/tmp/" . Ulid::generate() . '.m4a';
+        $tmpDestination = artifact_path(sprintf('tmp/%s.m4a', Ulid::generate()));
 
         $this->transcoder->transcode(
             $storage->getPresignedUrl($song->storage_metadata->getPath()),
