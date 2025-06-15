@@ -11,10 +11,6 @@ on:
     paths-ignore:
       - resources/assets/**
   workflow_dispatch:
-    branches:
-      - master
-    paths-ignore:
-      - resources/assets/**
 jobs:
   test:
     runs-on: ubuntu-latest

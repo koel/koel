@@ -18,11 +18,8 @@ abstract class CloudStorage extends SongStorage
 
     public function copyToLocal(string $key): string
     {
-        $tmpDir = sys_get_temp_dir() . '/koel_tmp';
-        File::ensureDirectoryExists($tmpDir);
-
         $publicUrl = $this->getPresignedUrl($key);
-        $localPath = $tmpDir . '/' . basename($key);
+        $localPath = artifact_path(sprintf('tmp/%s_%s', Ulid::generate(), basename($key)));
 
         File::copy($publicUrl, $localPath);
 

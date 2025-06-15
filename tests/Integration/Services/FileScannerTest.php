@@ -2,6 +2,7 @@
 
 namespace Tests\Integration\Services;
 
+use App\Helpers\Ulid;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Setting;
@@ -9,7 +10,6 @@ use App\Models\Song;
 use App\Services\Scanner\FileScanner;
 use App\Values\ScanConfiguration;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -180,7 +180,7 @@ class FileScannerTest extends TestCase
     #[Test]
     public function ignoreLrcFileIfEmbeddedLyricsAvailable(): void
     {
-        $base = sys_get_temp_dir() . '/' . Str::uuid();
+        $base = sys_get_temp_dir() . '/' . Ulid::generate();
         $mediaFile = $base . '.mp3';
         $lrcFile = $base . '.lrc';
         File::copy(test_path('songs/full.mp3'), $mediaFile);
@@ -192,7 +192,7 @@ class FileScannerTest extends TestCase
     #[Test]
     public function readLrcFileIfEmbeddedLyricsNotAvailable(): void
     {
-        $base = sys_get_temp_dir() . '/' . Str::uuid();
+        $base = sys_get_temp_dir() . '/' . Ulid::generate();
         $mediaFile = $base . '.mp3';
         $lrcFile = $base . '.lrc';
         File::copy(test_path('songs/blank.mp3'), $mediaFile);

@@ -35,15 +35,13 @@ final class EpisodePlayable implements Arrayable, Jsonable
 
     private static function createForEpisode(Episode $episode): self
     {
-        $dir = sys_get_temp_dir() . '/koel-episodes';
-        $file = sprintf('%s/%s.mp3', $dir, $episode->id);
+        $file = artifact_path("episodes/{$episode->id}.mp3");
 
         if (!File::exists($file)) {
-            File::ensureDirectoryExists($dir);
             Http::sink($file)->get($episode->path)->throw();
         }
 
-        $playable = new self($file, md5_file($file));
+        $playable = new self($file, File::hash($file));
         Cache::forever("episode-playable.{$episode->id}", $playable);
 
         return $playable;

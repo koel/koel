@@ -6,6 +6,7 @@ use App\Facades\License;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Str;
 use Webmozart\Assert\Assert;
 
 /**
@@ -41,7 +42,7 @@ class SongBuilder extends Builder
     public function inDirectory(string $path): self
     {
         // Make sure the path ends with a directory separator.
-        $path = rtrim(trim($path), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        $path = Str::finish(trim($path), DIRECTORY_SEPARATOR);
 
         return $this->where('path', 'LIKE', "$path%");
     }

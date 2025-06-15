@@ -33,13 +33,19 @@ class LocalTranscodingStrategyTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create(['path' => '/path/to/song.flac']);
 
-        $destination = sprintf("%s/koel-transcodes/128/$ulid.m4a", sys_get_temp_dir());
+        $destination = artifact_path("transcodes/128/$ulid.m4a", ensureDirectoryExists: false);
 
         $this->transcoder->shouldReceive('transcode')
             ->with('/path/to/song.flac', $destination, 128)
             ->once();
 
-        File::shouldReceive('hash')->with($destination)->andReturn('mocked-checksum');
+        File::shouldReceive('hash')
+            ->with($destination)
+            ->andReturn('mocked-checksum');
+
+        File::shouldReceive('ensureDirectoryExists')
+            ->with(dirname($destination))
+            ->once();
 
         $transcodedPath = $this->strategy->getTranscodeLocation($song, 128);
 
@@ -65,8 +71,13 @@ class LocalTranscodingStrategyTest extends TestCase
             'hash' => 'mocked-checksum',
         ]);
 
-        File::shouldReceive('isReadable')->with('/path/to/transcode.m4a')->andReturn(true);
-        File::shouldReceive('hash')->with('/path/to/transcode.m4a')->andReturn('mocked-checksum');
+        File::shouldReceive('isReadable')
+            ->with('/path/to/transcode.m4a')
+            ->andReturn(true);
+
+        File::shouldReceive('hash')
+            ->with('/path/to/transcode.m4a')
+            ->andReturn('mocked-checksum');
 
         $transcodedPath = $this->strategy->getTranscodeLocation($transcode->song, $transcode->bit_rate);
 
@@ -86,12 +97,22 @@ class LocalTranscodingStrategyTest extends TestCase
             'hash' => 'mocked-checksum',
         ]);
 
-        File::shouldReceive('isReadable')->with('/path/to/transcode.m4a')->andReturn(false);
-        File::shouldReceive('delete')->with('/path/to/transcode.m4a');
+        $destination = artifact_path("transcodes/128/$ulid.m4a", ensureDirectoryExists: false);
 
+        File::shouldReceive('isReadable')
+            ->with('/path/to/transcode.m4a')
+            ->andReturn(false);
 
-        $destination = sprintf("%s/koel-transcodes/128/$ulid.m4a", sys_get_temp_dir());
-        File::shouldReceive('hash')->with($destination)->andReturn('mocked-checksum');
+        File::shouldReceive('delete')
+            ->with('/path/to/transcode.m4a');
+
+        File::shouldReceive('hash')
+            ->with($destination)
+            ->andReturn('mocked-checksum');
+
+        File::shouldReceive('ensureDirectoryExists')
+            ->with(dirname($destination))
+            ->once();
 
         $this->transcoder->shouldReceive('transcode')
             ->with('/path/to/song.flac', $destination, 128)

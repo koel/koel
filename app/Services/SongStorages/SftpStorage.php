@@ -4,6 +4,7 @@ namespace App\Services\SongStorages;
 
 use App\Enums\SongStorageType;
 use App\Exceptions\SongUploadFailedException;
+use App\Helpers\Ulid;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\Scanner\FileScanner;
@@ -14,8 +15,6 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-use Symfony\Component\Uid\Ulid;
 use Throwable;
 
 class SftpStorage extends SongStorage
@@ -62,10 +61,7 @@ class SftpStorage extends SongStorage
 
     public function copyToLocal(string $path): string
     {
-        $tmpDir = sys_get_temp_dir() . '/koel_tmp';
-        File::ensureDirectoryExists($tmpDir);
-
-        $localPath = $tmpDir . '/' . basename($path);
+        $localPath = artifact_path(sprintf('tmp/%s_%s', Ulid::generate(), basename($path)));
 
         File::put($localPath, $this->disk->get($path));
 
@@ -80,7 +76,7 @@ class SftpStorage extends SongStorage
 
     private function generateRemotePath(string $filename, User $uploader): string
     {
-        return sprintf('%s__%s__%s', $uploader->id, Str::lower(Ulid::generate()), $filename);
+        return sprintf('%s__%s__%s', $uploader->id, Ulid::generate(), $filename);
     }
 
     public function deleteFileUnderPath(string $path, bool|Closure $backup): void

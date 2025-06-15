@@ -31,7 +31,8 @@ class SfpTranscodingStrategyTest extends TestCase
     public function getTranscodeLocation(): void
     {
         $ulid = Ulid::freeze();
-        $destination = sys_get_temp_dir() . "/koel-transcodes/128/$ulid.m4a";
+
+        $destination = artifact_path("transcodes/128/$ulid.m4a", ensureDirectoryExists: false);
 
         /** @var Song $song */
         $song = Song::factory()->create([
@@ -41,6 +42,10 @@ class SfpTranscodingStrategyTest extends TestCase
 
         $storage = $this->mock(SftpStorage::class);
         $storage->shouldReceive('copyToLocal')->with('remote/path/to/song.flac')->andReturn('/tmp/song.flac');
+
+        File::shouldReceive('ensureDirectoryExists')
+            ->with(dirname($destination))
+            ->once();
 
         $this->transcoder
             ->shouldReceive('transcode')
@@ -77,8 +82,13 @@ class SfpTranscodingStrategyTest extends TestCase
             'hash' => 'mocked-checksum',
         ]);
 
-        File::shouldReceive('isReadable')->with('/path/to/transcode.m4a')->andReturn(true);
-        File::shouldReceive('hash')->with('/path/to/transcode.m4a')->andReturn('mocked-checksum');
+        File::shouldReceive('isReadable')
+            ->with('/path/to/transcode.m4a')
+            ->andReturn(true);
+
+        File::shouldReceive('hash')
+            ->with('/path/to/transcode.m4a')
+            ->andReturn('mocked-checksum');
 
         $transcodedPath = $this->strategy->getTranscodeLocation($transcode->song, $transcode->bit_rate);
 
@@ -107,7 +117,11 @@ class SfpTranscodingStrategyTest extends TestCase
         $storage = $this->mock(SftpStorage::class);
         $storage->shouldReceive('copyToLocal')->with('remote/path/to/song.flac')->andReturn('/tmp/song.flac');
 
-        $destination = sys_get_temp_dir() . "/koel-transcodes/128/$ulid.m4a";
+        $destination = artifact_path("transcodes/128/$ulid.m4a", ensureDirectoryExists: false);
+
+        File::shouldReceive('ensureDirectoryExists')
+            ->with(dirname($destination))
+            ->once();
 
         $this->transcoder
             ->shouldReceive('transcode')
