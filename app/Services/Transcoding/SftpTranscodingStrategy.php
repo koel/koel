@@ -29,7 +29,7 @@ class SftpTranscodingStrategy extends TranscodingStrategy
 
         // (Re)Transcode the song to the specified bit rate and either create a new transcode record or
         // update the existing one.
-        $destination = "$this->rootDirectory/$bitRate/" . Ulid::generate() . '.m4a';
+        $destination = artifact_path(sprintf('transcodes/%d/%s.m4a', $bitRate, Ulid::generate()));
         $this->transcoder->transcode($tmpSource, $destination, $bitRate);
         $this->createOrUpdateTranscode($song, $destination, $bitRate, File::hash($destination));
 

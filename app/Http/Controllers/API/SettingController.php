@@ -23,7 +23,7 @@ class SettingController extends Controller
     {
         $this->authorize('admin', User::class);
 
-        Setting::set('media_path', rtrim(trim($request->media_path), '/'));
+        Setting::set('media_path', rtrim(trim($request->media_path), DIRECTORY_SEPARATOR));
 
         $this->mediaSyncService->scan(ScanConfiguration::make(owner: $this->user, makePublic: true));
 
