@@ -150,6 +150,7 @@ class SongRepository extends Repository
     {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
             ->accessible()
+            ->storedLocally()
             ->withMeta()
             ->when($folder, static fn (SongBuilder $query) => $query->where('folder_id', $folder->id)) // @phpstan-ignore-line
             ->when(!$folder, static fn (SongBuilder $query) => $query->whereNull('folder_id'))

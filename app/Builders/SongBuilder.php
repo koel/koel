@@ -143,8 +143,8 @@ class SongBuilder extends Builder
 
     public function storedLocally(): self
     {
-        return $this->where(static fn (self $query) => $query->whereNull('storage')->orWhere('storage', ''))
-                ->whereNull('podcast_id');
+        return $this->where(static fn (self $query) => $query->whereNull('songs.storage')->orWhere('songs.storage', ''))
+                ->whereNull('songs.podcast_id');
     }
 
     public function forUser(User $user): self
