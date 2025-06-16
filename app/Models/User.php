@@ -32,14 +32,16 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property Collection<array-key, Playlist> $playlists
  * @property Collection<array-key, PlaylistFolder> $playlist_folders
  * @property Collection<array-key, Podcast> $podcasts
+ * @property Organization $organization
  * @property PersonalAccessToken $currentAccessToken
  * @property UserPreferences $preferences
  * @property bool $is_admin
  * @property int $id
- * @property string $public_id
  * @property string $email
  * @property string $name
+ * @property string $organization_id
  * @property string $password
+ * @property string $public_id
  * @property-read ?string $sso_id
  * @property-read ?string $sso_provider
  * @property-read bool $connected_to_lastfm Whether the user is connected to Last.fm
@@ -93,6 +95,11 @@ class User extends Authenticatable implements AuditableContract
                     'password' => Hash::make(self::FIRST_ADMIN_PASSWORD),
                 ]);
             });
+    }
+
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class);
     }
 
     public function invitedBy(): BelongsTo

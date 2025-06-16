@@ -2,21 +2,20 @@
 
 namespace App\Http\Controllers\SSO;
 
-use App\Facades\License;
+use App\Attributes\RequiresPlus;
 use App\Http\Controllers\Controller;
 use App\Services\AuthenticationService;
 use App\Services\UserService;
-use App\Values\SSOUser;
+use App\Values\SsoUser;
 use Laravel\Socialite\Facades\Socialite;
 
+#[RequiresPlus]
 class GoogleCallbackController extends Controller
 {
     public function __invoke(AuthenticationService $auth, UserService $userService)
     {
-        assert(License::isPlus());
-
         $user = Socialite::driver('google')->user();
-        $user = $userService->createOrUpdateUserFromSSO(SSOUser::fromSocialite($user, 'Google'));
+        $user = $userService->createOrUpdateUserFromSso(SsoUser::fromSocialite($user, 'Google'));
 
         return view('sso-callback')->with('token', $auth->logUserIn($user)->toArray());
     }
