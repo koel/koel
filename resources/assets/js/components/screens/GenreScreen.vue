@@ -3,7 +3,7 @@
     <template #header>
       <ScreenHeader v-if="genre" :layout="headerLayout">
         Genre: <span class="text-thin">{{ decodeURIComponent(name!) }}</span>
-        <ControlsToggle v-if="songs.length" v-model="showingControls" />
+        <ControlsToggle v-if="displayedSongs.length" v-model="showingControls" />
 
         <template #thumbnail>
           <ThumbnailStack :thumbnails="thumbnails" />
@@ -66,12 +66,14 @@ import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 
+const songs = ref<Song[]>([])
+
 const {
   SongList,
   ControlsToggle,
   ThumbnailStack,
   headerLayout,
-  songs,
+  songs: displayedSongs,
   songList,
   thumbnails,
   showingControls,
@@ -79,7 +81,7 @@ const {
   onPressEnter,
   playSelected,
   onScrollBreakpoint,
-} = useSongList(ref<Song[]>([]), { type: 'Genre' }, { sortable: true, filterable: false })
+} = useSongList(songs, { type: 'Genre' }, { sortable: true, filterable: false })
 
 const { SongListControls, config } = useSongListControls('Genre')
 
@@ -106,7 +108,7 @@ const fetch = async () => {
   loading.value = true
 
   try {
-    let fetched: { songs: Playable[], nextPage: number | null }
+    let fetched: { songs: Song[], nextPage: number | null }
 
     [genre.value, fetched] = await Promise.all([
       genreStore.fetchOne(name.value!),
