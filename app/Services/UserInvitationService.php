@@ -42,7 +42,8 @@ class UserInvitationService
 
     private function inviteOne(string $email, bool $isAdmin, User $invitor): User
     {
-        $invitee = User::query()->create([
+        /** @var User $invitee */
+        $invitee = $invitor->organization->users()->create([
             'name' => '',
             'email' => $email,
             'password' => '',

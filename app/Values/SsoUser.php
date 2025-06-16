@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Laravel\Socialite\Contracts\User as SocialiteUser;
 use Webmozart\Assert\Assert;
 
-final class SSOUser
+final class SsoUser
 {
     private function __construct(
         public string $provider,

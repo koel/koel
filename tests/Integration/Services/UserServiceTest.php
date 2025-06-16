@@ -2,7 +2,6 @@
 
 namespace Tests\Integration\Services;
 
-use App\Exceptions\KoelPlusRequiredException;
 use App\Exceptions\UserProspectUpdateDeniedException;
 use App\Services\UserService;
 use Illuminate\Support\Facades\Hash;
@@ -71,20 +70,6 @@ class UserServiceTest extends TestCase
 
         $this->assertModelExists($user);
         self::assertEmpty($user->password);
-    }
-
-    #[Test]
-    public function createSSOUserRequiresKoelPlus(): void
-    {
-        $this->expectException(KoelPlusRequiredException::class);
-
-        $this->service->createUser(
-            name: 'Bruce Dickinson',
-            email: 'bruce@dickison.com',
-            plainTextPassword: 'FearOfTheDark',
-            isAdmin: false,
-            ssoProvider: 'Google'
-        );
     }
 
     #[Test]

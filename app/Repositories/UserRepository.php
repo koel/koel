@@ -5,7 +5,7 @@
 namespace App\Repositories;
 
 use App\Models\User;
-use App\Values\SSOUser;
+use App\Values\SsoUser;
 
 /**
  * @extends Repository<User>
@@ -22,7 +22,7 @@ class UserRepository extends Repository
         return User::query()->firstWhere('email', $email);
     }
 
-    public function findOneBySSO(SSOUser $ssoUser): ?User
+    public function findOneBySso(SsoUser $ssoUser): ?User
     {
         // we prioritize the SSO ID over the email address, but still resort to the latter
         return User::query()->firstWhere([

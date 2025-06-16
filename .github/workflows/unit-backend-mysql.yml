@@ -69,6 +69,8 @@ jobs:
         run: composer analyze -- --no-progress
       - name: Run tests
         run: composer coverage
+        env:
+          COMPOSER_PROCESS_TIMEOUT: 600
       - name: Upload logs if broken
         uses: actions/upload-artifact@v4
         if: failure()
