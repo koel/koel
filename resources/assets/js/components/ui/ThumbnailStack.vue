@@ -16,20 +16,36 @@
 
 <script lang="ts" setup>
 import { take } from 'lodash'
-import { computed, toRefs } from 'vue'
+import { computed, ref, toRefs, watch } from 'vue'
 import defaultCover from '@/../img/covers/default.svg'
 
 const props = defineProps<{ thumbnails: string[] }>()
-
-const defaultBackgroundImage = `url(${defaultCover})`
-
 const { thumbnails } = toRefs(props)
 
-const displayedThumbnails = computed(() => {
-  return thumbnails.value.length === 0
-    ? [defaultCover]
-    : (thumbnails.value.length < 4 ? [thumbnails.value[0]] : take(thumbnails.value, 4)).map(url => url || defaultCover)
-})
+const defaultBackgroundImage = `url(${defaultCover})`
+const displayedThumbnails = ref<string[]>([])
+
+/**
+ * If the thumbnail stack is "completed" (all 4 thumbnails are present and not the default cover).
+ * This is to avoid re-rendering the component whenever the thumbnail list changes.
+ */
+const stackCompleted = ref(false)
+
+watch(thumbnails, () => {
+  if (stackCompleted.value) {
+    return
+  }
+
+  if (thumbnails.value.length === 0) {
+    displayedThumbnails.value = [defaultCover]
+  } else {
+    displayedThumbnails.value = take(thumbnails.value, thumbnails.value.length < 4 ? 1 : 4)
+      .map(url => url || defaultCover)
+  }
+
+  stackCompleted.value = displayedThumbnails.value.length === 4
+  && displayedThumbnails.value.every(thumbnail => thumbnail !== defaultCover)
+}, { immediate: true })
 
 const layout = computed<'single' | 'tiles'>(() => displayedThumbnails.value.length < 4 ? 'single' : 'tiles')
 </script>

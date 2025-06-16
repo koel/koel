@@ -260,7 +260,7 @@ export const songStore = {
       `genres/${name}/songs?${new URLSearchParams(params).toString()}`,
     )
 
-    const songs = this.syncWithVault(resource.data)
+    const songs = this.syncWithVault(resource.data) as Song[]
 
     return {
       songs,
