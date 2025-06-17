@@ -21,8 +21,13 @@ your media files. Refer to [Storage Support](../plus/cloud-storage-support) for 
 
 ## Supported Audio Formats
 
-As of current, these audio formats are supported: `.mp3`, `.ogg`, `.aac`, `.m4a`, `.opus`, `.flac`, and `.aiff` (experimental).
-Do note that, to support transcoding FLAC and AIFF files, you'll need proper [setup and configuration](streaming.md#transcoding).
+Koel supports a vast range of audio formats, both lossy and lossless. Under the hood, it uses
+[getID3](https://www.getid3.org/) and as such, it can read metadata from most audio formats supported by the library,
+including but not limited to MP3, Ogg Vorbis, AAC, FLAC, AIFF, Monkey's Audio, WavPack, etc.
+
+Do note that, to play audio formats that are not
+[natively supported by modern browsers](https://caniuse.com/?search=audio%20format), you'll need proper
+[setup and configuration](streaming.md#transcoding).
 
 ## Scan via the Web interface
 
@@ -167,7 +172,7 @@ all media files hosted on S3.
 
 ### Supports and Requirements
 
-As of current, only `mp3`, `ogg`, `m4a`, and `flac` files are supported.
+Only `mp3`, `ogg`, `m4a`, and `flac` files are supported.
 
 ### Step-by-Step Installation
 

@@ -65,6 +65,7 @@ class StreamerTest extends TestCase
         $song = Song::factory()->create([
             'storage' => SongStorageType::LOCAL,
             'path' => '/tmp/test.flac',
+            'mime_type' => 'audio/flac',
         ]);
 
         $streamer = new Streamer($song, null);
@@ -88,20 +89,21 @@ class StreamerTest extends TestCase
     #[Test]
     public function useTranscodingAdapterIfSongMimeTypeRequiresTranscoding(): void
     {
-        $backupConfig = config('koel.streaming.transcode_required_formats');
-        config(['koel.streaming.transcode_required_formats' => ['aiff']]);
+        $backupConfig = config('koel.streaming.transcode_required_mime_types');
+        config(['koel.streaming.transcode_required_mime_types' => ['audio/aif']]);
 
         /** @var Song $song */
         $song = Song::factory()->create([
             'storage' => SongStorageType::LOCAL,
             'path' => '/tmp/test.aiff',
+            'mime_type' => 'audio/aif',
         ]);
 
         $streamer = new Streamer($song, null);
 
         self::assertInstanceOf(TranscodingStreamerAdapter::class, $streamer->getAdapter());
 
-        config(['koel.streaming.transcode_required_formats' => $backupConfig]);
+        config(['koel.streaming.transcode_required_mime_types' => $backupConfig]);
     }
 
     /** @return array<mixed> */

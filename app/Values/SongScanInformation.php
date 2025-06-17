@@ -6,6 +6,7 @@ use App\Models\Album;
 use App\Models\Artist;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 final class SongScanInformation implements Arrayable
 {
@@ -23,6 +24,7 @@ final class SongScanInformation implements Arrayable
         public ?array $cover,
         public ?string $path,
         public ?int $mTime,
+        public ?string $mimeType,
     ) {
     }
 
@@ -70,7 +72,8 @@ final class SongScanInformation implements Arrayable
             length: (float) Arr::get($info, 'playtime_seconds'),
             cover: $cover,
             path: $path,
-            mTime: get_mtime($path)
+            mTime: get_mtime($path),
+            mimeType: Str::lower(Arr::get($info, 'mime_type')) ?: 'audio/mpeg',
         );
     }
 
@@ -104,6 +107,7 @@ final class SongScanInformation implements Arrayable
             'cover' => $this->cover,
             'path' => $this->path,
             'mtime' => $this->mTime,
+            'mime_type' => $this->mimeType,
         ];
     }
 }

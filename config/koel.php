@@ -50,8 +50,77 @@ return [
         'method' => env('STREAMING_METHOD'),
         'ffmpeg_path' => env('FFMPEG_PATH'),
         'transcode_flac' => env('TRANSCODE_FLAC', true),
-        'supported_formats' => ['mp3', 'wav', 'ogg', 'm4a', 'flac', 'opus', 'aiff', 'aif'],
-        'transcode_required_formats' => ['aiff', 'aif'],
+        'supported_mime_types' => [
+            // Lossy formats
+            'audio/mpeg',            // MP3
+            'audio/mp4',             // AAC, M4A (MP4 audio)
+            'audio/aac',             // AAC
+            'audio/ogg',             // Ogg (Vorbis, Opus, Speex, FLAC)
+            'audio/vorbis',          // Ogg Vorbis
+            'audio/opus',            // Opus
+            'audio/flac',            // FLAC
+            'audio/x-flac',          // FLAC (alternate)
+            'audio/amr',             // AMR
+            'audio/ac3',             // Dolby AC-3
+            'audio/dts',             // DTS
+            'audio/vnd.rn-realaudio', // RealAudio
+            'audio/x-ms-wma',        // Windows Media Audio (WMA)
+            'audio/basic',           // µ-law
+
+            // Lossless and other audio formats
+            'audio/vnd.wave',        // WAV
+            'audio/x-wav',           // WAV (alternate)
+            'audio/aiff',            // AIFF
+            'audio/x-aiff',          // AIFF (alternate)
+            'audio/x-m4a',           // Apple MPEG-4 Audio
+            'audio/x-matroska',      // Matroska Audio
+            'audio/webm',            // WebM Audio
+            'audio/x-ape',           // Monkey’s Audio (APE)
+            'audio/tta',             // True Audio (TTA)
+            'audio/x-wavpack',       // WavPack
+            'audio/x-optimfrog',     // OptimFROG
+            'audio/x-shorten',       // Shorten
+            'audio/x-lpac',          // LPAC
+            'audio/x-dsd',           // DSD (DSF)
+            'audio/x-speex',         // Speex
+            'audio/x-dss',           // DSS (Digital Speech Standard)
+            'audio/x-audible',       // Audible
+            'audio/x-twinvq',        // TwinVQ
+            'audio/vqf',             // TwinVQ (alternate)
+            'audio/x-musepack',      // Musepack
+            'audio/x-monkeys-audio',// APE (alternate)
+            'audio/x-voc',           // Creative VOC
+        ],
+        'transcode_required_mime_types' => [
+            'audio/vorbis',
+            'audio/x-flac',
+            'audio/amr',
+            'audio/ac3',
+            'audio/dts',
+            'audio/vnd.rn-realaudio',
+            'audio/x-ms-wma',
+            'audio/basic',
+            'audio/vnd.wave',        // not always handled correctly
+            'audio/aiff',
+            'audio/x-aiff',
+            'audio/x-m4a',           // only if it contains ALAC (not AAC)
+            'audio/x-matroska',
+            'audio/x-ape',
+            'audio/tta',
+            'audio/x-wavpack',
+            'audio/x-optimfrog',
+            'audio/x-shorten',
+            'audio/x-lpac',
+            'audio/x-dsd',
+            'audio/x-speex',
+            'audio/x-dss',
+            'audio/x-audible',
+            'audio/x-twinvq',
+            'audio/vqf',
+            'audio/x-musepack',
+            'audio/x-monkeys-audio',
+            'audio/x-voc',
+        ],
     ],
 
     'services' => [

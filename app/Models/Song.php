@@ -46,6 +46,7 @@ use Webmozart\Assert\Assert;
  * @property int $album_id
  * @property int|null $year
  * @property string $genre
+ * @property ?string $mime_type The MIME type of the song file, if available
  * @property string $id
  * @property int $artist_id
  * @property int $mtime

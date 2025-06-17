@@ -14,18 +14,22 @@ use App\Values\SmartPlaylistRuleGroup as RuleGroup;
 use App\Values\SmartPlaylistSqlElements as SqlElements;
 use Illuminate\Database\Eloquent\Collection;
 
+use function Functional\memoize;
+
 class SmartPlaylistService
 {
     /** @return Collection|array<array-key, Song> */
     public function getSongs(Playlist $playlist, ?User $user = null): Collection
     {
+        $isPlus = memoize(static fn () => License::isPlus());
+
         throw_unless($playlist->is_smart, NonSmartPlaylistException::create($playlist));
 
         $user ??= $playlist->owner;
 
         $query = Song::query(type: PlayableType::SONG, user: $user)
             ->withMeta()
-            ->when(License::isPlus(), static fn (SongBuilder $query) => $query->accessible())
+            ->when($isPlus, static fn (SongBuilder $query) => $query->accessible())
             ->when(
                 $playlist->own_songs_only && License::isPlus(),
                 static fn (SongBuilder $query) => $query->where('songs.owner_id', $user->id)
