@@ -5,7 +5,6 @@ use App\Models\Song;
 use FileEye\MimeMap\Extension;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 return new class extends Migration
@@ -18,9 +17,20 @@ return new class extends Migration
             $table->string('mime_type')->nullable();
         });
 
-        Song::query(PlayableType::SONG)->get()->each(static function (Song $song): void {
-            $song->mime_type = self::guessMimeType($song);
-            $song->save();
+        Song::query(PlayableType::SONG)->chunk(100, static function ($songs): void {
+            $cases = '';
+            $ids = [];
+
+            /** @var Song $album */
+            foreach ($songs as $song) {
+                $ids[] = $song->id;
+                $mimeType = self::guessMimeType($song);
+                $cases .= "WHEN '$song->id' THEN '$mimeType' ";
+            }
+
+            DB::table('songs')
+                ->whereIn('id', $ids)
+                ->update(['mime_type' => DB::raw("CASE id $cases END")]);
         });
     }
 
