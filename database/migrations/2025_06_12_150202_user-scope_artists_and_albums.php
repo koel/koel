@@ -35,22 +35,44 @@ return new class extends Migration {
 
         Artist::query()
             ->orderBy('id')
-            ->get()
-            ->each(static function (Artist $artist) use ($firstAdmin): void {
-                $artist->update([
-                    'user_id' => $firstAdmin->id,
-                    'public_id' => Ulid::generate(),
-                ]);
+            ->chunkById(200, static function ($artists) use ($firstAdmin): void {
+                $cases = '';
+                $ids = [];
+
+                /** @var Artist $artist */
+                foreach ($artists as $artist) {
+                    $ulid = Ulid::generate();
+                    $cases .= "WHEN $artist->id THEN '$ulid' ";
+                    $ids[] = $artist->id;
+                }
+
+                DB::table('artists')
+                    ->whereIn('id', $ids)
+                    ->update([
+                        'user_id' => $firstAdmin->id,
+                        'public_id' => DB::raw("CASE id $cases END"),
+                    ]);
             });
 
         Album::query()
             ->orderBy('id')
-            ->get()
-            ->each(static function (Album $album) use ($firstAdmin): void {
-                $album->update([
-                    'user_id' => $firstAdmin->id,
-                    'public_id' => Ulid::generate(),
-                ]);
+            ->chunkById(200, static function ($albums) use ($firstAdmin): void {
+                $cases = '';
+                $ids = [];
+
+                /** @var Album $album */
+                foreach ($albums as $album) {
+                    $ulid = Ulid::generate();
+                    $cases .= "WHEN $album->id THEN '$ulid' ";
+                    $ids[] = $album->id;
+                }
+
+                DB::table('albums')
+                    ->whereIn('id', $ids)
+                    ->update([
+                        'user_id' => $firstAdmin->id,
+                        'public_id' => DB::raw("CASE id $cases END"),
+                    ]);
             });
 
         // For the CE, we stop here. All artists and albums are owned by the default user and shared across all users.
@@ -60,31 +82,75 @@ return new class extends Migration {
 
         // For Koel Plus, we need to update songs that are not owned by the default user to
         // have their corresponding artist and album owned by the same user.
-        $songsNotOwnedByDefaultUser = Song::query()
+        Song::query()
             ->with('artist', 'album')
             ->whereNull('podcast_id')
-            ->where('owner_id', '!=', $firstAdmin)
-            ->get();
+            ->where('owner_id', '!=', $firstAdmin->id)
+            ->chunk(100, static function ($songsChunk) use (&$artistCache, &$albumCache): void {
+                if (count($songsChunk) === 0) {
+                    return;
+                }
 
-        foreach ($songsNotOwnedByDefaultUser as $song) {
-            $artist = Artist::query()->firstOrCreate([
-                'name' => $song->artist->name,
-                'user_id' => $song->owner_id,
-            ], [
-                'image' => $song->artist->image,
-            ]);
+                $artistCases = [];
+                $albumCases = [];
+                $songIds = [];
 
-            $album = Album::query()->firstOrCreate([
-                'name' => $song->album->name,
-                'artist_id' => $artist->id,
-                'user_id' => $song->owner_id,
-            ], [
-                'cover' => $song->album->cover,
-            ]);
+                /** @var Song $song */
+                foreach ($songsChunk as $song) {
+                    $artistKey = "{$song->artist->name}|{$song->owner_id}";
 
-            $song->artist_id = $artist->id;
-            $song->album_id = $album->id;
-            $song->save();
-        }
+                    $artistId = $artistCache[$artistKey]
+                        ?? tap(Artist::query()->create([
+                            'name' => $song->artist->name,
+                            'user_id' => $song->owner_id,
+                            'image' => $song->artist->image ?? '',
+                        ]), static function ($artist) use (&$artistCache, $artistKey): void {
+                            $artistCache[$artistKey] = $artist->id;
+                        })->id;
+
+                    $albumKey = "{$song->album->name}|{$artistId}|{$song->owner_id}";
+
+                    $albumId = $albumCache[$albumKey]
+                        ?? tap(Album::query()->create([
+                            'name' => $song->album->name,
+                            'artist_id' => $artistId,
+                            'user_id' => $song->owner_id,
+                            'cover' => $song->album->cover ?? '',
+                        ]), static function ($album) use (&$albumCache, $albumKey): void {
+                            $albumCache[$albumKey] = $album->id;
+                        })->id;
+
+                    $songIds[] = $song->id;
+
+                    $artistCases[$song->id] = $artistId;
+                    $albumCases[$song->id] = $albumId;
+                }
+
+                // Build CASE statements for artist_id
+                $artistCaseSql = 'CASE id ';
+
+                foreach ($artistCases as $songId => $artistId) {
+                    $artistCaseSql .= "WHEN '{$songId}' THEN {$artistId} ";
+                }
+
+                $artistCaseSql .= 'ELSE artist_id END';
+
+                // Build CASE statements for album_id
+                $albumCaseSql = 'CASE id ';
+
+                foreach ($albumCases as $songId => $albumId) {
+                    $albumCaseSql .= "WHEN '{$songId}' THEN {$albumId} ";
+                }
+
+                $albumCaseSql .= 'ELSE album_id END';
+
+                // Run single batch update query
+                DB::table('songs')
+                    ->whereIn('id', $songIds)
+                    ->update([
+                        'artist_id' => DB::raw($artistCaseSql),
+                        'album_id' => DB::raw($albumCaseSql),
+                    ]);
+            });
     }
 };
