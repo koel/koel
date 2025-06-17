@@ -7,7 +7,6 @@ use App\Services\Streamer\Adapters\LocalStreamerAdapter;
 use App\Services\Streamer\Adapters\TranscodingStreamerAdapter;
 use App\Services\TokenManager;
 use App\Values\CompositeToken;
-use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -62,12 +61,10 @@ class SongPlayTest extends TestCase
         $token = app(TokenManager::class)->createCompositeToken($user);
 
         /** @var Song $song */
-        $song = Song::factory()->create(['path' => '/tmp/blank.flac']);
-
-        File::partialMock()
-            ->shouldReceive('mimeType')
-            ->with($song->path)
-            ->andReturn('audio/flac');
+        $song = Song::factory()->create([
+            'path' => '/tmp/blank.flac',
+            'mime_type' => 'audio/flac',
+        ]);
 
         $this->mock(TranscodingStreamerAdapter::class)
             ->shouldReceive('stream')

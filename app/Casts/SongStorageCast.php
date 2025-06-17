@@ -11,6 +11,10 @@ class SongStorageCast implements CastsAttributes
     /** @param string|null $value */
     public function get(Model $model, string $key, mixed $value, array $attributes): SongStorageType
     {
+        if (!$value) {
+            return SongStorageType::LOCAL;
+        }
+
         return SongStorageType::tryFrom($value) ?? SongStorageType::LOCAL;
     }
 

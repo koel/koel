@@ -3,23 +3,21 @@
 namespace App\Rules;
 
 use Closure;
-use getID3;
 use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Support\Arr;
-use Webmozart\Assert\Assert;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class SupportedAudioFile implements ValidationRule
 {
+    /** @param UploadedFile $value */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $passes = rescue(static function () use ($value) {
-            Assert::oneOf(
-                Arr::get((new getID3())->analyze($value->getRealPath()), 'fileformat'),
-                config('koel.streaming.supported_formats')
-            );
-
-            return true;
-        }) ?? false;
+        $passes = in_array(
+            Str::lower(File::mimeType($value->getRealPath())),
+            config('koel.streaming.supported_mime_types'),
+            true,
+        );
 
         if (!$passes) {
             $fail('Unsupported audio file');

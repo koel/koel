@@ -25,6 +25,7 @@ class SongFactory extends Factory
             'is_public' => true,
             'owner_id' => static fn (array $attributes) => Album::query()->find($attributes['album_id'])->user_id, // @phpstan-ignore-line
             'mtime' => time(),
+            'mime_type' => 'audio/mpeg',
         ];
     }
 
@@ -51,6 +52,8 @@ class SongFactory extends Factory
             'lyrics' => '',
             'track' => null,
             'disc' => 0,
+            'year' => null,
+            'mime_type' => null,
         ]);
     }
 }

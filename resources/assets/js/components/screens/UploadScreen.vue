@@ -69,7 +69,7 @@ import { faRotateRight, faTrashCan, faUpload, faWarning } from '@fortawesome/fre
 import { computed, defineAsyncComponent, ref, toRef } from 'vue'
 
 import { isDirectoryReadingSupported as canDropFolders } from '@/utils/supports'
-import { acceptedMediaTypes } from '@/utils/mediaHelper'
+import { acceptedExtensions } from '@/utils/mediaHelper'
 import { uploadService } from '@/services/uploadService'
 import { useUpload } from '@/composables/useUpload'
 
@@ -81,7 +81,7 @@ import ScreenBase from '@/components/screens/ScreenBase.vue'
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 const UploadItem = defineAsyncComponent(() => import('@/components/ui/upload/UploadItem.vue'))
 
-const acceptAttribute = acceptedMediaTypes.join(',')
+const acceptAttribute = acceptedExtensions.map(ext => `.${ext}`).join(',')
 
 const { allowsUpload, mediaPathSetUp, queueFilesForUpload, handleDropEvent } = useUpload()
 

@@ -25,7 +25,7 @@ export const useUpload = () => {
 
   const queueFilesForUpload = (files: Array<File>) => {
     const uploadCandidates = files
-      .filter(async file => await acceptsFile(file))
+      .filter(file => acceptsFile(file))
       .map((file): UploadFile => ({
         file,
         id: `${file.name}-${file.size}`, // for simplicity, a file's identity is determined by its name and size

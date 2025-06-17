@@ -13,8 +13,6 @@ use App\Services\Streamer\Adapters\SftpStreamerAdapter;
 use App\Services\Streamer\Adapters\StreamerAdapter;
 use App\Services\Streamer\Adapters\TranscodingStreamerAdapter;
 use App\Values\RequestedStreamingConfig;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 
 class Streamer
 {
@@ -72,13 +70,14 @@ class Streamer
             return false;
         }
 
-        $extension = Str::lower(File::extension($song->storage_metadata->getPath()));
-
-        if ($extension === 'flac' && config('koel.streaming.transcode_flac')) {
+        if (
+            in_array($song->mime_type, ['audio/flac', 'audio/x-flac'], true)
+            && config('koel.streaming.transcode_flac')
+        ) {
             return true;
         }
 
-        return in_array($extension, config('koel.streaming.transcode_required_formats', []), true);
+        return in_array($song->mime_type, config('koel.streaming.transcode_required_mime_types', []), true);
     }
 
     private static function hasValidFfmpegInstallation(): bool

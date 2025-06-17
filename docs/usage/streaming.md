@@ -50,8 +50,9 @@ This behavior can be controlled via the `TRANSCODE_FLAC` setting in `.env` file:
 
 ### Forced Transcoding
 
-For audio formats that aren't widely supported by browsers, such as AIFF, Koel will always resort to transcoding. If you
-upload files in such formats, make sure the FFmpeg setup and configuration (see above) are correct.
+For audio formats that aren't [widely supported by browsers](https://caniuse.com/?search=audio%20format),
+such as AIFF, Koel will always resort to transcoding. If you upload files in such formats, make sure the FFmpeg setup
+and configuration (see above) are correct.
 
 ### Transcoding on Mobile
 

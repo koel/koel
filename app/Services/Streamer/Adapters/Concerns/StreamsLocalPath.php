@@ -10,6 +10,7 @@ use DaveRandom\Resume\ResourceServlet;
 use DaveRandom\Resume\SendFileFailureException;
 use DaveRandom\Resume\UnreadableFileException;
 use DaveRandom\Resume\UnsatisfiableRangeException;
+use Illuminate\Support\Facades\File;
 use Symfony\Component\HttpFoundation\Response;
 
 use function DaveRandom\Resume\get_request_header;
@@ -25,7 +26,7 @@ trait StreamsLocalPath
             $rangeHeader = $rangeHeader === 'bytes=0-1' ? 'bytes=0-' : $rangeHeader;
 
             $rangeSet = RangeSet::createFromHeader($rangeHeader);
-            $resource = new FileResource($path, mime_content_type($path));
+            $resource = new FileResource($path, File::mimeType($path));
             (new ResourceServlet($resource))->sendResource($rangeSet);
         } catch (InvalidRangeHeaderException) {
             abort(Response::HTTP_BAD_REQUEST);
