@@ -21,7 +21,7 @@ return new class extends Migration
             $cases = '';
             $ids = [];
 
-            /** @var Song $album */
+            /** @var Song $song */
             foreach ($songs as $song) {
                 $ids[] = $song->id;
                 $mimeType = self::guessMimeType($song);

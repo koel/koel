@@ -7,6 +7,7 @@ use App\Helpers\Ulid;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
 use App\Models\Contracts\PermissionableResource;
 use Carbon\Carbon;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -44,6 +45,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 class Album extends Model implements AuditableContract, PermissionableResource
 {
     use Auditable;
+    /** @use HasFactory<UserFactory> */
     use HasFactory;
     use Searchable;
     use SupportsDeleteWhereValueNotIn;
@@ -70,6 +72,7 @@ class Album extends Model implements AuditableContract, PermissionableResource
 
     public static function query(): AlbumBuilder
     {
+        /** @var AlbumBuilder */
         return parent::query();
     }
 

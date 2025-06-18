@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Jackiedo\DotenvEditor\DotenvEditor;
 use Throwable;
@@ -219,7 +220,7 @@ class InitCommand extends Command
             // In non-interactive mode, we must not endlessly attempt to connect.
             // Doing so will just end up with a huge amount of "failed to connect" logs.
             // We do retry a little, though, just in case there's some kind of temporary failure.
-            if ($this->inNoInteractionMode() && $attempt >= self::NON_INTERACTION_MAX_DATABASE_ATTEMPT_COUNT) {
+            if ($attempt >= self::NON_INTERACTION_MAX_DATABASE_ATTEMPT_COUNT && $this->inNoInteractionMode()) {
                 $this->components->error('Maximum database connection attempts reached. Giving up.');
                 break;
             }
@@ -230,7 +231,7 @@ class InitCommand extends Command
                 // Make sure the config cache is cleared before another attempt.
                 Artisan::call('config:clear', ['--quiet' => true]);
                 DB::reconnect();
-                DB::getDoctrineSchemaManager()->listTables();
+                Schema::getTables();
 
                 break;
             } catch (Throwable $e) {

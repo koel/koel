@@ -84,15 +84,21 @@ class User extends Authenticatable implements AuditableContract
      */
     public static function firstAdmin(): static
     {
+        $defaultOrganization = Organization::default();
+
         return static::query()
-            ->where('is_admin', true)
+            ->where([
+                'is_admin' => true,
+                'organization_id' => $defaultOrganization->id,
+            ])
             ->oldest()
-            ->firstOr(static function (): User {
+            ->firstOr(static function () use ($defaultOrganization): User {
                 return static::query()->create([
                     'is_admin' => true,
                     'email' => self::FIRST_ADMIN_EMAIL,
                     'name' => self::FIRST_ADMIN_NAME,
                     'password' => Hash::make(self::FIRST_ADMIN_PASSWORD),
+                    'organization_id' => $defaultOrganization->id,
                 ]);
             });
     }

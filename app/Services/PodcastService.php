@@ -184,7 +184,7 @@ class PodcastService
 
     public function isPodcastObsolete(Podcast $podcast): bool
     {
-        if ($podcast->last_synced_at->diffInHours(now()) < 12) {
+        if (abs($podcast->last_synced_at->diffInHours(now())) < 12) {
             // If we have recently synchronized the podcast, consider it "fresh"
             return false;
         }

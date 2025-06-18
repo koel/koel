@@ -18,6 +18,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property Collection<array-key, Playlist> $playlists
  * @property int $user_id
  * @property Carbon $created_at
+ * @property ?string $id
  */
 class PlaylistFolder extends Model implements AuditableContract
 {

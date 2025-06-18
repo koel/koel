@@ -51,6 +51,7 @@ class Podcast extends Model
 
     public static function query(): PodcastBuilder
     {
+        /** @var PodcastBuilder */
         return parent::query();
     }
 

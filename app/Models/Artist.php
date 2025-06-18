@@ -64,6 +64,7 @@ class Artist extends Model implements AuditableContract, PermissionableResource
 
     public static function query(): ArtistBuilder
     {
+        /** @var ArtistBuilder */
         return parent::query();
     }
 

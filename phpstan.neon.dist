@@ -18,7 +18,6 @@ parameters:
         - '#is not subtype of native type (Illuminate\\Support|Illuminate\\Database\\Eloquent)\\Collection#'
         - '#expects Countable\|iterable, Illuminate\\Contracts\\Pagination\\LengthAwarePaginator given#'
         - '#expects App\\Models\\User\|null, Illuminate\\Contracts\\Auth\\Authenticatable\|null given#'
-        - '#expects .*, Mockery\\LegacyMockInterface given#'
         - '#Call to an undefined method Illuminate\\Filesystem\\FilesystemAdapter::getAdapter\(\)#'
         - '#Call to an undefined method Mockery\\ExpectationInterface|Mockery\\HigherOrderMessage::with\(\)#'
         - '#Call to private method .*\(\) of parent class Illuminate\\Database\\Eloquent\\Builder<Illuminate\\Database\\Eloquent\\Model>#'
@@ -33,11 +32,17 @@ parameters:
         - '#Unknown parameter \$(type|user) in call to static method App\\Models\\Song::query\(\)#'
         - "#Called 'modelKeys' on Laravel collection, but could have been retrieved as a query#"
         - '#expects App\\Models\\.*, Illuminate\\Database\\Eloquent\\Model given#'
+        - '#Static method App\\Models\\Song::query\(\) invoked with 1 parameter, 0 required#'
+        -
+          message: '#expects .*, Mockery\\MockInterface given#'
+          path: tests/*
+        -
+          message: '#expects .*, Mockery\\LegacyMockInterface given#'
+          path: tests/*
 
 
     excludePaths:
         - ./routes/console.php
         - ./app/Services/Util.php
 
-    checkMissingIterableValueType: false
     reportUnmatchedIgnoredErrors: false

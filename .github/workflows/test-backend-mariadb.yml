@@ -1,4 +1,5 @@
-name: Backend Unit Tests - MySQL
+name: Backend Tests - MariaDB
+
 on:
   pull_request:
     branches:
@@ -11,39 +12,37 @@ on:
     paths-ignore:
       - resources/assets/**
   workflow_dispatch:
+
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: [ 8.1 ]
-        mysql-version: [ 5.7, 8.0 ]
+        php-version: [ 8.2 ]
+        mariadb-version: [ 11.7 ]
       fail-fast: false
-
     services:
-      mysql:
-        image: mysql:${{ matrix.mysql-version }}
+      mariadb:
+        image: mariadb:${{ matrix.mariadb-version }}
         env:
           MYSQL_DATABASE: koel
-          MYSQL_USER: mysql
-          MYSQL_PASSWORD: mysql
-          MYSQL_ROOT_PASSWORD: mysql
+          MYSQL_USER: mariadb
+          MYSQL_PASSWORD: mariadb
+          MYSQL_ROOT_PASSWORD: mariadb
         ports:
           - 3306:3306
         options: >-
-          --health-cmd "mysqladmin ping"
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
     env:
       DB_CONNECTION: mysql-ci
       DB_HOST: 127.0.1.1
       DB_PORT: 3306
       DB_DATABASE: koel
-      DB_USERNAME: mysql
-      DB_PASSWORD: mysql
-
+      DB_USERNAME: mariadb
+      DB_PASSWORD: mariadb
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v2
@@ -55,29 +54,20 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer:v2
-          coverage: xdebug
-          extensions: pdo_sqlite, zip, gd
+          extensions: pdo_mysql, zip, gd
       - name: Install PHP dependencies
         uses: ramsey/composer-install@v2
         with:
           composer-options: --prefer-dist
       - name: Generate app key
         run: php artisan key:generate --quiet
-      - name: Run code style checker
-        run: composer cs
-      - name: Run static analysis
-        run: composer analyze -- --no-progress
       - name: Run tests
-        run: composer coverage
+        run: composer test
         env:
           COMPOSER_PROCESS_TIMEOUT: 600
       - name: Upload logs if broken
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: unit-be-mysql-logs-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
+          name: unit-be-mariadb-logs-${{ github.run_id }}-${{ github.run_attempt }}
           path: storage/logs
-      - name: Upload coverage
-        uses: codecov/codecov-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}

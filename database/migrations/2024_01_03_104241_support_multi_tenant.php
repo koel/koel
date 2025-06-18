@@ -18,7 +18,7 @@ return new class extends Migration {
         Schema::table('songs', static function (Blueprint $table): void {
             $firstAdmin = User::query()->where('is_admin', true)->oldest()->first();
 
-            if ($firstAdmin === null) {
+            if (!$firstAdmin) {
                 return;
             }
 
