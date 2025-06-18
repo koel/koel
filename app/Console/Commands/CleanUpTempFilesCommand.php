@@ -20,7 +20,7 @@ class CleanUpTempFilesCommand extends Command
         $count = 0;
 
         foreach ($files as $file) {
-            if (now()->diffInMinutes(Carbon::createFromTimestamp($file->getMTime())) > $maxAgeMinutes) {
+            if (abs(now()->diffInMinutes(Carbon::createFromTimestamp($file->getMTime()))) > $maxAgeMinutes) {
                 File::delete($file->getPathname());
                 $this->components->info("Deleted {$file->getPathname()}");
                 $count++;

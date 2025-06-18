@@ -13,19 +13,19 @@ class IncreaseStringColumnsLength extends Migration
         });
 
         Schema::table('artists', static function (Blueprint $table): void {
-            $table->string('name', pow(2, 16) - 32)->change();
+            $table->string('name', (2 ** 16) - 32)->change();
         });
 
         Schema::table('albums', static function (Blueprint $table): void {
-            $table->string('name', pow(2, 16) - 32)->change();
+            $table->string('name', (2 ** 16) - 32)->change();
         });
 
         Schema::table('playlists', static function (Blueprint $table): void {
-            $table->string('name', pow(2, 16) - 32)->change();
+            $table->string('name', (2 ** 16) - 32)->change();
         });
 
         Schema::table('songs', static function (Blueprint $table): void {
-            $table->string('title', pow(2, 16) - 32)->change();
+            $table->string('title', (2 ** 16) - 32)->change();
         });
     }
 }

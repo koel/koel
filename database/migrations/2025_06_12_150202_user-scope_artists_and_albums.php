@@ -31,7 +31,12 @@ return new class extends Migration {
         });
 
         // set the default user_id for existing albums and artists to the first admin
-        $firstAdmin = User::firstAdmin();
+        $firstAdmin = User::query()->where('is_admin', true)->oldest()->first();
+
+        if (!$firstAdmin) {
+            // No first admin exists, i.e., the database is empty (during the initial setup).
+            return;
+        }
 
         Artist::query()
             ->orderBy('id')

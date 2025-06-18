@@ -188,7 +188,7 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
     #[Test]
     public function validCases($value): void
     {
-        (new ValidSmartPlaylistRulePayload())->validate('rules', $value, static fn ($foo) => $foo);
-        self::addToAssertionCount(1);
+        (new ValidSmartPlaylistRulePayload())->validate('rules', $value, static fn ($foo) => $foo); // @phpstan-ignore-line
+        $this->addToAssertionCount(1);
     }
 }

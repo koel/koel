@@ -27,9 +27,12 @@ class MacroProvider extends ServiceProvider
         });
 
         if (app()->runningUnitTests()) {
-            UploadedFile::macro('fromFile', static function (string $path, ?string $name = null): UploadedFile {
-                return UploadedFile::fake()->createWithContent($name ?? basename($path), File::get($path));
-            });
+            UploadedFile::macro(
+                'fromFile',
+                function (string $path, ?string $name = null): UploadedFile {// @phpcs:ignore
+                    return UploadedFile::fake()->createWithContent($name ?? basename($path), File::get($path));
+                }
+            );
 
             TestResponse::macro('log', function (string $file = 'test-response.json'): TestResponse {
                 /** @var TestResponse $this */

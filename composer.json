@@ -6,16 +6,22 @@
     "stream",
     "mp3"
   ],
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/phanan/Laravel-Dotenv-Editor"
+    }
+  ],
   "license": "MIT",
   "type": "project",
   "require": {
     "php": ">=8.1",
-    "laravel/framework": "^10.0",
+    "laravel/framework": "^11.0",
     "james-heinrich/getid3": "^1.9",
     "guzzlehttp/guzzle": "^7.2",
     "pusher/pusher-php-server": "^7.0",
     "predis/predis": "~1.0",
-    "jackiedo/dotenv-editor": "^2.1",
+    "jackiedo/dotenv-editor": "dev-patch-1#812fb1baf9eaf8ed8121d5ff328269e7ee653352",
     "ext-exif": "*",
     "ext-gd": "*",
     "ext-fileinfo": "*",
@@ -24,12 +30,11 @@
     "daverandom/resume": "^0.0.3",
     "laravel/helpers": "^1.7",
     "intervention/image": "^2.5",
-    "doctrine/dbal": "^3.0",
     "lstrojny/functional-php": "^1.14",
     "teamtnt/laravel-scout-tntsearch-driver": "^14.0",
     "algolia/algoliasearch-client-php": "^3.3",
     "webmozart/assert": "^1.10",
-    "laravel/sanctum": "^3.3",
+    "laravel/sanctum": "^4.0",
     "laravel/scout": "^10.0",
     "jwilsson/spotify-web-api-php": "^5.2",
     "meilisearch/meilisearch-php": "^0.24.0",
@@ -40,7 +45,7 @@
     "saloonphp/laravel-plugin": "^3.0",
     "laravel/socialite": "^5.12",
     "laravel/ui": "^4.5",
-    "nunomaduro/collision": "^7.10",
+    "nunomaduro/collision": "^v8",
     "league/flysystem-sftp-v3": "^3.0",
     "saloonphp/xml-wrangler": "^1.2",
     "phanan/poddle": "^1.0",
@@ -50,14 +55,15 @@
     "fileeye/mimemap": "^2.2"
   },
   "require-dev": {
+    "roave/security-advisories": "dev-latest",
     "mockery/mockery": "~1.0",
     "phpunit/phpunit": "^10.1",
     "php-mock/php-mock-mockery": "^1.3",
     "dms/phpunit-arraysubset-asserts": "^0.5.0",
     "fakerphp/faker": "^1.13",
     "slevomat/coding-standard": "^7.0",
-    "laravel/tinker": "^2.9",
-    "larastan/larastan": "^2.9",
+    "laravel/tinker": "^2.10",
+    "larastan/larastan": "^2.11",
     "phlak/semver": "^5.0",
     "laravel/prompts": "^0.1.25"
   },

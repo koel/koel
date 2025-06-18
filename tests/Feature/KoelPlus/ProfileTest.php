@@ -12,7 +12,7 @@ use function Tests\test_path;
 class ProfileTest extends PlusTestCase
 {
     #[Test]
-    public function updateSSOProfile(): void
+    public function updateSsoProfile(): void
     {
         $user = create_user([
             'sso_provider' => 'Google',

@@ -43,11 +43,10 @@ return new class extends Migration
         });
 
         Schema::table('playlists', static function (Blueprint $table): void {
-            if (DB::getDriverName() !== 'sqlite') {
+            Schema::withoutForeignKeyConstraints(static function () use ($table): void {
                 $table->dropForeign(['folder_id']);
-            }
-
-            $table->dropColumn('folder_id');
+                $table->dropColumn('folder_id');
+            });
         });
     }
 };

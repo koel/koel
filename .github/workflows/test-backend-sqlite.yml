@@ -1,4 +1,5 @@
-name: Backend Unit Tests - PostgreSQL
+name: Backend Tests - SQLite
+
 on:
   pull_request:
     branches:
@@ -11,37 +12,14 @@ on:
     paths-ignore:
       - resources/assets/**
   workflow_dispatch:
+
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: [ 8.1 ]
+        php-version: [ 8.2 ]
       fail-fast: false
-
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_DB: koel
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    env:
-      DB_CONNECTION: pgsql-ci
-      DB_HOST: localhost
-      DB_PORT: 5432
-      DB_DATABASE: koel
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgres
-
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v2
@@ -61,7 +39,7 @@ jobs:
           composer-options: --prefer-dist
       - name: Generate app key
         run: php artisan key:generate --quiet
-      - name: Run tests
+      - name: Run tests with coverage
         run: composer coverage
         env:
           COMPOSER_PROCESS_TIMEOUT: 600
@@ -69,7 +47,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: unit-be-postgres-logs-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
+          name: unit-be-logs-${{ github.run_id }}-${{ github.run_attempt }}-sqlite
           path: storage/logs
       - name: Upload coverage
         uses: codecov/codecov-action@v1

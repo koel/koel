@@ -102,9 +102,10 @@ class MediaScannerTest extends TestCase
         $this->scanner->scan($config);
 
         /** @var Song $song */
-        $song = Song::query()->first();
+        $song = Song::query()->latest()->first();
 
-        touch($song->path, $time = time() + 1000);
+        $time = $song->mtime + 1000;
+        touch($song->path, $time);
         $this->scanner->scan($config);
 
         self::assertSame($time, $song->refresh()->mtime);
@@ -120,7 +121,7 @@ class MediaScannerTest extends TestCase
         $this->scanner->scan($config);
 
         /** @var Song $song */
-        $song = Song::query()->first();
+        $song = Song::query()->latest()->first();
 
         $song->update([
             'title' => "It's John Cena!",
