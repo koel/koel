@@ -46,8 +46,7 @@
     "spatie/laravel-ray": "^1.36",
     "tiben/crontab-manager": "*",
     "owen-it/laravel-auditing": "^13.7",
-    "fileeye/mimemap": "^2.2",
-    "laravel/reverb": "^1.0"
+    "fileeye/mimemap": "^2.2"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
