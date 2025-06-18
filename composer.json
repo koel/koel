@@ -1,16 +1,10 @@
 {
   "name": "koel/koel",
-  "description": "Personal audio streaming service that works.",
+  "description": "Audio streaming solution that works.",
   "keywords": [
     "audio",
     "stream",
     "mp3"
-  ],
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/phanan/Laravel-Dotenv-Editor"
-    }
   ],
   "license": "MIT",
   "type": "project",
@@ -21,7 +15,7 @@
     "guzzlehttp/guzzle": "^7.2",
     "pusher/pusher-php-server": "^7.0",
     "predis/predis": "~1.0",
-    "jackiedo/dotenv-editor": "dev-patch-1#812fb1baf9eaf8ed8121d5ff328269e7ee653352",
+    "koel/dotenv-editor": "^2.2",
     "ext-exif": "*",
     "ext-gd": "*",
     "ext-fileinfo": "*",
@@ -52,7 +46,8 @@
     "spatie/laravel-ray": "^1.36",
     "tiben/crontab-manager": "*",
     "owen-it/laravel-auditing": "^13.7",
-    "fileeye/mimemap": "^2.2"
+    "fileeye/mimemap": "^2.2",
+    "laravel/reverb": "^1.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
