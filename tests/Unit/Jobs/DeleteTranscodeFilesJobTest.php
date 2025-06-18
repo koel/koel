@@ -6,7 +6,7 @@ use App\Enums\SongStorageType;
 use App\Jobs\DeleteTranscodeFiles;
 use App\Services\Transcoding\CloudTranscodingStrategy;
 use App\Services\Transcoding\LocalTranscodingStrategy;
-use App\Values\TranscodeFileInfo;
+use App\Values\Transcoding\TranscodeFileInfo;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 

@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Casts\SmartPlaylistRulesCast;
 use App\Facades\License as LicenseFacade;
 use App\Models\Song as Playable;
-use App\Values\SmartPlaylistRuleGroupCollection;
+use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;

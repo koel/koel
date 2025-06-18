@@ -13,7 +13,7 @@ use App\Repositories\SongRepository;
 use App\Repositories\TranscodeRepository;
 use App\Values\SongFileInfo;
 use App\Values\SongUpdateData;
-use App\Values\TranscodeFileInfo;
+use App\Values\Transcoding\TranscodeFileInfo;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;

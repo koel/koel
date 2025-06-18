@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Values;
+namespace App\Values\License;
 
 use App\Enums\LicenseStatus as Status;
 use App\Models\License;

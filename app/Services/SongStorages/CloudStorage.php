@@ -4,17 +4,13 @@ namespace App\Services\SongStorages;
 
 use App\Helpers\Ulid;
 use App\Models\User;
-use App\Services\Scanner\FileScanner;
-use App\Services\SongStorages\Concerns\ScansUploadedFile;
+use App\Services\SongStorages\Concerns\MovesUploadedFile;
+use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
 use Illuminate\Support\Facades\File;
 
-abstract class CloudStorage extends SongStorage
+abstract class CloudStorage extends SongStorage implements MustDeleteTemporaryLocalFileAfterUpload
 {
-    use ScansUploadedFile;
-
-    public function __construct(protected FileScanner $scanner)
-    {
-    }
+    use MovesUploadedFile;
 
     public function copyToLocal(string $key): string
     {

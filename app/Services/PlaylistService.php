@@ -10,7 +10,7 @@ use App\Models\PlaylistFolder as Folder;
 use App\Models\Song as Playable;
 use App\Models\User;
 use App\Repositories\SongRepository;
-use App\Values\SmartPlaylistRuleGroupCollection;
+use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;

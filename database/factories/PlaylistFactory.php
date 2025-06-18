@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Values\SmartPlaylistRule;
-use App\Values\SmartPlaylistRuleGroup;
-use App\Values\SmartPlaylistRuleGroupCollection;
+use App\Values\SmartPlaylist\SmartPlaylistRule;
+use App\Values\SmartPlaylist\SmartPlaylistRuleGroup;
+use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

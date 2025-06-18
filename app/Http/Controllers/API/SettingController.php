@@ -7,7 +7,7 @@ use App\Http\Requests\API\SettingRequest;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\Scanner\MediaScanner;
-use App\Values\ScanConfiguration;
+use App\Values\Scanning\ScanConfiguration;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class SettingController extends Controller

@@ -5,7 +5,7 @@ namespace App\Listeners;
 use App\Events\MediaScanCompleted;
 use App\Models\Song;
 use App\Repositories\SongRepository;
-use App\Values\ScanResult;
+use App\Values\Scanning\ScanResult;
 use Illuminate\Database\Eloquent\Builder;
 
 class DeleteNonExistingRecordsPostScan

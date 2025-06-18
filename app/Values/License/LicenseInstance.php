@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Values;
+namespace App\Values\License;
 
 use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;

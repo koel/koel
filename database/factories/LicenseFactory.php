@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Values\LicenseInstance;
-use App\Values\LicenseMeta;
+use App\Values\License\LicenseInstance;
+use App\Values\License\LicenseMeta;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

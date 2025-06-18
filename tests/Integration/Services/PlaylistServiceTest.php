@@ -6,7 +6,7 @@ use App\Models\PlaylistFolder;
 use App\Models\Podcast;
 use App\Models\Song;
 use App\Services\PlaylistService;
-use App\Values\SmartPlaylistRuleGroupCollection;
+use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
 use InvalidArgumentException as BaseInvalidArgumentException;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;

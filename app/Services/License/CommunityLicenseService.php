@@ -5,7 +5,7 @@ namespace App\Services\License;
 use App\Exceptions\MethodNotImplementedException;
 use App\Models\License;
 use App\Services\License\Contracts\LicenseServiceInterface;
-use App\Values\LicenseStatus;
+use App\Values\License\LicenseStatus;
 
 class CommunityLicenseService implements LicenseServiceInterface
 {

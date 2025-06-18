@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Repositories\SongRepository;
 use App\Repositories\UserRepository;
 use App\Services\MediaMetadataService;
+use App\Values\UploadReference;
 use Illuminate\Http\UploadedFile;
 
 /**
@@ -20,14 +21,20 @@ use Illuminate\Http\UploadedFile;
  */
 class S3LambdaStorage extends S3CompatibleStorage
 {
-    public function __construct( // @phpcs:ignore
+    public function __construct(
         private readonly MediaMetadataService $mediaMetadataService,
         private readonly SongRepository $songRepository,
         private readonly UserRepository $userRepository
     ) {
+        parent::__construct();
     }
 
-    public function storeUploadedFile(UploadedFile $file, User $uploader): Song
+    public function storeUploadedFile(UploadedFile $uploadedFile, User $uploader): UploadReference
+    {
+        throw new MethodNotImplementedException('Lambda storage does not support uploading.');
+    }
+
+    public function undoUpload(UploadReference $reference): void
     {
         throw new MethodNotImplementedException('Lambda storage does not support uploading.');
     }

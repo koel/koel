@@ -9,9 +9,9 @@ use App\Facades\License;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
-use App\Values\SmartPlaylistRule as Rule;
-use App\Values\SmartPlaylistRuleGroup as RuleGroup;
-use App\Values\SmartPlaylistSqlElements as SqlElements;
+use App\Values\SmartPlaylist\SmartPlaylistRule as Rule;
+use App\Values\SmartPlaylist\SmartPlaylistRuleGroup as RuleGroup;
+use App\Values\SmartPlaylist\SmartPlaylistSqlElements as SqlElements;
 use Illuminate\Database\Eloquent\Collection;
 
 use function Functional\memoize;

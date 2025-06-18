@@ -4,51 +4,37 @@ namespace App\Services\SongStorages;
 
 use App\Enums\SongStorageType;
 use App\Exceptions\MediaPathNotSetException;
-use App\Exceptions\SongUploadFailedException;
 use App\Models\Setting;
-use App\Models\Song;
 use App\Models\User;
-use App\Services\Scanner\FileScanner;
-use App\Values\ScanConfiguration;
+use App\Values\UploadReference;
 use Exception;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
-use Throwable;
 
 use function Functional\memoize;
 
 class LocalStorage extends SongStorage
 {
-    public function __construct(private readonly FileScanner $scanner)
-    {
-    }
-
-    public function storeUploadedFile(UploadedFile $file, User $uploader): Song
+    public function storeUploadedFile(UploadedFile $uploadedFile, User $uploader): UploadReference
     {
         $uploadDirectory = $this->getUploadDirectory($uploader);
-        $targetFileName = $this->getTargetFileName($file, $uploader);
+        $targetFileName = $this->getTargetFileName($uploadedFile, $uploader);
 
-        $file->move($uploadDirectory, $targetFileName);
+        $uploadedFile->move($uploadDirectory, $targetFileName);
         $targetPathName = $uploadDirectory . $targetFileName;
 
-        try {
-            $result = $this->scanner->setFile($targetPathName)
-                ->scan(ScanConfiguration::make(
-                    owner: $uploader,
-                    makePublic: $uploader->preferences->makeUploadsPublic
-                ));
-        } catch (Throwable $e) {
-            File::delete($targetPathName);
-            throw SongUploadFailedException::fromThrowable($e);
-        }
+        // For local storage, the "location" and "localPath" are the same.
+        return UploadReference::make(
+            location: $targetPathName,
+            localPath: $targetPathName,
+        );
+    }
 
-        if ($result->isError()) {
-            File::delete($targetPathName);
-            throw SongUploadFailedException::fromErrorMessage($result->error);
-        }
-
-        return $this->scanner->getSong();
+    public function undoUpload(UploadReference $reference): void
+    {
+        // To undo an upload, we simply delete the file from the local disk.
+        File::delete($reference->localPath);
     }
 
     private function getUploadDirectory(User $uploader): string
