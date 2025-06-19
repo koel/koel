@@ -4,7 +4,7 @@ namespace Tests\Feature\KoelPlus;
 
 use App\Http\Resources\PlaylistResource;
 use App\Models\Playlist;
-use App\Values\SmartPlaylistRule;
+use App\Values\SmartPlaylist\SmartPlaylistRule;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 

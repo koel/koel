@@ -2,12 +2,12 @@
 
 namespace App\Values;
 
-class RequestedStreamingConfig
+readonly class RequestedStreamingConfig
 {
     private function __construct(
-        public readonly bool $transcode,
-        public readonly int $bitRate,
-        public readonly float $startTime
+        public bool $transcode,
+        public int $bitRate,
+        public float $startTime
     ) {
     }
 

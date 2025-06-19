@@ -24,12 +24,13 @@ class UploadTest extends PlusTestCase
     }
 
     #[Test]
-    public function uploads(): void
+    public function upload(): void
     {
         $user = create_user();
 
         $this->postAs('api/upload', ['file' => $this->file], $user)->assertSuccessful();
         self::assertDirectoryExists(public_path("sandbox/media/__KOEL_UPLOADS_\${$user->id}__"));
+        self::assertFileExists(public_path("sandbox/media/__KOEL_UPLOADS_\${$user->id}__/song.mp3"));
 
         /** @var Song $song */
         $song = Song::query()->latest()->first();

@@ -4,8 +4,8 @@ namespace Tests\Unit\Listeners;
 
 use App\Events\MediaScanCompleted;
 use App\Listeners\WriteSyncLog;
-use App\Values\ScanResult;
-use App\Values\ScanResultCollection;
+use App\Values\Scanning\ScanResult;
+use App\Values\Scanning\ScanResultCollection;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;

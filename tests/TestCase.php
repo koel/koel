@@ -58,6 +58,7 @@ abstract class TestCase extends BaseTestCase
             'koel.artist_image_dir' => 'sandbox/img/artists/',
             'koel.playlist_cover_dir' => 'sandbox/img/playlists/',
             'koel.user_avatar_dir' => 'sandbox/img/avatars/',
+            'koel.artifacts_path' => public_path('sandbox/artifacts/'),
         ]);
 
         File::ensureDirectoryExists(public_path(config('koel.album_cover_dir')));

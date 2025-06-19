@@ -3,59 +3,58 @@
 namespace App\Services\SongStorages;
 
 use App\Enums\SongStorageType;
-use App\Exceptions\SongUploadFailedException;
 use App\Helpers\Ulid;
-use App\Models\Song;
 use App\Models\User;
-use App\Services\Scanner\FileScanner;
 use App\Services\SongStorages\Concerns\DeletesUsingFilesystem;
-use App\Services\SongStorages\Concerns\ScansUploadedFile;
+use App\Services\SongStorages\Concerns\MovesUploadedFile;
+use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
+use App\Values\UploadReference;
 use Closure;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
-use Throwable;
+use Illuminate\Support\Str;
 
-class SftpStorage extends SongStorage
+class SftpStorage extends SongStorage implements MustDeleteTemporaryLocalFileAfterUpload
 {
     use DeletesUsingFilesystem;
-    use ScansUploadedFile;
+    use MovesUploadedFile;
 
     private Filesystem $disk;
 
-    public function __construct(protected FileScanner $scanner)
+    public function __construct()
     {
         $this->disk = Storage::disk('sftp');
     }
 
-    public function storeUploadedFile(UploadedFile $file, User $uploader): Song
+    public function storeUploadedFile(UploadedFile $uploadedFile, User $uploader): UploadReference
     {
-        $result = $this->scanUploadedFile($this->scanner, $file, $uploader);
-        $song = $this->scanner->getSong();
-        $path = $this->generateRemotePath($file->getClientOriginalName(), $uploader);
+        $file = $this->moveUploadedFileToTemporaryLocation($uploadedFile);
+        $path = $this->generateRemotePath($uploadedFile->getClientOriginalName(), $uploader);
 
-        try {
-            $this->disk->put($path, File::get($result->path));
+        $this->disk->put($path, $file->getContent());
 
-            $song->update([
-                'path' => "sftp://$path",
-                'storage' => SongStorageType::SFTP,
-            ]);
+        return UploadReference::make(
+            location: "sftp://$path",
+            localPath: $file->getRealPath(),
+        );
+    }
 
-            return $song;
-        } catch (Throwable $e) {
-            throw SongUploadFailedException::fromThrowable($e);
-        } finally {
-            File::delete($result->path);
-        }
+    public function undoUpload(UploadReference $reference): void
+    {
+        // Delete the tmp file
+        File::delete($reference->localPath);
+
+        // Delete the file from the SFTP server
+        $this->delete(location: Str::after($reference->location, 'sftp://'), backup: false);
     }
 
     public function delete(string $location, bool $backup = false): void
     {
         $this->deleteFileUnderPath(
             $location,
-            static fn (Filesystem $fs, string $path) => $fs->copy($path, "$path.bak"),
+            $backup ? static fn (Filesystem $fs, string $path) => $fs->copy($path, "$path.bak") : false,
         );
     }
 

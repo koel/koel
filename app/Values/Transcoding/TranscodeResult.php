@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Values;
+namespace App\Values\Transcoding;
 
 use Illuminate\Support\Facades\File;
 
-final class TranscodeResult
+final readonly class TranscodeResult
 {
-    public function __construct(public readonly string $path, public readonly string $checksum)
+    public function __construct(public string $path, public string $checksum)
     {
     }
 

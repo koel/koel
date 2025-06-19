@@ -2,7 +2,7 @@
 
 namespace App\Casts;
 
-use App\Values\SmartPlaylistRuleGroupCollection;
+use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 
 class SmartPlaylistRulesCast implements CastsAttributes

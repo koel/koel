@@ -2,10 +2,13 @@
 
 namespace Tests\Integration\KoelPlus\Services\SongStorages;
 
-use App\Models\Song;
+use App\Helpers\Ulid;
 use App\Services\SongStorages\SftpStorage;
+use App\Values\UploadReference;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
@@ -29,39 +32,40 @@ class SftpStorageTest extends PlusTestCase
     #[Test]
     public function storeUploadedFile(): void
     {
-        self::assertEquals(0, Song::query()->where('storage', 'sftp')->count());
+        Ulid::freeze('random');
+        $user = create_user();
+        $reference = $this->service->storeUploadedFile($this->file, $user);
 
-        $song = $this->service->storeUploadedFile($this->file, create_user());
+        Storage::disk('sftp')->assertExists(Str::after($reference->location, 'sftp://'));
 
-        Storage::disk('sftp')->assertExists($song->storage_metadata->getPath());
-        self::assertEquals(1, Song::query()->where('storage', 'sftp')->count());
+        self::assertSame("sftp://{$user->id}__random__song.mp3", $reference->location);
+        self::assertSame(artifact_path('tmp/random/song.mp3'), $reference->localPath);
     }
 
     #[Test]
-    public function storingWithVisibilityPreference(): void
+    public function undoUpload(): void
     {
-        $user = create_user();
+        Storage::disk('sftp')->put('123__random__song.mp3', 'fake content');
+        File::shouldReceive('delete')->once()->with('/tmp/random/song.mp3');
 
-        $user->preferences->makeUploadsPublic = true;
-        $user->save();
+        $reference = UploadReference::make(
+            location: 'sftp://123__random__song.mp3',
+            localPath: '/tmp/random/song.mp3',
+        );
 
-        self::assertTrue($this->service->storeUploadedFile($this->file, $user)->is_public);
-
-        $user->preferences->makeUploadsPublic = false;
-        $user->save();
-
-        $privateFile = UploadedFile::fromFile(test_path('songs/full.mp3'), 'song.mp3'); //@phpstan-ignore-line
-        self::assertFalse($this->service->storeUploadedFile($privateFile, $user)->is_public);
+        $this->service->undoUpload($reference);
     }
 
     #[Test]
     public function deleteSong(): void
     {
-        $song = $this->service->storeUploadedFile($this->file, create_user());
-        Storage::disk('sftp')->assertExists($song->storage_metadata->getPath());
+        $reference = $this->service->storeUploadedFile($this->file, create_user());
+        $remotePath = Str::after($reference->location, 'sftp://');
+        Storage::disk('sftp')->assertExists($remotePath);
 
-        $this->service->delete($song->storage_metadata->getPath());
-        Storage::disk('sftp')->assertMissing($song->storage_metadata->getPath());
+        $this->service->delete($remotePath);
+
+        Storage::disk('sftp')->assertMissing($remotePath);
     }
 
     #[Test]

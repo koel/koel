@@ -9,7 +9,7 @@ use App\Models\Setting;
 use App\Models\Song;
 use App\Services\Scanner\FileScanner;
 use App\Services\Scanner\MediaScanner;
-use App\Values\ScanConfiguration;
+use App\Values\Scanning\ScanConfiguration;
 use App\Values\WatchRecord\InotifyWatchRecord;
 use getID3;
 use Illuminate\Support\Arr;

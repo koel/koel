@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Values;
+namespace App\Values\SmartPlaylist;
 
 use App\Enums\SmartPlaylistModel;
 use App\Enums\SmartPlaylistOperator;

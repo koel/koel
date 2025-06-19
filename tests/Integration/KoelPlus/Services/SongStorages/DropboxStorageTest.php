@@ -3,11 +3,14 @@
 namespace Tests\Integration\KoelPlus\Services\SongStorages;
 
 use App\Filesystems\DropboxFilesystem;
+use App\Helpers\Ulid;
 use App\Models\Song;
 use App\Services\SongStorages\DropboxStorage;
+use App\Values\UploadReference;
 use Illuminate\Http\Client\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Mockery;
 use Mockery\MockInterface;
@@ -56,6 +59,8 @@ class DropboxStorageTest extends PlusTestCase
     #[Test]
     public function storeUploadedFile(): void
     {
+        Ulid::freeze('random');
+
         $this->client->shouldReceive('setAccessToken')->with('free-bird')->once();
 
         /** @var DropboxStorage $service */
@@ -68,13 +73,33 @@ class DropboxStorageTest extends PlusTestCase
                 && $request['grant_type'] === 'refresh_token';
         });
 
-        self::assertSame(0, Song::query()->where('storage', 'dropbox')->count());
-
+        $user = create_user();
         $this->filesystem->shouldReceive('write')->once();
-        $service->storeUploadedFile($this->file, create_user());
+        $reference = $service->storeUploadedFile($this->file, $user);
 
-        self::assertSame(1, Song::query()->where('storage', 'dropbox')->count());
+        self::assertSame("dropbox://{$user->id}__random__song.mp3", $reference->location);
+        self::assertSame(artifact_path("tmp/random/song.mp3"), $reference->localPath);
+
         self::assertSame('free-bird', Cache::get('dropbox_access_token'));
+    }
+
+    #[Test]
+    public function undoUpload(): void
+    {
+        $this->filesystem->shouldReceive('delete')->once()->with('koel/song.mp3');
+        File::shouldReceive('delete')->once()->with('/tmp/random/song.mp3');
+
+        $reference = UploadReference::make(
+            location: 'dropbox://koel/song.mp3',
+            localPath: '/tmp/random/song.mp3',
+        );
+
+        $this->client->shouldReceive('setAccessToken')->with('free-bird')->once();
+
+        /** @var DropboxStorage $service */
+        $service = app(DropboxStorage::class);
+
+        $service->undoUpload($reference);
     }
 
     #[Test]

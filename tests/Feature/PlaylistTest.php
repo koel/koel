@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use App\Http\Resources\PlaylistResource;
 use App\Models\Playlist;
 use App\Models\Song;
-use App\Values\SmartPlaylistRule;
+use App\Values\SmartPlaylist\SmartPlaylistRule;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 

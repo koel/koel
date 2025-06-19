@@ -2,7 +2,7 @@
 
 namespace App\Rules;
 
-use App\Values\SmartPlaylistRuleGroupCollection;
+use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Arr;

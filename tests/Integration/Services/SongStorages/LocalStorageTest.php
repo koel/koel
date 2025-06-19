@@ -3,7 +3,6 @@
 namespace Tests\Integration\Services\SongStorages;
 
 use App\Exceptions\MediaPathNotSetException;
-use App\Exceptions\SongUploadFailedException;
 use App\Models\Setting;
 use App\Services\SongStorages\LocalStorage;
 use Illuminate\Http\UploadedFile;
@@ -35,40 +34,14 @@ class LocalStorageTest extends TestCase
     }
 
     #[Test]
-    public function storeUploadedFileFails(): void
-    {
-        Setting::set('media_path', public_path('sandbox/media'));
-
-        $this->expectException(SongUploadFailedException::class);
-        $this->service->storeUploadedFile(UploadedFile::fake()->create('fake.mp3'), create_user());
-    }
-
-    #[Test]
     public function storeUploadedFile(): void
     {
         Setting::set('media_path', public_path('sandbox/media'));
         $user = create_user();
 
-        $song = $this->service->storeUploadedFile(UploadedFile::fromFile(test_path('songs/full.mp3')), $user); //@phpstan-ignore-line
+        $reference = $this->service->storeUploadedFile(UploadedFile::fromFile(test_path('songs/full.mp3')), $user); //@phpstan-ignore-line
 
-        self::assertSame($song->owner_id, $user->id);
-        self::assertSame(public_path("sandbox/media/__KOEL_UPLOADS_\${$user->id}__/full.mp3"), $song->path);
-    }
-
-    #[Test]
-    public function storingWithVisibilityPreference(): void
-    {
-        $user = create_user();
-        $user->preferences->makeUploadsPublic = true;
-        $user->save();
-
-        Setting::set('media_path', public_path('sandbox/media'));
-        $song = $this->service->storeUploadedFile(UploadedFile::fromFile(test_path('songs/full.mp3')), $user); //@phpstan-ignore-line
-        self::assertTrue($song->is_public);
-
-        $user->preferences->makeUploadsPublic = false;
-        $user->save();
-        $privateSongs = $this->service->storeUploadedFile(UploadedFile::fromFile(test_path('songs/full.mp3')), $user); //@phpstan-ignore-line
-        self::assertFalse($privateSongs->is_public);
+        self::assertSame(public_path("sandbox/media/__KOEL_UPLOADS_\${$user->id}__/full.mp3"), $reference->location);
+        self::assertSame($reference->location, $reference->localPath);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Values;
+namespace App\Values\License;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;

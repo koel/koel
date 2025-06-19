@@ -3,52 +3,47 @@
 namespace App\Services\SongStorages;
 
 use App\Enums\SongStorageType;
-use App\Exceptions\SongUploadFailedException;
 use App\Filesystems\DropboxFilesystem;
-use App\Models\Song;
 use App\Models\User;
-use App\Services\Scanner\FileScanner;
 use App\Services\SongStorages\Concerns\DeletesUsingFilesystem;
+use App\Values\UploadReference;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
-use Throwable;
+use Illuminate\Support\Str;
 
 class DropboxStorage extends CloudStorage
 {
     use DeletesUsingFilesystem;
 
     public function __construct(
-        protected FileScanner $scanner,
         private readonly DropboxFilesystem $filesystem,
         private readonly array $config
     ) {
-        parent::__construct($scanner);
-
         $this->filesystem->getAdapter()->getClient()->setAccessToken($this->maybeRefreshAccessToken());
     }
 
-    public function storeUploadedFile(UploadedFile $file, User $uploader): Song
+    public function storeUploadedFile(UploadedFile $uploadedFile, User $uploader): UploadReference
     {
-        $result = $this->scanUploadedFile($this->scanner, $file, $uploader);
-        $song = $this->scanner->getSong();
-        $key = $this->generateStorageKey($file->getClientOriginalName(), $uploader);
+        $file = $this->moveUploadedFileToTemporaryLocation($uploadedFile);
+        $key = $this->generateStorageKey($uploadedFile->getClientOriginalName(), $uploader);
 
-        try {
-            $this->uploadToStorage($key, $result->path);
+        $this->uploadToStorage($key, $file->getRealPath());
 
-            $song->update([
-                'path' => "dropbox://$key",
-                'storage' => SongStorageType::DROPBOX,
-            ]);
+        return UploadReference::make(
+            location: "dropbox://$key",
+            localPath: $file->getRealPath(),
+        );
+    }
 
-            return $song;
-        } catch (Throwable $e) {
-            throw SongUploadFailedException::fromThrowable($e);
-        } finally {
-            File::delete($result->path);
-        }
+    public function undoUpload(UploadReference $reference): void
+    {
+        // Delete the temporary file
+        File::delete($reference->localPath);
+
+        // Delete the file from Dropbox
+        $this->delete(Str::after($reference->location, 'dropbox://'));
     }
 
     private function maybeRefreshAccessToken(): string

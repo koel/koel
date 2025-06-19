@@ -5,9 +5,9 @@ namespace App\Values;
 use App\Enums\SongStorageType;
 use App\Models\Song;
 
-class SongFileInfo
+readonly class SongFileInfo
 {
-    private function __construct(public readonly string $location, public readonly SongStorageType $storage)
+    private function __construct(public string $location, public SongStorageType $storage)
     {
     }
 

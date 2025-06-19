@@ -8,7 +8,7 @@ use App\Models\Artist;
 use App\Models\Setting;
 use App\Models\Song;
 use App\Services\Scanner\FileScanner;
-use App\Values\ScanConfiguration;
+use App\Values\Scanning\ScanConfiguration;
 use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;

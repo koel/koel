@@ -3,7 +3,7 @@
 namespace App\Services\License\Contracts;
 
 use App\Models\License;
-use App\Values\LicenseStatus;
+use App\Values\License\LicenseStatus;
 
 interface LicenseServiceInterface
 {

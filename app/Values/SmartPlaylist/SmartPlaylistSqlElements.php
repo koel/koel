@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Values;
+namespace App\Values\SmartPlaylist;
 
 use App\Enums\SmartPlaylistModel as Model;
 use App\Enums\SmartPlaylistOperator as Operator;
-use App\Values\SmartPlaylistRule as Rule;
+use App\Values\SmartPlaylist\SmartPlaylistRule as Rule;
 use Carbon\Carbon;
 use Closure;
 

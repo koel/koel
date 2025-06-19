@@ -8,7 +8,7 @@ use App\Http\Integrations\LemonSqueezy\Requests\DeactivateLicenseRequest;
 use App\Http\Integrations\LemonSqueezy\Requests\ValidateLicenseRequest;
 use App\Models\License;
 use App\Services\LicenseService;
-use App\Values\LicenseStatus;
+use App\Values\License\LicenseStatus;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;

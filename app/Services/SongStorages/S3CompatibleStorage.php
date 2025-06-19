@@ -3,42 +3,42 @@
 namespace App\Services\SongStorages;
 
 use App\Enums\SongStorageType;
-use App\Models\Song;
 use App\Models\User;
-use App\Services\Scanner\FileScanner;
 use App\Services\SongStorages\Concerns\DeletesUsingFilesystem;
+use App\Values\UploadReference;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class S3CompatibleStorage extends CloudStorage
 {
     use DeletesUsingFilesystem;
 
-    public function __construct(protected FileScanner $scanner, private readonly ?string $bucket)
+    public function __construct(private readonly ?string $bucket = null)
     {
-        parent::__construct($scanner);
     }
 
-    public function storeUploadedFile(UploadedFile $file, User $uploader): Song
+    public function storeUploadedFile(UploadedFile $uploadedFile, User $uploader): UploadReference
     {
-        return DB::transaction(function () use ($file, $uploader): Song {
-            $result = $this->scanUploadedFile($this->scanner, $file, $uploader);
-            $song = $this->scanner->getSong();
-            $key = $this->generateStorageKey($file->getClientOriginalName(), $uploader);
+        $file = $this->moveUploadedFileToTemporaryLocation($uploadedFile);
+        $key = $this->generateStorageKey($uploadedFile->getClientOriginalName(), $uploader);
 
-            $this->uploadToStorage($key, $result->path);
+        $this->uploadToStorage($key, $file->getRealPath());
 
-            $song->update([
-                'path' => "s3://$this->bucket/$key",
-                'storage' => SongStorageType::S3,
-            ]);
+        return UploadReference::make(
+            location: "s3://$this->bucket/$key",
+            localPath: $file->getRealPath(),
+        );
+    }
 
-            File::delete($result->path);
+    public function undoUpload(UploadReference $reference): void
+    {
+        // Delete the temporary file
+        File::delete($reference->localPath);
 
-            return $song;
-        });
+        // Delete the file from S3
+        $this->deleteFileWithKey(Str::after($reference->location, "s3://$this->bucket/"));
     }
 
     public function getPresignedUrl(string $key): string

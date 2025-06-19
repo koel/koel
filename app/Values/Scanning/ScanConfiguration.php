@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Values;
+namespace App\Values\Scanning;
 
 use App\Models\User;
 

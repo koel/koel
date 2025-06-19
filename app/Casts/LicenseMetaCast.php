@@ -2,7 +2,7 @@
 
 namespace App\Casts;
 
-use App\Values\LicenseMeta;
+use App\Values\License\LicenseMeta;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Support\Facades\Log;
 use Throwable;

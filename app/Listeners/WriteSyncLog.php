@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\MediaScanCompleted;
-use App\Values\ScanResult;
+use App\Values\Scanning\ScanResult;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 

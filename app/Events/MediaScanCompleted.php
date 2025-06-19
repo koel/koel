@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\Values\ScanResultCollection;
+use App\Values\Scanning\ScanResultCollection;
 use Illuminate\Queue\SerializesModels;
 
 class MediaScanCompleted extends Event
