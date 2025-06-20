@@ -1,13 +1,13 @@
 <?php
 
-namespace Tests\Integration\Services;
+namespace Tests\Integration\Services\Scanners;
 
 use App\Helpers\Ulid;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Setting;
 use App\Models\Song;
-use App\Services\Scanner\FileScanner;
+use App\Services\Scanners\FileScanner;
 use App\Values\Scanning\ScanConfiguration;
 use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;

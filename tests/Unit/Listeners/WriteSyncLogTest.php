@@ -3,7 +3,7 @@
 namespace Tests\Unit\Listeners;
 
 use App\Events\MediaScanCompleted;
-use App\Listeners\WriteSyncLog;
+use App\Listeners\WriteScanLog;
 use App\Values\Scanning\ScanResult;
 use App\Values\Scanning\ScanResultCollection;
 use Carbon\Carbon;
@@ -15,14 +15,14 @@ use function Tests\test_path;
 
 class WriteSyncLogTest extends TestCase
 {
-    private WriteSyncLog $listener;
+    private WriteScanLog $listener;
     private string $originalLogLevel;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->listener = new WriteSyncLog();
+        $this->listener = new WriteScanLog();
         $this->originalLogLevel = config('koel.sync_log_level');
         Carbon::setTestNow(Carbon::create(2021, 1, 2, 12, 34, 56));
     }

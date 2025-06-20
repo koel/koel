@@ -6,9 +6,9 @@ use App\Events\MultipleSongsUnliked;
 use App\Services\LastfmService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class UnloveMultipleTracksOnLastfm implements ShouldQueue
+readonly class UnloveMultipleTracksOnLastfm implements ShouldQueue
 {
-    public function __construct(private readonly LastfmService $lastfm)
+    public function __construct(private LastfmService $lastfm)
     {
     }
 

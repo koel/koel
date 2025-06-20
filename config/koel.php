@@ -30,8 +30,9 @@ return [
     |
     */
 
-    'sync' => [
+    'scan' => [
         'timeout' => env('APP_MAX_SCAN_TIME', 600),
+        'memory_limit' => env('MEMORY_LIMIT'),
     ],
 
     /*
@@ -175,7 +176,6 @@ return [
     */
     'ignore_dot_files' => env('IGNORE_DOT_FILES', true),
 
-    'memory_limit' => env('MEMORY_LIMIT'),
     'force_https' => env('FORCE_HTTPS', false),
     'backup_on_delete' => env('BACKUP_ON_DELETE', true),
 

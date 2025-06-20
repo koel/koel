@@ -75,7 +75,7 @@ driver instead.
 :::
 
 ::: details You receive an "Unknown error" when scanning using the web interface
-Try scanning from the command line with `php artisan koel:sync`. Most of the time, you should receive a more detailed,
+Try scanning from the command line with `php artisan koel:scan`. Most of the time, you should receive a more detailed,
 easier to debug, message.
 See also: [Music Discovery](usage/music-discovery).
 :::

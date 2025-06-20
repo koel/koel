@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\SongFolderStructureExtractionRequested;
 use App\Facades\License;
 use App\Jobs\DeleteSongFiles;
 use App\Jobs\DeleteTranscodeFiles;
@@ -9,8 +10,12 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Models\Transcode;
+use App\Models\User;
 use App\Repositories\SongRepository;
 use App\Repositories\TranscodeRepository;
+use App\Services\Scanners\Contracts\ScannerCacheStrategy as CacheStrategy;
+use App\Values\Scanning\ScanConfiguration;
+use App\Values\Scanning\ScanInformation;
 use App\Values\SongFileInfo;
 use App\Values\SongUpdateData;
 use App\Values\Transcoding\TranscodeFileInfo;
@@ -19,11 +24,13 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-class SongService
+readonly class SongService
 {
     public function __construct(
-        private readonly SongRepository $songRepository,
-        private readonly TranscodeRepository $transcodeRepository,
+        private SongRepository $songRepository,
+        private TranscodeRepository $transcodeRepository,
+        private MediaMetadataService $mediaMetadataService,
+        private CacheStrategy $cache,
     ) {
     }
 
@@ -155,5 +162,92 @@ class SongService
         if ($transcodeFiles->isNotEmpty()) {
             DeleteTranscodeFiles::dispatch($transcodeFiles);
         }
+    }
+
+    public function createSongFromScanInformation(ScanInformation $info, ScanConfiguration $config): Song
+    {
+        /** @var Song $song */
+        $song = Song::query()->where('path', $info->path)->first();
+
+        $isFileNew = !$song;
+        $isFileModified = $song && $song->mtime !== $info->mTime;
+        $isFileNewOrModified = $isFileNew || $isFileModified;
+
+        // if the file is not new or modified and we're not force-rescanning, skip the whole process.
+        if (!$isFileNewOrModified && !$config->force) {
+            return $song;
+        }
+
+        $data = $info->toArray();
+
+        // If the file is new, we take all necessary metadata, totally discarding the "ignores" config.
+        // Otherwise, we only take the metadata not in the "ignores" config.
+        if (!$isFileNew) {
+            Arr::forget($data, $config->ignores);
+        }
+
+        $artist = $this->resolveArtist($config->owner, Arr::get($data, 'artist'));
+
+        $albumArtist = Arr::get($data, 'albumartist')
+            ? $this->resolveArtist($config->owner, $data['albumartist'])
+            : $artist;
+
+        $album = $this->resolveAlbum($albumArtist, Arr::get($data, 'album'));
+
+        if (!$album->has_cover && !in_array('cover', $config->ignores, true)) {
+            $coverData = Arr::get($data, 'cover.data');
+
+            if ($coverData) {
+                $this->mediaMetadataService->writeAlbumCover($album, $coverData);
+            } else {
+                $this->mediaMetadataService->trySetAlbumCoverFromDirectory($album, dirname($data['path']));
+            }
+        }
+
+        Arr::forget($data, ['album', 'artist', 'albumartist', 'cover']);
+
+        $data['album_id'] = $album->id;
+        $data['artist_id'] = $artist->id;
+        $data['is_public'] = $config->makePublic;
+
+        if ($isFileNew) {
+            // Only set the owner if the song is new, i.e., don't override the owner if the song is being updated.
+            $data['owner_id'] = $config->owner->id;
+            $song = Song::query()->create($data);
+        } else {
+            $song->update($data);
+        }
+
+        if (!$album->year && $song->year) {
+            $album->update(['year' => $song->year]);
+        }
+
+        if ($config->extractFolderStructure) {
+            event(new SongFolderStructureExtractionRequested($song));
+        }
+
+        return $song;
+    }
+
+    private function resolveArtist(User $user, ?string $name): Artist
+    {
+        $name = trim($name);
+
+        return $this->cache->remember(
+            key: simple_hash("{$user->id}_{$name}"),
+            ttl: now()->addMinutes(30),
+            callback: static fn () => Artist::getOrCreate($user, $name)
+        );
+    }
+
+    private function resolveAlbum(Artist $artist, ?string $name): Album
+    {
+        $name = trim($name);
+
+        return $this->cache->remember(
+            key: simple_hash("{$artist->id}_{$name}"),
+            ttl: now()->addMinutes(30),
+            callback: static fn () => Album::getOrCreate($artist, $name)
+        );
     }
 }

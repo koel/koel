@@ -6,11 +6,12 @@ use App\Events\MediaScanCompleted;
 use App\Models\Song;
 use App\Repositories\SongRepository;
 use App\Values\Scanning\ScanResult;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
 
-class DeleteNonExistingRecordsPostScan
+readonly class DeleteNonExistingRecordsPostScan implements ShouldQueue
 {
-    public function __construct(private readonly SongRepository $songRepository)
+    public function __construct(private SongRepository $songRepository)
     {
     }
 

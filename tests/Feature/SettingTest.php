@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Setting;
-use App\Services\Scanner\MediaScanner;
+use App\Services\Scanners\DirectoryScanner;
 use App\Values\Scanning\ScanResultCollection;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
@@ -13,13 +13,13 @@ use function Tests\create_admin;
 
 class SettingTest extends TestCase
 {
-    private MediaScanner|MockInterface $mediaScanner;
+    private DirectoryScanner|MockInterface $mediaScanner;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->mediaScanner = $this->mock(MediaScanner::class);
+        $this->mediaScanner = $this->mock(DirectoryScanner::class);
     }
 
     #[Test]

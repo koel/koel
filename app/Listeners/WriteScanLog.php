@@ -4,10 +4,11 @@ namespace App\Listeners;
 
 use App\Events\MediaScanCompleted;
 use App\Values\Scanning\ScanResult;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 
-class WriteSyncLog
+class WriteScanLog implements ShouldQueue
 {
     public function handle(MediaScanCompleted $event): void
     {

@@ -5,7 +5,7 @@ namespace Tests\Unit\Services;
 use App\Enums\SongStorageType;
 use App\Exceptions\SongUploadFailedException;
 use App\Models\Song;
-use App\Services\Scanner\FileScanner;
+use App\Services\Scanners\FileScanner;
 use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
 use App\Services\SongStorages\SongStorage;
 use App\Services\UploadService;

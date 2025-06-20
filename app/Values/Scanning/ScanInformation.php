@@ -8,7 +8,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
-final class SongScanInformation implements Arrayable
+final class ScanInformation implements Arrayable
 {
     private function __construct(
         public ?string $title,

@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Exceptions\SongUploadFailedException;
 use App\Models\Song;
 use App\Models\User;
-use App\Services\Scanner\FileScanner;
+use App\Services\Scanners\FileScanner;
 use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
 use App\Services\SongStorages\SongStorage;
 use App\Values\Scanning\ScanConfiguration;
@@ -16,34 +16,35 @@ use Throwable;
 
 readonly class UploadService
 {
-    public function __construct(private SongStorage $storage, private FileScanner $scanner)
-    {
+    public function __construct(
+        private SongService $songService,
+        private SongStorage $storage,
+        private FileScanner $scanner,
+    ) {
     }
 
     public function handleUpload(UploadedFile $file, User $uploader): Song
     {
         $uploadReference = $this->storage->storeUploadedFile($file, $uploader);
 
+        $config = ScanConfiguration::make(
+            owner: $uploader,
+            makePublic: $uploader->preferences->makeUploadsPublic,
+            extractFolderStructure: $this->storage->getStorageType()->supportsFolderStructureExtraction(),
+        );
+
         try {
-            $result = $this->scanner->setFile($uploadReference->localPath)
-                ->scan(ScanConfiguration::make(
-                    owner: $uploader,
-                    makePublic: $uploader->preferences->makeUploadsPublic,
-                    extractFolderStructure: $this->storage->getStorageType()->supportsFolderStructureExtraction(),
-                ));
+            $song = $this->songService->createSongFromScanInformation(
+                $this->scanner->scan($uploadReference->localPath),
+                $config,
+            );
         } catch (Throwable $error) {
             $this->handleUploadFailure($uploadReference, $error);
-        }
-
-        if ($result->isError()) {
-            $this->handleUploadFailure($uploadReference, $result->error);
         }
 
         if ($this->storage instanceof MustDeleteTemporaryLocalFileAfterUpload) {
             File::delete($uploadReference->localPath);
         }
-
-        $song = $this->scanner->getSong();
 
         // Since we scanned a local file, the song's path was initially set to the local path.
         // We need to update it to the actual storage (e.g. S3) and location (e.g., the S3 key) if applicable.

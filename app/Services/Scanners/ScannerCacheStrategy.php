@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Scanner;
+namespace App\Services\Scanners;
 
-use App\Services\Scanner\Contracts\ScannerCacheStrategy as ScannerCacheStrategyContract;
+use App\Services\Scanners\Contracts\ScannerCacheStrategy as ScannerCacheStrategyContract;
 use Closure;
 use DateInterval;
 use DateTimeInterface;

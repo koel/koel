@@ -3,10 +3,11 @@
 namespace App\Listeners;
 
 use App\Services\LibraryManager;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class PruneLibrary
+readonly class PruneLibrary implements ShouldQueue
 {
-    public function __construct(private readonly LibraryManager $libraryManager)
+    public function __construct(private LibraryManager $libraryManager)
     {
     }
 
