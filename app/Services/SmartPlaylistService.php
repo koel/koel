@@ -14,14 +14,12 @@ use App\Values\SmartPlaylist\SmartPlaylistRuleGroup as RuleGroup;
 use App\Values\SmartPlaylist\SmartPlaylistSqlElements as SqlElements;
 use Illuminate\Database\Eloquent\Collection;
 
-use function Functional\memoize;
-
 class SmartPlaylistService
 {
     /** @return Collection|array<array-key, Song> */
     public function getSongs(Playlist $playlist, ?User $user = null): Collection
     {
-        $isPlus = memoize(static fn () => License::isPlus());
+        $isPlus = once(static fn () => License::isPlus());
 
         throw_unless($playlist->is_smart, NonSmartPlaylistException::create($playlist));
 

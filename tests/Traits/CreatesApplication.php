@@ -2,7 +2,6 @@
 
 namespace Tests\Traits;
 
-use App\Console\Kernel;
 use App\Models\User;
 use Illuminate\Contracts\Console\Kernel as Artisan;
 use Illuminate\Foundation\Application;
@@ -24,7 +23,6 @@ trait CreatesApplication
 
         $this->mediaPath = test_path('songs');
 
-        /** @var Kernel $artisan */
         $artisan = $app->make(Artisan::class);
 
         $artisan->bootstrap();

@@ -8,8 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
-use function Functional\memoize;
-
 /**
  * @property string $id
  * @property string $name
@@ -30,9 +28,7 @@ class Organization extends Model
 
     public static function default(): Organization
     {
-        return memoize(
-            static fn () => self::query()->firstOrCreate(['slug' => self::DEFAULT_SLUG], ['name' => 'Koel'])
-        );
+        return once(static fn () => self::query()->firstOrCreate(['slug' => self::DEFAULT_SLUG], ['name' => 'Koel']));
     }
 
     public function users(): HasMany
