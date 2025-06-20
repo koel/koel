@@ -12,8 +12,6 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
-use function Functional\memoize;
-
 class LocalStorage extends SongStorage
 {
     public function storeUploadedFile(UploadedFile $uploadedFile, User $uploader): UploadReference
@@ -39,7 +37,7 @@ class LocalStorage extends SongStorage
 
     private function getUploadDirectory(User $uploader): string
     {
-        return memoize(static function () use ($uploader): string {
+        return once(static function () use ($uploader): string {
             $mediaPath = Setting::get('media_path');
 
             throw_unless((bool) $mediaPath, MediaPathNotSetException::class);

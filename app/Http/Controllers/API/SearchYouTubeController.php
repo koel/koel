@@ -11,6 +11,6 @@ class SearchYouTubeController extends Controller
 {
     public function __invoke(YouTubeSearchRequest $request, Song $song, YouTubeService $youTubeService)
     {
-        return response()->json($youTubeService->searchVideosRelatedToSong($song, $request->pageToken));
+        return response()->json($youTubeService->searchVideosRelatedToSong($song, (string) $request->pageToken));
     }
 }

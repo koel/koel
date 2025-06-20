@@ -309,7 +309,7 @@ class SongRepository extends Repository
         bool $random = false,
         ?User $scopedUser = null
     ): Collection {
-        $paths = array_map(static fn (string $path) => $path ? trim($path, DIRECTORY_SEPARATOR) : '', $paths);
+        $paths = array_map(static fn (?string $path) => $path ? trim($path, DIRECTORY_SEPARATOR) : '', $paths);
 
         if (!$paths) {
             return Collection::empty();

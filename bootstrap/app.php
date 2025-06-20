@@ -1,55 +1,52 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Create The Application
-|--------------------------------------------------------------------------
-|
-| The first thing we will do is create a new Laravel application instance
-| which serves as the "glue" for all the components of Laravel, and is
-| the IoC container for the system binding all of the various parts.
-|
-*/
-
+use App\Http\Middleware\AudioAuthenticate;
+use App\Http\Middleware\HandleDemoMode;
+use App\Http\Middleware\ObjectStorageAuthenticate;
+use App\Http\Middleware\RestrictPlusFeatures;
+use App\Http\Requests\Request;
+use App\Providers\RouteServiceProvider;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 
-$app = new Application(dirname(__DIR__));
+return Application::configure(basePath: dirname(__DIR__))
+    ->withRouting(
+        using: static function (): void {
+            RouteServiceProvider::loadVersionAwareRoutes('web');
+            RouteServiceProvider::loadVersionAwareRoutes('api');
+        },
+        commands: __DIR__ . '/../routes/console.php',
+        channels: __DIR__ . '/../routes/channels.php',
+        health: '/up',
+    )
+    ->withMiddleware(static function (Middleware $middleware): void {
+        $middleware->api(append: [
+            RestrictPlusFeatures::class,
+            HandleDemoMode::class,
+        ]);
 
-/*
-|--------------------------------------------------------------------------
-| Bind Important Interfaces
-|--------------------------------------------------------------------------
-|
-| Next, we need to bind some important interfaces into the container so
-| we will be able to resolve them when needed. The kernels serve the
-| incoming requests to this application from both the web and CLI.
-|
-*/
+        $middleware->web(append: [
+            RestrictPlusFeatures::class,
+            HandleDemoMode::class,
+        ]);
 
-$app->singleton(
-    Illuminate\Contracts\Http\Kernel::class,
-    App\Http\Kernel::class
-);
+        $middleware->alias([
+            'audio.auth' => AudioAuthenticate::class,
+            'os.auth' => ObjectStorageAuthenticate::class,
+        ]);
+    })
+    ->withExceptions(static function (Exceptions $exceptions): void {
+        $exceptions->render(
+            static function (AuthenticationException $e, Request $request): JsonResponse|RedirectResponse {
+                if ($request->expectsJson()) {
+                    return response()->json(['error' => 'Unauthenticated.'], 401);
+                }
 
-$app->singleton(
-    Illuminate\Contracts\Console\Kernel::class,
-    App\Console\Kernel::class
-);
-
-$app->singleton(
-    Illuminate\Contracts\Debug\ExceptionHandler::class,
-    App\Exceptions\Handler::class
-);
-
-/*
-|--------------------------------------------------------------------------
-| Return The Application
-|--------------------------------------------------------------------------
-|
-| This script returns the application instance. The instance is given to
-| the calling script so we can separate the building of the instances
-| from the actual running of the application and sending responses.
-|
-*/
-
-return $app;
+                return redirect()->guest('/');
+            }
+        );
+    })->create();
