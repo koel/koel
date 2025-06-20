@@ -9,15 +9,7 @@ use Webmozart\Assert\Assert;
 
 class RouteServiceProvider extends ServiceProvider
 {
-    protected $namespace = 'App\Http\Controllers';
-
-    public function map(): void
-    {
-        self::loadVersionAwareRoutes('web');
-        self::loadVersionAwareRoutes('api');
-    }
-
-    private static function loadVersionAwareRoutes(string $type): void
+    public static function loadVersionAwareRoutes(string $type): void
     {
         Assert::oneOf($type, ['web', 'api']);
 

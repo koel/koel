@@ -99,67 +99,10 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
-    /*
-    |--------------------------------------------------------------------------
-    | Autoloaded Service Providers
-    |--------------------------------------------------------------------------
-    |
-    | The service providers listed here will be automatically loaded on the
-    | request to your application. Feel free to add your own services to
-    | this array to grant expanded functionality to your applications.
-    |
-    */
-
-    'providers' => [
-        /*
-         * Laravel Framework Service Providers...
-         */
-        Illuminate\Auth\AuthServiceProvider::class,
-        Illuminate\Broadcasting\BroadcastServiceProvider::class,
-        Illuminate\Bus\BusServiceProvider::class,
-        Illuminate\Cache\CacheServiceProvider::class,
-        Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
-        Illuminate\Cookie\CookieServiceProvider::class,
-        Illuminate\Database\DatabaseServiceProvider::class,
-        Illuminate\Encryption\EncryptionServiceProvider::class,
-        Illuminate\Filesystem\FilesystemServiceProvider::class,
-        Illuminate\Foundation\Providers\FoundationServiceProvider::class,
-        Illuminate\Hashing\HashServiceProvider::class,
-        Illuminate\Mail\MailServiceProvider::class,
-        Illuminate\Notifications\NotificationServiceProvider::class,
-        Illuminate\Pagination\PaginationServiceProvider::class,
-        Illuminate\Pipeline\PipelineServiceProvider::class,
-        Illuminate\Queue\QueueServiceProvider::class,
-        Illuminate\Redis\RedisServiceProvider::class,
-        Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
-        Illuminate\Session\SessionServiceProvider::class,
-        Illuminate\Translation\TranslationServiceProvider::class,
-        Illuminate\Validation\ValidationServiceProvider::class,
-        Illuminate\View\ViewServiceProvider::class,
-        Jackiedo\DotenvEditor\DotenvEditorServiceProvider::class,
-        Intervention\Image\ImageServiceProvider::class,
-
-        Laravel\Scout\ScoutServiceProvider::class,
-        OwenIt\Auditing\AuditingServiceProvider::class,
-        TeamTNT\Scout\TNTSearchScoutServiceProvider::class,
-
-        /*
-         * Application Service Providers...
-         */
-        App\Providers\AppServiceProvider::class,
-        App\Providers\AuthServiceProvider::class,
-        App\Providers\EventServiceProvider::class,
-        App\Providers\RouteServiceProvider::class,
-        App\Providers\UtilServiceProvider::class,
-        App\Providers\YouTubeServiceProvider::class,
-        App\Providers\DownloadServiceProvider::class,
-        App\Providers\BroadcastServiceProvider::class,
-        App\Providers\ITunesServiceProvider::class,
-        App\Providers\StreamerServiceProvider::class,
-        App\Providers\SongStorageServiceProvider::class,
-        App\Providers\ObjectStorageServiceProvider::class,
-        App\Providers\MacroProvider::class,
-        App\Providers\LicenseServiceProvider::class,
+    'previous_keys' => [
+        ...array_filter(
+            explode(',', env('APP_PREVIOUS_KEYS', ''))
+        ),
     ],
 
     /*
@@ -207,7 +150,6 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'DotenvEditor' => Jackiedo\DotenvEditor\Facades\DotenvEditor::class,
         'Image' => Intervention\Image\Facades\Image::class,
-        'AWS' => Aws\Laravel\AwsFacade::class,
 
         'Util' => App\Facades\Util::class,
         'YouTube' => App\Facades\YouTube::class,

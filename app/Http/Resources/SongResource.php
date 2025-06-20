@@ -7,8 +7,6 @@ use App\Models\Song;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;
 
-use function Functional\memoize;
-
 class SongResource extends JsonResource
 {
     public const JSON_STRUCTURE = [
@@ -61,8 +59,8 @@ class SongResource extends JsonResource
     /** @inheritDoc */
     public function toArray($request): array
     {
-        $isPlus = memoize(static fn () => License::isPlus());
-        $user = memoize(static fn () => auth()->user());
+        $isPlus = once(static fn () => License::isPlus());
+        $user = once(static fn () => auth()->user());
 
         $data = [
             'type' => Str::plural($this->song->type->value),
