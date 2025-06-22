@@ -3,17 +3,12 @@
 namespace Tests\Integration\Services\Scanners;
 
 use App\Helpers\Ulid;
-use App\Models\Album;
-use App\Models\Artist;
 use App\Models\Setting;
-use App\Models\Song;
 use App\Services\Scanners\FileScanner;
-use App\Values\Scanning\ScanConfiguration;
 use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-use function Tests\create_admin;
 use function Tests\test_path;
 
 class FileScannerTest extends TestCase
@@ -24,7 +19,7 @@ class FileScannerTest extends TestCase
     {
         parent::setUp();
 
-        Setting::set('media_path', test_path());
+        Setting::set('media_path', $this->mediaPath);
         $this->scanner = app(FileScanner::class);
     }
 
@@ -38,7 +33,7 @@ class FileScannerTest extends TestCase
     #[Test]
     public function getFileInfo(): void
     {
-        $info = $this->scanner->setFile(test_path('songs/full.mp3'))->getScanInformation();
+        $info = $this->scanner->scan(test_path('songs/full.mp3'));
 
         $expectedData = [
             'artist' => 'Koel',
@@ -68,82 +63,10 @@ class FileScannerTest extends TestCase
     }
 
     #[Test]
-    public function scan(): void
-    {
-        $result = $this->scanner->setFile(test_path('songs/full.mp3'))->scan(
-            ScanConfiguration::make(owner: create_admin())
-        );
-
-        $song = Song::query()->where('path', $result->path)->firstOrFail();
-
-        self::assertArraySubset([
-            'title' => 'Amet',
-            'track' => 5,
-            'disc' => 3,
-            'lyrics' => "Foo\rbar",
-            'mtime' => filemtime(test_path('songs/full.mp3')),
-            'year' => 2015,
-            'is_public' => false,
-        ], $song->getAttributes());
-
-        self::assertSame(2015, $song->album->year);
-
-        // Ensure a folder is created for the song
-        self::assertNotNull($song->folder);
-    }
-
-    #[Test]
-    public function scanningSetsAlbumReleaseYearIfApplicable(): void
-    {
-        $artist = Artist::factory(['name' => 'Koel'])->create();
-
-        /** @var Album $album */
-        $album = Album::factory([
-            'name' => 'Koel Testing Vol. 1',
-            'year' => null,
-        ])->for($artist)
-            ->create();
-
-        self::assertNull($album->year);
-
-        $this->scanner->setFile(test_path('songs/full.mp3'))->scan(
-            ScanConfiguration::make(owner: create_admin())
-        );
-
-        $album->refresh();
-        self::assertSame(2015, $album->year);
-    }
-
-    #[Test]
-    public function scanningDoesNotSetAlbumReleaseYearIfAlreadyExists(): void
-    {
-        $artist = Artist::factory(['name' => 'Koel'])->create();
-
-        /** @var Album $album */
-        $album = Album::factory([
-            'name' => 'Koel Testing Vol. 1',
-            'year' => 2018,
-        ])->for($artist)
-            ->create();
-
-        $result = $this->scanner->setFile(test_path('songs/full.mp3'))->scan(
-            ScanConfiguration::make(owner: create_admin())
-        );
-
-        $song = Song::query()->where('path', $result->path)->firstOrFail();
-
-        self::assertTrue($song->album->is($album));
-
-        $album->refresh();
-
-        self::assertSame(2018, $album->year);
-    }
-
-    #[Test]
     public function getFileInfoVorbisCommentsFlac(): void
     {
         $flacPath = test_path('songs/full-vorbis-comments.flac');
-        $info = $this->scanner->setFile($flacPath)->getScanInformation();
+        $info = $this->scanner->scan($flacPath);
 
         $expectedData = [
             'artist' => 'Koel',
@@ -172,9 +95,7 @@ class FileScannerTest extends TestCase
     #[Test]
     public function songWithoutTitleHasFileNameAsTitle(): void
     {
-        $this->scanner->setFile(test_path('songs/blank.mp3'));
-
-        self::assertSame('blank', $this->scanner->getScanInformation()->title);
+        self::assertSame('blank', $this->scanner->scan(test_path('songs/blank.mp3'))->title);
     }
 
     #[Test]
@@ -186,7 +107,7 @@ class FileScannerTest extends TestCase
         File::copy(test_path('songs/full.mp3'), $mediaFile);
         File::copy(test_path('blobs/simple.lrc'), $lrcFile);
 
-        self::assertSame("Foo\rbar", $this->scanner->setFile($mediaFile)->getScanInformation()->lyrics);
+        self::assertSame("Foo\rbar", $this->scanner->scan($mediaFile)->lyrics);
     }
 
     #[Test]
@@ -198,8 +119,6 @@ class FileScannerTest extends TestCase
         File::copy(test_path('songs/blank.mp3'), $mediaFile);
         File::copy(test_path('blobs/simple.lrc'), $lrcFile);
 
-        $info = $this->scanner->setFile($mediaFile)->getScanInformation();
-
-        self::assertSame("Line 1\nLine 2\nLine 3", $info->lyrics);
+        self::assertSame("Line 1\nLine 2\nLine 3", $this->scanner->scan($mediaFile)->lyrics);
     }
 }

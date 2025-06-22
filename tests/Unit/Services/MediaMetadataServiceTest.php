@@ -8,15 +8,16 @@ use App\Services\ImageWriter;
 use App\Services\MediaMetadataService;
 use App\Services\SpotifyService;
 use Mockery;
-use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
+use Symfony\Component\Finder\Finder;
 use Tests\TestCase;
 
 class MediaMetadataServiceTest extends TestCase
 {
-    private LegacyMockInterface|SpotifyService|MockInterface $spotifyService;
-    private LegacyMockInterface|ImageWriter|MockInterface $imageWriter;
+    private SpotifyService|MockInterface $spotifyService;
+    private ImageWriter|MockInterface $imageWriter;
+    private Finder|MockInterface $finder;
     private MediaMetadataService $mediaMetadataService;
 
     public function setUp(): void
@@ -25,8 +26,13 @@ class MediaMetadataServiceTest extends TestCase
 
         $this->spotifyService = Mockery::mock(SpotifyService::class);
         $this->imageWriter = Mockery::mock(ImageWriter::class);
+        $this->finder = Mockery::mock(Finder::class);
 
-        $this->mediaMetadataService = new MediaMetadataService($this->spotifyService, $this->imageWriter);
+        $this->mediaMetadataService = new MediaMetadataService(
+            $this->spotifyService,
+            $this->imageWriter,
+            $this->finder,
+        );
     }
 
     #[Test]

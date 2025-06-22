@@ -39,7 +39,7 @@ class YouTubeServiceTest extends TestCase
         $response = $this->service->searchVideosRelatedToSong($song, 'my-token');
 
         self::assertSame('Slipknot - Snuff [OFFICIAL VIDEO]', $response->items[0]->snippet->title);
-        self::assertNotNull(Cache::get('youtube.cce909a3df066c88c2666d4283697867'));
+        self::assertNotNull(Cache::get('43d0e04621642165c5a3052b884945b9'));
 
         Saloon::assertSent(static function (SearchVideosRequest $request): bool {
             self::assertSame([

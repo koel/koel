@@ -34,7 +34,7 @@ readonly class UploadService
         );
 
         try {
-            $song = $this->songService->createSongFromScanInformation(
+            $song = $this->songService->createOrUpdateSongFromScan(
                 $this->scanner->scan($uploadReference->localPath),
                 $config,
             );

@@ -27,10 +27,10 @@ class ITunesServiceTest extends TestCase
     public function configuration(): void
     {
         config(['koel.services.itunes.enabled' => true]);
-        self::assertTrue($this->service->used());
+        self::assertTrue($this->service::used());
 
         config(['koel.services.itunes.enabled' => false]);
-        self::assertFalse($this->service->used());
+        self::assertFalse($this->service::used());
     }
 
     #[Test]
@@ -56,10 +56,7 @@ class ITunesServiceTest extends TestCase
             $this->service->getTrackUrl('Bohemian Rhapsody', $album)
         );
 
-        self::assertSame(
-            'https://itunes.apple.com/bar?at=foo',
-            Cache::get('itunes.track.5f0467bebbb2b26bf9dc7b19f3d85077')
-        );
+        self::assertSame('https://itunes.apple.com/bar?at=foo', Cache::get('8eca87872691f06f3cc6f2fbe6b3c528'));
 
         Saloon::assertSent(static function (GetTrackRequest $request): bool {
             self::assertSame([

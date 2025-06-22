@@ -57,7 +57,7 @@ class WatchRecordScanner extends Scanner
     private function handleNewOrModifiedFileRecord(string $path, ScanConfiguration $config): void
     {
         try {
-            $this->songService->createSongFromScanInformation($this->fileScanner->scan($path), $config);
+            $this->songService->createOrUpdateSongFromScan($this->fileScanner->scan($path), $config);
             Log::info("Scanned $path");
         } catch (Throwable $e) {
             Log::warning("Failed to scan $path.", ['error' => $e]);

@@ -9,9 +9,9 @@ use Illuminate\Support\Arr;
 use RuntimeException;
 use SplFileInfo;
 
-readonly class FileScanner
+class FileScanner
 {
-    public function __construct(private getID3 $getID3, private SimpleLrcReader $lrcReader)
+    public function __construct(private readonly getID3 $getID3, private readonly SimpleLrcReader $lrcReader)
     {
     }
 

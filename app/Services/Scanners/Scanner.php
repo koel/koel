@@ -23,7 +23,7 @@ abstract class Scanner
     {
         try {
             $info = $this->fileScanner->scan($path);
-            $song = $this->songService->createSongFromScanInformation($info, $config);
+            $song = $this->songService->createOrUpdateSongFromScan($info, $config);
 
             return $song->mtime === $info->mTime && !$config->force
                 ? ScanResult::skipped($info->path)

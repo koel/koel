@@ -120,7 +120,6 @@ class Artist extends Model implements AuditableContract, PermissionableResource
 
         // In the Community license, all artists are shared, so we determine the first artist by the name only.
         // In the Plus license, artists are user-specific, so we create or return the artist for the given user.
-        // Use memoize to avoid multiple queries in the same request (e.g. during scanning).
         $where = ['name' => $name];
 
         if (License::isPlus()) {

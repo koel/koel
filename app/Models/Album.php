@@ -89,8 +89,8 @@ class Album extends Model implements AuditableContract, PermissionableResource
     {
         return static::query()->firstOrCreate([ // @phpstan-ignore-line
             'artist_id' => $artist->id,
-            'name' => trim($name) ?: self::UNKNOWN_NAME,
             'user_id' => $artist->user_id,
+            'name' => trim($name) ?: self::UNKNOWN_NAME,
         ]);
     }
 

@@ -10,12 +10,12 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Symfony\Component\Finder\Finder;
 
-readonly class MediaMetadataService
+class MediaMetadataService
 {
     public function __construct(
-        private SpotifyService $spotifyService,
-        private ImageWriter $imageWriter,
-        private Finder $finder
+        private readonly SpotifyService $spotifyService,
+        private readonly ImageWriter $imageWriter,
+        private readonly Finder $finder
     ) {
     }
 
@@ -150,7 +150,7 @@ readonly class MediaMetadataService
     public function trySetAlbumCoverFromDirectory(Album $album, string $directory): void
     {
         // As directory scanning can be expensive, we cache and reuse the result.
-        Cache::remember(md5("$directory:cover"), now()->addDay(), function () use ($album, $directory): ?string {
+        Cache::remember(cache_key($directory, 'cover'), now()->addDay(), function () use ($album, $directory): ?string {
             $matches = array_keys(
                 iterator_to_array(
                     $this->finder::create()

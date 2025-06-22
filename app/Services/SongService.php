@@ -24,13 +24,13 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-readonly class SongService
+class SongService
 {
     public function __construct(
-        private SongRepository $songRepository,
-        private TranscodeRepository $transcodeRepository,
-        private MediaMetadataService $mediaMetadataService,
-        private CacheStrategy $cache,
+        private readonly SongRepository $songRepository,
+        private readonly TranscodeRepository $transcodeRepository,
+        private readonly MediaMetadataService $mediaMetadataService,
+        private readonly CacheStrategy $cache,
     ) {
     }
 
@@ -57,7 +57,7 @@ readonly class SongService
                     $foundSong = Song::query()->with('album.artist')->find($id);
 
                     if ($noTrackUpdate) {
-                        $data->track = $foundSong->track;
+                        $data->track = $foundSong?->track;
                     }
 
                     optional(
@@ -164,9 +164,9 @@ readonly class SongService
         }
     }
 
-    public function createSongFromScanInformation(ScanInformation $info, ScanConfiguration $config): Song
+    public function createOrUpdateSongFromScan(ScanInformation $info, ScanConfiguration $config): Song
     {
-        /** @var Song $song */
+        /** @var ?Song $song */
         $song = Song::query()->where('path', $info->path)->first();
 
         $isFileNew = !$song;
@@ -234,7 +234,7 @@ readonly class SongService
         $name = trim($name);
 
         return $this->cache->remember(
-            key: simple_hash("{$user->id}_{$name}"),
+            key: cache_key(__METHOD__, $user->id, $name),
             ttl: now()->addMinutes(30),
             callback: static fn () => Artist::getOrCreate($user, $name)
         );
@@ -245,7 +245,7 @@ readonly class SongService
         $name = trim($name);
 
         return $this->cache->remember(
-            key: simple_hash("{$artist->id}_{$name}"),
+            key: cache_key(__METHOD__, $artist->id, $name),
             ttl: now()->addMinutes(30),
             callback: static fn () => Album::getOrCreate($artist, $name)
         );

@@ -151,7 +151,7 @@ class DirectoryScannerTest extends TestCase
     #[Test]
     public function forceScanResetsData(): void
     {
-        Event::fake(MediaScanCompleted::class, SongFolderStructureExtractionRequested::class);
+        Event::fake([MediaScanCompleted::class, SongFolderStructureExtractionRequested::class]);
 
         $owner = create_admin();
         $this->scanner->scan($this->mediaPath, ScanConfiguration::make(owner: $owner));
