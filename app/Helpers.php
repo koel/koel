@@ -151,3 +151,16 @@ function simple_hash(?string $string): string
 {
     return md5("koel-hash:$string");
 }
+
+function is_image(string $path): bool
+{
+    return rescue(static fn () => (bool) exif_imagetype($path)) ?? false;
+}
+
+/**
+ * @param string|int ...$parts
+ */
+function cache_key(...$parts): string
+{
+    return simple_hash(implode('.', $parts));
+}

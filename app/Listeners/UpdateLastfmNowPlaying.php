@@ -6,9 +6,9 @@ use App\Events\PlaybackStarted;
 use App\Services\LastfmService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class UpdateLastfmNowPlaying implements ShouldQueue
+readonly class UpdateLastfmNowPlaying implements ShouldQueue
 {
-    public function __construct(private readonly LastfmService $lastfm)
+    public function __construct(private LastfmService $lastfm)
     {
     }
 

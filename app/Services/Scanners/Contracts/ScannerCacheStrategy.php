@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Scanner\Contracts;
+namespace App\Services\Scanners\Contracts;
 
 use Closure;
 use DateInterval;

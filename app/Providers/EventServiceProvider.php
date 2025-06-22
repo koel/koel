@@ -8,15 +8,17 @@ use App\Events\MultipleSongsLiked;
 use App\Events\MultipleSongsUnliked;
 use App\Events\NewPlaylistCollaboratorJoined;
 use App\Events\PlaybackStarted;
+use App\Events\SongFolderStructureExtractionRequested;
 use App\Events\SongLikeToggled;
 use App\Listeners\DeleteNonExistingRecordsPostScan;
+use App\Listeners\ExtractSongFolderStructure;
 use App\Listeners\LoveMultipleTracksOnLastfm;
 use App\Listeners\LoveTrackOnLastfm;
 use App\Listeners\MakePlaylistSongsPublic;
 use App\Listeners\PruneLibrary;
 use App\Listeners\UnloveMultipleTracksOnLastfm;
 use App\Listeners\UpdateLastfmNowPlaying;
-use App\Listeners\WriteSyncLog;
+use App\Listeners\WriteScanLog;
 use App\Models\Album;
 use App\Observers\AlbumObserver;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as BaseServiceProvider;
@@ -46,11 +48,15 @@ class EventServiceProvider extends BaseServiceProvider
 
         MediaScanCompleted::class => [
             DeleteNonExistingRecordsPostScan::class,
-            WriteSyncLog::class,
+            WriteScanLog::class,
         ],
 
         NewPlaylistCollaboratorJoined::class => [
             MakePlaylistSongsPublic::class,
+        ],
+
+        SongFolderStructureExtractionRequested::class => [
+            ExtractSongFolderStructure::class,
         ],
     ];
 

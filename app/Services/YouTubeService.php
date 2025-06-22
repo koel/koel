@@ -26,11 +26,10 @@ class YouTubeService
         }
 
         $request = new SearchVideosRequest($song, $pageToken);
-        $hash = md5(serialize($request->query()->all()));
 
         try {
             return Cache::remember(
-                "youtube.$hash",
+                cache_key('YouTube search query', serialize($request->query()->all())),
                 now()->addWeek(),
                 fn () => $this->connector->send($request)->object()
             );

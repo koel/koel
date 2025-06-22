@@ -2,9 +2,7 @@
 
 namespace App\Values\WatchRecord;
 
-use App\Values\WatchRecord\Contracts\WatchRecordInterface;
-
-class InotifyWatchRecord extends WatchRecord implements WatchRecordInterface
+class InotifyWatchRecord extends WatchRecord
 {
     /**
      * {@inheritdoc}

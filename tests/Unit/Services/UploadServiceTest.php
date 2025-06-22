@@ -5,12 +5,13 @@ namespace Tests\Unit\Services;
 use App\Enums\SongStorageType;
 use App\Exceptions\SongUploadFailedException;
 use App\Models\Song;
-use App\Services\Scanner\FileScanner;
+use App\Services\Scanners\FileScanner;
+use App\Services\SongService;
 use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
 use App\Services\SongStorages\SongStorage;
 use App\Services\UploadService;
 use App\Values\Scanning\ScanConfiguration;
-use App\Values\Scanning\ScanResult;
+use App\Values\Scanning\ScanInformation;
 use App\Values\UploadReference;
 use Exception;
 use Illuminate\Http\UploadedFile;
@@ -24,12 +25,14 @@ use function Tests\create_user;
 
 class UploadServiceTest extends TestCase
 {
+    private SongService|MockInterface $songService;
     private FileScanner|MockInterface $scanner;
 
     public function setUp(): void
     {
         parent::setUp();
 
+        $this->songService = Mockery::mock(SongService::class);
         $this->scanner = Mockery::mock(FileScanner::class);
     }
 
@@ -37,7 +40,9 @@ class UploadServiceTest extends TestCase
     public function handleUpload(): void
     {
         $storage = Mockery::mock(SongStorage::class, ['getStorageType' => SongStorageType::LOCAL]);
+        $scanInfo = ScanInformation::fromGetId3Info([], '/var/media/koel/some-file.mp3');
         $file = Mockery::mock(UploadedFile::class);
+        $song = Song::factory()->create();
         $uploader = create_user();
 
         $reference = UploadReference::make(
@@ -49,24 +54,23 @@ class UploadServiceTest extends TestCase
             ->with($file, $uploader)
             ->andReturn($reference);
 
-        $this->scanner->shouldReceive('setFile')
-            ->with('/var/media/koel/some-file.mp3')
-            ->andReturnSelf();
-
         $this->scanner->shouldReceive('scan')
-            ->with(Mockery::on(static function (ScanConfiguration $config) use ($uploader): bool {
+            ->with('/var/media/koel/some-file.mp3')
+            ->once()
+            ->andReturn($scanInfo);
+
+        $this->songService->shouldReceive('createOrUpdateSongFromScan')
+            ->with($scanInfo, Mockery::on(static function (ScanConfiguration $config) use ($uploader): bool {
                 return $config->owner->is($uploader)
                     && $config->makePublic === $uploader->preferences->makeUploadsPublic
                     && $config->extractFolderStructure;
             }))
-            ->andReturn(ScanResult::success('/var/media/koel/some-file.mp3'));
-
-        $song = Song::factory()->create();
-
-        $this->scanner->shouldReceive('getSong')
+            ->once()
             ->andReturn($song);
 
-        self::assertSame($song, (new UploadService($storage, $this->scanner))->handleUpload($file, $uploader));
+        $result = (new UploadService($this->songService, $storage, $this->scanner))->handleUpload($file, $uploader);
+
+        self::assertSame($song, $result);
     }
 
     #[Test]
@@ -74,7 +78,14 @@ class UploadServiceTest extends TestCase
     {
         $storage = Mockery::mock(SongStorage::class, ['getStorageType' => SongStorageType::S3]);
         $file = Mockery::mock(UploadedFile::class);
+        $scanInfo = ScanInformation::fromGetId3Info([], '/tmp/some-tmp-file.mp3');
         $uploader = create_user();
+
+        /** @var Song $song */
+        $song = Song::factory()->create([
+            'path' => '/tmp/some-tmp-file.mp3', // Initially set to the local path
+            'storage' => SongStorageType::LOCAL, // Initially set to local storage
+        ]);
 
         $reference = UploadReference::make(
             location: 's3://koel/some-file.mp3',
@@ -85,28 +96,20 @@ class UploadServiceTest extends TestCase
             ->with($file, $uploader)
             ->andReturn($reference);
 
-        $this->scanner->shouldReceive('setFile')
-            ->with('/tmp/some-tmp-file.mp3')
-            ->andReturnSelf();
-
         $this->scanner->shouldReceive('scan')
-            ->with(Mockery::on(static function (ScanConfiguration $config) use ($uploader): bool {
+            ->with('/tmp/some-tmp-file.mp3')
+            ->andReturn($scanInfo);
+
+        $this->songService->shouldReceive('createOrUpdateSongFromScan')
+            ->with($scanInfo, Mockery::on(static function (ScanConfiguration $config) use ($uploader): bool {
                 return $config->owner->is($uploader)
                     && $config->makePublic === $uploader->preferences->makeUploadsPublic
                     && !$config->extractFolderStructure;
             }))
-            ->andReturn(ScanResult::success('/tmp/some-tmp-file.mp3'));
-
-        /** @var Song $song */
-        $song = Song::factory()->create([
-            'path' => '/tmp/some-tmp-file.mp3', // Initially set to the local path
-            'storage' => SongStorageType::LOCAL, // Initially set to local storage
-        ]);
-
-        $this->scanner->shouldReceive('getSong')
+            ->once()
             ->andReturn($song);
 
-        $result = (new UploadService($storage, $this->scanner))->handleUpload($file, $uploader);
+        $result = (new UploadService($this->songService, $storage, $this->scanner))->handleUpload($file, $uploader);
 
         self::assertSame($song, $result);
         self::assertSame('s3://koel/some-file.mp3', $song->path);
@@ -116,11 +119,16 @@ class UploadServiceTest extends TestCase
     #[Test]
     public function deletesTempLocalPathAfterUploading(): void
     {
+        $scanInfo = ScanInformation::fromGetId3Info([], '/tmp/some-tmp-file.mp3');
+
         /** @var SongStorage|MustDeleteTemporaryLocalFileAfterUpload|MockInterface $storage */
         $storage = Mockery::mock(
             SongStorage::class . ',' . MustDeleteTemporaryLocalFileAfterUpload::class,
             ['getStorageType' => SongStorageType::S3]
         );
+
+        /** @var Song $song */
+        $song = Song::factory()->create();
 
         $file = Mockery::mock(UploadedFile::class);
         $uploader = create_user();
@@ -131,18 +139,39 @@ class UploadServiceTest extends TestCase
         );
 
         $storage->shouldReceive('storeUploadedFile')->andReturn($reference);
-        $this->scanner->shouldReceive('setFile')->andReturnSelf();
-        $this->scanner->shouldReceive('scan')->andReturn(ScanResult::success('/tmp/some-tmp-file.mp3'));
-
-        /** @var Song $song */
-        $song = Song::factory()->create();
-
-        $this->scanner->shouldReceive('getSong')
-            ->andReturn($song);
+        $this->scanner->shouldReceive('scan')->andReturn($scanInfo);
+        $this->songService->shouldReceive('createOrUpdateSongFromScan')->andReturn($song);
 
         File::shouldReceive('delete')->once()->with('/tmp/some-tmp-file.mp3');
 
-        (new UploadService($storage, $this->scanner))->handleUpload($file, $uploader);
+        (new UploadService($this->songService, $storage, $this->scanner))->handleUpload($file, $uploader);
+    }
+
+    #[Test]
+    public function undoUploadOnScanningProcessException(): void
+    {
+        $scanInfo = ScanInformation::fromGetId3Info([], '/var/media/koel/some-file.mp3');
+        $storage = Mockery::mock(SongStorage::class, ['getStorageType' => SongStorageType::LOCAL]);
+        $file = Mockery::mock(UploadedFile::class);
+        $uploader = create_user();
+
+        $reference = UploadReference::make(
+            location: '/var/media/koel/some-file.mp3',
+            localPath: '/var/media/koel/some-file.mp3',
+        );
+
+        $storage->shouldReceive('storeUploadedFile')->with($file, $uploader)->andReturn($reference);
+        $this->scanner->shouldReceive('scan')->andReturn($scanInfo);
+        $storage->shouldReceive('undoUpload')->with($reference)->once();
+
+        $this->songService
+            ->shouldReceive('createOrUpdateSongFromScan')
+            ->andThrow(new Exception('File supports racism'));
+
+        $this->expectException(SongUploadFailedException::class);
+        $this->expectExceptionMessage('File supports racism');
+
+        (new UploadService($this->songService, $storage, $this->scanner))->handleUpload($file, $uploader);
     }
 
     #[Test]
@@ -157,48 +186,13 @@ class UploadServiceTest extends TestCase
             localPath: '/var/media/koel/some-file.mp3',
         );
 
-        $storage->shouldReceive('storeUploadedFile')
-            ->with($file, $uploader)
-            ->andReturn($reference);
-
-        $this->scanner->shouldReceive('setFile')
-            ->with('/var/media/koel/some-file.mp3')
-            ->andReturnSelf();
-
-        $this->scanner->shouldReceive('scan')
-            ->andReturn(ScanResult::error('/var/media/koel/some-file.mp3', 'File supports racism'));
-
+        $storage->shouldReceive('storeUploadedFile')->with($file, $uploader)->andReturn($reference);
+        $this->scanner->shouldReceive('scan')->andThrow(new Exception('File supports racism'));
         $storage->shouldReceive('undoUpload')->with($reference)->once();
 
         $this->expectException(SongUploadFailedException::class);
         $this->expectExceptionMessage('File supports racism');
 
-        (new UploadService($storage, $this->scanner))->handleUpload($file, $uploader);
-    }
-
-    #[Test]
-    public function undoUploadOnScanningProcessException(): void
-    {
-        $storage = Mockery::mock(SongStorage::class, ['getStorageType' => SongStorageType::LOCAL]);
-        $file = Mockery::mock(UploadedFile::class);
-        $uploader = create_user();
-
-        $reference = UploadReference::make(
-            location: '/var/media/koel/some-file.mp3',
-            localPath: '/var/media/koel/some-file.mp3',
-        );
-
-        $storage->shouldReceive('storeUploadedFile')->with($file, $uploader)->andReturn($reference);
-        $this->scanner->shouldReceive('setFile')->andReturnSelf();
-
-        $exception = new Exception('Scanning failed due to Koel author too handsome hehe');
-
-        $this->scanner->shouldReceive('scan')->andThrow($exception);
-        $storage->shouldReceive('undoUpload')->with($reference)->once();
-
-        $this->expectException(SongUploadFailedException::class);
-        $this->expectExceptionMessage('Scanning failed due to Koel author too handsome hehe');
-
-        (new UploadService($storage, $this->scanner))->handleUpload($file, $uploader);
+        (new UploadService($this->songService, $storage, $this->scanner))->handleUpload($file, $uploader);
     }
 }

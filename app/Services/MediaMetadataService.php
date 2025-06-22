@@ -5,14 +5,17 @@ namespace App\Services;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Playlist;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Symfony\Component\Finder\Finder;
 
 class MediaMetadataService
 {
     public function __construct(
         private readonly SpotifyService $spotifyService,
-        private readonly ImageWriter $imageWriter
+        private readonly ImageWriter $imageWriter,
+        private readonly Finder $finder
     ) {
     }
 
@@ -142,5 +145,31 @@ class MediaMetadataService
             File::delete($playlist->cover_path);
             $playlist->update(['cover' => null]);
         }
+    }
+
+    public function trySetAlbumCoverFromDirectory(Album $album, string $directory): void
+    {
+        // As directory scanning can be expensive, we cache and reuse the result.
+        Cache::remember(cache_key($directory, 'cover'), now()->addDay(), function () use ($album, $directory): ?string {
+            $matches = array_keys(
+                iterator_to_array(
+                    $this->finder::create()
+                        ->depth(0)
+                        ->ignoreUnreadableDirs()
+                        ->files()
+                        ->followLinks()
+                        ->name('/(cov|fold)er\.(jpe?g|png)$/i')
+                        ->in($directory)
+                )
+            );
+
+            $cover = $matches[0] ?? null;
+
+            if ($cover && is_image($cover)) {
+                $this->writeAlbumCover($album, $cover);
+            }
+
+            return $cover;
+        });
     }
 }

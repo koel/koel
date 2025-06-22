@@ -11,12 +11,15 @@ use Tests\TestCase;
 class AlbumTest extends TestCase
 {
     #[Test]
-    public function existingAlbumCanBeRetrievedUsingUserAndArtistAndName(): void
+    public function existingAlbumCanBeRetrievedUsingArtistAndName(): void
     {
-        /** @var Album $album */
-        $album = Album::factory()->create();
+        /** @var Artist $artist */
+        $artist = Artist::factory()->create();
 
-        self::assertTrue(Album::getOrCreate($album->artist, $album->name)->is($album));
+        /** @var Album $album */
+        $album = Album::factory()->for($artist)->for($artist->user)->create();
+
+        self::assertTrue(Album::getOrCreate($artist, $album->name)->is($album));
     }
 
     #[Test]

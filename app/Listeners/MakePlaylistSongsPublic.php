@@ -6,9 +6,9 @@ use App\Events\NewPlaylistCollaboratorJoined;
 use App\Services\PlaylistService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class MakePlaylistSongsPublic implements ShouldQueue
+readonly class MakePlaylistSongsPublic implements ShouldQueue
 {
-    public function __construct(private readonly PlaylistService $service)
+    public function __construct(private PlaylistService $service)
     {
     }
 

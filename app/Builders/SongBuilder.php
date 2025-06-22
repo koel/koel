@@ -3,6 +3,7 @@
 namespace App\Builders;
 
 use App\Facades\License;
+use App\Models\Song;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
@@ -11,6 +12,8 @@ use Webmozart\Assert\Assert;
 
 /**
  * @method self logSql()
+ *
+ * @extends Builder<Song>
  */
 class SongBuilder extends Builder
 {
