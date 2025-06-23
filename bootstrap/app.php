@@ -5,7 +5,6 @@ use App\Http\Middleware\ForceHttps;
 use App\Http\Middleware\HandleDemoMode;
 use App\Http\Middleware\ObjectStorageAuthenticate;
 use App\Http\Middleware\RestrictPlusFeatures;
-use App\Http\Requests\Request;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
@@ -13,6 +12,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
