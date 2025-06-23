@@ -334,6 +334,14 @@ onMounted(() => render())
       @apply basis-[72px];
     }
 
+    &.year {
+      @apply basis-[64px] text-left;
+    }
+
+    &.genre {
+      @apply basis-48 text-left;
+    }
+
     &.added-at {
       @apply basis-36 text-left;
     }
@@ -383,8 +391,8 @@ onMounted(() => render())
       width: 200%;
     }
 
-    .song-item :is(.track-number, .album, .time, .added-at),
-    .song-list-header :is(.track-number, .album, .time, .added-at) {
+    .song-item :is(.track-number, .album, .time, .year, .genre, .added-at),
+    .song-list-header :is(.track-number, .album, .time, .year, .genre, .added-at) {
       display: none;
     }
 
