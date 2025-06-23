@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\AudioAuthenticate;
+use App\Http\Middleware\ForceHttps;
 use App\Http\Middleware\HandleDemoMode;
 use App\Http\Middleware\ObjectStorageAuthenticate;
 use App\Http\Middleware\RestrictPlusFeatures;
@@ -27,11 +28,13 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->api(append: [
             RestrictPlusFeatures::class,
             HandleDemoMode::class,
+            ForceHttps::class,
         ]);
 
         $middleware->web(append: [
             RestrictPlusFeatures::class,
             HandleDemoMode::class,
+            ForceHttps::class,
         ]);
 
         $middleware->alias([
