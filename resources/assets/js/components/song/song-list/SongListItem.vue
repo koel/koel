@@ -42,6 +42,8 @@
         </span>
         <span :title="playable.collaboration.added_at" class="added-at">{{ playable.collaboration.fmt_added_at }}</span>
       </template>
+      <span v-if="shouldShowColumn('genre')" class="genre">{{ playable.genre || '—' }}</span>
+      <span v-if="shouldShowColumn('year')" class="year">{{ playable.year || '—' }}</span>
       <span v-if="shouldShowColumn('duration')" class="time">{{ fmtLength }}</span>
       <span class="extra">
         <LikeButton :playable="playable" />

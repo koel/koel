@@ -465,7 +465,7 @@ interface PlayableListContext {
 }
 
 type PlayableListSortField =
-  keyof Pick<Song, 'track' | 'disc' | 'title' | 'album_name' | 'length' | 'artist_name' | 'created_at'>
+  keyof Pick<Song, 'track' | 'disc' | 'title' | 'album_name' | 'length' | 'artist_name' | 'genre' | 'year' | 'created_at'>
   | keyof Pick<Episode, 'podcast_author' | 'podcast_title'>
   | 'position'
 
@@ -521,7 +521,7 @@ interface Visualizer {
   }
 }
 
-type PlayableListColumnName = 'title' | 'album' | 'track' | 'duration' | 'created_at' | 'play_count'
+type PlayableListColumnName = 'title' | 'album' | 'track' | 'duration' | 'created_at' | 'play_count' | 'year' | 'genre'
 
 interface Folder {
   type: 'folders'

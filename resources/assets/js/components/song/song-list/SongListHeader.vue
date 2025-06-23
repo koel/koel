@@ -52,6 +52,34 @@
       <span class="added-at">Added</span>
     </template>
     <span
+      v-if="shouldShowColumn('genre')"
+      class="genre"
+      data-testid="header-genre"
+      role="button"
+      title="Sort by genre"
+      @click="sort('genre')"
+    >
+      Genre
+      <template v-if="config.sortable">
+        <Icon v-if="sortField === 'genre' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
+        <Icon v-if="sortField === 'genre' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
+      </template>
+    </span>
+    <span
+      v-if="shouldShowColumn('year')"
+      class="year"
+      data-testid="header-year"
+      role="button"
+      title="Sort by year"
+      @click="sort('year')"
+    >
+      Year
+      <template v-if="config.sortable">
+        <Icon v-if="sortField === 'year' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
+        <Icon v-if="sortField === 'year' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
+      </template>
+    </span>
+    <span
       v-if="shouldShowColumn('duration')"
       class="time"
       data-testid="header-length"
