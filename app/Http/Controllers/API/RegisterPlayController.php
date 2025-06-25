@@ -17,7 +17,7 @@ class RegisterPlayController extends Controller
     public function __invoke(
         IncreasePlayCountRequest $request,
         InteractionService $interactionService,
-        ?Authenticatable $user
+        Authenticatable $user
     ) {
         /** @var Song $song */
         $song = Song::query()->findOrFail($request->song);

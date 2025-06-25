@@ -16,7 +16,7 @@ class ToggleLikeSongController extends Controller
     public function __invoke(
         ToggleLikeSongRequest $request,
         InteractionService $interactionService,
-        ?Authenticatable $user
+        Authenticatable $user
     ) {
         /** @var Song $song */
         $song = Song::query()->findOrFail($request->song);

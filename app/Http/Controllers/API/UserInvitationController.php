@@ -21,7 +21,7 @@ class UserInvitationController extends Controller
     public function __construct(
         private readonly UserInvitationService $invitationService,
         private readonly AuthenticationService $auth,
-        private readonly ?Authenticatable $invitor
+        private readonly Authenticatable $invitor
     ) {
     }
 

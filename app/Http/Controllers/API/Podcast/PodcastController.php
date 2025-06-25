@@ -21,7 +21,7 @@ class PodcastController extends Controller
     public function __construct(
         private readonly PodcastService $podcastService,
         private readonly PodcastRepository $podcastRepository,
-        private readonly ?Authenticatable $user
+        private readonly Authenticatable $user
     ) {
     }
 

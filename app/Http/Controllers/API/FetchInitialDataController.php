@@ -33,7 +33,7 @@ class FetchInitialDataController extends Controller
         ApplicationInformationService $applicationInformationService,
         QueueService $queueService,
         LicenseServiceInterface $licenseService,
-        ?Authenticatable $user
+        Authenticatable $user
     ) {
         $licenseStatus = $licenseService->getStatus();
 

@@ -15,7 +15,7 @@ class LastfmController extends Controller
     public function __construct(
         private readonly LastfmService $lastfm,
         private readonly TokenManager $tokenManager,
-        private readonly ?Authenticatable $currentUser
+        private readonly Authenticatable $currentUser
     ) {
     }
 

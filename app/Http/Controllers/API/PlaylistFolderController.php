@@ -16,7 +16,7 @@ class PlaylistFolderController extends Controller
     /** @param User $user */
     public function __construct(
         private readonly PlaylistFolderService $service,
-        private readonly ?Authenticatable $user
+        private readonly Authenticatable $user
     ) {
     }
 

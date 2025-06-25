@@ -28,7 +28,7 @@ class SongController extends Controller
         private readonly AlbumRepository $albumRepository,
         private readonly ArtistRepository $artistRepository,
         private readonly LibraryManager $libraryManager,
-        private readonly ?Authenticatable $user
+        private readonly Authenticatable $user
     ) {
     }
 

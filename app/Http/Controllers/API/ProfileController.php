@@ -22,7 +22,7 @@ class ProfileController extends Controller
         private readonly Hasher $hash,
         private readonly UserService $userService,
         private readonly TokenManager $tokenManager,
-        private readonly ?Authenticatable $user
+        private readonly Authenticatable $user
     ) {
     }
 

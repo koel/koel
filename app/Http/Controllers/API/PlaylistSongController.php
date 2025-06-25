@@ -25,7 +25,7 @@ class PlaylistSongController extends Controller
         private readonly SongRepository $songRepository,
         private readonly PlaylistService $playlistService,
         private readonly SmartPlaylistService $smartPlaylistService,
-        private readonly ?Authenticatable $user
+        private readonly Authenticatable $user
     ) {
     }
 

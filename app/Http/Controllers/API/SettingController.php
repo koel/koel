@@ -15,7 +15,7 @@ class SettingController extends Controller
     /** @param User $user */
     public function __construct(
         private readonly DirectoryScanner $mediaSyncService,
-        private readonly ?Authenticatable $user
+        private readonly Authenticatable $user
     ) {
     }
 
