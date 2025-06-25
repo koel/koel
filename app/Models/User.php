@@ -193,4 +193,9 @@ class User extends Authenticatable implements AuditableContract
     {
         return Attribute::get(fn (): bool => (bool)$this->preferences->lastFmSessionKey)->shouldCache();
     }
+
+    public function getRouteKeyName(): string
+    {
+        return 'public_id';
+    }
 }

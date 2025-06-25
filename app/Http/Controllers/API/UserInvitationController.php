@@ -9,6 +9,7 @@ use App\Http\Requests\API\GetUserInvitationRequest;
 use App\Http\Requests\API\InviteUserRequest;
 use App\Http\Requests\API\RevokeUserInvitationRequest;
 use App\Http\Resources\UserProspectResource;
+use App\Models\User;
 use App\Services\AuthenticationService;
 use App\Services\UserInvitationService;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -22,6 +23,7 @@ class UserInvitationController extends Controller
     ) {
     }
 
+    /** @param User $invitor */
     public function invite(InviteUserRequest $request, Authenticatable $invitor)
     {
         $this->authorize('admin', $invitor);

@@ -178,4 +178,9 @@ class Artist extends Model implements AuditableContract, PermissionableResource
     {
         return 'public_id';
     }
+
+    public function getRouteKeyName(): string
+    {
+        return 'public_id';
+    }
 }
