@@ -17,8 +17,6 @@ return new class extends Migration {
             $table->string('public_id', 26)->unique()->nullable();
             $table->unsignedInteger('user_id')->nullable()->index();
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
-
-            $table->unique(['name', 'user_id']);
         });
 
         Schema::table('albums', static function (Blueprint $table): void {
@@ -26,8 +24,6 @@ return new class extends Migration {
             //Strictly saying we don't need user_id, but it's better for simplicity and performance.
             $table->unsignedInteger('user_id')->nullable()->index();
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
-
-            $table->unique(['name', 'artist_id', 'user_id']);
         });
 
         // set the default user_id for existing albums and artists to the first admin
