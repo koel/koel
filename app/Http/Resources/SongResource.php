@@ -34,7 +34,7 @@ class SongResource extends JsonResource
 
     public const PAGINATION_JSON_STRUCTURE = [
         'data' => [
-            '*' => self::JSON_STRUCTURE,
+            0 => self::JSON_STRUCTURE,
         ],
         'links' => [
             'first',

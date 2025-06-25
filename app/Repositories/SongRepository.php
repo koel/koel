@@ -8,16 +8,21 @@ use App\Facades\License;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Folder;
+use App\Models\Genre;
 use App\Models\Playlist;
 use App\Models\Podcast;
 use App\Models\Song;
 use App\Models\User;
-use App\Values\Genre;
+use App\Repositories\Contracts\ScoutableRepository;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
+use Laravel\Scout\Builder as ScoutBuilder;
 
-/** @extends Repository<Song> */
-class SongRepository extends Repository
+/**
+ * @extends Repository<Song>
+ * @implements ScoutableRepository<Song>
+ */
+class SongRepository extends Repository implements ScoutableRepository
 {
     private const DEFAULT_QUEUE_LIMIT = 500;
 
@@ -94,7 +99,7 @@ class SongRepository extends Repository
     }
 
     public function getByGenre(
-        string $genre,
+        Genre $genre,
         array $sortColumns,
         string $sortDirection,
         ?User $scopedUser = null,
@@ -103,7 +108,21 @@ class SongRepository extends Repository
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
             ->accessible()
             ->withMeta()
-            ->where('genre', $genre)
+            ->whereRelation('genres', 'genres.id', $genre->id)
+            ->sort($sortColumns, $sortDirection)
+            ->simplePaginate($perPage);
+    }
+
+    public function getWithNoGenre(
+        array $sortColumns,
+        string $sortDirection,
+        ?User $scopedUser = null,
+        int $perPage = 50
+    ): Paginator {
+        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
+            ->accessible()
+            ->withMeta()
+            ->whereDoesntHave('genres')
             ->sort($sortColumns, $sortDirection)
             ->simplePaginate($perPage);
     }
@@ -279,12 +298,12 @@ class SongRepository extends Repository
     }
 
     /** @return Collection|array<array-key, Song> */
-    public function getRandomByGenre(string $genre, int $limit, ?User $scopedUser = null): Collection
+    public function getRandomByGenre(Genre $genre, int $limit, ?User $scopedUser = null): Collection
     {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
             ->accessible()
             ->withMeta()
-            ->where('genre', $genre === Genre::NO_GENRE ? '' : $genre)
+            ->whereRelation('genres', 'genres.id', $genre->id)
             ->limit($limit)
             ->inRandomOrder()
             ->get();
@@ -348,5 +367,22 @@ class SongRepository extends Repository
             ->when(!$folder, static fn (SongBuilder $query) => $query->whereNull('songs.folder_id'))
             ->orderBy('songs.path')
             ->get();
+    }
+
+    /** @return Collection<Song>|array<array-key, Song> */
+    public function search(string $keywords, int $limit, ?User $scopedUser = null): Collection
+    {
+        $isPlus = once(static fn () => License::isPlus());
+        $scopedUser ??= $this->auth->user();
+
+        return $this->getMany(
+            ids: Song::search($keywords)
+                ->when($isPlus, static fn (ScoutBuilder $query) => $query->where('owner_id', $scopedUser?->id))
+                ->get()
+                ->take($limit)
+                ->modelKeys(),
+            preserveOrder: true,
+            scopedUser: $scopedUser,
+        );
     }
 }

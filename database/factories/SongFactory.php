@@ -20,7 +20,6 @@ class SongFactory extends Factory
             'disc' => random_int(1, 5),
             'lyrics' => $this->faker->paragraph(),
             'path' => '/tmp/' . uniqid('', true) . '.mp3',
-            'genre' => $this->faker->randomElement(['Rock', 'Pop', 'Jazz', 'Classical', 'Metal', 'Hip Hop', 'Rap']),
             'year' => $this->faker->year(),
             'is_public' => true,
             'owner_id' => static fn (array $attributes) => Album::query()->find($attributes['album_id'])->user_id, // @phpstan-ignore-line

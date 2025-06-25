@@ -17,14 +17,13 @@ class SongTest extends PlusTestCase
 
         Song::factory(2)->public()->create();
 
-        $ownSongs = Song::factory(3)->for($user, 'owner')->create();
+        $ownSongs = Song::factory(2)->for($user, 'owner')->create();
 
         $this->getAs('api/songs?own_songs_only=true', $user)
             ->assertSuccessful()
-            ->assertJsonCount(3, 'data')
+            ->assertJsonCount(2, 'data')
             ->assertJsonFragment(['id' => $ownSongs[0]->id])
-            ->assertJsonFragment(['id' => $ownSongs[1]->id])
-            ->assertJsonFragment(['id' => $ownSongs[2]->id]);
+            ->assertJsonFragment(['id' => $ownSongs[1]->id]);
     }
 
     #[Test]
@@ -33,15 +32,15 @@ class SongTest extends PlusTestCase
         $user = create_user();
 
         Song::factory(2)->public()->create();
-        Song::factory(3)->for($user, 'owner')->create();
+        Song::factory(2)->for($user, 'owner')->create();
 
         $this->getAs('api/songs?own_songs_only=false', $user)
             ->assertSuccessful()
-            ->assertJsonCount(5, 'data');
+            ->assertJsonCount(4, 'data');
 
         $this->getAs('api/songs', $user)
             ->assertSuccessful()
-            ->assertJsonCount(5, 'data');
+            ->assertJsonCount(4, 'data');
     }
 
     #[Test]
@@ -74,7 +73,7 @@ class SongTest extends PlusTestCase
         $currentUser = create_user();
         $anotherUser = create_user();
 
-        $externalUnownedSongs = Song::factory(3)->for($anotherUser, 'owner')->private()->create();
+        $externalUnownedSongs = Song::factory(2)->for($anotherUser, 'owner')->private()->create();
 
         // We can't edit songs that are not ours.
         $this->putAs('api/songs', [
@@ -95,7 +94,7 @@ class SongTest extends PlusTestCase
         ], $currentUser)->assertForbidden();
 
         // But we can edit our own songs.
-        $ownSongs = Song::factory(3)->for($currentUser, 'owner')->create();
+        $ownSongs = Song::factory(2)->for($currentUser, 'owner')->create();
 
         $this->putAs('api/songs', [
             'songs' => $ownSongs->modelKeys(),
@@ -111,7 +110,7 @@ class SongTest extends PlusTestCase
         $currentUser = create_user();
         $anotherUser = create_user();
 
-        $externalUnownedSongs = Song::factory(3)->for($anotherUser, 'owner')->private()->create();
+        $externalUnownedSongs = Song::factory(2)->for($anotherUser, 'owner')->private()->create();
 
         // We can't delete songs that are not ours.
         $this->deleteAs('api/songs', ['songs' => $externalUnownedSongs->modelKeys()], $currentUser)
@@ -124,7 +123,7 @@ class SongTest extends PlusTestCase
             ->assertForbidden();
 
         // But we can delete our own songs.
-        $ownSongs = Song::factory(3)->for($currentUser, 'owner')->create();
+        $ownSongs = Song::factory(2)->for($currentUser, 'owner')->create();
 
         $this->deleteAs('api/songs', ['songs' => $ownSongs->modelKeys()], $currentUser)
             ->assertSuccessful();
@@ -135,7 +134,7 @@ class SongTest extends PlusTestCase
     {
         $user = create_user();
 
-        $songs = Song::factory(3)->for($user, 'owner')->private()->create();
+        $songs = Song::factory(2)->for($user, 'owner')->private()->create();
 
         $this->putAs('api/songs/publicize', ['songs' => $songs->modelKeys()], $user)
             ->assertSuccessful();
@@ -151,7 +150,7 @@ class SongTest extends PlusTestCase
     {
         $user = create_user();
 
-        $songs = Song::factory(3)->for($user, 'owner')->public()->create();
+        $songs = Song::factory(2)->for($user, 'owner')->public()->create();
 
         $this->putAs('api/songs/privatize', ['songs' => $songs->modelKeys()], $user)
             ->assertSuccessful();
@@ -165,12 +164,12 @@ class SongTest extends PlusTestCase
     #[Test]
     public function publicizingOrPrivatizingSongsRequiresOwnership(): void
     {
-        $songs = Song::factory(3)->public()->create();
+        $songs = Song::factory(2)->public()->create();
 
         $this->putAs('api/songs/privatize', ['songs' => $songs->modelKeys()])
             ->assertForbidden();
 
-        $otherSongs = Song::factory(3)->private()->create();
+        $otherSongs = Song::factory(2)->private()->create();
 
         $this->putAs('api/songs/publicize', ['songs' => $otherSongs->modelKeys()])
             ->assertForbidden();

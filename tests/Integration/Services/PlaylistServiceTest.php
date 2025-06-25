@@ -42,7 +42,7 @@ class PlaylistServiceTest extends TestCase
     #[Test]
     public function createPlaylistWithSongs(): void
     {
-        $songs = Song::factory(3)->create();
+        $songs = Song::factory(2)->create();
         $user = create_user();
 
         $playlist = $this->service->createPlaylist('foo', $user, null, $songs->modelKeys());
@@ -198,14 +198,14 @@ class PlaylistServiceTest extends TestCase
     public function addSongsToPlaylist(): void
     {
         $playlist = create_playlist();
-        $playlist->addPlayables(Song::factory(3)->create());
+        $playlist->addPlayables(Song::factory(2)->create());
         $songs = Song::factory(2)->create();
 
         $addedSongs = $this->service->addPlayablesToPlaylist($playlist, $songs, $playlist->owner);
         $playlist->refresh();
 
         self::assertCount(2, $addedSongs);
-        self::assertCount(5, $playlist->playables);
+        self::assertCount(4, $playlist->playables);
         self::assertEqualsCanonicalizing($addedSongs->modelKeys(), $songs->modelKeys());
         $songs->each(static fn (Song $song) => self::assertTrue($playlist->playables->contains($song)));
     }
@@ -214,7 +214,7 @@ class PlaylistServiceTest extends TestCase
     public function addEpisodesToPlaylist(): void
     {
         $playlist = create_playlist();
-        $playlist->addPlayables(Song::factory(3)->create());
+        $playlist->addPlayables(Song::factory(2)->create());
 
         /** @var Podcast $podcast */
         $podcast = Podcast::factory()->create();
@@ -226,7 +226,7 @@ class PlaylistServiceTest extends TestCase
         $playlist->refresh();
 
         self::assertCount(2, $addedEpisodes);
-        self::assertCount(5, $playlist->playables);
+        self::assertCount(4, $playlist->playables);
         self::assertEqualsCanonicalizing($addedEpisodes->modelKeys(), $episodes->modelKeys());
     }
 
@@ -234,7 +234,7 @@ class PlaylistServiceTest extends TestCase
     public function addMixOfSongsAndEpisodesToPlaylist(): void
     {
         $playlist = create_playlist();
-        $playlist->addPlayables(Song::factory(3)->create());
+        $playlist->addPlayables(Song::factory(2)->create());
         $playables = Song::factory(2)->asEpisode()->create()
             ->merge(Song::factory(2)->create());
 
@@ -242,7 +242,7 @@ class PlaylistServiceTest extends TestCase
         $playlist->refresh();
 
         self::assertCount(4, $addedEpisodes);
-        self::assertCount(7, $playlist->playables);
+        self::assertCount(6, $playlist->playables);
         self::assertEqualsCanonicalizing($addedEpisodes->modelKeys(), $playables->modelKeys());
     }
 

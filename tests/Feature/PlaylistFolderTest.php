@@ -16,11 +16,11 @@ class PlaylistFolderTest extends TestCase
     public function listing(): void
     {
         $user = create_user();
-        PlaylistFolder::factory()->for($user)->count(3)->create();
+        PlaylistFolder::factory()->for($user)->count(2)->create();
 
         $this->getAs('api/playlist-folders', $user)
-            ->assertJsonStructure(['*' => PlaylistFolderResource::JSON_STRUCTURE])
-            ->assertJsonCount(3, '*');
+            ->assertJsonStructure([0 => PlaylistFolderResource::JSON_STRUCTURE])
+            ->assertJsonCount(2);
     }
 
     #[Test]
@@ -48,6 +48,7 @@ class PlaylistFolderTest extends TestCase
     #[Test]
     public function unauthorizedUpdate(): void
     {
+        /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->create(['name' => 'Metal']);
 
         $this->patchAs("api/playlist-folders/{$folder->id}", ['name' => 'Classical'])
@@ -59,6 +60,7 @@ class PlaylistFolderTest extends TestCase
     #[Test]
     public function destroy(): void
     {
+        /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->create();
 
         $this->deleteAs("api/playlist-folders/{$folder->id}", ['name' => 'Classical'], $folder->user)

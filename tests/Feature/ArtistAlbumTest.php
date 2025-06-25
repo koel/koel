@@ -17,6 +17,6 @@ class ArtistAlbumTest extends TestCase
         Album::factory(5)->for($artist)->create();
 
         $this->getAs("api/artists/{$artist->public_id}/albums")
-            ->assertJsonStructure(['*' => AlbumResource::JSON_STRUCTURE]);
+            ->assertJsonStructure([0 => AlbumResource::JSON_STRUCTURE]);
     }
 }

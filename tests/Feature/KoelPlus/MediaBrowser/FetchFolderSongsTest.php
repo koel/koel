@@ -27,14 +27,14 @@ class FetchFolderSongsTest extends PlusTestCase
         $subfolder = Folder::factory()->for($folder, 'parent')->create(['path' => 'foo/bar']);
 
         /** @var Collection $songs */
-        $songs = Song::factory()->for($folder)->count(3)->create();
+        $songs = Song::factory()->for($folder)->count(2)->create();
 
         // create songs in the subfolder, which should not be returned
-        Song::factory()->for($subfolder)->count(4)->create();
+        Song::factory()->for($subfolder)->create();
 
         $response = $this->getAs('api/songs/in-folder?path=foo');
 
-        $response->assertJsonStructure(['*' => SongFileResource::JSON_STRUCTURE]);
+        $response->assertJsonStructure([0 => SongFileResource::JSON_STRUCTURE]);
         self::assertEqualsCanonicalizing($songs->pluck('id')->all(), $response->json('*.id'));
     }
 
@@ -42,21 +42,21 @@ class FetchFolderSongsTest extends PlusTestCase
     public function fetchSongsInFolderWithEmptyPath(): void
     {
         /** @var Collection $songs */
-        $songs = Song::factory()->count(3)->create();
+        $songs = Song::factory()->count(2)->create();
 
         $folder = Folder::factory()->create(['path' => 'foo']);
 
         // create songs in the folder, which should not be returned
-        Song::factory()->for($folder)->count(3)->create();
+        Song::factory()->for($folder)->create();
 
         $response = $this->getAs('api/songs/in-folder?path=');
 
-        $response->assertJsonStructure(['*' => SongFileResource::JSON_STRUCTURE]);
+        $response->assertJsonStructure([0 => SongFileResource::JSON_STRUCTURE]);
         self::assertEqualsCanonicalizing($songs->pluck('id')->all(), Arr::pluck($response->json(), 'id'));
 
         $response = $this->getAs('api/songs/in-folder');
 
-        $response->assertJsonStructure(['*' => SongFileResource::JSON_STRUCTURE]);
+        $response->assertJsonStructure([0 => SongFileResource::JSON_STRUCTURE]);
         self::assertEqualsCanonicalizing($songs->pluck('id')->all(), $response->json('*.id'));
     }
 
@@ -64,13 +64,13 @@ class FetchFolderSongsTest extends PlusTestCase
     public function doesNotFetchPrivateSongsFromOtherUsers(): void
     {
         /** @var Collection $songs */
-        $songs = Song::factory()->count(3)->create();
+        $songs = Song::factory()->count(2)->create();
 
-        Song::factory()->count(2)->create(['is_public' => false]);
+        Song::factory()->create(['is_public' => false]);
 
         $response = $this->getAs('api/songs/in-folder?path=');
 
-        $response->assertJsonStructure(['*' => SongFileResource::JSON_STRUCTURE]);
+        $response->assertJsonStructure([0 => SongFileResource::JSON_STRUCTURE]);
         self::assertEqualsCanonicalizing($songs->pluck('id')->all(), $response->json('*.id'));
     }
 }

@@ -157,9 +157,11 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::delete('playlists/{playlist}/songs', [PlaylistSongController::class, 'destroy']);
         Route::post('playlists/{playlist}/songs/move', MovePlaylistSongsController::class);
 
-        Route::get('genres/{genre}/songs', GenreSongController::class)->where('genre', '.*');
-        Route::get('genres/{genre}/songs/random', FetchRandomSongsInGenreController::class)->where('genre', '.*');
-        Route::apiResource('genres', GenreController::class)->where(['genre' => '.*']);
+        // Genre routes
+        Route::get('genres/{genre?}/songs', GenreSongController::class);
+        Route::get('genres/{genre}/songs/random', FetchRandomSongsInGenreController::class);
+        Route::get('genres', [GenreController::class, 'index']);
+        Route::get('genres/{genre}', [GenreController::class, 'show']);
 
         Route::apiResource('users', UserController::class);
 

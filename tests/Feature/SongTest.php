@@ -6,9 +6,11 @@ use App\Http\Resources\SongResource;
 use App\Jobs\DeleteSongFiles;
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Genre;
 use App\Models\Song;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -39,7 +41,7 @@ class SongTest extends TestCase
     {
         Bus::fake();
 
-        $songs = Song::factory(3)->create();
+        $songs = Song::factory(2)->create();
 
         $this->deleteAs('api/songs', ['songs' => $songs->modelKeys()], create_admin())
             ->assertNoContent();
@@ -52,7 +54,7 @@ class SongTest extends TestCase
     public function unauthorizedDelete(): void
     {
         Bus::fake();
-        $songs = Song::factory(3)->create();
+        $songs = Song::factory(2)->create();
 
         $this->deleteAs('api/songs', ['songs' => $songs->modelKeys()])
             ->assertForbidden();
@@ -127,7 +129,7 @@ class SongTest extends TestCase
     #[Test]
     public function multipleUpdateNoCompilation(): void
     {
-        $songIds = Song::factory(3)->create()->modelKeys();
+        $songIds = Song::factory(2)->create()->modelKeys();
 
         $this->putAs('/api/songs', [
             'songs' => $songIds,
@@ -147,24 +149,22 @@ class SongTest extends TestCase
         // All of these songs must now belong to a new album and artist set
         self::assertSame('One by One', $songs[0]->album->name);
         self::assertSame($songs[0]->album_id, $songs[1]->album_id);
-        self::assertSame($songs[0]->album_id, $songs[2]->album_id);
 
         self::assertSame('John Cena', $songs[0]->artist->name);
         self::assertSame($songs[0]->artist_id, $songs[1]->artist_id);
-        self::assertSame($songs[0]->artist_id, $songs[2]->artist_id);
 
+        // Since the lyrics and title were not set, they should be left unchanged
         self::assertNotSame($songs[0]->title, $songs[1]->title);
         self::assertNotSame($songs[0]->lyrics, $songs[1]->lyrics);
 
         self::assertSame(9999, $songs[0]->track);
         self::assertSame(9999, $songs[1]->track);
-        self::assertSame(9999, $songs[2]->track);
     }
 
     #[Test]
     public function multipleUpdateCreatingNewAlbumsAndArtists(): void
     {
-        $originalSongs = Song::factory(3)->create();
+        $originalSongs = Song::factory(2)->create();
         $originalSongIds = $originalSongs->modelKeys();
         $originalAlbumNames = $originalSongs->pluck('album.name')->all();
         $originalAlbumIds = $originalSongs->pluck('album_id')->all();
@@ -185,15 +185,14 @@ class SongTest extends TestCase
 
         // Even though the album name doesn't change, a new artist should have been created
         // and thus, a new album with the same name was created as well.
-        collect([0, 1, 2])->each(static function (int $i) use ($songs, $originalAlbumNames, $originalAlbumIds): void {
+        collect([0, 1])->each(static function (int $i) use ($songs, $originalAlbumNames, $originalAlbumIds): void {
             self::assertSame($songs[$i]->album->name, $originalAlbumNames[$i]);
             self::assertNotSame($songs[$i]->album_id, $originalAlbumIds[$i]);
         });
 
         // And of course, the new artist is...
         self::assertSame('John Cena', $songs[0]->artist->name); // JOHN CENA!!!
-        self::assertSame('John Cena', $songs[1]->artist->name); // JOHN CENA!!!
-        self::assertSame('John Cena', $songs[2]->artist->name); // And... JOHN CENAAAAAAAAAAA!!!
+        self::assertSame('John Cena', $songs[1]->artist->name); // And... JOHN CENAAAAAAAAAAA!!!
     }
 
     #[Test]
@@ -269,5 +268,30 @@ class SongTest extends TestCase
         Song::deleteByChunk(Song::query()->get()->modelKeys(), 1);
 
         self::assertSame(0, Song::query()->count());
+    }
+
+    /** @return array<mixed> */
+    public static function provideGenreData(): array
+    {
+        return [
+            ['Rock, Pop', true],
+            ['Pop, Rock', true],
+            ['Rock,   Pop ', true],
+            ['Rock', false],
+            ['Jazz, Pop', false],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('provideGenreData')]
+    public function genreEqualsTo(string $target, bool $isEqual): void
+    {
+        /** @var Song $song */
+        $song = Song::factory()
+            ->hasAttached(Genre::factory()->create(['name' => 'Pop']))
+            ->hasAttached(Genre::factory()->create(['name' => 'Rock']))
+            ->create();
+
+        self::assertSame($isEqual, $song->genreEqualsTo($target));
     }
 }

@@ -18,6 +18,6 @@ class FavoriteSongTest extends TestCase
         Interaction::factory(5)->for($user)->create(['liked' => true]);
 
         $this->getAs('api/songs/favorite', $user)
-            ->assertJsonStructure(['*' => SongResource::JSON_STRUCTURE]);
+            ->assertJsonStructure([0 => SongResource::JSON_STRUCTURE]);
     }
 }

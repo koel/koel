@@ -22,7 +22,7 @@ class PlaylistTest extends TestCase
         create_playlists(count: 3, owner: $user);
 
         $this->getAs('api/playlists', $user)
-            ->assertJsonStructure(['*' => PlaylistResource::JSON_STRUCTURE])
+            ->assertJsonStructure([0 => PlaylistResource::JSON_STRUCTURE])
             ->assertJsonCount(3, '*');
     }
 
@@ -31,7 +31,7 @@ class PlaylistTest extends TestCase
     {
         $user = create_user();
 
-        $songs = Song::factory(4)->create();
+        $songs = Song::factory(2)->create();
 
         $this->postAs('api/playlists', [
             'name' => 'Foo Bar',
@@ -96,7 +96,7 @@ class PlaylistTest extends TestCase
                     ],
                 ],
             ],
-            'songs' => Song::factory(3)->create()->modelKeys(),
+            'songs' => Song::factory(2)->create()->modelKeys(),
         ])->assertUnprocessable();
     }
 

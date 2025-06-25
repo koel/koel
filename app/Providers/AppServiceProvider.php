@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Genre;
 use App\Services\Contracts\MusicEncyclopedia;
 use App\Services\LastfmService;
 use App\Services\License\Contracts\LicenseServiceInterface;
@@ -16,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Builder;
 use Illuminate\Database\SQLiteConnection;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use SpotifyWebAPI\Session as SpotifySession;
 
@@ -55,6 +57,14 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ScannerCacheStrategyContract::class, static function () {
             // Use a no-cache strategy for unit tests to ensure consistent results
             return app()->runningUnitTests() ? app(ScannerNoCacheStrategy::class) : app(ScannerCacheStrategy::class);
+        });
+
+        Route::bind('genre', static function (string $value): ?Genre {
+            if ($value === Genre::NO_GENRE_PUBLIC_ID) {
+                return null;
+            }
+
+            return Genre::query()->where('public_id', $value)->firstOrFail();
         });
     }
 

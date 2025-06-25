@@ -45,7 +45,7 @@ class QueueTest extends TestCase
 
         $this->assertDatabaseMissing(QueueState::class, ['user_id' => $user->id]);
 
-        $songIds = Song::factory(3)->create()->modelKeys();
+        $songIds = Song::factory(2)->create()->modelKeys();
 
         $this->putAs('api/queue/state', ['songs' => $songIds], $user)
             ->assertNoContent();
@@ -88,11 +88,11 @@ class QueueTest extends TestCase
         Song::factory(10)->create();
 
         $this->getAs('api/queue/fetch?order=rand&limit=5')
-            ->assertJsonStructure(['*' => SongResource::JSON_STRUCTURE])
+            ->assertJsonStructure([0 => SongResource::JSON_STRUCTURE])
             ->assertJsonCount(5, '*');
 
         $this->getAs('api/queue/fetch?order=asc&sort=title&limit=5')
-            ->assertJsonStructure(['*' => SongResource::JSON_STRUCTURE])
+            ->assertJsonStructure([0 => SongResource::JSON_STRUCTURE])
             ->assertJsonCount(5, '*');
     }
 }

@@ -76,13 +76,14 @@ class SongService
 
     private function updateSong(Song $song, SongUpdateData $data): Song
     {
-        // for non-nullable fields, if the provided data is empty, use the existing value
+        // For non-nullable fields, if the provided data is empty, use the existing value
         $data->albumName = $data->albumName ?: $song->album->name;
         $data->artistName = $data->artistName ?: $song->artist->name;
         $data->title = $data->title ?: $song->title;
 
-        // For nullable fields, use the existing value only if the provided data is explicitly null.
-        // This allows us to clear those fields.
+        // For nullable fields, use the existing value only if the provided data is explicitly null
+        // (i.e., when multiple songs are being updated and the user did not provide a value).
+        // This allows us to clear those fields (when user provides an empty string).
         $data->albumArtistName ??= $song->album_artist->name;
         $data->lyrics ??= $song->lyrics;
         $data->track ??= $song->track;
@@ -100,10 +101,13 @@ class SongService
         $song->lyrics = $data->lyrics;
         $song->track = $data->track;
         $song->disc = $data->disc;
-        $song->genre = $data->genre;
         $song->year = $data->year;
 
         $song->push();
+
+        if (!$song->genreEqualsTo($data->genre)) {
+            $song->syncGenres($data->genre);
+        }
 
         return $this->songRepository->getOne($song->id);
     }
@@ -179,6 +183,7 @@ class SongService
         }
 
         $data = $info->toArray();
+        $genre = Arr::pull($data, 'genre', '');
 
         // If the file is new, we take all necessary metadata, totally discarding the "ignores" config.
         // Otherwise, we only take the metadata not in the "ignores" config.
@@ -216,6 +221,10 @@ class SongService
             $song = Song::query()->create($data);
         } else {
             $song->update($data);
+        }
+
+        if ($genre !== $song->genre) {
+            $song->syncGenres($genre);
         }
 
         if (!$album->year && $song->year) {

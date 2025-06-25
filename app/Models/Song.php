@@ -19,6 +19,7 @@ use App\Values\SongStorageMetadata\SongStorageMetadata;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -45,7 +46,7 @@ use Webmozart\Assert\Assert;
  * @property int $disc
  * @property int $album_id
  * @property int|null $year
- * @property string $genre
+ * @property Collection<Genre>|array<array-key, Genre> $genres
  * @property ?string $mime_type The MIME type of the song file, if available
  * @property string $id
  * @property int $artist_id
@@ -61,6 +62,8 @@ use Webmozart\Assert\Assert;
  * @property ?string $folder_id
  * @property ?Folder $folder
  * @property ?string $basename
+ * @property-read ?string $genre The string representation of the genres associated with the song. Readonly.
+ *                               To set the genres, use the `syncGenres` method.
  *
  * // The following are only available for collaborative playlists
  * @property-read ?string $collaborator_email The email of the user who added the song to the playlist
@@ -99,7 +102,7 @@ class Song extends Model implements AuditableContract
         'episode_metadata' => EpisodeMetadataCast::class,
     ];
 
-    protected $with = ['album', 'artist', 'podcast', 'owner'];
+    protected $with = ['album', 'artist', 'podcast', 'genres', 'owner'];
 
     public static function query(?PlayableType $type = null, ?User $user = null): SongBuilder
     {
@@ -150,6 +153,11 @@ class Song extends Model implements AuditableContract
     public function interactions(): HasMany
     {
         return $this->hasMany(Interaction::class);
+    }
+
+    public function genres(): BelongsToMany
+    {
+        return $this->belongsToMany(Genre::class);
     }
 
     protected function albumArtist(): Attribute
@@ -217,6 +225,24 @@ class Song extends Model implements AuditableContract
         });
     }
 
+    protected function genre(): Attribute
+    {
+        return Attribute::get(fn () => $this->genres->pluck('name')->implode(', '))->shouldCache();
+    }
+
+    public function syncGenres(string|array $genres): void
+    {
+        $genreNames = is_array($genres) ? $genres : explode(',', $genres);
+
+        $genreIds = collect($genreNames)
+            ->map(static fn (string $name) => trim($name))
+            ->filter()
+            ->unique()
+            ->map(static fn (string $name) => Genre::get($name)->id);
+
+        $this->genres()->sync($genreIds);
+    }
+
     public static function getPathFromS3BucketAndKey(string $bucket, string $key): string
     {
         return "s3://$bucket/$key";
@@ -227,6 +253,7 @@ class Song extends Model implements AuditableContract
     {
         $array = [
             'id' => $this->id,
+            'owner_id' => $this->owner_id,
             'title' => $this->title,
             'type' => $this->type->value,
         ];
@@ -245,6 +272,22 @@ class Song extends Model implements AuditableContract
     public function isEpisode(): bool
     {
         return $this->type === PlayableType::PODCAST_EPISODE;
+    }
+
+    public function genreEqualsTo(string|array $genres): bool
+    {
+        $genreNames = collect(is_string($genres) ? explode(',', $genres) : $genres)
+            ->map(static fn (string $name) => trim($name))
+            ->filter()
+            ->unique()
+            ->sort()
+            ->join(', ');
+
+        if (!$this->genre && !$genreNames) {
+            return true;
+        }
+
+        return $this->genre === $genreNames;
     }
 
     public function isStoredOnCloud(): bool

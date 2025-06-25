@@ -170,6 +170,7 @@ class Artist extends Model implements AuditableContract, PermissionableResource
     {
         return [
             'id' => $this->id,
+            'user_id' => $this->user_id,
             'name' => $this->name,
         ];
     }

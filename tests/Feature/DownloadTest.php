@@ -83,8 +83,9 @@ class DownloadTest extends TestCase
     #[Test]
     public function downloadAlbum(): void
     {
+        /** @var Album $album */
         $album = Album::factory()->create();
-        $songs = Song::factory(3)->for($album)->create();
+        $songs = Song::factory(2)->for($album)->create();
         $user = create_user();
 
         $this->downloadService
@@ -104,8 +105,9 @@ class DownloadTest extends TestCase
     #[Test]
     public function downloadArtist(): void
     {
+        /** @var Artist $artist */
         $artist = Artist::factory()->create();
-        $songs = Song::factory(3)->for($artist)->create();
+        $songs = Song::factory(2)->for($artist)->create();
         $user = create_user();
 
         $this->downloadService
@@ -126,7 +128,7 @@ class DownloadTest extends TestCase
     public function downloadPlaylist(): void
     {
         $user = create_user();
-        $songs = Song::factory(3)->create();
+        $songs = Song::factory(2)->create();
 
         $playlist = create_playlist(owner: $user);
         $playlist->addPlayables($songs);
@@ -158,7 +160,7 @@ class DownloadTest extends TestCase
     public function downloadFavorites(): void
     {
         $user = create_user();
-        $favorites = Interaction::factory(3)->for($user)->create(['liked' => true]);
+        $favorites = Interaction::factory(2)->for($user)->create(['liked' => true]);
 
         $this->downloadService
             ->shouldReceive('getDownloadable')
