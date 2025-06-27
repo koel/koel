@@ -28,14 +28,6 @@
       </li>
       <li>
         <SponsorLogo
-          :logo="rayLogo"
-          name="Ray"
-          slogan="Understand and fix bugs faster with Ray"
-          url="https://myray.app"
-        />
-      </li>
-      <li>
-        <SponsorLogo
           class="no-inverse"
           :logo="followerBoerseLogo"
           name="Follower Börse"
@@ -65,7 +57,6 @@ import SponsorLogo from './SponsorLogo.vue'
 import doLogo from '../../assets/img/sponsors/do.svg'
 import followerBoerseLogo from '../../assets/img/sponsors/follower-boerse.svg'
 import keycdnLogo from '../../assets/img/sponsors/keycdn.svg'
-import rayLogo from '../../assets/img/sponsors/ray.svg'
 import whatTheDiffLogo from '../../assets/img/sponsors/what-the-diff.svg'
 import followHeroLogo from '../../assets/img/sponsors/followhero.webp'
 </script>
