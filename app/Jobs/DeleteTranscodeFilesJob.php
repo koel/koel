@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 use Log;
 use Throwable;
 
-class DeleteTranscodeFiles extends QueuedJob
+class DeleteTranscodeFilesJob extends QueuedJob
 {
     /**
      * @param Collection<TranscodeFileInfo>|array<array-key, TranscodeFileInfo> $files

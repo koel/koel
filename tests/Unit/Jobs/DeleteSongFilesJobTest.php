@@ -3,7 +3,7 @@
 namespace Tests\Unit\Jobs;
 
 use App\Enums\SongStorageType;
-use App\Jobs\DeleteSongFiles;
+use App\Jobs\DeleteSongFilesJob;
 use App\Services\SongStorages\SongStorage;
 use App\Values\SongFileInfo;
 use Mockery;
@@ -32,7 +32,7 @@ class DeleteSongFilesJobTest extends TestCase
             ->with('key.mp3', config('koel.backup_on_delete'))
             ->once();
 
-        $job = new DeleteSongFiles($files);
+        $job = new DeleteSongFilesJob($files);
         $job->handle($storage);
     }
 }

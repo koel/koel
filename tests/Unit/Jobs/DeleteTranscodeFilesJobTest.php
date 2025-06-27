@@ -3,7 +3,7 @@
 namespace Tests\Unit\Jobs;
 
 use App\Enums\SongStorageType;
-use App\Jobs\DeleteTranscodeFiles;
+use App\Jobs\DeleteTranscodeFilesJob;
 use App\Services\Transcoding\CloudTranscodingStrategy;
 use App\Services\Transcoding\LocalTranscodingStrategy;
 use App\Values\Transcoding\TranscodeFileInfo;
@@ -33,7 +33,7 @@ class DeleteTranscodeFilesJobTest extends TestCase
             ->once();
 
 
-        $job = new DeleteTranscodeFiles($files);
+        $job = new DeleteTranscodeFilesJob($files);
         $job->handle();
     }
 }
