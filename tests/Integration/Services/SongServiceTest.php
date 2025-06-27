@@ -3,8 +3,8 @@
 namespace Tests\Integration\Services;
 
 use App\Events\SongFolderStructureExtractionRequested;
-use App\Jobs\DeleteSongFiles;
-use App\Jobs\DeleteTranscodeFiles;
+use App\Jobs\DeleteSongFilesJob;
+use App\Jobs\DeleteTranscodeFilesJob;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Setting;
@@ -195,8 +195,8 @@ class SongServiceTest extends TestCase
         $songs->each(fn (Song $song) => $this->assertDatabaseMissing(Song::class, ['id' => $song->id]));
 
         Bus::assertDispatched(
-            DeleteSongFiles::class,
-            static function (DeleteSongFiles $job) use ($songs) {
+            DeleteSongFilesJob::class,
+            static function (DeleteSongFilesJob $job) use ($songs) {
                 self::assertEqualsCanonicalizing(
                     $job->files->pluck('location')->toArray(),
                     $songs->pluck('path')->toArray(),
@@ -206,7 +206,7 @@ class SongServiceTest extends TestCase
             }
         );
 
-        Bus::assertNotDispatched(DeleteTranscodeFiles::class);
+        Bus::assertNotDispatched(DeleteTranscodeFilesJob::class);
     }
 
     #[Test]
@@ -224,8 +224,8 @@ class SongServiceTest extends TestCase
         });
 
         Bus::assertDispatched(
-            DeleteSongFiles::class,
-            static function (DeleteSongFiles $job) use ($songs) {
+            DeleteSongFilesJob::class,
+            static function (DeleteSongFilesJob $job) use ($songs) {
                 self::assertEqualsCanonicalizing(
                     $job->files->pluck('location')->toArray(),
                     $songs->pluck('path')->toArray(),
@@ -236,8 +236,8 @@ class SongServiceTest extends TestCase
         );
 
         Bus::assertDispatched(
-            DeleteTranscodeFiles::class,
-            static function (DeleteTranscodeFiles $job) use ($transcodes) {
+            DeleteTranscodeFilesJob::class,
+            static function (DeleteTranscodeFilesJob $job) use ($transcodes) {
                 self::assertEqualsCanonicalizing(
                     $job->files->pluck('location')->toArray(),
                     $transcodes->pluck('location')->toArray(),

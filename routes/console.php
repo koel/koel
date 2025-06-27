@@ -1,12 +1,9 @@
 <?php
 
-use App\Console\Commands\CleanUpTempFilesCommand;
-use App\Console\Commands\PruneLibraryCommand;
-use App\Console\Commands\ScanCommand;
-use App\Console\Commands\SyncPodcastsCommand;
+use App\Jobs\RunCommandJob;
 use Illuminate\Support\Facades\Schedule;
 
-Schedule::command(ScanCommand::class)->daily();
-Schedule::command(PruneLibraryCommand::class)->daily();
-Schedule::command(SyncPodcastsCommand::class)->daily();
-Schedule::command(CleanUpTempFilesCommand::class)->daily();
+Schedule::job(new RunCommandJob('koel:scan'))->daily();
+Schedule::job(new RunCommandJob('koel:prune'))->daily();
+Schedule::job(new RunCommandJob('koel:podcasts:sync'))->daily();
+Schedule::job(new RunCommandJob('koel:clean-up-temp-files'))->daily();

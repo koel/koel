@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Http\Resources\SongResource;
-use App\Jobs\DeleteSongFiles;
+use App\Jobs\DeleteSongFilesJob;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Genre;
@@ -47,7 +47,7 @@ class SongTest extends TestCase
             ->assertNoContent();
 
         $songs->each(fn (Song $song) => $this->assertModelMissing($song));
-        Bus::assertDispatched(DeleteSongFiles::class);
+        Bus::assertDispatched(DeleteSongFilesJob::class);
     }
 
     #[Test]
@@ -60,7 +60,7 @@ class SongTest extends TestCase
             ->assertForbidden();
 
         $songs->each(fn (Song $song) => $this->assertModelExists($song));
-        Bus::assertNotDispatched(DeleteSongFiles::class);
+        Bus::assertNotDispatched(DeleteSongFilesJob::class);
     }
 
     #[Test]

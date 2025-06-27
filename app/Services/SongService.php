@@ -4,8 +4,8 @@ namespace App\Services;
 
 use App\Events\SongFolderStructureExtractionRequested;
 use App\Facades\License;
-use App\Jobs\DeleteSongFiles;
-use App\Jobs\DeleteTranscodeFiles;
+use App\Jobs\DeleteSongFilesJob;
+use App\Jobs\DeleteTranscodeFilesJob;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
@@ -161,10 +161,10 @@ class SongService
             return;
         }
 
-        DeleteSongFiles::dispatch($songFiles);
+        DeleteSongFilesJob::dispatch($songFiles);
 
         if ($transcodeFiles->isNotEmpty()) {
-            DeleteTranscodeFiles::dispatch($transcodeFiles);
+            DeleteTranscodeFilesJob::dispatch($transcodeFiles);
         }
     }
 
