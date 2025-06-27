@@ -2,12 +2,12 @@
 
 namespace App\Services;
 
+use App\Helpers\Ulid;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Playlist;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 use Symfony\Component\Finder\Finder;
 
 class MediaMetadataService
@@ -94,17 +94,17 @@ class MediaMetadataService
 
     private function generateAlbumCoverPath(): string
     {
-        return album_cover_path(sprintf('%s.webp', sha1(Str::uuid())));
+        return album_cover_path(sprintf('%s.webp', Ulid::generate()));
     }
 
     private function generateArtistImagePath(): string
     {
-        return artist_image_path(sprintf('%s.webp', sha1(Str::uuid())));
+        return artist_image_path(sprintf('%s.webp', Ulid::generate()));
     }
 
     private function generatePlaylistCoverPath(): string
     {
-        return playlist_cover_path(sprintf('%s.webp', sha1(Str::uuid())));
+        return playlist_cover_path(sprintf('%s.webp', Ulid::generate()));
     }
 
     /**

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Exceptions\FailedToParsePodcastFeedException;
 use App\Exceptions\UserAlreadySubscribedToPodcastException;
+use App\Helpers\Uuid;
 use App\Models\Podcast;
 use App\Models\PodcastUserPivot;
 use App\Models\Song as Episode;
@@ -18,7 +19,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use PhanAn\Poddle\Poddle;
 use PhanAn\Poddle\Values\Episode as EpisodeValue;
 use PhanAn\Poddle\Values\EpisodeCollection;
@@ -127,7 +127,7 @@ class PodcastService
         /** @var EpisodeValue $episodeValue */
         foreach ($episodeCollection as $episodeValue) {
             if (!in_array($episodeValue->guid->value, $existingEpisodeGuids, true)) {
-                $id = Str::uuid()->toString();
+                $id = Uuid::generate();
                 $ids[] = $id;
                 $records[] = [
                     'id' => $id,

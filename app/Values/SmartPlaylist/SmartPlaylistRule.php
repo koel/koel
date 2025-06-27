@@ -4,8 +4,8 @@ namespace App\Values\SmartPlaylist;
 
 use App\Enums\SmartPlaylistModel;
 use App\Enums\SmartPlaylistOperator;
+use App\Helpers\Uuid;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Support\Str;
 use Webmozart\Assert\Assert;
 
 final class SmartPlaylistRule implements Arrayable
@@ -19,7 +19,7 @@ final class SmartPlaylistRule implements Arrayable
     {
         self::assertConfig($config);
 
-        $this->id = $config['id'] ?? Str::uuid()->toString();
+        $this->id = $config['id'] ?? Uuid::generate();
         $this->value = $config['value'];
         $this->model = SmartPlaylistModel::from($config['model']);
         $this->operator = SmartPlaylistOperator::from($config['operator']);

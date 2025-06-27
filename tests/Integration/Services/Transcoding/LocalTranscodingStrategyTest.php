@@ -28,10 +28,10 @@ class LocalTranscodingStrategyTest extends TestCase
     #[Test]
     public function getTranscodedLocation(): void
     {
-        $ulid = Ulid::freeze();
-
         /** @var Song $song */
         $song = Song::factory()->create(['path' => '/path/to/song.flac']);
+
+        $ulid = Ulid::freeze();
 
         $destination = artifact_path("transcodes/128/$ulid.m4a", ensureDirectoryExists: false);
 
@@ -87,8 +87,9 @@ class LocalTranscodingStrategyTest extends TestCase
     #[Test]
     public function retranscodeIfRecordIsInvalid(): void
     {
-        $ulid = Ulid::freeze();
         $song = Song::factory()->create(['path' => '/path/to/song.flac']);
+
+        $ulid = Ulid::freeze();
 
         /** @var Transcode $transcode */
         $transcode = Transcode::factory()->for($song)->create([

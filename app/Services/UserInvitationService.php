@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Exceptions\InvitationNotFoundException;
+use App\Helpers\Uuid;
 use App\Mail\UserInvite;
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -10,7 +11,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
 
 class UserInvitationService
 {
@@ -49,7 +49,7 @@ class UserInvitationService
             'password' => '',
             'is_admin' => $isAdmin,
             'invited_by_id' => $invitor->id,
-            'invitation_token' => Str::uuid()->toString(),
+            'invitation_token' => Uuid::generate(),
             'invited_at' => now(),
         ]);
 

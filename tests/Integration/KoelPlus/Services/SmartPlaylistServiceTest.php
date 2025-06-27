@@ -2,9 +2,9 @@
 
 namespace Tests\Integration\KoelPlus\Services;
 
+use App\Helpers\Uuid;
 use App\Models\Song;
 use App\Services\SmartPlaylistService;
-use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
@@ -35,10 +35,10 @@ class SmartPlaylistServiceTest extends PlusTestCase
             attributes: [
                 'rules' =>  [
                     [
-                        'id' => Str::uuid()->toString(),
+                        'id' => Uuid::generate(),
                         'rules' => [
                             [
-                                'id' => Str::uuid()->toString(),
+                                'id' => Uuid::generate(),
                                 'model' => 'title',
                                 'operator' => 'is',
                                 'value' => ['Foo Something'],

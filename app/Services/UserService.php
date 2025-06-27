@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Exceptions\UserProspectUpdateDeniedException;
+use App\Helpers\Ulid;
 use App\Models\Organization;
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -134,6 +135,6 @@ class UserService
 
     private static function generateUserAvatarPath(): string
     {
-        return user_avatar_path(sprintf('%s.webp', sha1(Str::uuid())));
+        return user_avatar_path(sprintf('%s.webp', Ulid::generate()));
     }
 }
