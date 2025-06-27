@@ -504,6 +504,7 @@ interface ToastMessage {
 
 interface Genre {
   type: 'genres'
+  id: string
   name: string
   song_count: number
   length: number

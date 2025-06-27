@@ -26,10 +26,10 @@ class SmartPlaylistServiceTest extends PlusTestCase
     public function ownSongsOnlyOption(): void
     {
         $owner = create_user();
-        $matches = Song::factory()->count(3)->for($owner, 'owner')->create(['title' => 'Foo Something']);
+        $matches = Song::factory()->count(2)->for($owner, 'owner')->create(['title' => 'Foo Something']);
 
-        Song::factory()->count(2)->create(['title' => 'Foo Something']);
-        Song::factory()->count(3)->create(['title' => 'Bar Something']);
+        Song::factory()->count(1)->create(['title' => 'Foo Something']);
+        Song::factory()->count(2)->create(['title' => 'Bar Something']);
 
         $playlist = create_playlist(
             attributes: [

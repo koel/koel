@@ -2,16 +2,16 @@
 
 namespace App\Repositories;
 
-use App\Repositories\Contracts\RepositoryInterface;
+use App\Repositories\Contracts\Repository as RepositoryContract;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * @template T of Model
- * @implements RepositoryInterface<T>
+ * @implements RepositoryContract<T>
  */
-abstract class Repository implements RepositoryInterface
+abstract class Repository implements RepositoryContract
 {
     /** @var class-string<T> $modelClass */
     public string $modelClass;

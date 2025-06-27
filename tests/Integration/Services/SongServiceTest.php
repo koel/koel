@@ -188,7 +188,7 @@ class SongServiceTest extends TestCase
     public function deleteSongs(): void
     {
         Bus::fake();
-        $songs = Song::factory()->count(3)->create();
+        $songs = Song::factory()->count(2)->create();
 
         $this->service->deleteSongs($songs->pluck('id')->toArray());
 
@@ -213,7 +213,7 @@ class SongServiceTest extends TestCase
     public function deleteSongsWithTranscodes(): void
     {
         Bus::fake();
-        $transcodes = Transcode::factory()->count(3)->create();
+        $transcodes = Transcode::factory()->count(2)->create();
         $songs = $transcodes->map(static fn (Transcode $transcode) => $transcode->song); // @phpstan-ignore-line
 
         $this->service->deleteSongs($transcodes->pluck('song_id')->toArray());

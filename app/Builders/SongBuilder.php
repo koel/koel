@@ -23,25 +23,25 @@ class SongBuilder extends Builder
         'length' => 'songs.length',
         'created_at' => 'songs.created_at',
         'disc' => 'songs.disc',
-        'genre' => 'songs.genre',
         'year' => 'songs.year',
         'artist_name' => 'artists.name',
         'album_name' => 'albums.name',
         'podcast_title' => 'podcasts.title',
         'podcast_author' => 'podcasts.author',
+        'genre' => 'genres.name',
     ];
 
     private const VALID_SORT_COLUMNS = [
         'songs.title',
         'songs.track',
         'songs.length',
-        'songs.genre',
         'songs.year',
         'songs.created_at',
         'artists.name',
         'albums.name',
         'podcasts.title',
         'podcasts.author',
+        'genres.name',
     ];
 
     private User $user;
@@ -78,23 +78,25 @@ class SongBuilder extends Builder
             );
     }
 
-    public function accessible(): self
+    public function accessible(?User $user = null): self
     {
         if (License::isCommunity()) {
             // In the Community Edition, all songs are accessible by all users.
             return $this;
         }
 
+        $user ??= $this->user;
+
         // We want to alias both podcasts and podcast_user tables to avoid possible conflicts with other joins.
         return $this->leftJoin('podcasts as podcasts_a11y', 'songs.podcast_id', 'podcasts_a11y.id')
-            ->leftJoin('podcast_user as podcast_user_a11y', function (JoinClause $join): void {
+            ->leftJoin('podcast_user as podcast_user_a11y', static function (JoinClause $join) use ($user): void {
                 $join->on('podcasts_a11y.id', 'podcast_user_a11y.podcast_id')
-                    ->where('podcast_user_a11y.user_id', $this->user->id);
+                    ->where('podcast_user_a11y.user_id', $user->id);
             })
-            ->where(function (Builder $query): void {
+            ->where(static function (Builder $query) use ($user): void {
                 // Songs must be public or owned by the user.
                 $query->where('songs.is_public', true)
-                    ->orWhere('songs.owner_id', $this->user->id);
+                    ->orWhere('songs.owner_id', $user->id);
             })->whereNot(static function (Builder $query): void {
                 // Episodes must belong to a podcast that the user is not subscribed to.
                 $query->whereNotNull('songs.podcast_id')
@@ -125,7 +127,9 @@ class SongBuilder extends Builder
 
     public function sort(array $columns, string $direction): self
     {
-        $this->leftJoin('podcasts', 'songs.podcast_id', 'podcasts.id');
+        $this->leftJoin('podcasts', 'songs.podcast_id', 'podcasts.id')
+            ->leftJoin('genre_song', 'songs.id', 'genre_song.song_id')
+            ->leftJoin('genres', 'genre_song.genre_id', 'genres.id');
 
         foreach ($columns as $column) {
             $this->sortByOneColumn($column, $direction);

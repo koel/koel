@@ -18,7 +18,7 @@ class PlaylistSongTest extends TestCase
         $playlist->addPlayables(Song::factory(5)->create());
 
         $this->getAs("api/playlists/{$playlist->id}/songs", $playlist->owner)
-            ->assertJsonStructure(['*' => SongResource::JSON_STRUCTURE]);
+            ->assertJsonStructure([0 => SongResource::JSON_STRUCTURE]);
     }
 
     #[Test]
@@ -43,7 +43,7 @@ class PlaylistSongTest extends TestCase
         ]);
 
         $this->getAs("api/playlists/{$playlist->id}/songs", $playlist->owner)
-            ->assertJsonStructure(['*' => SongResource::JSON_STRUCTURE]);
+            ->assertJsonStructure([0 => SongResource::JSON_STRUCTURE]);
     }
 
     #[Test]

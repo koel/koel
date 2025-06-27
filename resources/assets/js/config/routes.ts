@@ -142,7 +142,7 @@ export const routes: Route[] = [
   },
   {
     name: 'genres.show',
-    path: '/genres/:name',
+    path: '/genres/:id',
     screen: 'Genre',
   },
   {

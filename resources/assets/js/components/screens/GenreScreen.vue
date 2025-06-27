@@ -2,7 +2,7 @@
   <ScreenBase>
     <template #header>
       <ScreenHeader v-if="genre" :layout="headerLayout">
-        Genre: <span class="text-thin">{{ decodeURIComponent(name!) }}</span>
+        Genre: <span class="text-thin">{{ genre.name }}</span>
         <ControlsToggle v-if="displayedSongs.length" v-model="showingControls" />
 
         <template #thumbnail>
@@ -91,14 +91,14 @@ let sortField: MaybeArray<PlayableListSortField> = 'title'
 let sortOrder: SortOrder = 'asc'
 
 const randomSongCount = 500
-const name = ref<string | null>(null)
+const id = ref<string | null>(null)
 const genre = ref<Genre | null>(null)
 const loading = ref(false)
 const page = ref<number | null>(1)
 
 const moreSongsAvailable = computed(() => page.value !== null)
 const showSkeletons = computed(() => loading.value && songs.value.length === 0)
-const duration = computed(() => secondsToHumanReadable(genre.value?.length ?? 0))
+const duration = computed(() => genre.value ? secondsToHumanReadable(genre.value.length) : '')
 
 const fetch = async () => {
   if (!moreSongsAvailable.value || loading.value) {
@@ -111,8 +111,8 @@ const fetch = async () => {
     let fetched: { songs: Song[], nextPage: number | null }
 
     [genre.value, fetched] = await Promise.all([
-      genreStore.fetchOne(name.value!),
-      songStore.paginateForGenre(name.value!, {
+      genreStore.fetchOne(id.value!),
+      songStore.paginateForGenre(id.value!, {
         sort: sortField,
         order: sortOrder,
         page: page.value!,
@@ -145,13 +145,12 @@ const fetchWithSort = async (field: MaybeArray<PlayableListSortField>, order: So
   await fetch()
 }
 
-const getNameFromRoute = () => getRouteParam('name') ?? null
+const getIdFromRoute = () => getRouteParam('id') ?? null
 
 onRouteChanged(route => {
-  if (route.screen !== 'Genre') {
-    return
+  if (route.screen === 'Genre') {
+    id.value = getIdFromRoute()
   }
-  name.value = getNameFromRoute()
 })
 
 const playAll = async () => {
@@ -169,9 +168,9 @@ const playAll = async () => {
   go(url('queue'))
 }
 
-onMounted(() => (name.value = getNameFromRoute()))
+onMounted(() => (id.value = getIdFromRoute()))
 
-watch(name, async () => name.value && await refresh())
+watch(id, async () => id.value && await refresh())
 
 // We can't really tell how/if the genres have been updated, so we just refresh the list
 eventBus.on('SONGS_UPDATED', async () => genre.value && await refresh())

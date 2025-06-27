@@ -25,4 +25,9 @@ enum SmartPlaylistOperator: string
             default => 'where',
         };
     }
+
+    public function isNegative(): bool
+    {
+        return in_array($this, [self::IS_NOT, self::NOT_CONTAIN, self::IS_NOT_BETWEEN], true);
+    }
 }

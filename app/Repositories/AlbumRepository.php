@@ -2,18 +2,22 @@
 
 namespace App\Repositories;
 
+use App\Facades\License;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\User;
+use App\Repositories\Contracts\ScoutableRepository;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
+use Laravel\Scout\Builder as ScoutBuilder;
 
 /**
  * @extends Repository<Album>
+ * @implements ScoutableRepository<Album>
  */
-class AlbumRepository extends Repository
+class AlbumRepository extends Repository implements ScoutableRepository
 {
     /** @return Collection|array<array-key, Album> */
     public function getRecentlyAdded(int $count = 6, ?User $user = null): Collection
@@ -80,5 +84,22 @@ class AlbumRepository extends Repository
             ->distinct()
             ->select('albums.*', 'artists.name as artist_name')
             ->simplePaginate(21);
+    }
+
+    /** @return Collection<Album>|array<array-key, Album> */
+    public function search(string $keywords, int $limit, ?User $scopedUser = null): Collection
+    {
+        $isPlus = once(static fn () => License::isPlus());
+        $scopedUser ??= auth()->user();
+
+        return $this->getMany(
+            ids:  Album::search($keywords)
+                ->when($isPlus, static fn (ScoutBuilder $query) => $query->where('user_id', $scopedUser?->id))
+                ->get()
+                ->take($limit)
+                ->modelKeys(),
+            preserveOrder: true,
+            user: $scopedUser,
+        );
     }
 }

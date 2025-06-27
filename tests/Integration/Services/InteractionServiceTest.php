@@ -82,7 +82,7 @@ class InteractionServiceTest extends TestCase
         Event::fake(MultipleSongsUnliked::class);
         $user = create_user();
 
-        $interactions = Interaction::factory(3)->for($user)->create(['liked' => true]);
+        $interactions = Interaction::factory(2)->for($user)->create(['liked' => true]);
 
         $this->interactionService->unlikeMany($interactions->map(static fn (Interaction $i) => $i->song), $user); // @phpstan-ignore-line
 

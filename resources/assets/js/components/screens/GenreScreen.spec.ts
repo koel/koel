@@ -53,9 +53,9 @@ new class extends UnitTestCase {
     })
 
     await this.router.activateRoute({
-      path: `genres/${genre.name}`,
+      path: `genres/${genre.id}`,
       screen: 'Genre',
-    }, { name: genre.name })
+    }, { id: genre.id })
 
     const rendered = this.render(GenreScreen, {
       global: {
@@ -66,8 +66,8 @@ new class extends UnitTestCase {
     })
 
     await waitFor(() => {
-      expect(fetchGenreMock).toHaveBeenCalledWith(genre!.name)
-      expect(paginateMock).toHaveBeenCalledWith(genre!.name, {
+      expect(fetchGenreMock).toHaveBeenCalledWith(genre!.id)
+      expect(paginateMock).toHaveBeenCalledWith(genre!.id, {
         sort: 'title',
         order: 'asc',
         page: 1,

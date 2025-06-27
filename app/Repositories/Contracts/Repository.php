@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /** @template T of Model */
-interface RepositoryInterface
+interface Repository
 {
     /** @return T */
     public function getOne($id): Model;

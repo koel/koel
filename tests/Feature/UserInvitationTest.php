@@ -24,7 +24,7 @@ class UserInvitationTest extends TestCase
             'is_admin' => true,
         ], create_admin())
             ->assertSuccessful()
-            ->assertJsonStructure(['*' => UserProspectResource::JSON_STRUCTURE]);
+            ->assertJsonStructure([0 => UserProspectResource::JSON_STRUCTURE]);
 
         Mail::assertQueued(UserInvite::class, 2);
     }

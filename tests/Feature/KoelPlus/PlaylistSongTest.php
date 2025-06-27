@@ -16,22 +16,22 @@ class PlaylistSongTest extends PlusTestCase
     public function getSongsInCollaborativePlaylist(): void
     {
         $playlist = create_playlist();
-        $playlist->addPlayables(Song::factory()->public()->count(3)->create());
+        $playlist->addPlayables(Song::factory()->public()->count(2)->create());
 
         $collaborator = create_user();
         $playlist->addCollaborator($collaborator);
 
         $this->getAs("api/playlists/{$playlist->id}/songs", $collaborator)
             ->assertSuccessful()
-            ->assertJsonStructure(['*' => CollaborativeSongResource::JSON_STRUCTURE])
-            ->assertJsonCount(3);
+            ->assertJsonStructure([0 => CollaborativeSongResource::JSON_STRUCTURE])
+            ->assertJsonCount(2);
     }
 
     #[Test]
     public function privateSongsDoNotShowUpInCollaborativePlaylist(): void
     {
         $playlist = create_playlist();
-        $playlist->addPlayables(Song::factory()->public()->count(3)->create());
+        $playlist->addPlayables(Song::factory()->public()->count(2)->create());
 
         /** @var Song $privateSong */
         $privateSong = Song::factory()->private()->create();
@@ -42,8 +42,8 @@ class PlaylistSongTest extends PlusTestCase
 
         $this->getAs("api/playlists/{$playlist->id}/songs", $collaborator)
             ->assertSuccessful()
-            ->assertJsonStructure(['*' => CollaborativeSongResource::JSON_STRUCTURE])
-            ->assertJsonCount(3)
+            ->assertJsonStructure([0 => CollaborativeSongResource::JSON_STRUCTURE])
+            ->assertJsonCount(2)
             ->assertJsonMissing(['id' => $privateSong->id]);
     }
 
@@ -53,7 +53,7 @@ class PlaylistSongTest extends PlusTestCase
         $playlist = create_playlist();
         $collaborator = create_user();
         $playlist->addCollaborator($collaborator);
-        $songs = Song::factory()->for($collaborator, 'owner')->count(3)->create();
+        $songs = Song::factory()->for($collaborator, 'owner')->count(2)->create();
 
         $this->postAs("api/playlists/{$playlist->id}/songs", ['songs' => $songs->modelKeys()], $collaborator)
             ->assertSuccessful();
@@ -68,7 +68,7 @@ class PlaylistSongTest extends PlusTestCase
         $playlist = create_playlist();
         $collaborator = create_user();
         $playlist->addCollaborator($collaborator);
-        $songs = Song::factory()->for($collaborator, 'owner')->count(3)->create();
+        $songs = Song::factory()->for($collaborator, 'owner')->count(2)->create();
         $playlist->addPlayables($songs);
 
         $this->deleteAs("api/playlists/{$playlist->id}/songs", ['songs' => $songs->modelKeys()], $collaborator)

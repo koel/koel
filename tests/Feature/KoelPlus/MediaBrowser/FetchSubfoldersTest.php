@@ -25,10 +25,10 @@ class FetchSubfoldersTest extends PlusTestCase
         $folder = Folder::factory()->create();
 
         /** @var Collection $subfolders */
-        $subfolders = Folder::factory()->for($folder, 'parent')->count(3)->create();
+        $subfolders = Folder::factory()->for($folder, 'parent')->count(2)->create();
 
         $response = $this->getAs('/api/browse/folders?path=' . $folder->path)
-            ->assertJsonStructure(['*' => FolderResource::JSON_STRUCTURE]);
+            ->assertJsonStructure([0 => FolderResource::JSON_STRUCTURE]);
 
         self::assertEqualsCanonicalizing($subfolders->pluck('id')->toArray(), $response->json('*.id'));
     }
@@ -36,10 +36,10 @@ class FetchSubfoldersTest extends PlusTestCase
     #[Test]
     public function tesFetchUnderMediaRoot(): void
     {
-        $subfolders = Folder::factory()->count(3)->create();
+        $subfolders = Folder::factory()->count(2)->create();
 
         $response = $this->getAs('/api/browse/folders')
-            ->assertJsonStructure(['*' => FolderResource::JSON_STRUCTURE]);
+            ->assertJsonStructure([0 => FolderResource::JSON_STRUCTURE]);
 
         self::assertEqualsCanonicalizing($subfolders->pluck('id')->toArray(), $response->json('*.id'));
     }

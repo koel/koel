@@ -183,6 +183,7 @@ class Album extends Model implements AuditableContract, PermissionableResource
     {
         $array = [
             'id' => $this->id,
+            'user_id' => $this->user_id,
             'name' => $this->name,
         ];
 

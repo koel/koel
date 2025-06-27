@@ -9,9 +9,9 @@ use App\Facades\License;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
+use App\Values\SmartPlaylist\SmartPlaylistQueryModifier as QueryModifier;
 use App\Values\SmartPlaylist\SmartPlaylistRule as Rule;
 use App\Values\SmartPlaylist\SmartPlaylistRuleGroup as RuleGroup;
-use App\Values\SmartPlaylist\SmartPlaylistSqlElements as SqlElements;
 use Illuminate\Database\Eloquent\Collection;
 
 class SmartPlaylistService
@@ -19,9 +19,9 @@ class SmartPlaylistService
     /** @return Collection|array<array-key, Song> */
     public function getSongs(Playlist $playlist, ?User $user = null): Collection
     {
-        $isPlus = once(static fn () => License::isPlus());
-
         throw_unless($playlist->is_smart, NonSmartPlaylistException::create($playlist));
+
+        $isPlus = once(static fn () => License::isPlus());
 
         $user ??= $playlist->owner;
 
@@ -36,8 +36,7 @@ class SmartPlaylistService
         $playlist->rule_groups->each(static function (RuleGroup $group, int $index) use ($query): void {
             $whereClosure = static function (SongBuilder $subQuery) use ($group): void {
                 $group->rules->each(static function (Rule $rule) use ($subQuery): void {
-                    $tokens = SqlElements::fromRule($rule);
-                    $subQuery->{$tokens->clause}(...$tokens->parameters);
+                    QueryModifier::applyRule($rule, $subQuery);
                 });
             };
 

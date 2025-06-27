@@ -22,12 +22,12 @@ class OverviewTest extends TestCase
 
         $this->getAs('api/overview', $user)
             ->assertJsonStructure([
-                'most_played_songs' => ['*' => SongResource::JSON_STRUCTURE],
-                'recently_played_songs' => ['*' => SongResource::JSON_STRUCTURE],
-                'recently_added_albums' => ['*' => AlbumResource::JSON_STRUCTURE],
-                'recently_added_songs' => ['*' => SongResource::JSON_STRUCTURE],
-                'most_played_artists' => ['*' => ArtistResource::JSON_STRUCTURE],
-                'most_played_albums' => ['*' => AlbumResource::JSON_STRUCTURE],
+                'most_played_songs' => [0 => SongResource::JSON_STRUCTURE],
+                'recently_played_songs' => [0 => SongResource::JSON_STRUCTURE],
+                'recently_added_albums' => [0 => AlbumResource::JSON_STRUCTURE],
+                'recently_added_songs' => [0 => SongResource::JSON_STRUCTURE],
+                'most_played_artists' => [0 => ArtistResource::JSON_STRUCTURE],
+                'most_played_albums' => [0 => AlbumResource::JSON_STRUCTURE],
             ]);
     }
 }

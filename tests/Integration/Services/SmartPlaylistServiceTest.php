@@ -4,6 +4,7 @@ namespace Tests\Integration\Services;
 
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Genre;
 use App\Models\Interaction;
 use App\Models\Song;
 use App\Models\User;
@@ -30,8 +31,8 @@ class SmartPlaylistServiceTest extends TestCase
     #[Test]
     public function titleIs(): void
     {
-        $matches = Song::factory()->count(3)->create(['title' => 'Foo Something']);
-        Song::factory()->count(3)->create(['title' => 'Bar Something']);
+        $matches = Song::factory()->count(1)->create(['title' => 'Foo Something']);
+        Song::factory()->create(['title' => 'Bar Something']);
 
         $this->assertMatchesAgainstRules($matches, [
             [
@@ -51,8 +52,8 @@ class SmartPlaylistServiceTest extends TestCase
     #[Test]
     public function titleIsNot(): void
     {
-        $matches = Song::factory()->count(3)->create(['title' => 'Foo Something']);
-        Song::factory()->count(3)->create(['title' => 'Bar Something']);
+        $matches = Song::factory()->count(1)->create(['title' => 'Foo Something']);
+        Song::factory()->create(['title' => 'Bar Something']);
 
         $this->assertMatchesAgainstRules($matches, [
             [
@@ -72,8 +73,8 @@ class SmartPlaylistServiceTest extends TestCase
     #[Test]
     public function titleContains(): void
     {
-        $matches = Song::factory()->count(3)->create(['title' => 'Foo Something']);
-        Song::factory()->count(3)->create(['title' => 'Foo Nothing']);
+        $matches = Song::factory()->count(1)->create(['title' => 'Foo Something']);
+        Song::factory()->create(['title' => 'Foo Nothing']);
 
         $this->assertMatchesAgainstRules($matches, [
             [
@@ -93,8 +94,8 @@ class SmartPlaylistServiceTest extends TestCase
     #[Test]
     public function titleDoesNotContain(): void
     {
-        $matches = Song::factory()->count(3)->create(['title' => 'Foo Something']);
-        Song::factory()->count(3)->create(['title' => 'Foo Nothing']);
+        $matches = Song::factory()->count(1)->create(['title' => 'Foo Something']);
+        Song::factory()->create(['title' => 'Foo Nothing']);
 
         $this->assertMatchesAgainstRules($matches, [
             [
@@ -114,8 +115,8 @@ class SmartPlaylistServiceTest extends TestCase
     #[Test]
     public function titleBeginsWith(): void
     {
-        $matches = Song::factory()->count(3)->create(['title' => 'Foo Something']);
-        Song::factory()->count(3)->create(['title' => 'Bar Something']);
+        $matches = Song::factory()->count(1)->create(['title' => 'Foo Something']);
+        Song::factory()->create(['title' => 'Bar Something']);
 
         $this->assertMatchesAgainstRules($matches, [
             [
@@ -135,8 +136,8 @@ class SmartPlaylistServiceTest extends TestCase
     #[Test]
     public function titleEndsWith(): void
     {
-        $matches = Song::factory()->count(3)->create(['title' => 'Foo Something']);
-        Song::factory()->count(3)->create(['title' => 'Foo Nothing']);
+        $matches = Song::factory()->count(1)->create(['title' => 'Foo Something']);
+        Song::factory()->create(['title' => 'Foo Nothing']);
 
         $this->assertMatchesAgainstRules($matches, [
             [
@@ -156,12 +157,9 @@ class SmartPlaylistServiceTest extends TestCase
     #[Test]
     public function albumIs(): void
     {
-        $albums = Album::factory()->count(2)->create(['name' => 'Foo Album']);
-
-        $matches = Song::factory()->count(3)->for($albums[0])->create()
-            ->merge(Song::factory()->count(2)->for($albums[1])->create());
-
-        Song::factory()->count(3)->create();
+        $album = Album::factory()->create(['name' => 'Foo Album']);
+        $matches = Song::factory()->count(1)->for($album)->create();
+        Song::factory()->create();
 
         $this->assertMatchesAgainstRules($matches, [
             [
@@ -182,11 +180,11 @@ class SmartPlaylistServiceTest extends TestCase
     public function artistIs(): void
     {
         $matches = Song::factory()
-            ->count(3)
+            ->count(1)
             ->for(Artist::factory()->create(['name' => 'Foo Artist']))
             ->create();
 
-        Song::factory()->count(3)->create();
+        Song::factory()->create();
 
         $this->assertMatchesAgainstRules($matches, [
             [
@@ -204,12 +202,12 @@ class SmartPlaylistServiceTest extends TestCase
     }
 
     #[Test]
-    public function genreIsOrContains(): void
+    public function genreIs(): void
     {
-        $matches = Song::factory()->count(3)->create(['genre' => 'Foo Genre'])
-            ->merge(Song::factory()->count(2)->create(['genre' => 'Bar Genre']));
+        $genre = Genre::factory()->create(['name' => 'Foo Genre']);
+        $matches = Song::factory()->count(1)->hasAttached($genre)->create();
 
-        Song::factory()->count(3)->create(['genre' => 'Baz Genre']);
+        Song::factory()->create();
 
         $this->assertMatchesAgainstRules($matches, [
             [
@@ -223,14 +221,26 @@ class SmartPlaylistServiceTest extends TestCase
                     ],
                 ],
             ],
+        ]);
+    }
+
+    #[Test]
+    public function genreIsNot(): void
+    {
+        $genre = Genre::factory()->create(['name' => 'Foo Genre']);
+        $matches = Song::factory()->count(1)->create();
+
+        Song::factory()->hasAttached($genre)->create();
+
+        $this->assertMatchesAgainstRules($matches, [
             [
-                'id' => '70fe0cbd-c0e3-4ce2-806b-30153795bdeb',
+                'id' => 'aaf61bc3-3bdf-4fa4-b9f3-f7f7838ed502',
                 'rules' => [
                     [
-                        'id' => '50f1e8c1-170b-46a0-b752-d515440b34d9',
+                        'id' => '70b08372-b733-4fe2-aedb-639f77120d6d',
                         'model' => 'genre',
-                        'operator' => 'contains',
-                        'value' => ['Bar'],
+                        'operator' => 'isNot',
+                        'value' => ['Foo Genre'],
                     ],
                 ],
             ],
@@ -240,10 +250,10 @@ class SmartPlaylistServiceTest extends TestCase
     #[Test]
     public function yearIsGreaterThan(): void
     {
-        $matches = Song::factory()->count(3)->create(['year' => 2030])
-            ->merge(Song::factory()->count(2)->create(['year' => 2022]));
+        $matches = Song::factory()->count(1)->create(['year' => 2030])
+            ->merge(Song::factory()->count(1)->create(['year' => 2022]));
 
-        Song::factory()->count(3)->create(['year' => 2020]);
+        Song::factory()->create(['year' => 2020]);
 
         $this->assertMatchesAgainstRules($matches, [
             [
@@ -263,10 +273,10 @@ class SmartPlaylistServiceTest extends TestCase
     #[Test]
     public function yearIsLessThan(): void
     {
-        $matches = Song::factory()->count(3)->create(['year' => 1980])
-            ->merge(Song::factory()->count(2)->create(['year' => 1978]));
+        $matches = Song::factory()->count(1)->create(['year' => 1980])
+            ->merge(Song::factory()->count(1)->create(['year' => 1978]));
 
-        Song::factory()->count(3)->create(['year' => 1991]);
+        Song::factory()->create(['year' => 1991]);
 
         $this->assertMatchesAgainstRules($matches, [
             [
@@ -286,10 +296,10 @@ class SmartPlaylistServiceTest extends TestCase
     #[Test]
     public function yearIsBetween(): void
     {
-        $matches = Song::factory()->count(3)->create(['year' => 1980])
-            ->merge(Song::factory()->count(2)->create(['year' => 1978]));
+        $matches = Song::factory()->count(1)->create(['year' => 1980])
+            ->merge(Song::factory()->count(1)->create(['year' => 1978]));
 
-        Song::factory()->count(3)->create(['year' => 1991]);
+        Song::factory()->create(['year' => 1991]);
 
         $this->assertMatchesAgainstRules($matches, [
             [
@@ -310,19 +320,13 @@ class SmartPlaylistServiceTest extends TestCase
     public function playCountIsGreaterThan(): void
     {
         $user = create_user();
-        $matches = Song::factory()->count(2)->create();
-
+        $matches = Song::factory()->count(1)->create();
         $notMatch = Song::factory()->create();
 
         Interaction::factory()
             ->for($matches[0])
             ->for($user)
             ->create(['play_count' => 1000]);
-
-        Interaction::factory()
-            ->for($matches[1])
-            ->for($user)
-            ->create(['play_count' => 2000]);
 
         Interaction::factory()
             ->for($user)
@@ -348,8 +352,7 @@ class SmartPlaylistServiceTest extends TestCase
     public function lastPlayedAtIsInLast(): void
     {
         $user = create_user();
-        $matches = Song::factory()->count(2)->create();
-
+        $matches = Song::factory()->count(1)->create();
         $notMatch = Song::factory()->create();
 
         Interaction::factory()
@@ -358,14 +361,8 @@ class SmartPlaylistServiceTest extends TestCase
             ->create(['last_played_at' => now()->subDays(2)]);
 
         Interaction::factory()
-            ->for($matches[1])
-            ->for($user)
-            ->create(['last_played_at' => now()->subDay()]);
-
-        Interaction::factory()
             ->for($user)
             ->for($notMatch)
-            ->count(2)
             ->create(['last_played_at' => now()->subDays(4)]);
 
         $this->assertMatchesAgainstRules($matches, [
@@ -387,24 +384,17 @@ class SmartPlaylistServiceTest extends TestCase
     public function lastPlayedNotInLast(): void
     {
         $user = create_user();
-        $matches = Song::factory()->count(2)->create();
-
+        $matches = Song::factory()->count(1)->create();
         $notMatch = Song::factory()->create();
 
         Interaction::factory()
             ->for($matches[0])
-            ->for($user)
-            ->create(['last_played_at' => now()->subDays(4)]);
-
-        Interaction::factory()
-            ->for($matches[1])
             ->for($user)
             ->create(['last_played_at' => now()->subDays(3)]);
 
         Interaction::factory()
             ->for($user)
             ->for($notMatch)
-            ->count(2)
             ->create(['last_played_at' => now()->subDays(2)]);
 
         $this->assertMatchesAgainstRules($matches, [
@@ -426,8 +416,7 @@ class SmartPlaylistServiceTest extends TestCase
     public function lastPlayedIs(): void
     {
         $user = create_user();
-        $matches = Song::factory()->count(2)->create();
-
+        $matches = Song::factory()->count(1)->create();
         $notMatch = Song::factory()->create();
 
         Interaction::factory()
@@ -436,14 +425,8 @@ class SmartPlaylistServiceTest extends TestCase
             ->create(['last_played_at' => now()]);
 
         Interaction::factory()
-            ->for($matches[1])
-            ->for($user)
-            ->create(['last_played_at' => now()]);
-
-        Interaction::factory()
             ->for($user)
             ->for($notMatch)
-            ->count(2)
             ->create(['last_played_at' => now()->subDays(4)]);
 
         $this->assertMatchesAgainstRules($matches, [
@@ -464,10 +447,10 @@ class SmartPlaylistServiceTest extends TestCase
     #[Test]
     public function lengthIsGreaterThan(): void
     {
-        $matches = Song::factory()->count(3)->create(['length' => 300])
-            ->merge(Song::factory()->count(2)->create(['length' => 200]));
+        $matches = Song::factory()->count(1)->create(['length' => 300])
+            ->merge(Song::factory()->count(1)->create(['length' => 200]));
 
-        Song::factory()->count(3)->create(['length' => 100]);
+        Song::factory()->count(1)->create(['length' => 100]);
 
         $this->assertMatchesAgainstRules($matches, [
             [
@@ -487,10 +470,10 @@ class SmartPlaylistServiceTest extends TestCase
     #[Test]
     public function lengthIsInBetween(): void
     {
-        $matches = Song::factory()->count(3)->create(['length' => 300])
-            ->merge(Song::factory()->count(2)->create(['length' => 200]));
+        $matches = Song::factory()->count(1)->create(['length' => 300])
+            ->merge(Song::factory()->count(1)->create(['length' => 200]));
 
-        Song::factory()->count(3)->create(['length' => 100]);
+        Song::factory()->count(1)->create(['length' => 100]);
 
         $this->assertMatchesAgainstRules($matches, [
             [
@@ -510,11 +493,10 @@ class SmartPlaylistServiceTest extends TestCase
     #[Test]
     public function dateAddedInLast(): void
     {
-        $matches = Song::factory()->count(3)->create(['created_at' => now()->subDays(2)])
-            ->merge(Song::factory()->count(2)->create(['created_at' => now()->subDay()]))
+        $matches = Song::factory()->count(1)->create(['created_at' => now()->subDay()])
             ->merge(Song::factory()->count(1)->create(['created_at' => today()]));
 
-        Song::factory()->count(3)->create(['created_at' => now()->subDays(4)]);
+        Song::factory()->count(1)->create(['created_at' => now()->subDays(4)]);
 
         $this->assertMatchesAgainstRules($matches, [
             [
@@ -534,11 +516,10 @@ class SmartPlaylistServiceTest extends TestCase
     #[Test]
     public function dateAddedNotInLast(): void
     {
-        $matches = Song::factory()->count(3)->create(['created_at' => now()->subDays(4)])
-            ->merge(Song::factory()->count(2)->create(['created_at' => now()->subDays(5)]))
-            ->merge(Song::factory()->count(1)->create(['created_at' => now()->subDays(6)]));
+        $matches = Song::factory()->count(1)->create(['created_at' => now()->subDays(4)])
+            ->merge(Song::factory()->count(1)->create(['created_at' => now()->subDays(5)]));
 
-        Song::factory()->count(3)->create(['created_at' => now()->subDays(2)]);
+        Song::factory()->create(['created_at' => now()->subDays(2)]);
 
         $this->assertMatchesAgainstRules($matches, [
             [
@@ -555,11 +536,8 @@ class SmartPlaylistServiceTest extends TestCase
         ]);
     }
 
-    protected function assertMatchesAgainstRules(
-        Collection $matches,
-        array $rules,
-        ?User $owner = null,
-    ): void {
+    protected function assertMatchesAgainstRules(Collection $matches, array $rules, ?User $owner = null): void
+    {
         $playlist = create_playlist(['rules' => $rules], $owner ?? create_admin());
 
         self::assertEqualsCanonicalizing(

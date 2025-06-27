@@ -36,6 +36,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property-read ?string $cover_path
  * @property-read EloquentCollection<array-key, PlaylistFolder> $folders
  * @property-read bool $is_collaborative
+ * @property int $owner_id
  */
 class Playlist extends Model implements AuditableContract
 {
@@ -197,6 +198,7 @@ class Playlist extends Model implements AuditableContract
     {
         return [
             'id' => $this->id,
+            'owner_id' => $this->owner_id,
             'name' => $this->name,
         ];
     }

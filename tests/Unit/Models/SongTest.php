@@ -17,4 +17,15 @@ class SongTest extends TestCase
         self::assertSame("Line 1\nLine 2\nLine 3", $song->lyrics);
         self::assertSame("[00:00.00]Line 1\n[00:01.00]Line 2\n[00:02.00]Line 3", $song->getAttributes()['lyrics']);
     }
+
+    #[Test]
+    public function syncGenres(): void
+    {
+        /** @var Song $song */
+        $song = Song::factory()->create();
+        $song->syncGenres('Pop, Rock');
+
+        self::assertCount(2, $song->genres);
+        self::assertEqualsCanonicalizing(['Pop', 'Rock'], $song->genres->pluck('name')->all());
+    }
 }

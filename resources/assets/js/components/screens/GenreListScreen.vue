@@ -20,16 +20,20 @@
           v-for="genre in genres"
           :key="genre.name"
           :class="`level-${getLevel(genre)}`"
-          class="rounded-[0.5em] inline-block m-1.5 align-middle overflow-hidden"
+          class="rounded-[0.5em] inline-block m-1.5 align-middle"
         >
           <a
-            :href="url('genres.show', { name: encodeURIComponent(genre.name) })"
+            :href="url('genres.show', { id: genre.id })"
             :title="`${genre.name}: ${pluralize(genre.song_count, 'song')}`"
-            class="bg-white/15 inline-flex items-center justify-center !text-k-text-secondary
-          transition-colors duration-200 ease-in-out hover:!text-k-text-primary hover:bg-k-highlight"
+            class="group bg-white/15 relative inline-flex items-center justify-center !text-k-text-secondary
+          transition-colors duration-200 ease-in-out hover:!text-k-text-primary hover:bg-k-highlight
+          rounded-lg active:scale-95"
           >
             <span class="name bg-white/5 px-[0.5em] py-[0.2em] leading-normal">{{ genre.name }}</span>
-            <span class="count items-center px-[0.5em] py-[0.2em]">
+            <span
+              class="count absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 items-center px-[0.3em] py-0
+              pointer-events-none text-sm bg-k-bg-secondary group-hover:bg-k-primary border border-white/10 rounded-full shadow-md"
+            >
               {{ genre.song_count }}
             </span>
           </a>
@@ -104,10 +108,6 @@ onMounted(async () => {
 .genres {
   li {
     font-size: var(--unit);
-
-    &:active {
-      @apply scale-95;
-    }
   }
 
   .level-0 {

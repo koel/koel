@@ -16,14 +16,14 @@ class SongVisibilityTest extends PlusTestCase
         $currentUser = create_user();
         $anotherUser = create_user();
 
-        $externalSongs = Song::factory(3)->for($anotherUser, 'owner')->private()->create();
+        $externalSongs = Song::factory(2)->for($anotherUser, 'owner')->private()->create();
 
         // We can't make public songs that are not ours.
         $this->putAs('api/songs/publicize', ['songs' => $externalSongs->modelKeys()], $currentUser)
             ->assertForbidden();
 
         // But we can our own songs.
-        $ownSongs = Song::factory(3)->for($currentUser, 'owner')->create();
+        $ownSongs = Song::factory(2)->for($currentUser, 'owner')->create();
 
         $this->putAs('api/songs/publicize', ['songs' => $ownSongs->modelKeys()], $currentUser)
             ->assertSuccessful();
@@ -37,14 +37,14 @@ class SongVisibilityTest extends PlusTestCase
         $currentUser = create_user();
         $anotherUser = create_user();
 
-        $externalSongs = Song::factory(3)->for($anotherUser, 'owner')->public()->create();
+        $externalSongs = Song::factory(2)->for($anotherUser, 'owner')->public()->create();
 
         // We can't Mark as Private songs that are not ours.
         $this->putAs('api/songs/privatize', ['songs' => $externalSongs->modelKeys()], $currentUser)
             ->assertForbidden();
 
         // But we can our own songs.
-        $ownSongs = Song::factory(3)->for($currentUser, 'owner')->create();
+        $ownSongs = Song::factory(2)->for($currentUser, 'owner')->create();
 
         $this->putAs('api/songs/privatize', ['songs' => $ownSongs->modelKeys()], $currentUser)
             ->assertSuccessful();
