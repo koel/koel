@@ -3,12 +3,12 @@
 namespace App\Console\Commands\Storage;
 
 use App\Facades\License;
+use App\Helpers\Ulid;
 use App\Services\SongStorages\DropboxStorage;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 use Jackiedo\DotenvEditor\DotenvEditor;
 use Throwable;
 
@@ -38,7 +38,7 @@ class SetupDropboxStorageCommand extends Command
         $config['DROPBOX_APP_KEY'] = $this->ask('Enter your Dropbox app key');
         $config['DROPBOX_APP_SECRET'] = $this->ask('Enter your Dropbox app secret');
 
-        $cacheKey = Str::uuid()->toString();
+        $cacheKey = Ulid::generate();
 
         Cache::put(
             $cacheKey,

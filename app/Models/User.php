@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Casts\UserPreferencesCast;
 use App\Exceptions\UserAlreadySubscribedToPodcastException;
 use App\Facades\License;
+use App\Helpers\Uuid;
 use App\Values\UserPreferences;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -17,7 +18,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\PersonalAccessToken;
 use OwenIt\Auditing\Auditable;
@@ -74,7 +74,7 @@ class User extends Authenticatable implements AuditableContract
     protected static function booted(): void
     {
         static::creating(static function (self $user): void {
-            $user->public_id ??= Str::uuid()->toString();
+            $user->public_id ??= Uuid::generate();
         });
     }
 

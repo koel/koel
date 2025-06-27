@@ -4,6 +4,7 @@ namespace App\Services\SongStorages;
 
 use App\Enums\SongStorageType;
 use App\Exceptions\MediaPathNotSetException;
+use App\Helpers\Ulid;
 use App\Models\Setting;
 use App\Models\User;
 use App\Values\UploadReference;
@@ -63,7 +64,7 @@ class LocalStorage extends SongStorage
 
     private function getUniqueHash(): string
     {
-        return Str::take(sha1(Str::uuid()), 6);
+        return Str::take(sha1(Ulid::generate()), 6);
     }
 
     public function delete(string $location, bool $backup = false): void

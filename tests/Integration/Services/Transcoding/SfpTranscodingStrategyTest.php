@@ -30,15 +30,14 @@ class SfpTranscodingStrategyTest extends TestCase
     #[Test]
     public function getTranscodeLocation(): void
     {
-        $ulid = Ulid::freeze();
-
-        $destination = artifact_path("transcodes/128/$ulid.m4a", ensureDirectoryExists: false);
-
         /** @var Song $song */
         $song = Song::factory()->create([
             'path' => 'sftp://remote/path/to/song.flac',
             'storage' => SongStorageType::SFTP,
         ]);
+
+        $ulid = Ulid::freeze();
+        $destination = artifact_path("transcodes/128/$ulid.m4a", ensureDirectoryExists: false);
 
         $storage = $this->mock(SftpStorage::class);
         $storage->shouldReceive('copyToLocal')->with('remote/path/to/song.flac')->andReturn('/tmp/song.flac');
@@ -98,11 +97,12 @@ class SfpTranscodingStrategyTest extends TestCase
     #[Test]
     public function retranscodeIfRecordIsInvalid(): void
     {
-        $ulid = Ulid::freeze();
         $song = Song::factory()->create([
             'path' => 'sftp://remote/path/to/song.flac',
             'storage' => SongStorageType::SFTP,
         ]);
+
+        $ulid = Ulid::freeze();
 
         /** @var Transcode $transcode */
         $transcode = Transcode::factory()->for($song)->create([
