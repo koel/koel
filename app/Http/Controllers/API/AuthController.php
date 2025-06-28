@@ -8,6 +8,7 @@ use App\Services\AuthenticationService;
 use App\Values\CompositeToken;
 use Closure;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Throwable;
@@ -20,7 +21,7 @@ class AuthController extends Controller
     {
     }
 
-    public function login(UserLoginRequest $request)
+    public function login(UserLoginRequest $request): JsonResponse
     {
         $compositeToken = $this->throttleLoginRequest(
             fn () => $this->auth->login($request->email, $request->password),
@@ -30,7 +31,7 @@ class AuthController extends Controller
         return response()->json($compositeToken->toArray());
     }
 
-    public function loginUsingOneTimeToken(Request $request)
+    public function loginUsingOneTimeToken(Request $request): JsonResponse
     {
         $compositeToken = $this->throttleLoginRequest(
             fn () => $this->auth->loginViaOneTimeToken($request->input('token')),

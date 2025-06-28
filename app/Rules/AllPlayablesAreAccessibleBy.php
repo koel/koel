@@ -19,8 +19,13 @@ class AllPlayablesAreAccessibleBy implements ValidationRule
     {
         $ids = array_unique(Arr::wrap($value));
 
-        if ($ids && app(SongRepository::class)->getMany(ids: $ids, scopedUser: $this->user)->count() !== count($ids)) {
+        if ($ids && $this->countAccessiblePlayables($ids) !== count($ids)) {
             $fail('Not all songs or episodes exist in the database or are accessible by the user.');
         }
+    }
+
+    private function countAccessiblePlayables(array $ids): int
+    {
+        return app(SongRepository::class)->countAccessibleByIds($ids, $this->user);
     }
 }

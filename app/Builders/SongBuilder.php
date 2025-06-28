@@ -60,22 +60,24 @@ class SongBuilder extends Builder
             $join->on('interactions.song_id', 'songs.id')->where('interactions.user_id', $this->user->id);
         };
 
+        $selects = [
+            'songs.*',
+            'albums.name as album_name',
+            'artists.name as artist_name',
+        ];
+
+        if ($requiresInteractions) {
+            $selects[] = 'interactions.liked';
+            $selects[] = 'interactions.play_count';
+        }
+
         return $this
             ->with('artist', 'album', 'album.artist')
-            ->when(
-                $requiresInteractions,
-                static fn (self $query) => $query->join('interactions', $joinClosure),
-                static fn (self $query) => $query->leftJoin('interactions', $joinClosure)
-            )
+            ->when($requiresInteractions, static fn (self $query) => $query->join('interactions', $joinClosure))
+            ->when(!$requiresInteractions, static fn (self $query) => $query->leftJoin('interactions', $joinClosure))
             ->leftJoin('albums', 'songs.album_id', 'albums.id')
             ->leftJoin('artists', 'songs.artist_id', 'artists.id')
-            ->select(
-                'songs.*',
-                'albums.name',
-                'artists.name',
-                'interactions.liked',
-                'interactions.play_count'
-            );
+            ->select(...$selects);
     }
 
     public function accessible(?User $user = null): self
@@ -127,9 +129,15 @@ class SongBuilder extends Builder
 
     public function sort(array $columns, string $direction): self
     {
-        $this->leftJoin('podcasts', 'songs.podcast_id', 'podcasts.id')
-            ->leftJoin('genre_song', 'songs.id', 'genre_song.song_id')
-            ->leftJoin('genres', 'genre_song.genre_id', 'genres.id');
+        $this->when(
+            in_array('podcast_title', $columns, true) || in_array('podcast_author', $columns, true),
+            static fn (self $query) => $query->leftJoin('podcasts', 'songs.podcast_id', 'podcasts.id')
+        )->when(
+            in_array('genre', $columns, true),
+            static fn (self $query) => $query
+                ->leftJoin('genre_song', 'songs.id', 'genre_song.song_id')
+                ->leftJoin('genres', 'genre_song.genre_id', 'genres.id')
+        );
 
         foreach ($columns as $column) {
             $this->sortByOneColumn($column, $direction);
