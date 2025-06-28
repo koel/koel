@@ -40,4 +40,9 @@ return [
         'redirect' => '/auth/google/callback',
         'hd' => env('SSO_GOOGLE_HOSTED_DOMAIN'),
     ],
+
+    'gravatar' => [
+        'url' => env('GRAVATAR_URL', 'https://www.gravatar.com/avatar'),
+        'default' => env('GRAVATAR_DEFAULT', 'robohash'),
+    ],
 ];

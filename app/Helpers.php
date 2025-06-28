@@ -90,7 +90,10 @@ function rescue_unless($condition, callable $callback): mixed
 
 function gravatar(string $email, int $size = 192): string
 {
-    return sprintf("https://www.gravatar.com/avatar/%s?s=$size&d=robohash", md5(Str::lower($email)));
+    $url = config('services.gravatar.url');
+    $default = config('services.gravatar.default');
+    
+    return sprintf("%s/%s?s=$size&d=$default", $url, md5(Str::lower($email)));
 }
 
 function avatar_or_gravatar(?string $avatar, string $email): string
