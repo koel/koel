@@ -35,9 +35,9 @@ const init = (el: ElementWithTooltip, binding: DirectiveBinding) => {
 
   // make sure the actual title is removed from the element, but keep a backup for the updated() hook calls
   $tooltip.querySelector<HTMLDivElement>('.tooltip-content')!.textContent = binding.value
-  || el.title
-  || el.getAttribute('data-title')
-  || el.textContent
+    || el.title
+    || el.getAttribute('data-title')
+    || el.textContent
 
   if (el.title && !el.getAttribute('data-title')) {
     el.setAttribute('data-title', el.title)

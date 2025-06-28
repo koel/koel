@@ -27,7 +27,10 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v2
         with:
-          node-version: 18
+          node-version: 22
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - name: Build project
         run: |
           sudo apt install pngquant zip unzip

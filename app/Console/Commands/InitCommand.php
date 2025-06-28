@@ -306,14 +306,18 @@ class InitCommand extends Command
         $this->components->info('Now to front-end stuff');
         $this->components->info('Installing npm dependencies');
         $this->newLine();
-        self::runOkOrThrow('yarn install --colors');
+        $this->runOkOrThrow('pnpm install --color');
         $this->components->info('Compiling assets');
-        self::runOkOrThrow('yarn run --colors build');
+        $this->runOkOrThrow('pnpm run --color build');
     }
 
-    private static function runOkOrThrow(string $command): void
+    private function runOkOrThrow(string $command): void
     {
-        throw_unless(Process::forever()->run($command)->successful(), InstallationFailedException::class);
+        $printer = $this->option('verbose')
+            ? static fn (string $type, string $output) => print $output
+            : null;
+
+        throw_unless(Process::forever()->run($command, $printer)->successful(), InstallationFailedException::class);
     }
 
     private function setMediaPathFromEnvFile(): void

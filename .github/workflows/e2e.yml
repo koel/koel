@@ -21,7 +21,7 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.1
+          php-version: 8.2
           tools: composer:v2
           extensions: pdo_sqlite
       - name: Install PHP dependencies
@@ -33,11 +33,11 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: 22
       - name: Run E2E tests
         uses: cypress-io/github-action@v2
         with:
-          build: yarn build --no-progress
+          build: pnpm build --no-progress
           start: php artisan serve --port=8080 --quiet
           wait-on: 'http://localhost:8080'
           quiet: true

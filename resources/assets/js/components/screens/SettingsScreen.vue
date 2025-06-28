@@ -94,8 +94,7 @@ const save = async () => {
 const confirmThenSave = async () => {
   if (shouldWarn.value) {
     await showConfirmDialog('Changing the media path will essentially remove all existing local data – songs, artists, \
-          albums, favorites, etc. Sure you want to proceed?', 'Confirm')
-          && await save()
+      albums, favorites, etc. Sure you want to proceed?', 'Confirm') && await save()
   } else {
     await save()
   }

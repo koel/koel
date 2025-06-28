@@ -18,7 +18,7 @@ import { computed, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
 
 const props = defineProps<{ items: any[], itemHeight: number }>()
 const emit = defineEmits<{
-  (e: 'scrolledToEnd'): void
+  (e: 'scrolled-to-end'): void
   (e: 'scroll', event: Event): void
 }>()
 
@@ -49,7 +49,7 @@ const onScroll = (e: Event) => requestAnimationFrame(() => {
   emit('scroll', e)
 
   if (scroller.value.scrollTop + scroller.value.clientHeight + itemHeight.value >= scroller.value.scrollHeight) {
-    emit('scrolledToEnd')
+    emit('scrolled-to-end')
   }
 })
 

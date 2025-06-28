@@ -12,7 +12,7 @@ The requirements for each part are as follows:
   extensions
 * Any database supported by Laravel – MySQL, MariaDB, PostgreSQL, or SQLite
 * If you're [building Koel from source](#building-from-source), make sure to have [Composer](https://getcomposer.org/),
-  Git, and Node.js >= 14 with [Yarn](https://yarnpkg.com).
+  Git, and Node.js >= 18 with [pnpm](https://pnpm.io/).
 
 ### Client
 

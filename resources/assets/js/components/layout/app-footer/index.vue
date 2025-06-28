@@ -140,9 +140,9 @@ footer {
     &::before {
       @apply bg-black bg-repeat absolute top-0 left-0 opacity-50 z-[1] pointer-events-none -m-[20rem];
       content: '';
-      background-image: linear-gradient(135deg, #111 25%, transparent 25%),
-        linear-gradient(225deg, #111 25%, transparent 25%), linear-gradient(45deg, #111 25%, transparent 25%),
-        linear-gradient(315deg, #111 25%, rgba(255, 255, 255, 0) 25%);
+      background-image:
+        linear-gradient(135deg, #111 25%, transparent 25%), linear-gradient(225deg, #111 25%, transparent 25%),
+        linear-gradient(45deg, #111 25%, transparent 25%), linear-gradient(315deg, #111 25%, rgba(255, 255, 255, 0) 25%);
       background-position:
         6px 0,
         6px 0,
