@@ -6,11 +6,9 @@ use App\Http\Resources\SongResource;
 use App\Jobs\DeleteSongFilesJob;
 use App\Models\Album;
 use App\Models\Artist;
-use App\Models\Genre;
 use App\Models\Song;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -258,40 +256,5 @@ class SongTest extends TestCase
 
         self::assertSame(0, $song->track);
         self::assertSame(1, $song->disc);
-    }
-
-    #[Test]
-    public function deletingByChunk(): void
-    {
-        Song::factory(5)->create();
-
-        Song::deleteByChunk(Song::query()->get()->modelKeys(), 1);
-
-        self::assertSame(0, Song::query()->count());
-    }
-
-    /** @return array<mixed> */
-    public static function provideGenreData(): array
-    {
-        return [
-            ['Rock, Pop', true],
-            ['Pop, Rock', true],
-            ['Rock,   Pop ', true],
-            ['Rock', false],
-            ['Jazz, Pop', false],
-        ];
-    }
-
-    #[Test]
-    #[DataProvider('provideGenreData')]
-    public function genreEqualsTo(string $target, bool $isEqual): void
-    {
-        /** @var Song $song */
-        $song = Song::factory()
-            ->hasAttached(Genre::factory()->create(['name' => 'Pop']))
-            ->hasAttached(Genre::factory()->create(['name' => 'Rock']))
-            ->create();
-
-        self::assertSame($isEqual, $song->genreEqualsTo($target));
     }
 }

@@ -23,10 +23,6 @@ class DeleteSongFilesJob extends QueuedJob
             try {
                 $storage->delete($file->location, config('koel.backup_on_delete'));
             } catch (Throwable $e) {
-                if (app()->runningUnitTests()) {
-                    return;
-                }
-
                 Log::error('Failed to remove song file', [
                     'path' => $file->location,
                     'exception' => $e,
