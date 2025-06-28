@@ -57,6 +57,7 @@ class InitCommand extends Command
             $this->maybeSeedDatabase();
             $this->maybeSetMediaPath();
             $this->maybeCompileFrontEndAssets();
+            $this->maybeCopyManifests();
             $this->dotenvEditor->save();
             $this->tryInstallingScheduler();
         } catch (Throwable $e) {
@@ -302,13 +303,13 @@ class InitCommand extends Command
             return;
         }
 
-        $this->newLine();
-        $this->components->info('Now to front-end stuff');
-        $this->components->info('Installing npm dependencies');
-        $this->newLine();
-        $this->runOkOrThrow('pnpm install --color');
-        $this->components->info('Compiling assets');
-        $this->runOkOrThrow('pnpm run --color build');
+        $this->components->task('Installing npm dependencies', function (): void {
+            $this->runOkOrThrow('pnpm install --color');
+        });
+
+        $this->components->task('Compiling frontend assets', function (): void {
+            $this->runOkOrThrow('pnpm run --color build');
+        });
     }
 
     private function runOkOrThrow(string $command): void
@@ -355,15 +356,34 @@ class InitCommand extends Command
             return;
         }
 
-        $this->components->info('Trying to install Koel scheduler…');
+        $result = 0;
 
-        if (Artisan::call('koel:scheduler:install') !== self::SUCCESS) {
+        $this->components->task('Installing Koel scheduler', static function () use (&$success): void {
+            $success = Artisan::call('koel:scheduler:install', ['--quiet' => true]);
+        });
+
+        if ($result !== self::SUCCESS) {
             $this->components->warn(
                 'Failed to install scheduler. ' .
                 'Please install manually: https://docs.koel.dev/cli-commands#command-scheduling'
             );
-        } else {
-            $this->components->info('Koel scheduler installed successfully.');
+        }
+    }
+
+    private function maybeCopyManifests(): void
+    {
+        foreach (['manifest.json', 'manifest-remote.json'] as $file) {
+            $destination = public_path($file);
+            $source = public_path("$file.example");
+
+            if (File::exists($destination)) {
+                $this->components->task("$file already exists -- skipping");
+                continue;
+            }
+
+            $this->components->task("Copying $file", static function () use ($source, $destination): void {
+                File::copy($source, $destination);
+            });
         }
     }
 }
