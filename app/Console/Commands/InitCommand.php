@@ -37,11 +37,11 @@ class InitCommand extends Command
 
     public function handle(): int
     {
-        $this->alert('KOEL INSTALLATION WIZARD');
-        $this->info(
-            'As a reminder, you can always install/upgrade manually following the guide at '
+        $this->components->alert('KOEL INSTALLATION WIZARD');
+
+        $this->components->info(
+            'Remember, you can always install/upgrade manually using the guide at '
             . config('koel.misc.docs_url')
-            . PHP_EOL
         );
 
         if ($this->inNoInteractionMode()) {
@@ -72,28 +72,27 @@ class InitCommand extends Command
         }
 
         $this->newLine();
-        $this->output->success('All done!');
-        $this->info('Koel can now be run from localhost with `php artisan serve`.');
+        $this->components->success('All done!');
+
+        if (app()->environment('local')) {
+            $this->components->info('🏗️ Koel can now be run from localhost with `php artisan serve`');
+        } else {
+            $this->components->info('🌟 A shiny Koel is now available at ' . config('app.url'));
+        }
 
         if ($this->adminSeeded) {
-            $this->info(
-                sprintf('Log in with email %s and password %s', User::FIRST_ADMIN_EMAIL, User::FIRST_ADMIN_PASSWORD)
+            $this->components->info(
+                sprintf('🧑‍💻 Log in with email %s and password %s', User::FIRST_ADMIN_EMAIL, User::FIRST_ADMIN_PASSWORD)
             );
         }
 
         if (!Setting::get('media_path')) {
-            $this->info('You can set up the storage with `php artisan koel:storage`.');
+            $this->components->info('📀 You can set up the storage with `php artisan koel:storage`');
         }
 
-        $this->info('Again, visit 📙 ' . config('koel.misc.docs_url') . ' for more tips and tweaks.');
-
-        $this->info(
-            "Feeling generous and want to support Koel’s development? Check out "
-            . config('koel.misc.sponsor_github_url')
-            . ' 🤗'
-        );
-
-        $this->info('Thanks for using Koel. You rock! 🤘');
+        $this->components->info('🛟 Documentation can be found at ' . config('koel.misc.docs_url'));
+        $this->components->info('🤗 Consider supporting Koel’s development: ' . config('koel.misc.sponsor_github_url'));
+        $this->components->info('🤘 Finally, thanks for using Koel. You rock!');
 
         return self::SUCCESS;
     }
@@ -358,8 +357,8 @@ class InitCommand extends Command
 
         $result = 0;
 
-        $this->components->task('Installing Koel scheduler', static function () use (&$success): void {
-            $success = Artisan::call('koel:scheduler:install', ['--quiet' => true]);
+        $this->components->task('Installing Koel scheduler', static function () use (&$result): void {
+            $result = Artisan::call('koel:scheduler:install', ['--quiet' => true]);
         });
 
         if ($result !== self::SUCCESS) {
