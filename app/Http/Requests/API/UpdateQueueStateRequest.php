@@ -2,17 +2,18 @@
 
 namespace App\Http\Requests\API;
 
+use App\Rules\AllPlayablesAreAccessibleBy;
+
 /**
  * @property-read array<string> $songs
  */
 class UpdateQueueStateRequest extends Request
 {
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function rules(): array
     {
-        // @todo validate song/episode ids
         return [
-            'songs' => ['array'],
+            'songs' => ['required', 'array', new AllPlayablesAreAccessibleBy($this->user())],
         ];
     }
 }

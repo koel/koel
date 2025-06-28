@@ -15,6 +15,7 @@ use App\Models\Song;
 use App\Models\User;
 use App\Repositories\Contracts\ScoutableRepository;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Laravel\Scout\Builder as ScoutBuilder;
 
@@ -183,8 +184,12 @@ class SongRepository extends Repository implements ScoutableRepository
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
             ->accessible()
             ->withMeta()
-            ->where('songs.artist_id', $artist->id)
-            ->orWhere('albums.artist_id', $artist->id)
+            ->where(static function (SongBuilder $query) use ($artist): void {
+                $query->whereBelongsTo($artist)
+                    ->orWhereHas('album', static function (Builder $albumQuery) use ($artist): void {
+                        $albumQuery->whereBelongsTo($artist);
+                    });
+            })
             ->orderBy('albums.name')
             ->orderBy('songs.disc')
             ->orderBy('songs.track')
@@ -237,6 +242,15 @@ class SongRepository extends Repository implements ScoutableRepository
             ->get();
 
         return $preserveOrder ? $songs->orderByArray($ids) : $songs; // @phpstan-ignore-line
+    }
+
+    /** @param array<string> $ids */
+    public function countAccessibleByIds(array $ids, ?User $scopedUser = null): int
+    {
+        return Song::query(user: $scopedUser ?? $this->auth->user())
+            ->accessible()
+            ->whereIn('songs.id', $ids)
+            ->count();
     }
 
     /**

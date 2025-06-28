@@ -8,6 +8,7 @@ use App\Models\Artist;
 use App\Models\User;
 use App\Repositories\Contracts\ScoutableRepository;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
@@ -68,8 +69,12 @@ class AlbumRepository extends Repository implements ScoutableRepository
     {
         return Album::query()
             ->accessibleBy($user ?? $this->auth->user())
-            ->where('albums.artist_id', $artist->id)
-            ->orWhereIn('albums.id', $artist->songs()->pluck('album_id'))
+            ->where(static function (Builder $query) use ($artist): void {
+                $query->whereBelongsTo($artist)
+                    ->orWhereHas('songs', static function (Builder $songQuery) use ($artist): void {
+                        $songQuery->whereBelongsTo($artist);
+                    });
+            })
             ->orderBy('albums.name')
             ->distinct()
             ->get('albums.*');

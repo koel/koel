@@ -11,6 +11,8 @@ use Illuminate\Auth\Passwords\PasswordBroker;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use InvalidArgumentException;
+use Throwable;
 
 class AuthenticationService
 {
@@ -73,13 +75,28 @@ class AuthenticationService
     public function generateOneTimeToken(User $user): string
     {
         $token = bin2hex(random_bytes(12));
-        Cache::set("one-time-token.$token", encrypt($user->id), 60 * 10);
+        Cache::set(cache_key('one-time token', $token), encrypt($user->id), 60 * 10);
 
         return $token;
     }
 
     public function loginViaOneTimeToken(string $token): CompositeToken
     {
-        return $this->logUserIn($this->userRepository->getOne(decrypt(Cache::get("one-time-token.$token"))));
+        $cacheKey = cache_key('one-time token', $token);
+        $encryptedUserId = Cache::get($cacheKey);
+
+        if (!$encryptedUserId) {
+            throw new InvalidArgumentException(message: 'One-time token not found or expired.');
+        }
+
+        try {
+            $userId = decrypt($encryptedUserId);
+        } catch (Throwable $e) {
+            throw new InvalidArgumentException(message: 'Invalid one-time token.', previous: $e);
+        } finally {
+            Cache::forget($cacheKey);
+        }
+
+        return $this->logUserIn($this->userRepository->getOne($userId));
     }
 }
