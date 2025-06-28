@@ -44,7 +44,7 @@ watch(thumbnails, () => {
   }
 
   stackCompleted.value = displayedThumbnails.value.length === 4
-  && displayedThumbnails.value.every(thumbnail => thumbnail !== defaultCover)
+    && displayedThumbnails.value.every(thumbnail => thumbnail !== defaultCover)
 }, { immediate: true })
 
 const layout = computed<'single' | 'tiles'>(() => displayedThumbnails.value.length < 4 ? 'single' : 'tiles')

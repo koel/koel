@@ -24,8 +24,11 @@ jobs:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v2
         with:
-          node-version: 21
-      - run: yarn install && yarn build # Needed for Proxy Auth tests
+          node-version: 22
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - run: pnpm install && pnpm build # Needed for Proxy Auth tests
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:

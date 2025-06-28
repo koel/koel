@@ -5,7 +5,7 @@
     class="focus-visible:outline-none"
     :item-height="40"
     :items="rows"
-    @scrolled-to-end="$emit('scrolledToEnd')"
+    @scrolled-to-end="$emit('scrolled-to-end')"
     @keydown.enter.prevent.stop="handleEnter"
     @keydown.a.prevent="selectAllWithKeyboard"
   >
@@ -46,7 +46,7 @@ const props = defineProps<{ items: (Folder | Song)[], path: string }>()
 
 defineEmits<{
   (e: 'press:enter', event: KeyboardEvent): void
-  (e: 'scrolledToEnd'): void
+  (e: 'scrolled-to-end'): void
 }>()
 
 const { items, path } = toRefs(props)

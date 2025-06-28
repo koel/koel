@@ -14,7 +14,7 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByTitle('Shuffle all. Press Alt/⌥ to change mode.'))
 
-      expect(emitted().playAll[0]).toEqual([true])
+      expect(emitted()['play-all'][0]).toEqual([true])
     })
 
     it.each([[0], [1]])('plays all if %s songs are selected with Alt pressed', async (selectedCount: number) => {
@@ -24,7 +24,7 @@ new class extends UnitTestCase {
       await this.user.click(screen.getByTitle('Play all. Press Alt/⌥ to change mode.'))
       await this.user.keyboard('{/Alt}')
 
-      expect(emitted().playAll[0]).toEqual([false])
+      expect(emitted()['play-all'][0]).toEqual([false])
     })
 
     it('shuffles selected if more than one song are selected', async () => {
@@ -32,7 +32,7 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByTitle('Shuffle selected. Press Alt/⌥ to change mode.'))
 
-      expect(emitted().playSelected[0]).toEqual([true])
+      expect(emitted()['play-selected'][0]).toEqual([true])
     })
 
     it('plays selected if more than one song are selected with Alt pressed', async () => {
@@ -42,7 +42,7 @@ new class extends UnitTestCase {
       await this.user.click(screen.getByTitle('Play selected. Press Alt/⌥ to change mode.'))
       await this.user.keyboard('{/Alt}')
 
-      expect(emitted().playSelected[0]).toEqual([false])
+      expect(emitted()['play-selected'][0]).toEqual([false])
     })
 
     it('clears queue', async () => {
@@ -50,7 +50,7 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByTitle('Clear current queue'))
 
-      expect(emitted().clearQueue).toBeTruthy()
+      expect(emitted()['clear-queue']).toBeTruthy()
     })
 
     it('deletes current playlist', async () => {
@@ -58,7 +58,7 @@ new class extends UnitTestCase {
 
       await this.user.click(screen.getByTitle('Delete this playlist'))
 
-      expect(emitted().deletePlaylist).toBeTruthy()
+      expect(emitted()['delete-playlist']).toBeTruthy()
     })
   }
 

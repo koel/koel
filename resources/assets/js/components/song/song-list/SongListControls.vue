@@ -114,9 +114,9 @@ import BtnGroup from '@/components/ui/form/BtnGroup.vue'
 const props = defineProps<{ config: SongListControlsConfig }>()
 
 const emit = defineEmits<{
-  (e: 'playAll' | 'playSelected', shuffle: boolean): void
+  (e: 'play-all' | 'play-selected', shuffle: boolean): void
   (e: 'filter', keywords: string): void
-  (e: 'clearQueue' | 'deletePlaylist' | 'refresh'): void
+  (e: 'clear-queue' | 'delete-playlist' | 'refresh'): void
 }>()
 
 const SongListFilter = defineAsyncComponent(() => import('@/components/ui/ListFilter.vue'))
@@ -134,12 +134,12 @@ const altPressed = ref(false)
 
 const showAddToButton = computed(() => Boolean(selectedPlayables.value.length))
 
-const shuffle = () => emit('playAll', true)
-const shuffleSelected = () => emit('playSelected', true)
-const playAll = () => emit('playAll', false)
-const playSelected = () => emit('playSelected', false)
-const clearQueue = () => emit('clearQueue')
-const deletePlaylist = () => emit('deletePlaylist')
+const shuffle = () => emit('play-all', true)
+const shuffleSelected = () => emit('play-selected', true)
+const playAll = () => emit('play-all', false)
+const playSelected = () => emit('play-selected', false)
+const clearQueue = () => emit('clear-queue')
+const deletePlaylist = () => emit('delete-playlist')
 const refresh = () => emit('refresh')
 const registerKeydown = (event: KeyboardEvent) => event.key === 'Alt' && (altPressed.value = true)
 const registerKeyup = (event: KeyboardEvent) => event.key === 'Alt' && (altPressed.value = false)

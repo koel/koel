@@ -15,7 +15,7 @@
       :item-height="calculatedItemHeight"
       :items="rows"
       @scroll="onScroll"
-      @scrolled-to-end="$emit('scrolledToEnd')"
+      @scrolled-to-end="$emit('scrolled-to-end')"
     >
       <SongListItem
         :key="item.playable.id"
@@ -65,8 +65,8 @@ const emit = defineEmits<{
   (e: 'press:delete'): void
   (e: 'reorder', song: Playable, type: MoveType): void
   (e: 'sort', field: MaybeArray<PlayableListSortField>, order: SortOrder): void
-  (e: 'scrollBreakpoint', direction: 'up' | 'down'): void
-  (e: 'scrolledToEnd'): void
+  (e: 'scroll-breakpoint', direction: 'up' | 'down'): void
+  (e: 'scrolled-to-end'): void
 }>()
 
 const { startDragging } = useDraggable('playables')
@@ -124,9 +124,9 @@ const onScroll = (e: Event) => {
   const scroller = e.target as HTMLElement
 
   if (scroller.scrollTop > 512 && lastScrollTop < 512) {
-    emit('scrollBreakpoint', 'down')
+    emit('scroll-breakpoint', 'down')
   } else if (scroller.scrollTop < 512 && lastScrollTop > 512) {
-    emit('scrollBreakpoint', 'up')
+    emit('scroll-breakpoint', 'up')
   }
 
   lastScrollTop = scroller.scrollTop

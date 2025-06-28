@@ -28,7 +28,7 @@ Below are a couple of commands that might help in this area:
 rm -rf vendor && composer install
 
 # Clear node_modules, re-install, and re-build the front-end assets
-rm -rf node_modules && yarn install && yarn build
+rm -rf node_modules && pnpm install && pnpm build
 
 # Clear the Laravel cache. This command is automatically run after `composer install`.
 php artisan cache:clear
@@ -84,8 +84,8 @@ See also: [Music Discovery](usage/music-discovery).
 Set your database and table collation to `utf8_unicode_ci` or `utf8mb4_unicode_ci`.
 :::
 
-::: details You receive an &lt;input random strings here&gt; error when running `yarn`
-This most likely has little to do with Koel but more with your node/npm/yarn environment and installation. Deleting
+::: details You receive an &lt;input random strings here&gt; error when running `pnpm`
+This most likely has little to do with Koel but more with your node/npm/pnpm environment and installation. Deleting
 `node_modules` and rerunning the command sometimes help.
 :::
 

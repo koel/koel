@@ -1,25 +1,19 @@
-name: Frontend Unit Tests
+name: Frontend Lint
 on:
   pull_request:
     branches:
       - master
     paths:
       - resources/assets/**
-      - .github/workflows/unit-frontend.yml
+      - .github/workflows/lint-frontend.yml
   push:
     branches:
       - master
       - next
     paths:
       - resources/assets/**
-      - .github/workflows/unit-frontend.yml
+      - .github/workflows/lint-frontend.yml
   workflow_dispatch:
-    branches:
-      - master
-      - next
-    paths:
-      - resources/assets/**
-      - .github/workflows/unit-frontend.yml
 
 env:
   LARAVEL_BYPASS_ENV_CHECK: 1
@@ -41,9 +35,5 @@ jobs:
           version: 10
       - name: Install dependencies
         run: pnpm install
-      - name: Run unit tests
-        run: pnpm test:unit
-      - name: Collect coverage
-        uses: codecov/codecov-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Lint
+        run: pnpm lint

@@ -47,14 +47,17 @@ export const useSongList = (
   const { isCurrentScreen, go, url } = useRouter()
 
   const fuzzy = config.filterable
-    ? useFuzzySearch(playables, [
-      'title',
-      'artist_name',
-      'album_name',
-      'podcast_title',
-      'podcast_author',
-      'episode_description',
-    ])
+    ? useFuzzySearch(
+        playables,
+        [
+          'title',
+          'artist_name',
+          'album_name',
+          'podcast_title',
+          'podcast_author',
+          'episode_description',
+        ],
+      )
     : null
 
   const songList = ref<InstanceType<typeof SongList>>()

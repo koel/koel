@@ -19,9 +19,10 @@ export default config(
       'node/prefer-global/process': ['error', 'always'],
       'style/space-before-function-paren': ['error', 'always'],
       'ts/ban-ts-comment': 'off',
-      'vue/block-order': ['error', { 'order': ['template', 'script', 'style'] }],
+      'vue/block-order': ['error', {'order': ['template', 'script', 'style']}],
       'vue/no-lone-template': 'off',
       'vue/singleline-html-element-content-newline': 'off',
+      'vue/custom-event-name-casing': ['error', 'kebab-case'],
     },
   },
 ).prepend({
