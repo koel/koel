@@ -22,18 +22,18 @@ return new class extends Migration
 
         Schema::table('users', static function (Blueprint $table): void {
             $table->string('organization_id', 26)->nullable()->after('id')->index();
-
-            $table->foreign('organization_id')
-                ->references('id')
-                ->on('organizations')
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
         });
 
         DB::table('users')->update(['organization_id' => Organization::default()->id]);
 
         Schema::table('users', static function (Blueprint $table): void {
             $table->string('organization_id', 26)->nullable(false)->change();
+            
+            $table->foreign('organization_id')
+                ->references('id')
+                ->on('organizations')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
         });
     }
 };
