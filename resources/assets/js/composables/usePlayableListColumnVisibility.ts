@@ -8,7 +8,17 @@ const visibleColumns: Ref<PlayableListColumnName[]> = ref([])
 
 export const usePlayableListColumnVisibility = () => {
   const collectVisibleColumns = () => {
-    const validColumns: PlayableListColumnName[] = ['track', 'title', 'artist', 'album', 'duration', 'play_count']
+    const validColumns: PlayableListColumnName[] = [
+      'track',
+      'genre',
+      'year',
+      'title',
+      'artist',
+      'album',
+      'duration',
+      'play_count',
+    ]
+
     const defaultColumns: PlayableListColumnName[] = ['track', 'title', 'artist', 'album', 'duration']
 
     try {
