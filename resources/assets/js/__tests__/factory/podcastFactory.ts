@@ -1,6 +1,6 @@
-import type { Faker } from '@faker-js/faker'
+import { faker } from '@faker-js/faker'
 
-export default (faker: Faker): Podcast => {
+export default (): Podcast => {
   return {
     type: 'podcasts',
     id: faker.string.uuid(),

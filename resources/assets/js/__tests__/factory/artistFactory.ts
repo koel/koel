@@ -1,6 +1,6 @@
-import type { Faker } from '@faker-js/faker'
+import { faker } from '@faker-js/faker'
 
-export default (faker: Faker): Artist => {
+export default (): Artist => {
   return {
     type: 'artists',
     id: faker.string.ulid(),

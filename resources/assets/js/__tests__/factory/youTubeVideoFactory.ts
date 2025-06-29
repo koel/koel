@@ -1,6 +1,6 @@
-import type { Faker } from '@faker-js/faker'
+import { faker } from '@faker-js/faker'
 
-export default (faker: Faker): YouTubeVideo => ({
+export default (): YouTubeVideo => ({
   id: {
     videoId: faker.string.alphanumeric(16),
   },

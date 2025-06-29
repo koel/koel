@@ -1,7 +1,7 @@
-import type { Faker } from '@faker-js/faker'
 import factory from 'factoria'
+import { faker } from '@faker-js/faker'
 
-export default (faker: Faker): SmartPlaylistRuleGroup => ({
+export default (): SmartPlaylistRuleGroup => ({
   id: faker.string.uuid(),
-  rules: factory('smart-playlist-rule', 3),
+  rules: factory('smart-playlist-rule', 3) as unknown as SmartPlaylistRule[],
 })

@@ -1,10 +1,10 @@
 <template>
   <div>
     <h4
-      v-if="showDisc && item.playable.disc"
+      v-if="isSong(playable) && showDisc && playable.disc"
       class="title text-k-text-primary !flex gap-2 p-2 uppercase pl-5"
     >
-      Disc {{ item.playable.disc }}
+      Disc {{ playable.disc }}
     </h4>
 
     <article
@@ -36,15 +36,19 @@
         <span class="artist">{{ artist }}</span>
       </span>
       <span v-if="shouldShowColumn('album')" class="album">{{ album }}</span>
-      <template v-if="config.collaborative">
+      <template v-if="config.collaborative && isSong(playable) && playable.collaboration">
         <span class="collaborator">
           <UserAvatar :user="collaborator" width="24" />
         </span>
-        <span :title="playable.collaboration.added_at" class="added-at">{{ playable.collaboration.fmt_added_at }}</span>
+        <span :title="String(playable.collaboration.added_at)" class="added-at">{{
+          playable.collaboration.fmt_added_at
+        }}</span>
       </template>
-      <span v-if="shouldShowColumn('genre')" class="genre">{{ playable.genre || '—' }}</span>
-      <span v-if="shouldShowColumn('year')" class="year">{{ playable.year || '—' }}</span>
-      <span v-if="shouldShowColumn('duration')" class="time">{{ fmtLength }}</span>
+      <template v-if="isSong(playable)">
+        <span v-if="shouldShowColumn('genre')" class="genre">{{ playable.genre || '—' }}</span>
+        <span v-if="shouldShowColumn('year')" class="year">{{ playable.year || '—' }}</span>
+        <span v-if="shouldShowColumn('duration')" class="time">{{ fmtLength }}</span>
+      </template>
       <span class="extra">
         <LikeButton :playable="playable" />
       </span>
@@ -79,7 +83,7 @@ const { shouldShowColumn } = usePlayableListColumnVisibility()
 
 const { item } = toRefs(props)
 
-const playable = computed<Playable | CollaborativeSong>(() => item.value.playable)
+const playable = computed<Playable>(() => item.value.playable)
 const playing = computed(() => ['Playing', 'Paused'].includes(playable.value.playback_state!))
 const external = computed(() => isSong(playable.value) && playable.value.is_external)
 
@@ -88,7 +92,7 @@ const artist = computed(() => getPlayableProp(playable.value, 'artist_name', 'po
 const album = computed(() => getPlayableProp(playable.value, 'album_name', 'podcast_title'))
 
 const collaborator = computed<Pick<User, 'name' | 'avatar'>>(
-  () => (playable.value as CollaborativeSong).collaboration.user,
+  () => (playable.value as Song).collaboration!.user,
 )
 
 const play = () => emit('play', playable.value)

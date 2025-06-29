@@ -21,7 +21,7 @@ export const useUpload = () => {
 
   const allowsUpload = computed(() => currentUserCan.uploadSongs())
 
-  const fileEntryToFile = async (entry: FileSystemEntry) => new Promise<File>(resolve => entry.file(resolve))
+  const fileEntryToFile = async (entry: FileSystemFileEntry) => new Promise<File>(resolve => entry.file(resolve))
 
   const queueFilesForUpload = (files: Array<File>) => {
     const uploadCandidates = files

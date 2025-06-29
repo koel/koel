@@ -33,7 +33,7 @@ import { getPlayableProp } from '@/utils/helpers'
 const props = defineProps<{ playable: Playable }>()
 const { playable } = toRefs(props)
 
-const src = computed(() => getPlayableProp<string>(playable.value, 'album_cover', 'episode_image'))
+const src = computed(() => getPlayableProp(playable.value, 'album_cover', 'episode_image'))
 
 const play = () => playbackService.play(playable.value)
 

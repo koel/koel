@@ -1,6 +1,6 @@
-import type { Faker } from '@faker-js/faker'
+import { faker } from '@faker-js/faker'
 
-export default (faker: Faker): Folder => ({
+export default (): Folder => ({
   type: 'folders',
   id: faker.string.uuid(),
   parent_id: faker.string.uuid(),

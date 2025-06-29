@@ -135,7 +135,7 @@ interface Album {
   year: number | null
 }
 
-interface Playable {
+interface BasePlayable {
   type: 'songs' | 'episodes'
   readonly id: string
   title: string
@@ -150,7 +150,7 @@ interface Playable {
   created_at: string
 }
 
-interface Song extends Playable {
+interface Song extends BasePlayable {
   type: 'songs'
   readonly owner_id: User['id']
   album_id: Album['id']
@@ -169,9 +169,14 @@ interface Song extends Playable {
   is_external: boolean
   basename?: string
   deleted?: boolean
+  collaboration?: {
+    user: PlaylistCollaborator
+    added_at: string | null
+    fmt_added_at: string | null
+  }
 }
 
-interface Episode extends Playable {
+interface Episode extends BasePlayable {
   type: 'episodes'
   episode_link: string | null
   episode_description: string
@@ -181,13 +186,7 @@ interface Episode extends Playable {
   podcast_author: string
 }
 
-interface CollaborativeSong extends Playable {
-  collaboration: {
-    user: PlaylistCollaborator
-    added_at: string | null
-    fmt_added_at: string | null
-  }
-}
+type Playable = Song | Episode
 
 interface QueueState {
   type: 'queue-states'
@@ -522,7 +521,16 @@ interface Visualizer {
   }
 }
 
-type PlayableListColumnName = 'title' | 'album' | 'track' | 'duration' | 'created_at' | 'play_count' | 'year' | 'genre'
+type PlayableListColumnName =
+  'title'
+  | 'album'
+  | 'artist'
+  | 'track'
+  | 'duration'
+  | 'created_at'
+  | 'play_count'
+  | 'year'
+  | 'genre'
 
 interface Folder {
   type: 'folders'

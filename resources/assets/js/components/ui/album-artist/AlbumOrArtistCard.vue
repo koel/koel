@@ -10,7 +10,7 @@
     @contextmenu.prevent="onContextMenu"
   >
     <slot name="thumbnail">
-      <Thumbnail v-if="!isPodcast" :entity="entity" />
+      <Thumbnail v-if="!isPodcast(entity)" :entity="entity" />
     </slot>
 
     <footer class="flex flex-1 flex-col gap-1.5 overflow-hidden">
@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, toRefs } from 'vue'
+import { toRefs } from 'vue'
 
 import Thumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
 
@@ -39,7 +39,7 @@ const emit = defineEmits<{
   (e: 'contextmenu', event: MouseEvent): void
 }>()
 
-const isPodcast = computed(() => props.entity.type === 'podcasts')
+const isPodcast = (entity: Album | Artist | Podcast): entity is Podcast => entity.type === 'podcasts'
 
 const { layout } = toRefs(props)
 

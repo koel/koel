@@ -127,10 +127,10 @@ export const useSongList = (
   })
 
   const thumbnails = computed(() => {
-    const playablesWithCover = playables.value.filter(p => getPlayableProp<string>(p, 'album_cover', 'episode_image'))
+    const playablesWithCover = playables.value.filter(p => getPlayableProp(p, 'album_cover', 'episode_image'))
 
     const sampleCovers = sampleSize(playablesWithCover, 20)
-      .map(p => getPlayableProp<string>(p, 'album_cover', 'episode_image'))
+      .map(p => getPlayableProp(p, 'album_cover', 'episode_image'))
 
     return take(Array.from(new Set(sampleCovers)), 4)
   })
@@ -158,8 +158,12 @@ export const useSongList = (
 
       const fields = extendedSortFields.value!
 
-      if (fields[0] === 'disc' && fields.length > 1 && new Set(filtered.map(p => p.disc ?? null)).size === 1) {
-        // If we're sorting by disc and there's only one disc, we remove disc from the sort fields.
+      if (
+        fields[0] === 'disc'
+        && fields.length > 1
+        && new Set(filtered.map(p => (p as Song).disc ?? null)).size === 1
+      ) {
+        // If we're sorting by disc and there's only one disc, we remove `disc` from the sort fields.
         // Otherwise, the tracks will be sorted by disc number first, and since there's only one disc,
         // the track order will remain the same through alternating between asc and desc.
         fields.shift()

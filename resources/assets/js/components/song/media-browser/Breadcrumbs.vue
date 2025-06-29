@@ -1,6 +1,6 @@
 <template>
   <ul class="text-base" :class="disabled && 'disabled'">
-    <li v-for="crumb in crumbs" :key="crumb.path" class="inline-block">
+    <li v-for="crumb in crumbs" :key="String(crumb.path)" class="inline-block">
       <a
         v-if="crumb.path !== null"
         :href="url('media-browser', { path: crumb.path })"

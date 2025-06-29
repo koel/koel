@@ -22,7 +22,13 @@ import { $ } from '@/utils/$'
 const el = ref<HTMLElement>()
 const showing = ref(false)
 
-const scrollToTop = () => $.scrollTo(el.value!.parentElement, 0, 500, () => (showing.value = false))
+const scrollToTop = () => {
+  if (!el.value?.parentElement) {
+    return
+  }
+
+  $.scrollTo(el.value.parentElement, 0, 500, () => (showing.value = false))
+}
 
 onMounted(() => {
   el.value?.parentElement?.addEventListener('scroll', event => {

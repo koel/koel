@@ -1,7 +1,19 @@
 import select from 'select'
 import { isObject, without } from 'lodash'
-import type { AsyncComponentLoader, Component, InjectionKey } from 'vue'
-import { defineAsyncComponent as baseDefineAsyncComponent, inject, isRef, provide, readonly, shallowReadonly } from 'vue'
+import type {
+  AsyncComponentLoader,
+  Component,
+  DeepReadonly,
+  InjectionKey,
+} from 'vue'
+import {
+  defineAsyncComponent as baseDefineAsyncComponent,
+  inject,
+  isRef,
+  provide,
+  readonly,
+  shallowReadonly,
+} from 'vue'
 import type { ReadonlyInjectionKey } from '@/symbols'
 import { logger } from '@/utils/logger'
 import { md5 } from '@/utils/crypto'
@@ -32,7 +44,10 @@ export const provideReadonly = <T> (key: ReadonlyInjectionKey<T>, value: T, deep
     logger.warn(`value cannot be made readonly: ${value}`)
     provide(key, [value, mutator])
   } else {
-    provide(key, [deep ? readonly(value) : shallowReadonly(value), mutator])
+    provide(key, [
+      deep ? (readonly(value) as unknown as DeepReadonly<T>) : (shallowReadonly(value) as unknown as Readonly<T>),
+      mutator,
+    ])
   }
 }
 
@@ -112,7 +127,13 @@ export const copyText = async (text: string) => {
   }
 }
 
-export const getPlayableProp = <T> (playable: Playable, songKey: keyof Song, episodeKey: keyof Episode): T => {
+export const getPlayableProp = <
+  SK extends keyof Song,
+  EK extends keyof Episode,
+> (playable: Playable,
+  songKey: SK,
+  episodeKey: EK,
+): Song[SK] | Episode[EK] => {
   return isSong(playable) ? playable[songKey] : playable[episodeKey]
 }
 
