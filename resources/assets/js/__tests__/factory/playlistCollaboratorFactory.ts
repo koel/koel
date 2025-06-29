@@ -1,6 +1,6 @@
-import type { Faker } from '@faker-js/faker'
+import { faker } from '@faker-js/faker'
 
-export default (faker: Faker): PlaylistCollaborator => ({
+export default (): PlaylistCollaborator => ({
   type: 'playlist-collaborators',
   id: faker.string.ulid(),
   name: faker.person.fullName(),

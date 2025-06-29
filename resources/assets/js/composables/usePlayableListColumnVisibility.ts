@@ -1,3 +1,4 @@
+import type { Ref } from 'vue'
 import { ref } from 'vue'
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 import { useLocalStorage } from '@/composables/useLocalStorage'

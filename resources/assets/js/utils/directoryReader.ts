@@ -18,7 +18,7 @@ async function readAllDirectoryEntries (directoryReader: FileSystemDirectoryRead
 }
 
 async function getAllFileEntries (dataTransferItemList: DataTransferItemList) {
-  const fileEntries: FileSystemEntry[] = []
+  const fileEntries: FileSystemFileEntry[] = []
   const queue: FileSystemEntry[] = []
 
   for (let i = 0, length = dataTransferItemList.length; i < length; i++) {
@@ -33,7 +33,7 @@ async function getAllFileEntries (dataTransferItemList: DataTransferItemList) {
     }
 
     if (entry.isFile) {
-      fileEntries.push(entry)
+      fileEntries.push(entry as FileSystemFileEntry)
     } else if (entry.isDirectory) {
       queue.push(...await readAllDirectoryEntries(entry.createReader()))
     }

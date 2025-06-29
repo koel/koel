@@ -148,10 +148,10 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
         case 'playables':
           return songStore.byIds(<string[]>data)
         case 'album':
-          const album = await albumStore.resolve(<number>data)
+          const album = await albumStore.resolve(data)
           return album ? await songStore.fetchForAlbum(album) : <Song[]>[]
         case 'artist':
-          const artist = await artistStore.resolve(<number>data)
+          const artist = await artistStore.resolve(data)
           return artist ? await songStore.fetchForArtist(artist) : <Song[]>[]
         case 'playlist':
           const playlist = playlistStore.byId(<string>data)

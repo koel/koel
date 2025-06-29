@@ -18,7 +18,6 @@ import playlistCollaboratorFactory from '@/__tests__/factory/playlistCollaborato
 import episodeFactory from '@/__tests__/factory/episodeFactory'
 import podcastFactory from '@/__tests__/factory/podcastFactory'
 import folderFactory from '@/__tests__/factory/folderFactory'
-import type { Faker } from '@faker-js/faker'
 
 interface ModelToTypeMap {
   'artist': Artist
@@ -44,11 +43,8 @@ interface ModelToTypeMap {
 type Model = keyof ModelToTypeMap
 type Overrides<M extends Model> = Factoria.Overrides<ModelToTypeMap[M]>
 
-const define = <M extends Model> (
-  model: M,
-  handle: (faker: Faker) => Overrides<M>,
-  states?: Record<string, Factoria.StateDefinition>,
-) => factoria.define(model, handle, states)
+const define: typeof factoria.define = (model, handle, states) =>
+  factoria.define(model, handle, states)
 
 function factory<M extends Model> (
   model: M,

@@ -1,7 +1,7 @@
-import type { Faker } from '@faker-js/faker'
+import { faker } from '@faker-js/faker'
 import { genres } from '@/config/genres'
 
-export default (faker: Faker): Genre => {
+export default (): Genre => {
   return {
     type: 'genres',
     id: faker.string.ulid(),

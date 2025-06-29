@@ -168,7 +168,7 @@ new class extends UnitTestCase {
 
       expect(references).toEqual([
         { id: items[0].id, type: 'songs' },
-        { path: items[1].path, type: 'folders' }, // @ts-expect-error
+        { path: (items[1] as Folder).path, type: 'folders' },
       ])
     })
   }

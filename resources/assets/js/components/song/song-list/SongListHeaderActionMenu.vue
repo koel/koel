@@ -16,10 +16,10 @@
           <label
             v-if="shouldShowColumnVisibilityCheckboxes()"
             class="w-4 mr-2.5 flex items-center"
-            @click.stop="item.visibilityToggleable && toggleColumn(item.column)"
+            @click.stop="item.visibilityToggleable && toggleColumn(item.column!)"
           >
             <input
-              :checked="shouldShowColumn(item.column)"
+              :checked="shouldShowColumn(item.column!)"
               :disabled="!item.visibilityToggleable"
               :title="item.visibilityToggleable ? `Click to toggle the ${item.label} column` : ''"
               class="disabled:opacity-20 bg-white h-4 aspect-square rounded checked:border-white/75 checked:border-2 checked:bg-k-highlight"

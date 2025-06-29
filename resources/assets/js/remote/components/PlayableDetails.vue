@@ -23,7 +23,7 @@ import { getPlayableProp } from '@/utils/helpers'
 const props = defineProps<{ playable: Playable }>()
 const { playable } = toRefs(props)
 
-const coverArt = computed(() => getPlayableProp<string>(playable.value, 'album_cover', 'episode_image') || defaultCover)
+const coverArt = computed(() => getPlayableProp(playable.value, 'album_cover', 'episode_image') || defaultCover)
 
 const artist = computed(() => getPlayableProp(playable.value, 'artist_name', 'podcast_author'))
 const album = computed(() => getPlayableProp(playable.value, 'album_name', 'podcast_title'))

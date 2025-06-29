@@ -5379,7 +5379,7 @@ snapshots:
 
   '@types/yauzl@2.10.3':
     dependencies:
-      '@types/node': 14.18.63
+      '@types/node': 24.0.7
     optional: true
 
   '@types/youtube-player@5.5.11': {}

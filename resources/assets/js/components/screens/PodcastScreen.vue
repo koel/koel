@@ -111,7 +111,7 @@ const headerLayout = ref<ScreenHeaderLayout>('expanded')
 const loading = ref(false)
 const podcastId = ref<string>()
 const podcast = ref<Podcast>()
-const episodes = ref<Episode[]>()
+const episodes = ref<Episode[]>([])
 const keywords = ref('')
 
 provide(FilterKeywordsKey, keywords)

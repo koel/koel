@@ -23,7 +23,7 @@ new class extends UnitTestCase {
 
   protected afterEach () {
     super.afterEach(() => {
-      window.location = originalLocation
+      window.location = originalLocation // @ts-expect-error
       useLocalStorage(false).remove('redirect')
     })
   }

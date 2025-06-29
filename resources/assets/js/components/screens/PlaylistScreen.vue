@@ -102,7 +102,7 @@ import PlaylistThumbnail from '@/components/ui/PlaylistThumbnail.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
 
-type PlaylistPlayable = Playable | CollaborativeSong
+type Playable = Playable
 
 // Since this component is responsible for all playlists, we keep track of the state for each,
 // so that filter and sort settings are preserved when switching between them.
@@ -135,7 +135,7 @@ const getState = (id: Playlist['id']) => {
 }
 
 let currentState = blankState()
-const allPlayables = ref<PlaylistPlayable[]>([])
+const allPlayables = ref<Playable[]>([])
 const collaborators = ref<PlaylistCollaborator[]>([])
 
 const playlistId = ref<Playlist['id']>()
