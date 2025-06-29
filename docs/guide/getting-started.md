@@ -8,7 +8,7 @@ The requirements for each part are as follows:
 
 ### Server
 
-* [All requirements by Laravel](https://laravel.com/docs/10.x/deployment#server-requirements) – PHP >= 8.1 with required
+* [All requirements by Laravel](https://laravel.com/docs/11.x/deployment#server-requirements) – PHP >= 8.2 with required
   extensions
 * Any database supported by Laravel – MySQL, MariaDB, PostgreSQL, or SQLite
 * If you're [building Koel from source](#building-from-source), make sure to have [Composer](https://getcomposer.org/),
