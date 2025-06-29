@@ -3,8 +3,8 @@
 namespace App\Http\Requests;
 
 /**
- * @property float|string $time
- * @property string $api_token
+ * @property-read float|string $time
+ * @property-read string $api_token
  */
 class SongPlayRequest extends Request
 {

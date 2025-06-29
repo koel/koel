@@ -47,7 +47,7 @@ return [
     */
 
     'streaming' => [
-        'bitrate' => env('OUTPUT_BIT_RATE', 128),
+        'bitrate' => env('TRANSCODE_BIT_RATE') ?: env('OUTPUT_BIT_RATE', 128),
         'method' => env('STREAMING_METHOD'),
         'ffmpeg_path' => env('FFMPEG_PATH'),
         'transcode_flac' => env('TRANSCODE_FLAC', true),

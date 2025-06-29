@@ -6,7 +6,6 @@ use App\Models\Song;
 use App\Services\Streamer\Adapters\Concerns\StreamsLocalPath;
 use App\Services\Transcoding\TranscodeStrategyFactory;
 use App\Values\RequestedStreamingConfig;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
 
@@ -14,10 +13,7 @@ class TranscodingStreamerAdapter implements StreamerAdapter
 {
     use StreamsLocalPath;
 
-    /**
-     * @return RedirectResponse|void
-     */
-    public function stream(Song $song, ?RequestedStreamingConfig $config = null): mixed
+    public function stream(Song $song, ?RequestedStreamingConfig $config = null) // @phpcs:ignore
     {
         abort_unless(
             is_executable(config('koel.streaming.ffmpeg_path')),
