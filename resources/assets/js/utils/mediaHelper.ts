@@ -1,45 +1,4 @@
-export const acceptedExtensions = [
-  // Lossy
-  'mp3',
-  'mp4',
-  'm4a',
-  'aac',
-  'ogg',
-  'opus',
-  'flac',
-  'fla',
-  'amr',
-  'ac3',
-  'dts',
-  'ra',
-  'rm',
-  'wma',
-  'au',
-
-  // Lossless and others
-  'wav',
-  'aiff',
-  'aif',
-  'aifc',
-  'mka',
-  'ape',
-  'tta',
-  'wv',
-  'wvc',
-  'ofr',
-  'ofs',
-  'shn',
-  'lpac',
-  'dsf',
-  'dff',
-  'spx',
-  'dss',
-  'aa',
-  'vqf',
-  'mpc',
-  'mp+',
-  'voc',
-]
+export const acceptedExtensions = window.ACCEPTED_AUDIO_EXTENSIONS
 
 const getFileExtension = (filename: string): string | null => {
   const match = filename.toLowerCase().match(/\.([a-z0-9+]+)$/)
