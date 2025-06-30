@@ -92,7 +92,7 @@ function gravatar(string $email, int $size = 192): string
 {
     $url = config('services.gravatar.url');
     $default = config('services.gravatar.default');
-    
+
     return sprintf("%s/%s?s=$size&d=$default", $url, md5(Str::lower($email)));
 }
 
@@ -166,4 +166,18 @@ function is_image(string $path): bool
 function cache_key(...$parts): string
 {
     return simple_hash(implode('.', $parts));
+}
+
+/**
+ * @return array<string>
+ */
+function collect_accepted_audio_extensions(): array
+{
+    return array_values(
+        collect(array_values(config('koel.streaming.supported_mime_types')))
+            ->flatten()
+            ->unique()
+            ->map(static fn (string $ext) => Str::lower($ext))
+            ->toArray()
+    );
 }

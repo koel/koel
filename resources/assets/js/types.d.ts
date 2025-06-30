@@ -70,6 +70,7 @@ interface Window {
   IS_DEMO: boolean
   SSO_PROVIDERS: SSOProvider[]
   AUTH_TOKEN: CompositeToken | null
+  ACCEPTED_AUDIO_EXTENSIONS: string[]
 
   readonly PUSHER_APP_KEY: string
   readonly PUSHER_APP_CLUSTER: string
