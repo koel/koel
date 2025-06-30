@@ -9,7 +9,7 @@ use App\Services\License\CommunityLicenseService;
 use App\Services\MediaBrowser;
 use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\File;
 use Tests\Traits\CreatesApplication;
@@ -19,7 +19,7 @@ abstract class TestCase extends BaseTestCase
 {
     use ArraySubsetAsserts;
     use CreatesApplication;
-    use DatabaseTransactions;
+    use LazilyRefreshDatabase;
     use MakesHttpRequests;
 
     /**
