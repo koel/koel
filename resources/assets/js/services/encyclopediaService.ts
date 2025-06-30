@@ -4,7 +4,7 @@ import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { songStore } from '@/stores/songStore'
 
-export const mediaInfoService = {
+export const encyclopediaService = {
   async fetchForArtist (artist: Artist) {
     artist = artistStore.syncWithVault(artist)[0]
     const cacheKey = ['artist.info', artist.id]

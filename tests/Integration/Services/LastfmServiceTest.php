@@ -44,7 +44,9 @@ class LastfmServiceTest extends TestCase
         $artist = Artist::factory()->make(['name' => 'Kamelot']);
 
         Saloon::fake([
-            GetArtistInfoRequest::class => MockResponse::make(body: File::get(test_path('blobs/lastfm/artist.json'))),
+            GetArtistInfoRequest::class => MockResponse::make(
+                body: File::get(test_path('fixtures/lastfm/artist.json'))
+            ),
         ]);
 
         $info = $this->service->getArtistInformation($artist);
@@ -78,7 +80,7 @@ class LastfmServiceTest extends TestCase
 
         Saloon::fake([
             GetArtistInfoRequest::class => MockResponse::make(
-                body: File::get(test_path('blobs/lastfm/artist-notfound.json'))
+                body: File::get(test_path('fixtures/lastfm/artist-notfound.json'))
             ),
         ]);
 
@@ -92,7 +94,7 @@ class LastfmServiceTest extends TestCase
         $album = Album::factory()->for(Artist::factory()->create(['name' => 'Kamelot']))->create(['name' => 'Epica']);
 
         Saloon::fake([
-            GetAlbumInfoRequest::class => MockResponse::make(body: File::get(test_path('blobs/lastfm/album.json'))),
+            GetAlbumInfoRequest::class => MockResponse::make(body: File::get(test_path('fixtures/lastfm/album.json'))),
         ]);
 
         $info = $this->service->getAlbumInformation($album);
@@ -139,7 +141,7 @@ class LastfmServiceTest extends TestCase
 
         Saloon::fake([
             GetAlbumInfoRequest::class => MockResponse::make(
-                body: File::get(test_path('blobs/lastfm/album-notfound.json'))
+                body: File::get(test_path('fixtures/lastfm/album-notfound.json'))
             ),
         ]);
 

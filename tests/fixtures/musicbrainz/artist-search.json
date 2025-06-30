@@ -1,0 +1,56 @@
+{
+  "created": "2025-07-01T07:09:36.320Z",
+  "count": 11018,
+  "offset": 0,
+  "artists": [
+    {
+      "id": "6da0515e-a27d-449d-84cc-00713c38a140",
+      "type": "Group",
+      "type-id": "e431f5f6-b5d2-343d-8b36-72607fffb74b",
+      "score": 100,
+      "name": "Skid Row",
+      "sort-name": "Skid Row",
+      "country": "US",
+      "area": {
+        "id": "489ce91b-6658-3307-9877-795b68554c98",
+        "type": "Country",
+        "type-id": "06dd0ae4-8c74-30bb-b43d-95dcedf961de",
+        "name": "United States",
+        "sort-name": "United States",
+        "life-span": {
+          "ended": null
+        }
+      },
+      "begin-area": {
+        "id": "8c449bf6-603a-410f-a95b-e2bbd3e73e59",
+        "type": "City",
+        "type-id": "6fd8f29a-3d0a-32fc-980d-ea697b69da78",
+        "name": "Toms River",
+        "sort-name": "Toms River",
+        "life-span": {
+          "ended": null
+        }
+      },
+      "disambiguation": "US hard rock / heavy metal band",
+      "isnis": [
+        "0000000122576076"
+      ],
+      "life-span": {
+        "begin": "1986",
+        "ended": null
+      },
+      "aliases": [
+        {
+          "sort-name": "Skidrow",
+          "name": "Skidrow",
+          "locale": null,
+          "type": null,
+          "primary": null,
+          "begin-date": null,
+          "end-date": null
+        }
+      ],
+      "tags": "****ARRAY REDACTED****"
+    }
+  ]
+}

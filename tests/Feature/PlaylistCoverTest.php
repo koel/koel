@@ -20,7 +20,7 @@ class PlaylistCoverTest extends TestCase
 
         $this->putAs(
             "api/playlists/{$playlist->id}/cover",
-            ['cover' => read_as_data_url(test_path('blobs/cover.png'))],
+            ['cover' => read_as_data_url(test_path('fixtures/cover.png'))],
             $playlist->owner
         )
             ->assertOk();

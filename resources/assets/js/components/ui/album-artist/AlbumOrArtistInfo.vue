@@ -22,6 +22,6 @@
 <script lang="ts" setup>
 import { toRefs } from 'vue'
 
-const props = withDefaults(defineProps<{ mode?: MediaInfoDisplayMode }>(), { mode: 'aside' })
+const props = withDefaults(defineProps<{ mode?: EncyclopediaDisplayMode }>(), { mode: 'aside' })
 const { mode } = toRefs(props)
 </script>

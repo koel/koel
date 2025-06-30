@@ -33,7 +33,7 @@ class UserServiceTest extends TestCase
             email: 'bruce@dickison.com',
             plainTextPassword: 'FearOfTheDark',
             isAdmin: true,
-            avatar: read_as_data_url(test_path('blobs/cover.png')),
+            avatar: read_as_data_url(test_path('fixtures/cover.png')),
         );
 
         $this->assertModelExists($user);
@@ -83,7 +83,7 @@ class UserServiceTest extends TestCase
             email: 'steve@iron.com',
             password: 'TheTrooper',
             isAdmin: true,
-            avatar: read_as_data_url(test_path('blobs/cover.png'))
+            avatar: read_as_data_url(test_path('fixtures/cover.png'))
         );
 
         $user->refresh();

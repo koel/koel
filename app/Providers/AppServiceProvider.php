@@ -3,11 +3,12 @@
 namespace App\Providers;
 
 use App\Models\Genre;
-use App\Services\Contracts\MusicEncyclopedia;
+use App\Services\Contracts\Encyclopedia;
 use App\Services\LastfmService;
 use App\Services\License\Contracts\LicenseServiceInterface;
 use App\Services\LicenseService;
-use App\Services\NullMusicEncyclopedia;
+use App\Services\MusicBrainzService;
+use App\Services\NullEncyclopedia;
 use App\Services\Scanners\Contracts\ScannerCacheStrategy as ScannerCacheStrategyContract;
 use App\Services\Scanners\ScannerCacheStrategy;
 use App\Services\Scanners\ScannerNoCacheStrategy;
@@ -44,8 +45,17 @@ class AppServiceProvider extends ServiceProvider
                 : null;
         });
 
-        $this->app->bind(MusicEncyclopedia::class, static function () {
-            return app(LastfmService::enabled() ? LastfmService::class : NullMusicEncyclopedia::class);
+        $this->app->bind(Encyclopedia::class, static function () {
+            // Prefer Last.fm over MusicBrainz, and fall back to a null encyclopedia.
+            if (LastfmService::enabled()) {
+                return app(LastfmService::class);
+            }
+
+            if (MusicBrainzService::enabled()) {
+                return app(MusicBrainzService::class);
+            }
+
+            return app(NullEncyclopedia::class);
         });
 
         $this->app->bind(LicenseServiceInterface::class, LicenseService::class);

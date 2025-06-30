@@ -84,7 +84,7 @@ class SpotifyServiceTest extends TestCase
     /** @return array<mixed> */
     private static function parseFixture(string $name): array
     {
-        return json_decode(File::get(test_path("blobs/spotify/$name")), true);
+        return File::json(test_path("fixtures/spotify/$name"));
     }
 
     protected function tearDown(): void

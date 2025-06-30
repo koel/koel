@@ -8,26 +8,23 @@
 
     <ParagraphSkeleton v-if="loading" />
 
-    <template v-else>
-      <template v-if="info?.bio">
-        <ExpandableContentBlock v-if="mode === 'aside'">
-          <div v-html="info.bio.full" />
-        </ExpandableContentBlock>
+    <template v-if="!loading && info?.bio">
+      <ExpandableContentBlock v-if="mode === 'aside' && info.bio.full">
+        <div v-html="info.bio.full" />
+      </ExpandableContentBlock>
 
-        <div v-else v-html="info.bio.full" />
-      </template>
+      <div v-else v-html="info.bio.full" />
     </template>
 
     <template v-if="info && !loading" #footer>
-      Data &copy;
-      <a :href="info.url" rel="openener" target="_blank">Last.fm</a>
+      <a :href="info.url" rel="openener" target="_blank">Source</a>
     </template>
   </AlbumArtistInfo>
 </template>
 
 <script lang="ts" setup>
 import { ref, toRefs, watch } from 'vue'
-import { mediaInfoService } from '@/services/mediaInfoService'
+import { encyclopediaService } from '@/services/encyclopediaService'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 
 import ArtistThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
@@ -35,10 +32,10 @@ import AlbumArtistInfo from '@/components/ui/album-artist/AlbumOrArtistInfo.vue'
 import ExpandableContentBlock from '@/components/ui/album-artist/ExpandableContentBlock.vue'
 import ParagraphSkeleton from '@/components/ui/skeletons/ParagraphSkeleton.vue'
 
-const props = withDefaults(defineProps<{ artist: Artist, mode?: MediaInfoDisplayMode }>(), { mode: 'aside' })
+const props = withDefaults(defineProps<{ artist: Artist, mode?: EncyclopediaDisplayMode }>(), { mode: 'aside' })
 const { artist, mode } = toRefs(props)
 
-const { useLastfm, useSpotify } = useThirdPartyServices()
+const { useMusicBrainz, useLastfm, useSpotify } = useThirdPartyServices()
 
 const loading = ref(false)
 const info = ref<ArtistInfo | null>(null)
@@ -46,9 +43,9 @@ const info = ref<ArtistInfo | null>(null)
 watch(artist, async () => {
   info.value = null
 
-  if (useLastfm.value || useSpotify.value) {
+  if (useMusicBrainz.value || useLastfm.value || useSpotify.value) {
     loading.value = true
-    info.value = await mediaInfoService.fetchForArtist(artist.value)
+    info.value = await encyclopediaService.fetchForArtist(artist.value)
     loading.value = false
   }
 }, { immediate: true })

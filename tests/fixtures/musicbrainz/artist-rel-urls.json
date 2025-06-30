@@ -1,0 +1,362 @@
+{
+  "gender": null,
+  "name": "Skid Row",
+  "relations": [
+    {
+      "direction": "forward",
+      "begin": null,
+      "attributes": [],
+      "ended": false,
+      "attribute-ids": {
+      },
+      "source-credit": "",
+      "target-type": "url",
+      "type-id": "08db8098-c0df-4b78-82c3-c8697b4bba7f",
+      "end": null,
+      "target-credit": "",
+      "attribute-values": {
+      },
+      "type": "last.fm",
+      "url": {
+        "resource": "https://www.last.fm/music/Skid+Row",
+        "id": "bc7e1a9a-6958-460a-a69a-441b633b3ba9"
+      }
+    },
+    {
+      "target-credit": "",
+      "end": null,
+      "attribute-values": {
+      },
+      "type": "lyrics",
+      "url": {
+        "resource": "http://muzikum.eu/en/122-8835/skid-row/lyrics.html",
+        "id": "a15e35c6-c4d0-4177-8c37-86289be6dc3b"
+      },
+      "attribute-ids": {
+      },
+      "direction": "forward",
+      "attributes": [],
+      "begin": null,
+      "ended": false,
+      "target-type": "url",
+      "type-id": "e4d73442-3762-45a8-905c-401da65544ed",
+      "source-credit": ""
+    },
+    {
+      "attribute-ids": {
+      },
+      "direction": "forward",
+      "ended": false,
+      "attributes": [],
+      "begin": null,
+      "target-type": "url",
+      "type-id": "fe33d22f-c3b0-4d68-bd53-a856badf2b15",
+      "source-credit": "",
+      "target-credit": "",
+      "end": null,
+      "attribute-values": {
+      },
+      "type": "official homepage",
+      "url": {
+        "id": "46051885-1e7b-4223-8c2c-87a909e0f375",
+        "resource": "http://www.skidrow.com/"
+      }
+    },
+    {
+      "target-credit": "",
+      "end": null,
+      "url": {
+        "id": "3fe674a9-d3d1-4202-9fae-4f0d49e18b50",
+        "resource": "https://www.facebook.com/OfficialSkidRow"
+      },
+      "type": "social network",
+      "attribute-values": {
+      },
+      "attribute-ids": {
+      },
+      "attributes": [],
+      "begin": null,
+      "ended": false,
+      "direction": "forward",
+      "type-id": "99429741-f3f6-484b-84f8-23af51991770",
+      "target-type": "url",
+      "source-credit": ""
+    },
+    {
+      "end": null,
+      "target-credit": "",
+      "type": "social network",
+      "attribute-values": {
+      },
+      "url": {
+        "resource": "https://www.instagram.com/officialskidrow/",
+        "id": "da5bc84c-4114-4733-8539-6dedacb77466"
+      },
+      "direction": "forward",
+      "ended": false,
+      "begin": null,
+      "attributes": [],
+      "attribute-ids": {
+      },
+      "source-credit": "",
+      "target-type": "url",
+      "type-id": "99429741-f3f6-484b-84f8-23af51991770"
+    },
+    {
+      "type-id": "99429741-f3f6-484b-84f8-23af51991770",
+      "target-type": "url",
+      "source-credit": "",
+      "attribute-ids": {
+      },
+      "ended": false,
+      "begin": null,
+      "attributes": [],
+      "direction": "forward",
+      "url": {
+        "id": "a0be71be-2790-4495-82a7-6cedd7828b09",
+        "resource": "https://www.reverbnation.com/skidrow"
+      },
+      "type": "social network",
+      "attribute-values": {
+      },
+      "target-credit": "",
+      "end": null
+    },
+    {
+      "type-id": "99429741-f3f6-484b-84f8-23af51991770",
+      "target-type": "url",
+      "source-credit": "",
+      "attribute-ids": {
+      },
+      "attributes": [],
+      "begin": null,
+      "ended": false,
+      "direction": "forward",
+      "url": {
+        "id": "f4de3da0-9b5e-4f91-afb1-4756910b590f",
+        "resource": "https://www.tiktok.com/@skidrowofficial"
+      },
+      "attribute-values": {
+      },
+      "type": "social network",
+      "target-credit": "",
+      "end": null
+    },
+    {
+      "ended": false,
+      "attributes": [],
+      "begin": null,
+      "direction": "forward",
+      "attribute-ids": {
+      },
+      "source-credit": "",
+      "type-id": "aac9c4bc-a5b9-30b8-9839-e3ac314c6e58",
+      "target-type": "url",
+      "end": null,
+      "target-credit": "",
+      "url": {
+        "resource": "https://www.songkick.com/artists/19056",
+        "id": "cbe73b87-9102-441b-a2be-5b315cc7e169"
+      },
+      "type": "songkick",
+      "attribute-values": {
+      }
+    },
+    {
+      "type-id": "89e4a949-0976-440d-bda1-5f772c1e5710",
+      "target-type": "url",
+      "source-credit": "",
+      "attribute-ids": {
+      },
+      "attributes": [],
+      "begin": null,
+      "ended": false,
+      "direction": "forward",
+      "url": {
+        "id": "d182f8c4-5312-44c3-bf4f-68e46d1202bc",
+        "resource": "https://soundcloud.com/skidrowofficial"
+      },
+      "type": "soundcloud",
+      "attribute-values": {
+      },
+      "target-credit": "",
+      "end": null
+    },
+    {
+      "attribute-ids": {
+      },
+      "ended": false,
+      "begin": null,
+      "attributes": [],
+      "direction": "forward",
+      "type-id": "63cc5d1f-f096-4c94-a43f-ecb32ea94161",
+      "target-type": "url",
+      "source-credit": "",
+      "target-credit": "",
+      "end": null,
+      "url": {
+        "id": "bda34015-2053-4e6c-95aa-501b8713d51d",
+        "resource": "https://music.amazon.com/artists/B001Q97JF8"
+      },
+      "attribute-values": {
+      },
+      "type": "streaming"
+    },
+    {
+      "begin": null,
+      "attributes": [],
+      "ended": false,
+      "direction": "forward",
+      "attribute-ids": {
+      },
+      "source-credit": "",
+      "type-id": "63cc5d1f-f096-4c94-a43f-ecb32ea94161",
+      "target-type": "url",
+      "end": null,
+      "target-credit": "",
+      "url": {
+        "resource": "https://music.apple.com/us/artist/163805",
+        "id": "d8797ff9-9cec-48e9-9304-ee2fb4d1f743"
+      },
+      "attribute-values": {
+      },
+      "type": "streaming"
+    },
+    {
+      "type": "streaming",
+      "attribute-values": {
+      },
+      "url": {
+        "resource": "https://tidal.com/artist/14824",
+        "id": "3e3390d4-bcbb-4c06-9621-0213e4297762"
+      },
+      "end": null,
+      "target-credit": "",
+      "source-credit": "",
+      "target-type": "url",
+      "type-id": "63cc5d1f-f096-4c94-a43f-ecb32ea94161",
+      "direction": "forward",
+      "ended": false,
+      "attributes": [],
+      "begin": null,
+      "attribute-ids": {
+      }
+    },
+    {
+      "attribute-values": {
+      },
+      "type": "wikidata",
+      "url": {
+        "id": "f9cd856c-b97c-4f9e-9210-b994832ddd05",
+        "resource": "https://www.wikidata.org/wiki/Q461269"
+      },
+      "target-credit": "",
+      "end": null,
+      "target-type": "url",
+      "type-id": "689870a4-a1e4-4912-b17f-7b2664215698",
+      "source-credit": "",
+      "attribute-ids": {
+      },
+      "direction": "forward",
+      "attributes": [],
+      "begin": null,
+      "ended": false
+    },
+    {
+      "source-credit": "SkidRowOfficial",
+      "type-id": "6a540e5b-58c6-4192-b6ba-dbc71ec8fcf0",
+      "target-type": "url",
+      "ended": false,
+      "attributes": [],
+      "begin": null,
+      "direction": "forward",
+      "attribute-ids": {
+      },
+      "url": {
+        "id": "0e6c1c94-0209-4f03-a61b-61d306cee640",
+        "resource": "https://www.youtube.com/channel/UCBfUBCl_wyCCvATBFrUk9hA"
+      },
+      "type": "youtube",
+      "attribute-values": {
+      },
+      "end": null,
+      "target-credit": ""
+    },
+    {
+      "source-credit": "Skid Row",
+      "target-type": "url",
+      "type-id": "6a540e5b-58c6-4192-b6ba-dbc71ec8fcf0",
+      "direction": "forward",
+      "begin": null,
+      "attributes": [],
+      "ended": false,
+      "attribute-ids": {
+      },
+      "attribute-values": {
+      },
+      "type": "youtube",
+      "url": {
+        "id": "050f07a0-4b0d-44a1-9c77-6a9fbf455aac",
+        "resource": "https://www.youtube.com/channel/UCKf3ql762O9-Mhp0-l23AqQ"
+      },
+      "end": null,
+      "target-credit": ""
+    },
+    {
+      "attribute-ids": {
+      },
+      "direction": "forward",
+      "ended": false,
+      "begin": null,
+      "attributes": [],
+      "target-type": "url",
+      "type-id": "631712a0-7525-42ba-b7a3-605aa7a238c4",
+      "source-credit": "",
+      "target-credit": "",
+      "end": null,
+      "attribute-values": {
+      },
+      "type": "youtube music",
+      "url": {
+        "resource": "https://music.youtube.com/channel/UCncr4k7oPRqXOqMl3vvymqQ",
+        "id": "d7823ade-12f2-4294-a3be-055aeb5ca1a5"
+      }
+    }
+  ],
+  "begin-area": {
+    "name": "Toms River",
+    "sort-name": "Toms River",
+    "type": null,
+    "id": "8c449bf6-603a-410f-a95b-e2bbd3e73e59",
+    "disambiguation": "",
+    "type-id": null
+  },
+  "area": {
+    "type-id": null,
+    "iso-3166-1-codes": [
+      "US"
+    ],
+    "sort-name": "United States",
+    "type": null,
+    "id": "489ce91b-6658-3307-9877-795b68554c98",
+    "disambiguation": "",
+    "name": "United States"
+  },
+  "id": "6da0515e-a27d-449d-84cc-00713c38a140",
+  "type-id": "e431f5f6-b5d2-343d-8b36-72607fffb74b",
+  "country": "US",
+  "disambiguation": "US hard rock / heavy metal band",
+  "ipis": [],
+  "sort-name": "Skid Row",
+  "type": "Group",
+  "gender-id": null,
+  "end-area": null,
+  "life-span": {
+    "end": null,
+    "begin": "1986",
+    "ended": false
+  },
+  "isnis": [
+    "0000000122576076"
+  ]
+}

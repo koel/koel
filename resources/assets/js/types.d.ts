@@ -89,7 +89,7 @@ interface FileSystemEntry {
   createReader: () => FileSystemDirectoryReader
 }
 
-type MediaInfoDisplayMode = 'aside' | 'full'
+type EncyclopediaDisplayMode = 'aside' | 'full'
 type ScreenHeaderLayout = 'expanded' | 'collapsed'
 
 interface AlbumTrack {

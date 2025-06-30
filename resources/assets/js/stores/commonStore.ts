@@ -26,6 +26,7 @@ const initialState = {
   playlists: [] as Playlist[],
   playlist_folders: [] as PlaylistFolder[],
   settings: {} as Settings,
+  uses_musicbrainz: false,
   uses_i_tunes: false,
   uses_last_fm: false,
   uses_spotify: false,

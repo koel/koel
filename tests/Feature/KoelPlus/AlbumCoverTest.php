@@ -3,7 +3,7 @@
 namespace Tests\Feature\KoelPlus;
 
 use App\Models\Album;
-use App\Services\MediaMetadataService;
+use App\Services\ArtworkService;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
@@ -14,13 +14,13 @@ use function Tests\create_user;
 
 class AlbumCoverTest extends PlusTestCase
 {
-    private MediaMetadataService|MockInterface $mediaMetadataService;
+    private ArtworkService|MockInterface $artworkService;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->mediaMetadataService = $this->mock(MediaMetadataService::class);
+        $this->artworkService = $this->mock(ArtworkService::class);
     }
 
     #[Test]
@@ -31,9 +31,8 @@ class AlbumCoverTest extends PlusTestCase
         /** @var Album $album */
         $album = Album::factory()->for($user)->create();
 
-        $this->mediaMetadataService
-            ->shouldReceive('writeAlbumCover')
-            ->once()
+        $this->artworkService
+            ->expects('storeAlbumCover')
             ->with(Mockery::on(static fn (Album $target) => $target->is($album)), 'data:image/jpeg;base64,Rm9v');
 
         $this->putAs("api/albums/{$album->public_id}/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], $user)
@@ -50,7 +49,7 @@ class AlbumCoverTest extends PlusTestCase
 
         self::assertFalse($album->belongsToUser($user));
 
-        $this->mediaMetadataService->shouldNotReceive('writeAlbumCover');
+        $this->artworkService->shouldNotReceive('storeAlbumCover');
 
         $this->putAs("api/albums/{$album->public_id}/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], $user)
             ->assertForbidden();

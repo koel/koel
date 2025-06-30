@@ -1,0 +1,49 @@
+{
+  "type": "standard",
+  "title": "Skid Row (American band)",
+  "displaytitle": "<span class=\"mw-page-title-main\">Skid Row (American band)</span>",
+  "namespace": {
+    "id": 0,
+    "text": ""
+  },
+  "wikibase_item": "Q461269",
+  "titles": {
+    "canonical": "Skid_Row_(American_band)",
+    "normalized": "Skid Row (American band)",
+    "display": "<span class=\"mw-page-title-main\">Skid Row (American band)</span>"
+  },
+  "pageid": 1690020,
+  "thumbnail": {
+    "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/2023_Sweden_Rock_-_3330_%2853049443466%29.jpg/330px-2023_Sweden_Rock_-_3330_%2853049443466%29.jpg",
+    "width": 320,
+    "height": 213
+  },
+  "originalimage": {
+    "source": "https://upload.wikimedia.org/wikipedia/commons/3/3b/2023_Sweden_Rock_-_3330_%2853049443466%29.jpg",
+    "width": 4866,
+    "height": 3246
+  },
+  "lang": "en",
+  "dir": "ltr",
+  "revision": "1298140392",
+  "tid": "891f8875-55e2-11f0-b7cb-751521fae169",
+  "timestamp": "2025-06-30T18:46:30Z",
+  "description": "American rock band",
+  "description_source": "local",
+  "content_urls": {
+    "desktop": {
+      "page": "https://en.wikipedia.org/wiki/Skid_Row_(American_band)",
+      "revisions": "https://en.wikipedia.org/wiki/Skid_Row_(American_band)?action=history",
+      "edit": "https://en.wikipedia.org/wiki/Skid_Row_(American_band)?action=edit",
+      "talk": "https://en.wikipedia.org/wiki/Talk:Skid_Row_(American_band)"
+    },
+    "mobile": {
+      "page": "https://en.m.wikipedia.org/wiki/Skid_Row_(American_band)",
+      "revisions": "https://en.m.wikipedia.org/wiki/Special:History/Skid_Row_(American_band)",
+      "edit": "https://en.m.wikipedia.org/wiki/Skid_Row_(American_band)?action=edit",
+      "talk": "https://en.m.wikipedia.org/wiki/Talk:Skid_Row_(American_band)"
+    }
+  },
+  "extract": "Skid Row is an American rock band formed in 1986…",
+  "extract_html": "<p><b>Skid Row</b> is an American rock band formed in 1986…"
+}

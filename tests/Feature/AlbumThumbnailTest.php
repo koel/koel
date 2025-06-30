@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Album;
-use App\Services\MediaMetadataService;
+use App\Services\ArtworkService;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -12,13 +12,13 @@ use Tests\TestCase;
 
 class AlbumThumbnailTest extends TestCase
 {
-    private MockInterface $mediaMetadataService;
+    private ArtworkService|MockInterface $artworkService;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->mediaMetadataService = $this->mock(MediaMetadataService::class);
+        $this->artworkService = $this->mock(ArtworkService::class);
     }
 
     /** @return array<mixed> */
@@ -31,9 +31,10 @@ class AlbumThumbnailTest extends TestCase
     #[Test]
     public function getAlbumThumbnail(?string $thumbnailUrl): void
     {
+        /** @var Album $createdAlbum */
         $createdAlbum = Album::factory()->create();
 
-        $this->mediaMetadataService
+        $this->artworkService
             ->shouldReceive('getAlbumThumbnailUrl')
             ->once()
             ->with(Mockery::on(static function (Album $album) use ($createdAlbum): bool {

@@ -4,11 +4,11 @@ namespace App\Services;
 
 use App\Models\Album;
 use App\Models\Artist;
-use App\Services\Contracts\MusicEncyclopedia;
+use App\Services\Contracts\Encyclopedia;
 use App\Values\AlbumInformation;
 use App\Values\ArtistInformation;
 
-class NullMusicEncyclopedia implements MusicEncyclopedia
+class NullEncyclopedia implements Encyclopedia
 {
     public function getArtistInformation(Artist $artist): ?ArtistInformation
     {

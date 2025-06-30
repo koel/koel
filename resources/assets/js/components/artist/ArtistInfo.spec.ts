@@ -3,14 +3,14 @@ import { screen } from '@testing-library/vue'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { commonStore } from '@/stores/commonStore'
-import { mediaInfoService } from '@/services/mediaInfoService'
+import { encyclopediaService } from '@/services/encyclopediaService'
 import ArtistInfoComponent from './ArtistInfo.vue'
 
 let artist: Artist
 
 new class extends UnitTestCase {
   protected test () {
-    it.each<[MediaInfoDisplayMode]>([['aside'], ['full']])('renders in %s mode', async mode => {
+    it.each<[EncyclopediaDisplayMode]>([['aside'], ['full']])('renders in %s mode', async mode => {
       await this.renderComponent(mode)
 
       if (mode === 'aside') {
@@ -23,12 +23,12 @@ new class extends UnitTestCase {
     })
   }
 
-  private async renderComponent (mode: MediaInfoDisplayMode = 'aside', info?: ArtistInfo) {
+  private async renderComponent (mode: EncyclopediaDisplayMode = 'aside', info?: ArtistInfo) {
     commonStore.state.uses_last_fm = true
     info = info ?? factory('artist-info')
     artist = factory('artist', { name: 'Led Zeppelin' })
 
-    const fetchMock = this.mock(mediaInfoService, 'fetchForArtist').mockResolvedValue(info)
+    const fetchMock = this.mock(encyclopediaService, 'fetchForArtist').mockResolvedValue(info)
 
     const rendered = this.render(ArtistInfoComponent, {
       props: {

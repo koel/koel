@@ -11,7 +11,7 @@ use App\Models\Song;
 use App\Models\User;
 use App\Repositories\SongRepository;
 use App\Repositories\UserRepository;
-use App\Services\MediaMetadataService;
+use App\Services\ArtworkService;
 use App\Values\UploadReference;
 use Illuminate\Http\UploadedFile;
 
@@ -22,7 +22,7 @@ use Illuminate\Http\UploadedFile;
 class S3LambdaStorage extends S3CompatibleStorage
 {
     public function __construct(
-        private readonly MediaMetadataService $mediaMetadataService,
+        private readonly ArtworkService $artworkService,
         private readonly SongRepository $songRepository,
         private readonly UserRepository $userRepository
     ) {
@@ -62,7 +62,7 @@ class S3LambdaStorage extends S3CompatibleStorage
         $album = Album::getOrCreate($albumArtist, $albumName);
 
         if ($cover) {
-            $this->mediaMetadataService->writeAlbumCover($album, base64_decode($cover['data'], true));
+            $this->artworkService->storeAlbumCover($album, base64_decode($cover['data'], true));
         }
 
         return Song::query()->updateOrCreate(['path' => $path], [

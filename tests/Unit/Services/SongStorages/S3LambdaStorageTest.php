@@ -5,7 +5,7 @@ namespace Tests\Unit\Services\SongStorages;
 use App\Models\Song;
 use App\Repositories\SongRepository;
 use App\Repositories\UserRepository;
-use App\Services\MediaMetadataService;
+use App\Services\ArtworkService;
 use App\Services\SongStorages\S3LambdaStorage;
 use Mockery;
 use Mockery\LegacyMockInterface;
@@ -25,7 +25,7 @@ class S3LambdaStorageTest extends TestCase
     {
         parent::setUp();
 
-        $metadataService = Mockery::mock(MediaMetadataService::class);
+        $metadataService = Mockery::mock(ArtworkService::class);
         $this->songRepository = Mockery::mock(SongRepository::class);
         $this->userRepository = Mockery::mock(UserRepository::class);
 

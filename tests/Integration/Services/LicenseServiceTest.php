@@ -38,7 +38,7 @@ class LicenseServiceTest extends TestCase
 
         Saloon::fake([
             ActivateLicenseRequest::class => MockResponse::make(
-                body: File::get(test_path('blobs/lemonsqueezy/license-activated-successful.json')),
+                body: File::get(test_path('fixtures/lemonsqueezy/license-activated-successful.json')),
             ),
         ]);
 
@@ -76,7 +76,7 @@ class LicenseServiceTest extends TestCase
 
         Saloon::fake([
             ActivateLicenseRequest::class => MockResponse::make(
-                body: File::get(test_path('blobs/lemonsqueezy/license-activated-successful.json')),
+                body: File::get(test_path('fixtures/lemonsqueezy/license-activated-successful.json')),
             ),
         ]);
 
@@ -91,7 +91,7 @@ class LicenseServiceTest extends TestCase
 
         Saloon::fake([
             ActivateLicenseRequest::class => MockResponse::make(
-                body: File::get(test_path('blobs/lemonsqueezy/license-invalid.json')),
+                body: File::get(test_path('fixtures/lemonsqueezy/license-invalid.json')),
                 status: Response::HTTP_NOT_FOUND,
             ),
         ]);
@@ -107,7 +107,7 @@ class LicenseServiceTest extends TestCase
 
         Saloon::fake([
             DeactivateLicenseRequest::class => MockResponse::make(
-                body: File::get(test_path('blobs/lemonsqueezy/license-deactivated-successful.json')),
+                body: File::get(test_path('fixtures/lemonsqueezy/license-deactivated-successful.json')),
                 status: Response::HTTP_NOT_FOUND,
             ),
         ]);
@@ -193,7 +193,7 @@ class LicenseServiceTest extends TestCase
 
         Saloon::fake([
             ValidateLicenseRequest::class => MockResponse::make(
-                body: File::get(test_path('blobs/lemonsqueezy/license-validated-successful.json')),
+                body: File::get(test_path('fixtures/lemonsqueezy/license-validated-successful.json')),
             ),
         ]);
 
