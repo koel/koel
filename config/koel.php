@@ -92,8 +92,10 @@ return [
             'audio/x-monkeys-audio' => 'ape',// APE (alternate)
             'audio/x-voc' => 'voc',           // Creative VOC
         ],
+        // Note that this is **not** guaranteed to work 100% of the time, as technically
+        // a mime type doesn't tell the actual codec used in the file.
+        // However, it's a good enough heuristic for most cases.
         'transcode_required_mime_types' => [
-            'audio/mp4',
             'audio/vorbis',
             'audio/x-flac',
             'audio/amr',
