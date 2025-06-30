@@ -85,7 +85,7 @@ const {
 
 const { SongListControls, config } = useSongListControls('Genre')
 
-const { getRouteParam, go, onRouteChanged, url } = useRouter()
+const { getRouteParam, isCurrentScreen, go, onRouteChanged, url } = useRouter()
 
 let sortField: MaybeArray<PlayableListSortField> = 'title'
 let sortOrder: SortOrder = 'asc'
@@ -168,7 +168,11 @@ const playAll = async () => {
   go(url('queue'))
 }
 
-onMounted(() => (id.value = getIdFromRoute()))
+onMounted(() => {
+  if (isCurrentScreen('Genre')) {
+    id.value = getIdFromRoute()
+  }
+})
 
 watch(id, async () => id.value && await refresh())
 
