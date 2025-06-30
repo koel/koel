@@ -40,38 +40,7 @@ abstract class Scanner
      */
     protected function gatherFiles(string $path): Finder
     {
-        $audioExtensions = [
-            'mp3',  // audio/mpeg
-            'mp4', 'm4a', // audio/mp4
-            'aac',  // audio/aac
-            'ogg',  // audio/ogg, audio/vorbis, audio/opus, audio/speex, audio/flac
-            'opus', // audio/opus
-            'flac', 'fla', // audio/flac, audio/x-flac
-            'amr',  // audio/amr
-            'ac3',  // audio/ac3
-            'dts',  // audio/dts
-            'ra', 'rm', // audio/vnd.rn-realaudio
-            'wma',  // audio/x-ms-wma
-            'au',   // audio/basic
-            'wav',  // audio/vnd.wave, audio/x-wav
-            'aiff', 'aif', 'aifc', // audio/aiff, audio/x-aiff
-            'mka',  // audio/x-matroska
-            'ape',  // audio/x-ape, audio/x-monkeys-audio
-            'tta',  // audio/tta
-            'wv', 'wvc', // audio/x-wavpack
-            'ofr', 'ofs', // audio/x-optimfrog
-            'shn',  // audio/x-shorten, audio/xmms-shn
-            'lpac', // audio/x-lpac
-            'dsf', 'dff', // audio/x-dsd
-            'spx',  // audio/x-speex
-            'dss',  // audio/x-dss
-            'aa',   // audio/x-audible
-            'vqf',  // audio/x-twinvq, audio/vqf
-            'mpc', 'mp+', // audio/x-musepack
-            'voc',  // audio/x-voc
-        ];
-
-        $nameRegex = '/\.(' . implode('|', $audioExtensions) . ')$/i';
+        $nameRegex = '/\.(' . implode('|', collect_accepted_audio_extensions()) . ')$/i';
 
         return $this->finder::create()
             ->ignoreUnreadableDirs()

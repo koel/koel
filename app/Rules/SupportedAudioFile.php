@@ -13,10 +13,9 @@ class SupportedAudioFile implements ValidationRule
     /** @param UploadedFile $value */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $passes = in_array(
+        $passes = array_key_exists(
             Str::lower(File::mimeType($value->getRealPath())),
-            config('koel.streaming.supported_mime_types'),
-            true,
+            config('koel.streaming.supported_mime_types')
         );
 
         if (!$passes) {
