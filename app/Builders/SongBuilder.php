@@ -54,30 +54,22 @@ class SongBuilder extends Builder
         return $this->where('path', 'LIKE', "$path%");
     }
 
-    public function withMeta(bool $requiresInteractions = false): self
+    public function withMetaData(): self
     {
-        $joinClosure = function (JoinClause $join): void {
-            $join->on('interactions.song_id', 'songs.id')->where('interactions.user_id', $this->user->id);
-        };
-
-        $selects = [
-            'songs.*',
-            'albums.name as album_name',
-            'artists.name as artist_name',
-        ];
-
-        if ($requiresInteractions) {
-            $selects[] = 'interactions.liked';
-            $selects[] = 'interactions.play_count';
-        }
-
         return $this
             ->with('artist', 'album', 'album.artist')
-            ->when($requiresInteractions, static fn (self $query) => $query->join('interactions', $joinClosure))
-            ->when(!$requiresInteractions, static fn (self $query) => $query->leftJoin('interactions', $joinClosure))
+            ->leftJoin('interactions', function (JoinClause $join): void {
+                $join->on('interactions.song_id', 'songs.id')->where('interactions.user_id', $this->user->id);
+            })
             ->leftJoin('albums', 'songs.album_id', 'albums.id')
             ->leftJoin('artists', 'songs.artist_id', 'artists.id')
-            ->select(...$selects);
+            ->select(
+                'songs.*',
+                'albums.name as album_name',
+                'artists.name as artist_name',
+                'interactions.liked',
+                'interactions.play_count',
+            );
     }
 
     public function accessible(?User $user = null): self

@@ -26,7 +26,7 @@ class SmartPlaylistService
         $user ??= $playlist->owner;
 
         $query = Song::query(type: PlayableType::SONG, user: $user)
-            ->withMeta()
+            ->withMetaData()
             ->when($isPlus, static fn (SongBuilder $query) => $query->accessible())
             ->when(
                 $playlist->own_songs_only && License::isPlus(),
