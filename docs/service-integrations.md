@@ -16,7 +16,7 @@ album information, artist images, and album arts.
 You don't have anything to do to enable this integration, as it is enabled by default. However, you can disable it by
 explicitly setting `USE_MUSICBRAINZ` to `false` in `.env`.
 
-Do note that MusicBrainz [rate limit](https://musicbrainz.org/doc/MusicBrainz_API/Rate_Limiting) its API.
+Do note that MusicBrainz [rate-limits](https://musicbrainz.org/doc/MusicBrainz_API/Rate_Limiting) its API.
 Koel tries to play nice by caching the data it retrieves and using a conformed user agent, which you can customize
 via the `MUSICBRAINZ_USER_AGENT` variable in `.env`. The default user agent is `Koel/<current-version> (<app-url>)`.
 
