@@ -29,7 +29,7 @@ class ProfileTest extends PlusTestCase
         $this->putAs('api/me', [
             'name' => 'Bruce Dickinson',
             'email' => 'bruce@iron.com',
-            'avatar' => read_as_data_url(test_path('blobs/cover.png')),
+            'avatar' => read_as_data_url(test_path('fixtures/cover.png')),
         ], $user)->assertOk();
 
         $user->refresh();

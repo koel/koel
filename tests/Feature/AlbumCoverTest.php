@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Album;
-use App\Services\MediaMetadataService;
+use App\Services\ArtworkService;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
@@ -14,23 +14,23 @@ use function Tests\create_user;
 
 class AlbumCoverTest extends TestCase
 {
-    private MediaMetadataService|MockInterface $mediaMetadataService;
+    private ArtworkService|MockInterface $artworkService;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->mediaMetadataService = $this->mock(MediaMetadataService::class);
+        $this->artworkService = $this->mock(ArtworkService::class);
     }
 
     #[Test]
     public function update(): void
     {
+        /** @var Album $album */
         $album = Album::factory()->create();
 
-        $this->mediaMetadataService
-            ->shouldReceive('writeAlbumCover')
-            ->once()
+        $this->artworkService
+            ->expects('storeAlbumCover')
             ->with(Mockery::on(static fn (Album $target) => $target->is($album)), 'data:image/jpeg;base64,Rm9v');
 
         $this->putAs("api/album/{$album->public_id}/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], create_admin())
@@ -40,9 +40,10 @@ class AlbumCoverTest extends TestCase
     #[Test]
     public function updateNotAllowedForNormalUsers(): void
     {
+        /** @var Album $album */
         $album = Album::factory()->create();
 
-        $this->mediaMetadataService->shouldNotReceive('writeAlbumCover');
+        $this->artworkService->shouldNotReceive('storeAlbumCover');
 
         $this->putAs("api/album/{$album->public_id}/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], create_user())
             ->assertForbidden();

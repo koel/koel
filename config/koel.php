@@ -128,6 +128,11 @@ return [
     ],
 
     'services' => [
+        'musicbrainz' => [
+            'enabled' => env('USE_MUSICBRAINZ', true),
+            'endpoint' => 'https://musicbrainz.org/ws/2',
+            'user_agent' => env('MUSICBRAINZ_USER_AGENT'),
+        ],
         'youtube' => [
             'key' => env('YOUTUBE_API_KEY'),
             'endpoint' => 'https://www.googleapis.com/youtube/v3',

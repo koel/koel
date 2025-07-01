@@ -1,0 +1,49 @@
+{
+  "type": "standard",
+  "title": "Slave to the Grind",
+  "displaytitle": "<i>Slave to the Grind</i>",
+  "namespace": {
+    "id": 0,
+    "text": ""
+  },
+  "wikibase_item": "Q1929918",
+  "titles": {
+    "canonical": "Slave_to_the_Grind",
+    "normalized": "Slave to the Grind",
+    "display": "<i>Slave to the Grind</i>"
+  },
+  "pageid": 157469,
+  "thumbnail": {
+    "source": "https://upload.wikimedia.org/wikipedia/en/e/ec/Skidrow-slavecover.jpg",
+    "width": 300,
+    "height": 300
+  },
+  "originalimage": {
+    "source": "https://upload.wikimedia.org/wikipedia/en/e/ec/Skidrow-slavecover.jpg",
+    "width": 300,
+    "height": 300
+  },
+  "lang": "en",
+  "dir": "ltr",
+  "revision": "1298220652",
+  "tid": "e8f64d9d-563b-11f0-ad92-e15053e2d736",
+  "timestamp": "2025-07-01T05:26:16Z",
+  "description": "1991 studio album by Skid Row",
+  "description_source": "local",
+  "content_urls": {
+    "desktop": {
+      "page": "https://en.wikipedia.org/wiki/Slave_to_the_Grind",
+      "revisions": "https://en.wikipedia.org/wiki/Slave_to_the_Grind?action=history",
+      "edit": "https://en.wikipedia.org/wiki/Slave_to_the_Grind?action=edit",
+      "talk": "https://en.wikipedia.org/wiki/Talk:Slave_to_the_Grind"
+    },
+    "mobile": {
+      "page": "https://en.m.wikipedia.org/wiki/Slave_to_the_Grind",
+      "revisions": "https://en.m.wikipedia.org/wiki/Special:History/Slave_to_the_Grind",
+      "edit": "https://en.m.wikipedia.org/wiki/Slave_to_the_Grind?action=edit",
+      "talk": "https://en.m.wikipedia.org/wiki/Talk:Slave_to_the_Grind"
+    }
+  },
+  "extract": "Slave to the Grind is the second studio album…",
+  "extract_html": "<i>Slave to the Grind</i> is the second studio album…"
+}

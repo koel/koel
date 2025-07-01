@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Album;
-use App\Services\MediaInformationService;
+use App\Services\EncyclopediaService;
 use App\Values\AlbumInformation;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
@@ -19,7 +19,7 @@ class AlbumInformationTest extends TestCase
 
         $album = Album::factory()->create();
 
-        $lastfm = $this->mock(MediaInformationService::class);
+        $lastfm = $this->mock(EncyclopediaService::class);
         $lastfm->shouldReceive('getAlbumInformation')
             ->with(Mockery::on(static fn (Album $a) => $a->is($album)))
             ->andReturn(AlbumInformation::make(

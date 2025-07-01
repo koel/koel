@@ -1,0 +1,174 @@
+{
+  "text-representation": {
+    "language": "eng",
+    "script": "Latn"
+  },
+  "date": "1976",
+  "country": "US",
+  "packaging": "Cardboard/Paper Sleeve",
+  "media": [
+    {
+      "format": "12\" Vinyl",
+      "position": 1,
+      "track-offset": 0,
+      "track-count": 8,
+      "id": "49bf6969-143d-332f-babf-c3850e2839cc",
+      "format-id": "3e9080b0-5e6c-34ab-bd15-f526b6306a64",
+      "title": "",
+      "tracks": [
+        {
+          "recording": {
+            "disambiguation": "",
+            "first-release-date": "1973-01-05",
+            "title": "Make It",
+            "length": 220666,
+            "id": "fe67ff29-a470-4c5c-9b0a-080162bae8dd",
+            "video": false
+          },
+          "length": 225000,
+          "id": "a133dc67-337e-38e1-8f52-8f8999c73dd0",
+          "title": "Make It",
+          "number": "A1",
+          "position": 1
+        },
+        {
+          "position": 2,
+          "number": "A2",
+          "length": 225000,
+          "id": "4fc0ffee-338f-3143-aa0d-90a54b0e35ba",
+          "title": "Somebody",
+          "recording": {
+            "disambiguation": "",
+            "first-release-date": "1973-01-05",
+            "title": "Somebody",
+            "id": "1b7c1df6-5c36-44cb-b00d-7545d5d4bbd5",
+            "length": 225400,
+            "video": false
+          }
+        },
+        {
+          "position": 3,
+          "number": "A3",
+          "recording": {
+            "disambiguation": "",
+            "title": "Dream On",
+            "length": 267000,
+            "id": "e135871f-0fed-4683-90e3-ebbe435fbe4e",
+            "first-release-date": "1973-01-05",
+            "video": false
+          },
+          "id": "ac7a2b48-0da9-3925-b9de-67947bcf9ec6",
+          "title": "Dream On",
+          "length": 268000
+        },
+        {
+          "position": 4,
+          "number": "A4",
+          "recording": {
+            "disambiguation": "",
+            "video": false,
+            "first-release-date": "1973-01-05",
+            "length": 432000,
+            "id": "9da82652-17b8-4499-a5ad-e9412d495fda",
+            "title": "One Way Street"
+          },
+          "length": 432000,
+          "title": "One Way Street",
+          "id": "528fe788-602b-3642-8489-80d280abef3d"
+        },
+        {
+          "title": "Mama Kin",
+          "id": "97b2ded0-a836-349b-9d0d-39d60324c10a",
+          "recording": {
+            "first-release-date": "1973-01-05",
+            "title": "Mama Kin",
+            "id": "62b6e85f-46ff-4a62-868b-3b40beff758b",
+            "length": 267306,
+            "video": false,
+            "disambiguation": ""
+          },
+          "length": 265000,
+          "number": "B1",
+          "position": 5
+        },
+        {
+          "number": "B2",
+          "title": "Write Me a Letter",
+          "length": 251000,
+          "id": "ac22b5a0-b79e-355a-bc29-c11af25683a8",
+          "recording": {
+            "first-release-date": "1973-01-05",
+            "length": 252000,
+            "id": "8c97c0d6-13a1-41df-a4b1-eb3436d75abb",
+            "title": "Write Me a Letter",
+            "video": false,
+            "disambiguation": ""
+          },
+          "position": 6
+        },
+        {
+          "id": "03fc9dd8-9434-35ee-83c9-a8695320b245",
+          "length": 303000,
+          "title": "Movin’ Out",
+          "recording": {
+            "disambiguation": "",
+            "length": 302226,
+            "title": "Movin’ Out",
+            "id": "121255e4-f67f-4c42-aad3-3e1008dc621a",
+            "first-release-date": "1973-01-05",
+            "video": false
+          },
+          "number": "B3",
+          "position": 7
+        },
+        {
+          "position": 8,
+          "title": "Walkin’ the Dog",
+          "length": 192000,
+          "recording": {
+            "disambiguation": "",
+            "first-release-date": "1973-01-05",
+            "title": "Walkin’ the Dog",
+            "length": 192640,
+            "id": "efba3bd5-1408-4c0d-be5b-125761cc857b",
+            "video": false
+          },
+          "id": "70e11cc4-54e1-34e7-8d09-fc4651b025d3",
+          "number": "B4"
+        }
+      ]
+    }
+  ],
+  "title": "Aerosmith",
+  "id": "390133b4-7060-4ae3-a451-ca81ce4b7f45",
+  "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+  "asin": "B003UJ8UUA",
+  "status": "Official",
+  "disambiguation": "",
+  "release-events": [
+    {
+      "area": {
+        "type-id": null,
+        "iso-3166-1-codes": [
+          "US"
+        ],
+        "sort-name": "United States",
+        "type": null,
+        "id": "489ce91b-6658-3307-9877-795b68554c98",
+        "disambiguation": "",
+        "name": "United States"
+      },
+      "date": "1976"
+    }
+  ],
+  "quality": "normal",
+  "cover-art-archive": {
+    "back": true,
+    "darkened": false,
+    "front": true,
+    "artwork": true,
+    "count": 5
+  },
+  "packaging-id": "f7101ce3-0384-39ce-9fde-fbbd0044d35f",
+  "barcode": ""
+}

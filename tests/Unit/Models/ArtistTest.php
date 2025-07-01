@@ -50,7 +50,7 @@ class ArtistTest extends TestCase
     #[Test]
     public function artistsWithNameInUtf16EncodingAreRetrievedCorrectly(): void
     {
-        $name = File::get(test_path('blobs/utf16'));
+        $name = File::get(test_path('fixtures/utf16'));
         $artist = Artist::getOrCreate(create_user(), $name);
 
         self::assertTrue(Artist::getOrCreate($artist->user, $name)->is($artist));

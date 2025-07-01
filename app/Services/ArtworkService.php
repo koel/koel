@@ -10,20 +10,12 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\Finder\Finder;
 
-class MediaMetadataService
+class ArtworkService
 {
     public function __construct(
-        private readonly SpotifyService $spotifyService,
         private readonly ImageWriter $imageWriter,
         private readonly Finder $finder
     ) {
-    }
-
-    public function tryDownloadAlbumCover(Album $album): void
-    {
-        optional($this->spotifyService->tryGetAlbumCover($album), function (string $coverUrl) use ($album): void {
-            $this->writeAlbumCover($album, $coverUrl);
-        });
     }
 
     /**
@@ -32,9 +24,13 @@ class MediaMetadataService
      * @param string $source Path, URL, or even binary data. See https://image.intervention.io/v2/api/make.
      * @param string|null $destination The destination path. Automatically generated if empty.
      */
-    public function writeAlbumCover(Album $album, string $source, ?string $destination = '', bool $cleanUp = true): void
-    {
-        rescue(function () use ($album, $source, $destination, $cleanUp): void {
+    public function storeAlbumCover(
+        Album $album,
+        string $source,
+        ?string $destination = '',
+        bool $cleanUp = true,
+    ): ?string {
+        return rescue(function () use ($album, $source, $destination, $cleanUp): string {
             $destination = $destination ?: $this->generateAlbumCoverPath();
             $this->imageWriter->write($destination, $source);
 
@@ -44,13 +40,8 @@ class MediaMetadataService
 
             $album->update(['cover' => basename($destination)]);
             $this->createThumbnailForAlbum($album);
-        });
-    }
 
-    public function tryDownloadArtistImage(Artist $artist): void
-    {
-        optional($this->spotifyService->tryGetArtistImage($artist), function (string $imageUrl) use ($artist): void {
-            $this->writeArtistImage($artist, $imageUrl);
+            return $album->cover;
         });
     }
 
@@ -60,13 +51,13 @@ class MediaMetadataService
      * @param string $source Path, URL, or even binary data. See https://image.intervention.io/v2/api/make.
      * @param string|null $destination The destination path. Automatically generated if empty.
      */
-    public function writeArtistImage(
+    public function storeArtistImage(
         Artist $artist,
         string $source,
         ?string $destination = '',
         bool $cleanUp = true
-    ): void {
-        rescue(function () use ($artist, $source, $destination, $cleanUp): void {
+    ): ?string {
+        return rescue(function () use ($artist, $source, $destination, $cleanUp): string {
             $destination = $destination ?: $this->generateArtistImagePath();
             $this->imageWriter->write($destination, $source);
 
@@ -75,12 +66,14 @@ class MediaMetadataService
             }
 
             $artist->update(['image' => basename($destination)]);
+
+            return $artist->image;
         });
     }
 
-    public function writePlaylistCover(Playlist $playlist, string $source): void
+    public function storePlaylistCover(Playlist $playlist, string $source): ?string
     {
-        rescue(function () use ($playlist, $source): void {
+        return rescue(function () use ($playlist, $source): string {
             $destination = $this->generatePlaylistCoverPath();
             $this->imageWriter->write($destination, $source);
 
@@ -89,6 +82,8 @@ class MediaMetadataService
             }
 
             $playlist->update(['cover' => basename($destination)]);
+
+            return $playlist->cover;
         });
     }
 
@@ -166,7 +161,7 @@ class MediaMetadataService
             $cover = $matches[0] ?? null;
 
             if ($cover && is_image($cover)) {
-                $this->writeAlbumCover($album, $cover);
+                $this->storeAlbumCover($album, $cover);
             }
 
             return $cover;

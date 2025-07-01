@@ -4,12 +4,12 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Artist;
-use App\Services\MediaInformationService;
+use App\Services\EncyclopediaService;
 
 class FetchArtistInformationController extends Controller
 {
-    public function __invoke(Artist $artist, MediaInformationService $informationService)
+    public function __invoke(Artist $artist, EncyclopediaService $encyclopediaService)
     {
-        return response()->json($informationService->getArtistInformation($artist));
+        return response()->json($encyclopediaService->getArtistInformation($artist));
     }
 }

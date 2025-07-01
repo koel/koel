@@ -3,14 +3,14 @@
 namespace Tests\Integration\Services;
 
 use App\Models\Album;
-use App\Services\MediaMetadataService;
+use App\Services\ArtworkService;
 use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\test_path;
 
-class MediaMetadataServiceTest extends TestCase
+class EncyclopediaServiceTest extends TestCase
 {
     public function setUp(): void
     {
@@ -22,14 +22,14 @@ class MediaMetadataServiceTest extends TestCase
     #[Test]
     public function getAlbumThumbnailUrl(): void
     {
-        File::copy(test_path('blobs/cover.png'), album_cover_path('album-cover-for-thumbnail-test.jpg'));
+        File::copy(test_path('fixtures/cover.png'), album_cover_path('album-cover-for-thumbnail-test.jpg'));
 
         /** @var Album $album */
         $album = Album::factory()->create(['cover' => 'album-cover-for-thumbnail-test.jpg']);
 
         self::assertSame(
             album_cover_url('album-cover-for-thumbnail-test_thumb.jpg'),
-            app(MediaMetadataService::class)->getAlbumThumbnailUrl($album)
+            app(ArtworkService::class)->getAlbumThumbnailUrl($album)
         );
 
         self::assertFileExists(album_cover_path('album-cover-for-thumbnail-test_thumb.jpg'));
@@ -40,7 +40,7 @@ class MediaMetadataServiceTest extends TestCase
     {
         /** @var Album $album */
         $album = Album::factory()->create(['cover' => '']);
-        self::assertNull(app(MediaMetadataService::class)->getAlbumThumbnailUrl($album));
+        self::assertNull(app(ArtworkService::class)->getAlbumThumbnailUrl($album));
     }
 
     private function cleanUp(): void

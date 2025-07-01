@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Artist;
-use App\Services\MediaMetadataService;
+use App\Services\ArtworkService;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
@@ -13,23 +13,23 @@ use function Tests\create_admin;
 
 class ArtistImageTest extends TestCase
 {
-    private MediaMetadataService|MockInterface $mediaMetadataService;
+    private ArtworkService|MockInterface $artworkService;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->mediaMetadataService = $this->mock(MediaMetadataService::class);
+        $this->artworkService = $this->mock(ArtworkService::class);
     }
 
     #[Test]
     public function update(): void
     {
+        /** @var Artist $artist */
         $artist = Artist::factory()->create();
 
-        $this->mediaMetadataService
-            ->shouldReceive('writeArtistImage')
-            ->once()
+        $this->artworkService
+            ->expects('storeArtistImage')
             ->with(Mockery::on(static fn (Artist $target) => $target->is($artist)), 'data:image/jpeg;base64,Rm9v');
 
         $this->putAs(
@@ -42,9 +42,10 @@ class ArtistImageTest extends TestCase
     #[Test]
     public function updateNotAllowedForNormalUsers(): void
     {
+        /** @var Artist $artist */
         $artist = Artist::factory()->create();
 
-        $this->mediaMetadataService->shouldNotReceive('writeArtistImage');
+        $this->artworkService->shouldNotReceive('storeArtistImage');
 
         $this->putAs("api/artist/{$artist->public_id}/image", ['image' => 'data:image/jpeg;base64,Rm9v'])
             ->assertForbidden();

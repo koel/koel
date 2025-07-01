@@ -43,7 +43,7 @@ class FileScannerTest extends TestCase
             'disc' => 3,
             'lyrics' => "Foo\rbar",
             'cover' => [
-                'data' => File::get(test_path('blobs/cover.png')),
+                'data' => File::get(test_path('fixtures/cover.png')),
                 'image_mime' => 'image/png',
                 'image_width' => 512,
                 'image_height' => 512,
@@ -77,7 +77,7 @@ class FileScannerTest extends TestCase
             'disc' => 3,
             'lyrics' => "Foo\r\nbar",
             'cover' => [
-                'data' => File::get(test_path('blobs/cover.png')),
+                'data' => File::get(test_path('fixtures/cover.png')),
                 'image_mime' => 'image/png',
                 'image_width' => 512,
                 'image_height' => 512,
@@ -105,7 +105,7 @@ class FileScannerTest extends TestCase
         $mediaFile = $base . '.mp3';
         $lrcFile = $base . '.lrc';
         File::copy(test_path('songs/full.mp3'), $mediaFile);
-        File::copy(test_path('blobs/simple.lrc'), $lrcFile);
+        File::copy(test_path('fixtures/simple.lrc'), $lrcFile);
 
         self::assertSame("Foo\rbar", $this->scanner->scan($mediaFile)->lyrics);
     }
@@ -117,7 +117,7 @@ class FileScannerTest extends TestCase
         $mediaFile = $base . '.mp3';
         $lrcFile = $base . '.lrc';
         File::copy(test_path('songs/blank.mp3'), $mediaFile);
-        File::copy(test_path('blobs/simple.lrc'), $lrcFile);
+        File::copy(test_path('fixtures/simple.lrc'), $lrcFile);
 
         self::assertSame("Line 1\nLine 2\nLine 3", $this->scanner->scan($mediaFile)->lyrics);
     }

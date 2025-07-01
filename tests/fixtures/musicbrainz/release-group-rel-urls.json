@@ -1,0 +1,132 @@
+{
+  "primary-type": "Album",
+  "disambiguation": "",
+  "relations": [
+    {
+      "end": null,
+      "ended": false,
+      "begin": null,
+      "type": "allmusic",
+      "type-id": "a50a1d20-2b20-4d2c-9a29-eb771dd78386",
+      "attributes": [],
+      "attribute-values": {
+      },
+      "target-credit": "",
+      "source-credit": "",
+      "target-type": "url",
+      "direction": "forward",
+      "url": {
+        "id": "557c80f7-7b63-42fd-97b7-1a01fadd5a2e",
+        "resource": "https://www.allmusic.com/album/mw0000264528"
+      },
+      "attribute-ids": {
+      }
+    },
+    {
+      "attribute-ids": {
+      },
+      "url": {
+        "id": "91ed2994-fd27-4ddf-b966-a5b83027a1d5",
+        "resource": "https://www.discogs.com/master/94196"
+      },
+      "direction": "forward",
+      "source-credit": "",
+      "target-type": "url",
+      "target-credit": "",
+      "attribute-values": {
+      },
+      "attributes": [],
+      "type-id": "99e550f3-5ab4-3110-b5b9-fe01d970b126",
+      "type": "discogs",
+      "begin": null,
+      "ended": false,
+      "end": null
+    },
+    {
+      "type": "lyrics",
+      "end": null,
+      "ended": false,
+      "begin": null,
+      "attribute-values": {
+      },
+      "type-id": "156344d3-da8b-40c6-8b10-7b1c22727124",
+      "attributes": [],
+      "target-credit": "",
+      "direction": "forward",
+      "source-credit": "",
+      "target-type": "url",
+      "url": {
+        "id": "ae6e9f1b-8c66-43bf-b8f5-8412cf7385f1",
+        "resource": "https://genius.com/albums/Skid-row/Slave-to-the-grind"
+      },
+      "attribute-ids": {
+      }
+    },
+    {
+      "attribute-values": {
+      },
+      "attributes": [],
+      "type-id": "38320e40-9f4a-3ae7-8cb2-3f3c9c5d856d",
+      "type": "other databases",
+      "begin": null,
+      "ended": false,
+      "end": null,
+      "attribute-ids": {
+      },
+      "url": {
+        "resource": "https://rateyourmusic.com/release/album/skid-row/slave-to-the-grind/",
+        "id": "71dfe6ce-f3bd-41d0-92e5-7fac7b71f2c4"
+      },
+      "source-credit": "",
+      "direction": "forward",
+      "target-type": "url",
+      "target-credit": ""
+    },
+    {
+      "type-id": "38320e40-9f4a-3ae7-8cb2-3f3c9c5d856d",
+      "attributes": [],
+      "attribute-values": {
+      },
+      "ended": false,
+      "begin": null,
+      "end": null,
+      "type": "other databases",
+      "attribute-ids": {
+      },
+      "url": {
+        "resource": "https://www.musik-sammler.de/album/15577/",
+        "id": "c9de5478-147e-4853-ae1c-a9ce4a7f7dae"
+      },
+      "target-credit": "",
+      "target-type": "url",
+      "source-credit": "",
+      "direction": "forward"
+    },
+    {
+      "type-id": "b988d08c-5d86-4a57-9557-c83b399e3580",
+      "attributes": [],
+      "attribute-values": {
+      },
+      "ended": false,
+      "begin": null,
+      "end": null,
+      "type": "wikidata",
+      "attribute-ids": {
+      },
+      "url": {
+        "resource": "https://www.wikidata.org/wiki/Q1929918",
+        "id": "7ea49df8-9740-4444-8b2c-335ac3ccc920"
+      },
+      "target-credit": "",
+      "source-credit": "",
+      "direction": "forward",
+      "target-type": "url"
+    }
+  ],
+  "secondary-type-ids": [],
+  "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+  "title": "Slave to the Grind",
+  "secondary-types": [],
+  "id": "dbf64d90-6f91-3470-aab6-fa51e5e463b4",
+  "first-release-date": "1991-06-11"
+}

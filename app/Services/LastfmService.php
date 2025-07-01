@@ -13,13 +13,13 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Models\User;
-use App\Services\Contracts\MusicEncyclopedia;
+use App\Services\Contracts\Encyclopedia;
 use App\Values\AlbumInformation;
 use App\Values\ArtistInformation;
 use Generator;
 use Illuminate\Support\Collection;
 
-class LastfmService implements MusicEncyclopedia
+class LastfmService implements Encyclopedia
 {
     public function __construct(private readonly LastfmConnector $connector)
     {

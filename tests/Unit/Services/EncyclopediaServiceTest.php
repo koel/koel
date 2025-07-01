@@ -4,32 +4,38 @@ namespace Tests\Unit\Services;
 
 use App\Models\Album;
 use App\Models\Artist;
-use App\Services\Contracts\MusicEncyclopedia;
+use App\Services\ArtworkService;
+use App\Services\Contracts\Encyclopedia;
+use App\Services\EncyclopediaService;
 use App\Services\LastfmService;
-use App\Services\MediaInformationService;
-use App\Services\MediaMetadataService;
+use App\Services\SpotifyService;
 use App\Values\AlbumInformation;
 use App\Values\ArtistInformation;
 use Mockery;
-use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-class MediaInformationServiceTest extends TestCase
+class EncyclopediaServiceTest extends TestCase
 {
-    private MusicEncyclopedia|MockInterface|LegacyMockInterface $encyclopedia;
-    private MediaMetadataService|LegacyMockInterface|MockInterface $mediaMetadataService;
-    private MediaInformationService $mediaInformationService;
+    private Encyclopedia|MockInterface $encyclopedia;
+    private ArtworkService|MockInterface $artworkService;
+    private SpotifyService|MockInterface $spotifyService;
+    private EncyclopediaService $encyclopediaService;
 
     public function setUp(): void
     {
         parent::setUp();
 
         $this->encyclopedia = Mockery::mock(LastfmService::class);
-        $this->mediaMetadataService = Mockery::mock(MediaMetadataService::class);
+        $this->artworkService = Mockery::mock(ArtworkService::class);
+        $this->spotifyService = Mockery::mock(SpotifyService::class);
 
-        $this->mediaInformationService = new MediaInformationService($this->encyclopedia, $this->mediaMetadataService);
+        $this->encyclopediaService = new EncyclopediaService(
+            $this->encyclopedia,
+            $this->artworkService,
+            $this->spotifyService,
+        );
     }
 
     #[Test]
@@ -40,16 +46,12 @@ class MediaInformationServiceTest extends TestCase
         $info = AlbumInformation::make();
 
         $this->encyclopedia
-            ->shouldReceive('getAlbumInformation')
-            ->once()
+            ->expects('getAlbumInformation')
             ->with($album)
             ->andReturn($info);
 
-        $this->mediaMetadataService
-            ->shouldNotReceive('tryDownloadAlbumCover');
-
-        self::assertSame($info, $this->mediaInformationService->getAlbumInformation($album));
-        self::assertNotNull(cache()->get(cache_key('album info', $album->id, $album->name)));
+        self::assertSame($info, $this->encyclopediaService->getAlbumInformation($album));
+        self::assertNotNull(cache()->get(cache_key('album information', $album->name, $album->artist->name)));
     }
 
     #[Test]
@@ -67,11 +69,11 @@ class MediaInformationServiceTest extends TestCase
             ->with($album)
             ->andReturn($info);
 
-        $this->mediaMetadataService
-            ->shouldReceive('tryDownloadAlbumCover')
+        $this->artworkService
+            ->shouldReceive('storeAlbumCover')
             ->with($album);
 
-        self::assertSame($info, $this->mediaInformationService->getAlbumInformation($album));
+        self::assertSame($info, $this->encyclopediaService->getAlbumInformation($album));
     }
 
     #[Test]
@@ -84,16 +86,12 @@ class MediaInformationServiceTest extends TestCase
         self::assertTrue($artist->has_image);
 
         $this->encyclopedia
-            ->shouldReceive('getArtistInformation')
-            ->once()
+            ->expects('getArtistInformation')
             ->with($artist)
             ->andReturn($info);
 
-        $this->mediaMetadataService
-            ->shouldNotReceive('tryDownloadArtistImage');
-
-        self::assertSame($info, $this->mediaInformationService->getArtistInformation($artist));
-        self::assertNotNull(cache()->get(cache_key('artist info', $artist->id)));
+        self::assertSame($info, $this->encyclopediaService->getArtistInformation($artist));
+        self::assertNotNull(cache()->get(cache_key('artist information', $artist->name)));
     }
 
     #[Test]
@@ -111,10 +109,6 @@ class MediaInformationServiceTest extends TestCase
             ->with($artist)
             ->andReturn($info);
 
-        $this->mediaMetadataService
-            ->shouldReceive('tryDownloadArtistImage')
-            ->with($artist);
-
-        self::assertSame($info, $this->mediaInformationService->getArtistInformation($artist));
+        self::assertSame($info, $this->encyclopediaService->getArtistInformation($artist));
     }
 }

@@ -17,6 +17,7 @@ use App\Services\ITunesService;
 use App\Services\LastfmService;
 use App\Services\License\Contracts\LicenseServiceInterface;
 use App\Services\MediaBrowser;
+use App\Services\MusicBrainzService;
 use App\Services\QueueService;
 use App\Services\SpotifyService;
 use App\Services\YouTubeService;
@@ -42,6 +43,7 @@ class FetchInitialDataController extends Controller
             'playlists' => PlaylistResource::collection($playlistRepository->getAllAccessibleByUser($user)),
             'playlist_folders' => PlaylistFolderResource::collection($user->playlist_folders),
             'current_user' => UserResource::make($user, true),
+            'uses_musicbrainz' => MusicBrainzService::enabled(),
             'uses_last_fm' => LastfmService::used(),
             'uses_spotify' => SpotifyService::enabled(),
             'uses_you_tube' => YouTubeService::enabled(),

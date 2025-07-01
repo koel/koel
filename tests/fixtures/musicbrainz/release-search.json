@@ -1,0 +1,75 @@
+{
+  "created": "2025-07-01T07:34:51.556Z",
+  "count": 20,
+  "offset": 0,
+  "releases": [
+    {
+      "id": "sample-release-mbid",
+      "score": 100,
+      "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+      "packaging-id": "ec27701a-4a22-37f4-bfac-6616e0f9750a",
+      "artist-credit-id": "8662d8f8-ee87-30e3-9b84-7a5e8f7993b9",
+      "count": 1,
+      "title": "Slave to the Grind",
+      "status": "Official",
+      "packaging": "Jewel Case",
+      "text-representation": {
+        "language": "eng",
+        "script": "Latn"
+      },
+      "artist-credit": [
+        {
+          "name": "Skid Row",
+          "artist": {
+            "id": "sample-artist-mbid",
+            "name": "Skid Row",
+            "sort-name": "Skid Row",
+            "disambiguation": "US hard rock / heavy metal band"
+          }
+        }
+      ],
+      "release-group": {
+        "id": "sample-release-group-mbid",
+        "type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+        "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+        "title": "Slave to the Grind",
+        "primary-type": "Album"
+      },
+      "date": "2011-09-21",
+      "country": "JP",
+      "release-events": [
+        {
+          "date": "2011-09-21",
+          "area": {
+            "id": "2db42837-c832-3c27-b4a3-08198f75693c",
+            "name": "Japan",
+            "sort-name": "Japan",
+            "iso-3166-1-codes": [
+              "JP"
+            ]
+          }
+        }
+      ],
+      "barcode": "4943674111282",
+      "asin": "B005EPHQ7Q",
+      "label-info": [
+        {
+          "catalog-number": "WPCR-14252",
+          "label": {
+            "id": "50c384a2-0b44-401b-b893-8181173339c7",
+            "name": "Atlantic"
+          }
+        }
+      ],
+      "track-count": 16,
+      "media": [
+        {
+          "id": "7d121738-aae1-3838-b6e2-5ad7863e27ad",
+          "format": "CD",
+          "disc-count": 1,
+          "track-count": 16
+        }
+      ]
+    }
+  ]
+}

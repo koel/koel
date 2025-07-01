@@ -7,7 +7,7 @@ use App\Models\Artist;
 use App\Values\AlbumInformation;
 use App\Values\ArtistInformation;
 
-interface MusicEncyclopedia
+interface Encyclopedia
 {
     public function getArtistInformation(Artist $artist): ?ArtistInformation;
 

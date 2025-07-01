@@ -5,7 +5,7 @@ import { cache } from '@/services/cache'
 import { http } from '@/services/http'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
-import { mediaInfoService } from './mediaInfoService'
+import { encyclopediaService } from './encyclopediaService'
 
 new class extends UnitTestCase {
   protected test () {
@@ -16,7 +16,7 @@ new class extends UnitTestCase {
       const hasCacheMock = this.mock(cache, 'has', false)
       const setCacheMock = this.mock(cache, 'set')
 
-      await mediaInfoService.fetchForArtist(artist)
+      await encyclopediaService.fetchForArtist(artist)
 
       expect(getMock).toHaveBeenCalledWith(`artists/${artist.id}/information`)
       expect(hasCacheMock).toHaveBeenCalledWith(['artist.info', artist.id])
@@ -32,7 +32,7 @@ new class extends UnitTestCase {
 
       const artist = artistStore.syncWithVault(factory('artist'))[0]
 
-      expect(await mediaInfoService.fetchForArtist(artist)).toBe(artistInfo)
+      expect(await encyclopediaService.fetchForArtist(artist)).toBe(artistInfo)
       expect(hasCacheMock).toHaveBeenCalledWith(['artist.info', artist.id])
       expect(getCacheMock).toHaveBeenCalledWith(['artist.info', artist.id])
       expect(getMock).not.toHaveBeenCalled()
@@ -45,7 +45,7 @@ new class extends UnitTestCase {
       const hasCacheMock = this.mock(cache, 'has', false)
       const setCacheMock = this.mock(cache, 'set')
 
-      await mediaInfoService.fetchForAlbum(album)
+      await encyclopediaService.fetchForAlbum(album)
 
       expect(getMock).toHaveBeenCalledWith(`albums/${album.id}/information`)
       expect(hasCacheMock).toHaveBeenCalledWith(['album.info', album.id, album.name])
@@ -60,7 +60,7 @@ new class extends UnitTestCase {
       const getCacheMock = this.mock(cache, 'get', albumInfo)
       const getMock = this.mock(http, 'get')
 
-      expect(await mediaInfoService.fetchForAlbum(album)).toBe(albumInfo)
+      expect(await encyclopediaService.fetchForAlbum(album)).toBe(albumInfo)
       expect(hasCacheMock).toHaveBeenCalledWith(['album.info', album.id, album.name])
       expect(getCacheMock).toHaveBeenCalledWith(['album.info', album.id, album.name])
       expect(getMock).not.toHaveBeenCalled()

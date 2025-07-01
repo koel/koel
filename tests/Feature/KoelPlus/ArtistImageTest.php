@@ -3,7 +3,7 @@
 namespace Tests\Feature\KoelPlus;
 
 use App\Models\Artist;
-use App\Services\MediaMetadataService;
+use App\Services\ArtworkService;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
@@ -14,13 +14,13 @@ use function Tests\create_user;
 
 class ArtistImageTest extends PlusTestCase
 {
-    private MockInterface|MediaMetadataService $mediaMetadataService;
+    private MockInterface|ArtworkService $artworkService;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->mediaMetadataService = $this->mock(MediaMetadataService::class);
+        $this->artworkService = $this->mock(ArtworkService::class);
     }
 
     #[Test]
@@ -33,9 +33,8 @@ class ArtistImageTest extends PlusTestCase
 
         self::assertTrue($artist->belongsToUser($user));
 
-        $this->mediaMetadataService
-            ->shouldReceive('writeArtistImage')
-            ->once()
+        $this->artworkService
+            ->expects('storeArtistImage')
             ->with(Mockery::on(static fn (Artist $target) => $target->is($artist)), 'data:image/jpeg;base64,Rm9v');
 
         $this->putAs("api/artists/{$artist->public_id}/image", ['image' => 'data:image/jpeg;base64,Rm9v'], $user)
@@ -52,7 +51,7 @@ class ArtistImageTest extends PlusTestCase
 
         self::assertFalse($artist->belongsToUser($user));
 
-        $this->mediaMetadataService
+        $this->artworkService
             ->shouldReceive('writeArtistImage')
             ->never();
 

@@ -28,7 +28,7 @@ class PodcastServiceTest extends TestCase
         parent::setUp();
 
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(test_path('blobs/podcast.xml'))),
+            new Response(200, [], file_get_contents(test_path('fixtures/podcast.xml'))),
         ]);
 
         $handlerStack = HandlerStack::create($mock);

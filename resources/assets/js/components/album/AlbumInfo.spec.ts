@@ -3,14 +3,14 @@ import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { commonStore } from '@/stores/commonStore'
-import { mediaInfoService } from '@/services/mediaInfoService'
+import { encyclopediaService } from '@/services/encyclopediaService'
 import AlbumInfoComponent from './AlbumInfo.vue'
 
 let album: Album
 
 new class extends UnitTestCase {
   protected test () {
-    it.each<[MediaInfoDisplayMode]>([['aside'], ['full']])('renders in %s mode', async mode => {
+    it.each<[EncyclopediaDisplayMode]>([['aside'], ['full']])('renders in %s mode', async mode => {
       await this.renderComponent(mode)
 
       screen.getByTestId('album-info-tracks')
@@ -25,7 +25,7 @@ new class extends UnitTestCase {
     })
   }
 
-  private async renderComponent (mode: MediaInfoDisplayMode = 'aside', info?: AlbumInfo) {
+  private async renderComponent (mode: EncyclopediaDisplayMode = 'aside', info?: AlbumInfo) {
     commonStore.state.uses_last_fm = true
 
     if (info === undefined) {
@@ -33,7 +33,7 @@ new class extends UnitTestCase {
     }
 
     album = factory('album', { name: 'IV' })
-    const fetchMock = this.mock(mediaInfoService, 'fetchForAlbum').mockResolvedValue(info)
+    const fetchMock = this.mock(encyclopediaService, 'fetchForAlbum').mockResolvedValue(info)
 
     const rendered = this.render(AlbumInfoComponent, {
       props: {

@@ -72,7 +72,7 @@ class ProfileTest extends TestCase
             'name' => 'Foo',
             'email' => 'bar@baz.com',
             'current_password' => 'secret',
-            'avatar' => read_as_data_url(test_path('blobs/cover.png')),
+            'avatar' => read_as_data_url(test_path('fixtures/cover.png')),
         ], $user)
             ->assertOk();
 

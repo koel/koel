@@ -14,12 +14,12 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Throwable;
 
-readonly class UploadService
+class UploadService
 {
     public function __construct(
-        private SongService $songService,
-        private SongStorage $storage,
-        private FileScanner $scanner,
+        private readonly SongService $songService,
+        private readonly SongStorage $storage,
+        private readonly FileScanner $scanner,
     ) {
     }
 
