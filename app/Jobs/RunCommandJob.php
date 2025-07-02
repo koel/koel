@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 use Illuminate\Support\Facades\Artisan;
 
-class RunCommandJob extends QueuedJob
+class RunCommandJob extends SyncAwareQueuedJob
 {
     public function __construct(public readonly string $command)
     {

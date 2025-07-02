@@ -14,12 +14,6 @@ on:
       - resources/assets/**
       - .github/workflows/unit-frontend.yml
   workflow_dispatch:
-    branches:
-      - master
-      - next
-    paths:
-      - resources/assets/**
-      - .github/workflows/unit-frontend.yml
 
 env:
   LARAVEL_BYPASS_ENV_CHECK: 1

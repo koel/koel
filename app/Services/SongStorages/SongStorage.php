@@ -6,13 +6,12 @@ use App\Enums\SongStorageType;
 use App\Exceptions\KoelPlusRequiredException;
 use App\Models\User;
 use App\Values\UploadReference;
-use Illuminate\Http\UploadedFile;
 
 abstract class SongStorage
 {
     abstract public function getStorageType(): SongStorageType;
 
-    abstract public function storeUploadedFile(UploadedFile $uploadedFile, User $uploader): UploadReference;
+    abstract public function storeUploadedFile(string $uploadedFilePath, User $uploader): UploadReference;
 
     abstract public function undoUpload(UploadReference $reference): void;
 

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\GenreFetchSongRequest;
-use App\Http\Resources\SongResource;
+use App\Http\Resources\SongResourceCollection;
 use App\Models\Genre;
 use App\Models\User;
 use App\Repositories\SongRepository;
@@ -38,6 +38,6 @@ class GenreSongController extends Controller
             );
         }
 
-        return SongResource::collection($songs);
+        return SongResourceCollection::make($songs);
     }
 }

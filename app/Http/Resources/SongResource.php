@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Facades\License;
 use App\Models\Song;
+use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;
 
@@ -51,16 +52,25 @@ class SongResource extends JsonResource
         ],
     ];
 
+    private ?User $user;
+
     public function __construct(protected Song $song)
     {
         parent::__construct($song);
+    }
+
+    public function for(User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
     }
 
     /** @inheritDoc */
     public function toArray($request): array
     {
         $isPlus = once(static fn () => License::isPlus());
-        $user = once(static fn () => auth()->user());
+        $user = $this->user ?? once(static fn () => auth()->user());
 
         $data = [
             'type' => Str::plural($this->song->type->value),

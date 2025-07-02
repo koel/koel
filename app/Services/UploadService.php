@@ -10,7 +10,6 @@ use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
 use App\Services\SongStorages\SongStorage;
 use App\Values\Scanning\ScanConfiguration;
 use App\Values\UploadReference;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Throwable;
 
@@ -23,9 +22,9 @@ class UploadService
     ) {
     }
 
-    public function handleUpload(UploadedFile $file, User $uploader): Song
+    public function handleUpload(string $filePath, User $uploader): Song
     {
-        $uploadReference = $this->storage->storeUploadedFile($file, $uploader);
+        $uploadReference = $this->storage->storeUploadedFile($filePath, $uploader);
 
         $config = ScanConfiguration::make(
             owner: $uploader,

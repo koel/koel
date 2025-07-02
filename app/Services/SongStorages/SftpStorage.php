@@ -11,7 +11,6 @@ use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
 use App\Values\UploadReference;
 use Closure;
 use Illuminate\Contracts\Filesystem\Filesystem;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -28,16 +27,14 @@ class SftpStorage extends SongStorage implements MustDeleteTemporaryLocalFileAft
         $this->disk = Storage::disk('sftp');
     }
 
-    public function storeUploadedFile(UploadedFile $uploadedFile, User $uploader): UploadReference
+    public function storeUploadedFile(string $uploadedFilePath, User $uploader): UploadReference
     {
-        $file = $this->moveUploadedFileToTemporaryLocation($uploadedFile);
-        $path = $this->generateRemotePath($uploadedFile->getClientOriginalName(), $uploader);
-
-        $this->disk->put($path, $file->getContent());
+        $path = $this->generateRemotePath(basename($uploadedFilePath), $uploader);
+        $this->disk->put($path, File::get($uploadedFilePath));
 
         return UploadReference::make(
             location: "sftp://$path",
-            localPath: $file->getRealPath(),
+            localPath: $uploadedFilePath,
         );
     }
 

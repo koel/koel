@@ -7,7 +7,6 @@ use App\Filesystems\DropboxFilesystem;
 use App\Models\User;
 use App\Services\SongStorages\Concerns\DeletesUsingFilesystem;
 use App\Values\UploadReference;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
@@ -24,16 +23,14 @@ class DropboxStorage extends CloudStorage
         $this->filesystem->getAdapter()->getClient()->setAccessToken($this->maybeRefreshAccessToken());
     }
 
-    public function storeUploadedFile(UploadedFile $uploadedFile, User $uploader): UploadReference
+    public function storeUploadedFile(string $uploadedFilePath, User $uploader): UploadReference
     {
-        $file = $this->moveUploadedFileToTemporaryLocation($uploadedFile);
-        $key = $this->generateStorageKey($uploadedFile->getClientOriginalName(), $uploader);
-
-        $this->uploadToStorage($key, $file->getRealPath());
+        $key = $this->generateStorageKey(basename($uploadedFilePath), $uploader);
+        $this->uploadToStorage($key, $uploadedFilePath);
 
         return UploadReference::make(
             location: "dropbox://$key",
-            localPath: $file->getRealPath(),
+            localPath: $uploadedFilePath,
         );
     }
 
