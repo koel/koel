@@ -5,7 +5,6 @@ namespace Tests\Integration\KoelPlus\Services\SongStorages;
 use App\Helpers\Ulid;
 use App\Services\SongStorages\SftpStorage;
 use App\Values\UploadReference;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -18,7 +17,7 @@ use function Tests\test_path;
 class SftpStorageTest extends PlusTestCase
 {
     private SftpStorage $service;
-    private UploadedFile $file;
+    private string $uploadedFilePath;
 
     public function setUp(): void
     {
@@ -26,7 +25,8 @@ class SftpStorageTest extends PlusTestCase
 
         Storage::fake('sftp');
         $this->service = app(SftpStorage::class);
-        $this->file = UploadedFile::fromFile(test_path('songs/full.mp3'), 'song.mp3'); //@phpstan-ignore-line
+        File::copy(test_path('songs/full.mp3'), artifact_path('tmp/random/song.mp3'));
+        $this->uploadedFilePath = artifact_path('tmp/random/song.mp3');
     }
 
     #[Test]
@@ -34,7 +34,7 @@ class SftpStorageTest extends PlusTestCase
     {
         Ulid::freeze('random');
         $user = create_user();
-        $reference = $this->service->storeUploadedFile($this->file, $user);
+        $reference = $this->service->storeUploadedFile($this->uploadedFilePath, $user);
 
         Storage::disk('sftp')->assertExists(Str::after($reference->location, 'sftp://'));
 
@@ -59,7 +59,7 @@ class SftpStorageTest extends PlusTestCase
     #[Test]
     public function deleteSong(): void
     {
-        $reference = $this->service->storeUploadedFile($this->file, create_user());
+        $reference = $this->service->storeUploadedFile($this->uploadedFilePath, create_user());
         $remotePath = Str::after($reference->location, 'sftp://');
         Storage::disk('sftp')->assertExists($remotePath);
 

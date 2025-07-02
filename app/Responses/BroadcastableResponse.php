@@ -18,12 +18,12 @@ abstract class BroadcastableResponse implements Arrayable, ShouldBroadcast, Shou
     /**
      * Transform the object into a JSON response, ready for returning from a controller.
      */
-    public function toResponse(int $status = 200, array $header = [], array $options = []): JsonResponse
+    public function toResponse(int $status = 200, array $headers = [], int $options = 0): JsonResponse
     {
         return response()->json(
             data: $this->toArray(),
             status: $status,
-            headers: $header,
+            headers: $headers,
             options: $options
         );
     }

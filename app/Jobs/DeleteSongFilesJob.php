@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-class DeleteSongFilesJob extends SyncAwareQueuedJob
+class DeleteSongFilesJob extends QueuedJob
 {
     /**
      * @param Collection<SongFileInfo>|array<array-key, SongFileInfo> $files

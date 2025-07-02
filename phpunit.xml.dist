@@ -22,6 +22,7 @@
         <env name="SCOUT_DRIVER" value="null"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="QUEUE_DRIVER" value="sync"/>
+        <env name="BROADCAST_CONNECTION" value="log"/>
         <env name="DB_CONNECTION" value="sqlite"/>
         <env name="LASTFM_API_KEY" value="foo"/>
         <env name="LASTFM_API_SECRET" value="bar"/>

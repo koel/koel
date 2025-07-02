@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Repositories\AlbumRepository;
 use App\Repositories\SongRepository;
 use App\Responses\SongUploadResponse;
+use App\Services\Dispatcher;
 use App\Services\SongStorages\SongStorage;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Bus\PendingDispatch;
@@ -26,6 +27,7 @@ class UploadController extends Controller
         AlbumRepository $albumRepository,
         SongRepository $songRepository,
         UploadRequest $request,
+        Dispatcher $dispatcher,
         Authenticatable $user
     ) {
         $this->authorize('upload', User::class);
@@ -38,7 +40,7 @@ class UploadController extends Controller
             );
 
             /** @var Song|PendingDispatch $dispatchedResult */
-            $dispatchedResult = HandleSongUploadJob::dispatch($file->getRealPath(), $user);
+            $dispatchedResult = $dispatcher->dispatch(new HandleSongUploadJob($file->getRealPath(), $user));
 
             if ($dispatchedResult instanceof Song) {
                 $song = $songRepository->getOne($dispatchedResult->id);

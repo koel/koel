@@ -12,7 +12,7 @@ import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { socketListener } from '@/services/socketListener'
 import { socketService } from '@/services/socketService'
 import { uploadService } from '@/services/uploadService'
-import { broadcastListener } from '@/services/broadcastListener'
+import { broadcastSubscriber } from '@/services/broadcastSubscriber'
 
 const emits = defineEmits<{
   (e: 'success'): void
@@ -46,7 +46,7 @@ onMounted(async () => {
       }
     })
 
-    broadcastListener.init(currentUser.value.id)
+    broadcastSubscriber.init(currentUser.value.id)
     await socketService.init() && socketListener.listen()
 
     emits('success')

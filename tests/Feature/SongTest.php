@@ -7,8 +7,11 @@ use App\Jobs\DeleteSongFilesJob;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
+use App\Services\Dispatcher;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
+use Mockery;
+use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -16,6 +19,15 @@ use function Tests\create_admin;
 
 class SongTest extends TestCase
 {
+    private Dispatcher|MockInterface $dispatcher;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->dispatcher = $this->mock(Dispatcher::class);
+    }
+
     #[Test]
     public function index(): void
     {
@@ -41,11 +53,14 @@ class SongTest extends TestCase
 
         $songs = Song::factory(2)->create();
 
+        $this->dispatcher
+            ->expects('dispatch')
+            ->with(Mockery::type(DeleteSongFilesJob::class));
+
         $this->deleteAs('api/songs', ['songs' => $songs->modelKeys()], create_admin())
             ->assertNoContent();
 
         $songs->each(fn (Song $song) => $this->assertModelMissing($song));
-        Bus::assertDispatched(DeleteSongFilesJob::class);
     }
 
     #[Test]
@@ -54,11 +69,14 @@ class SongTest extends TestCase
         Bus::fake();
         $songs = Song::factory(2)->create();
 
+        $this->dispatcher
+            ->expects('dispatch')
+            ->never();
+
         $this->deleteAs('api/songs', ['songs' => $songs->modelKeys()])
             ->assertForbidden();
 
         $songs->each(fn (Song $song) => $this->assertModelExists($song));
-        Bus::assertNotDispatched(DeleteSongFilesJob::class);
     }
 
     #[Test]

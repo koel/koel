@@ -9,7 +9,7 @@ use App\Repositories\SongRepository;
 use App\Responses\SongUploadResponse;
 use App\Services\UploadService;
 
-class HandleSongUploadJob extends SyncAwareQueuedJob
+class HandleSongUploadJob extends QueuedJob
 {
     public function __construct(public readonly string $filePath, public readonly User $uploader)
     {

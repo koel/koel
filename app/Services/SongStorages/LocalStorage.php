@@ -34,16 +34,14 @@ class LocalStorage extends SongStorage
 
     private function getUploadDirectory(User $uploader): string
     {
-        return once(static function () use ($uploader): string {
-            $mediaPath = Setting::get('media_path');
+        $mediaPath = Setting::get('media_path');
 
-            throw_unless((bool) $mediaPath, MediaPathNotSetException::class);
+        throw_unless((bool) $mediaPath, MediaPathNotSetException::class);
 
-            $dir = "$mediaPath/__KOEL_UPLOADS_\${$uploader->id}__/";
-            File::ensureDirectoryExists($dir);
+        $dir = "$mediaPath/__KOEL_UPLOADS_\${$uploader->id}__/";
+        File::ensureDirectoryExists($dir);
 
-            return $dir;
-        });
+        return $dir;
     }
 
     private function getDestination(string $sourcePath, User $uploader): string

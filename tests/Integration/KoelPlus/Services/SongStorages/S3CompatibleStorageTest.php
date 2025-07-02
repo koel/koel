@@ -5,7 +5,6 @@ namespace Tests\Integration\KoelPlus\Services\SongStorages;
 use App\Helpers\Ulid;
 use App\Services\SongStorages\S3CompatibleStorage;
 use App\Values\UploadReference;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -18,7 +17,7 @@ use function Tests\test_path;
 class S3CompatibleStorageTest extends PlusTestCase
 {
     private S3CompatibleStorage $service;
-    private UploadedFile $file;
+    private string $uploadedFilePath;
 
     public function setUp(): void
     {
@@ -26,7 +25,9 @@ class S3CompatibleStorageTest extends PlusTestCase
 
         Storage::fake('s3');
         $this->service = app(S3CompatibleStorage::class);
-        $this->file = UploadedFile::fromFile(test_path('songs/full.mp3'), 'song.mp3'); //@phpstan-ignore-line
+
+        File::copy(test_path('songs/full.mp3'), artifact_path('tmp/random/full.mp3'));
+        $this->uploadedFilePath = artifact_path('tmp/random/full.mp3');
     }
 
     #[Test]
@@ -34,12 +35,12 @@ class S3CompatibleStorageTest extends PlusTestCase
     {
         Ulid::freeze('random');
         $user = create_user();
-        $reference = $this->service->storeUploadedFile($this->file, $user);
+        $reference = $this->service->storeUploadedFile($this->uploadedFilePath, $user);
 
         Storage::disk('s3')->assertExists(Str::after($reference->location, 's3://koel/')); // 'koel' is the bucket name
 
-        self::assertSame("s3://koel/{$user->id}__random__song.mp3", $reference->location);
-        self::assertSame(artifact_path('tmp/random/song.mp3'), $reference->localPath);
+        self::assertSame("s3://koel/{$user->id}__random__full.mp3", $reference->location);
+        self::assertSame(artifact_path('tmp/random/full.mp3'), $reference->localPath);
     }
 
     #[Test]
@@ -81,7 +82,7 @@ class S3CompatibleStorageTest extends PlusTestCase
     #[Test]
     public function getPresignedUrl(): void
     {
-        $reference = $this->service->storeUploadedFile($this->file, create_user());
+        $reference = $this->service->storeUploadedFile($this->uploadedFilePath, create_user());
         $url = $this->service->getPresignedUrl(Str::after($reference->location, 's3://koel/'));
 
         self::assertStringContainsString(Str::after($reference->location, 's3://koel/'), $url);
