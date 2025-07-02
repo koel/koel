@@ -1,0 +1,39 @@
+// Vitest Snapshot v1
+
+exports[`renders proper content with MusicBrainz integration status false, current user admin status false 1`] = `
+<section class="text-k-text-secondary">
+  <h3 class="text-2xl mb-2 flex items-center gap-2"><span class="mr-2 text-[#1db954]"><img src="undefined/resources/assets/img/logos/musicbrainz.svg" alt="MusicBrainz Logo" height="20" width="20"></span> MusicBrainz Integration </h3>
+  <div>
+    <p> MusicBrainz integration is not enabled.
+      <!--v-if-->
+    </p>
+  </div>
+</section>
+`;
+
+exports[`renders proper content with MusicBrainz integration status false, current user admin status true 1`] = `
+<section class="text-k-text-secondary">
+  <h3 class="text-2xl mb-2 flex items-center gap-2"><span class="mr-2 text-[#1db954]"><img src="undefined/resources/assets/img/logos/musicbrainz.svg" alt="MusicBrainz Logo" height="20" width="20"></span> MusicBrainz Integration </h3>
+  <div>
+    <p> MusicBrainz integration is not enabled. <span data-testid="spotify-admin-instruction"> Check <a href="https://docs.koel.dev/service-integrations#musicbrainz-wikipedia" target="_blank">Documentation</a> for integration instructions. </span></p>
+  </div>
+</section>
+`;
+
+exports[`renders proper content with MusicBrainz integration status true, current user admin status false 1`] = `
+<section class="text-k-text-secondary">
+  <h3 class="text-2xl mb-2 flex items-center gap-2"><span class="mr-2 text-[#1db954]"><img src="undefined/resources/assets/img/logos/musicbrainz.svg" alt="MusicBrainz Logo" height="20" width="20"></span> MusicBrainz Integration </h3>
+  <div>
+    <p> MusicBrainz integration is enabled. Koel will attempt to retrieve album and artist information from MusicBrainz (and Wikipedia) when a song is played, if needed. </p>
+  </div>
+</section>
+`;
+
+exports[`renders proper content with MusicBrainz integration status true, current user admin status true 1`] = `
+<section class="text-k-text-secondary">
+  <h3 class="text-2xl mb-2 flex items-center gap-2"><span class="mr-2 text-[#1db954]"><img src="undefined/resources/assets/img/logos/musicbrainz.svg" alt="MusicBrainz Logo" height="20" width="20"></span> MusicBrainz Integration </h3>
+  <div>
+    <p> MusicBrainz integration is enabled. Koel will attempt to retrieve album and artist information from MusicBrainz (and Wikipedia) when a song is played, if needed. </p>
+  </div>
+</section>
+`;
