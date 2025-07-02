@@ -25,6 +25,10 @@ abstract class Scanner
             $info = $this->fileScanner->scan($path);
             $song = $this->songService->createOrUpdateSongFromScan($info, $config);
 
+            if ($song->wasRecentlyCreated) {
+                return ScanResult::success($info->path);
+            }
+
             return $song->mtime === $info->mTime && !$config->force
                 ? ScanResult::skipped($info->path)
                 : ScanResult::success($info->path);
