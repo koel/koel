@@ -1,0 +1,49 @@
+// Vitest Snapshot v1
+
+exports[`renders proper content with Last.fm integration status false, current user admin status false 1`] = `
+<section data-v-6bdc1e9f="" class="text-k-text-secondary">
+  <h3 data-v-6bdc1e9f="" class="text-2xl mb-2"><span data-v-6bdc1e9f="" class="mr-2 text-[var(--lastfm-color)]"><br data-v-6bdc1e9f="" data-testid="Icon" icon="[object Object]"></span> Last.fm Integration </h3>
+  <div data-v-6bdc1e9f="" data-testid="lastfm-not-integrated">
+    <p data-v-6bdc1e9f=""> Last.fm integration is not enabled. <span data-v-6bdc1e9f="" data-testid="lastfm-user-instruction"> Try politely asking an administrator to enable it. </span></p>
+  </div>
+</section>
+`;
+
+exports[`renders proper content with Last.fm integration status false, current user admin status true 1`] = `
+<section data-v-6bdc1e9f="" class="text-k-text-secondary">
+  <h3 data-v-6bdc1e9f="" class="text-2xl mb-2"><span data-v-6bdc1e9f="" class="mr-2 text-[var(--lastfm-color)]"><br data-v-6bdc1e9f="" data-testid="Icon" icon="[object Object]"></span> Last.fm Integration </h3>
+  <div data-v-6bdc1e9f="" data-testid="lastfm-not-integrated">
+    <p data-v-6bdc1e9f=""> Last.fm integration is not enabled. <span data-v-6bdc1e9f="" data-testid="lastfm-admin-instruction"> Check <a data-v-6bdc1e9f="" href="https://docs.koel.dev/service-integrations#last-fm" target="_blank">Documentation</a> for integration instructions. </span></p>
+  </div>
+</section>
+`;
+
+exports[`renders proper content with Last.fm integration status true, current user admin status false 1`] = `
+<section data-v-6bdc1e9f="" class="text-k-text-secondary">
+  <h3 data-v-6bdc1e9f="" class="text-2xl mb-2"><span data-v-6bdc1e9f="" class="mr-2 text-[var(--lastfm-color)]"><br data-v-6bdc1e9f="" data-testid="Icon" icon="[object Object]"></span> Last.fm Integration </h3>
+  <div data-v-6bdc1e9f="" data-testid="lastfm-integrated">
+    <p data-v-6bdc1e9f="">Last.fm integration is enabled. Koel will attempt to retrieve album and artist information from Last.fm.</p>
+    <p data-v-6bdc1e9f=""> It appears that you have connected your Last.fm account as well – Perfect! </p>
+    <p data-v-6bdc1e9f=""> Connecting Koel and your Last.fm account enables such exciting features as <a data-v-6bdc1e9f="" href="https://www.last.fm/about/trackmymusic" rel="noopener" target="_blank">scrobbling</a>. </p>
+    <div data-v-6bdc1e9f="" class="buttons mt-4 space-x-2">
+      <!---->
+      <!---->
+    </div>
+  </div>
+</section>
+`;
+
+exports[`renders proper content with Last.fm integration status true, current user admin status true 1`] = `
+<section data-v-6bdc1e9f="" class="text-k-text-secondary">
+  <h3 data-v-6bdc1e9f="" class="text-2xl mb-2"><span data-v-6bdc1e9f="" class="mr-2 text-[var(--lastfm-color)]"><br data-v-6bdc1e9f="" data-testid="Icon" icon="[object Object]"></span> Last.fm Integration </h3>
+  <div data-v-6bdc1e9f="" data-testid="lastfm-integrated">
+    <p data-v-6bdc1e9f="">Last.fm integration is enabled. Koel will attempt to retrieve album and artist information from Last.fm.</p>
+    <p data-v-6bdc1e9f=""> It appears that you have connected your Last.fm account as well – Perfect! </p>
+    <p data-v-6bdc1e9f=""> Connecting Koel and your Last.fm account enables such exciting features as <a data-v-6bdc1e9f="" href="https://www.last.fm/about/trackmymusic" rel="noopener" target="_blank">scrobbling</a>. </p>
+    <div data-v-6bdc1e9f="" class="buttons mt-4 space-x-2">
+      <!---->
+      <!---->
+    </div>
+  </div>
+</section>
+`;

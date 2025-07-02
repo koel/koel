@@ -39,7 +39,7 @@
       </ScreenHeader>
     </template>
 
-    <ScreenTabs class="-m-6">
+    <ScreenTabs v-if="artist" class="-m-6">
       <template #header>
         <label :class="{ active: activeTab === 'Songs' }">
           Songs
@@ -49,7 +49,7 @@
           Albums
           <input v-model="activeTab" :disabled="loading" name="tab" type="radio" value="Albums">
         </label>
-        <label v-if="useLastfm" :class="{ active: activeTab === 'Info' }">
+        <label v-if="useEncyclopedia" :class="{ active: activeTab === 'Info' }">
           Information
           <input v-model="activeTab" :disabled="loading" name="tab" type="radio" value="Info">
         </label>
@@ -82,7 +82,7 @@
         </AlbumOrArtistGrid>
       </div>
 
-      <div v-if="useLastfm && artist" v-show="activeTab === 'Info'" class="info-pane">
+      <div v-if="useEncyclopedia && artist" v-show="activeTab === 'Info'" class="info-pane">
         <ArtistInfo :artist="artist" mode="full" />
       </div>
     </ScreenTabs>
@@ -145,7 +145,9 @@ const {
 
 const { SongListControls, config } = useSongListControls('Artist')
 
-const { useLastfm } = useThirdPartyServices()
+const { useLastfm, useMusicBrainz } = useThirdPartyServices()
+
+const useEncyclopedia = computed(() => useMusicBrainz.value || useLastfm.value)
 
 const albumCount = computed(() => {
   const albums = new Set()

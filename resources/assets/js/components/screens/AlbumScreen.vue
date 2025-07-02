@@ -43,7 +43,7 @@
       </ScreenHeader>
     </template>
 
-    <ScreenTabs class="-m-6">
+    <ScreenTabs v-if="album" class="-m-6">
       <template #header>
         <label :class="{ active: activeTab === 'Songs' }">
           Songs
@@ -53,7 +53,7 @@
           Other Albums
           <input v-model="activeTab" :disabled="loading" name="tab" type="radio" value="OtherAlbums">
         </label>
-        <label v-if="useLastfm" :class="{ active: activeTab === 'Info' }">
+        <label v-if="useEncyclopedia" :class="{ active: activeTab === 'Info' }">
           Information
           <input v-model="activeTab" :disabled="loading" name="tab" type="radio" value="Info">
         </label>
@@ -83,7 +83,7 @@
         </AlbumGrid>
       </div>
 
-      <div v-if="useLastfm && album" v-show="activeTab === 'Info'" class="info-pane">
+      <div v-if="useEncyclopedia && album" v-show="activeTab === 'Info'" class="info-pane">
         <AlbumInfo :album="album" mode="full" />
       </div>
     </ScreenTabs>
@@ -91,12 +91,11 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, ref, toRef, watch } from 'vue'
+import { computed, defineAsyncComponent, ref, watch } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { pluralize } from '@/utils/formatters'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
-import { commonStore } from '@/stores/commonStore'
 import { songStore } from '@/stores/songStore'
 import { downloadService } from '@/services/downloadService'
 import { useErrorHandler } from '@/composables/useErrorHandler'
@@ -112,6 +111,7 @@ import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 import ScreenTabs from '@/components/ui/ArtistAlbumScreenTabs.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import AlbumGrid from '@/components/ui/album-artist/AlbumOrArtistGrid.vue'
+import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 
 type Tab = 'Songs' | 'OtherAlbums' | 'Info'
 const activeTab = ref<Tab>('Songs')
@@ -150,8 +150,9 @@ const {
 } = useSongList(songs, { type: 'Album' })
 
 const { SongListControls, config } = useSongListControls('Album')
+const { useLastfm, useMusicBrainz } = useThirdPartyServices()
 
-const useLastfm = toRef(commonStore.state, 'uses_last_fm')
+const useEncyclopedia = computed(() => useMusicBrainz.value || useLastfm.value)
 
 const isStandardArtist = computed(() => {
   if (!album.value) {

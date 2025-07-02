@@ -18,10 +18,8 @@
         Spotify integration is not enabled.
         <span v-if="isAdmin" data-testid="spotify-admin-instruction">
           Check
-          <a href="https://docs.koel.dev/service-integrations#spotify" target="_blank">
-            Documentation
-          </a>
-          for instructions.
+          <a href="https://docs.koel.dev/service-integrations#spotify" target="_blank">Documentation</a>
+          for integration instructions.
         </span>
       </p>
     </div>
