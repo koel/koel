@@ -7,16 +7,18 @@ use App\Http\Integrations\MusicBrainz\Requests\GetArtistUrlRelationshipsRequest;
 use App\Pipelines\Encyclopedia\GetArtistWikidataIdUsingMbid;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
-use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Saloon\Http\Faking\MockResponse;
 use Saloon\Laravel\Facades\Saloon;
+use Tests\Concerns\TestsPipelines;
 use Tests\TestCase;
 
 use function Tests\test_path;
 
 class GetArtistWikidataIdUsingMbidTest extends TestCase
 {
+    use TestsPipelines;
+
     #[Test]
     public function getWikidataId(): void
     {
@@ -26,10 +28,7 @@ class GetArtistWikidataIdUsingMbidTest extends TestCase
             GetArtistUrlRelationshipsRequest::class => MockResponse::make(body: $json),
         ]);
 
-        $mock = Mockery::mock();
-        $mock->shouldReceive('next')
-            ->once()
-            ->with('Q461269');
+        $mock = self::createNextClosureMock('Q461269');
 
         (new GetArtistWikidataIdUsingMbid(new MusicBrainzConnector()))(
             'sample-mbid',
@@ -55,10 +54,7 @@ class GetArtistWikidataIdUsingMbidTest extends TestCase
 
         Cache::put(cache_key('artist wikidata id from mbid', 'sample-mbid'), 'Q461269');
 
-        $mock = Mockery::mock();
-        $mock->shouldReceive('next')
-            ->once()
-            ->with('Q461269');
+        $mock = self::createNextClosureMock('Q461269');
 
         (new GetArtistWikidataIdUsingMbid(new MusicBrainzConnector()))(
             'sample-mbid',
@@ -73,10 +69,7 @@ class GetArtistWikidataIdUsingMbidTest extends TestCase
     {
         Saloon::fake([]);
 
-        $mock = Mockery::mock();
-        $mock->shouldReceive('next')
-            ->once()
-            ->with(null);
+        $mock = self::createNextClosureMock(null);
 
         (new GetArtistWikidataIdUsingMbid(new MusicBrainzConnector()))(
             null,

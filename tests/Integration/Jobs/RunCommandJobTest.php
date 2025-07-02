@@ -12,8 +12,7 @@ class RunCommandJobTest extends TestCase
     #[Test]
     public function dispatch(): void
     {
-        Artisan::shouldReceive('call')
-            ->once()
+        Artisan::expects('call')
             ->with('some:command');
 
         dispatch(new RunCommandJob('some:command'));

@@ -23,8 +23,7 @@ class ScrobbleJobTest extends TestCase
         $job = new ScrobbleJob($user, $song, 100);
         $lastfm = Mockery::mock(LastfmService::class);
 
-        $lastfm->shouldReceive('scrobble')
-            ->once()
+        $lastfm->expects('scrobble')
             ->with($song, $user, 100);
 
         $job->handle($lastfm);

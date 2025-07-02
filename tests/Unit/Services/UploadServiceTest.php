@@ -50,22 +50,20 @@ class UploadServiceTest extends TestCase
             localPath: '/var/media/koel/some-file.mp3',
         );
 
-        $storage->shouldReceive('storeUploadedFile')
+        $storage->expects('storeUploadedFile')
             ->with($file, $uploader)
             ->andReturn($reference);
 
-        $this->scanner->shouldReceive('scan')
+        $this->scanner->expects('scan')
             ->with('/var/media/koel/some-file.mp3')
-            ->once()
             ->andReturn($scanInfo);
 
-        $this->songService->shouldReceive('createOrUpdateSongFromScan')
+        $this->songService->expects('createOrUpdateSongFromScan')
             ->with($scanInfo, Mockery::on(static function (ScanConfiguration $config) use ($uploader): bool {
                 return $config->owner->is($uploader)
                     && $config->makePublic === $uploader->preferences->makeUploadsPublic
                     && $config->extractFolderStructure;
             }))
-            ->once()
             ->andReturn($song);
 
         $result = (new UploadService($this->songService, $storage, $this->scanner))->handleUpload($file, $uploader);
@@ -92,21 +90,20 @@ class UploadServiceTest extends TestCase
             localPath: '/tmp/some-tmp-file.mp3',
         );
 
-        $storage->shouldReceive('storeUploadedFile')
+        $storage->expects('storeUploadedFile')
             ->with($file, $uploader)
             ->andReturn($reference);
 
-        $this->scanner->shouldReceive('scan')
+        $this->scanner->expects('scan')
             ->with('/tmp/some-tmp-file.mp3')
             ->andReturn($scanInfo);
 
-        $this->songService->shouldReceive('createOrUpdateSongFromScan')
+        $this->songService->expects('createOrUpdateSongFromScan')
             ->with($scanInfo, Mockery::on(static function (ScanConfiguration $config) use ($uploader): bool {
                 return $config->owner->is($uploader)
                     && $config->makePublic === $uploader->preferences->makeUploadsPublic
                     && !$config->extractFolderStructure;
             }))
-            ->once()
             ->andReturn($song);
 
         $result = (new UploadService($this->songService, $storage, $this->scanner))->handleUpload($file, $uploader);
@@ -138,11 +135,11 @@ class UploadServiceTest extends TestCase
             localPath: '/tmp/some-tmp-file.mp3',
         );
 
-        $storage->shouldReceive('storeUploadedFile')->andReturn($reference);
-        $this->scanner->shouldReceive('scan')->andReturn($scanInfo);
-        $this->songService->shouldReceive('createOrUpdateSongFromScan')->andReturn($song);
+        $storage->expects('storeUploadedFile')->andReturn($reference);
+        $this->scanner->expects('scan')->andReturn($scanInfo);
+        $this->songService->expects('createOrUpdateSongFromScan')->andReturn($song);
 
-        File::shouldReceive('delete')->once()->with('/tmp/some-tmp-file.mp3');
+        File::expects('delete')->with('/tmp/some-tmp-file.mp3');
 
         (new UploadService($this->songService, $storage, $this->scanner))->handleUpload($file, $uploader);
     }
@@ -160,12 +157,12 @@ class UploadServiceTest extends TestCase
             localPath: '/var/media/koel/some-file.mp3',
         );
 
-        $storage->shouldReceive('storeUploadedFile')->with($file, $uploader)->andReturn($reference);
-        $this->scanner->shouldReceive('scan')->andReturn($scanInfo);
-        $storage->shouldReceive('undoUpload')->with($reference)->once();
+        $storage->expects('storeUploadedFile')->with($file, $uploader)->andReturn($reference);
+        $this->scanner->expects('scan')->andReturn($scanInfo);
+        $storage->expects('undoUpload')->with($reference);
 
         $this->songService
-            ->shouldReceive('createOrUpdateSongFromScan')
+            ->expects('createOrUpdateSongFromScan')
             ->andThrow(new Exception('File supports racism'));
 
         $this->expectException(SongUploadFailedException::class);
@@ -186,9 +183,9 @@ class UploadServiceTest extends TestCase
             localPath: '/var/media/koel/some-file.mp3',
         );
 
-        $storage->shouldReceive('storeUploadedFile')->with($file, $uploader)->andReturn($reference);
-        $this->scanner->shouldReceive('scan')->andThrow(new Exception('File supports racism'));
-        $storage->shouldReceive('undoUpload')->with($reference)->once();
+        $storage->expects('storeUploadedFile')->with($file, $uploader)->andReturn($reference);
+        $this->scanner->expects('scan')->andThrow(new Exception('File supports racism'));
+        $storage->expects('undoUpload')->with($reference);
 
         $this->expectException(SongUploadFailedException::class);
         $this->expectExceptionMessage('File supports racism');

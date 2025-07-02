@@ -40,24 +40,14 @@ class SfpTranscodingStrategyTest extends TestCase
         $destination = artifact_path("transcodes/128/$ulid.m4a", ensureDirectoryExists: false);
 
         $storage = $this->mock(SftpStorage::class);
-        $storage->shouldReceive('copyToLocal')->with('remote/path/to/song.flac')->andReturn('/tmp/song.flac');
+        $storage->expects('copyToLocal')->with('remote/path/to/song.flac')->andReturn('/tmp/song.flac');
 
-        File::shouldReceive('ensureDirectoryExists')
-            ->with(dirname($destination))
-            ->once();
+        File::expects('ensureDirectoryExists')->with(dirname($destination));
 
-        $this->transcoder
-            ->shouldReceive('transcode')
-            ->with('/tmp/song.flac', $destination, 128)
-            ->once();
+        $this->transcoder->expects('transcode')->with('/tmp/song.flac', $destination, 128);
 
-        File::shouldReceive('hash')
-            ->with($destination)
-            ->andReturn('mocked-checksum');
-
-        File::shouldReceive('delete')
-            ->with('/tmp/song.flac')
-            ->once();
+        File::expects('hash')->with($destination)->andReturn('mocked-checksum');
+        File::expects('delete')->with('/tmp/song.flac');
 
         $this->strategy->getTranscodeLocation($song, 128);
 
@@ -72,7 +62,7 @@ class SfpTranscodingStrategyTest extends TestCase
     #[Test]
     public function getFromDatabaseRecord(): void
     {
-        $this->transcoder->shouldReceive('transcode')->never();
+        $this->transcoder->expects('transcode')->never();
 
         /** @var Transcode $transcode */
         $transcode = Transcode::factory()->create([
@@ -81,11 +71,11 @@ class SfpTranscodingStrategyTest extends TestCase
             'hash' => 'mocked-checksum',
         ]);
 
-        File::shouldReceive('isReadable')
+        File::expects('isReadable')
             ->with('/path/to/transcode.m4a')
             ->andReturn(true);
 
-        File::shouldReceive('hash')
+        File::expects('hash')
             ->with('/path/to/transcode.m4a')
             ->andReturn('mocked-checksum');
 
@@ -111,30 +101,20 @@ class SfpTranscodingStrategyTest extends TestCase
             'hash' => 'mocked-checksum',
         ]);
 
-        File::shouldReceive('isReadable')->with('/path/to/transcode.m4a')->andReturn(false);
-        File::shouldReceive('delete')->with('/path/to/transcode.m4a');
+        File::expects('isReadable')->with('/path/to/transcode.m4a')->andReturn(false);
+        File::expects('delete')->with('/path/to/transcode.m4a');
 
         $storage = $this->mock(SftpStorage::class);
-        $storage->shouldReceive('copyToLocal')->with('remote/path/to/song.flac')->andReturn('/tmp/song.flac');
+        $storage->expects('copyToLocal')->with('remote/path/to/song.flac')->andReturn('/tmp/song.flac');
 
         $destination = artifact_path("transcodes/128/$ulid.m4a", ensureDirectoryExists: false);
 
-        File::shouldReceive('ensureDirectoryExists')
-            ->with(dirname($destination))
-            ->once();
+        File::expects('ensureDirectoryExists')->with(dirname($destination));
 
-        $this->transcoder
-            ->shouldReceive('transcode')
-            ->with('/tmp/song.flac', $destination, 128)
-            ->once();
+        $this->transcoder->expects('transcode')->with('/tmp/song.flac', $destination, 128);
 
-        File::shouldReceive('hash')
-            ->with($destination)
-            ->andReturn('mocked-checksum');
-
-        File::shouldReceive('delete')
-            ->with('/tmp/song.flac')
-            ->once();
+        File::expects('hash')->with($destination)->andReturn('mocked-checksum');
+        File::expects('delete')->with('/tmp/song.flac');
 
         $this->strategy->getTranscodeLocation($song, 128);
         self::assertSame($destination, $transcode->refresh()->location);

@@ -61,7 +61,7 @@ class DropboxStorageTest extends PlusTestCase
     {
         Ulid::freeze('random');
 
-        $this->client->shouldReceive('setAccessToken')->with('free-bird')->once();
+        $this->client->expects('setAccessToken')->with('free-bird');
 
         /** @var DropboxStorage $service */
         $service = app(DropboxStorage::class);
@@ -74,7 +74,7 @@ class DropboxStorageTest extends PlusTestCase
         });
 
         $user = create_user();
-        $this->filesystem->shouldReceive('write')->once();
+        $this->filesystem->expects('write');
         $reference = $service->storeUploadedFile($this->file, $user);
 
         self::assertSame("dropbox://{$user->id}__random__song.mp3", $reference->location);
@@ -86,15 +86,15 @@ class DropboxStorageTest extends PlusTestCase
     #[Test]
     public function undoUpload(): void
     {
-        $this->filesystem->shouldReceive('delete')->once()->with('koel/song.mp3');
-        File::shouldReceive('delete')->once()->with('/tmp/random/song.mp3');
+        $this->filesystem->expects('delete')->with('koel/song.mp3');
+        File::expects('delete')->with('/tmp/random/song.mp3');
 
         $reference = UploadReference::make(
             location: 'dropbox://koel/song.mp3',
             localPath: '/tmp/random/song.mp3',
         );
 
-        $this->client->shouldReceive('setAccessToken')->with('free-bird')->once();
+        $this->client->expects('setAccessToken')->with('free-bird');
 
         /** @var DropboxStorage $service */
         $service = app(DropboxStorage::class);
@@ -107,7 +107,7 @@ class DropboxStorageTest extends PlusTestCase
     {
         Cache::put('dropbox_access_token', 'cached-token', now()->addHour());
 
-        $this->client->shouldReceive('setAccessToken')->with('cached-token')->once();
+        $this->client->expects('setAccessToken')->with('cached-token');
         app(DropboxStorage::class);
 
         self::assertSame('cached-token', Cache::get('dropbox_access_token'));
@@ -125,8 +125,7 @@ class DropboxStorageTest extends PlusTestCase
         /** @var DropboxStorage $service */
         $service = app(DropboxStorage::class);
 
-        $this->filesystem->shouldReceive('temporaryUrl')
-            ->once()
+        $this->filesystem->expects('temporaryUrl')
             ->with('song.mp3')
             ->andReturn('https://dropbox.com/song.mp3?token=123');
 

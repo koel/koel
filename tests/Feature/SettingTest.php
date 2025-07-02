@@ -25,7 +25,7 @@ class SettingTest extends TestCase
     #[Test]
     public function saveSettings(): void
     {
-        $this->mediaScanner->shouldReceive('scan')->once()
+        $this->mediaScanner->expects('scan')
             ->andReturn(ScanResultCollection::create());
 
         $this->putAs('/api/settings', ['media_path' => __DIR__], create_admin())

@@ -35,8 +35,7 @@ class AlbumThumbnailTest extends TestCase
         $createdAlbum = Album::factory()->create();
 
         $this->artworkService
-            ->shouldReceive('getAlbumThumbnailUrl')
-            ->once()
+            ->expects('getAlbumThumbnailUrl')
             ->with(Mockery::on(static function (Album $album) use ($createdAlbum): bool {
                 return $album->id === $createdAlbum->id;
             }))

@@ -46,7 +46,7 @@ class S3CompatibleStorageTest extends PlusTestCase
     public function undoUpload(): void
     {
         Storage::disk('s3')->put('123__random__song.mp3', 'fake content');
-        File::shouldReceive('delete')->once()->with('/tmp/random/song.mp3');
+        File::expects('delete')->with('/tmp/random/song.mp3');
 
         $reference = UploadReference::make(
             location: 's3://koel/123__random__song.mp3', // 'koel' is the bucket name

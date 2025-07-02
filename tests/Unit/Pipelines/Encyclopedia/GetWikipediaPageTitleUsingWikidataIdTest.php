@@ -7,16 +7,18 @@ use App\Http\Integrations\Wikidata\WikidataConnector;
 use App\Pipelines\Encyclopedia\GetWikipediaPageTitleUsingWikidataId;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
-use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Saloon\Http\Faking\MockResponse;
 use Saloon\Laravel\Facades\Saloon;
+use Tests\Concerns\TestsPipelines;
 use Tests\TestCase;
 
 use function Tests\test_path;
 
 class GetWikipediaPageTitleUsingWikidataIdTest extends TestCase
 {
+    use TestsPipelines;
+
     #[Test]
     public function getName(): void
     {
@@ -26,10 +28,7 @@ class GetWikipediaPageTitleUsingWikidataIdTest extends TestCase
             GetEntityDataRequest::class => MockResponse::make(body: $json),
         ]);
 
-        $mock = Mockery::mock();
-        $mock->shouldReceive('next')
-            ->once()
-            ->with('Skid Row (American band)');
+        $mock = self::createNextClosureMock('Skid Row (American band)');
 
         (new GetWikipediaPageTitleUsingWikidataId(new WikidataConnector()))(
             'Q461269',
@@ -56,10 +55,7 @@ class GetWikipediaPageTitleUsingWikidataIdTest extends TestCase
             'How’d that get in there?'
         );
 
-        $mock = Mockery::mock();
-        $mock->shouldReceive('next')
-            ->once()
-            ->with('How’d that get in there?');
+        $mock = self::createNextClosureMock('How’d that get in there?');
 
         (new GetWikipediaPageTitleUsingWikidataId(new WikidataConnector()))(
             'Q461269',
@@ -73,11 +69,7 @@ class GetWikipediaPageTitleUsingWikidataIdTest extends TestCase
     public function justPassOnIfIdIsNull(): void
     {
         Saloon::fake([]);
-
-        $mock = Mockery::mock();
-        $mock->shouldReceive('next')
-            ->once()
-            ->with(null);
+        $mock = self::createNextClosureMock(null);
 
         (new GetWikipediaPageTitleUsingWikidataId(new WikidataConnector()))(
             null,

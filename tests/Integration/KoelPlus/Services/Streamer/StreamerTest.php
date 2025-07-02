@@ -9,7 +9,6 @@ use App\Services\Streamer\Adapters\LocalStreamerAdapter;
 use App\Services\Streamer\Adapters\S3CompatibleStreamerAdapter;
 use App\Services\Streamer\Adapters\SftpStreamerAdapter;
 use App\Services\Streamer\Streamer;
-use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Integration\KoelPlus\Services\TestingDropboxStorage;
 use Tests\PlusTestCase;
@@ -21,8 +20,6 @@ class StreamerTest extends PlusTestCase
     #[Test]
     public function resolveAdapters(): void
     {
-        File::partialMock()->shouldReceive('mimeType')->andReturn('audio/mpeg');
-
         collect(SongStorageType::cases())
             ->each(static function (SongStorageType $type): void {
                 /** @var Song $song */

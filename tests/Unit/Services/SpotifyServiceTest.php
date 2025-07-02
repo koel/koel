@@ -8,7 +8,6 @@ use App\Models\Artist;
 use App\Services\SpotifyService;
 use Illuminate\Support\Facades\File;
 use Mockery;
-use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -18,7 +17,7 @@ use function Tests\test_path;
 class SpotifyServiceTest extends TestCase
 {
     private SpotifyService $service;
-    private SpotifyClient|MockInterface|LegacyMockInterface $client;
+    private SpotifyClient|MockInterface $client;
 
     public function setUp(): void
     {
@@ -40,7 +39,7 @@ class SpotifyServiceTest extends TestCase
         $artist = Artist::factory(['name' => 'Foo'])->create();
 
         $this->client
-            ->shouldReceive('search')
+            ->expects('search')
             ->with('Foo', 'artist', ['limit' => 1])
             ->andReturn(self::parseFixture('search-artist.json'));
 
@@ -64,7 +63,7 @@ class SpotifyServiceTest extends TestCase
         $album = Album::factory(['name' => 'Bar'])->for(Artist::factory(['name' => 'Foo']))->create();
 
         $this->client
-            ->shouldReceive('search')
+            ->expects('search')
             ->with('Bar artist:Foo', 'album', ['limit' => 1])
             ->andReturn(self::parseFixture('search-album.json'));
 

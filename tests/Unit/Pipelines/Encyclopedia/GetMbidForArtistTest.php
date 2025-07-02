@@ -7,16 +7,18 @@ use App\Http\Integrations\MusicBrainz\Requests\SearchForArtistRequest;
 use App\Pipelines\Encyclopedia\GetMbidForArtist;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
-use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Saloon\Http\Faking\MockResponse;
 use Saloon\Laravel\Facades\Saloon;
+use Tests\Concerns\TestsPipelines;
 use Tests\TestCase;
 
 use function Tests\test_path;
 
 class GetMbidForArtistTest extends TestCase
 {
+    use TestsPipelines;
+
     #[Test]
     public function getMbid(): void
     {
@@ -26,10 +28,7 @@ class GetMbidForArtistTest extends TestCase
             SearchForArtistRequest::class => MockResponse::make(body: $json),
         ]);
 
-        $mock = Mockery::mock();
-        $mock->shouldReceive('next')
-            ->once()
-            ->with('6da0515e-a27d-449d-84cc-00713c38a140');
+        $mock = self::createNextClosureMock('6da0515e-a27d-449d-84cc-00713c38a140');
 
         (new GetMbidForArtist(new MusicBrainzConnector()))(
             'Skid Row',
@@ -55,13 +54,8 @@ class GetMbidForArtistTest extends TestCase
     public function getFromCache(): void
     {
         Saloon::fake([]);
-
         Cache::put(cache_key('artist mbid', 'Skid Row'), 'sample-mbid');
-
-        $mock = Mockery::mock();
-        $mock->shouldReceive('next')
-            ->once()
-            ->with('sample-mbid');
+        $mock = self::createNextClosureMock('sample-mbid');
 
         (new GetMbidForArtist(new MusicBrainzConnector()))(
             'Skid Row',
@@ -75,11 +69,7 @@ class GetMbidForArtistTest extends TestCase
     public function justPassOnIfMbidIsNull(): void
     {
         Saloon::fake([]);
-
-        $mock = Mockery::mock();
-        $mock->shouldReceive('next')
-            ->once()
-            ->with(null);
+        $mock = self::createNextClosureMock(null);
 
         (new GetMbidForArtist(new MusicBrainzConnector()))(
             null,

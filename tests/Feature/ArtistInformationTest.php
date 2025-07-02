@@ -20,7 +20,7 @@ class ArtistInformationTest extends TestCase
         $artist = Artist::factory()->create();
 
         $lastfm = $this->mock(EncyclopediaService::class);
-        $lastfm->shouldReceive('getArtistInformation')
+        $lastfm->expects('getArtistInformation')
             ->with(Mockery::on(static fn (Artist $a) => $a->is($artist)))
             ->andReturn(ArtistInformation::make(
                 url: 'https://lastfm.com/artist/foo',

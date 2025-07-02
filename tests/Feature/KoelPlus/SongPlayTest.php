@@ -26,8 +26,7 @@ class SongPlayTest extends PlusTestCase
         ]);
 
         $this->mock(LocalStreamerAdapter::class)
-            ->shouldReceive('stream')
-            ->once();
+            ->expects('stream');
 
         $this->get("play/{$song->id}?t=$token->audioToken")
             ->assertOk();
@@ -45,8 +44,7 @@ class SongPlayTest extends PlusTestCase
         $token = app(TokenManager::class)->createCompositeToken($song->owner);
 
         $this->mock(LocalStreamerAdapter::class)
-            ->shouldReceive('stream')
-            ->once();
+            ->expects('stream');
 
         $this->get("play/{$song->id}?t=$token->audioToken")
             ->assertOk();

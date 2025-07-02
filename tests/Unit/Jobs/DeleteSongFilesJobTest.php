@@ -24,13 +24,8 @@ class DeleteSongFilesJobTest extends TestCase
         /** @var SongStorage|MockInterface $storage */
         $storage = Mockery::mock(SongStorage::class);
 
-        $storage->shouldReceive('delete')
-            ->with('path/to/song.mp3', config('koel.backup_on_delete'))
-            ->once();
-
-        $storage->shouldReceive('delete')
-            ->with('key.mp3', config('koel.backup_on_delete'))
-            ->once();
+        $storage->expects('delete')->with('path/to/song.mp3', config('koel.backup_on_delete'));
+        $storage->expects('delete')->with('key.mp3', config('koel.backup_on_delete'));
 
         $job = new DeleteSongFilesJob($files);
         $job->handle($storage);

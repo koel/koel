@@ -7,16 +7,18 @@ use App\Http\Integrations\MusicBrainz\Requests\SearchForReleaseRequest;
 use App\Pipelines\Encyclopedia\GetReleaseAndReleaseGroupMbidsForAlbum;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
-use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Saloon\Http\Faking\MockResponse;
 use Saloon\Laravel\Facades\Saloon;
+use Tests\Concerns\TestsPipelines;
 use Tests\TestCase;
 
 use function Tests\test_path;
 
 class GetReleaseAndReleaseGroupMbidsForAlbumTest extends TestCase
 {
+    use TestsPipelines;
+
     #[Test]
     public function getMbids(): void
     {
@@ -26,10 +28,7 @@ class GetReleaseAndReleaseGroupMbidsForAlbumTest extends TestCase
             SearchForReleaseRequest::class => MockResponse::make(body: $json),
         ]);
 
-        $mock = Mockery::mock();
-        $mock->shouldReceive('next')
-            ->once()
-            ->with(['sample-release-mbid', 'sample-release-group-mbid']);
+        $mock = self::createNextClosureMock(['sample-release-mbid', 'sample-release-group-mbid']);
 
         (new GetReleaseAndReleaseGroupMbidsForAlbum(new MusicBrainzConnector()))(
             [
@@ -67,10 +66,7 @@ class GetReleaseAndReleaseGroupMbidsForAlbumTest extends TestCase
             ['sample-release-mbid', 'sample-release-group-mbid']
         );
 
-        $mock = Mockery::mock();
-        $mock->shouldReceive('next')
-            ->once()
-            ->with(['sample-release-mbid', 'sample-release-group-mbid']);
+        $mock = self::createNextClosureMock(['sample-release-mbid', 'sample-release-group-mbid']);
 
         (new GetReleaseAndReleaseGroupMbidsForAlbum(new MusicBrainzConnector()))(
             [
@@ -87,11 +83,7 @@ class GetReleaseAndReleaseGroupMbidsForAlbumTest extends TestCase
     public function justPassOnIfParamsAreNull(): void
     {
         Saloon::fake([]);
-
-        $mock = Mockery::mock();
-        $mock->shouldReceive('next')
-            ->once()
-            ->with(null);
+        $mock = self::createNextClosureMock(null);
 
         (new GetReleaseAndReleaseGroupMbidsForAlbum(new MusicBrainzConnector()))(
             null,

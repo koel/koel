@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Traits;
+namespace Tests\Concerns;
 
 use App\Models\User;
 use Illuminate\Testing\TestResponse;

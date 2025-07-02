@@ -36,11 +36,10 @@ class ArtworkServiceTest extends TestCase
         $coverPath = '/koel/public/img/album/foo.jpg';
 
         $this->imageWriter
-            ->shouldReceive('write')
-            ->once()
+            ->expects('write')
             ->with('/koel/public/img/album/foo.jpg', 'dummy-src');
 
-        $this->imageWriter->shouldReceive('write')->once();
+        $this->imageWriter->expects('write');
 
         $cover = $this->artworkService->storeAlbumCover($album, 'dummy-src', $coverPath);
 
@@ -56,8 +55,7 @@ class ArtworkServiceTest extends TestCase
         $imagePath = '/koel/public/img/artist/foo.jpg';
 
         $this->imageWriter
-            ->shouldReceive('write')
-            ->once()
+            ->expects('write')
             ->with('/koel/public/img/artist/foo.jpg', 'dummy-src');
 
         $this->artworkService->storeArtistImage($artist, 'dummy-src', $imagePath);

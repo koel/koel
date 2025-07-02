@@ -7,16 +7,18 @@ use App\Http\Integrations\MusicBrainz\Requests\GetReleaseGroupUrlRelationshipsRe
 use App\Pipelines\Encyclopedia\GetAlbumWikidataIdUsingReleaseGroupMbid;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
-use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Saloon\Http\Faking\MockResponse;
 use Saloon\Laravel\Facades\Saloon;
+use Tests\Concerns\TestsPipelines;
 use Tests\TestCase;
 
 use function Tests\test_path;
 
 class GetAlbumWikidataIdUsingReleaseGroupMbidTest extends TestCase
 {
+    use TestsPipelines;
+
     #[Test]
     public function getWikidataId(): void
     {
@@ -26,10 +28,7 @@ class GetAlbumWikidataIdUsingReleaseGroupMbidTest extends TestCase
             GetReleaseGroupUrlRelationshipsRequest::class => MockResponse::make(body: $json),
         ]);
 
-        $mock = Mockery::mock();
-        $mock->shouldReceive('next')
-            ->once()
-            ->with('Q1929918');
+        $mock = self::createNextClosureMock('Q1929918');
 
         (new GetAlbumWikidataIdUsingReleaseGroupMbid(new MusicBrainzConnector()))(
             'sample-mbid',
@@ -55,10 +54,7 @@ class GetAlbumWikidataIdUsingReleaseGroupMbidTest extends TestCase
 
         Cache::put(cache_key('album wikidata id from release group mbid', 'sample-mbid'), 'Q1929918');
 
-        $mock = Mockery::mock();
-        $mock->shouldReceive('next')
-            ->once()
-            ->with('Q1929918');
+        $mock = self::createNextClosureMock('Q1929918');
 
         (new GetAlbumWikidataIdUsingReleaseGroupMbid(new MusicBrainzConnector()))(
             'sample-mbid',
@@ -73,10 +69,7 @@ class GetAlbumWikidataIdUsingReleaseGroupMbidTest extends TestCase
     {
         Saloon::fake([]);
 
-        $mock = Mockery::mock();
-        $mock->shouldReceive('next')
-            ->once()
-            ->with(null);
+        $mock = self::createNextClosureMock(null);
 
         (new GetAlbumWikidataIdUsingReleaseGroupMbid(new MusicBrainzConnector()))(
             null,

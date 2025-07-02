@@ -65,7 +65,7 @@ class SongServiceTest extends TestCase
             'albumArtistName' => 'Artist A',
         ];
 
-        DB::shouldReceive('transaction')->andReturnUsing(static function ($callback) {
+        DB::expects('transaction')->andReturnUsing(static function ($callback) {
             return $callback();
         });
 
@@ -110,7 +110,7 @@ class SongServiceTest extends TestCase
             'albumArtistName' => $albumArtistName,
         ];
 
-        DB::shouldReceive('transaction')->andReturnUsing(static function ($callback) {
+        DB::expects('transaction')->andReturnUsing(static function ($callback) {
             return $callback();
         });
 
@@ -165,7 +165,7 @@ class SongServiceTest extends TestCase
             'albumArtistName' => null,
         ];
 
-        DB::shouldReceive('transaction')->andReturnUsing(static function ($callback) {
+        DB::expects('transaction')->andReturnUsing(static function ($callback) {
             return $callback();
         });
 

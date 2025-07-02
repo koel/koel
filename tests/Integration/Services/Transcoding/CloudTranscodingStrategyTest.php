@@ -44,36 +44,30 @@ class CloudTranscodingStrategyTest extends TestCase
         $transcodeKey = "transcodes/128/$ulid.m4a";
         $transcodePresignedUrl = "https://s3.song.presigned.url/transcodes/128/$ulid.m4a";
 
-        $storage->shouldReceive('getPresignedUrl')
+        $storage->expects('getPresignedUrl')
             ->with('key.flac')
-            ->once()
             ->andReturn($songPresignedUrl);
 
-        $storage->shouldReceive('getPresignedUrl')
+        $storage->expects('getPresignedUrl')
             ->with($transcodeKey)
-            ->once()
             ->andReturn($transcodePresignedUrl);
 
-        $storage->shouldReceive('uploadToStorage')
-            ->with($transcodeKey, $tmpDestination)
-            ->once();
+        $storage->expects('uploadToStorage')
+            ->with($transcodeKey, $tmpDestination);
 
         $this->transcoder
-            ->shouldReceive('transcode')
-            ->with($songPresignedUrl, $tmpDestination, 128)
-            ->once();
+            ->expects('transcode')
+            ->with($songPresignedUrl, $tmpDestination, 128);
 
-        File::shouldReceive('ensureDirectoryExists')
-            ->with(dirname($tmpDestination))
-            ->once();
+        File::expects('ensureDirectoryExists')
+            ->with(dirname($tmpDestination));
 
-        File::shouldReceive('hash')
+        File::expects('hash')
             ->with($tmpDestination)
             ->andReturn('mocked-checksum');
 
-        File::shouldReceive('delete')
-            ->with($tmpDestination)
-            ->once();
+        File::expects('delete')
+            ->with($tmpDestination);
 
         $transcodedPath = $this->strategy->getTranscodeLocation($song, 128);
 
@@ -103,11 +97,11 @@ class CloudTranscodingStrategyTest extends TestCase
 
         $storage = $this->mock(S3CompatibleStorage::class);
 
-        $storage->shouldReceive('getPresignedUrl')
+        $storage->expects('getPresignedUrl')
             ->with('transcodes/128/some-ulid.m4a')
             ->andReturn('https://s3.song.presigned.url/transcodes/128/some-ulid.m4a');
 
-        $this->transcoder->shouldReceive('transcode')->never();
+        $this->transcoder->expects('transcode')->never();
 
         self::assertSame(
             'https://s3.song.presigned.url/transcodes/128/some-ulid.m4a',

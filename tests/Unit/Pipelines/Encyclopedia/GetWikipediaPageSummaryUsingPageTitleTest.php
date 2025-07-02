@@ -7,16 +7,18 @@ use App\Http\Integrations\Wikipedia\WikipediaConnector;
 use App\Pipelines\Encyclopedia\GetWikipediaPageSummaryUsingPageTitle;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
-use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Saloon\Http\Faking\MockResponse;
 use Saloon\Laravel\Facades\Saloon;
+use Tests\Concerns\TestsPipelines;
 use Tests\TestCase;
 
 use function Tests\test_path;
 
 class GetWikipediaPageSummaryUsingPageTitleTest extends TestCase
 {
+    use TestsPipelines;
+
     #[Test]
     public function getPageSummary(): void
     {
@@ -26,10 +28,7 @@ class GetWikipediaPageSummaryUsingPageTitleTest extends TestCase
             GetPageSummaryRequest::class => MockResponse::make(body: $json),
         ]);
 
-        $mock = Mockery::mock();
-        $mock->shouldReceive('next')
-            ->once()
-            ->with($json); // we're passing the whole JSON response through the pipeline
+        $mock = self::createNextClosureMock($json); // we're passing the whole JSON response through the pipeline
 
         (new GetWikipediaPageSummaryUsingPageTitle(new WikipediaConnector()))(
             'Skid Row (American band)',
@@ -56,10 +55,7 @@ class GetWikipediaPageSummaryUsingPageTitleTest extends TestCase
             ['Spider Man' => 'How’d that get in there?'],
         );
 
-        $mock = Mockery::mock();
-        $mock->shouldReceive('next')
-            ->once()
-            ->with(['Spider Man' => 'How’d that get in there?']);
+        $mock = self::createNextClosureMock(['Spider Man' => 'How’d that get in there?']);
 
         (new GetWikipediaPageSummaryUsingPageTitle(new WikipediaConnector()))(
             'Skid Row (American band)',
@@ -73,11 +69,7 @@ class GetWikipediaPageSummaryUsingPageTitleTest extends TestCase
     public function justPassOnIfPageTitleIsNull(): void
     {
         Saloon::fake([]);
-
-        $mock = Mockery::mock();
-        $mock->shouldReceive('next')
-            ->once()
-            ->with(null);
+        $mock = self::createNextClosureMock(null);
 
         (new GetWikipediaPageSummaryUsingPageTitle(new WikipediaConnector()))(
             null,

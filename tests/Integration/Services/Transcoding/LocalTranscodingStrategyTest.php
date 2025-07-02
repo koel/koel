@@ -35,17 +35,15 @@ class LocalTranscodingStrategyTest extends TestCase
 
         $destination = artifact_path("transcodes/128/$ulid.m4a", ensureDirectoryExists: false);
 
-        $this->transcoder->shouldReceive('transcode')
-            ->with('/path/to/song.flac', $destination, 128)
-            ->once();
+        $this->transcoder->expects('transcode')
+            ->with('/path/to/song.flac', $destination, 128);
 
-        File::shouldReceive('hash')
+        File::expects('hash')
             ->with($destination)
             ->andReturn('mocked-checksum');
 
-        File::shouldReceive('ensureDirectoryExists')
-            ->with(dirname($destination))
-            ->once();
+        File::expects('ensureDirectoryExists')
+            ->with(dirname($destination));
 
         $transcodedPath = $this->strategy->getTranscodeLocation($song, 128);
 
@@ -62,7 +60,7 @@ class LocalTranscodingStrategyTest extends TestCase
     #[Test]
     public function getFromDatabaseRecord(): void
     {
-        $this->transcoder->shouldReceive('transcode')->never();
+        $this->transcoder->expects('transcode')->never();
 
         /** @var Transcode $transcode */
         $transcode = Transcode::factory()->create([
@@ -71,11 +69,11 @@ class LocalTranscodingStrategyTest extends TestCase
             'hash' => 'mocked-checksum',
         ]);
 
-        File::shouldReceive('isReadable')
+        File::expects('isReadable')
             ->with('/path/to/transcode.m4a')
             ->andReturn(true);
 
-        File::shouldReceive('hash')
+        File::expects('hash')
             ->with('/path/to/transcode.m4a')
             ->andReturn('mocked-checksum');
 
@@ -100,24 +98,12 @@ class LocalTranscodingStrategyTest extends TestCase
 
         $destination = artifact_path("transcodes/128/$ulid.m4a", ensureDirectoryExists: false);
 
-        File::shouldReceive('isReadable')
-            ->with('/path/to/transcode.m4a')
-            ->andReturn(false);
+        File::expects('isReadable')->with('/path/to/transcode.m4a')->andReturn(false);
+        File::expects('delete')->with('/path/to/transcode.m4a');
+        File::expects('hash')->with($destination)->andReturn('mocked-checksum');
+        File::expects('ensureDirectoryExists')->with(dirname($destination));
 
-        File::shouldReceive('delete')
-            ->with('/path/to/transcode.m4a');
-
-        File::shouldReceive('hash')
-            ->with($destination)
-            ->andReturn('mocked-checksum');
-
-        File::shouldReceive('ensureDirectoryExists')
-            ->with(dirname($destination))
-            ->once();
-
-        $this->transcoder->shouldReceive('transcode')
-            ->with('/path/to/song.flac', $destination, 128)
-            ->once();
+        $this->transcoder->expects('transcode')->with('/path/to/song.flac', $destination, 128);
 
         $transcodedLocation = $this->strategy->getTranscodeLocation($song, 128);
 

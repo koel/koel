@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Traits;
+namespace Tests\Concerns;
 
 use Illuminate\Contracts\Console\Kernel as Artisan;
 use Illuminate\Foundation\Application;

@@ -6,7 +6,6 @@ use App\Http\Middleware\ForceHttps;
 use Illuminate\Http\Request;
 use Illuminate\Routing\UrlGenerator;
 use Mockery;
-use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,7 +13,7 @@ use Tests\TestCase;
 
 class ForceHttpsTest extends TestCase
 {
-    private LegacyMockInterface|UrlGenerator|MockInterface $url;
+    private UrlGenerator|MockInterface $url;
     private ForceHttps $middleware;
 
     public function setUp(): void
@@ -30,11 +29,11 @@ class ForceHttpsTest extends TestCase
     {
         config(['koel.force_https' => true]);
 
-        $this->url->shouldReceive('forceScheme')->with('https');
+        $this->url->expects('forceScheme')->with('https');
 
         $request = Mockery::mock(Request::class);
-        $request->shouldReceive('getClientIp')->andReturn('127.0.0.1');
-        $request->shouldReceive('setTrustedProxies')
+        $request->expects('getClientIp')->andReturn('127.0.0.1');
+        $request->expects('setTrustedProxies')
             ->with(
                 ['127.0.0.1'],
                 Request::HEADER_X_FORWARDED_FOR
@@ -54,7 +53,7 @@ class ForceHttpsTest extends TestCase
     {
         config(['koel.force_https' => false]);
 
-        $this->url->shouldReceive('forceScheme')->with('https')->never();
+        $this->url->expects('forceScheme')->with('https')->never();
 
         $request = Mockery::mock(Request::class);
         $request->shouldNotReceive('setTrustedProxies');

@@ -37,7 +37,7 @@ class AuthenticationServiceTest extends TestCase
     public function trySendResetPasswordLink(): void
     {
         $this->passwordBroker
-            ->shouldReceive('sendResetLink')
+            ->expects('sendResetLink')
             ->with(['email' => 'foo@bar.com'])
             ->andReturn(Password::RESET_LINK_SENT);
 
