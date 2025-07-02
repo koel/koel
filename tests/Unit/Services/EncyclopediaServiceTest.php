@@ -23,6 +23,8 @@ class EncyclopediaServiceTest extends TestCase
     private SpotifyService|MockInterface $spotifyService;
     private EncyclopediaService $encyclopediaService;
 
+    private array $spotifyConfig;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -36,6 +38,15 @@ class EncyclopediaServiceTest extends TestCase
             $this->artworkService,
             $this->spotifyService,
         );
+
+        $this->spotifyConfig = config('koel.services.spotify');
+    }
+
+    public function tearDown(): void
+    {
+        config()->set('koel.services.spotify', $this->spotifyConfig);
+
+        parent::tearDown();
     }
 
     #[Test]
@@ -59,19 +70,46 @@ class EncyclopediaServiceTest extends TestCase
     {
         /** @var Album $album */
         $album = Album::factory()->create(['cover' => '']);
-        $info = AlbumInformation::make();
+        $info = AlbumInformation::make(cover: 'https://wiki.example.com/album-cover.jpg');
 
         self::assertFalse($album->has_cover);
 
         $this->encyclopedia
-            ->shouldReceive('getAlbumInformation')
-            ->once()
+            ->expects('getAlbumInformation')
             ->with($album)
             ->andReturn($info);
 
         $this->artworkService
-            ->shouldReceive('storeAlbumCover')
-            ->with($album);
+            ->expects('storeAlbumCover')
+            ->with($album, 'https://wiki.example.com/album-cover.jpg');
+
+        self::assertSame($info, $this->encyclopediaService->getAlbumInformation($album));
+    }
+
+    #[Test]
+    public function getAlbumInformationPrefersSpotifyForFetchingCoverImage(): void
+    {
+        config()->set('koel.services.spotify', [
+            'client_id' => 'spotify-client-id',
+            'client_secret' => 'spotify-client-secret',
+        ]);
+
+        /** @var Album $album */
+        $album = Album::factory()->create(['cover' => '']);
+        $info = AlbumInformation::make(cover: 'https://wiki.example.com/album-cover.jpg');
+
+        self::assertFalse($album->has_cover);
+
+        $this->encyclopedia
+            ->expects('getAlbumInformation')
+            ->with($album)
+            ->andReturn($info);
+
+        $this->spotifyService->expects('tryGetAlbumCover')->with($album)->andReturn('https://spotify.com/cover.jpg');
+
+        $this->artworkService
+            ->expects('storeAlbumCover')
+            ->with($album, 'https://spotify.com/cover.jpg');
 
         self::assertSame($info, $this->encyclopediaService->getAlbumInformation($album));
     }
@@ -99,15 +137,46 @@ class EncyclopediaServiceTest extends TestCase
     {
         /** @var Artist $artist */
         $artist = Artist::factory()->create(['image' => '']);
-        $info = ArtistInformation::make();
+        $info = ArtistInformation::make(image: 'https://wiki.example.com/artist-image.jpg');
 
         self::assertFalse($artist->has_image);
 
         $this->encyclopedia
-            ->shouldReceive('getArtistInformation')
-            ->once()
+            ->expects('getArtistInformation')
             ->with($artist)
             ->andReturn($info);
+
+        $this->artworkService
+            ->expects('storeArtistImage')
+            ->with($artist, 'https://wiki.example.com/artist-image.jpg');
+
+        self::assertSame($info, $this->encyclopediaService->getArtistInformation($artist));
+    }
+
+    #[Test]
+    public function getArtistInformationPrefersSpotifyForFetchingImage(): void
+    {
+        config()->set('koel.services.spotify', [
+            'client_id' => 'spotify-client-id',
+            'client_secret' => 'spotify-client-secret',
+        ]);
+
+        /** @var Artist $artist */
+        $artist = Artist::factory()->create(['image' => '']);
+        $info = ArtistInformation::make(image: 'https://wiki.example.com/artist-image.jpg');
+
+        self::assertFalse($artist->has_image);
+
+        $this->encyclopedia
+            ->expects('getArtistInformation')
+            ->with($artist)
+            ->andReturn($info);
+
+        $this->spotifyService->expects('tryGetArtistImage')->with($artist)->andReturn('https://spotify.com/image.jpg');
+
+        $this->artworkService
+            ->expects('storeArtistImage')
+            ->with($artist, 'https://spotify.com/image.jpg');
 
         self::assertSame($info, $this->encyclopediaService->getArtistInformation($artist));
     }

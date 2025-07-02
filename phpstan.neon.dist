@@ -36,10 +36,6 @@ parameters:
         -
           message: '#expects .*, Mockery\\MockInterface given#'
           path: tests/*
-        -
-          message: '#expects .*, Mockery\\LegacyMockInterface given#'
-          path: tests/*
-
 
     excludePaths:
         - ./routes/console.php

@@ -45,8 +45,7 @@ class DownloadTest extends TestCase
         $user = create_user();
 
         $this->downloadService
-            ->shouldReceive('getDownloadable')
-            ->once()
+            ->expects('getDownloadable')
             ->with(Mockery::on(static function (Collection $retrievedSongs) use ($song) {
                 return $retrievedSongs->count() === 1 && $retrievedSongs->first()->is($song);
             }))
@@ -63,8 +62,7 @@ class DownloadTest extends TestCase
         $user = create_user();
 
         $this->downloadService
-            ->shouldReceive('getDownloadable')
-            ->once()
+            ->expects('getDownloadable')
             ->with(Mockery::on(static function (Collection $retrievedSongs) use ($songs): bool {
                 self::assertEqualsCanonicalizing($retrievedSongs->modelKeys(), $songs->modelKeys());
 
@@ -89,8 +87,7 @@ class DownloadTest extends TestCase
         $user = create_user();
 
         $this->downloadService
-            ->shouldReceive('getDownloadable')
-            ->once()
+            ->expects('getDownloadable')
             ->with(Mockery::on(static function (Collection $retrievedSongs) use ($songs): bool {
                 self::assertEqualsCanonicalizing($retrievedSongs->modelKeys(), $songs->modelKeys());
 
@@ -111,8 +108,7 @@ class DownloadTest extends TestCase
         $user = create_user();
 
         $this->downloadService
-            ->shouldReceive('getDownloadable')
-            ->once()
+            ->expects('getDownloadable')
             ->with(Mockery::on(static function (Collection $retrievedSongs) use ($songs): bool {
                 self::assertEqualsCanonicalizing($retrievedSongs->modelKeys(), $songs->modelKeys());
 
@@ -134,13 +130,12 @@ class DownloadTest extends TestCase
         $playlist->addPlayables($songs);
 
         $this->downloadService
-            ->shouldReceive('getDownloadable')
+            ->expects('getDownloadable')
             ->with(Mockery::on(static function (Collection $retrievedSongs) use ($songs): bool {
                 self::assertEqualsCanonicalizing($retrievedSongs->modelKeys(), $songs->modelKeys());
 
                 return true;
             }))
-            ->once()
             ->andReturn(Downloadable::make(test_path('songs/blank.mp3')));
 
         $this->get("download/playlist/{$playlist->id}?api_token=" . $user->createToken('Koel')->plainTextToken)
@@ -163,13 +158,12 @@ class DownloadTest extends TestCase
         $favorites = Interaction::factory(2)->for($user)->create(['liked' => true]);
 
         $this->downloadService
-            ->shouldReceive('getDownloadable')
+            ->expects('getDownloadable')
             ->with(Mockery::on(static function (Collection $songs) use ($favorites): bool {
                 self::assertEqualsCanonicalizing($songs->modelKeys(), $favorites->pluck('song_id')->all());
 
                 return true;
             }))
-            ->once()
             ->andReturn(Downloadable::make(test_path('songs/blank.mp3')));
 
         $this->get('download/favorites?api_token=' . $user->createToken('Koel')->plainTextToken)

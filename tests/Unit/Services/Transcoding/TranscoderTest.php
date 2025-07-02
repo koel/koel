@@ -25,7 +25,7 @@ class TranscoderTest extends TestCase
     public function transcode(): void
     {
         Process::fake();
-        File::shouldReceive('ensureDirectoryExists')->with('/path/to')->once();
+        File::expects('ensureDirectoryExists')->with('/path/to');
 
         $this->transcoder->transcode('/path/to/song.flac', '/path/to/output.m4a', 128);
 

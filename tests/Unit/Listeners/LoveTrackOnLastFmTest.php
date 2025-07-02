@@ -20,9 +20,7 @@ class LoveTrackOnLastFmTest extends TestCase
 
         $lastfm = Mockery::mock(LastfmService::class, ['enabled' => true]);
 
-        $lastfm->shouldReceive('toggleLoveTrack')
-            ->with($interaction->song, $interaction->user, $interaction->liked)
-            ->once();
+        $lastfm->expects('toggleLoveTrack')->with($interaction->song, $interaction->user, $interaction->liked);
 
         (new LoveTrackOnLastfm($lastfm))->handle(new SongLikeToggled($interaction));
     }

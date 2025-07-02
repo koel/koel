@@ -18,7 +18,7 @@ class ForgotPasswordTest extends TestCase
     public function sendResetPasswordRequest(): void
     {
         $this->mock(AuthenticationService::class)
-            ->shouldReceive('trySendResetPasswordLink')
+            ->expects('trySendResetPasswordLink')
             ->with('foo@bar.com')
             ->andReturnTrue();
 
@@ -30,7 +30,7 @@ class ForgotPasswordTest extends TestCase
     public function sendResetPasswordRequestFailed(): void
     {
         $this->mock(AuthenticationService::class)
-            ->shouldReceive('trySendResetPasswordLink')
+            ->expects('trySendResetPasswordLink')
             ->with('foo@bar.com')
             ->andReturnFalse();
 

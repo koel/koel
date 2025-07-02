@@ -8,16 +8,18 @@ use App\Pipelines\Encyclopedia\GetAlbumTracksUsingMbid;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
-use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Saloon\Http\Faking\MockResponse;
 use Saloon\Laravel\Facades\Saloon;
+use Tests\Concerns\TestsPipelines;
 use Tests\TestCase;
 
 use function Tests\test_path;
 
 class GetAlbumTracksUsingMbidTest extends TestCase
 {
+    use TestsPipelines;
+
     private array $responseBody;
     private array $tracks;
 
@@ -47,10 +49,7 @@ class GetAlbumTracksUsingMbidTest extends TestCase
             GetRecordingsRequest::class => MockResponse::make(body: $this->responseBody),
         ]);
 
-        $mock = Mockery::mock();
-        $mock->shouldReceive('next')
-            ->once()
-            ->with($this->tracks);
+        $mock = self::createNextClosureMock($this->tracks);
 
         (new GetAlbumTracksUsingMbid(new MusicBrainzConnector()))(
             'sample-mbid',
@@ -72,10 +71,7 @@ class GetAlbumTracksUsingMbidTest extends TestCase
         Saloon::fake([]);
         Cache::put(cache_key('album tracks', 'sample-mbid'), $this->tracks);
 
-        $mock = Mockery::mock();
-        $mock->shouldReceive('next')
-            ->once()
-            ->with($this->tracks);
+        $mock = self::createNextClosureMock($this->tracks);
 
         (new GetAlbumTracksUsingMbid(new MusicBrainzConnector()))(
             'sample-mbid',
@@ -90,10 +86,7 @@ class GetAlbumTracksUsingMbidTest extends TestCase
     {
         Saloon::fake([]);
 
-        $mock = Mockery::mock();
-        $mock->shouldReceive('next')
-            ->once()
-            ->with(null);
+        $mock = self::createNextClosureMock(null);
 
         (new GetAlbumTracksUsingMbid(new MusicBrainzConnector()))(
             null,

@@ -30,7 +30,7 @@ class EncyclopediaService
             function () use ($album): AlbumInformation {
                 $info = $this->encyclopedia->getAlbumInformation($album) ?: AlbumInformation::make();
 
-                if ($album->has_cover || (SpotifyService::enabled() && !$info->cover)) {
+                if ($album->has_cover || (!SpotifyService::enabled() && !$info->cover)) {
                     // If the album already has a cover, or there's no resource to download a cover from,
                     // just return the info.
                     return $info;
@@ -60,7 +60,7 @@ class EncyclopediaService
             function () use ($artist): ArtistInformation {
                 $info = $this->encyclopedia->getArtistInformation($artist) ?: ArtistInformation::make();
 
-                if ($artist->has_image || (SpotifyService::enabled() && !$info->image)) {
+                if ($artist->has_image || (!SpotifyService::enabled() && !$info->image)) {
                     // If the artist already has an image, or there's no resource to download an image from,
                     // just return the info.
                     return $info;

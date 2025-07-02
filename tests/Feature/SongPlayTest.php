@@ -44,8 +44,7 @@ class SongPlayTest extends TestCase
         ]);
 
         $this->mock(LocalStreamerAdapter::class)
-            ->shouldReceive('stream')
-            ->once();
+            ->expects('stream');
 
         $this->get("play/{$song->id}?t=$token->audioToken")
             ->assertOk();
@@ -67,8 +66,7 @@ class SongPlayTest extends TestCase
         ]);
 
         $this->mock(TranscodingStreamerAdapter::class)
-            ->shouldReceive('stream')
-            ->once();
+            ->expects('stream');
 
         $this->get("play/{$song->id}?t=$token->audioToken")
             ->assertOk();
@@ -88,8 +86,7 @@ class SongPlayTest extends TestCase
         $song = Song::factory()->create(['path' => '/var/songs/blank.mp3']);
 
         $this->mock(TranscodingStreamerAdapter::class)
-            ->shouldReceive('stream')
-            ->once();
+            ->expects('stream');
 
         $this->get("play/{$song->id}/1?t=$token->audioToken")
             ->assertOk();

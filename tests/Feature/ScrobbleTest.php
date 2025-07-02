@@ -22,13 +22,12 @@ class ScrobbleTest extends TestCase
         $song = Song::factory()->create();
 
         $this->mock(LastfmService::class)
-            ->shouldReceive('scrobble')
+            ->expects('scrobble')
             ->with(
                 Mockery::on(static fn (Song $s) => $s->is($song)),
                 Mockery::on(static fn (User $u) => $u->is($user)),
                 100
-            )
-            ->once();
+            );
 
         $this->postAs("/api/songs/{$song->id}/scrobble", ['timestamp' => 100], $user)
             ->assertNoContent();

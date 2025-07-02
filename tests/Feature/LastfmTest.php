@@ -35,14 +35,14 @@ class LastfmTest extends TestCase
         $temporaryToken = Mockery::mock(NewAccessToken::class);
         $temporaryToken->plainTextToken = 'tmp-token';
 
+        /** @var TokenManager|MockInterface $tokenManager */
         $tokenManager = $this->mock(TokenManager::class);
 
-        $tokenManager->shouldReceive('getUserFromPlainTextToken')
+        $tokenManager->expects('getUserFromPlainTextToken')
             ->with($token)
             ->andReturn($user);
 
-        $tokenManager->shouldReceive('createToken')
-            ->once()
+        $tokenManager->expects('createToken')
             ->with($user)
             ->andReturn($temporaryToken);
 
@@ -60,11 +60,11 @@ class LastfmTest extends TestCase
 
         self::assertNotNull(PersonalAccessToken::findToken($token));
 
+        /** @var LastfmService|MockInterface $lastfm */
         $lastfm = Mockery::mock(LastfmService::class)->makePartial();
 
-        $lastfm->shouldReceive('getSessionKey')
+        $lastfm->expects('getSessionKey')
             ->with('lastfm-token')
-            ->once()
             ->andReturn('my-session-key');
 
         app()->instance(LastfmService::class, $lastfm);
@@ -82,10 +82,10 @@ class LastfmTest extends TestCase
     {
         $user = create_user();
 
+        /** @var LastfmService|MockInterface $lastfm */
         $lastfm = Mockery::mock(LastfmService::class)->makePartial();
 
-        $lastfm->shouldReceive('getSessionKey')
-            ->once()
+        $lastfm->expects('getSessionKey')
             ->with('foo')
             ->andReturn('my-session-key');
 
@@ -93,13 +93,11 @@ class LastfmTest extends TestCase
 
         $tokenManager = $this->mock(TokenManager::class);
 
-        $tokenManager->shouldReceive('getUserFromPlainTextToken')
-            ->once()
+        $tokenManager->expects('getUserFromPlainTextToken')
             ->with('my-token')
             ->andReturn($user);
 
-        $tokenManager->shouldReceive('deleteTokenByPlainTextToken')
-            ->once();
+        $tokenManager->expects('deleteTokenByPlainTextToken');
 
         $this->get('lastfm/callback?token=foo&api_token=my-token');
 

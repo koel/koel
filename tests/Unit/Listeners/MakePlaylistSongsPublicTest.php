@@ -17,17 +17,12 @@ class MakePlaylistSongsPublicTest extends TestCase
     #[Test]
     public function handle(): void
     {
-        $collaborator = create_user();
-
         /** @var PlaylistCollaborationToken $token */
         $token = PlaylistCollaborationToken::factory()->create();
 
         $service = Mockery::mock(PlaylistService::class);
+        $service->expects('makePlaylistContentPublic')->with($token->playlist);
 
-        $service->shouldReceive('makePlaylistContentPublic')
-            ->with($token->playlist)
-            ->once();
-
-        (new MakePlaylistSongsPublic($service))->handle(new NewPlaylistCollaboratorJoined($collaborator, $token));
+        (new MakePlaylistSongsPublic($service))->handle(new NewPlaylistCollaboratorJoined(create_user(), $token));
     }
 }

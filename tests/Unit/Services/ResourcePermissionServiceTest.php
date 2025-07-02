@@ -43,11 +43,11 @@ class ResourcePermissionServiceTest extends TestCase
         $modelClass = $type->value;
         $subject = $modelClass::factory()->create(); // @phpstan-ignore-line
 
-        Gate::shouldReceive('forUser')
+        Gate::expects('forUser')
             ->with($user)
             ->andReturnSelf();
 
-        Gate::shouldReceive('allows')
+        Gate::expects('allows')
             ->with('edit', Mockery::on(static fn (Model $s) => $s->is($subject)))
             ->andReturn(true);
 

@@ -8,7 +8,6 @@ use App\Repositories\UserRepository;
 use App\Services\ArtworkService;
 use App\Services\SongStorages\S3LambdaStorage;
 use Mockery;
-use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -17,8 +16,8 @@ use function Tests\create_admin;
 
 class S3LambdaStorageTest extends TestCase
 {
-    private SongRepository|LegacyMockInterface|MockInterface $songRepository;
-    private UserRepository|LegacyMockInterface|MockInterface $userRepository;
+    private SongRepository|MockInterface $songRepository;
+    private UserRepository|MockInterface $userRepository;
     private S3LambdaStorage $storage;
 
     public function setUp(): void
@@ -40,9 +39,7 @@ class S3LambdaStorageTest extends TestCase
     public function createSongEntry(): void
     {
         $user = create_admin();
-        $this->userRepository->shouldReceive('getFirstAdminUser')
-            ->once()
-            ->andReturn($user);
+        $this->userRepository->expects('getFirstAdminUser')->andReturn($user);
 
         $song = $this->storage->createSongEntry(
             bucket: 'foo',
@@ -72,9 +69,7 @@ class S3LambdaStorageTest extends TestCase
     {
         $user = create_admin();
 
-        $this->userRepository->shouldReceive('getFirstAdminUser')
-            ->once()
-            ->andReturn($user);
+        $this->userRepository->expects('getFirstAdminUser')->andReturn($user);
 
         /** @var Song $song */
         $song = Song::factory()->create([
@@ -118,10 +113,7 @@ class S3LambdaStorageTest extends TestCase
             'storage' => 's3-lambda',
         ]);
 
-        $this->songRepository->shouldReceive('findOneByPath')
-            ->with('s3://foo/bar')
-            ->once()
-            ->andReturn($song);
+        $this->songRepository->expects('findOneByPath')->with('s3://foo/bar')->andReturn($song);
 
         $this->storage->deleteSongEntry('foo', 'bar');
 

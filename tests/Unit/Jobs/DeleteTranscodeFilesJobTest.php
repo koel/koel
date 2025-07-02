@@ -20,18 +20,13 @@ class DeleteTranscodeFilesJobTest extends TestCase
             TranscodeFileInfo::make('key.m4a', SongStorageType::S3),
         ]);
 
-        $localStrategy = $this->mock(LocalTranscodingStrategy::class);
+        $this->mock(LocalTranscodingStrategy::class)
+            ->expects('deleteTranscodeFile')
+            ->with('path/to/transcode.m4a', SongStorageType::LOCAL);
 
-        $localStrategy->shouldReceive('deleteTranscodeFile')
-            ->with('path/to/transcode.m4a', SongStorageType::LOCAL)
-            ->once();
-
-        $cloudStrategy = $this->mock(CloudTranscodingStrategy::class);
-
-        $cloudStrategy->shouldReceive('deleteTranscodeFile')
-            ->with('key.m4a', SongStorageType::S3)
-            ->once();
-
+        $this->mock(CloudTranscodingStrategy::class)
+            ->expects('deleteTranscodeFile')
+            ->with('key.m4a', SongStorageType::S3);
 
         $job = new DeleteTranscodeFilesJob($files);
         $job->handle();

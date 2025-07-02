@@ -12,8 +12,8 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\File;
-use Tests\Traits\CreatesApplication;
-use Tests\Traits\MakesHttpRequests;
+use Tests\Concerns\CreatesApplication;
+use Tests\Concerns\MakesHttpRequests;
 
 abstract class TestCase extends BaseTestCase
 {

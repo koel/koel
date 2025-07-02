@@ -52,7 +52,7 @@ class ArtistImageTest extends PlusTestCase
         self::assertFalse($artist->belongsToUser($user));
 
         $this->artworkService
-            ->shouldReceive('writeArtistImage')
+            ->expects('writeArtistImage')
             ->never();
 
         $this->putAs("api/artists/{$artist->public_id}/image", ['image' => 'data:image/jpeg;base64,Rm9v'], $user)
