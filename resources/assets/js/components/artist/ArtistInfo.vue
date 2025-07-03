@@ -8,13 +8,7 @@
 
     <ParagraphSkeleton v-if="loading" />
 
-    <template v-if="!loading && info?.bio">
-      <ExpandableContentBlock v-if="mode === 'aside' && info.bio.full">
-        <div v-html="info.bio.full" />
-      </ExpandableContentBlock>
-
-      <div v-else v-html="info.bio.full" />
-    </template>
+    <div v-if="!loading && info?.bio" v-html="info.bio.full" />
 
     <template v-if="info && !loading" #footer>
       <a :href="info.url" rel="openener" target="_blank">Source</a>
@@ -29,7 +23,6 @@ import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 
 import ArtistThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
 import AlbumArtistInfo from '@/components/ui/album-artist/AlbumOrArtistInfo.vue'
-import ExpandableContentBlock from '@/components/ui/album-artist/ExpandableContentBlock.vue'
 import ParagraphSkeleton from '@/components/ui/skeletons/ParagraphSkeleton.vue'
 
 const props = withDefaults(defineProps<{ artist: Artist, mode?: EncyclopediaDisplayMode }>(), { mode: 'aside' })
