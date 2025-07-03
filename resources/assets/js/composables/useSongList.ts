@@ -1,4 +1,4 @@
-import { differenceBy, orderBy, sampleSize, take, throttle } from 'lodash'
+import { differenceBy, orderBy, take, throttle } from 'lodash'
 import isMobile from 'ismobilejs'
 import type { Ref } from 'vue'
 import { computed, provide, reactive, ref } from 'vue'
@@ -129,7 +129,7 @@ export const useSongList = (
   const thumbnails = computed(() => {
     const playablesWithCover = playables.value.filter(p => getPlayableProp(p, 'album_cover', 'episode_image'))
 
-    const sampleCovers = sampleSize(playablesWithCover, 20)
+    const sampleCovers = playablesWithCover.slice(0, 100)
       .map(p => getPlayableProp(p, 'album_cover', 'episode_image'))
 
     return take(Array.from(new Set(sampleCovers)), 4)
