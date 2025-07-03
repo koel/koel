@@ -6,6 +6,7 @@ use App\Exceptions\MediaPathNotSetException;
 use App\Models\Setting;
 use App\Services\SongStorages\LocalStorage;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -37,9 +38,11 @@ class LocalStorageTest extends TestCase
     public function storeUploadedFile(): void
     {
         Setting::set('media_path', public_path('sandbox/media'));
+        File::copy(test_path('songs/full.mp3'), artifact_path('tmp/random/full.mp3'));
+
         $user = create_user();
 
-        $reference = $this->service->storeUploadedFile(UploadedFile::fromFile(test_path('songs/full.mp3')), $user); //@phpstan-ignore-line
+        $reference = $this->service->storeUploadedFile(artifact_path('tmp/random/full.mp3'), $user);
 
         self::assertSame(public_path("sandbox/media/__KOEL_UPLOADS_\${$user->id}__/full.mp3"), $reference->location);
         self::assertSame($reference->location, $reference->localPath);

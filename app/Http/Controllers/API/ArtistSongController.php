@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\SongResource;
+use App\Http\Resources\SongResourceCollection;
 use App\Models\Artist;
 use App\Models\User;
 use App\Repositories\SongRepository;
@@ -20,6 +20,6 @@ class ArtistSongController extends Controller
 
     public function index(Artist $artist)
     {
-        return SongResource::collection($this->songRepository->getByArtist($artist, $this->user));
+        return SongResourceCollection::make($this->songRepository->getByArtist($artist, $this->user));
     }
 }

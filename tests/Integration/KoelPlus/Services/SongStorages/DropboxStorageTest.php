@@ -8,7 +8,6 @@ use App\Models\Song;
 use App\Services\SongStorages\DropboxStorage;
 use App\Values\UploadReference;
 use Illuminate\Http\Client\Request;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
@@ -29,7 +28,7 @@ class DropboxStorageTest extends PlusTestCase
 
     private MockInterface|DropboxFilesystem $filesystem;
     private MockInterface|Client $client;
-    private UploadedFile $file;
+    private string $uploadedFilePath;
 
     public function setUp(): void
     {
@@ -53,7 +52,8 @@ class DropboxStorageTest extends PlusTestCase
 
         self::mockDropboxRefreshAccessTokenCall();
 
-        $this->file = UploadedFile::fromFile(test_path('songs/full.mp3'), 'song.mp3'); //@phpstan-ignore-line
+        File::copy(test_path('songs/full.mp3'), artifact_path('/tmp/random/song.mp3'));
+        $this->uploadedFilePath = artifact_path('/tmp/random/song.mp3');
     }
 
     #[Test]
@@ -75,7 +75,7 @@ class DropboxStorageTest extends PlusTestCase
 
         $user = create_user();
         $this->filesystem->expects('write');
-        $reference = $service->storeUploadedFile($this->file, $user);
+        $reference = $service->storeUploadedFile($this->uploadedFilePath, $user);
 
         self::assertSame("dropbox://{$user->id}__random__song.mp3", $reference->location);
         self::assertSame(artifact_path("tmp/random/song.mp3"), $reference->localPath);

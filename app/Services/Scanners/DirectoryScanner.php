@@ -3,7 +3,6 @@
 namespace App\Services\Scanners;
 
 use App\Enums\ScanEvent;
-use App\Events\LibraryChanged;
 use App\Events\MediaScanCompleted;
 use App\Values\Scanning\ScanConfiguration;
 use App\Values\Scanning\ScanResultCollection;
@@ -35,9 +34,6 @@ class DirectoryScanner extends Scanner
         }
 
         event(new MediaScanCompleted($results));
-
-        // Trigger LibraryChanged, so that PruneLibrary handler is fired to prune the lib.
-        event(new LibraryChanged());
 
         return $results;
     }

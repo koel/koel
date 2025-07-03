@@ -5,7 +5,7 @@ namespace App\Jobs;
 use App\Services\Transcoding\TranscodeStrategyFactory;
 use App\Values\Transcoding\TranscodeFileInfo;
 use Illuminate\Support\Collection;
-use Log;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class DeleteTranscodeFilesJob extends QueuedJob

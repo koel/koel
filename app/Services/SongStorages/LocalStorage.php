@@ -9,24 +9,20 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Values\UploadReference;
 use Exception;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 class LocalStorage extends SongStorage
 {
-    public function storeUploadedFile(UploadedFile $uploadedFile, User $uploader): UploadReference
+    public function storeUploadedFile(string $uploadedFilePath, User $uploader): UploadReference
     {
-        $uploadDirectory = $this->getUploadDirectory($uploader);
-        $targetFileName = $this->getTargetFileName($uploadedFile, $uploader);
-
-        $uploadedFile->move($uploadDirectory, $targetFileName);
-        $targetPathName = $uploadDirectory . $targetFileName;
+        $destination = $this->getDestination($uploadedFilePath, $uploader);
+        File::move($uploadedFilePath, $destination);
 
         // For local storage, the "location" and "localPath" are the same.
         return UploadReference::make(
-            location: $targetPathName,
-            localPath: $targetPathName,
+            location: $destination,
+            localPath: $destination,
         );
     }
 
@@ -38,28 +34,29 @@ class LocalStorage extends SongStorage
 
     private function getUploadDirectory(User $uploader): string
     {
-        return once(static function () use ($uploader): string {
-            $mediaPath = Setting::get('media_path');
+        $mediaPath = Setting::get('media_path');
 
-            throw_unless((bool) $mediaPath, MediaPathNotSetException::class);
+        throw_unless((bool) $mediaPath, MediaPathNotSetException::class);
 
-            $dir = "$mediaPath/__KOEL_UPLOADS_\${$uploader->id}__/";
-            File::ensureDirectoryExists($dir);
+        $dir = "$mediaPath/__KOEL_UPLOADS_\${$uploader->id}__/";
+        File::ensureDirectoryExists($dir);
 
-            return $dir;
-        });
+        return $dir;
     }
 
-    private function getTargetFileName(UploadedFile $file, User $uploader): string
+    private function getDestination(string $sourcePath, User $uploader): string
     {
+        $uploadDirectory = $this->getUploadDirectory($uploader);
+        $sourceName = basename($sourcePath);
+
         // If there's no existing file with the same name in the upload directory, use the original name.
         // Otherwise, prefix the original name with a hash.
         // The whole point is to keep a readable file name when we can.
-        if (!File::exists($this->getUploadDirectory($uploader) . $file->getClientOriginalName())) {
-            return $file->getClientOriginalName();
+        if (!File::exists($uploadDirectory . $sourceName)) {
+            return $uploadDirectory . $sourceName;
         }
 
-        return $this->getUniqueHash() . '_' . $file->getClientOriginalName();
+        return $uploadDirectory . $this->getUniqueHash() . '_' . $sourceName;
     }
 
     private function getUniqueHash(): string

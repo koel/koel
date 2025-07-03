@@ -107,12 +107,12 @@ class Song extends Model implements AuditableContract
     public static function query(?PlayableType $type = null, ?User $user = null): SongBuilder
     {
         return parent::query()
+            ->when($user, static fn (SongBuilder $query) => $query->forUser($user)) // @phpstan-ignore-line
             ->when($type, static fn (Builder $query) => match ($type) { // @phpstan-ignore-line phpcs:ignore
                 PlayableType::SONG => $query->whereNull('songs.podcast_id'),
                 PlayableType::PODCAST_EPISODE => $query->whereNotNull('songs.podcast_id'),
                 default => $query,
-            })
-            ->when($user, static fn (SongBuilder $query) => $query->forUser($user)); // @phpstan-ignore-line
+            });
     }
 
     public function owner(): BelongsTo

@@ -265,18 +265,22 @@ class DirectoryScannerTest extends TestCase
     }
 
     #[Test]
-    public function optionallyIgnoreHiddenFiles(): void
+    public function hiddenFilesAndFoldersAreIgnoredIfConfiguredSo(): void
     {
-        $path = Setting::get('media_path');
+        $config = ScanConfiguration::make(owner: create_admin());
 
+        config(['koel.ignore_dot_files' => true]);
+        $this->scanner->scan($this->mediaPath, $config);
+        $this->assertDatabaseMissing(Album::class, ['name' => 'Hidden Album']);
+    }
+
+    #[Test]
+    public function hiddenFilesAndFoldersAreScannedIfConfiguredSo(): void
+    {
         $config = ScanConfiguration::make(owner: create_admin());
 
         config(['koel.ignore_dot_files' => false]);
-        $this->scanner->scan($path, $config);
+        $this->scanner->scan($this->mediaPath, $config);
         $this->assertDatabaseHas(Album::class, ['name' => 'Hidden Album']);
-
-        config(['koel.ignore_dot_files' => true]);
-        $this->scanner->scan($path, $config);
-        $this->assertDatabaseMissing(Album::class, ['name' => 'Hidden Album']);
     }
 }

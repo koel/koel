@@ -14,7 +14,6 @@ use App\Values\Scanning\ScanConfiguration;
 use App\Values\Scanning\ScanInformation;
 use App\Values\UploadReference;
 use Exception;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Mockery;
 use Mockery\MockInterface;
@@ -41,7 +40,7 @@ class UploadServiceTest extends TestCase
     {
         $storage = Mockery::mock(SongStorage::class, ['getStorageType' => SongStorageType::LOCAL]);
         $scanInfo = ScanInformation::fromGetId3Info([], '/var/media/koel/some-file.mp3');
-        $file = Mockery::mock(UploadedFile::class);
+        $file = '/var/media/koel/some-file.mp3';
         $song = Song::factory()->create();
         $uploader = create_user();
 
@@ -75,7 +74,7 @@ class UploadServiceTest extends TestCase
     public function uploadUpdatesSongPathAndStorage(): void
     {
         $storage = Mockery::mock(SongStorage::class, ['getStorageType' => SongStorageType::S3]);
-        $file = Mockery::mock(UploadedFile::class);
+        $file = '/tmp/some-tmp-file.mp3';
         $scanInfo = ScanInformation::fromGetId3Info([], '/tmp/some-tmp-file.mp3');
         $uploader = create_user();
 
@@ -127,7 +126,7 @@ class UploadServiceTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create();
 
-        $file = Mockery::mock(UploadedFile::class);
+        $file = '/tmp/some-tmp-file.mp3';
         $uploader = create_user();
 
         $reference = UploadReference::make(
@@ -149,7 +148,7 @@ class UploadServiceTest extends TestCase
     {
         $scanInfo = ScanInformation::fromGetId3Info([], '/var/media/koel/some-file.mp3');
         $storage = Mockery::mock(SongStorage::class, ['getStorageType' => SongStorageType::LOCAL]);
-        $file = Mockery::mock(UploadedFile::class);
+        $file = '/tmp/some-file.mp3';
         $uploader = create_user();
 
         $reference = UploadReference::make(
@@ -175,7 +174,7 @@ class UploadServiceTest extends TestCase
     public function undoUploadOnScanningError(): void
     {
         $storage = Mockery::mock(SongStorage::class, ['getStorageType' => SongStorageType::LOCAL]);
-        $file = Mockery::mock(UploadedFile::class);
+        $file = '/tmp/some-file.mp3';
         $uploader = create_user();
 
         $reference = UploadReference::make(

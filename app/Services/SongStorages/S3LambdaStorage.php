@@ -13,7 +13,6 @@ use App\Repositories\SongRepository;
 use App\Repositories\UserRepository;
 use App\Services\ArtworkService;
 use App\Values\UploadReference;
-use Illuminate\Http\UploadedFile;
 
 /**
  * The legacy storage implementation for Lambda and S3, to provide backward compatibility.
@@ -29,7 +28,7 @@ class S3LambdaStorage extends S3CompatibleStorage
         parent::__construct();
     }
 
-    public function storeUploadedFile(UploadedFile $uploadedFile, User $uploader): UploadReference
+    public function storeUploadedFile(string $uploadedFilePath, User $uploader): UploadReference
     {
         throw new MethodNotImplementedException('Lambda storage does not support uploading.');
     }

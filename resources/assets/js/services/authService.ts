@@ -35,7 +35,7 @@ export const authService = {
     merge(userStore.current, (await http.put<User>('me', data)))
   },
 
-  getApiToken: () => lsGet(API_TOKEN_STORAGE_KEY),
+  getApiToken: () => lsGet<string>(API_TOKEN_STORAGE_KEY),
 
   hasApiToken () {
     return Boolean(this.getApiToken())

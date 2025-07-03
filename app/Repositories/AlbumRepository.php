@@ -10,6 +10,7 @@ use App\Repositories\Contracts\ScoutableRepository;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Laravel\Scout\Builder as ScoutBuilder;
@@ -20,6 +21,17 @@ use Laravel\Scout\Builder as ScoutBuilder;
  */
 class AlbumRepository extends Repository implements ScoutableRepository
 {
+    /** @param int $id */
+    public function getOne($id, ?User $scopedUser = null): Model
+    {
+        $scopedUser ??= auth()->user();
+
+        return $this->getOneBy([
+            'id' => $id,
+            'user_id' => $scopedUser?->id,
+        ]);
+    }
+
     /** @return Collection|array<array-key, Album> */
     public function getRecentlyAdded(int $count = 6, ?User $user = null): Collection
     {

@@ -1,12 +1,8 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Broadcast Channels
-|--------------------------------------------------------------------------
-|
-| Here you may register all of the event broadcasting channels that your
-| application supports. The given channel authorization callbacks are
-| used to check if an authenticated user can listen to the channel.
-|
-*/
+use App\Models\User;
+use Illuminate\Support\Facades\Broadcast;
+
+Broadcast::channel('user.{publicId}', static function (User $user, $publicId): bool {
+    return $user->is(User::query()->where('public_id', $publicId)->firstOrFail());
+});

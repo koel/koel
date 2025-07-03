@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\LibraryChanged;
 use App\Events\SongFolderStructureExtractionRequested;
 use App\Facades\License;
 use App\Jobs\DeleteSongFilesJob;
@@ -31,6 +32,7 @@ class SongService
         private readonly TranscodeRepository $transcodeRepository,
         private readonly ArtworkService $artworkService,
         private readonly CacheStrategy $cache,
+        private readonly Dispatcher $dispatcher,
     ) {
     }
 
@@ -68,6 +70,9 @@ class SongService
                     if ($noTrackUpdate) {
                         $data->track = null;
                     }
+
+                    // Instruct the system to prune the library, i.e., remove empty albums and artists.
+                    event(new LibraryChanged());
 
                     return $updated;
                 }, collect());
@@ -161,11 +166,14 @@ class SongService
             return;
         }
 
-        DeleteSongFilesJob::dispatch($songFiles);
+        $this->dispatcher->dispatch(new DeleteSongFilesJob($songFiles));
 
         if ($transcodeFiles->isNotEmpty()) {
-            DeleteTranscodeFilesJob::dispatch($transcodeFiles);
+            $this->dispatcher->dispatch(new DeleteTranscodeFilesJob($transcodeFiles));
         }
+
+        // Instruct the system to prune the library, i.e., remove empty albums and artists.
+        event(new LibraryChanged());
     }
 
     public function createOrUpdateSongFromScan(ScanInformation $info, ScanConfiguration $config): Song
@@ -177,7 +185,7 @@ class SongService
         $isFileModified = $song && $song->mtime !== $info->mTime;
         $isFileNewOrModified = $isFileNew || $isFileModified;
 
-        // if the file is not new or modified and we're not force-rescanning, skip the whole process.
+        // if the file is not new or modified, and we're not force-rescanning, skip the whole process.
         if (!$isFileNewOrModified && !$config->force) {
             return $song;
         }

@@ -9,6 +9,7 @@ use App\Http\Requests\API\SongUpdateRequest;
 use App\Http\Resources\AlbumResource;
 use App\Http\Resources\ArtistResource;
 use App\Http\Resources\SongResource;
+use App\Http\Resources\SongResourceCollection;
 use App\Models\Song;
 use App\Models\User;
 use App\Repositories\AlbumRepository;
@@ -34,7 +35,7 @@ class SongController extends Controller
 
     public function index(SongListRequest $request)
     {
-        return SongResource::collection(
+        return SongResourceCollection::make(
             $this->songRepository->getForListing(
                 sortColumns: $request->sort ? explode(',', $request->sort) : ['songs.title'],
                 sortDirection: $request->order ?: 'asc',
@@ -67,7 +68,7 @@ class SongController extends Controller
         );
 
         return response()->json([
-            'songs' => SongResource::collection($updatedSongs),
+            'songs' => SongResourceCollection::make($updatedSongs),
             'albums' => AlbumResource::collection($albums),
             'artists' => ArtistResource::collection($artists),
             'removed' => $this->libraryManager->prune(),

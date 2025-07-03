@@ -2,10 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\ScrobbleJob;
 use App\Models\Song;
-use App\Models\User;
-use App\Services\LastfmService;
-use Mockery;
+use App\Services\Dispatcher;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -21,13 +20,13 @@ class ScrobbleTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create();
 
-        $this->mock(LastfmService::class)
-            ->expects('scrobble')
-            ->with(
-                Mockery::on(static fn (Song $s) => $s->is($song)),
-                Mockery::on(static fn (User $u) => $u->is($user)),
-                100
-            );
+        $this->mock(Dispatcher::class)
+            ->expects('dispatch')
+            ->andReturnUsing(function (ScrobbleJob $job) use ($song, $user): void {
+                $this->assertTrue($song->is($job->song));
+                $this->assertTrue($user->is($job->user));
+                $this->assertEquals(100, $job->timestamp);
+            });
 
         $this->postAs("/api/songs/{$song->id}/scrobble", ['timestamp' => 100], $user)
             ->assertNoContent();

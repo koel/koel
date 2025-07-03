@@ -2,6 +2,7 @@
 
 namespace Tests\Integration\Services;
 
+use App\Events\LibraryChanged;
 use App\Events\SongFolderStructureExtractionRequested;
 use App\Jobs\DeleteSongFilesJob;
 use App\Jobs\DeleteTranscodeFilesJob;
@@ -10,13 +11,14 @@ use App\Models\Artist;
 use App\Models\Setting;
 use App\Models\Song;
 use App\Models\Transcode;
+use App\Services\Dispatcher;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
 use App\Values\Scanning\ScanConfiguration;
 use App\Values\SongUpdateData;
-use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -27,11 +29,13 @@ use function Tests\test_path;
 class SongServiceTest extends TestCase
 {
     private SongService $service;
+    private Dispatcher|MockInterface $dispatcher;
 
     public function setUp(): void
     {
         parent::setUp();
 
+        $this->dispatcher = $this->mock(Dispatcher::class);
         $this->service = app(SongService::class);
 
         $user = create_user();
@@ -42,6 +46,8 @@ class SongServiceTest extends TestCase
 
     public function testUpdateSingleSong(): void
     {
+        Event::fake(LibraryChanged::class);
+
         $song = Song::factory()->create();
 
         $data = SongUpdateData::make(
@@ -76,10 +82,14 @@ class SongServiceTest extends TestCase
         $this->assertEquals($expectedData['track'], $updatedSongs->first()->track);
         $this->assertEquals($expectedData['lyrics'], $updatedSongs->first()->lyrics);
         $this->assertEquals($expectedData['genre'], $updatedSongs->first()->genre);
+
+        Event::assertDispatched(LibraryChanged::class);
     }
 
     public function testUpdateMultipleSongsTrackProvided(): void
     {
+        Event::fake(LibraryChanged::class);
+
         $song1 = Song::factory()->create([
             'track' => 1,
         ]);
@@ -124,10 +134,14 @@ class SongServiceTest extends TestCase
             $this->assertEquals($expectedData['lyrics'], $updatedSong->lyrics);
             $this->assertEquals($expectedData['genre'], $updatedSong->genre);
         }
+
+        Event::assertDispatched(LibraryChanged::class);
     }
 
     public function testUpdateMultipleTracksWithoutProvidingTrack(): void
     {
+        Event::fake(LibraryChanged::class);
+
         $song1 = Song::factory()->create(['track' => 1, 'disc' => 1]);
         $song2 = Song::factory()->create(['track' => 2, 'disc' => 1]);
 
@@ -182,39 +196,60 @@ class SongServiceTest extends TestCase
         $this->assertEquals($expectedData2['track'], $updatedSongs[1]->track);
         $this->assertEquals($expectedData2['lyrics'], $updatedSongs[1]->lyrics);
         $this->assertEquals($expectedData2['genre'], $updatedSongs[1]->genre);
+
+        Event::assertDispatched(LibraryChanged::class);
     }
 
     #[Test]
     public function deleteSongs(): void
     {
-        Bus::fake();
+        Event::fake(LibraryChanged::class);
         $songs = Song::factory()->count(2)->create();
 
-        $this->service->deleteSongs($songs->pluck('id')->toArray());
-
-        $songs->each(fn (Song $song) => $this->assertDatabaseMissing(Song::class, ['id' => $song->id]));
-
-        Bus::assertDispatched(
-            DeleteSongFilesJob::class,
-            static function (DeleteSongFilesJob $job) use ($songs) {
+        $this->dispatcher->expects('dispatch')
+            ->with(DeleteSongFilesJob::class)
+            ->andReturnUsing(static function (DeleteSongFilesJob $job) use ($songs): void {
                 self::assertEqualsCanonicalizing(
                     $job->files->pluck('location')->toArray(),
                     $songs->pluck('path')->toArray(),
                 );
+            });
 
-                return true;
-            }
-        );
+        $this->dispatcher->shouldNotReceive('dispatch')->with(DeleteTranscodeFilesJob::class);
 
-        Bus::assertNotDispatched(DeleteTranscodeFilesJob::class);
+        $this->service->deleteSongs($songs->pluck('id')->toArray());
+        $songs->each(fn (Song $song) => $this->assertDatabaseMissing(Song::class, ['id' => $song->id]));
+
+        Event::assertDispatched(LibraryChanged::class);
     }
 
     #[Test]
     public function deleteSongsWithTranscodes(): void
     {
-        Bus::fake();
+        Event::fake(LibraryChanged::class);
+
         $transcodes = Transcode::factory()->count(2)->create();
         $songs = $transcodes->map(static fn (Transcode $transcode) => $transcode->song); // @phpstan-ignore-line
+
+        $this->dispatcher
+            ->expects('dispatch')
+            ->with(DeleteSongFilesJob::class)
+            ->andReturnUsing(static function (DeleteSongFilesJob $job) use ($songs): void {
+                self::assertEqualsCanonicalizing(
+                    $job->files->pluck('location')->toArray(),
+                    $songs->pluck('path')->toArray(),
+                );
+            });
+
+        $this->dispatcher
+            ->expects('dispatch')
+            ->with(DeleteTranscodeFilesJob::class)
+            ->andReturnUsing(static function (DeleteTranscodeFilesJob $job) use ($transcodes): void {
+                self::assertEqualsCanonicalizing(
+                    $job->files->pluck('location')->toArray(),
+                    $transcodes->pluck('location')->toArray(),
+                );
+            });
 
         $this->service->deleteSongs($transcodes->pluck('song_id')->toArray());
 
@@ -223,29 +258,7 @@ class SongServiceTest extends TestCase
             $this->assertDatabaseMissing(Transcode::class, ['id' => $transcode->id]);
         });
 
-        Bus::assertDispatched(
-            DeleteSongFilesJob::class,
-            static function (DeleteSongFilesJob $job) use ($songs) {
-                self::assertEqualsCanonicalizing(
-                    $job->files->pluck('location')->toArray(),
-                    $songs->pluck('path')->toArray(),
-                );
-
-                return true;
-            }
-        );
-
-        Bus::assertDispatched(
-            DeleteTranscodeFilesJob::class,
-            static function (DeleteTranscodeFilesJob $job) use ($transcodes) {
-                self::assertEqualsCanonicalizing(
-                    $job->files->pluck('location')->toArray(),
-                    $transcodes->pluck('location')->toArray(),
-                );
-
-                return true;
-            }
-        );
+        Event::assertDispatched(LibraryChanged::class);
     }
 
     #[Test]

@@ -31,7 +31,7 @@ class ExcerptSearchResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'songs' => SongResource::collection($this->result->songs),
+            'songs' => SongResourceCollection::make($this->result->songs),
             'artists' => ArtistResource::collection($this->result->artists),
             'albums' => AlbumResource::collection($this->result->albums),
             'podcasts' => PodcastResourceCollection::make($this->result->podcasts),

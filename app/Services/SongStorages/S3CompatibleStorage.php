@@ -6,7 +6,6 @@ use App\Enums\SongStorageType;
 use App\Models\User;
 use App\Services\SongStorages\Concerns\DeletesUsingFilesystem;
 use App\Values\UploadReference;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -19,16 +18,14 @@ class S3CompatibleStorage extends CloudStorage
     {
     }
 
-    public function storeUploadedFile(UploadedFile $uploadedFile, User $uploader): UploadReference
+    public function storeUploadedFile(string $uploadedFilePath, User $uploader): UploadReference
     {
-        $file = $this->moveUploadedFileToTemporaryLocation($uploadedFile);
-        $key = $this->generateStorageKey($uploadedFile->getClientOriginalName(), $uploader);
-
-        $this->uploadToStorage($key, $file->getRealPath());
+        $key = $this->generateStorageKey(basename($uploadedFilePath), $uploader);
+        $this->uploadToStorage($key, $uploadedFilePath);
 
         return UploadReference::make(
             location: "s3://$this->bucket/$key",
-            localPath: $file->getRealPath(),
+            localPath: $uploadedFilePath,
         );
     }
 

@@ -8,7 +8,7 @@ import { songStore } from '@/stores/songStore'
 import { eventBus } from '@/utils/eventBus'
 import { logger } from '@/utils/logger'
 
-interface UploadResult {
+export interface UploadResult {
   song: Song
   album: Album
 }
@@ -82,16 +82,15 @@ export const uploadService = {
     file.status = 'Uploading'
 
     try {
-      const result = await http.post<UploadResult>('upload', formData, (progressEvent: ProgressEvent) => {
+      const result = await http.post<UploadResult | null>('upload', formData, (progressEvent: ProgressEvent) => {
         file.progress = progressEvent.loaded * 100 / progressEvent.total
       })
 
       file.status = 'Uploaded'
 
-      songStore.syncWithVault(result.song)
-      albumStore.syncWithVault(result.album)
-      commonStore.state.song_length += 1
-      eventBus.emit('SONG_UPLOADED', result.song)
+      if (result) {
+        this.handleUploadResult(result)
+      }
 
       this.proceed() // upload the next file
 
@@ -108,6 +107,13 @@ export const uploadService = {
 
       this.proceed() // upload the next file
     }
+  },
+
+  handleUploadResult: (result: UploadResult) => {
+    songStore.syncWithVault(result.song)
+    albumStore.syncWithVault(result.album)
+    commonStore.state.song_length += 1
+    eventBus.emit('SONG_UPLOADED', result.song)
   },
 
   retry (file: UploadFile) {
