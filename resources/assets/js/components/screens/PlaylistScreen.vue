@@ -174,6 +174,8 @@ watch(filterKeywords, keywords => {
 })
 
 const sort = (field: MaybeArray<PlayableListSortField> | null, order: SortOrder) => {
+  listConfig.reorderable = field === 'position'
+
   currentState.sortField = field
   currentState.sortOrder = order
 
