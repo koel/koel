@@ -70,8 +70,8 @@ docker exec --user www-data <container_name_for_koel> php artisan koel:scan
 :::
 
 ::: details You receive a `Class 'Pusher' not found` error
-Add or set `BROADCAST_DRIVER=log` in your `.env` file. This will instruct Laravel to use `log` as the default broadcast
-driver instead.
+Add or set `BROADCAST_CONNECTION=log` in your `.env` file. This will instruct Laravel to use `log` as the default
+broadcast driver instead.
 :::
 
 ::: details You receive an "Unknown error" when scanning using the web interface
