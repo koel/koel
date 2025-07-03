@@ -10,17 +10,27 @@ export const broadcastSubscriber = {
   echo: null as Echo<Broadcaster> | null,
 
   newEchoInstance (): Echo<Broadcaster> {
+    const key = import.meta.env.VITE_PUSHER_APP_KEY
+    const cluster = import.meta.env.VITE_PUSHER_APP_CLUSTER
+
+    if (!key || !cluster) {
+      return new Echo({
+        broadcaster: 'null',
+      })
+    }
+
+    window.Pusher = window.Pusher || Pusher
+
     return new Echo({
+      key,
+      cluster,
       broadcaster: 'pusher',
-      key: import.meta.env.VITE_PUSHER_APP_KEY,
-      cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
       forceTLS: true,
       bearerToken: authService.getApiToken(),
     })
   },
 
   init (userId: User['id'], echo?: Echo<'pusher' | 'null'>) {
-    window.Pusher = window.Pusher || Pusher
     this.subscribeToEvents(echo || this.newEchoInstance(), userId)
   },
 

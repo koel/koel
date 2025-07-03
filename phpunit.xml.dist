@@ -32,7 +32,7 @@
         <env name="YOUTUBE_API_KEY" value="foo"/>
         <env name="AWS_REGION" value="us-west-2"/>
         <env name="AWS_BUCKET" value="koel"/>
-        <env name="BROADCAST_DRIVER" value="log"/>
+        <env name="BROADCAST_CONNECTION" value="log"/>
         <env name="CACHE_MEDIA" value="true"/>
         <env name="MAIL_MAILER" value="log"/>
         <ini name="memory_limit" value="1024M"/>
