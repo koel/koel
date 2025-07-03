@@ -9,11 +9,7 @@
     <ParagraphSkeleton v-if="loading" />
 
     <template v-if="!loading && info?.wiki">
-      <ExpandableContentBlock v-if="mode === 'aside' && info.wiki.full">
-        <div v-html="info.wiki.full" />
-      </ExpandableContentBlock>
-
-      <div v-else v-html="info.wiki.full" />
+      <div v-html="info.wiki.full" />
 
       <TrackList
         v-if="info.tracks?.length"
@@ -38,7 +34,6 @@ import { defineAsyncComponent } from '@/utils/helpers'
 
 import AlbumThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
 import AlbumArtistInfo from '@/components/ui/album-artist/AlbumOrArtistInfo.vue'
-import ExpandableContentBlock from '@/components/ui/album-artist/ExpandableContentBlock.vue'
 import ParagraphSkeleton from '@/components/ui/skeletons/ParagraphSkeleton.vue'
 
 const props = withDefaults(defineProps<{ album: Album, mode?: EncyclopediaDisplayMode }>(), { mode: 'aside' })
