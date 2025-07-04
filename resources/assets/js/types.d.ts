@@ -479,7 +479,7 @@ interface BasicListSorterDropDownItem<T extends PodcastListSortField | AlbumList
 }
 
 type SortOrder = 'asc' | 'desc'
-type MoveType = 'before' | 'after'
+type Placement = 'before' | 'after'
 
 type MethodOf<T> = { [K in keyof T]: T[K] extends Closure ? K : never; }[keyof T]
 

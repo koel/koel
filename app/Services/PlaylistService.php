@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\Placement;
 use App\Exceptions\OperationNotApplicableForSmartPlaylistException;
 use App\Exceptions\PlaylistBothSongsAndRulesProvidedException;
 use App\Facades\License;
@@ -128,19 +129,23 @@ class PlaylistService
         $playlist->playables()->where('is_public', false)->update(['is_public' => true]);
     }
 
-    public function movePlayablesInPlaylist(Playlist $playlist, array $movingIds, string $target, string $type): void
-    {
-        Assert::oneOf($type, ['before', 'after']);
+    /** @param array<string> $movingIds */
+    public function movePlayablesInPlaylist(
+        Playlist $playlist,
+        array $movingIds,
+        string $target,
+        Placement $placement,
+    ): void {
         throw_if($playlist->is_smart, OperationNotApplicableForSmartPlaylistException::class);
 
-        DB::transaction(static function () use ($playlist, $movingIds, $target, $type): void {
+        DB::transaction(static function () use ($playlist, $movingIds, $target, $placement): void {
             $targetPosition = $playlist->playables()->wherePivot('song_id', $target)->value('position');
-            $insertPosition = $type === 'before' ? $targetPosition : $targetPosition + 1;
+            $insertPosition = $placement === Placement::BEFORE ? $targetPosition : $targetPosition + 1;
 
             // create a "gap" for the moving songs by incrementing the position of the songs after the target
             $playlist->playables()
                 ->newPivotQuery()
-                ->where('position', $type === 'before' ? '>=' : '>', $targetPosition)
+                ->where('position', $placement === Placement::BEFORE ? '>=' : '>', $targetPosition)
                 ->whereNotIn('song_id', $movingIds)
                 ->increment('position', count($movingIds));
 

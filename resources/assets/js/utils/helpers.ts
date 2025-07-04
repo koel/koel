@@ -1,11 +1,6 @@
 import select from 'select'
 import { isObject, without } from 'lodash'
-import type {
-  AsyncComponentLoader,
-  Component,
-  DeepReadonly,
-  InjectionKey,
-} from 'vue'
+import type { AsyncComponentLoader, Component, DeepReadonly, InjectionKey } from 'vue'
 import {
   defineAsyncComponent as baseDefineAsyncComponent,
   inject,
@@ -61,14 +56,14 @@ export const requireInjection = <T> (key: InjectionKey<T>, defaultValue?: T) => 
   return value
 }
 
-export const moveItemsInList = <T> (list: T[], items: T | T[], target: T, type: MoveType) => {
+export const moveItemsInList = <T> (list: T[], items: T | T[], target: T, placement: Placement) => {
   if (!list.includes(target)) {
     throw new Error('Target not found in list')
   }
 
   const subset = arrayify(items)
 
-  const isTargetAdjacent = type === 'before'
+  const isTargetAdjacent = placement === 'before'
     ? list.indexOf(subset[subset.length - 1]) + 1 === list.indexOf(target)
     : list.indexOf(subset[0]) - 1 === list.indexOf(target)
 
@@ -78,7 +73,7 @@ export const moveItemsInList = <T> (list: T[], items: T | T[], target: T, type: 
 
   const updatedList = without(list, ...subset)
   const targetIndex = updatedList.indexOf(target)
-  updatedList.splice(type === 'before' ? targetIndex : targetIndex + 1, 0, ...subset)
+  updatedList.splice(placement === 'before' ? targetIndex : targetIndex + 1, 0, ...subset)
 
   return updatedList
 }

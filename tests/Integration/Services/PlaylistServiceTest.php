@@ -2,6 +2,7 @@
 
 namespace Tests\Integration\Services;
 
+use App\Enums\Placement;
 use App\Models\PlaylistFolder;
 use App\Models\Podcast;
 use App\Models\Song;
@@ -283,18 +284,18 @@ class PlaylistServiceTest extends TestCase
         $ids = $songs->modelKeys();
         $playlist->addPlayables($songs);
 
-        $this->service->movePlayablesInPlaylist($playlist, [$ids[2], $ids[3]], $ids[0], 'after');
+        $this->service->movePlayablesInPlaylist($playlist, [$ids[2], $ids[3]], $ids[0], Placement::AFTER);
         self::assertSame([$ids[0], $ids[2], $ids[3], $ids[1]], $playlist->refresh()->playables->modelKeys());
 
-        $this->service->movePlayablesInPlaylist($playlist, [$ids[0]], $ids[3], 'before');
+        $this->service->movePlayablesInPlaylist($playlist, [$ids[0]], $ids[3], Placement::BEFORE);
         self::assertSame([$ids[2], $ids[0], $ids[3], $ids[1]], $playlist->refresh()->playables->modelKeys());
 
         // move to the first position
-        $this->service->movePlayablesInPlaylist($playlist, [$ids[0], $ids[1]], $ids[2], 'before');
+        $this->service->movePlayablesInPlaylist($playlist, [$ids[0], $ids[1]], $ids[2], Placement::BEFORE);
         self::assertSame([$ids[0], $ids[1], $ids[2], $ids[3]], $playlist->refresh()->playables->modelKeys());
 
         // move to the last position
-        $this->service->movePlayablesInPlaylist($playlist, [$ids[0], $ids[1]], $ids[3], 'after');
+        $this->service->movePlayablesInPlaylist($playlist, [$ids[0], $ids[1]], $ids[3], Placement::AFTER);
         self::assertSame([$ids[2], $ids[3], $ids[0], $ids[1]], $playlist->refresh()->playables->modelKeys());
     }
 }

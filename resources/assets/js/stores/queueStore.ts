@@ -105,8 +105,8 @@ export const queueStore = {
   /**
    * Move some songs to after a target.
    */
-  move (playables: MaybeArray<Playable>, target: Playable, type: MoveType) {
-    this.state.playables = moveItemsInList(this.state.playables, playables, target, type)
+  move (playables: MaybeArray<Playable>, target: Playable, placement: Placement) {
+    this.state.playables = moveItemsInList(this.state.playables, playables, target, placement)
     this.saveState()
   },
 
