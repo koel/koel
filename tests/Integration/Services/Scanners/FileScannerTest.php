@@ -5,7 +5,9 @@ namespace Tests\Integration\Services\Scanners;
 use App\Helpers\Ulid;
 use App\Models\Setting;
 use App\Services\Scanners\FileScanner;
+use getID3;
 use Illuminate\Support\Facades\File;
+use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -120,5 +122,40 @@ class FileScannerTest extends TestCase
         File::copy(test_path('fixtures/simple.lrc'), $lrcFile);
 
         self::assertSame("Line 1\nLine 2\nLine 3", $this->scanner->scan($mediaFile)->lyrics);
+    }
+
+    #[Test]
+    public function htmlEntities(): void
+    {
+        $path = test_path('songs/blank.mp3');
+
+        $analyzed = [
+            'filenamepath' => $path,
+            'tags' => [
+                'id3v2' => [
+                    'title' => ['&#27700;&#35895;&#24195;&#23455;'],
+                    'album' => ['&#23567;&#23721;&#20117;&#12371; Random'],
+                    'artist' => ['&#20304;&#20489;&#32190;&#38899; Unknown'],
+                ],
+            ],
+            'encoding' => 'UTF-8',
+            'playtime_seconds' => 100,
+        ];
+
+        $this->swap(
+            getID3::class,
+            Mockery::mock(getID3::class, [
+                'CopyTagsToComments' => $analyzed,
+                'analyze' => $analyzed,
+            ])
+        );
+
+        /** @var FileScanner $fileScanner */
+        $fileScanner = app(FileScanner::class);
+        $info = $fileScanner->scan($path);
+
+        self::assertSame('佐倉綾音 Unknown', $info->artistName);
+        self::assertSame('小岩井こ Random', $info->albumName);
+        self::assertSame('水谷広実', $info->title);
     }
 }

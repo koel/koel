@@ -3,18 +3,16 @@
 namespace Tests\Integration\Services\Scanners;
 
 use App\Events\MediaScanCompleted;
-use App\Events\SongFolderStructureExtractionRequested;
+use App\Facades\Dispatcher;
+use App\Jobs\ExtractSongFolderStructureJob;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Setting;
 use App\Models\Song;
 use App\Services\Scanners\DirectoryScanner;
-use App\Services\Scanners\FileScanner;
 use App\Values\Scanning\ScanConfiguration;
-use getID3;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
-use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -29,6 +27,7 @@ class DirectoryScannerTest extends TestCase
         parent::setUp();
 
         Setting::set('media_path', realpath($this->mediaPath));
+
         $this->scanner = app(DirectoryScanner::class);
     }
 
@@ -40,7 +39,8 @@ class DirectoryScannerTest extends TestCase
     #[Test]
     public function scan(): void
     {
-        Event::fake([MediaScanCompleted::class, SongFolderStructureExtractionRequested::class]);
+        Event::fake([MediaScanCompleted::class]);
+        Dispatcher::shouldReceive('dispatch')->with(ExtractSongFolderStructureJob::class)->atLeast();
 
         $owner = create_admin();
         $this->scanner->scan($this->mediaPath, ScanConfiguration::make(owner: $owner));
@@ -101,15 +101,13 @@ class DirectoryScannerTest extends TestCase
 
         // An event should be dispatched to indicate the scan is completed
         Event::assertDispatched(MediaScanCompleted::class);
-
-        // Events should be dispatched to indicate the folder structure extraction is requested for several songs
-        Event::assertDispatched(SongFolderStructureExtractionRequested::class);
     }
 
     #[Test]
     public function modifiedFileIsRescanned(): void
     {
-        Event::fake([MediaScanCompleted::class, SongFolderStructureExtractionRequested::class]);
+        Event::fake([MediaScanCompleted::class]);
+        Dispatcher::shouldReceive('dispatch')->with(ExtractSongFolderStructureJob::class)->atLeast();
 
         $config = ScanConfiguration::make(owner: create_admin());
         $this->scanner->scan($this->mediaPath, $config);
@@ -127,7 +125,8 @@ class DirectoryScannerTest extends TestCase
     #[Test]
     public function rescanWithoutForceDoesNotResetData(): void
     {
-        Event::fake([MediaScanCompleted::class, SongFolderStructureExtractionRequested::class]);
+        Event::fake([MediaScanCompleted::class]);
+        Dispatcher::shouldReceive('dispatch')->with(ExtractSongFolderStructureJob::class)->atLeast();
 
         $config = ScanConfiguration::make(owner: create_admin());
 
@@ -151,7 +150,8 @@ class DirectoryScannerTest extends TestCase
     #[Test]
     public function forceScanResetsData(): void
     {
-        Event::fake([MediaScanCompleted::class, SongFolderStructureExtractionRequested::class]);
+        Event::fake([MediaScanCompleted::class]);
+        Dispatcher::shouldReceive('dispatch')->with(ExtractSongFolderStructureJob::class)->atLeast();
 
         $owner = create_admin();
         $this->scanner->scan($this->mediaPath, ScanConfiguration::make(owner: $owner));
@@ -180,7 +180,8 @@ class DirectoryScannerTest extends TestCase
     #[Test]
     public function ignoredTagsAreIgnoredEvenWithForceRescanning(): void
     {
-        Event::fake([MediaScanCompleted::class, SongFolderStructureExtractionRequested::class]);
+        Event::fake([MediaScanCompleted::class]);
+        Dispatcher::shouldReceive('dispatch')->with(ExtractSongFolderStructureJob::class)->atLeast();
 
         $owner = create_admin();
         $this->scanner->scan($this->mediaPath, ScanConfiguration::make(owner: $owner));
@@ -204,7 +205,8 @@ class DirectoryScannerTest extends TestCase
     #[Test]
     public function scanAllTagsForNewFilesRegardlessOfIgnoredOption(): void
     {
-        Event::fake([MediaScanCompleted::class, SongFolderStructureExtractionRequested::class]);
+        Event::fake([MediaScanCompleted::class]);
+        Dispatcher::shouldReceive('dispatch')->with(ExtractSongFolderStructureJob::class)->atLeast();
 
         $owner = create_admin();
         $this->scanner->scan($this->mediaPath, ScanConfiguration::make(owner: $owner));
@@ -231,42 +233,11 @@ class DirectoryScannerTest extends TestCase
     }
 
     #[Test]
-    public function htmlEntities(): void
-    {
-        $path = $this->path('/songs/blank.mp3');
-        $analyzed = [
-            'filenamepath' => $path,
-            'tags' => [
-                'id3v2' => [
-                    'title' => ['&#27700;&#35895;&#24195;&#23455;'],
-                    'album' => ['&#23567;&#23721;&#20117;&#12371; Random'],
-                    'artist' => ['&#20304;&#20489;&#32190;&#38899; Unknown'],
-                ],
-            ],
-            'encoding' => 'UTF-8',
-            'playtime_seconds' => 100,
-        ];
-
-        $this->swap(
-            getID3::class,
-            Mockery::mock(getID3::class, [
-                'CopyTagsToComments' => $analyzed,
-                'analyze' => $analyzed,
-            ])
-        );
-
-        /** @var FileScanner $fileScanner */
-        $fileScanner = app(FileScanner::class);
-        $info = $fileScanner->scan($path);
-
-        self::assertSame('佐倉綾音 Unknown', $info->artistName);
-        self::assertSame('小岩井こ Random', $info->albumName);
-        self::assertSame('水谷広実', $info->title);
-    }
-
-    #[Test]
     public function hiddenFilesAndFoldersAreIgnoredIfConfiguredSo(): void
     {
+        Event::fake([MediaScanCompleted::class]);
+        Dispatcher::shouldReceive('dispatch')->with(ExtractSongFolderStructureJob::class)->atLeast();
+
         $config = ScanConfiguration::make(owner: create_admin());
 
         config(['koel.ignore_dot_files' => true]);
@@ -277,6 +248,9 @@ class DirectoryScannerTest extends TestCase
     #[Test]
     public function hiddenFilesAndFoldersAreScannedIfConfiguredSo(): void
     {
+        Event::fake([MediaScanCompleted::class]);
+        Dispatcher::shouldReceive('dispatch')->with(ExtractSongFolderStructureJob::class)->atLeast();
+
         $config = ScanConfiguration::make(owner: create_admin());
 
         config(['koel.ignore_dot_files' => false]);

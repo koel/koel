@@ -2,16 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Facades\Dispatcher;
 use App\Http\Resources\SongResource;
 use App\Jobs\DeleteSongFilesJob;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
-use App\Services\Dispatcher;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
-use Mockery;
-use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -19,15 +17,6 @@ use function Tests\create_admin;
 
 class SongTest extends TestCase
 {
-    private Dispatcher|MockInterface $dispatcher;
-
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->dispatcher = $this->mock(Dispatcher::class);
-    }
-
     #[Test]
     public function index(): void
     {
@@ -50,12 +39,9 @@ class SongTest extends TestCase
     public function destroy(): void
     {
         Bus::fake();
+        Dispatcher::expects('dispatch')->with(DeleteSongFilesJob::class);
 
         $songs = Song::factory(2)->create();
-
-        $this->dispatcher
-            ->expects('dispatch')
-            ->with(Mockery::type(DeleteSongFilesJob::class));
 
         $this->deleteAs('api/songs', ['songs' => $songs->modelKeys()], create_admin())
             ->assertNoContent();
@@ -67,11 +53,9 @@ class SongTest extends TestCase
     public function unauthorizedDelete(): void
     {
         Bus::fake();
-        $songs = Song::factory(2)->create();
+        Dispatcher::expects('dispatch')->never();
 
-        $this->dispatcher
-            ->expects('dispatch')
-            ->never();
+        $songs = Song::factory(2)->create();
 
         $this->deleteAs('api/songs', ['songs' => $songs->modelKeys()])
             ->assertForbidden();

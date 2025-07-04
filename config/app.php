@@ -156,5 +156,6 @@ return [
         'Download' => App\Facades\Download::class,
         'ITunes' => App\Facades\ITunes::class,
         'License' => App\Facades\License::class,
+        'Dispatcher' => App\Services\Dispatcher::class,
     ],
 ];

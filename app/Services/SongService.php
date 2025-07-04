@@ -3,10 +3,11 @@
 namespace App\Services;
 
 use App\Events\LibraryChanged;
-use App\Events\SongFolderStructureExtractionRequested;
+use App\Facades\Dispatcher;
 use App\Facades\License;
 use App\Jobs\DeleteSongFilesJob;
 use App\Jobs\DeleteTranscodeFilesJob;
+use App\Jobs\ExtractSongFolderStructureJob;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
@@ -32,7 +33,6 @@ class SongService
         private readonly TranscodeRepository $transcodeRepository,
         private readonly ArtworkService $artworkService,
         private readonly CacheStrategy $cache,
-        private readonly Dispatcher $dispatcher,
     ) {
     }
 
@@ -166,10 +166,10 @@ class SongService
             return;
         }
 
-        $this->dispatcher->dispatch(new DeleteSongFilesJob($songFiles));
+        Dispatcher::dispatch(new DeleteSongFilesJob($songFiles));
 
         if ($transcodeFiles->isNotEmpty()) {
-            $this->dispatcher->dispatch(new DeleteTranscodeFilesJob($transcodeFiles));
+            Dispatcher::dispatch(new DeleteTranscodeFilesJob($transcodeFiles));
         }
 
         // Instruct the system to prune the library, i.e., remove empty albums and artists.
@@ -242,7 +242,7 @@ class SongService
         }
 
         if ($config->extractFolderStructure) {
-            event(new SongFolderStructureExtractionRequested($song));
+            Dispatcher::dispatch(new ExtractSongFolderStructureJob($song));
         }
 
         return $song;
