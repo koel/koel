@@ -4,6 +4,7 @@ namespace Tests\Integration\Services;
 
 use App\Exceptions\AlbumNameConflictException;
 use App\Models\Album;
+use App\Models\Song;
 use App\Services\AlbumService;
 use App\Values\AlbumUpdateData;
 use PHPUnit\Framework\Attributes\Test;
@@ -30,12 +31,18 @@ class AlbumServiceTest extends TestCase
             'year' => 2020,
         ]);
 
+        $songs = Song::factory()->for($album)->count(2)->create();
+
         $data = AlbumUpdateData::make(name: 'New Album Name', year: 2023);
 
         $updatedAlbum = $this->albumService->updateAlbum($album, $data);
 
-        $this->assertEquals('New Album Name', $updatedAlbum->name);
-        $this->assertEquals(2023, $updatedAlbum->year);
+        self::assertEquals('New Album Name', $updatedAlbum->name);
+        self::assertEquals(2023, $updatedAlbum->year);
+
+        $songs->each(static function (Song $song) use ($updatedAlbum): void {
+            self::assertEquals($updatedAlbum->name, $song->fresh()->album_name);
+        });
     }
 
     #[Test]

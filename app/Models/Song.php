@@ -35,33 +35,35 @@ use Throwable;
 use Webmozart\Assert\Assert;
 
 /**
- * @property string $path
- * @property string $title
  * @property ?Album $album
- * @property ?Artist $artist
  * @property ?Artist $album_artist
- * @property float $length
- * @property string $lyrics
- * @property int $track
- * @property int $disc
- * @property int $album_id
- * @property int|null $year
- * @property Collection<Genre>|array<array-key, Genre> $genres
- * @property ?string $mime_type The MIME type of the song file, if available
- * @property string $id
- * @property int $artist_id
- * @property int $mtime
+ * @property ?Artist $artist
+ * @property ?Folder $folder
  * @property ?bool $liked Whether the song is liked by the current user (dynamically calculated)
  * @property ?int $play_count The number of times the song has been played by the current user (dynamically calculated)
- * @property Carbon $created_at
- * @property int $owner_id
- * @property bool $is_public
- * @property User $owner
- * @property-read SongStorageMetadata $storage_metadata
- * @property SongStorageType $storage
- * @property ?string $folder_id
- * @property ?Folder $folder
+ * @property ?string $album_name
+ * @property ?string $artist_name
  * @property ?string $basename
+ * @property ?string $folder_id
+ * @property ?string $mime_type The MIME type of the song file, if available
+ * @property Carbon $created_at
+ * @property Collection<Genre>|array<array-key, Genre> $genres
+ * @property SongStorageType $storage
+ * @property User $owner
+ * @property bool $is_public
+ * @property float $length
+ * @property int $album_id
+ * @property int $artist_id
+ * @property int $disc
+ * @property int $mtime
+ * @property int $owner_id
+ * @property int $track
+ * @property int|null $year
+ * @property string $id
+ * @property string $lyrics
+ * @property string $path
+ * @property string $title
+ * @property-read SongStorageMetadata $storage_metadata
  * @property-read ?string $genre The string representation of the genres associated with the song. Readonly.
  *                               To set the genres, use the `syncGenres` method.
  *
@@ -262,8 +264,12 @@ class Song extends Model implements AuditableContract
             $array['episode_description'] = $this->episode_metadata->description;
         }
 
-        if ($this->artist && !$this->artist->is_unknown && !$this->artist->is_various) {
-            $array['artist'] = $this->artist->name;
+        if (
+            $this->artist_name
+            && $this->artist_name !== Artist::UNKNOWN_NAME
+            && $this->artist_name !== Artist::VARIOUS_NAME
+        ) {
+            $array['artist'] = $this->artist_name;
         }
 
         return $array;

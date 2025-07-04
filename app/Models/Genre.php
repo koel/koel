@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Builders\GenreBuilder;
-use App\Helpers\Ulid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -28,15 +27,6 @@ class Genre extends Model
         'public_id',
         'name',
     ];
-
-    protected static function booted(): void
-    {
-        parent::booted();
-
-        static::creating(static function (self $genre): void {
-            $genre->public_id ??= Ulid::generate();
-        });
-    }
 
     public static function query(): GenreBuilder
     {

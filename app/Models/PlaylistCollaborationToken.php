@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Helpers\Uuid;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,13 +18,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class PlaylistCollaborationToken extends Model
 {
     use HasFactory;
-
-    protected static function booted(): void
-    {
-        static::creating(static function (PlaylistCollaborationToken $token): void {
-            $token->token ??= Uuid::generate();
-        });
-    }
 
     public function playlist(): BelongsTo
     {

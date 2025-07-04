@@ -190,7 +190,7 @@ class SongRepository extends Repository implements ScoutableRepository
                         $albumQuery->whereBelongsTo($artist);
                     });
             })
-            ->orderBy('albums.name')
+            ->orderBy('songs.album_name')
             ->orderBy('songs.disc')
             ->orderBy('songs.track')
             ->orderBy('songs.title')

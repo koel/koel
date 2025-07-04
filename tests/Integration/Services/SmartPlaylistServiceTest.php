@@ -183,7 +183,9 @@ class SmartPlaylistServiceTest extends TestCase
         $matches = Song::factory()
             ->count(1)
             ->for(Artist::factory()->create(['name' => 'Foo Artist']))
-            ->create();
+            ->create([
+                'artist_name' => 'Foo Artist',
+            ]);
 
         Song::factory()->create();
 

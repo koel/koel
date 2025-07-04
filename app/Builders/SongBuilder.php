@@ -24,8 +24,8 @@ class SongBuilder extends Builder
         'created_at' => 'songs.created_at',
         'disc' => 'songs.disc',
         'year' => 'songs.year',
-        'artist_name' => 'artists.name',
-        'album_name' => 'albums.name',
+        'artist_name' => 'songs.artist_name',
+        'album_name' => 'songs.album_name',
         'podcast_title' => 'podcasts.title',
         'podcast_author' => 'podcasts.author',
         'genre' => 'genres.name',
@@ -37,8 +37,8 @@ class SongBuilder extends Builder
         'songs.length',
         'songs.year',
         'songs.created_at',
-        'artists.name',
-        'albums.name',
+        'songs.artist_name',
+        'songs.album_name',
         'podcasts.title',
         'podcasts.author',
         'genres.name',
@@ -61,12 +61,8 @@ class SongBuilder extends Builder
             ->leftJoin('interactions', function (JoinClause $join): void {
                 $join->on('interactions.song_id', 'songs.id')->where('interactions.user_id', $this->user->id);
             })
-            ->leftJoin('albums', 'songs.album_id', 'albums.id')
-            ->leftJoin('artists', 'songs.artist_id', 'artists.id')
             ->select(
                 'songs.*',
-                'albums.name as album_name',
-                'artists.name as artist_name',
                 'interactions.liked',
                 'interactions.play_count',
             );
@@ -107,11 +103,12 @@ class SongBuilder extends Builder
 
         return $this
             ->orderBy($column, $direction)
-            ->when($column === 'artists.name', static fn (self $query) => $query->orderBy('albums.name')
+            // Depending on the column, we might need to order by other columns as well.
+            ->when($column === 'songs.artist_name', static fn (self $query) => $query->orderBy('songs.album_name')
                 ->orderBy('songs.disc')
                 ->orderBy('songs.track')
                 ->orderBy('songs.title'))
-            ->when($column === 'albums.name', static fn (self $query) => $query->orderBy('artists.name')
+            ->when($column === 'songs.album_name', static fn (self $query) => $query->orderBy('songs.artist_name')
                 ->orderBy('songs.disc')
                 ->orderBy('songs.track')
                 ->orderBy('songs.title'))

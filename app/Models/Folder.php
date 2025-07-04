@@ -32,13 +32,6 @@ class Folder extends Model
     public $timestamps = false;
     protected $appends = ['name'];
 
-    protected static function booted(): void
-    {
-        self::creating(static function (self $folder): void {
-            $folder->hash ??= simple_hash($folder->path);
-        });
-    }
-
     public function songs(): HasMany
     {
         return $this->hasMany(Song::class)->orderBy('path');

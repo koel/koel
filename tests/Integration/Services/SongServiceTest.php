@@ -276,6 +276,8 @@ class SongServiceTest extends TestCase
             'mtime' => filemtime(test_path('songs/full.mp3')),
             'year' => 2015,
             'is_public' => false,
+            'artist_name' => 'Koel',
+            'album_name' => 'Koel Testing Vol. 1',
         ], $song->getAttributes());
 
         self::assertSame(2015, $song->album->year);

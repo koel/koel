@@ -99,7 +99,7 @@ class AlbumRepository extends Repository implements ScoutableRepository
             ->isStandard()
             ->sort($sortColumn, $sortDirection)
             ->distinct()
-            ->select('albums.*', 'artists.name as artist_name')
+            ->select('albums.*')
             ->simplePaginate(21);
     }
 
