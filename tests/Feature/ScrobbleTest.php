@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Facades\Dispatcher;
 use App\Jobs\ScrobbleJob;
 use App\Models\Song;
-use App\Services\Dispatcher;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -20,8 +20,7 @@ class ScrobbleTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create();
 
-        $this->mock(Dispatcher::class)
-            ->expects('dispatch')
+        Dispatcher::expects('dispatch')
             ->andReturnUsing(function (ScrobbleJob $job) use ($song, $user): void {
                 $this->assertTrue($song->is($job->song));
                 $this->assertTrue($user->is($job->user));

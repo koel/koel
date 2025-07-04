@@ -3,18 +3,16 @@
 namespace Tests\Integration\Services\Scanners;
 
 use App\Events\MediaScanCompleted;
+use App\Facades\Dispatcher;
 use App\Jobs\ExtractSongFolderStructureJob;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Setting;
 use App\Models\Song;
-use App\Services\Dispatcher;
 use App\Services\Scanners\DirectoryScanner;
 use App\Values\Scanning\ScanConfiguration;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
-use Mockery;
-use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -23,7 +21,6 @@ use function Tests\create_admin;
 class DirectoryScannerTest extends TestCase
 {
     private DirectoryScanner $scanner;
-    private Dispatcher|MockInterface $dispatcher;
 
     public function setUp(): void
     {
@@ -31,7 +28,6 @@ class DirectoryScannerTest extends TestCase
 
         Setting::set('media_path', realpath($this->mediaPath));
 
-        $this->dispatcher = $this->mock(Dispatcher::class);
         $this->scanner = app(DirectoryScanner::class);
     }
 
@@ -44,7 +40,7 @@ class DirectoryScannerTest extends TestCase
     public function scan(): void
     {
         Event::fake([MediaScanCompleted::class]);
-        $this->dispatcher->shouldReceive('dispatch')->with(Mockery::type(ExtractSongFolderStructureJob::class));
+        Dispatcher::shouldReceive('dispatch')->with(ExtractSongFolderStructureJob::class)->atLeast();
 
         $owner = create_admin();
         $this->scanner->scan($this->mediaPath, ScanConfiguration::make(owner: $owner));
@@ -111,7 +107,7 @@ class DirectoryScannerTest extends TestCase
     public function modifiedFileIsRescanned(): void
     {
         Event::fake([MediaScanCompleted::class]);
-        $this->dispatcher->shouldReceive('dispatch')->with(Mockery::type(ExtractSongFolderStructureJob::class));
+        Dispatcher::shouldReceive('dispatch')->with(ExtractSongFolderStructureJob::class)->atLeast();
 
         $config = ScanConfiguration::make(owner: create_admin());
         $this->scanner->scan($this->mediaPath, $config);
@@ -130,7 +126,7 @@ class DirectoryScannerTest extends TestCase
     public function rescanWithoutForceDoesNotResetData(): void
     {
         Event::fake([MediaScanCompleted::class]);
-        $this->dispatcher->shouldReceive('dispatch')->with(Mockery::type(ExtractSongFolderStructureJob::class));
+        Dispatcher::shouldReceive('dispatch')->with(ExtractSongFolderStructureJob::class)->atLeast();
 
         $config = ScanConfiguration::make(owner: create_admin());
 
@@ -155,7 +151,7 @@ class DirectoryScannerTest extends TestCase
     public function forceScanResetsData(): void
     {
         Event::fake([MediaScanCompleted::class]);
-        $this->dispatcher->shouldReceive('dispatch')->with(Mockery::type(ExtractSongFolderStructureJob::class));
+        Dispatcher::shouldReceive('dispatch')->with(ExtractSongFolderStructureJob::class)->atLeast();
 
         $owner = create_admin();
         $this->scanner->scan($this->mediaPath, ScanConfiguration::make(owner: $owner));
@@ -185,7 +181,7 @@ class DirectoryScannerTest extends TestCase
     public function ignoredTagsAreIgnoredEvenWithForceRescanning(): void
     {
         Event::fake([MediaScanCompleted::class]);
-        $this->dispatcher->shouldReceive('dispatch')->with(Mockery::type(ExtractSongFolderStructureJob::class));
+        Dispatcher::shouldReceive('dispatch')->with(ExtractSongFolderStructureJob::class)->atLeast();
 
         $owner = create_admin();
         $this->scanner->scan($this->mediaPath, ScanConfiguration::make(owner: $owner));
@@ -210,7 +206,7 @@ class DirectoryScannerTest extends TestCase
     public function scanAllTagsForNewFilesRegardlessOfIgnoredOption(): void
     {
         Event::fake([MediaScanCompleted::class]);
-        $this->dispatcher->shouldReceive('dispatch')->with(Mockery::type(ExtractSongFolderStructureJob::class));
+        Dispatcher::shouldReceive('dispatch')->with(ExtractSongFolderStructureJob::class)->atLeast();
 
         $owner = create_admin();
         $this->scanner->scan($this->mediaPath, ScanConfiguration::make(owner: $owner));
@@ -240,7 +236,7 @@ class DirectoryScannerTest extends TestCase
     public function hiddenFilesAndFoldersAreIgnoredIfConfiguredSo(): void
     {
         Event::fake([MediaScanCompleted::class]);
-        $this->dispatcher->shouldReceive('dispatch')->with(Mockery::type(ExtractSongFolderStructureJob::class));
+        Dispatcher::shouldReceive('dispatch')->with(ExtractSongFolderStructureJob::class)->atLeast();
 
         $config = ScanConfiguration::make(owner: create_admin());
 
@@ -253,7 +249,7 @@ class DirectoryScannerTest extends TestCase
     public function hiddenFilesAndFoldersAreScannedIfConfiguredSo(): void
     {
         Event::fake([MediaScanCompleted::class]);
-        $this->dispatcher->shouldReceive('dispatch')->with(Mockery::type(ExtractSongFolderStructureJob::class));
+        Dispatcher::shouldReceive('dispatch')->with(ExtractSongFolderStructureJob::class)->atLeast();
 
         $config = ScanConfiguration::make(owner: create_admin());
 

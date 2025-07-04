@@ -3,6 +3,7 @@
 namespace Tests\Integration\Services;
 
 use App\Events\LibraryChanged;
+use App\Facades\Dispatcher;
 use App\Jobs\DeleteSongFilesJob;
 use App\Jobs\DeleteTranscodeFilesJob;
 use App\Jobs\ExtractSongFolderStructureJob;
@@ -11,15 +12,12 @@ use App\Models\Artist;
 use App\Models\Setting;
 use App\Models\Song;
 use App\Models\Transcode;
-use App\Services\Dispatcher;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
 use App\Values\Scanning\ScanConfiguration;
 use App\Values\SongUpdateData;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
-use Mockery;
-use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -30,13 +28,11 @@ use function Tests\test_path;
 class SongServiceTest extends TestCase
 {
     private SongService $service;
-    private Dispatcher|MockInterface $dispatcher;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->dispatcher = $this->mock(Dispatcher::class);
         $this->service = app(SongService::class);
 
         $user = create_user();
@@ -210,7 +206,7 @@ class SongServiceTest extends TestCase
         Event::fake(LibraryChanged::class);
         $songs = Song::factory()->count(2)->create();
 
-        $this->dispatcher->expects('dispatch')
+        Dispatcher::expects('dispatch')
             ->with(DeleteSongFilesJob::class)
             ->andReturnUsing(static function (DeleteSongFilesJob $job) use ($songs): void {
                 self::assertEqualsCanonicalizing(
@@ -219,7 +215,7 @@ class SongServiceTest extends TestCase
                 );
             });
 
-        $this->dispatcher->shouldNotReceive('dispatch')->with(DeleteTranscodeFilesJob::class);
+        Dispatcher::expects('dispatch')->with(DeleteTranscodeFilesJob::class)->never();
 
         $this->service->deleteSongs($songs->pluck('id')->toArray());
         $songs->each(fn (Song $song) => $this->assertDatabaseMissing(Song::class, ['id' => $song->id]));
@@ -235,8 +231,7 @@ class SongServiceTest extends TestCase
         $transcodes = Transcode::factory()->count(2)->create();
         $songs = $transcodes->map(static fn (Transcode $transcode) => $transcode->song); // @phpstan-ignore-line
 
-        $this->dispatcher
-            ->expects('dispatch')
+        Dispatcher::expects('dispatch')
             ->with(DeleteSongFilesJob::class)
             ->andReturnUsing(static function (DeleteSongFilesJob $job) use ($songs): void {
                 self::assertEqualsCanonicalizing(
@@ -245,8 +240,7 @@ class SongServiceTest extends TestCase
                 );
             });
 
-        $this->dispatcher
-            ->expects('dispatch')
+        Dispatcher::expects('dispatch')
             ->with(DeleteTranscodeFilesJob::class)
             ->andReturnUsing(static function (DeleteTranscodeFilesJob $job) use ($transcodes): void {
                 self::assertEqualsCanonicalizing(
@@ -268,7 +262,7 @@ class SongServiceTest extends TestCase
     #[Test]
     public function createOrUpdateFromScan(): void
     {
-        $this->dispatcher->shouldReceive('dispatch')->with(Mockery::type(ExtractSongFolderStructureJob::class));
+        Dispatcher::expects('dispatch')->with(ExtractSongFolderStructureJob::class);
 
         $info = app(FileScanner::class)->scan(test_path('songs/full.mp3'));
         $song = $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(owner: create_admin()));
@@ -291,7 +285,7 @@ class SongServiceTest extends TestCase
     #[Test]
     public function creatingOrUpdatingFromScanSetsAlbumReleaseYearIfApplicable(): void
     {
-        $this->dispatcher->shouldReceive('dispatch')->with(Mockery::type(ExtractSongFolderStructureJob::class));
+        Dispatcher::expects('dispatch')->with(ExtractSongFolderStructureJob::class);
 
         $owner = create_admin();
 
@@ -318,7 +312,7 @@ class SongServiceTest extends TestCase
     #[Test]
     public function creatingOrUpdatingFromScanSetsAlbumReleaseYearIfItAlreadyExists(): void
     {
-        $this->dispatcher->shouldReceive('dispatch')->with(Mockery::type(ExtractSongFolderStructureJob::class));
+        Dispatcher::expects('dispatch')->with(ExtractSongFolderStructureJob::class);
 
         $owner = create_admin();
 
