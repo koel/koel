@@ -46,7 +46,6 @@
       </p>
 
       <CreditsBlock v-if="isDemo" />
-      <SponsorList />
 
       <p v-if="!isPlus">
         Loving Koel? Please consider supporting its development via
@@ -68,7 +67,6 @@ import { useKoelPlus } from '@/composables/useKoelPlus'
 import { useNewVersionNotification } from '@/composables/useNewVersionNotification'
 import { eventBus } from '@/utils/eventBus'
 
-import SponsorList from '@/components/meta/SponsorList.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import BtnUpgradeToPlus from '@/components/koel-plus/BtnUpgradeToPlus.vue'
 import CreditsBlock from '@/components/meta/CreditsBlock.vue'
