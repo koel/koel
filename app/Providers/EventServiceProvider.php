@@ -8,10 +8,8 @@ use App\Events\MultipleSongsLiked;
 use App\Events\MultipleSongsUnliked;
 use App\Events\NewPlaylistCollaboratorJoined;
 use App\Events\PlaybackStarted;
-use App\Events\SongFolderStructureExtractionRequested;
 use App\Events\SongLikeToggled;
 use App\Listeners\DeleteNonExistingRecordsPostScan;
-use App\Listeners\ExtractSongFolderStructure;
 use App\Listeners\LoveMultipleTracksOnLastfm;
 use App\Listeners\LoveTrackOnLastfm;
 use App\Listeners\MakePlaylistSongsPublic;
@@ -64,10 +62,6 @@ class EventServiceProvider extends BaseServiceProvider
 
         NewPlaylistCollaboratorJoined::class => [
             MakePlaylistSongsPublic::class,
-        ],
-
-        SongFolderStructureExtractionRequested::class => [
-            ExtractSongFolderStructure::class,
         ],
     ];
 

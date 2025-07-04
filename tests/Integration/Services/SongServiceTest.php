@@ -3,9 +3,9 @@
 namespace Tests\Integration\Services;
 
 use App\Events\LibraryChanged;
-use App\Events\SongFolderStructureExtractionRequested;
 use App\Jobs\DeleteSongFilesJob;
 use App\Jobs\DeleteTranscodeFilesJob;
+use App\Jobs\ExtractSongFolderStructureJob;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Setting;
@@ -18,6 +18,7 @@ use App\Values\Scanning\ScanConfiguration;
 use App\Values\SongUpdateData;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -90,9 +91,12 @@ class SongServiceTest extends TestCase
     {
         Event::fake(LibraryChanged::class);
 
+        /** @var Song $song1 */
         $song1 = Song::factory()->create([
             'track' => 1,
         ]);
+
+        /** @var Song $song2 */
         $song2 = Song::factory()->create([
             'track' => 2,
         ]);
@@ -264,7 +268,8 @@ class SongServiceTest extends TestCase
     #[Test]
     public function createOrUpdateFromScan(): void
     {
-        Event::fake(SongFolderStructureExtractionRequested::class);
+        $this->dispatcher->shouldReceive('dispatch')->with(Mockery::type(ExtractSongFolderStructureJob::class));
+
         $info = app(FileScanner::class)->scan(test_path('songs/full.mp3'));
         $song = $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(owner: create_admin()));
 
@@ -281,17 +286,13 @@ class SongServiceTest extends TestCase
         ], $song->getAttributes());
 
         self::assertSame(2015, $song->album->year);
-
-        Event::assertDispatched(
-            SongFolderStructureExtractionRequested::class,
-            static fn (SongFolderStructureExtractionRequested $event) => $event->song->is($song),
-        );
     }
 
     #[Test]
     public function creatingOrUpdatingFromScanSetsAlbumReleaseYearIfApplicable(): void
     {
-        Event::fake(SongFolderStructureExtractionRequested::class);
+        $this->dispatcher->shouldReceive('dispatch')->with(Mockery::type(ExtractSongFolderStructureJob::class));
+
         $owner = create_admin();
 
         /** @var Artist $artist */
@@ -317,6 +318,8 @@ class SongServiceTest extends TestCase
     #[Test]
     public function creatingOrUpdatingFromScanSetsAlbumReleaseYearIfItAlreadyExists(): void
     {
+        $this->dispatcher->shouldReceive('dispatch')->with(Mockery::type(ExtractSongFolderStructureJob::class));
+
         $owner = create_admin();
 
         /** @var Artist $artist */

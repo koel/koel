@@ -3,10 +3,10 @@
 namespace App\Services;
 
 use App\Events\LibraryChanged;
-use App\Events\SongFolderStructureExtractionRequested;
 use App\Facades\License;
 use App\Jobs\DeleteSongFilesJob;
 use App\Jobs\DeleteTranscodeFilesJob;
+use App\Jobs\ExtractSongFolderStructureJob;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
@@ -242,7 +242,7 @@ class SongService
         }
 
         if ($config->extractFolderStructure) {
-            event(new SongFolderStructureExtractionRequested($song));
+            $this->dispatcher->dispatch(new ExtractSongFolderStructureJob($song));
         }
 
         return $song;
