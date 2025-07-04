@@ -34,8 +34,10 @@ You can always change the visibility of the songs and/or reassign them to other 
 --- Mark all songs as private
 UPDATE songs SET is_public = 0;
 
---- Assign all songs to another user
-UPDATE songs SET user_id = 2;
+--- Assign all songs, albums, and artists to another user
+UPDATE songs SET owner_id = 2;
+UPDATE albums SET user_id = 2;
+UPDATE artists SET user_id = 2;
 ```
 
 ## Playlist Collaboration
