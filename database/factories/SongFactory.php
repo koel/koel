@@ -13,7 +13,9 @@ class SongFactory extends Factory
     {
         return [
             'album_id' => Album::factory(),
-            'artist_id' => static fn (array $attributes) => Album::query()->find($attributes['album_id'])->artist_id, // @phpstan-ignore-line
+            'album_name' => static fn (array $attributes) => Album::query()->find($attributes['album_id'])?->name, // @phpstan-ignore-line
+            'artist_id' => static fn (array $attributes) => Album::query()->find($attributes['album_id'])?->artist_id, // @phpstan-ignore-line
+            'artist_name' => static fn (array $attributes) => Album::query()->find($attributes['album_id'])?->artist_name, // @phpstan-ignore-line
             'title' => $this->faker->sentence,
             'length' => $this->faker->randomFloat(2, 10, 500),
             'track' => random_int(1, 20),

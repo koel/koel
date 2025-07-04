@@ -222,6 +222,8 @@ class SongService
         $data['album_id'] = $album->id;
         $data['artist_id'] = $artist->id;
         $data['is_public'] = $config->makePublic;
+        $data['album_name'] = $album->name;
+        $data['artist_name'] = $artist->name;
 
         if ($isFileNew) {
             // Only set the owner if the song is new, i.e., don't override the owner if the song is being updated.

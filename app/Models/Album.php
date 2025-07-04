@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Builders\AlbumBuilder;
-use App\Helpers\Ulid;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
 use App\Models\Contracts\PermissionableResource;
 use Carbon\Carbon;
@@ -34,6 +33,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property bool $is_unknown If the album is the Unknown Album
  * @property float|string $length Total length of the album in seconds (dynamically calculated)
  * @property int $artist_id
+ * @property string $artist_name
  * @property int $id
  * @property int $user_id
  * @property int|string $play_count Total number of times the album's songs have been played (dynamically calculated)
@@ -61,15 +61,6 @@ class Album extends Model implements AuditableContract, PermissionableResource
     /** @deprecated */
     protected $appends = ['is_compilation'];
 
-    protected static function booted(): void
-    {
-        parent::booted();
-
-        static::creating(static function (self $album): void {
-            $album->public_id ??= Ulid::generate();
-        });
-    }
-
     public static function query(): AlbumBuilder
     {
         /** @var AlbumBuilder */
@@ -89,6 +80,7 @@ class Album extends Model implements AuditableContract, PermissionableResource
     {
         return static::query()->firstOrCreate([ // @phpstan-ignore-line
             'artist_id' => $artist->id,
+            'artist_name' => $artist->name,
             'user_id' => $artist->user_id,
             'name' => trim($name) ?: self::UNKNOWN_NAME,
         ]);
@@ -187,8 +179,12 @@ class Album extends Model implements AuditableContract, PermissionableResource
             'name' => $this->name,
         ];
 
-        if (!$this->artist->is_unknown && !$this->artist->is_various) {
-            $array['artist'] = $this->artist->name;
+        if (
+            $this->artist_name
+            && $this->artist_name !== Artist::UNKNOWN_NAME
+            && $this->artist_name !== Artist::VARIOUS_NAME
+        ) {
+            $array['artist'] = $this->artist_name;
         }
 
         return $array;

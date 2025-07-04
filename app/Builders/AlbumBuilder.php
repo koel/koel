@@ -14,14 +14,14 @@ class AlbumBuilder extends Builder
         'name' => 'albums.name',
         'year' => 'albums.year',
         'created_at' => 'albums.created_at',
-        'artist_name' => 'artists.name',
+        'artist_name' => 'albums.artist_name',
     ];
 
     private const VALID_SORT_COLUMNS = [
         'albums.name',
         'albums.year',
         'albums.created_at',
-        'artists.name',
+        'albums.artist_name',
     ];
 
     public function isStandard(): self
@@ -48,8 +48,6 @@ class AlbumBuilder extends Builder
 
     public function sort(string $column, string $direction): self
     {
-        $this->leftJoin('artists', 'albums.artist_id', 'artists.id');
-
         $column = self::normalizeSortColumn($column);
 
         Assert::oneOf($column, self::VALID_SORT_COLUMNS);
@@ -57,7 +55,8 @@ class AlbumBuilder extends Builder
 
         return $this
             ->orderBy($column, $direction)
-            ->when($column === 'artists.name', static fn (self $query) => $query->orderBy('albums.name'))
+            // Depending on the column, we might need to order by the album's name as well.
+            ->when($column === 'albums.artist_name', static fn (self $query) => $query->orderBy('albums.name'))
             ->when($column === 'albums.year', static fn (self $query) => $query->orderBy('albums.name'));
     }
 }

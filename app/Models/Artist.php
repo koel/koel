@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Builders\ArtistBuilder;
 use App\Facades\License;
 use App\Facades\Util;
-use App\Helpers\Ulid;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
 use App\Models\Contracts\PermissionableResource;
 use Carbon\Carbon;
@@ -52,15 +51,6 @@ class Artist extends Model implements AuditableContract, PermissionableResource
 
     protected $guarded = ['id'];
     protected $hidden = ['created_at', 'updated_at'];
-
-    protected static function booted(): void
-    {
-        parent::booted();
-
-        static::creating(static function (self $artist): void {
-            $artist->public_id ??= Ulid::generate();
-        });
-    }
 
     public static function query(): ArtistBuilder
     {
