@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Enums\Placement;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\MovePlaylistSongsRequest;
 use App\Models\Playlist;
@@ -13,7 +14,12 @@ class MovePlaylistSongsController extends Controller
     {
         $this->authorize('collaborate', $playlist);
 
-        $service->movePlayablesInPlaylist($playlist, $request->songs, $request->target, $request->type);
+        $service->movePlayablesInPlaylist(
+            $playlist,
+            $request->songs,
+            $request->target,
+            Placement::from($request->placement),
+        );
 
         return response()->noContent();
     }

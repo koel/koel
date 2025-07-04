@@ -63,7 +63,7 @@ import SongListHeader from '@/components/song/song-list/SongListHeader.vue'
 const emit = defineEmits<{
   (e: 'press:enter', event: KeyboardEvent): void
   (e: 'press:delete'): void
-  (e: 'reorder', song: Playable, type: MoveType): void
+  (e: 'reorder', song: Playable, placement: Placement): void
   (e: 'sort', field: MaybeArray<PlayableListSortField>, order: SortOrder): void
   (e: 'scroll-breakpoint', direction: 'up' | 'down'): void
   (e: 'scrolled-to-end'): void

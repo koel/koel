@@ -168,19 +168,24 @@ export const playlistStore = {
     return orderBy(playlists, ['is_smart', 'name'], ['desc', 'asc'])
   },
 
-  moveItemsInPlaylist: async (playlist: Playlist, songs: MaybeArray<Playable>, target: Playable, type: MoveType) => {
+  moveItemsInPlaylist: async (
+    playlist: Playlist,
+    playables: MaybeArray<Playable>,
+    target: Playable,
+    placement: Placement,
+  ) => {
     const orderHash = JSON.stringify(playlist.playables?.map(({ id }) => id))
     playlist.playables?.splice(
       0,
       playlist.playables.length,
-      ...moveItemsInList(playlist.playables, songs, target, type),
+      ...moveItemsInList(playlist.playables, playables, target, placement),
     )
 
     if (orderHash !== JSON.stringify(playlist.playables?.map(({ id }) => id))) {
       await http.silently.post(`playlists/${playlist.id}/songs/move`, {
-        songs: arrayify(songs).map(({ id }) => id),
+        placement,
+        songs: arrayify(playables).map(({ id }) => id),
         target: target.id,
-        type,
       })
     }
   },

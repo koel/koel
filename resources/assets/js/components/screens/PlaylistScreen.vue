@@ -102,8 +102,6 @@ import PlaylistThumbnail from '@/components/ui/PlaylistThumbnail.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
 
-type Playable = Playable
-
 // Since this component is responsible for all playlists, we keep track of the state for each,
 // so that filter and sort settings are preserved when switching between them.
 // Playlists and content are (re)fetched (and cached) by the stores on demand, so we don't need to keep them in state.
@@ -185,7 +183,7 @@ const sort = (field: MaybeArray<PlayableListSortField> | null, order: SortOrder)
   baseSort(field, order)
 
   if (field === 'position') {
-    // To sort by position, we simply re-assign the songs array from the playlist, which maintains the original order.
+    // To sort by position, we simply re-assign the song array from the playlist, which maintains the original order.
     allPlayables.value = playlist.value!.playables!
   }
 }
@@ -217,8 +215,8 @@ const fetchDetails = async (refresh = false) => {
   }
 }
 
-const onReorder = (target: Playable, type: MoveType) => {
-  playlistStore.moveItemsInPlaylist(playlist.value!, selectedPlayables.value, target, type)
+const onReorder = (target: Playable, placement: Placement) => {
+  playlistStore.moveItemsInPlaylist(playlist.value!, selectedPlayables.value, target, placement)
 }
 
 watch(playlistId, async id => {
