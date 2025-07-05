@@ -2,10 +2,7 @@
 
 use App\Facades\License;
 use App\Helpers\Ulid;
-use App\Models\Album;
-use App\Models\Artist;
 use App\Models\Song;
-use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -28,20 +25,18 @@ return new class extends Migration {
         });
 
         // set the default user_id for existing albums and artists to the first admin
-        $firstAdmin = User::query()->where('is_admin', true)->oldest()->first();
+        $firstAdmin = DB::table('users')->where('is_admin', true)->oldest()->first();
 
         if (!$firstAdmin) {
             // No first admin exists, i.e., the database is empty (during the initial setup).
             return;
         }
 
-        Artist::query()
-            ->orderBy('id')
+        DB::table('artists')
             ->chunkById(200, static function ($artists) use ($firstAdmin): void {
                 $cases = '';
                 $ids = [];
 
-                /** @var Artist $artist */
                 foreach ($artists as $artist) {
                     $ulid = Ulid::generate();
                     $cases .= "WHEN $artist->id THEN '$ulid' ";
@@ -56,13 +51,11 @@ return new class extends Migration {
                     ]);
             });
 
-        Album::query()
-            ->orderBy('id')
+        DB::table('albums')
             ->chunkById(200, static function ($albums) use ($firstAdmin): void {
                 $cases = '';
                 $ids = [];
 
-                /** @var Album $album */
                 foreach ($albums as $album) {
                     $ulid = Ulid::generate();
                     $cases .= "WHEN $album->id THEN '$ulid' ";
@@ -84,11 +77,19 @@ return new class extends Migration {
 
         // For Koel Plus, we need to update songs that are not owned by the default user to
         // have their corresponding artist and album owned by the same user.
-        Song::query()
-            ->with('artist', 'album')
-            ->whereNull('podcast_id')
-            ->where('owner_id', '!=', $firstAdmin->id)
-            ->chunk(100, static function ($songsChunk) use (&$artistCache, &$albumCache): void {
+        DB::table('songs')
+            ->join('albums', 'songs.album_id', '=', 'albums.id')
+            ->join('artists', 'albums.artist_id', '=', 'artists.id')
+            ->whereNull('songs.podcast_id')
+            ->where('songs.owner_id', '!=', $firstAdmin->id)
+            ->select(
+                'songs.*',
+                'artists.name as artist_name',
+                'artists.image as artist_image',
+                'albums.name as album_name',
+                'albums.cover as album_cover',
+            )
+            ->chunkById(100, static function ($songsChunk) use (&$artistCache, &$albumCache): void {
                 if (count($songsChunk) === 0) {
                     return;
                 }
@@ -99,28 +100,29 @@ return new class extends Migration {
 
                 /** @var Song $song */
                 foreach ($songsChunk as $song) {
-                    $artistKey = "{$song->artist->name}|{$song->owner_id}";
+                    $artistKey = "{$song->artist_name}|{$song->owner_id}";
 
                     $artistId = $artistCache[$artistKey]
-                        ?? tap(Artist::query()->create([
-                            'name' => $song->artist->name,
+                        ?? tap(DB::table('artists')->insertGetId([
+                            'public_id' => Ulid::generate(),
                             'user_id' => $song->owner_id,
-                            'image' => $song->artist->image ?? '',
-                        ]), static function ($artist) use (&$artistCache, $artistKey): void {
-                            $artistCache[$artistKey] = $artist->id;
-                        })->id;
+                            'image' => $song->artist_image ?? '',
+                        ]), static function ($id) use (&$artistCache, $artistKey): void {
+                            $artistCache[$artistKey] = $id;
+                        });
 
-                    $albumKey = "{$song->album->name}|{$artistId}|{$song->owner_id}";
+                    $albumKey = "{$song->album_name}|{$artistId}|{$song->owner_id}";
 
                     $albumId = $albumCache[$albumKey]
-                        ?? tap(Album::query()->create([
-                            'name' => $song->album->name,
+                        ?? tap(DB::table('albums')->insertGetId([
+                            'name' => $song->album_name,
+                            'public_id' => Ulid::generate(),
                             'artist_id' => $artistId,
                             'user_id' => $song->owner_id,
-                            'cover' => $song->album->cover ?? '',
-                        ]), static function ($album) use (&$albumCache, $albumKey): void {
-                            $albumCache[$albumKey] = $album->id;
-                        })->id;
+                            'cover' => $song->album_cover ?? '',
+                        ]), static function ($id) use (&$albumCache, $albumKey): void {
+                            $albumCache[$albumKey] = $id;
+                        });
 
                     $songIds[] = $song->id;
 

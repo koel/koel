@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Genre;
+use App\Helpers\Ulid;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -51,9 +51,14 @@ return new class extends Migration
                 $songGenres = [];
 
                 foreach ($genres as $name) {
+                    $genreId = DB::table('genres')->insertGetId([
+                        'public_id' => Ulid::generate(),
+                        'name' => $name,
+                    ]);
+
                     $songGenres[] = [
                         'song_id' => $song->id,
-                        'genre_id' => Genre::get($name)->id,
+                        'genre_id' => $genreId,
                     ];
                 }
 

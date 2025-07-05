@@ -1,19 +1,26 @@
 <?php
 
-use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 class ConvertUserPreferencesFromArrayToJson extends Migration
 {
     public function up(): void
     {
-        User::all()->each(static function (User $user): void {
-            rescue(static function () use ($user): void {
-                $preferences = unserialize($user->getRawOriginal('preferences'));
-                $user->preferences->lastFmSessionKey = Arr::get($preferences, 'lastfm_session_key');
-                $user->save();
+        DB::table('users')
+            ->get()
+            ->each(static function ($user): void {
+                rescue(static function () use ($user): void {
+                    $preferences = unserialize($user->preferences);
+
+                    if (!is_array($preferences)) {
+                        $preferences = [];
+                    }
+
+                    DB::table('users')
+                        ->where('id', $user->id)
+                        ->update(['preferences' => json_encode($preferences)]);
+                });
             });
-        });
     }
 }
