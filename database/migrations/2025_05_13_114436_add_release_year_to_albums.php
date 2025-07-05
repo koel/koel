@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\Album;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -13,7 +13,7 @@ return new class extends Migration
             $table->smallInteger('year')->nullable();
         });
 
-        Album::query()
+        DB::table('albums')
             ->join('songs', 'albums.id', '=', 'songs.album_id')
             ->whereNull('albums.year')
             ->whereNotNull('songs.year')

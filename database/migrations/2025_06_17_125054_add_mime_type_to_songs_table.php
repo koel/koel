@@ -1,14 +1,14 @@
 <?php
 
-use App\Enums\PlayableType;
 use App\Models\Song;
 use FileEye\MimeMap\Extension;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
-return new class extends Migration
-{
+return new class extends Migration {
     private const DEFAULT_MIME_TYPE = 'audio/mpeg'; // Default to mp3
 
     public function up(): void
@@ -17,28 +17,30 @@ return new class extends Migration
             $table->string('mime_type')->nullable();
         });
 
-        Song::query(PlayableType::SONG)->chunk(100, static function ($songs): void {
-            $cases = '';
-            $ids = [];
+        DB::table('songs')
+            ->whereNull('podcast_id')
+            ->chunkById(100, static function ($songs): void {
+                $cases = '';
+                $ids = [];
 
-            /** @var Song $song */
-            foreach ($songs as $song) {
-                $ids[] = $song->id;
-                $mimeType = self::guessMimeType($song);
-                $cases .= "WHEN '$song->id' THEN '$mimeType' ";
-            }
+                /** @var Song $song */
+                foreach ($songs as $song) {
+                    $ids[] = $song->id;
+                    $mimeType = self::guessMimeType($song);
+                    $cases .= "WHEN '$song->id' THEN '$mimeType' ";
+                }
 
-            DB::table('songs')
-                ->whereIn('id', $ids)
-                ->update(['mime_type' => DB::raw("CASE id $cases END")]);
-        });
+                DB::table('songs')
+                    ->whereIn('id', $ids)
+                    ->update(['mime_type' => DB::raw("CASE id $cases END")]);
+            });
     }
 
-    public static function guessMimeType(Song $song): string
+    public static function guessMimeType(object $song): string
     {
         static $extToMimeMap = [];
 
-        $extension = Str::afterLast($song->storage_metadata->getPath(), '.');
+        $extension = Str::afterLast($song->path, '.');
 
         if (!$extension) {
             return self::DEFAULT_MIME_TYPE;
