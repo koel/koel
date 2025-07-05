@@ -4,14 +4,6 @@
     <ul>
       <li>
         <SponsorLogo
-          :logo="keycdnLogo"
-          name="KeyCDN"
-          slogan="Content Delivery Made Easy"
-          url="https://www.keycdn.com/?a=11519"
-        />
-      </li>
-      <li>
-        <SponsorLogo
           :logo="doLogo"
           name="DigitalOcean"
           slogan="Cloud Infrastructure for Developers"
@@ -56,7 +48,6 @@ import SponsorLogo from './SponsorLogo.vue'
 
 import doLogo from '../../assets/img/sponsors/do.svg'
 import followerBoerseLogo from '../../assets/img/sponsors/follower-boerse.svg'
-import keycdnLogo from '../../assets/img/sponsors/keycdn.svg'
 import whatTheDiffLogo from '../../assets/img/sponsors/what-the-diff.svg'
 import followHeroLogo from '../../assets/img/sponsors/followhero.webp'
 </script>
