@@ -6,8 +6,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::create('genres', static function (Blueprint $table): void {
@@ -51,10 +50,11 @@ return new class extends Migration
                 $songGenres = [];
 
                 foreach ($genres as $name) {
-                    $genreId = DB::table('genres')->insertGetId([
-                        'public_id' => Ulid::generate(),
-                        'name' => $name,
-                    ]);
+                    $genreId = DB::table('genres')->where('name', $name)->first()?->id
+                        ?: DB::table('genres')->insertGetId([
+                            'public_id' => Ulid::generate(),
+                            'name' => $name,
+                        ]);
 
                     $songGenres[] = [
                         'song_id' => $song->id,
