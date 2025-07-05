@@ -82,6 +82,7 @@ return new class extends Migration {
             ->join('artists', 'albums.artist_id', '=', 'artists.id')
             ->whereNull('songs.podcast_id')
             ->where('songs.owner_id', '!=', $firstAdmin->id)
+            ->orderBy('songs.created_at')
             ->select(
                 'songs.*',
                 'artists.name as artist_name',
@@ -89,7 +90,7 @@ return new class extends Migration {
                 'albums.name as album_name',
                 'albums.cover as album_cover',
             )
-            ->chunkById(100, static function ($songsChunk) use (&$artistCache, &$albumCache): void {
+            ->chunk(100, static function ($songsChunk) use (&$artistCache, &$albumCache): void {
                 if (count($songsChunk) === 0) {
                     return;
                 }

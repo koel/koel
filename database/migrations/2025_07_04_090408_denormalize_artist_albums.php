@@ -25,8 +25,9 @@ return new class extends Migration
             ->join('artists', 'albums.artist_id', '=', 'artists.id')
             ->whereNotNull('songs.artist_id')
             ->whereNotNull('songs.album_id')
+            ->orderBy('songs.created_at')
             ->select('songs.id', 'artists.name as artist_name', 'albums.name as album_name')
-            ->chunkById(100, static function ($songs) use ($pdo): void {
+            ->chunk(100, static function ($songs) use ($pdo): void {
                 $artistCases = [];
                 $albumCases = [];
                 $songIds = [];
@@ -68,8 +69,9 @@ return new class extends Migration
         DB::table('albums')
             ->join('artists', 'albums.artist_id', '=', 'artists.id')
             ->whereNotNull('albums.artist_id')
+            ->orderBy('albums.created_at')
             ->select('albums.id', 'artists.name as artist_name')
-            ->chunkById(100, static function ($albums) use ($pdo): void {
+            ->chunk(100, static function ($albums) use ($pdo): void {
                 $albumCases = [];
                 $albumIds = [];
 
