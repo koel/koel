@@ -40,9 +40,9 @@
         <span class="collaborator">
           <UserAvatar :user="collaborator" width="24" />
         </span>
-        <span :title="String(playable.collaboration.added_at)" class="added-at">{{
-          playable.collaboration.fmt_added_at
-        }}</span>
+        <span :title="String(playable.collaboration.added_at)" class="added-at">
+          {{ playable.collaboration.fmt_added_at }}
+        </span>
       </template>
       <template v-if="isSong(playable)">
         <span v-if="shouldShowColumn('genre')" class="genre">{{ playable.genre || '—' }}</span>

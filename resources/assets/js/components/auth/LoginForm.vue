@@ -12,11 +12,11 @@
       </div>
 
       <FormRow>
-        <TextInput v-model="email" autofocus placeholder="Email Address" required type="email" />
+        <TextInput v-model="email" autofocus :placeholder="emailPlaceholder" required type="email" />
       </FormRow>
 
       <FormRow>
-        <PasswordField v-model="password" placeholder="Password" required />
+        <PasswordField v-model="password" :placeholder="passwordPlaceholder" required />
       </FormRow>
 
       <FormRow>
@@ -53,7 +53,7 @@ import FormRow from '@/components/ui/form/FormRow.vue'
 
 const emit = defineEmits<{ (e: 'loggedin'): void }>()
 
-const DEMO_ACCOUNT = {
+const demoAccount = window.DEMO_ACCOUNT || {
   email: 'demo@koel.dev',
   password: 'demo',
 }
@@ -61,10 +61,13 @@ const DEMO_ACCOUNT = {
 const canResetPassword = window.MAILER_CONFIGURED && !window.IS_DEMO
 const ssoProviders = window.SSO_PROVIDERS || []
 
-const email = ref(window.IS_DEMO ? DEMO_ACCOUNT.email : '')
-const password = ref(window.IS_DEMO ? DEMO_ACCOUNT.password : '')
+const email = ref(window.IS_DEMO ? demoAccount.email : '')
+const password = ref(window.IS_DEMO ? demoAccount.password : '')
 const failed = ref(false)
 const showingForgotPasswordForm = ref(false)
+
+const emailPlaceholder = window.IS_DEMO ? demoAccount.email : 'Your email address'
+const passwordPlaceholder = window.IS_DEMO ? demoAccount.password : 'Your password'
 
 const showForgotPasswordForm = () => (showingForgotPasswordForm.value = true)
 

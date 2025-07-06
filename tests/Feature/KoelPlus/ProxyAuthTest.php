@@ -21,6 +21,9 @@ class ProxyAuthTest extends PlusTestCase
             'koel.proxy_auth.user_header' => 'remote-user',
             'koel.proxy_auth.preferred_name_header' => 'remote-preferred-name',
         ]);
+
+        // Disable Vite so that the test can run without a frontend build.
+        $this->withoutVite();
     }
 
     protected function tearDown(): void

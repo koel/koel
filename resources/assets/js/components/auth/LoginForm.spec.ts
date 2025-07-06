@@ -60,8 +60,8 @@ new class extends UnitTestCase {
   private async submitForm (loginMock: Mock) {
     const rendered = this.render(LoginFrom)
 
-    await this.type(screen.getByPlaceholderText('Email Address'), 'john@doe.com')
-    await this.type(screen.getByPlaceholderText('Password'), 'secret')
+    await this.type(screen.getByPlaceholderText('Your email address'), 'john@doe.com')
+    await this.type(screen.getByPlaceholderText('Your password'), 'secret')
     await this.user.click(screen.getByTestId('submit'))
 
     expect(loginMock).toHaveBeenCalledWith('john@doe.com', 'secret')

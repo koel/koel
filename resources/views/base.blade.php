@@ -11,14 +11,14 @@
     <meta name="theme-color" content="#282828">
     <meta name="msapplication-navbutton-color" content="#282828">
 
-    <link rel="manifest" href="{{ static_url('manifest.json') }}"/>
-    <meta name="msapplication-config" content="{{ static_url('browserconfig.xml') }}"/>
-    <link rel="icon" type="image/x-icon" href="{{ static_url('img/favicon.ico') }}"/>
+    <link rel="manifest" href="{{ static_url('manifest.json') }}" />
+    <meta name="msapplication-config" content="{{ static_url('browserconfig.xml') }}" />
+    <link rel="icon" type="image/x-icon" href="{{ static_url('img/favicon.ico') }}" />
     <link rel="icon" href="{{ static_url('img/icon.png') }}">
     <link rel="apple-touch-icon" href="{{ static_url('img/icon.png') }}">
 
     @unless(License::isPlus())
-    <script src="https://app.lemonsqueezy.com/js/lemon.js" defer></script>
+        <script src="https://app.lemonsqueezy.com/js/lemon.js" defer></script>
     @endunless
 
     <script>
@@ -32,7 +32,7 @@
 <noscript>It may sound funny, but Koel requires JavaScript to sing. Please enable it.</noscript>
 
 <script>
-    window.BASE_URL = @json(asset(''));
+    window.BASE_URL = @json(base_url());
     window.IS_DEMO = @json(config('koel.misc.demo'));
 
     window.PUSHER_APP_KEY = @json(config('broadcasting.connections.pusher.key'));

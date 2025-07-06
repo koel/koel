@@ -2,6 +2,8 @@
 
 use App\Facades\ITunes;
 use App\Http\Controllers\AuthorizeDropboxController;
+use App\Http\Controllers\Demo\IndexController as DemoIndexController;
+use App\Http\Controllers\Demo\NewSessionController;
 use App\Http\Controllers\Download\DownloadAlbumController;
 use App\Http\Controllers\Download\DownloadArtistController;
 use App\Http\Controllers\Download\DownloadFavoritesController;
@@ -16,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 
 Route::middleware('web')->group(static function (): void {
-    Route::get('/', IndexController::class);
+    Route::get('/', config('koel.misc.demo') ? DemoIndexController::class : IndexController::class);
 
     Route::get('remote', static fn () => view('remote'));
 
@@ -49,4 +51,10 @@ Route::middleware('web')->group(static function (): void {
             });
         }
     });
+});
+
+Route::middleware('web')->prefix('demo')->group(static function (): void {
+    Route::get('/new-session', NewSessionController::class)
+        ->name('demo.new-session')
+        ->middleware('throttle:10,1');
 });
