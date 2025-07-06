@@ -3,8 +3,8 @@
     <div
       v-if="allowsUpload && mediaPathSetUp"
       :class="{ droppable }"
-      class="drop-zone h-[256px] max-h-[66vh] aspect-square outline-4 outline-dashed outline-gray-300
-      fixed z-10 top-0 left-0 rounded-3xl bg-black/40 flex flex-col-reverse items-center justify-center
+      class="drop-zone h-screen w-screen fixed z-[9999] top-0 left-0
+       bg-black/40 flex flex-col-reverse items-center justify-center
       overflow-hidden duration-200"
       @dragleave="onDropLeave"
       @dragover="onDragOver"
@@ -49,11 +49,8 @@ const close = () => emit('close')
 
 <style lang="postcss" scoped>
 .drop-zone {
-  transform: translate(calc(50vw - 50%), calc(50vh - 50%));
-
   &.droppable {
-    @apply h-[384px] outline-white bg-black/90;
-    box-shadow: 0 0 0 999rem rgba(0, 0, 0, 0.7);
+    @apply bg-black/80;
   }
 }
 </style>
