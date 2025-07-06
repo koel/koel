@@ -13,7 +13,7 @@
     @dragover="onDragOver"
     @drop="onDrop"
   >
-    <Hotkeys />
+    <HotkeyListener />
     <MainWrapper />
     <AppFooter />
     <SupportKoel />
@@ -58,7 +58,7 @@ import GlobalEventListeners from '@/components/utils/GlobalEventListeners.vue'
 import AppInitializer from '@/components/utils/AppInitializer.vue'
 import MediaBrowserContextMenu from '@/components/media-browser/MediaBrowserContextMenu.vue'
 
-const Hotkeys = defineAsyncComponent(() => import('@/components/utils/HotkeyListener.vue'))
+const HotkeyListener = defineAsyncComponent(() => import('@/components/utils/HotkeyListener.vue'))
 const LoginForm = defineAsyncComponentWithLoadingState(() => import('@/components/auth/LoginForm.vue'))
 const MainWrapper = defineAsyncComponentWithLoadingState(() => import('@/components/layout/main-wrapper/index.vue'))
 const AlbumContextMenu = defineAsyncComponent(() => import('@/components/album/AlbumContextMenu.vue'))
