@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Attributes\DisabledInDemo;
 use App\Facades\License;
 use App\Services\AuthenticationService;
 use App\Services\ProxyAuthService;
 use Illuminate\Http\Request;
 
+#[DisabledInDemo]
 class IndexController extends Controller
 {
     public function __invoke(Request $request, ProxyAuthService $proxyAuthService, AuthenticationService $auth)

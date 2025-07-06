@@ -68,6 +68,12 @@ interface Window {
   BASE_URL: string
   MAILER_CONFIGURED: boolean
   IS_DEMO: boolean
+
+  DEMO_ACCOUNT?: {
+    email: string
+    password: string
+  }
+
   SSO_PROVIDERS: SSOProvider[]
   AUTH_TOKEN: CompositeToken | null
   ACCEPTED_AUDIO_EXTENSIONS: string[]

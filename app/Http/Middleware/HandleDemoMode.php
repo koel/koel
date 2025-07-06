@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Attributes\DisabledInDemo;
+use App\Attributes\RequiresDemo;
 use App\Http\Middleware\Concerns\ChecksControllerAttributes;
 use Closure;
 use Illuminate\Http\Request;
@@ -22,6 +23,13 @@ class HandleDemoMode
         if (config('koel.misc.demo')) {
             optional(
                 Arr::get(self::getAttributeUsageFromRequest($request, DisabledInDemo::class), 0),
+                static fn (ReflectionAttribute $attribute) => abort($attribute->newInstance()->code)
+            );
+        }
+
+        if (!config('koel.misc.demo')) {
+            optional(
+                Arr::get(self::getAttributeUsageFromRequest($request, RequiresDemo::class), 0),
                 static fn (ReflectionAttribute $attribute) => abort($attribute->newInstance()->code)
             );
         }

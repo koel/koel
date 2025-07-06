@@ -18,6 +18,11 @@ function static_url(?string $name = null): string
     return $cdnUrl ? $cdnUrl . '/' . trim(ltrim($name, '/')) : trim(asset($name));
 }
 
+function base_url(): string
+{
+    return app()->runningUnitTests() ? config('app.url') : asset('');
+}
+
 function album_cover_path(?string $fileName): ?string
 {
     return $fileName ? public_path(config('koel.album_cover_dir') . $fileName) : null;
