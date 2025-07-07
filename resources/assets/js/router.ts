@@ -1,5 +1,6 @@
 import type { Ref } from 'vue'
 import { ref, watch } from 'vue'
+import type { RouteName } from '@/config/routes'
 import { routes } from '@/config/routes'
 import { forceReloadWindow } from '@/utils/helpers'
 
@@ -154,14 +155,14 @@ export default class Router {
     return null
   }
 
-  public static url (name: Route['name'], params: object = {}) {
+  public static url (name: RouteName, params: object = {}) {
     const route = routes.find(route => route.name === name)
 
     if (!route) {
       throw new Error(`Route "${name}" not found`)
     }
 
-    let path = route.path
+    let path = route.path as string
 
     path = path.replace(/:(\w+)\??/g, (_, key: string, offset: number, fullPath: string) => {
       const isOptional = fullPath[offset + key.length + 1] === '?'

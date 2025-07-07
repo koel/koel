@@ -9,7 +9,7 @@ import { logger } from '@/utils/logger'
 const UUID_REGEX = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 const ULID_REGEX = '[0-9A-Za-z]{26}'
 
-export const routes: Route[] = [
+export const routes = [
   {
     name: 'home',
     path: '/home',
@@ -95,18 +95,20 @@ export const routes: Route[] = [
   },
   {
     name: 'albums.show',
-    path: '/albums/:id',
+    path: '/albums/:id/:tab?',
     screen: 'Album',
     constraints: {
       id: ULID_REGEX,
+      tab: '(songs|other-albums|information)',
     },
   },
   {
     name: 'artists.show',
-    path: '/artists/:id',
+    path: '/artists/:id/:tab?',
     screen: 'Artist',
     constraints: {
       id: ULID_REGEX,
+      tab: '(songs|albums|information)',
     },
   },
   {
@@ -205,4 +207,6 @@ export const routes: Route[] = [
       path: '.+',
     },
   },
-]
+] as const satisfies Route[]
+
+export type RouteName = typeof routes[number]['name']

@@ -1,5 +1,5 @@
 <template>
-  <ScreenBase v-if="albumId">
+  <ScreenBase>
     <template #header>
       <ScreenHeaderSkeleton v-if="loading" />
 
@@ -43,23 +43,24 @@
       </ScreenHeader>
     </template>
 
-    <ScreenTabs v-if="album" class="-m-6">
+    <ScreenTabs v-if="album" class="-m-6" :class="loading && 'pointer-events-none'">
       <template #header>
-        <label :class="{ active: activeTab === 'Songs' }">
-          Songs
-          <input v-model="activeTab" :disabled="loading" name="tab" type="radio" value="Songs">
-        </label>
-        <label :class="{ active: activeTab === 'OtherAlbums' }">
-          Other Albums
-          <input v-model="activeTab" :disabled="loading" name="tab" type="radio" value="OtherAlbums">
-        </label>
-        <label v-if="useEncyclopedia" :class="{ active: activeTab === 'Info' }">
-          Information
-          <input v-model="activeTab" :disabled="loading" name="tab" type="radio" value="Info">
-        </label>
+        <nav>
+          <ul>
+            <li :class="activeTab === 'songs' && 'active'">
+              <a :href="url('albums.show', { id: album.id, tab: 'songs' })">Songs</a>
+            </li>
+            <li :class="activeTab === 'other-albums' && 'active'">
+              <a :href="url('albums.show', { id: album.id, tab: 'other-albums' })">Other Albums</a>
+            </li>
+            <li v-if="useEncyclopedia" :class="activeTab === 'information' && 'active'">
+              <a :href="url('albums.show', { id: album.id, tab: 'information' })">Information</a>
+            </li>
+          </ul>
+        </nav>
       </template>
 
-      <div v-show="activeTab === 'Songs'" class="songs-pane">
+      <div v-show="activeTab === 'songs'" class="songs-pane">
         <SongListSkeleton v-if="loading" />
         <SongList
           v-if="!loading && album"
@@ -69,7 +70,7 @@
         />
       </div>
 
-      <div v-show="activeTab === 'OtherAlbums'" class="albums-pane" data-testid="albums-pane">
+      <div v-show="activeTab === 'other-albums'" class="albums-pane" data-testid="albums-pane">
         <template v-if="otherAlbums">
           <AlbumGrid v-if="otherAlbums.length" v-koel-overflow-fade view-mode="list">
             <AlbumCard v-for="otherAlbum in otherAlbums" :key="otherAlbum.id" :album="otherAlbum" layout="compact" />
@@ -83,7 +84,7 @@
         </AlbumGrid>
       </div>
 
-      <div v-if="useEncyclopedia && album" v-show="activeTab === 'Info'" class="info-pane">
+      <div v-if="useEncyclopedia && album" v-show="activeTab === 'information'" class="info-pane">
         <AlbumInfo :album="album" mode="full" />
       </div>
     </ScreenTabs>
@@ -91,7 +92,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, ref } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { pluralize } from '@/utils/formatters'
 import { albumStore } from '@/stores/albumStore'
@@ -103,6 +104,7 @@ import { usePolicies } from '@/composables/usePolicies'
 import { useSongList } from '@/composables/useSongList'
 import { useSongListControls } from '@/composables/useSongListControls'
 import { useRouter } from '@/composables/useRouter'
+import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import AlbumThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
@@ -111,19 +113,20 @@ import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 import ScreenTabs from '@/components/ui/ArtistAlbumScreenTabs.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import AlbumGrid from '@/components/ui/album-artist/AlbumOrArtistGrid.vue'
-import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 
-type Tab = 'Songs' | 'OtherAlbums' | 'Info'
-const activeTab = ref<Tab>('Songs')
+const validTabs = ['songs', 'other-albums', 'information'] as const
+type Tab = (typeof validTabs)[number]
 
 const AlbumInfo = defineAsyncComponent(() => import('@/components/album/AlbumInfo.vue'))
 const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCard.vue'))
 const AlbumCardSkeleton = defineAsyncComponent(() => import('@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'))
 
-const { getRouteParam, go, onScreenActivated, url } = useRouter()
+const { getRouteParam, go, onScreenActivated, onRouteChanged, url, triggerNotFound } = useRouter()
 const { currentUserCan } = usePolicies()
+const { SongListControls, config } = useSongListControls('Album')
+const { useLastfm, useMusicBrainz } = useThirdPartyServices()
 
-const albumId = ref<Album['id']>()
+const activeTab = ref<Tab>('songs')
 const album = ref<Album | undefined>()
 const songs = ref<Song[]>([])
 const loading = ref(false)
@@ -149,9 +152,6 @@ const {
   onScrollBreakpoint,
 } = useSongList(songs, { type: 'Album' })
 
-const { SongListControls, config } = useSongListControls('Album')
-const { useLastfm, useMusicBrainz } = useThirdPartyServices()
-
 const useEncyclopedia = computed(() => useMusicBrainz.value || useLastfm.value)
 
 const isStandardArtist = computed(() => {
@@ -166,22 +166,18 @@ const download = () => downloadService.fromAlbum(album.value!)
 
 const edit = () => eventBus.emit('MODAL_SHOW_EDIT_ALBUM_FORM', album.value!)
 
-watch(activeTab, async tab => {
-  if (tab === 'OtherAlbums' && !otherAlbums.value) {
-    const albums = await albumStore.fetchForArtist(album.value!.artist_id)
-    otherAlbums.value = albums.filter(({ id }) => id !== album.value!.id)
-  }
-})
-
-watch(albumId, async id => {
-  if (!id || loading.value) {
+const fetchScreenData = async () => {
+  if (loading.value) {
     return
   }
+
+  const id = getRouteParam('id')
+  const tabParam = getRouteParam<Tab>('tab') || 'songs'
+  activeTab.value = validTabs.includes(tabParam) ? tabParam : 'songs'
 
   album.value = undefined
   info.value = undefined
   otherAlbums.value = undefined
-  activeTab.value = 'Songs'
 
   loading.value = true
 
@@ -190,6 +186,17 @@ watch(albumId, async id => {
       albumStore.resolve(id),
       songStore.fetchForAlbum(id),
     ])
+
+    if (!album.value) {
+      // If the album does not exist, redirect to the album list.
+      await triggerNotFound()
+      return
+    }
+
+    if (activeTab.value === 'other-albums') {
+      const albums = await albumStore.fetchForArtist(album.value.artist_id)
+      otherAlbums.value = albums.filter(({ id }) => id !== album.value!.id)
+    }
 
     context.entity = album.value
 
@@ -201,12 +208,18 @@ watch(albumId, async id => {
   } finally {
     loading.value = false
   }
+}
+
+onScreenActivated('Album', () => fetchScreenData())
+onRouteChanged(route => route.name === 'albums.show' && fetchScreenData())
+
+eventBus.on('SONGS_UPDATED', result => {
+  // After songs are updated, check if the current album still exists.
+  // If it doesn't, redirect to the album list.
+  if (result.removed.albums.find(({ id }) => id === album.value?.id)) {
+    go(url('albums.index'))
+  }
 })
-
-onScreenActivated('Album', () => (albumId.value = getRouteParam('id')))
-
-// if the current album has been deleted, go back to the list
-eventBus.on('SONGS_UPDATED', () => albumStore.byId(albumId.value!) || go(url('albums.index')))
 </script>
 
 <style lang="postcss" scoped>

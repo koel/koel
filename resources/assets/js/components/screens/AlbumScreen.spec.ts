@@ -33,23 +33,26 @@ new class extends UnitTestCase {
 
     it('goes back to list if album is deleted', async () => {
       const goMock = this.mock(Router, 'go')
-      const byIdMock = this.mock(albumStore, 'byId', null)
       await this.renderComponent()
+      await this.tick()
 
       eventBus.emit('SONGS_UPDATED', {
         songs: [],
         artists: [],
         albums: [],
         removed: {
-          albums: [],
+          albums: [{
+            id: album.id,
+            name: album.name,
+            artist_id: album.artist_id,
+            cover: album.cover,
+            created_at: album.created_at,
+          }],
           artists: [],
         },
       })
 
-      await waitFor(() => {
-        expect(byIdMock).toHaveBeenCalledWith(album.id)
-        expect(goMock).toHaveBeenCalledWith('/#/albums')
-      })
+      await waitFor(() => expect(goMock).toHaveBeenCalledWith('/#/albums'))
     })
 
     it('shows the song list', async () => {
@@ -58,15 +61,13 @@ new class extends UnitTestCase {
     })
 
     it('shows other albums from the same artist', async () => {
-      await this.renderComponent()
-
       const albums = factory('album', 3)
-      albums.push(album)
       const fetchMock = this.mock(albumStore, 'fetchForArtist').mockResolvedValue(albums)
+      await this.renderComponent('other-albums')
+
+      albums.push(album)
 
       await waitFor(async () => {
-        await this.user.click(screen.getByRole('radio', { name: 'Other Albums' }))
-
         expect(fetchMock).toHaveBeenCalledWith(album.artist_id)
         expect(screen.getAllByTestId('album-card')).toHaveLength(3) // current album is excluded
       })
@@ -84,7 +85,7 @@ new class extends UnitTestCase {
     })
   }
 
-  private async renderComponent () {
+  private async renderComponent (tab: 'songs' | 'other-albums' | 'information' = 'songs') {
     commonStore.state.uses_last_fm = true
 
     album = factory('album', {
@@ -100,9 +101,12 @@ new class extends UnitTestCase {
     const fetchSongsMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
 
     await this.router.activateRoute({
-      path: 'albums/foo',
+      path: `albums/foo/${tab}`,
       screen: 'Album',
-    }, { id: 'foo' })
+    }, {
+      tab,
+      id: 'foo',
+    })
 
     this.beAdmin().render(AlbumScreen, {
       global: {

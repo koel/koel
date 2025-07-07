@@ -14,23 +14,24 @@
   @apply flex flex-col overflow-hidden flex-1 text-k-text-secondary;
 }
 
-:deep(header) {
+:deep(header ul) {
   @apply flex bg-white/5 overflow-hidden flex-shrink-0 border-b-white/5;
 
-  label {
+  li {
     @apply text-base relative uppercase tracking-wider opacity-50 cursor-pointer;
-    @apply transition-opacity duration-200 ease-in-out px-7 py-4 rounded-none;
+    @apply transition-opacity duration-200 ease-in-out rounded-none;
 
     &:hover {
       @apply opacity-80;
     }
 
-    &.active {
+    &.active,
+    &:hover {
       @apply opacity-100;
     }
 
-    input {
-      @apply hidden;
+    a {
+      @apply text-k-text-primary relative px-7 py-4 inline-block;
     }
   }
 }
