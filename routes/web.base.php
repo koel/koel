@@ -18,7 +18,11 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 
 Route::middleware('web')->group(static function (): void {
-    Route::get('/', config('koel.misc.demo') ? DemoIndexController::class : IndexController::class);
+    // Using a closure to determine the controller instead of static configuration to allow for testing.
+    Route::get(
+        '/',
+        static fn () => app()->call(config('koel.misc.demo') ? DemoIndexController::class : IndexController::class),
+    );
 
     Route::get('remote', static fn () => view('remote'));
 

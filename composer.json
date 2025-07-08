@@ -47,7 +47,8 @@
     "tiben/crontab-manager": "*",
     "owen-it/laravel-auditing": "^13.7",
     "fileeye/mimemap": "^2.2",
-    "ezyang/htmlpurifier": "^4.18"
+    "ezyang/htmlpurifier": "^4.18",
+    "jaybizzle/crawler-detect": "^1.3"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
