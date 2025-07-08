@@ -1,5 +1,5 @@
 <template>
-  <ScreenBase v-if="artistId">
+  <ScreenBase>
     <template #header>
       <ScreenHeaderSkeleton v-if="loading" />
 
@@ -39,23 +39,24 @@
       </ScreenHeader>
     </template>
 
-    <ScreenTabs v-if="artist" class="-m-6">
+    <ScreenTabs v-if="artist" class="-m-6" :class="loading && 'pointer-events-none'">
       <template #header>
-        <label :class="{ active: activeTab === 'Songs' }">
-          Songs
-          <input v-model="activeTab" :disabled="loading" name="tab" type="radio" value="Songs">
-        </label>
-        <label :class="{ active: activeTab === 'Albums' }">
-          Albums
-          <input v-model="activeTab" :disabled="loading" name="tab" type="radio" value="Albums">
-        </label>
-        <label v-if="useEncyclopedia" :class="{ active: activeTab === 'Info' }">
-          Information
-          <input v-model="activeTab" :disabled="loading" name="tab" type="radio" value="Info">
-        </label>
+        <nav>
+          <ul>
+            <li :class="activeTab === 'songs' && 'active'">
+              <a :href="url('artists.show', { id: artist.id, tab: 'songs' })">Songs</a>
+            </li>
+            <li :class="activeTab === 'albums' && 'active'">
+              <a :href="url('artists.show', { id: artist.id, tab: 'albums' })">Albums</a>
+            </li>
+            <li v-if="useEncyclopedia" :class="activeTab === 'information' && 'active'">
+              <a :href="url('artists.show', { id: artist.id, tab: 'information' })">Information</a>
+            </li>
+          </ul>
+        </nav>
       </template>
 
-      <div v-show="activeTab === 'Songs'" class="songs-pane">
+      <div v-show="activeTab === 'songs'" class="songs-pane">
         <SongListSkeleton v-if="loading" />
         <SongList
           v-if="!loading && artist"
@@ -65,7 +66,7 @@
         />
       </div>
 
-      <div v-show="activeTab === 'Albums'" class="albums-pane">
+      <div v-show="activeTab === 'albums'" class="albums-pane">
         <AlbumOrArtistGrid v-koel-overflow-fade view-mode="list">
           <template v-if="albums">
             <AlbumCard
@@ -82,7 +83,7 @@
         </AlbumOrArtistGrid>
       </div>
 
-      <div v-if="useEncyclopedia && artist" v-show="activeTab === 'Info'" class="info-pane">
+      <div v-if="useEncyclopedia && artist" v-show="activeTab === 'information'" class="info-pane">
         <ArtistInfo :artist="artist" mode="full" />
       </div>
     </ScreenTabs>
@@ -90,7 +91,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, ref } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { pluralize } from '@/utils/formatters'
 import { albumStore } from '@/stores/albumStore'
@@ -115,12 +116,14 @@ const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/Artist
 const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCard.vue'))
 const AlbumCardSkeleton = defineAsyncComponent(() => import('@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'))
 
-type Tab = 'Songs' | 'Albums' | 'Info'
-const activeTab = ref<Tab>('Songs')
+const validTabs = ['songs', 'albums', 'information'] as const
+type Tab = typeof validTabs[number]
 
-const { getRouteParam, go, onScreenActivated, url } = useRouter()
+const { SongListControls, config } = useSongListControls('Artist')
+const { useLastfm, useMusicBrainz } = useThirdPartyServices()
+const { getRouteParam, go, onScreenActivated, onRouteChanged, url, triggerNotFound } = useRouter()
 
-const artistId = ref<Artist['id']>()
+const activeTab = ref<Tab>('songs')
 const artist = ref<Artist>()
 const songs = ref<Song[]>([])
 const loading = ref(false)
@@ -143,10 +146,6 @@ const {
   onScrollBreakpoint,
 } = useSongList(songs, { type: 'Artist' })
 
-const { SongListControls, config } = useSongListControls('Artist')
-
-const { useLastfm, useMusicBrainz } = useThirdPartyServices()
-
 const useEncyclopedia = computed(() => useMusicBrainz.value || useLastfm.value)
 
 const albumCount = computed(() => {
@@ -155,16 +154,16 @@ const albumCount = computed(() => {
   return albums.size
 })
 
-watch(activeTab, async tab => {
-  if (tab === 'Albums' && !albums.value) {
-    albums.value = await albumStore.fetchForArtist(artist.value!)
-  }
-})
+const download = () => downloadService.fromArtist(artist.value!)
 
-watch(artistId, async id => {
-  if (!id || loading.value) {
+const fetchScreenData = async () => {
+  if (loading.value) {
     return
   }
+
+  const id = getRouteParam('id')
+  const tabParam = getRouteParam<Tab>('tab') || 'songs'
+  activeTab.value = validTabs.includes(tabParam) ? tabParam : 'songs'
 
   loading.value = true
 
@@ -174,18 +173,31 @@ watch(artistId, async id => {
       songStore.fetchForArtist(id),
     ])
 
+    if (!artist.value) {
+      await triggerNotFound()
+      return
+    }
+
+    if (activeTab.value === 'albums') {
+      albums.value = await albumStore.fetchForArtist(artist.value)
+    }
+
     context.entity = artist.value
   } catch (error: unknown) {
     useErrorHandler('dialog').handleHttpError(error)
   } finally {
     loading.value = false
   }
+}
+
+onScreenActivated('Artist', () => fetchScreenData())
+onRouteChanged(route => route.name === 'artists.show' && fetchScreenData())
+
+eventBus.on('SONGS_UPDATED', result => {
+  // After songs are updated, check if the current artist still exists.
+  // If not, redirect to the artist index screen.
+  if (result.removed.artists.find(({ id }) => id === artist.value?.id)) {
+    go(url('artists.index'))
+  }
 })
-
-const download = () => downloadService.fromArtist(artist.value!)
-
-onScreenActivated('Artist', () => (artistId.value = getRouteParam('id')))
-
-// if the current artist has been deleted, go back to the list
-eventBus.on('SONGS_UPDATED', () => artistStore.byId(artist.value!.id) || go(url('artists.index')))
 </script>

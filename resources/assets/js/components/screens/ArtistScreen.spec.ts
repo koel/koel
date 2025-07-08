@@ -13,7 +13,7 @@ import ArtistScreen from './ArtistScreen.vue'
 let artist: Artist
 
 new class extends UnitTestCase {
-  protected async renderComponent () {
+  protected async renderComponent (tab: 'songs' | 'albums' | 'information' = 'songs') {
     commonStore.state.uses_last_fm = true
 
     artist = factory('artist', {
@@ -27,9 +27,12 @@ new class extends UnitTestCase {
     const fetchSongsMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
 
     await this.router.activateRoute({
-      path: 'artists/foo',
+      path: `artists/foo/${tab}`,
       screen: 'Artist',
-    }, { id: 'foo' })
+    }, {
+      tab,
+      id: 'foo',
+    })
 
     this.render(ArtistScreen, {
       global: {
@@ -61,7 +64,6 @@ new class extends UnitTestCase {
 
     it('goes back to list if artist is deleted', async () => {
       const goMock = this.mock(Router, 'go')
-      const byIdMock = this.mock(artistStore, 'byId', null)
       await this.renderComponent()
 
       eventBus.emit('SONGS_UPDATED', {
@@ -70,14 +72,16 @@ new class extends UnitTestCase {
         albums: [],
         removed: {
           albums: [],
-          artists: [],
+          artists: [{
+            id: artist.id,
+            name: artist.name,
+            image: artist.image,
+            created_at: artist.created_at,
+          }],
         },
       })
 
-      await waitFor(() => {
-        expect(byIdMock).toHaveBeenCalledWith(artist.id)
-        expect(goMock).toHaveBeenCalledWith('/#/artists')
-      })
+      await waitFor(() => expect(goMock).toHaveBeenCalledWith('/#/artists'))
     })
 
     it('shows the song list', async () => {
