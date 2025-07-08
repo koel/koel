@@ -10,12 +10,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('songs', static function (Blueprint $table): void {
-            $table->string('artist_name', (2 ** 16) - 32)->nullable()->index();
-            $table->string('album_name', (2 ** 16) - 32)->nullable()->index();
+            $table->string('artist_name')->nullable()->index();
+            $table->string('album_name')->nullable()->index();
         });
 
         Schema::table('albums', static function (Blueprint $table): void {
-            $table->string('artist_name', (2 ** 16) - 32)->nullable()->index();
+            $table->string('artist_name')->nullable()->index();
         });
 
         $pdo = DB::connection()->getPdo();
