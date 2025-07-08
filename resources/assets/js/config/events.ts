@@ -19,6 +19,8 @@ export interface Events {
   CONTEXT_MENU_OPENED: (el: Ref<HTMLElement> | HTMLElement) => void
 
   FULLSCREEN_TOGGLE: () => void
+  PLAYBACK_STARTED: (playable: Playable) => void
+  UP_NEXT: (playable: Playable | null) => void
 
   MODAL_SHOW_ADD_USER_FORM: () => void
   MODAL_SHOW_INVITE_USER_FORM: () => void
