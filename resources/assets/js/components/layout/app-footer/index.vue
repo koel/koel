@@ -14,6 +14,10 @@
       <PlaybackControls />
       <ExtraControls />
     </div>
+
+    <Transition>
+      <UpNext v-show="showingUpNext" :playable="nextPlayable" class="up-next" />
+    </Transition>
   </footer>
 </template>
 
@@ -24,7 +28,7 @@ import { useFullscreen } from '@vueuse/core'
 import { eventBus } from '@/utils/eventBus'
 import { isSong } from '@/utils/typeGuards'
 import { isAudioContextSupported } from '@/utils/supports'
-import { requireInjection } from '@/utils/helpers'
+import { defineAsyncComponent, requireInjection } from '@/utils/helpers'
 import { CurrentPlayableKey } from '@/symbols'
 import { artistStore } from '@/stores/artistStore'
 import { preferenceStore } from '@/stores/preferenceStore'
@@ -36,17 +40,25 @@ import SongInfo from '@/components/layout/app-footer/FooterSongInfo.vue'
 import ExtraControls from '@/components/layout/app-footer/FooterExtraControls.vue'
 import PlaybackControls from '@/components/layout/app-footer/FooterPlaybackControls.vue'
 
+const UpNext = defineAsyncComponent(() => import('@/components/layout/app-footer/UpNext.vue'))
+
 const playable = requireInjection(CurrentPlayableKey, ref())
 let hideControlsTimeout: number
 
 const root = ref<HTMLElement>()
 const artist = ref<Artist>()
+const nextPlayable = ref<Playable | null>(null)
+
+const { isFullscreen, toggle: toggleFullscreen } = useFullscreen(root)
+
+const showingUpNext = computed(() => nextPlayable.value && isFullscreen.value)
 
 const requestContextMenu = (event: MouseEvent) => {
-  if (document.fullscreenElement) {
+  if (document.fullscreenElement || !playable.value) {
     return
   }
-  playable.value && eventBus.emit('PLAYABLE_CONTEXT_MENU_REQUESTED', event, playable.value)
+
+  eventBus.emit('PLAYABLE_CONTEXT_MENU_REQUESTED', event, playable.value)
 }
 
 watch(playable, async () => {
@@ -102,8 +114,6 @@ const showControls = throttle(() => {
   setupControlHidingTimer()
 }, 100)
 
-const { isFullscreen, toggle: toggleFullscreen } = useFullscreen(root)
-
 watch(isFullscreen, fullscreen => {
   if (fullscreen) {
     setupControlHidingTimer()
@@ -114,9 +124,20 @@ watch(isFullscreen, fullscreen => {
 })
 
 eventBus.on('FULLSCREEN_TOGGLE', () => toggleFullscreen())
+  .on('UP_NEXT', next => (nextPlayable.value = next))
 </script>
 
 <style lang="postcss" scoped>
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 2s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+
 footer {
   box-shadow: 0 0 30px 20px rgba(0, 0, 0, 0.2);
 
@@ -128,7 +149,7 @@ footer {
     padding: calc(100vh - 9rem) 5vw 0;
     @apply bg-none;
 
-    &.hide-controls :not(.fullscreen-backdrop) {
+    &.hide-controls :not(.fullscreen-backdrop, .up-next, .up-next *) {
       transition: opacity 2s ease-in-out !important; /* overriding all children's custom transition, if any */
       @apply opacity-0;
     }

@@ -1,6 +1,7 @@
 import isMobile from 'ismobilejs'
 import plyr from 'plyr'
-import { watch } from 'vue'
+import type { Ref } from 'vue'
+import { ref, watch } from 'vue'
 import { shuffle, throttle } from 'lodash'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
@@ -20,7 +21,7 @@ import { volumeManager } from '@/services/volumeManager'
 import { useEpisodeProgressTracking } from '@/composables/useEpisodeProgressTracking'
 
 /**
- * The number of seconds before the current playable ends to start preload the next one.
+ * The number of seconds before the current playable ends to start preloading the next one.
  */
 const PRELOAD_BUFFER = 30
 
@@ -28,6 +29,7 @@ class PlaybackService {
   public player!: Plyr
   private repeatModes: RepeatMode[] = ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE']
   private initialized = false
+  private upNext: Ref<Playable | null> = ref(null)
 
   public get isTranscoding () {
     return isMobile.any && preferences.transcode_on_mobile
@@ -72,6 +74,7 @@ class PlaybackService {
     this.setMediaSessionActionHandlers()
 
     watch(volumeManager.volume, volume => this.player.setVolume(volume), { immediate: true })
+    watch(this.upNext, upNext => eventBus.emit('UP_NEXT', upNext))
 
     this.initialized = true
   }
@@ -182,6 +185,10 @@ class PlaybackService {
 
   public async restart () {
     const playable = queueStore.current!
+
+    // Reset the "up next" value to let subscribers know that the next item is cleared
+    // (because another song, likely the "next" one, is being played)
+    this.upNext.value = null
 
     this.recordStartTime(playable)
     this.broadcast(playable)
@@ -420,6 +427,10 @@ class PlaybackService {
         }
       }
 
+      if (!media.duration || !media.currentTime) {
+        return
+      }
+
       if (Math.ceil(media.currentTime) % 5 === 0) {
         // every 5 seconds, we save the current playback position to the server
         try {
@@ -439,11 +450,15 @@ class PlaybackService {
 
       const nextPlayable = queueStore.next
 
-      if (!nextPlayable || nextPlayable.preloaded || this.isTranscoding) {
+      if (!nextPlayable) {
         return
       }
 
-      if (media.duration && media.currentTime + PRELOAD_BUFFER > media.duration) {
+      // Set the "up next" value to the next playable if we're near the end of the current playback.
+      this.upNext.value = media.currentTime + 15 > media.duration ? nextPlayable : null
+
+      // Preload the next playable if we're near the end of the current playback.
+      if (media.currentTime + PRELOAD_BUFFER > media.duration && !nextPlayable.preloaded && !this.isTranscoding) {
         this.preload(nextPlayable)
       }
     }
