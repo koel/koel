@@ -10,6 +10,7 @@ export default (): Album => {
     cover: faker.image.url(),
     created_at: faker.date.past().toISOString(),
     year: faker.date.past().getFullYear(),
+    is_external: false,
   }
 }
 

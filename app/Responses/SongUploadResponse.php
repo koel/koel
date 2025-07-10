@@ -30,7 +30,7 @@ class SongUploadResponse extends BroadcastableResponse
     {
         return [
             'song' => SongResource::make($this->song)->for($this->song->owner),
-            'album' => AlbumResource::make($this->album),
+            'album' => AlbumResource::make($this->album)->for($this->album->user),
         ];
     }
 }

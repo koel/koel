@@ -38,21 +38,6 @@ new class extends UnitTestCase {
         expect(goMock).toHaveBeenCalledWith('/#/queue')
       })
     })
-
-    it('renders in Plus edition', async () => {
-      this.enablePlusEdition()
-
-      const [{ html }, fetchMock] = await this.renderComponent()
-      await waitFor(() => expect(html()).toMatchSnapshot())
-
-      await this.user.click(screen.getByLabelText('Own songs only'))
-      await waitFor(() => expect(fetchMock).toHaveBeenCalledWith({
-        sort: 'title',
-        order: 'asc',
-        page: 1,
-        own_songs_only: true,
-      }))
-    })
   }
 
   private async renderComponent () {

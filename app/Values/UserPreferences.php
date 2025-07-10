@@ -17,6 +17,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
         'show_album_art_overlay' => 'boolean',
         'lyrics_zoom_level' => 'integer',
         'make_uploads_public' => 'boolean',
+        'include_public_media' => 'boolean',
         'continuous_playback' => 'boolean',
     ];
 
@@ -35,6 +36,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
         'transcode_quality',
         'show_album_art_overlay',
         'make_uploads_public',
+        'include_public_media',
         'support_bar_no_bugging',
         'lyrics_zoom_level',
         'visualizer',
@@ -59,6 +61,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
         public int $transcodeQuality,
         public bool $showAlbumArtOverlay,
         public bool $makeUploadsPublic,
+        public bool $includePublicMedia,
         public bool $supportBarNoBugging,
         public bool $continuousPlayback,
         public int $lyricsZoomLevel,
@@ -95,6 +98,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
             transcodeQuality: $data['transcode_quality'] ?? config('koel.streaming.bitrate'),
             showAlbumArtOverlay: $data['show_album_art_overlay'] ?? true,
             makeUploadsPublic: $data['make_uploads_public'] ?? false,
+            includePublicMedia: $data['include_public_media'] ?? true,
             supportBarNoBugging: $data['support_bar_no_bugging'] ?? false,
             continuousPlayback: $data['continuous_playback'] ?? false,
             lyricsZoomLevel: $data['lyrics_zoom_level'] ?? 1,
@@ -133,7 +137,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
         Assert::inArray($key, self::ALL_KEYS);
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function toArray(): array
     {
         return [
@@ -144,6 +148,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
             'transcode_on_mobile' => $this->transcodeOnMobile,
             'transcode_quality' => $this->transcodeQuality,
             'make_uploads_public' => $this->makeUploadsPublic,
+            'include_public_media' => $this->includePublicMedia,
             'lastfm_session_key' => $this->lastFmSessionKey,
             'support_bar_no_bugging' => $this->supportBarNoBugging,
             'artists_view_mode' => $this->artistsViewMode,
@@ -160,7 +165,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
         ];
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function jsonSerialize(): array
     {
         return $this->toArray();

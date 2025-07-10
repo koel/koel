@@ -61,7 +61,7 @@ class SongBuilder extends Builder
             ->leftJoin('interactions', function (JoinClause $join): void {
                 $join->on('interactions.song_id', 'songs.id')->where('interactions.user_id', $this->user->id);
             })
-            ->select(
+            ->addSelect(
                 'songs.*',
                 'interactions.liked',
                 'interactions.play_count',
@@ -78,20 +78,32 @@ class SongBuilder extends Builder
         $user ??= $this->user;
 
         // We want to alias both podcasts and podcast_user tables to avoid possible conflicts with other joins.
-        return $this->leftJoin('podcasts as podcasts_a11y', 'songs.podcast_id', 'podcasts_a11y.id')
+        $this->leftJoin('podcasts as podcasts_a11y', 'songs.podcast_id', 'podcasts_a11y.id')
             ->leftJoin('podcast_user as podcast_user_a11y', static function (JoinClause $join) use ($user): void {
                 $join->on('podcasts_a11y.id', 'podcast_user_a11y.podcast_id')
                     ->where('podcast_user_a11y.user_id', $user->id);
-            })
-            ->where(static function (Builder $query) use ($user): void {
-                // Songs must be public or owned by the user.
-                $query->where('songs.is_public', true)
-                    ->orWhere('songs.owner_id', $user->id);
-            })->whereNot(static function (Builder $query): void {
-                // Episodes must belong to a podcast that the user is not subscribed to.
-                $query->whereNotNull('songs.podcast_id')
-                    ->whereNull('podcast_user_a11y.podcast_id');
+            })->whereNot(static function (self $query): void {
+                // Episodes must belong to a podcast that the user is subscribed to.
+                $query->whereNotNull('songs.podcast_id')->whereNull('podcast_user_a11y.podcast_id');
             });
+
+        // Depending on the user preferences, songs must be either:
+        // - owned by the user, or
+        // - shared (is_public=true) by the users in the same organization
+        if (!$user->preferences->includePublicMedia) {
+            return $this->whereBelongsTo($user, 'owner');
+        }
+
+        return $this->where(static function (Builder $query) use ($user): void {
+            $query->whereBelongsTo($user, 'owner')
+                ->orWhere(static function (Builder $q) use ($user): void {
+                    $q->where('songs.is_public', true)
+                        ->whereHas('owner', static function (Builder $owner) use ($user): void {
+                            $owner->where('organization_id', $user->organization_id)
+                                ->where('owner_id', '<>', $user->id);
+                        });
+                });
+        });
     }
 
     private function sortByOneColumn(string $column, string $direction): self

@@ -30,6 +30,7 @@ export default (): User => ({
     visualizer: null,
     active_extra_panel_tab: null,
     make_uploads_public: false,
+    include_public_media: true,
     lastfm_session_key: 'fake-session-key',
   },
   sso_provider: null,

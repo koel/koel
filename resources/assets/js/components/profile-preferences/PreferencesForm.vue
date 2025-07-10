@@ -2,8 +2,14 @@
   <div class="space-y-3">
     <FormRow v-if="isPlus">
       <div>
-        <CheckBox v-model="preferences.make_uploads_public" name="make_upload_public" />
+        <CheckBox v-model="preferences.make_uploads_public" name="make_uploads_public" />
         Make uploaded songs public by default
+      </div>
+    </FormRow>
+    <FormRow v-if="isPlus">
+      <div>
+        <CheckBox v-model="preferences.include_public_media" name="include_public_media" />
+        Show other users’ public songs, albums, and artists in your library (reload required)
       </div>
     </FormRow>
     <FormRow>

@@ -9,20 +9,34 @@ import { songStore } from '@/stores/songStore'
 import { eventBus } from '@/utils/eventBus'
 import ArtistCard from './ArtistCard.vue'
 
-let artist: Artist
-
 new class extends UnitTestCase {
-  protected beforeEach () {
-    super.beforeEach(() => {
-      artist = factory('artist', {
-        id: 'led-zeppelin',
-        name: 'Led Zeppelin',
-      })
+  private createArtist (overrides: Partial<Artist> = {}): Artist {
+    return factory('artist', {
+      id: 'led-zeppelin',
+      name: 'Led Zeppelin',
+      ...overrides,
+    })
+  }
+
+  private renderComponent (artist?: Artist) {
+    return this.render(ArtistCard, {
+      props: {
+        artist: artist || this.createArtist(),
+      },
+      global: {
+        stubs: {
+          AlbumArtistThumbnail: this.stub('thumbnail'),
+        },
+      },
     })
   }
 
   protected test () {
     it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
+
+    it('renders external artist', () => {
+      expect(this.renderComponent(this.createArtist({ is_external: true })).html()).toMatchSnapshot()
+    })
 
     it('downloads', async () => {
       const mock = this.mock(downloadService, 'fromArtist')
@@ -40,11 +54,12 @@ new class extends UnitTestCase {
     })
 
     it('shuffles', async () => {
+      const artist = this.createArtist()
       const songs = factory('song', 16)
       const fetchMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 
-      this.renderComponent()
+      this.renderComponent(artist)
 
       await this.user.click(screen.getByTitle('Shuffle all songs by Led Zeppelin'))
       await this.tick()
@@ -54,24 +69,12 @@ new class extends UnitTestCase {
     })
 
     it('requests context menu', async () => {
-      this.renderComponent()
+      const artist = this.createArtist()
+      this.renderComponent(artist)
       const emitMock = this.mock(eventBus, 'emit')
       await this.trigger(screen.getByTestId('artist-album-card'), 'contextMenu')
 
       expect(emitMock).toHaveBeenCalledWith('ARTIST_CONTEXT_MENU_REQUESTED', expect.any(MouseEvent), artist)
-    })
-  }
-
-  private renderComponent () {
-    return this.render(ArtistCard, {
-      props: {
-        artist,
-      },
-      global: {
-        stubs: {
-          AlbumArtistThumbnail: this.stub('thumbnail'),
-        },
-      },
     })
   }
 }

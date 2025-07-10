@@ -17,7 +17,6 @@ use App\Values\SongStorageMetadata\S3LambdaMetadata;
 use App\Values\SongStorageMetadata\SftpMetadata;
 use App\Values\SongStorageMetadata\SongStorageMetadata;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -110,7 +109,7 @@ class Song extends Model implements AuditableContract
     {
         return parent::query()
             ->when($user, static fn (SongBuilder $query) => $query->forUser($user)) // @phpstan-ignore-line
-            ->when($type, static fn (Builder $query) => match ($type) { // @phpstan-ignore-line phpcs:ignore
+            ->when($type, static fn (SongBuilder $query) => match ($type) { // @phpstan-ignore-line phpcs:ignore
                 PlayableType::SONG => $query->whereNull('songs.podcast_id'),
                 PlayableType::PODCAST_EPISODE => $query->whereNotNull('songs.podcast_id'),
                 default => $query,

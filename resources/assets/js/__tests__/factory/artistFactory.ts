@@ -7,6 +7,7 @@ export default (): Artist => {
     name: faker.person.fullName(),
     image: 'foo.jpg',
     created_at: faker.date.past().toISOString(),
+    is_external: false,
   }
 }
 
