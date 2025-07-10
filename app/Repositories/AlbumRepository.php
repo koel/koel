@@ -2,7 +2,6 @@
 
 namespace App\Repositories;
 
-use App\Facades\License;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\User;
@@ -11,9 +10,6 @@ use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\JoinClause;
-use Illuminate\Support\Facades\DB;
-use Laravel\Scout\Builder as ScoutBuilder;
 
 /**
  * @extends Repository<Album>
@@ -52,12 +48,8 @@ class AlbumRepository extends Repository implements ScoutableRepository
         return Album::query()
             ->isStandard()
             ->accessibleBy($user)
-            ->leftJoin('songs', 'albums.id', 'songs.album_id')
-            ->join('interactions', static function (JoinClause $join) use ($user): void {
-                $join->on('songs.id', 'interactions.song_id')->where('interactions.user_id', $user->id);
-            })
-            ->select('albums.*', DB::raw('SUM(interactions.play_count) as play_count'))
-            ->groupBy('albums.id')
+            ->withPlayCount($user)
+            ->addSelect('albums.*')
             ->orderByDesc('play_count')
             ->limit($count)
             ->get();
@@ -106,15 +98,8 @@ class AlbumRepository extends Repository implements ScoutableRepository
     /** @return Collection<Album>|array<array-key, Album> */
     public function search(string $keywords, int $limit, ?User $scopedUser = null): Collection
     {
-        $isPlus = once(static fn () => License::isPlus());
-        $scopedUser ??= auth()->user();
-
         return $this->getMany(
-            ids:  Album::search($keywords)
-                ->when($isPlus, static fn (ScoutBuilder $query) => $query->where('user_id', $scopedUser?->id))
-                ->get()
-                ->take($limit)
-                ->modelKeys(),
+            ids: Album::search($keywords)->get()->take($limit)->modelKeys(),
             preserveOrder: true,
             user: $scopedUser,
         );

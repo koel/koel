@@ -9,7 +9,10 @@
     @dragstart="onDragStart"
   >
     <template #name>
-      <a :href="url('artists.show', { id: artist.id })" class="font-medium" data-testid="name">{{ artist.name }}</a>
+      <a :href="url('artists.show', { id: artist.id })" class="font-medium" data-testid="name">
+        <ExternalMark v-if="artist.is_external" class="mr-1" />
+        {{ artist.name }}
+      </a>
     </template>
     <template #meta>
       <a :title="`Shuffle all songs by ${artist.name}`" role="button" @click.prevent="shuffle">
@@ -34,6 +37,7 @@ import { useDraggable } from '@/composables/useDragAndDrop'
 import { useRouter } from '@/composables/useRouter'
 
 import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
+import ExternalMark from '@/components/ui/ExternalMark.vue'
 
 const props = withDefaults(defineProps<{ artist: Artist, layout?: ArtistAlbumCardLayout }>(), { layout: 'full' })
 const { go, url } = useRouter()

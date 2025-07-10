@@ -24,6 +24,7 @@ export const defaultPreferences: UserPreferences = {
   visualizer: 'default',
   active_extra_panel_tab: null,
   make_uploads_public: false,
+  include_public_media: true,
   continuous_playback: false,
 }
 
@@ -71,8 +72,12 @@ const preferenceStore = {
     return this.state?.[key]
   },
 
-  update (key: keyof UserPreferences, value: any) {
-    http.silently.patch('me/preferences', { key, value })
+  async update (key: keyof UserPreferences, value: any) {
+    await http.silently.patch('me/preferences', { key, value })
+
+    if (key === 'include_public_media') {
+      window.location.reload()
+    }
   },
 
   // Calling preferenceStore.temporary.volume = 7 won't trigger saving.

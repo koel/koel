@@ -128,6 +128,7 @@ interface Artist {
   name: string
   image: string | null
   created_at: string
+  is_external: boolean
 }
 
 interface Album {
@@ -140,6 +141,7 @@ interface Album {
   thumbnail?: string | null
   created_at: string
   year: number | null
+  is_external: boolean
 }
 
 interface BasePlayable {
@@ -328,6 +330,7 @@ interface UserPreferences extends Record<string, any> {
   visualizer?: Visualizer['id'] | null
   active_extra_panel_tab: SideSheetTab | null
   make_uploads_public: boolean
+  include_public_media: boolean
   lastfm_session_key?: string
 }
 

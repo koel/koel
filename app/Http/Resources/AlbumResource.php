@@ -2,7 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Facades\License;
 use App\Models\Album;
+use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class AlbumResource extends JsonResource
@@ -37,14 +39,26 @@ class AlbumResource extends JsonResource
         ],
     ];
 
+    private ?User $user;
+
     public function __construct(private readonly Album $album)
     {
         parent::__construct($album);
     }
 
-    /** @return array<mixed> */
+    public function for(User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /** @inheritdoc */
     public function toArray($request): array
     {
+        $isPlus = once(static fn () => License::isPlus());
+        $user = $this->user ?? once(static fn () => auth()->user());
+
         return [
             'type' => 'albums',
             'id' => $this->album->public_id,
@@ -54,6 +68,7 @@ class AlbumResource extends JsonResource
             'cover' => $this->album->cover,
             'created_at' => $this->album->created_at,
             'year' => $this->album->year,
+            'is_external' => $isPlus && $this->album->user_id !== $user->id,
         ];
     }
 }

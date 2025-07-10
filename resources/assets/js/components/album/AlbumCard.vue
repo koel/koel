@@ -11,6 +11,7 @@
     <template #name>
       <div class="flex gap-2 items-center">
         <a :href="url('albums.show', { id: album.id })" class="font-medium flex-1" data-testid="name">
+          <ExternalMark v-if="album.is_external" class="mr-1" />
           {{ album.name }}
         </a>
 
@@ -58,6 +59,7 @@ import { useDraggable } from '@/composables/useDragAndDrop'
 import { useRouter } from '@/composables/useRouter'
 
 import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
+import ExternalMark from '@/components/ui/ExternalMark.vue'
 
 const props = withDefaults(defineProps<{
   album: Album

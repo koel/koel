@@ -9,11 +9,13 @@ import { songStore } from '@/stores/songStore'
 import { eventBus } from '@/utils/eventBus'
 import AlbumCard from './AlbumCard.vue'
 
-let album: Album
-
 new class extends UnitTestCase {
   protected test () {
     it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
+
+    it('renders external album', () => {
+      expect(this.renderComponent(this.createAlbum({ is_external: true })).html()).toMatchSnapshot()
+    })
 
     it('downloads', async () => {
       const mock = this.mock(downloadService, 'fromAlbum')
@@ -32,10 +34,11 @@ new class extends UnitTestCase {
     })
 
     it('shuffles', async () => {
+      const album = this.createAlbum()
       const songs = factory('song', 10)
       const fetchMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
       const shuffleMock = this.mock(playbackService, 'queueAndPlay').mockResolvedValue(void 0)
-      this.renderComponent()
+      this.renderComponent(album, false)
 
       await this.user.click(screen.getByTitle('Shuffle all songs in the album IV'))
       await this.tick()
@@ -45,7 +48,8 @@ new class extends UnitTestCase {
     })
 
     it('requests context menu', async () => {
-      this.renderComponent()
+      const album = this.createAlbum()
+      this.renderComponent(album)
       const emitMock = this.mock(eventBus, 'emit')
       await this.trigger(screen.getByTestId('artist-album-card'), 'contextMenu')
 
@@ -53,30 +57,32 @@ new class extends UnitTestCase {
     })
 
     it('shows release year', () => {
-      this.renderComponent(1971, true)
+      this.renderComponent(this.createAlbum({ year: 1971 }), true)
       screen.getByText('1971')
     })
 
     it('does not show release year if not enabled via prop', () => {
-      this.renderComponent(1971)
+      this.renderComponent(this.createAlbum({ year: 1971 }))
       expect(screen.queryByText('1971')).toBeNull()
     })
   }
 
-  private renderComponent (year: number | null = null, showReleaseYear = false) {
-    album = factory('album', {
-      year,
+  private createAlbum (overrides: Partial<Album> = {}): Album {
+    return factory('album', {
       id: 'iv',
       name: 'IV',
       artist_id: 'led-zeppelin',
       artist_name: 'Led Zeppelin',
       cover: 'https://example.com/cover.jpg',
+      ...overrides,
     })
+  }
 
+  private renderComponent (album?: Album, showReleaseYear = false) {
     return this.render(AlbumCard, {
       props: {
-        album,
         showReleaseYear,
+        album: album || this.createAlbum(),
       },
       global: {
         stubs: {

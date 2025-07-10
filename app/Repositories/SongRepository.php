@@ -17,7 +17,6 @@ use App\Repositories\Contracts\ScoutableRepository;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Laravel\Scout\Builder as ScoutBuilder;
 
 /**
  * @extends Repository<Song>
@@ -386,15 +385,8 @@ class SongRepository extends Repository implements ScoutableRepository
     /** @return Collection<Song>|array<array-key, Song> */
     public function search(string $keywords, int $limit, ?User $scopedUser = null): Collection
     {
-        $isPlus = once(static fn () => License::isPlus());
-        $scopedUser ??= $this->auth->user();
-
         return $this->getMany(
-            ids: Song::search($keywords)
-                ->when($isPlus, static fn (ScoutBuilder $query) => $query->where('owner_id', $scopedUser?->id))
-                ->get()
-                ->take($limit)
-                ->modelKeys(),
+            ids: Song::search($keywords)->get()->take($limit)->modelKeys(),
             preserveOrder: true,
             scopedUser: $scopedUser,
         );

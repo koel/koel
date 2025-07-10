@@ -105,6 +105,7 @@ return new class extends Migration {
 
                     $artistId = $artistCache[$artistKey]
                         ?? tap(DB::table('artists')->insertGetId([
+                            'name' => $song->artist_name,
                             'public_id' => Ulid::generate(),
                             'user_id' => $song->owner_id,
                             'image' => $song->artist_image ?? '',

@@ -22,10 +22,6 @@
               @play-all="playAll"
               @play-selected="playSelected"
             />
-            <label v-if="isPlus" class="text-k-text-secondary inline-flex items-center text-base">
-              <CheckBox v-model="ownSongsOnly" />
-              <span>Own songs only</span>
-            </label>
           </div>
         </template>
       </ScreenHeader>
@@ -77,7 +73,6 @@ import { useSongListControls } from '@/composables/useSongListControls'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
-import CheckBox from '@/components/ui/form/CheckBox.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 
