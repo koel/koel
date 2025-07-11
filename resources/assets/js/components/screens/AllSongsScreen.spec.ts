@@ -60,7 +60,6 @@ new class extends UnitTestCase {
       sort: 'title',
       order: 'asc',
       page: 1,
-      own_songs_only: false,
     }))
 
     return [rendered, fetchMock] as const

@@ -8,7 +8,6 @@ use App\Models\Podcast;
 use App\Models\Song;
 use App\Services\PlaylistService;
 use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
-use InvalidArgumentException as BaseInvalidArgumentException;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 use Tests\TestCase;
@@ -152,47 +151,6 @@ class PlaylistServiceTest extends TestCase
         self::assertSame('bar', $playlist->name);
         self::assertTrue($playlist->is_smart);
         self::assertSame($playlist->rule_groups->first()->rules->first()->value, ['bar']);
-    }
-
-    #[Test]
-    public function settingOwnsSongOnlyFailsForCommunityLicenseWhenCreate(): void
-    {
-        $this->expectException(BaseInvalidArgumentException::class);
-        $this->expectExceptionMessage('"Own songs only" option only works with smart playlists and Plus license.');
-
-        $this->service->createPlaylist(
-            name: 'foo',
-            user: create_user(),
-            ruleGroups: SmartPlaylistRuleGroupCollection::create([
-                [
-                    'id' => '45368b8f-fec8-4b72-b826-6b295af0da65',
-                    'rules' => [
-                        [
-                            'id' => '8cfa8700-fbc0-4078-b175-af31c20a3582',
-                            'model' => 'title',
-                            'operator' => 'is',
-                            'value' => ['foo'],
-                        ],
-                    ],
-                ],
-            ]),
-            ownSongsOnly: true
-        );
-    }
-
-    #[Test]
-    public function settingOwnsSongOnlyFailsForCommunityLicenseWhenUpdate(): void
-    {
-        $this->expectException(BaseInvalidArgumentException::class);
-        $this->expectExceptionMessage('"Own songs only" option only works with smart playlists and Plus license.');
-
-        $playlist = create_playlist(smart: true);
-
-        $this->service->updatePlaylist(
-            playlist: $playlist,
-            name: 'foo',
-            ownSongsOnly: true
-        );
     }
 
     #[Test]

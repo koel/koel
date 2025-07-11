@@ -38,13 +38,6 @@
             Group
           </Btn>
         </div>
-
-        <div v-if="isPlus" class="form-row">
-          <label class="text-k-text-secondary">
-            <CheckBox v-model="mutablePlaylist.own_songs_only" />
-            Only include songs from my own library
-          </label>
-        </div>
       </main>
 
       <footer>
@@ -68,9 +61,7 @@ import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useModal } from '@/composables/useModal'
 import { useOverlay } from '@/composables/useOverlay'
 import { useSmartPlaylistForm } from '@/composables/useSmartPlaylistForm'
-import { useKoelPlus } from '@/composables/useKoelPlus'
 
-import CheckBox from '@/components/ui/form/CheckBox.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 import SelectBox from '@/components/ui/form/SelectBox.vue'
@@ -79,7 +70,6 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
-const { isPlus } = useKoelPlus()
 
 const playlist = useModal().getFromContext<Playlist>('playlist')
 const folders = toRef(playlistFolderStore.state, 'folders')

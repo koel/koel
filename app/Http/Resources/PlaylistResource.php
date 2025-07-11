@@ -15,7 +15,6 @@ class PlaylistResource extends JsonResource
         'user_id',
         'is_smart',
         'rules',
-        'own_songs_only',
         'created_at',
     ];
 
@@ -40,7 +39,6 @@ class PlaylistResource extends JsonResource
             'is_collaborative' => $this->playlist->is_collaborative,
             'rules' => $this->playlist->rules,
             'cover' => $this->playlist->cover,
-            'own_songs_only' => $this->playlist->own_songs_only,
             'created_at' => $this->playlist->created_at,
         ];
     }

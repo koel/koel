@@ -44,7 +44,6 @@ export interface SongListPaginateParams extends Record<string, any> {
   sort: MaybeArray<PlayableListSortField>
   order: SortOrder
   page: number
-  own_songs_only: boolean
 }
 
 export interface GenreSongListPaginateParams extends Record<string, any> {

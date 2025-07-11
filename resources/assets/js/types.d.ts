@@ -270,7 +270,6 @@ interface Playlist {
   is_smart: boolean
   is_collaborative: boolean
   rules: SmartPlaylistRuleGroup[]
-  own_songs_only: boolean
   cover: string | null
   playables?: Playable[]
 }

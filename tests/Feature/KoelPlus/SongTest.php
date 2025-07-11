@@ -11,39 +11,6 @@ use function Tests\create_user;
 class SongTest extends PlusTestCase
 {
     #[Test]
-    public function withOwnSongsOnlyOptionOn(): void
-    {
-        $user = create_user();
-
-        Song::factory(2)->public()->create();
-
-        $ownSongs = Song::factory(2)->for($user, 'owner')->create();
-
-        $this->getAs('api/songs?own_songs_only=true', $user)
-            ->assertSuccessful()
-            ->assertJsonCount(2, 'data')
-            ->assertJsonFragment(['id' => $ownSongs[0]->id])
-            ->assertJsonFragment(['id' => $ownSongs[1]->id]);
-    }
-
-    #[Test]
-    public function withOwnSongsOnlyOptionOffOrMissing(): void
-    {
-        $user = create_user();
-
-        Song::factory(2)->public()->create();
-        Song::factory(2)->for($user, 'owner')->create();
-
-        $this->getAs('api/songs?own_songs_only=false', $user)
-            ->assertSuccessful()
-            ->assertJsonCount(4, 'data');
-
-        $this->getAs('api/songs', $user)
-            ->assertSuccessful()
-            ->assertJsonCount(4, 'data');
-    }
-
-    #[Test]
     public function showSongPolicy(): void
     {
         $user = create_user();

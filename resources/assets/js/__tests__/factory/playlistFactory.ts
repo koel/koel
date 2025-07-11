@@ -9,7 +9,6 @@ export default (): Playlist => ({
   name: faker.word.sample(),
   is_smart: false,
   rules: [],
-  own_songs_only: false,
   is_collaborative: false,
   cover: faker.image.url(),
 })

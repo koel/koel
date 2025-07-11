@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\API;
 
 use App\Exceptions\PlaylistBothSongsAndRulesProvidedException;
-use App\Facades\License;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\PlaylistStoreRequest;
 use App\Http\Requests\API\PlaylistUpdateRequest;
@@ -50,7 +49,6 @@ class PlaylistController extends Controller
                 $folder,
                 Arr::wrap($request->songs),
                 $request->rules ? SmartPlaylistRuleGroupCollection::create(Arr::wrap($request->rules)) : null,
-                $request->own_songs_only && $request->rules && License::isPlus()
             );
 
             return PlaylistResource::make($playlist);
@@ -76,7 +74,6 @@ class PlaylistController extends Controller
                 $request->name,
                 $folder,
                 $request->rules ? SmartPlaylistRuleGroupCollection::create(Arr::wrap($request->rules)) : null,
-                $request->own_songs_only && $request->rules && License::isPlus()
             )
         );
     }

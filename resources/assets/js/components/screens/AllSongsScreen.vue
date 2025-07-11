@@ -43,14 +43,6 @@
           <Icon :icon="faVolumeOff" />
         </template>
         Your library is empty.
-        <a
-          v-if="isPlus && ownSongsOnly"
-          class="block secondary"
-          role="button"
-          @click.prevent="showSongsFromOthers"
-        >
-          Show public songs from other users?
-        </a>
       </ScreenEmptyState>
     </template>
   </ScreenBase>
@@ -58,7 +50,7 @@
 
 <script lang="ts" setup>
 import { faVolumeOff } from '@fortawesome/free-solid-svg-icons'
-import { computed, ref, toRef, watch } from 'vue'
+import { computed, ref, toRef } from 'vue'
 import { pluralize, secondsToHumanReadable } from '@/utils/formatters'
 import { commonStore } from '@/stores/commonStore'
 import { queueStore } from '@/stores/queueStore'
@@ -66,8 +58,6 @@ import { songStore } from '@/stores/songStore'
 import { playbackService } from '@/services/playbackService'
 import { useRouter } from '@/composables/useRouter'
 import { useErrorHandler } from '@/composables/useErrorHandler'
-import { useKoelPlus } from '@/composables/useKoelPlus'
-import { useLocalStorage } from '@/composables/useLocalStorage'
 import { useSongList } from '@/composables/useSongList'
 import { useSongListControls } from '@/composables/useSongListControls'
 
@@ -97,8 +87,6 @@ const {
 const { SongListControls, config } = useSongListControls('Songs')
 
 const { go, onScreenActivated, url } = useRouter()
-const { isPlus } = useKoelPlus()
-const { get: lsGet, set: lsSet } = useLocalStorage()
 
 let initialized = false
 const loading = ref(false)
@@ -108,8 +96,6 @@ let sortOrder: SortOrder = 'asc'
 const page = ref<number | null>(1)
 const moreSongsAvailable = computed(() => page.value !== null)
 const showSkeletons = computed(() => loading.value && songs.value.length === 0)
-
-const ownSongsOnly = ref(isPlus.value ? Boolean(lsGet('own-songs-only')) : false)
 
 const fetchSongs = async () => {
   if (!moreSongsAvailable.value || loading.value) {
@@ -123,7 +109,6 @@ const fetchSongs = async () => {
       sort: sortField,
       order: sortOrder,
       page: page.value!,
-      own_songs_only: ownSongsOnly.value,
     })
   } catch (error: any) {
     useErrorHandler().handleHttpError(error)
@@ -149,19 +134,6 @@ const sort = async (field: MaybeArray<PlayableListSortField>, order: SortOrder) 
   sortField = field
   sortOrder = order
 
-  await fetchSongs()
-}
-
-watch(ownSongsOnly, async value => {
-  lsSet('own-songs-only', value)
-  page.value = 1
-  songStore.state.songs = []
-
-  await fetchSongs()
-})
-
-const showSongsFromOthers = async () => {
-  ownSongsOnly.value = false
   await fetchSongs()
 }
 
