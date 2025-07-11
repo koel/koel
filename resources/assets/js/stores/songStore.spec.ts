@@ -290,10 +290,9 @@ new class extends UnitTestCase {
         page: 2,
         sort: 'title',
         order: 'desc',
-        own_songs_only: true,
       })).toBe(3)
 
-      expect(getMock).toHaveBeenCalledWith('songs?page=2&sort=title&order=desc&own_songs_only=true')
+      expect(getMock).toHaveBeenCalledWith('songs?page=2&sort=title&order=desc')
       expect(syncMock).toHaveBeenCalledWith(songs)
       expect(songStore.state.songs).toEqual(reactive(songs))
     })

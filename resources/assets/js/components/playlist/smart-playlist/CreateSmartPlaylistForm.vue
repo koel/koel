@@ -33,13 +33,6 @@
             Group
           </Btn>
         </div>
-
-        <div v-if="isPlus" class="form-row">
-          <label class="text-k-text-secondary">
-            <CheckBox v-model="ownSongsOnly" />
-            Only include songs from my own library
-          </label>
-        </div>
       </main>
 
       <footer>
@@ -62,9 +55,7 @@ import { useModal } from '@/composables/useModal'
 import { useOverlay } from '@/composables/useOverlay'
 import { useSmartPlaylistForm } from '@/composables/useSmartPlaylistForm'
 import { useRouter } from '@/composables/useRouter'
-import { useKoelPlus } from '@/composables/useKoelPlus'
 
-import CheckBox from '@/components/ui/form/CheckBox.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 import SelectBox from '@/components/ui/form/SelectBox.vue'
@@ -84,14 +75,12 @@ const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { go, url } = useRouter()
-const { isPlus } = useKoelPlus()
 
 const targetFolder = useModal().getFromContext<PlaylistFolder | null>('folder')
 
 const name = ref('')
 const folderId = ref(targetFolder?.id)
 const folders = toRef(playlistFolderStore.state, 'folders')
-const ownSongsOnly = ref(false)
 
 const close = () => emit('close')
 
@@ -115,7 +104,6 @@ const submit = async () => {
     const playlist = await playlistStore.store(name.value, {
       rules: collectedRuleGroups.value,
       folder_id: folderId.value,
-      own_songs_only: ownSongsOnly.value,
     })
 
     close()

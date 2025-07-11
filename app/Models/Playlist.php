@@ -31,7 +31,6 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property EloquentCollection<array-key, Playable> $playables
  * @property EloquentCollection<array-key, User> $users
  * @property EloquentCollection<array-key, User> $collaborators
- * @property bool $own_songs_only
  * @property-read ?string $cover The playlist cover's URL
  * @property-read ?string $cover_path
  * @property-read EloquentCollection<array-key, PlaylistFolder> $folders
@@ -50,7 +49,6 @@ class Playlist extends Model implements AuditableContract
 
     protected $casts = [
         'rules' => SmartPlaylistRulesCast::class,
-        'own_songs_only' => 'bool',
     ];
 
     protected $appends = ['is_smart'];

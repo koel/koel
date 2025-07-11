@@ -14,7 +14,6 @@ interface CreatePlaylistRequestData {
   songs: Playable['id'][]
   rules?: SmartPlaylistRuleGroup[]
   folder_id?: PlaylistFolder['name']
-  own_songs_only?: boolean
 }
 
 export const playlistStore = {
@@ -66,7 +65,7 @@ export const playlistStore = {
 
   async store (
     name: string,
-    data: Partial<Pick<Playlist, 'rules' | 'folder_id' | 'own_songs_only'>> = {},
+    data: Partial<Pick<Playlist, 'rules' | 'folder_id'>> = {},
     songs: Playable[] = [],
   ) {
     const requestData: CreatePlaylistRequestData = {
@@ -76,7 +75,6 @@ export const playlistStore = {
 
     data.rules && (requestData.rules = this.serializeSmartPlaylistRulesForStorage(data.rules))
     data.folder_id && (requestData.folder_id = data.folder_id)
-    data.own_songs_only && (requestData.own_songs_only = data.own_songs_only)
 
     const playlist = reactive(await http.post<Playlist>('playlists', requestData))
 
@@ -119,12 +117,11 @@ export const playlistStore = {
     return playlist
   },
 
-  async update (playlist: Playlist, data: Partial<Pick<Playlist, 'name' | 'rules' | 'folder_id' | 'own_songs_only'>>) {
+  async update (playlist: Playlist, data: Partial<Pick<Playlist, 'name' | 'rules' | 'folder_id'>>) {
     await http.put(`playlists/${playlist.id}`, {
       name: data.name,
       rules: data.rules ? this.serializeSmartPlaylistRulesForStorage(data.rules) : null,
       folder_id: data.folder_id,
-      own_songs_only: data.own_songs_only,
     })
 
     playlist.is_smart && cache.remove(['playlist.songs', playlist.id])

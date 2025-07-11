@@ -81,7 +81,6 @@ class SongRepository extends Repository implements ScoutableRepository
     public function getForListing(
         array $sortColumns,
         string $sortDirection,
-        bool $ownSongsOnly = false,
         ?User $scopedUser = null,
         int $perPage = 50
     ): Paginator {
@@ -90,10 +89,6 @@ class SongRepository extends Repository implements ScoutableRepository
         return Song::query(type: PlayableType::SONG, user: $scopedUser)
             ->accessible()
             ->withMetaData()
-            ->when(
-                $ownSongsOnly,
-                static fn (SongBuilder $query) => $query->where('songs.owner_id', $scopedUser->id)
-            )
             ->sort($sortColumns, $sortDirection)
             ->simplePaginate($perPage);
     }
