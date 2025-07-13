@@ -34,6 +34,10 @@ class ProxyAuthService
 
     private static function validateProxyIp(Request $request): bool
     {
-        return IpUtils::checkIp($request->ip(), config('koel.proxy_auth.allow_list'));
+        $proxyIp = $request->server->get('REMOTE_ADDR');
+        return IpUtils::checkIp(
+            $proxyIp,
+            config('koel.proxy_auth.allow_list')
+        );
     }
 }
