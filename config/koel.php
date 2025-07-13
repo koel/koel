@@ -49,7 +49,7 @@ return [
     'streaming' => [
         'bitrate' => env('TRANSCODE_BIT_RATE') ?: env('OUTPUT_BIT_RATE', 128),
         'method' => env('STREAMING_METHOD'),
-        'ffmpeg_path' => env('FFMPEG_PATH'),
+        'ffmpeg_path' => env('FFMPEG_PATH') ?: find_ffmpeg_path(),
         'transcode_flac' => env('TRANSCODE_FLAC', true),
         'supported_mime_types' => [
             // Lossy formats
