@@ -11,7 +11,6 @@
     @dragover.prevent
   >
     <img
-      v-koel-hide-broken-icon
       alt="Thumbnail"
       :src="image"
       class="w-full aspect-square object-cover"

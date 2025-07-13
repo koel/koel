@@ -6,7 +6,6 @@
     @click.prevent="playOrPause"
   >
     <img
-      v-koel-hide-broken-icon
       alt="Cover image"
       :src="src"
       class="w-full aspect-square object-cover"
