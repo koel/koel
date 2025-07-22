@@ -13,10 +13,11 @@ class AlbumSongTest extends TestCase
     #[Test]
     public function index(): void
     {
+        /** @var Album $album */
         $album = Album::factory()->create();
         Song::factory(5)->for($album)->create();
 
-        $this->getAs("api/albums/{$album->public_id}/songs")
+        $this->getAs("api/albums/{$album->id}/songs")
             ->assertJsonStructure([0 => SongResource::JSON_STRUCTURE]);
     }
 }

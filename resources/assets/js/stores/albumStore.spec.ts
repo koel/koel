@@ -104,6 +104,7 @@ new class extends UnitTestCase {
       })
 
       expect(await albumStore.paginate({
+        favorites_only: false,
         sort: 'name',
         order: 'asc',
         page: 1,
@@ -131,6 +132,27 @@ new class extends UnitTestCase {
       expect(albumStore.vault.get(album.id)?.name).toBe(updateData.name)
       expect(albumStore.vault.get(album.id)?.year).toBe(updateData.year)
       expect(updateAlbumNameMock).toHaveBeenCalledWith(album, updateData.name)
+    })
+
+    it('toggles favorite', async () => {
+      const album = factory('album', { favorite: false })
+      albumStore.syncWithVault(album)
+
+      const postMock = this.mock(http, 'post').mockResolvedValueOnce(factory('favorite', {
+        favoriteable_type: 'album',
+        favoriteable_id: album.id,
+      }))
+
+      await albumStore.toggleFavorite(album)
+
+      expect(postMock).toHaveBeenCalledWith('favorites/toggle', { type: 'album', id: album.id })
+      expect(album.favorite).toBe(true)
+
+      postMock.mockResolvedValue(null)
+      await albumStore.toggleFavorite(album)
+
+      expect(postMock).toHaveBeenNthCalledWith(2, 'favorites/toggle', { type: 'album', id: album.id })
+      expect(album.favorite).toBe(false)
     })
   }
 }

@@ -7,14 +7,14 @@ import { commonStore } from '@/stores/commonStore'
 import { queueStore } from '@/stores/queueStore'
 import { songStore } from '@/stores/songStore'
 import { playbackService } from '@/services/playbackService'
-import AllSongsScreen from './AllSongsScreen.vue'
+import Component from './AllSongsScreen.vue'
 
 new class extends UnitTestCase {
   protected beforeEach (cb?: Closure) {
     super.beforeEach(cb)
     commonStore.state.song_count = 420
     commonStore.state.song_length = 123_456
-    songStore.state.songs = factory('song', 20)
+    songStore.state.playables = factory('song', 20)
     this.be()
   }
 
@@ -48,7 +48,7 @@ new class extends UnitTestCase {
       path: '/songs',
     }
 
-    const rendered = this.render(AllSongsScreen, {
+    const rendered = this.render(Component, {
       global: {
         stubs: {
           SongList: this.stub('song-list'),

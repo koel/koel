@@ -2,7 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Album;
+use App\Models\Artist;
 use App\Models\Genre;
+use App\Models\Podcast;
+use App\Models\Song;
 use App\Services\Contracts\Encyclopedia;
 use App\Services\LastfmService;
 use App\Services\License\Contracts\LicenseServiceInterface;
@@ -15,6 +19,7 @@ use App\Services\Scanners\ScannerNoCacheStrategy;
 use App\Services\SpotifyService;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Schema\Builder;
 use Illuminate\Database\SQLiteConnection;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -76,6 +81,13 @@ class AppServiceProvider extends ServiceProvider
 
             return Genre::query()->where('public_id', $value)->firstOrFail();
         });
+
+        Relation::morphMap([
+            'playable' => Song::class,
+            'album' => Album::class,
+            'artist' => Artist::class,
+            'podcast' => Podcast::class,
+        ]);
     }
 
     public function register(): void

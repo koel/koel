@@ -3,7 +3,7 @@ import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { recentlyPlayedStore } from '@/stores/recentlyPlayedStore'
-import RecentlyPlayedScreen from './RecentlyPlayedScreen.vue'
+import Component from './RecentlyPlayedScreen.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -15,18 +15,18 @@ new class extends UnitTestCase {
     })
 
     it('displays the empty state', async () => {
-      await this.renderComponent([])
+      await this.renderComponent()
 
       expect(screen.queryByTestId('song-list')).toBeNull()
       screen.getByTestId('screen-empty-state')
     })
   }
 
-  private async renderComponent (playables: Playable[]) {
+  private async renderComponent (playables: Playable[] = []) {
     recentlyPlayedStore.state.playables = playables
     const fetchMock = this.mock(recentlyPlayedStore, 'fetch')
 
-    this.render(RecentlyPlayedScreen, {
+    this.render(Component, {
       global: {
         stubs: {
           SongList: this.stub('song-list'),

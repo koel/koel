@@ -35,7 +35,7 @@ class AlbumCoverTest extends PlusTestCase
             ->expects('storeAlbumCover')
             ->with(Mockery::on(static fn (Album $target) => $target->is($album)), 'data:image/jpeg;base64,Rm9v');
 
-        $this->putAs("api/albums/{$album->public_id}/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], $user)
+        $this->putAs("api/albums/{$album->id}/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], $user)
             ->assertOk();
     }
 
@@ -51,7 +51,7 @@ class AlbumCoverTest extends PlusTestCase
 
         $this->artworkService->shouldNotReceive('storeAlbumCover');
 
-        $this->putAs("api/albums/{$album->public_id}/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], $user)
+        $this->putAs("api/albums/{$album->id}/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], $user)
             ->assertForbidden();
     }
 
@@ -61,7 +61,7 @@ class AlbumCoverTest extends PlusTestCase
         /** @var Album $album */
         $album = Album::factory()->create();
 
-        $this->putAs("api/albums/{$album->public_id}/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], create_admin())
+        $this->putAs("api/albums/{$album->id}/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], create_admin())
             ->assertForbidden();
     }
 }

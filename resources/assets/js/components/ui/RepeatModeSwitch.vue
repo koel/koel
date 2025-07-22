@@ -1,6 +1,6 @@
 <template>
   <button
-    v-koel-tooltip.top
+    v-koel-tooltip
     :class="{ active: mode !== 'NO_REPEAT' }"
     :title="`Change repeat mode (current: ${readableMode})`"
     class="opacity-30"

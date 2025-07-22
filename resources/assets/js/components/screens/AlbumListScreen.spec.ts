@@ -4,8 +4,8 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
-import { preferenceStore } from '@/stores/preferenceStore'
-import AlbumListScreen from './AlbumListScreen.vue'
+import { preferenceStore as preferences } from '@/stores/preferenceStore'
+import Component from './AlbumListScreen.vue'
 
 new class extends UnitTestCase {
   protected beforeEach () {
@@ -26,7 +26,7 @@ new class extends UnitTestCase {
     })
 
     it.each<[ArtistAlbumViewMode]>([['list'], ['thumbnails']])('sets layout from preferences', async mode => {
-      preferenceStore.albums_view_mode = mode
+      preferences.temporary.albums_view_mode = mode
 
       await this.renderComponent()
 
@@ -35,6 +35,7 @@ new class extends UnitTestCase {
 
     it('switches layout', async () => {
       await this.renderComponent()
+      await this.tick()
 
       await this.user.click(screen.getByRole('radio', { name: 'View as list' }))
       await waitFor(() => expect(screen.getByTestId('album-grid').classList.contains(`as-list`)).toBe(true))
@@ -42,12 +43,37 @@ new class extends UnitTestCase {
       await this.user.click(screen.getByRole('radio', { name: 'View as thumbnails' }))
       await waitFor(() => expect(screen.getByTestId('album-grid').classList.contains(`as-thumbnails`)).toBe(true))
     })
+
+    it('shows all or only favorites upon toggling the button', async () => {
+      await this.renderComponent()
+      await this.tick()
+
+      const fetchMock = this.mock(albumStore, 'paginate')
+
+      await this.user.click(screen.getByRole('button', { name: 'Show favorites only' }))
+
+      await waitFor(() => expect(fetchMock).toHaveBeenNthCalledWith(1, {
+        favorites_only: true,
+        page: 1,
+        order: 'asc',
+        sort: 'name',
+      }))
+
+      await this.user.click(screen.getByRole('button', { name: 'Show all' }))
+
+      await waitFor(() => expect(fetchMock).toHaveBeenNthCalledWith(2, {
+        favorites_only: false,
+        page: 1,
+        order: 'asc',
+        sort: 'name',
+      }))
+    })
   }
 
   private async renderComponent () {
     albumStore.state.albums = factory('album', 9)
 
-    this.render(AlbumListScreen, {
+    const rendered = this.render(Component, {
       global: {
         stubs: {
           AlbumCard: this.stub('album-card'),
@@ -56,5 +82,7 @@ new class extends UnitTestCase {
     })
 
     await this.router.activateRoute({ path: 'albums', screen: 'Albums' })
+
+    return rendered
   }
 }

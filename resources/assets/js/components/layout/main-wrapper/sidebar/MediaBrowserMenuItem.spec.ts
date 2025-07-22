@@ -1,15 +1,15 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import MediaBrowserMenuItem from './MediaBrowserMenuItem.vue'
+import Component from './MediaBrowserMenuItem.vue'
 
 new class extends UnitTestCase {
   protected test () {
     it('renders', () => {
-      expect(this.render(MediaBrowserMenuItem).html()).toMatchSnapshot()
+      expect(this.render(Component).html()).toMatchSnapshot()
     })
 
     it('keeps track of the active path', async () => {
-      const { html } = this.render(MediaBrowserMenuItem)
+      const { html } = this.render(Component)
 
       await this.router.activateRoute({
         path: '_',

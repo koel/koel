@@ -3,11 +3,11 @@ import { ref } from 'vue'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { CurrentPlayableKey } from '@/symbols'
-import FooterSongInfo from './FooterSongInfo.vue'
+import Component from './FooterSongInfo.vue'
 
 new class extends UnitTestCase {
   protected test () {
-    it('renders with no current song', () => expect(this.render(FooterSongInfo).html()).toMatchSnapshot())
+    it('renders with no current song', () => expect(this.render(Component).html()).toMatchSnapshot())
 
     it('renders with current song', () => {
       const song = factory('song', {
@@ -18,7 +18,7 @@ new class extends UnitTestCase {
         artist_name: 'Led Zeppelin',
       })
 
-      expect(this.render(FooterSongInfo, {
+      expect(this.render(Component, {
         global: {
           provide: {
             [<symbol>CurrentPlayableKey]: ref(song),

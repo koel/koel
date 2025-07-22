@@ -10,7 +10,7 @@
     <Icon v-if="isCurrentEpisode" :icon="faBookmark" size="xl" class="absolute -top-1 right-3 text-k-accent" />
     <button
       class="hidden md:block md:flex-[0_0_128px] relative overflow-hidden rounded-lg active:scale-95"
-      role="button"
+      data-testid="play-button"
       @click.prevent="playOrPause"
     >
       <img
@@ -27,6 +27,7 @@
         <Icon v-if="isPlaying" :icon="faPause" class="text-white" size="2xl" />
         <Icon v-else :icon="faPlay" class="ml-1 text-white" size="2xl" />
       </span>
+      <span class="sr-only">Play/Pause</span>
     </button>
     <div class="flex-1">
       <time
@@ -37,7 +38,17 @@
         {{ publicationDateForHumans }}
       </time>
 
-      <h3 class="text-xl" :title="episode.title">{{ episode.title }}</h3>
+      <h3 class="text-xl" :title="episode.title">
+        {{ episode.title }}
+
+        <FavoriteButton
+          v-if="episode.favorite"
+          :favorite="episode.favorite"
+          class="ml-2"
+          @toggle="toggleFavorite"
+        />
+      </h3>
+
       <div class="description text-k-text-secondary mt-3 line-clamp-3" v-html="description" />
     </div>
     <div class="md:flex-[0_0_122px] text-sm text-k-text-secondary flex md:flex-col items-center justify-center w-full">
@@ -63,6 +74,7 @@ import { songStore as episodeStore } from '@/stores/songStore'
 import { queueStore } from '@/stores/queueStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useRouter } from '@/composables/useRouter'
+import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
 const props = defineProps<{ episode: Episode, podcast: Podcast }>()
 
@@ -121,6 +133,8 @@ const playOrPause = async () => {
 
   await playbackService.play(episode.value, currentPosition.value >= episode.value.length ? 0 : currentPosition.value)
 }
+
+const toggleFavorite = () => episodeStore.toggleFavorite(episode.value)
 </script>
 
 <style scoped lang="postcss">

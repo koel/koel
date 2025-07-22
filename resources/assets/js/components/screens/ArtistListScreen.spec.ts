@@ -5,7 +5,7 @@ import factory from '@/__tests__/factory'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore } from '@/stores/preferenceStore'
-import ArtistListScreen from './ArtistListScreen.vue'
+import Component from './ArtistListScreen.vue'
 
 new class extends UnitTestCase {
   protected beforeEach () {
@@ -42,12 +42,37 @@ new class extends UnitTestCase {
       await this.user.click(screen.getByRole('radio', { name: 'View as thumbnails' }))
       await waitFor(() => expect(screen.getByTestId('artist-list').classList.contains(`as-thumbnails`)).toBe(true))
     })
+
+    it('shows all or only favorites upon toggling the button', async () => {
+      await this.renderComponent()
+      await this.tick()
+
+      const fetchMock = this.mock(artistStore, 'paginate')
+
+      await this.user.click(screen.getByRole('button', { name: 'Show favorites only' }))
+
+      await waitFor(() => expect(fetchMock).toHaveBeenNthCalledWith(1, {
+        favorites_only: true,
+        page: 1,
+        order: 'asc',
+        sort: 'name',
+      }))
+
+      await this.user.click(screen.getByRole('button', { name: 'Show all' }))
+
+      await waitFor(() => expect(fetchMock).toHaveBeenNthCalledWith(2, {
+        favorites_only: false,
+        page: 1,
+        order: 'asc',
+        sort: 'name',
+      }))
+    })
   }
 
   private async renderComponent () {
     artistStore.state.artists = factory('artist', 9)
 
-    const rendered = this.render(ArtistListScreen, {
+    const rendered = this.render(Component, {
       global: {
         stubs: {
           ArtistCard: this.stub('artist-card'),

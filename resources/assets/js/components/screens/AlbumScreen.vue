@@ -32,13 +32,17 @@
         </template>
 
         <template #controls>
-          <SongListControls
-            v-if="songs.length && (!isPhone || showingControls)"
-            :config="config"
-            @filter="applyFilter"
-            @play-all="playAll"
-            @play-selected="playSelected"
-          />
+          <div class="flex gap-2">
+            <SongListControls
+              v-if="songs.length && (!isPhone || showingControls)"
+              :config="config"
+              @filter="applyFilter"
+              @play-all="playAll"
+              @play-selected="playSelected"
+            />
+
+            <FavoriteButton :favorite="album.favorite" class="px-3.5 py-2" @toggle="toggleFavorite" />
+          </div>
         </template>
       </ScreenHeader>
     </template>
@@ -113,6 +117,7 @@ import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 import ScreenTabs from '@/components/ui/ArtistAlbumScreenTabs.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import AlbumGrid from '@/components/ui/album-artist/AlbumOrArtistGrid.vue'
+import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
 const validTabs = ['songs', 'other-albums', 'information'] as const
 type Tab = (typeof validTabs)[number]
@@ -165,6 +170,7 @@ const isStandardArtist = computed(() => {
 const download = () => downloadService.fromAlbum(album.value!)
 
 const edit = () => eventBus.emit('MODAL_SHOW_EDIT_ALBUM_FORM', album.value!)
+const toggleFavorite = () => albumStore.toggleFavorite(album.value!)
 
 const fetchScreenData = async () => {
   if (loading.value) {

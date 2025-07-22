@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { searchStore } from '@/stores/searchStore'
-import SearchSongResultsScreen from './SearchSongResultsScreen.vue'
+import Component from './SearchSongResultsScreen.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -10,7 +10,7 @@ new class extends UnitTestCase {
       const searchMock = this.mock(searchStore, 'playableSearch')
 
       this.router.activateRoute({ path: 'search-songs', screen: 'Search.Songs' }, { q: 'search me' })
-      this.render(SearchSongResultsScreen)
+      this.render(Component)
 
       expect(resetResultMock).toHaveBeenCalled()
       expect(searchMock).toHaveBeenCalledWith('search me')

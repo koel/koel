@@ -1,8 +1,8 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
-import { favoriteStore } from '@/stores/favoriteStore'
 import { downloadService } from './downloadService'
+import { songStore } from '@/stores/songStore'
 
 new class extends UnitTestCase {
   protected test () {
@@ -42,7 +42,7 @@ new class extends UnitTestCase {
       'downloads favorites if available',
       (songs, triggered) => {
         const mock = this.mock(downloadService, 'trigger')
-        favoriteStore.state.playables = songs
+        songStore.state.favorites = songs
 
         downloadService.fromFavorites()
 

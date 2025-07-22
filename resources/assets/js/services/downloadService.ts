@@ -1,5 +1,5 @@
-import { favoriteStore } from '@/stores/favoriteStore'
 import { authService } from '@/services/authService'
+import { songStore } from '@/stores/songStore'
 import { arrayify } from '@/utils/helpers'
 
 export const downloadService = {
@@ -21,7 +21,7 @@ export const downloadService = {
   },
 
   fromFavorites () {
-    if (favoriteStore.state.playables.length) {
+    if (songStore.state.favorites.length) {
       this.trigger('favorites')
     }
   },

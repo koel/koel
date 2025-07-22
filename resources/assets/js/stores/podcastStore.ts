@@ -1,3 +1,4 @@
+import type { Reactive } from 'vue'
 import { reactive } from 'vue'
 import { http } from '@/services/http'
 
@@ -21,8 +22,8 @@ export const podcastStore = {
     return podcast
   },
 
-  async fetchAll () {
-    this.state.podcasts = await http.get<Podcast[]>('podcasts')
+  async fetchAll (favoritesOnly = false) {
+    this.state.podcasts = await http.get<Podcast[]>(`podcasts?favorites_only=${favoritesOnly}`)
     return this.state.podcasts
   },
 
@@ -34,5 +35,22 @@ export const podcastStore = {
   async unsubscribe (podcast: Podcast) {
     await http.delete(`podcasts/${podcast.id}/subscriptions`)
     this.state.podcasts = this.state.podcasts.filter(p => p.id !== podcast.id)
+  },
+
+  reset () {
+    this.state.podcasts = []
+  },
+
+  async toggleFavorite (podcast: Reactive<Podcast>) {
+    // Don't wait for the HTTP response to update the status, just toggle right away.
+    // We'll update the liked status again after the HTTP request.
+    podcast.favorite = !podcast.favorite
+
+    const favorite = await http.post<Favorite | null>(`favorites/toggle`, {
+      type: 'podcast',
+      id: podcast.id,
+    })
+
+    podcast.favorite = Boolean(favorite)
   },
 }

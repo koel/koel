@@ -4,9 +4,11 @@ namespace Tests\Feature;
 
 use App\Events\MultipleSongsLiked;
 use App\Events\PlaybackStarted;
-use App\Events\SongLikeToggled;
+use App\Events\SongFavoriteToggled;
+use App\Models\Favorite;
 use App\Models\Interaction;
 use App\Models\Song;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Event;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -21,6 +23,8 @@ class InteractionTest extends TestCase
         Event::fake(PlaybackStarted::class);
 
         $user = create_user();
+
+        /** @var Song $song */
         $song = Song::factory()->create();
 
         $this->postAs('api/interaction/play', ['song' => $song->id], $user);
@@ -42,59 +46,67 @@ class InteractionTest extends TestCase
     }
 
     #[Test]
+    /** @deprecated Only for older client (e.g., mobile app) */
     public function toggleLike(): void
     {
-        Event::fake(SongLikeToggled::class);
+        Event::fake(SongFavoriteToggled::class);
 
         $user = create_user();
+
+        /** @var Song $song */
         $song = Song::factory()->create();
 
         $this->postAs('api/interaction/like', ['song' => $song->id], $user);
 
-        $this->assertDatabaseHas(Interaction::class, [
+        $this->assertDatabaseHas(Favorite::class, [
             'user_id' => $user->id,
-            'song_id' => $song->id,
-            'liked' => 1,
+            'favoriteable_id' => $song->id,
+            'favoriteable_type' => 'playable',
         ]);
 
         // Try again
         $this->postAs('api/interaction/like', ['song' => $song->id], $user);
 
-        $this->assertDatabaseHas(Interaction::class, [
+        $this->assertDatabaseMissing(Favorite::class, [
             'user_id' => $user->id,
-            'song_id' => $song->id,
-            'liked' => 0,
+            'favoriteable_id' => $song->id,
+            'favoriteable_type' => 'playable',
         ]);
 
-        Event::assertDispatched(SongLikeToggled::class);
+        Event::assertDispatched(SongFavoriteToggled::class);
     }
 
     #[Test]
+    /** @deprecated Only for older client (e.g., mobile app) */
     public function toggleLikeBatch(): void
     {
         Event::fake(MultipleSongsLiked::class);
 
         $user = create_user();
+
+        /** @var Collection<Song> $songs */
         $songs = Song::factory(2)->create();
         $songIds = $songs->modelKeys();
 
         $this->postAs('api/interaction/batch/like', ['songs' => $songIds], $user);
 
         foreach ($songs as $song) {
-            $this->assertDatabaseHas(Interaction::class, [
+            $this->assertDatabaseHas(Favorite::class, [
                 'user_id' => $user->id,
-                'song_id' => $song->id,
-                'liked' => 1,
+                'favoriteable_id' => $song->id,
+                'favoriteable_type' => 'playable',
             ]);
         }
+
+        Event::assertDispatched(MultipleSongsLiked::class);
 
         $this->postAs('api/interaction/batch/unlike', ['songs' => $songIds], $user);
 
         foreach ($songs as $song) {
-            $this->assertDatabaseHas(Interaction::class, [
+            $this->assertDatabaseMissing(Favorite::class, [
                 'user_id' => $user->id,
-                'song_id' => $song->id,
-                'liked' => 0,
+                'favoriteable_id' => $song->id,
+                'favoriteable_type' => 'playable',
             ]);
         }
 

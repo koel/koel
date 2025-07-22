@@ -3,7 +3,7 @@ import { screen, waitFor } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { MessageToasterStub } from '@/__tests__/stubs'
 import { userStore } from '@/stores/userStore'
-import AddUserForm from './AddUserForm.vue'
+import Component from './AddUserForm.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -11,7 +11,7 @@ new class extends UnitTestCase {
       const storeMock = this.mock(userStore, 'store')
       const alertMock = this.mock(MessageToasterStub.value, 'success')
 
-      this.render(AddUserForm)
+      this.render(Component)
 
       await this.type(screen.getByRole('textbox', { name: 'Name' }), 'John Doe')
       await this.type(screen.getByRole('textbox', { name: 'Email' }), 'john@doe.com')

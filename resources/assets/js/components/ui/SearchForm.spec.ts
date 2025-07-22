@@ -3,12 +3,12 @@ import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { eventBus } from '@/utils/eventBus'
 import Router from '@/router'
-import SearchForm from './SearchForm.vue'
+import Component from './SearchForm.vue'
 
 new class extends UnitTestCase {
   protected test () {
     it('sets focus into search box when requested', async () => {
-      this.render(SearchForm)
+      this.render(Component)
 
       eventBus.emit('FOCUS_SEARCH_FIELD')
 
@@ -17,7 +17,7 @@ new class extends UnitTestCase {
 
     it('goes to search screen when search box is focused', async () => {
       const mock = this.mock(Router, 'go')
-      this.render(SearchForm)
+      this.render(Component)
 
       await this.user.click(screen.getByRole('searchbox'))
 
@@ -26,7 +26,7 @@ new class extends UnitTestCase {
 
     it('emits an event when search query is changed', async () => {
       const mock = this.mock(eventBus, 'emit')
-      this.render(SearchForm)
+      this.render(Component)
 
       await this.type(screen.getByRole('searchbox'), 'hey')
 
@@ -35,7 +35,7 @@ new class extends UnitTestCase {
 
     it('goes to the search screen if the form is submitted', async () => {
       const goMock = this.mock(Router, 'go')
-      this.render(SearchForm)
+      this.render(Component)
 
       await this.type(screen.getByRole('searchbox'), 'hey')
       await this.user.click(screen.getByRole('button', { name: 'Search' }))

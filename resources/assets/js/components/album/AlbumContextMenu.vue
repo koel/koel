@@ -3,6 +3,8 @@
     <template v-if="album">
       <li @click="play">Play All</li>
       <li @click="shuffle">Shuffle All</li>
+      <li class="separator" />
+      <li @click="toggleFavorite">{{ album.favorite ? 'Undo Favorite' : 'Favorite' }}</li>
       <template v-if="allowEdit">
         <li @click="edit">Edit…</li>
       </template>
@@ -55,6 +57,8 @@ const shuffle = () => trigger(async () => {
 })
 
 const edit = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_ALBUM_FORM', album.value!))
+
+const toggleFavorite = () => trigger(() => albumStore.toggleFavorite(album.value!))
 
 const viewAlbumDetails = () => trigger(() => go(url('albums.show', { id: album.value!.id })))
 const viewArtistDetails = () => trigger(() => go(url('artists.show', { id: album.value!.artist_id })))

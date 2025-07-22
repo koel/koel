@@ -39,7 +39,12 @@
           - {{ pluralize(playable.play_count, 'play') }}
         </p>
       </div>
-      <LikeButton :playable="playable" class="opacity-0 text-k-text-secondary group-hover:opacity-100" />
+      <FavoriteButton
+        class="-mt-1"
+        :class="playable.favorite || 'opacity-0 group-hover:opacity-100'"
+        :favorite="playable.favorite"
+        @toggle="toggleFavorite"
+      />
     </main>
   </article>
 </template>
@@ -52,10 +57,11 @@ import { pluralize } from '@/utils/formatters'
 import { playbackService } from '@/services/playbackService'
 import { useDraggable } from '@/composables/useDragAndDrop'
 import { useRouter } from '@/composables/useRouter'
+import { songStore } from '@/stores/songStore'
 
 import SongThumbnail from '@/components/song/SongThumbnail.vue'
-import LikeButton from '@/components/song/SongLikeButton.vue'
 import ExternalMark from '@/components/ui/ExternalMark.vue'
+import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
 const props = defineProps<{ playable: Playable }>()
 const { playable } = toRefs(props)
@@ -73,6 +79,7 @@ const requestContextMenu = (event: MouseEvent) => eventBus.emit(
 
 const onDragStart = (event: DragEvent) => startDragging(event, [playable.value])
 const play = () => playbackService.play(playable.value)
+const toggleFavorite = () => songStore.toggleFavorite(playable.value)
 </script>
 
 <style lang="postcss" scoped>

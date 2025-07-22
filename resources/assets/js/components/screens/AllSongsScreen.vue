@@ -82,7 +82,7 @@ const {
   onPressEnter,
   playSelected,
   onScrollBreakpoint,
-} = useSongList(toRef(songStore.state, 'songs'), { type: 'Songs' }, { filterable: false, sortable: true })
+} = useSongList(toRef(songStore.state, 'playables'), { type: 'Songs' }, { filterable: false, sortable: true })
 
 const { SongListControls, config } = useSongListControls('Songs')
 
@@ -130,7 +130,7 @@ const playAll = async (shuffle: boolean) => {
 
 const sort = async (field: MaybeArray<PlayableListSortField>, order: SortOrder) => {
   page.value = 1
-  songStore.state.songs = []
+  songStore.state.playables = []
   sortField = field
   sortOrder = order
 

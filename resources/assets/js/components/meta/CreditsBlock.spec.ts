@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { http } from '@/services/http'
-import CreditsBlock from './CreditsBlock.vue'
+import Component from './CreditsBlock.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -14,7 +14,7 @@ new class extends UnitTestCase {
         { name: 'Something Else', url: 'https://something-else.net' },
       ])
 
-      const { html } = this.render(CreditsBlock)
+      const { html } = this.render(Component)
 
       await this.tick(3)
       expect(html()).toMatchSnapshot()

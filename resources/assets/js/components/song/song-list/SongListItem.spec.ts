@@ -1,10 +1,9 @@
 import { expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
 import factory from '@/__tests__/factory'
+import { songStore } from '@/stores/songStore'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import SongListItem from './SongListItem.vue'
-
-let row: PlayableRow
+import Component from './SongListItem.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -17,11 +16,10 @@ new class extends UnitTestCase {
         playback_state: 'Playing',
         track: 12,
         album_cover: 'https://example.com/cover.jpg',
-        liked: true,
+        favorite: true,
       })
 
-      const { html } = this.renderComponent(song)
-      expect(html()).toMatchSnapshot()
+      expect(this.renderComponent(song).html()).toMatchSnapshot()
     })
 
     it('emits play event on double click', async () => {
@@ -40,21 +38,35 @@ new class extends UnitTestCase {
       const { getByText } = this.renderComponent(song, showDisc)
       expect(getByText('Disc 2')).toBeTruthy()
     })
+
+    it('toggles favorite state when the Favorite button is clicked', async () => {
+      const toggleFavoriteMock = this.mock(songStore, 'toggleFavorite')
+      const { row } = this.renderComponent()
+
+      await this.user.click(screen.getByRole('button', { name: 'Favorite' }))
+
+      expect(toggleFavoriteMock).toHaveBeenCalledWith(row.playable)
+    })
   }
 
   private renderComponent (playable?: Playable, showDisc = false) {
-    playable = playable ?? factory('song')
+    playable = playable ?? factory('song', { favorite: false })
 
-    row = {
+    const row = {
       playable,
       selected: false,
     }
 
-    return this.render(SongListItem, {
+    const rendered = this.render(Component, {
       props: {
         item: row,
         showDisc,
       },
     })
+
+    return {
+      ...rendered,
+      row,
+    }
   }
 }

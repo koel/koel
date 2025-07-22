@@ -31,7 +31,7 @@ final class ToggleLoveTrackRequest extends Request implements HasBody, RequiresS
         return [
             'method' => $this->love ? 'track.love' : 'track.unlove',
             'sk' => $this->user->preferences->lastFmSessionKey,
-            'artist' => $this->song->artist->name,
+            'artist' => $this->song->artist_name,
             'track' => $this->song->title,
         ];
     }

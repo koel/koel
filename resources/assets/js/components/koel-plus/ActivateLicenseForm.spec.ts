@@ -2,7 +2,7 @@ import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { plusService } from '@/services/plusService'
-import Form from './ActivateLicenseForm.vue'
+import Component from './ActivateLicenseForm.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -17,6 +17,6 @@ new class extends UnitTestCase {
   }
 
   private renderComponent () {
-    return this.render(Form)
+    return this.render(Component)
   }
 }

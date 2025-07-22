@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\API\AddSongsToPlaylistRequest;
 use App\Http\Requests\API\RemoveSongsFromPlaylistRequest;
 use App\Http\Resources\CollaborativeSongResource;
-use App\Http\Resources\SongResourceCollection;
+use App\Http\Resources\SongResource;
 use App\Models\Playlist;
 use App\Models\User;
 use App\Repositories\SongRepository;
@@ -33,7 +33,7 @@ class PlaylistSongController extends Controller
     {
         if ($playlist->is_smart) {
             $this->authorize('own', $playlist);
-            return SongResourceCollection::make($this->smartPlaylistService->getSongs($playlist, $this->user));
+            return SongResource::collection($this->smartPlaylistService->getSongs($playlist, $this->user));
         }
 
         $this->authorize('collaborate', $playlist);
@@ -58,7 +58,7 @@ class PlaylistSongController extends Controller
     {
         return License::isPlus()
             ? CollaborativeSongResource::collection($songs)
-            : SongResourceCollection::make($songs);
+            : SongResource::collection($songs);
     }
 
     public function destroy(Playlist $playlist, RemoveSongsFromPlaylistRequest $request)

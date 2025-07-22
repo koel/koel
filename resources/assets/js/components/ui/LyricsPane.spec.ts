@@ -3,7 +3,7 @@ import { screen } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { eventBus } from '@/utils/eventBus'
-import LyricsPane from './LyricsPane.vue'
+import Component from './LyricsPane.vue'
 import Magnifier from '@/components/ui/Magnifier.vue'
 
 new class extends UnitTestCase {
@@ -32,7 +32,7 @@ new class extends UnitTestCase {
       lyrics: 'Foo bar baz qux',
     })
 
-    return this.render(LyricsPane, {
+    return this.render(Component, {
       props: {
         song,
       },

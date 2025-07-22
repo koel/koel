@@ -1,10 +1,10 @@
 import isMobile from 'ismobilejs'
 import { isObject, mergeWith } from 'lodash'
 import type { RenderOptions } from '@testing-library/vue'
+import { cleanup, createEvent, fireEvent, render } from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
 import type { UserEvent } from '@testing-library/user-event/dist/types/setup/setup'
 import type { EventType } from '@testing-library/dom/types/events'
-import { cleanup, createEvent, fireEvent, render } from '@testing-library/vue'
 import { afterEach, beforeEach, vi } from 'vitest'
 import { defineComponent, nextTick } from 'vue'
 import factory from '@/__tests__/factory'
@@ -14,6 +14,7 @@ import { userStore } from '@/stores/userStore'
 import { http } from '@/services/http'
 import { DialogBoxKey, MessageToasterKey, OverlayKey, RouterKey } from '@/symbols'
 import Router from '@/router'
+import { preferenceStore } from '@/stores/preferenceStore'
 
 // A deep-merge function that
 // - supports symbols as keys (_.merge doesn't)
@@ -47,7 +48,6 @@ export default abstract class UnitTestCase {
 
   public constructor () {
     this.router = new Router()
-    this.mock(http, 'request') // prevent actual HTTP requests from being made
     this.user = userEvent.setup({ delay: null }) // @see https://github.com/testing-library/user-event/issues/833
 
     this.setReadOnlyProperty(navigator, 'clipboard', {
@@ -61,6 +61,9 @@ export default abstract class UnitTestCase {
 
   protected beforeEach (cb?: Closure) {
     beforeEach(() => {
+      this.mock(http, 'request').mockResolvedValue({}) // prevent actual HTTP requests from being made
+      preferenceStore.init()
+
       commonStore.state.song_length = 10
       commonStore.state.allows_download = true
       commonStore.state.uses_i_tunes = true
@@ -122,6 +125,7 @@ export default abstract class UnitTestCase {
           'koel-tooltip': {},
           'koel-hide-broken-icon': {},
           'koel-overflow-fade': {},
+          'koel-new-tab': {},
         },
         components: {
           Icon: this.stub('Icon'),

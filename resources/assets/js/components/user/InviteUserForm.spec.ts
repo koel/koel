@@ -3,7 +3,7 @@ import { screen, waitFor } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { MessageToasterStub } from '@/__tests__/stubs'
 import { invitationService } from '@/services/invitationService'
-import InviteUserForm from './InviteUserForm.vue'
+import Component from './InviteUserForm.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -11,7 +11,7 @@ new class extends UnitTestCase {
       const inviteMock = this.mock(invitationService, 'invite')
       const alertMock = this.mock(MessageToasterStub.value, 'success')
 
-      this.render(InviteUserForm)
+      this.render(Component)
 
       await this.type(screen.getByRole('textbox'), 'foo@bar.ai\n')
       await this.user.click(screen.getByRole('checkbox'))
@@ -27,7 +27,7 @@ new class extends UnitTestCase {
       const inviteMock = this.mock(invitationService, 'invite')
       const alertMock = this.mock(MessageToasterStub.value, 'success')
 
-      this.render(InviteUserForm)
+      this.render(Component)
 
       await this.type(screen.getByRole('textbox'), 'foo@bar.ai\n\na@b.c\n\n')
       await this.user.click(screen.getByRole('checkbox'))
@@ -42,7 +42,7 @@ new class extends UnitTestCase {
     it('does not invites if at least one email is invalid', async () => {
       const inviteMock = this.mock(invitationService, 'invite')
 
-      this.render(InviteUserForm)
+      this.render(Component)
 
       await this.type(screen.getByRole('textbox'), 'invalid\n\na@b.c\n\n')
       await this.user.click(screen.getByRole('checkbox'))

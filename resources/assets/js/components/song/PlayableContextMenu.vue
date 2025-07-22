@@ -5,6 +5,7 @@
         <span v-if="firstSongPlaying">Pause</span>
         <span v-else>Play</span>
       </li>
+      <li class="separator" />
       <template v-if="isSong(playables[0])">
         <li @click="viewAlbum(playables[0])">Go to Album</li>
         <li @click="viewArtist(playables[0])">Go to Artist</li>
@@ -77,7 +78,6 @@ import { eventBus } from '@/utils/eventBus'
 import { arrayify, copyText } from '@/utils/helpers'
 import { getPlayableCollectionContentType, isSong } from '@/utils/typeGuards'
 import { commonStore } from '@/stores/commonStore'
-import { favoriteStore } from '@/stores/favoriteStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { queueStore } from '@/stores/queueStore'
 import { songStore } from '@/stores/songStore'
@@ -107,6 +107,8 @@ const {
   queueToTop,
   addToFavorites,
   addToExistingPlaylist,
+  removeFromFavorites,
+  removeFromQueue,
   addToNewPlaylist,
 } = usePlayableMenuMethods(playables, close)
 
@@ -245,9 +247,6 @@ const removePlayablesFromPlaylist = () => trigger(async () => {
 
   await removeFromPlaylist(playlist, playables.value)
 })
-
-const removeFromQueue = () => trigger(() => queueStore.unqueue(playables.value))
-const removeFromFavorites = () => trigger(() => favoriteStore.unlike(playables.value))
 
 const copyUrl = () => trigger(async () => {
   await copyText(songStore.getShareableUrl(playables.value[0]))

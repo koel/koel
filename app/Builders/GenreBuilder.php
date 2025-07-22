@@ -15,6 +15,6 @@ class GenreBuilder extends Builder
             return $this;
         }
 
-        return $this->whereHas('songs', static fn (SongBuilder $query) => $query->accessible($user)); //@phpstan-ignore-line
+        return $this->whereHas('songs', static fn (SongBuilder $query) => $query->setScopedUser($user)->accessible()); //@phpstan-ignore-line
     }
 }

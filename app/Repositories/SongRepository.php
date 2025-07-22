@@ -46,8 +46,7 @@ class SongRepository extends Repository implements ScoutableRepository
     public function getRecentlyAdded(int $count = 10, ?User $scopedUser = null): Collection
     {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
-            ->accessible()
-            ->withMetaData()
+            ->withUserContext()
             ->latest()
             ->limit($count)
             ->get();
@@ -57,8 +56,7 @@ class SongRepository extends Repository implements ScoutableRepository
     public function getMostPlayed(int $count = 7, ?User $scopedUser = null): Collection
     {
         return Song::query(user: $scopedUser ?? $this->auth->user())
-            ->accessible()
-            ->withMetaData()
+            ->withUserContext()
             ->where('interactions.play_count', '>', 0)
             ->orderByDesc('interactions.play_count')
             ->limit($count)
@@ -69,8 +67,7 @@ class SongRepository extends Repository implements ScoutableRepository
     public function getRecentlyPlayed(int $count = 7, ?User $scopedUser = null): Collection
     {
         return Song::query(user: $scopedUser ?? $this->auth->user())
-            ->accessible()
-            ->withMetaData()
+            ->withUserContext()
             ->where('interactions.play_count', '>', 0)
             ->addSelect('interactions.last_played_at')
             ->orderByDesc('interactions.last_played_at')
@@ -87,8 +84,7 @@ class SongRepository extends Repository implements ScoutableRepository
         $scopedUser ??= $this->auth->user();
 
         return Song::query(type: PlayableType::SONG, user: $scopedUser)
-            ->accessible()
-            ->withMetaData()
+            ->withUserContext()
             ->sort($sortColumns, $sortDirection)
             ->simplePaginate($perPage);
     }
@@ -101,8 +97,7 @@ class SongRepository extends Repository implements ScoutableRepository
         int $perPage = 50
     ): Paginator {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
-            ->accessible()
-            ->withMetaData()
+            ->withUserContext()
             ->whereRelation('genres', 'genres.id', $genre->id)
             ->sort($sortColumns, $sortDirection)
             ->simplePaginate($perPage);
@@ -115,8 +110,7 @@ class SongRepository extends Repository implements ScoutableRepository
         int $perPage = 50
     ): Paginator {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
-            ->accessible()
-            ->withMetaData()
+            ->withUserContext()
             ->whereDoesntHave('genres')
             ->sort($sortColumns, $sortDirection)
             ->simplePaginate($perPage);
@@ -130,8 +124,7 @@ class SongRepository extends Repository implements ScoutableRepository
         ?User $scopedUser = null,
     ): Collection {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
-            ->accessible()
-            ->withMetaData()
+            ->withUserContext()
             ->sort($sortColumns, $sortDirection)
             ->limit($limit)
             ->get();
@@ -141,9 +134,7 @@ class SongRepository extends Repository implements ScoutableRepository
     public function getFavorites(?User $scopedUser = null): Collection
     {
         return Song::query(user: $scopedUser ?? $this->auth->user())
-            ->accessible()
-            ->withMetaData()
-            ->where('interactions.liked', true)
+            ->withUserContext(favoritesOnly: true)
             ->get();
     }
 
@@ -151,8 +142,7 @@ class SongRepository extends Repository implements ScoutableRepository
     public function getByAlbum(Album $album, ?User $scopedUser = null): Collection
     {
         return Song::query(user: $scopedUser ?? $this->auth->user())
-            ->accessible()
-            ->withMetaData()
+            ->withUserContext()
             ->whereBelongsTo($album)
             ->orderBy('songs.disc')
             ->orderBy('songs.track')
@@ -163,9 +153,8 @@ class SongRepository extends Repository implements ScoutableRepository
     public function paginateInFolder(?Folder $folder = null, ?User $scopedUser = null): Paginator
     {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
-            ->accessible()
+            ->withUserContext()
             ->storedLocally()
-            ->withMetaData()
             ->when($folder, static fn (SongBuilder $query) => $query->where('folder_id', $folder->id)) // @phpstan-ignore-line
             ->when(!$folder, static fn (SongBuilder $query) => $query->whereNull('folder_id'))
             ->orderBy('songs.path')
@@ -176,8 +165,7 @@ class SongRepository extends Repository implements ScoutableRepository
     public function getByArtist(Artist $artist, ?User $scopedUser = null): Collection
     {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
-            ->accessible()
-            ->withMetaData()
+            ->withUserContext()
             ->where(static function (SongBuilder $query) use ($artist): void {
                 $query->whereBelongsTo($artist)
                     ->orWhereHas('album', static function (Builder $albumQuery) use ($artist): void {
@@ -195,8 +183,7 @@ class SongRepository extends Repository implements ScoutableRepository
     public function getByStandardPlaylist(Playlist $playlist, ?User $scopedUser = null): Collection
     {
         return Song::query(user: $scopedUser ?? $this->auth->user())
-            ->accessible()
-            ->withMetaData()
+            ->withUserContext()
             ->leftJoin('playlist_song', 'songs.id', '=', 'playlist_song.song_id')
             ->leftJoin('playlists', 'playlists.id', '=', 'playlist_song.playlist_id')
             ->when(License::isPlus(), static function (SongBuilder $query): SongBuilder {
@@ -219,8 +206,7 @@ class SongRepository extends Repository implements ScoutableRepository
     public function getRandom(int $limit, ?User $scopedUser = null): Collection
     {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
-            ->accessible()
-            ->withMetaData()
+            ->withUserContext()
             ->inRandomOrder()
             ->limit($limit)
             ->get();
@@ -230,8 +216,7 @@ class SongRepository extends Repository implements ScoutableRepository
     public function getMany(array $ids, bool $preserveOrder = false, ?User $scopedUser = null): Collection
     {
         $songs = Song::query(user: $scopedUser ?? $this->auth->user())
-            ->accessible()
-            ->withMetaData()
+            ->withUserContext()
             ->whereIn('songs.id', $ids)
             ->get();
 
@@ -255,8 +240,7 @@ class SongRepository extends Repository implements ScoutableRepository
     public function getManyInCollaborativeContext(array $ids, ?User $scopedUser = null): Collection
     {
         return Song::query(user: $scopedUser ?? $this->auth->user())
-            ->accessible()
-            ->withMetaData()
+            ->withUserContext()
             ->when(License::isPlus(), static function (SongBuilder $query): SongBuilder {
                 return
                     $query->leftJoin('playlist_song', 'songs.id', '=', 'playlist_song.song_id')
@@ -274,20 +258,18 @@ class SongRepository extends Repository implements ScoutableRepository
     }
 
     /** @param string $id */
-    public function getOne($id, ?User $scopedUser = null): Song
+    public function getOne($id, ?User $user = null): Song
     {
-        return Song::query(user: $scopedUser ?? $this->auth->user())
-            ->accessible()
-            ->withMetaData()
+        return Song::query(user: $user ?? $this->auth->user())
+            ->withUserContext()
             ->findOrFail($id);
     }
 
     /** @param string $id */
-    public function findOne($id, ?User $scopedUser = null): ?Song
+    public function findOne($id, ?User $user = null): ?Song
     {
-        return Song::query(user: $scopedUser ?? $this->auth->user())
-            ->accessible()
-            ->withMetaData()
+        return Song::query(user: $user ?? $this->auth->user())
+            ->withUserContext()
             ->find($id);
     }
 
@@ -309,8 +291,7 @@ class SongRepository extends Repository implements ScoutableRepository
     public function getRandomByGenre(Genre $genre, int $limit, ?User $scopedUser = null): Collection
     {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
-            ->accessible()
-            ->withMetaData()
+            ->withUserContext()
             ->whereRelation('genres', 'genres.id', $genre->id)
             ->limit($limit)
             ->inRandomOrder()
@@ -323,10 +304,14 @@ class SongRepository extends Repository implements ScoutableRepository
         return $podcast->episodes()->pluck('episode_guid')->toArray();
     }
 
-    /** @return Collection<Song> */
-    public function getEpisodesByPodcast(Podcast $podcast): Collection
+    /** @return Collection<Song>|array<array-key, Song> */
+    public function getEpisodesByPodcast(Podcast $podcast, ?User $user = null): Collection
     {
-        return $podcast->episodes;
+        return Song::query(user: $user ?? $this->auth->user())
+            ->withUserContext()
+            ->whereBelongsTo($podcast)
+            ->orderByDesc('songs.created_at')
+            ->get();
     }
 
     /** @return Collection<Song>|array<array-key, Song> */
@@ -346,8 +331,7 @@ class SongRepository extends Repository implements ScoutableRepository
         $scopedUser ??= $this->auth->user();
 
         return Song::query(type: PlayableType::SONG, user: $scopedUser)
-            ->accessible()
-            ->withMetaData()
+            ->withUserContext()
             // if the root path is included, we don't need to filter by folder
             ->when(!$hasRootPath, function (SongBuilder $query) use ($paths, $scopedUser): void {
                 $folders = $this->folderRepository->getByPaths($paths, $scopedUser);
@@ -368,8 +352,7 @@ class SongRepository extends Repository implements ScoutableRepository
     public function getInFolder(?Folder $folder = null, int $limit = 500, ?User $scopedUser = null): Collection
     {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
-            ->accessible()
-            ->withMetaData()
+            ->withUserContext()
             ->limit($limit)
             ->when($folder, static fn (SongBuilder $query) => $query->where('songs.folder_id', $folder->id)) // @phpstan-ignore-line
             ->when(!$folder, static fn (SongBuilder $query) => $query->whereNull('songs.folder_id'))
@@ -378,12 +361,12 @@ class SongRepository extends Repository implements ScoutableRepository
     }
 
     /** @return Collection<Song>|array<array-key, Song> */
-    public function search(string $keywords, int $limit, ?User $scopedUser = null): Collection
+    public function search(string $keywords, int $limit, ?User $user = null): Collection
     {
         return $this->getMany(
             ids: Song::search($keywords)->get()->take($limit)->modelKeys(),
             preserveOrder: true,
-            scopedUser: $scopedUser,
+            scopedUser: $user,
         );
     }
 }

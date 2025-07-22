@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
- * @property bool $liked
  * @property int $play_count
  * @property Song $song
  * @property User $user
@@ -21,7 +20,6 @@ class Interaction extends Model
     use HasFactory;
 
     protected $casts = [
-        'liked' => 'boolean',
         'play_count' => 'integer',
     ];
 

@@ -2,7 +2,7 @@ import { expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { eventBus } from '@/utils/eventBus'
-import FooterExtraControls from './FooterExtraControls.vue'
+import Component from './FooterExtraControls.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -23,7 +23,7 @@ new class extends UnitTestCase {
   }
 
   private renderComponent () {
-    return this.render(FooterExtraControls, {
+    return this.render(Component, {
       global: {
         stubs: {
           Equalizer: this.stub('Equalizer'),

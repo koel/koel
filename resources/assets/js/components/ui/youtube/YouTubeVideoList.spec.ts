@@ -5,7 +5,7 @@ import factory from '@/__tests__/factory'
 import { youTubeService } from '@/services/youTubeService'
 import Btn from '@/components/ui/form/Btn.vue'
 import YouTubeVideo from '@/components/ui/youtube/YouTubeVideoItem.vue'
-import YouTubeVideoList from './YouTubeVideoList.vue'
+import Component from './YouTubeVideoList.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -20,7 +20,7 @@ new class extends UnitTestCase {
         items: factory('video', 3),
       })
 
-      this.render(YouTubeVideoList, {
+      this.render(Component, {
         props: {
           song,
         },

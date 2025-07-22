@@ -3,6 +3,8 @@
     <template v-if="artist">
       <li @click="play">Play All</li>
       <li @click="shuffle">Shuffle All</li>
+      <li class="separator" />
+      <li @click="toggleFavorite">{{ artist.favorite ? 'Undo Favorite' : 'Favorite' }}</li>
       <template v-if="isStandardArtist">
         <li class="separator" />
         <li @click="viewArtistDetails">Go to Artist</li>
@@ -49,6 +51,7 @@ const shuffle = () => trigger(async () => {
 
 const viewArtistDetails = () => trigger(() => go(url('artists.show', { id: artist.value!.id })))
 const download = () => trigger(() => downloadService.fromArtist(artist.value!))
+const toggleFavorite = () => trigger(() => artistStore.toggleFavorite(artist.value!))
 
 eventBus.on('ARTIST_CONTEXT_MENU_REQUESTED', async ({ pageX, pageY }, _artist) => {
   artist.value = _artist

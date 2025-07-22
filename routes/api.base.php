@@ -12,6 +12,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CheckResourcePermissionController;
 use App\Http\Controllers\API\DisconnectFromLastfmController;
 use App\Http\Controllers\API\ExcerptSearchController;
+use App\Http\Controllers\API\FavoriteController;
 use App\Http\Controllers\API\FetchAlbumInformationController;
 use App\Http\Controllers\API\FetchAlbumThumbnailController;
 use App\Http\Controllers\API\FetchArtistInformationController;
@@ -41,7 +42,6 @@ use App\Http\Controllers\API\PlaylistCoverController;
 use App\Http\Controllers\API\PlaylistFolderController;
 use App\Http\Controllers\API\PlaylistFolderPlaylistController;
 use App\Http\Controllers\API\PlaylistSongController;
-use App\Http\Controllers\API\Podcast\FetchEpisodeController;
 use App\Http\Controllers\API\Podcast\PodcastController;
 use App\Http\Controllers\API\Podcast\PodcastEpisodeController;
 use App\Http\Controllers\API\Podcast\UnsubscribeFromPodcastController;
@@ -137,12 +137,19 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
 
         // Interaction routes
         Route::post('interaction/play', RegisterPlayController::class);
+
+        // Like/unlike routes (deprecated)
         Route::post('interaction/like', ToggleLikeSongController::class);
         Route::post('interaction/batch/like', LikeMultipleSongsController::class);
         Route::post('interaction/batch/unlike', UnlikeMultipleSongsController::class);
 
+        Route::post('favorites/toggle', [FavoriteController::class, 'toggle']);
+        Route::post('favorites', [FavoriteController::class, 'store']);
+        Route::delete('favorites', [FavoriteController::class, 'destroy']);
+
         Route::get('songs/recently-played', FetchRecentlyPlayedSongController::class);
-        Route::get('songs/favorite', FetchFavoriteSongsController::class);
+        Route::get('songs/favorite', FetchFavoriteSongsController::class); // @deprecated
+        Route::get('songs/favorites', FetchFavoriteSongsController::class);
 
         Route::apiResource('playlist-folders', PlaylistFolderController::class);
         Route::apiResource('playlist-folders.playlists', PlaylistFolderPlaylistController::class)->except('destroy');
@@ -216,7 +223,6 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
 
         // Podcast routes
         Route::apiResource('podcasts', PodcastController::class);
-        Route::get('episodes/{episode}', FetchEpisodeController::class);
         Route::apiResource('podcasts.episodes', PodcastEpisodeController::class);
         Route::delete('podcasts/{podcast}/subscriptions', UnsubscribeFromPodcastController::class);
 

@@ -18,16 +18,14 @@ class PlayCountTest extends TestCase
     {
         Event::fake(PlaybackStarted::class);
 
-        $interaction = Interaction::factory()->create([
-            'play_count' => 10,
-        ]);
+        /** @var Interaction $interaction */
+        $interaction = Interaction::factory()->create(['play_count' => 10]);
 
         $this->postAs('/api/interaction/play', ['song' => $interaction->song_id], $interaction->user)
             ->assertJsonStructure([
                 'type',
                 'id',
                 'song_id',
-                'liked',
                 'play_count',
             ]);
 
@@ -40,6 +38,7 @@ class PlayCountTest extends TestCase
     {
         Event::fake(PlaybackStarted::class);
 
+        /** @var Song $song */
         $song = Song::factory()->create();
         $user = create_user();
 
@@ -48,7 +47,6 @@ class PlayCountTest extends TestCase
                 'type',
                 'id',
                 'song_id',
-                'liked',
                 'play_count',
             ]);
 
