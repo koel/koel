@@ -18,7 +18,7 @@ export const DialogBoxStub = ref({
   success: noop,
   warning: noop,
   error: noop,
-  confirm: noop,
+  confirm: () => true, // for testing purposes, we assume confirmation is always accepted
 }) as unknown as Ref<InstanceType<typeof DialogBox>>
 
 export const OverlayStub = ref({

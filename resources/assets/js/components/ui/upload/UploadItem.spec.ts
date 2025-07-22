@@ -1,12 +1,10 @@
 import { expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import type { UploadFile, UploadStatus } from '@/services/uploadService'
+import type { UploadStatus } from '@/services/uploadService'
 import { uploadService } from '@/services/uploadService'
 import Btn from '@/components/ui/form/Btn.vue'
-import UploadItem from './UploadItem.vue'
-
-let file: UploadFile
+import Component from './UploadItem.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -37,7 +35,7 @@ new class extends UnitTestCase {
   }
 
   private renderComponent (status: UploadStatus) {
-    file = {
+    const file = {
       status,
       file: new File([], 'sample.mp3'),
       id: 'x-file',
@@ -46,7 +44,7 @@ new class extends UnitTestCase {
       progress: 42,
     }
 
-    return this.render(UploadItem, {
+    const rendered = this.render(Component, {
       props: {
         file,
       },
@@ -56,5 +54,10 @@ new class extends UnitTestCase {
         },
       },
     })
+
+    return {
+      ...rendered,
+      file,
+    }
   }
 }

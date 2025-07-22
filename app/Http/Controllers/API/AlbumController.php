@@ -26,12 +26,14 @@ class AlbumController extends Controller
         return AlbumResource::collection($this->repository->getForListing(
             sortColumn: $request->sort ?? 'name',
             sortDirection: $request->order ?? 'asc',
+            favoritesOnly: $request->boolean('favorites_only'),
         ));
     }
 
     public function show(Album $album)
     {
-        return AlbumResource::make($album);
+        // enrich the album with its user context
+        return AlbumResource::make($this->repository->getOne($album->id));
     }
 
     public function update(Album $album, AlbumUpdateRequest $request)

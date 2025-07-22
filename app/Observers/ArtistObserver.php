@@ -2,17 +2,11 @@
 
 namespace App\Observers;
 
-use App\Helpers\Ulid;
 use App\Models\Artist;
 use Illuminate\Support\Facades\File;
 
 class ArtistObserver
 {
-    public function creating(Artist $artist): void
-    {
-        $artist->public_id ??= Ulid::generate();
-    }
-
     public function deleted(Artist $artist): void
     {
         if (!$artist->has_image) {

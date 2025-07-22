@@ -6,22 +6,22 @@ import { http } from '@/services/http'
 import { songStore } from '@/stores/songStore'
 import { queueStore } from '@/stores/queueStore'
 
-let playables: Playable[]
-
 new class extends UnitTestCase {
+  private playables: Song[] = []
+
   protected beforeEach () {
     super.beforeEach(() => {
-      playables = factory('song', 3)
-      queueStore.state.playables = reactive(playables)
+      this.playables = factory('song', 3)
+      queueStore.state.playables = reactive(this.playables)
     })
   }
 
   protected test () {
-    it('returns all queued songs', () => expect(queueStore.all).toEqual(playables))
+    it('returns all queued songs', () => expect(queueStore.all).toEqual(this.playables))
 
-    it('returns the first queued song', () => expect(queueStore.first).toEqual(playables[0]))
+    it('returns the first queued song', () => expect(queueStore.first).toEqual(this.playables[0]))
 
-    it('returns the last queued song', () => expect(queueStore.last).toEqual(playables[2]))
+    it('returns the last queued song', () => expect(queueStore.last).toEqual(this.playables[2]))
 
     it('queues to bottom', () => {
       const song = factory('song')
@@ -54,17 +54,17 @@ new class extends UnitTestCase {
 
     it('removes a song from queue', () => {
       const putMock = this.mock(http, 'put')
-      queueStore.unqueue(playables[1])
+      queueStore.unqueue(this.playables[1])
 
-      expect(queueStore.all).toEqual([playables[0], playables[2]])
+      expect(queueStore.all).toEqual([this.playables[0], this.playables[2]])
       expect(putMock).toHaveBeenCalledWith('queue/state', { songs: queueStore.all.map(song => song.id) })
     })
 
     it('removes multiple songs from queue', () => {
       const putMock = this.mock(http, 'put')
-      queueStore.unqueue([playables[1], playables[0]])
+      queueStore.unqueue([this.playables[1], this.playables[0]])
 
-      expect(queueStore.all).toEqual([playables[2]])
+      expect(queueStore.all).toEqual([this.playables[2]])
       expect(putMock).toHaveBeenCalledWith('queue/state', { songs: queueStore.all.map(song => song.id) })
     })
 

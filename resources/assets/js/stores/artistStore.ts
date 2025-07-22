@@ -1,3 +1,4 @@
+import type { Reactive } from 'vue'
 import { reactive } from 'vue'
 import { differenceBy, unionBy } from 'lodash'
 import { cache } from '@/services/cache'
@@ -9,6 +10,7 @@ const UNKNOWN_ARTIST_NAME = 'Unknown Artist'
 const VARIOUS_ARTISTS_NAME = 'Various Artists'
 
 interface ArtistListPaginateParams extends Record<string, any> {
+  favorites_only: boolean
   sort: ArtistListSortField
   order: SortOrder
   page: number
@@ -87,5 +89,18 @@ export const artistStore = {
   reset () {
     this.vault.clear()
     this.state.artists = []
+  },
+
+  async toggleFavorite (artist: Reactive<Artist>) {
+    // Don't wait for the HTTP response to update the status, just toggle right away.
+    // We'll update the liked status again after the HTTP request.
+    artist.favorite = !artist.favorite
+
+    const favorite = await http.post<Favorite | null>(`favorites/toggle`, {
+      type: 'artist',
+      id: artist.id,
+    })
+
+    artist.favorite = Boolean(favorite)
   },
 }

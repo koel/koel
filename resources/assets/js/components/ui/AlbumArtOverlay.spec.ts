@@ -3,16 +3,14 @@ import { expect, it } from 'vitest'
 import { albumStore } from '@/stores/albumStore'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { logger } from '@/utils/logger'
-import AlbumArtOverlay from './AlbumArtOverlay.vue'
-
-let albumId: Album['id']
+import Component from './AlbumArtOverlay.vue'
 
 new class extends UnitTestCase {
   protected test () {
     it('fetches and displays the album thumbnail', async () => {
       const fetchMock = this.mock(albumStore, 'fetchThumbnail').mockResolvedValue('http://test/thumb.jpg')
 
-      const { html } = await this.renderComponent()
+      const { albumId, html } = await this.renderComponent()
 
       await waitFor(() => {
         expect(fetchMock).toHaveBeenCalledWith(albumId)
@@ -24,7 +22,7 @@ new class extends UnitTestCase {
       this.mock(logger, 'error')
       const fetchMock = this.mock(albumStore, 'fetchThumbnail').mockRejectedValue(new Error('Failed to fetch'))
 
-      const { html } = await this.renderComponent()
+      const { albumId, html } = await this.renderComponent()
 
       await waitFor(() => {
         expect(fetchMock).toHaveBeenCalledWith(albumId)
@@ -34,9 +32,9 @@ new class extends UnitTestCase {
   }
 
   private async renderComponent () {
-    albumId = 'foo'
+    const albumId = 'foo'
 
-    const rendered = this.render(AlbumArtOverlay, {
+    const rendered = this.render(Component, {
       props: {
         album: albumId,
       },
@@ -44,6 +42,9 @@ new class extends UnitTestCase {
 
     await this.tick()
 
-    return rendered
+    return {
+      ...rendered,
+      albumId,
+    }
   }
 }

@@ -4,7 +4,7 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import { socketService } from '@/services/socketService'
 import { volumeManager } from '@/services/volumeManager'
 import { preferenceStore } from '@/stores/preferenceStore'
-import Volume from './VolumeSlider.vue'
+import Component from './VolumeSlider.vue'
 
 new class extends UnitTestCase {
   protected beforeEach () {
@@ -16,7 +16,7 @@ new class extends UnitTestCase {
 
   protected test () {
     it('mutes and unmutes', async () => {
-      const { html } = this.render(Volume)
+      const { html } = this.render(Component)
       expect(html()).toMatchSnapshot()
       expect(volumeManager.volume.value).toEqual(5)
 
@@ -31,7 +31,7 @@ new class extends UnitTestCase {
 
     it('sets and broadcasts volume', async () => {
       const broadcastMock = this.mock(socketService, 'broadcast')
-      this.render(Volume)
+      this.render(Component)
 
       await fireEvent.update(screen.getByRole('slider'), '4.2')
       vi.runAllTimers()

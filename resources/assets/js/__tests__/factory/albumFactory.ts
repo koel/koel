@@ -11,6 +11,7 @@ export default (): Album => {
     created_at: faker.date.past().toISOString(),
     year: faker.date.past().getFullYear(),
     is_external: false,
+    favorite: faker.datatype.boolean(),
   }
 }
 

@@ -43,6 +43,7 @@ class PodcastResource extends JsonResource
             'link' => $this->podcast->link,
             'description' => $this->podcast->description,
             'author' => $this->podcast->author,
+            'favorite' => $this->podcast->favorite,
         ];
 
         if ($this->withSubscriptionData) {

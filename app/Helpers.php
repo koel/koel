@@ -191,13 +191,13 @@ function find_ffmpeg_path(): ?string
 {
     // for Unix-like systems, we can use the `which` command
     if (PHP_OS_FAMILY !== 'Windows') {
-        $path = trim(shell_exec('which ffmpeg'));
+        $path = trim(shell_exec('which ffmpeg') ?: '');
 
         return $path && is_executable($path) ? $path : null;
     }
 
     // for Windows, we can check `where` command
-    $path = trim(shell_exec('where ffmpeg'));
+    $path = trim(shell_exec('where ffmpeg') ?: '');
 
     if ($path && is_executable($path)) {
         return $path;

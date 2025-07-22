@@ -12,7 +12,7 @@
   >
     <template #icon>
       <Icon v-if="isRecentlyPlayedList(list)" :icon="faClockRotateLeft" class="text-k-success" fixed-width />
-      <Icon v-else-if="isFavoriteList(list)" :icon="faHeart" class="text-k-love" fixed-width />
+      <Icon v-else-if="isFavoriteList(list)" :icon="faStar" class="text-k-highlight" fixed-width />
       <Icon v-else-if="list.is_smart" :icon="faWandMagicSparkles" fixed-width />
       <Icon v-else-if="list.is_collaborative" :icon="faUsers" fixed-width />
       <ListMusicIcon v-else :size="16" />
@@ -22,12 +22,12 @@
 </template>
 
 <script lang="ts" setup>
-import { faClockRotateLeft, faHeart, faUsers, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
+import { faClockRotateLeft, faStar, faUsers, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
 import { ListMusicIcon } from 'lucide-vue-next'
 import { computed, ref, toRefs } from 'vue'
 import { eventBus } from '@/utils/eventBus'
+import { songStore } from '@/stores/songStore'
 import { useRouter } from '@/composables/useRouter'
-import { favoriteStore } from '@/stores/favoriteStore'
 import { useDraggable, useDroppable } from '@/composables/useDragAndDrop'
 import { usePlaylistManagement } from '@/composables/usePlaylistManagement'
 
@@ -119,7 +119,7 @@ const onDrop = async (event: DragEvent) => {
   }
 
   if (isFavoriteList(list.value)) {
-    await favoriteStore.like(playables)
+    await songStore.favorite(playables)
   } else if (isPlaylist(list.value)) {
     await addToPlaylist(list.value, playables)
   }

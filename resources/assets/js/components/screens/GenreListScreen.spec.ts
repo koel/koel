@@ -4,7 +4,7 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { commonStore } from '@/stores/commonStore'
 import { genreStore } from '@/stores/genreStore'
-import GenreListScreen from './GenreListScreen.vue'
+import Component from './GenreListScreen.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -18,7 +18,7 @@ new class extends UnitTestCase {
 
       const fetchMock = this.mock(genreStore, 'fetchAll').mockResolvedValue(genres)
 
-      this.render(GenreListScreen)
+      this.render(Component)
 
       await waitFor(() => {
         expect(fetchMock).toHaveBeenCalled()
@@ -30,7 +30,7 @@ new class extends UnitTestCase {
       commonStore.state.song_length = 0
       const fetchMock = this.mock(genreStore, 'fetchAll')
 
-      this.render(GenreListScreen)
+      this.render(Component)
 
       await waitFor(() => {
         expect(fetchMock).not.toHaveBeenCalled()

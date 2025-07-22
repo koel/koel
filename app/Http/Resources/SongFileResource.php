@@ -39,6 +39,12 @@ class SongFileResource extends SongResource
         parent::__construct($song);
     }
 
+    /** @inheritdoc */
+    public static function collection($resource): SongFileResourceCollection
+    {
+        return SongFileResourceCollection::make($resource);
+    }
+
     /** @inheritDoc */
     public function toArray($request): array
     {

@@ -13,10 +13,11 @@ class ArtistAlbumTest extends TestCase
     #[Test]
     public function index(): void
     {
+        /** @var Artist $artist */
         $artist = Artist::factory()->create();
         Album::factory(5)->for($artist)->create();
 
-        $this->getAs("api/artists/{$artist->public_id}/albums")
+        $this->getAs("api/artists/{$artist->id}/albums")
             ->assertJsonStructure([0 => AlbumResource::JSON_STRUCTURE]);
     }
 }

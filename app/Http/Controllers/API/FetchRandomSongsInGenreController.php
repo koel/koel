@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\FetchRandomSongsInGenreRequest;
-use App\Http\Resources\SongResourceCollection;
+use App\Http\Resources\SongResource;
 use App\Models\Genre;
 use App\Models\User;
 use App\Repositories\SongRepository;
@@ -19,6 +19,6 @@ class FetchRandomSongsInGenreController extends Controller
         SongRepository $repository,
         Authenticatable $user
     ) {
-        return SongResourceCollection::make($repository->getRandomByGenre($genre, $request->limit, $user));
+        return SongResource::collection($repository->getRandomByGenre($genre, $request->limit, $user));
     }
 }

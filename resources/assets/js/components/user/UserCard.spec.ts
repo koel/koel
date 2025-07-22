@@ -7,7 +7,7 @@ import { eventBus } from '@/utils/eventBus'
 import { userStore } from '@/stores/userStore'
 import { DialogBoxStub } from '@/__tests__/stubs'
 import { invitationService } from '@/services/invitationService'
-import UserCard from './UserCard.vue'
+import Component from './UserCard.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -85,7 +85,7 @@ new class extends UnitTestCase {
   }
 
   private renderComponent (user: User) {
-    return this.render(UserCard, {
+    return this.render(Component, {
       props: {
         user,
       },

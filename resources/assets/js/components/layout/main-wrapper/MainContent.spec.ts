@@ -7,7 +7,7 @@ import { albumStore } from '@/stores/albumStore'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { CurrentPlayableKey } from '@/symbols'
 import AlbumArtOverlay from '@/components/ui/AlbumArtOverlay.vue'
-import MainContent from './MainContent.vue'
+import Component from './MainContent.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -29,7 +29,7 @@ new class extends UnitTestCase {
   }
 
   private renderComponent () {
-    return this.render(MainContent, {
+    return this.render(Component, {
       global: {
         provide: {
           [<symbol>CurrentPlayableKey]: ref(factory('song')),

@@ -5,32 +5,42 @@ namespace App\Policies;
 use App\Facades\License;
 use App\Models\Song;
 use App\Models\User;
+use Illuminate\Auth\Access\Response;
 
 class SongPolicy
 {
-    public function own(User $user, Song $song): bool
+    public function own(User $user, Song $song): Response
     {
-        // Do not use $song->owner->is($user) here, as it may trigger an extra query.
-        return $song->owner_id === $user->id;
+        return $song->ownedBy($user) ? Response::allow() : Response::deny();
     }
 
-    public function access(User $user, Song $song): bool
+    public function access(User $user, Song $song): Response
     {
-        return License::isCommunity() || $song->accessibleBy($user);
+        return License::isCommunity() || $song->accessibleBy($user)
+            ? Response::allow()
+            : Response::deny();
     }
 
-    public function delete(User $user, Song $song): bool
+    public function delete(User $user, Song $song): Response
     {
-        return (License::isPlus() && $song->ownedBy($user)) || $user->is_admin;
+        return (License::isPlus() && $song->ownedBy($user)) || $user->is_admin
+            ? Response::allow()
+            : Response::deny();
     }
 
-    public function edit(User $user, Song $song): bool
+    public function edit(User $user, Song $song): Response
     {
-        return (License::isPlus() && $song->accessibleBy($user)) || $user->is_admin;
+        return (License::isPlus() && $song->accessibleBy($user)) || $user->is_admin
+            ? Response::allow()
+            : Response::deny();
     }
 
-    public function download(User $user, Song $song): bool
+    public function download(User $user, Song $song): Response
     {
-        return config('koel.download.allow') && $this->access($user, $song);
+        if (!config('koel.download.allow')) {
+            return Response::deny();
+        }
+
+        return $this->access($user, $song);
     }
 }

@@ -46,7 +46,7 @@ const init = (el: ElementWithTooltip, binding: DirectiveBinding) => {
 
   const $arrow = $tooltip.querySelector<HTMLDivElement>('.tooltip-arrow')!
 
-  let placement: Placement = 'bottom'
+  let placement: Placement = 'top'
 
   ;(['left', 'right', 'top', 'bottom'] as Placement[]).forEach(p => {
     if (binding.modifiers[p]) {

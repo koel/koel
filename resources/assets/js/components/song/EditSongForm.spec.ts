@@ -9,9 +9,7 @@ import { ModalContextKey } from '@/symbols'
 import type { SongUpdateResult } from '@/stores/songStore'
 import { songStore } from '@/stores/songStore'
 import { MessageToasterStub } from '@/__tests__/stubs'
-import EditSongForm from './EditSongForm.vue'
-
-let songs: Song[]
+import Component from './EditSongForm.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -30,7 +28,7 @@ new class extends UnitTestCase {
       const emitMock = this.mock(eventBus, 'emit')
       const alertMock = this.mock(MessageToasterStub.value, 'success')
 
-      const { html } = await this.renderComponent(factory('song', {
+      const { songs, html } = await this.renderComponent(factory('song', {
         title: 'Rocket to Heaven',
         artist_name: 'Led Zeppelin',
         album_name: 'IV',
@@ -83,7 +81,7 @@ new class extends UnitTestCase {
       const emitMock = this.mock(eventBus, 'emit')
       const alertMock = this.mock(MessageToasterStub.value, 'success')
 
-      const { html } = await this.renderComponent(factory('song', 3))
+      const { songs, html } = await this.renderComponent(factory('song', 3))
 
       expect(html()).toMatchSnapshot()
       expect(screen.queryByTestId('title-input')).toBeNull()
@@ -126,10 +124,10 @@ new class extends UnitTestCase {
     })
   }
 
-  private async renderComponent (_songs: MaybeArray<Song>, initialTab: EditSongFormTabName = 'details') {
-    songs = arrayify(_songs)
+  private async renderComponent (songs: MaybeArray<Song>, initialTab: EditSongFormTabName = 'details') {
+    songs = arrayify(songs)
 
-    const rendered = this.render(EditSongForm, {
+    const rendered = this.render(Component, {
       global: {
         provide: {
           [<symbol>ModalContextKey]: [ref({
@@ -142,6 +140,9 @@ new class extends UnitTestCase {
 
     await this.tick()
 
-    return rendered
+    return {
+      ...rendered,
+      songs,
+    }
   }
 }

@@ -2,7 +2,7 @@
   <button
     v-if="tag === 'button'"
     ref="button"
-    class="text-base text-k-text-primary bg-k-primary px-4 py-2.5 rounded cursor-pointer"
+    class="text-base text-k-text-primary bg-k-primary px-3.5 py-2 rounded cursor-pointer"
     type="button"
   >
     <slot>Click me</slot>
@@ -10,7 +10,7 @@
   <a
     v-else
     ref="button"
-    class="text-base text-k-text-primary bg-k-primary px-4 py-2.5 rounded cursor-pointer"
+    class="text-base text-k-text-primary bg-k-primary px-3.5 py-2 rounded cursor-pointer"
   >
     <slot>Click me</slot>
   </a>

@@ -1,3 +1,4 @@
+import type { Reactive } from 'vue'
 import { reactive } from 'vue'
 import { differenceBy, merge, unionBy } from 'lodash'
 import { cache } from '@/services/cache'
@@ -14,6 +15,7 @@ interface AlbumUpdateData {
 }
 
 interface AlbumListPaginateParams extends Record<string, any> {
+  favorites_only: boolean
   sort: AlbumListSortField
   order: SortOrder
   page: number
@@ -115,6 +117,19 @@ export const albumStore = {
     return this.syncWithVault(
       await cache.remember<Album[]>(['artist-albums', id], async () => await http.get<Album[]>(`artists/${id}/albums`)),
     )
+  },
+
+  async toggleFavorite (album: Reactive<Album>) {
+    // Don't wait for the HTTP response to update the status, just toggle right away.
+    // We'll update the liked status again after the HTTP request.
+    album.favorite = !album.favorite
+
+    const favorite = await http.post<Favorite | null>(`favorites/toggle`, {
+      type: 'album',
+      id: album.id,
+    })
+
+    album.favorite = Boolean(favorite)
   },
 
   reset () {

@@ -6,7 +6,7 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import { songStore } from '@/stores/songStore'
 import { playbackService } from '@/services/playbackService'
 import { PlayablesKey } from '@/symbols'
-import AlbumTrackListItem from './AlbumTrackListItem.vue'
+import Component from './AlbumTrackListItem.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -35,7 +35,7 @@ new class extends UnitTestCase {
 
     const matchMock = this.mock(songStore, 'match', matchedSong)
 
-    const rendered = this.render(AlbumTrackListItem, {
+    const rendered = this.render(Component, {
       props: {
         album,
         track,

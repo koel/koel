@@ -9,7 +9,6 @@ use App\Repositories\Contracts\ScoutableRepository;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @extends Repository<Album>
@@ -17,39 +16,34 @@ use Illuminate\Database\Eloquent\Model;
  */
 class AlbumRepository extends Repository implements ScoutableRepository
 {
-    /** @param int $id */
-    public function getOne($id, ?User $scopedUser = null): Model
+    /**
+     * @param string $id
+     */
+    public function getOne($id, ?User $user = null): Album
     {
-        $scopedUser ??= auth()->user();
-
-        return $this->getOneBy([
-            'id' => $id,
-            'user_id' => $scopedUser?->id,
-        ]);
+        return Album::query()
+            ->withUserContext(user: $user ?? $this->auth->user())
+            ->findOrFail($id);
     }
 
     /** @return Collection|array<array-key, Album> */
     public function getRecentlyAdded(int $count = 6, ?User $user = null): Collection
     {
         return Album::query()
-            ->isStandard()
-            ->accessibleBy($user ?? $this->auth->user())
+            ->withUserContext(user: $user ?? $this->auth->user())
+            ->onlyStandard()
             ->distinct()
-            ->latest('albums.created_at')
+            ->latest()
             ->limit($count)
-            ->get('albums.*');
+            ->get();
     }
 
     /** @return Collection|array<array-key, Album> */
     public function getMostPlayed(int $count = 6, ?User $user = null): Collection
     {
-        $user ??= $this->auth->user();
-
         return Album::query()
-            ->isStandard()
-            ->accessibleBy($user)
-            ->withPlayCount($user)
-            ->addSelect('albums.*')
+            ->withUserContext(user: $user ?? $this->auth->user(), includePlayCount: true)
+            ->onlyStandard()
             ->orderByDesc('play_count')
             ->limit($count)
             ->get();
@@ -59,11 +53,11 @@ class AlbumRepository extends Repository implements ScoutableRepository
     public function getMany(array $ids, bool $preserveOrder = false, ?User $user = null): Collection
     {
         $albums = Album::query()
-            ->isStandard()
-            ->accessibleBy($user ?? auth()->user())
+            ->withUserContext(user: $user ?? $this->auth->user())
+            ->onlyStandard()
             ->whereIn('albums.id', $ids)
             ->distinct()
-            ->get('albums.*');
+            ->get();
 
         return $preserveOrder ? $albums->orderByArray($ids) : $albums;
     }
@@ -72,7 +66,7 @@ class AlbumRepository extends Repository implements ScoutableRepository
     public function getByArtist(Artist $artist, ?User $user = null): Collection
     {
         return Album::query()
-            ->accessibleBy($user ?? $this->auth->user())
+            ->withUserContext(user: $user ?? $this->auth->user())
             ->where(static function (Builder $query) use ($artist): void {
                 $query->whereBelongsTo($artist)
                     ->orWhereHas('songs', static function (Builder $songQuery) use ($artist): void {
@@ -81,27 +75,30 @@ class AlbumRepository extends Repository implements ScoutableRepository
             })
             ->orderBy('albums.name')
             ->distinct()
-            ->get('albums.*');
+            ->get();
     }
 
-    public function getForListing(string $sortColumn, string $sortDirection, ?User $user = null): Paginator
-    {
+    public function getForListing(
+        string $sortColumn,
+        string $sortDirection,
+        bool $favoritesOnly = false,
+        ?User $user = null,
+    ): Paginator {
         return Album::query()
-            ->accessibleBy($user ?? $this->auth->user())
-            ->isStandard()
+            ->withUserContext(user: $user ?? $this->auth->user(), favoritesOnly: $favoritesOnly)
+            ->onlyStandard()
             ->sort($sortColumn, $sortDirection)
             ->distinct()
-            ->select('albums.*')
             ->simplePaginate(21);
     }
 
     /** @return Collection<Album>|array<array-key, Album> */
-    public function search(string $keywords, int $limit, ?User $scopedUser = null): Collection
+    public function search(string $keywords, int $limit, ?User $user = null): Collection
     {
         return $this->getMany(
             ids: Album::search($keywords)->get()->take($limit)->modelKeys(),
             preserveOrder: true,
-            user: $scopedUser,
+            user: $user,
         );
     }
 }

@@ -19,7 +19,7 @@ new class extends UnitTestCase {
   protected afterEach () {
     super.afterEach(() => {
       isMobile.any = false
-      preferenceStore.transcode_on_mobile = false
+      preferenceStore.temporary.transcode_on_mobile = false
     })
   }
 
@@ -155,19 +155,19 @@ new class extends UnitTestCase {
 
     it('gets source URL', () => {
       commonStore.state.cdn_url = 'http://test/'
-      const song = factory('song', { id: 'foo' })
+      const song = factory('song')
       this.mock(authService, 'getAudioToken', 'hadouken')
 
-      expect(songStore.getSourceUrl(song)).toBe('http://test/play/foo?t=hadouken')
+      expect(songStore.getSourceUrl(song)).toBe(`http://test/play/${song.id}?t=hadouken`)
 
       isMobile.any = true
-      preferenceStore.transcode_on_mobile = true
-      expect(songStore.getSourceUrl(song)).toBe('http://test/play/foo/1?t=hadouken')
+      preferenceStore.temporary.transcode_on_mobile = true
+      expect(songStore.getSourceUrl(song)).toBe(`http://test/play/${song.id}/1?t=hadouken`)
     })
 
     it('gets shareable URL', () => {
-      const song = factory('song', { id: 'foo' })
-      expect(songStore.getShareableUrl(song)).toBe('http://test/#/songs/foo')
+      const song = factory('song')
+      expect(songStore.getShareableUrl(song)).toBe(`http://test/#/songs/${song.id}`)
     })
 
     it('syncs with the vault', () => {
@@ -243,7 +243,7 @@ new class extends UnitTestCase {
 
     it('fetches for playlist with cache', async () => {
       const songs = factory('song', 3)
-      const playlist = factory('playlist', { id: '966268ea-935d-4f63-a84e-180385376a78' })
+      const playlist = factory('playlist')
       this.mock(playlistStore, 'byId').mockReturnValueOnce(playlist)
       cache.set(['playlist.songs', playlist.id], songs)
 
@@ -258,7 +258,7 @@ new class extends UnitTestCase {
 
     it('fetches for playlist discarding cache', async () => {
       const songs = factory('song', 3)
-      const playlist = factory('playlist', { id: '966268ea-935d-4f63-a84e-180385376a78' })
+      const playlist = factory('playlist')
       this.mock(playlistStore, 'byId').mockReturnValueOnce(playlist)
       cache.set(['playlist.songs', playlist.id], songs)
 
@@ -294,7 +294,7 @@ new class extends UnitTestCase {
 
       expect(getMock).toHaveBeenCalledWith('songs?page=2&sort=title&order=desc')
       expect(syncMock).toHaveBeenCalledWith(songs)
-      expect(songStore.state.songs).toEqual(reactive(songs))
+      expect(songStore.state.playables).toEqual(reactive(songs))
     })
 
     it('paginates for genre', async () => {
@@ -337,6 +337,79 @@ new class extends UnitTestCase {
 
       expect(getMock).toHaveBeenCalledWith('genres/foo/songs/random?limit=500')
       expect(syncMock).toHaveBeenCalledWith(songs)
+    })
+
+    it('fetches favorites', async () => {
+      const songs = factory('song', 3)
+      const getMock = this.mock(http, 'get').mockResolvedValue(songs)
+
+      await songStore.fetchFavorites()
+
+      expect(getMock).toHaveBeenCalledWith('songs/favorite')
+      expect(songStore.state.favorites).toEqual(songs)
+    })
+
+    it('toggles favorite to true', async () => {
+      songStore.state.favorites = factory('song', 2, { favorite: true })
+
+      const song = factory('song', { favorite: false })
+
+      const postMock = this.mock(http, 'post').mockResolvedValue(factory('favorite', {
+        favoriteable_type: 'playable',
+        favoriteable_id: song.id,
+      }))
+
+      await songStore.toggleFavorite(song)
+
+      expect(postMock).toHaveBeenCalledWith('favorites/toggle', {
+        type: 'playable',
+        id: song.id,
+      })
+      expect(song.favorite).toBe(true)
+      expect(songStore.state.favorites).toHaveLength(3)
+      expect(songStore.state.favorites).toContain(song)
+    })
+
+    it('toggles favorite to false', async () => {
+      songStore.state.favorites = factory('song', 3, { favorite: true })
+
+      const song = songStore.state.favorites[0]
+      const postMock = this.mock(http, 'post').mockResolvedValue(null)
+
+      await songStore.toggleFavorite(song)
+
+      expect(postMock).toHaveBeenCalledWith('favorites/toggle', {
+        type: 'playable',
+        id: song.id,
+      })
+
+      expect(song.favorite).toBe(false)
+      expect(songStore.state.favorites).toHaveLength(2)
+      expect(songStore.state.favorites).not.toContain(song)
+    })
+
+    it('adds to favorites', async () => {
+      const songs = factory('song', 3)
+      const postMock = this.mock(http, 'post')
+
+      await songStore.favorite(songs)
+
+      expect(postMock).toHaveBeenCalledWith(`favorites`, {
+        type: 'playable',
+        ids: songs.map(song => song.id),
+      })
+    })
+
+    it('removes from favorites', async () => {
+      const songs = factory('song', 3)
+      const deleteMock = this.mock(http, 'delete')
+
+      await songStore.undoFavorite(songs)
+
+      expect(deleteMock).toHaveBeenCalledWith(`favorites`, {
+        type: 'playable',
+        ids: songs.map(song => song.id),
+      })
     })
   }
 }

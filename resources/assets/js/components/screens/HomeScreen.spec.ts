@@ -5,7 +5,7 @@ import { commonStore } from '@/stores/commonStore'
 import { overviewStore } from '@/stores/overviewStore'
 import type { Events } from '@/config/events'
 import { eventBus } from '@/utils/eventBus'
-import HomeScreen from './HomeScreen.vue'
+import Component from './HomeScreen.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -13,7 +13,7 @@ new class extends UnitTestCase {
       commonStore.state.song_length = 0
       this.mock(overviewStore, 'fetch')
 
-      this.render(HomeScreen)
+      this.render(Component)
 
       screen.getByTestId('screen-empty-state')
     })
@@ -50,7 +50,7 @@ new class extends UnitTestCase {
   }
 
   private async renderComponent () {
-    this.render(HomeScreen)
+    this.render(Component)
     await this.router.activateRoute({ path: 'home', screen: 'Home' })
   }
 }

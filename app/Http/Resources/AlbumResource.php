@@ -61,14 +61,15 @@ class AlbumResource extends JsonResource
 
         return [
             'type' => 'albums',
-            'id' => $this->album->public_id,
+            'id' => $this->album->id,
             'name' => $this->album->name,
-            'artist_id' => $this->album->artist->public_id,
+            'artist_id' => $this->album->artist->id,
             'artist_name' => $this->album->artist->name,
             'cover' => $this->album->cover,
             'created_at' => $this->album->created_at,
             'year' => $this->album->year,
             'is_external' => $isPlus && $this->album->user_id !== $user->id,
+            'favorite' => $this->album->favorite,
         ];
     }
 }

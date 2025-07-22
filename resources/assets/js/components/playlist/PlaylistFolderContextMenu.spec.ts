@@ -8,7 +8,7 @@ import { songStore } from '@/stores/songStore'
 import { playbackService } from '@/services/playbackService'
 import { eventBus } from '@/utils/eventBus'
 import Router from '@/router'
-import PlaylistFolderContextMenu from './PlaylistFolderContextMenu.vue'
+import Component from './PlaylistFolderContextMenu.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -116,7 +116,7 @@ new class extends UnitTestCase {
   }
 
   private async renderComponent (folder: PlaylistFolder) {
-    this.render(PlaylistFolderContextMenu)
+    this.render(Component)
     eventBus.emit('PLAYLIST_FOLDER_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, folder)
     await this.tick(2)
   }

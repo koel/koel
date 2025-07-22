@@ -40,7 +40,7 @@ new class extends UnitTestCase {
         artist_id: 'led-zeppelin',
         album_name: 'Led Zeppelin IV',
         album_id: 'iv',
-        liked: true,
+        favorite: true,
       })
     }
 

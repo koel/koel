@@ -37,9 +37,11 @@
             <BtnGroup uppercase>
               <Btn v-if="episodes" v-koel-tooltip="'Refresh'" success @click.prevent="refresh">
                 <Icon :icon="faRotateRight" fixed-width />
+                <span class="sr-only">Refresh Podcast</span>
               </Btn>
               <Btn v-koel-tooltip="'Unsubscribe'" danger uppercase @click.prevent="unsubscribe">
                 <Icon :icon="faTimes" fixed-width />
+                <span class="sr-only">Unsubscribe from Podcast</span>
               </Btn>
             </BtnGroup>
 
@@ -48,6 +50,8 @@
             <Btn v-koel-tooltip="'Visit podcast website'" tag="a" gray :href="podcast.link" target="_blank">
               <Icon :icon="faExternalLink" fixed-width />
             </Btn>
+
+            <FavoriteButton :favorite="podcast.favorite" class="px-3.5 py-2" @toggle="toggleFavorite" />
           </div>
         </template>
       </ScreenHeader>
@@ -95,6 +99,7 @@ import Btn from '@/components/ui/form/Btn.vue'
 import ListFilter from '@/components/ui/ListFilter.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'
 import EpisodeItemSkeleton from '@/components/ui/skeletons/EpisodeItemSkeleton.vue'
+import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
 const { showConfirmDialog } = useDialogBox()
 const { onScreenActivated, getRouteParam, go, triggerNotFound } = useRouter()
@@ -109,7 +114,7 @@ const descriptionEl = ref<HTMLDivElement>()
 
 const headerLayout = ref<ScreenHeaderLayout>('expanded')
 const loading = ref(false)
-const podcastId = ref<string>()
+const podcastId = ref<Podcast['id']>()
 const podcast = ref<Podcast>()
 const episodes = ref<Episode[]>([])
 const keywords = ref('')
@@ -186,6 +191,7 @@ const podcastPlaying = computed(() => {
   if (!currentPlayingItemIsPartOfPodcast.value) {
     return false
   }
+
   return queueStore.current!.playback_state === 'Playing'
 })
 
@@ -193,9 +199,11 @@ const playButtonLabel = computed(() => {
   if (headerLayout.value === 'collapsed') {
     return ''
   }
+
   if (podcastPlaying.value) {
     return ''
   }
+
   return inProgress.value ? 'Continue' : 'Start Listening'
 })
 
@@ -223,6 +231,7 @@ const playOrPause = async () => {
   if (!episodes.value?.length) {
     return
   }
+
   queueStore.replaceQueueWith(orderBy(episodes.value, 'created_at'))
   await playbackService.playFirstInQueue()
 }
@@ -231,6 +240,7 @@ const refresh = async () => {
   if (loading.value) {
     return
   }
+
   loading.value = true
 
   try {
@@ -262,6 +272,8 @@ const onListScroll = (e: Event) => {
 
   lastScrollTop = scroller.scrollTop
 }
+
+const toggleFavorite = () => podcastStore.toggleFavorite(podcast.value!)
 
 onScreenActivated('Podcast', () => (podcastId.value = getRouteParam('id')!))
 </script>

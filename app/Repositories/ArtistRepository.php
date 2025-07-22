@@ -14,16 +14,22 @@ use Illuminate\Database\Eloquent\Collection;
  */
 class ArtistRepository extends Repository implements ScoutableRepository
 {
+    /**
+     * @param string $id
+     */
+    public function getOne($id, ?User $user = null): Artist
+    {
+        return Artist::query()
+            ->withUserContext(user: $user ?? $this->auth->user())
+            ->findOrFail($id);
+    }
+
     /** @return Collection|array<array-key, Artist> */
     public function getMostPlayed(int $count = 6, ?User $user = null): Collection
     {
-        $user ??= auth()->user();
-
         return Artist::query()
-            ->isStandard()
-            ->accessibleBy($user)
-            ->withPlayCount($user)
-            ->addSelect('artists.*')
+            ->withUserContext(user: $user ?? $this->auth->user(), includePlayCount: true)
+            ->onlyStandard()
             ->orderByDesc('play_count')
             ->limit($count)
             ->get();
@@ -33,34 +39,36 @@ class ArtistRepository extends Repository implements ScoutableRepository
     public function getMany(array $ids, bool $preserveOrder = false, ?User $user = null): Collection
     {
         $artists = Artist::query()
-            ->isStandard()
-            ->accessibleBy($user ?? auth()->user())
+            ->withUserContext(user: $user ?? $this->auth->user())
+            ->onlyStandard()
             ->whereIn('artists.id', $ids)
             ->distinct()
-            ->get('artists.*');
+            ->get();
 
         return $preserveOrder ? $artists->orderByArray($ids) : $artists;
     }
 
-    public function getForListing(string $sortColumn, string $sortDirection, ?User $user = null): Paginator
-    {
+    public function getForListing(
+        string $sortColumn,
+        string $sortDirection,
+        bool $favoritesOnly = false,
+        ?User $user = null,
+    ): Paginator {
         return Artist::query()
-            ->isStandard()
-            ->accessibleBy($user ?? auth()->user())
+            ->withUserContext(user: $user ?? $this->auth->user(), favoritesOnly: $favoritesOnly)
+            ->onlyStandard()
             ->sort($sortColumn, $sortDirection)
             ->distinct()
-            ->orderBy('artists.name')
-            ->select('artists.*')
             ->simplePaginate(21);
     }
 
     /** @return Collection<Artist>|array<array-key, Artist> */
-    public function search(string $keywords, int $limit, ?User $scopedUser = null): Collection
+    public function search(string $keywords, int $limit, ?User $user = null): Collection
     {
         return $this->getMany(
             ids: Artist::search($keywords)->get()->take($limit)->modelKeys(),
             preserveOrder: true,
-            user: $scopedUser,
+            user: $user,
         );
     }
 }

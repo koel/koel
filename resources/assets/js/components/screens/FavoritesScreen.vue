@@ -53,7 +53,7 @@
       No favorites yet.
       <span class="secondary block">
         Click the&nbsp;
-        <Icon :icon="faHeart" />&nbsp;
+        <Icon :icon="faStar" />&nbsp;
         icon to mark a song as favorite.
       </span>
     </ScreenEmptyState>
@@ -62,10 +62,10 @@
 
 <script lang="ts" setup>
 import { faHeartBroken } from '@fortawesome/free-solid-svg-icons'
-import { faHeart } from '@fortawesome/free-regular-svg-icons'
+import { faStar } from '@fortawesome/free-regular-svg-icons'
 import { ref, toRef } from 'vue'
 import { pluralize } from '@/utils/formatters'
-import { favoriteStore } from '@/stores/favoriteStore'
+import { songStore } from '@/stores/songStore'
 import { downloadService } from '@/services/downloadService'
 import { useRouter } from '@/composables/useRouter'
 import { useSongList } from '@/composables/useSongList'
@@ -94,26 +94,26 @@ const {
   playSelected,
   applyFilter,
   onScrollBreakpoint,
-} = useSongList(toRef(favoriteStore.state, 'playables'), { type: 'Favorites' })
+} = useSongList(toRef(songStore.state, 'favorites'), { type: 'Favorites' })
 
 const { SongListControls, config } = useSongListControls('Favorites')
 
 const download = () => downloadService.fromFavorites()
-const removeSelected = () => selectedPlayables.value.length && favoriteStore.unlike(selectedPlayables.value)
+const removeSelected = () => selectedPlayables.value.length && songStore.undoFavorite(selectedPlayables.value)
 
 let initialized = false
 const loading = ref(false)
 
-const fetchSongs = async () => {
+const fetchFavorites = async () => {
   loading.value = true
-  await favoriteStore.fetch()
+  await songStore.fetchFavorites()
   loading.value = false
 }
 
 useRouter().onScreenActivated('Favorites', async () => {
   if (!initialized) {
     initialized = true
-    await fetchSongs()
+    await fetchFavorites()
   }
 })
 </script>

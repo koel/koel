@@ -4,7 +4,7 @@ import factory from '@/__tests__/factory'
 import { eventBus } from '@/utils/eventBus'
 import type { Events } from '@/config/events'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import ModalWrapper from './ModalWrapper.vue'
+import Component from './ModalWrapper.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -25,7 +25,7 @@ new class extends UnitTestCase {
       ['equalizer', 'MODAL_SHOW_EQUALIZER', undefined],
       ['add-podcast-form', 'MODAL_SHOW_ADD_PODCAST_FORM', undefined],
     ])('shows %s modal', async (modalName, eventName, eventParams?: any) => {
-      this.render(ModalWrapper, {
+      this.render(Component, {
         global: {
           stubs: {
             AboutKoelModal: this.stub('about-koel'),

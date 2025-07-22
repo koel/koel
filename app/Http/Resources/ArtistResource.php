@@ -58,11 +58,12 @@ class ArtistResource extends JsonResource
 
         return [
             'type' => 'artists',
-            'id' => $this->artist->public_id,
+            'id' => $this->artist->id,
             'name' => $this->artist->name,
             'image' => $this->artist->image,
             'created_at' => $this->artist->created_at,
             'is_external' => $isPlus && $this->artist->user_id !== $user->id,
+            'favorite' => $this->artist->favorite,
         ];
     }
 }

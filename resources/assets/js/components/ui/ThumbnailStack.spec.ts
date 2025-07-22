@@ -1,11 +1,11 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import ThumbnailStack from './ThumbnailStack.vue'
+import Component from './ThumbnailStack.vue'
 
 new class extends UnitTestCase {
   protected test () {
     it('displays 4 thumbnails at most', () => {
-      const { getAllByTestId } = this.render(ThumbnailStack, {
+      const { getAllByTestId } = this.render(Component, {
         props: {
           thumbnails: [
             'https://via.placeholder.com/150',
@@ -21,7 +21,7 @@ new class extends UnitTestCase {
     })
 
     it('displays the first thumbnail if less than 4 are provided', () => {
-      const { getAllByTestId } = this.render(ThumbnailStack, {
+      const { getAllByTestId } = this.render(Component, {
         props: {
           thumbnails: [
             'https://via.placeholder.com/150',

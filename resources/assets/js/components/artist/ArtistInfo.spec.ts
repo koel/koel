@@ -4,9 +4,7 @@ import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { commonStore } from '@/stores/commonStore'
 import { encyclopediaService } from '@/services/encyclopediaService'
-import ArtistInfoComponent from './ArtistInfo.vue'
-
-let artist: Artist
+import Component from './ArtistInfo.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -26,11 +24,11 @@ new class extends UnitTestCase {
   private async renderComponent (mode: EncyclopediaDisplayMode = 'aside', info?: ArtistInfo) {
     commonStore.state.uses_last_fm = true
     info = info ?? factory('artist-info')
-    artist = factory('artist', { name: 'Led Zeppelin' })
+    const artist = factory('artist', { name: 'Led Zeppelin' })
 
     const fetchMock = this.mock(encyclopediaService, 'fetchForArtist').mockResolvedValue(info)
 
-    const rendered = this.render(ArtistInfoComponent, {
+    const rendered = this.render(Component, {
       props: {
         artist,
         mode,
@@ -45,6 +43,9 @@ new class extends UnitTestCase {
     await this.tick(1)
     expect(fetchMock).toHaveBeenCalledWith(artist)
 
-    return rendered
+    return {
+      ...rendered,
+      artist,
+    }
   }
 }

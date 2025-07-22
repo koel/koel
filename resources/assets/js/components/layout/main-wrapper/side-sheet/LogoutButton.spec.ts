@@ -2,13 +2,13 @@ import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { eventBus } from '@/utils/eventBus'
-import LogoutButton from './LogoutButton.vue'
+import Component from './LogoutButton.vue'
 
 new class extends UnitTestCase {
   protected test () {
     it('emits the logout event', async () => {
       const emitMock = this.mock(eventBus, 'emit')
-      this.render(LogoutButton)
+      this.render(Component)
 
       await this.user.click(screen.getByRole('button'))
 

@@ -6,7 +6,7 @@ import factory from '@/__tests__/factory'
 import { MessageToasterStub } from '@/__tests__/stubs'
 import { ModalContextKey } from '@/symbols'
 import { userStore } from '@/stores/userStore'
-import EditUserForm from './EditUserForm.vue'
+import Component from './EditUserForm.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -16,7 +16,7 @@ new class extends UnitTestCase {
 
       const user = ref(factory('user', { name: 'John Doe' }))
 
-      this.render(EditUserForm, {
+      this.render(Component, {
         global: {
           provide: {
             [<symbol>ModalContextKey]: [ref({ user })],

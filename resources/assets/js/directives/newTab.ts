@@ -1,3 +1,7 @@
+/**
+ * Set target="_blank" on all anchor tags within an element.
+ */
+
 import type { Directive } from 'vue'
 
 const setTargetBlank = (el: HTMLElement) => Array.from(el.getElementsByTagName('a'))

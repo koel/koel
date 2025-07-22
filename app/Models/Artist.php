@@ -5,11 +5,14 @@ namespace App\Models;
 use App\Builders\ArtistBuilder;
 use App\Facades\License;
 use App\Facades\Util;
+use App\Models\Concerns\MorphsToFavorites;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
-use App\Models\Contracts\PermissionableResource;
+use App\Models\Contracts\Favoriteable;
+use App\Models\Contracts\Permissionable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -30,19 +33,16 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property bool $has_image If the artist has a (non-default) image
  * @property bool $is_unknown If the artist is Unknown Artist
  * @property bool $is_various If the artist is Various Artist
- * @property float|string $length Total length of the artist's songs in seconds (dynamically calculated)
- * @property int $id
+ * @property string $id
  * @property int $user_id The ID of the user that owns this artist
  * @property string $name
- * @property string $public_id The artist's public ID (ULID)
- * @property string|int $album_count Total number of albums by the artist (dynamically calculated)
- * @property string|int $play_count Total number of times the artist has been played (dynamically calculated)
- * @property string|int $song_count Total number of songs by the artist (dynamically calculated)
  */
-class Artist extends Model implements AuditableContract, PermissionableResource
+class Artist extends Model implements AuditableContract, Favoriteable, Permissionable
 {
     use Auditable;
     use HasFactory;
+    use HasUlids;
+    use MorphsToFavorites;
     use Searchable;
     use SupportsDeleteWhereValueNotIn;
 
@@ -55,7 +55,7 @@ class Artist extends Model implements AuditableContract, PermissionableResource
     public static function query(): ArtistBuilder
     {
         /** @var ArtistBuilder */
-        return parent::query();
+        return parent::query()->addSelect('artists.*');
     }
 
     public function newEloquentBuilder($query): ArtistBuilder
@@ -165,13 +165,8 @@ class Artist extends Model implements AuditableContract, PermissionableResource
         ];
     }
 
-    public static function getPermissionableResourceIdentifier(): string
+    public static function getPermissionableIdentifier(): string
     {
-        return 'public_id';
-    }
-
-    public function getRouteKeyName(): string
-    {
-        return 'public_id';
+        return 'id';
     }
 }

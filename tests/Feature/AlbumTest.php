@@ -33,17 +33,18 @@ class AlbumTest extends TestCase
     #[Test]
     public function show(): void
     {
-        $this->getAs('api/albums/' . Album::factory()->create()->public_id)
+        $this->getAs('api/albums/' . Album::factory()->create()->id)
             ->assertJsonStructure(AlbumResource::JSON_STRUCTURE);
     }
 
     #[Test]
     public function update(): void
     {
+        /** @var Album $album */
         $album = Album::factory()->create();
 
         $this->putAs(
-            "api/albums/{$album->public_id}",
+            "api/albums/{$album->id}",
             [
                 'name' => 'Updated Album Name',
                 'year' => 2023,
@@ -60,10 +61,11 @@ class AlbumTest extends TestCase
     #[Test]
     public function nonAdminCannotUpdateAlbumInCommunityEdition(): void
     {
+        /** @var Album $album */
         $album = Album::factory()->create();
 
         $this->putAs(
-            "api/albums/{$album->public_id}",
+            "api/albums/{$album->id}",
             [
                 'name' => 'Updated Album Name',
                 'year' => 2023,

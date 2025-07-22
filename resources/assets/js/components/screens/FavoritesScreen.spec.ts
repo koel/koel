@@ -2,13 +2,13 @@ import { screen, waitFor } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { favoriteStore } from '@/stores/favoriteStore'
-import FavoritesScreen from './FavoritesScreen.vue'
+import { songStore } from '@/stores/songStore'
+import Component from './FavoritesScreen.vue'
 
 new class extends UnitTestCase {
   protected test () {
     it('renders a list of favorites', async () => {
-      favoriteStore.state.playables = factory('song', 13)
+      songStore.state.favorites = factory('song', 13)
       await this.renderComponent()
 
       await waitFor(() => {
@@ -18,7 +18,7 @@ new class extends UnitTestCase {
     })
 
     it('shows empty state', async () => {
-      favoriteStore.state.playables = []
+      songStore.state.favorites = []
       await this.renderComponent()
 
       screen.getByTestId('screen-empty-state')
@@ -27,8 +27,8 @@ new class extends UnitTestCase {
   }
 
   private async renderComponent () {
-    const fetchMock = this.mock(favoriteStore, 'fetch')
-    this.render(FavoritesScreen)
+    const fetchMock = this.mock(songStore, 'fetchFavorites')
+    this.render(Component)
 
     await this.router.activateRoute({ path: 'favorites', screen: 'Favorites' })
 

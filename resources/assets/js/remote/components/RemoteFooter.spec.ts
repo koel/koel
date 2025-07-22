@@ -31,12 +31,12 @@ new class extends UnitTestCase {
   protected test () {
     it('toggles like', async () => {
       const broadcastMock = this.mock(socketService, 'broadcast')
-      const playable = factory('song', { liked: false })
+      const playable = factory('song', { favorite: false })
       this.renderComponent(playable)
 
       await this.user.click(screen.getByTestId('btn-toggle-favorite'))
       expect(broadcastMock).toHaveBeenCalledWith('SOCKET_TOGGLE_FAVORITE')
-      expect(playable.liked).toBe(true)
+      expect(playable.favorite).toBe(true)
     })
 
     it('plays previous', async () => {
