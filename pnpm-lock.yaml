@@ -27,8 +27,8 @@ importers:
         specifier: ^2.1.6
         version: 2.1.6(pusher-js@4.4.0)(socket.io-client@4.8.1)(vue@3.5.17(typescript@5.8.3))
       axios:
-        specifier: ^1.10.0
-        version: 1.10.0
+        specifier: ^1.11.0
+        version: 1.11.0
       butterchurn:
         specifier: ^2.6.7
         version: 2.6.7
@@ -149,7 +149,7 @@ importers:
         version: 13.4.0(vue@3.5.17(typescript@5.8.3))
       '@vueuse/integrations':
         specifier: ^13.4.0
-        version: 13.4.0(axios@1.10.0)(focus-trap@7.6.5)(fuse.js@7.1.0)(nprogress@0.2.0)(qrcode@1.5.4)(vue@3.5.17(typescript@5.8.3))
+        version: 13.4.0(axios@1.11.0)(focus-trap@7.6.5)(fuse.js@7.1.0)(nprogress@0.2.0)(qrcode@1.5.4)(vue@3.5.17(typescript@5.8.3))
       autoprefixer:
         specifier: ^10.4.21
         version: 10.4.21(postcss@8.5.6)
@@ -206,7 +206,7 @@ importers:
         version: 5.4.19(@types/node@24.0.7)(sugarss@4.0.1(postcss@8.5.6))
       vitepress:
         specifier: ^1.6.3
-        version: 1.6.3(@algolia/client-search@5.29.0)(@types/node@24.0.7)(axios@1.10.0)(fuse.js@7.1.0)(nprogress@0.2.0)(postcss@8.5.6)(qrcode@1.5.4)(search-insights@2.17.3)(sugarss@4.0.1(postcss@8.5.6))(typescript@5.8.3)
+        version: 1.6.3(@algolia/client-search@5.29.0)(@types/node@24.0.7)(axios@1.11.0)(fuse.js@7.1.0)(nprogress@0.2.0)(postcss@8.5.6)(qrcode@1.5.4)(search-insights@2.17.3)(sugarss@4.0.1(postcss@8.5.6))(typescript@5.8.3)
       vitest:
         specifier: ^0.24.5
         version: 0.24.5(jsdom@19.0.0)(sugarss@4.0.1(postcss@8.5.6))
@@ -1568,8 +1568,8 @@ packages:
   aws4@1.13.2:
     resolution: {integrity: sha512-lHe62zvbTB5eEABUVi/AwVh0ZKY9rMMDhmm+eeyuuUQbQ3+J+fONVQOZyj+DdrvD4BY33uYniyRJ4UJIaSKAfw==}
 
-  axios@1.10.0:
-    resolution: {integrity: sha512-/1xYAC4MP/HEG+3duIhFr4ZQXR4sQXOIe+o6sdqzeykGLx6Upp/1p8MHqhINOvGeP7xyNHe7tsiJByc4SSVUxw==}
+  axios@1.11.0:
+    resolution: {integrity: sha512-1Lx3WLFQWm3ooKDYZD1eXmoGO9fxYQjrycfHFC8P0sCfQVXyROp0p9PFWBehewBOdCwHc+f/b8I0fMto5eSfwA==}
 
   babel-runtime@6.26.0:
     resolution: {integrity: sha512-ITKNuq2wKlW1fJg9sSW52eepoYgZBggvOAHC0u/CYu/qxQ9EVzThCgR69BnSXLHjy2f7SY5zaQ4yt7H9ZVxY2g==}
@@ -2568,6 +2568,10 @@ packages:
 
   form-data@4.0.3:
     resolution: {integrity: sha512-qsITQPfmvMOSAdeyZ+12I1c+CKSstAFAwu+97zrnWAbIr5u8wfsExUzCesVLC8NgHuRUqNN4Zy6UPWUTRGslcA==}
+    engines: {node: '>= 6'}
+
+  form-data@4.0.4:
+    resolution: {integrity: sha512-KrGhL9Q4zjj0kiUt5OO4Mr/A/jlI2jDYs5eHBpYHPcBEVSiipAvn2Ko2HnPe20rmcuuvMHNdZFp+4IlGTMF0Ow==}
     engines: {node: '>= 6'}
 
   format@0.2.2:
@@ -5723,13 +5727,13 @@ snapshots:
       '@vueuse/shared': 13.4.0(vue@3.5.17(typescript@5.8.3))
       vue: 3.5.17(typescript@5.8.3)
 
-  '@vueuse/integrations@12.8.2(axios@1.10.0)(focus-trap@7.6.5)(fuse.js@7.1.0)(nprogress@0.2.0)(qrcode@1.5.4)(typescript@5.8.3)':
+  '@vueuse/integrations@12.8.2(axios@1.11.0)(focus-trap@7.6.5)(fuse.js@7.1.0)(nprogress@0.2.0)(qrcode@1.5.4)(typescript@5.8.3)':
     dependencies:
       '@vueuse/core': 12.8.2(typescript@5.8.3)
       '@vueuse/shared': 12.8.2(typescript@5.8.3)
       vue: 3.5.17(typescript@5.8.3)
     optionalDependencies:
-      axios: 1.10.0
+      axios: 1.11.0
       focus-trap: 7.6.5
       fuse.js: 7.1.0
       nprogress: 0.2.0
@@ -5737,13 +5741,13 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@vueuse/integrations@13.4.0(axios@1.10.0)(focus-trap@7.6.5)(fuse.js@7.1.0)(nprogress@0.2.0)(qrcode@1.5.4)(vue@3.5.17(typescript@5.8.3))':
+  '@vueuse/integrations@13.4.0(axios@1.11.0)(focus-trap@7.6.5)(fuse.js@7.1.0)(nprogress@0.2.0)(qrcode@1.5.4)(vue@3.5.17(typescript@5.8.3))':
     dependencies:
       '@vueuse/core': 13.4.0(vue@3.5.17(typescript@5.8.3))
       '@vueuse/shared': 13.4.0(vue@3.5.17(typescript@5.8.3))
       vue: 3.5.17(typescript@5.8.3)
     optionalDependencies:
-      axios: 1.10.0
+      axios: 1.11.0
       focus-trap: 7.6.5
       fuse.js: 7.1.0
       nprogress: 0.2.0
@@ -5906,10 +5910,10 @@ snapshots:
 
   aws4@1.13.2: {}
 
-  axios@1.10.0:
+  axios@1.11.0:
     dependencies:
       follow-redirects: 1.15.9
-      form-data: 4.0.3
+      form-data: 4.0.4
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
       - debug
@@ -7028,6 +7032,14 @@ snapshots:
       mime-types: 2.1.35
 
   form-data@4.0.3:
+    dependencies:
+      asynckit: 0.4.0
+      combined-stream: 1.0.8
+      es-set-tostringtag: 2.1.0
+      hasown: 2.0.2
+      mime-types: 2.1.35
+
+  form-data@4.0.4:
     dependencies:
       asynckit: 0.4.0
       combined-stream: 1.0.8
@@ -8977,7 +8989,7 @@ snapshots:
       fsevents: 2.3.3
       sugarss: 4.0.1(postcss@8.5.6)
 
-  vitepress@1.6.3(@algolia/client-search@5.29.0)(@types/node@24.0.7)(axios@1.10.0)(fuse.js@7.1.0)(nprogress@0.2.0)(postcss@8.5.6)(qrcode@1.5.4)(search-insights@2.17.3)(sugarss@4.0.1(postcss@8.5.6))(typescript@5.8.3):
+  vitepress@1.6.3(@algolia/client-search@5.29.0)(@types/node@24.0.7)(axios@1.11.0)(fuse.js@7.1.0)(nprogress@0.2.0)(postcss@8.5.6)(qrcode@1.5.4)(search-insights@2.17.3)(sugarss@4.0.1(postcss@8.5.6))(typescript@5.8.3):
     dependencies:
       '@docsearch/css': 3.8.2
       '@docsearch/js': 3.8.2(@algolia/client-search@5.29.0)(search-insights@2.17.3)
@@ -8990,7 +9002,7 @@ snapshots:
       '@vue/devtools-api': 7.7.7
       '@vue/shared': 3.5.17
       '@vueuse/core': 12.8.2(typescript@5.8.3)
-      '@vueuse/integrations': 12.8.2(axios@1.10.0)(focus-trap@7.6.5)(fuse.js@7.1.0)(nprogress@0.2.0)(qrcode@1.5.4)(typescript@5.8.3)
+      '@vueuse/integrations': 12.8.2(axios@1.11.0)(focus-trap@7.6.5)(fuse.js@7.1.0)(nprogress@0.2.0)(qrcode@1.5.4)(typescript@5.8.3)
       focus-trap: 7.6.5
       mark.js: 8.11.1
       minisearch: 7.1.2
