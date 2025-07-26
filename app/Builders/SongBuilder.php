@@ -87,21 +87,27 @@ class SongBuilder extends Builder
                 $query->whereNotNull('songs.podcast_id')->whereNull('podcast_user_a11y.podcast_id');
             });
 
-        // Depending on the user preferences, songs must be either:
-        // - owned by the user, or
-        // - shared (is_public=true) by the users in the same organization
-        if (!$user->preferences->includePublicMedia) {
-            return $this->whereBelongsTo($user, 'owner');
-        }
+        // If the song is a podcast episode, we need to ensure that the user has access to it.
+        return $this->where(function (self $query): void {
+            $query->whereNotNull('songs.podcast_id')
+                ->orWhere(function (self $q2) {
+                    // Depending on the user preferences, the song must be either:
+                    // - owned by the user, or
+                    // - shared (is_public=true) by the users in the same organization
+                    if (!$this->user->preferences->includePublicMedia) {
+                        return $q2->whereBelongsTo($this->user, 'owner');
+                    }
 
-        return $this->where(static function (Builder $query) use ($user): void {
-            $query->whereBelongsTo($user, 'owner')
-                ->orWhere(static function (Builder $q) use ($user): void {
-                    $q->where('songs.is_public', true)
-                        ->whereHas('owner', static function (Builder $owner) use ($user): void {
-                            $owner->where('organization_id', $user->organization_id)
-                                ->where('owner_id', '<>', $user->id);
-                        });
+                    return $q2->where(function (self $q3): void {
+                        $q3->whereBelongsTo($this->user, 'owner')
+                            ->orWhere(function (self $q4): void {
+                                $q4->where('songs.is_public', true)
+                                    ->whereHas('owner', function (Builder $owner): void {
+                                        $owner->where('organization_id', $this->user->organization_id)
+                                            ->where('owner_id', '<>', $this->user->id);
+                                    });
+                            });
+                    });
                 });
         });
     }
