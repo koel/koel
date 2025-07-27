@@ -2,7 +2,7 @@ import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { authService } from '@/services/authService'
-import ResetPasswordForm from './ResetPasswordForm.vue'
+import Component from './ResetPasswordForm.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -15,7 +15,7 @@ new class extends UnitTestCase {
         screen: 'Password.Reset',
       }, { payload: 'Zm9vQGJhci5jb218bXktdG9rZW4=' })
 
-      this.render(ResetPasswordForm)
+      this.render(Component)
       await this.type(screen.getByPlaceholderText('New password'), 'new-password')
       await this.user.click(screen.getByRole('button', { name: 'Save' }))
 

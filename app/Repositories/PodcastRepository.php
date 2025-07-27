@@ -15,31 +15,38 @@ class PodcastRepository extends Repository implements ScoutableRepository
         return $this->findOneBy(['url' => $url]);
     }
 
-    /** @return Collection<Podcast> */
-    public function getAllByUser(User $user): Collection
+    /** @return Collection<Podcast>|array<array-key, Podcast> */
+    public function getAllSubscribedByUser(bool $favoritesOnly, ?User $user = null): Collection
     {
-        return $user->podcasts()->orderByPivot('updated_at', 'desc')->get();
+        return Podcast::query()
+            ->with('subscribers')
+            ->setScopedUser($user ?? $this->auth->user())
+            ->withFavoriteStatus(favoritesOnly: $favoritesOnly)
+            ->subscribed()
+            ->get();
     }
 
-    /** @return Collection<Podcast> */
+    /** @return Collection<Podcast>|array<array-key, Podcast> */
     public function getMany(array $ids, bool $preserveOrder = false, ?User $user = null): Collection
     {
         $podcasts = Podcast::query()
-            ->subscribedBy($user ?? $this->auth->user())
+            ->with('subscribers')
+            ->setScopedUser($user ?? $this->auth->user())
+            ->subscribed()
             ->whereIn('podcasts.id', $ids)
             ->distinct()
-            ->get('podcasts.*');
+            ->get();
 
         return $preserveOrder ? $podcasts->orderByArray($ids) : $podcasts;
     }
 
     /** @return Collection<Podcast>|array<array-key, Podcast> */
-    public function search(string $keywords, int $limit, ?User $scopedUser = null): Collection
+    public function search(string $keywords, int $limit, ?User $user = null): Collection
     {
         return $this->getMany(
             ids: Podcast::search($keywords)->get()->take($limit)->modelKeys(),
             preserveOrder: true,
-            user: $scopedUser,
+            user: $user,
         );
     }
 }

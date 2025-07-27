@@ -16,9 +16,9 @@ interface ScoutableRepository
      *
      * @param string $keywords The search keywords.
      * @param int $limit The maximum number of results to return.
-     * @param ?User $scopedUser Optional user to scope the search.
+     * @param ?User $user Optional user to scope the search.
      *
      * @return Collection<T>|array<array-key, T> A collection of models matching the search criteria.
      */
-    public function search(string $keywords, int $limit, ?User $scopedUser = null): Collection;
+    public function search(string $keywords, int $limit, ?User $user = null): Collection;
 }

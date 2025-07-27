@@ -9,6 +9,13 @@ use Illuminate\Auth\Access\Response;
 
 class ArtistPolicy
 {
+    public function access(User $user, Artist $artist): Response
+    {
+        return License::isCommunity() || $artist->belongsToUser($user)
+            ? Response::allow()
+            : Response::deny();
+    }
+
     public function update(User $user, Artist $artist): Response
     {
         if ($artist->is_unknown || $artist->is_various) {

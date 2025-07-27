@@ -4,6 +4,7 @@
     :entity="album"
     :layout="layout"
     :title="`${album.name} by ${album.artist_name}`"
+    class="group"
     @contextmenu="requestContextMenu"
     @dblclick="shuffle"
     @dragstart="onDragStart"
@@ -13,6 +14,8 @@
         <a :href="url('albums.show', { id: album.id })" class="font-medium flex-1" data-testid="name">
           <ExternalMark v-if="album.is_external" class="mr-1" />
           {{ album.name }}
+
+          <FavoriteButton v-if="album.favorite" :favorite="album.favorite" class="ml-1" @toggle="toggleLike" />
         </a>
 
         <span
@@ -60,6 +63,7 @@ import { useRouter } from '@/composables/useRouter'
 
 import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
 import ExternalMark from '@/components/ui/ExternalMark.vue'
+import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
 const props = withDefaults(defineProps<{
   album: Album
@@ -85,6 +89,8 @@ const shuffle = async () => {
   playbackService.queueAndPlay(await songStore.fetchForAlbum(album.value), true /* shuffled */)
   go(url('queue'))
 }
+
+const toggleLike = () => albumStore.toggleFavorite(album.value)
 
 const download = () => downloadService.fromAlbum(album.value)
 const onDragStart = (event: DragEvent) => startDragging(event, album.value)

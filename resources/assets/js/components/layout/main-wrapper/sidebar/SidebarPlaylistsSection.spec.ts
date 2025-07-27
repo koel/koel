@@ -4,9 +4,9 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { playlistStore } from '@/stores/playlistStore'
-import SidebarPlaylistsSection from './SidebarPlaylistsSection.vue'
 import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
 import PlaylistFolderSidebarItem from './PlaylistFolderSidebarItem.vue'
+import Component from './SidebarPlaylistsSection.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -36,7 +36,7 @@ new class extends UnitTestCase {
   }
 
   private renderComponent () {
-    this.render(SidebarPlaylistsSection, {
+    this.render(Component, {
       global: {
         stubs: {
           PlaylistSidebarItem,

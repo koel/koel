@@ -11,6 +11,6 @@ exports[`renders 1`] = `
       <li data-v-42061e3e="" class="playlist" data-testid="add-to-playlist" tabindex="0">Bar</li>
       <li data-v-42061e3e="" class="playlist" data-testid="add-to-playlist" tabindex="0">Baz</li>
     </ul>
-  </section><button data-v-8943c846="" data-v-42061e3e="" class="text-base text-k-text-primary bg-k-primary px-4 py-2.5 rounded cursor-pointer !w-full !border !border-solid !border-white/20" type="button" transparent=""> New Playlist… </button>
+  </section><button data-v-8943c846="" data-v-42061e3e="" class="text-base text-k-text-primary bg-k-primary px-3.5 py-2 rounded cursor-pointer !w-full !border !border-solid !border-white/20" type="button" transparent=""> New Playlist… </button>
 </div>
 `;

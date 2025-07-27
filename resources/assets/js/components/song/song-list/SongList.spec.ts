@@ -11,9 +11,7 @@ import {
   PlayableListSortOrderKey,
   SelectedPlayablesKey,
 } from '@/symbols'
-import SongList from './SongList.vue'
-
-let songs: Playable[]
+import Component from './SongList.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -24,7 +22,7 @@ new class extends UnitTestCase {
   }
 
   private async renderComponent (
-    _songs: MaybeArray<Playable>,
+    songs: MaybeArray<Playable>,
     config: Partial<PlayableListConfig> = {
       sortable: true,
       reorderable: true,
@@ -36,7 +34,7 @@ new class extends UnitTestCase {
     sortField: PlayableListSortField = 'title',
     sortOrder: SortOrder = 'asc',
   ) {
-    songs = arrayify(_songs)
+    songs = arrayify(songs)
 
     const sortFieldRef = ref(sortField)
     const sortOrderRef = ref(sortOrder)
@@ -46,7 +44,7 @@ new class extends UnitTestCase {
       path: '/songs',
     })
 
-    return this.render(SongList, {
+    const rendered = this.render(Component, {
       global: {
         stubs: {
           VirtualScroller: this.stub('virtual-scroller'),
@@ -63,5 +61,10 @@ new class extends UnitTestCase {
         },
       },
     })
+
+    return {
+      ...rendered,
+      songs,
+    }
   }
 }

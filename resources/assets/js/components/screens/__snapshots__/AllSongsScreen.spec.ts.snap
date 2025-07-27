@@ -4,7 +4,7 @@ exports[`renders 1`] = `
 <section data-v-dcfb8776="" data-v-8ea4eaa5="" class="max-h-full min-h-full w-full flex flex-col transform-gpu">
   <header data-v-5691beb5="" data-v-8ea4eaa5="" class="expanded screen-header min-h-0 md:min-h-full flex items-end flex-shrink-0 relative content-stretch leading-normal p-6 border-b border-b-k-bg-secondary">
     <aside data-v-5691beb5="" class="thumbnail-wrapper hidden md:block overflow-hidden w-0 rounded-md">
-      <article data-v-55bfc268="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="tiles thumbnail-stack aspect-square overflow-hidden grid bg-cover bg-no-repeat" style="background-image: url(undefined/resources/assets/img/covers/default.svg);"><span data-v-55bfc268="" class="block will-change-transform w-full h-full bg-cover bg-no-repeat" data-testid="thumbnail"></span><span data-v-55bfc268="" class="block will-change-transform w-full h-full bg-cover bg-no-repeat" data-testid="thumbnail"></span><span data-v-55bfc268="" class="block will-change-transform w-full h-full bg-cover bg-no-repeat" data-testid="thumbnail"></span><span data-v-55bfc268="" class="block will-change-transform w-full h-full bg-cover bg-no-repeat" data-testid="thumbnail"></span></article>
+      <article data-v-55bfc268="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="tiles thumbnail-stack aspect-square overflow-hidden grid bg-cover bg-no-repeat" style="background-image: url(&quot;undefined/resources/assets/img/covers/default.svg&quot;);"><span data-v-55bfc268="" class="block will-change-transform w-full h-full bg-cover bg-no-repeat" data-testid="thumbnail"></span><span data-v-55bfc268="" class="block will-change-transform w-full h-full bg-cover bg-no-repeat" data-testid="thumbnail"></span><span data-v-55bfc268="" class="block will-change-transform w-full h-full bg-cover bg-no-repeat" data-testid="thumbnail"></span><span data-v-55bfc268="" class="block will-change-transform w-full h-full bg-cover bg-no-repeat" data-testid="thumbnail"></span></article>
     </aside>
     <main data-v-5691beb5="" class="flex flex-1 gap-5 items-center overflow-hidden">
       <div data-v-5691beb5="" class="w-full flex-1 overflow-hidden">
@@ -12,7 +12,7 @@ exports[`renders 1`] = `
       </div>
       <div data-v-8ea4eaa5="" data-v-5691beb5-s="" class="controls w-full min-h-[32px] flex justify-between items-center gap-4">
         <div data-v-8ea4eaa5="" data-v-5691beb5-s="" class="relative" data-testid="song-list-controls">
-          <div class="flex gap-2 flex-wrap"><span data-v-cf9b67d8="" class="btn-group inline-flex relative flex-nowrap" uppercase=""><button data-v-8943c846="" class="text-base text-k-text-primary bg-k-primary px-4 py-2.5 rounded cursor-pointer btn-shuffle-all" type="button" data-testid="btn-shuffle-all" highlight="" title="Shuffle all. Press Alt/⌥ to change mode."><br data-testid="Icon" icon="[object Object]" fixed-width=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
+          <div class="flex gap-2 flex-wrap"><span data-v-cf9b67d8="" class="btn-group inline-flex relative flex-nowrap" uppercase=""><button data-v-8943c846="" class="text-base text-k-text-primary bg-k-primary px-3.5 py-2 rounded cursor-pointer btn-shuffle-all" type="button" data-testid="btn-shuffle-all" highlight="" title="Shuffle all. Press Alt/⌥ to change mode."><br data-testid="Icon" icon="[object Object]" fixed-width=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
             <!--v-if-->
             <!--v-if-->
           </div>
@@ -25,7 +25,7 @@ exports[`renders 1`] = `
                     <li data-v-42061e3e="" data-testid="queue" tabindex="0">Queue</li>
                     <li data-v-42061e3e="" class="favorites" data-testid="add-to-favorites" tabindex="0"> Favorites </li>
                   </ul>
-                </section><button data-v-8943c846="" data-v-42061e3e="" class="text-base text-k-text-primary bg-k-primary px-4 py-2.5 rounded cursor-pointer !w-full !border !border-solid !border-white/20" type="button" transparent=""> New Playlist… </button>
+                </section><button data-v-8943c846="" data-v-42061e3e="" class="text-base text-k-text-primary bg-k-primary px-3.5 py-2 rounded cursor-pointer !w-full !border !border-solid !border-white/20" type="button" transparent=""> New Playlist… </button>
               </div>
             </div>
           </div>

@@ -2,7 +2,7 @@ import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { commonStore } from '@/stores/commonStore'
-import AboutKoelButton from './AboutKoelButton.vue'
+import Component from './AboutKoelButton.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -10,7 +10,7 @@ new class extends UnitTestCase {
       commonStore.state.current_version = '1.0.0'
       commonStore.state.latest_version = '1.0.0'
 
-      this.beAdmin().render(AboutKoelButton)
+      this.beAdmin().render(Component)
       expect(screen.queryByTitle('New version available!')).toBeNull()
       expect(screen.queryByTestId('new-version-indicator')).toBeNull()
       screen.getByTitle('About Koel')
@@ -20,7 +20,7 @@ new class extends UnitTestCase {
       commonStore.state.current_version = '1.0.0'
       commonStore.state.latest_version = '1.0.1'
 
-      this.beAdmin().render(AboutKoelButton)
+      this.beAdmin().render(Component)
       screen.getByTitle('New version available!')
       screen.getByTestId('new-version-indicator')
     })
@@ -29,7 +29,7 @@ new class extends UnitTestCase {
       commonStore.state.current_version = '1.0.0'
       commonStore.state.latest_version = '1.0.1'
 
-      this.be().render(AboutKoelButton)
+      this.be().render(Component)
       expect(screen.queryByTitle('New version available!')).toBeNull()
       expect(screen.queryByTestId('new-version-indicator')).toBeNull()
       screen.getByTitle('About Koel')

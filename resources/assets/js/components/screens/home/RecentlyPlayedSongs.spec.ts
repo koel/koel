@@ -4,13 +4,13 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { overviewStore } from '@/stores/overviewStore'
 import Router from '@/router'
-import RecentlyPlayedSongs from './RecentlyPlayedSongs.vue'
+import Component from './RecentlyPlayedSongs.vue'
 
 new class extends UnitTestCase {
   protected test () {
     it('displays the songs', () => {
       overviewStore.state.recentlyPlayed = factory('song', 6)
-      expect(this.render(RecentlyPlayedSongs, {
+      expect(this.render(Component, {
         global: {
           stubs: {
             SongCard: this.stub('song-card'),
@@ -21,7 +21,7 @@ new class extends UnitTestCase {
 
     it('goes to dedicated screen', async () => {
       const mock = this.mock(Router, 'go')
-      this.render(RecentlyPlayedSongs)
+      this.render(Component)
 
       await this.user.click(screen.getByRole('button', { name: 'View All' }))
 

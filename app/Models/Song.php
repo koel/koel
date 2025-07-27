@@ -9,7 +9,9 @@ use App\Casts\SongStorageCast;
 use App\Casts\SongTitleCast;
 use App\Enums\PlayableType;
 use App\Enums\SongStorageType;
+use App\Models\Concerns\MorphsToFavorites;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
+use App\Models\Contracts\Favoriteable;
 use App\Values\SongStorageMetadata\DropboxMetadata;
 use App\Values\SongStorageMetadata\LocalMetadata;
 use App\Values\SongStorageMetadata\S3CompatibleMetadata;
@@ -38,7 +40,7 @@ use Webmozart\Assert\Assert;
  * @property ?Artist $album_artist
  * @property ?Artist $artist
  * @property ?Folder $folder
- * @property ?bool $liked Whether the song is liked by the current user (dynamically calculated)
+ * @property ?bool $favorite Whether the song is liked by the current user (dynamically calculated)
  * @property ?int $play_count The number of times the song has been played by the current user (dynamically calculated)
  * @property ?string $album_name
  * @property ?string $artist_name
@@ -51,13 +53,13 @@ use Webmozart\Assert\Assert;
  * @property User $owner
  * @property bool $is_public
  * @property float $length
- * @property int $album_id
- * @property int $artist_id
+ * @property string $album_id
+ * @property string $artist_id
  * @property int $disc
  * @property int $mtime
  * @property int $owner_id
  * @property int $track
- * @property int|null $year
+ * @property ?int $year
  * @property string $id
  * @property string $lyrics
  * @property string $path
@@ -80,11 +82,12 @@ use Webmozart\Assert\Assert;
  * @property ?string $podcast_id
  * @property ?Podcast $podcast
  */
-class Song extends Model implements AuditableContract
+class Song extends Model implements AuditableContract, Favoriteable
 {
     use Auditable;
     use HasFactory;
     use HasUuids;
+    use MorphsToFavorites;
     use Searchable;
     use SupportsDeleteWhereValueNotIn;
 
@@ -103,17 +106,18 @@ class Song extends Model implements AuditableContract
         'episode_metadata' => EpisodeMetadataCast::class,
     ];
 
-    protected $with = ['album', 'artist', 'podcast', 'genres', 'owner'];
+    protected $with = ['album', 'artist', 'album.artist', 'podcast', 'genres', 'owner'];
 
     public static function query(?PlayableType $type = null, ?User $user = null): SongBuilder
     {
         return parent::query()
-            ->when($user, static fn (SongBuilder $query) => $query->forUser($user)) // @phpstan-ignore-line
+            ->when($user, static fn (SongBuilder $query) => $query->setScopedUser($user)) // @phpstan-ignore-line
             ->when($type, static fn (SongBuilder $query) => match ($type) { // @phpstan-ignore-line phpcs:ignore
                 PlayableType::SONG => $query->whereNull('songs.podcast_id'),
                 PlayableType::PODCAST_EPISODE => $query->whereNotNull('songs.podcast_id'),
                 default => $query,
-            });
+            })
+            ->addSelect('songs.*');
     }
 
     public function owner(): BelongsTo

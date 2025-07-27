@@ -2,21 +2,18 @@
 
 namespace App\Builders;
 
+use App\Builders\Concerns\CanScopeByUser;
 use App\Facades\License;
-use App\Models\Song;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Str;
+use LogicException;
 use Webmozart\Assert\Assert;
 
-/**
- * @method self logSql()
- *
- * @extends Builder<Song>
- */
-class SongBuilder extends Builder
+class SongBuilder extends FavoriteableBuilder
 {
+    use CanScopeByUser;
+
     public const SORT_COLUMNS_NORMALIZE_MAP = [
         'title' => 'songs.title',
         'track' => 'songs.track',
@@ -44,8 +41,6 @@ class SongBuilder extends Builder
         'genres.name',
     ];
 
-    private User $user;
-
     public function inDirectory(string $path): self
     {
         // Make sure the path ends with a directory separator.
@@ -54,34 +49,31 @@ class SongBuilder extends Builder
         return $this->where('path', 'LIKE', "$path%");
     }
 
-    public function withMetaData(): self
+    private function withPlayCount(): self
     {
+        throw_unless($this->user, new LogicException('User must be set to query play counts.'));
+
         return $this
-            ->with('artist', 'album', 'album.artist')
             ->leftJoin('interactions', function (JoinClause $join): void {
                 $join->on('interactions.song_id', 'songs.id')->where('interactions.user_id', $this->user->id);
             })
-            ->addSelect(
-                'songs.*',
-                'interactions.liked',
-                'interactions.play_count',
-            );
+            ->addSelect('interactions.play_count');
     }
 
-    public function accessible(?User $user = null): self
+    public function accessible(): self
     {
         if (License::isCommunity()) {
             // In the Community Edition, all songs are accessible by all users.
             return $this;
         }
 
-        $user ??= $this->user;
+        throw_unless($this->user, new LogicException('User must be set to query accessible songs.'));
 
         // We want to alias both podcasts and podcast_user tables to avoid possible conflicts with other joins.
         $this->leftJoin('podcasts as podcasts_a11y', 'songs.podcast_id', 'podcasts_a11y.id')
-            ->leftJoin('podcast_user as podcast_user_a11y', static function (JoinClause $join) use ($user): void {
+            ->leftJoin('podcast_user as podcast_user_a11y', function (JoinClause $join): void {
                 $join->on('podcasts_a11y.id', 'podcast_user_a11y.podcast_id')
-                    ->where('podcast_user_a11y.user_id', $user->id);
+                    ->where('podcast_user_a11y.user_id', $this->user->id);
             })->whereNot(static function (self $query): void {
                 // Episodes must belong to a podcast that the user is subscribed to.
                 $query->whereNotNull('songs.podcast_id')->whereNull('podcast_user_a11y.podcast_id');
@@ -110,6 +102,16 @@ class SongBuilder extends Builder
                     });
                 });
         });
+    }
+
+    public function withUserContext(
+        bool $includeFavoriteStatus = true,
+        bool $favoritesOnly = false,
+        bool $includePlayCount = true,
+    ): self {
+        return $this->accessible()
+            ->when($includeFavoriteStatus, static fn (self $query) => $query->withFavoriteStatus($favoritesOnly))
+            ->when($includePlayCount, static fn (self $query) => $query->withPlayCount());
     }
 
     private function sortByOneColumn(string $column, string $direction): self
@@ -171,12 +173,5 @@ class SongBuilder extends Builder
     {
         return $this->where(static fn (self $query) => $query->whereNull('songs.storage')->orWhere('songs.storage', ''))
                 ->whereNull('songs.podcast_id');
-    }
-
-    public function forUser(User $user): self
-    {
-        $this->user = $user;
-
-        return $this;
     }
 }

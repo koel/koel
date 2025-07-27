@@ -3,20 +3,13 @@ import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
-import { favoriteStore } from '@/stores/favoriteStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { queueStore } from '@/stores/queueStore'
 import { eventBus } from '@/utils/eventBus'
 import { arrayify } from '@/utils/helpers'
+import { songStore } from '@/stores/songStore'
 import Btn from '@/components/ui/form/Btn.vue'
-import AddToMenu from './AddToMenu.vue'
-
-let playables: Playable[]
-
-const config: AddToMenuConfig = {
-  queue: true,
-  favorites: true,
-}
+import Component from './AddToMenu.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -47,7 +40,7 @@ new class extends UnitTestCase {
       queueStore.state.playables[2].playback_state = 'Playing'
 
       const mock = this.mock(queueStore, queueMethod)
-      this.renderComponent()
+      const { playables } = this.renderComponent()
 
       await this.user.click(screen.getByTestId(testId))
 
@@ -55,8 +48,8 @@ new class extends UnitTestCase {
     })
 
     it('adds songs to Favorites', async () => {
-      const mock = this.mock(favoriteStore, 'like')
-      this.renderComponent()
+      const mock = this.mock(songStore, 'favorite')
+      const { playables } = this.renderComponent()
 
       await this.user.click(screen.getByTestId('add-to-favorites'))
 
@@ -66,7 +59,7 @@ new class extends UnitTestCase {
     it('adds songs to existing playlist', async () => {
       const mock = this.mock(playlistStore, 'addContent')
       playlistStore.state.playlists = factory('playlist', 3)
-      this.renderComponent()
+      const { playables } = this.renderComponent()
 
       await this.user.click(screen.getAllByTestId('add-to-playlist')[1])
 
@@ -75,7 +68,7 @@ new class extends UnitTestCase {
 
     it('creates playlist from selected songs', async () => {
       const emitMock = this.mock(eventBus, 'emit')
-      this.renderComponent()
+      const { playables } = this.renderComponent()
 
       await this.user.click(screen.getByText('New Playlist…'))
 
@@ -84,9 +77,14 @@ new class extends UnitTestCase {
   }
 
   private renderComponent (customConfig: Partial<AddToMenuConfig> = {}) {
-    playables = factory('song', 5)
+    const playables = factory('song', 5)
 
-    return this.render(AddToMenu, {
+    const config: AddToMenuConfig = {
+      queue: true,
+      favorites: true,
+    }
+
+    const rendered = this.render(Component, {
       props: {
         playables,
         config: Object.assign(clone(config), customConfig),
@@ -98,5 +96,10 @@ new class extends UnitTestCase {
         },
       },
     })
+
+    return {
+      ...rendered,
+      playables,
+    }
   }
 }

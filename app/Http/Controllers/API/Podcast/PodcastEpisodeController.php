@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API\Podcast;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\SongResourceCollection;
+use App\Http\Resources\SongResource;
 use App\Models\Podcast;
 use App\Repositories\SongRepository;
 use App\Services\PodcastService;
@@ -18,10 +18,10 @@ class PodcastEpisodeController extends Controller
 
     public function index(Podcast $podcast)
     {
-        if (request()->get('refresh')) {
+        if (request()->boolean('refresh')) {
             $this->podcastService->refreshPodcast($podcast);
         }
 
-        return SongResourceCollection::make($this->episodeRepository->getEpisodesByPodcast($podcast));
+        return SongResource::collection($this->episodeRepository->getEpisodesByPodcast($podcast));
     }
 }

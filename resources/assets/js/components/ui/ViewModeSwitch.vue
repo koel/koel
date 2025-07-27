@@ -3,7 +3,7 @@
     class="flex w-[64px] h-9 border border-solid border-white/20 rounded-md overflow-hidden mt-[0.5rem] md:mt-0"
   >
     <label
-      v-koel-tooltip.top
+      v-koel-tooltip
       :class="{ active: value === 'thumbnails' }"
       class="thumbnails"
       data-testid="view-mode-thumbnails"
@@ -15,7 +15,7 @@
     </label>
 
     <label
-      v-koel-tooltip.top
+      v-koel-tooltip
       :class="{ active: value === 'list' }"
       class="list"
       data-testid="view-mode-list"

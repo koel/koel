@@ -3,7 +3,7 @@
     <select
       ref="el"
       v-model="value"
-      class="appearance-none w-full pl-4 pr-8 py-2.5 text-base text-current"
+      class="appearance-none w-full pl-3.5 pr-8 py-2 text-base text-current"
     >
       <slot />
     </select>

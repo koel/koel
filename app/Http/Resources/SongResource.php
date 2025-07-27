@@ -5,7 +5,9 @@ namespace App\Http\Resources;
 use App\Facades\License;
 use App\Models\Song;
 use App\Models\User;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class SongResource extends JsonResource
@@ -59,6 +61,16 @@ class SongResource extends JsonResource
         parent::__construct($song);
     }
 
+    /**
+     * @param Collection<Song>|Paginator<Song> $resource
+     *
+     * @return SongResourceCollection
+     */
+    public static function collection($resource) // @phpcs:ignore
+    {
+        return SongResourceCollection::make($resource);
+    }
+
     public function for(User $user): self
     {
         $this->user = $user;
@@ -77,15 +89,16 @@ class SongResource extends JsonResource
             'id' => $this->song->id,
             'title' => $this->song->title,
             'lyrics' => $this->song->lyrics,
-            'album_id' => $this->song->album?->public_id,
-            'album_name' => $this->song->album?->name,
-            'artist_id' => $this->song->artist?->public_id,
+            'album_id' => $this->song->album_id,
+            'album_name' => $this->song->album_name,
+            'artist_id' => $this->song->artist_id,
             'artist_name' => $this->song->artist?->name,
-            'album_artist_id' => $this->song->album_artist?->public_id,
+            'album_artist_id' => $this->song->album_artist?->id,
             'album_artist_name' => $this->song->album_artist?->name,
             'album_cover' => $this->song->album?->cover,
             'length' => $this->song->length,
-            'liked' => (bool) $this->song->liked,
+            'liked' => $this->song->favorite, // backwards compatibility
+            'favorite' => $this->song->favorite,
             'play_count' => (int) $this->song->play_count,
             'track' => $this->song->track,
             'disc' => $this->song->disc,

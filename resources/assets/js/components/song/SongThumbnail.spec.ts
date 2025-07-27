@@ -6,8 +6,6 @@ import { playbackService } from '@/services/playbackService'
 import { queueStore } from '@/stores/queueStore'
 import Component from './SongThumbnail.vue'
 
-let playable: Playable
-
 new class extends UnitTestCase {
   protected test () {
     it.each<[PlaybackState, MethodOf<typeof playbackService>]>([
@@ -26,16 +24,21 @@ new class extends UnitTestCase {
   }
 
   private renderComponent (playbackState: PlaybackState = 'Stopped') {
-    playable = factory('song', {
+    const playable = factory('song', {
       playback_state: playbackState,
       play_count: 10,
       title: 'Foo bar',
     })
 
-    return this.render(Component, {
+    const rendered = this.render(Component, {
       props: {
         playable,
       },
     })
+
+    return {
+      ...rendered,
+      playable,
+    }
   }
 }

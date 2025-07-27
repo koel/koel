@@ -94,7 +94,7 @@ class PodcastService
         $pubDate = $parser->xmlReader->value('rss.channel.pubDate')->first()
             ?? $parser->xmlReader->value('rss.channel.lastBuildDate')->first();
 
-        if ($pubDate && Carbon::createFromFormat(Carbon::RFC1123, $pubDate)->isBefore($podcast->last_synced_at)) {
+        if ($pubDate && Carbon::createFromFormat(Carbon::RFC1123, $pubDate)?->isBefore($podcast->last_synced_at)) {
             // The pubDate/lastBuildDate value indicates that there's no new content since last check.
             // We'll simply return the podcast.
             return $podcast;

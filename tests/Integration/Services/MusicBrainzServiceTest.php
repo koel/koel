@@ -21,6 +21,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 use Throwable;
 
+use function Tests\create_user;
 use function Tests\test_path;
 
 class MusicBrainzServiceTest extends TestCase
@@ -122,11 +123,17 @@ class MusicBrainzServiceTest extends TestCase
             File::json(test_path('fixtures/wikipedia/album-page-summary.json'))
         );
 
+        $user = create_user();
+
         /** @var Album $album */
         $album = Artist::factory() // @phpstan-ignore-line
+            ->for($user)
             ->create(['name' => 'Skid Row'])
             ->albums()
-            ->create(['name' => 'Slave to the Grind']);
+            ->create([
+                'name' => 'Slave to the Grind',
+                'user_id' => $user->id,
+            ]);
 
         self::assertInstanceOf(AlbumInformation::class, $this->service->getAlbumInformation($album));
         // eh, good enough
@@ -146,11 +153,17 @@ class MusicBrainzServiceTest extends TestCase
 
         $this->mockPipelinePipe(GetAlbumTracksUsingMbid::class, 'sample-album-mbid', new Exception('Oopsie'));
 
+        $user = create_user();
+
         /** @var Album $album */
         $album = Artist::factory() // @phpstan-ignore-line
+            ->for($user)
             ->create(['name' => 'Skid Row'])
             ->albums()
-            ->create(['name' => 'Slave to the Grind']);
+            ->create([
+                'name' => 'Slave to the Grind',
+                'user_id' => $user->id,
+            ]);
 
         self::assertNull($this->service->getAlbumInformation($album));
     }

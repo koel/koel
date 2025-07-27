@@ -9,6 +9,13 @@ use Illuminate\Auth\Access\Response;
 
 class AlbumPolicy
 {
+    public function access(User $user, Album $album): Response
+    {
+        return License::isCommunity() || $album->belongsToUser($user)
+            ? Response::allow()
+            : Response::deny();
+    }
+
     /**
      * If the user can update the album (e.g., edit name, year, or upload the cover image).
      */

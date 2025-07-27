@@ -12,7 +12,6 @@ class InteractionResource extends JsonResource
         'id',
         'songId',
         'song_id',
-        'liked',
         'playCount',
         'play_count',
     ];
@@ -30,7 +29,6 @@ class InteractionResource extends JsonResource
             'id' => $this->interaction->id,
             'songId' => $this->interaction->song_id, // @fixme backwards compatibility
             'song_id' => $this->interaction->song_id,
-            'liked' => $this->interaction->liked,
             'playCount' => $this->interaction->play_count, // @fixme backwards compatibility
             'play_count' => $this->interaction->play_count,
         ];

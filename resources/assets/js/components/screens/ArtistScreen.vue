@@ -28,13 +28,17 @@
         </template>
 
         <template #controls>
-          <SongListControls
-            v-if="songs.length && (!isPhone || showingControls)"
-            :config="config"
-            @filter="applyFilter"
-            @play-all="playAll"
-            @play-selected="playSelected"
-          />
+          <div class="flex gap-2">
+            <SongListControls
+              v-if="songs.length && (!isPhone || showingControls)"
+              :config="config"
+              @filter="applyFilter"
+              @play-all="playAll"
+              @play-selected="playSelected"
+            />
+
+            <FavoriteButton :favorite="artist.favorite" class="px-3.5 py-2" @toggle="toggleFavorite" />
+          </div>
         </template>
       </ScreenHeader>
     </template>
@@ -111,6 +115,7 @@ import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 import ScreenTabs from '@/components/ui/ArtistAlbumScreenTabs.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import AlbumOrArtistGrid from '@/components/ui/album-artist/AlbumOrArtistGrid.vue'
+import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
 const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/ArtistInfo.vue'))
 const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCard.vue'))
@@ -155,6 +160,7 @@ const albumCount = computed(() => {
 })
 
 const download = () => downloadService.fromArtist(artist.value!)
+const toggleFavorite = () => artistStore.toggleFavorite(artist.value!)
 
 const fetchScreenData = async () => {
   if (loading.value) {

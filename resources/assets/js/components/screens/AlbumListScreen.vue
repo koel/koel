@@ -5,8 +5,28 @@
         Albums
         <template #controls>
           <div v-if="!loading" class="flex gap-2">
-            <AlbumListSorter :field="sortParams.field" :order="sortParams.order" @sort="sort" />
-            <ViewModeSwitch v-model="viewMode" />
+            <Btn
+              v-koel-tooltip
+              :title="preferences.albums_favorites_only ? 'Show all' : 'Show favorites only'"
+              class="border border-white/10"
+              small
+              transparent
+              @click.prevent="toggleFavoritesOnly"
+            >
+              <Icon
+                :icon="preferences.albums_favorites_only ? faStar : faEmptyStar"
+                :class="preferences.albums_favorites_only && 'text-k-highlight'"
+                size="sm"
+              />
+            </Btn>
+
+            <AlbumListSorter
+              :field="preferences.albums_sort_field"
+              :order="preferences.albums_sort_order"
+              @sort="sort"
+            />
+
+            <ViewModeSwitch v-model="preferences.albums_view_mode" />
           </div>
         </template>
       </ScreenHeader>
@@ -23,7 +43,7 @@
     </ScreenEmptyState>
 
     <div v-else ref="gridContainer" v-koel-overflow-fade class="-m-6 overflow-auto">
-      <AlbumGrid ref="grid" :view-mode="viewMode" data-testid="album-grid">
+      <AlbumGrid ref="grid" :view-mode="preferences.albums_view_mode" data-testid="album-grid">
         <template v-if="showSkeletons">
           <AlbumCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
         </template>
@@ -33,7 +53,7 @@
             :key="album.id"
             :album="album"
             :layout="itemLayout"
-            :show-release-year="sortParams.field === 'year'"
+            :show-release-year="preferences.albums_sort_field === 'year'"
           />
           <ToTopButton />
         </template>
@@ -43,8 +63,9 @@
 </template>
 
 <script lang="ts" setup>
-import { faCompactDisc } from '@fortawesome/free-solid-svg-icons'
-import { computed, nextTick, reactive, ref, toRef, watch } from 'vue'
+import { faStar as faEmptyStar } from '@fortawesome/free-regular-svg-icons'
+import { faCompactDisc, faStar } from '@fortawesome/free-solid-svg-icons'
+import { computed, nextTick, ref, toRef } from 'vue'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
@@ -61,25 +82,24 @@ import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import AlbumGrid from '@/components/ui/album-artist/AlbumOrArtistGrid.vue'
 import AlbumListSorter from '@/components/album/AlbumListSorter.vue'
+import Btn from '@/components/ui/form/Btn.vue'
 
 const { isAdmin } = useAuthorization()
 
 const gridContainer = ref<HTMLDivElement>()
 const grid = ref<InstanceType<typeof AlbumGrid>>()
-const viewMode = ref<ArtistAlbumViewMode>('thumbnails')
 const albums = toRef(albumStore.state, 'albums')
-
-const sortParams = reactive<{ field: AlbumListSortField, order: SortOrder }>({
-  field: 'name',
-  order: 'asc',
-})
 
 let initialized = false
 const loading = ref(false)
 const page = ref<number | null>(1)
 
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
-const itemLayout = computed<ArtistAlbumCardLayout>(() => viewMode.value === 'thumbnails' ? 'full' : 'compact')
+
+const itemLayout = computed<ArtistAlbumCardLayout>(
+  () => preferences.albums_view_mode === 'thumbnails' ? 'full' : 'compact',
+)
+
 const moreAlbumsAvailable = computed(() => page.value !== null)
 const showSkeletons = computed(() => loading.value && albums.value.length === 0)
 
@@ -91,9 +111,10 @@ const fetchAlbums = async () => {
   loading.value = true
 
   page.value = await albumStore.paginate({
+    favorites_only: preferences.albums_favorites_only,
     page: page!.value || 1,
-    sort: sortParams.field,
-    order: sortParams.order,
+    sort: preferences.albums_sort_field,
+    order: preferences.albums_sort_order,
   })
 
   loading.value = false
@@ -109,8 +130,16 @@ const resetState = async () => {
 }
 
 const sort = async (field: AlbumListSortField, order: SortOrder) => {
-  preferences.albums_sort_field = sortParams.field = field
-  preferences.albums_sort_order = sortParams.order = order
+  preferences.albums_sort_field = field
+  preferences.albums_sort_order = order
+
+  await resetState()
+  await nextTick()
+  await fetchAlbums()
+}
+
+const toggleFavoritesOnly = async () => {
+  preferences.albums_favorites_only = !preferences.albums_favorites_only
 
   await resetState()
   await nextTick()
@@ -123,10 +152,6 @@ useRouter().onScreenActivated('Albums', async () => {
   }
 
   if (!initialized) {
-    viewMode.value = preferences.albums_view_mode || 'thumbnails'
-    sortParams.field = preferences.albums_sort_field
-    sortParams.order = preferences.albums_sort_order
-
     initialized = true
 
     try {
@@ -137,6 +162,4 @@ useRouter().onScreenActivated('Albums', async () => {
     }
   }
 })
-
-watch(viewMode, () => (preferences.albums_view_mode = viewMode.value))
 </script>

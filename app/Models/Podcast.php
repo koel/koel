@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Builders\PodcastBuilder;
 use App\Casts\Podcast\CategoriesCast;
 use App\Casts\Podcast\PodcastMetadataCast;
+use App\Models\Concerns\MorphsToFavorites;
+use App\Models\Contracts\Favoriteable;
 use App\Models\Song as Episode;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -32,15 +34,15 @@ use PhanAn\Poddle\Values\ChannelMetadata;
  * @property Carbon $last_synced_at
  * @property ?string $author
  */
-class Podcast extends Model
+class Podcast extends Model implements Favoriteable
 {
     use HasFactory;
     use HasUuids;
+    use MorphsToFavorites;
     use Searchable;
 
     protected $hidden = ['created_at', 'updated_at'];
     protected $guarded = [];
-    protected $with = ['subscribers'];
 
     protected $casts = [
         'categories' => CategoriesCast::class,
@@ -52,7 +54,7 @@ class Podcast extends Model
     public static function query(): PodcastBuilder
     {
         /** @var PodcastBuilder */
-        return parent::query();
+        return parent::query()->addSelect('podcasts.*');
     }
 
     public function newEloquentBuilder($query): PodcastBuilder

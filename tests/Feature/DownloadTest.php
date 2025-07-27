@@ -4,7 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Album;
 use App\Models\Artist;
-use App\Models\Interaction;
+use App\Models\Favorite;
 use App\Models\Song;
 use App\Services\DownloadService;
 use App\Values\Downloadable;
@@ -95,7 +95,7 @@ class DownloadTest extends TestCase
             }))
             ->andReturn(Downloadable::make(test_path('songs/blank.mp3')));
 
-        $this->get("download/album/{$album->public_id}?api_token=" . $user->createToken('Koel')->plainTextToken)
+        $this->get("download/album/{$album->id}?api_token=" . $user->createToken('Koel')->plainTextToken)
             ->assertOk();
     }
 
@@ -116,7 +116,7 @@ class DownloadTest extends TestCase
             }))
             ->andReturn(Downloadable::make(test_path('songs/blank.mp3')));
 
-        $this->get("download/artist/{$artist->public_id}?api_token=" . $user->createToken('Koel')->plainTextToken)
+        $this->get("download/artist/{$artist->id}?api_token=" . $user->createToken('Koel')->plainTextToken)
             ->assertOk();
     }
 
@@ -155,12 +155,20 @@ class DownloadTest extends TestCase
     public function downloadFavorites(): void
     {
         $user = create_user();
-        $favorites = Interaction::factory(2)->for($user)->create(['liked' => true]);
+
+        /** @var Collection<int, Song> $songs */
+        $songs = Song::factory(2)->for($user, 'owner')->create();
+
+        $songs->map(static function (Song $song) use ($user): Favorite {
+            return Favorite::factory()->for($user)->create([
+                'favoriteable_id' => $song->id,
+            ]);
+        });
 
         $this->downloadService
             ->expects('getDownloadable')
-            ->with(Mockery::on(static function (Collection $songs) use ($favorites): bool {
-                self::assertEqualsCanonicalizing($songs->modelKeys(), $favorites->pluck('song_id')->all());
+            ->with(Mockery::on(static function (Collection $input) use ($songs): bool {
+                self::assertEqualsCanonicalizing($input->modelKeys(), $songs->pluck('id')->all());
 
                 return true;
             }))

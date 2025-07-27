@@ -12,6 +12,8 @@
       <a :href="url('artists.show', { id: artist.id })" class="font-medium" data-testid="name">
         <ExternalMark v-if="artist.is_external" class="mr-1" />
         {{ artist.name }}
+
+        <FavoriteButton v-if="artist.favorite" :favorite="artist.favorite" class="ml-1" @toggle="toggleFavorite" />
       </a>
     </template>
     <template #meta>
@@ -38,6 +40,7 @@ import { useRouter } from '@/composables/useRouter'
 
 import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
 import ExternalMark from '@/components/ui/ExternalMark.vue'
+import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
 const props = withDefaults(defineProps<{ artist: Artist, layout?: ArtistAlbumCardLayout }>(), { layout: 'full' })
 const { go, url } = useRouter()
@@ -54,6 +57,8 @@ const shuffle = async () => {
   playbackService.queueAndPlay(await songStore.fetchForArtist(artist.value), true /* shuffled */)
   go(url('queue'))
 }
+
+const toggleFavorite = () => artistStore.toggleFavorite(artist.value)
 
 const download = () => downloadService.fromArtist(artist.value)
 const onDragStart = (event: DragEvent) => startDragging(event, artist.value)

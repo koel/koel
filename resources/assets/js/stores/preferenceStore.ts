@@ -11,16 +11,23 @@ export const defaultPreferences: UserPreferences = {
     preamp: 0,
     gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   },
-  artists_view_mode: null,
-  albums_view_mode: null,
+  albums_view_mode: 'thumbnails',
+  artists_view_mode: 'thumbnails',
   albums_sort_field: 'name',
+  artists_sort_field: 'name',
+  podcasts_sort_field: 'title',
   albums_sort_order: 'asc',
+  artists_sort_order: 'asc',
+  podcasts_sort_order: 'asc',
+  albums_favorites_only: false,
+  artists_favorites_only: false,
+  podcasts_favorites_only: false,
   transcode_on_mobile: false,
   transcode_quality: 128,
   support_bar_no_bugging: false,
   show_album_art_overlay: true,
   lyrics_zoom_level: 1,
-  theme: null,
+  theme: 'classic',
   visualizer: 'default',
   active_extra_panel_tab: null,
   make_uploads_public: false,
@@ -88,7 +95,7 @@ const preferenceStore = {
   },
 }
 
-type ExportedType = Omit<typeof preferenceStore, 'setupProxy' | '_temporary' | 'update'> & UserPreferences
+type ExportedType = Omit<typeof preferenceStore, 'setupProxy' | '_temporary'> & UserPreferences
 
 const exported = preferenceStore as unknown as ExportedType
 

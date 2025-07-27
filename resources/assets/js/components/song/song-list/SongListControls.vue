@@ -5,7 +5,7 @@
         <template v-if="altPressed">
           <Btn
             v-if="selectedPlayables.length < 2 && filteredPlayables.length"
-            v-koel-tooltip.bottom
+            v-koel-tooltip
             class="btn-play-all"
             highlight
             title="Play all. Press Alt/⌥ to change mode."
@@ -17,7 +17,7 @@
 
           <Btn
             v-if="selectedPlayables.length > 1"
-            v-koel-tooltip.bottom
+            v-koel-tooltip
             class="btn-play-selected"
             highlight
             title="Play selected. Press Alt/⌥ to change mode."
@@ -31,7 +31,7 @@
         <template v-else>
           <Btn
             v-if="selectedPlayables.length < 2 && filteredPlayables.length"
-            v-koel-tooltip.bottom
+            v-koel-tooltip
             class="btn-shuffle-all"
             data-testid="btn-shuffle-all"
             highlight
@@ -44,7 +44,7 @@
 
           <Btn
             v-if="selectedPlayables.length > 1"
-            v-koel-tooltip.bottom
+            v-koel-tooltip
             class="btn-shuffle-selected"
             data-testid="btn-shuffle-selected"
             highlight

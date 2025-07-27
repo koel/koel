@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Album;
 use App\Models\Podcast;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use PhanAn\Poddle\Values\EpisodeMetadata;
 
 class SongFactory extends Factory
 {
@@ -44,6 +45,12 @@ class SongFactory extends Factory
     {
         return $this->state(fn () => [ // @phpcs:ignore
             'podcast_id' => Podcast::factory(),
+            'episode_metadata' => EpisodeMetadata::fromArray([
+                'link' => $this->faker->url(),
+                'description' => $this->faker->paragraph,
+                'duration' => $this->faker->randomFloat(2, 10, 500),
+                'image' => $this->faker->imageUrl(),
+            ]),
             'is_public' => true,
             'artist_id' => null,
             'owner_id' => null,

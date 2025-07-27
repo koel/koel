@@ -19,7 +19,7 @@ class AlbumTest extends PlusTestCase
         $album = Album::factory()->create();
 
         $this->putAs(
-            "api/albums/{$album->public_id}",
+            "api/albums/{$album->id}",
             [
                 'name' => 'Updated Album Name',
                 'year' => 2023,
@@ -43,7 +43,7 @@ class AlbumTest extends PlusTestCase
         self::assertFalse($album->belongsToUser($scaryBossMan));
 
         $this->putAs(
-            "api/albums/{$album->public_id}",
+            "api/albums/{$album->id}",
             [
                 'name' => 'Updated Album Name',
                 'year' => 2023,
@@ -62,7 +62,7 @@ class AlbumTest extends PlusTestCase
         self::assertFalse($album->belongsToUser($randomDude));
 
         $this->putAs(
-            "api/albums/{$album->public_id}",
+            "api/albums/{$album->id}",
             [
                 'name' => 'Updated Album Name',
                 'year' => 2023,

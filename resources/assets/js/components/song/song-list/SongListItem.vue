@@ -50,7 +50,7 @@
         <span v-if="shouldShowColumn('duration')" class="time">{{ fmtLength }}</span>
       </template>
       <span class="extra">
-        <LikeButton :playable="playable" />
+        <FavoriteButton :favorite="playable.favorite" @toggle="toggleFavorite" />
       </span>
     </article>
   </div>
@@ -65,11 +65,12 @@ import { secondsToHis } from '@/utils/formatters'
 import { usePlayableListColumnVisibility } from '@/composables/usePlayableListColumnVisibility'
 import { PlayableListConfigKey } from '@/symbols'
 
-import LikeButton from '@/components/song/SongLikeButton.vue'
 import SoundBars from '@/components/ui/SoundBars.vue'
 import SongThumbnail from '@/components/song/SongThumbnail.vue'
 import UserAvatar from '@/components/user/UserAvatar.vue'
 import ExternalMark from '@/components/ui/ExternalMark.vue'
+import FavoriteButton from '@/components/ui/FavoriteButton.vue'
+import { songStore } from '@/stores/songStore'
 
 const props = withDefaults(defineProps<{ item: PlayableRow, showDisc: boolean }>(), {
   showDisc: false,
@@ -96,6 +97,8 @@ const collaborator = computed<Pick<User, 'name' | 'avatar'>>(
 )
 
 const play = () => emit('play', playable.value)
+
+const toggleFavorite = () => songStore.toggleFavorite(playable.value)
 </script>
 
 <style lang="postcss" scoped>

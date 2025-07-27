@@ -25,7 +25,7 @@ class QueueStateResource extends JsonResource
     {
         return [
             'type' => 'queue-states',
-            'songs' => SongResourceCollection::make($this->state->playables)->for(auth()->user()),
+            'songs' => SongResource::collection($this->state->playables)->for(auth()->user()),
             'current_song' => $this->state->currentPlayable ? new SongResource($this->state->currentPlayable) : null,
             'playback_position' => $this->state->playbackPosition,
         ];

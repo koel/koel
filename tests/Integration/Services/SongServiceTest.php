@@ -16,7 +16,6 @@ use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
 use App\Values\Scanning\ScanConfiguration;
 use App\Values\SongUpdateData;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -45,6 +44,7 @@ class SongServiceTest extends TestCase
     {
         Event::fake(LibraryChanged::class);
 
+        /** @var Song $song */
         $song = Song::factory()->create();
 
         $data = SongUpdateData::make(
@@ -68,10 +68,6 @@ class SongServiceTest extends TestCase
             'albumArtistName' => 'Artist A',
         ];
 
-        DB::expects('transaction')->andReturnUsing(static function ($callback) {
-            return $callback();
-        });
-
         $updatedSongs = $this->service->updateSongs([$song->id], $data);
 
         $this->assertEquals(1, $updatedSongs->count());
@@ -88,14 +84,10 @@ class SongServiceTest extends TestCase
         Event::fake(LibraryChanged::class);
 
         /** @var Song $song1 */
-        $song1 = Song::factory()->create([
-            'track' => 1,
-        ]);
+        $song1 = Song::factory()->create(['track' => 1]);
 
         /** @var Song $song2 */
-        $song2 = Song::factory()->create([
-            'track' => 2,
-        ]);
+        $song2 = Song::factory()->create(['track' => 2]);
 
         $albumArtistName = 'New Album Artist';
         $lyrics = 'Lyrics 2';
@@ -120,10 +112,6 @@ class SongServiceTest extends TestCase
             'albumArtistName' => $albumArtistName,
         ];
 
-        DB::expects('transaction')->andReturnUsing(static function ($callback) {
-            return $callback();
-        });
-
         $updatedSongs = $this->service->updateSongs([$song1->id, $song2->id], $data);
 
         $this->assertEquals(2, $updatedSongs->count());
@@ -142,7 +130,10 @@ class SongServiceTest extends TestCase
     {
         Event::fake(LibraryChanged::class);
 
+        /** @var Song $song1 */
         $song1 = Song::factory()->create(['track' => 1, 'disc' => 1]);
+
+        /** @var Song $song2 */
         $song2 = Song::factory()->create(['track' => 2, 'disc' => 1]);
 
         $lyrics = 'Lyrics';
@@ -159,7 +150,6 @@ class SongServiceTest extends TestCase
             year: null,
             lyrics: $lyrics
         );
-
 
         $expectedData1 = [
             'disc' => 1,
@@ -178,10 +168,6 @@ class SongServiceTest extends TestCase
             'genre' => $genre,
             'albumArtistName' => null,
         ];
-
-        DB::expects('transaction')->andReturnUsing(static function ($callback) {
-            return $callback();
-        });
 
         $updatedSongs = $this->service->updateSongs([$song1->id, $song2->id], $data);
 

@@ -17,7 +17,7 @@ new class extends UnitTestCase {
     })
 
     it('renders an empty state if no songs queued', () => {
-      this.renderComponent([])
+      this.renderComponent()
 
       expect(screen.queryByTestId('song-list')).toBeNull()
       expect(screen.queryByTestId('screen-empty-state')).toBeTruthy()
@@ -28,7 +28,7 @@ new class extends UnitTestCase {
       const fetchRandomMock = this.mock(queueStore, 'fetchRandom')
       const playMock = this.mock(playbackService, 'playFirstInQueue')
 
-      this.renderComponent([])
+      this.renderComponent()
       await this.user.click(screen.getByText('playing some random songs'))
 
       await waitFor(() => {
@@ -47,7 +47,7 @@ new class extends UnitTestCase {
     })
   }
 
-  private renderComponent (playables: Playable[]) {
+  private renderComponent (playables: Playable[] = []) {
     queueStore.state.playables = playables
 
     this.render(Component, {

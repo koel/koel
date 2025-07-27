@@ -22,9 +22,7 @@ class SmartPlaylistService
 
         $user ??= $playlist->owner;
 
-        $query = Song::query(type: PlayableType::SONG, user: $user)
-            ->withMetaData()
-            ->accessible();
+        $query = Song::query(type: PlayableType::SONG, user: $user)->withUserContext();
 
         $playlist->rule_groups->each(static function (RuleGroup $group, int $index) use ($query): void {
             $whereClosure = static function (SongBuilder $subQuery) use ($group): void {

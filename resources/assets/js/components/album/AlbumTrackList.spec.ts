@@ -3,7 +3,7 @@ import factory from '@/__tests__/factory'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { songStore } from '@/stores/songStore'
-import AlbumTrackList from './AlbumTrackList.vue'
+import Component from './AlbumTrackList.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -11,7 +11,7 @@ new class extends UnitTestCase {
       const album = factory('album')
       const fetchMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(factory('song', 5))
 
-      this.render(AlbumTrackList, {
+      this.render(Component, {
         props: {
           album,
           tracks: factory('album-track', 3),

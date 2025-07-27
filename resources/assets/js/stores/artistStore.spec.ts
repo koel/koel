@@ -105,6 +105,7 @@ new class extends UnitTestCase {
       })
 
       expect(await artistStore.paginate({
+        favorites_only: false,
         page: 1,
         sort: 'name',
         order: 'asc',
@@ -112,6 +113,27 @@ new class extends UnitTestCase {
 
       expect(artistStore.state.artists).toEqual(artists)
       expect(artistStore.vault.size).toBe(3)
+    })
+
+    it('toggles favorite', async () => {
+      const artist = factory('artist', { favorite: false })
+      artistStore.syncWithVault(artist)
+
+      const postMock = this.mock(http, 'post').mockResolvedValueOnce(factory('favorite', {
+        favoriteable_type: 'artist',
+        favoriteable_id: artist.id,
+      }))
+
+      await artistStore.toggleFavorite(artist)
+
+      expect(postMock).toHaveBeenCalledWith('favorites/toggle', { type: 'artist', id: artist.id })
+      expect(artist.favorite).toBe(true)
+
+      postMock.mockResolvedValue(null)
+      await artistStore.toggleFavorite(artist)
+
+      expect(postMock).toHaveBeenNthCalledWith(2, 'favorites/toggle', { type: 'artist', id: artist.id })
+      expect(artist.favorite).toBe(false)
     })
   }
 }

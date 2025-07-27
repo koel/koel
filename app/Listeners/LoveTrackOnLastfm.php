@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\Events\SongLikeToggled;
+use App\Events\SongFavoriteToggled;
 use App\Services\LastfmService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
@@ -12,21 +12,17 @@ readonly class LoveTrackOnLastfm implements ShouldQueue
     {
     }
 
-    public function handle(SongLikeToggled $event): void
+    public function handle(SongFavoriteToggled $event): void
     {
         if (
-            $event->interaction->song->isEpisode()
+            $event->song->isEpisode()
             || !LastfmService::enabled()
-            || !$event->interaction->user->preferences->lastFmSessionKey
-            || $event->interaction->song->artist->is_unknown
+            || !$event->user->preferences->lastFmSessionKey
+            || $event->song->artist->is_unknown
         ) {
             return;
         }
 
-        $this->lastfm->toggleLoveTrack(
-            $event->interaction->song,
-            $event->interaction->user,
-            $event->interaction->liked
-        );
+        $this->lastfm->toggleLoveTrack($event->song, $event->user, $event->favorite);
     }
 }

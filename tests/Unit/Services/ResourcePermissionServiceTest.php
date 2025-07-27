@@ -3,7 +3,7 @@
 namespace Tests\Unit\Services;
 
 use App\Enums\PermissionableResourceType;
-use App\Models\Contracts\PermissionableResource;
+use App\Models\Contracts\Permissionable;
 use App\Services\ResourcePermissionService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
@@ -39,7 +39,7 @@ class ResourcePermissionServiceTest extends TestCase
     {
         $user = create_user();
 
-        /** @var class-string<Model|PermissionableResource> $modelClass */
+        /** @var class-string<Model|Permissionable> $modelClass */
         $modelClass = $type->value;
         $subject = $modelClass::factory()->create(); // @phpstan-ignore-line
 
@@ -53,7 +53,7 @@ class ResourcePermissionServiceTest extends TestCase
 
         self::assertTrue($this->service->checkPermission(
             $type,
-            $subject->{$modelClass::getPermissionableResourceIdentifier()}, // @phpstan-ignore-line
+            $subject->{$modelClass::getPermissionableIdentifier()}, // @phpstan-ignore-line
             'edit',
             $user
         ));

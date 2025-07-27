@@ -9,9 +9,9 @@ import { eventBus } from '@/utils/eventBus'
 import { playbackService } from '@/services/playbackService'
 import { socketService } from '@/services/socketService'
 import { volumeManager } from '@/services/volumeManager'
-import { favoriteStore } from '@/stores/favoriteStore'
 import { queueStore } from '@/stores/queueStore'
 import { useRouter } from '@/composables/useRouter'
+import { songStore } from '@/stores/songStore'
 
 const { isCurrentScreen, go, url } = useRouter()
 
@@ -56,7 +56,7 @@ onKeyStroke('l', () => {
   if (!queueStore.current) {
     return
   }
-  favoriteStore.toggleOne(queueStore.current)
+  songStore.toggleFavorite(queueStore.current)
   socketService.broadcast('SOCKET_SONG', queueStore.current)
 })
 </script>

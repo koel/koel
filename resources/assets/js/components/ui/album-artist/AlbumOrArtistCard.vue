@@ -21,6 +21,8 @@
         <slot name="meta" />
       </p>
     </footer>
+
+    <slot />
   </article>
 </template>
 
@@ -82,10 +84,18 @@ article {
   }
 
   .meta {
-    :deep(a) {
-      & + a {
+    :deep(a),
+    :deep(button) {
+      & + a,
+      & + button {
         &::before {
           @apply mr-0.5 content-['•'] text-k-text-secondary;
+        }
+      }
+
+      & + button {
+        &::before {
+          @apply mr-1;
         }
       }
     }

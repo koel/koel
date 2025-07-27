@@ -8,7 +8,7 @@ export default (): Episode => {
     length: faker.number.int(),
     created_at: faker.date.past().toISOString(),
     playback_state: 'Stopped',
-    liked: false,
+    favorite: faker.datatype.boolean(),
     play_count: 0,
     episode_link: faker.internet.url(),
     episode_description: faker.lorem.paragraph(),

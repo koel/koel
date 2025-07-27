@@ -4,7 +4,7 @@ namespace Tests\Feature\KoelPlus;
 
 use App\Events\MultipleSongsLiked;
 use App\Events\MultipleSongsUnliked;
-use App\Events\SongLikeToggled;
+use App\Events\SongFavoriteToggled;
 use App\Models\Song;
 use Illuminate\Support\Facades\Event;
 use PHPUnit\Framework\Attributes\Test;
@@ -17,7 +17,7 @@ class InteractionTest extends PlusTestCase
     #[Test]
     public function policyForRegisterPlay(): void
     {
-        Event::fake(SongLikeToggled::class);
+        Event::fake(SongFavoriteToggled::class);
 
         $owner = create_user();
 
@@ -43,7 +43,7 @@ class InteractionTest extends PlusTestCase
     #[Test]
     public function policyForToggleLike(): void
     {
-        Event::fake(SongLikeToggled::class);
+        Event::fake(SongFavoriteToggled::class);
 
         $owner = create_user();
 

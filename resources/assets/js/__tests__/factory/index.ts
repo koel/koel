@@ -18,6 +18,7 @@ import playlistCollaboratorFactory from '@/__tests__/factory/playlistCollaborato
 import episodeFactory from '@/__tests__/factory/episodeFactory'
 import podcastFactory from '@/__tests__/factory/podcastFactory'
 import folderFactory from '@/__tests__/factory/folderFactory'
+import favoriteFactory from '@/__tests__/factory/favoriteFactory'
 
 interface ModelToTypeMap {
   'artist': Artist
@@ -38,6 +39,7 @@ interface ModelToTypeMap {
   'episode': Episode
   'podcast': Podcast
   'folder': Folder
+  'favorite': Favorite
 }
 
 type Model = keyof ModelToTypeMap
@@ -102,3 +104,4 @@ define('playlist-collaborator', playlistCollaboratorFactory)
 define('episode', episodeFactory)
 define('podcast', podcastFactory)
 define('folder', folderFactory)
+define('favorite', favoriteFactory)

@@ -3,7 +3,7 @@ import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { invitationService } from '@/services/invitationService'
-import AcceptInvitation from './AcceptInvitation.vue'
+import Component from './AcceptInvitation.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -23,7 +23,7 @@ new class extends UnitTestCase {
         token: 'my-token',
       })
 
-      this.render(AcceptInvitation)
+      this.render(Component)
       await waitFor(() => expect(getProspectMock).toHaveBeenCalledWith('my-token'))
 
       await this.tick(2)

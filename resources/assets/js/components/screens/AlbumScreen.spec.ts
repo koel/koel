@@ -9,9 +9,7 @@ import { downloadService } from '@/services/downloadService'
 import { resourcePermissionService } from '@/services/resourcePermissionService'
 import { eventBus } from '@/utils/eventBus'
 import Router from '@/router'
-import AlbumScreen from './AlbumScreen.vue'
-
-let album: Album
+import Component from './AlbumScreen.vue'
 
 new class extends UnitTestCase {
   protected beforeEach () {
@@ -23,7 +21,7 @@ new class extends UnitTestCase {
   protected test () {
     it('downloads', async () => {
       const downloadMock = this.mock(downloadService, 'fromAlbum')
-      await this.renderComponent()
+      const { album } = await this.renderComponent()
 
       await waitFor(async () => {
         await this.user.click(screen.getByRole('button', { name: 'Download All' }))
@@ -33,7 +31,7 @@ new class extends UnitTestCase {
 
     it('goes back to list if album is deleted', async () => {
       const goMock = this.mock(Router, 'go')
-      await this.renderComponent()
+      const { album } = await this.renderComponent()
       await this.tick()
 
       eventBus.emit('SONGS_UPDATED', {
@@ -63,7 +61,7 @@ new class extends UnitTestCase {
     it('shows other albums from the same artist', async () => {
       const albums = factory('album', 3)
       const fetchMock = this.mock(albumStore, 'fetchForArtist').mockResolvedValue(albums)
-      await this.renderComponent('other-albums')
+      const { album } = await this.renderComponent('other-albums')
 
       albums.push(album)
 
@@ -74,7 +72,7 @@ new class extends UnitTestCase {
     })
 
     it('requests edit form', async () => {
-      await this.renderComponent()
+      const { album } = await this.renderComponent()
 
       const emitMock = this.mock(eventBus, 'emit')
 
@@ -88,7 +86,7 @@ new class extends UnitTestCase {
   private async renderComponent (tab: 'songs' | 'other-albums' | 'information' = 'songs') {
     commonStore.state.uses_last_fm = true
 
-    album = factory('album', {
+    const album = factory('album', {
       id: 'foo',
       name: 'Led Zeppelin IV',
       artist_id: 'bar',
@@ -108,7 +106,7 @@ new class extends UnitTestCase {
       id: 'foo',
     })
 
-    this.beAdmin().render(AlbumScreen, {
+    const rendered = this.beAdmin().render(Component, {
       global: {
         stubs: {
           SongList: this.stub('song-list'),
@@ -122,5 +120,13 @@ new class extends UnitTestCase {
       expect(resolveAlbumMock).toHaveBeenCalledWith(album.id)
       expect(fetchSongsMock).toHaveBeenCalledWith(album.id)
     })
+
+    return {
+      ...rendered,
+      album,
+      songs,
+      resolveAlbumMock,
+      fetchSongsMock,
+    }
   }
 }

@@ -33,7 +33,7 @@ class ArtistImageTest extends TestCase
             ->with(Mockery::on(static fn (Artist $target) => $target->is($artist)), 'data:image/jpeg;base64,Rm9v');
 
         $this->putAs(
-            "api/artist/{$artist->public_id}/image",
+            "api/artist/{$artist->id}/image",
             ['image' => 'data:image/jpeg;base64,Rm9v'],
             create_admin(),
         )->assertOk();
@@ -47,7 +47,7 @@ class ArtistImageTest extends TestCase
 
         $this->artworkService->shouldNotReceive('storeArtistImage');
 
-        $this->putAs("api/artist/{$artist->public_id}/image", ['image' => 'data:image/jpeg;base64,Rm9v'])
+        $this->putAs("api/artist/{$artist->id}/image", ['image' => 'data:image/jpeg;base64,Rm9v'])
             ->assertForbidden();
     }
 }

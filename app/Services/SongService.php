@@ -228,6 +228,7 @@ class SongService
         if ($isFileNew) {
             // Only set the owner if the song is new, i.e., don't override the owner if the song is being updated.
             $data['owner_id'] = $config->owner->id;
+            /** @var Song $song */
             $song = Song::query()->create($data);
         } else {
             $song->update($data);

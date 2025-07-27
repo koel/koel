@@ -7,12 +7,12 @@ use App\Exceptions\UserAlreadySubscribedToPodcastException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Podcast\PodcastStoreRequest;
 use App\Http\Resources\PodcastResource;
-use App\Http\Resources\PodcastResourceCollection;
 use App\Models\Podcast;
 use App\Models\User;
 use App\Repositories\PodcastRepository;
 use App\Services\PodcastService;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class PodcastController extends Controller
@@ -25,9 +25,11 @@ class PodcastController extends Controller
     ) {
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        return PodcastResourceCollection::make($this->podcastRepository->getAllByUser($this->user));
+        return PodcastResource::collection(
+            $this->podcastRepository->getAllSubscribedByUser($request->boolean('favorites_only'), $this->user)
+        );
     }
 
     #[DisabledInDemo]

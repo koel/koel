@@ -3,12 +3,15 @@
 namespace App\Models;
 
 use App\Builders\AlbumBuilder;
+use App\Models\Concerns\MorphsToFavorites;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
-use App\Models\Contracts\PermissionableResource;
+use App\Models\Contracts\Favoriteable;
+use App\Models\Contracts\Permissionable;
 use Carbon\Carbon;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -31,22 +34,21 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property User $user
  * @property bool $has_cover If the album has a non-default cover image
  * @property bool $is_unknown If the album is the Unknown Album
- * @property float|string $length Total length of the album in seconds (dynamically calculated)
- * @property int $artist_id
+ * @property string $artist_id
  * @property string $artist_name
- * @property int $id
+ * @property string $id
  * @property int $user_id
- * @property int|string $play_count Total number of times the album's songs have been played (dynamically calculated)
- * @property int|string $song_count Total number of songs on the album (dynamically calculated)
  * @property string $cover The album cover's URL
  * @property string $name Name of the album
- * @property string $public_id The album's public ID (ULID)
+ * @property ?boolean $favorite Whether the album is liked by the scoped user
  */
-class Album extends Model implements AuditableContract, PermissionableResource
+class Album extends Model implements AuditableContract, Favoriteable, Permissionable
 {
     use Auditable;
     /** @use HasFactory<UserFactory> */
     use HasFactory;
+    use HasUlids;
+    use MorphsToFavorites;
     use Searchable;
     use SupportsDeleteWhereValueNotIn;
 
@@ -54,7 +56,6 @@ class Album extends Model implements AuditableContract, PermissionableResource
 
     protected $guarded = ['id'];
     protected $hidden = ['updated_at'];
-    protected $casts = ['artist_id' => 'integer'];
 
     protected $with = ['artist'];
 
@@ -64,7 +65,7 @@ class Album extends Model implements AuditableContract, PermissionableResource
     public static function query(): AlbumBuilder
     {
         /** @var AlbumBuilder */
-        return parent::query();
+        return parent::query()->addSelect('albums.*');
     }
 
     public function newEloquentBuilder($query): AlbumBuilder
@@ -138,7 +139,7 @@ class Album extends Model implements AuditableContract, PermissionableResource
      */
     protected function name(): Attribute
     {
-        return Attribute::get(static fn (string $value) => html_entity_decode($value))->shouldCache();
+        return Attribute::get(static fn (?string $value) => html_entity_decode($value))->shouldCache();
     }
 
     protected function thumbnailName(): Attribute
@@ -190,13 +191,8 @@ class Album extends Model implements AuditableContract, PermissionableResource
         return $array;
     }
 
-    public static function getPermissionableResourceIdentifier(): string
+    public static function getPermissionableIdentifier(): string
     {
-        return 'public_id';
-    }
-
-    public function getRouteKeyName(): string
-    {
-        return 'public_id';
+        return 'id';
     }
 }

@@ -5,7 +5,7 @@
       data-testid="btn-toggle-favorite"
       @click.prevent="toggleFavorite"
     >
-      <Icon :class="playable.liked && 'yep'" :icon="playable.liked ? faHeart : faEmptyHeart" />
+      <Icon :class="playable.favorite && 'yep'" :icon="playable.favorite ? faHeart : faEmptyHeart" />
     </button>
 
     <button class="text-[6vmin]" data-testid="btn-play-prev" @click.prevent="playPrev">
@@ -41,7 +41,7 @@ const props = defineProps<{ playable: Playable }>()
 const { playable } = toRefs(props)
 
 const toggleFavorite = () => {
-  playable.value.liked = !playable.value.liked
+  playable.value.favorite = !playable.value.liked
   socketService.broadcast('SOCKET_TOGGLE_FAVORITE')
 }
 

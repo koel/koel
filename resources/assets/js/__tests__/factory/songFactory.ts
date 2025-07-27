@@ -24,7 +24,7 @@ const generate = (partOfCompilation = false): Song => {
     year: faker.helpers.arrayElement([null, faker.date.past().getFullYear()]),
     lyrics: faker.lorem.paragraph(),
     play_count: faker.number.int(),
-    liked: faker.datatype.boolean(),
+    favorite: faker.datatype.boolean(),
     is_public: faker.datatype.boolean(),
     created_at: faker.date.past().toISOString(),
     playback_state: 'Stopped',

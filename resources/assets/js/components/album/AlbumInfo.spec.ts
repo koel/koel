@@ -4,9 +4,7 @@ import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { commonStore } from '@/stores/commonStore'
 import { encyclopediaService } from '@/services/encyclopediaService'
-import AlbumInfoComponent from './AlbumInfo.vue'
-
-let album: Album
+import Component from './AlbumInfo.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -32,10 +30,10 @@ new class extends UnitTestCase {
       info = factory('album-info')
     }
 
-    album = factory('album', { name: 'IV' })
+    const album = factory('album', { name: 'IV' })
     const fetchMock = this.mock(encyclopediaService, 'fetchForAlbum').mockResolvedValue(info)
 
-    const rendered = this.render(AlbumInfoComponent, {
+    const rendered = this.render(Component, {
       props: {
         album,
         mode,
@@ -51,6 +49,9 @@ new class extends UnitTestCase {
     await this.tick(1)
     expect(fetchMock).toHaveBeenCalledWith(album)
 
-    return rendered
+    return {
+      ...rendered,
+      album,
+    }
   }
 }

@@ -2,13 +2,13 @@ import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { authService } from '@/services/authService'
-import ForgotPasswordForm from './ForgotPasswordForm.vue'
+import Component from './ForgotPasswordForm.vue'
 
 new class extends UnitTestCase {
   protected test () {
     it('requests reset password link', async () => {
       const requestMock = this.mock(authService, 'requestResetPasswordLink').mockResolvedValue(null)
-      this.render(ForgotPasswordForm)
+      this.render(Component)
       await this.type(screen.getByPlaceholderText('Your email address'), 'foo@bar.com')
       await this.user.click(screen.getByText('Reset Password'))
 
@@ -16,7 +16,7 @@ new class extends UnitTestCase {
     })
 
     it('cancels', async () => {
-      const { emitted } = this.render(ForgotPasswordForm)
+      const { emitted } = this.render(Component)
       await this.user.click(screen.getByText('Cancel'))
 
       expect(emitted().cancel).toBeTruthy()

@@ -6,10 +6,7 @@ import factory from '@/__tests__/factory'
 import { queueStore } from '@/stores/queueStore'
 import { songStore } from '@/stores/songStore'
 import { playbackService } from '@/services/playbackService'
-import Thumbnail from './AlbumOrArtistThumbnail.vue'
-
-let album: Album
-let artist: Artist
+import Component from './AlbumOrArtistThumbnail.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -25,7 +22,7 @@ new class extends UnitTestCase {
       const songs = factory('song', 10)
       const fetchMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
-      this.renderForAlbum()
+      const { album } = this.renderForAlbum()
 
       await this.user.click(screen.getByRole('button'))
 
@@ -39,7 +36,7 @@ new class extends UnitTestCase {
       const songs = factory('song', 10)
       const fetchMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
       const queueMock = this.mock(queueStore, 'queue')
-      this.renderForAlbum()
+      const { album } = this.renderForAlbum()
 
       await this.user.keyboard('{Alt>}')
       await this.user.click(screen.getByRole('button'))
@@ -55,7 +52,7 @@ new class extends UnitTestCase {
       const songs = factory('song', 10)
       const fetchMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
-      this.renderForArtist()
+      const { artist } = this.renderForArtist()
 
       await this.user.click(screen.getByRole('button'))
 
@@ -69,7 +66,7 @@ new class extends UnitTestCase {
       const songs = factory('song', 10)
       const fetchMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
       const queueMock = this.mock(queueStore, 'queue')
-      this.renderForArtist()
+      const { artist } = this.renderForArtist()
 
       await this.user.keyboard('{Alt>}')
       await this.user.click(screen.getByRole('button'))
@@ -83,28 +80,38 @@ new class extends UnitTestCase {
   }
 
   private renderForAlbum () {
-    album = factory('album', {
+    const album = factory('album', {
       name: 'IV',
       cover: 'https://test/album.jpg',
     })
 
-    return this.render(Thumbnail, {
+    const rendered = this.render(Component, {
       props: {
         entity: album,
       },
     })
+
+    return {
+      ...rendered,
+      album,
+    }
   }
 
   private renderForArtist () {
-    artist = factory('artist', {
+    const artist = factory('artist', {
       name: 'Led Zeppelin',
       image: 'https://test/blimp.jpg',
     })
 
-    return this.render(Thumbnail, {
+    const rendered = this.render(Component, {
       props: {
         entity: artist,
       },
     })
+
+    return {
+      ...rendered,
+      artist,
+    }
   }
 }

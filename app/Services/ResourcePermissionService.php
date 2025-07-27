@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Enums\PermissionableResourceType;
-use App\Models\Contracts\PermissionableResource;
+use App\Models\Contracts\Permissionable;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
@@ -31,9 +31,9 @@ class ResourcePermissionService
         PermissionableResourceType $type,
         int|string $id,
     ): Model {
-        /** @var class-string<Model|PermissionableResource> $modelClass */
+        /** @var class-string<Model|Permissionable> $modelClass */
         $modelClass = $type->value;
 
-        return $modelClass::query()->where($modelClass::getPermissionableResourceIdentifier(), $id)->firstOrFail(); // @phpstan-ignore-line
+        return $modelClass::query()->where($modelClass::getPermissionableIdentifier(), $id)->firstOrFail(); // @phpstan-ignore-line
     }
 }
