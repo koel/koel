@@ -6,15 +6,12 @@ import { eventBus } from '@/utils/eventBus'
 import { screen, waitFor } from '@testing-library/vue'
 import { downloadService } from '@/services/downloadService'
 import { playbackService } from '@/services/playbackService'
-import { favoriteStore } from '@/stores/favoriteStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { queueStore } from '@/stores/queueStore'
 import { songStore } from '@/stores/songStore'
 import { DialogBoxStub, MessageToasterStub } from '@/__tests__/stubs'
 import Router from '@/router'
 import Component from './PlayableContextMenu.vue'
-
-let playables: Playable[]
 
 new class extends UnitTestCase {
   protected beforeEach () {
@@ -72,7 +69,7 @@ new class extends UnitTestCase {
 
     it('downloads', async () => {
       const downloadMock = this.mock(downloadService, 'fromPlayables')
-      await this.renderComponent()
+      const { playables } = await this.renderComponent()
 
       await this.user.click(screen.getByText('Download'))
 
@@ -81,7 +78,7 @@ new class extends UnitTestCase {
 
     it('queues', async () => {
       const queueMock = this.mock(queueStore, 'queue')
-      await this.renderComponent()
+      const { playables } = await this.renderComponent()
 
       await this.user.click(screen.getByText('Queue'))
 
@@ -91,7 +88,7 @@ new class extends UnitTestCase {
     it('queues after current', async () => {
       this.fillQueue()
       const queueMock = this.mock(queueStore, 'queueAfterCurrent')
-      await this.renderComponent()
+      const { playables } = await this.renderComponent()
 
       await this.user.click(screen.getByText('After Current'))
 
@@ -101,7 +98,7 @@ new class extends UnitTestCase {
     it('queues to bottom', async () => {
       this.fillQueue()
       const queueMock = this.mock(queueStore, 'queue')
-      await this.renderComponent()
+      const { playables } = await this.renderComponent()
 
       await this.user.click(screen.getByText('Bottom of Queue'))
 
@@ -111,7 +108,7 @@ new class extends UnitTestCase {
     it('queues to top', async () => {
       this.fillQueue()
       const queueMock = this.mock(queueStore, 'queueToTop')
-      await this.renderComponent()
+      const { playables } = await this.renderComponent()
 
       await this.user.click(screen.getByText('Top of Queue'))
 
@@ -127,7 +124,7 @@ new class extends UnitTestCase {
         screen: 'Queue',
       })
 
-      await this.renderComponent()
+      const { playables } = await this.renderComponent()
 
       await this.user.click(screen.getByText('Remove from Queue'))
 
@@ -148,8 +145,8 @@ new class extends UnitTestCase {
     })
 
     it('adds to favorites', async () => {
-      const likeMock = this.mock(favoriteStore, 'like')
-      await this.renderComponent()
+      const likeMock = this.mock(songStore, 'favorite')
+      const { playables } = await this.renderComponent()
 
       await this.user.click(screen.getByText('Favorites'))
 
@@ -168,14 +165,14 @@ new class extends UnitTestCase {
     })
 
     it('removes from favorites', async () => {
-      const unlikeMock = this.mock(favoriteStore, 'unlike')
+      const unlikeMock = this.mock(songStore, 'undoFavorite')
 
       await this.router.activateRoute({
         path: '/favorites',
         screen: 'Favorites',
       })
 
-      await this.renderComponent()
+      const { playables } = await this.renderComponent()
 
       await this.user.click(screen.getByText('Remove from Favorites'))
 
@@ -186,7 +183,7 @@ new class extends UnitTestCase {
       playlistStore.state.playlists = factory('playlist', 3)
       const addMock = this.mock(playlistStore, 'addContent')
       this.mock(MessageToasterStub.value, 'success')
-      await this.renderComponent()
+      const { playables } = await this.renderComponent()
 
       playlistStore.state.playlists.forEach(playlist => screen.queryByText(playlist.name))
 
@@ -213,7 +210,7 @@ new class extends UnitTestCase {
         screen: 'Playlist',
       }, { id: String(playlist.id) })
 
-      await this.renderComponent()
+      const { playables } = await this.renderComponent()
 
       const removeContentMock = this.mock(playlistStore, 'removeContent')
       const emitMock = this.mock(eventBus, 'emit')
@@ -238,7 +235,7 @@ new class extends UnitTestCase {
     })
 
     it('allows edit songs if current user is admin', async () => {
-      await this.beAdmin().renderComponent()
+      const { playables } = await this.beAdmin().renderComponent()
 
       // mock after render to ensure that the component is mounted properly
       const emitMock = this.mock(eventBus, 'emit')
@@ -275,7 +272,7 @@ new class extends UnitTestCase {
       const confirmMock = this.mock(DialogBoxStub.value, 'confirm', true)
       const toasterMock = this.mock(MessageToasterStub.value, 'success')
       const deleteMock = this.mock(songStore, 'deleteFromFilesystem')
-      await this.beAdmin().renderComponent()
+      const { playables } = await this.beAdmin().renderComponent()
 
       const emitMock = this.mock(eventBus, 'emit')
 
@@ -295,7 +292,7 @@ new class extends UnitTestCase {
     })
 
     it('creates playlist from selected songs', async () => {
-      await this.be().renderComponent()
+      const { playables } = await this.be().renderComponent()
 
       // mock after render to ensure that the component is mounted properly
       const emitMock = this.mock(eventBus, 'emit')
@@ -393,14 +390,17 @@ new class extends UnitTestCase {
     })
   }
 
-  private async renderComponent (_playables?: MaybeArray<Playable>) {
-    playables = arrayify(_playables || factory('song', 5))
+  private async renderComponent (playables?: MaybeArray<Playable>) {
+    playables = playables ? arrayify(playables) : factory('song', 5)
 
     const rendered = this.render(Component)
     eventBus.emit('PLAYABLE_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, playables)
     await this.tick(2)
 
-    return rendered
+    return {
+      ...rendered,
+      playables,
+    }
   }
 
   private fillQueue () {

@@ -37,7 +37,7 @@ class ArtistImageTest extends PlusTestCase
             ->expects('storeArtistImage')
             ->with(Mockery::on(static fn (Artist $target) => $target->is($artist)), 'data:image/jpeg;base64,Rm9v');
 
-        $this->putAs("api/artists/{$artist->public_id}/image", ['image' => 'data:image/jpeg;base64,Rm9v'], $user)
+        $this->putAs("api/artists/{$artist->id}/image", ['image' => 'data:image/jpeg;base64,Rm9v'], $user)
             ->assertOk();
     }
 
@@ -55,7 +55,7 @@ class ArtistImageTest extends PlusTestCase
             ->expects('writeArtistImage')
             ->never();
 
-        $this->putAs("api/artists/{$artist->public_id}/image", ['image' => 'data:image/jpeg;base64,Rm9v'], $user)
+        $this->putAs("api/artists/{$artist->id}/image", ['image' => 'data:image/jpeg;base64,Rm9v'], $user)
             ->assertForbidden();
     }
 
@@ -66,7 +66,7 @@ class ArtistImageTest extends PlusTestCase
         $artist = Artist::factory()->create();
 
         $this->putAs(
-            "api/artists/{$artist->public_id}/image",
+            "api/artists/{$artist->id}/image",
             ['image' => 'data:image/jpeg;base64,Rm9v'],
             create_admin(),
         )->assertForbidden();

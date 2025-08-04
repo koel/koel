@@ -2,12 +2,16 @@
 
 namespace App\Events;
 
+use App\Models\Song;
 use App\Models\User;
 use Illuminate\Support\Collection;
 
 class MultipleSongsUnliked extends Event
 {
-    public function __construct(public Collection $songs, public User $user)
+    /**
+     * @param Collection<Song> $songs
+     */
+    public function __construct(public readonly Collection $songs, public readonly User $user)
     {
     }
 }

@@ -3,17 +3,12 @@ import { screen } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import Component from './ThemeCard.vue'
 
-const theme: Theme = {
-  id: 'sample',
-  thumbnailColor: '#f00',
-}
-
 new class extends UnitTestCase {
   protected test () {
     it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
 
     it('emits an event when selected', async () => {
-      const { emitted } = this.renderComponent()
+      const { emitted, theme } = this.renderComponent()
 
       await this.user.click(screen.getByRole('button', { name: 'Sample' }))
 
@@ -22,10 +17,20 @@ new class extends UnitTestCase {
   }
 
   private renderComponent () {
-    return this.render(Component, {
+    const theme: Theme = {
+      id: 'sample',
+      thumbnailColor: '#f00',
+    }
+
+    const rendered = this.render(Component, {
       props: {
         theme,
       },
     })
+
+    return {
+      ...rendered,
+      theme,
+    }
   }
 }

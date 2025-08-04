@@ -8,15 +8,13 @@ import { songStore } from '@/stores/songStore'
 import { downloadService } from '@/services/downloadService'
 import { eventBus } from '@/utils/eventBus'
 import Router from '@/router'
-import ArtistScreen from './ArtistScreen.vue'
-
-let artist: Artist
+import Component from './ArtistScreen.vue'
 
 new class extends UnitTestCase {
   protected async renderComponent (tab: 'songs' | 'albums' | 'information' = 'songs') {
     commonStore.state.uses_last_fm = true
 
-    artist = factory('artist', {
+    const artist = factory('artist', {
       id: 'foo',
       name: 'Led Zeppelin',
     })
@@ -34,7 +32,7 @@ new class extends UnitTestCase {
       id: 'foo',
     })
 
-    this.render(ArtistScreen, {
+    const rendered = this.render(Component, {
       global: {
         stubs: {
           ArtistInfo: this.stub('artist-info'),
@@ -50,12 +48,20 @@ new class extends UnitTestCase {
     })
 
     await this.tick(2)
+
+    return {
+      ...rendered,
+      artist,
+      songs,
+      resolveArtistMock,
+      fetchSongsMock,
+    }
   }
 
   protected test () {
     it('downloads', async () => {
       const downloadMock = this.mock(downloadService, 'fromArtist')
-      await this.renderComponent()
+      const { artist } = await this.renderComponent()
 
       await this.user.click(screen.getByRole('button', { name: 'Download All' }))
 
@@ -64,7 +70,7 @@ new class extends UnitTestCase {
 
     it('goes back to list if artist is deleted', async () => {
       const goMock = this.mock(Router, 'go')
-      await this.renderComponent()
+      const { artist } = await this.renderComponent()
 
       eventBus.emit('SONGS_UPDATED', {
         songs: [],

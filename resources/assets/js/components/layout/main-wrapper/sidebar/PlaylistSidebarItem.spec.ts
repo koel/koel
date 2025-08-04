@@ -3,11 +3,11 @@ import { fireEvent, screen } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { eventBus } from '@/utils/eventBus'
-import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
+import Component from './PlaylistSidebarItem.vue'
 
 new class extends UnitTestCase {
-  renderComponent (list: PlaylistLike) {
-    this.render(PlaylistSidebarItem, {
+  private renderComponent (list: PlaylistLike) {
+    this.render(Component, {
       props: {
         list,
       },

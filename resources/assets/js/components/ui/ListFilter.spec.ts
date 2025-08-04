@@ -3,20 +3,29 @@ import { screen } from '@testing-library/vue'
 import { ref } from 'vue'
 import { FilterKeywordsKey } from '@/symbols'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import ListFilter from './ListFilter.vue'
+import Component from './ListFilter.vue'
 
 new class extends UnitTestCase {
+  private renderComponent (rawKeywords = '') {
+    const keywords = ref(rawKeywords)
+
+    const rendered = this.render(Component, {
+      global: {
+        provide: {
+          [FilterKeywordsKey]: keywords,
+        },
+      },
+    })
+
+    return {
+      ...rendered,
+      keywords,
+    }
+  }
+
   protected test () {
     it('mutates the injected reference', async () => {
-      const keywords = ref('')
-
-      this.render(ListFilter, {
-        global: {
-          provide: {
-            [FilterKeywordsKey]: keywords,
-          },
-        },
-      })
+      const { keywords } = this.renderComponent()
 
       await this.user.click(screen.getByTitle('Filter'))
       await this.user.type(screen.getByPlaceholderText('Keywords'), 'sample')
@@ -25,15 +34,7 @@ new class extends UnitTestCase {
     })
 
     it('hides an empty text input on blur', async () => {
-      const keywords = ref('sample')
-
-      this.render(ListFilter, {
-        global: {
-          provide: {
-            [FilterKeywordsKey]: keywords,
-          },
-        },
-      })
+      this.renderComponent('sample')
 
       const input = screen.getByPlaceholderText('Keywords')
       await this.user.clear(input)

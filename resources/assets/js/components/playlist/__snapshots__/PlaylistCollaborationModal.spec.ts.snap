@@ -14,6 +14,6 @@ exports[`renders the modal 1`] = `
       <div data-v-886145d2="" class="collaborators-wrapper overflow-auto"><br data-v-886145d2="" data-testid="CollaboratorList" playlist="[object Object]"></div>
     </section>
   </main>
-  <footer data-v-886145d2=""><button data-v-8943c846="" data-v-886145d2="" class="text-base text-k-text-primary bg-k-primary px-4 py-2.5 rounded cursor-pointer" type="button">Close</button></footer>
+  <footer data-v-886145d2=""><button data-v-8943c846="" data-v-886145d2="" class="text-base text-k-text-primary bg-k-primary px-3.5 py-2 rounded cursor-pointer" type="button">Close</button></footer>
 </div>
 `;

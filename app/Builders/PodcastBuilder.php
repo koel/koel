@@ -2,17 +2,21 @@
 
 namespace App\Builders;
 
-use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
+use App\Builders\Concerns\CanScopeByUser;
 use Illuminate\Database\Query\JoinClause;
+use LogicException;
 
-class PodcastBuilder extends Builder
+class PodcastBuilder extends FavoriteableBuilder
 {
-    public function subscribedBy(User $user): self
+    use CanScopeByUser;
+
+    public function subscribed(): self
     {
-        return $this->join('podcast_user', static function (JoinClause $join) use ($user): void {
+        throw_if(!$this->user, new LogicException('User must be set to query subscribed podcasts.'));
+
+        return $this->join('podcast_user', function (JoinClause $join): void {
             $join->on('podcasts.id', 'podcast_user.podcast_id')
-                ->where('user_id', $user->id);
+                ->where('podcast_user.user_id', $this->user->id);
         });
     }
 }

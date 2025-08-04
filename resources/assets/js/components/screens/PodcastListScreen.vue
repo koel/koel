@@ -5,7 +5,27 @@
         Podcasts
         <template #controls>
           <div v-if="!loading" class="flex gap-2">
-            <PodcastListSorter :field="sortParams.field" :order="sortParams.order" @sort="sort" />
+            <Btn
+              v-koel-tooltip
+              :title="preferences.podcasts_favorites_only ? 'Show all' : 'Show favorites only'"
+              class="border border-white/10"
+              small
+              transparent
+              @click.prevent="toggleFavoritesOnly"
+            >
+              <Icon
+                :icon="preferences.podcasts_favorites_only ? faStar : faEmptyStar"
+                :class="preferences.podcasts_favorites_only && 'text-k-highlight'"
+                size="sm"
+              />
+            </Btn>
+
+            <PodcastListSorter
+              :field="preferences.podcasts_sort_field"
+              :order="preferences.podcasts_sort_order"
+              @sort="sort"
+            />
+
             <ListFilter />
             <BtnGroup uppercase>
               <Btn highlight @click.prevent="requestAddPodcastForm">
@@ -37,15 +57,17 @@
 </template>
 
 <script setup lang="ts">
-import { faAdd, faPodcast } from '@fortawesome/free-solid-svg-icons'
+import { faAdd, faPodcast, faStar } from '@fortawesome/free-solid-svg-icons'
+import { faStar as faEmptyStar } from '@fortawesome/free-regular-svg-icons'
 import { orderBy } from 'lodash'
-import { computed, provide, reactive, ref } from 'vue'
+import { computed, nextTick, provide, ref } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { podcastStore } from '@/stores/podcastStore'
 import { useRouter } from '@/composables/useRouter'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useFuzzySearch } from '@/composables/useFuzzySearch'
 import { FilterKeywordsKey } from '@/symbols'
+import { preferenceStore as preferences } from '@/stores/preferenceStore'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'
@@ -66,20 +88,15 @@ const keywords = ref('')
 
 provide(FilterKeywordsKey, keywords)
 
-const sortParams = reactive<{ field: PodcastListSortField, order: SortOrder }>({
-  field: 'last_played_at',
-  order: 'desc',
-})
-
 const podcasts = computed(() => orderBy(
   keywords.value ? fuzzy.search(keywords.value) : podcastStore.state.podcasts,
-  sortParams.field,
-  sortParams.order,
+  preferences.podcasts_sort_field,
+  preferences.podcasts_sort_order,
 ))
 
 const noPodcasts = computed(() => !loading.value && podcasts.value.length === 0)
 
-const init = async () => {
+const fetchPodcasts = async () => {
   if (loading.value) {
     return
   }
@@ -87,7 +104,8 @@ const init = async () => {
   loading.value = true
 
   try {
-    fuzzy.setDocuments(await podcastStore.fetchAll())
+    await podcastStore.fetchAll(preferences.podcasts_favorites_only)
+    fuzzy.setDocuments(podcastStore.state.podcasts)
   } catch (error: any) {
     useErrorHandler().handleHttpError(error)
   } finally {
@@ -98,14 +116,22 @@ const init = async () => {
 const requestAddPodcastForm = () => eventBus.emit('MODAL_SHOW_ADD_PODCAST_FORM')
 
 const sort = (field: PodcastListSortField, order: SortOrder) => {
-  sortParams.order = order
-  sortParams.field = field
+  preferences.podcasts_sort_order = order
+  preferences.podcasts_sort_field = field
+}
+
+const toggleFavoritesOnly = async () => {
+  preferences.podcasts_favorites_only = !preferences.podcasts_favorites_only
+
+  podcastStore.reset()
+  await nextTick()
+  await fetchPodcasts()
 }
 
 onScreenActivated('Podcasts', async () => {
   if (!initialized) {
     initialized = true
-    await init()
+    await fetchPodcasts()
   }
 })
 </script>

@@ -1,6 +1,7 @@
 import isMobile from 'ismobilejs'
 import slugify from 'slugify'
-import { merge, orderBy, sumBy, take, unionBy, uniqBy } from 'lodash'
+import { differenceBy, merge, orderBy, sumBy, take, unionBy, uniqBy } from 'lodash'
+import type { Reactive } from 'vue'
 import { reactive, watch } from 'vue'
 import { arrayify, use } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
@@ -55,8 +56,9 @@ export interface GenreSongListPaginateParams extends Record<string, any> {
 export const songStore = {
   vault: new Map<Playable['id'], Playable>(),
 
-  state: reactive<{ songs: Playable[] }>({
-    songs: [],
+  state: reactive<{ playables: Playable[], favorites: Playable[] }>({
+    playables: [],
+    favorites: [],
   }),
 
   getFormattedLength: (playables: MaybeArray<Playable>) => secondsToHumanReadable(sumBy(arrayify(playables), 'length')),
@@ -247,7 +249,7 @@ export const songStore = {
     return await cache.remember<Episode[]>(
       [`podcast.episodes`, id],
       async () => this.syncWithVault(
-        await http.get<Episode[]>(`podcasts/${id}/episodes${refresh ? '?refresh=1' : ''}`),
+        await http.get<Episode[]>(`podcasts/${id}/episodes${refresh ? '?refresh=true' : ''}`),
       ),
     )
   },
@@ -273,8 +275,8 @@ export const songStore = {
   },
 
   async paginate (params: SongListPaginateParams) {
-    const resource = await http.get<PaginatorResource<Song>>(`songs?${new URLSearchParams(params).toString()}`)
-    this.state.songs = unionBy(this.state.songs, this.syncWithVault(resource.data), 'id')
+    const resource = await http.get<PaginatorResource<Playable>>(`songs?${new URLSearchParams(params).toString()}`)
+    this.state.playables = unionBy(this.state.playables, this.syncWithVault(resource.data), 'id')
 
     return resource.links.next ? ++resource.meta.current_page : null
   },
@@ -358,5 +360,51 @@ export const songStore = {
 
   async fetchInFolder (path: string) {
     return this.syncWithVault(await http.get<Song[]>(`songs/in-folder?path=${path}`))
+  },
+
+  async fetchFavorites () {
+    this.state.favorites = this.syncWithVault(await http.get<Playable[]>('songs/favorite'))
+    return this.state.favorites
+  },
+
+  async toggleFavorite (playable: Reactive<Playable>) {
+    // Don't wait for the HTTP response to update the status, just toggle right away.
+    // We'll update the liked status again after the HTTP request.
+    playable.favorite = !playable.favorite
+
+    const favorite = await http.post<Favorite | null>(`favorites/toggle`, {
+      type: 'playable',
+      id: playable.id,
+    })
+
+    playable.favorite = Boolean(favorite)
+
+    this.state.favorites = playable.favorite
+      ? unionBy(this.state.favorites, arrayify(playable), 'id')
+      : differenceBy(this.state.favorites, arrayify(playable), 'id')
+  },
+
+  async favorite (playables: MaybeArray<Playable>) {
+    playables = arrayify(playables)
+    playables.forEach(playable => (playable.favorite = true))
+
+    await http.post('favorites', {
+      type: 'playable',
+      ids: playables.map(playable => playable.id),
+    })
+
+    this.state.favorites = unionBy(this.state.favorites, playables, 'id')
+  },
+
+  async undoFavorite (playables: MaybeArray<Playable>) {
+    playables = arrayify(playables)
+    playables.forEach(playable => (playable.favorite = true))
+
+    await http.delete('favorites', {
+      type: 'playable',
+      ids: playables.map(playable => playable.id),
+    })
+
+    this.state.favorites = differenceBy(this.state.favorites, playables, 'id')
   },
 }

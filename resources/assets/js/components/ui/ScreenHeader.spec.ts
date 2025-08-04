@@ -1,11 +1,11 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import ScreenHeader from './ScreenHeader.vue'
+import Component from './ScreenHeader.vue'
 
 new class extends UnitTestCase {
   protected test () {
     it('renders', () => {
-      expect(this.render(ScreenHeader, {
+      expect(this.render(Component, {
         slots: {
           default: 'This Header',
           meta: '<p>Some meta</p>',

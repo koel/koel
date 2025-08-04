@@ -19,11 +19,13 @@ class ArtistController extends Controller
         return ArtistResource::collection($this->repository->getForListing(
             sortColumn: $request->sort ?? 'name',
             sortDirection: $request->order ?? 'asc',
+            favoritesOnly: $request->boolean('favorites_only'),
         ));
     }
 
     public function show(Artist $artist)
     {
-        return ArtistResource::make($artist);
+        // enrich the artist with its user context
+        return ArtistResource::make($this->repository->getOne($artist->id));
     }
 }

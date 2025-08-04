@@ -9,9 +9,7 @@ import { playbackService } from '@/services/playbackService'
 import { commonStore } from '@/stores/commonStore'
 import { songStore } from '@/stores/songStore'
 import { resourcePermissionService } from '@/services/resourcePermissionService'
-import ArtistContextMenu from './ArtistContextMenu.vue'
-
-let artist: Artist
+import Component from './ArtistContextMenu.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -22,7 +20,7 @@ new class extends UnitTestCase {
       const fetchMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 
-      await this.renderComponent()
+      const { artist } = await this.renderComponent()
       await screen.getByText('Play All').click()
       await this.tick()
 
@@ -35,7 +33,7 @@ new class extends UnitTestCase {
       const fetchMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 
-      await this.renderComponent()
+      const { artist } = await this.renderComponent()
       await screen.getByText('Shuffle All').click()
       await this.tick()
 
@@ -46,7 +44,7 @@ new class extends UnitTestCase {
     it('downloads', async () => {
       const mock = this.mock(downloadService, 'fromArtist')
 
-      await this.renderComponent()
+      const { artist } = await this.renderComponent()
       await screen.getByText('Download').click()
 
       expect(mock).toHaveBeenCalledWith(artist)
@@ -61,7 +59,7 @@ new class extends UnitTestCase {
 
     it('goes to artist', async () => {
       const mock = this.mock(Router, 'go')
-      await this.renderComponent()
+      const { artist } = await this.renderComponent()
 
       await screen.getByText('Go to Artist').click()
 
@@ -83,17 +81,21 @@ new class extends UnitTestCase {
     })
   }
 
-  private async renderComponent (_artist?: Artist) {
+  private async renderComponent (artist?: Artist) {
     this.mock(resourcePermissionService, 'check').mockReturnValue(true)
 
-    artist = _artist || factory('artist', {
+    artist = artist || factory('artist', {
       name: 'Accept',
+      favorite: false,
     })
 
-    const rendered = this.render(ArtistContextMenu)
+    const rendered = this.render(Component)
     eventBus.emit('ARTIST_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, artist)
     await this.tick(2)
 
-    return rendered
+    return {
+      ...rendered,
+      artist,
+    }
   }
 }

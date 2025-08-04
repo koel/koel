@@ -7,11 +7,9 @@ import { playbackService } from '@/services/playbackService'
 import { CurrentPlayableKey } from '@/symbols'
 import { commonStore } from '@/stores/commonStore'
 import { songStore } from '@/stores/songStore'
-import { favoriteStore } from '@/stores/favoriteStore'
 import { recentlyPlayedStore } from '@/stores/recentlyPlayedStore'
-import { queueStore } from '@/stores/queueStore'
 import Router from '@/router'
-import FooterPlayButton from './FooterPlayButton.vue'
+import Component from './FooterPlayButton.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -52,37 +50,15 @@ new class extends UnitTestCase {
 
     it.each<[
       ScreenName,
-        typeof favoriteStore | typeof recentlyPlayedStore,
-        MethodOf<typeof favoriteStore | typeof recentlyPlayedStore>,
+        typeof songStore | typeof recentlyPlayedStore,
+        MethodOf<typeof songStore | typeof recentlyPlayedStore>,
     ]>([
-      ['Favorites', favoriteStore, 'fetch'],
+      ['Favorites', songStore, 'fetchFavorites'],
       ['RecentlyPlayed', recentlyPlayedStore, 'fetch'],
     ])('initiates playback for %s screen', async (screenName, store, fetchMethod) => {
       commonStore.state.song_count = 10
       const songs = factory('song', 3)
       const fetchMock = this.mock(store, fetchMethod).mockResolvedValue(songs)
-      const playMock = this.mock(playbackService, 'queueAndPlay')
-      const goMock = this.mock(Router, 'go')
-
-      await this.router.activateRoute({
-        screen: screenName,
-        path: '_',
-      })
-
-      this.renderComponent()
-
-      await this.user.click(screen.getByRole('button'))
-      await waitFor(() => {
-        expect(fetchMock).toHaveBeenCalled()
-        expect(playMock).toHaveBeenCalledWith(songs)
-        expect(goMock).toHaveBeenCalledWith('/#/queue')
-      })
-    })
-
-    it.each<[ScreenName]>([['Queue'], ['Songs'], ['Albums']])('initiates playback %s screen', async screenName => {
-      commonStore.state.song_count = 10
-      const songs = factory('song', 3)
-      const fetchMock = this.mock(queueStore, 'fetchRandom').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
       const goMock = this.mock(Router, 'go')
 
@@ -123,7 +99,7 @@ new class extends UnitTestCase {
   }
 
   private renderComponent (currentPlayable: Playable | null = null) {
-    return this.render(FooterPlayButton, {
+    return this.render(Component, {
       global: {
         provide: {
           [<symbol>CurrentPlayableKey]: ref(currentPlayable),

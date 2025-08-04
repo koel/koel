@@ -5,7 +5,7 @@ import factory from '@/__tests__/factory'
 import { genreStore } from '@/stores/genreStore'
 import { songStore } from '@/stores/songStore'
 import { playbackService } from '@/services/playbackService'
-import GenreScreen from './GenreScreen.vue'
+import Component from './GenreScreen.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -57,7 +57,7 @@ new class extends UnitTestCase {
       screen: 'Genre',
     }, { id: genre.id })
 
-    const rendered = this.render(GenreScreen, {
+    const rendered = this.render(Component, {
       global: {
         stubs: {
           SongList: this.stub('song-list'),

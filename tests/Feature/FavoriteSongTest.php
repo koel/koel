@@ -3,7 +3,8 @@
 namespace Tests\Feature;
 
 use App\Http\Resources\SongResource;
-use App\Models\Interaction;
+use App\Models\Favorite;
+use App\Models\Song;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -15,7 +16,13 @@ class FavoriteSongTest extends TestCase
     public function index(): void
     {
         $user = create_user();
-        Interaction::factory(5)->for($user)->create(['liked' => true]);
+        $songs = Song::factory(2)->for($user, 'owner')->create();
+
+        $songs->each(static function (Song $song) use ($user): void {
+            Favorite::factory()->for($user)->create([
+                'favoriteable_id' => $song->id,
+            ]);
+        });
 
         $this->getAs('api/songs/favorite', $user)
             ->assertJsonStructure([0 => SongResource::JSON_STRUCTURE]);

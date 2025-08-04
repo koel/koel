@@ -1,12 +1,12 @@
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import BtnGroup from './BtnGroup.vue'
+import Component from './BtnGroup.vue'
 import Btn from './Btn.vue'
 
 new class extends UnitTestCase {
   protected test () {
     it('renders', () => {
-      expect(this.render(BtnGroup, {
+      expect(this.render(Component, {
         slots: {
           default: ['Green', 'Orange', 'Blue'].map(text => this.renderButtonToSlot(text)),
         },

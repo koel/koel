@@ -2,16 +2,10 @@ import { expect, it, vi } from 'vitest'
 import { screen } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { preferenceStore } from '@/stores/preferenceStore'
-import { http } from '@/services/http'
-import SupportKoel from './SupportKoel.vue'
+import Component from './SupportKoel.vue'
 
 new class extends UnitTestCase {
   protected beforeEach () {
-    // Prevent actual HTTP requests from being made
-    this.setReadOnlyProperty(http, 'silently', {
-      patch: vi.fn(),
-    })
-
     super.beforeEach(() => vi.useFakeTimers())
   }
 
@@ -54,7 +48,7 @@ new class extends UnitTestCase {
 
   private async renderComponent () {
     preferenceStore.initialized.value = true
-    const rendered = this.render(SupportKoel)
+    const rendered = this.render(Component)
 
     vi.advanceTimersByTime(30 * 60 * 1000)
     await this.tick()

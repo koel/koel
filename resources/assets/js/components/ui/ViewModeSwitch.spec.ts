@@ -1,12 +1,12 @@
 import { expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import ViewModeSwitch from './ViewModeSwitch.vue'
+import Component from './ViewModeSwitch.vue'
 
 new class extends UnitTestCase {
   protected test () {
     it.each<[ArtistAlbumViewMode]>([['thumbnails'], ['list']])('renders %s mode', mode => {
-      const { html } = this.render(ViewModeSwitch, {
+      const { html } = this.render(Component, {
         props: {
           modelValue: mode,
         },
@@ -16,7 +16,7 @@ new class extends UnitTestCase {
     })
 
     it('emits the correct event', async () => {
-      const { emitted } = this.render(ViewModeSwitch, {
+      const { emitted } = this.render(Component, {
         props: {
           modelValue: 'thumbnails',
         },

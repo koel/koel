@@ -16,9 +16,9 @@
 
 <script lang="ts" setup>
 import { computed, toRef } from 'vue'
-import { favoriteStore } from '@/stores/favoriteStore'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { playlistStore } from '@/stores/playlistStore'
+import { songStore } from '@/stores/songStore'
 
 import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
 import PlaylistFolderSidebarItem from './PlaylistFolderSidebarItem.vue'
@@ -28,7 +28,7 @@ import SidebarSection from '@/components/layout/main-wrapper/sidebar/SidebarSect
 
 const folders = toRef(playlistFolderStore.state, 'folders')
 const playlists = toRef(playlistStore.state, 'playlists')
-const favorites = toRef(favoriteStore.state, 'playables')
+const favorites = toRef(songStore.state, 'favorites')
 
 const orphanPlaylists = computed(() => playlists.value.filter(({ folder_id }) => {
   if (folder_id === null) {

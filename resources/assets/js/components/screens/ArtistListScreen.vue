@@ -5,8 +5,28 @@
         Artists
         <template #controls>
           <div v-if="!loading" class="flex gap-2">
-            <ArtistListSorter :field="sortParams.field" :order="sortParams.order" @sort="sort" />
-            <ViewModeSwitch v-model="viewMode" />
+            <Btn
+              v-koel-tooltip
+              :title="favoritesOnly ? 'Show all' : 'Show favorites only'"
+              class="border border-white/10"
+              small
+              transparent
+              @click.prevent="toggleFavoritesOnly"
+            >
+              <Icon
+                :icon="favoritesOnly ? faStar : faEmptyStar"
+                :class="favoritesOnly && 'text-k-highlight'"
+                size="sm"
+              />
+            </Btn>
+
+            <ArtistListSorter
+              :field="preferences.artists_sort_field"
+              :order="preferences.artists_sort_order"
+              @sort="sort"
+            />
+
+            <ViewModeSwitch v-model="preferences.artists_view_mode" />
           </div>
         </template>
       </ScreenHeader>
@@ -23,7 +43,7 @@
     </ScreenEmptyState>
 
     <div v-else ref="gridContainer" v-koel-overflow-fade class="-m-6 overflow-auto">
-      <ArtistGrid :view-mode="viewMode" data-testid="artist-list">
+      <ArtistGrid :view-mode="preferences.artists_view_mode" data-testid="artist-list">
         <template v-if="showSkeletons">
           <ArtistCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
         </template>
@@ -37,8 +57,8 @@
 </template>
 
 <script lang="ts" setup>
-import { faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons'
-import { computed, nextTick, reactive, ref, toRef, watch } from 'vue'
+import { faMicrophoneSlash, faStar } from '@fortawesome/free-solid-svg-icons'
+import { computed, nextTick, ref, toRef } from 'vue'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
@@ -55,25 +75,27 @@ import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import ArtistGrid from '@/components/ui/album-artist/AlbumOrArtistGrid.vue'
 import ArtistListSorter from '@/components/artist/ArtistListSorter.vue'
+import { faStar as faEmptyStar } from '@fortawesome/free-regular-svg-icons'
+import Btn from '@/components/ui/form/Btn.vue'
 
 const { isAdmin } = useAuthorization()
 
 const gridContainer = ref<HTMLDivElement>()
 const grid = ref<InstanceType<typeof ArtistGrid>>()
-const viewMode = ref<ArtistAlbumViewMode>('thumbnails')
 const artists = toRef(artistStore.state, 'artists')
 
-const sortParams = reactive<{ field: ArtistListSortField, order: SortOrder }>({
-  field: 'name',
-  order: 'asc',
-})
+const favoritesOnly = ref(false)
 
 let initialized = false
 const loading = ref(false)
 const page = ref<number | null>(1)
 
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
-const itemLayout = computed<ArtistAlbumCardLayout>(() => viewMode.value === 'thumbnails' ? 'full' : 'compact')
+
+const itemLayout = computed<ArtistAlbumCardLayout>(
+  () => preferences.artists_view_mode === 'thumbnails' ? 'full' : 'compact',
+)
+
 const moreArtistsAvailable = computed(() => page.value !== null)
 const showSkeletons = computed(() => loading.value && artists.value.length === 0)
 
@@ -85,9 +107,10 @@ const fetchArtists = async () => {
   loading.value = true
 
   page.value = await artistStore.paginate({
+    favorites_only: favoritesOnly.value,
     page: page!.value || 1,
-    sort: sortParams.field,
-    order: sortParams.order,
+    sort: preferences.artists_sort_field,
+    order: preferences.artists_sort_order,
   })
 
   loading.value = false
@@ -106,8 +129,16 @@ const resetState = async () => {
 }
 
 const sort = async (field: ArtistListSortField, order: SortOrder) => {
-  preferences.albums_sort_field = sortParams.field = field
-  preferences.albums_sort_order = sortParams.order = order
+  preferences.artists_sort_field = field
+  preferences.artists_sort_order = order
+
+  await resetState()
+  await nextTick()
+  await fetchArtists()
+}
+
+const toggleFavoritesOnly = async () => {
+  favoritesOnly.value = !favoritesOnly.value
 
   await resetState()
   await nextTick()
@@ -119,7 +150,6 @@ useRouter().onScreenActivated('Artists', async () => {
     return
   }
   if (!initialized) {
-    viewMode.value = preferences.artists_view_mode || 'thumbnails'
     initialized = true
 
     try {
@@ -130,6 +160,4 @@ useRouter().onScreenActivated('Artists', async () => {
     }
   }
 })
-
-watch(viewMode, () => preferences.artists_view_mode = viewMode.value)
 </script>

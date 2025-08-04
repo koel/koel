@@ -8,7 +8,7 @@ use App\Events\MultipleSongsLiked;
 use App\Events\MultipleSongsUnliked;
 use App\Events\NewPlaylistCollaboratorJoined;
 use App\Events\PlaybackStarted;
-use App\Events\SongLikeToggled;
+use App\Events\SongFavoriteToggled;
 use App\Listeners\DeleteNonExistingRecordsPostScan;
 use App\Listeners\LoveMultipleTracksOnLastfm;
 use App\Listeners\LoveTrackOnLastfm;
@@ -34,7 +34,7 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as BaseServiceP
 class EventServiceProvider extends BaseServiceProvider
 {
     protected $listen = [
-        SongLikeToggled::class => [
+        SongFavoriteToggled::class => [
             LoveTrackOnLastfm::class,
         ],
 

@@ -4,11 +4,11 @@ import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { authService } from '@/services/authService'
 import { logger } from '@/utils/logger'
-import LoginFrom from './LoginForm.vue'
+import Component from './LoginForm.vue'
 
 new class extends UnitTestCase {
   protected test () {
-    it('renders', () => expect(this.render(LoginFrom).html()).toMatchSnapshot())
+    it('renders', () => expect(this.render(Component).html()).toMatchSnapshot())
 
     it('logs in', async () => {
       expect((await this.submitForm(this.mock(authService, 'login'))).emitted().loggedin).toBeTruthy()
@@ -26,7 +26,7 @@ new class extends UnitTestCase {
     })
 
     it('shows forgot password form', async () => {
-      this.render(LoginFrom)
+      this.render(Component)
       await this.user.click(screen.getByText('Forgot password?'))
 
       await waitFor(() => screen.getByTestId('forgot-password-form'))
@@ -34,7 +34,7 @@ new class extends UnitTestCase {
 
     it('does not show forgot password form if mailer is not configure', async () => {
       window.MAILER_CONFIGURED = false
-      this.render(LoginFrom)
+      this.render(Component)
 
       expect(screen.queryByText('Forgot password?')).toBeNull()
       window.MAILER_CONFIGURED = true
@@ -43,7 +43,7 @@ new class extends UnitTestCase {
     it('shows Google login button', async () => {
       window.SSO_PROVIDERS = ['Google']
 
-      const { html } = this.render(LoginFrom, {
+      const { html } = this.render(Component, {
         global: {
           stubs: {
             GoogleLoginButton: this.stub('google-login-button'),
@@ -58,7 +58,7 @@ new class extends UnitTestCase {
   }
 
   private async submitForm (loginMock: Mock) {
-    const rendered = this.render(LoginFrom)
+    const rendered = this.render(Component)
 
     await this.type(screen.getByPlaceholderText('Your email address'), 'john@doe.com')
     await this.type(screen.getByPlaceholderText('Your password'), 'secret')

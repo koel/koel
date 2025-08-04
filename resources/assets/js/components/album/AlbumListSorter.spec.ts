@@ -1,12 +1,12 @@
 import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import AlbumListSorter from './AlbumListSorter.vue'
+import Component from './AlbumListSorter.vue'
 
 new class extends UnitTestCase {
   protected test () {
     it('renders and emits the proper event', async () => {
-      const { emitted } = this.render(AlbumListSorter, {
+      const { emitted } = this.render(Component, {
         props: {
           field: 'name',
           order: 'asc',

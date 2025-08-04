@@ -6,8 +6,9 @@
     @click.prevent="playOrPause"
   >
     <img
-      alt="Cover image"
+      v-if="src"
       :src="src"
+      alt="Cover image"
       class="w-full aspect-square object-cover"
       loading="lazy"
     >

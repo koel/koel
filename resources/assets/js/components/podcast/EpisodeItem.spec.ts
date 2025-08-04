@@ -7,12 +7,11 @@ import { preferenceStore } from '@/stores/preferenceStore'
 import Component from './EpisodeItem.vue'
 
 new class extends UnitTestCase {
-  private renderComponent (episode: Episode, podcast?: Podcast) {
-    podcast = podcast || factory('podcast', {
-      id: episode.id,
-    })
+  private renderComponent (episode?: Episode, podcast?: Podcast) {
+    episode = episode || factory('episode')
+    podcast = podcast || factory('podcast', { id: episode.podcast_id })
 
-    this.render(Component, {
+    const rendered = this.render(Component, {
       props: {
         episode,
         podcast,
@@ -23,31 +22,29 @@ new class extends UnitTestCase {
         },
       },
     })
+
+    return {
+      ...rendered,
+      episode,
+      podcast,
+    }
   }
 
   protected test () {
     it('pauses playback', async () => {
       const pauseMock = this.mock(playbackService, 'pause')
+      this.renderComponent(factory('episode', { playback_state: 'Playing' }))
 
-      this.renderComponent(factory('episode', {
-        id: 'foo',
-        playback_state: 'Playing',
-      }))
-
-      await this.user.click(screen.getByRole('button'))
+      await this.user.click(screen.getByTestId('play-button'))
 
       expect(pauseMock).toHaveBeenCalled()
     })
 
     it('resumes playback', async () => {
       const resumeMock = this.mock(playbackService, 'resume')
+      this.renderComponent(factory('episode', { playback_state: 'Paused' }))
 
-      this.renderComponent(factory('episode', {
-        id: 'foo',
-        playback_state: 'Paused',
-      }))
-
-      await this.user.click(screen.getByRole('button'))
+      await this.user.click(screen.getByTestId('play-button'))
 
       expect(resumeMock).toHaveBeenCalled()
     })
@@ -73,7 +70,7 @@ new class extends UnitTestCase {
         })
 
         this.renderComponent(episode, podcast)
-        await this.user.click(screen.getByRole('button'))
+        await this.user.click(screen.getByTestId('play-button'))
 
         expect(playMock).toHaveBeenCalledWith(episode, startPlaybackPosition)
       },
@@ -82,9 +79,8 @@ new class extends UnitTestCase {
     it('plays from beginning if no saved progress', async () => {
       const playMock = this.mock(playbackService, 'play')
 
-      const episode = factory('episode')
-      this.renderComponent(episode)
-      await this.user.click(screen.getByRole('button'))
+      const { episode } = this.renderComponent()
+      await this.user.click(screen.getByTestId('play-button'))
 
       expect(playMock).toHaveBeenCalledWith(episode, 0)
     })
@@ -109,7 +105,7 @@ new class extends UnitTestCase {
     })
 
     it('does not show progress bar if no progress', async () => {
-      this.renderComponent(factory('episode'))
+      this.renderComponent()
       expect(screen.queryByTestId('episode-progress-stub')).toBeNull()
     })
   }

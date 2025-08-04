@@ -1,7 +1,7 @@
 import { expect, it, vi } from 'vitest'
 import { screen } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import MessageToast from './MessageToast.vue'
+import Component from './MessageToast.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -26,7 +26,7 @@ new class extends UnitTestCase {
   }
 
   private renderComponent () {
-    return this.render(MessageToast, {
+    return this.render(Component, {
       props: {
         message: {
           id: 101,

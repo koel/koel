@@ -2,16 +2,10 @@
 
 namespace App\Observers;
 
-use App\Helpers\Ulid;
 use App\Models\Album;
 
 class AlbumObserver
 {
-    public function creating(Album $album): void
-    {
-        $album->public_id ??= Ulid::generate();
-    }
-
     public function deleted(Album $album): void
     {
         if (!$album->has_cover) {

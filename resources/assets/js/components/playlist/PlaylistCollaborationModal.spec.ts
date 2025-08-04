@@ -3,12 +3,12 @@ import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { ModalContextKey } from '@/symbols'
-import Modal from './PlaylistCollaborationModal.vue'
+import Component from './PlaylistCollaborationModal.vue'
 
 new class extends UnitTestCase {
   protected test () {
     it('renders the modal', async () => {
-      const { html } = this.render(Modal, {
+      const { html } = this.render(Component, {
         global: {
           provide: {
             [<symbol>ModalContextKey]: [ref({ playlist: factory('playlist') })],

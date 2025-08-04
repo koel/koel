@@ -2,13 +2,13 @@ import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { overviewStore } from '@/stores/overviewStore'
-import RecentlyAddedAlbums from './RecentlyAddedAlbums.vue'
+import Component from './RecentlyAddedAlbums.vue'
 
 new class extends UnitTestCase {
   protected test () {
     it('displays the albums', () => {
       overviewStore.state.recentlyAddedAlbums = factory('album', 6)
-      expect(this.render(RecentlyAddedAlbums, {
+      expect(this.render(Component, {
         global: {
           stubs: {
             AlbumCard: this.stub('album-card'),

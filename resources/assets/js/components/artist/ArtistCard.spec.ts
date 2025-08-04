@@ -7,21 +7,24 @@ import { playbackService } from '@/services/playbackService'
 import { commonStore } from '@/stores/commonStore'
 import { songStore } from '@/stores/songStore'
 import { eventBus } from '@/utils/eventBus'
-import ArtistCard from './ArtistCard.vue'
+import { artistStore } from '@/stores/artistStore'
+import Component from './ArtistCard.vue'
 
 new class extends UnitTestCase {
   private createArtist (overrides: Partial<Artist> = {}): Artist {
     return factory('artist', {
       id: 'led-zeppelin',
       name: 'Led Zeppelin',
+      favorite: false,
       ...overrides,
     })
   }
 
   private renderComponent (artist?: Artist) {
-    return this.render(ArtistCard, {
+    artist = artist || this.createArtist()
+    const rendered = this.render(Component, {
       props: {
-        artist: artist || this.createArtist(),
+        artist,
       },
       global: {
         stubs: {
@@ -29,6 +32,11 @@ new class extends UnitTestCase {
         },
       },
     })
+
+    return {
+      ...rendered,
+      artist,
+    }
   }
 
   protected test () {
@@ -54,12 +62,11 @@ new class extends UnitTestCase {
     })
 
     it('shuffles', async () => {
-      const artist = this.createArtist()
       const songs = factory('song', 16)
       const fetchMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 
-      this.renderComponent(artist)
+      const { artist } = this.renderComponent()
 
       await this.user.click(screen.getByTitle('Shuffle all songs by Led Zeppelin'))
       await this.tick()
@@ -69,12 +76,26 @@ new class extends UnitTestCase {
     })
 
     it('requests context menu', async () => {
-      const artist = this.createArtist()
-      this.renderComponent(artist)
+      const { artist } = this.renderComponent()
       const emitMock = this.mock(eventBus, 'emit')
       await this.trigger(screen.getByTestId('artist-album-card'), 'contextMenu')
 
       expect(emitMock).toHaveBeenCalledWith('ARTIST_CONTEXT_MENU_REQUESTED', expect.any(MouseEvent), artist)
+    })
+
+    it('if favorite, has a Favorite icon button that undoes favorite state', async () => {
+      const artist = this.createArtist({ favorite: true })
+      const toggleMock = this.mock(artistStore, 'toggleFavorite')
+      this.renderComponent(artist)
+
+      await this.user.click(screen.getByRole('button', { name: 'Undo Favorite' }))
+
+      expect(toggleMock).toHaveBeenCalledWith(artist)
+    })
+
+    it('if not favorite, does not have a Favorite icon button', async () => {
+      this.renderComponent()
+      expect(screen.queryByRole('button', { name: 'Undo Favorite' })).toBeNull()
     })
   }
 }

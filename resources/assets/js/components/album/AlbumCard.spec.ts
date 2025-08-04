@@ -7,7 +7,8 @@ import { playbackService } from '@/services/playbackService'
 import { commonStore } from '@/stores/commonStore'
 import { songStore } from '@/stores/songStore'
 import { eventBus } from '@/utils/eventBus'
-import AlbumCard from './AlbumCard.vue'
+import { albumStore } from '@/stores/albumStore'
+import Component from './AlbumCard.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -34,11 +35,10 @@ new class extends UnitTestCase {
     })
 
     it('shuffles', async () => {
-      const album = this.createAlbum()
       const songs = factory('song', 10)
       const fetchMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
       const shuffleMock = this.mock(playbackService, 'queueAndPlay').mockResolvedValue(void 0)
-      this.renderComponent(album, false)
+      const { album } = this.renderComponent(undefined, false)
 
       await this.user.click(screen.getByTitle('Shuffle all songs in the album IV'))
       await this.tick()
@@ -48,8 +48,7 @@ new class extends UnitTestCase {
     })
 
     it('requests context menu', async () => {
-      const album = this.createAlbum()
-      this.renderComponent(album)
+      const { album } = this.renderComponent()
       const emitMock = this.mock(eventBus, 'emit')
       await this.trigger(screen.getByTestId('artist-album-card'), 'contextMenu')
 
@@ -65,6 +64,21 @@ new class extends UnitTestCase {
       this.renderComponent(this.createAlbum({ year: 1971 }))
       expect(screen.queryByText('1971')).toBeNull()
     })
+
+    it('if favorite, has a Favorite icon button that undoes favorite state', async () => {
+      const album = this.createAlbum({ favorite: true })
+      const toggleMock = this.mock(albumStore, 'toggleFavorite')
+      this.renderComponent(album)
+
+      await this.user.click(screen.getByRole('button', { name: 'Undo Favorite' }))
+
+      expect(toggleMock).toHaveBeenCalledWith(album)
+    })
+
+    it('if not favorite, does not have a Favorite icon button', async () => {
+      this.renderComponent()
+      expect(screen.queryByRole('button', { name: 'Undo Favorite' })).toBeNull()
+    })
   }
 
   private createAlbum (overrides: Partial<Album> = {}): Album {
@@ -74,12 +88,15 @@ new class extends UnitTestCase {
       artist_id: 'led-zeppelin',
       artist_name: 'Led Zeppelin',
       cover: 'https://example.com/cover.jpg',
+      favorite: false,
       ...overrides,
     })
   }
 
   private renderComponent (album?: Album, showReleaseYear = false) {
-    return this.render(AlbumCard, {
+    album = album || this.createAlbum()
+
+    const render = this.render(Component, {
       props: {
         showReleaseYear,
         album: album || this.createAlbum(),
@@ -90,5 +107,10 @@ new class extends UnitTestCase {
         },
       },
     })
+
+    return {
+      ...render,
+      album,
+    }
   }
 }

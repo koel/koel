@@ -15,6 +15,12 @@ class CollaborativeSongResource extends SongResource
         ],
     ];
 
+    /** @inheritdoc */
+    public static function collection($resource): CollaborativeSongResourceCollection
+    {
+        return CollaborativeSongResourceCollection::make($resource);
+    }
+
     /** @return array<mixed> */
     public function toArray($request): array
     {
@@ -28,7 +34,7 @@ class CollaborativeSongResource extends SongResource
                     ),
                 ),
                 'added_at' => $this->song->added_at,
-                'fmt_added_at' => $this->song->added_at ? Carbon::make($this->song->added_at)->diffForHumans() : null,
+                'fmt_added_at' => $this->song->added_at ? Carbon::make($this->song->added_at)?->diffForHumans() : null,
             ],
         ]);
     }

@@ -8,10 +8,8 @@ import { downloadService } from '@/services/downloadService'
 import { playbackService } from '@/services/playbackService'
 import { commonStore } from '@/stores/commonStore'
 import { songStore } from '@/stores/songStore'
-import AlbumContextMenu from './AlbumContextMenu.vue'
 import { resourcePermissionService } from '@/services/resourcePermissionService'
-
-let album: Album
+import Component from './AlbumContextMenu.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -22,7 +20,7 @@ new class extends UnitTestCase {
       const fetchMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 
-      await this.renderComponent()
+      const { album } = await this.renderComponent()
       await this.user.click(screen.getByText('Play All'))
       await this.tick()
 
@@ -35,7 +33,7 @@ new class extends UnitTestCase {
       const fetchMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 
-      await this.renderComponent()
+      const { album } = await this.renderComponent()
       await this.user.click(screen.getByText('Shuffle All'))
       await this.tick()
 
@@ -45,7 +43,7 @@ new class extends UnitTestCase {
 
     it('downloads', async () => {
       const downloadMock = this.mock(downloadService, 'fromAlbum')
-      await this.renderComponent()
+      const { album } = await this.renderComponent()
 
       await this.user.click(screen.getByText('Download'))
 
@@ -61,7 +59,7 @@ new class extends UnitTestCase {
 
     it('goes to album', async () => {
       const mock = this.mock(Router, 'go')
-      await this.renderComponent()
+      const { album } = await this.renderComponent()
 
       await this.user.click(screen.getByText('Go to Album'))
 
@@ -78,7 +76,7 @@ new class extends UnitTestCase {
 
     it('goes to artist', async () => {
       const mock = this.mock(Router, 'go')
-      await this.renderComponent()
+      const { album } = await this.renderComponent()
 
       await this.user.click(screen.getByText('Go to Artist'))
 
@@ -86,7 +84,7 @@ new class extends UnitTestCase {
     })
 
     it('requests edit form', async () => {
-      await this.renderComponent()
+      const { album } = await this.renderComponent()
 
       // for the "Edit…" menu item to show up
       await this.tick(2)
@@ -98,17 +96,21 @@ new class extends UnitTestCase {
     })
   }
 
-  private async renderComponent (_album?: Album) {
+  private async renderComponent (album?: Album) {
     this.mock(resourcePermissionService, 'check').mockReturnValue(true)
 
-    album = _album || factory('album', {
+    album = album || factory('album', {
       name: 'IV',
+      favorite: false,
     })
 
-    const rendered = this.beAdmin().render(AlbumContextMenu)
+    const rendered = this.beAdmin().render(Component)
     eventBus.emit('ALBUM_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, album)
     await this.tick(2)
 
-    return rendered
+    return {
+      ...rendered,
+      album,
+    }
   }
 }

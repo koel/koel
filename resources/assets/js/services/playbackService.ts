@@ -31,10 +31,6 @@ class PlaybackService {
   private initialized = false
   private upNext: Ref<Playable | null> = ref(null)
 
-  public get isTranscoding () {
-    return isMobile.any && preferences.transcode_on_mobile
-  }
-
   /**
    * The next item in the queue.
    * If we're in REPEAT_ALL mode and there's no next item, just get the first item.
@@ -402,11 +398,12 @@ class PlaybackService {
 
     media.addEventListener('ended', () => {
       if (
-        isSong(queueStore.current!)
+        queueStore.current
+        && isSong(queueStore.current)
         && commonStore.state.uses_last_fm
         && userStore.current.preferences!.lastfm_session_key
       ) {
-        songStore.scrobble(queueStore.current!)
+        songStore.scrobble(queueStore.current)
       }
 
       preferences.repeat_mode === 'REPEAT_ONE' ? this.restart() : this.playNext()
@@ -419,16 +416,10 @@ class PlaybackService {
         return
       }
 
-      if (!currentPlayable.play_count_registered && !this.isTranscoding) {
-        // if we've passed 25% of the playable, it's safe to say it has been "played".
-        // Refer to https://github.com/koel/koel/issues/1087
-        if (!media.duration || media.currentTime * 4 >= media.duration) {
-          this.registerPlay(currentPlayable)
-        }
-      }
-
-      if (!media.duration || !media.currentTime) {
-        return
+      // If we've passed 25% of the playable, it's safe to say it has been "played".
+      // See https://github.com/koel/koel/issues/1087
+      if (!currentPlayable.play_count_registered && media.currentTime * 4 >= media.duration) {
+        this.registerPlay(currentPlayable)
       }
 
       if (Math.ceil(media.currentTime) % 5 === 0) {
@@ -458,7 +449,7 @@ class PlaybackService {
       this.upNext.value = media.currentTime + 15 > media.duration ? nextPlayable : null
 
       // Preload the next playable if we're near the end of the current playback.
-      if (media.currentTime + PRELOAD_BUFFER > media.duration && !nextPlayable.preloaded && !this.isTranscoding) {
+      if (media.currentTime + PRELOAD_BUFFER > media.duration && !nextPlayable.preloaded) {
         this.preload(nextPlayable)
       }
     }

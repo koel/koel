@@ -6,9 +6,7 @@ import { eventBus } from '@/utils/eventBus'
 import { playlistStore } from '@/stores/playlistStore'
 import { songStore } from '@/stores/songStore'
 import { downloadService } from '@/services/downloadService'
-import PlaylistScreen from './PlaylistScreen.vue'
-
-let playlist: Playlist
+import Component from './PlaylistScreen.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -22,7 +20,7 @@ new class extends UnitTestCase {
     })
 
     it('displays the empty state if playlist is empty', async () => {
-      await this.renderComponent([])
+      await this.renderComponent()
 
       await waitFor(() => {
         screen.getByTestId('screen-empty-state')
@@ -32,7 +30,7 @@ new class extends UnitTestCase {
 
     it('downloads the playlist', async () => {
       const downloadMock = this.mock(downloadService, 'fromPlaylist')
-      await this.renderComponent(factory('song', 10))
+      const { playlist } = await this.renderComponent(factory('song', 10))
 
       await this.tick(2)
       await this.user.click(screen.getByRole('button', { name: 'Download All' }))
@@ -42,7 +40,7 @@ new class extends UnitTestCase {
 
     it('deletes the playlist', async () => {
       const emitMock = this.mock(eventBus, 'emit')
-      await this.renderComponent([])
+      const { playlist } = await this.renderComponent()
 
       await this.user.click(screen.getByRole('button', { name: 'Delete this playlist' }))
 
@@ -50,7 +48,7 @@ new class extends UnitTestCase {
     })
 
     it('refreshes the playlist', async () => {
-      const { fetchMock } = await this.renderComponent([])
+      const { playlist, fetchMock } = await this.renderComponent()
 
       await this.user.click(screen.getByRole('button', { name: 'Refresh' }))
 
@@ -58,16 +56,17 @@ new class extends UnitTestCase {
     })
   }
 
-  private async renderComponent (songs: Playable[]) {
-    playlist = playlist || factory('playlist')
+  private async renderComponent (songs: Playable[] = []) {
+    const playlist = factory('playlist')
     this.be(factory('user', { id: playlist.owner_id }))
 
+    playlistStore.state.playlists = []
     playlistStore.init([playlist])
     playlist.playables = songs
 
     const fetchMock = this.mock(songStore, 'fetchForPlaylist').mockResolvedValue(songs)
 
-    const rendered = this.render(PlaylistScreen)
+    const rendered = this.render(Component)
 
     await this.router.activateRoute({
       path: `playlists/${playlist.id}`,
@@ -76,6 +75,10 @@ new class extends UnitTestCase {
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalledWith(playlist, false))
 
-    return { rendered, fetchMock }
+    return {
+      ...rendered,
+      playlist,
+      fetchMock,
+    }
   }
 }

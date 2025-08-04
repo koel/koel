@@ -4,18 +4,18 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import { settingStore } from '@/stores/settingStore'
 import { DialogBoxStub } from '@/__tests__/stubs'
 import Router from '@/router'
-import SettingsScreen from './SettingsScreen.vue'
+import Component from './SettingsScreen.vue'
 
 new class extends UnitTestCase {
   protected test () {
-    it('renders', () => expect(this.render(SettingsScreen).html()).toMatchSnapshot())
+    it('renders', () => expect(this.render(Component).html()).toMatchSnapshot())
 
     it('submits the settings form', async () => {
       const updateMock = this.mock(settingStore, 'update')
       const goMock = this.mock(Router, 'go')
 
       settingStore.state.media_path = ''
-      this.render(SettingsScreen)
+      this.render(Component)
 
       await this.type(screen.getByPlaceholderText('/path/to/your/music'), '/media')
       await this.user.click(screen.getByTestId('submit'))
@@ -32,7 +32,7 @@ new class extends UnitTestCase {
       const confirmMock = this.mock(DialogBoxStub.value, 'confirm')
 
       settingStore.state.media_path = '/old'
-      this.render(SettingsScreen)
+      this.render(Component)
 
       await this.type(screen.getByPlaceholderText('/path/to/your/music'), '/new')
       await this.user.click(screen.getByTestId('submit'))

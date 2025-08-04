@@ -8,6 +8,7 @@ export default (): Artist => {
     image: 'foo.jpg',
     created_at: faker.date.past().toISOString(),
     is_external: false,
+    favorite: faker.datatype.boolean(),
   }
 }
 

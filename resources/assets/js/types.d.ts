@@ -129,6 +129,7 @@ interface Artist {
   image: string | null
   created_at: string
   is_external: boolean
+  favorite: boolean
 }
 
 interface Album {
@@ -142,6 +143,7 @@ interface Album {
   created_at: string
   year: number | null
   is_external: boolean
+  favorite: boolean
 }
 
 interface BasePlayable {
@@ -154,7 +156,7 @@ interface BasePlayable {
   play_start_time?: number
   preloaded?: boolean
   playback_state?: PlaybackState
-  liked: boolean
+  favorite: boolean
   fmt_length?: string
   created_at: string
 }
@@ -291,6 +293,7 @@ interface Podcast {
     current_episode: Playable['id'] | null
     progresses: Record<Playable['id'], number>
   }
+  favorite: boolean
 }
 
 interface YouTubeVideo {
@@ -316,10 +319,17 @@ interface UserPreferences extends Record<string, any> {
   confirm_before_closing: boolean
   continuous_playback: boolean
   equalizer: EqualizerPreset
-  artists_view_mode: ArtistAlbumViewMode | null
-  albums_view_mode: ArtistAlbumViewMode | null
+  albums_view_mode: ArtistAlbumViewMode
+  artists_view_mode: ArtistAlbumViewMode
   albums_sort_field: AlbumListSortField
+  artists_sort_field: ArtistListSortField
+  podcasts_sort_field: PodcastListSortField
   albums_sort_order: SortOrder
+  artists_sort_order: SortOrder
+  podcasts_sort_order: SortOrder
+  albums_favorites_only: boolean
+  artists_favorites_only: boolean
+  podcasts_favorites_only: boolean
   transcode_on_mobile: boolean
   transcode_quality: number
   support_bar_no_bugging: boolean
@@ -355,8 +365,15 @@ interface Interaction {
   type: 'interactions'
   readonly id: number
   readonly song_id: Playable['id']
-  liked: boolean
   play_count: number
+}
+
+interface Favorite {
+  readonly type: 'favorites'
+  readonly favoriteable_id: string
+  readonly favoriteable_type: 'playable' | 'podcast' | 'album' | 'artist'
+  readonly user_id: User['id']
+  readonly created_at: string
 }
 
 interface EqualizerBandElement extends HTMLElement {

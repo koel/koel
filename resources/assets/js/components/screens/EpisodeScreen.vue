@@ -39,6 +39,8 @@
             >
               <Icon :icon="faExternalLink" fixed-width />
             </Btn>
+
+            <FavoriteButton :favorite="episode.favorite" class="px-3.5 py-2" @toggle="toggleFavorite" />
           </div>
         </template>
       </ScreenHeader>
@@ -70,6 +72,7 @@ import ScreenBase from '@/components/screens/ScreenBase.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
+import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
 const { onScreenActivated, getRouteParam, triggerNotFound, url } = useRouter()
 
@@ -146,6 +149,8 @@ const onContextMenu = (event: MouseEvent) => {
   }
   eventBus.emit('PLAYABLE_CONTEXT_MENU_REQUESTED', event, episode.value)
 }
+
+const toggleFavorite = () => episodeStore.toggleFavorite(episode.value!)
 
 onScreenActivated('Episode', () => (episodeId.value = getRouteParam('id')!))
 </script>

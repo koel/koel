@@ -2,9 +2,7 @@ import { expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { youTubeService } from '@/services/youTubeService'
-import YouTubeVideoItem from './YouTubeVideoItem.vue'
-
-let video: YouTubeVideo
+import Component from './YouTubeVideoItem.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -12,7 +10,7 @@ new class extends UnitTestCase {
 
     it('plays', async () => {
       const mock = this.mock(youTubeService, 'play')
-      this.renderComponent()
+      const { video } = this.renderComponent()
 
       await this.user.click(screen.getByRole('button'))
 
@@ -21,7 +19,7 @@ new class extends UnitTestCase {
   }
 
   private renderComponent () {
-    video = {
+    const video = {
       id: {
         videoId: 'cLgJQ8Zj3AA',
       },
@@ -35,10 +33,16 @@ new class extends UnitTestCase {
         },
       },
     }
-    return this.render(YouTubeVideoItem, {
+
+    const rendered = this.render(Component, {
       props: {
         video,
       },
     })
+
+    return {
+      ...rendered,
+      video,
+    }
   }
 }

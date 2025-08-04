@@ -2,7 +2,7 @@ import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { screen } from '@testing-library/vue'
-import MediaListItem from './MediaListItem.vue'
+import Component from './MediaListItem.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -11,7 +11,7 @@ new class extends UnitTestCase {
         basename: 'whatever.mp3',
       })
 
-      const { emitted } = this.render(MediaListItem, {
+      const { emitted } = this.render(Component, {
         props: {
           item,
         },
@@ -25,7 +25,7 @@ new class extends UnitTestCase {
     it('renders a folder', async () => {
       const item = factory('folder')
 
-      const { emitted } = this.render(MediaListItem, {
+      const { emitted } = this.render(Component, {
         props: {
           item,
         },

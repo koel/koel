@@ -3,7 +3,7 @@ import { screen, waitFor } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { commonStore } from '@/stores/commonStore'
 import { http } from '@/services/http'
-import AboutKoelModel from './AboutKoelModal.vue'
+import Component from './AboutKoelModal.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -36,7 +36,7 @@ new class extends UnitTestCase {
   }
 
   private renderComponent () {
-    return this.render(AboutKoelModel, {
+    return this.render(Component, {
       global: {
         stubs: {
           SponsorList: this.stub('sponsor-list'),

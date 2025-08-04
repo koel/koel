@@ -18,7 +18,7 @@ const { viewMode } = toRefs(props)
 const scrollToTop = async () => {
   await nextTick()
 
-  container.value!.scrollTo({
+  container.value!.scrollTo?.({
     top: 0,
     behavior: 'smooth',
   })

@@ -70,7 +70,7 @@
     "factoria": "^4.0.1",
     "husky": "^9.1.7",
     "jest-serializer-vue": "^2.0.2",
-    "jsdom": "^19.0.0",
+    "jsdom": "^26.1.0",
     "laravel-echo": "^2.1.6",
     "laravel-vite-plugin": "^1.3.0",
     "lint-staged": "^10.5.4",

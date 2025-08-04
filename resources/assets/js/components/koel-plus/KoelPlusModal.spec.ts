@@ -2,13 +2,13 @@ import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { commonStore } from '@/stores/commonStore'
-import Modal from './KoelPlusModal.vue'
+import Component from './KoelPlusModal.vue'
 
 new class extends UnitTestCase {
   protected test () {
     it('shows button to purchase Koel Plus', async () => {
       commonStore.state.koel_plus.product_id = '42'
-      this.renderComponent()
+      this.render(Component)
 
       screen.getByTestId('buttons')
       expect(screen.queryByTestId('activateForm')).toBeNull()
@@ -20,13 +20,9 @@ new class extends UnitTestCase {
 
     it('shows form to activate Koel Plus', async () => {
       commonStore.state.koel_plus.product_id = '42'
-      this.renderComponent()
+      this.render(Component)
       await this.user.click(screen.getByText('I have a license key'))
       screen.getByTestId('activateForm')
     })
-  }
-
-  private renderComponent () {
-    return this.render(Modal)
   }
 }

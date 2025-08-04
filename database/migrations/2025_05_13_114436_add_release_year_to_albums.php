@@ -17,7 +17,7 @@ return new class extends Migration
             ->join('songs', 'albums.id', '=', 'songs.album_id')
             ->whereNull('albums.year')
             ->whereNotNull('songs.year')
-            ->groupBy('albums.id', 'songs.id')
+            ->groupBy('albums.id', 'songs.id', 'songs.year')
             ->distinct('albums.id')
             ->get(['albums.id', 'songs.year'])
             ->each(static function ($album): void {

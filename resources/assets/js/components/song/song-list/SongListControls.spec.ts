@@ -5,7 +5,7 @@ import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { FilteredPlayablesKey, PlayablesKey, SelectedPlayablesKey } from '@/symbols'
-import SongListControls from './SongListControls.vue'
+import Component from './SongListControls.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -75,7 +75,7 @@ new class extends UnitTestCase {
       filter: true,
     }, configOverrides)
 
-    return this.render(SongListControls, {
+    return this.render(Component, {
       global: {
         provide: {
           [<symbol>PlayablesKey]: [ref(songs)],

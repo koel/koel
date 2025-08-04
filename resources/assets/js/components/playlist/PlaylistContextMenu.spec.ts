@@ -9,7 +9,7 @@ import { userStore } from '@/stores/userStore'
 import { playbackService } from '@/services/playbackService'
 import { eventBus } from '@/utils/eventBus'
 import Router from '@/router'
-import PlaylistContextMenu from './PlaylistContextMenu.vue'
+import Component from './PlaylistContextMenu.vue'
 
 new class extends UnitTestCase {
   protected test () {
@@ -159,7 +159,7 @@ new class extends UnitTestCase {
       id: playlist.owner_id,
     })
 
-    this.render(PlaylistContextMenu)
+    this.render(Component)
     eventBus.emit('PLAYLIST_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, playlist)
     await this.tick(2)
   }
