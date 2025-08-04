@@ -32,7 +32,7 @@
       <YouTubeSidebarItem v-if="youtubeVideoTitle" data-testid="youtube">
         {{ youtubeVideoTitle }}
       </YouTubeSidebarItem>
-      <SidebarItem :href="url('podcasts.index')" screen="Podcasts">
+      <SidebarItem v-if="!isDemo" :href="url('podcasts.index')" screen="Podcasts">
         <template #icon>
           <Icon :icon="faPodcast" fixed-width />
         </template>
@@ -62,6 +62,7 @@ const youtubeVideoTitle = ref<string | null>(null)
 const { url } = useRouter()
 
 const usesMediaBrowser = toRef(commonStore.state, 'uses_media_browser')
+const isDemo = window.IS_DEMO
 
 eventBus.on('PLAY_YOUTUBE_VIDEO', payload => (youtubeVideoTitle.value = unescape(payload.title)))
 </script>
