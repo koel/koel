@@ -30,9 +30,8 @@ class AlbumRepository extends Repository implements ScoutableRepository
     public function getRecentlyAdded(int $count = 6, ?User $user = null): Collection
     {
         return Album::query()
-            ->withUserContext(user: $user ?? $this->auth->user())
             ->onlyStandard()
-            ->distinct()
+            ->withUserContext(user: $user ?? $this->auth->user())
             ->latest()
             ->limit($count)
             ->get();
@@ -42,8 +41,8 @@ class AlbumRepository extends Repository implements ScoutableRepository
     public function getMostPlayed(int $count = 6, ?User $user = null): Collection
     {
         return Album::query()
-            ->withUserContext(user: $user ?? $this->auth->user(), includePlayCount: true)
             ->onlyStandard()
+            ->withUserContext(user: $user ?? $this->auth->user(), includePlayCount: true)
             ->orderByDesc('play_count')
             ->limit($count)
             ->get();
@@ -53,10 +52,9 @@ class AlbumRepository extends Repository implements ScoutableRepository
     public function getMany(array $ids, bool $preserveOrder = false, ?User $user = null): Collection
     {
         $albums = Album::query()
-            ->withUserContext(user: $user ?? $this->auth->user())
             ->onlyStandard()
+            ->withUserContext(user: $user ?? $this->auth->user())
             ->whereIn('albums.id', $ids)
-            ->distinct()
             ->get();
 
         return $preserveOrder ? $albums->orderByArray($ids) : $albums;
@@ -74,7 +72,6 @@ class AlbumRepository extends Repository implements ScoutableRepository
                     });
             })
             ->orderBy('albums.name')
-            ->distinct()
             ->get();
     }
 
@@ -85,10 +82,9 @@ class AlbumRepository extends Repository implements ScoutableRepository
         ?User $user = null,
     ): Paginator {
         return Album::query()
-            ->withUserContext(user: $user ?? $this->auth->user(), favoritesOnly: $favoritesOnly)
             ->onlyStandard()
+            ->withUserContext(user: $user ?? $this->auth->user(), favoritesOnly: $favoritesOnly)
             ->sort($sortColumn, $sortDirection)
-            ->distinct()
             ->simplePaginate(21);
     }
 

@@ -39,10 +39,9 @@ class ArtistRepository extends Repository implements ScoutableRepository
     public function getMany(array $ids, bool $preserveOrder = false, ?User $user = null): Collection
     {
         $artists = Artist::query()
-            ->withUserContext(user: $user ?? $this->auth->user())
             ->onlyStandard()
+            ->withUserContext(user: $user ?? $this->auth->user())
             ->whereIn('artists.id', $ids)
-            ->distinct()
             ->get();
 
         return $preserveOrder ? $artists->orderByArray($ids) : $artists;
@@ -58,7 +57,6 @@ class ArtistRepository extends Repository implements ScoutableRepository
             ->withUserContext(user: $user ?? $this->auth->user(), favoritesOnly: $favoritesOnly)
             ->onlyStandard()
             ->sort($sortColumn, $sortDirection)
-            ->distinct()
             ->simplePaginate(21);
     }
 
