@@ -47,8 +47,8 @@
       <template v-if="isSong(playable)">
         <span v-if="shouldShowColumn('genre')" class="genre">{{ playable.genre || '—' }}</span>
         <span v-if="shouldShowColumn('year')" class="year">{{ playable.year || '—' }}</span>
-        <span v-if="shouldShowColumn('duration')" class="time">{{ fmtLength }}</span>
       </template>
+      <span v-if="shouldShowColumn('duration')" class="time">{{ fmtLength }}</span>
       <span class="extra">
         <FavoriteButton :favorite="playable.favorite" @toggle="toggleFavorite" />
       </span>
