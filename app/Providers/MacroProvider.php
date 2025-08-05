@@ -33,7 +33,9 @@ class MacroProvider extends ServiceProvider
             $driver = DB::getDriverName();
 
             if (!in_array($driver, ['mysql', 'mariadb', 'pgsql'], true)) {
-                Log::warning("No drop FK logic for driver $driver");
+                if (!app()->runningUnitTests()) {
+                    Log::warning("No drop FK logic for driver $driver");
+                }
 
                 return;
             }

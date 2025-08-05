@@ -10,7 +10,7 @@ use Tests\TestCase;
 
 use function Tests\create_user;
 
-class FavoriteSongTest extends TestCase
+class FetchFavoriteSongsTest extends TestCase
 {
     #[Test]
     public function index(): void

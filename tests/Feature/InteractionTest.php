@@ -56,6 +56,7 @@ class InteractionTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create();
 
+        // Toggle on
         $this->postAs('api/interaction/like', ['song' => $song->id], $user);
 
         $this->assertDatabaseHas(Favorite::class, [
@@ -64,8 +65,9 @@ class InteractionTest extends TestCase
             'favoriteable_type' => 'playable',
         ]);
 
-        // Try again
-        $this->postAs('api/interaction/like', ['song' => $song->id], $user);
+        // Toggle off
+        $this->postAs('api/interaction/like', ['song' => $song->id], $user)
+            ->assertNoContent();
 
         $this->assertDatabaseMissing(Favorite::class, [
             'user_id' => $user->id,

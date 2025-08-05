@@ -22,6 +22,8 @@ class ToggleLikeSongController extends Controller
         $song = Song::query()->findOrFail($request->song);
         $this->authorize('access', $song);
 
-        return FavoriteResource::make($service->toggleFavorite($song, $user));
+        $favorite = $service->toggleFavorite($song, $user);
+
+        return $favorite ? FavoriteResource::make($favorite) : response()->noContent();
     }
 }
