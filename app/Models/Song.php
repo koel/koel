@@ -104,6 +104,7 @@ class Song extends Model implements AuditableContract, Favoriteable
         'is_public' => 'bool',
         'storage' => SongStorageCast::class,
         'episode_metadata' => EpisodeMetadataCast::class,
+        'favorite' => 'bool',
     ];
 
     protected $with = ['album', 'artist', 'album.artist', 'podcast', 'genres', 'owner'];
