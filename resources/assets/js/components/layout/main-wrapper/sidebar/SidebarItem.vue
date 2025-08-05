@@ -11,7 +11,7 @@
       class="flex items-center overflow-x-hidden gap-3 h-11 relative active:pt-0.5 active:pr-0 active:pb-0 active:pl-0.5
       text-k-text-secondary hover:text-k-text-primary"
     >
-      <span class="opacity-70">
+      <span>
         <slot name="icon" />
       </span>
 

@@ -19,13 +19,13 @@
       </SidebarItem>
       <SidebarItem :href="url('artists.index')" screen="Artists">
         <template #icon>
-          <MicVocalIcon size="16" />
+          <MicVocalIcon :size="16" />
         </template>
         Artists
       </SidebarItem>
       <SidebarItem :href="url('genres.index')" screen="Genres">
         <template #icon>
-          <GuitarIcon size="16" />
+          <GuitarIcon :size="16" />
         </template>
         Genres
       </SidebarItem>
