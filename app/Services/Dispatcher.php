@@ -11,7 +11,9 @@ class Dispatcher
 
     public function __construct()
     {
-        $this->shouldQueue = config('queue.default') !== 'sync' && config('broadcasting.default') !== 'log';
+        $this->shouldQueue = config('queue.default') !== 'sync'
+            && config('broadcasting.default') !== 'log'
+            && config('broadcasting.default') !== 'null';
     }
 
     public function dispatch(object $job): mixed
