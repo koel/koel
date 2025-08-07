@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Demo;
 
 use App\Attributes\RequiresDemo;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\UserService;
 use Illuminate\Http\Request;
@@ -13,8 +14,6 @@ use Jaybizzle\CrawlerDetect\CrawlerDetect;
 #[RequiresDemo]
 class NewSessionController extends Controller
 {
-    private const DEMO_PASSWORD = 'demo';
-
     public function __invoke(
         Request $request,
         CrawlerDetect $crawlerDetect,
@@ -23,19 +22,19 @@ class NewSessionController extends Controller
     ) {
         $email = $crawlerDetect->isCrawler()
             ? 'demo@koel.dev'
-            : Str::take(sha1(config('app.key') . $request->ip()), 8) . '@demo.koel.dev';
+            : Str::take(sha1(config('app.key') . $request->ip()), 8) . '@' . User::DEMO_USER_DOMAIN;
 
         $user = $repository->findOneByEmail($email)
             ?? $service->createUser(
                 name: 'Koel',
                 email: $email,
-                plainTextPassword: self::DEMO_PASSWORD,
+                plainTextPassword: User::DEMO_PASSWORD,
                 isAdmin: false,
             );
 
         return redirect('/')->with('demo_account', [
             'email' => $user->email,
-            'password' => self::DEMO_PASSWORD,
+            'password' => User::DEMO_PASSWORD,
         ]);
     }
 }
