@@ -7,9 +7,11 @@ use App\Exceptions\UserAlreadySubscribedToPodcastException;
 use App\Facades\License;
 use App\Values\UserPreferences;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -55,10 +57,13 @@ class User extends Authenticatable implements AuditableContract
     use HasApiTokens;
     use HasFactory;
     use Notifiable;
+    use Prunable;
 
     private const FIRST_ADMIN_NAME = 'Koel';
     public const FIRST_ADMIN_EMAIL = 'admin@koel.dev';
     public const FIRST_ADMIN_PASSWORD = 'KoelIsCool';
+    public const DEMO_PASSWORD = 'demo';
+    public const DEMO_USER_DOMAIN = 'demo.koel.dev';
 
     protected $guarded = ['id', 'public_id'];
     protected $hidden = ['password', 'remember_token', 'created_at', 'updated_at', 'invitation_accepted_at'];
@@ -189,5 +194,19 @@ class User extends Authenticatable implements AuditableContract
     public function getRouteKeyName(): string
     {
         return 'public_id';
+    }
+
+    /** Delete all old and inactive demo users */
+    public function prunable(): Builder
+    {
+        if (!config('koel.misc.demo')) {
+            return static::query()->whereRaw('false');
+        }
+
+        return static::query()->where('created_at', '<=', now()->subWeek())
+            ->where('email', 'like', '%@' . self::DEMO_USER_DOMAIN)
+            ->whereDoesntHave('interactions', static function (Builder $query): void {
+                $query->where('last_played_at', '>=', now()->subDays(7));
+            });
     }
 }
