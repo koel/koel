@@ -1,7 +1,7 @@
 <template>
   <ScreenBase>
     <template #header>
-      <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
+      <ScreenHeader :layout="playables.length === 0 ? 'collapsed' : headerLayout">
         Your Favorites
         <ControlsToggle v-model="showingControls" />
 
@@ -9,8 +9,8 @@
           <ThumbnailStack :thumbnails="thumbnails" />
         </template>
 
-        <template v-if="songs.length" #meta>
-          <span>{{ pluralize(songs, 'item') }}</span>
+        <template v-if="playables.length" #meta>
+          <span>{{ pluralize(playables, 'item') }}</span>
           <span>{{ duration }}</span>
 
           <a
@@ -25,9 +25,9 @@
         </template>
 
         <template #controls>
-          <SongListControls
-            v-if="songs.length && (!isPhone || showingControls)"
-            :config="config"
+          <PlayableListControls
+            v-if="playables.length && (!isPhone || showingControls)"
+            :config
             @filter="applyFilter"
             @play-all="playAll"
             @play-selected="playSelected"
@@ -36,10 +36,10 @@
       </ScreenHeader>
     </template>
 
-    <SongListSkeleton v-if="loading" class="-m-6" />
-    <SongList
-      v-if="songs.length"
-      ref="songList"
+    <PlayableListSkeleton v-if="loading" class="-m-6" />
+    <PlayableList
+      v-if="playables.length"
+      ref="playableList"
       class="-m-6"
       @press:delete="removeSelected"
       @press:enter="onPressEnter"
@@ -65,24 +65,24 @@ import { faHeartBroken } from '@fortawesome/free-solid-svg-icons'
 import { faStar } from '@fortawesome/free-regular-svg-icons'
 import { ref, toRef } from 'vue'
 import { pluralize } from '@/utils/formatters'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import { downloadService } from '@/services/downloadService'
 import { useRouter } from '@/composables/useRouter'
-import { useSongList } from '@/composables/useSongList'
-import { useSongListControls } from '@/composables/useSongListControls'
+import { usePlayableList } from '@/composables/usePlayableList'
+import { usePlayableListControls } from '@/composables/usePlayableListControls'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
-import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
+import PlayableListSkeleton from '@/components/ui/skeletons/PlayableListSkeleton.vue'
 
 const {
-  SongList,
+  PlayableList,
   ControlsToggle,
   ThumbnailStack,
   headerLayout,
-  songs,
-  songList,
+  playables,
+  playableList,
   duration,
   downloadable,
   thumbnails,
@@ -94,19 +94,19 @@ const {
   playSelected,
   applyFilter,
   onScrollBreakpoint,
-} = useSongList(toRef(songStore.state, 'favorites'), { type: 'Favorites' })
+} = usePlayableList(toRef(playableStore.state, 'favorites'), { type: 'Favorites' })
 
-const { SongListControls, config } = useSongListControls('Favorites')
+const { PlayableListControls, config } = usePlayableListControls('Favorites')
 
 const download = () => downloadService.fromFavorites()
-const removeSelected = () => selectedPlayables.value.length && songStore.undoFavorite(selectedPlayables.value)
+const removeSelected = () => selectedPlayables.value.length && playableStore.undoFavorite(selectedPlayables.value)
 
 let initialized = false
 const loading = ref(false)
 
 const fetchFavorites = async () => {
   loading.value = true
-  await songStore.fetchFavorites()
+  await playableStore.fetchFavorites()
   loading.value = false
 }
 

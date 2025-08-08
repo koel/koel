@@ -9,14 +9,12 @@
               v-koel-tooltip
               :title="preferences.albums_favorites_only ? 'Show all' : 'Show favorites only'"
               class="border border-white/10"
-              small
               transparent
               @click.prevent="toggleFavoritesOnly"
             >
               <Icon
                 :icon="preferences.albums_favorites_only ? faStar : faEmptyStar"
                 :class="preferences.albums_favorites_only && 'text-k-highlight'"
-                size="sm"
               />
             </Btn>
 
@@ -43,7 +41,7 @@
     </ScreenEmptyState>
 
     <div v-else ref="gridContainer" v-koel-overflow-fade class="-m-6 overflow-auto">
-      <AlbumGrid ref="grid" :view-mode="preferences.albums_view_mode" data-testid="album-grid">
+      <GridListView ref="grid" :view-mode="preferences.albums_view_mode" data-testid="album-grid">
         <template v-if="showSkeletons">
           <AlbumCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
         </template>
@@ -51,13 +49,13 @@
           <AlbumCard
             v-for="album in albums"
             :key="album.id"
-            :album="album"
+            :album
             :layout="itemLayout"
             :show-release-year="preferences.albums_sort_field === 'year'"
           />
           <ToTopButton />
         </template>
-      </AlbumGrid>
+      </GridListView>
     </div>
   </ScreenBase>
 </template>
@@ -80,14 +78,14 @@ import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
-import AlbumGrid from '@/components/ui/album-artist/AlbumOrArtistGrid.vue'
+import GridListView from '@/components/ui/GridListView.vue'
 import AlbumListSorter from '@/components/album/AlbumListSorter.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 
 const { isAdmin } = useAuthorization()
 
 const gridContainer = ref<HTMLDivElement>()
-const grid = ref<InstanceType<typeof AlbumGrid>>()
+const grid = ref<InstanceType<typeof GridListView>>()
 const albums = toRef(albumStore.state, 'albums')
 
 let initialized = false
@@ -96,7 +94,7 @@ const page = ref<number | null>(1)
 
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 
-const itemLayout = computed<ArtistAlbumCardLayout>(
+const itemLayout = computed<CardLayout>(
   () => preferences.albums_view_mode === 'thumbnails' ? 'full' : 'compact',
 )
 

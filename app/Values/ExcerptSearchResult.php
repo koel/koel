@@ -10,12 +10,18 @@ final class ExcerptSearchResult
         public Collection $songs,
         public Collection $artists,
         public Collection $albums,
-        public Collection $podcasts
+        public Collection $podcasts,
+        public Collection $radioStations,
     ) {
     }
 
-    public static function make(Collection $songs, Collection $artists, Collection $albums, Collection $podcasts): self
-    {
-        return new self($songs, $artists, $albums, $podcasts);
+    public static function make(
+        Collection $songs,
+        Collection $artists,
+        Collection $albums,
+        Collection $podcasts,
+        Collection $radioStations,
+    ): self {
+        return new self($songs, $artists, $albums, $podcasts, $radioStations);
     }
 }

@@ -49,6 +49,8 @@ use App\Http\Controllers\API\PrivatizeSongsController;
 use App\Http\Controllers\API\ProfileController;
 use App\Http\Controllers\API\PublicizeSongsController;
 use App\Http\Controllers\API\QueueStateController;
+use App\Http\Controllers\API\Radio\RadioStationController;
+use App\Http\Controllers\API\Radio\RadioStationLogoController;
 use App\Http\Controllers\API\RegisterPlayController;
 use App\Http\Controllers\API\ResetPasswordController;
 use App\Http\Controllers\API\ScrobbleController;
@@ -232,6 +234,12 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         // Media browser routes
         Route::get('browse/folders', FetchSubfoldersController::class);
         Route::get('browse/songs', PaginateFolderSongsController::class);
+
+        // Radio station routes
+        Route::group(['prefix' => 'radio'], static function (): void {
+            Route::apiResource('stations', RadioStationController::class);
+            Route::delete('stations/{radioStation}/logo', [RadioStationLogoController::class, 'destroy']);
+        });
     });
 
     // Object-storage (S3) routes

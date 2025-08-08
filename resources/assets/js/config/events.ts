@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import type { SongUpdateResult } from '@/stores/songStore'
+import type { SongUpdateResult } from '@/stores/playableStore'
 
 export interface Events {
   LOG_OUT: () => void
@@ -12,6 +12,7 @@ export interface Events {
   ALBUM_CONTEXT_MENU_REQUESTED: (event: MouseEvent, album: Album) => void
   ARTIST_CONTEXT_MENU_REQUESTED: (event: MouseEvent, artist: Artist) => void
   PODCAST_CONTEXT_MENU_REQUESTED: (event: MouseEvent, podcast: Podcast) => void
+  RADIO_STATION_CONTEXT_MENU_REQUESTED: (event: MouseEvent, station: RadioStation) => void
   CREATE_NEW_PLAYLIST_CONTEXT_MENU_REQUESTED: ({ top, left }: { top: number, left: number }) => void
   PLAYLIST_CONTEXT_MENU_REQUESTED: (event: MouseEvent, playlist: Playlist) => void
   PLAYLIST_FOLDER_CONTEXT_MENU_REQUESTED: (event: MouseEvent, playlistFolder: PlaylistFolder) => void
@@ -34,6 +35,8 @@ export interface Events {
   MODAL_SHOW_EDIT_PLAYLIST_FOLDER_FORM: (playlistFolder: PlaylistFolder) => void
   MODAL_SHOW_PLAYLIST_COLLABORATION: (playlist: Playlist) => void
   MODAL_SHOW_ADD_PODCAST_FORM: () => void
+  MODAL_SHOW_ADD_RADIO_STATION_FORM: () => void
+  MODAL_SHOW_EDIT_RADIO_STATION_FORM: (station: RadioStation) => void
   MODAL_SHOW_ABOUT_KOEL: () => void
   MODAL_SHOW_KOEL_PLUS: () => void
   MODAL_SHOW_EQUALIZER: () => void
@@ -51,14 +54,14 @@ export interface Events {
   EPISODE_PROGRESS_UPDATED: (episode: Episode, progress: number) => void
 
   SOCKET_TOGGLE_PLAYBACK: () => void
-  SOCKET_TOGGLE_FAVORITE: () => void
+  SOCKET_TOGGLE_FAVORITE: (streamable: Streamable) => void
   SOCKET_PLAY_NEXT: () => void
   SOCKET_PLAY_PREV: () => void
   SOCKET_PLAYBACK_STOPPED: () => void
   SOCKET_GET_STATUS: () => void
-  SOCKET_STATUS: (data: { playable?: Playable, volume: number }) => void
+  SOCKET_STATUS: (data: { streamable?: Streamable, volume: number }) => void
   SOCKET_GET_CURRENT_PLAYABLE: () => void
-  SOCKET_PLAYABLE: (playable: Playable) => void
+  SOCKET_STREAMABLE: (streamable: Streamable) => void
   SOCKET_SET_VOLUME: (volume: number) => void
   SOCKET_VOLUME_CHANGED: (volume: number) => void
 }

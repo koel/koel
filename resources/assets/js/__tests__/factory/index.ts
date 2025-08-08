@@ -1,45 +1,47 @@
 import type { Factoria } from 'factoria'
 import factoria from 'factoria'
-import artistFactory, { states as artistStates } from '@/__tests__/factory/artistFactory'
-import songFactory, { states as songStates } from '@/__tests__/factory/songFactory'
 import albumFactory, { states as albumStates } from '@/__tests__/factory/albumFactory'
+import albumInfoFactory from '@/__tests__/factory/albumInfoFactory'
+import albumTrackFactory from '@/__tests__/factory/albumTrackFactory'
+import artistFactory, { states as artistStates } from '@/__tests__/factory/artistFactory'
+import artistInfoFactory from '@/__tests__/factory/artistInfoFactory'
+import episodeFactory from '@/__tests__/factory/episodeFactory'
+import favoriteFactory from '@/__tests__/factory/favoriteFactory'
+import folderFactory from '@/__tests__/factory/folderFactory'
+import genreFactory from '@/__tests__/factory/genreFactory'
 import interactionFactory from '@/__tests__/factory/interactionFactory'
-import smartPlaylistRuleFactory from '@/__tests__/factory/smartPlaylistRuleFactory'
-import smartPlaylistRuleGroupFactory from '@/__tests__/factory/smartPlaylistRuleGroupFactory'
+import playlistCollaboratorFactory from '@/__tests__/factory/playlistCollaboratorFactory'
 import playlistFactory, { states as playlistStates } from '@/__tests__/factory/playlistFactory'
 import playlistFolderFactory from '@/__tests__/factory/playlistFolderFactory'
-import userFactory, { states as userStates } from '@/__tests__/factory/userFactory'
-import albumTrackFactory from '@/__tests__/factory/albumTrackFactory'
-import albumInfoFactory from '@/__tests__/factory/albumInfoFactory'
-import artistInfoFactory from '@/__tests__/factory/artistInfoFactory'
-import youTubeVideoFactory from '@/__tests__/factory/youTubeVideoFactory'
-import genreFactory from '@/__tests__/factory/genreFactory'
-import playlistCollaboratorFactory from '@/__tests__/factory/playlistCollaboratorFactory'
-import episodeFactory from '@/__tests__/factory/episodeFactory'
 import podcastFactory from '@/__tests__/factory/podcastFactory'
-import folderFactory from '@/__tests__/factory/folderFactory'
-import favoriteFactory from '@/__tests__/factory/favoriteFactory'
+import radioStationFactory from '@/__tests__/factory/radioStationFactory'
+import smartPlaylistRuleFactory from '@/__tests__/factory/smartPlaylistRuleFactory'
+import smartPlaylistRuleGroupFactory from '@/__tests__/factory/smartPlaylistRuleGroupFactory'
+import songFactory, { states as songStates } from '@/__tests__/factory/songFactory'
+import userFactory, { states as userStates } from '@/__tests__/factory/userFactory'
+import youTubeVideoFactory from '@/__tests__/factory/youTubeVideoFactory'
 
 interface ModelToTypeMap {
+  'album': Album
+  'album-info': AlbumInfo
+  'album-track': AlbumTrack
   'artist': Artist
   'artist-info': ArtistInfo
-  'album': Album
-  'album-track': AlbumTrack
-  'album-info': AlbumInfo
-  'song': Song
-  'interaction': Interaction
+  'episode': Episode
+  'favorite': Favorite
+  'folder': Folder
   'genre': Genre
-  'video': YouTubeVideo
+  'interaction': Interaction
+  'playlist': Playlist
+  'playlist-collaborator': PlaylistCollaborator
+  'playlist-folder': PlaylistFolder
+  'podcast': Podcast
+  'radio-station': RadioStation
   'smart-playlist-rule': SmartPlaylistRule
   'smart-playlist-rule-group': SmartPlaylistRuleGroup
-  'playlist': Playlist
-  'playlist-folder': PlaylistFolder
+  'song': Song
   'user': User
-  'playlist-collaborator': PlaylistCollaborator
-  'episode': Episode
-  'podcast': Podcast
-  'folder': Folder
-  'favorite': Favorite
+  'video': YouTubeVideo
 }
 
 type Model = keyof ModelToTypeMap
@@ -86,22 +88,23 @@ export default factory as typeof factory & {
   states: typeof states
 }
 
+define('album', albumFactory, albumStates)
+define('album-info', albumInfoFactory)
+define('album-track', albumTrackFactory)
 define('artist', artistFactory, artistStates)
 define('artist-info', artistInfoFactory)
-define('album', albumFactory, albumStates)
-define('album-track', albumTrackFactory)
-define('album-info', albumInfoFactory)
-define('song', songFactory, songStates)
-define('interaction', interactionFactory)
+define('episode', episodeFactory)
+define('favorite', favoriteFactory)
+define('folder', folderFactory)
 define('genre', genreFactory)
-define('video', youTubeVideoFactory)
+define('interaction', interactionFactory)
+define('playlist', playlistFactory, playlistStates)
+define('playlist-collaborator', playlistCollaboratorFactory)
+define('playlist-folder', playlistFolderFactory)
+define('podcast', podcastFactory)
+define('radio-station', radioStationFactory)
 define('smart-playlist-rule', smartPlaylistRuleFactory)
 define('smart-playlist-rule-group', smartPlaylistRuleGroupFactory)
-define('playlist', playlistFactory, playlistStates)
-define('playlist-folder', playlistFolderFactory)
+define('song', songFactory, songStates)
 define('user', userFactory, userStates)
-define('playlist-collaborator', playlistCollaboratorFactory)
-define('episode', episodeFactory)
-define('podcast', podcastFactory)
-define('folder', folderFactory)
-define('favorite', favoriteFactory)
+define('video', youTubeVideoFactory)

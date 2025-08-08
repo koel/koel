@@ -2,20 +2,21 @@
   <ScreenBase v-if="playlistId">
     <template #header>
       <ScreenHeader
-        v-if="playlist" :disabled="loading"
+        v-if="playlist"
+        :disabled="loading"
         :layout="allPlayables.length === 0 ? 'collapsed' : headerLayout"
       >
         {{ playlist.name }}
         <ControlsToggle v-if="filteredPlayables.length" v-model="showingControls" />
 
         <template #thumbnail>
-          <PlaylistThumbnail :playlist="playlist">
-            <ThumbnailStack v-if="!playlist.cover" :thumbnails="thumbnails" />
+          <PlaylistThumbnail :playlist>
+            <ThumbnailStack v-if="!playlist.cover" :thumbnails />
           </PlaylistThumbnail>
         </template>
 
         <template v-if="filteredPlayables.length || playlist.is_collaborative" #meta>
-          <CollaboratorsBadge v-if="collaborators.length" :collaborators="collaborators" />
+          <CollaboratorsBadge v-if="collaborators.length" :collaborators />
           <span>{{ pluralize(filteredPlayables, 'item') }}</span>
           <span>{{ duration }}</span>
           <a
@@ -29,7 +30,7 @@
         </template>
 
         <template #controls>
-          <SongListControls
+          <PlayableListControls
             v-if="!isPhone || showingControls"
             :config="controlsConfig"
             @refresh="fetchDetails(true)"
@@ -42,11 +43,11 @@
       <ScreenHeaderSkeleton v-else />
     </template>
 
-    <SongListSkeleton v-if="loading" class="-m-6" />
+    <PlayableListSkeleton v-if="loading" class="-m-6" />
     <template v-else>
-      <SongList
+      <PlayableList
         v-if="filteredPlayables.length"
-        ref="songList"
+        ref="playableList"
         class="-m-6"
         @reorder="onReorder"
         @sort="sort"
@@ -84,23 +85,23 @@ import { ref, watch } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { pluralize } from '@/utils/formatters'
 import { playlistStore } from '@/stores/playlistStore'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import { downloadService } from '@/services/downloadService'
 import { playlistCollaborationService } from '@/services/playlistCollaborationService'
 import { useRouter } from '@/composables/useRouter'
 import { useAuthorization } from '@/composables/useAuthorization'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { usePlaylistManagement } from '@/composables/usePlaylistManagement'
-import { useSongList } from '@/composables/useSongList'
-import { useSongListControls } from '@/composables/useSongListControls'
+import { usePlayableList } from '@/composables/usePlayableList'
+import { usePlayableListControls } from '@/composables/usePlayableListControls'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
-import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 import CollaboratorsBadge from '@/components/playlist/PlaylistCollaboratorsBadge.vue'
 import PlaylistThumbnail from '@/components/ui/PlaylistThumbnail.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
+import PlayableListSkeleton from '@/components/ui/skeletons/PlayableListSkeleton.vue'
 
 // Since this component is responsible for all playlists, we keep track of the state for each,
 // so that filter and sort settings are preserved when switching between them.
@@ -141,12 +142,12 @@ const playlist = ref<Playlist>()
 const loading = ref(false)
 
 const {
-  SongList,
+  PlayableList,
   ControlsToggle,
   ThumbnailStack,
   headerLayout,
-  songs: filteredPlayables,
-  songList,
+  playables: filteredPlayables,
+  playableList,
   duration,
   downloadable,
   thumbnails,
@@ -161,9 +162,9 @@ const {
   onScrollBreakpoint,
   sort: baseSort,
   config: listConfig,
-} = useSongList(allPlayables, { type: 'Playlist' })
+} = usePlayableList(allPlayables, { type: 'Playlist' })
 
-const { SongListControls, config: controlsConfig } = useSongListControls('Playlist')
+const { PlayableListControls, config: controlsConfig } = usePlayableListControls('Playlist')
 const { removeFromPlaylist } = usePlaylistManagement()
 
 watch(filterKeywords, keywords => {
@@ -183,7 +184,7 @@ const sort = (field: MaybeArray<PlayableListSortField> | null, order: SortOrder)
   baseSort(field, order)
 
   if (field === 'position') {
-    // To sort by position, we simply re-assign the song array from the playlist, which maintains the original order.
+    // To sort by position, we simply re-assign the playable array from the playlist, which maintains the original order.
     allPlayables.value = playlist.value!.playables!
   }
 }
@@ -203,7 +204,7 @@ const fetchDetails = async (refresh = false) => {
     loading.value = true
 
     ;[allPlayables.value, collaborators.value] = await Promise.all([
-      songStore.fetchForPlaylist(playlist.value!, refresh),
+      playableStore.fetchForPlaylist(playlist.value!, refresh),
       playlist.value!.is_collaborative
         ? playlistCollaborationService.fetchCollaborators(playlist.value!)
         : Promise.resolve<PlaylistCollaborator[]>([]),

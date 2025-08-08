@@ -15,7 +15,7 @@ class ImageData implements ValidationRule
         }) ?? false;
 
         if (!$passes) {
-            $fail('Invalid DataURL string');
+            $fail("Invalid image for $attribute");
         }
     }
 }

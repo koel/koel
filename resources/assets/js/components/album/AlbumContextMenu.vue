@@ -24,13 +24,13 @@ import { computed, ref, toRef } from 'vue'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import { downloadService } from '@/services/downloadService'
-import { playbackService } from '@/services/playbackService'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { usePolicies } from '@/composables/usePolicies'
 import { useRouter } from '@/composables/useRouter'
 import { eventBus } from '@/utils/eventBus'
+import { playback } from '@/services/playbackManager'
 
 const { go, url } = useRouter()
 const { base, ContextMenu, open, trigger } = useContextMenu()
@@ -47,12 +47,12 @@ const isStandardArtist = computed(() => {
 })
 
 const play = () => trigger(async () => {
-  playbackService.queueAndPlay(await songStore.fetchForAlbum(album.value!))
+  playback().queueAndPlay(await playableStore.fetchSongsForAlbum(album.value!))
   go(url('queue'))
 })
 
 const shuffle = () => trigger(async () => {
-  playbackService.queueAndPlay(await songStore.fetchForAlbum(album.value!), true)
+  playback().queueAndPlay(await playableStore.fetchSongsForAlbum(album.value!), true)
   go(url('queue'))
 })
 

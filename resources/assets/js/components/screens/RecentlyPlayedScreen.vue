@@ -1,7 +1,7 @@
 <template>
   <ScreenBase>
     <template #header>
-      <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
+      <ScreenHeader :layout="playables.length === 0 ? 'collapsed' : headerLayout">
         Recently Played
         <ControlsToggle v-model="showingControls" />
 
@@ -9,15 +9,15 @@
           <ThumbnailStack :thumbnails="thumbnails" />
         </template>
 
-        <template v-if="songs.length" #meta>
-          <span>{{ pluralize(songs, 'item') }}</span>
+        <template v-if="playables.length" #meta>
+          <span>{{ pluralize(playables, 'item') }}</span>
           <span>{{ duration }}</span>
         </template>
 
         <template #controls>
-          <SongListControls
-            v-if="songs.length && (!isPhone || showingControls)"
-            :config="config"
+          <PlayableListControls
+            v-if="playables.length && (!isPhone || showingControls)"
+            :config
             @filter="applyFilter"
             @play-all="playAll"
             @play-selected="playSelected"
@@ -26,11 +26,11 @@
       </ScreenHeader>
     </template>
 
-    <SongListSkeleton v-if="loading" class="-m-6" />
+    <PlayableListSkeleton v-if="loading" class="-m-6" />
 
-    <SongList
-      v-if="songs.length"
-      ref="songList"
+    <PlayableList
+      v-if="playables.length"
+      ref="playableList"
       class="-m-6"
       @press:enter="onPressEnter"
       @scroll-breakpoint="onScrollBreakpoint"
@@ -40,7 +40,7 @@
       <template #icon>
         <Icon :icon="faClock" />
       </template>
-      No songs recently played.
+      Nothing played recently.
       <span class="secondary block">Start playing to populate this playlist.</span>
     </ScreenEmptyState>
   </ScreenBase>
@@ -52,23 +52,23 @@ import { ref, toRef } from 'vue'
 import { pluralize } from '@/utils/formatters'
 import { recentlyPlayedStore } from '@/stores/recentlyPlayedStore'
 import { useRouter } from '@/composables/useRouter'
-import { useSongList } from '@/composables/useSongList'
-import { useSongListControls } from '@/composables/useSongListControls'
+import { usePlayableList } from '@/composables/usePlayableList'
+import { usePlayableListControls } from '@/composables/usePlayableListControls'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
-import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
+import PlayableListSkeleton from '@/components/ui/skeletons/PlayableListSkeleton.vue'
 
 const recentlyPlayedSongs = toRef(recentlyPlayedStore.state, 'playables')
 
 const {
-  SongList,
+  PlayableList,
   ControlsToggle,
   ThumbnailStack,
   headerLayout,
-  songs,
-  songList,
+  playables,
+  playableList,
   thumbnails,
   duration,
   showingControls,
@@ -78,9 +78,9 @@ const {
   playSelected,
   applyFilter,
   onScrollBreakpoint,
-} = useSongList(recentlyPlayedSongs, { type: 'RecentlyPlayed' }, { sortable: false })
+} = usePlayableList(recentlyPlayedSongs, { type: 'RecentlyPlayed' }, { sortable: false })
 
-const { SongListControls, config } = useSongListControls('RecentlyPlayed')
+const { PlayableListControls, config } = usePlayableListControls('RecentlyPlayed')
 
 let initialized = false
 const loading = ref(false)

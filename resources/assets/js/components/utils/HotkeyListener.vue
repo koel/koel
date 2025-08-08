@@ -6,12 +6,12 @@
 import type { KeyFilter } from '@vueuse/core'
 import { onKeyStroke as baseOnKeyStroke } from '@vueuse/core'
 import { eventBus } from '@/utils/eventBus'
-import { playbackService } from '@/services/playbackService'
 import { socketService } from '@/services/socketService'
 import { volumeManager } from '@/services/volumeManager'
 import { queueStore } from '@/stores/queueStore'
 import { useRouter } from '@/composables/useRouter'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
+import { playback } from '@/services/playbackManager'
 
 const { isCurrentScreen, go, url } = useRouter()
 
@@ -39,15 +39,15 @@ const onKeyStroke = (key: KeyFilter, callback: (e: KeyboardEvent) => void) => {
 }
 
 onKeyStroke('f', () => eventBus.emit('FOCUS_SEARCH_FIELD'))
-onKeyStroke('j', () => playbackService.playNext())
-onKeyStroke('k', () => playbackService.playPrev())
-onKeyStroke(' ', () => playbackService.toggle())
-onKeyStroke('r', () => playbackService.rotateRepeatMode())
+onKeyStroke('j', () => playback('current')?.playNext())
+onKeyStroke('k', () => playback('current')?.playPrev())
+onKeyStroke(' ', () => playback('current')?.toggle())
+onKeyStroke('r', () => playback('current')?.rotateRepeatMode())
 onKeyStroke('q', () => go(isCurrentScreen('Queue') ? -1 : url('queue')))
 onKeyStroke('h', () => go(url('home')))
 
-onKeyStroke('ArrowRight', () => playbackService.seekBy(10))
-onKeyStroke('ArrowLeft', () => playbackService.seekBy(-10))
+onKeyStroke('ArrowRight', () => playback('current')?.forward(10))
+onKeyStroke('ArrowLeft', () => playback('current')?.rewind(-10))
 onKeyStroke('ArrowUp', () => volumeManager.increase())
 onKeyStroke('ArrowDown', () => volumeManager.decrease())
 onKeyStroke('m', () => volumeManager.toggleMute())
@@ -56,7 +56,7 @@ onKeyStroke('l', () => {
   if (!queueStore.current) {
     return
   }
-  songStore.toggleFavorite(queueStore.current)
-  socketService.broadcast('SOCKET_SONG', queueStore.current)
+  playableStore.toggleFavorite(queueStore.current)
+  socketService.broadcast('SOCKET_STREAMABLE', queueStore.current)
 })
 </script>

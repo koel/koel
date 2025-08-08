@@ -3,9 +3,9 @@ import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { downloadService } from '@/services/downloadService'
-import { playbackService } from '@/services/playbackService'
+import { playbackService } from '@/services/QueuePlaybackService'
 import { commonStore } from '@/stores/commonStore'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import { eventBus } from '@/utils/eventBus'
 import { albumStore } from '@/stores/albumStore'
 import Component from './AlbumCard.vue'
@@ -35,8 +35,10 @@ new class extends UnitTestCase {
     })
 
     it('shuffles', async () => {
+      this.createAudioPlayer()
+
       const songs = factory('song', 10)
-      const fetchMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
+      const fetchMock = this.mock(playableStore, 'fetchSongsForAlbum').mockResolvedValue(songs)
       const shuffleMock = this.mock(playbackService, 'queueAndPlay').mockResolvedValue(void 0)
       const { album } = this.renderComponent(undefined, false)
 

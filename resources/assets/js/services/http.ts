@@ -13,7 +13,7 @@ class Http {
     this.client = Axios.create({
       baseURL: `${window.BASE_URL}api`,
       headers: {
-        'X-Api-Version': 'v6',
+        'X-Api-Version': 'v7',
       },
     })
 

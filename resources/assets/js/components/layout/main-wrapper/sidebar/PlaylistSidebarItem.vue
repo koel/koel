@@ -1,9 +1,10 @@
 <template>
   <SidebarItem
-    :class="{ current, droppable }"
+    :class="{ droppable }"
     :href="href"
     class="playlist select-none"
     draggable="true"
+    :active
     @contextmenu="onContextMenu"
     @dragleave="onDragLeave"
     @dragover="onDragOver"
@@ -26,7 +27,7 @@ import { faClockRotateLeft, faStar, faUsers, faWandMagicSparkles } from '@fortaw
 import { ListMusicIcon } from 'lucide-vue-next'
 import { computed, ref, toRefs } from 'vue'
 import { eventBus } from '@/utils/eventBus'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import { useRouter } from '@/composables/useRouter'
 import { useDraggable, useDroppable } from '@/composables/useDragAndDrop'
 import { usePlaylistManagement } from '@/composables/usePlaylistManagement'
@@ -34,7 +35,7 @@ import { usePlaylistManagement } from '@/composables/usePlaylistManagement'
 import SidebarItem from '@/components/layout/main-wrapper/sidebar/SidebarItem.vue'
 
 const props = defineProps<{ list: PlaylistLike }>()
-const { onRouteChanged, url } = useRouter()
+const { url, isCurrentScreen, getRouteParam } = useRouter()
 const { startDragging } = useDraggable('playlist')
 const { acceptsDrop, resolveDroppedItems } = useDroppable(['playables', 'album', 'artist', 'browser-media'])
 
@@ -48,7 +49,11 @@ const isPlaylist = (list: PlaylistLike): list is Playlist => 'id' in list
 const isFavoriteList = (list: PlaylistLike): list is FavoriteList => list.name === 'Favorites'
 const isRecentlyPlayedList = (list: PlaylistLike): list is RecentlyPlayedList => list.name === 'Recently Played'
 
-const current = ref(false)
+const active = computed(() => {
+  return (isCurrentScreen('Favorites') && isFavoriteList(list.value))
+    || (isCurrentScreen('RecentlyPlayed') && isRecentlyPlayedList(list.value))
+    || (isCurrentScreen('Playlist') && (list.value as Playlist).id === getRouteParam('id'))
+})
 
 const href = computed(() => {
   if (isPlaylist(list.value)) {
@@ -119,33 +124,13 @@ const onDrop = async (event: DragEvent) => {
   }
 
   if (isFavoriteList(list.value)) {
-    await songStore.favorite(playables)
+    await playableStore.favorite(playables)
   } else if (isPlaylist(list.value)) {
     await addToPlaylist(list.value, playables)
   }
 
   return false
 }
-
-onRouteChanged(route => {
-  switch (route.screen) {
-    case 'Favorites':
-      current.value = isFavoriteList(list.value)
-      break
-
-    case 'RecentlyPlayed':
-      current.value = isRecentlyPlayedList(list.value)
-      break
-
-    case 'Playlist':
-      current.value = (list.value as Playlist).id === route.params!.id
-      break
-
-    default:
-      current.value = false
-      break
-  }
-})
 </script>
 
 <style lang="postcss" scoped>

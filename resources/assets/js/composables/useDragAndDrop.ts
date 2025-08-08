@@ -5,7 +5,7 @@ import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import { mediaBrowser } from '@/services/mediaBrowser'
 
 type Draggable = MaybeArray<Playable> | Album | Artist | Playlist | PlaylistFolder | MaybeArray<Song | Folder>
@@ -146,21 +146,21 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
 
       switch (type) {
         case 'playables':
-          return songStore.byIds(<string[]>data)
+          return playableStore.byIds(<string[]>data)
         case 'album':
           const album = await albumStore.resolve(data)
-          return album ? await songStore.fetchForAlbum(album) : <Song[]>[]
+          return album ? await playableStore.fetchSongsForAlbum(album) : <Song[]>[]
         case 'artist':
           const artist = await artistStore.resolve(data)
-          return artist ? await songStore.fetchForArtist(artist) : <Song[]>[]
+          return artist ? await playableStore.fetchSongsForArtist(artist) : <Song[]>[]
         case 'playlist':
           const playlist = playlistStore.byId(<string>data)
-          return playlist ? await songStore.fetchForPlaylist(playlist) : <Song[]>[]
+          return playlist ? await playableStore.fetchForPlaylist(playlist) : <Song[]>[]
         case 'playlist-folder':
           const folder = playlistFolderStore.byId(<string>data)
-          return folder ? await songStore.fetchForPlaylistFolder(folder) : <Song[]>[]
+          return folder ? await playableStore.fetchForPlaylistFolder(folder) : <Song[]>[]
         case 'browser-media':
-          return await songStore.resolveFromMediaReferences(data)
+          return await playableStore.resolveSongsFromMediaReferences(data)
         default:
           throw new Error(`Unknown drag type: ${type}`)
       }

@@ -5,19 +5,19 @@
     </template>
 
     <ul class="menu">
-      <SidebarItem v-if="isAdmin" :href="url('settings')" screen="Settings">
+      <SidebarItem v-if="isAdmin" :href="url('settings')" :active="isCurrentScreen('Settings')">
         <template #icon>
           <Icon :icon="faTools" fixed-width />
         </template>
         Settings
       </SidebarItem>
-      <SidebarItem v-if="allowsUpload" :href="url('upload')" screen="Upload">
+      <SidebarItem v-if="allowsUpload" :href="url('upload')" :active="isCurrentScreen('Upload')">
         <template #icon>
           <Icon :icon="faUpload" fixed-width />
         </template>
         Upload
       </SidebarItem>
-      <SidebarItem v-if="isAdmin" :href="url('users.index')" screen="Users">
+      <SidebarItem v-if="isAdmin" :href="url('users.index')" :active="isCurrentScreen('Users', 'Profile')">
         <template #icon>
           <Icon :icon="faUsers" fixed-width />
         </template>
@@ -37,7 +37,7 @@ import SidebarSection from '@/components/layout/main-wrapper/sidebar/SidebarSect
 import SidebarSectionHeader from '@/components/layout/main-wrapper/sidebar/SidebarSectionHeader.vue'
 import SidebarItem from '@/components/layout/main-wrapper/sidebar/SidebarItem.vue'
 
-const { url } = useRouter()
+const { url, isCurrentScreen } = useRouter()
 const { isAdmin } = useAuthorization()
 const { allowsUpload } = useUpload()
 </script>

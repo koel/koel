@@ -58,13 +58,13 @@ import { faDownload, faExternalLink, faPause, faPlay } from '@fortawesome/free-s
 import DOMPurify from 'dompurify'
 import { orderBy } from 'lodash'
 import { computed, ref, watch } from 'vue'
-import { songStore as episodeStore } from '@/stores/songStore'
+import { playableStore as episodeStore } from '@/stores/playableStore'
 import { queueStore } from '@/stores/queueStore'
 import { podcastStore } from '@/stores/podcastStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { eventBus } from '@/utils/eventBus'
 import { downloadService } from '@/services/downloadService'
-import { playbackService } from '@/services/playbackService'
+import { playback } from '@/services/playbackManager'
 import { useRouter } from '@/composables/useRouter'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 
@@ -96,12 +96,12 @@ const playOrPause = async () => {
   queueStore.queueIfNotQueued(episode.value!)
 
   if (playing.value) {
-    playbackService.pause()
+    playback().pause()
     return
   }
 
   if (queueStore.current?.id === episodeId.value) {
-    await playbackService.resume()
+    await playback().resume()
     return
   }
 
@@ -117,10 +117,10 @@ const playOrPause = async () => {
   }
 
   if (preferences.continuous_playback) {
-    queueStore.replaceQueueWith(orderBy(await episodeStore.fetchForPodcast(episode.value!.podcast_id), 'created_at'))
+    queueStore.replaceQueueWith(orderBy(await episodeStore.fetchEpisodesInPodcast(episode.value!.podcast_id), 'created_at'))
   }
 
-  await playbackService.play(episode.value!, startingPoint)
+  await playback().play(episode.value!, startingPoint)
 }
 
 const download = () => downloadService.fromPlayables(episode.value!)

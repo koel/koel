@@ -102,6 +102,11 @@ class ArtworkService
         return playlist_cover_path(sprintf('%s.webp', Ulid::generate()));
     }
 
+    private function generateRadioStationLogoPath(): string
+    {
+        return radio_station_logo_path(sprintf('%s.webp', Ulid::generate()));
+    }
+
     /**
      * Get the URL of an album's thumbnail.
      * Auto-generate the thumbnail when possible, if one doesn't exist yet.
@@ -166,5 +171,13 @@ class ArtworkService
 
             return $cover;
         });
+    }
+
+    public function storeRadioStationLogo(string $logo): ?string
+    {
+        $destination = $this->generateRadioStationLogoPath();
+        $this->imageWriter->write($destination, $logo);
+
+        return basename($destination);
     }
 }

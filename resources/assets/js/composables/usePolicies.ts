@@ -29,6 +29,14 @@ export const usePolicies = () => {
     uploadSongs: () => isAdmin.value || isPlus.value,
     editAlbum: async (album: Album) => await resourcePermissionService.check('album', album.id, 'edit'),
     editArtist: async (artist: Artist) => await resourcePermissionService.check('artist', artist.id, 'edit'),
+
+    editRadioStation: async (station: RadioStation) => {
+      return await resourcePermissionService.check('radio-station', station.id, 'edit')
+    },
+
+    deleteRadioStation: async (station: RadioStation) => {
+      return await resourcePermissionService.check('radio-station', station.id, 'delete')
+    },
   }
 
   return {

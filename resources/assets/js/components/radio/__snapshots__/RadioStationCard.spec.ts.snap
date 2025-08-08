@@ -1,0 +1,31 @@
+// Vitest Snapshot v1
+
+exports[`renders with playing state 1`] = `
+<article data-v-2e80fe66="" class="full relative group flex max-w-full md:max-w-[256px] border p-5 rounded-lg flex-col gap-5 transition border-color duration-200" data-testid="radio-station-card" tabindex="0"><button data-v-2e80fe66="" style="background-image: url(&quot;undefined/resources/assets/img/covers/default.svg&quot;);" class="thumbnail relative w-full aspect-square bg-no-repeat bg-cover bg-center overflow-hidden rounded-md active:scale-95" data-testid="radio-station-card-thumbnail" title="Play/pause Beethoven Goes Metal"><img alt="Logo" src="https://example.com/logo.jpg" class="w-full aspect-square object-cover" loading="lazy"><span class="absolute top-0 left-0 w-full h-full group-hover:bg-black/40 no-hover:bg-black/40 z-10"></span><span class="play-icon absolute flex opacity-0 no-hover:opacity-100 items-center justify-center w-[32px] aspect-square rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-k-highlight group-hover:opacity-100 duration-500 transition z-20"><br data-testid="Icon" icon="[object Object]" class="text-white" size="lg"></span></button>
+  <footer data-v-2e80fe66="" class="flex flex-1 flex-col gap-1.5 overflow-hidden">
+    <div data-v-2e80fe66="" class="name flex flex-col gap-2 whitespace-nowrap">
+      <h3 data-v-2e80fe66="" class="font-medium">Beethoven Goes Metal
+        <!--v-if-->
+      </h3>
+    </div>
+    <div data-v-2e80fe66="" class="meta text-[0.9rem] flex gap-1.5 opacity-70 hover:opacity-100">
+      <p data-v-2e80fe66="" class="line-clamp-3" title="Heavy af">Heavy af</p>
+    </div>
+  </footer>
+</article>
+`;
+
+exports[`renders with stopped state 1`] = `
+<article data-v-2e80fe66="" class="full relative group flex max-w-full md:max-w-[256px] border p-5 rounded-lg flex-col gap-5 transition border-color duration-200" data-testid="radio-station-card" tabindex="0"><button data-v-2e80fe66="" style="background-image: url(&quot;undefined/resources/assets/img/covers/default.svg&quot;);" class="thumbnail relative w-full aspect-square bg-no-repeat bg-cover bg-center overflow-hidden rounded-md active:scale-95" data-testid="radio-station-card-thumbnail" title="Play/pause Beethoven Goes Metal"><img alt="Logo" src="https://example.com/logo.jpg" class="w-full aspect-square object-cover" loading="lazy"><span class="absolute top-0 left-0 w-full h-full group-hover:bg-black/40 no-hover:bg-black/40 z-10"></span><span class="play-icon absolute flex opacity-0 no-hover:opacity-100 items-center justify-center w-[32px] aspect-square rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-k-highlight group-hover:opacity-100 duration-500 transition z-20"><br data-testid="Icon" icon="[object Object]" class="ml-0.5 text-white" size="lg"></span></button>
+  <footer data-v-2e80fe66="" class="flex flex-1 flex-col gap-1.5 overflow-hidden">
+    <div data-v-2e80fe66="" class="name flex flex-col gap-2 whitespace-nowrap">
+      <h3 data-v-2e80fe66="" class="font-medium">Beethoven Goes Metal
+        <!--v-if-->
+      </h3>
+    </div>
+    <div data-v-2e80fe66="" class="meta text-[0.9rem] flex gap-1.5 opacity-70 hover:opacity-100">
+      <p data-v-2e80fe66="" class="line-clamp-3" title="Heavy af">Heavy af</p>
+    </div>
+  </footer>
+</article>
+`;

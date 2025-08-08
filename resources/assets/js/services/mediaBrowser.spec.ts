@@ -2,7 +2,7 @@ import { expect, it, vi } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { http } from '@/services/http'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import { mediaBrowser } from '@/services/mediaBrowser'
 import { cache } from '@/services/cache'
 import { commonStore } from '@/stores/commonStore'
@@ -28,7 +28,7 @@ new class extends UnitTestCase {
         .mockResolvedValueOnce(folders)
         .mockResolvedValueOnce(songPaginator)
 
-      const syncWithVaultMock = this.mock(songStore, 'syncWithVault').mockReturnValue(songs)
+      const syncWithVaultMock = this.mock(playableStore, 'syncWithVault').mockReturnValue(songs)
 
       const result = await mediaBrowser.browse(path, 2)
 
@@ -64,7 +64,7 @@ new class extends UnitTestCase {
 
       const getMock = this.mock(http, 'get')
 
-      const syncWithVaultMock = this.mock(songStore, 'syncWithVault').mockReturnValue(songs)
+      const syncWithVaultMock = this.mock(playableStore, 'syncWithVault').mockReturnValue(songs)
 
       const result = await mediaBrowser.browse(path, 2)
 
@@ -99,7 +99,7 @@ new class extends UnitTestCase {
         .mockResolvedValueOnce(folders)
         .mockResolvedValueOnce(songPaginator)
 
-      const syncWithVaultMock = this.mock(songStore, 'syncWithVault').mockReturnValue(songs)
+      const syncWithVaultMock = this.mock(playableStore, 'syncWithVault').mockReturnValue(songs)
 
       const result = await mediaBrowser.browse(path, 2, true)
 

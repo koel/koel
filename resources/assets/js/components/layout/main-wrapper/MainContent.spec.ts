@@ -5,7 +5,7 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { albumStore } from '@/stores/albumStore'
 import { preferenceStore } from '@/stores/preferenceStore'
-import { CurrentPlayableKey } from '@/symbols'
+import { CurrentStreamableKey } from '@/symbols'
 import AlbumArtOverlay from '@/components/ui/AlbumArtOverlay.vue'
 import Component from './MainContent.vue'
 
@@ -32,7 +32,7 @@ new class extends UnitTestCase {
     return this.render(Component, {
       global: {
         provide: {
-          [<symbol>CurrentPlayableKey]: ref(factory('song')),
+          [<symbol>CurrentStreamableKey]: ref(factory('song')),
         },
         stubs: {
           AlbumArtOverlay,

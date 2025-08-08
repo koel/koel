@@ -1,6 +1,6 @@
 <template>
   <li
-    :class="current && 'current'"
+    :class="{ active }"
     class="relative before:right-0 px-6 before:top-1/4 before:w-[4px] before:h-1/2 before:absolute before:rounded-full
     before:transition-[box-shadow,_background-color] before:ease-in-out before:duration-500"
     data-testid="sidebar-item"
@@ -23,28 +23,17 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
-import { useRouter } from '@/composables/useRouter'
 import { eventBus } from '@/utils/eventBus'
 
-const props = withDefaults(defineProps<{ href?: string | undefined, screen?: ScreenName | undefined }>(), {
-  href: undefined,
-  screen: undefined,
+const props = withDefaults(defineProps<{ href?: string | undefined, active?: boolean }>(), {
+  active: false,
 })
 
-const current = ref(false)
-
-const { onRouteChanged } = useRouter()
-
 const onClick = () => eventBus.emit('TOGGLE_SIDEBAR')
-
-if (screen) {
-  onRouteChanged(route => (current.value = route.screen === props.screen))
-}
 </script>
 
 <style lang="postcss" scoped>
-li.current {
+li.active {
   a {
     @apply text-k-text-primary !important;
   }

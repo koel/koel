@@ -6,7 +6,7 @@ import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { overviewStore } from '@/stores/overviewStore'
 import { recentlyPlayedStore } from '@/stores/recentlyPlayedStore'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 
 new class extends UnitTestCase {
   protected beforeEach () {
@@ -24,7 +24,7 @@ new class extends UnitTestCase {
 
   protected test () {
     it('initializes the store', async () => {
-      const songSyncMock = this.mock(songStore, 'syncWithVault')
+      const songSyncMock = this.mock(playableStore, 'syncWithVault')
       const albumSyncMock = this.mock(albumStore, 'syncWithVault')
       const artistSyncMock = this.mock(artistStore, 'syncWithVault')
       const refreshMock = this.mock(overviewStore, 'refreshPlayStats')
@@ -61,7 +61,7 @@ new class extends UnitTestCase {
       const mostPlayedSongs = factory('song', 7)
       const recentlyPlayedSongs = factory('song', 9)
 
-      const mostPlayedSongsMock = this.mock(songStore, 'getMostPlayed', mostPlayedSongs)
+      const mostPlayedSongsMock = this.mock(playableStore, 'getMostPlayedSongs', mostPlayedSongs)
       recentlyPlayedStore.excerptState.playables = recentlyPlayedSongs
 
       overviewStore.refreshPlayStats()

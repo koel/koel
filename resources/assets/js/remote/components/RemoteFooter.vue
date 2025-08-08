@@ -5,10 +5,15 @@
       data-testid="btn-toggle-favorite"
       @click.prevent="toggleFavorite"
     >
-      <Icon :class="playable.favorite && 'yep'" :icon="playable.favorite ? faHeart : faEmptyHeart" />
+      <Icon :class="streamable.favorite && 'yep'" :icon="streamable.favorite ? faHeart : faEmptyHeart" />
     </button>
 
-    <button class="text-[6vmin]" data-testid="btn-play-prev" @click.prevent="playPrev">
+    <button
+      :class="canRewindAndFastForward || 'cursor-not-allowed opacity-50'"
+      class="text-[6vmin]"
+      data-testid="btn-play-prev"
+      @click.prevent="playPrev"
+    >
       <Icon :icon="faStepBackward" />
     </button>
 
@@ -18,10 +23,15 @@
       data-testid="btn-toggle-playback"
       @click.prevent="togglePlayback"
     >
-      <Icon :class="playing || 'paused'" :icon="playing ? faPause : faPlay" />
+      <Icon :class="playing || 'paused'" :icon="playing ? stopOrPauseIcon : faPlay" />
     </button>
 
-    <button class="text-[6vmin]" data-testid="btn-play-next" @click.prevent="playNext">
+    <button
+      :class="canRewindAndFastForward || 'cursor-not-allowed opacity-50'"
+      class="text-[6vmin]"
+      data-testid="btn-play-next"
+      @click.prevent="playNext"
+    >
       <Icon :icon="faStepForward" />
     </button>
 
@@ -30,25 +40,28 @@
 </template>
 
 <script lang="ts" setup>
-import { faHeart, faPause, faPlay, faStepBackward, faStepForward } from '@fortawesome/free-solid-svg-icons'
+import { faHeart, faPause, faPlay, faStepBackward, faStepForward, faStop } from '@fortawesome/free-solid-svg-icons'
 import { faHeart as faEmptyHeart } from '@fortawesome/free-regular-svg-icons'
 import { computed, toRefs } from 'vue'
 import { socketService } from '@/services/socketService'
+import { isRadioStation } from '@/utils/typeGuards'
 
 import VolumeControl from '@/remote/components/VolumeControl.vue'
 
-const props = defineProps<{ playable: Playable }>()
-const { playable } = toRefs(props)
+const props = defineProps<{ streamable: Streamable }>()
+const { streamable } = toRefs(props)
 
 const toggleFavorite = () => {
-  playable.value.favorite = !playable.value.liked
+  streamable.value.favorite = !streamable.value.favorite
   socketService.broadcast('SOCKET_TOGGLE_FAVORITE')
 }
 
-const playing = computed(() => playable.value.playback_state === 'Playing')
+const stopOrPauseIcon = computed(() => isRadioStation(streamable.value) ? faStop : faPause)
+const playing = computed(() => streamable.value.playback_state === 'Playing')
+const canRewindAndFastForward = computed(() => !isRadioStation(streamable.value))
 
 const togglePlayback = () => {
-  playable.value.playback_state = playable.value.playback_state === 'Playing' ? 'Paused' : 'Playing'
+  streamable.value.playback_state = streamable.value.playback_state === 'Playing' ? 'Paused' : 'Playing'
   socketService.broadcast('SOCKET_TOGGLE_PLAYBACK')
 }
 

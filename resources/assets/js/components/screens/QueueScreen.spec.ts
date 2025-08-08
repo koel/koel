@@ -4,7 +4,7 @@ import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { commonStore } from '@/stores/commonStore'
 import { queueStore } from '@/stores/queueStore'
-import { playbackService } from '@/services/playbackService'
+import { playbackService } from '@/services/QueuePlaybackService'
 import Component from './QueueScreen.vue'
 
 new class extends UnitTestCase {
@@ -24,6 +24,8 @@ new class extends UnitTestCase {
     })
 
     it('has an option to plays some random songs if the library is not empty', async () => {
+      this.createAudioPlayer()
+
       commonStore.state.song_count = 300
       const fetchRandomMock = this.mock(queueStore, 'fetchRandom')
       const playMock = this.mock(playbackService, 'playFirstInQueue')
@@ -38,6 +40,8 @@ new class extends UnitTestCase {
     })
 
     it('shuffles all', async () => {
+      this.createAudioPlayer()
+
       const songs = factory('song', 3)
       this.renderComponent(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
@@ -53,7 +57,7 @@ new class extends UnitTestCase {
     this.render(Component, {
       global: {
         stubs: {
-          SongList: this.stub('song-list'),
+          PlayableList: this.stub('song-list'),
         },
       },
     })

@@ -69,11 +69,12 @@ import { eventBus } from '@/utils/eventBus'
 import { secondsToHumanReadable } from '@/utils/formatters'
 import { useDraggable } from '@/composables/useDragAndDrop'
 import { formatTimeAgo } from '@vueuse/core'
-import { playbackService } from '@/services/playbackService'
-import { songStore as episodeStore } from '@/stores/songStore'
+import { playableStore as episodeStore } from '@/stores/playableStore'
 import { queueStore } from '@/stores/queueStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useRouter } from '@/composables/useRouter'
+import { playback } from '@/services/playbackManager'
+
 import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
 const props = defineProps<{ episode: Episode, podcast: Podcast }>()
@@ -120,18 +121,18 @@ const isPlaying = computed(() => episode.value.playback_state === 'Playing')
 
 const playOrPause = async () => {
   if (isPlaying.value) {
-    return playbackService.pause()
+    return playback().pause()
   }
 
   if (episode.value.playback_state === 'Paused') {
-    return playbackService.resume()
+    return playback().resume()
   }
 
   if (preferences.continuous_playback) {
-    queueStore.replaceQueueWith(orderBy(await episodeStore.fetchForPodcast(podcast.value.id), 'created_at'))
+    queueStore.replaceQueueWith(orderBy(await episodeStore.fetchEpisodesInPodcast(podcast.value.id), 'created_at'))
   }
 
-  await playbackService.play(episode.value, currentPosition.value >= episode.value.length ? 0 : currentPosition.value)
+  await playback().play(episode.value, currentPosition.value >= episode.value.length ? 0 : currentPosition.value)
 }
 
 const toggleFavorite = () => episodeStore.toggleFavorite(episode.value)

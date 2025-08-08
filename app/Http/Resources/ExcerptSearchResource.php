@@ -20,6 +20,9 @@ class ExcerptSearchResource extends JsonResource
         'podcasts' => [
             PodcastResource::JSON_STRUCTURE,
         ],
+        'radio_stations' => [
+            RadioStationResource::JSON_STRUCTURE,
+        ],
     ];
 
     public function __construct(private readonly ExcerptSearchResult $result)
@@ -35,6 +38,7 @@ class ExcerptSearchResource extends JsonResource
             'artists' => ArtistResource::collection($this->result->artists),
             'albums' => AlbumResource::collection($this->result->albums),
             'podcasts' => PodcastResource::collection($this->result->podcasts),
+            'radio_stations' => RadioStationResource::collection($this->result->radioStations),
         ];
     }
 }

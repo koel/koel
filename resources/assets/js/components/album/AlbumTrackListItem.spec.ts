@@ -3,8 +3,8 @@ import { screen } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { songStore } from '@/stores/songStore'
-import { playbackService } from '@/services/playbackService'
+import { playableStore } from '@/stores/playableStore'
+import { playbackService } from '@/services/QueuePlaybackService'
 import { PlayablesKey } from '@/symbols'
 import Component from './AlbumTrackListItem.vue'
 
@@ -13,6 +13,8 @@ new class extends UnitTestCase {
     it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
 
     it('plays', async () => {
+      this.createAudioPlayer()
+
       const matchedSong = factory('song')
       const playMock = this.mock(playbackService, 'play')
 
@@ -33,7 +35,7 @@ new class extends UnitTestCase {
       length: 280,
     })
 
-    const matchMock = this.mock(songStore, 'match', matchedSong)
+    const matchMock = this.mock(playableStore, 'matchSongsByTitle', matchedSong)
 
     const rendered = this.render(Component, {
       props: {

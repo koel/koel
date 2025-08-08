@@ -5,9 +5,9 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { eventBus } from '@/utils/eventBus'
 import { downloadService } from '@/services/downloadService'
-import { playbackService } from '@/services/playbackService'
+import { playbackService } from '@/services/QueuePlaybackService'
 import { commonStore } from '@/stores/commonStore'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import { resourcePermissionService } from '@/services/resourcePermissionService'
 import Component from './ArtistContextMenu.vue'
 
@@ -16,8 +16,10 @@ new class extends UnitTestCase {
     it('renders', async () => expect((await this.renderComponent()).html()).toMatchSnapshot())
 
     it('plays all', async () => {
+      this.createAudioPlayer()
+
       const songs = factory('song', 10)
-      const fetchMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
+      const fetchMock = this.mock(playableStore, 'fetchSongsForArtist').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 
       const { artist } = await this.renderComponent()
@@ -29,8 +31,10 @@ new class extends UnitTestCase {
     })
 
     it('shuffles all', async () => {
+      this.createAudioPlayer()
+
       const songs = factory('song', 10)
-      const fetchMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
+      const fetchMock = this.mock(playableStore, 'fetchSongsForArtist').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 
       const { artist } = await this.renderComponent()

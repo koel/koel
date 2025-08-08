@@ -4,8 +4,8 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { MessageToasterStub } from '@/__tests__/stubs'
 import { playlistStore } from '@/stores/playlistStore'
-import { songStore } from '@/stores/songStore'
-import { playbackService } from '@/services/playbackService'
+import { playableStore } from '@/stores/playableStore'
+import { playbackService } from '@/services/QueuePlaybackService'
 import { eventBus } from '@/utils/eventBus'
 import Router from '@/router'
 import Component from './PlaylistFolderContextMenu.vue'
@@ -33,9 +33,11 @@ new class extends UnitTestCase {
     })
 
     it('plays', async () => {
+      this.createAudioPlayer()
+
       const folder = this.createPlayableFolder()
       const songs = factory('song', 3)
-      const fetchMock = this.mock(songStore, 'fetchForPlaylistFolder').mockResolvedValue(songs)
+      const fetchMock = this.mock(playableStore, 'fetchForPlaylistFolder').mockResolvedValue(songs)
       const queueMock = this.mock(playbackService, 'queueAndPlay')
       const goMock = this.mock(Router, 'go')
       await this.renderComponent(folder)
@@ -50,9 +52,11 @@ new class extends UnitTestCase {
     })
 
     it('warns if attempting to play with no songs in folder', async () => {
+      this.createAudioPlayer()
+
       const folder = this.createPlayableFolder()
 
-      const fetchMock = this.mock(songStore, 'fetchForPlaylistFolder').mockResolvedValue([])
+      const fetchMock = this.mock(playableStore, 'fetchForPlaylistFolder').mockResolvedValue([])
       const queueMock = this.mock(playbackService, 'queueAndPlay')
       const goMock = this.mock(Router, 'go')
       const warnMock = this.mock(MessageToasterStub.value, 'warning')
@@ -70,9 +74,11 @@ new class extends UnitTestCase {
     })
 
     it('shuffles', async () => {
+      this.createAudioPlayer()
+
       const folder = this.createPlayableFolder()
       const songs = factory('song', 3)
-      const fetchMock = this.mock(songStore, 'fetchForPlaylistFolder').mockResolvedValue(songs)
+      const fetchMock = this.mock(playableStore, 'fetchForPlaylistFolder').mockResolvedValue(songs)
       const queueMock = this.mock(playbackService, 'queueAndPlay')
       const goMock = this.mock(Router, 'go')
       await this.renderComponent(folder)
@@ -95,9 +101,11 @@ new class extends UnitTestCase {
     })
 
     it('warns if attempting to shuffle with no songs in folder', async () => {
+      this.createAudioPlayer()
+
       const folder = this.createPlayableFolder()
 
-      const fetchMock = this.mock(songStore, 'fetchForPlaylistFolder').mockResolvedValue([])
+      const fetchMock = this.mock(playableStore, 'fetchForPlaylistFolder').mockResolvedValue([])
       const queueMock = this.mock(playbackService, 'queueAndPlay')
       const goMock = this.mock(Router, 'go')
       const warnMock = this.mock(MessageToasterStub.value, 'warning')

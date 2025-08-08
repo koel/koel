@@ -6,7 +6,7 @@
         <ControlsToggle v-model="showingControls" />
 
         <template #thumbnail>
-          <ThumbnailStack :thumbnails="thumbnails" />
+          <ThumbnailStack :thumbnails />
         </template>
 
         <template v-if="totalSongCount" #meta>
@@ -18,7 +18,7 @@
           <div class="controls w-full min-h-[32px] flex justify-between items-center gap-4">
             <SongListControls
               v-if="totalSongCount && (!isPhone || showingControls)"
-              :config="config"
+              :config
               @play-all="playAll"
               @play-selected="playSelected"
             />
@@ -54,15 +54,15 @@ import { computed, ref, toRef } from 'vue'
 import { pluralize, secondsToHumanReadable } from '@/utils/formatters'
 import { commonStore } from '@/stores/commonStore'
 import { queueStore } from '@/stores/queueStore'
-import { songStore } from '@/stores/songStore'
-import { playbackService } from '@/services/playbackService'
+import { playableStore } from '@/stores/playableStore'
 import { useRouter } from '@/composables/useRouter'
 import { useErrorHandler } from '@/composables/useErrorHandler'
-import { useSongList } from '@/composables/useSongList'
-import { useSongListControls } from '@/composables/useSongListControls'
+import { usePlayableList } from '@/composables/usePlayableList'
+import { usePlayableListControls } from '@/composables/usePlayableListControls'
+import { playback } from '@/services/playbackManager'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
-import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
+import SongListSkeleton from '@/components/ui/skeletons/PlayableListSkeleton.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 
@@ -70,21 +70,21 @@ const totalSongCount = toRef(commonStore.state, 'song_count')
 const totalDuration = computed(() => secondsToHumanReadable(commonStore.state.song_length))
 
 const {
-  SongList,
+  PlayableList: SongList,
   ControlsToggle,
   ThumbnailStack,
   headerLayout,
   thumbnails,
-  songs,
-  songList,
+  playables: songs,
+  playableList: songList,
   showingControls,
   isPhone,
   onPressEnter,
   playSelected,
   onScrollBreakpoint,
-} = useSongList(toRef(songStore.state, 'playables'), { type: 'Songs' }, { filterable: false, sortable: true })
+} = usePlayableList(toRef(playableStore.state, 'playables'), { type: 'Songs' }, { filterable: false, sortable: true })
 
-const { SongListControls, config } = useSongListControls('Songs')
+const { PlayableListControls: SongListControls, config } = usePlayableListControls('Songs')
 
 const { go, onScreenActivated, url } = useRouter()
 
@@ -105,7 +105,7 @@ const fetchSongs = async () => {
   loading.value = true
 
   try {
-    page.value = await songStore.paginate({
+    page.value = await playableStore.paginateSongs({
       sort: sortField,
       order: sortOrder,
       page: page.value!,
@@ -125,12 +125,12 @@ const playAll = async (shuffle: boolean) => {
   }
 
   go(url('queue'))
-  await playbackService.playFirstInQueue()
+  await playback().playFirstInQueue()
 }
 
 const sort = async (field: MaybeArray<PlayableListSortField>, order: SortOrder) => {
   page.value = 1
-  songStore.state.playables = []
+  playableStore.state.playables = []
   sortField = field
   sortOrder = order
 

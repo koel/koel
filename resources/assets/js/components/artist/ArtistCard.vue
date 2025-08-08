@@ -32,17 +32,17 @@ import { computed, toRef, toRefs } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import { downloadService } from '@/services/downloadService'
-import { playbackService } from '@/services/playbackService'
 import { useDraggable } from '@/composables/useDragAndDrop'
 import { useRouter } from '@/composables/useRouter'
+import { playback } from '@/services/playbackManager'
 
 import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
 import ExternalMark from '@/components/ui/ExternalMark.vue'
 import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
-const props = withDefaults(defineProps<{ artist: Artist, layout?: ArtistAlbumCardLayout }>(), { layout: 'full' })
+const props = withDefaults(defineProps<{ artist: Artist, layout?: CardLayout }>(), { layout: 'full' })
 const { go, url } = useRouter()
 const { startDragging } = useDraggable('artist')
 
@@ -54,7 +54,7 @@ const allowDownload = toRef(commonStore.state, 'allows_download')
 const showing = computed(() => artistStore.isStandard(artist.value))
 
 const shuffle = async () => {
-  playbackService.queueAndPlay(await songStore.fetchForArtist(artist.value), true /* shuffled */)
+  playback().queueAndPlay(await playableStore.fetchSongsForArtist(artist.value), true /* shuffled */)
   go(url('queue'))
 }
 

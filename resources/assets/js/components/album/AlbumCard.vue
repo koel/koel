@@ -15,7 +15,7 @@
           <ExternalMark v-if="album.is_external" class="mr-1" />
           {{ album.name }}
 
-          <FavoriteButton v-if="album.favorite" :favorite="album.favorite" class="ml-1" @toggle="toggleLike" />
+          <FavoriteButton v-if="album.favorite" :favorite="album.favorite" class="ml-1" @toggle="toggleFavorite" />
         </a>
 
         <span
@@ -55,11 +55,11 @@ import { eventBus } from '@/utils/eventBus'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import { downloadService } from '@/services/downloadService'
-import { playbackService } from '@/services/playbackService'
 import { useDraggable } from '@/composables/useDragAndDrop'
 import { useRouter } from '@/composables/useRouter'
+import { playback } from '@/services/playbackManager'
 
 import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
 import ExternalMark from '@/components/ui/ExternalMark.vue'
@@ -67,7 +67,7 @@ import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
 const props = withDefaults(defineProps<{
   album: Album
-  layout?: ArtistAlbumCardLayout
+  layout?: CardLayout
   showReleaseYear?: boolean
 }>(), {
   layout: 'full',
@@ -86,11 +86,11 @@ const isStandardArtist = computed(() => artistStore.isStandard(album.value.artis
 const showing = computed(() => !albumStore.isUnknown(album.value))
 
 const shuffle = async () => {
-  playbackService.queueAndPlay(await songStore.fetchForAlbum(album.value), true /* shuffled */)
+  playback().queueAndPlay(await playableStore.fetchSongsForAlbum(album.value), true /* shuffled */)
   go(url('queue'))
 }
 
-const toggleLike = () => albumStore.toggleFavorite(album.value)
+const toggleFavorite = () => albumStore.toggleFavorite(album.value)
 
 const download = () => downloadService.fromAlbum(album.value)
 const onDragStart = (event: DragEvent) => startDragging(event, album.value)

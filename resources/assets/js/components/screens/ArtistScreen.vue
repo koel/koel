@@ -31,7 +31,7 @@
           <div class="flex gap-2">
             <SongListControls
               v-if="songs.length && (!isPhone || showingControls)"
-              :config="config"
+              :config
               @filter="applyFilter"
               @play-all="playAll"
               @play-selected="playSelected"
@@ -71,7 +71,7 @@
       </div>
 
       <div v-show="activeTab === 'albums'" class="albums-pane">
-        <AlbumOrArtistGrid v-koel-overflow-fade view-mode="list">
+        <GridListView v-koel-overflow-fade view-mode="list">
           <template v-if="albums">
             <AlbumCard
               v-for="album in albums"
@@ -84,7 +84,7 @@
           <template v-else>
             <AlbumCardSkeleton v-for="i in 6" :key="i" layout="compact" />
           </template>
-        </AlbumOrArtistGrid>
+        </GridListView>
       </div>
 
       <div v-if="useEncyclopedia && artist" v-show="activeTab === 'information'" class="info-pane">
@@ -100,21 +100,21 @@ import { eventBus } from '@/utils/eventBus'
 import { pluralize } from '@/utils/formatters'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import { downloadService } from '@/services/downloadService'
 import { useErrorHandler } from '@/composables/useErrorHandler'
-import { useSongList } from '@/composables/useSongList'
-import { useSongListControls } from '@/composables/useSongListControls'
+import { usePlayableList } from '@/composables/usePlayableList'
+import { usePlayableListControls } from '@/composables/usePlayableListControls'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 import { useRouter } from '@/composables/useRouter'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ArtistThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
 import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
-import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
+import SongListSkeleton from '@/components/ui/skeletons/PlayableListSkeleton.vue'
 import ScreenTabs from '@/components/ui/ArtistAlbumScreenTabs.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
-import AlbumOrArtistGrid from '@/components/ui/album-artist/AlbumOrArtistGrid.vue'
+import GridListView from '@/components/ui/GridListView.vue'
 import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
 const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/ArtistInfo.vue'))
@@ -124,7 +124,7 @@ const AlbumCardSkeleton = defineAsyncComponent(() => import('@/components/ui/ske
 const validTabs = ['songs', 'albums', 'information'] as const
 type Tab = typeof validTabs[number]
 
-const { SongListControls, config } = useSongListControls('Artist')
+const { PlayableListControls: SongListControls, config } = usePlayableListControls('Artist')
 const { useLastfm, useMusicBrainz } = useThirdPartyServices()
 const { getRouteParam, go, onScreenActivated, onRouteChanged, url, triggerNotFound } = useRouter()
 
@@ -135,10 +135,10 @@ const loading = ref(false)
 const albums = ref<Album[] | undefined>()
 
 const {
-  SongList,
+  PlayableList: SongList,
   ControlsToggle,
   headerLayout,
-  songList,
+  playableList: songList,
   showingControls,
   isPhone,
   context,
@@ -149,7 +149,7 @@ const {
   playSelected,
   applyFilter,
   onScrollBreakpoint,
-} = useSongList(songs, { type: 'Artist' })
+} = usePlayableList(songs, { type: 'Artist' })
 
 const useEncyclopedia = computed(() => useMusicBrainz.value || useLastfm.value)
 
@@ -176,7 +176,7 @@ const fetchScreenData = async () => {
   try {
     [artist.value, songs.value] = await Promise.all([
       artistStore.resolve(id),
-      songStore.fetchForArtist(id),
+      playableStore.fetchSongsForArtist(id),
     ])
 
     if (!artist.value) {

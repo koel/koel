@@ -18,14 +18,14 @@ exports[`renders 1`] = `
           </div>
           <div>
             <div class="context-menu p-0 hidden">
-              <div data-v-42061e3e="" class="add-to w-full max-w-[256px] min-w-[200px] p-3 space-y-3" data-testid="add-to-menu" tabindex="0">
-                <section data-v-42061e3e="" class="existing-playlists">
-                  <p data-v-42061e3e="" class="mb-2 text-[0.9rem]">Add 0 items to</p>
-                  <ul data-v-42061e3e="" class="relative max-h-48 overflow-y-scroll space-y-1.5">
-                    <li data-v-42061e3e="" data-testid="queue" tabindex="0">Queue</li>
-                    <li data-v-42061e3e="" class="favorites" data-testid="add-to-favorites" tabindex="0"> Favorites </li>
+              <div data-v-2ee1a399="" class="add-to w-full max-w-[256px] min-w-[200px] p-3 space-y-3" data-testid="add-to-menu" tabindex="0">
+                <section data-v-2ee1a399="" class="existing-playlists">
+                  <p data-v-2ee1a399="" class="mb-2 text-[0.9rem]">Add 0 items to</p>
+                  <ul data-v-2ee1a399="" class="relative max-h-48 overflow-y-scroll space-y-1.5">
+                    <li data-v-2ee1a399="" data-testid="queue" tabindex="0">Queue</li>
+                    <li data-v-2ee1a399="" class="favorites" data-testid="add-to-favorites" tabindex="0"> Favorites </li>
                   </ul>
-                </section><button data-v-8943c846="" data-v-42061e3e="" class="text-base text-k-text-primary bg-k-primary px-3.5 py-2 rounded cursor-pointer !w-full !border !border-solid !border-white/20" type="button" transparent=""> New Playlist… </button>
+                </section><button data-v-8943c846="" data-v-2ee1a399="" class="text-base text-k-text-primary bg-k-primary px-3.5 py-2 rounded cursor-pointer !w-full !border !border-solid !border-white/20" type="button" transparent=""> New Playlist… </button>
               </div>
             </div>
           </div>
