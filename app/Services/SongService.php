@@ -33,6 +33,7 @@ class SongService
         private readonly TranscodeRepository $transcodeRepository,
         private readonly ArtworkService $artworkService,
         private readonly CacheStrategy $cache,
+        private readonly EncyclopediaService $encyclopediaService,
     ) {
     }
 
@@ -215,6 +216,10 @@ class SongService
             } else {
                 $this->artworkService->trySetAlbumCoverFromDirectory($album, dirname($data['path']));
             }
+        }
+
+        if (!$artist->has_image && SpotifyService::enabled()) {
+            $this->encyclopediaService->getArtistInformation($artist);
         }
 
         Arr::forget($data, ['album', 'artist', 'albumartist', 'cover']);
