@@ -11,8 +11,6 @@ class DatabaseSeeder extends Seeder
     {
         Model::unguard();
 
-        $this->call(ArtistTableSeeder::class);
-        $this->call(AlbumTableSeeder::class);
         $this->call(SettingTableSeeder::class);
 
         Model::reguard();
