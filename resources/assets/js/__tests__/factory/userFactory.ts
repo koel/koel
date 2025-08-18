@@ -39,6 +39,7 @@ export default (): User => ({
     make_uploads_public: false,
     include_public_media: true,
     lastfm_session_key: 'fake-session-key',
+    rotate_currently_playing_album_art: true,
   },
   sso_provider: null,
   sso_id: null,

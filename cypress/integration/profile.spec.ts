@@ -86,6 +86,21 @@ context('Profiles & Preferences', () => {
     cy.findByTestId('album-art-overlay').should('exist')
   })
 
+  it('has an option to enable/disable the spinning album art', () => {
+    cy.$login()
+    cy.$mockPlayback()
+    cy.$clickSidebarItem('Current Queue')
+    cy.get('#queueWrapper').within(() => cy.findByTestId('shuffle-library').click())
+    cy.get('.song-info.playing .album-thumb').should('have.css', 'animation-name', 'spin')
+
+    cy.findByTestId('view-profile-link').click()
+    cy.get('#profileWrapper [name=rotate_currently_playing_album_art]').scrollIntoView().uncheck()
+    cy.get('.song-info.playing .album-thumb').should('have.css', 'animation-name', 'none')
+
+    cy.get('#profileWrapper [name=rotate_currently_playing_album_art]').scrollIntoView().check()
+    cy.get('.song-info.playing .album-thumb').should('have.css', 'animation-name', 'spin')
+  })
+
   it('sets a theme', () => {
     cy.$login()
     cy.findByTestId('view-profile-link').click()

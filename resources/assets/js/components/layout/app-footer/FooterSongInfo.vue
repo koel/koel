@@ -26,6 +26,7 @@ import { isSong } from '@/utils/typeGuards'
 import { CurrentPlayableKey } from '@/symbols'
 import { useDraggable } from '@/composables/useDragAndDrop'
 import { useRouter } from '@/composables/useRouter'
+import { preferenceStore as preferences } from '@/stores/preferenceStore'
 
 const { startDragging } = useDraggable('playables')
 const { url } = useRouter()
@@ -55,6 +56,9 @@ const artistOrPodcastName = computed(() => {
 
 const coverBackgroundImage = computed(() => `url(${cover.value ?? defaultCover})`)
 const draggable = computed(() => Boolean(song.value))
+const shouldRotateAlbumArt = computed(() => preferences.rotate_currently_playing_album_art)
+const albumArtAnimation = computed(() =>
+  shouldRotateAlbumArt.value ? 'spin 30s linear infinite' : 'none')
 
 const onDragStart = (event: DragEvent) => {
   if (song.value) {
@@ -93,7 +97,7 @@ const onDragStart = (event: DragEvent) => {
 
   &.playing .album-thumb {
     @apply motion-reduce:animate-none;
-    animation: spin 30s linear infinite;
+    animation: v-bind(albumArtAnimation);
   }
 }
 

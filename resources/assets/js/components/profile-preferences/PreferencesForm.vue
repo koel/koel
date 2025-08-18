@@ -30,6 +30,12 @@
         Confirm before closing Koel
       </div>
     </FormRow>
+    <FormRow v-if="!onMobile">
+      <div>
+        <CheckBox v-model="preferences.rotate_currently_playing_album_art" name="rotate_currently_playing_album_art" />
+        Continuously rotate the current album's art
+      </div>
+    </FormRow>
     <FormRow v-if="showTranscodingOption">
       <div>
         <CheckBox

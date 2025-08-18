@@ -341,6 +341,7 @@ interface UserPreferences extends Record<string, any> {
   make_uploads_public: boolean
   include_public_media: boolean
   lastfm_session_key?: string
+  rotate_currently_playing_album_art: boolean
 }
 
 interface User {
