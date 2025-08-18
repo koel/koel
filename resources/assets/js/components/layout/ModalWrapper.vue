@@ -1,7 +1,7 @@
 <template>
   <dialog
     ref="dialog"
-    class="text-k-text-primary min-w-full md:min-w-[480px] border-0 p-0 rounded-md overflow-hidden bg-k-bg-primary backdrop:bg-black/70"
+    class="text-k-text-primary min-w-full md:min-w-[480px] border-0 p-0 rounded-md bg-k-bg-primary backdrop:bg-black/70"
     @close.prevent
   >
     <Component
@@ -62,7 +62,6 @@ eventBus.on('MODAL_SHOW_ABOUT_KOEL', () => (activeModalName.value = 'about-koel'
       folder,
       playables: playables ? arrayify(playables) : [],
     }
-
     activeModalName.value = 'create-playlist-form'
   })
   .on('MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM', folder => {
@@ -87,7 +86,6 @@ eventBus.on('MODAL_SHOW_ABOUT_KOEL', () => (activeModalName.value = 'about-koel'
       initialTab,
       songs: arrayify(songs),
     }
-
     activeModalName.value = 'edit-song-form'
   })
   .on('MODAL_SHOW_EDIT_PLAYLIST_FOLDER_FORM', folder => {
@@ -106,26 +104,31 @@ eventBus.on('MODAL_SHOW_ABOUT_KOEL', () => (activeModalName.value = 'about-koel'
 
 <style lang="postcss" scoped>
 dialog {
-  :deep(form),
-  :deep(> div) {
-    @apply relative;
+  overflow: visible;
+}
 
-    > header,
-    > main,
-    > footer {
-      @apply px-6 py-5;
-    }
+:deep([id='koel-plus-modal']) {
+  overflow: visible;
+}
 
-    > footer {
-      @apply mt-0 bg-black/10 border-t border-white/5 space-x-2;
-    }
+:deep(> div) {
+  @apply relative;
 
-    > header {
-      @apply flex bg-k-bg-secondary;
+  > header,
+  > main,
+  > footer {
+    @apply px-6 py-5;
+  }
 
-      h1 {
-        @apply text-3xl leading-normal overflow-hidden text-ellipsis whitespace-nowrap;
-      }
+  > footer {
+    @apply mt-0 bg-black/10 border-t border-white/5 space-x-2;
+  }
+
+  > header {
+    @apply flex bg-k-bg-secondary;
+
+    h1 {
+      @apply text-3xl leading-normal overflow-hidden text-ellipsis whitespace-nowrap;
     }
   }
 }
