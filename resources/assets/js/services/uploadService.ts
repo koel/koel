@@ -4,7 +4,7 @@ import { reactive } from 'vue'
 import { http } from '@/services/http'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import { eventBus } from '@/utils/eventBus'
 import { logger } from '@/utils/logger'
 
@@ -110,7 +110,7 @@ export const uploadService = {
   },
 
   handleUploadResult: (result: UploadResult) => {
-    songStore.syncWithVault(result.song)
+    playableStore.syncWithVault(result.song)
     albumStore.syncWithVault(result.album)
     commonStore.state.song_length += 1
     eventBus.emit('SONG_UPLOADED', result.song)

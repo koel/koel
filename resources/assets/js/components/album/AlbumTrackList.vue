@@ -17,7 +17,7 @@
 
 <script lang="ts" setup>
 import { onMounted, provide, ref, toRefs } from 'vue'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import { PlayablesKey } from '@/symbols'
 
 import TrackListItem from '@/components/album/AlbumTrackListItem.vue'
@@ -30,7 +30,7 @@ const songs = ref<Song[]>([])
 // @ts-ignore
 provide(PlayablesKey, songs)
 
-onMounted(async () => songs.value = await songStore.fetchForAlbum(album.value))
+onMounted(async () => songs.value = await playableStore.fetchSongsForAlbum(album.value))
 </script>
 
 <style lang="postcss" scoped>

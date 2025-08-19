@@ -3,20 +3,25 @@ import { reactive } from 'vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { http } from '@/services/http'
-import type { ExcerptSearchResult } from '@/stores/searchStore'
+import type { ExcerptSearchResult, ExcerptState } from '@/stores/searchStore'
+import { searchStore } from '@/stores/searchStore'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
-import { searchStore } from '@/stores/searchStore'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 
 new class extends UnitTestCase {
   protected beforeEach () {
     super.beforeEach(() => {
-      searchStore.state = reactive({
+      searchStore.state = reactive<{
+        excerpt: ExcerptState
+        playables: Playable[]
+      }>({
         excerpt: {
           playables: [],
           albums: [],
           artists: [],
+          podcasts: [],
+          radio_stations: [],
         },
         playables: [],
       })
@@ -26,13 +31,15 @@ new class extends UnitTestCase {
   protected test () {
     it('performs an excerpt search', async () => {
       const result: ExcerptSearchResult = {
-        playables: factory('song', 3),
+        songs: factory('song', 3),
         albums: factory('album', 3),
         artists: factory('artist', 3),
+        podcasts: factory('podcast', 3),
+        radio_stations: factory('radio-station', 3),
       }
 
       const getMock = this.mock(http, 'get').mockResolvedValue(result)
-      const syncSongsMock = this.mock(songStore, 'syncWithVault', result.songs)
+      const syncSongsMock = this.mock(playableStore, 'syncWithVault', result.songs)
       const syncAlbumsMock = this.mock(albumStore, 'syncWithVault', result.albums)
       const syncArtistsMock = this.mock(artistStore, 'syncWithVault', result.artists)
 
@@ -43,7 +50,7 @@ new class extends UnitTestCase {
       expect(syncAlbumsMock).toHaveBeenCalledWith(result.albums)
       expect(syncArtistsMock).toHaveBeenCalledWith(result.artists)
 
-      expect(searchStore.state.excerpt.songs).toEqual(result.songs)
+      expect(searchStore.state.excerpt.playables).toEqual(result.songs)
       expect(searchStore.state.excerpt.albums).toEqual(result.albums)
       expect(searchStore.state.excerpt.artists).toEqual(result.artists)
     })
@@ -52,7 +59,7 @@ new class extends UnitTestCase {
       const songs = factory('song', 3)
 
       const getMock = this.mock(http, 'get').mockResolvedValue(songs)
-      const syncMock = this.mock(songStore, 'syncWithVault', songs)
+      const syncMock = this.mock(playableStore, 'syncWithVault', songs)
 
       await searchStore.playableSearch('test')
 

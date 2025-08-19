@@ -22,8 +22,8 @@
 import { toRef, toRefs } from 'vue'
 import { overviewStore } from '@/stores/overviewStore'
 
-import SongCard from '@/components/song/SongCard.vue'
-import SongCardSkeleton from '@/components/ui/skeletons/SongCardSkeleton.vue'
+import SongCard from '@/components/playable/PlayableCard.vue'
+import SongCardSkeleton from '@/components/ui/skeletons/PlayableCardSkeleton.vue'
 import HomeScreenBlock from '@/components/screens/home/HomeScreenBlock.vue'
 
 const props = withDefaults(defineProps<{ loading?: boolean }>(), { loading: false })

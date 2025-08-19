@@ -35,7 +35,7 @@
           <div class="flex gap-2">
             <SongListControls
               v-if="songs.length && (!isPhone || showingControls)"
-              :config="config"
+              :config
               @filter="applyFilter"
               @play-all="playAll"
               @play-selected="playSelected"
@@ -76,16 +76,16 @@
 
       <div v-show="activeTab === 'other-albums'" class="albums-pane" data-testid="albums-pane">
         <template v-if="otherAlbums">
-          <AlbumGrid v-if="otherAlbums.length" v-koel-overflow-fade view-mode="list">
+          <GridListView v-if="otherAlbums.length" v-koel-overflow-fade view-mode="list">
             <AlbumCard v-for="otherAlbum in otherAlbums" :key="otherAlbum.id" :album="otherAlbum" layout="compact" />
-          </AlbumGrid>
+          </GridListView>
           <p v-else class="text-k-text-secondary p-6">
             No other albums by {{ album.artist_name }} found in the library.
           </p>
         </template>
-        <AlbumGrid v-else view-mode="list">
+        <GridListView v-else view-mode="list">
           <AlbumCardSkeleton v-for="i in 6" :key="i" layout="compact" />
-        </AlbumGrid>
+        </GridListView>
       </div>
 
       <div v-if="useEncyclopedia && album" v-show="activeTab === 'information'" class="info-pane">
@@ -101,22 +101,22 @@ import { eventBus } from '@/utils/eventBus'
 import { pluralize } from '@/utils/formatters'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import { downloadService } from '@/services/downloadService'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { usePolicies } from '@/composables/usePolicies'
-import { useSongList } from '@/composables/useSongList'
-import { useSongListControls } from '@/composables/useSongListControls'
+import { usePlayableList } from '@/composables/usePlayableList'
+import { usePlayableListControls } from '@/composables/usePlayableListControls'
 import { useRouter } from '@/composables/useRouter'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import AlbumThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
 import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
-import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
+import SongListSkeleton from '@/components/ui/skeletons/PlayableListSkeleton.vue'
 import ScreenTabs from '@/components/ui/ArtistAlbumScreenTabs.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
-import AlbumGrid from '@/components/ui/album-artist/AlbumOrArtistGrid.vue'
+import GridListView from '@/components/ui/GridListView.vue'
 import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
 const validTabs = ['songs', 'other-albums', 'information'] as const
@@ -128,7 +128,7 @@ const AlbumCardSkeleton = defineAsyncComponent(() => import('@/components/ui/ske
 
 const { getRouteParam, go, onScreenActivated, onRouteChanged, url, triggerNotFound } = useRouter()
 const { currentUserCan } = usePolicies()
-const { SongListControls, config } = useSongListControls('Album')
+const { PlayableListControls: SongListControls, config } = usePlayableListControls('Album')
 const { useLastfm, useMusicBrainz } = useThirdPartyServices()
 
 const activeTab = ref<Tab>('songs')
@@ -140,10 +140,10 @@ const info = ref<ArtistInfo | undefined>()
 const editable = ref(false)
 
 const {
-  SongList,
+  PlayableList: SongList,
   ControlsToggle,
   headerLayout,
-  songList,
+  playableList: songList,
   showingControls,
   isPhone,
   downloadable,
@@ -155,7 +155,7 @@ const {
   playSelected,
   applyFilter,
   onScrollBreakpoint,
-} = useSongList(songs, { type: 'Album' })
+} = usePlayableList(songs, { type: 'Album' })
 
 const useEncyclopedia = computed(() => useMusicBrainz.value || useLastfm.value)
 
@@ -190,7 +190,7 @@ const fetchScreenData = async () => {
   try {
     [album.value, songs.value] = await Promise.all([
       albumStore.resolve(id),
-      songStore.fetchForAlbum(id),
+      playableStore.fetchSongsForAlbum(id),
     ])
 
     if (!album.value) {

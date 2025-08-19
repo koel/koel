@@ -21,6 +21,9 @@ return [
     // The *relative* path to the directory to store user avatars, *with* a trailing slash.
     'user_avatar_dir' => 'img/avatars/',
 
+    // The *relative* path to the directory to store radio station logos, *with* a trailing slash.
+    'radio_station_logo_dir' => 'img/radio-stations/',
+
     /*
     |--------------------------------------------------------------------------
     | Sync Options

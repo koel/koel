@@ -53,6 +53,16 @@ function playlist_cover_url(?string $fileName): ?string
     return $fileName ? static_url(config('koel.playlist_cover_dir') . $fileName) : null;
 }
 
+function radio_station_logo_path(?string $fileName): ?string
+{
+    return $fileName ? public_path(config('koel.radio_station_logo_dir') . $fileName) : null;
+}
+
+function radio_station_logo_url(?string $fileName): ?string
+{
+    return $fileName ? static_url(config('koel.radio_station_logo_dir') . $fileName) : null;
+}
+
 function user_avatar_path(?string $fileName): ?string
 {
     return $fileName ? public_path(config('koel.user_avatar_dir') . $fileName) : null;

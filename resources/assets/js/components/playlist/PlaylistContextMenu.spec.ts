@@ -4,9 +4,9 @@ import factory from '@/__tests__/factory'
 import { MessageToasterStub } from '@/__tests__/stubs'
 import { screen, waitFor } from '@testing-library/vue'
 import { queueStore } from '@/stores/queueStore'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import { userStore } from '@/stores/userStore'
-import { playbackService } from '@/services/playbackService'
+import { playbackService } from '@/services/QueuePlaybackService'
 import { eventBus } from '@/utils/eventBus'
 import Router from '@/router'
 import Component from './PlaylistContextMenu.vue'
@@ -44,9 +44,11 @@ new class extends UnitTestCase {
     })
 
     it('plays', async () => {
+      this.createAudioPlayer()
+
       const playlist = factory('playlist')
       const songs = factory('song', 3)
-      const fetchMock = this.mock(songStore, 'fetchForPlaylist').mockResolvedValue(songs)
+      const fetchMock = this.mock(playableStore, 'fetchForPlaylist').mockResolvedValue(songs)
       const queueMock = this.mock(playbackService, 'queueAndPlay')
       const goMock = this.mock(Router, 'go')
       await this.renderComponent(playlist)
@@ -61,8 +63,10 @@ new class extends UnitTestCase {
     })
 
     it('warns if attempting to play an empty playlist', async () => {
+      this.createAudioPlayer()
+
       const playlist = factory('playlist')
-      const fetchMock = this.mock(songStore, 'fetchForPlaylist').mockResolvedValue([])
+      const fetchMock = this.mock(playableStore, 'fetchForPlaylist').mockResolvedValue([])
       const queueMock = this.mock(playbackService, 'queueAndPlay')
       const goMock = this.mock(Router, 'go')
       const warnMock = this.mock(MessageToasterStub.value, 'warning')
@@ -80,9 +84,11 @@ new class extends UnitTestCase {
     })
 
     it('shuffles', async () => {
+      this.createAudioPlayer()
+
       const playlist = factory('playlist')
       const songs = factory('song', 3)
-      const fetchMock = this.mock(songStore, 'fetchForPlaylist').mockResolvedValue(songs)
+      const fetchMock = this.mock(playableStore, 'fetchForPlaylist').mockResolvedValue(songs)
       const queueMock = this.mock(playbackService, 'queueAndPlay')
       const goMock = this.mock(Router, 'go')
       await this.renderComponent(playlist)
@@ -97,8 +103,10 @@ new class extends UnitTestCase {
     })
 
     it('warns if attempting to shuffle an empty playlist', async () => {
+      this.createAudioPlayer()
+
       const playlist = factory('playlist')
-      const fetchMock = this.mock(songStore, 'fetchForPlaylist').mockResolvedValue([])
+      const fetchMock = this.mock(playableStore, 'fetchForPlaylist').mockResolvedValue([])
       const queueMock = this.mock(playbackService, 'queueAndPlay')
       const goMock = this.mock(Router, 'go')
       const warnMock = this.mock(MessageToasterStub.value, 'warning')
@@ -116,9 +124,11 @@ new class extends UnitTestCase {
     })
 
     it('queues', async () => {
+      this.createAudioPlayer()
+
       const playlist = factory('playlist')
       const songs = factory('song', 3)
-      const fetchMock = this.mock(songStore, 'fetchForPlaylist').mockResolvedValue(songs)
+      const fetchMock = this.mock(playableStore, 'fetchForPlaylist').mockResolvedValue(songs)
       const queueMock = this.mock(queueStore, 'queueAfterCurrent')
       const toastMock = this.mock(MessageToasterStub.value, 'success')
       await this.renderComponent(playlist)

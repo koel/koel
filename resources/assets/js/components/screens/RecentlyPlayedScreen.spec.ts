@@ -29,7 +29,7 @@ new class extends UnitTestCase {
     this.render(Component, {
       global: {
         stubs: {
-          SongList: this.stub('song-list'),
+          PlayableList: this.stub('song-list'),
         },
       },
     })

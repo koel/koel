@@ -56,9 +56,9 @@ export const routes = [
     screen: 'Search.Excerpt',
   },
   {
-    name: 'search.songs',
+    name: 'search.playables',
     path: '/search/songs',
-    screen: 'Search.Songs',
+    screen: 'Search.Playables',
   },
   {
     name: 'upload',
@@ -166,6 +166,11 @@ export const routes = [
     screen: 'Episode',
   },
   {
+    name: 'radio-stations.index',
+    path: '/radio/stations',
+    screen: 'Radio.Stations',
+  },
+  {
     name: 'visualizer',
     path: '/visualizer',
     screen: 'Visualizer',
@@ -179,7 +184,7 @@ export const routes = [
     },
     redirect: () => 'queue',
     onResolve: params => {
-      cache.set('song-to-queue', params.id)
+      cache.set('playable-to-queue', params.id)
       return true
     },
   },

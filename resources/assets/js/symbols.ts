@@ -15,7 +15,7 @@ export const FilterKeywordsKey: InjectionKey<Ref<string>> = Symbol('PlayableList
 
 export const PlayablesKey: ReadonlyInjectionKey<Ref<Playable[]>> | InjectionKey<Ref<Playable[]>> = Symbol('PlayablesKey')
 export const FilteredPlayablesKey: ReadonlyInjectionKey<Ref<Playable[]>> | InjectionKey<Ref<Playable[]>> = Symbol('FilteredPlayablesKey')
-export const CurrentPlayableKey: InjectionKey<Ref<Playable | undefined>> = Symbol('CurrentPlayable')
+export const CurrentStreamableKey: InjectionKey<Ref<Streamable | undefined>> = Symbol('CurrentStreamableKey')
 export const SelectedPlayablesKey: ReadonlyInjectionKey<Ref<Playable[]>> = Symbol('SelectedPlayables')
 export const PlayableListConfigKey: ReadonlyInjectionKey<Partial<PlayableListConfig>> = Symbol('PlayableListConfig')
 export const PlayableListSortFieldKey: ReadonlyInjectionKey<Ref<PlayableListSortField>> = Symbol('PlayableListSortField')

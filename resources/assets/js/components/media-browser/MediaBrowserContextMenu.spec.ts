@@ -3,9 +3,9 @@ import { screen } from '@testing-library/vue'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { eventBus } from '@/utils/eventBus'
-import { playbackService } from '@/services/playbackService'
+import { playbackService } from '@/services/QueuePlaybackService'
 import { queueStore } from '@/stores/queueStore'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import { mediaBrowser } from '@/services/mediaBrowser'
 import Router from '@/router'
 import Component from './MediaBrowserContextMenu.vue'
@@ -28,9 +28,11 @@ new class extends UnitTestCase {
     })
 
     it('plays', async () => {
+      this.createAudioPlayer()
+
       const resolvedSongs = factory('song', 3)
       const playMock = this.mock(playbackService, 'queueAndPlay')
-      const resolveMock = this.mock(songStore, 'resolveFromMediaReferences').mockResolvedValue(resolvedSongs)
+      const resolveMock = this.mock(playableStore, 'resolveSongsFromMediaReferences').mockResolvedValue(resolvedSongs)
       const goMock = this.mock(Router, 'go')
 
       // we don't care about the actual references here, as this functionality should have been tested in the
@@ -58,9 +60,11 @@ new class extends UnitTestCase {
     })
 
     it('shuffles', async () => {
+      this.createAudioPlayer()
+
       const resolvedSongs = factory('song', 3)
       const playMock = this.mock(playbackService, 'queueAndPlay')
-      const resolveMock = this.mock(songStore, 'resolveFromMediaReferences').mockResolvedValue(resolvedSongs)
+      const resolveMock = this.mock(playableStore, 'resolveSongsFromMediaReferences').mockResolvedValue(resolvedSongs)
       const goMock = this.mock(Router, 'go')
 
       // we don't care about the actual references here, as this functionality should have been tested in the
@@ -90,7 +94,7 @@ new class extends UnitTestCase {
     it('adds to queue', async () => {
       const resolvedSongs = factory('song', 3)
       const queueMock = this.mock(queueStore, 'queueAfterCurrent')
-      const resolveMock = this.mock(songStore, 'resolveFromMediaReferences').mockResolvedValue(resolvedSongs)
+      const resolveMock = this.mock(playableStore, 'resolveSongsFromMediaReferences').mockResolvedValue(resolvedSongs)
 
       // we don't care about the actual references here, as this functionality should have been tested in the
       // mediaBrowser spec

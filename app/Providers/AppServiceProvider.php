@@ -6,7 +6,9 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Genre;
 use App\Models\Podcast;
+use App\Models\RadioStation;
 use App\Models\Song;
+use App\Rules\ValidRadioStationUrl;
 use App\Services\Contracts\Encyclopedia;
 use App\Services\LastfmService;
 use App\Services\License\Contracts\LicenseServiceInterface;
@@ -74,6 +76,8 @@ class AppServiceProvider extends ServiceProvider
             return app()->runningUnitTests() ? app(ScannerNoCacheStrategy::class) : app(ScannerCacheStrategy::class);
         });
 
+        $this->app->singleton(ValidRadioStationUrl::class, static fn () => new ValidRadioStationUrl());
+
         Route::bind('genre', static function (string $value): ?Genre {
             if ($value === Genre::NO_GENRE_PUBLIC_ID) {
                 return null;
@@ -87,6 +91,7 @@ class AppServiceProvider extends ServiceProvider
             'album' => Album::class,
             'artist' => Artist::class,
             'podcast' => Podcast::class,
+            'radio-station' => RadioStation::class,
         ]);
     }
 

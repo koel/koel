@@ -2,9 +2,9 @@ import { screen, waitFor } from '@testing-library/vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { podcastStore } from '@/stores/podcastStore'
-import { songStore as episodeStore } from '@/stores/songStore'
+import { playableStore as episodeStore } from '@/stores/playableStore'
 import factory from '@/__tests__/factory'
-import { playbackService } from '@/services/playbackService'
+import { playbackService } from '@/services/QueuePlaybackService'
 import { queueStore } from '@/stores/queueStore'
 import Component from './PodcastScreen.vue'
 
@@ -20,6 +20,8 @@ new class extends UnitTestCase {
     })
 
     it('starts playing the podcast', async () => {
+      this.createAudioPlayer()
+
       const playMock = this.mock(playbackService, 'playFirstInQueue')
       await this.renderComponent()
       await this.tick()
@@ -29,6 +31,8 @@ new class extends UnitTestCase {
     })
 
     it('resumes playback if currently queue item is part of podcast', async () => {
+      this.createAudioPlayer()
+
       const playMock = this.mock(playbackService, 'resume')
 
       const { episodes } = await this.renderComponent()
@@ -42,6 +46,8 @@ new class extends UnitTestCase {
     })
 
     it('continues playing the current episode if any', async () => {
+      this.createAudioPlayer()
+
       const playMock = this.mock(playbackService, 'play')
 
       const { podcast, episodes } = await this.renderComponent()
@@ -97,7 +103,7 @@ new class extends UnitTestCase {
     episodes = episodes || factory('episode', 9, { podcast_id: podcast.id })
 
     const resolvePodcastMock = this.mock(podcastStore, 'resolve').mockResolvedValue(podcast)
-    const fetchEpisodesMock = this.mock(episodeStore, 'fetchForPodcast').mockResolvedValue(episodes)
+    const fetchEpisodesMock = this.mock(episodeStore, 'fetchEpisodesInPodcast').mockResolvedValue(episodes)
 
     const rendered = this.render(Component, {
       global: {

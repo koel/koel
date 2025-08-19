@@ -31,7 +31,7 @@ import { toRefs } from 'vue'
 
 import Thumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
 
-const props = withDefaults(defineProps<{ layout?: ArtistAlbumCardLayout, entity: Artist | Album | Podcast }>(), {
+const props = withDefaults(defineProps<{ layout?: CardLayout, entity: Artist | Album | Podcast }>(), {
   layout: 'full',
 })
 

@@ -2,14 +2,14 @@ import { screen } from '@testing-library/vue'
 import factory from '@/__tests__/factory'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import Component from './AlbumTrackList.vue'
 
 new class extends UnitTestCase {
   protected test () {
     it('displays the tracks', async () => {
       const album = factory('album')
-      const fetchMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(factory('song', 5))
+      const fetchMock = this.mock(playableStore, 'fetchSongsForAlbum').mockResolvedValue(factory('song', 5))
 
       this.render(Component, {
         props: {

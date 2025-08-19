@@ -4,7 +4,7 @@ import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import { downloadService } from '@/services/downloadService'
 import { eventBus } from '@/utils/eventBus'
 import Router from '@/router'
@@ -22,7 +22,7 @@ new class extends UnitTestCase {
     const resolveArtistMock = this.mock(artistStore, 'resolve').mockResolvedValue(artist)
 
     const songs = factory('song', 13)
-    const fetchSongsMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
+    const fetchSongsMock = this.mock(playableStore, 'fetchSongsForArtist').mockResolvedValue(songs)
 
     await this.router.activateRoute({
       path: `artists/foo/${tab}`,
@@ -90,7 +90,7 @@ new class extends UnitTestCase {
       await waitFor(() => expect(goMock).toHaveBeenCalledWith('/#/artists'))
     })
 
-    it('shows the song list', async () => {
+    it('shows the playable list', async () => {
       await this.renderComponent()
       screen.getByTestId('song-list')
     })

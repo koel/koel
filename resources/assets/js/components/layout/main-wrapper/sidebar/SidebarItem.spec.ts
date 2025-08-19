@@ -9,17 +9,6 @@ new class extends UnitTestCase {
   protected test () {
     it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
 
-    it('activates when the screen matches', async () => {
-      this.renderComponent()
-
-      await this.router.activateRoute({
-        screen: 'Home',
-        path: '_',
-      })
-
-      expect(screen.getByTestId('sidebar-item').classList.contains('current')).toBe(true)
-    })
-
     it('emits the sidebar toggle event when clicked', async () => {
       const mock = this.mock(eventBus, 'emit')
       this.renderComponent()

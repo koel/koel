@@ -1,13 +1,13 @@
 <template>
   <div :class="{ standalone: inStandaloneMode }" class="h-screen bg-k-bg-primary">
     <template v-if="authenticated">
-      <AlbumArtOverlay v-if="showAlbumArtOverlay" :album="(state.playable as Song).album_id" />
+      <AlbumArtOverlay v-if="showAlbumArtOverlay" :album="(state.streamable as Song).album_id" />
 
       <main class="h-screen flex flex-col items-center justify-between text-center relative z-[1]">
         <template v-if="connected">
-          <template v-if="state.playable">
-            <PlayableDetails :playable="state.playable" />
-            <RemoteFooter :playable="state.playable" />
+          <template v-if="state.streamable">
+            <StreamableDetails :streamable="state.streamable" />
+            <RemoteFooter :streamable="state.streamable" />
           </template>
 
           <p v-else class="text-k-text-secondary">No song is playing.</p>
@@ -32,7 +32,7 @@ import { isSong } from '@/utils/typeGuards'
 import { logger } from '@/utils/logger'
 import type { RemoteState } from '@/remote/types'
 
-const PlayableDetails = defineAsyncComponent(() => import('@/remote/components/PlayableDetails.vue'))
+const StreamableDetails = defineAsyncComponent(() => import('@/remote/components/StreamableDetails.vue'))
 const Scanner = defineAsyncComponent(() => import('@/remote/components/Scanner.vue'))
 const RemoteFooter = defineAsyncComponent(() => import('@/remote/components/RemoteFooter.vue'))
 const AlbumArtOverlay = defineAsyncComponent(() => import('@/components/ui/AlbumArtOverlay.vue'))
@@ -42,7 +42,7 @@ const authenticated = ref(false)
 const connected = ref(false)
 
 const state = reactive<RemoteState>({
-  playable: null,
+  streamable: null,
   volume: 0,
 })
 
@@ -50,8 +50,8 @@ provide('state', state)
 
 const showAlbumArtOverlay = computed(() => {
   return preferenceStore.show_album_art_overlay
-    && state.playable
-    && isSong(state.playable)
+    && state.streamable
+    && isSong(state.streamable)
 })
 
 const inStandaloneMode = ref(
@@ -64,12 +64,12 @@ const init = async () => {
     await socketService.init()
 
     socketService
-      .listen('SOCKET_PLAYABLE', playable => (state.playable = playable))
-      .listen('SOCKET_PLAYBACK_STOPPED', () => state.playable && (state.playable.playback_state = 'Stopped'))
+      .listen('SOCKET_STREAMABLE', playable => (state.streamable = playable))
+      .listen('SOCKET_PLAYBACK_STOPPED', () => state.streamable && (state.streamable.playback_state = 'Stopped'))
       .listen('SOCKET_VOLUME_CHANGED', (volume: number) => state.volume = volume)
-      .listen('SOCKET_STATUS', (data: { playable?: Playable, volume: number }) => {
+      .listen('SOCKET_STATUS', (data: { streamable?: Streamable, volume: number }) => {
         state.volume = data.volume || 0
-        state.playable = data.playable || null
+        state.streamable = data.streamable || null
         connected.value = true
       })
   } catch (error: unknown) {

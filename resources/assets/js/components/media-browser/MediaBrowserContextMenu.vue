@@ -13,11 +13,11 @@ import { eventBus } from '@/utils/eventBus'
 import { useRouter } from '@/composables/useRouter'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { useMessageToaster } from '@/composables/useMessageToaster'
-import { playbackService } from '@/services/playbackService'
 import { queueStore } from '@/stores/queueStore'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import { pluralize } from '@/utils/formatters'
 import { mediaBrowser } from '@/services/mediaBrowser'
+import { playback } from '@/services/playbackManager'
 
 const { base, ContextMenu, open, trigger } = useContextMenu()
 const { go, url } = useRouter()
@@ -32,10 +32,10 @@ let references: MediaReference[]
 const openFolder = () => trigger(async () => go(url('media-browser', { path: (items.value![0] as Folder).path })))
 
 const play = () => trigger(async () => {
-  const songs = await songStore.resolveFromMediaReferences(references)
+  const songs = await playableStore.resolveSongsFromMediaReferences(references)
 
   if (songs.length) {
-    playbackService.queueAndPlay(songs)
+    playback().queueAndPlay(songs)
     go(url('queue'))
   } else {
     toastWarning('Nothing to play.')
@@ -43,11 +43,11 @@ const play = () => trigger(async () => {
 })
 
 const shuffle = () => trigger(async () => {
-  const songs = await songStore.resolveFromMediaReferences(references, true)
+  const songs = await playableStore.resolveSongsFromMediaReferences(references, true)
 
   if (songs.length) {
     // folder shuffling has already been done server-side, but local songs shuffling is still needed.
-    playbackService.queueAndPlay(songs, true)
+    playback().queueAndPlay(songs, true)
     go(url('queue'))
   } else {
     toastWarning('Nothing to play.')
@@ -55,7 +55,7 @@ const shuffle = () => trigger(async () => {
 })
 
 const addToQueue = () => trigger(async () => {
-  const songs = await songStore.resolveFromMediaReferences(references)
+  const songs = await playableStore.resolveSongsFromMediaReferences(references)
 
   if (songs.length) {
     queueStore.queueAfterCurrent(songs)

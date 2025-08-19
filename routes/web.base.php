@@ -13,6 +13,7 @@ use App\Http\Controllers\IndexController;
 use App\Http\Controllers\LastfmController;
 use App\Http\Controllers\PlayController;
 use App\Http\Controllers\SSO\GoogleCallbackController;
+use App\Http\Controllers\StreamRadioController;
 use App\Http\Controllers\ViewSongOnITunesController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
@@ -44,6 +45,8 @@ Route::middleware('web')->group(static function (): void {
 
     Route::middleware('audio.auth')->group(static function (): void {
         Route::get('play/{song}/{transcode?}', PlayController::class)->name('song.play');
+
+        Route::get('radio/stream/{radioStation}', StreamRadioController::class)->name('radio.stream');
 
         if (config('koel.download.allow')) {
             Route::prefix('download')->group(static function (): void {

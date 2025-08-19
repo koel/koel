@@ -1,8 +1,8 @@
 import { http } from '@/services/http'
 import { cache } from '@/services/cache'
 
-type ResourceType = 'album' | 'artist'
-type Action = 'edit'
+type ResourceType = 'album' | 'artist' | 'radio-station'
+type Action = 'edit' | 'delete'
 
 export const resourcePermissionService = {
   check: async (type: ResourceType, id: string | number, action: Action) => {

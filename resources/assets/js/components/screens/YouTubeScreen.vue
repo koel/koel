@@ -24,8 +24,8 @@ import { ref, watch } from 'vue'
 import type { YouTubePlayer } from 'youtube-player/dist/types'
 import { eventBus } from '@/utils/eventBus'
 import { requireInjection, use } from '@/utils/helpers'
-import { playbackService } from '@/services/playbackService'
-import { CurrentPlayableKey } from '@/symbols'
+import { CurrentStreamableKey } from '@/symbols'
+import { playback } from '@/services/playbackManager'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -42,19 +42,19 @@ const getPlayer = () => {
       height: '100%',
     })
 
-    // Pause song playback when video is played
-    player.on('stateChange', ({ data }) => data === 1 && playbackService.pause())
+    // Pause playable/radio playback when a video is played
+    player.on('stateChange', ({ data }) => data === 1 && playback('current')?.pause())
   }
 
   return player
 }
 
-const currentSong = requireInjection(CurrentPlayableKey)
+const currentStreamable = requireInjection(CurrentStreamableKey)
 
 /**
- * Pause video playback when a song is played/resumed.
+ * Pause video playback when a playable is played/resumed.
  */
-watch(() => currentSong.value?.playback_state, state => state === 'Playing' && player?.pauseVideo())
+watch(() => currentStreamable.value?.playback_state, state => state === 'Playing' && player?.pauseVideo())
 
 eventBus.on('PLAY_YOUTUBE_VIDEO', payload => {
   showingVideo.value = true

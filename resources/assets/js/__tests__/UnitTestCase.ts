@@ -1,10 +1,9 @@
 import isMobile from 'ismobilejs'
 import { isObject, mergeWith } from 'lodash'
-import type { RenderOptions } from '@testing-library/vue'
+import type { EventType, RenderOptions } from '@testing-library/vue'
 import { cleanup, createEvent, fireEvent, render } from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
 import type { UserEvent } from '@testing-library/user-event/dist/types/setup/setup'
-import type { EventType } from '@testing-library/dom/types/events'
 import { afterEach, beforeEach, vi } from 'vitest'
 import { defineComponent, nextTick } from 'vue'
 import factory from '@/__tests__/factory'
@@ -15,6 +14,7 @@ import { http } from '@/services/http'
 import { DialogBoxKey, MessageToasterKey, OverlayKey, RouterKey } from '@/symbols'
 import Router from '@/router'
 import { preferenceStore } from '@/stores/preferenceStore'
+import { noop } from '@/utils/helpers'
 
 // A deep-merge function that
 // - supports symbols as keys (_.merge doesn't)
@@ -75,6 +75,7 @@ export default abstract class UnitTestCase {
 
   protected afterEach (cb?: Closure) {
     afterEach(() => {
+      document.body.innerHTML = ''
       isMobile.any = false
       commonStore.state.song_length = 10
       cleanup()
@@ -200,5 +201,17 @@ export default abstract class UnitTestCase {
     setPropIfNotExists(options.global.provide, RouterKey, this.router)
 
     return options
+  }
+
+  protected createAudioPlayer () {
+    if (document.querySelector('.plyr')) {
+      return
+    }
+
+    document.body.innerHTML = '<div class="plyr"><audio crossorigin="anonymous" controls/></div>'
+
+    window.AudioContext = vi.fn().mockImplementation(() => ({
+      createMediaElementSource: vi.fn(noop),
+    }))
   }
 }

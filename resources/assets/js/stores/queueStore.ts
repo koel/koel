@@ -4,7 +4,7 @@ import { arrayify, moveItemsInList } from '@/utils/helpers'
 import { logger } from '@/utils/logger'
 import { isSong } from '@/utils/typeGuards'
 import { http } from '@/services/http'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 
 export const queueStore = {
   state: reactive<{ playables: Playable[] }>({
@@ -13,14 +13,14 @@ export const queueStore = {
 
   init (savedState: QueueState) {
     // don't set this.all here, as it would trigger saving state
-    this.state.playables = songStore.syncWithVault(savedState.songs)
+    this.state.playables = playableStore.syncWithVault(savedState.songs)
 
     if (!this.state.playables.length) {
       return
     }
 
     if (savedState.current_song) {
-      songStore.syncWithVault(savedState.current_song)[0].playback_state = 'Paused'
+      playableStore.syncWithVault(savedState.current_song)[0].playback_state = 'Paused'
     } else {
       this.all[0].playback_state = 'Paused'
     }
@@ -32,7 +32,7 @@ export const queueStore = {
 
   set all (playables: Playable[]) {
     this.state.playables = playables
-    songStore.syncWithVault(playables.filter(isSong))
+    playableStore.syncWithVault(playables.filter(isSong))
     this.saveState()
   },
 
@@ -49,7 +49,7 @@ export const queueStore = {
   },
 
   /**
-   * Add song(s) to the end of the current queue.
+   * Add playable(s) to the end of the current queue.
    */
   queue (playables: MaybeArray<Playable>) {
     this.unqueue(playables)

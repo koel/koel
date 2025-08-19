@@ -22,6 +22,8 @@ import { ModalContextKey } from '@/symbols'
 const modalNameToComponentMap = {
   'about-koel': defineAsyncComponent(() => import('@/components/meta/AboutKoelModal.vue')),
   'add-podcast-form': defineAsyncComponent(() => import('@/components/podcast/AddPodcastForm.vue')),
+  'add-radio-station-form': defineAsyncComponent(() => import('@/components/radio/AddRadioStationForm.vue')),
+  'edit-radio-station-form': defineAsyncComponent(() => import('@/components/radio/EditRadioStationForm.vue')),
   'add-user-form': defineAsyncComponent(() => import('@/components/user/AddUserForm.vue')),
   'create-playlist-folder-form': defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistFolderForm.vue')),
   'create-playlist-form': defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistForm.vue')),
@@ -29,7 +31,7 @@ const modalNameToComponentMap = {
   'edit-playlist-folder-form': defineAsyncComponent(() => import('@/components/playlist/EditPlaylistFolderForm.vue')),
   'edit-playlist-form': defineAsyncComponent(() => import('@/components/playlist/EditPlaylistForm.vue')),
   'edit-smart-playlist-form': defineAsyncComponent(() => import('@/components/playlist/smart-playlist/EditSmartPlaylistForm.vue')),
-  'edit-song-form': defineAsyncComponent(() => import('@/components/song/EditSongForm.vue')),
+  'edit-song-form': defineAsyncComponent(() => import('@/components/playable/EditSongForm.vue')),
   'edit-user-form': defineAsyncComponent(() => import('@/components/user/EditUserForm.vue')),
   'edit-album-form': defineAsyncComponent(() => import('@/components/album/EditAlbumForm.vue')),
   'equalizer': defineAsyncComponent(() => import('@/components/ui/equalizer/Equalizer.vue')),
@@ -100,6 +102,13 @@ eventBus.on('MODAL_SHOW_ABOUT_KOEL', () => (activeModalName.value = 'about-koel'
   })
   .on('MODAL_SHOW_ADD_PODCAST_FORM', () => {
     activeModalName.value = 'add-podcast-form'
+  })
+  .on('MODAL_SHOW_ADD_RADIO_STATION_FORM', () => {
+    activeModalName.value = 'add-radio-station-form'
+  })
+  .on('MODAL_SHOW_EDIT_RADIO_STATION_FORM', station => {
+    context.value = { station }
+    activeModalName.value = 'edit-radio-station-form'
   })
   .on('MODAL_SHOW_EQUALIZER', () => (activeModalName.value = 'equalizer'))
 </script>

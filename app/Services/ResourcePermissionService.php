@@ -13,6 +13,7 @@ class ResourcePermissionService
 {
     private const VALID_ACTIONS = [
         'edit',
+        'delete',
     ];
 
     public function checkPermission(

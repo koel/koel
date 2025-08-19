@@ -2,7 +2,7 @@ import { cache } from '@/services/cache'
 import { http } from '@/services/http'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 
 export const encyclopediaService = {
   async fetchForArtist (artist: Artist) {
@@ -33,7 +33,7 @@ export const encyclopediaService = {
 
     if (info?.cover) {
       album.cover = info.cover
-      songStore.byAlbum(album).forEach(song => (song.album_cover = info.cover!))
+      playableStore.byAlbum(album).forEach(song => (song.album_cover = info.cover!))
     }
 
     return info

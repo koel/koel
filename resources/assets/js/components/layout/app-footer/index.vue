@@ -5,12 +5,13 @@
     @mousemove="showControls"
     @contextmenu.prevent="requestContextMenu"
   >
-    <AudioPlayer v-show="playable" />
+    <AudioPlayer v-show="currentStreamable" :class="isRadio && 'pointer-events-none'" />
 
     <div class="fullscreen-backdrop hidden" />
 
     <div class="wrapper relative flex flex-1">
-      <SongInfo />
+      <RadioStationInfo v-if="isRadio" />
+      <SongInfo v-else />
       <PlaybackControls />
       <ExtraControls />
     </div>
@@ -26,23 +27,24 @@ import { throttle } from 'lodash'
 import { computed, nextTick, ref, watch } from 'vue'
 import { useFullscreen } from '@vueuse/core'
 import { eventBus } from '@/utils/eventBus'
-import { isSong } from '@/utils/typeGuards'
+import { isEpisode, isRadioStation, isSong } from '@/utils/typeGuards'
 import { isAudioContextSupported } from '@/utils/supports'
 import { defineAsyncComponent, requireInjection } from '@/utils/helpers'
-import { CurrentPlayableKey } from '@/symbols'
+import { CurrentStreamableKey } from '@/symbols'
 import { artistStore } from '@/stores/artistStore'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { audioService } from '@/services/audioService'
-import { playbackService } from '@/services/playbackService'
+import { playback } from '@/services/playbackManager'
 
 import AudioPlayer from '@/components/layout/app-footer/AudioPlayer.vue'
-import SongInfo from '@/components/layout/app-footer/FooterSongInfo.vue'
 import ExtraControls from '@/components/layout/app-footer/FooterExtraControls.vue'
 import PlaybackControls from '@/components/layout/app-footer/FooterPlaybackControls.vue'
 
+const SongInfo = defineAsyncComponent(() => import('@/components/layout/app-footer/FooterPlayableInfo.vue'))
+const RadioStationInfo = defineAsyncComponent(() => import('@/components/layout/app-footer/FooterRadioStationInfo.vue'))
 const UpNext = defineAsyncComponent(() => import('@/components/layout/app-footer/UpNext.vue'))
 
-const playable = requireInjection(CurrentPlayableKey, ref())
+const currentStreamable = requireInjection(CurrentStreamableKey, ref())
 let hideControlsTimeout: number
 
 const root = ref<HTMLElement>()
@@ -52,31 +54,45 @@ const nextPlayable = ref<Playable | null>(null)
 const { isFullscreen, toggle: toggleFullscreen } = useFullscreen(root)
 
 const showingUpNext = computed(() => nextPlayable.value && isFullscreen.value)
+const isRadio = computed(() => currentStreamable.value && isRadioStation(currentStreamable.value))
 
 const requestContextMenu = (event: MouseEvent) => {
-  if (document.fullscreenElement || !playable.value) {
+  if (document.fullscreenElement || !currentStreamable.value) {
     return
   }
 
-  eventBus.emit('PLAYABLE_CONTEXT_MENU_REQUESTED', event, playable.value)
+  if (isRadio.value) {
+    eventBus.emit('RADIO_STATION_CONTEXT_MENU_REQUESTED', event, currentStreamable.value as RadioStation)
+  } else {
+    eventBus.emit('PLAYABLE_CONTEXT_MENU_REQUESTED', event, currentStreamable.value as Playable)
+  }
 }
 
-watch(playable, async () => {
-  if (!playable.value) {
+watch(currentStreamable, async streamable => {
+  if (!streamable) {
     return
   }
 
-  if (isSong(playable.value)) {
-    artist.value = await artistStore.resolve(playable.value.artist_id)
+  if (isSong(streamable)) {
+    artist.value = await artistStore.resolve(streamable.artist_id)
   }
 })
 
 const appBackgroundImage = computed(() => {
-  if (!playable.value || !isSong(playable.value)) {
+  if (!currentStreamable.value) {
     return 'none'
   }
 
-  const src = artist.value?.image ?? playable.value.album_cover
+  let src: string | null = null
+
+  if (isSong(currentStreamable.value)) {
+    src = artist.value?.image ?? currentStreamable.value.album_cover
+  } else if (isEpisode(currentStreamable.value)) {
+    src = currentStreamable.value.episode_image
+  } else if (isRadio.value) {
+    src = (currentStreamable.value as RadioStation).logo
+  }
+
   return src ? `url(${src})` : 'none'
 })
 
@@ -89,14 +105,20 @@ const initPlaybackRelatedServices = async () => {
     return
   }
 
-  playbackService.init(plyrWrapper)
-  isAudioContextSupported && audioService.init(playbackService.player.media)
+  // Defaults to the queue playback over radio playback.
+  const playbackService = playback()
+
+  // If audio context is supported, initialize the audio service which handles audio processing (equalizer, etc.)
+  if (isAudioContextSupported) {
+    audioService.init(playbackService.player.media)
+  }
 }
 
 watch(preferenceStore.initialized, async initialized => {
   if (!initialized) {
     return
   }
+
   await initPlaybackRelatedServices()
 }, { immediate: true })
 
@@ -142,6 +164,7 @@ footer {
   box-shadow: 0 0 30px 20px rgba(0, 0, 0, 0.2);
 
   .fullscreen-backdrop {
+    background-color: #1d1d1d;
     background-image: v-bind(appBackgroundImage);
   }
 
