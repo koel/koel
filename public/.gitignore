@@ -5,16 +5,26 @@ fonts
 img/*
 !img/icon.png
 !img/favicon.ico
+
 !img/covers
 img/covers/*
 !img/covers/.gitkeep
+
 !img/artists
 img/artists/*
 !img/artists/.gitkeep
+
+!img/playlists
 img/playlists/*
 !img/playlists/.gitkeep
+
+!img/avatars
 img/avatars/*
 !img/avatars/.gitkeep
+
+!img/radio-stations
+img/radio-stations/*
+!img/radio-stations/.gitkeep
 
 images
 js
