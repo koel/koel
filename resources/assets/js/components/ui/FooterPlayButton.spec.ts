@@ -3,17 +3,19 @@ import { ref } from 'vue'
 import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
-import { playbackService } from '@/services/playbackService'
-import { CurrentPlayableKey } from '@/symbols'
+import { playbackService } from '@/services/QueuePlaybackService'
+import { CurrentStreamableKey } from '@/symbols'
 import { commonStore } from '@/stores/commonStore'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import { recentlyPlayedStore } from '@/stores/recentlyPlayedStore'
 import Router from '@/router'
 import Component from './FooterPlayButton.vue'
 
 new class extends UnitTestCase {
   protected test () {
-    it('toggles the playback of current song', async () => {
+    it('toggles the playback of current item', async () => {
+      this.createAudioPlayer()
+
       const toggleMock = this.mock(playbackService, 'toggle')
       this.renderComponent(factory('song'))
 
@@ -22,14 +24,16 @@ new class extends UnitTestCase {
       expect(toggleMock).toHaveBeenCalled()
     })
 
-    it.each<[ScreenName, MethodOf<typeof songStore>, Album['id'] | Artist['id'] | Playlist['id']]>([
-      ['Album', 'fetchForAlbum', 'foo'],
-      ['Artist', 'fetchForArtist', 'foo'],
+    it.each<[ScreenName, MethodOf<typeof playableStore>, Album['id'] | Artist['id'] | Playlist['id']]>([
+      ['Album', 'fetchSongsForAlbum', 'foo'],
+      ['Artist', 'fetchSongsForArtist', 'foo'],
       ['Playlist', 'fetchForPlaylist', '71d8cd40-20d4-4b17-b460-d30fe5bb7b66'],
     ])('initiates playback for %s screen', async (screenName, fetchMethod, id) => {
+      this.createAudioPlayer()
+
       commonStore.state.song_count = 10
       const songs = factory('song', 3)
-      const fetchMock = this.mock(songStore, fetchMethod).mockResolvedValue(songs)
+      const fetchMock = this.mock(playableStore, fetchMethod).mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
       const goMock = this.mock(Router, 'go')
 
@@ -50,12 +54,14 @@ new class extends UnitTestCase {
 
     it.each<[
       ScreenName,
-        typeof songStore | typeof recentlyPlayedStore,
-        MethodOf<typeof songStore | typeof recentlyPlayedStore>,
+        typeof playableStore | typeof recentlyPlayedStore,
+        MethodOf<typeof playableStore | typeof recentlyPlayedStore>,
     ]>([
-      ['Favorites', songStore, 'fetchFavorites'],
+      ['Favorites', playableStore, 'fetchFavorites'],
       ['RecentlyPlayed', recentlyPlayedStore, 'fetch'],
     ])('initiates playback for %s screen', async (screenName, store, fetchMethod) => {
+      this.createAudioPlayer()
+
       commonStore.state.song_count = 10
       const songs = factory('song', 3)
       const fetchMock = this.mock(store, fetchMethod).mockResolvedValue(songs)
@@ -78,6 +84,8 @@ new class extends UnitTestCase {
     })
 
     it('does nothing if there are no songs', async () => {
+      this.createAudioPlayer()
+
       commonStore.state.song_count = 0
 
       const playMock = this.mock(playbackService, 'queueAndPlay')
@@ -102,7 +110,7 @@ new class extends UnitTestCase {
     return this.render(Component, {
       global: {
         provide: {
-          [<symbol>CurrentPlayableKey]: ref(currentPlayable),
+          [<symbol>CurrentStreamableKey]: ref(currentPlayable),
         },
       },
     })

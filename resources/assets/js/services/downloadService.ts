@@ -1,5 +1,5 @@
 import { authService } from '@/services/authService'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import { arrayify } from '@/utils/helpers'
 
 export const downloadService = {
@@ -21,7 +21,7 @@ export const downloadService = {
   },
 
   fromFavorites () {
-    if (songStore.state.favorites.length) {
+    if (playableStore.state.favorites.length) {
       this.trigger('favorites')
     }
   },
@@ -29,7 +29,7 @@ export const downloadService = {
   /**
    * Build a download link using a segment and trigger it.
    *
-   * @param  {string} uri The uri segment, corresponding to the song(s),
+   * @param  {string} uri The uri segment, corresponding to the playable(s),
    *                      artist, playlist, or album.
    */
   trigger: (uri: string) => {

@@ -4,7 +4,7 @@ import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import { downloadService } from '@/services/downloadService'
 import { resourcePermissionService } from '@/services/resourcePermissionService'
 import { eventBus } from '@/utils/eventBus'
@@ -96,7 +96,7 @@ new class extends UnitTestCase {
     const resolveAlbumMock = this.mock(albumStore, 'resolve').mockResolvedValue(album)
 
     const songs = factory('song', 13)
-    const fetchSongsMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
+    const fetchSongsMock = this.mock(playableStore, 'fetchSongsForAlbum').mockResolvedValue(songs)
 
     await this.router.activateRoute({
       path: `albums/foo/${tab}`,

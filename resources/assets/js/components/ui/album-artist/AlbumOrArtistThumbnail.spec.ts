@@ -4,8 +4,8 @@ import { orderBy } from 'lodash'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { queueStore } from '@/stores/queueStore'
-import { songStore } from '@/stores/songStore'
-import { playbackService } from '@/services/playbackService'
+import { playableStore } from '@/stores/playableStore'
+import { playbackService } from '@/services/QueuePlaybackService'
 import Component from './AlbumOrArtistThumbnail.vue'
 
 new class extends UnitTestCase {
@@ -19,8 +19,10 @@ new class extends UnitTestCase {
     })
 
     it('plays album', async () => {
+      this.createAudioPlayer()
+
       const songs = factory('song', 10)
-      const fetchMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
+      const fetchMock = this.mock(playableStore, 'fetchSongsForAlbum').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
       const { album } = this.renderForAlbum()
 
@@ -33,8 +35,10 @@ new class extends UnitTestCase {
     })
 
     it('queues album', async () => {
+      this.createAudioPlayer()
+
       const songs = factory('song', 10)
-      const fetchMock = this.mock(songStore, 'fetchForAlbum').mockResolvedValue(songs)
+      const fetchMock = this.mock(playableStore, 'fetchSongsForAlbum').mockResolvedValue(songs)
       const queueMock = this.mock(queueStore, 'queue')
       const { album } = this.renderForAlbum()
 
@@ -50,7 +54,7 @@ new class extends UnitTestCase {
 
     it('plays artist', async () => {
       const songs = factory('song', 10)
-      const fetchMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
+      const fetchMock = this.mock(playableStore, 'fetchSongsForArtist').mockResolvedValue(songs)
       const playMock = this.mock(playbackService, 'queueAndPlay')
       const { artist } = this.renderForArtist()
 
@@ -64,7 +68,7 @@ new class extends UnitTestCase {
 
     it('queues artist', async () => {
       const songs = factory('song', 10)
-      const fetchMock = this.mock(songStore, 'fetchForArtist').mockResolvedValue(songs)
+      const fetchMock = this.mock(playableStore, 'fetchSongsForArtist').mockResolvedValue(songs)
       const queueMock = this.mock(queueStore, 'queue')
       const { artist } = this.renderForArtist()
 

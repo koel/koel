@@ -9,7 +9,7 @@
     <FormRow v-if="isPlus">
       <div>
         <CheckBox v-model="preferences.include_public_media" name="include_public_media" />
-        Show other users’ public songs, albums, and artists in your library (reload required)
+        Show other users’ public songs, albums, artists, and radio stations in your library (reload required)
       </div>
     </FormRow>
     <FormRow>

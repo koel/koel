@@ -23,9 +23,9 @@ import { useContextMenu } from '@/composables/useContextMenu'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { usePolicies } from '@/composables/usePolicies'
 import { useKoelPlus } from '@/composables/useKoelPlus'
-import { playbackService } from '@/services/playbackService'
 import { queueStore } from '@/stores/queueStore'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
+import { playback } from '@/services/playbackManager'
 
 const { base, ContextMenu, open, trigger } = useContextMenu()
 const { go, url } = useRouter()
@@ -42,10 +42,10 @@ const edit = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FORM', 
 const destroy = () => trigger(() => eventBus.emit('PLAYLIST_DELETE', playlist.value!))
 
 const play = () => trigger(async () => {
-  const songs = await songStore.fetchForPlaylist(playlist.value!)
+  const songs = await playableStore.fetchForPlaylist(playlist.value!)
 
   if (songs.length) {
-    playbackService.queueAndPlay(songs)
+    playback().queueAndPlay(songs)
     go(url('queue'))
   } else {
     toastWarning('The playlist is empty.')
@@ -53,10 +53,10 @@ const play = () => trigger(async () => {
 })
 
 const shuffle = () => trigger(async () => {
-  const songs = await songStore.fetchForPlaylist(playlist.value!)
+  const songs = await playableStore.fetchForPlaylist(playlist.value!)
 
   if (songs.length) {
-    playbackService.queueAndPlay(songs, true)
+    playback().queueAndPlay(songs, true)
     go(url('queue'))
   } else {
     toastWarning('The playlist is empty.')
@@ -64,7 +64,7 @@ const shuffle = () => trigger(async () => {
 })
 
 const addToQueue = () => trigger(async () => {
-  const songs = await songStore.fetchForPlaylist(playlist.value!)
+  const songs = await playableStore.fetchForPlaylist(playlist.value!)
 
   if (songs.length) {
     queueStore.queueAfterCurrent(songs)

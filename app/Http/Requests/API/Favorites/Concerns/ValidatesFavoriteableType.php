@@ -12,7 +12,7 @@ trait ValidatesFavoriteableType
         return [
             'string',
             'required',
-            Rule::in(['playable', 'album', 'artist', 'podcast']),
+            Rule::in(['playable', 'album', 'artist', 'podcast', 'radio-station']),
         ];
     }
 }

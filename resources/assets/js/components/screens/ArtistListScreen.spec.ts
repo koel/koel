@@ -25,7 +25,7 @@ new class extends UnitTestCase {
       await waitFor(() => screen.getByTestId('screen-empty-state'))
     })
 
-    it.each<[ArtistAlbumViewMode]>([['list'], ['thumbnails']])('sets layout:%s from preferences', async mode => {
+    it.each<[ViewMode]>([['list'], ['thumbnails']])('sets layout:%s from preferences', async mode => {
       preferenceStore.artists_view_mode = mode
 
       await this.renderComponent()

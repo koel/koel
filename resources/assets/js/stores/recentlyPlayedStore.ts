@@ -1,7 +1,7 @@
 import { reactive } from 'vue'
 import { remove } from 'lodash'
 import { http } from '@/services/http'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 
 const EXCERPT_COUNT = 7
 
@@ -15,7 +15,7 @@ export const recentlyPlayedStore = {
   }),
 
   async fetch () {
-    this.state.playables = songStore.syncWithVault(await http.get<Playable[]>('songs/recently-played'))
+    this.state.playables = playableStore.syncWithVault(await http.get<Playable[]>('songs/recently-played'))
     return this.state.playables
   },
 

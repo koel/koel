@@ -1,5 +1,5 @@
 <template>
-  <ContextMenu ref="base" data-testid="album-context-menu" extra-class="podcast-menu">
+  <ContextMenu ref="base" data-testid="podcast-context-menu" extra-class="podcast-menu">
     <template v-if="podcast">
       <li @click="play">Play All</li>
       <li @click="shuffle">Shuffle All</li>
@@ -13,12 +13,12 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { songStore } from '@/stores/songStore'
-import { playbackService } from '@/services/playbackService'
+import { playableStore } from '@/stores/playableStore'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { useRouter } from '@/composables/useRouter'
 import { eventBus } from '@/utils/eventBus'
 import { podcastStore } from '@/stores/podcastStore'
+import { playback } from '@/services/playbackManager'
 
 const { go, url } = useRouter()
 const { base, ContextMenu, open, trigger } = useContextMenu()
@@ -26,12 +26,12 @@ const { base, ContextMenu, open, trigger } = useContextMenu()
 const podcast = ref<Podcast>()
 
 const play = () => trigger(async () => {
-  playbackService.queueAndPlay(await songStore.fetchForPodcast(podcast.value!))
+  playback().queueAndPlay(await playableStore.fetchEpisodesInPodcast(podcast.value!))
   go(url('queue'))
 })
 
 const shuffle = () => trigger(async () => {
-  playbackService.queueAndPlay(await songStore.fetchForPodcast(podcast.value!), true)
+  playback().queueAndPlay(await playableStore.fetchEpisodesInPodcast(podcast.value!), true)
   go(url('queue'))
 })
 

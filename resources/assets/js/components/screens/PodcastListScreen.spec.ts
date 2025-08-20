@@ -14,7 +14,7 @@ new class extends UnitTestCase {
       await this.renderComponent()
 
       expect(screen.getAllByTestId('podcast-item')).toHaveLength(9)
-      expect(fetchMock).toHaveBeenCalledWith(false)
+      expect(fetchMock).toHaveBeenCalled()
     })
 
     it('shows a message when there are no podcasts', async () => {
@@ -26,17 +26,21 @@ new class extends UnitTestCase {
     })
 
     it('shows all or only favorites upon toggling the button', async () => {
-      const fetchMock = this.mock(podcastStore, 'fetchAll')
+      podcastStore.state.podcasts = [
+        ...factory('podcast', 3, { favorite: true }),
+        ...factory('podcast', 6, { favorite: false }),
+      ]
+
+      this.mock(podcastStore, 'fetchAll')
 
       await this.renderComponent()
-      await this.tick()
-      expect(fetchMock).toHaveBeenNthCalledWith(1, false)
+      expect(screen.getAllByTestId('podcast-item')).toHaveLength(9)
 
       await this.user.click(screen.getByRole('button', { name: 'Show favorites only' }))
-      expect(fetchMock).toHaveBeenNthCalledWith(2, true)
+      await waitFor(() => expect(screen.getAllByTestId('podcast-item')).toHaveLength(3))
 
       await this.user.click(screen.getByRole('button', { name: 'Show all' }))
-      expect(fetchMock).toHaveBeenNthCalledWith(3, false)
+      await waitFor(() => expect(screen.getAllByTestId('podcast-item')).toHaveLength(9))
     })
   }
 

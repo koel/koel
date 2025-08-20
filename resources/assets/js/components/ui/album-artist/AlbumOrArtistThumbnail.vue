@@ -29,20 +29,20 @@
 
 <script lang="ts" setup>
 import { faPlay } from '@fortawesome/free-solid-svg-icons'
+import defaultCover from '@/../img/covers/default.svg'
 import { orderBy } from 'lodash'
 import { computed, ref, toRefs } from 'vue'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { queueStore } from '@/stores/queueStore'
-import { songStore } from '@/stores/songStore'
-import { playbackService } from '@/services/playbackService'
-import defaultCover from '@/../img/covers/default.svg'
+import { playableStore } from '@/stores/playableStore'
 import { useRouter } from '@/composables/useRouter'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useFileReader } from '@/composables/useFileReader'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { usePolicies } from '@/composables/usePolicies'
 import { acceptedImageTypes } from '@/config/acceptedImageTypes'
+import { playback } from '@/services/playbackManager'
 
 const props = defineProps<{ entity: Album | Artist }>()
 const { toastSuccess } = useMessageToaster()
@@ -71,8 +71,8 @@ const allowsUpload = ref(false)
 
 const playOrQueue = async (event: MouseEvent) => {
   const songs = forAlbum.value
-    ? await songStore.fetchForAlbum(entity.value as Album)
-    : await songStore.fetchForArtist(entity.value as Artist)
+    ? await playableStore.fetchSongsForAlbum(entity.value as Album)
+    : await playableStore.fetchSongsForArtist(entity.value as Artist)
 
   if (event.altKey) {
     queueStore.queue(orderBy(songs, sortFields.value))
@@ -80,7 +80,7 @@ const playOrQueue = async (event: MouseEvent) => {
     return
   }
 
-  playbackService.queueAndPlay(songs)
+  playback().queueAndPlay(songs)
   go(url('queue'))
 }
 

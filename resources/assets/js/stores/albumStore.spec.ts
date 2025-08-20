@@ -2,7 +2,7 @@ import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { http } from '@/services/http'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import { albumStore } from '@/stores/albumStore'
 
 new class extends UnitTestCase {
@@ -58,7 +58,7 @@ new class extends UnitTestCase {
       albumStore.syncWithVault(album)
       const songsInAlbum = factory('song', 3, { album_id: album.id })
       const putMock = this.mock(http, 'put').mockResolvedValue({ cover_url: 'http://test/cover.jpg' })
-      this.mock(songStore, 'byAlbum', songsInAlbum)
+      this.mock(playableStore, 'byAlbum', songsInAlbum)
 
       await albumStore.uploadCover(album, 'data://cover')
 
@@ -124,7 +124,7 @@ new class extends UnitTestCase {
       }
 
       const putMock = this.mock(http, 'put').mockResolvedValueOnce({ ...album, ...updateData })
-      const updateAlbumNameMock = this.mock(songStore, 'updateAlbumName')
+      const updateAlbumNameMock = this.mock(playableStore, 'updateAlbumName')
 
       await albumStore.update(album, updateData)
 

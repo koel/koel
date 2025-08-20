@@ -3,25 +3,25 @@ import { expect, it } from 'vitest'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { http } from '@/services/http'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import { queueStore } from '@/stores/queueStore'
 
 new class extends UnitTestCase {
-  private playables: Song[] = []
+  private songs: Song[] = []
 
   protected beforeEach () {
     super.beforeEach(() => {
-      this.playables = factory('song', 3)
-      queueStore.state.playables = reactive(this.playables)
+      this.songs = factory('song', 3)
+      queueStore.state.playables = reactive(this.songs)
     })
   }
 
   protected test () {
-    it('returns all queued songs', () => expect(queueStore.all).toEqual(this.playables))
+    it('returns all queued songs', () => expect(queueStore.all).toEqual(this.songs))
 
-    it('returns the first queued song', () => expect(queueStore.first).toEqual(this.playables[0]))
+    it('returns the first queued song', () => expect(queueStore.first).toEqual(this.songs[0]))
 
-    it('returns the last queued song', () => expect(queueStore.last).toEqual(this.playables[2]))
+    it('returns the last queued song', () => expect(queueStore.last).toEqual(this.songs[2]))
 
     it('queues to bottom', () => {
       const song = factory('song')
@@ -54,17 +54,17 @@ new class extends UnitTestCase {
 
     it('removes a song from queue', () => {
       const putMock = this.mock(http, 'put')
-      queueStore.unqueue(this.playables[1])
+      queueStore.unqueue(this.songs[1])
 
-      expect(queueStore.all).toEqual([this.playables[0], this.playables[2]])
+      expect(queueStore.all).toEqual([this.songs[0], this.songs[2]])
       expect(putMock).toHaveBeenCalledWith('queue/state', { songs: queueStore.all.map(song => song.id) })
     })
 
     it('removes multiple songs from queue', () => {
       const putMock = this.mock(http, 'put')
-      queueStore.unqueue([this.playables[1], this.playables[0]])
+      queueStore.unqueue([this.songs[1], this.songs[0]])
 
-      expect(queueStore.all).toEqual([this.playables[2]])
+      expect(queueStore.all).toEqual([this.songs[2]])
       expect(putMock).toHaveBeenCalledWith('queue/state', { songs: queueStore.all.map(song => song.id) })
     })
 
@@ -104,7 +104,7 @@ new class extends UnitTestCase {
     it('fetches random songs to queue', async () => {
       const songs = factory('song', 3)
       const getMock = this.mock(http, 'get').mockResolvedValue(songs)
-      const syncMock = this.mock(songStore, 'syncWithVault', songs)
+      const syncMock = this.mock(playableStore, 'syncWithVault', songs)
       const putMock = this.mock(http, 'put')
 
       await queueStore.fetchRandom(3)
@@ -118,7 +118,7 @@ new class extends UnitTestCase {
     it('fetches random songs to queue with a custom order', async () => {
       const songs = factory('song', 3)
       const getMock = this.mock(http, 'get').mockResolvedValue(songs)
-      const syncMock = this.mock(songStore, 'syncWithVault', songs)
+      const syncMock = this.mock(playableStore, 'syncWithVault', songs)
       const putMock = this.mock(http, 'put')
 
       await queueStore.fetchInOrder('title', 'desc', 3)

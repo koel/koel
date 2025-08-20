@@ -31,7 +31,7 @@
         aria-labelledby="extraTabLyrics"
         data-testid="side-sheet-lyrics"
       >
-        <LyricsPane v-if="playable" :song="playable" />
+        <LyricsPane v-if="streamable" :song="streamable" />
       </SideSheetPanelLazyWrapper>
 
       <SideSheetPanelLazyWrapper
@@ -63,7 +63,7 @@
         aria-labelledby="extraTabYouTube"
         data-testid="side-sheet-youtube"
       >
-        <YouTubeVideoList v-if="shouldShowYouTubeTab && playable" :song="playable" />
+        <YouTubeVideoList v-if="shouldShowYouTubeTab && streamable" :song="streamable" />
       </SideSheetPanelLazyWrapper>
     </main>
   </aside>
@@ -72,7 +72,6 @@
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
 import { faBars } from '@fortawesome/free-solid-svg-icons'
-import type { Ref } from 'vue'
 import { computed, onMounted, ref, watch } from 'vue'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
@@ -81,7 +80,7 @@ import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 import { eventBus } from '@/utils/eventBus'
 import { isSong } from '@/utils/typeGuards'
 import { defineAsyncComponent, requireInjection } from '@/utils/helpers'
-import { CurrentPlayableKey } from '@/symbols'
+import { CurrentStreamableKey } from '@/symbols'
 
 import ProfileAvatar from '@/components/ui/ProfileAvatar.vue'
 import AboutKoelButton from '@/components/layout/main-wrapper/side-sheet/AboutKoelButton.vue'
@@ -98,7 +97,7 @@ const YouTubeVideoList = defineAsyncComponent(() => import('@/components/ui/yout
 
 const { useYouTube } = useThirdPartyServices()
 
-const playable = requireInjection(CurrentPlayableKey, ref(undefined)) as Ref<Song | undefined>
+const streamable = requireInjection(CurrentStreamableKey, ref(undefined))
 const activeTab = ref<SideSheetTab | null>(null)
 const activatedTabs = ref<SideSheetTab[]>([])
 
@@ -107,48 +106,49 @@ const album = ref<Album>()
 const loadingArtist = ref(false)
 const loadingAlbum = ref(false)
 
-const songPlaying = computed(() => playable.value && isSong(playable.value))
+const songPlaying = computed(() => streamable.value && isSong(streamable.value))
 const shouldShowYouTubeTab = computed(() => useYouTube.value && songPlaying.value)
 
 const shouldMountTab = (tab: SideSheetTab) => activatedTabs.value.includes(tab)
 
-const maybeResolveArtist = async () => {
-  if (!songPlaying.value || playable.value!.artist_id === artist.value?.id) {
+const maybeResolveArtist = async (song: Song) => {
+  if (song.artist_id === artist.value?.id) {
     return
   }
 
   loadingArtist.value = true
-  artist.value = await artistStore.resolve(playable.value!.artist_id)
+  artist.value = await artistStore.resolve(song.artist_id)
   loadingArtist.value = false
 }
 
-const maybeResolveAlbum = async () => {
-  if (!songPlaying.value || playable.value!.album_id === album.value?.id) {
+const maybeResolveAlbum = async (song: Song) => {
+  if (song.album_id === album.value?.id) {
     return
   }
 
   loadingAlbum.value = true
-  album.value = await albumStore.resolve(playable.value!.album_id)
+  album.value = await albumStore.resolve(song.album_id)
   loadingAlbum.value = false
 }
 
-const maybeResolveArtistOrAlbum = (activeTab: SideSheetTab | null = null) => {
+const resolveArtistOrAlbum = (activeTab: SideSheetTab | null = null, song: Song) => {
   switch (activeTab) {
     case 'Artist':
-      return maybeResolveArtist()
+      return maybeResolveArtist(song)
     case 'Album':
-      return maybeResolveAlbum()
+      return maybeResolveAlbum(song)
     default:
+      break
   }
 }
 
-watch(playable, song => {
+watch(streamable, song => {
   if (!song || !isSong(song)) {
     return
   }
 
-  playable.value = song
-  maybeResolveArtistOrAlbum(activeTab.value)
+  streamable.value = song
+  resolveArtistOrAlbum(activeTab.value, song)
 }, { immediate: true })
 
 watch(activeTab, tab => {
@@ -162,7 +162,9 @@ watch(activeTab, tab => {
     activatedTabs.value.push(tab)
   }
 
-  maybeResolveArtistOrAlbum(tab)
+  if (streamable.value && isSong(streamable.value)) {
+    resolveArtistOrAlbum(tab, streamable.value)
+  }
 })
 
 const onProfileLinkClick = () => isMobile.any && (activeTab.value = null)

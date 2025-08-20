@@ -5,7 +5,7 @@ import { cache } from '@/services/cache'
 import { http } from '@/services/http'
 import { arrayify } from '@/utils/helpers'
 import { logger } from '@/utils/logger'
-import { songStore } from '@/stores/songStore'
+import { playableStore as songStore } from '@/stores/playableStore'
 
 const UNKNOWN_ALBUM_NAME = 'Unknown Album'
 

@@ -2,7 +2,7 @@
   <textarea
     ref="el"
     v-model="value"
-    class="px-4 w-full min-h-48 text-base py-2.5 rounded text-k-text-input bg-k-bg-input"
+    class="px-4 w-full h-48 text-base py-2.5 rounded text-k-text-input bg-k-bg-input"
   />
 </template>
 

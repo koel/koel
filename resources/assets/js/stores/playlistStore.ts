@@ -7,7 +7,7 @@ import { http } from '@/services/http'
 import { cache } from '@/services/cache'
 import models from '@/config/smart-playlist/models'
 import operators from '@/config/smart-playlist/operators'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 
 interface CreatePlaylistRequestData {
   name: Playlist['name']
@@ -100,7 +100,7 @@ export const playlistStore = {
       songs: playables.map(song => song.id),
     })
 
-    songStore.syncWithVault(updatedPlayables)
+    playableStore.syncWithVault(updatedPlayables)
     cache.remove(['playlist.songs', playlist.id])
 
     return playlist

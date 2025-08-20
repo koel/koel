@@ -6,12 +6,12 @@ import { socketService } from '@/services/socketService'
 import Component from './RemoteFooter.vue'
 
 new class extends UnitTestCase {
-  private renderComponent (playable?: Playable) {
-    playable = playable || factory('song')
+  private renderComponent (streamable?: Streamable) {
+    streamable = streamable || factory('song')
 
     this.render(Component, {
       props: {
-        playable,
+        streamable,
       },
       global: {
         components: {
@@ -20,7 +20,7 @@ new class extends UnitTestCase {
         },
         provide: {
           state: {
-            playable,
+            streamable,
             volume: 7,
           },
         },

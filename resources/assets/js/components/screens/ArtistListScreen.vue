@@ -9,14 +9,12 @@
               v-koel-tooltip
               :title="favoritesOnly ? 'Show all' : 'Show favorites only'"
               class="border border-white/10"
-              small
               transparent
               @click.prevent="toggleFavoritesOnly"
             >
               <Icon
                 :icon="favoritesOnly ? faStar : faEmptyStar"
                 :class="favoritesOnly && 'text-k-highlight'"
-                size="sm"
               />
             </Btn>
 
@@ -43,7 +41,7 @@
     </ScreenEmptyState>
 
     <div v-else ref="gridContainer" v-koel-overflow-fade class="-m-6 overflow-auto">
-      <ArtistGrid :view-mode="preferences.artists_view_mode" data-testid="artist-list">
+      <GridListView :view-mode="preferences.artists_view_mode" data-testid="artist-list">
         <template v-if="showSkeletons">
           <ArtistCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
         </template>
@@ -51,7 +49,7 @@
           <ArtistCard v-for="artist in artists" :key="artist.id" :artist="artist" :layout="itemLayout" />
           <ToTopButton />
         </template>
-      </ArtistGrid>
+      </GridListView>
     </div>
   </ScreenBase>
 </template>
@@ -73,7 +71,7 @@ import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
-import ArtistGrid from '@/components/ui/album-artist/AlbumOrArtistGrid.vue'
+import GridListView from '@/components/ui/GridListView.vue'
 import ArtistListSorter from '@/components/artist/ArtistListSorter.vue'
 import { faStar as faEmptyStar } from '@fortawesome/free-regular-svg-icons'
 import Btn from '@/components/ui/form/Btn.vue'
@@ -81,7 +79,7 @@ import Btn from '@/components/ui/form/Btn.vue'
 const { isAdmin } = useAuthorization()
 
 const gridContainer = ref<HTMLDivElement>()
-const grid = ref<InstanceType<typeof ArtistGrid>>()
+const grid = ref<InstanceType<typeof GridListView>>()
 const artists = toRef(artistStore.state, 'artists')
 
 const favoritesOnly = ref(false)
@@ -92,7 +90,7 @@ const page = ref<number | null>(1)
 
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 
-const itemLayout = computed<ArtistAlbumCardLayout>(
+const itemLayout = computed<CardLayout>(
   () => preferences.artists_view_mode === 'thumbnails' ? 'full' : 'compact',
 )
 

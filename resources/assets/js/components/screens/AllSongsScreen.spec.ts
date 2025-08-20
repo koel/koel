@@ -5,8 +5,8 @@ import factory from '@/__tests__/factory'
 import Router from '@/router'
 import { commonStore } from '@/stores/commonStore'
 import { queueStore } from '@/stores/queueStore'
-import { songStore } from '@/stores/songStore'
-import { playbackService } from '@/services/playbackService'
+import { playableStore } from '@/stores/playableStore'
+import { playbackService } from '@/services/QueuePlaybackService'
 import Component from './AllSongsScreen.vue'
 
 new class extends UnitTestCase {
@@ -14,7 +14,7 @@ new class extends UnitTestCase {
     super.beforeEach(cb)
     commonStore.state.song_count = 420
     commonStore.state.song_length = 123_456
-    songStore.state.playables = factory('song', 20)
+    playableStore.state.playables = factory('song', 20)
     this.be()
   }
 
@@ -25,6 +25,8 @@ new class extends UnitTestCase {
     })
 
     it('shuffles', async () => {
+      this.createAudioPlayer()
+
       const queueMock = this.mock(queueStore, 'fetchRandom')
       const playMock = this.mock(playbackService, 'playFirstInQueue')
       const goMock = this.mock(Router, 'go')
@@ -41,7 +43,7 @@ new class extends UnitTestCase {
   }
 
   private async renderComponent () {
-    const fetchMock = this.mock(songStore, 'paginate').mockResolvedValue(2)
+    const fetchMock = this.mock(playableStore, 'paginateSongs').mockResolvedValue(2)
 
     this.router.$currentRoute.value = {
       screen: 'Songs',

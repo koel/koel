@@ -144,6 +144,11 @@ class User extends Authenticatable implements AuditableContract
             ->withTimestamps();
     }
 
+    public function radioStations(): HasMany
+    {
+        return $this->hasMany(RadioStation::class);
+    }
+
     public function subscribedToPodcast(Podcast $podcast): bool
     {
         return $this->podcasts()->whereKey($podcast)->exists();

@@ -4,8 +4,8 @@ import { screen } from '@testing-library/vue'
 import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { eventBus } from '@/utils/eventBus'
-import { playbackService } from '@/services/playbackService'
-import { songStore as episodeStore } from '@/stores/songStore'
+import { playbackService } from '@/services/QueuePlaybackService'
+import { playableStore as episodeStore } from '@/stores/playableStore'
 import Component from './PodcastContextMenu.vue'
 
 new class extends UnitTestCase {
@@ -13,8 +13,10 @@ new class extends UnitTestCase {
     it('renders', async () => expect((await this.renderComponent()).html()).toMatchSnapshot())
 
     it('plays all', async () => {
+      this.createAudioPlayer()
+
       const episodes = factory('episode', 10)
-      const fetchMock = this.mock(episodeStore, 'fetchForPodcast').mockResolvedValue(episodes)
+      const fetchMock = this.mock(episodeStore, 'fetchEpisodesInPodcast').mockResolvedValue(episodes)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 
       const { podcast } = await this.renderComponent()
@@ -26,8 +28,10 @@ new class extends UnitTestCase {
     })
 
     it('shuffles all', async () => {
+      this.createAudioPlayer()
+
       const episodes = factory('episode', 10)
-      const fetchMock = this.mock(episodeStore, 'fetchForPodcast').mockResolvedValue(episodes)
+      const fetchMock = this.mock(episodeStore, 'fetchEpisodesInPodcast').mockResolvedValue(episodes)
       const playMock = this.mock(playbackService, 'queueAndPlay')
 
       const { podcast } = await this.renderComponent()

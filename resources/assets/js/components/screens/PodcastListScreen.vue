@@ -50,7 +50,7 @@
         <PodcastItemSkeleton v-for="i in 5" :key="i" />
       </template>
       <template v-else>
-        <PodcastItem v-for="podcast in podcasts" :key="podcast.id" :podcast="podcast" />
+        <PodcastItem v-for="podcast in podcasts" :key="podcast.id" :podcast />
       </template>
     </div>
   </ScreenBase>
@@ -60,7 +60,7 @@
 import { faAdd, faPodcast, faStar } from '@fortawesome/free-solid-svg-icons'
 import { faStar as faEmptyStar } from '@fortawesome/free-regular-svg-icons'
 import { orderBy } from 'lodash'
-import { computed, nextTick, provide, ref } from 'vue'
+import { computed, provide, ref } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { podcastStore } from '@/stores/podcastStore'
 import { useRouter } from '@/composables/useRouter'
@@ -88,11 +88,13 @@ const keywords = ref('')
 
 provide(FilterKeywordsKey, keywords)
 
-const podcasts = computed(() => orderBy(
-  keywords.value ? fuzzy.search(keywords.value) : podcastStore.state.podcasts,
-  preferences.podcasts_sort_field,
-  preferences.podcasts_sort_order,
-))
+const podcasts = computed(() => {
+  return orderBy(
+    keywords.value ? fuzzy.search(keywords.value) : podcastStore.state.podcasts,
+    preferences.podcasts_sort_field,
+    preferences.podcasts_sort_order,
+  ).filter(podcast => preferences.podcasts_favorites_only ? podcast.favorite : true)
+})
 
 const noPodcasts = computed(() => !loading.value && podcasts.value.length === 0)
 
@@ -104,7 +106,7 @@ const fetchPodcasts = async () => {
   loading.value = true
 
   try {
-    await podcastStore.fetchAll(preferences.podcasts_favorites_only)
+    await podcastStore.fetchAll()
     fuzzy.setDocuments(podcastStore.state.podcasts)
   } catch (error: any) {
     useErrorHandler().handleHttpError(error)
@@ -122,10 +124,6 @@ const sort = (field: PodcastListSortField, order: SortOrder) => {
 
 const toggleFavoritesOnly = async () => {
   preferences.podcasts_favorites_only = !preferences.podcasts_favorites_only
-
-  podcastStore.reset()
-  await nextTick()
-  await fetchPodcasts()
 }
 
 onScreenActivated('Podcasts', async () => {

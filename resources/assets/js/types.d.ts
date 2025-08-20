@@ -146,9 +146,16 @@ interface Album {
   favorite: boolean
 }
 
-interface BasePlayable {
-  type: 'songs' | 'episodes'
+interface IStreamable {
+  readonly type: Song['type'] | Episode['type'] | RadioStation['type']
   readonly id: string
+  favorite: boolean
+  playback_state?: PlaybackState
+  created_at: string
+}
+
+interface BasePlayable extends IStreamable {
+  type: Song['type'] | Episode['type']
   title: string
   readonly length: number
   play_count_registered?: boolean
@@ -156,9 +163,7 @@ interface BasePlayable {
   play_start_time?: number
   preloaded?: boolean
   playback_state?: PlaybackState
-  favorite: boolean
   fmt_length?: string
-  created_at: string
 }
 
 interface Song extends BasePlayable {
@@ -197,7 +202,17 @@ interface Episode extends BasePlayable {
   podcast_author: string
 }
 
+interface RadioStation extends IStreamable {
+  readonly type: 'radio-stations'
+  name: string
+  url: string
+  logo: string | null
+  description: string
+  is_public: boolean
+}
+
 type Playable = Song | Episode
+type Streamable = Playable | RadioStation
 
 interface QueueState {
   type: 'queue-states'
@@ -319,17 +334,21 @@ interface UserPreferences extends Record<string, any> {
   confirm_before_closing: boolean
   continuous_playback: boolean
   equalizer: EqualizerPreset
-  albums_view_mode: ArtistAlbumViewMode
-  artists_view_mode: ArtistAlbumViewMode
+  albums_view_mode: ViewMode
+  artists_view_mode: ViewMode
+  radio_stations_view_mode: ViewMode
   albums_sort_field: AlbumListSortField
   artists_sort_field: ArtistListSortField
   podcasts_sort_field: PodcastListSortField
+  radio_stations_sort_field: RadioStationListSortField
   albums_sort_order: SortOrder
   artists_sort_order: SortOrder
   podcasts_sort_order: SortOrder
+  radio_stations_sort_order: SortOrder
   albums_favorites_only: boolean
   artists_favorites_only: boolean
   podcasts_favorites_only: boolean
+  radio_stations_favorites_only: boolean
   transcode_on_mobile: boolean
   transcode_quality: number
   support_bar_no_bugging: boolean
@@ -427,22 +446,23 @@ declare type ScreenName =
   | 'Upload'
   | 'Podcasts'
   | 'Podcast'
+  | 'Radio.Stations'
   | 'Episode'
   | 'Search.Excerpt'
-  | 'Search.Songs'
+  | 'Search.Playables'
   | 'MediaBrowser'
   | 'Invitation.Accept'
   | 'Password.Reset'
   | '404'
 
-declare type ArtistAlbumCardLayout = 'full' | 'compact'
+declare type CardLayout = 'full' | 'compact'
 
 interface AddToMenuConfig {
   queue: boolean
   favorites: boolean
 }
 
-interface SongListControlsConfig {
+interface PlayableListControlsConfig {
   addTo: AddToMenuConfig
   clearQueue: boolean
   deletePlaylist: boolean
@@ -473,7 +493,7 @@ interface Theme {
   properties?: Partial<Record<ThemeableProperty, string>>
 }
 
-type ArtistAlbumViewMode = 'list' | 'thumbnails'
+type ViewMode = 'list' | 'thumbnails'
 
 type RepeatMode = 'NO_REPEAT' | 'REPEAT_ALL' | 'REPEAT_ONE'
 
@@ -487,7 +507,7 @@ interface PlayableListConfig {
 
 interface PlayableListContext {
   entity?: Playlist | Album | Artist | Genre
-  type?: Extract<ScreenName, 'Songs' | 'Album' | 'Artist' | 'Playlist' | 'Favorites' | 'RecentlyPlayed' | 'Queue' | 'Genre' | 'Search.Songs'>
+  type?: Extract<ScreenName, 'Songs' | 'Album' | 'Artist' | 'Playlist' | 'Favorites' | 'RecentlyPlayed' | 'Queue' | 'Genre' | 'Search.Playables'>
 }
 
 type PlayableListSortField =
@@ -495,9 +515,10 @@ type PlayableListSortField =
   | keyof Pick<Episode, 'podcast_author' | 'podcast_title'>
   | 'position'
 
-type PodcastListSortField = keyof Pick<Podcast, 'title' | 'last_played_at' | 'subscribed_at' | 'author'>
 type AlbumListSortField = keyof Pick<Album, 'name' | 'year' | 'artist_name' | 'created_at'>
 type ArtistListSortField = keyof Pick<Artist, 'name' | 'created_at'>
+type PodcastListSortField = keyof Pick<Podcast, 'title' | 'last_played_at' | 'subscribed_at' | 'author'>
+type RadioStationListSortField = keyof Pick<RadioStation, 'name' | 'created_at'>
 
 interface BasicListSorterDropDownItem<T extends PodcastListSortField | AlbumListSortField | ArtistListSortField> {
   label: string

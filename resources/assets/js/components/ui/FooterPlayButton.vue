@@ -1,6 +1,6 @@
 <template>
   <FooterButton
-    :title="playing ? 'Pause' : 'Play or resume'"
+    :title
     class="!w-[3rem] rounded-full border-2 border-solid aspect-square !transition-transform hover:scale-125 !text-2xl
     has-[.icon-play]:indent-[0.23rem]"
     @click.prevent="toggle"
@@ -13,22 +13,31 @@
 <script lang="ts" setup>
 import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref } from 'vue'
-import { playbackService } from '@/services/playbackService'
 import { commonStore } from '@/stores/commonStore'
 import { queueStore } from '@/stores/queueStore'
 import { recentlyPlayedStore } from '@/stores/recentlyPlayedStore'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import { useRouter } from '@/composables/useRouter'
 import { requireInjection } from '@/utils/helpers'
-import { CurrentPlayableKey } from '@/symbols'
+import { CurrentStreamableKey } from '@/symbols'
+import { playback } from '@/services/playbackManager'
 
 import FooterButton from '@/components/layout/app-footer/FooterButton.vue'
 
 const { getCurrentScreen, getRouteParam, go, url } = useRouter()
-const song = requireInjection(CurrentPlayableKey, ref())
+const streamable = requireInjection(CurrentStreamableKey, ref())
 
 const libraryEmpty = computed(() => commonStore.state.song_count === 0)
-const playing = computed(() => song.value?.playback_state === 'Playing')
+const playing = computed(() => streamable.value?.playback_state === 'Playing')
+const isRadio = computed(() => streamable.value?.type === 'radio-stations')
+
+const title = computed(() => {
+  if (isRadio.value) {
+    return streamable.value?.playback_state === 'Playing' ? 'Stop streaming' : 'Start streaming'
+  }
+
+  return playing.value ? 'Pause' : 'Play or resume'
+})
 
 const initiatePlayback = async () => {
   if (libraryEmpty.value) {
@@ -39,16 +48,16 @@ const initiatePlayback = async () => {
 
   switch (getCurrentScreen()) {
     case 'Album':
-      playables = await songStore.fetchForAlbum(getRouteParam('id')!)
+      playables = await playableStore.fetchSongsForAlbum(getRouteParam('id')!)
       break
     case 'Artist':
-      playables = await songStore.fetchForArtist(getRouteParam('id')!)
+      playables = await playableStore.fetchSongsForArtist(getRouteParam('id')!)
       break
     case 'Playlist':
-      playables = await songStore.fetchForPlaylist(getRouteParam('id')!)
+      playables = await playableStore.fetchForPlaylist(getRouteParam('id')!)
       break
     case 'Favorites':
-      playables = await songStore.fetchFavorites()
+      playables = await playableStore.fetchFavorites()
       break
     case 'RecentlyPlayed':
       playables = await recentlyPlayedStore.fetch()
@@ -58,9 +67,21 @@ const initiatePlayback = async () => {
       break
   }
 
-  await playbackService.queueAndPlay(playables)
+  await playback().queueAndPlay(playables)
   go(url('queue'))
 }
 
-const toggle = async () => song.value ? playbackService.toggle() : initiatePlayback()
+const toggle = async () => {
+  if (!streamable.value) {
+    await initiatePlayback()
+    return
+  }
+
+  if (isRadio.value) {
+    await playback('radio').toggle()
+    return
+  }
+
+  await playback('queue').toggle()
+}
 </script>

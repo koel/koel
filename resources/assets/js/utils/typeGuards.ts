@@ -1,9 +1,13 @@
-export function isSong (item: Playable | Folder): item is Song {
-  return item.type === 'songs'
+export function isSong (streamable: Streamable): streamable is Song {
+  return streamable.type === 'songs'
 }
 
-export function isEpisode (playable: Playable): playable is Episode {
-  return playable.type === 'episodes'
+export function isEpisode (streamable: Streamable): streamable is Episode {
+  return streamable.type === 'episodes'
+}
+
+export function isRadioStation (streamable: Streamable): streamable is RadioStation {
+  return streamable.type === 'radio-stations'
 }
 
 export function getPlayableCollectionContentType (playables: Playable[]): Song['type'] | Episode['type'] | 'mixed' {

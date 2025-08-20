@@ -4,7 +4,7 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { eventBus } from '@/utils/eventBus'
 import { playlistStore } from '@/stores/playlistStore'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import { downloadService } from '@/services/downloadService'
 import Component from './PlaylistScreen.vue'
 
@@ -64,7 +64,7 @@ new class extends UnitTestCase {
     playlistStore.init([playlist])
     playlist.playables = songs
 
-    const fetchMock = this.mock(songStore, 'fetchForPlaylist').mockResolvedValue(songs)
+    const fetchMock = this.mock(playableStore, 'fetchForPlaylist').mockResolvedValue(songs)
 
     const rendered = this.render(Component)
 

@@ -17,16 +17,16 @@
     <div v-else class="space-y-12">
       <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-8 md:gap-4">
         <MostPlayedSongs :loading="loading" data-testid="most-played-songs" />
-        <RecentlyPlayedSongs :loading="loading" data-testid="recently-played-songs" />
+        <RecentlyPlayedPlayables :loading="loading" data-testid="recently-played-songs" />
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-8 md:gap-4">
-        <RecentlyAddedAlbums :loading="loading" data-testid="recently-added-albums" />
-        <RecentlyAddedSongs :loading="loading" data-testid="recently-added-songs" />
+        <NewAlbums :loading="loading" data-testid="recently-added-albums" />
+        <NewSongs :loading="loading" data-testid="recently-added-songs" />
       </div>
 
-      <MostPlayedArtists :loading="loading" data-testid="most-played-artists" />
-      <MostPlayedAlbums :loading="loading" data-testid="most-played-albums" />
+      <TopArtists :loading="loading" data-testid="most-played-artists" />
+      <TopAlbums :loading="loading" data-testid="most-played-albums" />
 
       <BtnScrollToTop />
     </div>
@@ -46,11 +46,11 @@ import { useAuthorization } from '@/composables/useAuthorization'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 
 import MostPlayedSongs from '@/components/screens/home/MostPlayedSongs.vue'
-import RecentlyPlayedSongs from '@/components/screens/home/RecentlyPlayedSongs.vue'
-import RecentlyAddedAlbums from '@/components/screens/home/RecentlyAddedAlbums.vue'
-import RecentlyAddedSongs from '@/components/screens/home/RecentlyAddedSongs.vue'
-import MostPlayedArtists from '@/components/screens/home/MostPlayedArtists.vue'
-import MostPlayedAlbums from '@/components/screens/home/MostPlayedAlbums.vue'
+import RecentlyPlayedPlayables from '@/components/screens/home/RecentlyPlayedPlayables.vue'
+import NewAlbums from '@/components/screens/home/NewAlbums.vue'
+import NewSongs from '@/components/screens/home/NewSongs.vue'
+import TopArtists from '@/components/screens/home/TopArtists.vue'
+import TopAlbums from '@/components/screens/home/TopAlbums.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import BtnScrollToTop from '@/components/ui/BtnScrollToTop.vue'

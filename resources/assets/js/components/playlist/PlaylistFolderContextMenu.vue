@@ -19,11 +19,11 @@
 import { computed, ref } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { playlistStore } from '@/stores/playlistStore'
-import { playbackService } from '@/services/playbackService'
 import { useRouter } from '@/composables/useRouter'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { useMessageToaster } from '@/composables/useMessageToaster'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
+import { playback } from '@/services/playbackManager'
 
 const { base, ContextMenu, open, trigger } = useContextMenu()
 const { go, url } = useRouter()
@@ -35,10 +35,10 @@ const playlistsInFolder = computed(() => folder.value ? playlistStore.byFolder(f
 const playable = computed(() => playlistsInFolder.value.length > 0)
 
 const play = () => trigger(async () => {
-  const songs = await songStore.fetchForPlaylistFolder(folder.value!)
+  const songs = await playableStore.fetchForPlaylistFolder(folder.value!)
 
   if (songs.length) {
-    playbackService.queueAndPlay(songs)
+    playback().queueAndPlay(songs)
     go(url('queue'))
   } else {
     toastWarning('No songs available.')
@@ -46,10 +46,10 @@ const play = () => trigger(async () => {
 })
 
 const shuffle = () => trigger(async () => {
-  const songs = await songStore.fetchForPlaylistFolder(folder.value!)
+  const songs = await playableStore.fetchForPlaylistFolder(folder.value!)
 
   if (songs.length) {
-    playbackService.queueAndPlay(songs, true)
+    playback().queueAndPlay(songs, true)
     go(url('queue'))
   } else {
     toastWarning('No songs available.')

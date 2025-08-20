@@ -5,7 +5,7 @@ import Component from './ViewModeSwitch.vue'
 
 new class extends UnitTestCase {
   protected test () {
-    it.each<[ArtistAlbumViewMode]>([['thumbnails'], ['list']])('renders %s mode', mode => {
+    it.each<[ViewMode]>([['thumbnails'], ['list']])('renders %s mode', mode => {
       const { html } = this.render(Component, {
         props: {
           modelValue: mode,

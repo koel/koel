@@ -8,10 +8,20 @@
     </template>
 
     <div v-if="q" class="space-y-8">
-      <SongResultsBlock :query="q" :searching="searching" :playables="excerpt.playables" data-testid="song-excerpts" />
-      <ArtistResultsBlock :artists="excerpt.artists" :searching="searching" data-testid="artist-excerpts" />
-      <AlbumResultsBlock :albums="excerpt.albums" :searching="searching" data-testid="album-excerpts" />
-      <PodcastExcerptResultsBlock :podcasts="excerpt.podcasts" :searching="searching" data-testid="podcast-excerpts" />
+      <PlayableExcerptResultsBlock
+        :playables="excerpt.playables"
+        :query="q"
+        :searching
+        data-testid="playable-excerpts"
+      />
+      <ArtistResultsBlock :artists="excerpt.artists" :searching data-testid="artist-excerpts" />
+      <AlbumResultsBlock :albums="excerpt.albums" :searching data-testid="album-excerpts" />
+      <PodcastExcerptResultsBlock :podcasts="excerpt.podcasts" :searching data-testid="podcast-excerpts" />
+      <RadioStationExcerptResultsBlock
+        :stations="excerpt.radio_stations"
+        :searching
+        data-testid="radio-station-excerpts"
+      />
     </div>
 
     <ScreenEmptyState v-else>
@@ -34,10 +44,11 @@ import { searchStore } from '@/stores/searchStore'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
-import SongResultsBlock from '@/components/screens/search/SongExcerptResultsBlock.vue'
+import PlayableExcerptResultsBlock from '@/components/screens/search/PlayableExcerptResultsBlock.vue'
 import ArtistResultsBlock from '@/components/screens/search/ArtistExcerptResultsBlock.vue'
 import AlbumResultsBlock from '@/components/screens/search/AlbumExcerptResultsBlock.vue'
 import PodcastExcerptResultsBlock from '@/components/screens/search/PodcastExcerptResultsBlock.vue'
+import RadioStationExcerptResultsBlock from '@/components/screens/search/RadioStationExcerptResultsBlock.vue'
 
 const excerpt = toRef(searchStore.state, 'excerpt')
 const q = ref('')

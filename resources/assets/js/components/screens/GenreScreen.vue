@@ -6,7 +6,7 @@
         <ControlsToggle v-if="displayedSongs.length" v-model="showingControls" />
 
         <template #thumbnail>
-          <ThumbnailStack :thumbnails="thumbnails" />
+          <ThumbnailStack :thumbnails />
         </template>
 
         <template v-if="genre" #meta>
@@ -17,7 +17,7 @@
         <template #controls>
           <SongListControls
             v-if="!isPhone || showingControls"
-            :config="config"
+            :config
             @play-all="playAll"
             @play-selected="playSelected"
           />
@@ -26,7 +26,7 @@
       <ScreenHeaderSkeleton v-else />
     </template>
 
-    <SongListSkeleton v-if="showSkeletons" class="-m-6" />
+    <PlayableListSkeleton v-if="showSkeletons" class="-m-6" />
     <SongList
       v-else
       ref="songList"
@@ -39,7 +39,7 @@
 
     <ScreenEmptyState v-if="!songs.length && !loading">
       <template #icon>
-        <GuitarIcon size="96" />
+        <GuitarIcon :size="96" />
       </template>
 
       No songs in this genre.
@@ -52,38 +52,38 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { GuitarIcon } from 'lucide-vue-next'
 import { pluralize, secondsToHumanReadable } from '@/utils/formatters'
 import { eventBus } from '@/utils/eventBus'
-import { playbackService } from '@/services/playbackService'
 import { genreStore } from '@/stores/genreStore'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
+import { playback } from '@/services/playbackManager'
 import { useRouter } from '@/composables/useRouter'
 import { useErrorHandler } from '@/composables/useErrorHandler'
-import { useSongList } from '@/composables/useSongList'
-import { useSongListControls } from '@/composables/useSongListControls'
+import { usePlayableList } from '@/composables/usePlayableList'
+import { usePlayableListControls } from '@/composables/usePlayableListControls'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
-import SongListSkeleton from '@/components/ui/skeletons/SongListSkeleton.vue'
+import PlayableListSkeleton from '@/components/ui/skeletons/PlayableListSkeleton.vue'
 import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 
 const songs = ref<Song[]>([])
 
 const {
-  SongList,
+  PlayableList: SongList,
   ControlsToggle,
   ThumbnailStack,
   headerLayout,
-  songs: displayedSongs,
-  songList,
+  playables: displayedSongs,
+  playableList: songList,
   thumbnails,
   showingControls,
   isPhone,
   onPressEnter,
   playSelected,
   onScrollBreakpoint,
-} = useSongList(songs, { type: 'Genre' }, { sortable: true, filterable: false })
+} = usePlayableList(songs, { type: 'Genre' }, { sortable: true, filterable: false })
 
-const { SongListControls, config } = useSongListControls('Genre')
+const { PlayableListControls: SongListControls, config } = usePlayableListControls('Genre')
 
 const { getRouteParam, isCurrentScreen, go, onRouteChanged, url } = useRouter()
 
@@ -112,7 +112,7 @@ const fetch = async () => {
 
     [genre.value, fetched] = await Promise.all([
       genreStore.fetchOne(id.value!),
-      songStore.paginateForGenre(id.value!, {
+      playableStore.paginateSongsForGenre(id.value!, {
         sort: sortField,
         order: sortOrder,
         page: page.value!,
@@ -160,9 +160,9 @@ const playAll = async () => {
 
   // we ignore the queueAndPlay's await to avoid blocking the UI
   if (genre.value!.song_count <= randomSongCount) {
-    playbackService.queueAndPlay(songs.value, true)
+    playback().queueAndPlay(songs.value, true)
   } else {
-    playbackService.queueAndPlay(await songStore.fetchRandomForGenre(genre.value!, randomSongCount))
+    playback().queueAndPlay(await playableStore.fetchRandomSongsByGenre(genre.value!, randomSongCount))
   }
 
   go(url('queue'))

@@ -8,6 +8,7 @@ use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
 use App\Repositories\Contracts\ScoutableRepository;
 use App\Repositories\PodcastRepository;
+use App\Repositories\RadioStationRepository;
 use App\Repositories\SongRepository;
 use App\Values\ExcerptSearchResult;
 use Illuminate\Support\Collection;
@@ -23,7 +24,8 @@ class SearchService
         private readonly SongRepository $songRepository,
         private readonly ArtistRepository $artistRepository,
         private readonly AlbumRepository $albumRepository,
-        private readonly PodcastRepository $podcastRepository
+        private readonly PodcastRepository $podcastRepository,
+        private readonly RadioStationRepository $radioStationRepository,
     ) {
     }
 
@@ -43,6 +45,7 @@ class SearchService
                 $this->artistRepository,
                 $this->albumRepository,
                 $this->podcastRepository,
+                $this->radioStationRepository,
             ] as $repository
         ) {
             try {

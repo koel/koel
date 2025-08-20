@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Services;
 
+use App\Helpers\Ulid;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Services\ArtworkService;
@@ -16,7 +17,7 @@ class ArtworkServiceTest extends TestCase
 {
     private ImageWriter|MockInterface $imageWriter;
     private Finder|MockInterface $finder;
-    private ArtworkService $artworkService;
+    private ArtworkService $service;
 
     public function setUp(): void
     {
@@ -25,11 +26,11 @@ class ArtworkServiceTest extends TestCase
         $this->imageWriter = Mockery::mock(ImageWriter::class);
         $this->finder = Mockery::mock(Finder::class);
 
-        $this->artworkService = new ArtworkService($this->imageWriter, $this->finder);
+        $this->service = new ArtworkService($this->imageWriter, $this->finder);
     }
 
     #[Test]
-    public function writeAlbumCover(): void
+    public function storeAlbumCover(): void
     {
         /** @var Album $album */
         $album = Album::factory()->create();
@@ -41,14 +42,14 @@ class ArtworkServiceTest extends TestCase
 
         $this->imageWriter->expects('write');
 
-        $cover = $this->artworkService->storeAlbumCover($album, 'dummy-src', $coverPath);
+        $cover = $this->service->storeAlbumCover($album, 'dummy-src', $coverPath);
 
         self::assertSame(album_cover_url('foo.jpg'), $album->refresh()->cover);
         self::assertSame($cover, $album->cover);
     }
 
     #[Test]
-    public function writeArtistImage(): void
+    public function storeArtistImage(): void
     {
         /** @var Artist $artist */
         $artist = Artist::factory()->create();
@@ -58,8 +59,21 @@ class ArtworkServiceTest extends TestCase
             ->expects('write')
             ->with('/koel/public/img/artist/foo.jpg', 'dummy-src');
 
-        $this->artworkService->storeArtistImage($artist, 'dummy-src', $imagePath);
+        $this->service->storeArtistImage($artist, 'dummy-src', $imagePath);
 
         self::assertSame(artist_image_url('foo.jpg'), $artist->refresh()->image);
+    }
+
+    #[Test]
+    public function writeRadioStationLogo(): void
+    {
+        $ulid = Ulid::freeze();
+        $logo = "$ulid.webp";
+
+        $this->imageWriter
+            ->expects('write')
+            ->with(radio_station_logo_path($logo), 'dummy-logo-src');
+
+        self::assertSame($logo, $this->service->storeRadioStationLogo('dummy-logo-src'));
     }
 }

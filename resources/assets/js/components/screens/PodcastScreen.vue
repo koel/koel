@@ -82,12 +82,12 @@ import { computed, nextTick, provide, reactive, ref, watch } from 'vue'
 import { useRouter } from '@/composables/useRouter'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { useErrorHandler } from '@/composables/useErrorHandler'
-import { songStore as episodeStore } from '@/stores/songStore'
+import { playableStore as episodeStore } from '@/stores/playableStore'
 import { podcastStore } from '@/stores/podcastStore'
 import { queueStore } from '@/stores/queueStore'
-import { playbackService } from '@/services/playbackService'
 import { isEpisode } from '@/utils/typeGuards'
 import { useFuzzySearch } from '@/composables/useFuzzySearch'
+import { playback } from '@/services/playbackManager'
 import { FilterKeywordsKey } from '@/symbols'
 
 import ScreenBase from '@/components/screens/ScreenBase.vue'
@@ -126,7 +126,7 @@ const { search } = useFuzzySearch<Episode>(episodes, ['title', 'episode_descript
 const fetchDetails = async () => {
   [podcast.value, episodes.value] = await Promise.all([
     podcastStore.resolve(podcastId.value!),
-    episodeStore.fetchForPodcast(podcastId.value!),
+    episodeStore.fetchEpisodesInPodcast(podcastId.value!),
   ])
 }
 
@@ -209,12 +209,12 @@ const playButtonLabel = computed(() => {
 
 const playOrPause = async () => {
   if (podcastPlaying.value) {
-    playbackService.pause()
+    playback().pause()
     return
   }
 
   if (currentPlayingItemIsPartOfPodcast.value) {
-    await playbackService.resume()
+    await playback().resume()
     return
   }
 
@@ -224,7 +224,7 @@ const playOrPause = async () => {
       return
     }
 
-    await playbackService.play(currentEpisode, podcast.value?.state.progresses[currentEpisode.id] || 0)
+    await playback().play(currentEpisode, podcast.value?.state.progresses[currentEpisode.id] || 0)
     return
   }
 
@@ -233,7 +233,7 @@ const playOrPause = async () => {
   }
 
   queueStore.replaceQueueWith(orderBy(episodes.value, 'created_at'))
-  await playbackService.playFirstInQueue()
+  await playback().playFirstInQueue()
 }
 
 const refresh = async () => {
@@ -244,7 +244,7 @@ const refresh = async () => {
   loading.value = true
 
   try {
-    episodes.value = await episodeStore.fetchForPodcast(podcastId.value!, true)
+    episodes.value = await episodeStore.fetchEpisodesInPodcast(podcastId.value!, true)
   } catch (error: unknown) {
     useErrorHandler().handleHttpError(error)
   } finally {

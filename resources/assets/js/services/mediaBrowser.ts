@@ -1,6 +1,6 @@
 import { trim } from 'lodash'
 import { http } from '@/services/http'
-import { songStore } from '@/stores/songStore'
+import { playableStore } from '@/stores/playableStore'
 import { commonStore } from '@/stores/commonStore'
 import { cache } from '@/services/cache'
 
@@ -24,7 +24,7 @@ export const mediaBrowser = {
 
     return {
       subfolders: folders,
-      songs: songStore.syncWithVault(paginator.data) as Song[],
+      songs: playableStore.syncWithVault(paginator.data) as Song[],
       nextPage: paginator.links.next ? ++paginator.meta.current_page : null,
     }
   },

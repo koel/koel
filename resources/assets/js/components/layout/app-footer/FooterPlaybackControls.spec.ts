@@ -3,8 +3,8 @@ import { expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
 import factory from '@/__tests__/factory'
 import UnitTestCase from '@/__tests__/UnitTestCase'
-import { CurrentPlayableKey } from '@/symbols'
-import { playbackService } from '@/services/playbackService'
+import { CurrentStreamableKey } from '@/symbols'
+import { playbackService } from '@/services/QueuePlaybackService'
 import Component from './FooterPlaybackControls.vue'
 
 new class extends UnitTestCase {
@@ -12,7 +12,9 @@ new class extends UnitTestCase {
     it('renders without a current playable', () => expect(this.renderComponent(null).html()).toMatchSnapshot())
     it('renders with a current playable', () => expect(this.renderComponent().html()).toMatchSnapshot())
 
-    it('plays the previous song', async () => {
+    it('plays the previous playable', async () => {
+      this.createAudioPlayer()
+
       const playMock = this.mock(playbackService, 'playPrev')
       this.renderComponent()
 
@@ -22,6 +24,8 @@ new class extends UnitTestCase {
     })
 
     it('plays the next playable', async () => {
+      this.createAudioPlayer()
+
       const playMock = this.mock(playbackService, 'playNext')
       this.renderComponent()
 
@@ -50,7 +54,7 @@ new class extends UnitTestCase {
           PlayButton: this.stub('PlayButton'),
         },
         provide: {
-          [<symbol>CurrentPlayableKey]: ref(playable),
+          [<symbol>CurrentStreamableKey]: ref(playable),
         },
       },
     })

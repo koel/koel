@@ -16,8 +16,8 @@
 <script lang="ts" setup>
 import { Repeat, Repeat1 } from 'lucide-vue-next'
 import { computed, toRef } from 'vue'
-import { playbackService } from '@/services/playbackService'
 import { preferenceStore } from '@/stores/preferenceStore'
+import { playback } from '@/services/playbackManager'
 
 const mode = toRef(preferenceStore.state, 'repeat_mode')
 
@@ -27,7 +27,7 @@ const readableMode = computed(() => mode.value
   .join(' '),
 )
 
-const changeMode = () => playbackService.rotateRepeatMode()
+const changeMode = () => playback().rotateRepeatMode()
 </script>
 
 <style lang="postcss" scoped>

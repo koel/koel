@@ -35,7 +35,7 @@ import { defineAsyncComponent, onMounted, provide, ref, watch } from 'vue'
 import { useOnline } from '@vueuse/core'
 import { queueStore } from '@/stores/queueStore'
 import { authService } from '@/services/authService'
-import { CurrentPlayableKey, DialogBoxKey, MessageToasterKey, OverlayKey } from '@/symbols'
+import { CurrentStreamableKey, DialogBoxKey, MessageToasterKey, OverlayKey } from '@/symbols'
 import { useRouter } from '@/composables/useRouter'
 
 import DialogBox from '@/components/ui/DialogBox.vue'
@@ -51,6 +51,7 @@ import AppFooter from '@/components/layout/app-footer/index.vue'
 import GlobalEventListeners from '@/components/utils/GlobalEventListeners.vue'
 import AppInitializer from '@/components/utils/AppInitializer.vue'
 import ContextMenus from '@/components/ui/ContextMenus.vue'
+import { radioStationStore } from '@/stores/radioStationStore'
 
 const HotkeyListener = defineAsyncComponent(() => import('@/components/utils/HotkeyListener.vue'))
 const LoginForm = defineAsyncComponentWithLoadingState(() => import('@/components/auth/LoginForm.vue'))
@@ -63,7 +64,7 @@ const ResetPasswordForm = defineAsyncComponentWithLoadingState(() => import('@/c
 const overlay = ref<InstanceType<typeof Overlay>>()
 const dialog = ref<InstanceType<typeof DialogBox>>()
 const toaster = ref<InstanceType<typeof MessageToaster>>()
-const currentSong = ref<Playable>()
+const currentStreamable = ref<Streamable>()
 const showDropZone = ref(false)
 
 const layout = ref<'main' | 'auth' | 'invitation' | 'reset-password'>()
@@ -130,7 +131,13 @@ const onDragOver = (e: DragEvent) => {
   showDropZone.value = Boolean(e.dataTransfer?.types.includes('Files')) && !isCurrentScreen('Upload')
 }
 
-watch(() => queueStore.current, song => (currentSong.value = song))
+watch(() => queueStore.current, song => (currentStreamable.value = song))
+
+watch(() => radioStationStore.current, station => {
+  if (station) {
+    currentStreamable.value = station
+  }
+})
 
 const onDragEnd = () => (showDropZone.value = false)
 
@@ -147,7 +154,7 @@ const onDrop = () => (showDropZone.value = false)
 provide(OverlayKey, overlay)
 provide(DialogBoxKey, dialog)
 provide(MessageToasterKey, toaster)
-provide(CurrentPlayableKey, currentSong)
+provide(CurrentStreamableKey, currentStreamable)
 </script>
 
 <style lang="postcss">

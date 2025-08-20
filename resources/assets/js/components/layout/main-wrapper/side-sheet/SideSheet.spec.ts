@@ -8,7 +8,7 @@ import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore } from '@/stores/preferenceStore'
-import { CurrentPlayableKey } from '@/symbols'
+import { CurrentStreamableKey } from '@/symbols'
 import { eventBus } from '@/utils/eventBus'
 import Component from './SideSheet.vue'
 
@@ -21,7 +21,7 @@ new class extends UnitTestCase {
   }
 
   protected test () {
-    it('renders without a current song', () => expect(this.renderComponent().rendered.html()).toMatchSnapshot())
+    it('renders without a current playable', () => expect(this.renderComponent().rendered.html()).toMatchSnapshot())
 
     it('gets active tab from the preference', async () => {
       preferenceStore.active_extra_panel_tab = 'Lyrics'
@@ -45,7 +45,7 @@ new class extends UnitTestCase {
       })
     })
 
-    it('resolves album and fetches album info for the current song', async () => {
+    it('resolves album and fetches album info for the current playable', async () => {
       preferenceStore.active_extra_panel_tab = 'Album'
 
       const songRef = ref<Song | null>(null)
@@ -62,7 +62,7 @@ new class extends UnitTestCase {
       })
     })
 
-    it('resolves artist and fetches artist info for the current song', async () => {
+    it('resolves artist and fetches artist info for the current playable', async () => {
       preferenceStore.active_extra_panel_tab = 'Artist'
 
       const songRef = ref<Song | null>(null)
@@ -123,7 +123,7 @@ new class extends UnitTestCase {
           YouTubeVideoList: this.stub('youtube-video-list'),
         },
         provide: {
-          [<symbol>CurrentPlayableKey]: songRef,
+          [<symbol>CurrentStreamableKey]: songRef,
         },
       },
     })

@@ -36,7 +36,7 @@ import { podcastStore } from '@/stores/podcastStore'
 import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
 import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
-const props = withDefaults(defineProps<{ podcast: Podcast, layout?: ArtistAlbumCardLayout }>(), { layout: 'full' })
+const props = withDefaults(defineProps<{ podcast: Podcast, layout?: CardLayout }>(), { layout: 'full' })
 const { podcast, layout } = toRefs(props)
 
 const { go, url } = useRouter()
