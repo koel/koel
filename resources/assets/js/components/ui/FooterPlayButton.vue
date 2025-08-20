@@ -5,13 +5,13 @@
     has-[.icon-play]:indent-[0.23rem]"
     @click.prevent="toggle"
   >
-    <Icon v-if="playing" :icon="isRadio ? faStop : faPause" />
+    <Icon v-if="playing" :icon="faPause" />
     <Icon v-else :icon="faPlay" class="icon-play" />
   </FooterButton>
 </template>
 
 <script lang="ts" setup>
-import { faPause, faPlay, faStop } from '@fortawesome/free-solid-svg-icons'
+import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref } from 'vue'
 import { commonStore } from '@/stores/commonStore'
 import { queueStore } from '@/stores/queueStore'

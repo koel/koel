@@ -23,7 +23,7 @@
       data-testid="btn-toggle-playback"
       @click.prevent="togglePlayback"
     >
-      <Icon :class="playing || 'paused'" :icon="playing ? stopOrPauseIcon : faPlay" />
+      <Icon :class="playing || 'paused'" :icon="playing ? faPause : faPlay" />
     </button>
 
     <button
@@ -40,7 +40,7 @@
 </template>
 
 <script lang="ts" setup>
-import { faHeart, faPause, faPlay, faStepBackward, faStepForward, faStop } from '@fortawesome/free-solid-svg-icons'
+import { faHeart, faPause, faPlay, faStepBackward, faStepForward } from '@fortawesome/free-solid-svg-icons'
 import { faHeart as faEmptyHeart } from '@fortawesome/free-regular-svg-icons'
 import { computed, toRefs } from 'vue'
 import { socketService } from '@/services/socketService'
@@ -56,7 +56,6 @@ const toggleFavorite = () => {
   socketService.broadcast('SOCKET_TOGGLE_FAVORITE')
 }
 
-const stopOrPauseIcon = computed(() => isRadioStation(streamable.value) ? faStop : faPause)
 const playing = computed(() => streamable.value.playback_state === 'Playing')
 const canRewindAndFastForward = computed(() => !isRadioStation(streamable.value))
 

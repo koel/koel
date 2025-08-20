@@ -15,17 +15,7 @@ export class RadioPlaybackService extends BasePlaybackService {
   }
 
   public async stop () {
-    // Even though we're stopping playback, we still want to set the playback state to 'Paused'.
-    // This allows for resuming playback later, if requested.
-    use(radioStationStore.current, station => station.playback_state = 'Paused')
-
-    if (this.player) {
-      this.player.media.pause()
-      this.player.media.currentTime = 0
-      this.player.media.removeAttribute('src')
-    }
-
-    socketService.broadcast('SOCKET_PLAYBACK_STOPPED')
+    return this.pause()
   }
 
   protected onError (): void { // eslint-disable node/handle-callback-err
@@ -49,8 +39,19 @@ export class RadioPlaybackService extends BasePlaybackService {
   }
 
   public async pause () {
-    // For radio playback, we simply stop instead of pausing.
-    return this.stop()
+    use(radioStationStore.current, station => {
+      station.playback_state = 'Paused'
+
+      // Broadcast the updated station state.
+      socketService.broadcast('SOCKET_STREAMABLE', station)
+    })
+
+    // For radio playback, we simply stop the player and reset the media source.
+    if (this.player) {
+      this.player.media.pause()
+      this.player.media.currentTime = 0
+      this.player.media.removeAttribute('src')
+    }
   }
 
   public async playNext () {
@@ -62,7 +63,11 @@ export class RadioPlaybackService extends BasePlaybackService {
   }
 
   public async resume () {
-    return this.stop()
+    if (!radioStationStore.current) {
+      throw new Error('Logic exception: no current radio station.')
+    }
+
+    return this.play(radioStationStore.current)
   }
 
   public rewind (): void {

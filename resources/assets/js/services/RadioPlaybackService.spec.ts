@@ -43,7 +43,7 @@ new class extends UnitTestCase {
       expect(broadcastMock).toHaveBeenCalledWith('SOCKET_STREAMABLE', toBePlayedStation)
     })
 
-    it('stops a radio station playback', async () => {
+    it('pauses a radio station playback', async () => {
       const currentStation = factory('radio-station')
       currentStation.playback_state = 'Playing'
       radioStationStore.state.stations = [currentStation]
@@ -55,7 +55,7 @@ new class extends UnitTestCase {
       expect(pauseMock).toHaveBeenCalled()
       expect(playbackService.player.media.src).toBe('')
       expect(currentStation.playback_state).toBe('Paused')
-      expect(broadcastMock).toHaveBeenCalledWith('SOCKET_PLAYBACK_STOPPED')
+      expect(broadcastMock).toHaveBeenCalledWith('SOCKET_STREAMABLE', currentStation)
     })
   }
 }
