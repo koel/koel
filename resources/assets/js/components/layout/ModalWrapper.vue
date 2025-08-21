@@ -1,13 +1,12 @@
 <template>
   <dialog
     ref="dialog"
-    class="text-k-text-primary min-w-full md:min-w-[480px] border-0 p-0 rounded-md overflow-hidden bg-k-bg-primary backdrop:bg-black/70"
+    class="text-k-text-primary min-w-full md:min-w-[480px] border-0 p-0 rounded-md overflow-visible bg-k-bg-primary backdrop:bg-black/70"
     @close.prevent
   >
     <Component
       :is="modalNameToComponentMap[activeModalName]"
       v-if="activeModalName"
-      class="overflow-auto"
       @close="close"
     />
   </dialog>
@@ -125,16 +124,16 @@ dialog {
       @apply px-6 py-5;
     }
 
-    > footer {
-      @apply mt-0 bg-black/10 border-t border-white/5 space-x-2;
-    }
-
     > header {
-      @apply flex bg-k-bg-secondary;
+      @apply flex bg-k-bg-secondary rounded-t-md;
 
       h1 {
         @apply text-3xl leading-normal overflow-hidden text-ellipsis whitespace-nowrap;
       }
+    }
+
+    > footer {
+      @apply mt-0 bg-black/10 border-t border-white/5 space-x-2 rounded-b-md;
     }
   }
 }
