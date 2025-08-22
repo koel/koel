@@ -545,7 +545,7 @@ class SmartPlaylistServiceTest extends TestCase
 
         self::assertEqualsCanonicalizing(
             $matches->modelKeys(),
-            $this->service->getSongs($playlist)->modelKeys()
+            $this->service->getSongs($playlist, $playlist->owner)->modelKeys()
         );
     }
 }

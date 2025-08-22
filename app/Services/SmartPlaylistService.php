@@ -15,12 +15,12 @@ use Illuminate\Database\Eloquent\Collection;
 
 class SmartPlaylistService
 {
+    private const SONG_LIMIT = 500;
+
     /** @return Collection|array<array-key, Song> */
-    public function getSongs(Playlist $playlist, ?User $user = null): Collection
+    public function getSongs(Playlist $playlist, User $user): Collection
     {
         throw_unless($playlist->is_smart, NonSmartPlaylistException::create($playlist));
-
-        $user ??= $playlist->owner;
 
         $query = Song::query(type: PlayableType::SONG, user: $user)->withUserContext();
 
@@ -38,6 +38,8 @@ class SmartPlaylistService
             );
         });
 
-        return $query->orderBy('songs.title')->get();
+        return $query->orderBy('songs.title')
+            ->limit(self::SONG_LIMIT)
+            ->get();
     }
 }
