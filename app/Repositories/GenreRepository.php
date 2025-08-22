@@ -89,8 +89,8 @@ class GenreRepository extends Repository
         return GenreSummary::make(
             publicId: Genre::NO_GENRE_PUBLIC_ID,
             name: Genre::NO_GENRE_NAME,
-            songCount: $result->song_count,
-            length: $result->length
+            songCount: (int) $result->song_count,
+            length: (float) $result->length
         );
     }
 }
