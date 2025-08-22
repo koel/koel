@@ -17,7 +17,7 @@ enum SmartPlaylistOperator: string
     case NOT_IN_LAST = 'notInLast';
     case IS_NOT_BETWEEN = 'isNotBetween';
 
-    public function toEloquentClause(): string
+    public function toWhereMethod(): string
     {
         return match ($this) {
             self::IS_BETWEEN => 'whereBetween',

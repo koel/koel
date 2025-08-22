@@ -6,6 +6,7 @@ use App\Builders\Concerns\CanScopeByUser;
 use App\Facades\License;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use LogicException;
 use Webmozart\Assert\Assert;
@@ -57,7 +58,7 @@ class SongBuilder extends FavoriteableBuilder
             ->leftJoin('interactions', function (JoinClause $join): void {
                 $join->on('interactions.song_id', 'songs.id')->where('interactions.user_id', $this->user->id);
             })
-            ->addSelect('interactions.play_count');
+            ->addSelect(DB::raw('COALESCE(interactions.play_count, 0) as play_count'));
     }
 
     public function accessible(): self

@@ -12,6 +12,13 @@ use Illuminate\Database\Eloquent\Builder;
 
 final class SmartPlaylistQueryModifier
 {
+    private static function resolveWhereMethod(Rule $rule, Operator $operator): string
+    {
+        return $rule->model->requiresRawQuery()
+            ? 'whereRaw'
+            : $operator->toWhereMethod();
+    }
+
     public static function applyRule(Rule $rule, SongBuilder $query): void
     {
         $operator = $rule->operator;
@@ -47,13 +54,15 @@ final class SmartPlaylistQueryModifier
             $query->{$whereHasClause}(
                 $rule->model->getManyToManyRelation(),
                 static function (Builder $subQuery) use ($rule, $operator, $value): void {
-                    $subQuery->{$operator->toEloquentClause()}(
+                    $subQuery->{self::resolveWhereMethod($rule, $operator)}(
                         ...self::generateParameters($rule->model, $operator, $value)
                     );
                 }
             );
         } else {
-            $query->{$operator->toEloquentClause()}(...self::generateParameters($rule->model, $operator, $value));
+            $query->{self::resolveWhereMethod($rule, $operator)}(
+                ...self::generateParameters($rule->model, $operator, $value)
+            );
         }
     }
 
@@ -62,7 +71,37 @@ final class SmartPlaylistQueryModifier
     {
         $column = $model->toColumnName();
 
-        $parameters = match ($operator) {
+        $parameters = $model->requiresRawQuery()
+            ? self::generateRawParameters($column, $operator, $value)
+            : self::generateEloquentParameters($column, $operator, $value);
+
+        return $parameters instanceof Closure ? $parameters() : $parameters;
+    }
+
+    /** @return array<mixed> */
+    private static function generateRawParameters(string $column, Operator $operator, array $value): array|Closure
+    {
+        // For raw parameters like those for play count, we need to use raw SQL clauses (whereRaw).
+        // whereRaw() expects a string for the statement and an array of parameters for binding.
+        return match ($operator) {
+            Operator::BEGINS_WITH => ["$column LIKE ?", ["{$value[0]}%"]],
+            Operator::CONTAINS => ["$column LIKE ?", ["%{$value[0]}%"]],
+            Operator::ENDS_WITH => ["$column LIKE ?", ["%{$value[0]}"]],
+            Operator::IN_LAST => static fn () => ["$column >= ?", [now()->subDays($value[0])]],
+            Operator::IS => ["$column = ?", [$value[0]]],
+            Operator::IS_BETWEEN => ["$column BETWEEN ? AND ?", $value],
+            Operator::IS_GREATER_THAN => ["$column > ?", [$value[0]]],
+            Operator::IS_LESS_THAN => ["$column < ?", [$value[0]]],
+            Operator::IS_NOT => ["$column <> ?", [$value[0]]],
+            Operator::IS_NOT_BETWEEN => ["$column NOT BETWEEN ? AND ?", $value],
+            Operator::NOT_CONTAIN => ["$column NOT LIKE ?", ["%{$value[0]}%"]],
+            Operator::NOT_IN_LAST => static fn () => ["$column < ?", [now()->subDays($value[0])]],
+        };
+    }
+
+    private static function generateEloquentParameters(string $column, Operator $operator, array $value): array|Closure
+    {
+        return match ($operator) {
             Operator::BEGINS_WITH => [$column, 'LIKE', "$value[0]%"],
             Operator::ENDS_WITH => [$column, 'LIKE', "%$value[0]"],
             Operator::IS => [$column, '=', $value[0]],
@@ -75,7 +114,5 @@ final class SmartPlaylistQueryModifier
             Operator::NOT_IN_LAST => static fn () => [$column, '<', now()->subDays($value[0])],
             Operator::IN_LAST => static fn () => [$column, '>=', now()->subDays($value[0])],
         };
-
-        return $parameters instanceof Closure ? $parameters() : $parameters;
     }
 }
