@@ -37,6 +37,8 @@ export const usePolicies = () => {
     deleteRadioStation: async (station: RadioStation) => {
       return await resourcePermissionService.check('radio-station', station.id, 'delete')
     },
+
+    addRadioStation: () => !window.IS_DEMO || isAdmin.value,
   }
 
   return {

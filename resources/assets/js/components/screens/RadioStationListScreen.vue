@@ -29,8 +29,16 @@
 
             <ListFilter />
 
-            <Btn highlight small @click.prevent="requestAddStationForm">
+            <Btn
+              v-if="canAdd"
+              v-koel-tooltip
+              highlight
+              small
+              title="Add a new station"
+              @click.prevent="requestAddStationForm"
+            >
               <Icon :icon="faAdd" fixed-width />
+              <span class="sr-only">Add a new station</span>
             </Btn>
 
             <ViewModeSwitch v-model="preferences.radio_stations_view_mode" />
@@ -48,7 +56,7 @@
     </ScreenEmptyState>
 
     <div v-else ref="gridContainer" v-koel-overflow-fade class="-m-6 overflow-auto">
-      <GridListView ref="grid" :view-mode="preferences.radio_stations_view_mode" data-testid="album-grid">
+      <GridListView ref="grid" :view-mode="preferences.radio_stations_view_mode" data-testid="radio-station-grid">
         <template v-if="showSkeletons">
           <AlbumCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
         </template>
@@ -80,6 +88,7 @@ import { useErrorHandler } from '@/composables/useErrorHandler'
 import { orderBy } from 'lodash'
 import { FilterKeywordsKey } from '@/symbols'
 import { radioStationStore } from '@/stores/radioStationStore'
+import { usePolicies } from '@/composables/usePolicies'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
@@ -94,6 +103,7 @@ import BtnScrollToTop from '@/components/ui/BtnScrollToTop.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 
 const { onScreenActivated } = useRouter()
+const { currentUserCan } = usePolicies()
 const fuzzy = useFuzzySearch<RadioStation>(radioStationStore.state.stations, ['name', 'description'])
 
 let initialized = false
@@ -112,6 +122,7 @@ const stations = computed(() => {
   ).filter(station => preferences.radio_stations_favorites_only ? station.favorite : true)
 })
 
+const canAdd = computed(() => currentUserCan.addRadioStation())
 const noStations = computed(() => !loading.value && stations.value.length === 0)
 const showSkeletons = computed(() => loading.value && stations.value.length === 0)
 const itemLayout = computed<CardLayout>(() => preferences.radio_stations_view_mode === 'list' ? 'compact' : 'full')
