@@ -48,7 +48,8 @@
     "owen-it/laravel-auditing": "^13.7",
     "fileeye/mimemap": "^2.2",
     "ezyang/htmlpurifier": "^4.18",
-    "jaybizzle/crawler-detect": "^1.3"
+    "jaybizzle/crawler-detect": "^1.3",
+    "paragonie/sodium_compat": "^1.6"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
