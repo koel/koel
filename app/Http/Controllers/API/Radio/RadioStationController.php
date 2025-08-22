@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\Radio;
 
+use App\Attributes\DisabledInDemo;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Radio\StoreRadioStationRequest;
 use App\Http\Requests\API\Radio\UpdateRadioStationRequest;
@@ -28,6 +29,7 @@ class RadioStationController extends Controller
         return RadioStationResource::collection($this->repository->getAllForUser($this->user));
     }
 
+    #[DisabledInDemo]
     public function store(StoreRadioStationRequest $request)
     {
         $station = $this->radioService->createRadioStation(
@@ -44,6 +46,7 @@ class RadioStationController extends Controller
             ->setStatusCode(Response::HTTP_CREATED);
     }
 
+    #[DisabledInDemo]
     public function update(RadioStation $station, UpdateRadioStationRequest $request)
     {
         $this->authorize('update', $station);
@@ -60,6 +63,7 @@ class RadioStationController extends Controller
         return RadioStationResource::make($updated);
     }
 
+    #[DisabledInDemo]
     public function destroy(RadioStation $station)
     {
         $this->authorize('delete', $station);

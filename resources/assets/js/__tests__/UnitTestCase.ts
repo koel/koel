@@ -81,6 +81,7 @@ export default abstract class UnitTestCase {
       cleanup()
       this.restoreAllMocks()
       this.disablePlusEdition()
+      this.disableDemoMode()
       cb?.()
     })
   }
@@ -116,6 +117,7 @@ export default abstract class UnitTestCase {
   protected restoreAllMocks () {
     this.backupMethods.forEach((fn, [obj, methodName]) => (obj[methodName] = fn))
     this.backupMethods = new Map()
+    return this
   }
 
   protected render (component: any, options: RenderOptions = {}) {
@@ -156,6 +158,16 @@ export default abstract class UnitTestCase {
       product_id: '',
     }
 
+    return this
+  }
+
+  protected enableDemoMode () {
+    window.IS_DEMO = true
+    return this
+  }
+
+  protected disableDemoMode () {
+    window.IS_DEMO = false
     return this
   }
 
