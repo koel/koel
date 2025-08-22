@@ -22,7 +22,7 @@ trait StreamsLocalPath
         try {
             $rangeHeader = get_request_header('Range');
 
-            // On Safari, "Range" header value can be "bytes=0-1" which breaks streaming.
+            // On Safari, the "Range" header value can be "bytes=0-1" which breaks streaming.
             $rangeHeader = $rangeHeader === 'bytes=0-1' ? 'bytes=0-' : $rangeHeader;
 
             $rangeSet = RangeSet::createFromHeader($rangeHeader);

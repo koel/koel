@@ -46,7 +46,7 @@ class Streamer
 
     public function stream(): mixed
     {
-        // Turn off error reporting to make sure our stream isn't interfered.
+        // Turn off error reporting to make sure our stream isn't interfered with.
         @error_reporting(0);
 
         return $this->adapter->stream($this->song, $this->config);
