@@ -1,23 +1,23 @@
+import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { createHarness } from '@/__tests__/TestHarness'
 import { eventBus } from '@/utils/eventBus'
 import Component from './SidebarYourLibrarySection.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('shows YouTube item if a video is played', async () => {
-      this.render(Component)
-      expect(screen.queryByTestId('youtube')).toBeNull()
+describe('sidebarYourLibrarySection.vue', () => {
+  const h = createHarness()
 
-      eventBus.emit('PLAY_YOUTUBE_VIDEO', {
-        id: 'video-id',
-        title: 'Another One Bites the Dust',
-      })
+  it('shows YouTube item if a video is played', async () => {
+    h.render(Component)
+    expect(screen.queryByTestId('youtube')).toBeNull()
 
-      await this.tick()
-      screen.getByTestId('youtube')
-      screen.getByText('Another One Bites the Dust')
+    eventBus.emit('PLAY_YOUTUBE_VIDEO', {
+      id: 'video-id',
+      title: 'Another One Bites the Dust',
     })
-  }
-}
+
+    await h.tick()
+    screen.getByTestId('youtube')
+    screen.getByText('Another One Bites the Dust')
+  })
+})

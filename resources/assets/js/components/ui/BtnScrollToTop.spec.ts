@@ -1,22 +1,21 @@
-import { expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { createHarness } from '@/__tests__/TestHarness'
 import { $ } from '@/utils/$'
+
 import Component from './BtnScrollToTop.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('renders', () => {
-      expect(this.render(Component).html()).toMatchSnapshot()
-    })
+describe('btnScrollToTop.vue', () => {
+  const h = createHarness()
 
-    it('scrolls to top', async () => {
-      const mock = this.mock($, 'scrollTo')
-      this.render(Component)
+  it('renders', () => expect(h.render(Component).html()).toMatchSnapshot())
 
-      await this.user.click(screen.getByTitle('Scroll to top'))
+  it('scrolls to top', async () => {
+    const mock = h.mock($, 'scrollTo')
+    h.render(Component)
 
-      expect(mock).toHaveBeenCalled()
-    })
-  }
-}
+    await h.user.click(screen.getByTitle('Scroll to top'))
+
+    expect(mock).toHaveBeenCalled()
+  })
+})

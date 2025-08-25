@@ -1,6 +1,6 @@
 // Vitest Snapshot v1
 
-exports[`renders 1`] = `
+exports[`aboutKoelModal.vue > renders 1`] = `
 <div data-v-6b5b01a9="" class="about text-k-text-secondary text-center max-w-[480px] overflow-hidden relative" data-testid="about-koel" tabindex="0">
   <main data-v-6b5b01a9="" class="p-6">
     <div data-v-6b5b01a9="" class="mb-4"><img data-v-6b5b01a9="" alt="Koel's logo" class="inline-block" src="undefined/resources/assets/img/logo.svg" width="128"></div>

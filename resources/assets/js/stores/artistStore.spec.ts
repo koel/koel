@@ -1,139 +1,137 @@
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import factory from '@/__tests__/factory'
 import { http } from '@/services/http'
 import { artistStore } from '@/stores/artistStore'
 
-new class extends UnitTestCase {
-  protected beforeEach () {
-    super.beforeEach(() => {
+describe('artistStore', () => {
+  const h = createHarness({
+    beforeEach: () => {
       artistStore.vault.clear()
       artistStore.state.artists = []
-    })
-  }
+    },
+  })
 
-  protected test () {
-    it('gets an artist by ID', () => {
-      const artist = factory('artist')
-      artistStore.vault.set(artist.id, artist)
-      expect(artistStore.byId(artist.id)).toEqual(artist)
-    })
+  it('gets an artist by ID', () => {
+    const artist = h.factory('artist')
+    artistStore.vault.set(artist.id, artist)
+    expect(artistStore.byId(artist.id)).toEqual(artist)
+  })
 
-    it('removes artists by IDs', () => {
-      const artists = factory('artist', 3)
-      artists.forEach(artist => artistStore.vault.set(artist.id, artist))
-      artistStore.state.artists = artists
+  it('removes artists by IDs', () => {
+    const artists = h.factory('artist', 3)
+    artists.forEach(artist => artistStore.vault.set(artist.id, artist))
+    artistStore.state.artists = artists
 
-      artistStore.removeByIds([artists[0].id, artists[1].id])
+    artistStore.removeByIds([artists[0].id, artists[1].id])
 
-      expect(artistStore.vault.size).toBe(1)
-      expect(artistStore.vault.has(artists[0].id)).toBe(false)
-      expect(artistStore.vault.has(artists[1].id)).toBe(false)
-      expect(artistStore.state.artists).toEqual([artists[2]])
-    })
+    expect(artistStore.vault.size).toBe(1)
+    expect(artistStore.vault.has(artists[0].id)).toBe(false)
+    expect(artistStore.vault.has(artists[1].id)).toBe(false)
+    expect(artistStore.state.artists).toEqual([artists[2]])
+  })
 
-    it('identifies an unknown artist', () => {
-      const artist = factory.states('unknown')('artist')
+  it('identifies an unknown artist', () => {
+    const artist = factory.states('unknown')('artist')
 
-      expect(artistStore.isUnknown(artist)).toBe(true)
-      expect(artistStore.isUnknown(artist.name)).toBe(true)
-      expect(artistStore.isUnknown(factory('artist'))).toBe(false)
-    })
+    expect(artistStore.isUnknown(artist)).toBe(true)
+    expect(artistStore.isUnknown(artist.name)).toBe(true)
+    expect(artistStore.isUnknown(h.factory('artist'))).toBe(false)
+  })
 
-    it('identifies the various artist', () => {
-      const artist = factory.states('various')('artist')
+  it('identifies the various artist', () => {
+    const artist = factory.states('various')('artist')
 
-      expect(artistStore.isVarious(artist)).toBe(true)
-      expect(artistStore.isVarious(artist.name)).toBe(true)
-      expect(artistStore.isVarious(factory('artist'))).toBe(false)
-    })
+    expect(artistStore.isVarious(artist)).toBe(true)
+    expect(artistStore.isVarious(artist.name)).toBe(true)
+    expect(artistStore.isVarious(h.factory('artist'))).toBe(false)
+  })
 
-    it('identifies a standard artist', () => {
-      expect(artistStore.isStandard(factory.states('unknown')('artist'))).toBe(false)
-      expect(artistStore.isStandard(factory.states('various')('artist'))).toBe(false)
-      expect(artistStore.isStandard(factory('artist'))).toBe(true)
-    })
+  it('identifies a standard artist', () => {
+    expect(artistStore.isStandard(factory.states('unknown')('artist'))).toBe(false)
+    expect(artistStore.isStandard(factory.states('various')('artist'))).toBe(false)
+    expect(artistStore.isStandard(h.factory('artist'))).toBe(true)
+  })
 
-    it('syncs artists with the vault', () => {
-      const artist = factory('artist', { name: 'Led Zeppelin' })
+  it('syncs artists with the vault', () => {
+    const artist = h.factory('artist', { name: 'Led Zeppelin' })
 
-      artistStore.syncWithVault(artist)
-      expect(artistStore.vault.get(artist.id)).toEqual(artist)
+    artistStore.syncWithVault(artist)
+    expect(artistStore.vault.get(artist.id)).toEqual(artist)
 
-      artist.name = 'Pink Floyd'
-      artistStore.syncWithVault(artist)
+    artist.name = 'Pink Floyd'
+    artistStore.syncWithVault(artist)
 
-      expect(artistStore.vault.size).toBe(1)
-      expect(artistStore.vault.get(artist.id)?.name).toBe('Pink Floyd')
-    })
+    expect(artistStore.vault.size).toBe(1)
+    expect(artistStore.vault.get(artist.id)?.name).toBe('Pink Floyd')
+  })
 
-    it('uploads an image for an artist', async () => {
-      const artist = factory('artist')
-      artistStore.syncWithVault(artist)
-      const putMock = this.mock(http, 'put').mockResolvedValue({ image_url: 'http://test/img.jpg' })
+  it('uploads an image for an artist', async () => {
+    const artist = h.factory('artist')
+    artistStore.syncWithVault(artist)
+    const putMock = h.mock(http, 'put').mockResolvedValue({ image_url: 'http://test/img.jpg' })
 
-      await artistStore.uploadImage(artist, 'data://image')
+    await artistStore.uploadImage(artist, 'data://image')
 
-      expect(artist.image).toBe('http://test/img.jpg')
-      expect(putMock).toHaveBeenCalledWith(`artists/${artist.id}/image`, { image: 'data://image' })
-      expect(artistStore.byId(artist.id)?.image).toBe('http://test/img.jpg')
-    })
+    expect(artist.image).toBe('http://test/img.jpg')
+    expect(putMock).toHaveBeenCalledWith(`artists/${artist.id}/image`, { image: 'data://image' })
+    expect(artistStore.byId(artist.id)?.image).toBe('http://test/img.jpg')
+  })
 
-    it('resolves an artist', async () => {
-      const artist = factory('artist')
-      const getMock = this.mock(http, 'get').mockResolvedValueOnce(artist)
+  it('resolves an artist', async () => {
+    const artist = h.factory('artist')
+    const getMock = h.mock(http, 'get').mockResolvedValueOnce(artist)
 
-      expect(await artistStore.resolve(artist.id)).toEqual(artist)
-      expect(getMock).toHaveBeenCalledWith(`artists/${artist.id}`)
+    expect(await artistStore.resolve(artist.id)).toEqual(artist)
+    expect(getMock).toHaveBeenCalledWith(`artists/${artist.id}`)
 
-      // next call shouldn't make another request
-      expect(await artistStore.resolve(artist.id)).toEqual(artist)
-      expect(getMock).toHaveBeenCalledOnce()
-    })
+    // next call shouldn't make another request
+    expect(await artistStore.resolve(artist.id)).toEqual(artist)
+    expect(getMock).toHaveBeenCalledOnce()
+  })
 
-    it('paginates', async () => {
-      const artists = factory('artist', 3)
+  it('paginates', async () => {
+    const artists = h.factory('artist', 3)
 
-      this.mock(http, 'get').mockResolvedValueOnce({
-        data: artists,
-        links: {
-          next: '/artists?page=2',
-        },
-        meta: {
-          current_page: 1,
-        },
-      })
-
-      expect(await artistStore.paginate({
-        favorites_only: false,
-        page: 1,
-        sort: 'name',
-        order: 'asc',
-      })).toEqual(2)
-
-      expect(artistStore.state.artists).toEqual(artists)
-      expect(artistStore.vault.size).toBe(3)
+    h.mock(http, 'get').mockResolvedValueOnce({
+      data: artists,
+      links: {
+        next: '/artists?page=2',
+      },
+      meta: {
+        current_page: 1,
+      },
     })
 
-    it('toggles favorite', async () => {
-      const artist = factory('artist', { favorite: false })
-      artistStore.syncWithVault(artist)
+    expect(await artistStore.paginate({
+      favorites_only: false,
+      page: 1,
+      sort: 'name',
+      order: 'asc',
+    })).toEqual(2)
 
-      const postMock = this.mock(http, 'post').mockResolvedValueOnce(factory('favorite', {
-        favoriteable_type: 'artist',
-        favoriteable_id: artist.id,
-      }))
+    expect(artistStore.state.artists).toEqual(artists)
+    expect(artistStore.vault.size).toBe(3)
+  })
 
-      await artistStore.toggleFavorite(artist)
+  it('toggles favorite', async () => {
+    const artist = h.factory('artist', { favorite: false })
+    artistStore.syncWithVault(artist)
 
-      expect(postMock).toHaveBeenCalledWith('favorites/toggle', { type: 'artist', id: artist.id })
-      expect(artist.favorite).toBe(true)
+    const postMock = h.mock(http, 'post').mockResolvedValueOnce(h.factory('favorite', {
+      favoriteable_type: 'artist',
+      favoriteable_id: artist.id,
+    }))
 
-      postMock.mockResolvedValue(null)
-      await artistStore.toggleFavorite(artist)
+    await artistStore.toggleFavorite(artist)
 
-      expect(postMock).toHaveBeenNthCalledWith(2, 'favorites/toggle', { type: 'artist', id: artist.id })
-      expect(artist.favorite).toBe(false)
-    })
-  }
-}
+    expect(postMock).toHaveBeenCalledWith('favorites/toggle', { type: 'artist', id: artist.id })
+    expect(artist.favorite).toBe(true)
+
+    postMock.mockResolvedValue(null)
+    await artistStore.toggleFavorite(artist)
+
+    expect(postMock).toHaveBeenNthCalledWith(2, 'favorites/toggle', { type: 'artist', id: artist.id })
+    expect(artist.favorite).toBe(false)
+  })
+})

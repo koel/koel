@@ -1,40 +1,37 @@
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
-import factory from '@/__tests__/factory'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import { http } from '@/services/http'
 import { defaultPreferences, preferenceStore } from '@/stores/preferenceStore'
 
-new class extends UnitTestCase {
-  protected beforeEach () {
-    super.beforeEach(() => preferenceStore.init())
-  }
+describe('preferenceStore', () => {
+  const h = createHarness({
+    beforeEach: () => preferenceStore.init(),
+  })
 
-  protected test () {
-    it('sets preferences and saves the state', () => {
-      const user = factory('user')
-      user.preferences = defaultPreferences
-      const mock = this.mock(http, 'patch')
-      preferenceStore.set('volume', 5)
-      expect(mock).toHaveBeenCalledWith('me/preferences', { key: 'volume', value: 5 })
+  it('sets preferences and saves the state', () => {
+    const user = h.factory('user')
+    user.preferences = defaultPreferences
+    const mock = h.mock(http, 'patch')
+    preferenceStore.set('volume', 5)
+    expect(mock).toHaveBeenCalledWith('me/preferences', { key: 'volume', value: 5 })
 
-      // test the proxy
-      preferenceStore.volume = 6
-      expect(mock).toHaveBeenCalledWith('me/preferences', { key: 'volume', value: 6 })
-    })
+    // test the proxy
+    preferenceStore.volume = 6
+    expect(mock).toHaveBeenCalledWith('me/preferences', { key: 'volume', value: 6 })
+  })
 
-    it('does not trigger a request if the value is the same', () => {
-      const mock = this.mock(http, 'patch')
-      preferenceStore.set('volume', preferenceStore.volume)
-      expect(mock).not.toHaveBeenCalled()
-    })
+  it('does not trigger a request if the value is the same', () => {
+    const mock = h.mock(http, 'patch')
+    preferenceStore.set('volume', preferenceStore.volume)
+    expect(mock).not.toHaveBeenCalled()
+  })
 
-    it('returns preference values', () => {
-      const mock = this.mock(http, 'patch')
-      preferenceStore.set('volume', 4.2)
-      expect(mock).toHaveBeenCalledWith('me/preferences', { key: 'volume', value: 4.2 })
+  it('returns preference values', () => {
+    const mock = h.mock(http, 'patch')
+    preferenceStore.set('volume', 4.2)
+    expect(mock).toHaveBeenCalledWith('me/preferences', { key: 'volume', value: 4.2 })
 
-      expect(preferenceStore.get('volume')).toBe(4.2)
-      expect(preferenceStore.volume).toBe(4.2)
-    })
-  }
-}
+    expect(preferenceStore.get('volume')).toBe(4.2)
+    expect(preferenceStore.volume).toBe(4.2)
+  })
+})

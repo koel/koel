@@ -7,14 +7,14 @@
           <div v-if="!loading" class="flex gap-2">
             <Btn
               v-koel-tooltip
-              :title="favoritesOnly ? 'Show all' : 'Show favorites only'"
+              :title="preferences.artists_favorites_only ? 'Show all' : 'Show favorites only'"
               class="border border-white/10"
               transparent
               @click.prevent="toggleFavoritesOnly"
             >
               <Icon
-                :icon="favoritesOnly ? faStar : faEmptyStar"
-                :class="favoritesOnly && 'text-k-highlight'"
+                :icon="preferences.artists_favorites_only ? faStar : faEmptyStar"
+                :class="preferences.artists_favorites_only && 'text-k-highlight'"
               />
             </Btn>
 
@@ -56,10 +56,11 @@
 
 <script lang="ts" setup>
 import { faMicrophoneSlash, faStar } from '@fortawesome/free-solid-svg-icons'
+import { faStar as faEmptyStar } from '@fortawesome/free-regular-svg-icons'
 import { computed, nextTick, onMounted, ref, toRef } from 'vue'
-import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
+import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useInfiniteScroll } from '@/composables/useInfiniteScroll'
 import { useAuthorization } from '@/composables/useAuthorization'
@@ -72,7 +73,6 @@ import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import GridListView from '@/components/ui/GridListView.vue'
 import ArtistListSorter from '@/components/artist/ArtistListSorter.vue'
-import { faStar as faEmptyStar } from '@fortawesome/free-regular-svg-icons'
 import Btn from '@/components/ui/form/Btn.vue'
 
 const { isAdmin } = useAuthorization()
@@ -80,8 +80,6 @@ const { isAdmin } = useAuthorization()
 const gridContainer = ref<HTMLDivElement>()
 const grid = ref<InstanceType<typeof GridListView>>()
 const artists = toRef(artistStore.state, 'artists')
-
-const favoritesOnly = ref(false)
 
 const loading = ref(false)
 const page = ref<number | null>(1)
@@ -103,7 +101,7 @@ const fetchArtists = async () => {
   loading.value = true
 
   page.value = await artistStore.paginate({
-    favorites_only: favoritesOnly.value,
+    favorites_only: preferences.artists_favorites_only,
     page: page!.value || 1,
     sort: preferences.artists_sort_field,
     order: preferences.artists_sort_order,
@@ -134,7 +132,7 @@ const sort = async (field: ArtistListSortField, order: SortOrder) => {
 }
 
 const toggleFavoritesOnly = async () => {
-  favoritesOnly.value = !favoritesOnly.value
+  preferences.artists_favorites_only = !preferences.artists_favorites_only
 
   await resetState()
   await nextTick()

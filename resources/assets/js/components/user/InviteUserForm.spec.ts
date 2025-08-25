@@ -1,54 +1,54 @@
-import { expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { screen, waitFor } from '@testing-library/vue'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { createHarness } from '@/__tests__/TestHarness'
 import { MessageToasterStub } from '@/__tests__/stubs'
 import { invitationService } from '@/services/invitationService'
 import Component from './InviteUserForm.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('invites single email', async () => {
-      const inviteMock = this.mock(invitationService, 'invite')
-      const alertMock = this.mock(MessageToasterStub.value, 'success')
+describe('inviteUserForm.vue', () => {
+  const h = createHarness()
 
-      this.render(Component)
+  it('invites single email', async () => {
+    const inviteMock = h.mock(invitationService, 'invite')
+    const alertMock = h.mock(MessageToasterStub.value, 'success')
 
-      await this.type(screen.getByRole('textbox'), 'foo@bar.ai\n')
-      await this.user.click(screen.getByRole('checkbox'))
-      await this.user.click(screen.getByRole('button', { name: 'Invite' }))
+    h.render(Component)
 
-      await waitFor(() => {
-        expect(inviteMock).toHaveBeenCalledWith(['foo@bar.ai'], true)
-        expect(alertMock).toHaveBeenCalledWith('Invitation sent.')
-      })
+    await h.type(screen.getByRole('textbox'), 'foo@bar.ai\n')
+    await h.user.click(screen.getByRole('checkbox'))
+    await h.user.click(screen.getByRole('button', { name: 'Invite' }))
+
+    await waitFor(() => {
+      expect(inviteMock).toHaveBeenCalledWith(['foo@bar.ai'], true)
+      expect(alertMock).toHaveBeenCalledWith('Invitation sent.')
     })
+  })
 
-    it('invites multiple emails', async () => {
-      const inviteMock = this.mock(invitationService, 'invite')
-      const alertMock = this.mock(MessageToasterStub.value, 'success')
+  it('invites multiple emails', async () => {
+    const inviteMock = h.mock(invitationService, 'invite')
+    const alertMock = h.mock(MessageToasterStub.value, 'success')
 
-      this.render(Component)
+    h.render(Component)
 
-      await this.type(screen.getByRole('textbox'), 'foo@bar.ai\n\na@b.c\n\n')
-      await this.user.click(screen.getByRole('checkbox'))
-      await this.user.click(screen.getByRole('button', { name: 'Invite' }))
+    await h.type(screen.getByRole('textbox'), 'foo@bar.ai\n\na@b.c\n\n')
+    await h.user.click(screen.getByRole('checkbox'))
+    await h.user.click(screen.getByRole('button', { name: 'Invite' }))
 
-      await waitFor(() => {
-        expect(inviteMock).toHaveBeenCalledWith(['foo@bar.ai', 'a@b.c'], true)
-        expect(alertMock).toHaveBeenCalledWith('Invitations sent.')
-      })
+    await waitFor(() => {
+      expect(inviteMock).toHaveBeenCalledWith(['foo@bar.ai', 'a@b.c'], true)
+      expect(alertMock).toHaveBeenCalledWith('Invitations sent.')
     })
+  })
 
-    it('does not invites if at least one email is invalid', async () => {
-      const inviteMock = this.mock(invitationService, 'invite')
+  it('does not invites if at least one email is invalid', async () => {
+    const inviteMock = h.mock(invitationService, 'invite')
 
-      this.render(Component)
+    h.render(Component)
 
-      await this.type(screen.getByRole('textbox'), 'invalid\n\na@b.c\n\n')
-      await this.user.click(screen.getByRole('checkbox'))
-      await this.user.click(screen.getByRole('button', { name: 'Invite' }))
+    await h.type(screen.getByRole('textbox'), 'invalid\n\na@b.c\n\n')
+    await h.user.click(screen.getByRole('checkbox'))
+    await h.user.click(screen.getByRole('button', { name: 'Invite' }))
 
-      await waitFor(() => expect(inviteMock).not.toHaveBeenCalled())
-    })
-  }
-}
+    await waitFor(() => expect(inviteMock).not.toHaveBeenCalled())
+  })
+})

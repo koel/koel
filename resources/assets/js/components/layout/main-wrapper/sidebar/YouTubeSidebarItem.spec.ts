@@ -1,17 +1,17 @@
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import Component from './YouTubeSidebarItem.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('renders', async () => {
-      const { html } = this.render(Component, {
-        slots: {
-          default: 'Another One Bites the Dust',
-        },
-      })
+describe('youTubeSidebarItem.vue', () => {
+  const h = createHarness()
 
-      expect(html()).toMatchSnapshot()
+  it('renders', async () => {
+    const { html } = h.render(Component, {
+      slots: {
+        default: 'Another One Bites the Dust',
+      },
     })
-  }
-}
+
+    expect(html()).toMatchSnapshot()
+  })
+})

@@ -1,43 +1,27 @@
 import { ref } from 'vue'
 import { screen } from '@testing-library/vue'
-import { expect, it } from 'vitest'
-import factory from '@/__tests__/factory'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import { playableStore } from '@/stores/playableStore'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { PlayablesKey } from '@/symbols'
 import Component from './AlbumTrackListItem.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
+describe('albumTrackListItem.vue', () => {
+  const h = createHarness()
 
-    it('plays', async () => {
-      this.createAudioPlayer()
+  const renderComponent = (matchedSong?: Song) => {
+    const songsToMatchAgainst = h.factory('song', 10)
+    const album = h.factory('album')
 
-      const matchedSong = factory('song')
-      const playMock = this.mock(playbackService, 'play')
-
-      this.renderComponent(matchedSong)
-
-      await this.user.click(screen.getByTitle('Click to play'))
-
-      expect(playMock).toHaveBeenCalledWith(matchedSong)
-    })
-  }
-
-  private renderComponent (matchedSong?: Song) {
-    const songsToMatchAgainst = factory('song', 10)
-    const album = factory('album')
-
-    const track = factory('album-track', {
+    const track = h.factory('album-track', {
       title: 'Fahrstuhl to Heaven',
       length: 280,
     })
 
-    const matchMock = this.mock(playableStore, 'matchSongsByTitle', matchedSong)
+    const matchMock = h.mock(playableStore, 'matchSongsByTitle', matchedSong)
 
-    const rendered = this.render(Component, {
+    const rendered = h.render(Component, {
       props: {
         album,
         track,
@@ -53,4 +37,19 @@ new class extends UnitTestCase {
 
     return rendered
   }
-}
+
+  it('renders', () => expect(renderComponent().html()).toMatchSnapshot())
+
+  it('plays', async () => {
+    h.createAudioPlayer()
+
+    const matchedSong = h.factory('song')
+    const playMock = h.mock(playbackService, 'play')
+
+    renderComponent(matchedSong)
+
+    await h.user.click(screen.getByTitle('Click to play'))
+
+    expect(playMock).toHaveBeenCalledWith(matchedSong)
+  })
+})

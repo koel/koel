@@ -1,5 +1,5 @@
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { themeStore } from '@/stores/themeStore'
 
@@ -13,93 +13,88 @@ const testTheme: Theme = {
   },
 }
 
-new class extends UnitTestCase {
-  protected beforeEach () {
-    super.beforeEach(() => {
+describe('themeStore', () => {
+  const h = createHarness({
+    beforeEach: () => {
       document.documentElement.style.setProperty('--color-text-primary', '#fff')
       document.documentElement.style.setProperty('--color-text-secondary', '#ccc')
       document.documentElement.style.setProperty('--color-bg-primary', '#000')
       document.documentElement.style.setProperty('--color-highlight', 'orange')
-    })
-  }
-
-  protected afterEach () {
-    super.afterEach(() => {
+    },
+    afterEach: () => {
       for (const key in themeStore.defaultProperties) {
         document.documentElement.style.removeProperty(key)
       }
 
       document.documentElement.removeAttribute('data-theme')
-      delete preferenceStore.theme
-    })
-  }
+      delete (preferenceStore as any).theme
+    },
+  })
 
-  protected test () {
-    it('initializes the store', () => {
-      const applyMock = this.mock(themeStore, 'applyThemeFromPreference')
+  it('initializes the store', () => {
+    const applyMock = h.mock(themeStore, 'applyThemeFromPreference')
 
-      themeStore.init()
+    themeStore.init()
 
-      expect(themeStore.defaultProperties).toEqual({
-        '--color-text-primary': '#fff',
-        '--color-text-secondary': '#ccc',
-        '--color-bg-primary': '#000',
-        '--color-bg-secondary': '',
-        '--color-highlight': 'orange',
-        '--bg-image': '',
-        '--bg-position': '',
-        '--bg-attachment': '',
-        '--bg-size': '',
-        '--font-family': '',
-        '--font-size': '',
-      })
-
-      expect(applyMock).toHaveBeenCalled()
+    expect(themeStore.defaultProperties).toEqual({
+      '--color-text-primary': '#fff',
+      '--color-text-secondary': '#ccc',
+      '--color-bg-primary': '#000',
+      '--color-bg-secondary': '',
+      '--color-highlight': 'orange',
+      '--bg-image': '',
+      '--bg-position': '',
+      '--bg-attachment': '',
+      '--bg-size': '',
+      '--font-family': '',
+      '--font-size': '',
     })
 
-    it('sets a theme', () => {
-      themeStore.setTheme(testTheme)
+    expect(applyMock).toHaveBeenCalled()
+  })
 
-      expect(document.documentElement.getAttribute('data-theme')).toEqual('test')
-      expect(document.documentElement.style.getPropertyValue('--color-text-primary')).toEqual('#eee')
-      expect(document.documentElement.style.getPropertyValue('--color-text-secondary')).toEqual('#ddd')
-      expect(document.documentElement.style.getPropertyValue('--bg-image')).toEqual('/images/bg.jpg')
+  it('sets a theme', () => {
+    themeStore.setTheme(testTheme)
 
-      themeStore.setTheme({
-        id: 'another',
-        thumbnailColor: '#ccc',
-        properties: {
-          '--color-text-primary': '#ccc',
-        },
-      })
+    expect(document.documentElement.getAttribute('data-theme')).toEqual('test')
+    expect(document.documentElement.style.getPropertyValue('--color-text-primary')).toEqual('#eee')
+    expect(document.documentElement.style.getPropertyValue('--color-text-secondary')).toEqual('#ddd')
+    expect(document.documentElement.style.getPropertyValue('--bg-image')).toEqual('/images/bg.jpg')
 
-      expect(document.documentElement.getAttribute('data-theme')).toEqual('another')
-      // verify that non-existent theme properties are reset back to the default
-      expect(document.documentElement.style.getPropertyValue('--color-text-primary')).toEqual('#ccc')
-      expect(document.documentElement.style.getPropertyValue('--color-text-secondary')).toEqual('#ccc')
-      expect(document.documentElement.style.getPropertyValue('--bg-image')).toEqual('')
+    themeStore.setTheme({
+      id: 'another',
+      thumbnailColor: '#ccc',
+      properties: {
+        '--color-text-primary': '#ccc',
+      },
     })
 
-    it('gets a theme by id', () => {
-      themeStore.state.themes.push(testTheme)
-      expect(themeStore.getThemeById('test')).toEqual(testTheme)
-    })
+    expect(document.documentElement.getAttribute('data-theme')).toEqual('another')
+    // verify that non-existent theme properties are reset back to the default
+    expect(document.documentElement.style.getPropertyValue('--color-text-primary')).toEqual('#ccc')
+    expect(document.documentElement.style.getPropertyValue('--color-text-secondary')).toEqual('#ccc')
+    expect(document.documentElement.style.getPropertyValue('--bg-image')).toEqual('')
+  })
 
-    it('gets the default theme', () => {
-      expect(themeStore.getDefaultTheme().id).toEqual('classic')
-    })
+  it('gets a theme by id', () => {
+    themeStore.state.themes.push(testTheme)
+    expect(themeStore.getThemeById('test')).toEqual(testTheme)
+  })
 
-    it('applies a theme from preference', () => {
-      preferenceStore.theme = 'test'
-      const setMock = this.mock(themeStore, 'setTheme')
-      themeStore.applyThemeFromPreference()
+  it('gets the default theme', () => {
+    expect(themeStore.getDefaultTheme().id).toEqual('classic')
+  })
 
-      expect(setMock).toHaveBeenCalledWith(testTheme)
+  it('applies a theme from preference', () => {
+    ;(preferenceStore as any).theme = 'test'
+    const setMock = h.mock(themeStore, 'setTheme')
+    themeStore.applyThemeFromPreference()
 
-      preferenceStore.theme = 'non-existent-for-sure'
-      themeStore.applyThemeFromPreference()
+    expect(setMock).toHaveBeenCalledWith(testTheme)
 
-      expect(setMock).toHaveBeenCalledWith(themeStore.getDefaultTheme())
-    })
-  }
-}
+    ;(preferenceStore as any).theme = 'non-existent-for-sure'
+    themeStore.applyThemeFromPreference()
+
+    expect(setMock).toHaveBeenCalledWith(themeStore.getDefaultTheme())
+  })
+})

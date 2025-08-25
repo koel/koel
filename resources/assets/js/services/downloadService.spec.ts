@@ -1,53 +1,52 @@
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
-import factory from '@/__tests__/factory'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import { downloadService } from './downloadService'
 import { playableStore } from '@/stores/playableStore'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('downloads playables', () => {
-      const mock = this.mock(downloadService, 'trigger')
-      downloadService.fromPlayables([factory('song', { id: 'bar' })])
+describe('downloadService', () => {
+  const h = createHarness()
 
-      expect(mock).toHaveBeenCalledWith('songs?songs[]=bar&')
-    })
+  it('downloads playables', () => {
+    const mock = h.mock(downloadService, 'trigger')
+    downloadService.fromPlayables([h.factory('song', { id: 'bar' })])
 
-    it('downloads all by artist', () => {
-      const mock = this.mock(downloadService, 'trigger')
-      const artist = factory('artist')
-      downloadService.fromArtist(artist)
+    expect(mock).toHaveBeenCalledWith('songs?songs[]=bar&')
+  })
 
-      expect(mock).toHaveBeenCalledWith(`artist/${artist.id}`)
-    })
+  it('downloads all by artist', () => {
+    const mock = h.mock(downloadService, 'trigger')
+    const artist = h.factory('artist')
+    downloadService.fromArtist(artist)
 
-    it('downloads all in album', () => {
-      const mock = this.mock(downloadService, 'trigger')
-      const album = factory('album')
-      downloadService.fromAlbum(album)
+    expect(mock).toHaveBeenCalledWith(`artist/${artist.id}`)
+  })
 
-      expect(mock).toHaveBeenCalledWith(`album/${album.id}`)
-    })
+  it('downloads all in album', () => {
+    const mock = h.mock(downloadService, 'trigger')
+    const album = h.factory('album')
+    downloadService.fromAlbum(album)
 
-    it('downloads a playlist', () => {
-      const mock = this.mock(downloadService, 'trigger')
-      const playlist = factory('playlist')
+    expect(mock).toHaveBeenCalledWith(`album/${album.id}`)
+  })
 
-      downloadService.fromPlaylist(playlist)
+  it('downloads a playlist', () => {
+    const mock = h.mock(downloadService, 'trigger')
+    const playlist = h.factory('playlist')
 
-      expect(mock).toHaveBeenCalledWith(`playlist/${playlist.id}`)
-    })
+    downloadService.fromPlaylist(playlist)
 
-    it.each<[Playable[], boolean]>([[[], false], [factory('song', 5), true]])(
-      'downloads favorites if available',
-      (songs, triggered) => {
-        const mock = this.mock(downloadService, 'trigger')
-        playableStore.state.favorites = songs
+    expect(mock).toHaveBeenCalledWith(`playlist/${playlist.id}`)
+  })
 
-        downloadService.fromFavorites()
+  it.each<[Playable[], boolean]>([[[], false], [h.factory('song', 5), true]])(
+    'downloads favorites if available',
+    (songs, triggered) => {
+      const mock = h.mock(downloadService, 'trigger')
+      playableStore.state.favorites = songs
 
-        triggered ? expect(mock).toHaveBeenCalledWith('favorites') : expect(mock).not.toHaveBeenCalled()
-      },
-    )
-  }
-}
+      downloadService.fromFavorites()
+
+      triggered ? expect(mock).toHaveBeenCalledWith('favorites') : expect(mock).not.toHaveBeenCalled()
+    },
+  )
+})

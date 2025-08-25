@@ -1,17 +1,17 @@
 import { screen } from '@testing-library/vue'
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import { eventBus } from '@/utils/eventBus'
 import Component from './HomeButton.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('triggers the sidebar toggle event', async () => {
-      this.mock(eventBus, 'emit')
-      this.render(Component)
-      await this.user.click(screen.getByRole('link'))
+describe('homeButton.vue', () => {
+  const h = createHarness()
 
-      expect(eventBus.emit).toHaveBeenCalledWith('TOGGLE_SIDEBAR')
-    })
-  }
-}
+  it('triggers the sidebar toggle event', async () => {
+    h.mock(eventBus, 'emit')
+    h.render(Component)
+    await h.user.click(screen.getByRole('link'))
+
+    expect(eventBus.emit).toHaveBeenCalledWith('TOGGLE_SIDEBAR')
+  })
+})

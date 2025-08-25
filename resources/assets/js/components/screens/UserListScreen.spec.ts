@@ -1,6 +1,6 @@
-import { expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { createHarness } from '@/__tests__/TestHarness'
 import factory from '@/__tests__/factory'
 import { http } from '@/services/http'
 import { eventBus } from '@/utils/eventBus'
@@ -8,67 +8,65 @@ import Btn from '@/components/ui/form/Btn.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'
 import UserListScreen from './UserListScreen.vue'
 
-new class extends UnitTestCase {
-  protected beforeEach (cb?: Closure) {
-    super.beforeEach(cb)
+describe('userListScreen.vue', () => {
+  const h = createHarness({
+    beforeEach: () => {
+      h.beAdmin()
+    },
+  })
 
-    this.beAdmin()
-  }
-
-  protected test () {
-    it('displays a list of users', async () => {
-      await this.renderComponent()
-
-      expect(screen.getAllByTestId('user-card')).toHaveLength(6)
-      expect(screen.queryByTestId('prospects-heading')).toBeNull()
-    })
-
-    it('displays a list of user prospects', async () => {
-      const users = [...factory.states('prospect')('user', 2), ...factory('user', 3)]
-      await this.renderComponent(users)
-
-      expect(screen.getAllByTestId('user-card')).toHaveLength(5)
-      screen.getByTestId('prospects-heading')
-    })
-
-    it('triggers create user modal', async () => {
-      const emitMock = this.mock(eventBus, 'emit')
-      await this.renderComponent()
-
-      await this.user.click(screen.getByRole('button', { name: 'Add' }))
-
-      expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_ADD_USER_FORM')
-    })
-
-    it('triggers invite user modal', async () => {
-      const emitMock = this.mock(eventBus, 'emit')
-      await this.renderComponent()
-
-      await this.user.click(screen.getByRole('button', { name: 'Invite' }))
-
-      expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_INVITE_USER_FORM')
-    })
-  }
-
-  private async renderComponent (users: User[] = []) {
+  const renderComponent = async (users: User[] = []) => {
     if (users.length === 0) {
-      users = factory('user', 6)
+      users = h.factory('user', 6)
     }
 
-    const fetchMock = this.mock(http, 'get').mockResolvedValue(users)
+    const fetchMock = h.mock(http, 'get').mockResolvedValue(users)
 
-    this.render(UserListScreen, {
+    h.render(UserListScreen, {
       global: {
         stubs: {
           Btn,
           BtnGroup,
-          UserCard: this.stub('user-card'),
+          UserCard: h.stub('user-card'),
         },
       },
     })
 
     expect(fetchMock).toHaveBeenCalledWith('users')
 
-    await this.tick(2)
+    await h.tick(2)
   }
-}
+
+  it('displays a list of users', async () => {
+    await renderComponent()
+
+    expect(screen.getAllByTestId('user-card')).toHaveLength(6)
+    expect(screen.queryByTestId('prospects-heading')).toBeNull()
+  })
+
+  it('displays a list of user prospects', async () => {
+    const users = [...factory.states('prospect')('user', 2), ...h.factory('user', 3)]
+    await renderComponent(users)
+
+    expect(screen.getAllByTestId('user-card')).toHaveLength(5)
+    screen.getByTestId('prospects-heading')
+  })
+
+  it('triggers create user modal', async () => {
+    const emitMock = h.mock(eventBus, 'emit')
+    await renderComponent()
+
+    await h.user.click(screen.getByRole('button', { name: 'Add' }))
+
+    expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_ADD_USER_FORM')
+  })
+
+  it('triggers invite user modal', async () => {
+    const emitMock = h.mock(eventBus, 'emit')
+    await renderComponent()
+
+    await h.user.click(screen.getByRole('button', { name: 'Invite' }))
+
+    expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_INVITE_USER_FORM')
+  })
+})

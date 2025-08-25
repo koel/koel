@@ -1,30 +1,30 @@
 import { screen } from '@testing-library/vue'
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import Router from '@/router'
 import Component from './FooterQueueButton.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('goes to queue screen', async () => {
-      const goMock = this.mock(Router, 'go')
-      this.render(Component)
+describe('footerQueueButton.vue', () => {
+  const h = createHarness()
 
-      await this.user.click(screen.getByRole('button'))
-      expect(goMock).toHaveBeenCalledWith('/#/queue')
-    })
+  it('goes to queue screen', async () => {
+    const goMock = h.mock(Router, 'go')
+    h.render(Component)
 
-    it('goes back if current screen is Queue', async () => {
-      this.router.$currentRoute.value = {
-        screen: 'Queue',
-        path: '/queue',
-      }
+    await h.user.click(screen.getByRole('button'))
+    expect(goMock).toHaveBeenCalledWith('/#/queue')
+  })
 
-      const goMock = this.mock(Router, 'go')
-      this.render(Component)
+  it('goes back if current screen is Queue', async () => {
+    h.router.$currentRoute.value = {
+      screen: 'Queue',
+      path: '/queue',
+    }
 
-      await this.user.click(screen.getByRole('button'))
-      expect(goMock).toHaveBeenCalledWith(-1)
-    })
-  }
-}
+    const goMock = h.mock(Router, 'go')
+    h.render(Component)
+
+    await h.user.click(screen.getByRole('button'))
+    expect(goMock).toHaveBeenCalledWith(-1)
+  })
+})

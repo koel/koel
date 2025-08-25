@@ -1,6 +1,6 @@
 // Vitest Snapshot v1
 
-exports[`renders with current playable 1`] = `
+exports[`footerPlayableInfo.vue > renders with current playable 1`] = `
 <div data-v-e015ebf7="" class="playing song-info px-6 py-0 flex items-center content-start w-[84px] md:w-[420px] gap-5" draggable="true"><span data-v-e015ebf7="" class="album-thumb block h-[55%] md:h-3/4 aspect-square rounded-full bg-cover"></span>
   <div data-v-e015ebf7="" class="meta overflow-hidden hidden md:block">
     <h3 data-v-e015ebf7="" class="title text-ellipsis overflow-hidden whitespace-nowrap">Fahrstuhl zum Mond</h3><a data-v-e015ebf7="" href="/#/artists/led-zeppelin" class="artist text-ellipsis overflow-hidden whitespace-nowrap block text-[0.9rem] text-k-text-secondary">Led Zeppelin</a>
@@ -8,7 +8,7 @@ exports[`renders with current playable 1`] = `
 </div>
 `;
 
-exports[`renders with no current playable 1`] = `
+exports[`footerPlayableInfo.vue > renders with no current playable 1`] = `
 <div data-v-e015ebf7="" class="song-info px-6 py-0 flex items-center content-start w-[84px] md:w-[420px] gap-5" draggable="false"><span data-v-e015ebf7="" class="album-thumb block h-[55%] md:h-3/4 aspect-square rounded-full bg-cover"></span>
   <!--v-if-->
 </div>

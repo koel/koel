@@ -1,44 +1,43 @@
 import { ref } from 'vue'
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
-import factory from '@/__tests__/factory'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { screen, waitFor } from '@testing-library/vue'
 import { ModalContextKey } from '@/symbols'
 import Component from './EditPlaylistForm.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('submits', async () => {
-      playlistFolderStore.state.folders = factory('playlist-folder', 3)
+describe('editPlaylistForm.vue', () => {
+  const h = createHarness()
 
-      const playlist = factory('playlist', {
-        name: 'My playlist',
-        folder_id: playlistFolderStore.state.folders[0].id,
-      })
+  it('submits', async () => {
+    playlistFolderStore.state.folders = h.factory('playlist-folder', 3)
 
-      playlistStore.state.playlists = [playlist]
+    const playlist = h.factory('playlist', {
+      name: 'My playlist',
+      folder_id: playlistFolderStore.state.folders[0].id,
+    })
 
-      const updateMock = this.mock(playlistStore, 'update')
+    playlistStore.state.playlists = [playlist]
 
-      this.render(Component, {
-        global: {
-          provide: {
-            [<symbol>ModalContextKey]: [ref({ playlist })],
-          },
+    const updateMock = h.mock(playlistStore, 'update')
+
+    h.render(Component, {
+      global: {
+        provide: {
+          [<symbol>ModalContextKey]: [ref({ playlist })],
         },
-      })
+      },
+    })
 
-      await this.type(screen.getByPlaceholderText('Playlist name'), 'Your playlist')
-      await this.user.click(screen.getByRole('button', { name: 'Save' }))
+    await h.type(screen.getByPlaceholderText('Playlist name'), 'Your playlist')
+    await h.user.click(screen.getByRole('button', { name: 'Save' }))
 
-      await waitFor(() => {
-        expect(updateMock).toHaveBeenCalledWith(playlist, {
-          name: 'Your playlist',
-          folder_id: playlist.folder_id,
-        })
+    await waitFor(() => {
+      expect(updateMock).toHaveBeenCalledWith(playlist, {
+        name: 'Your playlist',
+        folder_id: playlist.folder_id,
       })
     })
-  }
-}
+  })
+})

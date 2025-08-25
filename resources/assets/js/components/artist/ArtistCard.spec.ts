@@ -1,7 +1,6 @@
 import { screen } from '@testing-library/vue'
-import { expect, it } from 'vitest'
-import factory from '@/__tests__/factory'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import { downloadService } from '@/services/downloadService'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { commonStore } from '@/stores/commonStore'
@@ -10,9 +9,11 @@ import { eventBus } from '@/utils/eventBus'
 import { artistStore } from '@/stores/artistStore'
 import Component from './ArtistCard.vue'
 
-new class extends UnitTestCase {
-  private createArtist (overrides: Partial<Artist> = {}): Artist {
-    return factory('artist', {
+describe('artistCard.vue', () => {
+  const h = createHarness()
+
+  const createArtist = (overrides: Partial<Artist> = {}): Artist => {
+    return h.factory('artist', {
       id: 'led-zeppelin',
       name: 'Led Zeppelin',
       favorite: false,
@@ -20,15 +21,15 @@ new class extends UnitTestCase {
     })
   }
 
-  private renderComponent (artist?: Artist) {
-    artist = artist || this.createArtist()
-    const rendered = this.render(Component, {
+  const renderComponent = (artist?: Artist) => {
+    artist = artist || createArtist()
+    const rendered = h.render(Component, {
       props: {
         artist,
       },
       global: {
         stubs: {
-          AlbumArtistThumbnail: this.stub('thumbnail'),
+          AlbumArtistThumbnail: h.stub('thumbnail'),
         },
       },
     })
@@ -39,65 +40,63 @@ new class extends UnitTestCase {
     }
   }
 
-  protected test () {
-    it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
+  it('renders', () => expect(renderComponent().html()).toMatchSnapshot())
 
-    it('renders external artist', () => {
-      expect(this.renderComponent(this.createArtist({ is_external: true })).html()).toMatchSnapshot()
-    })
+  it('renders external artist', () => {
+    expect(renderComponent(createArtist({ is_external: true })).html()).toMatchSnapshot()
+  })
 
-    it('downloads', async () => {
-      const mock = this.mock(downloadService, 'fromArtist')
-      this.renderComponent()
+  it('downloads', async () => {
+    const mock = h.mock(downloadService, 'fromArtist')
+    renderComponent()
 
-      await this.user.click(screen.getByTitle('Download all songs by Led Zeppelin'))
-      expect(mock).toHaveBeenCalledOnce()
-    })
+    await h.user.click(screen.getByTitle('Download all songs by Led Zeppelin'))
+    expect(mock).toHaveBeenCalledOnce()
+  })
 
-    it('does not have an option to download if downloading is disabled', async () => {
-      commonStore.state.allows_download = false
-      this.renderComponent()
+  it('does not have an option to download if downloading is disabled', async () => {
+    commonStore.state.allows_download = false
+    renderComponent()
 
-      expect(screen.queryByText('Download')).toBeNull()
-    })
+    expect(screen.queryByText('Download')).toBeNull()
+  })
 
-    it('shuffles', async () => {
-      this.createAudioPlayer()
+  it('shuffles', async () => {
+    h.createAudioPlayer()
 
-      const songs = factory('song', 16)
-      const fetchMock = this.mock(playableStore, 'fetchSongsForArtist').mockResolvedValue(songs)
-      const playMock = this.mock(playbackService, 'queueAndPlay')
+    const songs = h.factory('song', 16)
+    const fetchMock = h.mock(playableStore, 'fetchSongsForArtist').mockResolvedValue(songs)
+    const playMock = h.mock(playbackService, 'queueAndPlay')
 
-      const { artist } = this.renderComponent()
+    const { artist } = renderComponent()
 
-      await this.user.click(screen.getByTitle('Shuffle all songs by Led Zeppelin'))
-      await this.tick()
+    await h.user.click(screen.getByTitle('Shuffle all songs by Led Zeppelin'))
+    await h.tick()
 
-      expect(fetchMock).toHaveBeenCalledWith(artist)
-      expect(playMock).toHaveBeenCalledWith(songs, true)
-    })
+    expect(fetchMock).toHaveBeenCalledWith(artist)
+    expect(playMock).toHaveBeenCalledWith(songs, true)
+  })
 
-    it('requests context menu', async () => {
-      const { artist } = this.renderComponent()
-      const emitMock = this.mock(eventBus, 'emit')
-      await this.trigger(screen.getByTestId('artist-album-card'), 'contextMenu')
+  it('requests context menu', async () => {
+    const { artist } = renderComponent()
+    const emitMock = h.mock(eventBus, 'emit')
+    await h.trigger(screen.getByTestId('artist-album-card'), 'contextMenu')
 
-      expect(emitMock).toHaveBeenCalledWith('ARTIST_CONTEXT_MENU_REQUESTED', expect.any(MouseEvent), artist)
-    })
+    expect(emitMock).toHaveBeenCalledWith('ARTIST_CONTEXT_MENU_REQUESTED', expect.any(MouseEvent), artist)
+  })
 
-    it('if favorite, has a Favorite icon button that undoes favorite state', async () => {
-      const artist = this.createArtist({ favorite: true })
-      const toggleMock = this.mock(artistStore, 'toggleFavorite')
-      this.renderComponent(artist)
+  it('if favorite, has a Favorite icon button that undoes favorite state', async () => {
+    const artist = createArtist({ favorite: true })
+    const toggleMock = h.mock(artistStore, 'toggleFavorite')
+    renderComponent(artist)
 
-      await this.user.click(screen.getByRole('button', { name: 'Undo Favorite' }))
+    await h.user.click(screen.getByRole('button', { name: 'Undo Favorite' }))
 
-      expect(toggleMock).toHaveBeenCalledWith(artist)
-    })
+    expect(toggleMock).toHaveBeenCalledWith(artist)
+  })
 
-    it('if not favorite, does not have a Favorite icon button', async () => {
-      this.renderComponent()
-      expect(screen.queryByRole('button', { name: 'Undo Favorite' })).toBeNull()
-    })
-  }
-}
+  it('if not favorite, does not have a Favorite icon button', async () => {
+    renderComponent()
+    expect(screen.queryByRole('button', { name: 'Undo Favorite' })).toBeNull()
+  })
+})

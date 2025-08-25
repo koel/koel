@@ -1,38 +1,19 @@
-import { expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
-import UnitTestCase from '@/__tests__/UnitTestCase'
-import factory from '@/__tests__/factory'
+import { createHarness } from '@/__tests__/TestHarness'
 import { eventBus } from '@/utils/eventBus'
 import Component from './LyricsPane.vue'
 import Magnifier from '@/components/ui/Magnifier.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
+describe('lyricsPane.vue', () => {
+  const h = createHarness()
 
-    it('provides a button to add lyrics if current user is admin', async () => {
-      const song = factory('song', { lyrics: null })
-
-      const mock = this.mock(eventBus, 'emit')
-      this.beAdmin().renderComponent(song)
-
-      await this.user.click(screen.getByRole('button', { name: 'Click here' }))
-
-      expect(mock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_SONG_FORM', song, 'lyrics')
-    })
-
-    it('does not have a button to add lyrics if current user is not an admin', async () => {
-      this.be().renderComponent(factory('song', { lyrics: null }))
-      expect(screen.queryByRole('button', { name: 'Click here' })).toBeNull()
-    })
-  }
-
-  private renderComponent (song?: Song) {
-    song = song || factory('song', {
+  const renderComponent = (song?: Song) => {
+    song = song || h.factory('song', {
       lyrics: 'Foo bar baz qux',
     })
 
-    return this.render(Component, {
+    const rendered = h.render(Component, {
       props: {
         song,
       },
@@ -42,5 +23,30 @@ new class extends UnitTestCase {
         },
       },
     })
+
+    return {
+      ...rendered,
+      song,
+    }
   }
-}
+
+  it('renders', () => expect(renderComponent().html()).toMatchSnapshot())
+
+  it('provides a button to add lyrics if current user is admin', async () => {
+    const song = h.factory('song', { lyrics: null })
+
+    const mock = h.mock(eventBus, 'emit')
+    h.beAdmin()
+    renderComponent(song)
+
+    await h.user.click(screen.getByRole('button', { name: 'Click here' }))
+
+    expect(mock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_SONG_FORM', song, 'lyrics')
+  })
+
+  it('does not have a button to add lyrics if current user is not an admin', async () => {
+    h.be()
+    renderComponent(h.factory('song', { lyrics: null }))
+    expect(screen.queryByRole('button', { name: 'Click here' })).toBeNull()
+  })
+})

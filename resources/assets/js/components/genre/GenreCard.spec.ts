@@ -1,25 +1,14 @@
-import { expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
-import UnitTestCase from '@/__tests__/UnitTestCase'
-import factory from '@/__tests__/factory'
+import { createHarness } from '@/__tests__/TestHarness'
 import { eventBus } from '@/utils/eventBus'
 import Component from './GenreCard.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
+describe('genreCard.vue', () => {
+  const h = createHarness()
 
-    it('requests context menu', async () => {
-      const { genre } = this.renderComponent()
-      const emitMock = this.mock(eventBus, 'emit')
-      await this.trigger(screen.getByRole('listitem'), 'contextMenu')
-
-      expect(emitMock).toHaveBeenCalledWith('GENRE_CONTEXT_MENU_REQUESTED', expect.any(MouseEvent), genre)
-    })
-  }
-
-  private createGenre (overrides: Partial<Genre> = {}): Genre {
-    return factory('genre', {
+  const createGenre = (overrides: Partial<Genre> = {}): Genre => {
+    return h.factory('genre', {
       id: 'foo',
       name: 'Classical',
       song_count: 99,
@@ -27,12 +16,12 @@ new class extends UnitTestCase {
     })
   }
 
-  private renderComponent (genre?: Genre) {
-    genre = genre || this.createGenre()
+  const renderComponent = (genre?: Genre) => {
+    genre = genre || createGenre()
 
-    const render = this.render(Component, {
+    const render = h.render(Component, {
       props: {
-        genre: genre || this.createGenre(),
+        genre: genre || createGenre(),
       },
     })
 
@@ -41,4 +30,14 @@ new class extends UnitTestCase {
       genre,
     }
   }
-}
+
+  it('renders', () => expect(renderComponent().html()).toMatchSnapshot())
+
+  it('requests context menu', async () => {
+    const { genre } = renderComponent()
+    const emitMock = h.mock(eventBus, 'emit')
+    await h.trigger(screen.getByRole('listitem'), 'contextMenu')
+
+    expect(emitMock).toHaveBeenCalledWith('GENRE_CONTEXT_MENU_REQUESTED', expect.any(MouseEvent), genre)
+  })
+})

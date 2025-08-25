@@ -1,19 +1,19 @@
 // Vitest Snapshot v1
 
-exports[`renders 1`] = `
+exports[`breadcrumbs.vue > renders 1`] = `
 <ul data-v-a48b9e35="" class="text-base">
   <li data-v-a48b9e35="" class="inline-block"><a data-v-a48b9e35="" href="/#/browse" class="text-k-text-secondary font-normal">Library</a></li>
 </ul>
 `;
 
-exports[`renders 2`] = `
+exports[`breadcrumbs.vue > renders 2`] = `
 <ul data-v-a48b9e35="" class="text-base">
   <li data-v-a48b9e35="" class="inline-block"><a data-v-a48b9e35="" href="/#/browse" class="text-k-text-secondary font-normal">Library</a></li>
   <li data-v-a48b9e35="" class="inline-block"><a data-v-a48b9e35="" href="/#/browse/var" class="text-k-text-secondary font-normal">var</a></li>
 </ul>
 `;
 
-exports[`renders 3`] = `
+exports[`breadcrumbs.vue > renders 3`] = `
 <ul data-v-a48b9e35="" class="text-base">
   <li data-v-a48b9e35="" class="inline-block"><a data-v-a48b9e35="" href="/#/browse" class="text-k-text-secondary font-normal">Library</a></li>
   <li data-v-a48b9e35="" class="inline-block"><a data-v-a48b9e35="" href="/#/browse/var" class="text-k-text-secondary font-normal">var</a></li>
@@ -21,7 +21,7 @@ exports[`renders 3`] = `
 </ul>
 `;
 
-exports[`renders 4`] = `
+exports[`breadcrumbs.vue > renders 4`] = `
 <ul data-v-a48b9e35="" class="text-base">
   <li data-v-a48b9e35="" class="inline-block"><a data-v-a48b9e35="" href="/#/browse" class="text-k-text-secondary font-normal">Library</a></li>
   <li data-v-a48b9e35="" class="inline-block"><span data-v-a48b9e35="">…</span></li>

@@ -1,27 +1,26 @@
+import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
-import factory from '@/__tests__/factory'
+import { createHarness } from '@/__tests__/TestHarness'
 import Component from './AlbumOrArtistCard.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('emits events on user actions', async () => {
-      const { emitted } = this.render(Component, {
-        props: {
-          entity: factory('album'),
-        },
-      })
+describe('albumOrArtistCard.vue', () => {
+  const h = createHarness()
 
-      const component = screen.getByTestId('artist-album-card')
-      await this.trigger(component, 'dblClick')
-      expect(emitted().dblclick).toBeTruthy()
-
-      await this.trigger(component, 'dragStart')
-      expect(emitted().dragstart).toBeTruthy()
-
-      await this.trigger(component, 'contextMenu')
-      expect(emitted().contextmenu).toBeTruthy()
+  it('emits events on user actions', async () => {
+    const { emitted } = h.render(Component, {
+      props: {
+        entity: h.factory('album'),
+      },
     })
-  }
-}
+
+    const component = screen.getByTestId('artist-album-card')
+    await h.trigger(component, 'dblClick')
+    expect(emitted().dblclick).toBeTruthy()
+
+    await h.trigger(component, 'dragStart')
+    expect(emitted().dragstart).toBeTruthy()
+
+    await h.trigger(component, 'contextMenu')
+    expect(emitted().contextmenu).toBeTruthy()
+  })
+})

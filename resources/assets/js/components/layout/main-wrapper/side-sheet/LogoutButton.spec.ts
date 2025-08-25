@@ -1,18 +1,18 @@
 import { screen } from '@testing-library/vue'
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import { eventBus } from '@/utils/eventBus'
 import Component from './LogoutButton.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('emits the logout event', async () => {
-      const emitMock = this.mock(eventBus, 'emit')
-      this.render(Component)
+describe('logoutButton.vue', () => {
+  const h = createHarness()
 
-      await this.user.click(screen.getByRole('button'))
+  it('emits the logout event', async () => {
+    const emitMock = h.mock(eventBus, 'emit')
+    h.render(Component)
 
-      expect(emitMock).toHaveBeenCalledWith('LOG_OUT')
-    })
-  }
-}
+    await h.user.click(screen.getByRole('button'))
+
+    expect(emitMock).toHaveBeenCalledWith('LOG_OUT')
+  })
+})

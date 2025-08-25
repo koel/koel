@@ -1,25 +1,25 @@
 import { screen } from '@testing-library/vue'
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import Component from './GenreListSorter.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('renders and emits the proper event', async () => {
-      const { emitted } = this.render(Component, {
-        props: {
-          field: 'name',
-          order: 'asc',
-        },
-      })
+describe('genreListSorter.vue', () => {
+  const h = createHarness()
 
-      screen.getByTitle('Sorting by Name, ascending')
-
-      await this.user.click(screen.getByTitle('Sort by Name'))
-      expect(emitted().sort[0]).toEqual(['name', 'desc'])
-
-      await this.user.click(screen.getByTitle('Sort by Song Count'))
-      expect(emitted().sort[1]).toEqual(['song_count', 'asc'])
+  it('renders and emits the proper event', async () => {
+    const { emitted } = h.render(Component, {
+      props: {
+        field: 'name',
+        order: 'asc',
+      },
     })
-  }
-}
+
+    screen.getByTitle('Sorting by Name, ascending')
+
+    await h.user.click(screen.getByTitle('Sort by Name'))
+    expect(emitted().sort[0]).toEqual(['name', 'desc'])
+
+    await h.user.click(screen.getByTitle('Sort by Song Count'))
+    expect(emitted().sort[1]).toEqual(['song_count', 'asc'])
+  })
+})

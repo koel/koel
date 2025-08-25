@@ -1,71 +1,70 @@
 import Router from '@/router'
-import { expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
-import UnitTestCase from '@/__tests__/UnitTestCase'
-import factory from '@/__tests__/factory'
+import { createHarness } from '@/__tests__/TestHarness'
 import { eventBus } from '@/utils/eventBus'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { playableStore as episodeStore } from '@/stores/playableStore'
 import Component from './PodcastContextMenu.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('renders', async () => expect((await this.renderComponent()).html()).toMatchSnapshot())
+describe('podcastContextMenu.vue', () => {
+  const h = createHarness()
 
-    it('plays all', async () => {
-      this.createAudioPlayer()
-
-      const episodes = factory('episode', 10)
-      const fetchMock = this.mock(episodeStore, 'fetchEpisodesInPodcast').mockResolvedValue(episodes)
-      const playMock = this.mock(playbackService, 'queueAndPlay')
-
-      const { podcast } = await this.renderComponent()
-      await this.user.click(screen.getByText('Play All'))
-      await this.tick()
-
-      expect(fetchMock).toHaveBeenCalledWith(podcast)
-      expect(playMock).toHaveBeenCalledWith(episodes)
-    })
-
-    it('shuffles all', async () => {
-      this.createAudioPlayer()
-
-      const episodes = factory('episode', 10)
-      const fetchMock = this.mock(episodeStore, 'fetchEpisodesInPodcast').mockResolvedValue(episodes)
-      const playMock = this.mock(playbackService, 'queueAndPlay')
-
-      const { podcast } = await this.renderComponent()
-      await this.user.click(screen.getByText('Shuffle All'))
-      await this.tick()
-
-      expect(fetchMock).toHaveBeenCalledWith(podcast)
-      expect(playMock).toHaveBeenCalledWith(episodes, true)
-    })
-
-    it('goes to podcast', async () => {
-      const mock = this.mock(Router, 'go')
-      const { podcast } = await this.renderComponent()
-
-      await this.user.click(screen.getByText('Go to Podcast'))
-
-      expect(mock).toHaveBeenCalledWith(`/#/podcasts/${podcast.id}`)
-    })
-  }
-
-  private async renderComponent (podcast?: Podcast) {
-    podcast = podcast || factory('podcast', {
+  const renderComponent = async (podcast?: Podcast) => {
+    podcast = podcast || h.factory('podcast', {
       title: 'A Brief History of Time',
       author: 'Stephen Hawking',
       favorite: false,
     })
 
-    const rendered = this.beAdmin().render(Component)
+    const rendered = h.beAdmin().render(Component)
     eventBus.emit('PODCAST_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, podcast)
-    await this.tick(2)
+    await h.tick(2)
 
     return {
       ...rendered,
       podcast,
     }
   }
-}
+
+  it('renders', async () => expect((await renderComponent()).html()).toMatchSnapshot())
+
+  it('plays all', async () => {
+    h.createAudioPlayer()
+
+    const episodes = h.factory('episode', 10)
+    const fetchMock = h.mock(episodeStore, 'fetchEpisodesInPodcast').mockResolvedValue(episodes)
+    const playMock = h.mock(playbackService, 'queueAndPlay')
+
+    const { podcast } = await renderComponent()
+    await h.user.click(screen.getByText('Play All'))
+    await h.tick()
+
+    expect(fetchMock).toHaveBeenCalledWith(podcast)
+    expect(playMock).toHaveBeenCalledWith(episodes)
+  })
+
+  it('shuffles all', async () => {
+    h.createAudioPlayer()
+
+    const episodes = h.factory('episode', 10)
+    const fetchMock = h.mock(episodeStore, 'fetchEpisodesInPodcast').mockResolvedValue(episodes)
+    const playMock = h.mock(playbackService, 'queueAndPlay')
+
+    const { podcast } = await renderComponent()
+    await h.user.click(screen.getByText('Shuffle All'))
+    await h.tick()
+
+    expect(fetchMock).toHaveBeenCalledWith(podcast)
+    expect(playMock).toHaveBeenCalledWith(episodes, true)
+  })
+
+  it('goes to podcast', async () => {
+    const mock = h.mock(Router, 'go')
+    const { podcast } = await renderComponent()
+
+    await h.user.click(screen.getByText('Go to Podcast'))
+
+    expect(mock).toHaveBeenCalledWith(`/#/podcasts/${podcast.id}`)
+  })
+})

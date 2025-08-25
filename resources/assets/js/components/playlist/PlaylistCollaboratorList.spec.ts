@@ -1,40 +1,40 @@
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
-import factory from '@/__tests__/factory'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import { playlistCollaborationService } from '@/services/playlistCollaborationService'
 import Component from './PlaylistCollaboratorList.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('renders', async () => {
-      const playlist = factory('playlist', {
-        is_collaborative: true,
-      })
+describe('playlistCollaboratorList.vue', () => {
+  const h = createHarness()
 
-      const fetchMock = this.mock(playlistCollaborationService, 'fetchCollaborators').mockResolvedValue(
-        factory('playlist-collaborator', 5),
-      )
-
-      const { html } = await this.be().renderComponent(playlist)
-      expect(fetchMock).toHaveBeenCalledWith(playlist)
-      expect(html()).toMatchSnapshot()
-    })
-  }
-
-  private async renderComponent (playlist: Playlist) {
-    const rendered = this.render(Component, {
+  const renderComponent = async (playlist: Playlist) => {
+    const rendered = h.render(Component, {
       props: {
         playlist,
       },
       global: {
         stubs: {
-          ListItem: this.stub('ListItem'),
+          ListItem: h.stub('ListItem'),
         },
       },
     })
 
-    await this.tick(2)
+    await h.tick(2)
 
     return rendered
   }
-}
+
+  it('renders', async () => {
+    const playlist = h.factory('playlist', {
+      is_collaborative: true,
+    })
+
+    const fetchMock = h.mock(playlistCollaborationService, 'fetchCollaborators').mockResolvedValue(
+      h.factory('playlist-collaborator', 5),
+    )
+
+    h.be()
+    const { html } = await renderComponent(playlist)
+    expect(fetchMock).toHaveBeenCalledWith(playlist)
+    expect(html()).toMatchSnapshot()
+  })
+})

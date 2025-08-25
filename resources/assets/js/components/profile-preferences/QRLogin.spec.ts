@@ -1,33 +1,33 @@
-import { expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { screen } from '@testing-library/vue'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { createHarness } from '@/__tests__/TestHarness'
 import { authService } from '@/services/authService'
 import Component from './QRLogin.vue'
 
-new class extends UnitTestCase {
-  protected beforeEach () {
-    vi.mock('@vueuse/integrations/useQRCode', () => ({
-      useQRCode: () => 'data:image/png;base64,my-qr-code',
-    }))
-  }
+describe('qRLogin.vue', () => {
+  const h = createHarness({
+    beforeEach: () => {
+      vi.mock('@vueuse/integrations/useQRCode', () => ({
+        useQRCode: () => 'data:image/png;base64,my-qr-code',
+      }))
+    },
+  })
 
-  protected test () {
-    it('renders', async () => {
-      const getTokenMock = this.mock(authService, 'getOneTimeToken').mockResolvedValue('my-token')
-      const { html } = this.render(Component)
+  it('renders', async () => {
+    const getTokenMock = h.mock(authService, 'getOneTimeToken').mockResolvedValue('my-token')
+    const { html } = h.render(Component)
 
-      expect(getTokenMock).toHaveBeenCalled()
-      expect(html()).toMatchSnapshot()
-    })
+    expect(getTokenMock).toHaveBeenCalled()
+    expect(html()).toMatchSnapshot()
+  })
 
-    it('refreshes QR code', async () => {
-      const getTokenMock = this.mock(authService, 'getOneTimeToken').mockResolvedValue('my-token')
-      const { html } = this.render(Component)
+  it('refreshes QR code', async () => {
+    const getTokenMock = h.mock(authService, 'getOneTimeToken').mockResolvedValue('my-token')
+    const { html } = h.render(Component)
 
-      await this.user.click(screen.getByRole('button', { name: 'Refresh now' }))
+    await h.user.click(screen.getByRole('button', { name: 'Refresh now' }))
 
-      expect(getTokenMock).toHaveBeenCalled()
-      expect(html()).toMatchSnapshot()
-    })
-  }
-}
+    expect(getTokenMock).toHaveBeenCalled()
+    expect(html()).toMatchSnapshot()
+  })
+})

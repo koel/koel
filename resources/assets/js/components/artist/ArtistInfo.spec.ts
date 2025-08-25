@@ -1,46 +1,33 @@
-import { expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
-import factory from '@/__tests__/factory'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { createHarness } from '@/__tests__/TestHarness'
 import { commonStore } from '@/stores/commonStore'
 import { encyclopediaService } from '@/services/encyclopediaService'
 import Component from './ArtistInfo.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it.each<[EncyclopediaDisplayMode]>([['aside'], ['full']])('renders in %s mode', async mode => {
-      await this.renderComponent(mode)
+describe('artistInfo.vue', () => {
+  const h = createHarness()
 
-      if (mode === 'aside') {
-        screen.getByTestId('thumbnail')
-      } else {
-        expect(screen.queryByTestId('thumbnail')).toBeNull()
-      }
-
-      expect(screen.getByTestId('artist-info').classList.contains(mode)).toBe(true)
-    })
-  }
-
-  private async renderComponent (mode: EncyclopediaDisplayMode = 'aside', info?: ArtistInfo) {
+  const renderComponent = async (mode: EncyclopediaDisplayMode = 'aside', info?: ArtistInfo) => {
     commonStore.state.uses_last_fm = true
-    info = info ?? factory('artist-info')
-    const artist = factory('artist', { name: 'Led Zeppelin' })
+    info = info ?? h.factory('artist-info')
+    const artist = h.factory('artist', { name: 'Led Zeppelin' })
 
-    const fetchMock = this.mock(encyclopediaService, 'fetchForArtist').mockResolvedValue(info)
+    const fetchMock = h.mock(encyclopediaService, 'fetchForArtist').mockResolvedValue(info)
 
-    const rendered = this.render(Component, {
+    const rendered = h.render(Component, {
       props: {
         artist,
         mode,
       },
       global: {
         stubs: {
-          ArtistThumbnail: this.stub('thumbnail'),
+          ArtistThumbnail: h.stub('thumbnail'),
         },
       },
     })
 
-    await this.tick(1)
+    await h.tick(1)
     expect(fetchMock).toHaveBeenCalledWith(artist)
 
     return {
@@ -48,4 +35,16 @@ new class extends UnitTestCase {
       artist,
     }
   }
-}
+
+  it.each<[EncyclopediaDisplayMode]>([['aside'], ['full']])('renders in %s mode', async mode => {
+    await renderComponent(mode)
+
+    if (mode === 'aside') {
+      screen.getByTestId('thumbnail')
+    } else {
+      expect(screen.queryByTestId('thumbnail')).toBeNull()
+    }
+
+    expect(screen.getByTestId('artist-info').classList.contains(mode)).toBe(true)
+  })
+})

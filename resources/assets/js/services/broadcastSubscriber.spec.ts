@@ -1,7 +1,7 @@
 import type { Broadcaster } from 'laravel-echo'
 import Echo from 'laravel-echo'
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import { uploadService } from '@/services/uploadService'
 import { broadcastSubscriber } from '@/services/broadcastSubscriber'
 
@@ -33,20 +33,20 @@ class FakeChannel {
   }
 }
 
-new class extends UnitTestCase {
-  protected test () {
-    const echo = new FakeEcho({
-      broadcaster: 'null',
-    })
+describe('broadcastSubscriber', () => {
+  const h = createHarness()
 
-    broadcastSubscriber.init('foo-id', echo)
-    const privateChannel = echo.channels['user.foo-id']
-    expect(privateChannel).toBeInstanceOf(FakeChannel)
+  const echo = new FakeEcho({
+    broadcaster: 'null',
+  })
 
-    it('listens to .song.uploaded event', () => {
-      const handleMock = this.mock(uploadService, 'handleUploadResult')
-      privateChannel.trigger('.song.uploaded', 'some data')
-      expect(handleMock).toHaveBeenCalledWith('some data')
-    })
-  }
-}
+  broadcastSubscriber.init('foo-id', echo)
+  const privateChannel = echo.channels['user.foo-id']
+  expect(privateChannel).toBeInstanceOf(FakeChannel)
+
+  it('listens to .song.uploaded event', () => {
+    const handleMock = h.mock(uploadService, 'handleUploadResult')
+    privateChannel.trigger('.song.uploaded', 'some data')
+    expect(handleMock).toHaveBeenCalledWith('some data')
+  })
+})

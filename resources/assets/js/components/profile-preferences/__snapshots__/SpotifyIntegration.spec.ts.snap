@@ -1,6 +1,6 @@
 // Vitest Snapshot v1
 
-exports[`renders proper content with Spotify integration status false, current user admin status false 1`] = `
+exports[`spotifyIntegration.vue > renders proper content with Spotify integration status false, current user admin status false 1`] = `
 <section class="text-k-text-secondary">
   <h3 class="text-2xl mb-2"><span class="mr-2 text-[#1db954]"><br data-testid="Icon" icon="[object Object]"></span> Spotify Integration </h3>
   <div>
@@ -11,7 +11,7 @@ exports[`renders proper content with Spotify integration status false, current u
 </section>
 `;
 
-exports[`renders proper content with Spotify integration status false, current user admin status true 1`] = `
+exports[`spotifyIntegration.vue > renders proper content with Spotify integration status false, current user admin status true 1`] = `
 <section class="text-k-text-secondary">
   <h3 class="text-2xl mb-2"><span class="mr-2 text-[#1db954]"><br data-testid="Icon" icon="[object Object]"></span> Spotify Integration </h3>
   <div>
@@ -20,7 +20,7 @@ exports[`renders proper content with Spotify integration status false, current u
 </section>
 `;
 
-exports[`renders proper content with Spotify integration status true, current user admin status false 1`] = `
+exports[`spotifyIntegration.vue > renders proper content with Spotify integration status true, current user admin status false 1`] = `
 <section class="text-k-text-secondary">
   <h3 class="text-2xl mb-2"><span class="mr-2 text-[#1db954]"><br data-testid="Icon" icon="[object Object]"></span> Spotify Integration </h3>
   <div>
@@ -29,7 +29,7 @@ exports[`renders proper content with Spotify integration status true, current us
 </section>
 `;
 
-exports[`renders proper content with Spotify integration status true, current user admin status true 1`] = `
+exports[`spotifyIntegration.vue > renders proper content with Spotify integration status true, current user admin status true 1`] = `
 <section class="text-k-text-secondary">
   <h3 class="text-2xl mb-2"><span class="mr-2 text-[#1db954]"><br data-testid="Icon" icon="[object Object]"></span> Spotify Integration </h3>
   <div>

@@ -1,38 +1,38 @@
 import { screen } from '@testing-library/vue'
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import { commonStore } from '@/stores/commonStore'
 import Component from './AboutKoelButton.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('shows no notification when no new available available', () => {
-      commonStore.state.current_version = '1.0.0'
-      commonStore.state.latest_version = '1.0.0'
+describe('aboutKoelButton.vue', () => {
+  const h = createHarness()
 
-      this.beAdmin().render(Component)
-      expect(screen.queryByTitle('New version available!')).toBeNull()
-      expect(screen.queryByTestId('new-version-indicator')).toBeNull()
-      screen.getByTitle('About Koel')
-    })
+  it('shows no notification when no new available available', () => {
+    commonStore.state.current_version = '1.0.0'
+    commonStore.state.latest_version = '1.0.0'
 
-    it('shows notification when new version available', () => {
-      commonStore.state.current_version = '1.0.0'
-      commonStore.state.latest_version = '1.0.1'
+    h.beAdmin().render(Component)
+    expect(screen.queryByTitle('New version available!')).toBeNull()
+    expect(screen.queryByTestId('new-version-indicator')).toBeNull()
+    screen.getByTitle('About Koel')
+  })
 
-      this.beAdmin().render(Component)
-      screen.getByTitle('New version available!')
-      screen.getByTestId('new-version-indicator')
-    })
+  it('shows notification when new version available', () => {
+    commonStore.state.current_version = '1.0.0'
+    commonStore.state.latest_version = '1.0.1'
 
-    it('doesn\'t show notification to non-admin users', () => {
-      commonStore.state.current_version = '1.0.0'
-      commonStore.state.latest_version = '1.0.1'
+    h.beAdmin().render(Component)
+    screen.getByTitle('New version available!')
+    screen.getByTestId('new-version-indicator')
+  })
 
-      this.be().render(Component)
-      expect(screen.queryByTitle('New version available!')).toBeNull()
-      expect(screen.queryByTestId('new-version-indicator')).toBeNull()
-      screen.getByTitle('About Koel')
-    })
-  }
-}
+  it('doesn\'t show notification to non-admin users', () => {
+    commonStore.state.current_version = '1.0.0'
+    commonStore.state.latest_version = '1.0.1'
+
+    h.be().render(Component)
+    expect(screen.queryByTitle('New version available!')).toBeNull()
+    expect(screen.queryByTestId('new-version-indicator')).toBeNull()
+    screen.getByTitle('About Koel')
+  })
+})

@@ -1,34 +1,34 @@
-import { expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { screen, waitFor } from '@testing-library/vue'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { createHarness } from '@/__tests__/TestHarness'
 import { MessageToasterStub } from '@/__tests__/stubs'
 import { userStore } from '@/stores/userStore'
 import Component from './AddUserForm.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('creates a new user', async () => {
-      const storeMock = this.mock(userStore, 'store')
-      const alertMock = this.mock(MessageToasterStub.value, 'success')
+describe('addUserForm.vue', () => {
+  const h = createHarness()
 
-      this.render(Component)
+  it('creates a new user', async () => {
+    const storeMock = h.mock(userStore, 'store')
+    const alertMock = h.mock(MessageToasterStub.value, 'success')
 
-      await this.type(screen.getByRole('textbox', { name: 'Name' }), 'John Doe')
-      await this.type(screen.getByRole('textbox', { name: 'Email' }), 'john@doe.com')
-      await this.type(screen.getByTitle('Password'), 'secret-password')
-      await this.user.click(screen.getByRole('checkbox'))
-      await this.user.click(screen.getByRole('button', { name: 'Save' }))
+    h.render(Component)
 
-      await waitFor(() => {
-        expect(storeMock).toHaveBeenCalledWith({
-          name: 'John Doe',
-          email: 'john@doe.com',
-          password: 'secret-password',
-          is_admin: true,
-        })
+    await h.type(screen.getByRole('textbox', { name: 'Name' }), 'John Doe')
+    await h.type(screen.getByRole('textbox', { name: 'Email' }), 'john@doe.com')
+    await h.type(screen.getByTitle('Password'), 'secret-password')
+    await h.user.click(screen.getByRole('checkbox'))
+    await h.user.click(screen.getByRole('button', { name: 'Save' }))
 
-        expect(alertMock).toHaveBeenCalledWith('New user "John Doe" created.')
+    await waitFor(() => {
+      expect(storeMock).toHaveBeenCalledWith({
+        name: 'John Doe',
+        email: 'john@doe.com',
+        password: 'secret-password',
+        is_admin: true,
       })
+
+      expect(alertMock).toHaveBeenCalledWith('New user "John Doe" created.')
     })
-  }
-}
+  })
+})

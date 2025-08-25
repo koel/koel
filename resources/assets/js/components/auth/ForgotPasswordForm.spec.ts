@@ -1,25 +1,25 @@
 import { screen } from '@testing-library/vue'
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import { authService } from '@/services/authService'
 import Component from './ForgotPasswordForm.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('requests reset password link', async () => {
-      const requestMock = this.mock(authService, 'requestResetPasswordLink').mockResolvedValue(null)
-      this.render(Component)
-      await this.type(screen.getByPlaceholderText('Your email address'), 'foo@bar.com')
-      await this.user.click(screen.getByText('Reset Password'))
+describe('forgotPasswordForm.vue', () => {
+  const h = createHarness()
 
-      expect(requestMock).toHaveBeenCalledWith('foo@bar.com')
-    })
+  it('requests reset password link', async () => {
+    const requestMock = h.mock(authService, 'requestResetPasswordLink').mockResolvedValue(null)
+    h.render(Component)
+    await h.type(screen.getByPlaceholderText('Your email address'), 'foo@bar.com')
+    await h.user.click(screen.getByText('Reset Password'))
 
-    it('cancels', async () => {
-      const { emitted } = this.render(Component)
-      await this.user.click(screen.getByText('Cancel'))
+    expect(requestMock).toHaveBeenCalledWith('foo@bar.com')
+  })
 
-      expect(emitted().cancel).toBeTruthy()
-    })
-  }
-}
+  it('cancels', async () => {
+    const { emitted } = h.render(Component)
+    await h.user.click(screen.getByText('Cancel'))
+
+    expect(emitted().cancel).toBeTruthy()
+  })
+})

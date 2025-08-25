@@ -1,16 +1,16 @@
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import { http } from '@/services/http'
 import { plusService as service } from './plusService'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('activates license', async () => {
-      const postMock = this.mock(http, 'post').mockResolvedValue({})
+describe('plusService', () => {
+  const h = createHarness()
 
-      await service.activateLicense('abc123')
+  it('activates license', async () => {
+    const postMock = h.mock(http, 'post').mockResolvedValue({})
 
-      expect(postMock).toHaveBeenCalledWith('licenses/activate', { key: 'abc123' })
-    })
-  }
-}
+    await service.activateLicense('abc123')
+
+    expect(postMock).toHaveBeenCalledWith('licenses/activate', { key: 'abc123' })
+  })
+})

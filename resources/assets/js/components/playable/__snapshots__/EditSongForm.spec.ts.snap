@@ -1,6 +1,6 @@
 // Vitest Snapshot v1
 
-exports[`edits a single song 1`] = `
+exports[`editSongForm.vue > edits a single song 1`] = `
 <form data-v-9c4a3e26="" class="max-w-[540px]">
   <header data-v-9c4a3e26="" class="gap-4"><img data-v-9c4a3e26="" src="http://test/album.jpg" alt="" class="w-[84px] aspect-square object-cover object-center rounded-md">
     <div data-v-9c4a3e26="" class="flex-1 flex flex-col justify-center overflow-hidden">
@@ -235,7 +235,7 @@ exports[`edits a single song 1`] = `
 </form>
 `;
 
-exports[`edits multiple songs 1`] = `
+exports[`editSongForm.vue > edits multiple songs 1`] = `
 <form data-v-9c4a3e26="" class="max-w-[540px]">
   <header data-v-9c4a3e26="" class="gap-4"><img data-v-9c4a3e26="" src="undefined/resources/assets/img/covers/default.svg" alt="" class="w-[84px] aspect-square object-cover object-center rounded-md">
     <div data-v-9c4a3e26="" class="flex-1 flex flex-col justify-center overflow-hidden">

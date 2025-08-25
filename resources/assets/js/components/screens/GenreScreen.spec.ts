@@ -1,37 +1,31 @@
-import { expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { screen, waitFor } from '@testing-library/vue'
-import UnitTestCase from '@/__tests__/UnitTestCase'
-import factory from '@/__tests__/factory'
+import { createHarness } from '@/__tests__/TestHarness'
 import { genreStore } from '@/stores/genreStore'
 import { playableStore } from '@/stores/playableStore'
 import Component from './GenreScreen.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('renders the song list', async () => {
-      await this.renderComponent()
-      expect(screen.getByTestId('song-list')).toBeTruthy()
-    })
-  }
+describe('genreScreen', () => {
+  const h = createHarness()
 
-  private async renderComponent (genre?: Genre, songs?: Song[]) {
-    genre = genre || factory('genre')
+  const renderComponent = async (genre?: Genre, songs?: Song[]) => {
+    genre = genre || h.factory('genre')
 
-    const fetchGenreMock = this.mock(genreStore, 'fetchOne').mockResolvedValue(genre)
-    const paginateMock = this.mock(playableStore, 'paginateSongsByGenre').mockResolvedValue({
+    const fetchGenreMock = h.mock(genreStore, 'fetchOne').mockResolvedValue(genre)
+    const paginateMock = h.mock(playableStore, 'paginateSongsByGenre').mockResolvedValue({
       nextPage: 2,
-      songs: songs || factory('song', 13),
+      songs: songs || h.factory('song', 13),
     })
 
-    await this.router.activateRoute({
+    await h.router.activateRoute({
       path: `genres/${genre.id}`,
       screen: 'Genre',
     }, { id: genre.id })
 
-    const rendered = this.render(Component, {
+    const rendered = h.render(Component, {
       global: {
         stubs: {
-          SongList: this.stub('song-list'),
+          SongList: h.stub('song-list'),
         },
       },
     })
@@ -45,8 +39,13 @@ new class extends UnitTestCase {
       })
     })
 
-    await this.tick(2)
+    await h.tick(2)
 
     return rendered
   }
-}
+
+  it('renders the song list', async () => {
+    await renderComponent()
+    expect(screen.getByTestId('song-list')).toBeTruthy()
+  })
+})
