@@ -1,6 +1,6 @@
 // Vitest Snapshot v1
 
-exports[`renders proper content with MusicBrainz integration status false, current user admin status false 1`] = `
+exports[`musicBrainzIntegration.vue > renders proper content with MusicBrainz integration status false, current user admin status false 1`] = `
 <section class="text-k-text-secondary">
   <h3 class="text-2xl mb-2 flex items-center gap-2"><span class="mr-2 text-[#1db954]"><img src="undefined/resources/assets/img/logos/musicbrainz.svg" alt="MusicBrainz Logo" height="20" width="20"></span> MusicBrainz Integration </h3>
   <div>
@@ -11,7 +11,7 @@ exports[`renders proper content with MusicBrainz integration status false, curre
 </section>
 `;
 
-exports[`renders proper content with MusicBrainz integration status false, current user admin status true 1`] = `
+exports[`musicBrainzIntegration.vue > renders proper content with MusicBrainz integration status false, current user admin status true 1`] = `
 <section class="text-k-text-secondary">
   <h3 class="text-2xl mb-2 flex items-center gap-2"><span class="mr-2 text-[#1db954]"><img src="undefined/resources/assets/img/logos/musicbrainz.svg" alt="MusicBrainz Logo" height="20" width="20"></span> MusicBrainz Integration </h3>
   <div>
@@ -20,7 +20,7 @@ exports[`renders proper content with MusicBrainz integration status false, curre
 </section>
 `;
 
-exports[`renders proper content with MusicBrainz integration status true, current user admin status false 1`] = `
+exports[`musicBrainzIntegration.vue > renders proper content with MusicBrainz integration status true, current user admin status false 1`] = `
 <section class="text-k-text-secondary">
   <h3 class="text-2xl mb-2 flex items-center gap-2"><span class="mr-2 text-[#1db954]"><img src="undefined/resources/assets/img/logos/musicbrainz.svg" alt="MusicBrainz Logo" height="20" width="20"></span> MusicBrainz Integration </h3>
   <div>
@@ -29,7 +29,7 @@ exports[`renders proper content with MusicBrainz integration status true, curren
 </section>
 `;
 
-exports[`renders proper content with MusicBrainz integration status true, current user admin status true 1`] = `
+exports[`musicBrainzIntegration.vue > renders proper content with MusicBrainz integration status true, current user admin status true 1`] = `
 <section class="text-k-text-secondary">
   <h3 class="text-2xl mb-2 flex items-center gap-2"><span class="mr-2 text-[#1db954]"><img src="undefined/resources/assets/img/logos/musicbrainz.svg" alt="MusicBrainz Logo" height="20" width="20"></span> MusicBrainz Integration </h3>
   <div>

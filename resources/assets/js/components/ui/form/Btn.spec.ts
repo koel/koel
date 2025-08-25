@@ -1,15 +1,15 @@
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import Component from './Btn.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('renders', () => {
-      expect(this.render(Component, {
-        slots: {
-          default: 'Click Me Nao',
-        },
-      }).html()).toMatchSnapshot()
-    })
-  }
-}
+describe('btn.vue', () => {
+  const h = createHarness()
+
+  it('renders', () => {
+    expect(h.render(Component, {
+      slots: {
+        default: 'Click Me Nao',
+      },
+    }).html()).toMatchSnapshot()
+  })
+})

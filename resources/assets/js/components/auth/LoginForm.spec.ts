@@ -1,71 +1,71 @@
 import { screen, waitFor } from '@testing-library/vue'
 import type { Mock } from 'vitest'
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import { authService } from '@/services/authService'
 import { logger } from '@/utils/logger'
 import Component from './LoginForm.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('renders', () => expect(this.render(Component).html()).toMatchSnapshot())
+describe('loginForm.vue', () => {
+  const h = createHarness()
 
-    it('logs in', async () => {
-      expect((await this.submitForm(this.mock(authService, 'login'))).emitted().loggedin).toBeTruthy()
-    })
+  const submitForm = async (loginMock: Mock) => {
+    const rendered = h.render(Component)
 
-    it('fails to log in', async () => {
-      const mock = this.mock(authService, 'login').mockRejectedValue('Unauthenticated')
-      const logMock = this.mock(logger, 'error')
-      const { emitted } = await this.submitForm(mock)
-      await this.tick()
-
-      expect(emitted().loggedin).toBeFalsy()
-      expect(screen.getByTestId('login-form').classList.contains('error')).toBe(true)
-      expect(logMock).toHaveBeenCalledWith('Unauthenticated')
-    })
-
-    it('shows forgot password form', async () => {
-      this.render(Component)
-      await this.user.click(screen.getByText('Forgot password?'))
-
-      await waitFor(() => screen.getByTestId('forgot-password-form'))
-    })
-
-    it('does not show forgot password form if mailer is not configure', async () => {
-      window.MAILER_CONFIGURED = false
-      this.render(Component)
-
-      expect(screen.queryByText('Forgot password?')).toBeNull()
-      window.MAILER_CONFIGURED = true
-    })
-
-    it('shows Google login button', async () => {
-      window.SSO_PROVIDERS = ['Google']
-
-      const { html } = this.render(Component, {
-        global: {
-          stubs: {
-            GoogleLoginButton: this.stub('google-login-button'),
-          },
-        },
-      })
-
-      expect(html()).toMatchSnapshot()
-
-      window.SSO_PROVIDERS = []
-    })
-  }
-
-  private async submitForm (loginMock: Mock) {
-    const rendered = this.render(Component)
-
-    await this.type(screen.getByPlaceholderText('Your email address'), 'john@doe.com')
-    await this.type(screen.getByPlaceholderText('Your password'), 'secret')
-    await this.user.click(screen.getByTestId('submit'))
+    await h.type(screen.getByPlaceholderText('Your email address'), 'john@doe.com')
+    await h.type(screen.getByPlaceholderText('Your password'), 'secret')
+    await h.user.click(screen.getByTestId('submit'))
 
     expect(loginMock).toHaveBeenCalledWith('john@doe.com', 'secret')
 
     return rendered
   }
-}
+
+  it('renders', () => expect(h.render(Component).html()).toMatchSnapshot())
+
+  it('logs in', async () => {
+    expect((await submitForm(h.mock(authService, 'login'))).emitted().loggedin).toBeTruthy()
+  })
+
+  it('fails to log in', async () => {
+    const mock = h.mock(authService, 'login').mockRejectedValue('Unauthenticated')
+    const logMock = h.mock(logger, 'error')
+    const { emitted } = await submitForm(mock)
+    await h.tick()
+
+    expect(emitted().loggedin).toBeFalsy()
+    expect(screen.getByTestId('login-form').classList.contains('error')).toBe(true)
+    expect(logMock).toHaveBeenCalledWith('Unauthenticated')
+  })
+
+  it('shows forgot password form', async () => {
+    h.render(Component)
+    await h.user.click(screen.getByText('Forgot password?'))
+
+    await waitFor(() => screen.getByTestId('forgot-password-form'))
+  })
+
+  it('does not show forgot password form if mailer is not configure', async () => {
+    window.MAILER_CONFIGURED = false
+    h.render(Component)
+
+    expect(screen.queryByText('Forgot password?')).toBeNull()
+    window.MAILER_CONFIGURED = true
+  })
+
+  it('shows Google login button', async () => {
+    window.SSO_PROVIDERS = ['Google']
+
+    const { html } = h.render(Component, {
+      global: {
+        stubs: {
+          GoogleLoginButton: h.stub('google-login-button'),
+        },
+      },
+    })
+
+    expect(html()).toMatchSnapshot()
+
+    window.SSO_PROVIDERS = []
+  })
+})

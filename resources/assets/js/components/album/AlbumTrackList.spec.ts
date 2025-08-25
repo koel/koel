@@ -1,27 +1,26 @@
 import { screen } from '@testing-library/vue'
-import factory from '@/__tests__/factory'
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import { playableStore } from '@/stores/playableStore'
 import Component from './AlbumTrackList.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('displays the tracks', async () => {
-      const album = factory('album')
-      const fetchMock = this.mock(playableStore, 'fetchSongsForAlbum').mockResolvedValue(factory('song', 5))
+describe('albumTrackList.vue', () => {
+  const h = createHarness()
 
-      this.render(Component, {
-        props: {
-          album,
-          tracks: factory('album-track', 3),
-        },
-      })
+  it('displays the tracks', async () => {
+    const album = h.factory('album')
+    const fetchMock = h.mock(playableStore, 'fetchSongsForAlbum').mockResolvedValue(h.factory('song', 5))
 
-      await this.tick()
-
-      expect(fetchMock).toHaveBeenCalledWith(album)
-      expect(screen.queryAllByTestId('album-track-item')).toHaveLength(3)
+    h.render(Component, {
+      props: {
+        album,
+        tracks: h.factory('album-track', 3),
+      },
     })
-  }
-}
+
+    await h.tick()
+
+    expect(fetchMock).toHaveBeenCalledWith(album)
+    expect(screen.queryAllByTestId('album-track-item')).toHaveLength(3)
+  })
+})

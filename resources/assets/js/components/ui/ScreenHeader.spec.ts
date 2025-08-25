@@ -1,18 +1,18 @@
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import Component from './ScreenHeader.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('renders', () => {
-      expect(this.render(Component, {
-        slots: {
-          default: 'This Header',
-          meta: '<p>Some meta</p>',
-          controls: '<nav>Some controls</nav>',
-          thumbnail: '<img src="https://placekitten.com/200/300" />',
-        },
-      }).html()).toMatchSnapshot()
-    })
-  }
-}
+describe('screenHeader.vue', () => {
+  const h = createHarness()
+
+  it('renders', () => {
+    expect(h.render(Component, {
+      slots: {
+        default: 'This Header',
+        meta: '<p>Some meta</p>',
+        controls: '<nav>Some controls</nav>',
+        thumbnail: '<img src="https://placekitten.com/200/300" />',
+      },
+    }).html()).toMatchSnapshot()
+  })
+})

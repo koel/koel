@@ -1,16 +1,16 @@
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import Component from './ScreenEmptyState.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('renders', () => {
-      expect(this.render(Component, {
-        slots: {
-          icon: '<i class="my-icon"/>',
-          default: 'Nothing here',
-        },
-      }).html()).toMatchSnapshot()
-    })
-  }
-}
+describe('screenEmptyState.vue', () => {
+  const h = createHarness()
+
+  it('renders', () => {
+    expect(h.render(Component, {
+      slots: {
+        icon: '<i class="my-icon"/>',
+        default: 'Nothing here',
+      },
+    }).html()).toMatchSnapshot()
+  })
+})

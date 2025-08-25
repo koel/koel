@@ -1,6 +1,6 @@
-import { it } from 'vitest'
+import { describe, it } from 'vitest'
 import { screen } from '@testing-library/vue'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { createHarness } from '@/__tests__/TestHarness'
 import { commonStore } from '@/stores/commonStore'
 import { eventBus } from '@/utils/eventBus'
 import Component from './Sidebar.vue'
@@ -16,26 +16,26 @@ const standardItems = [
 
 const adminItems = [...standardItems, 'Users', 'Upload', 'Settings']
 
-new class extends UnitTestCase {
-  protected test () {
-    it('shows the standard items', () => {
-      this.be().render(Component)
-      standardItems.forEach(label => screen.getByText(label))
-    })
+describe('sidebar.vue', () => {
+  const h = createHarness()
 
-    it('shows administrative items', () => {
-      this.beAdmin().render(Component)
-      adminItems.forEach(label => screen.getByText(label))
-    })
+  it('shows the standard items', () => {
+    h.be().render(Component)
+    standardItems.forEach(label => screen.getByText(label))
+  })
 
-    it('shows the YouTube sidebar item on demand', async () => {
-      commonStore.state.uses_you_tube = true
-      this.render(Component)
+  it('shows administrative items', () => {
+    h.beAdmin().render(Component)
+    adminItems.forEach(label => screen.getByText(label))
+  })
 
-      eventBus.emit('PLAY_YOUTUBE_VIDEO', { id: '123', title: 'A Random Video' })
-      await this.tick()
+  it('shows the YouTube sidebar item on demand', async () => {
+    commonStore.state.uses_you_tube = true
+    h.render(Component)
 
-      screen.getByText('A Random Video')
-    })
-  }
-}
+    eventBus.emit('PLAY_YOUTUBE_VIDEO', { id: '123', title: 'A Random Video' })
+    await h.tick()
+
+    screen.getByText('A Random Video')
+  })
+})

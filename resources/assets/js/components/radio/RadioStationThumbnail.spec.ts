@@ -1,28 +1,18 @@
+import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
-import factory from '@/__tests__/factory'
+import { createHarness } from '@/__tests__/TestHarness'
 import Component from './RadioStationThumbnail.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
+describe('radioStationThumbnail.vue', () => {
+  const h = createHarness()
 
-    it('emits the clicked event', async () => {
-      const { emitted } = this.renderComponent()
-
-      await this.user.click(screen.getByRole('button'))
-      expect(emitted().clicked).not.toBeNull()
-    })
-  }
-
-  private renderComponent (station?: RadioStation) {
-    station = station || factory('radio-station', {
+  const renderComponent = (station?: RadioStation) => {
+    station = station || h.factory('radio-station', {
       name: 'Beethoven Goes Metal',
       logo: 'https://test/beet.jpg',
     })
 
-    const rendered = this.render(Component, {
+    const rendered = h.render(Component, {
       props: {
         station,
       },
@@ -33,4 +23,13 @@ new class extends UnitTestCase {
       station,
     }
   }
-}
+
+  it('renders', () => expect(renderComponent().html()).toMatchSnapshot())
+
+  it('emits the clicked event', async () => {
+    const { emitted } = renderComponent()
+
+    await h.user.click(screen.getByRole('button'))
+    expect(emitted().clicked).not.toBeNull()
+  })
+})

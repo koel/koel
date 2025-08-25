@@ -1,14 +1,14 @@
+import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { createHarness } from '@/__tests__/TestHarness'
 import Component from './SidebarToggleButton.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('emits the toggle event', () => {
-      const { emitted } = this.render(Component)
-      this.trigger(screen.getByRole('checkbox'), 'click')
-      expect(emitted()['update:modelValue']).toBeTruthy()
-    })
-  }
-}
+describe('sidebarToggleButton.vue', () => {
+  const h = createHarness()
+
+  it('emits the toggle event', () => {
+    const { emitted } = h.render(Component)
+    h.trigger(screen.getByRole('checkbox'), 'click')
+    expect(emitted()['update:modelValue']).toBeTruthy()
+  })
+})

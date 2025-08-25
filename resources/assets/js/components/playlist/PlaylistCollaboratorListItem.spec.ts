@@ -1,89 +1,93 @@
-import { expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
-import UnitTestCase from '@/__tests__/UnitTestCase'
-import factory from '@/__tests__/factory'
+import { createHarness } from '@/__tests__/TestHarness'
 import Component from './PlaylistCollaboratorListItem.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('does not show a badge when current user is not the collaborator', async () => {
-      const currentUser = factory('user')
-      this.be(currentUser).renderComponent({
-        collaborator: factory('playlist-collaborator', { id: currentUser.id + 1 }),
-        removable: true,
-        manageable: true,
-        role: 'owner',
-      })
+describe('playlistCollaboratorListItem.vue', () => {
+  const h = createHarness()
 
-      expect(screen.queryByTitle('This is you!')).toBeNull()
-    })
-
-    it('shows a badge when current user is the collaborator', async () => {
-      const currentUser = factory('user')
-      this.be(currentUser).renderComponent({
-        collaborator: factory('playlist-collaborator', {
-          id: currentUser.id,
-          name: currentUser.name,
-          avatar: currentUser.avatar,
-        }),
-        removable: true,
-        manageable: true,
-        role: 'owner',
-      })
-
-      screen.getByTitle('This is you!')
-    })
-
-    it('shows the role', async () => {
-      const collaborator = factory('playlist-collaborator')
-
-      this.be().renderComponent({
-        collaborator,
-        removable: true,
-        manageable: true,
-        role: 'owner',
-      })
-
-      screen.getByText('Owner')
-
-      this.be().renderComponent({
-        collaborator,
-        removable: true,
-        manageable: true,
-        role: 'contributor',
-      })
-
-      screen.getByText('Contributor')
-    })
-
-    it('emits the remove event when the remove button is clicked', async () => {
-      const collaborator = factory('playlist-collaborator')
-      const { emitted } = this.be().renderComponent({
-        collaborator,
-        removable: true,
-        manageable: true,
-        role: 'owner',
-      })
-
-      await this.user.click(screen.getByRole('button', { name: 'Remove' }))
-
-      expect(emitted('remove')).toBeTruthy()
-    })
-  }
-
-  private renderComponent (props: {
+  const renderComponent = (props: {
     collaborator: PlaylistCollaborator
     removable: boolean
     manageable: boolean
     role: 'owner' | 'contributor'
-  }) {
-    return this.render(Component, {
+  }) => {
+    return h.render(Component, {
       props,
       global: {
         stubs: {
-          UserAvatar: this.stub('UserAvatar'),
+          UserAvatar: h.stub('UserAvatar'),
         },
       },
     })
   }
-}
+
+  it('does not show a badge when current user is not the collaborator', async () => {
+    const currentUser = h.factory('user')
+    h.be(currentUser)
+    renderComponent({
+      collaborator: h.factory('playlist-collaborator', { id: currentUser.id + 1 }),
+      removable: true,
+      manageable: true,
+      role: 'owner',
+    })
+
+    expect(screen.queryByTitle('This is you!')).toBeNull()
+  })
+
+  it('shows a badge when current user is the collaborator', async () => {
+    const currentUser = h.factory('user')
+    h.be(currentUser)
+    renderComponent({
+      collaborator: h.factory('playlist-collaborator', {
+        id: currentUser.id,
+        name: currentUser.name,
+        avatar: currentUser.avatar,
+      }),
+      removable: true,
+      manageable: true,
+      role: 'owner',
+    })
+
+    screen.getByTitle('This is you!')
+  })
+
+  it('shows the role', async () => {
+    const collaborator = h.factory('playlist-collaborator')
+
+    h.be()
+    renderComponent({
+      collaborator,
+      removable: true,
+      manageable: true,
+      role: 'owner',
+    })
+
+    screen.getByText('Owner')
+
+    h.be()
+    renderComponent({
+      collaborator,
+      removable: true,
+      manageable: true,
+      role: 'contributor',
+    })
+
+    screen.getByText('Contributor')
+  })
+
+  it('emits the remove event when the remove button is clicked', async () => {
+    const collaborator = h.factory('playlist-collaborator')
+    h.be()
+    const { emitted } = renderComponent({
+      collaborator,
+      removable: true,
+      manageable: true,
+      role: 'owner',
+    })
+
+    await h.user.click(screen.getByRole('button', { name: 'Remove' }))
+
+    expect(emitted('remove')).toBeTruthy()
+  })
+})

@@ -1,21 +1,20 @@
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
-import factory from '@/__tests__/factory'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import Component from './EpisodeProgress.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('renders', () => {
-      const { html } = this.render(Component, {
-        props: {
-          episode: factory('episode', {
-            length: 300,
-          }),
-          position: 60,
-        },
-      })
+describe('episodeProgress.vue', () => {
+  const h = createHarness()
 
-      expect(html()).toMatchSnapshot()
+  it('renders', () => {
+    const { html } = h.render(Component, {
+      props: {
+        episode: h.factory('episode', {
+          length: 300,
+        }),
+        position: 60,
+      },
     })
-  }
-}
+
+    expect(html()).toMatchSnapshot()
+  })
+})

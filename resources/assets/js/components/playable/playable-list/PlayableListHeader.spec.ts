@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/vue'
 import { ref } from 'vue'
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import {
   PlayableListConfigKey,
   PlayableListContextKey,
@@ -11,40 +11,10 @@ import {
 } from '@/symbols'
 import PlayableListHeader from './PlayableListHeader.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('renders', async () => {
-      const { html } = await this.renderComponent()
-      expect(html()).toMatchSnapshot()
-    })
+describe('playableListHeader.vue', () => {
+  const h = createHarness()
 
-    it.each<[PlayableListSortField, string]>([
-      ['track', 'header-track-number'],
-      ['title', 'header-title'],
-      ['album_name', 'header-album'],
-      ['length', 'header-length'],
-    ])('sorts by %s upon %s clicked', async (field, testId) => {
-      const { emitted } = await this.renderComponent()
-
-      await this.user.click(screen.getByTestId(testId))
-      expect(emitted().sort[0]).toEqual([field, 'desc'])
-
-      await this.user.click(screen.getByTestId(testId))
-      expect(emitted().sort[1]).toEqual([field, 'asc'])
-    })
-
-    it('cannot be sorted if configured so', async () => {
-      const { emitted } = await this.renderComponent({
-        sortable: false,
-        reorderable: true,
-      })
-
-      await this.user.click(screen.getByTestId('header-track-number'))
-      expect(emitted().sort).toBeUndefined()
-    })
-  }
-
-  private async renderComponent (
+  const renderComponent = async (
     config: Partial<PlayableListConfig> = {
       sortable: true,
       reorderable: true,
@@ -55,22 +25,22 @@ new class extends UnitTestCase {
     selectedPlayables: Playable[] = [],
     sortField: PlayableListSortField = 'title',
     sortOrder: SortOrder = 'asc',
-  ) {
+  ) => {
     const sortFieldRef = ref(sortField)
     const sortOrderRef = ref(sortOrder)
 
-    await this.router.activateRoute({
+    await h.router.activateRoute({
       screen: 'Songs',
       path: '/songs',
     })
 
-    return this.render(PlayableListHeader, {
+    return h.render(PlayableListHeader, {
       props: {
         contentType: 'songs',
       },
       global: {
         stubs: {
-          ActionMenu: this.stub(),
+          ActionMenu: h.stub(),
         },
         provide: {
           [<symbol>SelectedPlayablesKey]: [ref(selectedPlayables), (value: Playable[]) => (selectedPlayables = value)],
@@ -82,4 +52,34 @@ new class extends UnitTestCase {
       },
     })
   }
-}
+
+  it('renders', async () => {
+    const { html } = await renderComponent()
+    expect(html()).toMatchSnapshot()
+  })
+
+  it.each<[PlayableListSortField, string]>([
+    ['track', 'header-track-number'],
+    ['title', 'header-title'],
+    ['album_name', 'header-album'],
+    ['length', 'header-length'],
+  ])('sorts by %s upon %s clicked', async (field, testId) => {
+    const { emitted } = await renderComponent()
+
+    await h.user.click(screen.getByTestId(testId))
+    expect(emitted().sort[0]).toEqual([field, 'desc'])
+
+    await h.user.click(screen.getByTestId(testId))
+    expect(emitted().sort[1]).toEqual([field, 'asc'])
+  })
+
+  it('cannot be sorted if configured so', async () => {
+    const { emitted } = await renderComponent({
+      sortable: false,
+      reorderable: true,
+    })
+
+    await h.user.click(screen.getByTestId('header-track-number'))
+    expect(emitted().sort).toBeUndefined()
+  })
+})

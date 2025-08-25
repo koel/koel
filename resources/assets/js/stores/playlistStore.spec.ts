@@ -1,5 +1,5 @@
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import factory from '@/__tests__/factory'
 import { cache } from '@/services/cache'
 import { http } from '@/services/http'
@@ -63,144 +63,144 @@ const serializedRuleGroups = [
   },
 ]
 
-new class extends UnitTestCase {
-  protected test () {
-    it('serializes playlist for storage', () => {
-      expect(playlistStore.serializeSmartPlaylistRulesForStorage(ruleGroups)).toEqual(serializedRuleGroups)
+describe('playlistStore', () => {
+  const h = createHarness()
+
+  it('serializes playlist for storage', () => {
+    expect(playlistStore.serializeSmartPlaylistRulesForStorage(ruleGroups)).toEqual(serializedRuleGroups)
+  })
+
+  it('sets up a smart playlist with properly unserialized rules', () => {
+    const playlist = h.factory('playlist', {
+      is_smart: true,
+      rules: serializedRuleGroups as unknown as SmartPlaylistRuleGroup[],
     })
 
-    it('sets up a smart playlist with properly unserialized rules', () => {
-      const playlist = factory('playlist', {
-        is_smart: true,
-        rules: serializedRuleGroups as unknown as SmartPlaylistRuleGroup[],
-      })
+    playlistStore.setupSmartPlaylist(playlist)
 
-      playlistStore.setupSmartPlaylist(playlist)
+    expect(playlist.rules).toEqual(ruleGroups)
+  })
 
-      expect(playlist.rules).toEqual(ruleGroups)
+  it('stores a playlist', async () => {
+    const songs = h.factory('song', 3)
+    const playlist = h.factory('playlist')
+    const folder = h.factory('playlist-folder')
+    const postMock = h.mock(http, 'post').mockResolvedValue(playlist)
+    h.mock(playlistStore, 'serializeSmartPlaylistRulesForStorage', null)
+
+    await playlistStore.store('New Playlist', { folder_id: folder.id }, songs)
+
+    expect(postMock).toHaveBeenCalledWith('playlists', {
+      name: 'New Playlist',
+      songs: songs.map(song => song.id),
+      folder_id: folder.id,
     })
 
-    it('stores a playlist', async () => {
-      const songs = factory('song', 3)
-      const playlist = factory('playlist')
-      const folder = factory('playlist-folder')
-      const postMock = this.mock(http, 'post').mockResolvedValue(playlist)
-      this.mock(playlistStore, 'serializeSmartPlaylistRulesForStorage', null)
+    expect(playlistStore.state.playlists).toHaveLength(1)
+    expect(playlistStore.state.playlists[0]).toEqual(playlist)
+  })
 
-      await playlistStore.store('New Playlist', { folder_id: folder.id }, songs)
+  it('deletes a playlist', async () => {
+    const playlist = h.factory('playlist')
+    const deleteMock = h.mock(http, 'delete')
+    playlistStore.state.playlists = [h.factory('playlist'), playlist]
 
-      expect(postMock).toHaveBeenCalledWith('playlists', {
-        name: 'New Playlist',
-        songs: songs.map(song => song.id),
-        folder_id: folder.id,
-      })
+    await playlistStore.delete(playlist)
 
-      expect(playlistStore.state.playlists).toHaveLength(1)
-      expect(playlistStore.state.playlists[0]).toEqual(playlist)
+    expect(deleteMock).toHaveBeenCalledWith(`playlists/${playlist.id}`)
+    expect(playlistStore.state.playlists).toHaveLength(1)
+    expect(playlistStore.byId(playlist.id)).toBeUndefined()
+  })
+
+  it('adds songs to a playlist', async () => {
+    const playlist = h.factory('playlist')
+    const songs = h.factory('song', 3)
+    const postMock = h.mock(http, 'post').mockResolvedValue(playlist)
+    const removeMock = h.mock(cache, 'remove')
+
+    await playlistStore.addContent(playlist, songs)
+
+    expect(postMock).toHaveBeenCalledWith(`playlists/${playlist.id}/songs`, {
+      songs: songs.map(song => song.id),
     })
 
-    it('deletes a playlist', async () => {
-      const playlist = factory('playlist')
-      const deleteMock = this.mock(http, 'delete')
-      playlistStore.state.playlists = [factory('playlist'), playlist]
+    expect(removeMock).toHaveBeenCalledWith(['playlist.songs', playlist.id])
+  })
 
-      await playlistStore.delete(playlist)
+  it('removes songs from a playlist', async () => {
+    const playlist = h.factory('playlist')
+    const songs = h.factory('song', 3)
+    const deleteMock = h.mock(http, 'delete').mockResolvedValue(playlist)
+    const removeMock = h.mock(cache, 'remove')
 
-      expect(deleteMock).toHaveBeenCalledWith(`playlists/${playlist.id}`)
-      expect(playlistStore.state.playlists).toHaveLength(1)
-      expect(playlistStore.byId(playlist.id)).toBeUndefined()
+    await playlistStore.removeContent(playlist, songs)
+
+    expect(deleteMock).toHaveBeenCalledWith(`playlists/${playlist.id}/songs`, {
+      songs: songs.map(song => song.id),
     })
 
-    it('adds songs to a playlist', async () => {
-      const playlist = factory('playlist')
-      const songs = factory('song', 3)
-      const postMock = this.mock(http, 'post').mockResolvedValue(playlist)
-      const removeMock = this.mock(cache, 'remove')
+    expect(removeMock).toHaveBeenCalledWith(['playlist.songs', playlist.id])
+  })
 
-      await playlistStore.addContent(playlist, songs)
+  it('does not modify a smart playlist content', async () => {
+    const playlist = factory.states('smart')('playlist')
+    const postMock = h.mock(http, 'post')
 
-      expect(postMock).toHaveBeenCalledWith(`playlists/${playlist.id}/songs`, {
-        songs: songs.map(song => song.id),
-      })
+    await playlistStore.addContent(playlist, h.factory('song', 3))
+    expect(postMock).not.toHaveBeenCalled()
 
-      expect(removeMock).toHaveBeenCalledWith(['playlist.songs', playlist.id])
+    await playlistStore.removeContent(playlist, h.factory('song', 3))
+    expect(postMock).not.toHaveBeenCalled()
+  })
+
+  it('updates a standard playlist', async () => {
+    const playlist = h.factory('playlist')
+    playlistStore.state.playlists = [playlist]
+    const folder = h.factory('playlist-folder')
+
+    const putMock = h.mock(http, 'put').mockResolvedValue(playlist)
+
+    await playlistStore.update(playlist, { name: 'Foo', folder_id: folder.id })
+
+    expect(putMock).toHaveBeenCalledWith(`playlists/${playlist.id}`, {
+      name: 'Foo',
+      rules: null,
+      folder_id: folder.id,
     })
 
-    it('removes songs from a playlist', async () => {
-      const playlist = factory('playlist')
-      const songs = factory('song', 3)
-      const deleteMock = this.mock(http, 'delete').mockResolvedValue(playlist)
-      const removeMock = this.mock(cache, 'remove')
+    expect(playlist.name).toBe('Foo')
+  })
 
-      await playlistStore.removeContent(playlist, songs)
+  it('updates a smart playlist', async () => {
+    const playlist = factory.states('smart')('playlist')
+    playlistStore.state.playlists = [playlist]
+    const rules = h.factory('smart-playlist-rule-group', 2)
+    const serializeMock = h.mock(playlistStore, 'serializeSmartPlaylistRulesForStorage', ['Whatever'])
+    const putMock = h.mock(http, 'put').mockResolvedValue(playlist)
+    const removeMock = h.mock(cache, 'remove')
 
-      expect(deleteMock).toHaveBeenCalledWith(`playlists/${playlist.id}/songs`, {
-        songs: songs.map(song => song.id),
-      })
+    await playlistStore.update(playlist, { name: 'Foo', rules })
 
-      expect(removeMock).toHaveBeenCalledWith(['playlist.songs', playlist.id])
+    expect(serializeMock).toHaveBeenCalledWith(rules)
+
+    expect(putMock).toHaveBeenCalledWith(`playlists/${playlist.id}`, {
+      name: 'Foo',
+      rules: ['Whatever'],
+      folder_id: undefined,
     })
 
-    it('does not modify a smart playlist content', async () => {
-      const playlist = factory.states('smart')('playlist')
-      const postMock = this.mock(http, 'post')
+    expect(removeMock).toHaveBeenCalledWith(['playlist.songs', playlist.id])
+  })
 
-      await playlistStore.addContent(playlist, factory('song', 3))
-      expect(postMock).not.toHaveBeenCalled()
+  it('uploads a cover for a playlist', async () => {
+    const playlist = h.factory('playlist')
+    playlistStore.state.playlists = [playlist]
+    const putMock = h.mock(http, 'put').mockResolvedValue({ cover_url: 'http://test/cover.jpg' })
 
-      await playlistStore.removeContent(playlist, factory('song', 3))
-      expect(postMock).not.toHaveBeenCalled()
-    })
+    await playlistStore.uploadCover(playlist, 'data://cover')
 
-    it('updates a standard playlist', async () => {
-      const playlist = factory('playlist')
-      playlistStore.state.playlists = [playlist]
-      const folder = factory('playlist-folder')
-
-      const putMock = this.mock(http, 'put').mockResolvedValue(playlist)
-
-      await playlistStore.update(playlist, { name: 'Foo', folder_id: folder.id })
-
-      expect(putMock).toHaveBeenCalledWith(`playlists/${playlist.id}`, {
-        name: 'Foo',
-        rules: null,
-        folder_id: folder.id,
-      })
-
-      expect(playlist.name).toBe('Foo')
-    })
-
-    it('updates a smart playlist', async () => {
-      const playlist = factory.states('smart')('playlist')
-      playlistStore.state.playlists = [playlist]
-      const rules = factory('smart-playlist-rule-group', 2)
-      const serializeMock = this.mock(playlistStore, 'serializeSmartPlaylistRulesForStorage', ['Whatever'])
-      const putMock = this.mock(http, 'put').mockResolvedValue(playlist)
-      const removeMock = this.mock(cache, 'remove')
-
-      await playlistStore.update(playlist, { name: 'Foo', rules })
-
-      expect(serializeMock).toHaveBeenCalledWith(rules)
-
-      expect(putMock).toHaveBeenCalledWith(`playlists/${playlist.id}`, {
-        name: 'Foo',
-        rules: ['Whatever'],
-        folder_id: undefined,
-      })
-
-      expect(removeMock).toHaveBeenCalledWith(['playlist.songs', playlist.id])
-    })
-
-    it('uploads a cover for a playlist', async () => {
-      const playlist = factory('playlist')
-      playlistStore.state.playlists = [playlist]
-      const putMock = this.mock(http, 'put').mockResolvedValue({ cover_url: 'http://test/cover.jpg' })
-
-      await playlistStore.uploadCover(playlist, 'data://cover')
-
-      expect(playlist.cover).toBe('http://test/cover.jpg')
-      expect(putMock).toHaveBeenCalledWith(`playlists/${playlist.id}/cover`, { cover: 'data://cover' })
-      expect(playlistStore.byId(playlist.id)?.cover).toBe('http://test/cover.jpg')
-    })
-  }
-}
+    expect(playlist.cover).toBe('http://test/cover.jpg')
+    expect(putMock).toHaveBeenCalledWith(`playlists/${playlist.id}/cover`, { cover: 'data://cover' })
+    expect(playlistStore.byId(playlist.id)?.cover).toBe('http://test/cover.jpg')
+  })
+})

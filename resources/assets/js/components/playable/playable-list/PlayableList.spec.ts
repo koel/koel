@@ -1,7 +1,6 @@
 import { ref } from 'vue'
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
-import factory from '@/__tests__/factory'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import { arrayify } from '@/utils/helpers'
 import {
   FilteredPlayablesKey,
@@ -13,15 +12,10 @@ import {
 } from '@/symbols'
 import Component from './PlayableList.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('renders', async () => {
-      const { html } = await this.renderComponent(factory('song', 5))
-      expect(html()).toMatchSnapshot()
-    })
-  }
+describe('playableList.vue', () => {
+  const h = createHarness()
 
-  private async renderComponent (
+  const renderComponent = async (
     songs: MaybeArray<Playable>,
     config: Partial<PlayableListConfig> = {
       sortable: true,
@@ -33,23 +27,23 @@ new class extends UnitTestCase {
     selectedPlayables: Playable[] = [],
     sortField: PlayableListSortField = 'title',
     sortOrder: SortOrder = 'asc',
-  ) {
+  ) => {
     songs = arrayify(songs)
 
     const sortFieldRef = ref(sortField)
     const sortOrderRef = ref(sortOrder)
 
-    await this.router.activateRoute({
+    await h.router.activateRoute({
       screen: 'Songs',
       path: '/songs',
     })
 
-    const rendered = this.render(Component, {
+    const rendered = h.render(Component, {
       global: {
         stubs: {
-          VirtualScroller: this.stub(),
-          PlayableListSorter: this.stub(),
-          PlayableListHeader: this.stub(),
+          VirtualScroller: h.stub(),
+          PlayableListSorter: h.stub(),
+          PlayableListHeader: h.stub(),
         },
         provide: {
           [<symbol>FilteredPlayablesKey]: [ref(songs)],
@@ -67,4 +61,9 @@ new class extends UnitTestCase {
       songs,
     }
   }
-}
+
+  it('renders', async () => {
+    const { html } = await renderComponent(h.factory('song', 5))
+    expect(html()).toMatchSnapshot()
+  })
+})

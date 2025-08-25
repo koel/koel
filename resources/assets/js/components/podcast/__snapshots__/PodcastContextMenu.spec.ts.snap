@@ -1,6 +1,6 @@
 // Vitest Snapshot v1
 
-exports[`renders 1`] = `
+exports[`podcastContextMenu.vue > renders 1`] = `
 <nav data-v-6396fbf0="" class="podcast-menu menu context-menu select-none shadow" style="top: 42px; left: 420px; bottom: auto; right: auto;" tabindex="0" data-testid="podcast-context-menu">
   <ul data-v-6396fbf0="">
     <li>Play All</li>

@@ -1,45 +1,18 @@
-import { expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
-import UnitTestCase from '@/__tests__/UnitTestCase'
-import factory from '@/__tests__/factory'
+import { createHarness } from '@/__tests__/TestHarness'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { playableStore } from '@/stores/playableStore'
 import Component from './PlayableCard.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('has a thumbnail and a Favorite button', () => {
-      this.renderComponent()
-      screen.getByTestId('thumbnail')
-      screen.getByTestId('favorite-button')
-    })
+describe('playableCard.vue', () => {
+  const h = createHarness()
 
-    it('toggles the favorite state when the Favorite button is clicked', async () => {
-      const { playable } = this.renderComponent('Stopped', false)
-      const toggleFavoriteMock = this.mock(playableStore, 'toggleFavorite')
-
-      await this.user.click(screen.getByRole('button', { name: 'Favorite' }))
-
-      expect(toggleFavoriteMock).toHaveBeenCalledWith(playable)
-    })
-
-    it('queues and plays on double-click', async () => {
-      this.createAudioPlayer()
-
-      const playMock = this.mock(playbackService, 'play')
-      const { playable } = this.renderComponent()
-
-      await this.user.dblClick(screen.getByRole('article'))
-
-      expect(playMock).toHaveBeenCalledWith(playable)
-    })
-  }
-
-  private renderComponent (
+  const renderComponent = (
     playbackState: PlaybackState = 'Stopped',
     mockFavoriteButton = true,
-  ) {
-    const playable = factory('song', {
+  ) => {
+    const playable = h.factory('song', {
       playback_state: playbackState,
       play_count: 10,
       title: 'Foo bar',
@@ -47,14 +20,14 @@ new class extends UnitTestCase {
     })
 
     const stubs = {
-      PlayableThumbnail: this.stub('thumbnail'),
+      PlayableThumbnail: h.stub('thumbnail'),
     }
 
     if (mockFavoriteButton) {
-      stubs.FavoriteButton = this.stub('favorite-button')
+      stubs.FavoriteButton = h.stub('favorite-button')
     }
 
-    const rendered = this.render(Component, {
+    const rendered = h.render(Component, {
       props: {
         playable,
       },
@@ -68,4 +41,30 @@ new class extends UnitTestCase {
       playable,
     }
   }
-}
+
+  it('has a thumbnail and a Favorite button', () => {
+    renderComponent()
+    screen.getByTestId('thumbnail')
+    screen.getByTestId('favorite-button')
+  })
+
+  it('toggles the favorite state when the Favorite button is clicked', async () => {
+    const { playable } = renderComponent('Stopped', false)
+    const toggleFavoriteMock = h.mock(playableStore, 'toggleFavorite')
+
+    await h.user.click(screen.getByRole('button', { name: 'Favorite' }))
+
+    expect(toggleFavoriteMock).toHaveBeenCalledWith(playable)
+  })
+
+  it('queues and plays on double-click', async () => {
+    h.createAudioPlayer()
+
+    const playMock = h.mock(playbackService, 'play')
+    const { playable } = renderComponent()
+
+    await h.user.dblClick(screen.getByRole('article'))
+
+    expect(playMock).toHaveBeenCalledWith(playable)
+  })
+})

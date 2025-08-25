@@ -1,23 +1,23 @@
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import { commonStore } from '@/stores/commonStore'
 import Component from './SpotifyIntegration.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it.each<[boolean, boolean]>([[false, false], [false, true], [true, false], [true, true]]) (
-      'renders proper content with Spotify integration status %s, current user admin status %s',
-      (useSpotify, isAdmin) => {
-        commonStore.state.uses_spotify = useSpotify
+describe('spotifyIntegration.vue', () => {
+  const h = createHarness()
 
-        if (isAdmin) {
-          this.beAdmin()
-        } else {
-          this.be()
-        }
+  it.each<[boolean, boolean]>([[false, false], [false, true], [true, false], [true, true]]) (
+    'renders proper content with Spotify integration status %s, current user admin status %s',
+    (useSpotify, isAdmin) => {
+      commonStore.state.uses_spotify = useSpotify
 
-        expect(this.render(Component).html()).toMatchSnapshot()
-      },
-    )
-  }
-}
+      if (isAdmin) {
+        h.beAdmin()
+      } else {
+        h.be()
+      }
+
+      expect(h.render(Component).html()).toMatchSnapshot()
+    },
+  )
+})

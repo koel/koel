@@ -1,58 +1,58 @@
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import factory from '@/__tests__/factory'
 import { authService } from '@/services/authService'
 import { http } from '@/services/http'
 import { userStore } from '@/stores/userStore'
 import { invitationService } from './invitationService'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('accepts an invitation', async () => {
-      const postMock = this.mock(http, 'post').mockResolvedValue({
-        'audio-token': 'my-audio-token',
-        'token': 'my-token',
-      })
+describe('invitationService', () => {
+  const h = createHarness()
 
-      const setAudioTokenMock = this.mock(authService, 'setAudioToken')
-      const setApiTokenMock = this.mock(authService, 'setApiToken')
-
-      await invitationService.accept('invite-token', 'foo', 'bar')
-
-      expect(postMock).toHaveBeenCalledWith('invitations/accept', {
-        token: 'invite-token',
-        name: 'foo',
-        password: 'bar',
-      })
-
-      expect(setAudioTokenMock).toHaveBeenCalledWith('my-audio-token')
-      expect(setApiTokenMock).toHaveBeenCalledWith('my-token')
+  it('accepts an invitation', async () => {
+    const postMock = h.mock(http, 'post').mockResolvedValue({
+      'audio-token': 'my-audio-token',
+      'token': 'my-token',
     })
 
-    it('invites users', async () => {
-      const prospects = factory.states('prospect')('user', 2)
-      const addMock = this.mock(userStore, 'add')
-      const postMock = this.mock(http, 'post').mockResolvedValue(prospects)
+    const setAudioTokenMock = h.mock(authService, 'setAudioToken')
+    const setApiTokenMock = h.mock(authService, 'setApiToken')
 
-      await invitationService.invite([prospects[0].email, prospects[1].email], false)
+    await invitationService.accept('invite-token', 'foo', 'bar')
 
-      expect(postMock).toHaveBeenCalledWith('invitations', {
-        emails: [prospects[0].email, prospects[1].email],
-        is_admin: false,
-      })
-
-      expect(addMock).toHaveBeenCalledWith(prospects)
+    expect(postMock).toHaveBeenCalledWith('invitations/accept', {
+      token: 'invite-token',
+      name: 'foo',
+      password: 'bar',
     })
 
-    it('revokes an invitation', async () => {
-      const user = factory.states('prospect')('user')
-      const removeMock = this.mock(userStore, 'remove')
-      const deleteMock = this.mock(http, 'delete')
+    expect(setAudioTokenMock).toHaveBeenCalledWith('my-audio-token')
+    expect(setApiTokenMock).toHaveBeenCalledWith('my-token')
+  })
 
-      await invitationService.revoke(user)
+  it('invites users', async () => {
+    const prospects = factory.states('prospect')('user', 2)
+    const addMock = h.mock(userStore, 'add')
+    const postMock = h.mock(http, 'post').mockResolvedValue(prospects)
 
-      expect(deleteMock).toHaveBeenCalledWith('invitations', { email: user.email })
-      expect(removeMock).toHaveBeenCalledWith(user)
+    await invitationService.invite([prospects[0].email, prospects[1].email], false)
+
+    expect(postMock).toHaveBeenCalledWith('invitations', {
+      emails: [prospects[0].email, prospects[1].email],
+      is_admin: false,
     })
-  }
-}
+
+    expect(addMock).toHaveBeenCalledWith(prospects)
+  })
+
+  it('revokes an invitation', async () => {
+    const user = factory.states('prospect')('user')
+    const removeMock = h.mock(userStore, 'remove')
+    const deleteMock = h.mock(http, 'delete')
+
+    await invitationService.revoke(user)
+
+    expect(deleteMock).toHaveBeenCalledWith('invitations', { email: user.email })
+    expect(removeMock).toHaveBeenCalledWith(user)
+  })
+})

@@ -1,54 +1,53 @@
 import { ref } from 'vue'
 import { screen, waitFor } from '@testing-library/vue'
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
-import factory from '@/__tests__/factory'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import { albumStore } from '@/stores/albumStore'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { CurrentStreamableKey } from '@/symbols'
 import AlbumArtOverlay from '@/components/ui/AlbumArtOverlay.vue'
 import Component from './MainContent.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('has a translucent overlay per album', async () => {
-      this.mock(albumStore, 'fetchThumbnail').mockResolvedValue('http://test/foo.jpg')
+describe('mainContent.vue', () => {
+  const h = createHarness()
 
-      this.renderComponent()
-
-      await waitFor(() => screen.getByTestId('album-art-overlay'))
-    })
-
-    it('does not have a translucent over if configured not so', async () => {
-      preferenceStore.state.show_album_art_overlay = false
-
-      this.renderComponent()
-
-      await waitFor(() => expect(screen.queryByTestId('album-art-overlay')).toBeNull())
-    })
-  }
-
-  private renderComponent () {
-    return this.render(Component, {
+  const renderComponent = () => {
+    return h.render(Component, {
       global: {
         provide: {
-          [<symbol>CurrentStreamableKey]: ref(factory('song')),
+          [<symbol>CurrentStreamableKey]: ref(h.factory('song')),
         },
         stubs: {
           AlbumArtOverlay,
-          AllSongsScreen: this.stub('all-songs-screen'),
-          AlbumListScreen: this.stub('album-list-screen'),
-          ArtistListScreen: this.stub('artist-list-screen'),
-          PlaylistScreen: this.stub('playlist-screen'),
-          FavoritesScreen: this.stub('favorites-screen'),
-          RecentlyPlayedScreen: this.stub('recently-played-screen'),
-          UploadScreen: this.stub('upload-screen'),
-          SearchExcerptsScreen: this.stub('search-excerpts-screen'),
-          GenreScreen: this.stub('genre-screen'),
-          HomeScreen: this.stub(), // so that home overview requests are not made
-          Visualizer: this.stub('visualizer'),
+          AllSongsScreen: h.stub('all-songs-screen'),
+          AlbumListScreen: h.stub('album-list-screen'),
+          ArtistListScreen: h.stub('artist-list-screen'),
+          PlaylistScreen: h.stub('playlist-screen'),
+          FavoritesScreen: h.stub('favorites-screen'),
+          RecentlyPlayedScreen: h.stub('recently-played-screen'),
+          UploadScreen: h.stub('upload-screen'),
+          SearchExcerptsScreen: h.stub('search-excerpts-screen'),
+          GenreScreen: h.stub('genre-screen'),
+          HomeScreen: h.stub(), // so that home overview requests are not made
+          Visualizer: h.stub('visualizer'),
         },
       },
     })
   }
-}
+
+  it('has a translucent overlay per album', async () => {
+    h.mock(albumStore, 'fetchThumbnail').mockResolvedValue('http://test/foo.jpg')
+
+    renderComponent()
+
+    await waitFor(() => screen.getByTestId('album-art-overlay'))
+  })
+
+  it('does not have a translucent over if configured not so', async () => {
+    preferenceStore.state.show_album_art_overlay = false
+
+    renderComponent()
+
+    await waitFor(() => expect(screen.queryByTestId('album-art-overlay')).toBeNull())
+  })
+})

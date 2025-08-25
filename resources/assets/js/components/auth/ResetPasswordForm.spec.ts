@@ -1,26 +1,26 @@
 import { screen } from '@testing-library/vue'
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import { authService } from '@/services/authService'
 import Component from './ResetPasswordForm.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('resets password', async () => {
-      const resetMock = this.mock(authService, 'resetPassword').mockResolvedValue(null)
-      const loginMock = this.mock(authService, 'login').mockResolvedValue(null)
+describe('resetPasswordForm.vue', () => {
+  const h = createHarness()
 
-      await this.router.activateRoute({
-        path: '_',
-        screen: 'Password.Reset',
-      }, { payload: 'Zm9vQGJhci5jb218bXktdG9rZW4=' })
+  it('resets password', async () => {
+    const resetMock = h.mock(authService, 'resetPassword').mockResolvedValue(null)
+    const loginMock = h.mock(authService, 'login').mockResolvedValue(null)
 
-      this.render(Component)
-      await this.type(screen.getByPlaceholderText('New password'), 'new-password')
-      await this.user.click(screen.getByRole('button', { name: 'Save' }))
+    await h.router.activateRoute({
+      path: '_',
+      screen: 'Password.Reset',
+    }, { payload: 'Zm9vQGJhci5jb218bXktdG9rZW4=' })
 
-      expect(resetMock).toHaveBeenCalledWith('foo@bar.com', 'new-password', 'my-token')
-      expect(loginMock).toHaveBeenCalledWith('foo@bar.com', 'new-password')
-    })
-  }
-}
+    h.render(Component)
+    await h.type(screen.getByPlaceholderText('New password'), 'new-password')
+    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+
+    expect(resetMock).toHaveBeenCalledWith('foo@bar.com', 'new-password', 'my-token')
+    expect(loginMock).toHaveBeenCalledWith('foo@bar.com', 'new-password')
+  })
+})

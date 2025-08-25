@@ -1,36 +1,36 @@
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import Component from './ThumbnailStack.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('displays 4 thumbnails at most', () => {
-      const { getAllByTestId } = this.render(Component, {
-        props: {
-          thumbnails: [
-            'https://via.placeholder.com/150',
-            'https://via.placeholder.com/150?foo',
-            'https://via.placeholder.com/150?bar',
-            'https://via.placeholder.com/150?baz',
-            'https://via.placeholder.com/150?qux',
-          ],
-        },
-      })
+describe('thumbnailStack.vue', () => {
+  const h = createHarness()
 
-      expect(getAllByTestId('thumbnail')).toHaveLength(4)
+  it('displays 4 thumbnails at most', () => {
+    const { getAllByTestId } = h.render(Component, {
+      props: {
+        thumbnails: [
+          'https://via.placeholder.com/150',
+          'https://via.placeholder.com/150?foo',
+          'https://via.placeholder.com/150?bar',
+          'https://via.placeholder.com/150?baz',
+          'https://via.placeholder.com/150?qux',
+        ],
+      },
     })
 
-    it('displays the first thumbnail if less than 4 are provided', () => {
-      const { getAllByTestId } = this.render(Component, {
-        props: {
-          thumbnails: [
-            'https://via.placeholder.com/150',
-            'https://via.placeholder.com/150?foo',
-          ],
-        },
-      })
+    expect(getAllByTestId('thumbnail')).toHaveLength(4)
+  })
 
-      expect(getAllByTestId('thumbnail')).toHaveLength(1)
+  it('displays the first thumbnail if less than 4 are provided', () => {
+    const { getAllByTestId } = h.render(Component, {
+      props: {
+        thumbnails: [
+          'https://via.placeholder.com/150',
+          'https://via.placeholder.com/150?foo',
+        ],
+      },
     })
-  }
-}
+
+    expect(getAllByTestId('thumbnail')).toHaveLength(1)
+  })
+})

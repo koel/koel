@@ -1,105 +1,100 @@
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
-import factory from '@/__tests__/factory'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import { http } from '@/services/http'
 import type { CreateUserData, UpdateUserData } from '@/stores/userStore'
 import { userStore } from '@/stores/userStore'
 
-const currentUser = factory('user', {
-  name: 'John Doe',
-  email: 'john@doe.com',
-  is_admin: true,
-})
+describe('userStore', () => {
+  let currentUser: User
 
-new class extends UnitTestCase {
-  protected beforeEach () {
-    super.beforeEach(() => {
+  const h = createHarness({
+    beforeEach: () => {
       userStore.vault.clear()
       userStore.init(currentUser)
-    })
-  }
+    },
+  })
 
-  protected test () {
-    it('initializes with current user', () => {
-      expect(userStore.current).toEqual(currentUser)
-      expect(userStore.vault.size).toBe(1)
-    })
+  currentUser = h.factory('user')
 
-    it('syncs with vault', () => {
-      const user = factory('user')
+  it('initializes with current user', () => {
+    expect(userStore.current).toEqual(currentUser)
+    expect(userStore.vault.size).toBe(1)
+  })
 
-      expect(userStore.syncWithVault(user)).toEqual([user])
-      expect(userStore.vault.size).toBe(2)
-      expect(userStore.vault.get(user.id)).toEqual(user)
-    })
+  it('syncs with vault', () => {
+    const user = h.factory('user')
 
-    it('fetches users', async () => {
-      const users = factory('user', 3)
-      const getMock = this.mock(http, 'get').mockResolvedValue(users)
+    expect(userStore.syncWithVault(user)).toEqual([user])
+    expect(userStore.vault.size).toBe(2)
+    expect(userStore.vault.get(user.id)).toEqual(user)
+  })
 
-      await userStore.fetch()
+  it('fetches users', async () => {
+    const users = h.factory('user', 3)
+    const getMock = h.mock(http, 'get').mockResolvedValue(users)
 
-      expect(getMock).toHaveBeenCalledWith('users')
-      expect(userStore.vault.size).toBe(4)
-    })
+    await userStore.fetch()
 
-    it('gets user by id', () => {
-      const user = factory('user')
-      userStore.syncWithVault(user)
+    expect(getMock).toHaveBeenCalledWith('users')
+    expect(userStore.vault.size).toBe(4)
+  })
 
-      expect(userStore.byId(user.id)).toEqual(user)
-    })
+  it('gets user by id', () => {
+    const user = h.factory('user')
+    userStore.syncWithVault(user)
 
-    it('creates a user', async () => {
-      const data: CreateUserData = {
-        is_admin: false,
-        password: 'bratwurst',
-        name: 'Jane Doe',
-        email: 'jane@doe.com',
-      }
+    expect(userStore.byId(user.id)).toEqual(user)
+  })
 
-      const user = factory('user', data)
-      const postMock = this.mock(http, 'post').mockResolvedValue(user)
+  it('creates a user', async () => {
+    const data: CreateUserData = {
+      is_admin: false,
+      password: 'bratwurst',
+      name: 'Jane Doe',
+      email: 'jane@doe.com',
+    }
 
-      expect(await userStore.store(data)).toEqual(user)
-      expect(postMock).toHaveBeenCalledWith('users', data)
-      expect(userStore.vault.size).toBe(2)
-      expect(userStore.state.users).toHaveLength(2)
-    })
+    const user = h.factory('user', data)
+    const postMock = h.mock(http, 'post').mockResolvedValue(user)
 
-    it('updates a user', async () => {
-      const user = factory('user')
-      userStore.state.users.push(...userStore.syncWithVault(user))
+    expect(await userStore.store(data)).toEqual(user)
+    expect(postMock).toHaveBeenCalledWith('users', data)
+    expect(userStore.vault.size).toBe(2)
+    expect(userStore.state.users).toHaveLength(2)
+  })
 
-      const data: UpdateUserData = {
-        is_admin: true,
-        password: 'bratwurst',
-        name: 'Jane Doe',
-        email: 'jane@doe.com',
-      }
+  it('updates a user', async () => {
+    const user = h.factory('user')
+    userStore.state.users.push(...userStore.syncWithVault(user))
 
-      const updated = { ...user, ...data }
-      const putMock = this.mock(http, 'put').mockResolvedValue(updated)
+    const data: UpdateUserData = {
+      is_admin: true,
+      password: 'bratwurst',
+      name: 'Jane Doe',
+      email: 'jane@doe.com',
+    }
 
-      await userStore.update(user, data)
+    const updated = { ...user, ...data }
+    const putMock = h.mock(http, 'put').mockResolvedValue(updated)
 
-      expect(putMock).toHaveBeenCalledWith(`users/${user.id}`, data)
-      expect(userStore.vault.get(user.id)).toEqual(updated)
-    })
+    await userStore.update(user, data)
 
-    it('deletes a user', async () => {
-      const deleteMock = this.mock(http, 'delete')
+    expect(putMock).toHaveBeenCalledWith(`users/${user.id}`, data)
+    expect(userStore.vault.get(user.id)).toEqual(updated)
+  })
 
-      const user = factory('user')
-      userStore.state.users.push(...userStore.syncWithVault(user))
-      expect(userStore.vault.has(user.id)).toBe(true)
+  it('deletes a user', async () => {
+    const deleteMock = h.mock(http, 'delete')
 
-      expect(await userStore.destroy(user))
+    const user = h.factory('user')
+    userStore.state.users.push(...userStore.syncWithVault(user))
+    expect(userStore.vault.has(user.id)).toBe(true)
 
-      expect(deleteMock).toHaveBeenCalledWith(`users/${user.id}`)
-      expect(userStore.vault.size).toBe(1)
-      expect(userStore.state.users).toHaveLength(1)
-      expect(userStore.vault.has(user.id)).toBe(false)
-    })
-  }
-}
+    expect(await userStore.destroy(user))
+
+    expect(deleteMock).toHaveBeenCalledWith(`users/${user.id}`)
+    expect(userStore.vault.size).toBe(1)
+    expect(userStore.state.users).toHaveLength(1)
+    expect(userStore.vault.has(user.id)).toBe(false)
+  })
+})

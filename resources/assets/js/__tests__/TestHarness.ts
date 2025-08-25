@@ -41,9 +41,9 @@ const setPropIfNotExists = (obj: object | null, prop: any, value: any) => {
   }
 }
 
-export default abstract class UnitTestCase {
-  protected router: Router
-  protected user: UserEvent
+class TestHarness {
+  public router: Router
+  public user: UserEvent
   private backupMethods = new Map()
 
   public constructor () {
@@ -56,10 +56,9 @@ export default abstract class UnitTestCase {
 
     this.beforeEach()
     this.afterEach()
-    this.test()
   }
 
-  protected beforeEach (cb?: Closure) {
+  public beforeEach (cb?: Closure) {
     beforeEach(() => {
       this.mock(http, 'request').mockResolvedValue({}) // prevent actual HTTP requests from being made
       preferenceStore.init()
@@ -73,7 +72,7 @@ export default abstract class UnitTestCase {
     })
   }
 
-  protected afterEach (cb?: Closure) {
+  public afterEach (cb?: Closure) {
     afterEach(() => {
       document.body.innerHTML = ''
       isMobile.any = false
@@ -86,20 +85,33 @@ export default abstract class UnitTestCase {
     })
   }
 
-  protected auth (user?: User) {
-    return this.be(user)
-  }
+  public readonly auth = this.be
 
-  protected be (user?: User) {
+  public be (user?: User) {
     userStore.state.current = user || factory('user')
     return this
   }
 
-  protected beAdmin () {
+  public beAdmin () {
     return this.be(factory.states('admin')('user'))
   }
 
-  protected mock<T, M extends MethodOf<Required<T>>> (obj: T, methodName: M, implementation?: any) {
+  public mock<T, M extends MethodOf<Required<T>>> (obj: T, methodName: M, implementation?: any) {
+    // check if the method is already mocked, and if so, use it instead of creating a new mock
+    for (const [key, _] of this.backupMethods.entries()) {
+      if (key[0] !== obj || key[1] !== methodName) {
+        continue
+      }
+
+      const existingMock = obj[methodName] as unknown as ReturnType<typeof vi.fn>
+
+      if (implementation !== undefined) {
+        existingMock.mockImplementation(implementation instanceof Function ? implementation : () => implementation)
+      }
+
+      return existingMock
+    }
+
     const mock = vi.fn()
 
     if (implementation !== undefined) {
@@ -114,13 +126,13 @@ export default abstract class UnitTestCase {
     return mock
   }
 
-  protected restoreAllMocks () {
+  public restoreAllMocks () {
     this.backupMethods.forEach((fn, [obj, methodName]) => (obj[methodName] = fn))
-    this.backupMethods = new Map()
+    this.backupMethods.clear()
     return this
   }
 
-  protected render (component: any, options: RenderOptions = {}) {
+  public render (component: any, options: RenderOptions = {}) {
     return render(component, deepMerge({
       global: {
         directives: {
@@ -137,7 +149,7 @@ export default abstract class UnitTestCase {
     }, this.supplyRequiredProvides(options)))
   }
 
-  protected enablePlusEdition () {
+  public enablePlusEdition () {
     commonStore.state.koel_plus = {
       active: true,
       short_key: '****-XXXX',
@@ -149,7 +161,7 @@ export default abstract class UnitTestCase {
     return this
   }
 
-  protected disablePlusEdition () {
+  public disablePlusEdition () {
     commonStore.state.koel_plus = {
       active: false,
       short_key: '',
@@ -161,29 +173,29 @@ export default abstract class UnitTestCase {
     return this
   }
 
-  protected enableDemoMode () {
+  public enableDemoMode () {
     window.IS_DEMO = true
     return this
   }
 
-  protected disableDemoMode () {
+  public disableDemoMode () {
     window.IS_DEMO = false
     return this
   }
 
-  protected stub (testId = 'stub') {
+  public stub (testId = 'stub') {
     return defineComponent({
       template: `<br data-testid="${testId}"/>`,
     })
   }
 
-  protected async tick (count = 1) {
+  public async tick (count = 1) {
     for (let i = 0; i < count; ++i) {
       await nextTick()
     }
   }
 
-  protected setReadOnlyProperty<T> (obj: T, prop: keyof T, value: any) {
+  public setReadOnlyProperty<T> (obj: T, prop: keyof T, value: any) {
     return Object.defineProperties(obj, {
       [prop]: {
         value,
@@ -192,16 +204,14 @@ export default abstract class UnitTestCase {
     })
   }
 
-  protected async type (element: HTMLElement, value: string) {
+  public async type (element: HTMLElement, value: string) {
     await this.user.clear(element)
     await this.user.type(element, value)
   }
 
-  protected async trigger (element: HTMLElement, key: EventType | string, options: object = {}) {
+  public async trigger (element: HTMLElement, key: EventType | string, options: object = {}) {
     await fireEvent(element, createEvent[key](element, options))
   }
-
-  protected abstract test ()
 
   private supplyRequiredProvides (options: RenderOptions) {
     options.global = options.global || {}
@@ -215,7 +225,7 @@ export default abstract class UnitTestCase {
     return options
   }
 
-  protected createAudioPlayer () {
+  public createAudioPlayer () {
     if (document.querySelector('.plyr')) {
       return
     }
@@ -226,4 +236,20 @@ export default abstract class UnitTestCase {
       createMediaElementSource: vi.fn(noop),
     }))
   }
+
+  public readonly factory = factory
+}
+
+export function createHarness (overrides?: { beforeEach?: () => void, afterEach?: () => void }) {
+  const h = new (class extends TestHarness {
+  })
+
+  if (overrides?.beforeEach) {
+    h.beforeEach(overrides.beforeEach)
+  }
+  if (overrides?.afterEach) {
+    h.afterEach(overrides.afterEach)
+  }
+
+  return h
 }

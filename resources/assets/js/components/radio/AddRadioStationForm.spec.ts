@@ -1,55 +1,55 @@
-import { expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { screen, waitFor } from '@testing-library/vue'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { createHarness } from '@/__tests__/TestHarness'
 import { radioStationStore } from '@/stores/radioStationStore'
 import Component from './AddRadioStationForm.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('adds a radio station without a logo', async () => {
-      const storeMock = this.mock(radioStationStore, 'store')
+describe('addRadioStationForm.vue', () => {
+  const h = createHarness()
 
-      this.render(Component)
-      await this.type(screen.getByPlaceholderText('My Favorite Radio Station'), 'Beethoven Goes Metal')
-      await this.type(screen.getByPlaceholderText('https://radio.example.com/stream'), 'https://beet.stream/metal')
-      await this.type(screen.getByPlaceholderText('A short description of the station'), 'Heavy af')
+  it('adds a radio station without a logo', async () => {
+    const storeMock = h.mock(radioStationStore, 'store').mockResolvedValue(h.factory('radio-station'))
 
-      await this.user.click(screen.getByRole('button', { name: 'Save' }))
+    h.render(Component)
+    await h.type(screen.getByPlaceholderText('My Favorite Radio Station'), 'Beethoven Goes Metal')
+    await h.type(screen.getByPlaceholderText('https://radio.example.com/stream'), 'https://beet.stream/metal')
+    await h.type(screen.getByPlaceholderText('A short description of the station'), 'Heavy af')
 
-      expect(storeMock).toHaveBeenCalledWith({
-        name: 'Beethoven Goes Metal',
-        url: 'https://beet.stream/metal',
-        description: 'Heavy af',
-        logo: null,
-        is_public: false,
-      })
+    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+
+    expect(storeMock).toHaveBeenCalledWith({
+      name: 'Beethoven Goes Metal',
+      url: 'https://beet.stream/metal',
+      description: 'Heavy af',
+      logo: null,
+      is_public: false,
     })
+  })
 
-    it('adds a radio station with a logo', async () => {
-      const storeMock = this.mock(radioStationStore, 'store')
-      this.render(Component)
+  it('adds a radio station with a logo', async () => {
+    const storeMock = h.mock(radioStationStore, 'store').mockResolvedValue(h.factory('radio-station'))
 
-      await this.type(screen.getByPlaceholderText('My Favorite Radio Station'), 'Beethoven Goes Metal')
-      await this.type(screen.getByPlaceholderText('https://radio.example.com/stream'), 'https://beet.stream/metal')
-      await this.type(screen.getByPlaceholderText('A short description of the station'), 'Heavy af')
+    h.render(Component)
+    await h.type(screen.getByPlaceholderText('My Favorite Radio Station'), 'Beethoven Goes Metal')
+    await h.type(screen.getByPlaceholderText('https://radio.example.com/stream'), 'https://beet.stream/metal')
+    await h.type(screen.getByPlaceholderText('A short description of the station'), 'Heavy af')
 
-      await this.user.upload(
-        screen.getByLabelText('Pick a logo (optional)'),
-        new File(['bytes'], 'logo.png', { type: 'image/png' }),
-      )
+    await h.user.upload(
+      screen.getByLabelText('Pick a logo (optional)'),
+      new File(['bytes'], 'logo.png', { type: 'image/png' }),
+    )
 
-      await waitFor(() => screen.getByAltText('Logo'))
+    await waitFor(() => screen.getByAltText('Logo'))
 
-      await this.user.click(screen.getByLabelText('Make this station public'))
-      await this.user.click(screen.getByRole('button', { name: 'Save' }))
+    await h.user.click(screen.getByLabelText('Make this station public'))
+    await h.user.click(screen.getByRole('button', { name: 'Save' }))
 
-      expect(storeMock).toHaveBeenCalledWith({
-        name: 'Beethoven Goes Metal',
-        url: 'https://beet.stream/metal',
-        description: 'Heavy af',
-        logo: 'data:image/png;base64,Ynl0ZXM=',
-        is_public: true,
-      })
+    expect(storeMock).toHaveBeenCalledWith({
+      name: 'Beethoven Goes Metal',
+      url: 'https://beet.stream/metal',
+      description: 'Heavy af',
+      logo: 'data:image/png;base64,Ynl0ZXM=',
+      is_public: true,
     })
-  }
-}
+  })
+})

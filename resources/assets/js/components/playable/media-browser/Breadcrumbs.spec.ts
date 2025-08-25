@@ -1,17 +1,17 @@
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import Component from './Breadcrumbs.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it.each([[''], ['/var'], ['/var/media/'], ['/var/media/deep/nested/path']])('renders', path => {
-      const { html } = this.render(Component, {
-        props: {
-          path,
-        },
-      })
+describe('breadcrumbs.vue', () => {
+  const h = createHarness()
 
-      expect(html()).toMatchSnapshot()
+  it.each([[''], ['/var'], ['/var/media/'], ['/var/media/deep/nested/path']])('renders', path => {
+    const { html } = h.render(Component, {
+      props: {
+        path,
+      },
     })
-  }
-}
+
+    expect(html()).toMatchSnapshot()
+  })
+})

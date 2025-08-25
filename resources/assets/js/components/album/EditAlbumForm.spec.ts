@@ -1,42 +1,41 @@
 import { ref } from 'vue'
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
-import factory from '@/__tests__/factory'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import { screen, waitFor } from '@testing-library/vue'
 import { ModalContextKey } from '@/symbols'
 import { albumStore } from '@/stores/albumStore'
 import Component from './EditAlbumForm.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('submits', async () => {
-      const album = factory('album', {
-        name: 'A Real Good One',
-        year: 2023,
-      })
+describe('editAlbumForm.vue', () => {
+  const h = createHarness()
 
-      albumStore.state.albums = [album]
+  it('submits', async () => {
+    const album = h.factory('album', {
+      name: 'A Real Good One',
+      year: 2023,
+    })
 
-      const updateMock = this.mock(albumStore, 'update')
+    albumStore.state.albums = [album]
 
-      this.render(Component, {
-        global: {
-          provide: {
-            [<symbol>ModalContextKey]: [ref({ album })],
-          },
+    const updateMock = h.mock(albumStore, 'update')
+
+    h.render(Component, {
+      global: {
+        provide: {
+          [<symbol>ModalContextKey]: [ref({ album })],
         },
-      })
+      },
+    })
 
-      await this.type(screen.getByTitle('Album name'), 'Not So Good Actually')
-      await this.type(screen.getByTitle('Release year'), '2022')
-      await this.user.click(screen.getByRole('button', { name: 'Save' }))
+    await h.type(screen.getByTitle('Album name'), 'Not So Good Actually')
+    await h.type(screen.getByTitle('Release year'), '2022')
+    await h.user.click(screen.getByRole('button', { name: 'Save' }))
 
-      await waitFor(() => {
-        expect(updateMock).toHaveBeenCalledWith(album, {
-          name: 'Not So Good Actually',
-          year: 2022,
-        })
+    await waitFor(() => {
+      expect(updateMock).toHaveBeenCalledWith(album, {
+        name: 'Not So Good Actually',
+        year: 2022,
       })
     })
-  }
-}
+  })
+})

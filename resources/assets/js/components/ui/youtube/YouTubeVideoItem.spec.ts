@@ -1,24 +1,13 @@
-import { expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { createHarness } from '@/__tests__/TestHarness'
 import { youTubeService } from '@/services/youTubeService'
 import Component from './YouTubeVideoItem.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
+describe('youTubeVideoItem.vue', () => {
+  const h = createHarness()
 
-    it('plays', async () => {
-      const mock = this.mock(youTubeService, 'play')
-      const { video } = this.renderComponent()
-
-      await this.user.click(screen.getByRole('button'))
-
-      expect(mock).toHaveBeenCalledWith(video)
-    })
-  }
-
-  private renderComponent () {
+  const renderComponent = () => {
     const video = {
       id: {
         videoId: 'cLgJQ8Zj3AA',
@@ -34,7 +23,7 @@ new class extends UnitTestCase {
       },
     }
 
-    const rendered = this.render(Component, {
+    const rendered = h.render(Component, {
       props: {
         video,
       },
@@ -45,4 +34,15 @@ new class extends UnitTestCase {
       video,
     }
   }
-}
+
+  it('renders', () => expect(renderComponent().html()).toMatchSnapshot())
+
+  it('plays', async () => {
+    const mock = h.mock(youTubeService, 'play')
+    const { video } = renderComponent()
+
+    await h.user.click(screen.getByRole('button'))
+
+    expect(mock).toHaveBeenCalledWith(video)
+  })
+})

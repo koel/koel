@@ -1,43 +1,42 @@
-import { expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { fireEvent, screen } from '@testing-library/vue'
-import UnitTestCase from '@/__tests__/UnitTestCase'
-import factory from '@/__tests__/factory'
+import { createHarness } from '@/__tests__/TestHarness'
 import { eventBus } from '@/utils/eventBus'
 import Component from './PlaylistSidebarItem.vue'
 
-new class extends UnitTestCase {
-  private renderComponent (list: PlaylistLike) {
-    this.render(Component, {
+describe('playlistSidebarItem.vue', () => {
+  const h = createHarness()
+
+  const renderComponent = (list: PlaylistLike) => {
+    h.render(Component, {
       props: {
         list,
       },
     })
   }
 
-  protected test () {
-    it('requests context menu if is playlist', async () => {
-      const emitMock = this.mock(eventBus, 'emit')
-      const playlist = factory('playlist')
-      this.renderComponent(playlist)
+  it('requests context menu if is playlist', async () => {
+    const emitMock = h.mock(eventBus, 'emit')
+    const playlist = h.factory('playlist')
+    renderComponent(playlist)
 
-      await fireEvent.contextMenu(screen.getByRole('listitem'))
+    await fireEvent.contextMenu(screen.getByRole('listitem'))
 
-      expect(emitMock).toHaveBeenCalledWith('PLAYLIST_CONTEXT_MENU_REQUESTED', expect.anything(), playlist)
-    })
+    expect(emitMock).toHaveBeenCalledWith('PLAYLIST_CONTEXT_MENU_REQUESTED', expect.anything(), playlist)
+  })
 
-    it.each<FavoriteList['name'] | RecentlyPlayedList['name']>(['Favorites', 'Recently Played'])
-    ('does not request context menu if not playlist', async name => { // eslint-disable-line no-unexpected-multiline
-      const list: FavoriteList | RecentlyPlayedList = {
-        name,
-        playables: [],
-      }
+  it.each<FavoriteList['name'] | RecentlyPlayedList['name']>(['Favorites', 'Recently Played'])
+  ('does not request context menu if not playlist', async name => { // eslint-disable-line no-unexpected-multiline
+    const list: FavoriteList | RecentlyPlayedList = {
+      name,
+      playables: [],
+    }
 
-      const emitMock = this.mock(eventBus, 'emit')
-      this.renderComponent(list)
+    const emitMock = h.mock(eventBus, 'emit')
+    renderComponent(list)
 
-      await fireEvent.contextMenu(screen.getByRole('listitem'))
+    await fireEvent.contextMenu(screen.getByRole('listitem'))
 
-      expect(emitMock).not.toHaveBeenCalledWith('PLAYLIST_CONTEXT_MENU_REQUESTED', list)
-    })
-  }
-}
+    expect(emitMock).not.toHaveBeenCalledWith('PLAYLIST_CONTEXT_MENU_REQUESTED', list)
+  })
+})

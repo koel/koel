@@ -1,26 +1,25 @@
 import { ref } from 'vue'
-import { expect, it } from 'vitest'
-import factory from '@/__tests__/factory'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import { ModalContextKey } from '@/symbols'
 import Component from './PlaylistCollaborationModal.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('renders the modal', async () => {
-      const { html } = this.render(Component, {
-        global: {
-          provide: {
-            [<symbol>ModalContextKey]: [ref({ playlist: factory('playlist') })],
-          },
-          stubs: {
-            InviteCollaborators: this.stub('InviteCollaborators'),
-            CollaboratorList: this.stub('CollaboratorList'),
-          },
-        },
-      })
+describe('playlistCollaborationModal.vue', () => {
+  const h = createHarness()
 
-      expect(html()).toMatchSnapshot()
+  it('renders the modal', async () => {
+    const { html } = h.render(Component, {
+      global: {
+        provide: {
+          [<symbol>ModalContextKey]: [ref({ playlist: h.factory('playlist') })],
+        },
+        stubs: {
+          InviteCollaborators: h.stub('InviteCollaborators'),
+          CollaboratorList: h.stub('CollaboratorList'),
+        },
+      },
     })
-  }
-}
+
+    expect(html()).toMatchSnapshot()
+  })
+})

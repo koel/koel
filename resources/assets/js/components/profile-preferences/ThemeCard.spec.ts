@@ -1,28 +1,18 @@
-import { expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { createHarness } from '@/__tests__/TestHarness'
 import Component from './ThemeCard.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('renders', () => expect(this.renderComponent().html()).toMatchSnapshot())
+describe('themeCard.vue', () => {
+  const h = createHarness()
 
-    it('emits an event when selected', async () => {
-      const { emitted, theme } = this.renderComponent()
-
-      await this.user.click(screen.getByRole('button', { name: 'Sample' }))
-
-      expect(emitted().selected[0]).toEqual([theme])
-    })
-  }
-
-  private renderComponent () {
+  const renderComponent = () => {
     const theme: Theme = {
       id: 'sample',
       thumbnailColor: '#f00',
     }
 
-    const rendered = this.render(Component, {
+    const rendered = h.render(Component, {
       props: {
         theme,
       },
@@ -33,4 +23,14 @@ new class extends UnitTestCase {
       theme,
     }
   }
-}
+
+  it('renders', () => expect(renderComponent().html()).toMatchSnapshot())
+
+  it('emits an event when selected', async () => {
+    const { emitted, theme } = renderComponent()
+
+    await h.user.click(screen.getByRole('button', { name: 'Sample' }))
+
+    expect(emitted().selected[0]).toEqual([theme])
+  })
+})

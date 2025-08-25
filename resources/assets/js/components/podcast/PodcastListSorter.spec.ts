@@ -1,25 +1,25 @@
+import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { createHarness } from '@/__tests__/TestHarness'
 import Component from './PodcastListSorter.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('renders and emits the proper event', async () => {
-      const { emitted } = this.render(Component, {
-        props: {
-          field: 'title',
-          order: 'desc',
-        },
-      })
+describe('podcastListSorter.vue', () => {
+  const h = createHarness()
 
-      screen.getByTitle('Sorting by Title, descending')
-
-      await this.user.click(screen.getByTitle('Sort by Title'))
-      expect(emitted().sort[0]).toEqual(['title', 'asc'])
-
-      await this.user.click(screen.getByTitle('Sort by Author'))
-      expect(emitted().sort[1]).toEqual(['author', 'asc'])
+  it('renders and emits the proper event', async () => {
+    const { emitted } = h.render(Component, {
+      props: {
+        field: 'title',
+        order: 'desc',
+      },
     })
-  }
-}
+
+    screen.getByTitle('Sorting by Title, descending')
+
+    await h.user.click(screen.getByTitle('Sort by Title'))
+    expect(emitted().sort[0]).toEqual(['title', 'asc'])
+
+    await h.user.click(screen.getByTitle('Sort by Author'))
+    expect(emitted().sort[1]).toEqual(['author', 'asc'])
+  })
+})

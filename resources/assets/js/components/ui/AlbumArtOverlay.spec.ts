@@ -1,50 +1,50 @@
 import { waitFor } from '@testing-library/vue'
-import { expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { albumStore } from '@/stores/albumStore'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { createHarness } from '@/__tests__/TestHarness'
 import { logger } from '@/utils/logger'
 import Component from './AlbumArtOverlay.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('fetches and displays the album thumbnail', async () => {
-      const fetchMock = this.mock(albumStore, 'fetchThumbnail').mockResolvedValue('http://test/thumb.jpg')
+describe('albumArtOverlay.vue', () => {
+  const h = createHarness()
 
-      const { albumId, html } = await this.renderComponent()
-
-      await waitFor(() => {
-        expect(fetchMock).toHaveBeenCalledWith(albumId)
-        expect(html()).toMatchSnapshot()
-      })
-    })
-
-    it('displays nothing if fetching fails', async () => {
-      this.mock(logger, 'error')
-      const fetchMock = this.mock(albumStore, 'fetchThumbnail').mockRejectedValue(new Error('Failed to fetch'))
-
-      const { albumId, html } = await this.renderComponent()
-
-      await waitFor(() => {
-        expect(fetchMock).toHaveBeenCalledWith(albumId)
-        expect(html()).toMatchSnapshot()
-      })
-    })
-  }
-
-  private async renderComponent () {
+  const renderComponent = async () => {
     const albumId = 'foo'
 
-    const rendered = this.render(Component, {
+    const rendered = h.render(Component, {
       props: {
         album: albumId,
       },
     })
 
-    await this.tick()
+    await h.tick()
 
     return {
       ...rendered,
       albumId,
     }
   }
-}
+
+  it('fetches and displays the album thumbnail', async () => {
+    const fetchMock = h.mock(albumStore, 'fetchThumbnail').mockResolvedValue('http://test/thumb.jpg')
+
+    const { albumId, html } = await renderComponent()
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith(albumId)
+      expect(html()).toMatchSnapshot()
+    })
+  })
+
+  it('displays nothing if fetching fails', async () => {
+    h.mock(logger, 'error')
+    const fetchMock = h.mock(albumStore, 'fetchThumbnail').mockRejectedValue(new Error('Failed to fetch'))
+
+    const { albumId, html } = await renderComponent()
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith(albumId)
+      expect(html()).toMatchSnapshot()
+    })
+  })
+})

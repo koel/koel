@@ -1,24 +1,24 @@
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import Component from './BtnGroup.vue'
 import Btn from './Btn.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('renders', () => {
-      expect(this.render(Component, {
-        slots: {
-          default: ['Green', 'Orange', 'Blue'].map(text => this.renderButtonToSlot(text)),
-        },
-      }).html()).toMatchSnapshot()
-    })
-  }
+describe('btnGroup.vue', () => {
+  const h = createHarness()
 
-  private renderButtonToSlot (text: string) {
-    return this.render(Btn, {
+  const renderButtonToSlot = (text: string) => {
+    return h.render(Btn, {
       slots: {
         default: text,
       },
     }).html()
   }
-}
+
+  it('renders', () => {
+    expect(h.render(Component, {
+      slots: {
+        default: ['Green', 'Orange', 'Blue'].map(text => renderButtonToSlot(text)),
+      },
+    }).html()).toMatchSnapshot()
+  })
+})

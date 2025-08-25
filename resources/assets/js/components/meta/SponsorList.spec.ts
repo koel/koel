@@ -1,11 +1,11 @@
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import Component from './SponsorList.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('renders', () => {
-      expect(this.render(Component).html()).toMatchSnapshot()
-    })
-  }
-}
+describe('sponsorList.vue', () => {
+  const h = createHarness()
+
+  it('renders', () => {
+    expect(h.render(Component).html()).toMatchSnapshot()
+  })
+})

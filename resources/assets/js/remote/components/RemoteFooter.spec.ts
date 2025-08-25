@@ -1,22 +1,23 @@
 import { screen } from '@testing-library/vue'
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
-import factory from '@/__tests__/factory'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import { socketService } from '@/services/socketService'
 import Component from './RemoteFooter.vue'
 
-new class extends UnitTestCase {
-  private renderComponent (streamable?: Streamable) {
-    streamable = streamable || factory('song')
+describe('remoteFooter.vue', () => {
+  const h = createHarness()
 
-    this.render(Component, {
+  const renderComponent = (streamable?: Streamable) => {
+    streamable = streamable || h.factory('song')
+
+    h.render(Component, {
       props: {
         streamable,
       },
       global: {
         components: {
-          Icon: this.stub('Icon'),
-          VolumeControl: this.stub('volume-control'),
+          Icon: h.stub('Icon'),
+          VolumeControl: h.stub('volume-control'),
         },
         provide: {
           state: {
@@ -28,45 +29,43 @@ new class extends UnitTestCase {
     })
   }
 
-  protected test () {
-    it('toggles like', async () => {
-      const broadcastMock = this.mock(socketService, 'broadcast')
-      const playable = factory('song', { favorite: false })
-      this.renderComponent(playable)
+  it('toggles like', async () => {
+    const broadcastMock = h.mock(socketService, 'broadcast')
+    const playable = h.factory('song', { favorite: false })
+    renderComponent(playable)
 
-      await this.user.click(screen.getByTestId('btn-toggle-favorite'))
-      expect(broadcastMock).toHaveBeenCalledWith('SOCKET_TOGGLE_FAVORITE')
-      expect(playable.favorite).toBe(true)
-    })
+    await h.user.click(screen.getByTestId('btn-toggle-favorite'))
+    expect(broadcastMock).toHaveBeenCalledWith('SOCKET_TOGGLE_FAVORITE')
+    expect(playable.favorite).toBe(true)
+  })
 
-    it('plays previous', async () => {
-      const broadcastMock = this.mock(socketService, 'broadcast')
-      this.renderComponent()
+  it('plays previous', async () => {
+    const broadcastMock = h.mock(socketService, 'broadcast')
+    renderComponent()
 
-      await this.user.click(screen.getByTestId('btn-play-prev'))
-      expect(broadcastMock).toHaveBeenCalledWith('SOCKET_PLAY_PREV')
-    })
+    await h.user.click(screen.getByTestId('btn-play-prev'))
+    expect(broadcastMock).toHaveBeenCalledWith('SOCKET_PLAY_PREV')
+  })
 
-    it('plays next', async () => {
-      const broadcastMock = this.mock(socketService, 'broadcast')
-      this.renderComponent()
+  it('plays next', async () => {
+    const broadcastMock = h.mock(socketService, 'broadcast')
+    renderComponent()
 
-      await this.user.click(screen.getByTestId('btn-play-next'))
-      expect(broadcastMock).toHaveBeenCalledWith('SOCKET_PLAY_NEXT')
-    })
+    await h.user.click(screen.getByTestId('btn-play-next'))
+    expect(broadcastMock).toHaveBeenCalledWith('SOCKET_PLAY_NEXT')
+  })
 
-    it.each<[string, PlaybackState, PlaybackState]>([
-      ['pauses', 'Playing', 'Paused'],
-      ['resumes', 'Paused', 'Playing'],
-      ['starts', 'Stopped', 'Playing'],
-    ])('%s playback', async (_, currentState, newState) => {
-      const broadcastMock = this.mock(socketService, 'broadcast')
-      const playable = factory('episode', { playback_state: currentState })
-      this.renderComponent(playable)
+  it.each<[string, PlaybackState, PlaybackState]>([
+    ['pauses', 'Playing', 'Paused'],
+    ['resumes', 'Paused', 'Playing'],
+    ['starts', 'Stopped', 'Playing'],
+  ])('%s playback', async (_, currentState, newState) => {
+    const broadcastMock = h.mock(socketService, 'broadcast')
+    const playable = h.factory('episode', { playback_state: currentState })
+    renderComponent(playable)
 
-      await this.user.click(screen.getByTestId('btn-toggle-playback'))
-      expect(broadcastMock).toHaveBeenCalledWith('SOCKET_TOGGLE_PLAYBACK')
-      expect(playable.playback_state).toBe(newState)
-    })
-  }
-}
+    await h.user.click(screen.getByTestId('btn-toggle-playback'))
+    expect(broadcastMock).toHaveBeenCalledWith('SOCKET_TOGGLE_PLAYBACK')
+    expect(playable.playback_state).toBe(newState)
+  })
+})

@@ -1,19 +1,19 @@
+import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { createHarness } from '@/__tests__/TestHarness'
 import Component from './TextArea.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('emits value', async () => {
-      const { emitted } = this.render(Component)
+describe('textArea.vue', () => {
+  const h = createHarness()
 
-      await this.type(screen.getByRole('textbox'), 'Hi')
+  it('emits value', async () => {
+    const { emitted } = h.render(Component)
 
-      expect(emitted()['update:modelValue']).toStrictEqual([
-        ['H'],
-        ['Hi'],
-      ])
-    })
-  }
-}
+    await h.type(screen.getByRole('textbox'), 'Hi')
+
+    expect(emitted()['update:modelValue']).toStrictEqual([
+      ['H'],
+      ['Hi'],
+    ])
+  })
+})

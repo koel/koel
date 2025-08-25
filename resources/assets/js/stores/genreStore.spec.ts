@@ -1,24 +1,23 @@
-import { expect, it } from 'vitest'
-import factory from '@/__tests__/factory'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import { http } from '@/services/http'
 import { genreStore } from '@/stores/genreStore'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('fetches all genres', async () => {
-      const genres = factory('genre', 3)
-      this.mock(http, 'get').mockResolvedValue(genres)
+describe('genreStore', () => {
+  const h = createHarness()
 
-      expect(await genreStore.fetchAll()).toEqual(genres)
-    })
+  it('fetches all genres', async () => {
+    const genres = h.factory('genre', 3)
+    h.mock(http, 'get').mockResolvedValue(genres)
 
-    it('fetches a single genre', async () => {
-      const genre = factory('genre')
-      this.mock(http, 'get').mockResolvedValue(genre)
+    expect(await genreStore.fetchAll()).toEqual(genres)
+  })
 
-      expect(await genreStore.fetchOne(genre.name)).toEqual(genre)
-      expect(http.get).toHaveBeenCalledWith(`genres/${genre.name}`)
-    })
-  }
-}
+  it('fetches a single genre', async () => {
+    const genre = h.factory('genre')
+    h.mock(http, 'get').mockResolvedValue(genre)
+
+    expect(await genreStore.fetchOne(genre.name)).toEqual(genre)
+    expect(http.get).toHaveBeenCalledWith(`genres/${genre.name}`)
+  })
+})

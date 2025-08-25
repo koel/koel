@@ -1,6 +1,6 @@
 // Vitest Snapshot v1
 
-exports[`renders proper content with Last.fm integration status false, current user admin status false 1`] = `
+exports[`lastfmIntegration.vue > renders proper content with Last.fm integration status false, current user admin status false 1`] = `
 <section data-v-6bdc1e9f="" class="text-k-text-secondary">
   <h3 data-v-6bdc1e9f="" class="text-2xl mb-2"><span data-v-6bdc1e9f="" class="mr-2 text-[var(--lastfm-color)]"><br data-v-6bdc1e9f="" data-testid="Icon" icon="[object Object]"></span> Last.fm Integration </h3>
   <div data-v-6bdc1e9f="" data-testid="lastfm-not-integrated">
@@ -9,7 +9,7 @@ exports[`renders proper content with Last.fm integration status false, current u
 </section>
 `;
 
-exports[`renders proper content with Last.fm integration status false, current user admin status true 1`] = `
+exports[`lastfmIntegration.vue > renders proper content with Last.fm integration status false, current user admin status true 1`] = `
 <section data-v-6bdc1e9f="" class="text-k-text-secondary">
   <h3 data-v-6bdc1e9f="" class="text-2xl mb-2"><span data-v-6bdc1e9f="" class="mr-2 text-[var(--lastfm-color)]"><br data-v-6bdc1e9f="" data-testid="Icon" icon="[object Object]"></span> Last.fm Integration </h3>
   <div data-v-6bdc1e9f="" data-testid="lastfm-not-integrated">
@@ -18,7 +18,7 @@ exports[`renders proper content with Last.fm integration status false, current u
 </section>
 `;
 
-exports[`renders proper content with Last.fm integration status true, current user admin status false 1`] = `
+exports[`lastfmIntegration.vue > renders proper content with Last.fm integration status true, current user admin status false 1`] = `
 <section data-v-6bdc1e9f="" class="text-k-text-secondary">
   <h3 data-v-6bdc1e9f="" class="text-2xl mb-2"><span data-v-6bdc1e9f="" class="mr-2 text-[var(--lastfm-color)]"><br data-v-6bdc1e9f="" data-testid="Icon" icon="[object Object]"></span> Last.fm Integration </h3>
   <div data-v-6bdc1e9f="" data-testid="lastfm-integrated">
@@ -33,7 +33,7 @@ exports[`renders proper content with Last.fm integration status true, current us
 </section>
 `;
 
-exports[`renders proper content with Last.fm integration status true, current user admin status true 1`] = `
+exports[`lastfmIntegration.vue > renders proper content with Last.fm integration status true, current user admin status true 1`] = `
 <section data-v-6bdc1e9f="" class="text-k-text-secondary">
   <h3 data-v-6bdc1e9f="" class="text-2xl mb-2"><span data-v-6bdc1e9f="" class="mr-2 text-[var(--lastfm-color)]"><br data-v-6bdc1e9f="" data-testid="Icon" icon="[object Object]"></span> Last.fm Integration </h3>
   <div data-v-6bdc1e9f="" data-testid="lastfm-integrated">

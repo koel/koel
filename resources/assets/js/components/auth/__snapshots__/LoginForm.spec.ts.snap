@@ -1,6 +1,6 @@
 // Vitest Snapshot v1
 
-exports[`renders 1`] = `
+exports[`loginForm.vue > renders 1`] = `
 <div data-v-0b0f87ea="" class="flex items-center justify-center min-h-screen my-0 mx-auto flex-col gap-5">
   <form data-v-0b0f87ea="" class="w-full sm:w-[288px] sm:border duration-500 p-7 rounded-xl border-transparent sm:bg-white/10 space-y-3" data-testid="login-form">
     <div data-v-0b0f87ea="" class="text-center mb-8"><img data-v-0b0f87ea="" alt="Koel's logo" class="inline-block" src="undefined/resources/assets/img/logo.svg" width="156"></div><label data-v-0b0f87ea="" class="flex flex-col gap-2 text-[1.1rem]">
@@ -23,7 +23,7 @@ exports[`renders 1`] = `
 </div>
 `;
 
-exports[`shows Google login button 1`] = `
+exports[`loginForm.vue > shows Google login button 1`] = `
 <div data-v-0b0f87ea="" class="flex items-center justify-center min-h-screen my-0 mx-auto flex-col gap-5">
   <form data-v-0b0f87ea="" class="w-full sm:w-[288px] sm:border duration-500 p-7 rounded-xl border-transparent sm:bg-white/10 space-y-3" data-testid="login-form">
     <div data-v-0b0f87ea="" class="text-center mb-8"><img data-v-0b0f87ea="" alt="Koel's logo" class="inline-block" src="undefined/resources/assets/img/logo.svg" width="156"></div><label data-v-0b0f87ea="" class="flex flex-col gap-2 text-[1.1rem]">

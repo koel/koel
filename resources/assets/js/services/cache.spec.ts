@@ -1,57 +1,52 @@
-import { expect, it, vi } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { describe, expect, it, vi } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import { Cache } from './cache'
 
-new class extends UnitTestCase {
-  private cache!: Cache
+describe('cache', () => {
+  let cache!: Cache
 
-  protected beforeEach () {
-    super.beforeEach(() => this.cache = new Cache())
-  }
+  createHarness({
+    beforeEach: () => cache = new Cache(),
+    afterEach: () => vi.useRealTimers(),
+  })
 
-  protected afterEach () {
-    super.afterEach(() => vi.useRealTimers())
-  }
+  it('sets and gets a value', () => {
+    cache.set('foo', 'bar')
+    expect(cache.get('foo')).toBe('bar')
+  })
 
-  protected test () {
-    it('sets and gets a value', () => {
-      this.cache.set('foo', 'bar')
-      expect(this.cache.get('foo')).toBe('bar')
-    })
+  it('invalidates an entry after set time', () => {
+    vi.useFakeTimers()
+    cache.set('foo', 'bar', 999)
+    expect(cache.has('foo')).toBe(true)
 
-    it('invalidates an entry after set time', () => {
-      vi.useFakeTimers()
-      this.cache.set('foo', 'bar', 999)
-      expect(this.cache.has('foo')).toBe(true)
+    vi.advanceTimersByTime(1000 * 1000)
+    expect(cache.has('foo')).toBe(false)
+  })
 
-      vi.advanceTimersByTime(1000 * 1000)
-      expect(this.cache.has('foo')).toBe(false)
-    })
+  it('removes an entry', () => {
+    cache.set('foo', 'bar')
+    cache.remove('foo')
+    expect(cache.get('foo')).toBeUndefined()
+  })
 
-    it('removes an entry', () => {
-      this.cache.set('foo', 'bar')
-      this.cache.remove('foo')
-      expect(this.cache.get('foo')).toBeUndefined()
-    })
+  it('checks an entry\'s presence', () => {
+    cache.set('foo', 'bar')
+    expect(cache.hit('foo')).toBe(true)
+    expect(cache.has('foo')).toBe(true)
+    expect(cache.miss('foo')).toBe(false)
 
-    it('checks an entry\'s presence', () => {
-      this.cache.set('foo', 'bar')
-      expect(this.cache.hit('foo')).toBe(true)
-      expect(this.cache.has('foo')).toBe(true)
-      expect(this.cache.miss('foo')).toBe(false)
+    cache.remove('foo')
+    expect(cache.hit('foo')).toBe(false)
+    expect(cache.has('foo')).toBe(false)
+    expect(cache.miss('foo')).toBe(true)
+  })
 
-      this.cache.remove('foo')
-      expect(this.cache.hit('foo')).toBe(false)
-      expect(this.cache.has('foo')).toBe(false)
-      expect(this.cache.miss('foo')).toBe(true)
-    })
+  it('remembers a value', async () => {
+    const resolver = vi.fn().mockResolvedValue('bar')
+    expect(cache.has('foo')).toBe(false)
 
-    it('remembers a value', async () => {
-      const resolver = vi.fn().mockResolvedValue('bar')
-      expect(this.cache.has('foo')).toBe(false)
-
-      expect(await this.cache.remember('foo', resolver)).toBe('bar')
-      expect(this.cache.get('foo')).toBe('bar')
-    })
-  }
-}
+    expect(await cache.remember('foo', resolver)).toBe('bar')
+    expect(cache.get('foo')).toBe('bar')
+  })
+})

@@ -1,24 +1,24 @@
-import { expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { createHarness } from '@/__tests__/TestHarness'
 import Component from './CheckBox.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('renders unchecked state', () => expect(this.render(Component).html()).toMatchSnapshot())
+describe('checkBox.vue', () => {
+  const h = createHarness()
 
-    it('renders checked state', () => expect(this.render(Component, {
-      props: {
-        modelValue: true,
-      },
-    }).html()).toMatchSnapshot())
+  it('renders unchecked state', () => expect(h.render(Component).html()).toMatchSnapshot())
 
-    it('emits the input event', async () => {
-      const { emitted } = this.render(Component)
+  it('renders checked state', () => expect(h.render(Component, {
+    props: {
+      modelValue: true,
+    },
+  }).html()).toMatchSnapshot())
 
-      await this.trigger(screen.getByRole('checkbox'), 'click')
+  it('emits the input event', async () => {
+    const { emitted } = h.render(Component)
 
-      expect(emitted()['update:modelValue']).toBeTruthy()
-    })
-  }
-}
+    await h.trigger(screen.getByRole('checkbox'), 'click')
+
+    expect(emitted()['update:modelValue']).toBeTruthy()
+  })
+})

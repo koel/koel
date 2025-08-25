@@ -1,20 +1,19 @@
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
-import factory from '@/__tests__/factory'
+import { describe, expect, it } from 'vitest'
+import { createHarness } from '@/__tests__/TestHarness'
 import { overviewStore } from '@/stores/overviewStore'
 import Component from './NewAlbums.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('displays the albums', () => {
-      overviewStore.state.recentlyAddedAlbums = factory('album', 6)
-      expect(this.render(Component, {
-        global: {
-          stubs: {
-            AlbumCard: this.stub('album-card'),
-          },
+describe('newAlbums.vue', () => {
+  const h = createHarness()
+
+  it('displays the albums', () => {
+    overviewStore.state.recentlyAddedAlbums = h.factory('album', 6)
+    expect(h.render(Component, {
+      global: {
+        stubs: {
+          AlbumCard: h.stub('album-card'),
         },
-      }).getAllByTestId('album-card')).toHaveLength(6)
-    })
-  }
-}
+      },
+    }).getAllByTestId('album-card')).toHaveLength(6)
+  })
+})

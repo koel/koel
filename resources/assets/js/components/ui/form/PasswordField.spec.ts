@@ -1,20 +1,20 @@
+import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
-import { expect, it } from 'vitest'
-import UnitTestCase from '@/__tests__/UnitTestCase'
+import { createHarness } from '@/__tests__/TestHarness'
 import Component from './PasswordField.vue'
 
-new class extends UnitTestCase {
-  protected test () {
-    it('renders plain text', async () => {
-      this.render(Component)
-      const input = screen.getByTestId('input')
-      const toggle = screen.getByTestId('toggle')
+describe('passwordField.vue', () => {
+  const h = createHarness()
 
-      await this.trigger(toggle, 'click')
-      expect(input.getAttribute('type')).toBe('text')
+  it('renders plain text', async () => {
+    h.render(Component)
+    const input = screen.getByTestId('input')
+    const toggle = screen.getByTestId('toggle')
 
-      await this.trigger(toggle, 'click')
-      expect(input.getAttribute('type')).toBe('password')
-    })
-  }
-}
+    await h.trigger(toggle, 'click')
+    expect(input.getAttribute('type')).toBe('text')
+
+    await h.trigger(toggle, 'click')
+    expect(input.getAttribute('type')).toBe('password')
+  })
+})
