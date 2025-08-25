@@ -39,6 +39,8 @@ final class UserPreferences implements Arrayable, JsonSerializable
         'confirm_before_closing',
         'continuous_playback',
         'equalizer',
+        'genres_sort_field',
+        'genres_sort_order',
         'include_public_media',
         'lyrics_zoom_level',
         'make_uploads_public',
@@ -71,10 +73,12 @@ final class UserPreferences implements Arrayable, JsonSerializable
         public string $radioStationsViewMode,
         public string $albumsSortField,
         public string $artistsSortField,
+        public string $genresSortField,
         public string $podcastsSortField,
         public string $radioStationsSortField,
         public string $albumsSortOrder,
         public string $artistsSortOrder,
+        public string $genresSortOrder,
         public string $podcastsSortOrder,
         public string $radioStationsSortOrder,
         public bool $albumsFavoritesOnly,
@@ -105,10 +109,12 @@ final class UserPreferences implements Arrayable, JsonSerializable
         Assert::oneOf($this->albumsSortField, ['name', 'artist_name', 'year', 'created_at']);
         Assert::oneOf(strtolower($this->artistsSortOrder), ['asc', 'desc']);
         Assert::oneOf($this->artistsSortField, ['name', 'created_at']);
-        Assert::oneOf(strtolower($this->podcastsSortOrder), ['asc', 'desc']);
+        Assert::oneOf($this->genresSortField, ['name', 'song_count']);
+        Assert::oneOf(strtolower($this->genresSortOrder), ['asc', 'desc']);
         Assert::oneOf($this->podcastsSortField, ['title', 'last_played_at', 'subscribed_at', 'author']);
-        Assert::oneOf(strtolower($this->radioStationsSortOrder), ['asc', 'desc']);
+        Assert::oneOf(strtolower($this->podcastsSortOrder), ['asc', 'desc']);
         Assert::oneOf($this->radioStationsSortField, ['name', 'created_at']);
+        Assert::oneOf(strtolower($this->radioStationsSortOrder), ['asc', 'desc']);
 
         if (!in_array($this->transcodeQuality, [64, 96, 128, 192, 256, 320], true)) {
             $this->transcodeQuality = 128;
@@ -126,10 +132,12 @@ final class UserPreferences implements Arrayable, JsonSerializable
             radioStationsViewMode: $data['radio_stations_view_mode'] ?? 'thumbnails',
             albumsSortField: $data['albums_sort_field'] ?? 'name',
             artistsSortField: $data['artists_sort_field'] ?? 'name',
+            genresSortField: $data['genres_sort_field'] ?? 'name',
             podcastsSortField: $data['podcasts_sort_field'] ?? 'title',
             radioStationsSortField: $data['radio_stations_sort_field'] ?? 'name',
             albumsSortOrder: $data['albums_sort_order'] ?? 'asc',
             artistsSortOrder: $data['artists_sort_order'] ?? 'asc',
+            genresSortOrder: $data['genres_sort_order'] ?? 'asc',
             podcastsSortOrder: $data['podcasts_sort_order'] ?? 'asc',
             radioStationsSortOrder: $data['radio_stations_sort_order'] ?? 'asc',
             albumsFavoritesOnly: $data['albums_favorites_only'] ?? false,
@@ -201,10 +209,12 @@ final class UserPreferences implements Arrayable, JsonSerializable
             'radio_stations_view_mode' => $this->radioStationsViewMode,
             'albums_sort_field' => $this->albumsSortField,
             'artists_sort_field' => $this->artistsSortField,
+            'genres_sort_field' => $this->genresSortField,
             'podcasts_sort_field' => $this->podcastsSortField,
             'radio_stations_sort_field' => $this->radioStationsSortField,
             'albums_sort_order' => $this->albumsSortOrder,
             'artists_sort_order' => $this->artistsSortOrder,
+            'genres_sort_order' => $this->genresSortOrder,
             'podcasts_sort_order' => $this->podcastsSortOrder,
             'radio_stations_sort_order' => $this->radioStationsSortOrder,
             'albums_favorites_only' => $this->albumsFavoritesOnly,

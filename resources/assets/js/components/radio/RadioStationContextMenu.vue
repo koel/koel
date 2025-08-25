@@ -1,5 +1,5 @@
 <template>
-  <ContextMenu ref="base" data-testid="radio-station-context-menu" extra-class="podcast-menu">
+  <ContextMenu ref="base" data-testid="radio-station-context-menu" extra-class="radio-station-menu">
     <template v-if="station">
       <li @click="togglePlayback">{{ station.playback_state === 'Playing' ? 'Stop' : 'Play' }}</li>
       <li class="separator" />

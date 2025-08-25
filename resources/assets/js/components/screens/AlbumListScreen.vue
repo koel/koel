@@ -63,11 +63,10 @@
 <script lang="ts" setup>
 import { faStar as faEmptyStar } from '@fortawesome/free-regular-svg-icons'
 import { faCompactDisc, faStar } from '@fortawesome/free-solid-svg-icons'
-import { computed, nextTick, ref, toRef } from 'vue'
+import { computed, nextTick, onMounted, ref, toRef } from 'vue'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
-import { useRouter } from '@/composables/useRouter'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useInfiniteScroll } from '@/composables/useInfiniteScroll'
 import { useAuthorization } from '@/composables/useAuthorization'
@@ -88,7 +87,6 @@ const gridContainer = ref<HTMLDivElement>()
 const grid = ref<InstanceType<typeof GridListView>>()
 const albums = toRef(albumStore.state, 'albums')
 
-let initialized = false
 const loading = ref(false)
 const page = ref<number | null>(1)
 
@@ -144,20 +142,15 @@ const toggleFavoritesOnly = async () => {
   await fetchAlbums()
 }
 
-useRouter().onScreenActivated('Albums', async () => {
+onMounted(async () => {
   if (libraryEmpty.value) {
     return
   }
 
-  if (!initialized) {
-    initialized = true
-
-    try {
-      await makeScrollable()
-    } catch (error: unknown) {
-      initialized = false
-      useErrorHandler().handleHttpError(error)
-    }
+  try {
+    await makeScrollable()
+  } catch (error: unknown) {
+    useErrorHandler().handleHttpError(error)
   }
 })
 </script>

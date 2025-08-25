@@ -19,7 +19,7 @@ class Genre extends Model
     use Searchable;
 
     public const NO_GENRE_PUBLIC_ID = 'no-genre';
-    public const NO_GENRE_NAME = 'No Genre';
+    public const NO_GENRE_NAME = '';
 
     public $timestamps = false;
 

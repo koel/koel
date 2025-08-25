@@ -62,6 +62,9 @@ const initiatePlayback = async () => {
     case 'RecentlyPlayed':
       playables = await recentlyPlayedStore.fetch()
       break
+    case 'Genre':
+      playables = await playableStore.fetchSongsByGenre(getRouteParam('id')!)
+      break
     default:
       playables = await queueStore.fetchRandom()
       break

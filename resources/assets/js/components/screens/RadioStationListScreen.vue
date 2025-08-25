@@ -79,10 +79,9 @@ import { faAdd, faStar } from '@fortawesome/free-solid-svg-icons'
 import { RadioIcon } from 'lucide-vue-next'
 import { faStar as faEmptyStar } from '@fortawesome/free-regular-svg-icons'
 
-import { computed, provide, ref } from 'vue'
+import { computed, onMounted, provide, ref } from 'vue'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { eventBus } from '@/utils/eventBus'
-import { useRouter } from '@/composables/useRouter'
 import { useFuzzySearch } from '@/composables/useFuzzySearch'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { orderBy } from 'lodash'
@@ -102,11 +101,9 @@ import AlbumCardSkeleton from '@/components/ui/skeletons/ArtistAlbumCardSkeleton
 import BtnScrollToTop from '@/components/ui/BtnScrollToTop.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 
-const { onScreenActivated } = useRouter()
 const { currentUserCan } = usePolicies()
 const fuzzy = useFuzzySearch<RadioStation>(radioStationStore.state.stations, ['name', 'description'])
 
-let initialized = false
 const loading = ref(false)
 const keywords = ref('')
 const gridContainer = ref<HTMLDivElement>()
@@ -148,16 +145,11 @@ const toggleFavoritesOnly = () => {
 }
 
 const sort = (field: RadioStationListSortField, order: SortOrder) => {
-  preferences.radio_stations_sort_order = order
   preferences.radio_stations_sort_field = field
+  preferences.radio_stations_sort_order = order
 }
 
 const requestAddStationForm = () => eventBus.emit('MODAL_SHOW_ADD_RADIO_STATION_FORM')
 
-onScreenActivated('Radio.Stations', async () => {
-  if (!initialized) {
-    initialized = true
-    await fetchStations()
-  }
-})
+onMounted(async () => await fetchStations())
 </script>

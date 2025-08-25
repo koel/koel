@@ -2,7 +2,12 @@
   <ScreenBase>
     <template #header>
       <ScreenHeader v-if="genre" :layout="headerLayout">
-        Genre: <span class="text-thin">{{ genre.name }}</span>
+        <template v-if="genre.name">
+          <span class="font-thin">Genre:</span>
+          {{ genre.name }}
+        </template>
+        <span v-else class="font-thin italic">No Genre</span>
+
         <ControlsToggle v-if="displayedSongs.length" v-model="showingControls" />
 
         <template #thumbnail>
@@ -90,7 +95,7 @@ const { getRouteParam, isCurrentScreen, go, onRouteChanged, url } = useRouter()
 let sortField: MaybeArray<PlayableListSortField> = 'title'
 let sortOrder: SortOrder = 'asc'
 
-const randomSongCount = 500
+const songLimit = 500
 const id = ref<string | null>(null)
 const genre = ref<Genre | null>(null)
 const loading = ref(false)
@@ -112,7 +117,7 @@ const fetch = async () => {
 
     [genre.value, fetched] = await Promise.all([
       genreStore.fetchOne(id.value!),
-      playableStore.paginateSongsForGenre(id.value!, {
+      playableStore.paginateSongsByGenre(id.value!, {
         sort: sortField,
         order: sortOrder,
         page: page.value!,
@@ -153,16 +158,15 @@ onRouteChanged(route => {
   }
 })
 
-const playAll = async () => {
+const playAll = async (shuffle = false) => {
   if (!genre.value) {
     return
   }
 
-  // we ignore the queueAndPlay's await to avoid blocking the UI
-  if (genre.value!.song_count <= randomSongCount) {
-    playback().queueAndPlay(songs.value, true)
+  if (shuffle) {
+    playback().queueAndPlay(await playableStore.fetchSongsByGenre(genre.value!, songLimit, true))
   } else {
-    playback().queueAndPlay(await playableStore.fetchRandomSongsByGenre(genre.value!, randomSongCount))
+    playback().queueAndPlay(await playableStore.fetchSongsByGenre(genre.value!, songLimit, false))
   }
 
   go(url('queue'))

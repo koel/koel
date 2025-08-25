@@ -88,3 +88,20 @@ export const pluralize = (count: any[] | number | undefined, singular: string) =
   count = Array.isArray(count) ? count.length : (count ?? 0)
   return count === 1 ? `${count} ${singular}` : `${count.toLocaleString()} ${singular}s`
 }
+
+const fnv1a = (str: string) => {
+  let h = 0x811C9DC5
+
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i)
+    h = (h >>> 0) * 0x01000193
+  }
+
+  return h >>> 0
+}
+
+export const textToHsl = (text: string, s = 65, l = 55) => {
+  const hash = fnv1a(text)
+  const h = hash % 360
+  return `hsl(${h} ${s}% ${l}%)`
+}

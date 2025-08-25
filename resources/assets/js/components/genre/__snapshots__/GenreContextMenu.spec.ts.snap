@@ -1,0 +1,13 @@
+// Vitest Snapshot v1
+
+exports[`renders 1`] = `
+<nav data-v-6396fbf0="" class="genre-menu menu context-menu select-none shadow" style="top: 42px; left: 420px; bottom: auto; right: auto;" tabindex="0" data-testid="genre-context-menu">
+  <ul data-v-6396fbf0="">
+    <li>Play</li>
+    <li>Shuffle</li>
+    <li>Add to Queue</li>
+    <li class="separator"></li>
+    <li>View Genre</li>
+  </ul>
+</nav>
+`;

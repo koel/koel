@@ -339,11 +339,13 @@ interface UserPreferences extends Record<string, any> {
   radio_stations_view_mode: ViewMode
   albums_sort_field: AlbumListSortField
   artists_sort_field: ArtistListSortField
+  genres_sort_field: GenreListSortField
   podcasts_sort_field: PodcastListSortField
   radio_stations_sort_field: RadioStationListSortField
   albums_sort_order: SortOrder
   artists_sort_order: SortOrder
   podcasts_sort_order: SortOrder
+  genres_sort_order: SortOrder
   radio_stations_sort_order: SortOrder
   albums_favorites_only: boolean
   artists_favorites_only: boolean
@@ -516,10 +518,17 @@ type PlayableListSortField =
 
 type AlbumListSortField = keyof Pick<Album, 'name' | 'year' | 'artist_name' | 'created_at'>
 type ArtistListSortField = keyof Pick<Artist, 'name' | 'created_at'>
+type GenreListSortField = keyof Pick<Genre, 'name' | 'song_count'>
 type PodcastListSortField = keyof Pick<Podcast, 'title' | 'last_played_at' | 'subscribed_at' | 'author'>
 type RadioStationListSortField = keyof Pick<RadioStation, 'name' | 'created_at'>
+type SortField =
+  PodcastListSortField
+  | AlbumListSortField
+  | ArtistListSortField
+  | RadioStationListSortField
+  | GenreListSortField
 
-interface BasicListSorterDropDownItem<T extends PodcastListSortField | AlbumListSortField | ArtistListSortField> {
+interface BasicListSorterDropDownItem<T extends SortField> {
   label: string
   field: T
 }

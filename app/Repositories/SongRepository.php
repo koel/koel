@@ -75,7 +75,7 @@ class SongRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
-    public function getForListing(
+    public function paginate(
         array $sortColumns,
         string $sortDirection,
         ?User $scopedUser = null,
@@ -89,8 +89,11 @@ class SongRepository extends Repository implements ScoutableRepository
             ->simplePaginate($perPage);
     }
 
-    public function getByGenre(
-        Genre $genre,
+    /**
+     * @param Genre|null $genre If null, paginate songs that have no genre
+     */
+    public function paginateByGenre(
+        ?Genre $genre,
         array $sortColumns,
         string $sortDirection,
         ?User $scopedUser = null,
@@ -98,20 +101,8 @@ class SongRepository extends Repository implements ScoutableRepository
     ): Paginator {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
-            ->whereRelation('genres', 'genres.id', $genre->id)
-            ->sort($sortColumns, $sortDirection)
-            ->simplePaginate($perPage);
-    }
-
-    public function getWithNoGenre(
-        array $sortColumns,
-        string $sortDirection,
-        ?User $scopedUser = null,
-        int $perPage = 50
-    ): Paginator {
-        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
-            ->withUserContext()
-            ->whereDoesntHave('genres')
+            ->when($genre, static fn (Builder $builder) => $builder->whereRelation('genres', 'genres.id', $genre->id))
+            ->when(!$genre, static fn (Builder $builder) => $builder->whereDoesntHave('genres'))
             ->sort($sortColumns, $sortDirection)
             ->simplePaginate($perPage);
     }
@@ -287,14 +278,21 @@ class SongRepository extends Repository implements ScoutableRepository
             ->sum('length');
     }
 
-    /** @return Collection|array<array-key, Song> */
-    public function getRandomByGenre(Genre $genre, int $limit, ?User $scopedUser = null): Collection
+    /**
+     * @param Genre|null $genre If null, query songs that have no genre.
+     *
+     * @return Collection|array<array-key, Song>
+     */
+    public function getByGenre(?Genre $genre, int $limit, $random = false, ?User $scopedUser = null): Collection
     {
+
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
-            ->whereRelation('genres', 'genres.id', $genre->id)
+            ->when($genre, static fn (Builder $builder) => $builder->whereRelation('genres', 'genres.id', $genre->id))
+            ->when(!$genre, static fn (Builder $builder) => $builder->whereDoesntHave('genres'))
+            ->when($random, static fn (Builder $builder) => $builder->inRandomOrder())
+            ->when(!$random, static fn (Builder $builder) => $builder->orderBy('songs.title'))
             ->limit($limit)
-            ->inRandomOrder()
             ->get();
     }
 

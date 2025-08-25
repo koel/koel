@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\API\PlaylistFolderStoreRequest;
-use App\Http\Requests\API\PlaylistFolderUpdateRequest;
+use App\Http\Requests\API\PlaylistFolder\PlaylistFolderStoreRequest;
+use App\Http\Requests\API\PlaylistFolder\PlaylistFolderUpdateRequest;
 use App\Http\Resources\PlaylistFolderResource;
 use App\Models\PlaylistFolder;
 use App\Models\User;

@@ -35,7 +35,7 @@ class SongController extends Controller
     public function index(SongListRequest $request)
     {
         return SongResource::collection(
-            $this->songRepository->getForListing(
+            $this->songRepository->paginate(
                 sortColumns: $request->sort ? explode(',', $request->sort) : ['songs.title'],
                 sortDirection: $request->order ?: 'asc',
                 scopedUser: $this->user

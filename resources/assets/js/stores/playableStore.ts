@@ -250,11 +250,11 @@ export const playableStore = {
     )
   },
 
-  async paginateSongsForGenre (genre: Genre | Genre['name'], params: GenreSongListPaginateParams) {
-    const name = typeof genre === 'string' ? genre : genre.name
+  async paginateSongsByGenre (genre: Genre | Genre['id'], params: GenreSongListPaginateParams) {
+    const id = typeof genre === 'string' ? genre : genre.id
 
     const resource = await http.get<PaginatorResource<Song>>(
-      `genres/${name}/songs?${new URLSearchParams(params).toString()}`,
+      `genres/${id}/songs?${new URLSearchParams(params).toString()}`,
     )
 
     const songs = this.syncWithVault(resource.data) as Song[]
@@ -265,9 +265,15 @@ export const playableStore = {
     }
   },
 
-  async fetchRandomSongsByGenre (genre: Genre | Genre['name'], limit = 500) {
-    const name = typeof genre === 'string' ? genre : genre.name
-    return this.syncWithVault(await http.get<Song[]>(`genres/${name}/songs/random?limit=${limit}`))
+  async fetchSongsByGenre (genre: Genre | Genre['id'], random = false, limit = 500) {
+    const id = typeof genre === 'string' ? genre : genre.id
+
+    const params = new URLSearchParams({
+      limit: String(limit),
+      random: String(random),
+    }).toString()
+
+    return this.syncWithVault(await http.get<Song[]>(`genres/${id}/songs/queue?${params}`))
   },
 
   async paginateSongs (params: SongListPaginateParams) {
