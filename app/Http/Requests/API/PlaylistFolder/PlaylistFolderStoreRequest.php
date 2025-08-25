@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Http\Requests\API;
+namespace App\Http\Requests\API\PlaylistFolder;
+
+use App\Http\Requests\API\Request;
 
 /**
  * @property-read string $name
  */
-class PlaylistFolderUpdateRequest extends Request
+class PlaylistFolderStoreRequest extends Request
 {
     /** @return array<mixed> */
     public function rules(): array

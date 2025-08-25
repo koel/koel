@@ -21,7 +21,7 @@
         >
           <span>{{ item.label }}</span>
           <span v-if="isCurrentField(item.field)" class="opacity-80">
-            <Icon v-if="order === 'asc'" class="" :icon="faArrowUp" />
+            <Icon v-if="order === 'asc'" :icon="faArrowUp" />
             <Icon v-else :icon="faArrowDown" />
           </span>
         </li>
@@ -30,7 +30,7 @@
   </article>
 </template>
 
-<script setup lang="ts" generic="T extends AlbumListSortField | PodcastListSortField | ArtistListSortField">
+<script generic="T extends SortField" lang="ts" setup>
 import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons'
 import { OnClickOutside } from '@vueuse/components'
 import { computed, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'

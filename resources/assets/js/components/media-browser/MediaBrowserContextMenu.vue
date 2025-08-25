@@ -3,7 +3,7 @@
     <li v-if="isForSingleFolder" @click="openFolder">Open</li>
     <li @click="play">Play</li>
     <li @click="shuffle">Shuffle</li>
-    <li @click="addToQueue">Add to Queue</li>
+    <li @click="queue">Add to Queue</li>
   </ContextMenu>
 </template>
 
@@ -54,11 +54,11 @@ const shuffle = () => trigger(async () => {
   }
 })
 
-const addToQueue = () => trigger(async () => {
+const queue = () => trigger(async () => {
   const songs = await playableStore.resolveSongsFromMediaReferences(references)
 
   if (songs.length) {
-    queueStore.queueAfterCurrent(songs)
+    queueStore.queue(songs)
     toastSuccess(`${pluralize(songs, 'song')} added to queue.`)
   } else {
     toastWarning('Nothing to queue.')

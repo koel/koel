@@ -60,10 +60,9 @@
 import { faAdd, faPodcast, faStar } from '@fortawesome/free-solid-svg-icons'
 import { faStar as faEmptyStar } from '@fortawesome/free-regular-svg-icons'
 import { orderBy } from 'lodash'
-import { computed, provide, ref } from 'vue'
+import { computed, onMounted, provide, ref } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { podcastStore } from '@/stores/podcastStore'
-import { useRouter } from '@/composables/useRouter'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useFuzzySearch } from '@/composables/useFuzzySearch'
 import { FilterKeywordsKey } from '@/symbols'
@@ -79,10 +78,8 @@ import ScreenBase from '@/components/screens/ScreenBase.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 
-const { onScreenActivated } = useRouter()
 const fuzzy = useFuzzySearch<Podcast>([], ['title', 'description', 'author'])
 
-let initialized = false
 const loading = ref(false)
 const keywords = ref('')
 
@@ -126,10 +123,5 @@ const toggleFavoritesOnly = async () => {
   preferences.podcasts_favorites_only = !preferences.podcasts_favorites_only
 }
 
-onScreenActivated('Podcasts', async () => {
-  if (!initialized) {
-    initialized = true
-    await fetchPodcasts()
-  }
-})
+onMounted(async () => await fetchPodcasts())
 </script>

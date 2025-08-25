@@ -313,7 +313,7 @@ new class extends UnitTestCase {
 
       const syncMock = this.mock(playableStore, 'syncWithVault', reactiveSongs)
 
-      expect(await playableStore.paginateSongsForGenre('foo', {
+      expect(await playableStore.paginateSongsByGenre('foo', {
         page: 2,
         sort: 'title',
         order: 'desc',
@@ -326,16 +326,29 @@ new class extends UnitTestCase {
       expect(syncMock).toHaveBeenCalledWith(songs)
     })
 
-    it('fetches random songs for genre', async () => {
+    it('fetches songs for genre to queue', async () => {
       const songs = factory('song', 3)
       const reactiveSongs = reactive(songs)
 
       const getMock = this.mock(http, 'get').mockResolvedValueOnce(songs)
       const syncMock = this.mock(playableStore, 'syncWithVault', reactiveSongs)
 
-      expect(await playableStore.fetchRandomSongsByGenre('foo')).toEqual(reactiveSongs)
+      expect(await playableStore.fetchSongsByGenre('foo')).toEqual(reactiveSongs)
 
-      expect(getMock).toHaveBeenCalledWith('genres/foo/songs/random?limit=500')
+      expect(getMock).toHaveBeenCalledWith('genres/foo/songs/queue?limit=500&random=false')
+      expect(syncMock).toHaveBeenCalledWith(songs)
+    })
+
+    it('fetches random songs for genre to queue', async () => {
+      const songs = factory('song', 3)
+      const reactiveSongs = reactive(songs)
+
+      const getMock = this.mock(http, 'get').mockResolvedValueOnce(songs)
+      const syncMock = this.mock(playableStore, 'syncWithVault', reactiveSongs)
+
+      expect(await playableStore.fetchSongsByGenre('foo', true)).toEqual(reactiveSongs)
+
+      expect(getMock).toHaveBeenCalledWith('genres/foo/songs/queue?limit=500&random=true')
       expect(syncMock).toHaveBeenCalledWith(songs)
     })
 

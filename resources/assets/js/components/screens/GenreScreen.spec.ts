@@ -4,7 +4,6 @@ import UnitTestCase from '@/__tests__/UnitTestCase'
 import factory from '@/__tests__/factory'
 import { genreStore } from '@/stores/genreStore'
 import { playableStore } from '@/stores/playableStore'
-import { playbackService } from '@/services/QueuePlaybackService'
 import Component from './GenreScreen.vue'
 
 new class extends UnitTestCase {
@@ -13,45 +12,13 @@ new class extends UnitTestCase {
       await this.renderComponent()
       expect(screen.getByTestId('song-list')).toBeTruthy()
     })
-
-    it('shuffles all songs without fetching if genre has <= 500 songs', async () => {
-      this.createAudioPlayer()
-
-      const genre = factory('genre', { song_count: 10 })
-      const songs = factory('song', 10)
-      const playbackMock = this.mock(playbackService, 'queueAndPlay')
-
-      await this.renderComponent(genre, songs)
-
-      await this.user.click(screen.getByTitle('Shuffle all. Press Alt/⌥ to change mode.'))
-
-      expect(playbackMock).toHaveBeenCalledWith(songs, true)
-    })
-
-    it('fetches and shuffles all songs if genre has > 500 songs', async () => {
-      this.createAudioPlayer()
-
-      const genre = factory('genre', { song_count: 501 })
-      const songs = factory('song', 10) // we don't really need to generate 501 songs
-      const playbackMock = this.mock(playbackService, 'queueAndPlay')
-      const fetchMock = this.mock(playableStore, 'fetchRandomSongsByGenre').mockResolvedValue(songs)
-
-      await this.renderComponent(genre, songs)
-
-      await this.user.click(screen.getByTitle('Shuffle all. Press Alt/⌥ to change mode.'))
-
-      await waitFor(() => {
-        expect(fetchMock).toHaveBeenCalledWith(genre, 500)
-        expect(playbackMock).toHaveBeenCalledWith(songs)
-      })
-    })
   }
 
   private async renderComponent (genre?: Genre, songs?: Song[]) {
     genre = genre || factory('genre')
 
     const fetchGenreMock = this.mock(genreStore, 'fetchOne').mockResolvedValue(genre)
-    const paginateMock = this.mock(playableStore, 'paginateSongsForGenre').mockResolvedValue({
+    const paginateMock = this.mock(playableStore, 'paginateSongsByGenre').mockResolvedValue({
       nextPage: 2,
       songs: songs || factory('song', 13),
     })

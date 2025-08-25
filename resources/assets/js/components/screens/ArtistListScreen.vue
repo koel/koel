@@ -56,11 +56,10 @@
 
 <script lang="ts" setup>
 import { faMicrophoneSlash, faStar } from '@fortawesome/free-solid-svg-icons'
-import { computed, nextTick, ref, toRef } from 'vue'
+import { computed, nextTick, onMounted, ref, toRef } from 'vue'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
-import { useRouter } from '@/composables/useRouter'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useInfiniteScroll } from '@/composables/useInfiniteScroll'
 import { useAuthorization } from '@/composables/useAuthorization'
@@ -84,7 +83,6 @@ const artists = toRef(artistStore.state, 'artists')
 
 const favoritesOnly = ref(false)
 
-let initialized = false
 const loading = ref(false)
 const page = ref<number | null>(1)
 
@@ -143,19 +141,15 @@ const toggleFavoritesOnly = async () => {
   await fetchArtists()
 }
 
-useRouter().onScreenActivated('Artists', async () => {
+onMounted(async () => {
   if (libraryEmpty.value) {
     return
   }
-  if (!initialized) {
-    initialized = true
 
-    try {
-      await makeScrollable()
-    } catch (error: unknown) {
-      initialized = false
-      useErrorHandler().handleHttpError(error)
-    }
+  try {
+    await makeScrollable()
+  } catch (error: unknown) {
+    useErrorHandler().handleHttpError(error)
   }
 })
 </script>

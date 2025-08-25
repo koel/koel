@@ -8,8 +8,8 @@ import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { playableStore } from '@/stores/playableStore'
 import { mediaBrowser } from '@/services/mediaBrowser'
 
-type Draggable = MaybeArray<Playable> | Album | Artist | Playlist | PlaylistFolder | MaybeArray<Song | Folder>
-const draggableTypes = <const>['playables', 'album', 'artist', 'playlist', 'playlist-folder', 'browser-media']
+type Draggable = MaybeArray<Playable> | Album | Artist | Genre | Playlist | PlaylistFolder | MaybeArray<Song | Folder>
+const draggableTypes = <const>['playables', 'album', 'artist', 'genre', 'playlist', 'playlist-folder', 'browser-media']
 type DraggableType = typeof draggableTypes[number]
 
 const createGhostDragImage = (event: DragEvent, text: string): void => {
@@ -83,7 +83,12 @@ export const useDraggable = (type: DraggableType) => {
         dragged = arrayify(dragged as MaybeArray<Song | Folder>)
         data = mediaBrowser.extractMediaReferences(dragged)
         text = pluralize(dragged, 'item')
+        break
 
+      case 'genre':
+        dragged = <Genre>dragged
+        data = dragged.id
+        text = dragged.name || 'No Genre'
         break
 
       default:
@@ -161,6 +166,8 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
           return folder ? await playableStore.fetchForPlaylistFolder(folder) : <Song[]>[]
         case 'browser-media':
           return await playableStore.resolveSongsFromMediaReferences(data)
+        case 'genre':
+          return await playableStore.fetchSongsByGenre(<string>data)
         default:
           throw new Error(`Unknown drag type: ${type}`)
       }

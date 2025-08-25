@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\API\PlaylistFolderPlaylistDestroyRequest;
-use App\Http\Requests\API\PlaylistFolderPlaylistStoreRequest;
+use App\Http\Requests\API\PlaylistFolder\PlaylistFolderPlaylistDestroyRequest;
+use App\Http\Requests\API\PlaylistFolder\PlaylistFolderPlaylistStoreRequest;
 use App\Models\PlaylistFolder;
 use App\Services\PlaylistFolderService;
 use Illuminate\Support\Arr;

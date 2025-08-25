@@ -16,7 +16,7 @@ withDefaults(defineProps<{
 const emit = defineEmits<{ (e: 'sort', field: PodcastListSortField, order: SortOrder): void }>()
 
 const items: { label: string, field: PodcastListSortField }[] = [
-  { label: 'Last played', field: 'last_played_at' },
+  { label: 'Last Played', field: 'last_played_at' },
   { label: 'Subscribed', field: 'subscribed_at' },
   { label: 'Title', field: 'title' },
   { label: 'Author', field: 'author' },

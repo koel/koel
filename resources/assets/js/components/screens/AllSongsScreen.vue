@@ -50,7 +50,7 @@
 
 <script lang="ts" setup>
 import { faVolumeOff } from '@fortawesome/free-solid-svg-icons'
-import { computed, ref, toRef } from 'vue'
+import { computed, onMounted, ref, toRef } from 'vue'
 import { pluralize, secondsToHumanReadable } from '@/utils/formatters'
 import { commonStore } from '@/stores/commonStore'
 import { queueStore } from '@/stores/queueStore'
@@ -85,10 +85,8 @@ const {
 } = usePlayableList(toRef(playableStore.state, 'playables'), { type: 'Songs' }, { filterable: false, sortable: true })
 
 const { PlayableListControls: SongListControls, config } = usePlayableListControls('Songs')
+const { go, url } = useRouter()
 
-const { go, onScreenActivated, url } = useRouter()
-
-let initialized = false
 const loading = ref(false)
 let sortField: MaybeArray<PlayableListSortField> = 'title' // @todo get from query string
 let sortOrder: SortOrder = 'asc'
@@ -137,12 +135,7 @@ const sort = async (field: MaybeArray<PlayableListSortField>, order: SortOrder) 
   await fetchSongs()
 }
 
-onScreenActivated('Songs', async () => {
-  if (!initialized) {
-    initialized = true
-    await fetchSongs()
-  }
-})
+onMounted(async () => await fetchSongs())
 </script>
 
 <style lang="postcss" scoped>

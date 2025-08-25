@@ -93,7 +93,7 @@ new class extends UnitTestCase {
 
     it('adds to queue', async () => {
       const resolvedSongs = factory('song', 3)
-      const queueMock = this.mock(queueStore, 'queueAfterCurrent')
+      const queueMock = this.mock(queueStore, 'queue')
       const resolveMock = this.mock(playableStore, 'resolveSongsFromMediaReferences').mockResolvedValue(resolvedSongs)
 
       // we don't care about the actual references here, as this functionality should have been tested in the

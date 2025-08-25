@@ -20,12 +20,11 @@ use App\Http\Controllers\API\FetchDemoCreditsController;
 use App\Http\Controllers\API\FetchFavoriteSongsController;
 use App\Http\Controllers\API\FetchInitialDataController;
 use App\Http\Controllers\API\FetchOverviewController;
-use App\Http\Controllers\API\FetchRandomSongsInGenreController;
 use App\Http\Controllers\API\FetchRecentlyPlayedSongController;
 use App\Http\Controllers\API\FetchSongsForQueueController;
+use App\Http\Controllers\API\FetchSongsToQueueByGenreController;
 use App\Http\Controllers\API\ForgotPasswordController;
 use App\Http\Controllers\API\GenreController;
-use App\Http\Controllers\API\GenreSongController;
 use App\Http\Controllers\API\GetOneTimeTokenController;
 use App\Http\Controllers\API\LambdaSongController as S3SongController;
 use App\Http\Controllers\API\LikeMultipleSongsController;
@@ -34,6 +33,7 @@ use App\Http\Controllers\API\MediaBrowser\FetchRecursiveFolderSongsController;
 use App\Http\Controllers\API\MediaBrowser\FetchSubfoldersController;
 use App\Http\Controllers\API\MediaBrowser\PaginateFolderSongsController;
 use App\Http\Controllers\API\MovePlaylistSongsController;
+use App\Http\Controllers\API\PaginateSongsByGenreController;
 use App\Http\Controllers\API\PlaylistCollaboration\AcceptPlaylistCollaborationInviteController;
 use App\Http\Controllers\API\PlaylistCollaboration\CreatePlaylistCollaborationTokenController;
 use App\Http\Controllers\API\PlaylistCollaboration\PlaylistCollaboratorController;
@@ -167,8 +167,8 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::post('playlists/{playlist}/songs/move', MovePlaylistSongsController::class);
 
         // Genre routes
-        Route::get('genres/{genre?}/songs', GenreSongController::class);
-        Route::get('genres/{genre}/songs/random', FetchRandomSongsInGenreController::class);
+        Route::get('genres/{genre?}/songs', PaginateSongsByGenreController::class);
+        Route::get('genres/{genre?}/songs/queue', FetchSongsToQueueByGenreController::class);
         Route::get('genres', [GenreController::class, 'index']);
         Route::get('genres/{genre}', [GenreController::class, 'show']);
 

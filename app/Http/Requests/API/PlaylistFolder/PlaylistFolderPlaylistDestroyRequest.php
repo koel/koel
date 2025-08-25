@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Requests\API;
+namespace App\Http\Requests\API\PlaylistFolder;
 
+use App\Http\Requests\API\Request;
 use App\Models\Playlist;
 use App\Rules\AllPlaylistsAreAccessibleBy;
 use Illuminate\Validation\Rule;

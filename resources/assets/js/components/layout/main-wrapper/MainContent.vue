@@ -25,8 +25,8 @@
     <PodcastListScreen v-if="screenLoaded('Podcasts')" v-show="screen === 'Podcasts'" />
     <RadioStationListScreen v-if="screenLoaded('Radio.Stations')" v-show="screen === 'Radio.Stations'" />
     <MediaBrowser v-if="useMediaBrowser && screenLoaded('MediaBrowser')" v-show="screen === 'MediaBrowser'" />
+    <GenreListScreen v-if="screenLoaded('Genres')" v-show="screen === 'Genres'" />
 
-    <GenreListScreen v-if="screen === 'Genres'" />
     <SearchSongResultsScreen v-if="screen === 'Search.Playables'" />
     <AlbumScreen v-if="screen === 'Album'" />
     <ArtistScreen v-if="screen === 'Artist'" />

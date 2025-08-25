@@ -1,12 +1,26 @@
 <template>
   <ScreenBase>
     <template #header>
-      <ScreenHeader layout="collapsed">Genres</ScreenHeader>
+      <ScreenHeader layout="collapsed">
+        Genres
+
+        <template #controls>
+          <div v-if="!loading" class="flex gap-2">
+            <GenreListSorter
+              :field="preferences.genres_sort_field"
+              :order="preferences.genres_sort_order"
+              @sort="sort"
+            />
+
+            <ListFilter />
+          </div>
+        </template>
+      </ScreenHeader>
     </template>
 
     <ScreenEmptyState v-if="libraryEmpty">
       <template #icon>
-        <GuitarIcon size="96" />
+        <GuitarIcon :size="96" />
       </template>
       No genres found.
       <span class="secondary block">
@@ -15,34 +29,12 @@
     </ScreenEmptyState>
 
     <template v-else>
-      <ul v-if="genres" class="genres text-center">
-        <li
-          v-for="genre in genres"
-          :key="genre.name"
-          :class="`level-${getLevel(genre)}`"
-          class="rounded-[0.5em] inline-block m-1.5 align-middle"
-        >
-          <a
-            :href="url('genres.show', { id: genre.id })"
-            :title="`${genre.name}: ${pluralize(genre.song_count, 'song')}`"
-            class="group bg-white/15 relative inline-flex items-center justify-center !text-k-text-secondary
-          transition-colors duration-200 ease-in-out hover:!text-k-text-primary hover:bg-k-highlight
-          rounded-lg active:scale-95"
-          >
-            <span class="name bg-white/5 px-[0.5em] py-[0.2em] leading-normal">{{ genre.name }}</span>
-            <span
-              class="count absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 items-center px-[0.3em] py-0
-              pointer-events-none text-sm bg-k-bg-secondary group-hover:bg-k-primary border border-white/10 rounded-full shadow-md"
-            >
-              {{ genre.song_count }}
-            </span>
-          </a>
-        </li>
+      <ul v-if="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-3">
+        <GenreCard v-for="genre in displayedGenres" :key="genre.id" :genre />
       </ul>
-      <ul v-else class="text-center">
-        <li v-for="i in 20" :key="i" class="inline-block">
-          <GenreItemSkeleton />
-        </li>
+
+      <ul v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-3">
+        <GenreCardSkeleton v-for="key in 11" :key />
       </ul>
     </template>
   </ScreenBase>
@@ -50,94 +42,77 @@
 
 <script lang="ts" setup>
 import { GuitarIcon } from 'lucide-vue-next'
-import { maxBy, minBy } from 'lodash'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, provide, ref } from 'vue'
 import { commonStore } from '@/stores/commonStore'
 import { genreStore } from '@/stores/genreStore'
-import { pluralize } from '@/utils/formatters'
 import { useAuthorization } from '@/composables/useAuthorization'
 import { useErrorHandler } from '@/composables/useErrorHandler'
-import { useRouter } from '@/composables/useRouter'
+import { preferenceStore as preferences } from '@/stores/preferenceStore'
+import { useFuzzySearch } from '@/composables/useFuzzySearch'
+import { FilterKeywordsKey } from '@/symbols'
+import { orderBy } from 'lodash'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
-import GenreItemSkeleton from '@/components/ui/skeletons/GenreItemSkeleton.vue'
+import GenreCardSkeleton from '@/components/ui/skeletons/GenreCardSkeleton.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
+import GenreCard from '@/components/genre/GenreCard.vue'
+import ListFilter from '@/components/ui/ListFilter.vue'
+import GenreListSorter from '@/components/genre/GenreListSorter.vue'
 
 const { isAdmin } = useAuthorization()
 const { handleHttpError } = useErrorHandler()
-const { url } = useRouter()
 
-const genres = ref<Genre[]>()
+const genres = ref<Genre[]>([])
+const keywords = ref('')
+const loading = ref(false)
 
-const libraryEmpty = computed(() => commonStore.state.song_length === 0)
-const mostPopular = computed(() => maxBy(genres.value, 'song_count'))
-const leastPopular = computed(() => minBy(genres.value, 'song_count'))
+const fuzzy = useFuzzySearch<Genre>(genres, ['name'])
 
-const levels = computed(() => {
-  const max = mostPopular.value?.song_count || 1
-  const min = leastPopular.value?.song_count || 1
-  const range = max - min
-  const step = range / 5
+provide(FilterKeywordsKey, keywords)
 
-  return [min, min + step, min + step * 2, min + step * 3, min + step * 4, max]
+const displayedGenres = computed(() => {
+  const all = keywords.value ? fuzzy.search(keywords.value) : genres.value
+
+  if (preferences.genres_sort_field === 'name') {
+    // if sorted by name, ensure 'No Genre' is always on top
+    return orderBy(
+      all,
+      [genre => genre.name ? 1 : 0, 'name'],
+      ['asc', preferences.genres_sort_order],
+    )
+  }
+
+  return orderBy(all, preferences.genres_sort_field, preferences.genres_sort_order)
 })
 
-const getLevel = (genre: Genre) => {
-  const index = levels.value.findIndex(level => genre.song_count <= level)
-  return index === -1 ? 5 : index
-}
+const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 
 const fetchGenres = async () => {
+  if (loading.value) {
+    return
+  }
+
   try {
+    loading.value = true
     genres.value = await genreStore.fetchAll()
   } catch (error: unknown) {
     handleHttpError(error)
+  } finally {
+    loading.value = false
   }
+}
+
+const sort = (field: GenreListSortField, order: SortOrder) => {
+  preferences.genres_sort_field = field
+  preferences.genres_sort_order = order
 }
 
 onMounted(async () => {
   if (libraryEmpty.value) {
     return
   }
+
   await fetchGenres()
 })
 </script>
-
-<style lang="postcss" scoped>
-.genres {
-  li {
-    font-size: var(--unit);
-  }
-
-  .level-0 {
-    --unit: 1rem;
-    @apply opacity-80;
-  }
-
-  .level-1 {
-    --unit: 1.4rem;
-    @apply opacity-[84%];
-  }
-
-  .level-2 {
-    --unit: 1.8rem;
-    @apply opacity-[88%];
-  }
-
-  .level-3 {
-    --unit: 2.2rem;
-    @apply opacity-[92%];
-  }
-
-  .level-4 {
-    --unit: 2.6rem;
-    @apply opacity-[96%];
-  }
-
-  .level-5 {
-    --unit: 3rem;
-    @apply opacity-100;
-  }
-}
-</style>
