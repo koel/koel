@@ -30,7 +30,7 @@ class SftpStorage extends SongStorage implements MustDeleteTemporaryLocalFileAft
     public function storeUploadedFile(string $uploadedFilePath, User $uploader): UploadReference
     {
         $path = $this->generateRemotePath(basename($uploadedFilePath), $uploader);
-        $this->disk->put($path, File::get($uploadedFilePath));
+        $this->disk->put($path, fopen($uploadedFilePath, 'r'));
 
         return UploadReference::make(
             location: "sftp://$path",
@@ -59,7 +59,7 @@ class SftpStorage extends SongStorage implements MustDeleteTemporaryLocalFileAft
     {
         $localPath = artifact_path(sprintf('tmp/%s_%s', Ulid::generate(), basename($path)));
 
-        File::put($localPath, $this->disk->get($path));
+        file_put_contents($localPath, $this->disk->readStream($path));
 
         return $localPath;
     }

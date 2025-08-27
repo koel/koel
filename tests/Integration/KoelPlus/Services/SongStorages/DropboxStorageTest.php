@@ -74,7 +74,7 @@ class DropboxStorageTest extends PlusTestCase
         });
 
         $user = create_user();
-        $this->filesystem->expects('write');
+        $this->filesystem->expects('writeStream');
         $reference = $service->storeUploadedFile($this->uploadedFilePath, $user);
 
         self::assertSame("dropbox://{$user->id}__random__song.mp3", $reference->location);
