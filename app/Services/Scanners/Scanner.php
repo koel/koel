@@ -29,7 +29,7 @@ abstract class Scanner
                 return ScanResult::success($info->path);
             }
 
-            return $song->mtime === $info->mTime && !$config->force
+            return !$song->isFileModified($info) && !$config->force
                 ? ScanResult::skipped($info->path)
                 : ScanResult::success($info->path);
         } catch (Throwable $e) {

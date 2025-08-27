@@ -6,6 +6,7 @@ use App\Models\Album;
 use App\Models\Artist;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 class ScanInformation implements Arrayable
@@ -23,6 +24,7 @@ class ScanInformation implements Arrayable
         public ?float $length,
         public ?array $cover,
         public ?string $path,
+        public ?string $hash,
         public ?int $mTime,
         public ?string $mimeType,
     ) {
@@ -72,8 +74,45 @@ class ScanInformation implements Arrayable
             length: (float) Arr::get($info, 'playtime_seconds'),
             cover: $cover,
             path: $path,
+            hash: File::hash($path),
             mTime: get_mtime($path),
             mimeType: Str::lower(Arr::get($info, 'mime_type')) ?: 'audio/mpeg',
+        );
+    }
+
+    public static function make(
+        ?string $title = null,
+        ?string $albumName = null,
+        ?string $artistName = null,
+        ?string $albumArtistName = null,
+        ?int $track = null,
+        ?int $disc = null,
+        ?int $year = null,
+        ?string $genre = null,
+        ?string $lyrics = null,
+        ?float $length = null,
+        ?array $cover = null,
+        ?string $path = null,
+        ?string $hash = null,
+        ?int $mTime = null,
+        ?string $mimeType = null,
+    ): self {
+        return new self(
+            title: $title,
+            albumName: $albumName,
+            artistName: $artistName,
+            albumArtistName: $albumArtistName,
+            track: $track,
+            disc: $disc,
+            year: $year,
+            genre: $genre,
+            lyrics: $lyrics,
+            length: $length,
+            cover: $cover,
+            path: $path,
+            hash: $hash,
+            mTime: $mTime,
+            mimeType: $mimeType,
         );
     }
 
@@ -106,6 +145,7 @@ class ScanInformation implements Arrayable
             'length' => $this->length,
             'cover' => $this->cover,
             'path' => $this->path,
+            'hash' => $this->hash,
             'mtime' => $this->mTime,
             'mime_type' => $this->mimeType,
         ];

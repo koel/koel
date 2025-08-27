@@ -114,12 +114,12 @@ class DirectoryScannerTest extends TestCase
 
         /** @var Song $song */
         $song = Song::query()->latest()->first();
+        $correctHash = $song->hash;
+        $song->update(['hash' => 'fake-old-hash']);
 
-        $time = $song->mtime + 1000;
-        touch($song->path, $time);
         $this->scanner->scan($this->mediaPath, $config);
 
-        self::assertSame($time, $song->refresh()->mtime);
+        self::assertSame($correctHash, $song->refresh()->hash);
     }
 
     #[Test]
@@ -227,8 +227,8 @@ class DirectoryScannerTest extends TestCase
 
         // Song should be added back with all info
         self::assertEquals(
-            Arr::except(Song::query()->where('path', $song->path)->first()->toArray(), ['id', 'created_at']),
-            Arr::except($song->toArray(), ['id', 'created_at'])
+            Arr::except(Song::query()->where('path', $song->path)->first()->toArray(), ['id', 'created_at', 'pivot']),
+            Arr::except($song->toArray(), ['id', 'created_at', 'pivot'])
         );
     }
 

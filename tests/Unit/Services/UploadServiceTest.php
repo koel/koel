@@ -39,7 +39,7 @@ class UploadServiceTest extends TestCase
     public function handleUpload(): void
     {
         $storage = Mockery::mock(SongStorage::class, ['getStorageType' => SongStorageType::LOCAL]);
-        $scanInfo = ScanInformation::fromGetId3Info([], '/var/media/koel/some-file.mp3');
+        $scanInfo = ScanInformation::make(path: '/var/media/koel/some-file.mp3');
         $file = '/var/media/koel/some-file.mp3';
         $song = Song::factory()->create();
         $uploader = create_user();
@@ -75,7 +75,7 @@ class UploadServiceTest extends TestCase
     {
         $storage = Mockery::mock(SongStorage::class, ['getStorageType' => SongStorageType::S3]);
         $file = '/tmp/some-tmp-file.mp3';
-        $scanInfo = ScanInformation::fromGetId3Info([], '/tmp/some-tmp-file.mp3');
+        $scanInfo = ScanInformation::make(path: '/tmp/some-tmp-file.mp3');
         $uploader = create_user();
 
         /** @var Song $song */
@@ -115,7 +115,7 @@ class UploadServiceTest extends TestCase
     #[Test]
     public function deletesTempLocalPathAfterUploading(): void
     {
-        $scanInfo = ScanInformation::fromGetId3Info([], '/tmp/some-tmp-file.mp3');
+        $scanInfo = ScanInformation::make(path: '/tmp/some-tmp-file.mp3');
 
         /** @var SongStorage|MustDeleteTemporaryLocalFileAfterUpload|MockInterface $storage */
         $storage = Mockery::mock(
@@ -146,7 +146,7 @@ class UploadServiceTest extends TestCase
     #[Test]
     public function undoUploadOnScanningProcessException(): void
     {
-        $scanInfo = ScanInformation::fromGetId3Info([], '/var/media/koel/some-file.mp3');
+        $scanInfo = ScanInformation::make(path: '/var/media/koel/some-file.mp3');
         $storage = Mockery::mock(SongStorage::class, ['getStorageType' => SongStorageType::LOCAL]);
         $file = '/tmp/some-file.mp3';
         $uploader = create_user();

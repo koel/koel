@@ -26,6 +26,7 @@ class SongFactory extends Factory
             'year' => $this->faker->year(),
             'is_public' => true,
             'owner_id' => static fn (array $attributes) => Album::query()->find($attributes['album_id'])->user_id, // @phpstan-ignore-line
+            'hash' => $this->faker->md5(),
             'mtime' => time(),
             'mime_type' => 'audio/mpeg',
         ];
