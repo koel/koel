@@ -42,7 +42,7 @@ return [
     ],
 
     'gravatar' => [
-        'url' => env('GRAVATAR_URL', 'https://avatars.laravel.cloud/'),
+        'url' => env('GRAVATAR_URL', 'https://www.gravatar.com/avatar'),
         'default' => env('GRAVATAR_DEFAULT', 'robohash'),
     ],
 ];
