@@ -55,7 +55,7 @@ class S3CompatibleStorage extends CloudStorage
 
     public function uploadToStorage(string $key, string $path): void
     {
-        Storage::disk('s3')->put($key, File::get($path));
+        Storage::disk('s3')->put($key, fopen($path, 'r'));
     }
 
     public function testSetup(): void

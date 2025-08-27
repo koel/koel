@@ -90,7 +90,7 @@ class DropboxStorage extends CloudStorage
 
     public function uploadToStorage(string $key, string $path): void
     {
-        $this->filesystem->write($key, File::get($path));
+        $this->filesystem->writeStream($key, fopen($path, 'r'));
     }
 
     public function deleteFileWithKey(string $key, bool $backup): void
