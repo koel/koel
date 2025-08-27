@@ -182,10 +182,9 @@ class SongService
         $song = Song::query()->where('path', $info->path)->first();
 
         $isFileNew = !$song;
-        $isFileModified = $song && $song->mtime !== $info->mTime;
+        $isFileModified = $song && $song->isFileModified($info);
         $isFileNewOrModified = $isFileNew || $isFileModified;
 
-        // if the file is not new or modified, and we're not force-rescanning, skip the whole process.
         if (!$isFileNewOrModified && !$config->force) {
             return $song;
         }

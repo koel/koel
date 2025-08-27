@@ -12,6 +12,7 @@ use App\Enums\SongStorageType;
 use App\Models\Concerns\MorphsToFavorites;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
 use App\Models\Contracts\Favoriteable;
+use App\Values\Scanning\ScanInformation;
 use App\Values\SongStorageMetadata\DropboxMetadata;
 use App\Values\SongStorageMetadata\LocalMetadata;
 use App\Values\SongStorageMetadata\S3CompatibleMetadata;
@@ -29,6 +30,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\File;
 use Laravel\Scout\Searchable;
+use LogicException;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use PhanAn\Poddle\Values\EpisodeMetadata;
@@ -57,6 +59,7 @@ use Webmozart\Assert\Assert;
  * @property string $artist_id
  * @property int $disc
  * @property int $mtime
+ * @property ?string $hash The hash of the song file. Null for legacy songs.
  * @property int $owner_id
  * @property int $track
  * @property ?int $year
@@ -307,6 +310,23 @@ class Song extends Model implements AuditableContract, Favoriteable
             SongStorageType::S3_LAMBDA,
             SongStorageType::DROPBOX,
         ], true);
+    }
+
+    /**
+     * Determine if the song's associated file has been modified since the last scan.
+     * This is done by comparing the stored hash or mtime with the corresponding
+     * value from the scan information.
+     */
+    public function isFileModified(ScanInformation $scanInformation): bool
+    {
+        throw_if($this->isEpisode(), new LogicException('Podcast episodes do not have associated files.'));
+
+        // Prioritize hash over mtime, but keep mtime as a fallback for backwards compatibility.
+        if ($this->hash) {
+            return $this->hash !== $scanInformation->hash;
+        }
+
+        return $this->mtime !== $scanInformation->mTime;
     }
 
     public function __toString(): string
