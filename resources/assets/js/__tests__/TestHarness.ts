@@ -1,5 +1,4 @@
 import isMobile from 'ismobilejs'
-import { isObject, mergeWith } from 'lodash'
 import type { EventType, RenderOptions } from '@testing-library/vue'
 import { cleanup, createEvent, fireEvent, render } from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
@@ -15,31 +14,7 @@ import { DialogBoxKey, MessageToasterKey, OverlayKey, RouterKey } from '@/symbol
 import Router from '@/router'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { noop } from '@/utils/helpers'
-
-// A deep-merge function that
-// - supports symbols as keys (_.merge doesn't)
-// - supports Vue's Ref type without losing reactivity (deepmerge doesn't)
-// Credit: https://stackoverflow.com/a/60598589/794641
-const deepMerge = (first: object, second: object) => {
-  return mergeWith(first, second, (a, b) => {
-    if (!isObject(b)) {
-      return b
-    }
-
-    // @ts-ignore
-    return Array.isArray(a) ? [...a, ...b] : { ...a, ...b }
-  })
-}
-
-const setPropIfNotExists = (obj: object | null, prop: any, value: any) => {
-  if (!obj) {
-    return
-  }
-
-  if (!Object.prototype.hasOwnProperty.call(obj, prop)) {
-    obj[prop] = value
-  }
-}
+import { deepMerge, setPropIfNotExists } from '@/__tests__/utils'
 
 class TestHarness {
   public router: Router
