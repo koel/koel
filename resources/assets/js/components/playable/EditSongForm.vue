@@ -1,17 +1,17 @@
 <template>
-  <form class="max-w-[540px]" @submit.prevent="submit" @keydown.esc="maybeClose">
+  <form class="max-w-[540px]" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
     <header class="gap-4">
       <img :src="coverUrl" alt="" class="w-[84px] aspect-square object-cover object-center rounded-md">
       <div class="flex-1 flex flex-col justify-center overflow-hidden">
-        <h1 :class="{ mixed: !editingOnlyOneSong }">{{ displayedTitle }}</h1>
+        <h1 :class="{ mixed: editingMultipleSongs }">{{ displayedTitle }}</h1>
         <h2
-          :class="{ mixed: !allSongsAreFromSameArtist && !formData.artist_name }"
+          :class="{ mixed: !allSongsAreFromSameArtist && !data.artist_name }"
           data-testid="displayed-artist-name"
         >
           {{ displayedArtistName }}
         </h2>
         <h2
-          :class="{ mixed: !allSongsAreInSameAlbum && !formData.album_name }"
+          :class="{ mixed: !allSongsAreInSameAlbum && !data.album_name }"
           data-testid="displayed-album-name"
         >
           {{ displayedAlbumName }}
@@ -20,7 +20,7 @@
     </header>
 
     <Tabs class="mt-4">
-      <TabList>
+      <TabList v-if="editingOnlyOneSong">
         <TabButton
           id="editSongTabDetails"
           :selected="currentTab === 'details'"
@@ -30,7 +30,6 @@
           Details
         </TabButton>
         <TabButton
-          v-if="editingOnlyOneSong"
           id="editSongTabLyrics"
           :selected="currentTab === 'lyrics'"
           aria-controls="editSongPanelLyrics"
@@ -50,14 +49,14 @@
         >
           <FormRow v-if="editingOnlyOneSong">
             <template #label>Title</template>
-            <TextInput v-model="formData.title" v-koel-focus data-testid="title-input" name="title" title="Title" />
+            <TextInput v-model="data.title" v-koel-focus data-testid="title-input" name="title" title="Title" />
           </FormRow>
 
           <FormRow :cols="2">
             <FormRow>
               <template #label>Artist</template>
               <TextInput
-                v-model="formData.artist_name"
+                v-model="data.artist_name"
                 :placeholder="inputPlaceholder"
                 data-testid="artist-input"
                 name="artist"
@@ -67,7 +66,7 @@
             <FormRow>
               <template #label>Album Artist</template>
               <TextInput
-                v-model="formData.album_artist_name"
+                v-model="data.album_artist_name"
                 :placeholder="inputPlaceholder"
                 data-testid="albumArtist-input"
                 name="album_artist"
@@ -78,7 +77,7 @@
           <FormRow>
             <template #label>Album</template>
             <TextInput
-              v-model="formData.album_name"
+              v-model="data.album_name"
               :placeholder="inputPlaceholder"
               data-testid="album-input"
               name="album"
@@ -89,7 +88,7 @@
             <FormRow>
               <template #label>Track</template>
               <TextInput
-                v-model="formData.track"
+                v-model="data.track"
                 :placeholder="inputPlaceholder"
                 data-testid="track-input"
                 min="1"
@@ -100,7 +99,7 @@
             <FormRow>
               <template #label>Disc</template>
               <TextInput
-                v-model="formData.disc"
+                v-model="data.disc"
                 :placeholder="inputPlaceholder"
                 data-testid="disc-input"
                 min="1"
@@ -114,7 +113,7 @@
             <FormRow>
               <template #label>Genre</template>
               <TextInput
-                v-model="formData.genre"
+                v-model="data.genre"
                 :placeholder="inputPlaceholder"
                 data-testid="genre-input"
                 list="genres"
@@ -127,7 +126,7 @@
             <FormRow>
               <template #label>Year</template>
               <TextInput
-                v-model="formData.year"
+                v-model="data.year"
                 :placeholder="inputPlaceholder"
                 data-testid="year-input"
                 name="year"
@@ -145,7 +144,7 @@
         >
           <FormRow>
             <TextArea
-              v-model="formData.lyrics"
+              v-model="data.lyrics"
               v-koel-focus
               data-testid="lyrics-input"
               name="lyrics"
@@ -164,19 +163,17 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, reactive, ref } from 'vue'
-import { isEqual } from 'lodash'
+import { computed, ref } from 'vue'
 import defaultCover from '@/../img/covers/default.svg'
 import { pluralize } from '@/utils/formatters'
 import { eventBus } from '@/utils/eventBus'
-import type { SongUpdateData } from '@/stores/playableStore'
+import type { SongUpdateData, SongUpdateResult } from '@/stores/playableStore'
 import { playableStore as songStore } from '@/stores/playableStore'
 import { useDialogBox } from '@/composables/useDialogBox'
-import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useModal } from '@/composables/useModal'
-import { useOverlay } from '@/composables/useOverlay'
 import { genres } from '@/config/genres'
+import { useForm } from '@/composables/useForm'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
@@ -189,8 +186,8 @@ import TabPanel from '@/components/ui/tabs/TabPanel.vue'
 import TabPanelContainer from '@/components/ui/tabs/TabPanelContainer.vue'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
+const close = () => emit('close')
 
-const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { getFromContext } = useModal()
@@ -199,81 +196,62 @@ const songs = getFromContext<Song[]>('songs')
 const currentTab = ref(getFromContext<EditSongFormTabName>('initialTab'))
 
 const editingOnlyOneSong = songs.length === 1
-const inputPlaceholder = editingOnlyOneSong ? '' : 'Leave unchanged'
+const editingMultipleSongs = !editingOnlyOneSong
+const inputPlaceholder = editingMultipleSongs ? 'Leave unchanged' : ''
 
-const allSongsShareSameValue = (key: keyof Song) => {
-  if (editingOnlyOneSong) {
-    return true
-  }
-  return new Set(songs.map(song => song[key])).size === 1
-}
+const allSongsShareSameValue = (key: keyof Song) => editingMultipleSongs
+  ? new Set(songs.map(song => song[key])).size === 1
+  : true
 
 const allSongsAreFromSameArtist = allSongsShareSameValue('artist_name')
 const allSongsAreInSameAlbum = allSongsShareSameValue('album_id')
 const coverUrl = allSongsAreInSameAlbum ? (songs[0].album_cover || defaultCover) : defaultCover
 
-const formData = reactive<SongUpdateData>({
-  title: allSongsShareSameValue('title') ? songs[0].title : '',
+const initialValues: SongUpdateData = {
   album_name: allSongsAreInSameAlbum ? songs[0].album_name : '',
   artist_name: allSongsAreFromSameArtist ? songs[0].artist_name : '',
   album_artist_name: '',
-  lyrics: editingOnlyOneSong ? songs[0].lyrics : '',
   track: allSongsShareSameValue('track') && songs[0].track !== 0 ? songs[0].track : null,
   disc: allSongsShareSameValue('disc') && songs[0].disc !== 0 ? songs[0].disc : null,
   year: allSongsShareSameValue('year') ? songs[0].year : null,
   genre: allSongsShareSameValue('genre') ? songs[0].genre : '',
-})
+  ...(editingOnlyOneSong
+    ? {
+        title: allSongsShareSameValue('title') ? songs[0].title : '',
+        lyrics: editingOnlyOneSong ? songs[0].lyrics : '',
+      }
+    : {}),
+}
 
-// If the album artist(s) is the same as the artist(s), we set the form value as empty to not confuse the user
-// and make it less error-prone.
 if (allSongsAreInSameAlbum && allSongsAreFromSameArtist && songs[0].album_artist_id === songs[0].artist_id) {
-  formData.album_artist_name = ''
+  // If the album artist(s) is the same as the artist(s), we set the value as empty to not confuse the user
+  // and make it less error-prone.
+  initialValues.album_artist_name = ''
 } else {
-  formData.album_artist_name = allSongsShareSameValue('album_artist_name') ? songs[0].album_artist_name : ''
+  initialValues.album_artist_name = allSongsShareSameValue('album_artist_name') ? songs[0].album_artist_name : ''
 }
 
-if (!editingOnlyOneSong) {
-  delete formData.title
-  delete formData.lyrics
-}
-
-const initialFormData = Object.assign({}, formData)
-
-const displayedTitle = computed(() => {
-  return editingOnlyOneSong ? formData.title : `${songs.length} songs selected`
-})
-
-const displayedArtistName = computed(() => {
-  return allSongsAreFromSameArtist || formData.artist_name ? formData.artist_name : 'Mixed Artists'
-})
-
-const displayedAlbumName = computed(() => {
-  return allSongsAreInSameAlbum || formData.album_name ? formData.album_name : 'Mixed Albums'
-})
-
-const close = () => emit('close')
-
-const maybeClose = async () => {
-  if (isEqual(formData, initialFormData)) {
-    close()
-    return
-  }
-
-  await showConfirmDialog('Discard all changes?') && close()
-}
-
-const submit = async () => {
-  showOverlay()
-
-  try {
-    const result = await songStore.updateSongs(songs, formData)
+const { data, isPristine, handleSubmit } = useForm<SongUpdateData>({
+  initialValues,
+  onSubmit: async data => await songStore.updateSongs(songs, data),
+  onSuccess: (result: SongUpdateResult) => {
     toastSuccess(`Updated ${pluralize(songs, 'song')}.`)
     eventBus.emit('SONGS_UPDATED', result)
     close()
-  } catch (error: unknown) {
-    useErrorHandler('dialog').handleHttpError(error)
-  } finally {
-    hideOverlay()
+  },
+})
+
+const displayedTitle = computed(() => editingOnlyOneSong ? data.title : `${songs.length} songs selected`)
+
+const displayedArtistName = computed(() => {
+  return allSongsAreFromSameArtist || data.artist_name ? data.artist_name : 'Mixed Artists'
+})
+
+const displayedAlbumName = computed(() => allSongsAreInSameAlbum || data.album_name ? data.album_name : 'Mixed Albums')
+
+const maybeClose = async () => {
+  if (isPristine() || await showConfirmDialog('Discard all changes?')) {
+    close()
   }
 }
 </script>

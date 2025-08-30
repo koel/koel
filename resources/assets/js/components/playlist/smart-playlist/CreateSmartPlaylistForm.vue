@@ -1,6 +1,6 @@
 <template>
   <FormBase>
-    <form @submit.prevent="submit" @keydown.esc="maybeClose">
+    <form @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
       <header>
         <h1>New Smart Playlist</h1>
       </header>
@@ -9,13 +9,13 @@
         <FormRow :cols="2">
           <FormRow>
             <template #label>Name</template>
-            <TextInput v-model="name" v-koel-focus name="name" placeholder="Playlist name" required />
+            <TextInput v-model="data.name" v-koel-focus name="name" placeholder="Playlist name" required />
           </FormRow>
           <FormRow>
             <template #label>Folder</template>
-            <SelectBox v-model="folderId">
+            <SelectBox v-model="data.folder_id">
               <option :value="null" />
-              <option v-for="folder in folders" :key="folder.id" :value="folder.id">{{ folder.name }}</option>
+              <option v-for="({ id, name }) in folders" :key="id" :value="id">{{ name }}</option>
             </SelectBox>
           </FormRow>
         </FormRow>
@@ -45,16 +45,16 @@
 
 <script lang="ts" setup>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { ref, toRef } from 'vue'
+import { isEqual } from 'lodash'
+import { toRef } from 'vue'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { useDialogBox } from '@/composables/useDialogBox'
-import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useModal } from '@/composables/useModal'
-import { useOverlay } from '@/composables/useOverlay'
 import { useSmartPlaylistForm } from '@/composables/useSmartPlaylistForm'
 import { useRouter } from '@/composables/useRouter'
+import { useForm } from '@/composables/useForm'
 
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
@@ -71,48 +71,38 @@ const {
   onGroupChanged,
 } = useSmartPlaylistForm()
 
-const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { go, url } = useRouter()
 
-const targetFolder = useModal().getFromContext<PlaylistFolder | null>('folder')
-
-const name = ref('')
-const folderId = ref(targetFolder?.id)
 const folders = toRef(playlistFolderStore.state, 'folders')
+const targetFolder = useModal().getFromContext<PlaylistFolder | null>('folder')
 
 const close = () => emit('close')
 
-const isPristine = () => name.value === ''
-  && folderId.value === targetFolder?.id
-  && collectedRuleGroups.value.length === 0
+const { data, isPristine, handleSubmit } = useForm<{
+  name: Playlist['name']
+  folder_id: PlaylistFolder['id'] | null
+}>({
+  initialValues: {
+    name: '',
+    folder_id: targetFolder?.id || null,
+  },
+  isPristine: (original, current) => isEqual(original, current) && collectedRuleGroups.value.length === 0,
+  onSubmit: async ({ name, folder_id }) => await playlistStore.store(name, {
+    folder_id,
+    rules: collectedRuleGroups.value,
+  }),
+  onSuccess: (playlist: Playlist) => {
+    toastSuccess(`Playlist "${playlist.name}" created.`)
+    close()
+    go(url('playlists.show', { id: playlist.id }))
+  },
+})
 
 const maybeClose = async () => {
-  if (isPristine()) {
+  if (isPristine() || await showConfirmDialog('Discard all changes?')) {
     close()
-    return
-  }
-
-  await showConfirmDialog('Discard all changes?') && close()
-}
-
-const submit = async () => {
-  showOverlay()
-
-  try {
-    const playlist = await playlistStore.store(name.value, {
-      rules: collectedRuleGroups.value,
-      folder_id: folderId.value,
-    })
-
-    close()
-    toastSuccess(`Playlist "${playlist.name}" created.`)
-    go(url('playlists.show', { id: playlist.id }))
-  } catch (error: unknown) {
-    useErrorHandler('dialog').handleHttpError(error)
-  } finally {
-    hideOverlay()
   }
 }
 </script>

@@ -20,7 +20,7 @@ describe('inviteUserForm.vue', () => {
 
     await waitFor(() => {
       expect(inviteMock).toHaveBeenCalledWith(['foo@bar.ai'], true)
-      expect(alertMock).toHaveBeenCalledWith('Invitation sent.')
+      expect(alertMock).toHaveBeenCalledWith('Invitation(s) sent.')
     })
   })
 
@@ -36,7 +36,7 @@ describe('inviteUserForm.vue', () => {
 
     await waitFor(() => {
       expect(inviteMock).toHaveBeenCalledWith(['foo@bar.ai', 'a@b.c'], true)
-      expect(alertMock).toHaveBeenCalledWith('Invitations sent.')
+      expect(alertMock).toHaveBeenCalledWith('Invitation(s) sent.')
     })
   })
 

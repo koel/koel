@@ -1,10 +1,10 @@
 <template>
-  <form class="md:w-[480px] w-full" @submit.prevent="submit" @keydown.esc="maybeClose">
+  <form class="md:w-[480px] w-full" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
     <header>
       <h1>
         New Playlist
         <span v-if="playables.length" class="text-k-text-secondary" data-testid="from-playables">
-          from {{ pluralize(playables, noun) }}
+          from {{ pluralize(playables, entityName) }}
         </span>
       </h1>
     </header>
@@ -13,11 +13,11 @@
       <FormRow :cols="2">
         <FormRow>
           <template #label>Name</template>
-          <TextInput v-model="name" v-koel-focus name="name" placeholder="Playlist name" required />
+          <TextInput v-model="data.name" v-koel-focus name="name" placeholder="Playlist name" required />
         </FormRow>
         <FormRow>
           <template #label>Folder</template>
-          <SelectBox v-model="folderId">
+          <SelectBox v-model="data.folder_id">
             <option :value="null" />
             <option v-for="folder in folders" :key="folder.id" :value="folder.id">{{ folder.name }}</option>
           </SelectBox>
@@ -33,17 +33,16 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, toRef } from 'vue'
+import { computed, toRef } from 'vue'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { getPlayableCollectionContentType } from '@/utils/typeGuards'
 import { pluralize } from '@/utils/formatters'
 import { useRouter } from '@/composables/useRouter'
 import { useDialogBox } from '@/composables/useDialogBox'
-import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useModal } from '@/composables/useModal'
-import { useOverlay } from '@/composables/useOverlay'
+import { useForm } from '@/composables/useForm'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
@@ -52,22 +51,31 @@ import SelectBox from '@/components/ui/form/SelectBox.vue'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 
-const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { go, url } = useRouter()
 const { getFromContext } = useModal()
 
+const folders = toRef(playlistFolderStore.state, 'folders')
 const targetFolder = getFromContext<PlaylistFolder | null>('folder') ?? null
 const playables = getFromContext<Playable[]>('playables') ?? []
 
-const folderId = ref(targetFolder?.id)
-const name = ref('')
-const folders = toRef(playlistFolderStore.state, 'folders')
-
 const close = () => emit('close')
 
-const noun = computed(() => {
+const { data, isPristine, handleSubmit } = useForm<Pick<Playlist, 'name' | 'folder_id'>>({
+  initialValues: {
+    name: '',
+    folder_id: targetFolder?.id ?? null,
+  },
+  onSubmit: async ({ name, folder_id }) => await playlistStore.store(name, { folder_id }, playables),
+  onSuccess: (playlist: Playlist) => {
+    close()
+    toastSuccess(`Playlist "${playlist.name}" created.`)
+    go(url('playlists.show', { id: playlist.id }))
+  },
+})
+
+const entityName = computed(() => {
   switch (getPlayableCollectionContentType(playables)) {
     case 'songs':
       return 'song'
@@ -78,32 +86,9 @@ const noun = computed(() => {
   }
 })
 
-const submit = async () => {
-  showOverlay()
-
-  try {
-    const playlist = await playlistStore.store(name.value, {
-      folder_id: folderId.value,
-    }, playables)
-
-    close()
-    toastSuccess(`Playlist "${playlist.name}" created.`)
-    go(url('playlists.show', { id: playlist.id }))
-  } catch (error: unknown) {
-    useErrorHandler('dialog').handleHttpError(error)
-  } finally {
-    hideOverlay()
-  }
-}
-
-const isPristine = () => name.value.trim() === '' && folderId.value === targetFolder?.id
-
 const maybeClose = async () => {
-  if (isPristine()) {
+  if (isPristine() || await showConfirmDialog('Discard all changes?')) {
     close()
-    return
   }
-
-  await showConfirmDialog('Discard all changes?') && close()
 }
 </script>

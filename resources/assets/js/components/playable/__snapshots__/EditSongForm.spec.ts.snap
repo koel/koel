@@ -245,9 +245,7 @@ exports[`editSongForm.vue > edits multiple songs 1`] = `
     </div>
   </header>
   <div data-v-9c4a3e26="" class="min-h-full flex flex-col relative mt-4">
-    <nav data-v-9c4a3e26="" class="overflow-auto border-b-[2px] border-b-white/10 px-6 py-0 flex gap-1 min-h-[41px]" role="tablist"><button data-v-9c4a3e26="" aria-selected="true" class="cursor-pointer relative px-5 py-3 rounded-t-md opacity-70 bg-white/5 uppercase text-k-text-secondary duration-200 hover:bg-white/10 aria-selected:transition-none aria-selected:text-k-text-primary aria-selected:bg-white/10 aria-selected:opacity-100" role="tab" type="button" id="editSongTabDetails" aria-controls="editSongPanelDetails"> Details </button>
-      <!--v-if-->
-    </nav>
+    <!--v-if-->
     <div data-v-9c4a3e26="" class="p-6 overflow-auto">
       <div data-v-9c4a3e26="" role="tabpanel" tabindex="0" id="editSongPanelDetails" aria-labelledby="editSongTabDetails" class="space-y-5">
         <!--v-if-->

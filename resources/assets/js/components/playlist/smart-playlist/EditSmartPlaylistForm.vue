@@ -1,6 +1,6 @@
 <template>
   <FormBase data-testid="edit-smart-playlist-form">
-    <form @submit.prevent="submit" @keydown.esc="maybeClose">
+    <form @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
       <header>
         <h1>Edit Smart Playlist</h1>
       </header>
@@ -10,7 +10,7 @@
           <FormRow>
             <template #label>Name</template>
             <TextInput
-              v-model="mutablePlaylist.name"
+              v-model="data.name"
               v-koel-focus name="name"
               placeholder="Playlist name"
               required
@@ -18,7 +18,7 @@
           </FormRow>
           <FormRow>
             <template #label>Folder</template>
-            <SelectBox v-model="mutablePlaylist.folder_id">
+            <SelectBox v-model="data.folder_id">
               <option :value="null" />
               <option v-for="folder in folders" :key="folder.id" :value="folder.id">{{ folder.name }}</option>
             </SelectBox>
@@ -51,33 +51,27 @@
 <script lang="ts" setup>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { reactive, toRef } from 'vue'
-import { cloneDeep, isEqual } from 'lodash'
+import { cloneDeep, isEqual, pick } from 'lodash'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { eventBus } from '@/utils/eventBus'
 import { useDialogBox } from '@/composables/useDialogBox'
-import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useModal } from '@/composables/useModal'
-import { useOverlay } from '@/composables/useOverlay'
 import { useSmartPlaylistForm } from '@/composables/useSmartPlaylistForm'
+import { useForm } from '@/composables/useForm'
 
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 import SelectBox from '@/components/ui/form/SelectBox.vue'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
-const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 
 const playlist = useModal().getFromContext<Playlist>('playlist')
 const folders = toRef(playlistFolderStore.state, 'folders')
 const mutablePlaylist = reactive(cloneDeep(playlist))
-
-const isPristine = () => isEqual(mutablePlaylist.rules, playlist.rules)
-  && mutablePlaylist.name.trim() === playlist.name
-  && mutablePlaylist.folder_id === playlist.folder_id
 
 const {
   Btn,
@@ -86,33 +80,31 @@ const {
   collectedRuleGroups,
   addGroup,
   onGroupChanged,
-} = useSmartPlaylistForm(mutablePlaylist.rules)
+} = useSmartPlaylistForm(cloneDeep(playlist.rules))
 
 const close = () => emit('close')
 
-const maybeClose = async () => {
-  if (isPristine()) {
-    close()
-    return
-  }
-
-  await showConfirmDialog('Discard all changes?') && close()
-}
-
-const submit = async () => {
-  showOverlay()
-
-  mutablePlaylist.rules = collectedRuleGroups.value
-
-  try {
-    await playlistStore.update(playlist, mutablePlaylist)
+const { data, isPristine, handleSubmit } = useForm<{
+  name: Playlist['name']
+  folder_id: PlaylistFolder['id'] | null
+}>({
+  initialValues: pick(playlist, 'name', 'folder_id'),
+  isPristine: (original, current) => isEqual(original, current) && isEqual(collectedRuleGroups.value, playlist.rules),
+  onSubmit: async ({ name, folder_id }) => await playlistStore.update(playlist, {
+    name,
+    folder_id,
+    rules: collectedRuleGroups.value,
+  }),
+  onSuccess: () => {
     toastSuccess(`Playlist "${playlist.name}" updated.`)
     eventBus.emit('PLAYLIST_UPDATED', playlist)
     close()
-  } catch (error: unknown) {
-    useErrorHandler('dialog').handleHttpError(error)
-  } finally {
-    hideOverlay()
+  },
+})
+
+const maybeClose = async () => {
+  if (isPristine() || await showConfirmDialog('Discard all changes?')) {
+    close()
   }
 }
 </script>

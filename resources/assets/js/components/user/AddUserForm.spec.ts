@@ -9,8 +9,13 @@ describe('addUserForm.vue', () => {
   const h = createHarness()
 
   it('creates a new user', async () => {
-    const storeMock = h.mock(userStore, 'store')
-    const alertMock = h.mock(MessageToasterStub.value, 'success')
+    const storeMock = h.mock(userStore, 'store').mockResolvedValue(h.factory('user', {
+      name: 'John Doe',
+      email: 'john@doe.com',
+      is_admin: true,
+    }))
+
+    const toasterMock = h.mock(MessageToasterStub.value, 'success')
 
     h.render(Component)
 
@@ -28,7 +33,7 @@ describe('addUserForm.vue', () => {
         is_admin: true,
       })
 
-      expect(alertMock).toHaveBeenCalledWith('New user "John Doe" created.')
+      expect(toasterMock).toHaveBeenCalledWith('New user "John Doe" created.')
     })
   })
 })

@@ -6,13 +6,7 @@ import { merge } from 'lodash'
 import { arrayify } from '@/utils/helpers'
 import { commonStore } from '@/stores/commonStore'
 
-export interface RadioStationData {
-  name: string
-  url: string
-  logo: string | null
-  description: string | null
-  is_public: boolean
-}
+export type RadioStationData = Pick<RadioStation, 'name' | 'url' | 'logo' | 'description' | 'is_public'>
 
 export const radioStationStore = {
   // Unlike songs, we don't expect a lot of radio stations per user.
