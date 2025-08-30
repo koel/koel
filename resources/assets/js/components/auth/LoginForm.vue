@@ -5,18 +5,18 @@
       :class="{ error: failed }"
       class="w-full sm:w-[288px] sm:border duration-500 p-7 rounded-xl border-transparent sm:bg-white/10 space-y-3"
       data-testid="login-form"
-      @submit.prevent="login"
+      @submit.prevent="handleSubmit"
     >
       <div class="text-center mb-8">
         <img alt="Koel's logo" class="inline-block" src="@/../img/logo.svg" width="156">
       </div>
 
       <FormRow>
-        <TextInput v-model="email" autofocus :placeholder="emailPlaceholder" required type="email" />
+        <TextInput v-model="data.email" autofocus :placeholder="emailPlaceholder" required type="email" />
       </FormRow>
 
       <FormRow>
-        <PasswordField v-model="password" :placeholder="passwordPlaceholder" required />
+        <PasswordField v-model="data.password" :placeholder="passwordPlaceholder" required />
       </FormRow>
 
       <FormRow>
@@ -43,6 +43,7 @@ import { onMounted, ref } from 'vue'
 import { authService } from '@/services/authService'
 import { logger } from '@/utils/logger'
 import { useMessageToaster } from '@/composables/useMessageToaster'
+import { useForm } from '@/composables/useForm'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import PasswordField from '@/components/ui/form/PasswordField.vue'
@@ -53,43 +54,46 @@ import FormRow from '@/components/ui/form/FormRow.vue'
 
 const emit = defineEmits<{ (e: 'loggedin'): void }>()
 
+const { toastWarning, toastError } = useMessageToaster()
+
 const demoAccount = window.DEMO_ACCOUNT || {
   email: 'demo@koel.dev',
   password: 'demo',
 }
 
-const canResetPassword = window.MAILER_CONFIGURED && !window.IS_DEMO
-const ssoProviders = window.SSO_PROVIDERS || []
-
-const email = ref(window.IS_DEMO ? demoAccount.email : '')
-const password = ref(window.IS_DEMO ? demoAccount.password : '')
 const failed = ref(false)
 const showingForgotPasswordForm = ref(false)
-
+const canResetPassword = window.MAILER_CONFIGURED && !window.IS_DEMO
+const ssoProviders = window.SSO_PROVIDERS || []
 const emailPlaceholder = window.IS_DEMO ? demoAccount.email : 'Your email address'
 const passwordPlaceholder = window.IS_DEMO ? demoAccount.password : 'Your password'
 
-const showForgotPasswordForm = () => (showingForgotPasswordForm.value = true)
-
-const login = async () => {
-  try {
-    await authService.login(email.value, password.value)
+const { data, handleSubmit } = useForm<{ email: string, password: string }>({
+  initialValues: window.IS_DEMO
+    ? demoAccount
+    : {
+        email: '',
+        password: '',
+      },
+  onSubmit: async ({ email, password }) => await authService.login(email, password),
+  onSuccess: () => {
     failed.value = false
-
     // Reset the password so that the next login will have this field empty.
-    password.value = ''
-
+    data.password = ''
     emit('loggedin')
-  } catch (error: unknown) {
+  },
+  onError: (error: unknown) => {
     failed.value = true
     logger.error(error)
     window.setTimeout(() => (failed.value = false), 2000)
-  }
-}
+  },
+})
+
+const showForgotPasswordForm = () => (showingForgotPasswordForm.value = true)
 
 const onSSOError = (error: any) => {
   logger.error('SSO error: ', error)
-  useMessageToaster().toastError('Login failed. Please try again.')
+  toastError('Login failed. Please try again.')
 }
 
 const onSSOSuccess = (token: CompositeToken) => {
@@ -99,7 +103,7 @@ const onSSOSuccess = (token: CompositeToken) => {
 
 onMounted(() => {
   if (authService.hasRedirect()) {
-    useMessageToaster().toastWarning('Please log in first.')
+    toastWarning('Please log in first.')
   }
 })
 </script>

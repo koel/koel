@@ -13,7 +13,13 @@ interface CreatePlaylistRequestData {
   name: Playlist['name']
   songs: Playable['id'][]
   rules?: SmartPlaylistRuleGroup[]
-  folder_id?: PlaylistFolder['name']
+  folder_id?: PlaylistFolder['id'] | null
+}
+
+export interface UpdatePlaylistData {
+  name: Playlist['name']
+  rules?: SmartPlaylistRuleGroup[]
+  folder_id?: PlaylistFolder['id'] | null
 }
 
 export const playlistStore = {
@@ -117,7 +123,7 @@ export const playlistStore = {
     return playlist
   },
 
-  async update (playlist: Playlist, data: Partial<Pick<Playlist, 'name' | 'rules' | 'folder_id'>>) {
+  async update (playlist: Playlist, data: UpdatePlaylistData) {
     await http.put(`playlists/${playlist.id}`, {
       name: data.name,
       rules: data.rules ? this.serializeSmartPlaylistRulesForStorage(data.rules) : null,

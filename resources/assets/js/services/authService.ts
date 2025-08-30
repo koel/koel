@@ -5,7 +5,7 @@ import { useLocalStorage } from '@/composables/useLocalStorage'
 import { use } from '@/utils/helpers'
 
 export interface UpdateCurrentProfileData {
-  current_password: string | null
+  current_password: string
   name: string
   email: string
   avatar?: string

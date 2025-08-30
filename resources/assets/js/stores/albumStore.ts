@@ -9,10 +9,7 @@ import { playableStore as songStore } from '@/stores/playableStore'
 
 const UNKNOWN_ALBUM_NAME = 'Unknown Album'
 
-interface AlbumUpdateData {
-  name: string
-  year: number | null
-}
+export type AlbumUpdateData = Pick<Album, 'name' | 'year'>
 
 interface AlbumListPaginateParams extends Record<string, any> {
   favorites_only: boolean

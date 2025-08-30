@@ -1,11 +1,11 @@
 <template>
-  <form data-testid="update-profile-form" @submit.prevent="update">
+  <form data-testid="update-profile-form" @submit.prevent="handleSubmit">
     <AlertBox v-if="currentUser.sso_provider">
       <template v-if="currentUser.sso_provider === 'Reverse Proxy'">
         You’re authenticated by a reverse proxy.
       </template>
       <template v-else>
-        You’re logging in via single sign-on provided by <strong>{{ currentUser.sso_provider }}</strong>.
+        You’re logged in via single sign-on provided by <strong>{{ currentUser.sso_provider }}</strong>.
       </template>
       You can still update your name and avatar here.
     </AlertBox>
@@ -15,7 +15,7 @@
         <FormRow v-if="!currentUser.sso_provider">
           <template #label>Current Password</template>
           <TextInput
-            v-model="profile.current_password"
+            v-model="data.current_password"
             v-koel-focus
             data-testid="currentPassword"
             name="current_password"
@@ -27,14 +27,14 @@
 
         <FormRow>
           <template #label>Name</template>
-          <TextInput v-model="profile.name" data-testid="name" name="name" />
+          <TextInput v-model="data.name" data-testid="name" name="name" />
         </FormRow>
 
         <FormRow>
           <template #label>Email Address</template>
           <TextInput
             id="inputProfileEmail"
-            v-model="profile.email"
+            v-model="data.email"
             :readonly="currentUser.sso_provider"
             data-testid="email"
             name="email"
@@ -46,7 +46,7 @@
         <FormRow v-if="!currentUser.sso_provider">
           <template #label>New Password</template>
           <PasswordField
-            v-model="profile.new_password"
+            v-model="data.new_password"
             autocomplete="new-password"
             data-testid="newPassword"
             minlength="10"
@@ -57,7 +57,7 @@
       </div>
 
       <div>
-        <EditableProfileAvatar :profile="profile" />
+        <EditableProfileAvatar :profile="data" @changed="onAvatarChanged" />
       </div>
     </div>
 
@@ -71,12 +71,12 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
+import { pick } from 'lodash'
 import type { UpdateCurrentProfileData } from '@/services/authService'
 import { authService } from '@/services/authService'
 import { useAuthorization } from '@/composables/useAuthorization'
 import { useMessageToaster } from '@/composables/useMessageToaster'
-import { useErrorHandler } from '@/composables/useErrorHandler'
+import { useForm } from '@/composables/useForm'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import PasswordField from '@/components/ui/form/PasswordField.vue'
@@ -88,35 +88,37 @@ import FormRow from '@/components/ui/form/FormRow.vue'
 const { toastSuccess } = useMessageToaster()
 const { currentUser } = useAuthorization()
 
-const profile = ref<UpdateCurrentProfileData>({} as UpdateCurrentProfileData)
 const isDemo = window.IS_DEMO
 
-onMounted(() => {
-  profile.value = {
-    name: currentUser.value.name,
-    email: currentUser.value.email,
-    avatar: currentUser.value.avatar,
-    current_password: null,
-  }
+const { data, handleSubmit } = useForm<UpdateCurrentProfileData>({
+  initialValues: {
+    ...pick(currentUser.value, 'name', 'email', 'avatar'),
+    current_password: '',
+    new_password: '',
+  },
+  onSubmit: async data => {
+    if (isDemo) {
+      return
+    }
+
+    const formattedData = { ...data }
+
+    // if the new_password field is empty, remove the field entirely
+    // to ensure the field doesn't get sent to the server.
+    if (!formattedData.new_password) {
+      delete formattedData.new_password
+    }
+
+    await authService.updateProfile(formattedData)
+  },
+  onSuccess: () => {
+    data.current_password = ''
+    data.new_password = ''
+    toastSuccess('Profile updated.')
+  },
 })
 
-const update = async () => {
-  if (!profile.value) {
-    throw new Error('Profile data is missing.')
-  }
-
-  if (isDemo) {
-    toastSuccess('Profile updated.')
-    return
-  }
-
-  try {
-    await authService.updateProfile(Object.assign({}, profile.value))
-    profile.value.current_password = null
-    delete profile.value.new_password
-    toastSuccess('Profile updated.')
-  } catch (error: unknown) {
-    useErrorHandler('dialog').handleHttpError(error)
-  }
+const onAvatarChanged = (avatar: string) => {
+  data.avatar = avatar
 }
 </script>

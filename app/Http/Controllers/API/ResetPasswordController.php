@@ -15,6 +15,10 @@ class ResetPasswordController extends Controller
     {
         return $auth->tryResetPasswordUsingBroker($request->email, $request->password, $request->token)
             ? response()->noContent()
-            : response('', Response::HTTP_UNPROCESSABLE_ENTITY);
+            : response()->json([
+                'errors' => [
+                    'token' => ['Invalid or expired token.'],
+                ],
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 }

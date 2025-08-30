@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="submit" @keydown.esc="maybeClose">
+  <form @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
     <header>
       <h1>Edit Album</h1>
     </header>
@@ -8,7 +8,7 @@
       <FormRow>
         <template #label>Name</template>
         <TextInput
-          v-model="name"
+          v-model="data.name"
           v-koel-focus
           name="name"
           placeholder="Album name"
@@ -29,7 +29,7 @@
         <FormRow>
           <template #label>Release year</template>
           <TextInput
-            v-model="year"
+            v-model="data.year"
             type="number"
             name="year"
             title="Release year"
@@ -47,13 +47,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useOverlay } from '@/composables/useOverlay'
+import { pick } from 'lodash'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { useModal } from '@/composables/useModal'
-import { useErrorHandler } from '@/composables/useErrorHandler'
+import type { AlbumUpdateData } from '@/stores/albumStore'
 import { albumStore } from '@/stores/albumStore'
+import { useForm } from '@/composables/useForm'
 
 import FormRow from '@/components/ui/form/FormRow.vue'
 import Btn from '@/components/ui/form/Btn.vue'
@@ -61,46 +61,25 @@ import TextInput from '@/components/ui/form/TextInput.vue'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 
-const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 
-const album = useModal().getFromContext<Album>('album')
-const name = ref(album.name)
-const year = ref(album.year)
-
 const close = () => emit('close')
 
-const submit = async () => {
-  showOverlay()
+const album = useModal().getFromContext<Album>('album')
 
-  try {
-    await albumStore.update(album, {
-      name: name.value,
-      year: year.value,
-    })
-
+const { data, isPristine, handleSubmit } = useForm<AlbumUpdateData>({
+  initialValues: pick(album, 'name', 'year'),
+  onSubmit: async data => await albumStore.update(album, data),
+  onSuccess: () => {
     toastSuccess('Album updated.')
     close()
-  } catch (error: unknown) {
-    useErrorHandler('dialog').handleHttpError(error)
-  } finally {
-    hideOverlay()
-  }
-}
-
-const isPristine = () => album.name === name.value && album.year === year.value
+  },
+})
 
 const maybeClose = async () => {
-  if (isPristine()) {
+  if (isPristine() || await showConfirmDialog('Discard all changes?')) {
     close()
-    return
   }
-
-  await showConfirmDialog('Discard all changes?') && close()
 }
 </script>
-
-<style scoped lang="postcss">
-
-</style>

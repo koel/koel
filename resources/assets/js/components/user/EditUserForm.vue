@@ -1,5 +1,5 @@
 <template>
-  <form data-testid="edit-user-form" @submit.prevent="submit" @keydown.esc="maybeClose">
+  <form data-testid="edit-user-form" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
     <header>
       <h1>Edit User</h1>
     </header>
@@ -11,12 +11,12 @@
 
       <FormRow>
         <template #label>Name</template>
-        <TextInput v-model="updateData.name" v-koel-focus name="name" required title="Name" />
+        <TextInput v-model="data.name" v-koel-focus name="name" required title="Name" />
       </FormRow>
       <FormRow>
         <template #label>Email</template>
         <TextInput
-          v-model="updateData.email"
+          v-model="data.email"
           :readonly="user.sso_provider"
           name="email"
           required
@@ -27,7 +27,7 @@
       <FormRow v-if="!user.sso_provider">
         <template #label>Password</template>
         <TextInput
-          v-model="updateData.password"
+          v-model="data.password"
           autocomplete="new-password"
           name="password"
           placeholder="Leave blank for no changes"
@@ -38,7 +38,7 @@
       </FormRow>
       <FormRow>
         <div>
-          <CheckBox v-model="updateData.is_admin" name="is_admin" />
+          <CheckBox v-model="data.is_admin" name="is_admin" />
           User is an admin
           <TooltipIcon title="Admins can perform administrative tasks like managing users and uploading songs." />
         </div>
@@ -53,15 +53,13 @@
 </template>
 
 <script lang="ts" setup>
-import { isEqual } from 'lodash'
-import { reactive, watch } from 'vue'
+import { pick } from 'lodash'
 import type { UpdateUserData } from '@/stores/userStore'
 import { userStore } from '@/stores/userStore'
 import { useDialogBox } from '@/composables/useDialogBox'
-import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useModal } from '@/composables/useModal'
-import { useOverlay } from '@/composables/useOverlay'
+import { useForm } from '@/composables/useForm'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import TooltipIcon from '@/components/ui/TooltipIcon.vue'
@@ -72,47 +70,36 @@ import FormRow from '@/components/ui/form/FormRow.vue'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 
-const { showOverlay, hideOverlay } = useOverlay()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 
-const user = useModal().getFromContext<User>('user')
-
-let originalData: UpdateUserData
-let updateData: UpdateUserData
-
-watch(user, () => {
-  originalData = {
-    name: user.name,
-    email: user.email,
-    is_admin: user.is_admin,
-  }
-
-  updateData = reactive(Object.assign({}, originalData))
-}, { immediate: true })
-
 const close = () => emit('close')
 
-const submit = async () => {
-  showOverlay()
+const user = useModal().getFromContext<User>('user')
 
-  try {
-    await userStore.update(user, updateData)
+const { data, isPristine, handleSubmit } = useForm<UpdateUserData>({
+  initialValues: {
+    ...pick(user, 'name', 'email', 'is_admin'),
+    password: '',
+  },
+  onSubmit: async data => {
+    const formattedData = { ...data }
+
+    if (!formattedData.password) {
+      delete formattedData.password
+    }
+
+    await userStore.update(user, formattedData)
+  },
+  onSuccess: () => {
     toastSuccess('User profile updated.')
     close()
-  } catch (error: unknown) {
-    useErrorHandler('dialog').handleHttpError(error)
-  } finally {
-    hideOverlay()
-  }
-}
+  },
+})
 
 const maybeClose = async () => {
-  if (isEqual(originalData, updateData)) {
+  if (isPristine() || await showConfirmDialog('Discard all changes?')) {
     close()
-    return
   }
-
-  await showConfirmDialog('Discard all changes?') && close()
 }
 </script>

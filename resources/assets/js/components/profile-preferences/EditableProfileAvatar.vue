@@ -25,7 +25,7 @@
 
 <script lang="ts" setup>
 import { faRefresh, faTimes, faUpload } from '@fortawesome/free-solid-svg-icons'
-import { computed, ref, toRefs } from 'vue'
+import { computed, ref } from 'vue'
 import { useFileDialog } from '@vueuse/core'
 import { userStore } from '@/stores/userStore'
 import { useFileReader } from '@/composables/useFileReader'
@@ -35,7 +35,9 @@ import UserAvatar from '@/components/user/UserAvatar.vue'
 import ImageCropper from '@/components/utils/ImageCropper.vue'
 
 const props = defineProps<{ profile: Pick<User, 'name' | 'avatar'> }>()
-const { profile } = toRefs(props)
+const emit = defineEmits<{ (e: 'changed', image: string): void }>()
+
+const { profile } = props
 
 const { open, onChange } = useFileDialog({
   accept: 'image/*',
@@ -49,7 +51,7 @@ const cropperSource = ref<string | null>(null)
 
 onChange(files => {
   if (!files?.length) {
-    profile.value.avatar = userStore.current.avatar
+    emit('changed', userStore.current.avatar)
     cropperSource.value = null
     return
   }
@@ -59,17 +61,17 @@ onChange(files => {
   })
 })
 
-const removeAvatar = () => profile.value.avatar = gravatar(userStore.current.email)
+const removeAvatar = () => emit('changed', gravatar(userStore.current.email))
 
 const resetAvatar = () => {
-  profile.value.avatar = userStore.current.avatar
+  emit('changed', userStore.current.avatar)
   cropperSource.value = null
 }
 
-const avatarChanged = computed(() => profile.value.avatar !== userStore.current.avatar)
+const avatarChanged = computed(() => profile.avatar !== userStore.current.avatar)
 
 const onCrop = (result: string) => {
-  profile.value.avatar = result
+  emit('changed', result)
   cropperSource.value = null
 }
 

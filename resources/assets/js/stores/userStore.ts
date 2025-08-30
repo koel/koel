@@ -3,11 +3,7 @@ import { differenceBy, merge } from 'lodash'
 import { http } from '@/services/http'
 import { arrayify } from '@/utils/helpers'
 
-interface UserFormData {
-  name: string
-  email: string
-  is_admin: boolean
-}
+type UserFormData = Pick<User, 'name' | 'email' | 'is_admin'>
 
 export interface CreateUserData extends UserFormData {
   password: string
