@@ -26,6 +26,8 @@ img/avatars/*
 img/radio-stations/*
 !img/radio-stations/.gitkeep
 
+vendor/*
+
 images
 js
 manifest.json
