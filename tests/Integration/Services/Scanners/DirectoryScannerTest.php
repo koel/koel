@@ -225,10 +225,16 @@ class DirectoryScannerTest extends TestCase
             )
         );
 
+        $ignores = [
+            'id',
+            'created_at',
+            'updated_at',
+        ];
+
         // Song should be added back with all info
         self::assertEquals(
-            Arr::except(Song::query()->where('path', $song->path)->first()->toArray(), ['id', 'created_at', 'pivot']),
-            Arr::except($song->toArray(), ['id', 'created_at', 'pivot'])
+            Arr::except(Song::query()->where('path', $song->path)->first()->withoutRelations()->toArray(), $ignores),
+            Arr::except($song->withoutRelations()->toArray(), $ignores)
         );
     }
 
