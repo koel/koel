@@ -63,7 +63,8 @@
     "larastan/larastan": "^2.11",
     "phlak/semver": "^5.0",
     "laravel/prompts": "^0.1.25",
-    "laravel/boost": "^1.0"
+    "laravel/boost": "^1.0",
+    "opcodesio/log-viewer": "^3.19"
   },
   "suggest": {
     "ext-zip": "Allow downloading multiple songs as Zip archives"
