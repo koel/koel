@@ -7,7 +7,7 @@ return [
 
     // The absolute path to the directory to store artifacts, such as the transcoded audio files
     // or downloaded podcast episodes. By default, it is set to the system's temporary directory.
-    'artifacts_path' => env('ARTIFACTS_PATH') ?: realpath(sys_get_temp_dir() . '/koel'),
+    'artifacts_path' => env('ARTIFACTS_PATH') ?: sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'koel',
 
     // The *relative* path to the directory to store album covers and thumbnails, *with* a trailing slash.
     'album_cover_dir' => 'img/covers/',

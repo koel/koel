@@ -82,7 +82,7 @@ function artifact_path(?string $subPath = null, $ensureDirectoryExists = true): 
     }
 
     if ($ensureDirectoryExists) {
-        File::ensureDirectoryExists(dirname($path));
+        File::ensureDirectoryExists(Str::endsWith($path, DIRECTORY_SEPARATOR) ? $path : dirname($path));
     }
 
     return $path;
