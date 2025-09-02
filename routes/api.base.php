@@ -4,9 +4,11 @@ use App\Facades\YouTube;
 use App\Helpers\Uuid;
 use App\Http\Controllers\API\ActivateLicenseController;
 use App\Http\Controllers\API\AlbumController;
+use App\Http\Controllers\API\AlbumCoverController;
 use App\Http\Controllers\API\AlbumSongController;
 use App\Http\Controllers\API\ArtistAlbumController;
 use App\Http\Controllers\API\ArtistController;
+use App\Http\Controllers\API\ArtistImageController;
 use App\Http\Controllers\API\ArtistSongController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CheckResourcePermissionController;
@@ -63,8 +65,6 @@ use App\Http\Controllers\API\ToggleLikeSongController;
 use App\Http\Controllers\API\UnlikeMultipleSongsController;
 use App\Http\Controllers\API\UpdatePlaybackStatusController;
 use App\Http\Controllers\API\UpdateUserPreferenceController;
-use App\Http\Controllers\API\UploadAlbumCoverController;
-use App\Http\Controllers\API\UploadArtistImageController;
 use App\Http\Controllers\API\UploadController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\UserInvitationController;
@@ -193,17 +193,21 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::get('albums/{album}/information', FetchAlbumInformationController::class);
         Route::get('artists/{artist}/information', FetchArtistInformationController::class);
 
-        // Cover/image upload routes
-        Route::put('albums/{album}/cover', UploadAlbumCoverController::class);
+        // Cover/image routes
+        Route::put('albums/{album}/cover', [AlbumCoverController::class, 'store']);
+        Route::post('albums/{album}/cover', [AlbumCoverController::class, 'store']);
+        Route::delete('albums/{album}/cover', [AlbumCoverController::class, 'destroy']);
         Route::get('albums/{album}/thumbnail', FetchAlbumThumbnailController::class);
-        Route::put('artists/{artist}/image', UploadArtistImageController::class);
+        Route::put('artists/{artist}/image', [ArtistImageController::class, 'store']);
+        Route::post('artists/{artist}/image', [ArtistImageController::class, 'store']);
+        Route::delete('artists/{artist}/image', [ArtistImageController::class, 'destroy']);
         Route::put('playlists/{playlist}/cover', [PlaylistCoverController::class, 'update']);
         Route::delete('playlists/{playlist}/cover', [PlaylistCoverController::class, 'destroy']);
 
         // deprecated routes
-        Route::put('album/{album}/cover', UploadAlbumCoverController::class);
+        Route::put('album/{album}/cover', [AlbumCoverController::class, 'store']);
         Route::get('album/{album}/thumbnail', FetchAlbumThumbnailController::class);
-        Route::put('artist/{artist}/image', UploadArtistImageController::class);
+        Route::put('artist/{artist}/image', [ArtistImageController::class, 'store']);
 
         Route::get('search', ExcerptSearchController::class);
         Route::get('search/songs', SongSearchController::class);

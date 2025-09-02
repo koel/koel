@@ -16,7 +16,7 @@ describe('createPlaylistForm.vue', () => {
     h.render(Component, {
       global: {
         provide: {
-          [<symbol>ModalContextKey]: [ref({ folder })],
+          [<symbol>ModalContextKey]: ref({ folder }),
         },
       },
     })
@@ -39,7 +39,7 @@ describe('createPlaylistForm.vue', () => {
     h.render(Component, {
       global: {
         provide: {
-          [<symbol>ModalContextKey]: [ref({ folder, playables })],
+          [<symbol>ModalContextKey]: ref({ folder, playables }),
         },
       },
     })

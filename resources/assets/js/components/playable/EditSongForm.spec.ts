@@ -19,10 +19,10 @@ describe('editSongForm.vue', () => {
     const rendered = h.render(Component, {
       global: {
         provide: {
-          [<symbol>ModalContextKey]: [ref({
+          [<symbol>ModalContextKey]: ref({
             songs,
             initialTab,
-          })],
+          }),
         },
       },
     })

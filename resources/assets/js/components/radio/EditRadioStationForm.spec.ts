@@ -16,7 +16,7 @@ describe('editRadioStationForm.vue', () => {
     h.render(Component, {
       global: {
         provide: {
-          [<symbol>ModalContextKey]: [ref({ station })],
+          [<symbol>ModalContextKey]: ref({ station }),
         },
       },
     })
@@ -44,7 +44,7 @@ describe('editRadioStationForm.vue', () => {
     h.render(Component, {
       global: {
         provide: {
-          [<symbol>ModalContextKey]: [ref({ station })],
+          [<symbol>ModalContextKey]: ref({ station }),
         },
       },
     })
@@ -76,7 +76,7 @@ describe('editRadioStationForm.vue', () => {
     h.render(Component, {
       global: {
         provide: {
-          [<symbol>ModalContextKey]: [ref({ station })],
+          [<symbol>ModalContextKey]: ref({ station }),
         },
       },
     })

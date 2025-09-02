@@ -11,6 +11,7 @@ use Tests\PlusTestCase;
 
 use function Tests\create_admin;
 use function Tests\create_user;
+use function Tests\minimal_base64_encoded_image;
 
 class AlbumCoverTest extends PlusTestCase
 {
@@ -24,7 +25,7 @@ class AlbumCoverTest extends PlusTestCase
     }
 
     #[Test]
-    public function albumOwnerCanUploadCover(): void
+    public function albumOwnerCanUploadOrDeleteCover(): void
     {
         $user = create_user();
 
@@ -33,14 +34,17 @@ class AlbumCoverTest extends PlusTestCase
 
         $this->artworkService
             ->expects('storeAlbumCover')
-            ->with(Mockery::on(static fn (Album $target) => $target->is($album)), 'data:image/jpeg;base64,Rm9v');
+            ->with(Mockery::on(static fn (Album $target) => $target->is($album)), minimal_base64_encoded_image());
 
-        $this->putAs("api/albums/{$album->id}/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], $user)
+        $this->putAs("api/albums/{$album->id}/cover", ['cover' => minimal_base64_encoded_image()], $user)
             ->assertOk();
+
+        $this->deleteAs("api/albums/{$album->id}/cover", [], $user)
+            ->assertNoContent();
     }
 
     #[Test]
-    public function nonOwnerCannotUploadCover(): void
+    public function nonOwnerCannotUploadOrDeleteCover(): void
     {
         $user = create_user();
 
@@ -51,8 +55,10 @@ class AlbumCoverTest extends PlusTestCase
 
         $this->artworkService->shouldNotReceive('storeAlbumCover');
 
-        $this->putAs("api/albums/{$album->id}/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], $user)
+        $this->putAs("api/albums/{$album->id}/cover", ['cover' => minimal_base64_encoded_image()], $user)
             ->assertForbidden();
+
+        $this->deleteAs("api/albums/{$album->id}/cover", [], $user)->assertForbidden();
     }
 
     #[Test]
@@ -60,8 +66,11 @@ class AlbumCoverTest extends PlusTestCase
     {
         /** @var Album $album */
         $album = Album::factory()->create();
+        $admin = create_admin();
 
-        $this->putAs("api/albums/{$album->id}/cover", ['cover' => 'data:image/jpeg;base64,Rm9v'], create_admin())
+        $this->putAs("api/albums/{$album->id}/cover", ['cover' => minimal_base64_encoded_image()], $admin)
             ->assertForbidden();
+
+        $this->deleteAs("api/albums/{$album->id}/cover", [], $admin)->assertForbidden();
     }
 }

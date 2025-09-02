@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Helpers\Ulid;
 use App\Http\Resources\AlbumResource;
 use App\Models\Album;
 use PHPUnit\Framework\Attributes\Test;
@@ -9,6 +10,7 @@ use Tests\TestCase;
 
 use function Tests\create_admin;
 use function Tests\create_user;
+use function Tests\minimal_base64_encoded_image;
 
 class AlbumTest extends TestCase
 {
@@ -50,16 +52,65 @@ class AlbumTest extends TestCase
                 'year' => 2023,
             ],
             create_admin()
-        )->assertJsonStructure(AlbumResource::JSON_STRUCTURE);
+        )->assertJsonStructure(AlbumResource::JSON_STRUCTURE)
+            ->assertOk();
 
         $album->refresh();
 
-        $this->assertEquals('Updated Album Name', $album->name);
-        $this->assertEquals(2023, $album->year);
+        self::assertEquals('Updated Album Name', $album->name);
+        self::assertEquals(2023, $album->year);
     }
 
     #[Test]
-    public function nonAdminCannotUpdateAlbumInCommunityEdition(): void
+    public function updateWithCover(): void
+    {
+        /** @var Album $album */
+        $album = Album::factory()->create();
+
+        $ulid = Ulid::freeze();
+
+        $this->putAs(
+            "api/albums/{$album->id}",
+            [
+                'name' => 'Updated Album Name',
+                'year' => 2023,
+                'cover' => minimal_base64_encoded_image(),
+            ],
+            create_admin()
+        )->assertJsonStructure(AlbumResource::JSON_STRUCTURE)
+            ->assertOk();
+
+        $album->refresh();
+
+        self::assertEquals('Updated Album Name', $album->name);
+        self::assertEquals(2023, $album->year);
+        self::assertEquals(album_cover_url("$ulid.webp"), $album->cover);
+    }
+
+    #[Test]
+    public function updatingToExistingNameFails(): void
+    {
+        /** @var Album $existingAlbum */
+        $existingAlbum = Album::factory()->create(['name' => 'Black Album']);
+
+        /** @var Album $album */
+        $album = Album::factory()->for($existingAlbum->artist)->create();
+
+        $this->putAs(
+            "api/albums/{$album->id}",
+            [
+                'name' => 'Black Album',
+                'year' => 2023,
+            ],
+            create_admin()
+        )
+            ->assertJsonValidationErrors([
+                'name' => 'An album with the same name already exists for this artist.',
+            ]);
+    }
+
+    #[Test]
+    public function nonAdminCannotUpdateAlbum(): void
     {
         /** @var Album $album */
         $album = Album::factory()->create();

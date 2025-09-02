@@ -31,6 +31,7 @@ export interface Events {
   MODAL_SHOW_CREATE_PLAYLIST_FORM: (folder?: PlaylistFolder | null, playables?: MaybeArray<Playable>) => void
   MODAL_SHOW_EDIT_PLAYLIST_FORM: (playlist: Playlist) => void
   MODAL_SHOW_EDIT_ALBUM_FORM: (album: Album) => void
+  MODAL_SHOW_EDIT_ARTIST_FORM: (artist: Artist) => void
   MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM: (folder?: PlaylistFolder | null) => void
   MODAL_SHOW_CREATE_PLAYLIST_FOLDER_FORM: () => void
   MODAL_SHOW_EDIT_PLAYLIST_FOLDER_FORM: (playlistFolder: PlaylistFolder) => void

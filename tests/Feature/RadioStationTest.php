@@ -13,6 +13,7 @@ use Tests\TestCase;
 
 use function Tests\create_admin;
 use function Tests\create_user;
+use function Tests\minimal_base64_encoded_image;
 
 class RadioStationTest extends TestCase
 {
@@ -34,13 +35,13 @@ class RadioStationTest extends TestCase
         $user = create_user();
 
         $this->artworkService->expects('storeRadioStationLogo')
-            ->with('data:image/jpeg;base64,Rm9v')
+            ->with(minimal_base64_encoded_image())
             ->andReturn('logo.jpg');
 
         $this->postAs('/api/radio/stations', [
             'url' => 'https://example.com/stream',
             'name' => 'Test Radio Station',
-            'logo' => 'data:image/jpeg;base64,Rm9v',
+            'logo' => minimal_base64_encoded_image(),
             'description' => 'A test radio station',
             'is_public' => true,
         ], $user)
@@ -90,7 +91,7 @@ class RadioStationTest extends TestCase
     public function updateStationWithNewLogo(): void
     {
         $this->artworkService->expects('storeRadioStationLogo')
-            ->with('data:image/jpeg;base64,Rm9v')
+            ->with(minimal_base64_encoded_image())
             ->andReturn('new-logo.jpg');
 
         /** @var RadioStation $station */
@@ -99,7 +100,7 @@ class RadioStationTest extends TestCase
         $this->putAs("/api/radio/stations/{$station->id}", [
             'url' => 'https://example.com/updated-stream',
             'name' => 'Updated Radio Station',
-            'logo' => 'data:image/jpeg;base64,Rm9v',
+            'logo' => minimal_base64_encoded_image(),
             'description' => 'An updated test radio station',
             'is_public' => true,
         ], $station->user)

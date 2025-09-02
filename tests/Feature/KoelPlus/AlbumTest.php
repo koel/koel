@@ -29,8 +29,8 @@ class AlbumTest extends PlusTestCase
 
         $album->refresh();
 
-        $this->assertEquals('Updated Album Name', $album->name);
-        $this->assertEquals(2023, $album->year);
+        self::assertEquals('Updated Album Name', $album->name);
+        self::assertEquals(2023, $album->year);
     }
 
     #[Test]

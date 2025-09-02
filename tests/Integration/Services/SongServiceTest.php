@@ -70,11 +70,11 @@ class SongServiceTest extends TestCase
 
         $updatedSongs = $this->service->updateSongs([$song->id], $data);
 
-        $this->assertEquals(1, $updatedSongs->count());
-        $this->assertEquals($expectedData['disc'], $updatedSongs->first()->disc);
-        $this->assertEquals($expectedData['track'], $updatedSongs->first()->track);
-        $this->assertEquals($expectedData['lyrics'], $updatedSongs->first()->lyrics);
-        $this->assertEquals($expectedData['genre'], $updatedSongs->first()->genre);
+        self::assertEquals(1, $updatedSongs->count());
+        self::assertEquals($expectedData['disc'], $updatedSongs->first()->disc);
+        self::assertEquals($expectedData['track'], $updatedSongs->first()->track);
+        self::assertEquals($expectedData['lyrics'], $updatedSongs->first()->lyrics);
+        self::assertEquals($expectedData['genre'], $updatedSongs->first()->genre);
 
         Event::assertDispatched(LibraryChanged::class);
     }
@@ -114,13 +114,13 @@ class SongServiceTest extends TestCase
 
         $updatedSongs = $this->service->updateSongs([$song1->id, $song2->id], $data);
 
-        $this->assertEquals(2, $updatedSongs->count());
+        self::assertEquals(2, $updatedSongs->count());
 
         foreach ($updatedSongs as $updatedSong) {
-            $this->assertEquals($expectedData['disc'], $updatedSong->disc);
-            $this->assertEquals($expectedData['track'], $updatedSong->track);
-            $this->assertEquals($expectedData['lyrics'], $updatedSong->lyrics);
-            $this->assertEquals($expectedData['genre'], $updatedSong->genre);
+            self::assertEquals($expectedData['disc'], $updatedSong->disc);
+            self::assertEquals($expectedData['track'], $updatedSong->track);
+            self::assertEquals($expectedData['lyrics'], $updatedSong->lyrics);
+            self::assertEquals($expectedData['genre'], $updatedSong->genre);
         }
 
         Event::assertDispatched(LibraryChanged::class);
@@ -171,17 +171,17 @@ class SongServiceTest extends TestCase
 
         $updatedSongs = $this->service->updateSongs([$song1->id, $song2->id], $data);
 
-        $this->assertEquals(2, $updatedSongs->count());
+        self::assertEquals(2, $updatedSongs->count());
 
-        $this->assertEquals($expectedData1['disc'], $updatedSongs[0]->disc);
-        $this->assertEquals($expectedData1['track'], $updatedSongs[0]->track);
-        $this->assertEquals($expectedData1['lyrics'], $updatedSongs[0]->lyrics);
-        $this->assertEquals($expectedData1['genre'], $updatedSongs[0]->genre);
+        self::assertEquals($expectedData1['disc'], $updatedSongs[0]->disc);
+        self::assertEquals($expectedData1['track'], $updatedSongs[0]->track);
+        self::assertEquals($expectedData1['lyrics'], $updatedSongs[0]->lyrics);
+        self::assertEquals($expectedData1['genre'], $updatedSongs[0]->genre);
 
-        $this->assertEquals($expectedData2['disc'], $updatedSongs[1]->disc);
-        $this->assertEquals($expectedData2['track'], $updatedSongs[1]->track);
-        $this->assertEquals($expectedData2['lyrics'], $updatedSongs[1]->lyrics);
-        $this->assertEquals($expectedData2['genre'], $updatedSongs[1]->genre);
+        self::assertEquals($expectedData2['disc'], $updatedSongs[1]->disc);
+        self::assertEquals($expectedData2['track'], $updatedSongs[1]->track);
+        self::assertEquals($expectedData2['lyrics'], $updatedSongs[1]->lyrics);
+        self::assertEquals($expectedData2['genre'], $updatedSongs[1]->genre);
 
         Event::assertDispatched(LibraryChanged::class);
     }

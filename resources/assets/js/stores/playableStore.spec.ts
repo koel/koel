@@ -422,4 +422,44 @@ describe('playableStore', () => {
       ids: songs.map(song => song.id),
     })
   })
+
+  it('syncs album properties', () => {
+    const album = h.factory('album')
+    const songs = h.factory('song', 3, {
+      album_id: album.id,
+    })
+
+    playableStore.syncWithVault(songs)
+
+    album.name = 'New Album Name'
+    album.cover = 'https://test/new-album-cover.jpg'
+
+    playableStore.syncAlbumProperties(album)
+
+    playableStore.byIds<Song>(songs.map(song => song.id))
+      .forEach(song => {
+        expect(song.album_name).toBe('New Album Name')
+        expect(song.album_cover).toBe('https://test/new-album-cover.jpg')
+      })
+  })
+
+  it('syncs artist properties', () => {
+    const artist = h.factory('artist')
+
+    const songsFromArtist = h.factory('song', 3, {
+      artist_id: artist.id,
+    })
+
+    const songsContributedByArtist = h.factory('song', 2, {
+      album_artist_id: artist.id,
+    })
+
+    playableStore.syncWithVault([...songsFromArtist, ...songsContributedByArtist])
+
+    artist.name = 'New Artist Name'
+    playableStore.syncArtistProperties(artist)
+
+    songsFromArtist.forEach(({ artist_name }) => expect(artist_name).toBe('New Artist Name'))
+    songsContributedByArtist.forEach(({ album_artist_name }) => expect(album_artist_name).toBe('New Artist Name'))
+  })
 })

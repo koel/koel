@@ -24,7 +24,7 @@ class ScrobbleTest extends TestCase
             ->andReturnUsing(function (ScrobbleJob $job) use ($song, $user): void {
                 $this->assertTrue($song->is($job->song));
                 $this->assertTrue($user->is($job->user));
-                $this->assertEquals(100, $job->timestamp);
+                self::assertEquals(100, $job->timestamp);
             });
 
         $this->postAs("/api/songs/{$song->id}/scrobble", ['timestamp' => 100], $user)

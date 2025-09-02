@@ -3,13 +3,13 @@ import { reactive } from 'vue'
 import { differenceBy, merge, unionBy } from 'lodash'
 import { cache } from '@/services/cache'
 import { http } from '@/services/http'
-import { arrayify } from '@/utils/helpers'
+import { arrayify, use } from '@/utils/helpers'
 import { logger } from '@/utils/logger'
 import { playableStore as songStore } from '@/stores/playableStore'
 
 const UNKNOWN_ALBUM_NAME = 'Unknown Album'
 
-export type AlbumUpdateData = Pick<Album, 'name' | 'year'>
+export type AlbumUpdateData = Pick<Album, 'name' | 'year' | 'cover'>
 
 interface AlbumListPaginateParams extends Record<string, any> {
   favorites_only: boolean
@@ -62,20 +62,21 @@ export const albumStore = {
    * @param {string} cover The content data string of the cover
    */
   async uploadCover (album: Album, cover: string) {
-    album.cover = (await http.put<{ cover_url: string }>(`albums/${album.id}/cover`, { cover })).cover_url
-    songStore.byAlbum(album).forEach(song => song.album_cover = album.cover)
+    const coverUrl = (await http.put<{ cover_url: string }>(`albums/${album.id}/cover`, { cover })).cover_url
 
-    // sync to vault
-    this.byId(album.id)!.cover = album.cover
+    use(this.byId(album.id), album => {
+      album.cover = coverUrl
+      songStore.syncAlbumProperties(album)
+    })
 
-    return album.cover
+    return coverUrl
   },
 
   async update (album: Album, data: AlbumUpdateData) {
     const updated = await http.put<Album>(`albums/${album.id}`, data)
     this.state.albums = unionBy(this.state.albums, this.syncWithVault(updated), 'id')
 
-    songStore.updateAlbumName(album, updated.name)
+    songStore.syncAlbumProperties(album)
   },
 
   /**
@@ -127,6 +128,15 @@ export const albumStore = {
     })
 
     album.favorite = Boolean(favorite)
+  },
+
+  async removeCover (album: Album) {
+    await http.delete(`albums/${album.id}/cover`)
+
+    use(this.byId(album.id), album => {
+      album.cover = ''
+      songStore.syncAlbumProperties(album)
+    })
   },
 
   reset () {

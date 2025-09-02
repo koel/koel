@@ -19,7 +19,7 @@ describe('editUserForm.vue', () => {
     h.render(Component, {
       global: {
         provide: {
-          [<symbol>ModalContextKey]: [ref({ user })],
+          [<symbol>ModalContextKey]: ref({ user }),
         },
       },
     })

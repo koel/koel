@@ -3,11 +3,14 @@ import { reactive } from 'vue'
 import { differenceBy, unionBy } from 'lodash'
 import { cache } from '@/services/cache'
 import { http } from '@/services/http'
-import { arrayify } from '@/utils/helpers'
+import { arrayify, use } from '@/utils/helpers'
 import { logger } from '@/utils/logger'
+import { playableStore as songStore } from '@/stores/playableStore'
 
 const UNKNOWN_ARTIST_NAME = 'Unknown Artist'
 const VARIOUS_ARTISTS_NAME = 'Various Artists'
+
+export type ArtistUpdateData = Pick<Artist, 'name' | 'image'>
 
 interface ArtistListPaginateParams extends Record<string, any> {
   favorites_only: boolean
@@ -45,12 +48,10 @@ export const artistStore = {
   },
 
   async uploadImage (artist: Artist, image: string) {
-    artist.image = (await http.put<{ image_url: string }>(`artists/${artist.id}/image`, { image })).image_url
+    const imageUrl = (await http.put<{ image_url: string }>(`artists/${artist.id}/image`, { image })).image_url
+    use(this.byId(artist.id), artist => (artist.image = imageUrl))
 
-    // sync to vault
-    this.byId(artist.id)!.image = artist.image
-
-    return artist.image
+    return imageUrl
   },
 
   syncWithVault (artists: MaybeArray<Artist>) {
@@ -61,6 +62,12 @@ export const artistStore = {
 
       return local
     })
+  },
+
+  async update (artist: Artist, data: ArtistUpdateData) {
+    const updated = await http.put<Artist>(`artists/${artist.id}`, data)
+    this.state.artists = unionBy(this.state.artists, this.syncWithVault(updated), 'id')
+    songStore.syncArtistProperties(updated)
   },
 
   async resolve (id: Artist['id']) {
@@ -102,5 +109,10 @@ export const artistStore = {
     })
 
     artist.favorite = Boolean(favorite)
+  },
+
+  async removeImage (artist: Artist) {
+    await http.delete(`artists/${artist.id}/image`)
+    use(this.byId(artist.id), artist => (artist.image = ''))
   },
 }

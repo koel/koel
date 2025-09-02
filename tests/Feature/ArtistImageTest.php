@@ -2,14 +2,17 @@
 
 namespace Tests\Feature;
 
+use App\Helpers\Ulid;
 use App\Models\Artist;
 use App\Services\ArtworkService;
+use Illuminate\Support\Facades\File;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_admin;
+use function Tests\minimal_base64_encoded_image;
 
 class ArtistImageTest extends TestCase
 {
@@ -30,11 +33,11 @@ class ArtistImageTest extends TestCase
 
         $this->artworkService
             ->expects('storeArtistImage')
-            ->with(Mockery::on(static fn (Artist $target) => $target->is($artist)), 'data:image/jpeg;base64,Rm9v');
+            ->with(Mockery::on(static fn (Artist $target) => $target->is($artist)), minimal_base64_encoded_image());
 
         $this->putAs(
             "api/artist/{$artist->id}/image",
-            ['image' => 'data:image/jpeg;base64,Rm9v'],
+            ['image' => minimal_base64_encoded_image()],
             create_admin(),
         )->assertOk();
     }
@@ -47,7 +50,37 @@ class ArtistImageTest extends TestCase
 
         $this->artworkService->shouldNotReceive('storeArtistImage');
 
-        $this->putAs("api/artist/{$artist->id}/image", ['image' => 'data:image/jpeg;base64,Rm9v'])
+        $this->putAs("api/artist/{$artist->id}/image", ['image' => minimal_base64_encoded_image()])
             ->assertForbidden();
+    }
+
+    #[Test]
+    public function destroy(): void
+    {
+        $file = Ulid::generate() . '.jpg';
+        File::put(artist_image_path($file), 'foo');
+
+        /** @var Artist $artist */
+        $artist = Artist::factory()->create([
+            'image' => $file,
+        ]);
+
+        $this->deleteAs("api/artists/{$artist->id}/image", [], create_admin())
+            ->assertNoContent();
+
+        self::assertNull($artist->refresh()->image);
+        self::assertFileDoesNotExist(artist_image_path($file));
+    }
+
+    #[Test]
+    public function destroyNotAllowedForNormalUser(): void
+    {
+        /** @var Artist $artist */
+        $artist = Artist::factory()->create();
+
+        $this->deleteAs("api/artists/{$artist->id}/image")
+            ->assertForbidden();
+
+        self::assertNotNull($artist->refresh()->image);
     }
 }

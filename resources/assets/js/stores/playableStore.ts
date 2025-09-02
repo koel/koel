@@ -17,6 +17,7 @@ import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { overviewStore } from '@/stores/overviewStore'
 import { playlistStore } from '@/stores/playlistStore'
+import type { Album } from 'lucide-vue-next'
 
 export interface SongUpdateData {
   title?: string
@@ -77,10 +78,10 @@ export const playableStore = {
     return playable
   },
 
-  byIds (ids: Playable['id'][]) {
+  byIds<T extends Playable = Playable> (ids: T['id'][]) {
     const playables: Playable[] = []
     ids.forEach(id => use(this.byId(id), song => playables.push(song!)))
-    return playables
+    return playables as T[]
   },
 
   byAlbum (album: Album) {
@@ -88,8 +89,31 @@ export const playableStore = {
       .filter(playable => isSong(playable) && playable.album_id === album.id) as Song[]
   },
 
-  updateAlbumName (album: Album, name: string) {
-    this.byAlbum(album).forEach(song => (song.album_name = name))
+  syncAlbumProperties (album: Album) {
+    this.byAlbum(album).forEach(a => {
+      a.album_cover = album.cover
+      a.album_name = album.name
+    })
+  },
+
+  byArtist (artist: Artist) {
+    return Array.from(this.vault.values())
+      .filter(playable => isSong(playable) && playable.artist_id === artist.id) as Song[]
+  },
+
+  byAlbumArtist (artist: Artist) {
+    return Array.from(this.vault.values())
+      .filter(playable => isSong(playable) && playable.album_artist_id === artist.id) as Song[]
+  },
+
+  syncArtistProperties (artist: Artist) {
+    this.byArtist(artist).forEach(a => {
+      a.artist_name = artist.name
+    })
+
+    this.byAlbumArtist(artist).forEach(a => {
+      a.album_artist_name = artist.name
+    })
   },
 
   async resolve (id: Playable['id']) {

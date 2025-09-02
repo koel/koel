@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Facades\License;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\AddSongsToPlaylistRequest;
-use App\Http\Requests\API\RemoveSongsFromPlaylistRequest;
+use App\Http\Requests\API\Playlist\RemoveSongsFromPlaylistRequest;
 use App\Http\Resources\CollaborativeSongResource;
 use App\Http\Resources\SongResource;
 use App\Models\Playlist;

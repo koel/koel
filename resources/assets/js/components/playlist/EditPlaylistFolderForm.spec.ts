@@ -15,7 +15,7 @@ describe('editPlaylistFolderForm.vue', () => {
     h.render(Component, {
       global: {
         provide: {
-          [<symbol>ModalContextKey]: [ref({ folder })],
+          [<symbol>ModalContextKey]: ref({ folder }),
         },
       },
     })
