@@ -7,6 +7,7 @@ use Tests\TestCase;
 
 use function Tests\create_playlist;
 use function Tests\create_user;
+use function Tests\minimal_base64_encoded_image;
 use function Tests\read_as_data_url;
 use function Tests\test_path;
 
@@ -35,7 +36,7 @@ class PlaylistCoverTest extends TestCase
 
         $this->putAs(
             "api/playlists/{$playlist->id}/cover",
-            ['cover' => 'data:image/jpeg;base64,Rm9v'],
+            ['cover' => minimal_base64_encoded_image()],
             create_user()
         )
             ->assertForbidden();

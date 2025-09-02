@@ -2,10 +2,10 @@
 
 namespace Database\Factories;
 
+use App\Helpers\Ulid;
 use App\Models\Artist;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 class AlbumFactory extends Factory
 {
@@ -17,7 +17,7 @@ class AlbumFactory extends Factory
             'artist_id' => Artist::factory(),
             'artist_name' => static fn (array $attributes) => Artist::query()->find($attributes['artist_id'])->name, // @phpstan-ignore-line
             'name' => $this->faker->colorName,
-            'cover' => Str::uuid()->toString() . '.jpg',
+            'cover' => Ulid::generate() . '.jpg',
             'year' => $this->faker->year,
         ];
     }

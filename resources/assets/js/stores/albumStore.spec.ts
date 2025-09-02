@@ -55,16 +55,15 @@ describe('albumStore', () => {
   it('uploads a cover for an album', async () => {
     const album = h.factory('album')
     albumStore.syncWithVault(album)
-    const songsInAlbum = h.factory('song', 3, { album_id: album.id })
     const putMock = h.mock(http, 'put').mockResolvedValue({ cover_url: 'http://test/cover.jpg' })
-    h.mock(playableStore, 'byAlbum', songsInAlbum)
+    const syncPropsMock = h.mock(playableStore, 'syncAlbumProperties')
 
     await albumStore.uploadCover(album, 'data://cover')
 
     expect(album.cover).toBe('http://test/cover.jpg')
     expect(putMock).toHaveBeenCalledWith(`albums/${album.id}/cover`, { cover: 'data://cover' })
     expect(albumStore.byId(album.id)?.cover).toBe('http://test/cover.jpg')
-    songsInAlbum.forEach(song => expect(song.album_cover).toBe('http://test/cover.jpg'))
+    expect(syncPropsMock).toHaveBeenCalledWith(album)
   })
 
   it('fetches an album thumbnail', async () => {
@@ -120,17 +119,18 @@ describe('albumStore', () => {
     const updateData = {
       name: 'V',
       year: 2010,
+      cover: 'foo',
     }
 
     const putMock = h.mock(http, 'put').mockResolvedValueOnce({ ...album, ...updateData })
-    const updateAlbumNameMock = h.mock(playableStore, 'updateAlbumName')
+    const syncPropsMock = h.mock(playableStore, 'syncAlbumProperties')
 
     await albumStore.update(album, updateData)
 
     expect(putMock).toHaveBeenCalledWith(`albums/${album.id}`, updateData)
     expect(albumStore.vault.get(album.id)?.name).toBe(updateData.name)
     expect(albumStore.vault.get(album.id)?.year).toBe(updateData.year)
-    expect(updateAlbumNameMock).toHaveBeenCalledWith(album, updateData.name)
+    expect(syncPropsMock).toHaveBeenCalledWith(album)
   })
 
   it('toggles favorite', async () => {
@@ -152,5 +152,17 @@ describe('albumStore', () => {
 
     expect(postMock).toHaveBeenNthCalledWith(2, 'favorites/toggle', { type: 'album', id: album.id })
     expect(album.favorite).toBe(false)
+  })
+
+  it('removes cover', async () => {
+    const album = h.factory('album')
+    albumStore.syncWithVault(album)
+    const deleteMock = h.mock(http, 'delete').mockResolvedValue(null)
+    const syncPropsMock = h.mock(playableStore, 'syncAlbumProperties')
+
+    await albumStore.removeCover(album)
+
+    expect(deleteMock).toHaveBeenCalledWith(`albums/${album.id}/cover`)
+    expect(syncPropsMock).toHaveBeenCalledWith(album)
   })
 })

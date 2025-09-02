@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Requests\API;
+namespace App\Http\Requests\API\Artist;
+
+use App\Http\Requests\API\Request;
 
 /**
  * @property-read string $order

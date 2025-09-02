@@ -13,14 +13,16 @@ class RadioStationObserver
 
     public function updating(RadioStation $radioStation): void
     {
-        if ($radioStation->isDirty('logo')) {
-            // If the logo is being updated, delete the old logo file
-            $oldLogo = $radioStation->getRawOriginal('logo');
+        if (!$radioStation->isDirty('logo')) {
+            return;
+        }
 
-            if ($oldLogo) {
+        rescue_if(
+            $radioStation->getRawOriginal('logo'),
+            static function (string $oldLogo): void {
                 File::delete(radio_station_logo_path($oldLogo));
             }
-        }
+        );
     }
 
     public function updated(RadioStation $radioStation): void
@@ -29,10 +31,6 @@ class RadioStationObserver
 
     public function deleted(RadioStation $radioStation): void
     {
-        $logoPath = $radioStation->logo_path;
-
-        if ($logoPath) {
-            File::delete($logoPath);
-        }
+        rescue_if($radioStation->logo_path, static fn (string $path) => File::delete($path));
     }
 }

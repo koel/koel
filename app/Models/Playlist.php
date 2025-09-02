@@ -31,7 +31,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property EloquentCollection<array-key, Playable> $playables
  * @property EloquentCollection<array-key, User> $users
  * @property EloquentCollection<array-key, User> $collaborators
- * @property-read ?string $cover The playlist cover's URL
+ * @property ?string $cover The playlist cover's URL
  * @property-read ?string $cover_path
  * @property-read EloquentCollection<array-key, PlaylistFolder> $folders
  * @property-read bool $is_collaborative

@@ -6,18 +6,19 @@ use App\Exceptions\AlbumNameConflictException;
 use App\Models\Album;
 use App\Repositories\AlbumRepository;
 use App\Values\AlbumUpdateData;
-use Webmozart\Assert\Assert;
+use Illuminate\Support\Arr;
 
 class AlbumService
 {
-    public function __construct(private readonly AlbumRepository $albumRepository)
-    {
+    public function __construct(
+        private readonly AlbumRepository $albumRepository,
+        private readonly ArtworkService $artworkService,
+    ) {
     }
 
     public function updateAlbum(Album $album, AlbumUpdateData $data): Album
     {
-        Assert::false($album->is_unknown);
-
+        // Ensure that the album name is unique within the artist
         $existingAlbumWithTheSameName = $this->albumRepository->findOneBy([
             'name' => $data->name,
             'artist_id' => $album->artist_id,
@@ -25,8 +26,18 @@ class AlbumService
 
         throw_if($existingAlbumWithTheSameName?->isNot($album), AlbumNameConflictException::class);
 
-        $album->update($data->toArray());
+        if ($data->cover) {
+            $this->artworkService->storeAlbumCover($album, $data->cover);
+        }
+
+        $album->update(Arr::except($data->toArray(), 'cover'));
 
         return $album->refresh();
+    }
+
+    public function removeAlbumCover(Album $album): void
+    {
+        $album->cover = '';
+        $album->save(); // will trigger cover/thumbnail cleanup in Album Observer
     }
 }

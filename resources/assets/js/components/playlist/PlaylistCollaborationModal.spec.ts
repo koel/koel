@@ -11,7 +11,7 @@ describe('playlistCollaborationModal.vue', () => {
     const { html } = h.render(Component, {
       global: {
         provide: {
-          [<symbol>ModalContextKey]: [ref({ playlist: h.factory('playlist') })],
+          [<symbol>ModalContextKey]: ref({ playlist: h.factory('playlist') }),
         },
         stubs: {
           InviteCollaborators: h.stub('InviteCollaborators'),

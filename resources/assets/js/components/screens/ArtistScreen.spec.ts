@@ -6,11 +6,16 @@ import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
 import { downloadService } from '@/services/downloadService'
 import { eventBus } from '@/utils/eventBus'
+import { resourcePermissionService } from '@/services/resourcePermissionService'
 import Router from '@/router'
 import Component from './ArtistScreen.vue'
 
 describe('artistScreen.vue', () => {
-  const h = createHarness()
+  const h = createHarness({
+    beforeEach: () => {
+      h.mock(resourcePermissionService, 'check').mockResolvedValue(true)
+    },
+  })
 
   const renderComponent = async (tab: 'songs' | 'albums' | 'information' = 'songs') => {
     commonStore.state.uses_last_fm = true
@@ -48,8 +53,6 @@ describe('artistScreen.vue', () => {
       expect(fetchSongsMock).toHaveBeenCalledWith(artist.id)
     })
 
-    await h.tick(2)
-
     return {
       ...rendered,
       artist,
@@ -63,9 +66,10 @@ describe('artistScreen.vue', () => {
     const downloadMock = h.mock(downloadService, 'fromArtist')
     const { artist } = await renderComponent()
 
-    await h.user.click(screen.getByRole('button', { name: 'Download All' }))
-
-    expect(downloadMock).toHaveBeenCalledWith(artist)
+    await waitFor(async () => {
+      await h.user.click(screen.getByRole('button', { name: 'Download All' }))
+      expect(downloadMock).toHaveBeenCalledWith(artist)
+    })
   })
 
   it('goes back to list if artist is deleted', async () => {
@@ -93,6 +97,6 @@ describe('artistScreen.vue', () => {
 
   it('shows the playable list', async () => {
     await renderComponent()
-    screen.getByTestId('song-list')
+    await waitFor(() => screen.getByTestId('song-list'))
   })
 })

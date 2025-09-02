@@ -233,4 +233,8 @@ eventBus.on('SONGS_UPDATED', result => {
   content: '•';
   margin: 0 0.25em;
 }
+
+.screen-header :deep(.play-icon) {
+  @apply scale-[2];
+}
 </style>

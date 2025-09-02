@@ -144,4 +144,10 @@ class PlaylistService
             $playlist->playables()->syncWithoutDetaching($values);
         });
     }
+
+    public function deleteCover(Playlist $playlist): void
+    {
+        $playlist->cover = null;
+        $playlist->save(); // will trigger cover cleanup in Playlist Observer
+    }
 }

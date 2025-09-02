@@ -126,7 +126,7 @@ interface Artist {
   type: 'artists'
   readonly id: string
   name: string
-  image: string | null
+  image: string // empty string = no image
   created_at: string
   is_external: boolean
   favorite: boolean
@@ -138,7 +138,7 @@ interface Album {
   artist_id: Artist['id']
   artist_name: Artist['name']
   name: string
-  cover: string
+  cover: string // empty string = no cover
   thumbnail?: string | null
   created_at: string
   year: number | null

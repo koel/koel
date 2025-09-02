@@ -3,23 +3,26 @@
 namespace Tests\Integration\Services;
 
 use App\Exceptions\AlbumNameConflictException;
+use App\Helpers\Ulid;
 use App\Models\Album;
 use App\Models\Song;
 use App\Services\AlbumService;
 use App\Values\AlbumUpdateData;
+use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
-use Webmozart\Assert\InvalidArgumentException;
+
+use function Tests\minimal_base64_encoded_image;
 
 class AlbumServiceTest extends TestCase
 {
-    private AlbumService $albumService;
+    private AlbumService $service;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->albumService = app(AlbumService::class);
+        $this->service = app(AlbumService::class);
     }
 
     #[Test]
@@ -35,7 +38,7 @@ class AlbumServiceTest extends TestCase
 
         $data = AlbumUpdateData::make(name: 'New Album Name', year: 2023);
 
-        $updatedAlbum = $this->albumService->updateAlbum($album, $data);
+        $updatedAlbum = $this->service->updateAlbum($album, $data);
 
         self::assertEquals('New Album Name', $updatedAlbum->name);
         self::assertEquals(2023, $updatedAlbum->year);
@@ -46,15 +49,32 @@ class AlbumServiceTest extends TestCase
     }
 
     #[Test]
-    public function rejectUpdatingUnknownAlbum(): void
+    public function updateAlbumWithCover(): void
     {
         /** @var Album $album */
-        $album = Album::factory()->create(['name' => Album::UNKNOWN_NAME]);
-        $data = AlbumUpdateData::make(name: 'New Album Name', year: 2023);
+        $album = Album::factory()->create([
+            'name' => 'Old Album Name',
+            'year' => 2020,
+        ]);
 
-        $this->expectException(InvalidArgumentException::class);
+        $songs = Song::factory()->for($album)->count(2)->create();
 
-        $this->albumService->updateAlbum($album, $data);
+        $data = AlbumUpdateData::make(
+            name: 'New Album Name',
+            year: 2023,
+            cover: minimal_base64_encoded_image(),
+        );
+
+        $ulid = Ulid::freeze();
+        $updatedAlbum = $this->service->updateAlbum($album, $data);
+
+        self::assertEquals('New Album Name', $updatedAlbum->name);
+        self::assertEquals(2023, $updatedAlbum->year);
+        self::assertEquals(album_cover_url("$ulid.webp"), $updatedAlbum->cover);
+
+        $songs->each(static function (Song $song) use ($updatedAlbum): void {
+            self::assertEquals($updatedAlbum->name, $song->fresh()->album_name);
+        });
     }
 
     #[Test]
@@ -69,6 +89,23 @@ class AlbumServiceTest extends TestCase
 
         $this->expectException(AlbumNameConflictException::class);
 
-        $this->albumService->updateAlbum($album, $data);
+        $this->service->updateAlbum($album, $data);
+    }
+
+    #[Test]
+    public function removeCover(): void
+    {
+        $ulid = Ulid::generate();
+        File::put(album_cover_path("$ulid.webp"), 'content');
+        File::put(album_cover_path("{$ulid}_thumb.webp"), 'thumb-content');
+
+        /** @var Album $album */
+        $album = Album::factory()->create(['cover' => "$ulid.webp"]);
+
+        $this->service->removeAlbumCover($album);
+
+        self::assertNull($album->refresh()->cover);
+        self::assertFileDoesNotExist(album_cover_path("$ulid.webp"));
+        self::assertFileDoesNotExist(album_cover_path("{$ulid}_thumb.webp"));
     }
 }

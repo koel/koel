@@ -25,7 +25,7 @@ describe('editPlaylistForm.vue', () => {
     h.render(Component, {
       global: {
         provide: {
-          [<symbol>ModalContextKey]: [ref({ playlist })],
+          [<symbol>ModalContextKey]: ref({ playlist }),
         },
       },
     })

@@ -22,7 +22,7 @@ class ForgotPasswordTest extends TestCase
             ->with('foo@bar.com')
             ->andReturnTrue();
 
-        $this->post('/api/forgot-password', ['email' => 'foo@bar.com'])
+        $this->postJson('/api/forgot-password', ['email' => 'foo@bar.com'])
             ->assertNoContent();
     }
 
@@ -34,7 +34,7 @@ class ForgotPasswordTest extends TestCase
             ->with('foo@bar.com')
             ->andReturnFalse();
 
-        $this->post('/api/forgot-password', ['email' => 'foo@bar.com'])
+        $this->postJson('/api/forgot-password', ['email' => 'foo@bar.com'])
             ->assertNotFound();
     }
 
@@ -44,7 +44,7 @@ class ForgotPasswordTest extends TestCase
         Event::fake();
         $user = create_user();
 
-        $this->post('/api/reset-password', [
+        $this->postJson('/api/reset-password', [
             'email' => $user->email,
             'password' => 'new-password',
             'token' =>  Password::createToken($user),
@@ -60,11 +60,13 @@ class ForgotPasswordTest extends TestCase
         Event::fake();
         $user = create_user(['password' => Hash::make('old-password')]);
 
-        $this->post('/api/reset-password', [
+        $this->postJson('/api/reset-password', [
             'email' => $user->email,
             'password' => 'new-password',
             'token' => 'invalid-token',
-        ])->assertUnprocessable();
+        ])->assertJsonValidationErrors([
+            'token' => 'Invalid or expired token.',
+        ]);
 
         self::assertTrue(Hash::check('old-password', $user->refresh()->password));
         Event::assertNotDispatched(PasswordReset::class);
@@ -77,7 +79,7 @@ class ForgotPasswordTest extends TestCase
 
         $user = create_user();
 
-        $this->post('/api/reset-password', [
+        $this->postJson('/api/reset-password', [
             'email' => $user->email,
             'password' => 'new-password',
             'token' =>  Password::createToken($user),

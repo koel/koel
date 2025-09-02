@@ -7,21 +7,30 @@ use Illuminate\Support\Facades\File;
 
 class ArtistObserver
 {
-    public function deleted(Artist $artist): void
+    public function updating(Artist $artist): void
     {
-        if (!$artist->has_image) {
+        if (!$artist->isDirty('image')) {
             return;
         }
 
-        File::delete($artist->image_path);
+        $oldImage = $artist->getRawOriginal('image');
+
+        rescue_if($oldImage, static fn () => File::delete(artist_image_path($oldImage)));
     }
 
     public function updated(Artist $artist): void
     {
-        if (array_key_exists('name', $artist->getChanges())) {
+        $changes = $artist->getChanges();
+
+        if (array_key_exists('name', $changes)) {
             // Keep the artist name in sync across songs and albums, but only if it actually changed.
-            $artist->songs()->update(['artist_name' => $artist->getChanges()['name']]);
-            $artist->albums()->update(['artist_name' => $artist->getChanges()['name']]);
+            $artist->songs()->update(['artist_name' => $changes['name']]);
+            $artist->albums()->update(['artist_name' => $changes['name']]);
         }
+    }
+
+    public function deleted(Artist $artist): void
+    {
+        rescue_if($artist->has_image, static fn () => File::delete($artist->image_path));
     }
 }

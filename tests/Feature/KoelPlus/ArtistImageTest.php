@@ -11,6 +11,7 @@ use Tests\PlusTestCase;
 
 use function Tests\create_admin;
 use function Tests\create_user;
+use function Tests\minimal_base64_encoded_image;
 
 class ArtistImageTest extends PlusTestCase
 {
@@ -35,9 +36,9 @@ class ArtistImageTest extends PlusTestCase
 
         $this->artworkService
             ->expects('storeArtistImage')
-            ->with(Mockery::on(static fn (Artist $target) => $target->is($artist)), 'data:image/jpeg;base64,Rm9v');
+            ->with(Mockery::on(static fn (Artist $target) => $target->is($artist)), minimal_base64_encoded_image());
 
-        $this->putAs("api/artists/{$artist->id}/image", ['image' => 'data:image/jpeg;base64,Rm9v'], $user)
+        $this->putAs("api/artists/{$artist->id}/image", ['image' => minimal_base64_encoded_image()], $user)
             ->assertOk();
     }
 
@@ -55,7 +56,7 @@ class ArtistImageTest extends PlusTestCase
             ->expects('writeArtistImage')
             ->never();
 
-        $this->putAs("api/artists/{$artist->id}/image", ['image' => 'data:image/jpeg;base64,Rm9v'], $user)
+        $this->putAs("api/artists/{$artist->id}/image", ['image' => minimal_base64_encoded_image()], $user)
             ->assertForbidden();
     }
 
@@ -67,7 +68,7 @@ class ArtistImageTest extends PlusTestCase
 
         $this->putAs(
             "api/artists/{$artist->id}/image",
-            ['image' => 'data:image/jpeg;base64,Rm9v'],
+            ['image' => minimal_base64_encoded_image()],
             create_admin(),
         )->assertForbidden();
     }

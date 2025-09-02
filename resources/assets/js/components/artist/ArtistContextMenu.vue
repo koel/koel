@@ -5,6 +5,7 @@
       <li @click="shuffle">Shuffle All</li>
       <li class="separator" />
       <li @click="toggleFavorite">{{ artist.favorite ? 'Undo Favorite' : 'Favorite' }}</li>
+      <li v-if="allowEdit" @click="requestEditForm">Edit…</li>
       <template v-if="isStandardArtist">
         <li class="separator" />
         <li @click="viewArtistDetails">Go to Artist</li>
@@ -27,12 +28,15 @@ import { useContextMenu } from '@/composables/useContextMenu'
 import { useRouter } from '@/composables/useRouter'
 import { eventBus } from '@/utils/eventBus'
 import { playback } from '@/services/playbackManager'
+import { usePolicies } from '@/composables/usePolicies'
 
 const { go, url } = useRouter()
 const { base, ContextMenu, open, trigger } = useContextMenu()
+const { currentUserCan } = usePolicies()
 
 const artist = ref<Artist>()
 const allowDownload = toRef(commonStore.state, 'allows_download')
+const allowEdit = ref(false)
 
 const isStandardArtist = computed(() =>
   !artistStore.isUnknown(artist.value!)
@@ -52,9 +56,11 @@ const shuffle = () => trigger(async () => {
 const viewArtistDetails = () => trigger(() => go(url('artists.show', { id: artist.value!.id })))
 const download = () => trigger(() => downloadService.fromArtist(artist.value!))
 const toggleFavorite = () => trigger(() => artistStore.toggleFavorite(artist.value!))
+const requestEditForm = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_ARTIST_FORM', artist.value!))
 
 eventBus.on('ARTIST_CONTEXT_MENU_REQUESTED', async ({ pageX, pageY }, _artist) => {
   artist.value = _artist
   await open(pageY, pageX)
+  allowEdit.value = await currentUserCan.editArtist(_artist)
 })
 </script>

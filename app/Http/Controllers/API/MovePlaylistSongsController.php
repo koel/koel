@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Enums\Placement;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\API\MovePlaylistSongsRequest;
+use App\Http\Requests\API\Playlist\MovePlaylistSongsRequest;
 use App\Models\Playlist;
 use App\Services\PlaylistService;
 

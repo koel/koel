@@ -58,3 +58,12 @@ function create_playlists(int $count, array $attributes = [], ?User $owner = nul
         ->create($attributes)
         ->each(static fn (Playlist $p) => $p->users()->attach($owner ?? create_user(), ['role' => 'owner']));
 }
+
+/**
+ * A minimal base64 encoded image that's still valid binary data and can be used
+ * in tests that involve reading/writing image files.
+ */
+function minimal_base64_encoded_image(): string
+{
+    return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII'; // @phpcs:ignore
+}

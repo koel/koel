@@ -4,8 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Exceptions\AlbumNameConflictException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\API\AlbumListRequest;
-use App\Http\Requests\API\AlbumUpdateRequest;
+use App\Http\Requests\API\Album\AlbumListRequest;
+use App\Http\Requests\API\Album\AlbumUpdateRequest;
 use App\Http\Resources\AlbumResource;
 use App\Models\Album;
 use App\Repositories\AlbumRepository;

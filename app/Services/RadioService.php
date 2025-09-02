@@ -71,6 +71,6 @@ class RadioService
     public function removeStationLogo(RadioStation $station): void
     {
         $station->logo = null;
-        $station->save();
+        $station->save(); // will trigger logo cleanup in RadioStation Observer
     }
 }

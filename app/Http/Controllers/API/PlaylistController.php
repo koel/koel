@@ -4,8 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Exceptions\PlaylistBothSongsAndRulesProvidedException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\API\PlaylistStoreRequest;
-use App\Http\Requests\API\PlaylistUpdateRequest;
+use App\Http\Requests\API\Playlist\PlaylistStoreRequest;
+use App\Http\Requests\API\Playlist\PlaylistUpdateRequest;
 use App\Http\Resources\PlaylistResource;
 use App\Models\Playlist;
 use App\Models\User;

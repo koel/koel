@@ -60,6 +60,6 @@ watch(album, async () => {
 
 <style lang="postcss" scoped>
 :deep(.play-icon) {
-  @apply scale-[4];
+  @apply scale-[3];
 }
 </style>

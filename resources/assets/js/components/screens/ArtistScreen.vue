@@ -12,19 +12,25 @@
         </template>
 
         <template #meta>
-          <span>{{ pluralize(albumCount, 'album') }}</span>
-          <span>{{ pluralize(songs, 'item') }}</span>
-          <span>{{ duration }}</span>
+          <span class="flex meta-content">
+            <span>{{ pluralize(albumCount, 'album') }}</span>
+            <span>{{ pluralize(songs, 'item') }}</span>
+            <span>{{ duration }}</span>
 
-          <a
-            v-if="downloadable"
-            class="download"
-            role="button"
-            title="Download all songs by this artist"
-            @click.prevent="download"
-          >
-            Download All
-          </a>
+            <a
+              v-if="downloadable"
+              class="download"
+              role="button"
+              title="Download all songs by this artist"
+              @click.prevent="download"
+            >
+              Download All
+            </a>
+
+            <span v-if="editable">
+              <a role="button" title="Edit artist" @click.prevent="edit">Edit</a>
+            </span>
+          </span>
         </template>
 
         <template #controls>
@@ -107,6 +113,7 @@ import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 import { useRouter } from '@/composables/useRouter'
+import { usePolicies } from '@/composables/usePolicies'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ArtistThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
@@ -127,12 +134,14 @@ type Tab = typeof validTabs[number]
 const { PlayableListControls: SongListControls, config } = usePlayableListControls('Artist')
 const { useLastfm, useMusicBrainz } = useThirdPartyServices()
 const { getRouteParam, go, onScreenActivated, onRouteChanged, url, triggerNotFound } = useRouter()
+const { currentUserCan } = usePolicies()
 
 const activeTab = ref<Tab>('songs')
 const artist = ref<Artist>()
 const songs = ref<Song[]>([])
 const loading = ref(false)
 const albums = ref<Album[] | undefined>()
+const editable = ref(false)
 
 const {
   PlayableList: SongList,
@@ -189,6 +198,7 @@ const fetchScreenData = async () => {
     }
 
     context.entity = artist.value
+    editable.value = await currentUserCan.editArtist(artist.value!)
   } catch (error: unknown) {
     useErrorHandler('dialog').handleHttpError(error)
   } finally {
@@ -207,3 +217,14 @@ eventBus.on('SONGS_UPDATED', result => {
   }
 })
 </script>
+
+<style lang="postcss" scoped>
+.meta-content > *:not(:first-child)::before {
+  content: '•';
+  margin: 0 0.25em;
+}
+
+.screen-header :deep(.play-icon) {
+  @apply scale-[2];
+}
+</style>

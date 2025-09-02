@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
 import factory from '@/__tests__/factory'
 import { http } from '@/services/http'
+import { playableStore } from '@/stores/playableStore'
 import { artistStore } from '@/stores/artistStore'
 
 describe('artistStore', () => {
@@ -133,5 +134,40 @@ describe('artistStore', () => {
 
     expect(postMock).toHaveBeenNthCalledWith(2, 'favorites/toggle', { type: 'artist', id: artist.id })
     expect(artist.favorite).toBe(false)
+  })
+
+  it('updates artist', async () => {
+    const artist = h.factory('artist', { name: 'Led Zeppelin' })
+    artistStore.syncWithVault(artist)
+
+    const updatedArtist = {
+      ...artist,
+      name: 'Pink Floyd',
+      image: 'foo',
+    }
+
+    const updateData = {
+      name: 'Pink Floyd',
+      image: 'foo',
+    }
+
+    const putMock = h.mock(http, 'put').mockResolvedValue(updatedArtist)
+    const syncPropsMock = h.mock(playableStore, 'syncArtistProperties')
+
+    await artistStore.update(artist, updateData)
+
+    expect(putMock).toHaveBeenCalledWith(`artists/${artist.id}`, updateData)
+    expect(syncPropsMock).toHaveBeenCalledWith(updatedArtist)
+  })
+
+  it('removes image', async () => {
+    const artist = h.factory('artist')
+    artistStore.syncWithVault(artist)
+    const deleteMock = h.mock(http, 'delete').mockResolvedValue(null)
+
+    await artistStore.removeImage(artist)
+
+    expect(deleteMock).toHaveBeenCalledWith(`artists/${artist.id}/image`)
+    expect(artistStore.byId(artist.id)?.image).toBe('')
   })
 })
