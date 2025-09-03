@@ -384,7 +384,7 @@ export const playableStore = {
     return unionBy(songs, songsFromFolders as Song[], 'id')
   },
 
-  async fetchSongsInFolder (path: string) {
+  async fetchSongsInFolder (path: Folder['path']) {
     return this.syncWithVault(await http.get<Song[]>(`songs/in-folder?path=${path}`))
   },
 

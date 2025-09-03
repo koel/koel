@@ -53,7 +53,7 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 
 const bands = audioService.bands
 const preampGain = ref(0)
-const selectedPresetName = ref<string | null>(null)
+const selectedPresetName = ref<EqualizerPreset['name']>(null)
 const preampBandEl = ref<InstanceType<typeof EqualizerBand>>()
 const filterBandEls = ref<InstanceType<typeof EqualizerBand>[]>()
 

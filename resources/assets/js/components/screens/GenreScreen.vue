@@ -102,7 +102,7 @@ const { getRouteParam, isCurrentScreen, go, onRouteChanged, url } = useRouter()
 let sortField: MaybeArray<PlayableListSortField> = 'title'
 let sortOrder: SortOrder = 'asc'
 
-const id = ref<string | null>(null)
+const id = ref<Genre['id'] | null>(null)
 const genre = ref<Genre | null>(null)
 const loading = ref(false)
 const page = ref<number | null>(1)
