@@ -14,7 +14,6 @@
       v-slot="{ item }: { item: PlayableRow }"
       :item-height="calculatedItemHeight"
       :items="rows"
-      @scroll="onScroll"
       @scrolled-to-end="$emit('scrolled-to-end')"
     >
       <PlayableListItem
@@ -48,6 +47,8 @@ import { queueStore } from '@/stores/queueStore'
 import { useDraggable, useDroppable } from '@/composables/useDragAndDrop'
 import { useListSelection } from '@/composables/useListSelection'
 import { playback } from '@/services/playbackManager'
+import { useSwipeDirection } from '@/composables/useSwipeDirection'
+
 import {
   FilteredPlayablesKey,
   PlayableListConfigKey,
@@ -65,7 +66,7 @@ const emit = defineEmits<{
   (e: 'press:delete'): void
   (e: 'reorder', song: Playable, placement: Placement): void
   (e: 'sort', field: MaybeArray<PlayableListSortField>, order: SortOrder): void
-  (e: 'scroll-breakpoint', direction: 'up' | 'down'): void
+  (e: 'swipe', direction: 'up' | 'down'): void
   (e: 'scrolled-to-end'): void
 }>()
 
@@ -80,6 +81,11 @@ const [context] = requireInjection<[PlayableListContext]>(PlayableListContextKey
 
 const wrapper = ref<HTMLElement>()
 const sortFields = ref<PlayableListSortField[]>([])
+
+useSwipeDirection(
+  () => wrapper.value,
+  direction => emit('swipe', direction),
+)
 
 const rows = computed(() => {
   return playables.value.map<PlayableRow>(playable => {
@@ -117,20 +123,6 @@ watch(
   () => setSelectedPlayables(selected.value.map(({ playable }) => playable)),
   { deep: true },
 )
-
-let lastScrollTop = 0
-
-const onScroll = (e: Event) => {
-  const scroller = e.target as HTMLElement
-
-  if (scroller.scrollTop > 512 && lastScrollTop < 512) {
-    emit('scroll-breakpoint', 'down')
-  } else if (scroller.scrollTop < 512 && lastScrollTop > 512) {
-    emit('scroll-breakpoint', 'up')
-  }
-
-  lastScrollTop = scroller.scrollTop
-}
 
 const sort = (field: MaybeArray<PlayableListSortField>, order: SortOrder) => {
   // we simply pass the sort event from the header up to the parent component

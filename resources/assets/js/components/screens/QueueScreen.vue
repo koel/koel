@@ -35,7 +35,7 @@
       @reorder="onReorder"
       @press:delete="removeSelected"
       @press:enter="onPressEnter"
-      @scroll-breakpoint="onScrollBreakpoint"
+      @swipe="onSwipe"
     />
 
     <ScreenEmptyState v-else>
@@ -87,7 +87,7 @@ const {
   isPhone,
   playSelected,
   applyFilter,
-  onScrollBreakpoint,
+  onSwipe,
 } = usePlayableList(toRef(queueStore.state, 'playables'), { type: 'Queue' }, { reorderable: true, sortable: false })
 
 const { PlayableListControls, config } = usePlayableListControls('Queue')

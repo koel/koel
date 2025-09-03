@@ -7,6 +7,10 @@
       <li class="separator" />
       <li @click="showCollaborationModal">Collaborate…</li>
     </template>
+    <template v-if="allowDownload">
+      <li class="separator" />
+      <li @click="download">Download</li>
+    </template>
     <template v-if="canEditPlaylist">
       <li class="separator" />
       <li @click="edit">Edit…</li>
@@ -16,7 +20,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { computed, ref, toRef } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { useRouter } from '@/composables/useRouter'
 import { useContextMenu } from '@/composables/useContextMenu'
@@ -26,20 +30,35 @@ import { useKoelPlus } from '@/composables/useKoelPlus'
 import { queueStore } from '@/stores/queueStore'
 import { playableStore } from '@/stores/playableStore'
 import { playback } from '@/services/playbackManager'
+import { playlistStore } from '@/stores/playlistStore'
+import { useDialogBox } from '@/composables/useDialogBox'
+import { commonStore } from '@/stores/commonStore'
+import { downloadService } from '@/services/downloadService'
 
 const { base, ContextMenu, open, trigger } = useContextMenu()
 const { go, url } = useRouter()
 const { toastWarning, toastSuccess } = useMessageToaster()
 const { isPlus } = useKoelPlus()
 const { currentUserCan } = usePolicies()
+const { showConfirmDialog } = useDialogBox()
 
 const playlist = ref<Playlist>()
+const allowDownload = toRef(commonStore.state, 'allows_download')
 
 const canEditPlaylist = computed(() => currentUserCan.editPlaylist(playlist.value!))
 const canShowCollaboration = computed(() => isPlus.value && !playlist.value?.is_smart)
 
 const edit = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist.value!))
-const destroy = () => trigger(() => eventBus.emit('PLAYLIST_DELETE', playlist.value!))
+
+const destroy = () => trigger(async () => {
+  if (await showConfirmDialog(`Delete the playlist "${playlist.value!.name}"?`)) {
+    await playlistStore.delete(playlist.value!)
+    toastSuccess(`Playlist "${playlist.value!.name}" deleted.`)
+    eventBus.emit('PLAYLIST_DELETED', playlist.value!)
+  }
+})
+
+const download = () => trigger(() => downloadService.fromPlaylist(playlist.value!))
 
 const play = () => trigger(async () => {
   const songs = await playableStore.fetchForPlaylist(playlist.value!)

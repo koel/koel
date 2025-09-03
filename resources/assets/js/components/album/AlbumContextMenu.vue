@@ -9,8 +9,6 @@
         <li @click="edit">Edit…</li>
       </template>
       <li class="separator" />
-      <li v-if="isStandardAlbum" @click="viewAlbumDetails">Go to Album</li>
-      <li v-if="isStandardArtist" @click="viewArtistDetails">Go to Artist</li>
       <template v-if="isStandardAlbum && allowDownload">
         <li class="separator" />
         <li @click="download">Download</li>
@@ -22,7 +20,6 @@
 <script lang="ts" setup>
 import { computed, ref, toRef } from 'vue'
 import { albumStore } from '@/stores/albumStore'
-import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
 import { downloadService } from '@/services/downloadService'
@@ -42,10 +39,6 @@ const allowEdit = ref(false)
 
 const isStandardAlbum = computed(() => !albumStore.isUnknown(album.value!))
 
-const isStandardArtist = computed(() => {
-  return !artistStore.isUnknown(album.value!.artist_name) && !artistStore.isVarious(album.value!.artist_name)
-})
-
 const play = () => trigger(async () => {
   playback().queueAndPlay(await playableStore.fetchSongsForAlbum(album.value!))
   go(url('queue'))
@@ -60,8 +53,6 @@ const edit = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_ALBUM_FORM', alb
 
 const toggleFavorite = () => trigger(() => albumStore.toggleFavorite(album.value!))
 
-const viewAlbumDetails = () => trigger(() => go(url('albums.show', { id: album.value!.id })))
-const viewArtistDetails = () => trigger(() => go(url('artists.show', { id: album.value!.artist_id })))
 const download = () => trigger(() => downloadService.fromAlbum(album.value!))
 
 eventBus.on('ALBUM_CONTEXT_MENU_REQUESTED', async ({ pageX, pageY }, _album) => {

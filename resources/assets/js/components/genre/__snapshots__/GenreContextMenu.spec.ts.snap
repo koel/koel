@@ -6,8 +6,6 @@ exports[`genreContextMenu.vue > renders 1`] = `
     <li>Play</li>
     <li>Shuffle</li>
     <li>Add to Queue</li>
-    <li class="separator"></li>
-    <li>View Genre</li>
   </ul>
 </nav>
 `;

@@ -90,6 +90,26 @@ describe('playableContextMenu.vue', () => {
     expect(goMock).toHaveBeenCalledWith(`/#/artists/${song.artist_id}`)
   })
 
+  it('goes to podcast screen', async () => {
+    const goMock = h.mock(Router, 'go')
+    const episode = h.factory('episode')
+    await renderComponent(episode)
+
+    await h.user.click(screen.getByText('Go to Podcast'))
+
+    expect(goMock).toHaveBeenCalledWith(`/#/podcasts/${episode.podcast_id}`)
+  })
+
+  it('goes to episode description', async () => {
+    const goMock = h.mock(Router, 'go')
+    const episode = h.factory('episode')
+    await renderComponent(episode)
+
+    await h.user.click(screen.getByText('See Description'))
+
+    expect(goMock).toHaveBeenCalledWith(`/#/episodes/${episode.id}`)
+  })
+
   it('downloads', async () => {
     const downloadMock = h.mock(downloadService, 'fromPlayables')
     const { playables } = await renderComponent()

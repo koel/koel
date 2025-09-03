@@ -4,7 +4,6 @@ import { createHarness } from '@/__tests__/TestHarness'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
-import { downloadService } from '@/services/downloadService'
 import { resourcePermissionService } from '@/services/resourcePermissionService'
 import { eventBus } from '@/utils/eventBus'
 import Router from '@/router'
@@ -17,10 +16,13 @@ describe('albumScreen.vue', () => {
     },
   })
 
-  const renderComponent = async (tab: 'songs' | 'other-albums' | 'information' = 'songs') => {
+  const renderComponent = async (
+    tab: 'songs' | 'other-albums' | 'information' = 'songs',
+    album?: Album,
+  ) => {
     commonStore.state.uses_last_fm = true
 
-    const album = h.factory('album', {
+    album = album || h.factory('album', {
       id: 'foo',
       name: 'Led Zeppelin IV',
       artist_id: 'bar',
@@ -33,11 +35,11 @@ describe('albumScreen.vue', () => {
     const fetchSongsMock = h.mock(playableStore, 'fetchSongsForAlbum').mockResolvedValue(songs)
 
     await h.router.activateRoute({
-      path: `albums/foo/${tab}`,
+      path: `albums/${album.id}/${tab}`,
       screen: 'Album',
     }, {
       tab,
-      id: 'foo',
+      id: album.id,
     })
 
     const rendered = h.beAdmin().render(Component, {
@@ -63,16 +65,6 @@ describe('albumScreen.vue', () => {
       fetchSongsMock,
     }
   }
-
-  it('downloads', async () => {
-    const downloadMock = h.mock(downloadService, 'fromAlbum')
-    const { album } = await renderComponent()
-
-    await waitFor(async () => {
-      await h.user.click(screen.getByRole('button', { name: 'Download All' }))
-      expect(downloadMock).toHaveBeenCalledWith(album)
-    })
-  })
 
   it('goes back to list if album is deleted', async () => {
     const goMock = h.mock(Router, 'go')
@@ -116,14 +108,28 @@ describe('albumScreen.vue', () => {
     })
   })
 
-  it('requests edit form', async () => {
-    const { album } = await renderComponent()
+  it('has a Favorite button if album is favorite', async () => {
+    const { album } = await renderComponent('songs', h.factory('album', { favorite: true }))
+    const favoriteMock = h.mock(albumStore, 'toggleFavorite')
 
+    await waitFor(async () => {
+      await h.user.click(screen.getByRole('button', { name: 'Undo Favorite' }))
+      expect(favoriteMock).toHaveBeenCalledWith(album)
+    })
+  })
+
+  it('does not have a Favorite button if album is not favorite', async () => {
+    await renderComponent('songs', h.factory('album', { favorite: false }))
+    expect(screen.queryByRole('button', { name: 'Favorite' })).toBeNull()
+  })
+
+  it('requests Actions menu', async () => {
+    const { album } = await renderComponent()
     const emitMock = h.mock(eventBus, 'emit')
 
     await waitFor(async () => {
-      await h.user.click(screen.getByRole('button', { name: 'Edit' }))
-      expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_ALBUM_FORM', album)
+      await h.user.click(screen.getByRole('button', { name: 'More Actions' }))
+      expect(emitMock).toHaveBeenCalledWith('ALBUM_CONTEXT_MENU_REQUESTED', expect.any(MouseEvent), album)
     })
   })
 })

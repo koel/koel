@@ -20,29 +20,29 @@
             <span v-if="album.year">{{ album.year }}</span>
             <span>{{ pluralize(songs, 'song') }}</span>
             <span>{{ duration }}</span>
-
-            <span v-if="downloadable">
-              <a role="button" title="Download all songs in album" @click.prevent="download">Download All</a>
-            </span>
-
-            <span v-if="editable">
-              <a role="button" title="Edit album" @click.prevent="edit">Edit</a>
-            </span>
           </span>
         </template>
 
         <template #controls>
-          <div class="flex gap-2">
-            <SongListControls
-              v-if="songs.length && (!isPhone || showingControls)"
-              :config
-              @filter="applyFilter"
-              @play-all="playAll"
-              @play-selected="playSelected"
+          <SongListControls
+            v-if="songs.length && (!isPhone || showingControls)"
+            :config
+            @filter="applyFilter"
+            @play-all="playAll"
+            @play-selected="playSelected"
+          >
+            <FavoriteButton
+              v-if="album.favorite"
+              :favorite="album.favorite"
+              class="px-3.5 py-2"
+              @toggle="toggleFavorite"
             />
 
-            <FavoriteButton :favorite="album.favorite" class="px-3.5 py-2" @toggle="toggleFavorite" />
-          </div>
+            <Btn gray @click="requestContextMenu">
+              <Icon :icon="faEllipsis" fixed-width />
+              <span class="sr-only">More Actions</span>
+            </Btn>
+          </SongListControls>
         </template>
       </ScreenHeader>
     </template>
@@ -70,7 +70,7 @@
           v-if="!loading && album"
           ref="songList"
           @press:enter="onPressEnter"
-          @scroll-breakpoint="onScrollBreakpoint"
+          @swipe="onSwipe"
         />
       </div>
 
@@ -96,13 +96,13 @@
 </template>
 
 <script lang="ts" setup>
+import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, ref } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { pluralize } from '@/utils/formatters'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { playableStore } from '@/stores/playableStore'
-import { downloadService } from '@/services/downloadService'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { usePolicies } from '@/composables/usePolicies'
 import { usePlayableList } from '@/composables/usePlayableList'
@@ -117,7 +117,7 @@ import SongListSkeleton from '@/components/ui/skeletons/PlayableListSkeleton.vue
 import ScreenTabs from '@/components/ui/ArtistAlbumScreenTabs.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import GridListView from '@/components/ui/GridListView.vue'
-import FavoriteButton from '@/components/ui/FavoriteButton.vue'
+import Btn from '@/components/ui/form/Btn.vue'
 
 const validTabs = ['songs', 'other-albums', 'information'] as const
 type Tab = (typeof validTabs)[number]
@@ -125,6 +125,7 @@ type Tab = (typeof validTabs)[number]
 const AlbumInfo = defineAsyncComponent(() => import('@/components/album/AlbumInfo.vue'))
 const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCard.vue'))
 const AlbumCardSkeleton = defineAsyncComponent(() => import('@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'))
+const FavoriteButton = defineAsyncComponent(() => import('@/components/ui/FavoriteButton.vue'))
 
 const { getRouteParam, go, onScreenActivated, onRouteChanged, url, triggerNotFound } = useRouter()
 const { currentUserCan } = usePolicies()
@@ -146,7 +147,6 @@ const {
   playableList: songList,
   showingControls,
   isPhone,
-  downloadable,
   duration,
   context,
   sort,
@@ -154,7 +154,7 @@ const {
   playAll,
   playSelected,
   applyFilter,
-  onScrollBreakpoint,
+  onSwipe,
 } = usePlayableList(songs, { type: 'Album' })
 
 const useEncyclopedia = computed(() => useMusicBrainz.value || useLastfm.value)
@@ -167,9 +167,6 @@ const isStandardArtist = computed(() => {
   return !artistStore.isVarious(album.value.artist_name) && !artistStore.isUnknown(album.value.artist_name)
 })
 
-const download = () => downloadService.fromAlbum(album.value!)
-
-const edit = () => eventBus.emit('MODAL_SHOW_EDIT_ALBUM_FORM', album.value!)
 const toggleFavorite = () => albumStore.toggleFavorite(album.value!)
 
 const fetchScreenData = async () => {
@@ -218,6 +215,10 @@ const fetchScreenData = async () => {
 
 onScreenActivated('Album', () => fetchScreenData())
 onRouteChanged(route => route.name === 'albums.show' && fetchScreenData())
+
+const requestContextMenu = (event: MouseEvent) => {
+  eventBus.emit('ALBUM_CONTEXT_MENU_REQUESTED', event, album.value!)
+}
 
 eventBus.on('SONGS_UPDATED', result => {
   // After songs are updated, check if the current album still exists.

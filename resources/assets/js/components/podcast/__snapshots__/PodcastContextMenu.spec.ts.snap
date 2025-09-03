@@ -8,7 +8,9 @@ exports[`podcastContextMenu.vue > renders 1`] = `
     <li class="separator"></li>
     <li>Favorite</li>
     <li class="separator"></li>
-    <li>Go to Podcast</li>
+    <li>Visit Website</li>
+    <li class="separator"></li>
+    <li>Unsubscribe</li>
   </ul>
 </nav>
 `;

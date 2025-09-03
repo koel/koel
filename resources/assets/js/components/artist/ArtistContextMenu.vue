@@ -6,10 +6,6 @@
       <li class="separator" />
       <li @click="toggleFavorite">{{ artist.favorite ? 'Undo Favorite' : 'Favorite' }}</li>
       <li v-if="allowEdit" @click="requestEditForm">Edit…</li>
-      <template v-if="isStandardArtist">
-        <li class="separator" />
-        <li @click="viewArtistDetails">Go to Artist</li>
-      </template>
       <template v-if="isStandardArtist && allowDownload">
         <li class="separator" />
         <li @click="download">Download</li>
@@ -53,7 +49,6 @@ const shuffle = () => trigger(async () => {
   go(url('queue'))
 })
 
-const viewArtistDetails = () => trigger(() => go(url('artists.show', { id: artist.value!.id })))
 const download = () => trigger(() => downloadService.fromArtist(artist.value!))
 const toggleFavorite = () => trigger(() => artistStore.toggleFavorite(artist.value!))
 const requestEditForm = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_ARTIST_FORM', artist.value!))

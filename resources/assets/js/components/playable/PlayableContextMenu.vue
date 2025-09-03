@@ -1,5 +1,5 @@
 <template>
-  <ContextMenu ref="base" data-testid="song-context-menu" extra-class="song-menu">
+  <ContextMenu ref="base" data-testid="playable-context-menu" extra-class="playable-menu">
     <template v-if="onlyOneSelected">
       <li @click.stop.prevent="doPlayback">
         <span v-if="firstSongPlaying">Pause</span>
@@ -12,7 +12,10 @@
       </template>
       <template v-else>
         <li @click="viewPodcast(playables[0] as Episode)">Go to Podcast</li>
-        <li @click="viewEpisode(playables[0] as Episode)">See Episode Description</li>
+        <li @click="viewEpisode(playables[0] as Episode)">See Description</li>
+        <li v-if="(playables[0] as Episode).episode_link" @click="visitEpisodeWebpage(playables[0] as Episode)">
+          Visit Webpage
+        </li>
       </template>
     </template>
     <li class="has-sub">
@@ -237,6 +240,7 @@ const viewAlbum = (song: Song) => trigger(() => go(url('albums.show', { id: song
 const viewArtist = (song: Song) => trigger(() => go(url('artists.show', { id: song.artist_id })))
 const viewPodcast = (episode: Episode) => trigger(() => go(url('podcasts.show', { id: episode.podcast_id })))
 const viewEpisode = (episode: Episode) => trigger(() => go(url('episodes.show', { id: episode.id })))
+const visitEpisodeWebpage = (episode: Episode) => trigger(() => window.open(episode.episode_link!, '_blank'))
 const download = () => trigger(() => downloadService.fromPlayables(playables.value))
 
 const removePlayablesFromPlaylist = () => trigger(async () => {

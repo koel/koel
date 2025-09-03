@@ -14,37 +14,30 @@
         <template #meta>
           <span class="flex meta-content">
             <span>{{ pluralize(albumCount, 'album') }}</span>
-            <span>{{ pluralize(songs, 'item') }}</span>
+            <span>{{ pluralize(songs, 'song') }}</span>
             <span>{{ duration }}</span>
-
-            <a
-              v-if="downloadable"
-              class="download"
-              role="button"
-              title="Download all songs by this artist"
-              @click.prevent="download"
-            >
-              Download All
-            </a>
-
-            <span v-if="editable">
-              <a role="button" title="Edit artist" @click.prevent="edit">Edit</a>
-            </span>
           </span>
         </template>
 
         <template #controls>
-          <div class="flex gap-2">
-            <SongListControls
-              v-if="songs.length && (!isPhone || showingControls)"
-              :config
-              @filter="applyFilter"
-              @play-all="playAll"
-              @play-selected="playSelected"
+          <SongListControls
+            v-if="songs.length && (!isPhone || showingControls)"
+            :config
+            @filter="applyFilter"
+            @play-all="playAll"
+            @play-selected="playSelected"
+          >
+            <FavoriteButton
+              v-if="artist.favorite"
+              :favorite="artist.favorite"
+              class="px-3.5 py-2"
+              @toggle="toggleFavorite"
             />
-
-            <FavoriteButton :favorite="artist.favorite" class="px-3.5 py-2" @toggle="toggleFavorite" />
-          </div>
+            <Btn gray @click="requestContextMenu">
+              <Icon :icon="faEllipsis" fixed-width />
+              <span class="sr-only">More Actions</span>
+            </Btn>
+          </SongListControls>
         </template>
       </ScreenHeader>
     </template>
@@ -72,7 +65,7 @@
           v-if="!loading && artist"
           ref="songList"
           @press:enter="onPressEnter"
-          @scroll-breakpoint="onScrollBreakpoint"
+          @swipe="onSwipe"
         />
       </div>
 
@@ -101,13 +94,13 @@
 </template>
 
 <script lang="ts" setup>
+import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, ref } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { pluralize } from '@/utils/formatters'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { playableStore } from '@/stores/playableStore'
-import { downloadService } from '@/services/downloadService'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
@@ -122,11 +115,12 @@ import SongListSkeleton from '@/components/ui/skeletons/PlayableListSkeleton.vue
 import ScreenTabs from '@/components/ui/ArtistAlbumScreenTabs.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import GridListView from '@/components/ui/GridListView.vue'
-import FavoriteButton from '@/components/ui/FavoriteButton.vue'
+import Btn from '@/components/ui/form/Btn.vue'
 
 const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/ArtistInfo.vue'))
 const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCard.vue'))
 const AlbumCardSkeleton = defineAsyncComponent(() => import('@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'))
+const FavoriteButton = defineAsyncComponent(() => import('@/components/ui/FavoriteButton.vue'))
 
 const validTabs = ['songs', 'albums', 'information'] as const
 type Tab = typeof validTabs[number]
@@ -152,12 +146,11 @@ const {
   isPhone,
   context,
   duration,
-  downloadable,
   onPressEnter,
   playAll,
   playSelected,
   applyFilter,
-  onScrollBreakpoint,
+  onSwipe,
 } = usePlayableList(songs, { type: 'Artist' })
 
 const useEncyclopedia = computed(() => useMusicBrainz.value || useLastfm.value)
@@ -168,7 +161,6 @@ const albumCount = computed(() => {
   return albums.size
 })
 
-const download = () => downloadService.fromArtist(artist.value!)
 const toggleFavorite = () => artistStore.toggleFavorite(artist.value!)
 
 const fetchScreenData = async () => {
@@ -208,6 +200,10 @@ const fetchScreenData = async () => {
 
 onScreenActivated('Artist', () => fetchScreenData())
 onRouteChanged(route => route.name === 'artists.show' && fetchScreenData())
+
+const requestContextMenu = (event: MouseEvent) => {
+  eventBus.emit('ARTIST_CONTEXT_MENU_REQUESTED', event, artist.value!)
+}
 
 eventBus.on('SONGS_UPDATED', result => {
   // After songs are updated, check if the current artist still exists.

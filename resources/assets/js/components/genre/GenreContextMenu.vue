@@ -4,8 +4,6 @@
       <li @click="play">Play</li>
       <li @click="shuffle">Shuffle</li>
       <li @click="queue">Add to Queue</li>
-      <li class="separator" />
-      <li @click="goToGenre">View Genre</li>
     </template>
   </ContextMenu>
 </template>
@@ -23,7 +21,7 @@ import { pluralize } from '@/utils/formatters'
 
 const { base, ContextMenu, open, trigger } = useContextMenu()
 const { toastSuccess } = useMessageToaster()
-const { go, url } = useRouter()
+const { go } = useRouter()
 
 const genre = ref<Genre>()
 
@@ -42,8 +40,6 @@ const queue = () => trigger(async () => {
   queueStore.queue(songs)
   toastSuccess(`${pluralize(songs, 'song')} added to queue.`)
 })
-
-const goToGenre = () => trigger(async () => go(url('genres.show', { id: genre.value!.id })))
 
 eventBus.on('GENRE_CONTEXT_MENU_REQUESTED', async ({ pageX, pageY }, _genre) => {
   genre.value = _genre

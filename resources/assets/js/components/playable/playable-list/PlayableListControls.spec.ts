@@ -79,12 +79,4 @@ describe('playableListControls.vue', () => {
 
     expect(emitted()['clear-queue']).toBeTruthy()
   })
-
-  it('deletes current playlist', async () => {
-    const { emitted } = renderComponent(0)
-
-    await h.user.click(screen.getByTitle('Delete this playlist'))
-
-    expect(emitted()['delete-playlist']).toBeTruthy()
-  })
 })

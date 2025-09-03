@@ -1,4 +1,3 @@
-import Router from '@/router'
 import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
@@ -6,6 +5,7 @@ import { eventBus } from '@/utils/eventBus'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { playableStore as episodeStore } from '@/stores/playableStore'
 import Component from './PodcastContextMenu.vue'
+import { podcastStore } from '@/stores/podcastStore'
 
 describe('podcastContextMenu.vue', () => {
   const h = createHarness()
@@ -59,12 +59,30 @@ describe('podcastContextMenu.vue', () => {
     expect(playMock).toHaveBeenCalledWith(episodes, true)
   })
 
-  it('goes to podcast', async () => {
-    const mock = h.mock(Router, 'go')
+  it('favorites', async () => {
     const { podcast } = await renderComponent()
+    const favoriteMock = h.mock(podcastStore, 'toggleFavorite')
 
-    await h.user.click(screen.getByText('Go to Podcast'))
+    await h.user.click(screen.getByText('Favorite'))
 
-    expect(mock).toHaveBeenCalledWith(`/#/podcasts/${podcast.id}`)
+    expect(favoriteMock).toHaveBeenCalledWith(podcast)
+  })
+
+  it('undoes favorite', async () => {
+    const { podcast } = await renderComponent(h.factory('podcast', { favorite: true }))
+    const favoriteMock = h.mock(podcastStore, 'toggleFavorite')
+
+    await h.user.click(screen.getByText('Undo Favorite'))
+
+    expect(favoriteMock).toHaveBeenCalledWith(podcast)
+  })
+
+  it('unsubscribes', async () => {
+    const { podcast } = await renderComponent()
+    const unsubMock = h.mock(podcastStore, 'unsubscribe')
+
+    await h.user.click(screen.getByText('Unsubscribe'))
+
+    expect(unsubMock).toHaveBeenCalledWith(podcast)
   })
 })

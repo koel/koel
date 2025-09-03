@@ -4,7 +4,6 @@ import { createHarness } from '@/__tests__/TestHarness'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
-import { downloadService } from '@/services/downloadService'
 import { eventBus } from '@/utils/eventBus'
 import { resourcePermissionService } from '@/services/resourcePermissionService'
 import Router from '@/router'
@@ -17,10 +16,13 @@ describe('artistScreen.vue', () => {
     },
   })
 
-  const renderComponent = async (tab: 'songs' | 'albums' | 'information' = 'songs') => {
+  const renderComponent = async (
+    tab: 'songs' | 'albums' | 'information' = 'songs',
+    artist?: Artist,
+  ) => {
     commonStore.state.uses_last_fm = true
 
-    const artist = h.factory('artist', {
+    artist = artist || h.factory('artist', {
       id: 'foo',
       name: 'Led Zeppelin',
     })
@@ -31,11 +33,11 @@ describe('artistScreen.vue', () => {
     const fetchSongsMock = h.mock(playableStore, 'fetchSongsForArtist').mockResolvedValue(songs)
 
     await h.router.activateRoute({
-      path: `artists/foo/${tab}`,
+      path: `artists/${artist.id}/${tab}`,
       screen: 'Artist',
     }, {
       tab,
-      id: 'foo',
+      id: artist.id,
     })
 
     const rendered = h.render(Component, {
@@ -61,16 +63,6 @@ describe('artistScreen.vue', () => {
       fetchSongsMock,
     }
   }
-
-  it('downloads', async () => {
-    const downloadMock = h.mock(downloadService, 'fromArtist')
-    const { artist } = await renderComponent()
-
-    await waitFor(async () => {
-      await h.user.click(screen.getByRole('button', { name: 'Download All' }))
-      expect(downloadMock).toHaveBeenCalledWith(artist)
-    })
-  })
 
   it('goes back to list if artist is deleted', async () => {
     const goMock = h.mock(Router, 'go')
@@ -98,5 +90,30 @@ describe('artistScreen.vue', () => {
   it('shows the playable list', async () => {
     await renderComponent()
     await waitFor(() => screen.getByTestId('song-list'))
+  })
+
+  it('has a Favorite button if artist is favorite', async () => {
+    const { artist } = await renderComponent('songs', h.factory('artist', { favorite: true }))
+    const favoriteMock = h.mock(artistStore, 'toggleFavorite')
+
+    await waitFor(async () => {
+      await h.user.click(screen.getByRole('button', { name: 'Undo Favorite' }))
+      expect(favoriteMock).toHaveBeenCalledWith(artist)
+    })
+  })
+
+  it('does not have a Favorite button if artist is not favorite', async () => {
+    await renderComponent('songs', h.factory('artist', { favorite: false }))
+    expect(screen.queryByRole('button', { name: 'Favorite' })).toBeNull()
+  })
+
+  it('requests Actions menu', async () => {
+    const { artist } = await renderComponent()
+    const emitMock = h.mock(eventBus, 'emit')
+
+    await waitFor(async () => {
+      await h.user.click(screen.getByRole('button', { name: 'More Actions' }))
+      expect(emitMock).toHaveBeenCalledWith('ARTIST_CONTEXT_MENU_REQUESTED', expect.any(MouseEvent), artist)
+    })
   })
 })

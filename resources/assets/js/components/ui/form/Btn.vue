@@ -87,5 +87,9 @@ a {
   &[uppercase] {
     @apply uppercase;
   }
+
+  &[bordered] {
+    @apply border;
+  }
 }
 </style>

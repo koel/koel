@@ -34,7 +34,7 @@
         ref="songList"
         class="-m-6"
         @sort="sort"
-        @scroll-breakpoint="onScrollBreakpoint"
+        @swipe="onSwipe"
         @press:enter="onPressEnter"
         @scrolled-to-end="fetchSongs"
       />
@@ -81,7 +81,7 @@ const {
   isPhone,
   onPressEnter,
   playSelected,
-  onScrollBreakpoint,
+  onSwipe,
 } = usePlayableList(toRef(playableStore.state, 'playables'), { type: 'Songs' }, { filterable: false, sortable: true })
 
 const { PlayableListControls: SongListControls, config } = usePlayableListControls('Songs')
