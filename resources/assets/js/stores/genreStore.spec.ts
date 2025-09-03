@@ -17,7 +17,7 @@ describe('genreStore', () => {
     const genre = h.factory('genre')
     h.mock(http, 'get').mockResolvedValue(genre)
 
-    expect(await genreStore.fetchOne(genre.name)).toEqual(genre)
-    expect(http.get).toHaveBeenCalledWith(`genres/${genre.name}`)
+    expect(await genreStore.fetchOne(genre.id)).toEqual(genre)
+    expect(http.get).toHaveBeenCalledWith(`genres/${genre.id}`)
   })
 })

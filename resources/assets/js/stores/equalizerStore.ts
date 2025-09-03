@@ -2,9 +2,7 @@ import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { equalizerPresets as presets } from '@/config/audio'
 
 export const equalizerStore = {
-  getPresetByName (name: string) {
-    return presets.find(preset => preset.name === name)
-  },
+  getPresetByName: (name: string) => presets.find(preset => preset.name === name),
 
   /**
    * Get the current equalizer config.

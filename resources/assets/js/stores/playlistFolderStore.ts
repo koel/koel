@@ -17,7 +17,7 @@ export const playlistFolderStore = {
     return this.state.folders.find(folder => folder.id === id)
   },
 
-  async store (name: string) {
+  async store (name: PlaylistFolder['name']) {
     const folder = reactive(await http.post<PlaylistFolder>('playlist-folders', { name }))
 
     this.state.folders.push(folder)
@@ -32,7 +32,7 @@ export const playlistFolderStore = {
     playlistStore.byFolder(folder).forEach(playlist => (playlist.folder_id = null))
   },
 
-  async rename (folder: PlaylistFolder, name: string) {
+  async rename (folder: PlaylistFolder, name: PlaylistFolder['name']) {
     await http.put(`playlist-folders/${folder.id}`, { name })
     this.byId(folder.id)!.name = name
   },
