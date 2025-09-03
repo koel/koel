@@ -12,14 +12,14 @@ export const useListSelection = <T> (
 
   // Keep track of selected items by their ID, so that when the list is updated (e.g., items are removed or added,
   // the list is sorted, or infinite loading triggered), we can reapply the selection.
-  const selectedIds = new Map()
+  const selectedIds = new Set()
 
   const resolveIdPath = (selectable: Selectable<T>) => typeof idPath === 'function' ? idPath(selectable) : idPath
 
   const select = (selectable: Selectable<T>) => {
     selectable.selected = true
     lastSelected.value = selectable
-    selectedIds.set(get(selectable, resolveIdPath(selectable)), true)
+    selectedIds.add(get(selectable, resolveIdPath(selectable)))
   }
 
   const deselect = (selectable: Selectable<T>) => {
@@ -30,7 +30,7 @@ export const useListSelection = <T> (
 
   const selectAll = () => selectables.value.forEach(select)
   const deselectAll = () => selectables.value.forEach(deselect)
-  const isSelected = (item: Selectable<T>) => item.selected
+  const isSelected = (item: Selectable<T>) => selectedIds.has(get(item, resolveIdPath(item)))
   const selected = computed(() => selectables.value.filter(isSelected))
 
   const toggleSelected = (selectable: Selectable<T>) => {

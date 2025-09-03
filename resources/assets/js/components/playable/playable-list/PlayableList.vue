@@ -106,6 +106,7 @@ const {
   inSelectedRange,
   lastSelected,
   selected,
+  reapplySelection,
 } = useListSelection(rows, 'playable.id')
 
 const shouldTriggerContinuousPlayback = computed(() => {
@@ -131,6 +132,7 @@ const sort = (field: MaybeArray<PlayableListSortField>, order: SortOrder) => {
 
 const render = () => {
   config.sortable || (sortFields.value = [])
+  reapplySelection()
 }
 
 watch(playables, () => render(), { deep: true })
