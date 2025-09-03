@@ -19,14 +19,6 @@
           <CollaboratorsBadge v-if="collaborators.length" :collaborators />
           <span>{{ pluralize(filteredPlayables, 'item') }}</span>
           <span>{{ duration }}</span>
-          <a
-            v-if="downloadable"
-            role="button"
-            title="Download all items in playlist"
-            @click.prevent="download"
-          >
-            Download All
-          </a>
         </template>
 
         <template #controls>
@@ -34,10 +26,14 @@
             v-if="!isPhone || showingControls"
             :config="controlsConfig"
             @refresh="fetchDetails(true)"
-            @delete-playlist="destroy"
             @play-all="playAll"
             @play-selected="playSelected"
-          />
+          >
+            <Btn gray @click="requestContextMenu">
+              <Icon :icon="faEllipsis" fixed-width />
+              <span class="sr-only">More Actions</span>
+            </Btn>
+          </PlayableListControls>
         </template>
       </ScreenHeader>
       <ScreenHeaderSkeleton v-else />
@@ -53,7 +49,7 @@
         @sort="sort"
         @press:delete="removeSelected"
         @press:enter="onPressEnter"
-        @scroll-breakpoint="onScrollBreakpoint"
+        @swipe="onSwipe"
       />
 
       <ScreenEmptyState v-else>
@@ -80,16 +76,15 @@
 
 <script lang="ts" setup>
 import { faFile } from '@fortawesome/free-regular-svg-icons'
+import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
 import { differenceBy } from 'lodash'
 import { ref, watch } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { pluralize } from '@/utils/formatters'
 import { playlistStore } from '@/stores/playlistStore'
 import { playableStore } from '@/stores/playableStore'
-import { downloadService } from '@/services/downloadService'
 import { playlistCollaborationService } from '@/services/playlistCollaborationService'
 import { useRouter } from '@/composables/useRouter'
-import { useAuthorization } from '@/composables/useAuthorization'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { usePlaylistManagement } from '@/composables/usePlaylistManagement'
 import { usePlayableList } from '@/composables/usePlayableList'
@@ -102,6 +97,7 @@ import PlaylistThumbnail from '@/components/ui/PlaylistThumbnail.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
 import PlayableListSkeleton from '@/components/ui/skeletons/PlayableListSkeleton.vue'
+import Btn from '@/components/ui/form/Btn.vue'
 
 // Since this component is responsible for all playlists, we keep track of the state for each,
 // so that filter and sort settings are preserved when switching between them.
@@ -112,8 +108,7 @@ interface PlaylistScreenState {
   sortOrder: SortOrder | null
 }
 
-const { currentUser } = useAuthorization()
-const { triggerNotFound, getRouteParam, onScreenActivated } = useRouter()
+const { triggerNotFound, getRouteParam, onScreenActivated, go, url } = useRouter()
 
 const states = new Map<Playlist['id'], PlaylistScreenState>()
 
@@ -149,7 +144,6 @@ const {
   playables: filteredPlayables,
   playableList,
   duration,
-  downloadable,
   thumbnails,
   selectedPlayables,
   showingControls,
@@ -159,7 +153,7 @@ const {
   onPressEnter,
   playAll,
   playSelected,
-  onScrollBreakpoint,
+  onSwipe,
   sort: baseSort,
   config: listConfig,
 } = usePlayableList(allPlayables, { type: 'Playlist' })
@@ -189,8 +183,6 @@ const sort = (field: MaybeArray<PlayableListSortField> | null, order: SortOrder)
   }
 }
 
-const destroy = () => eventBus.emit('PLAYLIST_DELETE', playlist.value!)
-const download = () => downloadService.fromPlaylist(playlist.value!)
 const editPlaylist = () => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist.value!)
 
 const removeSelected = async () => await removeFromPlaylist(playlist.value!, selectedPlayables.value)
@@ -249,7 +241,6 @@ watch(playlistId, async id => {
   listConfig.reorderable = currentState.sortField === 'position'
   listConfig.collaborative = playlist.value.is_collaborative
   listConfig.hasCustomOrderSort = !playlist.value.is_smart
-  controlsConfig.deletePlaylist = playlist.value.owner_id === currentUser.value?.id
 
   currentState.sortField ??= (playlist.value?.is_smart ? 'title' : 'position')
   currentState.sortOrder ??= 'asc'
@@ -259,13 +250,24 @@ watch(playlistId, async id => {
 
 onScreenActivated('Playlist', () => (playlistId.value = getRouteParam('id')!))
 
+const requestContextMenu = (event: MouseEvent) => {
+  eventBus.emit('PLAYLIST_CONTEXT_MENU_REQUESTED', event, playlist.value!)
+}
+
 eventBus
   .on('PLAYLIST_UPDATED', async ({ id }) => id === playlistId.value && await fetchDetails())
   .on('PLAYLIST_COLLABORATOR_REMOVED', async ({ id }) => id === playlistId.value && await fetchDetails())
   .on('PLAYLIST_CONTENT_REMOVED', async ({ id }, removed) => {
-    if (id !== playlistId.value) {
-      return
+    if (id === playlistId.value) {
+      allPlayables.value = differenceBy(allPlayables.value, removed, 'id')
     }
-    allPlayables.value = differenceBy(allPlayables.value, removed, 'id')
   })
+  .on('PLAYLIST_DELETED', async ({ id }) => id === playlistId.value && go(url('home')))
 </script>
+
+<style lang="postcss" scoped>
+:deep(.meta) > *:not(:first-child)::before {
+  content: '•';
+  margin: 0 0.25em 0 0;
+}
+</style>

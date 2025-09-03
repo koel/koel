@@ -1,5 +1,5 @@
 <template>
-  <ScreenBase @contextmenu.prevent="onContextMenu">
+  <ScreenBase>
     <template #header>
       <ScreenHeaderSkeleton v-if="loading && !episode" />
       <ScreenHeader v-if="episode">
@@ -26,10 +26,6 @@
               <Icon v-else :icon="faPlay" fixed-width />
             </Btn>
 
-            <Btn v-koel-tooltip="'Download'" gray @click.prevent="download">
-              <Icon :icon="faDownload" fixed-width />
-            </Btn>
-
             <Btn
               v-if="episode.episode_link"
               v-koel-tooltip="'Visit episode webpage'" :href="episode.episode_link"
@@ -40,7 +36,17 @@
               <Icon :icon="faExternalLink" fixed-width />
             </Btn>
 
-            <FavoriteButton :favorite="episode.favorite" class="px-3.5 py-2" @toggle="toggleFavorite" />
+            <FavoriteButton
+              v-if="episode.favorite"
+              :favorite="episode.favorite"
+              class="px-3.5 py-2"
+              @toggle="toggleFavorite"
+            />
+
+            <Btn gray @click="requestContextMenu">
+              <Icon :icon="faEllipsis" fixed-width />
+              <span class="sr-only">More Actions</span>
+            </Btn>
           </div>
         </template>
       </ScreenHeader>
@@ -54,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { faDownload, faExternalLink, faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
+import { faEllipsis, faExternalLink, faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
 import DOMPurify from 'dompurify'
 import { orderBy } from 'lodash'
 import { computed, ref, watch } from 'vue'
@@ -63,7 +69,6 @@ import { queueStore } from '@/stores/queueStore'
 import { podcastStore } from '@/stores/podcastStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { eventBus } from '@/utils/eventBus'
-import { downloadService } from '@/services/downloadService'
 import { playback } from '@/services/playbackManager'
 import { useRouter } from '@/composables/useRouter'
 import { useErrorHandler } from '@/composables/useErrorHandler'
@@ -77,7 +82,7 @@ import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 const { onScreenActivated, getRouteParam, triggerNotFound, url } = useRouter()
 
 const loading = ref(false)
-const episodeId = ref<string>()
+const episodeId = ref<Episode['id']>()
 const episode = ref<Episode>()
 
 const playing = computed(() => {
@@ -123,8 +128,6 @@ const playOrPause = async () => {
   await playback().play(episode.value!, startingPoint)
 }
 
-const download = () => downloadService.fromPlayables(episode.value!)
-
 watch(episodeId, async id => {
   if (!id || loading.value) {
     return
@@ -143,11 +146,8 @@ watch(episodeId, async id => {
   }
 })
 
-const onContextMenu = (event: MouseEvent) => {
-  if (!episode.value) {
-    return
-  }
-  eventBus.emit('PLAYABLE_CONTEXT_MENU_REQUESTED', event, episode.value)
+const requestContextMenu = (event: MouseEvent) => {
+  eventBus.emit('PLAYABLE_CONTEXT_MENU_REQUESTED', event, episode.value!)
 }
 
 const toggleFavorite = () => episodeStore.toggleFavorite(episode.value!)

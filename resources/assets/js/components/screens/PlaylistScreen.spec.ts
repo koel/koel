@@ -4,7 +4,8 @@ import { createHarness } from '@/__tests__/TestHarness'
 import { eventBus } from '@/utils/eventBus'
 import { playlistStore } from '@/stores/playlistStore'
 import { playableStore } from '@/stores/playableStore'
-import { downloadService } from '@/services/downloadService'
+import Router from '@/router'
+import type { Events } from '@/config/events'
 import Component from './PlaylistScreen.vue'
 
 describe('playlistScreen.vue', () => {
@@ -18,7 +19,7 @@ describe('playlistScreen.vue', () => {
     playlistStore.init([playlist])
     playlist.playables = songs
 
-    const fetchMock = h.mock(playableStore, 'fetchForPlaylist').mockResolvedValue(songs)
+    const fetchSongsMock = h.mock(playableStore, 'fetchForPlaylist').mockResolvedValueOnce(songs)
 
     const rendered = h.render(Component)
 
@@ -27,12 +28,12 @@ describe('playlistScreen.vue', () => {
       screen: 'Playlist',
     }, { id: playlist.id })
 
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith(playlist, false))
+    await waitFor(() => expect(fetchSongsMock).toHaveBeenCalledWith(playlist, false))
 
     return {
       ...rendered,
       playlist,
-      fetchMock,
+      fetchSongsMock,
     }
   }
 
@@ -54,30 +55,44 @@ describe('playlistScreen.vue', () => {
     })
   })
 
-  it('downloads the playlist', async () => {
-    const downloadMock = h.mock(downloadService, 'fromPlaylist')
-    const { playlist } = await renderComponent(h.factory('song', 10))
-
-    await h.tick(2)
-    await h.user.click(screen.getByRole('button', { name: 'Download All' }))
-
-    await waitFor(() => expect(downloadMock).toHaveBeenCalledWith(playlist))
-  })
-
-  it('deletes the playlist', async () => {
-    const emitMock = h.mock(eventBus, 'emit')
-    const { playlist } = await renderComponent()
-
-    await h.user.click(screen.getByRole('button', { name: 'Delete this playlist' }))
-
-    await waitFor(() => expect(emitMock).toHaveBeenCalledWith('PLAYLIST_DELETE', playlist))
-  })
-
   it('refreshes the playlist', async () => {
-    const { playlist, fetchMock } = await renderComponent()
+    const { playlist, fetchSongsMock } = await renderComponent()
+    fetchSongsMock.mockResolvedValue(h.factory('song', 5))
 
     await h.user.click(screen.getByRole('button', { name: 'Refresh' }))
 
-    expect(fetchMock).toHaveBeenCalledWith(playlist, true)
+    expect(fetchSongsMock).toHaveBeenCalledWith(playlist, true)
   })
+
+  it('shows Actions menu', async () => {
+    const { playlist } = await renderComponent()
+    const emitMock = h.mock(eventBus, 'emit')
+
+    await waitFor(async () => {
+      await h.user.click(screen.getByRole('button', { name: 'More Actions' }))
+      expect(emitMock).toHaveBeenCalledWith('PLAYLIST_CONTEXT_MENU_REQUESTED', expect.any(MouseEvent), playlist)
+    })
+  })
+
+  it('goes back to home if playlist is deleted', async () => {
+    const goMock = h.mock(Router, 'go')
+    const { playlist } = await renderComponent()
+    eventBus.emit('PLAYLIST_DELETED', playlist)
+
+    await h.tick()
+
+    expect(goMock).toHaveBeenCalledWith('/#/home')
+  })
+
+  it.each<[keyof Events]>([['PLAYLIST_UPDATED'], ['PLAYLIST_COLLABORATOR_REMOVED']])(
+    'refreshes upon %s event trigger',
+    async eventKey => {
+      const { playlist, fetchSongsMock } = await renderComponent()
+      fetchSongsMock.mockResolvedValueOnce(h.factory('song', 5))
+
+      eventBus.emit(eventKey, playlist)
+
+      expect(fetchSongsMock).toHaveBeenCalledWith(playlist, false)
+    },
+  )
 })

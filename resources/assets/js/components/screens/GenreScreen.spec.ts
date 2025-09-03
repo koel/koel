@@ -4,6 +4,7 @@ import { createHarness } from '@/__tests__/TestHarness'
 import { genreStore } from '@/stores/genreStore'
 import { playableStore } from '@/stores/playableStore'
 import Component from './GenreScreen.vue'
+import { eventBus } from '@/utils/eventBus'
 
 describe('genreScreen', () => {
   const h = createHarness()
@@ -41,11 +42,24 @@ describe('genreScreen', () => {
 
     await h.tick(2)
 
-    return rendered
+    return {
+      ...rendered,
+      genre,
+    }
   }
 
   it('renders the song list', async () => {
     await renderComponent()
     expect(screen.getByTestId('song-list')).toBeTruthy()
+  })
+
+  it('requests Actions menu', async () => {
+    const { genre } = await renderComponent()
+    const emitMock = h.mock(eventBus, 'emit')
+
+    await waitFor(async () => {
+      await h.user.click(screen.getByRole('button', { name: 'More Actions' }))
+      expect(emitMock).toHaveBeenCalledWith('GENRE_CONTEXT_MENU_REQUESTED', expect.any(MouseEvent), genre)
+    })
   })
 })

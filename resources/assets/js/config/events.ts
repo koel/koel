@@ -43,11 +43,12 @@ export interface Events {
   MODAL_SHOW_KOEL_PLUS: () => void
   MODAL_SHOW_EQUALIZER: () => void
 
-  PLAYLIST_DELETE: (playlist: Playlist) => void
-  PLAYLIST_FOLDER_DELETE: (playlistFolder: PlaylistFolder) => void
+  PLAYLIST_DELETED: (playlist: Playlist) => void
   PLAYLIST_CONTENT_REMOVED: (playlist: Playlist, playables: Playable[]) => void
   PLAYLIST_UPDATED: (playlist: Playlist) => void
   PLAYLIST_COLLABORATOR_REMOVED: (playlist: Playlist) => void
+
+  PODCAST_UNSUBSCRIBED: (podcast: Podcast) => void
 
   SONGS_UPDATED: (result: SongUpdateResult) => void
   SONGS_DELETED: (songs: Song[]) => void

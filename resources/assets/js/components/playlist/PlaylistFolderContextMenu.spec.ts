@@ -7,15 +7,22 @@ import { playableStore } from '@/stores/playableStore'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { eventBus } from '@/utils/eventBus'
 import Router from '@/router'
+import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import Component from './PlaylistFolderContextMenu.vue'
 
 describe('playlistFolderContextMenu.vue', () => {
   const h = createHarness()
 
-  const renderComponent = async (folder: PlaylistFolder) => {
-    h.render(Component)
+  const renderComponent = async (folder?: PlaylistFolder) => {
+    folder = folder || h.factory('playlist-folder')
+    const rendered = h.render(Component)
     eventBus.emit('PLAYLIST_FOLDER_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, folder)
     await h.tick(2)
+
+    return {
+      ...rendered,
+      folder,
+    }
   }
 
   const createPlayableFolder = () => {
@@ -25,8 +32,7 @@ describe('playlistFolderContextMenu.vue', () => {
   }
 
   it('renames', async () => {
-    const folder = h.factory('playlist-folder')
-    await renderComponent(folder)
+    const { folder } = await renderComponent()
     const emitMock = h.mock(eventBus, 'emit')
 
     await h.user.click(screen.getByText('Rename'))
@@ -35,24 +41,21 @@ describe('playlistFolderContextMenu.vue', () => {
   })
 
   it('deletes', async () => {
-    const folder = h.factory('playlist-folder')
-    await renderComponent(folder)
-    const emitMock = h.mock(eventBus, 'emit')
+    const { folder } = await renderComponent()
+    const deleteMock = h.mock(playlistFolderStore, 'delete')
 
     await h.user.click(screen.getByText('Delete'))
-
-    expect(emitMock).toHaveBeenCalledWith('PLAYLIST_FOLDER_DELETE', folder)
+    expect(deleteMock).toHaveBeenCalledWith(folder)
   })
 
   it('plays', async () => {
     h.createAudioPlayer()
 
-    const folder = createPlayableFolder()
     const songs = h.factory('song', 3)
     const fetchMock = h.mock(playableStore, 'fetchForPlaylistFolder').mockResolvedValue(songs)
     const queueMock = h.mock(playbackService, 'queueAndPlay')
     const goMock = h.mock(Router, 'go')
-    await renderComponent(folder)
+    const { folder } = await renderComponent(createPlayableFolder())
 
     await h.user.click(screen.getByText('Play All'))
 
@@ -66,14 +69,12 @@ describe('playlistFolderContextMenu.vue', () => {
   it('warns if attempting to play with no songs in folder', async () => {
     h.createAudioPlayer()
 
-    const folder = createPlayableFolder()
-
     const fetchMock = h.mock(playableStore, 'fetchForPlaylistFolder').mockResolvedValue([])
     const queueMock = h.mock(playbackService, 'queueAndPlay')
     const goMock = h.mock(Router, 'go')
     const warnMock = h.mock(MessageToasterStub.value, 'warning')
 
-    await renderComponent(folder)
+    const { folder } = await renderComponent(createPlayableFolder())
 
     await h.user.click(screen.getByText('Play All'))
 
@@ -88,12 +89,12 @@ describe('playlistFolderContextMenu.vue', () => {
   it('shuffles', async () => {
     h.createAudioPlayer()
 
-    const folder = createPlayableFolder()
     const songs = h.factory('song', 3)
     const fetchMock = h.mock(playableStore, 'fetchForPlaylistFolder').mockResolvedValue(songs)
     const queueMock = h.mock(playbackService, 'queueAndPlay')
     const goMock = h.mock(Router, 'go')
-    await renderComponent(folder)
+
+    const { folder } = await renderComponent(createPlayableFolder())
 
     await h.user.click(screen.getByText('Shuffle All'))
 
@@ -105,8 +106,7 @@ describe('playlistFolderContextMenu.vue', () => {
   })
 
   it('does not show shuffle option if folder is empty', async () => {
-    const folder = h.factory('playlist-folder')
-    await renderComponent(folder)
+    await renderComponent()
 
     expect(screen.queryByText('Shuffle All')).toBeNull()
     expect(screen.queryByText('Play All')).toBeNull()
@@ -115,14 +115,12 @@ describe('playlistFolderContextMenu.vue', () => {
   it('warns if attempting to shuffle with no songs in folder', async () => {
     h.createAudioPlayer()
 
-    const folder = createPlayableFolder()
-
     const fetchMock = h.mock(playableStore, 'fetchForPlaylistFolder').mockResolvedValue([])
     const queueMock = h.mock(playbackService, 'queueAndPlay')
     const goMock = h.mock(Router, 'go')
     const warnMock = h.mock(MessageToasterStub.value, 'warning')
 
-    await renderComponent(folder)
+    const { folder } = await renderComponent(createPlayableFolder())
 
     await h.user.click(screen.getByText('Shuffle All'))
 

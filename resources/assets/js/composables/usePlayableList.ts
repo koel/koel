@@ -108,7 +108,7 @@ export const usePlayableList = (
 
   const sortOrder = ref<SortOrder>('asc')
 
-  const onScrollBreakpoint = (direction: 'up' | 'down') => {
+  const onSwipe = (direction: 'up' | 'down') => {
     headerLayout.value = direction === 'down' ? 'collapsed' : 'expanded'
   }
 
@@ -237,7 +237,7 @@ export const usePlayableList = (
     playAll,
     playSelected,
     applyFilter,
-    onScrollBreakpoint,
+    onSwipe,
     sort,
   }
 }

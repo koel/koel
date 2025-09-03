@@ -5,6 +5,8 @@ import { podcastStore } from '@/stores/podcastStore'
 import { playableStore as episodeStore } from '@/stores/playableStore'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { queueStore } from '@/stores/queueStore'
+import Router from '@/router'
+import { eventBus } from '@/utils/eventBus'
 import Component from './PodcastScreen.vue'
 
 describe('podcastScreen.vue', () => {
@@ -108,23 +110,36 @@ describe('podcastScreen.vue', () => {
     expect(fetchEpisodesMock).toHaveBeenNthCalledWith(2, podcast.id, true)
   })
 
-  it('unsubscribes from podcast', async () => {
-    const unsubscribeMock = h.mock(podcastStore, 'unsubscribe')
-    const { podcast } = await renderComponent()
-
-    await h.tick()
-    await h.user.click(screen.getByRole('button', { name: 'Unsubscribe from Podcast' }))
-
-    expect(unsubscribeMock).toHaveBeenCalledWith(podcast)
-  })
-
-  it('toggle favorites', async () => {
-    const { podcast } = await renderComponent()
+  it('has a Favorite button if podcast is favorite', async () => {
+    const { podcast } = await renderComponent(h.factory('podcast', { favorite: true }))
     const toggleFavoriteMock = h.mock(podcastStore, 'toggleFavorite')
 
     await h.tick()
-    await h.user.click(screen.getByRole('button', { name: 'Favorite' }))
+    await h.user.click(screen.getByRole('button', { name: 'Undo Favorite' }))
 
     expect(toggleFavoriteMock).toHaveBeenCalledWith(podcast)
+  })
+
+  it('does not have a Favorite button if podcast is not favorite', async () => {
+    await renderComponent(h.factory('podcast', { favorite: false }))
+    expect(screen.queryByRole('button', { name: 'Favorite' })).toBeNull()
+  })
+
+  it('requests Actions menu', async () => {
+    const { podcast } = await renderComponent()
+    const emitMock = h.mock(eventBus, 'emit')
+
+    await waitFor(async () => {
+      await h.user.click(screen.getByRole('button', { name: 'More Actions' }))
+      expect(emitMock).toHaveBeenCalledWith('PODCAST_CONTEXT_MENU_REQUESTED', expect.any(MouseEvent), podcast)
+    })
+  })
+
+  it('goes back to podcast list if current one is unsubscribed', async () => {
+    const goMock = h.mock(Router, 'go')
+    const { podcast } = await renderComponent()
+    eventBus.emit('PODCAST_UNSUBSCRIBED', podcast)
+
+    expect(goMock).toHaveBeenCalledWith('/#/podcasts')
   })
 })

@@ -26,6 +26,8 @@ class DownloadPlaylistController extends Controller
             ? $smartPlaylistService->getSongs($playlist, $user)
             : $repository->getByStandardPlaylist($playlist, $user);
 
+        abort_if($songs->isEmpty(), 404, 'The playlist is empty.');
+
         return $download->getDownloadable($songs)?->toResponse();
     }
 }

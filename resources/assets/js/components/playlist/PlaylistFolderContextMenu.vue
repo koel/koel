@@ -24,10 +24,13 @@ import { useContextMenu } from '@/composables/useContextMenu'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { playableStore } from '@/stores/playableStore'
 import { playback } from '@/services/playbackManager'
+import { playlistFolderStore } from '@/stores/playlistFolderStore'
+import { useDialogBox } from '@/composables/useDialogBox'
 
 const { base, ContextMenu, open, trigger } = useContextMenu()
 const { go, url } = useRouter()
-const { toastWarning } = useMessageToaster()
+const { toastWarning, toastSuccess } = useMessageToaster()
+const { showConfirmDialog } = useDialogBox()
 
 const folder = ref<PlaylistFolder>()
 
@@ -59,7 +62,13 @@ const shuffle = () => trigger(async () => {
 const createPlaylist = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_PLAYLIST_FORM', folder.value!))
 const createSmartPlaylist = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM', folder.value!))
 const rename = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FOLDER_FORM', folder.value!))
-const destroy = () => trigger(() => eventBus.emit('PLAYLIST_FOLDER_DELETE', folder.value!))
+
+const destroy = () => trigger(async () => {
+  if (await showConfirmDialog(`Delete the playlist folder "${folder.value!.name}"?`)) {
+    await playlistFolderStore.delete(folder.value!)
+    toastSuccess(`Playlist folder "${folder.value!.name}" deleted.`)
+  }
+})
 
 eventBus.on('PLAYLIST_FOLDER_CONTEXT_MENU_REQUESTED', async ({ pageX, pageY }, _folder) => {
   folder.value = _folder

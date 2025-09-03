@@ -68,26 +68,17 @@
         <Btn v-if="config.clearQueue" danger title="Clear current queue" @click.prevent="clearQueue">Clear</Btn>
       </BtnGroup>
 
-      <BtnGroup v-if="config.refresh || config.deletePlaylist">
+      <BtnGroup v-if="config.refresh">
         <Btn v-if="config.refresh" v-koel-tooltip success title="Refresh" @click.prevent="refresh">
           <Icon :icon="faRotateRight" fixed-width />
-        </Btn>
-
-        <Btn
-          v-if="config.deletePlaylist"
-          v-koel-tooltip
-          class="del btn-delete-playlist"
-          danger
-          title="Delete this playlist"
-          @click.prevent="deletePlaylist"
-        >
-          <Icon :icon="faTrashCan" />
         </Btn>
       </BtnGroup>
 
       <BtnGroup v-if="config.filter && allPlayables.length">
         <ListFilter />
       </BtnGroup>
+
+      <slot />
     </div>
 
     <OnClickOutside @trigger="closeAddToMenu">
@@ -99,7 +90,7 @@
 </template>
 
 <script lang="ts" setup>
-import { faPlay, faRandom, faRotateRight, faTrashCan } from '@fortawesome/free-solid-svg-icons'
+import { faPlay, faRandom, faRotateRight } from '@fortawesome/free-solid-svg-icons'
 import type { Ref } from 'vue'
 import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref, toRef, watch } from 'vue'
 import { OnClickOutside } from '@vueuse/components'
@@ -139,7 +130,6 @@ const shuffleSelected = () => emit('play-selected', true)
 const playAll = () => emit('play-all', false)
 const playSelected = () => emit('play-selected', false)
 const clearQueue = () => emit('clear-queue')
-const deletePlaylist = () => emit('delete-playlist')
 const refresh = () => emit('refresh')
 const registerKeydown = (event: KeyboardEvent) => event.key === 'Alt' && (altPressed.value = true)
 const registerKeyup = (event: KeyboardEvent) => event.key === 'Alt' && (altPressed.value = false)

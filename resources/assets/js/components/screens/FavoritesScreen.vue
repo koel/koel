@@ -43,7 +43,7 @@
       class="-m-6"
       @press:delete="removeSelected"
       @press:enter="onPressEnter"
-      @scroll-breakpoint="onScrollBreakpoint"
+      @swipe="onSwipe"
     />
 
     <ScreenEmptyState v-else>
@@ -93,7 +93,7 @@ const {
   playAll,
   playSelected,
   applyFilter,
-  onScrollBreakpoint,
+  onSwipe,
 } = usePlayableList(toRef(playableStore.state, 'favorites'), { type: 'Favorites' })
 
 const { PlayableListControls, config } = usePlayableListControls('Favorites')

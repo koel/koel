@@ -32,7 +32,7 @@
       ref="playableList"
       class="-m-6"
       @press:enter="onPressEnter"
-      @scroll-breakpoint="onScrollBreakpoint"
+      @swipe="onSwipe"
     />
   </ScreenBase>
 </template>
@@ -67,7 +67,7 @@ const {
   playAll,
   playSelected,
   applyFilter,
-  onScrollBreakpoint,
+  onSwipe,
 } = usePlayableList(toRef(searchStore.state, 'playables'), { type: 'Search.Playables' })
 
 const { PlayableListControls, config } = usePlayableListControls('Search.Playables')

@@ -33,7 +33,7 @@
       ref="playableList"
       class="-m-6"
       @press:enter="onPressEnter"
-      @scroll-breakpoint="onScrollBreakpoint"
+      @swipe="onSwipe"
     />
 
     <ScreenEmptyState v-else>
@@ -77,7 +77,7 @@ const {
   playAll,
   playSelected,
   applyFilter,
-  onScrollBreakpoint,
+  onSwipe,
 } = usePlayableList(recentlyPlayedSongs, { type: 'RecentlyPlayed' }, { sortable: false })
 
 const { PlayableListControls, config } = usePlayableListControls('RecentlyPlayed')

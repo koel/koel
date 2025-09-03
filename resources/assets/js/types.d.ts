@@ -466,7 +466,6 @@ interface AddToMenuConfig {
 interface PlayableListControlsConfig {
   addTo: AddToMenuConfig
   clearQueue: boolean
-  deletePlaylist: boolean
   refresh: boolean
   filter: boolean
 }

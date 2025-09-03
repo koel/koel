@@ -1,4 +1,3 @@
-import Router from '@/router'
 import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
@@ -69,14 +68,5 @@ describe('genreContextMenu.vue', () => {
 
     expect(fetchMock).toHaveBeenCalledWith(genre)
     expect(queueMock).toHaveBeenCalledWith(songs)
-  })
-
-  it('goes to genre', async () => {
-    const mock = h.mock(Router, 'go')
-    const { genre } = await renderComponent()
-
-    await h.user.click(screen.getByText('View Genre'))
-
-    expect(mock).toHaveBeenCalledWith(`/#/genres/${genre.id}`)
   })
 })

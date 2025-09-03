@@ -13,7 +13,6 @@ export const usePlayableListControls = (
       favorites: screen !== 'Favorites',
     },
     clearQueue: screen === 'Queue',
-    deletePlaylist: screen === 'Playlist',
     refresh: screen === 'Playlist',
     filter: [
       'Queue',

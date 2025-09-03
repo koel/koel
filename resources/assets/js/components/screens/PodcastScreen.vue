@@ -39,19 +39,21 @@
                 <Icon :icon="faRotateRight" fixed-width />
                 <span class="sr-only">Refresh Podcast</span>
               </Btn>
-              <Btn v-koel-tooltip="'Unsubscribe'" danger uppercase @click.prevent="unsubscribe">
-                <Icon :icon="faTimes" fixed-width />
-                <span class="sr-only">Unsubscribe from Podcast</span>
-              </Btn>
             </BtnGroup>
 
             <ListFilter v-if="episodes?.length" />
 
-            <Btn v-koel-tooltip="'Visit podcast website'" tag="a" gray :href="podcast.link" target="_blank">
-              <Icon :icon="faExternalLink" fixed-width />
-            </Btn>
+            <FavoriteButton
+              v-if="podcast.favorite"
+              :favorite="podcast.favorite"
+              class="px-3.5 py-2"
+              @toggle="toggleFavorite"
+            />
 
-            <FavoriteButton :favorite="podcast.favorite" class="px-3.5 py-2" @toggle="toggleFavorite" />
+            <Btn gray @click="requestContextMenu">
+              <Icon :icon="faEllipsis" fixed-width />
+              <span class="sr-only">More Actions</span>
+            </Btn>
           </div>
         </template>
       </ScreenHeader>
@@ -77,10 +79,9 @@
 <script setup lang="ts">
 import DOMPurify from 'dompurify'
 import { orderBy } from 'lodash'
-import { faExternalLink, faPause, faPlay, faRotateRight, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faEllipsis, faPause, faPlay, faRotateRight } from '@fortawesome/free-solid-svg-icons'
 import { computed, nextTick, provide, reactive, ref, watch } from 'vue'
 import { useRouter } from '@/composables/useRouter'
-import { useDialogBox } from '@/composables/useDialogBox'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { playableStore as episodeStore } from '@/stores/playableStore'
 import { podcastStore } from '@/stores/podcastStore'
@@ -89,6 +90,7 @@ import { isEpisode } from '@/utils/typeGuards'
 import { useFuzzySearch } from '@/composables/useFuzzySearch'
 import { playback } from '@/services/playbackManager'
 import { FilterKeywordsKey } from '@/symbols'
+import { eventBus } from '@/utils/eventBus'
 
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -101,8 +103,8 @@ import BtnGroup from '@/components/ui/form/BtnGroup.vue'
 import EpisodeItemSkeleton from '@/components/ui/skeletons/EpisodeItemSkeleton.vue'
 import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
-const { showConfirmDialog } = useDialogBox()
-const { onScreenActivated, getRouteParam, go, triggerNotFound } = useRouter()
+const { onScreenActivated, getRouteParam, go, triggerNotFound, url } = useRouter()
+const { handleHttpError } = useErrorHandler()
 
 const description = reactive({
   overflown: false,
@@ -141,9 +143,11 @@ watch(podcastId, async id => {
     await fetchDetails()
     description.content = DOMPurify.sanitize(podcast.value?.description || '')
     await nextTick()
-    description.overflown = descriptionEl.value!.scrollHeight > descriptionEl.value!.clientHeight
+    if (descriptionEl.value) {
+      description.overflown = descriptionEl.value.scrollHeight > descriptionEl.value.clientHeight
+    }
   } catch (error: unknown) {
-    useErrorHandler().handleHttpError(error, {
+    handleHttpError(error, {
       404: () => triggerNotFound(),
     })
   } finally {
@@ -157,6 +161,10 @@ const maybeExpandDescription = () => {
   }
   description.expanded = !description.expanded
   descriptionEl.value!.classList.toggle('line-clamp-3')
+}
+
+const requestContextMenu = (event: MouseEvent) => {
+  eventBus.emit('PODCAST_CONTEXT_MENU_REQUESTED', event, podcast.value!)
 }
 
 const descriptionTooltip = computed(() => {
@@ -246,16 +254,9 @@ const refresh = async () => {
   try {
     episodes.value = await episodeStore.fetchEpisodesInPodcast(podcastId.value!, true)
   } catch (error: unknown) {
-    useErrorHandler().handleHttpError(error)
+    handleHttpError(error)
   } finally {
     loading.value = false
-  }
-}
-
-const unsubscribe = async () => {
-  if (await showConfirmDialog(`Unsubscribe from ${podcast.value?.title}?`)) {
-    await podcastStore.unsubscribe(podcast.value!)
-    go(-1)
   }
 }
 
@@ -276,6 +277,8 @@ const onListScroll = (e: Event) => {
 const toggleFavorite = () => podcastStore.toggleFavorite(podcast.value!)
 
 onScreenActivated('Podcast', () => (podcastId.value = getRouteParam('id')!))
+
+eventBus.on('PODCAST_UNSUBSCRIBED', ({ id }) => id === podcastId.value && go(url('podcasts.index')))
 </script>
 
 <style scoped lang="postcss">

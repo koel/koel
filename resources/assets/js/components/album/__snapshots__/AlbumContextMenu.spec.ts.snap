@@ -9,8 +9,6 @@ exports[`albumContextMenu.vue > renders 1`] = `
     <li>Favorite</li>
     <!--v-if-->
     <li class="separator"></li>
-    <li>Go to Album</li>
-    <li>Go to Artist</li>
     <li class="separator"></li>
     <li>Download</li>
   </ul>

@@ -1,4 +1,3 @@
-import Router from '@/router'
 import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
@@ -80,26 +79,14 @@ describe('artistContextMenu.vue', () => {
     expect(screen.queryByText('Download')).toBeNull()
   })
 
-  it('goes to artist', async () => {
-    const mock = h.mock(Router, 'go')
-    const { artist } = await renderComponent()
-
-    await screen.getByText('Go to Artist').click()
-
-    expect(mock).toHaveBeenCalledWith(`/#/artists/${artist.id}`)
-  })
-
-  it('does not have an option to download or go to Unknown Artist', async () => {
+  it('does not have an option to download Unknown Artist', async () => {
     await renderComponent(factory.states('unknown')('artist'))
 
-    expect(screen.queryByText('Go to Artist')).toBeNull()
     expect(screen.queryByText('Download')).toBeNull()
   })
 
-  it('does not have an option to download or go to Various Artist', async () => {
+  it('does not have an option to download Various Artist', async () => {
     await renderComponent(factory.states('various')('artist'))
-
-    expect(screen.queryByText('Go to Artist')).toBeNull()
     expect(screen.queryByText('Download')).toBeNull()
   })
 })

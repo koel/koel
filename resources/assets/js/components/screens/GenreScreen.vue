@@ -25,7 +25,12 @@
             :config
             @play-all="playAll"
             @play-selected="playSelected"
-          />
+          >
+            <Btn gray @click="requestContextMenu">
+              <Icon :icon="faEllipsis" fixed-width />
+              <span class="sr-only">More Actions</span>
+            </Btn>
+          </SongListControls>
         </template>
       </ScreenHeader>
       <ScreenHeaderSkeleton v-else />
@@ -38,7 +43,7 @@
       class="-m-6"
       @sort="fetchWithSort"
       @press:enter="onPressEnter"
-      @scroll-breakpoint="onScrollBreakpoint"
+      @swipe="onSwipe"
       @scrolled-to-end="fetch"
     />
 
@@ -53,6 +58,7 @@
 </template>
 
 <script lang="ts" setup>
+import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
 import { computed, onMounted, ref, watch } from 'vue'
 import { GuitarIcon } from 'lucide-vue-next'
 import { pluralize, secondsToHumanReadable } from '@/utils/formatters'
@@ -70,6 +76,7 @@ import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import PlayableListSkeleton from '@/components/ui/skeletons/PlayableListSkeleton.vue'
 import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
+import Btn from '@/components/ui/form/Btn.vue'
 
 const songs = ref<Song[]>([])
 
@@ -85,7 +92,7 @@ const {
   isPhone,
   onPressEnter,
   playSelected,
-  onScrollBreakpoint,
+  onSwipe,
 } = usePlayableList(songs, { type: 'Genre' }, { sortable: true, filterable: false })
 
 const { PlayableListControls: SongListControls, config } = usePlayableListControls('Genre')
@@ -95,7 +102,6 @@ const { getRouteParam, isCurrentScreen, go, onRouteChanged, url } = useRouter()
 let sortField: MaybeArray<PlayableListSortField> = 'title'
 let sortOrder: SortOrder = 'asc'
 
-const songLimit = 500
 const id = ref<string | null>(null)
 const genre = ref<Genre | null>(null)
 const loading = ref(false)
@@ -164,12 +170,16 @@ const playAll = async (shuffle = false) => {
   }
 
   if (shuffle) {
-    playback().queueAndPlay(await playableStore.fetchSongsByGenre(genre.value!, songLimit, true))
+    playback().queueAndPlay(await playableStore.fetchSongsByGenre(genre.value!, true))
   } else {
-    playback().queueAndPlay(await playableStore.fetchSongsByGenre(genre.value!, songLimit, false))
+    playback().queueAndPlay(await playableStore.fetchSongsByGenre(genre.value!, false))
   }
 
   go(url('queue'))
+}
+
+const requestContextMenu = (event: MouseEvent) => {
+  eventBus.emit('GENRE_CONTEXT_MENU_REQUESTED', event, genre.value!)
 }
 
 onMounted(() => {
