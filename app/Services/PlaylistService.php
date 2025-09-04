@@ -4,17 +4,15 @@ namespace App\Services;
 
 use App\Enums\Placement;
 use App\Exceptions\OperationNotApplicableForSmartPlaylistException;
-use App\Exceptions\PlaylistBothSongsAndRulesProvidedException;
 use App\Models\Playlist;
-use App\Models\PlaylistFolder as Folder;
 use App\Models\Song as Playable;
 use App\Models\User;
 use App\Repositories\SongRepository;
-use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
+use App\Values\PlaylistCreateData;
+use App\Values\PlaylistUpdateData;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Webmozart\Assert\Assert;
 
 class PlaylistService
 {
@@ -22,35 +20,25 @@ class PlaylistService
     {
     }
 
-    public function createPlaylist(
-        string $name,
-        User $user,
-        ?Folder $folder = null,
-        array $playables = [],
-        ?SmartPlaylistRuleGroupCollection $ruleGroups = null,
-    ): Playlist {
-        if ($folder) {
-            Assert::true($folder->ownedBy($user), 'The playlist folder does not belong to the user');
-        }
-
-        throw_if($playables && $ruleGroups, new PlaylistBothSongsAndRulesProvidedException());
-
+    public function createPlaylist(PlaylistCreateData $data, User $user): Playlist
+    {
         return DB::transaction(
-            static function () use ($name, $user, $playables, $folder, $ruleGroups): Playlist {
+            static function () use ($data, $user): Playlist {
                 /** @var Playlist $playlist */
                 $playlist = Playlist::query()->create([
-                    'name' => $name,
-                    'rules' => $ruleGroups,
+                    'name' => $data->name,
+                    'description' => $data->description,
+                    'rules' => $data->ruleGroups,
                 ]);
 
                 $user->ownedPlaylists()->attach($playlist, [
                     'role' => 'owner',
                 ]);
 
-                $folder?->playlists()->attach($playlist);
+                $playlist->folders()->attach($data->folderId);
 
-                if (!$playlist->is_smart && $playables) {
-                    $playlist->addPlayables($playables, $user);
+                if (!$playlist->is_smart && $data->playableIds) {
+                    $playlist->addPlayables($data->playableIds, $user);
                 }
 
                 return $playlist;
@@ -58,22 +46,17 @@ class PlaylistService
         );
     }
 
-    public function updatePlaylist(
-        Playlist $playlist,
-        string $name,
-        ?Folder $folder = null,
-        ?SmartPlaylistRuleGroupCollection $ruleGroups = null,
-    ): Playlist {
-        if ($folder) {
-            Assert::true($playlist->ownedBy($folder->user), 'The playlist folder does not belong to the user');
-        }
-
+    public function updatePlaylist(Playlist $playlist, PlaylistUpdateData $data): Playlist
+    {
         $playlist->update([
-            'name' => $name,
-            'rules' => $ruleGroups,
+            'name' => $data->name,
+            'description' => $data->description,
+            'rules' => $data->ruleGroups,
         ]);
 
-        $folder?->playlists()->syncWithoutDetaching($playlist);
+        if ($data->folderId) {
+            $playlist->folders()->syncWithoutDetaching([$data->folderId]);
+        }
 
         return $playlist;
     }

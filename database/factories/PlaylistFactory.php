@@ -16,6 +16,7 @@ class PlaylistFactory extends Factory
         return [
             'name' => $this->faker->name,
             'rules' => null,
+            'description' => $this->faker->realText(),
         ];
     }
 

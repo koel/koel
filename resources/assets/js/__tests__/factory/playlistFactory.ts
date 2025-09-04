@@ -5,6 +5,7 @@ export default (): Playlist => ({
   type: 'playlists',
   owner_id: faker.string.ulid(),
   id: faker.string.uuid(),
+  description: faker.lorem.sentence(),
   folder_id: faker.string.uuid(),
   name: faker.word.sample(),
   is_smart: false,

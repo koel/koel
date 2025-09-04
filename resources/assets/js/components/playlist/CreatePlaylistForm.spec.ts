@@ -23,10 +23,13 @@ describe('createPlaylistForm.vue', () => {
 
     expect(screen.queryByTestId('from-playables')).toBeNull()
 
-    await h.type(screen.getByPlaceholderText('Playlist name'), 'My playlist')
+    await h.type(screen.getByRole('textbox', { name: 'name' }), 'My playlist')
+    await h.type(screen.getByRole('textbox', { name: 'description' }), 'Some description')
     await h.user.click(screen.getByRole('button', { name: 'Save' }))
 
-    expect(storeMock).toHaveBeenCalledWith('My playlist', {
+    expect(storeMock).toHaveBeenCalledWith({
+      name: 'My playlist',
+      description: 'Some description',
       folder_id: folder.id,
     }, [])
   })
@@ -46,10 +49,13 @@ describe('createPlaylistForm.vue', () => {
 
     screen.getByText('from 3 songs')
 
-    await h.type(screen.getByPlaceholderText('Playlist name'), 'My playlist')
+    await h.type(screen.getByRole('textbox', { name: 'name' }), 'My playlist')
+    await h.type(screen.getByRole('textbox', { name: 'description' }), 'Some description')
     await h.user.click(screen.getByRole('button', { name: 'Save' }))
 
-    expect(storeMock).toHaveBeenCalledWith('My playlist', {
+    expect(storeMock).toHaveBeenCalledWith({
+      name: 'My playlist',
+      description: 'Some description',
       folder_id: folder.id,
     }, playables)
   })

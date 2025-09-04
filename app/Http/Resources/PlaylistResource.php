@@ -11,6 +11,7 @@ class PlaylistResource extends JsonResource
         'type',
         'id',
         'name',
+        'description',
         'folder_id',
         'user_id',
         'is_smart',
@@ -32,6 +33,7 @@ class PlaylistResource extends JsonResource
             'type' => 'playlists',
             'id' => $this->playlist->id,
             'name' => $this->playlist->name,
+            'description' => $this->playlist->description,
             'folder_id' => $this->playlist->getFolderId($user),
             'user_id' => $this->playlist->owner->public_id, // backwards compatibility
             'owner_id' => $this->playlist->owner->public_id,

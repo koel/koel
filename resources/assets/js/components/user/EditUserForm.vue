@@ -11,7 +11,7 @@
 
       <FormRow>
         <template #label>Name</template>
-        <TextInput v-model="data.name" v-koel-focus name="name" required title="Name" />
+        <TextInput v-model="data.name" v-koel-focus name="name" required />
       </FormRow>
       <FormRow>
         <template #label>Email</template>
@@ -31,7 +31,6 @@
           autocomplete="new-password"
           name="password"
           placeholder="Leave blank for no changes"
-          title="Password"
           type="password"
         />
         <template #help>Min. 10 characters. Should be a mix of characters, numbers, and symbols.</template>

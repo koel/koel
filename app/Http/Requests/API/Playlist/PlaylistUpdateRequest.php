@@ -9,7 +9,8 @@ use Illuminate\Validation\Rule;
 
 /**
  * @property-read string $name
- * @property-read int|null $folder_id
+ * @property-read ?string $description
+ * @property-read ?string $folder_id
  * @property-read array $rules
  */
 class PlaylistUpdateRequest extends Request
@@ -19,6 +20,7 @@ class PlaylistUpdateRequest extends Request
     {
         return [
             'name' => 'required',
+            'description' => 'string|sometimes',
             'rules' => ['array', 'nullable', new ValidSmartPlaylistRulePayload()],
             'folder_id' => ['nullable', 'sometimes', Rule::exists(PlaylistFolder::class, 'id')],
         ];

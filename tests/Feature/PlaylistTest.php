@@ -35,6 +35,7 @@ class PlaylistTest extends TestCase
 
         $this->postAs('api/playlists', [
             'name' => 'Foo Bar',
+            'description' => 'Foo Bar Description',
             'songs' => $songs->modelKeys(),
             'rules' => [],
         ], $user)
@@ -43,6 +44,7 @@ class PlaylistTest extends TestCase
         $playlist = Playlist::query()->latest()->first();
 
         self::assertSame('Foo Bar', $playlist->name);
+        self::assertSame('Foo Bar Description', $playlist->description);
         self::assertTrue($playlist->ownedBy($user));
         self::assertNull($playlist->getFolder());
         self::assertEqualsCanonicalizing($songs->modelKeys(), $playlist->playables->modelKeys());
@@ -61,6 +63,7 @@ class PlaylistTest extends TestCase
 
         $this->postAs('api/playlists', [
             'name' => 'Smart Foo Bar',
+            'description' => 'Smart Foo Bar Description',
             'rules' => [
                 [
                     'id' => '2a4548cd-c67f-44d4-8fec-34ff75c8a026',
@@ -72,6 +75,7 @@ class PlaylistTest extends TestCase
         $playlist = Playlist::query()->latest()->first();
 
         self::assertSame('Smart Foo Bar', $playlist->name);
+        self::assertSame('Smart Foo Bar Description', $playlist->description);
         self::assertTrue($playlist->ownedBy($user));
         self::assertTrue($playlist->is_smart);
         self::assertCount(1, $playlist->rule_groups);
@@ -84,6 +88,7 @@ class PlaylistTest extends TestCase
     {
         $this->postAs('api/playlists', [
             'name' => 'Smart Foo Bar',
+            'description' => 'Smart Foo Bar Description',
             'rules' => [
                 [
                     'id' => '2a4548cd-c67f-44d4-8fec-34ff75c8a026',
@@ -105,6 +110,7 @@ class PlaylistTest extends TestCase
     {
         $this->postAs('api/playlists', [
             'name' => 'Foo Bar',
+            'description' => 'Foo Bar Description',
             'rules' => [],
             'songs' => ['foo'],
         ])
@@ -112,14 +118,18 @@ class PlaylistTest extends TestCase
     }
 
     #[Test]
-    public function updatePlaylistName(): void
+    public function update(): void
     {
         $playlist = create_playlist(['name' => 'Foo']);
 
-        $this->putAs("api/playlists/{$playlist->id}", ['name' => 'Bar'], $playlist->owner)
+        $this->putAs("api/playlists/{$playlist->id}", [
+            'name' => 'Bar',
+            'description' => 'Bar Description',
+        ], $playlist->owner)
             ->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
 
         self::assertSame('Bar', $playlist->refresh()->name);
+        self::assertSame('Bar Description', $playlist->description);
     }
 
     #[Test]
@@ -127,7 +137,11 @@ class PlaylistTest extends TestCase
     {
         $playlist = create_playlist(['name' => 'Foo']);
 
-        $this->putAs("api/playlists/{$playlist->id}", ['name' => 'Qux'])->assertForbidden();
+        $this->putAs("api/playlists/{$playlist->id}", [
+            'name' => 'Qux',
+            'description' => 'Qux Description',
+        ])->assertForbidden();
+        
         self::assertSame('Foo', $playlist->refresh()->name);
     }
 

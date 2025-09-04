@@ -30,12 +30,14 @@ describe('editPlaylistForm.vue', () => {
       },
     })
 
-    await h.type(screen.getByPlaceholderText('Playlist name'), 'Your playlist')
+    await h.type(screen.getByRole('textbox', { name: 'name' }), 'Your playlist')
+    await h.type(screen.getByRole('textbox', { name: 'description' }), 'Updated description')
     await h.user.click(screen.getByRole('button', { name: 'Save' }))
 
     await waitFor(() => {
       expect(updateMock).toHaveBeenCalledWith(playlist, {
         name: 'Your playlist',
+        description: 'Updated description',
         folder_id: playlist.folder_id,
       })
     })
