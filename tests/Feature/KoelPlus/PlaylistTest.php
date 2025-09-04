@@ -11,13 +11,16 @@ use function Tests\create_user;
 class PlaylistTest extends PlusTestCase
 {
     #[Test]
-    public function collaboratorCannotChangePlaylistName(): void
+    public function collaboratorCannotUpdatePlaylist(): void
     {
         $playlist = create_playlist();
         $collaborator = create_user();
         $playlist->addCollaborator($collaborator);
 
-        $this->putAs("api/playlists/{$playlist->id}", ['name' => 'Nope'], $collaborator)
+        $this->putAs("api/playlists/{$playlist->id}", [
+            'name' => 'Nope',
+            'description' => 'Nopey Nope',
+        ], $collaborator)
             ->assertForbidden();
     }
 }

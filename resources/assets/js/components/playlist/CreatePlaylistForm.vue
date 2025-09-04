@@ -10,9 +10,9 @@
     </header>
 
     <main>
-      <FormRow :cols="2">
+      <div class="grid grid-cols-2 gap-4">
         <FormRow>
-          <template #label>Name</template>
+          <template #label>Name *</template>
           <TextInput v-model="data.name" v-koel-focus name="name" placeholder="Playlist name" required />
         </FormRow>
         <FormRow>
@@ -22,7 +22,16 @@
             <option v-for="folder in folders" :key="folder.id" :value="folder.id">{{ folder.name }}</option>
           </SelectBox>
         </FormRow>
-      </FormRow>
+        <FormRow class="col-span-2">
+          <template #label>Description</template>
+          <TextArea
+            v-model="data.description"
+            class="h-28"
+            name="description"
+            placeholder="Some optional description"
+          />
+        </FormRow>
+      </div>
     </main>
 
     <footer>
@@ -48,6 +57,7 @@ import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 import SelectBox from '@/components/ui/form/SelectBox.vue'
+import TextArea from '@/components/ui/form/TextArea.vue'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 
@@ -62,12 +72,13 @@ const playables = getFromContext<Playable[]>('playables') ?? []
 
 const close = () => emit('close')
 
-const { data, isPristine, handleSubmit } = useForm<Pick<Playlist, 'name' | 'folder_id'>>({
+const { data, isPristine, handleSubmit } = useForm<Pick<Playlist, 'name' | 'folder_id' | 'description'>>({
   initialValues: {
     name: '',
+    description: '',
     folder_id: targetFolder?.id ?? null,
   },
-  onSubmit: async ({ name, folder_id }) => await playlistStore.store(name, { folder_id }, playables),
+  onSubmit: async data => await playlistStore.store(data, playables),
   onSuccess: (playlist: Playlist) => {
     close()
     toastSuccess(`Playlist "${playlist.name}" created.`)

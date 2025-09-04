@@ -10,9 +10,10 @@ use Illuminate\Validation\Rule;
 
 /**
  * @property array<string> $songs
- * @property-read string $name
- * @property-read int|null $folder_id
+ * @property-read ?string $folder_id
+ * @property-read ?string $description
  * @property-read array $rules
+ * @property-read string $name
  */
 class PlaylistStoreRequest extends Request
 {
@@ -22,6 +23,7 @@ class PlaylistStoreRequest extends Request
         return [
             'name' => 'required',
             'songs' => ['array', new AllPlayablesAreAccessibleBy($this->user())],
+            'description' => 'string|sometimes', // backward compatibility for mobile apps
             'rules' => ['array', 'nullable', new ValidSmartPlaylistRulePayload()],
             'folder_id' => ['nullable', 'sometimes', Rule::exists(PlaylistFolder::class, 'id')],
         ];

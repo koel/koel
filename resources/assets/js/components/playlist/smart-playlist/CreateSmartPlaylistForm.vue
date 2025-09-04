@@ -6,9 +6,9 @@
       </header>
 
       <main class="space-y-5">
-        <FormRow :cols="2">
+        <div class="grid grid-cols-2 gap-4">
           <FormRow>
-            <template #label>Name</template>
+            <template #label>Name *</template>
             <TextInput v-model="data.name" v-koel-focus name="name" placeholder="Playlist name" required />
           </FormRow>
           <FormRow>
@@ -18,7 +18,11 @@
               <option v-for="({ id, name }) in folders" :key="id" :value="id">{{ name }}</option>
             </SelectBox>
           </FormRow>
-        </FormRow>
+          <FormRow class="col-span-2">
+            <template #label>Description</template>
+            <TextArea v-model="data.description" class="h-28" name="description" />
+          </FormRow>
+        </div>
 
         <div v-koel-overflow-fade class="group-container space-y-5 overflow-auto max-h-[480px]">
           <RuleGroup
@@ -59,6 +63,7 @@ import { useForm } from '@/composables/useForm'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 import SelectBox from '@/components/ui/form/SelectBox.vue'
+import TextArea from '@/components/ui/form/TextArea.vue'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 
@@ -80,17 +85,15 @@ const targetFolder = useModal().getFromContext<PlaylistFolder | null>('folder')
 
 const close = () => emit('close')
 
-const { data, isPristine, handleSubmit } = useForm<{
-  name: Playlist['name']
-  folder_id: PlaylistFolder['id'] | null
-}>({
+const { data, isPristine, handleSubmit } = useForm<Pick<Playlist, 'name' | 'description' | 'folder_id'>>({
   initialValues: {
     name: '',
+    description: '',
     folder_id: targetFolder?.id || null,
   },
   isPristine: (original, current) => isEqual(original, current) && collectedRuleGroups.value.length === 0,
-  onSubmit: async ({ name, folder_id }) => await playlistStore.store(name, {
-    folder_id,
+  onSubmit: async data => await playlistStore.store({
+    ...data,
     rules: collectedRuleGroups.value,
   }),
   onSuccess: (playlist: Playlist) => {

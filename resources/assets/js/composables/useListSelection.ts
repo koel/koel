@@ -30,7 +30,7 @@ export const useListSelection = <T> (
 
   const selectAll = () => selectables.value.forEach(select)
   const deselectAll = () => selectables.value.forEach(deselect)
-  const isSelected = (item: Selectable<T>) => selectedIds.has(get(item, resolveIdPath(item)))
+  const isSelected = (item: Selectable<T>) => item.selected
   const selected = computed(() => selectables.value.filter(isSelected))
 
   const toggleSelected = (selectable: Selectable<T>) => {

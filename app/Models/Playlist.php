@@ -23,6 +23,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 /**
  * @property string $id
  * @property string $name
+ * @property string $description
  * @property bool $is_smart
  * @property User $owner
  * @property ?SmartPlaylistRuleGroupCollection $rule_groups
@@ -198,6 +199,7 @@ class Playlist extends Model implements AuditableContract
             'id' => $this->id,
             'owner_id' => $this->owner_id,
             'name' => $this->name,
+            'description' => $this->description,
         ];
     }
 }

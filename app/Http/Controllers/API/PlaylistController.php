@@ -12,9 +12,9 @@ use App\Models\User;
 use App\Repositories\PlaylistFolderRepository;
 use App\Repositories\PlaylistRepository;
 use App\Services\PlaylistService;
-use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
+use App\Values\PlaylistCreateData;
+use App\Values\PlaylistUpdateData;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
 
 class PlaylistController extends Controller
@@ -35,20 +35,14 @@ class PlaylistController extends Controller
 
     public function store(PlaylistStoreRequest $request)
     {
-        $folder = null;
-
         if ($request->folder_id) {
-            $folder = $this->folderRepository->getOne($request->folder_id);
-            $this->authorize('own', $folder);
+            $this->authorize('own', $this->folderRepository->getOne($request->folder_id));
         }
 
         try {
             $playlist = $this->playlistService->createPlaylist(
-                $request->name,
+                PlaylistCreateData::fromRequest($request),
                 $this->user,
-                $folder,
-                Arr::wrap($request->songs),
-                $request->rules ? SmartPlaylistRuleGroupCollection::create(Arr::wrap($request->rules)) : null,
             );
 
             return PlaylistResource::make($playlist);
@@ -61,21 +55,13 @@ class PlaylistController extends Controller
     {
         $this->authorize('own', $playlist);
 
-        $folder = null;
-
         if ($request->folder_id) {
-            $folder = $this->folderRepository->getOne($request->folder_id);
-            $this->authorize('own', $folder);
+            $this->authorize('own', $this->folderRepository->getOne($request->folder_id));
         }
 
-        return PlaylistResource::make(
-            $this->playlistService->updatePlaylist(
-                $playlist,
-                $request->name,
-                $folder,
-                $request->rules ? SmartPlaylistRuleGroupCollection::create(Arr::wrap($request->rules)) : null,
-            )
-        );
+        $updated = $this->playlistService->updatePlaylist($playlist, PlaylistUpdateData::fromRequest($request));
+
+        return PlaylistResource::make($updated);
     }
 
     public function destroy(Playlist $playlist)

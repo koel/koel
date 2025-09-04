@@ -19,8 +19,8 @@ describe('addUserForm.vue', () => {
 
     h.render(Component)
 
-    await h.type(screen.getByRole('textbox', { name: 'Name' }), 'John Doe')
-    await h.type(screen.getByRole('textbox', { name: 'Email' }), 'john@doe.com')
+    await h.type(screen.getByRole('textbox', { name: 'name' }), 'John Doe')
+    await h.type(screen.getByRole('textbox', { name: 'email' }), 'john@doe.com')
     await h.type(screen.getByTitle('Password'), 'secret-password')
     await h.user.click(screen.getByRole('checkbox'))
     await h.user.click(screen.getByRole('button', { name: 'Save' }))

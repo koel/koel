@@ -24,8 +24,8 @@ describe('editUserForm.vue', () => {
       },
     })
 
-    await h.type(screen.getByRole('textbox', { name: 'Name' }), 'Jane Doe')
-    await h.type(screen.getByTitle('Password'), 'new-password-duck')
+    await h.type(screen.getByRole('textbox', { name: 'name' }), 'Jane Doe')
+    await h.type(screen.getByPlaceholderText('Leave blank for no changes'), 'new-password-duck')
     await h.user.click(screen.getByRole('button', { name: 'Update' }))
 
     await waitFor(() => {

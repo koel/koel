@@ -7,11 +7,12 @@ use App\Models\PlaylistFolder;
 use App\Models\Podcast;
 use App\Models\Song;
 use App\Services\PlaylistService;
+use App\Values\PlaylistCreateData;
+use App\Values\PlaylistUpdateData;
 use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 use Tests\TestCase;
-use Webmozart\Assert\InvalidArgumentException;
 
 use function Tests\create_playlist;
 use function Tests\create_user;
@@ -32,9 +33,15 @@ class PlaylistServiceTest extends TestCase
     {
         $user = create_user();
 
-        $playlist = $this->service->createPlaylist('foo', $user);
+        $data = PlaylistCreateData::make(
+            name: 'foo',
+            description: 'bar',
+        );
+
+        $playlist = $this->service->createPlaylist($data, $user);
 
         self::assertSame('foo', $playlist->name);
+        self::assertSame('bar', $playlist->description);
         self::assertTrue($user->is($playlist->owner));
         self::assertFalse($playlist->is_smart);
     }
@@ -45,9 +52,16 @@ class PlaylistServiceTest extends TestCase
         $songs = Song::factory(2)->create();
         $user = create_user();
 
-        $playlist = $this->service->createPlaylist('foo', $user, null, $songs->modelKeys());
+        $data = PlaylistCreateData::make(
+            name: 'foo',
+            description: 'bar',
+            playableIds: $songs->modelKeys(),
+        );
+
+        $playlist = $this->service->createPlaylist($data, $user);
 
         self::assertSame('foo', $playlist->name);
+        self::assertSame('bar', $playlist->description);
         self::assertTrue($user->is($playlist->owner));
         self::assertFalse($playlist->is_smart);
         self::assertEqualsCanonicalizing($playlist->playables->modelKeys(), $songs->modelKeys());
@@ -72,9 +86,16 @@ class PlaylistServiceTest extends TestCase
 
         $user = create_user();
 
-        $playlist = $this->service->createPlaylist('foo', $user, null, [], $rules);
+        $data = PlaylistCreateData::make(
+            name: 'foo',
+            description: 'bar',
+            ruleGroups: $rules,
+        );
+
+        $playlist = $this->service->createPlaylist($data, $user);
 
         self::assertSame('foo', $playlist->name);
+        self::assertSame('bar', $playlist->description);
         self::assertTrue($user->is($playlist->owner));
         self::assertTrue($playlist->is_smart);
     }
@@ -85,22 +106,18 @@ class PlaylistServiceTest extends TestCase
         /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->create();
 
-        $playlist = $this->service->createPlaylist('foo', $folder->user, $folder);
+        $data = PlaylistCreateData::make(
+            name: 'foo',
+            description: 'bar',
+            folderId: $folder->id,
+        );
+
+        $playlist = $this->service->createPlaylist($data, $folder->user);
 
         self::assertSame('foo', $playlist->name);
+        self::assertSame('bar', $playlist->description);
         self::assertTrue($folder->ownedBy($playlist->owner));
         self::assertTrue($playlist->inFolder($folder));
-    }
-
-    #[Test]
-    public function createPlaylistInAnotherUsersFolder(): void
-    {
-        /** @var PlaylistFolder $folder */
-        $folder = PlaylistFolder::factory()->create();
-
-        $this->expectException(InvalidArgumentException::class);
-
-        $this->service->createPlaylist('foo', create_user(), $folder);
     }
 
     #[Test]
@@ -108,9 +125,13 @@ class PlaylistServiceTest extends TestCase
     {
         $playlist = create_playlist(['name' => 'foo']);
 
-        $this->service->updatePlaylist($playlist, 'bar');
+        $this->service->updatePlaylist($playlist, PlaylistUpdateData::make(
+            name: 'bar',
+            description: 'baz',
+        ));
 
         self::assertSame('bar', $playlist->name);
+        self::assertSame('baz', $playlist->description);
     }
 
     #[Test]
@@ -132,23 +153,30 @@ class PlaylistServiceTest extends TestCase
 
         $playlist = create_playlist(['name' => 'foo', 'rules' => $rules]);
 
-        $this->service->updatePlaylist($playlist, 'bar', null, SmartPlaylistRuleGroupCollection::create([
-            [
-                'id' => '45368b8f-fec8-4b72-b826-6b295af0da65',
-                'rules' => [
-                    [
-                        'id' => '8cfa8700-fbc0-4078-b175-af31c20a3582',
-                        'model' => 'title',
-                        'operator' => 'is',
-                        'value' => ['bar'],
+        $data = PlaylistUpdateData::make(
+            name: 'bar',
+            description: 'baz',
+            ruleGroups: SmartPlaylistRuleGroupCollection::create([
+                [
+                    'id' => '45368b8f-fec8-4b72-b826-6b295af0da65',
+                    'rules' => [
+                        [
+                            'id' => '8cfa8700-fbc0-4078-b175-af31c20a3582',
+                            'model' => 'title',
+                            'operator' => 'is',
+                            'value' => ['bar'],
+                        ],
                     ],
                 ],
-            ],
-        ]));
+            ]),
+        );
+
+        $this->service->updatePlaylist($playlist, $data);
 
         $playlist->refresh();
 
         self::assertSame('bar', $playlist->name);
+        self::assertSame('baz', $playlist->description);
         self::assertTrue($playlist->is_smart);
         self::assertSame($playlist->rule_groups->first()->rules->first()->value, ['bar']);
     }

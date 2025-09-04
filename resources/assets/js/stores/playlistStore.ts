@@ -1,4 +1,4 @@
-import { differenceBy, orderBy } from 'lodash'
+import { differenceBy, orderBy, pick } from 'lodash'
 import { reactive } from 'vue'
 import { arrayify, moveItemsInList } from '@/utils/helpers'
 import { logger } from '@/utils/logger'
@@ -12,14 +12,16 @@ import { playableStore } from '@/stores/playableStore'
 interface CreatePlaylistRequestData {
   name: Playlist['name']
   songs: Playable['id'][]
+  description: Playlist['description']
+  folder_id: PlaylistFolder['id'] | null
   rules?: SmartPlaylistRuleGroup[]
-  folder_id?: PlaylistFolder['id'] | null
 }
 
 export interface UpdatePlaylistData {
   name: Playlist['name']
-  rules?: SmartPlaylistRuleGroup[]
+  description: Playlist['description']
   folder_id?: PlaylistFolder['id'] | null
+  rules?: SmartPlaylistRuleGroup[]
 }
 
 export const playlistStore = {
@@ -70,21 +72,24 @@ export const playlistStore = {
   },
 
   async store (
-    name: string,
-    data: Partial<Pick<Playlist, 'rules' | 'folder_id'>> = {},
+    data: Pick<Playlist, 'name' | 'description' | 'folder_id'> & { rules?: SmartPlaylistRuleGroup[] },
     songs: Playable[] = [],
   ) {
     const requestData: CreatePlaylistRequestData = {
-      name,
+      ...pick(data, 'name', 'description', 'folder_id'),
       songs: songs.map(song => song.id),
     }
 
-    data.rules && (requestData.rules = this.serializeSmartPlaylistRulesForStorage(data.rules))
-    data.folder_id && (requestData.folder_id = data.folder_id)
+    // Reformat the rules to be database-ready.
+    if (data.rules) {
+      requestData.rules = this.serializeSmartPlaylistRulesForStorage(data.rules)
+    }
 
     const playlist = reactive(await http.post<Playlist>('playlists', requestData))
 
-    playlist.is_smart && this.setupSmartPlaylist(playlist)
+    if (playlist.is_smart) {
+      this.setupSmartPlaylist(playlist)
+    }
 
     this.state.playlists.push(playlist)
     this.state.playlists = this.sort(this.state.playlists)
@@ -125,12 +130,14 @@ export const playlistStore = {
 
   async update (playlist: Playlist, data: UpdatePlaylistData) {
     await http.put(`playlists/${playlist.id}`, {
-      name: data.name,
+      ...data,
       rules: data.rules ? this.serializeSmartPlaylistRulesForStorage(data.rules) : null,
-      folder_id: data.folder_id,
     })
 
-    playlist.is_smart && cache.remove(['playlist.songs', playlist.id])
+    if (playlist.is_smart) {
+      cache.remove(['playlist.songs', playlist.id])
+    }
+
     Object.assign(this.byId(playlist.id)!, data)
   },
 
@@ -149,7 +156,7 @@ export const playlistStore = {
   },
 
   /**
-   * Serialize the rule (groups) to be ready for database.
+   * Serialize the rule (groups) to be storage-ready.
    */
   serializeSmartPlaylistRulesForStorage: (ruleGroups: SmartPlaylistRuleGroup[]) => {
     if (!ruleGroups || !ruleGroups.length) {

@@ -88,10 +88,15 @@ describe('playlistStore', () => {
     const postMock = h.mock(http, 'post').mockResolvedValue(playlist)
     h.mock(playlistStore, 'serializeSmartPlaylistRulesForStorage', null)
 
-    await playlistStore.store('New Playlist', { folder_id: folder.id }, songs)
+    await playlistStore.store({
+      name: 'New Playlist',
+      folder_id: folder.id,
+      description: 'Foo',
+    }, songs)
 
     expect(postMock).toHaveBeenCalledWith('playlists', {
       name: 'New Playlist',
+      description: 'Foo',
       songs: songs.map(song => song.id),
       folder_id: folder.id,
     })
@@ -160,10 +165,15 @@ describe('playlistStore', () => {
 
     const putMock = h.mock(http, 'put').mockResolvedValue(playlist)
 
-    await playlistStore.update(playlist, { name: 'Foo', folder_id: folder.id })
+    await playlistStore.update(playlist, {
+      name: 'Foo',
+      description: 'Bar',
+      folder_id: folder.id,
+    })
 
     expect(putMock).toHaveBeenCalledWith(`playlists/${playlist.id}`, {
       name: 'Foo',
+      description: 'Bar',
       rules: null,
       folder_id: folder.id,
     })
@@ -179,12 +189,17 @@ describe('playlistStore', () => {
     const putMock = h.mock(http, 'put').mockResolvedValue(playlist)
     const removeMock = h.mock(cache, 'remove')
 
-    await playlistStore.update(playlist, { name: 'Foo', rules })
+    await playlistStore.update(playlist, {
+      rules,
+      name: 'Foo',
+      description: 'Bar',
+    })
 
     expect(serializeMock).toHaveBeenCalledWith(rules)
 
     expect(putMock).toHaveBeenCalledWith(`playlists/${playlist.id}`, {
       name: 'Foo',
+      description: 'Bar',
       rules: ['Whatever'],
       folder_id: undefined,
     })

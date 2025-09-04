@@ -7,6 +7,9 @@
         :layout="allPlayables.length === 0 ? 'collapsed' : headerLayout"
       >
         {{ playlist.name }}
+        <p v-if="playlist.description" class="text-base text-k-text-secondary font-light">
+          {{ playlist.description }}
+        </p>
         <ControlsToggle v-if="filteredPlayables.length" v-model="showingControls" />
 
         <template #thumbnail>

@@ -7,11 +7,11 @@
     <main class="space-y-5">
       <FormRow>
         <template #label>Name</template>
-        <TextInput v-model="data.name" v-koel-focus name="name" required title="Name" />
+        <TextInput v-model="data.name" v-koel-focus name="name" required />
       </FormRow>
       <FormRow>
         <template #label>Email</template>
-        <TextInput v-model="data.email" name="email" required title="Email" type="email" />
+        <TextInput v-model="data.email" name="email" required type="email" />
       </FormRow>
       <FormRow>
         <template #label>Password</template>

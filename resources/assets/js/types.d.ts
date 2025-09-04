@@ -283,6 +283,7 @@ interface Playlist {
   readonly id: string
   readonly owner_id: User['id']
   name: string
+  description: string
   folder_id: PlaylistFolder['id'] | null
   is_smart: boolean
   is_collaborative: boolean
