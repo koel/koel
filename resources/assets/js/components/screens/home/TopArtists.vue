@@ -23,7 +23,7 @@ import { toRef, toRefs } from 'vue'
 import { overviewStore } from '@/stores/overviewStore'
 
 import ArtistCard from '@/components/artist/ArtistCard.vue'
-import ArtistCardSkeleton from '@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'
+import ArtistCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
 import HomeScreenSection from '@/components/screens/home/HomeScreenBlock.vue'
 
 const props = withDefaults(defineProps<{ loading?: boolean }>(), { loading: false })

@@ -602,3 +602,20 @@ interface MediaRow {
 }
 
 type MediaReference = Pick<Folder, 'type' | 'path'> | Pick<Song, 'type' | 'id'>
+
+interface LiveEvent {
+  type: 'live-events'
+  id: string
+  name: string
+  dates: {
+    start: string
+    end: string | null
+  }
+  url: string
+  image: string
+  venue: {
+    name: string
+    url: string
+    city: string
+  }
+}

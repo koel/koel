@@ -26,7 +26,7 @@ import { toRef, toRefs } from 'vue'
 import { overviewStore } from '@/stores/overviewStore'
 
 import PlayableCard from '@/components/playable/PlayableCard.vue'
-import PlayableCardSkeleton from '@/components/ui/skeletons/PlayableCardSkeleton.vue'
+import PlayableCardSkeleton from '@/components/playable/PlayableCardSkeleton.vue'
 import HomeScreenBlock from '@/components/screens/home/HomeScreenBlock.vue'
 import ViewAllRecentlyPlayedPlayablesButton from '@/components/screens/home/ViewAllRecentlyPlayedPlayablesButton.vue'
 

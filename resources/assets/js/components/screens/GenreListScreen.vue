@@ -53,7 +53,7 @@ import { FilterKeywordsKey } from '@/symbols'
 import { orderBy } from 'lodash'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
-import GenreCardSkeleton from '@/components/ui/skeletons/GenreCardSkeleton.vue'
+import GenreCardSkeleton from '@/components/genre/GenreCardSkeleton.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import GenreCard from '@/components/genre/GenreCard.vue'

@@ -73,8 +73,8 @@ import { usePlayableListControls } from '@/composables/usePlayableListControls'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
-import PlayableListSkeleton from '@/components/ui/skeletons/PlayableListSkeleton.vue'
-import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
+import PlayableListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
+import ScreenHeaderSkeleton from '@/components/ui/ScreenHeaderSkeleton.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 

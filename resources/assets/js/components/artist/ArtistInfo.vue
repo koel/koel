@@ -23,7 +23,7 @@ import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 
 import ArtistThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
 import AlbumArtistInfo from '@/components/ui/album-artist/AlbumOrArtistInfo.vue'
-import ParagraphSkeleton from '@/components/ui/skeletons/ParagraphSkeleton.vue'
+import ParagraphSkeleton from '@/components/ui/ParagraphSkeleton.vue'
 
 const props = withDefaults(defineProps<{ artist: Artist, mode?: EncyclopediaDisplayMode }>(), { mode: 'aside' })
 const { artist, mode } = toRefs(props)

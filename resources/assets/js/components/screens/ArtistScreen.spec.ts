@@ -17,7 +17,7 @@ describe('artistScreen.vue', () => {
   })
 
   const renderComponent = async (
-    tab: 'songs' | 'albums' | 'information' = 'songs',
+    tab: 'songs' | 'albums' | 'information' | 'events' = 'songs',
     artist?: Artist,
   ) => {
     commonStore.state.uses_last_fm = true
@@ -46,6 +46,7 @@ describe('artistScreen.vue', () => {
           ArtistInfo: h.stub('artist-info'),
           SongList: h.stub('song-list'),
           AlbumCard: h.stub('album-card'),
+          ArtistEventList: h.stub('artist-event-list'),
         },
       },
     })
@@ -90,6 +91,20 @@ describe('artistScreen.vue', () => {
   it('shows the playable list', async () => {
     await renderComponent()
     await waitFor(() => screen.getByTestId('song-list'))
+  })
+
+  it('has an Events tab if using Ticketmaster', async () => {
+    commonStore.state.uses_ticketmaster = true
+    await renderComponent()
+
+    await waitFor(() => screen.getByRole('link', { name: 'Events' }))
+  })
+
+  it('does not have an Events tab if not using Ticketmaster', async () => {
+    commonStore.state.uses_ticketmaster = false
+    await renderComponent()
+
+    await waitFor(() => expect(screen.queryByRole('link', { name: 'Events' })).toBeNull())
   })
 
   it('has a Favorite button if artist is favorite', async () => {

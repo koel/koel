@@ -34,7 +34,7 @@ import { defineAsyncComponent } from '@/utils/helpers'
 
 import AlbumThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
 import AlbumArtistInfo from '@/components/ui/album-artist/AlbumOrArtistInfo.vue'
-import ParagraphSkeleton from '@/components/ui/skeletons/ParagraphSkeleton.vue'
+import ParagraphSkeleton from '@/components/ui/ParagraphSkeleton.vue'
 
 const props = withDefaults(defineProps<{ album: Album, mode?: EncyclopediaDisplayMode }>(), { mode: 'aside' })
 

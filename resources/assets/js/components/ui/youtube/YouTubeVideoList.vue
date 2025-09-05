@@ -26,7 +26,7 @@ import { useErrorHandler } from '@/composables/useErrorHandler'
 const props = defineProps<{ song: Song }>()
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 const YouTubeVideo = defineAsyncComponent(() => import('@/components/ui/youtube/YouTubeVideoItem.vue'))
-const YouTubeVideoListSkeleton = defineAsyncComponent(() => import('@/components/ui/skeletons/YouTubeVideoListSkeleton.vue'))
+const YouTubeVideoListSkeleton = defineAsyncComponent(() => import('@/components/ui/youtube/YouTubeVideoListSkeleton.vue'))
 
 const { song } = toRefs(props)
 

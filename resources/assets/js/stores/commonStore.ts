@@ -30,6 +30,7 @@ const initialState = {
   uses_i_tunes: false,
   uses_last_fm: false,
   uses_spotify: false,
+  uses_ticketmaster: false,
   uses_media_browser: false,
   users: [] as User[],
   uses_you_tube: false,

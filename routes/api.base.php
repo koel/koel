@@ -6,10 +6,12 @@ use App\Http\Controllers\API\ActivateLicenseController;
 use App\Http\Controllers\API\AlbumController;
 use App\Http\Controllers\API\AlbumCoverController;
 use App\Http\Controllers\API\AlbumSongController;
-use App\Http\Controllers\API\ArtistAlbumController;
-use App\Http\Controllers\API\ArtistController;
-use App\Http\Controllers\API\ArtistImageController;
-use App\Http\Controllers\API\ArtistSongController;
+use App\Http\Controllers\API\Artist\ArtistAlbumController;
+use App\Http\Controllers\API\Artist\ArtistController;
+use App\Http\Controllers\API\Artist\ArtistImageController;
+use App\Http\Controllers\API\Artist\ArtistSongController;
+use App\Http\Controllers\API\Artist\FetchArtistEventsController;
+use App\Http\Controllers\API\Artist\FetchArtistInformationController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CheckResourcePermissionController;
 use App\Http\Controllers\API\DisconnectFromLastfmController;
@@ -17,7 +19,6 @@ use App\Http\Controllers\API\ExcerptSearchController;
 use App\Http\Controllers\API\FavoriteController;
 use App\Http\Controllers\API\FetchAlbumInformationController;
 use App\Http\Controllers\API\FetchAlbumThumbnailController;
-use App\Http\Controllers\API\FetchArtistInformationController;
 use App\Http\Controllers\API\FetchDemoCreditsController;
 use App\Http\Controllers\API\FetchFavoriteSongsController;
 use App\Http\Controllers\API\FetchInitialDataController;
@@ -192,6 +193,9 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         // Media information routes
         Route::get('albums/{album}/information', FetchAlbumInformationController::class);
         Route::get('artists/{artist}/information', FetchArtistInformationController::class);
+        
+        // Events (shows) routes
+        Route::get('artists/{artist}/events', FetchArtistEventsController::class);
 
         // Cover/image routes
         Route::put('albums/{album}/cover', [AlbumCoverController::class, 'store']);

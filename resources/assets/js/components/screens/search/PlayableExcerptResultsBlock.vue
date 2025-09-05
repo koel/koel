@@ -36,7 +36,7 @@ import { computed, toRefs } from 'vue'
 import { useRouter } from '@/composables/useRouter'
 import { getPlayableCollectionContentType } from '@/utils/typeGuards'
 
-import PlayableCardSkeleton from '@/components/ui/skeletons/PlayableCardSkeleton.vue'
+import PlayableCardSkeleton from '@/components/playable/PlayableCardSkeleton.vue'
 import ExcerptResultBlock from '@/components/screens/search/ExcerptResultBlock.vue'
 import PlayableCard from '@/components/playable/PlayableCard.vue'
 import Btn from '@/components/ui/form/Btn.vue'

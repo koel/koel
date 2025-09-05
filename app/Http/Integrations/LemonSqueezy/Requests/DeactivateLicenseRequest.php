@@ -23,7 +23,7 @@ class DeactivateLicenseRequest extends Request implements HasBody
         return '/licenses/deactivate';
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     protected function defaultBody(): array
     {
         return [

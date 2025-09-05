@@ -97,7 +97,7 @@ import RadioStationListSorter from '@/components/radio/RadioStationListSorter.vu
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import RadioStationCard from '@/components/radio/RadioStationCard.vue'
 import GridListView from '@/components/ui/GridListView.vue'
-import AlbumCardSkeleton from '@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'
+import AlbumCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
 import BtnScrollToTop from '@/components/ui/BtnScrollToTop.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 

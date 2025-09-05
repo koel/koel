@@ -115,4 +115,8 @@ export const artistStore = {
     await http.delete(`artists/${artist.id}/image`)
     use(this.byId(artist.id), artist => (artist.image = ''))
   },
+
+  async fetchEvents (artist: Artist) {
+    return await http.get<LiveEvent[]>(`artists/${artist.id}/events`)
+  },
 }

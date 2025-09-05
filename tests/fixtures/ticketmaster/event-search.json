@@ -1,0 +1,454 @@
+{
+  "_embedded": {
+    "events": [
+      {
+        "name": "Louder Than Life",
+        "type": "event",
+        "id": "1ApZkASGkexQ0qw",
+        "test": false,
+        "url": "https://on.fgtix.com/trk/VEe0b",
+        "locale": "en-us",
+        "images": [
+          {
+            "ratio": "3_2",
+            "url": "https://s1.ticketm.net/dam/a/a08/9909316c-8e80-435c-a648-c4de964c3a08_TABLET_LANDSCAPE_3_2.jpg",
+            "width": 1024,
+            "height": 683,
+            "fallback": false
+          },
+          {
+            "ratio": "16_9",
+            "url": "https://s1.ticketm.net/dam/a/a08/9909316c-8e80-435c-a648-c4de964c3a08_RETINA_PORTRAIT_16_9.jpg",
+            "width": 640,
+            "height": 360,
+            "fallback": false
+          },
+          {
+            "ratio": "16_9",
+            "url": "https://s1.ticketm.net/dam/a/a08/9909316c-8e80-435c-a648-c4de964c3a08_TABLET_LANDSCAPE_16_9.jpg",
+            "width": 1024,
+            "height": 576,
+            "fallback": false
+          },
+          {
+            "ratio": "16_9",
+            "url": "https://s1.ticketm.net/dam/a/a08/9909316c-8e80-435c-a648-c4de964c3a08_RETINA_LANDSCAPE_16_9.jpg",
+            "width": 1136,
+            "height": 639,
+            "fallback": false
+          },
+          {
+            "ratio": "16_9",
+            "url": "https://s1.ticketm.net/dam/a/a08/9909316c-8e80-435c-a648-c4de964c3a08_EVENT_DETAIL_PAGE_16_9.jpg",
+            "width": 205,
+            "height": 115,
+            "fallback": false
+          },
+          {
+            "ratio": "3_2",
+            "url": "https://s1.ticketm.net/dam/a/a08/9909316c-8e80-435c-a648-c4de964c3a08_ARTIST_PAGE_3_2.jpg",
+            "width": 305,
+            "height": 203,
+            "fallback": false
+          },
+          {
+            "ratio": "16_9",
+            "url": "https://s1.ticketm.net/dam/a/a08/9909316c-8e80-435c-a648-c4de964c3a08_SOURCE",
+            "width": 2426,
+            "height": 1365,
+            "fallback": false
+          },
+          {
+            "ratio": "16_9",
+            "url": "https://s1.ticketm.net/dam/a/a08/9909316c-8e80-435c-a648-c4de964c3a08_RECOMENDATION_16_9.jpg",
+            "width": 100,
+            "height": 56,
+            "fallback": false
+          },
+          {
+            "ratio": "3_2",
+            "url": "https://s1.ticketm.net/dam/a/a08/9909316c-8e80-435c-a648-c4de964c3a08_RETINA_PORTRAIT_3_2.jpg",
+            "width": 640,
+            "height": 427,
+            "fallback": false
+          },
+          {
+            "ratio": "4_3",
+            "url": "https://s1.ticketm.net/dam/a/a08/9909316c-8e80-435c-a648-c4de964c3a08_CUSTOM.jpg",
+            "width": 305,
+            "height": 225,
+            "fallback": false
+          },
+          {
+            "ratio": "16_9",
+            "url": "https://s1.ticketm.net/dam/a/a08/9909316c-8e80-435c-a648-c4de964c3a08_TABLET_LANDSCAPE_LARGE_16_9.jpg",
+            "width": 2048,
+            "height": 1152,
+            "fallback": false
+          }
+        ],
+        "sales": {
+          "public": {
+            "startDateTime": "2024-11-20T14:00:00Z",
+            "startTBD": false,
+            "startTBA": false,
+            "endDateTime": "2025-09-22T03:00:00Z"
+          }
+        },
+        "dates": {
+          "start": {
+            "localDate": "2025-09-18",
+            "dateTBD": false,
+            "dateTBA": false,
+            "timeTBA": false,
+            "noSpecificTime": true
+          },
+          "end": {
+            "localDate": "2025-09-21",
+            "approximate": false,
+            "noSpecificTime": true
+          },
+          "timezone": "America/New_York",
+          "status": {
+            "code": "onsale"
+          },
+          "spanMultipleDays": false
+        },
+        "classifications": [
+          {
+            "primary": true,
+            "segment": {
+              "id": "KZFzniwnSyZfZ7v7nJ",
+              "name": "Music"
+            },
+            "genre": {
+              "id": "KnvZfZ7vAe6",
+              "name": "Undefined"
+            },
+            "subGenre": {
+              "id": "KZazBEonSMnZfZ7v6JI",
+              "name": "Undefined"
+            },
+            "type": {
+              "id": "KZAyXgnZfZ7v7lt",
+              "name": "Event Style"
+            },
+            "subType": {
+              "id": "KZFzBErXgnZfZ7vA6E",
+              "name": "Festival"
+            },
+            "family": false
+          }
+        ],
+        "promoter": {
+          "id": "494",
+          "name": "PROMOTED BY VENUE",
+          "description": "PROMOTED BY VENUE / NTL / USA"
+        },
+        "promoters": [
+          {
+            "id": "494",
+            "name": "PROMOTED BY VENUE",
+            "description": "PROMOTED BY VENUE / NTL / USA"
+          }
+        ],
+        "ageRestrictions": {
+          "legalAgeEnforced": false
+        },
+        "ticketing": {
+          "safeTix": {
+            "enabled": false
+          },
+          "allInclusivePricing": {
+            "enabled": false
+          }
+        },
+        "_links": {
+          "self": {
+            "href": "/discovery/v2/events/1ApZkASGkexQ0qw?locale=en-us"
+          },
+          "attractions": [
+          ],
+          "venues": [
+            {
+              "href": "/discovery/v2/venues/KovZ917AJwU?locale=en-us"
+            }
+          ]
+        },
+        "_embedded": {
+          "venues": [
+            {
+              "name": "Highland Festival Grounds at KY Expo Center",
+              "type": "venue",
+              "id": "KovZ917AJwU",
+              "test": false,
+              "url": "https://www.ticketmaster.com/highland-festival-grounds-at-ky-expo-tickets-louisville/venue/181179",
+              "locale": "en-us",
+              "postalCode": "40209",
+              "timezone": "America/New_York",
+              "city": {
+                "name": "Louisville"
+              },
+              "state": {
+                "name": "Kentucky",
+                "stateCode": "KY"
+              },
+              "country": {
+                "name": "United States Of America",
+                "countryCode": "US"
+              },
+              "address": {
+                "line1": "1016 Phillips Ln."
+              },
+              "location": {
+                "longitude": "-85.73583380",
+                "latitude": "38.19538600"
+              },
+              "markets": [
+                {
+                  "name": "Louisville and Lexington",
+                  "id": "28"
+                }
+              ],
+              "dmas": [
+                {
+                  "id": 320
+                },
+                {
+                  "id": 325
+                }
+              ],
+              "upcomingEvents": {
+                "ticketmaster": 2,
+                "_total": 2,
+                "_filtered": 0
+              },
+              "_links": {
+                "self": {
+                  "href": "/discovery/v2/venues/KovZ917AJwU?locale=en-us"
+                }
+              }
+            }
+          ],
+          "attractions": [
+          ]
+        }
+      },
+      {
+        "name": "Slayer",
+        "type": "event",
+        "id": "vv1kFZbIuZG7BbTP",
+        "test": false,
+        "url": "https://www.ticketmaster.com/slayer-hershey-pennsylvania-09-20-2025/event/0200628340E98FE5",
+        "locale": "en-us",
+        "images": [
+          {
+            "ratio": "16_9",
+            "url": "https://s1.ticketm.net/dam/a/b31/36956980-f95a-406a-a9d3-a1130f5ceb31_922471_RETINA_PORTRAIT_16_9.jpg",
+            "width": 640,
+            "height": 360,
+            "fallback": false
+          },
+          {
+            "ratio": "3_2",
+            "url": "https://s1.ticketm.net/dam/a/b31/36956980-f95a-406a-a9d3-a1130f5ceb31_922471_TABLET_LANDSCAPE_3_2.jpg",
+            "width": 1024,
+            "height": 683,
+            "fallback": false
+          }
+        ],
+        "sales": {
+          "public": {
+            "startDateTime": "2025-04-11T14:00:00Z",
+            "startTBD": false,
+            "startTBA": false,
+            "endDateTime": "2025-09-21T00:00:00Z"
+          },
+          "presales": [
+          ]
+        },
+        "dates": {
+          "start": {
+            "localDate": "2025-09-20",
+            "localTime": "16:00:00",
+            "dateTime": "2025-09-20T20:00:00Z",
+            "dateTBD": false,
+            "dateTBA": false,
+            "timeTBA": false,
+            "noSpecificTime": false
+          },
+          "timezone": "America/New_York",
+          "status": {
+            "code": "onsale"
+          },
+          "spanMultipleDays": false
+        },
+        "classifications": [
+          {
+            "primary": true,
+            "segment": {
+              "id": "KZFzniwnSyZfZ7v7nJ",
+              "name": "Music"
+            },
+            "genre": {
+              "id": "KnvZfZ7vAvt",
+              "name": "Metal"
+            },
+            "family": false
+          }
+        ],
+        "promoter": {
+          "id": "653",
+          "name": "LIVE NATION MUSIC",
+          "description": "LIVE NATION MUSIC / NTL / USA"
+        },
+        "promoters": [
+          {
+            "id": "653",
+            "name": "LIVE NATION MUSIC",
+            "description": "LIVE NATION MUSIC / NTL / USA"
+          }
+        ],
+        "info": "We are now a cashless venue",
+        "pleaseNote": "We are now a cashless venue",
+        "products": [
+          {
+            "name": "Slayer VIP Upgrades (Tickets Not Included)",
+            "id": "vvG1FZbm7f8ngi",
+            "url": "https://www.ticketmaster.com/slayer-vip-upgrades-tickets-not-included-hershey-pennsylvania-09-20-2025/event/020062E11442AD6C",
+            "type": "VIP",
+            "classifications": [
+            ]
+          }
+        ],
+        "seatmap": {
+          "staticUrl": "https://mapsapi.tmol.io/maps/geometry/3/event/0200628340E98FE5/staticImage?type=png&systemId=HOST"
+        },
+        "accessibility": {
+          "ticketLimit": 4
+        },
+        "ticketLimit": {
+          "info": "There is an overall 8 ticket limit for this event."
+        },
+        "ageRestrictions": {
+          "legalAgeEnforced": false
+        },
+        "ticketing": {
+          "safeTix": {
+            "enabled": true
+          },
+          "allInclusivePricing": {
+            "enabled": true
+          }
+        },
+        "_links": {
+          "self": {
+            "href": "/discovery/v2/events/vv1kFZbIuZG7BbTP?locale=en-us"
+          },
+          "attractions": [
+          ],
+          "venues": [
+            {
+              "href": "/discovery/v2/venues/KovZpaoU8e?locale=en-us"
+            }
+          ]
+        },
+        "_embedded": {
+          "venues": [
+            {
+              "name": "Hersheypark Stadium",
+              "type": "venue",
+              "id": "KovZpaoU8e",
+              "test": false,
+              "url": "https://www.ticketmaster.com/hersheypark-stadium-tickets-hershey/venue/16394",
+              "locale": "en-us",
+              "aliases": [
+                "hershey",
+                "hersheypark",
+                "hershey stadium"
+              ],
+              "images": [
+                {
+                  "ratio": "16_9",
+                  "url": "https://s1.ticketm.net/dbimages/24554v.jpg",
+                  "width": 640,
+                  "height": 360,
+                  "fallback": false
+                }
+              ],
+              "postalCode": "17033",
+              "timezone": "America/New_York",
+              "city": {
+                "name": "Hershey"
+              },
+              "state": {
+                "name": "Pennsylvania",
+                "stateCode": "PA"
+              },
+              "country": {
+                "name": "United States Of America",
+                "countryCode": "US"
+              },
+              "address": {
+                "line1": "100 W Hersheypark Dr"
+              },
+              "location": {
+                "longitude": "-76.66028100",
+                "latitude": "40.29071500"
+              },
+              "markets": [
+                {
+                  "name": "Philadelphia",
+                  "id": "18"
+                }
+              ],
+              "dmas": [
+                {
+                  "id": 294
+                },
+                {
+                  "id": 358
+                },
+                {
+                  "id": 416
+                }
+              ],
+              "boxOfficeInfo": {
+              },
+              "parkingDetail": "Parking fee is charged.",
+              "accessibleSeatingDetail": "Fully Acessible. All special seating needs please contact the box office at 717-534-3911.",
+              "generalInfo": {
+                "generalRule": "All hand carried items, including backpacks, belt bag and purses will be searched.Guests are encouraged to keep nonessential items in their vehicles. -No umbrellas,lawn chairs, food, beverages or coolers. -No audio/video tape recording devises allowed. -Smoking only in designated areas. -No food, beverages, or coolers permitted. -Once in the venue, you may not leave the premises. If so, you will be recharged admission to enter. -No camping or loitering. -Posters and signs are not permitted into the Venue. -All events are all-weather events.",
+                "childRule": "All patrons who have reached their 2nd birthday need a ticket, however, for some family shows (ex:Sesame) anyone aged 1 or over needs a ticket."
+              },
+              "upcomingEvents": {
+                "archtics": 5,
+                "ticketmaster": 6,
+                "_total": 11,
+                "_filtered": 0
+              },
+              "_links": {
+                "self": {
+                  "href": "/discovery/v2/venues/KovZpaoU8e?locale=en-us"
+                }
+              }
+            }
+          ],
+          "attractions": [
+          ]
+        }
+      }
+    ]
+  },
+  "_links": {
+    "self": {
+      "href": "/discovery/v2/events.json?size=2&attractionId=K8vZ9171G_0"
+    }
+  },
+  "page": {
+    "size": 2,
+    "totalElements": 2,
+    "totalPages": 1,
+    "number": 0
+  }
+}

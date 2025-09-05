@@ -72,7 +72,7 @@ import { useInfiniteScroll } from '@/composables/useInfiniteScroll'
 import { useAuthorization } from '@/composables/useAuthorization'
 
 import AlbumCard from '@/components/album/AlbumCard.vue'
-import AlbumCardSkeleton from '@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'
+import AlbumCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'

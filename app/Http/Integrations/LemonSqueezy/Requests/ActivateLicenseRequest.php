@@ -22,7 +22,7 @@ class ActivateLicenseRequest extends Request implements HasBody
         return '/licenses/activate';
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     protected function defaultBody(): array
     {
         return [

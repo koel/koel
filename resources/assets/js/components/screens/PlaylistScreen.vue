@@ -98,8 +98,8 @@ import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import CollaboratorsBadge from '@/components/playlist/PlaylistCollaboratorsBadge.vue'
 import PlaylistThumbnail from '@/components/ui/PlaylistThumbnail.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
-import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
-import PlayableListSkeleton from '@/components/ui/skeletons/PlayableListSkeleton.vue'
+import ScreenHeaderSkeleton from '@/components/ui/ScreenHeaderSkeleton.vue'
+import PlayableListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 
 // Since this component is responsible for all playlists, we keep track of the state for each,

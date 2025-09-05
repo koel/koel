@@ -60,7 +60,7 @@ import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import Breadcrumbs from '@/components/playable/media-browser/Breadcrumbs.vue'
 import MediaListView from '@/components/playable/media-browser/MediaListView.vue'
-import MediaListViewSkeleton from '@/components/ui/skeletons/MediaListViewSkeleton.vue'
+import MediaListViewSkeleton from '@/components/playable/media-browser/MediaListViewSkeleton.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 
 const { isAdmin } = useAuthorization()

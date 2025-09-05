@@ -58,7 +58,7 @@ import { usePlayableListControls } from '@/composables/usePlayableListControls'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
-import PlayableListSkeleton from '@/components/ui/skeletons/PlayableListSkeleton.vue'
+import PlayableListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
 
 const recentlyPlayedSongs = toRef(recentlyPlayedStore.state, 'playables')
 
