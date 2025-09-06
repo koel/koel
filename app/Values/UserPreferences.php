@@ -24,6 +24,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
         'transcode_on_mobile' => 'boolean',
         'transcode_quality' => 'integer',
         'volume' => 'float',
+        'rotate_currently_playing_album_art' => 'boolean',
     ];
 
     private const CUSTOMIZABLE_KEYS = [
@@ -60,6 +61,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
         'transcode_quality',
         'visualizer',
         'volume',
+        'rotate_currently_playing_album_art',
     ];
 
     private const ALL_KEYS = self::CUSTOMIZABLE_KEYS + ['lastfm_session_key'];
@@ -98,7 +100,8 @@ final class UserPreferences implements Arrayable, JsonSerializable
         public int $lyricsZoomLevel,
         public string $visualizer,
         public ?string $activeExtraPanelTab,
-        public ?string $lastFmSessionKey
+        public ?string $lastFmSessionKey,
+        public bool $rotateCurrentlyPlayingAlbumArt,
     ) {
         Assert::oneOf($this->repeatMode, ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE']);
         Assert::oneOf($this->artistsViewMode, ['list', 'thumbnails']);
@@ -158,6 +161,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
             visualizer: $data['visualizer'] ?? 'default',
             activeExtraPanelTab: $data['active_extra_panel_tab'] ?? null,
             lastFmSessionKey: $data['lastfm_session_key'] ?? null,
+            rotateCurrentlyPlayingAlbumArt: $data['rotate_currently_playing_album_art'] ?? false,
         );
     }
 
@@ -228,6 +232,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
             'visualizer' => $this->visualizer,
             'active_extra_panel_tab' => $this->activeExtraPanelTab,
             'continuous_playback' => $this->continuousPlayback,
+            'rotate_currently_playing_album_art' => $this->rotateCurrentlyPlayingAlbumArt,
         ];
     }
 
