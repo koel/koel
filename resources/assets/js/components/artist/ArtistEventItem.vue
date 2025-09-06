@@ -24,8 +24,11 @@
             - {{ event.dates.end }}
           </template>
         </dd>
-        <dt class="sr-only">Location</dt>
-        <dd>{{ event.venue.name }}, {{ event.venue.city }}</dd>
+        <dt class="sr-only">Venue</dt>
+        <dd>
+          <template v-if="event.venue.name">{{ event.venue.name }},</template>
+          {{ event.venue.city }}
+        </dd>
       </dl>
 
       <Icon
