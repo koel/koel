@@ -46,7 +46,7 @@ import { useRouter } from '@/composables/useRouter'
 import { pluralize } from '@/utils/formatters'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
-import PlayableListSkeleton from '@/components/ui/skeletons/PlayableListSkeleton.vue'
+import PlayableListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 
 const { getRouteParam } = useRouter()

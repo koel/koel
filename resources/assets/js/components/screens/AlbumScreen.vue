@@ -112,8 +112,8 @@ import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import AlbumThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
-import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
-import SongListSkeleton from '@/components/ui/skeletons/PlayableListSkeleton.vue'
+import ScreenHeaderSkeleton from '@/components/ui/ScreenHeaderSkeleton.vue'
+import SongListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
 import ScreenTabs from '@/components/ui/ArtistAlbumScreenTabs.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import GridListView from '@/components/ui/GridListView.vue'
@@ -124,7 +124,7 @@ type Tab = (typeof validTabs)[number]
 
 const AlbumInfo = defineAsyncComponent(() => import('@/components/album/AlbumInfo.vue'))
 const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCard.vue'))
-const AlbumCardSkeleton = defineAsyncComponent(() => import('@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'))
+const AlbumCardSkeleton = defineAsyncComponent(() => import('@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'))
 const FavoriteButton = defineAsyncComponent(() => import('@/components/ui/FavoriteButton.vue'))
 
 const { getRouteParam, go, onScreenActivated, onRouteChanged, url, triggerNotFound } = useRouter()

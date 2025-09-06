@@ -10,6 +10,7 @@ import favoriteFactory from '@/__tests__/factory/favoriteFactory'
 import folderFactory from '@/__tests__/factory/folderFactory'
 import genreFactory from '@/__tests__/factory/genreFactory'
 import interactionFactory from '@/__tests__/factory/interactionFactory'
+import liveEventFactory from '@/__tests__/factory/liveEventFactory'
 import playlistCollaboratorFactory from '@/__tests__/factory/playlistCollaboratorFactory'
 import playlistFactory, { states as playlistStates } from '@/__tests__/factory/playlistFactory'
 import playlistFolderFactory from '@/__tests__/factory/playlistFolderFactory'
@@ -32,6 +33,7 @@ interface ModelToTypeMap {
   'folder': Folder
   'genre': Genre
   'interaction': Interaction
+  'live-event': LiveEvent
   'playlist': Playlist
   'playlist-collaborator': PlaylistCollaborator
   'playlist-folder': PlaylistFolder
@@ -98,6 +100,7 @@ define('favorite', favoriteFactory)
 define('folder', folderFactory)
 define('genre', genreFactory)
 define('interaction', interactionFactory)
+define('live-event', liveEventFactory)
 define('playlist', playlistFactory, playlistStates)
 define('playlist-collaborator', playlistCollaboratorFactory)
 define('playlist-folder', playlistFolderFactory)

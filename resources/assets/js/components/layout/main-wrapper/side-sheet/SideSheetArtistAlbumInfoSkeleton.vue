@@ -8,5 +8,5 @@
 </template>
 
 <script setup lang="ts">
-import ParagraphSkeleton from '@/components/ui/skeletons/ParagraphSkeleton.vue'
+import ParagraphSkeleton from '@/components/ui/ParagraphSkeleton.vue'
 </script>

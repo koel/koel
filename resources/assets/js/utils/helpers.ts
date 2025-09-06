@@ -14,7 +14,7 @@ import { logger } from '@/utils/logger'
 import { md5 } from '@/utils/crypto'
 import { isSong } from '@/utils/typeGuards'
 
-import LoadingComponent from '@/components/ui/skeletons/Loading.vue'
+import LoadingComponent from '@/components/ui/Loading.vue'
 
 export const use = <T> (value: T | undefined | null, cb: (arg: T) => void) => {
   if (typeof value === 'undefined' || value === null) {

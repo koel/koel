@@ -3,7 +3,7 @@
 exports[`allSongsScreen.vue > renders 1`] = `
 <section data-v-dcfb8776="" data-v-8ea4eaa5="" class="max-h-full min-h-full w-full flex flex-col transform-gpu">
   <header data-v-5691beb5="" data-v-8ea4eaa5="" class="expanded screen-header min-h-0 md:min-h-full flex items-end flex-shrink-0 relative content-stretch leading-normal p-6 border-b border-b-k-bg-secondary">
-    <aside data-v-5691beb5="" class="thumbnail-wrapper hidden md:block overflow-hidden w-0 rounded-md">
+    <aside data-v-5691beb5="" class="thumbnail-wrapper hidden md:flex items-end overflow-hidden w-0 rounded-md">
       <article data-v-55bfc268="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="tiles thumbnail-stack aspect-square overflow-hidden grid bg-cover bg-no-repeat" style="background-image: url(&quot;undefined/resources/assets/img/covers/default.svg&quot;);"><span data-v-55bfc268="" class="block will-change-transform w-full h-full bg-cover bg-no-repeat" data-testid="thumbnail"></span><span data-v-55bfc268="" class="block will-change-transform w-full h-full bg-cover bg-no-repeat" data-testid="thumbnail"></span><span data-v-55bfc268="" class="block will-change-transform w-full h-full bg-cover bg-no-repeat" data-testid="thumbnail"></span><span data-v-55bfc268="" class="block will-change-transform w-full h-full bg-cover bg-no-repeat" data-testid="thumbnail"></span></article>
     </aside>
     <main data-v-5691beb5="" class="flex flex-1 gap-5 items-center overflow-hidden">

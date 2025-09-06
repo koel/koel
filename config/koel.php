@@ -154,6 +154,15 @@ return [
             'affiliate_id' => '1000lsGu',
             'endpoint' => 'https://itunes.apple.com/search',
         ],
+        'ticketmaster' => [
+            'key' => env('TICKETMASTER_API_KEY'),
+            'endpoint' => 'https://app.ticketmaster.com/discovery/v2',
+            'default_country_code' => env('TICKETMASTER_DEFAULT_COUNTRY_CODE') ?: 'US',
+        ],
+        'ipinfo' => [
+            'token' => env('IPINFO_TOKEN'),
+            'endpoint' => 'https://api.ipinfo.io',
+        ],
     ],
 
     'cdn' => [

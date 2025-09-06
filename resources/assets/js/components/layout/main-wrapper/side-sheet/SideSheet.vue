@@ -87,7 +87,8 @@ import AboutKoelButton from '@/components/layout/main-wrapper/side-sheet/AboutKo
 import LogoutButton from '@/components/layout/main-wrapper/side-sheet/LogoutButton.vue'
 import SideSheetButton from '@/components/layout/main-wrapper/side-sheet/SideSheetButton.vue'
 import SideSheetPanelLazyWrapper from '@/components/layout/main-wrapper/side-sheet/SideSheetPanelLazyWrapper.vue'
-import SideSheetArtistAlbumInfoSkeleton from '@/components/ui/skeletons/SideSheetArtistAlbumInfoSkeleton.vue'
+import SideSheetArtistAlbumInfoSkeleton
+  from '@/components/layout/main-wrapper/side-sheet/SideSheetArtistAlbumInfoSkeleton.vue'
 import SideSheetTabHeader from './SideSheetTabHeader.vue'
 
 const LyricsPane = defineAsyncComponent(() => import('@/components/ui/LyricsPane.vue'))

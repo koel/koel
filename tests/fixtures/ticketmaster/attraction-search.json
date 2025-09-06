@@ -1,0 +1,123 @@
+{
+  "_embedded": {
+    "attractions": [
+      {
+        "name": "Slayer",
+        "type": "attraction",
+        "id": "slayer-id-1234567890",
+        "test": false,
+        "url": "https://www.ticketmaster.com/slayer-tickets/artist/736135",
+        "locale": "en-us",
+        "externalLinks": {
+          "twitter": [
+            {
+              "url": "@slayer"
+            }
+          ]
+        },
+        "images": [
+          {
+            "ratio": "16_9",
+            "url": "https://s1.ticketm.net/dam/a/b31/36956980-f95a-406a-a9d3-a1130f5ceb31_922471_RETINA_PORTRAIT_16_9.jpg",
+            "width": 640,
+            "height": 360,
+            "fallback": false
+          },
+          {
+            "ratio": "3_2",
+            "url": "https://s1.ticketm.net/dam/a/b31/36956980-f95a-406a-a9d3-a1130f5ceb31_922471_TABLET_LANDSCAPE_3_2.jpg",
+            "width": 1024,
+            "height": 683,
+            "fallback": false
+          }
+        ],
+        "classifications": [
+          {
+            "primary": true,
+            "segment": {
+              "id": "KZFzniwnSyZfZ7v7nJ",
+              "name": "Music"
+            },
+            "genre": {
+              "id": "KnvZfZ7vAvt",
+              "name": "Metal"
+            },
+            "subGenre": {
+              "id": "KZazBEonSMnZfZ7vkFd",
+              "name": "Heavy Metal"
+            },
+            "type": {
+              "id": "KZAyXgnZfZ7v7nI",
+              "name": "Undefined"
+            },
+            "subType": {
+              "id": "KZFzBErXgnZfZ7v7lJ",
+              "name": "Undefined"
+            },
+            "family": false
+          }
+        ],
+        "upcomingEvents": {
+          "veeps": 1,
+          "ticketmaster": 2,
+          "_total": 3,
+          "_filtered": 0
+        },
+        "_links": {
+          "self": {
+            "href": "/discovery/v2/attractions/K8vZ9171G_0?locale=en-us"
+          }
+        }
+      },
+      {
+        "name": "Demon Slayer",
+        "type": "attraction",
+        "id": "K8vZ917jfuV",
+        "test": false,
+        "url": "https://www.ticketmaster.com/demon-slayer-tickets/artist/3103525",
+        "locale": "en-us",
+        "externalLinks": {
+          "spotify": [
+            {
+              "url": "https://open.spotify.com/artist/12otLKQE6aWkgzBObcdmbG"
+            }
+          ]
+        },
+        "images": [
+        ],
+        "classifications": [
+        ],
+        "upcomingEvents": {
+          "ticketmaster": 1,
+          "_total": 1,
+          "_filtered": 0
+        },
+        "_links": {
+          "self": {
+            "href": "/discovery/v2/attractions/K8vZ917jfuV?locale=en-us"
+          }
+        }
+      }
+    ]
+  },
+  "_links": {
+    "first": {
+      "href": "/discovery/v2/attractions.json?keyword=Slayer&page=0&size=5"
+    },
+    "self": {
+      "href": "/discovery/v2/attractions.json?size=5&keyword=Slayer"
+    },
+    "next": {
+      "href": "/discovery/v2/attractions.json?keyword=Slayer&page=1&size=5"
+    },
+    "last": {
+      "href": "/discovery/v2/attractions.json?keyword=Slayer&page=2&size=5"
+    }
+  },
+  "page": {
+    "size": 2,
+    "totalElements": 2,
+    "totalPages": 1,
+    "number": 0
+  }
+}

@@ -62,7 +62,7 @@ import { usePlayableListControls } from '@/composables/usePlayableListControls'
 import { playback } from '@/services/playbackManager'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
-import SongListSkeleton from '@/components/ui/skeletons/PlayableListSkeleton.vue'
+import SongListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 

@@ -94,13 +94,13 @@ import { eventBus } from '@/utils/eventBus'
 
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
-import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
+import ScreenHeaderSkeleton from '@/components/ui/ScreenHeaderSkeleton.vue'
 import EpisodeItem from '@/components/podcast/EpisodeItem.vue'
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import ListFilter from '@/components/ui/ListFilter.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'
-import EpisodeItemSkeleton from '@/components/ui/skeletons/EpisodeItemSkeleton.vue'
+import EpisodeItemSkeleton from '@/components/podcast/EpisodeItemSkeleton.vue'
 import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
 const { onScreenActivated, getRouteParam, go, triggerNotFound, url } = useRouter()

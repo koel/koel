@@ -20,6 +20,7 @@ use App\Services\MediaBrowser;
 use App\Services\MusicBrainzService;
 use App\Services\QueueService;
 use App\Services\SpotifyService;
+use App\Services\TicketmasterService;
 use App\Services\YouTubeService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
@@ -47,7 +48,8 @@ class FetchInitialDataController extends Controller
             'uses_last_fm' => LastfmService::used(),
             'uses_spotify' => SpotifyService::enabled(),
             'uses_you_tube' => YouTubeService::enabled(),
-            'uses_i_tunes' => $iTunesService->used(),
+            'uses_i_tunes' => ITunesService::used(),
+            'uses_ticketmaster' => TicketmasterService::used(),
             'allows_download' => config('koel.download.allow'),
             'uses_media_browser' => MediaBrowser::used(),
             'supports_batch_downloading' => extension_loaded('zip'),

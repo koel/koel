@@ -55,6 +55,9 @@
             <li v-if="useEncyclopedia" :class="activeTab === 'information' && 'active'">
               <a :href="url('artists.show', { id: artist.id, tab: 'information' })">Information</a>
             </li>
+            <li v-if="useTicketmaster" :class="activeTab === 'events' && 'active'">
+              <a :href="url('artists.show', { id: artist.id, tab: 'events' })">Events</a>
+            </li>
           </ul>
         </nav>
       </template>
@@ -89,6 +92,10 @@
       <div v-if="useEncyclopedia && artist" v-show="activeTab === 'information'" class="info-pane">
         <ArtistInfo :artist="artist" mode="full" />
       </div>
+
+      <div v-if="useTicketmaster && artist" v-show="activeTab === 'events'" class="events-pane">
+        <ArtistEventList :artist="artist" />
+      </div>
     </ScreenTabs>
   </ScreenBase>
 </template>
@@ -110,8 +117,8 @@ import { usePolicies } from '@/composables/usePolicies'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ArtistThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
-import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
-import SongListSkeleton from '@/components/ui/skeletons/PlayableListSkeleton.vue'
+import ScreenHeaderSkeleton from '@/components/ui/ScreenHeaderSkeleton.vue'
+import SongListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
 import ScreenTabs from '@/components/ui/ArtistAlbumScreenTabs.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import GridListView from '@/components/ui/GridListView.vue'
@@ -119,14 +126,15 @@ import Btn from '@/components/ui/form/Btn.vue'
 
 const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/ArtistInfo.vue'))
 const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCard.vue'))
-const AlbumCardSkeleton = defineAsyncComponent(() => import('@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'))
+const ArtistEventList = defineAsyncComponent(() => import('@/components/artist/ArtistEventList.vue'))
+const AlbumCardSkeleton = defineAsyncComponent(() => import('@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'))
 const FavoriteButton = defineAsyncComponent(() => import('@/components/ui/FavoriteButton.vue'))
 
-const validTabs = ['songs', 'albums', 'information'] as const
+const validTabs = ['songs', 'albums', 'information', 'events'] as const
 type Tab = typeof validTabs[number]
 
 const { PlayableListControls: SongListControls, config } = usePlayableListControls('Artist')
-const { useLastfm, useMusicBrainz } = useThirdPartyServices()
+const { useLastfm, useMusicBrainz, useTicketmaster } = useThirdPartyServices()
 const { getRouteParam, go, onScreenActivated, onRouteChanged, url, triggerNotFound } = useRouter()
 const { currentUserCan } = usePolicies()
 

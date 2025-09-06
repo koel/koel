@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\Artist;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AlbumResource;

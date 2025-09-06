@@ -23,7 +23,7 @@ import { useAuthorization } from '@/composables/useAuthorization'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 
-import ListSkeleton from '@/components/ui/skeletons/PlaylistCollaboratorListSkeleton.vue'
+import ListSkeleton from '@/components/playlist/PlaylistCollaboratorListSkeleton.vue'
 import ListItem from '@/components/playlist/PlaylistCollaboratorListItem.vue'
 
 const props = defineProps<{ playlist: Playlist }>()

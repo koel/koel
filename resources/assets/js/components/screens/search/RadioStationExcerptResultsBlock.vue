@@ -22,7 +22,7 @@
 import { toRefs } from 'vue'
 
 import ExcerptResultBlock from '@/components/screens/search/ExcerptResultBlock.vue'
-import RadioStationCardSkeleton from '@/components/ui/skeletons/RadioStationCardSkeleton.vue'
+import RadioStationCardSkeleton from '@/components/radio/RadioStationCardSkeleton.vue'
 import RadioStationCard from '@/components/radio/RadioStationCard.vue'
 
 const props = withDefaults(defineProps<{ stations?: RadioStation[], searching?: boolean }>(), {

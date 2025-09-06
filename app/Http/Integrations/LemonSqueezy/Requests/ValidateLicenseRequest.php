@@ -23,7 +23,7 @@ class ValidateLicenseRequest extends Request implements HasBody
         return '/licenses/validate';
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     protected function defaultBody(): array
     {
         return [

@@ -22,7 +22,7 @@
 import { toRefs } from 'vue'
 
 import ExcerptResultBlock from '@/components/screens/search/ExcerptResultBlock.vue'
-import AlbumCardSkeleton from '@/components/ui/skeletons/ArtistAlbumCardSkeleton.vue'
+import AlbumCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
 import AlbumCard from '@/components/album/AlbumCard.vue'
 
 const props = withDefaults(defineProps<{ albums?: Album[], searching?: boolean }>(), {

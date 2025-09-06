@@ -76,7 +76,7 @@ import { useErrorHandler } from '@/composables/useErrorHandler'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import Btn from '@/components/ui/form/Btn.vue'
-import ScreenHeaderSkeleton from '@/components/ui/skeletons/ScreenHeaderSkeleton.vue'
+import ScreenHeaderSkeleton from '@/components/ui/ScreenHeaderSkeleton.vue'
 import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
 const { onScreenActivated, getRouteParam, triggerNotFound, url } = useRouter()

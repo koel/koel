@@ -8,5 +8,6 @@ export const useThirdPartyServices = () => {
     useYouTube: toRef(commonStore.state, 'uses_you_tube'),
     useAppleMusic: toRef(commonStore.state, 'uses_i_tunes'),
     useSpotify: toRef(commonStore.state, 'uses_spotify'),
+    useTicketmaster: toRef(commonStore.state, 'uses_ticketmaster'),
   }
 }

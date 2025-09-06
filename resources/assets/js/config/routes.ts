@@ -108,7 +108,7 @@ export const routes = [
     screen: 'Artist',
     constraints: {
       id: ULID_REGEX,
-      tab: '(songs|albums|information)',
+      tab: '(songs|albums|information|events)',
     },
   },
   {
