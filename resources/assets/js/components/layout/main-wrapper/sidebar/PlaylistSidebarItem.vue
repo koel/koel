@@ -30,7 +30,7 @@ import { eventBus } from '@/utils/eventBus'
 import { playableStore } from '@/stores/playableStore'
 import { useRouter } from '@/composables/useRouter'
 import { useDraggable, useDroppable } from '@/composables/useDragAndDrop'
-import { usePlaylistManagement } from '@/composables/usePlaylistManagement'
+import { usePlaylistContentManagement } from '@/composables/usePlaylistContentManagement'
 
 import SidebarItem from '@/components/layout/main-wrapper/sidebar/SidebarItem.vue'
 
@@ -41,7 +41,7 @@ const { acceptsDrop, resolveDroppedItems } = useDroppable(['playables', 'album',
 
 const droppable = ref(false)
 
-const { addToPlaylist } = usePlaylistManagement()
+const { addToPlaylist } = usePlaylistContentManagement()
 
 const { list } = toRefs(props)
 

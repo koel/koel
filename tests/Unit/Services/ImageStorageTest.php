@@ -5,7 +5,7 @@ namespace Tests\Unit\Services;
 use App\Helpers\Ulid;
 use App\Models\Album;
 use App\Models\Artist;
-use App\Services\ArtworkService;
+use App\Services\ImageStorage;
 use App\Services\ImageWriter;
 use Mockery;
 use Mockery\MockInterface;
@@ -13,11 +13,11 @@ use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\Finder\Finder;
 use Tests\TestCase;
 
-class ArtworkServiceTest extends TestCase
+class ImageStorageTest extends TestCase
 {
     private ImageWriter|MockInterface $imageWriter;
     private Finder|MockInterface $finder;
-    private ArtworkService $service;
+    private ImageStorage $service;
 
     public function setUp(): void
     {
@@ -26,7 +26,7 @@ class ArtworkServiceTest extends TestCase
         $this->imageWriter = Mockery::mock(ImageWriter::class);
         $this->finder = Mockery::mock(Finder::class);
 
-        $this->service = new ArtworkService($this->imageWriter, $this->finder);
+        $this->service = new ImageStorage($this->imageWriter, $this->finder);
     }
 
     #[Test]
@@ -65,15 +65,15 @@ class ArtworkServiceTest extends TestCase
     }
 
     #[Test]
-    public function writeRadioStationLogo(): void
+    public function storeImage(): void
     {
         $ulid = Ulid::freeze();
         $logo = "$ulid.webp";
 
         $this->imageWriter
             ->expects('write')
-            ->with(image_storage_path($logo), 'dummy-logo-src');
+            ->with(image_storage_path($logo), 'dummy-logo-src', null);
 
-        self::assertSame($logo, $this->service->storeRadioStationLogo('dummy-logo-src'));
+        self::assertSame($logo, $this->service->storeImage('dummy-logo-src'));
     }
 }

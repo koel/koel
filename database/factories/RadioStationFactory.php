@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Helpers\Ulid;
 use App\Models\RadioStation;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -20,7 +21,7 @@ class RadioStationFactory extends Factory
             'user_id' => User::factory(),
             'name' => $this->faker->company(),
             'url' => $this->faker->url(),
-            'logo' => $this->faker->imageUrl(128, 128),
+            'logo' => Ulid::generate() . '.webp',
             'description' => $this->faker->text(),
             'is_public' => false,
         ];

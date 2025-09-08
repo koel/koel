@@ -12,6 +12,7 @@ use Tests\TestCase;
 use function Tests\create_playlist;
 use function Tests\create_playlists;
 use function Tests\create_user;
+use function Tests\minimal_base64_encoded_image;
 
 class PlaylistTest extends TestCase
 {
@@ -38,6 +39,7 @@ class PlaylistTest extends TestCase
             'description' => 'Foo Bar Description',
             'songs' => $songs->modelKeys(),
             'rules' => [],
+            'cover' => minimal_base64_encoded_image(),
         ], $user)
             ->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
 
@@ -48,6 +50,29 @@ class PlaylistTest extends TestCase
         self::assertTrue($playlist->ownedBy($user));
         self::assertNull($playlist->getFolder());
         self::assertEqualsCanonicalizing($songs->modelKeys(), $playlist->playables->modelKeys());
+        self::assertNotNull($playlist->cover);
+    }
+
+    #[Test]
+    public function createPlaylistWithoutCover(): void
+    {
+        $user = create_user();
+
+        $this->postAs('api/playlists', [
+            'name' => 'Foo Bar',
+            'description' => 'Foo Bar Description',
+            'songs' => [],
+            'rules' => [],
+        ], $user)
+            ->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
+
+        $playlist = Playlist::query()->latest()->first();
+
+        self::assertSame('Foo Bar', $playlist->name);
+        self::assertSame('Foo Bar Description', $playlist->description);
+        self::assertTrue($playlist->ownedBy($user));
+        self::assertNull($playlist->getFolder());
+        self::assertNull($playlist->cover);
     }
 
     #[Test]
@@ -70,6 +95,7 @@ class PlaylistTest extends TestCase
                     'rules' => [$rule->toArray()],
                 ],
             ],
+            'cover' => minimal_base64_encoded_image(),
         ], $user)->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
 
         $playlist = Playlist::query()->latest()->first();
@@ -81,6 +107,7 @@ class PlaylistTest extends TestCase
         self::assertCount(1, $playlist->rule_groups);
         self::assertNull($playlist->getFolder());
         self::assertTrue($rule->equals($playlist->rule_groups[0]->rules[0]));
+        self::assertNotNull($playlist->cover);
     }
 
     #[Test]
@@ -141,7 +168,7 @@ class PlaylistTest extends TestCase
             'name' => 'Qux',
             'description' => 'Qux Description',
         ])->assertForbidden();
-        
+
         self::assertSame('Foo', $playlist->refresh()->name);
     }
 

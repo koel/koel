@@ -2,44 +2,46 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Arr;
-use Intervention\Image\Constraint;
-use Intervention\Image\ImageManager;
+use App\Values\ImageWritingConfig;
+use Intervention\Image\FileExtension;
+use Intervention\Image\Interfaces\ImageManagerInterface;
+use Intervention\Image\Laravel\Facades\Image;
+use RuntimeException;
 
 class ImageWriter
 {
-    private const DEFAULT_MAX_WIDTH = 500;
-    private const DEFAULT_QUALITY = 80;
+    private FileExtension $extension;
 
-    private string $supportedFormat = 'jpg';
-
-    public function __construct(private readonly ImageManager $imageManager)
+    public function __construct()
     {
-        $this->supportedFormat = self::getSupportedFormat();
+        $this->extension = self::getExtension();
     }
 
-    private static function getSupportedFormat(): string
+    private static function getExtension(): FileExtension
     {
-        return Arr::get(gd_info(), 'WebP Support') ? 'webp' : 'jpg';
-    }
+        /** @var ImageManagerInterface $manager */
+        $manager = Image::getFacadeRoot();
 
-    public function write(string $destination, object|string $source, array $config = []): void
-    {
-        $img = $this->imageManager
-            ->make($source)
-            ->resize(
-                $config['max_width'] ?? self::DEFAULT_MAX_WIDTH,
-                null,
-                static function (Constraint $constraint): void {
-                    $constraint->upsize();
-                    $constraint->aspectRatio();
-                }
-            );
-
-        if (isset($config['blur'])) {
-            $img->blur($config['blur']);
+        // Prioritize AVIF over WEBP over JPEG.
+        foreach ([FileExtension::AVIF, FileExtension::WEBP, FileExtension::JPEG] as $extension) {
+            if ($manager->driver()->supports($extension)) {
+                return $extension;
+            }
         }
 
-        $img->save($destination, $config['quality'] ?? self::DEFAULT_QUALITY, $this->supportedFormat);
+        throw new RuntimeException('No supported image extension found.');
+    }
+
+    public function write(string $destination, mixed $source, ?ImageWritingConfig $config = null): void
+    {
+        $config ??= ImageWritingConfig::default();
+
+        $img = Image::read($source)->scale(width: $config->maxWidth);
+
+        if ($config->blur) {
+            $img->blur($config->blur);
+        }
+
+        $img->save($destination, $config->quality, $this->extension);
     }
 }

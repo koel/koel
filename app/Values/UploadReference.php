@@ -2,7 +2,7 @@
 
 namespace App\Values;
 
-readonly class UploadReference
+final readonly class UploadReference
 {
     /**
      * @param string $location Depending on the storage type, this could be the full storage key (with prefix)

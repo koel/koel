@@ -193,25 +193,18 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         // Media information routes
         Route::get('albums/{album}/information', FetchAlbumInformationController::class);
         Route::get('artists/{artist}/information', FetchArtistInformationController::class);
-        
+
         // Events (shows) routes
         Route::get('artists/{artist}/events', FetchArtistEventsController::class);
 
         // Cover/image routes
-        Route::put('albums/{album}/cover', [AlbumCoverController::class, 'store']);
-        Route::post('albums/{album}/cover', [AlbumCoverController::class, 'store']);
         Route::delete('albums/{album}/cover', [AlbumCoverController::class, 'destroy']);
         Route::get('albums/{album}/thumbnail', FetchAlbumThumbnailController::class);
-        Route::put('artists/{artist}/image', [ArtistImageController::class, 'store']);
-        Route::post('artists/{artist}/image', [ArtistImageController::class, 'store']);
         Route::delete('artists/{artist}/image', [ArtistImageController::class, 'destroy']);
-        Route::put('playlists/{playlist}/cover', [PlaylistCoverController::class, 'update']);
         Route::delete('playlists/{playlist}/cover', [PlaylistCoverController::class, 'destroy']);
 
         // deprecated routes
-        Route::put('album/{album}/cover', [AlbumCoverController::class, 'store']);
         Route::get('album/{album}/thumbnail', FetchAlbumThumbnailController::class);
-        Route::put('artist/{artist}/image', [ArtistImageController::class, 'store']);
 
         Route::get('search', ExcerptSearchController::class);
         Route::get('search/songs', SongSearchController::class);

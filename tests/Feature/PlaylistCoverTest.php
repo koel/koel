@@ -2,65 +2,38 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_playlist;
 use function Tests\create_user;
-use function Tests\minimal_base64_encoded_image;
-use function Tests\read_as_data_url;
-use function Tests\test_path;
 
 class PlaylistCoverTest extends TestCase
 {
     #[Test]
-    public function uploadCover(): void
-    {
-        $playlist = create_playlist();
-        self::assertNull($playlist->cover);
-
-        $this->putAs(
-            "api/playlists/{$playlist->id}/cover",
-            ['cover' => read_as_data_url(test_path('fixtures/cover.png'))],
-            $playlist->owner
-        )
-            ->assertOk();
-
-        self::assertNotNull($playlist->refresh()->cover);
-    }
-
-    #[Test]
-    public function uploadCoverNotAllowedForNonOwner(): void
-    {
-        $playlist = create_playlist();
-
-        $this->putAs(
-            "api/playlists/{$playlist->id}/cover",
-            ['cover' => minimal_base64_encoded_image()],
-            create_user()
-        )
-            ->assertForbidden();
-    }
-
-    #[Test]
     public function deleteCover(): void
     {
-        $playlist = create_playlist(['cover' => 'cover.jpg']);
+        File::put(image_storage_path('foo.webp'), 'fake-content');
+        $playlist = create_playlist(['cover' => 'foo.webp']);
 
         $this->deleteAs("api/playlists/{$playlist->id}/cover", [], $playlist->owner)
             ->assertNoContent();
 
         self::assertNull($playlist->refresh()->cover);
+        self::assertFileDoesNotExist(image_storage_path('foo.webp'));
     }
 
     #[Test]
     public function nonOwnerCannotDeleteCover(): void
     {
-        $playlist = create_playlist(['cover' => 'cover.jpg']);
+        File::put(image_storage_path('foo.webp'), 'fake-content');
+        $playlist = create_playlist(['cover' => 'foo.webp']);
 
         $this->deleteAs("api/playlists/{$playlist->id}/cover", [], create_user())
             ->assertForbidden();
 
-        self::assertSame('cover.jpg', $playlist->refresh()->getRawOriginal('cover'));
+        self::assertSame(image_storage_url('foo.webp'), $playlist->refresh()->cover);
+        self::assertFileExists(image_storage_path('foo.webp'));
     }
 }

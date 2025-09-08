@@ -6,7 +6,7 @@ use App\Http\Resources\RadioStationResource;
 use App\Models\Organization;
 use App\Models\RadioStation;
 use App\Rules\ValidRadioStationUrl;
-use App\Services\ArtworkService;
+use App\Services\ImageStorage;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -17,13 +17,13 @@ use function Tests\minimal_base64_encoded_image;
 
 class RadioStationTest extends TestCase
 {
-    private ArtworkService|MockInterface $artworkService;
+    private ImageStorage|MockInterface $imageStorage;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->artworkService = $this->mock(ArtworkService::class);
+        $this->imageStorage = $this->mock(ImageStorage::class);
 
         $validator = app(ValidRadioStationUrl::class);
         $validator->bypass = true;
@@ -34,7 +34,7 @@ class RadioStationTest extends TestCase
     {
         $user = create_user();
 
-        $this->artworkService->expects('storeRadioStationLogo')
+        $this->imageStorage->expects('storeImage')
             ->with(minimal_base64_encoded_image())
             ->andReturn('logo.jpg');
 
@@ -61,7 +61,7 @@ class RadioStationTest extends TestCase
     #[Test]
     public function updateStation(): void
     {
-        $this->artworkService->shouldNotReceive('storeRadioStationLogo');
+        $this->imageStorage->shouldNotReceive('storeImage');
 
         /** @var RadioStation $station */
         $station = RadioStation::factory()->create();
@@ -90,7 +90,7 @@ class RadioStationTest extends TestCase
     #[Test]
     public function updateStationWithNewLogo(): void
     {
-        $this->artworkService->expects('storeRadioStationLogo')
+        $this->imageStorage->expects('storeImage')
             ->with(minimal_base64_encoded_image())
             ->andReturn('new-logo.jpg');
 

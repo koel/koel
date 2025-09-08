@@ -1,7 +1,7 @@
 <template>
   <ScreenBase>
     <template #header>
-      <ScreenHeader :layout="songs.length === 0 ? 'collapsed' : headerLayout">
+      <ScreenHeader :disabled="loading" :layout="songs.length ? headerLayout : 'collapsed'">
         All Songs
         <ControlsToggle v-model="showingControls" />
 

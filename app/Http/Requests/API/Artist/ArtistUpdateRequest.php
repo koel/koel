@@ -3,7 +3,7 @@
 namespace App\Http\Requests\API\Artist;
 
 use App\Http\Requests\API\Request;
-use App\Rules\ImageData;
+use App\Rules\ValidImageData;
 
 /**
  * @property-read string $name
@@ -16,7 +16,7 @@ class ArtistUpdateRequest extends Request
     {
         return [
             'name' => 'string|required',
-            'image' => ['string', 'nullable', new ImageData()],
+            'image' => ['string', 'nullable', new ValidImageData()],
         ];
     }
 }

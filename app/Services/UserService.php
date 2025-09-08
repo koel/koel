@@ -3,12 +3,11 @@
 namespace App\Services;
 
 use App\Exceptions\UserProspectUpdateDeniedException;
-use App\Helpers\Ulid;
 use App\Models\Organization;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use App\Values\ImageWritingConfig;
 use App\Values\SsoUser;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -16,7 +15,7 @@ class UserService
 {
     public function __construct(
         private readonly UserRepository $repository,
-        private readonly ImageWriter $imageWriter,
+        private readonly ImageStorage $imageStorage,
         private readonly OrganizationService $organizationService,
     ) {
     }
@@ -113,12 +112,7 @@ class UserService
             return $avatar;
         }
 
-        $path = self::generateUserAvatarPath();
-        $this->imageWriter->write($path, $avatar, ['max_width' => 480]);
-
-        optional($user?->getRawOriginal('avatar'), static fn (string $oldAvatar) => File::delete($oldAvatar));
-
-        return basename($path);
+        return basename($this->imageStorage->storeImage($avatar, ImageWritingConfig::make(maxWidth: 480)));
     }
 
     public function deleteUser(User $user): void
@@ -131,10 +125,5 @@ class UserService
         $user->preferences = $user->preferences->set($key, $value);
 
         $user->save();
-    }
-
-    private static function generateUserAvatarPath(): string
-    {
-        return image_storage_path(sprintf('%s.webp', Ulid::generate()));
     }
 }

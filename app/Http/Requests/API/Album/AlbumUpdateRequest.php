@@ -3,7 +3,7 @@
 namespace App\Http\Requests\API\Album;
 
 use App\Http\Requests\API\Request;
-use App\Rules\ImageData;
+use App\Rules\ValidImageData;
 
 /**
  * @property-read string $name
@@ -18,7 +18,7 @@ class AlbumUpdateRequest extends Request
         return [
             'name' => 'string|required',
             'year' => 'integer|nullable',
-            'cover' => ['string', 'nullable', new ImageData()],
+            'cover' => ['string', 'nullable', new ValidImageData()],
         ];
     }
 }

@@ -13,7 +13,7 @@ class EncyclopediaService
 {
     public function __construct(
         private readonly Encyclopedia $encyclopedia,
-        private readonly ArtworkService $artworkService,
+        private readonly ImageStorage $imageStorage,
         private readonly SpotifyService $spotifyService,
     ) {
     }
@@ -84,7 +84,7 @@ class EncyclopediaService
             ? $this->spotifyService->tryGetAlbumCover($album)
             : $info->cover;
 
-        return $coverUrl ? $this->artworkService->storeAlbumCover($album, $coverUrl) : null;
+        return $coverUrl ? $this->imageStorage->storeAlbumCover($album, $coverUrl) : null;
     }
 
     private function fetchAndStoreArtistImage(Artist $artist, ArtistInformation $info): ?string
@@ -93,6 +93,6 @@ class EncyclopediaService
             ? $this->spotifyService->tryGetArtistImage($artist)
             : $info->image;
 
-        return $imgUrl ? $this->artworkService->storeArtistImage($artist, $imgUrl) : null;
+        return $imgUrl ? $this->imageStorage->storeArtistImage($artist, $imgUrl) : null;
     }
 }

@@ -13,7 +13,7 @@ class ArtistService
 {
     public function __construct(
         private readonly ArtistRepository $artistRepository,
-        private readonly ArtworkService $artworkService,
+        private readonly ImageStorage $imageStorage,
     ) {
     }
 
@@ -30,7 +30,7 @@ class ArtistService
         throw_if($existingArtistWithTheSameName?->isNot($artist), ArtistNameConflictException::class);
 
         if ($data->image) {
-            $this->artworkService->storeArtistImage($artist, $data->image);
+            $this->imageStorage->storeArtistImage($artist, $data->image);
         }
 
         $artist->update(Arr::except($data->toArray(), 'image'));

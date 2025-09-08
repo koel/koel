@@ -23,7 +23,6 @@
     "ext-SimpleXML": "*",
     "daverandom/resume": "^0.0.3",
     "laravel/helpers": "^1.7",
-    "intervention/image": "^2.5",
     "lstrojny/functional-php": "^1.14",
     "teamtnt/laravel-scout-tntsearch-driver": "^14.0",
     "algolia/algoliasearch-client-php": "^3.3",
@@ -50,7 +49,8 @@
     "ezyang/htmlpurifier": "^4.18",
     "jaybizzle/crawler-detect": "^1.3",
     "paragonie/sodium_compat": "^1.6",
-    "laravel/nightwatch": "^1.13"
+    "laravel/nightwatch": "^1.13",
+    "intervention/image-laravel": "^1.5"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",

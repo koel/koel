@@ -16,19 +16,27 @@ use Illuminate\Support\Facades\DB;
 
 class PlaylistService
 {
-    public function __construct(private readonly SongRepository $songRepository)
-    {
+    public function __construct(
+        private readonly ImageStorage $imageStorage,
+        private readonly SongRepository $songRepository,
+    ) {
     }
 
     public function createPlaylist(PlaylistCreateData $data, User $user): Playlist
     {
+        // cover is optional and not critical, so no transaction is needed
+        $cover = rescue_if($data->cover, function () use ($data) {
+            return $this->imageStorage->storeImage($data->cover);
+        });
+
         return DB::transaction(
-            static function () use ($data, $user): Playlist {
+            static function () use ($data, $cover, $user): Playlist {
                 /** @var Playlist $playlist */
                 $playlist = Playlist::query()->create([
                     'name' => $data->name,
                     'description' => $data->description,
                     'rules' => $data->ruleGroups,
+                    'cover' => $cover,
                 ]);
 
                 $user->ownedPlaylists()->attach($playlist, [
@@ -48,11 +56,21 @@ class PlaylistService
 
     public function updatePlaylist(Playlist $playlist, PlaylistUpdateData $data): Playlist
     {
-        $playlist->update([
+        $cover = rescue_if($data->cover, function () use ($data) {
+            return $this->imageStorage->storeImage($data->cover);
+        });
+
+        $updateData = [
             'name' => $data->name,
             'description' => $data->description,
             'rules' => $data->ruleGroups,
-        ]);
+        ];
+
+        if ($cover) {
+            $updateData['cover'] = $cover;
+        }
+
+        $playlist->update($updateData);
 
         if ($data->folderId) {
             $playlist->folders()->syncWithoutDetaching([$data->folderId]);
@@ -128,9 +146,19 @@ class PlaylistService
         });
     }
 
-    public function deleteCover(Playlist $playlist): void
+    public function updatePlaylistCover(Playlist $playlist, string $coverData): Playlist
+    {
+        $playlist->cover = $this->imageStorage->storeImage($coverData);
+        $playlist->save();
+
+        return $playlist;
+    }
+
+    public function deletePlaylistCover(Playlist $playlist): Playlist
     {
         $playlist->cover = null;
         $playlist->save(); // will trigger cover cleanup in Playlist Observer
+
+        return $playlist;
     }
 }

@@ -3,6 +3,7 @@
 namespace Tests\Integration\Services;
 
 use App\Enums\Placement;
+use App\Helpers\Ulid;
 use App\Models\PlaylistFolder;
 use App\Models\Podcast;
 use App\Models\Song;
@@ -10,12 +11,14 @@ use App\Services\PlaylistService;
 use App\Values\PlaylistCreateData;
 use App\Values\PlaylistUpdateData;
 use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
+use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 use Tests\TestCase;
 
 use function Tests\create_playlist;
 use function Tests\create_user;
+use function Tests\minimal_base64_encoded_image;
 
 class PlaylistServiceTest extends TestCase
 {
@@ -36,6 +39,7 @@ class PlaylistServiceTest extends TestCase
         $data = PlaylistCreateData::make(
             name: 'foo',
             description: 'bar',
+            cover: minimal_base64_encoded_image(),
         );
 
         $playlist = $this->service->createPlaylist($data, $user);
@@ -44,6 +48,7 @@ class PlaylistServiceTest extends TestCase
         self::assertSame('bar', $playlist->description);
         self::assertTrue($user->is($playlist->owner));
         self::assertFalse($playlist->is_smart);
+        self::assertNotNull($playlist->cover);
     }
 
     #[Test]
@@ -55,6 +60,7 @@ class PlaylistServiceTest extends TestCase
         $data = PlaylistCreateData::make(
             name: 'foo',
             description: 'bar',
+            cover: minimal_base64_encoded_image(),
             playableIds: $songs->modelKeys(),
         );
 
@@ -65,6 +71,25 @@ class PlaylistServiceTest extends TestCase
         self::assertTrue($user->is($playlist->owner));
         self::assertFalse($playlist->is_smart);
         self::assertEqualsCanonicalizing($playlist->playables->modelKeys(), $songs->modelKeys());
+    }
+
+    #[Test]
+    public function createPlaylistWithoutCover(): void
+    {
+        $user = create_user();
+
+        $data = PlaylistCreateData::make(
+            name: 'foo',
+            description: 'bar',
+        );
+
+        $playlist = $this->service->createPlaylist($data, $user);
+
+        self::assertSame('foo', $playlist->name);
+        self::assertSame('bar', $playlist->description);
+        self::assertTrue($user->is($playlist->owner));
+        self::assertFalse($playlist->is_smart);
+        self::assertNull($playlist->cover);
     }
 
     #[Test]
@@ -283,5 +308,32 @@ class PlaylistServiceTest extends TestCase
         // move to the last position
         $this->service->movePlayablesInPlaylist($playlist, [$ids[0], $ids[1]], $ids[3], Placement::AFTER);
         self::assertSame([$ids[2], $ids[3], $ids[0], $ids[1]], $playlist->refresh()->playables->modelKeys());
+    }
+
+    #[Test]
+    public function updatePlaylistCover(): void
+    {
+        File::put(image_storage_path('foo.webp'), 'content');
+        $playlist = create_playlist(['cover' => 'foo.webp']);
+
+        $ulid = Ulid::freeze();
+        $this->service->updatePlaylistCover($playlist, minimal_base64_encoded_image());
+
+        self::assertSame(image_storage_url("$ulid.webp"), $playlist->cover);
+        self::assertFileExists(image_storage_path("$ulid.webp"));
+        self::assertFileDoesNotExist(image_storage_path('foo.webp'));
+    }
+
+    #[Test]
+    public function deletePlaylistCover(): void
+    {
+        File::put(image_storage_path('foo.webp'), 'content');
+
+        $playlist = create_playlist(['cover' => 'foo.webp']);
+
+        $this->service->deletePlaylistCover($playlist);
+
+        self::assertNull($playlist->refresh()->cover);
+        self::assertFileDoesNotExist(image_storage_path('foo.webp'));
     }
 }

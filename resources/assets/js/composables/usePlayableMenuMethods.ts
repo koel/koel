@@ -1,11 +1,11 @@
 import type { Ref } from 'vue'
 import { queueStore } from '@/stores/queueStore'
 import { eventBus } from '@/utils/eventBus'
-import { usePlaylistManagement } from '@/composables/usePlaylistManagement'
+import { usePlaylistContentManagement } from '@/composables/usePlaylistContentManagement'
 import { playableStore } from '@/stores/playableStore'
 
 export const usePlayableMenuMethods = (playables: Ref<Playable[]>, close: Closure) => {
-  const { addToPlaylist } = usePlaylistManagement()
+  const { addToPlaylist } = usePlaylistContentManagement()
 
   const trigger = async (cb: Closure) => {
     close()

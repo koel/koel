@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Album;
-use App\Services\ArtworkService;
+use App\Services\ImageStorage;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -12,13 +12,13 @@ use Tests\TestCase;
 
 class AlbumThumbnailTest extends TestCase
 {
-    private ArtworkService|MockInterface $artworkService;
+    private ImageStorage|MockInterface $imageStorage;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->artworkService = $this->mock(ArtworkService::class);
+        $this->imageStorage = $this->mock(ImageStorage::class);
     }
 
     /** @return array<mixed> */
@@ -34,7 +34,7 @@ class AlbumThumbnailTest extends TestCase
         /** @var Album $createdAlbum */
         $createdAlbum = Album::factory()->create();
 
-        $this->artworkService
+        $this->imageStorage
             ->expects('getAlbumThumbnailUrl')
             ->with(Mockery::on(static function (Album $album) use ($createdAlbum): bool {
                 return $album->id === $createdAlbum->id;

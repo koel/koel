@@ -12,7 +12,7 @@ class AlbumService
 {
     public function __construct(
         private readonly AlbumRepository $albumRepository,
-        private readonly ArtworkService $artworkService,
+        private readonly ImageStorage $imageStorage,
     ) {
     }
 
@@ -27,7 +27,7 @@ class AlbumService
         throw_if($existingAlbumWithTheSameName?->isNot($album), AlbumNameConflictException::class);
 
         if ($data->cover) {
-            $this->artworkService->storeAlbumCover($album, $data->cover);
+            $this->imageStorage->storeAlbumCover($album, $data->cover);
         }
 
         $album->update(Arr::except($data->toArray(), 'cover'));

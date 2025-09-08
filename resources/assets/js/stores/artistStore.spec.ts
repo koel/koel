@@ -67,18 +67,6 @@ describe('artistStore', () => {
     expect(artistStore.vault.get(artist.id)?.name).toBe('Pink Floyd')
   })
 
-  it('uploads an image for an artist', async () => {
-    const artist = h.factory('artist')
-    artistStore.syncWithVault(artist)
-    const putMock = h.mock(http, 'put').mockResolvedValue({ image_url: 'http://test/img.jpg' })
-
-    await artistStore.uploadImage(artist, 'data://image')
-
-    expect(artist.image).toBe('http://test/img.jpg')
-    expect(putMock).toHaveBeenCalledWith(`artists/${artist.id}/image`, { image: 'data://image' })
-    expect(artistStore.byId(artist.id)?.image).toBe('http://test/img.jpg')
-  })
-
   it('resolves an artist', async () => {
     const artist = h.factory('artist')
     const getMock = h.mock(http, 'get').mockResolvedValueOnce(artist)

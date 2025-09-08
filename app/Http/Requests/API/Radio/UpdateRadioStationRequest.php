@@ -3,7 +3,7 @@
 namespace App\Http\Requests\API\Radio;
 
 use App\Http\Requests\API\Request;
-use App\Rules\ImageData;
+use App\Rules\ValidImageData;
 use App\Rules\ValidRadioStationUrl;
 use Illuminate\Validation\Rule;
 
@@ -29,7 +29,7 @@ class UpdateRadioStationRequest extends Request
                 app(ValidRadioStationUrl::class),
             ],
             'name' => ['required', 'string', 'max:191'],
-            'logo' => ['nullable', new ImageData()],
+            'logo' => ['nullable', new ValidImageData()],
             'description' => ['nullable', 'string'],
             'is_public' => ['boolean', 'nullable'],
         ];

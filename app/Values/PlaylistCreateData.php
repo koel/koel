@@ -8,7 +8,7 @@ use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 
-readonly class PlaylistCreateData implements Arrayable
+final readonly class PlaylistCreateData implements Arrayable
 {
     /**
      * @param array<string> $playableIds
@@ -17,6 +17,7 @@ readonly class PlaylistCreateData implements Arrayable
         public string $name,
         public string $description,
         public ?string $folderId,
+        public ?string $cover,
         public array $playableIds,
         public ?SmartPlaylistRuleGroupCollection $ruleGroups,
     ) {
@@ -29,6 +30,7 @@ readonly class PlaylistCreateData implements Arrayable
             name: $request->name,
             description: (string) $request->description,
             folderId: $request->folder_id,
+            cover: $request->cover,
             playableIds: Arr::wrap($request->songs),
             ruleGroups: $request->rules ? SmartPlaylistRuleGroupCollection::create(Arr::wrap($request->rules)) : null,
         );
@@ -38,6 +40,7 @@ readonly class PlaylistCreateData implements Arrayable
         string $name,
         string $description = '',
         ?string $folderId = null,
+        ?string $cover = null,
         array $playableIds = [],
         ?SmartPlaylistRuleGroupCollection $ruleGroups = null,
     ): self {
@@ -45,6 +48,7 @@ readonly class PlaylistCreateData implements Arrayable
             name: $name,
             description: $description,
             folderId: $folderId,
+            cover: $cover,
             playableIds: $playableIds,
             ruleGroups: $ruleGroups,
         );
@@ -57,6 +61,7 @@ readonly class PlaylistCreateData implements Arrayable
             'name' => $this->name,
             'description' => $this->description,
             'folder_id' => $this->folderId,
+            'cover' => $this->cover,
             'playable_ids' => $this->playableIds,
             'rule_groups' => $this->ruleGroups,
         ];
