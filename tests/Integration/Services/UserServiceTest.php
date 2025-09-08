@@ -39,7 +39,7 @@ class UserServiceTest extends TestCase
         $this->assertModelExists($user);
         self::assertTrue(Hash::check('FearOfTheDark', $user->password));
         self::assertTrue($user->is_admin);
-        self::assertFileExists(user_avatar_path($user->getRawOriginal('avatar')));
+        self::assertFileExists(image_storage_path($user->getRawOriginal('avatar')));
     }
 
     #[Test]
@@ -92,7 +92,7 @@ class UserServiceTest extends TestCase
         self::assertSame('steve@iron.com', $user->email);
         self::assertTrue(Hash::check('TheTrooper', $user->password));
         self::assertTrue($user->is_admin);
-        self::assertFileExists(user_avatar_path($user->getRawOriginal('avatar')));
+        self::assertFileExists(image_storage_path($user->getRawOriginal('avatar')));
     }
 
     #[Test]

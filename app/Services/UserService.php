@@ -135,6 +135,6 @@ class UserService
 
     private static function generateUserAvatarPath(): string
     {
-        return user_avatar_path(sprintf('%s.webp', Ulid::generate()));
+        return image_storage_path(sprintf('%s.webp', Ulid::generate()));
     }
 }

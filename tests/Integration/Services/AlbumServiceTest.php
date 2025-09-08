@@ -70,7 +70,7 @@ class AlbumServiceTest extends TestCase
 
         self::assertEquals('New Album Name', $updatedAlbum->name);
         self::assertEquals(2023, $updatedAlbum->year);
-        self::assertEquals(album_cover_url("$ulid.webp"), $updatedAlbum->cover);
+        self::assertEquals(image_storage_url("$ulid.webp"), $updatedAlbum->cover);
 
         $songs->each(static function (Song $song) use ($updatedAlbum): void {
             self::assertEquals($updatedAlbum->name, $song->fresh()->album_name);
@@ -96,8 +96,8 @@ class AlbumServiceTest extends TestCase
     public function removeCover(): void
     {
         $ulid = Ulid::generate();
-        File::put(album_cover_path("$ulid.webp"), 'content');
-        File::put(album_cover_path("{$ulid}_thumb.webp"), 'thumb-content');
+        File::put(image_storage_path("$ulid.webp"), 'content');
+        File::put(image_storage_path("{$ulid}_thumb.webp"), 'thumb-content');
 
         /** @var Album $album */
         $album = Album::factory()->create(['cover' => "$ulid.webp"]);
@@ -105,7 +105,7 @@ class AlbumServiceTest extends TestCase
         $this->service->removeAlbumCover($album);
 
         self::assertNull($album->refresh()->cover);
-        self::assertFileDoesNotExist(album_cover_path("$ulid.webp"));
-        self::assertFileDoesNotExist(album_cover_path("{$ulid}_thumb.webp"));
+        self::assertFileDoesNotExist(image_storage_path("$ulid.webp"));
+        self::assertFileDoesNotExist(image_storage_path("{$ulid}_thumb.webp"));
     }
 }

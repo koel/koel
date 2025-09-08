@@ -23,54 +23,14 @@ function base_url(): string
     return app()->runningUnitTests() ? config('app.url') : asset('');
 }
 
-function album_cover_path(?string $fileName): ?string
+function image_storage_path(?string $fileName): ?string
 {
-    return $fileName ? public_path(config('koel.album_cover_dir') . $fileName) : null;
+    return $fileName ? public_path(config('koel.image_storage_dir') . $fileName) : null;
 }
 
-function album_cover_url(?string $fileName): ?string
+function image_storage_url(?string $fileName): ?string
 {
-    return $fileName ? static_url(config('koel.album_cover_dir') . $fileName) : null;
-}
-
-function artist_image_path(?string $fileName): ?string
-{
-    return $fileName ? public_path(config('koel.artist_image_dir') . $fileName) : null;
-}
-
-function artist_image_url(?string $fileName): ?string
-{
-    return $fileName ? static_url(config('koel.artist_image_dir') . $fileName) : null;
-}
-
-function playlist_cover_path(?string $fileName): ?string
-{
-    return $fileName ? public_path(config('koel.playlist_cover_dir') . $fileName) : null;
-}
-
-function playlist_cover_url(?string $fileName): ?string
-{
-    return $fileName ? static_url(config('koel.playlist_cover_dir') . $fileName) : null;
-}
-
-function radio_station_logo_path(?string $fileName): ?string
-{
-    return $fileName ? public_path(config('koel.radio_station_logo_dir') . $fileName) : null;
-}
-
-function radio_station_logo_url(?string $fileName): ?string
-{
-    return $fileName ? static_url(config('koel.radio_station_logo_dir') . $fileName) : null;
-}
-
-function user_avatar_path(?string $fileName): ?string
-{
-    return $fileName ? public_path(config('koel.user_avatar_dir') . $fileName) : null;
-}
-
-function user_avatar_url(?string $fileName): ?string
-{
-    return $fileName ? static_url(config('koel.user_avatar_dir') . $fileName) : null;
+    return $fileName ? static_url(config('koel.image_storage_dir') . $fileName) : null;
 }
 
 function artifact_path(?string $subPath = null, $ensureDirectoryExists = true): string
@@ -121,7 +81,7 @@ function avatar_or_gravatar(?string $avatar, string $email): string
         return $avatar;
     }
 
-    return user_avatar_url($avatar);
+    return image_storage_url($avatar);
 }
 
 /**

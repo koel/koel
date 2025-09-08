@@ -44,7 +44,7 @@ class ArtworkServiceTest extends TestCase
 
         $cover = $this->service->storeAlbumCover($album, 'dummy-src', $coverPath);
 
-        self::assertSame(album_cover_url('foo.jpg'), $album->refresh()->cover);
+        self::assertSame(image_storage_url('foo.jpg'), $album->refresh()->cover);
         self::assertSame($cover, $album->cover);
     }
 
@@ -61,7 +61,7 @@ class ArtworkServiceTest extends TestCase
 
         $this->service->storeArtistImage($artist, 'dummy-src', $imagePath);
 
-        self::assertSame(artist_image_url('foo.jpg'), $artist->refresh()->image);
+        self::assertSame(image_storage_url('foo.jpg'), $artist->refresh()->image);
     }
 
     #[Test]
@@ -72,7 +72,7 @@ class ArtworkServiceTest extends TestCase
 
         $this->imageWriter
             ->expects('write')
-            ->with(radio_station_logo_path($logo), 'dummy-logo-src');
+            ->with(image_storage_path($logo), 'dummy-logo-src');
 
         self::assertSame($logo, $this->service->storeRadioStationLogo('dummy-logo-src'));
     }

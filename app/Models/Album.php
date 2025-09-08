@@ -114,7 +114,7 @@ class Album extends Model implements AuditableContract, Favoriteable, Permission
 
     protected function cover(): Attribute
     {
-        return Attribute::get(static fn (?string $value): ?string => album_cover_url($value));
+        return Attribute::get(static fn (?string $value): ?string => image_storage_url($value));
     }
 
     protected function hasCover(): Attribute
@@ -129,7 +129,7 @@ class Album extends Model implements AuditableContract, Favoriteable, Permission
         return Attribute::get(function () {
             $cover = Arr::get($this->attributes, 'cover');
 
-            return $cover ? album_cover_path($cover) : null;
+            return $cover ? image_storage_path($cover) : null;
         });
     }
 
@@ -157,12 +157,12 @@ class Album extends Model implements AuditableContract, Favoriteable, Permission
 
     protected function thumbnailPath(): Attribute
     {
-        return Attribute::get(fn () => $this->thumbnail_name ? album_cover_path($this->thumbnail_name) : null);
+        return Attribute::get(fn () => $this->thumbnail_name ? image_storage_path($this->thumbnail_name) : null);
     }
 
     protected function thumbnail(): Attribute
     {
-        return Attribute::get(fn () => $this->thumbnail_name ? album_cover_url($this->thumbnail_name) : null);
+        return Attribute::get(fn () => $this->thumbnail_name ? image_storage_url($this->thumbnail_name) : null);
     }
 
     /** @deprecated Only here for backward compat with mobile apps */

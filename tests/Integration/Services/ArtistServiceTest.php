@@ -67,7 +67,7 @@ class ArtistServiceTest extends TestCase
         $updatedArtist = $this->service->updateArtist($artist, $data);
 
         self::assertEquals('New Artist Name', $updatedArtist->name);
-        self::assertEquals(artist_image_url("$ulid.webp"), $updatedArtist->image);
+        self::assertEquals(image_storage_url("$ulid.webp"), $updatedArtist->image);
 
         $songs->each(static function (Song $song) use ($updatedArtist): void {
             self::assertEquals($updatedArtist->name, $song->fresh()->artist_name);

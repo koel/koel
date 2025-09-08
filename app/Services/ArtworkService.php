@@ -14,7 +14,7 @@ class ArtworkService
 {
     public function __construct(
         private readonly ImageWriter $imageWriter,
-        private readonly Finder $finder
+        private readonly Finder $finder,
     ) {
     }
 
@@ -27,7 +27,7 @@ class ArtworkService
     public function storeAlbumCover(Album $album, string $source, ?string $destination = ''): ?string
     {
         return rescue(function () use ($album, $source, $destination): string {
-            $destination = $destination ?: $this->generateAlbumCoverPath();
+            $destination = $destination ?: self::generateImageStoragePath();
             $this->imageWriter->write($destination, $source);
 
             $album->update(['cover' => basename($destination)]);
@@ -46,7 +46,7 @@ class ArtworkService
     public function storeArtistImage(Artist $artist, string $source, ?string $destination = ''): ?string
     {
         return rescue(function () use ($artist, $source, $destination): string {
-            $destination = $destination ?: $this->generateArtistImagePath();
+            $destination = $destination ?: self::generateImageStoragePath();
             $this->imageWriter->write($destination, $source);
 
             $artist->update(['image' => basename($destination)]);
@@ -58,7 +58,7 @@ class ArtworkService
     public function storePlaylistCover(Playlist $playlist, string $source): ?string
     {
         return rescue(function () use ($playlist, $source): string {
-            $destination = $this->generatePlaylistCoverPath();
+            $destination = self::generateImageStoragePath();
             $this->imageWriter->write($destination, $source);
 
             if ($playlist->cover_path) {
@@ -69,26 +69,6 @@ class ArtworkService
 
             return $playlist->cover;
         });
-    }
-
-    private function generateAlbumCoverPath(): string
-    {
-        return album_cover_path(sprintf('%s.webp', Ulid::generate()));
-    }
-
-    private function generateArtistImagePath(): string
-    {
-        return artist_image_path(sprintf('%s.webp', Ulid::generate()));
-    }
-
-    private function generatePlaylistCoverPath(): string
-    {
-        return playlist_cover_path(sprintf('%s.webp', Ulid::generate()));
-    }
-
-    private function generateRadioStationLogoPath(): string
-    {
-        return radio_station_logo_path(sprintf('%s.webp', Ulid::generate()));
     }
 
     /**
@@ -141,9 +121,14 @@ class ArtworkService
 
     public function storeRadioStationLogo(string $logo): ?string
     {
-        $destination = $this->generateRadioStationLogoPath();
+        $destination = self::generateImageStoragePath();
         $this->imageWriter->write($destination, $logo);
 
         return basename($destination);
+    }
+
+    private static function generateImageStoragePath(): string
+    {
+        return image_storage_path(sprintf('%s.webp', Ulid::generate()));
     }
 }
