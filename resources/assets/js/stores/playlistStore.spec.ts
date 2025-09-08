@@ -206,16 +206,4 @@ describe('playlistStore', () => {
 
     expect(removeMock).toHaveBeenCalledWith(['playlist.songs', playlist.id])
   })
-
-  it('uploads a cover for a playlist', async () => {
-    const playlist = h.factory('playlist')
-    playlistStore.state.playlists = [playlist]
-    const putMock = h.mock(http, 'put').mockResolvedValue({ cover_url: 'http://test/cover.jpg' })
-
-    await playlistStore.uploadCover(playlist, 'data://cover')
-
-    expect(playlist.cover).toBe('http://test/cover.jpg')
-    expect(putMock).toHaveBeenCalledWith(`playlists/${playlist.id}/cover`, { cover: 'data://cover' })
-    expect(playlistStore.byId(playlist.id)?.cover).toBe('http://test/cover.jpg')
-  })
 })

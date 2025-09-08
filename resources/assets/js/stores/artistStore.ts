@@ -47,13 +47,6 @@ export const artistStore = {
     return !this.isVarious(artist) && !this.isUnknown(artist)
   },
 
-  async uploadImage (artist: Artist, image: string) {
-    const imageUrl = (await http.put<{ image_url: string }>(`artists/${artist.id}/image`, { image })).image_url
-    use(this.byId(artist.id), artist => (artist.image = imageUrl))
-
-    return imageUrl
-  },
-
   syncWithVault (artists: MaybeArray<Artist>) {
     return arrayify(artists).map(artist => {
       let local = this.vault.get(artist.id)

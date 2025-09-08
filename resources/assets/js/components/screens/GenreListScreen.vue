@@ -1,11 +1,11 @@
 <template>
   <ScreenBase>
     <template #header>
-      <ScreenHeader layout="collapsed">
+      <ScreenHeader layout="collapsed" :disabled="loading">
         Genres
 
         <template #controls>
-          <div v-if="!loading" class="flex gap-2">
+          <div class="flex gap-2">
             <GenreListSorter
               :field="preferences.genres_sort_field"
               :order="preferences.genres_sort_order"

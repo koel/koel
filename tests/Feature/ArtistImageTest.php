@@ -4,56 +4,14 @@ namespace Tests\Feature;
 
 use App\Helpers\Ulid;
 use App\Models\Artist;
-use App\Services\ArtworkService;
 use Illuminate\Support\Facades\File;
-use Mockery;
-use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_admin;
-use function Tests\minimal_base64_encoded_image;
 
 class ArtistImageTest extends TestCase
 {
-    private ArtworkService|MockInterface $artworkService;
-
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->artworkService = $this->mock(ArtworkService::class);
-    }
-
-    #[Test]
-    public function update(): void
-    {
-        /** @var Artist $artist */
-        $artist = Artist::factory()->create();
-
-        $this->artworkService
-            ->expects('storeArtistImage')
-            ->with(Mockery::on(static fn (Artist $target) => $target->is($artist)), minimal_base64_encoded_image());
-
-        $this->putAs(
-            "api/artist/{$artist->id}/image",
-            ['image' => minimal_base64_encoded_image()],
-            create_admin(),
-        )->assertOk();
-    }
-
-    #[Test]
-    public function updateNotAllowedForNormalUsers(): void
-    {
-        /** @var Artist $artist */
-        $artist = Artist::factory()->create();
-
-        $this->artworkService->shouldNotReceive('storeArtistImage');
-
-        $this->putAs("api/artist/{$artist->id}/image", ['image' => minimal_base64_encoded_image()])
-            ->assertForbidden();
-    }
-
     #[Test]
     public function destroy(): void
     {

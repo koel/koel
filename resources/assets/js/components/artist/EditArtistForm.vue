@@ -28,7 +28,7 @@
           </button>
         </span>
         <div class="flex-1">
-          <FileInput v-if="!displayedImage" accept="image/*" name="image" @change="onImageChange">
+          <FileInput v-if="!displayedImage" accept="image/*" name="image" @change="onImageInputChange">
             Pick an image (optional)
           </FileInput>
         </div>
@@ -49,8 +49,8 @@ import { useDialogBox } from '@/composables/useDialogBox'
 import { useModal } from '@/composables/useModal'
 import type { ArtistUpdateData } from '@/stores/artistStore'
 import { artistStore } from '@/stores/artistStore'
-import { useFileReader } from '@/composables/useFileReader'
 import { useForm } from '@/composables/useForm'
+import { useImageFileInput } from '@/composables/useImageFileInput'
 
 import FormRow from '@/components/ui/form/FormRow.vue'
 import Btn from '@/components/ui/form/Btn.vue'
@@ -61,7 +61,6 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
-const { readAsDataUrl } = useFileReader()
 
 const close = () => emit('close')
 
@@ -81,21 +80,9 @@ const { data, isPristine, handleSubmit } = useForm<ArtistUpdateData>({
 
 const displayedImage = computed(() => artist.image || data.image)
 
-const onImageChange = (e: InputEvent) => {
-  const target = e.target as HTMLInputElement
-
-  if (!target.files || !target.files.length) {
-    data.image = ''
-    return
-  }
-
-  readAsDataUrl(target.files[0], dataUrl => {
-    data.image = dataUrl
-  })
-
-  // reset the value so that, if the user removes the logo, they can re-pick the same one
-  target.value = ''
-}
+const { onImageInputChange } = useImageFileInput({
+  onImageDataUrl: dataUrl => (data.image = dataUrl),
+})
 
 const removeOrResetImage = async () => {
   if (data.image) {

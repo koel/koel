@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Helpers\Ulid;
 use App\Values\SmartPlaylist\SmartPlaylistRule;
 use App\Values\SmartPlaylist\SmartPlaylistRuleGroup;
 use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
@@ -17,6 +18,7 @@ class PlaylistFactory extends Factory
             'name' => $this->faker->name,
             'rules' => null,
             'description' => $this->faker->realText(),
+            'cover' => Ulid::generate() . '.webp',
         ];
     }
 

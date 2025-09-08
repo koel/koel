@@ -52,20 +52,6 @@ describe('albumStore', () => {
     expect(albumStore.vault.get(album.id)?.name).toBe('V')
   })
 
-  it('uploads a cover for an album', async () => {
-    const album = h.factory('album')
-    albumStore.syncWithVault(album)
-    const putMock = h.mock(http, 'put').mockResolvedValue({ cover_url: 'http://test/cover.jpg' })
-    const syncPropsMock = h.mock(playableStore, 'syncAlbumProperties')
-
-    await albumStore.uploadCover(album, 'data://cover')
-
-    expect(album.cover).toBe('http://test/cover.jpg')
-    expect(putMock).toHaveBeenCalledWith(`albums/${album.id}/cover`, { cover: 'data://cover' })
-    expect(albumStore.byId(album.id)?.cover).toBe('http://test/cover.jpg')
-    expect(syncPropsMock).toHaveBeenCalledWith(album)
-  })
-
   it('fetches an album thumbnail', async () => {
     const getMock = h.mock(http, 'get').mockResolvedValue({ thumbnailUrl: 'http://test/thumbnail.jpg' })
     const album = h.factory('album')

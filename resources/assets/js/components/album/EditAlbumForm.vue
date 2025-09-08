@@ -49,7 +49,7 @@
           </button>
         </span>
         <div class="flex-1">
-          <FileInput v-if="!displayedCover" accept="image/*" name="cover" @change="onCoverChange">
+          <FileInput v-if="!displayedCover" accept="image/*" name="cover" @change="onImageInputChange">
             Pick a cover (optional)
           </FileInput>
         </div>
@@ -71,8 +71,8 @@ import { useDialogBox } from '@/composables/useDialogBox'
 import { useModal } from '@/composables/useModal'
 import type { AlbumUpdateData } from '@/stores/albumStore'
 import { albumStore } from '@/stores/albumStore'
-import { useFileReader } from '@/composables/useFileReader'
 import { useForm } from '@/composables/useForm'
+import { useImageFileInput } from '@/composables/useImageFileInput'
 
 import FormRow from '@/components/ui/form/FormRow.vue'
 import Btn from '@/components/ui/form/Btn.vue'
@@ -83,7 +83,6 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
-const { readAsDataUrl } = useFileReader()
 
 const close = () => emit('close')
 
@@ -101,23 +100,11 @@ const { data, isPristine, handleSubmit } = useForm<AlbumUpdateData>({
   },
 })
 
+const { onImageInputChange } = useImageFileInput({
+  onImageDataUrl: dataUrl => (data.cover = dataUrl),
+})
+
 const displayedCover = computed(() => album.cover || data.cover)
-
-const onCoverChange = (e: InputEvent) => {
-  const target = e.target as HTMLInputElement
-
-  if (!target.files || !target.files.length) {
-    data.cover = ''
-    return
-  }
-
-  readAsDataUrl(target.files[0], dataUrl => {
-    data.cover = dataUrl
-  })
-
-  // reset the value so that, if the user removes the logo, they can re-pick the same one
-  target.value = ''
-}
 
 const removeOrResetCover = async () => {
   if (data.cover) {

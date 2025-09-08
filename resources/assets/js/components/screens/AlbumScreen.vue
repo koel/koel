@@ -1,9 +1,9 @@
 <template>
   <ScreenBase>
     <template #header>
-      <ScreenHeaderSkeleton v-if="loading" />
+      <ScreenHeaderSkeleton v-if="loading && !album" />
 
-      <ScreenHeader v-if="!loading && album" :layout="songs.length === 0 ? 'collapsed' : headerLayout">
+      <ScreenHeader v-if="album" :disabled="loading" :layout="songs.length ? headerLayout : 'collapsed'">
         {{ album.name }}
         <ControlsToggle v-model="showingControls" />
 

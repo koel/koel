@@ -2,7 +2,7 @@
 
 namespace App\Values;
 
-final class GenreSummary
+final readonly class GenreSummary
 {
     private function __construct(
         public string $publicId,

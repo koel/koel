@@ -177,8 +177,7 @@ class User extends Authenticatable implements AuditableContract
 
     protected function hasCustomAvatar(): Attribute
     {
-        return Attribute::get(fn (): bool => (bool) Arr::get($this->attributes, 'avatar'))
-            ->shouldCache();
+        return Attribute::get(fn () => (bool) $this->getRawOriginal('avatar'))->shouldCache();
     }
 
     protected function isProspect(): Attribute

@@ -2,7 +2,7 @@
 
 namespace App\Values;
 
-readonly class RequestedStreamingConfig
+final readonly class RequestedStreamingConfig
 {
     private function __construct(
         public bool $transcode,

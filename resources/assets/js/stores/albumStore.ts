@@ -55,23 +55,6 @@ export const albumStore = {
     })
   },
 
-  /**
-   * Upload a cover for an album.
-   *
-   * @param {Album} album The album object
-   * @param {string} cover The content data string of the cover
-   */
-  async uploadCover (album: Album, cover: string) {
-    const coverUrl = (await http.put<{ cover_url: string }>(`albums/${album.id}/cover`, { cover })).cover_url
-
-    use(this.byId(album.id), album => {
-      album.cover = coverUrl
-      songStore.syncAlbumProperties(album)
-    })
-
-    return coverUrl
-  },
-
   async update (album: Album, data: AlbumUpdateData) {
     const updated = await http.put<Album>(`albums/${album.id}`, data)
     this.state.albums = unionBy(this.state.albums, this.syncWithVault(updated), 'id')

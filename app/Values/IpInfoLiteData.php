@@ -5,7 +5,7 @@ namespace App\Values;
 use Illuminate\Contracts\Support\Arrayable;
 use Saloon\Http\Response;
 
-readonly class IpInfoLiteData implements Arrayable
+final readonly class IpInfoLiteData implements Arrayable
 {
     private function __construct(
         public string $ip,

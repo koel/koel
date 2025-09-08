@@ -4,7 +4,7 @@
       <ScreenHeader
         v-if="playlist"
         :disabled="loading"
-        :layout="allPlayables.length === 0 ? 'collapsed' : headerLayout"
+        :layout="allPlayables.length ? headerLayout : 'collapsed'"
       >
         {{ playlist.name }}
         <p v-if="playlist.description" class="text-base text-k-text-secondary font-light">
@@ -89,7 +89,7 @@ import { playableStore } from '@/stores/playableStore'
 import { playlistCollaborationService } from '@/services/playlistCollaborationService'
 import { useRouter } from '@/composables/useRouter'
 import { useErrorHandler } from '@/composables/useErrorHandler'
-import { usePlaylistManagement } from '@/composables/usePlaylistManagement'
+import { usePlaylistContentManagement } from '@/composables/usePlaylistContentManagement'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
 
@@ -162,7 +162,7 @@ const {
 } = usePlayableList(allPlayables, { type: 'Playlist' })
 
 const { PlayableListControls, config: controlsConfig } = usePlayableListControls('Playlist')
-const { removeFromPlaylist } = usePlaylistManagement()
+const { removeFromPlaylist } = usePlaylistContentManagement()
 
 watch(filterKeywords, keywords => {
   // keep track of the keywords in the state

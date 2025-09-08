@@ -1,10 +1,10 @@
 <template>
   <ScreenBase>
     <template #header>
-      <ScreenHeader layout="collapsed">
+      <ScreenHeader layout="collapsed" :disabled="loading">
         Artists
         <template #controls>
-          <div v-if="!loading" class="flex gap-2">
+          <div class="flex gap-2">
             <Btn
               v-koel-tooltip
               :title="preferences.artists_favorites_only ? 'Show all' : 'Show favorites only'"

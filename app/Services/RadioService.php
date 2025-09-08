@@ -10,7 +10,7 @@ class RadioService
 {
     public function __construct(
         private readonly RadioStationRepository $repository,
-        private readonly ArtworkService $artworkService,
+        private readonly ImageStorage $imageStorage,
     ) {
     }
 
@@ -24,7 +24,7 @@ class RadioService
     ): RadioStation {
         // logo is optional and not critical, so no transaction is needed
         $logoFileName = rescue_if($logo, function () use ($logo) {
-            return $this->artworkService->storeRadioStationLogo($logo);
+            return $this->imageStorage->storeImage($logo);
         });
 
         /** @var RadioStation $station */
@@ -49,7 +49,7 @@ class RadioService
     ): RadioStation {
         // logo is optional and not critical, so no transaction is needed
         $newLogo = rescue_if($logo, function () use ($logo) {
-            return $this->artworkService->storeRadioStationLogo($logo);
+            return $this->imageStorage->storeImage($logo);
         });
 
         $data = [

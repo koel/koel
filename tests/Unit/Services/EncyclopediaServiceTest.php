@@ -4,9 +4,9 @@ namespace Tests\Unit\Services;
 
 use App\Models\Album;
 use App\Models\Artist;
-use App\Services\ArtworkService;
 use App\Services\Contracts\Encyclopedia;
 use App\Services\EncyclopediaService;
+use App\Services\ImageStorage;
 use App\Services\LastfmService;
 use App\Services\SpotifyService;
 use App\Values\AlbumInformation;
@@ -19,7 +19,7 @@ use Tests\TestCase;
 class EncyclopediaServiceTest extends TestCase
 {
     private Encyclopedia|MockInterface $encyclopedia;
-    private ArtworkService|MockInterface $artworkService;
+    private ImageStorage|MockInterface $imageStorage;
     private SpotifyService|MockInterface $spotifyService;
     private EncyclopediaService $encyclopediaService;
 
@@ -30,12 +30,12 @@ class EncyclopediaServiceTest extends TestCase
         parent::setUp();
 
         $this->encyclopedia = Mockery::mock(LastfmService::class);
-        $this->artworkService = Mockery::mock(ArtworkService::class);
+        $this->imageStorage = Mockery::mock(ImageStorage::class);
         $this->spotifyService = Mockery::mock(SpotifyService::class);
 
         $this->encyclopediaService = new EncyclopediaService(
             $this->encyclopedia,
-            $this->artworkService,
+            $this->imageStorage,
             $this->spotifyService,
         );
 
@@ -79,7 +79,7 @@ class EncyclopediaServiceTest extends TestCase
             ->with($album)
             ->andReturn($info);
 
-        $this->artworkService
+        $this->imageStorage
             ->expects('storeAlbumCover')
             ->with($album, 'https://wiki.example.com/album-cover.jpg');
 
@@ -107,7 +107,7 @@ class EncyclopediaServiceTest extends TestCase
 
         $this->spotifyService->expects('tryGetAlbumCover')->with($album)->andReturn('https://spotify.com/cover.jpg');
 
-        $this->artworkService
+        $this->imageStorage
             ->expects('storeAlbumCover')
             ->with($album, 'https://spotify.com/cover.jpg');
 
@@ -146,7 +146,7 @@ class EncyclopediaServiceTest extends TestCase
             ->with($artist)
             ->andReturn($info);
 
-        $this->artworkService
+        $this->imageStorage
             ->expects('storeArtistImage')
             ->with($artist, 'https://wiki.example.com/artist-image.jpg');
 
@@ -174,7 +174,7 @@ class EncyclopediaServiceTest extends TestCase
 
         $this->spotifyService->expects('tryGetArtistImage')->with($artist)->andReturn('https://spotify.com/image.jpg');
 
-        $this->artworkService
+        $this->imageStorage
             ->expects('storeArtistImage')
             ->with($artist, 'https://spotify.com/image.jpg');
 

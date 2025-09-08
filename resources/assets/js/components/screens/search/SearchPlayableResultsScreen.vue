@@ -1,7 +1,7 @@
 <template>
   <ScreenBase>
     <template #header>
-      <ScreenHeader :layout="playables.length === 0 ? 'collapsed' : headerLayout">
+      <ScreenHeader :disabled="loading" :layout="playables.length ? headerLayout : 'collapsed'">
         Results for <span class="font-thin">{{ decodedQ }}</span>
         <ControlsToggle v-model="showingControls" />
 

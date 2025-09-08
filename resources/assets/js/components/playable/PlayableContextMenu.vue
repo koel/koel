@@ -88,7 +88,7 @@ import { downloadService } from '@/services/downloadService'
 import { useRouter } from '@/composables/useRouter'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useDialogBox } from '@/composables/useDialogBox'
-import { usePlaylistManagement } from '@/composables/usePlaylistManagement'
+import { usePlaylistContentManagement } from '@/composables/usePlaylistContentManagement'
 import { usePlayableMenuMethods } from '@/composables/usePlayableMenuMethods'
 import { usePolicies } from '@/composables/usePolicies'
 import { useContextMenu } from '@/composables/useContextMenu'
@@ -99,7 +99,7 @@ const { toastSuccess, toastError, toastWarning } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { go, getRouteParam, isCurrentScreen, url } = useRouter()
 const { base, ContextMenu, open, close, trigger } = useContextMenu()
-const { removeFromPlaylist } = usePlaylistManagement()
+const { removeFromPlaylist } = usePlaylistContentManagement()
 const { isPlus } = useKoelPlus()
 
 const playables = ref<Playable[]>([])

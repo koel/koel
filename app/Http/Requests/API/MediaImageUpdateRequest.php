@@ -2,15 +2,15 @@
 
 namespace App\Http\Requests\API;
 
-use App\Rules\ImageData;
+use App\Rules\ValidImageData;
 
 abstract class MediaImageUpdateRequest extends Request
 {
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function rules(): array
     {
         return [
-            $this->getImageFieldName() => ['string', 'required', new ImageData()],
+            $this->getImageFieldName() => ['string', 'required', new ValidImageData()],
         ];
     }
 

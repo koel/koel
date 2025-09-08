@@ -46,7 +46,7 @@
           </button>
         </span>
         <div class="flex-1">
-          <FileInput v-if="!data.logo" accept="image/*" name="logo" @change="onLogoChange">
+          <FileInput v-if="!data.logo" accept="image/*" name="logo" @change="onImageInputChange">
             Pick a logo (optional)
           </FileInput>
         </div>
@@ -71,8 +71,8 @@ import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import type { RadioStationData } from '@/stores/radioStationStore'
 import { radioStationStore } from '@/stores/radioStationStore'
-import { useFileReader } from '@/composables/useFileReader'
 import { useForm } from '@/composables/useForm'
+import { useImageFileInput } from '@/composables/useImageFileInput'
 
 import TextInput from '@/components/ui/form/TextInput.vue'
 import Btn from '@/components/ui/form/Btn.vue'
@@ -85,7 +85,6 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
-const { readAsDataUrl } = useFileReader()
 
 const close = () => emit('close')
 
@@ -104,20 +103,9 @@ const { data, isPristine, handleSubmit } = useForm<RadioStationData>({
   },
 })
 
-const onLogoChange = (e: InputEvent) => {
-  const target = e.target as HTMLInputElement
-
-  if (!target.files || !target.files.length) {
-    return
-  }
-
-  readAsDataUrl(target.files[0], dataUrl => {
-    data.logo = dataUrl
-  })
-
-  // reset the value so that, if the user removes the logo, they can re-pick the same one
-  target.value = ''
-}
+const { onImageInputChange } = useImageFileInput({
+  onImageDataUrl: dataUrl => (data.logo = dataUrl),
+})
 
 const maybeClose = async () => {
   if (isPristine() || await showConfirmDialog('Discard all changes?')) {

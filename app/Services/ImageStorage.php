@@ -5,12 +5,12 @@ namespace App\Services;
 use App\Helpers\Ulid;
 use App\Models\Album;
 use App\Models\Artist;
-use App\Models\Playlist;
+use App\Values\ImageWritingConfig;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\Finder\Finder;
 
-class ArtworkService
+class ImageStorage
 {
     public function __construct(
         private readonly ImageWriter $imageWriter,
@@ -21,16 +21,19 @@ class ArtworkService
     /**
      * Write an album cover image file and update the Album with the new cover attribute.
      *
-     * @param string $source Path, URL, or even binary data. See https://image.intervention.io/v2/api/make.
+     * @param string $source Path, URL, or even binary data.
+     * See https://image.intervention.io/v3/basics/instantiation#read-image-sources.
      * @param string|null $destination The destination path. Automatically generated if empty.
      */
     public function storeAlbumCover(Album $album, string $source, ?string $destination = ''): ?string
     {
-        return rescue(function () use ($album, $source, $destination): string {
-            $destination = $destination ?: self::generateImageStoragePath();
-            $this->imageWriter->write($destination, $source);
+        $destination = $destination ?: self::generateRandomStoragePath();
 
-            $album->update(['cover' => basename($destination)]);
+        return rescue(function () use ($album, $source, $destination): string {
+            $this->imageWriter->write($destination, $source);
+            $album->cover = basename($destination);
+            $album->save();
+
             $this->createThumbnailForAlbum($album);
 
             return $album->cover;
@@ -45,35 +48,20 @@ class ArtworkService
      */
     public function storeArtistImage(Artist $artist, string $source, ?string $destination = ''): ?string
     {
-        return rescue(function () use ($artist, $source, $destination): string {
-            $destination = $destination ?: self::generateImageStoragePath();
-            $this->imageWriter->write($destination, $source);
+        $destination = $destination ?: self::generateRandomStoragePath();
 
-            $artist->update(['image' => basename($destination)]);
+        return rescue(function () use ($artist, $source, $destination): string {
+            $this->imageWriter->write($destination, $source);
+            $artist->image = basename($destination);
+            $artist->save();
 
             return $artist->image;
         });
     }
 
-    public function storePlaylistCover(Playlist $playlist, string $source): ?string
-    {
-        return rescue(function () use ($playlist, $source): string {
-            $destination = self::generateImageStoragePath();
-            $this->imageWriter->write($destination, $source);
-
-            if ($playlist->cover_path) {
-                File::delete($playlist->cover_path);
-            }
-
-            $playlist->update(['cover' => basename($destination)]);
-
-            return $playlist->cover;
-        });
-    }
-
     /**
      * Get the URL of an album's thumbnail.
-     * Auto-generate the thumbnail when possible, if one doesn't exist yet.
+     * Auto-generate the thumbnail when possible if one doesn't exist.
      */
     public function getAlbumThumbnailUrl(Album $album): ?string
     {
@@ -90,7 +78,10 @@ class ArtworkService
 
     private function createThumbnailForAlbum(Album $album): void
     {
-        $this->imageWriter->write($album->thumbnail_path, $album->cover_path, ['max_width' => 48, 'blur' => 10]);
+        $this->imageWriter->write($album->thumbnail_path, $album->cover_path, ImageWritingConfig::make(
+            maxWidth: 48,
+            blur: 10,
+        ));
     }
 
     public function trySetAlbumCoverFromDirectory(Album $album, string $directory): void
@@ -104,7 +95,7 @@ class ArtworkService
                         ->ignoreUnreadableDirs()
                         ->files()
                         ->followLinks()
-                        ->name('/(cov|fold)er\.(jpe?g|png)$/i')
+                        ->name('/(cov|fold)er\.(jpe?g|gif|png|webp|avif)$/i')
                         ->in($directory)
                 )
             );
@@ -119,15 +110,15 @@ class ArtworkService
         });
     }
 
-    public function storeRadioStationLogo(string $logo): ?string
+    public function storeImage(mixed $source, ?ImageWritingConfig $config = null): string
     {
-        $destination = self::generateImageStoragePath();
-        $this->imageWriter->write($destination, $logo);
+        $destination = self::generateRandomStoragePath();
+        $this->imageWriter->write($destination, $source, $config);
 
         return basename($destination);
     }
 
-    private static function generateImageStoragePath(): string
+    private static function generateRandomStoragePath(): string
     {
         return image_storage_path(sprintf('%s.webp', Ulid::generate()));
     }

@@ -2,7 +2,7 @@
   <article
     :class="layout"
     :style="{ backgroundImage: `url(${defaultCover})` }"
-    class="thumbnail-stack aspect-square overflow-hidden grid bg-cover bg-no-repeat"
+    class="thumbnail-stack flex-1 aspect-square overflow-hidden grid bg-cover bg-no-repeat"
   >
     <span
       v-for="thumbnail in displayedThumbnails"

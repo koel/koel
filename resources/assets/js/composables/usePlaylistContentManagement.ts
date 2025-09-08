@@ -4,7 +4,7 @@ import { getPlayableCollectionContentType } from '@/utils/typeGuards'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 
-export const usePlaylistManagement = () => {
+export const usePlaylistContentManagement = () => {
   const { handleHttpError } = useErrorHandler('dialog')
   const { toastSuccess } = useMessageToaster()
 

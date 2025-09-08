@@ -3,7 +3,7 @@
 namespace Tests\Integration\Services;
 
 use App\Models\Album;
-use App\Services\ArtworkService;
+use App\Services\ImageStorage;
 use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -29,7 +29,7 @@ class EncyclopediaServiceTest extends TestCase
 
         self::assertSame(
             image_storage_url('album-cover-for-thumbnail-test_thumb.jpg'),
-            app(ArtworkService::class)->getAlbumThumbnailUrl($album)
+            app(ImageStorage::class)->getAlbumThumbnailUrl($album)
         );
 
         self::assertFileExists(image_storage_path('album-cover-for-thumbnail-test_thumb.jpg'));
@@ -40,7 +40,7 @@ class EncyclopediaServiceTest extends TestCase
     {
         /** @var Album $album */
         $album = Album::factory()->create(['cover' => '']);
-        self::assertNull(app(ArtworkService::class)->getAlbumThumbnailUrl($album));
+        self::assertNull(app(ImageStorage::class)->getAlbumThumbnailUrl($album));
     }
 
     private function cleanUp(): void
