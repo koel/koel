@@ -15,7 +15,7 @@ class ArtistObserver
 
         $oldImage = $artist->getRawOriginal('image');
 
-        rescue_if($oldImage, static fn () => File::delete(artist_image_path($oldImage)));
+        rescue_if($oldImage, static fn () => File::delete(image_storage_path($oldImage)));
     }
 
     public function updated(Artist $artist): void

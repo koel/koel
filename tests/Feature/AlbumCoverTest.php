@@ -56,7 +56,7 @@ class AlbumCoverTest extends TestCase
     public function destroy(): void
     {
         $file = Ulid::generate() . '.jpg';
-        File::put(album_cover_path($file), 'foo');
+        File::put(image_storage_path($file), 'foo');
 
         /** @var Album $album */
         $album = Album::factory()->create([
@@ -67,7 +67,7 @@ class AlbumCoverTest extends TestCase
             ->assertNoContent();
 
         self::assertNull($album->refresh()->cover);
-        self::assertFileDoesNotExist(album_cover_path($file));
+        self::assertFileDoesNotExist(image_storage_path($file));
     }
 
     #[Test]

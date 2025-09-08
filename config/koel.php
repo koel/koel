@@ -9,20 +9,10 @@ return [
     // or downloaded podcast episodes. By default, it is set to the system's temporary directory.
     'artifacts_path' => env('ARTIFACTS_PATH') ?: sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'koel',
 
-    // The *relative* path to the directory to store album covers and thumbnails, *with* a trailing slash.
-    'album_cover_dir' => 'img/covers/',
+    // The *relative* path to the directory to store artist images, playlist covers, user avatars, etc.
+    // This is relative to the public path.
+    'image_storage_dir' => 'img/storage/',
 
-    // The *relative* path to the directory to store artist images, *with* a trailing slash.
-    'artist_image_dir' => 'img/artists/',
-
-    // The *relative* path to the directory to store playlist covers, *with* a trailing slash.
-    'playlist_cover_dir' => 'img/playlists/',
-
-    // The *relative* path to the directory to store user avatars, *with* a trailing slash.
-    'user_avatar_dir' => 'img/avatars/',
-
-    // The *relative* path to the directory to store radio station logos, *with* a trailing slash.
-    'radio_station_logo_dir' => 'img/radio-stations/',
 
     /*
     |--------------------------------------------------------------------------

@@ -103,7 +103,7 @@ class Playlist extends Model implements AuditableContract
 
     protected function cover(): Attribute
     {
-        return Attribute::get(static fn (?string $value): ?string => playlist_cover_url($value))->shouldCache();
+        return Attribute::get(static fn (?string $value): ?string => image_storage_url($value))->shouldCache();
     }
 
     protected function coverPath(): Attribute
@@ -111,7 +111,7 @@ class Playlist extends Model implements AuditableContract
         return Attribute::get(function () {
             $cover = Arr::get($this->attributes, 'cover');
 
-            return $cover ? playlist_cover_path($cover) : null;
+            return $cover ? image_storage_path($cover) : null;
         })->shouldCache();
     }
 

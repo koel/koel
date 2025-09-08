@@ -22,17 +22,17 @@ class EncyclopediaServiceTest extends TestCase
     #[Test]
     public function getAlbumThumbnailUrl(): void
     {
-        File::copy(test_path('fixtures/cover.png'), album_cover_path('album-cover-for-thumbnail-test.jpg'));
+        File::copy(test_path('fixtures/cover.png'), image_storage_path('album-cover-for-thumbnail-test.jpg'));
 
         /** @var Album $album */
         $album = Album::factory()->create(['cover' => 'album-cover-for-thumbnail-test.jpg']);
 
         self::assertSame(
-            album_cover_url('album-cover-for-thumbnail-test_thumb.jpg'),
+            image_storage_url('album-cover-for-thumbnail-test_thumb.jpg'),
             app(ArtworkService::class)->getAlbumThumbnailUrl($album)
         );
 
-        self::assertFileExists(album_cover_path('album-cover-for-thumbnail-test_thumb.jpg'));
+        self::assertFileExists(image_storage_path('album-cover-for-thumbnail-test_thumb.jpg'));
     }
 
     #[Test]
@@ -45,11 +45,11 @@ class EncyclopediaServiceTest extends TestCase
 
     private function cleanUp(): void
     {
-        File::delete(album_cover_path('album-cover-for-thumbnail-test.jpg'));
-        File::delete(album_cover_path('album-cover-for-thumbnail-test_thumb.jpg'));
+        File::delete(image_storage_path('album-cover-for-thumbnail-test.jpg'));
+        File::delete(image_storage_path('album-cover-for-thumbnail-test_thumb.jpg'));
 
-        self::assertFileDoesNotExist(album_cover_path('album-cover-for-thumbnail-test.jpg'));
-        self::assertFileDoesNotExist(album_cover_path('album-cover-for-thumbnail-test_thumb.jpg'));
+        self::assertFileDoesNotExist(image_storage_path('album-cover-for-thumbnail-test.jpg'));
+        self::assertFileDoesNotExist(image_storage_path('album-cover-for-thumbnail-test_thumb.jpg'));
     }
 
     protected function tearDown(): void

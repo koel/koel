@@ -78,7 +78,7 @@ class ProfileTest extends TestCase
 
         $user->refresh();
 
-        self::assertFileExists(user_avatar_path($user->getRawOriginal('avatar')));
+        self::assertFileExists(image_storage_path($user->getRawOriginal('avatar')));
     }
 
     #[Test]

@@ -16,7 +16,7 @@ class PlaylistObserver
         $oldCover = $playlist->getRawOriginal('cover');
 
         // If the cover is being updated, delete the old cover
-        rescue_if($oldCover, static fn () => File::delete(playlist_cover_path($oldCover)));
+        rescue_if($oldCover, static fn () => File::delete(image_storage_path($oldCover)));
     }
 
     public function deleted(Playlist $playlist): void

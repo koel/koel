@@ -58,7 +58,7 @@ class ArtistImageTest extends TestCase
     public function destroy(): void
     {
         $file = Ulid::generate() . '.jpg';
-        File::put(artist_image_path($file), 'foo');
+        File::put(image_storage_path($file), 'foo');
 
         /** @var Artist $artist */
         $artist = Artist::factory()->create([
@@ -69,7 +69,7 @@ class ArtistImageTest extends TestCase
             ->assertNoContent();
 
         self::assertNull($artist->refresh()->image);
-        self::assertFileDoesNotExist(artist_image_path($file));
+        self::assertFileDoesNotExist(image_storage_path($file));
     }
 
     #[Test]

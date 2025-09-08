@@ -19,11 +19,11 @@ class AlbumObserver
         rescue_if(
             $oldCover,
             static function () use ($oldCover): void {
-                $oldCoverPath = album_cover_path($oldCover);
+                $oldCoverPath = image_storage_path($oldCover);
                 $parts = pathinfo($oldCoverPath);
 
                 $oldThumbnail = sprintf('%s_thumb.%s', $parts['filename'], $parts['extension']);
-                File::delete([$oldCoverPath, album_cover_path($oldThumbnail)]);
+                File::delete([$oldCoverPath, image_storage_path($oldThumbnail)]);
             },
         );
     }

@@ -20,7 +20,7 @@ class RadioStationObserver
         rescue_if(
             $radioStation->getRawOriginal('logo'),
             static function (string $oldLogo): void {
-                File::delete(radio_station_logo_path($oldLogo));
+                File::delete(image_storage_path($oldLogo));
             }
         );
     }

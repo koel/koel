@@ -138,12 +138,12 @@ class Artist extends Model implements AuditableContract, Favoriteable, Permissio
      */
     protected function image(): Attribute
     {
-        return Attribute::get(static fn (?string $value): ?string => artist_image_url($value));
+        return Attribute::get(static fn (?string $value): ?string => image_storage_url($value));
     }
 
     protected function imagePath(): Attribute
     {
-        return Attribute::get(fn (): ?string => artist_image_path(Arr::get($this->attributes, 'image')));
+        return Attribute::get(fn (): ?string => image_storage_path(Arr::get($this->attributes, 'image')));
     }
 
     protected function hasImage(): Attribute
@@ -151,7 +151,7 @@ class Artist extends Model implements AuditableContract, Favoriteable, Permissio
         return Attribute::get(function (): bool {
             $image = Arr::get($this->attributes, 'image');
 
-            return $image && (app()->runningUnitTests() || File::exists(artist_image_path($image)));
+            return $image && (app()->runningUnitTests() || File::exists(image_storage_path($image)));
         });
     }
 

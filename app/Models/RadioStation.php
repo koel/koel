@@ -68,7 +68,7 @@ class RadioStation extends Model implements AuditableContract, Favoriteable, Per
 
     protected function logo(): Attribute
     {
-        return Attribute::get(static fn (?string $value): ?string => radio_station_logo_url($value))->shouldCache();
+        return Attribute::get(static fn (?string $value): ?string => image_storage_url($value))->shouldCache();
     }
 
     protected function logoPath(): Attribute
@@ -76,7 +76,7 @@ class RadioStation extends Model implements AuditableContract, Favoriteable, Per
         return Attribute::get(function () {
             $logo = Arr::get($this->attributes, 'logo');
 
-            return $logo ? radio_station_logo_path($logo) : null;
+            return $logo ? image_storage_path($logo) : null;
         })->shouldCache();
     }
 
