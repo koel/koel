@@ -3,7 +3,6 @@
     <template #header>
       <ScreenHeader :layout="playables.length === 0 ? 'collapsed' : headerLayout">
         Current Queue
-        <ControlsToggle v-model="showingControls" />
 
         <template #thumbnail>
           <ThumbnailStack :thumbnails />
@@ -16,7 +15,7 @@
 
         <template #controls>
           <PlayableListControls
-            v-if="playables.length && (!isPhone || showingControls)"
+            v-if="playables.length"
             :config
             @filter="applyFilter"
             @clear-queue="clearQueue"
@@ -75,7 +74,6 @@ const { go, onScreenActivated, url } = useRouter()
 
 const {
   PlayableList,
-  ControlsToggle,
   ThumbnailStack,
   headerLayout,
   playables,
@@ -83,8 +81,6 @@ const {
   duration,
   thumbnails,
   selectedPlayables,
-  showingControls,
-  isPhone,
   playSelected,
   applyFilter,
   onSwipe,

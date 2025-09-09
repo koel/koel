@@ -3,7 +3,6 @@
     <template #header>
       <ScreenHeader :disabled="loading" :layout="playables.length ? headerLayout : 'collapsed'">
         Results for <span class="font-thin">{{ decodedQ }}</span>
-        <ControlsToggle v-model="showingControls" />
 
         <template #thumbnail>
           <ThumbnailStack :thumbnails="thumbnails" />
@@ -16,7 +15,7 @@
 
         <template #controls>
           <PlayableListControls
-            v-if="playables.length && (!isPhone || showingControls)"
+            v-if="playables.length"
             :config
             @filter="applyFilter"
             @play-all="playAll"
@@ -54,15 +53,12 @@ const q = ref('')
 
 const {
   PlayableList,
-  ControlsToggle,
   ThumbnailStack,
   headerLayout,
   playables,
   playableList,
   thumbnails,
   duration,
-  showingControls,
-  isPhone,
   onPressEnter,
   playAll,
   playSelected,

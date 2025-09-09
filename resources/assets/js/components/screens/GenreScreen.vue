@@ -8,8 +8,6 @@
         </template>
         <span v-else class="font-thin italic">No Genre</span>
 
-        <ControlsToggle v-if="displayedSongs.length" v-model="showingControls" />
-
         <template #thumbnail>
           <ThumbnailStack :thumbnails />
         </template>
@@ -20,12 +18,7 @@
         </template>
 
         <template #controls>
-          <SongListControls
-            v-if="!isPhone || showingControls"
-            :config
-            @play-all="playAll"
-            @play-selected="playSelected"
-          >
+          <SongListControls :config @play-all="playAll" @play-selected="playSelected">
             <Btn gray @click="requestContextMenu">
               <Icon :icon="faEllipsis" fixed-width />
               <span class="sr-only">More Actions</span>
@@ -82,14 +75,10 @@ const songs = ref<Song[]>([])
 
 const {
   PlayableList: SongList,
-  ControlsToggle,
   ThumbnailStack,
   headerLayout,
-  playables: displayedSongs,
   playableList: songList,
   thumbnails,
-  showingControls,
-  isPhone,
   onPressEnter,
   playSelected,
   onSwipe,

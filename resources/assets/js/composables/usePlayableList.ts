@@ -1,5 +1,4 @@
 import { differenceBy, orderBy, take, throttle } from 'lodash'
-import isMobile from 'ismobilejs'
 import type { Ref } from 'vue'
 import { computed, provide, reactive, ref } from 'vue'
 import { commonStore } from '@/stores/commonStore'
@@ -22,7 +21,6 @@ import {
   SelectedPlayablesKey,
 } from '@/symbols'
 
-import ControlsToggle from '@/components/ui/ScreenControlsToggle.vue'
 import PlayableList from '@/components/playable/playable-list/PlayableList.vue'
 import ThumbnailStack from '@/components/ui/ThumbnailStack.vue'
 
@@ -62,9 +60,7 @@ export const usePlayableList = (
 
   const playableList = ref<InstanceType<typeof PlayableList>>()
 
-  const isPhone = isMobile.phone
   const selectedPlayables = ref<Playable[]>([])
-  const showingControls = ref(false)
   const headerLayout = ref<ScreenHeaderLayout>('expanded')
 
   const sortField = ref<MaybeArray<PlayableListSortField> | null>((() => {
@@ -217,7 +213,6 @@ export const usePlayableList = (
 
   return {
     PlayableList,
-    ControlsToggle,
     ThumbnailStack,
     playables: filteredPlayables,
     config,
@@ -230,9 +225,7 @@ export const usePlayableList = (
     thumbnails,
     playableList,
     selectedPlayables,
-    showingControls,
     filterKeywords,
-    isPhone,
     onPressEnter,
     playAll,
     playSelected,

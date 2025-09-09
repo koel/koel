@@ -3,7 +3,6 @@
     <template #header>
       <ScreenHeader :layout="playables.length === 0 ? 'collapsed' : headerLayout">
         Your Favorites
-        <ControlsToggle v-model="showingControls" />
 
         <template #thumbnail>
           <ThumbnailStack :thumbnails="thumbnails" />
@@ -26,7 +25,7 @@
 
         <template #controls>
           <PlayableListControls
-            v-if="playables.length && (!isPhone || showingControls)"
+            v-if="playables.length"
             :config
             @filter="applyFilter"
             @play-all="playAll"
@@ -78,7 +77,6 @@ import PlayableListSkeleton from '@/components/playable/playable-list/PlayableLi
 
 const {
   PlayableList,
-  ControlsToggle,
   ThumbnailStack,
   headerLayout,
   playables,
@@ -87,8 +85,6 @@ const {
   downloadable,
   thumbnails,
   selectedPlayables,
-  showingControls,
-  isPhone,
   onPressEnter,
   playAll,
   playSelected,

@@ -3,7 +3,6 @@
     <template #header>
       <ScreenHeader :layout="playables.length === 0 ? 'collapsed' : headerLayout">
         Recently Played
-        <ControlsToggle v-model="showingControls" />
 
         <template #thumbnail>
           <ThumbnailStack :thumbnails="thumbnails" />
@@ -16,7 +15,7 @@
 
         <template #controls>
           <PlayableListControls
-            v-if="playables.length && (!isPhone || showingControls)"
+            v-if="playables.length"
             :config
             @filter="applyFilter"
             @play-all="playAll"
@@ -64,15 +63,12 @@ const recentlyPlayedSongs = toRef(recentlyPlayedStore.state, 'playables')
 
 const {
   PlayableList,
-  ControlsToggle,
   ThumbnailStack,
   headerLayout,
   playables,
   playableList,
   thumbnails,
   duration,
-  showingControls,
-  isPhone,
   onPressEnter,
   playAll,
   playSelected,
