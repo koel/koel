@@ -6,7 +6,7 @@ use App\Http\Requests\API\Request as BaseRequest;
 
 class Request extends BaseRequest
 {
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function rules(): array
     {
         return [

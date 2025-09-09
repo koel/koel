@@ -12,7 +12,6 @@ use App\Services\UserService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Http\Response;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class ProfileController extends Controller
@@ -40,14 +39,7 @@ class ProfileController extends Controller
             ValidationException::withMessages(['current_password' => 'Invalid current password'])
         );
 
-        $user = $this->userService->updateUser(
-            user: $this->user,
-            name: $request->name,
-            email: $request->email,
-            password: $request->new_password,
-            avatar: Str::startsWith($request->avatar, 'data:') ? $request->avatar : null
-        );
-
+        $user = $this->userService->updateUser($this->user, $request->toDto());
         $response = UserResource::make($user)->response();
 
         if ($request->new_password) {

@@ -4,8 +4,8 @@ namespace App\Http\Controllers\API\Radio;
 
 use App\Attributes\DisabledInDemo;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\API\Radio\StoreRadioStationRequest;
-use App\Http\Requests\API\Radio\UpdateRadioStationRequest;
+use App\Http\Requests\API\Radio\RadioStationStoreRequest;
+use App\Http\Requests\API\Radio\RadioStationUpdateRequest;
 use App\Http\Resources\RadioStationResource;
 use App\Models\RadioStation;
 use App\Models\User;
@@ -30,16 +30,9 @@ class RadioStationController extends Controller
     }
 
     #[DisabledInDemo]
-    public function store(StoreRadioStationRequest $request)
+    public function store(RadioStationStoreRequest $request)
     {
-        $station = $this->radioService->createRadioStation(
-            $request->url,
-            $request->name,
-            $request->logo,
-            $request->description,
-            (bool) $request->is_public,
-            $this->user
-        );
+        $station = $this->radioService->createRadioStation($request->toDto(), $this->user);
 
         return RadioStationResource::make($station)
             ->response()
@@ -47,20 +40,11 @@ class RadioStationController extends Controller
     }
 
     #[DisabledInDemo]
-    public function update(RadioStation $station, UpdateRadioStationRequest $request)
+    public function update(RadioStation $station, RadioStationUpdateRequest $request)
     {
         $this->authorize('update', $station);
 
-        $updated = $this->radioService->updateRadioStation(
-            $station,
-            $request->url,
-            $request->name,
-            $request->logo,
-            $request->description,
-            (bool) $request->is_public
-        );
-
-        return RadioStationResource::make($updated);
+        return RadioStationResource::make($this->radioService->updateRadioStation($station, $request->toDto()));
     }
 
     #[DisabledInDemo]

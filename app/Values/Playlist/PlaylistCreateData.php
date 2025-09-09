@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Values;
+namespace App\Values\Playlist;
 
 use App\Exceptions\PlaylistBothSongsAndRulesProvidedException;
-use App\Http\Requests\API\Playlist\PlaylistStoreRequest;
 use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Support\Arr;
 
 final readonly class PlaylistCreateData implements Arrayable
 {
@@ -22,18 +20,6 @@ final readonly class PlaylistCreateData implements Arrayable
         public ?SmartPlaylistRuleGroupCollection $ruleGroups,
     ) {
         throw_if($this->ruleGroups && $this->playableIds, PlaylistBothSongsAndRulesProvidedException::class);
-    }
-
-    public static function fromRequest(PlaylistStoreRequest $request): self
-    {
-        return new self(
-            name: $request->name,
-            description: (string) $request->description,
-            folderId: $request->folder_id,
-            cover: $request->cover,
-            playableIds: Arr::wrap($request->songs),
-            ruleGroups: $request->rules ? SmartPlaylistRuleGroupCollection::create(Arr::wrap($request->rules)) : null,
-        );
     }
 
     public static function make(

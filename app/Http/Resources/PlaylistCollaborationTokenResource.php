@@ -17,7 +17,7 @@ class PlaylistCollaborationTokenResource extends JsonResource
         parent::__construct($token);
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function toArray($request): array
     {
         return [

@@ -12,8 +12,6 @@ use App\Models\User;
 use App\Repositories\PlaylistFolderRepository;
 use App\Repositories\PlaylistRepository;
 use App\Services\PlaylistService;
-use App\Values\PlaylistCreateData;
-use App\Values\PlaylistUpdateData;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Validation\ValidationException;
 
@@ -40,10 +38,7 @@ class PlaylistController extends Controller
         }
 
         try {
-            $playlist = $this->playlistService->createPlaylist(
-                PlaylistCreateData::fromRequest($request),
-                $this->user,
-            );
+            $playlist = $this->playlistService->createPlaylist($request->toDto(), $this->user);
 
             return PlaylistResource::make($playlist);
         } catch (PlaylistBothSongsAndRulesProvidedException $e) {
@@ -59,9 +54,7 @@ class PlaylistController extends Controller
             $this->authorize('own', $this->folderRepository->getOne($request->folder_id));
         }
 
-        $updated = $this->playlistService->updatePlaylist($playlist, PlaylistUpdateData::fromRequest($request));
-
-        return PlaylistResource::make($updated);
+        return PlaylistResource::make($this->playlistService->updatePlaylist($playlist, $request->toDto()));
     }
 
     public function destroy(Playlist $playlist)

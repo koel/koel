@@ -12,8 +12,8 @@ use App\Pipelines\Encyclopedia\GetReleaseAndReleaseGroupMbidsForAlbum;
 use App\Pipelines\Encyclopedia\GetWikipediaPageSummaryUsingPageTitle;
 use App\Pipelines\Encyclopedia\GetWikipediaPageTitleUsingWikidataId;
 use App\Services\Contracts\Encyclopedia;
-use App\Values\AlbumInformation;
-use App\Values\ArtistInformation;
+use App\Values\Album\AlbumInformation;
+use App\Values\Artist\ArtistInformation;
 use Illuminate\Support\Facades\Pipeline;
 
 class MusicBrainzService implements Encyclopedia

@@ -9,7 +9,7 @@ use App\Http\Requests\API\Request;
  */
 class PlaylistFolderStoreRequest extends Request
 {
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function rules(): array
     {
         return [

@@ -26,7 +26,7 @@ final class SmartPlaylistRuleGroup implements Arrayable
         );
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function toArray(): array
     {
         return [

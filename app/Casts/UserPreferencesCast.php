@@ -2,7 +2,7 @@
 
 namespace App\Casts;
 
-use App\Values\UserPreferences;
+use App\Values\User\UserPreferences;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 
 class UserPreferencesCast implements CastsAttributes

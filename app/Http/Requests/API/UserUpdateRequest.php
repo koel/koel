@@ -3,6 +3,7 @@
 namespace App\Http\Requests\API;
 
 use App\Models\User;
+use App\Values\User\UserUpdateData;
 use Illuminate\Validation\Rules\Password;
 
 /**
@@ -12,7 +13,7 @@ use Illuminate\Validation\Rules\Password;
  */
 class UserUpdateRequest extends Request
 {
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function rules(): array
     {
         /** @var User $user */
@@ -24,5 +25,15 @@ class UserUpdateRequest extends Request
             'password' => ['sometimes', Password::defaults()],
             'is_admin' => 'sometimes',
         ];
+    }
+
+    public function toDto(): UserUpdateData
+    {
+        return UserUpdateData::make(
+            name: $this->name,
+            email: $this->email,
+            plainTextPassword: $this->password,
+            isAdmin: $this->has('is_admin') ? $this->boolean('is_admin') : null,
+        );
     }
 }

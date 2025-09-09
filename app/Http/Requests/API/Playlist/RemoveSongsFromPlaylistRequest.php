@@ -11,7 +11,7 @@ use Illuminate\Validation\Rule;
  */
 class RemoveSongsFromPlaylistRequest extends Request
 {
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function rules(): array
     {
         return [

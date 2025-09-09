@@ -4,6 +4,8 @@ namespace Tests\Integration\Services;
 
 use App\Models\RadioStation;
 use App\Services\RadioService;
+use App\Values\Radio\RadioStationCreateData;
+use App\Values\Radio\RadioStationUpdateData;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -25,14 +27,12 @@ class RadioServiceTest extends TestCase
     {
         $user = create_user();
 
-        $station = $this->service->createRadioStation(
+        $station = $this->service->createRadioStation(RadioStationCreateData::make(
             url: 'https://example.com/stream',
             name: 'Test Radio',
-            logo: null,
             description: 'A test radio station',
             isPublic: true,
-            user: $user,
-        );
+        ), $user);
 
         self::assertSame('Test Radio', $station->name);
         self::assertSame('https://example.com/stream', $station->url);
@@ -48,14 +48,11 @@ class RadioServiceTest extends TestCase
         /** @var RadioStation $station */
         $station = RadioStation::factory()->create();
 
-        $updatedStation = $this->service->updateRadioStation(
-            radioStation: $station,
-            url: 'https://example.com/new-stream',
+        $updatedStation = $this->service->updateRadioStation($station, RadioStationUpdateData::make(
             name: 'Updated Radio',
-            logo: null,
+            url: 'https://example.com/new-stream',
             description: 'An updated test radio station',
-            isPublic: false,
-        );
+        ));
 
         self::assertSame('Updated Radio', $updatedStation->name);
         self::assertSame('https://example.com/new-stream', $updatedStation->url);

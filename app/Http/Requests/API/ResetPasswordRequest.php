@@ -11,7 +11,7 @@ use Illuminate\Validation\Rules\Password;
  */
 class ResetPasswordRequest extends Request
 {
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function rules(): array
     {
         return [

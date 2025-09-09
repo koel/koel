@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class SettingFactory extends Factory
 {
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function definition(): array
     {
         return [

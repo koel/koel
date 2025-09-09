@@ -12,7 +12,7 @@ use App\Pipelines\Encyclopedia\GetReleaseAndReleaseGroupMbidsForAlbum;
 use App\Pipelines\Encyclopedia\GetWikipediaPageSummaryUsingPageTitle;
 use App\Pipelines\Encyclopedia\GetWikipediaPageTitleUsingWikidataId;
 use App\Services\MusicBrainzService;
-use App\Values\AlbumInformation;
+use App\Values\Album\AlbumInformation;
 use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;

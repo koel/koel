@@ -7,6 +7,9 @@ use App\Models\PlaylistFolder;
 use App\Rules\AllPlayablesAreAccessibleBy;
 use App\Rules\ValidImageData;
 use App\Rules\ValidSmartPlaylistRulePayload;
+use App\Values\Playlist\PlaylistCreateData;
+use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
+use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 
 /**
@@ -30,5 +33,17 @@ class PlaylistStoreRequest extends Request
             'folder_id' => ['nullable', 'sometimes', Rule::exists(PlaylistFolder::class, 'id')],
             'cover' => ['sometimes', 'nullable', new ValidImageData()],
         ];
+    }
+
+    public function toDto(): PlaylistCreateData
+    {
+        return PlaylistCreateData::make(
+            name: $this->name,
+            description: (string) $this->description,
+            folderId: $this->folder_id,
+            cover: $this->cover,
+            playableIds: Arr::wrap($this->songs),
+            ruleGroups: $this->rules ? SmartPlaylistRuleGroupCollection::create(Arr::wrap($this->rules)) : null,
+        );
     }
 }

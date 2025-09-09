@@ -6,7 +6,7 @@ use App\Attributes\RequiresPlus;
 use App\Http\Controllers\Controller;
 use App\Services\AuthenticationService;
 use App\Services\UserService;
-use App\Values\SsoUser;
+use App\Values\User\SsoUser;
 use Laravel\Socialite\Facades\Socialite;
 
 #[RequiresPlus]

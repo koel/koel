@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Values\PlaylistCollaborator;
+use App\Values\Playlist\PlaylistCollaborator;
 use Carbon\Carbon;
 
 class CollaborativeSongResource extends SongResource
@@ -21,7 +21,7 @@ class CollaborativeSongResource extends SongResource
         return CollaborativeSongResourceCollection::make($resource);
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function toArray($request): array
     {
         return array_merge(parent::toArray($request), [

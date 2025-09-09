@@ -4,6 +4,8 @@ namespace Tests\Integration\Services;
 
 use App\Exceptions\UserProspectUpdateDeniedException;
 use App\Services\UserService;
+use App\Values\User\UserCreateData;
+use App\Values\User\UserUpdateData;
 use Illuminate\Support\Facades\Hash;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -28,13 +30,13 @@ class UserServiceTest extends TestCase
     #[Test]
     public function createUser(): void
     {
-        $user = $this->service->createUser(
+        $user = $this->service->createUser(UserCreateData::make(
             name: 'Bruce Dickinson',
             email: 'bruce@dickison.com',
             plainTextPassword: 'FearOfTheDark',
             isAdmin: true,
             avatar: read_as_data_url(test_path('fixtures/cover.png')),
-        );
+        ));
 
         $this->assertModelExists($user);
         self::assertTrue(Hash::check('FearOfTheDark', $user->password));
@@ -45,12 +47,11 @@ class UserServiceTest extends TestCase
     #[Test]
     public function createUserWithEmptyAvatarHasGravatar(): void
     {
-        $user = $this->service->createUser(
+        $user = $this->service->createUser(UserCreateData::make(
             name: 'Bruce Dickinson',
             email: 'bruce@dickison.com',
             plainTextPassword: 'FearOfTheDark',
-            isAdmin: false
-        );
+        ));
 
         $this->assertModelExists($user);
         self::assertTrue(Hash::check('FearOfTheDark', $user->password));
@@ -61,12 +62,11 @@ class UserServiceTest extends TestCase
     #[Test]
     public function createUserWithNoPassword(): void
     {
-        $user = $this->service->createUser(
+        $user = $this->service->createUser(UserCreateData::make(
             name: 'Bruce Dickinson',
             email: 'bruce@dickison.com',
             plainTextPassword: '',
-            isAdmin: false
-        );
+        ));
 
         $this->assertModelExists($user);
         self::assertEmpty($user->password);
@@ -77,14 +77,13 @@ class UserServiceTest extends TestCase
     {
         $user = create_user();
 
-        $this->service->updateUser(
-            user: $user,
+        $this->service->updateUser($user, UserUpdateData::make(
             name: 'Steve Harris',
             email: 'steve@iron.com',
-            password: 'TheTrooper',
+            plainTextPassword: 'TheTrooper',
             isAdmin: true,
             avatar: read_as_data_url(test_path('fixtures/cover.png'))
-        );
+        ));
 
         $user->refresh();
 
@@ -100,11 +99,10 @@ class UserServiceTest extends TestCase
     {
         $user = create_admin(['password' => Hash::make('TheTrooper')]);
 
-        $this->service->updateUser(
-            user: $user,
+        $this->service->updateUser($user, UserUpdateData::make(
             name: 'Steve Harris',
             email: 'steve@iron.com'
-        );
+        ));
 
         $user->refresh();
 
@@ -119,10 +117,9 @@ class UserServiceTest extends TestCase
     {
         $this->expectException(UserProspectUpdateDeniedException::class);
 
-        $this->service->updateUser(
-            user: create_user_prospect(),
+        $this->service->updateUser(create_user_prospect(), UserUpdateData::make(
             name: 'Steve Harris',
-            email: 'steve@iron.com'
-        );
+            email: 'steve@iron.com',
+        ));
     }
 }

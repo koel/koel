@@ -23,7 +23,7 @@ final readonly class IpInfoLiteData implements Arrayable
     {
         $json = $response->json();
 
-        return new static(
+        return new self(
             ip: $json['ip'] ?? '',
             asn: $json['asn'] ?? '',
             asName: $json['as_name'] ?? '',

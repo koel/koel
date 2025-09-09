@@ -20,7 +20,7 @@ class PlaylistFolderResource extends JsonResource
         parent::__construct($folder);
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function toArray($request): array
     {
         return [

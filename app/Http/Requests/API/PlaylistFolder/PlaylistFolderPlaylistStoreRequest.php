@@ -12,7 +12,7 @@ use Illuminate\Validation\Rule;
  */
 class PlaylistFolderPlaylistStoreRequest extends Request
 {
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function rules(): array
     {
         return [

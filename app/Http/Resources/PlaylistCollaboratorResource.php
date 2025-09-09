@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Values\PlaylistCollaborator;
+use App\Values\Playlist\PlaylistCollaborator;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PlaylistCollaboratorResource extends JsonResource
@@ -19,7 +19,7 @@ class PlaylistCollaboratorResource extends JsonResource
         parent::__construct($collaborator);
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function toArray($request): array
     {
         return [

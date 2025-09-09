@@ -1,11 +1,9 @@
 <?php
 
-namespace App\Values;
+namespace App\Values\Playlist;
 
-use App\Http\Requests\API\Playlist\PlaylistUpdateRequest;
 use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Support\Arr;
 
 final readonly class PlaylistUpdateData implements Arrayable
 {
@@ -16,17 +14,6 @@ final readonly class PlaylistUpdateData implements Arrayable
         public ?string $cover,
         public ?SmartPlaylistRuleGroupCollection $ruleGroups,
     ) {
-    }
-
-    public static function fromRequest(PlaylistUpdateRequest $request): self
-    {
-        return new self(
-            name: $request->name,
-            description: (string) $request->description,
-            folderId: $request->folder_id,
-            cover: $request->cover,
-            ruleGroups: $request->rules ? SmartPlaylistRuleGroupCollection::create(Arr::wrap($request->rules)) : null,
-        );
     }
 
     public static function make(

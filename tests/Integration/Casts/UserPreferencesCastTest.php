@@ -2,7 +2,7 @@
 
 namespace Tests\Integration\Casts;
 
-use App\Values\UserPreferences;
+use App\Values\User\UserPreferences;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 

@@ -9,7 +9,7 @@ use PhanAn\Poddle\Values\EpisodeMetadata;
 
 class SongFactory extends Factory
 {
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function definition(): array
     {
         return [

@@ -24,7 +24,7 @@ class PlaylistResource extends JsonResource
         parent::__construct($playlist);
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function toArray($request): array
     {
         $user = $request->user() ?? $this->playlist->owner;

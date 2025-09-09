@@ -4,8 +4,8 @@ namespace App\Services\Contracts;
 
 use App\Models\Album;
 use App\Models\Artist;
-use App\Values\AlbumInformation;
-use App\Values\ArtistInformation;
+use App\Values\Album\AlbumInformation;
+use App\Values\Artist\ArtistInformation;
 
 interface Encyclopedia
 {

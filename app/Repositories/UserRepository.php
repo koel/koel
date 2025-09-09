@@ -5,7 +5,7 @@
 namespace App\Repositories;
 
 use App\Models\User;
-use App\Values\SsoUser;
+use App\Values\User\SsoUser;
 
 /**
  * @extends Repository<User>

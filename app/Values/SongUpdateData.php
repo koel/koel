@@ -2,7 +2,6 @@
 
 namespace App\Values;
 
-use App\Http\Requests\API\SongUpdateRequest;
 use Illuminate\Contracts\Support\Arrayable;
 
 final class SongUpdateData implements Arrayable
@@ -19,21 +18,6 @@ final class SongUpdateData implements Arrayable
         public ?string $lyrics,
     ) {
         $this->albumArtistName = $this->albumArtistName ?: $this->artistName;
-    }
-
-    public static function fromRequest(SongUpdateRequest $request): self
-    {
-        return new self(
-            title: $request->input('data.title'),
-            artistName: $request->input('data.artist_name'),
-            albumName: $request->input('data.album_name'),
-            albumArtistName: $request->input('data.album_artist_name'),
-            track: (int) $request->input('data.track'),
-            disc: (int) $request->input('data.disc'),
-            genre: $request->input('data.genre'),
-            year: (int) $request->input('data.year'),
-            lyrics: $request->input('data.lyrics'),
-        );
     }
 
     public static function make(

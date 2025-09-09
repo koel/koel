@@ -8,7 +8,7 @@ namespace App\Http\Requests\API;
 class InviteUserRequest extends Request
 {
     /**
-     * @return array<mixed>
+     * @inheritdoc
      */
     public function rules(): array
     {
@@ -19,7 +19,7 @@ class InviteUserRequest extends Request
     }
 
     /**
-     * @return array<mixed>
+     * @inheritdoc
      */
     public function messages(): array
     {

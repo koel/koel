@@ -8,7 +8,7 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Services\ArtistService;
-use App\Values\ArtistUpdateData;
+use App\Values\Artist\ArtistUpdateData;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 

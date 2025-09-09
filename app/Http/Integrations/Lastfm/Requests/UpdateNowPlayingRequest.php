@@ -26,7 +26,7 @@ final class UpdateNowPlayingRequest extends Request implements HasBody, Requires
         return '/';
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     protected function defaultBody(): array
     {
         $parameters = [

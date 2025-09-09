@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 
 class UserFactory extends Factory
 {
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function definition(): array
     {
         return [

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Values;
+namespace App\Values\Artist;
 
 use HTMLPurifier;
 use Illuminate\Contracts\Support\Arrayable;
@@ -48,7 +48,7 @@ final class ArtistInformation implements Arrayable
         );
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function toArray(): array
     {
         return [

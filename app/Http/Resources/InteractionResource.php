@@ -21,7 +21,7 @@ class InteractionResource extends JsonResource
         parent::__construct($interaction);
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function toArray($request): array
     {
         return [

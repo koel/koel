@@ -66,7 +66,7 @@ final class SmartPlaylistQueryModifier
         }
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     private static function generateParameters(Model $model, Operator $operator, array $value): array
     {
         $column = $model->toColumnName();
@@ -78,7 +78,7 @@ final class SmartPlaylistQueryModifier
         return $parameters instanceof Closure ? $parameters() : $parameters;
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     private static function generateRawParameters(string $column, Operator $operator, array $value): array|Closure
     {
         // For raw parameters like those for play count, we need to use raw SQL clauses (whereRaw).

@@ -8,7 +8,7 @@ namespace App\Http\Requests\API;
  */
 class LastfmCallbackRequest extends Request
 {
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function rules(): array
     {
         return [

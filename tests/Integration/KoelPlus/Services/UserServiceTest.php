@@ -4,7 +4,9 @@ namespace Tests\Integration\KoelPlus\Services;
 
 use App\Models\User;
 use App\Services\UserService;
-use App\Values\SsoUser;
+use App\Values\User\SsoUser;
+use App\Values\User\UserCreateData;
+use App\Values\User\UserUpdateData;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Two\User as SocialiteUser;
 use Mockery;
@@ -27,7 +29,7 @@ class UserServiceTest extends PlusTestCase
     #[Test]
     public function createUserViaSsoProvider(): void
     {
-        $user = $this->service->createUser(
+        $user = $this->service->createUser(UserCreateData::make(
             name: 'Bruce Dickinson',
             email: 'bruce@dickison.com',
             plainTextPassword: '',
@@ -35,7 +37,7 @@ class UserServiceTest extends PlusTestCase
             avatar: 'https://lh3.googleusercontent.com/a/vatar',
             ssoId: '123',
             ssoProvider: 'Google'
-        );
+        ));
 
         $this->assertModelExists($user);
         self::assertSame('Google', $user->sso_provider);
@@ -124,13 +126,12 @@ class UserServiceTest extends PlusTestCase
             'sso_provider' => 'Google',
         ]);
 
-        $this->service->updateUser(
-            user: $user,
+        $this->service->updateUser($user, UserUpdateData::make(
             name: 'Steve Harris',
             email: 'steve@iron.com',
-            password: 'TheTrooper',
+            plainTextPassword: 'TheTrooper',
             isAdmin: true,
-        );
+        ));
 
         $user->refresh();
 

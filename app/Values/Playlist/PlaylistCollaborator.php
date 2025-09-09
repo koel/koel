@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Values;
+namespace App\Values\Playlist;
 
 use App\Models\User;
 use Illuminate\Contracts\Support\Arrayable;
@@ -21,7 +21,7 @@ final class PlaylistCollaborator implements Arrayable
         return new self($user->public_id, $user->name, $user->avatar);
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function toArray(): array
     {
         return [

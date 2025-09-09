@@ -16,7 +16,6 @@ use App\Repositories\ArtistRepository;
 use App\Repositories\SongRepository;
 use App\Services\LibraryManager;
 use App\Services\SongService;
-use App\Values\SongUpdateData;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class SongController extends Controller
@@ -55,7 +54,7 @@ class SongController extends Controller
         // Don't use SongRepository::findMany() because it'd be already catered to the current user.
         Song::query()->findMany($request->songs)->each(fn (Song $song) => $this->authorize('edit', $song));
 
-        $updatedSongs = $this->songService->updateSongs($request->songs, SongUpdateData::fromRequest($request));
+        $updatedSongs = $this->songService->updateSongs($request->songs, $request->toDto());
         $albums = $this->albumRepository->getMany($updatedSongs->pluck('album_id')->toArray());
 
         $artists = $this->artistRepository->getMany(
