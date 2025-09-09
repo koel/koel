@@ -32,6 +32,7 @@ defineExpose({
 <style lang="postcss" scoped>
 div {
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  content-visibility: auto;
 }
 
 div.as-list {

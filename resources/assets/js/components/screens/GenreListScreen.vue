@@ -29,7 +29,7 @@
     </ScreenEmptyState>
 
     <template v-else>
-      <ul v-if="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-3">
+      <ul v-if="!loading" class="genre-list grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-3">
         <GenreCard v-for="genre in displayedGenres" :key="genre.id" :genre />
       </ul>
 
@@ -116,3 +116,9 @@ onMounted(async () => {
   await fetchGenres()
 })
 </script>
+
+<style lang="postcss">
+.genre-list {
+  content-visibility: auto;
+}
+</style>
