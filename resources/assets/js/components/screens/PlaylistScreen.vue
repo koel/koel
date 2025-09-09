@@ -10,7 +10,6 @@
         <p v-if="playlist.description" class="text-base text-k-text-secondary font-light">
           {{ playlist.description }}
         </p>
-        <ControlsToggle v-if="filteredPlayables.length" v-model="showingControls" />
 
         <template #thumbnail>
           <PlaylistThumbnail :playlist>
@@ -26,7 +25,6 @@
 
         <template #controls>
           <PlayableListControls
-            v-if="!isPhone || showingControls"
             :config="controlsConfig"
             @refresh="fetchDetails(true)"
             @play-all="playAll"
@@ -141,7 +139,6 @@ const loading = ref(false)
 
 const {
   PlayableList,
-  ControlsToggle,
   ThumbnailStack,
   headerLayout,
   playables: filteredPlayables,
@@ -149,8 +146,6 @@ const {
   duration,
   thumbnails,
   selectedPlayables,
-  showingControls,
-  isPhone,
   context,
   filterKeywords,
   onPressEnter,

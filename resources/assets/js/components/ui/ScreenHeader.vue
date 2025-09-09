@@ -1,12 +1,12 @@
 <template>
   <header
     :class="[layout, disabled ? 'disabled' : '']"
-    class="screen-header min-h-0 md:min-h-full flex items-end flex-shrink-0 relative content-stretch leading-normal p-6
+    class="screen-header gap-4 min-h-0 md:min-h-full flex items-end flex-shrink-0 relative content-stretch leading-normal p-6
     border-b border-b-k-bg-secondary"
   >
     <aside
       v-if="$slots.thumbnail"
-      class="thumbnail-wrapper hidden md:flex items-end overflow-hidden w-0 rounded-md"
+      class="thumbnail-wrapper hidden md:flex items-end overflow-hidden rounded-md"
     >
       <slot name="thumbnail" />
     </aside>
@@ -40,8 +40,18 @@ withDefaults(defineProps<{
 header.screen-header {
   --transition-duration: 300ms;
 
-  @media (prefers-reduced-motion) {
-    --transition-duration: 0;
+  .thumbnail-wrapper {
+    @apply origin-top duration-[var(--transition-duration)] translate-y-0 opacity-100 w-[192px];
+    will-change: transform, opacity;
+    transition-property: transform, opacity;
+  }
+
+  &.collapsed {
+    @apply gap-0;
+
+    .thumbnail-wrapper {
+      @apply -translate-y-full opacity-0 w-0;
+    }
   }
 
   &.disabled {
@@ -55,35 +65,12 @@ header.screen-header {
   }
 
   &.expanded {
-    .thumbnail-wrapper {
-      @apply mr-6 w-[192px];
-
-      > * {
-        @apply scale-100;
-      }
-    }
-
     .meta {
       @apply block;
     }
 
     main {
       @apply flex-col items-start;
-    }
-  }
-
-  .thumbnail-wrapper {
-    transition: width var(--transition-duration);
-
-    > * {
-      @apply scale-0 origin-bottom-left;
-      transition:
-        transform var(--transition-duration),
-        width var(--transition-duration);
-    }
-
-    &:empty {
-      @apply hidden;
     }
   }
 

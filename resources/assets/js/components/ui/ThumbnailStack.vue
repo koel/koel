@@ -8,7 +8,7 @@
       v-for="thumbnail in displayedThumbnails"
       :key="thumbnail"
       :style="{ backgroundImage: `url(${thumbnail}` }"
-      class="block will-change-transform w-full h-full bg-cover bg-no-repeat"
+      class="block w-full h-full bg-cover bg-no-repeat"
       data-testid="thumbnail"
     />
   </article>

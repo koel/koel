@@ -5,7 +5,6 @@
 
       <ScreenHeader v-if="artist" :disabled="loading" :layout="songs.length ? headerLayout : 'collapsed'">
         {{ artist.name }}
-        <ControlsToggle v-model="showingControls" />
 
         <template #thumbnail>
           <ArtistThumbnail :entity="artist" />
@@ -21,7 +20,7 @@
 
         <template #controls>
           <SongListControls
-            v-if="songs.length && (!isPhone || showingControls)"
+            v-if="songs.length"
             :config
             @filter="applyFilter"
             @play-all="playAll"
@@ -147,11 +146,8 @@ const editable = ref(false)
 
 const {
   PlayableList: SongList,
-  ControlsToggle,
   headerLayout,
   playableList: songList,
-  showingControls,
-  isPhone,
   context,
   duration,
   onPressEnter,

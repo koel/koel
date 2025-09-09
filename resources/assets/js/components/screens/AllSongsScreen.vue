@@ -3,7 +3,6 @@
     <template #header>
       <ScreenHeader :disabled="loading" :layout="songs.length ? headerLayout : 'collapsed'">
         All Songs
-        <ControlsToggle v-model="showingControls" />
 
         <template #thumbnail>
           <ThumbnailStack :thumbnails />
@@ -15,9 +14,9 @@
         </template>
 
         <template #controls>
-          <div class="controls w-full min-h-[32px] flex justify-between items-center gap-4">
+          <div class="controls w-full flex justify-between items-center gap-4">
             <SongListControls
-              v-if="totalSongCount && (!isPhone || showingControls)"
+              v-if="totalSongCount"
               :config
               @play-all="playAll"
               @play-selected="playSelected"
@@ -71,14 +70,11 @@ const totalDuration = computed(() => secondsToHumanReadable(commonStore.state.so
 
 const {
   PlayableList: SongList,
-  ControlsToggle,
   ThumbnailStack,
   headerLayout,
   thumbnails,
   playables: songs,
   playableList: songList,
-  showingControls,
-  isPhone,
   onPressEnter,
   playSelected,
   onSwipe,
