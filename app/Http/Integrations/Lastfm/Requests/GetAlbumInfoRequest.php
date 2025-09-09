@@ -4,7 +4,7 @@ namespace App\Http\Integrations\Lastfm\Requests;
 
 use App\Http\Integrations\Lastfm\Concerns\FormatsLastFmText;
 use App\Models\Album;
-use App\Values\AlbumInformation;
+use App\Values\Album\AlbumInformation;
 use Illuminate\Support\Arr;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
@@ -25,7 +25,7 @@ final class GetAlbumInfoRequest extends Request
         return '/';
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     protected function defaultQuery(): array
     {
         return [

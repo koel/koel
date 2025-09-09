@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PlaylistFolderFactory extends Factory
 {
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function definition(): array
     {
         return [

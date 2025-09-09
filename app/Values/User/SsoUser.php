@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Values;
+namespace App\Values\User;
 
 use Illuminate\Http\Request;
 use Laravel\Socialite\Contracts\User as SocialiteUser;

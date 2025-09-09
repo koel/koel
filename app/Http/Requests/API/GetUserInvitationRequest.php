@@ -8,7 +8,7 @@ namespace App\Http\Requests\API;
 class GetUserInvitationRequest extends Request
 {
     /**
-     * @return array<mixed>
+     * @inheritdoc
      */
     public function rules(): array
     {

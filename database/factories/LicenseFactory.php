@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 
 class LicenseFactory extends Factory
 {
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function definition(): array
     {
         return [

@@ -2,7 +2,7 @@
 
 namespace App\Values\WatchRecord;
 
-class InotifyWatchRecord extends WatchRecord
+final class InotifyWatchRecord extends WatchRecord
 {
     /**
      * {@inheritdoc}

@@ -25,7 +25,7 @@ final class ToggleLoveTrackRequest extends Request implements HasBody, RequiresS
         return '/';
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     protected function defaultBody(): array
     {
         return [

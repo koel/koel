@@ -19,7 +19,7 @@ final class GetSessionKeyRequest extends Request implements RequiresSignature
         return '/';
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     protected function defaultQuery(): array
     {
         return [

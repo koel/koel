@@ -25,7 +25,7 @@ class UserResource extends JsonResource
         parent::__construct($user);
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function toArray($request): array
     {
         return [

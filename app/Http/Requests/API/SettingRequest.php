@@ -9,7 +9,7 @@ use App\Rules\MediaPath;
  */
 class SettingRequest extends Request
 {
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function rules(): array
     {
         return [

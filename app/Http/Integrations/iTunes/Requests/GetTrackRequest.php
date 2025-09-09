@@ -15,7 +15,7 @@ class GetTrackRequest extends Request
     {
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     protected function defaultQuery(): array
     {
         $term = $this->trackName;

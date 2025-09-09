@@ -129,7 +129,7 @@ class ScanInformation implements Arrayable
         return $value ?? $default;
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function toArray(): array
     {
         return [

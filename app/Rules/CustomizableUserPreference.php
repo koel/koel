@@ -2,7 +2,7 @@
 
 namespace App\Rules;
 
-use App\Values\UserPreferences;
+use App\Values\User\UserPreferences;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 

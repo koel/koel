@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Casts\UserPreferencesCast;
 use App\Exceptions\UserAlreadySubscribedToPodcastException;
 use App\Facades\License;
-use App\Values\UserPreferences;
+use App\Values\User\UserPreferences;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;

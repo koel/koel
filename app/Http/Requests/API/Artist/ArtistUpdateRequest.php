@@ -4,6 +4,7 @@ namespace App\Http\Requests\API\Artist;
 
 use App\Http\Requests\API\Request;
 use App\Rules\ValidImageData;
+use App\Values\Artist\ArtistUpdateData;
 
 /**
  * @property-read string $name
@@ -18,5 +19,13 @@ class ArtistUpdateRequest extends Request
             'name' => 'string|required',
             'image' => ['string', 'nullable', new ValidImageData()],
         ];
+    }
+
+    public function toDto(): ArtistUpdateData
+    {
+        return ArtistUpdateData::make(
+            name: $this->name,
+            image: $this->image ?: null,
+        );
     }
 }

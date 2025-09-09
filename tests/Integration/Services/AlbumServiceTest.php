@@ -7,7 +7,7 @@ use App\Helpers\Ulid;
 use App\Models\Album;
 use App\Models\Song;
 use App\Services\AlbumService;
-use App\Values\AlbumUpdateData;
+use App\Values\Album\AlbumUpdateData;
 use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;

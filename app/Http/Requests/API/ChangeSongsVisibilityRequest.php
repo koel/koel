@@ -11,7 +11,7 @@ use Illuminate\Validation\Rule;
  */
 class ChangeSongsVisibilityRequest extends Request
 {
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function rules(): array
     {
         return [

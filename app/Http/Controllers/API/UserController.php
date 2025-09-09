@@ -31,12 +31,7 @@ class UserController extends Controller
     {
         $this->authorize('admin', User::class);
 
-        return UserResource::make($this->userService->createUser(
-            $request->name,
-            $request->email,
-            $request->password,
-            $request->get('is_admin') ?: false
-        ));
+        return UserResource::make($this->userService->createUser($request->toDto()));
     }
 
     public function update(UserUpdateRequest $request, User $user)
@@ -44,13 +39,7 @@ class UserController extends Controller
         $this->authorize('admin', User::class);
 
         try {
-            return UserResource::make($this->userService->updateUser(
-                user: $user,
-                name: $request->name,
-                email: $request->email,
-                password: $request->password,
-                isAdmin: $request->get('is_admin') ?: false
-            ));
+            return UserResource::make($this->userService->updateUser($user, $request->toDto()));
         } catch (UserProspectUpdateDeniedException) {
             abort(Response::HTTP_FORBIDDEN, 'Cannot update a user prospect.');
         }

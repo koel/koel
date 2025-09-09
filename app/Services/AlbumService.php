@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Exceptions\AlbumNameConflictException;
 use App\Models\Album;
 use App\Repositories\AlbumRepository;
-use App\Values\AlbumUpdateData;
+use App\Values\Album\AlbumUpdateData;
 use Illuminate\Support\Arr;
 
 class AlbumService

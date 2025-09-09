@@ -11,7 +11,7 @@ abstract class Request extends FormRequest
         return true;
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function rules(): array
     {
         return [];

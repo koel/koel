@@ -5,8 +5,8 @@ namespace App\Services;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Services\Contracts\Encyclopedia;
-use App\Values\AlbumInformation;
-use App\Values\ArtistInformation;
+use App\Values\Album\AlbumInformation;
+use App\Values\Artist\ArtistInformation;
 use Illuminate\Support\Facades\Cache;
 
 class EncyclopediaService

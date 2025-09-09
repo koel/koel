@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class QueueStateFactory extends Factory
 {
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function definition(): array
     {
         return [

@@ -7,7 +7,7 @@ namespace App\Http\Requests\API;
  */
 class ActivateLicenseRequest extends Request
 {
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function rules(): array
     {
         return [

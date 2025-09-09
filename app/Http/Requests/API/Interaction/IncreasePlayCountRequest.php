@@ -10,7 +10,7 @@ use Illuminate\Validation\Rule;
  */
 class IncreasePlayCountRequest extends Request
 {
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function rules(): array
     {
         return [

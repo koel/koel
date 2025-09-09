@@ -29,7 +29,7 @@ final class ScrobbleRequest extends Request implements HasBody, RequiresSignatur
         return '/';
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     protected function defaultBody(): array
     {
         $body = [

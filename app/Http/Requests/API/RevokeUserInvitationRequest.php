@@ -7,7 +7,7 @@ namespace App\Http\Requests\API;
  */
 class RevokeUserInvitationRequest extends Request
 {
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function rules(): array
     {
         return ['email' => 'required|email'];

@@ -9,7 +9,7 @@ use Illuminate\Http\UploadedFile;
 /** @property UploadedFile $file */
 class UploadRequest extends Request
 {
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function rules(): array
     {
         return [

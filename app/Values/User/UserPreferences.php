@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Values;
+namespace App\Values\User;
 
+use App\Values\Equalizer;
 use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
 use Webmozart\Assert\Assert;

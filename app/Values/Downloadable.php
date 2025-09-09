@@ -5,11 +5,11 @@ namespace App\Values;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
-class Downloadable
+final readonly class Downloadable
 {
     private bool $redirectable;
 
-    private function __construct(public readonly string $path)
+    private function __construct(public string $path)
     {
         $this->redirectable = Str::startsWith($path, ['http://', 'https://']);
     }

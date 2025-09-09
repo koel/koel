@@ -7,8 +7,10 @@ use App\Models\Organization;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Values\ImageWritingConfig;
-use App\Values\SsoUser;
-use Illuminate\Support\Facades\Hash;
+use App\Values\User\SsoUser;
+use App\Values\User\UserCreateData;
+use App\Values\User\UserUpdateData;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class UserService
@@ -20,31 +22,13 @@ class UserService
     ) {
     }
 
-    public function createUser(
-        string $name,
-        string $email,
-        string $plainTextPassword,
-        bool $isAdmin,
-        ?string $avatar = null,
-        ?string $ssoId = null,
-        ?string $ssoProvider = null,
-        ?Organization $organization = null,
-    ): User {
-        if ($ssoProvider) {
-            SsoUser::assertValidProvider($ssoProvider);
-        }
-
+    public function createUser(UserCreateData $dto, ?Organization $organization = null): User
+    {
         $organization ??= $this->organizationService->getCurrentOrganization();
+        $data = $dto->toArray();
+        $data['avatar'] = $dto->avatar ? $this->maybeStoreAvatar($dto->avatar) : null;
 
-        return $organization->users()->create([
-            'name' => $name,
-            'email' => $email,
-            'password' => $plainTextPassword ? Hash::make($plainTextPassword) : '',
-            'is_admin' => $isAdmin,
-            'sso_id' => $ssoId,
-            'sso_provider' => $ssoProvider,
-            'avatar' => $avatar ? $this->createNewAvatar($avatar) : null,
-        ]);
+        return $organization->users()->create($data);
     }
 
     public function createOrUpdateUserFromSso(SsoUser $ssoUser): User
@@ -61,44 +45,27 @@ class UserService
             return $existingUser;
         }
 
-        return $this->createUser(
-            name: $ssoUser->name,
-            email: $ssoUser->email,
-            plainTextPassword: '',
-            isAdmin: false,
-            avatar: $ssoUser->avatar,
-            ssoId: $ssoUser->id,
-            ssoProvider: $ssoUser->provider,
-            organization: $this->organizationService->getCurrentOrganization(),
-        );
+        return $this->createUser(UserCreateData::fromSsoUser($ssoUser));
     }
 
-    public function updateUser(
-        User $user,
-        string $name,
-        string $email,
-        ?string $password = null,
-        ?bool $isAdmin = null,
-        ?string $avatar = null
-    ): User {
+    public function updateUser(User $user, UserUpdateData $dto): User
+    {
         throw_if($user->is_prospect, new UserProspectUpdateDeniedException());
 
+        $data = [
+            'name' => $dto->name,
+            'email' => $dto->email,
+            'password' => $dto->password ?: $user->password,
+            'is_admin' => $dto->isAdmin ?? $user->is_admin,
+            'avatar' => $dto->avatar ? $this->maybeStoreAvatar($dto->avatar) : null,
+        ];
+
         if ($user->sso_provider) {
-            // An SSO profile is largely managed by the SSO provider
-            $user->update([
-                'is_admin' => $isAdmin ?? $user->is_admin,
-                'name' => $name,
-                'avatar' => $avatar ? $this->createNewAvatar($avatar, $user) : null,
-            ]);
-        } else {
-            $user->update([
-                'name' => $name,
-                'email' => $email,
-                'password' => $password ? Hash::make($password) : $user->password,
-                'is_admin' => $isAdmin ?? $user->is_admin,
-                'avatar' => $avatar ? $this->createNewAvatar($avatar, $user) : null,
-            ]);
+            // SSO users cannot change their password or email
+            Arr::forget($data, ['password', 'email']);
         }
+
+        $user->update($data);
 
         return $user;
     }
@@ -106,7 +73,7 @@ class UserService
     /**
      * @param string $avatar Either the URL of the avatar or image data
      */
-    private function createNewAvatar(string $avatar, ?User $user = null): string
+    private function maybeStoreAvatar(string $avatar): string
     {
         if (Str::startsWith($avatar, ['http://', 'https://'])) {
             return $avatar;

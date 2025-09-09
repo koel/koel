@@ -10,7 +10,7 @@ use App\Exceptions\PlaylistCollaborationTokenExpiredException;
 use App\Models\Playlist;
 use App\Models\PlaylistCollaborationToken;
 use App\Models\User;
-use App\Values\PlaylistCollaborator;
+use App\Values\Playlist\PlaylistCollaborator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 

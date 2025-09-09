@@ -10,7 +10,6 @@ use App\Http\Resources\AlbumResource;
 use App\Models\Album;
 use App\Repositories\AlbumRepository;
 use App\Services\AlbumService;
-use App\Values\AlbumUpdateData;
 use Illuminate\Validation\ValidationException;
 
 class AlbumController extends Controller
@@ -41,7 +40,7 @@ class AlbumController extends Controller
         $this->authorize('update', $album);
 
         try {
-            return AlbumResource::make($this->service->updateAlbum($album, AlbumUpdateData::fromRequest($request)));
+            return AlbumResource::make($this->service->updateAlbum($album, $request->toDto()));
         } catch (AlbumNameConflictException $e) {
             throw ValidationException::withMessages(['name' => $e->getMessage()]);
         }

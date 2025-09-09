@@ -49,7 +49,7 @@ final class SmartPlaylistRule implements Arrayable
         return new self($config);
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function toArray(): array
     {
         return [

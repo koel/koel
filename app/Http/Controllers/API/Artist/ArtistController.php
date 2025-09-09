@@ -10,7 +10,6 @@ use App\Http\Resources\ArtistResource;
 use App\Models\Artist;
 use App\Repositories\ArtistRepository;
 use App\Services\ArtistService;
-use App\Values\ArtistUpdateData;
 use Illuminate\Validation\ValidationException;
 
 class ArtistController extends Controller
@@ -41,7 +40,7 @@ class ArtistController extends Controller
         $this->authorize('update', $artist);
 
         try {
-            return ArtistResource::make($this->service->updateArtist($artist, ArtistUpdateData::fromRequest($request)));
+            return ArtistResource::make($this->service->updateArtist($artist, $request->toDto()));
         } catch (ArtistNameConflictException $e) {
             throw ValidationException::withMessages(['name' => $e->getMessage()]);
         }

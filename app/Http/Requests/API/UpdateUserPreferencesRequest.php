@@ -10,7 +10,7 @@ use App\Rules\CustomizableUserPreference;
  */
 class UpdateUserPreferencesRequest extends Request
 {
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function rules(): array
     {
         return [

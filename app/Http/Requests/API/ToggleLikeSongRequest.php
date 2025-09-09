@@ -5,7 +5,7 @@ namespace App\Http\Requests\API;
 /** @property-read string $song */
 class ToggleLikeSongRequest extends Request
 {
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function rules(): array
     {
         return [

@@ -6,6 +6,9 @@ use App\Http\Requests\API\Request;
 use App\Models\PlaylistFolder;
 use App\Rules\ValidImageData;
 use App\Rules\ValidSmartPlaylistRulePayload;
+use App\Values\Playlist\PlaylistUpdateData;
+use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
+use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 
 /**
@@ -27,5 +30,16 @@ class PlaylistUpdateRequest extends Request
             'folder_id' => ['nullable', 'sometimes', Rule::exists(PlaylistFolder::class, 'id')],
             'cover' => ['string', 'sometimes', 'nullable', new ValidImageData()],
         ];
+    }
+
+    public function toDto(): PlaylistUpdateData
+    {
+        return PlaylistUpdateData::make(
+            name: $this->name,
+            description: (string) $this->description,
+            folderId: $this->folder_id,
+            cover: $this->cover,
+            ruleGroups: $this->rules ? SmartPlaylistRuleGroupCollection::create(Arr::wrap($this->rules)) : null,
+        );
     }
 }

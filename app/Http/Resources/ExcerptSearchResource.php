@@ -30,7 +30,7 @@ class ExcerptSearchResource extends JsonResource
         parent::__construct($result);
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function toArray($request): array
     {
         return [

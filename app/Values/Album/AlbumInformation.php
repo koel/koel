@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Values;
+namespace App\Values\Album;
 
 use HTMLPurifier;
 use Illuminate\Contracts\Support\Arrayable;
@@ -69,7 +69,7 @@ final class AlbumInformation implements Arrayable
         return $self;
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function toArray(): array
     {
         return [

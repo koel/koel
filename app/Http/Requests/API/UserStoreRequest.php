@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\API;
 
+use App\Values\User\UserCreateData;
 use Illuminate\Validation\Rules\Password;
 
 /**
@@ -11,7 +12,7 @@ use Illuminate\Validation\Rules\Password;
  */
 class UserStoreRequest extends Request
 {
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function rules(): array
     {
         return [
@@ -20,5 +21,15 @@ class UserStoreRequest extends Request
             'password' => ['required', Password::defaults()],
             'is_admin' => 'sometimes',
         ];
+    }
+
+    public function toDto(): UserCreateData
+    {
+        return UserCreateData::make(
+            name: $this->name,
+            email: $this->email,
+            plainTextPassword: $this->password,
+            isAdmin: $this->boolean('is_admin'),
+        );
     }
 }

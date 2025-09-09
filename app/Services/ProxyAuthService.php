@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Attributes\RequiresPlus;
 use App\Models\User;
-use App\Values\SsoUser;
+use App\Values\User\SsoUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\IpUtils;

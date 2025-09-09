@@ -18,7 +18,7 @@ class GenreResource extends JsonResource
         parent::__construct($summary);
     }
 
-    /** @return array<mixed> */
+    /** @inheritdoc */
     public function toArray($request): array
     {
         return [
