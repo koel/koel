@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Values;
+namespace App\Values\Song;
 
 use App\Enums\SongStorageType;
 use App\Models\Song;

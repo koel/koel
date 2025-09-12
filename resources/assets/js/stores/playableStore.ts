@@ -37,8 +37,8 @@ export interface SongUpdateResult {
   artists: Artist[]
   albums: Album[]
   removed: {
-    albums: Pick<Album, 'id' | 'artist_id' | 'name' | 'cover' | 'created_at'>[]
-    artists: Pick<Artist, 'id' | 'name' | 'image' | 'created_at'>[]
+    album_ids: Album['id'][]
+    artist_ids: Artist['id'][]
   }
 }
 
@@ -177,8 +177,8 @@ export const playableStore = {
     albumStore.syncWithVault(result.albums)
     artistStore.syncWithVault(result.artists)
 
-    albumStore.removeByIds(result.removed.albums.map(album => album.id))
-    artistStore.removeByIds(result.removed.artists.map(artist => artist.id))
+    albumStore.removeByIds(result.removed.album_ids)
+    artistStore.removeByIds(result.removed.artist_ids)
 
     return result
   },

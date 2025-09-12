@@ -203,6 +203,11 @@ const fetchScreenData = async () => {
 
     editable.value = await currentUserCan.editAlbum(album.value!)
   } catch (error: unknown) {
+    if (error?.status === 404) {
+      await triggerNotFound()
+      return
+    }
+
     useErrorHandler('dialog').handleHttpError(error)
   } finally {
     loading.value = false
@@ -219,7 +224,7 @@ const requestContextMenu = (event: MouseEvent) => {
 eventBus.on('SONGS_UPDATED', result => {
   // After songs are updated, check if the current album still exists.
   // If it doesn't, redirect to the album list.
-  if (result.removed.albums.find(({ id }) => id === album.value?.id)) {
+  if (result.removed.album_ids.includes(album.value!.id)) {
     go(url('albums.index'))
   }
 })

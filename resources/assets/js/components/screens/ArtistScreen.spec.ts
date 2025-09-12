@@ -75,13 +75,8 @@ describe('artistScreen.vue', () => {
       artists: [],
       albums: [],
       removed: {
-        albums: [],
-        artists: [{
-          id: artist.id,
-          name: artist.name,
-          image: artist.image,
-          created_at: artist.created_at,
-        }],
+        album_ids: [],
+        artist_ids: [artist.id, 'foo'],
       },
     })
 

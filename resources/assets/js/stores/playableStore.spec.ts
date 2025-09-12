@@ -108,19 +108,8 @@ describe('playableStore', () => {
       albums: h.factory('album', 2),
       artists: h.factory('artist', 2),
       removed: {
-        albums: [{
-          id: 'iv',
-          artist_id: 'led-zeppelin',
-          name: 'Removed Album',
-          cover: 'http://test/removed-album.jpg',
-          created_at: '2020-01-01',
-        }],
-        artists: [{
-          id: 'led-zeppelin',
-          name: 'Removed Artist',
-          image: 'http://test/removed-artist.jpg',
-          created_at: '2020-01-01',
-        }],
+        album_ids: ['iv'],
+        artist_ids: ['led-zeppelin'],
       },
     }
 

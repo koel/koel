@@ -18,12 +18,12 @@ class FetchOverviewController extends Controller
         ArtistRepository $artistRepository
     ) {
         return response()->json([
+            'most_played_albums' => AlbumResource::collection($albumRepository->getMostPlayed()),
+            'most_played_artists' => ArtistResource::collection($artistRepository->getMostPlayed()),
             'most_played_songs' => SongResource::collection($songRepository->getMostPlayed()),
-            'recently_played_songs' => SongResource::collection($songRepository->getRecentlyPlayed()),
             'recently_added_albums' => AlbumResource::collection($albumRepository->getRecentlyAdded()),
             'recently_added_songs' => SongResource::collection($songRepository->getRecentlyAdded()),
-            'most_played_artists' => ArtistResource::collection($artistRepository->getMostPlayed()),
-            'most_played_albums' => AlbumResource::collection($albumRepository->getMostPlayed()),
+            'recently_played_songs' => SongResource::collection($songRepository->getRecentlyPlayed()),
         ]);
     }
 }

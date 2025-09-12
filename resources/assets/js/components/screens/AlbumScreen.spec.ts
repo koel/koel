@@ -76,14 +76,8 @@ describe('albumScreen.vue', () => {
       artists: [],
       albums: [],
       removed: {
-        albums: [{
-          id: album.id,
-          name: album.name,
-          artist_id: album.artist_id,
-          cover: album.cover,
-          created_at: album.created_at,
-        }],
-        artists: [],
+        album_ids: [album.id, 'foo'],
+        artist_ids: [],
       },
     })
 
