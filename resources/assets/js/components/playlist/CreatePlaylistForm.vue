@@ -84,11 +84,11 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { go, url } = useRouter()
-const { getFromContext } = useModal()
+const { getFromContext } = useModal<'CREATE_PLAYLIST_FORM'>()
 
 const folders = toRef(playlistFolderStore.state, 'folders')
-const targetFolder = getFromContext<PlaylistFolder | null>('folder') ?? null
-const playables = getFromContext<Playable[]>('playables') ?? []
+const targetFolder = getFromContext('folder')
+const playables = getFromContext('playables')
 
 const close = () => emit('close')
 

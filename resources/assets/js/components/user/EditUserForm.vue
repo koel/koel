@@ -74,7 +74,7 @@ const { showConfirmDialog } = useDialogBox()
 
 const close = () => emit('close')
 
-const user = useModal().getFromContext<User>('user')
+const user = useModal<'EDIT_USER_FORM'>().getFromContext('user')
 
 const { data, isPristine, handleSubmit } = useForm<UpdateUserData>({
   initialValues: {

@@ -86,7 +86,7 @@ const { showConfirmDialog } = useDialogBox()
 
 const close = () => emit('close')
 
-const album = useModal().getFromContext<Album>('album')
+const album = useModal<'EDIT_ALBUM_FORM'>().getFromContext('album')
 
 const { data, isPristine, handleSubmit } = useForm<AlbumUpdateData>({
   initialValues: {

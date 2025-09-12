@@ -190,10 +190,10 @@ const close = () => emit('close')
 
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
-const { getFromContext } = useModal()
+const { getFromContext } = useModal<'EDIT_SONG_FORM'>()
 
-const songs = getFromContext<Song[]>('songs')
-const currentTab = ref(getFromContext<EditSongFormTabName>('initialTab'))
+const songs = getFromContext('songs')
+const currentTab = ref(getFromContext('initialTab'))
 
 const editingOnlyOneSong = songs.length === 1
 const editingMultipleSongs = !editingOnlyOneSong

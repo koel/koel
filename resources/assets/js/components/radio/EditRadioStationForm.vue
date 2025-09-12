@@ -68,7 +68,6 @@
 
 <script setup lang="ts">
 import { pick } from 'lodash'
-import type { Reactive } from 'vue'
 import { computed } from 'vue'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
@@ -88,7 +87,7 @@ import FileInput from '@/components/ui/form/FileInput.vue'
 const emit = defineEmits<{ (e: 'close'): void }>()
 const close = () => emit('close')
 
-const station = useModal().getFromContext<Reactive<RadioStation>>('station')
+const station = useModal<'EDIT_RADIO_STATION_FORM'>().getFromContext('station')
 
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
