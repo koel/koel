@@ -173,10 +173,10 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::get('genres', [GenreController::class, 'index']);
         Route::get('genres/{genre}', [GenreController::class, 'show']);
 
-        Route::apiResource('users', UserController::class);
+        Route::apiResource('users', UserController::class)->only(['index', 'store', 'update', 'destroy']);
 
         // User and user profile routes
-        Route::apiResource('user', UserController::class);
+        Route::apiResource('user', UserController::class)->only(['index', 'store', 'update', 'destroy']);
         Route::get('me', [ProfileController::class, 'show']);
         Route::put('me', [ProfileController::class, 'update']);
         Route::patch('me/preferences', UpdateUserPreferenceController::class);
