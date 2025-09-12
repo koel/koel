@@ -44,7 +44,7 @@ import CollaboratorList from '@/components/playlist/PlaylistCollaboratorList.vue
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 
-const playlist = useModal().getFromContext<Playlist>('playlist')
+const playlist = useModal<'PLAYLIST_COLLABORATION'>().getFromContext('playlist')
 const { currentUser } = useAuthorization()
 
 const canManageCollaborators = computed(() => currentUser.value?.id === playlist.owner_id)

@@ -82,7 +82,7 @@ const { showConfirmDialog } = useDialogBox()
 const close = () => emit('close')
 
 const folders = toRef(playlistFolderStore.state, 'folders')
-const playlist = useModal().getFromContext<Playlist>('playlist')
+const playlist = useModal<'EDIT_PLAYLIST_FORM'>().getFromContext('playlist')
 
 const { data, isPristine, handleSubmit } = useForm<UpdatePlaylistData>({
   initialValues: {

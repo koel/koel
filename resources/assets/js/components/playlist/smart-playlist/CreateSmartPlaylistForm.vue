@@ -142,7 +142,7 @@ const { showConfirmDialog } = useDialogBox()
 const { go, url } = useRouter()
 
 const folders = toRef(playlistFolderStore.state, 'folders')
-const targetFolder = useModal().getFromContext<PlaylistFolder | null>('folder')
+const targetFolder = useModal<'CREATE_SMART_PLAYLIST_FORM'>().getFromContext('folder')
 const currentTab = ref<'details' | 'rules'>('details')
 
 const close = () => emit('close')

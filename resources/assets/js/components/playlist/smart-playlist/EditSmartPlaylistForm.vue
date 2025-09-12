@@ -136,7 +136,7 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 
-const playlist = useModal().getFromContext<Playlist>('playlist')
+const playlist = useModal<'EDIT_SMART_PLAYLIST_FORM'>().getFromContext('playlist')
 const folders = toRef(playlistFolderStore.state, 'folders')
 const mutablePlaylist = reactive(cloneDeep(playlist))
 

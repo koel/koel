@@ -64,7 +64,7 @@ const { showConfirmDialog } = useDialogBox()
 
 const close = () => emit('close')
 
-const artist = useModal().getFromContext<Artist>('artist')
+const artist = useModal<'EDIT_ARTIST_FORM'>().getFromContext('artist')
 
 const { data, isPristine, handleSubmit } = useForm<ArtistUpdateData>({
   initialValues: {

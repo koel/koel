@@ -43,7 +43,7 @@ const { showConfirmDialog } = useDialogBox()
 
 const close = () => emit('close')
 
-const folder = useModal().getFromContext<PlaylistFolder>('folder')
+const folder = useModal<'EDIT_PLAYLIST_FOLDER_FORM'>().getFromContext('folder')
 
 const { data, isPristine, handleSubmit } = useForm<Pick<PlaylistFolder, 'name'>>({
   initialValues: pick(folder, 'name'),
