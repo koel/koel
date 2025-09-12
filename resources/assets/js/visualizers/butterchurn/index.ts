@@ -1,6 +1,6 @@
 import butterchurn from 'butterchurn'
 import butterchurnPresets from 'butterchurn-presets'
-import {audioService} from '@/services/audioService'
+import { audioService } from '@/services/audioService'
 
 export const initVisualizer = (container: HTMLElement) => {
   const audioContext = audioService.context

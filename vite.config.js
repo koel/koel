@@ -3,6 +3,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import laravel from 'laravel-vite-plugin'
 import path from 'path'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 export default defineConfig({
   plugins: [
@@ -14,6 +15,9 @@ export default defineConfig({
       ],
       refresh: true
     }),
+    visualizer({
+      filename: 'stats.html'
+    })
   ],
   resolve: {
     alias: {

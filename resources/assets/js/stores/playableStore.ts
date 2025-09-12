@@ -17,7 +17,6 @@ import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { overviewStore } from '@/stores/overviewStore'
 import { playlistStore } from '@/stores/playlistStore'
-import type { Album } from 'lucide-vue-next'
 
 export interface SongUpdateData {
   title?: string

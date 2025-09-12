@@ -11,6 +11,7 @@ db.mwb.bak
 bower_components
 /CHANGE
 koel.db
+/stats.html
 
 ### Node ###
 # Logs
