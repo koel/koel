@@ -214,7 +214,8 @@ export const usePlayableList = (
   return {
     PlayableList,
     ThumbnailStack,
-    playables: filteredPlayables,
+    playables,
+    filteredPlayables,
     config,
     context,
     downloadable,
