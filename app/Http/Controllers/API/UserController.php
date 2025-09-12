@@ -27,6 +27,13 @@ class UserController extends Controller
         return UserResource::collection($this->userRepository->getAll());
     }
 
+    public function show(User $user)
+    {
+        $this->authorize('admin', User::class);
+
+        return UserResource::make($user);
+    }
+
     public function store(UserStoreRequest $request)
     {
         $this->authorize('admin', User::class);
