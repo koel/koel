@@ -5,7 +5,7 @@ namespace Tests\Unit\Jobs;
 use App\Enums\SongStorageType;
 use App\Jobs\DeleteSongFilesJob;
 use App\Services\SongStorages\SongStorage;
-use App\Values\SongFileInfo;
+use App\Values\Song\SongFileInfo;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;

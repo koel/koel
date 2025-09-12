@@ -104,6 +104,7 @@ class Song extends Model implements AuditableContract, Favoriteable
         'mtime' => 'int',
         'track' => 'int',
         'disc' => 'int',
+        'year' => 'int',
         'is_public' => 'bool',
         'storage' => SongStorageCast::class,
         'episode_metadata' => EpisodeMetadataCast::class,

@@ -3,7 +3,7 @@
 namespace App\Http\Requests\API;
 
 use App\Models\Song;
-use App\Values\SongUpdateData;
+use App\Values\Song\SongUpdateData;
 use Illuminate\Validation\Rule;
 
 /**

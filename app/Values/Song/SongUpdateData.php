@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Values;
+namespace App\Values\Song;
 
 use Illuminate\Contracts\Support\Arrayable;
 
@@ -21,15 +21,15 @@ final class SongUpdateData implements Arrayable
     }
 
     public static function make(
-        ?string $title,
-        ?string $artistName,
-        ?string $albumName,
-        ?string $albumArtistName,
-        ?int $track,
-        ?int $disc,
-        ?string $genre,
-        ?int $year,
-        ?string $lyrics
+        ?string $title = null,
+        ?string $artistName = null,
+        ?string $albumName = null,
+        ?string $albumArtistName = null,
+        ?int $track = null,
+        ?int $disc = null,
+        ?string $genre = null,
+        ?int $year = null,
+        ?string $lyrics = null,
     ): self {
         return new self(
             $title,

@@ -196,6 +196,11 @@ const fetchScreenData = async () => {
     context.entity = artist.value
     editable.value = await currentUserCan.editArtist(artist.value!)
   } catch (error: unknown) {
+    if (error?.status === 404) {
+      await triggerNotFound()
+      return
+    }
+
     useErrorHandler('dialog').handleHttpError(error)
   } finally {
     loading.value = false
@@ -212,7 +217,7 @@ const requestContextMenu = (event: MouseEvent) => {
 eventBus.on('SONGS_UPDATED', result => {
   // After songs are updated, check if the current artist still exists.
   // If not, redirect to the artist index screen.
-  if (result.removed.artists.find(({ id }) => id === artist.value?.id)) {
+  if (result.removed.artist_ids.includes(artist.value!.id)) {
     go(url('artists.index'))
   }
 })

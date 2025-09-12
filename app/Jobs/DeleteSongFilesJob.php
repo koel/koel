@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Services\SongStorages\SongStorage;
-use App\Values\SongFileInfo;
+use App\Values\Song\SongFileInfo;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Throwable;

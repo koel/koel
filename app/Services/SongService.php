@@ -18,8 +18,9 @@ use App\Repositories\TranscodeRepository;
 use App\Services\Scanners\Contracts\ScannerCacheStrategy as CacheStrategy;
 use App\Values\Scanning\ScanConfiguration;
 use App\Values\Scanning\ScanInformation;
-use App\Values\SongFileInfo;
-use App\Values\SongUpdateData;
+use App\Values\Song\SongFileInfo;
+use App\Values\Song\SongUpdateData;
+use App\Values\Song\SongUpdateResult;
 use App\Values\Transcoding\TranscodeFileInfo;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Arr;
@@ -36,8 +37,7 @@ class SongService
     ) {
     }
 
-    /** @return Collection<array-key, Song> */
-    public function updateSongs(array $ids, SongUpdateData $data): Collection
+    public function updateSongs(array $ids, SongUpdateData $data): SongUpdateResult
     {
         if (count($ids) === 1) {
             // If we're only updating one song, an empty non-required should be converted to the default values.
@@ -50,32 +50,54 @@ class SongService
             $data->albumArtistName = $data->albumArtistName ?: $data->artistName;
         }
 
-        return DB::transaction(function () use ($ids, $data): Collection {
+        return DB::transaction(function () use ($ids, $data): SongUpdateResult {
+            $result = SongUpdateResult::make();
             $multiSong = count($ids) > 1;
             $noTrackUpdate = $multiSong && !$data->track;
+            $affectedAlbums = collect();
+            $affectedArtists = collect();
 
-            return collect($ids)
-                ->reduce(function (Collection $updated, string $id) use ($data, $noTrackUpdate): Collection {
-                    $foundSong = Song::query()->with('album.artist')->find($id);
-
+            Song::query()->with('artist.user', 'album.artist', 'album.artist.user')->findMany($ids)->each(
+                function (Song $song) use ($data, $result, $noTrackUpdate, $affectedAlbums, $affectedArtists): void {
                     if ($noTrackUpdate) {
-                        $data->track = $foundSong?->track;
+                        $data->track = $song->track;
                     }
 
-                    optional(
-                        $foundSong,
-                        fn (Song $song) => $updated->push($this->updateSong($song, clone $data)) // @phpstan-ignore-line
-                    );
+                    if ($affectedAlbums->pluck('id')->doesntContain($song->album_id)) {
+                        $affectedAlbums->push($song->album);
+                    }
+
+                    if ($affectedArtists->pluck('id')->doesntContain($song->artist_id)) {
+                        $affectedArtists->push($song->artist);
+                    }
+
+                    if ($affectedArtists->pluck('id')->doesntContain($song->album->artist_id)) {
+                        $affectedArtists->push($song->album_artist);
+                    }
+
+                    $result->addSong($this->updateSong($song, clone $data)); // @phpstan-ignore-line
 
                     if ($noTrackUpdate) {
                         $data->track = null;
                     }
+                },
+            );
 
-                    // Instruct the system to prune the library, i.e., remove empty albums and artists.
-                    event(new LibraryChanged());
+            $affectedAlbums->each(static function (Album $album) use ($result): void {
+                if ($album->refresh()->songs()->count() === 0) {
+                    $result->addRemovedAlbum($album);
+                    $album->delete();
+                }
+            });
 
-                    return $updated;
-                }, collect());
+            $affectedArtists->each(static function (Artist $artist) use ($result): void {
+                if ($artist->refresh()->songs()->count() === 0) {
+                    $result->addRemovedArtist($artist);
+                    $artist->delete();
+                }
+            });
+
+            return $result;
         });
     }
 
@@ -101,7 +123,9 @@ class SongService
         $album = Album::getOrCreate($albumArtist, $data->albumName);
 
         $song->album_id = $album->id;
+        $song->album_name = $album->name;
         $song->artist_id = $artist->id;
+        $song->artist_name = $artist->name;
         $song->title = $data->title;
         $song->lyrics = $data->lyrics;
         $song->track = $data->track;

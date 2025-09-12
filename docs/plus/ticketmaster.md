@@ -1,7 +1,7 @@
 # Ticketmaster
 
 [Ticketmaster](https://www.ticketmaster.com/) is one of the most popular ticketing platforms for events, tours, and
-concerts. By integrating with Ticketmaster, you can access to the upcoming events in your area by going to the Events
+concerts. By integrating with Ticketmaster, you can access the upcoming events in your area by going to the Events
 tab found on the _Artist_ screen. Clicking on an event will take you to the corresponding webpage where you can purchase
 tickets and learn more about the event.
 

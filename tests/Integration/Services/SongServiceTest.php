@@ -2,7 +2,6 @@
 
 namespace Tests\Integration\Services;
 
-use App\Events\LibraryChanged;
 use App\Facades\Dispatcher;
 use App\Jobs\DeleteSongFilesJob;
 use App\Jobs\DeleteTranscodeFilesJob;
@@ -15,8 +14,7 @@ use App\Models\Transcode;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
 use App\Values\Scanning\ScanConfiguration;
-use App\Values\SongUpdateData;
-use Illuminate\Support\Facades\Event;
+use App\Values\Song\SongUpdateData;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -40,156 +38,163 @@ class SongServiceTest extends TestCase
         Setting::set('media_path', $this->mediaPath);
     }
 
-    public function testUpdateSingleSong(): void
+    #[Test]
+    public function updateSingleSong(): void
     {
-        Event::fake(LibraryChanged::class);
-
         /** @var Song $song */
         $song = Song::factory()->create();
 
         $data = SongUpdateData::make(
-            title: null,
-            artistName: null,
-            albumName: null,
-            albumArtistName: 'Artist A',
-            track: null,
+            albumArtistName: 'Queen',
             disc: 1,
-            genre: null,
-            year: null,
-            lyrics: null
+            lyrics: 'Is this the real life?',
         );
 
-        $expectedData = [
-            'disc' => 1,
-            'track' => 0,
-            'lyrics' => '',
-            'year' => null,
-            'genre' => '',
-            'albumArtistName' => 'Artist A',
-        ];
+        $result = $this->service->updateSongs([$song->id], $data);
+        /** @var Song $updatedSong */
+        $updatedSong = $result->updatedSongs->first();
 
-        $updatedSongs = $this->service->updateSongs([$song->id], $data);
-
-        self::assertEquals(1, $updatedSongs->count());
-        self::assertEquals($expectedData['disc'], $updatedSongs->first()->disc);
-        self::assertEquals($expectedData['track'], $updatedSongs->first()->track);
-        self::assertEquals($expectedData['lyrics'], $updatedSongs->first()->lyrics);
-        self::assertEquals($expectedData['genre'], $updatedSongs->first()->genre);
-
-        Event::assertDispatched(LibraryChanged::class);
+        self::assertCount(1, $result->updatedSongs);
+        self::assertEquals(1, $updatedSong->disc);
+        self::assertEquals(0, $updatedSong->track);
+        self::assertEquals('Is this the real life?', $updatedSong->lyrics);
+        self::assertEquals('', $updatedSong->genre);
+        self::assertEquals('Queen', $updatedSong->album_artist->name);
+        // We changed the album artist name, so the old album should have been removed
+        self::assertCount(1, $result->removedAlbumIds);
     }
 
-    public function testUpdateMultipleSongsTrackProvided(): void
+    #[Test]
+    public function updateSingleSongWithAlbumChanged(): void
     {
-        Event::fake(LibraryChanged::class);
+        /** @var Song $song */
+        $song = Song::factory()->create();
+        $artist = $song->artist;
+        $album = $song->album;
 
+        $data = SongUpdateData::make(
+            albumName: 'New Album',
+        );
+
+        $result = $this->service->updateSongs([$song->id], $data);
+
+        /** @var Song $updatedSong */
+        $updatedSong = $result->updatedSongs->first();
+
+        self::assertTrue($updatedSong->artist->is($artist));
+        self::assertFalse($updatedSong->album->is($album));
+        self::assertSame('New Album', $updatedSong->album->name);
+        self::assertSame('New Album', $updatedSong->album_name);
+
+        // The old album should have been removed
+        self::assertCount(1, $result->removedAlbumIds);
+        self::assertSame($album->id, $result->removedAlbumIds->first());
+    }
+
+    #[Test]
+    public function updateSongWithArtistChanged(): void
+    {
+        /** @var Song $song */
+        $song = Song::factory()->create();
+        $artist = $song->artist;
+        $album = $song->album;
+        $albumName = $song->album->name;
+
+        $data = SongUpdateData::make(
+            artistName: 'New Artist',
+        );
+
+        $result = $this->service->updateSongs([$song->id], $data);
+
+        /** @var Song $updatedSong */
+        $updatedSong = $result->updatedSongs->first();
+
+        self::assertFalse($updatedSong->artist->is($artist));
+        self::assertSame('New Artist', $updatedSong->artist->name);
+        self::assertSame('New Artist', $updatedSong->artist_name);
+
+        // The album changes to a new one with the same name
+        self::assertFalse($updatedSong->album->is($album));
+        self::assertTrue($updatedSong->album->artist->is($updatedSong->artist));
+        self::assertSame($albumName, $updatedSong->album->name);
+
+        // Old album and artist should have been removed
+        self::assertCount(1, $result->removedAlbumIds);
+        self::assertCount(1, $result->removedArtistIds);
+        self::assertSame($album->id, $result->removedAlbumIds->first());
+        self::assertSame($artist->id, $result->removedArtistIds->first());
+    }
+
+    #[Test]
+    public function updateMultipleSongsTrackProvided(): void
+    {
         /** @var Song $song1 */
         $song1 = Song::factory()->create(['track' => 1]);
 
         /** @var Song $song2 */
         $song2 = Song::factory()->create(['track' => 2]);
 
-        $albumArtistName = 'New Album Artist';
-        $lyrics = 'Lyrics 2';
         $data = SongUpdateData::make(
-            title: null,
-            artistName: 'Arist B',
-            albumName: null,
-            albumArtistName: $albumArtistName,
+            artistName: 'Queen',
+            albumArtistName: 'New Album Artist',
             track: 5,
             disc: 2,
             genre: 'Pop',
             year: 2023,
-            lyrics: $lyrics
+            lyrics: 'Is this the real life?'
         );
 
-        $expectedData = [
-            'disc' => 2,
-            'track' => 5,
-            'lyrics' => $lyrics,
-            'year' => 2023,
-            'genre' => 'Pop',
-            'albumArtistName' => $albumArtistName,
-        ];
+        $result = $this->service->updateSongs([$song1->id, $song2->id], $data);
 
-        $updatedSongs = $this->service->updateSongs([$song1->id, $song2->id], $data);
+        self::assertEquals(2, $result->updatedSongs->count());
 
-        self::assertEquals(2, $updatedSongs->count());
-
-        foreach ($updatedSongs as $updatedSong) {
-            self::assertEquals($expectedData['disc'], $updatedSong->disc);
-            self::assertEquals($expectedData['track'], $updatedSong->track);
-            self::assertEquals($expectedData['lyrics'], $updatedSong->lyrics);
-            self::assertEquals($expectedData['genre'], $updatedSong->genre);
+        /** @var Song $updatedSong */
+        foreach ($result->updatedSongs as $updatedSong) {
+            self::assertEquals(2, $updatedSong->disc);
+            self::assertEquals(5, $updatedSong->track);
+            self::assertSame(2023, $updatedSong->year);
+            self::assertEquals('Is this the real life?', $updatedSong->lyrics);
+            self::assertEquals('Pop', $updatedSong->genre);
+            self::assertSame('New Album Artist', $updatedSong->album_artist->name);
+            self::assertSame('Queen', $updatedSong->artist_name);
         }
-
-        Event::assertDispatched(LibraryChanged::class);
     }
 
-    public function testUpdateMultipleTracksWithoutProvidingTrack(): void
+    #[Test]
+    public function updateMultipleTracksWithoutProvidingTrack(): void
     {
-        Event::fake(LibraryChanged::class);
-
         /** @var Song $song1 */
         $song1 = Song::factory()->create(['track' => 1, 'disc' => 1]);
 
         /** @var Song $song2 */
         $song2 = Song::factory()->create(['track' => 2, 'disc' => 1]);
 
-        $lyrics = 'Lyrics';
-        $genre = 'Genre';
-
         $data = SongUpdateData::make(
-            title: null,
-            artistName: 'Artist',
-            albumName: null,
-            albumArtistName: null,
-            track: null,
-            disc: null,
-            genre: 'Genre',
-            year: null,
-            lyrics: $lyrics
+            artistName: 'Queen',
+            genre: 'Rock',
+            lyrics: 'Is this the real life?',
         );
 
-        $expectedData1 = [
-            'disc' => 1,
-            'track' => 1,
-            'lyrics' => $lyrics,
-            'year' => null,
-            'genre' => $genre,
-            'albumArtistName' => null,
-        ];
+        $result = $this->service->updateSongs([$song1->id, $song2->id], $data);
 
-        $expectedData2 = [
-            'disc' => 1,
-            'track' => 2,
-            'lyrics' => $lyrics,
-            'year' => null,
-            'genre' => $genre,
-            'albumArtistName' => null,
-        ];
+        $updatedSongs = $result->updatedSongs;
+        self::assertCount(2, $updatedSongs);
 
-        $updatedSongs = $this->service->updateSongs([$song1->id, $song2->id], $data);
+        $updatedSongs->each(static function (Song $song): void {
+            self::assertEquals(1, $song->disc);
+            self::assertEquals('Is this the real life?', $song->lyrics);
+            self::assertEquals('Rock', $song->genre);
+            self::assertEquals('Queen', $song->artist_name);
+            self::assertEquals('Queen', $song->artist->name);
+        });
 
-        self::assertEquals(2, $updatedSongs->count());
-
-        self::assertEquals($expectedData1['disc'], $updatedSongs[0]->disc);
-        self::assertEquals($expectedData1['track'], $updatedSongs[0]->track);
-        self::assertEquals($expectedData1['lyrics'], $updatedSongs[0]->lyrics);
-        self::assertEquals($expectedData1['genre'], $updatedSongs[0]->genre);
-
-        self::assertEquals($expectedData2['disc'], $updatedSongs[1]->disc);
-        self::assertEquals($expectedData2['track'], $updatedSongs[1]->track);
-        self::assertEquals($expectedData2['lyrics'], $updatedSongs[1]->lyrics);
-        self::assertEquals($expectedData2['genre'], $updatedSongs[1]->genre);
-
-        Event::assertDispatched(LibraryChanged::class);
+        self::assertEquals(1, $updatedSongs[0]->track);
+        self::assertEquals(2, $updatedSongs[1]->track);
     }
 
     #[Test]
     public function deleteSongs(): void
     {
-        Event::fake(LibraryChanged::class);
         $songs = Song::factory()->count(2)->create();
 
         Dispatcher::expects('dispatch')
@@ -205,15 +210,11 @@ class SongServiceTest extends TestCase
 
         $this->service->deleteSongs($songs->pluck('id')->toArray());
         $songs->each(fn (Song $song) => $this->assertDatabaseMissing(Song::class, ['id' => $song->id]));
-
-        Event::assertDispatched(LibraryChanged::class);
     }
 
     #[Test]
     public function deleteSongsWithTranscodes(): void
     {
-        Event::fake(LibraryChanged::class);
-
         $transcodes = Transcode::factory()->count(2)->create();
         $songs = $transcodes->map(static fn (Transcode $transcode) => $transcode->song); // @phpstan-ignore-line
 
@@ -241,8 +242,6 @@ class SongServiceTest extends TestCase
             $this->assertDatabaseMissing(Song::class, ['id' => $transcode->song_id]);
             $this->assertDatabaseMissing(Transcode::class, ['id' => $transcode->id]);
         });
-
-        Event::assertDispatched(LibraryChanged::class);
     }
 
     #[Test]
