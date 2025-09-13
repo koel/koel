@@ -1,0 +1,25 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/php
+{
+  "name": "Koel - PHP 8.2",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "18"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "bmewburn.vscode-intelephense-client",
+        "ms-vscode.vscode-json",
+        "bradlc.vscode-tailwindcss",
+        "Vue.volar"
+      ]
+    }
+  },
+  "forwardPorts": [8000, 8080, 3000],
+  "postCreateCommand": "sudo chmod a+x \"$(pwd)\" && sudo ln -s \"$(pwd)\" /var/www/html"
+}

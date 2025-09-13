@@ -17,6 +17,7 @@ koel.db
 # Logs
 *.log
 npm-debug.log*
+.pnpm-store
 
 # Runtime data
 pids
@@ -94,3 +95,4 @@ docs/.vitepress/cache
 demo-credits.json
 
 public/sandbox
+
