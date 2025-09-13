@@ -1,6 +1,5 @@
 FROM mcr.microsoft.com/devcontainers/php:1-8.2-bookworm
 
-# Install system dependencies needed for PHP extensions
 RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
@@ -15,7 +14,6 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions required by Koel
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
         gd \
@@ -26,8 +24,6 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
         zip \
         intl
 
-# Set up symlink for web directory
 RUN rm -rf /var/www/html
 
-# Create workspace directory and set permissions
 WORKDIR /workspaces/koel
