@@ -109,7 +109,13 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Event::listen(static function (SocialiteWasCalled $event): void {
-            $event->extendSocialite('authelia', AutheliaProvider::class);
+            if (
+                config('services.authelia.base_url')
+                && config('services.authelia.client_id')
+                && config('services.authelia.client_secret')
+            ) {
+                $event->extendSocialite('authelia', AutheliaProvider::class);
+            }
         });
     }
 
