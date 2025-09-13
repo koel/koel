@@ -41,6 +41,13 @@ return [
         'hd' => env('SSO_GOOGLE_HOSTED_DOMAIN'),
     ],
 
+    'authelia' => [
+        'base_url' => env('SSO_AUTHELIA_BASE_URL'),
+        'client_id' => env('SSO_AUTHELIA_CLIENT_ID'),
+        'client_secret' => env('SSO_AUTHELIA_CLIENT_SECRET'),
+        'redirect' => env('SSO_AUTHELIA_REDIRECT_URI'),
+    ],
+
     'gravatar' => [
         'url' => env('GRAVATAR_URL', 'https://www.gravatar.com/avatar'),
         'default' => env('GRAVATAR_DEFAULT', 'robohash'),

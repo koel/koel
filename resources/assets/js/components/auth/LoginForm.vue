@@ -32,6 +32,7 @@
 
     <div v-if="ssoProviders.length" v-show="!showingForgotPasswordForm" class="flex gap-3 items-center">
       <GoogleLoginButton v-if="ssoProviders.includes('Google')" @error="onSSOError" @success="onSSOSuccess" />
+      <AutheliaLoginButton v-if="ssoProviders.includes('Authelia')" @error="onSSOError" @success="onSSOSuccess" />
     </div>
 
     <ForgotPasswordForm v-if="showingForgotPasswordForm" @cancel="showingForgotPasswordForm = false" />
@@ -49,6 +50,7 @@ import Btn from '@/components/ui/form/Btn.vue'
 import PasswordField from '@/components/ui/form/PasswordField.vue'
 import ForgotPasswordForm from '@/components/auth/ForgotPasswordForm.vue'
 import GoogleLoginButton from '@/components/auth/sso/GoogleLoginButton.vue'
+import AutheliaLoginButton from '@/components/auth/sso/AutheliaLoginButton.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 

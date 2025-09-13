@@ -53,7 +53,8 @@
     "intervention/image-laravel": "^1.5",
     "laravel/prompts": "^0.3.6",
     "laravel/tinker": "^2.10",
-    "fakerphp/faker": "^1.24"
+    "fakerphp/faker": "^1.24",
+    "socialiteproviders/authelia": "^4.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",

@@ -110,6 +110,14 @@ function collect_sso_providers(): array
         $providers[] = 'Google';
     }
 
+    if (
+        config('services.authelia.base_url')
+        && config('services.authelia.client_id')
+        && config('services.authelia.client_secret')
+    ) {
+        $providers[] = 'Authelia';
+    }
+
     return $providers;
 }
 

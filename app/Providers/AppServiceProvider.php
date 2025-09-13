@@ -28,8 +28,11 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Schema\Builder;
 use Illuminate\Database\SQLiteConnection;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use SocialiteProviders\Authelia\Provider as AutheliaProvider;
+use SocialiteProviders\Manager\SocialiteWasCalled;
 use SpotifyWebAPI\Session as SpotifySession;
 
 class AppServiceProvider extends ServiceProvider
@@ -103,6 +106,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(GeolocationService::class, static function (): GeolocationService {
             return app(IPinfoService::class);
+        });
+
+        Event::listen(static function (SocialiteWasCalled $event): void {
+            $event->extendSocialite('authelia', AutheliaProvider::class);
         });
     }
 
