@@ -9,8 +9,10 @@ use App\Casts\SongStorageCast;
 use App\Casts\SongTitleCast;
 use App\Enums\PlayableType;
 use App\Enums\SongStorageType;
+use App\Models\Concerns\MorphsToEmbeds;
 use App\Models\Concerns\MorphsToFavorites;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
+use App\Models\Contracts\Embeddable;
 use App\Models\Contracts\Favoriteable;
 use App\Values\Scanning\ScanInformation;
 use App\Values\SongStorageMetadata\DropboxMetadata;
@@ -85,11 +87,12 @@ use Webmozart\Assert\Assert;
  * @property ?string $podcast_id
  * @property ?Podcast $podcast
  */
-class Song extends Model implements AuditableContract, Favoriteable
+class Song extends Model implements AuditableContract, Favoriteable, Embeddable
 {
     use Auditable;
     use HasFactory;
     use HasUuids;
+    use MorphsToEmbeds;
     use MorphsToFavorites;
     use Searchable;
     use SupportsDeleteWhereValueNotIn;

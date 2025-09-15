@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Collection;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-use function Tests\create_admin;
 use function Tests\create_playlist;
 use function Tests\create_user;
 
@@ -541,7 +540,12 @@ class SmartPlaylistServiceTest extends TestCase
 
     protected function assertMatchesAgainstRules(Collection $matches, array $rules, ?User $owner = null): void
     {
-        $playlist = create_playlist(['rules' => $rules], $owner ?? create_admin());
+        $playlist = create_playlist(['rules' => $rules]);
+
+        if ($owner) {
+            $playlist->users()->detach();
+            $playlist->users()->attach($owner, ['role' => 'owner']);
+        }
 
         self::assertEqualsCanonicalizing(
             $matches->modelKeys(),

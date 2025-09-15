@@ -22,9 +22,7 @@ class DownloadPlaylistController extends Controller
     ) {
         $this->authorize('download', $playlist);
 
-        $songs = $playlist->is_smart
-            ? $smartPlaylistService->getSongs($playlist, $user)
-            : $repository->getByStandardPlaylist($playlist, $user);
+        $songs = $repository->getByPlaylist($playlist, $user);
 
         abort_if($songs->isEmpty(), 404, 'The playlist is empty.');
 

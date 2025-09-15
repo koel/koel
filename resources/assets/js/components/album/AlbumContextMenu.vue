@@ -13,6 +13,8 @@
         <li class="separator" />
         <li @click="download">Download</li>
       </template>
+      <li class="separator" />
+      <li @click="showEmbedModal">Embed…</li>
     </template>
   </ContextMenu>
 </template>
@@ -50,10 +52,9 @@ const shuffle = () => trigger(async () => {
 })
 
 const edit = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_ALBUM_FORM', album.value!))
-
 const toggleFavorite = () => trigger(() => albumStore.toggleFavorite(album.value!))
-
 const download = () => trigger(() => downloadService.fromAlbum(album.value!))
+const showEmbedModal = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_EMBED_FORM', album.value!))
 
 eventBus.on('ALBUM_CONTEXT_MENU_REQUESTED', async ({ pageX, pageY }, _album) => {
   album.value = _album

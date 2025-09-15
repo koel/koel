@@ -84,10 +84,11 @@ class PlaylistFolderTest extends TestCase
     #[Test]
     public function movePlaylistToFolder(): void
     {
-        /** @var PlaylistFolder $folder */
-        $folder = PlaylistFolder::factory()->create();
+        $playlist = create_playlist();
 
-        $playlist = create_playlist(owner: $folder->user);
+        /** @var PlaylistFolder $folder */
+        $folder = PlaylistFolder::factory()->for($playlist->owner)->create();
+
         self::assertNull($playlist->getFolderId($folder->user));
 
         $this->postAs(
@@ -103,10 +104,11 @@ class PlaylistFolderTest extends TestCase
     #[Test]
     public function unauthorizedMovingPlaylistToFolderIsNotAllowed(): void
     {
-        /** @var PlaylistFolder $folder */
-        $folder = PlaylistFolder::factory()->create();
+        $playlist = create_playlist();
 
-        $playlist = create_playlist(owner: $folder->user);
+        /** @var PlaylistFolder $folder */
+        $folder = PlaylistFolder::factory()->for($playlist->owner)->create();
+
         self::assertNull($playlist->getFolderId($folder->user));
 
         $this->postAs("api/playlist-folders/{$folder->id}/playlists", ['playlists' => [$playlist->id]])
@@ -118,10 +120,10 @@ class PlaylistFolderTest extends TestCase
     #[Test]
     public function movePlaylistToRootLevel(): void
     {
-        /** @var PlaylistFolder $folder */
-        $folder = PlaylistFolder::factory()->create();
+        $playlist = create_playlist();
 
-        $playlist = create_playlist(owner: $folder->user);
+        /** @var PlaylistFolder $folder */
+        $folder = PlaylistFolder::factory()->for($playlist->owner)->create();
 
         $folder->playlists()->attach($playlist);
         self::assertTrue($playlist->refresh()->getFolder($folder->user)->is($folder));
@@ -139,10 +141,10 @@ class PlaylistFolderTest extends TestCase
     #[Test]
     public function unauthorizedMovingPlaylistToRootLevelIsNotAllowed(): void
     {
-        /** @var PlaylistFolder $folder */
-        $folder = PlaylistFolder::factory()->create();
+        $playlist = create_playlist();
 
-        $playlist = create_playlist(owner: $folder->user);
+        /** @var PlaylistFolder $folder */
+        $folder = PlaylistFolder::factory()->for($playlist->owner)->create();
 
         $folder->playlists()->attach($playlist);
         self::assertTrue($playlist->refresh()->getFolder($folder->user)->is($folder));

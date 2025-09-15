@@ -3,6 +3,7 @@ export interface Modals {
   ADD_PODCAST_FORM: never
   ADD_RADIO_STATION_FORM: never
   ADD_USER_FORM: never
+  CREATE_EMBED_FORM: { embeddable: Embeddable }
   CREATE_PLAYLIST_FORM: { folder: PlaylistFolder | null, playables: Playable[] }
   CREATE_PLAYLIST_FOLDER_FORM: never
   CREATE_SMART_PLAYLIST_FORM: { folder: PlaylistFolder | null }

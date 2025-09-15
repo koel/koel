@@ -3,6 +3,8 @@
 namespace Database\Factories;
 
 use App\Helpers\Ulid;
+use App\Models\Playlist;
+use App\Models\User;
 use App\Values\SmartPlaylist\SmartPlaylistRule;
 use App\Values\SmartPlaylist\SmartPlaylistRuleGroup;
 use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
@@ -39,5 +41,14 @@ class PlaylistFactory extends Factory
                 ]),
             ]),
         ]);
+    }
+
+    public function configure(): static
+    {
+        // @phpstan-ignore-next-line
+        return $this->afterCreating(static function (Playlist $playlist): void {
+            $user = User::factory()->create();
+            $playlist->users()->attach($user->id, ['role' => 'owner']);
+        });
     }
 }

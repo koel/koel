@@ -2,7 +2,7 @@
   <article
     :class="{ selected: theme.selected }"
     :style="thumbnailStyles"
-    :title="`Set current theme to ${name}`"
+    :title="`Set current theme to ${theme.name}`"
     class="theme h-[96px] bg-center bg-cover relative cursor-pointer rounded-lg overflow-hidden border-2 border-solid border-white/10 transition duration-300 hover:border-white/50]"
   >
     <button
@@ -10,20 +10,18 @@
       type="button"
       @click="$emit('selected', theme)"
     >
-      {{ name }}
+      {{ theme.name }}
     </button>
   </article>
 </template>
 
 <script lang="ts" setup>
 import { toRefs } from 'vue'
-import { slugToTitle } from '@/utils/formatters'
 
 const props = defineProps<{ theme: Theme }>()
 defineEmits<{ (e: 'selected', theme: Theme): void }>()
 
 const { theme } = toRefs(props)
-const name = theme.value.name ? theme.value.name : slugToTitle(theme.value.id)
 
 const thumbnailStyles: Record<string, string> = {
   'background-color': theme.value.thumbnailColor,

@@ -33,17 +33,11 @@ function read_as_data_url(string $path): string
 }
 
 /** @param array<mixed> $attributes */
-function create_playlist(array $attributes = [], ?User $owner = null, bool $smart = false): Playlist
+function create_playlist(array $attributes = [], bool $smart = false): Playlist
 {
-    $owner ??= create_user();
-
-    $playlist = $smart
+    return $smart
         ? Playlist::factory()->smart()->create($attributes)
         : Playlist::factory()->create($attributes);
-
-    $owner->playlists()->attach($playlist, ['role' => 'owner']);
-
-    return $playlist;
 }
 
 /**
@@ -56,7 +50,12 @@ function create_playlists(int $count, array $attributes = [], ?User $owner = nul
     return Playlist::factory()
         ->count($count)
         ->create($attributes)
-        ->each(static fn (Playlist $p) => $p->users()->attach($owner ?? create_user(), ['role' => 'owner']));
+        ->when($owner, static function (Collection $playlists) use ($owner): void {
+            $playlists->each(static function (Playlist $p) use ($owner): void {
+                $p->users()->detach();
+                $p->users()->attach($owner, ['role' => 'owner']);
+            });
+        });
 }
 
 /**

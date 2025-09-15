@@ -300,17 +300,17 @@ describe('playableContextMenu.vue', () => {
   })
 
   it('has an option to copy shareable URL if song is public in Plus edition', async () => {
-    h.enablePlusEdition()
-
-    await renderComponent(h.factory('song', { is_public: true }))
-    screen.getByText('Copy Shareable URL')
+    await h.withPlusEdition(async () => {
+      await renderComponent(h.factory('song', { is_public: true }))
+      screen.getByText('Copy Shareable URL')
+    })
   })
 
   it('does not have an option to share if song is private in Plus edition', async () => {
-    h.enablePlusEdition()
-
-    await renderComponent(h.factory('song', { is_public: false }))
-    expect(screen.queryByText('Copy Shareable URL')).toBeNull()
+    await h.withPlusEdition(async () => {
+      await renderComponent(h.factory('song', { is_public: false }))
+      expect(screen.queryByText('Copy Shareable URL')).toBeNull()
+    })
   })
 
   it('deletes song', async () => {
@@ -356,9 +356,7 @@ describe('playableContextMenu.vue', () => {
     expect(screen.queryByText('Unmark as Private')).toBeNull()
   })
 
-  it('makes songs private', async () => {
-    h.enablePlusEdition()
-
+  it('makes songs private', async () => await h.withPlusEdition(async () => {
     const user = h.factory('user')
     const songs = h.factory('song', 5, {
       is_public: true,
@@ -373,11 +371,9 @@ describe('playableContextMenu.vue', () => {
     await h.user.click(screen.getByText('Mark as Private'))
 
     expect(privatizeMock).toHaveBeenCalledWith(songs)
-  })
+  }))
 
-  it('makes songs public', async () => {
-    h.enablePlusEdition()
-
+  it('makes songs public', async () => await h.withPlusEdition(async () => {
     const user = h.factory('user')
     const songs = h.factory('song', 5, {
       is_public: false,
@@ -392,43 +388,43 @@ describe('playableContextMenu.vue', () => {
     await h.user.click(screen.getByText('Unmark as Private'))
 
     expect(publicizeMock).toHaveBeenCalledWith(songs)
-  })
+  }))
 
   it('does not have an option to make songs public or private if current user is not owner', async () => {
-    h.enablePlusEdition()
+    await h.withPlusEdition(async () => {
+      const user = h.factory('user')
+      const owner = h.factory('user')
+      const songs = h.factory('song', 5, {
+        is_public: false,
+        owner_id: owner.id,
+      })
 
-    const user = h.factory('user')
-    const owner = h.factory('user')
-    const songs = h.factory('song', 5, {
-      is_public: false,
-      owner_id: owner.id,
+      h.be(user)
+
+      await renderComponent(songs)
+
+      expect(screen.queryByText('Unmark as Private')).toBeNull()
+      expect(screen.queryByText('Mark as Private')).toBeNull()
     })
-
-    h.be(user)
-
-    await renderComponent(songs)
-
-    expect(screen.queryByText('Unmark as Private')).toBeNull()
-    expect(screen.queryByText('Mark as Private')).toBeNull()
   })
 
   it('has both options to make public and private if songs have mixed visibilities', async () => {
-    h.enablePlusEdition()
+    await h.withPlusEdition(async () => {
+      const owner = h.factory('user')
+      const songs = h.factory('song', 2, {
+        is_public: false,
+        owner_id: owner.id,
+      }).concat(...h.factory('song', 3, {
+        is_public: true,
+        owner_id: owner.id,
+      }))
 
-    const owner = h.factory('user')
-    const songs = h.factory('song', 2, {
-      is_public: false,
-      owner_id: owner.id,
-    }).concat(...h.factory('song', 3, {
-      is_public: true,
-      owner_id: owner.id,
-    }))
+      h.be(owner)
+      await renderComponent(songs)
 
-    h.be(owner)
-    await renderComponent(songs)
-
-    screen.getByText('Unmark as Private')
-    screen.getByText('Mark as Private')
+      screen.getByText('Unmark as Private')
+      screen.getByText('Mark as Private')
+    })
   })
 
   it('does not have an option to make songs public or private or Community edition', async () => {
@@ -443,5 +439,13 @@ describe('playableContextMenu.vue', () => {
 
     expect(screen.queryByText('Unmark as Private')).toBeNull()
     expect(screen.queryByText('Mark as Private')).toBeNull()
+  })
+
+  it('requests the embed form', async () => {
+    const { playables } = await renderComponent(h.factory('song'))
+    const emitMock = h.mock(eventBus, 'emit')
+    await h.user.click(screen.getByText('Embed…'))
+
+    expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_CREATE_EMBED_FORM', playables[0])
   })
 })

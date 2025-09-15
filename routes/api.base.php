@@ -15,6 +15,8 @@ use App\Http\Controllers\API\Artist\FetchArtistInformationController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CheckResourcePermissionController;
 use App\Http\Controllers\API\DisconnectFromLastfmController;
+use App\Http\Controllers\API\Embed\EmbedController;
+use App\Http\Controllers\API\Embed\EmbedOptionsController;
 use App\Http\Controllers\API\ExcerptSearchController;
 use App\Http\Controllers\API\FavoriteController;
 use App\Http\Controllers\API\FetchAlbumInformationController;
@@ -76,16 +78,21 @@ use Pusher\Pusher;
 Route::prefix('api')->middleware('api')->group(static function (): void {
     Route::get('ping', static fn () => null);
 
-    Route::post('me', [AuthController::class, 'login'])->name('auth.login');
-    Route::post('me/otp', [AuthController::class, 'loginUsingOneTimeToken']);
+    Route::middleware('throttle:10,1')->group(static function (): void {
+        Route::post('me', [AuthController::class, 'login'])->name('auth.login');
+        Route::post('me/otp', [AuthController::class, 'loginUsingOneTimeToken']);
 
-    Route::delete('me', [AuthController::class, 'logout']);
+        Route::delete('me', [AuthController::class, 'logout']);
 
-    Route::post('forgot-password', ForgotPasswordController::class);
-    Route::post('reset-password', ResetPasswordController::class);
+        Route::post('forgot-password', ForgotPasswordController::class);
+        Route::post('reset-password', ResetPasswordController::class);
 
-    Route::get('invitations', [UserInvitationController::class, 'get']);
-    Route::post('invitations/accept', [UserInvitationController::class, 'accept']);
+        Route::get('invitations', [UserInvitationController::class, 'get']);
+        Route::post('invitations/accept', [UserInvitationController::class, 'accept']);
+
+        Route::get('embeds/{embed}/{options}', [EmbedController::class, 'getPayload'])->name('embeds.payload');
+        Route::post('embed-options', [EmbedOptionsController::class, 'encrypt']);
+    });
 
     Route::middleware('auth')->group(static function (): void {
         Route::get('one-time-token', GetOneTimeTokenController::class);
@@ -241,6 +248,9 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
             Route::apiResource('stations', RadioStationController::class);
             Route::delete('stations/{radioStation}/logo', [RadioStationLogoController::class, 'destroy']);
         });
+
+        // Embed routes
+        Route::post('embeds/resolve', [EmbedController::class, 'resolveForEmbeddable']);
     });
 
     // Object-storage (S3) routes

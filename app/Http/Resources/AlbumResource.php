@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use App\Facades\License;
 use App\Models\Album;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class AlbumResource extends JsonResource
@@ -54,10 +55,11 @@ class AlbumResource extends JsonResource
     }
 
     /** @inheritdoc */
-    public function toArray($request): array
+    public function toArray(Request $request): array
     {
         $isPlus = once(static fn () => License::isPlus());
         $user = $this->user ?? once(static fn () => auth()->user());
+        $embedding = $request->routeIs('embeds.payload');
 
         return [
             'type' => 'albums',
@@ -66,10 +68,13 @@ class AlbumResource extends JsonResource
             'artist_id' => $this->album->artist->id,
             'artist_name' => $this->album->artist->name,
             'cover' => $this->album->cover,
-            'created_at' => $this->album->created_at,
+            'created_at' => $this->unless($embedding, $this->album->created_at),
             'year' => $this->album->year,
-            'is_external' => $isPlus && $this->album->user_id !== $user->id,
-            'favorite' => $this->album->favorite,
+            'is_external' => $this->unless(
+                $embedding,
+                fn () => $isPlus && $this->album->user_id !== $user->id,
+            ),
+            'favorite' => $this->unless($embedding, $this->album->favorite),
         ];
     }
 }

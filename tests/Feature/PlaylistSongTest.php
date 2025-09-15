@@ -18,6 +18,7 @@ class PlaylistSongTest extends TestCase
         $playlist->addPlayables(Song::factory(5)->create());
 
         $this->getAs("api/playlists/{$playlist->id}/songs", $playlist->owner)
+            ->assertSuccessful()
             ->assertJsonStructure([0 => SongResource::JSON_STRUCTURE]);
     }
 

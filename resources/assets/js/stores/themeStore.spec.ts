@@ -5,6 +5,7 @@ import { themeStore } from '@/stores/themeStore'
 
 const testTheme: Theme = {
   id: 'test',
+  name: 'Test Theme',
   thumbnailColor: '#eee',
   properties: {
     '--color-text-primary': '#eee',
@@ -32,7 +33,7 @@ describe('themeStore', () => {
   })
 
   it('initializes the store', () => {
-    const applyMock = h.mock(themeStore, 'applyThemeFromPreference')
+    const setThemeMock = h.mock(themeStore, 'setTheme')
 
     themeStore.init()
 
@@ -50,7 +51,7 @@ describe('themeStore', () => {
       '--font-size': '',
     })
 
-    expect(applyMock).toHaveBeenCalled()
+    expect(setThemeMock).toHaveBeenCalledWith('classic')
   })
 
   it('sets a theme', () => {
@@ -63,6 +64,7 @@ describe('themeStore', () => {
 
     themeStore.setTheme({
       id: 'another',
+      name: 'Another Theme',
       thumbnailColor: '#ccc',
       properties: {
         '--color-text-primary': '#ccc',
@@ -83,18 +85,5 @@ describe('themeStore', () => {
 
   it('gets the default theme', () => {
     expect(themeStore.getDefaultTheme().id).toEqual('classic')
-  })
-
-  it('applies a theme from preference', () => {
-    ;(preferenceStore as any).theme = 'test'
-    const setMock = h.mock(themeStore, 'setTheme')
-    themeStore.applyThemeFromPreference()
-
-    expect(setMock).toHaveBeenCalledWith(testTheme)
-
-    ;(preferenceStore as any).theme = 'non-existent-for-sure'
-    themeStore.applyThemeFromPreference()
-
-    expect(setMock).toHaveBeenCalledWith(themeStore.getDefaultTheme())
   })
 })

@@ -61,6 +61,7 @@
     <li v-if="allowEdit" @click="openEditForm">Edit…</li>
     <li v-if="downloadable" @click="download">Download</li>
     <li v-if="onlyOneSelected && canBeShared" @click="copyUrl">Copy Shareable URL</li>
+    <li v-if="onlyOneSelected" @click="showEmbedModal">Embed…</li>
 
     <template v-if="canBeRemovedFromPlaylist">
       <li class="separator" />
@@ -256,6 +257,8 @@ const copyUrl = () => trigger(async () => {
   await copyText(playableStore.getShareableUrl(playables.value[0]))
   toastSuccess('URL copied to clipboard.')
 })
+
+const showEmbedModal = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_EMBED_FORM', playables.value[0]))
 
 const deleteFromFilesystem = () => trigger(async () => {
   if (await showConfirmDialog('Delete selected playable(s) from the filesystem? This action is NOT reversible!')) {

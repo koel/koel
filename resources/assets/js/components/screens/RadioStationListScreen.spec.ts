@@ -72,19 +72,18 @@ describe('radioStationListScreen.vue', () => {
     expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_ADD_RADIO_STATION_FORM')
   })
 
-  it('does not show the Add button in demo mode', async () => {
-    h.enableDemoMode()
+  it('does not show the Add button in demo mode', async () => await h.withDemoMode(async () => {
     await renderComponent()
     await h.tick()
 
     expect(screen.queryByRole('button', { name: 'Add a new station' })).toBeNull()
-  })
+  }))
 
-  it('shows the Add button in demo mode for admins', async () => {
-    h.beAdmin().enableDemoMode()
+  it('shows the Add button in demo mode for admins', async () => await h.withDemoMode(async () => {
+    h.beAdmin()
     await renderComponent()
     await h.tick()
 
     screen.getByRole('button', { name: 'Add a new station' })
-  })
+  }))
 })

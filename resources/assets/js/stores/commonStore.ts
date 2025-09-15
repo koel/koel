@@ -68,7 +68,7 @@ export const commonStore = {
     playlistFolderStore.init(this.state.playlist_folders)
     settingStore.init(this.state.settings)
     queueStore.init(this.state.queue_state)
-    themeStore.init()
+    themeStore.init(themeStore.getCurrentTheme())
 
     return this.state
   },

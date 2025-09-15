@@ -3,10 +3,13 @@
 namespace App\Repositories;
 
 use App\Builders\SongBuilder;
+use App\Enums\EmbeddableType;
 use App\Enums\PlayableType;
+use App\Exceptions\NonSmartPlaylistException;
 use App\Facades\License;
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Embed;
 use App\Models\Folder;
 use App\Models\Genre;
 use App\Models\Playlist;
@@ -14,9 +17,13 @@ use App\Models\Podcast;
 use App\Models\Song;
 use App\Models\User;
 use App\Repositories\Contracts\ScoutableRepository;
+use App\Values\SmartPlaylist\SmartPlaylistQueryModifier as QueryModifier;
+use App\Values\SmartPlaylist\SmartPlaylistRule as Rule;
+use App\Values\SmartPlaylist\SmartPlaylistRuleGroup as RuleGroup;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use LogicException;
 
 /**
  * @extends Repository<Song>
@@ -24,7 +31,7 @@ use Illuminate\Database\Eloquent\Collection;
  */
 class SongRepository extends Repository implements ScoutableRepository
 {
-    private const DEFAULT_QUEUE_LIMIT = 500;
+    private const LIST_SIZE_LIMIT = 500;
 
     public function __construct(private readonly FolderRepository $folderRepository)
     {
@@ -111,7 +118,7 @@ class SongRepository extends Repository implements ScoutableRepository
     public function getForQueue(
         array $sortColumns,
         string $sortDirection,
-        int $limit = self::DEFAULT_QUEUE_LIMIT,
+        int $limit = self::LIST_SIZE_LIMIT,
         ?User $scopedUser = null,
     ): Collection {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
@@ -171,8 +178,20 @@ class SongRepository extends Repository implements ScoutableRepository
     }
 
     /** @return Collection|array<array-key, Song> */
-    public function getByStandardPlaylist(Playlist $playlist, ?User $scopedUser = null): Collection
+    public function getByPlaylist(Playlist $playlist, ?User $scopedUser = null): Collection
     {
+        if ($playlist->is_smart) {
+            return $this->getBySmartPlaylist($playlist, $scopedUser);
+        } else {
+            return $this->getByStandardPlaylist($playlist, $scopedUser);
+        }
+    }
+
+    /** @return Collection|array<array-key, Song> */
+    private function getByStandardPlaylist(Playlist $playlist, ?User $scopedUser = null): Collection
+    {
+        throw_if($playlist->is_smart, new LogicException('Not a standard playlist.'));
+
         return Song::query(user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
             ->leftJoin('playlist_song', 'songs.id', '=', 'playlist_song.song_id')
@@ -190,6 +209,32 @@ class SongRepository extends Repository implements ScoutableRepository
             })
             ->where('playlists.id', $playlist->id)
             ->orderBy('playlist_song.position')
+            ->get();
+    }
+
+    /** @return Collection|array<array-key, Song> */
+    private function getBySmartPlaylist(Playlist $playlist, ?User $scopedUser = null): Collection
+    {
+        throw_unless($playlist->is_smart, NonSmartPlaylistException::create($playlist));
+
+        $query = Song::query(type: PlayableType::SONG, user: $scopedUser)->withUserContext();
+
+        $playlist->rule_groups->each(static function (RuleGroup $group, int $index) use ($query): void {
+            $whereClosure = static function (SongBuilder $subQuery) use ($group): void {
+                $group->rules->each(static function (Rule $rule) use ($subQuery): void {
+                    QueryModifier::applyRule($rule, $subQuery);
+                });
+            };
+
+            $query->when(
+                $index === 0,
+                static fn (SongBuilder $query) => $query->where($whereClosure),
+                static fn (SongBuilder $query) => $query->orWhere($whereClosure)
+            );
+        });
+
+        return $query->orderBy('songs.title')
+            ->limit(self::LIST_SIZE_LIMIT)
             ->get();
     }
 
@@ -366,5 +411,16 @@ class SongRepository extends Repository implements ScoutableRepository
             preserveOrder: true,
             scopedUser: $user,
         );
+    }
+
+    /** @return Collection<Song>|array<array-key, Song> */
+    public function getForEmbed(Embed $embed): Collection
+    {
+        return match (EmbeddableType::from($embed->embeddable_type)) {
+            EmbeddableType::ALBUM => $this->getByAlbum($embed->embeddable, $embed->user),
+            EmbeddableType::ARTIST => $this->getByArtist($embed->embeddable, $embed->user),
+            EmbeddableType::PLAYLIST => $this->getByPlaylist($embed->embeddable, $embed->user),
+            EmbeddableType::PLAYABLE => $this->getMany(ids: [$embed->embeddable->getKey()], scopedUser: $embed->user),
+        };
     }
 }

@@ -32,8 +32,9 @@ describe('supportKoel.vue', () => {
   })
 
   it('does not show for Plus edition', async () => {
-    h.enablePlusEdition()
-    expect((await renderComponent()).queryByTestId('support-bar')).toBeNull()
+    await h.withPlusEdition(async () => {
+      expect((await renderComponent()).queryByTestId('support-bar')).toBeNull()
+    })
   })
 
   it('hides', async () => {

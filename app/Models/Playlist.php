@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Casts\SmartPlaylistRulesCast;
 use App\Facades\License as LicenseFacade;
+use App\Models\Concerns\MorphsToEmbeds;
+use App\Models\Contracts\Embeddable;
 use App\Models\Song as Playable;
 use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
 use Carbon\Carbon;
@@ -38,11 +40,12 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property-read bool $is_collaborative
  * @property int $owner_id
  */
-class Playlist extends Model implements AuditableContract
+class Playlist extends Model implements AuditableContract, Embeddable
 {
     use Auditable;
     use HasFactory;
     use HasUuids;
+    use MorphsToEmbeds;
     use Searchable;
 
     protected $hidden = ['created_at', 'updated_at'];

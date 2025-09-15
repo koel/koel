@@ -123,11 +123,10 @@ class DownloadTest extends TestCase
     #[Test]
     public function downloadPlaylist(): void
     {
-        $user = create_user();
         $songs = Song::factory(2)->create();
 
-        $playlist = create_playlist(owner: $user);
-        $playlist->addPlayables($songs);
+        $playlist = create_playlist();
+        $playlist->playables()->attach($songs, ['user_id' => $playlist->owner->id]);
 
         $this->downloadService
             ->expects('getDownloadable')
@@ -138,8 +137,9 @@ class DownloadTest extends TestCase
             }))
             ->andReturn(Downloadable::make(test_path('songs/blank.mp3')));
 
-        $this->get("download/playlist/{$playlist->id}?api_token=" . $user->createToken('Koel')->plainTextToken)
-            ->assertOk();
+        $this->get(
+            "download/playlist/{$playlist->id}?api_token=" . $playlist->owner->createToken('Koel')->plainTextToken
+        )->assertOk();
     }
 
     #[Test]

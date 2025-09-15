@@ -67,6 +67,7 @@ export default defineConfig({
           { text: 'User Management', link: '/usage/user-management' },
           { text: 'Profile & Preferences', link: '/usage/profile-preferences' },
           { text: 'Remote Controller', link: '/usage/remote-controller' },
+          { text: 'Embedding', link: '/usage/embedding' },
         ],
       },
       {

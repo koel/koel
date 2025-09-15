@@ -19,10 +19,12 @@ import thumbMono from '../img/themes/thumbnails/mono.avif'
 export default [
   {
     id: 'classic',
+    name: 'Classic',
     thumbnailColor: '#181818',
   },
   {
     id: 'mono',
+    name: 'Mono',
     thumbnailColor: '#181818',
     thumbnailUrl: thumbMono,
     properties: {
@@ -32,6 +34,7 @@ export default [
   },
   {
     id: 'violet',
+    name: 'Violet',
     thumbnailColor: '#31094e',
     properties: {
       '--color-bg-secondary': '#360f52',
@@ -41,6 +44,7 @@ export default [
   },
   {
     id: 'oak',
+    name: 'Oak',
     thumbnailColor: '#560d25',
     properties: {
       '--color-bg-secondary': '#5a132a',
@@ -50,6 +54,7 @@ export default [
   },
   {
     id: 'slate',
+    name: 'Slate',
     thumbnailColor: '#29434e',
     properties: {
       '--color-bg-secondary': '#2e4752',
@@ -59,6 +64,7 @@ export default [
   },
   {
     id: 'madison',
+    name: 'Madison',
     thumbnailColor: '#0e3463',
     properties: {
       '--color-bg-secondary': '#143967',
@@ -68,6 +74,7 @@ export default [
   },
   {
     id: 'astronaut',
+    name: 'Astronaut',
     thumbnailColor: '#2a3074',
     properties: {
       '--color-bg-secondary': '#2f3577',
@@ -77,6 +84,7 @@ export default [
   },
   {
     id: 'chocolate',
+    name: 'Chocolate',
     thumbnailColor: '#3f2724',
     properties: {
       '--color-bg-secondary': '#442c29',
@@ -86,6 +94,7 @@ export default [
   },
   {
     id: 'laura',
+    name: 'Laura',
     thumbnailColor: '#126673',
     properties: {
       '--color-bg-secondary': '#186a76',
@@ -119,7 +128,7 @@ export default [
   },
   {
     id: 'purple-waves',
-    name: 'Waves of Fortune',
+    name: 'Fortune Waves',
     thumbnailColor: '#44115c',
     thumbnailUrl: bgPurpleWaves,
     properties: {
@@ -130,6 +139,7 @@ export default [
   },
   {
     id: 'pop-culture',
+    name: 'Pop Culture',
     thumbnailColor: '#ad0937',
     thumbnailUrl: thumbPopCulture,
     properties: {
@@ -141,7 +151,7 @@ export default [
   },
   {
     id: 'jungle',
-    name: 'Welcome to the Jungle',
+    name: 'To the Jungle',
     thumbnailColor: '#0f0f03',
     thumbnailUrl: thumbJungle,
     properties: {
@@ -177,6 +187,7 @@ export default [
   },
   {
     id: 'nemo',
+    name: 'Nemo',
     thumbnailColor: '#031724',
     thumbnailUrl: thumbNemo,
     properties: {

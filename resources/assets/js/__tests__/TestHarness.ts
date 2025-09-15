@@ -54,8 +54,6 @@ class TestHarness {
       commonStore.state.song_length = 10
       cleanup()
       this.restoreAllMocks()
-      this.disablePlusEdition()
-      this.disableDemoMode()
       cb?.()
     })
   }
@@ -124,7 +122,7 @@ class TestHarness {
     }, this.supplyRequiredProvides(options)))
   }
 
-  public enablePlusEdition () {
+  public async withPlusEdition (cb: Closure) {
     commonStore.state.koel_plus = {
       active: true,
       short_key: '****-XXXX',
@@ -133,10 +131,8 @@ class TestHarness {
       product_id: 'koel-plus',
     }
 
-    return this
-  }
+    await cb()
 
-  public disablePlusEdition () {
     commonStore.state.koel_plus = {
       active: false,
       short_key: '',
@@ -148,13 +144,11 @@ class TestHarness {
     return this
   }
 
-  public enableDemoMode () {
+  public async withDemoMode (cb: Closure) {
     window.IS_DEMO = true
-    return this
-  }
-
-  public disableDemoMode () {
+    await cb()
     window.IS_DEMO = false
+
     return this
   }
 
@@ -175,6 +169,7 @@ class TestHarness {
       [prop]: {
         value,
         configurable: true,
+        writable: true,
       },
     })
   }

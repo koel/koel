@@ -10,6 +10,8 @@ exports[`artistContextMenu.vue > renders 1`] = `
     <!--v-if-->
     <li class="separator"></li>
     <li>Download</li>
+    <li class="separator"></li>
+    <li>Embed…</li>
   </ul>
 </nav>
 `;

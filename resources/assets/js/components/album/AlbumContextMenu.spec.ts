@@ -98,4 +98,12 @@ describe('albumContextMenu.vue', () => {
 
     expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_ALBUM_FORM', album)
   })
+
+  it('requests the embed form', async () => {
+    const { album } = await renderComponent()
+    const emitMock = h.mock(eventBus, 'emit')
+    await h.user.click(screen.getByText('Embed…'))
+
+    expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_CREATE_EMBED_FORM', album)
+  })
 })

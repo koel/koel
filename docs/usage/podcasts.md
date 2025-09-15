@@ -2,7 +2,7 @@
 
 Aside from music, Koel also supports podcast streaming. This feature is still in its early stages, so expect more improvements in the future.
 
-![Podcasts](../assets/img/podcasts.avif)
+![Podcasts](../assets/img/interface/podcasts.avif)
 
 ## Subscribe to a Podcast
 

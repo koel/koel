@@ -1,33 +1,13 @@
 import type { Factoria } from 'factoria'
 import factoria from 'factoria'
-import albumFactory, { states as albumStates } from '@/__tests__/factory/albumFactory'
-import albumInfoFactory from '@/__tests__/factory/albumInfoFactory'
-import albumTrackFactory from '@/__tests__/factory/albumTrackFactory'
-import artistFactory, { states as artistStates } from '@/__tests__/factory/artistFactory'
-import artistInfoFactory from '@/__tests__/factory/artistInfoFactory'
-import episodeFactory from '@/__tests__/factory/episodeFactory'
-import favoriteFactory from '@/__tests__/factory/favoriteFactory'
-import folderFactory from '@/__tests__/factory/folderFactory'
-import genreFactory from '@/__tests__/factory/genreFactory'
-import interactionFactory from '@/__tests__/factory/interactionFactory'
-import liveEventFactory from '@/__tests__/factory/liveEventFactory'
-import playlistCollaboratorFactory from '@/__tests__/factory/playlistCollaboratorFactory'
-import playlistFactory, { states as playlistStates } from '@/__tests__/factory/playlistFactory'
-import playlistFolderFactory from '@/__tests__/factory/playlistFolderFactory'
-import podcastFactory from '@/__tests__/factory/podcastFactory'
-import radioStationFactory from '@/__tests__/factory/radioStationFactory'
-import smartPlaylistRuleFactory from '@/__tests__/factory/smartPlaylistRuleFactory'
-import smartPlaylistRuleGroupFactory from '@/__tests__/factory/smartPlaylistRuleGroupFactory'
-import songFactory, { states as songStates } from '@/__tests__/factory/songFactory'
-import userFactory, { states as userStates } from '@/__tests__/factory/userFactory'
-import youTubeVideoFactory from '@/__tests__/factory/youTubeVideoFactory'
 
-interface ModelToTypeMap {
+export interface ModelToTypeMap {
   'album': Album
   'album-info': AlbumInfo
   'album-track': AlbumTrack
   'artist': Artist
   'artist-info': ArtistInfo
+  'embed': Embed
   'episode': Episode
   'favorite': Favorite
   'folder': Folder
@@ -43,7 +23,7 @@ interface ModelToTypeMap {
   'smart-playlist-rule-group': SmartPlaylistRuleGroup
   'song': Song
   'user': User
-  'video': YouTubeVideo
+  'you-tube-video': YouTubeVideo
 }
 
 type Model = keyof ModelToTypeMap
@@ -90,24 +70,22 @@ export default factory as typeof factory & {
   states: typeof states
 }
 
-define('album', albumFactory, albumStates)
-define('album-info', albumInfoFactory)
-define('album-track', albumTrackFactory)
-define('artist', artistFactory, artistStates)
-define('artist-info', artistInfoFactory)
-define('episode', episodeFactory)
-define('favorite', favoriteFactory)
-define('folder', folderFactory)
-define('genre', genreFactory)
-define('interaction', interactionFactory)
-define('live-event', liveEventFactory)
-define('playlist', playlistFactory, playlistStates)
-define('playlist-collaborator', playlistCollaboratorFactory)
-define('playlist-folder', playlistFolderFactory)
-define('podcast', podcastFactory)
-define('radio-station', radioStationFactory)
-define('smart-playlist-rule', smartPlaylistRuleFactory)
-define('smart-playlist-rule-group', smartPlaylistRuleGroupFactory)
-define('song', songFactory, songStates)
-define('user', userFactory, userStates)
-define('video', youTubeVideoFactory)
+// Dynamically import and register all factory modules
+const factoryModules = import.meta.glob('@/__tests__/factory/*Factory.ts', { eager: true })
+
+for (const [path, mod] of Object.entries(factoryModules)) {
+  const match = path.match(/\/([^/]+)Factory\.ts$/)
+  if (!match) {
+    continue
+  }
+
+  const base = match[1]
+  const modelName = base
+    .replace(/[A-Z]/g, m => `-${m.toLowerCase()}`)
+    .replace(/^-/, '')
+
+  const factoryFn = (mod as any).default
+  const states = (mod as any).states
+
+  define(modelName, factoryFn, states)
+}

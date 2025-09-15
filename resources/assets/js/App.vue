@@ -22,6 +22,7 @@
   </main>
 
   <LoginForm v-if="layout === 'auth'" @loggedin="onUserLoggedIn" />
+  <Embed v-if="layout === 'embed'" />
 
   <AcceptInvitation v-if="layout === 'invitation'" />
   <ResetPasswordForm v-if="layout === 'reset-password'" />
@@ -35,6 +36,7 @@ import { defineAsyncComponent, onMounted, provide, ref, watch } from 'vue'
 import { useOnline } from '@vueuse/core'
 import { queueStore } from '@/stores/queueStore'
 import { authService } from '@/services/authService'
+import { radioStationStore } from '@/stores/radioStationStore'
 import { CurrentStreamableKey, DialogBoxKey, MessageToasterKey, OverlayKey } from '@/symbols'
 import { useRouter } from '@/composables/useRouter'
 
@@ -51,7 +53,6 @@ import AppFooter from '@/components/layout/app-footer/index.vue'
 import GlobalEventListeners from '@/components/utils/GlobalEventListeners.vue'
 import AppInitializer from '@/components/utils/AppInitializer.vue'
 import ContextMenus from '@/components/ui/ContextMenus.vue'
-import { radioStationStore } from '@/stores/radioStationStore'
 
 const HotkeyListener = defineAsyncComponent(() => import('@/components/utils/HotkeyListener.vue'))
 const LoginForm = defineAsyncComponentWithLoadingState(() => import('@/components/auth/LoginForm.vue'))
@@ -60,6 +61,7 @@ const SupportKoel = defineAsyncComponentWithLoadingState(() => import('@/compone
 const DropZone = defineAsyncComponent(() => import('@/components/ui/upload/DropZone.vue'))
 const AcceptInvitation = defineAsyncComponentWithLoadingState(() => import('@/components/invitation/AcceptInvitation.vue'))
 const ResetPasswordForm = defineAsyncComponentWithLoadingState(() => import('@/components/auth/ResetPasswordForm.vue'))
+const Embed = defineAsyncComponentWithLoadingState(() => import('@/components/embed/widget/EmbedWidget.vue'))
 
 const overlay = ref<InstanceType<typeof Overlay>>()
 const dialog = ref<InstanceType<typeof DialogBox>>()
@@ -67,7 +69,7 @@ const toaster = ref<InstanceType<typeof MessageToaster>>()
 const currentStreamable = ref<Streamable>()
 const showDropZone = ref(false)
 
-const layout = ref<'main' | 'auth' | 'invitation' | 'reset-password'>()
+const layout = ref<'main' | 'auth' | 'invitation' | 'reset-password' | 'embed'>()
 
 const { isCurrentScreen, getCurrentScreen, resolveRoute } = useRouter()
 const online = useOnline()
@@ -97,6 +99,15 @@ const onInitError = () => {
 }
 
 onMounted(async () => {
+  await resolveRoute()
+  const screen = getCurrentScreen()
+
+  if (screen === 'Embed') {
+    // since Embed doesn't require authentication, we can just show it right away
+    layout.value = 'embed'
+    return
+  }
+
   // If the user is authenticated via a proxy, we have the token in the window object.
   // Simply forward it to the authService and continue with the normal flow.
   if (window.AUTH_TOKEN) {
@@ -109,9 +120,7 @@ onMounted(async () => {
     return
   }
 
-  await resolveRoute()
-
-  switch (getCurrentScreen()) {
+  switch (screen) {
     case 'Invitation.Accept':
       layout.value = 'invitation'
       break

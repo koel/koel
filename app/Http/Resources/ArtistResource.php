@@ -55,15 +55,19 @@ class ArtistResource extends JsonResource
     {
         $isPlus = once(static fn () => License::isPlus());
         $user = $this->user ?? once(static fn () => auth()->user());
+        $embedding = $request->routeIs('embeds.payload');
 
         return [
             'type' => 'artists',
             'id' => $this->artist->id,
             'name' => $this->artist->name,
             'image' => $this->artist->image,
-            'created_at' => $this->artist->created_at,
-            'is_external' => $isPlus && $this->artist->user_id !== $user->id,
-            'favorite' => $this->artist->favorite,
+            'created_at' => $this->unless($embedding, $this->artist->created_at),
+            'is_external' => $this->unless(
+                $embedding,
+                fn () => $isPlus && $this->artist->user_id !== $user->id,
+            ),
+            'favorite' => $this->unless($embedding, $this->artist->favorite),
         ];
     }
 }

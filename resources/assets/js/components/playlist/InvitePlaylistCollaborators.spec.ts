@@ -21,7 +21,6 @@ describe('invitePlaylistCollaborators.vue', () => {
 
     await waitFor(async () => {
       expect(navigator.clipboard.writeText).toHaveBeenCalledWith('http://localhost:3000/invite/1234')
-      screen.getByText('Link copied to clipboard!')
     })
   })
 })

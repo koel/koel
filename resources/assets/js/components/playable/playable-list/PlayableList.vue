@@ -1,7 +1,7 @@
 <template>
   <div
     ref="wrapper"
-    class="song-list-wrap relative flex flex-col flex-1 overflow-auto py-0 px-3 md:p-0"
+    class="playable-list-wrap relative flex flex-col flex-1 overflow-auto py-0 px-3 md:p-0"
     data-testid="song-list"
     tabindex="0"
     @keydown.delete.prevent.stop="handleDelete"
@@ -240,11 +240,17 @@ const openContextMenu = async (row: PlayableRow, event: MouseEvent) => {
 }
 
 const onPlay = async (playable: Playable) => {
-  if (shouldTriggerContinuousPlayback.value) {
-    queueStore.replaceQueueWith(getAllPlayablesWithSort())
-  }
+  if (playable.playback_state === 'Stopped') {
+    if (shouldTriggerContinuousPlayback.value) {
+      queueStore.replaceQueueWith(getAllPlayablesWithSort())
+    }
 
-  await playback().play(playable)
+    await playback().play(playable)
+  } else if (playable.playback_state === 'Paused') {
+    await playback().resume()
+  } else {
+    await playback().pause()
+  }
 }
 
 const discIndexMap = computed(() => {
@@ -299,7 +305,7 @@ onMounted(() => render())
 </script>
 
 <style lang="postcss">
-.song-list-wrap {
+.playable-list-wrap {
   .virtual-scroller {
     @apply flex-1;
   }
