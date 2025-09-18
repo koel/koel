@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\Embed;
 
 use App\Enums\EmbeddableType;
+use App\Exceptions\EmbeddableNotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Embed\ResolveEmbedRequest;
 use App\Http\Resources\EmbedOptionsResource;
@@ -14,6 +15,7 @@ use App\Services\EmbedService;
 use App\Values\EmbedOptions;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class EmbedController extends Controller
 {
@@ -37,9 +39,13 @@ class EmbedController extends Controller
 
     public function getPayload(Request $request, Embed $embed)
     {
-        return response()->json([
-            'embed' => EmbedResource::make($embed, $this->songRepository->getForEmbed($embed)),
-            'options' => EmbedOptionsResource::make(EmbedOptions::fromRequest($request)),
-        ]);
+        try {
+            return response()->json([
+                'embed' => EmbedResource::make($embed, $this->songRepository->getForEmbed($embed)),
+                'options' => EmbedOptionsResource::make(EmbedOptions::fromRequest($request)),
+            ]);
+        } catch (EmbeddableNotFoundException) {
+            abort(Response::HTTP_NOT_FOUND);
+        }
     }
 }

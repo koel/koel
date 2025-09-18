@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
 import { screen } from '@testing-library/vue'
-import Component from './PlayableEmbedItem.vue'
+import EmbedWidgetTrackItem from './EmbedWidgetTrackItem.vue'
 
 describe('playableEmbedItem.vue', async () => {
   const h = createHarness()
 
   const renderComponent = (playable: Playable) => {
-    const rendered = h.render(Component, {
+    const rendered = h.render(EmbedWidgetTrackItem, {
       props: {
         item: {
           playable,

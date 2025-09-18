@@ -227,7 +227,6 @@ interface Embed {
 type WidgetReadyEmbed = Embed & {
   embeddable: Embeddable
   playables: Playable[]
-  plus: boolean
 }
 
 interface QueueState {

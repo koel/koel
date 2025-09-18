@@ -51,7 +51,7 @@ import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useForm } from '@/composables/useForm'
 
 import Btn from '@/components/ui/form/Btn.vue'
-import EmbedOptionsPanel from '@/components/embed/widget/EmbedOptionsPanel.vue'
+import EmbedOptionsPanel from '@/components/embed/EmbedOptionsPanel.vue'
 import CheckBox from '@/components/ui/form/CheckBox.vue'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
