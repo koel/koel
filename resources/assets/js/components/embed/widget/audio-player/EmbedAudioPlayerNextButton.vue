@@ -2,7 +2,7 @@
   <button
     :class="playable || 'opacity-50 pointer-events-none'"
     :disabled="!playable"
-    class="w-8 transition aspect-square rounded border border-px border-white/20 hover:scale-110"
+    class="w-10 transition aspect-square rounded-full border border-px border-white/20 hover:scale-110"
     type="button"
     @click.prevent="emit('clicked')"
   >
