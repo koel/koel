@@ -12,6 +12,7 @@ use App\Http\Controllers\Download\DownloadSongsController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\LastfmController;
 use App\Http\Controllers\PlayController;
+use App\Http\Controllers\SSO\AutheliaCallbackController;
 use App\Http\Controllers\SSO\GoogleCallbackController;
 use App\Http\Controllers\StreamEmbedController;
 use App\Http\Controllers\StreamRadioController;
@@ -41,6 +42,9 @@ Route::middleware('web')->group(static function (): void {
 
     Route::get('auth/google/redirect', static fn () => Socialite::driver('google')->redirect());
     Route::get('auth/google/callback', GoogleCallbackController::class);
+
+    Route::get('auth/authelia/redirect', static fn () => Socialite::driver('authelia')->redirect());
+    Route::get('auth/authelia/callback', AutheliaCallbackController::class);
 
     Route::get('dropbox/authorize', AuthorizeDropboxController::class)->name('dropbox.authorize');
 
