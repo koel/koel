@@ -1,6 +1,6 @@
 <template>
   <div class="flex gap-2 items-center">
-    <PlayButton :playable="currentPlayable" @clicked="playOrPause" />
+    <PlayButton :playable="currentPlayable" :preview :progress @clicked="playOrPause" />
     <NextButton v-if="playables.length > 1" :playable="nextPlayable" @clicked="playNext" />
 
     <template v-if="!preview">
@@ -111,6 +111,7 @@ const playNext = () => nextPlayable.value ? play(nextPlayable.value) : stop()
 const setupAudioEvents = (audio: HTMLAudioElement) => {
   audio.addEventListener('loadedmetadata', () => {
     maxDuration.value = preview.value ? Math.min(audio.duration, 30) : audio.duration
+    audio.volume = 0.75
   })
 
   audio.addEventListener('ended', () => playNext())
@@ -121,12 +122,20 @@ const setupAudioEvents = (audio: HTMLAudioElement) => {
     const timeRemaining = secondsToHis(maxDuration.value - audio.currentTime)
     timeRemainingLabel.value = timeRemaining === 'NaN:NaN' ? '--:--' : `-${timeRemaining}`
 
-    if (preview.value && audio.currentTime >= maxDuration.value) {
-      audio.pause()
-      audio.currentTime = 0
-      audio.dispatchEvent(new Event('ended'))
+    if (preview.value) {
+      if (audio.currentTime + 3 >= maxDuration.value) {
+        // Gradually decrease the volume once we're approaching the end of the sample.
+        audio.volume = Math.max(0, audio.volume - 0.07)
+      }
+
+      // Play the next track once we've reached the end of the sample.
+      if (audio.currentTime >= maxDuration.value) {
+        audio.pause()
+        audio.currentTime = 0
+        audio.dispatchEvent(new Event('ended'))
+      }
     }
-  }, 200))
+  }, 100))
 }
 
 onMounted(() => setupAudioEvents(audio.value!))
