@@ -20,7 +20,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/vue-fontawesome": "^3.0.8",
     "@laravel/echo-vue": "^2.1.6",
-    "axios": "^1.10.0",
+    "axios": "^1.12.0",
     "butterchurn": "^2.6.7",
     "butterchurn-presets": "^2.4.7",
     "compare-versions": "^3.6.0",
