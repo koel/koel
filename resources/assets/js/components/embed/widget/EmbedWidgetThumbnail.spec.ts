@@ -2,13 +2,13 @@ import { describe, expect, it } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
 import type { ModelToTypeMap } from '@/__tests__/factory'
 import { screen } from '@testing-library/vue'
-import Component from './EmbedThumbnail.vue'
+import EmbedWidgetThumbnail from './EmbedWidgetThumbnail.vue'
 
 describe('embedThumbnail.vue', () => {
   const h = createHarness()
 
   const renderComponent = (embeddable: Embeddable) => {
-    const rendered = h.render(Component, {
+    const rendered = h.render(EmbedWidgetThumbnail, {
       props: {
         embeddable,
       },

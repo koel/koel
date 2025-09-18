@@ -2,7 +2,7 @@
   <div
     ref="progressBar"
     :class="playable?.playback_state || 'invisible'"
-    class="progress-bar group flex-1 flex justify-center flex-col relative cursor-pointer"
+    class="progress-bar group flex-1 h-8 flex justify-center flex-col relative cursor-pointer"
     tabindex="0"
     @click="onClick"
     @mousemove="onMouseMove"

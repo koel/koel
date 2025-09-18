@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Builders\SongBuilder;
 use App\Enums\EmbeddableType;
 use App\Enums\PlayableType;
+use App\Exceptions\EmbeddableNotFoundException;
 use App\Exceptions\NonSmartPlaylistException;
 use App\Facades\License;
 use App\Models\Album;
@@ -416,6 +417,8 @@ class SongRepository extends Repository implements ScoutableRepository
     /** @return Collection<Song>|array<array-key, Song> */
     public function getForEmbed(Embed $embed): Collection
     {
+        throw_unless((bool) $embed->embeddable, new EmbeddableNotFoundException());
+
         return match (EmbeddableType::from($embed->embeddable_type)) {
             EmbeddableType::ALBUM => $this->getByAlbum($embed->embeddable, $embed->user),
             EmbeddableType::ARTIST => $this->getByArtist($embed->embeddable, $embed->user),

@@ -48,7 +48,7 @@ class EmbedTest extends TestCase
 
         /** @var Embed $embed */
         $embed = Embed::factory()->create();
-        $options = EmbedOptions::make()->encrypt();
+        $options = EmbedOptions::make();
 
         $this->getAs("api/embeds/{$embed->id}/$options")
             ->assertSuccessful()
@@ -58,5 +58,18 @@ class EmbedTest extends TestCase
         $this->getJson("api/embeds/{$embed->id}/$options")
             ->assertSuccessful()
             ->assertJsonStructure($jsonStructure);
+    }
+
+    #[Test]
+    public function getPayloadThrowsNotFoundIfEmbeddableIsNotAvailableAnyMore(): void
+    {
+        /** @var Embed $embed */
+        $embed = Embed::factory()->create();
+        $embed->embeddable->delete();
+
+        $options = EmbedOptions::make();
+
+        $this->getJson("api/embeds/{$embed->id}/$options")
+            ->assertNotFound();
     }
 }
