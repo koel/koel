@@ -68,3 +68,27 @@ Object.defineProperty(window, 'matchMedia', {
 })
 
 Axios.defaults.adapter = vi.fn()
+
+// Mock iframe's navigation API
+const iframeContentWindowMap = new WeakMap<HTMLIFrameElement, any>()
+
+Object.defineProperty(HTMLIFrameElement.prototype, 'contentWindow', {
+  configurable: true,
+  get (this: HTMLIFrameElement) {
+    if (!iframeContentWindowMap.has(this)) {
+      const stub = {
+        location: {
+          replace: vi.fn(),
+          assign: vi.fn(),
+          reload: vi.fn(),
+          href: '',
+        },
+        postMessage: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      }
+      iframeContentWindowMap.set(this, stub)
+    }
+    return iframeContentWindowMap.get(this)
+  },
+})

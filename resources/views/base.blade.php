@@ -29,8 +29,6 @@
 <body>
 <div id="app"></div>
 
-<noscript>It may sound funny, but Koel requires JavaScript to sing. Please enable it.</noscript>
-
 <script>
     window.BASE_URL = @json(base_url());
     window.IS_DEMO = @json(config('koel.misc.demo'));

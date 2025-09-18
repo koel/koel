@@ -11,6 +11,8 @@ exports[`albumContextMenu.vue > renders 1`] = `
     <li class="separator"></li>
     <li class="separator"></li>
     <li>Download</li>
+    <li class="separator"></li>
+    <li>Embed…</li>
   </ul>
 </nav>
 `;

@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Genre;
+use App\Models\Playlist;
 use App\Models\Podcast;
 use App\Models\RadioStation;
 use App\Models\Song;
@@ -95,6 +96,7 @@ class AppServiceProvider extends ServiceProvider
             'artist' => Artist::class,
             'podcast' => Podcast::class,
             'radio-station' => RadioStation::class,
+            'playlist' => Playlist::class,
         ]);
 
         $this->app->when(TicketmasterService::class)

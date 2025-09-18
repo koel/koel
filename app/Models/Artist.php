@@ -5,8 +5,10 @@ namespace App\Models;
 use App\Builders\ArtistBuilder;
 use App\Facades\License;
 use App\Facades\Util;
+use App\Models\Concerns\MorphsToEmbeds;
 use App\Models\Concerns\MorphsToFavorites;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
+use App\Models\Contracts\Embeddable;
 use App\Models\Contracts\Favoriteable;
 use App\Models\Contracts\Permissionable;
 use Carbon\Carbon;
@@ -37,11 +39,12 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property int $user_id The ID of the user that owns this artist
  * @property string $name
  */
-class Artist extends Model implements AuditableContract, Favoriteable, Permissionable
+class Artist extends Model implements AuditableContract, Embeddable, Favoriteable, Permissionable
 {
     use Auditable;
     use HasFactory;
     use HasUlids;
+    use MorphsToEmbeds;
     use MorphsToFavorites;
     use Searchable;
     use SupportsDeleteWhereValueNotIn;

@@ -64,16 +64,15 @@ class PlaylistFolderServiceTest extends TestCase
     #[Test]
     public function aPlaylistCannotBelongToMultipleFoldersByOneUser(): void
     {
-        $user = create_user();
+        $playlist = create_playlist();
 
         /** @var PlaylistFolder $existingFolder */
-        $existingFolder = PlaylistFolder::factory()->for($user)->create();
+        $existingFolder = PlaylistFolder::factory()->for($playlist->owner)->create();
 
-        $playlist = create_playlist(owner: $user);
         $existingFolder->playlists()->attach($playlist);
 
         /** @var PlaylistFolder $newFolder */
-        $newFolder = PlaylistFolder::factory()->for($user)->create();
+        $newFolder = PlaylistFolder::factory()->for($playlist->owner)->create();
 
         $this->service->addPlaylistsToFolder($newFolder, [$playlist->id]);
 
@@ -83,16 +82,14 @@ class PlaylistFolderServiceTest extends TestCase
     #[Test]
     public function aPlaylistCanBelongToMultipleFoldersFromDifferentUsers(): void
     {
-        $user = create_user();
-
         /** @var PlaylistFolder $existingFolderFromAnotherUser */
         $existingFolderFromAnotherUser = PlaylistFolder::factory()->create();
 
-        $playlist = create_playlist(owner: $user);
+        $playlist = create_playlist();
         $existingFolderFromAnotherUser->playlists()->attach($playlist);
 
         /** @var PlaylistFolder $newFolder */
-        $newFolder = PlaylistFolder::factory()->for($user)->create();
+        $newFolder = PlaylistFolder::factory()->for($playlist->owner)->create();
 
         $this->service->addPlaylistsToFolder($newFolder, [$playlist->id]);
 

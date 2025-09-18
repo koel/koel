@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import { playbackService } from '@/services/QueuePlaybackService'
-import { queueStore } from '@/stores/queueStore'
 import Component from './PlayableThumbnail.vue'
 
 describe('playableThumbnail.vue', () => {
@@ -27,19 +25,11 @@ describe('playableThumbnail.vue', () => {
     }
   }
 
-  it.each<[PlaybackState, MethodOf<typeof playbackService>]>([
-    ['Stopped', 'play'],
-    ['Playing', 'pause'],
-    ['Paused', 'resume'],
-  ])('if state is currently "%s", %ss', async (state, method) => {
+  it('emits the event when clicked', async () => {
     h.createAudioPlayer()
-
-    h.mock(queueStore, 'queueIfNotQueued')
-    const playbackMock = h.mock(playbackService, method)
-    renderComponent(state)
-
+    const { emitted } = renderComponent()
     await h.user.click(screen.getByRole('button'))
 
-    expect(playbackMock).toHaveBeenCalled()
+    expect(emitted().clicked).toBeTruthy()
   })
 })

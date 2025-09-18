@@ -14,10 +14,10 @@ describe('youTubeVideoList.vue', () => {
 
     const searchMock = h.mock(youTubeService, 'searchVideosBySong').mockResolvedValueOnce({
       nextPageToken: 'foo',
-      items: h.factory('video', 5),
+      items: h.factory('you-tube-video', 5),
     }).mockResolvedValueOnce({
       nextPageToken: 'bar',
-      items: h.factory('video', 3),
+      items: h.factory('you-tube-video', 3),
     })
 
     h.render(Component, {

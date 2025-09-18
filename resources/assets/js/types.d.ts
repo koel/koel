@@ -164,6 +164,7 @@ interface BasePlayable extends IStreamable {
   preloaded?: boolean
   playback_state?: PlaybackState
   fmt_length?: string
+  embed_stream_url?: string // only when embedded
 }
 
 interface Song extends BasePlayable {
@@ -213,6 +214,21 @@ interface RadioStation extends IStreamable {
 
 type Playable = Song | Episode
 type Streamable = Playable | RadioStation
+type Embeddable = Playable | Playlist | Artist | Album
+
+interface Embed {
+  type: 'embeds'
+  id: string
+  user_id: User['id']
+  embeddable_id: Embeddable['id']
+  embeddable_type: 'playable' | 'playlist' | 'artist' | 'album'
+}
+
+type WidgetReadyEmbed = Embed & {
+  embeddable: Embeddable
+  playables: Playable[]
+  plus: boolean
+}
 
 interface QueueState {
   type: 'queue-states'
@@ -453,6 +469,7 @@ declare type ScreenName =
   | 'Search.Excerpt'
   | 'Search.Playables'
   | 'MediaBrowser'
+  | 'Embed'
   | 'Invitation.Accept'
   | 'Password.Reset'
   | '404'
@@ -487,7 +504,7 @@ type ThemeableProperty = '--color-text-primary'
 
 interface Theme {
   id: string
-  name?: string
+  name: string
   thumbnailColor: string
   thumbnailUrl?: string
   selected?: boolean
@@ -618,4 +635,15 @@ interface LiveEvent {
     url: string
     city: string
   }
+}
+
+interface EmbedLayout {
+  id: string
+  name: string
+}
+
+interface EmbedOptions {
+  theme: Theme['id']
+  layout: EmbedLayout['id']
+  preview: boolean
 }

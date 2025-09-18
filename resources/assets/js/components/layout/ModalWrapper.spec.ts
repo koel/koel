@@ -11,12 +11,13 @@ describe('modalWrapper.vue', () => {
   it.each<[
     string,
     keyof Events,
-      User | Playable[] | Playlist | PlaylistFolder | Artist | Album | RadioStation | undefined,
+      User | MaybeArray<Streamable> | Playlist | PlaylistFolder | Artist | Album | undefined,
   ]>([
     ['about-koel', 'MODAL_SHOW_ABOUT_KOEL', undefined],
     ['add-podcast-form', 'MODAL_SHOW_ADD_PODCAST_FORM', undefined],
     ['add-radio-station-form', 'MODAL_SHOW_ADD_RADIO_STATION_FORM', undefined],
     ['add-user-form', 'MODAL_SHOW_ADD_USER_FORM', undefined],
+    ['create-embed-form', 'MODAL_SHOW_CREATE_EMBED_FORM', h.factory('song')],
     ['create-playlist-folder-form', 'MODAL_SHOW_CREATE_PLAYLIST_FOLDER_FORM', undefined],
     ['create-playlist-form', 'MODAL_SHOW_CREATE_PLAYLIST_FORM', h.factory('playlist-folder')],
     ['create-smart-playlist-form', 'MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM', h.factory('playlist-folder')],
@@ -40,6 +41,7 @@ describe('modalWrapper.vue', () => {
           AddPodcastForm: h.stub('add-podcast-form'),
           AddRadioStationForm: h.stub('add-radio-station-form'),
           AddUserForm: h.stub('add-user-form'),
+          CreateEmbedForm: h.stub('create-embed-form'),
           CreatePlaylistFolderForm: h.stub('create-playlist-folder-form'),
           CreatePlaylistForm: h.stub('create-playlist-form'),
           CreateSmartPlaylistForm: h.stub('create-smart-playlist-form'),

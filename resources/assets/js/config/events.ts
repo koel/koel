@@ -42,6 +42,7 @@ export interface Events {
   MODAL_SHOW_ABOUT_KOEL: () => void
   MODAL_SHOW_KOEL_PLUS: () => void
   MODAL_SHOW_EQUALIZER: () => void
+  MODAL_SHOW_CREATE_EMBED_FORM: (embeddable: Embeddable) => void
 
   PLAYLIST_DELETED: (playlist: Playlist) => void
   PLAYLIST_CONTENT_REMOVED: (playlist: Playlist, playables: Playable[]) => void

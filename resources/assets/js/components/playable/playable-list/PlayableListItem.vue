@@ -9,11 +9,7 @@
 
     <article
       :class="{ playing, selected: item.selected }"
-      class="song-item group pl-5 text-k-text-secondary border-b border-k-border !max-w-full h-[64px] flex
-        items-center transition-[background-color,_box-shadow] ease-in-out duration-200
-        focus:rounded-md focus focus-within:rounded-md focus:ring-inset focus:ring-1 focus:!ring-k-accent
-        focus-within:ring-inset focus-within:ring-1 focus-within:!ring-k-accent
-        hover:bg-white/5 hover:ring-inset hover:ring-1 hover:ring-white/10 hover:rounded-md"
+      class="song-item group pl-5 playable-list-item"
       data-testid="song-item"
       tabindex="0"
       @dblclick.prevent.stop="play"
@@ -26,7 +22,7 @@
         </span>
       </span>
       <span class="thumbnail leading-none">
-        <PlayableThumbnail :playable />
+        <PlayableThumbnail :playable @clicked="play" />
       </span>
       <span class="title-artist flex flex-col gap-2 overflow-hidden">
         <span class="title text-k-text-primary !flex gap-2 items-center">
@@ -48,7 +44,7 @@
         <span v-if="shouldShowColumn('genre')" class="genre">{{ playable.genre || '—' }}</span>
         <span v-if="shouldShowColumn('year')" class="year">{{ playable.year || '—' }}</span>
       </template>
-      <span v-if="shouldShowColumn('duration')" class="time">{{ fmtLength }}</span>
+      <span v-if="shouldShowColumn('duration')" class="time font-mono">{{ fmtLength }}</span>
       <span class="extra">
         <FavoriteButton :favorite="playable.favorite" @toggle="toggleFavorite" />
       </span>
@@ -64,15 +60,15 @@ import { isSong } from '@/utils/typeGuards'
 import { secondsToHis } from '@/utils/formatters'
 import { usePlayableListColumnVisibility } from '@/composables/usePlayableListColumnVisibility'
 import { PlayableListConfigKey } from '@/symbols'
+import { playableStore } from '@/stores/playableStore'
 
 import SoundBars from '@/components/ui/SoundBars.vue'
 import PlayableThumbnail from '@/components/playable/PlayableThumbnail.vue'
 import UserAvatar from '@/components/user/UserAvatar.vue'
 import ExternalMark from '@/components/ui/ExternalMark.vue'
 import FavoriteButton from '@/components/ui/FavoriteButton.vue'
-import { playableStore } from '@/stores/playableStore'
 
-const props = withDefaults(defineProps<{ item: PlayableRow, showDisc: boolean }>(), {
+const props = withDefaults(defineProps<{ item: PlayableRow, showDisc?: boolean }>(), {
   showDisc: false,
 })
 
@@ -109,10 +105,6 @@ article {
     &.dragover-bottom {
       @apply after:top-auto after:bottom-0;
     }
-  }
-
-  &.selected {
-    @apply bg-white/10;
   }
 
   &.playing {

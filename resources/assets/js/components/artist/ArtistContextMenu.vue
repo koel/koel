@@ -10,6 +10,8 @@
         <li class="separator" />
         <li @click="download">Download</li>
       </template>
+      <li class="separator" />
+      <li @click="showEmbedModal">Embed…</li>
     </template>
   </ContextMenu>
 </template>
@@ -52,6 +54,7 @@ const shuffle = () => trigger(async () => {
 const download = () => trigger(() => downloadService.fromArtist(artist.value!))
 const toggleFavorite = () => trigger(() => artistStore.toggleFavorite(artist.value!))
 const requestEditForm = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_ARTIST_FORM', artist.value!))
+const showEmbedModal = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_EMBED_FORM', artist.value!))
 
 eventBus.on('ARTIST_CONTEXT_MENU_REQUESTED', async ({ pageX, pageY }, _artist) => {
   artist.value = _artist

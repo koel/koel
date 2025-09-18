@@ -1,4 +1,4 @@
-![Koel's homepage](../assets/img/home.webp)
+![Koel's homepage](../assets/img/interface/home.webp)
 
 <br>
 

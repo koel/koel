@@ -22,15 +22,23 @@ export const themeStore = {
     themes,
   }),
 
-  init () {
+  init (theme: Theme | Theme['id'] = 'classic') {
     for (const key in this.defaultProperties) {
       this.defaultProperties[key] = document.documentElement.style.getPropertyValue(key)
     }
 
-    this.applyThemeFromPreference()
+    this.setTheme(theme)
   },
 
-  setTheme (theme: Theme) {
+  get all () {
+    return this.state.themes
+  },
+
+  setTheme (theme: Theme | Theme['id']) {
+    if (typeof theme === 'string') {
+      theme = this.getThemeById(theme) ?? this.getDefaultTheme()
+    }
+
     document.documentElement.setAttribute('data-theme', theme.id)
     const properties = Object.assign(clone(this.defaultProperties), theme.properties ?? {})
 
@@ -50,11 +58,13 @@ export const themeStore = {
     return this.getThemeById('classic')!
   },
 
-  applyThemeFromPreference () {
-    const theme = preferences.theme
+  getCurrentTheme () {
+    return preferences.theme
       ? (this.getThemeById(preferences.theme) ?? this.getDefaultTheme())
       : this.getDefaultTheme()
+  },
 
-    this.setTheme(theme)
+  isValidTheme (id: Theme['id']) {
+    return this.getThemeById(id) !== undefined
   },
 }

@@ -12,7 +12,6 @@ use App\Models\Playlist;
 use App\Models\User;
 use App\Repositories\SongRepository;
 use App\Services\PlaylistService;
-use App\Services\SmartPlaylistService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
@@ -24,7 +23,6 @@ class PlaylistSongController extends Controller
     public function __construct(
         private readonly SongRepository $songRepository,
         private readonly PlaylistService $playlistService,
-        private readonly SmartPlaylistService $smartPlaylistService,
         private readonly Authenticatable $user
     ) {
     }
@@ -33,12 +31,13 @@ class PlaylistSongController extends Controller
     {
         if ($playlist->is_smart) {
             $this->authorize('own', $playlist);
-            return SongResource::collection($this->smartPlaylistService->getSongs($playlist, $this->user));
+
+            return SongResource::collection($this->songRepository->getByPlaylist($playlist, $this->user));
         }
 
         $this->authorize('collaborate', $playlist);
 
-        return self::createResourceCollection($this->songRepository->getByStandardPlaylist($playlist, $this->user));
+        return self::createResourceCollection($this->songRepository->getByPlaylist($playlist, $this->user));
     }
 
     public function store(Playlist $playlist, AddSongsToPlaylistRequest $request)

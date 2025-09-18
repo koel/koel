@@ -6,8 +6,10 @@ use App\Facades\License;
 use App\Models\Song;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 class SongResource extends JsonResource
@@ -79,48 +81,60 @@ class SongResource extends JsonResource
     }
 
     /** @inheritDoc */
-    public function toArray($request): array
+    public function toArray(Request $request): array
     {
         $isPlus = once(static fn () => License::isPlus());
         $user = $this->user ?? once(static fn () => auth()->user());
+        $embedding = $request->routeIs('embeds.payload');
 
         $data = [
             'type' => Str::plural($this->song->type->value),
             'id' => $this->song->id,
             'title' => $this->song->title,
-            'lyrics' => $this->song->lyrics,
-            'album_id' => $this->song->album_id,
+            'lyrics' => $this->unless($embedding, $this->song->lyrics),
+            'album_id' => $this->unless($embedding, $this->song->album_id),
             'album_name' => $this->song->album_name,
-            'artist_id' => $this->song->artist_id,
+            'artist_id' => $this->unless($embedding, $this->song->artist_id),
             'artist_name' => $this->song->artist?->name,
-            'album_artist_id' => $this->song->album_artist?->id,
-            'album_artist_name' => $this->song->album_artist?->name,
+            'album_artist_id' => $this->unless($embedding, $this->song->album_artist?->id),
+            'album_artist_name' => $this->unless($embedding, $this->song->album_artist?->name),
             'album_cover' => $this->song->album?->cover,
             'length' => $this->song->length,
-            'liked' => $this->song->favorite, // backwards compatibility
-            'favorite' => $this->song->favorite,
-            'play_count' => (int) $this->song->play_count,
+            'liked' => $this->unless($embedding, $this->song->favorite), // backwards compatibility
+            'favorite' => $this->unless($embedding, $this->song->favorite),
+            'play_count' => $this->unless($embedding, (int) $this->song->play_count),
             'track' => $this->song->track,
-            'disc' => $this->song->disc,
-            'genre' => $this->song->genre,
-            'year' => $this->song->year,
-            'is_public' => $this->song->is_public,
-            'created_at' => $this->song->created_at,
+            'disc' => $this->unless($embedding, $this->song->disc),
+            'genre' => $this->unless($embedding, $this->song->genre),
+            'year' => $this->unless($embedding, $this->song->year),
+            'is_public' => $this->unless($embedding, $this->song->is_public),
+            'created_at' => $this->unless($embedding, $this->song->created_at),
+            'embed_stream_url' => $this->when(
+                $embedding,
+                fn () => URL::temporarySignedRoute('embeds.stream', now()->addDay(), [
+                    'song' => $this->song->id,
+                    'embed' => $request->route('embed')->id, // @phpstan-ignore-line
+                    'options' => $request->route('options'),
+                ]),
+            ),
         ];
 
         if ($this->song->isEpisode()) {
             $data += [
-                'episode_description' => $this->song->episode_metadata->description,
+                'episode_description' => $this->unless($embedding, $this->song->episode_metadata->description),
                 'episode_link' => $this->song->episode_metadata->link,
                 'episode_image' => $this->song->episode_metadata->image ?? $this->song->podcast->image,
-                'podcast_id' => $this->song->podcast->id,
+                'podcast_id' => $this->unless($embedding, $this->song->podcast->id),
                 'podcast_title' => $this->song->podcast->title,
                 'podcast_author' => $this->song->podcast->metadata->author,
             ];
         } else {
             $data += [
-                'owner_id' => $this->song->owner->public_id,
-                'is_external' => $isPlus && !$this->song->ownedBy($user),
+                'owner_id' => $this->unless($embedding, $this->song->owner->public_id),
+                'is_external' => $this->unless(
+                    $embedding,
+                    fn () => $isPlus && !$this->song->ownedBy($user),
+                ),
             ];
         }
 

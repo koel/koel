@@ -24,6 +24,7 @@ const modalNameToComponentMap: Record<keyof Modals, Closure> = {
   ADD_PODCAST_FORM: defineAsyncComponent(() => import('@/components/podcast/AddPodcastForm.vue')),
   ADD_RADIO_STATION_FORM: defineAsyncComponent(() => import('@/components/radio/AddRadioStationForm.vue')),
   ADD_USER_FORM: defineAsyncComponent(() => import('@/components/user/AddUserForm.vue')),
+  CREATE_EMBED_FORM: defineAsyncComponent(() => import('@/components/embed/CreateEmbedForm.vue')),
   CREATE_PLAYLIST_FOLDER_FORM: defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistFolderForm.vue')),
   CREATE_PLAYLIST_FORM: defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistForm.vue')),
   CREATE_SMART_PLAYLIST_FORM: defineAsyncComponent(() => import('@/components/playlist/smart-playlist/CreateSmartPlaylistForm.vue')),
@@ -66,6 +67,7 @@ eventBus.on('MODAL_SHOW_ABOUT_KOEL', () => showModal('ABOUT_KOEL'))
   .on('MODAL_SHOW_KOEL_PLUS', () => showModal('KOEL_PLUS'))
   .on('MODAL_SHOW_ADD_USER_FORM', () => showModal('ADD_USER_FORM'))
   .on('MODAL_SHOW_INVITE_USER_FORM', () => showModal('INVITE_USER_FORM'))
+  .on('MODAL_SHOW_CREATE_EMBED_FORM', embeddable => showModal('CREATE_EMBED_FORM', { embeddable }))
   .on('MODAL_SHOW_CREATE_PLAYLIST_FORM', (folder, playables) => showModal('CREATE_PLAYLIST_FORM', {
     folder: folder ?? null,
     playables: playables ? arrayify(playables) : [],
@@ -95,8 +97,7 @@ eventBus.on('MODAL_SHOW_ABOUT_KOEL', () => showModal('ABOUT_KOEL'))
 
 <style lang="postcss" scoped>
 dialog {
-  :deep(form),
-  :deep(> div) {
+  :deep(> *) {
     @apply relative;
 
     > header,

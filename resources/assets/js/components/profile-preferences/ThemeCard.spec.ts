@@ -9,6 +9,7 @@ describe('themeCard.vue', () => {
   const renderComponent = () => {
     const theme: Theme = {
       id: 'sample',
+      name: 'Sample',
       thumbnailColor: '#f00',
     }
 

@@ -8,10 +8,10 @@
     tabindex="0"
     @dragstart="onDragStart"
     @contextmenu.prevent="requestContextMenu"
-    @dblclick.prevent="play"
+    @dblclick.prevent="playOrPause"
   >
     <span class="leading-none">
-      <PlayableThumbnail :playable="playable" />
+      <PlayableThumbnail :playable="playable" @clicked="playOrPause" />
     </span>
     <main class="flex-1 flex items-start overflow-hidden gap-2">
       <div class="flex-1 space-y-1 overflow-hidden">
@@ -78,7 +78,17 @@ const requestContextMenu = (event: MouseEvent) => eventBus.emit(
 )
 
 const onDragStart = (event: DragEvent) => startDragging(event, [playable.value])
-const play = () => playback().play(playable.value)
+
+const playOrPause = async () => {
+  if (playable.value.playback_state === 'Stopped') {
+    await playback().play(playable.value)
+  } else if (playable.value.playback_state === 'Paused') {
+    await playback().resume()
+  } else {
+    await playback().pause()
+  }
+}
+
 const toggleFavorite = () => playableStore.toggleFavorite(playable.value)
 </script>
 

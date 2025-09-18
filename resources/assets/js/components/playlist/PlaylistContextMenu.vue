@@ -11,6 +11,8 @@
       <li class="separator" />
       <li @click="download">Download</li>
     </template>
+    <li class="separator" />
+    <li @click="showEmbedModal">Embed…</li>
     <template v-if="canEditPlaylist">
       <li class="separator" />
       <li @click="edit">Edit…</li>
@@ -94,6 +96,7 @@ const addToQueue = () => trigger(async () => {
 })
 
 const showCollaborationModal = () => trigger(() => eventBus.emit('MODAL_SHOW_PLAYLIST_COLLABORATION', playlist.value!))
+const showEmbedModal = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_EMBED_FORM', playlist.value!))
 
 eventBus.on('PLAYLIST_CONTEXT_MENU_REQUESTED', async ({ pageX, pageY }, _playlist) => {
   playlist.value = _playlist

@@ -9,8 +9,8 @@ import { userStore } from '@/stores/userStore'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { eventBus } from '@/utils/eventBus'
 import Router from '@/router'
-import Component from './PlaylistContextMenu.vue'
 import { playlistStore } from '@/stores/playlistStore'
+import Component from './PlaylistContextMenu.vue'
 
 describe('playlistContextMenu.vue', () => {
   const h = createHarness({
@@ -163,13 +163,20 @@ describe('playlistContextMenu.vue', () => {
     expect(screen.queryByText('Delete')).toBeNull()
   })
 
-  it('opens collaboration form', async () => {
-    h.enablePlusEdition()
+  it('opens collaboration form', async () => await h.withPlusEdition(async () => {
     const { playlist } = await renderComponent(h.factory('playlist'))
     const emitMock = h.mock(eventBus, 'emit')
 
     await h.user.click(screen.getByText('Collaborate…'))
 
     expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_PLAYLIST_COLLABORATION', playlist)
+  }))
+
+  it('requests the embed form', async () => {
+    const { playlist } = await renderComponent(h.factory('playlist'))
+    const emitMock = h.mock(eventBus, 'emit')
+    await h.user.click(screen.getByText('Embed…'))
+
+    expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_CREATE_EMBED_FORM', playlist)
   })
 })

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\API\Favorites\Concerns;
 
+use App\Enums\FavoriteableType;
 use Illuminate\Validation\Rule;
 
 trait ValidatesFavoriteableType
@@ -12,7 +13,7 @@ trait ValidatesFavoriteableType
         return [
             'string',
             'required',
-            Rule::in(['playable', 'album', 'artist', 'podcast', 'radio-station']),
+            Rule::enum(FavoriteableType::class),
         ];
     }
 }

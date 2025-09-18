@@ -212,6 +212,14 @@ export const routes = [
       path: '.+',
     },
   },
+  {
+    name: 'embed',
+    path: '/embed/:id/:options',
+    screen: 'Embed',
+    constraints: {
+      id: ULID_REGEX,
+    },
+  },
 ] as const satisfies Route[]
 
 export type RouteName = typeof routes[number]['name']

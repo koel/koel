@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use App\Builders\AlbumBuilder;
+use App\Models\Concerns\MorphsToEmbeds;
 use App\Models\Concerns\MorphsToFavorites;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
+use App\Models\Contracts\Embeddable;
 use App\Models\Contracts\Favoriteable;
 use App\Models\Contracts\Permissionable;
 use Carbon\Carbon;
@@ -42,12 +44,13 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property string $name Name of the album
  * @property ?boolean $favorite Whether the album is liked by the scoped user
  */
-class Album extends Model implements AuditableContract, Favoriteable, Permissionable
+class Album extends Model implements AuditableContract, Embeddable, Favoriteable, Permissionable
 {
     use Auditable;
     /** @use HasFactory<UserFactory> */
     use HasFactory;
     use HasUlids;
+    use MorphsToEmbeds;
     use MorphsToFavorites;
     use Searchable;
     use SupportsDeleteWhereValueNotIn;

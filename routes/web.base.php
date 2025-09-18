@@ -13,6 +13,7 @@ use App\Http\Controllers\IndexController;
 use App\Http\Controllers\LastfmController;
 use App\Http\Controllers\PlayController;
 use App\Http\Controllers\SSO\GoogleCallbackController;
+use App\Http\Controllers\StreamEmbedController;
 use App\Http\Controllers\StreamRadioController;
 use App\Http\Controllers\ViewSongOnITunesController;
 use Illuminate\Support\Facades\Route;
@@ -58,6 +59,10 @@ Route::middleware('web')->group(static function (): void {
             });
         }
     });
+
+    Route::get('embeds/{embed}/stream/{song}/{options}', StreamEmbedController::class)
+        ->name('embeds.stream')
+        ->middleware('signed', 'throttle:10,1');
 });
 
 Route::middleware('web')->prefix('demo')->group(static function (): void {

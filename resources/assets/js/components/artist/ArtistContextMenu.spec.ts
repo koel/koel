@@ -89,4 +89,12 @@ describe('artistContextMenu.vue', () => {
     await renderComponent(factory.states('various')('artist'))
     expect(screen.queryByText('Download')).toBeNull()
   })
+
+  it('requests the embed form', async () => {
+    const { artist } = await renderComponent()
+    const emitMock = h.mock(eventBus, 'emit')
+    await h.user.click(screen.getByText('Embed…'))
+
+    expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_CREATE_EMBED_FORM', artist)
+  })
 })

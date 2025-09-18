@@ -7,7 +7,7 @@ describe('youTubeService', () => {
   const h = createHarness()
 
   it('plays a video', () => {
-    const video = h.factory('video', {
+    const video = h.factory('you-tube-video', {
       id: {
         videoId: 'foo',
       },

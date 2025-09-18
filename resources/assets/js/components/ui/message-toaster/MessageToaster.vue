@@ -22,6 +22,8 @@ const root = ref<HTMLDivElement & {
 const messages = ref<ToastMessage[]>([])
 
 const addMessage = (type: 'info' | 'success' | 'warning' | 'danger', content: string, timeout = 5) => {
+  root.value?.showPopover?.()
+
   messages.value.push({
     type,
     content,
@@ -30,7 +32,13 @@ const addMessage = (type: 'info' | 'success' | 'warning' | 'danger', content: st
   })
 }
 
-const removeMessage = (message: ToastMessage) => (messages.value = messages.value.filter(({ id }) => id !== message.id))
+const removeMessage = (message: ToastMessage) => {
+  messages.value = messages.value.filter(({ id }) => id !== message.id)
+
+  if (messages.value.length === 0) {
+    root.value?.hidePopover?.()
+  }
+}
 
 const info = (content: string, timeout?: number) => addMessage('info', content, timeout)
 const success = (content: string, timeout?: number) => addMessage('success', content, timeout)
@@ -43,7 +51,6 @@ onMounted(() => {
   }
 
   root.value.popover = 'manual'
-  root.value.showPopover?.()
 })
 
 defineExpose({ info, success, warning, error })

@@ -9,16 +9,16 @@ use Illuminate\Auth\Access\Response;
 
 class SongPolicy
 {
-    public function own(User $user, Song $song): Response
-    {
-        return $song->ownedBy($user) ? Response::allow() : Response::deny();
-    }
-
     public function access(User $user, Song $song): Response
     {
         return License::isCommunity() || $song->accessibleBy($user)
             ? Response::allow()
             : Response::deny();
+    }
+
+    public function own(User $user, Song $song): Response
+    {
+        return $song->ownedBy($user) ? Response::allow() : Response::deny();
     }
 
     public function delete(User $user, Song $song): Response
@@ -37,10 +37,6 @@ class SongPolicy
 
     public function download(User $user, Song $song): Response
     {
-        if (!config('koel.download.allow')) {
-            return Response::deny();
-        }
-
         return $this->access($user, $song);
     }
 }

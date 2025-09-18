@@ -1,0 +1,13 @@
+// Vitest Snapshot v1
+
+exports[`playableEmbedItem.vue > renders a podcast episode 1`] = `
+<div data-v-ba549ff0="">
+  <article data-v-ba549ff0="" class="playable-list-item group gap-4 px-4" data-testid="playable-embed-item" tabindex="0"><span data-v-ba549ff0="" class="track-number flex items-center justify-center min-w-5 overflow-hidden"><span data-v-ba549ff0="" class="text-k-text-secondary"><br data-v-ba549ff0="" data-testid="Icon" icon="[object Object]"></span></span><span data-v-ba549ff0="" class="leading-none"><br data-v-ba549ff0="" data-testid="playable-thumbnail" playable="[object Object]"></span><span data-v-ba549ff0="" class="title-artist flex-1 flex flex-col gap-2 overflow-hidden"><span data-v-ba549ff0="" class="title text-k-text-primary">How to tell people to shut up about Queen</span><span data-v-ba549ff0="">The Everyday Guy - The Everyday Guide</span></span><span data-v-ba549ff0="" class="font-mono">04:40</span></article>
+</div>
+`;
+
+exports[`playableEmbedItem.vue > renders a song 1`] = `
+<div data-v-ba549ff0="">
+  <article data-v-ba549ff0="" class="playable-list-item group gap-4 px-4" data-testid="playable-embed-item" tabindex="0"><span data-v-ba549ff0="" class="track-number flex items-center justify-center min-w-5 overflow-hidden"><span data-v-ba549ff0="" class="text-k-text-secondary">9</span></span><span data-v-ba549ff0="" class="leading-none"><br data-v-ba549ff0="" data-testid="playable-thumbnail" playable="[object Object]"></span><span data-v-ba549ff0="" class="title-artist flex-1 flex flex-col gap-2 overflow-hidden"><span data-v-ba549ff0="" class="title text-k-text-primary">Bohemian Rhapsody</span><span data-v-ba549ff0="">Queen - A Night at the Opera</span></span><span data-v-ba549ff0="" class="font-mono">04:40</span></article>
+</div>
+`;
