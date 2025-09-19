@@ -42,7 +42,7 @@ Route::middleware('web')->group(static function (): void {
     Route::get('auth/google/redirect', static fn () => Socialite::driver('google')->redirect());
     Route::get('auth/google/callback', GoogleCallbackController::class);
 
-    Route::get('dropbox/authorize', AuthorizeDropboxController::class)->name('dropbox.authorize');
+    Route::get('dropbox/authorize/{key}', AuthorizeDropboxController::class)->name('dropbox.authorize');
 
     Route::middleware('audio.auth')->group(static function (): void {
         Route::get('play/{song}/{transcode?}', PlayController::class)->name('song.play');
