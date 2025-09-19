@@ -3,11 +3,9 @@
 namespace App\Console\Commands\Storage;
 
 use App\Facades\License;
-use App\Helpers\Ulid;
 use App\Services\SongStorages\DropboxStorage;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Jackiedo\DotenvEditor\DotenvEditor;
 use Throwable;
@@ -22,7 +20,7 @@ class SetupDropboxStorageCommand extends Command
         parent::__construct();
     }
 
-    public function handle(): int
+    public function handle(bool $firstTry = true): int
     {
         if (!License::isPlus()) {
             $this->components->error('Dropbox as a storage driver is only available in Koel Plus.');
@@ -30,29 +28,21 @@ class SetupDropboxStorageCommand extends Command
             return self::FAILURE;
         }
 
-        $this->components->info('Setting up Dropbox as the storage driver for Koel.');
-        $this->components->warn('Changing the storage configuration can cause irreversible data loss.');
-        $this->components->warn('Consider backing up your data before proceeding.');
+        if ($firstTry) {
+            $this->components->info('Setting up Dropbox as the storage driver for Koel.');
+            $this->components->warn('Changing the storage configuration can cause irreversible data loss.');
+            $this->components->warn('Consider backing up your data before proceeding.');
+        }
 
         $config = ['STORAGE_DRIVER' => 'dropbox'];
-        $config['DROPBOX_APP_KEY'] = $this->ask('Enter your Dropbox app key');
-        $config['DROPBOX_APP_SECRET'] = $this->ask('Enter your Dropbox app secret');
+        $config['DROPBOX_APP_KEY'] = $this->ask('Enter your Dropbox app key', env('DROPBOX_APP_KEY'));
+        $config['DROPBOX_APP_SECRET'] = $this->ask('Enter your Dropbox app secret', env('DROPBOX_APP_SECRET'));
 
-        $cacheKey = Ulid::generate();
-
-        Cache::put(
-            $cacheKey,
-            ['app_key' => $config['DROPBOX_APP_KEY'], 'app_secret' => $config['DROPBOX_APP_SECRET']],
-            now()->addMinutes(15)
-        );
-
-        $tmpUrl = route('dropbox.authorize', ['state' => $cacheKey]);
-
-        $this->comment('Please visit the following link to authorize Koel to access your Dropbox account:');
-        $this->info($tmpUrl);
-        $this->comment('The link will expire in 15 minutes.');
+        $this->comment('Visit the following link to authorize Koel to access your Dropbox account.');
         $this->comment('After you have authorized Koel, enter the access code below.');
-        $accessCode = $this->ask('Enter the access code');
+        $this->info(route('dropbox.authorize', ['key' => $config['DROPBOX_APP_KEY']]));
+
+        $accessCode = $this->ask('Access code');
 
         $response = Http::asForm()
             ->withBasicAuth($config['DROPBOX_APP_KEY'], $config['DROPBOX_APP_SECRET'])
@@ -66,7 +56,9 @@ class SetupDropboxStorageCommand extends Command
                 'Failed to authorize with Dropbox. The server said: ' . $response->json('error_description') . '.'
             );
 
-            return self::FAILURE;
+            $this->info('Please try again.');
+
+            return $this->handle(firstTry: false);
         }
 
         $config['DROPBOX_REFRESH_TOKEN'] = $response->json('refresh_token');
@@ -93,12 +85,10 @@ class SetupDropboxStorageCommand extends Command
             $this->dotenvEditor->restore();
             Artisan::call('config:clear', ['--quiet' => true]);
 
-            return self::FAILURE;
+            return $this->handle(firstTry: false);
         }
 
         $this->components->info('All done!');
-
-        Cache::forget($cacheKey);
 
         return self::SUCCESS;
     }
