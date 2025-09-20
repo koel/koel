@@ -6,9 +6,7 @@ import Component from './CreditsBlock.vue'
 describe('creditsBlock.vue', () => {
   const h = createHarness()
 
-  it('renders the credits', async () => {
-    window.IS_DEMO = true
-
+  it('renders the credits', async () => h.withDemoMode(async () => {
     const getMock = h.mock(http, 'get').mockResolvedValue([
       { name: 'Foo', url: 'https://foo.com' },
       { name: 'Bar', url: 'https://bar.com' },
@@ -20,7 +18,5 @@ describe('creditsBlock.vue', () => {
     await h.tick(3)
     expect(html()).toMatchSnapshot()
     expect(getMock).toHaveBeenCalledWith('demo/credits')
-
-    window.IS_DEMO = false
-  })
+  }))
 })

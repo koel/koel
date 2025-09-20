@@ -39,10 +39,8 @@
       <p class="author">
         Made with ❤️ by
         <a href="https://github.com/phanan" rel="noopener" target="_blank">Phan An</a>
-        and quite a few
-        <a href="https://github.com/koel/core/graphs/contributors" rel="noopener" target="_blank">awesome</a>&nbsp;<a
-          href="https://github.com/koel/koel/graphs/contributors" rel="noopener" target="_blank"
-        >contributors</a>.
+        and quite a few awesome
+        <a href="https://github.com/koel/koel/graphs/contributors" rel="noopener" target="_blank">contributors</a>.
       </p>
 
       <CreditsBlock v-if="isDemo" />
