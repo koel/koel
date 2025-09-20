@@ -8,7 +8,7 @@ exports[`aboutKoelModal.vue > renders 1`] = `
       <!--v-if-->
     </div>
     <!--v-if-->
-    <p data-v-6b5b01a9="" class="author"> Made with ❤️ by <a data-v-6b5b01a9="" href="https://github.com/phanan" rel="noopener" target="_blank">Phan An</a> and quite a few <a data-v-6b5b01a9="" href="https://github.com/koel/core/graphs/contributors" rel="noopener" target="_blank">awesome</a>&nbsp;<a data-v-6b5b01a9="" href="https://github.com/koel/koel/graphs/contributors" rel="noopener" target="_blank">contributors</a>. </p>
+    <p data-v-6b5b01a9="" class="author"> Made with ❤️ by <a data-v-6b5b01a9="" href="https://github.com/phanan" rel="noopener" target="_blank">Phan An</a> and quite a few awesome <a data-v-6b5b01a9="" href="https://github.com/koel/koel/graphs/contributors" rel="noopener" target="_blank">contributors</a>. </p>
     <!--v-if-->
     <p data-v-6b5b01a9=""> Loving Koel? Please consider supporting its development via <a data-v-6b5b01a9="" href="https://github.com/users/phanan/sponsorship" rel="noopener" target="_blank">GitHub Sponsors</a> and/or <a data-v-6b5b01a9="" href="https://opencollective.com/koel" rel="noopener" target="_blank">OpenCollective</a>. </p>
   </main>

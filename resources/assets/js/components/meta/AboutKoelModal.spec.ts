@@ -32,9 +32,8 @@ describe('aboutKoelModal.vue', () => {
     renderComponent().getByTestId('new-version-about')
   })
 
-  it('shows demo notation', async () => {
+  it('shows demo notation', async () => h.withDemoMode(async () => {
     const getMock = h.mock(http, 'get').mockResolvedValue([])
-    window.IS_DEMO = true
 
     renderComponent()
 
@@ -42,7 +41,5 @@ describe('aboutKoelModal.vue', () => {
       screen.getByTestId('demo-credits')
       expect(getMock).toHaveBeenCalledWith('demo/credits')
     })
-
-    window.IS_DEMO = false
-  })
+  }))
 })
