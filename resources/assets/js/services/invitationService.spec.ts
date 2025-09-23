@@ -35,11 +35,11 @@ describe('invitationService', () => {
     const addMock = h.mock(userStore, 'add')
     const postMock = h.mock(http, 'post').mockResolvedValue(prospects)
 
-    await invitationService.invite([prospects[0].email, prospects[1].email], false)
+    await invitationService.invite([prospects[0].email, prospects[1].email], 'admin')
 
     expect(postMock).toHaveBeenCalledWith('invitations', {
       emails: [prospects[0].email, prospects[1].email],
-      is_admin: false,
+      role: 'admin',
     })
 
     expect(addMock).toHaveBeenCalledWith(prospects)

@@ -47,8 +47,7 @@ class PlaylistFactory extends Factory
     {
         // @phpstan-ignore-next-line
         return $this->afterCreating(static function (Playlist $playlist): void {
-            $user = User::factory()->create();
-            $playlist->users()->attach($user->id, ['role' => 'owner']);
+            $playlist->users()->attach(User::factory()->create(), ['role' => 'owner']);
         });
     }
 }

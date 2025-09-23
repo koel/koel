@@ -9,6 +9,7 @@
   <PlaylistFolderContextMenu />
   <PodcastContextMenu />
   <RadioStationContextMenu />
+  <UserContextMenu />
 </template>
 
 <script setup lang="ts">
@@ -24,4 +25,5 @@ const PlaylistContextMenu = defineAsyncComponent(() => import('@/components/play
 const PlaylistFolderContextMenu = defineAsyncComponent(() => import('@/components/playlist/PlaylistFolderContextMenu.vue'))
 const PodcastContextMenu = defineAsyncComponent(() => import('@/components/podcast/PodcastContextMenu.vue'))
 const RadioStationContextMenu = defineAsyncComponent(() => import('@/components/radio/RadioStationContextMenu.vue'))
+const UserContextMenu = defineAsyncComponent(() => import('@/components/user/UserContextMenu.vue'))
 </script>

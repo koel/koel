@@ -1,10 +1,6 @@
 import type { Route } from '@/router'
-import Router from '@/router'
-import { userStore } from '@/stores/userStore'
 import { cache } from '@/services/cache'
-import { playlistCollaborationService } from '@/services/playlistCollaborationService'
-import { useUpload } from '@/composables/useUpload'
-import { logger } from '@/utils/logger'
+import { usePolicies } from '@/composables/usePolicies'
 
 const UUID_REGEX = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 const ULID_REGEX = '[0-9A-Za-z]{26}'
@@ -19,6 +15,9 @@ export const routes = [
     name: '404',
     path: '/404',
     screen: '404',
+    meta: {
+      public: true,
+    },
   },
   {
     name: 'queue',
@@ -64,19 +63,25 @@ export const routes = [
     name: 'upload',
     path: '/upload',
     screen: 'Upload',
-    onResolve: () => useUpload().allowsUpload.value,
+    meta: {
+      guard: () => usePolicies().currentUserCan.uploadSongs(),
+    },
   },
   {
     name: 'settings',
     path: '/settings',
     screen: 'Settings',
-    onResolve: () => userStore.current?.is_admin,
+    meta: {
+      guard: () => usePolicies().currentUserCan.manageSettings(),
+    },
   },
   {
     name: 'users.index',
     path: '/users',
     screen: 'Users',
-    onResolve: () => userStore.current?.is_admin,
+    meta: {
+      guard: () => usePolicies().currentUserCan.manageUsers(),
+    },
   },
   {
     name: 'youtube',
@@ -122,19 +127,9 @@ export const routes = [
   {
     name: 'playlist.collaborate',
     path: '/playlist/collaborate/:id',
-    screen: 'Blank',
+    screen: 'Playlist.Collaborate',
     constraints: {
       id: UUID_REGEX,
-    },
-    onResolve: async params => {
-      try {
-        const playlist = await playlistCollaborationService.acceptInvite(params.id)
-        Router.go(Router.url('playlists.show', { id: playlist.id }), true)
-        return true
-      } catch (error: unknown) {
-        logger.error(error)
-        return false
-      }
     },
   },
   {
@@ -182,16 +177,19 @@ export const routes = [
     constraints: {
       id: UUID_REGEX,
     },
-    redirect: () => 'queue',
-    onResolve: params => {
-      cache.set('playable-to-queue', params.id)
-      return true
+    meta: {
+      redirect: () => 'queue',
+      onResolved: params => cache.set('playable-to-queue', params.id),
     },
   },
   {
     name: 'invitation.accept',
     path: '/invitation/accept/:token',
     screen: 'Invitation.Accept',
+    meta: {
+      layout: 'invitation',
+      public: true,
+    },
     constraints: {
       token: UUID_REGEX,
     },
@@ -200,6 +198,10 @@ export const routes = [
     name: 'password.reset',
     path: '/reset-password/:payload',
     screen: 'Password.Reset',
+    meta: {
+      public: true,
+      layout: 'reset-password',
+    },
     constraints: {
       payload: '[a-zA-Z0-9\\+/=]+',
     },
@@ -216,6 +218,10 @@ export const routes = [
     name: 'embed',
     path: '/embed/:id/:options',
     screen: 'Embed',
+    meta: {
+      public: true,
+      layout: 'embed',
+    },
     constraints: {
       id: ULID_REGEX,
     },

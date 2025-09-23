@@ -69,7 +69,7 @@ export const artistStore = {
     if (!artist) {
       try {
         artist = this.syncWithVault(
-          await cache.remember<Artist>(['artist', id], async () => await http.get<Artist>(`artists/${id}`)),
+          await cache.remember(['artist', id], async () => await http.get<Artist>(`artists/${id}`)),
         )[0]
       } catch (error: unknown) {
         logger.error(error)

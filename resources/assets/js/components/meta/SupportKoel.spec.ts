@@ -11,6 +11,7 @@ describe('supportKoel.vue', () => {
       vi.useRealTimers()
       preferenceStore.state.support_bar_no_bugging = false
     },
+    authenticated: false, // we want to trigger preferenceStore.initialized manually
   })
 
   const renderComponent = async () => {
@@ -48,7 +49,7 @@ describe('supportKoel.vue', () => {
     await renderComponent()
     await h.user.click(screen.getByRole('button', { name: 'Don\'t bug me again' }))
 
-    expect(await screen.queryByTestId('support-bar')).toBeNull()
+    expect(screen.queryByTestId('support-bar')).toBeNull()
     expect(preferenceStore.state.support_bar_no_bugging).toBe(true)
   })
 })

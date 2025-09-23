@@ -28,7 +28,7 @@ describe('aboutKoelModal.vue', () => {
   it('shows new version', () => {
     commonStore.state.current_version = 'v1.0.0'
     commonStore.state.latest_version = 'v1.0.1'
-    h.beAdmin()
+    h.actingAsAdmin()
     renderComponent().getByTestId('new-version-about')
   })
 

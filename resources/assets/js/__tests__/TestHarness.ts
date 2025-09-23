@@ -15,6 +15,8 @@ import Router from '@/router'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { noop } from '@/utils/helpers'
 import { deepMerge, setPropIfNotExists } from '@/__tests__/utils'
+import { eventBus } from '@/utils/eventBus'
+import { cache } from '@/services/cache'
 
 class TestHarness {
   public router: Router
@@ -28,15 +30,11 @@ class TestHarness {
     this.setReadOnlyProperty(navigator, 'clipboard', {
       writeText: vi.fn(),
     })
-
-    this.beforeEach()
-    this.afterEach()
   }
 
   public beforeEach (cb?: Closure) {
     beforeEach(() => {
       this.mock(http, 'request').mockResolvedValue({}) // prevent actual HTTP requests from being made
-      preferenceStore.init()
 
       commonStore.state.song_length = 10
       commonStore.state.allows_download = true
@@ -52,21 +50,24 @@ class TestHarness {
       document.body.innerHTML = ''
       isMobile.any = false
       commonStore.state.song_length = 10
+      cache.clear()
       cleanup()
       this.restoreAllMocks()
+      eventBus.removeAllListeners()
       cb?.()
     })
   }
 
-  public readonly auth = this.be
+  public readonly auth = this.actingAsUser
 
-  public be (user?: User) {
-    userStore.state.current = user || factory('user')
+  public actingAsUser (user?: CurrentUser) {
+    userStore.state.current = user || factory.states('current')('user') as CurrentUser
+    preferenceStore.init(userStore.state.current.preferences)
     return this
   }
 
-  public beAdmin () {
-    return this.be(factory.states('admin')('user'))
+  public actingAsAdmin () {
+    return this.actingAsUser(factory.states('admin')('user') as CurrentUser)
   }
 
   public mock<T, M extends MethodOf<Required<T>>> (obj: T, methodName: M, implementation?: any) {
@@ -102,6 +103,7 @@ class TestHarness {
   public restoreAllMocks () {
     this.backupMethods.forEach((fn, [obj, methodName]) => (obj[methodName] = fn))
     this.backupMethods.clear()
+
     return this
   }
 
@@ -152,9 +154,19 @@ class TestHarness {
     return this
   }
 
-  public stub (testId = 'stub') {
+  public stub (testId = 'stub', asModelComponent = false, defaultValue?: any) {
+    if (!asModelComponent) {
+      return defineComponent({
+        template: `<br data-testid="${testId}"/>`,
+      })
+    }
+
     return defineComponent({
-      template: `<br data-testid="${testId}"/>`,
+      template: `<input data-testid="${testId}" @input="$emit('update:modelValue', $event.target.value)" />`,
+      emits: ['update:modelValue'],
+      mounted () {
+        defaultValue && this.$emit('update:modelValue', defaultValue)
+      },
     })
   }
 
@@ -210,16 +222,19 @@ class TestHarness {
   public readonly factory = factory
 }
 
-export function createHarness (overrides?: { beforeEach?: () => void, afterEach?: () => void }) {
-  const h = new (class extends TestHarness {
-  })
+export function createHarness (overrides?: {
+  beforeEach?: () => void
+  afterEach?: () => void
+  authenticated?: boolean
+}) {
+  const h = new TestHarness()
 
-  if (overrides?.beforeEach) {
-    h.beforeEach(overrides.beforeEach)
+  if (overrides?.authenticated ?? true) {
+    h.actingAsUser()
   }
-  if (overrides?.afterEach) {
-    h.afterEach(overrides.afterEach)
-  }
+
+  h.beforeEach(overrides?.beforeEach)
+  h.afterEach(overrides?.afterEach)
 
   return h
 }

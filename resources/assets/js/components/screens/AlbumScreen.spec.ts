@@ -4,7 +4,7 @@ import { createHarness } from '@/__tests__/TestHarness'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
-import { resourcePermissionService } from '@/services/resourcePermissionService'
+import { acl } from '@/services/acl'
 import { eventBus } from '@/utils/eventBus'
 import Router from '@/router'
 import Component from './AlbumScreen.vue'
@@ -12,7 +12,7 @@ import Component from './AlbumScreen.vue'
 describe('albumScreen.vue', () => {
   const h = createHarness({
     beforeEach: () => {
-      h.mock(resourcePermissionService, 'check').mockResolvedValue(true)
+      h.mock(acl, 'checkResourcePermission').mockResolvedValue(true)
     },
   })
 
@@ -42,7 +42,7 @@ describe('albumScreen.vue', () => {
       id: album.id,
     })
 
-    const rendered = h.beAdmin().render(Component, {
+    const rendered = h.actingAsAdmin().render(Component, {
       global: {
         stubs: {
           SongList: h.stub('song-list'),

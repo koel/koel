@@ -2,6 +2,7 @@
 
 namespace Tests\Integration\Services;
 
+use App\Enums\Acl\Role;
 use App\Exceptions\UserProspectUpdateDeniedException;
 use App\Services\UserService;
 use App\Values\User\UserCreateData;
@@ -13,8 +14,7 @@ use Tests\TestCase;
 use function Tests\create_admin;
 use function Tests\create_user;
 use function Tests\create_user_prospect;
-use function Tests\read_as_data_url;
-use function Tests\test_path;
+use function Tests\minimal_base64_encoded_image;
 
 class UserServiceTest extends TestCase
 {
@@ -34,13 +34,13 @@ class UserServiceTest extends TestCase
             name: 'Bruce Dickinson',
             email: 'bruce@dickison.com',
             plainTextPassword: 'FearOfTheDark',
-            isAdmin: true,
-            avatar: read_as_data_url(test_path('fixtures/cover.png')),
+            role: Role::ADMIN,
+            avatar: minimal_base64_encoded_image(),
         ));
 
         $this->assertModelExists($user);
         self::assertTrue(Hash::check('FearOfTheDark', $user->password));
-        self::assertTrue($user->is_admin);
+        self::assertSame(Role::ADMIN, $user->role);
         self::assertFileExists(image_storage_path($user->getRawOriginal('avatar')));
     }
 
@@ -55,7 +55,7 @@ class UserServiceTest extends TestCase
 
         $this->assertModelExists($user);
         self::assertTrue(Hash::check('FearOfTheDark', $user->password));
-        self::assertFalse($user->is_admin);
+        self::assertSame(Role::USER, $user->role);
         self::assertStringStartsWith('https://www.gravatar.com/avatar/', $user->avatar);
     }
 
@@ -81,8 +81,8 @@ class UserServiceTest extends TestCase
             name: 'Steve Harris',
             email: 'steve@iron.com',
             plainTextPassword: 'TheTrooper',
-            isAdmin: true,
-            avatar: read_as_data_url(test_path('fixtures/cover.png'))
+            role: Role::ADMIN,
+            avatar: minimal_base64_encoded_image(),
         ));
 
         $user->refresh();
@@ -90,14 +90,15 @@ class UserServiceTest extends TestCase
         self::assertSame('Steve Harris', $user->name);
         self::assertSame('steve@iron.com', $user->email);
         self::assertTrue(Hash::check('TheTrooper', $user->password));
-        self::assertTrue($user->is_admin);
+        self::assertSame(Role::ADMIN, $user->role);
         self::assertFileExists(image_storage_path($user->getRawOriginal('avatar')));
     }
 
     #[Test]
-    public function updateUserWithoutSettingPasswordOrAdminStatus(): void
+    public function updateUserWithoutSettingPasswordOrRole(): void
     {
         $user = create_admin(['password' => Hash::make('TheTrooper')]);
+        self::assertSame(Role::ADMIN, $user->role);
 
         $this->service->updateUser($user, UserUpdateData::make(
             name: 'Steve Harris',
@@ -109,7 +110,7 @@ class UserServiceTest extends TestCase
         self::assertSame('Steve Harris', $user->name);
         self::assertSame('steve@iron.com', $user->email);
         self::assertTrue(Hash::check('TheTrooper', $user->password));
-        self::assertTrue($user->is_admin);
+        self::assertSame(Role::ADMIN, $user->role); // shouldn't change
     }
 
     #[Test]

@@ -7,7 +7,9 @@ import { logger } from '@/utils/logger'
 import Component from './LoginForm.vue'
 
 describe('loginForm.vue', () => {
-  const h = createHarness()
+  const h = createHarness({
+    authenticated: false,
+  })
 
   const submitForm = async (loginMock: Mock) => {
     const rendered = h.render(Component)
@@ -56,7 +58,7 @@ describe('loginForm.vue', () => {
   it('shows Google login button', async () => {
     window.SSO_PROVIDERS = ['Google']
 
-    const { html } = h.render(Component, {
+    h.render(Component, {
       global: {
         stubs: {
           GoogleLoginButton: h.stub('google-login-button'),
@@ -64,7 +66,7 @@ describe('loginForm.vue', () => {
       },
     })
 
-    expect(html()).toMatchSnapshot()
+    screen.getByTestId('google-login-button')
 
     window.SSO_PROVIDERS = []
   })

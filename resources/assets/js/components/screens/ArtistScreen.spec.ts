@@ -5,14 +5,14 @@ import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
 import { eventBus } from '@/utils/eventBus'
-import { resourcePermissionService } from '@/services/resourcePermissionService'
+import { acl } from '@/services/acl'
 import Router from '@/router'
 import Component from './ArtistScreen.vue'
 
 describe('artistScreen.vue', () => {
   const h = createHarness({
     beforeEach: () => {
-      h.mock(resourcePermissionService, 'check').mockResolvedValue(true)
+      h.mock(acl, 'checkResourcePermission').mockResolvedValue(true)
     },
   })
 

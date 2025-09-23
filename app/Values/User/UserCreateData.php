@@ -2,6 +2,7 @@
 
 namespace App\Values\User;
 
+use App\Enums\Acl\Role;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Facades\Hash;
 
@@ -12,8 +13,8 @@ final readonly class UserCreateData implements Arrayable
     public function __construct(
         public string $name,
         public string $email,
-        ?string $plainTextPassword = null,
-        public bool $isAdmin = false,
+        ?string $plainTextPassword,
+        public Role $role,
         public ?string $avatar = null,
         public ?string $ssoId = null,
         public ?string $ssoProvider = null,
@@ -31,7 +32,7 @@ final readonly class UserCreateData implements Arrayable
             name: $ssoUser->name,
             email: $ssoUser->email,
             plainTextPassword: '',
-            isAdmin: false,
+            role: Role::default(),
             avatar: $ssoUser->avatar,
             ssoId: $ssoUser->id,
             ssoProvider: $ssoUser->provider,
@@ -42,7 +43,7 @@ final readonly class UserCreateData implements Arrayable
         string $name,
         string $email,
         ?string $plainTextPassword = null,
-        bool $isAdmin = false,
+        ?Role $role = null,
         ?string $avatar = null,
         ?string $ssoId = null,
         ?string $ssoProvider = null,
@@ -51,7 +52,7 @@ final readonly class UserCreateData implements Arrayable
             name: $name,
             email: $email,
             plainTextPassword: $plainTextPassword,
-            isAdmin: $isAdmin,
+            role: $role ?? Role::default(),
             avatar: $avatar,
             ssoId: $ssoId,
             ssoProvider: $ssoProvider,
@@ -65,7 +66,7 @@ final readonly class UserCreateData implements Arrayable
             'name' => $this->name,
             'email' => $this->email,
             'password' => $this->password,
-            'is_admin' => $this->isAdmin,
+            'role' => $this->role->value,
             'avatar' => $this->avatar,
             'sso_id' => $this->ssoId,
             'sso_provider' => $this->ssoProvider,

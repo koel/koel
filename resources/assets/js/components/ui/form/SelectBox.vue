@@ -1,5 +1,5 @@
 <template>
-  <label class="relative bg-white text-gray-800 rounded">
+  <div class="relative bg-white text-gray-800 rounded">
     <select
       ref="el"
       v-model="value"
@@ -12,7 +12,7 @@
       class="text-k-highlight pointer-events-none absolute top-1/3 right-[8px]"
       size="sm"
     />
-  </label>
+  </div>
 </template>
 
 <script lang="ts" setup>

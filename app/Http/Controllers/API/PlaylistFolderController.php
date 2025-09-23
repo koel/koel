@@ -22,7 +22,7 @@ class PlaylistFolderController extends Controller
 
     public function index()
     {
-        return PlaylistFolderResource::collection($this->user->playlist_folders);
+        return PlaylistFolderResource::collection($this->user->playlistFolders);
     }
 
     public function store(PlaylistFolderStoreRequest $request)

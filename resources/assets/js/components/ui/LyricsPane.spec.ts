@@ -36,7 +36,7 @@ describe('lyricsPane.vue', () => {
     const song = h.factory('song', { lyrics: null })
 
     const mock = h.mock(eventBus, 'emit')
-    h.beAdmin()
+    h.actingAsAdmin()
     renderComponent(song)
 
     await h.user.click(screen.getByRole('button', { name: 'Click here' }))
@@ -45,7 +45,7 @@ describe('lyricsPane.vue', () => {
   })
 
   it('does not have a button to add lyrics if current user is not an admin', async () => {
-    h.be()
+    h.actingAsUser()
     renderComponent(h.factory('song', { lyrics: null }))
     expect(screen.queryByRole('button', { name: 'Click here' })).toBeNull()
   })

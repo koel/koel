@@ -23,7 +23,7 @@
         </p>
 
         <template v-else>
-          <p v-if="isAdmin" class="py-3">
+          <p v-if="currentUserCan.manageSettings()" class="py-3">
             <!-- close the modal first to prevent it from overlapping Lemonsqueezy's overlay -->
             <BtnUpgradeToPlus class="!w-auto inline-block !px-6" @click.prevent="showPlusModal" />
           </p>
@@ -60,10 +60,10 @@
 </template>
 
 <script lang="ts" setup>
-import { useAuthorization } from '@/composables/useAuthorization'
 import { useKoelPlus } from '@/composables/useKoelPlus'
 import { useNewVersionNotification } from '@/composables/useNewVersionNotification'
 import { eventBus } from '@/utils/eventBus'
+import { usePolicies } from '@/composables/usePolicies'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import BtnUpgradeToPlus from '@/components/koel-plus/BtnUpgradeToPlus.vue'
@@ -79,7 +79,7 @@ const {
 } = useNewVersionNotification()
 
 const { isPlus, license } = useKoelPlus()
-const { isAdmin } = useAuthorization()
+const { currentUserCan } = usePolicies()
 
 const close = () => emit('close')
 

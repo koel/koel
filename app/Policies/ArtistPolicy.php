@@ -2,40 +2,34 @@
 
 namespace App\Policies;
 
+use App\Enums\Acl\Permission;
 use App\Facades\License;
 use App\Models\Artist;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class ArtistPolicy
 {
-    public function access(User $user, Artist $artist): Response
+    public function access(User $user, Artist $artist): bool
     {
-        return License::isCommunity() || $artist->belongsToUser($user)
-            ? Response::allow()
-            : Response::deny();
+        return License::isCommunity() || $artist->belongsToUser($user);
     }
 
-    public function update(User $user, Artist $artist): Response
+    public function update(User $user, Artist $artist): bool
     {
         if ($artist->is_unknown || $artist->is_various) {
-            return Response::deny();
+            return false;
         }
 
-        // For CE, if the user is an admin, they can update any artist.
-        if ($user->is_admin && License::isCommunity()) {
-            return Response::allow();
+        // For CE, if the user can manage songs, they can update any artist.
+        if ($user->hasPermissionTo(Permission::MANAGE_SONGS) && License::isCommunity()) {
+            return true;
         }
 
         // For Plus, only the owner of the artist can update it.
-        if ($artist->belongsToUser($user) && License::isPlus()) {
-            return Response::allow();
-        }
-
-        return Response::deny();
+        return $artist->belongsToUser($user) && License::isPlus();
     }
 
-    public function edit(User $user, Artist $artist): Response
+    public function edit(User $user, Artist $artist): bool
     {
         return $this->update($user, $artist);
     }

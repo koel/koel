@@ -11,7 +11,7 @@
     @keydown.esc="close"
   >
     <ul>
-      <slot>Menu items go here.</slot>
+      <slot><!-- menu items go here --></slot>
     </ul>
   </nav>
 </template>

@@ -17,7 +17,7 @@
     <div v-else>
       <p>
         MusicBrainz integration is not enabled.
-        <span v-if="isAdmin" data-testid="spotify-admin-instruction">
+        <span v-if="currentUserCan.manageSettings()" data-testid="spotify-admin-instruction">
           Check
           <a href="https://docs.koel.dev/service-integrations#musicbrainz-wikipedia" target="_blank">Documentation</a>
           for integration instructions.
@@ -30,9 +30,9 @@
 <script lang="ts" setup>
 import musicbrainzLogo from '@/../img/logos/musicbrainz.svg'
 
-import { useAuthorization } from '@/composables/useAuthorization'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
+import { usePolicies } from '@/composables/usePolicies'
 
-const { isAdmin } = useAuthorization()
+const { currentUserCan } = usePolicies()
 const { useMusicBrainz } = useThirdPartyServices()
 </script>

@@ -7,14 +7,14 @@ import { downloadService } from '@/services/downloadService'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
-import { resourcePermissionService } from '@/services/resourcePermissionService'
+import { acl } from '@/services/acl'
 import Component from './ArtistContextMenu.vue'
 
 describe('artistContextMenu.vue', () => {
   const h = createHarness()
 
   const renderComponent = async (artist?: Artist) => {
-    h.mock(resourcePermissionService, 'check').mockReturnValue(true)
+    h.mock(acl, 'checkResourcePermission').mockReturnValue(true)
 
     artist = artist || h.factory('artist', {
       name: 'Accept',

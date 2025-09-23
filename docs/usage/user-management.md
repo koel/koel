@@ -1,7 +1,19 @@
 # User Management
 
+Koel supports multiple users with different roles and permissions.
+
+* **Admins** can do basically anything: manage settings, users, and the shared music library
+* **Users** can access the shared library and manage their own profile and preferences.
+* <PlusBadge /> **Managers** can manage users and the shared library, but not settings.
+
+:::tip Multi-library support
+In the Community edition, all users share a common library (though playlists, favorites, and other stats are private).
+In [Koel Plus](../plus/what-is-koel-plus), each user manages their own library with the ability to share and collaborate with others.
+A private library can only be managed by its owner.
+:::
+
 ## First Admin User
-Upon installation, Koel prompts to create a first (default) admin user. 
+Upon installation, Koel prompts to create a first (default) admin user.
 If you're using the [Docker image](../guide/getting-started#using-docker), the admin user will be created automatically with these credentials:
 
 ```
@@ -22,12 +34,13 @@ php artisan koel:admin:change-password
 
 ## Adding More Users
 
-As an admin, you can add more users and manage their profiles under Manage → Users. 
-If Koel has been [configured](../guide/getting-started#configure-a-mailer) with a mailer, you can also invite a user via email. 
+With the `manage users` permission (admin and manager roles), you can add more users and manage their profiles under
+Manage → Users. If Koel has been [configured](../guide/getting-started#configure-a-mailer) with a mailer, you can also invite a user via email.
+You cannot add, invite, edit, or delete users whose roles are higher than yours.
 
-:::tip Multi-library support
-In the Community edition of Koel, all users share the same library (though playlists, favorites, and other stats are private).
-[Koel Plus](../plus/what-is-koel-plus) offers multi-library support, where each user can have their own library with the ability to share and collaborate with others.
-:::
+## Changing User Roles
+
+User roles can be changed via the web interface from the Users page if the current user has the `manage users`
+permission, or via the [command line](../cli-commands#koel-admin-set-user-role).
 
 

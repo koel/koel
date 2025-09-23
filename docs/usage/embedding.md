@@ -24,5 +24,5 @@ Koel is not responsible for any copyright issues.
 :::info Allow iframes
 Since the embed is an iframe, make sure your Koel's webserver sends the proper `X-Frame-Options` response header—or
 doesn't send one at all, which would allow the iframe to be embedded _anywhere_. If you're not familiar with the
-concept, you can read more about it
+concept, read more about it
 [here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options).

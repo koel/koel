@@ -9,8 +9,8 @@
         <Icon :icon="faVolumeOff" />
       </template>
       No songs found.
-      <span class="secondary block">
-        {{ isAdmin ? 'Have you set up your library yet?' : 'Contact your administrator to set up your library.' }}
+      <span v-if="currentUserCan.manageSettings()" class="secondary block">
+        Have you set up your library yet?
       </span>
     </ScreenEmptyState>
 
@@ -42,7 +42,7 @@ import { commonStore } from '@/stores/commonStore'
 import { overviewStore } from '@/stores/overviewStore'
 import { userStore } from '@/stores/userStore'
 import { useRouter } from '@/composables/useRouter'
-import { useAuthorization } from '@/composables/useAuthorization'
+import { usePolicies } from '@/composables/usePolicies'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 
 import MostPlayedSongs from '@/components/screens/home/MostPlayedSongs.vue'
@@ -56,7 +56,7 @@ import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import BtnScrollToTop from '@/components/ui/BtnScrollToTop.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 
-const { isAdmin } = useAuthorization()
+const { currentUserCan } = usePolicies()
 
 const greetings = [
   'Oh hai!',

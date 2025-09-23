@@ -5,7 +5,7 @@ import type { CreateUserData, UpdateUserData } from '@/stores/userStore'
 import { userStore } from '@/stores/userStore'
 
 describe('userStore', () => {
-  let currentUser: User
+  let currentUser: CurrentUser
 
   const h = createHarness({
     beforeEach: () => {
@@ -14,7 +14,7 @@ describe('userStore', () => {
     },
   })
 
-  currentUser = h.factory('user')
+  currentUser = h.factory.states('current')('user') as CurrentUser
 
   it('initializes with current user', () => {
     expect(userStore.current).toEqual(currentUser)
@@ -48,7 +48,7 @@ describe('userStore', () => {
 
   it('creates a user', async () => {
     const data: CreateUserData = {
-      is_admin: false,
+      role: 'user',
       password: 'bratwurst',
       name: 'Jane Doe',
       email: 'jane@doe.com',
@@ -68,7 +68,7 @@ describe('userStore', () => {
     userStore.state.users.push(...userStore.syncWithVault(user))
 
     const data: UpdateUserData = {
-      is_admin: true,
+      role: 'admin',
       password: 'bratwurst',
       name: 'Jane Doe',
       email: 'jane@doe.com',

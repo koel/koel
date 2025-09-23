@@ -59,6 +59,7 @@ export default defineConfig({
           { text: 'Music Discovery', link: '/usage/music-discovery' },
           { text: 'Streaming Music', link: '/usage/streaming' },
           { text: 'Using the Web Interface', link: '/usage/web-interface' },
+          { text: 'Playlists', link: '/usage/playlists' },
           { text: 'Instant Search', link: '/usage/search' },
           { text: 'Themes', link: '/usage/themes' },
           { text: 'Artist, Album, & Playlist Arts', link: '/usage/artist-album-playlist-arts' },

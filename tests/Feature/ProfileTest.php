@@ -7,8 +7,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
-use function Tests\read_as_data_url;
-use function Tests\test_path;
+use function Tests\minimal_base64_encoded_image;
 
 class ProfileTest extends TestCase
 {
@@ -72,7 +71,7 @@ class ProfileTest extends TestCase
             'name' => 'Foo',
             'email' => 'bar@baz.com',
             'current_password' => 'secret',
-            'avatar' => read_as_data_url(test_path('fixtures/cover.png')),
+            'avatar' => minimal_base64_encoded_image(),
         ], $user)
             ->assertOk();
 

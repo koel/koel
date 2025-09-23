@@ -18,6 +18,7 @@ describe('playableListHeaderActionMenu.vue', () => {
 
   it('emits the sort event when an item is clicked', async () => {
     const { emitted } = h.render(Component)
+    screen.debug()
     await h.user.click(screen.getByText('Title'))
     expect(emitted().sort[0]).toEqual(['title'])
   })
@@ -68,7 +69,7 @@ describe('playableListHeaderActionMenu.vue', () => {
   })
 
   it('has a checkbox to toggle the column visibility', async () => {
-    h.be().render(Component)
+    h.actingAsUser().render(Component)
 
     ;['Album', 'Track & Disc', 'Time'].forEach(text => screen.getByTitle(`Click to toggle the ${text} column`))
 
@@ -81,7 +82,7 @@ describe('playableListHeaderActionMenu.vue', () => {
 
   it('gets the column visibility from local storage', async () => {
     // ensure the localstorage is properly namespaced
-    h.be()
+    h.actingAsUser()
 
     useLocalStorage().set('playable-list-columns', ['track'])
     h.render(Component)

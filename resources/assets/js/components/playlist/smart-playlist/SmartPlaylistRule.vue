@@ -5,7 +5,7 @@
         <option v-for="m in models" :key="m.name" :value="m">{{ m.label }}</option>
       </SelectBox>
 
-      <SelectBox v-model="selectedOperator" name="operator[]">
+      <SelectBox v-model="selectedOperator" class="flex-1 max-w-44" name="operator[]">
         <option v-for="option in availableOperators" :key="option.operator" :value="option">{{ option.label }}</option>
       </SelectBox>
 
@@ -20,7 +20,7 @@
           @update:model-value="onInput"
         />
 
-        <span v-if="valueSuffix" class="suffix">{{ valueSuffix }}</span>
+        <span v-if="valueSuffix" class="suffix mr-5 text-sm">{{ valueSuffix }}</span>
       </span>
 
       <Btn

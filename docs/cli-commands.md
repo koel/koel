@@ -53,6 +53,21 @@ php artisan koel:admin:change-password [<email>]
 |---------|--------------------------------------------------------------|
 | `email` | The user's email. If empty, will get the default admin user. |
 
+### `koel:admin:set-user-role`
+
+Set a user's role.
+
+#### Usage
+
+```bash
+php artisan koel:admin:set-user-role <email>
+```
+
+#### Arguments
+| Name    | Description       |
+|---------|-------------------|
+| `email` | The user's email. |
+
 ### `koel:clean-up-temp-files`
 
 Remove temporary files older than a certain age. Examples of temporary files include temporarily downloaded files,

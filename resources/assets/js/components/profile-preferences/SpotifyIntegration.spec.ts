@@ -6,15 +6,15 @@ import Component from './SpotifyIntegration.vue'
 describe('spotifyIntegration.vue', () => {
   const h = createHarness()
 
-  it.each<[boolean, boolean]>([[false, false], [false, true], [true, false], [true, true]]) (
+  it.each<[boolean, boolean]>([[false, false], [false, true], [true, false], [true, true]])(
     'renders proper content with Spotify integration status %s, current user admin status %s',
     (useSpotify, isAdmin) => {
       commonStore.state.uses_spotify = useSpotify
 
       if (isAdmin) {
-        h.beAdmin()
+        h.actingAsAdmin()
       } else {
-        h.be()
+        h.actingAsUser()
       }
 
       expect(h.render(Component).html()).toMatchSnapshot()

@@ -2,40 +2,38 @@
 
 namespace App\Policies;
 
+use App\Enums\Acl\Permission;
 use App\Facades\License;
 use App\Models\Song;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class SongPolicy
 {
-    public function access(User $user, Song $song): Response
+    public function access(User $user, Song $song): bool
     {
-        return License::isCommunity() || $song->accessibleBy($user)
-            ? Response::allow()
-            : Response::deny();
+        return License::isCommunity() || $song->accessibleBy($user);
     }
 
-    public function own(User $user, Song $song): Response
+    public function own(User $user, Song $song): bool
     {
-        return $song->ownedBy($user) ? Response::allow() : Response::deny();
+        return $song->ownedBy($user);
     }
 
-    public function delete(User $user, Song $song): Response
+    public function delete(User $user, Song $song): bool
     {
-        return (License::isPlus() && $song->ownedBy($user)) || $user->is_admin
-            ? Response::allow()
-            : Response::deny();
+        return License::isCommunity()
+            ? $user->hasPermissionTo(Permission::MANAGE_SONGS)
+            : $song->ownedBy($user);
     }
 
-    public function edit(User $user, Song $song): Response
+    public function edit(User $user, Song $song): bool
     {
-        return (License::isPlus() && $song->accessibleBy($user)) || $user->is_admin
-            ? Response::allow()
-            : Response::deny();
+        return License::isCommunity()
+            ? $user->hasPermissionTo(Permission::MANAGE_SONGS)
+            : $song->accessibleBy($user);
     }
 
-    public function download(User $user, Song $song): Response
+    public function download(User $user, Song $song): bool
     {
         return $this->access($user, $song);
     }

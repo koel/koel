@@ -13,7 +13,7 @@ class UserProspectResource extends JsonResource
         'name',
         'email',
         'avatar',
-        'is_admin',
+        'role',
         'is_prospect',
     ];
 
@@ -31,7 +31,7 @@ class UserProspectResource extends JsonResource
             'name' => $this->user->name,
             'email' => $this->user->email,
             'avatar' => $this->user->avatar,
-            'is_admin' => $this->user->is_admin,
+            'role' => $this->user->role->value,
             'is_prospect' => $this->user->is_prospect,
         ];
     }

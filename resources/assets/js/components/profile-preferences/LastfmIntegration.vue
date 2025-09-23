@@ -26,7 +26,7 @@
     <div v-else data-testid="lastfm-not-integrated">
       <p>
         Last.fm integration is not enabled.
-        <span v-if="isAdmin" data-testid="lastfm-admin-instruction">
+        <span v-if="currentUserCan.manageSettings()" data-testid="lastfm-admin-instruction">
           Check
           <a href="https://docs.koel.dev/service-integrations#last-fm" target="_blank">Documentation</a>
           for integration instructions.
@@ -44,17 +44,18 @@ import { faLastfm } from '@fortawesome/free-brands-svg-icons'
 import { computed, defineAsyncComponent } from 'vue'
 import { authService } from '@/services/authService'
 import { http } from '@/services/http'
-
 import { useAuthorization } from '@/composables/useAuthorization'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 import { forceReloadWindow } from '@/utils/helpers'
+import { usePolicies } from '@/composables/usePolicies'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 
-const { currentUser, isAdmin } = useAuthorization()
+const { currentUser } = useAuthorization()
+const { currentUserCan } = usePolicies()
 const { useLastfm } = useThirdPartyServices()
 
-const connected = computed(() => Boolean(currentUser.value.preferences!.lastfm_session_key))
+const connected = computed(() => Boolean(currentUser.value.preferences.lastfm_session_key))
 
 /**
  * Connect the current user to Last.fm.

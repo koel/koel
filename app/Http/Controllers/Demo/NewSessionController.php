@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Demo;
 
 use App\Attributes\RequiresDemo;
+use App\Enums\Acl\Role;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -29,7 +30,7 @@ class NewSessionController extends Controller
             name: 'Koel',
             email: $email,
             plainTextPassword: User::DEMO_PASSWORD,
-            isAdmin: false,
+            role: Role::ADMIN,
         ));
 
         return redirect('/')->with('demo_account', [

@@ -67,41 +67,11 @@ From the same area, you can also:
 * <InterfaceIcon :src="volumeIcon" alt="Volume" /> control the volume
 * <InterfaceIcon :src="expandIcon" alt="Expand" /> toggle full-screen mode
 
-Right-clicking the footer area brings up context menu for the currently playing song.
-
-## Creating and Managing Playlists
-
-Koel supports creating an unlimited number of playlists as well as organizing them into folders.
-Start by clicking the <InterfaceIcon :src="plusIcon" alt="Add" /> button next to the "Playlists" header in the
-navigation bar. You'll be provided with three options:
-
-* "New Playlist…" brings up a dialog to create a standard playlist
-* "New Smart Playlist…" brings up a dialog to create a smart playlist
-* "New Folder…" brings up a dialog to create a playlist folder
-
-Creating a standard playlist or playlist folder should be straightforward, as you only need to supply a name.
-Once a playlist or playlist folder is created, you can:
-
-* Drag and drop songs into a standard playlist to add them
-* Drag and drop playlists a playlist folder to organize them. You can also drag and drop a playlist out of its folder.
-
-For a smart playlist, you can define the criteria that determine which songs are included in the playlist,
-and Koel will automatically update the playlist based on those criteria.
-For example, with the criteria shown in the following screenshot:
-
-<img loading="lazy" src="../assets/img/interface/new-smart-playlist.webp" alt="Smart playlist" style="width: 560px" />
-
-Koel will include in the playlist:
-
-* all songs by Pink Floyd, and
-* songs by Iron Maiden that have been played more than 99 times by the current user
-
-There are a great variety of criteria to choose from, and you can combine them in any way you like, providing a powerful
-tool for creating dynamic playlists.
+Right-clicking the footer area brings up the context menu for the currently playing song.
 
 ## Editing Songs
 
-As an admin (Community edition) or song owner (Koel Plus), you can edit a song's metadata by right-clicking on it and
+As a user with `manage songs` permission (Community edition) or the song owner (Koel Plus), you can edit a song's metadata by right-clicking on it and
 choosing "Edit…".
 A dialog will appear, allowing you to change the song's title, artist, album, genre, lyrics, and more.
 
@@ -126,8 +96,8 @@ even (silently) fail.
 
 ## Deleting Songs
 
-As an admin (Community edition) or song owner (Koel Plus), you can delete a song by right-clicking on it and choosing "
-Delete from Filesystem."
+As a user with `manage songs` permission (Community edition) or the song owner (Koel Plus), you can delete a song by
+right-clicking on it and choosing "Delete from Filesystem."
 You'll be prompted to confirm the deletion, and once confirmed, the song will be removed from the database and the
 filesystem.
 
@@ -137,10 +107,13 @@ You can disable this behavior by setting `BACKUP_ON_DELETE` to `false` in your `
 make it impossible to recover a song once it's deleted.
 :::
 
-## Share a Song
+## Share and Embed a Song
 
-You can share a song by right-clicking on it and choosing "Copy Shareable URL."
+Share a song by right-clicking on it and choosing "Copy Shareable URL."
 This will copy a URL to the clipboard that can then be shared with anyone with a Koel account.
+
+You can also embed a song for public sharing by right-clicking on it and choosing "Embed…".
+See [Embedding](./embedding) for more details.
 
 ## Keyboard Shortcuts
 

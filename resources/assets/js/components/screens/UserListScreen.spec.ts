@@ -11,7 +11,7 @@ import UserListScreen from './UserListScreen.vue'
 describe('userListScreen.vue', () => {
   const h = createHarness({
     beforeEach: () => {
-      h.beAdmin()
+      h.actingAsAdmin()
     },
   })
 

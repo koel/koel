@@ -15,7 +15,7 @@ describe('genreContextMenu.vue', () => {
       name: 'Classical',
     })
 
-    const rendered = h.beAdmin().render(Component)
+    const rendered = h.actingAsAdmin().render(Component)
     eventBus.emit('GENRE_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, genre)
     await h.tick(2)
 

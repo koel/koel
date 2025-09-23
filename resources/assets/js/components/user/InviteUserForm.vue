@@ -18,13 +18,7 @@
         />
         <template #help>To invite multiple users, input one email per line.</template>
       </FormRow>
-      <FormRow>
-        <div class="text-base">
-          <CheckBox v-model="data.is_admin" name="is_admin" />
-          Admin role
-          <TooltipIcon title="Admins can perform administrative tasks like managing users and uploading songs." />
-        </div>
-      </FormRow>
+      <RolePicker v-model="data.role" />
     </main>
 
     <footer>
@@ -42,10 +36,9 @@ import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useForm } from '@/composables/useForm'
 
 import Btn from '@/components/ui/form/Btn.vue'
-import TooltipIcon from '@/components/ui/TooltipIcon.vue'
-import CheckBox from '@/components/ui/form/CheckBox.vue'
 import TextArea from '@/components/ui/form/TextArea.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
+import RolePicker from '@/components/user/RolePicker.vue'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 
@@ -71,10 +64,10 @@ const collectValidEmails = () => {
 
 const close = () => emit('close')
 
-const { data, isPristine, handleSubmit } = useForm<{ raw_emails: string, is_admin: boolean }>({
+const { data, isPristine, handleSubmit } = useForm<{ raw_emails: string, role: Role }>({
   initialValues: {
     raw_emails: '',
-    is_admin: false,
+    role: 'user',
   },
   validator: () => {
     const validEmails = collectValidEmails()
@@ -93,7 +86,7 @@ const { data, isPristine, handleSubmit } = useForm<{ raw_emails: string, is_admi
 
     return true
   },
-  onSubmit: async ({ is_admin }) => invitationService.invite(collectValidEmails(), is_admin),
+  onSubmit: async ({ role }) => invitationService.invite(collectValidEmails(), role),
   onSuccess: () => {
     toastSuccess('Invitation(s) sent.')
     close()

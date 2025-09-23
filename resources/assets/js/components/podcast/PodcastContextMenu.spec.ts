@@ -17,7 +17,7 @@ describe('podcastContextMenu.vue', () => {
       favorite: false,
     })
 
-    const rendered = h.beAdmin().render(Component)
+    const rendered = h.actingAsAdmin().render(Component)
     eventBus.emit('PODCAST_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, podcast)
     await h.tick(2)
 

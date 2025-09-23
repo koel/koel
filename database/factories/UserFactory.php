@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\Acl\Role;
 use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -17,7 +18,6 @@ class UserFactory extends Factory
             'name' => $this->faker->name,
             'email' => $this->faker->email,
             'password' => Hash::make('secret'),
-            'is_admin' => false,
             'preferences' => [
                 'lastfm_session_key' => Str::random(),
             ],
@@ -28,7 +28,12 @@ class UserFactory extends Factory
 
     public function admin(): self
     {
-        return $this->state(fn () => ['is_admin' => true]); // @phpcs:ignore
+        return $this->afterCreating(static fn (User $user) => $user->syncRoles(Role::ADMIN)); // @phpstan-ignore-line
+    }
+
+    public function manager(): self
+    {
+        return $this->afterCreating(static fn (User $user) => $user->syncRoles(Role::MANAGER)); // @phpstan-ignore-line
     }
 
     public function prospect(): self

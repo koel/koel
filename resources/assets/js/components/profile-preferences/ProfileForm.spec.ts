@@ -9,7 +9,7 @@ describe('profileForm.vue', () => {
   const h = createHarness()
 
   const renderComponent = (user: User) => {
-    return h.be(user).render(Component)
+    return h.actingAsUser(user).render(Component)
   }
 
   it('updates profile', async () => {

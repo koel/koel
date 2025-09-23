@@ -119,7 +119,7 @@ describe('sideSheet.vue', () => {
     it('shows new version', () => {
       commonStore.state.current_version = 'v1.0.0'
       commonStore.state.latest_version = 'v1.0.1'
-      h.beAdmin()
+      h.actingAsAdmin()
       renderComponent()[0].getByRole('button', { name: 'New version available!' })
     })
   })

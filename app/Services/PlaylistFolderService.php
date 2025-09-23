@@ -11,7 +11,7 @@ class PlaylistFolderService
 {
     public function createFolder(User $user, string $name): PlaylistFolder
     {
-        return $user->playlist_folders()->create(['name' => $name]);
+        return $user->playlistFolders()->create(['name' => $name]);
     }
 
     public function renameFolder(PlaylistFolder $folder, string $name): PlaylistFolder

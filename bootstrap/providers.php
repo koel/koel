@@ -1,24 +1,43 @@
 <?php
 
+use App\Providers\AppServiceProvider;
+use App\Providers\AuthServiceProvider;
+use App\Providers\BroadcastServiceProvider;
+use App\Providers\DownloadServiceProvider;
+use App\Providers\EventServiceProvider;
+use App\Providers\ITunesServiceProvider;
+use App\Providers\LicenseServiceProvider;
+use App\Providers\MacroProvider;
+use App\Providers\ObjectStorageServiceProvider;
+use App\Providers\SongStorageServiceProvider;
+use App\Providers\StreamerServiceProvider;
+use App\Providers\UtilServiceProvider;
+use App\Providers\YouTubeServiceProvider;
+use Intervention\Image\ImageServiceProvider;
+use Jackiedo\DotenvEditor\DotenvEditorServiceProvider;
+use Laravel\Scout\ScoutServiceProvider;
+use OwenIt\Auditing\AuditingServiceProvider;
+use TeamTNT\Scout\TNTSearchScoutServiceProvider;
+
 return [
-    Jackiedo\DotenvEditor\DotenvEditorServiceProvider::class,
-    Intervention\Image\ImageServiceProvider::class,
+    DotenvEditorServiceProvider::class,
+    ImageServiceProvider::class,
 
-    Laravel\Scout\ScoutServiceProvider::class,
-    OwenIt\Auditing\AuditingServiceProvider::class,
-    TeamTNT\Scout\TNTSearchScoutServiceProvider::class,
+    ScoutServiceProvider::class,
+    AuditingServiceProvider::class,
+    TNTSearchScoutServiceProvider::class,
 
-    App\Providers\AppServiceProvider::class,
-    App\Providers\AuthServiceProvider::class,
-    App\Providers\EventServiceProvider::class,
-    App\Providers\UtilServiceProvider::class,
-    App\Providers\YouTubeServiceProvider::class,
-    App\Providers\DownloadServiceProvider::class,
-    App\Providers\BroadcastServiceProvider::class,
-    App\Providers\ITunesServiceProvider::class,
-    App\Providers\StreamerServiceProvider::class,
-    App\Providers\SongStorageServiceProvider::class,
-    App\Providers\ObjectStorageServiceProvider::class,
-    App\Providers\MacroProvider::class,
-    App\Providers\LicenseServiceProvider::class,
+    AppServiceProvider::class,
+    AuthServiceProvider::class,
+    EventServiceProvider::class,
+    UtilServiceProvider::class,
+    YouTubeServiceProvider::class,
+    DownloadServiceProvider::class,
+    BroadcastServiceProvider::class,
+    ITunesServiceProvider::class,
+    StreamerServiceProvider::class,
+    SongStorageServiceProvider::class,
+    ObjectStorageServiceProvider::class,
+    MacroProvider::class,
+    LicenseServiceProvider::class,
 ];

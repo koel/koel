@@ -82,8 +82,7 @@ describe('playbackService', () => {
 
   it('scrobbles if current playable ends', () => {
     commonStore.state.uses_last_fm = true
-    userStore.state.current = h.factory('user')
-    userStore.state.current.preferences!.lastfm_session_key = 'foo'
+    userStore.state.current.preferences.lastfm_session_key = 'foo'
 
     const scrobbleMock = h.mock(playableStore, 'scrobble')
     playbackService.player.media.dispatchEvent(new Event('ended'))

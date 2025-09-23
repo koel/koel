@@ -23,7 +23,7 @@ interface Repository
     /** @return Collection<array-key, T> */
     public function getMany(array $ids, bool $preserveOrder = false): Collection;
 
-    /** @return Collection<int, T> */
+    /** @return Collection<array-key, T> */
     public function getAll(): Collection;
 
     /** @return T|null */

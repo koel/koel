@@ -1,103 +1,101 @@
 <template>
-  <FormBase>
-    <form @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
-      <header>
-        <h1>New Smart Playlist</h1>
-      </header>
+  <form class="md:w-[560px]" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
+    <header>
+      <h1>New Smart Playlist</h1>
+    </header>
 
-      <main class="space-y-5">
-        <Tabs class="mt-1 -m-6">
-          <TabList>
-            <TabButton
-              id="createSmartPlaylistTabDetails"
-              :selected="currentTab === 'details'"
-              aria-controls="createSmartPlaylistDetails"
-              @click="currentTab = 'details'"
-            >
-              Details
-            </TabButton>
-            <TabButton
-              id="createSmartPlaylistTabRules"
-              :selected="currentTab === 'rules'"
-              aria-controls="createSmartPlaylistRules"
-              @click="currentTab = 'rules'"
-            >
-              Rules
-            </TabButton>
-          </TabList>
+    <main class="space-y-5">
+      <Tabs class="mt-1 -m-6">
+        <TabList>
+          <TabButton
+            id="createSmartPlaylistTabDetails"
+            :selected="currentTab === 'details'"
+            aria-controls="createSmartPlaylistDetails"
+            @click="currentTab = 'details'"
+          >
+            Details
+          </TabButton>
+          <TabButton
+            id="createSmartPlaylistTabRules"
+            :selected="currentTab === 'rules'"
+            aria-controls="createSmartPlaylistRules"
+            @click="currentTab = 'rules'"
+          >
+            Rules
+          </TabButton>
+        </TabList>
 
-          <TabPanelContainer>
-            <TabPanel
-              v-show="currentTab === 'details'"
-              id="createSmartPlaylistDetails"
-              aria-labelledby="createSmartPlaylistTabDetails"
-              class="space-y-5"
-            >
-              <div class="grid grid-cols-2 gap-4">
-                <FormRow>
-                  <template #label>Name *</template>
-                  <TextInput v-model="data.name" v-koel-focus name="name" placeholder="Playlist name" required />
-                </FormRow>
-                <FormRow>
-                  <template #label>Folder</template>
-                  <SelectBox v-model="data.folder_id">
-                    <option :value="null" />
-                    <option v-for="({ id, name }) in folders" :key="id" :value="id">{{ name }}</option>
-                  </SelectBox>
-                </FormRow>
-                <FormRow class="col-span-2">
-                  <template #label>Description</template>
-                  <TextArea v-model="data.description" class="h-28" name="description" />
-                </FormRow>
-                <div class="flex cols-span-2 gap-3 items-center">
-                  <span v-if="data.cover" class="w-24 h-24 aspect-square relative">
-                    <img :src="data.cover" alt="Cover" class="w-24 h-24 rounded object-cover">
-                    <button
-                      type="button"
-                      class="absolute inset-0 opacity-0 hover:opacity-100 bg-black/70 active:bg-black/85 active:text-[.9rem] transition-opacity"
-                      @click.prevent="data.cover = null"
-                    >
-                      Remove
-                    </button>
-                  </span>
-                  <div class="flex-1">
-                    <FileInput v-if="!data.cover" accept="image/*" name="cover" @change="onImageInputChange">
-                      Pick a cover (optional)
-                    </FileInput>
-                  </div>
+        <TabPanelContainer>
+          <TabPanel
+            v-show="currentTab === 'details'"
+            id="createSmartPlaylistDetails"
+            aria-labelledby="createSmartPlaylistTabDetails"
+            class="space-y-5"
+          >
+            <div class="grid grid-cols-2 gap-4">
+              <FormRow>
+                <template #label>Name *</template>
+                <TextInput v-model="data.name" v-koel-focus name="name" placeholder="Playlist name" required />
+              </FormRow>
+              <FormRow>
+                <template #label>Folder</template>
+                <SelectBox v-model="data.folder_id">
+                  <option :value="null" />
+                  <option v-for="({ id, name }) in folders" :key="id" :value="id">{{ name }}</option>
+                </SelectBox>
+              </FormRow>
+              <FormRow class="col-span-2">
+                <template #label>Description</template>
+                <TextArea v-model="data.description" class="h-28" name="description" />
+              </FormRow>
+              <div class="flex cols-span-2 gap-3 items-center">
+                <span v-if="data.cover" class="w-24 h-24 aspect-square relative">
+                  <img :src="data.cover" alt="Cover" class="w-24 h-24 rounded object-cover">
+                  <button
+                    type="button"
+                    class="absolute inset-0 opacity-0 hover:opacity-100 bg-black/70 active:bg-black/85 active:text-[.9rem] transition-opacity"
+                    @click.prevent="data.cover = null"
+                  >
+                    Remove
+                  </button>
+                </span>
+                <div class="flex-1">
+                  <FileInput v-if="!data.cover" accept="image/*" name="cover" @change="onImageInputChange">
+                    Pick a cover (optional)
+                  </FileInput>
                 </div>
               </div>
-            </TabPanel>
-            <TabPanel
-              v-show="currentTab === 'rules'"
-              id="createSmartPlaylistRules"
-              aria-labelledby="createSmartPlaylistTabRules"
-              class="space-y-5"
-            >
-              <div v-koel-overflow-fade class="group-container space-y-5 overflow-auto max-h-[480px]">
-                <RuleGroup
-                  v-for="(group, index) in collectedRuleGroups"
-                  :key="group.id"
-                  :group="group"
-                  :is-first-group="index === 0"
-                  @input="onGroupChanged"
-                />
-                <Btn class="btn-add-group" small success title="Add a new group" uppercase @click.prevent="addGroup">
-                  <Icon :icon="faPlus" />
-                  Group
-                </Btn>
-              </div>
-            </TabPanel>
-          </TabPanelContainer>
-        </Tabs>
-      </main>
+            </div>
+          </TabPanel>
+          <TabPanel
+            v-show="currentTab === 'rules'"
+            id="createSmartPlaylistRules"
+            aria-labelledby="createSmartPlaylistTabRules"
+            class="space-y-5"
+          >
+            <div v-koel-overflow-fade class="group-container space-y-5 overflow-auto max-h-[480px]">
+              <RuleGroup
+                v-for="(group, index) in collectedRuleGroups"
+                :key="group.id"
+                :group="group"
+                :is-first-group="index === 0"
+                @input="onGroupChanged"
+              />
+              <Btn class="btn-add-group" small success title="Add a new group" uppercase @click.prevent="addGroup">
+                <Icon :icon="faPlus" />
+                Group
+              </Btn>
+            </div>
+          </TabPanel>
+        </TabPanelContainer>
+      </Tabs>
+    </main>
 
-      <footer>
-        <Btn type="submit">Save</Btn>
-        <Btn class="btn-cancel" white @click.prevent="maybeClose">Cancel</Btn>
-      </footer>
-    </form>
-  </FormBase>
+    <footer>
+      <Btn type="submit">Save</Btn>
+      <Btn class="btn-cancel" white @click.prevent="maybeClose">Cancel</Btn>
+    </footer>
+  </form>
 </template>
 
 <script lang="ts" setup>
@@ -130,7 +128,6 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 
 const {
   Btn,
-  FormBase,
   RuleGroup,
   collectedRuleGroups,
   addGroup,
@@ -180,5 +177,9 @@ const maybeClose = async () => {
 <style lang="postcss" scoped>
 .group-container {
   scrollbar-gutter: stable;
+}
+
+form {
+  max-height: calc(100vh - 4rem);
 }
 </style>

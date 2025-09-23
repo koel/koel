@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Attributes\DemoConstraint;
 use App\Attributes\DisabledInDemo;
 use App\Attributes\RequiresDemo;
+use App\Enums\Acl\Role;
 use App\Http\Middleware\Concerns\ChecksControllerAttributes;
 use Closure;
 use Illuminate\Http\Request;
@@ -25,7 +26,7 @@ class HandleDemoMode
             /** @var DemoConstraint $instance */
             $instance = $attribute->newInstance();
 
-            if ($instance->allowAdminOverride && auth()->user()?->is_admin) {
+            if ($instance->allowAdminOverride && auth()->user()?->role === Role::ADMIN) {
                 return;
             }
 

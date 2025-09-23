@@ -18,6 +18,7 @@ export interface Events {
   PLAYLIST_FOLDER_CONTEXT_MENU_REQUESTED: (event: MouseEvent, playlistFolder: PlaylistFolder) => void
   MEDIA_BROWSER_CONTEXT_MENU_REQUESTED: (event: MouseEvent, items: Array<Folder | Song>) => void
   GENRE_CONTEXT_MENU_REQUESTED: (event: MouseEvent, genre: Genre) => void
+  USER_CONTEXT_MENU_REQUESTED: (event: MouseEvent, user: User) => void
   CONTEXT_MENU_OPENED: (el: Ref<HTMLElement> | HTMLElement) => void
 
   FULLSCREEN_TOGGLE: () => void

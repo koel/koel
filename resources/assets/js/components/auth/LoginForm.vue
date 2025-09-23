@@ -20,7 +20,7 @@
       </FormRow>
 
       <FormRow>
-        <Btn data-testid="submit" type="submit">Log In</Btn>
+        <Btn class="w-full" data-testid="submit" type="submit">Log In</Btn>
       </FormRow>
 
       <FormRow v-if="canResetPassword">
