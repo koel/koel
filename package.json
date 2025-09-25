@@ -81,7 +81,7 @@
     "rollup-plugin-visualizer": "^6.0.3",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3",
-    "vite": "^5.4.19",
+    "vite": "^5.4.20",
     "vitepress": "^1.6.3",
     "vitest": "^3.2.4"
   },
