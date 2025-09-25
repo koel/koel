@@ -1,4 +1,4 @@
-// Vitest Snapshot v1
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`streamableDetails.vue > renders a song 1`] = `
 <article data-v-f72f7b11="" class="flex-1 flex flex-col items-center justify-around w-screen"><img data-v-f72f7b11="" src="https://cover.site/fotd.jpg" class="my-0 mx-auto w-[calc(70vw_+_4px)] aspect-square rounded-full border-2 border-solid border-k-text-primary object-center object-cover" alt="Cover art">

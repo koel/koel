@@ -42,7 +42,7 @@ describe('podcastStore', () => {
     const storedPodcast = await podcastStore.store('https://example.com/podcast')
     expect(postMock).toHaveBeenCalledWith('podcasts', { url: 'https://example.com/podcast' })
     expect(storedPodcast).toEqual(podcast)
-    expect(podcastStore.state.podcasts).toContain(podcast)
+    expect(podcastStore.state.podcasts.includes(podcast)).toBe(true)
   })
 
   it('fetches all podcasts', async () => {

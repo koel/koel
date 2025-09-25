@@ -1,8 +1,45 @@
-// Vitest Snapshot v1
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`allSongsScreen.vue > renders 1`] = `
 <section data-v-dcfb8776="" data-v-8ea4eaa5="" class="max-h-full min-h-full w-full flex flex-col transform-gpu">
   <header data-v-5691beb5="" data-v-8ea4eaa5="" class="expanded disabled screen-header gap-4 min-h-0 md:min-h-full flex items-end flex-shrink-0 relative content-stretch leading-normal p-6 border-b border-b-k-bg-secondary">
+    <aside data-v-5691beb5="" class="thumbnail-wrapper hidden md:flex items-end overflow-hidden rounded-md">
+      <article data-v-55bfc268="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="tiles thumbnail-stack flex-1 aspect-square overflow-hidden grid bg-cover bg-no-repeat" style="background-image: url(&quot;undefined/resources/assets/img/covers/default.svg&quot;);"><span data-v-55bfc268="" class="block w-full h-full bg-cover bg-no-repeat" data-testid="thumbnail"></span><span data-v-55bfc268="" class="block w-full h-full bg-cover bg-no-repeat" data-testid="thumbnail"></span><span data-v-55bfc268="" class="block w-full h-full bg-cover bg-no-repeat" data-testid="thumbnail"></span><span data-v-55bfc268="" class="block w-full h-full bg-cover bg-no-repeat" data-testid="thumbnail"></span></article>
+    </aside>
+    <main data-v-5691beb5="" class="flex flex-1 gap-5 items-center overflow-hidden">
+      <div data-v-5691beb5="" class="w-full flex-1 overflow-hidden">
+        <h1 data-v-5691beb5="" class="name overflow-hidden whitespace-nowrap text-ellipsis mr-4 font-thin md:font-bold my-0 leading-tight"> All Songs </h1><span data-v-5691beb5="" class="meta text-k-text-secondary hidden text-[0.9rem] leading-loose space-x-2"><span data-v-8ea4eaa5="" data-v-5691beb5-s="">420 songs</span><span data-v-8ea4eaa5="" data-v-5691beb5-s="">34 hr 17 min</span></span>
+      </div>
+      <div data-v-8ea4eaa5="" data-v-5691beb5-s="" class="controls w-full flex justify-between items-center gap-4">
+        <div data-v-8ea4eaa5="" data-v-5691beb5-s="" class="relative" data-testid="song-list-controls">
+          <div class="flex gap-2 flex-wrap"><span data-v-cf9b67d8="" class="btn-group inline-flex relative flex-nowrap" uppercase=""><button data-v-8943c846="" class="text-base text-k-text-primary bg-k-primary px-3.5 py-2 rounded cursor-pointer btn-shuffle-all" type="button" data-testid="btn-shuffle-all" highlight="" title="Shuffle all. Press Alt/⌥ to change mode."><br data-testid="Icon" icon="[object Object]" fixed-width=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
+            <!--v-if-->
+            <!--v-if-->
+          </div>
+          <div>
+            <div class="context-menu p-0 hidden">
+              <div data-v-2ee1a399="" class="add-to w-full max-w-[256px] min-w-[200px] p-3 space-y-3" data-testid="add-to-menu" tabindex="0">
+                <section data-v-2ee1a399="" class="existing-playlists">
+                  <p data-v-2ee1a399="" class="mb-2 text-[0.9rem]">Add 0 items to</p>
+                  <ul data-v-2ee1a399="" class="relative max-h-48 overflow-y-scroll space-y-1.5">
+                    <li data-v-2ee1a399="" data-testid="queue" tabindex="0">Queue</li>
+                    <li data-v-2ee1a399="" class="favorites" data-testid="add-to-favorites" tabindex="0"> Favorites </li>
+                  </ul>
+                </section><button data-v-8943c846="" data-v-2ee1a399="" class="text-base text-k-text-primary bg-k-primary px-3.5 py-2 rounded cursor-pointer !w-full !border !border-solid !border-white/20" type="button" transparent=""> New Playlist… </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </header>
+  <main data-v-dcfb8776="" class="overflow-scroll flex flex-col b-16 md:b-6 p-6 flex-1 place-content-start"><br data-v-8ea4eaa5="" data-testid="song-list" class="-m-6"></main>
+</section>
+`;
+
+exports[`allSongsScreen.vue > renders 2`] = `
+<section data-v-dcfb8776="" data-v-8ea4eaa5="" class="max-h-full min-h-full w-full flex flex-col transform-gpu">
+  <header data-v-5691beb5="" data-v-8ea4eaa5="" class="expanded screen-header gap-4 min-h-0 md:min-h-full flex items-end flex-shrink-0 relative content-stretch leading-normal p-6 border-b border-b-k-bg-secondary">
     <aside data-v-5691beb5="" class="thumbnail-wrapper hidden md:flex items-end overflow-hidden rounded-md">
       <article data-v-55bfc268="" data-v-8ea4eaa5="" data-v-5691beb5-s="" class="tiles thumbnail-stack flex-1 aspect-square overflow-hidden grid bg-cover bg-no-repeat" style="background-image: url(&quot;undefined/resources/assets/img/covers/default.svg&quot;);"><span data-v-55bfc268="" class="block w-full h-full bg-cover bg-no-repeat" data-testid="thumbnail"></span><span data-v-55bfc268="" class="block w-full h-full bg-cover bg-no-repeat" data-testid="thumbnail"></span><span data-v-55bfc268="" class="block w-full h-full bg-cover bg-no-repeat" data-testid="thumbnail"></span><span data-v-55bfc268="" class="block w-full h-full bg-cover bg-no-repeat" data-testid="thumbnail"></span></article>
     </aside>

@@ -34,11 +34,11 @@ describe('footerPlayButton.vue', () => {
     expect(toggleMock).toHaveBeenCalled()
   })
 
-  it.each<[ScreenName, MethodOf<typeof playableStore>, Album['id'] | Artist['id'] | Playlist['id']]>([
-    ['Album', 'fetchSongsForAlbum', 'foo'],
-    ['Artist', 'fetchSongsForArtist', 'foo'],
-    ['Playlist', 'fetchForPlaylist', '71d8cd40-20d4-4b17-b460-d30fe5bb7b66'],
-  ])('initiates playback for %s screen', async (screenName, fetchMethod, id) => {
+  it.each<[string, MethodOf<typeof playableStore>, Album['id'] | Artist['id'] | Playlist['id']]>([
+    ['/albums/01K610ZFJGVTCVGZ0505464ZGR', 'fetchSongsForAlbum', '01K610ZFJGVTCVGZ0505464ZGR'],
+    ['/artists/01K610ZFJGVTCVGZ0505464ZGR', 'fetchSongsForArtist', '01K610ZFJGVTCVGZ0505464ZGR'],
+    ['/playlists/73a36cfd-4afd-48ae-b031-ae5488858375', 'fetchForPlaylist', '73a36cfd-4afd-48ae-b031-ae5488858375'],
+  ])('initiates playback for %s', async (hash, fetchMethod, id) => {
     h.createAudioPlayer()
 
     commonStore.state.song_count = 10
@@ -47,11 +47,7 @@ describe('footerPlayButton.vue', () => {
     const playMock = h.mock(playbackService, 'queueAndPlay')
     const goMock = h.mock(Router, 'go')
 
-    await h.router.activateRoute({
-      screen: screenName,
-      path: '_',
-    }, { id })
-
+    h.visit(hash)
     renderComponent()
 
     await h.user.click(screen.getByRole('button'))
@@ -64,13 +60,13 @@ describe('footerPlayButton.vue', () => {
 
   // @ts-ignore
   it.each<[
-    ScreenName,
+    string,
       typeof playableStore | typeof recentlyPlayedStore,
       MethodOf<typeof playableStore | typeof recentlyPlayedStore>,
   ]>([
-    ['Favorites', playableStore, 'fetchFavorites'],
-    ['RecentlyPlayed', recentlyPlayedStore, 'fetch'],
-  ])('initiates playback for %s screen', async (screenName, store, fetchMethod) => {
+    ['/favorites', playableStore, 'fetchFavorites'],
+    ['/recently-played', recentlyPlayedStore, 'fetch'],
+  ])('initiates playback for %s', async (hash, store, fetchMethod) => {
     h.createAudioPlayer()
 
     commonStore.state.song_count = 10
@@ -79,11 +75,7 @@ describe('footerPlayButton.vue', () => {
     const playMock = h.mock(playbackService, 'queueAndPlay')
     const goMock = h.mock(Router, 'go')
 
-    await h.router.activateRoute({
-      screen: screenName,
-      path: '_',
-    })
-
+    h.visit(hash)
     renderComponent()
 
     await h.user.click(screen.getByRole('button'))
@@ -102,11 +94,7 @@ describe('footerPlayButton.vue', () => {
     const playMock = h.mock(playbackService, 'queueAndPlay')
     const goMock = h.mock(Router, 'go')
 
-    await h.router.activateRoute({
-      screen: 'Songs',
-      path: '_',
-    })
-
+    h.visit('songs')
     renderComponent()
 
     await h.user.click(screen.getByRole('button'))

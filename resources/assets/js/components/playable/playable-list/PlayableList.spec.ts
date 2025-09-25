@@ -33,12 +33,7 @@ describe('playableList.vue', () => {
     const sortFieldRef = ref(sortField)
     const sortOrderRef = ref(sortOrder)
 
-    await h.router.activateRoute({
-      screen: 'Songs',
-      path: '/songs',
-    })
-
-    const rendered = h.render(Component, {
+    const rendered = h.visit('/songs').render(Component, {
       global: {
         stubs: {
           VirtualScroller: h.stub(),

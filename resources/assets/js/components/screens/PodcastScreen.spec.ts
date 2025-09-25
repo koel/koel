@@ -23,6 +23,8 @@ describe('podcastScreen.vue', () => {
     const resolvePodcastMock = h.mock(podcastStore, 'resolve').mockResolvedValue(podcast)
     const fetchEpisodesMock = h.mock(episodeStore, 'fetchEpisodesInPodcast').mockResolvedValue(episodes)
 
+    h.visit(`podcasts/${podcast.id}`)
+
     const rendered = h.render(Component, {
       global: {
         stubs: {
@@ -32,8 +34,9 @@ describe('podcastScreen.vue', () => {
       },
     })
 
-    await h.router.activateRoute({ path: `podcasts/${podcast.id}`, screen: 'Podcast' }, {
-      id: podcast.id,
+    await waitFor(() => {
+      expect(resolvePodcastMock).toHaveBeenCalledWith(podcast.id)
+      expect(fetchEpisodesMock).toHaveBeenCalledWith(podcast.id)
     })
 
     await h.tick()
@@ -87,15 +90,15 @@ describe('podcastScreen.vue', () => {
 
     const playMock = h.mock(playbackService, 'play')
 
-    const { podcast, episodes } = await renderComponent()
+    const podcast = h.factory('podcast')
+    const episodes = h.factory('episode', 2, { podcast_id: podcast.id })
     podcast.state.current_episode = episodes[0].id
     podcast.state.progresses = {
       [episodes[0].id]: 123,
       [episodes[1].id]: 456,
     }
 
-    await h.tick()
-
+    await renderComponent(podcast, episodes)
     await h.user.click(screen.getByRole('button', { name: 'Continue' }))
 
     expect(playMock).toHaveBeenCalledWith(episodes[0], 123)

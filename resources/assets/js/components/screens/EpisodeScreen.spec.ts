@@ -13,14 +13,7 @@ describe('episodeScreen.vue', () => {
 
     const resolveEpisodeMock = h.mock(episodeStore, 'resolve').mockResolvedValue(episode)
 
-    await h.router.activateRoute({
-      path: `episodes/${episode.id}`,
-      screen: 'Episode',
-    }, {
-      id: episode.id,
-    })
-
-    const rendered = h.render(Component)
+    const rendered = h.visit(`episodes/${episode.id}`).render(Component)
 
     await waitFor(() => {
       expect(resolveEpisodeMock).toHaveBeenCalledWith(episode.id)

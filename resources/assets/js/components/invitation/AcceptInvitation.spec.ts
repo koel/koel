@@ -17,22 +17,15 @@ describe('acceptInvitation.vue', () => {
       'audio-token': 'my-audio-token',
     })
 
-    await h.router.activateRoute({
-      path: '_',
-      screen: 'Invitation.Accept',
-    }, {
-      token: 'my-token',
-    })
+    h.visit('/invitation/accept/73a36cfd-4afd-48ae-b031-ae5488858375').render(Component)
 
-    h.render(Component)
-    await waitFor(() => expect(getProspectMock).toHaveBeenCalledWith('my-token'))
-
+    await waitFor(() => expect(getProspectMock).toHaveBeenCalledWith('73a36cfd-4afd-48ae-b031-ae5488858375'))
     await h.tick(2)
 
     await h.user.type(screen.getByTestId('name'), 'Bruce Dickinson')
     await h.user.type(screen.getByTestId('password'), 'top-secret')
     await h.user.click(screen.getByTestId('submit'))
 
-    expect(acceptMock).toHaveBeenCalledWith('my-token', 'Bruce Dickinson', 'top-secret')
+    expect(acceptMock).toHaveBeenCalledWith('73a36cfd-4afd-48ae-b031-ae5488858375', 'Bruce Dickinson', 'top-secret')
   })
 })

@@ -22,7 +22,7 @@ describe('radioStationListScreen.vue', () => {
       },
     })
 
-    await h.router.activateRoute({ path: 'radio/stations', screen: 'Radio.Stations' })
+    h.visit('/radio-stations')
     await h.tick()
 
     return rendered

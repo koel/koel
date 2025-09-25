@@ -162,11 +162,7 @@ describe('playableContextMenu.vue', () => {
     fillQueue()
     const removeMock = h.mock(queueStore, 'unqueue')
 
-    await h.router.activateRoute({
-      path: '/queue',
-      screen: 'Queue',
-    })
-
+    h.visit('/queue')
     const { playables } = await renderComponent()
 
     await h.user.click(screen.getByText('Remove from Queue'))
@@ -177,11 +173,7 @@ describe('playableContextMenu.vue', () => {
   it('does not show "Remove from Queue" when not on Queue screen', async () => {
     fillQueue()
 
-    await h.router.activateRoute({
-      path: '/songs',
-      screen: 'Songs',
-    })
-
+    h.visit('/songs')
     await renderComponent()
 
     expect(screen.queryByText('Remove from Queue')).toBeNull()
@@ -197,11 +189,7 @@ describe('playableContextMenu.vue', () => {
   })
 
   it('does not have an option to add to favorites for Favorites screen', async () => {
-    await h.router.activateRoute({
-      path: '/favorites',
-      screen: 'Favorites',
-    })
-
+    h.visit('/favorites')
     await renderComponent()
 
     expect(screen.queryByText('Favorites')).toBeNull()
@@ -210,11 +198,7 @@ describe('playableContextMenu.vue', () => {
   it('removes from favorites', async () => {
     const unlikeMock = h.mock(playableStore, 'undoFavorite')
 
-    await h.router.activateRoute({
-      path: '/favorites',
-      screen: 'Favorites',
-    })
-
+    h.visit('/favorites')
     const { playables } = await renderComponent()
 
     await h.user.click(screen.getByText('Remove from Favorites'))
@@ -248,11 +232,7 @@ describe('playableContextMenu.vue', () => {
     const playlist = h.factory('playlist')
     playlistStore.state.playlists.push(playlist)
 
-    await h.router.activateRoute({
-      path: `/playlists/${playlist.id}`,
-      screen: 'Playlist',
-    }, { id: String(playlist.id) })
-
+    h.visit(`/playlists/${playlist.id}`)
     const { playables } = await renderComponent()
 
     const removeContentMock = h.mock(playlistStore, 'removeContent')
@@ -267,11 +247,7 @@ describe('playableContextMenu.vue', () => {
   })
 
   it('does not have an option to remove from playlist if not on Playlist screen', async () => {
-    await h.router.activateRoute({
-      path: '/songs',
-      screen: 'Songs',
-    })
-
+    h.visit('/songs')
     await renderComponent()
 
     expect(screen.queryByText('Remove from Playlist')).toBeNull()

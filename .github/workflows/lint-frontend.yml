@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [ 18 ]
+        node-version: [ 22 ]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2

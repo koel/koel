@@ -219,6 +219,15 @@ class TestHarness {
     }))
   }
 
+  public visit (hash: string) {
+    if (!hash.startsWith('/')) {
+      hash = `/${hash}`
+    }
+
+    this.router.resolve(hash)
+    return this
+  }
+
   public readonly factory = factory
 }
 

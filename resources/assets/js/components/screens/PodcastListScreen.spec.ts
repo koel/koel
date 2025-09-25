@@ -16,7 +16,7 @@ describe('podcastListScreen.vue', () => {
       },
     })
 
-    await h.router.activateRoute({ path: 'podcasts', screen: 'Podcasts' })
+    h.visit('/podcasts')
     await h.tick()
 
     return rendered

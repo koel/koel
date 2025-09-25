@@ -23,7 +23,6 @@ describe('artistScreen.vue', () => {
     commonStore.state.uses_last_fm = true
 
     artist = artist || h.factory('artist', {
-      id: 'foo',
       name: 'Led Zeppelin',
     })
 
@@ -32,15 +31,7 @@ describe('artistScreen.vue', () => {
     const songs = h.factory('song', 13)
     const fetchSongsMock = h.mock(playableStore, 'fetchSongsForArtist').mockResolvedValue(songs)
 
-    await h.router.activateRoute({
-      path: `artists/${artist.id}/${tab}`,
-      screen: 'Artist',
-    }, {
-      tab,
-      id: artist.id,
-    })
-
-    const rendered = h.render(Component, {
+    const rendered = h.visit(`artists/${artist.id}/${tab}`).render(Component, {
       global: {
         stubs: {
           ArtistInfo: h.stub('artist-info'),

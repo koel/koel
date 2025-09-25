@@ -269,7 +269,7 @@ export const playableStore = {
       [`podcast.episodes`, id],
       async () => this.syncWithVault(
         await http.get<Episode[]>(`podcasts/${id}/episodes${refresh ? '?refresh=true' : ''}`),
-      ),
+      ) as Episode[],
     )
   },
 

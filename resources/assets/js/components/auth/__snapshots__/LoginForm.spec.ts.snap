@@ -1,4 +1,4 @@
-// Vitest Snapshot v1
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`loginForm.vue > renders 1`] = `
 <div data-v-0b0f87ea="" class="flex items-center justify-center min-h-screen my-0 mx-auto flex-col gap-5">

@@ -18,7 +18,6 @@ describe('playableListHeaderActionMenu.vue', () => {
 
   it('emits the sort event when an item is clicked', async () => {
     const { emitted } = h.render(Component)
-    screen.debug()
     await h.user.click(screen.getByText('Title'))
     expect(emitted().sort[0]).toEqual(['title'])
   })

@@ -367,7 +367,7 @@ describe('playableStore', () => {
     })
     expect(song.favorite).toBe(true)
     expect(playableStore.state.favorites).toHaveLength(3)
-    expect(playableStore.state.favorites).toContain(song)
+    expect(playableStore.state.favorites.includes(song)).toBe(true)
   })
 
   it('toggles favorite to false', async () => {
