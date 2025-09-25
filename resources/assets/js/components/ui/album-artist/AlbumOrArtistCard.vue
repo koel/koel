@@ -1,7 +1,7 @@
 <template>
   <article
     :class="layout"
-    class="relative group flex max-w-full md:max-w-[256px] border p-5 rounded-lg flex-col gap-5 transition border-color duration-200"
+    class="relative group flex max-w-full md:max-w-[256px] border p-5 rounded-lg flex-col gap-5"
     data-testid="artist-album-card"
     draggable="true"
     tabindex="0"

@@ -2,8 +2,7 @@
   <article
     :class="{ playing: playable.playback_state === 'Playing' || playable.playback_state === 'Paused' }"
     class="group flex gap-3 py-2 pl-2.5 pr-3 rounded-md items-center bg-k-bg-secondary border border-k-border
-    hover:border-white/15 transition-[border-color] duration-200 ease-in-out
-    focus:ring-1 focus:ring-k-accent focus-within:ring-1 focus-within:ring-k-accent"
+    hover:border-white/15 focus:ring-1 focus:ring-k-accent focus-within:ring-1 focus-within:ring-k-accent"
     draggable="true"
     tabindex="0"
     @dragstart="onDragStart"
