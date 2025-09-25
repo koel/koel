@@ -90,7 +90,7 @@ for more details.
 
 ## Upload via the Web Interface
 
-You can upload songs directly as an admin by clicking the "Upload" sidebar menu item or just drag and drop files and
+You can upload songs directly by clicking the "Upload" sidebar menu item or just drag and drop files and
 folders into the web interface.
 Note that if you’re not using a cloud storage (available with Koel Plus), you will need to set the media path first,
 as the files will be uploaded into the `%media_path%/__KOEL__UPLOADS__` directory.

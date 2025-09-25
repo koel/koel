@@ -23,8 +23,8 @@
         <GuitarIcon :size="96" />
       </template>
       No genres found.
-      <span class="secondary block">
-        {{ isAdmin ? 'Have you set up your library yet?' : 'Contact your administrator to set up your library.' }}
+      <span v-if="currentUserCan.manageSettings()" class="secondary block">
+        Have you set up your library yet?
       </span>
     </ScreenEmptyState>
 
@@ -45,12 +45,12 @@ import { GuitarIcon } from 'lucide-vue-next'
 import { computed, onMounted, provide, ref } from 'vue'
 import { commonStore } from '@/stores/commonStore'
 import { genreStore } from '@/stores/genreStore'
-import { useAuthorization } from '@/composables/useAuthorization'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useFuzzySearch } from '@/composables/useFuzzySearch'
 import { FilterKeywordsKey } from '@/symbols'
 import { orderBy } from 'lodash'
+import { usePolicies } from '@/composables/usePolicies'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import GenreCardSkeleton from '@/components/genre/GenreCardSkeleton.vue'
@@ -60,7 +60,7 @@ import GenreCard from '@/components/genre/GenreCard.vue'
 import ListFilter from '@/components/ui/ListFilter.vue'
 import GenreListSorter from '@/components/genre/GenreListSorter.vue'
 
-const { isAdmin } = useAuthorization()
+const { currentUserCan } = usePolicies()
 const { handleHttpError } = useErrorHandler()
 
 const genres = ref<Genre[]>([])

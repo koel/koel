@@ -11,6 +11,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_admin;
+use function Tests\create_manager;
 
 class UserInvitationTest extends TestCase
 {
@@ -21,7 +22,7 @@ class UserInvitationTest extends TestCase
 
         $this->postAs('api/invitations', [
             'emails' => ['foo@bar.io', 'bar@baz.ai'],
-            'is_admin' => true,
+            'role' => 'admin',
         ], create_admin())
             ->assertSuccessful()
             ->assertJsonStructure([0 => UserProspectResource::JSON_STRUCTURE]);
@@ -30,11 +31,36 @@ class UserInvitationTest extends TestCase
     }
 
     #[Test]
+    public function preventRoleEscalation(): void
+    {
+        $this->postAs('api/invitations', [
+            'emails' => ['foo@bar.io', 'bar@baz.ai'],
+            'role' => 'admin',
+        ], create_manager())
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('role');
+    }
+
+    #[Test]
+    public function cannotInviteNonAvailableRole(): void
+    {
+        $this->postAs('api/invitations', [
+            'emails' => ['foo@bar.io', 'bar@baz.ai'],
+            'role' => 'manager',
+        ], create_admin())
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('role');
+    }
+
+    #[Test]
     public function nonAdminCannotInvite(): void
     {
         Mail::fake();
 
-        $this->postAs('api/invitations', ['emails' => ['foo@bar.io', 'bar@baz.ai']])
+        $this->postAs('api/invitations', [
+            'emails' => ['foo@bar.io', 'bar@baz.ai'],
+            'role' => 'user',
+        ])
             ->assertForbidden();
 
         Mail::assertNothingQueued();

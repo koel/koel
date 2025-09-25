@@ -24,11 +24,15 @@ class UserService
 
     public function createUser(UserCreateData $dto, ?Organization $organization = null): User
     {
+        $dto->role->assertAvailable();
+
         $organization ??= $this->organizationService->getCurrentOrganization();
         $data = $dto->toArray();
         $data['avatar'] = $dto->avatar ? $this->maybeStoreAvatar($dto->avatar) : null;
 
-        return $organization->users()->create($data);
+        return $organization->users()
+            ->create($data)
+            ->syncRoles($dto->role);
     }
 
     public function createOrUpdateUserFromSso(SsoUser $ssoUser): User
@@ -51,12 +55,12 @@ class UserService
     public function updateUser(User $user, UserUpdateData $dto): User
     {
         throw_if($user->is_prospect, new UserProspectUpdateDeniedException());
+        $dto->role?->assertAvailable();
 
         $data = [
             'name' => $dto->name,
             'email' => $dto->email,
             'password' => $dto->password ?: $user->password,
-            'is_admin' => $dto->isAdmin ?? $user->is_admin,
             'avatar' => $dto->avatar ? $this->maybeStoreAvatar($dto->avatar) : null,
         ];
 
@@ -67,7 +71,11 @@ class UserService
 
         $user->update($data);
 
-        return $user;
+        if ($dto->role && $user->role !== $dto->role) {
+            $user->syncRoles($dto->role);
+        }
+
+        return $user->refresh(); // make sure the roles and permissions are refreshed
     }
 
     /**

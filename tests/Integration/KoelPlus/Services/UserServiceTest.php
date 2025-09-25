@@ -2,6 +2,7 @@
 
 namespace Tests\Integration\KoelPlus\Services;
 
+use App\Enums\Acl\Role;
 use App\Models\User;
 use App\Services\UserService;
 use App\Values\User\SsoUser;
@@ -33,7 +34,7 @@ class UserServiceTest extends PlusTestCase
             name: 'Bruce Dickinson',
             email: 'bruce@dickison.com',
             plainTextPassword: '',
-            isAdmin: false,
+            role: Role::ADMIN,
             avatar: 'https://lh3.googleusercontent.com/a/vatar',
             ssoId: '123',
             ssoProvider: 'Google'
@@ -130,13 +131,13 @@ class UserServiceTest extends PlusTestCase
             name: 'Steve Harris',
             email: 'steve@iron.com',
             plainTextPassword: 'TheTrooper',
-            isAdmin: true,
+            role: Role::MANAGER,
         ));
 
         $user->refresh();
 
         self::assertSame('bruce@iron.com', $user->email);
         self::assertFalse(Hash::check('TheTrooper', $user->password));
-        self::assertTrue($user->is_admin);
+        self::assertSame(Role::MANAGER, $user->role);
     }
 }

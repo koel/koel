@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Enums\Acl\Role;
 use App\Exceptions\InvitationNotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\AcceptUserInvitationRequest;
@@ -26,11 +27,11 @@ class UserInvitationController extends Controller
     /** @param User $invitor */
     public function invite(InviteUserRequest $request, Authenticatable $invitor)
     {
-        $this->authorize('admin', $invitor);
+        $this->authorize('manage', $invitor);
 
         $invitees = $this->invitationService->invite(
             $request->emails,
-            $request->get('is_admin') ?: false,
+            $request->enum('role', Role::class),
             $invitor
         );
 
@@ -57,9 +58,9 @@ class UserInvitationController extends Controller
         }
     }
 
-    public function revoke(RevokeUserInvitationRequest $request, Authenticatable $invitor)
+    public function revoke(RevokeUserInvitationRequest $request)
     {
-        $this->authorize('admin', $invitor);
+        $this->authorize('manage', User::class);
 
         try {
             $this->invitationService->revokeByEmail($request->email);

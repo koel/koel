@@ -75,7 +75,7 @@ export const albumStore = {
     if (!album) {
       try {
         album = this.syncWithVault(
-          await cache.remember<Album>(['album', id], async () => await http.get<Album>(`albums/${id}`)),
+          await cache.remember(['album', id], async () => await http.get<Album>(`albums/${id}`)),
         )[0]
       } catch (error: unknown) {
         logger.error(error)
@@ -96,7 +96,7 @@ export const albumStore = {
     const id = typeof artist === 'string' ? artist : artist.id
 
     return this.syncWithVault(
-      await cache.remember<Album[]>(['artist-albums', id], async () => await http.get<Album[]>(`artists/${id}/albums`)),
+      await cache.remember(['artist-albums', id], async () => await http.get<Album[]>(`artists/${id}/albums`)),
     )
   },
 

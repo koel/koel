@@ -50,9 +50,13 @@ export class Cache {
     this.storage.delete(Cache.normalizeKey(key))
   }
 
-  async remember<T> (key: any, resolver: Closure, seconds: number = DEFAULT_EXPIRATION_TIME) {
+  async remember<R> (key: any, resolver: () => R | Promise<R>, seconds: number = DEFAULT_EXPIRATION_TIME) {
     this.hit(key) || this.set(key, await resolver(), seconds)
-    return this.get<T>(key)
+    return this.get(key) as Awaited<R>
+  }
+
+  clear () {
+    this.storage.clear()
   }
 }
 

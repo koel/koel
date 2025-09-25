@@ -216,19 +216,19 @@ export const playableStore = {
   async fetchSongsForAlbum (album: Album | Album['id']) {
     const id = typeof album === 'string' ? album : album.id
 
-    return this.ensureNotDeleted(await cache.remember<Song[]>(
+    return this.ensureNotDeleted(await cache.remember(
       [`album.songs`, id],
       async () => this.syncWithVault(await http.get<Song[]>(`albums/${id}/songs`)),
-    ))
+    ) as Song[])
   },
 
   async fetchSongsForArtist (artist: Artist | Artist['id']) {
     const id = typeof artist === 'string' ? artist : artist.id
 
-    return this.ensureNotDeleted(await cache.remember<Song[]>(
+    return this.ensureNotDeleted(await cache.remember(
       [`artist.songs`, id],
       async () => this.syncWithVault(await http.get<Song[]>(`artists/${id}/songs`)),
-    ))
+    ) as Song[])
   },
 
   async fetchForPlaylist (playlist: Playlist | Playlist['id'], refresh = false) {
@@ -238,10 +238,10 @@ export const playableStore = {
       cache.remove(['playlist.songs', id])
     }
 
-    const songs = this.ensureNotDeleted(await cache.remember<Song[]>(
+    const songs = this.ensureNotDeleted(await cache.remember(
       [`playlist.songs`, id],
       async () => this.syncWithVault(await http.get<Song[]>(`playlists/${id}/songs`)),
-    ))
+    ) as Song[])
 
     playlistStore.byId(id)!.playables = songs
 
@@ -265,7 +265,7 @@ export const playableStore = {
       cache.remove(['podcast.episodes', id])
     }
 
-    return await cache.remember<Episode[]>(
+    return await cache.remember(
       [`podcast.episodes`, id],
       async () => this.syncWithVault(
         await http.get<Episode[]>(`podcasts/${id}/episodes${refresh ? '?refresh=true' : ''}`),
@@ -377,7 +377,7 @@ export const playableStore = {
     const fetcher = () => http.post<Song[]>(`songs/by-folders?shuffle=${shuffle}`, { paths })
 
     const songsFromFolders = this.syncWithVault(
-      shuffle ? await fetcher() : await cache.remember<Song[]>(cacheKey, async () => await fetcher()),
+      shuffle ? await fetcher() : await cache.remember(cacheKey, async () => await fetcher()),
     )
 
     return unionBy(songs, songsFromFolders as Song[], 'id')

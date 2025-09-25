@@ -5,8 +5,9 @@ import { routes } from '@/config/routes'
 import { forceReloadWindow } from '@/utils/helpers'
 
 type RouteParams = Record<string, string>
-type ResolveHook = (params: RouteParams) => Promise<boolean | void> | boolean | void
+type ResolvedHook = (params: RouteParams) => Promise<boolean | void> | boolean | void
 type RedirectHook = (params: RouteParams) => Route | string
+type RouteGuard = () => boolean
 
 export interface Route {
   name?: string
@@ -14,8 +15,13 @@ export interface Route {
   screen: ScreenName
   constraints?: Record<string, string>
   params?: RouteParams
-  redirect?: RedirectHook
-  onResolve?: ResolveHook
+  meta?: {
+    guard?: RouteGuard
+    layout?: string
+    onResolved?: ResolvedHook
+    public?: boolean
+    redirect?: RedirectHook
+  } & Record<string, any>
 }
 
 interface CompiledRoute {
@@ -96,34 +102,36 @@ export default class Router {
     reload && forceReloadWindow()
   }
 
-  public async resolve () {
+  public resolve () {
     if (!location.hash || location.hash === '#/' || location.hash === '#!/') {
-      return Router.go(this.homeRoute.path)
+      Router.go(this.homeRoute.path)
+      return null
     }
 
     const matchedRoute = this.tryMatchRoute()
     const [route, params] = matchedRoute ? [matchedRoute.originalRoute, matchedRoute.params] : [null, null]
 
     if (!route) {
-      return this.triggerNotFound()
+      this.triggerNotFound()
+      return null
     }
 
-    if ((await route.onResolve?.(params)) === false) {
-      return this.triggerNotFound()
+    route.meta?.onResolve?.(params)
+
+    if (route.meta?.redirect) {
+      const to = route.meta.redirect(params)
+      typeof to === 'string' ? Router.go(to) : this.activateRoute(to, params)
+    } else {
+      this.activateRoute(route, params)
     }
 
-    if (route.redirect) {
-      const to = route.redirect(params)
-      return typeof to === 'string' ? Router.go(to) : this.activateRoute(to, params)
-    }
-
-    return this.activateRoute(route, params)
+    return route
   }
 
-  public triggerNotFound = async () => await this.activateRoute(this.notFoundRoute)
+  public triggerNotFound = () => this.activateRoute(this.notFoundRoute)
   public onRouteChanged = (handler: RouteChangedHandler) => this.routeChangedHandlers.push(handler)
 
-  public async activateRoute (route: Route, params: RouteParams = {}) {
+  public activateRoute (route: Route, params: RouteParams = {}) {
     this.$currentRoute.value = route
     this.$currentRoute.value.params = params
   }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Enums\Acl\Permission;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PlaylistFolderResource;
 use App\Http\Resources\PlaylistResource;
@@ -40,10 +41,12 @@ class FetchInitialDataController extends Controller
         $licenseStatus = $licenseService->getStatus();
 
         return response()->json([
-            'settings' => $user->is_admin ? $settingRepository->getAllAsKeyValueArray() : [],
+            'settings' => $user->hasPermissionTo(Permission::MANAGE_SETTINGS)
+                ? $settingRepository->getAllAsKeyValueArray()
+                : [],
             'playlists' => PlaylistResource::collection($playlistRepository->getAllAccessibleByUser($user)),
-            'playlist_folders' => PlaylistFolderResource::collection($user->playlist_folders),
-            'current_user' => UserResource::make($user, true),
+            'playlist_folders' => PlaylistFolderResource::collection($user->playlistFolders),
+            'current_user' => UserResource::make($user),
             'uses_musicbrainz' => MusicBrainzService::enabled(),
             'uses_last_fm' => LastfmService::used(),
             'uses_spotify' => SpotifyService::enabled(),
@@ -58,7 +61,7 @@ class FetchInitialDataController extends Controller
                 && is_executable(config('koel.streaming.ffmpeg_path')),
             'cdn_url' => static_url(),
             'current_version' => koel_version(),
-            'latest_version' => $user->is_admin
+            'latest_version' => $user->hasPermissionTo(Permission::MANAGE_SETTINGS)
                 ? $applicationInformationService->getLatestVersionNumber()
                 : koel_version(),
             'song_count' => $songRepository->countSongs(),

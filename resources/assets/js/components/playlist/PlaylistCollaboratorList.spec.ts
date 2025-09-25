@@ -32,7 +32,7 @@ describe('playlistCollaboratorList.vue', () => {
       h.factory('playlist-collaborator', 5),
     )
 
-    h.be()
+    h.actingAsUser()
     const { html } = await renderComponent(playlist)
     expect(fetchMock).toHaveBeenCalledWith(playlist)
     expect(html()).toMatchSnapshot()

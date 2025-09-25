@@ -12,9 +12,9 @@ describe('musicBrainzIntegration.vue', () => {
       commonStore.state.uses_musicbrainz = useMusicBrainz
 
       if (isAdmin) {
-        h.beAdmin()
+        h.actingAsAdmin()
       } else {
-        h.be()
+        h.actingAsUser()
       }
 
       expect(h.render(Component).html()).toMatchSnapshot()

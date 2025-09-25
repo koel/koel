@@ -12,8 +12,8 @@ export const invitationService = {
     authService.setApiToken(compositeToken.token)
   },
 
-  invite: async (emails: string[], isAdmin: boolean) => {
-    const users = await http.post<User[]>('invitations', { emails, is_admin: isAdmin })
+  invite: async (emails: string[], role: Role) => {
+    const users = await http.post<User[]>('invitations', { emails, role })
     userStore.add(users)
   },
 

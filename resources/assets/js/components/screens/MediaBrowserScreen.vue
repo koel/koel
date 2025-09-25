@@ -17,8 +17,8 @@
 
     <ScreenEmptyState v-if="libraryEmpty">
       No files found.
-      <span class="secondary block">
-        {{ isAdmin ? 'Have you set up your library yet?' : 'Contact your administrator to set up your library.' }}
+      <span v-if="currentUserCan.manageSettings()" class="secondary block">
+        Have you set up your library yet?
       </span>
     </ScreenEmptyState>
 
@@ -49,11 +49,11 @@ import { faFolderOpen } from '@fortawesome/free-regular-svg-icons'
 import { pull } from 'lodash'
 import { computed, ref } from 'vue'
 import { commonStore } from '@/stores/commonStore'
-import { useAuthorization } from '@/composables/useAuthorization'
 import { useRouter } from '@/composables/useRouter'
 import { mediaBrowser } from '@/services/mediaBrowser'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { eventBus } from '@/utils/eventBus'
+import { usePolicies } from '@/composables/usePolicies'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -63,7 +63,7 @@ import MediaListView from '@/components/playable/media-browser/MediaListView.vue
 import MediaListViewSkeleton from '@/components/playable/media-browser/MediaListViewSkeleton.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 
-const { isAdmin } = useAuthorization()
+const { currentUserCan } = usePolicies()
 const { onRouteChanged, getRouteParam, onScreenActivated } = useRouter()
 
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)

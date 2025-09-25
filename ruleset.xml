@@ -9,7 +9,7 @@
     <file>./routes</file>
     <file>./tests</file>
 
-    <arg name="extensions" value="php,inc" />
+    <arg name="extensions" value="php,inc"/>
     <arg name="tab-width" value="4"/>
     <arg name="colors"/>
     <arg value="sp"/>
@@ -85,14 +85,8 @@
     <rule ref="SlevomatCodingStandard.TypeHints.DisallowArrayTypeHintSyntax"/>
     <rule ref="SlevomatCodingStandard.PHP.TypeCast"/>
     <rule ref="SlevomatCodingStandard.Classes.ClassConstantVisibility"/>
-    <rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHintSpacing">
-        <properties>
-            <property name="spacesCountBeforeColon" value="0"/>
-        </properties>
-    </rule>
     <rule ref="SlevomatCodingStandard.TypeHints.NullableTypeForNullDefaultValue"/>
     <rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHintSpacing"/>
-    <rule ref="SlevomatCodingStandard.TypeHints.PropertyTypeHintSpacing"/>
     <rule ref="SlevomatCodingStandard.Namespaces.DisallowGroupUse"/>
     <rule ref="SlevomatCodingStandard.Namespaces.MultipleUsesPerLine"/>
     <rule ref="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly">

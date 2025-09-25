@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\Acl\Role;
 use App\Exceptions\InvitationNotFoundException;
 use App\Helpers\Uuid;
 use App\Mail\UserInvite;
@@ -19,10 +20,12 @@ class UserInvitationService
     }
 
     /** @return Collection<array-key, User> */
-    public function invite(array $emails, bool $isAdmin, User $invitor): Collection
+    public function invite(array $emails, Role $role, User $invitor): Collection
     {
-        return DB::transaction(function () use ($emails, $isAdmin, $invitor) {
-            return collect($emails)->map(fn ($email) => $this->inviteOne($email, $isAdmin, $invitor));
+        $role->assertAvailable();
+
+        return DB::transaction(function () use ($emails, $role, $invitor) {
+            return collect($emails)->map(fn ($email) => $this->inviteOne($email, $role, $invitor));
         });
     }
 
@@ -40,18 +43,19 @@ class UserInvitationService
         $user->delete();
     }
 
-    private function inviteOne(string $email, bool $isAdmin, User $invitor): User
+    private function inviteOne(string $email, Role $role, User $invitor): User
     {
+        $role->assertAvailable();
+
         /** @var User $invitee */
         $invitee = $invitor->organization->users()->create([
             'name' => '',
             'email' => $email,
             'password' => '',
-            'is_admin' => $isAdmin,
             'invited_by_id' => $invitor->id,
             'invitation_token' => Uuid::generate(),
             'invited_at' => now(),
-        ]);
+        ])->syncRoles($role);
 
         Mail::to($email)->queue(new UserInvite($invitee));
 

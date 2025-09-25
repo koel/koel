@@ -37,6 +37,7 @@
     <UserListScreen v-if="screen === 'Users'" />
     <YouTubeScreen v-if="useYouTube" v-show="screen === 'YouTube'" />
     <NotFoundScreen v-if="screen === '404'" />
+    <AcceptPlaylistCollaborationInvite v-if="screen === 'Playlist.Collaborate'" />
   </section>
 </template>
 
@@ -49,6 +50,10 @@ import { useRouter } from '@/composables/useRouter'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 import { CurrentStreamableKey } from '@/symbols'
 import { commonStore } from '@/stores/commonStore'
+
+const AcceptPlaylistCollaborationInvite = defineAsyncComponent(
+  () => import('@/components/screens/AcceptPlaylistCollaborationInvite.vue'),
+)
 
 const ArtOverlay = defineAsyncComponent(() => import('@/components/ui/AlbumArtOverlay.vue'))
 const AlbumListScreen = defineAsyncComponent(() => import('@/components/screens/AlbumListScreen.vue'))

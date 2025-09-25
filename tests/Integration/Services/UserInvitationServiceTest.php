@@ -2,6 +2,7 @@
 
 namespace Tests\Integration\Services;
 
+use App\Enums\Acl\Role;
 use App\Exceptions\InvitationNotFoundException;
 use App\Mail\UserInvite;
 use App\Models\User;
@@ -34,9 +35,9 @@ class UserInvitationServiceTest extends TestCase
         $user = create_admin();
 
         $this->service
-            ->invite($emails, true, $user)
+            ->invite($emails, Role::ADMIN, $user)
             ->each(static function (User $prospect) use ($user): void {
-                self::assertTrue($prospect->is_admin);
+                self::assertSame(Role::ADMIN, $prospect->role);
                 self::assertTrue($prospect->invitedBy->is($user));
                 self::assertTrue($prospect->is_prospect);
                 self::assertNotNull($prospect->invitation_token);
@@ -87,19 +88,15 @@ class UserInvitationServiceTest extends TestCase
     #[Test]
     public function accept(): void
     {
-        $token = Str::uuid()->toString();
-        $user = create_admin();
+        $admin = create_admin();
 
-        User::factory()->for($user, 'invitedBy')->create([
-            'invitation_token' => $token,
-            'invited_at' => now(),
-            'is_admin' => true,
-        ]);
+        /** @var User $prospect */
+        $prospect = User::factory()->for($admin, 'invitedBy')->admin()->prospect()->create();
 
-        $user = $this->service->accept($token, 'Bruce Dickinson', 'SuperSecretPassword');
+        $user = $this->service->accept($prospect->invitation_token, 'Bruce Dickinson', 'SuperSecretPassword');
 
         self::assertFalse($user->is_prospect);
-        self::assertTrue($user->is_admin);
+        self::assertSame(Role::ADMIN, $user->role);
         self::assertNull($user->invitation_token);
         self::assertNotNull($user->invitation_accepted_at);
         self::assertTrue(Hash::check('SuperSecretPassword', $user->password));

@@ -278,7 +278,7 @@ describe('playableContextMenu.vue', () => {
   })
 
   it('allows edit songs if current user is admin', async () => {
-    h.beAdmin()
+    h.actingAsAdmin()
     const { playables } = await renderComponent()
 
     // mock after render to ensure that the component is mounted properly
@@ -289,7 +289,7 @@ describe('playableContextMenu.vue', () => {
   })
 
   it('does not allow edit songs if current user is not admin', async () => {
-    h.be()
+    h.actingAsUser()
     await renderComponent()
     expect(screen.queryByText('Edit…')).toBeNull()
   })
@@ -317,7 +317,7 @@ describe('playableContextMenu.vue', () => {
     const confirmMock = h.mock(DialogBoxStub.value, 'confirm', true)
     const toasterMock = h.mock(MessageToasterStub.value, 'success')
     const deleteMock = h.mock(playableStore, 'deleteSongsFromFilesystem')
-    h.beAdmin()
+    h.actingAsAdmin()
     const { playables } = await renderComponent()
 
     const emitMock = h.mock(eventBus, 'emit')
@@ -333,13 +333,13 @@ describe('playableContextMenu.vue', () => {
   })
 
   it('does not have an option to delete songs if current user is not admin', async () => {
-    h.be()
+    h.actingAsUser()
     await renderComponent()
     expect(screen.queryByText('Delete from Filesystem')).toBeNull()
   })
 
   it('creates playlist from selected songs', async () => {
-    h.be()
+    h.actingAsUser()
     const { playables } = await renderComponent()
 
     // mock after render to ensure that the component is mounted properly
@@ -357,13 +357,13 @@ describe('playableContextMenu.vue', () => {
   })
 
   it('makes songs private', async () => await h.withPlusEdition(async () => {
-    const user = h.factory('user')
+    const user = h.factory.states('current')('user') as CurrentUser
     const songs = h.factory('song', 5, {
       is_public: true,
       owner_id: user.id,
     })
 
-    h.be(user)
+    h.actingAsUser(user)
 
     await renderComponent(songs)
     const privatizeMock = h.mock(playableStore, 'privatizeSongs').mockResolvedValue(songs.map(song => song.id))
@@ -374,13 +374,13 @@ describe('playableContextMenu.vue', () => {
   }))
 
   it('makes songs public', async () => await h.withPlusEdition(async () => {
-    const user = h.factory('user')
+    const user = h.factory.states('current')('user') as CurrentUser
     const songs = h.factory('song', 5, {
       is_public: false,
       owner_id: user.id,
     })
 
-    h.be(user)
+    h.actingAsUser(user)
 
     await renderComponent(songs)
     const publicizeMock = h.mock(playableStore, 'publicizeSongs').mockResolvedValue(songs.map(song => song.id))
@@ -392,14 +392,14 @@ describe('playableContextMenu.vue', () => {
 
   it('does not have an option to make songs public or private if current user is not owner', async () => {
     await h.withPlusEdition(async () => {
-      const user = h.factory('user')
+      const user = h.factory.states('current')('user') as CurrentUser
       const owner = h.factory('user')
       const songs = h.factory('song', 5, {
         is_public: false,
         owner_id: owner.id,
       })
 
-      h.be(user)
+      h.actingAsUser(user)
 
       await renderComponent(songs)
 
@@ -410,7 +410,7 @@ describe('playableContextMenu.vue', () => {
 
   it('has both options to make public and private if songs have mixed visibilities', async () => {
     await h.withPlusEdition(async () => {
-      const owner = h.factory('user')
+      const owner = h.factory.states('current')('user') as CurrentUser
       const songs = h.factory('song', 2, {
         is_public: false,
         owner_id: owner.id,
@@ -419,7 +419,7 @@ describe('playableContextMenu.vue', () => {
         owner_id: owner.id,
       }))
 
-      h.be(owner)
+      h.actingAsUser(owner)
       await renderComponent(songs)
 
       screen.getByText('Unmark as Private')
@@ -428,13 +428,13 @@ describe('playableContextMenu.vue', () => {
   })
 
   it('does not have an option to make songs public or private or Community edition', async () => {
-    const owner = h.factory('user')
+    const owner = h.factory.states('current')('user') as CurrentUser
     const songs = h.factory('song', 5, {
       is_public: false,
       owner_id: owner.id,
     })
 
-    h.be(owner)
+    h.actingAsUser(owner)
     await renderComponent(songs)
 
     expect(screen.queryByText('Unmark as Private')).toBeNull()

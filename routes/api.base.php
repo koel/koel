@@ -2,6 +2,8 @@
 
 use App\Facades\YouTube;
 use App\Helpers\Uuid;
+use App\Http\Controllers\API\Acl\CheckResourcePermissionController;
+use App\Http\Controllers\API\Acl\FetchAssignableRolesController;
 use App\Http\Controllers\API\ActivateLicenseController;
 use App\Http\Controllers\API\AlbumController;
 use App\Http\Controllers\API\AlbumCoverController;
@@ -13,7 +15,6 @@ use App\Http\Controllers\API\Artist\ArtistSongController;
 use App\Http\Controllers\API\Artist\FetchArtistEventsController;
 use App\Http\Controllers\API\Artist\FetchArtistInformationController;
 use App\Http\Controllers\API\AuthController;
-use App\Http\Controllers\API\CheckResourcePermissionController;
 use App\Http\Controllers\API\DisconnectFromLastfmController;
 use App\Http\Controllers\API\Embed\EmbedController;
 use App\Http\Controllers\API\Embed\EmbedOptionsController;
@@ -236,9 +237,6 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::apiResource('podcasts.episodes', PodcastEpisodeController::class);
         Route::delete('podcasts/{podcast}/subscriptions', UnsubscribeFromPodcastController::class);
 
-        // Resource permission routes
-        Route::get('permissions/{type}/{id}/{action}', CheckResourcePermissionController::class);
-
         // Media browser routes
         Route::get('browse/folders', FetchSubfoldersController::class);
         Route::get('browse/songs', PaginateFolderSongsController::class);
@@ -251,6 +249,12 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
 
         // Embed routes
         Route::post('embeds/resolve', [EmbedController::class, 'resolveForEmbeddable']);
+
+        // ACL routes
+        Route::group(['prefix' => 'acl'], static function (): void {
+            Route::get('permissions/{type}/{id}/{action}', CheckResourcePermissionController::class);
+            Route::get('assignable-roles', FetchAssignableRolesController::class);
+        });
     });
 
     // Object-storage (S3) routes

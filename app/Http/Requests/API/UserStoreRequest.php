@@ -2,7 +2,11 @@
 
 namespace App\Http\Requests\API;
 
+use App\Enums\Acl\Role;
+use App\Rules\AvailableRole;
+use App\Rules\UserCanManageRole;
 use App\Values\User\UserCreateData;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 /**
@@ -19,7 +23,12 @@ class UserStoreRequest extends Request
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => ['required', Password::defaults()],
-            'is_admin' => 'sometimes',
+            'role' => [
+                'required',
+                Rule::enum(Role::class),
+                new AvailableRole(),
+                new UserCanManageRole($this->user()),
+            ],
         ];
     }
 
@@ -29,7 +38,7 @@ class UserStoreRequest extends Request
             name: $this->name,
             email: $this->email,
             plainTextPassword: $this->password,
-            isAdmin: $this->boolean('is_admin'),
+            role: $this->enum('role', Role::class),
         );
     }
 }

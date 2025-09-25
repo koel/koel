@@ -16,27 +16,27 @@ class UserController extends Controller
 {
     public function __construct(
         private readonly UserRepository $userRepository,
-        private readonly UserService $userService
+        private readonly UserService $userService,
     ) {
     }
 
     public function index()
     {
-        $this->authorize('admin', User::class);
+        $this->authorize('manage', User::class);
 
         return UserResource::collection($this->userRepository->getAll());
     }
 
     public function store(UserStoreRequest $request)
     {
-        $this->authorize('admin', User::class);
+        $this->authorize('manage', User::class);
 
         return UserResource::make($this->userService->createUser($request->toDto()));
     }
 
     public function update(UserUpdateRequest $request, User $user)
     {
-        $this->authorize('admin', User::class);
+        $this->authorize('update', $user);
 
         try {
             return UserResource::make($this->userService->updateUser($user, $request->toDto()));

@@ -4,21 +4,16 @@ namespace App\Policies;
 
 use App\Models\Podcast;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class PodcastPolicy
 {
-    public function access(User $user, Podcast $podcast): Response
+    public function access(User $user, Podcast $podcast): bool
     {
-        return $user->subscribedToPodcast($podcast)
-            ? Response::allow()
-            : Response::deny();
+        return $user->subscribedToPodcast($podcast);
     }
 
-    public function view(User $user, Podcast $podcast): Response
+    public function view(User $user, Podcast $podcast): bool
     {
-        return $user->subscribedToPodcast($podcast)
-            ? Response::allow()
-            : Response::deny();
+        return $user->subscribedToPodcast($podcast);
     }
 }

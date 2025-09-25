@@ -80,7 +80,7 @@ describe('radioStationListScreen.vue', () => {
   }))
 
   it('shows the Add button in demo mode for admins', async () => await h.withDemoMode(async () => {
-    h.beAdmin()
+    h.actingAsAdmin()
     await renderComponent()
     await h.tick()
 

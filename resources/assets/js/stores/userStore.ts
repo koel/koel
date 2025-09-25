@@ -3,7 +3,7 @@ import { differenceBy, merge } from 'lodash'
 import { http } from '@/services/http'
 import { arrayify } from '@/utils/helpers'
 
-type UserFormData = Pick<User, 'name' | 'email' | 'is_admin'>
+type UserFormData = Pick<User, 'name' | 'email' | 'role'>
 
 export interface CreateUserData extends UserFormData {
   password: string
@@ -18,7 +18,7 @@ export const userStore = {
 
   state: reactive({
     users: [] as User[],
-    current: null! as User,
+    current: null! as CurrentUser,
   }),
 
   syncWithVault (users: MaybeArray<User>) {
@@ -31,9 +31,9 @@ export const userStore = {
     })
   },
 
-  init (currentUser: User) {
+  init (currentUser: CurrentUser) {
     this.state.users = this.syncWithVault(currentUser)
-    this.state.current = this.state.users[0]
+    this.state.current = this.state.users[0] as CurrentUser
   },
 
   async fetch () {
@@ -45,7 +45,7 @@ export const userStore = {
   },
 
   get current () {
-    return this.state.current
+    return this.state.current as CurrentUser
   },
 
   async store (data: CreateUserData) {

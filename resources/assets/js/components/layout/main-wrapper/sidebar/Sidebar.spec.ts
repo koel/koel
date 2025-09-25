@@ -20,12 +20,12 @@ describe('sidebar.vue', () => {
   const h = createHarness()
 
   it('shows the standard items', () => {
-    h.be().render(Component)
+    h.actingAsUser().render(Component)
     standardItems.forEach(label => screen.getByText(label))
   })
 
   it('shows administrative items', () => {
-    h.beAdmin().render(Component)
+    h.actingAsAdmin().render(Component)
     adminItems.forEach(label => screen.getByText(label))
   })
 

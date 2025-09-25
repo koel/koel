@@ -21,10 +21,10 @@
     <section v-koel-overflow-fade class="pt-2 pb-10 overflow-y-auto space-y-8">
       <SidebarYourMusicSection />
       <SidebarPlaylistsSection />
-      <SidebarManageSection v-if="showManageSection" />
+      <SidebarManageSection v-if="showManageOptions" />
     </section>
 
-    <section v-if="!isPlus && isAdmin" class="p-6 flex-1 flex flex-col-reverse">
+    <section v-if="canUpgradeToPlus" class="p-6 flex-1 flex flex-col-reverse">
       <BtnUpgradeToPlus />
     </section>
 
@@ -40,11 +40,10 @@
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, watch } from 'vue'
 import { eventBus } from '@/utils/eventBus'
-import { useAuthorization } from '@/composables/useAuthorization'
 import { useKoelPlus } from '@/composables/useKoelPlus'
 import { useLocalStorage } from '@/composables/useLocalStorage'
-import { useUpload } from '@/composables/useUpload'
 import { useRouter } from '@/composables/useRouter'
+import { usePolicies } from '@/composables/usePolicies'
 
 import BtnUpgradeToPlus from '@/components/koel-plus/BtnUpgradeToPlus.vue'
 import HomeButton from '@/components/layout/main-wrapper/sidebar/HomeButton.vue'
@@ -56,8 +55,7 @@ import SidebarToggleButton from '@/components/layout/main-wrapper/sidebar/Sideba
 import SidebarYourMusicSection from './SidebarYourLibrarySection.vue'
 
 const { onRouteChanged } = useRouter()
-const { isAdmin } = useAuthorization()
-const { allowsUpload } = useUpload()
+const { currentUserCan } = usePolicies()
 const { isPlus } = useKoelPlus()
 const { get: lsGet, set: lsSet } = useLocalStorage()
 
@@ -65,8 +63,6 @@ const mobileShowing = ref(false)
 const expanded = ref(!lsGet('sidebar-collapsed', false))
 
 watch(expanded, value => lsSet('sidebar-collapsed', !value))
-
-const showManageSection = computed(() => isAdmin.value || allowsUpload.value)
 
 let tmpShowingHandler: number | undefined
 const tmpShowing = ref(false)
@@ -96,6 +92,14 @@ const onMouseLeave = (e: MouseEvent) => {
 
   tmpShowing.value = false
 }
+
+const showManageOptions = computed(() =>
+  currentUserCan.manageSettings()
+  || currentUserCan.manageUsers()
+  || currentUserCan.uploadSongs(),
+)
+
+const canUpgradeToPlus = computed(() => !isPlus.value && currentUserCan.manageSettings())
 
 onRouteChanged(_ => (mobileShowing.value = false))
 

@@ -380,18 +380,27 @@ interface UserPreferences extends Record<string, any> {
   lastfm_session_key?: string
 }
 
+type Permission = 'manage settings' | 'manage users' | 'manage songs' | 'manage podcasts' | 'manage radio stations'
+type Role = ('admin' | 'manager' | 'user') & string
+
 interface User {
   type: 'users'
   id: string
   name: string
   email: string
-  is_admin: boolean
   is_prospect: boolean
   password?: string
-  preferences?: UserPreferences
   avatar: string
+  role: Role
   sso_provider: SSOProvider | null
   sso_id: string | null
+  preferences?: UserPreferences
+  permissions?: Permission[]
+}
+
+type CurrentUser = User & {
+  preferences: UserPreferences
+  permissions: Permission[]
 }
 
 interface Settings {
@@ -442,36 +451,37 @@ interface EqualizerPreset {
 
 declare type PlaybackState = 'Stopped' | 'Playing' | 'Paused'
 declare type ScreenName =
-  | 'Home'
-  | 'Default' | 'Blank'
-  | 'Queue'
-  | 'Songs'
-  | 'Albums'
-  | 'Artists'
-  | 'Favorites'
-  | 'RecentlyPlayed'
-  | 'Settings'
-  | 'Users'
-  | 'YouTube'
-  | 'Visualizer'
-  | 'Profile'
+  | '404'
   | 'Album'
+  | 'Albums'
   | 'Artist'
-  | 'Genres'
-  | 'Genre'
-  | 'Playlist'
-  | 'Upload'
-  | 'Podcasts'
-  | 'Podcast'
-  | 'Radio.Stations'
+  | 'Artists'
+  | 'Default'
+  | 'Embed'
   | 'Episode'
+  | 'Favorites'
+  | 'Genre'
+  | 'Genres'
+  | 'Home'
+  | 'Invitation.Accept'
+  | 'MediaBrowser'
+  | 'Password.Reset'
+  | 'Playlist'
+  | 'Playlist.Collaborate'
+  | 'Podcast'
+  | 'Podcasts'
+  | 'Profile'
+  | 'Queue'
+  | 'Radio.Stations'
+  | 'RecentlyPlayed'
   | 'Search.Excerpt'
   | 'Search.Playables'
-  | 'MediaBrowser'
-  | 'Embed'
-  | 'Invitation.Accept'
-  | 'Password.Reset'
-  | '404'
+  | 'Settings'
+  | 'Songs'
+  | 'Upload'
+  | 'Users'
+  | 'Visualizer'
+  | 'YouTube'
 
 declare type CardLayout = 'full' | 'compact'
 

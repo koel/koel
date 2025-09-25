@@ -1,16 +1,17 @@
 <template>
-  <label
-    v-if="cols === 1"
-    class="flex flex-col gap-2 text-[1.1rem]"
-  >
-    <span v-if="$slots.label">
-      <slot name="label" />
-    </span>
-    <slot />
-    <span v-if="$slots.help" class="text-[.95rem] opacity-70 mt-1.5">
+  <div v-if="cols === 1" class="flex flex-col gap-2">
+    <label>
+      <span v-if="$slots.label" class="block mb-1.5">
+        <slot name="label" />
+      </span>
+
+      <slot />
+    </label>
+
+    <small v-if="$slots.help" class="text-[.95rem] opacity-70 mt-0.5">
       <slot v-if="$slots.help" name="help" />
-    </span>
-  </label>
+    </small>
+  </div>
 
   <div v-else :class="columnClass" class="grid gap-3">
     <slot />

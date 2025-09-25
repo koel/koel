@@ -35,8 +35,8 @@
         <Icon :icon="faMicrophoneSlash" />
       </template>
       No artists found.
-      <span class="secondary block">
-        {{ isAdmin ? 'Have you set up your library yet?' : 'Contact your administrator to set up your library.' }}
+      <span v-if="currentUserCan.manageSettings()" class="secondary block">
+        Have you set up your library yet?
       </span>
     </ScreenEmptyState>
 
@@ -63,7 +63,7 @@ import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useInfiniteScroll } from '@/composables/useInfiniteScroll'
-import { useAuthorization } from '@/composables/useAuthorization'
+import { usePolicies } from '@/composables/usePolicies'
 
 import ArtistCard from '@/components/artist/ArtistCard.vue'
 import ArtistCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
@@ -75,7 +75,7 @@ import GridListView from '@/components/ui/GridListView.vue'
 import ArtistListSorter from '@/components/artist/ArtistListSorter.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 
-const { isAdmin } = useAuthorization()
+const { currentUserCan } = usePolicies()
 
 const gridContainer = ref<HTMLDivElement>()
 const grid = ref<InstanceType<typeof GridListView>>()

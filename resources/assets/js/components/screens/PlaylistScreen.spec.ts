@@ -13,7 +13,7 @@ describe('playlistScreen.vue', () => {
 
   const renderComponent = async (songs: Playable[] = []) => {
     const playlist = h.factory('playlist')
-    h.be(h.factory('user', { id: playlist.owner_id }))
+    h.actingAsUser(h.factory.states('current')('user', { id: playlist.owner_id }) as CurrentUser)
 
     playlistStore.state.playlists = []
     playlistStore.init([playlist])

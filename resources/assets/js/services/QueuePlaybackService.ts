@@ -344,7 +344,7 @@ export class QueuePlaybackService extends BasePlaybackService {
       queueStore.current
       && isSong(queueStore.current)
       && commonStore.state.uses_last_fm
-      && userStore.current.preferences!.lastfm_session_key
+      && userStore.current.preferences.lastfm_session_key
     ) {
       playableStore.scrobble(queueStore.current)
     }

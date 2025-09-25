@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\Acl\Role;
 use App\Helpers\Ulid;
 use App\Models\Interaction;
 use App\Models\User;
@@ -11,6 +12,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_admin;
+use function Tests\create_manager;
 use function Tests\create_user;
 
 class UserTest extends TestCase
@@ -18,25 +20,23 @@ class UserTest extends TestCase
     #[Test]
     public function nonAdminCannotCreateUser(): void
     {
-        $this->postAs('api/user', [
+        $this->postAs('api/users', [
             'name' => 'Foo',
             'email' => 'bar@baz.com',
             'password' => 'secret',
-            'is_admin' => false,
+            'role' => 'user',
         ])->assertForbidden();
     }
 
     #[Test]
     public function adminCreatesUser(): void
     {
-        $admin = create_admin();
-
-        $this->postAs('api/user', [
+        $this->postAs('api/users', [
             'name' => 'Foo',
             'email' => 'bar@baz.com',
             'password' => 'secret',
-            'is_admin' => true,
-        ], $admin)
+            'role' => 'admin',
+        ], create_admin())
             ->assertSuccessful();
 
         /** @var User $user */
@@ -45,7 +45,47 @@ class UserTest extends TestCase
         self::assertTrue(Hash::check('secret', $user->password));
         self::assertSame('Foo', $user->name);
         self::assertSame('bar@baz.com', $user->email);
-        self::assertTrue($user->is_admin);
+        self::assertSame(Role::ADMIN, $user->role);
+    }
+
+    #[Test]
+    public function userWithNonAvailableRoleCannotBeCreated(): void
+    {
+        $this->postAs('api/users', [
+            'name' => 'Foo',
+            'email' => 'bar@baz.com',
+            'password' => 'secret',
+            'role' => 'manager',
+        ], create_admin())
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['role']);
+    }
+
+    #[Test]
+    public function privilegeEscalationIsForbiddenWhenCreating(): void
+    {
+        $this->postAs('api/users', [
+            'name' => 'Foo',
+            'email' => 'bar@baz.com',
+            'password' => 'secret',
+            'role' => 'admin',
+        ], create_manager())
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['role']);
+    }
+
+    #[Test]
+    public function creatingUsersWithHigherRoleIsNotAllowed(): void
+    {
+        $admin = create_admin();
+
+        $this->putAs("api/users/{$admin->public_id}", [
+            'name' => 'Foo',
+            'email' => 'bar@baz.com',
+            'password' => 'new-secret',
+            'role' => 'user',
+        ], create_manager())
+            ->assertForbidden();
     }
 
     #[Test]
@@ -54,11 +94,11 @@ class UserTest extends TestCase
         $admin = create_admin();
         $user = create_admin(['password' => 'secret']);
 
-        $this->putAs("api/user/{$user->public_id}", [
+        $this->putAs("api/users/{$user->public_id}", [
             'name' => 'Foo',
             'email' => 'bar@baz.com',
             'password' => 'new-secret',
-            'is_admin' => false,
+            'role' => 'user',
         ], $admin)
             ->assertSuccessful();
 
@@ -67,15 +107,39 @@ class UserTest extends TestCase
         self::assertTrue(Hash::check('new-secret', $user->password));
         self::assertSame('Foo', $user->name);
         self::assertSame('bar@baz.com', $user->email);
-        self::assertFalse($user->is_admin);
+        self::assertSame(Role::USER, $user->role);
     }
 
     #[Test]
+    public function privilegeEscalationIsForbiddenWhenUpdating(): void
+    {
+        $manager = create_manager();
+
+        $this->putAs("api/users/{$manager->public_id}", [
+            'role' => 'admin',
+        ], create_manager())
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['role']);
+    }
+
+    #[Test]
+    public function updatingUserToANonAvailableRoleIsNotAllowed(): void
+    {
+        $manager = create_manager();
+
+        $this->putAs("api/users/{$manager->public_id}", [
+            'role' => 'manager',
+        ], create_manager())
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['role']);
+    }
+
+        #[Test]
     public function adminDeletesUser(): void
     {
         $user = create_user();
 
-        $this->deleteAs("api/user/{$user->public_id}", [], create_admin());
+        $this->deleteAs("api/users/{$user->public_id}", [], create_admin());
         $this->assertModelMissing($user);
     }
 
@@ -84,7 +148,7 @@ class UserTest extends TestCase
     {
         $admin = create_admin();
 
-        $this->deleteAs("api/user/{$admin->public_id}", [], $admin)->assertForbidden();
+        $this->deleteAs("api/users/{$admin->public_id}", [], $admin)->assertForbidden();
         $this->assertModelExists($admin);
     }
 

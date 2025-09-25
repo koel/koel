@@ -1,15 +1,15 @@
 import { arrayify } from '@/utils/helpers'
 import { useAuthorization } from '@/composables/useAuthorization'
 import { useKoelPlus } from '@/composables/useKoelPlus'
-import { resourcePermissionService } from '@/services/resourcePermissionService'
+import { acl } from '@/services/acl'
 
 export const usePolicies = () => {
-  const { currentUser, isAdmin } = useAuthorization()
+  const { currentUser } = useAuthorization()
   const { isPlus } = useKoelPlus()
 
   const currentUserCan = {
     editSong: (songs: MaybeArray<Song>) => {
-      if (isAdmin.value) {
+      if (currentUser.value.permissions.includes('manage songs')) {
         return true
       }
 
@@ -20,25 +20,26 @@ export const usePolicies = () => {
       return arrayify(songs).every(song => song.owner_id === currentUser.value.id)
     },
 
-    // alias
-    editSongs (songs: MaybeArray<Song>) {
-      return this.editSong(songs)
-    },
-
     editPlaylist: (playlist: Playlist) => playlist.owner_id === currentUser.value.id,
-    uploadSongs: () => isAdmin.value || isPlus.value,
-    editAlbum: async (album: Album) => await resourcePermissionService.check('album', album.id, 'edit'),
-    editArtist: async (artist: Artist) => await resourcePermissionService.check('artist', artist.id, 'edit'),
+    editAlbum: async (album: Album) => await acl.checkResourcePermission('album', album.id, 'edit'),
+    editArtist: async (artist: Artist) => await acl.checkResourcePermission('artist', artist.id, 'edit'),
+    editUser: async (user: User) => await acl.checkResourcePermission('user', user.id, 'edit'),
+    deleteUser: async (user: User) => await acl.checkResourcePermission('user', user.id, 'delete'),
 
     editRadioStation: async (station: RadioStation) => {
-      return await resourcePermissionService.check('radio-station', station.id, 'edit')
+      return await acl.checkResourcePermission('radio-station', station.id, 'edit')
     },
 
     deleteRadioStation: async (station: RadioStation) => {
-      return await resourcePermissionService.check('radio-station', station.id, 'delete')
+      return await acl.checkResourcePermission('radio-station', station.id, 'delete')
     },
 
-    addRadioStation: () => !window.IS_DEMO || isAdmin.value,
+    // If the user has the permission, they can always add a radio station, even in demo mode.
+    addRadioStation: () => !window.IS_DEMO || currentUser.value.permissions.includes('manage radio stations'),
+
+    manageSettings: () => currentUser.value.permissions.includes('manage settings'),
+    manageUsers: () => currentUser.value.permissions.includes('manage users'),
+    uploadSongs: () => isPlus.value || currentUser.value.permissions.includes('manage songs'),
   }
 
   return {

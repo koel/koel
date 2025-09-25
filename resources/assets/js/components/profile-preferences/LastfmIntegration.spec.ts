@@ -12,9 +12,9 @@ describe('lastfmIntegration.vue', () => {
       commonStore.state.uses_last_fm = useLastfm
 
       if (isAdmin) {
-        h.beAdmin()
+        h.actingAsAdmin()
       } else {
-        h.be()
+        h.actingAsUser()
       }
 
       expect(h.render(Component).html()).toMatchSnapshot()

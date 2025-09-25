@@ -3,7 +3,7 @@ import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { eventBus } from '@/utils/eventBus'
 import { playbackService } from '@/services/RadioPlaybackService'
-import { resourcePermissionService } from '@/services/resourcePermissionService'
+import { acl } from '@/services/acl'
 import { radioStationStore } from '@/stores/radioStationStore'
 import Component from './RadioStationContextMenu.vue'
 
@@ -11,7 +11,7 @@ describe('radioStationContextMenu.vue', () => {
   const h = createHarness()
 
   const renderComponent = async (station?: RadioStation, manageable = true) => {
-    h.mock(resourcePermissionService, 'check').mockReturnValue(manageable)
+    h.mock(acl, 'checkResourcePermission').mockReturnValue(manageable)
 
     station = station || h.factory('radio-station', {
       favorite: false,

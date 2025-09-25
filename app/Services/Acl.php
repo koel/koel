@@ -2,14 +2,15 @@
 
 namespace App\Services;
 
+use App\Enums\Acl\Role;
 use App\Enums\PermissionableResourceType;
-use App\Models\Contracts\Permissionable;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use Webmozart\Assert\Assert;
 
-class ResourcePermissionService
+class Acl
 {
     private const VALID_ACTIONS = [
         'edit',
@@ -28,13 +29,18 @@ class ResourcePermissionService
             ->allows($action, self::resolveResource($type, $id));
     }
 
-    private static function resolveResource(
-        PermissionableResourceType $type,
-        int|string $id,
-    ): Model {
-        /** @var class-string<Model|Permissionable> $modelClass */
-        $modelClass = $type->value;
+    private static function resolveResource(PermissionableResourceType $type, int|string $id): Model
+    {
+        $modelClass = $type->modelClass();
 
         return $modelClass::query()->where($modelClass::getPermissionableIdentifier(), $id)->firstOrFail(); // @phpstan-ignore-line
+    }
+
+    /** @return Collection<Role> */
+    public function getAssignableRolesForUser(User $user): Collection
+    {
+        return Role::allAvailable()->filter(static fn (Role $role) => $user->role->canManage($role))
+            ->sortBy(static fn (Role $role) => $role->level())
+            ->values();
     }
 }

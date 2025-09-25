@@ -16,7 +16,7 @@
     <div v-else>
       <p>
         Spotify integration is not enabled.
-        <span v-if="isAdmin" data-testid="spotify-admin-instruction">
+        <span v-if="currentUserCan.manageSettings()" data-testid="spotify-admin-instruction">
           Check
           <a href="https://docs.koel.dev/service-integrations#spotify" target="_blank">Documentation</a>
           for integration instructions.
@@ -28,9 +28,9 @@
 
 <script lang="ts" setup>
 import { faSpotify } from '@fortawesome/free-brands-svg-icons'
-import { useAuthorization } from '@/composables/useAuthorization'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
+import { usePolicies } from '@/composables/usePolicies'
 
-const { isAdmin } = useAuthorization()
+const { currentUserCan } = usePolicies()
 const { useSpotify } = useThirdPartyServices()
 </script>

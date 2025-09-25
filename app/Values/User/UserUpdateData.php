@@ -2,6 +2,7 @@
 
 namespace App\Values\User;
 
+use App\Enums\Acl\Role;
 use Illuminate\Support\Facades\Hash;
 
 final readonly class UserUpdateData
@@ -12,7 +13,7 @@ final readonly class UserUpdateData
         public string $name,
         public string $email,
         ?string $plainTextPassword,
-        public ?bool $isAdmin,
+        public ?Role $role,
         public ?string $avatar,
     ) {
         $this->password = $plainTextPassword ? Hash::make($plainTextPassword) : null;
@@ -22,14 +23,14 @@ final readonly class UserUpdateData
         string $name,
         string $email,
         ?string $plainTextPassword = null,
-        ?bool $isAdmin = null,
+        ?Role $role = null,
         ?string $avatar = null
     ): self {
         return new self(
             name: $name,
             email: $email,
             plainTextPassword: $plainTextPassword,
-            isAdmin: $isAdmin,
+            role: $role,
             avatar: $avatar,
         );
     }

@@ -28,9 +28,7 @@
         data-testid="prospects-heading"
       >
         <i class="invited-heading-decoration" />
-        <span class="px-4 py-1 relative rounded-md border border-k-text-secondary">
-          Invited
-        </span>
+        <span class="px-4 py-1 relative">Invited</span>
         <i class="invited-heading-decoration" />
       </h2>
 

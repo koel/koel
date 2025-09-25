@@ -17,6 +17,11 @@ function create_admin(array $attributes = []): User
     return User::factory()->admin()->create($attributes);
 }
 
+function create_manager(array $attributes = []): User
+{
+    return User::factory()->manager()->create($attributes);
+}
+
 function create_user_prospect(array $attributes = []): User
 {
     return User::factory()->prospect()->create($attributes);
@@ -32,7 +37,6 @@ function read_as_data_url(string $path): string
     return 'data:' . mime_content_type($path) . ';base64,' . base64_encode(File::get($path));
 }
 
-/** @param array<mixed> $attributes */
 function create_playlist(array $attributes = [], bool $smart = false): Playlist
 {
     return $smart
@@ -41,8 +45,6 @@ function create_playlist(array $attributes = [], bool $smart = false): Playlist
 }
 
 /**
- * @param array<mixed> $attributes
- *
  * @return Collection<Playlist>|array<array-key, Playlist>
  */
 function create_playlists(int $count, array $attributes = [], ?User $owner = null): Collection

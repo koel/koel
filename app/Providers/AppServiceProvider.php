@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Enums\Acl\Role;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Genre;
@@ -9,6 +10,7 @@ use App\Models\Playlist;
 use App\Models\Podcast;
 use App\Models\RadioStation;
 use App\Models\Song;
+use App\Models\User;
 use App\Rules\ValidRadioStationUrl;
 use App\Services\Contracts\Encyclopedia;
 use App\Services\Geolocation\Contracts\GeolocationService;
@@ -29,6 +31,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Schema\Builder;
 use Illuminate\Database\SQLiteConnection;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use SpotifyWebAPI\Session as SpotifySession;
@@ -42,10 +45,12 @@ class AppServiceProvider extends ServiceProvider
 
         Model::preventLazyLoading(!app()->isProduction());
 
-        $this->enableOnDeleteCascadeForSqliteConnections($db);
+        self::enableOnDeleteCascadeForSqliteConnections($db);
 
         // disable wrapping JSON resource in a `data` key
         JsonResource::withoutWrapping();
+
+        self::grantAllPermissionsToSuperAdminRole();
 
         $this->app->bind(SpotifySession::class, static function () {
             return SpotifyService::enabled()
@@ -115,10 +120,15 @@ class AppServiceProvider extends ServiceProvider
         }
     }
 
-    public function enableOnDeleteCascadeForSqliteConnections(DatabaseManager $db): void
+    private static function enableOnDeleteCascadeForSqliteConnections(DatabaseManager $db): void
     {
         if ($db->connection() instanceof SQLiteConnection) {
             $db->statement($db->raw('PRAGMA foreign_keys = ON')->getValue($db->getQueryGrammar()));
         }
+    }
+
+    private static function grantAllPermissionsToSuperAdminRole(): void
+    {
+        Gate::after(static fn (User $user) => $user->hasRole(Role::ADMIN));
     }
 }
