@@ -29,10 +29,7 @@ describe('playableListHeader.vue', () => {
     const sortFieldRef = ref(sortField)
     const sortOrderRef = ref(sortOrder)
 
-    await h.router.activateRoute({
-      screen: 'Songs',
-      path: '/songs',
-    })
+    h.visit('/songs')
 
     return h.render(PlayableListHeader, {
       props: {

@@ -102,13 +102,15 @@ export default class Router {
     reload && forceReloadWindow()
   }
 
-  public resolve () {
-    if (!location.hash || location.hash === '#/' || location.hash === '#!/') {
+  public resolve (hash?: string) {
+    hash = hash ?? location.hash
+
+    if (['', '#/', '#!/'].includes(hash)) {
       Router.go(this.homeRoute.path)
       return null
     }
 
-    const matchedRoute = this.tryMatchRoute()
+    const matchedRoute = this.tryMatchRoute(hash)
     const [route, params] = matchedRoute ? [matchedRoute.originalRoute, matchedRoute.params] : [null, null]
 
     if (!route) {
@@ -136,9 +138,8 @@ export default class Router {
     this.$currentRoute.value.params = params
   }
 
-  private tryMatchRoute (): MatchedRoute | null {
-    const hash = location.hash.replace(/^#?/, '')
-    const [path, queryString] = hash.split('?')
+  private tryMatchRoute (hash: string): MatchedRoute | null {
+    const [path, queryString] = hash.replace(/^#?/, '').split('?')
 
     for (const route of this.compiledRoutes) {
       const match = path.match(route.regex)

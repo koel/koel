@@ -83,7 +83,7 @@
     "typescript": "^5.8.3",
     "vite": "^5.4.19",
     "vitepress": "^1.6.3",
-    "vitest": "^0.24.5"
+    "vitest": "^3.2.4"
   },
   "scripts": {
     "lint": "eslint ./resources/assets",

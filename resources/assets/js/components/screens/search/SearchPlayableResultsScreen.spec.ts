@@ -10,10 +10,9 @@ describe('searchPlayableResultsScreen.vue', () => {
     const resetResultMock = h.mock(searchStore, 'resetPlayableResultState')
     const searchMock = h.mock(searchStore, 'playableSearch')
 
-    h.router.activateRoute({ path: 'search-playables', screen: 'Search.Playables' }, { q: 'search me' })
-    h.render(SearchPlayableResultsScreen)
+    h.visit('/search/songs?q=foo').render(SearchPlayableResultsScreen)
 
     expect(resetResultMock).toHaveBeenCalled()
-    expect(searchMock).toHaveBeenCalledWith('search me')
+    expect(searchMock).toHaveBeenCalledWith('foo')
   })
 })

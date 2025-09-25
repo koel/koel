@@ -22,11 +22,7 @@ describe('playlistScreen.vue', () => {
     const fetchSongsMock = h.mock(playableStore, 'fetchForPlaylist').mockResolvedValueOnce(songs)
 
     const rendered = h.render(Component)
-
-    await h.router.activateRoute({
-      path: `playlists/${playlist.id}`,
-      screen: 'Playlist',
-    }, { id: playlist.id })
+    h.visit(`playlists/${playlist.id}`)
 
     await waitFor(() => expect(fetchSongsMock).toHaveBeenCalledWith(playlist, false))
 

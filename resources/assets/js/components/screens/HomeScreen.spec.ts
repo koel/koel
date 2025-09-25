@@ -11,8 +11,8 @@ describe('homeScreen.vue', () => {
   const h = createHarness()
 
   const renderComponent = async () => {
+    h.visit('/home')
     h.render(Component)
-    await h.router.activateRoute({ path: 'home', screen: 'Home' })
   }
 
   it('renders an empty state if no songs found', async () => {

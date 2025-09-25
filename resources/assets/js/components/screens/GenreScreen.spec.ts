@@ -18,12 +18,7 @@ describe('genreScreen', () => {
       songs: songs || h.factory('song', 13),
     })
 
-    await h.router.activateRoute({
-      path: `genres/${genre.id}`,
-      screen: 'Genre',
-    }, { id: genre.id })
-
-    const rendered = h.render(Component, {
+    const rendered = h.visit(`genres/${genre.id}`).render(Component, {
       global: {
         stubs: {
           SongList: h.stub('song-list'),

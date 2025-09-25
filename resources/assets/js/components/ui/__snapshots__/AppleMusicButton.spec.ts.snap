@@ -1,4 +1,4 @@
-// Vitest Snapshot v1
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`appleMusicButton.vue > renders 1`] = `
 <a data-v-429d7b12="" href="https://music.apple.com/buy-nao" class="rounded px-2 py-0 bg-white/10 h-6 flex items-center hover:itunes-gradient focus:itunes-gradient" target="_blank" title="Preview and buy this song on Apple Music"><svg data-v-429d7b12="" class="fill-k-text-primary" height="10" role="presentation" viewBox="0 0 83 20" width="41" xmlns="http://www.w3.org/2000/svg">

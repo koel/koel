@@ -9,9 +9,9 @@ describe('favoritesScreen.vue', () => {
 
   const renderComponent = async () => {
     const fetchMock = h.mock(playableStore, 'fetchFavorites')
-    h.render(Component)
 
-    await h.router.activateRoute({ path: 'favorites', screen: 'Favorites' })
+    h.render(Component)
+    h.visit('/favorites')
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalled())
   }

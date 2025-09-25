@@ -28,13 +28,7 @@ describe('embedWidget.vue', async () => {
 
     const initThemeMock = h.mock(themeStore, 'init')
 
-    await h.router.activateRoute({
-      path: 'embed',
-      screen: 'Embed',
-    }, {
-      id: embed.id,
-      options: 'encrypted-options',
-    })
+    h.visit(`/embed/${embed.id}/encrypted-options`)
 
     const rendered = h.render(Component, {
       props: {

@@ -1,4 +1,4 @@
-// Vitest Snapshot v1
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`footerExtraControls.vue > renders 1`] = `
 <div data-v-8bf5fe81="" class="extra-controls flex justify-end relative md:w-[420px] px-6 md:px-8 py-0">

@@ -11,12 +11,8 @@ describe('resetPasswordForm.vue', () => {
     const resetMock = h.mock(authService, 'resetPassword').mockResolvedValue(null)
     const loginMock = h.mock(authService, 'login').mockResolvedValue(null)
 
-    await h.router.activateRoute({
-      path: '_',
-      screen: 'Password.Reset',
-    }, { payload: 'Zm9vQGJhci5jb218bXktdG9rZW4=' })
+    h.visit('/reset-password/Zm9vQGJhci5jb218bXktdG9rZW4=').render(Component)
 
-    h.render(Component)
     await h.type(screen.getByPlaceholderText('New password'), 'new-password')
     await h.user.click(screen.getByRole('button', { name: 'Save' }))
 

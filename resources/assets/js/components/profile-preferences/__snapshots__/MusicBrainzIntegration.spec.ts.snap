@@ -1,4 +1,4 @@
-// Vitest Snapshot v1
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`musicBrainzIntegration.vue > renders proper content with MusicBrainz integration status false, current user admin status false 1`] = `
 <section class="text-k-text-secondary">

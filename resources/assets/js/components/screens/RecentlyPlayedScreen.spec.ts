@@ -19,7 +19,7 @@ describe('recentlyPlayedScreen.vue', () => {
       },
     })
 
-    await h.router.activateRoute({ path: 'recently-played', screen: 'RecentlyPlayed' })
+    h.visit('/recently-played')
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalled())
   }

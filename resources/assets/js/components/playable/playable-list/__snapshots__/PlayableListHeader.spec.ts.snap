@@ -1,4 +1,4 @@
-// Vitest Snapshot v1
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`playableListHeader.vue > renders 1`] = `
 <div class="sortable song-list-header flex z-[2] bg-k-bg-secondary pl-5"><span class="track-number" data-testid="header-track-number" role="button" title="Sort by track number"> # <!--v-if--><!--v-if--></span><span class="title-artist" data-testid="header-title" role="button" title="Sort by title"> Title <br data-testid="Icon" icon="[object Object]" class="text-k-highlight"><!--v-if--></span><span title="Sort by album" class="album" data-testid="header-album" role="button">Album<span class="ml-2"><!--v-if--><!--v-if--></span></span>

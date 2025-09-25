@@ -12,13 +12,7 @@ describe('mediaBrowserMenuItem.vue', () => {
   it('keeps track of the active path', async () => {
     const { html } = h.render(Component)
 
-    await h.router.activateRoute({
-      path: '_',
-      screen: 'MediaBrowser',
-    }, {
-      path: 'foo/bar',
-    })
-
+    h.visit('/browse/foo/bar')
     await h.tick(2)
 
     expect(html()).toMatchSnapshot()
