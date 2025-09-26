@@ -56,6 +56,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { GuitarIcon } from 'lucide-vue-next'
 import { pluralize, secondsToHumanReadable } from '@/utils/formatters'
 import { eventBus } from '@/utils/eventBus'
+import { defineAsyncComponent } from '@/utils/helpers'
 import { genreStore } from '@/stores/genreStore'
 import { playableStore } from '@/stores/playableStore'
 import { playback } from '@/services/playbackManager'
@@ -63,6 +64,7 @@ import { useRouter } from '@/composables/useRouter'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
+import { useContextMenu } from '@/composables/useContextMenu'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -70,6 +72,8 @@ import PlayableListSkeleton from '@/components/playable/playable-list/PlayableLi
 import ScreenHeaderSkeleton from '@/components/ui/ScreenHeaderSkeleton.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import Btn from '@/components/ui/form/Btn.vue'
+
+const ContextMenu = defineAsyncComponent(() => import('@/components/genre/GenreContextMenu.vue'))
 
 const songs = ref<Song[]>([])
 
@@ -85,8 +89,8 @@ const {
 } = usePlayableList(songs, { type: 'Genre' }, { sortable: true, filterable: false })
 
 const { PlayableListControls: SongListControls, config } = usePlayableListControls('Genre')
-
 const { getRouteParam, isCurrentScreen, go, onRouteChanged, url } = useRouter()
+const { openContextMenu } = useContextMenu()
 
 let sortField: MaybeArray<PlayableListSortField> = 'title'
 let sortOrder: SortOrder = 'asc'
@@ -158,18 +162,18 @@ const playAll = async (shuffle = false) => {
     return
   }
 
-  if (shuffle) {
-    playback().queueAndPlay(await playableStore.fetchSongsByGenre(genre.value!, true))
-  } else {
-    playback().queueAndPlay(await playableStore.fetchSongsByGenre(genre.value!, false))
-  }
-
   go(url('queue'))
+
+  if (shuffle) {
+    await playback().queueAndPlay(await playableStore.fetchSongsByGenre(genre.value!, true))
+  } else {
+    await playback().queueAndPlay(await playableStore.fetchSongsByGenre(genre.value!, false))
+  }
 }
 
-const requestContextMenu = (event: MouseEvent) => {
-  eventBus.emit('GENRE_CONTEXT_MENU_REQUESTED', event, genre.value!)
-}
+const requestContextMenu = (event: MouseEvent) => openContextMenu<'GENRE'>(ContextMenu, event, {
+  genre: genre.value!,
+})
 
 onMounted(() => {
   if (isCurrentScreen('Genre')) {

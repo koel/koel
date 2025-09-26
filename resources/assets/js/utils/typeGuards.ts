@@ -1,4 +1,4 @@
-export function isSong (streamable: Streamable): streamable is Song {
+export function isSong (streamable: Streamable | Folder): streamable is Song {
   return streamable.type === 'songs'
 }
 

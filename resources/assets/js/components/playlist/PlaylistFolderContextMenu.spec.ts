@@ -15,9 +15,12 @@ describe('playlistFolderContextMenu.vue', () => {
 
   const renderComponent = async (folder?: PlaylistFolder) => {
     folder = folder || h.factory('playlist-folder')
-    const rendered = h.render(Component)
-    eventBus.emit('PLAYLIST_FOLDER_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, folder)
-    await h.tick(2)
+
+    const rendered = h.render(Component, {
+      props: {
+        folder,
+      },
+    })
 
     return {
       ...rendered,

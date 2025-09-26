@@ -136,5 +136,6 @@ export const defineAsyncComponent = (loader: AsyncComponentLoader, loadingCompon
   return baseDefineAsyncComponent({
     loader,
     loadingComponent: loadingComponent || LoadingComponent,
+
   })
 }

@@ -10,20 +10,21 @@
     @contextmenu.prevent
     @keydown.esc="close"
   >
-    <ul>
-      <slot><!-- menu items go here --></slot>
-    </ul>
+    <component :is="options.component" v-if="options.component" v-bind="options.props" />
   </nav>
 </template>
 
 <script lang="ts" setup>
-import { nextTick, ref, toRefs } from 'vue'
+import { nextTick, ref, toRefs, watch } from 'vue'
 import { onClickOutside } from '@vueuse/core'
-import { eventBus } from '@/utils/eventBus'
 import { logger } from '@/utils/logger'
+import { requireInjection } from '@/utils/helpers'
+import { ContextMenuKey } from '@/symbols'
 
 const props = defineProps<{ extraClass?: string }>()
 const { extraClass } = toRefs(props)
+
+const options = requireInjection(ContextMenuKey)
 
 const el = ref<HTMLElement>()
 const shown = ref(false)
@@ -104,26 +105,32 @@ const open = async (t = 0, l = 0) => {
 
   await nextTick()
 
-  try {
-    await preventOffScreen(el.value!)
-    initSubmenus()
-  } catch (error: unknown) {
-    logger.error(error)
-    // in a non-browser environment (e.g., unit testing), these two functions are broken due to calls to
-    // getBoundingClientRect() and querySelectorAll()
-  }
-
-  eventBus.emit('CONTEXT_MENU_OPENED', el.value!)
+  // wrap the call to preventOffScreen() in a setTimeout() to better ensure the DOM is updated
+  setTimeout(async () => {
+    try {
+      await preventOffScreen(el.value!)
+      initSubmenus()
+    } catch (error: unknown) {
+      logger.error(error)
+      // in a non-browser environment (e.g., unit testing), these two functions are broken due to calls to
+      // getBoundingClientRect() and querySelectorAll()
+    }
+  }, 100)
 }
 
-const close = () => (shown.value = false)
+const close = () => {
+  shown.value = false
+}
+
+watch(options, () => {
+  if (options.value.component) {
+    open(options.value.position.top, options.value.position.left)
+  } else {
+    close()
+  }
+})
 
 onClickOutside(el, close)
-
-// ensure there's only one context menu at any time
-eventBus.on('CONTEXT_MENU_OPENED', target => target === el.value || close())
-
-defineExpose({ open, close, shown })
 </script>
 
 <style lang="postcss" scoped>

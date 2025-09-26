@@ -17,8 +17,11 @@ describe('radioStationContextMenu.vue', () => {
       favorite: false,
     })
 
-    const rendered = h.render(Component)
-    eventBus.emit('RADIO_STATION_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, station)
+    const rendered = h.render(Component, {
+      props: {
+        station,
+      },
+    })
 
     // For all menu items (including Delete and Edit, which require permission checks) to be rendered
     await h.tick(7)

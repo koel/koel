@@ -5,7 +5,6 @@ import { screen, waitFor } from '@testing-library/vue'
 import factory from '@/__tests__/factory'
 import { invitationService } from '@/services/invitationService'
 import { createHarness } from '@/__tests__/TestHarness'
-import { eventBus } from '@/utils/eventBus'
 import { acl } from '@/services/acl'
 import Component from './UserContextMenu.vue'
 
@@ -24,11 +23,14 @@ describe('userContextMenu.vue', () => {
       }
     })
 
-    const rendered = h.render(Component)
-    eventBus.emit('USER_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, user)
+    const rendered = h.render(Component, {
+      props: {
+        user,
+      },
+    })
 
     await waitFor(() => {
-      screen.getByTestId('user-context-menu')
+      screen.getByRole('listitem')
       expect(permissionMock).toHaveBeenCalledTimes(user.is_prospect ? 1 : 2)
     })
 

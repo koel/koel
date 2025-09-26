@@ -28,7 +28,7 @@
 import isMobile from 'ismobilejs'
 import { unionBy } from 'lodash'
 import { computed, nextTick, reactive, toRefs, watch } from 'vue'
-import { eventBus } from '@/utils/eventBus'
+import { defineAsyncComponent } from '@/utils/helpers'
 import { useRouter } from '@/composables/useRouter'
 import { useDraggable } from '@/composables/useDragAndDrop'
 import { useListSelection } from '@/composables/useListSelection'
@@ -38,21 +38,24 @@ import { mediaBrowser } from '@/services/mediaBrowser'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { playableStore } from '@/stores/playableStore'
 import { playback } from '@/services/playbackManager'
+import { useContextMenu } from '@/composables/useContextMenu'
 
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
 import MediaListItem from '@/components/playable/media-browser/MediaListItem.vue'
 
 const props = defineProps<{ items: (Folder | Song)[], path: string }>()
-
 defineEmits<{
   (e: 'press:enter', event: KeyboardEvent): void
   (e: 'scrolled-to-end'): void
 }>()
+const MediaBrowserContextMenu = defineAsyncComponent(() => import('@/components/media-browser/MediaBrowserContextMenu.vue'))
+const PlayableContextMenu = defineAsyncComponent(() => import('@/components/playable/PlayableContextMenu.vue'))
 
 const { items, path } = toRefs(props)
 
 const { go, url } = useRouter()
 const { startDragging } = useDraggable('browser-media')
+const { openContextMenu } = useContextMenu()
 
 const rows = computed(() => {
   return items.value.map((item): MediaRow => {
@@ -167,15 +170,18 @@ const onContextMenu = async (row: MediaRow, event: MouseEvent) => {
     clearSelection()
     toggleSelected(row)
 
-    // awaiting a next tick so that the selected items are collected properly
+    // awaiting a tick so that the selected items are collected properly
     await nextTick()
   }
 
   if (onlySongsSelected.value) {
-    eventBus.emit('PLAYABLE_CONTEXT_MENU_REQUESTED', event, selectedItems.value as Song[])
-    return
+    openContextMenu<'PLAYABLES'>(PlayableContextMenu, event, {
+      playables: selectedItems.value as Song[],
+    })
+  } else {
+    openContextMenu<'MEDIA_BROWSER'>(MediaBrowserContextMenu, event, {
+      items: selectedItems.value,
+    })
   }
-
-  eventBus.emit('MEDIA_BROWSER_CONTEXT_MENU_REQUESTED', event, selectedItems.value)
 }
 </script>

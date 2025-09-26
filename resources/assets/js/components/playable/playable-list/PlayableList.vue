@@ -25,7 +25,7 @@
         @dragleave="onDragLeave"
         @dragstart="onDragStart(item, $event)"
         @play="onPlay(item.playable)"
-        @contextmenu.prevent="openContextMenu(item, $event)"
+        @contextmenu.prevent="onContextMenu(item, $event)"
         @dragover.prevent="onDragOver"
         @drop.prevent="onDrop(item, $event)"
         @dragend.prevent="onDragEnd"
@@ -39,8 +39,7 @@ import { findIndex, throttle } from 'lodash'
 import isMobile from 'ismobilejs'
 import type { Ref } from 'vue'
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
-import { eventBus } from '@/utils/eventBus'
-import { requireInjection } from '@/utils/helpers'
+import { defineAsyncComponent, requireInjection } from '@/utils/helpers'
 import { getPlayableCollectionContentType } from '@/utils/typeGuards'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { queueStore } from '@/stores/queueStore'
@@ -48,6 +47,7 @@ import { useDraggable, useDroppable } from '@/composables/useDragAndDrop'
 import { useListSelection } from '@/composables/useListSelection'
 import { playback } from '@/services/playbackManager'
 import { useSwipeDirection } from '@/composables/useSwipeDirection'
+import { useContextMenu } from '@/composables/useContextMenu'
 
 import {
   FilteredPlayablesKey,
@@ -70,8 +70,11 @@ const emit = defineEmits<{
   (e: 'scrolled-to-end'): void
 }>()
 
+const PlayableContextMenu = defineAsyncComponent(() => import('@/components/playable/PlayableContextMenu.vue'))
+
 const { startDragging } = useDraggable('playables')
 const { getDroppedData, acceptsDrop } = useDroppable(['playables'])
+const { openContextMenu } = useContextMenu()
 
 const [playables] = requireInjection<[Ref<Playable[]>]>(FilteredPlayablesKey)
 const [selectedPlayables, setSelectedPlayables] = requireInjection<[Ref<Playable[]>, Closure]>(SelectedPlayablesKey)
@@ -227,16 +230,18 @@ const onClick = (row: PlayableRow, event: MouseEvent) => {
   }
 }
 
-const openContextMenu = async (row: PlayableRow, event: MouseEvent) => {
+const onContextMenu = async (row: PlayableRow, event: MouseEvent) => {
   if (!isSelected(row)) {
     clearSelection()
     toggleSelected(row)
 
-    // await a next tick so that the selected items are collected properly
+    // await a tick so that the selected items are collected properly
     await nextTick()
   }
 
-  eventBus.emit('PLAYABLE_CONTEXT_MENU_REQUESTED', event, selectedPlayables.value)
+  openContextMenu<'PLAYABLES'>(PlayableContextMenu, event, {
+    playables: selectedPlayables.value,
+  })
 }
 
 const onPlay = async (playable: Playable) => {

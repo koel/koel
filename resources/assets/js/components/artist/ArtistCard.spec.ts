@@ -1,12 +1,15 @@
 import { screen } from '@testing-library/vue'
-import { describe, expect, it } from 'vitest'
+import type { Mock } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
 import { downloadService } from '@/services/downloadService'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
-import { eventBus } from '@/utils/eventBus'
 import { artistStore } from '@/stores/artistStore'
+import { useContextMenu } from '@/composables/useContextMenu'
+import { assertOpenContextMenu } from '@/__tests__/assertions'
+import ArtistContextMenu from './ArtistContextMenu.vue'
 import Component from './ArtistCard.vue'
 
 describe('artistCard.vue', () => {
@@ -78,11 +81,12 @@ describe('artistCard.vue', () => {
   })
 
   it('requests context menu', async () => {
+    vi.mock('@/composables/useContextMenu')
+    const { openContextMenu } = useContextMenu()
     const { artist } = renderComponent()
-    const emitMock = h.mock(eventBus, 'emit')
     await h.trigger(screen.getByTestId('artist-album-card'), 'contextMenu')
 
-    expect(emitMock).toHaveBeenCalledWith('ARTIST_CONTEXT_MENU_REQUESTED', expect.any(MouseEvent), artist)
+    await assertOpenContextMenu(openContextMenu as Mock, ArtistContextMenu, { artist })
   })
 
   it('if favorite, has a Favorite icon button that undoes favorite state', async () => {

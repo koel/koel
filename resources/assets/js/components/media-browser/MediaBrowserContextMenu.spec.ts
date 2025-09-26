@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import { eventBus } from '@/utils/eventBus'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { queueStore } from '@/stores/queueStore'
 import { playableStore } from '@/stores/playableStore'
@@ -14,12 +13,12 @@ describe('mediaBrowserContextMenu.vue', () => {
     beforeEach: () => queueStore.state.playables = [],
   })
 
-  const renderComponent = async (items: Array<Song | Folder>) => {
-    const rendered = h.render(Component)
-    eventBus.emit('MEDIA_BROWSER_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, items)
-    await h.tick(2)
-
-    return rendered
+  const renderComponent = (items: Array<Song | Folder>) => {
+    return h.render(Component, {
+      props: {
+        items,
+      },
+    })
   }
 
   it('opens the folder if the only item is a folder', async () => {
@@ -50,7 +49,7 @@ describe('mediaBrowserContextMenu.vue', () => {
 
     const items = [...h.factory('song', 2), h.factory('folder')]
 
-    await renderComponent(items)
+    renderComponent(items)
 
     expect(extractReferencesMock).toHaveBeenCalled()
 
@@ -82,7 +81,7 @@ describe('mediaBrowserContextMenu.vue', () => {
 
     const items = [...h.factory('song', 2), h.factory('folder')]
 
-    await renderComponent(items)
+    renderComponent(items)
 
     expect(extractReferencesMock).toHaveBeenCalled()
 
@@ -111,7 +110,7 @@ describe('mediaBrowserContextMenu.vue', () => {
 
     const items = [...h.factory('song', 2), h.factory('folder')]
 
-    await renderComponent(items)
+    renderComponent(items)
 
     expect(extractReferencesMock).toHaveBeenCalled()
 

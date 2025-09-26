@@ -1,28 +1,29 @@
 <template>
-  <ContextMenu ref="base">
-    <li @click="play">Play</li>
-    <li @click="shuffle">Shuffle</li>
-    <li @click="addToQueue">Add to Queue</li>
-    <template v-if="canShowCollaboration">
-      <li class="separator" />
-      <li @click="showCollaborationModal">Collaborate…</li>
-    </template>
+  <ul>
+    <MenuItem @click="play">Play</MenuItem>
+    <MenuItem @click="shuffle">Shuffle</MenuItem>
+    <MenuItem @click="addToQueue">Add to Queue</MenuItem>
+    <MenuItem>
+      Share
+      <template #subMenuItems>
+        <MenuItem @click="showEmbedModal">Embed…</MenuItem>
+        <MenuItem v-if="canShowCollaboration" @click="showCollaborationModal">Collaborate…</MenuItem>
+      </template>
+    </MenuItem>
     <template v-if="allowDownload">
-      <li class="separator" />
-      <li @click="download">Download</li>
+      <Separator />
+      <MenuItem @click="download">Download</MenuItem>
     </template>
-    <li class="separator" />
-    <li @click="showEmbedModal">Embed…</li>
     <template v-if="canEditPlaylist">
-      <li class="separator" />
-      <li @click="edit">Edit…</li>
-      <li @click="destroy">Delete</li>
+      <Separator />
+      <MenuItem @click="edit">Edit…</MenuItem>
+      <MenuItem @click="destroy">Delete</MenuItem>
     </template>
-  </ContextMenu>
+  </ul>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, toRef } from 'vue'
+import { computed, toRef, toRefs } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { useRouter } from '@/composables/useRouter'
 import { useContextMenu } from '@/composables/useContextMenu'
@@ -37,33 +38,35 @@ import { useDialogBox } from '@/composables/useDialogBox'
 import { commonStore } from '@/stores/commonStore'
 import { downloadService } from '@/services/downloadService'
 
-const { base, ContextMenu, open, trigger } = useContextMenu()
+const props = defineProps<{ playlist: Playlist }>()
+const { playlist } = toRefs(props)
+
+const { MenuItem, Separator, trigger } = useContextMenu()
 const { go, url } = useRouter()
 const { toastWarning, toastSuccess } = useMessageToaster()
 const { isPlus } = useKoelPlus()
 const { currentUserCan } = usePolicies()
 const { showConfirmDialog } = useDialogBox()
 
-const playlist = ref<Playlist>()
 const allowDownload = toRef(commonStore.state, 'allows_download')
 
-const canEditPlaylist = computed(() => currentUserCan.editPlaylist(playlist.value!))
+const canEditPlaylist = computed(() => currentUserCan.editPlaylist(playlist.value))
 const canShowCollaboration = computed(() => isPlus.value && !playlist.value?.is_smart)
 
-const edit = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist.value!))
+const edit = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist.value))
 
 const destroy = () => trigger(async () => {
-  if (await showConfirmDialog(`Delete the playlist "${playlist.value!.name}"?`)) {
-    await playlistStore.delete(playlist.value!)
-    toastSuccess(`Playlist "${playlist.value!.name}" deleted.`)
-    eventBus.emit('PLAYLIST_DELETED', playlist.value!)
+  if (await showConfirmDialog(`Delete the playlist "${playlist.value.name}"?`)) {
+    await playlistStore.delete(playlist.value)
+    toastSuccess(`Playlist "${playlist.value.name}" deleted.`)
+    eventBus.emit('PLAYLIST_DELETED', playlist.value)
   }
 })
 
-const download = () => trigger(() => downloadService.fromPlaylist(playlist.value!))
+const download = () => trigger(() => downloadService.fromPlaylist(playlist.value))
 
 const play = () => trigger(async () => {
-  const songs = await playableStore.fetchForPlaylist(playlist.value!)
+  const songs = await playableStore.fetchForPlaylist(playlist.value)
 
   if (songs.length) {
     playback().queueAndPlay(songs)
@@ -74,7 +77,7 @@ const play = () => trigger(async () => {
 })
 
 const shuffle = () => trigger(async () => {
-  const songs = await playableStore.fetchForPlaylist(playlist.value!)
+  const songs = await playableStore.fetchForPlaylist(playlist.value)
 
   if (songs.length) {
     playback().queueAndPlay(songs, true)
@@ -85,7 +88,7 @@ const shuffle = () => trigger(async () => {
 })
 
 const addToQueue = () => trigger(async () => {
-  const songs = await playableStore.fetchForPlaylist(playlist.value!)
+  const songs = await playableStore.fetchForPlaylist(playlist.value)
 
   if (songs.length) {
     queueStore.queueAfterCurrent(songs)
@@ -95,11 +98,6 @@ const addToQueue = () => trigger(async () => {
   }
 })
 
-const showCollaborationModal = () => trigger(() => eventBus.emit('MODAL_SHOW_PLAYLIST_COLLABORATION', playlist.value!))
-const showEmbedModal = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_EMBED_FORM', playlist.value!))
-
-eventBus.on('PLAYLIST_CONTEXT_MENU_REQUESTED', async ({ pageX, pageY }, _playlist) => {
-  playlist.value = _playlist
-  await open(pageY, pageX)
-})
+const showCollaborationModal = () => trigger(() => eventBus.emit('MODAL_SHOW_PLAYLIST_COLLABORATION', playlist.value))
+const showEmbedModal = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_EMBED_FORM', playlist.value))
 </script>

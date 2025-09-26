@@ -1,12 +1,15 @@
 import { screen } from '@testing-library/vue'
-import { describe, expect, it } from 'vitest'
+import type { Mock } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
 import { downloadService } from '@/services/downloadService'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
-import { eventBus } from '@/utils/eventBus'
 import { albumStore } from '@/stores/albumStore'
+import { useContextMenu } from '@/composables/useContextMenu'
+import { assertOpenContextMenu } from '@/__tests__/assertions'
+import AlbumContextMenu from './AlbumContextMenu.vue'
 import Component from './AlbumCard.vue'
 
 describe('albumCard', () => {
@@ -83,11 +86,12 @@ describe('albumCard', () => {
   })
 
   it('requests context menu', async () => {
+    vi.mock('@/composables/useContextMenu')
+    const { openContextMenu } = useContextMenu()
     const { album } = renderComponent()
-    const emitMock = h.mock(eventBus, 'emit')
     await h.trigger(screen.getByTestId('artist-album-card'), 'contextMenu')
 
-    expect(emitMock).toHaveBeenCalledWith('ALBUM_CONTEXT_MENU_REQUESTED', expect.any(MouseEvent), album)
+    await assertOpenContextMenu(openContextMenu as Mock, AlbumContextMenu, { album })
   })
 
   it('shows release year', () => {

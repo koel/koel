@@ -85,11 +85,13 @@ import { pluralize } from '@/utils/formatters'
 import { playlistStore } from '@/stores/playlistStore'
 import { playableStore } from '@/stores/playableStore'
 import { playlistCollaborationService } from '@/services/playlistCollaborationService'
+import { defineAsyncComponent } from '@/utils/helpers'
 import { useRouter } from '@/composables/useRouter'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { usePlaylistContentManagement } from '@/composables/usePlaylistContentManagement'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
+import { useContextMenu } from '@/composables/useContextMenu'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -99,6 +101,8 @@ import ScreenBase from '@/components/screens/ScreenBase.vue'
 import ScreenHeaderSkeleton from '@/components/ui/ScreenHeaderSkeleton.vue'
 import PlayableListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
 import Btn from '@/components/ui/form/Btn.vue'
+
+const ContextMenu = defineAsyncComponent(() => import('@/components/playlist/PlaylistContextMenu.vue'))
 
 // Since this component is responsible for all playlists, we keep track of the state for each,
 // so that filter and sort settings are preserved when switching between them.
@@ -110,6 +114,7 @@ interface PlaylistScreenState {
 }
 
 const { triggerNotFound, getRouteParam, onScreenActivated, go, url } = useRouter()
+const { openContextMenu } = useContextMenu()
 
 const states = new Map<Playlist['id'], PlaylistScreenState>()
 
@@ -218,7 +223,7 @@ watch(playlistId, async id => {
   playlist.value = playlistStore.byId(id)
 
   if (!playlist.value) {
-    return await triggerNotFound()
+    return triggerNotFound()
   }
 
   context.entity = playlist.value
@@ -248,9 +253,9 @@ watch(playlistId, async id => {
 
 onScreenActivated('Playlist', () => (playlistId.value = getRouteParam('id')!))
 
-const requestContextMenu = (event: MouseEvent) => {
-  eventBus.emit('PLAYLIST_CONTEXT_MENU_REQUESTED', event, playlist.value!)
-}
+const requestContextMenu = (event: MouseEvent) => openContextMenu<'PLAYLIST'>(ContextMenu, event, {
+  playlist: playlist.value!,
+})
 
 eventBus
   .on('PLAYLIST_UPDATED', async ({ id }) => id === playlistId.value && await fetchDetails())

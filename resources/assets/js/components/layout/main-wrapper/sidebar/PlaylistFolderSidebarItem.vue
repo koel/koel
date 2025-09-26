@@ -43,25 +43,30 @@
 <script lang="ts" setup>
 import { faFolder, faFolderOpen } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRefs } from 'vue'
+import { defineAsyncComponent } from '@/utils/helpers'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { playlistStore } from '@/stores/playlistStore'
-import { eventBus } from '@/utils/eventBus'
 import { useDraggable, useDroppable } from '@/composables/useDragAndDrop'
+import { useContextMenu } from '@/composables/useContextMenu'
 
 import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
 import SidebarItem from './SidebarItem.vue'
 
 const props = defineProps<{ folder: PlaylistFolder }>()
+
+const ContextMenu = defineAsyncComponent(() => import('@/components/playlist/PlaylistFolderContextMenu.vue'))
+
 const { folder } = toRefs(props)
+
+const { acceptsDrop, resolveDroppedValue } = useDroppable(['playlist'])
+const { startDragging } = useDraggable('playlist-folder')
+const { openContextMenu } = useContextMenu()
 
 const opened = ref(false)
 const droppable = ref(false)
 const droppableOnHatch = ref(false)
 
 const playlistsInFolder = computed(() => playlistStore.byFolder(folder.value))
-
-const { acceptsDrop, resolveDroppedValue } = useDroppable(['playlist'])
-const { startDragging } = useDraggable('playlist-folder')
 
 const toggle = () => (opened.value = !opened.value)
 
@@ -123,11 +128,9 @@ const onDropOnHatch = async (event: DragEvent) => {
   await playlistFolderStore.removePlaylistFromFolder(folder.value, playlist)
 }
 
-const onContextMenu = (event: MouseEvent) => eventBus.emit(
-  'PLAYLIST_FOLDER_CONTEXT_MENU_REQUESTED',
-  event,
-  folder.value,
-)
+const onContextMenu = (event: MouseEvent) => openContextMenu<'PLAYLIST_FOLDER'>(ContextMenu, event, {
+  folder: folder.value,
+})
 </script>
 
 <style lang="postcss" scoped>

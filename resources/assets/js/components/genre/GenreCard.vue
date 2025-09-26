@@ -30,17 +30,23 @@
 import { computed } from 'vue'
 import { pluralize, textToHsl } from '@/utils/formatters'
 import { useRouter } from '@/composables/useRouter'
-import { eventBus } from '@/utils/eventBus'
 import { useDraggable } from '@/composables/useDragAndDrop'
+import { useContextMenu } from '@/composables/useContextMenu'
+import { defineAsyncComponent } from '@/utils/helpers'
 
 const props = defineProps<{ genre: Genre }>()
 
+const ContextMenu = defineAsyncComponent(() => import('@/components/genre/GenreContextMenu.vue'))
+
 const { url } = useRouter()
 const { startDragging } = useDraggable('genre')
+const { openContextMenu } = useContextMenu()
 
 const color = computed(() => textToHsl(props.genre.id))
 
-const onContextMenu = (e: MouseEvent) => eventBus.emit('GENRE_CONTEXT_MENU_REQUESTED', e, props.genre)
+const onContextMenu = (event: MouseEvent) => openContextMenu<'GENRE'>(ContextMenu, event, {
+  genre: props.genre,
+})
 
 const onDragStart = (event: DragEvent) => startDragging(event, props.genre)
 </script>

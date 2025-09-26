@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import { eventBus } from '@/utils/eventBus'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { playableStore } from '@/stores/playableStore'
-import Component from './GenreContextMenu.vue'
 import { queueStore } from '@/stores/queueStore'
+import Router from '@/router'
+import Component from './GenreContextMenu.vue'
 
 describe('genreContextMenu.vue', () => {
   const h = createHarness()
@@ -15,9 +15,11 @@ describe('genreContextMenu.vue', () => {
       name: 'Classical',
     })
 
-    const rendered = h.actingAsAdmin().render(Component)
-    eventBus.emit('GENRE_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, genre)
-    await h.tick(2)
+    const rendered = h.render(Component, {
+      props: {
+        genre,
+      },
+    })
 
     return {
       ...rendered,
@@ -33,6 +35,7 @@ describe('genreContextMenu.vue', () => {
     const songs = h.factory('song', 10)
     const fetchMock = h.mock(playableStore, 'fetchSongsByGenre').mockResolvedValue(songs)
     const playMock = h.mock(playbackService, 'queueAndPlay')
+    const goMock = h.mock(Router, 'go')
 
     const { genre } = await renderComponent()
     await h.user.click(screen.getByText('Play'))
@@ -40,6 +43,7 @@ describe('genreContextMenu.vue', () => {
 
     expect(fetchMock).toHaveBeenCalledWith(genre)
     expect(playMock).toHaveBeenCalledWith(songs)
+    expect(goMock).toHaveBeenCalledWith('queue')
   })
 
   it('shuffles all', async () => {
@@ -48,6 +52,7 @@ describe('genreContextMenu.vue', () => {
     const songs = h.factory('song', 10)
     const fetchMock = h.mock(playableStore, 'fetchSongsByGenre').mockResolvedValue(songs)
     const playMock = h.mock(playbackService, 'queueAndPlay')
+    const goMock = h.mock(Router, 'go')
 
     const { genre } = await renderComponent()
     await h.user.click(screen.getByText('Shuffle'))
@@ -55,6 +60,7 @@ describe('genreContextMenu.vue', () => {
 
     expect(fetchMock).toHaveBeenCalledWith(genre, true)
     expect(playMock).toHaveBeenCalledWith(songs)
+    expect(goMock).toHaveBeenCalledWith('queue')
   })
 
   it('adds to queue', async () => {

@@ -68,18 +68,22 @@ import { playableStore as episodeStore } from '@/stores/playableStore'
 import { queueStore } from '@/stores/queueStore'
 import { podcastStore } from '@/stores/podcastStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
-import { eventBus } from '@/utils/eventBus'
+import { defineAsyncComponent } from '@/utils/helpers'
 import { playback } from '@/services/playbackManager'
 import { useRouter } from '@/composables/useRouter'
 import { useErrorHandler } from '@/composables/useErrorHandler'
+import { useContextMenu } from '@/composables/useContextMenu'
 
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import ScreenHeaderSkeleton from '@/components/ui/ScreenHeaderSkeleton.vue'
-import FavoriteButton from '@/components/ui/FavoriteButton.vue'
+
+const FavoriteButton = defineAsyncComponent(() => import('@/components/ui/FavoriteButton.vue'))
+const ContextMenu = defineAsyncComponent(() => import('@/components/playable/PlayableContextMenu.vue'))
 
 const { onScreenActivated, getRouteParam, triggerNotFound, url } = useRouter()
+const { openContextMenu } = useContextMenu()
 
 const loading = ref(false)
 const episodeId = ref<Episode['id']>()
@@ -146,9 +150,9 @@ watch(episodeId, async id => {
   }
 })
 
-const requestContextMenu = (event: MouseEvent) => {
-  eventBus.emit('PLAYABLE_CONTEXT_MENU_REQUESTED', event, episode.value!)
-}
+const requestContextMenu = (event: MouseEvent) => openContextMenu<'PLAYABLES'>(ContextMenu, event, {
+  playables: [episode.value!],
+})
 
 const toggleFavorite = () => episodeStore.toggleFavorite(episode.value!)
 

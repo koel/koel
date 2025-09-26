@@ -91,6 +91,8 @@ import { useFuzzySearch } from '@/composables/useFuzzySearch'
 import { playback } from '@/services/playbackManager'
 import { FilterKeywordsKey } from '@/symbols'
 import { eventBus } from '@/utils/eventBus'
+import { useContextMenu } from '@/composables/useContextMenu'
+import { defineAsyncComponent } from '@/utils/helpers'
 
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -101,7 +103,9 @@ import Btn from '@/components/ui/form/Btn.vue'
 import ListFilter from '@/components/ui/ListFilter.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'
 import EpisodeItemSkeleton from '@/components/podcast/EpisodeItemSkeleton.vue'
-import FavoriteButton from '@/components/ui/FavoriteButton.vue'
+
+const FavoriteButton = defineAsyncComponent(() => import('@/components/ui/FavoriteButton.vue'))
+const ContextMenu = defineAsyncComponent(() => import('@/components/podcast/PodcastContextMenu.vue'))
 
 const { getRouteParam, go, triggerNotFound, url } = useRouter()
 const { handleHttpError } = useErrorHandler()
@@ -123,6 +127,7 @@ const keywords = ref('')
 provide(FilterKeywordsKey, keywords)
 
 const { search } = useFuzzySearch<Episode>(episodes, ['title', 'episode_description'])
+const { openContextMenu } = useContextMenu()
 
 const fetchDetails = async (id: Podcast['id']) => {
   [podcast.value, episodes.value] = await Promise.all([
@@ -165,9 +170,9 @@ const maybeExpandDescription = () => {
   descriptionEl.value.classList.toggle('line-clamp-3')
 }
 
-const requestContextMenu = (event: MouseEvent) => {
-  eventBus.emit('PODCAST_CONTEXT_MENU_REQUESTED', event, podcast.value!)
-}
+const requestContextMenu = (event: MouseEvent) => openContextMenu<'PODCAST'>(ContextMenu, event, {
+  podcast: podcast.value!,
+})
 
 const descriptionTooltip = computed(() => {
   if (!description.overflown) {

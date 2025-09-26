@@ -21,8 +21,12 @@ describe('playableContextMenu.vue', () => {
   const renderComponent = async (playables?: MaybeArray<Playable>) => {
     playables = playables ? arrayify(playables) : h.factory('song', 5)
 
-    const rendered = h.render(Component)
-    eventBus.emit('PLAYABLE_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, playables)
+    const rendered = h.render(Component, {
+      props: {
+        playables,
+      },
+    })
+
     await h.tick(2)
 
     return {
@@ -75,7 +79,7 @@ describe('playableContextMenu.vue', () => {
     const song = h.factory('song')
     await renderComponent(song)
 
-    await h.user.click(screen.getByText('Go to Album'))
+    await h.user.click(screen.getByText(song.album_name))
 
     expect(goMock).toHaveBeenCalledWith(`/#/albums/${song.album_id}`)
   })
@@ -85,7 +89,7 @@ describe('playableContextMenu.vue', () => {
     const song = h.factory('song')
     await renderComponent(song)
 
-    await h.user.click(screen.getByText('Go to Artist'))
+    await h.user.click(screen.getByText(song.artist_name))
 
     expect(goMock).toHaveBeenCalledWith(`/#/artists/${song.artist_id}`)
   })
@@ -95,7 +99,7 @@ describe('playableContextMenu.vue', () => {
     const episode = h.factory('episode')
     await renderComponent(episode)
 
-    await h.user.click(screen.getByText('Go to Podcast'))
+    await h.user.click(screen.getByText('Podcast'))
 
     expect(goMock).toHaveBeenCalledWith(`/#/podcasts/${episode.podcast_id}`)
   })
@@ -105,7 +109,7 @@ describe('playableContextMenu.vue', () => {
     const episode = h.factory('episode')
     await renderComponent(episode)
 
-    await h.user.click(screen.getByText('See Description'))
+    await h.user.click(screen.getByText('Episode'))
 
     expect(goMock).toHaveBeenCalledWith(`/#/episodes/${episode.id}`)
   })
@@ -272,20 +276,20 @@ describe('playableContextMenu.vue', () => {
 
   it('has an option to copy shareable URL in Community edition', async () => {
     await renderComponent(h.factory('song'))
-    screen.getByText('Copy Shareable URL')
+    screen.getByText('Copy URL')
   })
 
   it('has an option to copy shareable URL if song is public in Plus edition', async () => {
     await h.withPlusEdition(async () => {
       await renderComponent(h.factory('song', { is_public: true }))
-      screen.getByText('Copy Shareable URL')
+      screen.getByText('Copy URL')
     })
   })
 
   it('does not have an option to share if song is private in Plus edition', async () => {
     await h.withPlusEdition(async () => {
       await renderComponent(h.factory('song', { is_public: false }))
-      expect(screen.queryByText('Copy Shareable URL')).toBeNull()
+      expect(screen.queryByText('Copy URL')).toBeNull()
     })
   })
 

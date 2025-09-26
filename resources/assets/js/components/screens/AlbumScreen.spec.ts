@@ -1,5 +1,6 @@
 import { screen, waitFor } from '@testing-library/vue'
-import { describe, expect, it } from 'vitest'
+import type { Mock } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
@@ -7,6 +8,9 @@ import { playableStore } from '@/stores/playableStore'
 import { acl } from '@/services/acl'
 import { eventBus } from '@/utils/eventBus'
 import Router from '@/router'
+import { useContextMenu } from '@/composables/useContextMenu'
+import { assertOpenContextMenu } from '@/__tests__/assertions'
+import AlbumContextMenu from '@/components/album/AlbumContextMenu.vue'
 import Component from './AlbumScreen.vue'
 
 describe('albumScreen.vue', () => {
@@ -111,12 +115,13 @@ describe('albumScreen.vue', () => {
   })
 
   it('requests Actions menu', async () => {
+    vi.mock('@/composables/useContextMenu')
+    const { openContextMenu } = useContextMenu()
     const { album } = await renderComponent()
-    const emitMock = h.mock(eventBus, 'emit')
 
     await waitFor(async () => {
       await h.user.click(screen.getByRole('button', { name: 'More Actions' }))
-      expect(emitMock).toHaveBeenCalledWith('ALBUM_CONTEXT_MENU_REQUESTED', expect.any(MouseEvent), album)
+      await assertOpenContextMenu(openContextMenu as Mock, AlbumContextMenu, { album })
     })
   })
 })

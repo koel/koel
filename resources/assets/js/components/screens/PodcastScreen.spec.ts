@@ -1,5 +1,6 @@
 import { screen, waitFor } from '@testing-library/vue'
-import { describe, expect, it } from 'vitest'
+import type { Mock } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
 import { podcastStore } from '@/stores/podcastStore'
 import { playableStore as episodeStore } from '@/stores/playableStore'
@@ -7,6 +8,9 @@ import { playbackService } from '@/services/QueuePlaybackService'
 import { queueStore } from '@/stores/queueStore'
 import Router from '@/router'
 import { eventBus } from '@/utils/eventBus'
+import { useContextMenu } from '@/composables/useContextMenu'
+import { assertOpenContextMenu } from '@/__tests__/assertions'
+import PodcastContextMenu from '@/components/podcast/PodcastContextMenu.vue'
 import Component from './PodcastScreen.vue'
 
 describe('podcastScreen.vue', () => {
@@ -117,8 +121,9 @@ describe('podcastScreen.vue', () => {
     const { podcast } = await renderComponent(h.factory('podcast', { favorite: true }))
     const toggleFavoriteMock = h.mock(podcastStore, 'toggleFavorite')
 
-    await h.tick()
-    await h.user.click(screen.getByRole('button', { name: 'Undo Favorite' }))
+    await waitFor(async () =>
+      await h.user.click(screen.getByRole('button', { name: 'Undo Favorite' })),
+    )
 
     expect(toggleFavoriteMock).toHaveBeenCalledWith(podcast)
   })
@@ -129,12 +134,13 @@ describe('podcastScreen.vue', () => {
   })
 
   it('requests Actions menu', async () => {
+    vi.mock('@/composables/useContextMenu')
+    const { openContextMenu } = useContextMenu()
     const { podcast } = await renderComponent()
-    const emitMock = h.mock(eventBus, 'emit')
 
     await waitFor(async () => {
       await h.user.click(screen.getByRole('button', { name: 'More Actions' }))
-      expect(emitMock).toHaveBeenCalledWith('PODCAST_CONTEXT_MENU_REQUESTED', expect.any(MouseEvent), podcast)
+      await assertOpenContextMenu(openContextMenu as Mock, PodcastContextMenu, { podcast })
     })
   })
 

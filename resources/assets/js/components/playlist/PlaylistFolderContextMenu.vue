@@ -1,22 +1,25 @@
 <template>
-  <ContextMenu ref="base">
-    <template v-if="folder">
-      <template v-if="playable">
-        <li @click="play">Play All</li>
-        <li @click="shuffle">Shuffle All</li>
-        <li class="separator" />
-      </template>
-      <li @click="createPlaylist">New Playlist…</li>
-      <li @click="createSmartPlaylist">New Smart Playlist…</li>
-      <li class="separator" />
-      <li @click="rename">Rename</li>
-      <li @click="destroy">Delete</li>
+  <ul>
+    <template v-if="playable">
+      <MenuItem @click="play">Play All</MenuItem>
+      <MenuItem @click="shuffle">Shuffle All</MenuItem>
+      <Separator />
     </template>
-  </ContextMenu>
+    <MenuItem>
+      Add
+      <template #subMenuItems>
+        <MenuItem @click="createPlaylist">New Playlist…</MenuItem>
+        <MenuItem @click="createSmartPlaylist">New Smart Playlist…</MenuItem>
+      </template>
+    </MenuItem>
+    <Separator />
+    <MenuItem @click="rename">Rename</MenuItem>
+    <MenuItem @click="destroy">Delete</MenuItem>
+  </ul>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { computed, toRefs } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { playlistStore } from '@/stores/playlistStore'
 import { useRouter } from '@/composables/useRouter'
@@ -27,12 +30,13 @@ import { playback } from '@/services/playbackManager'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { useDialogBox } from '@/composables/useDialogBox'
 
-const { base, ContextMenu, open, trigger } = useContextMenu()
+const props = defineProps<{ folder: PlaylistFolder }>()
+const { folder } = toRefs(props)
+
+const { MenuItem, Separator, trigger } = useContextMenu()
 const { go, url } = useRouter()
 const { toastWarning, toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
-
-const folder = ref<PlaylistFolder>()
 
 const playlistsInFolder = computed(() => folder.value ? playlistStore.byFolder(folder.value) : [])
 const playable = computed(() => playlistsInFolder.value.length > 0)
@@ -68,10 +72,5 @@ const destroy = () => trigger(async () => {
     await playlistFolderStore.delete(folder.value!)
     toastSuccess(`Playlist folder "${folder.value!.name}" deleted.`)
   }
-})
-
-eventBus.on('PLAYLIST_FOLDER_CONTEXT_MENU_REQUESTED', async ({ pageX, pageY }, _folder) => {
-  folder.value = _folder
-  await open(pageY, pageX)
 })
 </script>
