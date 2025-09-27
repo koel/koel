@@ -15,19 +15,12 @@
     </ScreenEmptyState>
 
     <div v-else class="space-y-12">
-      <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-8 md:gap-4">
-        <MostPlayedSongs :loading="loading" data-testid="most-played-songs" />
-        <RecentlyPlayedPlayables :loading="loading" data-testid="recently-played-songs" />
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-8 md:gap-4">
-        <NewAlbums :loading="loading" data-testid="recently-added-albums" />
-        <NewSongs :loading="loading" data-testid="recently-added-songs" />
-      </div>
-
-      <TopArtists :loading="loading" data-testid="most-played-artists" />
+      <RecentlyPlayedPlayables :loading="loading" data-testid="recently-played-songs" />
+      <NewAlbums :loading="loading" data-testid="recently-added-albums" />
+      <NewSongs :loading="loading" data-testid="recently-added-songs" />
       <TopAlbums :loading="loading" data-testid="most-played-albums" />
-
+      <MostPlayedSongs :loading="loading" data-testid="most-played-songs" />
+      <TopArtists :loading="loading" data-testid="most-played-artists" />
       <BtnScrollToTop />
     </div>
   </ScreenBase>

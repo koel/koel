@@ -4,7 +4,7 @@ import { computed, provide, reactive, ref } from 'vue'
 import { commonStore } from '@/stores/commonStore'
 import { queueStore } from '@/stores/queueStore'
 import { playableStore } from '@/stores/playableStore'
-import { arrayify, getPlayableProp, provideReadonly } from '@/utils/helpers'
+import { arrayify, defineAsyncComponent, getPlayableProp, provideReadonly } from '@/utils/helpers'
 import { eventBus } from '@/utils/eventBus'
 import { useFuzzySearch } from '@/composables/useFuzzySearch'
 import { useRouter } from '@/composables/useRouter'
@@ -21,8 +21,8 @@ import {
   SelectedPlayablesKey,
 } from '@/symbols'
 
-import PlayableList from '@/components/playable/playable-list/PlayableList.vue'
-import ThumbnailStack from '@/components/ui/ThumbnailStack.vue'
+const PlayableList = defineAsyncComponent(() => import('@/components/playable/playable-list/PlayableList.vue'))
+const ThumbnailStack = defineAsyncComponent(() => import('@/components/ui/ThumbnailStack.vue'))
 
 export const usePlayableList = (
   playables: Ref<Playable[]>,
@@ -35,6 +35,7 @@ export const usePlayableList = (
     reorderable: false,
     collaborative: false,
     hasCustomOrderSort: false,
+    hasHeader: true,
   }
 
   config = reactive({ ...defaultConfig, ...config })

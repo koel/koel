@@ -1,14 +1,14 @@
 <template>
   <div
     ref="wrapper"
-    class="playable-list-wrap relative flex flex-col flex-1 overflow-auto py-0 px-3 md:p-0"
+    class="playable-list-wrap relative flex flex-col flex-1 overflow-auto py-0"
     data-testid="song-list"
     tabindex="0"
     @keydown.delete.prevent.stop="handleDelete"
     @keydown.enter.prevent.stop="handleEnter"
     @keydown.a.prevent="selectAllWithKeyboard"
   >
-    <PlayableListHeader :content-type="contentType" @sort="sort" />
+    <PlayableListHeader v-if="config.hasHeader" :content-type="contentType" @sort="sort" />
 
     <VirtualScroller
       v-slot="{ item }: { item: PlayableRow }"

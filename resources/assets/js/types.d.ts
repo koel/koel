@@ -530,11 +530,12 @@ interface PlayableListConfig {
   reorderable: boolean
   collaborative: boolean
   hasCustomOrderSort: boolean
+  hasHeader: boolean
 }
 
 interface PlayableListContext {
   entity?: Playlist | Album | Artist | Genre
-  type?: Extract<ScreenName, 'Songs' | 'Album' | 'Artist' | 'Playlist' | 'Favorites' | 'RecentlyPlayed' | 'Queue' | 'Genre' | 'Search.Playables'>
+  type?: Extract<ScreenName, 'Home' | 'Songs' | 'Album' | 'Artist' | 'Playlist' | 'Favorites' | 'RecentlyPlayed' | 'Queue' | 'Genre' | 'Search.Playables'>
 }
 
 type PlayableListSortField =

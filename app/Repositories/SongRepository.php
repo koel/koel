@@ -51,7 +51,7 @@ class SongRepository extends Repository implements ScoutableRepository
     }
 
     /** @return Collection|array<array-key, Song> */
-    public function getRecentlyAdded(int $count = 10, ?User $scopedUser = null): Collection
+    public function getRecentlyAdded(int $count = 8, ?User $scopedUser = null): Collection
     {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
@@ -61,7 +61,7 @@ class SongRepository extends Repository implements ScoutableRepository
     }
 
     /** @return Collection|array<array-key, Song> */
-    public function getMostPlayed(int $count = 7, ?User $scopedUser = null): Collection
+    public function getMostPlayed(int $count = 8, ?User $scopedUser = null): Collection
     {
         return Song::query(user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
@@ -72,7 +72,7 @@ class SongRepository extends Repository implements ScoutableRepository
     }
 
     /** @return Collection|array<array-key, Song> */
-    public function getRecentlyPlayed(int $count = 7, ?User $scopedUser = null): Collection
+    public function getRecentlyPlayed(int $count = 8, ?User $scopedUser = null): Collection
     {
         return Song::query(user: $scopedUser ?? $this->auth->user())
             ->withUserContext()

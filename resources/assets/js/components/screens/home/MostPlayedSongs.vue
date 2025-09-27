@@ -2,18 +2,15 @@
   <HomeScreenBlock>
     <template #header>Most Played</template>
 
-    <ol v-if="loading" class="space-y-3">
-      <li v-for="i in 3" :key="i">
-        <SongCardSkeleton />
-      </li>
-    </ol>
+    <PlayableListSkeleton v-if="loading" class="border border-white/5 rounded-lg" />
     <template v-else>
-      <ol v-if="songs.length" class="space-y-3">
-        <li v-for="song in songs" :key="song.id">
-          <SongCard :playable="song" />
-        </li>
-      </ol>
-      <p v-else class="text-k-text-secondary">You don’t seem to have been playing.</p>
+      <PlayableList
+        v-if="playables.length"
+        ref="playableList"
+        class="border border-white/5 rounded-lg overflow-hidden"
+        @press:enter="onPressEnter"
+      />
+      <p v-else class="text-k-text-secondary">Nothing played as of late.</p>
     </template>
   </HomeScreenBlock>
 </template>
@@ -21,13 +18,23 @@
 <script lang="ts" setup>
 import { toRef, toRefs } from 'vue'
 import { overviewStore } from '@/stores/overviewStore'
+import { usePlayableList } from '@/composables/usePlayableList'
+import { playback } from '@/services/playbackManager'
 
-import SongCard from '@/components/playable/PlayableCard.vue'
-import SongCardSkeleton from '@/components/playable/PlayableCardSkeleton.vue'
 import HomeScreenBlock from '@/components/screens/home/HomeScreenBlock.vue'
+import PlayableListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
 
 const props = withDefaults(defineProps<{ loading?: boolean }>(), { loading: false })
 const { loading } = toRefs(props)
 
-const songs = toRef(overviewStore.state, 'mostPlayedSongs')
+const {
+  PlayableList,
+  playables,
+  playableList,
+  selectedPlayables,
+} = usePlayableList(toRef(overviewStore.state, 'mostPlayedSongs'), {}, {
+  sortable: false,
+})
+
+const onPressEnter = () => selectedPlayables.value.length && playback().play(selectedPlayables.value[0])
 </script>
