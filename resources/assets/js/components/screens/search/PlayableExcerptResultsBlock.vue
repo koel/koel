@@ -15,18 +15,15 @@
       </Btn>
     </template>
 
-    <ul v-if="searching" class="results">
-      <li v-for="i in 6" :key="i">
-        <PlayableCardSkeleton />
-      </li>
-    </ul>
+    <PlayableListSkeleton v-if="searching" class="border border-white/5 rounded-lg" />
     <template v-else>
-      <ul v-if="playables.length" class="results">
-        <li v-for="playable in playables" :key="playable.id">
-          <PlayableCard :playable />
-        </li>
-      </ul>
-      <p v-else>None found.</p>
+      <PlayableList
+        v-if="displayedPlayables.length"
+        ref="playableList"
+        class="border border-white/5 rounded-lg overflow-hidden"
+        @press:enter="onPressEnter"
+      />
+      <p v-else>Nothing found.</p>
     </template>
   </ExcerptResultBlock>
 </template>
@@ -35,16 +32,28 @@
 import { computed, toRefs } from 'vue'
 import { useRouter } from '@/composables/useRouter'
 import { getPlayableCollectionContentType } from '@/utils/typeGuards'
+import { usePlayableList } from '@/composables/usePlayableList'
+import { playback } from '@/services/playbackManager'
 
-import PlayableCardSkeleton from '@/components/playable/PlayableCardSkeleton.vue'
 import ExcerptResultBlock from '@/components/screens/search/ExcerptResultBlock.vue'
-import PlayableCard from '@/components/playable/PlayableCard.vue'
 import Btn from '@/components/ui/form/Btn.vue'
+import PlayableListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
 
 const props = withDefaults(defineProps<{ playables?: Playable[], query?: string, searching?: boolean }>(), {
   playables: () => [],
   query: '',
   searching: false,
+})
+
+const { playables, query, searching } = toRefs(props)
+
+const {
+  PlayableList,
+  playables: displayedPlayables,
+  playableList,
+  selectedPlayables,
+} = usePlayableList(playables, {}, {
+  sortable: false,
 })
 
 const headingText = computed(() => {
@@ -58,9 +67,9 @@ const headingText = computed(() => {
   }
 })
 
-const { playables, query, searching } = toRefs(props)
 const { go, url } = useRouter()
 
+const onPressEnter = () => selectedPlayables.value.length && playback().play(selectedPlayables.value[0])
 const goToSongResults = () => go(`${url('search.playables')}/?q=${query.value}`)
 </script>
 

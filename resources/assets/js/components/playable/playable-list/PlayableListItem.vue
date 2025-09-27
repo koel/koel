@@ -9,7 +9,7 @@
 
     <article
       :class="{ playing, selected: item.selected }"
-      class="song-item group pl-5 playable-list-item"
+      class="song-item group pl-2 playable-list-item"
       data-testid="song-item"
       tabindex="0"
       @dblclick.prevent.stop="play"
