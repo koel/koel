@@ -1,7 +1,10 @@
-import { describe, expect, it } from 'vitest'
+import type { Mock } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import { eventBus } from '@/utils/eventBus'
+import { useContextMenu } from '@/composables/useContextMenu'
+import { assertOpenContextMenu } from '@/__tests__/assertions'
+import GenreContextMenu from '@/components/genre/GenreContextMenu.vue'
 import Component from './GenreCard.vue'
 
 describe('genreCard.vue', () => {
@@ -34,10 +37,11 @@ describe('genreCard.vue', () => {
   it('renders', () => expect(renderComponent().html()).toMatchSnapshot())
 
   it('requests context menu', async () => {
+    vi.mock('@/composables/useContextMenu')
+    const { openContextMenu } = useContextMenu()
     const { genre } = renderComponent()
-    const emitMock = h.mock(eventBus, 'emit')
-    await h.trigger(screen.getByRole('listitem'), 'contextMenu')
 
-    expect(emitMock).toHaveBeenCalledWith('GENRE_CONTEXT_MENU_REQUESTED', expect.any(MouseEvent), genre)
+    await h.trigger(screen.getByRole('listitem'), 'contextMenu')
+    await assertOpenContextMenu(openContextMenu as Mock, GenreContextMenu, { genre })
   })
 })

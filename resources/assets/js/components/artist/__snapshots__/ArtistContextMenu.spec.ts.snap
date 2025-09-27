@@ -1,17 +1,30 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`artistContextMenu.vue > renders 1`] = `
-<nav data-v-6396fbf0="" class="artist-menu menu context-menu select-none shadow" style="top: 42px; left: 420px; bottom: auto; right: auto;" tabindex="0" data-testid="artist-context-menu">
-  <ul data-v-6396fbf0="">
-    <li>Play All</li>
-    <li>Shuffle All</li>
-    <li class="separator"></li>
-    <li>Favorite</li>
+<ul>
+  <li class="">
+    <!--v-if-->Play All
     <!--v-if-->
-    <li class="separator"></li>
-    <li>Download</li>
-    <li class="separator"></li>
-    <li>Embed…</li>
-  </ul>
-</nav>
+  </li>
+  <li class="">
+    <!--v-if-->Shuffle All
+    <!--v-if-->
+  </li>
+  <li class="separator"></li>
+  <li class="">
+    <!--v-if-->Favorite
+    <!--v-if-->
+  </li>
+  <!--v-if-->
+  <li class="separator"></li>
+  <li class="">
+    <!--v-if-->Download
+    <!--v-if-->
+  </li>
+  <li class="separator"></li>
+  <li class="">
+    <!--v-if-->Embed…
+    <!--v-if-->
+  </li>
+</ul>
 `;

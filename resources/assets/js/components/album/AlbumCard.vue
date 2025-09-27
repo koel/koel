@@ -51,7 +51,6 @@
 
 <script lang="ts" setup>
 import { computed, toRef, toRefs } from 'vue'
-import { eventBus } from '@/utils/eventBus'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
@@ -60,6 +59,8 @@ import { downloadService } from '@/services/downloadService'
 import { useDraggable } from '@/composables/useDragAndDrop'
 import { useRouter } from '@/composables/useRouter'
 import { playback } from '@/services/playbackManager'
+import { useContextMenu } from '@/composables/useContextMenu'
+import { defineAsyncComponent } from '@/utils/helpers'
 
 import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
 import ExternalMark from '@/components/ui/ExternalMark.vue'
@@ -74,8 +75,11 @@ const props = withDefaults(defineProps<{
   showReleaseYear: false,
 })
 
+const AlbumContextMenu = defineAsyncComponent(() => import('@/components/album/AlbumContextMenu.vue'))
+
 const { go, url } = useRouter()
 const { startDragging } = useDraggable('album')
+const { openContextMenu } = useContextMenu()
 
 const { album, layout, showReleaseYear } = toRefs(props)
 
@@ -86,13 +90,16 @@ const isStandardArtist = computed(() => artistStore.isStandard(album.value.artis
 const showing = computed(() => !albumStore.isUnknown(album.value))
 
 const shuffle = async () => {
-  playback().queueAndPlay(await playableStore.fetchSongsForAlbum(album.value), true /* shuffled */)
   go(url('queue'))
+  await playback().queueAndPlay(await playableStore.fetchSongsForAlbum(album.value), true /* shuffled */)
 }
 
 const toggleFavorite = () => albumStore.toggleFavorite(album.value)
 
 const download = () => downloadService.fromAlbum(album.value)
 const onDragStart = (event: DragEvent) => startDragging(event, album.value)
-const requestContextMenu = (event: MouseEvent) => eventBus.emit('ALBUM_CONTEXT_MENU_REQUESTED', event, album.value)
+
+const requestContextMenu = (event: MouseEvent) => openContextMenu<'ALBUM'>(AlbumContextMenu, event, {
+  album: album.value,
+})
 </script>

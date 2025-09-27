@@ -4,13 +4,13 @@ import { cleanup, createEvent, fireEvent, render } from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
 import type { UserEvent } from '@testing-library/user-event/dist/types/setup/setup'
 import { afterEach, beforeEach, vi } from 'vitest'
-import { defineComponent, nextTick } from 'vue'
+import { defineComponent, nextTick, shallowRef } from 'vue'
 import factory from '@/__tests__/factory'
 import { DialogBoxStub, MessageToasterStub, OverlayStub } from '@/__tests__/stubs'
 import { commonStore } from '@/stores/commonStore'
 import { userStore } from '@/stores/userStore'
 import { http } from '@/services/http'
-import { DialogBoxKey, MessageToasterKey, OverlayKey, RouterKey } from '@/symbols'
+import { ContextMenuKey, DialogBoxKey, MessageToasterKey, OverlayKey, RouterKey } from '@/symbols'
 import Router from '@/router'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { noop } from '@/utils/helpers'
@@ -203,6 +203,11 @@ class TestHarness {
     setPropIfNotExists(options.global.provide, MessageToasterKey, MessageToasterStub)
     setPropIfNotExists(options.global.provide, OverlayKey, OverlayStub)
     setPropIfNotExists(options.global.provide, RouterKey, this.router)
+
+    setPropIfNotExists(options.global.provide, ContextMenuKey, shallowRef({
+      component: null,
+      position: { top: 0, left: 0 },
+    }))
 
     return options
   }

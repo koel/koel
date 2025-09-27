@@ -26,18 +26,23 @@
 import { faClockRotateLeft, faStar, faUsers, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
 import { ListMusicIcon } from 'lucide-vue-next'
 import { computed, ref, toRefs } from 'vue'
-import { eventBus } from '@/utils/eventBus'
+import { defineAsyncComponent } from '@/utils/helpers'
 import { playableStore } from '@/stores/playableStore'
 import { useRouter } from '@/composables/useRouter'
 import { useDraggable, useDroppable } from '@/composables/useDragAndDrop'
 import { usePlaylistContentManagement } from '@/composables/usePlaylistContentManagement'
+import { useContextMenu } from '@/composables/useContextMenu'
 
 import SidebarItem from '@/components/layout/main-wrapper/sidebar/SidebarItem.vue'
 
 const props = defineProps<{ list: PlaylistLike }>()
+
+const PlaylistContextMenu = defineAsyncComponent(() => import('@/components/playlist/PlaylistContextMenu.vue'))
+
 const { url, isCurrentScreen, getRouteParam } = useRouter()
 const { startDragging } = useDraggable('playlist')
 const { acceptsDrop, resolveDroppedItems } = useDroppable(['playables', 'album', 'artist', 'browser-media'])
+const { openContextMenu } = useContextMenu()
 
 const droppable = ref(false)
 
@@ -85,7 +90,9 @@ const contentEditable = computed(() => {
 const onContextMenu = (event: MouseEvent) => {
   if (isPlaylist(list.value)) {
     event.preventDefault()
-    eventBus.emit('PLAYLIST_CONTEXT_MENU_REQUESTED', event, list.value)
+    openContextMenu<'PLAYLIST'>(PlaylistContextMenu, event, {
+      playlist: list.value,
+    })
   }
 }
 

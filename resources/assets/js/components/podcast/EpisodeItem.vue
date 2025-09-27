@@ -64,8 +64,7 @@
 import DOMPurify from 'dompurify'
 import { orderBy } from 'lodash'
 import { faBookmark, faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
-import { computed, defineAsyncComponent, toRefs } from 'vue'
-import { eventBus } from '@/utils/eventBus'
+import { computed, toRefs } from 'vue'
 import { secondsToHumanReadable } from '@/utils/formatters'
 import { useDraggable } from '@/composables/useDragAndDrop'
 import { formatTimeAgo } from '@vueuse/core'
@@ -74,16 +73,18 @@ import { queueStore } from '@/stores/queueStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useRouter } from '@/composables/useRouter'
 import { playback } from '@/services/playbackManager'
-
-import FavoriteButton from '@/components/ui/FavoriteButton.vue'
+import { defineAsyncComponent } from '@/utils/helpers'
+import { useContextMenu } from '@/composables/useContextMenu'
 
 const props = defineProps<{ episode: Episode, podcast: Podcast }>()
-
+const PlayableContextMenu = defineAsyncComponent(() => import('@/components/playable/PlayableContextMenu.vue'))
 const EpisodeProgress = defineAsyncComponent(() => import('@/components/podcast/EpisodeProgress.vue'))
+const FavoriteButton = defineAsyncComponent(() => import('@/components/ui/FavoriteButton.vue'))
 
 const { episode, podcast } = toRefs(props)
 
 const { startDragging } = useDraggable('playables')
+const { openContextMenu } = useContextMenu()
 const { url } = useRouter()
 
 const publicationDateForHumans = computed(() => {
@@ -115,7 +116,10 @@ const isCurrentEpisode = computed(() => podcast.value.state.current_episode === 
 const description = computed(() => DOMPurify.sanitize(episode.value.episode_description))
 
 const onDragStart = (event: DragEvent) => startDragging(event, episode.value)
-const requestContextMenu = (event: MouseEvent) => eventBus.emit('PLAYABLE_CONTEXT_MENU_REQUESTED', event, episode.value)
+
+const requestContextMenu = (event: MouseEvent) => openContextMenu<'PLAYABLES'>(PlayableContextMenu, event, {
+  playables: [episode.value],
+})
 
 const isPlaying = computed(() => episode.value.playback_state === 'Playing')
 

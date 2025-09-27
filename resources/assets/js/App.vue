@@ -17,7 +17,6 @@
     <MainWrapper />
     <AppFooter />
     <SupportKoel />
-    <ContextMenus />
     <DropZone v-show="showDropZone" @close="showDropZone = false" />
   </main>
 
@@ -28,16 +27,18 @@
   <ResetPasswordForm v-if="layout === 'reset-password'" />
 
   <AppInitializer v-if="authenticated" @error="onInitError" @success="onInitSuccess" />
+
+  <ContextMenu />
 </template>
 
 <script lang="ts" setup>
 import { defineAsyncComponent } from '@/utils/helpers'
-import { computed, onMounted, provide, ref, watch } from 'vue'
+import { computed, onMounted, provide, ref, shallowRef, watch } from 'vue'
 import { useOnline } from '@vueuse/core'
 import { queueStore } from '@/stores/queueStore'
 import { authService } from '@/services/authService'
 import { radioStationStore } from '@/stores/radioStationStore'
-import { CurrentStreamableKey, DialogBoxKey, MessageToasterKey, OverlayKey } from '@/symbols'
+import { ContextMenuKey, CurrentStreamableKey, DialogBoxKey, MessageToasterKey, OverlayKey } from '@/symbols'
 import { useRouter } from '@/composables/useRouter'
 import type { Route } from '@/router'
 
@@ -53,7 +54,7 @@ import AppFooter from '@/components/layout/app-footer/index.vue'
 // GlobalEventListener must NOT be lazy-loaded, so that it can handle LOG_OUT event properly.
 import GlobalEventListeners from '@/components/utils/GlobalEventListeners.vue'
 import AppInitializer from '@/components/utils/AppInitializer.vue'
-import ContextMenus from '@/components/ui/ContextMenus.vue'
+import ContextMenu from '@/components/ui/context-menu/ContextMenu.vue'
 
 const HotkeyListener = defineAsyncComponent(() => import('@/components/utils/HotkeyListener.vue'))
 const LoginForm = defineAsyncComponent(() => import('@/components/auth/LoginForm.vue'))
@@ -147,6 +148,11 @@ provide(OverlayKey, overlay)
 provide(DialogBoxKey, dialog)
 provide(MessageToasterKey, toaster)
 provide(CurrentStreamableKey, currentStreamable)
+
+provide(ContextMenuKey, shallowRef({
+  component: null,
+  position: { top: 0, left: 0 },
+}))
 </script>
 
 <style lang="postcss">

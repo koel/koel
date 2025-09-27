@@ -101,7 +101,8 @@
 
 <script lang="ts" setup>
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
-import { computed, defineAsyncComponent, ref } from 'vue'
+import { computed, ref } from 'vue'
+import { defineAsyncComponent } from '@/utils/helpers'
 import { eventBus } from '@/utils/eventBus'
 import { pluralize } from '@/utils/formatters'
 import { albumStore } from '@/stores/albumStore'
@@ -113,6 +114,7 @@ import { usePlayableListControls } from '@/composables/usePlayableListControls'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 import { useRouter } from '@/composables/useRouter'
 import { usePolicies } from '@/composables/usePolicies'
+import { useContextMenu } from '@/composables/useContextMenu'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ArtistThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
@@ -128,6 +130,7 @@ const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCar
 const ArtistEventList = defineAsyncComponent(() => import('@/components/artist/ArtistEventList.vue'))
 const AlbumCardSkeleton = defineAsyncComponent(() => import('@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'))
 const FavoriteButton = defineAsyncComponent(() => import('@/components/ui/FavoriteButton.vue'))
+const ArtistContextMenu = defineAsyncComponent(() => import('@/components/artist/ArtistContextMenu.vue'))
 
 const validTabs = ['songs', 'albums', 'information', 'events'] as const
 type Tab = typeof validTabs[number]
@@ -136,6 +139,7 @@ const { PlayableListControls: SongListControls, config } = usePlayableListContro
 const { useLastfm, useMusicBrainz, useTicketmaster } = useThirdPartyServices()
 const { getRouteParam, go, onScreenActivated, onRouteChanged, url, triggerNotFound } = useRouter()
 const { currentUserCan } = usePolicies()
+const { openContextMenu } = useContextMenu()
 
 const activeTab = ref<Tab>('songs')
 const artist = ref<Artist>()
@@ -185,7 +189,7 @@ const fetchScreenData = async () => {
     ])
 
     if (!artist.value) {
-      await triggerNotFound()
+      triggerNotFound()
       return
     }
 
@@ -197,7 +201,7 @@ const fetchScreenData = async () => {
     editable.value = await currentUserCan.editArtist(artist.value!)
   } catch (error: unknown) {
     if (error?.status === 404) {
-      await triggerNotFound()
+      triggerNotFound()
       return
     }
 
@@ -210,9 +214,9 @@ const fetchScreenData = async () => {
 onScreenActivated('Artist', () => fetchScreenData())
 onRouteChanged(route => route.name === 'artists.show' && fetchScreenData())
 
-const requestContextMenu = (event: MouseEvent) => {
-  eventBus.emit('ARTIST_CONTEXT_MENU_REQUESTED', event, artist.value!)
-}
+const requestContextMenu = (event: MouseEvent) => openContextMenu<'ARTIST'>(ArtistContextMenu, event, {
+  artist: artist.value!,
+})
 
 eventBus.on('SONGS_UPDATED', result => {
   // After songs are updated, check if the current artist still exists.

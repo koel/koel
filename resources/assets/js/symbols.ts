@@ -1,4 +1,4 @@
-import type { DeepReadonly, InjectionKey, Ref } from 'vue'
+import type { Component, DeepReadonly, InjectionKey, Ref } from 'vue'
 import type Overlay from '@/components/ui/Overlay.vue'
 import type DialogBox from '@/components/ui/DialogBox.vue'
 import type MessageToaster from '@/components/ui/message-toaster/MessageToaster.vue'
@@ -10,6 +10,11 @@ export const RouterKey: InjectionKey<Router> = Symbol('Router')
 export const OverlayKey: InjectionKey<Ref<InstanceType<typeof Overlay>>> = Symbol('Overlay')
 export const DialogBoxKey: InjectionKey<Ref<InstanceType<typeof DialogBox>>> = Symbol('DialogBox')
 export const MessageToasterKey: InjectionKey<Ref<InstanceType<typeof MessageToaster>>> = Symbol('MessageToaster')
+export const ContextMenuKey: InjectionKey<Ref<{
+  component: Component | null
+  position: { top: number, left: number }
+  props?: Record<string, any>
+}>> = Symbol('ContextMenu')
 
 export const FilterKeywordsKey: InjectionKey<Ref<string>> = Symbol('PlayableListFilterKeywords')
 

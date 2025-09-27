@@ -1,4 +1,3 @@
-import type { Ref } from 'vue'
 import type { SongUpdateResult } from '@/stores/playableStore'
 
 export interface Events {
@@ -7,19 +6,6 @@ export interface Events {
   FOCUS_SEARCH_FIELD: () => void
   PLAY_YOUTUBE_VIDEO: (payload: { id: string, title: string }) => void
   SEARCH_KEYWORDS_CHANGED: (keywords: string) => void
-
-  PLAYABLE_CONTEXT_MENU_REQUESTED: (event: MouseEvent, playables: MaybeArray<Playable>) => void
-  ALBUM_CONTEXT_MENU_REQUESTED: (event: MouseEvent, album: Album) => void
-  ARTIST_CONTEXT_MENU_REQUESTED: (event: MouseEvent, artist: Artist) => void
-  PODCAST_CONTEXT_MENU_REQUESTED: (event: MouseEvent, podcast: Podcast) => void
-  RADIO_STATION_CONTEXT_MENU_REQUESTED: (event: MouseEvent, station: RadioStation) => void
-  CREATE_NEW_PLAYLIST_CONTEXT_MENU_REQUESTED: ({ top, left }: { top: number, left: number }) => void
-  PLAYLIST_CONTEXT_MENU_REQUESTED: (event: MouseEvent, playlist: Playlist) => void
-  PLAYLIST_FOLDER_CONTEXT_MENU_REQUESTED: (event: MouseEvent, playlistFolder: PlaylistFolder) => void
-  MEDIA_BROWSER_CONTEXT_MENU_REQUESTED: (event: MouseEvent, items: Array<Folder | Song>) => void
-  GENRE_CONTEXT_MENU_REQUESTED: (event: MouseEvent, genre: Genre) => void
-  USER_CONTEXT_MENU_REQUESTED: (event: MouseEvent, user: User) => void
-  CONTEXT_MENU_OPENED: (el: Ref<HTMLElement> | HTMLElement) => void
 
   FULLSCREEN_TOGGLE: () => void
   PLAYBACK_STARTED: (playable: Playable) => void

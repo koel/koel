@@ -1,11 +1,9 @@
 <template>
-  <ContextMenu ref="base">
-    <li data-testid="playlist-context-menu-create-simple" @click="onItemClicked('new-playlist')">New Playlist…</li>
-    <li data-testid="playlist-context-menu-create-smart" @click="onItemClicked('new-smart-playlist')">
-      New Smart Playlist…
-    </li>
-    <li data-testid="playlist-context-menu-create-folder" @click="onItemClicked('new-folder')">New Folder…</li>
-  </ContextMenu>
+  <ul>
+    <MenuItem @click="onItemClicked('new-playlist')">New Playlist…</MenuItem>
+    <MenuItem @click="onItemClicked('new-smart-playlist')">New Smart Playlist…</MenuItem>
+    <MenuItem @click="onItemClicked('new-folder')">New Folder…</MenuItem>
+  </ul>
 </template>
 
 <script lang="ts" setup>
@@ -13,7 +11,7 @@ import { useContextMenu } from '@/composables/useContextMenu'
 import { eventBus } from '@/utils/eventBus'
 import type { Events } from '@/config/events'
 
-const { base, ContextMenu, open, trigger } = useContextMenu()
+const { MenuItem, trigger } = useContextMenu()
 
 type Action = 'new-playlist' | 'new-smart-playlist' | 'new-folder'
 
@@ -24,6 +22,4 @@ const actionToEventMap: Record<Action, keyof Events> = {
 }
 
 const onItemClicked = (key: keyof typeof actionToEventMap) => trigger(() => eventBus.emit(actionToEventMap[key]))
-
-eventBus.on('CREATE_NEW_PLAYLIST_CONTEXT_MENU_REQUESTED', async ({ top, left }) => await open(top, left))
 </script>

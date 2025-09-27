@@ -1,81 +1,138 @@
 <template>
-  <ContextMenu ref="base" data-testid="playable-context-menu" extra-class="playable-menu">
+  <ul>
     <template v-if="onlyOneSelected">
-      <li @click.stop.prevent="doPlayback">
-        <span v-if="firstSongPlaying">Pause</span>
-        <span v-else>Play</span>
-      </li>
-      <li class="separator" />
-      <template v-if="isSong(playables[0])">
-        <li @click="viewAlbum(playables[0])">Go to Album</li>
-        <li @click="viewArtist(playables[0])">Go to Artist</li>
-      </template>
-      <template v-else>
-        <li @click="viewPodcast(playables[0] as Episode)">Go to Podcast</li>
-        <li @click="viewEpisode(playables[0] as Episode)">See Description</li>
-        <li v-if="(playables[0] as Episode).episode_link" @click="visitEpisodeWebpage(playables[0] as Episode)">
-          Visit Webpage
-        </li>
-      </template>
+      <MenuItem @click="doPlayback">{{ firstSongPlaying ? 'Pause' : 'Play' }}</MenuItem>
+      <Separator />
+      <MenuItem>
+        Go to
+        <template #subMenuItems>
+          <template v-if="isSong(playables[0])">
+            <MenuItem @click="viewAlbum(playables[0] as Song)">
+              <template #icon>
+                <Icon :icon="faCompactDisc" fixed-width />
+              </template>
+              {{ playables[0].album_name }}
+            </MenuItem>
+            <MenuItem @click="viewArtist(playables[0] as Song)">
+              <template #icon>
+                <MicVocalIcon :size="16" class="inline-block" />
+              </template>
+              {{ playables[0].artist_name }}
+            </MenuItem>
+          </template>
+          <template v-else>
+            <MenuItem @click="viewPodcast(playables[0] as Episode)">
+              <template #icon>
+                <Icon :icon="faPodcast" fixed-width />
+              </template>
+              Podcast
+            </MenuItem>
+            <MenuItem @click="viewEpisode(playables[0] as Episode)">
+              <template #icon>
+                <Icon :icon="faHeadphones" fixed-width />
+              </template>
+              Episode
+            </MenuItem>
+            <MenuItem
+              v-if="(playables[0] as Episode).episode_link"
+              @click="visitEpisodeWebpage(playables[0] as Episode)"
+            >
+              <template #icon>
+                <Icon :icon="faExternalLink" fixed-width />
+              </template>
+              Webpage
+            </MenuItem>
+          </template>
+        </template>
+      </MenuItem>
     </template>
-    <li class="has-sub">
+    <MenuItem>
       Add To
-      <ul class="submenu menu-add-to context-menu">
+      <template #subMenuItems>
         <template v-if="queue.length">
-          <li v-if="currentSong" @click="queueAfterCurrent">After Current</li>
-          <li @click="queueToBottom">Bottom of Queue</li>
-          <li @click="queueToTop">Top of Queue</li>
+          <MenuItem v-if="currentSong" @click="queueAfterCurrent">After Current</MenuItem>
+          <MenuItem @click="queueToBottom">Bottom of Queue</MenuItem>
+          <MenuItem @click="queueToTop">Top of Queue</MenuItem>
         </template>
-        <li v-else @click="queueToBottom">Queue</li>
-        <template v-if="!isFavoritesScreen">
-          <li class="separator" />
-          <li @click="addToFavorites">Favorites</li>
+        <MenuItem v-else @click="queueToBottom">Queue</MenuItem>
+        <template v-if="!isFavoritesScreen && !(onlyOneSelected && playables[0].favorite)">
+          <Separator />
+          <MenuItem @click="addToFavorites">Favorites</MenuItem>
         </template>
-        <li v-if="normalPlaylists.length" class="separator" />
+        <Separator v-if="normalPlaylists.length" />
         <template class="block">
           <ul v-if="normalPlaylists.length" v-koel-overflow-fade class="relative max-h-48 overflow-y-auto">
-            <li v-for="p in normalPlaylists" :key="p.id" @click="addToExistingPlaylist(p)">{{ p.name }}</li>
+            <MenuItem v-for="p in normalPlaylists" :key="p.id" @click="addToExistingPlaylist(p)">
+              {{ p.name }}
+            </MenuItem>
           </ul>
         </template>
-        <li class="separator" />
-        <li @click="addToNewPlaylist">New Playlist…</li>
-      </ul>
-    </li>
+        <Separator />
+        <MenuItem @click="addToNewPlaylist">New Playlist…</MenuItem>
+      </template>
+    </MenuItem>
 
     <template v-if="isQueueScreen">
-      <li class="separator" />
-      <li @click="removeFromQueue">Remove from Queue</li>
-      <li class="separator" />
+      <Separator />
+      <MenuItem @click="removeFromQueue">Remove from Queue</MenuItem>
+      <Separator />
     </template>
 
     <template v-if="isFavoritesScreen">
-      <li class="separator" />
-      <li @click="removeFromFavorites">Remove from Favorites</li>
+      <Separator />
+      <MenuItem @click="removeFromFavorites">Remove from Favorites</MenuItem>
     </template>
 
     <template v-if="visibilityActions.length">
-      <li class="separator" />
-      <li v-for="action in visibilityActions" :key="action.label" @click="action.handler">{{ action.label }}</li>
+      <Separator />
+      <MenuItem v-for="{ label, handler } in visibilityActions" :key="label" @click="handler">
+        {{ label }}
+      </MenuItem>
     </template>
 
-    <li v-if="allowEdit" @click="openEditForm">Edit…</li>
-    <li v-if="downloadable" @click="download">Download</li>
-    <li v-if="onlyOneSelected && canBeShared" @click="copyUrl">Copy Shareable URL</li>
-    <li v-if="onlyOneSelected" @click="showEmbedModal">Embed…</li>
+    <MenuItem v-if="onlyOneSelected">
+      Share
+      <template #subMenuItems>
+        <MenuItem v-if="canBeShared" @click="copyUrl">
+          <template #icon>
+            <Icon :icon="faLink" fixed-width />
+          </template>
+          Copy URL
+        </MenuItem>
+        <MenuItem @click="showEmbedModal">
+          <template #icon>
+            <Icon :icon="faCode" fixed-width />
+          </template>
+          Embed…
+        </MenuItem>
+      </template>
+    </MenuItem>
+
+    <MenuItem v-if="allowEdit" @click="openEditForm">Edit…</MenuItem>
+    <MenuItem v-if="downloadable" @click="download">Download</MenuItem>
 
     <template v-if="canBeRemovedFromPlaylist">
-      <li class="separator" />
-      <li @click="removePlayablesFromPlaylist">Remove from Playlist</li>
+      <Separator />
+      <MenuItem @click="removePlayablesFromPlaylist">Remove from Playlist</MenuItem>
     </template>
 
     <template v-if="allowEdit">
-      <li class="separator" />
-      <li @click="deleteFromFilesystem">Delete from Filesystem</li>
+      <Separator />
+      <MenuItem @click="deleteFromFilesystem">Delete from Filesystem</MenuItem>
     </template>
-  </ContextMenu>
+  </ul>
 </template>
 
 <script lang="ts" setup>
+import {
+  faCode,
+  faCompactDisc,
+  faExternalLink,
+  faHeadphones,
+  faLink,
+  faPodcast,
+} from '@fortawesome/free-solid-svg-icons'
+import { MicVocalIcon } from 'lucide-vue-next'
 import { computed, ref, toRef } from 'vue'
 import { pluralize } from '@/utils/formatters'
 import { eventBus } from '@/utils/eventBus'
@@ -96,14 +153,15 @@ import { useContextMenu } from '@/composables/useContextMenu'
 import { useKoelPlus } from '@/composables/useKoelPlus'
 import { playback } from '@/services/playbackManager'
 
+const props = defineProps<{ playables: MaybeArray<Playable> }>()
+const playables = ref(arrayify(props.playables))
+
 const { toastSuccess, toastError, toastWarning } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { go, getRouteParam, isCurrentScreen, url } = useRouter()
-const { base, ContextMenu, open, close, trigger } = useContextMenu()
+const { MenuItem, Separator, closeContextMenu, trigger } = useContextMenu()
 const { removeFromPlaylist } = usePlaylistContentManagement()
 const { isPlus } = useKoelPlus()
-
-const playables = ref<Playable[]>([])
 
 const {
   queueAfterCurrent,
@@ -114,7 +172,7 @@ const {
   removeFromFavorites,
   removeFromQueue,
   addToNewPlaylist,
-} = usePlayableMenuMethods(playables, close)
+} = usePlayableMenuMethods(playables, closeContextMenu)
 
 const playlists = toRef(playlistStore.state, 'playlists')
 
@@ -218,7 +276,7 @@ const doPlayback = () => trigger(async () => {
 
   switch (playables.value[0].playback_state) {
     case 'Playing':
-      playback().pause()
+      await playback().pause()
       break
 
     case 'Paused':
@@ -245,7 +303,8 @@ const visitEpisodeWebpage = (episode: Episode) => trigger(() => window.open(epis
 const download = () => trigger(() => downloadService.fromPlayables(playables.value))
 
 const removePlayablesFromPlaylist = () => trigger(async () => {
-  const playlist = playlistStore.byId(getRouteParam('id')!)
+  const playlist = playlistStore.byId(getRouteParam('id'))
+
   if (!playlist) {
     return
   }
@@ -266,10 +325,5 @@ const deleteFromFilesystem = () => trigger(async () => {
     toastSuccess(`Deleted ${pluralize(playables.value, 'song')} from the filesystem.`)
     eventBus.emit('SONGS_DELETED', playables.value as Song[])
   }
-})
-
-eventBus.on('PLAYABLE_CONTEXT_MENU_REQUESTED', async ({ pageX, pageY }, _songs) => {
-  playables.value = arrayify(_songs)
-  await open(pageY, pageX)
 })
 </script>

@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/vue'
+import { fireEvent, screen } from '@testing-library/vue'
 import { describe, expect, it } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
 import { podcastStore } from '@/stores/podcastStore'
@@ -20,7 +20,8 @@ describe('podcastItem.vue', () => {
       },
       global: {
         stubs: {
-          EpisodeProgress: h.stub('episode-progress-stub'),
+          EpisodeProgress: h.stub('episode-progress'),
+          FavoriteButton: h.stub('favorite-button', true),
         },
       },
     })
@@ -47,7 +48,7 @@ describe('podcastItem.vue', () => {
     const podcast = h.factory('podcast', { favorite: true })
 
     renderComponent(podcast)
-    await h.user.click(screen.getByRole('button', { name: 'Undo Favorite' }))
+    await fireEvent(screen.getByTestId('favorite-button'), new CustomEvent('toggle'))
 
     expect(toggleFavoriteMock).toHaveBeenCalledWith(podcast)
   })

@@ -1,22 +1,32 @@
-import { describe, expect, it } from 'vitest'
+import type { Mock } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import { eventBus } from '@/utils/eventBus'
+import { useContextMenu } from '@/composables/useContextMenu'
 import Component from './UserCard.vue'
+import { assertOpenContextMenu } from '@/__tests__/assertions'
+import UserContextMenu from '@/components/user/UserContextMenu.vue'
 
 describe('userCard.vue', () => {
   const h = createHarness()
 
-  const renderComponent = (user: User) => {
-    return h.render(Component, {
+  const renderComponent = (user?: User) => {
+    user = user ?? h.factory('user')
+
+    const rendered = h.render(Component, {
       props: {
         user,
       },
     })
+
+    return {
+      ...rendered,
+      user,
+    }
   }
 
   it('has different behaviors for current user', () => {
-    const user = h.factory('user')
+    const user = h.factory.states('current')('user') as CurrentUser
     h.actingAsUser(user)
     renderComponent(user)
 
@@ -26,12 +36,11 @@ describe('userCard.vue', () => {
   })
 
   it('requests the context menu', async () => {
-    const user = h.factory('user')
-    const emitMock = h.mock(eventBus, 'emit')
-    renderComponent(user)
+    vi.mock('@/composables/useContextMenu')
+    const { openContextMenu } = useContextMenu()
+    const { user } = renderComponent()
 
     await h.user.click(screen.getByRole('button', { name: 'More Actions' }))
-
-    expect(emitMock).toHaveBeenCalledWith('USER_CONTEXT_MENU_REQUESTED', expect.any(MouseEvent), user)
+    await assertOpenContextMenu(openContextMenu as Mock, UserContextMenu, { user })
   })
 })

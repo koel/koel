@@ -13,7 +13,6 @@ describe('mediaBrowserMenuItem.vue', () => {
     const { html } = h.render(Component)
 
     h.visit('/browse/foo/bar')
-    await h.tick(2)
 
     expect(html()).toMatchSnapshot()
   })

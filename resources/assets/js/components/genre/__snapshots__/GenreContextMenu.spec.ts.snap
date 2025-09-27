@@ -1,11 +1,18 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`genreContextMenu.vue > renders 1`] = `
-<nav data-v-6396fbf0="" class="genre-menu menu context-menu select-none shadow" style="top: 42px; left: 420px; bottom: auto; right: auto;" tabindex="0" data-testid="genre-context-menu">
-  <ul data-v-6396fbf0="">
-    <li>Play</li>
-    <li>Shuffle</li>
-    <li>Add to Queue</li>
-  </ul>
-</nav>
+<ul>
+  <li class="">
+    <!--v-if-->Play
+    <!--v-if-->
+  </li>
+  <li class="">
+    <!--v-if-->Shuffle
+    <!--v-if-->
+  </li>
+  <li class="">
+    <!--v-if-->Add to Queue
+    <!--v-if-->
+  </li>
+</ul>
 `;

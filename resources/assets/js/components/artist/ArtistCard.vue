@@ -29,7 +29,7 @@
 
 <script lang="ts" setup>
 import { computed, toRef, toRefs } from 'vue'
-import { eventBus } from '@/utils/eventBus'
+import { defineAsyncComponent } from '@/utils/helpers'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
@@ -37,14 +37,19 @@ import { downloadService } from '@/services/downloadService'
 import { useDraggable } from '@/composables/useDragAndDrop'
 import { useRouter } from '@/composables/useRouter'
 import { playback } from '@/services/playbackManager'
+import { useContextMenu } from '@/composables/useContextMenu'
 
 import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
 import ExternalMark from '@/components/ui/ExternalMark.vue'
 import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
 const props = withDefaults(defineProps<{ artist: Artist, layout?: CardLayout }>(), { layout: 'full' })
+
+const ContextMenu = defineAsyncComponent(() => import('@/components/artist/ArtistContextMenu.vue'))
+
 const { go, url } = useRouter()
 const { startDragging } = useDraggable('artist')
+const { openContextMenu } = useContextMenu()
 
 const { artist, layout } = toRefs(props)
 
@@ -62,5 +67,8 @@ const toggleFavorite = () => artistStore.toggleFavorite(artist.value)
 
 const download = () => downloadService.fromArtist(artist.value)
 const onDragStart = (event: DragEvent) => startDragging(event, artist.value)
-const requestContextMenu = (event: MouseEvent) => eventBus.emit('ARTIST_CONTEXT_MENU_REQUESTED', event, artist.value)
+
+const requestContextMenu = (event: MouseEvent) => openContextMenu<'ARTIST'>(ContextMenu, event, {
+  artist: artist.value,
+})
 </script>

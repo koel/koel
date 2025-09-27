@@ -1,26 +1,23 @@
 <template>
-  <ContextMenu ref="base" data-testid="album-context-menu" extra-class="album-menu">
-    <template v-if="album">
-      <li @click="play">Play All</li>
-      <li @click="shuffle">Shuffle All</li>
-      <li class="separator" />
-      <li @click="toggleFavorite">{{ album.favorite ? 'Undo Favorite' : 'Favorite' }}</li>
-      <template v-if="allowEdit">
-        <li @click="edit">Edit…</li>
-      </template>
-      <li class="separator" />
-      <template v-if="isStandardAlbum && allowDownload">
-        <li class="separator" />
-        <li @click="download">Download</li>
-      </template>
-      <li class="separator" />
-      <li @click="showEmbedModal">Embed…</li>
+  <ul>
+    <MenuItem @click="play">Play All</MenuItem>
+    <MenuItem @click="shuffle">Shuffle All</MenuItem>
+    <Separator />
+    <MenuItem @click="toggleFavorite">{{ album.favorite ? 'Undo Favorite' : 'Favorite' }}</MenuItem>
+    <template v-if="allowEdit">
+      <MenuItem @click="edit">Edit…</MenuItem>
     </template>
-  </ContextMenu>
+    <Separator />
+    <template v-if="isStandardAlbum && allowDownload">
+      <MenuItem @click="download">Download</MenuItem>
+    </template>
+    <Separator />
+    <MenuItem @click="showEmbedModal">Embed…</MenuItem>
+  </ul>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, toRef } from 'vue'
+import { computed, onMounted, ref, toRef, toRefs } from 'vue'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
@@ -31,35 +28,34 @@ import { useRouter } from '@/composables/useRouter'
 import { eventBus } from '@/utils/eventBus'
 import { playback } from '@/services/playbackManager'
 
+const props = defineProps<{ album: Album }>()
+const { album } = toRefs(props)
+
 const { go, url } = useRouter()
-const { base, ContextMenu, open, trigger } = useContextMenu()
+const { MenuItem, Separator, trigger } = useContextMenu()
 const { currentUserCan } = usePolicies()
 
-const album = ref<Album>()
 const allowDownload = toRef(commonStore.state, 'allows_download')
 const allowEdit = ref(false)
 
-const isStandardAlbum = computed(() => !albumStore.isUnknown(album.value!))
+const isStandardAlbum = computed(() => !albumStore.isUnknown(album.value))
 
 const play = () => trigger(async () => {
-  playback().queueAndPlay(await playableStore.fetchSongsForAlbum(album.value!))
   go(url('queue'))
+  await playback().queueAndPlay(await playableStore.fetchSongsForAlbum(album.value))
 })
 
 const shuffle = () => trigger(async () => {
-  playback().queueAndPlay(await playableStore.fetchSongsForAlbum(album.value!), true)
   go(url('queue'))
+  await playback().queueAndPlay(await playableStore.fetchSongsForAlbum(album.value), true)
 })
 
-const edit = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_ALBUM_FORM', album.value!))
-const toggleFavorite = () => trigger(() => albumStore.toggleFavorite(album.value!))
-const download = () => trigger(() => downloadService.fromAlbum(album.value!))
-const showEmbedModal = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_EMBED_FORM', album.value!))
+const edit = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_ALBUM_FORM', album.value))
+const toggleFavorite = () => trigger(() => albumStore.toggleFavorite(album.value))
+const download = () => trigger(() => downloadService.fromAlbum(album.value))
+const showEmbedModal = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_EMBED_FORM', album.value))
 
-eventBus.on('ALBUM_CONTEXT_MENU_REQUESTED', async ({ pageX, pageY }, _album) => {
-  album.value = _album
-  await open(pageY, pageX)
-
+onMounted(async () => {
   allowEdit.value = await currentUserCan.editAlbum(album.value)
 })
 </script>

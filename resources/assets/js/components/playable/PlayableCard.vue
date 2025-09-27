@@ -51,30 +51,32 @@
 <script lang="ts" setup>
 import { computed, toRefs } from 'vue'
 import { isEpisode, isSong } from '@/utils/typeGuards'
-import { eventBus } from '@/utils/eventBus'
 import { pluralize } from '@/utils/formatters'
 import { useDraggable } from '@/composables/useDragAndDrop'
 import { useRouter } from '@/composables/useRouter'
 import { playback } from '@/services/playbackManager'
 import { playableStore } from '@/stores/playableStore'
+import { defineAsyncComponent } from '@/utils/helpers'
+import { useContextMenu } from '@/composables/useContextMenu'
 
 import PlayableThumbnail from '@/components/playable/PlayableThumbnail.vue'
 import ExternalMark from '@/components/ui/ExternalMark.vue'
-import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
 const props = defineProps<{ playable: Playable }>()
+const PlayableContextMenu = defineAsyncComponent(() => import('@/components/playable/PlayableContextMenu.vue'))
+const FavoriteButton = defineAsyncComponent(() => import('@/components/ui/FavoriteButton.vue'))
+
 const { playable } = toRefs(props)
 
 const { startDragging } = useDraggable('playables')
+const { openContextMenu } = useContextMenu()
 const { url } = useRouter()
 
 const external = computed(() => isSong(playable.value) && playable.value.is_external)
 
-const requestContextMenu = (event: MouseEvent) => eventBus.emit(
-  'PLAYABLE_CONTEXT_MENU_REQUESTED',
-  event,
-  playable.value,
-)
+const requestContextMenu = (event: MouseEvent) => openContextMenu<'PLAYABLES'>(PlayableContextMenu, event, {
+  playables: playable.value,
+})
 
 const onDragStart = (event: DragEvent) => startDragging(event, [playable.value])
 

@@ -21,9 +21,11 @@ describe('artistContextMenu.vue', () => {
       favorite: false,
     })
 
-    const rendered = h.render(Component)
-    eventBus.emit('ARTIST_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, artist)
-    await h.tick(2)
+    const rendered = h.render(Component, {
+      props: {
+        artist,
+      },
+    })
 
     return {
       ...rendered,

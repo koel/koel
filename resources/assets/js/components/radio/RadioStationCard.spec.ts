@@ -1,9 +1,12 @@
-import { describe, expect, it } from 'vitest'
-import { screen } from '@testing-library/vue'
+import type { Mock } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+import { fireEvent, screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { playbackService } from '@/services/RadioPlaybackService'
 import { radioStationStore } from '@/stores/radioStationStore'
-import { eventBus } from '@/utils/eventBus'
+import { useContextMenu } from '@/composables/useContextMenu'
+import { assertOpenContextMenu } from '@/__tests__/assertions'
+import RadioStationContextMenu from '@/components/radio/RadioStationContextMenu.vue'
 import Component from './RadioStationCard.vue'
 
 describe('radioStationCard.vue', () => {
@@ -28,6 +31,11 @@ describe('radioStationCard.vue', () => {
     const render = h.render(Component, {
       props: {
         station: station || createRadioStation(),
+      },
+      global: {
+        stubs: {
+          FavoriteButton: h.stub('favorite-button', true),
+        },
       },
     })
 
@@ -56,11 +64,12 @@ describe('radioStationCard.vue', () => {
   })
 
   it('requests context menu', async () => {
+    vi.mock('@/composables/useContextMenu')
+    const { openContextMenu } = useContextMenu()
     const { station } = renderComponent()
-    const emitMock = h.mock(eventBus, 'emit')
     await h.trigger(screen.getByTestId('radio-station-card'), 'contextMenu')
 
-    expect(emitMock).toHaveBeenCalledWith('RADIO_STATION_CONTEXT_MENU_REQUESTED', expect.any(MouseEvent), station)
+    await assertOpenContextMenu(openContextMenu as Mock, RadioStationContextMenu, { station })
   })
 
   it('if favorite, has a Favorite icon button that undoes favorite state', async () => {
@@ -68,7 +77,7 @@ describe('radioStationCard.vue', () => {
     const toggleMock = h.mock(radioStationStore, 'toggleFavorite')
     renderComponent(album)
 
-    await h.user.click(screen.getByRole('button', { name: 'Undo Favorite' }))
+    await fireEvent(screen.getByTestId('favorite-button'), new CustomEvent('toggle'))
 
     expect(toggleMock).toHaveBeenCalledWith(album)
   })

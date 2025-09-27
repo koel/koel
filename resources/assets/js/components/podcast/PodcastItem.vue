@@ -1,8 +1,8 @@
 <template>
   <a
-    data-testid="podcast-item"
-    class="flex gap-5 p-5 rounded-lg border border-white/5 hover:bg-white/10 bg-white/5 !text-k-text-primary !hover:text-k-text-primary"
     :href="url('podcasts.show', { id: podcast.id })"
+    class="flex gap-5 p-5 rounded-lg border border-white/5 hover:bg-white/10 bg-white/5 !text-k-text-primary !hover:text-k-text-primary"
+    data-testid="podcast-item"
     @contextmenu.prevent="onContextMenu"
   >
     <aside class="hidden md:block md:flex-[0_0_128px]">
@@ -39,13 +39,16 @@ import { computed } from 'vue'
 import DOMPurify from 'dompurify'
 import { formatTimeAgo } from '@vueuse/core'
 import { useRouter } from '@/composables/useRouter'
-import { eventBus } from '@/utils/eventBus'
-import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 import { podcastStore } from '@/stores/podcastStore'
+import { useContextMenu } from '@/composables/useContextMenu'
+import { defineAsyncComponent } from '@/utils/helpers'
 
 const { podcast } = defineProps<{ podcast: Podcast }>()
+const FavoriteButton = defineAsyncComponent(() => import('@/components/ui/FavoriteButton.vue'))
+const PodcastContextMenu = defineAsyncComponent(() => import('@/components/podcast/PodcastContextMenu.vue'))
 
 const { url } = useRouter()
+const { openContextMenu } = useContextMenu()
 
 const description = computed(() => DOMPurify.sanitize(podcast.description))
 
@@ -56,7 +59,9 @@ const lastPlayedAt = computed(() => podcast.state.current_episode
 
 const toggleFavorite = () => podcastStore.toggleFavorite(podcast)
 
-const onContextMenu = (event: MouseEvent) => eventBus.emit('PODCAST_CONTEXT_MENU_REQUESTED', event, podcast)
+const onContextMenu = (event: MouseEvent) => openContextMenu<'PODCAST'>(PodcastContextMenu, event, {
+  podcast,
+})
 </script>
 
 <style scoped lang="postcss">

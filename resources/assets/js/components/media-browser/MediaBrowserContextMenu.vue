@@ -1,15 +1,14 @@
 <template>
-  <ContextMenu ref="base">
-    <li v-if="isForSingleFolder" @click="openFolder">Open</li>
-    <li @click="play">Play</li>
-    <li @click="shuffle">Shuffle</li>
-    <li @click="queue">Add to Queue</li>
-  </ContextMenu>
+  <ul>
+    <MenuItem v-if="isForSingleFolder" @click="openFolder">Open</MenuItem>
+    <MenuItem @click="play">Play</MenuItem>
+    <MenuItem @click="shuffle">Shuffle</MenuItem>
+    <MenuItem @click="queue">Add to Queue</MenuItem>
+  </ul>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
-import { eventBus } from '@/utils/eventBus'
+import { computed, onMounted, toRefs } from 'vue'
 import { useRouter } from '@/composables/useRouter'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { useMessageToaster } from '@/composables/useMessageToaster'
@@ -19,17 +18,18 @@ import { pluralize } from '@/utils/formatters'
 import { mediaBrowser } from '@/services/mediaBrowser'
 import { playback } from '@/services/playbackManager'
 
-const { base, ContextMenu, open, trigger } = useContextMenu()
+const props = defineProps<{ items: Array<Folder | Song> }>()
+const { items } = toRefs(props)
+
+const { MenuItem, trigger } = useContextMenu()
 const { go, url } = useRouter()
 const { toastWarning, toastSuccess } = useMessageToaster()
-
-const items = ref<Array<Folder | Song>>()
 
 const isForSingleFolder = computed(() => items.value?.length === 1 && items.value[0].type === 'folders')
 
 let references: MediaReference[]
 
-const openFolder = () => trigger(async () => go(url('media-browser', { path: (items.value![0] as Folder).path })))
+const openFolder = () => trigger(async () => go(url('media-browser', { path: (items.value[0] as Folder).path })))
 
 const play = () => trigger(async () => {
   const songs = await playableStore.resolveSongsFromMediaReferences(references)
@@ -65,9 +65,7 @@ const queue = () => trigger(async () => {
   }
 })
 
-eventBus.on('MEDIA_BROWSER_CONTEXT_MENU_REQUESTED', async ({ pageX, pageY }, _items) => {
-  items.value = _items
-  references = mediaBrowser.extractMediaReferences(_items)
-  await open(pageY, pageX)
+onMounted(() => {
+  references = mediaBrowser.extractMediaReferences(items.value)
 })
 </script>

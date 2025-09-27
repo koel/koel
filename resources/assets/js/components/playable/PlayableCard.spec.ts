@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { screen } from '@testing-library/vue'
+import { fireEvent, screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { playableStore } from '@/stores/playableStore'
@@ -8,10 +8,7 @@ import Component from './PlayableCard.vue'
 describe('playableCard.vue', () => {
   const h = createHarness()
 
-  const renderComponent = (
-    playbackState: PlaybackState = 'Stopped',
-    mockFavoriteButton = true,
-  ) => {
+  const renderComponent = (playbackState: PlaybackState = 'Stopped') => {
     const playable = h.factory('song', {
       playback_state: playbackState,
       play_count: 10,
@@ -19,20 +16,15 @@ describe('playableCard.vue', () => {
       favorite: false,
     })
 
-    const stubs = {
-      PlayableThumbnail: h.stub('thumbnail'),
-    }
-
-    if (mockFavoriteButton) {
-      stubs.FavoriteButton = h.stub('favorite-button')
-    }
-
     const rendered = h.render(Component, {
       props: {
         playable,
       },
       global: {
-        stubs,
+        stubs: {
+          PlayableThumbnail: h.stub('thumbnail'),
+          FavoriteButton: h.stub('favorite-button', true),
+        },
       },
     })
 
@@ -49,10 +41,10 @@ describe('playableCard.vue', () => {
   })
 
   it('toggles the favorite state when the Favorite button is clicked', async () => {
-    const { playable } = renderComponent('Stopped', false)
+    const { playable } = renderComponent('Stopped')
     const toggleFavoriteMock = h.mock(playableStore, 'toggleFavorite')
 
-    await h.user.click(screen.getByRole('button', { name: 'Favorite' }))
+    await fireEvent(screen.getByTestId('favorite-button'), new CustomEvent('toggle'))
 
     expect(toggleFavoriteMock).toHaveBeenCalledWith(playable)
   })

@@ -25,19 +25,23 @@
 
 <script lang="ts" setup>
 import { toRefs } from 'vue'
+import { defineAsyncComponent } from '@/utils/helpers'
+import { useContextMenu } from '@/composables/useContextMenu'
 
 import { radioStationStore } from '@/stores/radioStationStore'
 import { playback } from '@/services/playbackManager'
-import { eventBus } from '@/utils/eventBus'
 
 import RadioStationThumbnail from '@/components/radio/RadioStationThumbnail.vue'
-import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
 const props = withDefaults(defineProps<{ layout?: CardLayout, station: RadioStation }>(), {
   layout: 'full',
 })
+const FavoriteButton = defineAsyncComponent(() => import('@/components/ui/FavoriteButton.vue'))
+const ContextMenu = defineAsyncComponent(() => import('@/components/radio/RadioStationContextMenu.vue'))
 
 const { layout, station } = toRefs(props)
+
+const { openContextMenu } = useContextMenu()
 
 const togglePlay = () => {
   if (station.value.playback_state === 'Playing') {
@@ -51,7 +55,9 @@ const onDblClick = () => togglePlay()
 
 const onThumbnailClicked = () => togglePlay()
 
-const onContextMenu = (e: MouseEvent) => eventBus.emit('RADIO_STATION_CONTEXT_MENU_REQUESTED', e, station.value)
+const onContextMenu = (event: MouseEvent) => openContextMenu<'RADIO_STATION'>(ContextMenu, event, {
+  station: station.value,
+})
 
 const toggleFavorite = () => radioStationStore.toggleFavorite(station.value)
 </script>

@@ -1,16 +1,29 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`podcastContextMenu.vue > renders 1`] = `
-<nav data-v-6396fbf0="" class="podcast-menu menu context-menu select-none shadow" style="top: 42px; left: 420px; bottom: auto; right: auto;" tabindex="0" data-testid="podcast-context-menu">
-  <ul data-v-6396fbf0="">
-    <li>Play All</li>
-    <li>Shuffle All</li>
-    <li class="separator"></li>
-    <li>Favorite</li>
-    <li class="separator"></li>
-    <li>Visit Website</li>
-    <li class="separator"></li>
-    <li>Unsubscribe</li>
-  </ul>
-</nav>
+<ul>
+  <li class="">
+    <!--v-if-->Play All
+    <!--v-if-->
+  </li>
+  <li class="">
+    <!--v-if-->Shuffle All
+    <!--v-if-->
+  </li>
+  <li class="separator"></li>
+  <li class="">
+    <!--v-if-->Favorite
+    <!--v-if-->
+  </li>
+  <li class="separator"></li>
+  <li class="">
+    <!--v-if-->Visit Website
+    <!--v-if-->
+  </li>
+  <li class="separator"></li>
+  <li class="">
+    <!--v-if-->Unsubscribe
+    <!--v-if-->
+  </li>
+</ul>
 `;

@@ -108,6 +108,7 @@ import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
 import { useRouter } from '@/composables/useRouter'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
+import { useContextMenu } from '@/composables/useContextMenu'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import AlbumThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
@@ -123,6 +124,7 @@ type Tab = (typeof validTabs)[number]
 
 const AlbumInfo = defineAsyncComponent(() => import('@/components/album/AlbumInfo.vue'))
 const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCard.vue'))
+const ContextMenu = defineAsyncComponent(() => import('@/components/album/AlbumContextMenu.vue'))
 const AlbumCardSkeleton = defineAsyncComponent(() => import('@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'))
 const FavoriteButton = defineAsyncComponent(() => import('@/components/ui/FavoriteButton.vue'))
 
@@ -130,6 +132,7 @@ const { getRouteParam, go, onScreenActivated, onRouteChanged, url, triggerNotFou
 const { currentUserCan } = usePolicies()
 const { PlayableListControls: SongListControls, config } = usePlayableListControls('Album')
 const { useLastfm, useMusicBrainz } = useThirdPartyServices()
+const { openContextMenu } = useContextMenu()
 
 const activeTab = ref<Tab>('songs')
 const album = ref<Album | undefined>()
@@ -188,7 +191,7 @@ const fetchScreenData = async () => {
 
     if (!album.value) {
       // If the album does not exist, redirect to the album list.
-      await triggerNotFound()
+      triggerNotFound()
       return
     }
 
@@ -204,7 +207,7 @@ const fetchScreenData = async () => {
     editable.value = await currentUserCan.editAlbum(album.value!)
   } catch (error: unknown) {
     if (error?.status === 404) {
-      await triggerNotFound()
+      triggerNotFound()
       return
     }
 
@@ -217,9 +220,9 @@ const fetchScreenData = async () => {
 onScreenActivated('Album', () => fetchScreenData())
 onRouteChanged(route => route.name === 'albums.show' && fetchScreenData())
 
-const requestContextMenu = (event: MouseEvent) => {
-  eventBus.emit('ALBUM_CONTEXT_MENU_REQUESTED', event, album.value!)
-}
+const requestContextMenu = (event: MouseEvent) => openContextMenu<'ALBUM'>(ContextMenu, event, {
+  album: album.value!,
+})
 
 eventBus.on('SONGS_UPDATED', result => {
   // After songs are updated, check if the current album still exists.

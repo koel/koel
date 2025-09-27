@@ -43,22 +43,26 @@
 import googleLogo from '@/../img/logos/google.svg'
 import { faCircleCheck, faEllipsis, faShield } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
-import { eventBus } from '@/utils/eventBus'
 import { useRouter } from '@/composables/useRouter'
 import { useAuthorization } from '@/composables/useAuthorization'
+import { useContextMenu } from '@/composables/useContextMenu'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import UserAvatar from '@/components/user/UserAvatar.vue'
+import UserContextMenu from '@/components/user/UserContextMenu.vue'
 
 const props = defineProps<{ user: User }>()
 const { user } = toRefs(props)
 
 const { url } = useRouter()
+const { openContextMenu } = useContextMenu()
 
 const { currentUser } = useAuthorization()
 
 const isCurrentUser = computed(() => user.value.id === currentUser.value.id)
 const hasAdminPrivileges = computed(() => user.value.role === 'admin' || user.value.role === 'manager')
 
-const requestContextMenu = (e: MouseEvent) => eventBus.emit('USER_CONTEXT_MENU_REQUESTED', e, user.value)
+const requestContextMenu = (event: MouseEvent) => openContextMenu<'USER'>(UserContextMenu, event, {
+  user: user.value,
+})
 </script>

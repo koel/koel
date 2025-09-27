@@ -11,12 +11,17 @@
 
 <script lang="ts" setup>
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons'
-import { eventBus } from '@/utils/eventBus'
+import { useContextMenu } from '@/composables/useContextMenu'
+import { defineAsyncComponent } from '@/utils/helpers'
+
+const ContextMenu = defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistContextMenu.vue'))
+
+const { openContextMenu } = useContextMenu()
 
 const requestContextMenu = (e: MouseEvent) => {
   const { bottom, right } = (e.currentTarget as HTMLButtonElement).getBoundingClientRect()
 
-  eventBus.emit('CREATE_NEW_PLAYLIST_CONTEXT_MENU_REQUESTED', {
+  openContextMenu(ContextMenu, {
     top: bottom,
     left: right,
   })

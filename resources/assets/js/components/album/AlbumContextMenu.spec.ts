@@ -21,9 +21,11 @@ describe('albumContextMenu.vue', () => {
       favorite: false,
     })
 
-    const rendered = h.actingAsAdmin().render(Component)
-    eventBus.emit('ALBUM_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, album)
-    await h.tick(2)
+    const rendered = h.actingAsAdmin().render(Component, {
+      props: {
+        album,
+      },
+    })
 
     return {
       ...rendered,

@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import { eventBus } from '@/utils/eventBus'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { playableStore as episodeStore } from '@/stores/playableStore'
 import Component from './PodcastContextMenu.vue'
@@ -17,8 +16,12 @@ describe('podcastContextMenu.vue', () => {
       favorite: false,
     })
 
-    const rendered = h.actingAsAdmin().render(Component)
-    eventBus.emit('PODCAST_CONTEXT_MENU_REQUESTED', { pageX: 420, pageY: 42 } as MouseEvent, podcast)
+    const rendered = h.actingAsAdmin().render(Component, {
+      props: {
+        podcast,
+      },
+    })
+
     await h.tick(2)
 
     return {

@@ -109,10 +109,10 @@ make it impossible to recover a song once it's deleted.
 
 ## Share and Embed a Song
 
-Share a song by right-clicking on it and choosing "Copy Shareable URL."
+Share a song by right-clicking on it and choosing _Share → Copy URL_.
 This will copy a URL to the clipboard that can then be shared with anyone with a Koel account.
 
-You can also embed a song for public sharing by right-clicking on it and choosing "Embed…".
+You can also embed a song for public sharing by right-clicking on it and choosing _Share → Embed…_.
 See [Embedding](./embedding) for more details.
 
 ## Keyboard Shortcuts
