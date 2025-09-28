@@ -75,7 +75,7 @@ class AuthenticationService
     public function generateOneTimeToken(User $user): string
     {
         $token = bin2hex(random_bytes(12));
-        Cache::set(cache_key('one-time token', $token), encrypt($user->id), 60 * 10);
+        Cache::set(cache_key('one-time token', $token), encrypt($user->id), now()->addMinutes(10));
 
         return $token;
     }
