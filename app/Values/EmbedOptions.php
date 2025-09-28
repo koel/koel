@@ -56,7 +56,7 @@ class EmbedOptions implements Arrayable
             }
         }
 
-        return encrypt($array + ['salt' => bin2hex(random_bytes(3))]);
+        return encrypt($array);
     }
 
     /** @inheritdoc */
