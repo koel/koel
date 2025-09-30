@@ -17,4 +17,9 @@ class ScannerCacheStrategy implements ScannerCacheStrategyContract
     ): mixed {
         return Cache::remember($key, $ttl, $callback);
     }
+
+    public function forget(string $key): void
+    {
+        Cache::forget($key);
+    }
 }

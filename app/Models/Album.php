@@ -57,6 +57,8 @@ class Album extends Model implements AuditableContract, Embeddable, Favoriteable
 
     public const UNKNOWN_NAME = 'Unknown Album';
 
+    private const CACHE_NAMESPACE = 'album';
+
     protected $guarded = ['id'];
     protected $hidden = ['updated_at'];
 
@@ -69,6 +71,11 @@ class Album extends Model implements AuditableContract, Embeddable, Favoriteable
     {
         /** @var AlbumBuilder */
         return parent::query()->addSelect('albums.*');
+    }
+
+    public static function getCacheKey(string $artistId, ?string $name): string
+    {
+        return cache_key(self::CACHE_NAMESPACE, $artistId, $name);
     }
 
     public function newEloquentBuilder($query): AlbumBuilder
