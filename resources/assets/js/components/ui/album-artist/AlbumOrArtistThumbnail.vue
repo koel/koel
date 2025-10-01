@@ -24,7 +24,6 @@
 
 <script lang="ts" setup>
 import { faPlay } from '@fortawesome/free-solid-svg-icons'
-import defaultCover from '@/../img/covers/default.svg'
 import { orderBy } from 'lodash'
 import { computed, toRefs } from 'vue'
 import { queueStore } from '@/stores/queueStore'
@@ -32,12 +31,14 @@ import { playableStore } from '@/stores/playableStore'
 import { useRouter } from '@/composables/useRouter'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { playback } from '@/services/playbackManager'
+import { useBranding } from '@/composables/useBranding'
 
 const props = defineProps<{ entity: Album | Artist }>()
+const { entity } = toRefs(props)
+
 const { toastSuccess } = useMessageToaster()
 const { go, url } = useRouter()
-
-const { entity } = toRefs(props)
+const { cover: defaultCover } = useBranding()
 
 const forAlbum = computed(() => entity.value.type === 'albums')
 const sortFields = computed(() => forAlbum.value ? ['disc', 'track'] : ['album_id', 'disc', 'track'])

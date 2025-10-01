@@ -25,6 +25,17 @@ describe('aboutKoelModal.vue', () => {
     expect(renderComponent().html()).toMatchSnapshot()
   })
 
+  it('renders with custom branding', async () => {
+    commonStore.state.current_version = 'v0.0.0'
+    commonStore.state.latest_version = 'v0.0.0'
+
+    await h.withCustomBranding({
+      name: 'Little Bird',
+      logo: 'http://localhost/storage/logo.svg',
+      cover: 'http://localhost/storage/cover.jpg',
+    }, () => expect(renderComponent().html()).toMatchSnapshot())
+  })
+
   it('shows new version', () => {
     commonStore.state.current_version = 'v1.0.0'
     commonStore.state.latest_version = 'v1.0.1'

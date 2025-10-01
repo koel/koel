@@ -10,8 +10,10 @@
 
 <script lang="ts" setup>
 import { toRefs } from 'vue'
-import defaultCover from '@/../img/covers/default.svg'
+import { useBranding } from '@/composables/useBranding'
 
 const props = defineProps<{ user: Pick<User, 'name' | 'avatar'> }>()
 const { user } = toRefs(props)
+
+const { cover: defaultCover } = useBranding()
 </script>

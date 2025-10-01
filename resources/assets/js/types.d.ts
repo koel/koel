@@ -78,6 +78,8 @@ interface Window {
   AUTH_TOKEN: CompositeToken | null
   ACCEPTED_AUDIO_EXTENSIONS: string[]
 
+  BRANDING: Branding
+
   readonly PUSHER_APP_KEY: string
   readonly PUSHER_APP_CLUSTER: string
 
@@ -93,6 +95,12 @@ interface Window {
 
 interface FileSystemEntry {
   createReader: () => FileSystemDirectoryReader
+}
+
+interface Branding {
+  name: string
+  logo: string
+  cover: string
 }
 
 type EncyclopediaDisplayMode = 'aside' | 'full'

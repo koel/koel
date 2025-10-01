@@ -14,11 +14,13 @@
 <script lang="ts" setup>
 import type { Ref } from 'vue'
 import { computed, ref } from 'vue'
-import defaultCover from '@/../img/covers/default.svg'
 import { requireInjection } from '@/utils/helpers'
 import { CurrentStreamableKey } from '@/symbols'
+import { useBranding } from '@/composables/useBranding'
 
 const station = requireInjection<Ref<RadioStation | undefined>>(CurrentStreamableKey, ref())
+
+const { cover: defaultCover } = useBranding()
 
 const cover = computed(() => station.value ? station.value.logo : defaultCover)
 const coverBackgroundImage = computed(() => `url(${cover.value ?? defaultCover})`)

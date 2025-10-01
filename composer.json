@@ -54,7 +54,8 @@
     "laravel/prompts": "^0.3.6",
     "laravel/tinker": "^2.10",
     "fakerphp/faker": "^1.24",
-    "spatie/laravel-permission": "^6.21"
+    "spatie/laravel-permission": "^6.21",
+    "enshrined/svg-sanitize": "^0.22.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",

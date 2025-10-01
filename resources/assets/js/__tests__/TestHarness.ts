@@ -41,6 +41,8 @@ class TestHarness {
       commonStore.state.uses_i_tunes = true
       commonStore.state.supports_batch_downloading = true
       commonStore.state.supports_transcoding = true
+
+      this.setDefaultBranding()
       cb?.()
     })
   }
@@ -56,6 +58,14 @@ class TestHarness {
       eventBus.removeAllListeners()
       cb?.()
     })
+  }
+
+  private setDefaultBranding () {
+    window.BRANDING = {
+      name: 'Koel',
+      logo: '',
+      cover: '',
+    }
   }
 
   public readonly auth = this.actingAsUser
@@ -144,6 +154,15 @@ class TestHarness {
     }
 
     return this
+  }
+
+  public async withCustomBranding (branding: Branding, cb: Closure) {
+    // Custom branding implicitly requires Plus edition.
+    return await this.withPlusEdition(async () => {
+      window.BRANDING = branding
+      await cb()
+      this.setDefaultBranding()
+    })
   }
 
   public async withDemoMode (cb: Closure) {

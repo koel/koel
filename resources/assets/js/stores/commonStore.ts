@@ -12,7 +12,7 @@ import { userStore } from '@/stores/userStore'
 const initialState = {
   allows_download: false,
   cdn_url: '',
-  current_user: null! as User,
+  current_user: null! as CurrentUser,
   current_version: '',
   koel_plus: {
     active: false,

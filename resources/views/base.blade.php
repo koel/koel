@@ -13,9 +13,9 @@
 
     <link rel="manifest" href="{{ static_url('manifest.json') }}" />
     <meta name="msapplication-config" content="{{ static_url('browserconfig.xml') }}" />
-    <link rel="icon" type="image/x-icon" href="{{ static_url('img/favicon.ico') }}" />
-    <link rel="icon" href="{{ static_url('img/icon.png') }}">
-    <link rel="apple-touch-icon" href="{{ static_url('img/icon.png') }}">
+    <link rel="icon" type="image/x-icon" href="{{ koel_branding('logo') ?? static_url('img/favicon.ico') }}" />
+    <link rel="icon" href="{{ koel_branding('logo') ?? static_url('img/icon.png') }}">
+    <link rel="apple-touch-icon" href="{{ koel_branding('logo') ?? static_url('img/icon.png') }}">
 
     @unless(License::isPlus())
         <script src="https://app.lemonsqueezy.com/js/lemon.js" defer></script>
@@ -35,6 +35,8 @@
 
     window.PUSHER_APP_KEY = @json(config('broadcasting.connections.pusher.key'));
     window.PUSHER_APP_CLUSTER = @json(config('broadcasting.connections.pusher.options.cluster'));
+
+    window.BRANDING = @json(koel_branding());
 </script>
 
 @stack('scripts')

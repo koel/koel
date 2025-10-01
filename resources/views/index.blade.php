@@ -1,6 +1,6 @@
 @extends('base')
 
-@section('title', 'Koel')
+@section('title', koel_branding('name'))
 
 @push('scripts')
     <script>

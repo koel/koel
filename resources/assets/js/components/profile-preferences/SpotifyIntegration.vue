@@ -10,7 +10,8 @@
     <div v-if="useSpotify">
       <p>
         Spotify integration is enabled.
-        Koel will attempt to retrieve album arts and artist images from Spotify when a song is played, if needed.
+        {{ appName }} will attempt to retrieve album arts and artist images from Spotify when a song is played, if
+        needed.
       </p>
     </div>
     <div v-else>
@@ -30,7 +31,9 @@
 import { faSpotify } from '@fortawesome/free-brands-svg-icons'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 import { usePolicies } from '@/composables/usePolicies'
+import { useBranding } from '@/composables/useBranding'
 
 const { currentUserCan } = usePolicies()
 const { useSpotify } = useThirdPartyServices()
+const { name: appName } = useBranding()
 </script>

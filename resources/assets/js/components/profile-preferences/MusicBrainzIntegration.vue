@@ -10,8 +10,8 @@
     <div v-if="useMusicBrainz">
       <p>
         MusicBrainz integration is enabled.
-        Koel will attempt to retrieve album and artist information from MusicBrainz (and Wikipedia) when a song is
-        played, if needed.
+        {{ appName }} will attempt to retrieve album and artist information from MusicBrainz (and Wikipedia)
+        when a song is played, if needed.
       </p>
     </div>
     <div v-else>
@@ -32,7 +32,9 @@ import musicbrainzLogo from '@/../img/logos/musicbrainz.svg'
 
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 import { usePolicies } from '@/composables/usePolicies'
+import { useBranding } from '@/composables/useBranding'
 
 const { currentUserCan } = usePolicies()
 const { useMusicBrainz } = useThirdPartyServices()
+const { name: appName } = useBranding()
 </script>

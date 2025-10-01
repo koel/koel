@@ -7,6 +7,7 @@ declare global {
     BASE_URL: string
     MAILER_CONFIGURED: boolean
     SSO_PROVIDERS: string[]
+    BRANDING: Branding
     createLemonSqueezy: () => void
   }
 

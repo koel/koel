@@ -164,7 +164,6 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
-import defaultCover from '@/../img/covers/default.svg'
 import { pluralize } from '@/utils/formatters'
 import { eventBus } from '@/utils/eventBus'
 import type { SongUpdateData, SongUpdateResult } from '@/stores/playableStore'
@@ -174,6 +173,7 @@ import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useModal } from '@/composables/useModal'
 import { genres } from '@/config/genres'
 import { useForm } from '@/composables/useForm'
+import { useBranding } from '@/composables/useBranding'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
@@ -191,6 +191,7 @@ const close = () => emit('close')
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { getFromContext } = useModal<'EDIT_SONG_FORM'>()
+const { cover: defaultCover } = useBranding()
 
 const songs = getFromContext('songs')
 const currentTab = ref(getFromContext('initialTab'))

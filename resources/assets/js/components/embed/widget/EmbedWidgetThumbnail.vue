@@ -10,10 +10,12 @@
 </template>
 
 <script setup lang="ts">
-import defaultCover from '@/../img/covers/default.svg'
+import { useBranding } from '@/composables/useBranding'
 
 const props = defineProps<{ embeddable: Embeddable }>()
 const { embeddable } = props
+
+const { cover: defaultCover } = useBranding()
 
 let src: string | null = null
 

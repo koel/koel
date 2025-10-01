@@ -21,15 +21,16 @@
 <script lang="ts" setup>
 import type { Ref } from 'vue'
 import { computed, ref } from 'vue'
-import defaultCover from '@/../img/covers/default.svg'
 import { getPlayableProp, requireInjection, use } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
 import { CurrentStreamableKey } from '@/symbols'
 import { useDraggable } from '@/composables/useDragAndDrop'
 import { useRouter } from '@/composables/useRouter'
+import { useBranding } from '@/composables/useBranding'
 
 const { startDragging } = useDraggable('playables')
 const { url } = useRouter()
+const { cover: defaultCover } = useBranding()
 
 const playable = requireInjection<Ref<Playable | undefined>>(CurrentStreamableKey, ref())
 
