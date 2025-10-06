@@ -4,6 +4,6 @@ If [integrated](../service-integrations) Koel will attempt to fetch artists' ima
 Last.fm, or MusicBrainz/Wikipedia whenever a song is played. You can upload custom images for artists, albums, and
 playlists via the corresponding edit form.
 
-If there is no available for artist and album, Koel will use a default image (the Koel bird logo).
+If there is no image available for an artist or album, Koel will use a default image (the Koel bird logo).
 For a playlist, a random "thumbnail stack" will be generated and used based on the tracks.
 

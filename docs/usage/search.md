@@ -42,5 +42,5 @@ There's literally nothing you need to do to keep the index up to date.
 
 ## Usage
 
-To use the instant search, simply start typing in the search box at the top left of the screen or pressing <kbd>F</kbd>.
+To use the instant search, simply start typing in the search box at the top left of the screen or press <kbd>F</kbd>.
 You'll see the results appear as you type.

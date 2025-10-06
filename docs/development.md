@@ -13,7 +13,7 @@ For more requirements, refer to the [Requirements section](./guide/getting-start
 First, clone the repository and install the dependencies:
 
 ```bash
-git clone https://github/com/koel/koel.git
+git clone https://github.com/koel/koel.git
 cd koel
 composer install
 pnpm install
