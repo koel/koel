@@ -33,7 +33,7 @@ First, go to the [Releases page](https://github.com/koel/koel/releases) on GitHu
 following commands:
 
 ```bash
-php artisan koel:init --no-assets
+composer koel:init -- --no-assets
 
 # Follow the wizard to populate necessary configurations
 
@@ -48,8 +48,7 @@ From your console, run the following commands:
 cd <KOEL_ROOT_DIR>
 git clone https://github.com/koel/koel.git .
 git checkout latest # Check out the latest version at https://github.com/koel/koel/releases
-composer install
-php artisan koel:init
+composer koel:init
 
 # Follow the wizard to populate necessary configurations
 
@@ -107,8 +106,7 @@ If you installed Koel from source, upgrading is as simple as running the followi
 cd <KOEL_ROOT_DIR>
 git pull
 git checkout latest
-composer install
-php artisan koel:init
+composer koel:init
 ```
 
 ### Upgrade a pre-compiled archive installation
@@ -122,8 +120,7 @@ cd <KOEL_ROOT_DIR>
 rm -rf app config
 # assuming we're upgrading to v7.0.0
 wget -qO- https://github.com/koel/koel/releases/download/v7.0.0/koel-v7.0.0.tar.gz | tar -xvzC . --strip-components=1
-php artisan cache:clear
-php artisan koel:init --no-assets
+composer koel:init -- --no-assets
 ```
 
 ### Upgrade a Docker installation

@@ -119,6 +119,7 @@
     "post-create-project-cmd": [
       "@php artisan key:generate"
     ],
+    "koel:init": "@php scripts/koel-init.php",
     "test": "@php artisan test",
     "coverage": "@php artisan test --coverage-clover=coverage.xml",
     "cs": "phpcs --standard=ruleset.xml",
