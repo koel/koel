@@ -115,11 +115,18 @@ Usage
 php artisan koel:init [options]
 ```
 
+
 #### Options
 | Name             | Description                     |
 |------------------|---------------------------------|
 | `--no-assets`    | Do not compile front-end assets |
 | `--no-scheduler` | Do not install scheduler        |
+
+:::tip
+Instead of running `php artisan koel:init` directly, you should run `composer koel:init`, which calls this command
+under the hood after installing dependencies. To pass options to `php artisan koel:init`, use argument forwarding, e.g.,
+`composer koel:init -- --no-assets`.
+:::
 
 ### `koel:license:activate`
 
