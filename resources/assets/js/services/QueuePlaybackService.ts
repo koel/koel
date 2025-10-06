@@ -17,6 +17,7 @@ import { http } from '@/services/http'
 import { socketService } from '@/services/socketService'
 import { useEpisodeProgressTracking } from '@/composables/useEpisodeProgressTracking'
 import { BasePlaybackService } from '@/services/BasePlaybackService'
+import { useBranding } from '@/composables/useBranding'
 
 /**
  * The number of seconds before the current playable ends to start preloading the next one.
@@ -238,7 +239,7 @@ export class QueuePlaybackService extends BasePlaybackService {
       this.seekTo(0)
     }
 
-    document.title = 'Koel'
+    document.title = useBranding().name
 
     queueStore.current && (queueStore.current.playback_state = 'Stopped')
     navigator.mediaSession && (navigator.mediaSession.playbackState = 'none')
@@ -314,7 +315,7 @@ export class QueuePlaybackService extends BasePlaybackService {
   }
 
   private async setNowPlayingMeta (playable: Playable) {
-    document.title = `${playable.title} ♫ Koel`
+    document.title = `${playable.title} ♫ ${useBranding().name}`
     this.player.media.setAttribute(
       'title',
       isSong(playable) ? `${playable.artist_name} - ${playable.title}` : playable.title,

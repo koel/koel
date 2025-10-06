@@ -9,10 +9,12 @@
 
 <script lang="ts" setup>
 import { computed, toRefs } from 'vue'
-import defaultCover from '@/../img/covers/default.svg'
+import { useBranding } from '@/composables/useBranding'
 
 const props = defineProps<{ playlist: Playlist }>()
 const { playlist } = toRefs(props)
+
+const { cover: defaultCover } = useBranding()
 
 const backgroundImage = computed(() => `url(${playlist.value.cover || defaultCover})`)
 </script>

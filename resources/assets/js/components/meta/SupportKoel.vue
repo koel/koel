@@ -12,9 +12,7 @@
     </p>
     <button type="button" @click.prevent="close">Hide</button>
     <span class="block after:content-['•'] after:block" />
-    <button type="button" @click.prevent="stopBugging">
-      Don't bug me again
-    </button>
+    <button type="button" @click.prevent="stopBugging">Don't bug me again</button>
   </div>
 </template>
 

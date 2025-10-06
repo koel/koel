@@ -33,6 +33,7 @@ class DemoSessionTest extends TestCase
             ->andReturnFalse();
 
         $demoAccount = $this->get('/')
+            ->assertSuccessful()
             ->assertSee('window.DEMO_ACCOUNT')
             ->viewData('demo_account');
 

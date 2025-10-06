@@ -1,8 +1,12 @@
 <?php
 
 use App\Facades\License;
+use App\Services\SettingService;
+use App\Values\Branding;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Webmozart\Assert\Assert;
 
 /**
  * Get a URL for static file requests.
@@ -189,4 +193,22 @@ function find_ffmpeg_path(): ?string
     }
 
     return null;
+}
+
+function koel_branding(?string $key = null): Branding|string|null
+{
+    Assert::inArray($key, [null, 'name', 'logo', 'cover']);
+
+    $branding = once(static function (): Branding {
+        /** @var SettingService $service */
+        $service = app(SettingService::class);
+
+        return $service->getBranding();
+    });
+
+    if (!$key) {
+        return $branding;
+    }
+
+    return Arr::get($branding->toArray(), $key);
 }

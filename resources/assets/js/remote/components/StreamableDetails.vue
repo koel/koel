@@ -18,12 +18,14 @@
 
 <script lang="ts" setup>
 import { computed, toRefs } from 'vue'
-import defaultCover from '@/../img/covers/default.svg'
 import { getPlayableProp } from '@/utils/helpers'
 import { isRadioStation } from '@/utils/typeGuards'
+import { useBranding } from '@/composables/useBranding'
 
 const props = defineProps<{ streamable: Streamable }>()
 const { streamable } = toRefs(props)
+
+const { cover: defaultCover } = useBranding()
 
 const coverArt = computed(() => {
   const src = isRadioStation(streamable.value)

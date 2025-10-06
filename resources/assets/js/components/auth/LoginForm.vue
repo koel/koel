@@ -8,7 +8,7 @@
       @submit.prevent="handleSubmit"
     >
       <div class="text-center mb-8">
-        <img alt="Koel's logo" class="inline-block" src="@/../img/logo.svg" width="156">
+        <img alt="Logo" class="inline-block" :src="logo" width="156">
       </div>
 
       <FormRow>
@@ -44,6 +44,7 @@ import { authService } from '@/services/authService'
 import { logger } from '@/utils/logger'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useForm } from '@/composables/useForm'
+import { useBranding } from '@/composables/useBranding'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import PasswordField from '@/components/ui/form/PasswordField.vue'
@@ -55,6 +56,7 @@ import FormRow from '@/components/ui/form/FormRow.vue'
 const emit = defineEmits<{ (e: 'loggedin'): void }>()
 
 const { toastWarning, toastError } = useMessageToaster()
+const { logo } = useBranding()
 
 const demoAccount = window.DEMO_ACCOUNT || {
   email: 'demo@koel.dev',

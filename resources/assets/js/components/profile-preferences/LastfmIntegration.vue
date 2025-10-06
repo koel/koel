@@ -8,13 +8,16 @@
     </h3>
 
     <div v-if="useLastfm" data-testid="lastfm-integrated">
-      <p>Last.fm integration is enabled. Koel will attempt to retrieve album and artist information from Last.fm.</p>
+      <p>
+        Last.fm integration is enabled.
+        {{ appName }} will attempt to retrieve album and artist information from Last.fm.
+      </p>
       <p v-if="connected">
         It appears that you have connected your Last.fm account as well – Perfect!
       </p>
       <p v-else>You can also connect your Last.fm account here.</p>
       <p>
-        Connecting Koel and your Last.fm account enables such exciting features as
+        Connecting {{ appName }} and your Last.fm account enables such exciting features as
         <a href="https://www.last.fm/about/trackmymusic" rel="noopener" target="_blank">scrobbling</a>.
       </p>
       <div class="buttons mt-4 space-x-2">
@@ -48,12 +51,14 @@ import { useAuthorization } from '@/composables/useAuthorization'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 import { forceReloadWindow } from '@/utils/helpers'
 import { usePolicies } from '@/composables/usePolicies'
+import { useBranding } from '@/composables/useBranding'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 
 const { currentUser } = useAuthorization()
 const { currentUserCan } = usePolicies()
 const { useLastfm } = useThirdPartyServices()
+const { name: appName } = useBranding()
 
 const connected = computed(() => Boolean(currentUser.value.preferences.lastfm_session_key))
 

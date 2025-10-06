@@ -26,10 +26,11 @@
 <script setup lang="ts">
 import { toRefs } from 'vue'
 import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
-import defaultCover from '@/../img/covers/default.svg'
+import { useBranding } from '@/composables/useBranding'
 
 const props = defineProps<{ station: RadioStation }>()
 const emit = defineEmits<{ (e: 'clicked'): void }>()
 
 const { station } = toRefs(props)
+const { cover: defaultCover } = useBranding()
 </script>

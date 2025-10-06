@@ -8,12 +8,14 @@ use App\Models\Artist;
 use App\Values\ImageWritingConfig;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
+use RuntimeException;
 use Symfony\Component\Finder\Finder;
 
 class ImageStorage
 {
     public function __construct(
         private readonly ImageWriter $imageWriter,
+        private readonly SvgSanitizer $svgSanitizer,
         private readonly Finder $finder,
     ) {
     }
@@ -112,14 +114,38 @@ class ImageStorage
 
     public function storeImage(mixed $source, ?ImageWritingConfig $config = null): string
     {
+        preg_match('/^data:(image\/[A-Za-z0-9+\-.]+);base64,/', $source, $matches);
+        $mime = $matches[1] ?? null;
+
+        if ($mime === 'image/svg+xml') {
+            $svgData = preg_replace('/^data:image\/svg\+xml;base64,/', '', $source);
+            $raw = base64_decode($svgData, true);
+
+            if ($raw === false) {
+                throw new RuntimeException('Failed to decode base64 SVG data.');
+            }
+
+            $sanitized = $this->svgSanitizer->sanitize($raw);
+
+            if (!$sanitized) {
+                throw new RuntimeException('Invalid SVG file.');
+            }
+
+            $path = self::generateRandomStoragePath('svg');
+
+            File::put($path, $sanitized);
+
+            return basename($path);
+        }
+
         $destination = self::generateRandomStoragePath();
         $this->imageWriter->write($destination, $source, $config);
 
         return basename($destination);
     }
 
-    private static function generateRandomStoragePath(): string
+    private static function generateRandomStoragePath(string $extension = 'webp'): string
     {
-        return image_storage_path(sprintf('%s.webp', Ulid::generate()));
+        return image_storage_path(sprintf("%s.%s", Ulid::generate(), $extension));
     }
 }

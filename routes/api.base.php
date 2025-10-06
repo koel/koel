@@ -62,7 +62,8 @@ use App\Http\Controllers\API\ResetPasswordController;
 use App\Http\Controllers\API\ScrobbleController;
 use App\Http\Controllers\API\SearchYouTubeController;
 use App\Http\Controllers\API\SetLastfmSessionKeyController;
-use App\Http\Controllers\API\SettingController;
+use App\Http\Controllers\API\Settings\UpdateBrandingController;
+use App\Http\Controllers\API\Settings\UpdateMediaPathController;
 use App\Http\Controllers\API\SongController;
 use App\Http\Controllers\API\SongSearchController;
 use App\Http\Controllers\API\ToggleLikeSongController;
@@ -119,7 +120,8 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::get('queue/state', [QueueStateController::class, 'show']);
         Route::put('queue/state', [QueueStateController::class, 'update']);
 
-        Route::put('settings', [SettingController::class, 'update']);
+        Route::put('settings/media-path', UpdateMediaPathController::class);
+        Route::put('settings/branding', UpdateBrandingController::class);
 
         Route::apiResource('albums', AlbumController::class);
         Route::apiResource('albums.songs', AlbumSongController::class);

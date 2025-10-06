@@ -11,7 +11,7 @@ use Tests\TestCase;
 
 use function Tests\create_admin;
 
-class SettingTest extends TestCase
+class MediaPathSettingTest extends TestCase
 {
     private DirectoryScanner|MockInterface $mediaScanner;
 
@@ -28,7 +28,7 @@ class SettingTest extends TestCase
         $this->mediaScanner->expects('scan')
             ->andReturn(ScanResultCollection::create());
 
-        $this->putAs('/api/settings', ['media_path' => __DIR__], create_admin())
+        $this->putAs('/api/settings/media-path', ['path' => __DIR__], create_admin())
             ->assertSuccessful();
 
         self::assertSame(__DIR__, Setting::get('media_path'));
@@ -37,7 +37,7 @@ class SettingTest extends TestCase
     #[Test]
     public function nonAdminCannotSaveSettings(): void
     {
-        $this->putAs('/api/settings', ['media_path' => __DIR__])
+        $this->putAs('/api/settings/media-path', ['path' => __DIR__])
             ->assertForbidden();
     }
 
@@ -46,7 +46,7 @@ class SettingTest extends TestCase
     {
         config(['koel.storage_driver' => 's3']);
 
-        $this->putAs('/api/settings', ['media_path' => __DIR__], create_admin())
+        $this->putAs('/api/settings/media-path', ['path' => __DIR__], create_admin())
             ->assertUnprocessable();
 
         config(['koel.storage_driver' => 'local']);

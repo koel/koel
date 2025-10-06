@@ -26,13 +26,15 @@
 
 <script setup lang="ts">
 import { getPlayableProp } from '@/utils/helpers'
-import logo from '@/../img/logo.svg'
+import { useBranding } from '@/composables/useBranding'
 
 import Thumbnail from '@/components/embed/widget/EmbedWidgetThumbnail.vue'
 import PreviewBadge from '@/components/embed/widget/PreviewBadge.vue'
 
 const props = defineProps<{ embed: WidgetReadyEmbed, options: EmbedOptions }>()
 const { embed, options } = props
+
+const { logo } = useBranding()
 
 let heading: string
 let subheading: string

@@ -17,11 +17,12 @@
 <script lang="ts" setup>
 import { take } from 'lodash'
 import { computed, ref, toRefs, watch } from 'vue'
-import defaultCover from '@/../img/covers/default.svg'
+import { useBranding } from '@/composables/useBranding'
 
 const props = defineProps<{ thumbnails: string[] }>()
 const { thumbnails } = toRefs(props)
 
+const { cover: defaultCover } = useBranding()
 const defaultBackgroundImage = `url(${defaultCover})`
 const displayedThumbnails = ref<string[]>([])
 

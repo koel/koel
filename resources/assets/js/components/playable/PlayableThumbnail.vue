@@ -26,13 +26,15 @@
 <script lang="ts" setup>
 import { computed, toRefs } from 'vue'
 import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
-import defaultCover from '@/../img/covers/default.svg'
 import { getPlayableProp } from '@/utils/helpers'
+import { useBranding } from '@/composables/useBranding'
 
 const props = defineProps<{ playable: Playable }>()
 const emit = defineEmits<{ (e: 'clicked'): void }>()
 
 const { playable } = toRefs(props)
+
+const { cover: defaultCover } = useBranding()
 
 const src = computed(() => getPlayableProp(playable.value, 'album_cover', 'episode_image'))
 

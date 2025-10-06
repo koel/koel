@@ -7,6 +7,8 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Services\ImageStorage;
 use App\Services\ImageWriter;
+use App\Services\SvgSanitizer;
+use Illuminate\Support\Facades\File;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
@@ -18,15 +20,17 @@ class ImageStorageTest extends TestCase
     private ImageWriter|MockInterface $imageWriter;
     private Finder|MockInterface $finder;
     private ImageStorage $service;
+    private SvgSanitizer|MockInterface $svgSantizer;
 
     public function setUp(): void
     {
         parent::setUp();
 
         $this->imageWriter = Mockery::mock(ImageWriter::class);
+        $this->svgSantizer = Mockery::mock(SvgSanitizer::class);
         $this->finder = Mockery::mock(Finder::class);
 
-        $this->service = new ImageStorage($this->imageWriter, $this->finder);
+        $this->service = new ImageStorage($this->imageWriter, $this->svgSantizer, $this->finder);
     }
 
     #[Test]
@@ -65,7 +69,7 @@ class ImageStorageTest extends TestCase
     }
 
     #[Test]
-    public function storeImage(): void
+    public function storeRasterImage(): void
     {
         $ulid = Ulid::freeze();
         $logo = "$ulid.webp";
@@ -75,5 +79,23 @@ class ImageStorageTest extends TestCase
             ->with(image_storage_path($logo), 'dummy-logo-src', null);
 
         self::assertSame($logo, $this->service->storeImage('dummy-logo-src'));
+    }
+
+    #[Test]
+    public function storeSvg(): void
+    {
+        $source = 'data:image/svg+xml;base64,Zm9v';
+        $ulid = Ulid::freeze();
+        $logo = "$ulid.svg";
+
+        $this->svgSantizer
+            ->expects('sanitize')
+            ->with('foo')
+            ->andReturn('foo');
+
+        File::expects('put')
+            ->with(image_storage_path($logo), 'foo');
+
+        self::assertSame($logo, $this->service->storeImage($source));
     }
 }

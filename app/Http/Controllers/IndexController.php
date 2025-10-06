@@ -11,8 +11,11 @@ use Illuminate\Http\Request;
 #[DisabledInDemo]
 class IndexController extends Controller
 {
-    public function __invoke(Request $request, ProxyAuthService $proxyAuthService, AuthenticationService $auth)
-    {
+    public function __invoke(
+        Request $request,
+        ProxyAuthService $proxyAuthService,
+        AuthenticationService $auth,
+    ) {
         $data = ['token' => null];
 
         if (License::isPlus() && config('koel.proxy_auth.enabled')) {
