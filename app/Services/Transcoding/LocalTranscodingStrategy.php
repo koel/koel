@@ -26,7 +26,14 @@ class LocalTranscodingStrategy extends TranscodingStrategy
         // update the existing one.
         $destination = artifact_path(sprintf('transcodes/%d/%s.m4a', $bitRate, Ulid::generate()));
         $this->transcoder->transcode($song->path, $destination, $bitRate);
-        $this->createOrUpdateTranscode($song, $destination, $bitRate, File::hash($destination));
+
+        $this->createOrUpdateTranscode(
+            $song,
+            $destination,
+            $bitRate,
+            File::hash($destination),
+            File::size($destination),
+        );
 
         return $destination;
     }

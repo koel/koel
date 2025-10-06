@@ -262,6 +262,7 @@ class SongServiceTest extends TestCase
             'is_public' => false,
             'artist_name' => 'Koel',
             'album_name' => 'Koel Testing Vol. 1',
+            'file_size' => 72_081,
         ], $song->getAttributes());
 
         self::assertSame(2015, $song->album->year);

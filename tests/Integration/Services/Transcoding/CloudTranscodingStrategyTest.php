@@ -44,30 +44,16 @@ class CloudTranscodingStrategyTest extends TestCase
         $transcodeKey = "transcodes/128/$ulid.m4a";
         $transcodePresignedUrl = "https://s3.song.presigned.url/transcodes/128/$ulid.m4a";
 
-        $storage->expects('getPresignedUrl')
-            ->with('key.flac')
-            ->andReturn($songPresignedUrl);
+        $storage->expects('getPresignedUrl')->with('key.flac')->andReturn($songPresignedUrl);
+        $storage->expects('getPresignedUrl')->with($transcodeKey)->andReturn($transcodePresignedUrl);
+        $storage->expects('uploadToStorage')->with($transcodeKey, $tmpDestination);
 
-        $storage->expects('getPresignedUrl')
-            ->with($transcodeKey)
-            ->andReturn($transcodePresignedUrl);
+        $this->transcoder->expects('transcode')->with($songPresignedUrl, $tmpDestination, 128);
 
-        $storage->expects('uploadToStorage')
-            ->with($transcodeKey, $tmpDestination);
-
-        $this->transcoder
-            ->expects('transcode')
-            ->with($songPresignedUrl, $tmpDestination, 128);
-
-        File::expects('ensureDirectoryExists')
-            ->with(dirname($tmpDestination));
-
-        File::expects('hash')
-            ->with($tmpDestination)
-            ->andReturn('mocked-checksum');
-
-        File::expects('delete')
-            ->with($tmpDestination);
+        File::expects('ensureDirectoryExists')->with(dirname($tmpDestination));
+        File::expects('hash')->with($tmpDestination)->andReturn('mocked-checksum');
+        File::expects('delete')->with($tmpDestination);
+        File::expects('size')->with($tmpDestination)->andReturn(1_024);
 
         $transcodedPath = $this->strategy->getTranscodeLocation($song, 128);
 
@@ -78,6 +64,7 @@ class CloudTranscodingStrategyTest extends TestCase
             'location' => $transcodeKey,
             'bit_rate' => 128,
             'hash' => 'mocked-checksum',
+            'file_size' => 1_024,
         ]);
     }
 
