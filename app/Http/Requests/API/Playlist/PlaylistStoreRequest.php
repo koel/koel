@@ -28,7 +28,7 @@ class PlaylistStoreRequest extends Request
         return [
             'name' => 'required',
             'songs' => ['array', new AllPlayablesAreAccessibleBy($this->user())],
-            'description' => 'string|sometimes', // backward compatibility for mobile apps
+            'description' => 'string|sometimes|nullable', // backward compatibility for mobile apps
             'rules' => ['array', 'nullable', new ValidSmartPlaylistRulePayload()],
             'folder_id' => ['nullable', 'sometimes', Rule::exists(PlaylistFolder::class, 'id')],
             'cover' => ['sometimes', 'nullable', new ValidImageData()],
