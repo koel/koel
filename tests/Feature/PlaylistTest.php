@@ -76,6 +76,25 @@ class PlaylistTest extends TestCase
     }
 
     #[Test]
+    public function createPlaylistWithoutDescription(): void
+    {
+        $user = create_user();
+
+        $this->postAs('api/playlists', [
+            'name' => 'Foo Bar',
+            'description' => '',
+            'songs' => [],
+            'rules' => [],
+        ], $user)
+            ->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
+
+        $playlist = Playlist::query()->latest()->first();
+
+        self::assertSame('Foo Bar', $playlist->name);
+        self::assertSame('', $playlist->description);
+    }
+
+    #[Test]
     public function creatingSmartPlaylist(): void
     {
         $user = create_user();
@@ -157,6 +176,21 @@ class PlaylistTest extends TestCase
 
         self::assertSame('Bar', $playlist->refresh()->name);
         self::assertSame('Bar Description', $playlist->description);
+    }
+
+    #[Test]
+    public function updateWithoutDescription(): void
+    {
+        $playlist = create_playlist(['name' => 'Foo', 'description' => 'Bar Description']);
+
+        $this->putAs("api/playlists/{$playlist->id}", [
+            'name' => 'Bar',
+            'description' => '',
+        ], $playlist->owner)
+            ->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
+
+        self::assertSame('Bar', $playlist->refresh()->name);
+        self::assertSame('', $playlist->description);
     }
 
     #[Test]
