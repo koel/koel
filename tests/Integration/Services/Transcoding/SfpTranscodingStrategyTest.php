@@ -43,6 +43,7 @@ class SfpTranscodingStrategyTest extends TestCase
         $storage->expects('copyToLocal')->with('remote/path/to/song.flac')->andReturn('/tmp/song.flac');
 
         File::expects('ensureDirectoryExists')->with(dirname($destination));
+        File::expects('size')->with($destination)->andReturn(1_024);
 
         $this->transcoder->expects('transcode')->with('/tmp/song.flac', $destination, 128);
 
@@ -56,6 +57,7 @@ class SfpTranscodingStrategyTest extends TestCase
             'location' => $destination,
             'bit_rate' => 128,
             'hash' => 'mocked-checksum',
+            'file_size' => 1_024,
         ]);
     }
 
@@ -114,6 +116,7 @@ class SfpTranscodingStrategyTest extends TestCase
         $this->transcoder->expects('transcode')->with('/tmp/song.flac', $destination, 128);
 
         File::expects('hash')->with($destination)->andReturn('mocked-checksum');
+        File::expects('size')->with($destination)->andReturn(1_024);
         File::expects('delete')->with('/tmp/song.flac');
 
         $this->strategy->getTranscodeLocation($song, 128);

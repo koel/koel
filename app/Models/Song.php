@@ -65,6 +65,7 @@ use Webmozart\Assert\Assert;
  * @property int $owner_id
  * @property int $track
  * @property ?int $year
+ * @property ?int $file_size The size in bytes of the song file, if available.
  * @property string $id
  * @property string $lyrics
  * @property string $path
@@ -104,6 +105,7 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
         'title' => SongTitleCast::class,
         'lyrics' => SongLyricsCast::class,
         'length' => 'float',
+        'file_size' => 'int',
         'mtime' => 'int',
         'track' => 'int',
         'disc' => 'int',

@@ -35,15 +35,11 @@ class LocalTranscodingStrategyTest extends TestCase
 
         $destination = artifact_path("transcodes/128/$ulid.m4a", ensureDirectoryExists: false);
 
-        $this->transcoder->expects('transcode')
-            ->with('/path/to/song.flac', $destination, 128);
+        $this->transcoder->expects('transcode')->with('/path/to/song.flac', $destination, 128);
 
-        File::expects('hash')
-            ->with($destination)
-            ->andReturn('mocked-checksum');
-
-        File::expects('ensureDirectoryExists')
-            ->with(dirname($destination));
+        File::expects('hash')->with($destination)->andReturn('mocked-checksum');
+        File::expects('ensureDirectoryExists')->with(dirname($destination));
+        File::expects('size')->with($destination)->andReturn(1_024);
 
         $transcodedPath = $this->strategy->getTranscodeLocation($song, 128);
 
@@ -52,6 +48,7 @@ class LocalTranscodingStrategyTest extends TestCase
             'location' => $destination,
             'bit_rate' => 128,
             'hash' => 'mocked-checksum',
+            'file_size' => 1_024,
         ]);
 
         self::assertSame($transcodedPath, $destination);
@@ -102,6 +99,7 @@ class LocalTranscodingStrategyTest extends TestCase
         File::expects('delete')->with('/path/to/transcode.m4a');
         File::expects('hash')->with($destination)->andReturn('mocked-checksum');
         File::expects('ensureDirectoryExists')->with(dirname($destination));
+        File::expects('size')->with($destination)->andReturn(1_024);
 
         $this->transcoder->expects('transcode')->with('/path/to/song.flac', $destination, 128);
 

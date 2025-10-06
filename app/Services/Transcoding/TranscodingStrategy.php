@@ -23,14 +23,24 @@ abstract class TranscodingStrategy
         ]);
     }
 
-    protected function createOrUpdateTranscode(Song $song, string $location, int $bitRate, string $hash): Transcode
-    {
-        Transcode::query()->upsert([
-            'song_id' => $song->id,
-            'location' => $location,
-            'bit_rate' => $bitRate,
-            'hash' => $hash,
-        ], ['song_id', 'bit_rate'], ['location', 'hash']);
+    protected function createOrUpdateTranscode(
+        Song $song,
+        string $locationOrCloudKey,
+        int $bitRate,
+        string $hash,
+        int $fileSize,
+    ): Transcode {
+        Transcode::query()->upsert(
+            values: [
+                'song_id' => $song->id,
+                'location' => $locationOrCloudKey,
+                'bit_rate' => $bitRate,
+                'hash' => $hash,
+                'file_size' => $fileSize,
+            ],
+            uniqueBy: ['song_id', 'bit_rate'],
+            update: ['location', 'hash', 'file_size'],
+        );
 
         return $this->findTranscodeBySongAndBitRate($song, $bitRate); // @phpstan-ignore-line
     }

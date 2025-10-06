@@ -83,7 +83,7 @@ class AuthenticationService
     public function loginViaOneTimeToken(string $token): CompositeToken
     {
         $cacheKey = cache_key('one-time token', $token);
-        $encryptedUserId = Cache::get($cacheKey);
+        $encryptedUserId = Cache::pull($cacheKey);
 
         if (!$encryptedUserId) {
             throw new InvalidArgumentException(message: 'One-time token not found or expired.');
@@ -93,8 +93,6 @@ class AuthenticationService
             $userId = decrypt($encryptedUserId);
         } catch (Throwable $e) {
             throw new InvalidArgumentException(message: 'Invalid one-time token.', previous: $e);
-        } finally {
-            Cache::forget($cacheKey);
         }
 
         return $this->logUserIn($this->userRepository->getOne($userId));

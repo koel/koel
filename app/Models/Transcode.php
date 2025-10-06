@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\File;
  * @property Song $song
  * @property-read SongStorageType $storage The storage type of the associated song.
  * @property int $bit_rate
+ * @property ?int $file_size
  * @property string $hash
  * @property string $location
  */
@@ -25,6 +26,12 @@ class Transcode extends Model
     use HasUuids;
 
     protected $guarded = [];
+
+    protected $casts = [
+        'bit_rate' => 'int',
+        'file_size' => 'int',
+    ];
+
     protected $with = ['song'];
 
     public function song(): BelongsTo
@@ -34,7 +41,7 @@ class Transcode extends Model
 
     public function isValid(): bool
     {
-        // For cloud storage songs, since the transcoded file is stored on the cloud too,
+        // For cloud storage songs, since the transcoded file is stored in the cloud too,
         // we assume the transcoded file is valid.
         if ($this->song->isStoredOnCloud()) {
             return true;

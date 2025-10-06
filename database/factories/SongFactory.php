@@ -29,6 +29,7 @@ class SongFactory extends Factory
             'hash' => $this->faker->md5(),
             'mtime' => time(),
             'mime_type' => 'audio/mpeg',
+            'file_size' => $this->faker->numberBetween(4_000_000, 10_000_000),
         ];
     }
 
@@ -63,6 +64,7 @@ class SongFactory extends Factory
             'disc' => 0,
             'year' => null,
             'mime_type' => null,
+            'file_size' => null,
         ]);
     }
 }

@@ -24,7 +24,7 @@ class CloudTranscodingStrategy extends TranscodingStrategy
 
     /**
      * Create a new transcode for the given song at the specified bit rate by performing the following steps:
-     * 1. Transcode the song to the specified bit rate and storing it temporarily.
+     * 1. Transcode the song to the specified bit rate and store it temporarily.
      * 2. Upload the transcoded file back to the cloud storage.
      * 3. Store the transcode record in the database.
      * 4. Delete the temporary file.
@@ -44,7 +44,13 @@ class CloudTranscodingStrategy extends TranscodingStrategy
         try {
             $storage->uploadToStorage($key, $tmpDestination);
 
-            return $this->createOrUpdateTranscode($song, $key, $bitRate, File::hash($tmpDestination));
+            return $this->createOrUpdateTranscode(
+                $song,
+                $key,
+                $bitRate,
+                File::hash($tmpDestination),
+                File::size($tmpDestination),
+            );
         } finally {
             File::delete($tmpDestination);
         }

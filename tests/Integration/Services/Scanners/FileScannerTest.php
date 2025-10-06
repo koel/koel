@@ -58,6 +58,8 @@ class FileScannerTest extends TestCase
             'mtime' => filemtime(test_path('songs/full.mp3')),
             'albumartist' => '',
             'year' => 2015,
+            'mime_type' => 'audio/mpeg',
+            'file_size' => 72_081,
         ];
 
         self::assertArraySubset($expectedData, $info->toArray());
@@ -88,6 +90,8 @@ class FileScannerTest extends TestCase
             ],
             'path' => realpath($flacPath),
             'mtime' => filemtime($flacPath),
+            'mime_type' => 'audio/flac',
+            'file_size' => 532_201,
         ];
 
         self::assertArraySubset($expectedData, $info->toArray());
