@@ -7,16 +7,16 @@
     <Component
       :is="modalNameToComponentMap[activeModalName]"
       v-if="activeModalName"
+      v-bind="props"
       @close="close"
     />
   </dialog>
 </template>
 
 <script lang="ts" setup>
-import { provide, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { arrayify, defineAsyncComponent } from '@/utils/helpers'
 import { eventBus } from '@/utils/eventBus'
-import { ModalContextKey } from '@/symbols'
 import type { Modals } from '@/config/modals'
 
 const modalNameToComponentMap: Record<keyof Modals, Closure> = {
@@ -44,22 +44,20 @@ const modalNameToComponentMap: Record<keyof Modals, Closure> = {
 
 const dialog = ref<HTMLDialogElement>()
 const activeModalName = ref<keyof Modals | null>(null)
-const context = ref<Record<string, any>>({})
-
-provide(ModalContextKey, context)
+const props = ref<Record<string, any>>({})
 
 watch(activeModalName, name => name ? dialog.value?.showModal() : dialog.value?.close())
 
 const close = () => {
   activeModalName.value = null
-  context.value = {}
+  props.value = {}
 }
 
 const showModal = <N extends keyof Modals> (
   name: N,
   ...args: [Modals[N]] extends [never] ? [] : [ctx: Modals[N]]
 ) => {
-  context.value = (args[0] ?? {}) as Modals[N]
+  props.value = (args[0] ?? {}) as Modals[N]
   activeModalName.value = name
 }
 

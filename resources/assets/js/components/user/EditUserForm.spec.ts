@@ -1,9 +1,7 @@
-import { ref } from 'vue'
 import { fireEvent, screen, waitFor } from '@testing-library/vue'
 import { describe, expect, it } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
 import { MessageToasterStub } from '@/__tests__/stubs'
-import { ModalContextKey } from '@/symbols'
 import { userStore } from '@/stores/userStore'
 import Component from './EditUserForm.vue'
 
@@ -14,12 +12,12 @@ describe('editUserForm.vue', () => {
     user = user ?? h.factory('user')
 
     const rendered = h.render(Component, {
+      props: {
+        user,
+      },
       global: {
         stubs: {
           RolePicker: h.stub('role-picker', true),
-        },
-        provide: {
-          [<symbol>ModalContextKey]: ref({ user }),
         },
       },
     })

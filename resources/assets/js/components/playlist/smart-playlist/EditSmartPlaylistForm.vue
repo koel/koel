@@ -114,7 +114,6 @@ import { playlistStore } from '@/stores/playlistStore'
 import { eventBus } from '@/utils/eventBus'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
-import { useModal } from '@/composables/useModal'
 import { useSmartPlaylistForm } from '@/composables/useSmartPlaylistForm'
 import { useForm } from '@/composables/useForm'
 import { useImageFileInput } from '@/composables/useImageFileInput'
@@ -130,11 +129,14 @@ import TabList from '@/components/ui/tabs/TabList.vue'
 import TabPanel from '@/components/ui/tabs/TabPanel.vue'
 import FileInput from '@/components/ui/form/FileInput.vue'
 
+const props = defineProps<{ playlist: Playlist }>()
 const emit = defineEmits<{ (e: 'close'): void }>()
+
+const { playlist } = props
+
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 
-const playlist = useModal<'EDIT_SMART_PLAYLIST_FORM'>().getFromContext('playlist')
 const folders = toRef(playlistFolderStore.state, 'folders')
 const mutablePlaylist = reactive(cloneDeep(playlist))
 

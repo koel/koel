@@ -68,7 +68,6 @@ import { pluralize } from '@/utils/formatters'
 import { useRouter } from '@/composables/useRouter'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
-import { useModal } from '@/composables/useModal'
 import { useForm } from '@/composables/useForm'
 import { useImageFileInput } from '@/composables/useImageFileInput'
 
@@ -79,16 +78,19 @@ import SelectBox from '@/components/ui/form/SelectBox.vue'
 import TextArea from '@/components/ui/form/TextArea.vue'
 import FileInput from '@/components/ui/form/FileInput.vue'
 
+const props = withDefaults(defineProps<{ playables: Playable[], folder?: PlaylistFolder | null }>(), {
+  playables: () => [],
+})
+
 const emit = defineEmits<{ (e: 'close'): void }>()
+
+const { playables, folder: targetFolder } = props
 
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { go, url } = useRouter()
-const { getFromContext } = useModal<'CREATE_PLAYLIST_FORM'>()
 
 const folders = toRef(playlistFolderStore.state, 'folders')
-const targetFolder = getFromContext('folder')
-const playables = getFromContext('playables')
 
 const close = () => emit('close')
 

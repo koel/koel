@@ -1,7 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { ref } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import { ModalContextKey } from '@/symbols'
 import { embedService } from '@/stores/embedService'
 import { screen, waitFor } from '@testing-library/vue'
 import Component from './CreateEmbedForm.vue'
@@ -22,10 +20,8 @@ describe('createEmbedForm.vue', () => {
     const encryptOptionsMock = h.mock(embedService, 'encryptOptions').mockResolvedValueOnce('encrypted-1')
 
     const rendered = h.render(Component, {
-      global: {
-        provide: {
-          [<symbol>ModalContextKey]: ref({ embeddable }),
-        },
+      props: {
+        embeddable,
       },
     })
 

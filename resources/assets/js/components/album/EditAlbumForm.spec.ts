@@ -1,8 +1,6 @@
-import { ref } from 'vue'
 import { describe, expect, it } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
 import { screen, waitFor } from '@testing-library/vue'
-import { ModalContextKey } from '@/symbols'
 import { albumStore } from '@/stores/albumStore'
 import Component from './EditAlbumForm.vue'
 
@@ -14,10 +12,8 @@ describe('editAlbumForm.vue', () => {
     albumStore.state.albums = [album]
 
     const rendered = h.render(Component, {
-      global: {
-        provide: {
-          [<symbol>ModalContextKey]: ref({ album }),
-        },
+      props: {
+        album,
       },
     })
 

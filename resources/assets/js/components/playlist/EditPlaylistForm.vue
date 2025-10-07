@@ -63,7 +63,6 @@ import type { UpdatePlaylistData } from '@/stores/playlistStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
-import { useModal } from '@/composables/useModal'
 import { useForm } from '@/composables/useForm'
 import { useImageFileInput } from '@/composables/useImageFileInput'
 
@@ -74,7 +73,10 @@ import SelectBox from '@/components/ui/form/SelectBox.vue'
 import TextArea from '@/components/ui/form/TextArea.vue'
 import FileInput from '@/components/ui/form/FileInput.vue'
 
+const props = defineProps<{ playlist: Playlist }>()
 const emit = defineEmits<{ (e: 'close'): void }>()
+
+const { playlist } = props
 
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
@@ -82,7 +84,6 @@ const { showConfirmDialog } = useDialogBox()
 const close = () => emit('close')
 
 const folders = toRef(playlistFolderStore.state, 'folders')
-const playlist = useModal<'EDIT_PLAYLIST_FORM'>().getFromContext('playlist')
 
 const { data, isPristine, handleSubmit } = useForm<UpdatePlaylistData>({
   initialValues: {

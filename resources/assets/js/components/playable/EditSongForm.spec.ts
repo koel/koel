@@ -1,10 +1,8 @@
 import { screen } from '@testing-library/vue'
-import { ref } from 'vue'
 import { describe, expect, it } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
 import { arrayify } from '@/utils/helpers'
 import { eventBus } from '@/utils/eventBus'
-import { ModalContextKey } from '@/symbols'
 import type { SongUpdateResult } from '@/stores/playableStore'
 import { playableStore as songStore } from '@/stores/playableStore'
 import { MessageToasterStub } from '@/__tests__/stubs'
@@ -17,13 +15,9 @@ describe('editSongForm.vue', () => {
     songs = arrayify(songs)
 
     const rendered = h.render(Component, {
-      global: {
-        provide: {
-          [<symbol>ModalContextKey]: ref({
-            songs,
-            initialTab,
-          }),
-        },
+      props: {
+        songs,
+        initialTab,
       },
     })
 
@@ -41,8 +35,8 @@ describe('editSongForm.vue', () => {
       albums: [],
       artists: [],
       removed: {
-        albums: [],
-        artists: [],
+        album_ids: [],
+        artist_ids: [],
       },
     }
 
@@ -94,8 +88,8 @@ describe('editSongForm.vue', () => {
       albums: [],
       artists: [],
       removed: {
-        albums: [],
-        artists: [],
+        album_ids: [],
+        artist_ids: [],
       },
     }
 

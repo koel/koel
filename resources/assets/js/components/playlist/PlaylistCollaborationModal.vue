@@ -36,15 +36,16 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { useAuthorization } from '@/composables/useAuthorization'
-import { useModal } from '@/composables/useModal'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import InviteCollaborators from '@/components/playlist/InvitePlaylistCollaborators.vue'
 import CollaboratorList from '@/components/playlist/PlaylistCollaboratorList.vue'
 
+const props = defineProps<{ playlist: Playlist }>()
 const emit = defineEmits<{ (e: 'close'): void }>()
 
-const playlist = useModal<'PLAYLIST_COLLABORATION'>().getFromContext('playlist')
+const { playlist } = props
+
 const { currentUser } = useAuthorization()
 
 const canManageCollaborators = computed(() => currentUser.value?.id === playlist.owner_id)

@@ -51,7 +51,6 @@ import type { UpdateUserData } from '@/stores/userStore'
 import { userStore } from '@/stores/userStore'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
-import { useModal } from '@/composables/useModal'
 import { useForm } from '@/composables/useForm'
 
 import Btn from '@/components/ui/form/Btn.vue'
@@ -60,14 +59,15 @@ import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 import RolePicker from '@/components/user/RolePicker.vue'
 
+const props = defineProps<{ user: User }>()
 const emit = defineEmits<{ (e: 'close'): void }>()
+
+const { user } = props
 
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 
 const close = () => emit('close')
-
-const user = useModal<'EDIT_USER_FORM'>().getFromContext('user')
 
 const { data, isPristine, handleSubmit } = useForm<UpdateUserData>({
   initialValues: {

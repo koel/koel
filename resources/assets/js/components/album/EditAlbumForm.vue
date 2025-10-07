@@ -68,7 +68,6 @@ import { computed } from 'vue'
 import { pick } from 'lodash'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useDialogBox } from '@/composables/useDialogBox'
-import { useModal } from '@/composables/useModal'
 import type { AlbumUpdateData } from '@/stores/albumStore'
 import { albumStore } from '@/stores/albumStore'
 import { useForm } from '@/composables/useForm'
@@ -79,14 +78,15 @@ import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FileInput from '@/components/ui/form/FileInput.vue'
 
+const props = defineProps<{ album: Album }>()
 const emit = defineEmits<{ (e: 'close'): void }>()
+
+const { album } = props
 
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 
 const close = () => emit('close')
-
-const album = useModal<'EDIT_ALBUM_FORM'>().getFromContext('album')
 
 const { data, isPristine, handleSubmit } = useForm<AlbumUpdateData>({
   initialValues: {

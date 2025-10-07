@@ -26,5 +26,3 @@ export const PlayableListConfigKey: ReadonlyInjectionKey<Partial<PlayableListCon
 export const PlayableListSortFieldKey: ReadonlyInjectionKey<Ref<PlayableListSortField>> = Symbol('PlayableListSortField')
 export const PlayableListSortOrderKey: ReadonlyInjectionKey<Ref<SortOrder>> = Symbol('PlayableListSortOrder')
 export const PlayableListContextKey: InjectionKey<Ref<PlayableListContext>> = Symbol('PlayableListContext')
-
-export const ModalContextKey: InjectionKey<Ref<Record<string, any>>> = Symbol('ModalContext')

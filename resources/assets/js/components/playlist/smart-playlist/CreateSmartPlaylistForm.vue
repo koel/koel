@@ -107,7 +107,6 @@ import type { CreatePlaylistData } from '@/stores/playlistStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
-import { useModal } from '@/composables/useModal'
 import { useSmartPlaylistForm } from '@/composables/useSmartPlaylistForm'
 import { useRouter } from '@/composables/useRouter'
 import { useForm } from '@/composables/useForm'
@@ -124,7 +123,10 @@ import Tabs from '@/components/ui/tabs/Tabs.vue'
 import TabPanel from '@/components/ui/tabs/TabPanel.vue'
 import FileInput from '@/components/ui/form/FileInput.vue'
 
+const props = defineProps<{ folder?: PlaylistFolder | null }>()
 const emit = defineEmits<{ (e: 'close'): void }>()
+
+const { folder: targetFolder } = props
 
 const {
   Btn,
@@ -139,7 +141,6 @@ const { showConfirmDialog } = useDialogBox()
 const { go, url } = useRouter()
 
 const folders = toRef(playlistFolderStore.state, 'folders')
-const targetFolder = useModal<'CREATE_SMART_PLAYLIST_FORM'>().getFromContext('folder')
 const currentTab = ref<'details' | 'rules'>('details')
 
 const close = () => emit('close')

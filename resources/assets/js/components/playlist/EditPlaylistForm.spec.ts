@@ -1,10 +1,8 @@
-import { ref } from 'vue'
 import { describe, expect, it } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { screen, waitFor } from '@testing-library/vue'
-import { ModalContextKey } from '@/symbols'
 import Component from './EditPlaylistForm.vue'
 
 describe('editPlaylistForm.vue', () => {
@@ -15,10 +13,8 @@ describe('editPlaylistForm.vue', () => {
     playlistStore.state.playlists = [playlist]
 
     const rendered = h.render(Component, {
-      global: {
-        provide: {
-          [<symbol>ModalContextKey]: ref({ playlist }),
-        },
+      props: {
+        playlist,
       },
     })
 
