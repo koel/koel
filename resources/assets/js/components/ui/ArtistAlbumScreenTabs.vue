@@ -15,7 +15,7 @@
 }
 
 :deep(header ul) {
-  @apply flex bg-white/5 overflow-hidden flex-shrink-0 border-b-white/5;
+  @apply flex flex-nowrap bg-white/5 overflow-x-auto overflow-y-hidden flex-shrink-0 border-b-white/5;
 
   li {
     @apply text-base relative uppercase tracking-wider opacity-50 cursor-pointer;
