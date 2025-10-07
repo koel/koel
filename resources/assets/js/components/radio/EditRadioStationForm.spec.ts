@@ -2,9 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { screen, waitFor } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { radioStationStore } from '@/stores/radioStationStore'
-import { ModalContextKey } from '@/symbols'
 import type { Reactive } from 'vue'
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
 import Component from './EditRadioStationForm.vue'
 
 describe('editRadioStationForm.vue', () => {
@@ -14,10 +13,8 @@ describe('editRadioStationForm.vue', () => {
     station = station ?? h.factory('radio-station')
 
     const rendered = h.render(Component, {
-      global: {
-        provide: {
-          [<symbol>ModalContextKey]: ref({ station }),
-        },
+      props: {
+        station,
       },
     })
 

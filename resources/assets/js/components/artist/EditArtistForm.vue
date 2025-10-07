@@ -46,7 +46,6 @@
 import { computed } from 'vue'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useDialogBox } from '@/composables/useDialogBox'
-import { useModal } from '@/composables/useModal'
 import type { ArtistUpdateData } from '@/stores/artistStore'
 import { artistStore } from '@/stores/artistStore'
 import { useForm } from '@/composables/useForm'
@@ -57,14 +56,15 @@ import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FileInput from '@/components/ui/form/FileInput.vue'
 
+const props = defineProps<{ artist: Artist }>()
 const emit = defineEmits<{ (e: 'close'): void }>()
+
+const { artist } = props
 
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 
 const close = () => emit('close')
-
-const artist = useModal<'EDIT_ARTIST_FORM'>().getFromContext('artist')
 
 const { data, isPristine, handleSubmit } = useForm<ArtistUpdateData>({
   initialValues: {

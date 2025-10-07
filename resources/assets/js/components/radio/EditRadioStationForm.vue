@@ -73,7 +73,6 @@ import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import type { RadioStationData } from '@/stores/radioStationStore'
 import { radioStationStore } from '@/stores/radioStationStore'
-import { useModal } from '@/composables/useModal'
 import { useForm } from '@/composables/useForm'
 import { useImageFileInput } from '@/composables/useImageFileInput'
 
@@ -84,10 +83,12 @@ import TextArea from '@/components/ui/form/TextArea.vue'
 import CheckBox from '@/components/ui/form/CheckBox.vue'
 import FileInput from '@/components/ui/form/FileInput.vue'
 
+const props = defineProps<{ station: RadioStation }>()
 const emit = defineEmits<{ (e: 'close'): void }>()
-const close = () => emit('close')
 
-const station = useModal<'EDIT_RADIO_STATION_FORM'>().getFromContext('station')
+const { station } = props
+
+const close = () => emit('close')
 
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()

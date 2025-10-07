@@ -29,21 +29,21 @@ import { pick } from 'lodash'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
-import { useModal } from '@/composables/useModal'
 import { useForm } from '@/composables/useForm'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 
+const props = defineProps<{ folder: PlaylistFolder }>()
 const emit = defineEmits<{ (e: 'close'): void }>()
+
+const { folder } = props
 
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 
 const close = () => emit('close')
-
-const folder = useModal<'EDIT_PLAYLIST_FOLDER_FORM'>().getFromContext('folder')
 
 const { data, isPristine, handleSubmit } = useForm<Pick<PlaylistFolder, 'name'>>({
   initialValues: pick(folder, 'name'),

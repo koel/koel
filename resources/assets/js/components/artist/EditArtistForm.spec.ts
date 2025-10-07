@@ -1,8 +1,6 @@
-import { ref } from 'vue'
 import { describe, expect, it } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
 import { screen, waitFor } from '@testing-library/vue'
-import { ModalContextKey } from '@/symbols'
 import { artistStore } from '@/stores/artistStore'
 import Component from './EditArtistForm.vue'
 
@@ -14,10 +12,8 @@ describe('editArtistForm.vue', () => {
     artistStore.state.artists = [artist]
 
     const rendered = h.render(Component, {
-      global: {
-        provide: {
-          [<symbol>ModalContextKey]: ref({ artist }),
-        },
+      props: {
+        artist,
       },
     })
 

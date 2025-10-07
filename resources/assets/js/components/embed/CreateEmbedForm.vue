@@ -40,7 +40,6 @@
 </template>
 
 <script setup lang="ts">
-import { useModal } from '@/composables/useModal'
 import { computed, onMounted, ref, watch } from 'vue'
 import { embedService } from '@/stores/embedService'
 import { themeStore } from '@/stores/themeStore'
@@ -54,14 +53,14 @@ import Btn from '@/components/ui/form/Btn.vue'
 import EmbedOptionsPanel from '@/components/embed/EmbedOptionsPanel.vue'
 import CheckBox from '@/components/ui/form/CheckBox.vue'
 
+const props = defineProps<{ embeddable: Embeddable }>()
 const emit = defineEmits<{ (e: 'close'): void }>()
+
+const { embeddable } = props
 
 const { isPlus } = useKoelPlus()
 const { toastSuccess } = useMessageToaster()
 const { handleHttpError } = useErrorHandler()
-const { getFromContext } = useModal<'CREATE_EMBED_FORM'>()
-
-const embeddable = getFromContext('embeddable')
 
 const previewIframe = ref<HTMLIFrameElement>()
 const embed = ref<Embed>()
