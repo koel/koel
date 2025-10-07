@@ -1,4 +1,5 @@
 <template>
+  <!-- using .stop modifier to prevent events from bubbling up to the containing playlist folder (if any) -->
   <SidebarItem
     :class="{ droppable }"
     :href="href"
@@ -6,10 +7,10 @@
     draggable="true"
     :active
     @contextmenu="onContextMenu"
-    @dragleave="onDragLeave"
-    @dragover="onDragOver"
-    @dragstart="onDragStart"
-    @drop="onDrop"
+    @dragleave.stop="onDragLeave"
+    @dragover.stop="onDragOver"
+    @dragstart.stop="onDragStart"
+    @drop.stop="onDrop"
   >
     <template #icon>
       <Icon v-if="isRecentlyPlayedList(list)" :icon="faClockRotateLeft" class="text-k-success" fixed-width />
