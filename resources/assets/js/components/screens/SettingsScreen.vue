@@ -4,7 +4,7 @@
       <ScreenHeader>Settings</ScreenHeader>
     </template>
 
-    <main class="space-y-4">
+    <main class="space-y-6">
       <MediaPathSettingGroup open />
       <BrandingSettingGroup v-if="isPlus" :current-branding="currentBranding" />
     </main>

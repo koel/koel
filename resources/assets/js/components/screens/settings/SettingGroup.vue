@@ -1,6 +1,6 @@
 <template>
-  <article class="flex">
-    <header class="w-64">
+  <article class="flex flex-col md:flex-row gap-4">
+    <header class="w-full md:w-64">
       <h3 class="font-semibold">
         <slot name="title" />
       </h3>
