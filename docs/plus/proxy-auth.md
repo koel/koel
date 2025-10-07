@@ -12,7 +12,7 @@ Proxy authentication bypasses Koel's built-in authentication system and relies o
 Make sure your proxy server is secure and properly configured.
 :::
 
-To enable proxy authentication, set `PROXY_AUTH_ENABLED` to in `.env` to `true` and provide the necessary configuration:
+To enable proxy authentication, set `PROXY_AUTH_ENABLED` in `.env` to `true` and provide the necessary configuration:
 
 * `PROXY_AUTH_USER_HEADER`: The header name that contains the unique identifier for the user, e.g., `remote-user`.
 * `PROXY_AUTH_PREFERRED_NAME_HEADER`: The header name that contains the user's preferred, humanly-readable name, e.g., `remote-preferred-name`.

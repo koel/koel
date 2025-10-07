@@ -40,7 +40,7 @@ be transcoded to 128 kbps AAC. You can set it to a higher value, such as `192`, 
 of a larger file size. Practically, it's almost impossible to differentiate between 320 kbps AAC and lossless audio.
 
 As transcoding can take some time (albeit typically several seconds) and resources, Koel will cache the transcoded
-files for latter use. You should also expect a slight delay when you first play a song that requires transcoding, as
+files for later use. You should also expect a slight delay when you first play a song that requires transcoding, as
 Koel will need to do its transcoding magic first (which can involve downloading the file from your cloud storage if
 necessary).
 

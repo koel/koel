@@ -33,7 +33,7 @@ Clicking on the Google button will open a new window where you can log in with y
 ## User Management
 
 When a user logs in via SSO for the first time, a new user account will be created in Koel with the email address, name, avatar, and the SSO ID obtained from the SSO provider.
-If, however, there's already an existing user with the same email address , Koel will merge the two accounts with a sensible merging strategy.
+If, however, there's already an existing user with the same email address, Koel will merge the two accounts with a sensible merging strategy.
 
 SSO users can update their name and avatar, but not their email address. Furthermore, a new user created via SSO does not have a password set and won't be able to log in via the email+password method.
 

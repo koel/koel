@@ -30,7 +30,7 @@ tool for creating dynamic playlists.
 
 ## Collaboration <PlusBadge />
 
-Users of Koel Plust can collaborate on playlists. See [Collaboration](../plus/collaboration.md) for more details.
+Users of Koel Plus can collaborate on playlists. See [Collaboration](../plus/collaboration.md) for more details.
 
 <script lang="ts" setup>
 import plusIcon from '../assets/icons/plus-circle.svg'
