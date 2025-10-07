@@ -194,6 +194,7 @@ onMounted(() => {
 aside {
   @media screen and (max-width: 768px) {
     &.showing-pane {
+      @mixin themed-background;
       height: 100%;
     }
   }
