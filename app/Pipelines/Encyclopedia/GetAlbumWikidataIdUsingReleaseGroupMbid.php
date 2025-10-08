@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 
 class GetAlbumWikidataIdUsingReleaseGroupMbid
 {
-    use RemembersForever;
+    use TriesRemember;
 
     public function __construct(private readonly MusicBrainzConnector $connector)
     {
