@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Values\ImageWritingConfig;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Intervention\Image\FileExtension;
 use Intervention\Image\Interfaces\ImageManagerInterface;
 use Intervention\Image\Laravel\Facades\Image;
@@ -36,7 +38,8 @@ class ImageWriter
     {
         $config ??= ImageWritingConfig::default();
 
-        $img = Image::read($source)->scale(width: $config->maxWidth);
+        $img = Image::read(Str::isUrl($source) ? Http::get($source)->body() : $source)
+            ->scale(width: $config->maxWidth);
 
         if ($config->blur) {
             $img->blur($config->blur);

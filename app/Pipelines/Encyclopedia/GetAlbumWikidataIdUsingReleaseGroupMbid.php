@@ -6,11 +6,12 @@ use App\Http\Integrations\MusicBrainz\MusicBrainzConnector;
 use App\Http\Integrations\MusicBrainz\Requests\GetReleaseGroupUrlRelationshipsRequest;
 use Closure;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class GetAlbumWikidataIdUsingReleaseGroupMbid
 {
+    use RemembersForever;
+
     public function __construct(private readonly MusicBrainzConnector $connector)
     {
     }
@@ -21,9 +22,9 @@ class GetAlbumWikidataIdUsingReleaseGroupMbid
             return $next(null);
         }
 
-        $wikidataId = Cache::rememberForever(
-            cache_key('album wikidata id from release group mbid', $mbid),
-            function () use ($mbid): ?string {
+        $wikidataId = $this->tryRememberForever(
+            key: cache_key('album wikidata id from release group mbid', $mbid),
+            callback: function () use ($mbid): ?string {
                 $wikidata = collect(Arr::where(
                     $this->connector->send(new GetReleaseGroupUrlRelationshipsRequest($mbid))->json('relations'),
                     static fn ($relation) => $relation['type'] === 'wikidata',

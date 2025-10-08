@@ -6,10 +6,11 @@ use App\Http\Integrations\MusicBrainz\MusicBrainzConnector;
 use App\Http\Integrations\MusicBrainz\Requests\GetRecordingsRequest;
 use Closure;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Cache;
 
 class GetAlbumTracksUsingMbid
 {
+    use RemembersForever;
+
     public function __construct(private readonly MusicBrainzConnector $connector)
     {
     }
@@ -20,9 +21,9 @@ class GetAlbumTracksUsingMbid
             return $next(null);
         }
 
-        $tracks = Cache::rememberForever(
-            cache_key('album tracks', $mbid),
-            function () use ($mbid): array {
+        $tracks = $this->tryRememberForever(
+            key: cache_key('album tracks', $mbid),
+            callback: function () use ($mbid): array {
                 $tracks = [];
 
                 // There can be multiple media entries (e.g. CDs) in a release, each with its own set of tracks.

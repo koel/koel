@@ -16,6 +16,8 @@ class WikipediaConnector extends Connector
     {
         return [
             'Accept' => 'application/json',
+            'User-Agent' => config('koel.services.musicbrainz.user_agent')
+                ?: config('app.name') . '/' . koel_version() . ' ( ' . config('app.url') . ' )',
         ];
     }
 }
