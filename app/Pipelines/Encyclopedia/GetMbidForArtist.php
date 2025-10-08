@@ -5,10 +5,11 @@ namespace App\Pipelines\Encyclopedia;
 use App\Http\Integrations\MusicBrainz\MusicBrainzConnector;
 use App\Http\Integrations\MusicBrainz\Requests\SearchForArtistRequest;
 use Closure;
-use Illuminate\Support\Facades\Cache;
 
 class GetMbidForArtist
 {
+    use RemembersForever;
+
     public function __construct(private readonly MusicBrainzConnector $connector)
     {
     }
@@ -19,9 +20,9 @@ class GetMbidForArtist
             return $next(null);
         }
 
-        $mbid = Cache::rememberForever(
-            cache_key('artist mbid', $name),
-            fn () => $this->connector->send(new SearchForArtistRequest($name))->json('artists.0.id'),
+        $mbid = $this->tryRememberForever(
+            key: cache_key('artist mbid', $name),
+            callback: fn () => $this->connector->send(new SearchForArtistRequest($name))->json('artists.0.id'),
         );
 
         return $next($mbid);

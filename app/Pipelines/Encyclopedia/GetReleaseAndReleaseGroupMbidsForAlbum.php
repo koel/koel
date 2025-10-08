@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Cache;
 
 class GetReleaseAndReleaseGroupMbidsForAlbum
 {
+    use RemembersForever;
+
     public function __construct(private readonly MusicBrainzConnector $connector)
     {
     }
@@ -20,9 +22,9 @@ class GetReleaseAndReleaseGroupMbidsForAlbum
             return $next(null);
         }
 
-        [$releaseMbid, $releaseGroupMbid] = Cache::rememberForever(
-            cache_key('release and release group mbids', $params['album'], $params['artist']),
-            function () use ($params) {
+        $mbids = $this->tryRememberForever(
+            key: cache_key('release and release group mbids', $params['album'], $params['artist']),
+            callback: function () use ($params): array {
                 $response = $this->connector->send(new SearchForReleaseRequest($params['album'], $params['artist']));
 
                 // Opportunistically, cache the artist mbids as well.
@@ -38,9 +40,9 @@ class GetReleaseAndReleaseGroupMbidsForAlbum
                     $response->json('releases.0.id'),
                     $response->json('releases.0.release-group.id'),
                 ];
-            }
+            },
         );
 
-        return $next([$releaseMbid, $releaseGroupMbid]);
+        return $next($mbids);
     }
 }

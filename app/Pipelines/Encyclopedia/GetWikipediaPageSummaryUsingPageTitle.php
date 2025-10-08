@@ -5,10 +5,11 @@ namespace App\Pipelines\Encyclopedia;
 use App\Http\Integrations\Wikipedia\Requests\GetPageSummaryRequest;
 use App\Http\Integrations\Wikipedia\WikipediaConnector;
 use Closure;
-use Illuminate\Support\Facades\Cache;
 
 class GetWikipediaPageSummaryUsingPageTitle
 {
+    use RemembersForever;
+
     public function __construct(private readonly WikipediaConnector $connector)
     {
     }
@@ -19,14 +20,11 @@ class GetWikipediaPageSummaryUsingPageTitle
             return $next(null);
         }
 
-        $summary = Cache::remember(
-            cache_key('wikipedia page summary from page title', $pageTitle),
-            now()->addMonth(),
-            function () use ($pageTitle): array {
-                return $this->connector
-                    ->send(new GetPageSummaryRequest($pageTitle))
-                    ->json();
-            }
+        $summary = $this->tryRememberForever(
+            key: cache_key('wikipedia page summary from page title', $pageTitle),
+            callback: fn () => $this->connector
+                ->send(new GetPageSummaryRequest($pageTitle))
+                ->json(),
         );
 
         return $next($summary);
