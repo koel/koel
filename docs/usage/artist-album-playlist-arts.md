@@ -7,3 +7,5 @@ playlists via the corresponding edit form.
 If there is no image available for an artist or album, Koel will use a default image (the Koel bird logo).
 For a playlist, a random "thumbnail stack" will be generated and used based on the tracks.
 
+Newer versions of Koel also provide a [command](../cli-commands.md#koel-fetch-artwork) to fetch missing artist and
+album arts.
