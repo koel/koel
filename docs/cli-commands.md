@@ -105,6 +105,21 @@ This command needs to be run only once. Subsequent scans will take care of this 
 php artisan koel:extract-folders
 ```
 
+### `koel:fetch-artwork`
+
+Attempt to fetch missing album covers and artist images from the available sources (Spotify, Last.fm, and MusicBrainz).
+You'll need to configure and enable the corresponding [3rd-party integrations](./service-integrations.md) for this
+command to work.
+
+Note that Koel will only make a maximum of one request per second to avoid hitting the rate limits (if any) and
+risking getting blocked by the services.
+
+#### Usage
+
+```bash
+php artisan koel:fetch-artwork
+```
+
 ### `koel:init`
 
 Install or upgrade Koel.
