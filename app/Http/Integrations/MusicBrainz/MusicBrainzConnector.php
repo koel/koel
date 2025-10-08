@@ -20,7 +20,7 @@ class MusicBrainzConnector extends Connector
         return [
             'Accept' => 'application/json',
             'User-Agent' => config('koel.services.musicbrainz.user_agent')
-                ?: config('app.name') . '/' . koel_version() . ' ( ' . config('app.url') . ' )',
+                ?: sprintf('%s/%s( %s )', config('app.name'), koel_version(), config('app.url')),
         ];
     }
 }
