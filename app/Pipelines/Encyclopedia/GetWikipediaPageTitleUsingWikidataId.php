@@ -8,7 +8,7 @@ use Closure;
 
 class GetWikipediaPageTitleUsingWikidataId
 {
-    use RemembersForever;
+    use TriesRemember;
 
     public function __construct(private readonly WikidataConnector $connector)
     {
