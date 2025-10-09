@@ -32,6 +32,7 @@ visit [its repository](https://github.com/koel/player).
 [<img style="margin-right: 5px" src="./.github/assets/sponsors/ray.svg" height="32" alt="Ray logo" title="Understand and fix bugs faster using Ray">](https://myray.app/)
 [<img style="margin-right: 5px" src="./.github/assets/sponsors/follower-boerse.svg" height="32" alt="Follower Börse logo" title="TikTok Views Kaufen">](https://follower-boerse.de/produkt/tiktok-views-kaufen/)
 [<img style="margin-right: 5px" src="./.github/assets/sponsors/followhero.webp" height="32" alt="Twitter Follower">](https://followhero.de/twitter-follower-kaufen/)
+[<img style="margin-right: 5px" src="./.github/assets/sponsors/codespect.png" height="32" alt="CodeSpect logo" title="CodeSpect - AI Code Review Tool">](https://codespect.io/?ref=koel)
 
 [Support me on OpenCollective](https://opencollective.com/koel#backer) with a monthly donation and help me continue
 building Koel.
