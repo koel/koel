@@ -52,6 +52,8 @@ class Artist extends Model implements AuditableContract, Embeddable, Favoriteabl
     public const UNKNOWN_NAME = 'Unknown Artist';
     public const VARIOUS_NAME = 'Various Artists';
 
+    private const CACHE_NAMESPACE = 'artist';
+
     protected $guarded = ['id'];
     protected $hidden = ['created_at', 'updated_at'];
 
@@ -59,6 +61,11 @@ class Artist extends Model implements AuditableContract, Embeddable, Favoriteabl
     {
         /** @var ArtistBuilder */
         return parent::query()->addSelect('artists.*');
+    }
+
+    public static function getCacheKey(string $userId, ?string $name): string
+    {
+        return cache_key(self::CACHE_NAMESPACE, $userId, $name);
     }
 
     public function newEloquentBuilder($query): ArtistBuilder
