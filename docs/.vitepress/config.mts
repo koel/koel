@@ -81,6 +81,7 @@ export default defineConfig({
           { text: 'Single Sign-On', link: '/plus/sso' },
           { text: 'Proxy Authentication', link: '/plus/proxy-auth' },
           { text: 'Media Browser', link: '/plus/media-browser' },
+          { text: 'White Labeling', link: '/plus/white-labeling' },
           { text: 'Ticketmaster', link: '/plus/ticketmaster' },
         ],
       },
