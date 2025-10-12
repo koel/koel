@@ -4,17 +4,31 @@ namespace App\Services\Scanners;
 
 use App\Services\Scanners\Contracts\ScannerCacheStrategy as ScannerCacheStrategyContract;
 use Closure;
-use DateInterval;
-use DateTimeInterface;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Collection;
 
 class ScannerCacheStrategy implements ScannerCacheStrategyContract
 {
-    public function remember(
-        string $key,
-        DateInterval|DateTimeInterface|int|Closure|null $ttl,
-        Closure $callback,
-    ): mixed {
-        return Cache::remember($key, $ttl, $callback);
+    /** @var Collection<string, mixed> */
+    private Collection $cache;
+
+    public function __construct(private int $maxCacheSize = 1000)
+    {
+        $this->cache = new Collection();
+    }
+
+    public function remember(string $key, Closure $callback): mixed
+    {
+        if ($this->cache->has($key)) {
+            return $this->cache->get($key);
+        }
+
+        if ($this->cache->count() >= $this->maxCacheSize) {
+            $this->cache->shift();
+        }
+
+        $result = $callback();
+        $this->cache->put($key, $result);
+
+        return $result;
     }
 }

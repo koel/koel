@@ -278,7 +278,6 @@ class SongService
 
         return $this->cache->remember(
             key: cache_key(__METHOD__, $user->id, $name),
-            ttl: now()->addMinutes(30),
             callback: static fn () => Artist::getOrCreate($user, $name)
         );
     }
@@ -289,7 +288,6 @@ class SongService
 
         return $this->cache->remember(
             key: cache_key(__METHOD__, $artist->id, $name),
-            ttl: now()->addMinutes(30),
             callback: static fn () => Album::getOrCreate($artist, $name)
         );
     }
