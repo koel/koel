@@ -54,7 +54,7 @@ class ScannerCacheStrategyTest extends TestCase
     #[Test]
     public function evictsOldestEntryAfterCacheExceedsMaxSize(): void
     {
-        for ($i = 1; $i <= 4; $i++) {
+        for ($i = 1; $i <= 3; $i++) {
             $key = 'k' . $i;
             $val = $i;
             $this->cache->remember($key, static fn () => $val);
@@ -67,7 +67,7 @@ class ScannerCacheStrategyTest extends TestCase
         self::assertSame(1, $valueForK1);
 
         //Trigger eviction
-        $this->cache->remember('k5', static fn () => 5);
+        $this->cache->remember('k4', static fn () => 4);
 
         $new = $this->cache->remember('k1', static fn () => 9999);
         self::assertSame(9999, $new);

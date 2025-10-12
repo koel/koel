@@ -25,7 +25,7 @@ class ScannerCacheStrategy implements ScannerCacheStrategyContract
             return $this->cache[$key];
         }
 
-        if ($this->cache->count() > $this->maxCacheSize) {
+        if ($this->cache->count() >= $this->maxCacheSize) {
             $this->cache->shift();
         }
 
