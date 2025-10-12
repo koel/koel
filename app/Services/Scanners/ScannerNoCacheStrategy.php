@@ -16,8 +16,4 @@ class ScannerNoCacheStrategy implements ScannerCacheStrategy
     ): mixed {
         return $callback();
     }
-
-    public function forget(string $key): void
-    {
-    }
 }

@@ -13,6 +13,4 @@ interface ScannerCacheStrategy
         Closure|DateTimeInterface|DateInterval|int|null $ttl,
         Closure $callback,
     ): mixed;
-
-    public function forget(string $key): void;
 }
