@@ -8,8 +8,6 @@ use Illuminate\Support\Collection;
 
 class ScannerCacheStrategy implements ScannerCacheStrategyContract
 {
-    private int $maxCacheSize;
-
     /** @var Collection<string, mixed> */
     private Collection $cache;
 
