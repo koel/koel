@@ -22,15 +22,16 @@ class ScannerCacheStrategy implements ScannerCacheStrategyContract
     public function remember(string $key, Closure $callback): mixed
     {
         if ($this->cache->has($key)) {
-            return $this->cache[$key];
+            return $this->cache->get($key);
         }
 
         if ($this->cache->count() >= $this->maxCacheSize) {
             $this->cache->shift();
         }
 
-        $this->cache[$key] = $callback();
+        $result = $callback();
+        $this->cache->put($key, $result);
 
-        return $this->cache[$key];
+        return $result;
     }
 }
