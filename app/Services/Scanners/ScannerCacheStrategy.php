@@ -8,13 +8,14 @@ use Illuminate\Support\Collection;
 
 class ScannerCacheStrategy implements ScannerCacheStrategyContract
 {
-    private const MAX_CACHE_SIZE = 1000;
+    private int $maxCacheSize;
 
     /** @var Collection<string, mixed> */
     private Collection $cache;
 
-    public function __construct()
+    public function __construct(int $maxCacheSize = 1000)
     {
+        $this->maxCacheSize = $maxCacheSize;
         $this->cache = new Collection();
     }
 
@@ -24,7 +25,7 @@ class ScannerCacheStrategy implements ScannerCacheStrategyContract
             return $this->cache[$key];
         }
 
-        if ($this->cache->count() > self::MAX_CACHE_SIZE) {
+        if ($this->cache->count() > $this->maxCacheSize) {
             $this->cache->shift();
         }
 
