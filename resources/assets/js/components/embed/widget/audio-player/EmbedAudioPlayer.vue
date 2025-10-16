@@ -6,10 +6,7 @@
     <template v-if="!preview">
       <ProgressBar :playable="currentPlayable" :progress class="ml-2" @seek="seek" />
 
-      <span
-        v-show="timeRemainingLabel"
-        class="min-w-16 text-k-text-secondary flex items-center justify-end font-mono"
-      >
+      <span v-show="timeRemainingLabel" class="min-w-16 flex items-center justify-end font-mono">
         {{ timeRemainingLabel }}
       </span>
     </template>

@@ -40,7 +40,7 @@
         {{ canDropFolders ? 'Drop files or folders to upload' : 'Drop files to upload' }}
 
         <span class="secondary block">
-          <a class="block relative" role="button">
+          <a class="block relative !text-k-fg-70 hover:!text-k-fg" role="button">
             or click here to select songs
             <input
               :accept="acceptAttribute"

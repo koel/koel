@@ -8,7 +8,7 @@
             <Btn
               v-koel-tooltip
               :title="preferences.podcasts_favorites_only ? 'Show all' : 'Show favorites only'"
-              class="border border-white/10"
+              class="border border-k-fg-10"
               small
               transparent
               @click.prevent="toggleFavoritesOnly"

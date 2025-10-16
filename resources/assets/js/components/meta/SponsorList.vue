@@ -1,7 +1,7 @@
 <template>
   <div
     class="flex items-center flex-wrap justify-center gap-x-2 gap-y-4 p-4 bg-black/10
-    rounded-md border border-white/5"
+    rounded-md border border-k-fg-5"
   >
     <a
       v-for="sponsor in sponsors"

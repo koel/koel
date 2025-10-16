@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Repositories\PlaylistRepository;
 use App\Repositories\SettingRepository;
 use App\Repositories\SongRepository;
+use App\Repositories\ThemeRepository;
 use App\Services\ApplicationInformationService;
 use App\Services\ITunesService;
 use App\Services\LastfmService;
@@ -35,6 +36,7 @@ class FetchInitialDataController extends Controller
         PlaylistRepository $playlistRepository,
         ApplicationInformationService $applicationInformationService,
         QueueService $queueService,
+        ThemeRepository $themeRepository,
         LicenseServiceInterface $licenseService,
         Authenticatable $user
     ) {
@@ -76,6 +78,9 @@ class FetchInitialDataController extends Controller
             ],
             'storage_driver' => config('koel.storage_driver'),
             'dir_separator' => DIRECTORY_SEPARATOR,
+            'current_theme' => $licenseStatus->isValid()
+                ? $themeRepository->findUserThemeById($user->preferences->theme, $user)
+                : null,
         ]);
     }
 }

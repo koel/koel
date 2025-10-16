@@ -21,6 +21,7 @@ export interface Events {
   MODAL_SHOW_EDIT_ARTIST_FORM: (artist: Artist) => void
   MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM: (folder?: PlaylistFolder | null) => void
   MODAL_SHOW_CREATE_PLAYLIST_FOLDER_FORM: () => void
+  MODAL_SHOW_CREATE_THEME_FORM: () => void
   MODAL_SHOW_EDIT_PLAYLIST_FOLDER_FORM: (playlistFolder: PlaylistFolder) => void
   MODAL_SHOW_PLAYLIST_COLLABORATION: (playlist: Playlist) => void
   MODAL_SHOW_ADD_PODCAST_FORM: () => void

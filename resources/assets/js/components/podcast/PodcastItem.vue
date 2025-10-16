@@ -1,7 +1,7 @@
 <template>
   <a
     :href="url('podcasts.show', { id: podcast.id })"
-    class="flex gap-5 p-5 rounded-lg border border-white/5 hover:bg-white/10 bg-white/5 !text-k-text-primary !hover:text-k-text-primary"
+    class="flex gap-5 p-5 rounded-lg border border-k-fg-5 hover:bg-k-fg-10 bg-k-fg-5 !text-k-fg !hover:text-k-fg"
     data-testid="podcast-item"
     @contextmenu.prevent="onContextMenu"
   >
@@ -22,14 +22,14 @@
         <p class="mt-2">
           {{ podcast.author }}
           <template v-if="lastPlayedAt"> •
-            <span class="opacity-70">
+            <span class="text-k-fg-50">
               Last played
               <time :datetime="podcast.last_played_at" :title="podcast.last_played_at">{{ lastPlayedAt }}</time>
             </span>
           </template>
         </p>
       </header>
-      <div v-koel-new-tab class="description text-k-text-secondary mt-3 line-clamp-3" v-html="description" />
+      <div v-koel-new-tab class="description mt-3 line-clamp-3 text-k-fg-70" v-html="description" />
     </main>
   </a>
 </template>
@@ -71,7 +71,7 @@ const onContextMenu = (event: MouseEvent) => openContextMenu<'PODCAST'>(PodcastC
   }
 
   :deep(a) {
-    @apply text-k-text-primary hover:text-k-accent;
+    @apply text-k-fg hover:text-k-accent;
   }
 }
 </style>

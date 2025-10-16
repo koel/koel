@@ -10,7 +10,7 @@
           v-for="item in menuItems"
           :key="item.label"
           :class="currentlySortedBy(item.field) && 'active'"
-          class="cursor-pointer flex justify-between !pl-3 hover:!bg-white/10"
+          class="cursor-pointer flex justify-between !pl-3 hover:!bg-k-fg-10"
           @click="sortable && sort(item.field)"
         >
           <label
@@ -150,7 +150,7 @@ onBeforeUnmount(() => teardown())
 
 <style lang="postcss" scoped>
 .active {
-  @apply bg-k-highlight text-k-text-primary;
+  @apply bg-k-highlight text-k-fg;
 
   .icon {
     @apply block;

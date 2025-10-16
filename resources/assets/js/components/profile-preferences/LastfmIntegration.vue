@@ -1,5 +1,5 @@
 <template>
-  <section class="text-k-text-secondary">
+  <section>
     <h3 class="text-2xl mb-2">
       <span class="mr-2 text-[var(--lastfm-color)]">
         <Icon :icon="faLastfm" />

@@ -5,8 +5,8 @@
     @mouseenter="onMouseEnter"
     @mouseleave="onMouseLeave"
   >
-    <section class="btn-collapse-block flex md:hidden items-center border-b border-b-white/5 h-k-header-height px-6">
-      <div class="bg-white/5 rounded-full">
+    <section class="btn-collapse-block flex md:hidden items-center border-b border-b-k-fg-5 h-k-header-height px-6">
+      <div class="bg-k-fg-5 rounded-full">
         <SideSheetButton @click.prevent="collapseSidebar">
           <Icon :icon="faTimes" fixed-width />
         </SideSheetButton>
@@ -116,7 +116,7 @@ eventBus.on('TOGGLE_SIDEBAR', () => (mobileShowing.value = !mobileShowing.value)
 @import '@/../css/partials/mixins.pcss';
 
 nav {
-  @apply bg-k-bg-secondary;
+  @apply bg-k-fg-5;
   -ms-overflow-style: -ms-autohiding-scrollbar;
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
 
@@ -128,7 +128,7 @@ nav {
     }
 
     &.tmp-showing {
-      @apply fixed h-screen bg-k-bg-primary w-k-sidebar-width shadow-2xl z-[999];
+      @apply fixed h-screen bg-k-bg w-k-sidebar-width shadow-2xl z-[999];
 
       > *:not(.btn-toggle, .btn-collapse-block) {
         @apply block;

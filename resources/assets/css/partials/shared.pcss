@@ -20,7 +20,7 @@
   }
 
   ::placeholder {
-    @apply text-black/5;
+    @apply text-k-fg-30;
   }
 
   body,
@@ -31,7 +31,7 @@
     font-family: var(--font-family);
     font-size: var(--font-size);
 
-    @apply text-k-text-primary font-light leading-6 overflow-hidden;
+    @apply text-k-fg font-light leading-6 overflow-hidden;
   }
 
   input,
@@ -57,15 +57,11 @@
     @apply no-underline cursor-pointer focus:text-k-accent;
 
     /** Set the attributes manually to allow for inline overriding, which wouldn't be possible with @apply. */
-    color: var(--color-text-primary);
+    color: var(--color-fg);
 
     &:hover {
       color: var(--color-accent);
     }
-  }
-
-  :root {
-    --fade-size: 3rem;
   }
 
   button,

@@ -9,7 +9,7 @@
     <a
       :href="props.href"
       class="flex items-center overflow-x-hidden gap-3 h-11 relative active:pt-0.5 active:pr-0 active:pb-0 active:pl-0.5
-      text-k-text-secondary hover:text-k-text-primary"
+      text-k-fg-70 hover:text-k-fg"
     >
       <span>
         <slot name="icon" />
@@ -35,11 +35,11 @@ const onClick = () => eventBus.emit('TOGGLE_SIDEBAR')
 <style lang="postcss" scoped>
 li.active {
   a {
-    @apply text-k-text-primary !important;
+    @apply text-k-fg;
   }
 
   &::before {
-    @apply bg-k-highlight !important;
+    @apply bg-k-highlight;
     box-shadow: 0 0 40px 10px var(--color-highlight);
   }
 }

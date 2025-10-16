@@ -2,7 +2,7 @@
   <div>
     <h4
       v-if="isSong(playable) && showDisc && playable.disc"
-      class="title text-k-text-primary !flex gap-2 p-2 uppercase pl-5"
+      class="title text-k-fg !flex gap-2 p-2 uppercase pl-5"
     >
       Disc {{ playable.disc }}
     </h4>
@@ -16,7 +16,7 @@
     >
       <span v-if="shouldShowColumn('track')" class="track-number">
         <SoundBars v-if="playable.playback_state === 'Playing'" />
-        <span v-else class="text-k-text-secondary">
+        <span v-else>
           <template v-if="isSong(playable)">{{ playable.track || '' }}</template>
           <Icon v-else :icon="faPodcast" />
         </span>
@@ -25,7 +25,7 @@
         <PlayableThumbnail :playable @clicked="play" />
       </span>
       <span class="title-artist flex flex-col gap-2 overflow-hidden">
-        <span class="title text-k-text-primary !flex gap-2 items-center">
+        <span class="title text-k-fg !flex gap-2 items-center">
           <ExternalMark v-if="external" />
           <span class="flex-1">{{ playable.title }}</span>
         </span>

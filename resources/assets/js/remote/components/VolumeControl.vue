@@ -62,7 +62,7 @@ onMounted(() => {
   }
 
   .noUi-target {
-    background: var(--color-text-primary);
+    background: var(--color-fg);
     border-radius: 4px;
     border: 0;
     box-shadow: none;

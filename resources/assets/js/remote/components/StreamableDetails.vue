@@ -2,7 +2,7 @@
   <article class="flex-1 flex flex-col items-center justify-around w-screen">
     <img
       :src="coverArt"
-      class="my-0 mx-auto w-[calc(70vw_+_4px)] aspect-square rounded-full border-2 border-solid border-k-text-primary object-center object-cover"
+      class="my-0 mx-auto w-[calc(70vw_+_4px)] aspect-square rounded-full border-2 border-solid border-k-fg object-center object-cover"
       alt="Cover art"
     >
     <div class="w-full flex flex-col justify-around px-6">

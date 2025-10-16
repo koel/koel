@@ -1,7 +1,7 @@
 <template>
   <footer
     ref="root"
-    class="flex flex-col relative z-20 bg-k-bg-secondary h-k-footer-height"
+    class="flex flex-col relative z-20 bg-k-fg-5 h-k-footer-height"
     @mousemove="showControls"
     @contextmenu.prevent="requestContextMenu"
   >

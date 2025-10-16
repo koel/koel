@@ -9,7 +9,7 @@
   >
     <UserAvatar
       :user="currentUser"
-      class="p-0.5 border border-solid border-white/10 transition duration-200 ease-in-out hover:border-white/30 active:scale-95"
+      class="p-0.5 border border-solid border-k-fg-10 transition duration-200 ease-in-out hover:border-k-highlight active:scale-95"
       width="40"
     />
   </a>

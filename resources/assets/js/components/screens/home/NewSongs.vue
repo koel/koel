@@ -2,15 +2,15 @@
   <HomeScreenBlock>
     <template #header>New Songs</template>
 
-    <PlayableListSkeleton v-if="loading" class="border border-white/5 rounded-lg" />
+    <PlayableListSkeleton v-if="loading" class="border border-k-fg-5 rounded-lg" />
     <template v-else>
       <PlayableList
         v-if=" playables.length"
         ref="playableList"
-        class="border border-white/5 rounded-lg overflow-hidden"
+        class="border border-k-fg-5 rounded-lg overflow-hidden"
         @press:enter="onPressEnter"
       />
-      <p v-else class="text-k-text-secondary">No songs available.</p>
+      <p v-else>No songs available.</p>
     </template>
   </HomeScreenBlock>
 </template>

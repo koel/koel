@@ -1,5 +1,5 @@
 <template>
-  <div class="plus text-k-text-secondary max-w-[480px] flex flex-col items-center" data-testid="koel-plus" tabindex="0">
+  <div class="plus max-w-[480px] flex flex-col items-center" data-testid="koel-plus" tabindex="0">
     <img
       alt="Koel Plus"
       class="-mt-[48px] rounded-full border-[6px] border-white"

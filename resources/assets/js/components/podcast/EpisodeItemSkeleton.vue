@@ -1,6 +1,6 @@
 <template>
   <article
-    class="skeleton flex gap-4 px-6 py-5 !text-k-text-primary"
+    class="skeleton flex gap-4 px-6 py-5 !text-k-fg"
   >
     <aside class="flex-[0_0_128px]">
       <div class="pulse rounded-lg aspect-square" />

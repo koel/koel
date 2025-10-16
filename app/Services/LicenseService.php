@@ -112,7 +112,7 @@ class LicenseService implements LicenseServiceInterface
         ], [
             'key' => $body->license_key->key,
             'instance' => LicenseInstance::fromJsonObject($body->instance),
-            'meta' => LicenseMeta::fromJsonObject($body->meta),
+            'meta' => LicenseMeta::fromJson($body->meta),
             'created_at' => $body->license_key->created_at,
             'expires_at' => $body->license_key->expires_at,
         ]);

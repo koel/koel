@@ -26,7 +26,7 @@
         window.global = window
     </script>
 </head>
-<body>
+<body class="text-k-fg-70">
 <div id="app"></div>
 
 <script>

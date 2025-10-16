@@ -1,7 +1,7 @@
 <template>
   <div
     v-koel-focus
-    class="about text-k-text-secondary text-center max-w-[480px] overflow-hidden relative"
+    class="about text-center max-w-[480px] overflow-hidden relative"
     data-testid="about-koel"
     tabindex="0"
     @keydown.esc="close"
@@ -98,7 +98,7 @@ p {
 }
 
 a {
-  @apply text-k-text-primary hover:text-k-accent;
+  @apply text-k-fg hover:text-k-accent;
 }
 
 .plus-badge {

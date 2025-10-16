@@ -11,11 +11,11 @@
 
 <style lang="postcss" scoped>
 :deep(.tabs) {
-  @apply flex flex-col overflow-hidden flex-1 text-k-text-secondary;
+  @apply flex flex-col overflow-hidden flex-1;
 }
 
 :deep(header ul) {
-  @apply flex flex-nowrap bg-white/5 overflow-x-auto overflow-y-hidden flex-shrink-0 border-b-white/5;
+  @apply flex flex-nowrap bg-k-fg-5 overflow-x-auto overflow-y-hidden flex-shrink-0 border-b-k-fg-5;
 
   li {
     @apply text-base relative uppercase tracking-wider opacity-50 cursor-pointer;
@@ -31,7 +31,7 @@
     }
 
     a {
-      @apply text-k-text-primary relative px-7 py-4 inline-block;
+      @apply text-k-fg relative px-7 py-4 inline-block;
     }
   }
 }

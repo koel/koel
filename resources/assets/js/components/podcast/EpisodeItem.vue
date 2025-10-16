@@ -1,7 +1,7 @@
 <template>
   <a
     data-testid="episode-item"
-    class="group relative flex flex-col md:flex-row gap-4 px-6 py-5 !text-k-text-primary hover:bg-white/10 duration-200"
+    class="group relative flex flex-col md:flex-row gap-4 px-6 py-5 !text-k-fg hover:bg-k-fg-10 duration-200"
     :class="isCurrentEpisode && 'current'"
     :href="url('episodes.show', { id: episode.id })"
     @contextmenu.prevent="requestContextMenu"
@@ -33,7 +33,7 @@
       <time
         :datetime="episode.created_at"
         :title="episode.created_at"
-        class="block uppercase text-sm mb-1 text-k-text-secondary"
+        class="block uppercase text-sm mb-1 text-k-fg-70"
       >
         {{ publicationDateForHumans }}
       </time>
@@ -49,10 +49,10 @@
         />
       </h3>
 
-      <div class="description text-k-text-secondary mt-3 line-clamp-3" v-html="description" />
+      <div class="description mt-3 line-clamp-3 text-k-fg-70" v-html="description" />
     </div>
-    <div class="md:flex-[0_0_122px] text-sm text-k-text-secondary flex md:flex-col items-center justify-center w-full">
-      <span class="block md:mb-2">{{ timeLeft ? timeLeft : 'Played' }}</span>
+    <div class="md:flex-[0_0_122px] text-sm flex md:flex-col items-center justify-center w-full">
+      <span class="block md:mb-2 text-k-fg-70">{{ timeLeft ? timeLeft : 'Played' }}</span>
       <div class="px-4 flex-1 md:flex-grow-0 md:w-full">
         <EpisodeProgress v-if="shouldShowProgress" :episode="episode" :position="currentPosition" />
       </div>
@@ -149,7 +149,7 @@ const toggleFavorite = () => episodeStore.toggleFavorite(episode.value)
   }
 
   :deep(a) {
-    @apply text-k-text-primary hover:text-k-accent;
+    @apply text-k-fg hover:text-k-accent;
   }
 }
 </style>

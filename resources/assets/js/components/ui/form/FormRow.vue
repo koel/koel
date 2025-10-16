@@ -1,6 +1,6 @@
 <template>
   <div v-if="cols === 1" class="flex flex-col gap-2">
-    <label>
+    <label class="text-k-fg">
       <span v-if="$slots.label" class="block mb-1.5">
         <slot name="label" />
       </span>

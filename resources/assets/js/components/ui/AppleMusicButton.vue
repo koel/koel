@@ -1,12 +1,12 @@
 <template>
   <a
     :href="url"
-    class="rounded px-2 py-0 bg-white/10 h-6 flex items-center hover:itunes-gradient focus:itunes-gradient"
+    class="rounded px-2 py-0 bg-k-fg-10 h-6 flex items-center hover:itunes-gradient focus:itunes-gradient"
     target="_blank"
     title="Preview and buy this song on Apple Music"
   >
     <svg
-      class="fill-k-text-primary"
+      class="fill-k-fg"
       height="10"
       role="presentation"
       viewBox="0 0 83 20"

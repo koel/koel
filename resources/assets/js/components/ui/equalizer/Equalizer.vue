@@ -14,9 +14,9 @@
         <span
           class="text-sm h-[100px] w-[20px] flex flex-col justify-between items-center -ml-6 opacity-50"
         >
-          <span class="leading-none text-k-text-primary">+20</span>
-          <span class="leading-none text-k-text-primary">0</span>
-          <span class="leading-none text-k-text-primary">-20</span>
+          <span class="leading-none text-k-fg">+20</span>
+          <span class="leading-none text-k-fg">0</span>
+          <span class="leading-none text-k-fg">-20</span>
         </span>
 
         <EqualizerBand
@@ -32,7 +32,7 @@
       </div>
     </main>
 
-    <footer class="border-t-white/5">
+    <footer class="border-t-k-fg-5">
       <Btn @click.prevent="close">Close</Btn>
     </footer>
   </div>

@@ -37,6 +37,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Collection<array-key, Playlist> $playlists
  * @property Collection<array-key, PlaylistFolder> $playlistFolders
  * @property Collection<array-key, Podcast> $podcasts
+ * @property Collection<array-key, Theme> $themes
  * @property Organization $organization
  * @property PersonalAccessToken $currentAccessToken
  * @property UserPreferences $preferences
@@ -165,6 +166,11 @@ class User extends Authenticatable implements AuditableContract, Permissionable
     public function radioStations(): HasMany
     {
         return $this->hasMany(RadioStation::class);
+    }
+
+    public function themes(): HasMany
+    {
+        return $this->hasMany(Theme::class);
     }
 
     public function subscribedToPodcast(Podcast $podcast): bool

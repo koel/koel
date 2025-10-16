@@ -12,7 +12,7 @@ class LicenseMetaCast implements CastsAttributes
     public function get($model, string $key, $value, array $attributes): ?LicenseMeta
     {
         try {
-            return $value ? LicenseMeta::fromJsonObject(json_decode($value)) : null;
+            return $value ? LicenseMeta::fromJson(json_decode($value)) : null;
         } catch (Throwable) {
             Log::error('Failed to cast-get license meta', [
                 'model' => $model,

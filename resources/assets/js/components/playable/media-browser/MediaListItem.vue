@@ -1,8 +1,8 @@
 <template>
-  <article class="h-[40px] overflow-hidden border-b border-white/10" :class="{ playing }">
+  <article class="h-[40px] overflow-hidden border-b border-k-fg-10" :class="{ playing }">
     <div
-      class="flex gap-2 text-k-text-secondary px-6 py-3 cursor-default user-select-none"
       :class="item.type === 'folders' && 'items-center'"
+      class="flex gap-2 px-6 py-3 cursor-default user-select-none"
     >
       <template v-if="item.type === 'songs'">
         <span v-if="item.playback_state === 'Playing'" class="pl-[3px]" @click="pausePlayback">
@@ -22,13 +22,13 @@
           </button>
         </template>
       </template>
-      <Icon v-else :icon="faFolder" class="text-k-text-primary" fixed-width />
+      <Icon v-else :icon="faFolder" class="text-k-fg" fixed-width />
       <span class="flex-1 overflow-hidden text-ellipsis whitespace-nowrap user-select-none">{{ label }}</span>
 
       <!-- on a mobile device, show an Open button for a beter UX -->
       <button
         v-if="item.type === 'folders'"
-        class="sm:hidden border border-white/10 rounded px-1.5 py-px"
+        class="sm:hidden border border-k-fg-10 rounded px-1.5 py-px"
         title="Open"
         @click.prevent.stop="emit('open-folder')"
       >
@@ -66,7 +66,7 @@ const pausePlayback = () => playback().pause()
 
 <style scoped lang="postcss">
 .selected {
-  @apply bg-white/10 border-transparent;
+  @apply bg-k-fg-10 border-transparent;
 }
 
 .playing,

@@ -3,12 +3,12 @@
     <main class="relative">
       <template v-if="song">
         <div v-show="song.lyrics">
-          <pre class="font-sans whitespace-pre-wrap leading-relaxed">{{ lyrics }}</pre>
+          <div class="lyrics whitespace-pre-wrap leading-relaxed">{{ lyrics }}</div>
           <span class="magnifier-wrapper opacity-0 absolute top-0 right-0 hover:!opacity-100">
             <Magnifier @in="zoomIn" @out="zoomOut" />
           </span>
         </div>
-        <p v-if="song.id && !song.lyrics" class="text-k-text-secondary">
+        <p v-if="song.id && !song.lyrics">
           <template v-if="canUpdateLyrics">
             No lyrics found.
             <a role="button" @click.prevent="showEditSongForm">Click here</a>
@@ -60,7 +60,7 @@ main {
   }
 }
 
-pre {
+.lyrics {
   font-size: v-bind(fontSize);
 }
 </style>

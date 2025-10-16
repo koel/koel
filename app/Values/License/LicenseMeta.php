@@ -20,7 +20,7 @@ final class LicenseMeta implements Arrayable, Jsonable
         return new self($customerId, $customerName, $customerEmail);
     }
 
-    public static function fromJsonObject(object $json): self
+    public static function fromJson(object $json): self
     {
         return new self(
             customerId: $json->customer_id,

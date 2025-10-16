@@ -2,7 +2,7 @@
   <div
     :class="cssClass"
     :title="file.message"
-    class="upload-item relative rounded min-h-[32px] overflow-hidden bg-k-bg-secondary"
+    class="upload-item relative rounded min-h-[32px] overflow-hidden bg-k-fg-5"
   >
     <span class="progress absolute h-full top-0 left-0 z-0 duration-200 ease-out bg-k-highlight" />
     <span class="details z-10 absolute h-full w-full flex items-center content-between">

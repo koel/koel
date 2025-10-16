@@ -22,7 +22,7 @@ html.non-mac {
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-k-bg-primary border border-white/20 rounded-[50px];
+    @apply bg-k-bg border border-white/20 rounded-[50px];
   }
 
   ::-webkit-scrollbar-thumb:hover {
@@ -30,15 +30,15 @@ html.non-mac {
   }
 
   ::-webkit-scrollbar-thumb:active {
-    @apply bg-k-bg-primary;
+    @apply bg-k-bg;
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-k-bg-primary border-0 rounded-[50px];
+    @apply bg-k-bg border-0 rounded-[50px];
   }
 
   ::-webkit-scrollbar-track:hover {
-    @apply bg-k-bg-primary;
+    @apply bg-k-bg;
   }
 
   ::-webkit-scrollbar-track:active {
@@ -65,7 +65,7 @@ textarea:autofill:focus,
 select:autofill,
 select:autofill:hover,
 select:autofill:focus {
-  -webkit-text-fill-color: var(--color-text-input);
+  -webkit-text-fill-color: var(--color-fg-input);
   box-shadow: 0 0 0 1000px var(--color-bg-input) inset;
   transition: background-color 9999s ease-in-out 0s;
 }

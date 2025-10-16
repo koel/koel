@@ -3,7 +3,7 @@
     <form
       v-show="!showingForgotPasswordForm"
       :class="{ error: failed }"
-      class="w-full sm:w-[288px] sm:border duration-500 p-7 rounded-xl border-transparent sm:bg-white/10 space-y-3"
+      class="w-full sm:w-[288px] sm:border duration-500 p-7 rounded-xl border-transparent sm:bg-k-fg-10 space-y-3"
       data-testid="login-form"
       @submit.prevent="handleSubmit"
     >
@@ -24,7 +24,7 @@
       </FormRow>
 
       <FormRow v-if="canResetPassword">
-        <a class="text-right text-[.95rem] text-k-text-secondary" role="button" @click.prevent="showForgotPasswordForm">
+        <a class="text-right text-[.95rem] text-k-fg-70" role="button" @click.prevent="showForgotPasswordForm">
           Forgot password?
         </a>
       </FormRow>

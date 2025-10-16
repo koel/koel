@@ -35,7 +35,7 @@
 
       <ScreenEmptyState v-if="noContent">
         <template #icon>
-          <Icon :icon="faFolderOpen" class="text-k-text-primary" />
+          <Icon :icon="faFolderOpen" class="text-k-fg" />
         </template>
         This folder is empty.
       </ScreenEmptyState>

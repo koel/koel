@@ -8,7 +8,7 @@
       <img :src="model" alt="" class="rounded object-cover">
       <button
         v-if="hasCustomValue"
-        class="absolute top-2 right-2 w-9 active:scale-95 bg-black/50 hover:bg-black/70 aspect-square border border-white/10 rounded"
+        class="absolute top-2 right-2 w-9 active:scale-95 bg-black/50 hover:bg-black/70 aspect-square border border-k-fg-10 rounded"
         type="button"
         @click.prevent="removeCustomValue"
       >
@@ -22,7 +22,7 @@
       <template #help>Recommended size: 512×512 pixels.</template>
     </FormRow>
 
-    <p class="text-k-text-secondary text-[.95rem]">
+    <p class="text-[.95rem]">
       <slot name="help" />
     </p>
   </fieldset>

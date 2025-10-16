@@ -1,30 +1,24 @@
 import { describe, expect, it } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
 import { preferenceStore } from '@/stores/preferenceStore'
+import type { ThemeData } from '@/stores/themeStore'
 import { themeStore } from '@/stores/themeStore'
-
-const testTheme: Theme = {
-  id: 'test',
-  name: 'Test Theme',
-  thumbnailColor: '#eee',
-  properties: {
-    '--color-text-primary': '#eee',
-    '--color-text-secondary': '#ddd',
-    '--bg-image': '/images/bg.jpg',
-  },
-}
+import { http } from '@/services/http'
+import { cache } from '@/services/cache'
+import builtInThemes from '@/themes'
 
 describe('themeStore', () => {
   const h = createHarness({
     beforeEach: () => {
-      document.documentElement.style.setProperty('--color-text-primary', '#fff')
-      document.documentElement.style.setProperty('--color-text-secondary', '#ccc')
-      document.documentElement.style.setProperty('--color-bg-primary', '#000')
-      document.documentElement.style.setProperty('--color-highlight', 'orange')
+      document.body.style.setProperty('--color-fg', '#ffffff')
+      document.body.style.setProperty('--color-bg', '#000000')
+      document.body.style.setProperty('--color-highlight', '#ff0000')
+      document.body.style.setProperty('--font-family', 'system-ui')
+      document.body.style.setProperty('--font-size', '16px')
     },
     afterEach: () => {
       for (const key in themeStore.defaultProperties) {
-        document.documentElement.style.removeProperty(key)
+        document.body.style.removeProperty(key)
       }
 
       document.documentElement.removeAttribute('data-theme')
@@ -38,52 +32,108 @@ describe('themeStore', () => {
     themeStore.init()
 
     expect(themeStore.defaultProperties).toEqual({
-      '--color-text-primary': '#fff',
-      '--color-text-secondary': '#ccc',
-      '--color-bg-primary': '#000',
-      '--color-bg-secondary': '',
-      '--color-highlight': 'orange',
+      '--color-fg': '#ffffff',
+      '--color-bg': '#000000',
+      '--color-highlight': '#ff0000',
       '--bg-image': '',
       '--bg-position': '',
       '--bg-attachment': '',
       '--bg-size': '',
-      '--font-family': '',
-      '--font-size': '',
+      '--font-family': 'system-ui',
+      '--font-size': '16px',
     })
 
     expect(setThemeMock).toHaveBeenCalledWith('classic')
   })
 
-  it('sets a theme', () => {
-    themeStore.setTheme(testTheme)
+  it('initializes the store with a custom theme', () => {
+    const setThemeMock = h.mock(themeStore, 'setTheme')
 
-    expect(document.documentElement.getAttribute('data-theme')).toEqual('test')
-    expect(document.documentElement.style.getPropertyValue('--color-text-primary')).toEqual('#eee')
-    expect(document.documentElement.style.getPropertyValue('--color-text-secondary')).toEqual('#ddd')
-    expect(document.documentElement.style.getPropertyValue('--bg-image')).toEqual('/images/bg.jpg')
-
-    themeStore.setTheme({
-      id: 'another',
-      name: 'Another Theme',
-      thumbnailColor: '#ccc',
+    const theme = h.factory('theme', {
       properties: {
-        '--color-text-primary': '#ccc',
+        '--color-fg': '#00ff00',
+        '--color-bg': '#111111',
+        '--color-highlight': '#0000ff',
+        '--bg-image': 'url("/images/bg.jpg")',
+        '--font-family': 'Comic Sans MS, cursive, sans-serif',
+        '--font-size': '14.5px',
       },
     })
 
-    expect(document.documentElement.getAttribute('data-theme')).toEqual('another')
-    // verify that non-existent theme properties are reset back to the default
-    expect(document.documentElement.style.getPropertyValue('--color-text-primary')).toEqual('#ccc')
-    expect(document.documentElement.style.getPropertyValue('--color-text-secondary')).toEqual('#ccc')
-    expect(document.documentElement.style.getPropertyValue('--bg-image')).toEqual('')
+    themeStore.init(theme)
+
+    expect(themeStore.all.filter(({ id }) => id === theme.id)).toBeTruthy()
+    expect(setThemeMock).toHaveBeenCalledWith(theme)
+  })
+
+  it('sets a theme', () => {
+    const theme = h.factory('theme', {
+      properties: {
+        '--color-fg': '#ffffff',
+        '--color-bg': '#000000',
+        '--color-highlight': '#ff0000',
+        '--bg-image': 'url("/images/bg.jpg"',
+        '--font-size': '16px',
+      },
+    })
+
+    themeStore.setTheme(theme)
+
+    expect(document.documentElement.getAttribute('data-theme')).toEqual(theme.id)
+
+    for (const key in theme.properties) {
+      expect(document.body.style.getPropertyValue(key)).toEqual(theme.properties[key])
+    }
   })
 
   it('gets a theme by id', () => {
-    themeStore.state.themes.push(testTheme)
-    expect(themeStore.getThemeById('test')).toEqual(testTheme)
+    const theme = h.factory('theme')
+    themeStore.all.push(theme)
+    expect(themeStore.getThemeById(theme.id)).toEqual(theme)
   })
 
   it('gets the default theme', () => {
     expect(themeStore.getDefaultTheme().id).toEqual('classic')
+  })
+
+  it('creates a custom theme', async () => {
+    const createdTheme = h.factory('theme')
+    const postMock = h.mock(http, 'post').mockResolvedValueOnce(createdTheme)
+
+    const data: ThemeData = {
+      name: 'One Theme to Rule Them All',
+      fg_color: '#ffffff',
+      bg_color: '#000000',
+      highlight_color: '#ff0000',
+      bg_image: 'none',
+      font_family: 'system-ui',
+      font_size: 16.5,
+    }
+
+    await themeStore.store(data)
+
+    expect(postMock).toHaveBeenCalledWith('themes', data)
+    expect(themeStore.all[0]).toEqual(createdTheme)
+  })
+
+  it('fetches custom themes', async () => {
+    const customThemes = h.factory('theme', 5)
+    const getMock = h.mock(http, 'get').mockResolvedValueOnce(customThemes)
+
+    await themeStore.fetchCustomThemes()
+
+    expect(getMock).toHaveBeenCalled()
+    expect(cache.get('custom-themes')).toBe(customThemes)
+    expect(themeStore.all).toHaveLength(builtInThemes.length + 5)
+    customThemes.forEach(({ id }) => expect(themeStore.getThemeById(id)).toBeTruthy())
+  })
+
+  it('deletes a custom theme', async () => {
+    const customTheme = h.factory('theme')
+    themeStore.all.push(customTheme)
+    const deleteMock = h.mock(http, 'delete')
+    await themeStore.destroy(customTheme)
+
+    expect(deleteMock)
   })
 })

@@ -1,6 +1,6 @@
 <template>
   <article
-    class="relative flex place-content-center place-items-center flex-1 text-white/50"
+    class="relative flex place-content-center place-items-center flex-1 text-k-fg-50"
     data-testid="screen-empty-state"
   >
     <div class="md:max-w-3/4 px-6 pt-0 mx-auto flex flex-col items-center pb-k-header-height">
@@ -17,10 +17,10 @@
 <style lang="postcss">
 .text {
   a {
-    @apply text-white/80;
+    @apply text-k-fg-20;
 
     &:hover {
-      @apply text-white;
+      @apply text-k-fg;
     }
   }
 

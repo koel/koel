@@ -3,7 +3,7 @@
     :alt="`Avatar of ${user.name}`"
     :src="user.avatar"
     :title="user.name"
-    class="object-cover rounded-full aspect-square bg-k-bg-primary"
+    class="object-cover rounded-full aspect-square bg-k-bg"
     @error="user.avatar = defaultCover"
   >
 </template>

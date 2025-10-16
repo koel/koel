@@ -1,7 +1,7 @@
 <template>
   <form
     id="searchForm"
-    class="text-k-text-secondary flex items-stretch border overflow-hidden gap-2 pl-4 pr-0 py-0 rounded-md
+    class="text-k-fg-70 flex items-stretch border overflow-hidden gap-2 pl-4 pr-0 py-0 rounded-md
     border-solid border-transparent bg-black/20 focus-within:border-white/20 focus-within:bg-black/50
     transition-[border,_background-color] duration-200 ease-in-out"
     role="search"
@@ -17,7 +17,7 @@
       :class="{ dirty: q }"
       :placeholder="placeholder"
       autocorrect="false"
-      class="w-full rounded-none h-[36px] !bg-transparent !text-k-text-primary !placeholder:text-white/50
+      class="w-full rounded-none h-[36px] !bg-transparent !text-k-fg !placeholder:text-k-fg-50
       focus-visible:outline-0 !px-2"
       name="q"
       required
@@ -27,7 +27,7 @@
       @input="onInput"
     />
 
-    <button class="block md:hidden py-0 px-4 bg-white/5 rounded-none" title="Search" type="submit">
+    <button class="block md:hidden py-0 px-4 bg-k-fg-5 rounded-none" title="Search" type="submit">
       <Icon :icon="faSearch" />
     </button>
   </form>

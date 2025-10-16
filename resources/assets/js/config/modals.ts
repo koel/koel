@@ -19,4 +19,5 @@ export interface Modals {
   INVITE_USER_FORM: never
   KOEL_PLUS: never
   PLAYLIST_COLLABORATION: { playlist: Playlist }
+  CREATE_THEME_FORM: never
 }

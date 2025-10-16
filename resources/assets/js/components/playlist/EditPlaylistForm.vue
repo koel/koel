@@ -14,7 +14,6 @@
             name="name"
             placeholder="Playlist name"
             required
-            title="Playlist name"
           />
         </FormRow>
         <FormRow>
@@ -28,7 +27,7 @@
           <template #label>Description</template>
           <TextArea v-model="data.description" class="h-28" name="description" />
         </FormRow>
-        <div class="cols-span-2 flex gap-3 items-center">
+        <div class="col-span-2 flex gap-3 items-center">
           <span v-if="displayedCover" class="w-24 h-24 aspect-square relative">
             <img :src="displayedCover" alt="Cover" class="w-24 h-24 rounded object-cover">
             <button

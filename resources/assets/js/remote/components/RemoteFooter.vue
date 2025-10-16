@@ -1,5 +1,5 @@
 <template>
-  <footer class="h-[18vh] w-screen flex justify-around items-center border-t border-solid border-t-white/10 py-4">
+  <footer class="h-[18vh] w-screen flex justify-around items-center border-t border-solid border-t-k-fg-10 py-4">
     <button
       class="text-[5vmin] has-[.yep]:text-k-love"
       data-testid="btn-toggle-favorite"
@@ -18,7 +18,7 @@
     </button>
 
     <button
-      class="text-[7vmin] w-[16vmin] aspect-square border border-solid border-k-text-primary rounded-full flex
+      class="text-[7vmin] w-[16vmin] aspect-square border border-solid border-k-fg rounded-full flex
       items-center justify-center has-[.paused]:pl-[4px]"
       data-testid="btn-toggle-playback"
       @click.prevent="togglePlayback"
@@ -70,6 +70,6 @@ const playPrev = () => socketService.broadcast('SOCKET_PLAY_PREV')
 
 <style lang="postcss" scoped>
 a {
-  @apply text-k-text-primary active:opacity-80;
+  @apply text-k-fg active:opacity-80;
 }
 </style>

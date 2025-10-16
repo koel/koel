@@ -1,8 +1,9 @@
 <template>
   <dialog
     ref="dialog"
-    class="text-k-text-primary min-w-full md:min-w-[480px] border-0 p-0 md:rounded-md overflow-visible bg-k-bg-primary backdrop:bg-black/70"
+    class="text-k-fg min-w-full md:min-w-[480px] border-0 p-0 md:rounded-md overflow-visible bg-k-bg backdrop:bg-black/70"
     @close.prevent
+    @keydown.esc.prevent
   >
     <Component
       :is="modalNameToComponentMap[activeModalName]"
@@ -28,6 +29,7 @@ const modalNameToComponentMap: Record<keyof Modals, Closure> = {
   CREATE_PLAYLIST_FOLDER_FORM: defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistFolderForm.vue')),
   CREATE_PLAYLIST_FORM: defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistForm.vue')),
   CREATE_SMART_PLAYLIST_FORM: defineAsyncComponent(() => import('@/components/playlist/smart-playlist/CreateSmartPlaylistForm.vue')),
+  CREATE_THEME_FORM: defineAsyncComponent(() => import('@/components/profile-preferences/theme/CreateThemeForm.vue')),
   EDIT_ALBUM_FORM: defineAsyncComponent(() => import('@/components/album/EditAlbumForm.vue')),
   EDIT_ARTIST_FORM: defineAsyncComponent(() => import('@/components/artist/EditArtistForm.vue')),
   EDIT_PLAYLIST_FOLDER_FORM: defineAsyncComponent(() => import('@/components/playlist/EditPlaylistFolderForm.vue')),
@@ -58,6 +60,11 @@ const showModal = <N extends keyof Modals> (
   ...args: [Modals[N]] extends [never] ? [] : [ctx: Modals[N]]
 ) => {
   props.value = (args[0] ?? {}) as Modals[N]
+
+  props.value.toggleCssClass = 'toggleCssClass' in props.value
+    ? props.value.toggleCssClass
+    : (...classes: string[]) => classes.forEach(c => dialog.value?.classList.toggle(c))
+
   activeModalName.value = name
 }
 
@@ -74,6 +81,7 @@ eventBus.on('MODAL_SHOW_ABOUT_KOEL', () => showModal('ABOUT_KOEL'))
     folder: folder ?? null,
   }))
   .on('MODAL_SHOW_CREATE_PLAYLIST_FOLDER_FORM', () => showModal('CREATE_PLAYLIST_FOLDER_FORM'))
+  .on('MODAL_SHOW_CREATE_THEME_FORM', () => showModal('CREATE_THEME_FORM'))
   .on('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist => showModal(
     playlist.is_smart ? 'EDIT_SMART_PLAYLIST_FORM' : 'EDIT_PLAYLIST_FORM',
     { playlist },
@@ -105,7 +113,7 @@ dialog {
     }
 
     > header {
-      @apply flex bg-k-bg-secondary;
+      @apply flex bg-k-fg-5;
 
       h1 {
         @apply text-3xl leading-normal overflow-hidden text-ellipsis whitespace-nowrap;
@@ -113,7 +121,7 @@ dialog {
     }
 
     > footer {
-      @apply mt-0 bg-black/10 border-t border-white/5 space-x-2 rounded-b-md;
+      @apply mt-0 bg-black/10 border-t border-k-fg-5 space-x-2 rounded-b-md;
     }
   }
 }

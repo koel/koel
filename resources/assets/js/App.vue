@@ -157,8 +157,8 @@ provide(ContextMenuKey, shallowRef({
 
 <style lang="postcss">
 #dragGhost {
-  @apply inline-block py-2 pl-8 pr-3 rounded-md text-base font-sans fixed top-0 left-0 z-[-1] bg-k-success
-  text-k-text-primary no-hover:hidden;
+  @apply inline-block py-2 pl-8 pr-3 rounded-md text-base fixed top-0 left-0 z-[-1] bg-k-bg
+  text-k-fg no-hover:hidden;
 }
 
 #copyArea {

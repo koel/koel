@@ -59,10 +59,6 @@ dialog {
     @apply text-blue-400;
   }
 
-  &.loading {
-    @apply text-k-text-secondary;
-  }
-
   &.warning {
     @apply text-orange-400;
   }

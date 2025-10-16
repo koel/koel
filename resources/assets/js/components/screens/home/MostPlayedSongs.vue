@@ -2,15 +2,15 @@
   <HomeScreenBlock>
     <template #header>Most Played</template>
 
-    <PlayableListSkeleton v-if="loading" class="border border-white/5 rounded-lg" />
+    <PlayableListSkeleton v-if="loading" class="border border-k-fg-5 rounded-lg" />
     <template v-else>
       <PlayableList
         v-if="playables.length"
         ref="playableList"
-        class="border border-white/5 rounded-lg overflow-hidden"
+        class="border border-k-fg-5 rounded-lg overflow-hidden"
         @press:enter="onPressEnter"
       />
-      <p v-else class="text-k-text-secondary">Nothing played as of late.</p>
+      <p v-else>Nothing played as of late.</p>
     </template>
   </HomeScreenBlock>
 </template>

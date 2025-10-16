@@ -11,14 +11,5 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
-
-const props = withDefaults(defineProps<{ modelValue?: any }>(), { modelValue: false })
-
-const emit = defineEmits<{ (e: 'update:modelValue', value: boolean): void }>()
-
-const value = computed({
-  get: () => props.modelValue,
-  set: value => emit('update:modelValue', value),
-})
+const value = defineModel<boolean>()
 </script>

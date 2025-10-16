@@ -1,5 +1,5 @@
 <template>
-  <article class="text-k-text-secondary">
+  <article>
     Instead of using a password, you can scan the QR code below to log in to
     <a href="https://koel.dev/#mobile" target="_blank">Koel Player</a>
     on your mobile device.<br>

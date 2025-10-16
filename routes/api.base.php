@@ -66,6 +66,7 @@ use App\Http\Controllers\API\Settings\UpdateBrandingController;
 use App\Http\Controllers\API\Settings\UpdateMediaPathController;
 use App\Http\Controllers\API\SongController;
 use App\Http\Controllers\API\SongSearchController;
+use App\Http\Controllers\API\ThemeController;
 use App\Http\Controllers\API\ToggleLikeSongController;
 use App\Http\Controllers\API\UnlikeMultipleSongsController;
 use App\Http\Controllers\API\UpdatePlaybackStatusController;
@@ -248,6 +249,9 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
             Route::apiResource('stations', RadioStationController::class);
             Route::delete('stations/{radioStation}/logo', [RadioStationLogoController::class, 'destroy']);
         });
+
+        // Theme routes
+        Route::apiResource('themes', ThemeController::class)->except('show', 'update');
 
         // Embed routes
         Route::post('embeds/resolve', [EmbedController::class, 'resolveForEmbeddable']);

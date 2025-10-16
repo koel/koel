@@ -19,7 +19,7 @@
 
       <div
         v-show="showCode"
-        class="mt-5 px-4 py-2 font-mono break-all max-h-32 bg-white/5 rounded-md cursor-pointer select-all overflow-auto"
+        class="mt-5 px-4 py-2 font-mono break-all max-h-32 bg-k-fg-5 rounded-md cursor-pointer select-all overflow-auto"
         data-testid="embed-code"
         @click="copyCode"
       >

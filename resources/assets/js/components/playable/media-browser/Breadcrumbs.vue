@@ -4,7 +4,7 @@
       <a
         v-if="crumb.path !== null"
         :href="url('media-browser', { path: crumb.path })"
-        class="text-k-text-secondary font-normal"
+        class="text-k-fg-70 font-normal"
       >
         {{ crumb.name }}
       </a>
@@ -54,6 +54,6 @@ li:not(:first-of-type)::before {
 }
 
 li:last-of-type a {
-  @apply font-semibold text-k-text-primary cursor-default;
+  @apply font-semibold text-k-fg cursor-default;
 }
 </style>
