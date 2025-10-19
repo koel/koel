@@ -37,7 +37,7 @@ class ImageStorage
             $album->save();
 
             $this->createThumbnailForAlbum($album);
-
+            $this->createFullScreenCoverForAlbum($album, $source);
             return $album->cover;
         });
     }
@@ -83,6 +83,13 @@ class ImageStorage
         $this->imageWriter->write($album->thumbnail_path, $album->cover_path, ImageWritingConfig::make(
             maxWidth: 48,
             blur: 10,
+        ));
+    }
+
+    private function createFullScreenCoverForAlbum(Album $album, string $source): void
+    {
+        $this->imageWriter->write($album->full_screen_cover_path, $source, ImageWritingConfig::make(
+            maxWidth: 1920
         ));
     }
 

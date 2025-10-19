@@ -23,7 +23,12 @@ class AlbumObserver
                 $parts = pathinfo($oldCoverPath);
 
                 $oldThumbnail = sprintf('%s_thumb.%s', $parts['filename'], $parts['extension']);
-                File::delete([$oldCoverPath, image_storage_path($oldThumbnail)]);
+                $oldFullScreenCover = sprintf('%s_fullscreen.%s', $parts['filename'], $parts['extension']);
+                File::delete([
+                    $oldCoverPath,
+                    image_storage_path($oldThumbnail),
+                    image_storage_path($oldFullScreenCover),
+                ]);
             },
         );
     }
@@ -42,7 +47,7 @@ class AlbumObserver
     {
         rescue_if(
             $album->has_cover,
-            static fn () => File::delete([$album->cover_path, $album->thumbnail_path]),
+            static fn () => File::delete([$album->cover_path, $album->thumbnail_path, $album->full_screen_cover_path]),
         );
     }
 }
