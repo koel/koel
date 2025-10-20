@@ -3,15 +3,18 @@
 exports[`genreContextMenu.vue > renders 1`] = `
 <ul>
   <li class="">
-    <!--v-if-->Play
+    <!--v-if--><span class="label flex-1 overflow-hidden max-w-40 text-ellipsis">Play</span>
+    <!--v-if-->
     <!--v-if-->
   </li>
   <li class="">
-    <!--v-if-->Shuffle
+    <!--v-if--><span class="label flex-1 overflow-hidden max-w-40 text-ellipsis">Shuffle</span>
+    <!--v-if-->
     <!--v-if-->
   </li>
   <li class="">
-    <!--v-if-->Add to Queue
+    <!--v-if--><span class="label flex-1 overflow-hidden max-w-40 text-ellipsis">Add to Queue</span>
+    <!--v-if-->
     <!--v-if-->
   </li>
 </ul>

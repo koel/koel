@@ -19,8 +19,9 @@
     color-scheme: dark;
   }
 
-  ::placeholder {
-    @apply text-k-fg-30;
+  input,
+  textarea {
+    @apply placeholder:text-k-fg-50;
   }
 
   body,
@@ -54,22 +55,22 @@
   }
 
   a {
-    @apply no-underline cursor-pointer focus:text-k-accent;
+    @apply no-underline cursor-pointer focus:text-k-highlight;
 
     /** Set the attributes manually to allow for inline overriding, which wouldn't be possible with @apply. */
     color: var(--color-fg);
 
     &:hover {
-      color: var(--color-accent);
+      color: var(--color-highlight);
     }
   }
 
   button,
   [role='button'] {
-    @apply touch-manipulation select-none cursor-pointer focus-visible:outline-1 focus-visible:outline-k-accent;
+    @apply touch-manipulation select-none cursor-pointer focus-visible:outline-1 focus-visible:outline-k-highlight;
   }
 
   * {
-    @apply focus-visible:ring-0 focus-visible:outline-1 focus-visible:outline-k-accent;
+    @apply focus-visible:ring-0 focus-visible:outline-1 focus-visible:outline-k-highlight;
   }
 }

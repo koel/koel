@@ -135,7 +135,7 @@ const onContextMenu = (event: MouseEvent) => openContextMenu<'PLAYLIST_FOLDER'>(
 
 <style lang="postcss" scoped>
 .droppable {
-  @apply ring-1 ring-offset-0 ring-k-accent rounded-md cursor-copy;
+  @apply ring-1 ring-offset-0 ring-k-highlight rounded-md cursor-copy;
 }
 
 .hatch.droppable {

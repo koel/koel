@@ -71,7 +71,7 @@ const onContextMenu = (event: MouseEvent) => openContextMenu<'PODCAST'>(PodcastC
   }
 
   :deep(a) {
-    @apply text-k-fg hover:text-k-accent;
+    @apply text-k-fg hover:text-k-highlight;
   }
 }
 </style>

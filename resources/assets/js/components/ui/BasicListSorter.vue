@@ -16,11 +16,11 @@
           :key="item.label"
           :class="isCurrentField(item.field) && 'active'"
           :title="`Sort by ${item.label}`"
-          class="cursor-pointer flex justify-between"
+          class="cursor-pointer group flex justify-between"
           @click="sort(item.field)"
         >
           <span>{{ item.label }}</span>
-          <span v-if="isCurrentField(item.field)" class="opacity-80">
+          <span v-if="isCurrentField(item.field)" class="text-k-fg group-hover:text-k-highlight-fg">
             <Icon v-if="order === 'asc'" :icon="faArrowUp" />
             <Icon v-else :icon="faArrowDown" />
           </span>

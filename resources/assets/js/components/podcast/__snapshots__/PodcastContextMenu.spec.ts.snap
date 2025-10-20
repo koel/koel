@@ -3,26 +3,31 @@
 exports[`podcastContextMenu.vue > renders 1`] = `
 <ul>
   <li class="">
-    <!--v-if-->Play All
+    <!--v-if--><span class="label flex-1 overflow-hidden max-w-40 text-ellipsis">Play All</span>
+    <!--v-if-->
     <!--v-if-->
   </li>
   <li class="">
-    <!--v-if-->Shuffle All
+    <!--v-if--><span class="label flex-1 overflow-hidden max-w-40 text-ellipsis">Shuffle All</span>
     <!--v-if-->
-  </li>
-  <li class="separator"></li>
-  <li class="">
-    <!--v-if-->Favorite
     <!--v-if-->
   </li>
   <li class="separator"></li>
   <li class="">
-    <!--v-if-->Visit Website
+    <!--v-if--><span class="label flex-1 overflow-hidden max-w-40 text-ellipsis">Favorite</span>
+    <!--v-if-->
     <!--v-if-->
   </li>
   <li class="separator"></li>
   <li class="">
-    <!--v-if-->Unsubscribe
+    <!--v-if--><span class="label flex-1 overflow-hidden max-w-40 text-ellipsis">Visit Website</span>
+    <!--v-if-->
+    <!--v-if-->
+  </li>
+  <li class="separator"></li>
+  <li class="">
+    <!--v-if--><span class="label flex-1 overflow-hidden max-w-40 text-ellipsis">Unsubscribe</span>
+    <!--v-if-->
     <!--v-if-->
   </li>
 </ul>

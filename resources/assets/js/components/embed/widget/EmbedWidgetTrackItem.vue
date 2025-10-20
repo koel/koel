@@ -57,7 +57,7 @@ article {
   &.playing {
     .title,
     .track-number {
-      @apply text-k-accent !important;
+      @apply text-k-highlight !important;
     }
   }
 

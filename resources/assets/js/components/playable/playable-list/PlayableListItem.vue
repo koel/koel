@@ -111,7 +111,7 @@ article {
     .title,
     .track-number,
     .favorite {
-      @apply text-k-accent !important;
+      @apply text-k-highlight !important;
     }
   }
 

@@ -9,7 +9,7 @@
     </button>
 
     <button
-      :class="canRewindAndFastForward || 'cursor-not-allowed opacity-50'"
+      :class="canRewindAndFastForward || 'cursor-not-allowed text-k-fg-50'"
       class="text-[6vmin]"
       data-testid="btn-play-prev"
       @click.prevent="playPrev"
@@ -27,7 +27,7 @@
     </button>
 
     <button
-      :class="canRewindAndFastForward || 'cursor-not-allowed opacity-50'"
+      :class="canRewindAndFastForward || 'cursor-not-allowed text-k-fg-50'"
       class="text-[6vmin]"
       data-testid="btn-play-next"
       @click.prevent="playNext"
@@ -70,6 +70,6 @@ const playPrev = () => socketService.broadcast('SOCKET_PLAY_PREV')
 
 <style lang="postcss" scoped>
 a {
-  @apply text-k-fg active:opacity-80;
+  @apply text-k-fg active:text-k-fg-80;
 }
 </style>

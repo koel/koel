@@ -1,7 +1,7 @@
 <template>
   <button
     class="relative flex items-center justify-center h-[42px] aspect-square rounded-full
-    bg-none md:bg-black/30 text-xl opacity-70 transition-opacity duration-200 ease-in-out text-current cursor-pointer
+    bg-none md:bg-k-fg-10 text-k-fg-70 opacity-50 text-xl transition-opacity duration-200 ease-in-out cursor-pointer
     hover:active-state active:scale-90"
     type="button"
   >
@@ -14,7 +14,7 @@
 
 @layer utilities {
   .active-state {
-    @apply opacity-100 text-k-fg bg-k-fg-10;
+    @apply opacity-100 text-k-fg;
   }
 }
 

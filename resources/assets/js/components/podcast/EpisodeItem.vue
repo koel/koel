@@ -7,7 +7,7 @@
     @contextmenu.prevent="requestContextMenu"
     @dragstart="onDragStart"
   >
-    <Icon v-if="isCurrentEpisode" :icon="faBookmark" size="xl" class="absolute -top-1 right-3 text-k-accent" />
+    <Icon v-if="isCurrentEpisode" :icon="faBookmark" size="xl" class="absolute -top-1 right-3 text-k-highlight" />
     <button
       class="hidden md:block md:flex-[0_0_128px] relative overflow-hidden rounded-lg active:scale-95"
       data-testid="play-button"
@@ -149,7 +149,7 @@ const toggleFavorite = () => episodeStore.toggleFavorite(episode.value)
   }
 
   :deep(a) {
-    @apply text-k-fg hover:text-k-accent;
+    @apply text-k-fg hover:text-k-highlight;
   }
 }
 </style>

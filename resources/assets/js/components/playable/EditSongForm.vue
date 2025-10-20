@@ -261,6 +261,6 @@ const maybeClose = async () => {
 
 <style lang="postcss" scoped>
 .mixed {
-  @apply opacity-50;
+  @apply text-k-fg-50;
 }
 </style>

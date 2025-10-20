@@ -8,9 +8,9 @@
     <div class="w-full flex flex-col justify-around px-6">
       <div>
         <p class="text-[6vmin] font-bold mx-auto mb-4">{{ title }}</p>
-        <div v-if="description" class="text-[4vmin] leading-7 line-clamp-4 opacity-50">{{ description }}</div>
-        <p class="text-[5vmin] mb-2 opacity-50">{{ artist }}</p>
-        <p class="text-[4vmin] opacity-50">{{ album }}</p>
+        <div v-if="description" class="text-[4vmin] leading-7 line-clamp-4 text-k-fg-50">{{ description }}</div>
+        <p class="text-[5vmin] mb-2 text-k-fg-50">{{ artist }}</p>
+        <p class="text-[4vmin] text-k-fg-50">{{ album }}</p>
       </div>
     </div>
   </article>

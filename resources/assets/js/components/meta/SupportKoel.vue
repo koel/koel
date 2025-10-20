@@ -54,10 +54,10 @@ watch(preferenceStore.initialized, initialized => {
 
 <style lang="postcss" scoped>
 a {
-  @apply text-k-fg hover:text-k-accent;
+  @apply text-k-fg hover:text-k-highlight;
 }
 
 button {
-  @apply text-k-fg text-[0.9rem] hover:text-k-accent;
+  @apply text-k-fg text-[0.9rem] hover:text-k-highlight;
 }
 </style>
