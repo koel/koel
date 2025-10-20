@@ -98,7 +98,7 @@ p {
 }
 
 a {
-  @apply text-k-fg hover:text-k-accent;
+  @apply text-k-fg hover:text-k-highlight;
 }
 
 .plus-badge {

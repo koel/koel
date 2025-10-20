@@ -9,7 +9,7 @@
         <h2 class="text-2xl">
           <a
             :href="url('podcasts.show', { id: episode.podcast_id })"
-            class="!text-k-fg hover:!text-k-accent font-normal"
+            class="!text-k-fg hover:!text-k-highlight font-normal"
           >
             {{ episode.podcast_title }}
           </a>
@@ -166,7 +166,7 @@ onScreenActivated('Episode', () => (episodeId.value = getRouteParam('id')!))
   }
 
   :deep(a) {
-    @apply text-k-fg hover:text-k-accent;
+    @apply text-k-fg hover:text-k-highlight;
   }
 }
 </style>

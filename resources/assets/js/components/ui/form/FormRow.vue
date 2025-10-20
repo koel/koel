@@ -8,7 +8,7 @@
       <slot />
     </label>
 
-    <small v-if="$slots.help" class="text-[.95rem] opacity-70 mt-0.5">
+    <small v-if="$slots.help" class="text-[.95rem] text-k-fg-70 mt-0.5">
       <slot v-if="$slots.help" name="help" />
     </small>
   </div>

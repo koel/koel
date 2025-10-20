@@ -65,14 +65,14 @@ article {
       @apply overflow-hidden text-ellipsis text-k-fg;
 
       &:is(:hover, :active, :focus) {
-        @apply text-k-accent;
+        @apply text-k-highlight;
       }
     }
   }
 
   &:focus,
   &:focus-within {
-    @apply ring-1 ring-k-accent;
+    @apply ring-1 ring-k-highlight;
   }
 
   &.compact {

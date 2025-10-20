@@ -10,7 +10,7 @@
           v-for="item in menuItems"
           :key="item.label"
           :class="currentlySortedBy(item.field) && 'active'"
-          class="cursor-pointer flex justify-between !pl-3 hover:!bg-k-fg-10"
+          class="cursor-pointer group flex justify-between !pl-3 hover:!bg-k-highlight hover:!text-k-highlight-fg"
           @click="sortable && sort(item.field)"
         >
           <label
@@ -22,7 +22,8 @@
               :checked="shouldShowColumn(item.column!)"
               :disabled="!item.visibilityToggleable"
               :title="item.visibilityToggleable ? `Click to toggle the ${item.label} column` : ''"
-              class="disabled:opacity-20 bg-white h-4 aspect-square rounded checked:border-white/75 checked:border-2 checked:bg-k-highlight"
+              class="disabled:opacity-20 disabled:cursor-not-allowed bg-k-fg group-hover:border-k-highlight-fg h-4
+              aspect-square rounded checked:border-k-fg-70 checked:border-2 checked:bg-k-highlight"
               type="checkbox"
             >
           </label>
@@ -150,10 +151,14 @@ onBeforeUnmount(() => teardown())
 
 <style lang="postcss" scoped>
 .active {
-  @apply bg-k-highlight text-k-fg;
+  @apply bg-k-highlight text-k-highlight-fg;
 
   .icon {
     @apply block;
+  }
+
+  input {
+    @apply border-k-highlight-fg !important;
   }
 }
 </style>

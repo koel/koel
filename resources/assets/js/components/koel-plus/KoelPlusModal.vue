@@ -2,7 +2,7 @@
   <div class="plus max-w-[480px] flex flex-col items-center" data-testid="koel-plus" tabindex="0">
     <img
       alt="Koel Plus"
-      class="-mt-[48px] rounded-full border-[6px] border-white"
+      class="-mt-[48px] rounded-full border-[6px] border-k-fg"
       src="@/../img/koel-plus.svg"
       width="96"
     >
@@ -24,7 +24,7 @@
         <Btn class="cancel" transparent @click.prevent="hideActivateLicenseForm">Cancel</Btn>
       </div>
 
-      <div class="text-[0.9rem] opacity-70">
+      <div class="text-[0.9rem] text-k-fg-70">
         Visit <a href="https://koel.dev#plus" target="_blank">koel.dev</a> for more information.
       </div>
     </main>

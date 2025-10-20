@@ -6,8 +6,8 @@ exports[`streamableDetails.vue > renders a song 1`] = `
     <div data-v-f72f7b11="">
       <p data-v-f72f7b11="" class="text-[6vmin] font-bold mx-auto mb-4">Afraid to Shoot Strangers</p>
       <!--v-if-->
-      <p data-v-f72f7b11="" class="text-[5vmin] mb-2 opacity-50">Iron Maiden</p>
-      <p data-v-f72f7b11="" class="text-[4vmin] opacity-50">Fear of the Dark</p>
+      <p data-v-f72f7b11="" class="text-[5vmin] mb-2 text-k-fg-50">Iron Maiden</p>
+      <p data-v-f72f7b11="" class="text-[4vmin] text-k-fg-50">Fear of the Dark</p>
     </div>
   </div>
 </article>
@@ -19,8 +19,8 @@ exports[`streamableDetails.vue > renders an episode 1`] = `
     <div data-v-f72f7b11="">
       <p data-v-f72f7b11="" class="text-[6vmin] font-bold mx-auto mb-4">Brahms Piano Concerto No. 1</p>
       <!--v-if-->
-      <p data-v-f72f7b11="" class="text-[5vmin] mb-2 opacity-50">Some random dudes</p>
-      <p data-v-f72f7b11="" class="text-[4vmin] opacity-50">The Sticky Notes podcast</p>
+      <p data-v-f72f7b11="" class="text-[5vmin] mb-2 text-k-fg-50">Some random dudes</p>
+      <p data-v-f72f7b11="" class="text-[4vmin] text-k-fg-50">The Sticky Notes podcast</p>
     </div>
   </div>
 </article>

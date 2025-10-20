@@ -8,7 +8,7 @@
   >
     <span class="flex-1">{{ track.title }}</span>
     <AppleMusicButton v-if="useAppleMusic && !matchedSong" :url="iTunesUrl" />
-    <span class="w-14 text-right opacity-50">{{ fmtLength }}</span>
+    <span class="w-14 text-right text-k-fg-50">{{ fmtLength }}</span>
   </div>
 </template>
 

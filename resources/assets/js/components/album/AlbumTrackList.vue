@@ -6,7 +6,7 @@
       <li
         v-for="(track, index) in tracks"
         :key="index"
-        class="flex p-2 before:w-7 before:opacity-50"
+        class="flex p-2 before:w-7 before:text-k-fg-50"
         data-testid="album-track-item"
       >
         <TrackListItem :album="album" :track="track" />

@@ -1,6 +1,6 @@
 <template>
   <a
-    class="bg-black/20 active:scale-90 flex items-center px-3.5 rounded-md text-k-fg-70 hover:!text-k-fg"
+    class="bg-k-bg-50 active:scale-90 border border-k-fg-10 flex items-center px-3.5 rounded-md text-k-fg-70 hover:text-k-fg"
     :href="url('home')"
     @click="onClick"
   >

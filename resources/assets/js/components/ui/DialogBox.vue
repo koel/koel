@@ -2,7 +2,7 @@
   <dialog
     ref="dialog"
     :class="`${type}`"
-    class="rounded-md shadow-xl border-0 p-0 min-w-[320px] max-w-[calc(100vw - 40px)] backdrop:bg-black/50"
+    class="rounded-md bg-k-bg text-k-fg-70 shadow-xl border-0 p-0 min-w-[320px] max-w-[calc(100vw - 40px)] backdrop:bg-black/70"
   >
     <div class="flex gap-5 py-6 px-7">
       <aside>
@@ -21,7 +21,7 @@
       </main>
     </div>
 
-    <footer class="flex justify-end gap-2 px-6 py-4">
+    <footer class="flex justify-end gap-2 px-6 py-4 bg-k-fg-3">
       <Btn v-if="showCancelButton" gray name="cancel" @click.prevent="cancel">Cancel</Btn>
       <Btn name="ok">OK</Btn>
     </footer>
@@ -81,23 +81,6 @@ defineExpose({ success, info, warning, error, confirm })
 
 <style lang="postcss" scoped>
 dialog {
-  --dialog-bg-color: #fff;
-  --dialog-fg-color: #333;
-  --dialog-footer-bg-color: rgba(0, 0, 0, 0.05);
-
-  @media (prefers-color-scheme: dark) {
-    --dialog-bg-color: rgb(38 38 38);
-    --dialog-fg-color: #eee;
-    --dialog-footer-bg-color: rgba(255, 255, 255, 0.02);
-  }
-
-  background: var(--dialog-bg-color);
-  color: var(--dialog-fg-color);
-
-  footer {
-    background: var(--dialog-footer-bg-color);
-  }
-
   &.info aside i {
     @apply bg-blue-100 text-blue-600;
   }
