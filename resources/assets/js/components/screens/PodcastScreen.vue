@@ -15,7 +15,7 @@
 
         <template #meta>
           <div>
-            <p class="text-2xl text-k-text-primary mb-1">{{ podcast.author }}</p>
+            <p class="text-2xl text-k-fg mb-1">{{ podcast.author }}</p>
             <div
               ref="descriptionEl"
               v-koel-new-tab
@@ -59,7 +59,7 @@
       </ScreenHeader>
     </template>
 
-    <div class="-m-6 min-h-full flex flex-col flex-1 overflow-auto divide-y divide-white/10">
+    <div class="-m-6 min-h-full flex flex-col flex-1 overflow-auto divide-y divide-k-fg-10">
       <template v-if="loading && !episodes && !podcast">
         <EpisodeItemSkeleton v-for="i in 5" :key="i" />
       </template>

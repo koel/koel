@@ -22,6 +22,7 @@ export interface ModelToTypeMap {
   'smart-playlist-rule': SmartPlaylistRule
   'smart-playlist-rule-group': SmartPlaylistRuleGroup
   'song': Song
+  'theme': Theme
   'user': User
   'you-tube-video': YouTubeVideo
 }

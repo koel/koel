@@ -24,7 +24,7 @@
 
     <template v-if="prospects.length">
       <h2
-        class="px-0 pt-6 pb-3 uppercase tracking-widest text-center relative flex justify-center text-k-text-secondary"
+        class="px-0 pt-6 pb-3 uppercase tracking-widest text-center relative flex justify-center"
         data-testid="prospects-heading"
       >
         <i class="invited-heading-decoration" />
@@ -78,6 +78,6 @@ onMounted(async () => await userStore.fetch())
 <style lang="postcss" scoped>
 .invited-heading-decoration {
   @apply relative flex-1 before:absolute before:top-1/2;
-  @apply before:left-0 before:right-0 before:h-px before:opacity-20 before:bg-k-text-secondary;
+  @apply before:left-0 before:right-0 before:h-px before:opacity-20 before:bg-k-fg-70;
 }
 </style>

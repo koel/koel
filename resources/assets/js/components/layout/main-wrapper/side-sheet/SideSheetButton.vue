@@ -14,7 +14,7 @@
 
 @layer utilities {
   .active-state {
-    @apply opacity-100 text-k-text-primary bg-white/10;
+    @apply opacity-100 text-k-fg bg-k-fg-10;
   }
 }
 

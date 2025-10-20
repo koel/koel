@@ -17,7 +17,7 @@ defineEmits<{ (e: 'in' | 'out'): void }>()
 
 <style lang="postcss" scoped>
 button {
-  @apply text-k-text-primary bg-k-bg-primary border border-solid border-white/20 opacity-80
+  @apply text-k-fg bg-k-bg border border-solid border-white/20 opacity-80
   px-3 py-1.5 hover:opacity-100 active:scale-95;
 }
 </style>

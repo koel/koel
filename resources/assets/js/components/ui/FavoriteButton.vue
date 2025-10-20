@@ -2,7 +2,7 @@
   <button
     v-koel-tooltip
     :title
-    class="transition-[color] duration-200 ease-in-out text-k-text-secondary hover:text-k-text-primary"
+    class="transition-[color] duration-200 ease-in-out hover:text-k-fg"
     @click.prevent.stop="emit('toggle')"
   >
     <Icon :class="favorite && 'text-k-highlight'" :icon="favorite ? faStar : faEmptyStar" size="sm" />

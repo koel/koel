@@ -1,7 +1,7 @@
 <template>
   <div
     :class="config.sortable ? 'sortable' : 'unsortable'"
-    class="song-list-header flex z-[2] bg-k-bg-secondary pl-5"
+    class="song-list-header flex z-[2] bg-k-fg-3 pl-5"
   >
     <span
       v-if="shouldShowColumn('track')"

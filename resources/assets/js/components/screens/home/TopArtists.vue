@@ -13,7 +13,7 @@
           <ArtistCard :artist="artist" layout="compact" />
         </li>
       </ol>
-      <p v-else class="text-k-text-secondary">No artists found.</p>
+      <p v-else>No artists found.</p>
     </template>
   </HomeScreenSection>
 </template>

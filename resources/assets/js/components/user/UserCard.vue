@@ -1,15 +1,15 @@
 <template>
   <article
     :class="{ me: isCurrentUser }"
-    class="apply p-4 flex items-center rounded-md bg-k-bg-secondary border border-k-border
+    class="apply p-4 flex items-center rounded-md bg-k-fg-5 border border-k-border
     gap-3 transition-[border-color] duration-200 ease-in-out hover:border-white/15"
   >
     <UserAvatar :user="user" width="48" />
 
     <main class="flex flex-col justify-between relative flex-1 gap-1">
-      <h3 class="font-medium flex gap-2 items-center">
+      <h3 class="font-medium flex gap-2 items-center text-k-fg">
         <span v-if="user.name" class="name">{{ user.name }}</span>
-        <span v-else class="name font-light text-k-text-secondary">Anonymous</span>
+        <span v-else class="name font-light">Anonymous</span>
         <Icon v-if="isCurrentUser" :icon="faCircleCheck" class="you text-k-highlight" title="This is you!" />
         <Icon
           v-if="hasAdminPrivileges"
@@ -27,7 +27,7 @@
         >
       </h3>
 
-      <p class="text-k-text-secondary">{{ user.email }}</p>
+      <p>{{ user.email }}</p>
     </main>
 
     <Btn v-if="isCurrentUser" :href="url('profile')" highlight small tag="a">Your Profile</Btn>

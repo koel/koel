@@ -92,7 +92,7 @@ watch(playables, () => playables.value.length || close())
 
 <style lang="postcss" scoped>
 li {
-  @apply h-9 leading-9 py-0 px-3 whitespace-nowrap overflow-hidden text-ellipsis rounded bg-white/5 cursor-pointer
-  hover:bg-k-highlight hover:text-k-text-primary;
+  @apply h-9 leading-9 py-0 px-3 whitespace-nowrap overflow-hidden text-ellipsis rounded bg-k-fg-5 cursor-pointer
+  hover:bg-k-highlight hover:text-k-highlight-fg;
 }
 </style>

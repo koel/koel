@@ -1,6 +1,6 @@
 <template>
   <form
-    class="min-w-full sm:min-w-[480px] sm:bg-white/10 p-7 rounded-xl"
+    class="min-w-full sm:min-w-[480px] sm:bg-k-fg-10 p-7 rounded-xl"
     data-testid="forgot-password-form"
     @submit.prevent="handleSubmit"
   >
@@ -15,7 +15,7 @@
           type="email"
         />
         <Btn :disabled="loading" class="sm:rounded-l-none sm:rounded-r" type="submit">Reset Password</Btn>
-        <Btn :disabled="loading" class="!text-k-text-secondary" transparent @click="cancel">Cancel</Btn>
+        <Btn :disabled="loading" transparent @click="cancel">Cancel</Btn>
       </div>
     </FormRow>
   </form>

@@ -365,7 +365,7 @@ onMounted(() => render())
   }
 
   .song-list-header {
-    @apply tracking-widest uppercase cursor-pointer text-k-text-secondary;
+    @apply tracking-widest uppercase cursor-pointer text-k-fg-70;
 
     .extra {
       @apply px-0;

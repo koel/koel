@@ -92,7 +92,7 @@ import Tabs from '@/components/ui/tabs/Tabs.vue'
 
 const ProfileForm = defineAsyncComponent(() => import('@/components/profile-preferences/ProfileForm.vue'))
 const PreferencesForm = defineAsyncComponent(() => import('@/components/profile-preferences/PreferencesForm.vue'))
-const ThemeList = defineAsyncComponent(() => import('@/components/profile-preferences/ThemeList.vue'))
+const ThemeList = defineAsyncComponent(() => import('@/components/profile-preferences/theme/ThemePreferences.vue'))
 const Integrations = defineAsyncComponent(() => import('@/components/profile-preferences/Integrations.vue'))
 const QRLogin = defineAsyncComponent(() => import('@/components/profile-preferences/QRLogin.vue'))
 

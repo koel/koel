@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="shown"
-    class="bg-k-bg-primary text-[0.9rem] px-6 py-4 flex text-k-text-secondary z-10 space-x-3"
+    class="bg-k-bg text-[0.9rem] px-6 py-4 flex z-10 space-x-3"
     data-testid="support-bar"
   >
     <p class="flex-1">
@@ -54,10 +54,10 @@ watch(preferenceStore.initialized, initialized => {
 
 <style lang="postcss" scoped>
 a {
-  @apply text-k-text-primary hover:text-k-accent;
+  @apply text-k-fg hover:text-k-accent;
 }
 
 button {
-  @apply text-k-text-primary text-[0.9rem] hover:text-k-accent;
+  @apply text-k-fg text-[0.9rem] hover:text-k-accent;
 }
 </style>

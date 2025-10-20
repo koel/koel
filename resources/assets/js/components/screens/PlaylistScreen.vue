@@ -7,7 +7,7 @@
         :layout="allPlayables.length ? headerLayout : 'collapsed'"
       >
         {{ playlist.name }}
-        <p v-if="playlist.description" class="text-base text-k-text-secondary font-light">
+        <p v-if="playlist.description" class="text-base text-k-fg-70 font-light">
           {{ playlist.description }}
         </p>
 

@@ -1,5 +1,5 @@
 <template>
-  <section class="text-k-text-secondary">
+  <section>
     <h3 class="text-2xl mb-2 flex items-center gap-2">
       <span class="mr-2 text-[#1db954]">
         <img :src="musicbrainzLogo" alt="MusicBrainz Logo" height="20" width="20">

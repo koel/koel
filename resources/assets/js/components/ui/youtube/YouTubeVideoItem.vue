@@ -1,7 +1,7 @@
 <template>
   <a
     :href="href"
-    class="flex gap-3 !text-k-text-secondary hover:!text-k-text-primary focus:!text-k-text-primary active:!text-k-text-primary"
+    class="flex gap-3 text-k-fg-70 hover:!text-k-fg focus:text-k-fg active:text-k-fg"
     data-testid="youtube-search-result"
     role="button"
     @click.prevent="play"

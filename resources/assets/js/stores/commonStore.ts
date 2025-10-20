@@ -46,6 +46,7 @@ const initialState = {
   supports_batch_downloading: false,
   supports_transcoding: false,
   dir_separator: '/',
+  current_theme: null! as Theme,
 }
 
 type CommonStoreState = typeof initialState
@@ -68,7 +69,7 @@ export const commonStore = {
     playlistFolderStore.init(this.state.playlist_folders)
     settingStore.init(this.state.settings)
     queueStore.init(this.state.queue_state)
-    themeStore.init(themeStore.getCurrentTheme())
+    themeStore.init(this.state.current_theme || themeStore.getCurrentTheme())
 
     return this.state
   },

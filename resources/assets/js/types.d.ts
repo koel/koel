@@ -77,6 +77,7 @@ interface Window {
   SSO_PROVIDERS: SSOProvider[]
   AUTH_TOKEN: CompositeToken | null
   ACCEPTED_AUDIO_EXTENSIONS: string[]
+  RUNNING_UNIT_TESTS?: boolean
 
   BRANDING: Branding
 
@@ -505,13 +506,9 @@ interface PlayableListControlsConfig {
   filter: boolean
 }
 
-type ThemeableProperty = '--color-text-primary'
-  | '--color-text-secondary'
-  | '--color-bg-primary'
-  | '--color-bg-secondary'
+type ThemeableProperty = '--color-fg'
+  | '--color-bg'
   | '--color-highlight'
-  | '--color-bg-input'
-  | '--color-text-input'
   | '--bg-image'
   | '--bg-position'
   | '--bg-attachment'
@@ -522,10 +519,11 @@ type ThemeableProperty = '--color-text-primary'
 interface Theme {
   id: string
   name: string
-  thumbnailColor: string
-  thumbnailUrl?: string
+  thumbnail_color: string
+  thumbnail_image?: string
   selected?: boolean
   properties?: Partial<Record<ThemeableProperty, string>>
+  is_custom?: boolean
 }
 
 type ViewMode = 'list' | 'thumbnails'

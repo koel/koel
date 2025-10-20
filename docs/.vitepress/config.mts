@@ -82,6 +82,7 @@ export default defineConfig({
           { text: 'Proxy Authentication', link: '/plus/proxy-auth' },
           { text: 'Media Browser', link: '/plus/media-browser' },
           { text: 'White Labeling', link: '/plus/white-labeling' },
+          { text: 'Custom Themes', link: '/plus/custom-themes' },
           { text: 'Ticketmaster', link: '/plus/ticketmaster' },
         ],
       },

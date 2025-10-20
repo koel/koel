@@ -56,7 +56,7 @@ const play = () => matchedSong.value && playback().play(matchedSong.value)
   }
 
   &.available {
-    @apply cursor-pointer text-k-text-primary;
+    @apply cursor-pointer text-k-fg;
 
     &:hover {
       @apply text-k-highlight;

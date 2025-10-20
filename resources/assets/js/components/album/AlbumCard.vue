@@ -21,7 +21,7 @@
         <span
           v-if="showReleaseYear && album.year"
           :title="`Released in ${album.year}`"
-          class="text-sm text-k-text-primary rounded px-2 py-[2px] bg-white/10"
+          class="text-sm text-k-fg rounded px-2 py-[2px] bg-k-fg-10"
         >
           {{ album.year }}
         </span>
@@ -29,7 +29,7 @@
 
       <div class="space-x-2">
         <a v-if="isStandardArtist" :href="url('artists.show', { id: album.artist_id })">{{ album.artist_name }}</a>
-        <span v-else class="text-k-text-secondary">{{ album.artist_name }}</span>
+        <span v-else>{{ album.artist_name }}</span>
       </div>
     </template>
 

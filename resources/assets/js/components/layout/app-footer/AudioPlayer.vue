@@ -16,10 +16,10 @@
   }
 
   .plyr__progress--played[value] {
-    @apply transition duration-300 ease-in-out text-white/10;
+    @apply transition duration-300 ease-in-out text-k-fg-10;
 
     :fullscreen & {
-      @apply text-white/50 rounded-full overflow-hidden;
+      @apply text-k-fg-50 rounded-full overflow-hidden;
     }
   }
 

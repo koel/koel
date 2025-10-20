@@ -1,25 +1,25 @@
 <template>
-  <header class="flex h-[150px] p-6 gap-5 bg-white/5 flex-shrink-0 justify-end">
+  <header class="flex h-[150px] p-6 gap-5 bg-k-fg-5 flex-shrink-0 justify-end">
     <aside class="size-[112px] aspect-square">
       <Thumbnail :embeddable="embed.embeddable" />
     </aside>
 
     <div class="flex-1 flex flex-col justify-end gap-3">
       <h3
-        class="text-3xl flex items-center gap-2 font-medium sm:text-4xl sm:font-bold line-clamp-1"
         :title="heading"
+        class="text-3xl text-k-fg flex items-center gap-2 font-medium sm:text-4xl sm:font-bold line-clamp-1"
       >
         <PreviewBadge v-if="options.preview" />
         <span>{{ heading }}</span>
       </h3>
 
-      <p class="text-k-text-secondary line-clamp-1" :title="subheading">{{ subheading }}</p>
+      <p :title="subheading" class="line-clamp-1">{{ subheading }}</p>
 
       <slot name="audio-player" />
     </div>
 
-    <span class="absolute right-3 top-3 size-10 p-1 bg-white/10 rounded-md">
-      <img alt="Koel's logo" :src="logo">
+    <span class="absolute right-3 top-3 size-10 p-1 bg-k-fg-10 rounded-md">
+      <img :src="logo" alt="Koel's logo">
     </span>
   </header>
 </template>

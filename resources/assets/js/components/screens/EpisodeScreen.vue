@@ -3,13 +3,13 @@
     <template #header>
       <ScreenHeaderSkeleton v-if="loading && !episode" />
       <ScreenHeader v-if="episode">
-        <p class="text-base font-normal text-k-text-secondary">Episode</p>
+        <p class="text-base font-normal">Episode</p>
         <h1 class="text-ellipsis overflow-hidden whitespace-nowrap" :title="episode.title">{{ episode.title }}</h1>
 
-        <h2 class="text-2xl text-k-text-secondary">
+        <h2 class="text-2xl">
           <a
             :href="url('podcasts.show', { id: episode.podcast_id })"
-            class="!text-k-text-primary hover:!text-k-accent font-normal"
+            class="!text-k-fg hover:!text-k-accent font-normal"
           >
             {{ episode.podcast_title }}
           </a>
@@ -54,7 +54,7 @@
 
     <div v-if="episode">
       <h3 class="text-3xl font-semibold mb-4">Description</h3>
-      <div v-koel-new-tab class="description text-k-text-secondary" v-html="formattedDescription" />
+      <div v-koel-new-tab class="description" v-html="formattedDescription" />
     </div>
   </ScreenBase>
 </template>
@@ -166,7 +166,7 @@ onScreenActivated('Episode', () => (episodeId.value = getRouteParam('id')!))
   }
 
   :deep(a) {
-    @apply text-k-text-primary hover:text-k-accent;
+    @apply text-k-fg hover:text-k-accent;
   }
 }
 </style>

@@ -8,7 +8,7 @@
       <ul v-if="events?.length" class="space-y-4">
         <ArtistEventItem v-for="event in events" :key="event.id" :event />
       </ul>
-      <p v-else class="text-k-text-secondary">No upcoming events.</p>
+      <p>No upcoming events.</p>
     </template>
   </section>
 </template>

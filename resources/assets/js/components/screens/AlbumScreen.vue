@@ -15,7 +15,7 @@
             <a v-if="isStandardArtist" :href="url('artists.show', { id: album.artist_id })" class="artist">
               {{ album.artist_name }}
             </a>
-            <span v-else class="text-k-text-primary">{{ album.artist_name }}</span>
+            <span v-else class="text-k-fg">{{ album.artist_name }}</span>
             <span v-if="album.year">{{ album.year }}</span>
             <span>{{ pluralize(songs, 'song') }}</span>
             <span>{{ duration }}</span>
@@ -78,7 +78,7 @@
           <GridListView v-if="otherAlbums.length" v-koel-overflow-fade view-mode="list">
             <AlbumCard v-for="otherAlbum in otherAlbums" :key="otherAlbum.id" :album="otherAlbum" layout="compact" />
           </GridListView>
-          <p v-else class="text-k-text-secondary p-6">
+          <p v-else>
             No other albums by {{ album.artist_name }} found in the library.
           </p>
         </template>

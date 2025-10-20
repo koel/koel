@@ -1,7 +1,7 @@
 <template>
   <OnClickOutside @trigger="maybeHideInput">
     <form
-      class="flex border rounded-md overflow-hidden border-solid border-white/10 focus-within:bg-black/10 focus-within:border-white/40"
+      class="flex border rounded-md overflow-hidden border-solid border-k-fg-10 focus-within:bg-black/10 focus-within:border-white/40"
       @submit.prevent
     >
       <Btn v-koel-tooltip title="Filter" transparent unrounded @click.prevent="showInput">
@@ -11,7 +11,7 @@
         v-if="showingInput"
         ref="input"
         v-model="keywords"
-        class="!text-k-text-primary !bg-transparent !rounded-none !pl-0 !h-[unset] placeholder:text-white/50 focus-visible:outline-0"
+        class="!text-k-fg !bg-transparent !rounded-none !pl-0 !h-[unset] placeholder:text-k-fg-50 focus-visible:outline-0"
         placeholder="Keywords"
         type="search"
         @blur="inputting = false"

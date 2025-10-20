@@ -2,7 +2,7 @@
   <header
     :class="[layout, disabled ? 'disabled' : '']"
     class="screen-header gap-4 min-h-0 md:min-h-full flex items-end flex-shrink-0 relative content-stretch leading-normal p-6
-    border-b border-b-k-bg-secondary"
+    border-b border-b-k-fg-5"
   >
     <aside
       v-if="$slots.thumbnail"
@@ -13,10 +13,12 @@
 
     <main class="flex flex-1 gap-5 items-center overflow-hidden">
       <div class="w-full flex-1 overflow-hidden">
-        <h1 class="name overflow-hidden whitespace-nowrap text-ellipsis mr-4 font-thin md:font-bold my-0 leading-tight">
+        <h1
+          class="name text-k-fg overflow-hidden whitespace-nowrap text-ellipsis mr-4 font-thin md:font-bold my-0 leading-tight"
+        >
           <slot />
         </h1>
-        <span v-if="$slots.meta" class="meta text-k-text-secondary hidden text-[0.9rem] leading-loose space-x-2">
+        <span v-if="$slots.meta" class="meta hidden text-[0.9rem] leading-loose space-x-2">
           <slot name="meta" />
         </span>
       </div>
@@ -80,11 +82,11 @@ header.screen-header {
 
   .meta {
     a {
-      @apply text-k-text-primary hover:text-k-highlight;
+      @apply text-k-fg hover:text-k-highlight;
     }
 
     > :slotted(*) + :slotted(*) {
-      @apply ml-1 inline-block before:content-['•'] before:mr-1 before:text-k-text-secondary;
+      @apply ml-1 inline-block before:content-['•'] before:mr-1 before:text-k-fg-70;
     }
   }
 }

@@ -1,11 +1,11 @@
 <template>
   <div
-    :class="preview && 'preview-wrapper p-[2px] bg-white/5'"
+    :class="preview && 'preview-wrapper p-[2px] bg-k-fg-5'"
     class="rounded-full hover:scale-110 transition"
     data-testid="wrapper"
   >
     <button
-      class="w-12 aspect-square rounded-full bg-k-highlight border border-px border-k-highlight"
+      class="w-12 aspect-square rounded-full text-k-highlight-fg bg-k-highlight border border-px border-k-highlight"
       type="button"
       @click.prevent="emit('clicked')"
     >

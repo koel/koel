@@ -1,5 +1,5 @@
 <template>
-  <div class="relative h-1 w-full rounded-full overflow-hidden bg-white/30">
+  <div class="relative h-1 w-full rounded-full overflow-hidden bg-k-fg-30">
     <span class="absolute h-full bg-k-accent top-0 left-0" :style="{ width: `${percentage}%` }" />
   </div>
 </template>

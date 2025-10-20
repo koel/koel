@@ -1,7 +1,7 @@
 <template>
   <button
     v-koel-tooltip
-    class="transition-[color] duration-200 ease-in-out text-k-text-secondary hover:text-k-text-primary"
+    class="transition-[color] duration-200 ease-in-out hover:text-k-fg"
     type="button"
   >
     <slot />

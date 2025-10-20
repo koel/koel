@@ -18,7 +18,7 @@
           @toggle="toggleFavorite"
         />
       </h3>
-      <span class="text-k-text-secondary">{{ podcast.author }}</span>
+      <span>{{ podcast.author }}</span>
     </template>
 
     <template #thumbnail>

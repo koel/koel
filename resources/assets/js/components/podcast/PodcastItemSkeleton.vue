@@ -1,7 +1,7 @@
 <template>
   <article
-    class="skeleton flex gap-5 p-5 rounded-lg border border-white/5 hover:bg-white/10 bg-white/5
-    !text-k-text-primary !hover:text-k-text-primary"
+    class="skeleton flex gap-5 p-5 rounded-lg border border-k-fg-5 hover:bg-k-fg-10 bg-k-fg-5
+    !text-k-fg !hover:text-k-fg"
   >
     <aside class="flex-[0_0_128px]">
       <div class="pulse aspect-square rounded-lg" />

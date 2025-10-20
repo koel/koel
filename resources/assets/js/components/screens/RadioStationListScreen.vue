@@ -9,7 +9,7 @@
             <Btn
               v-koel-tooltip
               :title="preferences.radio_stations_favorites_only ? 'Show all' : 'Show favorites only'"
-              class="border border-white/10"
+              class="border border-k-fg-10"
               small
               transparent
               @click.prevent="toggleFavoritesOnly"

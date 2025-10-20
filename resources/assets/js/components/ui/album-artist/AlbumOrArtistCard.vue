@@ -52,7 +52,7 @@ const onContextMenu = (e: MouseEvent) => emit('contextmenu', e)
 
 <style lang="postcss" scoped>
 article {
-  @apply bg-k-bg-secondary border border-k-border hover:border-white/15;
+  @apply bg-k-fg-5 border border-k-border hover:border-white/15;
 
   &.full {
     :deep(.play-icon) {
@@ -62,7 +62,7 @@ article {
 
   .name {
     &:deep(a) {
-      @apply overflow-hidden text-ellipsis text-k-text-primary;
+      @apply overflow-hidden text-ellipsis text-k-fg;
 
       &:is(:hover, :active, :focus) {
         @apply text-k-accent;
@@ -89,7 +89,7 @@ article {
       & + a,
       & + button {
         &::before {
-          @apply mr-0.5 content-['•'] text-k-text-secondary;
+          @apply mr-0.5 content-['•'];
         }
       }
 

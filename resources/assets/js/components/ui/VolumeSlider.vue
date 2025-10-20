@@ -61,12 +61,12 @@ onMounted(() => volumeManager.init(inputEl.value!, preferenceStore.volume))
 #volume {
   [type='range'] {
     &::-webkit-slider-thumb {
-      @apply bg-k-text-secondary;
+      @apply bg-k-fg-70;
     }
 
     &:hover {
       &::-webkit-slider-thumb {
-        @apply bg-k-text-primary;
+        @apply bg-k-fg;
       }
     }
   }
@@ -78,5 +78,9 @@ onMounted(() => volumeManager.init(inputEl.value!, preferenceStore.volume))
       }
     }
   }
+}
+
+.plyr__volume[type='range']::-webkit-slider-runnable-track {
+  @apply bg-k-fg-10;
 }
 </style>

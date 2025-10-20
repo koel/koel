@@ -6,7 +6,7 @@
     <span class="logo block h-[55%] md:h-3/4 aspect-square rounded-full bg-cover" />
     <div v-if="station" class="meta overflow-hidden hidden md:block">
       <h3 class="title text-ellipsis overflow-hidden whitespace-nowrap">{{ station.name }}</h3>
-      <p class="text-k-text-secondary text-ellipsis overflow-hidden whitespace-nowrap">{{ station.description }}</p>
+      <p class="text-ellipsis overflow-hidden whitespace-nowrap">{{ station.description }}</p>
     </div>
   </div>
 </template>

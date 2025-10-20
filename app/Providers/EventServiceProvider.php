@@ -24,6 +24,7 @@ use App\Models\Genre;
 use App\Models\Playlist;
 use App\Models\PlaylistCollaborationToken;
 use App\Models\RadioStation;
+use App\Models\Theme;
 use App\Models\User;
 use App\Observers\AlbumObserver;
 use App\Observers\ArtistObserver;
@@ -32,6 +33,7 @@ use App\Observers\GenreObserver;
 use App\Observers\PlaylistCollaborationTokenObserver;
 use App\Observers\PlaylistObserver;
 use App\Observers\RadioStationObserver;
+use App\Observers\ThemeObserver;
 use App\Observers\UserObserver;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as BaseServiceProvider;
 
@@ -81,5 +83,6 @@ class EventServiceProvider extends BaseServiceProvider
         Genre::observe(GenreObserver::class);
         User::observe(UserObserver::class);
         RadioStation::observe(RadioStationObserver::class);
+        Theme::observe(ThemeObserver::class);
     }
 }

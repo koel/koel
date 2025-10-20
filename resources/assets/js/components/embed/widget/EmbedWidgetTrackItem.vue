@@ -9,7 +9,7 @@
     >
       <span class="track-number flex items-center justify-center min-w-5 overflow-hidden">
         <SoundBars v-if="playable.playback_state === 'Playing'" />
-        <span v-else class="text-k-text-secondary">
+        <span v-else>
           <template v-if="isSong(playable)">{{ playable.track || '' }}</template>
           <Icon v-else :icon="faPodcast" />
         </span>
@@ -18,7 +18,7 @@
         <PlayableThumbnail :playable @clicked="play" />
       </span>
       <span class="title-artist flex-1 flex flex-col gap-2 overflow-hidden">
-        <span class="title text-k-text-primary">{{ playable.title }}</span>
+        <span class="title text-k-fg">{{ playable.title }}</span>
         <span>{{ artist }} - {{ album }}</span>
       </span>
       <span class="font-mono">{{ fmtLength }}</span>

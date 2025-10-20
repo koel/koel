@@ -1,7 +1,7 @@
 <template>
   <article class="flex flex-col items-center min-w-[24px]">
     <span ref="sliderEl" class="slider h-[100px]" />
-    <label class="mt-2 mb-0 text-left text-sm text-k-text-primary">
+    <label class="mt-2 mb-0 text-left text-sm text-k-fg">
       <slot />
     </label>
   </article>

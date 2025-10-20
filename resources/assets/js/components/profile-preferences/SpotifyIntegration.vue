@@ -1,5 +1,5 @@
 <template>
-  <section class="text-k-text-secondary">
+  <section>
     <h3 class="text-2xl mb-2">
       <span class="mr-2 text-[#1db954]">
         <Icon :icon="faSpotify" />

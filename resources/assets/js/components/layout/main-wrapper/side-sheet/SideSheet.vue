@@ -1,12 +1,12 @@
 <template>
   <aside
     :class="{ 'showing-pane': activeTab }"
-    class="fixed sm:relative top-0 w-screen md:w-auto flex flex-col md:flex-row-reverse z-[2] text-k-text-secondary"
+    class="fixed sm:relative top-0 w-screen md:w-auto flex flex-col md:flex-row-reverse z-[2]"
   >
     <header
       class="controls flex md:flex-col justify-between items-center md:w-[64px] md:py-6 tw:px-0
-      bg-black/5 md:border-l border-solid md:border-l-white/5 md:border-b-0 md:shadow-none
-      z-[2] w-screen flex-row border-b border-b-white/5 border-l-0 shadow-xl
+      bg-black/5 md:border-l border-solid md:border-l-k-fg-5 md:border-b-0 md:shadow-none
+      z-[2] w-screen flex-row border-b border-b-k-fg-5 border-l-0 shadow-xl
       py-0 px-6 h-k-header-height"
     >
       <div class="btn-group">
@@ -23,7 +23,7 @@
       </div>
     </header>
 
-    <main v-if="songPlaying" v-show="activeTab" class="panes py-8 px-6 overflow-auto bg-k-bg-secondary">
+    <main v-if="songPlaying" v-show="activeTab" class="panes py-8 px-6 overflow-auto bg-k-fg-5">
       <SideSheetPanelLazyWrapper
         id="extraPanelLyrics"
         :active="activeTab === 'Lyrics'"

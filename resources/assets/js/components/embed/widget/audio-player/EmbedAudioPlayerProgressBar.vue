@@ -9,12 +9,12 @@
     @mouseout="onMouseOut"
   >
     <div
-      class="track w-full relative h-1 rounded-full bg-white/20
-      before:h-full before:rounded-full before:bg-white/30 before:absolute before:top-0 before:left-0
+      class="track w-full relative h-1 rounded-full bg-k-fg-20
+      before:h-full before:rounded-full before:bg-k-fg-30 before:absolute before:top-0 before:left-0
       before:pointer-events-none"
     >
       <div
-        class="seeker group-hover:bg-k-highlight relative h-1 rounded-full bg-white/50
+        class="seeker group-hover:bg-k-highlight relative h-1 rounded-full bg-k-fg-50
         after:transition-transform after:absolute after:top-1/2 after:right-[-10px] after:size-[10px] after:bg-white after:rounded-full"
       />
     </div>

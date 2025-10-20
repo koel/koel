@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ standalone: inStandaloneMode }" class="h-screen bg-k-bg-primary">
+  <div :class="{ standalone: inStandaloneMode }" class="h-screen bg-k-bg">
     <template v-if="authenticated">
       <AlbumArtOverlay v-if="showAlbumArtOverlay" :album="(state.streamable as Song).album_id" />
 
@@ -10,7 +10,7 @@
             <RemoteFooter :streamable="state.streamable" />
           </template>
 
-          <p v-else class="text-k-text-secondary">No song is playing.</p>
+          <p v-else>No song is playing.</p>
         </template>
         <Scanner v-else />
       </main>

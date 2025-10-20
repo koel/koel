@@ -11,7 +11,7 @@
 
     <footer class="flex flex-1 flex-col gap-1.5 overflow-hidden">
       <div class="name flex flex-col gap-2 whitespace-nowrap">
-        <h3 class="font-medium">
+        <h3 class="font-medium text-k-fg">
           {{ station.name }}
           <FavoriteButton v-if="station.favorite" :favorite="station.favorite" class="ml-1" @toggle="toggleFavorite" />
         </h3>
@@ -64,7 +64,7 @@ const toggleFavorite = () => radioStationStore.toggleFavorite(station.value)
 
 <style lang="postcss" scoped>
 article {
-  @apply bg-k-bg-secondary border border-k-border hover:border-white/15;
+  @apply bg-k-fg-5 border border-k-border hover:border-white/15;
 
   &.full {
     :deep(.play-icon) {
@@ -74,7 +74,7 @@ article {
 
   .name {
     a {
-      @apply overflow-hidden text-ellipsis text-k-text-primary;
+      @apply overflow-hidden text-ellipsis text-k-fg;
 
       &:is(:hover, :active, :focus) {
         @apply text-k-accent;
@@ -101,7 +101,7 @@ article {
       & + a,
       & + button {
         &::before {
-          @apply mr-0.5 content-['•'] text-k-text-secondary;
+          @apply mr-0.5 content-['•'];
         }
       }
 

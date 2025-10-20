@@ -3,9 +3,7 @@
     <header>
       <h1>
         New Playlist
-        <span v-if="playables.length" class="text-k-text-secondary" data-testid="from-playables">
-          from {{ pluralize(playables, entityName) }}
-        </span>
+        <span v-if="playables.length" data-testid="from-playables">from {{ pluralize(playables, entityName) }}</span>
       </h1>
     </header>
 
@@ -19,7 +17,7 @@
           <template #label>Folder</template>
           <SelectBox v-model="data.folder_id">
             <option :value="null" />
-            <option v-for="folder in folders" :key="folder.id" :value="folder.id">{{ folder.name }}</option>
+            <option v-for="{ id, name } in folders" :key="id" :value="id">{{ name }}</option>
           </SelectBox>
         </FormRow>
         <FormRow class="col-span-2">
@@ -31,7 +29,7 @@
             placeholder="Some optional description"
           />
         </FormRow>
-        <div class="flex cols-span-2 gap-3 items-center">
+        <div class="flex col-span-2 gap-3 items-center">
           <span v-if="data.cover" class="w-24 h-24 aspect-square relative">
             <img :src="data.cover" alt="Cover" class="w-24 h-24 rounded object-cover">
             <button

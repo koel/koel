@@ -1,7 +1,7 @@
 <template>
   <div
     :class="`alert-box-${props.type}`"
-    class="alert-box flex items-center gap-4 bg-white/10 mb-6 p-4 rounded-md text-k-text-primary"
+    class="alert-box flex items-center gap-4 bg-k-fg-10 mb-6 p-4 rounded-md text-k-fg"
   >
     <Icon v-if="props.type === 'info' || props.type === 'default'" :icon="faInfoCircle" />
     <Icon v-if="props.type === 'danger'" :icon="faExclamationCircle" />

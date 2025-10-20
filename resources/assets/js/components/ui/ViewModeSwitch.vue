@@ -1,6 +1,6 @@
 <template>
   <span
-    class="flex w-[64px] border border-solid border-white/20 rounded-md overflow-hidden"
+    class="flex w-[64px] border border-solid border-k-fg-20 rounded-md overflow-hidden"
   >
     <label
       v-koel-tooltip
@@ -30,16 +30,8 @@
 
 <script lang="ts" setup>
 import { LayoutGridIcon, LayoutListIcon } from 'lucide-vue-next'
-import { computed } from 'vue'
 
-const props = withDefaults(defineProps<{ modelValue?: ViewMode }>(), { modelValue: 'thumbnails' })
-
-const emit = defineEmits<{ (e: 'update:modelValue', value: ViewMode): void }>()
-
-const value = computed({
-  get: () => props.modelValue,
-  set: value => emit('update:modelValue', value),
-})
+const value = defineModel<ViewMode>({ default: 'thumbnails' })
 </script>
 
 <style lang="postcss" scoped>
@@ -47,7 +39,7 @@ label {
   @apply w-1/2 flex items-center justify-center h-full mb-0 cursor-pointer;
 
   &.active {
-    @apply bg-k-text-primary text-k-bg-primary;
+    @apply bg-k-fg text-k-bg;
   }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center justify-center flex-1 relative h-screen gap-4 text-k-text-secondary">
+  <div class="flex flex-col items-center justify-center flex-1 relative h-screen gap-4">
     <template v-if="!maxRetriesReached">
       <span class="relative flex h-5 aspect-square">
         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-k-highlight opacity-75" />

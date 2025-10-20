@@ -9,7 +9,7 @@
         class="absolute bottom-8 left-8 px-6 py-4 bg-black/30 rounded-md"
       >
         <h3 class="text-lg mb-2">{{ selectedVisualizer.name }}</h3>
-        <p v-if="selectedVisualizer.credits" class="text-k-text-secondary">
+        <p v-if="selectedVisualizer.credits">
           by {{ selectedVisualizer.credits.author }}
           <a :href="selectedVisualizer.credits.url" class="ml-2" target="_blank">
             <Icon :icon="faUpRightFromSquare" />
@@ -95,6 +95,6 @@ onBeforeUnmount(() => freeUp())
 
 .fullscreen {
   /* :fullscreen pseudo support is kind of buggy, so we use a class instead */
-  @apply bg-k-bg-primary;
+  @apply bg-k-bg;
 }
 </style>

@@ -48,7 +48,7 @@
                 <template #label>Description</template>
                 <TextArea v-model="data.description" class="h-28" name="description" />
               </FormRow>
-              <div class="flex cols-span-2 gap-3 items-center">
+              <div class="flex col-span-2 gap-3 items-center">
                 <span v-if="data.cover" class="w-24 h-24 aspect-square relative">
                   <img :src="data.cover" alt="Cover" class="w-24 h-24 rounded object-cover">
                   <button

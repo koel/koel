@@ -1,12 +1,12 @@
 .context-menu {
-  @apply py-1 px-0 w-max min-w-[144px] bg-k-bg-context-menu fixed border border-white/10 rounded-md z-[1001] shadow-md;
+  @apply py-1 px-0 w-max min-w-[144px] bg-k-bg-context-menu fixed border border-k-fg-10 rounded-md z-[1001] shadow-md;
 
   .arrow {
     @apply bg-k-bg-context-menu absolute w-[8px] aspect-square rotate-45;
   }
 
   li {
-    @apply relative px-4 py-1.5 whitespace-nowrap hover:bg-k-highlight hover:text-k-text-primary leading-7;
+    @apply relative px-4 py-1.5 text-k-fg hover:bg-k-highlight hover:text-k-highlight-fg leading-7;
     @apply whitespace-nowrap;
 
     &.with-icon {
@@ -14,7 +14,7 @@
     }
 
     &.separator {
-      @apply pointer-events-none p-0 border-b border-b-white/10;
+      @apply pointer-events-none p-0 border-b border-b-k-fg-10;
     }
 
     &.has-sub {

@@ -10,7 +10,7 @@
     </header>
 
     <main>
-      <p class="text-k-text-secondary">
+      <p>
         Collaborative playlists allow multiple users to contribute. <br>
         Note: Songs added to a collaborative playlist are made accessible to all users,
         and you cannot mark a song as private if it’s still part of a collaborative playlist.

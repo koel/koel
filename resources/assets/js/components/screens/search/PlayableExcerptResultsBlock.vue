@@ -15,12 +15,12 @@
       </Btn>
     </template>
 
-    <PlayableListSkeleton v-if="searching" class="border border-white/5 rounded-lg" />
+    <PlayableListSkeleton v-if="searching" class="border border-k-fg-5 rounded-lg" />
     <template v-else>
       <PlayableList
         v-if="displayedPlayables.length"
         ref="playableList"
-        class="border border-white/5 rounded-lg overflow-hidden"
+        class="border border-k-fg-5 rounded-lg overflow-hidden"
         @press:enter="onPressEnter"
       />
       <p v-else>Nothing found.</p>

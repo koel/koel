@@ -2,7 +2,7 @@
   <div class="flex items-center justify-center h-screen">
     <form
       v-if="validPayload"
-      class="flex flex-col gap-3 sm:w-[480px] sm:bg-white/10 sm:rounded-lg p-7"
+      class="flex flex-col gap-3 sm:w-[480px] sm:bg-k-fg-10 sm:rounded-lg p-7"
       @submit.prevent="handleSubmit"
     >
       <h1 class="text-2xl mb-2">Set New Password</h1>

@@ -3,7 +3,7 @@
     <form
       v-if="userProspect"
       autocomplete="off"
-      class="w-full sm:w-[320px] p-7 sm:bg-white/10 rounded-lg flex flex-col space-y-5"
+      class="w-full sm:w-[320px] p-7 sm:bg-k-fg-10 rounded-lg flex flex-col space-y-5"
       @submit.prevent="submit"
     >
       <header class="mb-4">
