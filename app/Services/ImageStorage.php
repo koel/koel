@@ -23,67 +23,64 @@ class ImageStorage
     /**
      * Write an album cover image file and update the Album with the new cover attribute.
      *
-     * @param string $source Path, URL, or even binary data.
-     * See https://image.intervention.io/v3/basics/instantiation#read-image-sources.
-     * @param string|null $destination The destination path. Automatically generated if empty.
+     * @param mixed $source Any kind of image data that Intervention can read.
      */
-    public function storeAlbumCover(Album $album, string $source, ?string $destination = ''): ?string
+    public function storeAlbumCover(Album $album, mixed $source): ?string
     {
-        $destination = $destination ?: self::generateRandomStoragePath();
-
-        return rescue(function () use ($album, $source, $destination): string {
-            $this->imageWriter->write($destination, $source);
-            $album->cover = basename($destination);
+        return rescue(function () use ($album, $source): string {
+            $fileName = $this->storeImage($source);
+            $album->cover = $fileName;
             $album->save();
 
-            $this->createThumbnailForAlbum($album);
+            $this->createAlbumThumbnail($album);
 
-            return $album->cover;
+            return $fileName;
         });
     }
 
     /**
      * Write an artist image file update the Artist with the new image attribute.
      *
-     * @param string $source Path, URL, or even binary data. See https://image.intervention.io/v2/api/make.
-     * @param string|null $destination The destination path. Automatically generated if empty.
+     * @param mixed $source Any kind of image data that Intervention can read.
      */
-    public function storeArtistImage(Artist $artist, string $source, ?string $destination = ''): ?string
+    public function storeArtistImage(Artist $artist, mixed $source): ?string
     {
-        $destination = $destination ?: self::generateRandomStoragePath();
-
-        return rescue(function () use ($artist, $source, $destination): string {
-            $this->imageWriter->write($destination, $source);
-            $artist->image = basename($destination);
+        return rescue(function () use ($artist, $source): string {
+            $fileName = $this->storeImage($source);
+            $artist->image = $fileName;
             $artist->save();
 
-            return $artist->image;
+            return $fileName;
         });
     }
 
     /**
-     * Get the URL of an album's thumbnail.
+     * Get an album's thumbnail file name.
      * Auto-generate the thumbnail when possible if one doesn't exist.
      */
-    public function getAlbumThumbnailUrl(Album $album): ?string
+    public function getOrCreateAlbumThumbnail(Album $album): ?string
     {
-        if (!$album->has_cover) {
-            return null;
-        }
+        $thumbnailPath = image_storage_path($album->thumbnail);
 
-        if (!File::exists($album->thumbnail_path)) {
-            $this->createThumbnailForAlbum($album);
+        if ($thumbnailPath && !File::exists($thumbnailPath)) {
+            $this->createAlbumThumbnail($album);
         }
 
         return $album->thumbnail;
     }
 
-    private function createThumbnailForAlbum(Album $album): void
+    private function createAlbumThumbnail(Album $album): void
     {
-        $this->imageWriter->write($album->thumbnail_path, $album->cover_path, ImageWritingConfig::make(
-            maxWidth: 48,
-            blur: 10,
-        ));
+        rescue_if($album->cover, function () use ($album): void {
+            $this->imageWriter->write(
+                destination: image_storage_path($album->thumbnail),
+                source: image_storage_path($album->cover),
+                config: ImageWritingConfig::make(
+                    maxWidth: 48,
+                    blur: 10,
+                ),
+            );
+        });
     }
 
     public function trySetAlbumCoverFromDirectory(Album $album, string $directory): void
@@ -112,6 +109,13 @@ class ImageStorage
         });
     }
 
+    /**
+     * Store an image file and return the (randomly generated) file name.
+     *
+     * @param mixed $source Any kind of image data that Intervention can read.
+     *
+     * @return string The file name.
+     */
     public function storeImage(mixed $source, ?ImageWritingConfig $config = null): string
     {
         preg_match('/^data:(image\/[A-Za-z0-9+\-.]+);base64,/', $source, $matches);

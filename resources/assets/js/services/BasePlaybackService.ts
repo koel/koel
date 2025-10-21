@@ -57,7 +57,7 @@ export abstract class BasePlaybackService {
     listen('error', this.onError.bind(this), true)
     listen('ended', this.onEnded.bind(this))
 
-    const timeUpdateHandler = process.env.NODE_ENV === 'test' ? this.onTimeUpdate : throttle(this.onTimeUpdate, 1000)
+    const timeUpdateHandler = window.RUNNING_UNIT_TESTS ? this.onTimeUpdate : throttle(this.onTimeUpdate, 1000)
     listen('timeupdate', timeUpdateHandler.bind(this))
   }
 

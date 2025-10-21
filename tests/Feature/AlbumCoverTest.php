@@ -26,7 +26,7 @@ class AlbumCoverTest extends TestCase
         $this->deleteAs("api/albums/{$album->id}/cover", [], create_admin())
             ->assertNoContent();
 
-        self::assertNull($album->refresh()->cover);
+        self::assertEmpty($album->refresh()->cover);
         self::assertFileDoesNotExist(image_storage_path($file));
     }
 
@@ -39,6 +39,6 @@ class AlbumCoverTest extends TestCase
         $this->deleteAs("api/albums/{$album->id}/cover")
             ->assertForbidden();
 
-        self::assertNotNull($album->refresh()->cover);
+        self::assertNotEmpty($album->refresh()->cover);
     }
 }

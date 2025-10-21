@@ -32,7 +32,7 @@ class RadioStationResource extends JsonResource
             'name' => $this->station->name,
             'id' => $this->station->id,
             'url' => $this->station->url,
-            'logo' => $this->station->logo,
+            'logo' => image_storage_url($this->station->logo),
             'description' => $this->station->description,
             'is_public' => $this->station->is_public,
             'created_at' => $this->station->created_at,

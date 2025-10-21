@@ -21,6 +21,6 @@ class PlaylistObserver
 
     public function deleted(Playlist $playlist): void
     {
-        rescue_if($playlist->cover_path, static fn () => File::delete($playlist->cover_path));
+        rescue_if($playlist->cover, static fn () => File::delete(image_storage_path($playlist->cover)));
     }
 }

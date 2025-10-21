@@ -26,7 +26,7 @@ class ArtistImageTest extends TestCase
         $this->deleteAs("api/artists/{$artist->id}/image", [], create_admin())
             ->assertNoContent();
 
-        self::assertNull($artist->refresh()->image);
+        self::assertEmpty($artist->refresh()->image);
         self::assertFileDoesNotExist(image_storage_path($file));
     }
 
@@ -39,6 +39,6 @@ class ArtistImageTest extends TestCase
         $this->deleteAs("api/artists/{$artist->id}/image")
             ->assertForbidden();
 
-        self::assertNotNull($artist->refresh()->image);
+        self::assertNotEmpty($artist->refresh()->image);
     }
 }

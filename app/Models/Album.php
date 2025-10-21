@@ -18,31 +18,26 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
+ * @property ?boolean $favorite Whether the album is liked by the scoped user
  * @property ?int $year
- * @property ?string $cover_path The absolute path to the cover file
- * @property ?string $thumbnail The public URL to the album's thumbnail
- * @property ?string $thumbnail_name The file name of the album's thumbnail
- * @property ?string $thumbnail_path The full path to the thumbnail. This doesn't guarantee the thumbnail exists.
+ * @property ?string $thumbnail The album's thumbnail file name
  * @property Artist $artist The album's artist
  * @property Carbon $created_at
  * @property Collection<array-key, Song> $songs
  * @property User $user
- * @property bool $has_cover If the album has a non-default cover image
  * @property bool $is_unknown If the album is the Unknown Album
+ * @property int $user_id
  * @property string $artist_id
  * @property string $artist_name
+ * @property string $cover The album cover's file name
  * @property string $id
- * @property int $user_id
- * @property string $cover The album cover's URL
  * @property string $name Name of the album
- * @property ?boolean $favorite Whether the album is liked by the scoped user
  */
 class Album extends Model implements AuditableContract, Embeddable, Favoriteable, Permissionable
 {
@@ -115,27 +110,6 @@ class Album extends Model implements AuditableContract, Embeddable, Favoriteable
         return Attribute::get(fn (): bool => $this->name === self::UNKNOWN_NAME);
     }
 
-    protected function cover(): Attribute
-    {
-        return Attribute::get(static fn (?string $value): ?string => image_storage_url($value));
-    }
-
-    protected function hasCover(): Attribute
-    {
-        return Attribute::get(
-            fn (): bool => $this->cover_path && (app()->runningUnitTests() || File::exists($this->cover_path))
-        );
-    }
-
-    protected function coverPath(): Attribute
-    {
-        return Attribute::get(function () {
-            $cover = Arr::get($this->attributes, 'cover');
-
-            return $cover ? image_storage_path($cover) : null;
-        });
-    }
-
     /**
      * Sometimes the tags extracted from getID3 are HTML entity encoded.
      * This makes sure they are always sane.
@@ -145,27 +119,15 @@ class Album extends Model implements AuditableContract, Embeddable, Favoriteable
         return Attribute::get(static fn (?string $value) => html_entity_decode($value))->shouldCache();
     }
 
-    protected function thumbnailName(): Attribute
+    protected function thumbnail(): Attribute
     {
         return Attribute::get(function (): ?string {
-            if (!$this->has_cover) {
+            if (!$this->cover) {
                 return null;
             }
 
-            $parts = pathinfo($this->cover_path);
-
-            return sprintf('%s_thumb.%s', $parts['filename'], $parts['extension']);
+            return sprintf('%s_thumb.%s', Str::beforeLast($this->cover, '.'), Str::afterLast($this->cover, '.'));
         })->shouldCache();
-    }
-
-    protected function thumbnailPath(): Attribute
-    {
-        return Attribute::get(fn () => $this->thumbnail_name ? image_storage_path($this->thumbnail_name) : null);
-    }
-
-    protected function thumbnail(): Attribute
-    {
-        return Attribute::get(fn () => $this->thumbnail_name ? image_storage_url($this->thumbnail_name) : null);
     }
 
     /** @deprecated Only here for backward compat with mobile apps */

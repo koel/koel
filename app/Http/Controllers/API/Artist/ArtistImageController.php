@@ -21,7 +21,7 @@ class ArtistImageController extends Controller
         $this->authorize('update', $artist);
         $this->imageStorage->storeArtistImage($artist, $request->getFileContent());
 
-        return response()->json(['image_url' => $artist->image]);
+        return response()->json(['image_url' => image_storage_url($artist->image)]);
     }
 
     public function destroy(Artist $artist)

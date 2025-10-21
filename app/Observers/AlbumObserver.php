@@ -40,9 +40,9 @@ class AlbumObserver
 
     public function deleted(Album $album): void
     {
-        rescue_if(
-            $album->has_cover,
-            static fn () => File::delete([$album->cover_path, $album->thumbnail_path]),
-        );
+        $coverPath = image_storage_path($album->cover);
+        $thumbnailPath = image_storage_path($album->thumbnail);
+
+        rescue_if($coverPath || $thumbnailPath, static fn () => File::delete([$coverPath, $thumbnailPath]));
     }
 }

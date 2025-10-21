@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 
 class SongService
 {
@@ -230,7 +231,9 @@ class SongService
 
         $album = $this->resolveAlbum($albumArtist, Arr::get($data, 'album'));
 
-        if (!$album->has_cover && !in_array('cover', $config->ignores, true)) {
+        $hasCover = $album->cover && File::exists(image_storage_path($album->cover));
+
+        if (!$hasCover && !in_array('cover', $config->ignores, true)) {
             $coverData = Arr::get($data, 'cover.data');
 
             if ($coverData) {

@@ -70,7 +70,7 @@ class AlbumServiceTest extends TestCase
 
         self::assertEquals('New Album Name', $updatedAlbum->name);
         self::assertEquals(2023, $updatedAlbum->year);
-        self::assertEquals(image_storage_url("$ulid.webp"), $updatedAlbum->cover);
+        self::assertEquals("$ulid.webp", $updatedAlbum->cover);
 
         $songs->each(static function (Song $song) use ($updatedAlbum): void {
             self::assertEquals($updatedAlbum->name, $song->fresh()->album_name);
@@ -104,7 +104,7 @@ class AlbumServiceTest extends TestCase
 
         $this->service->removeAlbumCover($album);
 
-        self::assertNull($album->refresh()->cover);
+        self::assertEmpty($album->refresh()->cover);
         self::assertFileDoesNotExist(image_storage_path("$ulid.webp"));
         self::assertFileDoesNotExist(image_storage_path("{$ulid}_thumb.webp"));
     }

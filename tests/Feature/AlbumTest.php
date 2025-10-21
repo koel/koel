@@ -84,7 +84,7 @@ class AlbumTest extends TestCase
 
         self::assertEquals('Updated Album Name', $album->name);
         self::assertEquals(2023, $album->year);
-        self::assertEquals(image_storage_url("$ulid.webp"), $album->cover);
+        self::assertEquals("$ulid.webp", $album->cover);
     }
 
     #[Test]

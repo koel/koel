@@ -21,7 +21,7 @@ class AlbumCoverController extends Controller
         $this->authorize('update', $album);
         $this->imageStorage->storeAlbumCover($album, $request->getFileContent());
 
-        return response()->json(['cover_url' => $album->cover]);
+        return response()->json(['cover_url' => image_storage_url($album->cover)]);
     }
 
     public function destroy(Album $album)

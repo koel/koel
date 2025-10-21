@@ -30,7 +30,7 @@ export const usePlayableListColumnVisibility = () => {
       columns.push('title')
       return Array.from(new Set(columns))
     } catch (error: unknown) {
-      process.env.NODE_ENV !== 'test' && logger.error('Failed to load columns from local storage', error)
+      window.RUNNING_UNIT_TESTS || logger.error('Failed to load columns from local storage', error)
       return defaultColumns
     }
   }

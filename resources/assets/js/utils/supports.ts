@@ -14,7 +14,7 @@ const iOS = () => [
  * Notice that event though iOS technically supports AudioContext, turning it on will cause a problem
  * where switching to another app will pause script execution and mute the audio.
  */
-export const isAudioContextSupported = process.env.NODE_ENV !== 'test' && !iOS()
+export const isAudioContextSupported = !window.RUNNING_UNIT_TESTS && !iOS()
 
 /**
  * Checks if the browser supports reading (and thus uploading) a whole directory.

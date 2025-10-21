@@ -77,7 +77,7 @@ class ArtistTest extends TestCase
         $artist->refresh();
 
         self::assertEquals('Updated Artist Name', $artist->name);
-        self::assertEquals(image_storage_url("$ulid.webp"), $artist->image);
+        self::assertEquals("$ulid.webp", $artist->image);
     }
 
     #[Test]
