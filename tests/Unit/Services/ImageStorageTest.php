@@ -8,6 +8,7 @@ use App\Models\Artist;
 use App\Services\ImageStorage;
 use App\Services\ImageWriter;
 use App\Services\SvgSanitizer;
+use App\Values\ImageWritingConfig;
 use Illuminate\Support\Facades\File;
 use Mockery;
 use Mockery\MockInterface;
@@ -41,10 +42,34 @@ class ImageStorageTest extends TestCase
         $coverPath = '/koel/public/img/album/foo.jpg';
 
         $this->imageWriter
-            ->expects('write')
+            ->shouldReceive('write')
+            ->once()
             ->with('/koel/public/img/album/foo.jpg', 'dummy-src');
 
-        $this->imageWriter->expects('write');
+        $this->imageWriter
+            ->shouldReceive('write')
+            ->once()
+            ->with(
+                image_storage_path('foo_thumb.jpg'),
+                image_storage_path('foo.jpg'),
+                Mockery::on(static function ($config) {
+                    return $config instanceof ImageWritingConfig
+                        && $config->maxWidth === 48
+                        && $config->blur === 10;
+                })
+            );
+
+        $this->imageWriter
+            ->shouldReceive('write')
+            ->once()
+            ->with(
+                image_storage_path('foo_fullscreen.jpg'),
+                'dummy-src',
+                Mockery::on(static function ($config) {
+                    return $config instanceof ImageWritingConfig
+                        && $config->maxWidth === 1920;
+                })
+            );
 
         $cover = $this->service->storeAlbumCover($album, 'dummy-src', $coverPath);
 

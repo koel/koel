@@ -9,6 +9,8 @@
 
     <div class="fullscreen-backdrop hidden" />
 
+    <div class="album-cover-layer hidden" />
+
     <div class="wrapper relative flex flex-1">
       <RadioStationInfo v-if="isRadio" />
       <SongInfo v-else />
@@ -104,6 +106,19 @@ const appBackgroundImage = computed(() => {
   return src ? `url(${src})` : 'none'
 })
 
+const albumCoverImage = computed(() => {
+  if (!currentStreamable.value) {
+    return 'none'
+  }
+
+  if (isSong(currentStreamable.value)) {
+    const src = currentStreamable.value.full_screen_cover || currentStreamable.value.album_cover
+    return src ? `url(${src})` : 'none'
+  }
+
+  return 'none'
+})
+
 const initPlaybackRelatedServices = async () => {
   const plyrWrapper = document.querySelector<HTMLElement>('.plyr')
 
@@ -176,11 +191,15 @@ footer {
     background-image: v-bind(appBackgroundImage);
   }
 
+  .album-cover-layer {
+    background-image: v-bind(albumCoverImage);
+  }
+
   &:fullscreen {
     padding: calc(100vh - 9rem) 5vw 0;
     @apply bg-none;
 
-    &.hide-controls :not(.fullscreen-backdrop, .up-next, .up-next *) {
+    &.hide-controls :not(.fullscreen-backdrop, .album-cover-layer, .up-next, .up-next *) {
       transition: opacity 2s ease-in-out !important; /* overriding all children's custom transition, if any */
       @apply opacity-0;
     }
@@ -214,6 +233,11 @@ footer {
 
     .fullscreen-backdrop {
       @apply saturate-[0.2] block absolute top-0 left-0 w-full h-full z-0 bg-cover bg-no-repeat bg-top;
+    }
+
+    .album-cover-layer {
+      @apply block absolute top-0 left-0 w-full h-full z-[1] bg-no-repeat bg-center pointer-events-none;
+      background-size: contain;
     }
   }
 }

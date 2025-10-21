@@ -30,6 +30,9 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property ?string $thumbnail The public URL to the album's thumbnail
  * @property ?string $thumbnail_name The file name of the album's thumbnail
  * @property ?string $thumbnail_path The full path to the thumbnail. This doesn't guarantee the thumbnail exists.
+ * @property ?string $full_screen_cover The public URL to the album's full screen cover image
+ * @property ?string $full_screen_cover_path The full path to the full screen cover image
+ * @property ?string $full_screen_cover_name The file name of the album's full screen cover image
  * @property Artist $artist The album's artist
  * @property Carbon $created_at
  * @property Collection<array-key, Song> $songs
@@ -147,15 +150,7 @@ class Album extends Model implements AuditableContract, Embeddable, Favoriteable
 
     protected function thumbnailName(): Attribute
     {
-        return Attribute::get(function (): ?string {
-            if (!$this->has_cover) {
-                return null;
-            }
-
-            $parts = pathinfo($this->cover_path);
-
-            return sprintf('%s_thumb.%s', $parts['filename'], $parts['extension']);
-        })->shouldCache();
+        return $this->getCoverVariantName('thumb');
     }
 
     protected function thumbnailPath(): Attribute
@@ -166,6 +161,45 @@ class Album extends Model implements AuditableContract, Embeddable, Favoriteable
     protected function thumbnail(): Attribute
     {
         return Attribute::get(fn () => $this->thumbnail_name ? image_storage_url($this->thumbnail_name) : null);
+    }
+
+    protected function fullScreenCoverPath(): Attribute
+    {
+        return Attribute::get(
+            fn () => $this->full_screen_cover_name
+                ? image_storage_path($this->full_screen_cover_name)
+            : null
+        );
+    }
+
+    protected function fullScreenCoverName(): Attribute
+    {
+        return $this->getCoverVariantName('fullscreen');
+    }
+
+    protected function fullScreenCover(): Attribute
+    {
+        return Attribute::get(function (): ?string {
+            if (!$this->full_screen_cover_path) {
+                return null;
+            }
+
+            return File::exists($this->full_screen_cover_path)
+                ? image_storage_url($this->full_screen_cover_name)
+                : null;
+        });
+    }
+
+    private function getCoverVariantName(string $pathSuffix): Attribute
+    {
+        return Attribute::get(function () use ($pathSuffix): ?string {
+            if (!$this->has_cover) {
+                return null;
+            }
+
+            $parts = pathinfo($this->cover_path);
+            return sprintf('%s_%s.%s', $parts['filename'], $pathSuffix, $parts['extension']);
+        })->shouldCache();
     }
 
     /** @deprecated Only here for backward compat with mobile apps */
