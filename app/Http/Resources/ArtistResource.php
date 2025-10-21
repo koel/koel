@@ -61,7 +61,7 @@ class ArtistResource extends JsonResource
             'type' => 'artists',
             'id' => $this->artist->id,
             'name' => $this->artist->name,
-            'image' => $this->artist->image,
+            'image' => image_storage_url($this->artist->image),
             'created_at' => $this->unless($embedding, $this->artist->created_at),
             'is_external' => $this->unless(
                 $embedding,

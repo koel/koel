@@ -72,7 +72,7 @@ class EncyclopediaServiceTest extends TestCase
         $album = Album::factory()->create(['cover' => '']);
         $info = AlbumInformation::make(cover: 'https://wiki.example.com/album-cover.jpg');
 
-        self::assertFalse($album->has_cover);
+        self::assertEmpty($album->cover);
 
         $this->encyclopedia
             ->expects('getAlbumInformation')
@@ -98,7 +98,7 @@ class EncyclopediaServiceTest extends TestCase
         $album = Album::factory()->create(['cover' => '']);
         $info = AlbumInformation::make(cover: 'https://wiki.example.com/album-cover.jpg');
 
-        self::assertFalse($album->has_cover);
+        self::assertEmpty($album->cover);
 
         $this->encyclopedia
             ->expects('getAlbumInformation')
@@ -121,7 +121,7 @@ class EncyclopediaServiceTest extends TestCase
         $artist = Artist::factory()->create();
         $info = ArtistInformation::make();
 
-        self::assertTrue($artist->has_image);
+        self::assertNotEmpty($artist->image);
 
         $this->encyclopedia
             ->expects('getArtistInformation')
@@ -139,7 +139,7 @@ class EncyclopediaServiceTest extends TestCase
         $artist = Artist::factory()->create(['image' => '']);
         $info = ArtistInformation::make(image: 'https://wiki.example.com/artist-image.jpg');
 
-        self::assertFalse($artist->has_image);
+        self::assertEmpty($artist->image);
 
         $this->encyclopedia
             ->expects('getArtistInformation')
@@ -165,7 +165,7 @@ class EncyclopediaServiceTest extends TestCase
         $artist = Artist::factory()->create(['image' => '']);
         $info = ArtistInformation::make(image: 'https://wiki.example.com/artist-image.jpg');
 
-        self::assertFalse($artist->has_image);
+        self::assertEmpty($artist->image);
 
         $this->encyclopedia
             ->expects('getArtistInformation')

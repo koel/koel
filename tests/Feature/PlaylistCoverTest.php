@@ -33,7 +33,7 @@ class PlaylistCoverTest extends TestCase
         $this->deleteAs("api/playlists/{$playlist->id}/cover", [], create_user())
             ->assertForbidden();
 
-        self::assertSame(image_storage_url('foo.webp'), $playlist->refresh()->cover);
+        self::assertSame('foo.webp', $playlist->refresh()->cover);
         self::assertFileExists(image_storage_path('foo.webp'));
     }
 }

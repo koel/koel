@@ -7,12 +7,10 @@ use App\Models\Concerns\MorphsToFavorites;
 use App\Models\Contracts\Favoriteable;
 use App\Models\Contracts\Permissionable;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Arr;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -22,8 +20,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property int $user_id
  * @property User $user
  * @property string $url
- * @property ?string $logo The URL of the station's logo
- * @property ?string $logo_path The path to the station's logo
+ * @property ?string $logo The station's logo file name
  * @property ?string $description
  * @property boolean $is_public
  * @property Carbon|string $created_at
@@ -64,20 +61,6 @@ class RadioStation extends Model implements AuditableContract, Favoriteable, Per
     public function newEloquentBuilder($query): RadioStationBuilder
     {
         return new RadioStationBuilder($query);
-    }
-
-    protected function logo(): Attribute
-    {
-        return Attribute::get(static fn (?string $value): ?string => image_storage_url($value))->shouldCache();
-    }
-
-    protected function logoPath(): Attribute
-    {
-        return Attribute::get(function () {
-            $logo = Arr::get($this->attributes, 'logo');
-
-            return $logo ? image_storage_path($logo) : null;
-        })->shouldCache();
     }
 
     /** @inheritdoc */

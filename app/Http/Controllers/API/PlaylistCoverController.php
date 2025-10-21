@@ -19,7 +19,7 @@ class PlaylistCoverController extends Controller
         $this->authorize('own', $playlist);
         $updated = $this->playlistService->updatePlaylistCover($playlist, $request->getFileContent());
 
-        return response()->json(['cover_url' => $updated->cover]);
+        return response()->json(['cover_url' => image_storage_url($updated->cover)]);
     }
 
     public function destroy(Playlist $playlist)

@@ -42,7 +42,7 @@ class PlaylistResource extends JsonResource
             'is_smart' => $this->unless($embedding, $this->playlist->is_smart),
             'is_collaborative' => $this->unless($embedding, $this->playlist->is_collaborative),
             'rules' => $this->unless($embedding, $this->playlist->rules),
-            'cover' => $this->playlist->cover,
+            'cover' => image_storage_url($this->playlist->cover),
             'created_at' => $this->unless($embedding, $this->playlist->created_at),
         ];
     }

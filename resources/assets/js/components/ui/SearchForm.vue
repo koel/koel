@@ -54,7 +54,7 @@ let onInput = () => {
   _q && eventBus.emit('SEARCH_KEYWORDS_CHANGED', _q)
 }
 
-if (process.env.NODE_ENV !== 'test') {
+if (!window.RUNNING_UNIT_TESTS) {
   onInput = debounce(onInput, 500)
 }
 

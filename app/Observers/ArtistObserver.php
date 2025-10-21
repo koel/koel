@@ -31,6 +31,6 @@ class ArtistObserver
 
     public function deleted(Artist $artist): void
     {
-        rescue_if($artist->has_image, static fn () => File::delete($artist->image_path));
+        rescue_if($artist->image, static fn () => File::delete(image_storage_url($artist->image)));
     }
 }

@@ -28,8 +28,8 @@ class EncyclopediaServiceTest extends TestCase
         $album = Album::factory()->create(['cover' => 'album-cover-for-thumbnail-test.jpg']);
 
         self::assertSame(
-            image_storage_url('album-cover-for-thumbnail-test_thumb.jpg'),
-            app(ImageStorage::class)->getAlbumThumbnailUrl($album)
+            'album-cover-for-thumbnail-test_thumb.jpg',
+            app(ImageStorage::class)->getOrCreateAlbumThumbnail($album)
         );
 
         self::assertFileExists(image_storage_path('album-cover-for-thumbnail-test_thumb.jpg'));
@@ -40,7 +40,7 @@ class EncyclopediaServiceTest extends TestCase
     {
         /** @var Album $album */
         $album = Album::factory()->create(['cover' => '']);
-        self::assertNull(app(ImageStorage::class)->getAlbumThumbnailUrl($album));
+        self::assertNull(app(ImageStorage::class)->getOrCreateAlbumThumbnail($album));
     }
 
     private function cleanUp(): void

@@ -38,18 +38,16 @@ class ImageStorageTest extends TestCase
     {
         /** @var Album $album */
         $album = Album::factory()->create();
-        $coverPath = '/koel/public/img/album/foo.jpg';
+
+        Ulid::freeze('foo');
 
         $this->imageWriter
             ->expects('write')
-            ->with('/koel/public/img/album/foo.jpg', 'dummy-src');
+            ->with(image_storage_path('foo.webp'), 'dummy-src', null);
 
-        $this->imageWriter->expects('write');
+        $this->service->storeAlbumCover($album, 'dummy-src');
 
-        $cover = $this->service->storeAlbumCover($album, 'dummy-src', $coverPath);
-
-        self::assertSame(image_storage_url('foo.jpg'), $album->refresh()->cover);
-        self::assertSame($cover, $album->cover);
+        self::assertSame('foo.webp', $album->refresh()->cover);
     }
 
     #[Test]
@@ -57,15 +55,16 @@ class ImageStorageTest extends TestCase
     {
         /** @var Artist $artist */
         $artist = Artist::factory()->create();
-        $imagePath = '/koel/public/img/artist/foo.jpg';
+
+        Ulid::freeze('foo');
 
         $this->imageWriter
             ->expects('write')
-            ->with('/koel/public/img/artist/foo.jpg', 'dummy-src');
+            ->with(image_storage_path('foo.webp'), 'dummy-src', null);
 
-        $this->service->storeArtistImage($artist, 'dummy-src', $imagePath);
+        $this->service->storeArtistImage($artist, 'dummy-src');
 
-        self::assertSame(image_storage_url('foo.jpg'), $artist->refresh()->image);
+        self::assertSame('foo.webp', $artist->refresh()->image);
     }
 
     #[Test]

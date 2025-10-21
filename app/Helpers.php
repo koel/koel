@@ -27,14 +27,14 @@ function base_url(): string
     return app()->runningUnitTests() ? config('app.url') : asset('');
 }
 
-function image_storage_path(?string $fileName): ?string
+function image_storage_path(?string $fileName, ?string $default = null): ?string
 {
-    return $fileName ? public_path(config('koel.image_storage_dir') . $fileName) : null;
+    return $fileName ? public_path(config('koel.image_storage_dir') . $fileName) : $default;
 }
 
-function image_storage_url(?string $fileName): ?string
+function image_storage_url(?string $fileName, ?string $default = null): ?string
 {
-    return $fileName ? static_url(config('koel.image_storage_dir') . $fileName) : null;
+    return $fileName ? static_url(config('koel.image_storage_dir') . $fileName) : $default;
 }
 
 function artifact_path(?string $subPath = null, $ensureDirectoryExists = true): string

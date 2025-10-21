@@ -319,7 +319,7 @@ class PlaylistServiceTest extends TestCase
         $ulid = Ulid::freeze();
         $this->service->updatePlaylistCover($playlist, minimal_base64_encoded_image());
 
-        self::assertSame(image_storage_url("$ulid.webp"), $playlist->cover);
+        self::assertSame("$ulid.webp", $playlist->cover);
         self::assertFileExists(image_storage_path("$ulid.webp"));
         self::assertFileDoesNotExist(image_storage_path('foo.webp'));
     }

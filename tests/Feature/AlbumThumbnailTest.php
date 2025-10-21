@@ -24,24 +24,24 @@ class AlbumThumbnailTest extends TestCase
     /** @return array<mixed> */
     public static function provideAlbumThumbnailData(): array
     {
-        return [['http://localhost/img/covers/foo_thumbnail.jpg'], [null]];
+        return [['foo_thumbnail.jpg'], [null]];
     }
 
     #[DataProvider('provideAlbumThumbnailData')]
     #[Test]
-    public function getAlbumThumbnail(?string $thumbnailUrl): void
+    public function getAlbumThumbnail(?string $fileName): void
     {
         /** @var Album $createdAlbum */
         $createdAlbum = Album::factory()->create();
 
         $this->imageStorage
-            ->expects('getAlbumThumbnailUrl')
+            ->expects('getOrCreateAlbumThumbnail')
             ->with(Mockery::on(static function (Album $album) use ($createdAlbum): bool {
                 return $album->id === $createdAlbum->id;
             }))
-            ->andReturn($thumbnailUrl);
+            ->andReturn($fileName);
 
         $response = $this->getAs("api/albums/{$createdAlbum->id}/thumbnail");
-        $response->assertJson(['thumbnailUrl' => $thumbnailUrl]);
+        $response->assertJson(['thumbnailUrl' => image_storage_url($fileName)]);
     }
 }
