@@ -21,7 +21,7 @@ jobs:
     strategy:
       matrix:
         php-version: [ 8.2 ]
-        mariadb-version: [ 11.7 ]
+        mariadb-version: [ 10.11.14 ]
       fail-fast: false
     services:
       mariadb:
