@@ -1,5 +1,5 @@
 <template>
-  <div class="relative bg-k-bg-input text-k-fg-input rounded">
+  <div class="relative bg-k-bg-input text-k-fg-input rounded border border-k-fg-10">
     <select
       ref="el"
       v-model="value"

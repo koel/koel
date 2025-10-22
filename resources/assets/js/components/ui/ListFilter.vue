@@ -1,17 +1,17 @@
 <template>
   <OnClickOutside @trigger="maybeHideInput">
     <form
-      class="flex border rounded-md overflow-hidden border-solid border-k-fg-10 focus-within:bg-black/10 focus-within:border-white/40"
+      class="flex border rounded-md border-k-fg-10 focus-within:border-k-highlight"
       @submit.prevent
     >
-      <Btn v-koel-tooltip title="Filter" transparent unrounded @click.prevent="showInput">
+      <button v-koel-tooltip class="px-3.5 py-2" title="Filter" type="button" @click.prevent="showInput">
         <Icon :icon="faFilter" fixed-width />
-      </Btn>
+      </button>
       <TextInput
         v-if="showingInput"
         ref="input"
         v-model="keywords"
-        class="!text-k-fg !bg-transparent !rounded-none !pl-0 !h-[unset] placeholder:text-k-fg-50 focus-visible:outline-0"
+        class="text-k-fg bg-transparent border-0 rounded-none !pl-0 !h-[unset] placeholder:text-k-fg-50 focus-visible:outline-0"
         placeholder="Keywords"
         type="search"
         @blur="inputting = false"
@@ -28,7 +28,6 @@ import { computed, nextTick, ref } from 'vue'
 import { requireInjection } from '@/utils/helpers'
 import { FilterKeywordsKey } from '@/symbols'
 
-import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 
 const input = ref<InstanceType<typeof TextInput>>()

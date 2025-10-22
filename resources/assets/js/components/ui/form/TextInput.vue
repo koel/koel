@@ -3,7 +3,7 @@
     ref="el"
     v-model="value"
     :aria-label="ariaLabel"
-    class="block text-base w-full px-3.5 py-2 rounded bg-k-bg-input text-k-fg-input
+    class="block text-base w-full px-3.5 py-2 rounded bg-k-bg-input text-k-fg-input border border-k-fg-10
     read-only:bg-gray-400 read-only:text-gray-900 disabled:bg-gray-400 disabled:text-gray-900 disabled:cursor-not-allowed"
     type="text"
   >
