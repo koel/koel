@@ -34,6 +34,7 @@ parameters:
         - '#expects App\\Models\\.*, Illuminate\\Database\\Eloquent\\Model given#'
         - '#Static method App\\Models\\Song::query\(\) invoked with 1 parameter, 0 required#'
         - '#expects callable\(Illuminate\\Database\\Eloquent\\Model, int\): mixed, Closure\(App\\Models\\.*\): void given#'
+        - "#Called 'env' outside of the config directory which returns null#"
         -
           message: '#expects .*, Mockery\\MockInterface given#'
           path: tests/*

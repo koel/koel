@@ -7,17 +7,17 @@ use App\Helpers\Ulid;
 use App\Helpers\Uuid;
 use App\Services\License\CommunityLicenseService;
 use App\Services\MediaBrowser;
-use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\File;
+use Tests\Concerns\AssertsArraySubset;
 use Tests\Concerns\CreatesApplication;
 use Tests\Concerns\MakesHttpRequests;
 
 abstract class TestCase extends BaseTestCase
 {
-    use ArraySubsetAsserts;
+    use AssertsArraySubset;
     use CreatesApplication;
     use LazilyRefreshDatabase;
     use MakesHttpRequests;

@@ -7,7 +7,7 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class SongResourceCollection extends ResourceCollection
 {
-    private ?User $user;
+    protected ?User $user;
 
     public function for(?User $user): static
     {

@@ -13,6 +13,7 @@ class OrganizationService
 
     public function getCurrentOrganization(): Organization
     {
+        // @phpstan-ignore-next-line
         return auth()->user()?->organization ?? $this->repository->getDefault();
     }
 }

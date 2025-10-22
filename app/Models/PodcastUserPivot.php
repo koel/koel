@@ -17,7 +17,6 @@ class PodcastUserPivot extends Pivot
     protected $table = 'podcast_user';
 
     protected $guarded = [];
-    protected $appends = ['meta'];
 
     protected $casts = [
         'state' => PodcastStateCast::class,

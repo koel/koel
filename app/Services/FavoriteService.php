@@ -32,7 +32,7 @@ class FavoriteService
     /**
      * Batch favorite multiple entities.
      *
-     * @param Collection<int, Model&Favoriteable> $entities
+     * @param Collection<int, Model> $entities
      */
     public function batchFavorite(Collection $entities, User $user): void
     {

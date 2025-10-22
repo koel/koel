@@ -6,7 +6,6 @@ use App\Models\Song;
 use App\Models\User;
 use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
-use App\Repositories\Contracts\ScoutableRepository;
 use App\Repositories\PodcastRepository;
 use App\Repositories\RadioStationRepository;
 use App\Repositories\SongRepository;
@@ -38,7 +37,6 @@ class SearchService
 
         $results = [];
 
-        /** @var ScoutableRepository $repository */
         foreach (
             [
                 $this->songRepository,

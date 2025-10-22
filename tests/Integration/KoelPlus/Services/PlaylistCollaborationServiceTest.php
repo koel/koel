@@ -35,7 +35,7 @@ class PlaylistCollaborationServiceTest extends PlusTestCase
 
         $token = $this->service->createToken($playlist);
 
-        self::assertNotNull($token->token);
+        self::assertNotEmpty($token->token);
         self::assertFalse($token->expired);
         self::assertSame($playlist->id, $token->playlist_id);
     }

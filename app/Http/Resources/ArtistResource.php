@@ -36,7 +36,7 @@ class ArtistResource extends JsonResource
         ],
     ];
 
-    private ?User $user;
+    private ?User $user = null;
 
     public function __construct(private readonly Artist $artist)
     {

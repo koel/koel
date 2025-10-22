@@ -82,11 +82,11 @@ class SongTest extends TestCase
         ], create_admin())
             ->assertOk();
 
-        /** @var Artist $artist */
+        /** @var Artist|null $artist */
         $artist = Artist::query()->where('name', 'John Cena')->first();
         self::assertNotNull($artist);
 
-        /** @var Album $album */
+        /** @var Album|null $album */
         $album = Album::query()->where('name', 'One by One')->first();
         self::assertNotNull($album);
 

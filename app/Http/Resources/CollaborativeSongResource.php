@@ -15,8 +15,8 @@ class CollaborativeSongResource extends SongResource
         ],
     ];
 
-    /** @inheritdoc */
-    public static function collection($resource): CollaborativeSongResourceCollection
+    /** @return CollaborativeSongResourceCollection */
+    public static function collection($resource): SongResourceCollection
     {
         return CollaborativeSongResourceCollection::make($resource);
     }

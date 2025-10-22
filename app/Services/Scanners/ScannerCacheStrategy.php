@@ -11,7 +11,7 @@ class ScannerCacheStrategy implements ScannerCacheStrategyContract
     /** @var Collection<string, mixed> */
     private Collection $cache;
 
-    public function __construct(private int $maxCacheSize = 1000)
+    public function __construct(private readonly int $maxCacheSize = 1000)
     {
         $this->cache = new Collection();
     }

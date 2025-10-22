@@ -25,7 +25,7 @@ final class EpisodePlayable implements Arrayable, Jsonable
         return File::isReadable($this->path) && $this->checksum === md5_file($this->path);
     }
 
-    public static function getForEpisode(Episode $episode): ?self
+    public static function getForEpisode(Episode $episode): self
     {
         /** @var self|null $cached */
         $cached = Cache::get("episode-playable.{$episode->id}");

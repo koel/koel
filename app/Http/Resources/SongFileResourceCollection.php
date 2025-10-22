@@ -2,20 +2,8 @@
 
 namespace App\Http\Resources;
 
-use App\Models\User;
-use Illuminate\Http\Resources\Json\ResourceCollection;
-
-class SongFileResourceCollection extends ResourceCollection
+class SongFileResourceCollection extends SongResourceCollection
 {
-    private ?User $user;
-
-    public function for(?User $user): static
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
     /** @inheritdoc */
     public function toArray($request): array
     {

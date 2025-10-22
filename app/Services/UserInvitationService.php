@@ -55,7 +55,9 @@ class UserInvitationService
             'invited_by_id' => $invitor->id,
             'invitation_token' => Uuid::generate(),
             'invited_at' => now(),
-        ])->syncRoles($role);
+        ]);
+
+        $invitee->syncRoles($role);
 
         Mail::to($email)->queue(new UserInvite($invitee));
 
