@@ -1,13 +1,13 @@
 <template>
   <form
     id="searchForm"
-    class="text-k-fg-70 flex items-stretch border border-k-fg-10 overflow-hidden gap-2 pl-4 pr-0 py-0 rounded-md
+    class="relative text-k-fg-70 flex items-stretch border border-k-fg-10 overflow-hidden gap-2 py-0 rounded-md
     bg-k-bg-50 focus-within:border-k-highlight
     transition-[border,_background-color] duration-200 ease-in-out"
     role="search"
     @submit.prevent="onSubmit"
   >
-    <span class="hidden md:flex text-k-fg-70 items-center">
+    <span class="hidden md:flex absolute h-full text-k-fg-70 px-4 items-center pointer-events-none">
       <Icon :icon="faSearch" />
     </span>
 
@@ -17,7 +17,7 @@
       :class="{ dirty: q }"
       :placeholder="placeholder"
       autocorrect="false"
-      class="w-full rounded-none h-[36px] bg-transparent focus-visible:outline-0 !px-2"
+      class="flex-1 rounded-none border-0 bg-transparent focus-visible:outline-0 md:pl-11"
       name="q"
       required
       spellcheck="false"
