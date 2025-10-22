@@ -44,7 +44,7 @@ class ThemeServiceTest extends TestCase
         self::assertSame('system-ui', $theme->properties->fontFamily);
         self::assertSame(14.0, $theme->properties->fontSize);
         self::assertTrue($theme->user->is($user));
-        self::assertNotNull($theme->properties->bgImage);
+        self::assertNotEmpty($theme->properties->bgImage);
     }
 
     #[Test]

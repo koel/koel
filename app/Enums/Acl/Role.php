@@ -85,7 +85,7 @@ enum Role: string implements Arrayable
         };
     }
 
-    /** @return array<string, string> */
+    /** @return array<mixed> */
     public function toArray(): array
     {
         return [

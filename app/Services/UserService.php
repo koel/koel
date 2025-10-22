@@ -30,9 +30,10 @@ class UserService
         $data = $dto->toArray();
         $data['avatar'] = $dto->avatar ? $this->maybeStoreAvatar($dto->avatar) : null;
 
-        return $organization->users()
-            ->create($data)
-            ->syncRoles($dto->role);
+        /** @var User $user */
+        $user = $organization->users()->create($data);
+
+        return $user->syncRoles($dto->role);
     }
 
     public function createOrUpdateUserFromSso(SsoUser $ssoUser): User

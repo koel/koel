@@ -172,7 +172,9 @@ class SongBuilder extends FavoriteableBuilder
 
     public function storedLocally(): self
     {
-        return $this->where(static fn (self $query) => $query->whereNull('songs.storage')->orWhere('songs.storage', ''))
+        return $this->where(static function (self $query): void {
+            $query->whereNull('songs.storage')->orWhere('songs.storage', '')
                 ->whereNull('songs.podcast_id');
+        });
     }
 }

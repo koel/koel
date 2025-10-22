@@ -5,10 +5,8 @@ namespace App\Http\Resources;
 use App\Facades\License;
 use App\Models\Song;
 use App\Models\User;
-use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
@@ -56,19 +54,14 @@ class SongResource extends JsonResource
         ],
     ];
 
-    private ?User $user;
+    private ?User $user = null;
 
     public function __construct(protected Song $song)
     {
         parent::__construct($song);
     }
 
-    /**
-     * @param Collection<Song>|Paginator<Song> $resource
-     *
-     * @return SongResourceCollection
-     */
-    public static function collection($resource) // @phpcs:ignore
+    public static function collection($resource): SongResourceCollection
     {
         return SongResourceCollection::make($resource);
     }

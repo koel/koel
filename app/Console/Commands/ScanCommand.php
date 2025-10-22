@@ -29,7 +29,7 @@ class ScanCommand extends Command
 
     protected $description = 'Scan for songs in the configured directory.';
 
-    private ?string $mediaPath;
+    private string $mediaPath;
     private ProgressBar $progressBar;
 
     public function __construct(

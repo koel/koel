@@ -2,9 +2,7 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\ResourceCollection;
-
-class CollaborativeSongResourceCollection extends ResourceCollection
+class CollaborativeSongResourceCollection extends SongResourceCollection
 {
     /** @inheritdoc */
     public function toArray($request): array

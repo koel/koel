@@ -45,7 +45,7 @@ class LicenseServiceTest extends TestCase
         $license = $this->service->activate($key);
 
         self::assertSame($key, $license->key);
-        self::assertNotNull($license->instance);
+        self::assertNotEmpty($license->instance);
         self::assertSame('Luke Skywalker', $license->meta->customerName);
         self::assertSame('luke@skywalker.com', $license->meta->customerEmail);
 

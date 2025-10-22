@@ -40,7 +40,7 @@ class FavoriteController extends Controller
     {
         $modelType = Relation::getMorphedModel($request->type);
 
-        /** @var Collection<int, Favoriteable&Model> $entities */
+        /** @var Collection<int, Model> $entities */
         $entities = $modelType::query()
             ->whereIn('id', $request->ids)
             ->get();
