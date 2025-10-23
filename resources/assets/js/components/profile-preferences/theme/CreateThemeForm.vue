@@ -33,7 +33,7 @@
         </div>
 
         <label for="themeBgImage">Background image</label>
-        <div class="flex flex-col gap-2">
+        <div class="inline-flex flex-col gap-2">
           <span
             v-if="data.bg_image"
             class="w-36 aspect-video relative overflow-hidden rounded-md border border-k-fg-10"
@@ -47,10 +47,7 @@
               Remove
             </button>
           </span>
-          <span class="w-48">
-            <!-- wrap in a container so that the file input doesn't take up the whole width -->
-            <FileInput aria-label="Background image" accept="image/*" @change="onBackgroundImageChange" />
-          </span>
+          <FileInput aria-label="Background image" accept="image/*" @change="onBackgroundImageChange" />
         </div>
 
         <label>Font</label>
