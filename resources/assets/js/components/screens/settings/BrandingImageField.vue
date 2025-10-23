@@ -1,6 +1,6 @@
 <template>
   <fieldset>
-    <h4>
+    <h4 class="text-k-fg">
       <slot name="label" />
     </h4>
 
