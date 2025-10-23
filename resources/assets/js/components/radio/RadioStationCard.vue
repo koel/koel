@@ -64,7 +64,7 @@ const toggleFavorite = () => radioStationStore.toggleFavorite(station.value)
 
 <style lang="postcss" scoped>
 article {
-  @apply bg-k-fg-5 border border-k-border hover:border-white/15;
+  @apply bg-k-fg-5 border border-k-fg-10 hover:border-white/15;
 
   &.full {
     :deep(.play-icon) {

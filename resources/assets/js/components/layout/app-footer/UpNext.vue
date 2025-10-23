@@ -1,7 +1,7 @@
 <template>
   <article
     v-if="playable"
-    class="fixed z-[99] right-[5vw] top-[4.5rem] flex bg-k-bg border border-px border-k-border"
+    class="fixed z-[99] right-[5vw] top-[4.5rem] flex bg-k-bg border border-px border-k-fg-10"
   >
     <span :style="{ backgroundImage: `url(${defaultCover})` }">
       <img :src alt="Cover image" class="w-[96px] aspect-square object-cover" loading="lazy">

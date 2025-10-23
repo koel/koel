@@ -25,11 +25,18 @@
 <script lang="ts" setup>
 import { eventBus } from '@/utils/eventBus'
 
-const props = withDefaults(defineProps<{ href?: string | undefined, active?: boolean }>(), {
+const props = withDefaults(defineProps<{
+  href?: string | undefined
+  active?: boolean
+}>(), {
   active: false,
 })
 
-const onClick = () => eventBus.emit('TOGGLE_SIDEBAR')
+const onClick = () => {
+  if (props.href) {
+    eventBus.emit('TOGGLE_SIDEBAR')
+  }
+}
 </script>
 
 <style lang="postcss" scoped>

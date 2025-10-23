@@ -11,20 +11,20 @@
         <span class="text" />
       </span>
     </div>
-    <div v-for="i in 40" :key="i" class="flex gap-4 px-4 py-3 border-b border-k-border">
-      <span class="title flex gap-3">
-        <span class="thumbnail block h-[48px] aspect-square rounded pulse" />
-        <span class="flex-1 flex-col space-y-2 content-center">
-          <span class="block h-5 rounded-full w-4/5 pulse" />
-          <span class="block h-5 rounded-full w-2/5 pulse" />
-        </span>
-      </span>
-      <span class="album flex-col content-center">
-        <span class="block h-5 w-3/5 rounded-full pulse" />
-      </span>
-      <span class="time flex-col content-center">
-        <span class="block h-5 w-3/5 rounded-full pulse" />
-      </span>
+    <div v-for="key in 40" :key class="flex gap-4 px-4 py-3 border-b border-k-fg-10">
+      <div class="title flex gap-3">
+        <div class="thumbnail block h-[48px] aspect-square rounded pulse" />
+        <div class="flex-1 flex-col space-y-2 content-center">
+          <div class="block h-5 rounded-full w-4/5 pulse" />
+          <div class="block h-5 rounded-full w-2/5 pulse" />
+        </div>
+      </div>
+      <div class="album flex-col content-center">
+        <div class="block h-5 w-3/5 rounded-full pulse" />
+      </div>
+      <div class="time flex-col content-center">
+        <div class="block h-5 w-3/5 rounded-full pulse" />
+      </div>
     </div>
   </div>
 </template>
