@@ -291,6 +291,6 @@ eventBus.on('PODCAST_UNSUBSCRIBED', ({ id }) => id === podcast.value?.id && go(u
 
 <style scoped lang="postcss">
 :deep(.items-wrapper) {
-  @apply divide-y divide-k-border;
+  @apply divide-y divide-k-fg-10;
 }
 </style>

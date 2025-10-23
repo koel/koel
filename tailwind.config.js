@@ -33,7 +33,6 @@ export default {
         'k-bg-95': 'color-mix(in srgb, var(--color-bg), transparent 5%)',
         'k-bg-context-menu': 'var(--color-bg)',
         'k-bg-input': 'color-mix(in srgb, var(--color-fg), transparent 95%)',
-        'k-border': 'color-mix(in srgb, var(--color-fg), transparent 95%)',
         'k-highlight': 'var(--color-highlight)',
         'k-highlight-fg': 'var(--color-highlight-fg)',
         'k-success': 'var(--color-success)',

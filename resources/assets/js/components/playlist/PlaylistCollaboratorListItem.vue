@@ -1,7 +1,7 @@
 <template>
   <li
     class="flex items-center justify-center w-full gap-3 py-2 px-3 rounded-md transition-colors duration-200 ease-in-out
-    bg-k-fg-5 border border-k-border hover:border hover:border-white/15"
+    bg-k-fg-5 border border-k-fg-10 hover:border-k-fg-20"
   >
     <span class="avatar">
       <UserAvatar :user="collaborator" width="32" />
