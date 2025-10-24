@@ -5,7 +5,7 @@
     data-testid="wrapper"
   >
     <button
-      class="w-12 aspect-square rounded-full text-k-highlight-fg bg-k-highlight border border-px border-k-highlight"
+      class="w-12 aspect-square rounded-full text-k-highlight-fg bg-k-highlight border border-k-bg"
       type="button"
       @click.prevent="emit('clicked')"
     >
@@ -36,7 +36,7 @@ const playing = computed(() => playable.value?.playback_state === 'Playing')
 
 <style lang="postcss" scoped>
 .preview-wrapper {
-  --bg-color: rgba(255, 255, 255, 0.7);
+  --bg-color: color-mix(in srgb, var(--color-highlight), transparent 60%);
 
   background-size: 100% 100%;
   background-position: 0 0;

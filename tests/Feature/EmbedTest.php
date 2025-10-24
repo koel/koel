@@ -44,6 +44,7 @@ class EmbedTest extends TestCase
         $jsonStructure = [
             'embed' => EmbedResource::JSON_PUBLIC_STRUCTURE,
             'options' => EmbedOptionsResource::JSON_STRUCTURE,
+            'theme',
         ];
 
         /** @var Embed $embed */

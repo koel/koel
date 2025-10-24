@@ -24,7 +24,7 @@ export const embedService = {
   },
 
   async getWidgetPayload (id: string, encryptedOptions: string) {
-    const payload = await http.get<{ embed: WidgetReadyEmbed, options: EmbedOptions }>(
+    const payload = await http.get<{ embed: WidgetReadyEmbed, options: EmbedOptions, theme: Theme | null }>(
       `embeds/${id}/${encryptedOptions}`,
     )
 
