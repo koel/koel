@@ -133,10 +133,10 @@ import {
   faPodcast,
 } from '@fortawesome/free-solid-svg-icons'
 import { MicVocalIcon } from 'lucide-vue-next'
-import { computed, ref, toRef } from 'vue'
+import { computed, toRef, toRefs } from 'vue'
 import { pluralize } from '@/utils/formatters'
 import { eventBus } from '@/utils/eventBus'
-import { arrayify, copyText } from '@/utils/helpers'
+import { copyText } from '@/utils/helpers'
 import { getPlayableCollectionContentType, isSong } from '@/utils/typeGuards'
 import { commonStore } from '@/stores/commonStore'
 import { playlistStore } from '@/stores/playlistStore'
@@ -153,8 +153,8 @@ import { useContextMenu } from '@/composables/useContextMenu'
 import { useKoelPlus } from '@/composables/useKoelPlus'
 import { playback } from '@/services/playbackManager'
 
-const props = defineProps<{ playables: MaybeArray<Playable> }>()
-const playables = ref(arrayify(props.playables))
+const props = defineProps<{ playables: Playable[] }>()
+const { playables } = toRefs(props)
 
 const { toastSuccess, toastError, toastWarning } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
@@ -181,7 +181,7 @@ const downloadable = computed(() => {
     return false
   }
 
-  // If multiple playables are selected, make sure zip extension is available on the server
+  // If multiple playables are selected, make sure the zip extension is available on the server
   return playables.value.length === 1 || commonStore.state.supports_batch_downloading
 })
 

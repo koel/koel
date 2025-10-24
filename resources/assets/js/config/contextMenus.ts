@@ -3,7 +3,7 @@ export interface ContextMenus {
   ARTIST: { artist: Artist }
   GENRE: { genre: Genre }
   MEDIA_BROWSER: { items: MaybeArray<Song | Folder> }
-  PLAYABLES: { playables: MaybeArray<Playable> }
+  PLAYABLES: { playables: Playable[] }
   PLAYLIST: { playlist: Playlist }
   PLAYLIST_FOLDER: { folder: PlaylistFolder }
   PODCAST: { podcast: Podcast }
