@@ -45,13 +45,12 @@ class EmbedController extends Controller
     {
         try {
             $options = EmbedOptions::fromRequest($request);
+            $theme = License::isPlus() ? $this->themeRepository->findOne($options->theme) : null;
 
             return response()->json([
                 'embed' => EmbedResource::make($embed, $this->songRepository->getForEmbed($embed)),
                 'options' => EmbedOptionsResource::make($options),
-                'theme' => License::isPlus()
-                    ? ThemeResource::make($this->themeRepository->findOne($options->theme))
-                    : null,
+                'theme' => $theme ? ThemeResource::make($theme) : null,
             ]);
         } catch (EmbeddableNotFoundException) {
             abort(Response::HTTP_NOT_FOUND);
