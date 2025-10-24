@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\PlaylistFolderResource;
 use App\Http\Resources\PlaylistResource;
 use App\Http\Resources\QueueStateResource;
+use App\Http\Resources\ThemeResource;
 use App\Http\Resources\UserResource;
 use App\Models\Setting;
 use App\Models\User;
@@ -41,6 +42,9 @@ class FetchInitialDataController extends Controller
         Authenticatable $user
     ) {
         $licenseStatus = $licenseService->getStatus();
+        $theme = $licenseStatus->isValid()
+            ? $themeRepository->findUserThemeById($user->preferences->theme, $user)
+            : null;
 
         return response()->json([
             'settings' => $user->hasPermissionTo(Permission::MANAGE_SETTINGS)
@@ -78,9 +82,7 @@ class FetchInitialDataController extends Controller
             ],
             'storage_driver' => config('koel.storage_driver'),
             'dir_separator' => DIRECTORY_SEPARATOR,
-            'current_theme' => $licenseStatus->isValid()
-                ? $themeRepository->findUserThemeById($user->preferences->theme, $user)
-                : null,
+            'current_theme' => $theme ? ThemeResource::make($theme) : null,
         ]);
     }
 }

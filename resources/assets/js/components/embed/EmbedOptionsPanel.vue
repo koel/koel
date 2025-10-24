@@ -7,12 +7,7 @@
       </SelectBox>
     </FormRow>
 
-    <FormRow v-if="isPlus">
-      <template #label>Theme</template>
-      <SelectBox v-model="options.theme">
-        <option v-for="theme in themeStore.all" :key="theme.id" :value="theme.id">{{ theme.name }}</option>
-      </SelectBox>
-    </FormRow>
+    <ThemeSelectBox v-if="isPlus" v-model="options.theme" />
 
     <FormRow v-if="isPlus" class="col-span-2">
       <template #label>
@@ -26,13 +21,16 @@
 <script setup lang="ts">
 import { useKoelPlus } from '@/composables/useKoelPlus'
 import { toRefs } from 'vue'
-import { themeStore } from '@/stores/themeStore'
+import { defineAsyncComponent } from '@/utils/helpers'
 
 import FormRow from '@/components/ui/form/FormRow.vue'
 import SelectBox from '@/components/ui/form/SelectBox.vue'
 import CheckBox from '@/components/ui/form/CheckBox.vue'
 
 const props = defineProps<{ modelValue: EmbedOptions }>()
+
+const ThemeSelectBox = defineAsyncComponent(() => import('@/components/embed/ThemeSelectBox.vue'))
+
 const { modelValue: options } = toRefs(props)
 
 const { isPlus } = useKoelPlus()
@@ -42,7 +40,3 @@ const layouts: EmbedLayout[] = [
   { id: 'compact', name: 'Banner only' },
 ]
 </script>
-
-<style scoped lang="postcss">
-
-</style>

@@ -71,7 +71,8 @@ const getPayload = async (id: string, encryptedOptions: string) => {
     options.value = payload.options
     embed.value = payload.embed
 
-    themeStore.init(options.value.theme)
+    // if the payload's theme is null, the theme is not custom. Resort to the built-in themes.
+    themeStore.init(payload.theme || options.value.theme)
   } catch (e: unknown) {
     error.value = e
     return

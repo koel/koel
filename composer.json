@@ -109,7 +109,8 @@
       "@php artisan clear-compiled"
     ],
     "post-update-cmd": [
-      "@php artisan cache:clear"
+      "@php artisan cache:clear",
+      "@php artisan boost:update --ansi"
     ],
     "post-root-package-install": [
       "@php -r \"copy('.env.example', '.env');\""
