@@ -1,17 +1,17 @@
 <template>
-  <nav
-    v-if="shown"
+  <dialog
     ref="el"
     v-koel-focus
     :class="extraClass"
     :style="{ top, left, bottom, right }"
-    class="menu context-menu select-none shadow"
+    class="menu context-menu select-none shadow overflow-visible backdrop:opacity-0"
     tabindex="0"
+    @mousedown="onMouseDown"
     @contextmenu.prevent
     @keydown.esc="close"
   >
     <component :is="options.component" v-if="options.component" v-bind="options.props" />
-  </nav>
+  </dialog>
 </template>
 
 <script lang="ts" setup>
@@ -26,8 +26,7 @@ const { extraClass } = toRefs(props)
 
 const options = requireInjection(ContextMenuKey)
 
-const el = ref<HTMLElement>()
-const shown = ref(false)
+const el = ref<HTMLDialogElement>()
 const top = ref('0')
 const left = ref('0')
 const bottom = ref('auto')
@@ -101,7 +100,7 @@ const open = async (t = 0, l = 0) => {
   left.value = `${l}px`
   bottom.value = 'auto'
   right.value = 'auto'
-  shown.value = true
+  el.value?.showModal()
 
   await nextTick()
 
@@ -118,13 +117,14 @@ const open = async (t = 0, l = 0) => {
   }, 100)
 }
 
-const close = () => {
-  shown.value = false
-}
+const close = () => el.value?.close()
 
-watch(options, () => {
-  if (options.value.component) {
-    open(options.value.position.top, options.value.position.left)
+// Close the context menu when clicking outside it.
+const onMouseDown = (e: MouseEvent) => e.target === el.value && close()
+
+watch(options, newOptions => {
+  if (newOptions.component) {
+    open(newOptions.position.top, newOptions.position.left)
   } else {
     close()
   }
