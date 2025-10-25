@@ -22,19 +22,62 @@ abstract class Scanner
     protected function handleIndividualFile(string $path, ScanConfiguration $config): ScanResult
     {
         try {
+            $lrcModified = false;
             $info = $this->fileScanner->scan($path);
+
+            // Check if song already exists
+            $existingSong = $this->songRepository->findOneByPath($path);
+
+            if ($existingSong) {
+                $lrcModified = $this->isLrcFileModified($existingSong, $path);
+
+                // If only LRC changed, force update the lyrics
+                if ($lrcModified && !$existingSong->isFileModified($info)) {
+                    $existingSong->update(['lyrics' => $info->lyrics]);
+                    return ScanResult::success($info->path);
+                }
+            }
+
             $song = $this->songService->createOrUpdateSongFromScan($info, $config);
 
             if ($song->wasRecentlyCreated) {
                 return ScanResult::success($info->path);
             }
 
-            return !$song->isFileModified($info) && !$config->force
+            $fileModified = $song->isFileModified($info);
+
+            return !$fileModified && !$lrcModified && !$config->force
                 ? ScanResult::skipped($info->path)
                 : ScanResult::success($info->path);
         } catch (Throwable $e) {
             return ScanResult::error($path, $e->getMessage());
         }
+    }
+
+    /**
+     * Check if the LRC file has been modified since the last scan.
+     */
+    protected function isLrcFileModified(object $song, string $mediaFilePath): bool
+    {
+        // Get potential LRC file path
+        $lrcPath = preg_replace('/\.[^.]+$/', '.lrc', $mediaFilePath);
+
+        if (!file_exists($lrcPath)) {
+            // Check uppercase extension
+            $lrcPath = preg_replace('/\.[^.]+$/', '.LRC', $mediaFilePath);
+            if (!file_exists($lrcPath)) {
+                // No LRC file exists
+                // If song has lyrics, they might have been removed
+                return !empty($song->lyrics);
+            }
+        }
+
+        // LRC file exists
+        $lrcMtime = filemtime($lrcPath);
+        $songMtime = $song->mtime;
+
+        // If LRC is newer than when the song was last scanned, consider it modified
+        return $lrcMtime > $songMtime;
     }
 
     /**
