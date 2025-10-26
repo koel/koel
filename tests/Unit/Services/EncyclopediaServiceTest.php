@@ -80,8 +80,8 @@ class EncyclopediaServiceTest extends TestCase
             ->andReturn($info);
 
         $this->imageStorage
-            ->expects('storeAlbumCover')
-            ->with($album, 'https://wiki.example.com/album-cover.jpg');
+            ->expects('storeImage')
+            ->with('https://wiki.example.com/album-cover.jpg');
 
         self::assertSame($info, $this->encyclopediaService->getAlbumInformation($album));
     }
@@ -108,8 +108,8 @@ class EncyclopediaServiceTest extends TestCase
         $this->spotifyService->expects('tryGetAlbumCover')->with($album)->andReturn('https://spotify.com/cover.jpg');
 
         $this->imageStorage
-            ->expects('storeAlbumCover')
-            ->with($album, 'https://spotify.com/cover.jpg');
+            ->expects('storeImage')
+            ->with('https://spotify.com/cover.jpg');
 
         self::assertSame($info, $this->encyclopediaService->getAlbumInformation($album));
     }
@@ -147,8 +147,8 @@ class EncyclopediaServiceTest extends TestCase
             ->andReturn($info);
 
         $this->imageStorage
-            ->expects('storeArtistImage')
-            ->with($artist, 'https://wiki.example.com/artist-image.jpg');
+            ->expects('storeImage')
+            ->with('https://wiki.example.com/artist-image.jpg');
 
         self::assertSame($info, $this->encyclopediaService->getArtistInformation($artist));
     }
@@ -175,8 +175,8 @@ class EncyclopediaServiceTest extends TestCase
         $this->spotifyService->expects('tryGetArtistImage')->with($artist)->andReturn('https://spotify.com/image.jpg');
 
         $this->imageStorage
-            ->expects('storeArtistImage')
-            ->with($artist, 'https://spotify.com/image.jpg');
+            ->expects('storeImage')
+            ->with('https://spotify.com/image.jpg');
 
         self::assertSame($info, $this->encyclopediaService->getArtistInformation($artist));
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\Radio;
+namespace App\Http\Controllers\API;
 
 use App\Attributes\DisabledInDemo;
 use App\Http\Controllers\Controller;

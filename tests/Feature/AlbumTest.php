@@ -40,28 +40,6 @@ class AlbumTest extends TestCase
     }
 
     #[Test]
-    public function update(): void
-    {
-        /** @var Album $album */
-        $album = Album::factory()->create();
-
-        $this->putAs(
-            "api/albums/{$album->id}",
-            [
-                'name' => 'Updated Album Name',
-                'year' => 2023,
-            ],
-            create_admin()
-        )->assertJsonStructure(AlbumResource::JSON_STRUCTURE)
-            ->assertOk();
-
-        $album->refresh();
-
-        self::assertEquals('Updated Album Name', $album->name);
-        self::assertEquals(2023, $album->year);
-    }
-
-    #[Test]
     public function updateWithCover(): void
     {
         /** @var Album $album */
@@ -85,6 +63,45 @@ class AlbumTest extends TestCase
         self::assertEquals('Updated Album Name', $album->name);
         self::assertEquals(2023, $album->year);
         self::assertEquals("$ulid.webp", $album->cover);
+    }
+
+    #[Test]
+    public function updateKeepingCoverIntact(): void
+    {
+        /** @var Album $album */
+        $album = Album::factory()->create(['cover' => 'neat-cover.webp']);
+
+        $this->putAs(
+            "api/albums/{$album->id}",
+            [
+                'name' => 'Updated Album Name',
+                'year' => 2023,
+            ],
+            create_admin()
+        )->assertJsonStructure(AlbumResource::JSON_STRUCTURE)
+            ->assertOk();
+
+        self::assertEquals('neat-cover.webp', $album->refresh()->cover);
+    }
+
+    #[Test]
+    public function updateRemovingCover(): void
+    {
+        /** @var Album $album */
+        $album = Album::factory()->create(['cover' => 'neat-cover.webp']);
+
+        $this->putAs(
+            "api/albums/{$album->id}",
+            [
+                'name' => 'Updated Album Name',
+                'year' => 2023,
+                'cover' => '',
+            ],
+            create_admin()
+        )->assertJsonStructure(AlbumResource::JSON_STRUCTURE)
+            ->assertOk();
+
+        self::assertEmpty($album->refresh()->cover);
     }
 
     #[Test]

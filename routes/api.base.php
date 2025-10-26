@@ -6,11 +6,9 @@ use App\Http\Controllers\API\Acl\CheckResourcePermissionController;
 use App\Http\Controllers\API\Acl\FetchAssignableRolesController;
 use App\Http\Controllers\API\ActivateLicenseController;
 use App\Http\Controllers\API\AlbumController;
-use App\Http\Controllers\API\AlbumCoverController;
 use App\Http\Controllers\API\AlbumSongController;
 use App\Http\Controllers\API\Artist\ArtistAlbumController;
 use App\Http\Controllers\API\Artist\ArtistController;
-use App\Http\Controllers\API\Artist\ArtistImageController;
 use App\Http\Controllers\API\Artist\ArtistSongController;
 use App\Http\Controllers\API\Artist\FetchArtistEventsController;
 use App\Http\Controllers\API\Artist\FetchArtistInformationController;
@@ -44,7 +42,6 @@ use App\Http\Controllers\API\PlaylistCollaboration\AcceptPlaylistCollaborationIn
 use App\Http\Controllers\API\PlaylistCollaboration\CreatePlaylistCollaborationTokenController;
 use App\Http\Controllers\API\PlaylistCollaboration\PlaylistCollaboratorController;
 use App\Http\Controllers\API\PlaylistController;
-use App\Http\Controllers\API\PlaylistCoverController;
 use App\Http\Controllers\API\PlaylistFolderController;
 use App\Http\Controllers\API\PlaylistFolderPlaylistController;
 use App\Http\Controllers\API\PlaylistSongController;
@@ -55,8 +52,7 @@ use App\Http\Controllers\API\PrivatizeSongsController;
 use App\Http\Controllers\API\ProfileController;
 use App\Http\Controllers\API\PublicizeSongsController;
 use App\Http\Controllers\API\QueueStateController;
-use App\Http\Controllers\API\Radio\RadioStationController;
-use App\Http\Controllers\API\Radio\RadioStationLogoController;
+use App\Http\Controllers\API\RadioStationController;
 use App\Http\Controllers\API\RegisterPlayController;
 use App\Http\Controllers\API\ResetPasswordController;
 use App\Http\Controllers\API\ScrobbleController;
@@ -209,10 +205,7 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         Route::get('artists/{artist}/events', FetchArtistEventsController::class);
 
         // Cover/image routes
-        Route::delete('albums/{album}/cover', [AlbumCoverController::class, 'destroy']);
         Route::get('albums/{album}/thumbnail', FetchAlbumThumbnailController::class);
-        Route::delete('artists/{artist}/image', [ArtistImageController::class, 'destroy']);
-        Route::delete('playlists/{playlist}/cover', [PlaylistCoverController::class, 'destroy']);
 
         // deprecated routes
         Route::get('album/{album}/thumbnail', FetchAlbumThumbnailController::class);
@@ -247,7 +240,6 @@ Route::prefix('api')->middleware('api')->group(static function (): void {
         // Radio station routes
         Route::group(['prefix' => 'radio'], static function (): void {
             Route::apiResource('stations', RadioStationController::class);
-            Route::delete('stations/{radioStation}/logo', [RadioStationLogoController::class, 'destroy']);
         });
 
         // Theme routes

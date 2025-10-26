@@ -132,15 +132,4 @@ describe('radioStationStore', () => {
     await store.toggleFavorite(station)
     expect(station.favorite).toBe(false)
   })
-
-  it('removes the logo from a station', async () => {
-    const station = h.factory('radio-station', { logo: '/cool-logo.webp' })
-    store.state.stations.push(station)
-    const deleteMock = h.mock(http, 'delete').mockResolvedValue(null)
-
-    await store.removeLogo(station)
-
-    expect(deleteMock).toHaveBeenCalledWith(`radio/stations/${station.id}/logo`)
-    expect(station.logo).toBeNull()
-  })
 })

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Helpers\Ulid;
 use App\Http\Resources\PlaylistResource;
 use App\Models\Playlist;
 use App\Models\Song;
@@ -34,6 +35,8 @@ class PlaylistTest extends TestCase
 
         $songs = Song::factory(2)->create();
 
+        $ulid = Ulid::freeze();
+
         $this->postAs('api/playlists', [
             'name' => 'Foo Bar',
             'description' => 'Foo Bar Description',
@@ -50,7 +53,7 @@ class PlaylistTest extends TestCase
         self::assertTrue($playlist->ownedBy($user));
         self::assertNull($playlist->getFolder());
         self::assertEqualsCanonicalizing($songs->modelKeys(), $playlist->playables->modelKeys());
-        self::assertNotNull($playlist->cover);
+        self::assertSame("$ulid.webp", $playlist->cover);
     }
 
     #[Test]
@@ -72,7 +75,7 @@ class PlaylistTest extends TestCase
         self::assertSame('Foo Bar Description', $playlist->description);
         self::assertTrue($playlist->ownedBy($user));
         self::assertNull($playlist->getFolder());
-        self::assertNull($playlist->cover);
+        self::assertEmpty($playlist->cover);
     }
 
     #[Test]
@@ -164,9 +167,11 @@ class PlaylistTest extends TestCase
     }
 
     #[Test]
-    public function update(): void
+    public function updateKeepingCoverIntact(): void
     {
-        $playlist = create_playlist(['name' => 'Foo']);
+        $playlist = create_playlist([
+            'cover' => 'neat-cover.webp',
+        ]);
 
         $this->putAs("api/playlists/{$playlist->id}", [
             'name' => 'Bar',
@@ -176,6 +181,45 @@ class PlaylistTest extends TestCase
 
         self::assertSame('Bar', $playlist->refresh()->name);
         self::assertSame('Bar Description', $playlist->description);
+        self::assertSame('neat-cover.webp', $playlist->cover);
+    }
+
+    #[Test]
+    public function updateReplacingCover(): void
+    {
+        $playlist = create_playlist([
+            'cover' => 'neat-cover.webp',
+        ]);
+
+        $ulid = Ulid::freeze();
+
+        $this->putAs("api/playlists/{$playlist->id}", [
+            'name' => 'Bar',
+            'description' => 'Bar Description',
+            'cover' => minimal_base64_encoded_image(),
+        ], $playlist->owner)
+            ->assertSuccessful()
+            ->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
+
+        self::assertSame("$ulid.webp", $playlist->refresh()->cover);
+    }
+
+    #[Test]
+    public function updateRemovingCover(): void
+    {
+        $playlist = create_playlist([
+            'cover' => 'neat-cover.webp',
+        ]);
+
+        $this->putAs("api/playlists/{$playlist->id}", [
+            'name' => 'Bar',
+            'description' => 'Bar Description',
+            'cover' => '',
+        ], $playlist->owner)
+            ->assertSuccessful()
+            ->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
+
+        self::assertEmpty($playlist->refresh()->cover);
     }
 
     #[Test]

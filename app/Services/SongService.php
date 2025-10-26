@@ -33,7 +33,7 @@ class SongService
     public function __construct(
         private readonly SongRepository $songRepository,
         private readonly TranscodeRepository $transcodeRepository,
-        private readonly ImageStorage $imageStorage,
+        private readonly AlbumService $albumService,
         private readonly CacheStrategy $cache,
     ) {
     }
@@ -237,9 +237,9 @@ class SongService
             $coverData = Arr::get($data, 'cover.data');
 
             if ($coverData) {
-                $this->imageStorage->storeAlbumCover($album, $coverData);
+                $this->albumService->storeAlbumCover($album, $coverData);
             } else {
-                $this->imageStorage->trySetAlbumCoverFromDirectory($album, dirname($data['path']));
+                $this->albumService->trySetAlbumCoverFromDirectory($album, dirname($data['path']));
             }
         }
 

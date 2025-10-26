@@ -2,12 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Helpers\Ulid;
 use App\Http\Resources\RadioStationResource;
 use App\Models\Organization;
 use App\Models\RadioStation;
 use App\Rules\ValidRadioStationUrl;
-use App\Services\ImageStorage;
-use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -17,26 +16,20 @@ use function Tests\minimal_base64_encoded_image;
 
 class RadioStationTest extends TestCase
 {
-    private ImageStorage|MockInterface $imageStorage;
-
     public function setUp(): void
     {
         parent::setUp();
-
-        $this->imageStorage = $this->mock(ImageStorage::class);
 
         $validator = app(ValidRadioStationUrl::class);
         $validator->bypass = true;
     }
 
     #[Test]
-    public function createStation(): void
+    public function create(): void
     {
         $user = create_user();
 
-        $this->imageStorage->expects('storeImage')
-            ->with(minimal_base64_encoded_image())
-            ->andReturn('logo.jpg');
+        $ulid = Ulid::freeze();
 
         $this->postAs('/api/radio/stations', [
             'url' => 'https://example.com/stream',
@@ -51,7 +44,7 @@ class RadioStationTest extends TestCase
         $this->assertDatabaseHas(RadioStation::class, [
             'url' => 'https://example.com/stream',
             'name' => 'Test Radio Station',
-            'logo' => 'logo.jpg',
+            'logo' => "$ulid.webp",
             'description' => 'A test radio station',
             'is_public' => true,
             'user_id' => $user->id,
@@ -59,62 +52,67 @@ class RadioStationTest extends TestCase
     }
 
     #[Test]
-    public function updateStation(): void
+    public function updateKeepingLogoIntact(): void
     {
-        $this->imageStorage->shouldNotReceive('storeImage');
-
         /** @var RadioStation $station */
-        $station = RadioStation::factory()->create();
-        $logo = $station->getRawOriginal('logo');
+        $station = RadioStation::factory()->create([
+            'logo' => 'neat-logo.webp',
+        ]);
 
         $this->putAs("/api/radio/stations/{$station->id}", [
             'url' => 'https://example.com/updated-stream',
             'name' => 'Updated Radio Station',
-            'logo' => null,
             'description' => 'An updated test radio station',
             'is_public' => false,
         ], $station->user)
             ->assertOk()
             ->assertJsonStructure(RadioStationResource::JSON_STRUCTURE);
 
-        $this->assertDatabaseHas(RadioStation::class, [
-            'id' => $station->id,
-            'url' => 'https://example.com/updated-stream',
-            'name' => 'Updated Radio Station',
-            'logo' => $logo, // logo should remain unchanged
-            'description' => 'An updated test radio station',
-            'is_public' => false,
-        ]);
+        $station->refresh();
+
+        self::assertEquals('neat-logo.webp', $station->logo);
+        self::assertEquals('https://example.com/updated-stream', $station->url);
+        self::assertEquals('Updated Radio Station', $station->name);
+        self::assertEquals('An updated test radio station', $station->description);
+        self::assertFalse($station->is_public);
     }
 
     #[Test]
-    public function updateStationWithNewLogo(): void
+    public function updateWithNewLogo(): void
     {
-        $this->imageStorage->expects('storeImage')
-            ->with(minimal_base64_encoded_image())
-            ->andReturn('new-logo.jpg');
-
         /** @var RadioStation $station */
         $station = RadioStation::factory()->create();
+
+        $ulid = Ulid::freeze();
 
         $this->putAs("/api/radio/stations/{$station->id}", [
             'url' => 'https://example.com/updated-stream',
             'name' => 'Updated Radio Station',
             'logo' => minimal_base64_encoded_image(),
-            'description' => 'An updated test radio station',
             'is_public' => true,
         ], $station->user)
             ->assertOk()
             ->assertJsonStructure(RadioStationResource::JSON_STRUCTURE);
 
-        $this->assertDatabaseHas(RadioStation::class, [
-            'id' => $station->id,
+        self::assertSame("$ulid.webp", $station->refresh()->logo);
+    }
+
+    #[Test]
+    public function updateRemovingLogo(): void
+    {
+        /** @var RadioStation $station */
+        $station = RadioStation::factory()->create();
+
+        $this->putAs("/api/radio/stations/{$station->id}", [
             'url' => 'https://example.com/updated-stream',
             'name' => 'Updated Radio Station',
-            'logo' => 'new-logo.jpg', // logo should be updated
-            'description' => 'An updated test radio station',
+            'logo' => '',
             'is_public' => true,
-        ]);
+        ], $station->user)
+            ->assertOk()
+            ->assertJsonStructure(RadioStationResource::JSON_STRUCTURE);
+
+        self::assertEmpty($station->refresh()->logo);
     }
 
     #[Test]
@@ -171,7 +169,7 @@ class RadioStationTest extends TestCase
     }
 
     #[Test]
-    public function listAllStations(): void
+    public function listAll(): void
     {
         $user = create_user();
 
@@ -199,7 +197,7 @@ class RadioStationTest extends TestCase
     }
 
     #[Test]
-    public function deleteRadioStation(): void
+    public function destroy(): void
     {
         /** @var RadioStation $station */
         $station = RadioStation::factory()->create();

@@ -57,14 +57,14 @@ function koel_version(): string
     return trim(File::get(base_path('.version')));
 }
 
-function rescue_if($condition, callable $callback): mixed
+function rescue_if($condition, callable $callback, $default = null): mixed
 {
-    return value($condition) ? rescue($callback) : null;
+    return value($condition) ? rescue($callback, $default) : $default;
 }
 
-function rescue_unless($condition, callable $callback): mixed
+function rescue_unless($condition, callable $callback, $default = null): mixed
 {
-    return !value($condition) ? rescue($callback) : null;
+    return rescue_if(!$condition, $callback, $default);
 }
 
 function gravatar(string $email, int $size = 192): string

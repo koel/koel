@@ -6,7 +6,13 @@ import { merge } from 'lodash'
 import { arrayify } from '@/utils/helpers'
 import { commonStore } from '@/stores/commonStore'
 
-export type RadioStationData = Pick<RadioStation, 'name' | 'url' | 'logo' | 'description' | 'is_public'>
+export interface RadioStationData {
+  name: RadioStation['name']
+  url: RadioStation['url']
+  description: RadioStation['description']
+  is_public: RadioStation['is_public']
+  logo?: RadioStation['logo']
+}
 
 export const radioStationStore = {
   // Unlike songs, we don't expect a lot of radio stations per user.
@@ -71,10 +77,5 @@ export const radioStationStore = {
     })
 
     station.favorite = Boolean(favorite)
-  },
-
-  async removeLogo (station: Reactive<RadioStation>) {
-    await http.delete(`radio/stations/${station.id}/logo`)
-    this.byId(station.id)!.logo = null
   },
 }

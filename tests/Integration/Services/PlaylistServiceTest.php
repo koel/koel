@@ -3,7 +3,6 @@
 namespace Tests\Integration\Services;
 
 use App\Enums\Placement;
-use App\Helpers\Ulid;
 use App\Models\PlaylistFolder;
 use App\Models\Podcast;
 use App\Models\Song;
@@ -11,7 +10,6 @@ use App\Services\PlaylistService;
 use App\Values\Playlist\PlaylistCreateData;
 use App\Values\Playlist\PlaylistUpdateData;
 use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
-use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 use Tests\TestCase;
@@ -308,32 +306,5 @@ class PlaylistServiceTest extends TestCase
         // move to the last position
         $this->service->movePlayablesInPlaylist($playlist, [$ids[0], $ids[1]], $ids[3], Placement::AFTER);
         self::assertSame([$ids[2], $ids[3], $ids[0], $ids[1]], $playlist->refresh()->playables->modelKeys());
-    }
-
-    #[Test]
-    public function updatePlaylistCover(): void
-    {
-        File::put(image_storage_path('foo.webp'), 'content');
-        $playlist = create_playlist(['cover' => 'foo.webp']);
-
-        $ulid = Ulid::freeze();
-        $this->service->updatePlaylistCover($playlist, minimal_base64_encoded_image());
-
-        self::assertSame("$ulid.webp", $playlist->cover);
-        self::assertFileExists(image_storage_path("$ulid.webp"));
-        self::assertFileDoesNotExist(image_storage_path('foo.webp'));
-    }
-
-    #[Test]
-    public function deletePlaylistCover(): void
-    {
-        File::put(image_storage_path('foo.webp'), 'content');
-
-        $playlist = create_playlist(['cover' => 'foo.webp']);
-
-        $this->service->deletePlaylistCover($playlist);
-
-        self::assertNull($playlist->refresh()->cover);
-        self::assertFileDoesNotExist(image_storage_path('foo.webp'));
     }
 }

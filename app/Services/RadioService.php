@@ -44,18 +44,12 @@ class RadioService
             'is_public' => $dto->isPublic,
         ];
 
-        if ($dto->logo) {
-            $data['logo'] = rescue(fn () => $this->imageStorage->storeImage($dto->logo));
+        if (is_string($dto->logo)) {
+            $data['logo'] = rescue_if($dto->logo, fn () => $this->imageStorage->storeImage($dto->logo), '');
         }
 
         $radioStation->update($data);
 
         return $this->repository->findOneWithUserContext($radioStation->id, $radioStation->user);
-    }
-
-    public function removeStationLogo(RadioStation $station): void
-    {
-        $station->logo = null;
-        $station->save(); // will trigger logo cleanup in RadioStation Observer
     }
 }

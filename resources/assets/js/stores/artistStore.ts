@@ -3,14 +3,17 @@ import { reactive } from 'vue'
 import { differenceBy, unionBy } from 'lodash'
 import { cache } from '@/services/cache'
 import { http } from '@/services/http'
-import { arrayify, use } from '@/utils/helpers'
+import { arrayify } from '@/utils/helpers'
 import { logger } from '@/utils/logger'
 import { playableStore as songStore } from '@/stores/playableStore'
 
 const UNKNOWN_ARTIST_NAME = 'Unknown Artist'
 const VARIOUS_ARTISTS_NAME = 'Various Artists'
 
-export type ArtistUpdateData = Pick<Artist, 'name' | 'image'>
+export interface ArtistUpdateData {
+  name: Artist['name']
+  image?: Artist['image'] | null
+}
 
 interface ArtistListPaginateParams extends Record<string, any> {
   favorites_only: boolean
@@ -102,11 +105,6 @@ export const artistStore = {
     })
 
     artist.favorite = Boolean(favorite)
-  },
-
-  async removeImage (artist: Artist) {
-    await http.delete(`artists/${artist.id}/image`)
-    use(this.byId(artist.id), artist => (artist.image = ''))
   },
 
   async fetchEvents (artist: Artist) {

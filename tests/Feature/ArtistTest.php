@@ -37,26 +37,6 @@ class ArtistTest extends TestCase
     }
 
     #[Test]
-    public function update(): void
-    {
-        /** @var Artist $artist */
-        $artist = Artist::factory()->create();
-
-        $this->putAs(
-            "api/artists/{$artist->id}",
-            [
-                'name' => 'Updated Artist Name',
-            ],
-            create_admin()
-        )->assertJsonStructure(ArtistResource::JSON_STRUCTURE)
-            ->assertOk();
-
-        $artist->refresh();
-
-        self::assertEquals('Updated Artist Name', $artist->name);
-    }
-
-    #[Test]
     public function updateWithImage(): void
     {
         /** @var Artist $artist */
@@ -78,6 +58,43 @@ class ArtistTest extends TestCase
 
         self::assertEquals('Updated Artist Name', $artist->name);
         self::assertEquals("$ulid.webp", $artist->image);
+    }
+
+    #[Test]
+    public function updateKeepingImageIntact(): void
+    {
+        /** @var Artist $artist */
+        $artist = Artist::factory()->create(['image' => 'neat-pose.webp']);
+
+        $this->putAs(
+            "api/artists/{$artist->id}",
+            [
+                'name' => 'Updated Artist Name',
+            ],
+            create_admin()
+        )->assertJsonStructure(ArtistResource::JSON_STRUCTURE)
+            ->assertOk();
+
+        self::assertEquals('neat-pose.webp', $artist->refresh()->image);
+    }
+
+    #[Test]
+    public function updateRemovingImage(): void
+    {
+        /** @var Artist $artist */
+        $artist = Artist::factory()->create(['image' => 'neat-pose.webp']);
+
+        $this->putAs(
+            "api/artists/{$artist->id}",
+            [
+                'name' => 'Updated Artist Name',
+                'image' => '',
+            ],
+            create_admin()
+        )->assertJsonStructure(ArtistResource::JSON_STRUCTURE)
+            ->assertOk();
+
+        self::assertEmpty($artist->refresh()->image);
     }
 
     #[Test]

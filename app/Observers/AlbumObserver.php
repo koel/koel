@@ -2,11 +2,20 @@
 
 namespace App\Observers;
 
+use App\Facades\Dispatcher;
+use App\Jobs\GenerateAlbumThumbnailJob;
 use App\Models\Album;
 use Illuminate\Support\Facades\File;
 
 class AlbumObserver
 {
+    public function saved(Album $album): void
+    {
+        if ($album->cover && !File::exists(image_storage_path($album->thumbnail))) {
+            Dispatcher::dispatch(new GenerateAlbumThumbnailJob($album));
+        }
+    }
+
     public function updating(Album $album): void
     {
         if (!$album->isDirty('cover')) {
