@@ -31,7 +31,7 @@ class RadioStationUpdateRequest extends Request
             ],
             'name' => ['required', 'string', 'max:191'],
             'logo' => ['nullable', new ValidImageData()],
-            'description' => ['string'],
+            'description' => ['string', 'nullable'],
             'is_public' => ['boolean'],
         ];
     }
@@ -41,7 +41,7 @@ class RadioStationUpdateRequest extends Request
         return RadioStationUpdateData::make(
             name: $this->name,
             url: $this->url,
-            description: $this->description,
+            description: (string) $this->description,
             logo: $this->logo,
             isPublic: $this->boolean('is_public')
         );

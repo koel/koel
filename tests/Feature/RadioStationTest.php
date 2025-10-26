@@ -59,6 +59,29 @@ class RadioStationTest extends TestCase
     }
 
     #[Test]
+    public function createStationWithEmptyDescription(): void
+    {
+        $user = create_user();
+        $this->postAs('/api/radio/stations', [
+            'url' => 'https://example.com/stream',
+            'name' => 'Test Radio Station',
+            'description' => '',
+            'is_public' => false,
+        ], $user)
+            ->assertCreated()
+            ->assertJsonStructure(RadioStationResource::JSON_STRUCTURE);
+
+        $this->assertDatabaseHas(RadioStation::class, [
+            'url' => 'https://example.com/stream',
+            'name' => 'Test Radio Station',
+            'logo' => null,
+            'description' => '',
+            'is_public' => false,
+            'user_id' => $user->id,
+        ]);
+    }
+
+    #[Test]
     public function updateStation(): void
     {
         $this->imageStorage->shouldNotReceive('storeImage');
@@ -84,6 +107,33 @@ class RadioStationTest extends TestCase
             'logo' => $logo, // logo should remain unchanged
             'description' => 'An updated test radio station',
             'is_public' => false,
+        ]);
+    }
+
+    #[Test]
+    public function updateStationWithEmptyDescription(): void
+    {
+        /** @var RadioStation $station */
+        $station = RadioStation::factory()->create();
+        $logo = $station->getRawOriginal('logo');
+
+        $this->putAs("/api/radio/stations/{$station->id}", [
+            'url' => 'https://example.com/updated-stream',
+            'name' => 'Updated Radio Station',
+            'logo' => null,
+            'description' => '',
+            'is_public' => true,
+        ], $station->user)
+            ->assertOk()
+            ->assertJsonStructure(RadioStationResource::JSON_STRUCTURE);
+
+        $this->assertDatabaseHas(RadioStation::class, [
+            'id' => $station->id,
+            'url' => 'https://example.com/updated-stream',
+            'name' => 'Updated Radio Station',
+            'logo' => $logo,
+            'description' => '',
+            'is_public' => true,
         ]);
     }
 

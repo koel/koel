@@ -41,7 +41,7 @@ class RadioStationStoreRequest extends Request
         return RadioStationCreateData::make(
             url: $this->url,
             name: $this->name,
-            description: $this->description,
+            description: (string) $this->description,
             logo: $this->logo,
             isPublic: $this->is_public,
         );
