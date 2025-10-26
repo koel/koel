@@ -7,7 +7,8 @@
             <div
               v-for="(line, index) in parsedLyrics"
               :key="index"
-              :class="['lyrics-line leading-relaxed transition-all duration-300', { 'active': index === currentLineIndex }]"
+              :class="index === currentLineIndex && 'active'"
+              class="lyrics-line leading-relaxed transition-all duration-300"
             >
               {{ line.text }}
             </div>
@@ -48,7 +49,7 @@ const { currentUserCan } = usePolicies()
 
 const canUpdateLyrics = currentUserCan.editSong(song.value)
 const zoomLevel = ref(preferences.lyrics_zoom_level || 1)
-const lyricsContainer = ref<HTMLElement>()
+const lyricsContainer = ref<HTMLDivElement>()
 const currentLineIndex = ref(-1)
 
 interface LyricLine {
@@ -89,7 +90,6 @@ const zoomIn = () => (zoomLevel.value = Math.min(zoomLevel.value + 1, 8))
 const zoomOut = () => (zoomLevel.value = Math.max(zoomLevel.value - 1, -2))
 const showEditSongForm = () => eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', song.value, 'lyrics')
 
-// Update current line based on playback position
 const updateCurrentLine = () => {
   if (!isSyncedLyrics.value) return
 
@@ -110,7 +110,6 @@ const updateCurrentLine = () => {
   }
 }
 
-// Scroll to keep current line visible
 const scrollToCurrentLine = async () => {
   if (!lyricsContainer.value || currentLineIndex.value < 0) return
 
@@ -147,7 +146,6 @@ watch(() => song.value.id, () => {
 
 watch(zoomLevel, level => (preferences.lyrics_zoom_level = level), { immediate: true })
 
-// Cleanup
 if (typeof window !== 'undefined') {
   window.addEventListener('beforeunload', () => {
     if (timeUpdateInterval) clearInterval(timeUpdateInterval)
