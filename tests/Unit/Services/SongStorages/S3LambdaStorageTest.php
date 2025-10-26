@@ -5,7 +5,7 @@ namespace Tests\Unit\Services\SongStorages;
 use App\Models\Song;
 use App\Repositories\SongRepository;
 use App\Repositories\UserRepository;
-use App\Services\ImageStorage;
+use App\Services\AlbumService;
 use App\Services\SongStorages\S3LambdaStorage;
 use Mockery;
 use Mockery\MockInterface;
@@ -18,18 +18,19 @@ class S3LambdaStorageTest extends TestCase
 {
     private SongRepository|MockInterface $songRepository;
     private UserRepository|MockInterface $userRepository;
+    private AlbumService|MockInterface $albumService;
     private S3LambdaStorage $storage;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $metadataService = Mockery::mock(ImageStorage::class);
+        $this->albumService = Mockery::mock(AlbumService::class);
         $this->songRepository = Mockery::mock(SongRepository::class);
         $this->userRepository = Mockery::mock(UserRepository::class);
 
         $this->storage = new S3LambdaStorage(
-            $metadataService,
+            $this->albumService,
             $this->songRepository,
             $this->userRepository
         );

@@ -84,7 +84,15 @@ class EncyclopediaService
             ? $this->spotifyService->tryGetAlbumCover($album)
             : $info->cover;
 
-        return $coverUrl ? $this->imageStorage->storeAlbumCover($album, $coverUrl) : null;
+        if (!$coverUrl) {
+            return null;
+        }
+
+        $fileName = $this->imageStorage->storeImage($coverUrl);
+        $album->cover = $fileName;
+        $album->save();
+
+        return image_storage_url($fileName);
     }
 
     private function fetchAndStoreArtistImage(Artist $artist, ArtistInformation $info): ?string
@@ -93,6 +101,14 @@ class EncyclopediaService
             ? $this->spotifyService->tryGetArtistImage($artist)
             : $info->image;
 
-        return $imgUrl ? $this->imageStorage->storeArtistImage($artist, $imgUrl) : null;
+        if (!$imgUrl) {
+            return null;
+        }
+
+        $fileName = $this->imageStorage->storeImage($imgUrl);
+        $artist->image = $fileName;
+        $artist->save();
+
+        return image_storage_url($fileName);
     }
 }

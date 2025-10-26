@@ -34,7 +34,6 @@ describe('editArtistForm.vue', () => {
 
     expect(updateMock).toHaveBeenCalledWith(artist, {
       name: 'Dude',
-      image: '',
     })
   })
 
@@ -43,26 +42,27 @@ describe('editArtistForm.vue', () => {
     const { artist } = renderComponent(h.factory('artist', { image: '' }))
 
     await h.type(screen.getByTitle('Artist name'), 'Dude')
-    await h.user.click(screen.getByRole('button', { name: 'Save' }))
 
     await h.user.upload(
       screen.getByLabelText('Pick an image (optional)'),
       new File(['bytes'], 'cover.png', { type: 'image/png' }),
     )
 
-    await waitFor(() => expect(updateMock).toHaveBeenCalledWith(artist, {
+    await waitFor(() => screen.getByRole('img'))
+
+    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+
+    expect(updateMock).toHaveBeenCalledWith(artist, {
       name: 'Dude',
       image: 'data:image/png;base64,Ynl0ZXM=',
-    }))
+    })
   })
 
   it('removes image and submits', async () => {
     const { artist } = renderComponent(h.factory('artist'))
-    const removeCoverMock = h.mock(artistStore, 'removeImage').mockResolvedValue(null)
     const updateMock = h.mock(artistStore, 'update')
 
     await h.user.click(screen.getByRole('button', { name: 'Remove' }))
-    expect(removeCoverMock).toHaveBeenCalledWith(artist)
 
     await h.type(screen.getByTitle('Artist name'), 'Dude')
     await h.user.click(screen.getByRole('button', { name: 'Save' }))

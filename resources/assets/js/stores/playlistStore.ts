@@ -13,6 +13,7 @@ interface CreatePlaylistRequestData {
   name: Playlist['name']
   songs: Playable['id'][]
   description: Playlist['description']
+  cover: string | null
   folder_id: PlaylistFolder['id'] | null
   rules?: SmartPlaylistRuleGroup[]
 }
@@ -78,11 +79,11 @@ export const playlistStore = {
   },
 
   async store (
-    data: Pick<Playlist, 'name' | 'description' | 'folder_id'> & { rules?: SmartPlaylistRuleGroup[] },
+    data: Pick<Playlist, 'name' | 'description' | 'folder_id' | 'cover'> & { rules?: SmartPlaylistRuleGroup[] },
     songs: Playable[] = [],
   ) {
     const requestData: CreatePlaylistRequestData = {
-      ...pick(data, 'name', 'description', 'folder_id'),
+      ...pick(data, 'name', 'description', 'folder_id', 'cover'),
       songs: songs.map(song => song.id),
     }
 
@@ -204,10 +205,5 @@ export const playlistStore = {
         target: target.id,
       })
     }
-  },
-
-  async removeCover (playlist: Playlist) {
-    playlist.cover = null
-    await http.delete(`playlists/${playlist.id}/cover`)
   },
 }

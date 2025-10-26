@@ -69,7 +69,7 @@ describe('createPlaylistForm.vue', () => {
       new File(['bytes'], 'logo.png', { type: 'image/png' }),
     )
 
-    await waitFor(() => screen.getByAltText('Cover'))
+    await waitFor(() => screen.getByRole('img'))
 
     await h.type(screen.getByRole('textbox', { name: 'name' }), 'My playlist')
     await h.type(screen.getByRole('textbox', { name: 'description' }), 'Some description')

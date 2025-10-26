@@ -5,6 +5,7 @@ namespace Tests;
 use App\Facades\License;
 use App\Helpers\Ulid;
 use App\Helpers\Uuid;
+use App\Models\Album;
 use App\Services\License\CommunityLicenseService;
 use App\Services\MediaBrowser;
 use Illuminate\Filesystem\Filesystem;
@@ -35,6 +36,10 @@ abstract class TestCase extends BaseTestCase
 
         License::swap($this->app->make(CommunityLicenseService::class));
         $this->fileSystem = File::getFacadeRoot();
+
+        // During the Album's `saved` event, we attempt to generate a thumbnail by dispatching a job.
+        // Disable this to avoid noise and side effects.
+        Album::getEventDispatcher()?->forget('eloquent.saved: ' . Album::class);
 
         self::createSandbox();
     }

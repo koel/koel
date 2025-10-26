@@ -139,16 +139,4 @@ describe('albumStore', () => {
     expect(postMock).toHaveBeenNthCalledWith(2, 'favorites/toggle', { type: 'album', id: album.id })
     expect(album.favorite).toBe(false)
   })
-
-  it('removes cover', async () => {
-    const album = h.factory('album')
-    albumStore.syncWithVault(album)
-    const deleteMock = h.mock(http, 'delete').mockResolvedValue(null)
-    const syncPropsMock = h.mock(playableStore, 'syncAlbumProperties')
-
-    await albumStore.removeCover(album)
-
-    expect(deleteMock).toHaveBeenCalledWith(`albums/${album.id}/cover`)
-    expect(syncPropsMock).toHaveBeenCalledWith(album)
-  })
 })

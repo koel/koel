@@ -11,7 +11,7 @@ use App\Models\Song;
 use App\Models\User;
 use App\Repositories\SongRepository;
 use App\Repositories\UserRepository;
-use App\Services\ImageStorage;
+use App\Services\AlbumService;
 use App\Values\UploadReference;
 
 /**
@@ -21,7 +21,7 @@ use App\Values\UploadReference;
 class S3LambdaStorage extends S3CompatibleStorage
 {
     public function __construct(
-        private readonly ImageStorage $imageStorage,
+        private readonly AlbumService $albumService,
         private readonly SongRepository $songRepository,
         private readonly UserRepository $userRepository
     ) {
@@ -61,7 +61,7 @@ class S3LambdaStorage extends S3CompatibleStorage
         $album = Album::getOrCreate($albumArtist, $albumName);
 
         if ($cover) {
-            $this->imageStorage->storeAlbumCover($album, base64_decode($cover['data'], true));
+            $this->albumService->storeAlbumCover($album, base64_decode($cover['data'], true));
         }
 
         return Song::query()->updateOrCreate(['path' => $path], [

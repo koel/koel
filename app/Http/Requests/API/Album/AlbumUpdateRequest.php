@@ -19,7 +19,7 @@ class AlbumUpdateRequest extends Request
         return [
             'name' => 'string|required',
             'year' => 'integer|nullable',
-            'cover' => ['string', 'nullable', new ValidImageData()],
+            'cover' => ['string', 'sometimes', 'nullable', new ValidImageData()],
         ];
     }
 
@@ -28,7 +28,7 @@ class AlbumUpdateRequest extends Request
         return AlbumUpdateData::make(
             name: $this->name,
             year: $this->year ?: null,
-            cover: $this->cover ?: null,
+            cover: $this->has('cover') ? $this->string('cover') : null,
         );
     }
 }

@@ -4,14 +4,14 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Album;
-use App\Services\ImageStorage;
+use App\Services\AlbumService;
 
 class FetchAlbumThumbnailController extends Controller
 {
-    public function __invoke(Album $album, ImageStorage $imageStorage)
+    public function __invoke(Album $album, AlbumService $albumService)
     {
         return response()->json([
-            'thumbnailUrl' => image_storage_url($imageStorage->getOrCreateAlbumThumbnail($album)), // @todo snake_case
+            'thumbnailUrl' => image_storage_url($albumService->getOrCreateAlbumThumbnail($album)), // @todo snake_case
         ]);
     }
 }

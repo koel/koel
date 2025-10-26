@@ -3,13 +3,17 @@ import { reactive } from 'vue'
 import { differenceBy, merge, unionBy } from 'lodash'
 import { cache } from '@/services/cache'
 import { http } from '@/services/http'
-import { arrayify, use } from '@/utils/helpers'
+import { arrayify } from '@/utils/helpers'
 import { logger } from '@/utils/logger'
 import { playableStore as songStore } from '@/stores/playableStore'
 
 const UNKNOWN_ALBUM_NAME = 'Unknown Album'
 
-export type AlbumUpdateData = Pick<Album, 'name' | 'year' | 'cover'>
+export interface AlbumUpdateData {
+  name: Album['name']
+  year: Album['year']
+  cover?: Album['cover'] | null
+}
 
 interface AlbumListPaginateParams extends Record<string, any> {
   favorites_only: boolean
@@ -111,15 +115,6 @@ export const albumStore = {
     })
 
     album.favorite = Boolean(favorite)
-  },
-
-  async removeCover (album: Album) {
-    await http.delete(`albums/${album.id}/cover`)
-
-    use(this.byId(album.id), album => {
-      album.cover = ''
-      songStore.syncAlbumProperties(album)
-    })
   },
 
   reset () {

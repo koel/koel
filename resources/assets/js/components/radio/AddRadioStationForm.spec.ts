@@ -39,7 +39,7 @@ describe('addRadioStationForm.vue', () => {
       new File(['bytes'], 'logo.png', { type: 'image/png' }),
     )
 
-    await waitFor(() => screen.getByAltText('Logo'))
+    await waitFor(() => screen.getByRole('img'))
 
     await h.user.click(screen.getByLabelText('Make this station public'))
     await h.user.click(screen.getByRole('button', { name: 'Save' }))

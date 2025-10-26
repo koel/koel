@@ -54,29 +54,25 @@ class PlaylistService
         );
     }
 
-    public function updatePlaylist(Playlist $playlist, PlaylistUpdateData $data): Playlist
+    public function updatePlaylist(Playlist $playlist, PlaylistUpdateData $dto): Playlist
     {
-        $cover = rescue_if($data->cover, function () use ($data) {
-            return $this->imageStorage->storeImage($data->cover);
-        });
-
-        $updateData = [
-            'name' => $data->name,
-            'description' => $data->description,
-            'rules' => $data->ruleGroups,
+        $data = [
+            'name' => $dto->name,
+            'description' => $dto->description,
+            'rules' => $dto->ruleGroups,
         ];
 
-        if ($cover) {
-            $updateData['cover'] = $cover;
+        if (is_string($dto->cover)) {
+            $data['cover'] = rescue_if($dto->cover, fn () => $this->imageStorage->storeImage($dto->cover), '');
         }
 
-        $playlist->update($updateData);
+        $playlist->update($data);
 
-        if ($data->folderId) {
-            $playlist->folders()->syncWithoutDetaching([$data->folderId]);
+        if ($dto->folderId) {
+            $playlist->folders()->syncWithoutDetaching([$dto->folderId]);
         }
 
-        return $playlist;
+        return $playlist->refresh();
     }
 
     /** @return EloquentCollection<array-key, Playable> */
@@ -144,21 +140,5 @@ class PlaylistService
 
             $playlist->playables()->syncWithoutDetaching($values);
         });
-    }
-
-    public function updatePlaylistCover(Playlist $playlist, string $coverData): Playlist
-    {
-        $playlist->cover = $this->imageStorage->storeImage($coverData);
-        $playlist->save();
-
-        return $playlist;
-    }
-
-    public function deletePlaylistCover(Playlist $playlist): Playlist
-    {
-        $playlist->cover = null;
-        $playlist->save(); // will trigger cover cleanup in Playlist Observer
-
-        return $playlist;
     }
 }

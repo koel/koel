@@ -37,23 +37,7 @@
           />
         </FormRow>
       </div>
-      <div class="flex gap-3 items-center">
-        <span v-if="displayedCover" class="w-24 h-24 aspect-square relative">
-          <img :src="displayedCover" alt="Album cover" class="w-24 h-24 rounded object-cover">
-          <button
-            type="button"
-            class="absolute inset-0 opacity-0 hover:opacity-100 bg-black/70 active:bg-black/85 active:text-[.9rem] transition-opacity"
-            @click.prevent="removeOrResetCover"
-          >
-            Remove
-          </button>
-        </span>
-        <div class="flex-1">
-          <FileInput v-if="!displayedCover" accept="image/*" name="cover" @change="onImageInputChange">
-            Pick a cover (optional)
-          </FileInput>
-        </div>
-      </div>
+      <ArtworkField v-model="data.cover">Pick a cover (optional)</ArtworkField>
     </main>
 
     <footer>
@@ -64,19 +48,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { pick } from 'lodash'
+import { cloneDeep, pick } from 'lodash'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useDialogBox } from '@/composables/useDialogBox'
 import type { AlbumUpdateData } from '@/stores/albumStore'
 import { albumStore } from '@/stores/albumStore'
 import { useForm } from '@/composables/useForm'
-import { useImageFileInput } from '@/composables/useImageFileInput'
 
 import FormRow from '@/components/ui/form/FormRow.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
-import FileInput from '@/components/ui/form/FileInput.vue'
+import ArtworkField from '@/components/ui/form/ArtworkField.vue'
 
 const props = defineProps<{ album: Album }>()
 const emit = defineEmits<{ (e: 'close'): void }>()
@@ -89,31 +71,22 @@ const { showConfirmDialog } = useDialogBox()
 const close = () => emit('close')
 
 const { data, isPristine, handleSubmit } = useForm<AlbumUpdateData>({
-  initialValues: {
-    ...pick(album, 'name', 'year'),
-    cover: '',
+  initialValues: { ...pick(album, 'name', 'year', 'cover') },
+  onSubmit: async data => {
+    const formData = cloneDeep(data)
+
+    if (formData.cover === album.cover) {
+      // If the image is the same, don't send it (the image URL) to the server.
+      delete formData.cover
+    }
+
+    await albumStore.update(album, formData)
   },
-  onSubmit: async data => await albumStore.update(album, data),
   onSuccess: () => {
     toastSuccess('Album updated.')
     close()
   },
 })
-
-const { onImageInputChange } = useImageFileInput({
-  onImageDataUrl: dataUrl => (data.cover = dataUrl),
-})
-
-const displayedCover = computed(() => album.cover || data.cover)
-
-const removeOrResetCover = async () => {
-  if (data.cover) {
-    data.cover = ''
-  } else if (album.cover && await showConfirmDialog('Remove the album cover? This cannot be undone.')) {
-    await albumStore.removeCover(album)
-    album.cover = '' // technically not needed but useful during testing
-  }
-}
 
 const maybeClose = async () => {
   if (isPristine() || await showConfirmDialog('Discard all changes?')) {

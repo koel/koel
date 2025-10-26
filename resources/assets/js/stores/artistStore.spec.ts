@@ -147,15 +147,4 @@ describe('artistStore', () => {
     expect(putMock).toHaveBeenCalledWith(`artists/${artist.id}`, updateData)
     expect(syncPropsMock).toHaveBeenCalledWith(updatedArtist)
   })
-
-  it('removes image', async () => {
-    const artist = h.factory('artist')
-    artistStore.syncWithVault(artist)
-    const deleteMock = h.mock(http, 'delete').mockResolvedValue(null)
-
-    await artistStore.removeImage(artist)
-
-    expect(deleteMock).toHaveBeenCalledWith(`artists/${artist.id}/image`)
-    expect(artistStore.byId(artist.id)?.image).toBe('')
-  })
 })

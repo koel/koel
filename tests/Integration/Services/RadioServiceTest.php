@@ -59,16 +59,4 @@ class RadioServiceTest extends TestCase
         self::assertFalse($updatedStation->is_public);
         self::assertSame('An updated test radio station', $updatedStation->description);
     }
-
-    #[Test]
-    public function removeRadioStationLogo(): void
-    {
-        /** @var RadioStation $station */
-        $station = RadioStation::factory()->create([
-            'logo' => 'path/to/logo.png',
-        ]);
-
-        $this->service->removeStationLogo($station);
-        self::assertNull($station->logo);
-    }
 }

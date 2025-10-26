@@ -30,8 +30,8 @@ class RadioStationUpdateRequest extends Request
                 app(ValidRadioStationUrl::class),
             ],
             'name' => ['required', 'string', 'max:191'],
-            'logo' => ['nullable', new ValidImageData()],
-            'description' => ['string'],
+            'logo' => ['nullable', 'sometimes', new ValidImageData()],
+            'description' => ['string', 'sometimes', 'nullable'],
             'is_public' => ['boolean'],
         ];
     }
@@ -41,8 +41,8 @@ class RadioStationUpdateRequest extends Request
         return RadioStationUpdateData::make(
             name: $this->name,
             url: $this->url,
-            description: $this->description,
-            logo: $this->logo,
+            description: $this->string('description'),
+            logo: $this->has('logo') ? $this->string('logo') : null,
             isPublic: $this->boolean('is_public')
         );
     }

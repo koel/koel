@@ -7,8 +7,9 @@ use App\Helpers\Ulid;
 use App\Models\Album;
 use App\Models\Song;
 use App\Services\AlbumService;
+use App\Services\ImageStorage;
 use App\Values\Album\AlbumUpdateData;
-use Illuminate\Support\Facades\File;
+use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -17,11 +18,13 @@ use function Tests\minimal_base64_encoded_image;
 class AlbumServiceTest extends TestCase
 {
     private AlbumService $service;
+    private ImageStorage|MockInterface $imageStorage;
 
     public function setUp(): void
     {
         parent::setUp();
 
+        $this->imageStorage = $this->mock(ImageStorage::class);
         $this->service = app(AlbumService::class);
     }
 
@@ -66,6 +69,8 @@ class AlbumServiceTest extends TestCase
         );
 
         $ulid = Ulid::freeze();
+        $this->imageStorage->expects('storeImage')->with(minimal_base64_encoded_image())->andReturn("$ulid.webp");
+
         $updatedAlbum = $this->service->updateAlbum($album, $data);
 
         self::assertEquals('New Album Name', $updatedAlbum->name);
@@ -75,6 +80,25 @@ class AlbumServiceTest extends TestCase
         $songs->each(static function (Song $song) use ($updatedAlbum): void {
             self::assertEquals($updatedAlbum->name, $song->fresh()->album_name);
         });
+    }
+
+    #[Test]
+    public function updateAlbumRemovingCover(): void
+    {
+        /** @var Album $album */
+        $album = Album::factory()->create();
+
+        $data = AlbumUpdateData::make(
+            name: 'New Album Name',
+            year: 2023,
+            cover: '',
+        );
+
+        $updatedAlbum = $this->service->updateAlbum($album, $data);
+
+        self::assertEquals('New Album Name', $updatedAlbum->name);
+        self::assertEquals(2023, $updatedAlbum->year);
+        self::assertEmpty($updatedAlbum->cover);
     }
 
     #[Test]
@@ -93,19 +117,18 @@ class AlbumServiceTest extends TestCase
     }
 
     #[Test]
-    public function removeCover(): void
+    public function storeAlbumCover(): void
     {
-        $ulid = Ulid::generate();
-        File::put(image_storage_path("$ulid.webp"), 'content');
-        File::put(image_storage_path("{$ulid}_thumb.webp"), 'thumb-content');
-
         /** @var Album $album */
-        $album = Album::factory()->create(['cover' => "$ulid.webp"]);
+        $album = Album::factory()->create();
 
-        $this->service->removeAlbumCover($album);
+        $this->imageStorage
+            ->expects('storeImage')
+            ->with('dummy-src')
+            ->andReturn('foo.webp');
 
-        self::assertEmpty($album->refresh()->cover);
-        self::assertFileDoesNotExist(image_storage_path("$ulid.webp"));
-        self::assertFileDoesNotExist(image_storage_path("{$ulid}_thumb.webp"));
+        $this->service->storeAlbumCover($album, 'dummy-src');
+
+        self::assertSame('foo.webp', $album->refresh()->cover);
     }
 }

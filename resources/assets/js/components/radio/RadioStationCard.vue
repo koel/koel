@@ -1,7 +1,7 @@
 <template>
   <article
     :class="layout"
-    class="relative group flex max-w-full md:max-w-[256px] border p-5 rounded-lg flex-col gap-5"
+    class="group relative flex max-w-full md:max-w-[256px] border p-5 rounded-lg flex-col gap-5"
     data-testid="radio-station-card"
     tabindex="0"
     @dblclick="onDblClick"
@@ -16,7 +16,7 @@
           <FavoriteButton v-if="station.favorite" :favorite="station.favorite" class="ml-1" @toggle="toggleFavorite" />
         </h3>
       </div>
-      <div class="meta text-[0.9rem] flex gap-1.5 opacity-70 hover:opacity-100">
+      <div class="meta text-[0.95rem] flex gap-1.5 text-k-fg-70">
         <p class="line-clamp-3" :title="station.description">{{ station.description }}</p>
       </div>
     </footer>
