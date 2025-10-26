@@ -72,5 +72,9 @@
 
   * {
     @apply focus-visible:ring-0 focus-visible:outline-1 focus-visible:outline-k-highlight;
+
+    &::selection {
+      @apply bg-k-highlight text-k-highlight-fg;
+    }
   }
 }
