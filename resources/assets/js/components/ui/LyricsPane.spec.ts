@@ -4,6 +4,7 @@ import { createHarness } from '@/__tests__/TestHarness'
 import { eventBus } from '@/utils/eventBus'
 import Component from './LyricsPane.vue'
 import Magnifier from '@/components/ui/Magnifier.vue'
+import SyncLyricsPane from '@/components/ui/SyncLyricsPane.vue'
 
 describe('lyricsPane.vue', () => {
   const h = createHarness()
@@ -20,6 +21,7 @@ describe('lyricsPane.vue', () => {
       global: {
         stubs: {
           Magnifier,
+          SyncLyricsPane,
         },
       },
     })
@@ -31,6 +33,33 @@ describe('lyricsPane.vue', () => {
   }
 
   it('renders', () => expect(renderComponent().html()).toMatchSnapshot())
+
+  it('renders plain text lyrics when lyrics are not synced', () => {
+    const { container } = renderComponent(h.factory('song', {
+      lyrics: 'Plain lyrics\nLine 2\nLine 3',
+    }))
+
+    expect(container.querySelector('.lyrics')).toBeTruthy()
+    expect(container.querySelector('.lyrics-synced')).toBeFalsy()
+  })
+
+  it('renders SyncLyricsPane when lyrics are in LRC format', () => {
+    const song = h.factory('song', {
+      lyrics: '[00:12.00]First line\n[00:17.20]Second line\n[00:21.00]Third line',
+    })
+
+    const { container } = h.render(Component, {
+      props: { song },
+      global: {
+        stubs: {
+          Magnifier,
+        },
+      },
+    })
+
+    expect(container.querySelector('.lyrics')).toBeFalsy()
+    expect(container.querySelector('.lyrics-synced')).toBeTruthy()
+  })
 
   it('provides a button to add lyrics if current user is admin', async () => {
     const song = h.factory('song', { lyrics: null })
