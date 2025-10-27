@@ -27,6 +27,7 @@ class ReleaseCommand extends Command
     {
         self::ensureMainBranch();
         self::ensureCleanWorkingDirectory();
+        self::runOkOrThrow('git fetch');
 
         $this->getCurrentVersion();
 
