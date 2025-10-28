@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\UserUnsubscribedFromPodcast;
 use App\Exceptions\FailedToParsePodcastFeedException;
 use App\Exceptions\UserAlreadySubscribedToPodcastException;
 use App\Helpers\Uuid;
@@ -95,7 +96,7 @@ class PodcastService
             ?? $parser->xmlReader->value('rss.channel.lastBuildDate')->first();
 
         if ($pubDate && Carbon::createFromFormat(Carbon::RFC1123, $pubDate)?->isBefore($podcast->last_synced_at)) {
-            // The pubDate/lastBuildDate value indicates that there's no new content since last check.
+            // The pubDate/lastBuildDate value indicates that there's been no new content since the last check.
             // We'll simply return the podcast.
             return $podcast;
         }
@@ -180,6 +181,7 @@ class PodcastService
     public function unsubscribeUserFromPodcast(User $user, Podcast $podcast): void
     {
         $user->unsubscribeFromPodcast($podcast);
+        event(new UserUnsubscribedFromPodcast($user, $podcast));
     }
 
     public function isPodcastObsolete(Podcast $podcast): bool
@@ -233,6 +235,11 @@ class PodcastService
         } catch (Throwable) {
             return null;
         }
+    }
+
+    public function deletePodcast(Podcast $podcast): void
+    {
+        $podcast->delete();
     }
 
     private function createParser(string $url): Poddle
