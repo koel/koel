@@ -56,25 +56,63 @@ const parsedLyrics = computed<LyricLine[]>(() => {
     return []
   }
 
-  const lines: LyricLine[] = []
-  const lrcRegex = /\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/g
-  let match = lrcRegex.exec(lyricsText)
+  const allLines = lyricsText.split('\n')
+  const linesWithTimestamps: Array<{ time: number, text: string, originalIndex: number }> = []
+  const lrcRegex = /\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/
 
-  while (match !== null) {
-    const minutes = Number.parseInt(match[1], 10)
-    const seconds = Number.parseInt(match[2], 10)
-    const centiseconds = Number.parseInt(match[3].padEnd(2, '0').slice(0, 2), 10)
-    const time = minutes * 60 + seconds + centiseconds / 100
-    const text = match[4].trim()
+  // First pass: collect lines with timestamps
+  allLines.forEach((line, index) => {
+    const match = line.match(lrcRegex)
+    if (match) {
+      const minutes = Number.parseInt(match[1], 10)
+      const seconds = Number.parseInt(match[2], 10)
+      const centiseconds = Number.parseInt(match[3].padEnd(2, '0').slice(0, 2), 10)
+      const time = minutes * 60 + seconds + centiseconds / 100
+      const text = match[4].trim()
 
-    if (text) {
-      lines.push({ time, text })
+      if (text) {
+        linesWithTimestamps.push({ time, text, originalIndex: index })
+      }
     }
+  })
 
-    match = lrcRegex.exec(lyricsText)
+  // If no timestamped lines found, this is not LRC format
+  if (linesWithTimestamps.length === 0) {
+    return []
   }
 
-  return lines.sort((a, b) => a.time - b.time)
+  // Second pass: handle lines without timestamps
+  const result: LyricLine[] = []
+  allLines.forEach((line, index) => {
+    const timestampedLine = linesWithTimestamps.find(l => l.originalIndex === index)
+
+    if (timestampedLine) {
+      result.push({ time: timestampedLine.time, text: timestampedLine.text })
+    } else {
+      const trimmedLine = line.replace(/\[.*?\]/, '').trim()
+      if (trimmedLine) {
+        // Find previous and next timestamped lines
+        const prevTimestamped = linesWithTimestamps.filter(l => l.originalIndex < index).at(-1)
+        const nextTimestamped = linesWithTimestamps.find(l => l.originalIndex > index)
+
+        let inferredTime: number
+        if (!prevTimestamped) {
+          // Very first line - use 00:00:00
+          inferredTime = 0
+        } else if (!nextTimestamped) {
+          // Last line - use previous line's timestamp
+          inferredTime = prevTimestamped.time
+        } else {
+          // Between two lines - use average
+          inferredTime = (prevTimestamped.time + nextTimestamped.time) / 2
+        }
+
+        result.push({ time: inferredTime, text: trimmedLine })
+      }
+    }
+  })
+
+  return result.sort((a, b) => a.time - b.time)
 })
 
 const isSyncedLyrics = computed(() => parsedLyrics.value.length > 0)
