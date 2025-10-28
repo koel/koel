@@ -9,7 +9,9 @@ use App\Events\MultipleSongsUnliked;
 use App\Events\NewPlaylistCollaboratorJoined;
 use App\Events\PlaybackStarted;
 use App\Events\SongFavoriteToggled;
+use App\Events\UserUnsubscribedFromPodcast;
 use App\Listeners\DeleteNonExistingRecordsPostScan;
+use App\Listeners\DeletePodcastIfNoSubscribers;
 use App\Listeners\LoveMultipleTracksOnLastfm;
 use App\Listeners\LoveTrackOnLastfm;
 use App\Listeners\MakePlaylistSongsPublic;
@@ -68,6 +70,10 @@ class EventServiceProvider extends BaseServiceProvider
 
         NewPlaylistCollaboratorJoined::class => [
             MakePlaylistSongsPublic::class,
+        ],
+
+        UserUnsubscribedFromPodcast::class => [
+            DeletePodcastIfNoSubscribers::class,
         ],
     ];
 
