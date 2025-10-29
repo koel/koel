@@ -7,9 +7,9 @@ import type Router from '@/router'
 export type ReadonlyInjectionKey<T> = InjectionKey<[Readonly<T> | DeepReadonly<T>, Closure]>
 
 export const RouterKey: InjectionKey<Router> = Symbol('Router')
-export const OverlayKey: InjectionKey<Ref<InstanceType<typeof Overlay>>> = Symbol('Overlay')
-export const DialogBoxKey: InjectionKey<Ref<InstanceType<typeof DialogBox>>> = Symbol('DialogBox')
-export const MessageToasterKey: InjectionKey<Ref<InstanceType<typeof MessageToaster>>> = Symbol('MessageToaster')
+export const OverlayKey: InjectionKey<Ref<InstanceType<typeof Overlay> | undefined>> = Symbol('Overlay')
+export const DialogBoxKey: InjectionKey<Ref<InstanceType<typeof DialogBox> | undefined>> = Symbol('DialogBox')
+export const MessageToasterKey: InjectionKey<Ref<InstanceType<typeof MessageToaster> | undefined>> = Symbol('MessageToaster')
 export const ContextMenuKey: InjectionKey<Ref<{
   component: Component | null
   position: { top: number, left: number }
