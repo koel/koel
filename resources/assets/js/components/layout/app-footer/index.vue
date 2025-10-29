@@ -185,6 +185,11 @@ footer {
       @apply opacity-0;
     }
 
+    &.hide-controls::after {
+      transition: opacity 2s ease-in-out !important;
+      @apply opacity-0;
+    }
+
     .wrapper {
       @apply z-[3];
     }
@@ -207,7 +212,7 @@ footer {
     }
 
     &::after {
-      background-image: linear-gradient(0deg, rgba(0, 0, 0, 1) 0%, rgba(255, 255, 255, 0) 30vh);
+      background-image: linear-gradient(0deg, var(--color-bg) 0%, rgba(255, 255, 255, 0) 30vh);
       content: '';
       @apply absolute w-full h-full top-0 left-0 z-[1] pointer-events-none;
     }
