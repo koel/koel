@@ -16,7 +16,6 @@
 
 <script lang="ts" setup>
 import { nextTick, ref, toRefs, watch } from 'vue'
-import { onClickOutside } from '@vueuse/core'
 import { logger } from '@/utils/logger'
 import { requireInjection } from '@/utils/helpers'
 import { ContextMenuKey } from '@/symbols'
@@ -129,8 +128,6 @@ watch(options, newOptions => {
     close()
   }
 })
-
-onClickOutside(el, close)
 </script>
 
 <style lang="postcss" scoped>

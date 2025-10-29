@@ -1,5 +1,13 @@
 <template>
-  <li :class="cssClasses">
+  <li
+    ref="el"
+    :class="cssClasses"
+    class="focus:outline-none focus:bg-k-highlight focus:text-k-highlight-fg"
+    tabindex="-1"
+    @mouseover="focus()"
+    @click.prevent="emit('click')"
+    @keydown.enter.prevent="emit('click')"
+  >
     <span v-if="hasIconSlot" class="w-4">
       <slot name="icon" />
     </span>
@@ -8,7 +16,7 @@
       <slot />
     </span>
 
-    <ul v-if="hasSubMenuItems" class="context-menu submenu">
+    <ul v-if="hasSubMenuItems" class="context-menu submenu" tabindex="-1">
       <slot name="subMenuItems" />
     </ul>
 
@@ -20,7 +28,15 @@
 
 <script setup lang="ts">
 import { faCaretRight } from '@fortawesome/free-solid-svg-icons'
-import { useSlots } from 'vue'
+import { ref, useSlots } from 'vue'
+
+const emit = defineEmits<{ (e: 'click'): void }>()
+
+const el = ref<HTMLLIElement>()
+
+const focus = () => {
+  el.value?.focus()
+}
 
 const slots = useSlots()
 
