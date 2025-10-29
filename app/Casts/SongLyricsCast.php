@@ -17,8 +17,8 @@ class SongLyricsCast implements CastsAttributes
         // Since we're displaying the lyrics using <pre>, replace breaks with newlines and strip all tags.
         $value = strip_tags(preg_replace('#<br\s*/?>#i', PHP_EOL, $value));
 
-        // also remove the timestamps that often come with LRC files
-        return preg_replace('/\[\d{2}:\d{2}.\d{2}]\s*/m', '', $value);
+        // Keep the original LRC format with timestamps for synced lyrics support
+        return $value;
     }
 
     public function set(Model $model, string $key, mixed $value, array $attributes): mixed
