@@ -206,6 +206,8 @@
 }
 
 .plyr__tooltip {
+  @apply bg-k-highlight text-k-highlight-fg;
+
   visibility: hidden;
   position: absolute;
   z-index: 2;
@@ -213,7 +215,6 @@
   margin-bottom: 10px;
   padding: 10px 15px;
   opacity: 0;
-  background: #fff;
   box-shadow: 0 0 5px rgba(64, 64, 64, .1), 0 0 0 1px rgba(64, 64, 64, .1);
   border-radius: 3px;
   line-height: 1.5;
@@ -234,17 +235,17 @@
 }
 
 .plyr__tooltip::after {
+  @apply border-t-k-highlight border-t-[7px];
   bottom: -8px;
   border-right: 7px solid transparent;
-  border-top: 7px solid rgba(64, 64, 64, .2);
   border-left: 7px solid transparent;
   z-index: 1
 }
 
 .plyr__tooltip::before {
+  @apply border-t-k-highlight border-t-[6px];
   bottom: -6px;
   border-right: 6px solid transparent;
-  border-top: 6px solid #fff;
   border-left: 6px solid transparent;
   z-index: 2
 }
