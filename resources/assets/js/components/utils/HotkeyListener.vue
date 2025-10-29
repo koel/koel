@@ -21,15 +21,13 @@ const onKeyStroke = (key: KeyFilter, callback: (e: KeyboardEvent) => void) => {
       return
     }
 
-    if (e.target instanceof HTMLInputElement
-      || e.target instanceof HTMLTextAreaElement
-      || e.target instanceof HTMLButtonElement
-    ) {
-      return
-    }
+    const el = e.target as HTMLElement
 
-    const role = (e.target as HTMLElement).getAttribute('role')
-    if (role === 'button' || role === 'checkbox') {
+    if (
+      el.isContentEditable
+      || el.matches('input, select, textarea, button, [role="button"], [role="checkbox"]')
+      || el.closest('dialog')
+    ) {
       return
     }
 
