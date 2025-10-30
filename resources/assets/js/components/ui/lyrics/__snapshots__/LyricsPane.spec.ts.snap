@@ -1,0 +1,7 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`lyricsPane.vue > renders 1`] = `
+<div data-v-0910b162="" class="group relative h-full">
+  <div data-v-0910b162="" class="lyrics px-6 py-8 whitespace-pre-wrap leading-relaxed" data-testid="plain-text-lyrics">Foo bar baz qux</div><br data-v-0910b162="" data-testid="magnifier" class="absolute top-4 right-4 opacity-0 group-hover:opacity-50 hover:!opacity-100 transition-opacity no-hover:!opacity-100">
+</div>
+`;

@@ -1,30 +1,34 @@
 <template>
-  <div ref="lyricsContainer" class="lyrics-synced overflow-y-auto max-h-[70vh]">
-    <SyncLyricsLine
-      v-for="(line, index) in parsedLyrics"
+  <article
+    ref="lyricsContainer"
+    v-koel-overflow-fade
+    class="overflow-y-auto space-y-2"
+  >
+    <LrcLyricsLine
+      v-for="(line, index) in lyrics"
       :key="index"
-      :line="line"
       :is-active="index === currentLineIndex"
+      :line
+      :style="{ opacity: Math.max(0.1, 1 - Math.abs(index - currentLineIndex) / 4) }"
+      class="hover:!opacity-100"
+      @click="seekToLine(line)"
     />
-  </div>
+  </article>
 </template>
 
 <script lang="ts" setup>
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { playback } from '@/services/playbackManager'
-import SyncLyricsLine from '@/components/ui/SyncLyricsLine.vue'
+import type { BasePlaybackService } from '@/services/BasePlaybackService'
 
-interface LyricLine {
-  time: number
-  text: string
-}
+import LrcLyricsLine from '@/components/ui/lyrics/LrcLyricsLine.vue'
 
-interface Props {
-  parsedLyrics: LyricLine[]
+const props = defineProps<{
+  lyrics: LrcLine[]
   fontSize: string
-}
+}>()
 
-const props = defineProps<Props>()
+let currentPlayback: BasePlaybackService | null
 
 const lyricsContainer = ref<HTMLDivElement | null>(null)
 const currentLineIndex = ref(-1)
@@ -37,14 +41,21 @@ const scrollToCurrentLine = async () => {
   await nextTick()
 
   const container = lyricsContainer.value
-  const lines = container.querySelectorAll('.lyrics-line')
-  const currentLine = lines[currentLineIndex.value] as HTMLElement
+  const lines = container.querySelectorAll<HTMLParagraphElement>('p')
+  const currentLine = lines[currentLineIndex.value]
 
   if (currentLine) {
     const containerHeight = container.clientHeight
     const lineTop = currentLine.offsetTop
     const lineHeight = currentLine.clientHeight
     const scrollTop = lineTop - containerHeight / 2 + lineHeight / 2
+
+    // Prevent the scroll bar from "flashing" when scrolling to the current line
+    // by temporarily adding a class to the container, which hides the scrollbar.
+    // After a short delay (approximately enough for scrollTo() to finish), remove
+    // the class to restore the scrollbar's default visibility.
+    container.classList.add('scrolling-to-view')
+    setTimeout(() => container.classList.remove('scrolling-to-view'), 300)
 
     container.scrollTo({
       top: scrollTop,
@@ -54,12 +65,11 @@ const scrollToCurrentLine = async () => {
 }
 
 const updateCurrentLine = () => {
-  const player = playback('current')
-  const currentTime = player?.player?.media?.currentTime || 0
+  const currentTime = currentPlayback?.player.media.currentTime || 0
   let newIndex = -1
 
-  for (let i = props.parsedLyrics.length - 1; i >= 0; i--) {
-    if (currentTime >= props.parsedLyrics[i].time) {
+  for (let i = props.lyrics.length - 1; i >= 0; i--) {
+    if (currentTime >= props.lyrics[i].time) {
       newIndex = i
       break
     }
@@ -83,13 +93,20 @@ const stopTimeUpdates = () => {
 
 const startTimeUpdates = () => {
   stopTimeUpdates()
-  if (props.parsedLyrics.length > 0 && typeof window !== 'undefined') {
+
+  if (props.lyrics.length > 0 && typeof window !== 'undefined') {
     timeUpdateInterval = window.setInterval(updateCurrentLine, 100)
   }
 }
 
-watch(() => props.parsedLyrics, () => {
+watch(() => props.lyrics, () => {
   currentLineIndex.value = -1
+
+  lyricsContainer.value?.scrollTo({
+    top: 0,
+    behavior: 'smooth',
+  })
+
   startTimeUpdates()
 }, { immediate: true, deep: true })
 
@@ -97,7 +114,11 @@ onMounted(() => {
   if (typeof window !== 'undefined') {
     window.addEventListener('beforeunload', stopTimeUpdates)
   }
+
+  currentPlayback = playback('current')
 })
+
+const seekToLine = (line: LrcLine) => currentPlayback?.seekTo(line.time)
 
 onBeforeUnmount(() => {
   stopTimeUpdates()
@@ -108,7 +129,15 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="postcss" scoped>
-.lyrics-synced {
+article {
   font-size: v-bind(fontSize);
+
+  &.scrolling-to-view {
+    scrollbar-width: none; /* Firefox */
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
 }
 </style>
