@@ -1,5 +1,5 @@
 <template>
-  <div v-if="shouldMount" v-show="active" role="tabpanel" tabindex="0">
+  <div v-if="shouldMount" v-show="active" class="h-full" role="tabpanel" tabindex="0">
     <slot />
   </div>
 </template>
@@ -14,7 +14,3 @@ const props = withDefaults(defineProps<{ active?: boolean, shouldMount: boolean 
 
 const { active, shouldMount } = toRefs(props)
 </script>
-
-<style scoped lang="postcss">
-
-</style>

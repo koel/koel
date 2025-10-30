@@ -663,3 +663,8 @@ interface EmbedOptions {
   layout: EmbedLayout['id']
   preview: boolean
 }
+
+interface LrcLine {
+  time: number
+  text: string
+}
