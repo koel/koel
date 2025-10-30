@@ -89,7 +89,7 @@ export const useLyrics = (songRef: Ref<Song>) => {
     })
 
     lrcLyrics.value = result.sort((a, b) => a.time - b.time)
-  }, { immediate: true })
+  }, { immediate: true, deep: true })
 
   return {
     hasLyrics,
