@@ -210,12 +210,17 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
                             return SftpMetadata::make($matches[1]);
 
                         case SongStorageType::S3:
-                            preg_match('/^s3:\\/\\/(.*)\\/(.*)/', $this->path, $matches);
-                            return S3CompatibleMetadata::make($matches[1], $matches[2]);
-
                         case SongStorageType::S3_LAMBDA:
-                            preg_match('/^s3:\\/\\/(.*)\\/(.*)/', $this->path, $matches);
-                            return S3LambdaMetadata::make($matches[1], $matches[2]);
+                            preg_match(
+                                "_s3://(?<bucket>[^/]+)/(?<key>.+$)_",
+                                $this->path,
+                                $matches,
+                                PREG_UNMATCHED_AS_NULL
+                            );
+
+                            extract($matches, EXTR_PREFIX_ALL, "os");
+
+                            return S3CompatibleMetadata::make($os_bucket, $os_key);
 
                         case SongStorageType::DROPBOX:
                             preg_match('/^dropbox:\\/\\/(.*)/', $this->path, $matches);
