@@ -18,7 +18,6 @@ use App\Values\Scanning\ScanInformation;
 use App\Values\SongStorageMetadata\DropboxMetadata;
 use App\Values\SongStorageMetadata\LocalMetadata;
 use App\Values\SongStorageMetadata\S3CompatibleMetadata;
-use App\Values\SongStorageMetadata\S3LambdaMetadata;
 use App\Values\SongStorageMetadata\SftpMetadata;
 use App\Values\SongStorageMetadata\SongStorageMetadata;
 use Carbon\Carbon;
