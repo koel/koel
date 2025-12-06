@@ -14,7 +14,6 @@ use App\Models\Concerns\MorphsToFavorites;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
 use App\Models\Contracts\Embeddable;
 use App\Models\Contracts\Favoriteable;
-use App\Values\Scanning\ScanInformation;
 use App\Values\SongStorageMetadata\DropboxMetadata;
 use App\Values\SongStorageMetadata\LocalMetadata;
 use App\Values\SongStorageMetadata\S3CompatibleMetadata;
@@ -323,16 +322,11 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
      * This is done by comparing the stored hash or mtime with the corresponding
      * value from the scan information.
      */
-    public function isFileModified(ScanInformation $scanInformation): bool
+    public function isFileModified(int $lastModified): bool
     {
         throw_if($this->isEpisode(), new LogicException('Podcast episodes do not have associated files.'));
 
-        // Prioritize hash over mtime, but keep mtime as a fallback for backwards compatibility.
-        if ($this->hash) {
-            return $this->hash !== $scanInformation->hash;
-        }
-
-        return $this->mtime !== $scanInformation->mTime;
+        return $this->mtime !== $lastModified;
     }
 
     public function __toString(): string

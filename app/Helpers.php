@@ -117,12 +117,12 @@ function collect_sso_providers(): array
     return $providers;
 }
 
-function get_mtime(string|SplFileInfo $file): int
+function get_mtime(string|SplFileInfo $path): int
 {
-    $file = is_string($file) ? new SplFileInfo($file) : $file;
+    $path = is_string($path) ? $path : $path->getPathname();
 
     // Workaround for #344, where getMTime() fails for certain files with Unicode names on Windows.
-    return rescue(static fn () => $file->getMTime()) ?? time();
+    return rescue(static fn () => File::lastModified($path)) ?? time();
 }
 
 /**

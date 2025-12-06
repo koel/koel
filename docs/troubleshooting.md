@@ -56,6 +56,11 @@ If you're still stuck, check below for a couple of common issues and their solut
 
 ## Common Issues
 
+::: Koel is stuck at the loading screen after a fresh installation
+If Koel isn't getting passed the loading screen, but there's no error in the console, there might be a cache issue.
+Try clearing your browser's cache. A neat trick is to open the DevTools panel, go to the Network tab, tick the
+"Disable cache" checkbox, and refresh Koel with DevTools open.
+
 ::: details You run into a permission issue
 Make sure your web server has the necessary permissions to _recursively_ read/write to critical folders like `storage`,
 `bootstrap/cache`, and `public`.
