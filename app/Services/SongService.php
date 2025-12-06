@@ -201,13 +201,15 @@ class SongService
         event(new LibraryChanged());
     }
 
-    public function createOrUpdateSongFromScan(ScanInformation $info, ScanConfiguration $config): Song
-    {
-        /** @var ?Song $song */
-        $song = Song::query()->where('path', $info->path)->first();
+    public function createOrUpdateSongFromScan(
+        ScanInformation $info,
+        ScanConfiguration $config,
+        ?Song $song = null,
+    ): ?Song {
+        $song ??= $this->songRepository->findOneByPath($info->path);
 
         $isFileNew = !$song;
-        $isFileModified = $song && $song->isFileModified($info);
+        $isFileModified = $song && $song->isFileModified($info->mTime);
         $isFileNewOrModified = $isFileNew || $isFileModified;
 
         if (!$isFileNewOrModified && !$config->force) {
