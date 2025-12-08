@@ -2,6 +2,11 @@
 
 ## Koel
 
+:::tip Code Wiki
+It's highly recommended to take a look at Koel's
+[Code Wiki](https://codewiki.google/github.com/koel/koel) to have a better understanding of the code.
+:::
+
 Koel is built with Laravel and Vue.js, and as such, it requires a PHP environment to run.
 There are multiple ways to set up a PHP development environment, but if you're on macOS,
 the easiest way is probably to use [Laravel Herd](https://herd.laravel.com/).
