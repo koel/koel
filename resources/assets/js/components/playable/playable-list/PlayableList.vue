@@ -11,13 +11,14 @@
     <PlayableListHeader v-if="config.hasHeader" :content-type="contentType" @sort="sort" />
 
     <VirtualScroller
-      v-slot="{ item }: { item: PlayableRow }"
+      v-slot="{ item, index }: { item: PlayableRow, index: number }"
       :item-height="calculatedItemHeight"
       :items="rows"
       @scrolled-to-end="$emit('scrolled-to-end')"
     >
       <PlayableListItem
         :key="item.playable.id"
+        :index="index"
         :item="item"
         :show-disc="showDiscLabel(item.playable)"
         draggable="true"
@@ -327,8 +328,13 @@ onMounted(() => render())
       @apply basis-20 overflow-visible;
     }
 
-    &.track-number {
+    &.track-number,
+    &.table-row-number {
       @apply basis-16;
+
+      &.large {
+        @apply basis-24;
+      }
     }
 
     &.album {
@@ -396,8 +402,8 @@ onMounted(() => render())
       width: 200%;
     }
 
-    .song-item :is(.track-number, .album, .time, .year, .genre, .added-at),
-    .song-list-header :is(.track-number, .album, .time, .year, .genre, .added-at) {
+    .song-item :is(.table-row-number, .track-number, .album, .time, .year, .genre, .added-at),
+    .song-list-header :is(.table-row-number, .track-number, .album, .time, .year, .genre, .added-at) {
       display: none;
     }
 

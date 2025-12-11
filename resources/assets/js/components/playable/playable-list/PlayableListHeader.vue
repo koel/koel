@@ -4,17 +4,37 @@
     class="song-list-header flex z-[2] bg-k-fg-3 pl-5"
   >
     <span
+      v-if="shouldShowColumn('tableRow')"
+      class="table-row-number"
+      data-testid="header-table-row-number"
+    >
+      #
+    </span>
+    <span
       v-if="shouldShowColumn('track')"
-      class="track-number"
+      :class="`track-number${shouldShowColumn('tableRow') ? ' large' : ''}`"
       data-testid="header-track-number"
       role="button"
       title="Sort by track number"
       @click="sort('track')"
     >
-      #
+      {{ shouldShowColumn('tableRow') ? 'Track #' : '#' }}
       <template v-if="config.sortable">
         <Icon v-if="sortField === 'track' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
         <Icon v-if="sortField === 'track' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
+      </template>
+    </span>
+    <span
+      class="title-artist"
+      data-testid="header-title"
+      role="button"
+      title="Sort by title"
+      @click="sort('title')"
+    >
+      Title
+      <template v-if="config.sortable">
+        <Icon v-if="sortField === 'title' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
+        <Icon v-if="sortField === 'title' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
       </template>
     </span>
     <span

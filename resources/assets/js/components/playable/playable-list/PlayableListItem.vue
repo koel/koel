@@ -14,16 +14,22 @@
       tabindex="0"
       @dblclick.prevent.stop="play"
     >
-      <span v-if="shouldShowColumn('track')" class="track-number">
+      <span v-if="shouldShowColumn('tableRow')" class="table-row-number">
+        {{ props.index + 1 }}
+      </span>
+
+      <span v-if="shouldShowColumn('track')" :class="`track-number${shouldShowColumn('tableRow') ? ' large' : ''}`">
         <SoundBars v-if="playable.playback_state === 'Playing'" />
         <span v-else>
           <template v-if="isSong(playable)">{{ playable.track || '' }}</template>
           <Icon v-else :icon="faPodcast" />
         </span>
       </span>
+
       <span class="thumbnail leading-none">
         <PlayableThumbnail :playable @clicked="play" />
       </span>
+
       <span class="title-artist flex flex-col gap-2 overflow-hidden">
         <span class="title text-k-fg !flex gap-2 items-center">
           <ExternalMark v-if="external" />
@@ -31,7 +37,9 @@
         </span>
         <span class="artist">{{ artist }}</span>
       </span>
+
       <span v-if="shouldShowColumn('album')" class="album">{{ album }}</span>
+
       <template v-if="config.collaborative && isSong(playable) && playable.collaboration">
         <span class="collaborator">
           <UserAvatar :user="collaborator" width="24" />
@@ -40,11 +48,14 @@
           {{ playable.collaboration.fmt_added_at }}
         </span>
       </template>
+
       <template v-if="isSong(playable)">
         <span v-if="shouldShowColumn('genre')" class="genre">{{ playable.genre || '—' }}</span>
         <span v-if="shouldShowColumn('year')" class="year">{{ playable.year || '—' }}</span>
       </template>
+
       <span v-if="shouldShowColumn('duration')" class="time font-mono">{{ fmtLength }}</span>
+
       <span class="extra">
         <FavoriteButton :favorite="playable.favorite" @toggle="toggleFavorite" />
       </span>
@@ -68,7 +79,7 @@ import UserAvatar from '@/components/user/UserAvatar.vue'
 import ExternalMark from '@/components/ui/ExternalMark.vue'
 import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
-const props = withDefaults(defineProps<{ item: PlayableRow, showDisc?: boolean }>(), {
+const props = withDefaults(defineProps<{ item: PlayableRow, index: number, showDisc?: boolean }>(), {
   showDisc: false,
 })
 

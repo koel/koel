@@ -9,9 +9,9 @@
         <li
           v-for="item in menuItems"
           :key="item.label"
-          :class="currentlySortedBy(item.field) && 'active'"
+          :class="(item.sortable === undefined || item.sortable) && currentlySortedBy(item.field) && 'active'"
           class="cursor-pointer group flex justify-between !pl-3 hover:!bg-k-highlight hover:!text-k-highlight-fg"
-          @click="sortable && sort(item.field)"
+          @click="sortable && (item.sortable === undefined || item.sortable) && sort(item.field)"
         >
           <label
             v-if="shouldShowColumnVisibilityCheckboxes()"
@@ -70,6 +70,7 @@ interface MenuItem {
   label: string
   field: MaybeArray<PlayableListSortField>
   visibilityToggleable: boolean
+  sortable?: boolean
 }
 
 const {
@@ -84,6 +85,8 @@ const button = ref<HTMLButtonElement>()
 const menu = ref<HTMLDivElement>()
 
 const menuItems = computed(() => {
+  const tableRow: MenuItem = { column: 'tableRow', label: 'Table Row', field: 'title', visibilityToggleable: true, sortable: false }
+
   const title: MenuItem = { column: 'title', label: 'Title', field: 'title', visibilityToggleable: false }
   const artist: MenuItem = { label: 'Artist', field: 'artist_name', visibilityToggleable: false }
   const author: MenuItem = { label: 'Author', field: 'podcast_author', visibilityToggleable: false }
@@ -117,12 +120,12 @@ const menuItems = computed(() => {
 
   const customOrder: MenuItem = { label: 'Custom Order', field: 'position', visibilityToggleable: false }
 
-  let items: MenuItem[] = [title, album, artist, track, genre, year, time, dateAdded]
+  let items: MenuItem[] = [tableRow, title, album, artist, track, genre, year, time, dateAdded]
 
   if (contentType.value === 'episodes') {
-    items = [title, podcast, author, time, dateAdded]
+    items = [tableRow, title, podcast, author, time, dateAdded]
   } else if (contentType.value === 'mixed') {
-    items = [title, albumOrPodcast, artistOrAuthor, time, dateAdded]
+    items = [tableRow, title, albumOrPodcast, artistOrAuthor, time, dateAdded]
   }
 
   if (hasCustomOrderSort.value) {

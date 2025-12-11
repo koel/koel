@@ -611,7 +611,8 @@ interface Visualizer {
 }
 
 type PlayableListColumnName =
-  'title'
+  'tableRow'
+  | 'title'
   | 'album'
   | 'artist'
   | 'track'
