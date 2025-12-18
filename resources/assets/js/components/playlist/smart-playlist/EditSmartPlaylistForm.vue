@@ -65,7 +65,7 @@
           >
             <div v-koel-overflow-fade class="group-container space-y-5 overflow-auto max-h-[480px]">
               <RuleGroup
-                v-for="(group, index) in mutablePlaylist.rules"
+                v-for="(group, index) in collectedRuleGroups"
                 :key="group.id"
                 :group="group"
                 :is-first-group="index === 0"
@@ -80,7 +80,6 @@
         </TabPanelContainer>
       </Tabs>
     </main>
-
     <footer>
       <Btn type="submit">Save</Btn>
       <Btn class="btn-cancel" white @click.prevent="maybeClose">Cancel</Btn>
@@ -90,7 +89,7 @@
 
 <script lang="ts" setup>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { reactive, toRef } from 'vue'
+import { toRef } from 'vue'
 import { cloneDeep, isEqual, pick } from 'lodash'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import type { UpdatePlaylistData } from '@/stores/playlistStore'
@@ -121,7 +120,7 @@ const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 
 const folders = toRef(playlistFolderStore.state, 'folders')
-const mutablePlaylist = reactive(cloneDeep(playlist))
+//const mutablePlaylist = reactive(cloneDeep(playlist))
 
 const {
   Btn,
