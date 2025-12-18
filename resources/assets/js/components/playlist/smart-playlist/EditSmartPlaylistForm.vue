@@ -65,7 +65,17 @@
           >
             <div v-koel-overflow-fade class="group-container space-y-5 overflow-auto max-h-[480px]">
               <RuleGroup
-                v-for="(group, index) in collectedRuleGroups"
+const folders = toRef(playlistFolderStore.state, 'folders')
+
+const {
+  Btn,
+  RuleGroup,
+  activateTab,
+  isTabActive,
+  collectedRuleGroups,
+  addGroup,
+  onGroupChanged,
+} = useSmartPlaylistForm(cloneDeep(playlist.rules))
                 :key="group.id"
                 :group="group"
                 :is-first-group="index === 0"
