@@ -23,9 +23,12 @@ class ReleaseCommand extends Command
 
     private Version $currentVersion;
 
+    private string $mainBranch = 'master';
+    private string $releaseBranch = 'release';
+
     public function handle(): int
     {
-        self::ensureMainBranch();
+        $this->ensureMainBranch();
         self::ensureCleanWorkingDirectory();
         self::runOkOrThrow('git fetch');
 
@@ -67,11 +70,11 @@ class ReleaseCommand extends Command
             "tag $version",
             'tag latest -f',
             'push origin --tags -f',
-            'checkout release',
+            "checkout $this->releaseBranch",
             'pull',
-            'merge master',
+            "merge $this->releaseBranch $this->mainBranch",
             'push',
-            'checkout master',
+            "checkout $this->mainBranch",
         ];
 
         foreach ($gitCommands as $command) {
@@ -136,12 +139,12 @@ class ReleaseCommand extends Command
         note('Current version: ' . $this->currentVersion->prefix());
     }
 
-    private static function ensureMainBranch(): void
+    private function ensureMainBranch(): void
     {
         $branch = trim(Process::run('git branch --show-current')->output());
 
-        if ($branch !== 'master') {
-            error("You must be on the master branch to release a new version (Current branch: '$branch.')");
+        if ($branch !== $this->mainBranch) {
+            error("You must be on the $this->mainBranch branch to release a new version (Current branch: '$branch.')");
 
             exit(self::FAILURE);
         }
