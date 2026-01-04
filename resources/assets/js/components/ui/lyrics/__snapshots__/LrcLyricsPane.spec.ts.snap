@@ -1,9 +1,0 @@
-// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
-
-exports[`lrcLyricsPane.vue > renders 1`] = `
-<article data-v-6db450e8="" class="overflow-y-auto space-y-2">
-  <p data-v-95602d25="" data-v-6db450e8="" class="relative leading-relaxed origin-left transition-all duration-200 cursor-default text-k-fg hover:!opacity-100" style="opacity: 0.75;">First line</p>
-  <p data-v-95602d25="" data-v-6db450e8="" class="relative leading-relaxed origin-left transition-all duration-200 cursor-default text-k-fg hover:!opacity-100" style="opacity: 0.5;">Second line</p>
-  <p data-v-95602d25="" data-v-6db450e8="" class="relative leading-relaxed origin-left transition-all duration-200 cursor-default text-k-fg hover:!opacity-100" style="opacity: 0.25;">Third line</p>
-</article>
-`;
