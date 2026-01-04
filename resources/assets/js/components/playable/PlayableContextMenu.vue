@@ -7,13 +7,13 @@
         Go to
         <template #subMenuItems>
           <template v-if="isSong(playables[0])">
-            <MenuItem @click="viewAlbum(playables[0] as Song)">
+            <MenuItem :title="playables[0].album_name" @click="viewAlbum(playables[0] as Song)">
               <template #icon>
                 <Icon :icon="faCompactDisc" fixed-width />
               </template>
               {{ playables[0].album_name }}
             </MenuItem>
-            <MenuItem @click="viewArtist(playables[0] as Song)">
+            <MenuItem :title="playables[0].artist_name" @click="viewArtist(playables[0] as Song)">
               <template #icon>
                 <MicVocalIcon :size="16" class="inline-block" />
               </template>
