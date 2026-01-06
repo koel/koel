@@ -5120,16 +5120,16 @@
         },
         {
             "name": "paragonie/sodium_compat",
-            "version": "v1.23.0",
+            "version": "v1.24.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paragonie/sodium_compat.git",
-                "reference": "b938a5c6844d222a26d46a6c7b80291e4cd8cfab"
+                "reference": "2cb48f26130919f92f30650bdcc30e6f4ebe45ac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/sodium_compat/zipball/b938a5c6844d222a26d46a6c7b80291e4cd8cfab",
-                "reference": "b938a5c6844d222a26d46a6c7b80291e4cd8cfab",
+                "url": "https://api.github.com/repos/paragonie/sodium_compat/zipball/2cb48f26130919f92f30650bdcc30e6f4ebe45ac",
+                "reference": "2cb48f26130919f92f30650bdcc30e6f4ebe45ac",
                 "shasum": ""
             },
             "require": {
@@ -5200,9 +5200,9 @@
             ],
             "support": {
                 "issues": "https://github.com/paragonie/sodium_compat/issues",
-                "source": "https://github.com/paragonie/sodium_compat/tree/v1.23.0"
+                "source": "https://github.com/paragonie/sodium_compat/tree/v1.24.0"
             },
-            "time": "2025-10-06T08:53:07+00:00"
+            "time": "2025-12-30T16:16:35+00:00"
         },
         {
             "name": "phanan/poddle",
