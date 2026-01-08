@@ -20,6 +20,7 @@ import { eventBus } from '@/utils/eventBus'
 import { cache } from '@/services/cache'
 import en from '@/locales/en.json'
 import es from '@/locales/es.json'
+import viLocale from '@/locales/vi.json'
 
 class TestHarness {
   public router: Router
@@ -128,6 +129,7 @@ class TestHarness {
       messages: {
         en,
         es,
+        vi: viLocale,
       },
     })
 

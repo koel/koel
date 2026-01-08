@@ -12,6 +12,7 @@ import '@/../css/app.pcss'
 import App from './App.vue'
 import en from '@/locales/en.json'
 import es from '@/locales/es.json'
+import vi from '@/locales/vi.json'
 
 const i18n = createI18n({
   legacy: false,
@@ -20,6 +21,7 @@ const i18n = createI18n({
   messages: {
     en,
     es,
+    vi,
   },
 })
 
