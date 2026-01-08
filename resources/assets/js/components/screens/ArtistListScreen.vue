@@ -2,12 +2,12 @@
   <ScreenBase>
     <template #header>
       <ScreenHeader layout="collapsed" :disabled="loading">
-        Artists
+        {{ t('screens.artists') }}
         <template #controls>
           <div class="flex gap-2">
             <Btn
               v-koel-tooltip
-              :title="preferences.artists_favorites_only ? 'Show all' : 'Show favorites only'"
+              :title="preferences.artists_favorites_only ? t('misc.showAll') : t('misc.showFavoritesOnly')"
               class="border border-k-fg-10"
               transparent
               @click.prevent="toggleFavoritesOnly"
@@ -34,9 +34,9 @@
       <template #icon>
         <Icon :icon="faMicrophoneSlash" />
       </template>
-      No artists found.
+      {{ t('emptyStates.artistsNotFound') }}
       <span v-if="currentUserCan.manageSettings()" class="secondary block">
-        Have you set up your library yet?
+        {{ t('screens.home.setupLibrary') }}
       </span>
     </ScreenEmptyState>
 
@@ -58,12 +58,15 @@
 import { faMicrophoneSlash, faStar } from '@fortawesome/free-solid-svg-icons'
 import { faStar as faEmptyStar } from '@fortawesome/free-regular-svg-icons'
 import { computed, nextTick, onMounted, ref, toRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useInfiniteScroll } from '@/composables/useInfiniteScroll'
 import { usePolicies } from '@/composables/usePolicies'
+
+const { t } = useI18n()
 
 import ArtistCard from '@/components/artist/ArtistCard.vue'
 import ArtistCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'

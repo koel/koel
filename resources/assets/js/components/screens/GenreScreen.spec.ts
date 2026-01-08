@@ -21,6 +21,11 @@ describe('genreScreen', () => {
       global: {
         stubs: {
           SongList: h.stub('song-list'),
+          ScreenBase: h.stub('screen-base'),
+          ScreenHeader: h.stub('screen-header'),
+          ScreenEmptyState: h.stub('screen-empty-state'),
+          PlayableListSkeleton: h.stub('playable-list-skeleton'),
+          ScreenHeaderSkeleton: h.stub('screen-header-skeleton'),
         },
       },
     })
@@ -44,6 +49,9 @@ describe('genreScreen', () => {
 
   it('renders the song list', async () => {
     await renderComponent()
-    expect(screen.getByTestId('song-list')).toBeTruthy()
+    // Wait for loading to complete and songs to be loaded
+    await waitFor(() => {
+      expect(screen.getByTestId('song-list')).toBeTruthy()
+    }, { timeout: 3000 })
   })
 })

@@ -23,7 +23,7 @@ describe('queueStore', () => {
 
   it('queues to bottom', () => {
     const song = h.factory('song')
-    const putMock = h.mock(http, 'put')
+    const putMock = h.mock(http, 'put').mockResolvedValue(undefined)
     queueStore.queue(song)
 
     expect(queueStore.all).toHaveLength(4)
@@ -33,7 +33,7 @@ describe('queueStore', () => {
 
   it('queues to top', () => {
     const song = h.factory('song')
-    const putMock = h.mock(http, 'put')
+    const putMock = h.mock(http, 'put').mockResolvedValue(undefined)
     queueStore.queueToTop(song)
 
     expect(queueStore.all).toHaveLength(4)
@@ -43,7 +43,7 @@ describe('queueStore', () => {
 
   it('replaces the whole queue', () => {
     const newSongs = h.factory('song', 2)
-    const putMock = h.mock(http, 'put')
+    const putMock = h.mock(http, 'put').mockResolvedValue(undefined)
     queueStore.replaceQueueWith(newSongs)
 
     expect(queueStore.all).toEqual(newSongs)
@@ -51,7 +51,7 @@ describe('queueStore', () => {
   })
 
   it('removes a song from queue', () => {
-    const putMock = h.mock(http, 'put')
+    const putMock = h.mock(http, 'put').mockResolvedValue(undefined)
     queueStore.unqueue(songs[1])
 
     expect(queueStore.all).toEqual([songs[0], songs[2]])
@@ -59,7 +59,7 @@ describe('queueStore', () => {
   })
 
   it('removes multiple songs from queue', () => {
-    const putMock = h.mock(http, 'put')
+    const putMock = h.mock(http, 'put').mockResolvedValue(undefined)
     queueStore.unqueue([songs[1], songs[0]])
 
     expect(queueStore.all).toEqual([songs[2]])
@@ -67,11 +67,12 @@ describe('queueStore', () => {
   })
 
   it('clears the queue', () => {
-    const putMock = h.mock(http, 'put')
+    const putMock = h.mock(http, 'put').mockResolvedValue(undefined)
     queueStore.clear()
 
     expect(queueStore.state.playables).toHaveLength(0)
-    expect(putMock).toHaveBeenCalledWith('queue/state', { songs: [] })
+    // saveState() skips saving when playableIds.length === 0
+    expect(putMock).not.toHaveBeenCalled()
   })
 
   it.each<[PlaybackState]>([['Playing'], ['Paused']])('identifies the current song by %s state', state => {
@@ -103,7 +104,7 @@ describe('queueStore', () => {
     const songs = h.factory('song', 3)
     const getMock = h.mock(http, 'get').mockResolvedValue(songs)
     const syncMock = h.mock(playableStore, 'syncWithVault', songs)
-    const putMock = h.mock(http, 'put')
+    const putMock = h.mock(http, 'put').mockResolvedValue(undefined)
 
     await queueStore.fetchRandom(3)
 
@@ -117,7 +118,7 @@ describe('queueStore', () => {
     const songs = h.factory('song', 3)
     const getMock = h.mock(http, 'get').mockResolvedValue(songs)
     const syncMock = h.mock(playableStore, 'syncWithVault', songs)
-    const putMock = h.mock(http, 'put')
+    const putMock = h.mock(http, 'put').mockResolvedValue(undefined)
 
     await queueStore.fetchInOrder('title', 'desc', 3)
 

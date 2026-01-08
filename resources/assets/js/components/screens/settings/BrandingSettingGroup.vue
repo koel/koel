@@ -1,32 +1,31 @@
 <template>
   <form @submit.prevent="handleSubmit">
     <SettingGroup>
-      <template #title>Branding</template>
+      <template #title>{{ t('settings.branding') }}</template>
 
       <div class="space-y-4">
         <FormRow>
-          <template #label>App name</template>
-          <TextInput v-model="data.name" class="md:w-2/3" name="name" placeholder="Koel" />
+          <template #label>{{ t('settings.appName') }}</template>
+          <TextInput v-model="data.name" class="md:w-2/3" name="name" :placeholder="t('settings.appNameDefault')" />
         </FormRow>
         <BrandingImageField v-model="data.logo" :default="koelBirdLogo" name="logo">
-          <template #label>App logo</template>
-          <template #help>To be used as the favicon, app icon, and logo throughout the app.</template>
+          <template #label>{{ t('settings.appLogo') }}</template>
+          <template #help>{{ t('settings.appLogoDescription') }}</template>
         </BrandingImageField>
         <BrandingImageField v-model="data.cover" :default="koelBirdCover" name="cover">
-          <template #label>App cover</template>
-          <template #help>
-            To be used as the placeholder if no album art, artist image, playlist cover etc. is available.
-          </template>
+          <template #label>{{ t('settings.appCover') }}</template>
+          <template #help>{{ t('settings.appCoverDescription') }}</template>
         </BrandingImageField>
       </div>
       <template #footer>
-        <Btn type="submit" :disabled="loading">Save</Btn>
+        <Btn type="submit" :disabled="loading">{{ t('auth.save') }}</Btn>
       </template>
     </SettingGroup>
   </form>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import { useForm } from '@/composables/useForm'
 import { useBranding } from '@/composables/useBranding'
 import { settingStore } from '@/stores/settingStore'
@@ -38,6 +37,8 @@ import FormRow from '@/components/ui/form/FormRow.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import BrandingImageField from '@/components/screens/settings/BrandingImageField.vue'
+
+const { t } = useI18n()
 
 const props = defineProps<{ currentBranding: Branding }>()
 
@@ -64,7 +65,7 @@ const { data, loading, handleSubmit } = useForm<Branding>({
 
     await settingStore.updateBranding(submittedData)
 
-    if (await showConfirmDialog('Settings saved. Reload to apply the changes?')) {
+    if (await showConfirmDialog(t('settings.reloadToApply'))) {
       forceReloadWindow()
     }
   },

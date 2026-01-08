@@ -23,7 +23,7 @@
           {{ podcast.author }}
           <template v-if="lastPlayedAt"> •
             <span class="text-k-fg-50">
-              Last played
+              {{ t('podcasts.sortFields.lastPlayed') }}
               <time :datetime="podcast.last_played_at" :title="podcast.last_played_at">{{ lastPlayedAt }}</time>
             </span>
           </template>
@@ -36,6 +36,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import DOMPurify from 'dompurify'
 import { formatTimeAgo } from '@vueuse/core'
 import { useRouter } from '@/composables/useRouter'
@@ -47,6 +48,7 @@ const { podcast } = defineProps<{ podcast: Podcast }>()
 const FavoriteButton = defineAsyncComponent(() => import('@/components/ui/FavoriteButton.vue'))
 const PodcastContextMenu = defineAsyncComponent(() => import('@/components/podcast/PodcastContextMenu.vue'))
 
+const { t } = useI18n()
 const { url } = useRouter()
 const { openContextMenu } = useContextMenu()
 

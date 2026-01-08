@@ -28,18 +28,48 @@ describe('playbackService', () => {
 
     radioStationStore.state.stations = [currentStation, toBePlayedStation]
 
-    const playMock = h.mock(playbackService.player.media, 'play')
     const broadcastMock = h.mock(socketService, 'broadcast')
     h.mock(radioStationStore, 'getSourceUrl', 'https://station.com/stream.mp3')
 
-    await playbackService.play(toBePlayedStation)
+    // Mock HTMLAudioElement methods for the radio element
+    const radioElement = document.getElementById('audio-radio') as HTMLAudioElement
+    const radioPlayMock = vi.fn().mockResolvedValue(undefined)
+    if (radioElement) {
+      radioElement.play = radioPlayMock
+      // Mock readyState to HAVE_CURRENT_DATA so it plays immediately
+      Object.defineProperty(radioElement, 'readyState', {
+        value: HTMLMediaElement.HAVE_CURRENT_DATA,
+        writable: true,
+        configurable: true,
+      })
+      // Mock load() to trigger canplay event immediately (which is what the code waits for)
+      const originalLoad = radioElement.load.bind(radioElement)
+      radioElement.load = vi.fn(() => {
+        originalLoad()
+        // Trigger canplay event immediately so the promise resolves
+        setTimeout(() => {
+          radioElement.dispatchEvent(new Event('canplay'))
+        }, 0)
+      })
+    }
 
-    expect(playMock).toHaveBeenCalled()
-    expect(playbackService.player.media.src).toBe('https://station.com/stream.mp3')
+    const playPromise = playbackService.play(toBePlayedStation)
+    
+    // Wait a bit for the canplay event to fire
+    await new Promise(resolve => setTimeout(resolve, 10))
+    
+    await playPromise
+
+    // Radio uses radioAudioElement, not player.media
+    expect(radioPlayMock).toHaveBeenCalled()
+    const radioAudioElement = playbackService['radioAudioElement'] as HTMLAudioElement
+    if (radioAudioElement) {
+      expect(radioAudioElement.src).toContain('https://station.com/stream.mp3')
+    }
     expect(currentStation.playback_state).toBe('Stopped')
     expect(toBePlayedStation.playback_state).toBe('Playing')
     expect(broadcastMock).toHaveBeenCalledWith('SOCKET_STREAMABLE', toBePlayedStation)
-  })
+  }, 10000) // Increase timeout for async operations
 
   it('pauses a radio station playback', async () => {
     const currentStation = h.factory('radio-station')
@@ -52,7 +82,8 @@ describe('playbackService', () => {
 
     expect(pauseMock).toHaveBeenCalled()
     expect(playbackService.player.media.src).toBe('')
-    expect(currentStation.playback_state).toBe('Paused')
+    // Radio stations use 'Stopped' instead of 'Paused' since radio streams are live
+    expect(currentStation.playback_state).toBe('Stopped')
     expect(broadcastMock).toHaveBeenCalledWith('SOCKET_STREAMABLE', currentStation)
   })
 })

@@ -3,7 +3,7 @@
  * Only show hours if the duration is longer than an hour.
  * Also, only show seconds if the duration is less than an hour.
  */
-export const secondsToHumanReadable = (total: number) => {
+export const secondsToHumanReadable = (total: number, translations?: { hr: string, min: string, sec: string }) => {
   total = Math.round(total)
 
   const hours = Math.floor(total / 3600)
@@ -11,20 +11,23 @@ export const secondsToHumanReadable = (total: number) => {
   const seconds = total - hours * 3600 - minutes * 60
 
   const parts: string[] = []
+  const hr = translations?.hr || 'hr'
+  const min = translations?.min || 'min'
+  const sec = translations?.sec || 'sec'
 
   if (hours > 0) {
-    parts.push(`${hours} hr`)
+    parts.push(`${hours} ${hr}`)
   }
 
   if (minutes > 0) {
-    parts.push(`${minutes} min`)
+    parts.push(`${minutes} ${min}`)
   }
 
   if (seconds > 0 && hours < 1) {
-    parts.push(`${seconds} sec`)
+    parts.push(`${seconds} ${sec}`)
   }
 
-  return parts.join(' ') || '0 sec'
+  return parts.join(' ') || `0 ${sec}`
 }
 
 /**

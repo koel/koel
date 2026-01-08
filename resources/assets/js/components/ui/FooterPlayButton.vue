@@ -13,6 +13,7 @@
 <script lang="ts" setup>
 import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { commonStore } from '@/stores/commonStore'
 import { queueStore } from '@/stores/queueStore'
 import { recentlyPlayedStore } from '@/stores/recentlyPlayedStore'
@@ -24,6 +25,7 @@ import { playback } from '@/services/playbackManager'
 
 import FooterButton from '@/components/layout/app-footer/FooterButton.vue'
 
+const { t } = useI18n()
 const { getCurrentScreen, getRouteParam, go, url } = useRouter()
 const streamable = requireInjection(CurrentStreamableKey, ref())
 
@@ -33,10 +35,10 @@ const isRadio = computed(() => streamable.value?.type === 'radio-stations')
 
 const title = computed(() => {
   if (isRadio.value) {
-    return streamable.value?.playback_state === 'Playing' ? 'Stop streaming' : 'Start streaming'
+    return streamable.value?.playback_state === 'Playing' ? t('radio.stop') : t('radio.play')
   }
 
-  return playing.value ? 'Pause' : 'Play or resume'
+  return playing.value ? t('ui.buttons.pause') : t('ui.tooltips.playOrResume')
 })
 
 const initiatePlayback = async () => {

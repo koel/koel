@@ -1,53 +1,54 @@
 <template>
   <form @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
     <header>
-      <h1>Edit Album</h1>
+      <h1>{{ t('albums.edit') }}</h1>
     </header>
 
     <main class="space-y-5">
       <FormRow>
-        <template #label>Name</template>
+        <template #label>{{ t('albums.name') }}</template>
         <TextInput
           v-model="data.name"
           v-koel-focus
           name="name"
-          placeholder="Album name"
+          :placeholder="t('albums.albumName')"
           required
-          title="Album name"
+          :title="t('albums.albumName')"
         />
       </FormRow>
       <div class="grid grid-cols-2 gap-2">
         <FormRow>
-          <template #label>Artist</template>
+          <template #label>{{ t('albums.artist') }}</template>
           <TextInput
             v-model="album.artist_name"
             name="artist"
             disabled
-            title="Artist name cannot be changed"
+            :title="t('albums.artistNotChangeable')"
           />
         </FormRow>
         <FormRow>
-          <template #label>Release year</template>
+          <template #label>{{ t('albums.releaseYear') }}</template>
           <TextInput
             v-model="data.year"
             type="number"
             name="year"
-            title="Release year"
+            :title="t('albums.releaseYear')"
             min="1000"
           />
         </FormRow>
       </div>
-      <ArtworkField v-model="data.cover">Pick a cover (optional)</ArtworkField>
+      <ArtworkField v-model="data.cover">{{ t('albums.pickCover') }}</ArtworkField>
     </main>
 
     <footer>
-      <Btn type="submit">Save</Btn>
-      <Btn white @click.prevent="maybeClose">Cancel</Btn>
+      <Btn type="submit">{{ t('auth.save') }}</Btn>
+      <Btn white @click.prevent="maybeClose">{{ t('auth.cancel') }}</Btn>
     </footer>
   </form>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import { cloneDeep, pick } from 'lodash'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useDialogBox } from '@/composables/useDialogBox'
@@ -59,6 +60,8 @@ import FormRow from '@/components/ui/form/FormRow.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import ArtworkField from '@/components/ui/form/ArtworkField.vue'
+
+const { t } = useI18n()
 
 const props = defineProps<{ album: Album }>()
 const emit = defineEmits<{ (e: 'close'): void }>()
@@ -83,13 +86,13 @@ const { data, isPristine, handleSubmit } = useForm<AlbumUpdateData>({
     await albumStore.update(album, formData)
   },
   onSuccess: () => {
-    toastSuccess('Album updated.')
+    toastSuccess(t('albums.updated'))
     close()
   },
 })
 
 const maybeClose = async () => {
-  if (isPristine() || await showConfirmDialog('Discard all changes?')) {
+  if (isPristine() || await showConfirmDialog(t('albums.discardChanges'))) {
     close()
   }
 }

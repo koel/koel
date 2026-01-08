@@ -2,15 +2,15 @@
   <ScreenBase>
     <template #header>
       <ScreenHeader layout="collapsed">
-        Users
+        {{ t('screens.users') }}
 
         <template #controls>
           <BtnGroup uppercase>
             <Btn success @click="showAddUserForm">
               <Icon :icon="faPlus" />
-              Add
+              {{ t('screens.add') }}
             </Btn>
-            <Btn v-if="canInvite" highlight @click="showInviteUserForm">Invite</Btn>
+            <Btn v-if="canInvite" highlight @click="showInviteUserForm">{{ t('users.inviteButton') }}</Btn>
           </BtnGroup>
         </template>
       </ScreenHeader>
@@ -28,7 +28,7 @@
         data-testid="prospects-heading"
       >
         <i class="invited-heading-decoration" />
-        <span class="px-4 py-1 relative">Invited</span>
+        <span class="px-4 py-1 relative">{{ t('misc.invited') }}</span>
         <i class="invited-heading-decoration" />
       </h2>
 
@@ -44,6 +44,7 @@
 <script lang="ts" setup>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, onMounted, toRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { userStore } from '@/stores/userStore'
 import { eventBus } from '@/utils/eventBus'
 import { useAuthorization } from '@/composables/useAuthorization'
@@ -53,6 +54,7 @@ import UserCard from '@/components/user/UserCard.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 
+const { t } = useI18n()
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 
 const { currentUser } = useAuthorization()

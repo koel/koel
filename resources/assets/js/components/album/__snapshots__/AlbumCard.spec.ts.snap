@@ -12,7 +12,7 @@ exports[`albumCard > renders 1`] = `
       </div>
       <div class="space-x-2"><a href="/#/artists/led-zeppelin">Led Zeppelin</a></div>
     </div>
-    <p data-v-2487c4e3="" class="meta text-[0.9rem] flex gap-1.5 opacity-70 hover:opacity-100"><a title="Shuffle all songs in the album IV" role="button"> Shuffle </a><a title="Download all songs in the album IV" role="button"> Download </a></p>
+    <p data-v-2487c4e3="" class="meta text-[0.9rem] flex gap-1.5 opacity-70 hover:opacity-100"><a title="Shuffle all songs" role="button">Shuffle</a><a title="Download all songs" role="button">Download</a></p>
   </footer>
 </article>
 `;
@@ -28,7 +28,7 @@ exports[`albumCard > renders external album 1`] = `
       </div>
       <div class="space-x-2"><a href="/#/artists/led-zeppelin">Led Zeppelin</a></div>
     </div>
-    <p data-v-2487c4e3="" class="meta text-[0.9rem] flex gap-1.5 opacity-70 hover:opacity-100"><a title="Shuffle all songs in the album IV" role="button"> Shuffle </a><a title="Download all songs in the album IV" role="button"> Download </a></p>
+    <p data-v-2487c4e3="" class="meta text-[0.9rem] flex gap-1.5 opacity-70 hover:opacity-100"><a title="Shuffle all songs" role="button">Shuffle</a><a title="Download all songs" role="button">Download</a></p>
   </footer>
 </article>
 `;

@@ -35,7 +35,7 @@ describe('editPlaylistForm.vue', () => {
 
     await h.type(screen.getByRole('textbox', { name: 'name' }), 'Your playlist')
     await h.type(screen.getByRole('textbox', { name: 'description' }), 'Updated description')
-    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+    await h.user.click(screen.getByRole('button', { name: /save/i }))
 
     await waitFor(() => {
       expect(updateMock).toHaveBeenCalledWith(playlist, {
@@ -54,11 +54,11 @@ describe('editPlaylistForm.vue', () => {
       cover: 'https://localhost:3000/img/storage/cover.webp',
     }))
 
-    await h.user.click(screen.getByRole('button', { name: 'Remove' }))
+    await h.user.click(screen.getByRole('button', { name: /remove/i }))
 
     await h.type(screen.getByRole('textbox', { name: 'name' }), 'Your playlist')
     await h.type(screen.getByRole('textbox', { name: 'description' }), 'Updated description')
-    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+    await h.user.click(screen.getByRole('button', { name: /save/i }))
 
     await waitFor(() => {
       expect(updateMock).toHaveBeenCalledWith(playlist, {
@@ -78,10 +78,10 @@ describe('editPlaylistForm.vue', () => {
       cover: 'https://localhost:3000/img/storage/cover.webp',
     }))
 
-    await h.user.click(screen.getByRole('button', { name: 'Remove' }))
+    await h.user.click(screen.getByRole('button', { name: /remove/i }))
 
     await h.user.upload(
-      screen.getByLabelText('Pick a cover (optional)'),
+      screen.getByLabelText(/pick a cover/i),
       new File(['bytes'], 'cover.png', { type: 'image/png' }),
     )
 
@@ -89,7 +89,7 @@ describe('editPlaylistForm.vue', () => {
 
     await h.type(screen.getByRole('textbox', { name: 'name' }), 'Your playlist')
     await h.type(screen.getByRole('textbox', { name: 'description' }), 'Updated description')
-    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+    await h.user.click(screen.getByRole('button', { name: /save/i }))
 
     await waitFor(() => {
       expect(updateMock).toHaveBeenCalledWith(playlist, {

@@ -1,7 +1,7 @@
 <template>
   <SidebarSection>
     <template #header>
-      <SidebarSectionHeader>Your Library</SidebarSectionHeader>
+      <SidebarSectionHeader>{{ $t('sidebar.yourLibrary') }}</SidebarSectionHeader>
     </template>
 
     <ul class="menu">
@@ -9,25 +9,25 @@
         <template #icon>
           <Icon :icon="faMusic" fixed-width />
         </template>
-        All Songs
+        {{ $t('sidebar.allSongs') }}
       </SidebarItem>
       <SidebarItem :href="url('albums.index')" :active="isCurrentScreen('Albums', 'Album')">
         <template #icon>
           <Icon :icon="faCompactDisc" fixed-width />
         </template>
-        Albums
+        {{ $t('sidebar.albums') }}
       </SidebarItem>
       <SidebarItem :href="url('artists.index')" :active="isCurrentScreen('Artists', 'Artist')">
         <template #icon>
           <MicVocalIcon :size="16" />
         </template>
-        Artists
+        {{ $t('sidebar.artists') }}
       </SidebarItem>
       <SidebarItem :href="url('genres.index')" :active="isCurrentScreen('Genres', 'Genre')">
         <template #icon>
           <GuitarIcon :size="16" />
         </template>
-        Genres
+        {{ $t('sidebar.genres') }}
       </SidebarItem>
       <YouTubeSidebarItem v-if="youtubeVideoTitle" data-testid="youtube" :active="isCurrentScreen('YouTube')">
         {{ youtubeVideoTitle }}
@@ -40,13 +40,13 @@
         <template #icon>
           <Icon :icon="faPodcast" fixed-width />
         </template>
-        Podcasts
+        {{ $t('sidebar.podcasts') }}
       </SidebarItem>
       <SidebarItem :href="url('radio-stations.index')" :active="isCurrentScreen('Radio.Stations')">
         <template #icon>
           <RadioIcon :size="16" />
         </template>
-        Radio
+        {{ $t('sidebar.radio') }}
       </SidebarItem>
       <MediaBrowserMenuItem v-if="usesMediaBrowser" :active="isCurrentScreen('MediaBrowser')" />
     </ul>

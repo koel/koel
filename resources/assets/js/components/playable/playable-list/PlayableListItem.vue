@@ -55,18 +55,23 @@
 <script lang="ts" setup>
 import { faPodcast } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { getPlayableProp, requireInjection } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
 import { secondsToHis } from '@/utils/formatters'
 import { usePlayableListColumnVisibility } from '@/composables/usePlayableListColumnVisibility'
 import { PlayableListConfigKey } from '@/symbols'
 import { playableStore } from '@/stores/playableStore'
+import { albumStore } from '@/stores/albumStore'
+import { artistStore } from '@/stores/artistStore'
 
 import SoundBars from '@/components/ui/SoundBars.vue'
 import PlayableThumbnail from '@/components/playable/PlayableThumbnail.vue'
 import UserAvatar from '@/components/user/UserAvatar.vue'
 import ExternalMark from '@/components/ui/ExternalMark.vue'
 import FavoriteButton from '@/components/ui/FavoriteButton.vue'
+
+const { t } = useI18n()
 
 const props = withDefaults(defineProps<{ item: PlayableRow, showDisc?: boolean }>(), {
   showDisc: false,
@@ -85,8 +90,20 @@ const playing = computed(() => ['Playing', 'Paused'].includes(playable.value.pla
 const external = computed(() => isSong(playable.value) && playable.value.is_external)
 
 const fmtLength = secondsToHis(playable.value.length)
-const artist = computed(() => getPlayableProp(playable.value, 'artist_name', 'podcast_author'))
-const album = computed(() => getPlayableProp(playable.value, 'album_name', 'podcast_title'))
+const artist = computed(() => {
+  const artistName = getPlayableProp(playable.value, 'artist_name', 'podcast_author')
+  if (isSong(playable.value) && artistStore.isUnknown(artistName)) {
+    return t('screens.unknownArtist')
+  }
+  return artistName
+})
+const album = computed(() => {
+  const albumName = getPlayableProp(playable.value, 'album_name', 'podcast_title')
+  if (isSong(playable.value) && albumStore.isUnknown(albumName)) {
+    return t('screens.unknownAlbum')
+  }
+  return albumName
+})
 
 const collaborator = computed<Pick<User, 'name' | 'avatar'>>(
   () => (playable.value as Song).collaboration!.user,

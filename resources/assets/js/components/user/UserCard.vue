@@ -9,13 +9,13 @@
     <main class="flex flex-col justify-between relative flex-1 gap-1">
       <h3 class="font-medium flex gap-2 items-center text-k-fg">
         <span v-if="user.name" class="name">{{ user.name }}</span>
-        <span v-else class="name font-light">Anonymous</span>
-        <Icon v-if="isCurrentUser" :icon="faCircleCheck" class="you text-k-highlight" title="This is you!" />
+        <span v-else class="name font-light">{{ t('users.anonymous') }}</span>
+        <Icon v-if="isCurrentUser" :icon="faCircleCheck" class="you text-k-highlight" :title="t('ui.tooltips.isYou')" />
         <Icon
           v-if="hasAdminPrivileges"
           :icon="faShield"
           class="is-admin text-k-primary"
-          title="User has admin privileges"
+          :title="t('ui.tooltips.adminPrivileges')"
         />
         <img
           v-if="user.sso_provider === 'Google'"
@@ -30,11 +30,11 @@
       <p>{{ user.email }}</p>
     </main>
 
-    <Btn v-if="isCurrentUser" :href="url('profile')" highlight small tag="a">Your Profile</Btn>
+    <Btn v-if="isCurrentUser" :href="url('profile')" highlight small tag="a">{{ t('users.yourProfile') }}</Btn>
 
     <Btn v-else gray @click="requestContextMenu">
       <Icon :icon="faEllipsis" fixed-width />
-      <span class="sr-only">More Actions</span>
+      <span class="sr-only">{{ t('misc.moreActions') }}</span>
     </Btn>
   </article>
 </template>
@@ -43,6 +43,7 @@
 import googleLogo from '@/../img/logos/google.svg'
 import { faCircleCheck, faEllipsis, faShield } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from '@/composables/useRouter'
 import { useAuthorization } from '@/composables/useAuthorization'
 import { useContextMenu } from '@/composables/useContextMenu'
@@ -50,6 +51,8 @@ import { useContextMenu } from '@/composables/useContextMenu'
 import Btn from '@/components/ui/form/Btn.vue'
 import UserAvatar from '@/components/user/UserAvatar.vue'
 import UserContextMenu from '@/components/user/UserContextMenu.vue'
+
+const { t } = useI18n()
 
 const props = defineProps<{ user: User }>()
 const { user } = toRefs(props)

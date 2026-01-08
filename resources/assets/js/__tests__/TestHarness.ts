@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event'
 import type { UserEvent } from '@testing-library/user-event/dist/types/setup/setup'
 import { afterEach, beforeEach, vi } from 'vitest'
 import { defineComponent, nextTick, shallowRef } from 'vue'
+import { createI18n } from 'vue-i18n'
 import factory from '@/__tests__/factory'
 import { DialogBoxStub, MessageToasterStub, OverlayStub } from '@/__tests__/stubs'
 import { commonStore } from '@/stores/commonStore'
@@ -17,6 +18,8 @@ import { noop } from '@/utils/helpers'
 import { deepMerge, setPropIfNotExists } from '@/__tests__/utils'
 import { eventBus } from '@/utils/eventBus'
 import { cache } from '@/services/cache'
+import en from '@/locales/en.json'
+import es from '@/locales/es.json'
 
 class TestHarness {
   public router: Router
@@ -118,8 +121,19 @@ class TestHarness {
   }
 
   public render (component: any, options: RenderOptions = {}) {
+    const i18n = createI18n({
+      legacy: false,
+      locale: 'en',
+      fallbackLocale: 'en',
+      messages: {
+        en,
+        es,
+      },
+    })
+
     return render(component, deepMerge({
       global: {
+        plugins: [i18n],
         directives: {
           'koel-focus': {},
           'koel-tooltip': {},

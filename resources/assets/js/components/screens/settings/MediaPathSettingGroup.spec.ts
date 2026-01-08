@@ -20,7 +20,7 @@ describe('mediaPathSettingGroup.vue', () => {
     settingStore.state.media_path = ''
     renderComponent()
 
-    await h.type(screen.getByPlaceholderText('/path/to/your/music'), '/media')
+    await h.type(screen.getByPlaceholderText(/path\/to\/your\/music/), '/media')
     await h.user.click(screen.getByTestId('submit'))
 
     await waitFor(() => {
@@ -37,7 +37,7 @@ describe('mediaPathSettingGroup.vue', () => {
     settingStore.state.media_path = '/old'
     h.render(Component)
 
-    await h.type(screen.getByPlaceholderText('/path/to/your/music'), '/new')
+    await h.type(screen.getByPlaceholderText(/path\/to\/your\/music/), '/new')
     await h.user.click(screen.getByTestId('submit'))
 
     await waitFor(() => {

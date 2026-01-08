@@ -13,8 +13,8 @@ describe('resetPasswordForm.vue', () => {
 
     h.visit('/reset-password/Zm9vQGJhci5jb218bXktdG9rZW4=').render(Component)
 
-    await h.type(screen.getByPlaceholderText('New password'), 'new-password')
-    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+    await h.type(screen.getByPlaceholderText('New password', { exact: false }), 'new-password')
+    await h.user.click(screen.getByRole('button', { name: /Save/i }))
 
     expect(resetMock).toHaveBeenCalledWith('foo@bar.com', 'new-password', 'my-token')
     expect(loginMock).toHaveBeenCalledWith('foo@bar.com', 'new-password')

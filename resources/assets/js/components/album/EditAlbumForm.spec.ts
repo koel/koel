@@ -29,9 +29,9 @@ describe('editAlbumForm.vue', () => {
 
     // there should be a "remove cover" button, though we're not clicking it
     screen.getByRole('button', { name: 'Remove' })
-    await h.type(screen.getByTitle('Album name'), 'Not So Good Actually')
-    await h.type(screen.getByTitle('Release year'), '2022')
-    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+    await h.type(screen.getByTitle(/album name/i), 'Not So Good Actually')
+    await h.type(screen.getByTitle(/release year/i), '2022')
+    await h.user.click(screen.getByRole('button', { name: /save/i }))
 
     expect(updateMock).toHaveBeenCalledWith(album, {
       name: 'Not So Good Actually',
@@ -43,17 +43,17 @@ describe('editAlbumForm.vue', () => {
     const updateMock = h.mock(albumStore, 'update')
     const { album } = renderComponent(h.factory('album'))
 
-    await h.type(screen.getByTitle('Album name'), 'Not So Good Actually')
-    await h.type(screen.getByTitle('Release year'), '2022')
+    await h.type(screen.getByTitle(/album name/i), 'Not So Good Actually')
+    await h.type(screen.getByTitle(/release year/i), '2022')
 
     await h.user.upload(
-      screen.getByLabelText('Pick a cover (optional)'),
+      screen.getByLabelText(/pick a cover/i),
       new File(['bytes'], 'cover.png', { type: 'image/png' }),
     )
 
     await waitFor(() => expect(screen.getByRole('img').getAttribute('src')).toBe('data:image/png;base64,Ynl0ZXM='))
 
-    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+    await h.user.click(screen.getByRole('button', { name: /save/i }))
 
     expect(updateMock).toHaveBeenCalledWith(album, {
       name: 'Not So Good Actually',
@@ -68,9 +68,9 @@ describe('editAlbumForm.vue', () => {
 
     await h.user.click(screen.getByRole('button', { name: 'Remove' }))
 
-    await h.type(screen.getByTitle('Album name'), 'Not So Good Actually')
-    await h.type(screen.getByTitle('Release year'), '2022')
-    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+    await h.type(screen.getByTitle(/album name/i), 'Not So Good Actually')
+    await h.type(screen.getByTitle(/release year/i), '2022')
+    await h.user.click(screen.getByRole('button', { name: /save/i }))
 
     expect(updateMock).toHaveBeenCalledWith(album, {
       name: 'Not So Good Actually',

@@ -8,7 +8,7 @@
       class="track-number"
       data-testid="header-track-number"
       role="button"
-      title="Sort by track number"
+      :title="t('ui.tooltips.sortByTrack')"
       @click="sort('track')"
     >
       #
@@ -21,10 +21,10 @@
       class="title-artist"
       data-testid="header-title"
       role="button"
-      title="Sort by title"
+      :title="t('ui.tooltips.sortByTitle')"
       @click="sort('title')"
     >
-      Title
+      {{ t('songs.title') }}
       <template v-if="config.sortable">
         <Icon v-if="sortField === 'title' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
         <Icon v-if="sortField === 'title' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
@@ -32,15 +32,15 @@
     </span>
     <span
       v-if="shouldShowColumn('album')"
-      :title="`Sort by ${contentType === 'episodes' ? 'podcast' : (contentType === 'songs' ? 'album' : 'album/podcast')}`"
+      :title="contentType === 'episodes' ? t('ui.tooltips.sortByPodcast') : (contentType === 'songs' ? t('ui.tooltips.sortByAlbum') : t('ui.tooltips.sortByAlbum'))"
       class="album"
       data-testid="header-album"
       role="button"
       @click="sort(contentType === 'episodes' ? 'podcast_title' : (contentType === 'songs' ? 'album_name' : ['album_name', 'podcast_title']))"
     >
-      <template v-if="contentType === 'episodes'">Podcast</template>
-      <template v-else-if="contentType === 'songs'">Album</template>
-      <template v-else>Album <span class="opacity-50">/</span> Podcast</template>
+      <template v-if="contentType === 'episodes'">{{ t('menu.playable.podcast') }}</template>
+      <template v-else-if="contentType === 'songs'">{{ t('songs.album') }}</template>
+      <template v-else>{{ t('songs.album') }} <span class="opacity-50">/</span> {{ t('menu.playable.podcast') }}</template>
 
       <span v-if="config.sortable" class="ml-2">
         <Icon v-if="sortingByAlbumOrPodcast && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
@@ -48,18 +48,18 @@
       </span>
     </span>
     <template v-if="config.collaborative">
-      <span class="collaborator">User</span>
-      <span class="added-at">Added</span>
+      <span class="collaborator">{{ t('songs.user') }}</span>
+      <span class="added-at">{{ t('songs.added') }}</span>
     </template>
     <span
       v-if="shouldShowColumn('genre')"
       class="genre"
       data-testid="header-genre"
       role="button"
-      title="Sort by genre"
+      :title="t('ui.tooltips.sortByGenre')"
       @click="sort('genre')"
     >
-      Genre
+      {{ t('songs.genre') }}
       <template v-if="config.sortable">
         <Icon v-if="sortField === 'genre' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
         <Icon v-if="sortField === 'genre' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
@@ -70,10 +70,10 @@
       class="year"
       data-testid="header-year"
       role="button"
-      title="Sort by year"
+      :title="t('ui.tooltips.sortByYear')"
       @click="sort('year')"
     >
-      Year
+      {{ t('songs.year') }}
       <template v-if="config.sortable">
         <Icon v-if="sortField === 'year' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
         <Icon v-if="sortField === 'year' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
@@ -84,10 +84,10 @@
       class="time"
       data-testid="header-length"
       role="button"
-      title="Sort by duration"
+      :title="t('ui.tooltips.sortByDuration')"
       @click="sort('length')"
     >
-      Time
+      {{ t('songs.time') }}
       <template v-if="config.sortable">
         <Icon v-if="sortField === 'length' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
         <Icon v-if="sortField === 'length' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
@@ -109,6 +109,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons'
 import { arrayify, requireInjection } from '@/utils/helpers'
 import { PlayableListConfigKey, PlayableListSortFieldKey, PlayableListSortOrderKey } from '@/symbols'
@@ -116,6 +117,8 @@ import type { getPlayableCollectionContentType } from '@/utils/typeGuards'
 import { usePlayableListColumnVisibility } from '@/composables/usePlayableListColumnVisibility'
 
 import PlayableListHeaderActionMenu from '@/components/playable/playable-list/PlayableListHeaderActionMenu.vue'
+
+const { t } = useI18n()
 
 withDefaults(defineProps<{
   contentType?: ReturnType<typeof getPlayableCollectionContentType>

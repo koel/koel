@@ -5,6 +5,7 @@ use App\Http\Middleware\ForceHttps;
 use App\Http\Middleware\HandleDemoMode;
 use App\Http\Middleware\ObjectStorageAuthenticate;
 use App\Http\Middleware\RestrictPlusFeatures;
+use App\Http\Middleware\SetLocaleFromBrowser;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
@@ -26,12 +27,14 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(static function (Middleware $middleware): void {
         $middleware->api(append: [
+            SetLocaleFromBrowser::class,
             RestrictPlusFeatures::class,
             HandleDemoMode::class,
             ForceHttps::class,
         ]);
 
         $middleware->web(append: [
+            SetLocaleFromBrowser::class,
             RestrictPlusFeatures::class,
             HandleDemoMode::class,
             ForceHttps::class,

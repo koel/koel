@@ -35,19 +35,19 @@ describe('radioStationContextMenu.vue', () => {
   it('renders with Edit/Delete items', async () => {
     await renderComponent()
 
-    screen.getByText('Edit…')
-    screen.getByText('Delete')
-    screen.getByText('Play')
-    screen.getByText('Favorite')
+    screen.getByText(/Edit/i)
+    screen.getByText(/Delete/i)
+    screen.getByText(/Play/i)
+    screen.getByText(/Favorite/i)
   })
 
   it('renders without Edit/Delete items', async () => {
     await renderComponent(undefined, false)
 
-    expect(screen.queryByText('Edit…')).toBeNull()
-    expect(screen.queryByText('Delete')).toBeNull()
-    screen.getByText('Play')
-    screen.getByText('Favorite')
+    expect(screen.queryByText(/Edit/i)).toBeNull()
+    expect(screen.queryByText(/Delete/i)).toBeNull()
+    screen.getByText(/Play/i)
+    screen.getByText(/Favorite/i)
   })
 
   it('plays', async () => {
@@ -56,7 +56,7 @@ describe('radioStationContextMenu.vue', () => {
     const playMock = h.mock(playbackService, 'play')
 
     const { station } = await renderComponent()
-    await h.user.click(screen.getByText('Play'))
+    await h.user.click(screen.getByText(/Play/i))
 
     expect(playMock).toHaveBeenCalledWith(station)
   })
@@ -67,7 +67,7 @@ describe('radioStationContextMenu.vue', () => {
     const stopMock = h.mock(playbackService, 'stop')
 
     await renderComponent(h.factory('radio-station', { playback_state: 'Playing' }))
-    await h.user.click(screen.getByText('Stop'))
+    await h.user.click(screen.getByText(/Stop/i))
 
     expect(stopMock).toHaveBeenCalled()
   })
@@ -76,7 +76,7 @@ describe('radioStationContextMenu.vue', () => {
     const toggleMock = h.mock(radioStationStore, 'toggleFavorite')
     const { station } = await renderComponent(h.factory('radio-station', { favorite: false }))
 
-    await h.user.click(screen.getByText('Favorite'))
+    await h.user.click(screen.getByText(/Favorite/i))
     expect(toggleMock).toHaveBeenCalledWith(station)
   })
 
@@ -84,7 +84,7 @@ describe('radioStationContextMenu.vue', () => {
     const toggleMock = h.mock(radioStationStore, 'toggleFavorite')
     const { station } = await renderComponent(h.factory('radio-station', { favorite: true }))
 
-    await h.user.click(screen.getByText('Undo Favorite'))
+    await h.user.click(screen.getByText(/Undo Favorite/i))
     expect(toggleMock).toHaveBeenCalledWith(station)
   })
 
@@ -92,7 +92,7 @@ describe('radioStationContextMenu.vue', () => {
     const { station } = await renderComponent()
 
     const emitMock = h.mock(eventBus, 'emit')
-    await h.user.click(screen.getByText('Edit…'))
+    await h.user.click(screen.getByText(/Edit/i))
 
     expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_RADIO_STATION_FORM', station)
   })
@@ -101,7 +101,7 @@ describe('radioStationContextMenu.vue', () => {
     const deleteMock = h.mock(radioStationStore, 'delete')
     const { station } = await renderComponent()
 
-    await h.user.click(screen.getByText('Delete'))
+    await h.user.click(screen.getByText(/Delete/i))
     expect(deleteMock).toHaveBeenCalledWith(station)
   })
 })

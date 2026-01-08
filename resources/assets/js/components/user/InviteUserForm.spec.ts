@@ -24,13 +24,13 @@ describe('inviteUserForm.vue', () => {
 
     renderComponent()
 
-    await h.type(screen.getByLabelText('Emails'), 'foo@bar.ai\n')
+    await h.type(screen.getByLabelText(/emails/i), 'foo@bar.ai\n')
     await fireEvent.update(screen.getByTestId('role-picker'), 'manager')
-    await h.user.click(screen.getByRole('button', { name: 'Invite' }))
+    await h.user.click(screen.getByRole('button', { name: /invite/i }))
 
     await waitFor(() => {
       expect(inviteMock).toHaveBeenCalledWith(['foo@bar.ai'], 'manager')
-      expect(alertMock).toHaveBeenCalledWith('Invitation(s) sent.')
+      expect(alertMock).toHaveBeenCalledWith(expect.stringMatching(/invitation.*sent/i))
     })
   })
 
@@ -40,12 +40,12 @@ describe('inviteUserForm.vue', () => {
 
     renderComponent()
 
-    await h.type(screen.getByLabelText('Emails'), 'foo@bar.ai\n\na@b.c\n\n')
-    await h.user.click(screen.getByRole('button', { name: 'Invite' }))
+    await h.type(screen.getByLabelText(/emails/i), 'foo@bar.ai\n\na@b.c\n\n')
+    await h.user.click(screen.getByRole('button', { name: /invite/i }))
 
     await waitFor(() => {
       expect(inviteMock).toHaveBeenCalledWith(['foo@bar.ai', 'a@b.c'], 'user')
-      expect(alertMock).toHaveBeenCalledWith('Invitation(s) sent.')
+      expect(alertMock).toHaveBeenCalledWith(expect.stringMatching(/invitation.*sent/i))
     })
   })
 
@@ -54,8 +54,8 @@ describe('inviteUserForm.vue', () => {
 
     renderComponent()
 
-    await h.type(screen.getByLabelText('Emails'), 'invalid\n\na@b.c\n\n')
-    await h.user.click(screen.getByRole('button', { name: 'Invite' }))
+    await h.type(screen.getByLabelText(/emails/i), 'invalid\n\na@b.c\n\n')
+    await h.user.click(screen.getByRole('button', { name: /invite/i }))
 
     await waitFor(() => expect(inviteMock).not.toHaveBeenCalled())
   })

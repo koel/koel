@@ -15,7 +15,7 @@
           <button
             v-if="item.playback_state !== 'Playing'"
             class="sm:hidden py-px"
-            title="Play"
+            :title="t('ui.buttons.play')"
             @click.prevent.stop="emit('play-song')"
           >
             <PlayCircleIcon :size="16" />
@@ -29,10 +29,10 @@
       <button
         v-if="item.type === 'folders'"
         class="sm:hidden border border-k-fg-10 rounded px-1.5 py-px"
-        title="Open"
+        :title="t('ui.buttons.open')"
         @click.prevent.stop="emit('open-folder')"
       >
-        Open
+        {{ t('ui.buttons.open') }}
       </button>
     </div>
   </article>
@@ -42,10 +42,13 @@
 import { FileMusicIcon, PlayCircleIcon } from 'lucide-vue-next'
 import { faFolder } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { isSong } from '@/utils/typeGuards'
 import { playback } from '@/services/playbackManager'
 
 import SoundBars from '@/components/ui/SoundBars.vue'
+
+const { t } = useI18n()
 
 const props = defineProps<{ item: Song | Folder }>()
 const emit = defineEmits<{

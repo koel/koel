@@ -1,21 +1,22 @@
 <template>
   <ul>
-    <MenuItem @click="play">Play All</MenuItem>
-    <MenuItem @click="shuffle">Shuffle All</MenuItem>
+    <MenuItem @click="play">{{ $t('menu.artist.playAll') }}</MenuItem>
+    <MenuItem @click="shuffle">{{ $t('menu.artist.shuffleAll') }}</MenuItem>
     <Separator />
-    <MenuItem @click="toggleFavorite">{{ artist.favorite ? 'Undo Favorite' : 'Favorite' }}</MenuItem>
-    <MenuItem v-if="allowEdit" @click="requestEditForm">Edit…</MenuItem>
+    <MenuItem @click="toggleFavorite">{{ artist.favorite ? $t('menu.artist.undoFavorite') : $t('menu.artist.favorite') }}</MenuItem>
+    <MenuItem v-if="allowEdit" @click="requestEditForm">{{ $t('playlists.edit') }}</MenuItem>
     <template v-if="isStandardArtist && allowDownload">
       <Separator />
-      <MenuItem @click="download">Download</MenuItem>
+      <MenuItem @click="download">{{ $t('menu.artist.download') }}</MenuItem>
     </template>
     <Separator />
-    <MenuItem @click="showEmbedModal">Embed…</MenuItem>
+    <MenuItem @click="showEmbedModal">{{ $t('menu.artist.embed') }}</MenuItem>
   </ul>
 </template>
 
 <script lang="ts" setup>
 import { computed, onMounted, ref, toRef, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'

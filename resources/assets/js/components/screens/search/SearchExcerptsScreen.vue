@@ -2,8 +2,8 @@
   <ScreenBase>
     <template #header>
       <ScreenHeader layout="collapsed">
-        <span v-if="q">Searching for <span class="font-thin">{{ q }}</span></span>
-        <span v-else>Search</span>
+        <span v-if="q">{{ t('content.screening.searchingFor') }} <span class="font-thin">{{ q }}</span></span>
+        <span v-else>{{ t('content.screening.search') }}</span>
       </ScreenHeader>
     </template>
 
@@ -28,8 +28,8 @@
       <template #icon>
         <Icon :icon="faSearch" />
       </template>
-      Find songs, artists, and albums,
-      <span class="secondary block">all in one place.</span>
+      {{ t('content.screening.findSongs') }}
+      <span class="secondary block">{{ t('content.screening.inOnePlace') }}</span>
     </ScreenEmptyState>
   </ScreenBase>
 </template>
@@ -38,6 +38,7 @@
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { intersectionBy } from 'lodash'
 import { ref, toRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { eventBus } from '@/utils/eventBus'
 import { searchStore } from '@/stores/searchStore'
 
@@ -50,6 +51,7 @@ import AlbumResultsBlock from '@/components/screens/search/AlbumExcerptResultsBl
 import PodcastExcerptResultsBlock from '@/components/screens/search/PodcastExcerptResultsBlock.vue'
 import RadioStationExcerptResultsBlock from '@/components/screens/search/RadioStationExcerptResultsBlock.vue'
 
+const { t } = useI18n()
 const excerpt = toRef(searchStore.state, 'excerpt')
 const q = ref('')
 const searching = ref(false)

@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/vue'
 import { describe, expect, it } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
+import en from '@/locales/en.json'
 import Component from './AlbumListSorter.vue'
 
 describe('albumListSorter.vue', () => {
@@ -14,18 +15,18 @@ describe('albumListSorter.vue', () => {
       },
     })
 
-    screen.getByTitle('Sorting by Name, ascending')
+    screen.getByTitle(en.ui.sorting.sortingBy.replace('{label}', en.albums.sortFields.name).replace('{order}', en.ui.sorting.ascending))
 
-    await h.user.click(screen.getByTitle('Sort by Name'))
+    await h.user.click(screen.getByTitle(en.ui.sorting.sortBy.replace('{label}', en.albums.sortFields.name)))
     expect(emitted().sort[0]).toEqual(['name', 'desc'])
 
-    await h.user.click(screen.getByTitle('Sort by Release Year'))
+    await h.user.click(screen.getByTitle(en.ui.sorting.sortBy.replace('{label}', en.albums.sortFields.year)))
     expect(emitted().sort[1]).toEqual(['year', 'asc'])
 
-    await h.user.click(screen.getByTitle('Sort by Artist'))
+    await h.user.click(screen.getByTitle(en.ui.sorting.sortBy.replace('{label}', en.albums.sortFields.artist_name)))
     expect(emitted().sort[2]).toEqual(['artist_name', 'asc'])
 
-    await h.user.click(screen.getByTitle('Sort by Date Added'))
+    await h.user.click(screen.getByTitle(en.ui.sorting.sortBy.replace('{label}', en.albums.sortFields.created_at)))
     expect(emitted().sort[3]).toEqual(['created_at', 'asc'])
   })
 })

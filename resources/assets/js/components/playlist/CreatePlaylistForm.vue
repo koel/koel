@@ -2,46 +2,47 @@
   <form class="md:w-[480px] w-full" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
     <header>
       <h1>
-        New Playlist
-        <span v-if="playables.length" data-testid="from-playables">from {{ pluralize(playables, entityName) }}</span>
+        {{ t('playlists.newPlaylist') }}
+        <span v-if="playables.length" data-testid="from-playables">{{ t('playlists.fromItems', { count: pluralize(playables, entityName).split(' ')[0], item: entityName }) }}</span>
       </h1>
     </header>
 
     <main>
       <div class="grid grid-cols-2 gap-4">
         <FormRow>
-          <template #label>Name *</template>
-          <TextInput v-model="data.name" v-koel-focus name="name" placeholder="Playlist name" required />
+          <template #label>{{ t('playlists.name') }}</template>
+          <TextInput v-model="data.name" v-koel-focus name="name" :placeholder="t('playlists.playlistName')" required />
         </FormRow>
         <FormRow>
-          <template #label>Folder</template>
+          <template #label>{{ t('playlists.folder.name') }}</template>
           <SelectBox v-model="data.folder_id">
             <option :value="null" />
             <option v-for="{ id, name } in folders" :key="id" :value="id">{{ name }}</option>
           </SelectBox>
         </FormRow>
         <FormRow class="col-span-2">
-          <template #label>Description</template>
+          <template #label>{{ t('playlists.description') }}</template>
           <TextArea
             v-model="data.description"
             class="h-20"
             name="description"
-            placeholder="Some optional description"
+            :placeholder="t('playlists.optionalDescription')"
           />
         </FormRow>
-        <ArtworkField v-model="data.cover">Pick a cover (optional)</ArtworkField>
+        <ArtworkField v-model="data.cover">{{ t('playlists.pickCover') }}</ArtworkField>
       </div>
     </main>
 
     <footer>
-      <Btn type="submit">Save</Btn>
-      <Btn white @click.prevent="maybeClose">Cancel</Btn>
+      <Btn type="submit">{{ t('buttons.save') || t('auth.save') }}</Btn>
+      <Btn white @click.prevent="maybeClose">{{ t('auth.cancel') }}</Btn>
     </footer>
   </form>
 </template>
 
 <script lang="ts" setup>
 import { computed, toRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import type { CreatePlaylistData } from '@/stores/playlistStore'
 import { playlistStore } from '@/stores/playlistStore'
@@ -67,6 +68,7 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { playables, folder: targetFolder } = props
 
+const { t } = useI18n()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { go, url } = useRouter()
@@ -85,7 +87,7 @@ const { data, isPristine, handleSubmit } = useForm<CreatePlaylistData>({
   onSubmit: async data => await playlistStore.store(data, playables),
   onSuccess: (playlist: Playlist) => {
     close()
-    toastSuccess(`Playlist "${playlist.name}" created.`)
+    toastSuccess(t('playlists.created', { name: playlist.name }))
     go(url('playlists.show', { id: playlist.id }))
   },
 })
@@ -102,7 +104,7 @@ const entityName = computed(() => {
 })
 
 const maybeClose = async () => {
-  if (isPristine() || await showConfirmDialog('Discard all changes?')) {
+  if (isPristine() || await showConfirmDialog(t('playlists.discardChanges'))) {
     close()
   }
 }

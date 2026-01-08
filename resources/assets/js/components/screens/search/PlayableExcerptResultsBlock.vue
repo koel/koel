@@ -11,7 +11,7 @@
         small
         @click.prevent="goToSongResults"
       >
-        View All
+        {{ t('ui.buttons.viewAll') }}
       </Btn>
     </template>
 
@@ -23,13 +23,14 @@
         class="border border-k-fg-5 rounded-lg overflow-hidden"
         @press:enter="onPressEnter"
       />
-      <p v-else>Nothing found.</p>
+      <p v-else>{{ t('screens.nothingFound') }}</p>
     </template>
   </ExcerptResultBlock>
 </template>
 
 <script lang="ts" setup>
 import { computed, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from '@/composables/useRouter'
 import { getPlayableCollectionContentType } from '@/utils/typeGuards'
 import { usePlayableList } from '@/composables/usePlayableList'
@@ -45,6 +46,7 @@ const props = withDefaults(defineProps<{ playables?: Playable[], query?: string,
   searching: false,
 })
 
+const { t } = useI18n()
 const { playables, query, searching } = toRefs(props)
 
 const {
@@ -59,11 +61,11 @@ const {
 const headingText = computed(() => {
   switch (getPlayableCollectionContentType(props.playables)) {
     case 'episodes':
-      return 'Episodes'
+      return t('misc.episodes')
     case 'songs':
-      return 'Songs'
+      return t('misc.songs')
     default:
-      return 'Songs & Episodes'
+      return t('content.screening.songsAndEpisodes')
   }
 })
 

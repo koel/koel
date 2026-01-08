@@ -17,11 +17,11 @@
       </a>
     </template>
     <template #meta>
-      <a :title="`Shuffle all songs by ${artist.name}`" role="button" @click.prevent="shuffle">
-        Shuffle
+      <a :title="t('misc.shuffleAllSongs')" role="button" @click.prevent="shuffle">
+        {{ t('albums.shuffle') }}
       </a>
-      <a v-if="allowDownload" :title="`Download all songs by ${artist.name}`" role="button" @click.prevent="download">
-        Download
+      <a v-if="allowDownload" :title="t('misc.downloadAllSongs')" role="button" @click.prevent="download">
+        {{ t('playlists.download') }}
       </a>
     </template>
   </BaseCard>
@@ -29,6 +29,7 @@
 
 <script lang="ts" setup>
 import { computed, toRef, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
@@ -42,6 +43,8 @@ import { useContextMenu } from '@/composables/useContextMenu'
 import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
 import ExternalMark from '@/components/ui/ExternalMark.vue'
 import FavoriteButton from '@/components/ui/FavoriteButton.vue'
+
+const { t } = useI18n()
 
 const props = withDefaults(defineProps<{ artist: Artist, layout?: CardLayout }>(), { layout: 'full' })
 

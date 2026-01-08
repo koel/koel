@@ -4,23 +4,22 @@
       <span class="mr-2 text-[#1db954]">
         <Icon :icon="faSpotify" />
       </span>
-      Spotify Integration
+      {{ t('integrations.spotify.title') }}
     </h3>
 
     <div v-if="useSpotify">
       <p>
-        Spotify integration is enabled.
-        {{ appName }} will attempt to retrieve album arts and artist images from Spotify when a song is played, if
-        needed.
+        {{ t('integrations.spotify.enabled') }}
+        {{ t('integrations.spotify.enabledDescription', { appName }) }}
       </p>
     </div>
     <div v-else>
       <p>
-        Spotify integration is not enabled.
+        {{ t('integrations.spotify.notEnabled') }}
         <span v-if="currentUserCan.manageSettings()" data-testid="spotify-admin-instruction">
-          Check
-          <a href="https://docs.koel.dev/service-integrations#spotify" target="_blank">Documentation</a>
-          for integration instructions.
+          {{ t('integrations.spotify.checkDocumentation') }}
+          <a href="https://docs.koel.dev/service-integrations#spotify" target="_blank">{{ t('integrations.spotify.documentation') }}</a>
+          {{ t('integrations.spotify.forInstructions') }}
         </span>
       </p>
     </div>
@@ -28,11 +27,13 @@
 </template>
 
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n'
 import { faSpotify } from '@fortawesome/free-brands-svg-icons'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 import { usePolicies } from '@/composables/usePolicies'
 import { useBranding } from '@/composables/useBranding'
 
+const { t } = useI18n()
 const { currentUserCan } = usePolicies()
 const { useSpotify } = useThirdPartyServices()
 const { name: appName } = useBranding()

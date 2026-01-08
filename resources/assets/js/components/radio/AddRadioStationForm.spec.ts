@@ -11,11 +11,11 @@ describe('addRadioStationForm.vue', () => {
     const storeMock = h.mock(radioStationStore, 'store').mockResolvedValue(h.factory('radio-station'))
 
     h.render(Component)
-    await h.type(screen.getByPlaceholderText('My Favorite Radio Station'), 'Beethoven Goes Metal')
-    await h.type(screen.getByPlaceholderText('https://radio.example.com/stream'), 'https://beet.stream/metal')
-    await h.type(screen.getByPlaceholderText('A short description of the station'), 'Heavy af')
+    await h.type(screen.getByPlaceholderText(/My Favorite Radio Station/i), 'Beethoven Goes Metal')
+    await h.type(screen.getByPlaceholderText(/https:\/\/radio\.example\.com\/stream/i), 'https://beet.stream/metal')
+    await h.type(screen.getByPlaceholderText(/A short description of the station/i), 'Heavy af')
 
-    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+    await h.user.click(screen.getByRole('button', { name: /Save/i }))
 
     expect(storeMock).toHaveBeenCalledWith({
       name: 'Beethoven Goes Metal',
@@ -30,19 +30,19 @@ describe('addRadioStationForm.vue', () => {
     const storeMock = h.mock(radioStationStore, 'store').mockResolvedValue(h.factory('radio-station'))
 
     h.render(Component)
-    await h.type(screen.getByPlaceholderText('My Favorite Radio Station'), 'Beethoven Goes Metal')
-    await h.type(screen.getByPlaceholderText('https://radio.example.com/stream'), 'https://beet.stream/metal')
-    await h.type(screen.getByPlaceholderText('A short description of the station'), 'Heavy af')
+    await h.type(screen.getByPlaceholderText(/My Favorite Radio Station/i), 'Beethoven Goes Metal')
+    await h.type(screen.getByPlaceholderText(/https:\/\/radio\.example\.com\/stream/i), 'https://beet.stream/metal')
+    await h.type(screen.getByPlaceholderText(/A short description of the station/i), 'Heavy af')
 
     await h.user.upload(
-      screen.getByLabelText('Pick a logo (optional)'),
+      screen.getByLabelText(/Pick a logo/i),
       new File(['bytes'], 'logo.png', { type: 'image/png' }),
     )
 
     await waitFor(() => screen.getByRole('img'))
 
-    await h.user.click(screen.getByLabelText('Make this station public'))
-    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+    await h.user.click(screen.getByLabelText(/Make this station public/i))
+    await h.user.click(screen.getByRole('button', { name: /Save/i }))
 
     expect(storeMock).toHaveBeenCalledWith({
       name: 'Beethoven Goes Metal',

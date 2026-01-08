@@ -8,11 +8,11 @@ exports[`allSongsScreen.vue > renders 1`] = `
     </aside>
     <main data-v-5691beb5="" class="flex flex-1 gap-5 items-center overflow-hidden">
       <div data-v-5691beb5="" class="w-full flex-1 overflow-hidden">
-        <h1 data-v-5691beb5="" class="name text-k-fg overflow-hidden whitespace-nowrap text-ellipsis mr-4 font-thin md:font-bold my-0 leading-tight"> All Songs </h1><span data-v-5691beb5="" class="meta hidden text-[0.9rem] leading-loose space-x-2"><span data-v-8ea4eaa5="" data-v-5691beb5-s="">420 songs</span><span data-v-8ea4eaa5="" data-v-5691beb5-s="">34 hr 17 min</span></span>
+        <h1 data-v-5691beb5="" class="name text-k-fg overflow-hidden whitespace-nowrap text-ellipsis mr-4 font-thin md:font-bold my-0 leading-tight">All Songs </h1><span data-v-5691beb5="" class="meta hidden text-[0.9rem] leading-loose space-x-2"><span data-v-8ea4eaa5="" data-v-5691beb5-s="">420 Songs</span><span data-v-8ea4eaa5="" data-v-5691beb5-s="">34 hr 17 min</span></span>
       </div>
       <div data-v-8ea4eaa5="" data-v-5691beb5-s="" class="controls w-full flex justify-between items-center gap-4">
         <div data-v-8ea4eaa5="" data-v-5691beb5-s="" class="relative" data-testid="song-list-controls">
-          <div class="flex gap-2 flex-wrap"><span data-v-cf9b67d8="" class="btn-group inline-flex relative flex-nowrap" uppercase=""><button data-v-8943c846="" class="text-base text-white border border-transparent bg-k-primary px-3.5 py-2 rounded cursor-pointer btn-shuffle-all" type="button" data-testid="btn-shuffle-all" highlight="" title="Shuffle all. Press Alt/⌥ to change mode."><br data-testid="Icon" icon="[object Object]" fixed-width=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
+          <div class="flex gap-2 flex-wrap"><span data-v-cf9b67d8="" class="btn-group inline-flex relative flex-nowrap" uppercase=""><button data-v-8943c846="" class="text-base text-white border border-transparent bg-k-primary px-3.5 py-2 rounded cursor-pointer btn-shuffle-all" type="button" data-testid="btn-shuffle-all" highlight="" title="Shuffle all. Press Alt/⌥ to change mode."><br data-testid="Icon" icon="[object Object]" fixed-width=""> All</button><!--v-if--><!--v-if--><!--v-if--></span>
             <!--v-if-->
             <!--v-if-->
           </div>
@@ -22,10 +22,10 @@ exports[`allSongsScreen.vue > renders 1`] = `
                 <section data-v-2ee1a399="" class="existing-playlists">
                   <p data-v-2ee1a399="" class="mb-2 text-[0.9rem]">Add 0 items to</p>
                   <ul data-v-2ee1a399="" class="relative max-h-48 overflow-y-scroll space-y-1.5">
-                    <li data-v-2ee1a399="" data-testid="queue" tabindex="0">Queue</li>
-                    <li data-v-2ee1a399="" class="favorites" data-testid="add-to-favorites" tabindex="0"> Favorites </li>
+                    <li data-v-2ee1a399="" data-testid="queue" tabindex="0">Current Queue</li>
+                    <li data-v-2ee1a399="" class="favorites" data-testid="add-to-favorites" tabindex="0">Favorites</li>
                   </ul>
-                </section><button data-v-8943c846="" data-v-2ee1a399="" class="text-base text-white border border-transparent bg-k-primary px-3.5 py-2 rounded cursor-pointer !w-full !border !border-solid !border-white/20" type="button" transparent=""> New Playlist… </button>
+                </section><button data-v-8943c846="" data-v-2ee1a399="" class="text-base text-white border border-transparent bg-k-primary px-3.5 py-2 rounded cursor-pointer !w-full !border !border-solid !border-white/20" type="button" transparent="">New Playlist…</button>
               </div>
             </div>
           </div>

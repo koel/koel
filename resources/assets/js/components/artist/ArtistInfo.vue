@@ -10,14 +10,15 @@
 
     <div v-if="!loading && info?.bio" v-html="info.bio.full" />
 
-    <template v-if="info && !loading" #footer>
-      <a :href="info.url" rel="openener" target="_blank">Source</a>
+    <template v-if="!loading && info?.url" #footer>
+      <a :href="info.url" rel="noopener" target="_blank">{{ t('albums.source') }}</a>
     </template>
   </AlbumArtistInfo>
 </template>
 
 <script lang="ts" setup>
 import { ref, toRefs, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { encyclopediaService } from '@/services/encyclopediaService'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 
@@ -28,6 +29,7 @@ import ParagraphSkeleton from '@/components/ui/ParagraphSkeleton.vue'
 const props = withDefaults(defineProps<{ artist: Artist, mode?: EncyclopediaDisplayMode }>(), { mode: 'aside' })
 const { artist, mode } = toRefs(props)
 
+const { t } = useI18n()
 const { useMusicBrainz, useLastfm, useSpotify } = useThirdPartyServices()
 
 const loading = ref(false)

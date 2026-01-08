@@ -16,8 +16,8 @@ describe('editPlaylistFolderForm.vue', () => {
       },
     })
 
-    await h.type(screen.getByPlaceholderText('Folder name'), 'Your folder')
-    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+    await h.type(screen.getByPlaceholderText(/Folder name/i), 'Your folder')
+    await h.user.click(screen.getByRole('button', { name: /Save/i }))
 
     await waitFor(() => {
       expect(renameMock).toHaveBeenCalledWith(folder, 'Your folder')

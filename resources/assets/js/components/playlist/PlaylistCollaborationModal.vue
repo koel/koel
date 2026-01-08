@@ -6,19 +6,18 @@
     @keydown.esc="close"
   >
     <header>
-      <h1>Playlist Collaboration</h1>
+      <h1>{{ t('playlists.collaboration') }}</h1>
     </header>
 
     <main>
       <p>
-        Collaborative playlists allow multiple users to contribute. <br>
-        Note: Songs added to a collaborative playlist are made accessible to all users,
-        and you cannot mark a song as private if it’s still part of a collaborative playlist.
+        {{ t('playlists.collaborativeDescription') }}<br>
+        {{ t('playlists.collaborativeWarning') }}
       </p>
 
       <section class="space-y-5">
         <h2 class="flex text-xl mt-6 mb-1 items-center">
-          <span class="flex-1">Current Collaborators</span>
+          <span class="flex-1">{{ t('playlists.currentCollaborators') }}</span>
           <InviteCollaborators v-if="canManageCollaborators" :playlist="playlist" />
         </h2>
         <div v-koel-overflow-fade class="collaborators-wrapper overflow-auto">
@@ -28,13 +27,14 @@
     </main>
 
     <footer>
-      <Btn @click.prevent="close">Close</Btn>
+      <Btn @click.prevent="close">{{ t('playlists.close') }}</Btn>
     </footer>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAuthorization } from '@/composables/useAuthorization'
 
 import Btn from '@/components/ui/form/Btn.vue'
@@ -46,6 +46,7 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { playlist } = props
 
+const { t } = useI18n()
 const { currentUser } = useAuthorization()
 
 const canManageCollaborators = computed(() => currentUser.value?.id === playlist.owner_id)

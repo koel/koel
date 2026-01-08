@@ -354,7 +354,38 @@ export class QueuePlaybackService extends BasePlaybackService {
   }
 
   protected onError (error: ErrorEvent): void {
-    logger.error(error)
+    const media = (error.target as HTMLMediaElement) || this.player?.media
+    const currentPlayable = queueStore.current
+    
+    // Get error details if available
+    const errorCode = media?.error?.code
+    const errorMessage = media?.error?.message || 'Unknown error'
+    
+    // Map error codes to human-readable messages
+    const errorMessages: Record<number, string> = {
+      1: 'MEDIA_ERR_ABORTED - The user aborted the loading',
+      2: 'MEDIA_ERR_NETWORK - A network error occurred',
+      3: 'MEDIA_ERR_DECODE - An error occurred while decoding',
+      4: 'MEDIA_ERR_SRC_NOT_SUPPORTED - The media source is not supported',
+    }
+    
+    const errorDetails = errorCode ? errorMessages[errorCode] || `Error code: ${errorCode}` : errorMessage
+    const playableInfo = currentPlayable 
+      ? `${currentPlayable.title} (ID: ${currentPlayable.id})`
+      : 'Unknown playable'
+    
+    // Log as warning since we're handling it gracefully by playing next
+    logger.warn(`Audio playback error for ${playableInfo}: ${errorDetails}. Skipping to next item.`)
+    
+    // Only log full error details in development
+    if (process.env.NODE_ENV === 'development' && media?.error) {
+      logger.warn('Media error details:', {
+        code: media.error.code,
+        message: media.error.message,
+        src: media.src,
+      })
+    }
+    
     this.playNext()
   }
 

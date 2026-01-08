@@ -5,7 +5,7 @@
     class="view-profile rounded-full"
     data-testid="view-profile-link"
     :href="url('profile')"
-    title="Profile and preferences"
+    :title="t('screens.profileAndPreferences')"
   >
     <UserAvatar
       :user="currentUser"
@@ -16,11 +16,13 @@
 </template>
 
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n'
 import { useAuthorization } from '@/composables/useAuthorization'
 import { useRouter } from '@/composables/useRouter'
 
 import UserAvatar from '@/components/user/UserAvatar.vue'
 
+const { t } = useI18n()
 const { url } = useRouter()
 const { currentUser } = useAuthorization()
 </script>

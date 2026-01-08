@@ -4,6 +4,7 @@
 
 <script lang="ts" setup>
 import { onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAuthorization } from '@/composables/useAuthorization'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useOverlay } from '@/composables/useOverlay'
@@ -19,6 +20,7 @@ const emits = defineEmits<{
   (e: 'error', err: unknown): void
 }>()
 
+const { t } = useI18n()
 const { showOverlay, hideOverlay } = useOverlay()
 const { currentUser } = useAuthorization()
 
@@ -32,7 +34,7 @@ const requestNotificationPermission = async () => {
 }
 
 onMounted(async () => {
-  showOverlay({ message: 'Just a little patience…' })
+  showOverlay({ message: t('misc.pleaseWait') })
 
   try {
     await commonStore.init()

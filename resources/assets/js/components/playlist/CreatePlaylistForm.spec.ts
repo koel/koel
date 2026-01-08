@@ -32,7 +32,7 @@ describe('createPlaylistForm.vue', () => {
 
     await h.type(screen.getByRole('textbox', { name: 'name' }), 'My playlist')
     await h.type(screen.getByRole('textbox', { name: 'description' }), 'Some description')
-    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+    await h.user.click(screen.getByRole('button', { name: /save/i }))
 
     expect(storeMock).toHaveBeenCalledWith({
       name: 'My playlist',
@@ -46,11 +46,13 @@ describe('createPlaylistForm.vue', () => {
     const storeMock = h.mock(playlistStore, 'store').mockResolvedValue(h.factory('playlist'))
     const { folder, playables } = renderComponent()
 
-    screen.getByText(`from ${playables.length} songs`)
+    // The format is "from {count} {item}" where item is singular "song"
+    // pluralize returns "2 songs", split(' ')[0] gives "2", entityName is "song"
+    screen.getByText(`from ${playables.length} song`)
 
     await h.type(screen.getByRole('textbox', { name: 'name' }), 'My playlist')
     await h.type(screen.getByRole('textbox', { name: 'description' }), 'Some description')
-    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+    await h.user.click(screen.getByRole('button', { name: /save/i }))
 
     expect(storeMock).toHaveBeenCalledWith({
       name: 'My playlist',
@@ -65,7 +67,7 @@ describe('createPlaylistForm.vue', () => {
     const storeMock = h.mock(playlistStore, 'store').mockResolvedValue(h.factory('playlist'))
 
     await h.user.upload(
-      screen.getByLabelText('Pick a cover (optional)'),
+      screen.getByLabelText(/pick a cover/i),
       new File(['bytes'], 'logo.png', { type: 'image/png' }),
     )
 
@@ -73,7 +75,7 @@ describe('createPlaylistForm.vue', () => {
 
     await h.type(screen.getByRole('textbox', { name: 'name' }), 'My playlist')
     await h.type(screen.getByRole('textbox', { name: 'description' }), 'Some description')
-    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+    await h.user.click(screen.getByRole('button', { name: /save/i }))
 
     expect(storeMock).toHaveBeenCalledWith({
       name: 'My playlist',

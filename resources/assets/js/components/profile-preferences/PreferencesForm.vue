@@ -3,13 +3,13 @@
     <FormRow v-if="isPlus">
       <div>
         <CheckBox v-model="preferences.make_uploads_public" name="make_uploads_public" />
-        Make uploaded songs public by default
+        {{ $t('preferences.makeUploadedPublic') }}
       </div>
     </FormRow>
     <FormRow v-if="isPlus">
       <div>
         <CheckBox v-model="preferences.include_public_media" name="include_public_media" />
-        Show other users’ public songs, albums, artists, and radio stations in your library (reload required)
+        {{ $t('preferences.showOthersPublicMedia') }}
       </div>
     </FormRow>
     <FormRow>
@@ -21,13 +21,13 @@
     <FormRow v-if="onMobile">
       <div>
         <CheckBox v-model="preferences.show_now_playing_notification" name="notify" />
-        Show “Now Playing” notification
+        {{ $t('preferences.showNowPlayingNotification') }}
       </div>
     </FormRow>
     <FormRow v-if="!onMobile">
       <div>
         <CheckBox v-model="preferences.confirm_before_closing" name="confirm_closing" />
-        Confirm before closing Koel
+        {{ $t('preferences.confirmClosing') }}
       </div>
     </FormRow>
     <FormRow v-if="showTranscodingOption">
@@ -37,7 +37,7 @@
           data-testid="transcode_on_mobile"
           name="transcode_on_mobile"
         />
-        Convert and play media at
+        {{ $t('preferences.convertPlayMedia') }}
         <select
           v-model="preferences.transcode_quality"
           :disabled="!preferences.transcode_on_mobile"
@@ -45,13 +45,13 @@
         >
           <option v-for="quality in [64, 96, 128, 192, 256, 320]" :key="quality" :value="quality">{{ quality }}</option>
         </select>
-        kbps on mobile
+        {{ $t('preferences.kbpsOnMobile') }}
       </div>
     </FormRow>
     <FormRow>
       <div>
         <CheckBox v-model="preferences.show_album_art_overlay" name="show_album_art_overlay" />
-        Show a translucent, blurred overlay of the current album’s art
+        {{ $t('preferences.showAlbumArtOverlay') }}
       </div>
     </FormRow>
   </div>
@@ -60,6 +60,7 @@
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
 import { computed, toRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useKoelPlus } from '@/composables/useKoelPlus'
@@ -67,27 +68,39 @@ import { useKoelPlus } from '@/composables/useKoelPlus'
 import CheckBox from '@/components/ui/form/CheckBox.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 
+const { t } = useI18n()
 const onMobile = isMobile.any
 const { isPlus } = useKoelPlus()
 
 const showTranscodingOption = toRef(commonStore.state, 'supports_transcoding')
 
 const continuousPlaybackLabel = computed(() => {
-  const types = [
-    'playlist',
-    'album',
-    'artist',
-    'genre',
-    'podcast',
+  const typeKeys = [
+    'playlists',
+    'albums',
+    'artists',
+    'genres',
+    'podcasts',
   ]
 
   if (commonStore.state.uses_media_browser) {
-    types.push('folder')
+    typeKeys.push('folder')
   }
 
-  types[types.length - 1] = `or ${types[types.length - 1]}`
+  const types = typeKeys.map(key => {
+    if (key === 'folder') {
+      return t('playlists.folder.name') || 'folder'
+    }
+    return t(`sidebar.${key}`)
+  })
 
-  return `Playing a song or episode triggers continuous playback of the entire ${types.join(', ')}`
+  // For the last item, we need to add "or" before it
+  if (types.length > 0) {
+    const lastType = types[types.length - 1]
+    types[types.length - 1] = `${t('preferences.or')} ${lastType}`
+  }
+
+  return t('preferences.continuousPlaybackDescription', { types: types.join(', ') })
 })
 </script>
 

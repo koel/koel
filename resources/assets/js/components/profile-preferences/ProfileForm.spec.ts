@@ -24,7 +24,7 @@ describe('profileForm.vue', () => {
     await h.type(screen.getByTestId('email'), 'koel@example.com')
     await h.type(screen.getByTestId('name'), 'Koel User')
     await h.type(screen.getByTestId('newPassword'), 'new-password')
-    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+    await h.user.click(screen.getByRole('button', { name: /save/i }))
 
     expect(updateMock).toHaveBeenCalledWith({
       name: 'Koel User',

@@ -2,14 +2,14 @@
   <ScreenBase>
     <template #header>
       <ScreenHeader :disabled="loading" :layout="playables.length ? headerLayout : 'collapsed'">
-        Results for <span class="font-thin">{{ decodedQ }}</span>
+        {{ t('misc.resultsFor') }} <span class="font-thin">{{ decodedQ }}</span>
 
         <template #thumbnail>
           <ThumbnailStack :thumbnails="thumbnails" />
         </template>
 
         <template v-if="playables.length" #meta>
-          <span>{{ pluralize(playables, 'item') }}</span>
+          <span>{{ itemCountText }}</span>
           <span>{{ duration }}</span>
         </template>
 
@@ -38,16 +38,17 @@
 
 <script lang="ts" setup>
 import { computed, onMounted, ref, toRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { searchStore } from '@/stores/searchStore'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
 import { useRouter } from '@/composables/useRouter'
-import { pluralize } from '@/utils/formatters'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import PlayableListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 
+const { t } = useI18n()
 const { getRouteParam } = useRouter()
 const q = ref('')
 
@@ -69,6 +70,11 @@ const {
 const { PlayableListControls, config } = usePlayableListControls('Search.Playables')
 const decodedQ = computed(() => decodeURIComponent(q.value))
 const loading = ref(false)
+const itemCountText = computed(() => {
+  const count = playables.value.length
+  const itemText = count === 1 ? t('messages.genericItemSingular') : t('messages.genericItemPlural')
+  return `${count.toLocaleString()} ${itemText}`
+})
 
 searchStore.resetPlayableResultState()
 

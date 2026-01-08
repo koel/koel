@@ -1,7 +1,7 @@
 <template>
   <ScreenBase>
     <template #header>
-      <ScreenHeader>Settings</ScreenHeader>
+      <ScreenHeader>{{ t('screens.settings') }}</ScreenHeader>
     </template>
 
     <main class="space-y-6">
@@ -12,6 +12,7 @@
 </template>
 
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import MediaPathSettingGroup from '@/components/screens/settings/MediaPathSettingGroup.vue'
@@ -20,6 +21,7 @@ import BrandingSettingGroup from '@/components/screens/settings/BrandingSettingG
 import { useKoelPlus } from '@/composables/useKoelPlus'
 import { useBranding } from '@/composables/useBranding'
 
+const { t } = useI18n()
 const {
   currentBranding,
 } = useBranding()

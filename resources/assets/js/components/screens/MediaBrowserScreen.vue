@@ -7,7 +7,7 @@
         <template #meta>
           <div class="flex items-center gap-2 mt-2">
             <Breadcrumbs :path class="flex-1" />
-            <Btn transparent small title="Reload" @click.prevent="refresh">
+            <Btn transparent small :title="t('misc.reload')" @click.prevent="refresh">
               <Icon :icon="faRotateRight" />
             </Btn>
           </div>
@@ -16,9 +16,9 @@
     </template>
 
     <ScreenEmptyState v-if="libraryEmpty">
-      No files found.
+      {{ t('screens.noFilesFound') }}
       <span v-if="currentUserCan.manageSettings()" class="secondary block">
-        Have you set up your library yet?
+        {{ t('screens.home.setupLibrary') }}
       </span>
     </ScreenEmptyState>
 
@@ -48,6 +48,7 @@ import { faRotateRight } from '@fortawesome/free-solid-svg-icons'
 import { faFolderOpen } from '@fortawesome/free-regular-svg-icons'
 import { pull } from 'lodash'
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { commonStore } from '@/stores/commonStore'
 import { useRouter } from '@/composables/useRouter'
 import { mediaBrowser } from '@/services/mediaBrowser'
@@ -63,6 +64,7 @@ import MediaListView from '@/components/playable/media-browser/MediaListView.vue
 import MediaListViewSkeleton from '@/components/playable/media-browser/MediaListViewSkeleton.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 
+const { t } = useI18n()
 const { currentUserCan } = usePolicies()
 const { onRouteChanged, getRouteParam, onScreenActivated } = useRouter()
 

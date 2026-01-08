@@ -1,14 +1,15 @@
 <template>
   <ul>
-    <MenuItem v-if="isForSingleFolder" @click="openFolder">Open</MenuItem>
-    <MenuItem @click="play">Play</MenuItem>
-    <MenuItem @click="shuffle">Shuffle</MenuItem>
-    <MenuItem @click="queue">Add to Queue</MenuItem>
+    <MenuItem v-if="isForSingleFolder" @click="openFolder">{{ t('menu.mediaBrowser.open') }}</MenuItem>
+    <MenuItem @click="play">{{ t('ui.buttons.play') }}</MenuItem>
+    <MenuItem @click="shuffle">{{ t('albums.shuffle') }}</MenuItem>
+    <MenuItem @click="queue">{{ t('misc.addToQueue') }}</MenuItem>
   </ul>
 </template>
 
 <script lang="ts" setup>
 import { computed, onMounted, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from '@/composables/useRouter'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { useMessageToaster } from '@/composables/useMessageToaster'
@@ -21,6 +22,7 @@ import { playback } from '@/services/playbackManager'
 const props = defineProps<{ items: Array<Folder | Song> }>()
 const { items } = toRefs(props)
 
+const { t } = useI18n()
 const { MenuItem, trigger } = useContextMenu()
 const { go, url } = useRouter()
 const { toastWarning, toastSuccess } = useMessageToaster()
@@ -59,9 +61,9 @@ const queue = () => trigger(async () => {
 
   if (songs.length) {
     queueStore.queue(songs)
-    toastSuccess(`${pluralize(songs, 'song')} added to queue.`)
+    toastSuccess(t('misc.addedToQueue', { count: songs.length, item: pluralize(songs, 'song') }))
   } else {
-    toastWarning('Nothing to queue.')
+    toastWarning(t('misc.nothingToQueue'))
   }
 })
 

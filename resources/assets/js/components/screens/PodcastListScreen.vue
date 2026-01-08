@@ -7,7 +7,7 @@
           <div class="flex gap-2">
             <Btn
               v-koel-tooltip
-              :title="preferences.podcasts_favorites_only ? 'Show all' : 'Show favorites only'"
+              :title="preferences.podcasts_favorites_only ? t('misc.showAll') : t('misc.showFavoritesOnly')"
               class="border border-k-fg-10"
               small
               transparent
@@ -41,8 +41,8 @@
       <template #icon>
         <Icon :icon="faPodcast" />
       </template>
-      No podcasts found.
-      <span class="secondary block">Add a podcast to get started.</span>
+      {{ t('emptyStates.podcastsNotFound') }}
+      <span class="secondary block">{{ t('emptyStates.podcastsNotFound') }}</span>
     </ScreenEmptyState>
 
     <div v-else v-koel-overflow-fade class="-m-6 p-6 overflow-auto space-y-3 min-h-full">
@@ -61,12 +61,15 @@ import { faAdd, faPodcast, faStar } from '@fortawesome/free-solid-svg-icons'
 import { faStar as faEmptyStar } from '@fortawesome/free-regular-svg-icons'
 import { orderBy } from 'lodash'
 import { computed, onMounted, provide, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { eventBus } from '@/utils/eventBus'
 import { podcastStore } from '@/stores/podcastStore'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useFuzzySearch } from '@/composables/useFuzzySearch'
 import { FilterKeywordsKey } from '@/symbols'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
+
+const { t } = useI18n()
 
 import Btn from '@/components/ui/form/Btn.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'

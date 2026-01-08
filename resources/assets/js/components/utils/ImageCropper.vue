@@ -9,8 +9,8 @@
         :stencil-props="{ aspectRatio: 1 }"
       />
       <div class="fixed top-6 right-6 flex flex-1 gap-2">
-        <Btn success @click.prevent="crop">Crop</Btn>
-        <Btn transparent @click.prevent="emits('cancel')">Cancel</Btn>
+        <Btn success @click.prevent="crop">{{ t('ui.buttons.crop') }}</Btn>
+        <Btn transparent @click.prevent="emits('cancel')">{{ t('auth.cancel') }}</Btn>
       </div>
     </div>
   </div>
@@ -18,10 +18,13 @@
 
 <script lang="ts" setup>
 import { ref, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Cropper } from 'vue-advanced-cropper'
 import 'vue-advanced-cropper/dist/style.css'
 
 import Btn from '@/components/ui/form/Btn.vue'
+
+const { t } = useI18n()
 
 const props = withDefaults(defineProps<{
   source?: string | null

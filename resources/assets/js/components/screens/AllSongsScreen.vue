@@ -2,14 +2,14 @@
   <ScreenBase>
     <template #header>
       <ScreenHeader :disabled="loading" :layout="songs.length ? headerLayout : 'collapsed'">
-        All Songs
+        {{ t('screens.allSongs') }}
 
         <template #thumbnail>
           <ThumbnailStack :thumbnails />
         </template>
 
         <template v-if="totalSongCount" #meta>
-          <span>{{ pluralize(totalSongCount, 'song') }}</span>
+          <span>{{ songCountText }}</span>
           <span>{{ totalDuration }}</span>
         </template>
 
@@ -41,7 +41,7 @@
         <template #icon>
           <Icon :icon="faVolumeOff" />
         </template>
-        Your library is empty.
+        {{ t('screens.yourLibraryIsEmpty') }}
       </ScreenEmptyState>
     </template>
   </ScreenBase>
@@ -50,7 +50,8 @@
 <script lang="ts" setup>
 import { faVolumeOff } from '@fortawesome/free-solid-svg-icons'
 import { computed, onMounted, ref, toRef } from 'vue'
-import { pluralize, secondsToHumanReadable } from '@/utils/formatters'
+import { useI18n } from 'vue-i18n'
+import { secondsToHumanReadable } from '@/utils/formatters'
 import { commonStore } from '@/stores/commonStore'
 import { queueStore } from '@/stores/queueStore'
 import { playableStore } from '@/stores/playableStore'
@@ -65,8 +66,14 @@ import SongListSkeleton from '@/components/playable/playable-list/PlayableListSk
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 
+const { t } = useI18n()
 const totalSongCount = toRef(commonStore.state, 'song_count')
-const totalDuration = computed(() => secondsToHumanReadable(commonStore.state.song_length))
+const totalDuration = computed(() => secondsToHumanReadable(commonStore.state.song_length, { hr: t('misc.hr'), min: t('misc.min'), sec: t('misc.sec') }))
+const songCountText = computed(() => {
+  const count = totalSongCount.value ?? 0
+  const songText = count === 1 ? t('messages.itemsSingular') : t('messages.itemsPlural')
+  return `${count.toLocaleString()} ${songText}`
+})
 
 const {
   PlayableList: SongList,

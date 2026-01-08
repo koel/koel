@@ -13,10 +13,10 @@
     @drop.stop="onDrop"
   >
     <template #icon>
-      <Icon v-if="isRecentlyPlayedList(list)" :icon="faClockRotateLeft" class="text-k-success" fixed-width />
-      <Icon v-else-if="isFavoriteList(list)" :icon="faStar" class="text-k-highlight" fixed-width />
-      <Icon v-else-if="list.is_smart" :icon="faWandMagicSparkles" fixed-width />
-      <Icon v-else-if="list.is_collaborative" :icon="faUsers" fixed-width />
+      <Icon v-if="isRecentlyPlayed" :icon="faClockRotateLeft" class="text-k-success" fixed-width />
+      <Icon v-else-if="isFavorite" :icon="faStar" class="text-k-highlight" fixed-width />
+      <Icon v-else-if="isSmart" :icon="faWandMagicSparkles" fixed-width />
+      <Icon v-else-if="isCollaborative" :icon="faUsers" fixed-width />
       <ListMusicIcon v-else :size="16" />
     </template>
     {{ list.name }}
@@ -27,6 +27,7 @@
 import { faClockRotateLeft, faStar, faUsers, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
 import { ListMusicIcon } from 'lucide-vue-next'
 import { computed, ref, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { playableStore } from '@/stores/playableStore'
 import { useRouter } from '@/composables/useRouter'
@@ -40,6 +41,7 @@ const props = defineProps<{ list: PlaylistLike }>()
 
 const PlaylistContextMenu = defineAsyncComponent(() => import('@/components/playlist/PlaylistContextMenu.vue'))
 
+const { t } = useI18n()
 const { url, isCurrentScreen, getRouteParam } = useRouter()
 const { startDragging } = useDraggable('playlist')
 const { acceptsDrop, resolveDroppedItems } = useDroppable(['playables', 'album', 'artist', 'browser-media'])
@@ -52,8 +54,32 @@ const { addToPlaylist } = usePlaylistContentManagement()
 const { list } = toRefs(props)
 
 const isPlaylist = (list: PlaylistLike): list is Playlist => 'id' in list
-const isFavoriteList = (list: PlaylistLike): list is FavoriteList => list.name === 'Favorites'
-const isRecentlyPlayedList = (list: PlaylistLike): list is RecentlyPlayedList => list.name === 'Recently Played'
+
+const isFavorite = computed(() => {
+  const favoriteName = t('sidebar.favorites')
+  return list.value.name === favoriteName && !isPlaylist(list.value)
+})
+
+const isRecentlyPlayed = computed(() => {
+  const recentlyPlayedName = t('sidebar.recentlyPlayed')
+  return list.value.name === recentlyPlayedName && !isPlaylist(list.value)
+})
+
+const isSmart = computed(() => {
+  return isPlaylist(list.value) && list.value.is_smart
+})
+
+const isCollaborative = computed(() => {
+  return isPlaylist(list.value) && list.value.is_collaborative
+})
+
+const isFavoriteList = (list: PlaylistLike): list is FavoriteList => {
+  return list.name === t('sidebar.favorites') && !isPlaylist(list)
+}
+
+const isRecentlyPlayedList = (list: PlaylistLike): list is RecentlyPlayedList => {
+  return list.name === t('sidebar.recentlyPlayed') && !isPlaylist(list)
+}
 
 const active = computed(() => {
   return (isCurrentScreen('Favorites') && isFavoriteList(list.value))
@@ -85,7 +111,7 @@ const contentEditable = computed(() => {
     return true
   }
 
-  return !list.value.is_smart
+  return isPlaylist(list.value) && !list.value.is_smart
 })
 
 const onContextMenu = (event: MouseEvent) => {

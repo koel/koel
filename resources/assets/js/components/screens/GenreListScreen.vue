@@ -2,7 +2,7 @@
   <ScreenBase>
     <template #header>
       <ScreenHeader layout="collapsed" :disabled="loading">
-        Genres
+        {{ t('screens.genres') }}
 
         <template #controls>
           <div class="flex gap-2">
@@ -22,9 +22,9 @@
       <template #icon>
         <GuitarIcon :size="96" />
       </template>
-      No genres found.
+      {{ t('screens.noGenresFound') }}
       <span v-if="currentUserCan.manageSettings()" class="secondary block">
-        Have you set up your library yet?
+        {{ t('screens.home.setupLibrary') }}
       </span>
     </ScreenEmptyState>
 
@@ -43,6 +43,7 @@
 <script lang="ts" setup>
 import { GuitarIcon } from 'lucide-vue-next'
 import { computed, onMounted, provide, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { commonStore } from '@/stores/commonStore'
 import { genreStore } from '@/stores/genreStore'
 import { useErrorHandler } from '@/composables/useErrorHandler'
@@ -60,6 +61,7 @@ import GenreCard from '@/components/genre/GenreCard.vue'
 import ListFilter from '@/components/ui/ListFilter.vue'
 import GenreListSorter from '@/components/genre/GenreListSorter.vue'
 
+const { t } = useI18n()
 const { currentUserCan } = usePolicies()
 const { handleHttpError } = useErrorHandler()
 

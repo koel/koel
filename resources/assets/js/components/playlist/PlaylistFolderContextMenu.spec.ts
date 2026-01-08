@@ -38,7 +38,8 @@ describe('playlistFolderContextMenu.vue', () => {
     const { folder } = await renderComponent()
     const emitMock = h.mock(eventBus, 'emit')
 
-    await h.user.click(screen.getByText('Rename'))
+    // The component uses t('playlists.folder.rename') which translates to "Rename Playlist Folder"
+    await h.user.click(screen.getByText('Rename Playlist Folder'))
 
     expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_PLAYLIST_FOLDER_FORM', folder)
   })
@@ -99,6 +100,7 @@ describe('playlistFolderContextMenu.vue', () => {
 
     const { folder } = await renderComponent(createPlayableFolder())
 
+    // The component uses t('menu.playlistFolder.shuffleAll') which translates to "Shuffle All"
     await h.user.click(screen.getByText('Shuffle All'))
 
     await waitFor(() => {
@@ -125,6 +127,7 @@ describe('playlistFolderContextMenu.vue', () => {
 
     const { folder } = await renderComponent(createPlayableFolder())
 
+    // The component uses t('menu.playlistFolder.shuffleAll') which translates to "Shuffle All"
     await h.user.click(screen.getByText('Shuffle All'))
 
     await waitFor(() => {

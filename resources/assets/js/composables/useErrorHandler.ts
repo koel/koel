@@ -1,5 +1,6 @@
 import type { AxiosResponse } from 'axios'
 import axios from 'axios'
+import { useI18n } from 'vue-i18n'
 import { logger } from '@/utils/logger'
 import { parseValidationError } from '@/utils/formatters'
 import { useDialogBox } from '@/composables/useDialogBox'
@@ -12,12 +13,13 @@ export interface StatusMessageMap {
 type ErrorMessageDriver = 'toast' | 'dialog'
 
 export const useErrorHandler = (driver: ErrorMessageDriver = 'toast') => {
+  const { t } = useI18n()
   const { toastError } = useMessageToaster()
   const { showErrorDialog } = useDialogBox()
 
   const showError = (message: string) => driver === 'toast' ? toastError(message) : showErrorDialog(message)
 
-  const showGenericError = () => showError('An unknown error occurred.')
+  const showGenericError = () => showError(t('notifications.unknownError'))
 
   const handleHttpError = (error: unknown, statusMessageMap: StatusMessageMap = {}) => {
     logger.error(error)

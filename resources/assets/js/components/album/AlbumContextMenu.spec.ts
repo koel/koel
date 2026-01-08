@@ -43,7 +43,7 @@ describe('albumContextMenu.vue', () => {
     const playMock = h.mock(playbackService, 'queueAndPlay')
 
     const { album } = await renderComponent()
-    await h.user.click(screen.getByText('Play All'))
+    await h.user.click(screen.getByText(/play all/i))
     await h.tick()
 
     expect(fetchMock).toHaveBeenCalledWith(album)
@@ -58,7 +58,7 @@ describe('albumContextMenu.vue', () => {
     const playMock = h.mock(playbackService, 'queueAndPlay')
 
     const { album } = await renderComponent()
-    await h.user.click(screen.getByText('Shuffle All'))
+    await h.user.click(screen.getByText(/shuffle all/i))
     await h.tick()
 
     expect(fetchMock).toHaveBeenCalledWith(album)
@@ -69,7 +69,7 @@ describe('albumContextMenu.vue', () => {
     const downloadMock = h.mock(downloadService, 'fromAlbum')
     const { album } = await renderComponent()
 
-    await h.user.click(screen.getByText('Download'))
+    await h.user.click(screen.getByText(/download/i))
 
     expect(downloadMock).toHaveBeenCalledWith(album)
   })
@@ -78,7 +78,7 @@ describe('albumContextMenu.vue', () => {
     commonStore.state.allows_download = false
     await renderComponent()
 
-    expect(screen.queryByText('Download')).toBeNull()
+    expect(screen.queryByText(/download/i)).toBeNull()
   })
 
   it('does not have an option to download or go to Unknown Album and Artist', async () => {
@@ -96,7 +96,7 @@ describe('albumContextMenu.vue', () => {
     await h.tick(2)
 
     const emitMock = h.mock(eventBus, 'emit')
-    await h.user.click(screen.getByText('Edit…'))
+    await h.user.click(screen.getByText(/edit/i))
 
     expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_ALBUM_FORM', album)
   })
@@ -104,7 +104,7 @@ describe('albumContextMenu.vue', () => {
   it('requests the embed form', async () => {
     const { album } = await renderComponent()
     const emitMock = h.mock(eventBus, 'emit')
-    await h.user.click(screen.getByText('Embed…'))
+    await h.user.click(screen.getByText(/embed/i))
 
     expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_CREATE_EMBED_FORM', album)
   })

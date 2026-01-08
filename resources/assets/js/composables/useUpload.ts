@@ -1,15 +1,16 @@
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { commonStore } from '@/stores/commonStore'
 import { acceptsFile } from '@/utils/mediaHelper'
 import type { UploadFile } from '@/services/uploadService'
 import { uploadService } from '@/services/uploadService'
 import { getAllFileEntries } from '@/utils/directoryReader'
-import { pluralize } from '@/utils/formatters'
 import { useRouter } from '@/composables/useRouter'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { usePolicies } from '@/composables/usePolicies'
 
 export const useUpload = () => {
+  const { t } = useI18n()
   const { toastSuccess, toastWarning } = useMessageToaster()
   const { go, isCurrentScreen } = useRouter()
 
@@ -49,10 +50,11 @@ export const useUpload = () => {
     const queuedFiles = queueFilesForUpload(files)
 
     if (queuedFiles.length) {
-      toastSuccess(`Queued ${pluralize(queuedFiles, 'file')} for upload`)
+      const itemLabel = queuedFiles.length === 1 ? t('messages.filesQueued') : t('messages.filesQueuedPlural')
+      toastSuccess(t('messages.queuedForUpload', { count: queuedFiles.length, item: itemLabel }))
       isCurrentScreen('Upload') || go('upload')
     } else {
-      toastWarning('No files applicable for upload')
+      toastWarning(t('messages.noFilesForUpload'))
     }
   }
 

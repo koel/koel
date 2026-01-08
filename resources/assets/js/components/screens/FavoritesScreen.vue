@@ -2,24 +2,24 @@
   <ScreenBase>
     <template #header>
       <ScreenHeader :layout="playables.length === 0 ? 'collapsed' : headerLayout">
-        Your Favorites
+        {{ t('screens.favorites') }}
 
         <template #thumbnail>
           <ThumbnailStack :thumbnails="thumbnails" />
         </template>
 
         <template v-if="playables.length" #meta>
-          <span>{{ pluralize(playables, 'item') }}</span>
+          <span>{{ itemCountText }}</span>
           <span>{{ duration }}</span>
 
           <a
             v-if="downloadable"
             class="download"
             role="button"
-            title="Download all favorites"
+            :title="t('ui.tooltips.downloadAll')"
             @click.prevent="download"
           >
-            Download All
+            {{ t('ui.buttons.downloadAll') }}
           </a>
         </template>
 
@@ -49,11 +49,9 @@
       <template #icon>
         <Icon :icon="faHeartBroken" />
       </template>
-      No favorites yet.
+      {{ t('misc.noFavoritesYet') }}
       <span class="secondary block">
-        Click the&nbsp;
-        <Icon :icon="faStar" />&nbsp;
-        icon to mark a song as favorite.
+        {{ t('screens.favoritesEmptyHint') }}
       </span>
     </ScreenEmptyState>
   </ScreenBase>
@@ -62,13 +60,21 @@
 <script lang="ts" setup>
 import { faHeartBroken } from '@fortawesome/free-solid-svg-icons'
 import { faStar } from '@fortawesome/free-regular-svg-icons'
-import { ref, toRef } from 'vue'
-import { pluralize } from '@/utils/formatters'
+import { computed, ref, toRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { playableStore } from '@/stores/playableStore'
 import { downloadService } from '@/services/downloadService'
 import { useRouter } from '@/composables/useRouter'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
+
+const { t } = useI18n()
+
+const itemCountText = computed(() => {
+  const count = playables.value.length
+  const itemText = count === 1 ? t('messages.genericItemSingular') : t('messages.genericItemPlural')
+  return `${count.toLocaleString()} ${itemText}`
+})
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'

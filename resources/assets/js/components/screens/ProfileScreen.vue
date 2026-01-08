@@ -1,7 +1,7 @@
 <template>
   <ScreenBase>
     <template #header>
-      <ScreenHeader>Profile &amp; Preferences</ScreenHeader>
+      <ScreenHeader>{{ t('screens.profileAndPreferences') }}</ScreenHeader>
     </template>
 
     <Tabs class="-mx-6">
@@ -11,28 +11,28 @@
           aria-controls="profilePaneProfile"
           @click="currentTab = 'profile'"
         >
-          Profile
+          {{ t('screens.profile') }}
         </TabButton>
         <TabButton
           :selected="currentTab === 'preferences'"
           aria-controls="profilePanePreferences"
           @click="currentTab = 'preferences'"
         >
-          Preferences
+          {{ t('screens.preferences') }}
         </TabButton>
         <TabButton
           :selected="currentTab === 'themes'"
           aria-controls="profilePaneThemes"
           @click="currentTab = 'themes'"
         >
-          Themes
+          {{ t('screens.themes') }}
         </TabButton>
         <TabButton
           :selected="currentTab === 'integrations'"
           aria-controls="profilePaneIntegrations"
           @click="currentTab = 'integrations'"
         >
-          Integrations
+          {{ t('screens.integrations') }}
         </TabButton>
         <TabButton
           :selected="currentTab === 'qr'"
@@ -79,6 +79,7 @@
 <script lang="ts" setup>
 import { QrCodeIcon } from 'lucide-vue-next'
 import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useLocalStorage } from '@/composables/useLocalStorage'
 import { defineAsyncComponent } from '@/utils/helpers'
 
@@ -90,6 +91,7 @@ import TabPanelContainer from '@/components/ui/tabs/TabPanelContainer.vue'
 import TabPanel from '@/components/ui/tabs/TabPanel.vue'
 import Tabs from '@/components/ui/tabs/Tabs.vue'
 
+const { t } = useI18n()
 const ProfileForm = defineAsyncComponent(() => import('@/components/profile-preferences/ProfileForm.vue'))
 const PreferencesForm = defineAsyncComponent(() => import('@/components/profile-preferences/PreferencesForm.vue'))
 const ThemeList = defineAsyncComponent(() => import('@/components/profile-preferences/theme/ThemePreferences.vue'))

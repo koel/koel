@@ -9,14 +9,14 @@
   >
     <a
       :href="url('genres.show', { id: genre.id })"
-      :title="genre.name || 'No Genre'"
+      :title="genre.name || t('emptyStates.noGenre')"
       class="flex flex-col justify-end h-full p-4"
     >
       <span
         class="text-2xl overflow-hidden whitespace-nowrap text-ellipsis font-normal text-k-fg-90"
         :class="genre.name || 'italic'"
       >
-        {{ genre.name || 'No Genre' }}
+        {{ genre.name || t('emptyStates.noGenre') }}
       </span>
       <span class="text-k-fg-70 text-lg">{{ pluralize(genre.song_count, 'song') }}</span>
     </a>
@@ -28,6 +28,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { pluralize, textToHsl } from '@/utils/formatters'
 import { useRouter } from '@/composables/useRouter'
 import { useDraggable } from '@/composables/useDragAndDrop'
@@ -35,6 +36,7 @@ import { useContextMenu } from '@/composables/useContextMenu'
 import { defineAsyncComponent } from '@/utils/helpers'
 
 const props = defineProps<{ genre: Genre }>()
+const { t } = useI18n()
 
 const ContextMenu = defineAsyncComponent(() => import('@/components/genre/GenreContextMenu.vue'))
 

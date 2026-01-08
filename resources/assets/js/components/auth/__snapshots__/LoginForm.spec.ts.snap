@@ -21,7 +21,7 @@ exports[`loginForm.vue > renders 1`] = `
       <!--v-if-->
     </div>
     <div data-v-0b0f87ea="" class="flex flex-col gap-2"><label class="text-k-fg">
-        <!--v-if--><a data-v-0b0f87ea="" class="text-right text-[.95rem] text-k-fg-70" role="button"> Forgot password? </a>
+        <!--v-if--><a data-v-0b0f87ea="" class="text-right text-[.95rem] text-k-fg-70" role="button">Forgot password?</a>
       </label>
       <!--v-if-->
     </div>

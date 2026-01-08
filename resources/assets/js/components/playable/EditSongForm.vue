@@ -27,7 +27,7 @@
           aria-controls="editSongPanelDetails"
           @click="currentTab = 'details'"
         >
-          Details
+          {{ t('songs.details') }}
         </TabButton>
         <TabButton
           id="editSongTabLyrics"
@@ -36,7 +36,7 @@
           data-testid="edit-song-lyrics-tab"
           @click="currentTab = 'lyrics'"
         >
-          Lyrics
+          {{ t('songs.lyrics') }}
         </TabButton>
       </TabList>
 
@@ -48,13 +48,13 @@
           class="space-y-5"
         >
           <FormRow v-if="editingOnlyOneSong">
-            <template #label>Title</template>
-            <TextInput v-model="data.title" v-koel-focus data-testid="title-input" name="title" title="Title" />
+            <template #label>{{ t('songs.title') }}</template>
+            <TextInput v-model="data.title" v-koel-focus data-testid="title-input" name="title" :title="t('songs.title')" />
           </FormRow>
 
           <FormRow :cols="2">
             <FormRow>
-              <template #label>Artist</template>
+              <template #label>{{ t('songs.artist') }}</template>
               <TextInput
                 v-model="data.artist_name"
                 :placeholder="inputPlaceholder"
@@ -64,7 +64,7 @@
             </FormRow>
 
             <FormRow>
-              <template #label>Album Artist</template>
+              <template #label>{{ t('songs.albumArtist') }}</template>
               <TextInput
                 v-model="data.album_artist_name"
                 :placeholder="inputPlaceholder"
@@ -75,7 +75,7 @@
           </FormRow>
 
           <FormRow>
-            <template #label>Album</template>
+            <template #label>{{ t('songs.album') }}</template>
             <TextInput
               v-model="data.album_name"
               :placeholder="inputPlaceholder"
@@ -86,7 +86,7 @@
 
           <FormRow :cols="2">
             <FormRow>
-              <template #label>Track</template>
+              <template #label>{{ t('songs.track') }}</template>
               <TextInput
                 v-model="data.track"
                 :placeholder="inputPlaceholder"
@@ -97,7 +97,7 @@
               />
             </FormRow>
             <FormRow>
-              <template #label>Disc</template>
+              <template #label>{{ t('songs.disc') }}</template>
               <TextInput
                 v-model="data.disc"
                 :placeholder="inputPlaceholder"
@@ -111,7 +111,7 @@
 
           <FormRow :cols="2">
             <FormRow>
-              <template #label>Genre</template>
+              <template #label>{{ t('songs.genre') }}</template>
               <TextInput
                 v-model="data.genre"
                 :placeholder="inputPlaceholder"
@@ -124,7 +124,7 @@
               </datalist>
             </FormRow>
             <FormRow>
-              <template #label>Year</template>
+              <template #label>{{ t('songs.year') }}</template>
               <TextInput
                 v-model="data.year"
                 :placeholder="inputPlaceholder"
@@ -148,7 +148,7 @@
               v-koel-focus
               data-testid="lyrics-input"
               name="lyrics"
-              title="Lyrics"
+              :title="t('songs.lyrics')"
             />
           </FormRow>
         </TabPanel>
@@ -156,15 +156,15 @@
     </Tabs>
 
     <footer>
-      <Btn type="submit">Update</Btn>
-      <Btn class="btn-cancel" white @click.prevent="maybeClose">Cancel</Btn>
+      <Btn type="submit">{{ t('ui.buttons.update') }}</Btn>
+      <Btn class="btn-cancel" white @click.prevent="maybeClose">{{ t('auth.cancel') }}</Btn>
     </footer>
   </form>
 </template>
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
-import { pluralize } from '@/utils/formatters'
+import { useI18n } from 'vue-i18n'
 import { eventBus } from '@/utils/eventBus'
 import type { SongUpdateData, SongUpdateResult } from '@/stores/playableStore'
 import { playableStore as songStore } from '@/stores/playableStore'
@@ -184,6 +184,8 @@ import TabButton from '@/components/ui/tabs/TabButton.vue'
 import TabPanel from '@/components/ui/tabs/TabPanel.vue'
 import TabPanelContainer from '@/components/ui/tabs/TabPanelContainer.vue'
 
+const { t } = useI18n()
+
 const props = withDefaults(defineProps<{ songs: Song[], initialTab?: EditSongFormTabName }>(), {
   initialTab: 'details',
 })
@@ -200,7 +202,7 @@ const { cover: defaultCover } = useBranding()
 
 const editingOnlyOneSong = songs.length === 1
 const editingMultipleSongs = !editingOnlyOneSong
-const inputPlaceholder = editingMultipleSongs ? 'Leave unchanged' : ''
+const inputPlaceholder = editingMultipleSongs ? t('form.placeholders.leaveUnchanged') : ''
 
 const allSongsShareSameValue = (key: keyof Song) => editingMultipleSongs
   ? new Set(songs.map(song => song[key])).size === 1
@@ -234,26 +236,30 @@ if (allSongsAreInSameAlbum && allSongsAreFromSameArtist && songs[0].album_artist
   initialValues.album_artist_name = allSongsShareSameValue('album_artist_name') ? songs[0].album_artist_name : ''
 }
 
+const inflect = () => {
+  return songs.length === 1 ? t('messages.itemsSingular') : t('messages.itemsPlural')
+}
+
 const { data, isPristine, handleSubmit } = useForm<SongUpdateData>({
   initialValues,
   onSubmit: async data => await songStore.updateSongs(songs, data),
   onSuccess: (result: SongUpdateResult) => {
-    toastSuccess(`Updated ${pluralize(songs, 'song')}.`)
+    toastSuccess(t('messages.itemsUpdated', { count: songs.length, item: inflect() }))
     eventBus.emit('SONGS_UPDATED', result)
     close()
   },
 })
 
-const displayedTitle = computed(() => editingOnlyOneSong ? data.title : `${songs.length} songs selected`)
+const displayedTitle = computed(() => editingOnlyOneSong ? data.title : t('songs.selected', { count: songs.length }))
 
 const displayedArtistName = computed(() => {
-  return allSongsAreFromSameArtist || data.artist_name ? data.artist_name : 'Mixed Artists'
+  return allSongsAreFromSameArtist || data.artist_name ? data.artist_name : t('songs.mixedArtists')
 })
 
-const displayedAlbumName = computed(() => allSongsAreInSameAlbum || data.album_name ? data.album_name : 'Mixed Albums')
+const displayedAlbumName = computed(() => allSongsAreInSameAlbum || data.album_name ? data.album_name : t('songs.mixedAlbums'))
 
 const maybeClose = async () => {
-  if (isPristine() || await showConfirmDialog('Discard all changes?')) {
+  if (isPristine() || await showConfirmDialog(t('playlists.discardChanges'))) {
     close()
   }
 }

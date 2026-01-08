@@ -8,9 +8,9 @@
       <template #icon>
         <Icon :icon="faVolumeOff" />
       </template>
-      No songs found.
+      {{ t('screens.home.noSongs') }}
       <span v-if="currentUserCan.manageSettings()" class="secondary block">
-        Have you set up your library yet?
+        {{ t('screens.home.setupLibrary') }}
       </span>
     </ScreenEmptyState>
 
@@ -30,6 +30,7 @@
 import { faVolumeOff } from '@fortawesome/free-solid-svg-icons'
 import { sample } from 'lodash'
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { eventBus } from '@/utils/eventBus'
 import { commonStore } from '@/stores/commonStore'
 import { overviewStore } from '@/stores/overviewStore'
@@ -49,21 +50,18 @@ import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import BtnScrollToTop from '@/components/ui/BtnScrollToTop.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 
+const { t, tm } = useI18n()
 const { currentUserCan } = usePolicies()
 
-const greetings = [
-  'Oh hai!',
-  'Hey, %s!',
-  'Howdy, %s!',
-  'Yo!',
-  'How’s it going, %s?',
-  'Sup, %s?',
-  'How’s life, %s?',
-  'How’s your day, %s?',
-  'How have you been, %s?',
-]
+const greeting = computed(() => {
+  if (!userStore.current) {
+    return ''
+  }
 
-const greeting = computed(() => userStore.current ? sample(greetings)!.replace('%s', userStore.current.name) : '')
+  const greetings = tm('screens.home.greetings') as string[]
+  const selectedGreeting = sample(greetings)!
+  return selectedGreeting.replace('{name}', userStore.current.name)
+})
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 
 const loading = ref(false)

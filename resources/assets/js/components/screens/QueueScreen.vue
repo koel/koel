@@ -2,14 +2,14 @@
   <ScreenBase>
     <template #header>
       <ScreenHeader :layout="playables.length === 0 ? 'collapsed' : headerLayout">
-        Current Queue
+        {{ t('screens.currentQueue') }}
 
         <template #thumbnail>
           <ThumbnailStack :thumbnails />
         </template>
 
         <template v-if="playables.length" #meta>
-          <span>{{ pluralize(playables, 'item') }}</span>
+          <span>{{ itemCountText }}</span>
           <span>{{ duration }}</span>
         </template>
 
@@ -42,10 +42,10 @@
         <Icon :icon="faCoffee" />
       </template>
 
-      No songs queued.
+      {{ t('screens.noSongsQueued') }}
       <span v-if="libraryNotEmpty" class="block secondary">
-        How about
-        <a class="start" @click.prevent="shuffleSome">playing some random songs</a>?
+        {{ t('screens.howAboutPlayingRandom') }}
+        <a class="start" @click.prevent="shuffleSome">{{ t('screens.playingSomeRandomSongs') }}</a>?
       </span>
     </ScreenEmptyState>
   </ScreenBase>
@@ -54,7 +54,7 @@
 <script lang="ts" setup>
 import { faCoffee } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRef } from 'vue'
-import { pluralize } from '@/utils/formatters'
+import { useI18n } from 'vue-i18n'
 import { commonStore } from '@/stores/commonStore'
 import { queueStore } from '@/stores/queueStore'
 import { playableStore } from '@/stores/playableStore'
@@ -70,6 +70,7 @@ import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import PlayableListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
 
+const { t } = useI18n()
 const { go, onScreenActivated, url } = useRouter()
 
 const {
@@ -90,6 +91,11 @@ const { PlayableListControls, config } = usePlayableListControls('Queue')
 
 const loading = ref(false)
 const libraryNotEmpty = computed(() => commonStore.state.song_count > 0)
+const itemCountText = computed(() => {
+  const count = playables.value.length
+  const itemText = count === 1 ? t('messages.genericItemSingular') : t('messages.genericItemPlural')
+  return `${count.toLocaleString()} ${itemText}`
+})
 
 const playAll = async (shuffle = true) => {
   playback().queueAndPlay(playables.value, shuffle)

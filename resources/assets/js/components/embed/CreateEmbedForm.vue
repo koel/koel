@@ -1,7 +1,7 @@
 <template>
   <article class="w-[650px]" :class="(loading || encryptingOptions) && 'pointer-events-none opacity-70'">
     <header>
-      <h1>Embed {{ typeLabel }}</h1>
+      <h1>{{ t('embeds.embed', { type: typeLabel }) }}</h1>
     </header>
     <main>
       <EmbedOptionsPanel v-model="options" class="mb-5" />
@@ -11,7 +11,7 @@
         ref="previewIframe"
         :height="options.layout === 'compact' ? '150' : 350"
         :src="embedSrc"
-        allow="autoplay *; encrypted-media *;"
+        allow="autoplay; encrypted-media"
         class="rounded-xl bg-transparent w-full max-w-[650px] overflow-hidden border-0"
         data-testid="embed-preview-iframe"
         loading="lazy"
@@ -28,12 +28,12 @@
     </main>
     <footer class="flex items-center">
       <div class="flex-1">
-        <Btn primary type="submit" @click.prevent="copyCode">Copy Code</Btn>
-        <Btn white @click="emit('close')">Close</Btn>
+        <Btn primary type="submit" @click.prevent="copyCode">{{ t('embeds.copyCode') }}</Btn>
+        <Btn white @click="emit('close')">{{ t('playlists.close') }}</Btn>
       </div>
       <label>
         <CheckBox v-model="showCode" />
-        Show code
+        {{ t('embeds.showCode') }}
       </label>
     </footer>
   </article>
@@ -41,6 +41,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { embedService } from '@/stores/embedService'
 import { themeStore } from '@/stores/themeStore'
 import { useKoelPlus } from '@/composables/useKoelPlus'
@@ -58,6 +59,7 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { embeddable } = props
 
+const { t } = useI18n()
 const { isPlus } = useKoelPlus()
 const { toastSuccess } = useMessageToaster()
 const { handleHttpError } = useErrorHandler()
@@ -94,7 +96,7 @@ const code = computed(() => {
   }
 
   return `<iframe src="${embedSrc.value}" style="border-radius:10px;width:100%;max-width:650px;overflow:hidden;"`
-    + ` height="${options.layout === 'compact' ? '150' : 350}" frameborder="0" allow="autoplay *;encrypted-media *;"`
+    + ` height="${options.layout === 'compact' ? '150' : 350}" frameborder="0" allow="autoplay; encrypted-media"`
     + ' loading="lazy"></iframe>'
 })
 
@@ -107,31 +109,26 @@ watch(embedSrc, value => {
   previewIframe.value.contentWindow.location.reload()
 })
 
-let typeLabel = ''
-
-switch (embeddable.type) {
-  case 'albums':
-    typeLabel = 'Album'
-    break
-  case 'artists':
-    typeLabel = 'Artist'
-    break
-  case 'playlists':
-    typeLabel = 'Playlist'
-    break
-  case 'songs':
-    typeLabel = 'Song'
-    break
-  case 'episodes':
-    typeLabel = 'Podcast Episode'
-    break
-  default:
-    throw new Error('Unknown embeddable type')
-}
+const typeLabel = computed(() => {
+  switch (embeddable.type) {
+    case 'albums':
+      return t('embeds.types.album')
+    case 'artists':
+      return t('embeds.types.artist')
+    case 'playlists':
+      return t('embeds.types.playlist')
+    case 'songs':
+      return t('embeds.types.song')
+    case 'episodes':
+      return t('embeds.types.podcastEpisode')
+    default:
+      throw new Error('Unknown embeddable type')
+  }
+})
 
 const copyCode = async () => {
   await copyText(code.value)
-  toastSuccess('Code copied to clipboard.')
+  toastSuccess(t('embeds.codeCopied'))
 }
 
 const resolveEmbed = async () => {

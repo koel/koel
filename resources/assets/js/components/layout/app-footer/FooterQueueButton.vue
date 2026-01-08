@@ -2,7 +2,7 @@
   <FooterButton
     :class="droppable && 'droppable'"
     class="queue-btn"
-    title="Queue (Q)"
+    :title="t('ui.tooltips.queueTooltip')"
     @click.prevent="showQueue"
     @dragleave.prevent="onDragLeave"
     @drop.prevent="onDrop"
@@ -16,6 +16,7 @@
 <script setup lang="ts">
 import { faListOl } from '@fortawesome/free-solid-svg-icons'
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useDroppable } from '@/composables/useDragAndDrop'
 import { useRouter } from '@/composables/useRouter'
 import { useMessageToaster } from '@/composables/useMessageToaster'
@@ -24,6 +25,7 @@ import { pluralize } from '@/utils/formatters'
 
 import FooterButton from '@/components/layout/app-footer/FooterButton.vue'
 
+const { t } = useI18n()
 const { go, isCurrentScreen, url } = useRouter()
 const { toastWarning, toastSuccess } = useMessageToaster()
 
@@ -50,9 +52,9 @@ const onDrop = async (event: DragEvent) => {
 
   if (items.length) {
     queueStore.queue(items)
-    toastSuccess(`Added ${pluralize(items, 'item')} to queue.`)
+    toastSuccess(t('misc.addedToQueue', { count: items.length, item: pluralize(items, 'item') }))
   } else {
-    toastWarning('No applicable items to queue.')
+    toastWarning(t('misc.nothingToQueue'))
   }
 
   return false

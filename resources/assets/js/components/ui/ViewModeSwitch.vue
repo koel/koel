@@ -7,11 +7,11 @@
       :class="{ active: value === 'thumbnails' }"
       class="thumbnails"
       data-testid="view-mode-thumbnails"
-      title="View as thumbnails"
+      :title="t('ui.tooltips.viewThumbnails')"
     >
       <input v-model="value" class="hidden" name="view-mode" type="radio" value="thumbnails">
       <LayoutGridIcon :size="16" />
-      <span class="hidden">View as thumbnails</span>
+      <span class="hidden">{{ t('ui.tooltips.viewThumbnails') }}</span>
     </label>
 
     <label
@@ -19,17 +19,20 @@
       :class="{ active: value === 'list' }"
       class="list"
       data-testid="view-mode-list"
-      title="View as list"
+      :title="t('ui.tooltips.viewList')"
     >
       <input v-model="value" class="hidden" name="view-mode" type="radio" value="list">
       <LayoutListIcon :size="16" />
-      <span class="hidden">View as list</span>
+      <span class="hidden">{{ t('ui.tooltips.viewList') }}</span>
     </label>
   </span>
 </template>
 
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n'
 import { LayoutGridIcon, LayoutListIcon } from 'lucide-vue-next'
+
+const { t } = useI18n()
 
 const value = defineModel<ViewMode>({ default: 'thumbnails' })
 </script>
