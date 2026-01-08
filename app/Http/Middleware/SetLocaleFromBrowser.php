@@ -13,7 +13,7 @@ class SetLocaleFromBrowser
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $supportedLocales = ['en', 'es'];
+        $supportedLocales = ['en', 'es', 'vi'];
         $preferredLocale = $this->getPreferredLocale($request, $supportedLocales);
 
         if ($preferredLocale) {
