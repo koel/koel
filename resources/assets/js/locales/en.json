@@ -542,6 +542,7 @@
       "playNext": "Play next in queue",
       "toggleVisualizer": "Toggle visualizer",
       "showEqualizer": "Show equalizer",
+      "equalizerNotAvailableForRadio": "Equalizer is not available for radio",
       "queue": "Queue (Q)",
       "queueTooltip": "Queue (Q)",
       "logout": "Log out",

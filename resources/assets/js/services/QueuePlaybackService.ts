@@ -25,6 +25,32 @@ import { useBranding } from '@/composables/useBranding'
 const PRELOAD_BUFFER = 30
 
 export class QueuePlaybackService extends BasePlaybackService {
+  public activate (plyrWrapper: HTMLElement) {
+    const result = super.activate(plyrWrapper)
+    
+    // Ensure crossorigin is set for songs/episodes (needed for equalizer and audio processing)
+    if (this.player?.media) {
+      this.player.media.setAttribute('crossorigin', 'anonymous')
+    }
+    
+    // Initialize audioService lazily only when queue playback is activated
+    // This allows radio to use the audio element directly without AudioContext
+    // IMPORTANT: Only initialize if audioService hasn't been initialized yet
+    // and the element hasn't been used by radio (which would have removed crossorigin)
+    if (isAudioContextSupported && !audioService.initialized) {
+      // Ensure crossorigin is set before initializing audioService
+      // (it might have been removed by radio playback)
+      if (this.player?.media) {
+        this.player.media.setAttribute('crossorigin', 'anonymous')
+      }
+      audioService.init(this.player.media)
+    } else if (audioService.source && audioService.initialized) {
+      // If already initialized, reconnect for processing
+      audioService.reconnectForProcessing()
+    }
+    
+    return result
+  }
   private repeatModes: RepeatMode[] = ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE']
   private upNext: Ref<Playable | null> = ref(null)
 
@@ -103,6 +129,9 @@ export class QueuePlaybackService extends BasePlaybackService {
     playable.playback_state = 'Playing'
 
     await this.setNowPlayingMeta(playable)
+
+    // Ensure crossorigin is set for songs/episodes (needed for equalizer and audio processing)
+    this.player.media.setAttribute('crossorigin', 'anonymous')
 
     // Manually set the `src` attribute of the audio to prevent plyr from resetting
     // the audio media object and cause our equalizer to malfunction.

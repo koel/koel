@@ -552,6 +552,7 @@
       "playNext": "Reproducir siguiente en la cola",
       "toggleVisualizer": "Alternar visualizador",
       "showEqualizer": "Mostrar ecualizador",
+      "equalizerNotAvailableForRadio": "El ecualizador no está disponible para radio",
       "queue": "Cola (Q)",
       "queueTooltip": "Cola (Q)",
       "logout": "Cerrar sesión",
