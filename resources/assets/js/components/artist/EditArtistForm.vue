@@ -1,32 +1,33 @@
 <template>
   <form @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
     <header>
-      <h1>Edit Artist</h1>
+      <h1>{{ t('artists.edit') }}</h1>
     </header>
 
     <main class="space-y-5">
       <FormRow>
-        <template #label>Name</template>
+        <template #label>{{ t('artists.name') }}</template>
         <TextInput
           v-model="data.name"
           v-koel-focus
           name="name"
-          placeholder="Artist name"
+          :placeholder="t('artists.artistName')"
           required
-          title="Artist name"
+          :title="t('artists.artistName')"
         />
       </FormRow>
-      <ArtworkField v-model="data.image">Pick an image (optional)</ArtworkField>
+      <ArtworkField v-model="data.image">{{ t('artists.pickImage') }}</ArtworkField>
     </main>
 
     <footer>
-      <Btn type="submit">Save</Btn>
-      <Btn white @click.prevent="maybeClose">Cancel</Btn>
+      <Btn type="submit">{{ t('auth.save') }}</Btn>
+      <Btn white @click.prevent="maybeClose">{{ t('auth.cancel') }}</Btn>
     </footer>
   </form>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import { cloneDeep, pick } from 'lodash'
 import type { ArtistUpdateData } from '@/stores/artistStore'
 import { artistStore } from '@/stores/artistStore'
@@ -38,6 +39,8 @@ import FormRow from '@/components/ui/form/FormRow.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import ArtworkField from '@/components/ui/form/ArtworkField.vue'
+
+const { t } = useI18n()
 
 const props = defineProps<{ artist: Artist }>()
 const emit = defineEmits<{ (e: 'close'): void }>()
@@ -62,13 +65,13 @@ const { data, isPristine, handleSubmit } = useForm<ArtistUpdateData>({
     await artistStore.update(artist, formData)
   },
   onSuccess: () => {
-    toastSuccess('Artist updated.')
+    toastSuccess(t('artists.updated'))
     close()
   },
 })
 
 const maybeClose = async () => {
-  if (isPristine() || await showConfirmDialog('Discard all changes?')) {
+  if (isPristine() || await showConfirmDialog(t('artists.discardChanges'))) {
     close()
   }
 }

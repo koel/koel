@@ -1,7 +1,7 @@
 <template>
   <div class="add-to w-full max-w-[256px] min-w-[200px] p-3 space-y-3" data-testid="add-to-menu" tabindex="0">
     <section class="existing-playlists">
-      <p class="mb-2 text-[0.9rem]">Add {{ pluralize(playables, 'item') }} to</p>
+      <p class="mb-2 text-[0.9rem]">{{ t('misc.addItemTo', { count: pluralize(playables, 'item').split(' ')[0], item: pluralize(playables, 'item').split(' ')[1] }) }}</p>
 
       <ul v-koel-overflow-fade class="relative max-h-48 overflow-y-scroll space-y-1.5">
         <template v-if="config.queue">
@@ -13,14 +13,14 @@
               tabindex="0"
               @click="queueAfterCurrent"
             >
-              After Current
+              {{ t('misc.afterCurrent') }}
             </li>
             <li class="bottom-queue" data-testid="queue-bottom" tabindex="0" @click="queueToBottom">
-              Bottom of Queue
+              {{ t('misc.bottomOfQueue') }}
             </li>
-            <li class="top-queue" data-testid="queue-top" tabindex="0" @click="queueToTop">Top of Queue</li>
+            <li class="top-queue" data-testid="queue-top" tabindex="0" @click="queueToTop">{{ t('misc.topOfQueue') }}</li>
           </template>
-          <li v-else data-testid="queue" tabindex="0" @click="queueToBottom">Queue</li>
+          <li v-else data-testid="queue" tabindex="0" @click="queueToBottom">{{ t('screens.currentQueue') }}</li>
         </template>
 
         <li
@@ -30,7 +30,7 @@
           tabindex="0"
           @click="addToFavorites"
         >
-          Favorites
+          {{ t('sidebar.favorites') }}
         </li>
 
         <li
@@ -51,13 +51,14 @@
       transparent
       @click.prevent="addToNewPlaylist"
     >
-      New Playlist…
+      {{ t('misc.newPlaylistEllipsis') }}
     </Btn>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { computed, toRef, toRefs, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { pluralize } from '@/utils/formatters'
 import { playlistStore } from '@/stores/playlistStore'
 import { queueStore } from '@/stores/queueStore'
@@ -65,6 +66,7 @@ import { usePlayableMenuMethods } from '@/composables/usePlayableMenuMethods'
 
 import Btn from '@/components/ui/form/Btn.vue'
 
+const { t } = useI18n()
 const props = defineProps<{ playables: Playable[], config: AddToMenuConfig }>()
 const emit = defineEmits<{ (e: 'closing'): void }>()
 

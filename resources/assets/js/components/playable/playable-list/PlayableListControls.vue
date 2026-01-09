@@ -8,11 +8,11 @@
             v-koel-tooltip
             class="btn-play-all"
             highlight
-            title="Play all. Press Alt/⌥ to change mode."
+            :title="t('ui.tooltips.playAll')"
             @click.prevent="playAll"
           >
             <Icon :icon="faPlay" fixed-width />
-            All
+            {{ t('ui.buttons.all') }}
           </Btn>
 
           <Btn
@@ -20,11 +20,11 @@
             v-koel-tooltip
             class="btn-play-selected"
             highlight
-            title="Play selected. Press Alt/⌥ to change mode."
+            :title="t('ui.tooltips.playSelected')"
             @click.prevent="playSelected"
           >
             <Icon :icon="faPlay" fixed-width />
-            Selected
+            {{ t('ui.buttons.selected') }}
           </Btn>
         </template>
 
@@ -35,11 +35,11 @@
             class="btn-shuffle-all"
             data-testid="btn-shuffle-all"
             highlight
-            title="Shuffle all. Press Alt/⌥ to change mode."
+            :title="t('ui.tooltips.shuffleAll')"
             @click.prevent="shuffle"
           >
             <Icon :icon="faRandom" fixed-width />
-            All
+            {{ t('ui.buttons.all') }}
           </Btn>
 
           <Btn
@@ -48,11 +48,11 @@
             class="btn-shuffle-selected"
             data-testid="btn-shuffle-selected"
             highlight
-            title="Shuffle selected. Press Alt/⌥ to change mode."
+            :title="t('ui.tooltips.shuffleSelected')"
             @click.prevent="shuffleSelected"
           >
             <Icon :icon="faRandom" fixed-width />
-            Selected
+            {{ t('ui.buttons.selected') }}
           </Btn>
         </template>
 
@@ -62,14 +62,14 @@
           success
           @click.prevent.stop="toggleAddToMenu"
         >
-          {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
+          {{ showingAddToMenu ? t('auth.cancel') : t('ui.buttons.addTo') }}
         </Btn>
 
-        <Btn v-if="config.clearQueue" danger title="Clear current queue" @click.prevent="clearQueue">Clear</Btn>
+        <Btn v-if="config.clearQueue" danger :title="t('ui.tooltips.clearQueue')" @click.prevent="clearQueue">{{ t('ui.buttons.clear') }}</Btn>
       </BtnGroup>
 
       <BtnGroup v-if="config.refresh">
-        <Btn v-if="config.refresh" v-koel-tooltip success title="Refresh" @click.prevent="refresh">
+        <Btn v-if="config.refresh" v-koel-tooltip success :title="t('ui.tooltips.refresh')" @click.prevent="refresh">
           <Icon :icon="faRotateRight" fixed-width />
         </Btn>
       </BtnGroup>
@@ -93,6 +93,7 @@
 import { faPlay, faRandom, faRotateRight } from '@fortawesome/free-solid-svg-icons'
 import type { Ref } from 'vue'
 import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref, toRef, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { OnClickOutside } from '@vueuse/components'
 import { FilteredPlayablesKey, PlayablesKey, SelectedPlayablesKey } from '@/symbols'
 import { requireInjection } from '@/utils/helpers'
@@ -101,6 +102,8 @@ import { useFloatingUi } from '@/composables/useFloatingUi'
 import AddToMenu from '@/components/playable/AddToMenu.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'
+
+const { t } = useI18n()
 
 const props = defineProps<{ config: PlayableListControlsConfig }>()
 

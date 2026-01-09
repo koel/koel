@@ -28,11 +28,11 @@ describe('editRadioStationForm.vue', () => {
     const updateMock = h.mock(radioStationStore, 'update')
     const { station } = renderComponent(reactive(h.factory('radio-station', { is_public: false })))
 
-    await h.type(screen.getByPlaceholderText('My Favorite Radio Station'), 'Beethoven Goes Pop')
-    await h.type(screen.getByPlaceholderText('https://radio.example.com/stream'), 'https://beet.stream/pop')
-    await h.type(screen.getByPlaceholderText('A short description of the station'), 'Poppy af')
+    await h.type(screen.getByPlaceholderText(/My Favorite Radio Station/i), 'Beethoven Goes Pop')
+    await h.type(screen.getByPlaceholderText(/https:\/\/radio\.example\.com\/stream/i), 'https://beet.stream/pop')
+    await h.type(screen.getByPlaceholderText(/A short description of the station/i), 'Poppy af')
 
-    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+    await h.user.click(screen.getByRole('button', { name: /Save/i }))
 
     expect(updateMock).toHaveBeenCalledWith(station, {
       name: 'Beethoven Goes Pop',
@@ -46,13 +46,13 @@ describe('editRadioStationForm.vue', () => {
     const updateMock = h.mock(radioStationStore, 'update')
     const { station } = renderComponent(reactive(h.factory('radio-station', { is_public: false })))
 
-    await h.user.click(screen.getByRole('button', { name: 'Remove' }))
+    await h.user.click(screen.getByRole('button', { name: /Remove/i }))
 
-    await h.type(screen.getByPlaceholderText('My Favorite Radio Station'), 'Beethoven Goes Pop')
-    await h.type(screen.getByPlaceholderText('https://radio.example.com/stream'), 'https://beet.stream/pop')
-    await h.type(screen.getByPlaceholderText('A short description of the station'), 'Poppy af')
+    await h.type(screen.getByPlaceholderText(/My Favorite Radio Station/i), 'Beethoven Goes Pop')
+    await h.type(screen.getByPlaceholderText(/https:\/\/radio\.example\.com\/stream/i), 'https://beet.stream/pop')
+    await h.type(screen.getByPlaceholderText(/A short description of the station/i), 'Poppy af')
 
-    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+    await h.user.click(screen.getByRole('button', { name: /Save/i }))
 
     expect(updateMock).toHaveBeenCalledWith(station, {
       name: 'Beethoven Goes Pop',
@@ -67,20 +67,20 @@ describe('editRadioStationForm.vue', () => {
     const updateMock = h.mock(radioStationStore, 'update')
     const { station } = renderComponent(reactive(h.factory('radio-station', { is_public: false })))
 
-    await h.user.click(screen.getByRole('button', { name: 'Remove' }))
+    await h.user.click(screen.getByRole('button', { name: /Remove/i }))
 
     await h.user.upload(
-      screen.getByLabelText('Pick a logo (optional)'),
+      screen.getByLabelText(/Pick a logo/i),
       new File(['bytes'], 'logo.png', { type: 'image/png' }),
     )
 
     await waitFor(() => screen.getByRole('img'))
 
-    await h.type(screen.getByPlaceholderText('My Favorite Radio Station'), 'Beethoven Goes Pop')
-    await h.type(screen.getByPlaceholderText('https://radio.example.com/stream'), 'https://beet.stream/pop')
-    await h.type(screen.getByPlaceholderText('A short description of the station'), 'Poppy af')
+    await h.type(screen.getByPlaceholderText(/My Favorite Radio Station/i), 'Beethoven Goes Pop')
+    await h.type(screen.getByPlaceholderText(/https:\/\/radio\.example\.com\/stream/i), 'https://beet.stream/pop')
+    await h.type(screen.getByPlaceholderText(/A short description of the station/i), 'Poppy af')
 
-    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+    await h.user.click(screen.getByRole('button', { name: /Save/i }))
 
     expect(updateMock).toHaveBeenCalledWith(station, {
       name: 'Beethoven Goes Pop',

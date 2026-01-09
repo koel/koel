@@ -10,9 +10,9 @@ describe('messageToast.vue', () => {
     return h.render(Component, {
       props: {
         message: {
-          id: 101,
+          id: '101',
           type: 'success',
-          message: 'Everything is fine',
+          content: 'Everything is fine',
           timeout: 5,
         },
       },
@@ -29,12 +29,18 @@ describe('messageToast.vue', () => {
   })
 
   it('dismisses upon timeout', async () => {
-    vi.useFakeTimers()
-
-    const { emitted } = renderComponent()
-    vi.advanceTimersByTime(5000)
+    // NOTE: This test has a known issue with vue-i18n and fake timers.
+    // vue-i18n (specifically @intlify) uses performance.now() internally which
+    // conflicts with Vitest's fake timers, causing invalid timestamp errors.
+    // 
+    // Workaround: Use real timers with a short timeout and verify the event is emitted.
+    // This is slower but works around the vue-i18n compatibility issue.
+    const { emitted, unmount } = renderComponent()
+    
+    // Wait for the timeout to trigger (5 seconds + small buffer)
+    await new Promise(resolve => setTimeout(resolve, 5100))
+    
     expect(emitted().dismiss).toBeTruthy()
-
-    vi.useRealTimers()
-  })
+    unmount()
+  }, 10000) // Increase test timeout to accommodate real timer
 })

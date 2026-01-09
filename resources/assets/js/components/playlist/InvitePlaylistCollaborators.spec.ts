@@ -17,7 +17,7 @@ describe('invitePlaylistCollaborators.vue', () => {
       },
     })
 
-    await h.user.click(screen.getByText('Invite'))
+    await h.user.click(screen.getByText(/Invite/i))
 
     await waitFor(async () => {
       expect(navigator.clipboard.writeText).toHaveBeenCalledWith('http://localhost:3000/invite/1234')

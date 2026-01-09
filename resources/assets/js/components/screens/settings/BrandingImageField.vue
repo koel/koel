@@ -13,13 +13,13 @@
         @click.prevent="removeCustomValue"
       >
         <Icon :icon="faTrashCan" />
-        <span class="sr-only">Remove</span>
+        <span class="sr-only">{{ t('ui.buttons.remove') }}</span>
       </button>
     </span>
 
     <FormRow v-if="!hasCustomValue">
-      <FileInput accept="image/*" :name @change="onImageInputChange">Select an image</FileInput>
-      <template #help>Recommended size: 512×512 pixels.</template>
+      <FileInput accept="image/*" :name @change="onImageInputChange">{{ t('form.placeholders.selectImage') }}</FileInput>
+      <template #help>{{ t('form.placeholders.imageSizeRecommended') }}</template>
     </FormRow>
 
     <p class="text-[.95rem]">
@@ -31,10 +31,13 @@
 <script setup lang="ts">
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useImageFileInput } from '@/composables/useImageFileInput'
 
 import FileInput from '@/components/ui/form/FileInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
+
+const { t } = useI18n()
 
 const props = defineProps<{ default: string, name: string }>()
 

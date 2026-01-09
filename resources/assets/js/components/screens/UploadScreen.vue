@@ -2,17 +2,17 @@
   <ScreenBase>
     <template #header>
       <ScreenHeader layout="collapsed">
-        Upload Media
+        {{ t('screens.upload') }}
 
         <template #controls>
           <BtnGroup v-if="hasUploadFailures" uppercase>
             <Btn data-testid="upload-retry-all-btn" success @click="retryAll">
               <Icon :icon="faRotateRight" />
-              Retry All
+              {{ t('screens.retryAll') }}
             </Btn>
             <Btn data-testid="upload-remove-all-btn" highlight @click="removeFailedEntries">
               <Icon :icon="faTrashCan" />
-              Remove Failed
+              {{ t('screens.removeFailed') }}
             </Btn>
           </BtnGroup>
         </template>
@@ -37,11 +37,11 @@
           <Icon :icon="faUpload" />
         </template>
 
-        {{ canDropFolders ? 'Drop files or folders to upload' : 'Drop files to upload' }}
+        {{ canDropFolders ? t('screens.dropFiles') : t('screens.dropFilesNoFolders') }}
 
         <span class="secondary block">
           <a class="block relative !text-k-fg-70 hover:!text-k-fg" role="button">
-            or click here to select songs
+            {{ t('screens.clickToSelect') }}
             <input
               :accept="acceptAttribute"
               class="absolute opacity-0 w-full h-full z-[2] cursor-pointer left-0 top-0"
@@ -59,7 +59,7 @@
       <template #icon>
         <Icon :icon="faWarning" />
       </template>
-      No media path set.
+      {{ t('screens.noMediaPath') }}
     </ScreenEmptyState>
   </ScreenBase>
 </template>
@@ -67,6 +67,7 @@
 <script lang="ts" setup>
 import { faRotateRight, faTrashCan, faUpload, faWarning } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, ref, toRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { isDirectoryReadingSupported as canDropFolders } from '@/utils/supports'
 import { acceptedExtensions } from '@/utils/mediaHelper'
@@ -80,6 +81,8 @@ import ScreenBase from '@/components/screens/ScreenBase.vue'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 const UploadItem = defineAsyncComponent(() => import('@/components/ui/upload/UploadItem.vue'))
+
+const { t } = useI18n()
 
 const acceptAttribute = acceptedExtensions.map(ext => `.${ext}`).join(',')
 

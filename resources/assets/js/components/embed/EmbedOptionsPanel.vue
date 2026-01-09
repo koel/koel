@@ -1,7 +1,7 @@
 <template>
   <div class="options grid gap-4" :class="isPlus && 'grid-cols-2'">
     <FormRow>
-      <template #label>Layout</template>
+      <template #label>{{ t('embeds.layout') }}</template>
       <SelectBox v-model="options.layout">
         <option v-for="layout in layouts" :key="layout.id" :value="layout.id">{{ layout.name }}</option>
       </SelectBox>
@@ -12,13 +12,15 @@
     <FormRow v-if="isPlus" class="col-span-2">
       <template #label>
         <CheckBox v-model="options.preview" />
-        <span class="text-base">Preview mode – only play max. 30 seconds per track</span>
+        <span class="text-base">{{ t('embeds.previewMode') }}</span>
       </template>
     </FormRow>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useKoelPlus } from '@/composables/useKoelPlus'
 import { toRefs } from 'vue'
 import { defineAsyncComponent } from '@/utils/helpers'
@@ -33,10 +35,11 @@ const ThemeSelectBox = defineAsyncComponent(() => import('@/components/embed/The
 
 const { modelValue: options } = toRefs(props)
 
+const { t } = useI18n()
 const { isPlus } = useKoelPlus()
 
-const layouts: EmbedLayout[] = [
-  { id: 'full', name: 'Banner and tracklist' },
-  { id: 'compact', name: 'Banner only' },
-]
+const layouts = computed<EmbedLayout[]>(() => [
+  { id: 'full', name: t('embeds.bannerAndTracklist') },
+  { id: 'compact', name: t('embeds.bannerOnly') },
+])
 </script>

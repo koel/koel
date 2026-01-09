@@ -15,7 +15,7 @@
     >
       <img
         :src="episode.episode_image"
-        alt="Episode thumbnail"
+        :alt="t('ui.altText.episodeThumbnail')"
         class="w-[128px] aspect-square object-cover"
         loading="lazy"
       >
@@ -27,7 +27,7 @@
         <Icon v-if="isPlaying" :icon="faPause" class="text-white" size="2xl" />
         <Icon v-else :icon="faPlay" class="ml-1 text-white" size="2xl" />
       </span>
-      <span class="sr-only">Play/Pause</span>
+      <span class="sr-only">{{ t('misc.srOnly.pauseResume') }}</span>
     </button>
     <div class="flex-1">
       <time
@@ -52,7 +52,7 @@
       <div class="description mt-3 line-clamp-3 text-k-fg-70" v-html="description" />
     </div>
     <div class="md:flex-[0_0_122px] text-sm flex md:flex-col items-center justify-center w-full">
-      <span class="block md:mb-2 text-k-fg-70">{{ timeLeft ? timeLeft : 'Played' }}</span>
+      <span class="block md:mb-2 text-k-fg-70">{{ timeLeft ? timeLeft : t('misc.played') }}</span>
       <div class="px-4 flex-1 md:flex-grow-0 md:w-full">
         <EpisodeProgress v-if="shouldShowProgress" :episode="episode" :position="currentPosition" />
       </div>
@@ -65,6 +65,7 @@ import DOMPurify from 'dompurify'
 import { orderBy } from 'lodash'
 import { faBookmark, faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { secondsToHumanReadable } from '@/utils/formatters'
 import { useDraggable } from '@/composables/useDragAndDrop'
 import { formatTimeAgo } from '@vueuse/core'
@@ -81,6 +82,7 @@ const PlayableContextMenu = defineAsyncComponent(() => import('@/components/play
 const EpisodeProgress = defineAsyncComponent(() => import('@/components/podcast/EpisodeProgress.vue'))
 const FavoriteButton = defineAsyncComponent(() => import('@/components/ui/FavoriteButton.vue'))
 
+const { t } = useI18n()
 const { episode, podcast } = toRefs(props)
 
 const { startDragging } = useDraggable('playables')
@@ -104,11 +106,12 @@ const publicationDateForHumans = computed(() => {
 const currentPosition = computed(() => podcast.value.state.progresses[episode.value.id] || 0)
 
 const timeLeft = computed(() => {
+  const translations = { hr: t('misc.hr'), min: t('misc.min'), sec: t('misc.sec') }
   if (currentPosition.value === 0) {
-    return secondsToHumanReadable(episode.value.length)
+    return secondsToHumanReadable(episode.value.length, translations)
   }
   const secondsLeft = episode.value.length - currentPosition.value
-  return secondsLeft === 0 ? 0 : `${secondsToHumanReadable(secondsLeft)} left`
+  return secondsLeft === 0 ? 0 : `${secondsToHumanReadable(secondsLeft, translations)} ${t('misc.left')}`
 })
 
 const shouldShowProgress = computed(() => timeLeft.value !== 0 && episode.value.length && currentPosition.value)

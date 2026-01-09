@@ -1,6 +1,7 @@
 import { differenceBy, orderBy, take, throttle } from 'lodash'
 import type { Ref } from 'vue'
 import { computed, provide, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { commonStore } from '@/stores/commonStore'
 import { queueStore } from '@/stores/queueStore'
 import { playableStore } from '@/stores/playableStore'
@@ -109,7 +110,12 @@ export const usePlayableList = (
     headerLayout.value = direction === 'down' ? 'collapsed' : 'expanded'
   }
 
-  const duration = computed(() => playableStore.getFormattedLength(playables.value))
+  const { t } = useI18n()
+  const duration = computed(() => playableStore.getFormattedLength(playables.value, {
+    hr: t('misc.hr'),
+    min: t('misc.min'),
+    sec: t('misc.sec'),
+  }))
 
   const downloadable = computed(() => {
     if (!commonStore.state.allows_download) {

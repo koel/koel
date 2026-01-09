@@ -1,7 +1,7 @@
 <template>
   <form class="md:w-[560px]" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
     <header>
-      <h1>Edit Smart Playlist</h1>
+      <h1>{{ t('smartPlaylists.edit') }}</h1>
     </header>
 
     <main class="space-y-5">
@@ -13,7 +13,7 @@
             aria-controls="createSmartPlaylistDetails"
             @click="activateTab('details')"
           >
-            Details
+            {{ t('smartPlaylists.details') }}
           </TabButton>
           <TabButton
             id="createSmartPlaylistTabRules"
@@ -21,7 +21,7 @@
             aria-controls="createSmartPlaylistRules"
             @click="activateTab('rules')"
           >
-            Rules
+            {{ t('smartPlaylists.rules') }}
           </TabButton>
         </TabList>
 
@@ -34,26 +34,26 @@
           >
             <div class="grid grid-cols-2 gap-4">
               <FormRow>
-                <template #label>Name *</template>
+                <template #label>{{ t('smartPlaylists.name') }}</template>
                 <TextInput
                   v-model="data.name"
                   v-koel-focus name="name"
-                  placeholder="Playlist name"
+                  :placeholder="t('screens.playlistNamePlaceholder')"
                   required
                 />
               </FormRow>
               <FormRow>
-                <template #label>Folder</template>
+                <template #label>{{ t('smartPlaylists.folder') }}</template>
                 <SelectBox v-model="data.folder_id">
                   <option :value="null" />
                   <option v-for="folder in folders" :key="folder.id" :value="folder.id">{{ folder.name }}</option>
                 </SelectBox>
               </FormRow>
               <FormRow class="col-span-2">
-                <template #label>Description</template>
+                <template #label>{{ t('smartPlaylists.description') }}</template>
                 <TextArea v-model="data.description" class="h-28" name="description" />
               </FormRow>
-              <ArtworkField v-model="data.cover">Pick a cover (optional)</ArtworkField>
+              <ArtworkField v-model="data.cover">{{ t('smartPlaylists.pickCover') }}</ArtworkField>
             </div>
           </TabPanel>
 
@@ -71,9 +71,9 @@
                 :is-first-group="index === 0"
                 @input="onGroupChanged"
               />
-              <Btn class="btn-add-group" small success title="Add a new group" uppercase @click.prevent="addGroup">
+              <Btn class="btn-add-group" small success :title="t('ui.tooltips.addNewGroup')" uppercase @click.prevent="addGroup">
                 <Icon :icon="faPlus" />
-                Group
+                {{ t('smartPlaylists.group') }}
               </Btn>
             </div>
           </TabPanel>
@@ -82,8 +82,8 @@
     </main>
 
     <footer>
-      <Btn type="submit">Save</Btn>
-      <Btn class="btn-cancel" white @click.prevent="maybeClose">Cancel</Btn>
+      <Btn type="submit">{{ t('auth.save') }}</Btn>
+      <Btn class="btn-cancel" white @click.prevent="maybeClose">{{ t('auth.cancel') }}</Btn>
     </footer>
   </form>
 </template>
@@ -91,6 +91,7 @@
 <script lang="ts" setup>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { reactive, toRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { cloneDeep, isEqual, pick } from 'lodash'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import type { UpdatePlaylistData } from '@/stores/playlistStore'
@@ -112,6 +113,7 @@ import TabList from '@/components/ui/tabs/TabList.vue'
 import TabPanel from '@/components/ui/tabs/TabPanel.vue'
 import ArtworkField from '@/components/ui/form/ArtworkField.vue'
 
+const { t } = useI18n()
 const props = defineProps<{ playlist: Playlist }>()
 const emit = defineEmits<{ (e: 'close'): void }>()
 

@@ -4,7 +4,7 @@
       class="flex border rounded-md border-k-fg-10 focus-within:border-k-highlight"
       @submit.prevent
     >
-      <button v-koel-tooltip class="px-3.5 py-2" title="Filter" type="button" @click.prevent="showInput">
+      <button v-koel-tooltip class="px-3.5 py-2" :title="t('ui.tooltips.filter')" type="button" @click.prevent="showInput">
         <Icon :icon="faFilter" fixed-width />
       </button>
       <TextInput
@@ -12,7 +12,7 @@
         ref="input"
         v-model="keywords"
         class="text-k-fg bg-transparent border-0 rounded-none !pl-0 !h-[unset] placeholder:text-k-fg-50 focus-visible:outline-0"
-        placeholder="Keywords"
+        :placeholder="t('form.placeholders.keywords')"
         type="search"
         @blur="inputting = false"
         @focus="inputting = true"
@@ -25,10 +25,13 @@
 import { OnClickOutside } from '@vueuse/components'
 import { faFilter } from '@fortawesome/free-solid-svg-icons'
 import { computed, nextTick, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { requireInjection } from '@/utils/helpers'
 import { FilterKeywordsKey } from '@/symbols'
 
 import TextInput from '@/components/ui/form/TextInput.vue'
+
+const { t } = useI18n()
 
 const input = ref<InstanceType<typeof TextInput>>()
 const inputting = ref(false)

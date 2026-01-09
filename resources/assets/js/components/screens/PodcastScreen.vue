@@ -35,9 +35,9 @@
               {{ playButtonLabel }}
             </Btn>
             <BtnGroup uppercase>
-              <Btn v-if="episodes" v-koel-tooltip="'Refresh'" success @click.prevent="refresh">
+              <Btn v-if="episodes" v-koel-tooltip="t('screens.refreshPodcast')" success @click.prevent="refresh">
                 <Icon :icon="faRotateRight" fixed-width />
-                <span class="sr-only">Refresh Podcast</span>
+                <span class="sr-only">{{ t('screens.refreshPodcast') }}</span>
               </Btn>
             </BtnGroup>
 
@@ -81,6 +81,7 @@ import DOMPurify from 'dompurify'
 import { orderBy } from 'lodash'
 import { faEllipsis, faPause, faPlay, faRotateRight } from '@fortawesome/free-solid-svg-icons'
 import { computed, nextTick, onMounted, provide, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from '@/composables/useRouter'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { playableStore as episodeStore } from '@/stores/playableStore'
@@ -107,6 +108,7 @@ import EpisodeItemSkeleton from '@/components/podcast/EpisodeItemSkeleton.vue'
 const FavoriteButton = defineAsyncComponent(() => import('@/components/ui/FavoriteButton.vue'))
 const ContextMenu = defineAsyncComponent(() => import('@/components/podcast/PodcastContextMenu.vue'))
 
+const { t } = useI18n()
 const { getRouteParam, go, triggerNotFound, url } = useRouter()
 const { handleHttpError } = useErrorHandler()
 
@@ -179,7 +181,7 @@ const descriptionTooltip = computed(() => {
     return ''
   }
 
-  return description.expanded ? 'Collapse' : 'Expand'
+  return description.expanded ? t('screens.collapse') : t('screens.expand')
 })
 
 const displayedEpisodes = computed(() => {
@@ -220,7 +222,7 @@ const playButtonLabel = computed(() => {
     return ''
   }
 
-  return inProgress.value ? 'Continue' : 'Start Listening'
+  return inProgress.value ? t('screens.continue') : t('screens.startListening')
 })
 
 const playOrPause = async () => {

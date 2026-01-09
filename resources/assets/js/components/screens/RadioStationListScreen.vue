@@ -2,13 +2,13 @@
   <ScreenBase>
     <template #header>
       <ScreenHeader layout="collapsed" :disabled="loading">
-        Radio Stations
+        {{ t('screens.radioStations') }}
 
         <template #controls>
           <div class="flex gap-2">
             <Btn
               v-koel-tooltip
-              :title="preferences.radio_stations_favorites_only ? 'Show all' : 'Show favorites only'"
+              :title="preferences.radio_stations_favorites_only ? t('misc.showAll') : t('misc.showFavoritesOnly')"
               class="border border-k-fg-10"
               small
               transparent
@@ -34,11 +34,11 @@
               v-koel-tooltip
               highlight
               small
-              title="Add a new station"
+              :title="t('ui.tooltips.addStation')"
               @click.prevent="requestAddStationForm"
             >
               <Icon :icon="faAdd" fixed-width />
-              <span class="sr-only">Add a new station</span>
+              <span class="sr-only">{{ t('ui.tooltips.addStation') }}</span>
             </Btn>
 
             <ViewModeSwitch v-model="preferences.radio_stations_view_mode" />
@@ -51,8 +51,8 @@
       <template #icon>
         <RadioIcon :size="96" />
       </template>
-      No stations found.
-      <span class="secondary block">Add a station to get started.</span>
+      {{ t('emptyStates.radiosEmpty') }}
+      <span class="secondary block">{{ t('emptyStates.radiosEmpty') }}</span>
     </ScreenEmptyState>
 
     <div v-else ref="gridContainer" v-koel-overflow-fade class="-m-6 overflow-auto">
@@ -80,6 +80,7 @@ import { RadioIcon } from 'lucide-vue-next'
 import { faStar as faEmptyStar } from '@fortawesome/free-regular-svg-icons'
 
 import { computed, onMounted, provide, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { eventBus } from '@/utils/eventBus'
 import { useFuzzySearch } from '@/composables/useFuzzySearch'
@@ -88,6 +89,8 @@ import { orderBy } from 'lodash'
 import { FilterKeywordsKey } from '@/symbols'
 import { radioStationStore } from '@/stores/radioStationStore'
 import { usePolicies } from '@/composables/usePolicies'
+
+const { t } = useI18n()
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'

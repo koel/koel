@@ -18,14 +18,24 @@
 
 <script setup lang="ts">
 import { computed, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { getPlayableProp } from '@/utils/helpers'
+import { isSong } from '@/utils/typeGuards'
 import { useBranding } from '@/composables/useBranding'
+import { artistStore } from '@/stores/artistStore'
 
 const props = defineProps<{ playable: Playable }>()
 const { playable } = toRefs(props)
 
+const { t } = useI18n()
 const { cover: defaultCover } = useBranding()
 
 const src = computed(() => getPlayableProp(playable.value, 'album_cover', 'episode_image'))
-const author = computed(() => getPlayableProp(playable.value, 'artist_name', 'podcast_author'))
+const author = computed(() => {
+  const artistName = getPlayableProp(playable.value, 'artist_name', 'podcast_author')
+  if (isSong(playable.value) && artistStore.isUnknown(artistName)) {
+    return t('screens.unknownArtist')
+  }
+  return artistName
+})
 </script>

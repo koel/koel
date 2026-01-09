@@ -3,7 +3,7 @@
     <template #header>
       <ScreenHeaderSkeleton v-if="loading && !episode" />
       <ScreenHeader v-if="episode">
-        <p class="text-base font-normal">Episode</p>
+        <p class="text-base font-normal">{{ t('screens.episode') }}</p>
         <h1 class="text-ellipsis overflow-hidden whitespace-nowrap" :title="episode.title">{{ episode.title }}</h1>
 
         <h2 class="text-2xl">
@@ -16,19 +16,19 @@
         </h2>
 
         <template #thumbnail>
-          <img :src="episode.episode_image" class="aspect-square object-cover" alt="Episode thumbnail">
+          <img :src="episode.episode_image" class="aspect-square object-cover" :alt="t('ui.altText.episodeThumbnail')">
         </template>
 
         <template #controls>
           <div class="flex gap-2">
-            <Btn v-koel-tooltip="playing ? 'Pause' : 'Play'" highlight @click.prevent="playOrPause">
+            <Btn v-koel-tooltip="playing ? t('ui.buttons.pause') : t('ui.buttons.play')" highlight @click.prevent="playOrPause">
               <Icon v-if="playing" :icon="faPause" fixed-width />
               <Icon v-else :icon="faPlay" fixed-width />
             </Btn>
 
             <Btn
               v-if="episode.episode_link"
-              v-koel-tooltip="'Visit episode webpage'" :href="episode.episode_link"
+              v-koel-tooltip="t('misc.srOnly.visitEpisodeWebpage')" :href="episode.episode_link"
               gray
               tag="a"
               target="_blank"
@@ -45,7 +45,7 @@
 
             <Btn gray @click="requestContextMenu">
               <Icon :icon="faEllipsis" fixed-width />
-              <span class="sr-only">More Actions</span>
+              <span class="sr-only">{{ t('misc.moreActions') }}</span>
             </Btn>
           </div>
         </template>
@@ -53,7 +53,7 @@
     </template>
 
     <div v-if="episode">
-      <h3 class="text-3xl font-semibold mb-4">Description</h3>
+      <h3 class="text-3xl font-semibold mb-4">{{ t('screens.description') }}</h3>
       <div v-koel-new-tab class="description" v-html="formattedDescription" />
     </div>
   </ScreenBase>
@@ -64,6 +64,7 @@ import { faEllipsis, faExternalLink, faPause, faPlay } from '@fortawesome/free-s
 import DOMPurify from 'dompurify'
 import { orderBy } from 'lodash'
 import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { playableStore as episodeStore } from '@/stores/playableStore'
 import { queueStore } from '@/stores/queueStore'
 import { podcastStore } from '@/stores/podcastStore'
@@ -82,6 +83,7 @@ import ScreenHeaderSkeleton from '@/components/ui/ScreenHeaderSkeleton.vue'
 const FavoriteButton = defineAsyncComponent(() => import('@/components/ui/FavoriteButton.vue'))
 const ContextMenu = defineAsyncComponent(() => import('@/components/playable/PlayableContextMenu.vue'))
 
+const { t } = useI18n()
 const { onScreenActivated, getRouteParam, triggerNotFound, url } = useRouter()
 const { openContextMenu } = useContextMenu()
 

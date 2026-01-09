@@ -28,11 +28,11 @@ describe('addUserForm.vue', () => {
 
     renderComponent()
 
-    await h.type(screen.getByRole('textbox', { name: 'name' }), 'John Doe')
-    await h.type(screen.getByRole('textbox', { name: 'email' }), 'john@doe.com')
+    await h.type(screen.getByLabelText('Name'), 'John Doe')
+    await h.type(screen.getByLabelText('Email'), 'john@doe.com')
     await h.type(screen.getByTitle('Password'), 'secret-password')
     await fireEvent.update(screen.getByTestId('role-picker'), 'admin')
-    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+    await h.user.click(screen.getByRole('button', { name: /save/i }))
 
     await waitFor(() => {
       expect(storeMock).toHaveBeenCalledWith({
@@ -42,7 +42,7 @@ describe('addUserForm.vue', () => {
         role: 'admin',
       })
 
-      expect(toasterMock).toHaveBeenCalledWith('New user "John Doe" created.')
+      expect(toasterMock).toHaveBeenCalledWith(expect.stringMatching(/John Doe.*created/))
     })
   })
 })

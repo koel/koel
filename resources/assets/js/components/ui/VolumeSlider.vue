@@ -1,10 +1,10 @@
 <template>
   <span id="volume" :class="level" class="hidden md:flex relative items-center gap-2">
-    <FooterExtraControlBtn v-show="level === 'muted'" tabindex="0" title="Unmute" @click="unmute">
+    <FooterExtraControlBtn v-show="level === 'muted'" tabindex="0" :title="t('ui.tooltips.unmute')" @click="unmute">
       <Icon :icon="faVolumeMute" fixed-width />
     </FooterExtraControlBtn>
 
-    <FooterExtraControlBtn v-show="level !== 'muted'" tabindex="0" title="Mute" @click="mute">
+    <FooterExtraControlBtn v-show="level !== 'muted'" tabindex="0" :title="t('ui.tooltips.mute')" @click="mute">
       <Icon :icon="level === 'discreet' ? faVolumeLow : faVolumeHigh" fixed-width />
     </FooterExtraControlBtn>
 
@@ -14,7 +14,7 @@
       max="10"
       role="slider"
       step="0.1"
-      title="Volume"
+      :title="t('ui.tooltips.volume')"
       type="range"
       @input="setVolume"
     >
@@ -24,12 +24,15 @@
 <script lang="ts" setup>
 import { faVolumeHigh, faVolumeLow, faVolumeMute } from '@fortawesome/free-solid-svg-icons'
 import { computed, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { watchThrottled } from '@vueuse/core'
 import { socketService } from '@/services/socketService'
 import { volumeManager } from '@/services/volumeManager'
 import { preferenceStore } from '@/stores/preferenceStore'
 
 import FooterExtraControlBtn from '@/components/layout/app-footer/FooterButton.vue'
+
+const { t } = useI18n()
 
 const inputEl = ref<HTMLInputElement>()
 

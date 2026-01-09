@@ -21,12 +21,14 @@
 <script lang="ts" setup>
 import type { Ref } from 'vue'
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { getPlayableProp, requireInjection, use } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
 import { CurrentStreamableKey } from '@/symbols'
 import { useDraggable } from '@/composables/useDragAndDrop'
 import { useRouter } from '@/composables/useRouter'
 import { useBranding } from '@/composables/useBranding'
+import { artistStore } from '@/stores/artistStore'
 
 const { startDragging } = useDraggable('playables')
 const { url } = useRouter()
@@ -49,10 +51,17 @@ const artistOrPodcastUri = computed(() => {
     : url('podcasts.show', { id: playable.value?.podcast_id })
 })
 
-const artistOrPodcastName = computed(() => playable.value
-  ? getPlayableProp(playable.value, 'artist_name', 'podcast_title')
-  : '',
-)
+const { t } = useI18n()
+const artistOrPodcastName = computed(() => {
+  if (!playable.value) {
+    return ''
+  }
+  if (isSong(playable.value)) {
+    const artistName = getPlayableProp(playable.value, 'artist_name', 'podcast_title')
+    return artistStore.isUnknown(artistName) ? t('screens.unknownArtist') : artistName
+  }
+  return getPlayableProp(playable.value, 'artist_name', 'podcast_title')
+})
 
 const coverBackgroundImage = computed(() => `url(${cover.value ?? defaultCover})`)
 const draggable = computed(() => Boolean(playable.value))

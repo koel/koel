@@ -43,7 +43,7 @@ describe('playlistContextMenu.vue', () => {
     const { playlist } = await renderComponent(h.factory('playlist'))
     const emitMock = h.mock(eventBus, 'emit')
 
-    await h.user.click(screen.getByText('Edit…'))
+    await h.user.click(screen.getByText(/edit/i))
 
     expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist)
   })
@@ -52,7 +52,7 @@ describe('playlistContextMenu.vue', () => {
     const { playlist } = await renderComponent(factory.states('smart')('playlist'))
     const emitMock = h.mock(eventBus, 'emit')
 
-    await h.user.click(screen.getByText('Edit…'))
+    await h.user.click(screen.getByText(/edit/i))
 
     expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist)
   })
@@ -61,7 +61,7 @@ describe('playlistContextMenu.vue', () => {
     const deleteMock = h.mock(playlistStore, 'delete')
     const { playlist } = await renderComponent(h.factory('playlist'))
 
-    await h.user.click(screen.getByText('Delete'))
+    await h.user.click(screen.getByText(/delete/i))
 
     expect(deleteMock).toHaveBeenCalledWith(playlist)
   })
@@ -75,7 +75,9 @@ describe('playlistContextMenu.vue', () => {
     const goMock = h.mock(Router, 'go')
     const { playlist } = await renderComponent(h.factory('playlist'))
 
-    await h.user.click(screen.getByText('Play'))
+    // There might be multiple "Play" elements, get the first one from the context menu
+    const playButtons = screen.getAllByText(/play/i)
+    await h.user.click(playButtons[0])
 
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith(playlist)
@@ -94,7 +96,9 @@ describe('playlistContextMenu.vue', () => {
 
     const { playlist } = await renderComponent(h.factory('playlist'))
 
-    await h.user.click(screen.getByText('Play'))
+    // There might be multiple "Play" elements, get the first one from the context menu
+    const playButtons = screen.getAllByText(/play/i)
+    await h.user.click(playButtons[0])
 
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith(playlist)
@@ -113,7 +117,7 @@ describe('playlistContextMenu.vue', () => {
     const goMock = h.mock(Router, 'go')
     const { playlist } = await renderComponent(h.factory('playlist'))
 
-    await h.user.click(screen.getByText('Shuffle'))
+    await h.user.click(screen.getByText(/shuffle/i))
 
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith(playlist)
@@ -132,7 +136,7 @@ describe('playlistContextMenu.vue', () => {
 
     const { playlist } = await renderComponent(h.factory('playlist'))
 
-    await h.user.click(screen.getByText('Shuffle'))
+    await h.user.click(screen.getByText(/shuffle/i))
 
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith(playlist)
@@ -151,7 +155,7 @@ describe('playlistContextMenu.vue', () => {
     const toastMock = h.mock(MessageToasterStub.value, 'success')
     const { playlist } = await renderComponent(h.factory('playlist'))
 
-    await h.user.click(screen.getByText('Add to Queue'))
+    await h.user.click(screen.getByText(/add to queue/i))
 
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith(playlist)
@@ -163,15 +167,15 @@ describe('playlistContextMenu.vue', () => {
   it('does not have an option to edit or delete if the playlist is not owned by the current user', async () => {
     await renderComponent(h.factory('playlist'), h.factory.states('current')('user') as CurrentUser)
 
-    expect(screen.queryByText('Edit…')).toBeNull()
-    expect(screen.queryByText('Delete')).toBeNull()
+    expect(screen.queryByText(/edit/i)).toBeNull()
+    expect(screen.queryByText(/delete/i)).toBeNull()
   })
 
   it('opens collaboration form', async () => await h.withPlusEdition(async () => {
     const { playlist } = await renderComponent(h.factory('playlist'))
     const emitMock = h.mock(eventBus, 'emit')
 
-    await h.user.click(screen.getByText('Collaborate…'))
+    await h.user.click(screen.getByText(/collaborate/i))
 
     expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_PLAYLIST_COLLABORATION', playlist)
   }))
@@ -179,7 +183,7 @@ describe('playlistContextMenu.vue', () => {
   it('requests the embed form', async () => {
     const { playlist } = await renderComponent(h.factory('playlist'))
     const emitMock = h.mock(eventBus, 'emit')
-    await h.user.click(screen.getByText('Embed…'))
+    await h.user.click(screen.getByText(/embed/i))
 
     expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_CREATE_EMBED_FORM', playlist)
   })

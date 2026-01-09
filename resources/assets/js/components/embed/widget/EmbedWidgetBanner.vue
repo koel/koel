@@ -25,8 +25,11 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import { getPlayableProp } from '@/utils/helpers'
+import { isSong } from '@/utils/typeGuards'
 import { useBranding } from '@/composables/useBranding'
+import { artistStore } from '@/stores/artistStore'
 
 import Thumbnail from '@/components/embed/widget/EmbedWidgetThumbnail.vue'
 import PreviewBadge from '@/components/embed/widget/PreviewBadge.vue'
@@ -34,6 +37,7 @@ import PreviewBadge from '@/components/embed/widget/PreviewBadge.vue'
 const props = defineProps<{ embed: WidgetReadyEmbed, options: EmbedOptions }>()
 const { embed, options } = props
 
+const { t } = useI18n()
 const { logo } = useBranding()
 
 let heading: string
@@ -47,21 +51,26 @@ const setAttributes = (_heading: string, _subheading: string) => {
 switch (embed.embeddable_type) {
   case 'album':
     const album = embed.embeddable as Album
-    setAttributes(album.name, `Album by ${album.artist_name}`)
+    const albumArtistName = artistStore.isUnknown(album.artist_name) ? t('screens.unknownArtist') : album.artist_name
+    setAttributes(album.name, albumArtistName)
     break
   case 'artist':
-    setAttributes((embed.embeddable as Artist).name, 'Artist')
+    setAttributes((embed.embeddable as Artist).name, t('artists.artist'))
     break
   case 'playable':
     const playable = embed.embeddable as Playable
+    let playableArtistName = getPlayableProp(playable, 'artist_name', 'podcast_title')
+    if (isSong(playable) && artistStore.isUnknown(playableArtistName)) {
+      playableArtistName = t('screens.unknownArtist')
+    }
     setAttributes(
       getPlayableProp(playable, 'title', 'title'),
-      getPlayableProp(playable, 'artist_name', 'podcast_title'),
+      playableArtistName,
     )
     break
   case 'playlist':
     const playlist = embed.embeddable as Playlist
-    setAttributes(playlist.name, playlist.description || 'Playlist')
+    setAttributes(playlist.name, playlist.description || t('playlists.playlist'))
     break
 }
 </script>

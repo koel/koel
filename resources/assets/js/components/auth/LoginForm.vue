@@ -20,12 +20,12 @@
       </FormRow>
 
       <FormRow>
-        <Btn class="w-full" data-testid="submit" type="submit">Log In</Btn>
+        <Btn class="w-full" data-testid="submit" type="submit">{{ t('auth.logIn') }}</Btn>
       </FormRow>
 
       <FormRow v-if="canResetPassword">
         <a class="text-right text-[.95rem] text-k-fg-70" role="button" @click.prevent="showForgotPasswordForm">
-          Forgot password?
+          {{ t('auth.forgotPassword') }}
         </a>
       </FormRow>
     </form>
@@ -40,6 +40,7 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { authService } from '@/services/authService'
 import { logger } from '@/utils/logger'
 import { useMessageToaster } from '@/composables/useMessageToaster'
@@ -55,6 +56,7 @@ import FormRow from '@/components/ui/form/FormRow.vue'
 
 const emit = defineEmits<{ (e: 'loggedin'): void }>()
 
+const { t } = useI18n()
 const { toastWarning, toastError } = useMessageToaster()
 const { logo } = useBranding()
 
@@ -67,8 +69,8 @@ const failed = ref(false)
 const showingForgotPasswordForm = ref(false)
 const canResetPassword = window.MAILER_CONFIGURED && !window.IS_DEMO
 const ssoProviders = window.SSO_PROVIDERS || []
-const emailPlaceholder = window.IS_DEMO ? demoAccount.email : 'Your email address'
-const passwordPlaceholder = window.IS_DEMO ? demoAccount.password : 'Your password'
+const emailPlaceholder = window.IS_DEMO ? demoAccount.email : t('auth.yourEmailAddress')
+const passwordPlaceholder = window.IS_DEMO ? demoAccount.password : t('auth.yourPassword')
 
 const { data, handleSubmit } = useForm<{ email: string, password: string }>({
   initialValues: window.IS_DEMO
@@ -95,7 +97,7 @@ const showForgotPasswordForm = () => (showingForgotPasswordForm.value = true)
 
 const onSSOError = (error: any) => {
   logger.error('SSO error: ', error)
-  toastError('Login failed. Please try again.')
+  toastError(t('auth.loginFailed'))
 }
 
 const onSSOSuccess = (token: CompositeToken) => {
@@ -105,7 +107,7 @@ const onSSOSuccess = (token: CompositeToken) => {
 
 onMounted(() => {
   if (authService.hasRedirect()) {
-    toastWarning('Please log in first.')
+    toastWarning(t('auth.pleaseLogInFirst'))
   }
 })
 </script>

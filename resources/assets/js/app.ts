@@ -1,5 +1,6 @@
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome'
 import { createApp } from 'vue'
+import { createI18n } from 'vue-i18n'
 import { focus } from '@/directives/focus'
 import { tooltip } from '@/directives/tooltip'
 import { hideBrokenIcon } from '@/directives/hideBrokenIcon'
@@ -9,8 +10,21 @@ import { RouterKey } from '@/symbols'
 import Router from '@/router'
 import '@/../css/app.pcss'
 import App from './App.vue'
+import en from '@/locales/en.json'
+import es from '@/locales/es.json'
+
+const i18n = createI18n({
+  legacy: false,
+  locale: (window as any).LOCALE || 'en',
+  fallbackLocale: 'en',
+  messages: {
+    en,
+    es,
+  },
+})
 
 createApp(App)
+  .use(i18n)
   .provide(RouterKey, new Router())
   .component('Icon', FontAwesomeIcon)
   .component('IconLayers', FontAwesomeLayers)

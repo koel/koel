@@ -13,13 +13,13 @@
 
       <div class="current-version">
         {{ appName }} {{ currentVersion }}
-        <span v-if="isPlus" class="badge">Plus</span>
-        <span v-else>Community</span>
-        Edition
+        <span v-if="isPlus" class="badge">{{ t('meta.plus') }}</span>
+        <span v-else>{{ t('meta.community') }}</span>
+        {{ t('meta.edition') }}
         <p v-if="isPlus" class="plus-badge">
-          Licensed to {{ license.customerName }} &lt;{{ license.customerEmail }}&gt;
+          {{ t('meta.licensedTo', { name: license.customerName, email: license.customerEmail }) }}
           <br>
-          License key: <span class="key font-mono">{{ license.shortKey }}</span>
+          {{ t('meta.licenseKey') }} <span class="key font-mono">{{ license.shortKey }}</span>
         </p>
 
         <template v-else>
@@ -32,34 +32,35 @@
 
       <p v-if="shouldNotifyNewVersion" data-testid="new-version-about">
         <a :href="latestVersionReleaseUrl" target="_blank">
-          A new version of {{ appName }} is available ({{ latestVersion }})!
+          {{ t('meta.newVersion', { app: appName, version: latestVersion }) }}
         </a>
       </p>
 
       <p v-if="!hasCustomBranding" class="author">
-        Made with ❤️ by
+        {{ t('meta.madeWith') }}
         <a href="https://github.com/phanan" rel="noopener" target="_blank">Phan An</a>
-        and quite a few awesome
-        <a href="https://github.com/koel/koel/graphs/contributors" rel="noopener" target="_blank">contributors</a>.
+        {{ t('meta.andQuiteAFewAwesome') }}
+        <a href="https://github.com/koel/koel/graphs/contributors" rel="noopener" target="_blank">{{ t('meta.contributors') }}</a>.
       </p>
 
       <CreditsBlock v-if="isDemo" />
 
       <p v-if="!isPlus">
-        Loving Koel? Please consider supporting its development via
-        <a href="https://github.com/users/phanan/sponsorship" rel="noopener" target="_blank">GitHub Sponsors</a>
-        and/or
-        <a href="https://opencollective.com/koel" rel="noopener" target="_blank">OpenCollective</a>.
+        {{ t('meta.supportDevelopment') }}
+        <a href="https://github.com/users/phanan/sponsorship" rel="noopener" target="_blank">{{ t('meta.gitHubSponsors') }}</a>
+        {{ t('meta.and') }}
+        <a href="https://opencollective.com/koel" rel="noopener" target="_blank">{{ t('meta.openCollective') }}</a>.
       </p>
     </main>
 
     <footer>
-      <Btn danger data-testid="close-modal-btn" rounded @click.prevent="close">Close</Btn>
+      <Btn danger data-testid="close-modal-btn" rounded @click.prevent="close">{{ t('playlists.close') }}</Btn>
     </footer>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n'
 import { useKoelPlus } from '@/composables/useKoelPlus'
 import { useNewVersionNotification } from '@/composables/useNewVersionNotification'
 import { eventBus } from '@/utils/eventBus'
@@ -71,6 +72,7 @@ import BtnUpgradeToPlus from '@/components/koel-plus/BtnUpgradeToPlus.vue'
 import CreditsBlock from '@/components/meta/CreditsBlock.vue'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
+const { t } = useI18n()
 const { name: appName, logo, hasCustomBranding } = useBranding()
 const {
   shouldNotifyNewVersion,

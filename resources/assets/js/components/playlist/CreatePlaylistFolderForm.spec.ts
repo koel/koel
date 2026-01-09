@@ -13,8 +13,8 @@ describe('createPlaylistFolderForm.vue', () => {
 
     h.render(Component)
 
-    await h.type(screen.getByPlaceholderText('Folder name'), 'My folder')
-    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+    await h.type(screen.getByPlaceholderText(/Folder name/i), 'My folder')
+    await h.user.click(screen.getByRole('button', { name: /Save/i }))
 
     expect(storeMock).toHaveBeenCalledWith('My folder')
   })

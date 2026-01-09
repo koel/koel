@@ -1,6 +1,6 @@
 <template>
   <HomeScreenBlock>
-    <template #header>Most Played</template>
+    <template #header>{{ t('screens.mostPlayed') }}</template>
 
     <PlayableListSkeleton v-if="loading" class="border border-k-fg-5 rounded-lg" />
     <template v-else>
@@ -10,13 +10,14 @@
         class="border border-k-fg-5 rounded-lg overflow-hidden"
         @press:enter="onPressEnter"
       />
-      <p v-else>Nothing played as of late.</p>
+      <p v-else>{{ t('emptyStates.mostPlayedEmpty') }}</p>
     </template>
   </HomeScreenBlock>
 </template>
 
 <script lang="ts" setup>
 import { toRef, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { overviewStore } from '@/stores/overviewStore'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { playback } from '@/services/playbackManager'
@@ -24,6 +25,7 @@ import { playback } from '@/services/playbackManager'
 import HomeScreenBlock from '@/components/screens/home/HomeScreenBlock.vue'
 import PlayableListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
 
+const { t } = useI18n()
 const props = withDefaults(defineProps<{ loading?: boolean }>(), { loading: false })
 const { loading } = toRefs(props)
 

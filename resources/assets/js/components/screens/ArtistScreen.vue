@@ -12,8 +12,8 @@
 
         <template #meta>
           <span class="flex meta-content">
-            <span>{{ pluralize(albumCount, 'album') }}</span>
-            <span>{{ pluralize(songs, 'song') }}</span>
+            <span>{{ albumCountText }}</span>
+            <span>{{ songCountText }}</span>
             <span>{{ duration }}</span>
           </span>
         </template>
@@ -34,7 +34,7 @@
             />
             <Btn gray @click="requestContextMenu">
               <Icon :icon="faEllipsis" fixed-width />
-              <span class="sr-only">More Actions</span>
+              <span class="sr-only">{{ t('misc.moreActions') }}</span>
             </Btn>
           </SongListControls>
         </template>
@@ -46,16 +46,16 @@
         <nav>
           <ul>
             <li :class="activeTab === 'songs' && 'active'">
-              <a :href="url('artists.show', { id: artist.id, tab: 'songs' })">Songs</a>
+              <a :href="url('artists.show', { id: artist.id, tab: 'songs' })">{{ t('misc.songs') }}</a>
             </li>
             <li :class="activeTab === 'albums' && 'active'">
-              <a :href="url('artists.show', { id: artist.id, tab: 'albums' })">Albums</a>
+              <a :href="url('artists.show', { id: artist.id, tab: 'albums' })">{{ t('misc.albums') }}</a>
             </li>
             <li v-if="useEncyclopedia" :class="activeTab === 'information' && 'active'">
-              <a :href="url('artists.show', { id: artist.id, tab: 'information' })">Information</a>
+              <a :href="url('artists.show', { id: artist.id, tab: 'information' })">{{ t('screens.information') }}</a>
             </li>
             <li v-if="useTicketmaster" :class="activeTab === 'events' && 'active'">
-              <a :href="url('artists.show', { id: artist.id, tab: 'events' })">Events</a>
+              <a :href="url('artists.show', { id: artist.id, tab: 'events' })">{{ t('misc.events') }}</a>
             </li>
           </ul>
         </nav>
@@ -102,9 +102,9 @@
 <script lang="ts" setup>
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { eventBus } from '@/utils/eventBus'
-import { pluralize } from '@/utils/formatters'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { playableStore } from '@/stores/playableStore'
@@ -135,6 +135,7 @@ const ArtistContextMenu = defineAsyncComponent(() => import('@/components/artist
 const validTabs = ['songs', 'albums', 'information', 'events'] as const
 type Tab = typeof validTabs[number]
 
+const { t } = useI18n()
 const { PlayableListControls: SongListControls, config } = usePlayableListControls('Artist')
 const { useLastfm, useMusicBrainz, useTicketmaster } = useThirdPartyServices()
 const { getRouteParam, go, onScreenActivated, onRouteChanged, url, triggerNotFound } = useRouter()
@@ -167,6 +168,18 @@ const albumCount = computed(() => {
   const albums = new Set()
   songs.value.forEach(song => albums.add(song.album_id))
   return albums.size
+})
+
+const albumCountText = computed(() => {
+  const count = albumCount.value
+  const albumText = count === 1 ? t('messages.albumSingular') : t('messages.albumPlural')
+  return `${count.toLocaleString()} ${albumText}`
+})
+
+const songCountText = computed(() => {
+  const count = songs.value.length
+  const songText = count === 1 ? t('messages.songSingular') : t('messages.songPlural')
+  return `${count.toLocaleString()} ${songText}`
 })
 
 const toggleFavorite = () => artistStore.toggleFavorite(artist.value!)

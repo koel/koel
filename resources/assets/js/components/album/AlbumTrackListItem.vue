@@ -15,6 +15,7 @@
 <script lang="ts" setup>
 import type { Ref } from 'vue'
 import { computed, defineAsyncComponent, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { playableStore } from '@/stores/playableStore'
 import { authService } from '@/services/authService'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
@@ -31,10 +32,11 @@ const { album, track } = toRefs(props)
 
 const { useAppleMusic } = useThirdPartyServices()
 
+const { t } = useI18n()
 const songsToMatchAgainst = requireInjection<Ref<Song[]>>(PlayablesKey)
 
 const matchedSong = computed(() => playableStore.matchSongsByTitle(track.value.title, songsToMatchAgainst.value))
-const tooltip = computed(() => matchedSong.value ? 'Click to play' : '')
+const tooltip = computed(() => matchedSong.value ? t('ui.tooltips.clickToPlay') : '')
 const fmtLength = computed(() => secondsToHis(track.value.length))
 
 const active = computed(() => matchedSong.value && matchedSong.value.playback_state !== 'Stopped')

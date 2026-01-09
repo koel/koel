@@ -3,17 +3,17 @@
     <template #header>
       <ScreenHeader v-if="genre" :layout="headerLayout">
         <template v-if="genre.name">
-          <span class="font-thin">Genre:</span>
+          <span class="font-thin">{{ t('screens.genreLabel') }}</span>
           {{ genre.name }}
         </template>
-        <span v-else class="font-thin italic">No Genre</span>
+        <span v-else class="font-thin italic">{{ t('emptyStates.noGenre') }}</span>
 
         <template #thumbnail>
           <ThumbnailStack :thumbnails />
         </template>
 
         <template v-if="genre" #meta>
-          <span>{{ pluralize(genre.song_count, 'song') }}</span>
+          <span>{{ songCountText }}</span>
           <span>{{ duration }}</span>
         </template>
 
@@ -21,7 +21,7 @@
           <SongListControls :config @play-all="playAll" @play-selected="playSelected">
             <Btn gray @click="requestContextMenu">
               <Icon :icon="faEllipsis" fixed-width />
-              <span class="sr-only">More Actions</span>
+              <span class="sr-only">{{ t('misc.moreActions') }}</span>
             </Btn>
           </SongListControls>
         </template>
@@ -45,7 +45,7 @@
         <GuitarIcon :size="96" />
       </template>
 
-      No songs in this genre.
+      {{ t('emptyStates.noSongsInGenre') }}
     </ScreenEmptyState>
   </ScreenBase>
 </template>
@@ -54,7 +54,8 @@
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
 import { computed, onMounted, ref, watch } from 'vue'
 import { GuitarIcon } from 'lucide-vue-next'
-import { pluralize, secondsToHumanReadable } from '@/utils/formatters'
+import { useI18n } from 'vue-i18n'
+import { secondsToHumanReadable } from '@/utils/formatters'
 import { eventBus } from '@/utils/eventBus'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { genreStore } from '@/stores/genreStore'
@@ -88,6 +89,7 @@ const {
   onSwipe,
 } = usePlayableList(songs, { type: 'Genre' }, { sortable: true, filterable: false })
 
+const { t } = useI18n()
 const { PlayableListControls: SongListControls, config } = usePlayableListControls('Genre')
 const { getRouteParam, isCurrentScreen, go, onRouteChanged, url } = useRouter()
 const { openContextMenu } = useContextMenu()
@@ -102,7 +104,15 @@ const page = ref<number | null>(1)
 
 const moreSongsAvailable = computed(() => page.value !== null)
 const showSkeletons = computed(() => loading.value && songs.value.length === 0)
-const duration = computed(() => genre.value ? secondsToHumanReadable(genre.value.length) : '')
+const duration = computed(() => genre.value ? secondsToHumanReadable(genre.value.length, { hr: t('misc.hr'), min: t('misc.min'), sec: t('misc.sec') }) : '')
+const songCountText = computed(() => {
+  if (!genre.value) {
+    return ''
+  }
+  const count = genre.value.song_count ?? 0
+  const songText = count === 1 ? t('messages.songSingular') : t('messages.songPlural')
+  return `${count.toLocaleString()} ${songText}`
+})
 
 const fetch = async () => {
   if (!moreSongsAvailable.value || loading.value) {

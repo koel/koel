@@ -13,18 +13,20 @@
           <PodcastCard :podcast="podcast" layout="compact" />
         </li>
       </ul>
-      <p v-else>None found.</p>
+      <p v-else>{{ t('screens.noneFound') }}</p>
     </template>
   </ExcerptResultBlock>
 </template>
 
 <script lang="ts" setup>
 import { toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import ExcerptResultBlock from '@/components/screens/search/ExcerptResultBlock.vue'
 import PodcastCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
 import PodcastCard from '@/components/podcast/PodcastCard.vue'
 
+const { t } = useI18n()
 const props = withDefaults(defineProps<{ podcasts?: Podcast[], searching?: boolean }>(), {
   podcasts: () => [],
   searching: false,

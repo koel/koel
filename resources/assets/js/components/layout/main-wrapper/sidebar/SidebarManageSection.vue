@@ -1,7 +1,7 @@
 <template>
   <SidebarSection>
     <template #header>
-      <SidebarSectionHeader>Manage</SidebarSectionHeader>
+      <SidebarSectionHeader>{{ $t('sidebar.manage') }}</SidebarSectionHeader>
     </template>
 
     <ul class="menu">
@@ -9,19 +9,19 @@
         <template #icon>
           <Icon :icon="faTools" fixed-width />
         </template>
-        Settings
+        {{ $t('sidebar.settings') }}
       </SidebarItem>
       <SidebarItem v-if="canUpload" :href="url('upload')" :active="isCurrentScreen('Upload')">
         <template #icon>
           <Icon :icon="faUpload" fixed-width />
         </template>
-        Upload
+        {{ $t('sidebar.upload') }}
       </SidebarItem>
       <SidebarItem v-if="canManageUsers" :href="url('users.index')" :active="isCurrentScreen('Users', 'Profile')">
         <template #icon>
           <Icon :icon="faUsers" fixed-width />
         </template>
-        Users
+        {{ $t('sidebar.users') }}
       </SidebarItem>
     </ul>
   </SidebarSection>

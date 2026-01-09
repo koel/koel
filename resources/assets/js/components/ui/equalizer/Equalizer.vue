@@ -1,15 +1,15 @@
 <template>
   <div class="select-none w-full flex flex-col" tabindex="0" @keydown.esc="close">
     <header>
-      <SelectBox v-model="selectedPresetName" class="!bg-black/30 !text-white" title="Select equalizer">
-        <option :value="null" disabled>Preset</option>
-        <option v-for="preset in presets" :key="preset.name!" :value="preset.name">{{ preset.name }}</option>
+      <SelectBox v-model="selectedPresetName" class="!bg-black/30 !text-white" :title="t('ui.tooltips.selectEqualizer')">
+        <option :value="null" disabled>{{ t('ui.equalizer.preset') }}</option>
+        <option v-for="preset in presets" :key="preset.name!" :value="preset.name">{{ t(`ui.equalizer.presets.${preset.name}`) }}</option>
       </SelectBox>
     </header>
 
     <main>
       <div class="t-4 b-5 x-4 p-4 flex justify-between rounded-md bg-black/20">
-        <EqualizerBand ref="preampBandEl" v-model="preampGain" type="preamp" @commit="save">Preamp</EqualizerBand>
+        <EqualizerBand ref="preampBandEl" v-model="preampGain" type="preamp" @commit="save">{{ t('ui.equalizer.preamp') }}</EqualizerBand>
 
         <span
           class="text-sm h-[100px] w-[20px] flex flex-col justify-between items-center -ml-6 opacity-50"
@@ -33,13 +33,14 @@
     </main>
 
     <footer class="border-t-k-fg-5">
-      <Btn @click.prevent="close">Close</Btn>
+      <Btn @click.prevent="close">{{ t('ui.equalizer.close') }}</Btn>
     </footer>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { nextTick, onMounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { equalizerStore } from '@/stores/equalizerStore'
 import type { Band } from '@/services/audioService'
 import { audioService } from '@/services/audioService'
@@ -48,6 +49,8 @@ import { equalizerPresets as presets } from '@/config/audio'
 import Btn from '@/components/ui/form/Btn.vue'
 import SelectBox from '@/components/ui/form/SelectBox.vue'
 import EqualizerBand from '@/components/ui/equalizer/EqualizerBand.vue'
+
+const { t } = useI18n()
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 

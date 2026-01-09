@@ -15,7 +15,7 @@
           v-for="item in items"
           :key="item.label"
           :class="isCurrentField(item.field) && 'active'"
-          :title="`Sort by ${item.label}`"
+          :title="t('ui.sorting.sortBy', { label: item.label })"
           class="cursor-pointer group flex justify-between"
           @click="sort(item.field)"
         >
@@ -34,6 +34,7 @@
 import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons'
 import { OnClickOutside } from '@vueuse/components'
 import { computed, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useFloatingUi } from '@/composables/useFloatingUi'
 
 const props = defineProps<{
@@ -43,6 +44,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{ (e: 'sort', field: T, order: SortOrder): void }>()
+
+const { t } = useI18n()
 
 const { field: currentField, order: currentOrder, items } = toRefs(props)
 
@@ -78,9 +81,10 @@ const sort = (field: T) => {
 
 const isCurrentField = (field: T) => field === currentField.value
 
-const title = computed(
-  () => `Sorting by ${currentLabel.value}, ${currentOrder.value === 'asc' ? 'ascending' : 'descending'}`,
-)
+const title = computed(() => {
+  const order = currentOrder.value === 'asc' ? t('ui.sorting.ascending') : t('ui.sorting.descending')
+  return t('ui.sorting.sortingBy', { label: currentLabel.value, order })
+})
 
 onMounted(() => menu.value && setupDropdown())
 onBeforeUnmount(() => teardownDropdown())

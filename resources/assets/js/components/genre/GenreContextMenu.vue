@@ -1,13 +1,14 @@
 <template>
   <ul>
-    <MenuItem @click="play">Play</MenuItem>
-    <MenuItem @click="shuffle">Shuffle</MenuItem>
-    <MenuItem @click="queue">Add to Queue</MenuItem>
+    <MenuItem @click="play">{{ t('ui.buttons.play') }}</MenuItem>
+    <MenuItem @click="shuffle">{{ t('albums.shuffle') }}</MenuItem>
+    <MenuItem @click="queue">{{ t('misc.addToQueue') }}</MenuItem>
   </ul>
 </template>
 
 <script lang="ts" setup>
 import { toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { playback } from '@/services/playbackManager'
 import { playableStore } from '@/stores/playableStore'
@@ -19,6 +20,7 @@ import { pluralize } from '@/utils/formatters'
 const props = defineProps<{ genre: Genre }>()
 const { genre } = toRefs(props)
 
+const { t } = useI18n()
 const { MenuItem, trigger } = useContextMenu()
 const { toastSuccess } = useMessageToaster()
 const { go } = useRouter()
@@ -36,6 +38,6 @@ const shuffle = () => trigger(async () => {
 const queue = () => trigger(async () => {
   const songs = await playableStore.fetchSongsByGenre(genre.value)
   queueStore.queue(songs)
-  toastSuccess(`${pluralize(songs, 'song')} added to queue.`)
+  toastSuccess(t('misc.addedToQueue', { count: songs.length, item: pluralize(songs, 'song') }))
 })
 </script>

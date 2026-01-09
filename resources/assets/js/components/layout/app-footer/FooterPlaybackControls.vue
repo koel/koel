@@ -13,7 +13,7 @@
       <FooterBtn
         :class="isRadio && 'pointer-events-none opacity-30 cursor-not-allowed'"
         class="text-2xl"
-        title="Play previous in queue"
+        :title="t('ui.tooltips.playPrevious')"
         @click.prevent="playPrev"
       >
         <Icon :icon="faStepBackward" />
@@ -24,7 +24,7 @@
       <FooterBtn
         :class="isRadio && 'pointer-events-none opacity-30 cursor-not-allowed'"
         class="text-2xl"
-        title="Play next in queue"
+        :title="t('ui.tooltips.playNext')"
         @click.prevent="playNext"
       >
         <Icon :icon="faStepForward" />
@@ -38,6 +38,7 @@
 <script lang="ts" setup>
 import { faStepBackward, faStepForward } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { requireInjection } from '@/utils/helpers'
 import { CurrentStreamableKey } from '@/symbols'
 import { playableStore } from '@/stores/playableStore'
@@ -48,6 +49,8 @@ import RepeatModeSwitch from '@/components/ui/RepeatModeSwitch.vue'
 import PlayButton from '@/components/ui/FooterPlayButton.vue'
 import FooterBtn from '@/components/layout/app-footer/FooterButton.vue'
 import FavoriteButton from '@/components/ui/FavoriteButton.vue'
+
+const { t } = useI18n()
 
 const streamable = requireInjection(CurrentStreamableKey, ref())
 

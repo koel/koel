@@ -1,6 +1,6 @@
 <template>
   <article>
-    <h3 class="text-2xl mb-3">Track Listing</h3>
+    <h3 class="text-2xl mb-3">{{ t('form.labels.trackListing') }}</h3>
 
     <ul>
       <li
@@ -17,10 +17,13 @@
 
 <script lang="ts" setup>
 import { onMounted, provide, ref, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { playableStore } from '@/stores/playableStore'
 import { PlayablesKey } from '@/symbols'
 
 import TrackListItem from '@/components/album/AlbumTrackListItem.vue'
+
+const { t } = useI18n()
 
 const props = defineProps<{ album: Album, tracks: AlbumTrack[] }>()
 const { album, tracks } = toRefs(props)

@@ -31,11 +31,11 @@ describe('brandingSettingGroup.vue', () => {
     renderComponent()
     const updateMock = h.mock(settingStore, 'updateBranding')
 
-    await h.type(screen.getByRole('textbox', { name: 'name' }), 'New App Name')
+    await h.type(screen.getByRole('textbox', { name: /name/ }), 'New App Name')
     await fireEvent.update(screen.queryAllByTestId('branding-image-field')[0], 'data:new-logo')
     await fireEvent.update(screen.queryAllByTestId('branding-image-field')[1], 'data:new-cover')
 
-    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+    await h.user.click(screen.getByRole('button', { name: /save/i }))
 
     expect(updateMock).toHaveBeenCalledWith({
       cover: 'data:new-cover',

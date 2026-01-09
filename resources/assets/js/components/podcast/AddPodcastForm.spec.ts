@@ -10,8 +10,8 @@ describe('addPodcastForm.vue', () => {
   it('adds a new podcast', async () => {
     const storeMock = h.mock(podcastStore, 'store').mockResolvedValue(h.factory('podcast'))
     h.render(Component)
-    await h.type(screen.getByPlaceholderText('https://example.com/feed.xml'), 'https://foo.bar/feed.xml')
-    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+    await h.type(screen.getByPlaceholderText(/https:\/\/example\.com\/feed\.xml/i), 'https://foo.bar/feed.xml')
+    await h.user.click(screen.getByRole('button', { name: /Save/i }))
     expect(storeMock).toHaveBeenCalledWith('https://foo.bar/feed.xml')
   })
 })

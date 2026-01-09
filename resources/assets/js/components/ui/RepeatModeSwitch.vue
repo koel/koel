@@ -2,7 +2,7 @@
   <button
     v-koel-tooltip
     :class="{ active: mode !== 'NO_REPEAT' }"
-    :title="`Change repeat mode (current: ${readableMode})`"
+    :title="t('ui.tooltips.changeRepeatModeCurrent', { mode: readableMode })"
     class="text-k-fg-30"
     data-testid="repeat-mode-switch"
     type="button"
@@ -16,9 +16,11 @@
 <script lang="ts" setup>
 import { Repeat, Repeat1 } from 'lucide-vue-next'
 import { computed, toRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { playback } from '@/services/playbackManager'
 
+const { t } = useI18n()
 const mode = toRef(preferenceStore.state, 'repeat_mode')
 
 const readableMode = computed(() => mode.value

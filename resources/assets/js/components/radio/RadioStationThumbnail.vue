@@ -3,7 +3,7 @@
     :style="{ backgroundImage: `url(${defaultCover})` }"
     class="thumbnail relative w-full aspect-square bg-no-repeat bg-cover bg-center overflow-hidden rounded-md active:scale-95"
     data-testid="radio-station-card-thumbnail"
-    :title="`Play/pause ${station.name}`"
+    :title="title"
     @click.prevent="emit('clicked')"
   >
     <img
@@ -24,13 +24,17 @@
 </template>
 
 <script setup lang="ts">
-import { toRefs } from 'vue'
+import { computed, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
 import { useBranding } from '@/composables/useBranding'
 
 const props = defineProps<{ station: RadioStation }>()
 const emit = defineEmits<{ (e: 'clicked'): void }>()
 
+const { t } = useI18n()
 const { station } = toRefs(props)
 const { cover: defaultCover } = useBranding()
+
+const title = computed(() => t('ui.tooltips.playPause', { name: station.value.name }))
 </script>

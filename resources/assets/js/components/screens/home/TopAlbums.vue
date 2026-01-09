@@ -1,6 +1,6 @@
 <template>
   <HomeScreenBlock>
-    <template #header>Top Albums</template>
+    <template #header>{{ t('screens.topAlbums') }}</template>
 
     <ol v-if="loading" class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
       <li v-for="i in 4" :key="i">
@@ -13,19 +13,21 @@
           <AlbumCard :album="album" layout="compact" />
         </li>
       </ol>
-      <p v-else>No albums found.</p>
+      <p v-else>{{ t('screens.noAlbumsFound') }}</p>
     </template>
   </HomeScreenBlock>
 </template>
 
 <script lang="ts" setup>
 import { toRef, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { overviewStore } from '@/stores/overviewStore'
 
 import AlbumCard from '@/components/album/AlbumCard.vue'
 import AlbumCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
 import HomeScreenBlock from '@/components/screens/home/HomeScreenBlock.vue'
 
+const { t } = useI18n()
 const props = withDefaults(defineProps<{ loading?: boolean }>(), { loading: false })
 const { loading } = toRefs(props)
 

@@ -26,6 +26,7 @@
 import { faPlay } from '@fortawesome/free-solid-svg-icons'
 import { orderBy } from 'lodash'
 import { computed, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { queueStore } from '@/stores/queueStore'
 import { playableStore } from '@/stores/playableStore'
 import { useRouter } from '@/composables/useRouter'
@@ -33,6 +34,7 @@ import { useMessageToaster } from '@/composables/useMessageToaster'
 import { playback } from '@/services/playbackManager'
 import { useBranding } from '@/composables/useBranding'
 
+const { t } = useI18n()
 const props = defineProps<{ entity: Album | Artist }>()
 const { entity } = toRefs(props)
 
@@ -50,8 +52,8 @@ const image = computed(() => {
 })
 
 const buttonLabel = computed(() => forAlbum.value
-  ? `Play all songs in the album ${entity.value.name}`
-  : `Play all songs by ${entity.value.name}`,
+  ? t('ui.tooltips.playAllSongsInAlbum', { name: entity.value.name })
+  : t('ui.tooltips.playAllSongsBy', { name: entity.value.name }),
 )
 
 const playOrQueue = async (event: MouseEvent) => {
@@ -61,7 +63,7 @@ const playOrQueue = async (event: MouseEvent) => {
 
   if (event.altKey) {
     queueStore.queue(orderBy(songs, sortFields.value))
-    toastSuccess('Songs added to queue.')
+    toastSuccess(t('misc.songsAddedToQueue'))
     return
   }
 

@@ -1,17 +1,17 @@
 <template>
   <ul>
     <template v-if="onlyOneSelected">
-      <MenuItem @click="doPlayback">{{ firstSongPlaying ? 'Pause' : 'Play' }}</MenuItem>
+      <MenuItem @click="doPlayback">{{ firstSongPlaying ? $t('ui.buttons.pause') : $t('ui.buttons.play') }}</MenuItem>
       <Separator />
       <MenuItem>
-        Go to
+        {{ $t('menu.playable.goTo') }}
         <template #subMenuItems>
           <template v-if="isSong(playables[0])">
             <MenuItem :title="playables[0].album_name" @click="viewAlbum(playables[0] as Song)">
               <template #icon>
                 <Icon :icon="faCompactDisc" fixed-width />
               </template>
-              {{ playables[0].album_name }}
+              {{ albumStore.isUnknown(playables[0].album_name) ? t('screens.unknownAlbum') : playables[0].album_name }}
             </MenuItem>
             <MenuItem :title="playables[0].artist_name" @click="viewArtist(playables[0] as Song)">
               <template #icon>
@@ -25,13 +25,13 @@
               <template #icon>
                 <Icon :icon="faPodcast" fixed-width />
               </template>
-              Podcast
+              {{ $t('menu.playable.podcast') }}
             </MenuItem>
             <MenuItem @click="viewEpisode(playables[0] as Episode)">
               <template #icon>
                 <Icon :icon="faHeadphones" fixed-width />
               </template>
-              Episode
+              {{ $t('menu.playable.episode') }}
             </MenuItem>
             <MenuItem
               v-if="(playables[0] as Episode).episode_link"
@@ -40,24 +40,24 @@
               <template #icon>
                 <Icon :icon="faExternalLink" fixed-width />
               </template>
-              Webpage
+              {{ $t('menu.playable.webpage') }}
             </MenuItem>
           </template>
         </template>
       </MenuItem>
     </template>
     <MenuItem>
-      Add To
+      {{ $t('menu.playable.addTo') }}
       <template #subMenuItems>
         <template v-if="queue.length">
-          <MenuItem v-if="currentSong" @click="queueAfterCurrent">After Current</MenuItem>
-          <MenuItem @click="queueToBottom">Bottom of Queue</MenuItem>
-          <MenuItem @click="queueToTop">Top of Queue</MenuItem>
+          <MenuItem v-if="currentSong" @click="queueAfterCurrent">{{ $t('menu.playable.afterCurrent') }}</MenuItem>
+          <MenuItem @click="queueToBottom">{{ $t('menu.playable.bottomOfQueue') }}</MenuItem>
+          <MenuItem @click="queueToTop">{{ $t('menu.playable.topOfQueue') }}</MenuItem>
         </template>
-        <MenuItem v-else @click="queueToBottom">Queue</MenuItem>
+        <MenuItem v-else @click="queueToBottom">{{ $t('menu.playable.queue') }}</MenuItem>
         <template v-if="!isFavoritesScreen && !(onlyOneSelected && playables[0].favorite)">
           <Separator />
-          <MenuItem @click="addToFavorites">Favorites</MenuItem>
+          <MenuItem @click="addToFavorites">{{ $t('menu.playable.favorites') }}</MenuItem>
         </template>
         <Separator v-if="normalPlaylists.length" />
         <template class="block">
@@ -68,19 +68,19 @@
           </ul>
         </template>
         <Separator />
-        <MenuItem @click="addToNewPlaylist">New Playlist…</MenuItem>
+        <MenuItem @click="addToNewPlaylist">{{ $t('menu.playable.newPlaylist') }}</MenuItem>
       </template>
     </MenuItem>
 
     <template v-if="isQueueScreen">
       <Separator />
-      <MenuItem @click="removeFromQueue">Remove from Queue</MenuItem>
+      <MenuItem @click="removeFromQueue">{{ $t('menu.playable.removeFromQueue') }}</MenuItem>
       <Separator />
     </template>
 
     <template v-if="isFavoritesScreen">
       <Separator />
-      <MenuItem @click="removeFromFavorites">Remove from Favorites</MenuItem>
+      <MenuItem @click="removeFromFavorites">{{ $t('menu.playable.removeFromFavorites') }}</MenuItem>
     </template>
 
     <template v-if="visibilityActions.length">
@@ -91,34 +91,34 @@
     </template>
 
     <MenuItem v-if="onlyOneSelected">
-      Share
+      {{ $t('menu.playable.share') }}
       <template #subMenuItems>
         <MenuItem v-if="canBeShared" @click="copyUrl">
           <template #icon>
             <Icon :icon="faLink" fixed-width />
           </template>
-          Copy URL
+          {{ $t('menu.playable.copyUrl') }}
         </MenuItem>
         <MenuItem @click="showEmbedModal">
           <template #icon>
             <Icon :icon="faCode" fixed-width />
           </template>
-          Embed…
+          {{ $t('menu.playable.embed') }}
         </MenuItem>
       </template>
     </MenuItem>
 
-    <MenuItem v-if="allowEdit" @click="openEditForm">Edit…</MenuItem>
-    <MenuItem v-if="downloadable" @click="download">Download</MenuItem>
+    <MenuItem v-if="allowEdit" @click="openEditForm">{{ $t('menu.playable.edit') }}</MenuItem>
+    <MenuItem v-if="downloadable" @click="download">{{ $t('menu.playable.download') }}</MenuItem>
 
     <template v-if="canBeRemovedFromPlaylist">
       <Separator />
-      <MenuItem @click="removePlayablesFromPlaylist">Remove from Playlist</MenuItem>
+      <MenuItem @click="removePlayablesFromPlaylist">{{ $t('menu.playable.removeFromPlaylist') }}</MenuItem>
     </template>
 
     <template v-if="allowEdit">
       <Separator />
-      <MenuItem @click="deleteFromFilesystem">Delete from Filesystem</MenuItem>
+      <MenuItem @click="deleteFromFilesystem">{{ $t('menu.playable.deleteFromFilesystem') }}</MenuItem>
     </template>
   </ul>
 </template>
@@ -134,6 +134,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { MicVocalIcon } from 'lucide-vue-next'
 import { computed, toRef, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { albumStore } from '@/stores/albumStore'
 import { pluralize } from '@/utils/formatters'
 import { eventBus } from '@/utils/eventBus'
 import { copyText } from '@/utils/helpers'
@@ -156,6 +158,7 @@ import { playback } from '@/services/playbackManager'
 const props = defineProps<{ playables: Playable[] }>()
 const { playables } = toRefs(props)
 
+const { t } = useI18n()
 const { toastSuccess, toastError, toastWarning } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { go, getRouteParam, isCurrentScreen, url } = useRouter()
@@ -203,7 +206,7 @@ const makePublic = () => trigger(async () => {
   }
 
   await playableStore.publicizeSongs(playables.value as Song[])
-  toastSuccess(`Unmarked ${pluralize(playables.value, 'song')} as private.`)
+  toastSuccess(t('misc.unmarkedAsPrivate', { item: pluralize(playables.value, 'song') }))
 })
 
 const makePrivate = () => trigger(async () => {
@@ -214,16 +217,16 @@ const makePrivate = () => trigger(async () => {
   const privatizedIds = await playableStore.privatizeSongs(playables.value as Song[])
 
   if (!privatizedIds.length) {
-    toastError('Songs cannot be marked as private if they’re part of a collaborative playlist.')
+    toastError(t('misc.cannotMarkAsPrivate'))
     return
   }
 
   if (privatizedIds.length < playables.value.length) {
-    toastWarning('Some songs cannot be marked as private as they’re part of a collaborative playlist.')
+    toastWarning(t('misc.someCannotMarkAsPrivate'))
     return
   }
 
-  toastSuccess(`Marked ${pluralize(playables.value, 'song')} as private.`)
+  toastSuccess(t('misc.markedAsPrivate', { item: pluralize(playables.value, 'song') }))
 })
 
 const visibilityActions = computed(() => {
@@ -243,19 +246,19 @@ const visibilityActions = computed(() => {
   if (visibilities.length === 2) {
     return [
       {
-        label: 'Unmark as Private',
+        label: t('menu.playable.unmarkAsPrivate'),
         handler: makePublic,
       },
       {
-        label: 'Mark as Private',
+        label: t('menu.playable.markAsPrivate'),
         handler: makePrivate,
       },
     ]
   }
 
   return visibilities[0] === 'public'
-    ? [{ label: 'Mark as Private', handler: makePrivate }]
-    : [{ label: 'Unmark as Private', handler: makePublic }]
+    ? [{ label: t('menu.playable.markAsPrivate'), handler: makePrivate }]
+    : [{ label: t('menu.playable.unmarkAsPrivate'), handler: makePublic }]
 })
 
 const canBeRemovedFromPlaylist = computed(() => {
@@ -314,13 +317,13 @@ const removePlayablesFromPlaylist = () => trigger(async () => {
 
 const copyUrl = () => trigger(async () => {
   await copyText(playableStore.getShareableUrl(playables.value[0]))
-  toastSuccess('URL copied to clipboard.')
+  toastSuccess(t('playlists.inviteLink'))
 })
 
 const showEmbedModal = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_EMBED_FORM', playables.value[0]))
 
 const deleteFromFilesystem = () => trigger(async () => {
-  if (await showConfirmDialog('Delete selected playable(s) from the filesystem? This action is NOT reversible!')) {
+  if (await showConfirmDialog(t('menu.playable.deleteFromFilesystemConfirm'))) {
     await playableStore.deleteSongsFromFilesystem(playables.value as Song[])
     toastSuccess(`Deleted ${pluralize(playables.value, 'song')} from the filesystem.`)
     eventBus.emit('SONGS_DELETED', playables.value as Song[])

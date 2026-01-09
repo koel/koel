@@ -4,6 +4,7 @@
 
 @push('scripts')
     <script>
+        window.LOCALE = @json(app()->getLocale());
         window.MAILER_CONFIGURED = @json(mailer_configured());
         window.SSO_PROVIDERS = @json(collect_sso_providers());
         window.ACCEPTED_AUDIO_EXTENSIONS = @json(collect_accepted_audio_extensions());

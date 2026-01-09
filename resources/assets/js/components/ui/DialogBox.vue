@@ -22,17 +22,20 @@
     </div>
 
     <footer class="flex justify-end gap-2 px-6 py-4 bg-k-fg-3">
-      <Btn v-if="showCancelButton" gray name="cancel" @click.prevent="cancel">Cancel</Btn>
-      <Btn name="ok">OK</Btn>
+      <Btn v-if="showCancelButton" gray name="cancel" @click.prevent="cancel">{{ t('dialogs.cancel') }}</Btn>
+      <Btn name="ok">{{ t('dialogs.ok') }}</Btn>
     </footer>
   </dialog>
 </template>
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { faCheck, faExclamation, faInfo, faQuestion, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons'
 
 import Btn from '@/components/ui/form/Btn.vue'
+
+const { t } = useI18n()
 
 type DialogType = 'info' | 'success' | 'warning' | 'danger' | 'confirm'
 

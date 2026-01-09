@@ -1,45 +1,46 @@
 <template>
   <form @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
     <header>
-      <h1>Edit Playlist</h1>
+      <h1>{{ t('playlists.edit') }}</h1>
     </header>
 
     <main>
       <div class="grid grid-cols-2 gap-4">
         <FormRow>
-          <template #label>Name *</template>
+          <template #label>{{ t('playlists.name') }}</template>
           <TextInput
             v-model="data.name"
             v-koel-focus
             name="name"
-            placeholder="Playlist name"
+            :placeholder="t('playlists.playlistName')"
             required
           />
         </FormRow>
         <FormRow>
-          <template #label>Folder</template>
+          <template #label>{{ t('playlists.folder.name') }}</template>
           <SelectBox v-model="data.folder_id">
             <option :value="null" />
             <option v-for="folder in folders" :key="folder.id" :value="folder.id">{{ folder.name }}</option>
           </SelectBox>
         </FormRow>
         <FormRow class="col-span-2">
-          <template #label>Description</template>
+          <template #label>{{ t('playlists.description') }}</template>
           <TextArea v-model="data.description" class="h-28" name="description" />
         </FormRow>
-        <ArtworkField v-model="data.cover">Pick a cover (optional)</ArtworkField>
+        <ArtworkField v-model="data.cover">{{ t('playlists.pickCover') }}</ArtworkField>
       </div>
     </main>
 
     <footer>
-      <Btn type="submit">Save</Btn>
-      <Btn white @click.prevent="maybeClose">Cancel</Btn>
+      <Btn type="submit">{{ t('auth.save') }}</Btn>
+      <Btn white @click.prevent="maybeClose">{{ t('auth.cancel') }}</Btn>
     </footer>
   </form>
 </template>
 
 <script lang="ts" setup>
 import { toRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { cloneDeep, pick } from 'lodash'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import type { UpdatePlaylistData } from '@/stores/playlistStore'
@@ -60,6 +61,7 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { playlist } = props
 
+const { t } = useI18n()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 
@@ -79,13 +81,13 @@ const { data, isPristine, handleSubmit } = useForm<UpdatePlaylistData>({
     await playlistStore.update(playlist, formData)
   },
   onSuccess: () => {
-    toastSuccess('Playlist updated.')
+    toastSuccess(t('playlists.updated'))
     close()
   },
 })
 
 const maybeClose = async () => {
-  if (isPristine() || await showConfirmDialog('Discard all changes?')) {
+  if (isPristine() || await showConfirmDialog(t('playlists.discardChanges'))) {
     close()
   }
 }

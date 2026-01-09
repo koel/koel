@@ -1,18 +1,19 @@
 <template>
   <ul>
     <MenuItem @click="togglePlayback">
-      {{ station.playback_state === 'Playing' ? 'Stop' : 'Play' }}
+      {{ station.playback_state === 'Playing' ? t('radio.stop') : t('radio.play') }}
     </MenuItem>
     <Separator />
-    <MenuItem @click="toggleFavorite">{{ station.favorite ? 'Undo Favorite' : 'Favorite' }}</MenuItem>
+    <MenuItem @click="toggleFavorite">{{ station.favorite ? t('radio.undoFavorite') : t('radio.favorite') }}</MenuItem>
     <Separator />
-    <MenuItem v-if="allowEdit" @click="requestEditForm">Edit…</MenuItem>
-    <MenuItem v-if="allowDelete" @click="maybeDelete">Delete</MenuItem>
+    <MenuItem v-if="allowEdit" @click="requestEditForm">{{ t('radio.edit') }}</MenuItem>
+    <MenuItem v-if="allowDelete" @click="maybeDelete">{{ t('radio.delete') }}</MenuItem>
   </ul>
 </template>
 
 <script lang="ts" setup>
 import { onMounted, ref, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { eventBus } from '@/utils/eventBus'
 import { radioStationStore } from '@/stores/radioStationStore'
@@ -24,6 +25,7 @@ import { useMessageToaster } from '@/composables/useMessageToaster'
 const props = defineProps<{ station: RadioStation }>()
 const { station } = toRefs(props)
 
+const { t } = useI18n()
 const { MenuItem, Separator, trigger } = useContextMenu()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
@@ -47,9 +49,9 @@ const toggleFavorite = () => trigger(() => radioStationStore.toggleFavorite(stat
 const requestEditForm = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_RADIO_STATION_FORM', station.value))
 
 const maybeDelete = () => trigger(async () => {
-  if (await showConfirmDialog('Delete the radio station? This action is NOT reversible!')) {
+  if (await showConfirmDialog(t('radio.deleteConfirm'))) {
     await radioStationStore.delete(station.value)
-    toastSuccess(`Radio station deleted.`)
+    toastSuccess(t('radio.deleted'))
   }
 })
 

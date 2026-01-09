@@ -1,13 +1,13 @@
 <template>
   <SidebarSection>
     <SidebarSectionHeader class="flex items-center">
-      <span class="flex-1">Playlists</span>
+      <span class="flex-1">{{ $t('sidebar.playlists') }}</span>
       <CreatePlaylistContextMenuButton />
     </SidebarSectionHeader>
 
     <ul>
-      <PlaylistSidebarItem :list="{ name: 'Favorites', playables: favorites }" />
-      <PlaylistSidebarItem :list="{ name: 'Recently Played', playables: [] }" />
+      <PlaylistSidebarItem :list="{ name: $t('sidebar.favorites'), playables: favorites }" />
+      <PlaylistSidebarItem :list="{ name: $t('sidebar.recentlyPlayed'), playables: [] }" />
       <PlaylistFolderSidebarItem v-for="folder in folders" :key="folder.id" :folder="folder" />
       <PlaylistSidebarItem v-for="playlist in orphanPlaylists" :key="playlist.id" :list="playlist" />
     </ul>

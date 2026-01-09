@@ -2,14 +2,14 @@
   <ScreenBase>
     <template #header>
       <ScreenHeader :layout="playables.length === 0 ? 'collapsed' : headerLayout">
-        Recently Played
+        {{ t('screens.recentlyPlayed') }}
 
         <template #thumbnail>
           <ThumbnailStack :thumbnails="thumbnails" />
         </template>
 
         <template v-if="playables.length" #meta>
-          <span>{{ pluralize(playables, 'item') }}</span>
+          <span>{{ itemCountText }}</span>
           <span>{{ duration }}</span>
         </template>
 
@@ -39,16 +39,16 @@
       <template #icon>
         <Icon :icon="faClock" />
       </template>
-      Nothing played recently.
-      <span class="secondary block">Start playing to populate this playlist.</span>
+      {{ t('emptyStates.recentlyPlayedEmpty') }}
+      <span class="secondary block">{{ t('emptyStates.recentlyPlayedEmptyHint') }}</span>
     </ScreenEmptyState>
   </ScreenBase>
 </template>
 
 <script lang="ts" setup>
 import { faClock } from '@fortawesome/free-regular-svg-icons'
-import { ref, toRef } from 'vue'
-import { pluralize } from '@/utils/formatters'
+import { computed, ref, toRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { recentlyPlayedStore } from '@/stores/recentlyPlayedStore'
 import { useRouter } from '@/composables/useRouter'
 import { usePlayableList } from '@/composables/usePlayableList'
@@ -59,6 +59,7 @@ import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import PlayableListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
 
+const { t } = useI18n()
 const recentlyPlayedSongs = toRef(recentlyPlayedStore.state, 'playables')
 
 const {
@@ -77,6 +78,12 @@ const {
 } = usePlayableList(recentlyPlayedSongs, { type: 'RecentlyPlayed' }, { sortable: false })
 
 const { PlayableListControls, config } = usePlayableListControls('RecentlyPlayed')
+
+const itemCountText = computed(() => {
+  const count = playables.value.length
+  const itemText = count === 1 ? t('messages.genericItemSingular') : t('messages.genericItemPlural')
+  return `${count.toLocaleString()} ${itemText}`
+})
 
 let initialized = false
 const loading = ref(false)

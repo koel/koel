@@ -1,6 +1,6 @@
 <template>
   <AlbumArtistInfo :mode="mode" data-testid="album-info">
-    <template #header>{{ album.name }}</template>
+    <template #header>{{ albumStore.isUnknown(album) ? t('screens.unknownAlbum') : album.name }}</template>
 
     <template #art>
       <AlbumThumbnail :entity="album" class="group" />
@@ -21,13 +21,15 @@
     </template>
 
     <template v-if="!loading && info?.url" #footer>
-      <a :href="info.url" rel="noopener" target="_blank">Source</a>
+      <a :href="info.url" rel="noopener" target="_blank">{{ t('albums.source') }}</a>
     </template>
   </AlbumArtistInfo>
 </template>
 
 <script lang="ts" setup>
 import { ref, toRefs, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { albumStore } from '@/stores/albumStore'
 import { encyclopediaService } from '@/services/encyclopediaService'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 import { defineAsyncComponent } from '@/utils/helpers'
@@ -40,6 +42,7 @@ const props = withDefaults(defineProps<{ album: Album, mode?: EncyclopediaDispla
 
 const TrackList = defineAsyncComponent(() => import('@/components/album/AlbumTrackList.vue'))
 
+const { t } = useI18n()
 const { album, mode } = toRefs(props)
 
 const { useMusicBrainz, useLastfm, useSpotify } = useThirdPartyServices()

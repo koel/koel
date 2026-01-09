@@ -19,7 +19,7 @@
 
         <template v-if="filteredPlayables.length || playlist.is_collaborative" #meta>
           <CollaboratorsBadge v-if="collaborators.length" :collaborators />
-          <span>{{ pluralize(filteredPlayables, 'item') }}</span>
+          <span>{{ itemCountText }}</span>
           <span>{{ duration }}</span>
         </template>
 
@@ -32,7 +32,7 @@
           >
             <Btn gray @click="requestContextMenu">
               <Icon :icon="faEllipsis" fixed-width />
-              <span class="sr-only">More Actions</span>
+              <span class="sr-only">{{ $t('misc.moreActions') }}</span>
             </Btn>
           </PlayableListControls>
         </template>
@@ -60,14 +60,14 @@
 
         <template v-if="playlist?.is_smart">
           <p>
-            No songs match the playlist's
-            <a class="inline" @click.prevent="editPlaylist">criteria</a>.
+            {{ $t('playlists.noSongsMatchCriteria') }}
+            <a class="inline" @click.prevent="editPlaylist">{{ $t('playlists.criteria') }}</a>.
           </p>
         </template>
         <template v-else>
-          The playlist is currently empty.
+          {{ $t('playlists.emptyMessage') }}
           <span class="block secondary">
-            Drag content into its name in the sidebar or use the &quot;Add To…&quot; button to fill it up.
+            {{ $t('playlists.emptyHint') }}
           </span>
         </template>
       </ScreenEmptyState>
@@ -79,9 +79,9 @@
 import { faFile } from '@fortawesome/free-regular-svg-icons'
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
 import { differenceBy } from 'lodash'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { eventBus } from '@/utils/eventBus'
-import { pluralize } from '@/utils/formatters'
 import { playlistStore } from '@/stores/playlistStore'
 import { playableStore } from '@/stores/playableStore'
 import { playlistCollaborationService } from '@/services/playlistCollaborationService'
@@ -113,8 +113,15 @@ interface PlaylistScreenState {
   sortOrder: SortOrder | null
 }
 
+const { t } = useI18n()
 const { triggerNotFound, getRouteParam, onScreenActivated, go, url } = useRouter()
 const { openContextMenu } = useContextMenu()
+
+const itemCountText = computed(() => {
+  const count = filteredPlayables.value.length
+  const itemText = count === 1 ? t('messages.genericItemSingular') : t('messages.genericItemPlural')
+  return `${count.toLocaleString()} ${itemText}`
+})
 
 const states = new Map<Playlist['id'], PlaylistScreenState>()
 

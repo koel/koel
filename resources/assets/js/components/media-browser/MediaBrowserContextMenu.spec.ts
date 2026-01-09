@@ -27,6 +27,7 @@ describe('mediaBrowserContextMenu.vue', () => {
     const goMock = h.mock(Router, 'go')
 
     await renderComponent(items)
+    // The component uses t('menu.open') which translates to "Open"
     await h.user.click(screen.getByText('Open'))
 
     expect(goMock).toHaveBeenCalledWith('/#/browse/foo/bar')

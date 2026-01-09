@@ -9,8 +9,17 @@ import Component from './VolumeSlider.vue'
 describe('volumeSlider.vue', () => {
   const h = createHarness({
     beforeEach: () => {
-      vi.useFakeTimers()
+      // Mock performance.now() and Date.now() to avoid vue-i18n timestamp issues with fake timers
+      const now = Date.now()
+      vi.setSystemTime(now)
+      vi.spyOn(performance, 'now').mockReturnValue(now)
+      vi.useFakeTimers({ now })
       preferenceStore.volume = 5
+    },
+    afterEach: () => {
+      vi.restoreAllMocks()
+      vi.useRealTimers()
+      vi.useRealTimers()
     },
   })
 

@@ -3,7 +3,7 @@
     v-if="showing"
     :entity="album"
     :layout="layout"
-    :title="`${album.name} by ${album.artist_name}`"
+    :title="`${album.name} by ${artistName}`"
     class="group"
     @contextmenu="requestContextMenu"
     @dblclick="shuffle"
@@ -20,7 +20,7 @@
 
         <span
           v-if="showReleaseYear && album.year"
-          :title="`Released in ${album.year}`"
+          :title="t('albums.releasedIn', { year: album.year })"
           class="text-sm text-k-fg rounded px-2 py-[2px] bg-k-fg-10"
         >
           {{ album.year }}
@@ -28,22 +28,22 @@
       </div>
 
       <div class="space-x-2">
-        <a v-if="isStandardArtist" :href="url('artists.show', { id: album.artist_id })">{{ album.artist_name }}</a>
-        <span v-else>{{ album.artist_name }}</span>
+        <a v-if="isStandardArtist" :href="url('artists.show', { id: album.artist_id })">{{ artistName }}</a>
+        <span v-else>{{ artistName }}</span>
       </div>
     </template>
 
     <template #meta>
-      <a :title="`Shuffle all songs in the album ${album.name}`" role="button" @click.prevent="shuffle">
-        Shuffle
+      <a :title="t('misc.shuffleAllSongs')" role="button" @click.prevent="shuffle">
+        {{ t('albums.shuffle') }}
       </a>
       <a
         v-if="allowDownload"
-        :title="`Download all songs in the album ${album.name}`"
+        :title="t('misc.downloadAllSongs')"
         role="button"
         @click.prevent="download"
       >
-        Download
+        {{ t('albums.download') }}
       </a>
     </template>
   </BaseCard>
@@ -51,6 +51,7 @@
 
 <script lang="ts" setup>
 import { computed, toRef, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
@@ -77,6 +78,7 @@ const props = withDefaults(defineProps<{
 
 const AlbumContextMenu = defineAsyncComponent(() => import('@/components/album/AlbumContextMenu.vue'))
 
+const { t } = useI18n()
 const { go, url } = useRouter()
 const { startDragging } = useDraggable('album')
 const { openContextMenu } = useContextMenu()
@@ -88,6 +90,7 @@ const allowDownload = toRef(commonStore.state, 'allows_download')
 
 const isStandardArtist = computed(() => artistStore.isStandard(album.value.artist_id))
 const showing = computed(() => !albumStore.isUnknown(album.value))
+const artistName = computed(() => artistStore.isUnknown(album.value.artist_name) ? t('screens.unknownArtist') : album.value.artist_name)
 
 const shuffle = async () => {
   go(url('queue'))

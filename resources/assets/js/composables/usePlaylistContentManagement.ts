@@ -1,3 +1,4 @@
+import { useI18n } from 'vue-i18n'
 import { playlistStore } from '@/stores/playlistStore'
 import { eventBus } from '@/utils/eventBus'
 import { getPlayableCollectionContentType } from '@/utils/typeGuards'
@@ -5,17 +6,21 @@ import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 
 export const usePlaylistContentManagement = () => {
+  const { t } = useI18n()
   const { handleHttpError } = useErrorHandler('dialog')
   const { toastSuccess } = useMessageToaster()
 
   const inflect = (playables: Playable[]) => {
-    switch (getPlayableCollectionContentType(playables)) {
+    const contentType = getPlayableCollectionContentType(playables)
+    const isSingular = playables.length === 1
+
+    switch (contentType) {
       case 'songs':
-        return playables.length === 1 ? 'Song' : 'Songs'
+        return isSingular ? t('messages.itemsSingular') : t('messages.itemsPlural')
       case 'episodes':
-        return playables.length === 1 ? 'Episode' : 'Episodes'
+        return isSingular ? t('messages.episodesSingular') : t('messages.episodesPlural')
       default:
-        return playables.length === 1 ? 'Item' : 'Items'
+        return isSingular ? t('messages.genericItemSingular') : t('messages.genericItemPlural')
     }
   }
 
@@ -27,7 +32,7 @@ export const usePlaylistContentManagement = () => {
     try {
       await playlistStore.addContent(playlist, playables)
       eventBus.emit('PLAYLIST_UPDATED', playlist)
-      toastSuccess(`${inflect(playables)} added into "${playlist.name}."`)
+      toastSuccess(t('messages.itemsAdded', { count: playables.length, item: inflect(playables), playlist: playlist.name }))
     } catch (error: unknown) {
       handleHttpError(error)
     }
@@ -41,7 +46,7 @@ export const usePlaylistContentManagement = () => {
     try {
       await playlistStore.removeContent(playlist, playables)
       eventBus.emit('PLAYLIST_CONTENT_REMOVED', playlist, playables)
-      toastSuccess(`${inflect(playables)} removed from "${playlist.name}."`)
+      toastSuccess(t('messages.itemsRemoved', { count: playables.length, item: inflect(playables), playlist: playlist.name }))
     } catch (error: unknown) {
       handleHttpError(error)
     }

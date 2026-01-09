@@ -11,7 +11,7 @@
     >
       <Icon v-if="playing" :icon="faPause" data-testid="icon-pause" size="lg" />
       <Icon v-else :icon="faPlay" class="ml-0.5" data-testid="icon-play" size="lg" />
-      <span class="sr-only">{{ playing ? 'Pause' : 'Play/Resume' }}</span>
+      <span class="sr-only">{{ playing ? t('ui.buttons.pause') : t('ui.buttons.playResume') }}</span>
     </button>
   </div>
 </template>
@@ -19,6 +19,9 @@
 <script setup lang="ts">
 import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = withDefaults(defineProps<{ playable?: Playable, preview?: boolean, progress?: number }>(), {
   preview: false,

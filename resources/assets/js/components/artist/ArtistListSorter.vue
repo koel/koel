@@ -3,6 +3,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import BasicListSorter from '@/components/ui/BasicListSorter.vue'
 
 withDefaults(defineProps<{
@@ -15,10 +17,12 @@ withDefaults(defineProps<{
 
 const emit = defineEmits<{ (e: 'sort', field: ArtistListSortField, order: SortOrder): void }>()
 
-const items: { label: string, field: ArtistListSortField }[] = [
-  { label: 'Name', field: 'name' },
-  { label: 'Date Added', field: 'created_at' },
-]
+const { t } = useI18n()
+
+const items = computed<{ label: string, field: ArtistListSortField }[]>(() => [
+  { label: t('artists.sortFields.name'), field: 'name' },
+  { label: t('artists.sortFields.dateAdded'), field: 'created_at' },
+])
 
 const sort = (field: ArtistListSortField, order: SortOrder) => emit('sort', field, order)
 </script>

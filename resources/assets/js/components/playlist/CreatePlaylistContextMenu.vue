@@ -1,16 +1,18 @@
 <template>
   <ul>
-    <MenuItem @click="onItemClicked('new-playlist')">New Playlist…</MenuItem>
-    <MenuItem @click="onItemClicked('new-smart-playlist')">New Smart Playlist…</MenuItem>
-    <MenuItem @click="onItemClicked('new-folder')">New Folder…</MenuItem>
+    <MenuItem @click="onItemClicked('new-playlist')">{{ t('menu.newPlaylist') }}</MenuItem>
+    <MenuItem @click="onItemClicked('new-smart-playlist')">{{ t('menu.newSmartPlaylist') }}</MenuItem>
+    <MenuItem @click="onItemClicked('new-folder')">{{ t('menu.newFolder') }}</MenuItem>
   </ul>
 </template>
 
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { eventBus } from '@/utils/eventBus'
 import type { Events } from '@/config/events'
 
+const { t } = useI18n()
 const { MenuItem, trigger } = useContextMenu()
 
 type Action = 'new-playlist' | 'new-smart-playlist' | 'new-folder'

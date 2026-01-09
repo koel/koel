@@ -34,10 +34,10 @@ describe('createThemeForm.vue', () => {
 
     renderComponent()
 
-    await h.type(screen.getByPlaceholderText('My Fancy Theme'), 'One Theme to Rule Them All')
-    await fireEvent.update(screen.getByRole('textbox', { name: 'Foreground color' }), '#ff0000')
-    await fireEvent.update(screen.getByRole('textbox', { name: 'Background color' }), '#0000ff')
-    await fireEvent.update(screen.getByRole('textbox', { name: 'Highlight color' }), '#00ff00')
+    await h.type(screen.getByPlaceholderText(/my.*theme/i), 'One Theme to Rule Them All')
+    await fireEvent.update(screen.getByRole('textbox', { name: /foreground/i }), '#ff0000')
+    await fireEvent.update(screen.getByRole('textbox', { name: /background/i }), '#0000ff')
+    await fireEvent.update(screen.getByRole('textbox', { name: /highlight/i }), '#00ff00')
 
     await h.user.upload(
       screen.getByLabelText('Select a file…'),
@@ -45,8 +45,8 @@ describe('createThemeForm.vue', () => {
     )
 
     await h.user.selectOptions(screen.getByRole('combobox'), 'sans-serif')
-    await h.type(screen.getByRole('spinbutton', { name: 'Font size' }), '18')
-    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+    await h.type(screen.getByRole('spinbutton', { name: /font size/i }), '18')
+    await h.user.click(screen.getByRole('button', { name: /save/i }))
 
     await waitFor(() => {
       expect(storeMock).toHaveBeenCalledWith({
@@ -65,15 +65,15 @@ describe('createThemeForm.vue', () => {
 
   it('previews the theme', async () => {
     const { toggleCssClassMock } = renderComponent()
-    expect(screen.queryByRole('button', { name: 'Exit preview' })).toBeNull()
+    expect(screen.queryByRole('button', { name: /exit preview/i })).toBeNull()
 
-    await h.user.click(screen.getByRole('button', { name: 'Preview' }))
+    await h.user.click(screen.getByRole('button', { name: /preview/i }))
     expect(toggleCssClassMock).toHaveBeenCalledWith('backdrop:bg-transparent', 'bg-transparent', 'cursor-not-allowed')
     expect(screen.getByTestId('create-theme-form').classList.contains('previewing')).toBe(true)
 
-    await h.user.click(screen.getByRole('button', { name: 'Exit preview' }))
+    await h.user.click(screen.getByRole('button', { name: /exit preview/i }))
     expect(toggleCssClassMock).toHaveBeenCalledWith('backdrop:bg-transparent', 'bg-transparent', 'cursor-not-allowed')
-    expect(screen.queryByRole('button', { name: 'Exit preview' })).toBeNull()
+    expect(screen.queryByRole('button', { name: /exit preview/i })).toBeNull()
     expect(screen.getByTestId('create-theme-form').classList.contains('previewing')).toBe(false)
   })
 })

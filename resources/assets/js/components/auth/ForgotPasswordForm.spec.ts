@@ -10,15 +10,15 @@ describe('forgotPasswordForm.vue', () => {
   it('requests reset password link', async () => {
     const requestMock = h.mock(authService, 'requestResetPasswordLink').mockResolvedValue(null)
     h.render(Component)
-    await h.type(screen.getByPlaceholderText('Your email address'), 'foo@bar.com')
-    await h.user.click(screen.getByText('Reset Password'))
+    await h.type(screen.getByPlaceholderText('Your email address', { exact: false }), 'foo@bar.com')
+    await h.user.click(screen.getByText('Reset Password', { exact: false }))
 
     expect(requestMock).toHaveBeenCalledWith('foo@bar.com')
   })
 
   it('cancels', async () => {
     const { emitted } = h.render(Component)
-    await h.user.click(screen.getByText('Cancel'))
+    await h.user.click(screen.getByText('Cancel', { exact: false }))
 
     expect(emitted().cancel).toBeTruthy()
   })

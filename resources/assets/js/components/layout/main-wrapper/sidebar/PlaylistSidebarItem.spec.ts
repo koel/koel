@@ -6,6 +6,7 @@ import { useContextMenu } from '@/composables/useContextMenu'
 import { assertOpenContextMenu } from '@/__tests__/assertions'
 import Component from './PlaylistSidebarItem.vue'
 import PlaylistContextMenu from '@/components/playlist/PlaylistContextMenu.vue'
+import en from '@/locales/en.json'
 
 vi.mock('@/composables/useContextMenu')
 
@@ -35,19 +36,24 @@ describe('playlistSidebarItem.vue', () => {
     await assertOpenContextMenu(openContextMenu as Mock, PlaylistContextMenu, { playlist: list })
   })
 
-  it.each<FavoriteList['name'] | RecentlyPlayedList['name']>(['Favorites', 'Recently Played'])
-  ('does not request context menu if not playlist', async name => { // eslint-disable-line no-unexpected-multiline
+  it('does not request context menu if not playlist', async () => {
     const { openContextMenu } = useContextMenu()
     ;(openContextMenu as Mock).mockClear()
-    const list: FavoriteList | RecentlyPlayedList = {
-      name,
-      playables: [],
+
+    const testCases = [
+      { name: en.sidebar.favorites, playables: [] } as FavoriteList,
+      { name: en.sidebar.recentlyPlayed, playables: [] } as RecentlyPlayedList,
+    ]
+
+    for (const list of testCases) {
+      renderComponent(list)
+
+      const listItem = screen.getByText(list.name).closest('li')
+      if (listItem) {
+        await fireEvent.contextMenu(listItem)
+      }
+
+      expect(openContextMenu).not.toHaveBeenCalled()
     }
-
-    renderComponent(list)
-
-    await fireEvent.contextMenu(screen.getByRole('listitem'))
-
-    expect(openContextMenu).not.toHaveBeenCalled()
   })
 })
