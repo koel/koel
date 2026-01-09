@@ -43,11 +43,15 @@ const { layout, station } = toRefs(props)
 
 const { openContextMenu } = useContextMenu()
 
-const togglePlay = () => {
+const togglePlay = async () => {
+  // Ensure the radio playback service is activated before playing
+  const plyrWrapper = document.querySelector('.plyr') as HTMLElement
+  const radioService = playback('radio', plyrWrapper)
+  
   if (station.value.playback_state === 'Playing') {
-    playback('radio').stop()
+    await radioService.stop()
   } else {
-    playback('radio').play(station.value)
+    await radioService.play(station.value)
   }
 }
 

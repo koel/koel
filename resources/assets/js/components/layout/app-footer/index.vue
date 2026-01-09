@@ -113,13 +113,12 @@ const initPlaybackRelatedServices = async () => {
     return
   }
 
-  // Defaults to the queue playback over radio playback.
-  const playbackService = playback()
-
-  // If audio context is supported, initialize the audio service which handles audio processing (equalizer, etc.)
-  if (isAudioContextSupported) {
-    audioService.init(playbackService.player.media)
-  }
+  // NOTE: We do NOT call playback() here anymore to avoid activating any service
+  // and potentially initializing audioService before user interaction.
+  // Services will be activated lazily when the user actually plays something.
+  // audioService will be initialized lazily only when QueuePlaybackService is activated
+  // (for songs/episodes that need equalizer/analyzer).
+  // Radio playback uses the audio element directly without AudioContext.
 }
 
 watch(preferenceStore.initialized, async initialized => {

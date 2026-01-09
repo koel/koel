@@ -14,12 +14,12 @@
 
       <FooterBtn
         v-if="useEqualizer"
-        :class="{ active: showEqualizer }"
+        :class="{ active: showEqualizer, 'pointer-events-none opacity-30 cursor-not-allowed': isRadio }"
         class="equalizer"
-        title="Show equalizer"
-        @click.prevent="showEqualizer"
+        :title="isRadio ? 'Equalizer not available for radio' : 'Show equalizer'"
+        @click.prevent="!isRadio && showEqualizer()"
       >
-        <AudioLinesIcon size="16" />
+        <AudioLinesIcon :size="16" />
       </FooterBtn>
 
       <VolumeSlider />
@@ -38,10 +38,16 @@ import { computed, onMounted, ref } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { isFullscreenSupported, isAudioContextSupported as useEqualizer } from '@/utils/supports'
 import { useRouter } from '@/composables/useRouter'
+import { requireInjection } from '@/utils/helpers'
+import { CurrentStreamableKey } from '@/symbols'
+import { isRadioStation } from '@/utils/typeGuards'
 
 import VolumeSlider from '@/components/ui/VolumeSlider.vue'
 import FooterBtn from '@/components/layout/app-footer/FooterButton.vue'
 import FooterQueueIcon from '@/components/layout/app-footer/FooterQueueButton.vue'
+
+const streamable = requireInjection(CurrentStreamableKey, ref())
+const isRadio = computed(() => streamable.value && isRadioStation(streamable.value))
 
 const isFullscreen = ref(false)
 const fullscreenButtonTitle = computed(() => (isFullscreen.value ? 'Exit fullscreen mode' : 'Enter fullscreen mode'))
