@@ -43,6 +43,7 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 const { t } = useI18n()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
+const { handleHttpError } = useErrorHandler('dialog')
 
 const close = () => emit('close')
 
@@ -55,7 +56,7 @@ const { loading, handleSubmit, data, isPristine } = useForm<Pick<Podcast, 'url'>
     close()
     toastSuccess(t('podcasts.added', { title: podcast.title }))
   },
-  onError: error => useErrorHandler('dialog').handleHttpError(error, {
+  onError: error => handleHttpError(error, {
     409: t('podcasts.alreadySubscribed'),
   }),
 })

@@ -20,6 +20,7 @@ interface UseFormConfig<T extends Record<string, any>> {
 export const useForm = <T extends Record<string, any>> (config: UseFormConfig<T>) => {
   const useOverlay = config.useOverlay ?? true
   const { showOverlay, hideOverlay } = useOverlayComposable()
+  const { handleHttpError } = useErrorHandler('dialog')
 
   const loading = ref(false)
   const data = reactive<T>(config.initialValues)
@@ -32,7 +33,7 @@ export const useForm = <T extends Record<string, any>> (config: UseFormConfig<T>
   const onError = async (error: unknown) => {
     config.onError
       ? await config.onError(error)
-      : useErrorHandler('dialog').handleHttpError(error)
+      : handleHttpError(error)
   }
 
   const handleSubmit = async () => {

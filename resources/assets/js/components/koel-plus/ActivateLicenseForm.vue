@@ -26,6 +26,7 @@ import TextInput from '@/components/ui/form/TextInput.vue'
 
 const { t } = useI18n()
 const { showSuccessDialog } = useDialogBox()
+const { handleHttpError } = useErrorHandler('dialog')
 
 const { data, loading, handleSubmit } = useForm<{ licenseKey: string }>({
   initialValues: {
@@ -36,6 +37,6 @@ const { data, loading, handleSubmit } = useForm<{ licenseKey: string }>({
     await showSuccessDialog(t('koelPlus.activationMessage'))
     forceReloadWindow()
   },
-  onError: (error: unknown) => useErrorHandler('dialog').handleHttpError(error),
+  onError: (error: unknown) => handleHttpError(error),
 })
 </script>
