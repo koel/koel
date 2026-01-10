@@ -92,7 +92,7 @@ class SongService
             });
 
             $affectedArtists->each(static function (Artist $artist) use ($result): void {
-                if ($artist->refresh()->songs()->count() === 0) {
+                if ($artist->songs()->count() === 0 && $artist->albums()->count() === 0) {
                     $result->addRemovedArtist($artist);
                     $artist->delete();
                 }
@@ -111,7 +111,7 @@ class SongService
 
         // For nullable fields, use the existing value only if the provided data is explicitly null
         // (i.e., when multiple songs are being updated and the user did not provide a value).
-        // This allows us to clear those fields (when user provides an empty string).
+        // This allows us to clear those fields (when the user provides an empty string).
         $data->albumArtistName ??= $song->album_artist->name;
         $data->lyrics ??= $song->lyrics;
         $data->track ??= $song->track;
