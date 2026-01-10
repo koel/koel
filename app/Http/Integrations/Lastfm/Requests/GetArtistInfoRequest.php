@@ -15,7 +15,7 @@ final class GetArtistInfoRequest extends Request
 
     protected Method $method = Method::GET;
 
-    public function __construct(private readonly Artist $artist)
+    public function __construct(private readonly Artist|string $artist)
     {
     }
 
@@ -29,7 +29,7 @@ final class GetArtistInfoRequest extends Request
     {
         return [
             'method' => 'artist.getInfo',
-            'artist' => $this->artist->name,
+            'artist' => $this->artist instanceof Artist ? $this->artist->name : $this->artist,
             'autocorrect' => 1,
             'format' => 'json',
         ];
