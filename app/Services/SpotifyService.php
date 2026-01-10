@@ -18,18 +18,18 @@ class SpotifyService
         return config('koel.services.spotify.client_id') && config('koel.services.spotify.client_secret');
     }
 
-    public function tryGetArtistImage(Artist $artist): ?string
+    public function tryGetArtistImage(Artist|string $artist): ?string
     {
         if (!static::enabled()) {
             return null;
         }
 
-        if ($artist->is_various || $artist->is_unknown) {
+        if ($artist instanceof Artist && ($artist->is_various || $artist->is_unknown)) {
             return null;
         }
 
         return Arr::get(
-            $this->client->search($artist->name, 'artist', ['limit' => 1]),
+            $this->client->search($artist instanceof Artist ? $artist->name : $artist, 'artist', ['limit' => 1]),
             'artists.items.0.images.0.url'
         );
     }

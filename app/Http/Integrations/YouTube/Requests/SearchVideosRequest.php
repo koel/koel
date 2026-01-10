@@ -10,7 +10,7 @@ class SearchVideosRequest extends Request
 {
     protected Method $method = Method::GET;
 
-    public function __construct(private readonly Song $song, private readonly string $pageToken = '')
+    public function __construct(private readonly Song|string $song, private readonly string $pageToken = '')
     {
     }
 
@@ -22,11 +22,15 @@ class SearchVideosRequest extends Request
     /** @inheritdoc */
     protected function defaultQuery(): array
     {
-        $q = $this->song->title;
+        if ($this->song instanceof Song) {
+            $q = $this->song->title;
 
-        // If the artist is worth noticing, include them into the search.
-        if (!$this->song->artist->is_unknown && !$this->song->artist->is_various) {
-            $q .= " {$this->song->artist->name}";
+            // If the artist is worth noticing, include them into the search.
+            if (!$this->song->artist->is_unknown && !$this->song->artist->is_various) {
+                $q .= " {$this->song->artist->name}";
+            }
+        } else {
+            $q = $this->song;
         }
 
         return [

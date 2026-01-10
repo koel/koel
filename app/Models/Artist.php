@@ -30,7 +30,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property Collection<array-key, Song> $songs
  * @property User $user
  * @property bool $is_unknown If the artist is Unknown Artist
- * @property bool $is_various If the artist is Various Artist
+ * @property bool $is_various If the artist is Various Artists
  * @property int $user_id The ID of the user that owns this artist
  * @property string $id
  * @property string $name
