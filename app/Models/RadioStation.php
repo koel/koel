@@ -20,6 +20,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property int $user_id
  * @property User $user
  * @property string $url
+ * @property ?string $stream_host The extracted host for CSP media-src
  * @property ?string $logo The station's logo file name
  * @property ?string $description
  * @property boolean $is_public
