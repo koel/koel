@@ -42,7 +42,7 @@ class UserService
 
         if ($existingUser) {
             $currentAvatar = $existingUser->getRawOriginal('avatar');
-            $isGoogleAvatar = $currentAvatar && Str::startsWith($currentAvatar, 'https://lh3.googleusercontent.com');
+            $isGoogleAvatar = $currentAvatar && Str::contains($currentAvatar, 'googleusercontent.com');
             
             // Preserve custom avatar only if it's not a Google URL (which should be updated from SSO)
             $avatar = ($existingUser->has_custom_avatar && !$isGoogleAvatar)
