@@ -68,6 +68,8 @@ class RadioStationObserver
 
     private function clearStreamHostsCache(): void
     {
+        // Clear both old and new cache keys for compatibility
         Cache::forget('radio_station_stream_hosts');
+        Cache::forget('radio_station_stream_hosts_v2');
     }
 }
