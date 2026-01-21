@@ -31,7 +31,7 @@
     "ismobilejs": "^0.4.1",
     "js-md5": "^0.8.3",
     "local-storage": "^2.0.0",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "lucide-vue-next": "^0.452.0",
     "nouislider": "^14.7.0",
     "nprogress": "^0.2.0",
