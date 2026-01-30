@@ -124,11 +124,21 @@ const onDragOver = (e: DragEvent) => {
   showDropZone.value = Boolean(e.dataTransfer?.types.includes('Files')) && !isCurrentScreen('Upload')
 }
 
-watch(() => queueStore.current, song => (currentStreamable.value = song))
+watch(() => queueStore.current, song => {
+  // Only update currentStreamable if radio is not playing
+  // This prevents queue from overwriting radio when switching from song to radio
+  if (!radioStationStore.current || radioStationStore.current.playback_state === 'Stopped') {
+    currentStreamable.value = song
+  }
+})
 
 watch(() => radioStationStore.current, station => {
-  if (station) {
+  // When radio is playing, it takes priority over queue
+  if (station && station.playback_state !== 'Stopped') {
     currentStreamable.value = station
+  } else if (!station && queueStore.current) {
+    // If radio stops and there's a queue item, switch back to queue
+    currentStreamable.value = queueStore.current
   }
 })
 
