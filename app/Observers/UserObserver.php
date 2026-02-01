@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Helpers\Uuid;
 use App\Models\User;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class UserObserver
 {
@@ -21,8 +22,10 @@ class UserObserver
 
         $oldAvatar = $user->getRawOriginal('avatar');
 
-        // If the avatar is being updated, delete the old avatar
-        rescue_if($oldAvatar, static fn () => File::delete(image_storage_path($oldAvatar)));
+        // Only delete the old avatar if it's a locally stored file (not a URL)
+        if ($oldAvatar && !Str::startsWith($oldAvatar, ['http://', 'https://'])) {
+            rescue_if($oldAvatar, static fn () => File::delete(image_storage_path($oldAvatar)));
+        }
     }
 
     public function deleted(User $user): void

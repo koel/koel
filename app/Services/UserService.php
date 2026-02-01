@@ -41,8 +41,16 @@ class UserService
         $existingUser = $this->repository->findOneBySso($ssoUser);
 
         if ($existingUser) {
+            $currentAvatar = $existingUser->getRawOriginal('avatar');
+            $isGoogleAvatar = $currentAvatar && Str::contains($currentAvatar, 'googleusercontent.com');
+            
+            // Preserve custom avatar only if it's not a Google URL (which should be updated from SSO)
+            $avatar = ($existingUser->has_custom_avatar && !$isGoogleAvatar)
+                ? $existingUser->avatar
+                : ($ssoUser->avatar ? $this->maybeStoreAvatar($ssoUser->avatar) : null);
+
             $existingUser->update([
-                'avatar' => $existingUser->has_custom_avatar ? $existingUser->avatar : $ssoUser->avatar,
+                'avatar' => $avatar,
                 'sso_id' => $ssoUser->id,
                 'sso_provider' => $ssoUser->provider,
             ]);
