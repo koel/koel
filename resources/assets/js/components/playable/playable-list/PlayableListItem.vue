@@ -56,12 +56,11 @@
 <script lang="ts" setup>
 import { faPodcast } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
-import { getPlayableProp, requireInjection } from '@/utils/helpers'
+import { getPlayableProp, humanReadablePlayCount, requireInjection } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
 import { secondsToHis } from '@/utils/formatters'
 import { usePlayableListColumnVisibility } from '@/composables/usePlayableListColumnVisibility'
 import { PlayableListConfigKey } from '@/symbols'
-import { humanReadablePlayCount } from '@/utils'
 import { playableStore } from '@/stores/playableStore'
 
 import SoundBars from '@/components/ui/SoundBars.vue'

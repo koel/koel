@@ -38,6 +38,7 @@ describe('playableListItem.vue', () => {
       track: 12,
       album_cover: 'https://example.com/cover.jpg',
       favorite: true,
+      play_count: 10,
     })
 
     expect(renderComponent(song).html()).toMatchSnapshot()
