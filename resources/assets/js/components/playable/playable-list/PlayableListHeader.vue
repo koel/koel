@@ -94,7 +94,7 @@
       </template>
     </span>
     <span
-      v-if="contentType === 'songs'"
+      v-if="shouldShowColumn('play_count')"
       class="plays"
       data-testid="header-playcount"
       role="button"

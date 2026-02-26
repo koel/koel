@@ -45,7 +45,7 @@
         <span v-if="shouldShowColumn('year')" class="year">{{ playable.year || '—' }}</span>
       </template>
       <span v-if="shouldShowColumn('duration')" class="time font-mono">{{ fmtLength }}</span>
-      <span v-if="isSong(playable)" class="plays">{{ localePlayCount }}</span>
+      <span v-if="shouldShowColumn('play_count')" class="plays">{{ localePlayCount }}</span>
       <span class="extra">
         <FavoriteButton :favorite="playable.favorite" @toggle="toggleFavorite" />
       </span>

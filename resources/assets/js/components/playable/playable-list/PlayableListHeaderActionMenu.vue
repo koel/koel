@@ -118,16 +118,12 @@ const menuItems = computed(() => {
 
   const customOrder: MenuItem = { label: 'Custom Order', field: 'position', visibilityToggleable: false }
 
-  let items: MenuItem[] = [title, album, artist, track, genre, year, time, dateAdded]
+  let items: MenuItem[] = [title, album, artist, track, genre, year, time, playCount, dateAdded]
 
   if (contentType.value === 'episodes') {
     items = [title, podcast, author, time, dateAdded]
   } else if (contentType.value === 'mixed') {
     items = [title, albumOrPodcast, artistOrAuthor, time, dateAdded]
-  }
-
-  if (contentType.value === 'songs') {
-    items.push(playCount)
   }
 
   if (hasCustomOrderSort.value) {
