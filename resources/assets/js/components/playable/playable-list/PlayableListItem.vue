@@ -45,6 +45,7 @@
         <span v-if="shouldShowColumn('year')" class="year">{{ playable.year || '—' }}</span>
       </template>
       <span v-if="shouldShowColumn('duration')" class="time font-mono">{{ fmtLength }}</span>
+      <span v-if="isSong(playable)" class="plays">{{ localePlayCount }}</span>
       <span class="extra">
         <FavoriteButton :favorite="playable.favorite" @toggle="toggleFavorite" />
       </span>
@@ -60,6 +61,7 @@ import { isSong } from '@/utils/typeGuards'
 import { secondsToHis } from '@/utils/formatters'
 import { usePlayableListColumnVisibility } from '@/composables/usePlayableListColumnVisibility'
 import { PlayableListConfigKey } from '@/symbols'
+import { humanReadablePlayCount } from '@/utils'
 import { playableStore } from '@/stores/playableStore'
 
 import SoundBars from '@/components/ui/SoundBars.vue'
@@ -92,6 +94,11 @@ const collaborator = computed<Pick<User, 'name' | 'avatar'>>(
   () => (playable.value as Song).collaboration!.user,
 )
 
+const localePlayCount = computed(() => {
+  const playCount = playable.value.play_count
+  return (playCount > 999_999) ? humanReadablePlayCount(playCount) : playCount.toLocaleString()
+})
+
 const play = () => emit('play', playable.value)
 
 const toggleFavorite = () => playableStore.toggleFavorite(playable.value)
@@ -119,6 +126,10 @@ article {
     span {
       @apply overflow-hidden whitespace-nowrap text-ellipsis block;
     }
+  }
+
+  .plays {
+    min-width: 5.5rem;
   }
 
   button {
