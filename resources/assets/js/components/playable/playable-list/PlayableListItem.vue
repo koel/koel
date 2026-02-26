@@ -127,10 +127,6 @@ article {
     }
   }
 
-  .plays {
-    min-width: 5.5rem;
-  }
-
   button {
     @apply text-current;
   }

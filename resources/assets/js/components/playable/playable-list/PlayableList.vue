@@ -327,6 +327,10 @@ onMounted(() => render())
       @apply basis-20 overflow-visible;
     }
 
+    &.plays {
+      @apply basis-[75px] overflow-visible;
+    }
+
     &.track-number {
       @apply basis-16;
     }
