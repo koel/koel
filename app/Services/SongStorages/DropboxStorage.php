@@ -18,7 +18,7 @@ class DropboxStorage extends CloudStorage
 
     public function __construct(
         private readonly DropboxFilesystem $filesystem,
-        private readonly array $config
+        private readonly array $config,
     ) {
         $this->filesystem
             ->getAdapter()
@@ -55,13 +55,13 @@ class DropboxStorage extends CloudStorage
             ->withBasicAuth($this->config['app_key'], $this->config['app_secret'])
             ->post('https://api.dropboxapi.com/oauth2/token', [
                 'refresh_token' => $this->config['refresh_token'],
-                'grant_type' => 'refresh_token'
+                'grant_type' => 'refresh_token',
             ]);
 
         Cache::put(
             'dropbox_access_token',
             $response->json('access_token'),
-            now()->addSeconds($response->json('expires_in') - 60) // 60 seconds buffer
+            now()->addSeconds($response->json('expires_in') - 60), // 60 seconds buffer
         );
 
         return $response->json('access_token');

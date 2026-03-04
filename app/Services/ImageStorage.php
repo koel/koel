@@ -11,9 +11,8 @@ class ImageStorage
 {
     public function __construct(
         private readonly ImageWriter $imageWriter,
-        private readonly SvgSanitizer $svgSanitizer
-    ) {
-    }
+        private readonly SvgSanitizer $svgSanitizer,
+    ) {}
 
     /**
      * Store an image file and return the (randomly generated) file name.

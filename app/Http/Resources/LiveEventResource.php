@@ -14,20 +14,20 @@ class LiveEventResource extends JsonResource
         'name',
         'dates' => [
             'start',
-            'end'
+            'end',
         ],
         'venue' => [
             'name',
             'url',
-            'city'
+            'city',
         ],
         'url',
-        'image'
+        'image',
     ];
 
     // Right now we only have Ticketmaster events, so we keep it simple.
     public function __construct(
-        private readonly TicketmasterEvent $event
+        private readonly TicketmasterEvent $event,
     ) {
         parent::__construct($event);
     }

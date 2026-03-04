@@ -22,7 +22,7 @@ class DownloadService
         if ($songs->count() === 1) {
             return optional(
                 $this->getLocalPathOrDownloadableUrl($songs->first()), // @phpstan-ignore-line
-                Downloadable::make(...)
+                Downloadable::make(...),
             );
         }
 
@@ -30,7 +30,7 @@ class DownloadService
             (new SongZipArchive())
                 ->addSongs($songs)
                 ->finish()
-                ->getPath()
+                ->getPath(),
         );
     }
 

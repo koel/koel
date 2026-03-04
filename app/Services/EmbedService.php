@@ -20,7 +20,7 @@ class EmbedService
             ->firstOrCreate([
                 'embeddable_id' => $embeddable->getKey(),
                 'embeddable_type' => $embeddable->getMorphClass(),
-                'user_id' => $user->id
+                'user_id' => $user->id,
             ]);
     }
 }

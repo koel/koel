@@ -11,9 +11,8 @@ class SearchForReleaseRequest extends Request
 
     public function __construct(
         private readonly string $albumName,
-        private readonly string $artistName
-    ) {
-    }
+        private readonly string $artistName,
+    ) {}
 
     public function resolveEndpoint(): string
     {
@@ -25,7 +24,7 @@ class SearchForReleaseRequest extends Request
     {
         return [
             'query' => "release:\"{$this->albumName}\" AND artist:\"{$this->artistName}\"",
-            'limit' => 1
+            'limit' => 1,
         ];
     }
 }

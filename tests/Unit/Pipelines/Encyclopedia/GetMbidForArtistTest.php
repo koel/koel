@@ -25,20 +25,20 @@ class GetMbidForArtistTest extends TestCase
         $json = File::json(test_path('fixtures/musicbrainz/artist-search.json'));
 
         Saloon::fake([
-            SearchForArtistRequest::class => MockResponse::make(body: $json)
+            SearchForArtistRequest::class => MockResponse::make(body: $json),
         ]);
 
         $mock = self::createNextClosureMock('6da0515e-a27d-449d-84cc-00713c38a140');
 
-        ( new GetMbidForArtist(new MusicBrainzConnector()) )('Skid Row', $mock->next(...)); // @phpstan-ignore-line
+        (new GetMbidForArtist(new MusicBrainzConnector()))('Skid Row', $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertSent(static function (SearchForArtistRequest $request): bool {
             self::assertSame(
                 [
                     'query' => 'artist:Skid Row',
-                    'limit' => 1
+                    'limit' => 1,
                 ],
-                $request->query()->all()
+                $request->query()->all(),
             );
 
             return true;
@@ -54,7 +54,7 @@ class GetMbidForArtistTest extends TestCase
         Cache::put(cache_key('artist mbid', 'Skid Row'), 'sample-mbid');
         $mock = self::createNextClosureMock('sample-mbid');
 
-        ( new GetMbidForArtist(new MusicBrainzConnector()) )('Skid Row', $mock->next(...)); // @phpstan-ignore-line
+        (new GetMbidForArtist(new MusicBrainzConnector()))('Skid Row', $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }
@@ -65,7 +65,7 @@ class GetMbidForArtistTest extends TestCase
         Saloon::fake([]);
         $mock = self::createNextClosureMock(null);
 
-        ( new GetMbidForArtist(new MusicBrainzConnector()) )(null, $mock->next(...)); // @phpstan-ignore-line
+        (new GetMbidForArtist(new MusicBrainzConnector()))(null, $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }

@@ -48,7 +48,7 @@ class LocalTranscodingStrategyTest extends TestCase
             'location' => $destination,
             'bit_rate' => 128,
             'hash' => 'mocked-checksum',
-            'file_size' => 1_024
+            'file_size' => 1_024,
         ]);
 
         self::assertSame($transcodedPath, $destination);
@@ -63,7 +63,7 @@ class LocalTranscodingStrategyTest extends TestCase
         $transcode = Transcode::factory()->create([
             'location' => '/path/to/transcode.m4a',
             'bit_rate' => 128,
-            'hash' => 'mocked-checksum'
+            'hash' => 'mocked-checksum',
         ]);
 
         File::expects('isReadable')->with('/path/to/transcode.m4a')->andReturn(true);
@@ -86,7 +86,7 @@ class LocalTranscodingStrategyTest extends TestCase
         $transcode = Transcode::factory()->for($song)->create([
             'location' => '/path/to/transcode.m4a',
             'bit_rate' => 128,
-            'hash' => 'mocked-checksum'
+            'hash' => 'mocked-checksum',
         ]);
 
         $destination = artifact_path("transcodes/128/$ulid.m4a", ensureDirectoryExists: false);

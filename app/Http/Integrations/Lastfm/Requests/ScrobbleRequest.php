@@ -20,9 +20,8 @@ final class ScrobbleRequest extends Request implements HasBody, RequiresSignatur
     public function __construct(
         private readonly Song $song,
         private readonly User $user,
-        private readonly int $timestamp
-    ) {
-    }
+        private readonly int $timestamp,
+    ) {}
 
     public function resolveEndpoint(): string
     {
@@ -37,7 +36,7 @@ final class ScrobbleRequest extends Request implements HasBody, RequiresSignatur
             'artist' => $this->song->artist->name,
             'track' => $this->song->title,
             'timestamp' => $this->timestamp,
-            'sk' => $this->user->preferences->lastFmSessionKey
+            'sk' => $this->user->preferences->lastFmSessionKey,
         ];
 
         if ($this->song->album->name !== Album::UNKNOWN_NAME) {

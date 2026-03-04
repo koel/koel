@@ -17,9 +17,8 @@ use SensitiveParameter;
 class UserInvitationService
 {
     public function __construct(
-        private readonly UserRepository $userRepository
-    ) {
-    }
+        private readonly UserRepository $userRepository,
+    ) {}
 
     /** @return Collection<array-key, User> */
     public function invite(array $emails, Role $role, User $invitor): Collection
@@ -61,7 +60,7 @@ class UserInvitationService
                 'password' => '',
                 'invited_by_id' => $invitor->id,
                 'invitation_token' => Uuid::generate(),
-                'invited_at' => now()
+                'invited_at' => now(),
             ]);
 
         $invitee->syncRoles($role);
@@ -72,11 +71,9 @@ class UserInvitationService
     }
 
     public function accept(
-        #[SensitiveParameter]
-        string $token,
+        #[SensitiveParameter] string $token,
         string $name,
-        #[SensitiveParameter]
-        string $password
+        #[SensitiveParameter] string $password,
     ): User {
         $user = $this->getUserProspectByToken($token);
 
@@ -84,7 +81,7 @@ class UserInvitationService
             'name' => $name,
             'password' => Hash::make($password),
             'invitation_token' => null,
-            'invitation_accepted_at' => now()
+            'invitation_accepted_at' => now(),
         ]);
 
         return $user;

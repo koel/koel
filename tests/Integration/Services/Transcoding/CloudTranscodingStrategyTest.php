@@ -33,7 +33,7 @@ class CloudTranscodingStrategyTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create([
             'path' => 's3://bucket/key.flac',
-            'storage' => SongStorageType::S3
+            'storage' => SongStorageType::S3,
         ]);
 
         $storage = $this->mock(S3CompatibleStorage::class);
@@ -64,7 +64,7 @@ class CloudTranscodingStrategyTest extends TestCase
             'location' => $transcodeKey,
             'bit_rate' => 128,
             'hash' => 'mocked-checksum',
-            'file_size' => 1_024
+            'file_size' => 1_024,
         ]);
     }
 
@@ -74,12 +74,12 @@ class CloudTranscodingStrategyTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create([
             'path' => 's3://bucket/key.flac',
-            'storage' => SongStorageType::S3
+            'storage' => SongStorageType::S3,
         ]);
 
         Transcode::factory()->for($song)->create([
             'location' => 'transcodes/128/some-ulid.m4a',
-            'bit_rate' => 128
+            'bit_rate' => 128,
         ]);
 
         $storage = $this->mock(S3CompatibleStorage::class);
@@ -93,7 +93,7 @@ class CloudTranscodingStrategyTest extends TestCase
 
         self::assertSame('https://s3.song.presigned.url/transcodes/128/some-ulid.m4a', $this->strategy->getTranscodeLocation(
             $song,
-            128
+            128,
         ));
     }
 }

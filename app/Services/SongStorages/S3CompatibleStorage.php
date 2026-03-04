@@ -15,9 +15,8 @@ class S3CompatibleStorage extends CloudStorage
     use DeletesUsingFilesystem;
 
     public function __construct(
-        private readonly ?string $bucket = null
-    ) {
-    }
+        private readonly ?string $bucket = null,
+    ) {}
 
     public function storeUploadedFile(string $uploadedFilePath, User $uploader): UploadReference
     {

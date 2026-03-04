@@ -18,7 +18,7 @@ class QueueStateFactory extends Factory
                 ->create()
                 ->modelKeys(),
             'current_song_id' => null,
-            'playback_position' => 0
+            'playback_position' => 0,
         ];
     }
 }

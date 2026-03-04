@@ -15,7 +15,7 @@ class FavoriteFactory extends Factory
         return [
             'user_id' => User::factory(),
             'favoriteable_type' => FavoriteableType::PLAYABLE->value,
-            'favoriteable_id' => Song::factory()
+            'favoriteable_id' => Song::factory(),
         ];
     }
 }

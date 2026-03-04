@@ -14,7 +14,6 @@ use App\Models\Concerns\MorphsToFavorites;
 use App\Models\Concerns\Songs\HasSongAttributes;
 use App\Models\Concerns\Songs\HasSongRelationships;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
-use LogicException;
 use App\Models\Contracts\Embeddable;
 use App\Models\Contracts\Favoriteable;
 use App\Values\SongStorageMetadata\SongStorageMetadata;
@@ -24,6 +23,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;
+use LogicException;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use PhanAn\Poddle\Values\EpisodeMetadata;
@@ -104,7 +104,7 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
         'is_public' => 'bool',
         'storage' => SongStorageCast::class,
         'episode_metadata' => EpisodeMetadataCast::class,
-        'favorite' => 'bool'
+        'favorite' => 'bool',
     ];
 
     protected $with = ['album', 'artist', 'album.artist', 'podcast', 'genres', 'owner'];
@@ -116,7 +116,7 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
             ->when($type, static fn(SongBuilder $query) => match ($type) { // @phpstan-ignore-line phpcs:ignore
                 PlayableType::SONG => $query->whereNull('songs.podcast_id'),
                 PlayableType::PODCAST_EPISODE => $query->whereNotNull('songs.podcast_id'),
-                default => $query
+                default => $query,
             })
             ->addSelect('songs.*');
     }
@@ -152,7 +152,7 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
             'id' => $this->id,
             'owner_id' => $this->owner_id,
             'title' => $this->title,
-            'type' => $this->type->value
+            'type' => $this->type->value,
         ];
 
         if ($this->episode_metadata?->description) {
@@ -211,9 +211,9 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
             [
                 SongStorageType::S3,
                 SongStorageType::S3_LAMBDA,
-                SongStorageType::DROPBOX
+                SongStorageType::DROPBOX,
             ],
-            true
+            true,
         );
     }
 

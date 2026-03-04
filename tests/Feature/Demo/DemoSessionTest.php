@@ -47,7 +47,7 @@ class DemoSessionTest extends TestCase
 
         $this->get('/')->assertSee('window.DEMO_ACCOUNT')->assertViewHas('demo_account', [
             'email' => 'demo@koel.dev',
-            'password' => 'demo'
+            'password' => 'demo',
         ]);
     }
 }

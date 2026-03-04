@@ -20,7 +20,7 @@ class NewSessionController extends Controller
         Request $request,
         CrawlerDetect $crawlerDetect,
         UserService $service,
-        UserRepository $repository
+        UserRepository $repository,
     ) {
         $email = $crawlerDetect->isCrawler()
             ? 'demo@koel.dev'
@@ -30,12 +30,12 @@ class NewSessionController extends Controller
             name: 'Koel',
             email: $email,
             plainTextPassword: User::DEMO_PASSWORD,
-            role: Role::ADMIN
+            role: Role::ADMIN,
         ));
 
         return redirect('/')->with('demo_account', [
             'email' => $user->email,
-            'password' => User::DEMO_PASSWORD
+            'password' => User::DEMO_PASSWORD,
         ]);
     }
 }

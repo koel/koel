@@ -3,13 +3,13 @@
 namespace App\Models\Concerns\Songs;
 
 use App\Enums\PlayableType;
+use App\Enums\SongStorageType;
 use App\Values\SongStorageMetadata\DropboxMetadata;
 use App\Values\SongStorageMetadata\LocalMetadata;
 use App\Values\SongStorageMetadata\S3CompatibleMetadata;
 use App\Values\SongStorageMetadata\S3LambdaMetadata;
 use App\Values\SongStorageMetadata\SftpMetadata;
 use App\Values\SongStorageMetadata\SongStorageMetadata;
-use App\Enums\SongStorageType;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Facades\File;
 use Throwable;
@@ -29,7 +29,7 @@ trait HasSongAttributes
 
     protected function storageMetadata(): Attribute
     {
-        return ( new Attribute(get: function (): SongStorageMetadata {
+        return (new Attribute(get: function (): SongStorageMetadata {
             try {
                 switch ($this->storage) {
                     case SongStorageType::SFTP:
@@ -54,7 +54,7 @@ trait HasSongAttributes
             } catch (Throwable) {
                 return LocalMetadata::make($this->path);
             }
-        }) )->shouldCache();
+        }))->shouldCache();
     }
 
     protected function basename(): Attribute

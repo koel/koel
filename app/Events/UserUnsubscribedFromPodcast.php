@@ -9,7 +9,6 @@ class UserUnsubscribedFromPodcast extends Event
 {
     public function __construct(
         public readonly User $user,
-        public readonly Podcast $podcast
-    ) {
-    }
+        public readonly Podcast $podcast,
+    ) {}
 }

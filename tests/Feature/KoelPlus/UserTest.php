@@ -18,9 +18,9 @@ class UserTest extends PlusTestCase
                 'name' => 'Manager',
                 'email' => 'foo@bar.com',
                 'password' => 'secret',
-                'role' => 'manager'
+                'role' => 'manager',
             ],
-            create_admin()
+            create_admin(),
         )->assertSuccessful();
     }
 
@@ -34,9 +34,9 @@ class UserTest extends PlusTestCase
             [
                 'name' => 'Manager',
                 'email' => 'foo@bar.com',
-                'role' => 'manager'
+                'role' => 'manager',
             ],
-            create_admin()
+            create_admin(),
         )->assertSuccessful();
     }
 }

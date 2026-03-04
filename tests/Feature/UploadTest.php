@@ -37,7 +37,7 @@ class UploadTest extends TestCase
     {
         return [
             [MediaPathNotSetException::class,  Response::HTTP_FORBIDDEN],
-            [SongUploadFailedException::class, Response::HTTP_BAD_REQUEST]
+            [SongUploadFailedException::class, Response::HTTP_BAD_REQUEST],
         ];
     }
 

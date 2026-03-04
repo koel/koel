@@ -20,9 +20,8 @@ class UserInvitationController extends Controller
 {
     public function __construct(
         private readonly UserInvitationService $invitationService,
-        private readonly AuthenticationService $auth
-    ) {
-    }
+        private readonly AuthenticationService $auth,
+    ) {}
 
     /** @param User $invitor */
     public function invite(InviteUserRequest $request, Authenticatable $invitor)

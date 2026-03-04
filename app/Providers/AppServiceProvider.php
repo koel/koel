@@ -56,7 +56,7 @@ class AppServiceProvider extends ServiceProvider
             return SpotifyService::enabled()
                 ? new SpotifySession(
                     config('koel.services.spotify.client_id'),
-                    config('koel.services.spotify.client_secret')
+                    config('koel.services.spotify.client_secret'),
                 )
                 : null;
         });
@@ -102,7 +102,7 @@ class AppServiceProvider extends ServiceProvider
             'artist' => Artist::class,
             'podcast' => Podcast::class,
             'radio-station' => RadioStation::class,
-            'playlist' => Playlist::class
+            'playlist' => Playlist::class,
         ]);
 
         $this->app

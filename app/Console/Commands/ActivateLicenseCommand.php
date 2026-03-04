@@ -12,7 +12,7 @@ class ActivateLicenseCommand extends Command
     protected $description = 'Activate a Koel Plus license';
 
     public function __construct(
-        private readonly LicenseServiceInterface $licenseService
+        private readonly LicenseServiceInterface $licenseService,
     ) {
         parent::__construct();
     }
@@ -34,7 +34,7 @@ class ActivateLicenseCommand extends Command
 
         $this->components->twoColumnDetail(
             'Registered To',
-            "{$license->meta->customerName} <{$license->meta->customerEmail}>"
+            "{$license->meta->customerName} <{$license->meta->customerEmail}>",
         );
 
         $this->components->twoColumnDetail('Expires On', 'Never ever');

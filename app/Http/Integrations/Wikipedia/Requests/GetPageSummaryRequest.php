@@ -10,9 +10,8 @@ class GetPageSummaryRequest extends Request
     protected Method $method = Method::GET;
 
     public function __construct(
-        private readonly string $pageTitle
-    ) {
-    }
+        private readonly string $pageTitle,
+    ) {}
 
     public function resolveEndpoint(): string
     {

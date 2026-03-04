@@ -36,7 +36,7 @@ class ScanCommand extends Command
     public function __construct(
         private readonly DirectoryScanner $directoryScanner,
         private readonly WatchRecordScanner $watchRecordScanner,
-        private readonly UserRepository $userRepository
+        private readonly UserRepository $userRepository,
     ) {
         parent::__construct();
     }
@@ -63,7 +63,7 @@ class ScanCommand extends Command
             // When scanning via CLI, the songs should be public by default, unless explicitly specified otherwise.
             makePublic: !$this->option('private'),
             ignores: collect($this->option('ignore'))->sort()->values()->all(),
-            force: $this->option('force')
+            force: $this->option('force'),
         );
 
         $record = $this->argument('record');
@@ -102,7 +102,7 @@ class ScanCommand extends Command
         $this->components->bulletList([
             "<fg=green>{$results->success()->count()}</> new or updated song(s)",
             "<fg=yellow>{$results->skipped()->count()}</> unchanged song(s)",
-            "<fg=red>{$results->error()->count()}</> invalid file(s)"
+            "<fg=red>{$results->error()->count()}</> invalid file(s)",
         ]);
     }
 
@@ -135,7 +135,7 @@ class ScanCommand extends Command
             $result->isSuccess() => '<fg=green>OK</>',
             $result->isSkipped() => '<fg=yellow>SKIPPED</>',
             $result->isError() => '<fg=red>ERROR</>',
-            default => throw new RuntimeException("Unknown scan result type: {$result->type->value}")
+            default => throw new RuntimeException("Unknown scan result type: {$result->type->value}"),
         });
 
         if ($result->isError()) {
@@ -186,7 +186,7 @@ class ScanCommand extends Command
         $user = $this->userRepository->getOrCreateFirstAdmin();
 
         $this->components->warn(
-            "No song owner specified. Setting the first admin ($user->name, ID {$user->id}) as owner."
+            "No song owner specified. Setting the first admin ($user->name, ID {$user->id}) as owner.",
         );
 
         return $user;

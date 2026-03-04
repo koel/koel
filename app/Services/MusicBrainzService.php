@@ -35,7 +35,7 @@ class MusicBrainzService implements Encyclopedia
                     GetMbidForArtist::class,
                     GetArtistWikidataIdUsingMbid::class,
                     GetWikipediaPageTitleUsingWikidataId::class,
-                    GetWikipediaPageSummaryUsingPageTitle::class
+                    GetWikipediaPageSummaryUsingPageTitle::class,
                 ])
                 ->thenReturn();
 
@@ -60,7 +60,7 @@ class MusicBrainzService implements Encyclopedia
              */
             [$albumMbid, $releaseGroupMbid] = Pipeline::send([
                 'album' => $album->name,
-                'artist' => $album->artist->name
+                'artist' => $album->artist->name,
             ])->through([GetReleaseAndReleaseGroupMbidsForAlbum::class])->thenReturn();
 
             if (!$albumMbid || !$releaseGroupMbid) {
@@ -74,14 +74,14 @@ class MusicBrainzService implements Encyclopedia
                 ->through([
                     GetAlbumWikidataIdUsingReleaseGroupMbid::class,
                     GetWikipediaPageTitleUsingWikidataId::class,
-                    GetWikipediaPageSummaryUsingPageTitle::class
+                    GetWikipediaPageSummaryUsingPageTitle::class,
                 ])
                 ->thenReturn();
 
             return $wikipediaSummary
                 ? AlbumInformation::fromWikipediaSummary($wikipediaSummary)->withMusicBrainzTracks($tracks)
                 : AlbumInformation::make(url: "https://musicbrainz.org/release/$albumMbid")->withMusicBrainzTracks(
-                    $tracks
+                    $tracks,
                 );
         });
     }

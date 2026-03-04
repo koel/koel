@@ -26,7 +26,7 @@ class Favorite extends Model
     protected $with = ['user', 'favoriteable'];
 
     protected $casts = [
-        'created_at' => 'datetime'
+        'created_at' => 'datetime',
     ];
 
     public static function booted(): void

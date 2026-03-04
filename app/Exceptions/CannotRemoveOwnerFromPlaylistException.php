@@ -4,6 +4,4 @@ namespace App\Exceptions;
 
 use Exception;
 
-class CannotRemoveOwnerFromPlaylistException extends Exception
-{
-}
+class CannotRemoveOwnerFromPlaylistException extends Exception {}

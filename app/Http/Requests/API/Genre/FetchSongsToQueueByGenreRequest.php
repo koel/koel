@@ -7,6 +7,4 @@ use App\Http\Requests\API\Request;
 /**
  * @property-read int $limit
  */
-class FetchSongsToQueueByGenreRequest extends Request
-{
-}
+class FetchSongsToQueueByGenreRequest extends Request {}

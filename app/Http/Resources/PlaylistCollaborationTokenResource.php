@@ -10,12 +10,12 @@ class PlaylistCollaborationTokenResource extends JsonResource
 {
     public const JSON_STRUCTURE = [
         'type',
-        'token'
+        'token',
     ];
 
     public function __construct(
         #[SensitiveParameter]
-        private readonly PlaylistCollaborationToken $token
+        private readonly PlaylistCollaborationToken $token,
     ) {
         parent::__construct($token);
     }
@@ -25,7 +25,7 @@ class PlaylistCollaborationTokenResource extends JsonResource
     {
         return [
             'type' => 'playlist_collaboration_tokens',
-            'token' => $this->token->token
+            'token' => $this->token->token,
         ];
     }
 }

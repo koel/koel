@@ -23,7 +23,7 @@ class RadioStationFactory extends Factory
             'url' => $this->faker->url(),
             'logo' => Ulid::generate() . '.webp',
             'description' => $this->faker->text(),
-            'is_public' => false
+            'is_public' => false,
         ];
     }
 }

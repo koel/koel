@@ -39,7 +39,7 @@ class SongTest extends TestCase
             ['Pop, Rock',    true],
             ['Rock,   Pop ', true],
             ['Rock',         false],
-            ['Jazz, Pop',    false]
+            ['Jazz, Pop',    false],
         ];
     }
 

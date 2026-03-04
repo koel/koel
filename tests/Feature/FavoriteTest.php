@@ -30,15 +30,15 @@ class FavoriteTest extends TestCase
             'api/favorites/toggle',
             [
                 'type' => 'playable',
-                'id' => $song->id
+                'id' => $song->id,
             ],
-            $user
+            $user,
         )->assertJsonStructure(FavoriteResource::JSON_STRUCTURE);
 
         $this->assertDatabaseHas(Favorite::class, [
             'favoriteable_type' => 'playable',
             'favoriteable_id' => $song->id,
-            'user_id' => $user->id
+            'user_id' => $user->id,
         ]);
 
         Event::assertDispatched(SongFavoriteToggled::class);
@@ -56,13 +56,13 @@ class FavoriteTest extends TestCase
             'api/favorites/toggle',
             [
                 'type' => 'playable',
-                'id' => $favorite->favoriteable_id
+                'id' => $favorite->favoriteable_id,
             ],
-            $favorite->user
+            $favorite->user,
         )->assertNoContent();
 
         $this->assertDatabaseMissing(Favorite::class, [
-            'id' => $favorite->id
+            'id' => $favorite->id,
         ]);
 
         Event::assertDispatched(SongFavoriteToggled::class);
@@ -81,16 +81,16 @@ class FavoriteTest extends TestCase
             'api/favorites',
             [
                 'type' => 'playable',
-                'ids' => $songs->pluck('id')->toArray()
+                'ids' => $songs->pluck('id')->toArray(),
             ],
-            $user
+            $user,
         )->assertNoContent();
 
         foreach ($songs as $song) {
             $this->assertDatabaseHas(Favorite::class, [
                 'favoriteable_type' => 'playable',
                 'favoriteable_id' => $song->id,
-                'user_id' => $user->id
+                'user_id' => $user->id,
             ]);
         }
 
@@ -114,14 +114,14 @@ class FavoriteTest extends TestCase
             'api/favorites',
             [
                 'type' => 'playable',
-                'ids' => $favorites->pluck('favoriteable_id')->toArray()
+                'ids' => $favorites->pluck('favoriteable_id')->toArray(),
             ],
-            $user
+            $user,
         )->assertNoContent();
 
         foreach ($favorites as $favorite) {
             $this->assertDatabaseMissing(Favorite::class, [
-                'id' => $favorite->id
+                'id' => $favorite->id,
             ]);
         }
 

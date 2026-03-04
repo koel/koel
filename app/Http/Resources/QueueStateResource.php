@@ -9,14 +9,14 @@ class QueueStateResource extends JsonResource
 {
     public const JSON_STRUCTURE = [
         'songs' => [
-            SongResource::JSON_STRUCTURE
+            SongResource::JSON_STRUCTURE,
         ],
         'current_song',
-        'playback_position'
+        'playback_position',
     ];
 
     public function __construct(
-        private readonly QueueState $state
+        private readonly QueueState $state,
     ) {
         parent::__construct($state);
     }
@@ -28,7 +28,7 @@ class QueueStateResource extends JsonResource
             'type' => 'queue-states',
             'songs' => SongResource::collection($this->state->playables)->for(auth()->user()),
             'current_song' => $this->state->currentPlayable ? new SongResource($this->state->currentPlayable) : null,
-            'playback_position' => $this->state->playbackPosition
+            'playback_position' => $this->state->playbackPosition,
         ];
     }
 }

@@ -9,7 +9,6 @@ use Illuminate\Http\Response;
 class RequiresPlus
 {
     public function __construct(
-        public int $code = Response::HTTP_NOT_FOUND
-    ) {
-    }
+        public int $code = Response::HTTP_NOT_FOUND,
+    ) {}
 }

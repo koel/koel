@@ -28,7 +28,7 @@ enum SmartPlaylistModel: string
             self::PLAY_COUNT => 'COALESCE(interactions.play_count, 0)',
             self::TITLE => 'songs.title',
             self::YEAR => 'songs.year',
-            default => $this->value
+            default => $this->value,
         };
     }
 
@@ -50,7 +50,7 @@ enum SmartPlaylistModel: string
     {
         return match ($this) {
             self::GENRE => 'genres',
-            default => null
+            default => null,
         };
     }
 }

@@ -24,7 +24,7 @@ class PaginateFolderSongsTest extends PlusTestCase
             ->create();
 
         $response = $this->getAs(
-            '/api/browse/songs?path=foo/bar&page=1'
+            '/api/browse/songs?path=foo/bar&page=1',
         )->assertJsonStructure(SongFileResource::PAGINATION_JSON_STRUCTURE);
 
         self::assertEqualsCanonicalizing($songs->pluck('id')->all(), $response->json('data.*.id'));

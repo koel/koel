@@ -11,9 +11,8 @@ use App\Values\QueueState as QueueStateDTO;
 class QueueService
 {
     public function __construct(
-        private readonly SongRepository $songRepository
-    ) {
-    }
+        private readonly SongRepository $songRepository,
+    ) {}
 
     public function getQueueState(User $user): QueueStateDTO
     {
@@ -26,7 +25,7 @@ class QueueService
         return QueueStateDTO::make(
             $this->songRepository->getMany(ids: $state->song_ids, preserveOrder: true, scopedUser: $user),
             $currentSong,
-            $state->playback_position ?? 0
+            $state->playback_position ?? 0,
         );
     }
 
@@ -38,10 +37,10 @@ class QueueService
     public function updatePlaybackStatus(User $user, Song $song, int $position): void
     {
         QueueState::query()->updateOrCreate([
-            'user_id' => $user->id
+            'user_id' => $user->id,
         ], [
             'current_song_id' => $song->id,
-            'playback_position' => $position
+            'playback_position' => $position,
         ]);
     }
 }

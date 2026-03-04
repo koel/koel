@@ -16,7 +16,7 @@ class ProfileTest extends TestCase
     {
         $this->putAs('api/me', [
             'name' => 'Foo',
-            'email' => 'bar@baz.com'
+            'email' => 'bar@baz.com',
         ])->assertUnprocessable();
     }
 
@@ -30,9 +30,9 @@ class ProfileTest extends TestCase
             [
                 'name' => 'Foo',
                 'email' => 'bar@baz.com',
-                'current_password' => 'secret'
+                'current_password' => 'secret',
             ],
-            $user
+            $user,
         );
 
         $user->refresh();
@@ -53,9 +53,9 @@ class ProfileTest extends TestCase
                 'name' => 'Foo',
                 'email' => 'bar@baz.com',
                 'new_password' => 'new-secret',
-                'current_password' => 'secret'
+                'current_password' => 'secret',
             ],
-            $user
+            $user,
         )->headers->get('Authorization');
 
         $user->refresh();
@@ -78,9 +78,9 @@ class ProfileTest extends TestCase
                 'name' => 'Foo',
                 'email' => 'bar@baz.com',
                 'current_password' => 'secret',
-                'avatar' => minimal_base64_encoded_image()
+                'avatar' => minimal_base64_encoded_image(),
             ],
-            $user
+            $user,
         )->assertOk();
 
         $user->refresh();
@@ -94,7 +94,7 @@ class ProfileTest extends TestCase
         $user = create_user([
             'password' => Hash::make('secret'),
             'email' => 'foo@bar.com',
-            'avatar' => 'foo.jpg'
+            'avatar' => 'foo.jpg',
         ]);
 
         $this->putAs(
@@ -102,9 +102,9 @@ class ProfileTest extends TestCase
             [
                 'name' => 'Foo',
                 'email' => 'foo@bar.com',
-                'current_password' => 'secret'
+                'current_password' => 'secret',
             ],
-            $user
+            $user,
         )->assertOk();
 
         $user->refresh();
@@ -123,9 +123,9 @@ class ProfileTest extends TestCase
             [
                 'name' => 'Foo',
                 'email' => 'bar@baz.com',
-                'current_password' => 'secret'
+                'current_password' => 'secret',
             ],
-            $user
+            $user,
         )->assertNoContent();
     }
 }

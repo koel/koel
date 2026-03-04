@@ -13,9 +13,8 @@ class SearchVideosRequest extends Request
     // @mago-ignore lint:sensitive-parameter
     public function __construct(
         private readonly Song|string $song,
-        private readonly string $pageToken = ''
-    ) {
-    }
+        private readonly string $pageToken = '',
+    ) {}
 
     public function resolveEndpoint(): string
     {
@@ -41,7 +40,7 @@ class SearchVideosRequest extends Request
             'type' => 'video',
             'maxResults' => 10,
             'pageToken' => $this->pageToken,
-            'q' => $q
+            'q' => $q,
         ];
     }
 }

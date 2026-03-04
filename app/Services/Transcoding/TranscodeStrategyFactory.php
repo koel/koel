@@ -12,9 +12,9 @@ class TranscodeStrategyFactory
             SongStorageType::LOCAL => app(LocalTranscodingStrategy::class),
             SongStorageType::S3,
             SongStorageType::S3_LAMBDA,
-            SongStorageType::DROPBOX
+            SongStorageType::DROPBOX,
                 => app(CloudTranscodingStrategy::class),
-            SongStorageType::SFTP => app(SftpTranscodingStrategy::class)
+            SongStorageType::SFTP => app(SftpTranscodingStrategy::class),
         };
     }
 }

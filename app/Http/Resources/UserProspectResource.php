@@ -14,11 +14,11 @@ class UserProspectResource extends JsonResource
         'email',
         'avatar',
         'role',
-        'is_prospect'
+        'is_prospect',
     ];
 
     public function __construct(
-        private readonly User $user
+        private readonly User $user,
     ) {
         parent::__construct($user);
     }
@@ -33,7 +33,7 @@ class UserProspectResource extends JsonResource
             'email' => $this->user->email,
             'avatar' => $this->user->avatar,
             'role' => $this->user->role->value,
-            'is_prospect' => $this->user->is_prospect
+            'is_prospect' => $this->user->is_prospect,
         ];
     }
 }

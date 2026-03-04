@@ -24,12 +24,12 @@ class PlayCountTest extends TestCase
         $this->postAs(
             '/api/interaction/play',
             ['song' => $interaction->song_id],
-            $interaction->user
+            $interaction->user,
         )->assertJsonStructure([
             'type',
             'id',
             'song_id',
-            'play_count'
+            'play_count',
         ]);
 
         self::assertSame(11, $interaction->refresh()->play_count);
@@ -49,7 +49,7 @@ class PlayCountTest extends TestCase
             'type',
             'id',
             'song_id',
-            'play_count'
+            'play_count',
         ]);
 
         $interaction = Interaction::query()

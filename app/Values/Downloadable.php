@@ -10,7 +10,7 @@ final readonly class Downloadable
     private bool $redirectable;
 
     private function __construct(
-        public string $path
+        public string $path,
     ) {
         $this->redirectable = Str::startsWith($path, ['http://', 'https://']);
     }

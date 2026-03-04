@@ -39,9 +39,9 @@ class RadioStationTest extends TestCase
                     'name' => 'Test Radio Station',
                     'logo' => minimal_base64_encoded_image(),
                     'description' => 'A test radio station',
-                    'is_public' => true
+                    'is_public' => true,
                 ],
-                $user
+                $user,
             )
             ->assertCreated()
             ->assertJsonStructure(RadioStationResource::JSON_STRUCTURE);
@@ -52,7 +52,7 @@ class RadioStationTest extends TestCase
             'logo' => "$ulid.webp",
             'description' => 'A test radio station',
             'is_public' => true,
-            'user_id' => $user->id
+            'user_id' => $user->id,
         ]);
     }
 
@@ -61,7 +61,7 @@ class RadioStationTest extends TestCase
     {
         /** @var RadioStation $station */
         $station = RadioStation::factory()->create([
-            'logo' => 'neat-logo.webp'
+            'logo' => 'neat-logo.webp',
         ]);
 
         $this
@@ -71,9 +71,9 @@ class RadioStationTest extends TestCase
                     'url' => 'https://example.com/updated-stream',
                     'name' => 'Updated Radio Station',
                     'description' => 'An updated test radio station',
-                    'is_public' => false
+                    'is_public' => false,
                 ],
-                $station->user
+                $station->user,
             )
             ->assertOk()
             ->assertJsonStructure(RadioStationResource::JSON_STRUCTURE);
@@ -102,9 +102,9 @@ class RadioStationTest extends TestCase
                     'url' => 'https://example.com/updated-stream',
                     'name' => 'Updated Radio Station',
                     'logo' => minimal_base64_encoded_image(),
-                    'is_public' => true
+                    'is_public' => true,
                 ],
-                $station->user
+                $station->user,
             )
             ->assertOk()
             ->assertJsonStructure(RadioStationResource::JSON_STRUCTURE);
@@ -125,9 +125,9 @@ class RadioStationTest extends TestCase
                     'url' => 'https://example.com/updated-stream',
                     'name' => 'Updated Radio Station',
                     'logo' => '',
-                    'is_public' => true
+                    'is_public' => true,
                 ],
-                $station->user
+                $station->user,
             )
             ->assertOk()
             ->assertJsonStructure(RadioStationResource::JSON_STRUCTURE);
@@ -145,7 +145,7 @@ class RadioStationTest extends TestCase
             'name' => 'Updated Radio Station',
             'logo' => null,
             'description' => 'An updated test radio station',
-            'is_public' => false
+            'is_public' => false,
         ];
 
         $this->putAs("/api/radio/stations/{$station->id}", $data, create_user())->assertForbidden();
@@ -161,7 +161,7 @@ class RadioStationTest extends TestCase
             'name' => 'Updated Radio Station',
             'logo' => null,
             'description' => 'An updated test radio station',
-            'is_public' => false
+            'is_public' => false,
         ];
 
         $this->putAs("/api/radio/stations/{$station->id}", $data, create_admin())->assertOk();
@@ -177,11 +177,11 @@ class RadioStationTest extends TestCase
             'name' => 'Updated Radio Station',
             'logo' => null,
             'description' => 'An updated test radio station',
-            'is_public' => false
+            'is_public' => false,
         ];
 
         $this->putAs("/api/radio/stations/{$station->id}", $data, create_admin([
-            'organization_id' => Organization::factory()
+            'organization_id' => Organization::factory(),
         ]))->assertForbidden();
     }
 
@@ -202,7 +202,7 @@ class RadioStationTest extends TestCase
         // Public station but in another organization should not be included
         RadioStation::factory()->create([
             'is_public' => true,
-            'user_id' => create_user(['organization_id' => Organization::factory()])->id
+            'user_id' => create_user(['organization_id' => Organization::factory()])->id,
         ]);
 
         $this
@@ -241,7 +241,7 @@ class RadioStationTest extends TestCase
         $station = RadioStation::factory()->create();
 
         $this->deleteAs("/api/radio/stations/{$station->id}", [], create_admin([
-            'organization_id' => Organization::factory()
+            'organization_id' => Organization::factory(),
         ]))->assertForbidden();
     }
 

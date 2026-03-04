@@ -19,10 +19,10 @@ class UserFactory extends Factory
             'email' => $this->faker->email,
             'password' => Hash::make('secret'),
             'preferences' => [
-                'lastfm_session_key' => Str::random()
+                'lastfm_session_key' => Str::random(),
             ],
             'remember_token' => Str::random(10),
-            'organization_id' => Organization::default()->id
+            'organization_id' => Organization::default()->id,
         ];
     }
 
@@ -42,7 +42,7 @@ class UserFactory extends Factory
         return $this->state(fn() => [
             'invitation_token' => Str::random(),
             'invited_at' => now(),
-            'invited_by_id' => User::factory()->admin()
+            'invited_by_id' => User::factory()->admin(),
         ]);
     }
 }

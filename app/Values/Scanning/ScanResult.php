@@ -9,9 +9,8 @@ final class ScanResult
     private function __construct(
         public string $path,
         public ScanResultType $type,
-        public ?string $error = null
-    ) {
-    }
+        public ?string $error = null,
+    ) {}
 
     public static function success(string $path): self
     {

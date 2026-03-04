@@ -24,11 +24,11 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
                                 'id' => '2a4548cd-c67f-44d4-8fec-34ff75c8a026',
                                 'model' => 'foo',
                                 'operator' => 'contains',
-                                'value' => ['bar']
-                            ]
-                        ]
-                    ]
-                ]
+                                'value' => ['bar'],
+                            ],
+                        ],
+                    ],
+                ],
             ],
             'invalid operator' => [
                 [
@@ -39,11 +39,11 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
                                 'id' => '2a4548cd-c67f-44d4-8fec-34ff75c8a026',
                                 'model' => 'artist.name',
                                 'operator' => '<script>',
-                                'value' => ['bar']
-                            ]
-                        ]
-                    ]
-                ]
+                                'value' => ['bar'],
+                            ],
+                        ],
+                    ],
+                ],
             ],
             'values are not an array' => [
                 [
@@ -54,11 +54,11 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
                                 'id' => 'f5fcc10f-eb6a-40f6-baf9-db573de088f8',
                                 'model' => 'artist.name',
                                 'operator' => 'is',
-                                'value' => 'bar'
-                            ]
-                        ]
-                    ]
-                ]
+                                'value' => 'bar',
+                            ],
+                        ],
+                    ],
+                ],
             ],
             'values are empty' => [
                 [
@@ -69,11 +69,11 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
                                 'id' => '2a4548cd-c67f-44d4-8fec-34ff75c8a026',
                                 'model' => 'artist.name',
                                 'operator' => 'is',
-                                'value' => []
-                            ]
-                        ]
-                    ]
-                ]
+                                'value' => [],
+                            ],
+                        ],
+                    ],
+                ],
             ],
             'values item account exceeds 2' => [
                 [
@@ -84,12 +84,12 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
                                 'id' => '2a4548cd-c67f-44d4-8fec-34ff75c8a026',
                                 'model' => 'artist.name',
                                 'operator' => 'is',
-                                'value' => ['bar', 'baz', 'qux']
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                'value' => ['bar', 'baz', 'qux'],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -100,7 +100,7 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
         $this->expectExceptionMessage('Invalid smart playlist rules');
 
         $fail = static fn(string $message) => throw new Exception($message);
-        ( new ValidSmartPlaylistRulePayload() )->validate('rules', $value, $fail);
+        (new ValidSmartPlaylistRulePayload())->validate('rules', $value, $fail);
     }
 
     /** @return array<mixed> */
@@ -116,11 +116,11 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
                                 'id' => '45368b8f-fec8-4b72-b826-6b295af0da65',
                                 'model' => 'artist.name',
                                 'operator' => 'is',
-                                'value' => ['bar']
-                            ]
-                        ]
-                    ]
-                ]
+                                'value' => ['bar'],
+                            ],
+                        ],
+                    ],
+                ],
             ],
             'multiple rules' => [
                 [
@@ -131,17 +131,17 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
                                 'id' => '45368b8f-fec8-4b72-b826-6b295af0da65',
                                 'model' => 'artist.name',
                                 'operator' => 'is',
-                                'value' => ['bar']
+                                'value' => ['bar'],
                             ],
                             [
                                 'id' => '2a4548cd-c67f-44d4-8fec-34ff75c8a026',
                                 'model' => 'interactions.play_count',
                                 'operator' => 'isGreaterThan',
-                                'value' => [50]
-                            ]
-                        ]
-                    ]
-                ]
+                                'value' => [50],
+                            ],
+                        ],
+                    ],
+                ],
             ],
             'multiple groups' => [
                 [
@@ -152,15 +152,15 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
                                 'id' => '59e95d10-e297-4f33-b2d8-de55e64a02fa',
                                 'model' => 'artist.name',
                                 'operator' => 'is',
-                                'value' => ['bar']
+                                'value' => ['bar'],
                             ],
                             [
                                 'id' => 'fefa409c-5539-4612-949f-47f71d06c828',
                                 'model' => 'interactions.play_count',
                                 'operator' => 'isGreaterThan',
-                                'value' => [50]
-                            ]
-                        ]
+                                'value' => [50],
+                            ],
+                        ],
                     ],
                     [
                         'id' => '45b23131-ece6-4461-8c1b-4d865f06a395',
@@ -169,18 +169,18 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
                                 'id' => 'e3e2f1cc-bde1-43fc-9fb2-96ea7d64412c',
                                 'model' => 'album.name',
                                 'operator' => 'contains',
-                                'value' => ['bar']
+                                'value' => ['bar'],
                             ],
                             [
                                 'id' => '39bba5c4-e9cb-4b72-a241-6b7c6cc14c3c',
                                 'model' => 'interactions.play_count',
                                 'operator' => 'isBetween',
-                                'value' => [10, 100]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                'value' => [10, 100],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -188,7 +188,7 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
     #[Test]
     public function validCases($value): void
     {
-        ( new ValidSmartPlaylistRulePayload() )->validate('rules', $value, static fn($foo) => $foo); // @phpstan-ignore-line
+        (new ValidSmartPlaylistRulePayload())->validate('rules', $value, static fn($foo) => $foo); // @phpstan-ignore-line
         $this->addToAssertionCount(1);
     }
 }

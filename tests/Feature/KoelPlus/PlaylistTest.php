@@ -21,9 +21,9 @@ class PlaylistTest extends PlusTestCase
             "api/playlists/{$playlist->id}",
             [
                 'name' => 'Nope',
-                'description' => 'Nopey Nope'
+                'description' => 'Nopey Nope',
             ],
-            $collaborator
+            $collaborator,
         )->assertForbidden();
     }
 }

@@ -18,9 +18,8 @@ class UserService
     public function __construct(
         private readonly UserRepository $repository,
         private readonly ImageStorage $imageStorage,
-        private readonly OrganizationService $organizationService
-    ) {
-    }
+        private readonly OrganizationService $organizationService,
+    ) {}
 
     public function createUser(UserCreateData $dto, ?Organization $organization = null): User
     {
@@ -44,7 +43,7 @@ class UserService
             $existingUser->update([
                 'avatar' => $existingUser->has_custom_avatar ? $existingUser->avatar : $ssoUser->avatar,
                 'sso_id' => $ssoUser->id,
-                'sso_provider' => $ssoUser->provider
+                'sso_provider' => $ssoUser->provider,
             ]);
 
             return $existingUser;
@@ -62,7 +61,7 @@ class UserService
             'name' => $dto->name,
             'email' => $dto->email,
             'password' => $dto->password ?: $user->password,
-            'avatar' => $dto->avatar ? $this->maybeStoreAvatar($dto->avatar) : null
+            'avatar' => $dto->avatar ? $this->maybeStoreAvatar($dto->avatar) : null,
         ];
 
         if ($user->sso_provider) {

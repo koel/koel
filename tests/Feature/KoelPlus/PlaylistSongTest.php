@@ -20,7 +20,7 @@ class PlaylistSongTest extends PlusTestCase
             Song::factory()
                 ->public()
                 ->count(2)
-                ->create()
+                ->create(),
         );
 
         $collaborator = create_user();
@@ -41,7 +41,7 @@ class PlaylistSongTest extends PlusTestCase
             Song::factory()
                 ->public()
                 ->count(2)
-                ->create()
+                ->create(),
         );
 
         /** @var Song $privateSong */
@@ -73,7 +73,7 @@ class PlaylistSongTest extends PlusTestCase
         $this->postAs(
             "api/playlists/{$playlist->id}/songs",
             ['songs' => $songs->modelKeys()],
-            $collaborator
+            $collaborator,
         )->assertSuccessful();
 
         $playlist->refresh();
@@ -95,7 +95,7 @@ class PlaylistSongTest extends PlusTestCase
         $this->deleteAs(
             "api/playlists/{$playlist->id}/songs",
             ['songs' => $songs->modelKeys()],
-            $collaborator
+            $collaborator,
         )->assertSuccessful();
 
         $playlist->refresh();

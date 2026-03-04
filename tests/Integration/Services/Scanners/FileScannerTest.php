@@ -52,14 +52,14 @@ class FileScannerTest extends TestCase
                 'imagetype' => 'PNG',
                 'picturetype' => 'Other',
                 'description' => '',
-                'datalength' => 7627
+                'datalength' => 7627,
             ],
             'path' => test_path('songs/full.mp3'),
             'mtime' => filemtime(test_path('songs/full.mp3')),
             'albumartist' => '',
             'year' => 2015,
             'mime_type' => 'audio/mpeg',
-            'file_size' => 72_081
+            'file_size' => 72_081,
         ];
 
         self::assertArraySubset($expectedData, $info->toArray());
@@ -86,12 +86,12 @@ class FileScannerTest extends TestCase
                 'image_width' => 512,
                 'image_height' => 512,
                 'picturetype' => 'Other',
-                'datalength' => 7627
+                'datalength' => 7627,
             ],
             'path' => realpath($flacPath),
             'mtime' => filemtime($flacPath),
             'mime_type' => 'audio/flac',
-            'file_size' => 532_201
+            'file_size' => 532_201,
         ];
 
         self::assertArraySubset($expectedData, $info->toArray());
@@ -139,16 +139,16 @@ class FileScannerTest extends TestCase
                 'id3v2' => [
                     'title' => ['&#27700;&#35895;&#24195;&#23455;'],
                     'album' => ['&#23567;&#23721;&#20117;&#12371; Random'],
-                    'artist' => ['&#20304;&#20489;&#32190;&#38899; Unknown']
-                ]
+                    'artist' => ['&#20304;&#20489;&#32190;&#38899; Unknown'],
+                ],
             ],
             'encoding' => 'UTF-8',
-            'playtime_seconds' => 100
+            'playtime_seconds' => 100,
         ];
 
         $this->swap(getID3::class, Mockery::mock(getID3::class, [
             'CopyTagsToComments' => $analyzed,
-            'analyze' => $analyzed
+            'analyze' => $analyzed,
         ]));
 
         /** @var FileScanner $fileScanner */

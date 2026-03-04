@@ -30,7 +30,7 @@ class QueueServiceTest extends TestCase
         /** @var QueueState $state */
         $state = QueueState::factory()->create([
             'current_song_id' => $currentSong->id,
-            'playback_position' => 123
+            'playback_position' => 123,
         ]);
 
         $dto = $this->service->getQueueState($state->user);
@@ -46,7 +46,7 @@ class QueueServiceTest extends TestCase
         $user = create_user();
 
         $this->assertDatabaseMissing(QueueState::class, [
-            'user_id' => $user->id
+            'user_id' => $user->id,
         ]);
 
         $songIds = Song::factory()

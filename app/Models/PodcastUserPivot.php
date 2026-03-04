@@ -19,6 +19,6 @@ class PodcastUserPivot extends Pivot
     protected $guarded = [];
 
     protected $casts = [
-        'state' => PodcastStateCast::class
+        'state' => PodcastStateCast::class,
     ];
 }

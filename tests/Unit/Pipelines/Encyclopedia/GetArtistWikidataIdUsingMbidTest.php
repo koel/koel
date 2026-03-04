@@ -25,12 +25,12 @@ class GetArtistWikidataIdUsingMbidTest extends TestCase
         $json = File::json(test_path('fixtures/musicbrainz/artist-rel-urls.json'));
 
         Saloon::fake([
-            GetArtistUrlRelationshipsRequest::class => MockResponse::make(body: $json)
+            GetArtistUrlRelationshipsRequest::class => MockResponse::make(body: $json),
         ]);
 
         $mock = self::createNextClosureMock('Q461269');
 
-        ( new GetArtistWikidataIdUsingMbid(new MusicBrainzConnector()) )('sample-mbid', $mock->next(...)); // @phpstan-ignore-line
+        (new GetArtistWikidataIdUsingMbid(new MusicBrainzConnector()))('sample-mbid', $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertSent(static function (GetArtistUrlRelationshipsRequest $request): bool {
             self::assertSame(['inc' => 'url-rels'], $request->query()->all());
@@ -50,7 +50,7 @@ class GetArtistWikidataIdUsingMbidTest extends TestCase
 
         $mock = self::createNextClosureMock('Q461269');
 
-        ( new GetArtistWikidataIdUsingMbid(new MusicBrainzConnector()) )('sample-mbid', $mock->next(...)); // @phpstan-ignore-line
+        (new GetArtistWikidataIdUsingMbid(new MusicBrainzConnector()))('sample-mbid', $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }
@@ -62,7 +62,7 @@ class GetArtistWikidataIdUsingMbidTest extends TestCase
 
         $mock = self::createNextClosureMock(null);
 
-        ( new GetArtistWikidataIdUsingMbid(new MusicBrainzConnector()) )(null, $mock->next(...)); // @phpstan-ignore-line
+        (new GetArtistWikidataIdUsingMbid(new MusicBrainzConnector()))(null, $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }

@@ -40,9 +40,9 @@ class ThemeTest extends PlusTestCase
                     'highlight_color' => '#ff0000',
                     'bg_image' => minimal_base64_encoded_image(),
                     'font_family' => 'system-ui',
-                    'font_size' => '16.5'
+                    'font_size' => '16.5',
                 ],
-                $user
+                $user,
             )
             ->assertCreated()
             ->assertJsonStructure(ThemeResource::JSON_STRUCTURE);

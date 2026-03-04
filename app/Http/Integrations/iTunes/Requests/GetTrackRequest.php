@@ -13,9 +13,8 @@ class GetTrackRequest extends Request
 
     public function __construct(
         private readonly string $trackName,
-        private readonly Album $album
-    ) {
-    }
+        private readonly Album $album,
+    ) {}
 
     /** @inheritdoc */
     protected function defaultQuery(): array
@@ -37,7 +36,7 @@ class GetTrackRequest extends Request
             'term' => $term,
             'media' => 'music',
             'entity' => 'song',
-            'limit' => 1
+            'limit' => 1,
         ];
     }
 

@@ -4,10 +4,10 @@ namespace App\Models\Concerns\Users;
 
 use App\Models\Interaction;
 use App\Models\Organization;
+use App\Models\Playlist;
 use App\Models\PlaylistFolder;
 use App\Models\Podcast;
 use App\Models\PodcastUserPivot;
-use App\Models\Playlist;
 use App\Models\RadioStation;
 use App\Models\Theme;
 use App\Models\User;

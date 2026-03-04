@@ -14,9 +14,8 @@ class QueueStateController extends Controller
     /** @param User $user */
     public function __construct(
         private readonly QueueService $queueService,
-        private readonly Authenticatable $user
-    ) {
-    }
+        private readonly Authenticatable $user,
+    ) {}
 
     public function show()
     {

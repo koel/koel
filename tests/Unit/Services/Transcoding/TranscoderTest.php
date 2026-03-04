@@ -41,7 +41,7 @@ class TranscoderTest extends TestCase
                     '-b:a',
                     '128k',
                     '-y',
-                    '/path/to/output.m4a'
+                    '/path/to/output.m4a',
                 ]
             );
         };

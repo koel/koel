@@ -15,7 +15,7 @@ class UpdateUserPreferencesRequest extends Request
     {
         return [
             'key' => ['required', 'string', new CustomizableUserPreference()],
-            'value' => 'sometimes'
+            'value' => 'sometimes',
         ];
     }
 }

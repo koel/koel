@@ -27,12 +27,12 @@ class RadioStationStoreRequest extends Request
                 Rule::unique('radio_stations')->where(function ($query) {
                     return $query->where('user_id', $this->user()->id);
                 }),
-                app(ValidRadioStationUrl::class)
+                app(ValidRadioStationUrl::class),
             ],
             'name' => ['required', 'string', 'max:191'],
             'logo' => ['nullable', new ValidImageData()],
             'description' => ['sometimes', 'nullable', 'string'],
-            'is_public' => ['boolean', 'nullable']
+            'is_public' => ['boolean', 'nullable'],
         ];
     }
 
@@ -43,7 +43,7 @@ class RadioStationStoreRequest extends Request
             name: $this->name,
             description: $this->string('description'),
             logo: $this->logo,
-            isPublic: $this->is_public
+            isPublic: $this->is_public,
         );
     }
 }

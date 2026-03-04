@@ -20,7 +20,7 @@ class AlbumBuilder extends FavoriteableBuilder
         'name' => 'albums.name',
         'year' => 'albums.year',
         'created_at' => 'albums.created_at',
-        'artist_name' => 'albums.artist_name'
+        'artist_name' => 'albums.artist_name',
     ];
 
     private const VALID_SORT_COLUMNS = [
@@ -28,7 +28,7 @@ class AlbumBuilder extends FavoriteableBuilder
         'albums.year',
         'albums.created_at',
         'albums.artist_name',
-        'favorite' // alias column for favorite status
+        'favorite', // alias column for favorite status
     ];
 
     public function onlyStandard(): self
@@ -59,7 +59,7 @@ class AlbumBuilder extends FavoriteableBuilder
                     $owner->where('organization_id', $this->user->organization_id)->where(
                         'owner_id',
                         '<>',
-                        $this->user->id
+                        $this->user->id,
                     );
                 });
             });
@@ -79,7 +79,7 @@ class AlbumBuilder extends FavoriteableBuilder
             ->join('interactions', function (JoinClause $join): void {
                 $join->on('songs_for_playcount.id', 'interactions.song_id')->where(
                     'interactions.user_id',
-                    $this->user->id
+                    $this->user->id,
                 );
             })
             ->groupBy($groupColumns)
@@ -90,7 +90,7 @@ class AlbumBuilder extends FavoriteableBuilder
         User $user,
         bool $includeFavoriteStatus = true,
         bool $favoritesOnly = false,
-        bool $includePlayCount = false
+        bool $includePlayCount = false,
     ): self {
         $this->user = $user;
 

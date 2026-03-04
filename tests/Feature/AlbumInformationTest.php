@@ -29,20 +29,20 @@ class AlbumInformationTest extends TestCase
                 cover: 'https://lastfm.com/cover/foo',
                 wiki: [
                     'summary' => 'foo',
-                    'full' => 'bar'
+                    'full' => 'bar',
                 ],
                 tracks: [
                     [
                         'title' => 'foo',
                         'length' => 123,
-                        'url' => 'https://lastfm.com/track/foo'
+                        'url' => 'https://lastfm.com/track/foo',
                     ],
                     [
                         'title' => 'bar',
                         'length' => 456,
-                        'url' => 'https://lastfm.com/track/bar'
-                    ]
-                ]
+                        'url' => 'https://lastfm.com/track/bar',
+                    ],
+                ],
             ));
 
         $this->getAs("api/albums/{$album->id}/information")->assertJsonStructure(AlbumInformation::JSON_STRUCTURE);
@@ -55,7 +55,7 @@ class AlbumInformationTest extends TestCase
         config(['koel.services.lastfm.secret' => null]);
 
         $this->getAs(
-            'api/albums/' . Album::factory()->create()->id . '/information'
+            'api/albums/' . Album::factory()->create()->id . '/information',
         )->assertJsonStructure(AlbumInformation::JSON_STRUCTURE);
     }
 }

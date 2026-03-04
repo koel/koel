@@ -14,9 +14,8 @@ class DeleteSongFilesJob extends QueuedJob
      * @param Collection<SongFileInfo>|array<array-key, SongFileInfo> $files
      */
     public function __construct(
-        public readonly Collection $files
-    ) {
-    }
+        public readonly Collection $files,
+    ) {}
 
     public function handle(SongStorage $storage): void
     {
@@ -26,7 +25,7 @@ class DeleteSongFilesJob extends QueuedJob
             } catch (Throwable $e) {
                 Log::error('Failed to remove song file', [
                     'path' => $file->location,
-                    'exception' => $e
+                    'exception' => $e,
                 ]);
             }
         });

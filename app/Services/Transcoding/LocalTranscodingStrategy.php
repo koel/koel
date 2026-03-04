@@ -32,7 +32,7 @@ class LocalTranscodingStrategy extends TranscodingStrategy
             $destination,
             $bitRate,
             File::hash($destination),
-            File::size($destination)
+            File::size($destination),
         );
 
         return $destination;

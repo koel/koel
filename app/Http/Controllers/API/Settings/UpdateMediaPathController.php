@@ -18,9 +18,8 @@ class UpdateMediaPathController extends Controller
     public function __construct(
         private readonly SettingService $settingService,
         private readonly DirectoryScanner $mediaSyncService,
-        private readonly Authenticatable $user
-    ) {
-    }
+        private readonly Authenticatable $user,
+    ) {}
 
     public function __invoke(UpdateMediaPathRequest $request)
     {
@@ -28,7 +27,7 @@ class UpdateMediaPathController extends Controller
 
         $this->mediaSyncService->scan(
             directory: $this->settingService->updateMediaPath($request->path),
-            config: ScanConfiguration::make(owner: $this->user, makePublic: true)
+            config: ScanConfiguration::make(owner: $this->user, makePublic: true),
         );
 
         return response()->noContent();

@@ -18,7 +18,7 @@ class MovePlaylistSongsController extends Controller
             $playlist,
             $request->songs,
             $request->target,
-            Placement::from($request->placement)
+            Placement::from($request->placement),
         );
 
         return response()->noContent();

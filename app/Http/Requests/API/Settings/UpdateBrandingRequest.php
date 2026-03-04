@@ -22,13 +22,13 @@ class UpdateBrandingRequest extends Request
                 return;
             }
 
-            ( new ValidImageData() )->validate($attribute, $value, $fail);
+            (new ValidImageData())->validate($attribute, $value, $fail);
         };
 
         return [
             'name' => 'required|string',
             'logo' => ['sometimes', 'nullable', $validImageDataOrUrl],
-            'cover' => ['sometimes', 'nullable', $validImageDataOrUrl]
+            'cover' => ['sometimes', 'nullable', $validImageDataOrUrl],
         ];
     }
 }

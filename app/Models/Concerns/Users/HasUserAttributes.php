@@ -13,7 +13,7 @@ trait HasUserAttributes
     {
         return Attribute::get(fn(): string => avatar_or_gravatar(
             Arr::get($this->attributes, 'avatar'),
-            $this->email
+            $this->email,
         ))->shouldCache();
     }
 

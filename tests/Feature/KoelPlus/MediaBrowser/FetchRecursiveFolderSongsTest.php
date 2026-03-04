@@ -37,11 +37,11 @@ class FetchRecursiveFolderSongsTest extends PlusTestCase
                 Song::factory()
                     ->for($folder)
                     ->count(1)
-                    ->create()
+                    ->create(),
             );
 
         $response = $this->postAs('/api/songs/by-folders', [
-            'paths' => ['foo', 'foo/bar']
+            'paths' => ['foo', 'foo/bar'],
         ]);
 
         self::assertEqualsCanonicalizing($response->json('*.id'), $songs->pluck('id')->all());
@@ -60,7 +60,7 @@ class FetchRecursiveFolderSongsTest extends PlusTestCase
             ->merge(Song::factory()->count(1)->create());
 
         $response = $this->postAs('/api/songs/by-folders', [
-            'paths' => ['', 'foo']
+            'paths' => ['', 'foo'],
         ]);
 
         self::assertEqualsCanonicalizing($response->json('*.id'), $songs->pluck('id')->all());

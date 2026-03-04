@@ -15,29 +15,28 @@ class LastfmController extends Controller
     public function __construct(
         private readonly LastfmService $lastfm,
         private readonly TokenManager $tokenManager,
-        private readonly Authenticatable $currentUser
-    ) {
-    }
+        private readonly Authenticatable $currentUser,
+    ) {}
 
     public function connect()
     {
         abort_unless(
             LastfmService::enabled(),
             Response::HTTP_NOT_IMPLEMENTED,
-            'Koel is not configured to use with Last.fm yet.'
+            'Koel is not configured to use with Last.fm yet.',
         );
 
         $callbackUrl = urlencode(sprintf(
             '%s?api_token=%s',
             route('lastfm.callback'),
             // create a temporary token that can be deleted later
-            $this->tokenManager->createToken($this->currentUser)->plainTextToken
+            $this->tokenManager->createToken($this->currentUser)->plainTextToken,
         ));
 
         $url = sprintf(
             'https://www.last.fm/api/auth/?api_key=%s&cb=%s',
             config('koel.services.lastfm.key'),
-            $callbackUrl
+            $callbackUrl,
         );
 
         return redirect($url);

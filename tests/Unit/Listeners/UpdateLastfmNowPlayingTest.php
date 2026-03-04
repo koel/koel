@@ -25,6 +25,6 @@ class UpdateLastfmNowPlayingTest extends TestCase
 
         $lastfm->expects('updateNowPlaying')->with($song, $user);
 
-        ( new UpdateLastfmNowPlaying($lastfm) )->handle(new PlaybackStarted($song, $user));
+        (new UpdateLastfmNowPlaying($lastfm))->handle(new PlaybackStarted($song, $user));
     }
 }

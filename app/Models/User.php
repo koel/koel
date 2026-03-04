@@ -76,7 +76,7 @@ class User extends Authenticatable implements AuditableContract, Permissionable
     protected $with = ['roles', 'permissions'];
 
     protected $casts = [
-        'preferences' => UserPreferencesCast::class
+        'preferences' => UserPreferencesCast::class,
     ];
 
     // @mago-ignore lint:no-redundant-method-override

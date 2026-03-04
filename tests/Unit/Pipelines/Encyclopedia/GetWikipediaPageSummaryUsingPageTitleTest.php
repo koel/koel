@@ -25,14 +25,14 @@ class GetWikipediaPageSummaryUsingPageTitleTest extends TestCase
         $json = File::json(test_path('fixtures/wikipedia/artist-page-summary.json'));
 
         Saloon::fake([
-            GetPageSummaryRequest::class => MockResponse::make(body: $json)
+            GetPageSummaryRequest::class => MockResponse::make(body: $json),
         ]);
 
         $mock = self::createNextClosureMock($json); // we're passing the whole JSON response through the pipeline
 
-        ( new GetWikipediaPageSummaryUsingPageTitle(new WikipediaConnector()) )(
+        (new GetWikipediaPageSummaryUsingPageTitle(new WikipediaConnector()))(
             'Skid Row (American band)',
-            $mock->next(...) // @phpstan-ignore-line
+            $mock->next(...), // @phpstan-ignore-line
         );
 
         Saloon::assertSent(static function (GetPageSummaryRequest $request): bool {
@@ -41,7 +41,7 @@ class GetWikipediaPageSummaryUsingPageTitleTest extends TestCase
 
         self::assertSame(
             $json,
-            Cache::get(cache_key('wikipedia page summary from page title', 'Skid Row (American band)'))
+            Cache::get(cache_key('wikipedia page summary from page title', 'Skid Row (American band)')),
         );
     }
 
@@ -51,14 +51,14 @@ class GetWikipediaPageSummaryUsingPageTitleTest extends TestCase
         Saloon::fake([]);
 
         Cache::put(cache_key('wikipedia page summary from page title', 'Skid Row (American band)'), [
-            'Spider Man' => 'How’d that get in there?'
+            'Spider Man' => 'How’d that get in there?',
         ]);
 
         $mock = self::createNextClosureMock(['Spider Man' => 'How’d that get in there?']);
 
-        ( new GetWikipediaPageSummaryUsingPageTitle(new WikipediaConnector()) )(
+        (new GetWikipediaPageSummaryUsingPageTitle(new WikipediaConnector()))(
             'Skid Row (American band)',
-            $mock->next(...) // @phpstan-ignore-line
+            $mock->next(...), // @phpstan-ignore-line
         );
 
         Saloon::assertNothingSent();
@@ -70,7 +70,7 @@ class GetWikipediaPageSummaryUsingPageTitleTest extends TestCase
         Saloon::fake([]);
         $mock = self::createNextClosureMock(null);
 
-        ( new GetWikipediaPageSummaryUsingPageTitle(new WikipediaConnector()) )(null, $mock->next(...)); // @phpstan-ignore-line
+        (new GetWikipediaPageSummaryUsingPageTitle(new WikipediaConnector()))(null, $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }

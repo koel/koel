@@ -15,7 +15,7 @@ class QueueTest extends TestCase
     public const QUEUE_STATE_JSON_STRUCTURE = [
         'current_song',
         'songs' => ['*' => SongResource::JSON_STRUCTURE],
-        'playback_position'
+        'playback_position',
     ];
 
     #[Test]
@@ -30,7 +30,7 @@ class QueueTest extends TestCase
         /** @var QueueState $queueState */
         $queueState = QueueState::factory()->create([
             'current_song_id' => Song::factory(),
-            'playback_position' => 123
+            'playback_position' => 123,
         ]);
 
         $this->getAs('api/queue/state', $queueState->user)->assertJsonStructure(self::QUEUE_STATE_JSON_STRUCTURE);
@@ -64,7 +64,7 @@ class QueueTest extends TestCase
         $this->putAs(
             'api/queue/playback-status',
             ['song' => $song->id, 'position' => 123],
-            $state->user
+            $state->user,
         )->assertNoContent();
 
         $state->refresh();
@@ -77,7 +77,7 @@ class QueueTest extends TestCase
         $this->putAs(
             'api/queue/playback-status',
             ['song' => $anotherSong->id, 'position' => 456],
-            $state->user
+            $state->user,
         )->assertNoContent();
 
         $state->refresh();

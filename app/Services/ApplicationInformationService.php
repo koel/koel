@@ -8,9 +8,8 @@ use Illuminate\Support\Facades\Cache;
 class ApplicationInformationService
 {
     public function __construct(
-        private readonly Client $client
-    ) {
-    }
+        private readonly Client $client,
+    ) {}
 
     /**
      * Get the latest version number of Koel from GitHub.
@@ -20,7 +19,7 @@ class ApplicationInformationService
         return rescue(function () {
             return Cache::remember(cache_key('latest version number'), now()->addDay(), function (): string {
                 return json_decode(
-                    $this->client->get('https://api.github.com/repos/koel/koel/tags')->getBody()
+                    $this->client->get('https://api.github.com/repos/koel/koel/tags')->getBody(),
                 )[0]->name;
             });
         }) ?? koel_version();

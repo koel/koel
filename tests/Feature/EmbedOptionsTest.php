@@ -14,7 +14,7 @@ class EmbedOptionsTest extends TestCase
             ->post('api/embed-options', [
                 'theme' => 'cat',
                 'layout' => 'compact',
-                'preview' => true
+                'preview' => true,
             ])
             ->assertSuccessful()
             ->assertJsonStructure(['encrypted']);

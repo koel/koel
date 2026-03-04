@@ -11,7 +11,6 @@ class NewPlaylistCollaboratorJoined extends Event
     public function __construct(
         public User $collaborator,
         #[SensitiveParameter]
-        public PlaylistCollaborationToken $token
-    ) {
-    }
+        public PlaylistCollaborationToken $token,
+    ) {}
 }

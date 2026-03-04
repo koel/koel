@@ -23,7 +23,7 @@ class LicenseService implements LicenseServiceInterface
 {
     public function __construct(
         private readonly LemonSqueezyConnector $connector,
-        private ?string $hashSalt = null
+        private ?string $hashSalt = null,
     ) {
         $this->hashSalt ??= config('app.key');
     }
@@ -110,13 +110,13 @@ class LicenseService implements LicenseServiceInterface
     private function updateOrCreateLicenseFromApiResponseBody(object $body): License
     {
         return License::query()->updateOrCreate([
-            'hash' => sha1($body->license_key->key . $this->hashSalt)
+            'hash' => sha1($body->license_key->key . $this->hashSalt),
         ], [
             'key' => $body->license_key->key,
             'instance' => LicenseInstance::fromJsonObject($body->instance),
             'meta' => LicenseMeta::fromJson($body->meta),
             'created_at' => $body->license_key->created_at,
-            'expires_at' => $body->license_key->expires_at
+            'expires_at' => $body->license_key->expires_at,
         ]);
     }
 

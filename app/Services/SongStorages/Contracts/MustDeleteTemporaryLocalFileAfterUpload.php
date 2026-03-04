@@ -2,6 +2,4 @@
 
 namespace App\Services\SongStorages\Contracts;
 
-interface MustDeleteTemporaryLocalFileAfterUpload
-{
-}
+interface MustDeleteTemporaryLocalFileAfterUpload {}

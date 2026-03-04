@@ -48,7 +48,7 @@ class S3LambdaStorageTest extends TestCase
             title: 'Bohemian Rhapsody',
             duration: 355.5,
             track: 1,
-            lyrics: 'Is this the real life?'
+            lyrics: 'Is this the real life?',
         );
 
         self::assertSame('Queen', $song->artist->name);
@@ -71,7 +71,7 @@ class S3LambdaStorageTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create([
             'path' => 's3://foo/bar',
-            'storage' => 's3-lambda'
+            'storage' => 's3-lambda',
         ]);
 
         $this->storage->createSongEntry(
@@ -84,7 +84,7 @@ class S3LambdaStorageTest extends TestCase
             title: 'Bohemian Rhapsody',
             duration: 355.5,
             track: 1,
-            lyrics: 'Is this the real life?'
+            lyrics: 'Is this the real life?',
         );
 
         self::assertSame(1, Song::query()->count());
@@ -107,7 +107,7 @@ class S3LambdaStorageTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create([
             'path' => 's3://foo/bar',
-            'storage' => 's3-lambda'
+            'storage' => 's3-lambda',
         ]);
 
         $this->songRepository

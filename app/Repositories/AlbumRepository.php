@@ -65,7 +65,7 @@ class AlbumRepository extends Repository implements ScoutableRepository
             ->withUserContext(user: $user ?? $this->auth->user())
             ->where(static function (Builder $query) use ($artist): void {
                 $query->whereBelongsTo($artist)->orWhereHas('songs', static function (Builder $songQuery) use (
-                    $artist
+                    $artist,
                 ): void {
                     $songQuery->whereBelongsTo($artist);
                 });
@@ -78,7 +78,7 @@ class AlbumRepository extends Repository implements ScoutableRepository
         string $sortColumn,
         string $sortDirection,
         bool $favoritesOnly = false,
-        ?User $user = null
+        ?User $user = null,
     ): Paginator {
         return Album::query()
             ->onlyStandard()
@@ -96,7 +96,7 @@ class AlbumRepository extends Repository implements ScoutableRepository
                 ->take($limit)
                 ->modelKeys(),
             preserveOrder: true,
-            user: $user
+            user: $user,
         );
     }
 }

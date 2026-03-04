@@ -12,7 +12,7 @@ class ThemeObserver
         rescue_if($theme->properties->bgImage, static function () use ($theme): void {
             File::delete([
                 image_storage_path($theme->properties->bgImage),
-                image_storage_path($theme->thumbnail)
+                image_storage_path($theme->thumbnail),
             ]);
         });
     }

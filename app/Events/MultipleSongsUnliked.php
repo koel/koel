@@ -13,7 +13,6 @@ class MultipleSongsUnliked extends Event
      */
     public function __construct(
         public readonly Collection $songs,
-        public readonly User $user
-    ) {
-    }
+        public readonly User $user,
+    ) {}
 }

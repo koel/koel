@@ -60,7 +60,7 @@ abstract class TestCase extends BaseTestCase
     {
         config([
             'koel.image_storage_dir' => 'sandbox/img/storage/',
-            'koel.artifacts_path' => public_path('sandbox/artifacts/')
+            'koel.artifacts_path' => public_path('sandbox/artifacts/'),
         ]);
 
         File::ensureDirectoryExists(public_path(config('koel.image_storage_dir')));

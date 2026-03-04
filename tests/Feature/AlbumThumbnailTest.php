@@ -32,7 +32,7 @@ class AlbumThumbnailTest extends TestCase
             ->with(
                 image_storage_path('foo.jpg'),
                 Mockery::on(static fn(ImageWritingConfig $config) => $config->maxWidth === 48),
-                image_storage_path('foo_thumb.jpg')
+                image_storage_path('foo_thumb.jpg'),
             )
             ->andReturn('foo_thumb.jpg');
 

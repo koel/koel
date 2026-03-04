@@ -34,7 +34,7 @@ class AlbumServiceTest extends TestCase
         /** @var Album $album */
         $album = Album::factory()->create([
             'name' => 'Old Album Name',
-            'year' => 2020
+            'year' => 2020,
         ]);
 
         $songs = Song::factory()
@@ -60,7 +60,7 @@ class AlbumServiceTest extends TestCase
         /** @var Album $album */
         $album = Album::factory()->create([
             'name' => 'Old Album Name',
-            'year' => 2020
+            'year' => 2020,
         ]);
 
         $songs = Song::factory()

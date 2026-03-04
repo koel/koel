@@ -16,9 +16,8 @@ abstract class Scanner
         protected SongService $songService,
         protected SongRepository $songRepository,
         protected FileScanner $fileScanner,
-        protected Finder $finder
-    ) {
-    }
+        protected Finder $finder,
+    ) {}
 
     protected function handleIndividualFile(string $path, ScanConfiguration $config): ScanResult
     {

@@ -33,7 +33,9 @@ class YouTubeServiceTest extends TestCase
         $song = Song::factory()->for(Artist::factory()->create(['name' => 'Slipknot']))->create(['title' => 'Snuff']);
 
         Saloon::fake([
-            SearchVideosRequest::class => MockResponse::make(body: File::get(test_path('fixtures/youtube/search.json')))
+            SearchVideosRequest::class => MockResponse::make(body: File::get(test_path(
+                'fixtures/youtube/search.json',
+            ))),
         ]);
 
         $response = $this->service->searchVideosRelatedToSong($song, 'my-token');
@@ -48,9 +50,9 @@ class YouTubeServiceTest extends TestCase
                     'type' => 'video',
                     'maxResults' => 10,
                     'pageToken' => 'my-token',
-                    'q' => 'Snuff Slipknot'
+                    'q' => 'Snuff Slipknot',
                 ],
-                $request->query()->all()
+                $request->query()->all(),
             );
 
             return true;

@@ -13,9 +13,8 @@ class FileScanner
 {
     public function __construct(
         private readonly getID3 $getID3,
-        private readonly SimpleLrcReader $lrcReader
-    ) {
-    }
+        private readonly SimpleLrcReader $lrcReader,
+    ) {}
 
     public function scan(string|SplFileInfo $path): ScanInformation
     {
@@ -35,7 +34,7 @@ class FileScanner
         $this->getID3->CopyTagsToComments($raw);
 
         return tap(ScanInformation::fromGetId3Info($raw, $filePath), function (ScanInformation $info) use (
-            $filePath
+            $filePath,
         ): void {
             $info->lyrics = $info->lyrics ?: $this->lrcReader->tryReadForMediaFile($filePath);
         });

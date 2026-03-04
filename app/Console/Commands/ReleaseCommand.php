@@ -38,7 +38,7 @@ class ReleaseCommand extends Command
             'minor' => (clone $this->currentVersion)->incrementMinor()->prefix(),
             'major' => (clone $this->currentVersion)->incrementMajor()->prefix(),
             null => $this->acquireReleaseVersionInteractively(),
-            default => self::tryParseVersion($this->argument('version')) ?? $this->acquireReleaseVersionInteractively()
+            default => self::tryParseVersion($this->argument('version')) ?? $this->acquireReleaseVersionInteractively(),
         };
 
         try {
@@ -73,7 +73,7 @@ class ReleaseCommand extends Command
             'pull',
             "merge $this->releaseBranch $this->mainBranch",
             'push',
-            "checkout $this->mainBranch"
+            "checkout $this->mainBranch",
         ];
 
         foreach ($gitCommands as $command) {
@@ -91,7 +91,7 @@ class ReleaseCommand extends Command
         $suggestedVersions = [
             $patchVersion => 'Patch',
             (clone $this->currentVersion)->incrementMinor()->prefix() => 'Minor',
-            (clone $this->currentVersion)->incrementMajor()->prefix() => 'Major'
+            (clone $this->currentVersion)->incrementMajor()->prefix() => 'Major',
         ];
 
         $options = [];
@@ -109,7 +109,7 @@ class ReleaseCommand extends Command
                 label: 'Enter the version you want to release',
                 placeholder: $patchVersion,
                 required: true,
-                validate: static fn(string $value) => self::tryParseVersion($value) ? null : 'Invalid version format'
+                validate: static fn(string $value) => self::tryParseVersion($value) ? null : 'Invalid version format',
             );
         }
 

@@ -17,7 +17,7 @@ class SongUpdateRequest extends Request
     {
         return [
             'data' => 'required|array',
-            'songs' => ['required', 'array', Rule::exists(Song::class, 'id')->whereNull('podcast_id')]
+            'songs' => ['required', 'array', Rule::exists(Song::class, 'id')->whereNull('podcast_id')],
         ];
     }
 
@@ -32,7 +32,7 @@ class SongUpdateRequest extends Request
             disc: (int) $this->input('data.disc'),
             genre: $this->input('data.genre'),
             year: (int) $this->input('data.year'),
-            lyrics: $this->input('data.lyrics')
+            lyrics: $this->input('data.lyrics'),
         );
     }
 }

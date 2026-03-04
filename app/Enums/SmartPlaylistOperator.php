@@ -22,7 +22,7 @@ enum SmartPlaylistOperator: string
         return match ($this) {
             self::IS_BETWEEN => 'whereBetween',
             self::IS_NOT_BETWEEN => 'whereNotBetween',
-            default => 'where'
+            default => 'where',
         };
     }
 

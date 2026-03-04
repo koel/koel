@@ -31,7 +31,7 @@ class License extends Model
         'key' => EncryptedValueCast::class,
         'instance' => LicenseInstanceCast::class,
         'meta' => LicenseMetaCast::class,
-        'expires_at' => 'datetime'
+        'expires_at' => 'datetime',
     ];
 
     protected function shortKey(): Attribute

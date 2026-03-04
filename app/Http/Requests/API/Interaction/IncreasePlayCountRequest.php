@@ -14,7 +14,7 @@ class IncreasePlayCountRequest extends Request
     public function rules(): array
     {
         return [
-            'song' => ['required', Rule::exists('songs', 'id')]
+            'song' => ['required', Rule::exists('songs', 'id')],
         ];
     }
 }

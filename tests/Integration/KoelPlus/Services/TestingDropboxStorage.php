@@ -14,8 +14,8 @@ trait TestingDropboxStorage
         Http::fake([
             'https://api.dropboxapi.com/oauth2/token' => Http::response([
                 'access_token' => $token,
-                'expires_in' => $expiresIn
-            ])
+                'expires_in' => $expiresIn,
+            ]),
         ]);
     }
 }

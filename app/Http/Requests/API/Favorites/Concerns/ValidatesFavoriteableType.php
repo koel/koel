@@ -14,7 +14,7 @@ trait ValidatesFavoriteableType
         return [
             'string',
             'required',
-            Rule::enum(FavoriteableType::class)
+            Rule::enum(FavoriteableType::class),
         ];
     }
 }

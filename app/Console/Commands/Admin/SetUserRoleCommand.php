@@ -14,7 +14,7 @@ class SetUserRoleCommand extends Command
     protected $description = 'Set a user\'s role';
 
     public function __construct(
-        private readonly UserRepository $userRepository
+        private readonly UserRepository $userRepository,
     ) {
         parent::__construct();
     }

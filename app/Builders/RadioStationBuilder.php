@@ -29,21 +29,18 @@ class RadioStationBuilder extends FavoriteableBuilder
                     ->orWhere(function (self $query): void {
                         $query->where('radio_stations.is_public', true)->where(
                             'organizations.id',
-                            $this->user->organization_id
+                            $this->user->organization_id,
                         );
                     });
             });
     }
 
-    public function withUserContext(
-        User $user,
-        bool $includeFavoriteStatus = true,
-        bool $favoritesOnly = false
-    ): self {
+    public function withUserContext(User $user, bool $includeFavoriteStatus = true, bool $favoritesOnly = false): self
+    {
         $this->user = $user;
 
         return $this->accessible()->when($includeFavoriteStatus, static fn(self $query) => $query->withFavoriteStatus(
-            $favoritesOnly
+            $favoritesOnly,
         ));
     }
 }

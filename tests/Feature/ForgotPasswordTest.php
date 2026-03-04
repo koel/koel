@@ -47,7 +47,7 @@ class ForgotPasswordTest extends TestCase
         $this->postJson('/api/reset-password', [
             'email' => $user->email,
             'password' => 'new-password',
-            'token' => Password::createToken($user)
+            'token' => Password::createToken($user),
         ])->assertNoContent();
 
         self::assertTrue(Hash::check('new-password', $user->refresh()->password));
@@ -63,9 +63,9 @@ class ForgotPasswordTest extends TestCase
         $this->postJson('/api/reset-password', [
             'email' => $user->email,
             'password' => 'new-password',
-            'token' => 'invalid-token'
+            'token' => 'invalid-token',
         ])->assertJsonValidationErrors([
-            'token' => 'Invalid or expired token.'
+            'token' => 'Invalid or expired token.',
         ]);
 
         self::assertTrue(Hash::check('old-password', $user->refresh()->password));
@@ -82,7 +82,7 @@ class ForgotPasswordTest extends TestCase
         $this->postJson('/api/reset-password', [
             'email' => $user->email,
             'password' => 'new-password',
-            'token' => Password::createToken($user)
+            'token' => Password::createToken($user),
         ])->assertForbidden();
     }
 

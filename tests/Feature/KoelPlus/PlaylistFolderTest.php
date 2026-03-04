@@ -41,11 +41,11 @@ class PlaylistFolderTest extends PlusTestCase
         $this->postAs(
             "api/playlist-folders/{$collaboratorFolder->id}/playlists",
             ['playlists' => [$playlist->id]],
-            $collaborator
+            $collaborator,
         )->assertSuccessful();
 
         self::assertTrue($this->folderService->getFolderForPlaylist($playlist->fresh(), $collaborator)?->is(
-            $collaboratorFolder
+            $collaboratorFolder,
         ));
 
         // Verify the playlist is in the owner's folder too
@@ -70,13 +70,13 @@ class PlaylistFolderTest extends PlusTestCase
 
         $collaboratorFolder->playlists()->attach($playlist);
         self::assertTrue($this->folderService->getFolderForPlaylist($playlist->refresh(), $collaborator)?->is(
-            $collaboratorFolder
+            $collaboratorFolder,
         ));
 
         $this->deleteAs(
             "api/playlist-folders/{$collaboratorFolder->id}/playlists",
             ['playlists' => [$playlist->id]],
-            $collaborator
+            $collaborator,
         )->assertSuccessful();
 
         self::assertNull($this->folderService->getFolderForPlaylist($playlist->fresh(), $collaborator));

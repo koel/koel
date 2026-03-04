@@ -10,9 +10,8 @@ use App\Repositories\AlbumRepository;
 class ArtistAlbumController extends Controller
 {
     public function __construct(
-        private readonly AlbumRepository $albumRepository
-    ) {
-    }
+        private readonly AlbumRepository $albumRepository,
+    ) {}
 
     public function index(Artist $artist)
     {

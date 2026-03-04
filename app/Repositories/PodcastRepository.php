@@ -49,7 +49,7 @@ class PodcastRepository extends Repository implements ScoutableRepository
                 ->take($limit)
                 ->modelKeys(),
             preserveOrder: true,
-            user: $user
+            user: $user,
         );
     }
 }

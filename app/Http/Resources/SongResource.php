@@ -32,32 +32,32 @@ class SongResource extends JsonResource
         'year',
         'disc',
         'is_public',
-        'created_at'
+        'created_at',
     ];
 
     public const PAGINATION_JSON_STRUCTURE = [
         'data' => [
-            0 => self::JSON_STRUCTURE
+            0 => self::JSON_STRUCTURE,
         ],
         'links' => [
             'first',
             'last',
             'prev',
-            'next'
+            'next',
         ],
         'meta' => [
             'current_page',
             'from',
             'path',
             'per_page',
-            'to'
-        ]
+            'to',
+        ],
     ];
 
     private ?User $user = null;
 
     public function __construct(
-        protected Song $song
+        protected Song $song,
     ) {
         parent::__construct($song);
     }
@@ -110,9 +110,9 @@ class SongResource extends JsonResource
                 [
                     'song' => $this->song->id,
                     'embed' => $request->route('embed')->id, // @phpstan-ignore-line
-                    'options' => $request->route('options')
-                ]
-            ))
+                    'options' => $request->route('options'),
+                ],
+            )),
         ];
 
         if ($this->song->isEpisode()) {
@@ -122,12 +122,12 @@ class SongResource extends JsonResource
                 'episode_image' => $this->song->episode_metadata->image ?? $this->song->podcast->image,
                 'podcast_id' => $this->unless($embedding, $this->song->podcast->id),
                 'podcast_title' => $this->song->podcast->title,
-                'podcast_author' => $this->song->podcast->metadata->author
+                'podcast_author' => $this->song->podcast->metadata->author,
             ];
         } else {
             $data += [
                 'owner_id' => $this->unless($embedding, $this->song->owner->public_id),
-                'is_external' => $this->unless($embedding, fn() => $isPlus && !$this->song->ownedBy($user))
+                'is_external' => $this->unless($embedding, fn() => $isPlus && !$this->song->ownedBy($user)),
             ];
         }
 

@@ -21,9 +21,8 @@ final class CompositeToken implements Arrayable
         #[SensitiveParameter]
         public string $apiToken,
         #[SensitiveParameter]
-        public string $audioToken
-    ) {
-    }
+        public string $audioToken,
+    ) {}
 
     public static function fromAccessTokens(NewAccessToken $api, NewAccessToken $audio): self
     {
@@ -37,7 +36,7 @@ final class CompositeToken implements Arrayable
     {
         return [
             'token' => $this->apiToken,
-            'audio-token' => $this->audioToken
+            'audio-token' => $this->audioToken,
         ];
     }
 }

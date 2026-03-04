@@ -16,7 +16,7 @@ class EmbedResource extends JsonResource
         'embeddable_type',
         'embeddable_id',
         'user_id',
-        'embeddable'
+        'embeddable',
     ];
 
     public const JSON_PUBLIC_STRUCTURE = [
@@ -25,12 +25,12 @@ class EmbedResource extends JsonResource
         'embeddable_type',
         'embeddable_id',
         'embeddable',
-        'playables'
+        'playables',
     ];
 
     public function __construct(
         private readonly Embed $embed,
-        private readonly ?Collection $playables = null
+        private readonly ?Collection $playables = null,
     ) {
         parent::__construct($embed);
     }
@@ -47,7 +47,7 @@ class EmbedResource extends JsonResource
             'embeddable_id' => $this->embed->embeddable_id,
             'user_id' => $this->unless($embedding, $this->embed->user->public_id),
             'embeddable' => $this->transformEmbeddableToResource(),
-            'playables' => SongResourceCollection::make($this->whenNotNull($this->playables))->for($this->embed->user)
+            'playables' => SongResourceCollection::make($this->whenNotNull($this->playables))->for($this->embed->user),
         ];
     }
 

@@ -17,9 +17,8 @@ final class GetAlbumInfoRequest extends Request
     protected Method $method = Method::GET;
 
     public function __construct(
-        private readonly Album $album
-    ) {
-    }
+        private readonly Album $album,
+    ) {}
 
     public function resolveEndpoint(): string
     {
@@ -34,7 +33,7 @@ final class GetAlbumInfoRequest extends Request
             'artist' => $this->album->artist->name,
             'album' => $this->album->name,
             'autocorrect' => 1,
-            'format' => 'json'
+            'format' => 'json',
         ];
     }
 
@@ -51,16 +50,16 @@ final class GetAlbumInfoRequest extends Request
             cover: Arr::get(object_get($album, 'image', []), '0.#text'),
             wiki: [
                 'summary' => self::formatLastFmText(object_get($album, 'wiki.summary')),
-                'full' => self::formatLastFmText(object_get($album, 'wiki.content'))
+                'full' => self::formatLastFmText(object_get($album, 'wiki.content')),
             ],
             tracks: array_map(
                 static fn($track): array => [
                     'title' => $track->name,
                     'length' => (int) $track->duration,
-                    'url' => $track->url
+                    'url' => $track->url,
                 ],
-                object_get($album, 'tracks.track', [])
-            )
+                object_get($album, 'tracks.track', []),
+            ),
         );
     }
 }

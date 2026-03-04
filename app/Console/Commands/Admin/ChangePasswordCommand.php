@@ -17,7 +17,7 @@ class ChangePasswordCommand extends Command
 
     public function __construct(
         private readonly Hash $hash,
-        private readonly UserRepository $userRepository
+        private readonly UserRepository $userRepository,
     ) {
         parent::__construct();
     }

@@ -49,9 +49,9 @@ class PlaylistTest extends TestCase
                 'description' => 'Foo Bar Description',
                 'songs' => $songs->modelKeys(),
                 'rules' => [],
-                'cover' => minimal_base64_encoded_image()
+                'cover' => minimal_base64_encoded_image(),
             ],
-            $user
+            $user,
         )->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
 
         $playlist = Playlist::query()->latest()->firstOrFail();
@@ -78,9 +78,9 @@ class PlaylistTest extends TestCase
                 'name' => 'Foo Bar',
                 'description' => 'Foo Bar Description',
                 'songs' => [],
-                'rules' => []
+                'rules' => [],
             ],
-            $user
+            $user,
         )->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
 
         $playlist = Playlist::query()->latest()->firstOrFail();
@@ -103,9 +103,9 @@ class PlaylistTest extends TestCase
                 'name' => 'Foo Bar',
                 'description' => '',
                 'songs' => [],
-                'rules' => []
+                'rules' => [],
             ],
-            $user
+            $user,
         )->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
 
         $playlist = Playlist::query()->latest()->first();
@@ -125,7 +125,7 @@ class PlaylistTest extends TestCase
         $rule = SmartPlaylistRule::make([
             'model' => 'artist.name',
             'operator' => 'is',
-            'value' => ['Bob Dylan']
+            'value' => ['Bob Dylan'],
         ]);
 
         $this->postAs(
@@ -136,12 +136,12 @@ class PlaylistTest extends TestCase
                 'rules' => [
                     [
                         'id' => '2a4548cd-c67f-44d4-8fec-34ff75c8a026',
-                        'rules' => [$rule->toArray()]
-                    ]
+                        'rules' => [$rule->toArray()],
+                    ],
                 ],
-                'cover' => minimal_base64_encoded_image()
+                'cover' => minimal_base64_encoded_image(),
             ],
-            $user
+            $user,
         )->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
 
         $playlist = Playlist::query()->latest()->first();
@@ -169,12 +169,12 @@ class PlaylistTest extends TestCase
                         SmartPlaylistRule::make([
                             'model' => 'artist.name',
                             'operator' => 'is',
-                            'value' => ['Bob Dylan']
-                        ])->toArray()
-                    ]
-                ]
+                            'value' => ['Bob Dylan'],
+                        ])->toArray(),
+                    ],
+                ],
             ],
-            'songs' => Song::factory(2)->create()->modelKeys()
+            'songs' => Song::factory(2)->create()->modelKeys(),
         ])->assertUnprocessable();
     }
 
@@ -185,7 +185,7 @@ class PlaylistTest extends TestCase
             'name' => 'Foo Bar',
             'description' => 'Foo Bar Description',
             'rules' => [],
-            'songs' => ['foo']
+            'songs' => ['foo'],
         ])->assertUnprocessable();
     }
 
@@ -193,16 +193,16 @@ class PlaylistTest extends TestCase
     public function updateKeepingCoverIntact(): void
     {
         $playlist = create_playlist([
-            'cover' => 'neat-cover.webp'
+            'cover' => 'neat-cover.webp',
         ]);
 
         $this->putAs(
             "api/playlists/{$playlist->id}",
             [
                 'name' => 'Bar',
-                'description' => 'Bar Description'
+                'description' => 'Bar Description',
             ],
-            $playlist->owner
+            $playlist->owner,
         )->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
 
         self::assertSame('Bar', $playlist->refresh()->name);
@@ -214,7 +214,7 @@ class PlaylistTest extends TestCase
     public function updateReplacingCover(): void
     {
         $playlist = create_playlist([
-            'cover' => 'neat-cover.webp'
+            'cover' => 'neat-cover.webp',
         ]);
 
         $ulid = Ulid::freeze();
@@ -225,9 +225,9 @@ class PlaylistTest extends TestCase
                 [
                     'name' => 'Bar',
                     'description' => 'Bar Description',
-                    'cover' => minimal_base64_encoded_image()
+                    'cover' => minimal_base64_encoded_image(),
                 ],
-                $playlist->owner
+                $playlist->owner,
             )
             ->assertSuccessful()
             ->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
@@ -239,7 +239,7 @@ class PlaylistTest extends TestCase
     public function updateRemovingCover(): void
     {
         $playlist = create_playlist([
-            'cover' => 'neat-cover.webp'
+            'cover' => 'neat-cover.webp',
         ]);
 
         $this
@@ -248,9 +248,9 @@ class PlaylistTest extends TestCase
                 [
                     'name' => 'Bar',
                     'description' => 'Bar Description',
-                    'cover' => ''
+                    'cover' => '',
                 ],
-                $playlist->owner
+                $playlist->owner,
             )
             ->assertSuccessful()
             ->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
@@ -267,9 +267,9 @@ class PlaylistTest extends TestCase
             "api/playlists/{$playlist->id}",
             [
                 'name' => 'Bar',
-                'description' => ''
+                'description' => '',
             ],
-            $playlist->owner
+            $playlist->owner,
         )->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
 
         self::assertSame('Bar', $playlist->refresh()->name);
@@ -283,7 +283,7 @@ class PlaylistTest extends TestCase
 
         $this->putAs("api/playlists/{$playlist->id}", [
             'name' => 'Qux',
-            'description' => 'Qux Description'
+            'description' => 'Qux Description',
         ])->assertForbidden();
 
         self::assertSame('Foo', $playlist->refresh()->name);

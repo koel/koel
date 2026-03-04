@@ -20,7 +20,7 @@ class CollectTagsCommand extends Command
         'year',
         'genre',
         'lyrics',
-        'cover'
+        'cover',
     ];
 
     private const COLLECTABLE_TAGS = ['year', 'genre'];
@@ -39,7 +39,7 @@ class CollectTagsCommand extends Command
             $this->error(sprintf(
                 'Invalid tag(s): %s. Allowed tags are: %s.',
                 $tags->diff(self::COLLECTABLE_TAGS)->join(', '),
-                implode(', ', self::COLLECTABLE_TAGS)
+                implode(', ', self::COLLECTABLE_TAGS),
             ));
 
             return self::FAILURE;
@@ -48,7 +48,7 @@ class CollectTagsCommand extends Command
         Song::withoutSyncingToSearch(function () use ($tags): void {
             $this->call('koel:sync', [
                 '--force' => true,
-                '--ignore' => collect(self::ALL_TAGS)->diff($tags)->all()
+                '--ignore' => collect(self::ALL_TAGS)->diff($tags)->all(),
             ]);
         });
 

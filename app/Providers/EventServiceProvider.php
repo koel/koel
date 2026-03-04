@@ -43,38 +43,38 @@ class EventServiceProvider extends BaseServiceProvider
 {
     protected $listen = [
         SongFavoriteToggled::class => [
-            LoveTrackOnLastfm::class
+            LoveTrackOnLastfm::class,
         ],
 
         MultipleSongsLiked::class => [
-            LoveMultipleTracksOnLastfm::class
+            LoveMultipleTracksOnLastfm::class,
         ],
 
         MultipleSongsUnliked::class => [
-            UnloveMultipleTracksOnLastfm::class
+            UnloveMultipleTracksOnLastfm::class,
         ],
 
         PlaybackStarted::class => [
-            UpdateLastfmNowPlaying::class
+            UpdateLastfmNowPlaying::class,
         ],
 
         LibraryChanged::class => [
-            PruneLibrary::class
+            PruneLibrary::class,
         ],
 
         MediaScanCompleted::class => [
             DeleteNonExistingRecordsPostScan::class,
             PruneLibrary::class,
-            WriteScanLog::class
+            WriteScanLog::class,
         ],
 
         NewPlaylistCollaboratorJoined::class => [
-            MakePlaylistSongsPublic::class
+            MakePlaylistSongsPublic::class,
         ],
 
         UserUnsubscribedFromPodcast::class => [
-            DeletePodcastIfNoSubscribers::class
-        ]
+            DeletePodcastIfNoSubscribers::class,
+        ],
     ];
 
     public function boot(): void

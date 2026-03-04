@@ -26,7 +26,7 @@ enum EmbeddableType: string
             self::PLAYABLE => Song::class,
             self::PLAYLIST => Playlist::class,
             self::ALBUM => Album::class,
-            self::ARTIST => Artist::class
+            self::ARTIST => Artist::class,
         };
     }
 
@@ -37,7 +37,7 @@ enum EmbeddableType: string
             self::PLAYABLE => SongResource::class,
             self::PLAYLIST => PlaylistResource::class,
             self::ALBUM => AlbumResource::class,
-            self::ARTIST => ArtistResource::class
+            self::ARTIST => ArtistResource::class,
         };
     }
 }

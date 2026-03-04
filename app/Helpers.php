@@ -157,7 +157,7 @@ function collect_accepted_audio_extensions(): array
             ->flatten()
             ->unique()
             ->map(Str::lower(...))
-            ->toArray()
+            ->toArray(),
     );
 }
 

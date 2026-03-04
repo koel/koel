@@ -13,7 +13,7 @@ final class SsoUser
         public string $id,
         public string $email,
         public string $name,
-        public ?string $avatar
+        public ?string $avatar,
     ) {
         self::assertValidProvider($provider);
     }
@@ -25,7 +25,7 @@ final class SsoUser
             id: $socialiteUser->getId(),
             email: $socialiteUser->getEmail(),
             name: $socialiteUser->getName(),
-            avatar: $socialiteUser->getAvatar()
+            avatar: $socialiteUser->getAvatar(),
         );
     }
 
@@ -39,7 +39,7 @@ final class SsoUser
             id: $identifier,
             email: $email,
             name: $request->header(config('koel.proxy_auth.preferred_name_header')) ?: $identifier,
-            avatar: null
+            avatar: null,
         );
     }
 

@@ -56,7 +56,7 @@ class UserInvitationServiceTest extends TestCase
 
         $prospect = User::factory()->for($user, 'invitedBy')->create([
             'invitation_token' => $token,
-            'invited_at' => now()
+            'invited_at' => now(),
         ]);
 
         self::assertTrue($this->service->getUserProspectByToken($token)->is($prospect));
@@ -77,7 +77,7 @@ class UserInvitationServiceTest extends TestCase
         /** @var User $prospect */
         $prospect = User::factory()->for($user, 'invitedBy')->create([
             'invitation_token' => Str::uuid()->toString(),
-            'invited_at' => now()
+            'invited_at' => now(),
         ]);
 
         $this->service->revokeByEmail($prospect->email);

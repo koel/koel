@@ -16,16 +16,15 @@ class ArtistController extends Controller
 {
     public function __construct(
         private readonly ArtistService $service,
-        private readonly ArtistRepository $repository
-    ) {
-    }
+        private readonly ArtistRepository $repository,
+    ) {}
 
     public function index(ArtistListRequest $request)
     {
         return ArtistResource::collection($this->repository->getForListing(
             sortColumn: $request->sort ?? 'name',
             sortDirection: $request->order ?? 'asc',
-            favoritesOnly: $request->boolean('favorites_only')
+            favoritesOnly: $request->boolean('favorites_only'),
         ));
     }
 

@@ -19,9 +19,8 @@ class PlaylistService
 {
     public function __construct(
         private readonly ImageStorage $imageStorage,
-        private readonly SongRepository $songRepository
-    ) {
-    }
+        private readonly SongRepository $songRepository,
+    ) {}
 
     public function createPlaylist(PlaylistCreateData $data, User $user): Playlist
     {
@@ -36,11 +35,11 @@ class PlaylistService
                 'name' => $data->name,
                 'description' => $data->description,
                 'rules' => $data->ruleGroups,
-                'cover' => $cover
+                'cover' => $cover,
             ]);
 
             $user->ownedPlaylists()->attach($playlist, [
-                'role' => 'owner'
+                'role' => 'owner',
             ]);
 
             $playlist->folders()->attach($data->folderId);
@@ -58,7 +57,7 @@ class PlaylistService
         $data = [
             'name' => $dto->name,
             'description' => $dto->description,
-            'rules' => $dto->ruleGroups
+            'rules' => $dto->ruleGroups,
         ];
 
         if (is_string($dto->cover)) {
@@ -78,14 +77,14 @@ class PlaylistService
     public function addPlayablesToPlaylist(
         Playlist $playlist,
         Collection|Playable|array $playables,
-        User $user
+        User $user,
     ): EloquentCollection {
         return DB::transaction(function () use ($playlist, $playables, $user) {
             $playables = Collection::wrap($playables);
 
             $playlist->addPlayables(
                 $playables->filter(static fn($song): bool => !$playlist->playables->contains($song)),
-                $user
+                $user,
             );
 
             // if the playlist is collaborative, make the songs public
@@ -96,7 +95,7 @@ class PlaylistService
             // we want a fresh copy of the songs with the possibly updated visibility
             return $this->songRepository->getManyInCollaborativeContext(
                 ids: $playables->pluck('id')->all(),
-                scopedUser: $user
+                scopedUser: $user,
             );
         });
     }
@@ -116,7 +115,7 @@ class PlaylistService
         Playlist $playlist,
         array $movingIds,
         string $target,
-        Placement $placement
+        Placement $placement,
     ): void {
         throw_if($playlist->is_smart, OperationNotApplicableForSmartPlaylistException::class);
 
@@ -145,7 +144,7 @@ class PlaylistService
     public function isPlaylistCollaborative(Playlist $playlist): bool
     {
         return once(
-            static fn() => !$playlist->is_smart && LicenseFacade::isPlus() && $playlist->collaborators->isNotEmpty()
+            static fn() => !$playlist->is_smart && LicenseFacade::isPlus() && $playlist->collaborators->isNotEmpty(),
         );
     }
 }

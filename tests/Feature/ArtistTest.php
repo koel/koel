@@ -24,7 +24,7 @@ class ArtistTest extends TestCase
         $this->getAs('api/artists?sort=name&order=asc')->assertJsonStructure(ArtistResource::PAGINATION_JSON_STRUCTURE);
 
         $this->getAs(
-            'api/artists?sort=created_at&order=desc&page=2'
+            'api/artists?sort=created_at&order=desc&page=2',
         )->assertJsonStructure(ArtistResource::PAGINATION_JSON_STRUCTURE);
     }
 
@@ -48,9 +48,9 @@ class ArtistTest extends TestCase
                 "api/artists/{$artist->id}",
                 [
                     'name' => 'Updated Artist Name',
-                    'image' => minimal_base64_encoded_image()
+                    'image' => minimal_base64_encoded_image(),
                 ],
-                create_admin()
+                create_admin(),
             )
             ->assertJsonStructure(ArtistResource::JSON_STRUCTURE)
             ->assertOk();
@@ -71,9 +71,9 @@ class ArtistTest extends TestCase
             ->putAs(
                 "api/artists/{$artist->id}",
                 [
-                    'name' => 'Updated Artist Name'
+                    'name' => 'Updated Artist Name',
                 ],
-                create_admin()
+                create_admin(),
             )
             ->assertJsonStructure(ArtistResource::JSON_STRUCTURE)
             ->assertOk();
@@ -92,9 +92,9 @@ class ArtistTest extends TestCase
                 "api/artists/{$artist->id}",
                 [
                     'name' => 'Updated Artist Name',
-                    'image' => ''
+                    'image' => '',
                 ],
-                create_admin()
+                create_admin(),
             )
             ->assertJsonStructure(ArtistResource::JSON_STRUCTURE)
             ->assertOk();
@@ -114,11 +114,11 @@ class ArtistTest extends TestCase
         $this->putAs(
             "api/artists/{$artist->id}",
             [
-                'name' => 'Maydup Nem'
+                'name' => 'Maydup Nem',
             ],
-            create_admin()
+            create_admin(),
         )->assertJsonValidationErrors([
-            'name' => 'An artist with the same name already exists.'
+            'name' => 'An artist with the same name already exists.',
         ]);
     }
 
@@ -131,9 +131,9 @@ class ArtistTest extends TestCase
         $this->putAs(
             "api/artists/{$artist->id}",
             [
-                'name' => 'Updated Name'
+                'name' => 'Updated Name',
             ],
-            create_user()
+            create_user(),
         )->assertForbidden();
     }
 }

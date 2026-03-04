@@ -36,7 +36,7 @@ class AlbumTest extends TestCase
             Album::query()
                 ->whereBelongsTo($artist)
                 ->where('name', $name)
-                ->first()
+                ->first(),
         );
 
         $album = Album::getOrCreate($artist, $name);
@@ -51,7 +51,7 @@ class AlbumTest extends TestCase
             [''],
             ['  '],
             [null],
-            [false]
+            [false],
         ];
     }
 

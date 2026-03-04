@@ -12,16 +12,15 @@ class FetchAssignableRolesController extends Controller
     /** @param User $user */
     public function __construct(
         private readonly Acl $acl,
-        private readonly Authenticatable $user
-    ) {
-    }
+        private readonly Authenticatable $user,
+    ) {}
 
     public function __invoke()
     {
         $this->authorize('manage', User::class);
 
         return response()->json([
-            'roles' => $this->acl->getAssignableRolesForUser($this->user)->toArray()
+            'roles' => $this->acl->getAssignableRolesForUser($this->user)->toArray(),
         ]);
     }
 }

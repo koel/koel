@@ -15,8 +15,8 @@ class UserPreferencesCastTest extends TestCase
     {
         $user = create_user([
             'preferences' => [
-                'lastfm_session_key' => 'foo'
-            ]
+                'lastfm_session_key' => 'foo',
+            ],
         ]);
 
         self::assertInstanceOf(UserPreferences::class, $user->preferences);

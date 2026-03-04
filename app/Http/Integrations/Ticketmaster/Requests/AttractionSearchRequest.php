@@ -13,9 +13,8 @@ class AttractionSearchRequest extends Request
     protected Method $method = Method::GET;
 
     public function __construct(
-        private readonly string $keywords
-    ) {
-    }
+        private readonly string $keywords,
+    ) {}
 
     public function resolveEndpoint(): string
     {
@@ -28,7 +27,7 @@ class AttractionSearchRequest extends Request
         return [
             'keyword' => $this->keywords,
             'size' => 5,
-            'classificationName' => ['Music']
+            'classificationName' => ['Music'],
         ];
     }
 

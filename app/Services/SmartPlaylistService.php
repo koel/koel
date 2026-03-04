@@ -12,9 +12,8 @@ use Illuminate\Database\Eloquent\Collection;
 class SmartPlaylistService
 {
     public function __construct(
-        private readonly SongRepository $songRepository
-    ) {
-    }
+        private readonly SongRepository $songRepository,
+    ) {}
 
     /** @return Collection|array<array-key, Song> */
     public function getSongs(Playlist $playlist, User $user): Collection

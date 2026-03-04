@@ -42,7 +42,7 @@ class FavoriteServiceTest extends TestCase
         $this->assertDatabaseHas(Favorite::class, [
             'user_id' => $user->id,
             'favoriteable_type' => 'playable',
-            'favoriteable_id' => $song->id
+            'favoriteable_id' => $song->id,
         ]);
 
         Event::assertDispatched(SongFavoriteToggled::class);
@@ -79,7 +79,7 @@ class FavoriteServiceTest extends TestCase
         $this->assertDatabaseHas(Favorite::class, [
             'user_id' => $user->id,
             'favoriteable_type' => 'album',
-            'favoriteable_id' => $album->id
+            'favoriteable_id' => $album->id,
         ]);
 
         Event::assertNotDispatched(SongFavoriteToggled::class);
@@ -100,7 +100,7 @@ class FavoriteServiceTest extends TestCase
             $this->assertDatabaseHas(Favorite::class, [
                 'user_id' => $user->id,
                 'favoriteable_type' => 'playable',
-                'favoriteable_id' => $song->id
+                'favoriteable_id' => $song->id,
             ]);
         }
 
@@ -124,7 +124,7 @@ class FavoriteServiceTest extends TestCase
 
         $this->service->batchUndoFavorite(
             $favorites->map(static fn(Favorite $favorite) => $favorite->favoriteable),
-            $user
+            $user,
         );
 
         foreach ($favorites as $favorite) {

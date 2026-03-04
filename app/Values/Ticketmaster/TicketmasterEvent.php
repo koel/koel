@@ -15,9 +15,8 @@ readonly class TicketmasterEvent implements Arrayable
         public string $image,
         public ?string $start,
         public ?string $end,
-        public TicketmasterVenue $venue
-    ) {
-    }
+        public TicketmasterVenue $venue,
+    ) {}
 
     public static function fromArray(array $data): self
     {
@@ -28,7 +27,7 @@ readonly class TicketmasterEvent implements Arrayable
             image: Arr::get($data, 'images.0.url', ''),
             start: self::tryParseDate(Arr::get($data, 'dates.start', [])),
             end: self::tryParseDate(Arr::get($data, 'dates.end', [])),
-            venue: TicketmasterVenue::fromArray(Arr::get($data, '_embedded.venues.0', []))
+            venue: TicketmasterVenue::fromArray(Arr::get($data, '_embedded.venues.0', [])),
         );
     }
 
@@ -39,7 +38,7 @@ readonly class TicketmasterEvent implements Arrayable
         string $image,
         ?string $start,
         ?string $end,
-        TicketmasterVenue $venue
+        TicketmasterVenue $venue,
     ): self {
         return new static(id: $id, name: $name, url: $url, image: $image, start: $start, end: $end, venue: $venue);
     }
@@ -53,7 +52,7 @@ readonly class TicketmasterEvent implements Arrayable
         if (Arr::get($dateData, 'localTime')) {
             return Carbon::createFromFormat(
                 'Y-m-d H:i:s',
-                Arr::get($dateData, 'localDate') . ' ' . Arr::get($dateData, 'localTime')
+                Arr::get($dateData, 'localDate') . ' ' . Arr::get($dateData, 'localTime'),
             )->format('D, j M Y, H:i');
         }
 
@@ -70,9 +69,9 @@ readonly class TicketmasterEvent implements Arrayable
             'image' => $this->image,
             'dates' => [
                 'start' => $this->start,
-                'end' => $this->end
+                'end' => $this->end,
             ],
-            'venue' => $this->venue->toArray()
+            'venue' => $this->venue->toArray(),
         ];
     }
 }

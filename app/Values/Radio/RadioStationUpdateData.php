@@ -11,16 +11,15 @@ final readonly class RadioStationUpdateData implements Arrayable
         public string $url,
         public string $description,
         public ?string $logo,
-        public bool $isPublic
-    ) {
-    }
+        public bool $isPublic,
+    ) {}
 
     public static function make(
         string $name,
         string $url,
         string $description,
         ?string $logo = null,
-        bool $isPublic = false
+        bool $isPublic = false,
     ): self {
         return new self(name: $name, url: $url, description: $description, logo: $logo, isPublic: $isPublic);
     }
@@ -33,7 +32,7 @@ final readonly class RadioStationUpdateData implements Arrayable
             'url' => $this->url,
             'description' => $this->description,
             'logo' => $this->logo,
-            'is_public' => $this->isPublic
+            'is_public' => $this->isPublic,
         ];
     }
 }

@@ -27,9 +27,8 @@ class ScanInformation implements Arrayable
         public ?string $hash,
         public ?int $mTime,
         public ?string $mimeType,
-        public ?int $fileSize
-    ) {
-    }
+        public ?int $fileSize,
+    ) {}
 
     public static function fromGetId3Info(array $info, string $path): self
     {
@@ -38,7 +37,7 @@ class ScanInformation implements Arrayable
             Arr::get($info, 'tags.id3v1', []),
             Arr::get($info, 'tags.id3v2', []),
             Arr::get($info, 'comments', []),
-            Arr::get($info, 'tags.vorbiscomment', [])
+            Arr::get($info, 'tags.vorbiscomment', []),
         );
 
         $comments = Arr::get($info, 'comments', []);
@@ -61,7 +60,7 @@ class ScanInformation implements Arrayable
             'unsynchronised_lyric',
             'unsychronised_lyric',
             'unsyncedlyrics',
-            'lyrics'
+            'lyrics',
         ]));
 
         return new self(
@@ -80,7 +79,7 @@ class ScanInformation implements Arrayable
             hash: File::hash($path),
             mTime: get_mtime($path),
             mimeType: Str::lower(Arr::get($info, 'mime_type')) ?: 'audio/mpeg',
-            fileSize: File::size($path)
+            fileSize: File::size($path),
         );
     }
 
@@ -100,7 +99,7 @@ class ScanInformation implements Arrayable
         ?string $hash = null,
         ?int $mTime = null,
         ?string $mimeType = null,
-        ?int $fileSize = null
+        ?int $fileSize = null,
     ): self {
         return new self(
             title: $title,
@@ -118,7 +117,7 @@ class ScanInformation implements Arrayable
             hash: $hash,
             mTime: $mTime,
             mimeType: $mimeType,
-            fileSize: $fileSize
+            fileSize: $fileSize,
         );
     }
 
@@ -154,7 +153,7 @@ class ScanInformation implements Arrayable
             'hash' => $this->hash,
             'mtime' => $this->mTime,
             'mime_type' => $this->mimeType,
-            'file_size' => $this->fileSize
+            'file_size' => $this->fileSize,
         ];
     }
 }

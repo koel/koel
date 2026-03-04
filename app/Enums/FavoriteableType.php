@@ -26,7 +26,7 @@ enum FavoriteableType: string
             self::ALBUM => Album::class,
             self::ARTIST => Artist::class,
             self::PODCAST => Podcast::class,
-            self::RADIO_STATION => RadioStation::class
+            self::RADIO_STATION => RadioStation::class,
         };
     }
 }

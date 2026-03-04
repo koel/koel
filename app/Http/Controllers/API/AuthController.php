@@ -18,15 +18,14 @@ class AuthController extends Controller
     use ThrottlesLogins;
 
     public function __construct(
-        private readonly AuthenticationService $auth
-    ) {
-    }
+        private readonly AuthenticationService $auth,
+    ) {}
 
     public function login(UserLoginRequest $request): JsonResponse
     {
         $compositeToken = $this->throttleLoginRequest(fn() => $this->auth->login(
             $request->email,
-            $request->password
+            $request->password,
         ), $request);
 
         return response()->json($compositeToken->toArray());
@@ -35,7 +34,7 @@ class AuthController extends Controller
     public function loginUsingOneTimeToken(Request $request): JsonResponse
     {
         $compositeToken = $this->throttleLoginRequest(fn() => $this->auth->loginViaOneTimeToken($request->input(
-            'token'
+            'token',
         )), $request);
 
         return response()->json($compositeToken->toArray());

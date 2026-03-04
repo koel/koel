@@ -31,7 +31,7 @@ class InstallSchedulerCommand extends Command
         }
 
         $job = CrontabJob::createFromCrontabLine(
-            '* * * * * cd ' . base_path() . ' && php artisan schedule:run >> /dev/null 2>&1'
+            '* * * * * cd ' . base_path() . ' && php artisan schedule:run >> /dev/null 2>&1',
         );
 
         $crontab->addJob($job);

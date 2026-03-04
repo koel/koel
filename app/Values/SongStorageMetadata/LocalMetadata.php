@@ -5,9 +5,8 @@ namespace App\Values\SongStorageMetadata;
 final class LocalMetadata extends SongStorageMetadata
 {
     private function __construct(
-        public string $path
-    ) {
-    }
+        public string $path,
+    ) {}
 
     public static function make(string $path): self
     {

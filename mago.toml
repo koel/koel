@@ -9,7 +9,7 @@ includes = ["vendor"]
 excludes = []
 
 [formatter]
-preset = "psr-12"
+preset = "default"
 
 [linter]
 integrations = ["laravel", "phpunit"]

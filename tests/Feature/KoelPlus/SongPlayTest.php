@@ -24,7 +24,7 @@ class SongPlayTest extends PlusTestCase
         $song = Song::factory()
             ->public()
             ->create([
-                'path' => test_path('songs/blank.mp3')
+                'path' => test_path('songs/blank.mp3'),
             ]);
 
         $this->mock(LocalStreamerAdapter::class)->expects('stream');
@@ -39,7 +39,7 @@ class SongPlayTest extends PlusTestCase
         $song = Song::factory()
             ->private()
             ->create([
-                'path' => test_path('songs/blank.mp3')
+                'path' => test_path('songs/blank.mp3'),
             ]);
 
         /** @var CompositeToken $token */
@@ -57,7 +57,7 @@ class SongPlayTest extends PlusTestCase
         $song = Song::factory()
             ->private()
             ->create([
-                'path' => test_path('songs/blank.mp3')
+                'path' => test_path('songs/blank.mp3'),
             ]);
 
         /** @var CompositeToken $token */

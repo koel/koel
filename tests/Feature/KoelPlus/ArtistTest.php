@@ -21,9 +21,9 @@ class ArtistTest extends PlusTestCase
         $this->putAs(
             "api/artists/{$artist->id}",
             [
-                'name' => 'Updated Artist Name'
+                'name' => 'Updated Artist Name',
             ],
-            $artist->user
+            $artist->user,
         )->assertJsonStructure(ArtistResource::JSON_STRUCTURE);
 
         $artist->refresh();
@@ -43,9 +43,9 @@ class ArtistTest extends PlusTestCase
         $this->putAs(
             "api/artists/{$artist->id}",
             [
-                'name' => 'Updated Artist Name'
+                'name' => 'Updated Artist Name',
             ],
-            $scaryBossMan
+            $scaryBossMan,
         )->assertForbidden();
     }
 
@@ -61,9 +61,9 @@ class ArtistTest extends PlusTestCase
         $this->putAs(
             "api/artists/{$artist->id}",
             [
-                'name' => 'Updated Artist Name'
+                'name' => 'Updated Artist Name',
             ],
-            $randomDude
+            $randomDude,
         )->assertForbidden();
     }
 }

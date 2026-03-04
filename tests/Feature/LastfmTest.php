@@ -42,7 +42,7 @@ class LastfmTest extends TestCase
         $tokenManager->expects('createToken')->with($user)->andReturn($temporaryToken);
 
         $this->get('lastfm/connect?api_token=' . $token)->assertRedirect(
-            'https://www.last.fm/api/auth/?api_key=foo&cb=http%3A%2F%2Flocalhost%2Flastfm%2Fcallback%3Fapi_token%3Dtmp-token'
+            'https://www.last.fm/api/auth/?api_key=foo&cb=http%3A%2F%2Flocalhost%2Flastfm%2Fcallback%3Fapi_token%3Dtmp-token',
         );
     }
 

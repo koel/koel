@@ -27,9 +27,8 @@ class EmbedController extends Controller
         private readonly EmbedService $service,
         private readonly SongRepository $songRepository,
         private readonly ThemeRepository $themeRepository,
-        private readonly ?Authenticatable $user
-    ) {
-    }
+        private readonly ?Authenticatable $user,
+    ) {}
 
     public function resolveForEmbeddable(ResolveEmbedRequest $request)
     {
@@ -50,7 +49,7 @@ class EmbedController extends Controller
             return response()->json([
                 'embed' => EmbedResource::make($embed, $this->songRepository->getForEmbed($embed)),
                 'options' => EmbedOptionsResource::make($options),
-                'theme' => $theme ? ThemeResource::make($theme) : null
+                'theme' => $theme ? ThemeResource::make($theme) : null,
             ]);
         } catch (EmbeddableNotFoundException) {
             abort(Response::HTTP_NOT_FOUND);

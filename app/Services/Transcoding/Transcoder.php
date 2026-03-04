@@ -23,7 +23,7 @@ class Transcoder
             '-b:a',
             "{$bitRate}k", // Set target bitrate (e.g., 128k, 192k)
             '-y', // Overwrite if exists
-            $destination
+            $destination,
         ]);
     }
 }

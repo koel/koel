@@ -51,7 +51,7 @@ class DownloadTest extends TestCase
             ->andReturn(Downloadable::make(test_path('songs/blank.mp3')));
 
         $this->get(
-            "download/songs?songs[]={$song->id}&api_token=" . $user->createToken('Koel')->plainTextToken
+            "download/songs?songs[]={$song->id}&api_token=" . $user->createToken('Koel')->plainTextToken,
         )->assertOk();
     }
 
@@ -73,7 +73,7 @@ class DownloadTest extends TestCase
 
         $this->get(
             "download/songs?songs[]={$songs[0]->id}&songs[]={$songs[1]->id}&api_token="
-            . $user->createToken('Koel')->plainTextToken
+            . $user->createToken('Koel')->plainTextToken,
         )->assertOk();
     }
 
@@ -135,7 +135,7 @@ class DownloadTest extends TestCase
             ->andReturn(Downloadable::make(test_path('songs/blank.mp3')));
 
         $this->get(
-            "download/playlist/{$playlist->id}?api_token=" . $playlist->owner->createToken('Koel')->plainTextToken
+            "download/playlist/{$playlist->id}?api_token=" . $playlist->owner->createToken('Koel')->plainTextToken,
         )->assertOk();
     }
 
@@ -145,7 +145,7 @@ class DownloadTest extends TestCase
         $playlist = create_playlist();
 
         $this->get(
-            "download/playlist/{$playlist->id}?api_token=" . create_user()->createToken('Koel')->plainTextToken
+            "download/playlist/{$playlist->id}?api_token=" . create_user()->createToken('Koel')->plainTextToken,
         )->assertForbidden();
     }
 
@@ -159,7 +159,7 @@ class DownloadTest extends TestCase
 
         $songs->map(static function (Song $song) use ($user): Favorite {
             return Favorite::factory()->for($user)->create([
-                'favoriteable_id' => $song->id
+                'favoriteable_id' => $song->id,
             ]);
         });
 

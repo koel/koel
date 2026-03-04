@@ -31,7 +31,7 @@ class EmbedServiceTest extends TestCase
             ['playable', Song::class],
             ['playlist', Playlist::class],
             ['album',    Album::class],
-            ['artist',   Artist::class]
+            ['artist',   Artist::class],
         ];
     }
 

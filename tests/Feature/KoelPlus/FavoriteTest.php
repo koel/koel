@@ -18,7 +18,7 @@ class FavoriteTest extends PlusTestCase
 
         $this->postAs('api/favorites/toggle', [
             'type' => 'playable',
-            'id' => $song->id
+            'id' => $song->id,
         ])->assertForbidden();
     }
 
@@ -30,7 +30,7 @@ class FavoriteTest extends PlusTestCase
 
         $this->postAs('api/favorites/toggle', [
             'type' => 'album',
-            'id' => $album->id
+            'id' => $album->id,
         ])->assertForbidden();
     }
 
@@ -42,7 +42,7 @@ class FavoriteTest extends PlusTestCase
 
         $this->postAs('api/favorites/toggle', [
             'type' => 'artist',
-            'id' => $artist->id
+            'id' => $artist->id,
         ])->assertForbidden();
     }
 
@@ -54,7 +54,7 @@ class FavoriteTest extends PlusTestCase
 
         $this->postAs('api/favorites', [
             'type' => 'playable',
-            'ids' => $songs->pluck('id')->toArray()
+            'ids' => $songs->pluck('id')->toArray(),
         ])->assertForbidden();
     }
 
@@ -66,7 +66,7 @@ class FavoriteTest extends PlusTestCase
 
         $this->deleteAs('api/favorites', [
             'type' => 'playable',
-            'ids' => $songs->pluck('id')->toArray()
+            'ids' => $songs->pluck('id')->toArray(),
         ])->assertForbidden();
     }
 }

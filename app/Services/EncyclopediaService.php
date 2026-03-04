@@ -15,9 +15,8 @@ class EncyclopediaService
     public function __construct(
         private readonly Encyclopedia $encyclopedia,
         private readonly ImageStorage $imageStorage,
-        private readonly SpotifyService $spotifyService
-    ) {
-    }
+        private readonly SpotifyService $spotifyService,
+    ) {}
 
     public function getAlbumInformation(Album $album): ?AlbumInformation
     {
@@ -45,7 +44,7 @@ class EncyclopediaService
                 });
 
                 return $info;
-            }
+            },
         );
     }
 
@@ -56,7 +55,7 @@ class EncyclopediaService
         }
 
         return Cache::remember(cache_key('artist information', $artist->name), now()->addWeek(), function () use (
-            $artist
+            $artist,
         ): ArtistInformation {
             $info = $this->encyclopedia->getArtistInformation($artist) ?: ArtistInformation::make();
 

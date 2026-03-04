@@ -10,16 +10,15 @@ readonly class TicketmasterVenue implements Arrayable
     private function __construct(
         public string $name,
         public string $url,
-        public string $city
-    ) {
-    }
+        public string $city,
+    ) {}
 
     public static function fromArray(array $data): self
     {
         return new self(
             name: Arr::get($data, 'name', ''),
             url: Arr::get($data, 'url', ''),
-            city: Arr::get($data, 'city.name', '')
+            city: Arr::get($data, 'city.name', ''),
         );
     }
 
@@ -34,7 +33,7 @@ readonly class TicketmasterVenue implements Arrayable
         return [
             'name' => $this->name,
             'url' => $this->url,
-            'city' => $this->city
+            'city' => $this->city,
         ];
     }
 }

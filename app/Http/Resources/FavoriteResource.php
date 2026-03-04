@@ -13,11 +13,11 @@ class FavoriteResource extends JsonResource
         'favoriteable_type',
         'favoriteable_id',
         'user_id',
-        'created_at'
+        'created_at',
     ];
 
     public function __construct(
-        private readonly Favorite $favorite
+        private readonly Favorite $favorite,
     ) {
         parent::__construct($favorite);
     }
@@ -30,7 +30,7 @@ class FavoriteResource extends JsonResource
             'favoriteable_type' => $this->favorite->favoriteable_type,
             'favoriteable_id' => $this->favorite->favoriteable_id,
             'user_id' => $this->favorite->user_id,
-            'created_at' => $this->favorite->created_at
+            'created_at' => $this->favorite->created_at,
         ];
     }
 }

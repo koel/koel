@@ -17,16 +17,15 @@ class AlbumService
     public function __construct(
         private readonly AlbumRepository $albumRepository,
         private readonly ImageStorage $imageStorage,
-        private readonly Finder $finder
-    ) {
-    }
+        private readonly Finder $finder,
+    ) {}
 
     public function updateAlbum(Album $album, AlbumUpdateData $dto): Album
     {
         // Ensure that the album name is unique within the artist
         $existingAlbumWithTheSameName = $this->albumRepository->findOneBy([
             'name' => $dto->name,
-            'artist_id' => $album->artist_id
+            'artist_id' => $album->artist_id,
         ]);
 
         throw_if($existingAlbumWithTheSameName?->isNot($album), AlbumNameConflictException::class);
@@ -67,7 +66,7 @@ class AlbumService
                     ->files()
                     ->followLinks()
                     ->name('/(cov|fold)er\.(jpe?g|gif|png|webp|avif)$/i')
-                    ->in($directory)
+                    ->in($directory),
             ));
 
             $cover = $matches[0] ?? null;
@@ -85,7 +84,7 @@ class AlbumService
         $this->imageStorage->storeImage(
             source: image_storage_path($album->cover),
             config: ImageWritingConfig::make(maxWidth: 48, blur: 10),
-            path: image_storage_path($album->thumbnail)
+            path: image_storage_path($album->thumbnail),
         );
 
         return $album->thumbnail;

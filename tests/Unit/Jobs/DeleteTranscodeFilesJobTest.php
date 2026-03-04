@@ -17,7 +17,7 @@ class DeleteTranscodeFilesJobTest extends TestCase
     {
         $files = collect([
             TranscodeFileInfo::make('path/to/transcode.m4a', SongStorageType::LOCAL),
-            TranscodeFileInfo::make('key.m4a', SongStorageType::S3)
+            TranscodeFileInfo::make('key.m4a', SongStorageType::S3),
         ]);
 
         $this

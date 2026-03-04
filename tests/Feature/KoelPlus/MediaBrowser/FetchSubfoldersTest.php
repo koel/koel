@@ -31,7 +31,7 @@ class FetchSubfoldersTest extends PlusTestCase
             ->create();
 
         $response = $this->getAs('/api/browse/folders?path=' . $folder->path)->assertJsonStructure([
-            0 => FolderResource::JSON_STRUCTURE
+            0 => FolderResource::JSON_STRUCTURE,
         ]);
 
         static::assertEqualsCanonicalizing($subfolders->pluck('id')->toArray(), $response->json('*.id'));

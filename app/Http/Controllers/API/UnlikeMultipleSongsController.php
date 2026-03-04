@@ -16,7 +16,7 @@ class UnlikeMultipleSongsController extends Controller
     public function __invoke(
         InteractWithMultipleSongsRequest $request,
         FavoriteService $favoriteService,
-        Authenticatable $user
+        Authenticatable $user,
     ) {
         /** @var Collection<int, Song> $songs */
         $songs = Song::query()->findMany($request->songs);

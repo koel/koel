@@ -14,7 +14,7 @@ class ViewSongOnITunesController extends Controller
         ViewSongOnITunesRequest $request,
         ITunesService $iTunesService,
         TokenManager $tokenManager,
-        Album $album
+        Album $album,
     ) {
         abort_unless((bool) $tokenManager->getUserFromPlainTextToken($request->api_token), Response::HTTP_UNAUTHORIZED);
 

@@ -47,7 +47,7 @@ class FavoriteService
                 'user_id' => $user->id,
                 'favoriteable_type' => $entity->getMorphClass(),
                 'favoriteable_id' => $entity->getKey(),
-                'created_at' => now()
+                'created_at' => now(),
             ];
         }
 

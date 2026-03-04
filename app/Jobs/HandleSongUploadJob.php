@@ -13,14 +13,13 @@ class HandleSongUploadJob extends QueuedJob
 {
     public function __construct(
         public readonly string $filePath,
-        public readonly User $uploader
-    ) {
-    }
+        public readonly User $uploader,
+    ) {}
 
     public function handle(
         UploadService $uploadService,
         SongRepository $songRepository,
-        AlbumRepository $albumRepository
+        AlbumRepository $albumRepository,
     ): Song {
         $song = $uploadService->handleUpload($this->filePath, $this->uploader);
 

@@ -20,7 +20,7 @@ class FetchFavoriteSongsTest extends TestCase
 
         $songs->each(static function (Song $song) use ($user): void {
             Favorite::factory()->for($user)->create([
-                'favoriteable_id' => $song->id
+                'favoriteable_id' => $song->id,
             ]);
         });
 

@@ -32,7 +32,7 @@ class AuthenticationServiceTest extends TestCase
         self::assertTrue($this->service->tryResetPasswordUsingBroker(
             $user->email,
             'new-password',
-            Password::createToken($user)
+            Password::createToken($user),
         ));
 
         self::assertTrue(Hash::check('new-password', $user->fresh()->password));

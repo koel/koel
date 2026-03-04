@@ -16,7 +16,7 @@ class ValidImageData implements ValidationRule
         try {
             Image::read($value, [
                 Base64ImageDecoder::class,
-                DataUriImageDecoder::class
+                DataUriImageDecoder::class,
             ]);
         } catch (Throwable) {
             $fail("Invalid image for $attribute");

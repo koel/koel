@@ -19,9 +19,9 @@ class LicenseFactory extends Factory
             'meta' => LicenseMeta::make(
                 customerId: $this->faker->numberBetween(1, 1000),
                 customerName: $this->faker->name(),
-                customerEmail: $this->faker->email()
+                customerEmail: $this->faker->email(),
             ),
-            'expires_at' => null
+            'expires_at' => null,
         ];
     }
 }

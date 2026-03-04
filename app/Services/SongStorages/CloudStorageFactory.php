@@ -13,7 +13,7 @@ class CloudStorageFactory
             SongStorageType::S3_LAMBDA => app(S3LambdaStorage::class),
             SongStorageType::S3 => app(S3CompatibleStorage::class),
             SongStorageType::DROPBOX => app(DropboxStorage::class),
-            default => throw NonCloudStorageException::create($storageType)
+            default => throw NonCloudStorageException::create($storageType),
         };
     }
 }

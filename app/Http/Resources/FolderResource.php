@@ -11,11 +11,11 @@ class FolderResource extends JsonResource
         'type',
         'id',
         'path',
-        'name'
+        'name',
     ];
 
     public function __construct(
-        private readonly Folder $folder
+        private readonly Folder $folder,
     ) {
         parent::__construct($this->folder);
     }
@@ -27,7 +27,7 @@ class FolderResource extends JsonResource
             'type' => 'folders',
             'id' => $this->folder->id,
             'path' => $this->folder->path,
-            'name' => $this->folder->name
+            'name' => $this->folder->name,
         ];
     }
 }

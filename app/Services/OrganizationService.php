@@ -8,9 +8,8 @@ use App\Repositories\OrganizationRepository;
 class OrganizationService
 {
     public function __construct(
-        private readonly OrganizationRepository $repository
-    ) {
-    }
+        private readonly OrganizationRepository $repository,
+    ) {}
 
     public function getCurrentOrganization(): Organization
     {

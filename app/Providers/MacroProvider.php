@@ -55,7 +55,7 @@ class MacroProvider extends ServiceProvider
                         $join->on('tc.constraint_name', '=', 'kcu.constraint_name')->on(
                             'tc.constraint_schema',
                             '=',
-                            'kcu.constraint_schema'
+                            'kcu.constraint_schema',
                         );
                     })
                     ->select('tc.constraint_name')
@@ -76,7 +76,7 @@ class MacroProvider extends ServiceProvider
                 // @mago-ignore lint:prefer-static-closure
                 function (string $path, ?string $name = null): UploadedFile {
                     return UploadedFile::fake()->createWithContent($name ?? basename($path), File::get($path));
-                }
+                },
             );
 
             TestResponse::macro('log', function (string $file = 'test-response.json'): TestResponse {

@@ -16,7 +16,7 @@ class StreamerServiceProvider extends ServiceProvider
             return match (config('koel.streaming.method')) {
                 'x-sendfile' => $this->app->make(XSendFileStreamerAdapter::class),
                 'x-accel-redirect' => $this->app->make(XAccelRedirectStreamerAdapter::class),
-                default => $this->app->make(PhpStreamerAdapter::class)
+                default => $this->app->make(PhpStreamerAdapter::class),
             };
         });
     }

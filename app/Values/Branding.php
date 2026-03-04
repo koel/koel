@@ -10,7 +10,7 @@ final class Branding implements Arrayable
     private function __construct(
         public readonly string $name,
         public ?string $logo,
-        public ?string $cover
+        public ?string $cover,
     ) {
         if ($logo && !URL::isValidUrl($logo)) {
             $this->logo = image_storage_url($logo);
@@ -21,11 +21,8 @@ final class Branding implements Arrayable
         }
     }
 
-    public static function make(
-        ?string $name = null,
-        ?string $logo = null,
-        ?string $cover = null
-    ): self {
+    public static function make(?string $name = null, ?string $logo = null, ?string $cover = null): self
+    {
         return new self(name: $name ?: config('app.name'), logo: $logo, cover: $cover);
     }
 
@@ -34,7 +31,7 @@ final class Branding implements Arrayable
         return new self(
             name: $settings['name'] ?? config('app.name'),
             logo: $settings['logo'] ?? null,
-            cover: $settings['cover'] ?? null
+            cover: $settings['cover'] ?? null,
         );
     }
 
@@ -44,7 +41,7 @@ final class Branding implements Arrayable
         return [
             'name' => $this->name,
             'logo' => $this->logo,
-            'cover' => $this->cover
+            'cover' => $this->cover,
         ];
     }
 

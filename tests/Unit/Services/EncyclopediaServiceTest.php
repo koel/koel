@@ -36,7 +36,7 @@ class EncyclopediaServiceTest extends TestCase
         $this->encyclopediaService = new EncyclopediaService(
             $this->encyclopedia,
             $this->imageStorage,
-            $this->spotifyService
+            $this->spotifyService,
         );
 
         $this->spotifyConfig = config('koel.services.spotify');
@@ -89,7 +89,7 @@ class EncyclopediaServiceTest extends TestCase
     {
         config()->set('koel.services.spotify', [
             'client_id' => 'spotify-client-id',
-            'client_secret' => 'spotify-client-secret'
+            'client_secret' => 'spotify-client-secret',
         ]);
 
         /** @var Album $album */
@@ -155,7 +155,7 @@ class EncyclopediaServiceTest extends TestCase
     {
         config()->set('koel.services.spotify', [
             'client_id' => 'spotify-client-id',
-            'client_secret' => 'spotify-client-secret'
+            'client_secret' => 'spotify-client-secret',
         ]);
 
         /** @var Artist $artist */

@@ -12,12 +12,8 @@ use Illuminate\Contracts\Auth\Authenticatable;
 class DownloadAlbumController extends Controller
 {
     /** @param User $user */
-    public function __invoke(
-        Album $album,
-        SongRepository $repository,
-        DownloadService $service,
-        Authenticatable $user
-    ) {
+    public function __invoke(Album $album, SongRepository $repository, DownloadService $service, Authenticatable $user)
+    {
         return $service->getDownloadable($repository->getByAlbum($album, $user))?->toResponse();
     }
 }

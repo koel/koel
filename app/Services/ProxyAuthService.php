@@ -14,9 +14,8 @@ use Throwable;
 class ProxyAuthService
 {
     public function __construct(
-        private readonly UserService $userService
-    ) {
-    }
+        private readonly UserService $userService,
+    ) {}
 
     public function tryGetProxyAuthenticatedUserFromRequest(Request $request): ?User
     {

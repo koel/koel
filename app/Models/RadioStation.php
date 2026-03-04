@@ -44,7 +44,7 @@ class RadioStation extends Model implements AuditableContract, Favoriteable, Per
         'updated_at' => 'datetime',
         'favorite' => 'boolean',
         'is_public' => 'boolean',
-        'description' => 'string'
+        'description' => 'string',
     ];
 
     public function user(): BelongsTo
@@ -70,7 +70,7 @@ class RadioStation extends Model implements AuditableContract, Favoriteable, Per
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'user_id' => $this->user_id
+            'user_id' => $this->user_id,
         ];
     }
 

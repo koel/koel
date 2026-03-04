@@ -25,7 +25,7 @@ class LoveTrackOnLastFmTest extends TestCase
         $lastfm = Mockery::mock(LastfmService::class, ['enabled' => true]);
         $lastfm->expects('toggleLoveTrack')->with($song, $user, true);
 
-        ( new LoveTrackOnLastfm($lastfm) )->handle(new SongFavoriteToggled($song, true, $user));
+        (new LoveTrackOnLastfm($lastfm))->handle(new SongFavoriteToggled($song, true, $user));
     }
 
     #[Test]
@@ -39,6 +39,6 @@ class LoveTrackOnLastFmTest extends TestCase
         $lastfm = Mockery::mock(LastfmService::class, ['enabled' => true]);
         $lastfm->expects('toggleLoveTrack')->with($song, $user, false);
 
-        ( new LoveTrackOnLastfm($lastfm) )->handle(new SongFavoriteToggled($song, false, $user));
+        (new LoveTrackOnLastfm($lastfm))->handle(new SongFavoriteToggled($song, false, $user));
     }
 }

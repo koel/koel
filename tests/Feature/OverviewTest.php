@@ -26,7 +26,7 @@ class OverviewTest extends TestCase
             'recently_added_albums' => [0 => AlbumResource::JSON_STRUCTURE],
             'recently_added_songs' => [0 => SongResource::JSON_STRUCTURE],
             'most_played_artists' => [0 => ArtistResource::JSON_STRUCTURE],
-            'most_played_albums' => [0 => AlbumResource::JSON_STRUCTURE]
+            'most_played_albums' => [0 => AlbumResource::JSON_STRUCTURE],
         ]);
     }
 }

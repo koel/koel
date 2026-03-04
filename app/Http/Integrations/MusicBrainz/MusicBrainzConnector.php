@@ -23,8 +23,8 @@ class MusicBrainzConnector extends Connector
                 '%s/%s( %s )',
                 config('app.name'),
                 koel_version(),
-                config('app.url')
-            )
+                config('app.url'),
+            ),
         ];
     }
 }

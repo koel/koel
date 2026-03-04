@@ -9,7 +9,7 @@ use PhanAn\Poddle\Values\Category;
 class PodcastCategoryResource extends JsonResource
 {
     public function __construct(
-        private readonly Category $category
+        private readonly Category $category,
     ) {
         parent::__construct($this->category);
     }

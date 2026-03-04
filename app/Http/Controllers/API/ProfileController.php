@@ -21,9 +21,8 @@ class ProfileController extends Controller
         private readonly Hasher $hash,
         private readonly UserService $userService,
         private readonly TokenManager $tokenManager,
-        private readonly Authenticatable $user
-    ) {
-    }
+        private readonly Authenticatable $user,
+    ) {}
 
     public function show()
     {
@@ -36,7 +35,7 @@ class ProfileController extends Controller
         // If the user is not using SSO, we need to verify their current password.
         throw_if(
             !$this->user->is_sso && !$this->hash->check($request->current_password, $this->user->password),
-            ValidationException::withMessages(['current_password' => 'Invalid current password'])
+            ValidationException::withMessages(['current_password' => 'Invalid current password']),
         );
 
         $user = $this->userService->updateUser($this->user, $request->toDto());
@@ -45,7 +44,7 @@ class ProfileController extends Controller
         if ($request->new_password) {
             $response->header(
                 'Authorization',
-                $this->tokenManager->refreshApiToken($request->bearerToken() ?: '')->plainTextToken
+                $this->tokenManager->refreshApiToken($request->bearerToken() ?: '')->plainTextToken,
             );
         }
 

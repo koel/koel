@@ -18,9 +18,9 @@ class BrandingSettingTest extends TestCase
             [
                 'name' => 'Little Bird',
                 'logo' => minimal_base64_encoded_image(),
-                'cover' => minimal_base64_encoded_image()
+                'cover' => minimal_base64_encoded_image(),
             ],
-            create_admin()
+            create_admin(),
         )->assertNotFound();
     }
 }

@@ -19,7 +19,7 @@ class Streamer
     public function __construct(
         private readonly Song $song,
         private ?StreamerAdapter $adapter = null,
-        private readonly ?RequestedStreamingConfig $config = null
+        private readonly ?RequestedStreamingConfig $config = null,
     ) {
         $this->adapter ??= $this->resolveAdapter();
     }
@@ -40,7 +40,7 @@ class Streamer
             SongStorageType::LOCAL => app(LocalStreamerAdapter::class),
             SongStorageType::SFTP => app(SftpStreamerAdapter::class),
             SongStorageType::S3, SongStorageType::S3_LAMBDA => app(S3CompatibleStreamerAdapter::class),
-            SongStorageType::DROPBOX => app(DropboxStreamerAdapter::class)
+            SongStorageType::DROPBOX => app(DropboxStreamerAdapter::class),
         };
     }
 

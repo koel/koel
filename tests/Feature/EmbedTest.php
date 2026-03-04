@@ -23,7 +23,7 @@ class EmbedTest extends TestCase
         $this
             ->postAs('api/embeds/resolve', [
                 'embeddable_id' => $song->id,
-                'embeddable_type' => 'playable'
+                'embeddable_type' => 'playable',
             ])
             ->assertSuccessful()
             ->assertJsonStructure(EmbedResource::JSON_STRUCTURE);
@@ -36,7 +36,7 @@ class EmbedTest extends TestCase
 
         $this->postAs('api/embeds/resolve', [
             'embeddable_id' => $playlist->id,
-            'embeddable_type' => 'playlist'
+            'embeddable_type' => 'playlist',
         ])->assertForbidden();
     }
 
@@ -46,7 +46,7 @@ class EmbedTest extends TestCase
         $jsonStructure = [
             'embed' => EmbedResource::JSON_PUBLIC_STRUCTURE,
             'options' => EmbedOptionsResource::JSON_STRUCTURE,
-            'theme'
+            'theme',
         ];
 
         /** @var Embed $embed */

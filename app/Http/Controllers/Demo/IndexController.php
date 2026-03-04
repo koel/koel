@@ -16,7 +16,7 @@ class IndexController extends Controller
         }
 
         return view('index', [
-            'demo_account' => request()->session()->get('demo_account')
+            'demo_account' => request()->session()->get('demo_account'),
         ]);
     }
 }

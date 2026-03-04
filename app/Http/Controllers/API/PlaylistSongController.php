@@ -23,9 +23,8 @@ class PlaylistSongController extends Controller
     public function __construct(
         private readonly SongRepository $songRepository,
         private readonly PlaylistService $playlistService,
-        private readonly Authenticatable $user
-    ) {
-    }
+        private readonly Authenticatable $user,
+    ) {}
 
     public function index(Playlist $playlist)
     {
@@ -51,7 +50,7 @@ class PlaylistSongController extends Controller
         return self::createResourceCollection($this->playlistService->addPlayablesToPlaylist(
             $playlist,
             $playables,
-            $this->user
+            $this->user,
         ));
     }
 

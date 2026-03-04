@@ -29,12 +29,12 @@ class RadioStationUpdateRequest extends Request
                         return $query->where('user_id', $this->user()->id);
                     })
                     ->ignore($this->route('station')->id), // @phpstan-ignore-line
-                app(ValidRadioStationUrl::class)
+                app(ValidRadioStationUrl::class),
             ],
             'name' => ['required', 'string', 'max:191'],
             'logo' => ['nullable', 'sometimes', new ValidImageData()],
             'description' => ['string', 'sometimes', 'nullable'],
-            'is_public' => ['boolean']
+            'is_public' => ['boolean'],
         ];
     }
 
@@ -45,7 +45,7 @@ class RadioStationUpdateRequest extends Request
             url: $this->url,
             description: $this->string('description'),
             logo: $this->has('logo') ? $this->string('logo') : null,
-            isPublic: $this->boolean('is_public')
+            isPublic: $this->boolean('is_public'),
         );
     }
 }

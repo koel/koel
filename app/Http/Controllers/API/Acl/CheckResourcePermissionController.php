@@ -15,7 +15,7 @@ class CheckResourcePermissionController extends Controller
             type: $type,
             id: $id,
             action: $action,
-            allowed: $acl->checkPermission(PermissionableResourceType::from($type), $id, $action)
+            allowed: $acl->checkPermission(PermissionableResourceType::from($type), $id, $action),
         );
     }
 }

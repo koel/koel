@@ -20,7 +20,7 @@ class PlaylistFactory extends Factory
             'name' => $this->faker->name,
             'rules' => null,
             'description' => $this->faker->realText(),
-            'cover' => Ulid::generate() . '.webp'
+            'cover' => Ulid::generate() . '.webp',
         ];
     }
 
@@ -36,11 +36,11 @@ class PlaylistFactory extends Factory
                             'id' => Str::uuid()->toString(),
                             'model' => 'artist.name',
                             'operator' => 'is',
-                            'value' => ['foo']
-                        ])
-                    ]
-                ])
-            ])
+                            'value' => ['foo'],
+                        ]),
+                    ],
+                ]),
+            ]),
         ]);
     }
 

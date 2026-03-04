@@ -8,7 +8,6 @@ abstract class DemoConstraint
 {
     public function __construct(
         public int $code = Response::HTTP_FORBIDDEN,
-        public bool $allowAdminOverride = true
-    ) {
-    }
+        public bool $allowAdminOverride = true,
+    ) {}
 }

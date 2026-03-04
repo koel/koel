@@ -8,9 +8,8 @@ final class ArtistUpdateData implements Arrayable
 {
     private function __construct(
         public string $name,
-        public ?string $image
-    ) {
-    }
+        public ?string $image,
+    ) {}
 
     public static function make(string $name, ?string $image = null): self
     {
@@ -22,7 +21,7 @@ final class ArtistUpdateData implements Arrayable
     {
         return [
             'name' => $this->name,
-            'cover' => $this->image
+            'cover' => $this->image,
         ];
     }
 }

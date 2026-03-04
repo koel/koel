@@ -25,9 +25,9 @@ class UserInvitationTest extends TestCase
                 'api/invitations',
                 [
                     'emails' => ['foo@bar.io', 'bar@baz.ai'],
-                    'role' => 'admin'
+                    'role' => 'admin',
                 ],
-                create_admin()
+                create_admin(),
             )
             ->assertSuccessful()
             ->assertJsonStructure([0 => UserProspectResource::JSON_STRUCTURE]);
@@ -43,9 +43,9 @@ class UserInvitationTest extends TestCase
                 'api/invitations',
                 [
                     'emails' => ['foo@bar.io', 'bar@baz.ai'],
-                    'role' => 'admin'
+                    'role' => 'admin',
                 ],
-                create_manager()
+                create_manager(),
             )
             ->assertUnprocessable()
             ->assertJsonValidationErrors('role');
@@ -59,9 +59,9 @@ class UserInvitationTest extends TestCase
                 'api/invitations',
                 [
                     'emails' => ['foo@bar.io', 'bar@baz.ai'],
-                    'role' => 'manager'
+                    'role' => 'manager',
                 ],
-                create_admin()
+                create_admin(),
             )
             ->assertUnprocessable()
             ->assertJsonValidationErrors('role');
@@ -74,7 +74,7 @@ class UserInvitationTest extends TestCase
 
         $this->postAs('api/invitations', [
             'emails' => ['foo@bar.io', 'bar@baz.ai'],
-            'role' => 'user'
+            'role' => 'user',
         ])->assertForbidden();
 
         Mail::assertNothingQueued();
@@ -120,7 +120,7 @@ class UserInvitationTest extends TestCase
             ->post('api/invitations/accept', [
                 'token' => $prospect->invitation_token,
                 'name' => 'Bruce Dickinson',
-                'password' => 'SuperSecretPassword'
+                'password' => 'SuperSecretPassword',
             ])
             ->assertSuccessful()
             ->assertJsonStructure(['token', 'audio-token']);
@@ -134,7 +134,7 @@ class UserInvitationTest extends TestCase
     {
         return User::factory()->for(create_admin(), 'invitedBy')->create([
             'invitation_token' => Str::uuid()->toString(),
-            'invited_at' => now()
+            'invited_at' => now(),
         ]);
     }
 }

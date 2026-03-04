@@ -9,9 +9,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 readonly class DeletePodcastIfNoSubscribers implements ShouldQueue
 {
     public function __construct(
-        private PodcastService $podcastService
-    ) {
-    }
+        private PodcastService $podcastService,
+    ) {}
 
     public function handle(UserUnsubscribedFromPodcast $event): void
     {

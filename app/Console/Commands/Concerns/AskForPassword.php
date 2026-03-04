@@ -27,10 +27,8 @@ trait AskForPassword
     }
 
     private function comparePasswords(
-        #[SensitiveParameter]
-        ?string $password,
-        #[SensitiveParameter]
-        ?string $confirmedPassword
+        #[SensitiveParameter] ?string $password,
+        #[SensitiveParameter] ?string $confirmedPassword,
     ): bool {
         if (!$password || !$confirmedPassword) {
             return false;

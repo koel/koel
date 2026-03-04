@@ -22,7 +22,7 @@ class PlaylistCollaborationTest extends PlusTestCase
         $this->postAs(
             "api/playlists/{$playlist->id}/collaborators/invite",
             [],
-            $playlist->owner
+            $playlist->owner,
         )->assertJsonStructure(PlaylistCollaborationTokenResource::JSON_STRUCTURE);
     }
 
@@ -36,7 +36,7 @@ class PlaylistCollaborationTest extends PlusTestCase
         $this->postAs(
             'api/playlists/collaborators/accept',
             ['token' => $token->token],
-            $user
+            $user,
         )->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
 
         self::assertTrue($token->playlist->hasCollaborator($user));
@@ -54,7 +54,7 @@ class PlaylistCollaborationTest extends PlusTestCase
         $this->deleteAs(
             "api/playlists/{$playlist->id}/collaborators",
             ['collaborator' => $user->public_id],
-            $playlist->owner
+            $playlist->owner,
         );
 
         self::assertFalse($playlist->refresh()->hasCollaborator($user));

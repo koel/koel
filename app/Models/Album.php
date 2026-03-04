@@ -80,7 +80,7 @@ class Album extends Model implements AuditableContract, Embeddable, Favoriteable
                 'artist_id' => $artist->id,
                 'artist_name' => $artist->name,
                 'user_id' => $artist->user_id,
-                'name' => trim($name) ?: self::UNKNOWN_NAME
+                'name' => trim($name) ?: self::UNKNOWN_NAME,
             ]);
     }
 
@@ -110,7 +110,7 @@ class Album extends Model implements AuditableContract, Embeddable, Favoriteable
         $array = [
             'id' => $this->id,
             'user_id' => $this->user_id,
-            'name' => $this->name
+            'name' => $this->name,
         ];
 
         if (

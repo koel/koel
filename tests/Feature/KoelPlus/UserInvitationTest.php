@@ -22,9 +22,9 @@ class UserInvitationTest extends PlusTestCase
                 'api/invitations',
                 [
                     'emails' => ['foo@bar.io', 'bar@baz.ai'],
-                    'role' => 'manager'
+                    'role' => 'manager',
                 ],
-                create_admin()
+                create_admin(),
             )
             ->assertSuccessful()
             ->assertJsonStructure([0 => UserProspectResource::JSON_STRUCTURE]);

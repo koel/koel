@@ -13,14 +13,14 @@ final class ArtistInformation implements Arrayable
         'image',
         'bio' => [
             'summary',
-            'full'
-        ]
+            'full',
+        ],
     ];
 
     private function __construct(
         public ?string $url,
         public ?string $image,
-        public array $bio
+        public array $bio,
     ) {
         $purifier = new HTMLPurifier();
 
@@ -31,7 +31,7 @@ final class ArtistInformation implements Arrayable
     public static function make(
         ?string $url = null,
         ?string $image = null,
-        array $bio = ['summary' => '', 'full' => '']
+        array $bio = ['summary' => '', 'full' => ''],
     ): self {
         return new self($url, $image, $bio);
     }
@@ -46,8 +46,8 @@ final class ArtistInformation implements Arrayable
             image: Arr::get($summary, 'thumbnail.source'),
             bio: [
                 'summary' => Arr::get($summary, 'extract', ''),
-                'full' => Arr::get($summary, 'extract_html', '')
-            ]
+                'full' => Arr::get($summary, 'extract_html', ''),
+            ],
         );
     }
 
@@ -57,7 +57,7 @@ final class ArtistInformation implements Arrayable
         return [
             'url' => $this->url,
             'image' => $this->image,
-            'bio' => $this->bio
+            'bio' => $this->bio,
         ];
     }
 }

@@ -22,7 +22,7 @@ class EmbedTest extends PlusTestCase
         $jsonStructure = [
             'embed' => EmbedResource::JSON_PUBLIC_STRUCTURE,
             'options' => EmbedOptionsResource::JSON_STRUCTURE,
-            'theme' => ThemeResource::JSON_STRUCTURE
+            'theme' => ThemeResource::JSON_STRUCTURE,
         ];
 
         /** @var Embed $embed */

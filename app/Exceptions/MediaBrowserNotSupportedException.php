@@ -4,6 +4,4 @@ namespace App\Exceptions;
 
 use DomainException;
 
-class MediaBrowserNotSupportedException extends DomainException
-{
-}
+class MediaBrowserNotSupportedException extends DomainException {}

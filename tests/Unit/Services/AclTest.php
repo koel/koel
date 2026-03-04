@@ -53,7 +53,7 @@ class AclTest extends TestCase
             $type,
             $subject->{$modelClass::getPermissionableIdentifier()}, // @phpstan-ignore-line
             'edit',
-            $user
+            $user,
         ));
     }
 

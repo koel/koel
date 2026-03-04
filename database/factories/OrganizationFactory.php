@@ -18,7 +18,7 @@ class OrganizationFactory extends Factory
     {
         return [
             'name' => $this->faker->company(),
-            'slug' => Ulid::generate()
+            'slug' => Ulid::generate(),
         ];
     }
 }

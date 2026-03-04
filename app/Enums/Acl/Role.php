@@ -18,7 +18,7 @@ enum Role: string implements Arrayable
         return match ($this) {
             self::ADMIN => 'Admin',
             self::MANAGER => 'Manager',
-            self::USER => 'User'
+            self::USER => 'User',
         };
     }
 
@@ -32,7 +32,7 @@ enum Role: string implements Arrayable
         return match ($this) {
             self::ADMIN => 3,
             self::MANAGER => 2,
-            self::USER => 1
+            self::USER => 1,
         };
     }
 
@@ -56,7 +56,7 @@ enum Role: string implements Arrayable
         return match ($this) {
             self::ADMIN, self::USER => true,
             // @mago-ignore lint:prefer-first-class-callable
-            self::MANAGER => once(static fn() => License::isPlus())
+            self::MANAGER => once(static fn() => License::isPlus()),
         };
     }
 
@@ -83,7 +83,7 @@ enum Role: string implements Arrayable
                 : 'Managers can manage users and perform other management tasks.',
             self::USER => $isCommunity
                 ? 'Users can play music and manage their own playlists.'
-                : 'Users can upload and manage their own music.'
+                : 'Users can upload and manage their own music.',
         };
     }
 
@@ -95,7 +95,7 @@ enum Role: string implements Arrayable
             'label' => $this->label(),
             'level' => $this->level(),
             'is_default' => $this === self::default(),
-            'description' => $this->description()
+            'description' => $this->description(),
         ];
     }
 }

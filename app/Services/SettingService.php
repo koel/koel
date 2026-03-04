@@ -10,9 +10,8 @@ use Illuminate\Support\Arr;
 class SettingService
 {
     public function __construct(
-        private readonly ImageStorage $imageStorage
-    ) {
-    }
+        private readonly ImageStorage $imageStorage,
+    ) {}
 
     public function getBranding(): Branding
     {

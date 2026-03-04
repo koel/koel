@@ -18,12 +18,12 @@ class ArtistBuilder extends FavoriteableBuilder
 
     public const SORT_COLUMNS_NORMALIZE_MAP = [
         'name' => 'artists.name',
-        'created_at' => 'artists.created_at'
+        'created_at' => 'artists.created_at',
     ];
 
     private const VALID_SORT_COLUMNS = [
         'artists.name',
-        'artists.created_at'
+        'artists.created_at',
     ];
 
     public function onlyStandard(): self
@@ -54,7 +54,7 @@ class ArtistBuilder extends FavoriteableBuilder
                     $owner->where('organization_id', $this->user->organization_id)->where(
                         'owner_id',
                         '<>',
-                        $this->user->id
+                        $this->user->id,
                     );
                 });
             });
@@ -74,7 +74,7 @@ class ArtistBuilder extends FavoriteableBuilder
             ->join('interactions', function (JoinClause $join): void {
                 $join->on('interactions.song_id', 'songs_for_playcount.id')->where(
                     'interactions.user_id',
-                    $this->user->id
+                    $this->user->id,
                 );
             })
             ->groupBy($groupColumns)
@@ -102,7 +102,7 @@ class ArtistBuilder extends FavoriteableBuilder
         User $user,
         bool $includeFavoriteStatus = true,
         bool $favoritesOnly = false,
-        bool $includePlayCount = false
+        bool $includePlayCount = false,
     ): self {
         $this->user = $user;
 

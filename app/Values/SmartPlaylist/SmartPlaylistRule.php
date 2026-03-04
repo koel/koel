@@ -56,7 +56,7 @@ final class SmartPlaylistRule implements Arrayable
             'id' => $this->id,
             'model' => $this->model->value,
             'operator' => $this->operator->value,
-            'value' => $this->value
+            'value' => $this->value,
         ];
     }
 

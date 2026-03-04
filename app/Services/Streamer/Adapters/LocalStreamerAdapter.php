@@ -2,6 +2,4 @@
 
 namespace App\Services\Streamer\Adapters;
 
-abstract class LocalStreamerAdapter implements StreamerAdapter
-{
-}
+abstract class LocalStreamerAdapter implements StreamerAdapter {}

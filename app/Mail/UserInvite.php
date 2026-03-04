@@ -15,15 +15,14 @@ class UserInvite extends Mailable
     use SerializesModels;
 
     public function __construct(
-        private readonly User $invitee
-    ) {
-    }
+        private readonly User $invitee,
+    ) {}
 
     public function content(): Content
     {
         return new Content(markdown: 'emails.users.invite', with: [
             'invitee' => $this->invitee,
-            'url' => url("/#/invitation/accept/{$this->invitee->invitation_token}")
+            'url' => url("/#/invitation/accept/{$this->invitee->invitation_token}"),
         ]);
     }
 

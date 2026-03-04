@@ -16,23 +16,23 @@ class AuthTest extends TestCase
     {
         create_user([
             'email' => 'koel@koel.dev',
-            'password' => Hash::make('secret')
+            'password' => Hash::make('secret'),
         ]);
 
         $this
             ->post('api/me', [
                 'email' => 'koel@koel.dev',
-                'password' => 'secret'
+                'password' => 'secret',
             ])
             ->assertOk()
             ->assertJsonStructure([
                 'token',
-                'audio-token'
+                'audio-token',
             ]);
 
         $this->post('api/me', [
             'email' => 'koel@koel.dev',
-            'password' => 'wrong-secret'
+            'password' => 'wrong-secret',
         ])->assertUnauthorized();
     }
 
@@ -48,7 +48,7 @@ class AuthTest extends TestCase
             ->assertOk()
             ->assertJsonStructure([
                 'token',
-                'audio-token'
+                'audio-token',
             ]);
     }
 
@@ -57,12 +57,12 @@ class AuthTest extends TestCase
     {
         $user = create_user([
             'email' => 'koel@koel.dev',
-            'password' => Hash::make('secret')
+            'password' => Hash::make('secret'),
         ]);
 
         $response = $this->post('api/me', [
             'email' => 'koel@koel.dev',
-            'password' => 'secret'
+            'password' => 'secret',
         ]);
 
         self::assertSame(2, $user->tokens()->count()); // 1 for API, 1 for audio token

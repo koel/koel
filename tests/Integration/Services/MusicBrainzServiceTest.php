@@ -56,7 +56,7 @@ class MusicBrainzServiceTest extends TestCase
         $this->mockPipelinePipe(
             GetWikipediaPageSummaryUsingPageTitle::class,
             'Skid Row (American band)',
-            File::json(test_path('fixtures/wikipedia/artist-page-summary.json'))
+            File::json(test_path('fixtures/wikipedia/artist-page-summary.json')),
         );
 
         /** @var Artist $artist */
@@ -70,10 +70,10 @@ class MusicBrainzServiceTest extends TestCase
                 'image' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/2023_Sweden_Rock_-_3330_%2853049443466%29.jpg/330px-2023_Sweden_Rock_-_3330_%2853049443466%29.jpg',
                 'bio' => [
                     'summary' => 'Skid Row is an American rock band formed in 1986…',
-                    'full' => '<p><b>Skid Row</b> is an American rock band formed in 1986…</p>'
-                ]
+                    'full' => '<p><b>Skid Row</b> is an American rock band formed in 1986…</p>',
+                ],
             ],
-            $info->toArray()
+            $info->toArray(),
         );
     }
 
@@ -85,7 +85,7 @@ class MusicBrainzServiceTest extends TestCase
         $this->mockPipelinePipe(
             GetArtistWikidataIdUsingMbid::class,
             'sample-mbid',
-            new Exception('Something went wrong')
+            new Exception('Something went wrong'),
         );
 
         /** @var Artist $artist */
@@ -109,9 +109,9 @@ class MusicBrainzServiceTest extends TestCase
             GetReleaseAndReleaseGroupMbidsForAlbum::class,
             [
                 'album' => 'Slave to the Grind',
-                'artist' => 'Skid Row'
+                'artist' => 'Skid Row',
             ],
-            ['sample-album-mbid', 'sample-release-group-mbid']
+            ['sample-album-mbid', 'sample-release-group-mbid'],
         );
 
         $this->mockPipelinePipe(GetAlbumTracksUsingMbid::class, 'sample-album-mbid', $tracks);
@@ -121,7 +121,7 @@ class MusicBrainzServiceTest extends TestCase
         $this->mockPipelinePipe(
             GetWikipediaPageSummaryUsingPageTitle::class,
             'Slave to the Grind',
-            File::json(test_path('fixtures/wikipedia/album-page-summary.json'))
+            File::json(test_path('fixtures/wikipedia/album-page-summary.json')),
         );
 
         $user = create_user();
@@ -133,7 +133,7 @@ class MusicBrainzServiceTest extends TestCase
             ->albums() // @phpstan-ignore-line
             ->create([
                 'name' => 'Slave to the Grind',
-                'user_id' => $user->id
+                'user_id' => $user->id,
             ]);
 
         self::assertInstanceOf(AlbumInformation::class, $this->service->getAlbumInformation($album));
@@ -148,9 +148,9 @@ class MusicBrainzServiceTest extends TestCase
             GetReleaseAndReleaseGroupMbidsForAlbum::class,
             [
                 'album' => 'Slave to the Grind',
-                'artist' => 'Skid Row'
+                'artist' => 'Skid Row',
             ],
-            ['sample-album-mbid', 'sample-release-group-mbid']
+            ['sample-album-mbid', 'sample-release-group-mbid'],
         );
 
         $this->mockPipelinePipe(GetAlbumTracksUsingMbid::class, 'sample-album-mbid', new Exception('Oopsie'));
@@ -164,7 +164,7 @@ class MusicBrainzServiceTest extends TestCase
             ->albums() // @phpstan-ignore-line
             ->create([
                 'name' => 'Slave to the Grind',
-                'user_id' => $user->id
+                'user_id' => $user->id,
             ]);
 
         self::assertNull($this->service->getAlbumInformation($album));

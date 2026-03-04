@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6acb1f85c0c22d89edba045a445b8993",
+    "content-hash": "ba9f94f04cb5ff6eb396e0a047f79b96",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -233,16 +233,16 @@
         },
         {
             "name": "azjezz/psl",
-            "version": "4.3.0",
+            "version": "3.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/azjezz/psl.git",
-                "reference": "74c95be0214eb7ea39146ed00ac4eb71b45d787b"
+                "reference": "78078f2c505473d2a28319ffe426b2a82ac76790"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/azjezz/psl/zipball/74c95be0214eb7ea39146ed00ac4eb71b45d787b",
-                "reference": "74c95be0214eb7ea39146ed00ac4eb71b45d787b",
+                "url": "https://api.github.com/repos/azjezz/psl/zipball/78078f2c505473d2a28319ffe426b2a82ac76790",
+                "reference": "78078f2c505473d2a28319ffe426b2a82ac76790",
                 "shasum": ""
             },
             "require": {
@@ -251,15 +251,17 @@
                 "ext-json": "*",
                 "ext-mbstring": "*",
                 "ext-sodium": "*",
-                "php": "~8.3.0 || ~8.4.0 || ~8.5.0",
-                "revolt/event-loop": "^1.0.7"
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0",
+                "revolt/event-loop": "^1.0.6"
             },
             "require-dev": {
-                "carthage-software/mago": "^1.6.0",
-                "infection/infection": "^0.31.2",
+                "carthage-software/mago": "~0.13.1",
                 "php-coveralls/php-coveralls": "^2.7.0",
-                "phpbench/phpbench": "^1.4.0",
-                "phpunit/phpunit": "^9.6.22"
+                "php-standard-library/psalm-plugin": "^2.3.0",
+                "phpbench/phpbench": "^1.2.15",
+                "phpunit/phpunit": "^9.6.18",
+                "roave/infection-static-analysis-plugin": "^1.36.0",
+                "vimeo/psalm": "^6.0.0"
             },
             "suggest": {
                 "php-standard-library/phpstan-extension": "PHPStan integration",
@@ -293,19 +295,15 @@
             "description": "PHP Standard Library",
             "support": {
                 "issues": "https://github.com/azjezz/psl/issues",
-                "source": "https://github.com/azjezz/psl/tree/4.3.0"
+                "source": "https://github.com/azjezz/psl/tree/3.3.0"
             },
             "funding": [
                 {
                     "url": "https://github.com/azjezz",
                     "type": "github"
-                },
-                {
-                    "url": "https://github.com/veewee",
-                    "type": "github"
                 }
             ],
-            "time": "2026-02-24T01:58:53+00:00"
+            "time": "2025-03-03T00:07:00+00:00"
         },
         {
             "name": "brick/math",
@@ -7477,24 +7475,23 @@
         },
         {
             "name": "spatie/macroable",
-            "version": "2.1.0",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/macroable.git",
-                "reference": "2967f69810ba4df158391665c0850010b9d1507c"
+                "reference": "ec2c320f932e730607aff8052c44183cf3ecb072"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/macroable/zipball/2967f69810ba4df158391665c0850010b9d1507c",
-                "reference": "2967f69810ba4df158391665c0850010b9d1507c",
+                "url": "https://api.github.com/repos/spatie/macroable/zipball/ec2c320f932e730607aff8052c44183cf3ecb072",
+                "reference": "ec2c320f932e730607aff8052c44183cf3ecb072",
                 "shasum": ""
             },
             "require": {
-                "php": "^8.3"
+                "php": "^8.0"
             },
             "require-dev": {
-                "pestphp/pest": "^4",
-                "phpunit/phpunit": "^12"
+                "phpunit/phpunit": "^8.0|^9.3"
             },
             "type": "library",
             "autoload": {
@@ -7522,9 +7519,9 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/macroable/issues",
-                "source": "https://github.com/spatie/macroable/tree/2.1.0"
+                "source": "https://github.com/spatie/macroable/tree/2.0.0"
             },
-            "time": "2026-01-30T17:13:34+00:00"
+            "time": "2021-03-26T22:39:02+00:00"
         },
         {
             "name": "spatie/ray",
@@ -10662,37 +10659,34 @@
         },
         {
             "name": "veewee/xml",
-            "version": "3.4.0",
+            "version": "3.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/veewee/xml.git",
-                "reference": "8799d7b81b60759b9776c10b8047a7e1ae364800"
+                "reference": "6ae6b154d64d427bf1b2840b40c23131eb1feba5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/veewee/xml/zipball/8799d7b81b60759b9776c10b8047a7e1ae364800",
-                "reference": "8799d7b81b60759b9776c10b8047a7e1ae364800",
+                "url": "https://api.github.com/repos/veewee/xml/zipball/6ae6b154d64d427bf1b2840b40c23131eb1feba5",
+                "reference": "6ae6b154d64d427bf1b2840b40c23131eb1feba5",
                 "shasum": ""
             },
             "require": {
-                "azjezz/psl": "^3.0 || ^4.0",
+                "azjezz/psl": "^3.0",
                 "ext-dom": "*",
                 "ext-libxml": "*",
                 "ext-xml": "*",
                 "ext-xmlreader": "*",
                 "ext-xmlwriter": "*",
                 "ext-xsl": "*",
-                "php": "~8.3.0 || ~8.4.0 || ~8.5.0",
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0",
                 "webmozart/assert": "^1.10"
             },
             "require-dev": {
-                "infection/infection": "^0.31.7",
-                "php-cs-fixer/shim": "~3.88",
                 "php-standard-library/psalm-plugin": "^2.2",
-                "phpunit/phpunit": "~12.3",
-                "symfony/finder": "^6.1 || ^7.0",
+                "symfony/finder": "^6.1",
                 "veewee/composer-run-parallel": "^1.0.0",
-                "vimeo/psalm": "~6.13"
+                "vimeo/psalm": "^5.4"
             },
             "type": "library",
             "autoload": {
@@ -10730,7 +10724,7 @@
             ],
             "support": {
                 "issues": "https://github.com/veewee/xml/issues",
-                "source": "https://github.com/veewee/xml/tree/3.4.0"
+                "source": "https://github.com/veewee/xml/tree/3.3.0"
             },
             "funding": [
                 {
@@ -10738,7 +10732,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-10-15T08:12:16+00:00"
+            "time": "2024-10-25T06:12:30+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -14987,5 +14981,8 @@
         "ext-simplexml": "*"
     },
     "platform-dev": {},
+    "platform-overrides": {
+        "php": "8.2.0"
+    },
     "plugin-api-version": "2.9.0"
 }

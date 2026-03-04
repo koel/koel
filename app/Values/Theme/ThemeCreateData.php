@@ -11,9 +11,8 @@ final readonly class ThemeCreateData
         public string $bgImage,
         public string $highlightColor,
         public string $fontFamily,
-        public float $fontSize = 13
-    ) {
-    }
+        public float $fontSize = 13,
+    ) {}
 
     public static function make(
         string $name,
@@ -22,7 +21,7 @@ final readonly class ThemeCreateData
         string $bgImage,
         string $highlightColor,
         string $fontFamily,
-        float $fontSize
+        float $fontSize,
     ): self {
         return new self(
             name: $name,
@@ -31,7 +30,7 @@ final readonly class ThemeCreateData
             bgImage: $bgImage,
             highlightColor: $highlightColor,
             fontFamily: $fontFamily,
-            fontSize: $fontSize
+            fontSize: $fontSize,
         );
     }
 }

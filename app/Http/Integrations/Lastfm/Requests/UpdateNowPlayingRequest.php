@@ -19,9 +19,8 @@ final class UpdateNowPlayingRequest extends Request implements HasBody, Requires
 
     public function __construct(
         private readonly Song $song,
-        private readonly User $user
-    ) {
-    }
+        private readonly User $user,
+    ) {}
 
     public function resolveEndpoint(): string
     {
@@ -36,7 +35,7 @@ final class UpdateNowPlayingRequest extends Request implements HasBody, Requires
             'artist' => $this->song->artist->name,
             'track' => $this->song->title,
             'duration' => $this->song->length,
-            'sk' => $this->user->preferences->lastFmSessionKey
+            'sk' => $this->user->preferences->lastFmSessionKey,
         ];
 
         if ($this->song->album->name !== Album::UNKNOWN_NAME) {

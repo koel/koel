@@ -23,7 +23,7 @@ class FetchArtworkCommand extends Command
     protected $description = 'Attempt to fetch artist and album artworks from available sources.';
 
     public function __construct(
-        private readonly EncyclopediaService $encyclopedia
+        private readonly EncyclopediaService $encyclopedia,
     ) {
         parent::__construct();
     }

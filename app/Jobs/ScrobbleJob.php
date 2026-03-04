@@ -11,9 +11,8 @@ class ScrobbleJob extends QueuedJob
     public function __construct(
         public User $user,
         public Song $song,
-        public int $timestamp
-    ) {
-    }
+        public int $timestamp,
+    ) {}
 
     public function handle(LastfmService $lastfmService): void
     {

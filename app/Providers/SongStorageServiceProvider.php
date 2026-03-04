@@ -18,7 +18,7 @@ class SongStorageServiceProvider extends ServiceProvider
                 's3' => S3CompatibleStorage::class,
                 'dropbox' => DropboxStorage::class,
                 'sftp' => SftpStorage::class,
-                default => LocalStorage::class
+                default => LocalStorage::class,
             };
 
             return $this->app->make($concrete);

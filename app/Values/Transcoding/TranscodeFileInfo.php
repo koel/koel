@@ -9,9 +9,8 @@ class TranscodeFileInfo
 {
     public function __construct(
         public readonly string $location,
-        public readonly SongStorageType $storage
-    ) {
-    }
+        public readonly SongStorageType $storage,
+    ) {}
 
     public static function make(string $location, SongStorageType $storageType): self
     {

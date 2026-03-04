@@ -26,7 +26,7 @@ abstract class FavoriteableBuilder extends Builder
 
             $join->on('favorites.favoriteable_id', $joinColumn)->where(
                 'favorites.favoriteable_type',
-                $this->getModel()->getMorphClass()
+                $this->getModel()->getMorphClass(),
             )->where('favorites.user_id', $this->user->id);
         });
 

@@ -21,9 +21,9 @@ class BrandingSettingTest extends PlusTestCase
             [
                 'name' => 'Little Bird',
                 'logo' => minimal_base64_encoded_image(),
-                'cover' => minimal_base64_encoded_image()
+                'cover' => minimal_base64_encoded_image(),
             ],
-            create_admin()
+            create_admin(),
         )->assertNoContent();
 
         $branding = Setting::get('branding');
@@ -39,7 +39,7 @@ class BrandingSettingTest extends PlusTestCase
         Setting::set('branding', [
             'name' => 'Koel',
             'logo' => 'old-logo.png',
-            'cover' => 'old-cover.png'
+            'cover' => 'old-cover.png',
         ]);
 
         $this->putAs(
@@ -47,9 +47,9 @@ class BrandingSettingTest extends PlusTestCase
             [
                 'name' => 'Little Bird',
                 'logo' => image_storage_url('old-logo.png'),
-                'cover' => image_storage_url('old-cover.png')
+                'cover' => image_storage_url('old-cover.png'),
             ],
-            create_admin()
+            create_admin(),
         )->assertNoContent();
 
         $branding = Setting::get('branding');
@@ -65,7 +65,7 @@ class BrandingSettingTest extends PlusTestCase
         Setting::set('branding', [
             'name' => 'Koel',
             'logo' => 'old-logo.png',
-            'cover' => 'old-cover.png'
+            'cover' => 'old-cover.png',
         ]);
 
         $this->putAs(
@@ -73,9 +73,9 @@ class BrandingSettingTest extends PlusTestCase
             [
                 'name' => 'Little Bird',
                 'logo' => minimal_base64_encoded_image(),
-                'cover' => minimal_base64_encoded_image()
+                'cover' => minimal_base64_encoded_image(),
             ],
-            create_admin()
+            create_admin(),
         )->assertNoContent();
 
         $branding = Setting::get('branding');
@@ -95,9 +95,9 @@ class BrandingSettingTest extends PlusTestCase
             [
                 'name' => 'Little Bird',
                 'logo' => minimal_base64_encoded_image(),
-                'cover' => minimal_base64_encoded_image()
+                'cover' => minimal_base64_encoded_image(),
             ],
-            create_user()
+            create_user(),
         )->assertForbidden();
     }
 }

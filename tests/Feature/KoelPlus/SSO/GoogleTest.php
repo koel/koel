@@ -20,7 +20,7 @@ class GoogleTest extends PlusTestCase
             'getEmail' => 'bruce@iron.com',
             'getName' => 'Bruce Dickinson',
             'getAvatar' => 'https://lh3.googleusercontent.com/a/vatar',
-            'getId' => Str::random()
+            'getId' => Str::random(),
         ]);
 
         Socialite::expects('driver->user')->andReturn($googleUser);
@@ -40,7 +40,7 @@ class GoogleTest extends PlusTestCase
             'getEmail' => 'bruce@iron.com',
             'getName' => 'Bruce Dickinson',
             'getAvatar' => 'https://lh3.googleusercontent.com/a/vatar',
-            'getId' => Str::random()
+            'getId' => Str::random(),
         ]);
 
         Socialite::expects('driver->user')->andReturn($googleUser);
@@ -57,14 +57,14 @@ class GoogleTest extends PlusTestCase
         create_user([
             'sso_provider' => 'Google',
             'sso_id' => '123',
-            'email' => 'bruce@iron.com'
+            'email' => 'bruce@iron.com',
         ]);
 
         $googleUser = Mockery::mock(GoogleUser::class, [
             'getEmail' => 'bruce@iron.com',
             'getName' => 'Bruce Dickinson',
             'getAvatar' => 'https://lh3.googleusercontent.com/a/vatar',
-            'getId' => '123'
+            'getId' => '123',
         ]);
 
         Socialite::expects('driver->user')->andReturn($googleUser);

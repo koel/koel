@@ -21,9 +21,9 @@ trait SupportsDeleteWhereValueNotIn
     public static function deleteWhereValueNotIn(
         array $values,
         ?string $field = null,
-        ?Closure $queryModifier = null
+        ?Closure $queryModifier = null,
     ): void {
-        $field ??= ( new static() )->getKeyName();
+        $field ??= (new static())->getKeyName();
         $queryModifier ??= static fn(Builder $builder) => $builder;
 
         $maxChunkSize = DB::getDriverName() === 'sqlite' ? 999 : 65_535;
@@ -52,7 +52,7 @@ trait SupportsDeleteWhereValueNotIn
 
     public static function deleteByChunk(array $values, int $chunkSize = 65_535, ?string $field = null): void
     {
-        $field ??= ( new static() )->getKeyName();
+        $field ??= (new static())->getKeyName();
 
         DB::transaction(static function () use ($values, $field, $chunkSize): void {
             foreach (array_chunk($values, $chunkSize) as $chunk) {

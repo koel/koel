@@ -24,7 +24,7 @@ class UserTest extends TestCase
             'name' => 'Foo',
             'email' => 'bar@baz.com',
             'password' => 'secret',
-            'role' => 'user'
+            'role' => 'user',
         ])->assertForbidden();
     }
 
@@ -37,9 +37,9 @@ class UserTest extends TestCase
                 'name' => 'Foo',
                 'email' => 'bar@baz.com',
                 'password' => 'secret',
-                'role' => 'admin'
+                'role' => 'admin',
             ],
-            create_admin()
+            create_admin(),
         )->assertSuccessful();
 
         /** @var User $user */
@@ -61,9 +61,9 @@ class UserTest extends TestCase
                     'name' => 'Foo',
                     'email' => 'bar@baz.com',
                     'password' => 'secret',
-                    'role' => 'manager'
+                    'role' => 'manager',
                 ],
-                create_admin()
+                create_admin(),
             )
             ->assertUnprocessable()
             ->assertJsonValidationErrors(['role']);
@@ -79,9 +79,9 @@ class UserTest extends TestCase
                     'name' => 'Foo',
                     'email' => 'bar@baz.com',
                     'password' => 'secret',
-                    'role' => 'admin'
+                    'role' => 'admin',
                 ],
-                create_manager()
+                create_manager(),
             )
             ->assertUnprocessable()
             ->assertJsonValidationErrors(['role']);
@@ -98,9 +98,9 @@ class UserTest extends TestCase
                 'name' => 'Foo',
                 'email' => 'bar@baz.com',
                 'password' => 'new-secret',
-                'role' => 'user'
+                'role' => 'user',
             ],
-            create_manager()
+            create_manager(),
         )->assertForbidden();
     }
 
@@ -116,9 +116,9 @@ class UserTest extends TestCase
                 'name' => 'Foo',
                 'email' => 'bar@baz.com',
                 'password' => 'new-secret',
-                'role' => 'user'
+                'role' => 'user',
             ],
-            $admin
+            $admin,
         )->assertSuccessful();
 
         $user->refresh();
@@ -138,9 +138,9 @@ class UserTest extends TestCase
             ->putAs(
                 "api/users/{$manager->public_id}",
                 [
-                    'role' => 'admin'
+                    'role' => 'admin',
                 ],
-                create_manager()
+                create_manager(),
             )
             ->assertUnprocessable()
             ->assertJsonValidationErrors(['role']);
@@ -155,9 +155,9 @@ class UserTest extends TestCase
             ->putAs(
                 "api/users/{$manager->public_id}",
                 [
-                    'role' => 'manager'
+                    'role' => 'manager',
                 ],
-                create_manager()
+                create_manager(),
             )
             ->assertUnprocessable()
             ->assertJsonValidationErrors(['role']);
@@ -188,35 +188,35 @@ class UserTest extends TestCase
 
         $oldUserWithNoActivity = create_user([
             'created_at' => now()->subDays(30),
-            'email' => Ulid::generate() . '@demo.koel.dev'
+            'email' => Ulid::generate() . '@demo.koel.dev',
         ]);
 
         $oldUserWithOldActivity = create_user([
             'created_at' => now()->subDays(30),
-            'email' => Ulid::generate() . '@demo.koel.dev'
+            'email' => Ulid::generate() . '@demo.koel.dev',
         ]);
 
         Interaction::factory()->for($oldUserWithOldActivity)->create([
-            'last_played_at' => now()->subDays(14)
+            'last_played_at' => now()->subDays(14),
         ]);
 
         $oldUserWithNonDemoEmail = create_user([
             'created_at' => now()->subDays(30),
-            'email' => Ulid::generate() . '@example.com'
+            'email' => Ulid::generate() . '@example.com',
         ]);
 
         $oldUserWithNewActivity = create_user([
             'created_at' => now()->subDays(30),
-            'email' => Ulid::generate() . '@demo.koel.dev'
+            'email' => Ulid::generate() . '@demo.koel.dev',
         ]);
 
         Interaction::factory()->for($oldUserWithNewActivity)->create([
-            'last_played_at' => now()->subDays(6)
+            'last_played_at' => now()->subDays(6),
         ]);
 
         $newUser = create_user([
             'created_at' => now()->subDay(),
-            'email' => Ulid::generate() . '@demo.koel.dev'
+            'email' => Ulid::generate() . '@demo.koel.dev',
         ]);
 
         Artisan::call('model:prune');
@@ -235,7 +235,7 @@ class UserTest extends TestCase
     {
         $user = create_user([
             'created_at' => now()->subDays(30),
-            'email' => Ulid::generate() . '@demo.koel.dev'
+            'email' => Ulid::generate() . '@demo.koel.dev',
         ]);
 
         Artisan::call('model:prune');

@@ -32,9 +32,9 @@ class RadioServiceTest extends TestCase
                 url: 'https://example.com/stream',
                 name: 'Test Radio',
                 description: 'A test radio station',
-                isPublic: true
+                isPublic: true,
             ),
-            $user
+            $user,
         );
 
         self::assertSame('Test Radio', $station->name);
@@ -54,7 +54,7 @@ class RadioServiceTest extends TestCase
         $updatedStation = $this->service->updateRadioStation($station, RadioStationUpdateData::make(
             name: 'Updated Radio',
             url: 'https://example.com/new-stream',
-            description: 'An updated test radio station'
+            description: 'An updated test radio station',
         ));
 
         self::assertSame('Updated Radio', $updatedStation->name);

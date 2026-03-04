@@ -13,7 +13,7 @@ class FolderRepository extends Repository
     private static function getOnlyBrowsable(Collection|Folder $folders, ?User $user = null): Collection
     {
         return Collection::wrap($folders)->filter(static fn(Folder $folder) => $folder->browsableBy( // @phpstan-ignore-line
-            $user ?? auth()->user()
+            $user ?? auth()->user(),
         ));
     }
 

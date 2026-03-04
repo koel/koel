@@ -18,7 +18,7 @@ class DownloadPlaylistController extends Controller
         SongRepository $repository,
         SmartPlaylistService $smartPlaylistService,
         DownloadService $download,
-        Authenticatable $user
+        Authenticatable $user,
     ) {
         $this->authorize('download', $playlist);
 

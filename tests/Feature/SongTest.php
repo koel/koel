@@ -77,10 +77,10 @@ class SongTest extends TestCase
                     'album_name' => 'One by One',
                     'lyrics' => 'Lorem ipsum dolor sic amet.',
                     'track' => 1,
-                    'disc' => 2
-                ]
+                    'disc' => 2,
+                ],
             ],
-            create_admin()
+            create_admin(),
         )->assertOk();
 
         /** @var Artist|null $artist */
@@ -96,7 +96,7 @@ class SongTest extends TestCase
             'album_id' => $album->id,
             'lyrics' => 'Lorem ipsum dolor sic amet.',
             'track' => 1,
-            'disc' => 2
+            'disc' => 2,
         ]);
     }
 
@@ -117,10 +117,10 @@ class SongTest extends TestCase
                     'artist_name' => '',
                     'album_name' => 'One by One',
                     'lyrics' => 'Lorem ipsum dolor sic amet.',
-                    'track' => 1
-                ]
+                    'track' => 1,
+                ],
             ],
-            create_admin()
+            create_admin(),
         )->assertOk();
 
         // We don't expect the song's artist to change
@@ -144,10 +144,10 @@ class SongTest extends TestCase
                     'artist_name' => 'John Cena',
                     'album_name' => 'One by One',
                     'lyrics' => null,
-                    'track' => 9999
-                ]
+                    'track' => 9999,
+                ],
             ],
-            create_admin()
+            create_admin(),
         )->assertOk();
 
         /** @var Collection<array-key, Song> $songs */
@@ -185,10 +185,10 @@ class SongTest extends TestCase
                     'artist_name' => 'John Cena',
                     'album_name' => '',
                     'lyrics' => 'Lorem ipsum dolor sic amet.',
-                    'track' => 1
-                ]
+                    'track' => 1,
+                ],
             ],
-            create_admin()
+            create_admin(),
         )->assertOk();
 
         $songs = Song::query()
@@ -225,10 +225,10 @@ class SongTest extends TestCase
                     'album_artist_name' => 'John Lennon',
                     'lyrics' => 'Lorem ipsum dolor sic amet.',
                     'track' => 1,
-                    'disc' => 2
-                ]
+                    'disc' => 2,
+                ],
             ],
-            create_admin()
+            create_admin(),
         )->assertOk();
 
         /** @var Album $album */
@@ -246,7 +246,7 @@ class SongTest extends TestCase
             'album_id' => $album->id,
             'lyrics' => 'Lorem ipsum dolor sic amet.',
             'track' => 1,
-            'disc' => 2
+            'disc' => 2,
         ]);
 
         self::assertTrue($album->artist->is($albumArtist));
@@ -258,7 +258,7 @@ class SongTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create([
             'track' => 12,
-            'disc' => 2
+            'disc' => 2,
         ]);
 
         $this->putAs(
@@ -267,10 +267,10 @@ class SongTest extends TestCase
                 'songs' => [$song->id],
                 'data' => [
                     'track' => null,
-                    'disc' => null
-                ]
+                    'disc' => null,
+                ],
             ],
-            create_admin()
+            create_admin(),
         )->assertOk();
 
         $song->refresh();

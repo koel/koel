@@ -18,7 +18,7 @@ class ThemeStoreRequest extends Request
             'font_family' => 'string|sometimes|nullable',
             'font_size' => 'numeric|sometimes|nullable',
             'bg_image' => ['string', 'sometimes', 'nullable', new ValidImageData()],
-            'highlight_color' => 'string|sometimes|nullable'
+            'highlight_color' => 'string|sometimes|nullable',
         ];
     }
 
@@ -33,7 +33,7 @@ class ThemeStoreRequest extends Request
             bgImage: $this->string('bg_image'),
             highlightColor: $purifier->purify($this->string('highlight_color')),
             fontFamily: $purifier->purify($this->string('font_family')),
-            fontSize: $this->float('font_size')
+            fontSize: $this->float('font_size'),
         );
     }
 }

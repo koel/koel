@@ -32,7 +32,7 @@ class Util
         return match (substr($str, 0, 4)) {
             UTF32_BIG_ENDIAN_BOM => 'UTF-32BE',
             UTF32_LITTLE_ENDIAN_BOM => 'UTF-32LE',
-            default => null
+            default => null,
         };
     }
 }

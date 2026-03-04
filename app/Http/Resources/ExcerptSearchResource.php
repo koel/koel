@@ -9,24 +9,24 @@ class ExcerptSearchResource extends JsonResource
 {
     public const JSON_STRUCTURE = [
         'songs' => [
-            SongResource::JSON_STRUCTURE
+            SongResource::JSON_STRUCTURE,
         ],
         'artists' => [
-            ArtistResource::JSON_STRUCTURE
+            ArtistResource::JSON_STRUCTURE,
         ],
         'albums' => [
-            AlbumResource::JSON_STRUCTURE
+            AlbumResource::JSON_STRUCTURE,
         ],
         'podcasts' => [
-            PodcastResource::JSON_STRUCTURE
+            PodcastResource::JSON_STRUCTURE,
         ],
         'radio_stations' => [
-            RadioStationResource::JSON_STRUCTURE
-        ]
+            RadioStationResource::JSON_STRUCTURE,
+        ],
     ];
 
     public function __construct(
-        private readonly ExcerptSearchResult $result
+        private readonly ExcerptSearchResult $result,
     ) {
         parent::__construct($result);
     }
@@ -39,7 +39,7 @@ class ExcerptSearchResource extends JsonResource
             'artists' => ArtistResource::collection($this->result->artists),
             'albums' => AlbumResource::collection($this->result->albums),
             'podcasts' => PodcastResource::collection($this->result->podcasts),
-            'radio_stations' => RadioStationResource::collection($this->result->radioStations)
+            'radio_stations' => RadioStationResource::collection($this->result->radioStations),
         ];
     }
 }

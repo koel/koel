@@ -11,7 +11,7 @@ class SetLastfmSessionKeyRequest extends Request
     public function rules(): array
     {
         return [
-            'key' => 'required'
+            'key' => 'required',
         ];
     }
 }

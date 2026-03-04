@@ -46,7 +46,7 @@ class PlaylistFolderService
     public function getFolderForPlaylist(Playlist $playlist, ?User $user = null): ?PlaylistFolder
     {
         return $playlist->folders->firstWhere(static fn(PlaylistFolder $folder) => $folder->user->is(
-            $user ?? $playlist->owner
+            $user ?? $playlist->owner,
         ));
     }
 }

@@ -39,8 +39,8 @@ class DropboxStorageTest extends PlusTestCase
             'filesystems.disks.dropbox' => [
                 'app_key' => 'dropbox-key',
                 'app_secret' => 'dropbox-secret',
-                'refresh_token' => 'coca-cola'
-            ]
+                'refresh_token' => 'coca-cola',
+            ],
         ]);
 
         $this->client = $this->mock(Client::class);
@@ -133,7 +133,7 @@ class DropboxStorageTest extends PlusTestCase
 
         self::assertSame(
             'https://dropbox.com/song.mp3?token=123',
-            $service->getPresignedUrl($song->storage_metadata->getPath())
+            $service->getPresignedUrl($song->storage_metadata->getPath()),
         );
     }
 }

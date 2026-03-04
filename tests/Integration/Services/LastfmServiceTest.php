@@ -31,7 +31,7 @@ class LastfmServiceTest extends TestCase
 
         config([
             'koel.services.lastfm.key' => 'key',
-            'koel.services.lastfm.secret' => 'secret'
+            'koel.services.lastfm.secret' => 'secret',
         ]);
 
         $this->service = app(LastfmService::class);
@@ -44,7 +44,9 @@ class LastfmServiceTest extends TestCase
         $artist = Artist::factory()->make(['name' => 'Kamelot']);
 
         Saloon::fake([
-            GetArtistInfoRequest::class => MockResponse::make(body: File::get(test_path('fixtures/lastfm/artist.json')))
+            GetArtistInfoRequest::class => MockResponse::make(body: File::get(test_path(
+                'fixtures/lastfm/artist.json',
+            ))),
         ]);
 
         $info = $this->service->getArtistInformation($artist);
@@ -55,9 +57,9 @@ class LastfmServiceTest extends TestCase
                     'method' => 'artist.getInfo',
                     'artist' => 'Kamelot',
                     'autocorrect' => 1,
-                    'format' => 'json'
+                    'format' => 'json',
                 ],
-                $request->query()->all()
+                $request->query()->all(),
             );
 
             return true;
@@ -69,10 +71,10 @@ class LastfmServiceTest extends TestCase
                 'image' => null,
                 'bio' => [
                     'summary' => 'Quisque ut nisi.',
-                    'full' => 'Quisque ut nisi. Vestibulum ullamcorper mauris at ligula.'
-                ]
+                    'full' => 'Quisque ut nisi. Vestibulum ullamcorper mauris at ligula.',
+                ],
             ],
-            $info->toArray()
+            $info->toArray(),
         );
     }
 
@@ -84,8 +86,8 @@ class LastfmServiceTest extends TestCase
 
         Saloon::fake([
             GetArtistInfoRequest::class => MockResponse::make(body: File::get(test_path(
-                'fixtures/lastfm/artist-notfound.json'
-            )))
+                'fixtures/lastfm/artist-notfound.json',
+            ))),
         ]);
 
         self::assertNull($this->service->getArtistInformation($artist));
@@ -98,7 +100,7 @@ class LastfmServiceTest extends TestCase
         $album = Album::factory()->for(Artist::factory()->create(['name' => 'Kamelot']))->create(['name' => 'Epica']);
 
         Saloon::fake([
-            GetAlbumInfoRequest::class => MockResponse::make(body: File::get(test_path('fixtures/lastfm/album.json')))
+            GetAlbumInfoRequest::class => MockResponse::make(body: File::get(test_path('fixtures/lastfm/album.json'))),
         ]);
 
         $info = $this->service->getAlbumInformation($album);
@@ -110,9 +112,9 @@ class LastfmServiceTest extends TestCase
                     'artist' => 'Kamelot',
                     'album' => 'Epica',
                     'autocorrect' => 1,
-                    'format' => 'json'
+                    'format' => 'json',
                 ],
-                $request->query()->all()
+                $request->query()->all(),
             );
 
             return true;
@@ -126,20 +128,20 @@ class LastfmServiceTest extends TestCase
                     [
                         'title' => 'Track 1',
                         'url' => 'https://foo/track1',
-                        'length' => 100
+                        'length' => 100,
                     ],
                     [
                         'title' => 'Track 2',
                         'url' => 'https://foo/track2',
-                        'length' => 150
-                    ]
+                        'length' => 150,
+                    ],
                 ],
                 'wiki' => [
                     'summary' => 'Quisque ut nisi.',
-                    'full' => 'Quisque ut nisi. Vestibulum ullamcorper mauris at ligula.'
-                ]
+                    'full' => 'Quisque ut nisi. Vestibulum ullamcorper mauris at ligula.',
+                ],
             ],
-            $info->toArray()
+            $info->toArray(),
         );
     }
 
@@ -151,8 +153,8 @@ class LastfmServiceTest extends TestCase
 
         Saloon::fake([
             GetAlbumInfoRequest::class => MockResponse::make(body: File::get(test_path(
-                'fixtures/lastfm/album-notfound.json'
-            )))
+                'fixtures/lastfm/album-notfound.json',
+            ))),
         ]);
 
         self::assertNull($this->service->getAlbumInformation($album));
@@ -163,8 +165,8 @@ class LastfmServiceTest extends TestCase
     {
         $user = create_user([
             'preferences' => [
-                'lastfm_session_key' => 'my_key'
-            ]
+                'lastfm_session_key' => 'my_key',
+            ],
         ]);
 
         /** @var Song $song */
@@ -182,9 +184,9 @@ class LastfmServiceTest extends TestCase
                     'track' => $song->title,
                     'timestamp' => 100,
                     'sk' => 'my_key',
-                    'album' => $song->album->name
+                    'album' => $song->album->name,
                 ],
-                $request->body()->all()
+                $request->body()->all(),
             );
 
             return true;
@@ -196,7 +198,7 @@ class LastfmServiceTest extends TestCase
     {
         return [
             [true,  'track.love'],
-            [false, 'track.unlove']
+            [false, 'track.unlove'],
         ];
     }
 
@@ -206,8 +208,8 @@ class LastfmServiceTest extends TestCase
     {
         $user = create_user([
             'preferences' => [
-                'lastfm_session_key' => 'my_key'
-            ]
+                'lastfm_session_key' => 'my_key',
+            ],
         ]);
 
         /** @var Song $song */
@@ -223,9 +225,9 @@ class LastfmServiceTest extends TestCase
                     'method' => $love ? 'track.love' : 'track.unlove',
                     'sk' => 'my_key',
                     'artist' => $song->artist->name,
-                    'track' => $song->title
+                    'track' => $song->title,
                 ],
-                $request->body()->all()
+                $request->body()->all(),
             );
 
             return true;
@@ -237,8 +239,8 @@ class LastfmServiceTest extends TestCase
     {
         $user = create_user([
             'preferences' => [
-                'lastfm_session_key' => 'my_key'
-            ]
+                'lastfm_session_key' => 'my_key',
+            ],
         ]);
 
         /** @var Song $song */
@@ -256,9 +258,9 @@ class LastfmServiceTest extends TestCase
                     'track' => $song->title,
                     'duration' => $song->length,
                     'sk' => 'my_key',
-                    'album' => $song->album->name
+                    'album' => $song->album->name,
                 ],
-                $request->body()->all()
+                $request->body()->all(),
             );
 
             return true;

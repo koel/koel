@@ -133,7 +133,7 @@ class SongServiceTest extends TestCase
             disc: 2,
             genre: 'Pop',
             year: 2023,
-            lyrics: 'Is this the real life?'
+            lyrics: 'Is this the real life?',
         );
 
         $result = $this->service->updateSongs([$song1->id, $song2->id], $data);
@@ -190,7 +190,7 @@ class SongServiceTest extends TestCase
             ->andReturnUsing(static function (DeleteSongFilesJob $job) use ($songs): void {
                 self::assertEqualsCanonicalizing(
                     $job->files->pluck('location')->toArray(),
-                    $songs->pluck('path')->toArray()
+                    $songs->pluck('path')->toArray(),
                 );
             });
 
@@ -211,7 +211,7 @@ class SongServiceTest extends TestCase
             ->andReturnUsing(static function (DeleteSongFilesJob $job) use ($songs): void {
                 self::assertEqualsCanonicalizing(
                     $job->files->pluck('location')->toArray(),
-                    $songs->pluck('path')->toArray()
+                    $songs->pluck('path')->toArray(),
                 );
             });
 
@@ -220,7 +220,7 @@ class SongServiceTest extends TestCase
             ->andReturnUsing(static function (DeleteTranscodeFilesJob $job) use ($transcodes): void {
                 self::assertEqualsCanonicalizing(
                     $job->files->pluck('location')->toArray(),
-                    $transcodes->pluck('location')->toArray()
+                    $transcodes->pluck('location')->toArray(),
                 );
             });
 
@@ -251,9 +251,9 @@ class SongServiceTest extends TestCase
                 'is_public' => false,
                 'artist_name' => 'Koel',
                 'album_name' => 'Koel Testing Vol. 1',
-                'file_size' => 72_081
+                'file_size' => 72_081,
             ],
-            $song->getAttributes()
+            $song->getAttributes(),
         );
 
         self::assertSame(2015, $song->album->year);
@@ -272,7 +272,7 @@ class SongServiceTest extends TestCase
         /** @var Album $album */
         $album = Album::factory([
             'name' => 'Koel Testing Vol. 1',
-            'year' => null
+            'year' => null,
         ])->for($owner)->for($artist)->create();
 
         self::assertNull($album->year);
@@ -296,7 +296,7 @@ class SongServiceTest extends TestCase
         /** @var Album $album */
         $album = Album::factory([
             'name' => 'Koel Testing Vol. 1',
-            'year' => 2018
+            'year' => 2018,
         ])->for($owner)->for($artist)->create();
 
         $info = app(FileScanner::class)->scan(test_path('songs/full.mp3'));

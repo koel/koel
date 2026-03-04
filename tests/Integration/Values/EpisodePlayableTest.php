@@ -15,14 +15,14 @@ class EpisodePlayableTest extends TestCase
     public function createAndRetrieved(): void
     {
         Http::fake([
-            'https://example.com/episode.mp3' => Http::response('foo')
+            'https://example.com/episode.mp3' => Http::response('foo'),
         ]);
 
         /** @var Song $episode */
         $episode = Song::factory()
             ->asEpisode()
             ->create([
-                'path' => 'https://example.com/episode.mp3'
+                'path' => 'https://example.com/episode.mp3',
             ]);
 
         $playable = EpisodePlayable::getForEpisode($episode);

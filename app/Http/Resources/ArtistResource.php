@@ -14,32 +14,32 @@ class ArtistResource extends JsonResource
         'id',
         'name',
         'image',
-        'created_at'
+        'created_at',
     ];
 
     public const PAGINATION_JSON_STRUCTURE = [
         'data' => [
-            '*' => self::JSON_STRUCTURE
+            '*' => self::JSON_STRUCTURE,
         ],
         'links' => [
             'first',
             'last',
             'prev',
-            'next'
+            'next',
         ],
         'meta' => [
             'current_page',
             'from',
             'path',
             'per_page',
-            'to'
-        ]
+            'to',
+        ],
     ];
 
     private ?User $user = null;
 
     public function __construct(
-        private readonly Artist $artist
+        private readonly Artist $artist,
     ) {
         parent::__construct($artist);
     }
@@ -66,7 +66,7 @@ class ArtistResource extends JsonResource
             'image' => image_storage_url($this->artist->image),
             'created_at' => $this->unless($embedding, $this->artist->created_at),
             'is_external' => $this->unless($embedding, fn() => $isPlus && $this->artist->user_id !== $user->id),
-            'favorite' => $this->unless($embedding, $this->artist->favorite)
+            'favorite' => $this->unless($embedding, $this->artist->favorite),
         ];
     }
 }

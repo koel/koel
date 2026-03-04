@@ -38,8 +38,8 @@ class LicenseServiceTest extends TestCase
 
         Saloon::fake([
             ActivateLicenseRequest::class => MockResponse::make(body: File::get(test_path(
-                'fixtures/lemonsqueezy/license-activated-successful.json'
-            )))
+                'fixtures/lemonsqueezy/license-activated-successful.json',
+            ))),
         ]);
 
         $license = $this->service->activate($key);
@@ -59,9 +59,9 @@ class LicenseServiceTest extends TestCase
             self::assertSame(
                 [
                     'license_key' => $key,
-                    'instance_name' => 'Koel Plus'
+                    'instance_name' => 'Koel Plus',
                 ],
-                $request->body()->all()
+                $request->body()->all(),
             );
 
             return true;
@@ -79,8 +79,8 @@ class LicenseServiceTest extends TestCase
 
         Saloon::fake([
             ActivateLicenseRequest::class => MockResponse::make(body: File::get(test_path(
-                'fixtures/lemonsqueezy/license-activated-successful.json'
-            )))
+                'fixtures/lemonsqueezy/license-activated-successful.json',
+            ))),
         ]);
 
         $this->service->activate($key);
@@ -95,8 +95,8 @@ class LicenseServiceTest extends TestCase
         Saloon::fake([
             ActivateLicenseRequest::class => MockResponse::make(
                 body: File::get(test_path('fixtures/lemonsqueezy/license-invalid.json')),
-                status: Response::HTTP_NOT_FOUND
-            )
+                status: Response::HTTP_NOT_FOUND,
+            ),
         ]);
 
         $this->service->activate('invalid-key');
@@ -111,8 +111,8 @@ class LicenseServiceTest extends TestCase
         Saloon::fake([
             DeactivateLicenseRequest::class => MockResponse::make(
                 body: File::get(test_path('fixtures/lemonsqueezy/license-deactivated-successful.json')),
-                status: Response::HTTP_NOT_FOUND
-            )
+                status: Response::HTTP_NOT_FOUND,
+            ),
         ]);
 
         $this->service->deactivate($license);
@@ -124,9 +124,9 @@ class LicenseServiceTest extends TestCase
             self::assertSame(
                 [
                     'license_key' => $license->key,
-                    'instance_id' => $license->instance->id
+                    'instance_id' => $license->instance->id,
                 ],
-                $request->body()->all()
+                $request->body()->all(),
             );
 
             return true;
@@ -156,8 +156,8 @@ class LicenseServiceTest extends TestCase
         Saloon::fake([
             DeactivateLicenseRequest::class => MockResponse::make(
                 body: 'Something went horrible wrong',
-                status: Response::HTTP_UNPROCESSABLE_ENTITY
-            )
+                status: Response::HTTP_UNPROCESSABLE_ENTITY,
+            ),
         ]);
 
         $this->service->deactivate($license);
@@ -199,8 +199,8 @@ class LicenseServiceTest extends TestCase
 
         Saloon::fake([
             ValidateLicenseRequest::class => MockResponse::make(body: File::get(test_path(
-                'fixtures/lemonsqueezy/license-validated-successful.json'
-            )))
+                'fixtures/lemonsqueezy/license-validated-successful.json',
+            ))),
         ]);
 
         self::assertTrue($this->service->getStatus()->isValid());
@@ -210,9 +210,9 @@ class LicenseServiceTest extends TestCase
             self::assertSame(
                 [
                     'license_key' => $license->key,
-                    'instance_id' => $license->instance->id
+                    'instance_id' => $license->instance->id,
                 ],
-                $request->body()->all()
+                $request->body()->all(),
             );
 
             return true;

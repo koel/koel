@@ -10,9 +10,8 @@ use Illuminate\Support\Arr;
 class SpotifyService
 {
     public function __construct(
-        private readonly SpotifyClient $client
-    ) {
-    }
+        private readonly SpotifyClient $client,
+    ) {}
 
     public static function enabled(): bool
     {
@@ -25,12 +24,12 @@ class SpotifyService
             return null;
         }
 
-        if ($artist instanceof Artist && ( $artist->is_various || $artist->is_unknown )) {
+        if ($artist instanceof Artist && ($artist->is_various || $artist->is_unknown)) {
             return null;
         }
 
         return Arr::get($this->client->search($artist instanceof Artist ? $artist->name : $artist, 'artist', [
-            'limit' => 1
+            'limit' => 1,
         ]), 'artists.items.0.images.0.url');
     }
 
@@ -45,7 +44,7 @@ class SpotifyService
         }
 
         return Arr::get($this->client->search("$album->name artist:{$album->artist->name}", 'album', [
-            'limit' => 1
+            'limit' => 1,
         ]), 'albums.items.0.images.0.url');
     }
 }

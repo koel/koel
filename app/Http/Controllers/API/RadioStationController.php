@@ -20,9 +20,8 @@ class RadioStationController extends Controller
     public function __construct(
         private readonly RadioStationRepository $repository,
         private readonly RadioService $radioService,
-        private readonly Authenticatable $user
-    ) {
-    }
+        private readonly Authenticatable $user,
+    ) {}
 
     public function index()
     {

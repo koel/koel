@@ -20,9 +20,8 @@ class AuthenticationService
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly TokenManager $tokenManager,
-        private readonly PasswordBroker $passwordBroker
-    ) {
-    }
+        private readonly PasswordBroker $passwordBroker,
+    ) {}
 
     public function login(string $email, #[SensitiveParameter] string $password): CompositeToken
     {
@@ -57,22 +56,19 @@ class AuthenticationService
 
     public function tryResetPasswordUsingBroker(
         string $email,
-        #[SensitiveParameter]
-        string $password,
-        #[SensitiveParameter]
-        string $token
+        #[SensitiveParameter] string $password,
+        #[SensitiveParameter] string $token,
     ): bool {
         $credentials = [
             'email' => $email,
             'password' => $password,
             'password_confirmation' => $password,
-            'token' => $token
+            'token' => $token,
         ];
 
         $status = $this->passwordBroker->reset($credentials, static function (
             User $user,
-            #[SensitiveParameter]
-            string $password
+            #[SensitiveParameter] string $password,
         ): void {
             $user->password = Hash::make($password);
             $user->save();

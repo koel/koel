@@ -42,10 +42,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'title',
                         'operator' => 'is',
-                        'value' => ['Foo Something']
-                    ]
-                ]
-            ]
+                        'value' => ['Foo Something'],
+                    ],
+                ],
+            ],
         ]);
     }
 
@@ -63,10 +63,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'title',
                         'operator' => 'isNot',
-                        'value' => ['Bar Something']
-                    ]
-                ]
-            ]
+                        'value' => ['Bar Something'],
+                    ],
+                ],
+            ],
         ]);
     }
 
@@ -84,10 +84,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'title',
                         'operator' => 'contains',
-                        'value' => ['Some']
-                    ]
-                ]
-            ]
+                        'value' => ['Some'],
+                    ],
+                ],
+            ],
         ]);
     }
 
@@ -105,10 +105,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'title',
                         'operator' => 'notContain',
-                        'value' => ['Nothing']
-                    ]
-                ]
-            ]
+                        'value' => ['Nothing'],
+                    ],
+                ],
+            ],
         ]);
     }
 
@@ -126,10 +126,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'title',
                         'operator' => 'beginsWith',
-                        'value' => ['Foo']
-                    ]
-                ]
-            ]
+                        'value' => ['Foo'],
+                    ],
+                ],
+            ],
         ]);
     }
 
@@ -147,10 +147,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'title',
                         'operator' => 'endsWith',
-                        'value' => ['Something']
-                    ]
-                ]
-            ]
+                        'value' => ['Something'],
+                    ],
+                ],
+            ],
         ]);
     }
 
@@ -172,10 +172,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'album.name',
                         'operator' => 'is',
-                        'value' => ['Foo Album']
-                    ]
-                ]
-            ]
+                        'value' => ['Foo Album'],
+                    ],
+                ],
+            ],
         ]);
     }
 
@@ -186,7 +186,7 @@ class SmartPlaylistServiceTest extends TestCase
             ->count(1)
             ->for(Artist::factory()->create(['name' => 'Foo Artist']))
             ->create([
-                'artist_name' => 'Foo Artist'
+                'artist_name' => 'Foo Artist',
             ]);
 
         Song::factory()->create();
@@ -199,10 +199,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'artist.name',
                         'operator' => 'is',
-                        'value' => ['Foo Artist']
-                    ]
-                ]
-            ]
+                        'value' => ['Foo Artist'],
+                    ],
+                ],
+            ],
         ]);
     }
 
@@ -225,10 +225,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'genre',
                         'operator' => 'is',
-                        'value' => ['Foo Genre']
-                    ]
-                ]
-            ]
+                        'value' => ['Foo Genre'],
+                    ],
+                ],
+            ],
         ]);
     }
 
@@ -248,10 +248,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'genre',
                         'operator' => 'isNot',
-                        'value' => ['Foo Genre']
-                    ]
-                ]
-            ]
+                        'value' => ['Foo Genre'],
+                    ],
+                ],
+            ],
         ]);
     }
 
@@ -273,10 +273,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'year',
                         'operator' => 'isGreaterThan',
-                        'value' => [2021]
-                    ]
-                ]
-            ]
+                        'value' => [2021],
+                    ],
+                ],
+            ],
         ]);
     }
 
@@ -298,10 +298,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'year',
                         'operator' => 'isLessThan',
-                        'value' => [1981]
-                    ]
-                ]
-            ]
+                        'value' => [1981],
+                    ],
+                ],
+            ],
         ]);
     }
 
@@ -323,10 +323,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'year',
                         'operator' => 'isBetween',
-                        'value' => [1970, 1985]
-                    ]
-                ]
-            ]
+                        'value' => [1970, 1985],
+                    ],
+                ],
+            ],
         ]);
     }
 
@@ -357,12 +357,12 @@ class SmartPlaylistServiceTest extends TestCase
                             'id' => Uuid::generate(),
                             'model' => 'interactions.play_count',
                             'operator' => 'isGreaterThan',
-                            'value' => [999]
-                        ]
-                    ]
-                ]
+                            'value' => [999],
+                        ],
+                    ],
+                ],
             ],
-            $user
+            $user,
         );
     }
 
@@ -393,12 +393,12 @@ class SmartPlaylistServiceTest extends TestCase
                             'id' => Uuid::generate(),
                             'model' => 'interactions.last_played_at',
                             'operator' => 'inLast',
-                            'value' => [3]
-                        ]
-                    ]
-                ]
+                            'value' => [3],
+                        ],
+                    ],
+                ],
             ],
-            $user
+            $user,
         );
     }
 
@@ -429,12 +429,12 @@ class SmartPlaylistServiceTest extends TestCase
                             'id' => Uuid::generate(),
                             'model' => 'interactions.last_played_at',
                             'operator' => 'notInLast',
-                            'value' => [2]
-                        ]
-                    ]
-                ]
+                            'value' => [2],
+                        ],
+                    ],
+                ],
             ],
-            $user
+            $user,
         );
     }
 
@@ -465,12 +465,12 @@ class SmartPlaylistServiceTest extends TestCase
                             'id' => Uuid::generate(),
                             'model' => 'interactions.last_played_at',
                             'operator' => 'is',
-                            'value' => [now()->format('Y-m-d')]
-                        ]
-                    ]
-                ]
+                            'value' => [now()->format('Y-m-d')],
+                        ],
+                    ],
+                ],
             ],
-            $user
+            $user,
         );
     }
 
@@ -492,10 +492,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'length',
                         'operator' => 'isGreaterThan',
-                        'value' => [199]
-                    ]
-                ]
-            ]
+                        'value' => [199],
+                    ],
+                ],
+            ],
         ]);
     }
 
@@ -517,10 +517,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'length',
                         'operator' => 'isBetween',
-                        'value' => [199, 301]
-                    ]
-                ]
-            ]
+                        'value' => [199, 301],
+                    ],
+                ],
+            ],
         ]);
     }
 
@@ -542,10 +542,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'created_at',
                         'operator' => 'inLast',
-                        'value' => [3]
-                    ]
-                ]
-            ]
+                        'value' => [3],
+                    ],
+                ],
+            ],
         ]);
     }
 
@@ -567,10 +567,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'created_at',
                         'operator' => 'notInLast',
-                        'value' => [3]
-                    ]
-                ]
-            ]
+                        'value' => [3],
+                    ],
+                ],
+            ],
         ]);
     }
 
@@ -585,7 +585,7 @@ class SmartPlaylistServiceTest extends TestCase
 
         self::assertEqualsCanonicalizing(
             $matches->modelKeys(),
-            $this->service->getSongs($playlist, $playlist->owner)->modelKeys()
+            $this->service->getSongs($playlist, $playlist->owner)->modelKeys(),
         );
     }
 }

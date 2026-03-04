@@ -39,7 +39,7 @@ class FetchInitialDataController extends Controller
         QueueService $queueService,
         ThemeRepository $themeRepository,
         LicenseServiceInterface $licenseService,
-        Authenticatable $user
+        Authenticatable $user,
     ) {
         $licenseStatus = $licenseService->getStatus();
         $theme = $licenseStatus->isValid()
@@ -78,11 +78,11 @@ class FetchInitialDataController extends Controller
                 'short_key' => $licenseStatus->license?->short_key,
                 'customer_name' => $licenseStatus->license?->meta->customerName,
                 'customer_email' => $licenseStatus->license?->meta->customerEmail,
-                'product_id' => config('lemonsqueezy.product_id')
+                'product_id' => config('lemonsqueezy.product_id'),
             ],
             'storage_driver' => config('koel.storage_driver'),
             'dir_separator' => DIRECTORY_SEPARATOR,
-            'current_theme' => $theme ? ThemeResource::make($theme) : null
+            'current_theme' => $theme ? ThemeResource::make($theme) : null,
         ]);
     }
 }

@@ -19,7 +19,7 @@ class StoreFavoritesRequest extends Request
         return [
             'type' => self::favoriteableTypeRule(),
             'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['string']
+            'ids.*' => ['string'],
         ];
     }
 }

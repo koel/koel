@@ -13,9 +13,8 @@ class ArtistService
 {
     public function __construct(
         private readonly ArtistRepository $artistRepository,
-        private readonly ImageStorage $imageStorage
-    ) {
-    }
+        private readonly ImageStorage $imageStorage,
+    ) {}
 
     public function updateArtist(Artist $artist, ArtistUpdateData $dto): Artist
     {
@@ -24,7 +23,7 @@ class ArtistService
         // Ensure that the artist name is unique (per user)
         $existingArtistWithTheSameName = $this->artistRepository->findOneBy([
             'name' => $dto->name,
-            'user_id' => $artist->user_id
+            'user_id' => $artist->user_id,
         ]);
 
         throw_if($existingArtistWithTheSameName?->isNot($artist), ArtistNameConflictException::class);

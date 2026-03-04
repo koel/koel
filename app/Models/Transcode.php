@@ -29,7 +29,7 @@ class Transcode extends Model
 
     protected $casts = [
         'bit_rate' => 'int',
-        'file_size' => 'int'
+        'file_size' => 'int',
     ];
 
     protected $with = ['song'];

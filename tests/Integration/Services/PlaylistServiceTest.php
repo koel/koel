@@ -56,7 +56,7 @@ class PlaylistServiceTest extends TestCase
             name: 'foo',
             description: 'bar',
             cover: minimal_base64_encoded_image(),
-            playableIds: $songs->modelKeys()
+            playableIds: $songs->modelKeys(),
         );
 
         $playlist = $this->service->createPlaylist($data, $user);
@@ -95,10 +95,10 @@ class PlaylistServiceTest extends TestCase
                         'id' => '8cfa8700-fbc0-4078-b175-af31c20a3582',
                         'model' => 'title',
                         'operator' => 'is',
-                        'value' => ['foo']
-                    ]
-                ]
-            ]
+                        'value' => ['foo'],
+                    ],
+                ],
+            ],
         ]);
 
         $user = create_user();
@@ -150,10 +150,10 @@ class PlaylistServiceTest extends TestCase
                         'id' => '8cfa8700-fbc0-4078-b175-af31c20a3582',
                         'model' => 'title',
                         'operator' => 'is',
-                        'value' => ['foo']
-                    ]
-                ]
-            ]
+                        'value' => ['foo'],
+                    ],
+                ],
+            ],
         ]);
 
         $playlist = create_playlist(['name' => 'foo', 'rules' => $rules]);
@@ -169,11 +169,11 @@ class PlaylistServiceTest extends TestCase
                             'id' => '8cfa8700-fbc0-4078-b175-af31c20a3582',
                             'model' => 'title',
                             'operator' => 'is',
-                            'value' => ['bar']
-                        ]
-                    ]
-                ]
-            ])
+                            'value' => ['bar'],
+                        ],
+                    ],
+                ],
+            ]),
         );
 
         $this->service->updatePlaylist($playlist, $data);

@@ -13,9 +13,8 @@ class SongUploadResponse extends BroadcastableResponse
 {
     protected function __construct(
         private readonly Song $song,
-        private readonly Album $album
-    ) {
-    }
+        private readonly Album $album,
+    ) {}
 
     public function broadcastOn(): Channel|string
     {
@@ -32,7 +31,7 @@ class SongUploadResponse extends BroadcastableResponse
     {
         return [
             'song' => SongResource::make($this->song)->for($this->song->owner),
-            'album' => AlbumResource::make($this->album)->for($this->album->user)
+            'album' => AlbumResource::make($this->album)->for($this->album->user),
         ];
     }
 }

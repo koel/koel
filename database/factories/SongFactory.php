@@ -29,7 +29,7 @@ class SongFactory extends Factory
             'hash' => $this->faker->md5(),
             'mtime' => time(),
             'mime_type' => 'audio/mpeg',
-            'file_size' => $this->faker->numberBetween(4_000_000, 10_000_000)
+            'file_size' => $this->faker->numberBetween(4_000_000, 10_000_000),
         ];
     }
 
@@ -53,7 +53,7 @@ class SongFactory extends Factory
                 'link' => $this->faker->url(),
                 'description' => $this->faker->paragraph,
                 'duration' => $this->faker->randomFloat(2, 10, 500),
-                'image' => $this->faker->imageUrl()
+                'image' => $this->faker->imageUrl(),
             ]),
             'is_public' => true,
             'artist_id' => null,
@@ -66,7 +66,7 @@ class SongFactory extends Factory
             'disc' => 0,
             'year' => null,
             'mime_type' => null,
-            'file_size' => null
+            'file_size' => null,
         ]);
     }
 }

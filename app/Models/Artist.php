@@ -112,7 +112,7 @@ class Artist extends Model implements AuditableContract, Embeddable, Favoriteabl
                 return static::query()
                     ->create([
                         'user_id' => $user->id,
-                        'name' => $name
+                        'name' => $name,
                     ]);
             });
     }
@@ -123,7 +123,7 @@ class Artist extends Model implements AuditableContract, Embeddable, Favoriteabl
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
-            'name' => $this->name
+            'name' => $this->name,
         ];
     }
 

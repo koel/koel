@@ -8,6 +8,4 @@ use App\Http\Requests\API\Request;
  * @property-read string $order
  * @property-read string $sort
  */
-class AlbumListRequest extends Request
-{
-}
+class AlbumListRequest extends Request {}

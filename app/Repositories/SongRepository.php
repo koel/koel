@@ -36,7 +36,7 @@ class SongRepository extends Repository implements ScoutableRepository
     private const LIST_SIZE_LIMIT = 500;
 
     public function __construct(
-        private readonly FolderRepository $folderRepository
+        private readonly FolderRepository $folderRepository,
     ) {
         parent::__construct();
     }
@@ -89,7 +89,7 @@ class SongRepository extends Repository implements ScoutableRepository
         array $sortColumns,
         string $sortDirection,
         ?User $scopedUser = null,
-        int $perPage = 50
+        int $perPage = 50,
     ): Paginator {
         $scopedUser ??= $this->auth->user();
 
@@ -107,7 +107,7 @@ class SongRepository extends Repository implements ScoutableRepository
         array $sortColumns,
         string $sortDirection,
         ?User $scopedUser = null,
-        int $perPage = 50
+        int $perPage = 50,
     ): Paginator {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
@@ -122,7 +122,7 @@ class SongRepository extends Repository implements ScoutableRepository
         array $sortColumns,
         string $sortDirection,
         int $limit = self::LIST_SIZE_LIMIT,
-        ?User $scopedUser = null
+        ?User $scopedUser = null,
     ): Collection {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
@@ -167,7 +167,7 @@ class SongRepository extends Repository implements ScoutableRepository
             ->withUserContext()
             ->where(static function (SongBuilder $query) use ($artist): void {
                 $query->whereBelongsTo($artist)->orWhereHas('album', static function (Builder $albumQuery) use (
-                    $artist
+                    $artist,
                 ): void {
                     $albumQuery->whereBelongsTo($artist);
                 });
@@ -203,13 +203,13 @@ class SongRepository extends Repository implements ScoutableRepository
                     'users as collaborators',
                     'playlist_song.user_id',
                     '=',
-                    'collaborators.id'
+                    'collaborators.id',
                 )->addSelect(
                     'collaborators.public_id as collaborator_public_id',
                     'collaborators.name as collaborator_name',
                     'collaborators.email as collaborator_email',
                     'collaborators.avatar as collaborator_avatar',
-                    'playlist_song.created_at as added_at'
+                    'playlist_song.created_at as added_at',
                 );
             })
             ->where('playlists.id', $playlist->id)
@@ -234,7 +234,7 @@ class SongRepository extends Repository implements ScoutableRepository
             $query->when(
                 $index === 0,
                 static fn(SongBuilder $query) => $query->where($whereClosure),
-                static fn(SongBuilder $query) => $query->orWhere($whereClosure)
+                static fn(SongBuilder $query) => $query->orWhere($whereClosure),
             );
         });
 
@@ -289,7 +289,7 @@ class SongRepository extends Repository implements ScoutableRepository
                         'collaborators.public_id as collaborator_public_id',
                         'collaborators.name as collaborator_name',
                         'collaborators.email as collaborator_email',
-                        'playlist_song.created_at as added_at'
+                        'playlist_song.created_at as added_at',
                     );
             })
             ->whereIn('songs.id', $ids)
@@ -316,7 +316,7 @@ class SongRepository extends Repository implements ScoutableRepository
     public function getTotalSongLength(?User $scopedUser = null): float
     {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())->accessible()->sum(
-            'length'
+            'length',
         );
     }
 
@@ -358,7 +358,7 @@ class SongRepository extends Repository implements ScoutableRepository
         array $paths,
         int $limit = 500,
         bool $random = false,
-        ?User $scopedUser = null
+        ?User $scopedUser = null,
     ): Collection {
         $paths = array_map(static fn(?string $path) => $path ? trim($path, DIRECTORY_SEPARATOR) : '', $paths);
 
@@ -408,7 +408,7 @@ class SongRepository extends Repository implements ScoutableRepository
                 ->take($limit)
                 ->modelKeys(),
             preserveOrder: true,
-            scopedUser: $user
+            scopedUser: $user,
         );
     }
 
@@ -421,7 +421,7 @@ class SongRepository extends Repository implements ScoutableRepository
             EmbeddableType::ALBUM => $this->getByAlbum($embed->embeddable, $embed->user),
             EmbeddableType::ARTIST => $this->getByArtist($embed->embeddable, $embed->user),
             EmbeddableType::PLAYLIST => $this->getByPlaylist($embed->embeddable, $embed->user),
-            EmbeddableType::PLAYABLE => $this->getMany(ids: [$embed->embeddable->getKey()], scopedUser: $embed->user)
+            EmbeddableType::PLAYABLE => $this->getMany(ids: [$embed->embeddable->getKey()], scopedUser: $embed->user),
         };
     }
 }

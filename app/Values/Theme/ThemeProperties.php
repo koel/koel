@@ -12,9 +12,8 @@ final class ThemeProperties implements Arrayable
         public readonly string $bgImage,
         public readonly string $highlightColor,
         public readonly string $fontFamily,
-        public readonly float $fontSize
-    ) {
-    }
+        public readonly float $fontSize,
+    ) {}
 
     public static function make(
         string $fgColor,
@@ -22,7 +21,7 @@ final class ThemeProperties implements Arrayable
         string $bgImage,
         string $highlightColor,
         string $fontFamily,
-        float $fontSize
+        float $fontSize,
     ): self {
         return new self(
             fgColor: $fgColor,
@@ -30,7 +29,7 @@ final class ThemeProperties implements Arrayable
             bgImage: $bgImage,
             highlightColor: $highlightColor,
             fontFamily: $fontFamily,
-            fontSize: $fontSize
+            fontSize: $fontSize,
         );
     }
 
@@ -47,7 +46,7 @@ final class ThemeProperties implements Arrayable
             bgImage: object_get($json, '--bg-image', ''),
             highlightColor: object_get($json, '--color-highlight', ''),
             fontFamily: object_get($json, '--font-family', ''),
-            fontSize: object_get($json, '--font-size', 13.0)
+            fontSize: object_get($json, '--font-size', 13.0),
         );
     }
 
@@ -69,7 +68,7 @@ final class ThemeProperties implements Arrayable
             '--bg-image' => $this->bgImage ? 'url("' . image_storage_url($this->bgImage) . '")' : '',
             '--color-highlight' => $this->highlightColor,
             '--font-family' => $this->fontFamily,
-            '--font-size' => $this->fontSize ? "{$this->fontSize}px" : '13.0px'
+            '--font-size' => $this->fontSize ? "{$this->fontSize}px" : '13.0px',
         ];
     }
 }

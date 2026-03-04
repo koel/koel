@@ -10,9 +10,8 @@ use Illuminate\Support\Facades\Cache;
 class ITunesService
 {
     public function __construct(
-        private readonly ITunesConnector $connector
-    ) {
-    }
+        private readonly ITunesConnector $connector,
+    ) {}
 
     public static function used(): bool
     {
@@ -38,7 +37,7 @@ class ITunesService
                     $connector = parse_url($trackUrl, PHP_URL_QUERY) ? '&' : '?';
 
                     return $trackUrl . "{$connector}at=" . config('koel.services.itunes.affiliate_id');
-                }
+                },
             );
         });
     }

@@ -19,7 +19,7 @@ class PodcastFactory extends Factory
             'url' => $this->faker->url,
             'author' => $this->faker->name,
             'categories' => [
-                ['text' => 'Technology', 'sub_category' => null]
+                ['text' => 'Technology', 'sub_category' => null],
             ],
             'explicit' => $this->faker->boolean,
             'language' => $this->faker->languageCode,
@@ -31,10 +31,10 @@ class PodcastFactory extends Factory
                 'txts' => [],
                 'fundings' => [],
                 'type' => 'episodic',
-                'complete' => $this->faker->boolean
+                'complete' => $this->faker->boolean,
             ],
             'added_by' => User::factory(),
-            'last_synced_at' => now()
+            'last_synced_at' => now(),
         ];
     }
 }

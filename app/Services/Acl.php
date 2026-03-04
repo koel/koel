@@ -14,14 +14,14 @@ class Acl
 {
     private const VALID_ACTIONS = [
         'edit',
-        'delete'
+        'delete',
     ];
 
     public function checkPermission(
         PermissionableResourceType $type,
         int|string $id,
         string $action,
-        ?User $user = null
+        ?User $user = null,
     ): bool {
         Assert::inArray($action, self::VALID_ACTIONS);
 

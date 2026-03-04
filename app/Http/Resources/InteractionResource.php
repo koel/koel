@@ -13,11 +13,11 @@ class InteractionResource extends JsonResource
         'songId',
         'song_id',
         'playCount',
-        'play_count'
+        'play_count',
     ];
 
     public function __construct(
-        private readonly Interaction $interaction
+        private readonly Interaction $interaction,
     ) {
         parent::__construct($interaction);
     }
@@ -31,7 +31,7 @@ class InteractionResource extends JsonResource
             'songId' => $this->interaction->song_id, // @fixme backwards compatibility
             'song_id' => $this->interaction->song_id,
             'playCount' => $this->interaction->play_count, // @fixme backwards compatibility
-            'play_count' => $this->interaction->play_count
+            'play_count' => $this->interaction->play_count,
         ];
     }
 }

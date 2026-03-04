@@ -26,7 +26,7 @@ class SongBuilder extends FavoriteableBuilder
         'album_name' => 'songs.album_name',
         'podcast_title' => 'podcasts.title',
         'podcast_author' => 'podcasts.author',
-        'genre' => 'genres.name'
+        'genre' => 'genres.name',
     ];
 
     private const VALID_SORT_COLUMNS = [
@@ -39,7 +39,7 @@ class SongBuilder extends FavoriteableBuilder
         'songs.album_name',
         'podcasts.title',
         'podcasts.author',
-        'genres.name'
+        'genres.name',
     ];
 
     public function inDirectory(string $path): self
@@ -74,7 +74,7 @@ class SongBuilder extends FavoriteableBuilder
             ->leftJoin('podcast_user as podcast_user_a11y', function (JoinClause $join): void {
                 $join->on('podcasts_a11y.id', 'podcast_user_a11y.podcast_id')->where(
                     'podcast_user_a11y.user_id',
-                    $this->user->id
+                    $this->user->id,
                 );
             })
             ->whereNot(static function (self $query): void {
@@ -100,7 +100,7 @@ class SongBuilder extends FavoriteableBuilder
                                 $owner->where('organization_id', $this->user->organization_id)->where(
                                     'owner_id',
                                     '<>',
-                                    $this->user->id
+                                    $this->user->id,
                                 );
                             });
                         });
@@ -112,7 +112,7 @@ class SongBuilder extends FavoriteableBuilder
     public function withUserContext(
         bool $includeFavoriteStatus = true,
         bool $favoritesOnly = false,
-        bool $includePlayCount = true
+        bool $includePlayCount = true,
     ): self {
         return $this
             ->accessible()
@@ -149,11 +149,11 @@ class SongBuilder extends FavoriteableBuilder
     {
         $this->when(
             in_array('podcast_title', $columns, true) || in_array('podcast_author', $columns, true),
-            static fn(self $query) => $query->leftJoin('podcasts', 'songs.podcast_id', 'podcasts.id')
+            static fn(self $query) => $query->leftJoin('podcasts', 'songs.podcast_id', 'podcasts.id'),
         )->when(in_array('genre', $columns, true), static fn(self $query) => $query->leftJoin(
             'genre_song',
             'songs.id',
-            'genre_song.song_id'
+            'genre_song.song_id',
         )->leftJoin('genres', 'genre_song.genre_id', 'genres.id'));
 
         foreach ($columns as $column) {

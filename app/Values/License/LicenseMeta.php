@@ -14,9 +14,8 @@ final class LicenseMeta implements Arrayable, Jsonable
     private function __construct(
         public int $customerId,
         public string $customerName,
-        public string $customerEmail
-    ) {
-    }
+        public string $customerEmail,
+    ) {}
 
     public static function make(int $customerId, string $customerName, string $customerEmail): self
     {
@@ -28,7 +27,7 @@ final class LicenseMeta implements Arrayable, Jsonable
         return new self(
             customerId: $json->customer_id,
             customerName: $json->customer_name,
-            customerEmail: $json->customer_email
+            customerEmail: $json->customer_email,
         );
     }
 
@@ -43,7 +42,7 @@ final class LicenseMeta implements Arrayable, Jsonable
         return [
             'customer_id' => $this->customerId,
             'customer_name' => $this->customerName,
-            'customer_email' => $this->customerEmail
+            'customer_email' => $this->customerEmail,
         ];
     }
 }

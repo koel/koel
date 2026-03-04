@@ -9,9 +9,8 @@ final class AlbumUpdateData implements Arrayable
     private function __construct(
         public string $name,
         public ?int $year,
-        public ?string $cover
-    ) {
-    }
+        public ?string $cover,
+    ) {}
 
     public static function make(string $name, ?int $year = null, ?string $cover = null): self
     {
@@ -24,7 +23,7 @@ final class AlbumUpdateData implements Arrayable
         return [
             'name' => $this->name,
             'year' => $this->year,
-            'cover' => $this->cover
+            'cover' => $this->cover,
         ];
     }
 }

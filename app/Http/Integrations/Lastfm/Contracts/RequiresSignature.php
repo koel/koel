@@ -2,6 +2,4 @@
 
 namespace App\Http\Integrations\Lastfm\Contracts;
 
-interface RequiresSignature
-{
-}
+interface RequiresSignature {}

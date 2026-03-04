@@ -50,7 +50,7 @@ class ExcerptSearchTest extends TestCase
             'songs' => [0 => SongResource::JSON_STRUCTURE],
             'podcasts' => [0 => PodcastResource::JSON_STRUCTURE],
             'artists' => [0 => ArtistResource::JSON_STRUCTURE],
-            'albums' => [0 => AlbumResource::JSON_STRUCTURE]
+            'albums' => [0 => AlbumResource::JSON_STRUCTURE],
         ]);
     }
 }

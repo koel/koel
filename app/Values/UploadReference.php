@@ -11,9 +11,8 @@ final readonly class UploadReference
      */
     private function __construct(
         public string $location,
-        public string $localPath
-    ) {
-    }
+        public string $localPath,
+    ) {}
 
     public static function make(string $location, string $localPath): self
     {

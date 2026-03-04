@@ -33,7 +33,7 @@ class SfpTranscodingStrategyTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create([
             'path' => 'sftp://remote/path/to/song.flac',
-            'storage' => SongStorageType::SFTP
+            'storage' => SongStorageType::SFTP,
         ]);
 
         $ulid = Ulid::freeze();
@@ -57,7 +57,7 @@ class SfpTranscodingStrategyTest extends TestCase
             'location' => $destination,
             'bit_rate' => 128,
             'hash' => 'mocked-checksum',
-            'file_size' => 1_024
+            'file_size' => 1_024,
         ]);
     }
 
@@ -70,7 +70,7 @@ class SfpTranscodingStrategyTest extends TestCase
         $transcode = Transcode::factory()->create([
             'location' => '/path/to/transcode.m4a',
             'bit_rate' => 128,
-            'hash' => 'mocked-checksum'
+            'hash' => 'mocked-checksum',
         ]);
 
         File::expects('isReadable')->with('/path/to/transcode.m4a')->andReturn(true);
@@ -87,7 +87,7 @@ class SfpTranscodingStrategyTest extends TestCase
     {
         $song = Song::factory()->create([
             'path' => 'sftp://remote/path/to/song.flac',
-            'storage' => SongStorageType::SFTP
+            'storage' => SongStorageType::SFTP,
         ]);
 
         $ulid = Ulid::freeze();
@@ -96,7 +96,7 @@ class SfpTranscodingStrategyTest extends TestCase
         $transcode = Transcode::factory()->for($song)->create([
             'location' => '/path/to/transcode.m4a',
             'bit_rate' => 128,
-            'hash' => 'mocked-checksum'
+            'hash' => 'mocked-checksum',
         ]);
 
         File::expects('isReadable')->with('/path/to/transcode.m4a')->andReturn(false);

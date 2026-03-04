@@ -14,8 +14,8 @@ class EmbedOptionsController extends Controller
             'encrypted' => EmbedOptions::make(
                 theme: $request->theme,
                 layout: $request->layout,
-                preview: $request->boolean('preview')
-            )->encrypt()
+                preview: $request->boolean('preview'),
+            )->encrypt(),
         ]);
     }
 }

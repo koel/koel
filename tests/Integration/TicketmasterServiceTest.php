@@ -43,9 +43,9 @@ class TicketmasterServiceTest extends TestCase
                         'keyword' => 'Slayer',
                         'size' => 5,
                         'classificationName' => ['Music'],
-                        'apikey' => 'tm-key'
+                        'apikey' => 'tm-key',
                     ],
-                    $request->query()->all()
+                    $request->query()->all(),
                 );
 
                 $attractionSearchJson = File::json(test_path('fixtures/ticketmaster/attraction-search.json'));
@@ -58,9 +58,9 @@ class TicketmasterServiceTest extends TestCase
                         'attractionId' => 'slayer-id-1234567890',
                         'countryCode' => 'DE',
                         'classificationName' => ['Music'],
-                        'apikey' => 'tm-key'
+                        'apikey' => 'tm-key',
                     ],
-                    $request->query()->all()
+                    $request->query()->all(),
                 );
 
                 $eventSearchJson = File::json(test_path('fixtures/ticketmaster/event-search.json'));
@@ -74,12 +74,12 @@ class TicketmasterServiceTest extends TestCase
                 $liteDataJson = File::json(test_path('fixtures/ipinfo/lite-data.json'));
 
                 return MockResponse::make(body: $liteDataJson);
-            }
+            },
         ]);
 
         /** @var Artist $artist */
         $artist = Artist::factory()->create([
-            'name' => 'Slayer'
+            'name' => 'Slayer',
         ]);
 
         $events = $this->service->searchEventForArtist($artist->name, '84.124.22.13');
@@ -101,8 +101,8 @@ class TicketmasterServiceTest extends TestCase
             venue: TicketmasterVenue::make(
                 name: 'Sample Venue',
                 url: 'https://www.ticketmaster.com/venue/1234567890',
-                city: 'Sample City'
-            )
+                city: 'Sample City',
+            ),
         );
 
         $events = collect([$event]);

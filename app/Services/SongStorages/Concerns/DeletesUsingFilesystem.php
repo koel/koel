@@ -13,7 +13,7 @@ trait DeletesUsingFilesystem
     private function deleteUsingFilesystem(
         Filesystem|IlluminateFilesystem $disk,
         string $key,
-        bool|Closure $backup
+        bool|Closure $backup,
     ): void {
         try {
             if (is_callable($backup)) {
@@ -24,7 +24,7 @@ trait DeletesUsingFilesystem
         } catch (Throwable $e) {
             Log::error('Failed to backup file.', [
                 'key' => $key,
-                'error' => $e
+                'error' => $e,
             ]);
         }
 

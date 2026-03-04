@@ -18,32 +18,32 @@ class AlbumResource extends JsonResource
         'artist_name',
         'cover',
         'created_at',
-        'year'
+        'year',
     ];
 
     public const PAGINATION_JSON_STRUCTURE = [
         'data' => [
-            '*' => self::JSON_STRUCTURE
+            '*' => self::JSON_STRUCTURE,
         ],
         'links' => [
             'first',
             'last',
             'prev',
-            'next'
+            'next',
         ],
         'meta' => [
             'current_page',
             'from',
             'path',
             'per_page',
-            'to'
-        ]
+            'to',
+        ],
     ];
 
     private ?User $user = null;
 
     public function __construct(
-        private readonly Album $album
+        private readonly Album $album,
     ) {
         parent::__construct($album);
     }
@@ -73,7 +73,7 @@ class AlbumResource extends JsonResource
             'created_at' => $this->unless($embedding, $this->album->created_at),
             'year' => $this->album->year,
             'is_external' => $this->unless($embedding, fn() => $isPlus && $this->album->user_id !== $user->id),
-            'favorite' => $this->unless($embedding, $this->album->favorite)
+            'favorite' => $this->unless($embedding, $this->album->favorite),
         ];
     }
 }

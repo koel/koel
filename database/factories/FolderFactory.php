@@ -11,7 +11,7 @@ class FolderFactory extends Factory
     {
         return implode(DIRECTORY_SEPARATOR, [
             bin2hex(random_bytes(5)),
-            Str::ulid()
+            Str::ulid(),
         ]);
     }
 
@@ -19,7 +19,7 @@ class FolderFactory extends Factory
     public function definition(): array
     {
         return [
-            'path' => self::generateRandomPath()
+            'path' => self::generateRandomPath(),
         ];
     }
 }

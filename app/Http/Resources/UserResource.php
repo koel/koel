@@ -21,11 +21,11 @@ class UserResource extends JsonResource
         'sso_id',
         'is_admin',
         'role',
-        'permissions'
+        'permissions',
     ];
 
     public function __construct(
-        private readonly User $user
+        private readonly User $user,
     ) {
         parent::__construct($user);
     }
@@ -50,7 +50,7 @@ class UserResource extends JsonResource
             'permissions' => $this->when($isCurrentUser, fn() => $this->user
                 ->getPermissionsViaRoles()
                 ->pluck('name')
-                ->toArray())
+                ->toArray()),
         ];
     }
 }

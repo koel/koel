@@ -11,9 +11,8 @@ readonly class TicketmasterAttraction implements Arrayable
         public string $id,
         public string $name,
         public string $url,
-        public string $image
-    ) {
-    }
+        public string $image,
+    ) {}
 
     public static function fromArray(array $data): self
     {
@@ -21,7 +20,7 @@ readonly class TicketmasterAttraction implements Arrayable
             id: Arr::get($data, 'id'),
             name: Arr::get($data, 'name'),
             url: Arr::get($data, 'url', ''),
-            image: Arr::get($data, 'images.0.url', '')
+            image: Arr::get($data, 'images.0.url', ''),
         );
     }
 
@@ -32,7 +31,7 @@ readonly class TicketmasterAttraction implements Arrayable
             'id' => $this->id,
             'name' => $this->name,
             'url' => $this->url,
-            'image' => $this->image
+            'image' => $this->image,
         ];
     }
 }

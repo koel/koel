@@ -14,7 +14,7 @@ class SetupLocalStorageCommand extends Command
     protected $description = 'Set up the local storage for Koel';
 
     public function __construct(
-        private readonly DotenvEditor $dotenvEditor
+        private readonly DotenvEditor $dotenvEditor,
     ) {
         parent::__construct();
     }

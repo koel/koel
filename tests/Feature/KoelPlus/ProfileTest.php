@@ -18,7 +18,7 @@ class ProfileTest extends PlusTestCase
             'sso_id' => '123',
             'email' => 'user@koel.dev',
             'name' => 'SSO User',
-            'avatar' => null
+            'avatar' => null,
             // no current password required for SSO users
         ]);
 
@@ -30,9 +30,9 @@ class ProfileTest extends PlusTestCase
             [
                 'name' => 'Bruce Dickinson',
                 'email' => 'bruce@iron.com',
-                'avatar' => minimal_base64_encoded_image()
+                'avatar' => minimal_base64_encoded_image(),
             ],
-            $user
+            $user,
         )->assertOk();
 
         $user->refresh();

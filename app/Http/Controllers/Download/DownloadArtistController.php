@@ -16,7 +16,7 @@ class DownloadArtistController extends Controller
         Artist $artist,
         SongRepository $repository,
         DownloadService $service,
-        Authenticatable $user
+        Authenticatable $user,
     ) {
         return $service->getDownloadable($repository->getByArtist($artist, $user))?->toResponse();
     }

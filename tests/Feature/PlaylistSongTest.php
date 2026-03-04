@@ -37,15 +37,15 @@ class PlaylistSongTest extends TestCase
                             'id' => '2a4548cd-c67f-44d4-8fec-34ff75c8a026',
                             'model' => 'title',
                             'operator' => 'contains',
-                            'value' => ['foo']
-                        ]
-                    ]
-                ]
-            ]
+                            'value' => ['foo'],
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $this->getAs("api/playlists/{$playlist->id}/songs", $playlist->owner)->assertJsonStructure([
-            0 => SongResource::JSON_STRUCTURE
+            0 => SongResource::JSON_STRUCTURE,
         ]);
     }
 
@@ -67,7 +67,7 @@ class PlaylistSongTest extends TestCase
         $this->postAs(
             "api/playlists/{$playlist->id}/songs",
             ['songs' => $songs->modelKeys()],
-            $playlist->owner
+            $playlist->owner,
         )->assertSuccessful();
 
         self::assertEqualsCanonicalizing($songs->modelKeys(), $playlist->playables->modelKeys());
@@ -87,7 +87,7 @@ class PlaylistSongTest extends TestCase
         $this->deleteAs(
             "api/playlists/{$playlist->id}/songs",
             ['songs' => $toBeRemovedSongs->modelKeys()],
-            $playlist->owner
+            $playlist->owner,
         )->assertNoContent();
 
         $playlist->refresh();
@@ -120,11 +120,11 @@ class PlaylistSongTest extends TestCase
                             'id' => '2a4548cd-c67f-44d4-8fec-34ff75c8a026',
                             'model' => 'title',
                             'operator' => 'contains',
-                            'value' => ['foo']
-                        ]
-                    ]
-                ]
-            ]
+                            'value' => ['foo'],
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $songs = Song::factory(2)->create()->modelKeys();
@@ -134,7 +134,7 @@ class PlaylistSongTest extends TestCase
         $this->deleteAs(
             "api/playlists/{$playlist->id}/songs",
             ['songs' => $songs],
-            $playlist->owner
+            $playlist->owner,
         )->assertForbidden();
     }
 }

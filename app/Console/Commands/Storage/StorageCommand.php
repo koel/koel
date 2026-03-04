@@ -26,13 +26,13 @@ class StorageCommand extends Command
             $choices = [
                 'local' => 'This server',
                 's3' => 'Amazon S3 or compatible services (DO Spaces, Cloudflare R2, etc.)',
-                'dropbox' => 'Dropbox'
+                'dropbox' => 'Dropbox',
             ];
 
             $driver = $this->choice(
                 'Where do you want to store your media files?',
                 $choices,
-                config('koel.storage_driver')
+                config('koel.storage_driver'),
             );
         } else {
             $driver = 'local';

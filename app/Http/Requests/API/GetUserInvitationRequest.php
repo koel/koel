@@ -13,7 +13,7 @@ class GetUserInvitationRequest extends Request
     public function rules(): array
     {
         return [
-            'token' => 'required|string'
+            'token' => 'required|string',
         ];
     }
 }

@@ -25,16 +25,15 @@ class SongController extends Controller
         private readonly SongRepository $songRepository,
         private readonly AlbumRepository $albumRepository,
         private readonly ArtistRepository $artistRepository,
-        private readonly Authenticatable $user
-    ) {
-    }
+        private readonly Authenticatable $user,
+    ) {}
 
     public function index(SongListRequest $request)
     {
         return SongResource::collection($this->songRepository->paginate(
             sortColumns: $request->sort ? explode(',', $request->sort) : ['songs.title'],
             sortDirection: $request->order ?: 'asc',
-            scopedUser: $this->user
+            scopedUser: $this->user,
         ));
     }
 
@@ -55,7 +54,7 @@ class SongController extends Controller
 
         $artists = $this->artistRepository->getMany(array_merge(
             $result->updatedSongs->pluck('artist_id')->all(),
-            $result->updatedSongs->pluck('album_artist_id')->all()
+            $result->updatedSongs->pluck('album_artist_id')->all(),
         ));
 
         return response()->json([
@@ -64,8 +63,8 @@ class SongController extends Controller
             'artists' => ArtistResource::collection($artists),
             'removed' => [
                 'artist_ids' => $result->removedArtistIds->toArray(),
-                'album_ids' => $result->removedAlbumIds->toArray()
-            ]
+                'album_ids' => $result->removedAlbumIds->toArray(),
+            ],
         ]);
     }
 

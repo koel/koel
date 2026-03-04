@@ -11,7 +11,7 @@ final class SmartPlaylistRuleGroup implements Arrayable
 {
     private function __construct(
         public string $id,
-        public Collection $rules
+        public Collection $rules,
     ) {
         Assert::uuid($id);
     }
@@ -23,10 +23,10 @@ final class SmartPlaylistRuleGroup implements Arrayable
             rules: collect(Arr::get(
                 $array,
                 'rules',
-                []
+                [],
             ))->transform(static function (array|SmartPlaylistRule $rule): SmartPlaylistRule {
                 return $rule instanceof SmartPlaylistRule ? $rule : SmartPlaylistRule::make($rule);
-            })
+            }),
         );
     }
 
@@ -35,7 +35,7 @@ final class SmartPlaylistRuleGroup implements Arrayable
     {
         return [
             'id' => $this->id,
-            'rules' => $this->rules->toArray()
+            'rules' => $this->rules->toArray(),
         ];
     }
 }

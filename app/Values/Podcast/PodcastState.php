@@ -11,9 +11,8 @@ final class PodcastState implements Arrayable, Jsonable
 {
     private function __construct(
         public readonly ?string $currentEpisode,
-        public readonly Collection $progresses
-    ) {
-    }
+        public readonly Collection $progresses,
+    ) {}
 
     public static function fromArray(array $data): self
     {
@@ -25,7 +24,7 @@ final class PodcastState implements Arrayable, Jsonable
     {
         return [
             'current_episode' => $this->currentEpisode,
-            'progresses' => $this->progresses->toArray()
+            'progresses' => $this->progresses->toArray(),
         ];
     }
 

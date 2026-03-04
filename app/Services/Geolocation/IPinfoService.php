@@ -11,9 +11,8 @@ use Illuminate\Support\Facades\Cache;
 class IPinfoService implements GeolocationService
 {
     public function __construct(
-        private readonly IPinfoConnector $connector
-    ) {
-    }
+        private readonly IPinfoConnector $connector,
+    ) {}
 
     public static function used(): bool
     {

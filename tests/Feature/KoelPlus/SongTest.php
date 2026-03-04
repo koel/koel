@@ -54,10 +54,10 @@ class SongTest extends PlusTestCase
             [
                 'songs' => $externalUnownedSongs->modelKeys(),
                 'data' => [
-                    'title' => 'New Title'
-                ]
+                    'title' => 'New Title',
+                ],
             ],
-            $currentUser
+            $currentUser,
         )->assertForbidden();
 
         // Even if some of the songs are owned by us, we still can't edit them.
@@ -68,10 +68,10 @@ class SongTest extends PlusTestCase
             [
                 'songs' => $mixedSongs->modelKeys(),
                 'data' => [
-                    'title' => 'New Title'
-                ]
+                    'title' => 'New Title',
+                ],
             ],
-            $currentUser
+            $currentUser,
         )->assertForbidden();
 
         // But we can edit our own songs.
@@ -82,10 +82,10 @@ class SongTest extends PlusTestCase
             [
                 'songs' => $ownSongs->modelKeys(),
                 'data' => [
-                    'title' => 'New Title'
-                ]
+                    'title' => 'New Title',
+                ],
             ],
-            $currentUser
+            $currentUser,
         )->assertSuccessful();
     }
 

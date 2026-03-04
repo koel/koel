@@ -12,9 +12,8 @@ class PodcastEpisodeController extends Controller
 {
     public function __construct(
         private readonly SongRepository $episodeRepository,
-        private readonly PodcastService $podcastService
-    ) {
-    }
+        private readonly PodcastService $podcastService,
+    ) {}
 
     public function index(Podcast $podcast)
     {

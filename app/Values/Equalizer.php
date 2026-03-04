@@ -12,9 +12,8 @@ final readonly class Equalizer implements Arrayable
     private function __construct(
         public ?string $name,
         public ?float $preamp,
-        public ?array $gains
-    ) {
-    }
+        public ?array $gains,
+    ) {}
 
     public static function tryMake(array|string $data): self
     {
@@ -40,7 +39,7 @@ final readonly class Equalizer implements Arrayable
         return [
             'name' => $this->name,
             'preamp' => $this->preamp,
-            'gains' => $this->gains
+            'gains' => $this->gains,
         ];
     }
 }

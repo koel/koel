@@ -26,14 +26,14 @@ class GenreRepository extends Repository
                 'genres.public_id',
                 'genres.name',
                 DB::raw('COUNT(songs.id) AS song_count'),
-                DB::raw('SUM(songs.length) AS length')
+                DB::raw('SUM(songs.length) AS length'),
             )
             ->get()
             ->map(static fn(object $genre) => GenreSummary::make(
                 publicId: $genre->public_id,
                 name: $genre->name,
                 songCount: $genre->song_count,
-                length: $genre->length
+                length: $genre->length,
             ));
 
         $summaryForNoGenre = $this->getSummaryForNoGenre($scopedUser);
@@ -59,7 +59,7 @@ class GenreRepository extends Repository
                 'genres.public_id',
                 'genres.name',
                 DB::raw('COUNT(songs.id) AS song_count'),
-                DB::raw('SUM(songs.length) AS length')
+                DB::raw('SUM(songs.length) AS length'),
             )
             ->firstOrFail();
 
@@ -67,7 +67,7 @@ class GenreRepository extends Repository
             publicId: $result->public_id,
             name: $result->name,
             songCount: $result->song_count,
-            length: $result->length
+            length: $result->length,
         );
     }
 
@@ -85,7 +85,7 @@ class GenreRepository extends Repository
             publicId: Genre::NO_GENRE_PUBLIC_ID,
             name: Genre::NO_GENRE_NAME,
             songCount: (int) $result->song_count,
-            length: (float) $result->length
+            length: (float) $result->length,
         );
     }
 }

@@ -13,7 +13,7 @@ class AuthorizeDropboxController extends Controller
         $appKey = $request->route('key');
 
         return redirect()->away(
-            "https://www.dropbox.com/oauth2/authorize?client_id=$appKey&response_type=code&token_access_type=offline"
+            "https://www.dropbox.com/oauth2/authorize?client_id=$appKey&response_type=code&token_access_type=offline",
         );
     }
 }

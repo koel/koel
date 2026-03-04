@@ -12,11 +12,11 @@ class EmbedOptionsResource extends JsonResource
         'type',
         'theme',
         'layout',
-        'preview'
+        'preview',
     ];
 
     public function __construct(
-        private readonly EmbedOptions $options
+        private readonly EmbedOptions $options,
     ) {
         parent::__construct($options);
     }
@@ -28,7 +28,7 @@ class EmbedOptionsResource extends JsonResource
             'type' => 'embed-options',
             'theme' => $this->options->theme,
             'layout' => $this->options->layout,
-            'preview' => $this->options->preview
+            'preview' => $this->options->preview,
         ];
     }
 }

@@ -51,7 +51,7 @@ class Playlist extends Model implements AuditableContract, Embeddable
     protected $guarded = [];
 
     protected $casts = [
-        'rules' => SmartPlaylistRulesCast::class
+        'rules' => SmartPlaylistRulesCast::class,
     ];
 
     protected $appends = ['is_smart'];
@@ -114,7 +114,7 @@ class Playlist extends Model implements AuditableContract, Embeddable
             'id' => $this->id,
             'owner_id' => $this->owner_id,
             'name' => $this->name,
-            'description' => $this->description
+            'description' => $this->description,
         ];
     }
 }

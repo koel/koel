@@ -22,7 +22,7 @@ class MovePlaylistSongsRequest extends Request
             // Instead, we only validate that the songs exist.
             'songs' => 'required|array|exists:songs,id',
             'target' => 'required|exists:playlist_song,song_id',
-            'placement' => ['required', new Enum(Placement::class)]
+            'placement' => ['required', new Enum(Placement::class)],
         ];
     }
 }

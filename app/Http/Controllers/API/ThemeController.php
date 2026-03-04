@@ -19,9 +19,8 @@ class ThemeController extends Controller
     public function __construct(
         private readonly ThemeService $themeService,
         private readonly ThemeRepository $themeRepository,
-        private readonly Authenticatable $user
-    ) {
-    }
+        private readonly Authenticatable $user,
+    ) {}
 
     public function index()
     {

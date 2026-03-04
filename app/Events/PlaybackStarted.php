@@ -9,7 +9,6 @@ class PlaybackStarted extends Event
 {
     public function __construct(
         public Song $song,
-        public User $user
-    ) {
-    }
+        public User $user,
+    ) {}
 }

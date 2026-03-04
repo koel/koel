@@ -16,7 +16,7 @@ class FetchSongsToQueueByGenreController extends Controller
     public function __invoke(
         FetchSongsToQueueByGenreRequest $request,
         SongRepository $repository,
-        Authenticatable $user
+        Authenticatable $user,
     ) {
         /** @var ?Genre $genre */
         $genre = request()->route('genre');

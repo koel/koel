@@ -13,7 +13,7 @@ class ViewSongOnITunesRequest extends Request
     {
         return [
             'q' => 'required',
-            'api_token' => 'required'
+            'api_token' => 'required',
         ];
     }
 }

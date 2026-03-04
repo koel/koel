@@ -14,7 +14,7 @@ class SyncPodcastsCommand extends Command
     protected $description = 'Synchronize podcasts.';
 
     public function __construct(
-        private readonly PodcastService $podcastService
+        private readonly PodcastService $podcastService,
     ) {
         parent::__construct();
     }

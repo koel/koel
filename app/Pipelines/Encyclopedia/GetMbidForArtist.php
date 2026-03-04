@@ -11,9 +11,8 @@ class GetMbidForArtist
     use TriesRemember;
 
     public function __construct(
-        private readonly MusicBrainzConnector $connector
-    ) {
-    }
+        private readonly MusicBrainzConnector $connector,
+    ) {}
 
     public function __invoke(?string $name, Closure $next): mixed
     {

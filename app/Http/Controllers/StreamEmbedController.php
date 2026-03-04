@@ -10,6 +10,6 @@ class StreamEmbedController extends Controller
 {
     public function __invoke(Embed $embed, Song $song)
     {
-        return ( new Streamer(song: $song) )->stream();
+        return (new Streamer(song: $song))->stream();
     }
 }

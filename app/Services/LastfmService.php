@@ -23,9 +23,8 @@ use SensitiveParameter;
 class LastfmService implements Encyclopedia
 {
     public function __construct(
-        private readonly LastfmConnector $connector
-    ) {
-    }
+        private readonly LastfmConnector $connector,
+    ) {}
 
     /**
      * Determine if our application is using Last.fm.

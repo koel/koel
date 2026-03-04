@@ -27,7 +27,7 @@ trait StreamsLocalPath
 
             $rangeSet = RangeSet::createFromHeader($rangeHeader);
             $resource = new FileResource($path, File::mimeType($path));
-            ( new ResourceServlet($resource) )->sendResource($rangeSet);
+            (new ResourceServlet($resource))->sendResource($rangeSet);
         } catch (InvalidRangeHeaderException) {
             abort(Response::HTTP_BAD_REQUEST);
         } catch (UnsatisfiableRangeException) {

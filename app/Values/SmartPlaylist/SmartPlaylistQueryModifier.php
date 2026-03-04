@@ -46,25 +46,25 @@ final class SmartPlaylistQueryModifier
                 Operator::IS_NOT => Operator::IS,
                 Operator::NOT_CONTAIN => Operator::CONTAINS,
                 Operator::IS_NOT_BETWEEN => Operator::IS_BETWEEN,
-                default => $operator
+                default => $operator,
             };
 
             $query->{$whereHasClause}($rule->model->getManyToManyRelation(), static function (Builder $subQuery) use (
                 $rule,
                 $operator,
-                $value
+                $value,
             ): void {
                 $subQuery->{self::resolveWhereMethod($rule, $operator)}(...self::generateParameters(
                     $rule->model,
                     $operator,
-                    $value
+                    $value,
                 ));
             });
         } else {
             $query->{self::resolveWhereMethod($rule, $operator)}(...self::generateParameters(
                 $rule->model,
                 $operator,
-                $value
+                $value,
             ));
         }
     }
@@ -98,7 +98,7 @@ final class SmartPlaylistQueryModifier
             Operator::IS_NOT => ["$column <> ?", [$value[0]]],
             Operator::IS_NOT_BETWEEN => ["$column NOT BETWEEN ? AND ?", $value],
             Operator::NOT_CONTAIN => ["$column NOT LIKE ?", ["%{$value[0]}%"]],
-            Operator::NOT_IN_LAST => static fn() => ["$column < ?", [now()->subDays($value[0])]]
+            Operator::NOT_IN_LAST => static fn() => ["$column < ?", [now()->subDays($value[0])]],
         };
     }
 
@@ -115,7 +115,7 @@ final class SmartPlaylistQueryModifier
             Operator::IS_GREATER_THAN => [$column, '>', $value[0]],
             Operator::IS_BETWEEN, Operator::IS_NOT_BETWEEN => [$column, $value],
             Operator::NOT_IN_LAST => static fn() => [$column, '<', now()->subDays($value[0])],
-            Operator::IN_LAST => static fn() => [$column, '>=', now()->subDays($value[0])]
+            Operator::IN_LAST => static fn() => [$column, '>=', now()->subDays($value[0])],
         };
     }
 }

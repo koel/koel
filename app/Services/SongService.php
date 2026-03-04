@@ -34,9 +34,8 @@ class SongService
         private readonly SongRepository $songRepository,
         private readonly TranscodeRepository $transcodeRepository,
         private readonly AlbumService $albumService,
-        private readonly CacheStrategy $cache
-    ) {
-    }
+        private readonly CacheStrategy $cache,
+    ) {}
 
     public function updateSongs(array $ids, SongUpdateData $data): SongUpdateResult
     {
@@ -66,7 +65,7 @@ class SongService
                     $result,
                     $noTrackUpdate,
                     $affectedAlbums,
-                    $affectedArtists
+                    $affectedArtists,
                 ): void {
                     if ($noTrackUpdate) {
                         $data->track = $song->track;
@@ -210,7 +209,7 @@ class SongService
     public function createOrUpdateSongFromScan(
         ScanInformation $info,
         ScanConfiguration $config,
-        ?Song $song = null
+        ?Song $song = null,
     ): ?Song {
         $song ??= $this->songRepository->findOneByPath($info->path);
 
@@ -289,7 +288,7 @@ class SongService
 
         return $this->cache->remember(
             key: cache_key(__METHOD__, $user->id, $name),
-            callback: static fn() => Artist::getOrCreate($user, $name)
+            callback: static fn() => Artist::getOrCreate($user, $name),
         );
     }
 
@@ -299,7 +298,7 @@ class SongService
 
         return $this->cache->remember(
             key: cache_key(__METHOD__, $artist->id, $name),
-            callback: static fn() => Album::getOrCreate($artist, $name)
+            callback: static fn() => Album::getOrCreate($artist, $name),
         );
     }
 }

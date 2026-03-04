@@ -49,7 +49,7 @@ class ArtistRepository extends Repository implements ScoutableRepository
         string $sortColumn,
         string $sortDirection,
         bool $favoritesOnly = false,
-        ?User $user = null
+        ?User $user = null,
     ): Paginator {
         return Artist::query()
             ->withUserContext(user: $user ?? $this->auth->user(), favoritesOnly: $favoritesOnly)
@@ -67,7 +67,7 @@ class ArtistRepository extends Repository implements ScoutableRepository
                 ->take($limit)
                 ->modelKeys(),
             preserveOrder: true,
-            user: $user
+            user: $user,
         );
     }
 }

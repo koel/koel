@@ -25,7 +25,7 @@ class SpotifyServiceTest extends TestCase
 
         config([
             'koel.services.spotify.client_id' => 'fake-client-id',
-            'koel.services.spotify.client_secret' => 'fake-client-secret'
+            'koel.services.spotify.client_secret' => 'fake-client-secret',
         ]);
 
         $this->client = Mockery::mock(SpotifyClient::class);
@@ -90,7 +90,7 @@ class SpotifyServiceTest extends TestCase
     {
         config([
             'koel.services.spotify.client_id' => null,
-            'koel.services.spotify.client_secret' => null
+            'koel.services.spotify.client_secret' => null,
         ]);
 
         parent::tearDown();

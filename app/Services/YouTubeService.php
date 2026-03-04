@@ -11,9 +11,8 @@ use Throwable;
 class YouTubeService
 {
     public function __construct(
-        private readonly YouTubeConnector $connector
-    ) {
-    }
+        private readonly YouTubeConnector $connector,
+    ) {}
 
     public static function enabled(): bool
     {
@@ -33,7 +32,7 @@ class YouTubeService
             return Cache::remember(
                 cache_key('YouTube search query', serialize($request->query()->all())),
                 now()->addWeek(),
-                fn() => $this->connector->send($request)->object()
+                fn() => $this->connector->send($request)->object(),
             );
         } catch (Throwable) {
             return null;

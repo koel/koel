@@ -14,9 +14,8 @@ class AlbumSongController extends Controller
     /** @param User $user */
     public function __construct(
         private readonly SongRepository $songRepository,
-        private readonly Authenticatable $user
-    ) {
-    }
+        private readonly Authenticatable $user,
+    ) {}
 
     public function index(Album $album)
     {
