@@ -1,0 +1,27 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "vue", "import"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "pedantic": "off",
+    "nursery": "off",
+    "style": "off",
+    "perf": "warn",
+    "restriction": "off"
+  },
+  "rules": {
+    "no-case-declarations": "off",
+    "no-new": "off",
+    "no-shadow": "off",
+    "no-unused-expressions": "off",
+    "no-unassigned-import": "off",
+    "no-await-in-loop": "off",
+    "typescript/ban-ts-comment": "off"
+  },
+  "ignorePatterns": [
+    "resources/assets/tsconfig.json",
+    "resources/assets/css/vendor/**",
+    "resources/assets/js/visualizers/**"
+  ]
+}

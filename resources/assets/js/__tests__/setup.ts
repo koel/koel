@@ -1,6 +1,6 @@
 import vueSnapshotSerializer from 'jest-serializer-vue'
 import { expect, vi } from 'vitest'
-import Axios from 'axios'
+import axios from 'axios'
 
 declare global {
   interface Window {
@@ -70,7 +70,7 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 })
 
-Axios.defaults.adapter = vi.fn()
+axios.defaults.adapter = vi.fn()
 
 // Mock iframe's navigation API
 const iframeContentWindowMap = new WeakMap<HTMLIFrameElement, any>()

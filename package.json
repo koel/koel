@@ -48,7 +48,6 @@
     "youtube-player": "^3.1.2"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^3.16.0",
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@faker-js/faker": "^9.8.0",
@@ -67,8 +66,6 @@
     "@vueuse/integrations": "^13.4.0",
     "autoprefixer": "^10.4.21",
     "cypress": "^9.7.0",
-    "eslint": "^9.30.0",
-    "eslint-plugin-format": "^0.1.3",
     "factoria": "^4.0.1",
     "husky": "^9.1.7",
     "jest-serializer-vue": "^2.0.2",
@@ -76,6 +73,7 @@
     "laravel-echo": "^2.1.6",
     "laravel-vite-plugin": "^1.3.0",
     "lint-staged": "^10.5.4",
+    "oxlint": "^1.51.0",
     "postcss": "^8.5.6",
     "postcss-mixins": "^10.0.1",
     "postcss-nested": "^6.2.0",
@@ -88,8 +86,8 @@
     "vitest": "^3.2.4"
   },
   "scripts": {
-    "lint": "eslint ./resources/assets",
-    "lint:fix": "eslint ./resources/assets --fix",
+    "lint": "oxlint ./resources/assets",
+    "lint:fix": "oxlint --fix ./resources/assets",
     "test": "vitest",
     "test:unit": "vitest",
     "test:e2e": "kill-port 8080 && start-test dev http-get://localhost:8080/api/ping 'cypress open'",
@@ -106,10 +104,10 @@
       "composer cs"
     ],
     "resources/assets/**/*.{js,ts,css,pcss,vue}": [
-      "eslint --fix"
+      "oxlint --fix"
     ],
     "cypress/**/*.ts": [
-      "eslint --fix"
+      "oxlint --fix"
     ]
   },
   "type": "module",

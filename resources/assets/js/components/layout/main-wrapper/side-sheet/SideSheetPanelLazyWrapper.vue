@@ -7,7 +7,7 @@
 <script lang="ts" setup>
 import { toRefs } from 'vue'
 
-const props = withDefaults(defineProps<{ active?: boolean, shouldMount: boolean }>(), {
+const props = withDefaults(defineProps<{ active?: boolean, shouldMount?: boolean }>(), {
   active: false,
   shouldMount: false,
 })
