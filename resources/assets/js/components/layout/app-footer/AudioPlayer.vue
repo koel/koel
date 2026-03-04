@@ -1,9 +1,13 @@
 <template>
   <!--
     A very thin wrapper around Plyr, extracted as a standalone component for easier styling and to work better with HMR.
+    We have two audio elements:
+    1. The main one (with Plyr) for queue playback (songs/episodes) - can be linked to AudioContext
+    2. A separate hidden one for radio playback - NEVER linked to AudioContext to avoid CORS issues
   -->
   <div class="plyr w-full h-[4px]">
-    <audio class="hidden" controls crossorigin="anonymous" />
+    <audio id="audio-queue" class="hidden" controls crossorigin="anonymous" />
+    <audio id="audio-radio" class="hidden" controls />
   </div>
 </template>
 

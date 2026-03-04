@@ -34,11 +34,12 @@ describe('radioStationStore', () => {
   })
 
   it('gets source URL', () => {
-    commonStore.state.cdn_url = 'http://test/'
-    const station = h.factory('radio-station')
-    h.mock(authService, 'getAudioToken', 'hadouken')
+    const station = h.factory('radio-station', { url: 'https://sslstream.online/8026/;' })
 
-    expect(store.getSourceUrl(station)).toBe(`http://test/radio/stream/${station.id}?t=hadouken`)
+    // getSourceUrl returns the direct URL from the streaming server
+    // We bypass the proxy to avoid consuming PHP server bandwidth
+    // audioService is disconnected for radio to allow direct playback without CORS
+    expect(store.getSourceUrl(station)).toBe('https://sslstream.online/8026/;')
   })
 
   it('gets the currently playing station', () => {

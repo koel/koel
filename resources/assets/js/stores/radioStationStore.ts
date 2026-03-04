@@ -42,7 +42,9 @@ export const radioStationStore = {
   },
 
   getSourceUrl: (station: RadioStation) => {
-    return `${commonStore.state.cdn_url}radio/stream/${station.id}?t=${authService.getAudioToken()}`
+    // Use the direct URL from the streaming server
+    // We bypass audioService for radio to avoid CORS requirements and proxy overhead
+    return station.url
   },
 
   // Unlike playable/playable, we don't support queueing radio stations and thus don't need a dedicated queue for them.
