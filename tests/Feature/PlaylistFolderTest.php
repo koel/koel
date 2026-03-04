@@ -174,6 +174,6 @@ class PlaylistFolderTest extends TestCase
             $playlist->id
         ]])->assertUnprocessable();
 
-        self::assertTrue($this->folderService->getFolderForPlaylist($playlist->refresh())?->is($folder));
+        self::assertTrue($this->folderService->getFolderForPlaylist($playlist->refresh())->is($folder));
     }
 }

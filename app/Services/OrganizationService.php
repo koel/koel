@@ -14,8 +14,7 @@ class OrganizationService
 
     public function getCurrentOrganization(): Organization
     {
-        // @phpstan-ignore-next-line
         // @mago-ignore lint:no-redundant-nullsafe
-        return auth()->user()?->organization ?? $this->repository->getDefault();
+        return auth()->user()?->organization ?? $this->repository->getDefault(); // @phpstan-ignore-line
     }
 }

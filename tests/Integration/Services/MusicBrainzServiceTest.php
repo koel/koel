@@ -127,10 +127,10 @@ class MusicBrainzServiceTest extends TestCase
         $user = create_user();
 
         /** @var Album $album */
-        $album = Artist::factory() // @phpstan-ignore-line
+        $album = Artist::factory()
             ->for($user)
             ->create(['name' => 'Skid Row'])
-            ->albums()
+            ->albums() // @phpstan-ignore-line
             ->create([
                 'name' => 'Slave to the Grind',
                 'user_id' => $user->id
@@ -158,10 +158,10 @@ class MusicBrainzServiceTest extends TestCase
         $user = create_user();
 
         /** @var Album $album */
-        $album = Artist::factory() // @phpstan-ignore-line
+        $album = Artist::factory()
             ->for($user)
             ->create(['name' => 'Skid Row'])
-            ->albums()
+            ->albums() // @phpstan-ignore-line
             ->create([
                 'name' => 'Slave to the Grind',
                 'user_id' => $user->id
