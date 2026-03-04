@@ -27,18 +27,19 @@ use Psr\Http\Client\ClientInterface;
 use Throwable;
 use Webmozart\Assert\Assert;
 
+// @mago-ignore lint:cyclomatic-complexity
 class PodcastService
 {
     public function __construct(
         private readonly PodcastRepository $podcastRepository,
         private readonly SongRepository $songRepository,
         private ?ClientInterface $client = null,
-    ) {
-    }
+    ) {}
 
     public function addPodcast(string $url, User $user): Podcast
     {
         // Since downloading and parsing a feed can be time-consuming, try setting the execution time to 5 minutes
+        // @mago-ignore lint:no-ini-set,no-error-control-operator
         @ini_set('max_execution_time', 300);
 
         $podcast = $this->podcastRepository->findOneByUrl($url);
@@ -92,8 +93,10 @@ class PodcastService
         $parser = $this->createParser($podcast->url);
         $channel = $parser->getChannel();
 
-        $pubDate = $parser->xmlReader->value('rss.channel.pubDate')->first()
-            ?? $parser->xmlReader->value('rss.channel.lastBuildDate')->first();
+        $pubDate = $parser->xmlReader->value('rss.channel.pubDate')->first() ?? $parser
+            ->xmlReader
+            ->value('rss.channel.lastBuildDate')
+            ->first();
 
         if ($pubDate && Carbon::createFromFormat(Carbon::RFC1123, $pubDate)?->isBefore($podcast->last_synced_at)) {
             // The pubDate/lastBuildDate value indicates that there's been no new content since the last check.
@@ -127,24 +130,26 @@ class PodcastService
 
         /** @var EpisodeValue $episodeValue */
         foreach ($episodeCollection as $episodeValue) {
-            if (!in_array($episodeValue->guid->value, $existingEpisodeGuids, true)) {
-                $id = Uuid::generate();
-                $ids[] = $id;
-                $records[] = [
-                    'id' => $id,
-                    'podcast_id' => $podcast->id,
-                    'title' => $episodeValue->title,
-                    'lyrics' => '',
-                    'path' => $episodeValue->enclosure->url,
-                    'created_at' => $episodeValue->metadata->pubDate ?: now(),
-                    'updated_at' => $episodeValue->metadata->pubDate ?: now(),
-                    'episode_metadata' => $episodeValue->metadata->toJson(),
-                    'episode_guid' => $episodeValue->guid,
-                    'length' => $episodeValue->metadata->duration ?? 0,
-                    'mtime' => time(),
-                    'is_public' => true,
-                ];
+            if (in_array($episodeValue->guid->value, $existingEpisodeGuids, true)) {
+                continue;
             }
+
+            $id = Uuid::generate();
+            $ids[] = $id;
+            $records[] = [
+                'id' => $id,
+                'podcast_id' => $podcast->id,
+                'title' => $episodeValue->title,
+                'lyrics' => '',
+                'path' => $episodeValue->enclosure->url,
+                'created_at' => $episodeValue->metadata->pubDate ?: now(),
+                'updated_at' => $episodeValue->metadata->pubDate ?: now(),
+                'episode_metadata' => $episodeValue->metadata->toJson(),
+                'episode_guid' => $episodeValue->guid,
+                'length' => $episodeValue->metadata->duration ?? 0,
+                'mtime' => time(),
+                'is_public' => true,
+            ];
         }
 
         // We use insert() instead of $podcast->episodes()->createMany() for better performance,
@@ -156,9 +161,14 @@ class PodcastService
         Episode::query()->whereIn('id', $ids)->searchable(); // @phpstan-ignore-line
     }
 
-    private function subscribeUserToPodcast(User $user, Podcast $podcast): void
+    public function subscribeUserToPodcast(User $user, Podcast $podcast): void
     {
-        $user->subscribeToPodcast($podcast);
+        throw_if(
+            $user->subscribedToPodcast($podcast),
+            UserAlreadySubscribedToPodcastException::create($user, $podcast),
+        );
+
+        $user->podcasts()->attach($podcast);
 
         // Refreshing so that $podcast->subscribers are updated
         $podcast->refresh();
@@ -180,7 +190,7 @@ class PodcastService
 
     public function unsubscribeUserFromPodcast(User $user, Podcast $podcast): void
     {
-        $user->unsubscribeFromPodcast($podcast);
+        $user->podcasts()->detach($podcast);
         event(new UserUnsubscribedFromPodcast($user, $podcast));
     }
 
@@ -195,7 +205,7 @@ class PodcastService
             $lastModified = Http::head($podcast->url)->header('Last-Modified');
 
             return $lastModified
-                && Carbon::createFromFormat(Carbon::RFC1123, $lastModified)->isAfter($podcast->last_synced_at);
+            && Carbon::createFromFormat(Carbon::RFC1123, $lastModified)->isAfter($podcast->last_synced_at);
         } catch (Throwable) {
             return true;
         }
@@ -212,7 +222,7 @@ class PodcastService
         try {
             $response = $client->request($method, $url, [
                 RequestOptions::HEADERS => [
-                    'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4.1 Safari/605.1.15', // @phpcs-ignore-line
+                    'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4.1 Safari/605.1.15',
                     'Origin' => '*',
                 ],
                 RequestOptions::HTTP_ERRORS => false,

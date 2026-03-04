@@ -12,13 +12,16 @@ class UserTest extends PlusTestCase
     #[Test]
     public function creatingManagersIsOk(): void
     {
-        $this->postAs('api/users', [
-            'name' => 'Manager',
-            'email' => 'foo@bar.com',
-            'password' => 'secret',
-            'role' => 'manager',
-        ], create_admin())
-            ->assertSuccessful();
+        $this->postAs(
+            'api/users',
+            [
+                'name' => 'Manager',
+                'email' => 'foo@bar.com',
+                'password' => 'secret',
+                'role' => 'manager',
+            ],
+            create_admin(),
+        )->assertSuccessful();
     }
 
     #[Test]
@@ -26,11 +29,14 @@ class UserTest extends PlusTestCase
     {
         $user = create_admin();
 
-        $this->putAs("api/users/{$user->public_id}", [
-            'name' => 'Manager',
-            'email' => 'foo@bar.com',
-            'role' => 'manager',
-        ], create_admin())
-            ->assertSuccessful();
+        $this->putAs(
+            "api/users/{$user->public_id}",
+            [
+                'name' => 'Manager',
+                'email' => 'foo@bar.com',
+                'role' => 'manager',
+            ],
+            create_admin(),
+        )->assertSuccessful();
     }
 }

@@ -30,24 +30,21 @@ class GetMbidForArtistTest extends TestCase
 
         $mock = self::createNextClosureMock('6da0515e-a27d-449d-84cc-00713c38a140');
 
-        (new GetMbidForArtist(new MusicBrainzConnector()))(
-            'Skid Row',
-            static fn ($args) => $mock->next($args) // @phpstan-ignore-line
-        );
+        (new GetMbidForArtist(new MusicBrainzConnector()))('Skid Row', $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertSent(static function (SearchForArtistRequest $request): bool {
-            self::assertSame([
-                'query' => 'artist:Skid Row',
-                'limit' => 1,
-            ], $request->query()->all());
+            self::assertSame(
+                [
+                    'query' => 'artist:Skid Row',
+                    'limit' => 1,
+                ],
+                $request->query()->all(),
+            );
 
             return true;
         });
 
-        self::assertSame(
-            '6da0515e-a27d-449d-84cc-00713c38a140',
-            Cache::get(cache_key('artist mbid', 'Skid Row')),
-        );
+        self::assertSame('6da0515e-a27d-449d-84cc-00713c38a140', Cache::get(cache_key('artist mbid', 'Skid Row')));
     }
 
     #[Test]
@@ -57,10 +54,7 @@ class GetMbidForArtistTest extends TestCase
         Cache::put(cache_key('artist mbid', 'Skid Row'), 'sample-mbid');
         $mock = self::createNextClosureMock('sample-mbid');
 
-        (new GetMbidForArtist(new MusicBrainzConnector()))(
-            'Skid Row',
-            static fn ($args) => $mock->next($args) // @phpstan-ignore-line
-        );
+        (new GetMbidForArtist(new MusicBrainzConnector()))('Skid Row', $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }
@@ -71,10 +65,7 @@ class GetMbidForArtistTest extends TestCase
         Saloon::fake([]);
         $mock = self::createNextClosureMock(null);
 
-        (new GetMbidForArtist(new MusicBrainzConnector()))(
-            null,
-            static fn ($args) => $mock->next($args) // @phpstan-ignore-line
-        );
+        (new GetMbidForArtist(new MusicBrainzConnector()))(null, $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }

@@ -4,6 +4,4 @@ namespace App\Exceptions;
 
 use DomainException;
 
-class NotAPlaylistCollaboratorException extends DomainException
-{
-}
+class NotAPlaylistCollaboratorException extends DomainException {}

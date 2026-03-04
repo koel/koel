@@ -13,8 +13,7 @@ final readonly class SongUpdateResult
         public Collection $updatedSongs,
         public Collection $removedArtistIds,
         public Collection $removedAlbumIds,
-    ) {
-    }
+    ) {}
 
     public static function make(
         ?Collection $updatedSongs = null,

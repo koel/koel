@@ -17,8 +17,7 @@ class ProfileTest extends TestCase
         $this->putAs('api/me', [
             'name' => 'Foo',
             'email' => 'bar@baz.com',
-        ])
-            ->assertUnprocessable();
+        ])->assertUnprocessable();
     }
 
     #[Test]
@@ -26,11 +25,15 @@ class ProfileTest extends TestCase
     {
         $user = create_user(['password' => Hash::make('secret')]);
 
-        $this->putAs('api/me', [
-            'name' => 'Foo',
-            'email' => 'bar@baz.com',
-            'current_password' => 'secret',
-        ], $user);
+        $this->putAs(
+            'api/me',
+            [
+                'name' => 'Foo',
+                'email' => 'bar@baz.com',
+                'current_password' => 'secret',
+            ],
+            $user,
+        );
 
         $user->refresh();
 
@@ -44,14 +47,16 @@ class ProfileTest extends TestCase
     {
         $user = create_user(['password' => Hash::make('secret')]);
 
-        $token = $this->putAs('api/me', [
-            'name' => 'Foo',
-            'email' => 'bar@baz.com',
-            'new_password' => 'new-secret',
-            'current_password' => 'secret',
-        ], $user)
-            ->headers
-            ->get('Authorization');
+        $token = $this->putAs(
+            'api/me',
+            [
+                'name' => 'Foo',
+                'email' => 'bar@baz.com',
+                'new_password' => 'new-secret',
+                'current_password' => 'secret',
+            ],
+            $user,
+        )->headers->get('Authorization');
 
         $user->refresh();
 
@@ -67,13 +72,16 @@ class ProfileTest extends TestCase
         $user = create_user(['password' => Hash::make('secret')]);
         self::assertNull($user->getRawOriginal('avatar'));
 
-        $this->putAs('api/me', [
-            'name' => 'Foo',
-            'email' => 'bar@baz.com',
-            'current_password' => 'secret',
-            'avatar' => minimal_base64_encoded_image(),
-        ], $user)
-            ->assertOk();
+        $this->putAs(
+            'api/me',
+            [
+                'name' => 'Foo',
+                'email' => 'bar@baz.com',
+                'current_password' => 'secret',
+                'avatar' => minimal_base64_encoded_image(),
+            ],
+            $user,
+        )->assertOk();
 
         $user->refresh();
 
@@ -89,12 +97,15 @@ class ProfileTest extends TestCase
             'avatar' => 'foo.jpg',
         ]);
 
-        $this->putAs('api/me', [
-            'name' => 'Foo',
-            'email' => 'foo@bar.com',
-            'current_password' => 'secret',
-        ], $user)
-            ->assertOk();
+        $this->putAs(
+            'api/me',
+            [
+                'name' => 'Foo',
+                'email' => 'foo@bar.com',
+                'current_password' => 'secret',
+            ],
+            $user,
+        )->assertOk();
 
         $user->refresh();
 
@@ -107,11 +118,14 @@ class ProfileTest extends TestCase
         config(['koel.misc.demo' => true]);
         $user = create_user(['password' => Hash::make('secret')]);
 
-        $this->putAs('api/me', [
-            'name' => 'Foo',
-            'email' => 'bar@baz.com',
-            'current_password' => 'secret',
-        ], $user)
-            ->assertNoContent();
+        $this->putAs(
+            'api/me',
+            [
+                'name' => 'Foo',
+                'email' => 'bar@baz.com',
+                'current_password' => 'secret',
+            ],
+            $user,
+        )->assertNoContent();
     }
 }

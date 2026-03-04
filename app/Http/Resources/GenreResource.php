@@ -13,8 +13,9 @@ class GenreResource extends JsonResource
         'name',
     ];
 
-    public function __construct(private readonly GenreSummary $summary)
-    {
+    public function __construct(
+        private readonly GenreSummary $summary,
+    ) {
         parent::__construct($summary);
     }
 

@@ -10,9 +10,9 @@ use Illuminate\Translation\PotentiallyTranslatedString;
 
 class UserCanManageRole implements ValidationRule
 {
-    public function __construct(private readonly User $user)
-    {
-    }
+    public function __construct(
+        private readonly User $user,
+    ) {}
 
     /**
      * Run the validation rule.

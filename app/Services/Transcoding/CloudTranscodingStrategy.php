@@ -16,8 +16,11 @@ class CloudTranscodingStrategy extends TranscodingStrategy
     {
         $storage = CloudStorageFactory::make($song->storage);
 
-        $transcode = $this->findTranscodeBySongAndBitRate($song, $bitRate)
-            ?? $this->createTranscode($storage, $song, $bitRate);
+        $transcode = $this->findTranscodeBySongAndBitRate($song, $bitRate) ?? $this->createTranscode(
+            $storage,
+            $song,
+            $bitRate,
+        );
 
         return $storage->getPresignedUrl($transcode->location);
     }

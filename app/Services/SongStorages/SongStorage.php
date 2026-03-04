@@ -23,7 +23,7 @@ abstract class SongStorage
     {
         throw_unless(
             $this->getStorageType()->supported(),
-            new KoelPlusRequiredException('The storage driver is only supported in Koel Plus.')
+            new KoelPlusRequiredException('The storage driver is only supported in Koel Plus.'),
         );
     }
 }

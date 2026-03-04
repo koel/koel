@@ -28,6 +28,7 @@ class Genre extends Model
         'name',
     ];
 
+    // @mago-ignore lint:no-redundant-method-override
     public static function query(): GenreBuilder
     {
         /** @var GenreBuilder */
@@ -54,9 +55,7 @@ class Genre extends Model
         $name = trim($name);
 
         /** @var static */
-        return static::query()->firstOrCreate(
-            ['name' => $name],
-        );
+        return static::query()->firstOrCreate(['name' => $name]);
     }
 
     /** @inheritdoc  */

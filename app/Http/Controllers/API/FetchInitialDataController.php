@@ -39,7 +39,7 @@ class FetchInitialDataController extends Controller
         QueueService $queueService,
         ThemeRepository $themeRepository,
         LicenseServiceInterface $licenseService,
-        Authenticatable $user
+        Authenticatable $user,
     ) {
         $licenseStatus = $licenseService->getStatus();
         $theme = $licenseStatus->isValid()
@@ -63,8 +63,8 @@ class FetchInitialDataController extends Controller
             'uses_media_browser' => MediaBrowser::used(),
             'supports_batch_downloading' => extension_loaded('zip'),
             'media_path_set' => (bool) Setting::get('media_path'),
-            'supports_transcoding' => config('koel.streaming.ffmpeg_path')
-                && is_executable(config('koel.streaming.ffmpeg_path')),
+            'supports_transcoding' =>
+                config('koel.streaming.ffmpeg_path') && is_executable(config('koel.streaming.ffmpeg_path')),
             'cdn_url' => static_url(),
             'current_version' => koel_version(),
             'latest_version' => $user->hasPermissionTo(Permission::MANAGE_SETTINGS)

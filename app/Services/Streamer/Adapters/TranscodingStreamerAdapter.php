@@ -13,12 +13,12 @@ class TranscodingStreamerAdapter implements StreamerAdapter
 {
     use StreamsLocalPath;
 
-    public function stream(Song $song, ?RequestedStreamingConfig $config = null) // @phpcs:ignore
+    public function stream(Song $song, ?RequestedStreamingConfig $config = null)
     {
         abort_unless(
             is_executable(config('koel.streaming.ffmpeg_path')),
             Response::HTTP_INTERNAL_SERVER_ERROR,
-            'ffmpeg not found or not executable.'
+            'ffmpeg not found or not executable.',
         );
 
         $bitRate = $config?->bitRate ?: config('koel.streaming.bitrate');

@@ -46,7 +46,7 @@ class ValidRadioStationUrlTest extends TestCase
         (new ValidRadioStationUrl())->validate(
             'url',
             'https://example.com/stream',
-            fn () => $this->addToAssertionCount(1),  // @phpstan-ignore-line
+            fn () => $this->addToAssertionCount(1), // @phpstan-ignore-line
         );
     }
 

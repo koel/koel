@@ -18,7 +18,6 @@ class RecentlyPlayedSongTest extends TestCase
 
         Interaction::factory(5)->for($user)->create();
 
-        $this->getAs('api/songs/recently-played', $user)
-            ->assertJsonStructure([0 => SongResource::JSON_STRUCTURE]);
+        $this->getAs('api/songs/recently-played', $user)->assertJsonStructure([0 => SongResource::JSON_STRUCTURE]);
     }
 }

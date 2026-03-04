@@ -7,6 +7,7 @@ use App\Values\CompositeToken;
 use Illuminate\Support\Facades\Cache;
 use Laravel\Sanctum\NewAccessToken;
 use Laravel\Sanctum\PersonalAccessToken;
+use SensitiveParameter;
 
 class TokenManager
 {
@@ -19,7 +20,7 @@ class TokenManager
     {
         $token = CompositeToken::fromAccessTokens(
             api: $this->createToken($user),
-            audio: $this->createToken($user, ['audio'])
+            audio: $this->createToken($user, ['audio']),
         );
 
         Cache::forever("app.composite-tokens.$token->apiToken", $token->audioToken);
@@ -27,7 +28,7 @@ class TokenManager
         return $token;
     }
 
-    public function deleteCompositionToken(string $plainTextApiToken): void
+    public function deleteCompositionToken(#[SensitiveParameter] string $plainTextApiToken): void
     {
         /** @var string $audioToken */
         $audioToken = Cache::get("app.composite-tokens.$plainTextApiToken");
@@ -45,17 +46,17 @@ class TokenManager
         $user->tokens()->delete();
     }
 
-    public function deleteTokenByPlainTextToken(string $plainTextToken): void
+    public function deleteTokenByPlainTextToken(#[SensitiveParameter] string $plainTextToken): void
     {
         PersonalAccessToken::findToken($plainTextToken)?->delete();
     }
 
-    public function getUserFromPlainTextToken(string $plainTextToken): ?User
+    public function getUserFromPlainTextToken(#[SensitiveParameter] string $plainTextToken): ?User
     {
         return PersonalAccessToken::findToken($plainTextToken)?->tokenable;
     }
 
-    public function refreshApiToken(string $currentPlainTextToken): NewAccessToken
+    public function refreshApiToken(#[SensitiveParameter] string $currentPlainTextToken): NewAccessToken
     {
         $newToken = $this->createToken($this->getUserFromPlainTextToken($currentPlainTextToken));
         $this->deleteTokenByPlainTextToken($currentPlainTextToken);

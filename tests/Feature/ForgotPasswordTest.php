@@ -17,25 +17,25 @@ class ForgotPasswordTest extends TestCase
     #[Test]
     public function sendResetPasswordRequest(): void
     {
-        $this->mock(AuthenticationService::class)
+        $this
+            ->mock(AuthenticationService::class)
             ->expects('trySendResetPasswordLink')
             ->with('foo@bar.com')
             ->andReturnTrue();
 
-        $this->postJson('/api/forgot-password', ['email' => 'foo@bar.com'])
-            ->assertNoContent();
+        $this->postJson('/api/forgot-password', ['email' => 'foo@bar.com'])->assertNoContent();
     }
 
     #[Test]
     public function sendResetPasswordRequestFailed(): void
     {
-        $this->mock(AuthenticationService::class)
+        $this
+            ->mock(AuthenticationService::class)
             ->expects('trySendResetPasswordLink')
             ->with('foo@bar.com')
             ->andReturnFalse();
 
-        $this->postJson('/api/forgot-password', ['email' => 'foo@bar.com'])
-            ->assertNotFound();
+        $this->postJson('/api/forgot-password', ['email' => 'foo@bar.com'])->assertNotFound();
     }
 
     #[Test]
@@ -47,7 +47,7 @@ class ForgotPasswordTest extends TestCase
         $this->postJson('/api/reset-password', [
             'email' => $user->email,
             'password' => 'new-password',
-            'token' =>  Password::createToken($user),
+            'token' => Password::createToken($user),
         ])->assertNoContent();
 
         self::assertTrue(Hash::check('new-password', $user->refresh()->password));
@@ -82,7 +82,7 @@ class ForgotPasswordTest extends TestCase
         $this->postJson('/api/reset-password', [
             'email' => $user->email,
             'password' => 'new-password',
-            'token' =>  Password::createToken($user),
+            'token' => Password::createToken($user),
         ])->assertForbidden();
     }
 

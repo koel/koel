@@ -9,14 +9,14 @@ use App\Values\Album\AlbumInformation;
 use App\Values\Artist\ArtistInformation;
 use Illuminate\Support\Facades\Cache;
 
+// @mago-ignore lint:cyclomatic-complexity
 class EncyclopediaService
 {
     public function __construct(
         private readonly Encyclopedia $encyclopedia,
         private readonly ImageStorage $imageStorage,
         private readonly SpotifyService $spotifyService,
-    ) {
-    }
+    ) {}
 
     public function getAlbumInformation(Album $album): ?AlbumInformation
     {
@@ -30,7 +30,7 @@ class EncyclopediaService
             function () use ($album): AlbumInformation {
                 $info = $this->encyclopedia->getAlbumInformation($album) ?: AlbumInformation::make();
 
-                if ($album->cover || (!SpotifyService::enabled() && !$info->cover)) {
+                if ($album->cover || !SpotifyService::enabled() && !$info->cover) {
                     // If the album already has a cover, or there's no resource to download a cover from,
                     // just return the info.
                     return $info;
@@ -44,7 +44,7 @@ class EncyclopediaService
                 });
 
                 return $info;
-            }
+            },
         );
     }
 
@@ -54,35 +54,31 @@ class EncyclopediaService
             return null;
         }
 
-        return Cache::remember(
-            cache_key('artist information', $artist->name),
-            now()->addWeek(),
-            function () use ($artist): ArtistInformation {
-                $info = $this->encyclopedia->getArtistInformation($artist) ?: ArtistInformation::make();
+        return Cache::remember(cache_key('artist information', $artist->name), now()->addWeek(), function () use (
+            $artist,
+        ): ArtistInformation {
+            $info = $this->encyclopedia->getArtistInformation($artist) ?: ArtistInformation::make();
 
-                if ($artist->image || (!SpotifyService::enabled() && !$info->image)) {
-                    // If the artist already has an image, or there's no resource to download an image from,
-                    // just return the info.
-                    return $info;
-                }
-
-                // If the artist image is not set, try to download it either from Spotify (prioritized, due to
-                // the high quality) or from the encyclopedia. We will also set the downloaded image right
-                // away into the info object so that the caller/client can use it immediately.
-                $info->image = rescue(function () use ($artist, $info): ?string {
-                    return $this->fetchAndStoreArtistImage($artist, $info) ?? $info->image;
-                });
-
+            if ($artist->image || !SpotifyService::enabled() && !$info->image) {
+                // If the artist already has an image, or there's no resource to download an image from,
+                // just return the info.
                 return $info;
             }
-        );
+
+            // If the artist image is not set, try to download it either from Spotify (prioritized, due to
+            // the high quality) or from the encyclopedia. We will also set the downloaded image right
+            // away into the info object so that the caller/client can use it immediately.
+            $info->image = rescue(function () use ($artist, $info): ?string {
+                return $this->fetchAndStoreArtistImage($artist, $info) ?? $info->image;
+            });
+
+            return $info;
+        });
     }
 
     private function fetchAndStoreAlbumCover(Album $album, AlbumInformation $info): ?string
     {
-        $coverUrl = SpotifyService::enabled()
-            ? $this->spotifyService->tryGetAlbumCover($album)
-            : $info->cover;
+        $coverUrl = SpotifyService::enabled() ? $this->spotifyService->tryGetAlbumCover($album) : $info->cover;
 
         if (!$coverUrl) {
             return null;
@@ -97,9 +93,7 @@ class EncyclopediaService
 
     private function fetchAndStoreArtistImage(Artist $artist, ArtistInformation $info): ?string
     {
-        $imgUrl = SpotifyService::enabled()
-            ? $this->spotifyService->tryGetArtistImage($artist)
-            : $info->image;
+        $imgUrl = SpotifyService::enabled() ? $this->spotifyService->tryGetArtistImage($artist) : $info->image;
 
         if (!$imgUrl) {
             return null;

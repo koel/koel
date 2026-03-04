@@ -8,7 +8,7 @@ use Illuminate\Http\Response;
 
 class Authenticate
 {
-    public function handle(Request $request, Closure $next) // @phpcs:ignore
+    public function handle(Request $request, Closure $next)
     {
         if ($request->user()?->tokenCan('*')) {
             return $next($request);

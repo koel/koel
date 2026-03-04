@@ -18,16 +18,12 @@ class UpdateMediaPathController extends Controller
     public function __construct(
         private readonly SettingService $settingService,
         private readonly DirectoryScanner $mediaSyncService,
-        private readonly Authenticatable $user
-    ) {
-    }
+        private readonly Authenticatable $user,
+    ) {}
 
     public function __invoke(UpdateMediaPathRequest $request)
     {
-        abort_unless(
-            $this->user->hasPermissionTo(Permission::MANAGE_SETTINGS),
-            Response::HTTP_FORBIDDEN,
-        );
+        abort_unless($this->user->hasPermissionTo(Permission::MANAGE_SETTINGS), Response::HTTP_FORBIDDEN);
 
         $this->mediaSyncService->scan(
             directory: $this->settingService->updateMediaPath($request->path),

@@ -31,17 +31,7 @@ final class SongUpdateData implements Arrayable
         ?int $year = null,
         ?string $lyrics = null,
     ): self {
-        return new self(
-            $title,
-            $artistName,
-            $albumName,
-            $albumArtistName,
-            $track,
-            $disc,
-            $genre,
-            $year,
-            $lyrics,
-        );
+        return new self($title, $artistName, $albumName, $albumArtistName, $track, $disc, $genre, $year, $lyrics);
     }
 
     /** @return array<string, mixed> */

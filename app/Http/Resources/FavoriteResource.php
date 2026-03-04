@@ -16,8 +16,9 @@ class FavoriteResource extends JsonResource
         'created_at',
     ];
 
-    public function __construct(private readonly Favorite $favorite)
-    {
+    public function __construct(
+        private readonly Favorite $favorite,
+    ) {
         parent::__construct($favorite);
     }
 

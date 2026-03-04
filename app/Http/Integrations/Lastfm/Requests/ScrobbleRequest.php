@@ -20,9 +20,8 @@ final class ScrobbleRequest extends Request implements HasBody, RequiresSignatur
     public function __construct(
         private readonly Song $song,
         private readonly User $user,
-        private readonly int $timestamp
-    ) {
-    }
+        private readonly int $timestamp,
+    ) {}
 
     public function resolveEndpoint(): string
     {

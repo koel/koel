@@ -16,9 +16,8 @@ abstract class Scanner
         protected SongService $songService,
         protected SongRepository $songRepository,
         protected FileScanner $fileScanner,
-        protected Finder $finder
-    ) {
-    }
+        protected Finder $finder,
+    ) {}
 
     protected function handleIndividualFile(string $path, ScanConfiguration $config): ScanResult
     {
@@ -66,6 +65,7 @@ abstract class Scanner
         }
 
         if (config('koel.scan.memory_limit')) {
+            // @mago-ignore lint:no-ini-set
             ini_set('memory_limit', config('koel.scan.memory_limit') . 'M');
         }
     }

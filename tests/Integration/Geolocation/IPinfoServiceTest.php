@@ -29,9 +29,9 @@ class IPinfoServiceTest extends TestCase
     public function getCountryCodeFromIp(): void
     {
         Saloon::fake([
-            GetLiteDataRequest::class => MockResponse::make(
-                body: File::json(test_path('fixtures/ipinfo/lite-data.json')),
-            ),
+            GetLiteDataRequest::class => MockResponse::make(body: File::json(test_path(
+                'fixtures/ipinfo/lite-data.json',
+            ))),
         ]);
 
         $countryCode = $this->service->getCountryCodeFromIp('172.16.31.10');

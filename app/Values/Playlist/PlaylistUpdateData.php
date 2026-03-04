@@ -13,8 +13,7 @@ final readonly class PlaylistUpdateData implements Arrayable
         public ?string $folderId,
         public ?string $cover,
         public ?SmartPlaylistRuleGroupCollection $ruleGroups,
-    ) {
-    }
+    ) {}
 
     public static function make(
         string $name,

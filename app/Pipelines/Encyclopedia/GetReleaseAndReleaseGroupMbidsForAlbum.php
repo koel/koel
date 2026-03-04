@@ -12,9 +12,9 @@ class GetReleaseAndReleaseGroupMbidsForAlbum
 {
     use TriesRemember;
 
-    public function __construct(private readonly MusicBrainzConnector $connector)
-    {
-    }
+    public function __construct(
+        private readonly MusicBrainzConnector $connector,
+    ) {}
 
     public function __invoke(?array $params, Closure $next): mixed
     {

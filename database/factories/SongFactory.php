@@ -16,7 +16,9 @@ class SongFactory extends Factory
             'album_id' => Album::factory(),
             'album_name' => static fn (array $attributes) => Album::query()->find($attributes['album_id'])?->name, // @phpstan-ignore-line
             'artist_id' => static fn (array $attributes) => Album::query()->find($attributes['album_id'])?->artist_id, // @phpstan-ignore-line
-            'artist_name' => static fn (array $attributes) => Album::query()->find($attributes['album_id'])?->artist_name, // @phpstan-ignore-line
+            'artist_name' => static fn (array $attributes) => Album::query()->find( // @phpstan-ignore-line
+                $attributes['album_id'],
+            )?->artist_name,
             'title' => $this->faker->sentence,
             'length' => $this->faker->randomFloat(2, 10, 500),
             'track' => random_int(1, 20),
@@ -35,17 +37,19 @@ class SongFactory extends Factory
 
     public function public(): self
     {
-        return $this->state(fn () => ['is_public' => true]); // @phpcs:ignore
+        // @mago-ignore lint:prefer-static-closure
+        return $this->state(fn () => ['is_public' => true]);
     }
 
     public function private(): self
     {
-        return $this->state(fn () => ['is_public' => false]); // @phpcs:ignore
+        // @mago-ignore lint:prefer-static-closure
+        return $this->state(fn () => ['is_public' => false]);
     }
 
     public function asEpisode(): self
     {
-        return $this->state(fn () => [ // @phpcs:ignore
+        return $this->state(fn () => [
             'podcast_id' => Podcast::factory(),
             'episode_metadata' => EpisodeMetadata::fromArray([
                 'link' => $this->faker->url(),

@@ -10,8 +10,9 @@ class PruneLibraryCommand extends Command
     protected $signature = 'koel:prune {--dry-run}';
     protected $description = 'Remove empty artists and albums';
 
-    public function __construct(private readonly LibraryManager $libraryManager)
-    {
+    public function __construct(
+        private readonly LibraryManager $libraryManager,
+    ) {
         parent::__construct();
     }
 
@@ -24,7 +25,7 @@ class PruneLibraryCommand extends Command
             $this->info('Dry run: no changes made.');
 
             $this->info(
-                "Found {$results['artists']->count()} empty artist(s) and {$results['albums']->count()} empty album(s)."
+                "Found {$results['artists']->count()} empty artist(s) and {$results['albums']->count()} empty album(s).",
             );
 
             foreach ($results['artists'] as $result) {

@@ -76,7 +76,8 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(LicenseServiceInterface::class, LicenseService::class);
 
-        $this->app->when(LicenseService::class)
+        $this->app
+            ->when(LicenseService::class)
             ->needs('$hashSalt')
             ->give(config('app.key'));
 
@@ -104,7 +105,8 @@ class AppServiceProvider extends ServiceProvider
             'playlist' => Playlist::class,
         ]);
 
-        $this->app->when(TicketmasterService::class)
+        $this->app
+            ->when(TicketmasterService::class)
             ->needs('$defaultCountryCode')
             ->give(config('koel.services.ticketmaster.default_country_code'));
 

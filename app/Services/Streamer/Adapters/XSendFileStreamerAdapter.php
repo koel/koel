@@ -20,6 +20,6 @@ class XSendFileStreamerAdapter extends LocalStreamerAdapter
         header('Content-Disposition: inline; filename="' . basename($path) . '"');
 
         // prevent PHP from sending stray headers
-        exit;
+        exit();
     }
 }

@@ -22,7 +22,10 @@ class SongTest extends PlusTestCase
         $this->getAs("api/songs/{$publicSong->id}", $user)->assertSuccessful();
 
         /** @var Song $ownPrivateSong */
-        $ownPrivateSong = Song::factory()->for($user, 'owner')->private()->create();
+        $ownPrivateSong = Song::factory()
+            ->for($user, 'owner')
+            ->private()
+            ->create();
 
         // We can access our own private songs.
         $this->getAs("api/songs/{$ownPrivateSong->id}", $user)->assertSuccessful();
@@ -40,35 +43,50 @@ class SongTest extends PlusTestCase
         $currentUser = create_user();
         $anotherUser = create_user();
 
-        $externalUnownedSongs = Song::factory(2)->for($anotherUser, 'owner')->private()->create();
+        $externalUnownedSongs = Song::factory(2)
+            ->for($anotherUser, 'owner')
+            ->private()
+            ->create();
 
         // We can't edit songs that are not ours.
-        $this->putAs('api/songs', [
-            'songs' => $externalUnownedSongs->modelKeys(),
-            'data' => [
-                'title' => 'New Title',
+        $this->putAs(
+            'api/songs',
+            [
+                'songs' => $externalUnownedSongs->modelKeys(),
+                'data' => [
+                    'title' => 'New Title',
+                ],
             ],
-        ], $currentUser)->assertForbidden();
+            $currentUser,
+        )->assertForbidden();
 
         // Even if some of the songs are owned by us, we still can't edit them.
         $mixedSongs = $externalUnownedSongs->merge(Song::factory(2)->for($currentUser, 'owner')->create());
 
-        $this->putAs('api/songs', [
-            'songs' => $mixedSongs->modelKeys(),
-            'data' => [
-                'title' => 'New Title',
+        $this->putAs(
+            'api/songs',
+            [
+                'songs' => $mixedSongs->modelKeys(),
+                'data' => [
+                    'title' => 'New Title',
+                ],
             ],
-        ], $currentUser)->assertForbidden();
+            $currentUser,
+        )->assertForbidden();
 
         // But we can edit our own songs.
         $ownSongs = Song::factory(2)->for($currentUser, 'owner')->create();
 
-        $this->putAs('api/songs', [
-            'songs' => $ownSongs->modelKeys(),
-            'data' => [
-                'title' => 'New Title',
+        $this->putAs(
+            'api/songs',
+            [
+                'songs' => $ownSongs->modelKeys(),
+                'data' => [
+                    'title' => 'New Title',
+                ],
             ],
-        ], $currentUser)->assertSuccessful();
+            $currentUser,
+        )->assertSuccessful();
     }
 
     #[Test]
@@ -77,23 +95,23 @@ class SongTest extends PlusTestCase
         $currentUser = create_user();
         $anotherUser = create_user();
 
-        $externalUnownedSongs = Song::factory(2)->for($anotherUser, 'owner')->private()->create();
+        $externalUnownedSongs = Song::factory(2)
+            ->for($anotherUser, 'owner')
+            ->private()
+            ->create();
 
         // We can't delete songs that are not ours.
-        $this->deleteAs('api/songs', ['songs' => $externalUnownedSongs->modelKeys()], $currentUser)
-            ->assertForbidden();
+        $this->deleteAs('api/songs', ['songs' => $externalUnownedSongs->modelKeys()], $currentUser)->assertForbidden();
 
         // Even if some of the songs are owned by us, we still can't delete them.
         $mixedSongs = $externalUnownedSongs->merge(Song::factory(2)->for($currentUser, 'owner')->create());
 
-        $this->deleteAs('api/songs', ['songs' => $mixedSongs->modelKeys()], $currentUser)
-            ->assertForbidden();
+        $this->deleteAs('api/songs', ['songs' => $mixedSongs->modelKeys()], $currentUser)->assertForbidden();
 
         // But we can delete our own songs.
         $ownSongs = Song::factory(2)->for($currentUser, 'owner')->create();
 
-        $this->deleteAs('api/songs', ['songs' => $ownSongs->modelKeys()], $currentUser)
-            ->assertSuccessful();
+        $this->deleteAs('api/songs', ['songs' => $ownSongs->modelKeys()], $currentUser)->assertSuccessful();
     }
 
     #[Test]
@@ -101,10 +119,12 @@ class SongTest extends PlusTestCase
     {
         $user = create_user();
 
-        $songs = Song::factory(2)->for($user, 'owner')->private()->create();
+        $songs = Song::factory(2)
+            ->for($user, 'owner')
+            ->private()
+            ->create();
 
-        $this->putAs('api/songs/publicize', ['songs' => $songs->modelKeys()], $user)
-            ->assertSuccessful();
+        $this->putAs('api/songs/publicize', ['songs' => $songs->modelKeys()], $user)->assertSuccessful();
 
         $songs->each(static function (Song $song): void {
             $song->refresh();
@@ -117,10 +137,12 @@ class SongTest extends PlusTestCase
     {
         $user = create_user();
 
-        $songs = Song::factory(2)->for($user, 'owner')->public()->create();
+        $songs = Song::factory(2)
+            ->for($user, 'owner')
+            ->public()
+            ->create();
 
-        $this->putAs('api/songs/privatize', ['songs' => $songs->modelKeys()], $user)
-            ->assertSuccessful();
+        $this->putAs('api/songs/privatize', ['songs' => $songs->modelKeys()], $user)->assertSuccessful();
 
         $songs->each(static function (Song $song): void {
             $song->refresh();
@@ -133,12 +155,10 @@ class SongTest extends PlusTestCase
     {
         $songs = Song::factory(2)->public()->create();
 
-        $this->putAs('api/songs/privatize', ['songs' => $songs->modelKeys()])
-            ->assertForbidden();
+        $this->putAs('api/songs/privatize', ['songs' => $songs->modelKeys()])->assertForbidden();
 
         $otherSongs = Song::factory(2)->private()->create();
 
-        $this->putAs('api/songs/publicize', ['songs' => $otherSongs->modelKeys()])
-            ->assertForbidden();
+        $this->putAs('api/songs/publicize', ['songs' => $otherSongs->modelKeys()])->assertForbidden();
     }
 }

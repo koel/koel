@@ -11,9 +11,11 @@ use Illuminate\Contracts\Support\Jsonable;
  */
 final class LicenseMeta implements Arrayable, Jsonable
 {
-    private function __construct(public int $customerId, public string $customerName, public string $customerEmail)
-    {
-    }
+    private function __construct(
+        public int $customerId,
+        public string $customerName,
+        public string $customerEmail,
+    ) {}
 
     public static function make(int $customerId, string $customerName, string $customerEmail): self
     {

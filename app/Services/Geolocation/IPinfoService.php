@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\Cache;
 
 class IPinfoService implements GeolocationService
 {
-    public function __construct(private readonly IPinfoConnector $connector)
-    {
-    }
+    public function __construct(
+        private readonly IPinfoConnector $connector,
+    ) {}
 
     public static function used(): bool
     {
@@ -25,14 +25,11 @@ class IPinfoService implements GeolocationService
             return null;
         }
 
-        return Cache::rememberForever(
-            cache_key('IP to country code', $ip),
-            function () use ($ip): string {
-                /** @var IpInfoLiteData $data */
-                $data = $this->connector->send(new GetLiteDataRequest($ip))->dto();
+        return Cache::rememberForever(cache_key('IP to country code', $ip), function () use ($ip): string {
+            /** @var IpInfoLiteData $data */
+            $data = $this->connector->send(new GetLiteDataRequest($ip))->dto();
 
-                return $data->countryCode;
-            },
-        );
+            return $data->countryCode;
+        });
     }
 }

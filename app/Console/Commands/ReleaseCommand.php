@@ -17,8 +17,7 @@ use function Laravel\Prompts\warning;
 
 class ReleaseCommand extends Command
 {
-    protected $signature
-        = 'koel:release {version? : The version to release, or "patch", "minor", "major" for auto-increment}';
+    protected $signature = 'koel:release {version? : The version to release, or "patch", "minor", "major" for auto-increment}';
     protected $description = 'Tag and release a new version of Koel';
 
     private Version $currentVersion;
@@ -103,20 +102,14 @@ class ReleaseCommand extends Command
 
         $options['custom'] = 'Custom';
 
-        $selected = select(
-            label: 'What are we releasing?',
-            options: $options,
-            default: $patchVersion,
-        );
+        $selected = select(label: 'What are we releasing?', options: $options, default: $patchVersion);
 
         if ($selected === 'custom') {
             $selected = text(
                 label: 'Enter the version you want to release',
                 placeholder: $patchVersion,
                 required: true,
-                validate: static fn (string $value) => self::tryParseVersion($value)
-                    ? null
-                    : 'Invalid version format',
+                validate: static fn (string $value) => self::tryParseVersion($value) ? null : 'Invalid version format',
             );
         }
 

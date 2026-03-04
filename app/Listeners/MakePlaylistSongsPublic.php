@@ -8,9 +8,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 readonly class MakePlaylistSongsPublic implements ShouldQueue
 {
-    public function __construct(private PlaylistService $service)
-    {
-    }
+    public function __construct(
+        private PlaylistService $service,
+    ) {}
 
     public function handle(NewPlaylistCollaboratorJoined $event): void
     {

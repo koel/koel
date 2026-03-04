@@ -9,9 +9,9 @@ use Illuminate\Support\Arr;
 
 class SpotifyService
 {
-    public function __construct(private readonly SpotifyClient $client)
-    {
-    }
+    public function __construct(
+        private readonly SpotifyClient $client,
+    ) {}
 
     public static function enabled(): bool
     {
@@ -28,10 +28,9 @@ class SpotifyService
             return null;
         }
 
-        return Arr::get(
-            $this->client->search($artist instanceof Artist ? $artist->name : $artist, 'artist', ['limit' => 1]),
-            'artists.items.0.images.0.url'
-        );
+        return Arr::get($this->client->search($artist instanceof Artist ? $artist->name : $artist, 'artist', [
+            'limit' => 1,
+        ]), 'artists.items.0.images.0.url');
     }
 
     public function tryGetAlbumCover(Album $album): ?string
@@ -44,9 +43,8 @@ class SpotifyService
             return null;
         }
 
-        return Arr::get(
-            $this->client->search("$album->name artist:{$album->artist->name}", 'album', ['limit' => 1]),
-            'albums.items.0.images.0.url'
-        );
+        return Arr::get($this->client->search("$album->name artist:{$album->artist->name}", 'album', [
+            'limit' => 1,
+        ]), 'albums.items.0.images.0.url');
     }
 }

@@ -9,8 +9,9 @@ final readonly class Downloadable
 {
     private bool $redirectable;
 
-    private function __construct(public string $path)
-    {
+    private function __construct(
+        public string $path,
+    ) {
         $this->redirectable = Str::startsWith($path, ['http://', 'https://']);
     }
 
@@ -21,8 +22,6 @@ final readonly class Downloadable
 
     public function toResponse(): Response
     {
-        return $this->redirectable
-            ? response()->redirectTo($this->path)
-            : response()->download($this->path);
+        return $this->redirectable ? response()->redirectTo($this->path) : response()->download($this->path);
     }
 }

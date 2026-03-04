@@ -56,8 +56,9 @@ class SongResource extends JsonResource
 
     private ?User $user = null;
 
-    public function __construct(protected Song $song)
-    {
+    public function __construct(
+        protected Song $song,
+    ) {
         parent::__construct($song);
     }
 
@@ -76,6 +77,7 @@ class SongResource extends JsonResource
     /** @inheritDoc */
     public function toArray(Request $request): array
     {
+        // @mago-ignore lint:prefer-first-class-callable
         $isPlus = once(static fn () => License::isPlus());
         $user = $this->user ?? once(static fn () => auth()->user());
         $embedding = $request->routeIs('embeds.payload');
@@ -102,14 +104,15 @@ class SongResource extends JsonResource
             'year' => $this->unless($embedding, $this->song->year),
             'is_public' => $this->unless($embedding, $this->song->is_public),
             'created_at' => $this->unless($embedding, $this->song->created_at),
-            'embed_stream_url' => $this->when(
-                $embedding,
-                fn () => URL::temporarySignedRoute('embeds.stream', now()->addDay(), [
+            'embed_stream_url' => $this->when($embedding, fn () => URL::temporarySignedRoute(
+                'embeds.stream',
+                now()->addDay(),
+                [
                     'song' => $this->song->id,
                     'embed' => $request->route('embed')->id, // @phpstan-ignore-line
                     'options' => $request->route('options'),
-                ]),
-            ),
+                ],
+            )),
         ];
 
         if ($this->song->isEpisode()) {
@@ -124,10 +127,7 @@ class SongResource extends JsonResource
         } else {
             $data += [
                 'owner_id' => $this->unless($embedding, $this->song->owner->public_id),
-                'is_external' => $this->unless(
-                    $embedding,
-                    fn () => $isPlus && !$this->song->ownedBy($user),
-                ),
+                'is_external' => $this->unless($embedding, fn () => $isPlus && !$this->song->ownedBy($user)),
             ];
         }
 

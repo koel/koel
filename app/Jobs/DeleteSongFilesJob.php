@@ -13,9 +13,9 @@ class DeleteSongFilesJob extends QueuedJob
     /**
      * @param Collection<SongFileInfo>|array<array-key, SongFileInfo> $files
      */
-    public function __construct(public readonly Collection $files)
-    {
-    }
+    public function __construct(
+        public readonly Collection $files,
+    ) {}
 
     public function handle(SongStorage $storage): void
     {

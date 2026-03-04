@@ -23,7 +23,7 @@ class S3LambdaStorage extends S3CompatibleStorage
     public function __construct(
         private readonly AlbumService $albumService,
         private readonly SongRepository $songRepository,
-        private readonly UserRepository $userRepository
+        private readonly UserRepository $userRepository,
     ) {
         parent::__construct();
     }
@@ -48,9 +48,9 @@ class S3LambdaStorage extends S3CompatibleStorage
         string $title,
         float $duration,
         int $track,
-        string $lyrics
+        string $lyrics,
     ): Song {
-        $user = $this->userRepository->getFirstAdminUser();
+        $user = $this->userRepository->getOrCreateFirstAdmin();
         $path = Song::getPathFromS3BucketAndKey($bucket, $key);
         $artist = Artist::getOrCreate($user, $artistName);
 

@@ -9,9 +9,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 readonly class LoveMultipleTracksOnLastfm implements ShouldQueue
 {
-    public function __construct(private LastfmService $lastfm)
-    {
-    }
+    public function __construct(
+        private LastfmService $lastfm,
+    ) {}
 
     public function handle(MultipleSongsLiked $event): void
     {

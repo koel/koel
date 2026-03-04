@@ -28,11 +28,10 @@ class DemoSessionTest extends TestCase
     #[Test]
     public function dynamicallyCreateDemoAccount(): void
     {
-        $this->mock(CrawlerDetect::class)
-            ->expects('isCrawler')
-            ->andReturnFalse();
+        $this->mock(CrawlerDetect::class)->expects('isCrawler')->andReturnFalse();
 
-        $demoAccount = $this->get('/')
+        $demoAccount = $this
+            ->get('/')
             ->assertSuccessful()
             ->assertSee('window.DEMO_ACCOUNT')
             ->viewData('demo_account');
@@ -44,15 +43,11 @@ class DemoSessionTest extends TestCase
     #[Test]
     public function useFixedDemoAccountForBots(): void
     {
-        $this->mock(CrawlerDetect::class)
-            ->expects('isCrawler')
-            ->andReturnTrue();
+        $this->mock(CrawlerDetect::class)->expects('isCrawler')->andReturnTrue();
 
-        $this->get('/')
-            ->assertSee('window.DEMO_ACCOUNT')
-            ->assertViewHas('demo_account', [
-                'email' => 'demo@koel.dev',
-                'password' => 'demo',
-            ]);
+        $this->get('/')->assertSee('window.DEMO_ACCOUNT')->assertViewHas('demo_account', [
+            'email' => 'demo@koel.dev',
+            'password' => 'demo',
+        ]);
     }
 }

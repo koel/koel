@@ -100,10 +100,7 @@ class UserServiceTest extends TestCase
         $user = create_admin(['password' => Hash::make('TheTrooper')]);
         self::assertSame(Role::ADMIN, $user->role);
 
-        $this->service->updateUser($user, UserUpdateData::make(
-            name: 'Steve Harris',
-            email: 'steve@iron.com'
-        ));
+        $this->service->updateUser($user, UserUpdateData::make(name: 'Steve Harris', email: 'steve@iron.com'));
 
         $user->refresh();
 

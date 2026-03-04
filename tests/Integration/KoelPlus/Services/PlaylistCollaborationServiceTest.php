@@ -105,7 +105,7 @@ class PlaylistCollaborationServiceTest extends PlusTestCase
 
         self::assertEqualsCanonicalizing(
             [$playlist->owner->public_id, $user->public_id],
-            Arr::pluck($collaborators->toArray(), 'id')
+            Arr::pluck($collaborators->toArray(), 'id'),
         );
     }
 

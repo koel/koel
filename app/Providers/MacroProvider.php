@@ -29,7 +29,8 @@ class MacroProvider extends ServiceProvider
             return $this;
         });
 
-        DB::macro('dropForeignKeyIfExists', function (string $table, string $column): void { // @phpcs:ignore
+        // @mago-ignore lint:prefer-static-closure
+        DB::macro('dropForeignKeyIfExists', function (string $table, string $column): void {
             $driver = DB::getDriverName();
 
             if (!in_array($driver, ['mysql', 'mariadb', 'pgsql'], true)) {
@@ -51,8 +52,11 @@ class MacroProvider extends ServiceProvider
             } else {
                 $constraint = DB::table('information_schema.table_constraints as tc')
                     ->join('information_schema.key_column_usage as kcu', static function ($join): void {
-                        $join->on('tc.constraint_name', '=', 'kcu.constraint_name')
-                            ->on('tc.constraint_schema', '=', 'kcu.constraint_schema');
+                        $join->on('tc.constraint_name', '=', 'kcu.constraint_name')->on(
+                            'tc.constraint_schema',
+                            '=',
+                            'kcu.constraint_schema',
+                        );
                     })
                     ->select('tc.constraint_name')
                     ->where('tc.constraint_type', 'FOREIGN KEY')
@@ -69,9 +73,10 @@ class MacroProvider extends ServiceProvider
         if (app()->runningUnitTests()) {
             UploadedFile::macro(
                 'fromFile',
-                function (string $path, ?string $name = null): UploadedFile { // @phpcs:ignore
+                // @mago-ignore lint:prefer-static-closure
+                function (string $path, ?string $name = null): UploadedFile {
                     return UploadedFile::fake()->createWithContent($name ?? basename($path), File::get($path));
-                }
+                },
             );
 
             TestResponse::macro('log', function (string $file = 'test-response.json'): TestResponse {

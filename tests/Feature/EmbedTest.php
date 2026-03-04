@@ -20,10 +20,12 @@ class EmbedTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create();
 
-        $this->postAs('api/embeds/resolve', [
-            'embeddable_id' => $song->id,
-            'embeddable_type' => 'playable',
-        ])->assertSuccessful()
+        $this
+            ->postAs('api/embeds/resolve', [
+                'embeddable_id' => $song->id,
+                'embeddable_type' => 'playable',
+            ])
+            ->assertSuccessful()
             ->assertJsonStructure(EmbedResource::JSON_STRUCTURE);
     }
 
@@ -51,14 +53,10 @@ class EmbedTest extends TestCase
         $embed = Embed::factory()->create();
         $options = EmbedOptions::make();
 
-        $this->getAs("api/embeds/{$embed->id}/$options")
-            ->assertSuccessful()
-            ->assertJsonStructure($jsonStructure);
+        $this->getAs("api/embeds/{$embed->id}/$options")->assertSuccessful()->assertJsonStructure($jsonStructure);
 
         // getJson() instead of getAs() to make sure it passes without authentication
-        $this->getJson("api/embeds/{$embed->id}/$options")
-            ->assertSuccessful()
-            ->assertJsonStructure($jsonStructure);
+        $this->getJson("api/embeds/{$embed->id}/$options")->assertSuccessful()->assertJsonStructure($jsonStructure);
     }
 
     #[Test]
@@ -70,7 +68,6 @@ class EmbedTest extends TestCase
 
         $options = EmbedOptions::make();
 
-        $this->getJson("api/embeds/{$embed->id}/$options")
-            ->assertNotFound();
+        $this->getJson("api/embeds/{$embed->id}/$options")->assertNotFound();
     }
 }

@@ -11,9 +11,10 @@ use SplFileInfo;
 
 class FileScanner
 {
-    public function __construct(private readonly getID3 $getID3, private readonly SimpleLrcReader $lrcReader)
-    {
-    }
+    public function __construct(
+        private readonly getID3 $getID3,
+        private readonly SimpleLrcReader $lrcReader,
+    ) {}
 
     public function scan(string|SplFileInfo $path): ScanInformation
     {
@@ -23,7 +24,7 @@ class FileScanner
         $raw = $this->getID3->analyze($filePath);
 
         if (Arr::get($raw, 'playtime_seconds')) {
-            $syncError = Arr::get($raw, 'error.0') ?: (null);
+            $syncError = Arr::get($raw, 'error.0') ?: null;
         } else {
             $syncError = Arr::get($raw, 'error.0') ?: 'Empty file';
         }
@@ -32,11 +33,10 @@ class FileScanner
 
         $this->getID3->CopyTagsToComments($raw);
 
-        return tap(
-            ScanInformation::fromGetId3Info($raw, $filePath),
-            function (ScanInformation $info) use ($filePath): void {
-                $info->lyrics = $info->lyrics ?: $this->lrcReader->tryReadForMediaFile($filePath);
-            }
-        );
+        return tap(ScanInformation::fromGetId3Info($raw, $filePath), function (ScanInformation $info) use (
+            $filePath,
+        ): void {
+            $info->lyrics = $info->lyrics ?: $this->lrcReader->tryReadForMediaFile($filePath);
+        });
     }
 }

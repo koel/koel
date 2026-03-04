@@ -9,9 +9,11 @@ use Throwable;
 final readonly class Equalizer implements Arrayable
 {
     /** @param array<int>|null $gains */
-    private function __construct(public ?string $name, public ?float $preamp, public ?array $gains)
-    {
-    }
+    private function __construct(
+        public ?string $name,
+        public ?float $preamp,
+        public ?array $gains,
+    ) {}
 
     public static function tryMake(array|string $data): self
     {

@@ -15,8 +15,7 @@ class EventSearchRequest extends Request
     public function __construct(
         private readonly string $attractionId,
         private readonly string $countryCode,
-    ) {
-    }
+    ) {}
 
     public function resolveEndpoint(): string
     {
@@ -36,7 +35,6 @@ class EventSearchRequest extends Request
     /** @return Collection<TicketmasterEvent>|array<array-key, TicketmasterEvent> */
     public function createDtoFromResponse(Response $response): Collection
     {
-        return collect($response->json('_embedded.events', []))
-            ->map(static fn (array $data) => TicketmasterEvent::fromArray($data));
+        return collect($response->json('_embedded.events', []))->map(TicketmasterEvent::fromArray(...));
     }
 }

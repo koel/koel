@@ -6,7 +6,7 @@ use App\Values\Scanning\ScanResultCollection;
 
 class MediaScanCompleted extends Event
 {
-    public function __construct(public ScanResultCollection $results)
-    {
-    }
+    public function __construct(
+        public ScanResultCollection $results,
+    ) {}
 }

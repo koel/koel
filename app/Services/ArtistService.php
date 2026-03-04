@@ -14,8 +14,7 @@ class ArtistService
     public function __construct(
         private readonly ArtistRepository $artistRepository,
         private readonly ImageStorage $imageStorage,
-    ) {
-    }
+    ) {}
 
     public function updateArtist(Artist $artist, ArtistUpdateData $dto): Artist
     {

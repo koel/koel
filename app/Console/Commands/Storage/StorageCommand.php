@@ -32,7 +32,7 @@ class StorageCommand extends Command
             $driver = $this->choice(
                 'Where do you want to store your media files?',
                 $choices,
-                config('koel.storage_driver')
+                config('koel.storage_driver'),
             );
         } else {
             $driver = 'local';

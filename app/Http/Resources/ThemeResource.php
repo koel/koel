@@ -25,8 +25,9 @@ class ThemeResource extends JsonResource
         'is_custom',
     ];
 
-    public function __construct(private readonly Theme $theme)
-    {
+    public function __construct(
+        private readonly Theme $theme,
+    ) {
         parent::__construct($theme);
     }
 

@@ -9,9 +9,10 @@ final readonly class UploadReference
      * or the local path to the file. This is the value to be stored in the database.
      * @param string $localPath The local path to the (maybe tmp.) file, used for tag scanning or cleaning up.
      */
-    private function __construct(public string $location, public string $localPath)
-    {
-    }
+    private function __construct(
+        public string $location,
+        public string $localPath,
+    ) {}
 
     public static function make(string $location, string $localPath): self
     {

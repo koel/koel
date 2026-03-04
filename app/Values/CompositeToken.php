@@ -4,6 +4,7 @@ namespace App\Values;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Laravel\Sanctum\NewAccessToken;
+use SensitiveParameter;
 
 /**
  * A "composite token" consists of two tokens:
@@ -16,9 +17,12 @@ use Laravel\Sanctum\NewAccessToken;
  */
 final class CompositeToken implements Arrayable
 {
-    private function __construct(public string $apiToken, public string $audioToken)
-    {
-    }
+    private function __construct(
+        #[SensitiveParameter]
+        public string $apiToken,
+        #[SensitiveParameter]
+        public string $audioToken,
+    ) {}
 
     public static function fromAccessTokens(NewAccessToken $api, NewAccessToken $audio): self
     {

@@ -7,9 +7,10 @@ use App\Models\Song;
 
 final readonly class SongFileInfo
 {
-    private function __construct(public string $location, public SongStorageType $storage)
-    {
-    }
+    private function __construct(
+        public string $location,
+        public SongStorageType $storage,
+    ) {}
 
     public static function make(string $location, SongStorageType $storage): self
     {

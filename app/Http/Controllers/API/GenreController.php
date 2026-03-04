@@ -14,9 +14,8 @@ class GenreController extends Controller
     /** @param User $user */
     public function __construct(
         private readonly GenreRepository $repository,
-        private readonly Authenticatable $user
-    ) {
-    }
+        private readonly Authenticatable $user,
+    ) {}
 
     public function index()
     {

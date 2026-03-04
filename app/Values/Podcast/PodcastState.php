@@ -9,16 +9,14 @@ use Illuminate\Support\Collection;
 
 final class PodcastState implements Arrayable, Jsonable
 {
-    private function __construct(public readonly ?string $currentEpisode, public readonly Collection $progresses)
-    {
-    }
+    private function __construct(
+        public readonly ?string $currentEpisode,
+        public readonly Collection $progresses,
+    ) {}
 
     public static function fromArray(array $data): self
     {
-        return new self(
-            Arr::get($data, 'current_episode'),
-            new Collection(Arr::get($data, 'progresses', []))
-        );
+        return new self(Arr::get($data, 'current_episode'), new Collection(Arr::get($data, 'progresses', [])));
     }
 
     /** @inheritDoc */

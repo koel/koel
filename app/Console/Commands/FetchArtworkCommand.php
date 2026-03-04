@@ -22,8 +22,9 @@ class FetchArtworkCommand extends Command
     protected $signature = 'koel:fetch-artwork';
     protected $description = 'Attempt to fetch artist and album artworks from available sources.';
 
-    public function __construct(private readonly EncyclopediaService $encyclopedia)
-    {
+    public function __construct(
+        private readonly EncyclopediaService $encyclopedia,
+    ) {
         parent::__construct();
     }
 

@@ -20,38 +20,37 @@ class StreamerTest extends PlusTestCase
     #[Test]
     public function resolveAdapters(): void
     {
-        collect(SongStorageType::cases())
-            ->each(static function (SongStorageType $type): void {
-                /** @var Song $song */
-                $song = Song::factory()->create(['storage' => $type]);
+        collect(SongStorageType::cases())->each(static function (SongStorageType $type): void {
+            /** @var Song $song */
+            $song = Song::factory()->create(['storage' => $type]);
 
-                if ($type === SongStorageType::DROPBOX) {
-                    self::mockDropboxRefreshAccessTokenCall();
-                }
+            if ($type === SongStorageType::DROPBOX) {
+                self::mockDropboxRefreshAccessTokenCall();
+            }
 
-                $streamer = new Streamer($song);
+            $streamer = new Streamer($song);
 
-                switch ($type) {
-                    case SongStorageType::S3:
-                    case SongStorageType::S3_LAMBDA:
-                        self::assertInstanceOf(S3CompatibleStreamerAdapter::class, $streamer->getAdapter());
-                        break;
+            switch ($type) {
+                case SongStorageType::S3:
+                case SongStorageType::S3_LAMBDA:
+                    self::assertInstanceOf(S3CompatibleStreamerAdapter::class, $streamer->getAdapter());
+                    break;
 
-                    case SongStorageType::DROPBOX:
-                        self::assertInstanceOf(DropboxStreamerAdapter::class, $streamer->getAdapter());
-                        break;
+                case SongStorageType::DROPBOX:
+                    self::assertInstanceOf(DropboxStreamerAdapter::class, $streamer->getAdapter());
+                    break;
 
-                    case SongStorageType::LOCAL:
-                        self::assertInstanceOf(LocalStreamerAdapter::class, $streamer->getAdapter());
-                        break;
+                case SongStorageType::LOCAL:
+                    self::assertInstanceOf(LocalStreamerAdapter::class, $streamer->getAdapter());
+                    break;
 
-                    case SongStorageType::SFTP:
-                        self::assertInstanceOf(SftpStreamerAdapter::class, $streamer->getAdapter());
-                        break;
+                case SongStorageType::SFTP:
+                    self::assertInstanceOf(SftpStreamerAdapter::class, $streamer->getAdapter());
+                    break;
 
-                    default:
-                        self::fail("Storage type not covered by tests: $type->value");
-                }
-            });
+                default:
+                    self::fail("Storage type not covered by tests: $type->value");
+            }
+        });
     }
 }

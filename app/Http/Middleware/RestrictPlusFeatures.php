@@ -23,7 +23,7 @@ class RestrictPlusFeatures
         if (License::isCommunity()) {
             optional(
                 Arr::get(self::getAttributeUsageFromRequest($request, RequiresPlus::class), 0),
-                static fn (ReflectionAttribute $attribute) => abort($attribute->newInstance()->code)
+                static fn (ReflectionAttribute $attribute) => abort($attribute->newInstance()->code),
             );
         }
 

@@ -12,9 +12,11 @@ use Illuminate\Contracts\Support\Jsonable;
  */
 final class LicenseInstance implements Arrayable, Jsonable
 {
-    private function __construct(public string $id, public string $name, public Carbon $createdAt)
-    {
-    }
+    private function __construct(
+        public string $id,
+        public string $name,
+        public Carbon $createdAt,
+    ) {}
 
     public static function make(string $id, string $name, Carbon|string $createdAt): self
     {

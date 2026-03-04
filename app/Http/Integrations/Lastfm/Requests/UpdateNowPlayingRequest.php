@@ -17,9 +17,10 @@ final class UpdateNowPlayingRequest extends Request implements HasBody, Requires
 
     protected Method $method = Method::POST;
 
-    public function __construct(private readonly Song $song, private readonly User $user)
-    {
-    }
+    public function __construct(
+        private readonly Song $song,
+        private readonly User $user,
+    ) {}
 
     public function resolveEndpoint(): string
     {

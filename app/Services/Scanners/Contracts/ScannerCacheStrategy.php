@@ -6,8 +6,5 @@ use Closure;
 
 interface ScannerCacheStrategy
 {
-    public function remember(
-        string $key,
-        Closure $callback,
-    ): mixed;
+    public function remember(string $key, Closure $callback): mixed;
 }

@@ -26,18 +26,15 @@ class SongController extends Controller
         private readonly AlbumRepository $albumRepository,
         private readonly ArtistRepository $artistRepository,
         private readonly Authenticatable $user,
-    ) {
-    }
+    ) {}
 
     public function index(SongListRequest $request)
     {
-        return SongResource::collection(
-            $this->songRepository->paginate(
-                sortColumns: $request->sort ? explode(',', $request->sort) : ['songs.title'],
-                sortDirection: $request->order ?: 'asc',
-                scopedUser: $this->user
-            )
-        );
+        return SongResource::collection($this->songRepository->paginate(
+            sortColumns: $request->sort ? explode(',', $request->sort) : ['songs.title'],
+            sortDirection: $request->order ?: 'asc',
+            scopedUser: $this->user,
+        ));
     }
 
     public function show(Song $song)
@@ -55,12 +52,10 @@ class SongController extends Controller
         $result = $this->songService->updateSongs($request->songs, $request->toDto());
         $albums = $this->albumRepository->getMany($result->updatedSongs->pluck('album_id')->toArray());
 
-        $artists = $this->artistRepository->getMany(
-            array_merge(
-                $result->updatedSongs->pluck('artist_id')->all(),
-                $result->updatedSongs->pluck('album_artist_id')->all()
-            )
-        );
+        $artists = $this->artistRepository->getMany(array_merge(
+            $result->updatedSongs->pluck('artist_id')->all(),
+            $result->updatedSongs->pluck('album_artist_id')->all(),
+        ));
 
         return response()->json([
             'songs' => SongResource::collection($result->updatedSongs),

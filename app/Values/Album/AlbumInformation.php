@@ -24,8 +24,12 @@ final class AlbumInformation implements Arrayable
         ],
     ];
 
-    private function __construct(public ?string $url, public ?string $cover, public array $wiki, public array $tracks)
-    {
+    private function __construct(
+        public ?string $url,
+        public ?string $cover,
+        public array $wiki,
+        public array $tracks,
+    ) {
         $purifier = new HTMLPurifier();
 
         $this->wiki['summary'] = $purifier->purify($this->wiki['summary']);
@@ -36,7 +40,7 @@ final class AlbumInformation implements Arrayable
         ?string $url = null,
         ?string $cover = null,
         array $wiki = ['summary' => '', 'full' => ''],
-        array $tracks = []
+        array $tracks = [],
     ): self {
         return new self($url, $cover, $wiki, $tracks);
     }
@@ -47,7 +51,7 @@ final class AlbumInformation implements Arrayable
             url: Arr::get($summary, 'content_urls.desktop.page'),
             cover: Arr::get($summary, 'thumbnail.source'),
             wiki: [
-                'summary' =>  Arr::get($summary, 'extract', ''),
+                'summary' => Arr::get($summary, 'extract', ''),
                 'full' => Arr::get($summary, 'extract_html', ''),
             ],
             tracks: [],

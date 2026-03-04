@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands\Concerns;
 
+use SensitiveParameter;
+
 /**
  * @method void  error($message, $verbosity = null)
  * @method mixed secret($message, $fallback = true)
@@ -24,8 +26,10 @@ trait AskForPassword
         return $password;
     }
 
-    private function comparePasswords(?string $password, ?string $confirmedPassword): bool
-    {
+    private function comparePasswords(
+        #[SensitiveParameter] ?string $password,
+        #[SensitiveParameter] ?string $confirmedPassword,
+    ): bool {
         if (!$password || !$confirmedPassword) {
             return false;
         }

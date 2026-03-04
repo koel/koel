@@ -15,7 +15,7 @@ class SupportedAudioFile implements ValidationRule
     {
         $passes = array_key_exists(
             Str::lower(File::mimeType($value->getRealPath())),
-            config('koel.streaming.supported_mime_types')
+            config('koel.streaming.supported_mime_types'),
         );
 
         if (!$passes) {

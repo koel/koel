@@ -8,8 +8,7 @@ final readonly class ImageWritingConfig
         public int $quality,
         public int $maxWidth,
         public ?int $blur,
-    ) {
-    }
+    ) {}
 
     public static function make(int $quality = 80, int $maxWidth = 500, ?int $blur = 0): self
     {

@@ -146,13 +146,10 @@ class FileScannerTest extends TestCase
             'playtime_seconds' => 100,
         ];
 
-        $this->swap(
-            getID3::class,
-            Mockery::mock(getID3::class, [
-                'CopyTagsToComments' => $analyzed,
-                'analyze' => $analyzed,
-            ])
-        );
+        $this->swap(getID3::class, Mockery::mock(getID3::class, [
+            'CopyTagsToComments' => $analyzed,
+            'analyze' => $analyzed,
+        ]));
 
         /** @var FileScanner $fileScanner */
         $fileScanner = app(FileScanner::class);

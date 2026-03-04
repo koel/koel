@@ -42,8 +42,9 @@ class AlbumResource extends JsonResource
 
     private ?User $user = null;
 
-    public function __construct(private readonly Album $album)
-    {
+    public function __construct(
+        private readonly Album $album,
+    ) {
         parent::__construct($album);
     }
 
@@ -57,6 +58,7 @@ class AlbumResource extends JsonResource
     /** @inheritdoc */
     public function toArray(Request $request): array
     {
+        // @mago-ignore lint:prefer-first-class-callable
         $isPlus = once(static fn () => License::isPlus());
         $user = $this->user ?? once(static fn () => auth()->user());
         $embedding = $request->routeIs('embeds.payload');
@@ -70,10 +72,7 @@ class AlbumResource extends JsonResource
             'cover' => image_storage_url($this->album->cover),
             'created_at' => $this->unless($embedding, $this->album->created_at),
             'year' => $this->album->year,
-            'is_external' => $this->unless(
-                $embedding,
-                fn () => $isPlus && $this->album->user_id !== $user->id,
-            ),
+            'is_external' => $this->unless($embedding, fn () => $isPlus && $this->album->user_id !== $user->id),
             'favorite' => $this->unless($embedding, $this->album->favorite),
         ];
     }

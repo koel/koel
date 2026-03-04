@@ -11,9 +11,9 @@ class GetLiteDataRequest extends Request
 {
     protected Method $method = Method::GET;
 
-    public function __construct(public readonly string $ip)
-    {
-    }
+    public function __construct(
+        public readonly string $ip,
+    ) {}
 
     public function resolveEndpoint(): string
     {

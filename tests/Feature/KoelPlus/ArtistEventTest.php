@@ -46,7 +46,8 @@ class ArtistEventTest extends PlusTestCase
             'name' => 'Slayer',
         ]);
 
-        $this->getAs("api/artists/{$artist->id}/events")
+        $this
+            ->getAs("api/artists/{$artist->id}/events")
             ->assertJsonStructure(['*' => LiveEventResource::JSON_STRUCTURE])
             ->assertJsonCount(2)
             ->assertOk();
@@ -79,7 +80,8 @@ class ArtistEventTest extends PlusTestCase
             'name' => 'Slayer',
         ]);
 
-        $this->getAs("api/artists/{$artist->id}/events")
+        $this
+            ->getAs("api/artists/{$artist->id}/events")
             ->assertJsonStructure(['*' => LiveEventResource::JSON_STRUCTURE])
             ->assertJsonCount(1)
             ->assertOk();

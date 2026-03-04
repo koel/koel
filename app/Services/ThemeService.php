@@ -10,9 +10,9 @@ use App\Values\Theme\ThemeProperties;
 
 class ThemeService
 {
-    public function __construct(private readonly ImageStorage $imageStorage)
-    {
-    }
+    public function __construct(
+        private readonly ImageStorage $imageStorage,
+    ) {}
 
     public function createTheme(User $user, ThemeCreateData $data): Theme
     {

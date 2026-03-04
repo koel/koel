@@ -73,13 +73,9 @@ class SfpTranscodingStrategyTest extends TestCase
             'hash' => 'mocked-checksum',
         ]);
 
-        File::expects('isReadable')
-            ->with('/path/to/transcode.m4a')
-            ->andReturn(true);
+        File::expects('isReadable')->with('/path/to/transcode.m4a')->andReturn(true);
 
-        File::expects('hash')
-            ->with('/path/to/transcode.m4a')
-            ->andReturn('mocked-checksum');
+        File::expects('hash')->with('/path/to/transcode.m4a')->andReturn('mocked-checksum');
 
         $transcodedPath = $this->strategy->getTranscodeLocation($transcode->song, $transcode->bit_rate);
 

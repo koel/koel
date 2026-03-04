@@ -7,7 +7,9 @@ use App\Models\User;
 
 class SongFavoriteToggled extends Event
 {
-    public function __construct(public readonly Song $song, public bool $favorite, public readonly User $user)
-    {
-    }
+    public function __construct(
+        public readonly Song $song,
+        public bool $favorite,
+        public readonly User $user,
+    ) {}
 }

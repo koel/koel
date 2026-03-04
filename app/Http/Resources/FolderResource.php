@@ -14,8 +14,9 @@ class FolderResource extends JsonResource
         'name',
     ];
 
-    public function __construct(private readonly Folder $folder)
-    {
+    public function __construct(
+        private readonly Folder $folder,
+    ) {
         parent::__construct($this->folder);
     }
 

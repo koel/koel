@@ -9,8 +9,10 @@ use Webmozart\Assert\Assert;
 
 final class SmartPlaylistRuleGroup implements Arrayable
 {
-    private function __construct(public string $id, public Collection $rules)
-    {
+    private function __construct(
+        public string $id,
+        public Collection $rules,
+    ) {
         Assert::uuid($id);
     }
 
@@ -18,11 +20,13 @@ final class SmartPlaylistRuleGroup implements Arrayable
     {
         return new self(
             id: Arr::get($array, 'id'),
-            rules: collect(Arr::get($array, 'rules', []))->transform(
-                static function (array|SmartPlaylistRule $rule): SmartPlaylistRule {
-                    return $rule instanceof SmartPlaylistRule ? $rule : SmartPlaylistRule::make($rule);
-                }
-            ),
+            rules: collect(Arr::get(
+                $array,
+                'rules',
+                [],
+            ))->transform(static function (array|SmartPlaylistRule $rule): SmartPlaylistRule {
+                return $rule instanceof SmartPlaylistRule ? $rule : SmartPlaylistRule::make($rule);
+            }),
         );
     }
 

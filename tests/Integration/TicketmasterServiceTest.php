@@ -38,24 +38,30 @@ class TicketmasterServiceTest extends TestCase
     {
         Saloon::fake([
             AttractionSearchRequest::class => static function (PendingRequest $request) {
-                self::assertEqualsCanonicalizing([
-                    'keyword' => 'Slayer',
-                    'size' => 5,
-                    'classificationName' => ['Music'],
-                    'apikey' => 'tm-key',
-                ], $request->query()->all());
+                self::assertEqualsCanonicalizing(
+                    [
+                        'keyword' => 'Slayer',
+                        'size' => 5,
+                        'classificationName' => ['Music'],
+                        'apikey' => 'tm-key',
+                    ],
+                    $request->query()->all(),
+                );
 
                 $attractionSearchJson = File::json(test_path('fixtures/ticketmaster/attraction-search.json'));
 
                 return MockResponse::make(body: $attractionSearchJson);
             },
             EventSearchRequest::class => static function (PendingRequest $request) {
-                self::assertEqualsCanonicalizing([
-                    'attractionId' => 'slayer-id-1234567890',
-                    'countryCode' => 'DE',
-                    'classificationName' => ['Music'],
-                    'apikey' => 'tm-key',
-                ], $request->query()->all());
+                self::assertEqualsCanonicalizing(
+                    [
+                        'attractionId' => 'slayer-id-1234567890',
+                        'countryCode' => 'DE',
+                        'classificationName' => ['Music'],
+                        'apikey' => 'tm-key',
+                    ],
+                    $request->query()->all(),
+                );
 
                 $eventSearchJson = File::json(test_path('fixtures/ticketmaster/event-search.json'));
 

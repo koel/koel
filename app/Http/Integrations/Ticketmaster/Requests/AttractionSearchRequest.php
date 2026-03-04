@@ -12,9 +12,9 @@ class AttractionSearchRequest extends Request
 {
     protected Method $method = Method::GET;
 
-    public function __construct(private readonly string $keywords)
-    {
-    }
+    public function __construct(
+        private readonly string $keywords,
+    ) {}
 
     public function resolveEndpoint(): string
     {
@@ -34,7 +34,6 @@ class AttractionSearchRequest extends Request
     /** @return Collection<TicketmasterAttraction>|array<array-key, TicketmasterAttraction> */
     public function createDtoFromResponse(Response $response): Collection
     {
-        return collect($response->json('_embedded.attractions', []))
-            ->map(static fn (array $data) => TicketmasterAttraction::fromArray($data));
+        return collect($response->json('_embedded.attractions', []))->map(TicketmasterAttraction::fromArray(...));
     }
 }

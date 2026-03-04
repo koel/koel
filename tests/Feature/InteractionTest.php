@@ -66,8 +66,7 @@ class InteractionTest extends TestCase
         ]);
 
         // Toggle off
-        $this->postAs('api/interaction/like', ['song' => $song->id], $user)
-            ->assertNoContent();
+        $this->postAs('api/interaction/like', ['song' => $song->id], $user)->assertNoContent();
 
         $this->assertDatabaseMissing(Favorite::class, [
             'user_id' => $user->id,

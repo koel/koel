@@ -13,11 +13,14 @@ class BrandingSettingTest extends TestCase
     #[Test]
     public function notAccessibleInCommunityLicense(): void
     {
-        $this->putAs('api/settings/branding', [
-            'name' => 'Little Bird',
-            'logo' => minimal_base64_encoded_image(),
-            'cover' => minimal_base64_encoded_image(),
-        ], create_admin())
-            ->assertNotFound();
+        $this->putAs(
+            'api/settings/branding',
+            [
+                'name' => 'Little Bird',
+                'logo' => minimal_base64_encoded_image(),
+                'cover' => minimal_base64_encoded_image(),
+            ],
+            create_admin(),
+        )->assertNotFound();
     }
 }

@@ -11,7 +11,7 @@ use Throwable;
 trait DeletesUsingFilesystem
 {
     private function deleteUsingFilesystem(
-        Filesystem | IlluminateFilesystem $disk,
+        Filesystem|IlluminateFilesystem $disk,
         string $key,
         bool|Closure $backup,
     ): void {

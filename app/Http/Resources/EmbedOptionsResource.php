@@ -15,8 +15,9 @@ class EmbedOptionsResource extends JsonResource
         'preview',
     ];
 
-    public function __construct(private readonly EmbedOptions $options)
-    {
+    public function __construct(
+        private readonly EmbedOptions $options,
+    ) {
         parent::__construct($options);
     }
 

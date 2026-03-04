@@ -12,8 +12,7 @@ final class ExcerptSearchResult
         public Collection $albums,
         public Collection $podcasts,
         public Collection $radioStations,
-    ) {
-    }
+    ) {}
 
     public static function make(
         Collection $songs,

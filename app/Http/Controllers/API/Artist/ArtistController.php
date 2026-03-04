@@ -17,8 +17,7 @@ class ArtistController extends Controller
     public function __construct(
         private readonly ArtistService $service,
         private readonly ArtistRepository $repository,
-    ) {
-    }
+    ) {}
 
     public function index(ArtistListRequest $request)
     {

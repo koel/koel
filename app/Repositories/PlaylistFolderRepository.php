@@ -7,6 +7,4 @@ use App\Models\PlaylistFolder;
 /**
  * @extends Repository<PlaylistFolder>
  */
-class PlaylistFolderRepository extends Repository
-{
-}
+class PlaylistFolderRepository extends Repository {}

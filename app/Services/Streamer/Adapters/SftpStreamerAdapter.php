@@ -11,9 +11,9 @@ class SftpStreamerAdapter implements StreamerAdapter
 {
     use StreamsLocalPath;
 
-    public function __construct(private readonly SftpStorage $storage)
-    {
-    }
+    public function __construct(
+        private readonly SftpStorage $storage,
+    ) {}
 
     public function stream(Song $song, ?RequestedStreamingConfig $config = null): void
     {

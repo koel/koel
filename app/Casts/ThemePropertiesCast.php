@@ -21,7 +21,7 @@ class ThemePropertiesCast implements CastsAttributes
                 'attributes' => $attributes,
             ]);
 
-            return  ThemeProperties::empty();
+            return ThemeProperties::empty();
         }
     }
 

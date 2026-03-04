@@ -26,8 +26,9 @@ class LiveEventResource extends JsonResource
     ];
 
     // Right now we only have Ticketmaster events, so we keep it simple.
-    public function __construct(private readonly TicketmasterEvent $event)
-    {
+    public function __construct(
+        private readonly TicketmasterEvent $event,
+    ) {
         parent::__construct($event);
     }
 

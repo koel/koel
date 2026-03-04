@@ -54,11 +54,9 @@ class SongBuilder extends FavoriteableBuilder
     {
         throw_unless($this->user, new LogicException('User must be set to query play counts.'));
 
-        return $this
-            ->leftJoin('interactions', function (JoinClause $join): void {
-                $join->on('interactions.song_id', 'songs.id')->where('interactions.user_id', $this->user->id);
-            })
-            ->addSelect(DB::raw('COALESCE(interactions.play_count, 0) as play_count'));
+        return $this->leftJoin('interactions', function (JoinClause $join): void {
+            $join->on('interactions.song_id', 'songs.id')->where('interactions.user_id', $this->user->id);
+        })->addSelect(DB::raw('COALESCE(interactions.play_count, 0) as play_count'));
     }
 
     public function accessible(): self
@@ -71,18 +69,23 @@ class SongBuilder extends FavoriteableBuilder
         throw_unless($this->user, new LogicException('User must be set to query accessible songs.'));
 
         // We want to alias both podcasts and podcast_user tables to avoid possible conflicts with other joins.
-        $this->leftJoin('podcasts as podcasts_a11y', 'songs.podcast_id', 'podcasts_a11y.id')
+        $this
+            ->leftJoin('podcasts as podcasts_a11y', 'songs.podcast_id', 'podcasts_a11y.id')
             ->leftJoin('podcast_user as podcast_user_a11y', function (JoinClause $join): void {
-                $join->on('podcasts_a11y.id', 'podcast_user_a11y.podcast_id')
-                    ->where('podcast_user_a11y.user_id', $this->user->id);
-            })->whereNot(static function (self $query): void {
+                $join->on('podcasts_a11y.id', 'podcast_user_a11y.podcast_id')->where(
+                    'podcast_user_a11y.user_id',
+                    $this->user->id,
+                );
+            })
+            ->whereNot(static function (self $query): void {
                 // Episodes must belong to a podcast that the user is subscribed to.
                 $query->whereNotNull('songs.podcast_id')->whereNull('podcast_user_a11y.podcast_id');
             });
 
         // If the song is a podcast episode, we need to ensure that the user has access to it.
         return $this->where(function (self $query): void {
-            $query->whereNotNull('songs.podcast_id')
+            $query
+                ->whereNotNull('songs.podcast_id')
                 ->orWhere(function (self $q2) {
                     // Depending on the user preferences, the song must be either:
                     // - owned by the user, or
@@ -92,14 +95,15 @@ class SongBuilder extends FavoriteableBuilder
                     }
 
                     return $q2->where(function (self $q3): void {
-                        $q3->whereBelongsTo($this->user, 'owner')
-                            ->orWhere(function (self $q4): void {
-                                $q4->where('songs.is_public', true)
-                                    ->whereHas('owner', function (Builder $owner): void {
-                                        $owner->where('organization_id', $this->user->organization_id)
-                                            ->where('owner_id', '<>', $this->user->id);
-                                    });
+                        $q3->whereBelongsTo($this->user, 'owner')->orWhere(function (self $q4): void {
+                            $q4->where('songs.is_public', true)->whereHas('owner', function (Builder $owner): void {
+                                $owner->where('organization_id', $this->user->organization_id)->where(
+                                    'owner_id',
+                                    '<>',
+                                    $this->user->id,
+                                );
                             });
+                        });
                     });
                 });
         });
@@ -110,7 +114,8 @@ class SongBuilder extends FavoriteableBuilder
         bool $favoritesOnly = false,
         bool $includePlayCount = true,
     ): self {
-        return $this->accessible()
+        return $this
+            ->accessible()
             ->when($includeFavoriteStatus, static fn (self $query) => $query->withFavoriteStatus($favoritesOnly))
             ->when($includePlayCount, static fn (self $query) => $query->withPlayCount());
     }
@@ -125,15 +130,18 @@ class SongBuilder extends FavoriteableBuilder
         return $this
             ->orderBy($column, $direction)
             // Depending on the column, we might need to order by other columns as well.
-            ->when($column === 'songs.artist_name', static fn (self $query) => $query->orderBy('songs.album_name')
+            ->when($column === 'songs.artist_name', static fn (self $query) => $query
+                ->orderBy('songs.album_name')
                 ->orderBy('songs.disc')
                 ->orderBy('songs.track')
                 ->orderBy('songs.title'))
-            ->when($column === 'songs.album_name', static fn (self $query) => $query->orderBy('songs.artist_name')
+            ->when($column === 'songs.album_name', static fn (self $query) => $query
+                ->orderBy('songs.artist_name')
                 ->orderBy('songs.disc')
                 ->orderBy('songs.track')
                 ->orderBy('songs.title'))
-            ->when($column === 'track', static fn (self $query) => $query->orderBy('songs.disc')
+            ->when($column === 'track', static fn (self $query) => $query
+                ->orderBy('songs.disc')
                 ->orderBy('songs.track'));
     }
 
@@ -141,13 +149,12 @@ class SongBuilder extends FavoriteableBuilder
     {
         $this->when(
             in_array('podcast_title', $columns, true) || in_array('podcast_author', $columns, true),
-            static fn (self $query) => $query->leftJoin('podcasts', 'songs.podcast_id', 'podcasts.id')
-        )->when(
-            in_array('genre', $columns, true),
-            static fn (self $query) => $query
-                ->leftJoin('genre_song', 'songs.id', 'genre_song.song_id')
-                ->leftJoin('genres', 'genre_song.genre_id', 'genres.id')
-        );
+            static fn (self $query) => $query->leftJoin('podcasts', 'songs.podcast_id', 'podcasts.id'),
+        )->when(in_array('genre', $columns, true), static fn (self $query) => $query->leftJoin(
+            'genre_song',
+            'songs.id',
+            'genre_song.song_id',
+        )->leftJoin('genres', 'genre_song.genre_id', 'genres.id'));
 
         foreach ($columns as $column) {
             $this->sortByOneColumn($column, $direction);
@@ -165,16 +172,13 @@ class SongBuilder extends FavoriteableBuilder
 
     public function storedOnCloud(): self
     {
-        return $this->whereNotNull('storage')
-            ->where('storage', '!=', '')
-            ->whereNull('podcast_id');
+        return $this->whereNotNull('storage')->where('storage', '!=', '')->whereNull('podcast_id');
     }
 
     public function storedLocally(): self
     {
         return $this->where(static function (self $query): void {
-            $query->whereNull('songs.storage')->orWhere('songs.storage', '')
-                ->whereNull('songs.podcast_id');
+            $query->whereNull('songs.storage')->orWhere('songs.storage', '')->whereNull('songs.podcast_id');
         });
     }
 }

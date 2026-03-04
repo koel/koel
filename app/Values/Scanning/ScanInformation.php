@@ -28,8 +28,7 @@ class ScanInformation implements Arrayable
         public ?int $mTime,
         public ?string $mimeType,
         public ?int $fileSize,
-    ) {
-    }
+    ) {}
 
     public static function fromGetId3Info(array $info, string $path): self
     {

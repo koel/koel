@@ -18,12 +18,13 @@ use App\Values\Album\AlbumInformation;
 use App\Values\Artist\ArtistInformation;
 use Generator;
 use Illuminate\Support\Collection;
+use SensitiveParameter;
 
 class LastfmService implements Encyclopedia
 {
-    public function __construct(private readonly LastfmConnector $connector)
-    {
-    }
+    public function __construct(
+        private readonly LastfmConnector $connector,
+    ) {}
 
     /**
      * Determine if our application is using Last.fm.
@@ -95,7 +96,7 @@ class LastfmService implements Encyclopedia
         rescue(fn () => $this->connector->send(new UpdateNowPlayingRequest($song, $user)));
     }
 
-    public function getSessionKey(string $token): ?string
+    public function getSessionKey(#[SensitiveParameter] string $token): ?string
     {
         return object_get($this->connector->send(new GetSessionKeyRequest($token))->object(), 'session.key');
     }

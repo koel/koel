@@ -25,11 +25,15 @@ class ProfileTest extends PlusTestCase
         self::assertTrue($user->is_sso);
         self::assertFalse($user->has_custom_avatar);
 
-        $this->putAs('api/me', [
-            'name' => 'Bruce Dickinson',
-            'email' => 'bruce@iron.com',
-            'avatar' => minimal_base64_encoded_image(),
-        ], $user)->assertOk();
+        $this->putAs(
+            'api/me',
+            [
+                'name' => 'Bruce Dickinson',
+                'email' => 'bruce@iron.com',
+                'avatar' => minimal_base64_encoded_image(),
+            ],
+            $user,
+        )->assertOk();
 
         $user->refresh();
 

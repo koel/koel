@@ -13,8 +13,7 @@ class RadioService
     public function __construct(
         private readonly RadioStationRepository $repository,
         private readonly ImageStorage $imageStorage,
-    ) {
-    }
+    ) {}
 
     public function createRadioStation(RadioStationCreateData $dto, User $user): RadioStation
     {

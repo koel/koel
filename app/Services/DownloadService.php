@@ -22,18 +22,19 @@ class DownloadService
         if ($songs->count() === 1) {
             return optional(
                 $this->getLocalPathOrDownloadableUrl($songs->first()), // @phpstan-ignore-line
-                static fn (string $url) => Downloadable::make($url)
+                Downloadable::make(...),
             );
         }
 
         return Downloadable::make(
             (new SongZipArchive())
-            ->addSongs($songs)
-            ->finish()
-            ->getPath()
+                ->addSongs($songs)
+                ->finish()
+                ->getPath(),
         );
     }
 
+    // @mago-ignore lint:halstead
     public function getLocalPathOrDownloadableUrl(Song $song): ?string
     {
         if (!$song->storage->supported()) {

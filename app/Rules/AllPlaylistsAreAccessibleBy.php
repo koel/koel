@@ -10,9 +10,9 @@ use Illuminate\Support\Arr;
 
 final class AllPlaylistsAreAccessibleBy implements ValidationRule
 {
-    public function __construct(private readonly User $user)
-    {
-    }
+    public function __construct(
+        private readonly User $user,
+    ) {}
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
@@ -26,7 +26,7 @@ final class AllPlaylistsAreAccessibleBy implements ValidationRule
             $fail(
                 License::isPlus()
                     ? 'Not all playlists are accessible by the user'
-                    : 'Not all playlists belong to the user'
+                    : 'Not all playlists belong to the user',
             );
         }
     }

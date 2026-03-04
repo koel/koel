@@ -4,6 +4,4 @@ namespace App\Exceptions;
 
 use RuntimeException;
 
-class PlaylistCollaborationTokenExpiredException extends RuntimeException
-{
-}
+class PlaylistCollaborationTokenExpiredException extends RuntimeException {}

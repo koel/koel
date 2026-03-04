@@ -32,10 +32,7 @@ class SftpStorage extends SongStorage implements MustDeleteTemporaryLocalFileAft
         $path = $this->generateRemotePath(basename($uploadedFilePath), $uploader);
         $this->disk->put($path, fopen($uploadedFilePath, 'r'));
 
-        return UploadReference::make(
-            location: "sftp://$path",
-            localPath: $uploadedFilePath,
-        );
+        return UploadReference::make(location: "sftp://$path", localPath: $uploadedFilePath);
     }
 
     public function undoUpload(UploadReference $reference): void

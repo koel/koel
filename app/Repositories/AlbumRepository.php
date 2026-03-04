@@ -21,9 +21,7 @@ class AlbumRepository extends Repository implements ScoutableRepository
      */
     public function getOne($id, ?User $user = null): Album
     {
-        return Album::query()
-            ->withUserContext(user: $user ?? $this->auth->user())
-            ->findOrFail($id);
+        return Album::query()->withUserContext(user: $user ?? $this->auth->user())->findOrFail($id);
     }
 
     /** @return Collection|array<array-key, Album> */
@@ -66,10 +64,11 @@ class AlbumRepository extends Repository implements ScoutableRepository
         return Album::query()
             ->withUserContext(user: $user ?? $this->auth->user())
             ->where(static function (Builder $query) use ($artist): void {
-                $query->whereBelongsTo($artist)
-                    ->orWhereHas('songs', static function (Builder $songQuery) use ($artist): void {
-                        $songQuery->whereBelongsTo($artist);
-                    });
+                $query->whereBelongsTo($artist)->orWhereHas('songs', static function (Builder $songQuery) use (
+                    $artist,
+                ): void {
+                    $songQuery->whereBelongsTo($artist);
+                });
             })
             ->orderBy('albums.name')
             ->get();
@@ -92,7 +91,10 @@ class AlbumRepository extends Repository implements ScoutableRepository
     public function search(string $keywords, int $limit, ?User $user = null): Collection
     {
         return $this->getMany(
-            ids: Album::search($keywords)->get()->take($limit)->modelKeys(),
+            ids: Album::search($keywords)
+                ->get()
+                ->take($limit)
+                ->modelKeys(),
             preserveOrder: true,
             user: $user,
         );

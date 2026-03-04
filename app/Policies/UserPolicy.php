@@ -15,21 +15,23 @@ class UserPolicy
 
     public function update(User $currentUser, User $userToUpdate): bool
     {
-        return $currentUser->hasPermissionTo(Permission::MANAGE_USERS)
-            && $currentUser->canManage($userToUpdate);
+        return (
+            $currentUser->hasPermissionTo(Permission::MANAGE_USERS)
+            && $currentUser->role->canManage($userToUpdate->role)
+        );
     }
 
     public function destroy(User $currentUser, User $userToDestroy): bool
     {
-        return $currentUser->hasPermissionTo(Permission::MANAGE_USERS)
+        return (
+            $currentUser->hasPermissionTo(Permission::MANAGE_USERS)
             && $userToDestroy->isNot($currentUser)
-            && $currentUser->canManage($userToDestroy);
+            && $currentUser->role->canManage($userToDestroy->role)
+        );
     }
 
     public function upload(User $currentUser): bool
     {
-        return License::isCommunity()
-            ? $currentUser->hasPermissionTo(Permission::MANAGE_SONGS)
-            : true; // For Plus Edition, any user can upload songs (to their own library).
+        return License::isCommunity() ? $currentUser->hasPermissionTo(Permission::MANAGE_SONGS) : true; // For Plus Edition, any user can upload songs (to their own library).
     }
 }

@@ -43,10 +43,9 @@ class SongTest extends TestCase
 
         $songs = Song::factory(2)->create();
 
-        $this->deleteAs('api/songs', ['songs' => $songs->modelKeys()], create_admin())
-            ->assertNoContent();
+        $this->deleteAs('api/songs', ['songs' => $songs->modelKeys()], create_admin())->assertNoContent();
 
-        $songs->each(fn (Song $song) => $this->assertModelMissing($song));
+        $songs->each($this->assertModelMissing(...));
     }
 
     #[Test]
@@ -57,10 +56,9 @@ class SongTest extends TestCase
 
         $songs = Song::factory(2)->create();
 
-        $this->deleteAs('api/songs', ['songs' => $songs->modelKeys()])
-            ->assertForbidden();
+        $this->deleteAs('api/songs', ['songs' => $songs->modelKeys()])->assertForbidden();
 
-        $songs->each(fn (Song $song) => $this->assertModelExists($song));
+        $songs->each($this->assertModelExists(...));
     }
 
     #[Test]
@@ -69,18 +67,21 @@ class SongTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create();
 
-        $this->putAs('/api/songs', [
-            'songs' => [$song->id],
-            'data' => [
-                'title' => 'Foo Bar',
-                'artist_name' => 'John Cena',
-                'album_name' => 'One by One',
-                'lyrics' => 'Lorem ipsum dolor sic amet.',
-                'track' => 1,
-                'disc' => 2,
+        $this->putAs(
+            '/api/songs',
+            [
+                'songs' => [$song->id],
+                'data' => [
+                    'title' => 'Foo Bar',
+                    'artist_name' => 'John Cena',
+                    'album_name' => 'One by One',
+                    'lyrics' => 'Lorem ipsum dolor sic amet.',
+                    'track' => 1,
+                    'disc' => 2,
+                ],
             ],
-        ], create_admin())
-            ->assertOk();
+            create_admin(),
+        )->assertOk();
 
         /** @var Artist|null $artist */
         $artist = Artist::query()->where('name', 'John Cena')->first();
@@ -107,17 +108,20 @@ class SongTest extends TestCase
 
         $originalArtistId = $song->artist->id;
 
-        $this->putAs('/api/songs', [
-            'songs' => [$song->id],
-            'data' => [
-                'title' => '',
-                'artist_name' => '',
-                'album_name' => 'One by One',
-                'lyrics' => 'Lorem ipsum dolor sic amet.',
-                'track' => 1,
+        $this->putAs(
+            '/api/songs',
+            [
+                'songs' => [$song->id],
+                'data' => [
+                    'title' => '',
+                    'artist_name' => '',
+                    'album_name' => 'One by One',
+                    'lyrics' => 'Lorem ipsum dolor sic amet.',
+                    'track' => 1,
+                ],
             ],
-        ], create_admin())
-            ->assertOk();
+            create_admin(),
+        )->assertOk();
 
         // We don't expect the song's artist to change
         self::assertSame($originalArtistId, $song->refresh()->artist->id);
@@ -131,17 +135,20 @@ class SongTest extends TestCase
     {
         $songIds = Song::factory(2)->create()->modelKeys();
 
-        $this->putAs('/api/songs', [
-            'songs' => $songIds,
-            'data' => [
-                'title' => null,
-                'artist_name' => 'John Cena',
-                'album_name' => 'One by One',
-                'lyrics' => null,
-                'track' => 9999,
+        $this->putAs(
+            '/api/songs',
+            [
+                'songs' => $songIds,
+                'data' => [
+                    'title' => null,
+                    'artist_name' => 'John Cena',
+                    'album_name' => 'One by One',
+                    'lyrics' => null,
+                    'track' => 9999,
+                ],
             ],
-        ], create_admin())
-            ->assertOk();
+            create_admin(),
+        )->assertOk();
 
         /** @var Collection<array-key, Song> $songs */
         $songs = Song::query()->whereIn('id', $songIds)->get();
@@ -169,19 +176,25 @@ class SongTest extends TestCase
         $originalAlbumNames = $originalSongs->pluck('album.name')->all();
         $originalAlbumIds = $originalSongs->pluck('album_id')->all();
 
-        $this->putAs('/api/songs', [
-            'songs' =>  $originalSongIds,
-            'data' => [
-                'title' => 'Foo Bar',
-                'artist_name' => 'John Cena',
-                'album_name' => '',
-                'lyrics' => 'Lorem ipsum dolor sic amet.',
-                'track' => 1,
+        $this->putAs(
+            '/api/songs',
+            [
+                'songs' => $originalSongIds,
+                'data' => [
+                    'title' => 'Foo Bar',
+                    'artist_name' => 'John Cena',
+                    'album_name' => '',
+                    'lyrics' => 'Lorem ipsum dolor sic amet.',
+                    'track' => 1,
+                ],
             ],
-        ], create_admin())
-            ->assertOk();
+            create_admin(),
+        )->assertOk();
 
-        $songs = Song::query()->whereIn('id', $originalSongIds)->get()->orderByArray($originalSongIds);
+        $songs = Song::query()
+            ->whereIn('id', $originalSongIds)
+            ->get()
+            ->orderByArray($originalSongIds);
 
         // Even though the album name doesn't change, a new artist should have been created
         // and thus, a new album with the same name was created as well.
@@ -201,19 +214,22 @@ class SongTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create();
 
-        $this->putAs('/api/songs', [
-            'songs' => [$song->id],
-            'data' => [
-                'title' => 'Foo Bar',
-                'artist_name' => 'John Cena',
-                'album_name' => 'One by One',
-                'album_artist_name' => 'John Lennon',
-                'lyrics' => 'Lorem ipsum dolor sic amet.',
-                'track' => 1,
-                'disc' => 2,
+        $this->putAs(
+            '/api/songs',
+            [
+                'songs' => [$song->id],
+                'data' => [
+                    'title' => 'Foo Bar',
+                    'artist_name' => 'John Cena',
+                    'album_name' => 'One by One',
+                    'album_artist_name' => 'John Lennon',
+                    'lyrics' => 'Lorem ipsum dolor sic amet.',
+                    'track' => 1,
+                    'disc' => 2,
+                ],
             ],
-        ], create_admin())
-            ->assertOk();
+            create_admin(),
+        )->assertOk();
 
         /** @var Album $album */
         $album = Album::query()->where('name', 'One by One')->first();
@@ -245,14 +261,17 @@ class SongTest extends TestCase
             'disc' => 2,
         ]);
 
-        $this->putAs('/api/songs', [
-            'songs' => [$song->id],
-            'data' => [
-                'track' => null,
-                'disc' => null,
+        $this->putAs(
+            '/api/songs',
+            [
+                'songs' => [$song->id],
+                'data' => [
+                    'track' => null,
+                    'disc' => null,
+                ],
             ],
-        ], create_admin())
-            ->assertOk();
+            create_admin(),
+        )->assertOk();
 
         $song->refresh();
 

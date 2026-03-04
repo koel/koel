@@ -10,7 +10,8 @@ class HomeTest extends TestCase
     #[Test]
     public function renders(): void
     {
-        $this->withoutVite()
+        $this
+            ->withoutVite()
             ->get('/')
             ->assertOk()
             ->assertSee('window.ACCEPTED_AUDIO_EXTENSIONS')

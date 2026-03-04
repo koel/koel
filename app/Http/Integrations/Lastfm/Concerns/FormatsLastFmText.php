@@ -15,8 +15,6 @@ trait FormatsLastFmText
             'User-contributed text is available under the Creative Commons By-SA License; additional terms may apply.',
         ];
 
-        return $value
-            ? trim(str_replace($artifacts, '', nl2br(strip_tags(html_entity_decode($value)))))
-            : '';
+        return $value ? trim(str_replace($artifacts, '', nl2br(strip_tags(html_entity_decode($value))))) : '';
     }
 }

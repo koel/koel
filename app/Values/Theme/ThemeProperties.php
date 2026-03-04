@@ -13,8 +13,7 @@ final class ThemeProperties implements Arrayable
         public readonly string $highlightColor,
         public readonly string $fontFamily,
         public readonly float $fontSize,
-    ) {
-    }
+    ) {}
 
     public static function make(
         string $fgColor,
@@ -36,14 +35,7 @@ final class ThemeProperties implements Arrayable
 
     public static function empty(): self
     {
-        return new self(
-            fgColor: '',
-            bgColor: '',
-            bgImage: '',
-            highlightColor: '',
-            fontFamily: '',
-            fontSize: 13.0,
-        );
+        return new self(fgColor: '', bgColor: '', bgImage: '', highlightColor: '', fontFamily: '', fontSize: 13.0);
     }
 
     public static function unserialize(object $json): self

@@ -7,13 +7,13 @@ use App\Repositories\OrganizationRepository;
 
 class OrganizationService
 {
-    public function __construct(private readonly OrganizationRepository $repository)
-    {
-    }
+    public function __construct(
+        private readonly OrganizationRepository $repository,
+    ) {}
 
     public function getCurrentOrganization(): Organization
     {
-        // @phpstan-ignore-next-line
-        return auth()->user()?->organization ?? $this->repository->getDefault();
+        // @mago-ignore lint:no-redundant-nullsafe
+        return auth()->user()?->organization ?? $this->repository->getDefault(); // @phpstan-ignore-line
     }
 }

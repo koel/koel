@@ -12,9 +12,9 @@ use Illuminate\Support\Arr;
 
 class LambdaSongController extends Controller
 {
-    public function __construct(private readonly S3LambdaStorage $storage)
-    {
-    }
+    public function __construct(
+        private readonly S3LambdaStorage $storage,
+    ) {}
 
     public function put(PutSongRequest $request)
     {
@@ -30,7 +30,7 @@ class LambdaSongController extends Controller
             trim(Arr::get($request->tags, 'title', '')),
             (int) Arr::get($request->tags, 'duration', 0),
             (int) Arr::get($request->tags, 'track'),
-            (string) Arr::get($request->tags, 'lyrics', '')
+            (string) Arr::get($request->tags, 'lyrics', ''),
         );
 
         return response()->json($song);

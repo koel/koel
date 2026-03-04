@@ -12,11 +12,8 @@ use App\Services\MediaBrowser;
 #[RequiresPlus]
 class PaginateFolderSongsController extends Controller
 {
-    public function __invoke(
-        MediaBrowser $browser,
-        FolderRepository $folderRepository,
-        SongRepository $songRepository,
-    ) {
+    public function __invoke(MediaBrowser $browser, FolderRepository $folderRepository, SongRepository $songRepository)
+    {
         $folder = $folderRepository->findByPath(request('path'));
 
         if ($folder) {

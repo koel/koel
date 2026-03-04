@@ -28,8 +28,7 @@ class EmbedController extends Controller
         private readonly SongRepository $songRepository,
         private readonly ThemeRepository $themeRepository,
         private readonly ?Authenticatable $user,
-    ) {
-    }
+    ) {}
 
     public function resolveForEmbeddable(ResolveEmbedRequest $request)
     {

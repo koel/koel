@@ -38,7 +38,8 @@ class UserFactory extends Factory
 
     public function prospect(): self
     {
-        return $this->state(fn () => [ // @phpcs:ignore
+        // @mago-ignore lint:prefer-static-closure
+        return $this->state(fn () => [
             'invitation_token' => Str::random(),
             'invited_at' => now(),
             'invited_by_id' => User::factory()->admin(),

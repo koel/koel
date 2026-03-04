@@ -11,8 +11,9 @@ class ActivateLicenseCommand extends Command
     protected $signature = 'koel:license:activate {key : The license key to activate.}';
     protected $description = 'Activate a Koel Plus license';
 
-    public function __construct(private readonly LicenseServiceInterface $licenseService)
-    {
+    public function __construct(
+        private readonly LicenseServiceInterface $licenseService,
+    ) {
         parent::__construct();
     }
 
@@ -33,7 +34,7 @@ class ActivateLicenseCommand extends Command
 
         $this->components->twoColumnDetail(
             'Registered To',
-            "{$license->meta->customerName} <{$license->meta->customerEmail}>"
+            "{$license->meta->customerName} <{$license->meta->customerEmail}>",
         );
 
         $this->components->twoColumnDetail('Expires On', 'Never ever');

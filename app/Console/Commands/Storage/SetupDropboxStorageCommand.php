@@ -15,8 +15,9 @@ class SetupDropboxStorageCommand extends Command
     protected $signature = 'koel:storage:dropbox';
     protected $description = 'Set up Dropbox as the storage driver for Koel';
 
-    public function __construct(private readonly DotenvEditor $dotenvEditor)
-    {
+    public function __construct(
+        private readonly DotenvEditor $dotenvEditor,
+    ) {
         parent::__construct();
     }
 
@@ -53,7 +54,7 @@ class SetupDropboxStorageCommand extends Command
 
         if ($response->failed()) {
             $this->error(
-                'Failed to authorize with Dropbox. The server said: ' . $response->json('error_description') . '.'
+                'Failed to authorize with Dropbox. The server said: ' . $response->json('error_description') . '.',
             );
 
             $this->info('Please try again.');

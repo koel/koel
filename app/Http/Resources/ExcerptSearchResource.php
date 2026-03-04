@@ -25,8 +25,9 @@ class ExcerptSearchResource extends JsonResource
         ],
     ];
 
-    public function __construct(private readonly ExcerptSearchResult $result)
-    {
+    public function __construct(
+        private readonly ExcerptSearchResult $result,
+    ) {
         parent::__construct($result);
     }
 

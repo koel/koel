@@ -6,12 +6,15 @@ use App\Http\Integrations\Lastfm\Contracts\RequiresSignature;
 use Saloon\Contracts\Authenticator;
 use Saloon\Http\PendingRequest;
 use Saloon\Repositories\Body\FormBodyRepository;
+use SensitiveParameter;
 
 final class LastfmAuthenticator implements Authenticator
 {
-    public function __construct(private readonly string $key, private readonly string $secret)
-    {
-    }
+    public function __construct(
+        private readonly string $key,
+        #[SensitiveParameter]
+        private readonly string $secret,
+    ) {}
 
     public function set(PendingRequest $pendingRequest): void
     {

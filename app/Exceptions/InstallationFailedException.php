@@ -4,6 +4,4 @@ namespace App\Exceptions;
 
 use RuntimeException;
 
-class InstallationFailedException extends RuntimeException
-{
-}
+class InstallationFailedException extends RuntimeException {}

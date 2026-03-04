@@ -15,10 +15,12 @@ class EmbedService
     /** @param Album|Artist|Playlist|Song $embeddable */
     public function resolveEmbedForEmbeddable(Embeddable $embeddable, User $user): Embed
     {
-        return $embeddable->embeds()->firstOrCreate([
-            'embeddable_id' => $embeddable->getKey(),
-            'embeddable_type' => $embeddable->getMorphClass(),
-            'user_id' => $user->id,
-        ]);
+        return $embeddable
+            ->embeds()
+            ->firstOrCreate([
+                'embeddable_id' => $embeddable->getKey(),
+                'embeddable_type' => $embeddable->getMorphClass(),
+                'user_id' => $user->id,
+            ]);
     }
 }

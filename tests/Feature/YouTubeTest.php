@@ -26,11 +26,8 @@ class YouTubeTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create();
 
-        $this->youTubeService
-            ->expects('searchVideosRelatedToSong')
-            ->with(Mockery::on(static fn (Song $retrievedSong) => $song->is($retrievedSong)), 'foo');
+        $this->youTubeService->expects('searchVideosRelatedToSong')->with(Mockery::on($song->is(...)), 'foo');
 
-        $this->getAs("/api/youtube/search/song/{$song->id}?pageToken=foo")
-            ->assertOk();
+        $this->getAs("/api/youtube/search/song/{$song->id}?pageToken=foo")->assertOk();
     }
 }

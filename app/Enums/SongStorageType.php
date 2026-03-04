@@ -14,7 +14,7 @@ enum SongStorageType: string
 
     public function supported(): bool
     {
-        return ($this === self::LOCAL || $this === self::S3_LAMBDA) || License::isPlus();
+        return $this === self::LOCAL || $this === self::S3_LAMBDA || License::isPlus();
     }
 
     public function supportsFolderStructureExtraction(): bool

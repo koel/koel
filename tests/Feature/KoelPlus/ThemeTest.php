@@ -18,7 +18,8 @@ class ThemeTest extends PlusTestCase
         $user = create_user();
         Theme::factory()->for($user)->create();
 
-        $this->getAs('api/themes', $user)
+        $this
+            ->getAs('api/themes', $user)
             ->assertSuccessful()
             ->assertJsonStructure(['*' => ThemeResource::JSON_STRUCTURE]);
     }
@@ -29,15 +30,20 @@ class ThemeTest extends PlusTestCase
         $user = create_user();
         self::assertCount(0, $user->themes);
 
-        $this->postAs('api/themes', [
-            'name' => 'Test Theme',
-            'fg_color' => '#ffffff',
-            'bg_color' => '#000000',
-            'highlight_color' => '#ff0000',
-            'bg_image' => minimal_base64_encoded_image(),
-            'font_family' => 'system-ui',
-            'font_size' => '16.5',
-        ], $user)
+        $this
+            ->postAs(
+                'api/themes',
+                [
+                    'name' => 'Test Theme',
+                    'fg_color' => '#ffffff',
+                    'bg_color' => '#000000',
+                    'highlight_color' => '#ff0000',
+                    'bg_image' => minimal_base64_encoded_image(),
+                    'font_family' => 'system-ui',
+                    'font_size' => '16.5',
+                ],
+                $user,
+            )
             ->assertCreated()
             ->assertJsonStructure(ThemeResource::JSON_STRUCTURE);
 
@@ -60,8 +66,7 @@ class ThemeTest extends PlusTestCase
         /** @var Theme $theme */
         $theme = Theme::factory()->create();
 
-        $this->deleteAs("api/themes/{$theme->id}", [], $theme->user)
-            ->assertNoContent();
+        $this->deleteAs("api/themes/{$theme->id}", [], $theme->user)->assertNoContent();
 
         self::assertModelMissing($theme);
     }
@@ -72,8 +77,7 @@ class ThemeTest extends PlusTestCase
         /** @var Theme $theme */
         $theme = Theme::factory()->create();
 
-        $this->deleteAs("api/themes/{$theme->id}", [], create_user())
-            ->assertForbidden();
+        $this->deleteAs("api/themes/{$theme->id}", [], create_user())->assertForbidden();
 
         self::assertModelExists($theme);
     }

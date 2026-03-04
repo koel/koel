@@ -21,13 +21,16 @@ class PlayCountTest extends TestCase
         /** @var Interaction $interaction */
         $interaction = Interaction::factory()->create(['play_count' => 10]);
 
-        $this->postAs('/api/interaction/play', ['song' => $interaction->song_id], $interaction->user)
-            ->assertJsonStructure([
-                'type',
-                'id',
-                'song_id',
-                'play_count',
-            ]);
+        $this->postAs(
+            '/api/interaction/play',
+            ['song' => $interaction->song_id],
+            $interaction->user,
+        )->assertJsonStructure([
+            'type',
+            'id',
+            'song_id',
+            'play_count',
+        ]);
 
         self::assertSame(11, $interaction->refresh()->play_count);
         Event::assertDispatched(PlaybackStarted::class);
@@ -42,13 +45,12 @@ class PlayCountTest extends TestCase
         $song = Song::factory()->create();
         $user = create_user();
 
-        $this->postAs('/api/interaction/play', ['song' => $song->id], $user)
-            ->assertJsonStructure([
-                'type',
-                'id',
-                'song_id',
-                'play_count',
-            ]);
+        $this->postAs('/api/interaction/play', ['song' => $song->id], $user)->assertJsonStructure([
+            'type',
+            'id',
+            'song_id',
+            'play_count',
+        ]);
 
         $interaction = Interaction::query()
             ->whereBelongsTo($song)

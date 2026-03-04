@@ -47,24 +47,27 @@ class ITunesServiceTest extends TestCase
         ]);
 
         /** @var Album $album */
-        $album = Album::factory()
-            ->for(Artist::factory()->create(['name' => 'Queen']))
-            ->create(['name' => 'A Night at the Opera']);
+        $album = Album::factory()->for(Artist::factory()->create(['name' => 'Queen']))->create([
+            'name' => 'A Night at the Opera',
+        ]);
 
-        self::assertSame(
-            'https://itunes.apple.com/bar?at=foo',
-            $this->service->getTrackUrl('Bohemian Rhapsody', $album)
-        );
+        self::assertSame('https://itunes.apple.com/bar?at=foo', $this->service->getTrackUrl(
+            'Bohemian Rhapsody',
+            $album,
+        ));
 
         self::assertSame('https://itunes.apple.com/bar?at=foo', Cache::get('8eca87872691f06f3cc6f2fbe6b3c528'));
 
         Saloon::assertSent(static function (GetTrackRequest $request): bool {
-            self::assertSame([
-                'term' => 'Bohemian Rhapsody A Night at the Opera Queen',
-                'media' => 'music',
-                'entity' => 'song',
-                'limit' => 1,
-            ], $request->query()->all());
+            self::assertSame(
+                [
+                    'term' => 'Bohemian Rhapsody A Night at the Opera Queen',
+                    'media' => 'music',
+                    'entity' => 'song',
+                    'limit' => 1,
+                ],
+                $request->query()->all(),
+            );
 
             return true;
         });

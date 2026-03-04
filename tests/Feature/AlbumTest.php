@@ -19,24 +19,26 @@ class AlbumTest extends TestCase
     {
         Album::factory(10)->create();
 
-        $this->getAs('api/albums')
-            ->assertJsonStructure(AlbumResource::PAGINATION_JSON_STRUCTURE);
+        $this->getAs('api/albums')->assertJsonStructure(AlbumResource::PAGINATION_JSON_STRUCTURE);
 
-        $this->getAs('api/albums?sort=artist_name&order=asc')
-            ->assertJsonStructure(AlbumResource::PAGINATION_JSON_STRUCTURE);
+        $this->getAs(
+            'api/albums?sort=artist_name&order=asc',
+        )->assertJsonStructure(AlbumResource::PAGINATION_JSON_STRUCTURE);
 
-        $this->getAs('api/albums?sort=year&order=desc&page=2')
-            ->assertJsonStructure(AlbumResource::PAGINATION_JSON_STRUCTURE);
+        $this->getAs(
+            'api/albums?sort=year&order=desc&page=2',
+        )->assertJsonStructure(AlbumResource::PAGINATION_JSON_STRUCTURE);
 
-        $this->getAs('api/albums?sort=created_at&order=desc&page=1')
-            ->assertJsonStructure(AlbumResource::PAGINATION_JSON_STRUCTURE);
+        $this->getAs(
+            'api/albums?sort=created_at&order=desc&page=1',
+        )->assertJsonStructure(AlbumResource::PAGINATION_JSON_STRUCTURE);
     }
 
     #[Test]
     public function show(): void
     {
-        $this->getAs('api/albums/' . Album::factory()->create()->id)
-            ->assertJsonStructure(AlbumResource::JSON_STRUCTURE);
+        $this->getAs('api/albums/'
+        . Album::factory()->create()->id)->assertJsonStructure(AlbumResource::JSON_STRUCTURE);
     }
 
     #[Test]
@@ -47,15 +49,17 @@ class AlbumTest extends TestCase
 
         $ulid = Ulid::freeze();
 
-        $this->putAs(
-            "api/albums/{$album->id}",
-            [
-                'name' => 'Updated Album Name',
-                'year' => 2023,
-                'cover' => minimal_base64_encoded_image(),
-            ],
-            create_admin()
-        )->assertJsonStructure(AlbumResource::JSON_STRUCTURE)
+        $this
+            ->putAs(
+                "api/albums/{$album->id}",
+                [
+                    'name' => 'Updated Album Name',
+                    'year' => 2023,
+                    'cover' => minimal_base64_encoded_image(),
+                ],
+                create_admin(),
+            )
+            ->assertJsonStructure(AlbumResource::JSON_STRUCTURE)
             ->assertOk();
 
         $album->refresh();
@@ -71,14 +75,16 @@ class AlbumTest extends TestCase
         /** @var Album $album */
         $album = Album::factory()->create(['cover' => 'neat-cover.webp']);
 
-        $this->putAs(
-            "api/albums/{$album->id}",
-            [
-                'name' => 'Updated Album Name',
-                'year' => 2023,
-            ],
-            create_admin()
-        )->assertJsonStructure(AlbumResource::JSON_STRUCTURE)
+        $this
+            ->putAs(
+                "api/albums/{$album->id}",
+                [
+                    'name' => 'Updated Album Name',
+                    'year' => 2023,
+                ],
+                create_admin(),
+            )
+            ->assertJsonStructure(AlbumResource::JSON_STRUCTURE)
             ->assertOk();
 
         self::assertEquals('neat-cover.webp', $album->refresh()->cover);
@@ -90,15 +96,17 @@ class AlbumTest extends TestCase
         /** @var Album $album */
         $album = Album::factory()->create(['cover' => 'neat-cover.webp']);
 
-        $this->putAs(
-            "api/albums/{$album->id}",
-            [
-                'name' => 'Updated Album Name',
-                'year' => 2023,
-                'cover' => '',
-            ],
-            create_admin()
-        )->assertJsonStructure(AlbumResource::JSON_STRUCTURE)
+        $this
+            ->putAs(
+                "api/albums/{$album->id}",
+                [
+                    'name' => 'Updated Album Name',
+                    'year' => 2023,
+                    'cover' => '',
+                ],
+                create_admin(),
+            )
+            ->assertJsonStructure(AlbumResource::JSON_STRUCTURE)
             ->assertOk();
 
         self::assertEmpty($album->refresh()->cover);
@@ -119,11 +127,10 @@ class AlbumTest extends TestCase
                 'name' => 'Black Album',
                 'year' => 2023,
             ],
-            create_admin()
-        )
-            ->assertJsonValidationErrors([
-                'name' => 'An album with the same name already exists for this artist.',
-            ]);
+            create_admin(),
+        )->assertJsonValidationErrors([
+            'name' => 'An album with the same name already exists for this artist.',
+        ]);
     }
 
     #[Test]
@@ -138,7 +145,7 @@ class AlbumTest extends TestCase
                 'name' => 'Updated Album Name',
                 'year' => 2023,
             ],
-            create_user()
+            create_user(),
         )->assertForbidden();
     }
 }

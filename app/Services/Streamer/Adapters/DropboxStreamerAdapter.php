@@ -10,9 +10,9 @@ use Illuminate\Routing\Redirector;
 
 class DropboxStreamerAdapter implements StreamerAdapter
 {
-    public function __construct(private readonly DropboxStorage $storage)
-    {
-    }
+    public function __construct(
+        private readonly DropboxStorage $storage,
+    ) {}
 
     public function stream(Song $song, ?RequestedStreamingConfig $config = null): Redirector|RedirectResponse
     {

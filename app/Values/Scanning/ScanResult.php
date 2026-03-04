@@ -6,9 +6,11 @@ use App\Enums\ScanResultType;
 
 final class ScanResult
 {
-    private function __construct(public string $path, public ScanResultType $type, public ?string $error = null)
-    {
-    }
+    private function __construct(
+        public string $path,
+        public ScanResultType $type,
+        public ?string $error = null,
+    ) {}
 
     public static function success(string $path): self
     {

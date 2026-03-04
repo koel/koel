@@ -13,8 +13,9 @@ class SyncPodcastsCommand extends Command
     protected $signature = 'koel:podcasts:sync';
     protected $description = 'Synchronize podcasts.';
 
-    public function __construct(private readonly PodcastService $podcastService)
-    {
+    public function __construct(
+        private readonly PodcastService $podcastService,
+    ) {
         parent::__construct();
     }
 

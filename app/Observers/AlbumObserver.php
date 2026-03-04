@@ -25,16 +25,13 @@ class AlbumObserver
         $oldCover = $album->getRawOriginal('cover');
 
         // If the cover is being updated, delete the old cover and thumbnail files
-        rescue_if(
-            $oldCover,
-            static function () use ($oldCover): void {
-                $oldCoverPath = image_storage_path($oldCover);
-                $parts = pathinfo($oldCoverPath);
+        rescue_if($oldCover, static function () use ($oldCover): void {
+            $oldCoverPath = image_storage_path($oldCover);
+            $parts = pathinfo($oldCoverPath);
 
-                $oldThumbnail = sprintf('%s_thumb.%s', $parts['filename'], $parts['extension']);
-                File::delete([$oldCoverPath, image_storage_path($oldThumbnail)]);
-            },
-        );
+            $oldThumbnail = sprintf('%s_thumb.%s', $parts['filename'], $parts['extension']);
+            File::delete([$oldCoverPath, image_storage_path($oldThumbnail)]);
+        });
     }
 
     public function updated(Album $album): void

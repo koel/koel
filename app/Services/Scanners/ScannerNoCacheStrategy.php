@@ -7,10 +7,8 @@ use Closure;
 
 class ScannerNoCacheStrategy implements ScannerCacheStrategy
 {
-    public function remember(
-        string $key,
-        Closure $callback,
-    ): mixed {
+    public function remember(string $key, Closure $callback): mixed
+    {
         return $callback();
     }
 }

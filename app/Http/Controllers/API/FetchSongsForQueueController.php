@@ -17,12 +17,7 @@ class FetchSongsForQueueController extends Controller
         return SongResource::collection(
             $request->order === 'rand'
                 ? $repository->getRandom($request->limit, $user)
-                : $repository->getForQueue(
-                    explode(',', $request->sort),
-                    $request->order,
-                    $request->limit,
-                    $user
-                )
+                : $repository->getForQueue(explode(',', $request->sort), $request->order, $request->limit, $user),
         );
     }
 }

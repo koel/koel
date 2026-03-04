@@ -21,7 +21,7 @@ trait SupportsDeleteWhereValueNotIn
     public static function deleteWhereValueNotIn(
         array $values,
         ?string $field = null,
-        ?Closure $queryModifier = null
+        ?Closure $queryModifier = null,
     ): void {
         $field ??= (new static())->getKeyName();
         $queryModifier ??= static fn (Builder $builder) => $builder;
@@ -34,7 +34,11 @@ trait SupportsDeleteWhereValueNotIn
             return;
         }
 
-        $allIds = static::query()->select($field)->get()->pluck($field)->all();
+        $allIds = static::query()
+            ->select($field)
+            ->get()
+            ->pluck($field)
+            ->all();
         $deletableIds = array_diff($allIds, $values);
 
         if (count($deletableIds) < $maxChunkSize) {

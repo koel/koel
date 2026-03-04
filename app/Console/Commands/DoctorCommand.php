@@ -32,6 +32,7 @@ use Throwable;
 use TiBeN\CrontabManager\CrontabAdapter;
 use TiBeN\CrontabManager\CrontabRepository;
 
+// @mago-ignore lint:too-many-methods,cyclomatic-complexity,kan-defect
 class DoctorCommand extends Command
 {
     protected $signature = 'koel:doctor';

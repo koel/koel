@@ -8,9 +8,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 readonly class UpdateLastfmNowPlaying implements ShouldQueue
 {
-    public function __construct(private LastfmService $lastfm)
-    {
-    }
+    public function __construct(
+        private LastfmService $lastfm,
+    ) {}
 
     public function handle(PlaybackStarted $event): void
     {

@@ -17,6 +17,6 @@ class GoogleCallbackController extends Controller
         $user = Socialite::driver('google')->user();
         $user = $userService->createOrUpdateUserFromSso(SsoUser::fromSocialite($user, 'Google'));
 
-        return view('sso-callback')->with('token', $auth->logUserIn($user)->toArray());
+        return view('sso-callback', ['token' => $auth->logUserIn($user)->toArray()]);
     }
 }

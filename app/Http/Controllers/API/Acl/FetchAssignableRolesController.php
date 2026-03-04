@@ -10,9 +10,10 @@ use Illuminate\Contracts\Auth\Authenticatable;
 class FetchAssignableRolesController extends Controller
 {
     /** @param User $user */
-    public function __construct(private readonly Acl $acl, private readonly Authenticatable $user)
-    {
-    }
+    public function __construct(
+        private readonly Acl $acl,
+        private readonly Authenticatable $user,
+    ) {}
 
     public function __invoke()
     {

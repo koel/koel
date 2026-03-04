@@ -26,13 +26,10 @@ class PlayController extends Controller
             ? (int) filter_var($user->preferences->transcodeQuality, FILTER_SANITIZE_NUMBER_INT)
             : null;
 
-        return (new Streamer(
-            song: $song,
-            config: RequestedStreamingConfig::make(
-                transcode: (bool) $transcode,
-                bitRate: $transcodeBitRate,
-                startTime: (float) $request->time
-            )
-        ))->stream();
+        return (new Streamer(song: $song, config: RequestedStreamingConfig::make(
+            transcode: (bool) $transcode,
+            bitRate: $transcodeBitRate,
+            startTime: (float) $request->time,
+        )))->stream();
     }
 }

@@ -26,7 +26,10 @@ class RadioStationRepository extends Repository implements ScoutableRepository
     public function search(string $keywords, int $limit, ?User $user = null): Collection
     {
         return $this->getMany(
-            ids: RadioStation::search($keywords)->get()->take($limit)->modelKeys(),
+            ids: RadioStation::search($keywords)
+                ->get()
+                ->take($limit)
+                ->modelKeys(),
             preserveOrder: true,
             user: $user,
         );
@@ -35,17 +38,13 @@ class RadioStationRepository extends Repository implements ScoutableRepository
     /** @return Collection<RadioStation>|array<array-key, RadioStation> */
     public function getAllForUser(User $user): Collection
     {
-        return RadioStation::query()
-            ->withUserContext(user: $user)
-            ->get();
+        return RadioStation::query()->withUserContext(user: $user)->get();
     }
 
     public function findOneWithUserContext(string $id, User $user, bool $withFavoriteStatus = true): RadioStation
     {
         return RadioStation::query()
-            ->withUserContext(
-                user: $user,
-                includeFavoriteStatus: $withFavoriteStatus,
-            )->findOrFail($id);
+            ->withUserContext(user: $user, includeFavoriteStatus: $withFavoriteStatus)
+            ->findOrFail($id);
     }
 }

@@ -25,27 +25,24 @@ class SearchService
         private readonly AlbumRepository $albumRepository,
         private readonly PodcastRepository $podcastRepository,
         private readonly RadioStationRepository $radioStationRepository,
-    ) {
-    }
+    ) {}
 
     public function excerptSearch(
         string $keywords,
         int $limit = self::DEFAULT_EXCERPT_RESULT_LIMIT,
-        ?User $scopedUser = null
+        ?User $scopedUser = null,
     ): ExcerptSearchResult {
         $scopedUser ??= auth()->user();
 
         $results = [];
 
-        foreach (
-            [
-                $this->songRepository,
-                $this->artistRepository,
-                $this->albumRepository,
-                $this->podcastRepository,
-                $this->radioStationRepository,
-            ] as $repository
-        ) {
+        foreach ([
+            $this->songRepository,
+            $this->artistRepository,
+            $this->albumRepository,
+            $this->podcastRepository,
+            $this->radioStationRepository,
+        ] as $repository) {
             try {
                 $results[] = $repository->search($keywords, $limit, $scopedUser);
             } catch (Throwable $e) {
@@ -61,7 +58,7 @@ class SearchService
     public function searchSongs(
         string $keywords,
         ?User $scopedUser = null,
-        int $limit = self::DEFAULT_SONG_RESULT_LIMIT
+        int $limit = self::DEFAULT_SONG_RESULT_LIMIT,
     ): Collection {
         return $this->songRepository->search($keywords, $limit, $scopedUser);
     }

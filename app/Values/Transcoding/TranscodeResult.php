@@ -6,9 +6,10 @@ use Illuminate\Support\Facades\File;
 
 final readonly class TranscodeResult
 {
-    public function __construct(public string $path, public string $checksum)
-    {
-    }
+    public function __construct(
+        public string $path,
+        public string $checksum,
+    ) {}
 
     public function valid(): bool
     {

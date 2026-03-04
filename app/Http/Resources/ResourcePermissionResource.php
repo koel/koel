@@ -11,7 +11,7 @@ class ResourcePermissionResource extends JsonResource
         private readonly string $type,
         private readonly string|int $id,
         private readonly string $action,
-        private readonly bool $allowed
+        private readonly bool $allowed,
     ) {
         parent::__construct($type);
     }

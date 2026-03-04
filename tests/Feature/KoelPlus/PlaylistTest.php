@@ -17,10 +17,13 @@ class PlaylistTest extends PlusTestCase
         $collaborator = create_user();
         $playlist->addCollaborator($collaborator);
 
-        $this->putAs("api/playlists/{$playlist->id}", [
-            'name' => 'Nope',
-            'description' => 'Nopey Nope',
-        ], $collaborator)
-            ->assertForbidden();
+        $this->putAs(
+            "api/playlists/{$playlist->id}",
+            [
+                'name' => 'Nope',
+                'description' => 'Nopey Nope',
+            ],
+            $collaborator,
+        )->assertForbidden();
     }
 }

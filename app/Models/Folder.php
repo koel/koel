@@ -62,7 +62,7 @@ class Folder extends Model
         // An uploads folder has a format of __KOEL_UPLOADS_$<id>__ and is a child of the root folder
         // (i.e., it has no parent).
         return Attribute::get(
-            fn () => !$this->parent_id && preg_match('/^__KOEL_UPLOADS_\$\d+__$/', $this->name) === 1
+            fn () => !$this->parent_id && preg_match('/^__KOEL_UPLOADS_\$\d+__$/', $this->name) === 1,
         );
     }
 

@@ -37,9 +37,9 @@ class LicenseServiceTest extends TestCase
         $key = '38b1460a-5104-4067-a91d-77b872934d51';
 
         Saloon::fake([
-            ActivateLicenseRequest::class => MockResponse::make(
-                body: File::get(test_path('fixtures/lemonsqueezy/license-activated-successful.json')),
-            ),
+            ActivateLicenseRequest::class => MockResponse::make(body: File::get(test_path(
+                'fixtures/lemonsqueezy/license-activated-successful.json',
+            ))),
         ]);
 
         $license = $this->service->activate($key);
@@ -56,10 +56,13 @@ class LicenseServiceTest extends TestCase
         self::assertTrue($cachedLicenseStatus->isValid());
 
         Saloon::assertSent(static function (ActivateLicenseRequest $request) use ($key): bool {
-            self::assertSame([
-                'license_key' => $key,
-                'instance_name' => 'Koel Plus',
-            ], $request->body()->all());
+            self::assertSame(
+                [
+                    'license_key' => $key,
+                    'instance_name' => 'Koel Plus',
+                ],
+                $request->body()->all(),
+            );
 
             return true;
         });
@@ -75,9 +78,9 @@ class LicenseServiceTest extends TestCase
         $key = '38b1460a-5104-4067-a91d-77b872934d51';
 
         Saloon::fake([
-            ActivateLicenseRequest::class => MockResponse::make(
-                body: File::get(test_path('fixtures/lemonsqueezy/license-activated-successful.json')),
-            ),
+            ActivateLicenseRequest::class => MockResponse::make(body: File::get(test_path(
+                'fixtures/lemonsqueezy/license-activated-successful.json',
+            ))),
         ]);
 
         $this->service->activate($key);
@@ -118,10 +121,13 @@ class LicenseServiceTest extends TestCase
         self::assertFalse(Cache::has('license_status'));
 
         Saloon::assertSent(static function (DeactivateLicenseRequest $request) use ($license): bool {
-            self::assertSame([
-                'license_key' => $license->key,
-                'instance_id' => $license->instance->id,
-            ], $request->body()->all());
+            self::assertSame(
+                [
+                    'license_key' => $license->key,
+                    'instance_id' => $license->instance->id,
+                ],
+                $request->body()->all(),
+            );
 
             return true;
         });
@@ -150,7 +156,7 @@ class LicenseServiceTest extends TestCase
         Saloon::fake([
             DeactivateLicenseRequest::class => MockResponse::make(
                 body: 'Something went horrible wrong',
-                status: Response::HTTP_UNPROCESSABLE_ENTITY
+                status: Response::HTTP_UNPROCESSABLE_ENTITY,
             ),
         ]);
 
@@ -192,19 +198,22 @@ class LicenseServiceTest extends TestCase
         self::assertFalse(Cache::has('license_status'));
 
         Saloon::fake([
-            ValidateLicenseRequest::class => MockResponse::make(
-                body: File::get(test_path('fixtures/lemonsqueezy/license-validated-successful.json')),
-            ),
+            ValidateLicenseRequest::class => MockResponse::make(body: File::get(test_path(
+                'fixtures/lemonsqueezy/license-validated-successful.json',
+            ))),
         ]);
 
         self::assertTrue($this->service->getStatus()->isValid());
         self::assertTrue(Cache::has('license_status'));
 
         Saloon::assertSent(static function (ValidateLicenseRequest $request) use ($license): bool {
-            self::assertSame([
-                'license_key' => $license->key,
-                'instance_id' => $license->instance->id,
-            ], $request->body()->all());
+            self::assertSame(
+                [
+                    'license_key' => $license->key,
+                    'instance_id' => $license->instance->id,
+                ],
+                $request->body()->all(),
+            );
 
             return true;
         });

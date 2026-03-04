@@ -22,7 +22,7 @@ class PaginateSongsByGenreController extends Controller
             $genre,
             $request->sort ? explode(',', $request->sort) : ['songs.title'],
             $request->order ?: 'asc',
-            $user
+            $user,
         );
 
         return SongResource::collection($songs);

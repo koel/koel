@@ -14,9 +14,7 @@ final class SmartPlaylistQueryModifier
 {
     private static function resolveWhereMethod(Rule $rule, Operator $operator): string
     {
-        return $rule->model->requiresRawQuery()
-            ? 'whereRaw'
-            : $operator->toWhereMethod();
+        return $rule->model->requiresRawQuery() ? 'whereRaw' : $operator->toWhereMethod();
     }
 
     public static function applyRule(Rule $rule, SongBuilder $query): void
@@ -51,18 +49,23 @@ final class SmartPlaylistQueryModifier
                 default => $operator,
             };
 
-            $query->{$whereHasClause}(
-                $rule->model->getManyToManyRelation(),
-                static function (Builder $subQuery) use ($rule, $operator, $value): void {
-                    $subQuery->{self::resolveWhereMethod($rule, $operator)}(
-                        ...self::generateParameters($rule->model, $operator, $value)
-                    );
-                }
-            );
+            $query->{$whereHasClause}($rule->model->getManyToManyRelation(), static function (Builder $subQuery) use (
+                $rule,
+                $operator,
+                $value,
+            ): void {
+                $subQuery->{self::resolveWhereMethod($rule, $operator)}(...self::generateParameters(
+                    $rule->model,
+                    $operator,
+                    $value,
+                ));
+            });
         } else {
-            $query->{self::resolveWhereMethod($rule, $operator)}(
-                ...self::generateParameters($rule->model, $operator, $value)
-            );
+            $query->{self::resolveWhereMethod($rule, $operator)}(...self::generateParameters(
+                $rule->model,
+                $operator,
+                $value,
+            ));
         }
     }
 

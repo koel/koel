@@ -39,9 +39,7 @@ function read_as_data_url(string $path): string
 
 function create_playlist(array $attributes = [], bool $smart = false): Playlist
 {
-    return $smart
-        ? Playlist::factory()->smart()->create($attributes)
-        : Playlist::factory()->create($attributes);
+    return $smart ? Playlist::factory()->smart()->create($attributes) : Playlist::factory()->create($attributes);
 }
 
 /**
@@ -66,5 +64,5 @@ function create_playlists(int $count, array $attributes = [], ?User $owner = nul
  */
 function minimal_base64_encoded_image(): string
 {
-    return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII'; // @phpcs:ignore
+    return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII';
 }

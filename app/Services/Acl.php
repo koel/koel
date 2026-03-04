@@ -25,8 +25,7 @@ class Acl
     ): bool {
         Assert::inArray($action, self::VALID_ACTIONS);
 
-        return Gate::forUser($user ?? auth()->user())
-            ->allows($action, self::resolveResource($type, $id));
+        return Gate::forUser($user ?? auth()->user())->allows($action, self::resolveResource($type, $id));
     }
 
     private static function resolveResource(PermissionableResourceType $type, int|string $id): Model
@@ -39,7 +38,8 @@ class Acl
     /** @return Collection<Role> */
     public function getAssignableRolesForUser(User $user): Collection
     {
-        return Role::allAvailable()->filter(static fn (Role $role) => $user->role->canManage($role))
+        return Role::allAvailable()
+            ->filter(static fn (Role $role) => $user->role->canManage($role))
             ->sortBy(static fn (Role $role) => $role->level())
             ->values();
     }

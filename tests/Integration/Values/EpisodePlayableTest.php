@@ -19,9 +19,11 @@ class EpisodePlayableTest extends TestCase
         ]);
 
         /** @var Song $episode */
-        $episode = Song::factory()->asEpisode()->create([
-            'path' => 'https://example.com/episode.mp3',
-        ]);
+        $episode = Song::factory()
+            ->asEpisode()
+            ->create([
+                'path' => 'https://example.com/episode.mp3',
+            ]);
 
         $playable = EpisodePlayable::getForEpisode($episode);
 

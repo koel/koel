@@ -24,7 +24,6 @@ class FetchFavoriteSongsTest extends TestCase
             ]);
         });
 
-        $this->getAs('api/songs/favorite', $user)
-            ->assertJsonStructure([0 => SongResource::JSON_STRUCTURE]);
+        $this->getAs('api/songs/favorite', $user)->assertJsonStructure([0 => SongResource::JSON_STRUCTURE]);
     }
 }

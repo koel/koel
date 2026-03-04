@@ -14,12 +14,9 @@ class ViewSongOnITunesController extends Controller
         ViewSongOnITunesRequest $request,
         ITunesService $iTunesService,
         TokenManager $tokenManager,
-        Album $album
+        Album $album,
     ) {
-        abort_unless(
-            (bool) $tokenManager->getUserFromPlainTextToken($request->api_token),
-            Response::HTTP_UNAUTHORIZED
-        );
+        abort_unless((bool) $tokenManager->getUserFromPlainTextToken($request->api_token), Response::HTTP_UNAUTHORIZED);
 
         $url = $iTunesService->getTrackUrl($request->q, $album);
         abort_unless((bool) $url, Response::HTTP_NOT_FOUND, "Koel can't find such a song on iTunes Store.");

@@ -12,8 +12,7 @@ abstract class TranscodingStrategy
     public function __construct(
         protected TranscodeRepository $transcodeRepository,
         protected Transcoder $transcoder,
-    ) {
-    }
+    ) {}
 
     protected function findTranscodeBySongAndBitRate(Song $song, int $bitRate): ?Transcode
     {

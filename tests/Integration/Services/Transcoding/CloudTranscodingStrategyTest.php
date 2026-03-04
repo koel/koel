@@ -84,15 +84,16 @@ class CloudTranscodingStrategyTest extends TestCase
 
         $storage = $this->mock(S3CompatibleStorage::class);
 
-        $storage->expects('getPresignedUrl')
+        $storage
+            ->expects('getPresignedUrl')
             ->with('transcodes/128/some-ulid.m4a')
             ->andReturn('https://s3.song.presigned.url/transcodes/128/some-ulid.m4a');
 
         $this->transcoder->expects('transcode')->never();
 
-        self::assertSame(
-            'https://s3.song.presigned.url/transcodes/128/some-ulid.m4a',
-            $this->strategy->getTranscodeLocation($song, 128)
-        );
+        self::assertSame('https://s3.song.presigned.url/transcodes/128/some-ulid.m4a', $this->strategy->getTranscodeLocation(
+            $song,
+            128,
+        ));
     }
 }

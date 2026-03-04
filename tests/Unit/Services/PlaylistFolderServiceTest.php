@@ -109,6 +109,8 @@ class PlaylistFolderServiceTest extends TestCase
 
         self::assertCount(0, $folder->playlists);
 
-        $playlists->each(static fn (Playlist $playlist) => self::assertNull($playlist->refresh()->getFolder())); // @phpstan-ignore-line
+        $playlists->each(fn (Playlist $playlist) => self::assertNull( // @phpstan-ignore-line
+            $this->service->getFolderForPlaylist($playlist->refresh()),
+        ));
     }
 }

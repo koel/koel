@@ -3,6 +3,7 @@
 namespace Tests\Feature\KoelPlus;
 
 use App\Models\PlaylistFolder;
+use App\Services\PlaylistFolderService;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
@@ -11,6 +12,15 @@ use function Tests\create_user;
 
 class PlaylistFolderTest extends PlusTestCase
 {
+    private PlaylistFolderService $folderService;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->folderService = app(PlaylistFolderService::class);
+    }
+
     #[Test]
     public function collaboratorPuttingPlaylistIntoTheirFolder(): void
     {
@@ -22,23 +32,24 @@ class PlaylistFolderTest extends PlusTestCase
         /** @var PlaylistFolder $ownerFolder */
         $ownerFolder = PlaylistFolder::factory()->for($playlist->owner)->create();
         $ownerFolder->playlists()->attach($playlist);
-        self::assertTrue($playlist->refresh()->getFolder($playlist->owner)?->is($ownerFolder));
+        self::assertTrue($this->folderService->getFolderForPlaylist($playlist)?->is($ownerFolder));
 
         /** @var PlaylistFolder $collaboratorFolder */
         $collaboratorFolder = PlaylistFolder::factory()->for($collaborator)->create();
-        self::assertNull($playlist->getFolder($collaborator));
+        self::assertNull($this->folderService->getFolderForPlaylist($playlist, $collaborator));
 
         $this->postAs(
             "api/playlist-folders/{$collaboratorFolder->id}/playlists",
             ['playlists' => [$playlist->id]],
-            $collaborator
-        )
-            ->assertSuccessful();
+            $collaborator,
+        )->assertSuccessful();
 
-        self::assertTrue($playlist->fresh()->getFolder($collaborator)?->is($collaboratorFolder));
+        self::assertTrue($this->folderService->getFolderForPlaylist($playlist->fresh(), $collaborator)?->is(
+            $collaboratorFolder,
+        ));
 
         // Verify the playlist is in the owner's folder too
-        self::assertTrue($playlist->fresh()->getFolder($playlist->owner)?->is($ownerFolder));
+        self::assertTrue($this->folderService->getFolderForPlaylist($playlist->fresh())?->is($ownerFolder));
     }
 
     #[Test]
@@ -47,28 +58,29 @@ class PlaylistFolderTest extends PlusTestCase
         $collaborator = create_user();
         $playlist = create_playlist();
         $playlist->addCollaborator($collaborator);
-        self::assertNull($playlist->getFolder($playlist->owner));
+        self::assertNull($this->folderService->getFolderForPlaylist($playlist));
 
         /** @var PlaylistFolder $ownerFolder */
         $ownerFolder = PlaylistFolder::factory()->for($playlist->owner)->create();
         $ownerFolder->playlists()->attach($playlist);
-        self::assertTrue($playlist->refresh()->getFolder($playlist->owner)?->is($ownerFolder));
+        self::assertTrue($this->folderService->getFolderForPlaylist($playlist->refresh())?->is($ownerFolder));
 
         /** @var PlaylistFolder $collaboratorFolder */
         $collaboratorFolder = PlaylistFolder::factory()->for($collaborator)->create();
 
         $collaboratorFolder->playlists()->attach($playlist);
-        self::assertTrue($playlist->refresh()->getFolder($collaborator)?->is($collaboratorFolder));
+        self::assertTrue($this->folderService->getFolderForPlaylist($playlist->refresh(), $collaborator)?->is(
+            $collaboratorFolder,
+        ));
 
         $this->deleteAs(
             "api/playlist-folders/{$collaboratorFolder->id}/playlists",
             ['playlists' => [$playlist->id]],
-            $collaborator
-        )
-            ->assertSuccessful();
+            $collaborator,
+        )->assertSuccessful();
 
-        self::assertNull($playlist->fresh()->getFolder($collaborator));
+        self::assertNull($this->folderService->getFolderForPlaylist($playlist->fresh(), $collaborator));
         // Verify the playlist is still in the owner's folder
-        self::assertTrue($playlist->getFolder($playlist->owner)?->is($ownerFolder));
+        self::assertTrue($this->folderService->getFolderForPlaylist($playlist)?->is($ownerFolder));
     }
 }

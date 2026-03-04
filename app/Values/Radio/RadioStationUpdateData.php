@@ -12,8 +12,7 @@ final readonly class RadioStationUpdateData implements Arrayable
         public string $description,
         public ?string $logo,
         public bool $isPublic,
-    ) {
-    }
+    ) {}
 
     public static function make(
         string $name,
@@ -22,13 +21,7 @@ final readonly class RadioStationUpdateData implements Arrayable
         ?string $logo = null,
         bool $isPublic = false,
     ): self {
-        return new self(
-            name: $name,
-            url: $url,
-            description: $description,
-            logo: $logo,
-            isPublic: $isPublic,
-        );
+        return new self(name: $name, url: $url, description: $description, logo: $logo, isPublic: $isPublic);
     }
 
     /** @inheritdoc */

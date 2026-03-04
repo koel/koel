@@ -6,6 +6,7 @@ use App\Console\Commands\Concerns\AskForPassword;
 use App\Exceptions\InstallationFailedException;
 use App\Models\Setting;
 use App\Models\User;
+use App\Repositories\UserRepository;
 use Illuminate\Console\Command;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Artisan;
@@ -18,20 +19,22 @@ use Illuminate\Support\Str;
 use Jackiedo\DotenvEditor\DotenvEditor;
 use Throwable;
 
+// @mago-ignore lint:too-many-methods,cyclomatic-complexity,kan-defect
 class InitCommand extends Command
 {
     use AskForPassword;
 
     private const NON_INTERACTION_MAX_DATABASE_ATTEMPT_COUNT = 10;
 
-    protected $signature =
-        'koel:init {--no-assets : Do not compile front-end assets} {--no-scheduler : Do not install scheduler}';
+    protected $signature = 'koel:init {--no-assets : Do not compile front-end assets} {--no-scheduler : Do not install scheduler}';
     protected $description = 'Install or upgrade Koel';
 
     private bool $adminSeeded = false;
 
-    public function __construct(private readonly DotenvEditor $dotenvEditor)
-    {
+    public function __construct(
+        private readonly UserRepository $userRepository,
+        private readonly DotenvEditor $dotenvEditor,
+    ) {
         parent::__construct();
     }
 
@@ -40,8 +43,7 @@ class InitCommand extends Command
         $this->components->alert('KOEL INSTALLATION WIZARD');
 
         $this->components->info(
-            'Remember, you can always install/upgrade manually using the guide at '
-            . config('koel.misc.docs_url')
+            'Remember, you can always install/upgrade manually using the guide at ' . config('koel.misc.docs_url'),
         );
 
         if ($this->inNoInteractionMode()) {
@@ -81,9 +83,11 @@ class InitCommand extends Command
         }
 
         if ($this->adminSeeded) {
-            $this->components->info(
-                sprintf('🧑‍💻 Log in with email %s and password %s', User::FIRST_ADMIN_EMAIL, User::FIRST_ADMIN_PASSWORD)
-            );
+            $this->components->info(sprintf(
+                '🧑‍💻 Log in with email %s and password %s',
+                User::FIRST_ADMIN_EMAIL,
+                User::FIRST_ADMIN_PASSWORD,
+            ));
         }
 
         if (!Setting::get('media_path')) {
@@ -154,7 +158,7 @@ class InitCommand extends Command
                 'sqlsrv' => 'SQL Server',
                 'sqlite-e2e' => 'SQLite',
             ],
-            'mysql'
+            'mysql',
         );
 
         if ($config['DB_CONNECTION'] === 'sqlite-e2e') {
@@ -194,7 +198,7 @@ class InitCommand extends Command
     private function setUpAdminAccount(): void
     {
         $this->components->task('Creating default admin account', function (): void {
-            User::firstAdmin();
+            $this->userRepository->getOrCreateFirstAdmin();
             $this->adminSeeded = true;
         });
     }
@@ -242,9 +246,9 @@ class InitCommand extends Command
                 // This avoids inadvertently wiping credentials if there's a connection failure.
                 if ($this->inNoInteractionMode()) {
                     $warning = sprintf(
-                        "Cannot connect to the database. Attempt: %d/%d",
+                        'Cannot connect to the database. Attempt: %d/%d',
                         $attempt,
-                        self::NON_INTERACTION_MAX_DATABASE_ATTEMPT_COUNT
+                        self::NON_INTERACTION_MAX_DATABASE_ATTEMPT_COUNT,
                     );
 
                     $this->components->warn($warning);
@@ -276,7 +280,9 @@ class InitCommand extends Command
         }
 
         $this->newLine();
-        $this->info('The absolute path to your media directory. You can leave it blank and set it later via the web interface.'); // @phpcs-ignore-line
+        $this->info(
+            'The absolute path to your media directory. You can leave it blank and set it later via the web interface.',
+        );
         $this->info('If you plan to use Koel with a cloud provider (S3 or Dropbox), you can also skip this.');
 
         while (true) {
@@ -313,9 +319,7 @@ class InitCommand extends Command
 
     private function runOkOrThrow(string $command): void
     {
-        $printer = $this->option('verbose')
-            ? static fn (string $type, string $output) => print $output
-            : null;
+        $printer = $this->option('verbose') ? static fn (string $type, string $output) => print $output : null;
 
         throw_unless(Process::forever()->run($command, $printer)->successful(), InstallationFailedException::class);
     }
@@ -362,10 +366,8 @@ class InitCommand extends Command
         });
 
         if ($result !== self::SUCCESS) {
-            $this->components->warn(
-                'Failed to install scheduler. ' .
-                'Please install manually: https://docs.koel.dev/cli-commands#command-scheduling'
-            );
+            $this->components->warn('Failed to install scheduler. '
+            . 'Please install manually: https://docs.koel.dev/cli-commands#command-scheduling');
         }
     }
 

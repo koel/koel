@@ -21,15 +21,15 @@ class PodcastController extends Controller
     public function __construct(
         private readonly PodcastService $podcastService,
         private readonly PodcastRepository $podcastRepository,
-        private readonly Authenticatable $user
-    ) {
-    }
+        private readonly Authenticatable $user,
+    ) {}
 
     public function index(Request $request)
     {
-        return PodcastResource::collection(
-            $this->podcastRepository->getAllSubscribedByUser($request->boolean('favorites_only'), $this->user)
-        );
+        return PodcastResource::collection($this->podcastRepository->getAllSubscribedByUser(
+            $request->boolean('favorites_only'),
+            $this->user,
+        ));
     }
 
     #[DisabledInDemo]

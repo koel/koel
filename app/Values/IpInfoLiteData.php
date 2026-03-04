@@ -16,8 +16,7 @@ final readonly class IpInfoLiteData implements Arrayable
         public string $country,
         public string $continentCode,
         public string $continent,
-    ) {
-    }
+    ) {}
 
     public static function fromSaloonResponse(Response $response): self
     {

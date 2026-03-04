@@ -11,8 +11,9 @@ class DeactivateLicenseCommand extends Command
     protected $signature = 'koel:license:deactivate';
     protected $description = 'Deactivate the currently active Koel Plus license';
 
-    public function __construct(private readonly LicenseServiceInterface $licenseService)
-    {
+    public function __construct(
+        private readonly LicenseServiceInterface $licenseService,
+    ) {
         parent::__construct();
     }
 

@@ -7,9 +7,10 @@ use App\Models\License;
 
 final class LicenseStatus
 {
-    private function __construct(public Status $status, public ?License $license)
-    {
-    }
+    private function __construct(
+        public Status $status,
+        public ?License $license,
+    ) {}
 
     public function isValid(): bool
     {

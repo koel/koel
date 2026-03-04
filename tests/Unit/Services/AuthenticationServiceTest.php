@@ -26,11 +26,7 @@ class AuthenticationServiceTest extends TestCase
         $this->tokenManager = $this->mock(TokenManager::class);
         $this->passwordBroker = $this->mock(PasswordBroker::class);
 
-        $this->service = new AuthenticationService(
-            $this->userRepository,
-            $this->tokenManager,
-            $this->passwordBroker
-        );
+        $this->service = new AuthenticationService($this->userRepository, $this->tokenManager, $this->passwordBroker);
     }
 
     #[Test]

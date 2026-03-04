@@ -27,9 +27,8 @@ class UserObserver
 
     public function deleted(User $user): void
     {
-        rescue_if(
-            $user->has_custom_avatar,
-            static fn () => File::delete(image_storage_path($user->getRawOriginal('avatar')))
-        );
+        rescue_if($user->has_custom_avatar, static fn () => File::delete(image_storage_path($user->getRawOriginal(
+            'avatar',
+        ))));
     }
 }

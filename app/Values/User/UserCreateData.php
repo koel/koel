@@ -5,6 +5,7 @@ namespace App\Values\User;
 use App\Enums\Acl\Role;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Facades\Hash;
+use SensitiveParameter;
 
 final readonly class UserCreateData implements Arrayable
 {
@@ -13,6 +14,7 @@ final readonly class UserCreateData implements Arrayable
     public function __construct(
         public string $name,
         public string $email,
+        #[SensitiveParameter]
         ?string $plainTextPassword,
         public Role $role,
         public ?string $avatar = null,
@@ -42,7 +44,7 @@ final readonly class UserCreateData implements Arrayable
     public static function make(
         string $name,
         string $email,
-        ?string $plainTextPassword = null,
+        #[SensitiveParameter] ?string $plainTextPassword = null,
         ?Role $role = null,
         ?string $avatar = null,
         ?string $ssoId = null,

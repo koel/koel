@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use InvalidArgumentException;
+use SensitiveParameter;
 use Throwable;
 
 class AuthenticationService
@@ -19,11 +20,10 @@ class AuthenticationService
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly TokenManager $tokenManager,
-        private readonly PasswordBroker $passwordBroker
-    ) {
-    }
+        private readonly PasswordBroker $passwordBroker,
+    ) {}
 
-    public function login(string $email, string $password): CompositeToken
+    public function login(string $email, #[SensitiveParameter] string $password): CompositeToken
     {
         $user = $this->userRepository->findFirstWhere('email', $email);
 
@@ -44,7 +44,7 @@ class AuthenticationService
         return $this->tokenManager->createCompositeToken($user);
     }
 
-    public function logoutViaBearerToken(string $token): void
+    public function logoutViaBearerToken(#[SensitiveParameter] string $token): void
     {
         $this->tokenManager->deleteCompositionToken($token);
     }
@@ -54,8 +54,11 @@ class AuthenticationService
         return $this->passwordBroker->sendResetLink(['email' => $email]) === Password::RESET_LINK_SENT;
     }
 
-    public function tryResetPasswordUsingBroker(string $email, string $password, string $token): bool
-    {
+    public function tryResetPasswordUsingBroker(
+        string $email,
+        #[SensitiveParameter] string $password,
+        #[SensitiveParameter] string $token,
+    ): bool {
         $credentials = [
             'email' => $email,
             'password' => $password,
@@ -63,7 +66,10 @@ class AuthenticationService
             'token' => $token,
         ];
 
-        $status = $this->passwordBroker->reset($credentials, static function (User $user, string $password): void {
+        $status = $this->passwordBroker->reset($credentials, static function (
+            User $user,
+            #[SensitiveParameter] string $password,
+        ): void {
             $user->password = Hash::make($password);
             $user->save();
             event(new PasswordReset($user));
@@ -80,7 +86,7 @@ class AuthenticationService
         return $token;
     }
 
-    public function loginViaOneTimeToken(string $token): CompositeToken
+    public function loginViaOneTimeToken(#[SensitiveParameter] string $token): CompositeToken
     {
         $cacheKey = cache_key('one-time token', $token);
         $encryptedUserId = Cache::pull($cacheKey);

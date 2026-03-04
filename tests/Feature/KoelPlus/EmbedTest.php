@@ -29,13 +29,9 @@ class EmbedTest extends PlusTestCase
         $embed = Embed::factory()->create();
         $options = EmbedOptions::make(theme: $theme->id);
 
-        $this->getAs("api/embeds/{$embed->id}/$options")
-            ->assertSuccessful()
-            ->assertJsonStructure($jsonStructure);
+        $this->getAs("api/embeds/{$embed->id}/$options")->assertSuccessful()->assertJsonStructure($jsonStructure);
 
         // getJson() instead of getAs() to make sure it passes without authentication
-        $this->getJson("api/embeds/{$embed->id}/$options")
-            ->assertSuccessful()
-            ->assertJsonStructure($jsonStructure);
+        $this->getJson("api/embeds/{$embed->id}/$options")->assertSuccessful()->assertJsonStructure($jsonStructure);
     }
 }

@@ -18,9 +18,12 @@ class DropboxStorage extends CloudStorage
 
     public function __construct(
         private readonly DropboxFilesystem $filesystem,
-        private readonly array $config
+        private readonly array $config,
     ) {
-        $this->filesystem->getAdapter()->getClient()->setAccessToken($this->maybeRefreshAccessToken());
+        $this->filesystem
+            ->getAdapter()
+            ->getClient()
+            ->setAccessToken($this->maybeRefreshAccessToken());
     }
 
     public function storeUploadedFile(string $uploadedFilePath, User $uploader): UploadReference
@@ -28,10 +31,7 @@ class DropboxStorage extends CloudStorage
         $key = $this->generateStorageKey(basename($uploadedFilePath), $uploader);
         $this->uploadToStorage($key, $uploadedFilePath);
 
-        return UploadReference::make(
-            location: "dropbox://$key",
-            localPath: $uploadedFilePath,
-        );
+        return UploadReference::make(location: "dropbox://$key", localPath: $uploadedFilePath);
     }
 
     public function undoUpload(UploadReference $reference): void
@@ -61,7 +61,7 @@ class DropboxStorage extends CloudStorage
         Cache::put(
             'dropbox_access_token',
             $response->json('access_token'),
-            now()->addSeconds($response->json('expires_in') - 60) // 60 seconds buffer
+            now()->addSeconds($response->json('expires_in') - 60), // 60 seconds buffer
         );
 
         return $response->json('access_token');

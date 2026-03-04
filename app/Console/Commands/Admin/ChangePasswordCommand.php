@@ -15,8 +15,10 @@ class ChangePasswordCommand extends Command
                             {email? : The user's email. If empty, will get the default admin user.}";
     protected $description = "Change a user's password";
 
-    public function __construct(private readonly Hash $hash, private readonly UserRepository $userRepository)
-    {
+    public function __construct(
+        private readonly Hash $hash,
+        private readonly UserRepository $userRepository,
+    ) {
         parent::__construct();
     }
 
@@ -24,9 +26,7 @@ class ChangePasswordCommand extends Command
     {
         $email = $this->argument('email');
 
-        $user = $email
-            ? $this->userRepository->findOneByEmail($email)
-            : $this->userRepository->getFirstAdminUser();
+        $user = $email ? $this->userRepository->findOneByEmail($email) : $this->userRepository->getOrCreateFirstAdmin();
 
         if (!$user) {
             $this->error('The user account cannot be found.');

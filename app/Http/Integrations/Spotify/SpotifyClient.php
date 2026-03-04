@@ -18,11 +18,11 @@ class SpotifyClient
     public function __construct(
         public SpotifyWebAPI $wrapped,
         private readonly ?Session $session,
-        private readonly Cache $cache
+        private readonly Cache $cache,
     ) {
         if (SpotifyService::enabled()) {
             $this->wrapped->setOptions(['return_assoc' => true]);
-            rescue(fn () => $this->setAccessToken());
+            rescue($this->setAccessToken(...));
         }
     }
 

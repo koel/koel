@@ -21,47 +21,48 @@ class SongPlayTest extends PlusTestCase
         $token = app(TokenManager::class)->createCompositeToken(create_user());
 
         /** @var Song $song */
-        $song = Song::factory()->public()->create([
-            'path' => test_path('songs/blank.mp3'),
-        ]);
+        $song = Song::factory()
+            ->public()
+            ->create([
+                'path' => test_path('songs/blank.mp3'),
+            ]);
 
-        $this->mock(LocalStreamerAdapter::class)
-            ->expects('stream');
+        $this->mock(LocalStreamerAdapter::class)->expects('stream');
 
-        $this->get("play/{$song->id}?t=$token->audioToken")
-            ->assertOk();
+        $this->get("play/{$song->id}?t=$token->audioToken")->assertOk();
     }
 
     #[Test]
     public function playPrivateOwnedSong(): void
     {
         /** @var Song $song */
-        $song = Song::factory()->private()->create([
-            'path' => test_path('songs/blank.mp3'),
-        ]);
+        $song = Song::factory()
+            ->private()
+            ->create([
+                'path' => test_path('songs/blank.mp3'),
+            ]);
 
         /** @var CompositeToken $token */
         $token = app(TokenManager::class)->createCompositeToken($song->owner);
 
-        $this->mock(LocalStreamerAdapter::class)
-            ->expects('stream');
+        $this->mock(LocalStreamerAdapter::class)->expects('stream');
 
-        $this->get("play/{$song->id}?t=$token->audioToken")
-            ->assertOk();
+        $this->get("play/{$song->id}?t=$token->audioToken")->assertOk();
     }
 
     #[Test]
     public function cannotPlayPrivateUnownedSong(): void
     {
         /** @var Song $song */
-        $song = Song::factory()->private()->create([
-            'path' => test_path('songs/blank.mp3'),
-        ]);
+        $song = Song::factory()
+            ->private()
+            ->create([
+                'path' => test_path('songs/blank.mp3'),
+            ]);
 
         /** @var CompositeToken $token */
         $token = app(TokenManager::class)->createCompositeToken(create_user());
 
-        $this->get("play/{$song->id}?t=$token->audioToken")
-            ->assertForbidden();
+        $this->get("play/{$song->id}?t=$token->audioToken")->assertForbidden();
     }
 }

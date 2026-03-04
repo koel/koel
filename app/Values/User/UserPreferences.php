@@ -7,6 +7,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
 use Webmozart\Assert\Assert;
 
+// @mago-ignore lint:cyclomatic-complexity
 final class UserPreferences implements Arrayable, JsonSerializable
 {
     private const CASTS = [
@@ -99,7 +100,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
         public int $lyricsZoomLevel,
         public string $visualizer,
         public ?string $activeExtraPanelTab,
-        public ?string $lastFmSessionKey
+        public ?string $lastFmSessionKey,
     ) {
         Assert::oneOf($this->repeatMode, ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE']);
         Assert::oneOf($this->artistsViewMode, ['list', 'thumbnails']);

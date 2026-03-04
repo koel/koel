@@ -49,7 +49,10 @@ class QueueServiceTest extends TestCase
             'user_id' => $user->id,
         ]);
 
-        $songIds = Song::factory()->count(2)->create()->modelKeys();
+        $songIds = Song::factory()
+            ->count(2)
+            ->create()
+            ->modelKeys();
         $this->service->updateQueueState($user, $songIds);
 
         /** @var QueueState $queueState */
@@ -65,7 +68,10 @@ class QueueServiceTest extends TestCase
         /** @var QueueState $state */
         $state = QueueState::factory()->create();
 
-        $songIds = Song::factory()->count(2)->create()->modelKeys();
+        $songIds = Song::factory()
+            ->count(2)
+            ->create()
+            ->modelKeys();
         $this->service->updateQueueState($state->user, $songIds);
 
         $state->refresh();

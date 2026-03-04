@@ -10,9 +10,9 @@ class GetWikipediaPageTitleUsingWikidataId
 {
     use TriesRemember;
 
-    public function __construct(private readonly WikidataConnector $connector)
-    {
-    }
+    public function __construct(
+        private readonly WikidataConnector $connector,
+    ) {}
 
     public function __invoke(?string $wikidataId, Closure $next): mixed
     {

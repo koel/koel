@@ -12,13 +12,11 @@ use Illuminate\Http\Request;
 #[RequiresPlus]
 class FetchArtistEventsController extends Controller
 {
-    public function __invoke(
-        Artist $artist,
-        TicketmasterService $ticketmasterService,
-        Request $request,
-    ) {
-        return LiveEventResource::collection(
-            $ticketmasterService->searchEventForArtist($artist->name, $request->getClientIp())
-        );
+    public function __invoke(Artist $artist, TicketmasterService $ticketmasterService, Request $request)
+    {
+        return LiveEventResource::collection($ticketmasterService->searchEventForArtist(
+            $artist->name,
+            $request->getClientIp(),
+        ));
     }
 }

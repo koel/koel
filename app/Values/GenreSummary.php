@@ -8,17 +8,11 @@ final readonly class GenreSummary
         public string $publicId,
         public string $name,
         public int $songCount,
-        public float $length
-    ) {
-    }
+        public float $length,
+    ) {}
 
     public static function make(string $publicId, string $name, int $songCount, float $length): self
     {
-        return new self(
-            publicId: $publicId,
-            name: $name,
-            songCount: $songCount,
-            length: $length,
-        );
+        return new self(publicId: $publicId, name: $name, songCount: $songCount, length: $length);
     }
 }

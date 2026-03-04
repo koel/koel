@@ -30,10 +30,7 @@ class GetAlbumWikidataIdUsingReleaseGroupMbidTest extends TestCase
 
         $mock = self::createNextClosureMock('Q1929918');
 
-        (new GetAlbumWikidataIdUsingReleaseGroupMbid(new MusicBrainzConnector()))(
-            'sample-mbid',
-            static fn ($args) => $mock->next($args) // @phpstan-ignore-line
-        );
+        (new GetAlbumWikidataIdUsingReleaseGroupMbid(new MusicBrainzConnector()))('sample-mbid', $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertSent(static function (GetReleaseGroupUrlRelationshipsRequest $request): bool {
             self::assertSame(['inc' => 'url-rels'], $request->query()->all());
@@ -41,10 +38,7 @@ class GetAlbumWikidataIdUsingReleaseGroupMbidTest extends TestCase
             return true;
         });
 
-        self::assertSame(
-            'Q1929918',
-            Cache::get(cache_key('album wikidata id from release group mbid', 'sample-mbid')),
-        );
+        self::assertSame('Q1929918', Cache::get(cache_key('album wikidata id from release group mbid', 'sample-mbid')));
     }
 
     #[Test]
@@ -56,10 +50,7 @@ class GetAlbumWikidataIdUsingReleaseGroupMbidTest extends TestCase
 
         $mock = self::createNextClosureMock('Q1929918');
 
-        (new GetAlbumWikidataIdUsingReleaseGroupMbid(new MusicBrainzConnector()))(
-            'sample-mbid',
-            static fn ($args) => $mock->next($args) // @phpstan-ignore-line
-        );
+        (new GetAlbumWikidataIdUsingReleaseGroupMbid(new MusicBrainzConnector()))('sample-mbid', $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }
@@ -71,10 +62,7 @@ class GetAlbumWikidataIdUsingReleaseGroupMbidTest extends TestCase
 
         $mock = self::createNextClosureMock(null);
 
-        (new GetAlbumWikidataIdUsingReleaseGroupMbid(new MusicBrainzConnector()))(
-            null,
-            static fn ($args) => $mock->next($args) // @phpstan-ignore-line
-        );
+        (new GetAlbumWikidataIdUsingReleaseGroupMbid(new MusicBrainzConnector()))(null, $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }

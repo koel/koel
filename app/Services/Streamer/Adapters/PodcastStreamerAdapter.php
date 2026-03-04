@@ -13,9 +13,9 @@ class PodcastStreamerAdapter implements StreamerAdapter
 {
     use StreamsLocalPath;
 
-    public function __construct(private readonly PodcastService $podcastService)
-    {
-    }
+    public function __construct(
+        private readonly PodcastService $podcastService,
+    ) {}
 
     /** @inheritDoc */
     public function stream(Episode $song, ?RequestedStreamingConfig $config = null)

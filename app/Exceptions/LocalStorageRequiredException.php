@@ -4,6 +4,4 @@ namespace App\Exceptions;
 
 use DomainException;
 
-class LocalStorageRequiredException extends DomainException
-{
-}
+class LocalStorageRequiredException extends DomainException {}

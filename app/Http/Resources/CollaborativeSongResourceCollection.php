@@ -10,7 +10,7 @@ class CollaborativeSongResourceCollection extends SongResourceCollection
         $user = $this->user ?? auth()->user();
 
         return $this->collection->map(
-            static fn (CollaborativeSongResource $resource) => $resource->for($user)
+            static fn (CollaborativeSongResource $resource) => $resource->for($user),
         )->toArray();
     }
 }

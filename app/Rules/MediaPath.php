@@ -20,7 +20,7 @@ class MediaPath implements ValidationRule
             $fail(
                 config('koel.storage_driver') === 'local'
                     ? 'Media path is required for local storage.'
-                    : 'Media path is not required for non-local storage.'
+                    : 'Media path is not required for non-local storage.',
             );
         }
     }

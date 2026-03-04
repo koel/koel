@@ -30,15 +30,20 @@ class TranscoderTest extends TestCase
         $this->transcoder->transcode('/path/to/song.flac', '/path/to/output.m4a', 128);
 
         $closure = static function (PendingProcess $process): bool {
-            return $process->command === [
+            return (
+                $process->command === [
                     '/usr/bin/ffmpeg',
-                    '-i', '/path/to/song.flac',
+                    '-i',
+                    '/path/to/song.flac',
                     '-vn',
-                    '-c:a', 'aac',
-                    '-b:a', '128k',
+                    '-c:a',
+                    'aac',
+                    '-b:a',
+                    '128k',
                     '-y',
                     '/path/to/output.m4a',
-                ];
+                ]
+            );
         };
 
         Process::assertRanTimes($closure, 1);

@@ -32,7 +32,7 @@ class GetWikipediaPageSummaryUsingPageTitleTest extends TestCase
 
         (new GetWikipediaPageSummaryUsingPageTitle(new WikipediaConnector()))(
             'Skid Row (American band)',
-            static fn ($args) => $mock->next($args), // @phpstan-ignore-line
+            $mock->next(...), // @phpstan-ignore-line
         );
 
         Saloon::assertSent(static function (GetPageSummaryRequest $request): bool {
@@ -50,16 +50,15 @@ class GetWikipediaPageSummaryUsingPageTitleTest extends TestCase
     {
         Saloon::fake([]);
 
-        Cache::put(
-            cache_key('wikipedia page summary from page title', 'Skid Row (American band)'),
-            ['Spider Man' => 'How’d that get in there?'],
-        );
+        Cache::put(cache_key('wikipedia page summary from page title', 'Skid Row (American band)'), [
+            'Spider Man' => 'How’d that get in there?',
+        ]);
 
         $mock = self::createNextClosureMock(['Spider Man' => 'How’d that get in there?']);
 
         (new GetWikipediaPageSummaryUsingPageTitle(new WikipediaConnector()))(
             'Skid Row (American band)',
-            static fn ($args) => $mock->next($args), // @phpstan-ignore-line
+            $mock->next(...), // @phpstan-ignore-line
         );
 
         Saloon::assertNothingSent();
@@ -71,10 +70,7 @@ class GetWikipediaPageSummaryUsingPageTitleTest extends TestCase
         Saloon::fake([]);
         $mock = self::createNextClosureMock(null);
 
-        (new GetWikipediaPageSummaryUsingPageTitle(new WikipediaConnector()))(
-            null,
-            static fn ($args) => $mock->next($args), // @phpstan-ignore-line
-        );
+        (new GetWikipediaPageSummaryUsingPageTitle(new WikipediaConnector()))(null, $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }

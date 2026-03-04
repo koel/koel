@@ -24,9 +24,10 @@ abstract class FavoriteableBuilder extends Builder
         $this->$joinMethod('favorites', function (JoinClause $join): void {
             $joinColumn = $this->model->getTable() . '.' . $this->model->getKeyName();
 
-            $join->on('favorites.favoriteable_id', $joinColumn)
-                ->where('favorites.favoriteable_type', $this->getModel()->getMorphClass())
-                ->where('favorites.user_id', $this->user->id);
+            $join->on('favorites.favoriteable_id', $joinColumn)->where(
+                'favorites.favoriteable_type',
+                $this->getModel()->getMorphClass(),
+            )->where('favorites.user_id', $this->user->id);
         });
 
         $this->addSelect(DB::raw('CASE WHEN favorites.created_at IS NULL THEN false ELSE true END AS favorite'));

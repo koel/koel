@@ -11,7 +11,7 @@ class PodcastResourceCollection extends ResourceCollection
 {
     public function __construct(
         private readonly Collection $podcasts,
-        private readonly bool $withSubscriptionData = true
+        private readonly bool $withSubscriptionData = true,
     ) {
         parent::__construct($this->podcasts);
     }

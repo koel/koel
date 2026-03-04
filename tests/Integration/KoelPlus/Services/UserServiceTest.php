@@ -37,7 +37,7 @@ class UserServiceTest extends PlusTestCase
             role: Role::ADMIN,
             avatar: 'https://lh3.googleusercontent.com/a/vatar',
             ssoId: '123',
-            ssoProvider: 'Google'
+            ssoProvider: 'Google',
         ));
 
         $this->assertModelExists($user);

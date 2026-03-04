@@ -16,7 +16,7 @@ class RedirectIfAuthenticated
     }
 
     /** @return mixed */
-    public function handle(Request $request, Closure $next) // @phpcs:ignore
+    public function handle(Request $request, Closure $next)
     {
         if ($this->auth->check()) {
             return redirect('/');

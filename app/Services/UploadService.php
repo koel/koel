@@ -19,8 +19,7 @@ class UploadService
         private readonly SongService $songService,
         private readonly SongStorage $storage,
         private readonly FileScanner $scanner,
-    ) {
-    }
+    ) {}
 
     public function handleUpload(string $filePath, User $uploader): Song
     {

@@ -66,7 +66,7 @@ abstract class Repository implements RepositoryContract
         return $preserveOrder ? $models->orderByArray($ids) : $models;
     }
 
-    /** @inheritDoc */ // @phpcs:ignore
+    /** @inheritDoc */
     public function getAll(): Collection
     {
         return $this->modelClass::all(); // @phpstan-ignore-line

@@ -46,9 +46,9 @@ class DropboxStorageTest extends PlusTestCase
         $this->client = $this->mock(Client::class);
         $this->filesystem = $this->mock(DropboxFilesystem::class);
 
-        $this->filesystem->allows('getAdapter')->andReturn(
-            Mockery::mock(DropboxAdapter::class, ['getClient' => $this->client])
-        );
+        $this->filesystem
+            ->allows('getAdapter')
+            ->andReturn(Mockery::mock(DropboxAdapter::class, ['getClient' => $this->client]));
 
         self::mockDropboxRefreshAccessTokenCall();
 
@@ -67,10 +67,14 @@ class DropboxStorageTest extends PlusTestCase
         $service = app(DropboxStorage::class);
 
         Http::assertSent(static function (Request $request) {
-            return $request->hasHeader('Authorization', 'Basic ' . base64_encode('dropbox-key:dropbox-secret'))
+            return (
+                $request->hasHeader('Authorization', 'Basic ' . base64_encode('dropbox-key:dropbox-secret'))
                 && $request->isForm()
+                // @mago-ignore lint:no-insecure-comparison
                 && $request['refresh_token'] === 'coca-cola'
-                && $request['grant_type'] === 'refresh_token';
+                // @mago-ignore lint:no-insecure-comparison
+                && $request['grant_type'] === 'refresh_token'
+            );
         });
 
         $user = create_user();
@@ -78,7 +82,7 @@ class DropboxStorageTest extends PlusTestCase
         $reference = $service->storeUploadedFile($this->uploadedFilePath, $user);
 
         self::assertSame("dropbox://{$user->id}__random__song.mp3", $reference->location);
-        self::assertSame(artifact_path("tmp/random/song.mp3"), $reference->localPath);
+        self::assertSame(artifact_path('tmp/random/song.mp3'), $reference->localPath);
 
         self::assertSame('free-bird', Cache::get('dropbox_access_token'));
     }
@@ -89,10 +93,7 @@ class DropboxStorageTest extends PlusTestCase
         $this->filesystem->expects('delete')->with('koel/song.mp3');
         File::expects('delete')->with('/tmp/random/song.mp3');
 
-        $reference = UploadReference::make(
-            location: 'dropbox://koel/song.mp3',
-            localPath: '/tmp/random/song.mp3',
-        );
+        $reference = UploadReference::make(location: 'dropbox://koel/song.mp3', localPath: '/tmp/random/song.mp3');
 
         $this->client->expects('setAccessToken')->with('free-bird');
 
@@ -125,13 +126,14 @@ class DropboxStorageTest extends PlusTestCase
         /** @var DropboxStorage $service */
         $service = app(DropboxStorage::class);
 
-        $this->filesystem->expects('temporaryUrl')
+        $this->filesystem
+            ->expects('temporaryUrl')
             ->with('song.mp3')
             ->andReturn('https://dropbox.com/song.mp3?token=123');
 
         self::assertSame(
             'https://dropbox.com/song.mp3?token=123',
-            $service->getPresignedUrl($song->storage_metadata->getPath())
+            $service->getPresignedUrl($song->storage_metadata->getPath()),
         );
     }
 }

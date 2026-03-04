@@ -35,14 +35,17 @@ class GetReleaseAndReleaseGroupMbidsForAlbumTest extends TestCase
                 'album' => 'Slave to the Grind',
                 'artist' => 'Skid Row',
             ],
-            static fn ($args) => $mock->next($args) // @phpstan-ignore-line
+            $mock->next(...), // @phpstan-ignore-line
         );
 
         Saloon::assertSent(static function (SearchForReleaseRequest $request): bool {
-            self::assertSame([
-                'query' => 'release:"Slave to the Grind" AND artist:"Skid Row"',
-                'limit' => 1,
-            ], $request->query()->all());
+            self::assertSame(
+                [
+                    'query' => 'release:"Slave to the Grind" AND artist:"Skid Row"',
+                    'limit' => 1,
+                ],
+                $request->query()->all(),
+            );
 
             return true;
         });
@@ -63,7 +66,7 @@ class GetReleaseAndReleaseGroupMbidsForAlbumTest extends TestCase
 
         Cache::put(
             cache_key('release and release group mbids', 'Slave to the Grind', 'Skid Row'),
-            ['sample-release-mbid', 'sample-release-group-mbid']
+            ['sample-release-mbid', 'sample-release-group-mbid'],
         );
 
         $mock = self::createNextClosureMock(['sample-release-mbid', 'sample-release-group-mbid']);
@@ -73,7 +76,7 @@ class GetReleaseAndReleaseGroupMbidsForAlbumTest extends TestCase
                 'album' => 'Slave to the Grind',
                 'artist' => 'Skid Row',
             ],
-            static fn ($args) => $mock->next($args) // @phpstan-ignore-line
+            $mock->next(...), // @phpstan-ignore-line
         );
 
         Saloon::assertNothingSent();
@@ -85,10 +88,7 @@ class GetReleaseAndReleaseGroupMbidsForAlbumTest extends TestCase
         Saloon::fake([]);
         $mock = self::createNextClosureMock(null);
 
-        (new GetReleaseAndReleaseGroupMbidsForAlbum(new MusicBrainzConnector()))(
-            null,
-            static fn ($args) => $mock->next($args) // @phpstan-ignore-line
-        );
+        (new GetReleaseAndReleaseGroupMbidsForAlbum(new MusicBrainzConnector()))(null, $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }

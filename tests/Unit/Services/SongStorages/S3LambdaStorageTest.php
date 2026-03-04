@@ -29,18 +29,14 @@ class S3LambdaStorageTest extends TestCase
         $this->songRepository = Mockery::mock(SongRepository::class);
         $this->userRepository = Mockery::mock(UserRepository::class);
 
-        $this->storage = new S3LambdaStorage(
-            $this->albumService,
-            $this->songRepository,
-            $this->userRepository
-        );
+        $this->storage = new S3LambdaStorage($this->albumService, $this->songRepository, $this->userRepository);
     }
 
     #[Test]
     public function createSongEntry(): void
     {
         $user = create_admin();
-        $this->userRepository->expects('getFirstAdminUser')->andReturn($user);
+        $this->userRepository->expects('getOrCreateFirstAdmin')->andReturn($user);
 
         $song = $this->storage->createSongEntry(
             bucket: 'foo',
@@ -52,7 +48,7 @@ class S3LambdaStorageTest extends TestCase
             title: 'Bohemian Rhapsody',
             duration: 355.5,
             track: 1,
-            lyrics: 'Is this the real life?'
+            lyrics: 'Is this the real life?',
         );
 
         self::assertSame('Queen', $song->artist->name);
@@ -70,7 +66,7 @@ class S3LambdaStorageTest extends TestCase
     {
         $user = create_admin();
 
-        $this->userRepository->expects('getFirstAdminUser')->andReturn($user);
+        $this->userRepository->expects('getOrCreateFirstAdmin')->andReturn($user);
 
         /** @var Song $song */
         $song = Song::factory()->create([
@@ -88,7 +84,7 @@ class S3LambdaStorageTest extends TestCase
             title: 'Bohemian Rhapsody',
             duration: 355.5,
             track: 1,
-            lyrics: 'Is this the real life?'
+            lyrics: 'Is this the real life?',
         );
 
         self::assertSame(1, Song::query()->count());
@@ -114,7 +110,10 @@ class S3LambdaStorageTest extends TestCase
             'storage' => 's3-lambda',
         ]);
 
-        $this->songRepository->expects('findOneByPath')->with('s3://foo/bar')->andReturn($song);
+        $this->songRepository
+            ->expects('findOneByPath')
+            ->with('s3://foo/bar')
+            ->andReturn($song);
 
         $this->storage->deleteSongEntry('foo', 'bar');
 

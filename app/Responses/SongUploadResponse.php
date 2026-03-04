@@ -11,9 +11,10 @@ use Illuminate\Broadcasting\PrivateChannel;
 
 class SongUploadResponse extends BroadcastableResponse
 {
-    protected function __construct(private readonly Song $song, private readonly Album $album)
-    {
-    }
+    protected function __construct(
+        private readonly Song $song,
+        private readonly Album $album,
+    ) {}
 
     public function broadcastOn(): Channel|string
     {

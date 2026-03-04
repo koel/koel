@@ -12,8 +12,7 @@ final readonly class ThemeCreateData
         public string $highlightColor,
         public string $fontFamily,
         public float $fontSize = 13,
-    ) {
-    }
+    ) {}
 
     public static function make(
         string $name,

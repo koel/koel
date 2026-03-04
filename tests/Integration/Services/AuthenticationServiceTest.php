@@ -29,9 +29,11 @@ class AuthenticationServiceTest extends TestCase
         Event::fake();
         $user = create_user();
 
-        self::assertTrue(
-            $this->service->tryResetPasswordUsingBroker($user->email, 'new-password', Password::createToken($user))
-        );
+        self::assertTrue($this->service->tryResetPasswordUsingBroker(
+            $user->email,
+            'new-password',
+            Password::createToken($user),
+        ));
 
         self::assertTrue(Hash::check('new-password', $user->fresh()->password));
 

@@ -11,8 +11,7 @@ readonly class TicketmasterVenue implements Arrayable
         public string $name,
         public string $url,
         public string $city,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): self
     {
@@ -25,11 +24,7 @@ readonly class TicketmasterVenue implements Arrayable
 
     public static function make(string $name, string $url, string $city): self
     {
-        return new static(
-            name: $name,
-            url: $url,
-            city: $city,
-        );
+        return new static(name: $name, url: $url, city: $city);
     }
 
     /** @inheritdoc */

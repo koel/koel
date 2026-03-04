@@ -34,9 +34,7 @@ class ImageStorageTest extends TestCase
         $ulid = Ulid::freeze();
         $logo = "$ulid.webp";
 
-        $this->imageWriter
-            ->expects('write')
-            ->with(image_storage_path($logo), 'dummy-logo-src', null);
+        $this->imageWriter->expects('write')->with(image_storage_path($logo), 'dummy-logo-src', null);
 
         self::assertSame($logo, $this->service->storeImage('dummy-logo-src'));
     }
@@ -53,8 +51,7 @@ class ImageStorageTest extends TestCase
             ->with('foo')
             ->andReturn('foo');
 
-        File::expects('put')
-            ->with(image_storage_path($logo), 'foo');
+        File::expects('put')->with(image_storage_path($logo), 'foo');
 
         self::assertSame($logo, $this->service->storeImage($source));
     }

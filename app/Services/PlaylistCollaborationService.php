@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Values\Playlist\PlaylistCollaborator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use SensitiveParameter;
 
 class PlaylistCollaborationService
 {
@@ -23,7 +24,7 @@ class PlaylistCollaborationService
         return $playlist->collaborationTokens()->create();
     }
 
-    public function acceptUsingToken(string $token, User $user): Playlist
+    public function acceptUsingToken(#[SensitiveParameter] string $token, User $user): Playlist
     {
         /** @var PlaylistCollaborationToken $collaborationToken */
         $collaborationToken = PlaylistCollaborationToken::query()->where('token', $token)->firstOrFail();
@@ -48,7 +49,7 @@ class PlaylistCollaborationService
     {
         $collaborators = $includingOwner ? $playlist->users : $playlist->collaborators;
 
-        return $collaborators->map(static fn (User $user) => PlaylistCollaborator::fromUser($user));
+        return $collaborators->map(PlaylistCollaborator::fromUser(...));
     }
 
     public function removeCollaborator(Playlist $playlist, User $user): void

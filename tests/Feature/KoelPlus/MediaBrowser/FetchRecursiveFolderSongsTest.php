@@ -29,8 +29,16 @@ class FetchRecursiveFolderSongsTest extends PlusTestCase
         $irrelevantFolder = Folder::factory()->create(['path' => 'foo/baz']);
         Song::factory()->for($irrelevantFolder)->create();
 
-        $songs = Song::factory()->for($subfolder)->count(2)->create()
-            ->merge(Song::factory()->for($folder)->count(1)->create());
+        $songs = Song::factory()
+            ->for($subfolder)
+            ->count(2)
+            ->create()
+            ->merge(
+                Song::factory()
+                    ->for($folder)
+                    ->count(1)
+                    ->create(),
+            );
 
         $response = $this->postAs('/api/songs/by-folders', [
             'paths' => ['foo', 'foo/bar'],
@@ -45,7 +53,10 @@ class FetchRecursiveFolderSongsTest extends PlusTestCase
         /** @var Folder $folder */
         $folder = Folder::factory()->create(['path' => 'foo']);
 
-        $songs = Song::factory()->for($folder)->count(2)->create()
+        $songs = Song::factory()
+            ->for($folder)
+            ->count(2)
+            ->create()
             ->merge(Song::factory()->count(1)->create());
 
         $response = $this->postAs('/api/songs/by-folders', [

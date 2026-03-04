@@ -30,10 +30,7 @@ class HandleDemoMode
                 return;
             }
 
-            abort(
-                $attribute->newInstance()->code,
-                'This action is disabled in demo mode.'
-            );
+            abort($attribute->newInstance()->code, 'This action is disabled in demo mode.');
         };
 
         if (config('koel.misc.demo')) {

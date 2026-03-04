@@ -10,8 +10,11 @@ use Throwable;
 
 class EmbedOptions implements Arrayable
 {
-    private function __construct(public string $theme, public string $layout, public bool $preview)
-    {
+    private function __construct(
+        public string $theme,
+        public string $layout,
+        public bool $preview,
+    ) {
         // Preview mode and theme are only customizable in Koel Plus
         if (License::isCommunity()) {
             $this->theme = 'classic';
@@ -51,9 +54,11 @@ class EmbedOptions implements Arrayable
 
         // Remove the default values from the array to keep the payload minimal
         foreach (self::make()->toArray() as $key => $value) {
-            if ($array[$key] === $value) {
-                unset($array[$key]);
+            if ($array[$key] !== $value) {
+                continue;
             }
+
+            unset($array[$key]);
         }
 
         return encrypt($array);

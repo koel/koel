@@ -15,8 +15,9 @@ class ExtractFoldersCommand extends Command
 
     private ProgressBar $progressBar;
 
-    public function __construct(private readonly MediaBrowser $browser)
-    {
+    public function __construct(
+        private readonly MediaBrowser $browser,
+    ) {
         parent::__construct();
     }
 

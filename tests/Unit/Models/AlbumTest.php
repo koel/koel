@@ -17,7 +17,10 @@ class AlbumTest extends TestCase
         $artist = Artist::factory()->create();
 
         /** @var Album $album */
-        $album = Album::factory()->for($artist)->for($artist->user)->create();
+        $album = Album::factory()
+            ->for($artist)
+            ->for($artist->user)
+            ->create();
 
         self::assertTrue(Album::getOrCreate($artist, $album->name)->is($album));
     }
@@ -29,7 +32,12 @@ class AlbumTest extends TestCase
         $artist = Artist::factory()->create();
         $name = 'Foo';
 
-        self::assertNull(Album::query()->whereBelongsTo($artist)->where('name', $name)->first());
+        self::assertNull(
+            Album::query()
+                ->whereBelongsTo($artist)
+                ->where('name', $name)
+                ->first(),
+        );
 
         $album = Album::getOrCreate($artist, $name);
         self::assertSame('Foo', $album->name);

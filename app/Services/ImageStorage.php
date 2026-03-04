@@ -12,8 +12,7 @@ class ImageStorage
     public function __construct(
         private readonly ImageWriter $imageWriter,
         private readonly SvgSanitizer $svgSanitizer,
-    ) {
-    }
+    ) {}
 
     /**
      * Store an image file and return the (randomly generated) file name.
@@ -57,6 +56,6 @@ class ImageStorage
 
     private static function generateRandomStoragePath(string $extension = 'webp'): string
     {
-        return image_storage_path(sprintf("%s.%s", Ulid::generate(), $extension));
+        return image_storage_path(sprintf('%s.%s', Ulid::generate(), $extension));
     }
 }

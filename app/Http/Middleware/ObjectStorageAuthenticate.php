@@ -12,7 +12,7 @@ use Illuminate\Http\Response;
  */
 class ObjectStorageAuthenticate
 {
-    public function handle(Request $request, Closure $next) // @phpcs:ignore
+    public function handle(Request $request, Closure $next)
     {
         abort_unless($request->get('appKey') === config('app.key'), Response::HTTP_UNAUTHORIZED);
 

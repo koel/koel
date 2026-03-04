@@ -23,7 +23,7 @@ class ArtistTest extends PlusTestCase
             [
                 'name' => 'Updated Artist Name',
             ],
-            $artist->user
+            $artist->user,
         )->assertJsonStructure(ArtistResource::JSON_STRUCTURE);
 
         $artist->refresh();
@@ -45,7 +45,7 @@ class ArtistTest extends PlusTestCase
             [
                 'name' => 'Updated Artist Name',
             ],
-            $scaryBossMan
+            $scaryBossMan,
         )->assertForbidden();
     }
 
@@ -63,7 +63,7 @@ class ArtistTest extends PlusTestCase
             [
                 'name' => 'Updated Artist Name',
             ],
-            $randomDude
+            $randomDude,
         )->assertForbidden();
     }
 }

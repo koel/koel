@@ -66,8 +66,10 @@ final class SmartPlaylistRule implements Arrayable
             $rule = self::make($rule);
         }
 
-        return $this->operator === $rule->operator
+        return (
+            $this->operator === $rule->operator
             && !array_diff($this->value, $rule->value)
-            && $this->model === $rule->model;
+            && $this->model === $rule->model
+        );
     }
 }

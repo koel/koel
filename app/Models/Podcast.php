@@ -69,7 +69,8 @@ class Podcast extends Model implements Favoriteable
 
     public function subscribers(): BelongsToMany
     {
-        return $this->belongsToMany(User::class)
+        return $this
+            ->belongsToMany(User::class)
             ->using(PodcastUserPivot::class)
             ->withPivot('state')
             ->withTimestamps();

@@ -16,8 +16,7 @@ readonly class TicketmasterEvent implements Arrayable
         public ?string $start,
         public ?string $end,
         public TicketmasterVenue $venue,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): self
     {
@@ -41,15 +40,7 @@ readonly class TicketmasterEvent implements Arrayable
         ?string $end,
         TicketmasterVenue $venue,
     ): self {
-        return new static(
-            id: $id,
-            name: $name,
-            url: $url,
-            image: $image,
-            start: $start,
-            end: $end,
-            venue: $venue,
-        );
+        return new static(id: $id, name: $name, url: $url, image: $image, start: $start, end: $end, venue: $venue);
     }
 
     private static function tryParseDate(array $dateData): ?string
@@ -61,7 +52,7 @@ readonly class TicketmasterEvent implements Arrayable
         if (Arr::get($dateData, 'localTime')) {
             return Carbon::createFromFormat(
                 'Y-m-d H:i:s',
-                Arr::get($dateData, 'localDate') . ' ' . Arr::get($dateData, 'localTime')
+                Arr::get($dateData, 'localDate') . ' ' . Arr::get($dateData, 'localTime'),
             )->format('D, j M Y, H:i');
         }
 

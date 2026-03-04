@@ -53,8 +53,6 @@ class EmbedResource extends JsonResource
 
     private function transformEmbeddableToResource(): JsonResource
     {
-        return EmbeddableType::from($this->embed->embeddable_type)
-                ->resourceClass()
-                ::make($this->embed->embeddable);
+        return EmbeddableType::from($this->embed->embeddable_type)->resourceClass()::make($this->embed->embeddable);
     }
 }

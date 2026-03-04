@@ -13,9 +13,9 @@ class ActivateLicenseRequest extends Request implements HasBody
 
     protected Method $method = Method::POST;
 
-    public function __construct(private readonly string $key)
-    {
-    }
+    public function __construct(
+        private readonly string $key,
+    ) {}
 
     public function resolveEndpoint(): string
     {

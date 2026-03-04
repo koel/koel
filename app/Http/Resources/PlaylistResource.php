@@ -3,6 +3,8 @@
 namespace App\Http\Resources;
 
 use App\Models\Playlist;
+use App\Services\PlaylistFolderService;
+use App\Services\PlaylistService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -20,8 +22,9 @@ class PlaylistResource extends JsonResource
         'created_at',
     ];
 
-    public function __construct(private readonly Playlist $playlist)
-    {
+    public function __construct(
+        private readonly Playlist $playlist,
+    ) {
         parent::__construct($playlist);
     }
 
@@ -31,16 +34,22 @@ class PlaylistResource extends JsonResource
         $user = $request->user() ?? $this->playlist->owner;
         $embedding = $request->routeIs('embeds.payload');
 
+        /** @var PlaylistService $playlistService */
+        $playlistService = app(PlaylistService::class);
+
+        /** @var PlaylistFolderService $folderService */
+        $folderService = app(PlaylistFolderService::class);
+
         return [
             'type' => 'playlists',
             'id' => $this->playlist->id,
             'name' => $this->playlist->name,
             'description' => $this->playlist->description,
-            'folder_id' => $this->unless($embedding, $this->playlist->getFolderId($user)),
+            'folder_id' => $this->unless($embedding, $folderService->getFolderForPlaylist($this->playlist, $user)?->id),
             'user_id' => $this->unless($embedding, $this->playlist->owner->public_id), // backwards compatibility
             'owner_id' => $this->unless($embedding, $this->playlist->owner->public_id),
             'is_smart' => $this->unless($embedding, $this->playlist->is_smart),
-            'is_collaborative' => $this->unless($embedding, $this->playlist->is_collaborative),
+            'is_collaborative' => $this->unless($embedding, $playlistService->isPlaylistCollaborative($this->playlist)),
             'rules' => $this->unless($embedding, $this->playlist->rules),
             'cover' => image_storage_url($this->playlist->cover),
             'created_at' => $this->unless($embedding, $this->playlist->created_at),

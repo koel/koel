@@ -16,9 +16,11 @@ final class ToggleLoveTrackRequest extends Request implements HasBody, RequiresS
 
     protected Method $method = Method::POST;
 
-    public function __construct(private readonly Song $song, private readonly User $user, private readonly bool $love)
-    {
-    }
+    public function __construct(
+        private readonly Song $song,
+        private readonly User $user,
+        private readonly bool $love,
+    ) {}
 
     public function resolveEndpoint(): string
     {

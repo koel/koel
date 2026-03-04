@@ -15,7 +15,7 @@ class FetchOverviewController extends Controller
     public function __invoke(
         SongRepository $songRepository,
         AlbumRepository $albumRepository,
-        ArtistRepository $artistRepository
+        ArtistRepository $artistRepository,
     ) {
         return response()->json([
             'most_played_albums' => AlbumResource::collection($albumRepository->getMostPlayed()),

@@ -20,15 +20,14 @@ final class ScanConfiguration
         public array $ignores,
         public bool $force,
         public bool $extractFolderStructure,
-    ) {
-    }
+    ) {}
 
     public static function make(
         User $owner,
         bool $makePublic = false,
         array $ignores = [],
         bool $force = false,
-        bool $extractFolderStructure = true
+        bool $extractFolderStructure = true,
     ): self {
         return new self($owner, $makePublic, $ignores, $force, $extractFolderStructure);
     }

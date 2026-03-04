@@ -117,7 +117,10 @@ class FavoriteServiceTest extends TestCase
         $user = create_user();
 
         /** @var Collection<int, Favorite> $favorites */
-        $favorites = Favorite::factory()->for($user)->count(2)->create();
+        $favorites = Favorite::factory()
+            ->for($user)
+            ->count(2)
+            ->create();
 
         $this->service->batchUndoFavorite(
             $favorites->map(static fn (Favorite $favorite) => $favorite->favoriteable),

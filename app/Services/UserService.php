@@ -19,8 +19,7 @@ class UserService
         private readonly UserRepository $repository,
         private readonly ImageStorage $imageStorage,
         private readonly OrganizationService $organizationService,
-    ) {
-    }
+    ) {}
 
     public function createUser(UserCreateData $dto, ?Organization $organization = null): User
     {

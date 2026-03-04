@@ -11,9 +11,10 @@ use App\Services\UploadService;
 
 class HandleSongUploadJob extends QueuedJob
 {
-    public function __construct(public readonly string $filePath, public readonly User $uploader)
-    {
-    }
+    public function __construct(
+        public readonly string $filePath,
+        public readonly User $uploader,
+    ) {}
 
     public function handle(
         UploadService $uploadService,

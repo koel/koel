@@ -14,19 +14,16 @@ class S3CompatibleStorage extends CloudStorage
 {
     use DeletesUsingFilesystem;
 
-    public function __construct(private readonly ?string $bucket = null)
-    {
-    }
+    public function __construct(
+        private readonly ?string $bucket = null,
+    ) {}
 
     public function storeUploadedFile(string $uploadedFilePath, User $uploader): UploadReference
     {
         $key = $this->generateStorageKey(basename($uploadedFilePath), $uploader);
         $this->uploadToStorage($key, $uploadedFilePath);
 
-        return UploadReference::make(
-            location: "s3://$this->bucket/$key",
-            localPath: $uploadedFilePath,
-        );
+        return UploadReference::make(location: "s3://$this->bucket/$key", localPath: $uploadedFilePath);
     }
 
     public function undoUpload(UploadReference $reference): void

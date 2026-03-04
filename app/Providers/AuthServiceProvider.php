@@ -9,6 +9,7 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
+use SensitiveParameter;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -19,12 +20,12 @@ class AuthServiceProvider extends ServiceProvider
         Auth::viaRequest('token-via-query-parameter', static function (Request $request): ?User {
             $token = $request->get('api_token') ?: $request->get('t');
 
-            return  app(TokenManager::class)->getUserFromPlainTextToken($token ?: '');
+            return app(TokenManager::class)->getUserFromPlainTextToken($token ?: '');
         });
 
         $this->setPasswordDefaultRules();
 
-        ResetPassword::createUrlUsing(static function (User $user, string $token): string {
+        ResetPassword::createUrlUsing(static function (User $user, #[SensitiveParameter] string $token): string {
             $payload = base64_encode($user->getEmailForPasswordReset() . "|$token");
 
             return url("/#/reset-password/$payload");
@@ -34,7 +35,11 @@ class AuthServiceProvider extends ServiceProvider
     private function setPasswordDefaultRules(): void
     {
         Password::defaults(fn (): Password => $this->app->isProduction()
-            ? Password::min(10)->letters()->numbers()->symbols()->uncompromised()
+            ? Password::min(10)
+                ->letters()
+                ->numbers()
+                ->symbols()
+                ->uncompromised()
             : Password::min(6));
     }
 }

@@ -20,8 +20,7 @@ class ThemeController extends Controller
         private readonly ThemeService $themeService,
         private readonly ThemeRepository $themeRepository,
         private readonly Authenticatable $user,
-    ) {
-    }
+    ) {}
 
     public function index()
     {

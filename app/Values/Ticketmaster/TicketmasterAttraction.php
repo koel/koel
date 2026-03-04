@@ -12,8 +12,7 @@ readonly class TicketmasterAttraction implements Arrayable
         public string $name,
         public string $url,
         public string $image,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): self
     {

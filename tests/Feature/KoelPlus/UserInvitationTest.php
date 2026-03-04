@@ -17,10 +17,15 @@ class UserInvitationTest extends PlusTestCase
     {
         Mail::fake();
 
-        $this->postAs('api/invitations', [
-            'emails' => ['foo@bar.io', 'bar@baz.ai'],
-            'role' => 'manager',
-        ], create_admin())
+        $this
+            ->postAs(
+                'api/invitations',
+                [
+                    'emails' => ['foo@bar.io', 'bar@baz.ai'],
+                    'role' => 'manager',
+                ],
+                create_admin(),
+            )
             ->assertSuccessful()
             ->assertJsonStructure([0 => UserProspectResource::JSON_STRUCTURE]);
 

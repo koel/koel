@@ -65,7 +65,7 @@
     "phlak/semver": "^5.0",
     "laravel/boost": "^1.0",
     "opcodesio/log-viewer": "^3.19",
-    "slevomat/coding-standard": "^8.23"
+    "carthage-software/mago": "^1.8.0"
   },
   "suggest": {
     "ext-zip": "Allow downloading multiple songs as Zip archives"
@@ -121,8 +121,9 @@
     "koel:init": "@php scripts/koel-init.php",
     "test": "@php artisan test",
     "coverage": "@php artisan test --coverage-clover=coverage.xml",
-    "cs": "phpcs --standard=ruleset.xml",
-    "cs:fix": "phpcbf --standard=ruleset.xml",
+    "cs": "mago format --check",
+    "cs:fix": "mago format",
+    "lint": "mago lint",
     "analyze": "phpstan analyse --memory-limit 1G --configuration phpstan.neon.dist --ansi",
     "dev": [
       "Composer\\Config::disableProcessTimeout",
@@ -133,8 +134,11 @@
     "preferred-install": "dist",
     "optimize-autoloader": true,
     "allow-plugins": {
-      "dealerdirect/phpcodesniffer-composer-installer": true,
-      "php-http/discovery": true
+      "php-http/discovery": true,
+      "carthage-software/mago": true
+    },
+    "platform": {
+      "php": "8.2.0"
     }
   },
   "minimum-stability": "stable",
