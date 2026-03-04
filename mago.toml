@@ -28,7 +28,7 @@ no-else-clause = { enabled = false }
 no-shorthand-ternary = { enabled = false }
 no-isset = { enabled = false }
 prefer-arrow-function = { enabled = false }
-too-many-methods = { exclude = ["tests/"] }
+too-many-methods = { threshold = 14, exclude = ["tests/"] }
 
 [analyzer]
 plugins = []

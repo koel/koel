@@ -13,8 +13,8 @@ use App\Models\Concerns\MorphsToEmbeds;
 use App\Models\Concerns\MorphsToFavorites;
 use App\Models\Concerns\Songs\HasSongAttributes;
 use App\Models\Concerns\Songs\HasSongRelationships;
-use App\Models\Concerns\Songs\ManagesSongState;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
+use LogicException;
 use App\Models\Contracts\Embeddable;
 use App\Models\Contracts\Favoriteable;
 use App\Values\SongStorageMetadata\SongStorageMetadata;
@@ -84,7 +84,6 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
     use HasSongAttributes;
     use HasSongRelationships;
     use HasUuids;
-    use ManagesSongState;
     use MorphsToEmbeds;
     use MorphsToFavorites;
     use Searchable;
@@ -169,6 +168,65 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
         }
 
         return $array;
+    }
+
+    public function syncGenres(string|array $genres): void
+    {
+        $genreNames = is_array($genres) ? $genres : explode(',', $genres);
+
+        $genreIds = collect($genreNames)
+            ->map(static fn(string $name) => trim($name))
+            ->filter()
+            ->unique()
+            ->map(static fn(string $name) => Genre::get($name)->id);
+
+        $this->genres()->sync($genreIds);
+    }
+
+    public function isEpisode(): bool
+    {
+        return $this->type === PlayableType::PODCAST_EPISODE;
+    }
+
+    public function genreEqualsTo(string|array $genres): bool
+    {
+        $genreNames = collect(is_string($genres) ? explode(',', $genres) : $genres)
+            ->map(static fn(string $name) => trim($name))
+            ->filter()
+            ->unique()
+            ->sort()
+            ->join(', ');
+
+        if (!$this->genre && !$genreNames) {
+            return true;
+        }
+
+        return $this->genre === $genreNames;
+    }
+
+    public function isStoredOnCloud(): bool
+    {
+        return in_array(
+            $this->storage,
+            [
+                SongStorageType::S3,
+                SongStorageType::S3_LAMBDA,
+                SongStorageType::DROPBOX
+            ],
+            true
+        );
+    }
+
+    /**
+     * Determine if the song's associated file has been modified since the last scan.
+     * This is done by comparing the stored hash or mtime with the corresponding
+     * value from the scan information.
+     */
+    public function isFileModified(int $lastModified): bool
+    {
+        throw_if($this->isEpisode(), new LogicException('Podcast episodes do not have associated files.'));
+
+        return $this->mtime !== $lastModified;
     }
 
     public function __toString(): string

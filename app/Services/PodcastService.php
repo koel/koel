@@ -27,7 +27,7 @@ use Psr\Http\Client\ClientInterface;
 use Throwable;
 use Webmozart\Assert\Assert;
 
-// @mago-ignore lint:too-many-methods,cyclomatic-complexity
+// @mago-ignore lint:cyclomatic-complexity
 class PodcastService
 {
     public function __construct(

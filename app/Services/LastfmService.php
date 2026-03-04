@@ -20,7 +20,6 @@ use Generator;
 use Illuminate\Support\Collection;
 use SensitiveParameter;
 
-// @mago-ignore lint:too-many-methods
 class LastfmService implements Encyclopedia
 {
     public function __construct(

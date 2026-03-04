@@ -7,7 +7,6 @@ use App\Facades\License;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 
-// @mago-ignore lint:too-many-methods
 enum Role: string implements Arrayable
 {
     case ADMIN = 'admin';
