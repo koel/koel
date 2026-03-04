@@ -27,7 +27,7 @@ class GetArtistWikidataIdUsingMbid
             callback: function () use ($mbid): ?string {
                 $wikidata = collect(Arr::where(
                     $this->connector->send(new GetArtistUrlRelationshipsRequest($mbid))->json('relations'),
-                    static fn($relation) => $relation['type'] === 'wikidata',
+                    static fn ($relation) => $relation['type'] === 'wikidata',
                 ))->first();
 
                 return $wikidata ? Str::afterLast(Arr::get($wikidata, 'url.resource'), '/') : null; // 'https://www.wikidata.org/wiki/Q461269'

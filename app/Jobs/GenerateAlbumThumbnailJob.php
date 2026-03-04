@@ -13,6 +13,6 @@ class GenerateAlbumThumbnailJob extends QueuedJob
 
     public function handle(AlbumService $albumService): void
     {
-        rescue(fn() => $albumService->generateAlbumThumbnail($this->album));
+        rescue(fn () => $albumService->generateAlbumThumbnail($this->album));
     }
 }

@@ -77,7 +77,7 @@ class PlaylistSongTest extends PlusTestCase
         )->assertSuccessful();
 
         $playlist->refresh();
-        $songs->each(static fn(Song $song) => self::assertTrue($playlist->playables->contains($song)));
+        $songs->each(static fn (Song $song) => self::assertTrue($playlist->playables->contains($song)));
     }
 
     #[Test]
@@ -99,6 +99,6 @@ class PlaylistSongTest extends PlusTestCase
         )->assertSuccessful();
 
         $playlist->refresh();
-        $songs->each(static fn(Song $song) => self::assertFalse($playlist->playables->contains($song)));
+        $songs->each(static fn (Song $song) => self::assertFalse($playlist->playables->contains($song)));
     }
 }

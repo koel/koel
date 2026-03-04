@@ -123,7 +123,7 @@ class FavoriteServiceTest extends TestCase
             ->create();
 
         $this->service->batchUndoFavorite(
-            $favorites->map(static fn(Favorite $favorite) => $favorite->favoriteable),
+            $favorites->map(static fn (Favorite $favorite) => $favorite->favoriteable),
             $user,
         );
 

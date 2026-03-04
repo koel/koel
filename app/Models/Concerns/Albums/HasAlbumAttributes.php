@@ -9,7 +9,7 @@ trait HasAlbumAttributes
 {
     protected function isUnknown(): Attribute
     {
-        return Attribute::get(fn(): bool => $this->name === self::UNKNOWN_NAME);
+        return Attribute::get(fn (): bool => $this->name === self::UNKNOWN_NAME);
     }
 
     /**
@@ -18,7 +18,7 @@ trait HasAlbumAttributes
      */
     protected function name(): Attribute
     {
-        return Attribute::get(static fn(?string $value) => html_entity_decode($value))->shouldCache();
+        return Attribute::get(static fn (?string $value) => html_entity_decode($value))->shouldCache();
     }
 
     protected function thumbnail(): Attribute
@@ -35,6 +35,6 @@ trait HasAlbumAttributes
     /** @deprecated Only here for backward compat with mobile apps */
     protected function isCompilation(): Attribute
     {
-        return Attribute::get(fn() => $this->artist->is_various);
+        return Attribute::get(fn () => $this->artist->is_various);
     }
 }

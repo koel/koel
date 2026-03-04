@@ -78,8 +78,8 @@ class SongResource extends JsonResource
     public function toArray(Request $request): array
     {
         // @mago-ignore lint:prefer-first-class-callable
-        $isPlus = once(static fn() => License::isPlus());
-        $user = $this->user ?? once(static fn() => auth()->user());
+        $isPlus = once(static fn () => License::isPlus());
+        $user = $this->user ?? once(static fn () => auth()->user());
         $embedding = $request->routeIs('embeds.payload');
 
         $data = [
@@ -104,7 +104,7 @@ class SongResource extends JsonResource
             'year' => $this->unless($embedding, $this->song->year),
             'is_public' => $this->unless($embedding, $this->song->is_public),
             'created_at' => $this->unless($embedding, $this->song->created_at),
-            'embed_stream_url' => $this->when($embedding, fn() => URL::temporarySignedRoute(
+            'embed_stream_url' => $this->when($embedding, fn () => URL::temporarySignedRoute(
                 'embeds.stream',
                 now()->addDay(),
                 [
@@ -127,7 +127,7 @@ class SongResource extends JsonResource
         } else {
             $data += [
                 'owner_id' => $this->unless($embedding, $this->song->owner->public_id),
-                'is_external' => $this->unless($embedding, fn() => $isPlus && !$this->song->ownedBy($user)),
+                'is_external' => $this->unless($embedding, fn () => $isPlus && !$this->song->ownedBy($user)),
             ];
         }
 

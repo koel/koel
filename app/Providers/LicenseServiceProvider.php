@@ -9,6 +9,6 @@ class LicenseServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        app()->singleton('License', static fn(): LicenseServiceInterface => app(LicenseServiceInterface::class));
+        app()->singleton('License', static fn (): LicenseServiceInterface => app(LicenseServiceInterface::class));
     }
 }

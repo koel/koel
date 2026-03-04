@@ -18,7 +18,7 @@ class IndexController extends Controller
         if (License::isPlus() && config('koel.proxy_auth.enabled')) {
             $data['token'] = optional(
                 $proxyAuthService->tryGetProxyAuthenticatedUserFromRequest($request),
-                static fn($user) => $auth->logUserIn($user)->toArray(),
+                static fn ($user) => $auth->logUserIn($user)->toArray(),
             );
         }
 

@@ -22,12 +22,12 @@ class UserObserver
         $oldAvatar = $user->getRawOriginal('avatar');
 
         // If the avatar is being updated, delete the old avatar
-        rescue_if($oldAvatar, static fn() => File::delete(image_storage_path($oldAvatar)));
+        rescue_if($oldAvatar, static fn () => File::delete(image_storage_path($oldAvatar)));
     }
 
     public function deleted(User $user): void
     {
-        rescue_if($user->has_custom_avatar, static fn() => File::delete(image_storage_path($user->getRawOriginal(
+        rescue_if($user->has_custom_avatar, static fn () => File::delete(image_storage_path($user->getRawOriginal(
             'avatar',
         ))));
     }

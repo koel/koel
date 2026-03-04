@@ -53,7 +53,7 @@ final class GetAlbumInfoRequest extends Request
                 'full' => self::formatLastFmText(object_get($album, 'wiki.content')),
             ],
             tracks: array_map(
-                static fn($track): array => [
+                static fn ($track): array => [
                     'title' => $track->name,
                     'length' => (int) $track->duration,
                     'url' => $track->url,

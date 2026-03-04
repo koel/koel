@@ -96,8 +96,8 @@ class AlbumBuilder extends FavoriteableBuilder
 
         return $this
             ->accessible()
-            ->when($includeFavoriteStatus, static fn(self $query) => $query->withFavoriteStatus($favoritesOnly))
-            ->when($includePlayCount, static fn(self $query) => $query->withPlayCount($includeFavoriteStatus));
+            ->when($includeFavoriteStatus, static fn (self $query) => $query->withFavoriteStatus($favoritesOnly))
+            ->when($includePlayCount, static fn (self $query) => $query->withPlayCount($includeFavoriteStatus));
     }
 
     private static function normalizeSortColumn(string $column): string
@@ -117,8 +117,8 @@ class AlbumBuilder extends FavoriteableBuilder
         return $this
             ->orderBy($column, $direction)
             // Depending on the column, we might need to order by the album's name as well.
-            ->when($column === 'albums.artist_name', static fn(self $query) => $query->orderBy('albums.name'))
-            ->when($column === 'albums.year', static fn(self $query) => $query->orderBy('albums.name'))
-            ->when($column === 'favorite', static fn(self $query) => $query->orderBy('albums.name'));
+            ->when($column === 'albums.artist_name', static fn (self $query) => $query->orderBy('albums.name'))
+            ->when($column === 'albums.year', static fn (self $query) => $query->orderBy('albums.name'))
+            ->when($column === 'favorite', static fn (self $query) => $query->orderBy('albums.name'));
     }
 }

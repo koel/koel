@@ -32,7 +32,7 @@ class YouTubeService
             return Cache::remember(
                 cache_key('YouTube search query', serialize($request->query()->all())),
                 now()->addWeek(),
-                fn() => $this->connector->send($request)->object(),
+                fn () => $this->connector->send($request)->object(),
             );
         } catch (Throwable) {
             return null;

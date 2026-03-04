@@ -39,8 +39,8 @@ class Acl
     public function getAssignableRolesForUser(User $user): Collection
     {
         return Role::allAvailable()
-            ->filter(static fn(Role $role) => $user->role->canManage($role))
-            ->sortBy(static fn(Role $role) => $role->level())
+            ->filter(static fn (Role $role) => $user->role->canManage($role))
+            ->sortBy(static fn (Role $role) => $role->level())
             ->values();
     }
 }

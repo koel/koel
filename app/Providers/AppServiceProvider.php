@@ -86,7 +86,7 @@ class AppServiceProvider extends ServiceProvider
             return app()->runningUnitTests() ? app(ScannerNoCacheStrategy::class) : app(ScannerCacheStrategy::class);
         });
 
-        $this->app->singleton(ValidRadioStationUrl::class, static fn() => new ValidRadioStationUrl());
+        $this->app->singleton(ValidRadioStationUrl::class, static fn () => new ValidRadioStationUrl());
 
         Route::bind('genre', static function (string $value): ?Genre {
             if ($value === Genre::NO_GENRE_PUBLIC_ID) {
@@ -131,6 +131,6 @@ class AppServiceProvider extends ServiceProvider
 
     private static function grantAllPermissionsToSuperAdminRole(): void
     {
-        Gate::after(static fn(User $user) => $user->hasRole(Role::ADMIN));
+        Gate::after(static fn (User $user) => $user->hasRole(Role::ADMIN));
     }
 }

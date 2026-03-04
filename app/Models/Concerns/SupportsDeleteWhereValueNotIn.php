@@ -24,7 +24,7 @@ trait SupportsDeleteWhereValueNotIn
         ?Closure $queryModifier = null,
     ): void {
         $field ??= (new static())->getKeyName();
-        $queryModifier ??= static fn(Builder $builder) => $builder;
+        $queryModifier ??= static fn (Builder $builder) => $builder;
 
         $maxChunkSize = DB::getDriverName() === 'sqlite' ? 999 : 65_535;
 

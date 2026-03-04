@@ -319,7 +319,7 @@ class InitCommand extends Command
 
     private function runOkOrThrow(string $command): void
     {
-        $printer = $this->option('verbose') ? static fn(string $type, string $output) => print $output : null;
+        $printer = $this->option('verbose') ? static fn (string $type, string $output) => print $output : null;
 
         throw_unless(Process::forever()->run($command, $printer)->successful(), InstallationFailedException::class);
     }

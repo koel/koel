@@ -61,7 +61,7 @@ class PlaylistService
         ];
 
         if (is_string($dto->cover)) {
-            $data['cover'] = rescue_if($dto->cover, fn() => $this->imageStorage->storeImage($dto->cover), '');
+            $data['cover'] = rescue_if($dto->cover, fn () => $this->imageStorage->storeImage($dto->cover), '');
         }
 
         $playlist->update($data);
@@ -83,7 +83,7 @@ class PlaylistService
             $playables = Collection::wrap($playables);
 
             $playlist->addPlayables(
-                $playables->filter(static fn($song): bool => !$playlist->playables->contains($song)),
+                $playables->filter(static fn ($song): bool => !$playlist->playables->contains($song)),
                 $user,
             );
 
@@ -144,7 +144,7 @@ class PlaylistService
     public function isPlaylistCollaborative(Playlist $playlist): bool
     {
         return once(
-            static fn() => !$playlist->is_smart && LicenseFacade::isPlus() && $playlist->collaborators->isNotEmpty(),
+            static fn () => !$playlist->is_smart && LicenseFacade::isPlus() && $playlist->collaborators->isNotEmpty(),
         );
     }
 }

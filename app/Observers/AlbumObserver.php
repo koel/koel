@@ -49,6 +49,6 @@ class AlbumObserver
         $coverPath = image_storage_path($album->cover);
         $thumbnailPath = image_storage_path($album->thumbnail);
 
-        rescue_if($coverPath || $thumbnailPath, static fn() => File::delete([$coverPath, $thumbnailPath]));
+        rescue_if($coverPath || $thumbnailPath, static fn () => File::delete([$coverPath, $thumbnailPath]));
     }
 }

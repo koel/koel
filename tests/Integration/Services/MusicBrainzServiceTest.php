@@ -42,7 +42,7 @@ class MusicBrainzServiceTest extends TestCase
         if ($output instanceof Throwable) {
             $expectation->andThrow($output);
         } else {
-            $expectation->andReturnUsing(static fn($_, $next) => $next($output));
+            $expectation->andReturnUsing(static fn ($_, $next) => $next($output));
         }
     }
 

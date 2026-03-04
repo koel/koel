@@ -27,7 +27,7 @@ class PlaylistFactory extends Factory
     public function smart(): static
     {
         // @mago-ignore lint:prefer-static-closure
-        return $this->state(fn() => [
+        return $this->state(fn () => [
             'rules' => SmartPlaylistRuleGroupCollection::create([
                 SmartPlaylistRuleGroup::make([
                     'id' => Str::uuid()->toString(),

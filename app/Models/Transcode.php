@@ -52,6 +52,6 @@ class Transcode extends Model
 
     protected function storage(): Attribute
     {
-        return Attribute::get(fn() => $this->song->storage)->shouldCache();
+        return Attribute::get(fn () => $this->song->storage)->shouldCache();
     }
 }

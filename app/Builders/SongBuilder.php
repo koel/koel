@@ -116,8 +116,8 @@ class SongBuilder extends FavoriteableBuilder
     ): self {
         return $this
             ->accessible()
-            ->when($includeFavoriteStatus, static fn(self $query) => $query->withFavoriteStatus($favoritesOnly))
-            ->when($includePlayCount, static fn(self $query) => $query->withPlayCount());
+            ->when($includeFavoriteStatus, static fn (self $query) => $query->withFavoriteStatus($favoritesOnly))
+            ->when($includePlayCount, static fn (self $query) => $query->withPlayCount());
     }
 
     private function sortByOneColumn(string $column, string $direction): self
@@ -130,17 +130,17 @@ class SongBuilder extends FavoriteableBuilder
         return $this
             ->orderBy($column, $direction)
             // Depending on the column, we might need to order by other columns as well.
-            ->when($column === 'songs.artist_name', static fn(self $query) => $query
+            ->when($column === 'songs.artist_name', static fn (self $query) => $query
                 ->orderBy('songs.album_name')
                 ->orderBy('songs.disc')
                 ->orderBy('songs.track')
                 ->orderBy('songs.title'))
-            ->when($column === 'songs.album_name', static fn(self $query) => $query
+            ->when($column === 'songs.album_name', static fn (self $query) => $query
                 ->orderBy('songs.artist_name')
                 ->orderBy('songs.disc')
                 ->orderBy('songs.track')
                 ->orderBy('songs.title'))
-            ->when($column === 'track', static fn(self $query) => $query
+            ->when($column === 'track', static fn (self $query) => $query
                 ->orderBy('songs.disc')
                 ->orderBy('songs.track'));
     }
@@ -149,8 +149,8 @@ class SongBuilder extends FavoriteableBuilder
     {
         $this->when(
             in_array('podcast_title', $columns, true) || in_array('podcast_author', $columns, true),
-            static fn(self $query) => $query->leftJoin('podcasts', 'songs.podcast_id', 'podcasts.id'),
-        )->when(in_array('genre', $columns, true), static fn(self $query) => $query->leftJoin(
+            static fn (self $query) => $query->leftJoin('podcasts', 'songs.podcast_id', 'podcasts.id'),
+        )->when(in_array('genre', $columns, true), static fn (self $query) => $query->leftJoin(
             'genre_song',
             'songs.id',
             'genre_song.song_id',

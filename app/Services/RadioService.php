@@ -44,7 +44,7 @@ class RadioService
         ];
 
         if (is_string($dto->logo)) {
-            $data['logo'] = rescue_if($dto->logo, fn() => $this->imageStorage->storeImage($dto->logo), '');
+            $data['logo'] = rescue_if($dto->logo, fn () => $this->imageStorage->storeImage($dto->logo), '');
         }
 
         $radioStation->update($data);

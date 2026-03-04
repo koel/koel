@@ -90,7 +90,7 @@ final class SmartPlaylistQueryModifier
             Operator::BEGINS_WITH => ["$column LIKE ?", ["{$value[0]}%"]],
             Operator::CONTAINS => ["$column LIKE ?", ["%{$value[0]}%"]],
             Operator::ENDS_WITH => ["$column LIKE ?", ["%{$value[0]}"]],
-            Operator::IN_LAST => static fn() => ["$column >= ?", [now()->subDays($value[0])]],
+            Operator::IN_LAST => static fn () => ["$column >= ?", [now()->subDays($value[0])]],
             Operator::IS => ["$column = ?", [$value[0]]],
             Operator::IS_BETWEEN => ["$column BETWEEN ? AND ?", $value],
             Operator::IS_GREATER_THAN => ["$column > ?", [$value[0]]],
@@ -98,7 +98,7 @@ final class SmartPlaylistQueryModifier
             Operator::IS_NOT => ["$column <> ?", [$value[0]]],
             Operator::IS_NOT_BETWEEN => ["$column NOT BETWEEN ? AND ?", $value],
             Operator::NOT_CONTAIN => ["$column NOT LIKE ?", ["%{$value[0]}%"]],
-            Operator::NOT_IN_LAST => static fn() => ["$column < ?", [now()->subDays($value[0])]],
+            Operator::NOT_IN_LAST => static fn () => ["$column < ?", [now()->subDays($value[0])]],
         };
     }
 
@@ -114,8 +114,8 @@ final class SmartPlaylistQueryModifier
             Operator::IS_LESS_THAN => [$column, '<', $value[0]],
             Operator::IS_GREATER_THAN => [$column, '>', $value[0]],
             Operator::IS_BETWEEN, Operator::IS_NOT_BETWEEN => [$column, $value],
-            Operator::NOT_IN_LAST => static fn() => [$column, '<', now()->subDays($value[0])],
-            Operator::IN_LAST => static fn() => [$column, '>=', now()->subDays($value[0])],
+            Operator::NOT_IN_LAST => static fn () => [$column, '<', now()->subDays($value[0])],
+            Operator::IN_LAST => static fn () => [$column, '>=', now()->subDays($value[0])],
         };
     }
 }

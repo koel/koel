@@ -25,7 +25,7 @@ abstract class Repository implements RepositoryContract
 
         // This instantiation may fail during a console command if e.g. APP_KEY is empty,
         // rendering the whole installation failing.
-        rescue(fn() => $this->auth = app(Guard::class));
+        rescue(fn () => $this->auth = app(Guard::class));
     }
 
     /** @return class-string<T> */

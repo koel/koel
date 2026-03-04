@@ -12,7 +12,7 @@ class SongStorageTypeTest extends PlusTestCase
     public function supported(): void
     {
         self::assertTrue(
-            collect(SongStorageType::cases())->every(static fn(SongStorageType $type) => $type->supported()),
+            collect(SongStorageType::cases())->every(static fn (SongStorageType $type) => $type->supported()),
         );
     }
 }

@@ -34,7 +34,7 @@ class AuthServiceProvider extends ServiceProvider
 
     private function setPasswordDefaultRules(): void
     {
-        Password::defaults(fn(): Password => $this->app->isProduction()
+        Password::defaults(fn (): Password => $this->app->isProduction()
             ? Password::min(10)
                 ->letters()
                 ->numbers()

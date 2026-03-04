@@ -28,18 +28,18 @@ class UserFactory extends Factory
 
     public function admin(): self
     {
-        return $this->afterCreating(static fn(User $user) => $user->syncRoles(Role::ADMIN)); // @phpstan-ignore-line
+        return $this->afterCreating(static fn (User $user) => $user->syncRoles(Role::ADMIN)); // @phpstan-ignore-line
     }
 
     public function manager(): self
     {
-        return $this->afterCreating(static fn(User $user) => $user->syncRoles(Role::MANAGER)); // @phpstan-ignore-line
+        return $this->afterCreating(static fn (User $user) => $user->syncRoles(Role::MANAGER)); // @phpstan-ignore-line
     }
 
     public function prospect(): self
     {
         // @mago-ignore lint:prefer-static-closure
-        return $this->state(fn() => [
+        return $this->state(fn () => [
             'invitation_token' => Str::random(),
             'invited_at' => now(),
             'invited_by_id' => User::factory()->admin(),

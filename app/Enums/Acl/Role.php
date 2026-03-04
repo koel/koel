@@ -56,7 +56,7 @@ enum Role: string implements Arrayable
         return match ($this) {
             self::ADMIN, self::USER => true,
             // @mago-ignore lint:prefer-first-class-callable
-            self::MANAGER => once(static fn() => License::isPlus()),
+            self::MANAGER => once(static fn () => License::isPlus()),
         };
     }
 
@@ -68,13 +68,13 @@ enum Role: string implements Arrayable
     /** @return Collection<self> */
     public static function allAvailable(): Collection
     {
-        return collect(self::cases())->filter(static fn(Role $role) => $role->available());
+        return collect(self::cases())->filter(static fn (Role $role) => $role->available());
     }
 
     public function description(): string
     {
         // @mago-ignore lint:prefer-first-class-callable
-        $isCommunity = once(static fn() => License::isCommunity());
+        $isCommunity = once(static fn () => License::isCommunity());
 
         return match ($this) {
             self::ADMIN => 'Admins can manage everything.',

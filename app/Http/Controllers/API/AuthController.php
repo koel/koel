@@ -23,7 +23,7 @@ class AuthController extends Controller
 
     public function login(UserLoginRequest $request): JsonResponse
     {
-        $compositeToken = $this->throttleLoginRequest(fn() => $this->auth->login(
+        $compositeToken = $this->throttleLoginRequest(fn () => $this->auth->login(
             $request->email,
             $request->password,
         ), $request);
@@ -33,7 +33,7 @@ class AuthController extends Controller
 
     public function loginUsingOneTimeToken(Request $request): JsonResponse
     {
-        $compositeToken = $this->throttleLoginRequest(fn() => $this->auth->loginViaOneTimeToken($request->input(
+        $compositeToken = $this->throttleLoginRequest(fn () => $this->auth->loginViaOneTimeToken($request->input(
             'token',
         )), $request);
 
@@ -57,7 +57,7 @@ class AuthController extends Controller
 
     public function logout(Request $request): Response
     {
-        rescue(fn() => $this->auth->logoutViaBearerToken($request->bearerToken()));
+        rescue(fn () => $this->auth->logoutViaBearerToken($request->bearerToken()));
 
         return response()->noContent();
     }

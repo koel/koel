@@ -20,7 +20,7 @@ class UnlikeMultipleSongsController extends Controller
     ) {
         /** @var Collection<int, Song> $songs */
         $songs = Song::query()->findMany($request->songs);
-        $songs->each(fn(Song $song) => $this->authorize('access', $song));
+        $songs->each(fn (Song $song) => $this->authorize('access', $song));
 
         $favoriteService->batchUndoFavorite($songs, $user); // @phpstan-ignore-line
 

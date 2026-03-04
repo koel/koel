@@ -20,7 +20,7 @@ readonly class DeleteNonExistingRecordsPostScan implements ShouldQueue
         $paths = $event
             ->results
             ->valid()
-            ->map(static fn(ScanResult $result) => $result->path)
+            ->map(static fn (ScanResult $result) => $result->path)
             ->merge($this->songRepository->getAllStoredOnCloud()->pluck('path'))
             ->toArray();
 

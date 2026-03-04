@@ -66,12 +66,12 @@ class LastfmService implements Encyclopedia
 
     public function scrobble(Song $song, User $user, int $timestamp): void
     {
-        rescue(fn() => $this->connector->send(new ScrobbleRequest($song, $user, $timestamp)));
+        rescue(fn () => $this->connector->send(new ScrobbleRequest($song, $user, $timestamp)));
     }
 
     public function toggleLoveTrack(Song $song, User $user, bool $love): void
     {
-        rescue(fn() => $this->connector->send(new ToggleLoveTrackRequest($song, $user, $love)));
+        rescue(fn () => $this->connector->send(new ToggleLoveTrackRequest($song, $user, $love)));
     }
 
     /**
@@ -93,7 +93,7 @@ class LastfmService implements Encyclopedia
 
     public function updateNowPlaying(Song $song, User $user): void
     {
-        rescue(fn() => $this->connector->send(new UpdateNowPlayingRequest($song, $user)));
+        rescue(fn () => $this->connector->send(new UpdateNowPlayingRequest($song, $user)));
     }
 
     public function getSessionKey(#[SensitiveParameter] string $token): ?string

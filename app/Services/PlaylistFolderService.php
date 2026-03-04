@@ -29,9 +29,9 @@ class PlaylistFolderService
             collect($playlistIds)->each(static function (string $playlistId) use ($folder): void {
                 PlaylistFolder::query()
                     ->where('user_id', $folder->user_id)
-                    ->whereHas('playlists', static fn(Builder $query) => $query->where('id', $playlistId))
+                    ->whereHas('playlists', static fn (Builder $query) => $query->where('id', $playlistId))
                     ->get()
-                    ->each(static fn(PlaylistFolder $folder) => $folder->playlists()->detach($playlistId));
+                    ->each(static fn (PlaylistFolder $folder) => $folder->playlists()->detach($playlistId));
             });
 
             $folder->playlists()->attach($playlistIds);
@@ -45,7 +45,7 @@ class PlaylistFolderService
 
     public function getFolderForPlaylist(Playlist $playlist, ?User $user = null): ?PlaylistFolder
     {
-        return $playlist->folders->firstWhere(static fn(PlaylistFolder $folder) => $folder->user->is(
+        return $playlist->folders->firstWhere(static fn (PlaylistFolder $folder) => $folder->user->is(
             $user ?? $playlist->owner,
         ));
     }

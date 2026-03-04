@@ -199,7 +199,7 @@ class PlaylistServiceTest extends TestCase
         self::assertCount(2, $addedSongs);
         self::assertCount(4, $playlist->playables);
         self::assertEqualsCanonicalizing($addedSongs->modelKeys(), $songs->modelKeys());
-        $songs->each(static fn(Song $song) => self::assertTrue($playlist->playables->contains($song)));
+        $songs->each(static fn (Song $song) => self::assertTrue($playlist->playables->contains($song)));
     }
 
     #[Test]
@@ -261,7 +261,7 @@ class PlaylistServiceTest extends TestCase
 
         $this->service->addPlayablesToPlaylist($playlist, $songs, $user);
 
-        $songs->each(static fn(Song $song) => self::assertTrue($song->refresh()->is_public));
+        $songs->each(static fn (Song $song) => self::assertTrue($song->refresh()->is_public));
     }
 
     #[Test]
@@ -272,7 +272,7 @@ class PlaylistServiceTest extends TestCase
 
         $this->service->makePlaylistContentPublic($playlist);
 
-        $playlist->playables->each(static fn(Song $song) => self::assertTrue($song->is_public));
+        $playlist->playables->each(static fn (Song $song) => self::assertTrue($song->is_public));
     }
 
     #[Test]

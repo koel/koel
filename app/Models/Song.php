@@ -112,8 +112,8 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
     public static function query(?PlayableType $type = null, ?User $user = null): SongBuilder
     {
         return parent::query()
-            ->when($user, static fn(SongBuilder $query) => $query->setScopedUser($user)) // @phpstan-ignore-line
-            ->when($type, static fn(SongBuilder $query) => match ($type) { // @phpstan-ignore-line phpcs:ignore
+            ->when($user, static fn (SongBuilder $query) => $query->setScopedUser($user)) // @phpstan-ignore-line
+            ->when($type, static fn (SongBuilder $query) => match ($type) { // @phpstan-ignore-line phpcs:ignore
                 PlayableType::SONG => $query->whereNull('songs.podcast_id'),
                 PlayableType::PODCAST_EPISODE => $query->whereNotNull('songs.podcast_id'),
                 default => $query,
@@ -175,10 +175,10 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
         $genreNames = is_array($genres) ? $genres : explode(',', $genres);
 
         $genreIds = collect($genreNames)
-            ->map(static fn(string $name) => trim($name))
+            ->map(static fn (string $name) => trim($name))
             ->filter()
             ->unique()
-            ->map(static fn(string $name) => Genre::get($name)->id);
+            ->map(static fn (string $name) => Genre::get($name)->id);
 
         $this->genres()->sync($genreIds);
     }
@@ -191,7 +191,7 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
     public function genreEqualsTo(string|array $genres): bool
     {
         $genreNames = collect(is_string($genres) ? explode(',', $genres) : $genres)
-            ->map(static fn(string $name) => trim($name))
+            ->map(static fn (string $name) => trim($name))
             ->filter()
             ->unique()
             ->sort()

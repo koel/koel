@@ -12,7 +12,7 @@ readonly class WriteScanLog implements ShouldQueue
 {
     public function handle(MediaScanCompleted $event): void
     {
-        $transformer = static fn(ScanResult $entry) => (string) $entry;
+        $transformer = static fn (ScanResult $entry) => (string) $entry;
 
         /** @var Collection $messages */
         $messages = config('koel.sync_log_level') === 'all'

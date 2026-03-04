@@ -14,24 +14,24 @@ final class ScanResultCollection extends Collection
     /** @return Collection<array-key, ScanResult> */
     public function valid(): Collection
     {
-        return $this->filter(static fn(ScanResult $result): bool => $result->isValid());
+        return $this->filter(static fn (ScanResult $result): bool => $result->isValid());
     }
 
     /** @return Collection<array-key, ScanResult> */
     public function success(): Collection
     {
-        return $this->filter(static fn(ScanResult $result): bool => $result->isSuccess());
+        return $this->filter(static fn (ScanResult $result): bool => $result->isSuccess());
     }
 
     /** @return Collection<array-key, ScanResult> */
     public function skipped(): Collection
     {
-        return $this->filter(static fn(ScanResult $result): bool => $result->isSkipped());
+        return $this->filter(static fn (ScanResult $result): bool => $result->isSkipped());
     }
 
     /** @return Collection<array-key, ScanResult> */
     public function error(): Collection
     {
-        return $this->filter(static fn(ScanResult $result): bool => $result->isError());
+        return $this->filter(static fn (ScanResult $result): bool => $result->isError());
     }
 }

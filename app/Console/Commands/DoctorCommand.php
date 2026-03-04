@@ -150,7 +150,7 @@ class DoctorCommand extends Command
         $recipient = Ulid::generate() . '@mailinator.com';
 
         try {
-            Mail::raw('This is a test email.', static fn(Message $message) => $message->to($recipient));
+            Mail::raw('This is a test email.', static fn (Message $message) => $message->to($recipient));
             $this->reportSuccess('Mailer configuration');
         } catch (Throwable $e) {
             $this->collectError($e);

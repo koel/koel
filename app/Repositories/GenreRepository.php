@@ -29,7 +29,7 @@ class GenreRepository extends Repository
                 DB::raw('SUM(songs.length) AS length'),
             )
             ->get()
-            ->map(static fn(object $genre) => GenreSummary::make(
+            ->map(static fn (object $genre) => GenreSummary::make(
                 publicId: $genre->public_id,
                 name: $genre->name,
                 songCount: $genre->song_count,

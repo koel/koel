@@ -111,8 +111,8 @@ class SongRepository extends Repository implements ScoutableRepository
     ): Paginator {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
-            ->when($genre, static fn(Builder $builder) => $builder->whereRelation('genres', 'genres.id', $genre->id))
-            ->when(!$genre, static fn(Builder $builder) => $builder->whereDoesntHave('genres'))
+            ->when($genre, static fn (Builder $builder) => $builder->whereRelation('genres', 'genres.id', $genre->id))
+            ->when(!$genre, static fn (Builder $builder) => $builder->whereDoesntHave('genres'))
             ->sort($sortColumns, $sortDirection)
             ->simplePaginate($perPage);
     }
@@ -154,8 +154,8 @@ class SongRepository extends Repository implements ScoutableRepository
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
             ->storedLocally()
-            ->when($folder, static fn(SongBuilder $query) => $query->where('folder_id', $folder->id)) // @phpstan-ignore-line
-            ->when(!$folder, static fn(SongBuilder $query) => $query->whereNull('folder_id'))
+            ->when($folder, static fn (SongBuilder $query) => $query->where('folder_id', $folder->id)) // @phpstan-ignore-line
+            ->when(!$folder, static fn (SongBuilder $query) => $query->whereNull('folder_id'))
             ->orderBy('songs.path')
             ->simplePaginate(50);
     }
@@ -233,8 +233,8 @@ class SongRepository extends Repository implements ScoutableRepository
 
             $query->when(
                 $index === 0,
-                static fn(SongBuilder $query) => $query->where($whereClosure),
-                static fn(SongBuilder $query) => $query->orWhere($whereClosure),
+                static fn (SongBuilder $query) => $query->where($whereClosure),
+                static fn (SongBuilder $query) => $query->orWhere($whereClosure),
             );
         });
 
@@ -329,10 +329,10 @@ class SongRepository extends Repository implements ScoutableRepository
     {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
-            ->when($genre, static fn(Builder $builder) => $builder->whereRelation('genres', 'genres.id', $genre->id))
-            ->when(!$genre, static fn(Builder $builder) => $builder->whereDoesntHave('genres'))
-            ->when($random, static fn(Builder $builder) => $builder->inRandomOrder())
-            ->when(!$random, static fn(Builder $builder) => $builder->orderBy('songs.title'))
+            ->when($genre, static fn (Builder $builder) => $builder->whereRelation('genres', 'genres.id', $genre->id))
+            ->when(!$genre, static fn (Builder $builder) => $builder->whereDoesntHave('genres'))
+            ->when($random, static fn (Builder $builder) => $builder->inRandomOrder())
+            ->when(!$random, static fn (Builder $builder) => $builder->orderBy('songs.title'))
             ->limit($limit)
             ->get();
     }
@@ -360,7 +360,7 @@ class SongRepository extends Repository implements ScoutableRepository
         bool $random = false,
         ?User $scopedUser = null,
     ): Collection {
-        $paths = array_map(static fn(?string $path) => $path ? trim($path, DIRECTORY_SEPARATOR) : '', $paths);
+        $paths = array_map(static fn (?string $path) => $path ? trim($path, DIRECTORY_SEPARATOR) : '', $paths);
 
         if (!$paths) {
             return Collection::empty();
@@ -376,8 +376,8 @@ class SongRepository extends Repository implements ScoutableRepository
                 $folders = $this->folderRepository->getByPaths($paths, $scopedUser);
                 $query->whereIn('songs.folder_id', $folders->pluck('id'));
             })
-            ->when(!$random, static fn(SongBuilder $query): SongBuilder => $query->orderBy('songs.path'))
-            ->when($random, static fn(SongBuilder $query): SongBuilder => $query->inRandomOrder())
+            ->when(!$random, static fn (SongBuilder $query): SongBuilder => $query->orderBy('songs.path'))
+            ->when($random, static fn (SongBuilder $query): SongBuilder => $query->inRandomOrder())
             ->limit($limit)
             ->get();
     }
@@ -393,8 +393,8 @@ class SongRepository extends Repository implements ScoutableRepository
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
             ->limit($limit)
-            ->when($folder, static fn(SongBuilder $query) => $query->where('songs.folder_id', $folder->id)) // @phpstan-ignore-line
-            ->when(!$folder, static fn(SongBuilder $query) => $query->whereNull('songs.folder_id'))
+            ->when($folder, static fn (SongBuilder $query) => $query->where('songs.folder_id', $folder->id)) // @phpstan-ignore-line
+            ->when(!$folder, static fn (SongBuilder $query) => $query->whereNull('songs.folder_id'))
             ->orderBy('songs.path')
             ->get();
     }

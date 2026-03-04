@@ -20,6 +20,6 @@ class RadioStationObserver
 
     public function deleted(RadioStation $radioStation): void
     {
-        rescue_if($radioStation->logo, static fn() => File::delete(image_storage_path($radioStation->logo)));
+        rescue_if($radioStation->logo, static fn () => File::delete(image_storage_path($radioStation->logo)));
     }
 }

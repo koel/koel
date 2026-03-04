@@ -10,6 +10,7 @@ excludes = []
 
 [formatter]
 preset = "default"
+space-before-arrow-function-parameter-list-parenthesis = true
 
 [linter]
 integrations = ["laravel", "phpunit"]

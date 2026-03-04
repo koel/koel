@@ -19,12 +19,12 @@ trait HasSongAttributes
 {
     protected function albumArtist(): Attribute
     {
-        return Attribute::get(fn() => $this->album?->artist)->shouldCache();
+        return Attribute::get(fn () => $this->album?->artist)->shouldCache();
     }
 
     protected function type(): Attribute
     {
-        return Attribute::get(fn() => $this->podcast_id ? PlayableType::PODCAST_EPISODE : PlayableType::SONG);
+        return Attribute::get(fn () => $this->podcast_id ? PlayableType::PODCAST_EPISODE : PlayableType::SONG);
     }
 
     protected function storageMetadata(): Attribute
@@ -68,6 +68,6 @@ trait HasSongAttributes
 
     protected function genre(): Attribute
     {
-        return Attribute::get(fn() => $this->genres->pluck('name')->implode(', '))->shouldCache();
+        return Attribute::get(fn () => $this->genres->pluck('name')->implode(', '))->shouldCache();
     }
 }

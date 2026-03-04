@@ -48,7 +48,7 @@ class SftpStorage extends SongStorage implements MustDeleteTemporaryLocalFileAft
     {
         $this->deleteFileUnderPath(
             $location,
-            $backup ? static fn(Filesystem $fs, string $path) => $fs->copy($path, "$path.bak") : false,
+            $backup ? static fn (Filesystem $fs, string $path) => $fs->copy($path, "$path.bak") : false,
         );
     }
 

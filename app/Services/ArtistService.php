@@ -33,7 +33,7 @@ class ArtistService
         if (is_string($dto->image)) {
             // A non-empty string means the user is uploading another image,
             // when an empty string means the user is removing the image.
-            $data['image'] = rescue_if($dto->image, fn() => $this->imageStorage->storeImage($dto->image), '');
+            $data['image'] = rescue_if($dto->image, fn () => $this->imageStorage->storeImage($dto->image), '');
         } else {
             // If the image is null, the user's not changing or removing the image at all.
             Arr::forget($data, 'image');

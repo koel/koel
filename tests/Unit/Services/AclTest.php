@@ -47,7 +47,7 @@ class AclTest extends TestCase
 
         Gate::expects('forUser')->with($user)->andReturnSelf();
 
-        Gate::expects('allows')->with('edit', Mockery::on(static fn(Model $s) => $s->is($subject)))->andReturn(true);
+        Gate::expects('allows')->with('edit', Mockery::on(static fn (Model $s) => $s->is($subject)))->andReturn(true);
 
         self::assertTrue($this->acl->checkPermission(
             $type,
@@ -64,6 +64,6 @@ class AclTest extends TestCase
 
         $this->acl
             ->getAssignableRolesForUser($admin)
-            ->each(static fn(Role $role) => self::assertTrue($admin->role->canManage($role)));
+            ->each(static fn (Role $role) => self::assertTrue($admin->role->canManage($role)));
     }
 }

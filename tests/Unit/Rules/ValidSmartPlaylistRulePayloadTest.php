@@ -99,7 +99,7 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
     {
         $this->expectExceptionMessage('Invalid smart playlist rules');
 
-        $fail = static fn(string $message) => throw new Exception($message);
+        $fail = static fn (string $message) => throw new Exception($message);
         (new ValidSmartPlaylistRulePayload())->validate('rules', $value, $fail);
     }
 
@@ -188,7 +188,7 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
     #[Test]
     public function validCases($value): void
     {
-        (new ValidSmartPlaylistRulePayload())->validate('rules', $value, static fn($foo) => $foo); // @phpstan-ignore-line
+        (new ValidSmartPlaylistRulePayload())->validate('rules', $value, static fn ($foo) => $foo); // @phpstan-ignore-line
         $this->addToAssertionCount(1);
     }
 }

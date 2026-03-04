@@ -108,7 +108,7 @@ class ArtistBuilder extends FavoriteableBuilder
 
         return $this
             ->accessible()
-            ->when($includeFavoriteStatus, static fn(self $query) => $query->withFavoriteStatus($favoritesOnly))
-            ->when($includePlayCount, static fn(self $query) => $query->withPlayCount($includeFavoriteStatus));
+            ->when($includeFavoriteStatus, static fn (self $query) => $query->withFavoriteStatus($favoritesOnly))
+            ->when($includePlayCount, static fn (self $query) => $query->withPlayCount($includeFavoriteStatus));
     }
 }

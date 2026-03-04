@@ -42,7 +42,7 @@ class ForceHttpsTest extends TestCase
         );
 
         $response = Mockery::mock(Response::class);
-        $next = static fn() => $response;
+        $next = static fn () => $response;
 
         self::assertSame($response, $this->middleware->handle($request, $next));
     }
@@ -61,7 +61,7 @@ class ForceHttpsTest extends TestCase
         $request->shouldNotReceive('setTrustedProxies');
 
         $response = Mockery::mock(Response::class);
-        $next = static fn() => $response;
+        $next = static fn () => $response;
 
         self::assertSame($response, $this->middleware->handle($request, $next));
     }

@@ -54,14 +54,16 @@ class Folder extends Model
 
     protected function name(): Attribute
     {
-        return Attribute::get(fn() => Arr::last(explode(DIRECTORY_SEPARATOR, $this->path)));
+        return Attribute::get(fn () => Arr::last(explode(DIRECTORY_SEPARATOR, $this->path)));
     }
 
     protected function isUploadsFolder(): Attribute
     {
         // An uploads folder has a format of __KOEL_UPLOADS_$<id>__ and is a child of the root folder
         // (i.e., it has no parent).
-        return Attribute::get(fn() => !$this->parent_id && preg_match('/^__KOEL_UPLOADS_\$\d+__$/', $this->name) === 1);
+        return Attribute::get(
+            fn () => !$this->parent_id && preg_match('/^__KOEL_UPLOADS_\$\d+__$/', $this->name) === 1,
+        );
     }
 
     protected function uploaderId(): Attribute

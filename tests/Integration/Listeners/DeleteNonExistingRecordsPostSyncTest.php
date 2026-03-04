@@ -27,7 +27,7 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
     public function handleDoesNotDeleteCloudEntries(): void
     {
         collect(SongStorageType::cases())
-            ->filter(static fn($type) => $type !== SongStorageType::LOCAL)
+            ->filter(static fn ($type) => $type !== SongStorageType::LOCAL)
             ->each(function ($type): void {
                 $song = Song::factory()->create(['storage' => $type]);
                 $this->listener->handle(new MediaScanCompleted(ScanResultCollection::create()));

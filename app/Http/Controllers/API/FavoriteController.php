@@ -44,7 +44,7 @@ class FavoriteController extends Controller
         /** @var Collection<int, Model> $entities */
         $entities = $modelType::query()->whereIn('id', $request->ids)->get();
 
-        $entities->each(fn(Model $entity) => $this->authorize('access', $entity));
+        $entities->each(fn (Model $entity) => $this->authorize('access', $entity));
 
         $this->service->batchFavorite($entities, $this->user);
 
@@ -58,7 +58,7 @@ class FavoriteController extends Controller
         /** @var Collection<int, Favoriteable&Model> $entities */
         $entities = $modelType::query()->whereIn('id', $request->ids)->get();
 
-        $entities->each(fn(Model $entity) => $this->authorize('access', $entity));
+        $entities->each(fn (Model $entity) => $this->authorize('access', $entity));
 
         $this->service->batchUndoFavorite($entities, $this->user);
 

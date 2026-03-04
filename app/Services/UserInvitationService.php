@@ -26,7 +26,7 @@ class UserInvitationService
         $role->assertAvailable();
 
         return DB::transaction(function () use ($emails, $role, $invitor) {
-            return collect($emails)->map(fn($email) => $this->inviteOne($email, $role, $invitor));
+            return collect($emails)->map(fn ($email) => $this->inviteOne($email, $role, $invitor));
         });
     }
 

@@ -47,7 +47,7 @@ class SongController extends Controller
     public function update(SongUpdateRequest $request)
     {
         // Don't use SongRepository::findMany() because it'd be already catered to the current user.
-        Song::query()->findMany($request->songs)->each(fn(Song $song) => $this->authorize('edit', $song));
+        Song::query()->findMany($request->songs)->each(fn (Song $song) => $this->authorize('edit', $song));
 
         $result = $this->songService->updateSongs($request->songs, $request->toDto());
         $albums = $this->albumRepository->getMany($result->updatedSongs->pluck('album_id')->toArray());
@@ -71,7 +71,7 @@ class SongController extends Controller
     public function destroy(DeleteSongsRequest $request)
     {
         // Don't use SongRepository::findMany() because it'd be already catered to the current user.
-        Song::query()->findMany($request->songs)->each(fn(Song $song) => $this->authorize('delete', $song));
+        Song::query()->findMany($request->songs)->each(fn (Song $song) => $this->authorize('delete', $song));
 
         $this->songService->deleteSongs($request->songs);
 

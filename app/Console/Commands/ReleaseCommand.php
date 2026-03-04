@@ -77,7 +77,7 @@ class ReleaseCommand extends Command
         ];
 
         foreach ($gitCommands as $command) {
-            $this->components->task("Executing `git $command`", static fn() => self::runOkOrThrow("git $command"));
+            $this->components->task("Executing `git $command`", static fn () => self::runOkOrThrow("git $command"));
         }
 
         info("Success! The new version $version has been tagged.");
@@ -109,7 +109,7 @@ class ReleaseCommand extends Command
                 label: 'Enter the version you want to release',
                 placeholder: $patchVersion,
                 required: true,
-                validate: static fn(string $value) => self::tryParseVersion($value) ? null : 'Invalid version format',
+                validate: static fn (string $value) => self::tryParseVersion($value) ? null : 'Invalid version format',
             );
         }
 

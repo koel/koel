@@ -197,14 +197,14 @@ class SongServiceTest extends TestCase
         Dispatcher::expects('dispatch')->with(DeleteTranscodeFilesJob::class)->never();
 
         $this->service->deleteSongs($songs->pluck('id')->toArray());
-        $songs->each(fn(Song $song) => $this->assertDatabaseMissing(Song::class, ['id' => $song->id]));
+        $songs->each(fn (Song $song) => $this->assertDatabaseMissing(Song::class, ['id' => $song->id]));
     }
 
     #[Test]
     public function deleteSongsWithTranscodes(): void
     {
         $transcodes = Transcode::factory()->count(2)->create();
-        $songs = $transcodes->map(static fn(Transcode $transcode) => $transcode->song); // @phpstan-ignore-line
+        $songs = $transcodes->map(static fn (Transcode $transcode) => $transcode->song); // @phpstan-ignore-line
 
         Dispatcher::expects('dispatch')
             ->with(DeleteSongFilesJob::class)

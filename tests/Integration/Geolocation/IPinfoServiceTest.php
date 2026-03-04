@@ -37,7 +37,7 @@ class IPinfoServiceTest extends TestCase
         $countryCode = $this->service->getCountryCodeFromIp('172.16.31.10');
 
         self::assertSame('DE', $countryCode);
-        Saloon::assertSent(static fn(GetLiteDataRequest $request) => $request->ip === '172.16.31.10');
+        Saloon::assertSent(static fn (GetLiteDataRequest $request) => $request->ip === '172.16.31.10');
     }
 
     #[Test]

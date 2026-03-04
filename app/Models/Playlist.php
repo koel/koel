@@ -73,7 +73,7 @@ class Playlist extends Model implements AuditableContract, Embeddable
 
     protected function owner(): Attribute
     {
-        return Attribute::get(fn() => $this->users()->wherePivot('role', 'owner')->sole())->shouldCache();
+        return Attribute::get(fn () => $this->users()->wherePivot('role', 'owner')->sole())->shouldCache();
     }
 
     public function collaborators(): BelongsToMany
@@ -93,13 +93,13 @@ class Playlist extends Model implements AuditableContract, Embeddable
 
     protected function isSmart(): Attribute
     {
-        return Attribute::get(fn(): bool => (bool) $this->rule_groups?->isNotEmpty())->shouldCache();
+        return Attribute::get(fn (): bool => (bool) $this->rule_groups?->isNotEmpty())->shouldCache();
     }
 
     protected function ruleGroups(): Attribute
     {
         // aliasing the attribute to avoid confusion
-        return Attribute::get(fn() => $this->rules);
+        return Attribute::get(fn () => $this->rules);
     }
 
     public function ownedBy(User $user): bool

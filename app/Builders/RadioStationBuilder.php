@@ -39,7 +39,7 @@ class RadioStationBuilder extends FavoriteableBuilder
     {
         $this->user = $user;
 
-        return $this->accessible()->when($includeFavoriteStatus, static fn(self $query) => $query->withFavoriteStatus(
+        return $this->accessible()->when($includeFavoriteStatus, static fn (self $query) => $query->withFavoriteStatus(
             $favoritesOnly,
         ));
     }

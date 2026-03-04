@@ -23,7 +23,7 @@ class AlbumInformationTest extends TestCase
         $lastfm = $this->mock(EncyclopediaService::class);
         $lastfm
             ->expects('getAlbumInformation')
-            ->with(Mockery::on(static fn(Album $a) => $a->is($album)))
+            ->with(Mockery::on(static fn (Album $a) => $a->is($album)))
             ->andReturn(AlbumInformation::make(
                 url: 'https://lastfm.com/album/foo',
                 cover: 'https://lastfm.com/cover/foo',

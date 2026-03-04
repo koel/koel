@@ -29,7 +29,7 @@ class SongVisibilityTest extends PlusTestCase
 
         $this->putAs('api/songs/publicize', ['songs' => $ownSongs->modelKeys()], $currentUser)->assertSuccessful();
 
-        $ownSongs->each(static fn(Song $song) => self::assertTrue($song->refresh()->is_public));
+        $ownSongs->each(static fn (Song $song) => self::assertTrue($song->refresh()->is_public));
     }
 
     #[Test]
@@ -51,6 +51,6 @@ class SongVisibilityTest extends PlusTestCase
 
         $this->putAs('api/songs/privatize', ['songs' => $ownSongs->modelKeys()], $currentUser)->assertSuccessful();
 
-        $ownSongs->each(static fn(Song $song) => self::assertFalse($song->refresh()->is_public));
+        $ownSongs->each(static fn (Song $song) => self::assertFalse($song->refresh()->is_public));
     }
 }
