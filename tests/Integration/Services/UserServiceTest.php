@@ -35,7 +35,7 @@ class UserServiceTest extends TestCase
             email: 'bruce@dickison.com',
             plainTextPassword: 'FearOfTheDark',
             role: Role::ADMIN,
-            avatar: minimal_base64_encoded_image(),
+            avatar: minimal_base64_encoded_image()
         ));
 
         $this->assertModelExists($user);
@@ -50,7 +50,7 @@ class UserServiceTest extends TestCase
         $user = $this->service->createUser(UserCreateData::make(
             name: 'Bruce Dickinson',
             email: 'bruce@dickison.com',
-            plainTextPassword: 'FearOfTheDark',
+            plainTextPassword: 'FearOfTheDark'
         ));
 
         $this->assertModelExists($user);
@@ -65,7 +65,7 @@ class UserServiceTest extends TestCase
         $user = $this->service->createUser(UserCreateData::make(
             name: 'Bruce Dickinson',
             email: 'bruce@dickison.com',
-            plainTextPassword: '',
+            plainTextPassword: ''
         ));
 
         $this->assertModelExists($user);
@@ -82,7 +82,7 @@ class UserServiceTest extends TestCase
             email: 'steve@iron.com',
             plainTextPassword: 'TheTrooper',
             role: Role::ADMIN,
-            avatar: minimal_base64_encoded_image(),
+            avatar: minimal_base64_encoded_image()
         ));
 
         $user->refresh();
@@ -100,10 +100,7 @@ class UserServiceTest extends TestCase
         $user = create_admin(['password' => Hash::make('TheTrooper')]);
         self::assertSame(Role::ADMIN, $user->role);
 
-        $this->service->updateUser($user, UserUpdateData::make(
-            name: 'Steve Harris',
-            email: 'steve@iron.com'
-        ));
+        $this->service->updateUser($user, UserUpdateData::make(name: 'Steve Harris', email: 'steve@iron.com'));
 
         $user->refresh();
 
@@ -120,7 +117,7 @@ class UserServiceTest extends TestCase
 
         $this->service->updateUser(create_user_prospect(), UserUpdateData::make(
             name: 'Steve Harris',
-            email: 'steve@iron.com',
+            email: 'steve@iron.com'
         ));
     }
 }

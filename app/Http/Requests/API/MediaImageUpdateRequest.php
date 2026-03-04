@@ -10,7 +10,7 @@ abstract class MediaImageUpdateRequest extends Request
     public function rules(): array
     {
         return [
-            $this->getImageFieldName() => ['string', 'required', new ValidImageData()],
+            $this->getImageFieldName() => ['string', 'required', new ValidImageData()]
         ];
     }
 

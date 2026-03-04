@@ -36,7 +36,7 @@ class ScanCommand extends Command
     public function __construct(
         private readonly DirectoryScanner $directoryScanner,
         private readonly WatchRecordScanner $watchRecordScanner,
-        private readonly UserRepository $userRepository,
+        private readonly UserRepository $userRepository
     ) {
         parent::__construct();
     }
@@ -102,7 +102,7 @@ class ScanCommand extends Command
         $this->components->bulletList([
             "<fg=green>{$results->success()->count()}</> new or updated song(s)",
             "<fg=yellow>{$results->skipped()->count()}</> unchanged song(s)",
-            "<fg=red>{$results->error()->count()}</> invalid file(s)",
+            "<fg=red>{$results->error()->count()}</> invalid file(s)"
         ]);
     }
 
@@ -132,9 +132,9 @@ class ScanCommand extends Command
         $path = trim(Str::replaceFirst($this->mediaPath, '', $result->path), DIRECTORY_SEPARATOR);
 
         $this->components->twoColumnDetail($path, match (true) {
-            $result->isSuccess() => "<fg=green>OK</>",
-            $result->isSkipped() => "<fg=yellow>SKIPPED</>",
-            $result->isError() => "<fg=red>ERROR</>",
+            $result->isSuccess() => '<fg=green>OK</>',
+            $result->isSkipped() => '<fg=yellow>SKIPPED</>',
+            $result->isError() => '<fg=red>ERROR</>',
             default => throw new RuntimeException("Unknown scan result type: {$result->type->value}")
         });
 

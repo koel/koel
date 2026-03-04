@@ -29,11 +29,7 @@ class S3LambdaStorageTest extends TestCase
         $this->songRepository = Mockery::mock(SongRepository::class);
         $this->userRepository = Mockery::mock(UserRepository::class);
 
-        $this->storage = new S3LambdaStorage(
-            $this->albumService,
-            $this->songRepository,
-            $this->userRepository
-        );
+        $this->storage = new S3LambdaStorage($this->albumService, $this->songRepository, $this->userRepository);
     }
 
     #[Test]
@@ -75,7 +71,7 @@ class S3LambdaStorageTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create([
             'path' => 's3://foo/bar',
-            'storage' => 's3-lambda',
+            'storage' => 's3-lambda'
         ]);
 
         $this->storage->createSongEntry(
@@ -111,10 +107,13 @@ class S3LambdaStorageTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create([
             'path' => 's3://foo/bar',
-            'storage' => 's3-lambda',
+            'storage' => 's3-lambda'
         ]);
 
-        $this->songRepository->expects('findOneByPath')->with('s3://foo/bar')->andReturn($song);
+        $this->songRepository
+            ->expects('findOneByPath')
+            ->with('s3://foo/bar')
+            ->andReturn($song);
 
         $this->storage->deleteSongEntry('foo', 'bar');
 

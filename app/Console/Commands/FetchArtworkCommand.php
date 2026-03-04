@@ -22,8 +22,9 @@ class FetchArtworkCommand extends Command
     protected $signature = 'koel:fetch-artwork';
     protected $description = 'Attempt to fetch artist and album artworks from available sources.';
 
-    public function __construct(private readonly EncyclopediaService $encyclopedia)
-    {
+    public function __construct(
+        private readonly EncyclopediaService $encyclopedia
+    ) {
         parent::__construct();
     }
 
@@ -39,7 +40,7 @@ class FetchArtworkCommand extends Command
 
         Artist::query()
             ->whereNotIn('name', [Artist::UNKNOWN_NAME, Artist::VARIOUS_NAME])
-            ->where(static fn (ArtistBuilder $query) => $query->whereNull('image')->orWhere('image', ''))
+            ->where(static fn(ArtistBuilder $query) => $query->whereNull('image')->orWhere('image', ''))
             ->orderBy('name')
             ->lazy()
             ->each(function (Artist $artist): void {
@@ -58,7 +59,7 @@ class FetchArtworkCommand extends Command
         Album::query()
             ->whereNot('name', Album::UNKNOWN_NAME)
             ->whereNotIn('artist_name', [Artist::UNKNOWN_NAME, Artist::VARIOUS_NAME])
-            ->where(static fn (AlbumBuilder $query) => $query->whereNull('cover')->orWhere('cover', ''))
+            ->where(static fn(AlbumBuilder $query) => $query->whereNull('cover')->orWhere('cover', ''))
             ->orderBy('name')
             ->lazy()
             ->each(function (Album $album): void {

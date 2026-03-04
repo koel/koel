@@ -15,10 +15,11 @@ class FetchArtistEventsController extends Controller
     public function __invoke(
         Artist $artist,
         TicketmasterService $ticketmasterService,
-        Request $request,
+        Request $request
     ) {
-        return LiveEventResource::collection(
-            $ticketmasterService->searchEventForArtist($artist->name, $request->getClientIp())
-        );
+        return LiveEventResource::collection($ticketmasterService->searchEventForArtist(
+            $artist->name,
+            $request->getClientIp()
+        ));
     }
 }

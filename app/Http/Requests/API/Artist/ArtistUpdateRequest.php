@@ -17,7 +17,7 @@ class ArtistUpdateRequest extends Request
     {
         return [
             'name' => 'string|required',
-            'image' => ['string', 'sometimes', 'nullable', new ValidImageData()],
+            'image' => ['string', 'sometimes', 'nullable', new ValidImageData()]
         ];
     }
 
@@ -26,7 +26,7 @@ class ArtistUpdateRequest extends Request
         return ArtistUpdateData::make(
             name: $this->name,
             // null means no change to the image, when an empty string means to delete the image
-            image: $this->has('image') ? $this->string('image') : null,
+            image: $this->has('image') ? $this->string('image') : null
         );
     }
 }

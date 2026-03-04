@@ -29,11 +29,12 @@ class SongFileResource extends SongResource
         'disc',
         'is_public',
         'basename',
-        'created_at',
+        'created_at'
     ];
 
-    public function __construct(protected Song $song)
-    {
+    public function __construct(
+        protected Song $song
+    ) {
         Assert::true($song->storage === SongStorageType::LOCAL);
 
         parent::__construct($song);

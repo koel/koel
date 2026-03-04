@@ -27,8 +27,8 @@ class UserStoreRequest extends Request
                 'required',
                 Rule::enum(Role::class),
                 new AvailableRole(),
-                new UserCanManageRole($this->user()),
-            ],
+                new UserCanManageRole($this->user())
+            ]
         ];
     }
 
@@ -38,7 +38,7 @@ class UserStoreRequest extends Request
             name: $this->name,
             email: $this->email,
             plainTextPassword: $this->password,
-            role: $this->enum('role', Role::class),
+            role: $this->enum('role', Role::class)
         );
     }
 }

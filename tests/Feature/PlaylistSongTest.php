@@ -17,7 +17,8 @@ class PlaylistSongTest extends TestCase
         $playlist = create_playlist();
         $playlist->addPlayables(Song::factory(5)->create());
 
-        $this->getAs("api/playlists/{$playlist->id}/songs", $playlist->owner)
+        $this
+            ->getAs("api/playlists/{$playlist->id}/songs", $playlist->owner)
             ->assertSuccessful()
             ->assertJsonStructure([0 => SongResource::JSON_STRUCTURE]);
     }
@@ -36,15 +37,16 @@ class PlaylistSongTest extends TestCase
                             'id' => '2a4548cd-c67f-44d4-8fec-34ff75c8a026',
                             'model' => 'title',
                             'operator' => 'contains',
-                            'value' => ['foo'],
-                        ],
-                    ],
-                ],
-            ],
+                            'value' => ['foo']
+                        ]
+                    ]
+                ]
+            ]
         ]);
 
-        $this->getAs("api/playlists/{$playlist->id}/songs", $playlist->owner)
-            ->assertJsonStructure([0 => SongResource::JSON_STRUCTURE]);
+        $this->getAs("api/playlists/{$playlist->id}/songs", $playlist->owner)->assertJsonStructure([
+            0 => SongResource::JSON_STRUCTURE
+        ]);
     }
 
     #[Test]
@@ -53,8 +55,7 @@ class PlaylistSongTest extends TestCase
         $playlist = create_playlist();
         $playlist->addPlayables(Song::factory(5)->create());
 
-        $this->getAs("api/playlists/{$playlist->id}/songs")
-            ->assertForbidden();
+        $this->getAs("api/playlists/{$playlist->id}/songs")->assertForbidden();
     }
 
     #[Test]
@@ -63,8 +64,11 @@ class PlaylistSongTest extends TestCase
         $playlist = create_playlist();
         $songs = Song::factory(2)->create();
 
-        $this->postAs("api/playlists/{$playlist->id}/songs", ['songs' => $songs->modelKeys()], $playlist->owner)
-            ->assertSuccessful();
+        $this->postAs(
+            "api/playlists/{$playlist->id}/songs",
+            ['songs' => $songs->modelKeys()],
+            $playlist->owner
+        )->assertSuccessful();
 
         self::assertEqualsCanonicalizing($songs->modelKeys(), $playlist->playables->modelKeys());
     }
@@ -84,8 +88,7 @@ class PlaylistSongTest extends TestCase
             "api/playlists/{$playlist->id}/songs",
             ['songs' => $toBeRemovedSongs->modelKeys()],
             $playlist->owner
-        )
-            ->assertNoContent();
+        )->assertNoContent();
 
         $playlist->refresh();
 
@@ -100,11 +103,9 @@ class PlaylistSongTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create();
 
-        $this->postAs("api/playlists/{$playlist->id}/songs", ['songs' => [$song->id]])
-            ->assertForbidden();
+        $this->postAs("api/playlists/{$playlist->id}/songs", ['songs' => [$song->id]])->assertForbidden();
 
-        $this->deleteAs("api/playlists/{$playlist->id}/songs", ['songs' => [$song->id]])
-            ->assertForbidden();
+        $this->deleteAs("api/playlists/{$playlist->id}/songs", ['songs' => [$song->id]])->assertForbidden();
     }
 
     #[Test]
@@ -119,19 +120,21 @@ class PlaylistSongTest extends TestCase
                             'id' => '2a4548cd-c67f-44d4-8fec-34ff75c8a026',
                             'model' => 'title',
                             'operator' => 'contains',
-                            'value' => ['foo'],
-                        ],
-                    ],
-                ],
-            ],
+                            'value' => ['foo']
+                        ]
+                    ]
+                ]
+            ]
         ]);
 
         $songs = Song::factory(2)->create()->modelKeys();
 
-        $this->postAs("api/playlists/{$playlist->id}/songs", ['songs' => $songs], $playlist->owner)
-            ->assertForbidden();
+        $this->postAs("api/playlists/{$playlist->id}/songs", ['songs' => $songs], $playlist->owner)->assertForbidden();
 
-        $this->deleteAs("api/playlists/{$playlist->id}/songs", ['songs' => $songs], $playlist->owner)
-            ->assertForbidden();
+        $this->deleteAs(
+            "api/playlists/{$playlist->id}/songs",
+            ['songs' => $songs],
+            $playlist->owner
+        )->assertForbidden();
     }
 }

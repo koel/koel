@@ -33,17 +33,16 @@ class ForceHttpsTest extends TestCase
 
         $request = Mockery::mock(Request::class);
         $request->expects('getClientIp')->andReturn('127.0.0.1');
-        $request->expects('setTrustedProxies')
-            ->with(
-                ['127.0.0.1'],
-                Request::HEADER_X_FORWARDED_FOR
-                | Request::HEADER_X_FORWARDED_HOST
-                | Request::HEADER_X_FORWARDED_PORT
-                | Request::HEADER_X_FORWARDED_PROTO
-            );
+        $request->expects('setTrustedProxies')->with(
+            ['127.0.0.1'],
+            Request::HEADER_X_FORWARDED_FOR
+            | Request::HEADER_X_FORWARDED_HOST
+            | Request::HEADER_X_FORWARDED_PORT
+            | Request::HEADER_X_FORWARDED_PROTO
+        );
 
         $response = Mockery::mock(Response::class);
-        $next = static fn () => $response;
+        $next = static fn() => $response;
 
         self::assertSame($response, $this->middleware->handle($request, $next));
     }
@@ -53,13 +52,16 @@ class ForceHttpsTest extends TestCase
     {
         config(['koel.force_https' => false]);
 
-        $this->url->expects('forceScheme')->with('https')->never();
+        $this->url
+            ->expects('forceScheme')
+            ->with('https')
+            ->never();
 
         $request = Mockery::mock(Request::class);
         $request->shouldNotReceive('setTrustedProxies');
 
         $response = Mockery::mock(Response::class);
-        $next = static fn () => $response;
+        $next = static fn() => $response;
 
         self::assertSame($response, $this->middleware->handle($request, $next));
     }

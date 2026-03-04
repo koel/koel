@@ -36,7 +36,7 @@ class ArtistTest extends TestCase
             [''],
             ['  '],
             [null],
-            [false],
+            [false]
         ];
     }
 

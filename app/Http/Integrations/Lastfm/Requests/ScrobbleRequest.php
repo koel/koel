@@ -37,7 +37,7 @@ final class ScrobbleRequest extends Request implements HasBody, RequiresSignatur
             'artist' => $this->song->artist->name,
             'track' => $this->song->title,
             'timestamp' => $this->timestamp,
-            'sk' => $this->user->preferences->lastFmSessionKey,
+            'sk' => $this->user->preferences->lastFmSessionKey
         ];
 
         if ($this->song->album->name !== Album::UNKNOWN_NAME) {

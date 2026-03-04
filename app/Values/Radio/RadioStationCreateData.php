@@ -11,7 +11,7 @@ final readonly class RadioStationCreateData implements Arrayable
         public string $name,
         public string $description,
         public ?string $logo,
-        public bool $isPublic,
+        public bool $isPublic
     ) {
     }
 
@@ -20,15 +20,9 @@ final readonly class RadioStationCreateData implements Arrayable
         string $name,
         string $description,
         ?string $logo = null,
-        bool $isPublic = false,
+        bool $isPublic = false
     ): self {
-        return new self(
-            url: $url,
-            name: $name,
-            description: $description,
-            logo: $logo,
-            isPublic: $isPublic,
-        );
+        return new self(url: $url, name: $name, description: $description, logo: $logo, isPublic: $isPublic);
     }
 
     /** @inheritdoc */
@@ -39,7 +33,7 @@ final readonly class RadioStationCreateData implements Arrayable
             'name' => $this->name,
             'logo' => $this->logo,
             'description' => $this->description,
-            'is_public' => $this->isPublic,
+            'is_public' => $this->isPublic
         ];
     }
 }

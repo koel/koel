@@ -32,11 +32,7 @@ class SettingServiceTest extends TestCase
 
         $assert();
 
-        Setting::set('branding', Branding::make(
-            name: 'Test Branding',
-            logo: 'test-logo.png',
-            cover: 'test-cover.png',
-        ));
+        Setting::set('branding', Branding::make(name: 'Test Branding', logo: 'test-logo.png', cover: 'test-cover.png'));
 
         $assert();
     }

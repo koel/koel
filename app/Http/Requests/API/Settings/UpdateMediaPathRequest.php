@@ -14,7 +14,7 @@ class UpdateMediaPathRequest extends Request
     public function rules(): array
     {
         return [
-            'path' => ['string', new MediaPath()],
+            'path' => ['string', new MediaPath()]
         ];
     }
 }

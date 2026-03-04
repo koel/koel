@@ -13,7 +13,6 @@ class ArtistEventTest extends TestCase
     {
         $artist = Artist::factory()->create();
 
-        $this->getAs("api/artists/{$artist->id}/events")
-            ->assertNotFound();
+        $this->getAs("api/artists/{$artist->id}/events")->assertNotFound();
     }
 }

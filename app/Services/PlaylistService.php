@@ -19,7 +19,7 @@ class PlaylistService
 {
     public function __construct(
         private readonly ImageStorage $imageStorage,
-        private readonly SongRepository $songRepository,
+        private readonly SongRepository $songRepository
     ) {
     }
 
@@ -30,29 +30,27 @@ class PlaylistService
             return $this->imageStorage->storeImage($data->cover);
         });
 
-        return DB::transaction(
-            static function () use ($data, $cover, $user): Playlist {
-                /** @var Playlist $playlist */
-                $playlist = Playlist::query()->create([
-                    'name' => $data->name,
-                    'description' => $data->description,
-                    'rules' => $data->ruleGroups,
-                    'cover' => $cover,
-                ]);
+        return DB::transaction(static function () use ($data, $cover, $user): Playlist {
+            /** @var Playlist $playlist */
+            $playlist = Playlist::query()->create([
+                'name' => $data->name,
+                'description' => $data->description,
+                'rules' => $data->ruleGroups,
+                'cover' => $cover
+            ]);
 
-                $user->ownedPlaylists()->attach($playlist, [
-                    'role' => 'owner',
-                ]);
+            $user->ownedPlaylists()->attach($playlist, [
+                'role' => 'owner'
+            ]);
 
-                $playlist->folders()->attach($data->folderId);
+            $playlist->folders()->attach($data->folderId);
 
-                if (!$playlist->is_smart && $data->playableIds) {
-                    $playlist->addPlayables($data->playableIds, $user);
-                }
-
-                return $playlist;
+            if (!$playlist->is_smart && $data->playableIds) {
+                $playlist->addPlayables($data->playableIds, $user);
             }
-        );
+
+            return $playlist;
+        });
     }
 
     public function updatePlaylist(Playlist $playlist, PlaylistUpdateData $dto): Playlist
@@ -60,11 +58,11 @@ class PlaylistService
         $data = [
             'name' => $dto->name,
             'description' => $dto->description,
-            'rules' => $dto->ruleGroups,
+            'rules' => $dto->ruleGroups
         ];
 
         if (is_string($dto->cover)) {
-            $data['cover'] = rescue_if($dto->cover, fn () => $this->imageStorage->storeImage($dto->cover), '');
+            $data['cover'] = rescue_if($dto->cover, fn() => $this->imageStorage->storeImage($dto->cover), '');
         }
 
         $playlist->update($data);
@@ -86,7 +84,7 @@ class PlaylistService
             $playables = Collection::wrap($playables);
 
             $playlist->addPlayables(
-                $playables->filter(static fn ($song): bool => !$playlist->playables->contains($song)),
+                $playables->filter(static fn($song): bool => !$playlist->playables->contains($song)),
                 $user
             );
 
@@ -118,7 +116,7 @@ class PlaylistService
         Playlist $playlist,
         array $movingIds,
         string $target,
-        Placement $placement,
+        Placement $placement
     ): void {
         throw_if($playlist->is_smart, OperationNotApplicableForSmartPlaylistException::class);
 
@@ -127,7 +125,8 @@ class PlaylistService
             $insertPosition = $placement === Placement::BEFORE ? $targetPosition : $targetPosition + 1;
 
             // create a "gap" for the moving songs by incrementing the position of the songs after the target
-            $playlist->playables()
+            $playlist
+                ->playables()
                 ->newPivotQuery()
                 ->where('position', $placement === Placement::BEFORE ? '>=' : '>', $targetPosition)
                 ->whereNotIn('song_id', $movingIds)
@@ -145,8 +144,8 @@ class PlaylistService
 
     public function isPlaylistCollaborative(Playlist $playlist): bool
     {
-        return once(static fn () => !$playlist->is_smart
-            && LicenseFacade::isPlus()
-            && $playlist->collaborators->isNotEmpty());
+        return once(
+            static fn() => !$playlist->is_smart && LicenseFacade::isPlus() && $playlist->collaborators->isNotEmpty()
+        );
     }
 }

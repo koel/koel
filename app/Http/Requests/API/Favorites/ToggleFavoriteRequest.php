@@ -18,7 +18,7 @@ class ToggleFavoriteRequest extends Request
     {
         return [
             'type' => self::favoriteableTypeRule(),
-            'id' => ['required', 'string'],
+            'id' => ['required', 'string']
         ];
     }
 }

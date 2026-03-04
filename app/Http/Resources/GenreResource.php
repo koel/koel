@@ -10,11 +10,12 @@ class GenreResource extends JsonResource
     public const JSON_STRUCTURE = [
         'type',
         'id',
-        'name',
+        'name'
     ];
 
-    public function __construct(private readonly GenreSummary $summary)
-    {
+    public function __construct(
+        private readonly GenreSummary $summary
+    ) {
         parent::__construct($summary);
     }
 
@@ -26,7 +27,7 @@ class GenreResource extends JsonResource
             'id' => $this->summary->publicId,
             'name' => $this->summary->name,
             'song_count' => $this->summary->songCount,
-            'length' => $this->summary->length,
+            'length' => $this->summary->length
         ];
     }
 }

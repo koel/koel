@@ -25,11 +25,9 @@ class MediaPathSettingTest extends TestCase
     #[Test]
     public function saveSettings(): void
     {
-        $this->mediaScanner->expects('scan')
-            ->andReturn(ScanResultCollection::create());
+        $this->mediaScanner->expects('scan')->andReturn(ScanResultCollection::create());
 
-        $this->putAs('/api/settings/media-path', ['path' => __DIR__], create_admin())
-            ->assertSuccessful();
+        $this->putAs('/api/settings/media-path', ['path' => __DIR__], create_admin())->assertSuccessful();
 
         self::assertSame(__DIR__, Setting::get('media_path'));
     }
@@ -37,8 +35,7 @@ class MediaPathSettingTest extends TestCase
     #[Test]
     public function nonAdminCannotSaveSettings(): void
     {
-        $this->putAs('/api/settings/media-path', ['path' => __DIR__])
-            ->assertForbidden();
+        $this->putAs('/api/settings/media-path', ['path' => __DIR__])->assertForbidden();
     }
 
     #[Test]
@@ -46,8 +43,7 @@ class MediaPathSettingTest extends TestCase
     {
         config(['koel.storage_driver' => 's3']);
 
-        $this->putAs('/api/settings/media-path', ['path' => __DIR__], create_admin())
-            ->assertUnprocessable();
+        $this->putAs('/api/settings/media-path', ['path' => __DIR__], create_admin())->assertUnprocessable();
 
         config(['koel.storage_driver' => 'local']);
     }

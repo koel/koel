@@ -29,7 +29,7 @@ class Transcode extends Model
 
     protected $casts = [
         'bit_rate' => 'int',
-        'file_size' => 'int',
+        'file_size' => 'int'
     ];
 
     protected $with = ['song'];
@@ -52,6 +52,6 @@ class Transcode extends Model
 
     protected function storage(): Attribute
     {
-        return Attribute::get(fn () => $this->song->storage)->shouldCache();
+        return Attribute::get(fn() => $this->song->storage)->shouldCache();
     }
 }

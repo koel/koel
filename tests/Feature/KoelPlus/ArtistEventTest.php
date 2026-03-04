@@ -38,15 +38,16 @@ class ArtistEventTest extends PlusTestCase
         Saloon::fake([
             AttractionSearchRequest::class => MockResponse::make(body: $attractionSearchJson),
             EventSearchRequest::class => MockResponse::make(body: $eventSearchJson),
-            GetLiteDataRequest::class => MockResponse::make(body: $liteDataJson),
+            GetLiteDataRequest::class => MockResponse::make(body: $liteDataJson)
         ]);
 
         /** @var Artist $artist */
         $artist = Artist::factory()->create([
-            'name' => 'Slayer',
+            'name' => 'Slayer'
         ]);
 
-        $this->getAs("api/artists/{$artist->id}/events")
+        $this
+            ->getAs("api/artists/{$artist->id}/events")
             ->assertJsonStructure(['*' => LiveEventResource::JSON_STRUCTURE])
             ->assertJsonCount(2)
             ->assertOk();
@@ -67,8 +68,8 @@ class ArtistEventTest extends PlusTestCase
             venue: TicketmasterVenue::make(
                 name: 'Sample Venue',
                 url: 'https://www.ticketmaster.com/venue/1234567890',
-                city: 'Sample City',
-            ),
+                city: 'Sample City'
+            )
         );
 
         Cache::put(cache_key('Ticketmaster events', 'Slayer', 'DE'), collect([$event]), now()->addDay());
@@ -76,10 +77,11 @@ class ArtistEventTest extends PlusTestCase
 
         /** @var Artist $artist */
         $artist = Artist::factory()->create([
-            'name' => 'Slayer',
+            'name' => 'Slayer'
         ]);
 
-        $this->getAs("api/artists/{$artist->id}/events")
+        $this
+            ->getAs("api/artists/{$artist->id}/events")
             ->assertJsonStructure(['*' => LiveEventResource::JSON_STRUCTURE])
             ->assertJsonCount(1)
             ->assertOk();

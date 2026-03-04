@@ -18,18 +18,22 @@ class ProfileTest extends PlusTestCase
             'sso_id' => '123',
             'email' => 'user@koel.dev',
             'name' => 'SSO User',
-            'avatar' => null,
+            'avatar' => null
             // no current password required for SSO users
         ]);
 
         self::assertTrue($user->is_sso);
         self::assertFalse($user->has_custom_avatar);
 
-        $this->putAs('api/me', [
-            'name' => 'Bruce Dickinson',
-            'email' => 'bruce@iron.com',
-            'avatar' => minimal_base64_encoded_image(),
-        ], $user)->assertOk();
+        $this->putAs(
+            'api/me',
+            [
+                'name' => 'Bruce Dickinson',
+                'email' => 'bruce@iron.com',
+                'avatar' => minimal_base64_encoded_image()
+            ],
+            $user
+        )->assertOk();
 
         $user->refresh();
 

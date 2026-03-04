@@ -12,8 +12,9 @@ use Illuminate\Support\Arr;
 
 class LambdaSongController extends Controller
 {
-    public function __construct(private readonly S3LambdaStorage $storage)
-    {
+    public function __construct(
+        private readonly S3LambdaStorage $storage
+    ) {
     }
 
     public function put(PutSongRequest $request)

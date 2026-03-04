@@ -34,5 +34,7 @@ jobs:
           composer-options: --prefer-dist
       - name: Run code style checker
         run: composer cs
+      - name: Run linter
+        run: composer lint
       - name: Run static analysis
         run: composer analyze -- --no-progress

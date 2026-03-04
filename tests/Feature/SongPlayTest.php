@@ -40,14 +40,12 @@ class SongPlayTest extends TestCase
 
         /** @var Song $song */
         $song = Song::factory()->create([
-            'path' => test_path('songs/blank.mp3'),
+            'path' => test_path('songs/blank.mp3')
         ]);
 
-        $this->mock(LocalStreamerAdapter::class)
-            ->expects('stream');
+        $this->mock(LocalStreamerAdapter::class)->expects('stream');
 
-        $this->get("play/{$song->id}?t=$token->audioToken")
-            ->assertOk();
+        $this->get("play/{$song->id}?t=$token->audioToken")->assertOk();
     }
 
     #[Test]
@@ -62,14 +60,12 @@ class SongPlayTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create([
             'path' => '/tmp/blank.flac',
-            'mime_type' => 'audio/flac',
+            'mime_type' => 'audio/flac'
         ]);
 
-        $this->mock(TranscodingStreamerAdapter::class)
-            ->expects('stream');
+        $this->mock(TranscodingStreamerAdapter::class)->expects('stream');
 
-        $this->get("play/{$song->id}?t=$token->audioToken")
-            ->assertOk();
+        $this->get("play/{$song->id}?t=$token->audioToken")->assertOk();
 
         config(['koel.streaming.transcode_flac' => false]);
     }
@@ -85,10 +81,8 @@ class SongPlayTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create(['path' => '/var/songs/blank.mp3']);
 
-        $this->mock(TranscodingStreamerAdapter::class)
-            ->expects('stream');
+        $this->mock(TranscodingStreamerAdapter::class)->expects('stream');
 
-        $this->get("play/{$song->id}/1?t=$token->audioToken")
-            ->assertOk();
+        $this->get("play/{$song->id}/1?t=$token->audioToken")->assertOk();
     }
 }

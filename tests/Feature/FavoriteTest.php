@@ -26,16 +26,19 @@ class FavoriteTest extends TestCase
         $song = Song::factory()->create();
         $user = create_user();
 
-        $this->postAs('api/favorites/toggle', [
-            'type' => 'playable',
-            'id' =>  $song->id,
-        ], $user)
-            ->assertJsonStructure(FavoriteResource::JSON_STRUCTURE);
+        $this->postAs(
+            'api/favorites/toggle',
+            [
+                'type' => 'playable',
+                'id' => $song->id
+            ],
+            $user
+        )->assertJsonStructure(FavoriteResource::JSON_STRUCTURE);
 
         $this->assertDatabaseHas(Favorite::class, [
             'favoriteable_type' => 'playable',
             'favoriteable_id' => $song->id,
-            'user_id' => $user->id,
+            'user_id' => $user->id
         ]);
 
         Event::assertDispatched(SongFavoriteToggled::class);
@@ -49,14 +52,17 @@ class FavoriteTest extends TestCase
         /** @var Favorite $favorite */
         $favorite = Favorite::factory()->create();
 
-        $this->postAs('api/favorites/toggle', [
-            'type' => 'playable',
-            'id' => $favorite->favoriteable_id,
-        ], $favorite->user)
-            ->assertNoContent();
+        $this->postAs(
+            'api/favorites/toggle',
+            [
+                'type' => 'playable',
+                'id' => $favorite->favoriteable_id
+            ],
+            $favorite->user
+        )->assertNoContent();
 
         $this->assertDatabaseMissing(Favorite::class, [
-            'id' => $favorite->id,
+            'id' => $favorite->id
         ]);
 
         Event::assertDispatched(SongFavoriteToggled::class);
@@ -71,17 +77,20 @@ class FavoriteTest extends TestCase
         $songs = Song::factory()->count(2)->create();
         $user = create_user();
 
-        $this->postAs('api/favorites', [
-            'type' => 'playable',
-            'ids' => $songs->pluck('id')->toArray(),
-        ], $user)
-            ->assertNoContent();
+        $this->postAs(
+            'api/favorites',
+            [
+                'type' => 'playable',
+                'ids' => $songs->pluck('id')->toArray()
+            ],
+            $user
+        )->assertNoContent();
 
         foreach ($songs as $song) {
             $this->assertDatabaseHas(Favorite::class, [
                 'favoriteable_type' => 'playable',
                 'favoriteable_id' => $song->id,
-                'user_id' => $user->id,
+                'user_id' => $user->id
             ]);
         }
 
@@ -96,17 +105,23 @@ class FavoriteTest extends TestCase
         $user = create_user();
 
         /** @var Collection<Favorite> $favorites */
-        $favorites = Favorite::factory()->for($user)->count(2)->create();
+        $favorites = Favorite::factory()
+            ->for($user)
+            ->count(2)
+            ->create();
 
-        $this->deleteAs('api/favorites', [
-            'type' => 'playable',
-            'ids' => $favorites->pluck('favoriteable_id')->toArray(),
-        ], $user)
-            ->assertNoContent();
+        $this->deleteAs(
+            'api/favorites',
+            [
+                'type' => 'playable',
+                'ids' => $favorites->pluck('favoriteable_id')->toArray()
+            ],
+            $user
+        )->assertNoContent();
 
         foreach ($favorites as $favorite) {
             $this->assertDatabaseMissing(Favorite::class, [
-                'id' => $favorite->id,
+                'id' => $favorite->id
             ]);
         }
 

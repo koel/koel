@@ -20,8 +20,9 @@ trait ChecksControllerAttributes
             $classReflection = new ReflectionClass($controller);
             $methodReflection = $classReflection->getMethod($method);
 
-            return $methodReflection->getAttributes($attributeClass)
-                ?: $classReflection->getAttributes($attributeClass);
+            return (
+                $methodReflection->getAttributes($attributeClass) ?: $classReflection->getAttributes($attributeClass)
+            );
         } catch (Throwable) {
             return [];
         }

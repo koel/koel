@@ -10,8 +10,9 @@ use Illuminate\Support\Arr;
 
 class AllPlayablesAreAccessibleBy implements ValidationRule
 {
-    public function __construct(private readonly User $user)
-    {
+    public function __construct(
+        private readonly User $user
+    ) {
     }
 
     /** @param array<string> $value */

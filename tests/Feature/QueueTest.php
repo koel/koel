@@ -15,14 +15,13 @@ class QueueTest extends TestCase
     public const QUEUE_STATE_JSON_STRUCTURE = [
         'current_song',
         'songs' => ['*' => SongResource::JSON_STRUCTURE],
-        'playback_position',
+        'playback_position'
     ];
 
     #[Test]
     public function getEmptyState(): void
     {
-        $this->getAs('api/queue/state')
-            ->assertJsonStructure(self::QUEUE_STATE_JSON_STRUCTURE);
+        $this->getAs('api/queue/state')->assertJsonStructure(self::QUEUE_STATE_JSON_STRUCTURE);
     }
 
     #[Test]
@@ -31,11 +30,10 @@ class QueueTest extends TestCase
         /** @var QueueState $queueState */
         $queueState = QueueState::factory()->create([
             'current_song_id' => Song::factory(),
-            'playback_position' => 123,
+            'playback_position' => 123
         ]);
 
-        $this->getAs('api/queue/state', $queueState->user)
-            ->assertJsonStructure(self::QUEUE_STATE_JSON_STRUCTURE);
+        $this->getAs('api/queue/state', $queueState->user)->assertJsonStructure(self::QUEUE_STATE_JSON_STRUCTURE);
     }
 
     #[Test]
@@ -47,8 +45,7 @@ class QueueTest extends TestCase
 
         $songIds = Song::factory(2)->create()->modelKeys();
 
-        $this->putAs('api/queue/state', ['songs' => $songIds], $user)
-            ->assertNoContent();
+        $this->putAs('api/queue/state', ['songs' => $songIds], $user)->assertNoContent();
 
         /** @var QueueState $queue */
         $queue = QueueState::query()->whereBelongsTo($user)->firstOrFail();
@@ -64,8 +61,11 @@ class QueueTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->create();
 
-        $this->putAs('api/queue/playback-status', ['song' => $song->id, 'position' => 123], $state->user)
-            ->assertNoContent();
+        $this->putAs(
+            'api/queue/playback-status',
+            ['song' => $song->id, 'position' => 123],
+            $state->user
+        )->assertNoContent();
 
         $state->refresh();
         self::assertSame($song->id, $state->current_song_id);
@@ -74,8 +74,11 @@ class QueueTest extends TestCase
         /** @var Song $anotherSong */
         $anotherSong = Song::factory()->create();
 
-        $this->putAs('api/queue/playback-status', ['song' => $anotherSong->id, 'position' => 456], $state->user)
-            ->assertNoContent();
+        $this->putAs(
+            'api/queue/playback-status',
+            ['song' => $anotherSong->id, 'position' => 456],
+            $state->user
+        )->assertNoContent();
 
         $state->refresh();
         self::assertSame($anotherSong->id, $state->current_song_id);
@@ -87,11 +90,13 @@ class QueueTest extends TestCase
     {
         Song::factory(10)->create();
 
-        $this->getAs('api/queue/fetch?order=rand&limit=5')
+        $this
+            ->getAs('api/queue/fetch?order=rand&limit=5')
             ->assertJsonStructure([0 => SongResource::JSON_STRUCTURE])
             ->assertJsonCount(5, '*');
 
-        $this->getAs('api/queue/fetch?order=asc&sort=title&limit=5')
+        $this
+            ->getAs('api/queue/fetch?order=asc&sort=title&limit=5')
             ->assertJsonStructure([0 => SongResource::JSON_STRUCTURE])
             ->assertJsonCount(5, '*');
     }

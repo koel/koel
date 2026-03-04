@@ -17,7 +17,7 @@ class AcceptUserInvitationRequest extends Request
         return [
             'name' => 'required',
             'token' => 'required',
-            'password' => ['required', Password::defaults()],
+            'password' => ['required', Password::defaults()]
         ];
     }
 }

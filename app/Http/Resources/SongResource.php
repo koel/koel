@@ -32,32 +32,33 @@ class SongResource extends JsonResource
         'year',
         'disc',
         'is_public',
-        'created_at',
+        'created_at'
     ];
 
     public const PAGINATION_JSON_STRUCTURE = [
         'data' => [
-            0 => self::JSON_STRUCTURE,
+            0 => self::JSON_STRUCTURE
         ],
         'links' => [
             'first',
             'last',
             'prev',
-            'next',
+            'next'
         ],
         'meta' => [
             'current_page',
             'from',
             'path',
             'per_page',
-            'to',
-        ],
+            'to'
+        ]
     ];
 
     private ?User $user = null;
 
-    public function __construct(protected Song $song)
-    {
+    public function __construct(
+        protected Song $song
+    ) {
         parent::__construct($song);
     }
 
@@ -76,8 +77,9 @@ class SongResource extends JsonResource
     /** @inheritDoc */
     public function toArray(Request $request): array
     {
-        $isPlus = once(static fn () => License::isPlus());
-        $user = $this->user ?? once(static fn () => auth()->user());
+        // @mago-ignore lint:prefer-first-class-callable
+        $isPlus = once(static fn() => License::isPlus());
+        $user = $this->user ?? once(static fn() => auth()->user());
         $embedding = $request->routeIs('embeds.payload');
 
         $data = [
@@ -102,14 +104,15 @@ class SongResource extends JsonResource
             'year' => $this->unless($embedding, $this->song->year),
             'is_public' => $this->unless($embedding, $this->song->is_public),
             'created_at' => $this->unless($embedding, $this->song->created_at),
-            'embed_stream_url' => $this->when(
-                $embedding,
-                fn () => URL::temporarySignedRoute('embeds.stream', now()->addDay(), [
+            'embed_stream_url' => $this->when($embedding, fn() => URL::temporarySignedRoute(
+                'embeds.stream',
+                now()->addDay(),
+                [
                     'song' => $this->song->id,
                     'embed' => $request->route('embed')->id, // @phpstan-ignore-line
-                    'options' => $request->route('options'),
-                ]),
-            ),
+                    'options' => $request->route('options')
+                ]
+            ))
         ];
 
         if ($this->song->isEpisode()) {
@@ -119,15 +122,12 @@ class SongResource extends JsonResource
                 'episode_image' => $this->song->episode_metadata->image ?? $this->song->podcast->image,
                 'podcast_id' => $this->unless($embedding, $this->song->podcast->id),
                 'podcast_title' => $this->song->podcast->title,
-                'podcast_author' => $this->song->podcast->metadata->author,
+                'podcast_author' => $this->song->podcast->metadata->author
             ];
         } else {
             $data += [
                 'owner_id' => $this->unless($embedding, $this->song->owner->public_id),
-                'is_external' => $this->unless(
-                    $embedding,
-                    fn () => $isPlus && !$this->song->ownedBy($user),
-                ),
+                'is_external' => $this->unless($embedding, fn() => $isPlus && !$this->song->ownedBy($user))
             ];
         }
 

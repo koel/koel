@@ -29,14 +29,12 @@ class GenreRepository extends Repository
                 DB::raw('SUM(songs.length) AS length')
             )
             ->get()
-            ->map(
-                static fn (object $genre) => GenreSummary::make(
-                    publicId: $genre->public_id,
-                    name: $genre->name,
-                    songCount: $genre->song_count,
-                    length: $genre->length
-                )
-            );
+            ->map(static fn(object $genre) => GenreSummary::make(
+                publicId: $genre->public_id,
+                name: $genre->name,
+                songCount: $genre->song_count,
+                length: $genre->length
+            ));
 
         $summaryForNoGenre = $this->getSummaryForNoGenre($scopedUser);
 
@@ -80,10 +78,7 @@ class GenreRepository extends Repository
             ->accessible()
             ->leftJoin('genre_song', 'songs.id', '=', 'genre_song.song_id')
             ->whereNull('genre_song.genre_id')
-            ->select(
-                DB::raw('COUNT(songs.id) AS song_count'),
-                DB::raw('SUM(songs.length) AS length')
-            )
+            ->select(DB::raw('COUNT(songs.id) AS song_count'), DB::raw('SUM(songs.length) AS length'))
             ->firstOrFail();
 
         return GenreSummary::make(

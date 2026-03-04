@@ -19,29 +19,30 @@ class UserFactory extends Factory
             'email' => $this->faker->email,
             'password' => Hash::make('secret'),
             'preferences' => [
-                'lastfm_session_key' => Str::random(),
+                'lastfm_session_key' => Str::random()
             ],
             'remember_token' => Str::random(10),
-            'organization_id' => Organization::default()->id,
+            'organization_id' => Organization::default()->id
         ];
     }
 
     public function admin(): self
     {
-        return $this->afterCreating(static fn (User $user) => $user->syncRoles(Role::ADMIN)); // @phpstan-ignore-line
+        return $this->afterCreating(static fn(User $user) => $user->syncRoles(Role::ADMIN)); // @phpstan-ignore-line
     }
 
     public function manager(): self
     {
-        return $this->afterCreating(static fn (User $user) => $user->syncRoles(Role::MANAGER)); // @phpstan-ignore-line
+        return $this->afterCreating(static fn(User $user) => $user->syncRoles(Role::MANAGER)); // @phpstan-ignore-line
     }
 
     public function prospect(): self
     {
-        return $this->state(fn () => [ // @phpcs:ignore
+        // @mago-ignore lint:prefer-static-closure
+        return $this->state(fn() => [
             'invitation_token' => Str::random(),
             'invited_at' => now(),
-            'invited_by_id' => User::factory()->admin(),
+            'invited_by_id' => User::factory()->admin()
         ]);
     }
 }

@@ -23,6 +23,6 @@ class MakePlaylistSongsPublicTest extends TestCase
         $service = Mockery::mock(PlaylistService::class);
         $service->expects('makePlaylistContentPublic')->with($token->playlist);
 
-        (new MakePlaylistSongsPublic($service))->handle(new NewPlaylistCollaboratorJoined(create_user(), $token));
+        ( new MakePlaylistSongsPublic($service) )->handle(new NewPlaylistCollaboratorJoined(create_user(), $token));
     }
 }

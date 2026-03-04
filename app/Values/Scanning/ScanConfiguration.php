@@ -19,7 +19,7 @@ final class ScanConfiguration
         public bool $makePublic,
         public array $ignores,
         public bool $force,
-        public bool $extractFolderStructure,
+        public bool $extractFolderStructure
     ) {
     }
 

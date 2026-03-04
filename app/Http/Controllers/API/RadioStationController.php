@@ -20,7 +20,7 @@ class RadioStationController extends Controller
     public function __construct(
         private readonly RadioStationRepository $repository,
         private readonly RadioService $radioService,
-        private readonly Authenticatable $user,
+        private readonly Authenticatable $user
     ) {
     }
 
@@ -34,9 +34,7 @@ class RadioStationController extends Controller
     {
         $station = $this->radioService->createRadioStation($request->toDto(), $this->user);
 
-        return RadioStationResource::make($station)
-            ->response()
-            ->setStatusCode(Response::HTTP_CREATED);
+        return RadioStationResource::make($station)->response()->setStatusCode(Response::HTTP_CREATED);
     }
 
     #[DisabledInDemo]

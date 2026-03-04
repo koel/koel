@@ -14,14 +14,14 @@ class IndexController extends Controller
     public function __invoke(
         Request $request,
         ProxyAuthService $proxyAuthService,
-        AuthenticationService $auth,
+        AuthenticationService $auth
     ) {
         $data = ['token' => null];
 
         if (License::isPlus() && config('koel.proxy_auth.enabled')) {
             $data['token'] = optional(
                 $proxyAuthService->tryGetProxyAuthenticatedUserFromRequest($request),
-                static fn ($user) => $auth->logUserIn($user)->toArray()
+                static fn($user) => $auth->logUserIn($user)->toArray()
             );
         }
 

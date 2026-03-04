@@ -14,7 +14,7 @@ class ArtistFactory extends Factory
         return [
             'user_id' => User::factory(),
             'name' => $this->faker->name,
-            'image' => Ulid::generate() . '.jpg',
+            'image' => Ulid::generate() . '.jpg'
         ];
     }
 }

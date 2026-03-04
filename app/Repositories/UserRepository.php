@@ -29,7 +29,7 @@ class UserRepository extends Repository
                     'email' => User::FIRST_ADMIN_EMAIL,
                     'name' => User::FIRST_ADMIN_NAME,
                     'password' => Hash::make(User::FIRST_ADMIN_PASSWORD),
-                    'organization_id' => $defaultOrganization->id,
+                    'organization_id' => $defaultOrganization->id
                 ]);
 
                 return $user->syncRoles(RoleEnum::ADMIN);
@@ -44,10 +44,12 @@ class UserRepository extends Repository
     public function findOneBySso(SsoUser $ssoUser): ?User
     {
         // we prioritize the SSO ID over the email address but still resort to the latter
-        return User::query()->firstWhere([
-            'sso_id' => $ssoUser->id,
-            'sso_provider' => $ssoUser->provider,
-        ]) ?? $this->findOneByEmail($ssoUser->email);
+        return (
+            User::query()->firstWhere([
+                'sso_id' => $ssoUser->id,
+                'sso_provider' => $ssoUser->provider
+            ]) ?? $this->findOneByEmail($ssoUser->email)
+        );
     }
 
     public function getOneByPublicId(string $publicId): User

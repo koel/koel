@@ -11,7 +11,7 @@ abstract class TranscodingStrategy
 {
     public function __construct(
         protected TranscodeRepository $transcodeRepository,
-        protected Transcoder $transcoder,
+        protected Transcoder $transcoder
     ) {
     }
 
@@ -19,7 +19,7 @@ abstract class TranscodingStrategy
     {
         return $this->transcodeRepository->findFirstWhere([
             'song_id' => $song->id,
-            'bit_rate' => $bitRate,
+            'bit_rate' => $bitRate
         ]);
     }
 
@@ -28,7 +28,7 @@ abstract class TranscodingStrategy
         string $locationOrCloudKey,
         int $bitRate,
         string $hash,
-        int $fileSize,
+        int $fileSize
     ): Transcode {
         Transcode::query()->upsert(
             values: [
@@ -36,10 +36,10 @@ abstract class TranscodingStrategy
                 'location' => $locationOrCloudKey,
                 'bit_rate' => $bitRate,
                 'hash' => $hash,
-                'file_size' => $fileSize,
+                'file_size' => $fileSize
             ],
             uniqueBy: ['song_id', 'bit_rate'],
-            update: ['location', 'hash', 'file_size'],
+            update: ['location', 'hash', 'file_size']
         );
 
         return $this->findTranscodeBySongAndBitRate($song, $bitRate); // @phpstan-ignore-line

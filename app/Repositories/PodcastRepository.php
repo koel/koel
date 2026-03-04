@@ -44,9 +44,12 @@ class PodcastRepository extends Repository implements ScoutableRepository
     public function search(string $keywords, int $limit, ?User $user = null): Collection
     {
         return $this->getMany(
-            ids: Podcast::search($keywords)->get()->take($limit)->modelKeys(),
+            ids: Podcast::search($keywords)
+                ->get()
+                ->take($limit)
+                ->modelKeys(),
             preserveOrder: true,
-            user: $user,
+            user: $user
         );
     }
 }

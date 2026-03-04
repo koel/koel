@@ -14,8 +14,9 @@ class ValidateLicenseRequest extends Request implements HasBody
 
     protected Method $method = Method::POST;
 
-    public function __construct(private readonly License $license)
-    {
+    public function __construct(
+        private readonly License $license
+    ) {
     }
 
     public function resolveEndpoint(): string
@@ -28,7 +29,7 @@ class ValidateLicenseRequest extends Request implements HasBody
     {
         return [
             'license_key' => $this->license->key,
-            'instance_id' => $this->license->instance->id,
+            'instance_id' => $this->license->instance->id
         ];
     }
 }

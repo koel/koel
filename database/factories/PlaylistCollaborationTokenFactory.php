@@ -11,7 +11,7 @@ class PlaylistCollaborationTokenFactory extends Factory
     public function definition(): array
     {
         return [
-            'playlist_id' => Playlist::factory(),
+            'playlist_id' => Playlist::factory()
         ];
     }
 }

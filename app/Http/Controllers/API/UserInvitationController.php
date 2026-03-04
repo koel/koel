@@ -20,7 +20,7 @@ class UserInvitationController extends Controller
 {
     public function __construct(
         private readonly UserInvitationService $invitationService,
-        private readonly AuthenticationService $auth,
+        private readonly AuthenticationService $auth
     ) {
     }
 
@@ -29,11 +29,7 @@ class UserInvitationController extends Controller
     {
         $this->authorize('manage', $invitor);
 
-        $invitees = $this->invitationService->invite(
-            $request->emails,
-            $request->enum('role', Role::class),
-            $invitor
-        );
+        $invitees = $this->invitationService->invite($request->emails, $request->enum('role', Role::class), $invitor);
 
         return UserProspectResource::collection($invitees);
     }

@@ -21,7 +21,7 @@ class CloudStorageFactoryTest extends TestCase
         return [
             'S3 Lambda' => [SongStorageType::S3_LAMBDA, S3LambdaStorage::class],
             'S3 Compatible' => [SongStorageType::S3, S3CompatibleStorage::class],
-            'Dropbox' => [SongStorageType::DROPBOX, DropboxStorage::class],
+            'Dropbox' => [SongStorageType::DROPBOX, DropboxStorage::class]
         ];
     }
 
@@ -42,7 +42,7 @@ class CloudStorageFactoryTest extends TestCase
     {
         return [
             'SFTP' => [SongStorageType::SFTP],
-            'Local' => [SongStorageType::LOCAL],
+            'Local' => [SongStorageType::LOCAL]
         ];
     }
 

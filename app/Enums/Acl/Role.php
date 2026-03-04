@@ -7,6 +7,7 @@ use App\Facades\License;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 
+// @mago-ignore lint:too-many-methods
 enum Role: string implements Arrayable
 {
     case ADMIN = 'admin';
@@ -18,7 +19,7 @@ enum Role: string implements Arrayable
         return match ($this) {
             self::ADMIN => 'Admin',
             self::MANAGER => 'Manager',
-            self::USER => 'User',
+            self::USER => 'User'
         };
     }
 
@@ -32,7 +33,7 @@ enum Role: string implements Arrayable
         return match ($this) {
             self::ADMIN => 3,
             self::MANAGER => 2,
-            self::USER => 1,
+            self::USER => 1
         };
     }
 
@@ -55,7 +56,8 @@ enum Role: string implements Arrayable
     {
         return match ($this) {
             self::ADMIN, self::USER => true,
-            self::MANAGER => once(static fn () => License::isPlus()),
+            // @mago-ignore lint:prefer-first-class-callable
+            self::MANAGER => once(static fn() => License::isPlus())
         };
     }
 
@@ -67,13 +69,13 @@ enum Role: string implements Arrayable
     /** @return Collection<self> */
     public static function allAvailable(): Collection
     {
-        return collect(self::cases())->filter(static fn (Role $role) => $role->available());
+        return collect(self::cases())->filter(static fn(Role $role) => $role->available());
     }
 
     public function description(): string
     {
         // @mago-ignore lint:prefer-first-class-callable
-        $isCommunity = once(static fn () => License::isCommunity());
+        $isCommunity = once(static fn() => License::isCommunity());
 
         return match ($this) {
             self::ADMIN => 'Admins can manage everything.',
@@ -82,7 +84,7 @@ enum Role: string implements Arrayable
                 : 'Managers can manage users and perform other management tasks.',
             self::USER => $isCommunity
                 ? 'Users can play music and manage their own playlists.'
-                : 'Users can upload and manage their own music.',
+                : 'Users can upload and manage their own music.'
         };
     }
 
@@ -94,7 +96,7 @@ enum Role: string implements Arrayable
             'label' => $this->label(),
             'level' => $this->level(),
             'is_default' => $this === self::default(),
-            'description' => $this->description(),
+            'description' => $this->description()
         ];
     }
 }

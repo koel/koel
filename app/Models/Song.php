@@ -11,32 +11,22 @@ use App\Enums\PlayableType;
 use App\Enums\SongStorageType;
 use App\Models\Concerns\MorphsToEmbeds;
 use App\Models\Concerns\MorphsToFavorites;
+use App\Models\Concerns\Songs\HasSongAttributes;
+use App\Models\Concerns\Songs\HasSongRelationships;
+use App\Models\Concerns\Songs\ManagesSongState;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
 use App\Models\Contracts\Embeddable;
 use App\Models\Contracts\Favoriteable;
-use App\Values\SongStorageMetadata\DropboxMetadata;
-use App\Values\SongStorageMetadata\LocalMetadata;
-use App\Values\SongStorageMetadata\S3CompatibleMetadata;
-use App\Values\SongStorageMetadata\S3LambdaMetadata;
-use App\Values\SongStorageMetadata\SftpMetadata;
 use App\Values\SongStorageMetadata\SongStorageMetadata;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\File;
 use Laravel\Scout\Searchable;
-use LogicException;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use PhanAn\Poddle\Values\EpisodeMetadata;
-use Throwable;
-use Webmozart\Assert\Assert;
 
 /**
  * @property ?Album $album
@@ -91,7 +81,10 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
 {
     use Auditable;
     use HasFactory;
+    use HasSongAttributes;
+    use HasSongRelationships;
     use HasUuids;
+    use ManagesSongState;
     use MorphsToEmbeds;
     use MorphsToFavorites;
     use Searchable;
@@ -112,7 +105,7 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
         'is_public' => 'bool',
         'storage' => SongStorageCast::class,
         'episode_metadata' => EpisodeMetadataCast::class,
-        'favorite' => 'bool',
+        'favorite' => 'bool'
     ];
 
     protected $with = ['album', 'artist', 'album.artist', 'podcast', 'genres', 'owner'];
@@ -120,68 +113,18 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
     public static function query(?PlayableType $type = null, ?User $user = null): SongBuilder
     {
         return parent::query()
-            ->when($user, static fn (SongBuilder $query) => $query->setScopedUser($user)) // @phpstan-ignore-line
-            ->when($type, static fn (SongBuilder $query) => match ($type) { // @phpstan-ignore-line phpcs:ignore
+            ->when($user, static fn(SongBuilder $query) => $query->setScopedUser($user)) // @phpstan-ignore-line
+            ->when($type, static fn(SongBuilder $query) => match ($type) { // @phpstan-ignore-line phpcs:ignore
                 PlayableType::SONG => $query->whereNull('songs.podcast_id'),
                 PlayableType::PODCAST_EPISODE => $query->whereNotNull('songs.podcast_id'),
-                default => $query,
+                default => $query
             })
             ->addSelect('songs.*');
-    }
-
-    public function owner(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
     }
 
     public function newEloquentBuilder($query): SongBuilder
     {
         return new SongBuilder($query);
-    }
-
-    public function artist(): BelongsTo
-    {
-        return $this->belongsTo(Artist::class);
-    }
-
-    public function album(): BelongsTo
-    {
-        return $this->belongsTo(Album::class);
-    }
-
-    public function podcast(): BelongsTo
-    {
-        return $this->belongsTo(Podcast::class);
-    }
-
-    public function folder(): BelongsTo
-    {
-        return $this->belongsTo(Folder::class);
-    }
-
-    public function playlists(): BelongsToMany
-    {
-        return $this->belongsToMany(Playlist::class);
-    }
-
-    public function interactions(): HasMany
-    {
-        return $this->hasMany(Interaction::class);
-    }
-
-    public function genres(): BelongsToMany
-    {
-        return $this->belongsToMany(Genre::class);
-    }
-
-    protected function albumArtist(): Attribute
-    {
-        return Attribute::get(fn () => $this->album?->artist)->shouldCache();
-    }
-
-    protected function type(): Attribute
-    {
-        return Attribute::get(fn () => $this->podcast_id ? PlayableType::PODCAST_EPISODE : PlayableType::SONG);
     }
 
     public function accessibleBy(User $user): bool
@@ -198,65 +141,6 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
         return $this->owner->id === $user->id;
     }
 
-    protected function storageMetadata(): Attribute
-    {
-        return (new Attribute(
-            get: function (): SongStorageMetadata {
-                try {
-                    switch ($this->storage) {
-                        case SongStorageType::SFTP:
-                            preg_match('/^sftp:\\/\\/(.*)/', $this->path, $matches);
-                            return SftpMetadata::make($matches[1]);
-
-                        case SongStorageType::S3:
-                            preg_match('/^s3:\\/\\/(.*)\\/(.*)/', $this->path, $matches);
-                            return S3CompatibleMetadata::make($matches[1], $matches[2]);
-
-                        case SongStorageType::S3_LAMBDA:
-                            preg_match('/^s3:\\/\\/(.*)\\/(.*)/', $this->path, $matches);
-                            return S3LambdaMetadata::make($matches[1], $matches[2]);
-
-                        case SongStorageType::DROPBOX:
-                            preg_match('/^dropbox:\\/\\/(.*)/', $this->path, $matches);
-                            return DropboxMetadata::make($matches[1]);
-
-                        default:
-                            return LocalMetadata::make($this->path);
-                    }
-                } catch (Throwable) {
-                    return LocalMetadata::make($this->path);
-                }
-            }
-        ))->shouldCache();
-    }
-
-    protected function basename(): Attribute
-    {
-        return Attribute::get(function () {
-            Assert::eq($this->type, PlayableType::SONG);
-
-            return File::basename($this->path);
-        });
-    }
-
-    protected function genre(): Attribute
-    {
-        return Attribute::get(fn () => $this->genres->pluck('name')->implode(', '))->shouldCache();
-    }
-
-    public function syncGenres(string|array $genres): void
-    {
-        $genreNames = is_array($genres) ? $genres : explode(',', $genres);
-
-        $genreIds = collect($genreNames)
-            ->map(static fn (string $name) => trim($name))
-            ->filter()
-            ->unique()
-            ->map(static fn (string $name) => Genre::get($name)->id);
-
-        $this->genres()->sync($genreIds);
-    }
-
     public static function getPathFromS3BucketAndKey(string $bucket, string $key): string
     {
         return "s3://$bucket/$key";
@@ -269,7 +153,7 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
             'id' => $this->id,
             'owner_id' => $this->owner_id,
             'title' => $this->title,
-            'type' => $this->type->value,
+            'type' => $this->type->value
         ];
 
         if ($this->episode_metadata?->description) {
@@ -285,48 +169,6 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
         }
 
         return $array;
-    }
-
-    public function isEpisode(): bool
-    {
-        return $this->type === PlayableType::PODCAST_EPISODE;
-    }
-
-    public function genreEqualsTo(string|array $genres): bool
-    {
-        $genreNames = collect(is_string($genres) ? explode(',', $genres) : $genres)
-            ->map(static fn (string $name) => trim($name))
-            ->filter()
-            ->unique()
-            ->sort()
-            ->join(', ');
-
-        if (!$this->genre && !$genreNames) {
-            return true;
-        }
-
-        return $this->genre === $genreNames;
-    }
-
-    public function isStoredOnCloud(): bool
-    {
-        return in_array($this->storage, [
-            SongStorageType::S3,
-            SongStorageType::S3_LAMBDA,
-            SongStorageType::DROPBOX,
-        ], true);
-    }
-
-    /**
-     * Determine if the song's associated file has been modified since the last scan.
-     * This is done by comparing the stored hash or mtime with the corresponding
-     * value from the scan information.
-     */
-    public function isFileModified(int $lastModified): bool
-    {
-        throw_if($this->isEpisode(), new LogicException('Podcast episodes do not have associated files.'));
-
-        return $this->mtime !== $lastModified;
     }
 
     public function __toString(): string

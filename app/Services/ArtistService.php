@@ -13,7 +13,7 @@ class ArtistService
 {
     public function __construct(
         private readonly ArtistRepository $artistRepository,
-        private readonly ImageStorage $imageStorage,
+        private readonly ImageStorage $imageStorage
     ) {
     }
 
@@ -24,7 +24,7 @@ class ArtistService
         // Ensure that the artist name is unique (per user)
         $existingArtistWithTheSameName = $this->artistRepository->findOneBy([
             'name' => $dto->name,
-            'user_id' => $artist->user_id,
+            'user_id' => $artist->user_id
         ]);
 
         throw_if($existingArtistWithTheSameName?->isNot($artist), ArtistNameConflictException::class);
@@ -34,7 +34,7 @@ class ArtistService
         if (is_string($dto->image)) {
             // A non-empty string means the user is uploading another image,
             // when an empty string means the user is removing the image.
-            $data['image'] = rescue_if($dto->image, fn () => $this->imageStorage->storeImage($dto->image), '');
+            $data['image'] = rescue_if($dto->image, fn() => $this->imageStorage->storeImage($dto->image), '');
         } else {
             // If the image is null, the user's not changing or removing the image at all.
             Arr::forget($data, 'image');

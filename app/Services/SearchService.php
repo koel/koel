@@ -24,7 +24,7 @@ class SearchService
         private readonly ArtistRepository $artistRepository,
         private readonly AlbumRepository $albumRepository,
         private readonly PodcastRepository $podcastRepository,
-        private readonly RadioStationRepository $radioStationRepository,
+        private readonly RadioStationRepository $radioStationRepository
     ) {
     }
 
@@ -37,15 +37,13 @@ class SearchService
 
         $results = [];
 
-        foreach (
-            [
-                $this->songRepository,
-                $this->artistRepository,
-                $this->albumRepository,
-                $this->podcastRepository,
-                $this->radioStationRepository,
-            ] as $repository
-        ) {
+        foreach ([
+            $this->songRepository,
+            $this->artistRepository,
+            $this->albumRepository,
+            $this->podcastRepository,
+            $this->radioStationRepository
+        ] as $repository) {
             try {
                 $results[] = $repository->search($keywords, $limit, $scopedUser);
             } catch (Throwable $e) {

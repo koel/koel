@@ -14,7 +14,7 @@ trait MakesHttpRequests
      * @param string $uri
      * @return TestResponse
      */
-    abstract public function json($method, $uri, array $data = [], array $headers = []); // @phpcs:ignore
+    abstract public function json($method, $uri, array $data = [], array $headers = []);
 
     private function jsonAs(?User $user, string $method, $uri, array $data = [], array $headers = []): TestResponse
     {

@@ -26,9 +26,13 @@ class PlaylistFolderTest extends TestCase
     public function listing(): void
     {
         $user = create_user();
-        PlaylistFolder::factory()->for($user)->count(2)->create();
+        PlaylistFolder::factory()
+            ->for($user)
+            ->count(2)
+            ->create();
 
-        $this->getAs('api/playlist-folders', $user)
+        $this
+            ->getAs('api/playlist-folders', $user)
             ->assertJsonStructure([0 => PlaylistFolderResource::JSON_STRUCTURE])
             ->assertJsonCount(2);
     }
@@ -38,8 +42,11 @@ class PlaylistFolderTest extends TestCase
     {
         $user = create_user();
 
-        $this->postAs('api/playlist-folders', ['name' => 'Classical'], $user)
-            ->assertJsonStructure(PlaylistFolderResource::JSON_STRUCTURE);
+        $this->postAs(
+            'api/playlist-folders',
+            ['name' => 'Classical'],
+            $user
+        )->assertJsonStructure(PlaylistFolderResource::JSON_STRUCTURE);
 
         $this->assertDatabaseHas(PlaylistFolder::class, ['name' => 'Classical', 'user_id' => $user->id]);
     }
@@ -50,8 +57,11 @@ class PlaylistFolderTest extends TestCase
         /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->create(['name' => 'Metal']);
 
-        $this->patchAs("api/playlist-folders/{$folder->id}", ['name' => 'Classical'], $folder->user)
-            ->assertJsonStructure(PlaylistFolderResource::JSON_STRUCTURE);
+        $this->patchAs(
+            "api/playlist-folders/{$folder->id}",
+            ['name' => 'Classical'],
+            $folder->user
+        )->assertJsonStructure(PlaylistFolderResource::JSON_STRUCTURE);
 
         self::assertSame('Classical', $folder->fresh()->name);
     }
@@ -62,8 +72,7 @@ class PlaylistFolderTest extends TestCase
         /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->create(['name' => 'Metal']);
 
-        $this->patchAs("api/playlist-folders/{$folder->id}", ['name' => 'Classical'])
-            ->assertForbidden();
+        $this->patchAs("api/playlist-folders/{$folder->id}", ['name' => 'Classical'])->assertForbidden();
 
         self::assertSame('Metal', $folder->fresh()->name);
     }
@@ -74,8 +83,11 @@ class PlaylistFolderTest extends TestCase
         /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->create();
 
-        $this->deleteAs("api/playlist-folders/{$folder->id}", ['name' => 'Classical'], $folder->user)
-            ->assertNoContent();
+        $this->deleteAs(
+            "api/playlist-folders/{$folder->id}",
+            ['name' => 'Classical'],
+            $folder->user
+        )->assertNoContent();
 
         $this->assertModelMissing($folder);
     }
@@ -86,8 +98,7 @@ class PlaylistFolderTest extends TestCase
         /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->create();
 
-        $this->deleteAs("api/playlist-folders/{$folder->id}", ['name' => 'Classical'])
-            ->assertForbidden();
+        $this->deleteAs("api/playlist-folders/{$folder->id}", ['name' => 'Classical'])->assertForbidden();
 
         $this->assertModelExists($folder);
     }
@@ -106,8 +117,7 @@ class PlaylistFolderTest extends TestCase
             "api/playlist-folders/{$folder->id}/playlists",
             ['playlists' => [$playlist->id]],
             $folder->user
-        )
-            ->assertSuccessful();
+        )->assertSuccessful();
 
         self::assertTrue($this->folderService->getFolderForPlaylist($playlist->fresh())?->is($folder));
     }
@@ -122,8 +132,9 @@ class PlaylistFolderTest extends TestCase
 
         self::assertNull($this->folderService->getFolderForPlaylist($playlist));
 
-        $this->postAs("api/playlist-folders/{$folder->id}/playlists", ['playlists' => [$playlist->id]])
-            ->assertUnprocessable();
+        $this->postAs("api/playlist-folders/{$folder->id}/playlists", ['playlists' => [
+            $playlist->id
+        ]])->assertUnprocessable();
 
         self::assertNull($this->folderService->getFolderForPlaylist($playlist->fresh()));
     }
@@ -143,8 +154,7 @@ class PlaylistFolderTest extends TestCase
             "api/playlist-folders/{$folder->id}/playlists",
             ['playlists' => [$playlist->id]],
             $folder->user
-        )
-            ->assertSuccessful();
+        )->assertSuccessful();
 
         self::assertNull($this->folderService->getFolderForPlaylist($playlist->fresh()));
     }
@@ -160,8 +170,9 @@ class PlaylistFolderTest extends TestCase
         $folder->playlists()->attach($playlist);
         self::assertTrue($this->folderService->getFolderForPlaylist($playlist->refresh())?->is($folder));
 
-        $this->deleteAs("api/playlist-folders/{$folder->id}/playlists", ['playlists' => [$playlist->id]])
-            ->assertUnprocessable();
+        $this->deleteAs("api/playlist-folders/{$folder->id}/playlists", ['playlists' => [
+            $playlist->id
+        ]])->assertUnprocessable();
 
         self::assertTrue($this->folderService->getFolderForPlaylist($playlist->refresh())?->is($folder));
     }

@@ -32,7 +32,7 @@ class InteractionTest extends TestCase
         $this->assertDatabaseHas(Interaction::class, [
             'user_id' => $user->id,
             'song_id' => $song->id,
-            'play_count' => 1,
+            'play_count' => 1
         ]);
 
         // Try again
@@ -41,7 +41,7 @@ class InteractionTest extends TestCase
         $this->assertDatabaseHas(Interaction::class, [
             'user_id' => $user->id,
             'song_id' => $song->id,
-            'play_count' => 2,
+            'play_count' => 2
         ]);
     }
 
@@ -62,17 +62,16 @@ class InteractionTest extends TestCase
         $this->assertDatabaseHas(Favorite::class, [
             'user_id' => $user->id,
             'favoriteable_id' => $song->id,
-            'favoriteable_type' => 'playable',
+            'favoriteable_type' => 'playable'
         ]);
 
         // Toggle off
-        $this->postAs('api/interaction/like', ['song' => $song->id], $user)
-            ->assertNoContent();
+        $this->postAs('api/interaction/like', ['song' => $song->id], $user)->assertNoContent();
 
         $this->assertDatabaseMissing(Favorite::class, [
             'user_id' => $user->id,
             'favoriteable_id' => $song->id,
-            'favoriteable_type' => 'playable',
+            'favoriteable_type' => 'playable'
         ]);
 
         Event::assertDispatched(SongFavoriteToggled::class);
@@ -96,7 +95,7 @@ class InteractionTest extends TestCase
             $this->assertDatabaseHas(Favorite::class, [
                 'user_id' => $user->id,
                 'favoriteable_id' => $song->id,
-                'favoriteable_type' => 'playable',
+                'favoriteable_type' => 'playable'
             ]);
         }
 
@@ -108,7 +107,7 @@ class InteractionTest extends TestCase
             $this->assertDatabaseMissing(Favorite::class, [
                 'user_id' => $user->id,
                 'favoriteable_id' => $song->id,
-                'favoriteable_type' => 'playable',
+                'favoriteable_type' => 'playable'
             ]);
         }
 

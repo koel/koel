@@ -55,7 +55,7 @@ class UserServiceTest extends PlusTestCase
             'getId' => '123',
             'getEmail' => 'bruce@iron.com',
             'getName' => 'Bruce Dickinson',
-            'getAvatar' => 'https://lh3.googleusercontent.com/a/vatar',
+            'getAvatar' => 'https://lh3.googleusercontent.com/a/vatar'
         ]);
 
         $user = $this->service->createOrUpdateUserFromSso(SsoUser::fromSocialite($socialiteUser, 'Google'));
@@ -76,14 +76,14 @@ class UserServiceTest extends PlusTestCase
             'email' => 'bruce@iron.com',
             'name' => 'Bruce Dickinson',
             'sso_id' => '123',
-            'sso_provider' => 'Google',
+            'sso_provider' => 'Google'
         ]);
 
         $socialiteUser = Mockery::mock(SocialiteUser::class, [
             'getId' => '123',
             'getEmail' => 'steve@iron.com',
             'getName' => 'Steve Harris',
-            'getAvatar' => 'https://lh3.googleusercontent.com/a/vatar',
+            'getAvatar' => 'https://lh3.googleusercontent.com/a/vatar'
         ]);
 
         $this->service->createOrUpdateUserFromSso(SsoUser::fromSocialite($socialiteUser, 'Google'));
@@ -100,14 +100,14 @@ class UserServiceTest extends PlusTestCase
     {
         $user = create_user([
             'email' => 'bruce@iron.com',
-            'name' => 'Bruce Dickinson',
+            'name' => 'Bruce Dickinson'
         ]);
 
         $socialiteUser = Mockery::mock(SocialiteUser::class, [
             'getId' => '123',
             'getEmail' => 'bruce@iron.com',
             'getName' => 'Steve Harris',
-            'getAvatar' => 'https://lh3.googleusercontent.com/a/vatar',
+            'getAvatar' => 'https://lh3.googleusercontent.com/a/vatar'
         ]);
 
         $this->service->createOrUpdateUserFromSso(SsoUser::fromSocialite($socialiteUser, 'Google'));
@@ -124,14 +124,14 @@ class UserServiceTest extends PlusTestCase
         $user = create_user([
             'email' => 'bruce@iron.com',
             'name' => 'Bruce Dickinson',
-            'sso_provider' => 'Google',
+            'sso_provider' => 'Google'
         ]);
 
         $this->service->updateUser($user, UserUpdateData::make(
             name: 'Steve Harris',
             email: 'steve@iron.com',
             plainTextPassword: 'TheTrooper',
-            role: Role::MANAGER,
+            role: Role::MANAGER
         ));
 
         $user->refresh();

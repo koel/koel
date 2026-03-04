@@ -34,7 +34,7 @@ class SongService
         private readonly SongRepository $songRepository,
         private readonly TranscodeRepository $transcodeRepository,
         private readonly AlbumService $albumService,
-        private readonly CacheStrategy $cache,
+        private readonly CacheStrategy $cache
     ) {
     }
 
@@ -58,8 +58,16 @@ class SongService
             $affectedAlbums = collect();
             $affectedArtists = collect();
 
-            Song::query()->with('artist.user', 'album.artist', 'album.artist.user')->findMany($ids)->each(
-                function (Song $song) use ($data, $result, $noTrackUpdate, $affectedAlbums, $affectedArtists): void {
+            Song::query()
+                ->with('artist.user', 'album.artist', 'album.artist.user')
+                ->findMany($ids)
+                ->each(function (Song $song) use (
+                    $data,
+                    $result,
+                    $noTrackUpdate,
+                    $affectedAlbums,
+                    $affectedArtists
+                ): void {
                     if ($noTrackUpdate) {
                         $data->track = $song->track;
                     }
@@ -81,8 +89,7 @@ class SongService
                     if ($noTrackUpdate) {
                         $data->track = null;
                     }
-                },
-            );
+                });
 
             $affectedAlbums->each(static function (Album $album) use ($result): void {
                 if ($album->refresh()->songs()->count() === 0) {
@@ -157,7 +164,8 @@ class SongService
         /**
          * @var Collection<array-key, Song> $collaborativeSongs
          */
-        $collaborativeSongs = $songs->toQuery()
+        $collaborativeSongs = $songs
+            ->toQuery()
             ->join('playlist_song', 'songs.id', '=', 'playlist_song.song_id')
             ->join('playlist_user', 'playlist_song.playlist_id', '=', 'playlist_user.playlist_id')
             ->select('songs.id')
@@ -181,12 +189,9 @@ class SongService
 
         // Since song (and cascadingly, transcode) records will be deleted, we query them first and, if there are any,
         // dispatch a job to delete their associated files.
-        $songFiles = Song::query()
-            ->findMany($ids)
-            ->map(SongFileInfo::fromSong(...)); // @phpstan-ignore-line
+        $songFiles = Song::query()->findMany($ids)->map(SongFileInfo::fromSong(...)); // @phpstan-ignore-line
 
-        $transcodeFiles = $this->transcodeRepository->findBySongIds($ids)
-            ->map(TranscodeFileInfo::fromTranscode(...)); // @phpstan-ignore-line
+        $transcodeFiles = $this->transcodeRepository->findBySongIds($ids)->map(TranscodeFileInfo::fromTranscode(...)); // @phpstan-ignore-line
 
         if (Song::destroy($ids) === 0) {
             return;
@@ -205,7 +210,7 @@ class SongService
     public function createOrUpdateSongFromScan(
         ScanInformation $info,
         ScanConfiguration $config,
-        ?Song $song = null,
+        ?Song $song = null
     ): ?Song {
         $song ??= $this->songRepository->findOneByPath($info->path);
 
@@ -284,7 +289,7 @@ class SongService
 
         return $this->cache->remember(
             key: cache_key(__METHOD__, $user->id, $name),
-            callback: static fn () => Artist::getOrCreate($user, $name)
+            callback: static fn() => Artist::getOrCreate($user, $name)
         );
     }
 
@@ -294,7 +299,7 @@ class SongService
 
         return $this->cache->remember(
             key: cache_key(__METHOD__, $artist->id, $name),
-            callback: static fn () => Album::getOrCreate($artist, $name)
+            callback: static fn() => Album::getOrCreate($artist, $name)
         );
     }
 }

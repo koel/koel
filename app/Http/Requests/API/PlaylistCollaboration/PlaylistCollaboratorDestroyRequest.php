@@ -15,7 +15,7 @@ class PlaylistCollaboratorDestroyRequest extends Request
     public function rules(): array
     {
         return [
-            'collaborator' => 'required|exists:users,public_id',
+            'collaborator' => 'required|exists:users,public_id'
         ];
     }
 }

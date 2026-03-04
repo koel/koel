@@ -21,31 +21,31 @@ class AlbumInformationTest extends TestCase
         $album = Album::factory()->create();
 
         $lastfm = $this->mock(EncyclopediaService::class);
-        $lastfm->expects('getAlbumInformation')
-            ->with(Mockery::on(static fn (Album $a) => $a->is($album)))
+        $lastfm
+            ->expects('getAlbumInformation')
+            ->with(Mockery::on(static fn(Album $a) => $a->is($album)))
             ->andReturn(AlbumInformation::make(
                 url: 'https://lastfm.com/album/foo',
                 cover: 'https://lastfm.com/cover/foo',
                 wiki: [
                     'summary' => 'foo',
-                    'full' => 'bar',
+                    'full' => 'bar'
                 ],
                 tracks: [
                     [
                         'title' => 'foo',
                         'length' => 123,
-                        'url' => 'https://lastfm.com/track/foo',
+                        'url' => 'https://lastfm.com/track/foo'
                     ],
                     [
                         'title' => 'bar',
                         'length' => 456,
-                        'url' => 'https://lastfm.com/track/bar',
-                    ],
+                        'url' => 'https://lastfm.com/track/bar'
+                    ]
                 ]
             ));
 
-        $this->getAs("api/albums/{$album->id}/information")
-            ->assertJsonStructure(AlbumInformation::JSON_STRUCTURE);
+        $this->getAs("api/albums/{$album->id}/information")->assertJsonStructure(AlbumInformation::JSON_STRUCTURE);
     }
 
     #[Test]
@@ -54,7 +54,8 @@ class AlbumInformationTest extends TestCase
         config(['koel.services.lastfm.key' => null]);
         config(['koel.services.lastfm.secret' => null]);
 
-        $this->getAs('api/albums/' . Album::factory()->create()->id . '/information')
-            ->assertJsonStructure(AlbumInformation::JSON_STRUCTURE);
+        $this->getAs('api/albums/'
+        . Album::factory()->create()->id
+        . '/information')->assertJsonStructure(AlbumInformation::JSON_STRUCTURE);
     }
 }

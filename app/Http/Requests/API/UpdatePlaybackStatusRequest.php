@@ -16,7 +16,7 @@ class UpdatePlaybackStatusRequest extends Request
     {
         return [
             'song' => ['required', 'string', new Exists(Song::class, 'id')],
-            'position' => 'required|integer',
+            'position' => 'required|integer'
         ];
     }
 }

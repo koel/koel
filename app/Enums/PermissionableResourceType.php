@@ -21,7 +21,7 @@ enum PermissionableResourceType: string
             self::ALBUM => Album::class,
             self::ARTIST => Artist::class,
             self::RADIO_STATION => RadioStation::class,
-            self::USER => User::class,
+            self::USER => User::class
         };
     }
 }

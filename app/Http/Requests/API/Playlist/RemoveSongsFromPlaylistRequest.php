@@ -15,7 +15,7 @@ class RemoveSongsFromPlaylistRequest extends Request
     public function rules(): array
     {
         return [
-            'songs' => ['required', 'array', Rule::exists(Song::class, 'id')],
+            'songs' => ['required', 'array', Rule::exists(Song::class, 'id')]
         ];
     }
 }

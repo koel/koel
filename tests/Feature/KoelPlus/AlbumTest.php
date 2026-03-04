@@ -22,7 +22,7 @@ class AlbumTest extends PlusTestCase
             "api/albums/{$album->id}",
             [
                 'name' => 'Updated Album Name',
-                'year' => 2023,
+                'year' => 2023
             ],
             $album->user
         )->assertJsonStructure(AlbumResource::JSON_STRUCTURE);
@@ -46,7 +46,7 @@ class AlbumTest extends PlusTestCase
             "api/albums/{$album->id}",
             [
                 'name' => 'Updated Album Name',
-                'year' => 2023,
+                'year' => 2023
             ],
             $scaryBossMan
         )->assertForbidden();
@@ -65,7 +65,7 @@ class AlbumTest extends PlusTestCase
             "api/albums/{$album->id}",
             [
                 'name' => 'Updated Album Name',
-                'year' => 2023,
+                'year' => 2023
             ],
             $randomDude
         )->assertForbidden();

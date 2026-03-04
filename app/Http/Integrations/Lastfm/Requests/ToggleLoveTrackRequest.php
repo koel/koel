@@ -16,8 +16,11 @@ final class ToggleLoveTrackRequest extends Request implements HasBody, RequiresS
 
     protected Method $method = Method::POST;
 
-    public function __construct(private readonly Song $song, private readonly User $user, private readonly bool $love)
-    {
+    public function __construct(
+        private readonly Song $song,
+        private readonly User $user,
+        private readonly bool $love
+    ) {
     }
 
     public function resolveEndpoint(): string
@@ -32,7 +35,7 @@ final class ToggleLoveTrackRequest extends Request implements HasBody, RequiresS
             'method' => $this->love ? 'track.love' : 'track.unlove',
             'sk' => $this->user->preferences->lastFmSessionKey,
             'artist' => $this->song->artist_name,
-            'track' => $this->song->title,
+            'track' => $this->song->title
         ];
     }
 }

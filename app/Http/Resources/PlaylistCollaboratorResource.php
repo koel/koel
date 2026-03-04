@@ -11,11 +11,12 @@ class PlaylistCollaboratorResource extends JsonResource
         'type',
         'id',
         'name',
-        'avatar',
+        'avatar'
     ];
 
-    public function __construct(private readonly PlaylistCollaborator $collaborator)
-    {
+    public function __construct(
+        private readonly PlaylistCollaborator $collaborator
+    ) {
         parent::__construct($collaborator);
     }
 
@@ -26,7 +27,7 @@ class PlaylistCollaboratorResource extends JsonResource
             'type' => 'playlist-collaborators',
             'id' => $this->collaborator->publicId,
             'name' => $this->collaborator->name,
-            'avatar' => $this->collaborator->avatar,
+            'avatar' => $this->collaborator->avatar
         ];
     }
 }

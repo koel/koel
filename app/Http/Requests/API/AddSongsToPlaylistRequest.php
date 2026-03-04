@@ -13,7 +13,7 @@ class AddSongsToPlaylistRequest extends Request
     public function rules(): array
     {
         return [
-            'songs' => ['required', 'array', new AllPlayablesAreAccessibleBy($this->user())],
+            'songs' => ['required', 'array', new AllPlayablesAreAccessibleBy($this->user())]
         ];
     }
 }

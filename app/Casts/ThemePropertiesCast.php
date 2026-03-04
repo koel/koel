@@ -18,10 +18,10 @@ class ThemePropertiesCast implements CastsAttributes
                 'model' => $model,
                 'key' => $key,
                 'value' => $value,
-                'attributes' => $attributes,
+                'attributes' => $attributes
             ]);
 
-            return  ThemeProperties::empty();
+            return ThemeProperties::empty();
         }
     }
 
@@ -35,7 +35,7 @@ class ThemePropertiesCast implements CastsAttributes
                 'model' => $model,
                 'key' => $key,
                 'value' => $value,
-                'attributes' => $attributes,
+                'attributes' => $attributes
             ]);
 
             return '';

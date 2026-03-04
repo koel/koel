@@ -20,13 +20,14 @@ class ThemeResource extends JsonResource
             '--color-highlight',
             '--font-family',
             '--font-size',
-            '--bg-image',
+            '--bg-image'
         ],
-        'is_custom',
+        'is_custom'
     ];
 
-    public function __construct(private readonly Theme $theme)
-    {
+    public function __construct(
+        private readonly Theme $theme
+    ) {
         parent::__construct($theme);
     }
 
@@ -40,7 +41,7 @@ class ThemeResource extends JsonResource
             'thumbnail_color' => $this->theme->properties->bgColor,
             'thumbnail_image' => $this->theme->thumbnail ? image_storage_url($this->theme->thumbnail) : '',
             'properties' => $this->theme->properties->toArray(),
-            'is_custom' => true, // as opposed to built-in themes
+            'is_custom' => true // as opposed to built-in themes
         ];
     }
 }

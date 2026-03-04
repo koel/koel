@@ -12,8 +12,9 @@ class GetArtistWikidataIdUsingMbid
 {
     use TriesRemember;
 
-    public function __construct(private readonly MusicBrainzConnector $connector)
-    {
+    public function __construct(
+        private readonly MusicBrainzConnector $connector
+    ) {
     }
 
     public function __invoke(?string $mbid, Closure $next): mixed
@@ -27,12 +28,10 @@ class GetArtistWikidataIdUsingMbid
             callback: function () use ($mbid): ?string {
                 $wikidata = collect(Arr::where(
                     $this->connector->send(new GetArtistUrlRelationshipsRequest($mbid))->json('relations'),
-                    static fn ($relation) => $relation['type'] === 'wikidata',
+                    static fn($relation) => $relation['type'] === 'wikidata'
                 ))->first();
 
-                return $wikidata
-                    ? Str::afterLast(Arr::get($wikidata, 'url.resource'), '/') // 'https://www.wikidata.org/wiki/Q461269'
-                    : null;
+                return $wikidata ? Str::afterLast(Arr::get($wikidata, 'url.resource'), '/') : null; // 'https://www.wikidata.org/wiki/Q461269'
             }
         );
 

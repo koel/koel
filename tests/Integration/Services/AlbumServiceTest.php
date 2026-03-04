@@ -34,10 +34,13 @@ class AlbumServiceTest extends TestCase
         /** @var Album $album */
         $album = Album::factory()->create([
             'name' => 'Old Album Name',
-            'year' => 2020,
+            'year' => 2020
         ]);
 
-        $songs = Song::factory()->for($album)->count(2)->create();
+        $songs = Song::factory()
+            ->for($album)
+            ->count(2)
+            ->create();
 
         $data = AlbumUpdateData::make(name: 'New Album Name', year: 2023);
 
@@ -57,19 +60,21 @@ class AlbumServiceTest extends TestCase
         /** @var Album $album */
         $album = Album::factory()->create([
             'name' => 'Old Album Name',
-            'year' => 2020,
+            'year' => 2020
         ]);
 
-        $songs = Song::factory()->for($album)->count(2)->create();
+        $songs = Song::factory()
+            ->for($album)
+            ->count(2)
+            ->create();
 
-        $data = AlbumUpdateData::make(
-            name: 'New Album Name',
-            year: 2023,
-            cover: minimal_base64_encoded_image(),
-        );
+        $data = AlbumUpdateData::make(name: 'New Album Name', year: 2023, cover: minimal_base64_encoded_image());
 
         $ulid = Ulid::freeze();
-        $this->imageStorage->expects('storeImage')->with(minimal_base64_encoded_image())->andReturn("$ulid.webp");
+        $this->imageStorage
+            ->expects('storeImage')
+            ->with(minimal_base64_encoded_image())
+            ->andReturn("$ulid.webp");
 
         $updatedAlbum = $this->service->updateAlbum($album, $data);
 
@@ -88,11 +93,7 @@ class AlbumServiceTest extends TestCase
         /** @var Album $album */
         $album = Album::factory()->create();
 
-        $data = AlbumUpdateData::make(
-            name: 'New Album Name',
-            year: 2023,
-            cover: '',
-        );
+        $data = AlbumUpdateData::make(name: 'New Album Name', year: 2023, cover: '');
 
         $updatedAlbum = $this->service->updateAlbum($album, $data);
 

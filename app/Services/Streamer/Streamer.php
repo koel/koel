@@ -40,13 +40,14 @@ class Streamer
             SongStorageType::LOCAL => app(LocalStreamerAdapter::class),
             SongStorageType::SFTP => app(SftpStreamerAdapter::class),
             SongStorageType::S3, SongStorageType::S3_LAMBDA => app(S3CompatibleStreamerAdapter::class),
-            SongStorageType::DROPBOX => app(DropboxStreamerAdapter::class),
+            SongStorageType::DROPBOX => app(DropboxStreamerAdapter::class)
         };
     }
 
     public function stream(): mixed
     {
         // Turn off error reporting to make sure our stream isn't interfered with.
+        // @mago-ignore lint:no-error-control-operator
         @error_reporting(0);
 
         return $this->adapter->stream($this->song, $this->config);
@@ -71,8 +72,7 @@ class Streamer
         }
 
         if (
-            in_array($song->mime_type, ['audio/flac', 'audio/x-flac'], true)
-            && config('koel.streaming.transcode_flac')
+            in_array($song->mime_type, ['audio/flac', 'audio/x-flac'], true) && config('koel.streaming.transcode_flac')
         ) {
             return true;
         }

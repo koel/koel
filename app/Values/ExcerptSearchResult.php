@@ -11,7 +11,7 @@ final class ExcerptSearchResult
         public Collection $artists,
         public Collection $albums,
         public Collection $podcasts,
-        public Collection $radioStations,
+        public Collection $radioStations
     ) {
     }
 
@@ -20,7 +20,7 @@ final class ExcerptSearchResult
         Collection $artists,
         Collection $albums,
         Collection $podcasts,
-        Collection $radioStations,
+        Collection $radioStations
     ): self {
         return new self($songs, $artists, $albums, $podcasts, $radioStations);
     }

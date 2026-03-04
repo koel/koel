@@ -9,8 +9,9 @@ class GetReleaseGroupUrlRelationshipsRequest extends Request
 {
     protected Method $method = Method::GET;
 
-    public function __construct(private readonly string $mbid)
-    {
+    public function __construct(
+        private readonly string $mbid
+    ) {
     }
 
     public function resolveEndpoint(): string
@@ -22,7 +23,7 @@ class GetReleaseGroupUrlRelationshipsRequest extends Request
     protected function defaultQuery(): array
     {
         return [
-            'inc' => 'url-rels',
+            'inc' => 'url-rels'
         ];
     }
 }

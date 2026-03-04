@@ -23,7 +23,7 @@ class FetchOverviewController extends Controller
             'most_played_songs' => SongResource::collection($songRepository->getMostPlayed()),
             'recently_added_albums' => AlbumResource::collection($albumRepository->getRecentlyAdded()),
             'recently_added_songs' => SongResource::collection($songRepository->getRecentlyAdded()),
-            'recently_played_songs' => SongResource::collection($songRepository->getRecentlyPlayed()),
+            'recently_played_songs' => SongResource::collection($songRepository->getRecentlyPlayed())
         ]);
     }
 }

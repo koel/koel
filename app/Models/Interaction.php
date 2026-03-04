@@ -20,7 +20,7 @@ class Interaction extends Model
     use HasFactory;
 
     protected $casts = [
-        'play_count' => 'integer',
+        'play_count' => 'integer'
     ];
 
     protected $guarded = ['id'];

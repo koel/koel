@@ -14,7 +14,7 @@ class TranscodeFactory extends Factory
             'song_id' => Song::factory(),
             'bit_rate' => $this->faker->randomElement([128, 192, 256, 320]),
             'hash' => $this->faker->md5(),
-            'location' => $this->faker->filePath() . '.mp4',
+            'location' => $this->faker->filePath() . '.mp4'
         ];
     }
 }

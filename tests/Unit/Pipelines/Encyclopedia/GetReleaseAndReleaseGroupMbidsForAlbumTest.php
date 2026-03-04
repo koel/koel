@@ -25,31 +25,34 @@ class GetReleaseAndReleaseGroupMbidsForAlbumTest extends TestCase
         $json = File::json(test_path('fixtures/musicbrainz/release-search.json'));
 
         Saloon::fake([
-            SearchForReleaseRequest::class => MockResponse::make(body: $json),
+            SearchForReleaseRequest::class => MockResponse::make(body: $json)
         ]);
 
         $mock = self::createNextClosureMock(['sample-release-mbid', 'sample-release-group-mbid']);
 
-        (new GetReleaseAndReleaseGroupMbidsForAlbum(new MusicBrainzConnector()))(
+        ( new GetReleaseAndReleaseGroupMbidsForAlbum(new MusicBrainzConnector()) )(
             [
                 'album' => 'Slave to the Grind',
-                'artist' => 'Skid Row',
+                'artist' => 'Skid Row'
             ],
             $mock->next(...) // @phpstan-ignore-line
         );
 
         Saloon::assertSent(static function (SearchForReleaseRequest $request): bool {
-            self::assertSame([
-                'query' => 'release:"Slave to the Grind" AND artist:"Skid Row"',
-                'limit' => 1,
-            ], $request->query()->all());
+            self::assertSame(
+                [
+                    'query' => 'release:"Slave to the Grind" AND artist:"Skid Row"',
+                    'limit' => 1
+                ],
+                $request->query()->all()
+            );
 
             return true;
         });
 
         self::assertSame(
             ['sample-release-mbid', 'sample-release-group-mbid'],
-            Cache::get(cache_key('release and release group mbids', 'Slave to the Grind', 'Skid Row')),
+            Cache::get(cache_key('release and release group mbids', 'Slave to the Grind', 'Skid Row'))
         );
 
         // The artist mbid should have been cached opportunistically, too.
@@ -68,10 +71,10 @@ class GetReleaseAndReleaseGroupMbidsForAlbumTest extends TestCase
 
         $mock = self::createNextClosureMock(['sample-release-mbid', 'sample-release-group-mbid']);
 
-        (new GetReleaseAndReleaseGroupMbidsForAlbum(new MusicBrainzConnector()))(
+        ( new GetReleaseAndReleaseGroupMbidsForAlbum(new MusicBrainzConnector()) )(
             [
                 'album' => 'Slave to the Grind',
-                'artist' => 'Skid Row',
+                'artist' => 'Skid Row'
             ],
             $mock->next(...) // @phpstan-ignore-line
         );
@@ -85,10 +88,7 @@ class GetReleaseAndReleaseGroupMbidsForAlbumTest extends TestCase
         Saloon::fake([]);
         $mock = self::createNextClosureMock(null);
 
-        (new GetReleaseAndReleaseGroupMbidsForAlbum(new MusicBrainzConnector()))(
-            null,
-            $mock->next(...) // @phpstan-ignore-line
-        );
+        ( new GetReleaseAndReleaseGroupMbidsForAlbum(new MusicBrainzConnector()) )(null, $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }

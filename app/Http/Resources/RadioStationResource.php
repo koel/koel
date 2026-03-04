@@ -16,11 +16,12 @@ class RadioStationResource extends JsonResource
         'logo',
         'description',
         'is_public',
-        'created_at',
+        'created_at'
     ];
 
-    public function __construct(private readonly RadioStation $station)
-    {
+    public function __construct(
+        private readonly RadioStation $station
+    ) {
         parent::__construct($station);
     }
 
@@ -36,7 +37,7 @@ class RadioStationResource extends JsonResource
             'description' => $this->station->description,
             'is_public' => $this->station->is_public,
             'created_at' => $this->station->created_at,
-            'favorite' => $this->station->favorite,
+            'favorite' => $this->station->favorite
         ];
     }
 }

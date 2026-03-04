@@ -25,8 +25,8 @@ class ResourcePermissionResource extends JsonResource
             'context' => [
                 'type' => $this->type,
                 'id' => $this->id,
-                'action' => $this->action,
-            ],
+                'action' => $this->action
+            ]
         ];
     }
 }

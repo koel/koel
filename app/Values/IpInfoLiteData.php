@@ -15,7 +15,7 @@ final readonly class IpInfoLiteData implements Arrayable
         public string $countryCode,
         public string $country,
         public string $continentCode,
-        public string $continent,
+        public string $continent
     ) {
     }
 
@@ -31,7 +31,7 @@ final readonly class IpInfoLiteData implements Arrayable
             countryCode: $json['country_code'] ?? '',
             country: $json['country'] ?? '',
             continentCode: $json['continent_code'] ?? '',
-            continent: $json['continent'] ?? '',
+            continent: $json['continent'] ?? ''
         );
     }
 
@@ -46,7 +46,7 @@ final readonly class IpInfoLiteData implements Arrayable
             'country_code' => $this->countryCode,
             'country' => $this->country,
             'continent_code' => $this->continentCode,
-            'continent' => $this->continent,
+            'continent' => $this->continent
         ];
     }
 }

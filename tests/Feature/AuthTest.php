@@ -16,24 +16,24 @@ class AuthTest extends TestCase
     {
         create_user([
             'email' => 'koel@koel.dev',
-            'password' => Hash::make('secret'),
+            'password' => Hash::make('secret')
         ]);
 
-        $this->post('api/me', [
-            'email' => 'koel@koel.dev',
-            'password' => 'secret',
-        ])
+        $this
+            ->post('api/me', [
+                'email' => 'koel@koel.dev',
+                'password' => 'secret'
+            ])
             ->assertOk()
             ->assertJsonStructure([
                 'token',
-                'audio-token',
+                'audio-token'
             ]);
 
         $this->post('api/me', [
             'email' => 'koel@koel.dev',
-            'password' => 'wrong-secret',
-        ])
-            ->assertUnauthorized();
+            'password' => 'wrong-secret'
+        ])->assertUnauthorized();
     }
 
     #[Test]
@@ -43,11 +43,12 @@ class AuthTest extends TestCase
         $authService = app(AuthenticationService::class);
         $token = $authService->generateOneTimeToken($user);
 
-        $this->post('api/me/otp', ['token' => $token])
+        $this
+            ->post('api/me/otp', ['token' => $token])
             ->assertOk()
             ->assertJsonStructure([
                 'token',
-                'audio-token',
+                'audio-token'
             ]);
     }
 
@@ -56,19 +57,17 @@ class AuthTest extends TestCase
     {
         $user = create_user([
             'email' => 'koel@koel.dev',
-            'password' => Hash::make('secret'),
+            'password' => Hash::make('secret')
         ]);
 
         $response = $this->post('api/me', [
             'email' => 'koel@koel.dev',
-            'password' => 'secret',
+            'password' => 'secret'
         ]);
 
         self::assertSame(2, $user->tokens()->count()); // 1 for API, 1 for audio token
 
-        $this->withToken($response->json('token'))
-            ->delete('api/me')
-            ->assertNoContent();
+        $this->withToken($response->json('token'))->delete('api/me')->assertNoContent();
 
         self::assertSame(0, $user->tokens()->count());
     }

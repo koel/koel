@@ -25,15 +25,12 @@ class GetWikipediaPageTitleUsingWikidataIdTest extends TestCase
         $json = File::json(test_path('fixtures/wikidata/entity.json'));
 
         Saloon::fake([
-            GetEntityDataRequest::class => MockResponse::make(body: $json),
+            GetEntityDataRequest::class => MockResponse::make(body: $json)
         ]);
 
         $mock = self::createNextClosureMock('Skid Row (American band)');
 
-        (new GetWikipediaPageTitleUsingWikidataId(new WikidataConnector()))(
-            'Q461269',
-            $mock->next(...), // @phpstan-ignore-line
-        );
+        ( new GetWikipediaPageTitleUsingWikidataId(new WikidataConnector()) )('Q461269', $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertSent(static function (GetEntityDataRequest $request): bool {
             return $request->resolveEndpoint() === 'Special:EntityData/Q461269';
@@ -41,7 +38,7 @@ class GetWikipediaPageTitleUsingWikidataIdTest extends TestCase
 
         self::assertSame(
             'Skid Row (American band)',
-            Cache::get(cache_key('wikipedia page title from wikidata id', 'Q461269')),
+            Cache::get(cache_key('wikipedia page title from wikidata id', 'Q461269'))
         );
     }
 
@@ -50,17 +47,11 @@ class GetWikipediaPageTitleUsingWikidataIdTest extends TestCase
     {
         Saloon::fake([]);
 
-        Cache::put(
-            cache_key('wikipedia page title from wikidata id', 'Q461269'),
-            'How’d that get in there?'
-        );
+        Cache::put(cache_key('wikipedia page title from wikidata id', 'Q461269'), 'How’d that get in there?');
 
         $mock = self::createNextClosureMock('How’d that get in there?');
 
-        (new GetWikipediaPageTitleUsingWikidataId(new WikidataConnector()))(
-            'Q461269',
-            $mock->next(...), // @phpstan-ignore-line
-        );
+        ( new GetWikipediaPageTitleUsingWikidataId(new WikidataConnector()) )('Q461269', $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }
@@ -71,10 +62,7 @@ class GetWikipediaPageTitleUsingWikidataIdTest extends TestCase
         Saloon::fake([]);
         $mock = self::createNextClosureMock(null);
 
-        (new GetWikipediaPageTitleUsingWikidataId(new WikidataConnector()))(
-            null,
-            $mock->next(...), // @phpstan-ignore-line
-        );
+        ( new GetWikipediaPageTitleUsingWikidataId(new WikidataConnector()) )(null, $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }

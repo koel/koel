@@ -11,8 +11,10 @@ use Illuminate\Support\Facades\Http;
 
 final class EpisodePlayable implements Arrayable, Jsonable
 {
-    private function __construct(public readonly string $path, public readonly string $checksum)
-    {
+    private function __construct(
+        public readonly string $path,
+        public readonly string $checksum
+    ) {
     }
 
     public static function make(string $path, string $sum): self
@@ -52,7 +54,7 @@ final class EpisodePlayable implements Arrayable, Jsonable
     {
         return [
             'path' => $this->path,
-            'checksum' => $this->checksum,
+            'checksum' => $this->checksum
         ];
     }
 

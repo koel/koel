@@ -56,7 +56,7 @@ final class SmartPlaylistRule implements Arrayable
             'id' => $this->id,
             'model' => $this->model->value,
             'operator' => $this->operator->value,
-            'value' => $this->value,
+            'value' => $this->value
         ];
     }
 
@@ -66,8 +66,10 @@ final class SmartPlaylistRule implements Arrayable
             $rule = self::make($rule);
         }
 
-        return $this->operator === $rule->operator
+        return (
+            $this->operator === $rule->operator
             && !array_diff($this->value, $rule->value)
-            && $this->model === $rule->model;
+            && $this->model === $rule->model
+        );
     }
 }

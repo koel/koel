@@ -18,8 +18,10 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 class FavoriteController extends Controller
 {
     /** @param User $user */
-    public function __construct(private readonly FavoriteService $service, private readonly Authenticatable $user)
-    {
+    public function __construct(
+        private readonly FavoriteService $service,
+        private readonly Authenticatable $user
+    ) {
     }
 
     public function toggle(ToggleFavoriteRequest $request)
@@ -41,11 +43,9 @@ class FavoriteController extends Controller
         $modelType = Relation::getMorphedModel($request->type);
 
         /** @var Collection<int, Model> $entities */
-        $entities = $modelType::query()
-            ->whereIn('id', $request->ids)
-            ->get();
+        $entities = $modelType::query()->whereIn('id', $request->ids)->get();
 
-        $entities->each(fn (Model $entity) => $this->authorize('access', $entity));
+        $entities->each(fn(Model $entity) => $this->authorize('access', $entity));
 
         $this->service->batchFavorite($entities, $this->user);
 
@@ -57,11 +57,9 @@ class FavoriteController extends Controller
         $modelType = Relation::getMorphedModel($request->type);
 
         /** @var Collection<int, Favoriteable&Model> $entities */
-        $entities = $modelType::query()
-            ->whereIn('id', $request->ids)
-            ->get();
+        $entities = $modelType::query()->whereIn('id', $request->ids)->get();
 
-        $entities->each(fn (Model $entity) => $this->authorize('access', $entity));
+        $entities->each(fn(Model $entity) => $this->authorize('access', $entity));
 
         $this->service->batchUndoFavorite($entities, $this->user);
 

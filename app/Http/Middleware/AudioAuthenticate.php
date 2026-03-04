@@ -8,7 +8,7 @@ use Illuminate\Http\Response;
 
 class AudioAuthenticate
 {
-    public function handle(Request $request, Closure $next) // @phpcs:ignore
+    public function handle(Request $request, Closure $next)
     {
         abort_unless($request->user()?->tokenCan('audio'), Response::HTTP_UNAUTHORIZED);
 

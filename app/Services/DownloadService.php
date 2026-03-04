@@ -28,12 +28,13 @@ class DownloadService
 
         return Downloadable::make(
             (new SongZipArchive())
-            ->addSongs($songs)
-            ->finish()
-            ->getPath()
+                ->addSongs($songs)
+                ->finish()
+                ->getPath()
         );
     }
 
+    // @mago-ignore lint:halstead
     public function getLocalPathOrDownloadableUrl(Song $song): ?string
     {
         if (!$song->storage->supported()) {

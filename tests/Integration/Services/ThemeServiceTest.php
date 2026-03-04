@@ -34,7 +34,7 @@ class ThemeServiceTest extends TestCase
             bgImage: minimal_base64_encoded_image(),
             highlightColor: '#ff0000',
             fontFamily: 'system-ui',
-            fontSize: 14.0,
+            fontSize: 14.0
         ));
 
         self::assertSame('One Theme to Rule Them All', $theme->name);
@@ -59,7 +59,7 @@ class ThemeServiceTest extends TestCase
             bgImage: '',
             highlightColor: '#ff0000',
             fontFamily: 'system-ui',
-            fontSize: 14.0,
+            fontSize: 14.0
         ));
 
         self::assertSame('One Theme to Rule Them All', $theme->name);

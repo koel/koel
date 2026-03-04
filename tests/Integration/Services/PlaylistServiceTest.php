@@ -35,11 +35,7 @@ class PlaylistServiceTest extends TestCase
     {
         $user = create_user();
 
-        $data = PlaylistCreateData::make(
-            name: 'foo',
-            description: 'bar',
-            cover: minimal_base64_encoded_image(),
-        );
+        $data = PlaylistCreateData::make(name: 'foo', description: 'bar', cover: minimal_base64_encoded_image());
 
         $playlist = $this->service->createPlaylist($data, $user);
 
@@ -60,7 +56,7 @@ class PlaylistServiceTest extends TestCase
             name: 'foo',
             description: 'bar',
             cover: minimal_base64_encoded_image(),
-            playableIds: $songs->modelKeys(),
+            playableIds: $songs->modelKeys()
         );
 
         $playlist = $this->service->createPlaylist($data, $user);
@@ -77,10 +73,7 @@ class PlaylistServiceTest extends TestCase
     {
         $user = create_user();
 
-        $data = PlaylistCreateData::make(
-            name: 'foo',
-            description: 'bar',
-        );
+        $data = PlaylistCreateData::make(name: 'foo', description: 'bar');
 
         $playlist = $this->service->createPlaylist($data, $user);
 
@@ -102,19 +95,15 @@ class PlaylistServiceTest extends TestCase
                         'id' => '8cfa8700-fbc0-4078-b175-af31c20a3582',
                         'model' => 'title',
                         'operator' => 'is',
-                        'value' => ['foo'],
-                    ],
-                ],
-            ],
+                        'value' => ['foo']
+                    ]
+                ]
+            ]
         ]);
 
         $user = create_user();
 
-        $data = PlaylistCreateData::make(
-            name: 'foo',
-            description: 'bar',
-            ruleGroups: $rules,
-        );
+        $data = PlaylistCreateData::make(name: 'foo', description: 'bar', ruleGroups: $rules);
 
         $playlist = $this->service->createPlaylist($data, $user);
 
@@ -130,11 +119,7 @@ class PlaylistServiceTest extends TestCase
         /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->create();
 
-        $data = PlaylistCreateData::make(
-            name: 'foo',
-            description: 'bar',
-            folderId: $folder->id,
-        );
+        $data = PlaylistCreateData::make(name: 'foo', description: 'bar', folderId: $folder->id);
 
         $playlist = $this->service->createPlaylist($data, $folder->user);
 
@@ -148,10 +133,7 @@ class PlaylistServiceTest extends TestCase
     {
         $playlist = create_playlist(['name' => 'foo']);
 
-        $this->service->updatePlaylist($playlist, PlaylistUpdateData::make(
-            name: 'bar',
-            description: 'baz',
-        ));
+        $this->service->updatePlaylist($playlist, PlaylistUpdateData::make(name: 'bar', description: 'baz'));
 
         self::assertSame('bar', $playlist->name);
         self::assertSame('baz', $playlist->description);
@@ -168,10 +150,10 @@ class PlaylistServiceTest extends TestCase
                         'id' => '8cfa8700-fbc0-4078-b175-af31c20a3582',
                         'model' => 'title',
                         'operator' => 'is',
-                        'value' => ['foo'],
-                    ],
-                ],
-            ],
+                        'value' => ['foo']
+                    ]
+                ]
+            ]
         ]);
 
         $playlist = create_playlist(['name' => 'foo', 'rules' => $rules]);
@@ -187,11 +169,11 @@ class PlaylistServiceTest extends TestCase
                             'id' => '8cfa8700-fbc0-4078-b175-af31c20a3582',
                             'model' => 'title',
                             'operator' => 'is',
-                            'value' => ['bar'],
-                        ],
-                    ],
-                ],
-            ]),
+                            'value' => ['bar']
+                        ]
+                    ]
+                ]
+            ])
         );
 
         $this->service->updatePlaylist($playlist, $data);
@@ -217,7 +199,7 @@ class PlaylistServiceTest extends TestCase
         self::assertCount(2, $addedSongs);
         self::assertCount(4, $playlist->playables);
         self::assertEqualsCanonicalizing($addedSongs->modelKeys(), $songs->modelKeys());
-        $songs->each(static fn (Song $song) => self::assertTrue($playlist->playables->contains($song)));
+        $songs->each(static fn(Song $song) => self::assertTrue($playlist->playables->contains($song)));
     }
 
     #[Test]
@@ -231,7 +213,10 @@ class PlaylistServiceTest extends TestCase
 
         /** @var Podcast $podcast */
         $podcast = Podcast::factory()->create();
-        $episodes = Song::factory(2)->asEpisode()->for($podcast)->create();
+        $episodes = Song::factory(2)
+            ->asEpisode()
+            ->for($podcast)
+            ->create();
 
         $podcastService->subscribeUserToPodcast($playlist->owner, $podcast);
 
@@ -248,7 +233,9 @@ class PlaylistServiceTest extends TestCase
     {
         $playlist = create_playlist();
         $playlist->addPlayables(Song::factory(2)->create());
-        $playables = Song::factory(2)->asEpisode()->create()
+        $playables = Song::factory(2)
+            ->asEpisode()
+            ->create()
             ->merge(Song::factory(2)->create());
 
         $addedEpisodes = $this->service->addPlayablesToPlaylist($playlist, $playables, $playlist->owner);
@@ -274,7 +261,7 @@ class PlaylistServiceTest extends TestCase
 
         $this->service->addPlayablesToPlaylist($playlist, $songs, $user);
 
-        $songs->each(static fn (Song $song) => self::assertTrue($song->refresh()->is_public));
+        $songs->each(static fn(Song $song) => self::assertTrue($song->refresh()->is_public));
     }
 
     #[Test]
@@ -285,7 +272,7 @@ class PlaylistServiceTest extends TestCase
 
         $this->service->makePlaylistContentPublic($playlist);
 
-        $playlist->playables->each(static fn (Song $song) => self::assertTrue($song->is_public));
+        $playlist->playables->each(static fn(Song $song) => self::assertTrue($song->is_public));
     }
 
     #[Test]

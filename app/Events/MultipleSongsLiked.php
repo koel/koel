@@ -11,7 +11,9 @@ class MultipleSongsLiked extends Event
     /**
      * @param Collection<Song> $songs
      */
-    public function __construct(public readonly Collection $songs, public readonly User $user)
-    {
+    public function __construct(
+        public readonly Collection $songs,
+        public readonly User $user
+    ) {
     }
 }

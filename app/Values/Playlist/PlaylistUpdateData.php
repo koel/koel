@@ -12,7 +12,7 @@ final readonly class PlaylistUpdateData implements Arrayable
         public string $description,
         public ?string $folderId,
         public ?string $cover,
-        public ?SmartPlaylistRuleGroupCollection $ruleGroups,
+        public ?SmartPlaylistRuleGroupCollection $ruleGroups
     ) {
     }
 
@@ -21,14 +21,14 @@ final readonly class PlaylistUpdateData implements Arrayable
         string $description = '',
         ?string $folderId = null,
         ?string $cover = null,
-        ?SmartPlaylistRuleGroupCollection $ruleGroups = null,
+        ?SmartPlaylistRuleGroupCollection $ruleGroups = null
     ): self {
         return new self(
             name: $name,
             description: $description,
             folderId: $folderId,
             cover: $cover,
-            ruleGroups: $ruleGroups,
+            ruleGroups: $ruleGroups
         );
     }
 
@@ -40,7 +40,7 @@ final readonly class PlaylistUpdateData implements Arrayable
             'description' => $this->description,
             'folder_id' => $this->folderId,
             'cover' => $this->cover,
-            'rule_groups' => $this->ruleGroups,
+            'rule_groups' => $this->ruleGroups
         ];
     }
 }

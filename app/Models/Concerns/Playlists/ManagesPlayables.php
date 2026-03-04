@@ -25,7 +25,7 @@ trait ManagesPlayables
         foreach ($playables as $playable) {
             $data[$playable] = [
                 'position' => ++$maxPosition,
-                'user_id' => $collaborator->id,
+                'user_id' => $collaborator->id
             ];
         }
 

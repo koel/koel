@@ -17,7 +17,7 @@ class DownloadSongsController extends Controller
 
         /** @var Array<Song>|Collection<array-key, Song> $songs */
         $songs = Song::query()->findMany($request->songs);
-        $songs->each(fn ($song) => $this->authorize('download', $song));
+        $songs->each(fn($song) => $this->authorize('download', $song));
 
         return $service->getDownloadable($repository->getMany($request->songs))?->toResponse();
     }

@@ -25,7 +25,7 @@ class Genre extends Model
 
     protected $fillable = [
         'public_id',
-        'name',
+        'name'
     ];
 
     // @mago-ignore lint:no-redundant-method-override
@@ -55,9 +55,7 @@ class Genre extends Model
         $name = trim($name);
 
         /** @var static */
-        return static::query()->firstOrCreate(
-            ['name' => $name],
-        );
+        return static::query()->firstOrCreate(['name' => $name]);
     }
 
     /** @inheritdoc  */
@@ -65,7 +63,7 @@ class Genre extends Model
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
+            'name' => $this->name
         ];
     }
 }

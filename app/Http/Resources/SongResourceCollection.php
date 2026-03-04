@@ -21,6 +21,6 @@ class SongResourceCollection extends ResourceCollection
     {
         $user = $this->user ?? auth()->user();
 
-        return $this->collection->map(static fn (SongResource $resource) => $resource->for($user))->toArray();
+        return $this->collection->map(static fn(SongResource $resource) => $resource->for($user))->toArray();
     }
 }

@@ -20,8 +20,8 @@ class PlaylistFolderPlaylistStoreRequest extends Request
                 'required',
                 'array',
                 new AllPlaylistsAreAccessibleBy($this->user()),
-                Rule::exists(Playlist::class, 'id'),
-            ],
+                Rule::exists(Playlist::class, 'id')
+            ]
         ];
     }
 }

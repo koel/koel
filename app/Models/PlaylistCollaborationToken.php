@@ -26,6 +26,6 @@ class PlaylistCollaborationToken extends Model
 
     protected function expired(): Attribute
     {
-        return Attribute::get(fn (): bool => $this->created_at->addDays(7)->isPast())->shouldCache();
+        return Attribute::get(fn(): bool => $this->created_at->addDays(7)->isPast())->shouldCache();
     }
 }

@@ -9,7 +9,7 @@ class ToggleLikeSongRequest extends Request
     public function rules(): array
     {
         return [
-            'song' => 'required|exists:songs,id',
+            'song' => 'required|exists:songs,id'
         ];
     }
 }

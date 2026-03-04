@@ -12,8 +12,9 @@ class GetAlbumWikidataIdUsingReleaseGroupMbid
 {
     use TriesRemember;
 
-    public function __construct(private readonly MusicBrainzConnector $connector)
-    {
+    public function __construct(
+        private readonly MusicBrainzConnector $connector
+    ) {
     }
 
     public function __invoke(?string $mbid, Closure $next): mixed
@@ -27,7 +28,7 @@ class GetAlbumWikidataIdUsingReleaseGroupMbid
             callback: function () use ($mbid): ?string {
                 $wikidata = collect(Arr::where(
                     $this->connector->send(new GetReleaseGroupUrlRelationshipsRequest($mbid))->json('relations'),
-                    static fn ($relation) => $relation['type'] === 'wikidata',
+                    static fn($relation) => $relation['type'] === 'wikidata'
                 ))->first();
 
                 return $wikidata ? Str::afterLast(Arr::get($wikidata, 'url.resource'), '/') : null;

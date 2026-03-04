@@ -11,15 +11,17 @@ use Illuminate\Database\Eloquent\Builder;
 
 readonly class DeleteNonExistingRecordsPostScan implements ShouldQueue
 {
-    public function __construct(private SongRepository $songRepository)
-    {
+    public function __construct(
+        private SongRepository $songRepository
+    ) {
     }
 
     public function handle(MediaScanCompleted $event): void
     {
-        $paths = $event->results
+        $paths = $event
+            ->results
             ->valid()
-            ->map(static fn (ScanResult $result) => $result->path)
+            ->map(static fn(ScanResult $result) => $result->path)
             ->merge($this->songRepository->getAllStoredOnCloud()->pluck('path'))
             ->toArray();
 

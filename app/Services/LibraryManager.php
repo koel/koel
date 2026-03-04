@@ -28,7 +28,7 @@ class LibraryManager
 
             $results = [
                 'albums' => $albumQuery->get('albums.*'),
-                'artists' => $artistQuery->get('artists.*'),
+                'artists' => $artistQuery->get('artists.*')
             ];
 
             if (!$dryRun) {

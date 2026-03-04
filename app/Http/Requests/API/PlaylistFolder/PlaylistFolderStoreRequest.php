@@ -13,7 +13,7 @@ class PlaylistFolderStoreRequest extends Request
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:191',
+            'name' => 'required|string|max:191'
         ];
     }
 }

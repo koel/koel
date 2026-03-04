@@ -15,7 +15,7 @@ class PodcastStoreRequest extends Request
     public function rules(): array
     {
         return [
-            'url' => 'required|url',
+            'url' => 'required|url'
         ];
     }
 }

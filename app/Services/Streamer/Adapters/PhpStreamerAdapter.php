@@ -16,6 +16,6 @@ class PhpStreamerAdapter extends LocalStreamerAdapter
 
         // For PHP streamer, we explicitly exit here to prevent the framework from sending additional headers
         // and causing "headers already sent" errors (#2054).
-        exit;
+        exit();
     }
 }

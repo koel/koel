@@ -10,8 +10,9 @@ use App\Values\Theme\ThemeProperties;
 
 class ThemeService
 {
-    public function __construct(private readonly ImageStorage $imageStorage)
-    {
+    public function __construct(
+        private readonly ImageStorage $imageStorage
+    ) {
     }
 
     public function createTheme(User $user, ThemeCreateData $data): Theme
@@ -23,12 +24,12 @@ class ThemeService
             // store the bg image and create a thumbnail too
             $bgImage = $this->imageStorage->storeImage(
                 source: $data->bgImage,
-                config: ImageWritingConfig::make(maxWidth: 2560),
+                config: ImageWritingConfig::make(maxWidth: 2560)
             );
 
             $thumbnail = $this->imageStorage->storeImage(
                 source: $data->bgImage,
-                config: ImageWritingConfig::make(maxWidth: 640),
+                config: ImageWritingConfig::make(maxWidth: 640)
             );
         }
 
@@ -41,8 +42,8 @@ class ThemeService
                 bgImage: $bgImage,
                 highlightColor: $data->highlightColor,
                 fontFamily: $data->fontFamily,
-                fontSize: $data->fontSize,
-            ),
+                fontSize: $data->fontSize
+            )
         ]);
     }
 

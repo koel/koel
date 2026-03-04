@@ -9,7 +9,7 @@ class ScannerNoCacheStrategy implements ScannerCacheStrategy
 {
     public function remember(
         string $key,
-        Closure $callback,
+        Closure $callback
     ): mixed {
         return $callback();
     }

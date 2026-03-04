@@ -9,8 +9,9 @@ use Illuminate\Support\Facades\Cache;
 
 class ITunesService
 {
-    public function __construct(private readonly ITunesConnector $connector)
-    {
+    public function __construct(
+        private readonly ITunesConnector $connector
+    ) {
     }
 
     public static function used(): bool

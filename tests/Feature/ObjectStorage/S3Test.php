@@ -35,8 +35,8 @@ class S3Test extends TestCase
                 'artist' => 'Koel',
                 'lyrics' => "When you wake up, turn your radio on, and you'll hear this simple song",
                 'duration' => 10,
-                'track' => 5,
-            ],
+                'track' => 5
+            ]
         ])->assertSuccessful();
 
         /** @var Song $song */
@@ -54,12 +54,12 @@ class S3Test extends TestCase
     public function removingASong(): void
     {
         Song::factory()->create([
-            'path' => 's3://koel/sample.mp3',
+            'path' => 's3://koel/sample.mp3'
         ]);
 
         $this->delete('api/os/s3/song', [
             'bucket' => 'koel',
-            'key' => 'sample.mp3',
+            'key' => 'sample.mp3'
         ]);
 
         $this->assertDatabaseMissing(Song::class, ['path' => 's3://koel/sample.mp3']);

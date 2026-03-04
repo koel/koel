@@ -21,19 +21,19 @@ class ArtistInformationTest extends TestCase
         $artist = Artist::factory()->create();
 
         $lastfm = $this->mock(EncyclopediaService::class);
-        $lastfm->expects('getArtistInformation')
-            ->with(Mockery::on(static fn (Artist $a) => $a->is($artist)))
+        $lastfm
+            ->expects('getArtistInformation')
+            ->with(Mockery::on(static fn(Artist $a) => $a->is($artist)))
             ->andReturn(ArtistInformation::make(
                 url: 'https://lastfm.com/artist/foo',
                 image: 'https://lastfm.com/image/foo',
                 bio: [
                     'summary' => 'foo',
-                    'full' => 'bar',
-                ],
+                    'full' => 'bar'
+                ]
             ));
 
-        $this->getAs("api/artists/{$artist->id}/information")
-            ->assertJsonStructure(ArtistInformation::JSON_STRUCTURE);
+        $this->getAs("api/artists/{$artist->id}/information")->assertJsonStructure(ArtistInformation::JSON_STRUCTURE);
     }
 
     #[Test]
@@ -42,7 +42,8 @@ class ArtistInformationTest extends TestCase
         config(['koel.services.lastfm.key' => null]);
         config(['koel.services.lastfm.secret' => null]);
 
-        $this->getAs('api/artists/' . Artist::factory()->create()->id . '/information')
-            ->assertJsonStructure(ArtistInformation::JSON_STRUCTURE);
+        $this->getAs('api/artists/'
+        . Artist::factory()->create()->id
+        . '/information')->assertJsonStructure(ArtistInformation::JSON_STRUCTURE);
     }
 }

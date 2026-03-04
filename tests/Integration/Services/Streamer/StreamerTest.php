@@ -29,30 +29,29 @@ class StreamerTest extends TestCase
         // prevent real HTTP calls from being made, e.g., from DropboxStorage
         Http::fake();
 
-        collect(SongStorageType::cases())
-            ->each(function (SongStorageType $type): void {
-                /** @var Song $song */
-                $song = Song::factory()->make(['storage' => $type]);
+        collect(SongStorageType::cases())->each(function (SongStorageType $type): void {
+            /** @var Song $song */
+            $song = Song::factory()->make(['storage' => $type]);
 
-                switch ($type) {
-                    case SongStorageType::S3:
-                    case SongStorageType::DROPBOX:
-                        $this->expectException(KoelPlusRequiredException::class);
-                        new Streamer($song);
-                        break;
+            switch ($type) {
+                case SongStorageType::S3:
+                case SongStorageType::DROPBOX:
+                    $this->expectException(KoelPlusRequiredException::class);
+                    new Streamer($song);
+                    break;
 
-                    case SongStorageType::S3_LAMBDA:
-                        self::assertInstanceOf(S3CompatibleStreamerAdapter::class, (new Streamer($song))->getAdapter());
-                        break;
+                case SongStorageType::S3_LAMBDA:
+                    self::assertInstanceOf(S3CompatibleStreamerAdapter::class, ( new Streamer($song) )->getAdapter());
+                    break;
 
-                    case SongStorageType::LOCAL:
-                        self::assertInstanceOf(LocalStreamerAdapter::class, (new Streamer($song))->getAdapter());
-                        break;
+                case SongStorageType::LOCAL:
+                    self::assertInstanceOf(LocalStreamerAdapter::class, ( new Streamer($song) )->getAdapter());
+                    break;
 
-                    default:
-                        self::fail("Storage type not covered by tests: $type->value");
-                }
-            });
+                default:
+                    self::fail("Storage type not covered by tests: $type->value");
+            }
+        });
     }
 
     #[Test]
@@ -65,7 +64,7 @@ class StreamerTest extends TestCase
         $song = Song::factory()->create([
             'storage' => SongStorageType::LOCAL,
             'path' => '/tmp/test.flac',
-            'mime_type' => 'audio/flac',
+            'mime_type' => 'audio/flac'
         ]);
 
         $streamer = new Streamer($song, null);
@@ -96,7 +95,7 @@ class StreamerTest extends TestCase
         $song = Song::factory()->create([
             'storage' => SongStorageType::LOCAL,
             'path' => '/tmp/test.aiff',
-            'mime_type' => 'audio/aif',
+            'mime_type' => 'audio/aif'
         ]);
 
         $streamer = new Streamer($song, null);
@@ -112,7 +111,7 @@ class StreamerTest extends TestCase
         return [
             PhpStreamerAdapter::class => [null, PhpStreamerAdapter::class],
             XSendFileStreamerAdapter::class => ['x-sendfile', XSendFileStreamerAdapter::class],
-            XAccelRedirectStreamerAdapter::class => ['x-accel-redirect', XAccelRedirectStreamerAdapter::class],
+            XAccelRedirectStreamerAdapter::class => ['x-accel-redirect', XAccelRedirectStreamerAdapter::class]
         ];
     }
 
@@ -125,7 +124,7 @@ class StreamerTest extends TestCase
         /** @var Song $song */
         $song = Song::factory()->make(['path' => test_path('songs/blank.mp3')]);
 
-        self::assertInstanceOf($expectedClass, (new Streamer($song))->getAdapter());
+        self::assertInstanceOf($expectedClass, ( new Streamer($song) )->getAdapter());
 
         config(['koel.streaming.method' => null]);
     }

@@ -27,9 +27,10 @@ class PodcastController extends Controller
 
     public function index(Request $request)
     {
-        return PodcastResource::collection(
-            $this->podcastRepository->getAllSubscribedByUser($request->boolean('favorites_only'), $this->user)
-        );
+        return PodcastResource::collection($this->podcastRepository->getAllSubscribedByUser(
+            $request->boolean('favorites_only'),
+            $this->user
+        ));
     }
 
     #[DisabledInDemo]

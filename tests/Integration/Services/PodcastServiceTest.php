@@ -30,7 +30,7 @@ class PodcastServiceTest extends TestCase
         parent::setUp();
 
         $mock = new MockHandler([
-            new Response(200, [], file_get_contents(test_path('fixtures/podcast.xml'))),
+            new Response(200, [], file_get_contents(test_path('fixtures/podcast.xml')))
         ]);
 
         $handlerStack = HandlerStack::create($mock);
@@ -55,7 +55,7 @@ class PodcastServiceTest extends TestCase
             'author' => 'Phan An (phanan)',
             'language' => 'en-US',
             'explicit' => false,
-            'added_by' => $user->id,
+            'added_by' => $user->id
         ]);
 
         self::assertCount(8, $podcast->episodes);
@@ -67,7 +67,7 @@ class PodcastServiceTest extends TestCase
         /** @var Podcast $podcast */
         $podcast = Podcast::factory()->create([
             'url' => 'https://example.com/feed.xml',
-            'title' => 'My Cool Podcast',
+            'title' => 'My Cool Podcast'
         ]);
 
         $user = create_user();
@@ -88,7 +88,7 @@ class PodcastServiceTest extends TestCase
 
         /** @var Podcast $podcast */
         $podcast = Podcast::factory()->create([
-            'url' => 'https://example.com/feed.xml',
+            'url' => 'https://example.com/feed.xml'
         ]);
 
         $user = create_user();
@@ -103,14 +103,14 @@ class PodcastServiceTest extends TestCase
         self::expectException(UserAlreadySubscribedToPodcastException::class);
 
         Http::fake([
-            'https://example.com/feed.xml' => Http::response(headers: ['Last-Modified' => now()->toRfc1123String()]),
+            'https://example.com/feed.xml' => Http::response(headers: ['Last-Modified' => now()->toRfc1123String()])
         ]);
 
         /** @var Podcast $podcast */
         $podcast = Podcast::factory()->create([
             'url' => 'https://example.com/feed.xml',
             'title' => 'Shall be changed very sad',
-            'last_synced_at' => now()->subDays(3),
+            'last_synced_at' => now()->subDays(3)
         ]);
 
         self::assertCount(0, $podcast->episodes);
@@ -138,12 +138,12 @@ class PodcastServiceTest extends TestCase
 
         self::assertFalse($user->subscribedToPodcast($podcast));
 
-        Event::assertDispatched(
-            UserUnsubscribedFromPodcast::class,
-            static function (UserUnsubscribedFromPodcast $event) use ($user, $podcast) {
-                return $event->user->is($user) && $event->podcast->is($podcast);
-            },
-        );
+        Event::assertDispatched(UserUnsubscribedFromPodcast::class, static function (UserUnsubscribedFromPodcast $event) use (
+            $user,
+            $podcast
+        ) {
+            return $event->user->is($user) && $event->podcast->is($podcast);
+        });
     }
 
     #[Test]
@@ -151,7 +151,7 @@ class PodcastServiceTest extends TestCase
     {
         /** @var Podcast $podcast */
         $podcast = Podcast::factory()->create([
-            'last_synced_at' => now()->subHours(6),
+            'last_synced_at' => now()->subHours(6)
         ]);
 
         self::assertFalse($this->service->isPodcastObsolete($podcast));
@@ -161,13 +161,13 @@ class PodcastServiceTest extends TestCase
     public function podcastObsoleteIfModifiedSinceLastSync(): void
     {
         Http::fake([
-            'https://example.com/feed.xml' => Http::response(headers: ['Last-Modified' => now()->toRfc1123String()]),
+            'https://example.com/feed.xml' => Http::response(headers: ['Last-Modified' => now()->toRfc1123String()])
         ]);
 
         /** @var Podcast $podcast */
         $podcast = Podcast::factory()->create([
             'url' => 'https://example.com/feed.xml',
-            'last_synced_at' => now()->subDays(1),
+            'last_synced_at' => now()->subDays(1)
         ]);
 
         self::assertTrue($this->service->isPodcastObsolete($podcast));
@@ -194,16 +194,16 @@ class PodcastServiceTest extends TestCase
     public function getStreamableUrl(): void
     {
         $mock = new MockHandler([
-            new Response(200, ['Access-Control-Allow-Origin' => '*']),
+            new Response(200, ['Access-Control-Allow-Origin' => '*'])
         ]);
 
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(['handler' => $handlerStack]);
 
-        self::assertSame(
+        self::assertSame('https://example.com/episode.mp3', $this->service->getStreamableUrl(
             'https://example.com/episode.mp3',
-            $this->service->getStreamableUrl('https://example.com/episode.mp3', $client)
-        );
+            $client
+        ));
     }
 
     #[Test]
@@ -223,16 +223,16 @@ class PodcastServiceTest extends TestCase
         $mock = new MockHandler([
             new Response(302, ['Location' => 'https://redir.example.com/track']),
             new Response(302, ['Location' => 'https://assets.example.com/episode.mp3']),
-            new Response(200, ['Access-Control-Allow-Origin' => '*']),
+            new Response(200, ['Access-Control-Allow-Origin' => '*'])
         ]);
 
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(['handler' => $handlerStack]);
 
-        self::assertSame(
-            'https://assets.example.com/episode.mp3',
-            $this->service->getStreamableUrl('https://example.com/episode.mp3', $client)
-        );
+        self::assertSame('https://assets.example.com/episode.mp3', $this->service->getStreamableUrl(
+            'https://example.com/episode.mp3',
+            $client
+        ));
     }
 
     #[Test]

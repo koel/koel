@@ -29,7 +29,7 @@ class SongZipArchiveTest extends TestCase
     {
         $songs = collect([
             Song::factory()->create(['path' => test_path('songs/full.mp3')]),
-            Song::factory()->create(['path' => test_path('songs/lorem.mp3')]),
+            Song::factory()->create(['path' => test_path('songs/lorem.mp3')])
         ]);
 
         $songZipArchive = new SongZipArchive();

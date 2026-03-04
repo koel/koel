@@ -48,10 +48,7 @@ class SftpStorageTest extends PlusTestCase
         Storage::disk('sftp')->put('123__random__song.mp3', 'fake content');
         File::expects('delete')->with('/tmp/random/song.mp3');
 
-        $reference = UploadReference::make(
-            location: 'sftp://123__random__song.mp3',
-            localPath: '/tmp/random/song.mp3',
-        );
+        $reference = UploadReference::make(location: 'sftp://123__random__song.mp3', localPath: '/tmp/random/song.mp3');
 
         $this->service->undoUpload($reference);
     }

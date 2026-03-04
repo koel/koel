@@ -26,7 +26,7 @@ class SpotifyClientTest extends TestCase
 
         config([
             'koel.services.spotify.client_id' => 'fake-client-id',
-            'koel.services.spotify.client_secret' => 'fake-client-secret',
+            'koel.services.spotify.client_secret' => 'fake-client-secret'
         ]);
 
         $this->session = Mockery::mock(SpotifySession::class);
@@ -47,7 +47,10 @@ class SpotifyClientTest extends TestCase
     public function accessTokenIsRetrievedFromCacheWhenApplicable(): void
     {
         $this->wrapped->expects('setOptions')->with(['return_assoc' => true]);
-        $this->cache->expects('get')->with('spotify.access_token')->andReturn('fake-access-token');
+        $this->cache
+            ->expects('get')
+            ->with('spotify.access_token')
+            ->andReturn('fake-access-token');
         $this->session->shouldNotReceive('requestCredentialsToken');
         $this->session->shouldNotReceive('getAccessToken');
         $this->cache->shouldNotReceive('put');
@@ -60,7 +63,10 @@ class SpotifyClientTest extends TestCase
     public function callForwarding(): void
     {
         $this->mockSetAccessToken();
-        $this->wrapped->expects('search')->with('foo', 'track')->andReturn('bar');
+        $this->wrapped
+            ->expects('search')
+            ->with('foo', 'track')
+            ->andReturn('bar');
 
         $this->client = new SpotifyClient($this->wrapped, $this->session, $this->cache);
 
@@ -72,17 +78,20 @@ class SpotifyClientTest extends TestCase
     {
         config([
             'koel.services.spotify.client_id' => null,
-            'koel.services.spotify.client_secret' => null,
+            'koel.services.spotify.client_secret' => null
         ]);
 
         $this->expectException(SpotifyIntegrationDisabledException::class);
-        (new SpotifyClient($this->wrapped, $this->session, $this->cache))->search('foo', 'track');
+        ( new SpotifyClient($this->wrapped, $this->session, $this->cache) )->search('foo', 'track');
     }
 
     private function mockSetAccessToken(): void
     {
         $this->wrapped->expects('setOptions')->with(['return_assoc' => true]);
-        $this->cache->expects('get')->with('spotify.access_token')->andReturnNull();
+        $this->cache
+            ->expects('get')
+            ->with('spotify.access_token')
+            ->andReturnNull();
         $this->session->expects('requestCredentialsToken');
         $this->session->expects('getAccessToken')->andReturn('fake-access-token');
         $this->cache->expects('put')->with('spotify.access_token', 'fake-access-token', 3_540);
@@ -93,7 +102,7 @@ class SpotifyClientTest extends TestCase
     {
         config([
             'koel.services.spotify.client_id' => null,
-            'koel.services.spotify.client_secret' => null,
+            'koel.services.spotify.client_secret' => null
         ]);
 
         parent::tearDown();

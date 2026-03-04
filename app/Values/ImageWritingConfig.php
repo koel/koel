@@ -7,7 +7,7 @@ final readonly class ImageWritingConfig
     private function __construct(
         public int $quality,
         public int $maxWidth,
-        public ?int $blur,
+        public ?int $blur
     ) {
     }
 

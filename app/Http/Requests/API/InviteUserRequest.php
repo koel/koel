@@ -23,8 +23,8 @@ class InviteUserRequest extends Request
                 'required',
                 Rule::enum(Role::class),
                 new AvailableRole(),
-                new UserCanManageRole($this->user()),
-            ],
+                new UserCanManageRole($this->user())
+            ]
         ];
     }
 
@@ -34,7 +34,7 @@ class InviteUserRequest extends Request
     public function messages(): array
     {
         return [
-            'emails.*.unique' => 'The email :input is already registered.',
+            'emails.*.unique' => 'The email :input is already registered.'
         ];
     }
 }

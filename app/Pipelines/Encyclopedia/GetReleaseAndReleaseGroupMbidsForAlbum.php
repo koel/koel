@@ -12,8 +12,9 @@ class GetReleaseAndReleaseGroupMbidsForAlbum
 {
     use TriesRemember;
 
-    public function __construct(private readonly MusicBrainzConnector $connector)
-    {
+    public function __construct(
+        private readonly MusicBrainzConnector $connector
+    ) {
     }
 
     public function __invoke(?array $params, Closure $next): mixed
@@ -32,15 +33,15 @@ class GetReleaseAndReleaseGroupMbidsForAlbum
                 foreach ($response->json('releases.0.artist-credit', []) as $credit) {
                     Cache::forever(
                         cache_key('artist mbid', Arr::get($credit, 'artist.name')),
-                        Arr::get($credit, 'artist.id'),
+                        Arr::get($credit, 'artist.id')
                     );
                 }
 
                 return [
                     $response->json('releases.0.id'),
-                    $response->json('releases.0.release-group.id'),
+                    $response->json('releases.0.release-group.id')
                 ];
-            },
+            }
         );
 
         return $next($mbids);

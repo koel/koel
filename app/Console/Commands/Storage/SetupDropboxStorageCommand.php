@@ -15,8 +15,9 @@ class SetupDropboxStorageCommand extends Command
     protected $signature = 'koel:storage:dropbox';
     protected $description = 'Set up Dropbox as the storage driver for Koel';
 
-    public function __construct(private readonly DotenvEditor $dotenvEditor)
-    {
+    public function __construct(
+        private readonly DotenvEditor $dotenvEditor
+    ) {
         parent::__construct();
     }
 
@@ -48,7 +49,7 @@ class SetupDropboxStorageCommand extends Command
             ->withBasicAuth($config['DROPBOX_APP_KEY'], $config['DROPBOX_APP_SECRET'])
             ->post('https://api.dropboxapi.com/oauth2/token', [
                 'code' => $accessCode,
-                'grant_type' => 'authorization_code',
+                'grant_type' => 'authorization_code'
             ]);
 
         if ($response->failed()) {
@@ -69,7 +70,7 @@ class SetupDropboxStorageCommand extends Command
         config()->set('filesystems.disks.dropbox', [
             'app_key' => $config['DROPBOX_APP_KEY'],
             'app_secret' => $config['DROPBOX_APP_SECRET'],
-            'refresh_token' => $config['DROPBOX_REFRESH_TOKEN'],
+            'refresh_token' => $config['DROPBOX_REFRESH_TOKEN']
         ]);
 
         $this->comment('Uploading a test file to make sure everything is working...');

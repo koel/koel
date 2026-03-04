@@ -18,7 +18,7 @@ class DeleteSongFilesJobTest extends TestCase
     {
         $files = collect([
             SongFileInfo::make('path/to/song.mp3', SongStorageType::LOCAL),
-            SongFileInfo::make('key.mp3', SongStorageType::S3),
+            SongFileInfo::make('key.mp3', SongStorageType::S3)
         ]);
 
         /** @var SongStorage|MockInterface $storage */

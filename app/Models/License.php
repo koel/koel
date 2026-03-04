@@ -31,16 +31,16 @@ class License extends Model
         'key' => EncryptedValueCast::class,
         'instance' => LicenseInstanceCast::class,
         'meta' => LicenseMetaCast::class,
-        'expires_at' => 'datetime',
+        'expires_at' => 'datetime'
     ];
 
     protected function shortKey(): Attribute
     {
-        return Attribute::get(fn (): string => '****-' . Str::afterLast($this->key, '-'))->shouldCache();
+        return Attribute::get(fn(): string => '****-' . Str::afterLast($this->key, '-'))->shouldCache();
     }
 
     protected function activatedAt(): Attribute
     {
-        return Attribute::get(fn () => $this->instance->createdAt)->shouldCache();
+        return Attribute::get(fn() => $this->instance->createdAt)->shouldCache();
     }
 }

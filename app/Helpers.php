@@ -122,7 +122,7 @@ function get_mtime(string|SplFileInfo $path): int
     $path = is_string($path) ? $path : $path->getPathname();
 
     // Workaround for #344, where getMTime() fails for certain files with Unicode names on Windows.
-    return rescue(static fn () => File::lastModified($path)) ?? time();
+    return rescue(static fn() => File::lastModified($path)) ?? time();
 }
 
 /**
@@ -136,7 +136,7 @@ function simple_hash(?string $string): string
 
 function is_image(string $path): bool
 {
-    return rescue(static fn () => (bool) exif_imagetype($path)) ?? false;
+    return rescue(static fn() => (bool) exif_imagetype($path)) ?? false;
 }
 
 /**

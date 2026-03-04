@@ -17,7 +17,7 @@ class EmbedFactory extends Factory
         return [
             'user_id' => User::factory(),
             'embeddable_type' => $type->value,
-            'embeddable_id' => $type->modelClass()::factory(),
+            'embeddable_id' => $type->modelClass()::factory()
         ];
     }
 }

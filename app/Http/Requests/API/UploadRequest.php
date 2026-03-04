@@ -13,7 +13,7 @@ class UploadRequest extends Request
     public function rules(): array
     {
         return [
-            'file' => ['required', 'file', new SupportedAudioFile()],
+            'file' => ['required', 'file', new SupportedAudioFile()]
         ];
     }
 }

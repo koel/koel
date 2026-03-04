@@ -12,11 +12,13 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use SensitiveParameter;
 
 class UserInvitationService
 {
-    public function __construct(private readonly UserRepository $userRepository)
-    {
+    public function __construct(
+        private readonly UserRepository $userRepository
+    ) {
     }
 
     /** @return Collection<array-key, User> */
@@ -25,15 +27,17 @@ class UserInvitationService
         $role->assertAvailable();
 
         return DB::transaction(function () use ($emails, $role, $invitor) {
-            return collect($emails)->map(fn ($email) => $this->inviteOne($email, $role, $invitor));
+            return collect($emails)->map(fn($email) => $this->inviteOne($email, $role, $invitor));
         });
     }
 
-    public function getUserProspectByToken(string $token): User
+    public function getUserProspectByToken(#[SensitiveParameter] string $token): User
     {
-        return User::query()->where('invitation_token', $token)->firstOr(static function (): never {
-            throw new InvitationNotFoundException();
-        });
+        return User::query()
+            ->where('invitation_token', $token)
+            ->firstOr(static function (): never {
+                throw new InvitationNotFoundException();
+            });
     }
 
     public function revokeByEmail(string $email): void
@@ -48,14 +52,17 @@ class UserInvitationService
         $role->assertAvailable();
 
         /** @var User $invitee */
-        $invitee = $invitor->organization->users()->create([
-            'name' => '',
-            'email' => $email,
-            'password' => '',
-            'invited_by_id' => $invitor->id,
-            'invitation_token' => Uuid::generate(),
-            'invited_at' => now(),
-        ]);
+        $invitee = $invitor
+            ->organization
+            ->users()
+            ->create([
+                'name' => '',
+                'email' => $email,
+                'password' => '',
+                'invited_by_id' => $invitor->id,
+                'invitation_token' => Uuid::generate(),
+                'invited_at' => now()
+            ]);
 
         $invitee->syncRoles($role);
 
@@ -64,15 +71,20 @@ class UserInvitationService
         return $invitee;
     }
 
-    public function accept(string $token, string $name, string $password): User
-    {
+    public function accept(
+        #[SensitiveParameter]
+        string $token,
+        string $name,
+        #[SensitiveParameter]
+        string $password
+    ): User {
         $user = $this->getUserProspectByToken($token);
 
         $user->update(attributes: [
             'name' => $name,
             'password' => Hash::make($password),
             'invitation_token' => null,
-            'invitation_accepted_at' => now(),
+            'invitation_accepted_at' => now()
         ]);
 
         return $user;

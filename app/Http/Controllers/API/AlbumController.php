@@ -16,7 +16,7 @@ class AlbumController extends Controller
 {
     public function __construct(
         private readonly AlbumRepository $repository,
-        private readonly AlbumService $service,
+        private readonly AlbumService $service
     ) {
     }
 
@@ -25,7 +25,7 @@ class AlbumController extends Controller
         return AlbumResource::collection($this->repository->getForListing(
             sortColumn: $request->sort ?? 'name',
             sortDirection: $request->order ?? 'asc',
-            favoritesOnly: $request->boolean('favorites_only'),
+            favoritesOnly: $request->boolean('favorites_only')
         ));
     }
 

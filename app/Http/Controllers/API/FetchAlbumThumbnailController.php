@@ -11,7 +11,7 @@ class FetchAlbumThumbnailController extends Controller
     public function __invoke(Album $album, AlbumService $albumService)
     {
         return response()->json([
-            'thumbnailUrl' => image_storage_url($albumService->getOrCreateAlbumThumbnail($album)), // @todo snake_case
+            'thumbnailUrl' => image_storage_url($albumService->getOrCreateAlbumThumbnail($album)) // @todo snake_case
         ]);
     }
 }

@@ -20,11 +20,10 @@ class FetchFavoriteSongsTest extends TestCase
 
         $songs->each(static function (Song $song) use ($user): void {
             Favorite::factory()->for($user)->create([
-                'favoriteable_id' => $song->id,
+                'favoriteable_id' => $song->id
             ]);
         });
 
-        $this->getAs('api/songs/favorite', $user)
-            ->assertJsonStructure([0 => SongResource::JSON_STRUCTURE]);
+        $this->getAs('api/songs/favorite', $user)->assertJsonStructure([0 => SongResource::JSON_STRUCTURE]);
     }
 }

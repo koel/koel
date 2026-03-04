@@ -10,8 +10,11 @@ use Throwable;
 
 class EmbedOptions implements Arrayable
 {
-    private function __construct(public string $theme, public string $layout, public bool $preview)
-    {
+    private function __construct(
+        public string $theme,
+        public string $layout,
+        public bool $preview
+    ) {
         // Preview mode and theme are only customizable in Koel Plus
         if (License::isCommunity()) {
             $this->theme = 'classic';
@@ -32,7 +35,7 @@ class EmbedOptions implements Arrayable
             return new self(
                 theme: Arr::get($array, 'theme', 'classic'),
                 layout: Arr::get($array, 'layout', 'full'),
-                preview: Arr::get($array, 'preview', false),
+                preview: Arr::get($array, 'preview', false)
             );
         } catch (Throwable) {
             return self::make();
@@ -67,7 +70,7 @@ class EmbedOptions implements Arrayable
         return [
             'theme' => $this->theme,
             'layout' => $this->layout,
-            'preview' => $this->preview,
+            'preview' => $this->preview
         ];
     }
 

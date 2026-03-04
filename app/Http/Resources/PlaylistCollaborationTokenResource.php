@@ -4,16 +4,19 @@ namespace App\Http\Resources;
 
 use App\Models\PlaylistCollaborationToken;
 use Illuminate\Http\Resources\Json\JsonResource;
+use SensitiveParameter;
 
 class PlaylistCollaborationTokenResource extends JsonResource
 {
     public const JSON_STRUCTURE = [
         'type',
-        'token',
+        'token'
     ];
 
-    public function __construct(private readonly PlaylistCollaborationToken $token)
-    {
+    public function __construct(
+        #[SensitiveParameter]
+        private readonly PlaylistCollaborationToken $token
+    ) {
         parent::__construct($token);
     }
 
@@ -22,7 +25,7 @@ class PlaylistCollaborationTokenResource extends JsonResource
     {
         return [
             'type' => 'playlist_collaboration_tokens',
-            'token' => $this->token->token,
+            'token' => $this->token->token
         ];
     }
 }

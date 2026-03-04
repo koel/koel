@@ -16,7 +16,7 @@ class WikidataConnector extends Connector
     {
         return [
             'Accept' => 'application/json',
-            'User-Agent' => sprintf('%s/%s( %s )', config('app.name'), koel_version(), config('app.url')),
+            'User-Agent' => sprintf('%s/%s( %s )', config('app.name'), koel_version(), config('app.url'))
         ];
     }
 }

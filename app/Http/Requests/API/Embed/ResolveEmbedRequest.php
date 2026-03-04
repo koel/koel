@@ -17,7 +17,7 @@ class ResolveEmbedRequest extends Request
     {
         return [
             'embeddable_id' => ['required', 'string'],
-            'embeddable_type' => ['required', Rule::enum(EmbeddableType::class)],
+            'embeddable_type' => ['required', Rule::enum(EmbeddableType::class)]
         ];
     }
 }

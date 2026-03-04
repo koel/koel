@@ -42,14 +42,11 @@ class PlaylistFolderTest extends PlusTestCase
             "api/playlist-folders/{$collaboratorFolder->id}/playlists",
             ['playlists' => [$playlist->id]],
             $collaborator
-        )
-            ->assertSuccessful();
+        )->assertSuccessful();
 
-        self::assertTrue(
-            $this->folderService
-                ->getFolderForPlaylist($playlist->fresh(), $collaborator)
-                ?->is($collaboratorFolder)
-        );
+        self::assertTrue($this->folderService->getFolderForPlaylist($playlist->fresh(), $collaborator)?->is(
+            $collaboratorFolder
+        ));
 
         // Verify the playlist is in the owner's folder too
         self::assertTrue($this->folderService->getFolderForPlaylist($playlist->fresh())?->is($ownerFolder));
@@ -72,18 +69,15 @@ class PlaylistFolderTest extends PlusTestCase
         $collaboratorFolder = PlaylistFolder::factory()->for($collaborator)->create();
 
         $collaboratorFolder->playlists()->attach($playlist);
-        self::assertTrue(
-            $this->folderService
-                ->getFolderForPlaylist($playlist->refresh(), $collaborator)
-                ?->is($collaboratorFolder)
-        );
+        self::assertTrue($this->folderService->getFolderForPlaylist($playlist->refresh(), $collaborator)?->is(
+            $collaboratorFolder
+        ));
 
         $this->deleteAs(
             "api/playlist-folders/{$collaboratorFolder->id}/playlists",
             ['playlists' => [$playlist->id]],
             $collaborator
-        )
-            ->assertSuccessful();
+        )->assertSuccessful();
 
         self::assertNull($this->folderService->getFolderForPlaylist($playlist->fresh(), $collaborator));
         // Verify the playlist is still in the owner's folder

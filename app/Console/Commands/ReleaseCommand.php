@@ -17,8 +17,7 @@ use function Laravel\Prompts\warning;
 
 class ReleaseCommand extends Command
 {
-    protected $signature
-        = 'koel:release {version? : The version to release, or "patch", "minor", "major" for auto-increment}';
+    protected $signature = 'koel:release {version? : The version to release, or "patch", "minor", "major" for auto-increment}';
     protected $description = 'Tag and release a new version of Koel';
 
     private Version $currentVersion;
@@ -39,7 +38,7 @@ class ReleaseCommand extends Command
             'minor' => (clone $this->currentVersion)->incrementMinor()->prefix(),
             'major' => (clone $this->currentVersion)->incrementMajor()->prefix(),
             null => $this->acquireReleaseVersionInteractively(),
-            default => self::tryParseVersion($this->argument('version')) ?? $this->acquireReleaseVersionInteractively(),
+            default => self::tryParseVersion($this->argument('version')) ?? $this->acquireReleaseVersionInteractively()
         };
 
         try {
@@ -74,11 +73,11 @@ class ReleaseCommand extends Command
             'pull',
             "merge $this->releaseBranch $this->mainBranch",
             'push',
-            "checkout $this->mainBranch",
+            "checkout $this->mainBranch"
         ];
 
         foreach ($gitCommands as $command) {
-            $this->components->task("Executing `git $command`", static fn () => self::runOkOrThrow("git $command"));
+            $this->components->task("Executing `git $command`", static fn() => self::runOkOrThrow("git $command"));
         }
 
         info("Success! The new version $version has been tagged.");
@@ -92,7 +91,7 @@ class ReleaseCommand extends Command
         $suggestedVersions = [
             $patchVersion => 'Patch',
             (clone $this->currentVersion)->incrementMinor()->prefix() => 'Minor',
-            (clone $this->currentVersion)->incrementMajor()->prefix() => 'Major',
+            (clone $this->currentVersion)->incrementMajor()->prefix() => 'Major'
         ];
 
         $options = [];
@@ -103,20 +102,14 @@ class ReleaseCommand extends Command
 
         $options['custom'] = 'Custom';
 
-        $selected = select(
-            label: 'What are we releasing?',
-            options: $options,
-            default: $patchVersion,
-        );
+        $selected = select(label: 'What are we releasing?', options: $options, default: $patchVersion);
 
         if ($selected === 'custom') {
             $selected = text(
                 label: 'Enter the version you want to release',
                 placeholder: $patchVersion,
                 required: true,
-                validate: static fn (string $value) => self::tryParseVersion($value)
-                    ? null
-                    : 'Invalid version format',
+                validate: static fn(string $value) => self::tryParseVersion($value) ? null : 'Invalid version format'
             );
         }
 

@@ -9,6 +9,6 @@ class SongFileResourceCollection extends SongResourceCollection
     {
         $user = $this->user ?? auth()->user();
 
-        return $this->collection->map(static fn (SongFileResource $resource) => $resource->for($user))->toArray();
+        return $this->collection->map(static fn(SongFileResource $resource) => $resource->for($user))->toArray();
     }
 }

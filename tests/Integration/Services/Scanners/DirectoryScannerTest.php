@@ -49,13 +49,13 @@ class DirectoryScannerTest extends TestCase
         $this->assertDatabaseHas(Song::class, [
             'path' => $this->path('/full.mp3'),
             'track' => 5,
-            'owner_id' => $owner->id,
+            'owner_id' => $owner->id
         ]);
 
         // Ogg files and audio files in subdirectories should be recognized
         $this->assertDatabaseHas(Song::class, [
             'path' => $this->path('/subdir/back-in-black.ogg'),
-            'owner_id' => $owner->id,
+            'owner_id' => $owner->id
         ]);
 
         // GitHub issue #380. folder.png should be copied and used as the cover for files
@@ -76,12 +76,12 @@ class DirectoryScannerTest extends TestCase
         // Artists should be created
         $this->assertDatabaseHas(Artist::class, [
             'name' => 'Cuckoo',
-            'user_id' => $owner->id,
+            'user_id' => $owner->id
         ]);
 
         $this->assertDatabaseHas(Artist::class, [
             'name' => 'Koel',
-            'user_id' => $owner->id,
+            'user_id' => $owner->id
         ]);
 
         // Albums should be created
@@ -137,7 +137,7 @@ class DirectoryScannerTest extends TestCase
 
         $song->update([
             'title' => "It's John Cena!",
-            'lyrics' => 'Booom Wroooom',
+            'lyrics' => 'Booom Wroooom'
         ]);
 
         $this->scanner->scan($this->mediaPath, $config);
@@ -161,7 +161,7 @@ class DirectoryScannerTest extends TestCase
 
         $song->update([
             'title' => "It's John Cena!",
-            'lyrics' => 'Booom Wroooom',
+            'lyrics' => 'Booom Wroooom'
         ]);
 
         $this->scanner->scan($this->mediaPath, ScanConfiguration::make(owner: create_admin(), force: true));
@@ -191,7 +191,7 @@ class DirectoryScannerTest extends TestCase
 
         $song->update([
             'title' => "It's John Cena!",
-            'lyrics' => 'Booom Wroooom',
+            'lyrics' => 'Booom Wroooom'
         ]);
 
         $this->scanner->scan($this->mediaPath, ScanConfiguration::make(owner: $owner, ignores: ['title'], force: true));
@@ -218,22 +218,25 @@ class DirectoryScannerTest extends TestCase
 
         $this->scanner->scan(
             $this->mediaPath,
-            ScanConfiguration::make(
-                owner: $owner,
-                ignores: ['title', 'disc', 'track'],
-                force: true
-            )
+            ScanConfiguration::make(owner: $owner, ignores: ['title', 'disc', 'track'], force: true)
         );
 
         $ignores = [
             'id',
             'created_at',
-            'updated_at',
+            'updated_at'
         ];
 
         // Song should be added back with all info
         self::assertEquals(
-            Arr::except(Song::query()->where('path', $song->path)->first()->withoutRelations()->toArray(), $ignores),
+            Arr::except(
+                Song::query()
+                    ->where('path', $song->path)
+                    ->first()
+                    ->withoutRelations()
+                    ->toArray(),
+                $ignores
+            ),
             Arr::except($song->withoutRelations()->toArray(), $ignores)
         );
     }

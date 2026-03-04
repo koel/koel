@@ -11,7 +11,7 @@ class Request extends BaseRequest
     {
         return [
             'bucket' => 'required',
-            'key' => 'required',
+            'key' => 'required'
         ];
     }
 }

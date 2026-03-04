@@ -20,8 +20,8 @@ class FetchSongsForQueueRequest extends Request
             'limit' => 'required|integer|min:1',
             'sort' => [
                 'required_unless:order,rand',
-                Rule::in(array_keys(SongBuilder::SORT_COLUMNS_NORMALIZE_MAP)),
-            ],
+                Rule::in(array_keys(SongBuilder::SORT_COLUMNS_NORMALIZE_MAP))
+            ]
         ];
     }
 }

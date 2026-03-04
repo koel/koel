@@ -14,13 +14,13 @@ class ValidRadioStationUrlTest extends TestCase
     public function valid(): void
     {
         Http::fake([
-            '*' => Http::response('', 200, ['Content-Type' => 'audio/mpeg']),
+            '*' => Http::response('', 200, ['Content-Type' => 'audio/mpeg'])
         ]);
 
-        (new ValidRadioStationUrl())->validate(
+        ( new ValidRadioStationUrl() )->validate(
             'url',
             'https://example.com/stream',
-            fn (string $attribute, ?string $message) => $this->fail("Validation failed for $attribute: $message"), // @phpstan-ignore-line
+            fn(string $attribute, ?string $message) => $this->fail("Validation failed for $attribute: $message") // @phpstan-ignore-line
         );
 
         $this->addToAssertionCount(1);
@@ -32,7 +32,7 @@ class ValidRadioStationUrlTest extends TestCase
         return [
             'invalid content type' => ['text/html'],
             'no content type' => [null],
-            'empty content type' => [''],
+            'empty content type' => ['']
         ];
     }
 
@@ -40,13 +40,13 @@ class ValidRadioStationUrlTest extends TestCase
     public function invalidBecauseOfNullHeader(?string $contentType): void
     {
         Http::fake([
-            '*' => Http::response('', 200, ['Content-Type' => $contentType]),
+            '*' => Http::response('', 200, ['Content-Type' => $contentType])
         ]);
 
-        (new ValidRadioStationUrl())->validate(
+        ( new ValidRadioStationUrl() )->validate(
             'url',
             'https://example.com/stream',
-            fn () => $this->addToAssertionCount(1),  // @phpstan-ignore-line
+            fn() => $this->addToAssertionCount(1) // @phpstan-ignore-line
         );
     }
 
@@ -58,7 +58,7 @@ class ValidRadioStationUrlTest extends TestCase
         $rule = new ValidRadioStationUrl();
         $rule->bypass = true;
 
-        $rule->validate('url', 'https://example.com/stream', static fn () => null); // @phpstan-ignore-line
+        $rule->validate('url', 'https://example.com/stream', static fn() => null); // @phpstan-ignore-line
 
         $this->addToAssertionCount(1);
         Http::assertNothingSent();

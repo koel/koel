@@ -51,7 +51,7 @@ class Playlist extends Model implements AuditableContract, Embeddable
     protected $guarded = [];
 
     protected $casts = [
-        'rules' => SmartPlaylistRulesCast::class,
+        'rules' => SmartPlaylistRulesCast::class
     ];
 
     protected $appends = ['is_smart'];
@@ -59,7 +59,8 @@ class Playlist extends Model implements AuditableContract, Embeddable
 
     public function playables(): BelongsToMany
     {
-        return $this->belongsToMany(Playable::class)
+        return $this
+            ->belongsToMany(Playable::class)
             ->withTimestamps()
             ->withPivot('position')
             ->orderByPivot('position');
@@ -67,14 +68,12 @@ class Playlist extends Model implements AuditableContract, Embeddable
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class)
-            ->withPivot('role', 'position')
-            ->withTimestamps();
+        return $this->belongsToMany(User::class)->withPivot('role', 'position')->withTimestamps();
     }
 
     protected function owner(): Attribute
     {
-        return Attribute::get(fn () => $this->users()->wherePivot('role', 'owner')->sole())->shouldCache();
+        return Attribute::get(fn() => $this->users()->wherePivot('role', 'owner')->sole())->shouldCache();
     }
 
     public function collaborators(): BelongsToMany
@@ -94,13 +93,13 @@ class Playlist extends Model implements AuditableContract, Embeddable
 
     protected function isSmart(): Attribute
     {
-        return Attribute::get(fn (): bool => (bool) $this->rule_groups?->isNotEmpty())->shouldCache();
+        return Attribute::get(fn(): bool => (bool) $this->rule_groups?->isNotEmpty())->shouldCache();
     }
 
     protected function ruleGroups(): Attribute
     {
         // aliasing the attribute to avoid confusion
-        return Attribute::get(fn () => $this->rules);
+        return Attribute::get(fn() => $this->rules);
     }
 
     public function ownedBy(User $user): bool
@@ -115,7 +114,7 @@ class Playlist extends Model implements AuditableContract, Embeddable
             'id' => $this->id,
             'owner_id' => $this->owner_id,
             'name' => $this->name,
-            'description' => $this->description,
+            'description' => $this->description
         ];
     }
 }

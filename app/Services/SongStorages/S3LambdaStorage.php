@@ -74,7 +74,7 @@ class S3LambdaStorage extends S3CompatibleStorage
             'mtime' => time(),
             'owner_id' => $user->id,
             'is_public' => true,
-            'storage' => SongStorageType::S3_LAMBDA,
+            'storage' => SongStorageType::S3_LAMBDA
         ]);
     }
 

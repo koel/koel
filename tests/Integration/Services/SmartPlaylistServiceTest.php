@@ -42,10 +42,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'title',
                         'operator' => 'is',
-                        'value' => ['Foo Something'],
-                    ],
-                ],
-            ],
+                        'value' => ['Foo Something']
+                    ]
+                ]
+            ]
         ]);
     }
 
@@ -63,10 +63,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'title',
                         'operator' => 'isNot',
-                        'value' => ['Bar Something'],
-                    ],
-                ],
-            ],
+                        'value' => ['Bar Something']
+                    ]
+                ]
+            ]
         ]);
     }
 
@@ -84,10 +84,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'title',
                         'operator' => 'contains',
-                        'value' => ['Some'],
-                    ],
-                ],
-            ],
+                        'value' => ['Some']
+                    ]
+                ]
+            ]
         ]);
     }
 
@@ -105,10 +105,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'title',
                         'operator' => 'notContain',
-                        'value' => ['Nothing'],
-                    ],
-                ],
-            ],
+                        'value' => ['Nothing']
+                    ]
+                ]
+            ]
         ]);
     }
 
@@ -126,10 +126,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'title',
                         'operator' => 'beginsWith',
-                        'value' => ['Foo'],
-                    ],
-                ],
-            ],
+                        'value' => ['Foo']
+                    ]
+                ]
+            ]
         ]);
     }
 
@@ -147,10 +147,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'title',
                         'operator' => 'endsWith',
-                        'value' => ['Something'],
-                    ],
-                ],
-            ],
+                        'value' => ['Something']
+                    ]
+                ]
+            ]
         ]);
     }
 
@@ -158,7 +158,10 @@ class SmartPlaylistServiceTest extends TestCase
     public function albumIs(): void
     {
         $album = Album::factory()->create(['name' => 'Foo Album']);
-        $matches = Song::factory()->count(1)->for($album)->create();
+        $matches = Song::factory()
+            ->count(1)
+            ->for($album)
+            ->create();
         Song::factory()->create();
 
         $this->assertMatchesAgainstRules($matches, [
@@ -169,10 +172,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'album.name',
                         'operator' => 'is',
-                        'value' => ['Foo Album'],
-                    ],
-                ],
-            ],
+                        'value' => ['Foo Album']
+                    ]
+                ]
+            ]
         ]);
     }
 
@@ -183,7 +186,7 @@ class SmartPlaylistServiceTest extends TestCase
             ->count(1)
             ->for(Artist::factory()->create(['name' => 'Foo Artist']))
             ->create([
-                'artist_name' => 'Foo Artist',
+                'artist_name' => 'Foo Artist'
             ]);
 
         Song::factory()->create();
@@ -196,10 +199,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'artist.name',
                         'operator' => 'is',
-                        'value' => ['Foo Artist'],
-                    ],
-                ],
-            ],
+                        'value' => ['Foo Artist']
+                    ]
+                ]
+            ]
         ]);
     }
 
@@ -207,7 +210,10 @@ class SmartPlaylistServiceTest extends TestCase
     public function genreIs(): void
     {
         $genre = Genre::factory()->create(['name' => 'Foo Genre']);
-        $matches = Song::factory()->count(1)->hasAttached($genre)->create();
+        $matches = Song::factory()
+            ->count(1)
+            ->hasAttached($genre)
+            ->create();
 
         Song::factory()->create();
 
@@ -219,10 +225,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'genre',
                         'operator' => 'is',
-                        'value' => ['Foo Genre'],
-                    ],
-                ],
-            ],
+                        'value' => ['Foo Genre']
+                    ]
+                ]
+            ]
         ]);
     }
 
@@ -242,17 +248,19 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'genre',
                         'operator' => 'isNot',
-                        'value' => ['Foo Genre'],
-                    ],
-                ],
-            ],
+                        'value' => ['Foo Genre']
+                    ]
+                ]
+            ]
         ]);
     }
 
     #[Test]
     public function yearIsGreaterThan(): void
     {
-        $matches = Song::factory()->count(1)->create(['year' => 2030])
+        $matches = Song::factory()
+            ->count(1)
+            ->create(['year' => 2030])
             ->merge(Song::factory()->count(1)->create(['year' => 2022]));
 
         Song::factory()->create(['year' => 2020]);
@@ -265,17 +273,19 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'year',
                         'operator' => 'isGreaterThan',
-                        'value' => [2021],
-                    ],
-                ],
-            ],
+                        'value' => [2021]
+                    ]
+                ]
+            ]
         ]);
     }
 
     #[Test]
     public function yearIsLessThan(): void
     {
-        $matches = Song::factory()->count(1)->create(['year' => 1980])
+        $matches = Song::factory()
+            ->count(1)
+            ->create(['year' => 1980])
             ->merge(Song::factory()->count(1)->create(['year' => 1978]));
 
         Song::factory()->create(['year' => 1991]);
@@ -288,17 +298,19 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'year',
                         'operator' => 'isLessThan',
-                        'value' => [1981],
-                    ],
-                ],
-            ],
+                        'value' => [1981]
+                    ]
+                ]
+            ]
         ]);
     }
 
     #[Test]
     public function yearIsBetween(): void
     {
-        $matches = Song::factory()->count(1)->create(['year' => 1980])
+        $matches = Song::factory()
+            ->count(1)
+            ->create(['year' => 1980])
             ->merge(Song::factory()->count(1)->create(['year' => 1978]));
 
         Song::factory()->create(['year' => 1991]);
@@ -311,10 +323,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'year',
                         'operator' => 'isBetween',
-                        'value' => [1970, 1985],
-                    ],
-                ],
-            ],
+                        'value' => [1970, 1985]
+                    ]
+                ]
+            ]
         ]);
     }
 
@@ -335,19 +347,23 @@ class SmartPlaylistServiceTest extends TestCase
             ->for($notMatch)
             ->create(['play_count' => 500]);
 
-        $this->assertMatchesAgainstRules($matches, [
+        $this->assertMatchesAgainstRules(
+            $matches,
             [
-                'id' => Uuid::generate(),
-                'rules' => [
-                    [
-                        'id' => Uuid::generate(),
-                        'model' => 'interactions.play_count',
-                        'operator' => 'isGreaterThan',
-                        'value' => [999],
-                    ],
-                ],
+                [
+                    'id' => Uuid::generate(),
+                    'rules' => [
+                        [
+                            'id' => Uuid::generate(),
+                            'model' => 'interactions.play_count',
+                            'operator' => 'isGreaterThan',
+                            'value' => [999]
+                        ]
+                    ]
+                ]
             ],
-        ], $user);
+            $user
+        );
     }
 
     #[Test]
@@ -367,19 +383,23 @@ class SmartPlaylistServiceTest extends TestCase
             ->for($notMatch)
             ->create(['last_played_at' => now()->subDays(4)]);
 
-        $this->assertMatchesAgainstRules($matches, [
+        $this->assertMatchesAgainstRules(
+            $matches,
             [
-                'id' => Uuid::generate(),
-                'rules' => [
-                    [
-                        'id' => Uuid::generate(),
-                        'model' => 'interactions.last_played_at',
-                        'operator' => 'inLast',
-                        'value' => [3],
-                    ],
-                ],
+                [
+                    'id' => Uuid::generate(),
+                    'rules' => [
+                        [
+                            'id' => Uuid::generate(),
+                            'model' => 'interactions.last_played_at',
+                            'operator' => 'inLast',
+                            'value' => [3]
+                        ]
+                    ]
+                ]
             ],
-        ], $user);
+            $user
+        );
     }
 
     #[Test]
@@ -399,19 +419,23 @@ class SmartPlaylistServiceTest extends TestCase
             ->for($notMatch)
             ->create(['last_played_at' => now()->subDays(2)]);
 
-        $this->assertMatchesAgainstRules($matches, [
+        $this->assertMatchesAgainstRules(
+            $matches,
             [
-                'id' => Uuid::generate(),
-                'rules' => [
-                    [
-                        'id' => Uuid::generate(),
-                        'model' => 'interactions.last_played_at',
-                        'operator' => 'notInLast',
-                        'value' => [2],
-                    ],
-                ],
+                [
+                    'id' => Uuid::generate(),
+                    'rules' => [
+                        [
+                            'id' => Uuid::generate(),
+                            'model' => 'interactions.last_played_at',
+                            'operator' => 'notInLast',
+                            'value' => [2]
+                        ]
+                    ]
+                ]
             ],
-        ], $user);
+            $user
+        );
     }
 
     #[Test]
@@ -431,25 +455,31 @@ class SmartPlaylistServiceTest extends TestCase
             ->for($notMatch)
             ->create(['last_played_at' => now()->subDays(4)]);
 
-        $this->assertMatchesAgainstRules($matches, [
+        $this->assertMatchesAgainstRules(
+            $matches,
             [
-                'id' => Uuid::generate(),
-                'rules' => [
-                    [
-                        'id' => Uuid::generate(),
-                        'model' => 'interactions.last_played_at',
-                        'operator' => 'is',
-                        'value' => [now()->format('Y-m-d')],
-                    ],
-                ],
+                [
+                    'id' => Uuid::generate(),
+                    'rules' => [
+                        [
+                            'id' => Uuid::generate(),
+                            'model' => 'interactions.last_played_at',
+                            'operator' => 'is',
+                            'value' => [now()->format('Y-m-d')]
+                        ]
+                    ]
+                ]
             ],
-        ], $user);
+            $user
+        );
     }
 
     #[Test]
     public function lengthIsGreaterThan(): void
     {
-        $matches = Song::factory()->count(1)->create(['length' => 300])
+        $matches = Song::factory()
+            ->count(1)
+            ->create(['length' => 300])
             ->merge(Song::factory()->count(1)->create(['length' => 200]));
 
         Song::factory()->count(1)->create(['length' => 100]);
@@ -462,17 +492,19 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'length',
                         'operator' => 'isGreaterThan',
-                        'value' => [199],
-                    ],
-                ],
-            ],
+                        'value' => [199]
+                    ]
+                ]
+            ]
         ]);
     }
 
     #[Test]
     public function lengthIsInBetween(): void
     {
-        $matches = Song::factory()->count(1)->create(['length' => 300])
+        $matches = Song::factory()
+            ->count(1)
+            ->create(['length' => 300])
             ->merge(Song::factory()->count(1)->create(['length' => 200]));
 
         Song::factory()->count(1)->create(['length' => 100]);
@@ -485,17 +517,19 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'length',
                         'operator' => 'isBetween',
-                        'value' => [199, 301],
-                    ],
-                ],
-            ],
+                        'value' => [199, 301]
+                    ]
+                ]
+            ]
         ]);
     }
 
     #[Test]
     public function dateAddedInLast(): void
     {
-        $matches = Song::factory()->count(1)->create(['created_at' => now()->subDay()])
+        $matches = Song::factory()
+            ->count(1)
+            ->create(['created_at' => now()->subDay()])
             ->merge(Song::factory()->count(1)->create(['created_at' => today()]));
 
         Song::factory()->count(1)->create(['created_at' => now()->subDays(4)]);
@@ -508,17 +542,19 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'created_at',
                         'operator' => 'inLast',
-                        'value' => [3],
-                    ],
-                ],
-            ],
+                        'value' => [3]
+                    ]
+                ]
+            ]
         ]);
     }
 
     #[Test]
     public function dateAddedNotInLast(): void
     {
-        $matches = Song::factory()->count(1)->create(['created_at' => now()->subDays(4)])
+        $matches = Song::factory()
+            ->count(1)
+            ->create(['created_at' => now()->subDays(4)])
             ->merge(Song::factory()->count(1)->create(['created_at' => now()->subDays(5)]));
 
         Song::factory()->create(['created_at' => now()->subDays(2)]);
@@ -531,10 +567,10 @@ class SmartPlaylistServiceTest extends TestCase
                         'id' => Uuid::generate(),
                         'model' => 'created_at',
                         'operator' => 'notInLast',
-                        'value' => [3],
-                    ],
-                ],
-            ],
+                        'value' => [3]
+                    ]
+                ]
+            ]
         ]);
     }
 

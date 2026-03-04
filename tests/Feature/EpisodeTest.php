@@ -15,7 +15,6 @@ class EpisodeTest extends TestCase
         /** @var Song $episode */
         $episode = Song::factory()->asEpisode()->create();
 
-        $this->getAs("api/songs/{$episode->id}")
-            ->assertJsonStructure(SongResource::JSON_STRUCTURE);
+        $this->getAs("api/songs/{$episode->id}")->assertJsonStructure(SongResource::JSON_STRUCTURE);
     }
 }

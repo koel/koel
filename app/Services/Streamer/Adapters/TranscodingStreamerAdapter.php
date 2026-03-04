@@ -13,7 +13,7 @@ class TranscodingStreamerAdapter implements StreamerAdapter
 {
     use StreamsLocalPath;
 
-    public function stream(Song $song, ?RequestedStreamingConfig $config = null) // @phpcs:ignore
+    public function stream(Song $song, ?RequestedStreamingConfig $config = null)
     {
         abort_unless(
             is_executable(config('koel.streaming.ffmpeg_path')),

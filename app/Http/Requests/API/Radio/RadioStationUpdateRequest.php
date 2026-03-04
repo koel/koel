@@ -24,15 +24,17 @@ class RadioStationUpdateRequest extends Request
             'url' => [
                 'required',
                 'url',
-                Rule::unique('radio_stations')->where(function ($query) {
-                    return $query->where('user_id', $this->user()->id);
-                })->ignore($this->route('station')->id), // @phpstan-ignore-line
-                app(ValidRadioStationUrl::class),
+                Rule::unique('radio_stations')
+                    ->where(function ($query) {
+                        return $query->where('user_id', $this->user()->id);
+                    })
+                    ->ignore($this->route('station')->id), // @phpstan-ignore-line
+                app(ValidRadioStationUrl::class)
             ],
             'name' => ['required', 'string', 'max:191'],
             'logo' => ['nullable', 'sometimes', new ValidImageData()],
             'description' => ['string', 'sometimes', 'nullable'],
-            'is_public' => ['boolean'],
+            'is_public' => ['boolean']
         ];
     }
 

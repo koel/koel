@@ -11,8 +11,10 @@ final class GetSessionKeyRequest extends Request implements RequiresSignature
 {
     protected Method $method = Method::GET;
 
-    public function __construct(#[SensitiveParameter] private readonly string $token)
-    {
+    public function __construct(
+        #[SensitiveParameter]
+        private readonly string $token
+    ) {
     }
 
     public function resolveEndpoint(): string
@@ -26,7 +28,7 @@ final class GetSessionKeyRequest extends Request implements RequiresSignature
         return [
             'method' => 'auth.getSession',
             'token' => $this->token,
-            'format' => 'json',
+            'format' => 'json'
         ];
     }
 }

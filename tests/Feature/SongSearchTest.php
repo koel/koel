@@ -31,7 +31,6 @@ class SongSearchTest extends TestCase
         $user = create_user();
         Song::factory(2)->for($user, 'owner')->create(['title' => 'Foo Song']);
 
-        $this->getAs('api/search/songs?q=foo', $user)
-            ->assertJsonStructure([0 => SongResource::JSON_STRUCTURE]);
+        $this->getAs('api/search/songs?q=foo', $user)->assertJsonStructure([0 => SongResource::JSON_STRUCTURE]);
     }
 }

@@ -30,16 +30,16 @@ class InitialDataTest extends TestCase
             'queue_state' => [
                 'songs',
                 'current_song',
-                'playback_position',
+                'playback_position'
             ],
             'koel_plus' => [
                 'active',
                 'short_key',
                 'customer_name',
                 'customer_email',
-                'product_id',
+                'product_id'
             ],
-            'supports_batch_downloading',
+            'supports_batch_downloading'
         ]);
     }
 }

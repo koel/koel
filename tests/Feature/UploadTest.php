@@ -36,8 +36,8 @@ class UploadTest extends TestCase
     public function provideUploadExceptions(): array
     {
         return [
-            [MediaPathNotSetException::class, Response::HTTP_FORBIDDEN],
-            [SongUploadFailedException::class, Response::HTTP_BAD_REQUEST],
+            [MediaPathNotSetException::class,  Response::HTTP_FORBIDDEN],
+            [SongUploadFailedException::class, Response::HTTP_BAD_REQUEST]
         ];
     }
 

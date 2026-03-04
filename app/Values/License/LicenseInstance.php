@@ -12,8 +12,11 @@ use Illuminate\Contracts\Support\Jsonable;
  */
 final class LicenseInstance implements Arrayable, Jsonable
 {
-    private function __construct(public string $id, public string $name, public Carbon $createdAt)
-    {
+    private function __construct(
+        public string $id,
+        public string $name,
+        public Carbon $createdAt
+    ) {
     }
 
     public static function make(string $id, string $name, Carbon|string $createdAt): self
@@ -26,7 +29,7 @@ final class LicenseInstance implements Arrayable, Jsonable
         return new self(
             id: object_get($json, 'id'),
             name: object_get($json, 'name'),
-            createdAt: Carbon::parse(object_get($json, 'created_at')),
+            createdAt: Carbon::parse(object_get($json, 'created_at'))
         );
     }
 
@@ -41,7 +44,7 @@ final class LicenseInstance implements Arrayable, Jsonable
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'created_at' => $this->createdAt->format('Y-m-d H:i:s'),
+            'created_at' => $this->createdAt->format('Y-m-d H:i:s')
         ];
     }
 }

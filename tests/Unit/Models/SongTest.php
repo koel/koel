@@ -35,11 +35,11 @@ class SongTest extends TestCase
     public static function provideGenreData(): array
     {
         return [
-            ['Rock, Pop', true],
-            ['Pop, Rock', true],
+            ['Rock, Pop',    true],
+            ['Pop, Rock',    true],
             ['Rock,   Pop ', true],
-            ['Rock', false],
-            ['Jazz, Pop', false],
+            ['Rock',         false],
+            ['Jazz, Pop',    false]
         ];
     }
 

@@ -13,8 +13,9 @@ class DeleteTranscodeFilesJob extends QueuedJob
     /**
      * @param Collection<TranscodeFileInfo>|array<array-key, TranscodeFileInfo> $files
      */
-    public function __construct(public readonly Collection $files)
-    {
+    public function __construct(
+        public readonly Collection $files
+    ) {
     }
 
     public function handle(): void
@@ -30,7 +31,7 @@ class DeleteTranscodeFilesJob extends QueuedJob
                 Log::error('Failed to remove transcode file', [
                     'location' => $file->location,
                     'storage' => $file->storage,
-                    'exception' => $e,
+                    'exception' => $e
                 ]);
             }
         });

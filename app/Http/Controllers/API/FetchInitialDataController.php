@@ -63,8 +63,8 @@ class FetchInitialDataController extends Controller
             'uses_media_browser' => MediaBrowser::used(),
             'supports_batch_downloading' => extension_loaded('zip'),
             'media_path_set' => (bool) Setting::get('media_path'),
-            'supports_transcoding' => config('koel.streaming.ffmpeg_path')
-                && is_executable(config('koel.streaming.ffmpeg_path')),
+            'supports_transcoding' =>
+                config('koel.streaming.ffmpeg_path') && is_executable(config('koel.streaming.ffmpeg_path')),
             'cdn_url' => static_url(),
             'current_version' => koel_version(),
             'latest_version' => $user->hasPermissionTo(Permission::MANAGE_SETTINGS)
@@ -78,11 +78,11 @@ class FetchInitialDataController extends Controller
                 'short_key' => $licenseStatus->license?->short_key,
                 'customer_name' => $licenseStatus->license?->meta->customerName,
                 'customer_email' => $licenseStatus->license?->meta->customerEmail,
-                'product_id' => config('lemonsqueezy.product_id'),
+                'product_id' => config('lemonsqueezy.product_id')
             ],
             'storage_driver' => config('koel.storage_driver'),
             'dir_separator' => DIRECTORY_SEPARATOR,
-            'current_theme' => $theme ? ThemeResource::make($theme) : null,
+            'current_theme' => $theme ? ThemeResource::make($theme) : null
         ]);
     }
 }

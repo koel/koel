@@ -20,13 +20,17 @@ class RadioStationBuilder extends FavoriteableBuilder
         }
 
         // otherwise, we return stations that are created by the user in the same organization.
-        return $this->join('users', 'users.id', '=', 'radio_stations.user_id')
+        return $this
+            ->join('users', 'users.id', '=', 'radio_stations.user_id')
             ->join('organizations', 'organizations.id', '=', 'users.organization_id')
             ->where(function (self $builder): void {
-                $builder->where('radio_stations.user_id', $this->user->id)
+                $builder
+                    ->where('radio_stations.user_id', $this->user->id)
                     ->orWhere(function (self $query): void {
-                        $query->where('radio_stations.is_public', true)
-                            ->where('organizations.id', $this->user->organization_id);
+                        $query->where('radio_stations.is_public', true)->where(
+                            'organizations.id',
+                            $this->user->organization_id
+                        );
                     });
             });
     }
@@ -34,11 +38,12 @@ class RadioStationBuilder extends FavoriteableBuilder
     public function withUserContext(
         User $user,
         bool $includeFavoriteStatus = true,
-        bool $favoritesOnly = false,
+        bool $favoritesOnly = false
     ): self {
         $this->user = $user;
 
-        return $this->accessible()
-            ->when($includeFavoriteStatus, static fn (self $query) => $query->withFavoriteStatus($favoritesOnly));
+        return $this->accessible()->when($includeFavoriteStatus, static fn(self $query) => $query->withFavoriteStatus(
+            $favoritesOnly
+        ));
     }
 }

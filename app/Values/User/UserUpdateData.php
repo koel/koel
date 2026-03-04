@@ -13,9 +13,10 @@ final readonly class UserUpdateData
     private function __construct(
         public string $name,
         public string $email,
-        #[SensitiveParameter] ?string $plainTextPassword,
+        #[SensitiveParameter]
+        ?string $plainTextPassword,
         public ?Role $role,
-        public ?string $avatar,
+        public ?string $avatar
     ) {
         $this->password = $plainTextPassword ? Hash::make($plainTextPassword) : null;
     }
@@ -23,7 +24,8 @@ final readonly class UserUpdateData
     public static function make(
         string $name,
         string $email,
-        #[SensitiveParameter] ?string $plainTextPassword = null,
+        #[SensitiveParameter]
+        ?string $plainTextPassword = null,
         ?Role $role = null,
         ?string $avatar = null
     ): self {
@@ -32,7 +34,7 @@ final readonly class UserUpdateData
             email: $email,
             plainTextPassword: $plainTextPassword,
             role: $role,
-            avatar: $avatar,
+            avatar: $avatar
         );
     }
 }

@@ -27,7 +27,10 @@ class FetchFolderSongsTest extends PlusTestCase
         $subfolder = Folder::factory()->for($folder, 'parent')->create(['path' => 'foo/bar']);
 
         /** @var Collection $songs */
-        $songs = Song::factory()->for($folder)->count(2)->create();
+        $songs = Song::factory()
+            ->for($folder)
+            ->count(2)
+            ->create();
 
         // create songs in the subfolder, which should not be returned
         Song::factory()->for($subfolder)->create();

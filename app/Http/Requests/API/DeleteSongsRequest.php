@@ -12,7 +12,7 @@ class DeleteSongsRequest extends Request
     public function rules(): array
     {
         return [
-            'songs' => ['required', 'array', Rule::exists(Song::class, 'id')->whereNull('podcast_id')],
+            'songs' => ['required', 'array', Rule::exists(Song::class, 'id')->whereNull('podcast_id')]
         ];
     }
 }

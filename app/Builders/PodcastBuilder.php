@@ -15,8 +15,7 @@ class PodcastBuilder extends FavoriteableBuilder
         throw_if(!$this->user, new LogicException('User must be set to query subscribed podcasts.'));
 
         return $this->join('podcast_user', function (JoinClause $join): void {
-            $join->on('podcasts.id', 'podcast_user.podcast_id')
-                ->where('podcast_user.user_id', $this->user->id);
+            $join->on('podcasts.id', 'podcast_user.podcast_id')->where('podcast_user.user_id', $this->user->id);
         });
     }
 }

@@ -22,7 +22,7 @@ class SpotifyClient
     ) {
         if (SpotifyService::enabled()) {
             $this->wrapped->setOptions(['return_assoc' => true]);
-            rescue(fn () => $this->setAccessToken());
+            rescue($this->setAccessToken(...));
         }
     }
 

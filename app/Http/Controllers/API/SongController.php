@@ -25,19 +25,17 @@ class SongController extends Controller
         private readonly SongRepository $songRepository,
         private readonly AlbumRepository $albumRepository,
         private readonly ArtistRepository $artistRepository,
-        private readonly Authenticatable $user,
+        private readonly Authenticatable $user
     ) {
     }
 
     public function index(SongListRequest $request)
     {
-        return SongResource::collection(
-            $this->songRepository->paginate(
-                sortColumns: $request->sort ? explode(',', $request->sort) : ['songs.title'],
-                sortDirection: $request->order ?: 'asc',
-                scopedUser: $this->user
-            )
-        );
+        return SongResource::collection($this->songRepository->paginate(
+            sortColumns: $request->sort ? explode(',', $request->sort) : ['songs.title'],
+            sortDirection: $request->order ?: 'asc',
+            scopedUser: $this->user
+        ));
     }
 
     public function show(Song $song)
@@ -50,17 +48,15 @@ class SongController extends Controller
     public function update(SongUpdateRequest $request)
     {
         // Don't use SongRepository::findMany() because it'd be already catered to the current user.
-        Song::query()->findMany($request->songs)->each(fn (Song $song) => $this->authorize('edit', $song));
+        Song::query()->findMany($request->songs)->each(fn(Song $song) => $this->authorize('edit', $song));
 
         $result = $this->songService->updateSongs($request->songs, $request->toDto());
         $albums = $this->albumRepository->getMany($result->updatedSongs->pluck('album_id')->toArray());
 
-        $artists = $this->artistRepository->getMany(
-            array_merge(
-                $result->updatedSongs->pluck('artist_id')->all(),
-                $result->updatedSongs->pluck('album_artist_id')->all()
-            )
-        );
+        $artists = $this->artistRepository->getMany(array_merge(
+            $result->updatedSongs->pluck('artist_id')->all(),
+            $result->updatedSongs->pluck('album_artist_id')->all()
+        ));
 
         return response()->json([
             'songs' => SongResource::collection($result->updatedSongs),
@@ -68,15 +64,15 @@ class SongController extends Controller
             'artists' => ArtistResource::collection($artists),
             'removed' => [
                 'artist_ids' => $result->removedArtistIds->toArray(),
-                'album_ids' => $result->removedAlbumIds->toArray(),
-            ],
+                'album_ids' => $result->removedAlbumIds->toArray()
+            ]
         ]);
     }
 
     public function destroy(DeleteSongsRequest $request)
     {
         // Don't use SongRepository::findMany() because it'd be already catered to the current user.
-        Song::query()->findMany($request->songs)->each(fn (Song $song) => $this->authorize('delete', $song));
+        Song::query()->findMany($request->songs)->each(fn(Song $song) => $this->authorize('delete', $song));
 
         $this->songService->deleteSongs($request->songs);
 

@@ -18,7 +18,7 @@ class TicketmasterService
     public function __construct(
         private readonly TicketmasterConnector $connector,
         private readonly GeolocationService $geolocator,
-        private readonly string $defaultCountryCode,
+        private readonly string $defaultCountryCode
     ) {
     }
 
@@ -57,11 +57,11 @@ class TicketmasterService
                     /** @var Collection<TicketmasterAttraction>|array<array-key, TicketmasterAttraction> $attractions */
                     $attractions = $this->connector->send(new AttractionSearchRequest($artistName))->dto();
 
-                    return $attractions->firstWhere(
-                        static function (TicketmasterAttraction $attraction) use ($artistName) {
-                            return Str::lower($attraction->name) === Str::lower($artistName);
-                        }
-                    )?->id;
+                    return $attractions->firstWhere(static function (TicketmasterAttraction $attraction) use (
+                        $artistName
+                    ) {
+                        return Str::lower($attraction->name) === Str::lower($artistName);
+                    })?->id;
                 }
             );
         });

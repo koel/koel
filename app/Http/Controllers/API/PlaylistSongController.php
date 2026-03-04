@@ -48,16 +48,16 @@ class PlaylistSongController extends Controller
 
         $playables = $this->songRepository->getMany(ids: $request->songs, scopedUser: $this->user);
 
-        return self::createResourceCollection(
-            $this->playlistService->addPlayablesToPlaylist($playlist, $playables, $this->user)
-        );
+        return self::createResourceCollection($this->playlistService->addPlayablesToPlaylist(
+            $playlist,
+            $playables,
+            $this->user
+        ));
     }
 
     private static function createResourceCollection(Collection $songs): ResourceCollection
     {
-        return License::isPlus()
-            ? CollaborativeSongResource::collection($songs)
-            : SongResource::collection($songs);
+        return License::isPlus() ? CollaborativeSongResource::collection($songs) : SongResource::collection($songs);
     }
 
     public function destroy(Playlist $playlist, RemoveSongsFromPlaylistRequest $request)

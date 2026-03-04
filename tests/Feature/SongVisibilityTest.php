@@ -16,10 +16,8 @@ class SongVisibilityTest extends TestCase
         $owner = create_admin();
         Song::factory(2)->create();
 
-        $this->putAs('api/songs/publicize', ['songs' => Song::query()->get()->modelKeys()], $owner)
-            ->assertNotFound();
+        $this->putAs('api/songs/publicize', ['songs' => Song::query()->get()->modelKeys()], $owner)->assertNotFound();
 
-        $this->putAs('api/songs/privatize', ['songs' => Song::query()->get()->modelKeys()], $owner)
-            ->assertNotFound();
+        $this->putAs('api/songs/privatize', ['songs' => Song::query()->get()->modelKeys()], $owner)->assertNotFound();
     }
 }

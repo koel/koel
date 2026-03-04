@@ -19,11 +19,12 @@ class PlaylistResource extends JsonResource
         'user_id',
         'is_smart',
         'rules',
-        'created_at',
+        'created_at'
     ];
 
-    public function __construct(private readonly Playlist $playlist)
-    {
+    public function __construct(
+        private readonly Playlist $playlist
+    ) {
         parent::__construct($playlist);
     }
 
@@ -51,7 +52,7 @@ class PlaylistResource extends JsonResource
             'is_collaborative' => $this->unless($embedding, $playlistService->isPlaylistCollaborative($this->playlist)),
             'rules' => $this->unless($embedding, $this->playlist->rules),
             'cover' => image_storage_url($this->playlist->cover),
-            'created_at' => $this->unless($embedding, $this->playlist->created_at),
+            'created_at' => $this->unless($embedding, $this->playlist->created_at)
         ];
     }
 }

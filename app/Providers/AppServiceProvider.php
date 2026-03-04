@@ -56,7 +56,7 @@ class AppServiceProvider extends ServiceProvider
             return SpotifyService::enabled()
                 ? new SpotifySession(
                     config('koel.services.spotify.client_id'),
-                    config('koel.services.spotify.client_secret'),
+                    config('koel.services.spotify.client_secret')
                 )
                 : null;
         });
@@ -76,7 +76,8 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(LicenseServiceInterface::class, LicenseService::class);
 
-        $this->app->when(LicenseService::class)
+        $this->app
+            ->when(LicenseService::class)
             ->needs('$hashSalt')
             ->give(config('app.key'));
 
@@ -85,7 +86,7 @@ class AppServiceProvider extends ServiceProvider
             return app()->runningUnitTests() ? app(ScannerNoCacheStrategy::class) : app(ScannerCacheStrategy::class);
         });
 
-        $this->app->singleton(ValidRadioStationUrl::class, static fn () => new ValidRadioStationUrl());
+        $this->app->singleton(ValidRadioStationUrl::class, static fn() => new ValidRadioStationUrl());
 
         Route::bind('genre', static function (string $value): ?Genre {
             if ($value === Genre::NO_GENRE_PUBLIC_ID) {
@@ -101,10 +102,11 @@ class AppServiceProvider extends ServiceProvider
             'artist' => Artist::class,
             'podcast' => Podcast::class,
             'radio-station' => RadioStation::class,
-            'playlist' => Playlist::class,
+            'playlist' => Playlist::class
         ]);
 
-        $this->app->when(TicketmasterService::class)
+        $this->app
+            ->when(TicketmasterService::class)
             ->needs('$defaultCountryCode')
             ->give(config('koel.services.ticketmaster.default_country_code'));
 
@@ -129,6 +131,6 @@ class AppServiceProvider extends ServiceProvider
 
     private static function grantAllPermissionsToSuperAdminRole(): void
     {
-        Gate::after(static fn (User $user) => $user->hasRole(Role::ADMIN));
+        Gate::after(static fn(User $user) => $user->hasRole(Role::ADMIN));
     }
 }

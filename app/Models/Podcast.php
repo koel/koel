@@ -48,7 +48,7 @@ class Podcast extends Model implements Favoriteable
         'categories' => CategoriesCast::class,
         'metadata' => PodcastMetadataCast::class,
         'last_synced_at' => 'datetime',
-        'explicit' => 'boolean',
+        'explicit' => 'boolean'
     ];
 
     public static function query(): PodcastBuilder
@@ -69,7 +69,8 @@ class Podcast extends Model implements Favoriteable
 
     public function subscribers(): BelongsToMany
     {
-        return $this->belongsToMany(User::class)
+        return $this
+            ->belongsToMany(User::class)
             ->using(PodcastUserPivot::class)
             ->withPivot('state')
             ->withTimestamps();
@@ -83,7 +84,7 @@ class Podcast extends Model implements Favoriteable
             'url' => $this->url,
             'title' => $this->title,
             'description' => $this->description,
-            'author' => $this->metadata->author,
+            'author' => $this->metadata->author
         ];
     }
 }

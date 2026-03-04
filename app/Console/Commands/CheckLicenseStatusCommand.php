@@ -13,8 +13,9 @@ class CheckLicenseStatusCommand extends Command
     protected $signature = 'koel:license:status';
     protected $description = 'Check the current Koel Plus license status';
 
-    public function __construct(private readonly LicenseServiceInterface $licenseService)
-    {
+    public function __construct(
+        private readonly LicenseServiceInterface $licenseService
+    ) {
         parent::__construct();
     }
 
@@ -46,7 +47,7 @@ class CheckLicenseStatusCommand extends Command
                 case LicenseStatus::NO_LICENSE:
                     $this->components->info(
                         'No license found. You can purchase one at https://store.koel.dev'
-                        . config('lemonsqueezy.plus_product_id')
+                            . config('lemonsqueezy.plus_product_id')
                     );
                     break;
 

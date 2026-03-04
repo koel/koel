@@ -17,7 +17,7 @@ final readonly class PlaylistCreateData implements Arrayable
         public ?string $folderId,
         public ?string $cover,
         public array $playableIds,
-        public ?SmartPlaylistRuleGroupCollection $ruleGroups,
+        public ?SmartPlaylistRuleGroupCollection $ruleGroups
     ) {
         throw_if($this->ruleGroups && $this->playableIds, PlaylistBothSongsAndRulesProvidedException::class);
     }
@@ -28,7 +28,7 @@ final readonly class PlaylistCreateData implements Arrayable
         ?string $folderId = null,
         ?string $cover = null,
         array $playableIds = [],
-        ?SmartPlaylistRuleGroupCollection $ruleGroups = null,
+        ?SmartPlaylistRuleGroupCollection $ruleGroups = null
     ): self {
         return new self(
             name: $name,
@@ -36,7 +36,7 @@ final readonly class PlaylistCreateData implements Arrayable
             folderId: $folderId,
             cover: $cover,
             playableIds: $playableIds,
-            ruleGroups: $ruleGroups,
+            ruleGroups: $ruleGroups
         );
     }
 
@@ -49,7 +49,7 @@ final readonly class PlaylistCreateData implements Arrayable
             'folder_id' => $this->folderId,
             'cover' => $this->cover,
             'playable_ids' => $this->playableIds,
-            'rule_groups' => $this->ruleGroups,
+            'rule_groups' => $this->ruleGroups
         ];
     }
 }

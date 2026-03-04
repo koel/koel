@@ -17,7 +17,7 @@ class AlbumService
     public function __construct(
         private readonly AlbumRepository $albumRepository,
         private readonly ImageStorage $imageStorage,
-        private readonly Finder $finder,
+        private readonly Finder $finder
     ) {
     }
 
@@ -26,7 +26,7 @@ class AlbumService
         // Ensure that the album name is unique within the artist
         $existingAlbumWithTheSameName = $this->albumRepository->findOneBy([
             'name' => $dto->name,
-            'artist_id' => $album->artist_id,
+            'artist_id' => $album->artist_id
         ]);
 
         throw_if($existingAlbumWithTheSameName?->isNot($album), AlbumNameConflictException::class);
@@ -36,7 +36,7 @@ class AlbumService
         if (is_string($dto->cover)) {
             // A non-empty string means the user is uploading another cover,
             // when an empty string means the user is removing the cover.
-            $data['cover'] = rescue_if($dto->cover, fn () => $this->imageStorage->storeImage($dto->cover), '');
+            $data['cover'] = rescue_if($dto->cover, fn() => $this->imageStorage->storeImage($dto->cover), '');
         } else {
             // If the cover is null, the user's not changing or removing the cover at all.
             Arr::forget($data, 'cover');
@@ -60,17 +60,15 @@ class AlbumService
     {
         // As directory scanning can be expensive, we cache and reuse the result.
         Cache::remember(cache_key($directory, 'cover'), now()->addDay(), function () use ($album, $directory): ?string {
-            $matches = array_keys(
-                iterator_to_array(
-                    $this->finder::create()
-                        ->depth(0)
-                        ->ignoreUnreadableDirs()
-                        ->files()
-                        ->followLinks()
-                        ->name('/(cov|fold)er\.(jpe?g|gif|png|webp|avif)$/i')
-                        ->in($directory)
-                )
-            );
+            $matches = array_keys(iterator_to_array(
+                $this->finder::create()
+                    ->depth(0)
+                    ->ignoreUnreadableDirs()
+                    ->files()
+                    ->followLinks()
+                    ->name('/(cov|fold)er\.(jpe?g|gif|png|webp|avif)$/i')
+                    ->in($directory)
+            ));
 
             $cover = $matches[0] ?? null;
 
@@ -86,11 +84,8 @@ class AlbumService
     {
         $this->imageStorage->storeImage(
             source: image_storage_path($album->cover),
-            config: ImageWritingConfig::make(
-                maxWidth: 48,
-                blur: 10,
-            ),
-            path: image_storage_path($album->thumbnail),
+            config: ImageWritingConfig::make(maxWidth: 48, blur: 10),
+            path: image_storage_path($album->thumbnail)
         );
 
         return $album->thumbnail;

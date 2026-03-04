@@ -14,9 +14,9 @@ class SongFactory extends Factory
     {
         return [
             'album_id' => Album::factory(),
-            'album_name' => static fn (array $attributes) => Album::query()->find($attributes['album_id'])?->name, // @phpstan-ignore-line
-            'artist_id' => static fn (array $attributes) => Album::query()->find($attributes['album_id'])?->artist_id, // @phpstan-ignore-line
-            'artist_name' => static fn (array $attributes) => Album::query()->find($attributes['album_id'])?->artist_name, // @phpstan-ignore-line
+            'album_name' => static fn(array $attributes) => Album::query()->find($attributes['album_id'])?->name, // @phpstan-ignore-line
+            'artist_id' => static fn(array $attributes) => Album::query()->find($attributes['album_id'])?->artist_id, // @phpstan-ignore-line
+            'artist_name' => static fn(array $attributes) => Album::query()->find($attributes['album_id'])?->artist_name, // @phpstan-ignore-line
             'title' => $this->faker->sentence,
             'length' => $this->faker->randomFloat(2, 10, 500),
             'track' => random_int(1, 20),
@@ -25,33 +25,35 @@ class SongFactory extends Factory
             'path' => '/tmp/' . uniqid('', true) . '.mp3',
             'year' => $this->faker->year(),
             'is_public' => true,
-            'owner_id' => static fn (array $attributes) => Album::query()->find($attributes['album_id'])->user_id, // @phpstan-ignore-line
+            'owner_id' => static fn(array $attributes) => Album::query()->find($attributes['album_id'])->user_id, // @phpstan-ignore-line
             'hash' => $this->faker->md5(),
             'mtime' => time(),
             'mime_type' => 'audio/mpeg',
-            'file_size' => $this->faker->numberBetween(4_000_000, 10_000_000),
+            'file_size' => $this->faker->numberBetween(4_000_000, 10_000_000)
         ];
     }
 
     public function public(): self
     {
-        return $this->state(fn () => ['is_public' => true]); // @phpcs:ignore
+        // @mago-ignore lint:prefer-static-closure
+        return $this->state(fn() => ['is_public' => true]);
     }
 
     public function private(): self
     {
-        return $this->state(fn () => ['is_public' => false]); // @phpcs:ignore
+        // @mago-ignore lint:prefer-static-closure
+        return $this->state(fn() => ['is_public' => false]);
     }
 
     public function asEpisode(): self
     {
-        return $this->state(fn () => [ // @phpcs:ignore
+        return $this->state(fn() => [
             'podcast_id' => Podcast::factory(),
             'episode_metadata' => EpisodeMetadata::fromArray([
                 'link' => $this->faker->url(),
                 'description' => $this->faker->paragraph,
                 'duration' => $this->faker->randomFloat(2, 10, 500),
-                'image' => $this->faker->imageUrl(),
+                'image' => $this->faker->imageUrl()
             ]),
             'is_public' => true,
             'artist_id' => null,
@@ -64,7 +66,7 @@ class SongFactory extends Factory
             'disc' => 0,
             'year' => null,
             'mime_type' => null,
-            'file_size' => null,
+            'file_size' => null
         ]);
     }
 }

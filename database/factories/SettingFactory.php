@@ -11,7 +11,7 @@ class SettingFactory extends Factory
     {
         return [
             'key' => $this->faker->slug,
-            'value' => $this->faker->name,
+            'value' => $this->faker->name
         ];
     }
 }

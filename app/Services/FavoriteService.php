@@ -47,13 +47,13 @@ class FavoriteService
                 'user_id' => $user->id,
                 'favoriteable_type' => $entity->getMorphClass(),
                 'favoriteable_id' => $entity->getKey(),
-                'created_at' => now(),
+                'created_at' => now()
             ];
         }
 
         Favorite::query()->upsert($favorites, ['favoriteable_type', 'favoriteable_id', 'user_id']);
 
-        $songs = $entities->filter(static fn (Model $entity) => $entity instanceof Song);
+        $songs = $entities->filter(static fn(Model $entity) => $entity instanceof Song);
 
         if ($songs->isNotEmpty()) {
             event(new MultipleSongsLiked($songs, $user));
@@ -67,7 +67,7 @@ class FavoriteService
      */
     public function batchUndoFavorite(Collection $entities, User $user): void
     {
-        $grouped = $entities->groupBy(static fn (Model $entity) => $entity->getMorphClass());
+        $grouped = $entities->groupBy(static fn(Model $entity) => $entity->getMorphClass());
 
         DB::transaction(static function () use ($grouped, $user): void {
             foreach ($grouped as $type => $items) {
@@ -79,7 +79,7 @@ class FavoriteService
             }
         });
 
-        $songs = $entities->filter(static fn (Model $entity) => $entity instanceof Song);
+        $songs = $entities->filter(static fn(Model $entity) => $entity instanceof Song);
 
         if ($songs->isNotEmpty()) {
             event(new MultipleSongsUnliked($songs, $user));

@@ -13,7 +13,7 @@ class LastfmCallbackRequest extends Request
     {
         return [
             'token' => 'required',
-            'api_token' => 'required',
+            'api_token' => 'required'
         ];
     }
 }

@@ -24,22 +24,18 @@ class PlaylistFolderService
 
     public function addPlaylistsToFolder(PlaylistFolder $folder, array $playlistIds): void
     {
-        DB::transaction(
-            static function () use ($folder, $playlistIds): void {
-                // A playlist can only be in one folder by the user at a time
-                collect($playlistIds)->each(
-                    static function (string $playlistId) use ($folder): void {
-                        PlaylistFolder::query()
-                            ->where('user_id', $folder->user_id)
-                            ->whereHas('playlists', static fn (Builder $query) => $query->where('id', $playlistId))
-                            ->get()
-                            ->each(static fn (PlaylistFolder $folder) => $folder->playlists()->detach($playlistId));
-                    }
-                );
+        DB::transaction(static function () use ($folder, $playlistIds): void {
+            // A playlist can only be in one folder by the user at a time
+            collect($playlistIds)->each(static function (string $playlistId) use ($folder): void {
+                PlaylistFolder::query()
+                    ->where('user_id', $folder->user_id)
+                    ->whereHas('playlists', static fn(Builder $query) => $query->where('id', $playlistId))
+                    ->get()
+                    ->each(static fn(PlaylistFolder $folder) => $folder->playlists()->detach($playlistId));
+            });
 
-                $folder->playlists()->attach($playlistIds);
-            }
-        );
+            $folder->playlists()->attach($playlistIds);
+        });
     }
 
     public function movePlaylistsToRootLevel(PlaylistFolder $folder, array $playlistIds): void
@@ -49,8 +45,8 @@ class PlaylistFolderService
 
     public function getFolderForPlaylist(Playlist $playlist, ?User $user = null): ?PlaylistFolder
     {
-        return $playlist->folders->firstWhere(
-            static fn (PlaylistFolder $folder) => $folder->user->is($user ?? $playlist->owner)
-        );
+        return $playlist->folders->firstWhere(static fn(PlaylistFolder $folder) => $folder->user->is(
+            $user ?? $playlist->owner
+        ));
     }
 }

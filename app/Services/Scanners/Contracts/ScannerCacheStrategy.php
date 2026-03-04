@@ -8,6 +8,6 @@ interface ScannerCacheStrategy
 {
     public function remember(
         string $key,
-        Closure $callback,
+        Closure $callback
     ): mixed;
 }

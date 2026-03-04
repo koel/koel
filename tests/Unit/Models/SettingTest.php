@@ -15,7 +15,7 @@ class SettingTest extends TestCase
 
         $this->assertDatabaseHas(Setting::class, [
             'key' => 'foo',
-            'value' => json_encode('bar'),
+            'value' => json_encode('bar')
         ]);
     }
 
@@ -24,17 +24,17 @@ class SettingTest extends TestCase
     {
         $settings = [
             'foo' => 'bar',
-            'baz' => 'qux',
+            'baz' => 'qux'
         ];
 
         Setting::set($settings);
 
         $this->assertDatabaseHas(Setting::class, [
             'key' => 'foo',
-            'value' => json_encode('bar'),
+            'value' => json_encode('bar')
         ])->assertDatabaseHas(Setting::class, [
             'key' => 'baz',
-            'value' => json_encode('qux'),
+            'value' => json_encode('qux')
         ]);
     }
 
@@ -52,7 +52,7 @@ class SettingTest extends TestCase
     {
         Setting::factory()->create([
             'key' => 'foo',
-            'value' => 'bar',
+            'value' => 'bar'
         ]);
 
         self::assertSame('bar', Setting::get('foo'));

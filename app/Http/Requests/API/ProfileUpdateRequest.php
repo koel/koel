@@ -23,7 +23,7 @@ class ProfileUpdateRequest extends Request
             'email' => 'required|email|unique:users,email,' . auth()->user()->getAuthIdentifier(),
             'current_password' => 'sometimes|required_with:new_password',
             'new_password' => ['sometimes', Password::defaults()],
-            'avatar' => 'sometimes',
+            'avatar' => 'sometimes'
         ];
     }
 
@@ -33,7 +33,7 @@ class ProfileUpdateRequest extends Request
             name: $this->name,
             email: $this->email,
             plainTextPassword: $this->new_password,
-            avatar: Str::startsWith($this->avatar, 'data:') ? $this->avatar : null,
+            avatar: Str::startsWith($this->avatar, 'data:') ? $this->avatar : null
         );
     }
 }

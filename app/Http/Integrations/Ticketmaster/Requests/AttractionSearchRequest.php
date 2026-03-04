@@ -12,8 +12,9 @@ class AttractionSearchRequest extends Request
 {
     protected Method $method = Method::GET;
 
-    public function __construct(private readonly string $keywords)
-    {
+    public function __construct(
+        private readonly string $keywords
+    ) {
     }
 
     public function resolveEndpoint(): string
@@ -27,14 +28,13 @@ class AttractionSearchRequest extends Request
         return [
             'keyword' => $this->keywords,
             'size' => 5,
-            'classificationName' => ['Music'],
+            'classificationName' => ['Music']
         ];
     }
 
     /** @return Collection<TicketmasterAttraction>|array<array-key, TicketmasterAttraction> */
     public function createDtoFromResponse(Response $response): Collection
     {
-        return collect($response->json('_embedded.attractions', []))
-            ->map(TicketmasterAttraction::fromArray(...));
+        return collect($response->json('_embedded.attractions', []))->map(TicketmasterAttraction::fromArray(...));
     }
 }

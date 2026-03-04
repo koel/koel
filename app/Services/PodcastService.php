@@ -27,12 +27,13 @@ use Psr\Http\Client\ClientInterface;
 use Throwable;
 use Webmozart\Assert\Assert;
 
+// @mago-ignore lint:too-many-methods,cyclomatic-complexity
 class PodcastService
 {
     public function __construct(
         private readonly PodcastRepository $podcastRepository,
         private readonly SongRepository $songRepository,
-        private ?ClientInterface $client = null,
+        private ?ClientInterface $client = null
     ) {
     }
 
@@ -72,7 +73,7 @@ class PodcastService
                     'categories' => $channel->categories,
                     'metadata' => $channel->metadata,
                     'added_by' => $user->id,
-                    'last_synced_at' => now(),
+                    'last_synced_at' => now()
                 ]);
 
                 $this->synchronizeEpisodes($podcast, $parser->getEpisodes(true));
@@ -93,8 +94,10 @@ class PodcastService
         $parser = $this->createParser($podcast->url);
         $channel = $parser->getChannel();
 
-        $pubDate = $parser->xmlReader->value('rss.channel.pubDate')->first()
-            ?? $parser->xmlReader->value('rss.channel.lastBuildDate')->first();
+        $pubDate = $parser->xmlReader->value('rss.channel.pubDate')->first() ?? $parser
+            ->xmlReader
+            ->value('rss.channel.lastBuildDate')
+            ->first();
 
         if ($pubDate && Carbon::createFromFormat(Carbon::RFC1123, $pubDate)?->isBefore($podcast->last_synced_at)) {
             // The pubDate/lastBuildDate value indicates that there's been no new content since the last check.
@@ -114,7 +117,7 @@ class PodcastService
             'image' => $channel->image,
             'categories' => $channel->categories,
             'metadata' => $channel->metadata,
-            'last_synced_at' => now(),
+            'last_synced_at' => now()
         ]);
 
         return $podcast->refresh();
@@ -146,7 +149,7 @@ class PodcastService
                 'episode_guid' => $episodeValue->guid,
                 'length' => $episodeValue->metadata->duration ?? 0,
                 'mtime' => time(),
-                'is_public' => true,
+                'is_public' => true
             ];
         }
 
@@ -203,7 +206,7 @@ class PodcastService
             $lastModified = Http::head($podcast->url)->header('Last-Modified');
 
             return $lastModified
-                && Carbon::createFromFormat(Carbon::RFC1123, $lastModified)->isAfter($podcast->last_synced_at);
+            && Carbon::createFromFormat(Carbon::RFC1123, $lastModified)->isAfter($podcast->last_synced_at);
         } catch (Throwable) {
             return true;
         }
@@ -220,11 +223,11 @@ class PodcastService
         try {
             $response = $client->request($method, $url, [
                 RequestOptions::HEADERS => [
-                    'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4.1 Safari/605.1.15', // @phpcs-ignore-line
-                    'Origin' => '*',
+                    'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4.1 Safari/605.1.15',
+                    'Origin' => '*'
                 ],
                 RequestOptions::HTTP_ERRORS => false,
-                RequestOptions::ALLOW_REDIRECTS => ['track_redirects' => true],
+                RequestOptions::ALLOW_REDIRECTS => ['track_redirects' => true]
             ]);
 
             $redirects = Arr::wrap($response->getHeader(RedirectMiddleware::HISTORY_HEADER));

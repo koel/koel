@@ -19,7 +19,7 @@ class ProxyAuthTest extends PlusTestCase
             'koel.proxy_auth.enabled' => true,
             'koel.proxy_auth.allow_list' => ['192.168.1.0/24'],
             'koel.proxy_auth.user_header' => 'remote-user',
-            'koel.proxy_auth.preferred_name_header' => 'remote-preferred-name',
+            'koel.proxy_auth.preferred_name_header' => 'remote-preferred-name'
         ]);
 
         // Disable Vite so that the test can run without a frontend build.
@@ -32,7 +32,7 @@ class ProxyAuthTest extends PlusTestCase
             'koel.proxy_auth.enabled' => false,
             'koel.proxy_auth.allow_list' => [],
             'koel.proxy_auth.user_header' => 'remote-user',
-            'koel.proxy_auth.preferred_name_header' => 'remote-preferred-name',
+            'koel.proxy_auth.preferred_name_header' => 'remote-preferred-name'
         ]);
 
         parent::tearDown();
@@ -44,7 +44,7 @@ class ProxyAuthTest extends PlusTestCase
         $response = $this->get('/', [
             'REMOTE_ADDR' => '192.168.1.127',
             'remote-user' => '123456',
-            'remote-preferred-name' => 'Bruce Dickinson',
+            'remote-preferred-name' => 'Bruce Dickinson'
         ]);
 
         $response->assertOk();
@@ -59,7 +59,7 @@ class ProxyAuthTest extends PlusTestCase
             'email' => '123456@reverse.proxy',
             'name' => 'Bruce Dickinson',
             'sso_id' => '123456',
-            'sso_provider' => 'Reverse Proxy',
+            'sso_provider' => 'Reverse Proxy'
         ]);
     }
 
@@ -68,13 +68,13 @@ class ProxyAuthTest extends PlusTestCase
     {
         $user = create_user([
             'sso_id' => '123456',
-            'sso_provider' => 'Reverse Proxy',
+            'sso_provider' => 'Reverse Proxy'
         ]);
 
         $response = $this->get('/', [
             'REMOTE_ADDR' => '192.168.1.127',
             'remote-user' => '123456',
-            'remote-preferred-name' => 'Bruce Dickinson',
+            'remote-preferred-name' => 'Bruce Dickinson'
         ]);
 
         $response->assertOk();
@@ -92,7 +92,7 @@ class ProxyAuthTest extends PlusTestCase
         $response = $this->get('/', [
             'REMOTE_ADDR' => '255.168.1.127',
             'remote-user' => '123456',
-            'remote-preferred-name' => 'Bruce Dickinson',
+            'remote-preferred-name' => 'Bruce Dickinson'
         ]);
 
         $response->assertOk();

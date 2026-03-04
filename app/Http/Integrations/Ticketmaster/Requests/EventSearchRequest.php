@@ -14,7 +14,7 @@ class EventSearchRequest extends Request
 
     public function __construct(
         private readonly string $attractionId,
-        private readonly string $countryCode,
+        private readonly string $countryCode
     ) {
     }
 
@@ -29,14 +29,13 @@ class EventSearchRequest extends Request
         return [
             'attractionId' => $this->attractionId,
             'countryCode' => $this->countryCode,
-            'classificationName' => ['Music'],
+            'classificationName' => ['Music']
         ];
     }
 
     /** @return Collection<TicketmasterEvent>|array<array-key, TicketmasterEvent> */
     public function createDtoFromResponse(Response $response): Collection
     {
-        return collect($response->json('_embedded.events', []))
-            ->map(TicketmasterEvent::fromArray(...));
+        return collect($response->json('_embedded.events', []))->map(TicketmasterEvent::fromArray(...));
     }
 }

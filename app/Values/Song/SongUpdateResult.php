@@ -12,19 +12,19 @@ final readonly class SongUpdateResult
     private function __construct(
         public Collection $updatedSongs,
         public Collection $removedArtistIds,
-        public Collection $removedAlbumIds,
+        public Collection $removedAlbumIds
     ) {
     }
 
     public static function make(
         ?Collection $updatedSongs = null,
         ?Collection $removedArtistIds = null,
-        ?Collection $removedAlbumIds = null,
+        ?Collection $removedAlbumIds = null
     ): self {
         return new self(
             updatedSongs: $updatedSongs ?? collect(),
             removedArtistIds: $removedArtistIds ?? collect(),
-            removedAlbumIds: $removedAlbumIds ?? collect(),
+            removedAlbumIds: $removedAlbumIds ?? collect()
         );
     }
 

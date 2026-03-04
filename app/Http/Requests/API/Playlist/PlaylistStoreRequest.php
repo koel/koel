@@ -31,7 +31,7 @@ class PlaylistStoreRequest extends Request
             'description' => 'string|sometimes|nullable', // backward compatibility for mobile apps
             'rules' => ['array', 'nullable', new ValidSmartPlaylistRulePayload()],
             'folder_id' => ['nullable', 'sometimes', Rule::exists(PlaylistFolder::class, 'id')],
-            'cover' => ['sometimes', 'nullable', new ValidImageData()],
+            'cover' => ['sometimes', 'nullable', new ValidImageData()]
         ];
     }
 
@@ -43,7 +43,7 @@ class PlaylistStoreRequest extends Request
             folderId: $this->folder_id,
             cover: $this->cover,
             playableIds: Arr::wrap($this->songs),
-            ruleGroups: $this->rules ? SmartPlaylistRuleGroupCollection::create(Arr::wrap($this->rules)) : null,
+            ruleGroups: $this->rules ? SmartPlaylistRuleGroupCollection::create(Arr::wrap($this->rules)) : null
         );
     }
 }

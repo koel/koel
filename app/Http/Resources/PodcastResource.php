@@ -18,11 +18,13 @@ class PodcastResource extends JsonResource
         'image',
         'link',
         'description',
-        'author',
+        'author'
     ];
 
-    public function __construct(private readonly Podcast $podcast, private readonly bool $withSubscriptionData = true)
-    {
+    public function __construct(
+        private readonly Podcast $podcast,
+        private readonly bool $withSubscriptionData = true
+    ) {
         parent::__construct($this->podcast);
     }
 
@@ -43,7 +45,7 @@ class PodcastResource extends JsonResource
             'link' => $this->podcast->link,
             'description' => $this->podcast->description,
             'author' => $this->podcast->author,
-            'favorite' => $this->podcast->favorite,
+            'favorite' => $this->podcast->favorite
         ];
 
         if ($this->withSubscriptionData) {

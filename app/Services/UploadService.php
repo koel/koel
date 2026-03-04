@@ -18,7 +18,7 @@ class UploadService
     public function __construct(
         private readonly SongService $songService,
         private readonly SongStorage $storage,
-        private readonly FileScanner $scanner,
+        private readonly FileScanner $scanner
     ) {
     }
 
@@ -29,13 +29,13 @@ class UploadService
         $config = ScanConfiguration::make(
             owner: $uploader,
             makePublic: $uploader->preferences->makeUploadsPublic,
-            extractFolderStructure: $this->storage->getStorageType()->supportsFolderStructureExtraction(),
+            extractFolderStructure: $this->storage->getStorageType()->supportsFolderStructureExtraction()
         );
 
         try {
             $song = $this->songService->createOrUpdateSongFromScan(
                 $this->scanner->scan($uploadReference->localPath),
-                $config,
+                $config
             );
         } catch (Throwable $error) {
             $this->handleUploadFailure($uploadReference, $error);
@@ -50,7 +50,7 @@ class UploadService
         if ($song->path !== $uploadReference->location || $song->storage !== $this->storage->getStorageType()) {
             $song->update([
                 'path' => $uploadReference->location,
-                'storage' => $this->storage->getStorageType(),
+                'storage' => $this->storage->getStorageType()
             ]);
         }
 

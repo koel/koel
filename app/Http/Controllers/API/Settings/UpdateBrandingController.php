@@ -17,22 +17,15 @@ class UpdateBrandingController extends Controller
     /** @param User $user */
     public function __construct(
         private readonly SettingService $settingService,
-        private readonly Authenticatable $user,
+        private readonly Authenticatable $user
     ) {
     }
 
     public function __invoke(UpdateBrandingRequest $request)
     {
-        abort_unless(
-            $this->user->hasPermissionTo(Permission::MANAGE_SETTINGS),
-            Response::HTTP_FORBIDDEN,
-        );
+        abort_unless($this->user->hasPermissionTo(Permission::MANAGE_SETTINGS), Response::HTTP_FORBIDDEN);
 
-        $this->settingService->updateBranding(
-            $request->name,
-            $request->logo,
-            $request->cover,
-        );
+        $this->settingService->updateBranding($request->name, $request->logo, $request->cover);
 
         return response()->noContent();
     }

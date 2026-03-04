@@ -15,7 +15,7 @@ class PaginateFolderSongsController extends Controller
     public function __invoke(
         MediaBrowser $browser,
         FolderRepository $folderRepository,
-        SongRepository $songRepository,
+        SongRepository $songRepository
     ) {
         $folder = $folderRepository->findByPath(request('path'));
 

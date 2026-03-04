@@ -26,7 +26,7 @@ class StorageCommand extends Command
             $choices = [
                 'local' => 'This server',
                 's3' => 'Amazon S3 or compatible services (DO Spaces, Cloudflare R2, etc.)',
-                'dropbox' => 'Dropbox',
+                'dropbox' => 'Dropbox'
             ];
 
             $driver = $this->choice(

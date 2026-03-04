@@ -20,13 +20,14 @@ class PlaylistFactory extends Factory
             'name' => $this->faker->name,
             'rules' => null,
             'description' => $this->faker->realText(),
-            'cover' => Ulid::generate() . '.webp',
+            'cover' => Ulid::generate() . '.webp'
         ];
     }
 
     public function smart(): static
     {
-        return $this->state(fn () => [ // @phpcs:ignore
+        // @mago-ignore lint:prefer-static-closure
+        return $this->state(fn() => [
             'rules' => SmartPlaylistRuleGroupCollection::create([
                 SmartPlaylistRuleGroup::make([
                     'id' => Str::uuid()->toString(),
@@ -35,11 +36,11 @@ class PlaylistFactory extends Factory
                             'id' => Str::uuid()->toString(),
                             'model' => 'artist.name',
                             'operator' => 'is',
-                            'value' => ['foo'],
-                        ]),
-                    ],
-                ]),
-            ]),
+                            'value' => ['foo']
+                        ])
+                    ]
+                ])
+            ])
         ]);
     }
 

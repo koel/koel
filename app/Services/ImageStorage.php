@@ -11,7 +11,7 @@ class ImageStorage
 {
     public function __construct(
         private readonly ImageWriter $imageWriter,
-        private readonly SvgSanitizer $svgSanitizer,
+        private readonly SvgSanitizer $svgSanitizer
     ) {
     }
 
@@ -57,6 +57,6 @@ class ImageStorage
 
     private static function generateRandomStoragePath(string $extension = 'webp'): string
     {
-        return image_storage_path(sprintf("%s.%s", Ulid::generate(), $extension));
+        return image_storage_path(sprintf('%s.%s', Ulid::generate(), $extension));
     }
 }

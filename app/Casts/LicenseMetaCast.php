@@ -18,7 +18,7 @@ class LicenseMetaCast implements CastsAttributes
                 'model' => $model,
                 'key' => $key,
                 'value' => $value,
-                'attributes' => $attributes,
+                'attributes' => $attributes
             ]);
 
             return null;
@@ -35,7 +35,7 @@ class LicenseMetaCast implements CastsAttributes
                 'model' => $model,
                 'key' => $key,
                 'value' => $value,
-                'attributes' => $attributes,
+                'attributes' => $attributes
             ]);
 
             return null;

@@ -15,12 +15,15 @@ class Transcoder
 
         Process::timeout(60)->run([
             config('koel.streaming.ffmpeg_path'),
-            '-i', $source,
-            '-vn',                     // Strip video
-            '-c:a', 'aac',             // Use native AAC encoder for its efficiency
-            '-b:a', "{$bitRate}k",     // Set target bitrate (e.g., 128k, 192k)
-            '-y',                      // Overwrite if exists
-            $destination,
+            '-i',
+            $source,
+            '-vn', // Strip video
+            '-c:a',
+            'aac', // Use native AAC encoder for its efficiency
+            '-b:a',
+            "{$bitRate}k", // Set target bitrate (e.g., 128k, 192k)
+            '-y', // Overwrite if exists
+            $destination
         ]);
     }
 }

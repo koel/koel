@@ -10,7 +10,7 @@ final class Branding implements Arrayable
     private function __construct(
         public readonly string $name,
         public ?string $logo,
-        public ?string $cover,
+        public ?string $cover
     ) {
         if ($logo && !URL::isValidUrl($logo)) {
             $this->logo = image_storage_url($logo);
@@ -24,13 +24,9 @@ final class Branding implements Arrayable
     public static function make(
         ?string $name = null,
         ?string $logo = null,
-        ?string $cover = null,
+        ?string $cover = null
     ): self {
-        return new self(
-            name: $name ?: config('app.name'),
-            logo: $logo,
-            cover: $cover,
-        );
+        return new self(name: $name ?: config('app.name'), logo: $logo, cover: $cover);
     }
 
     public static function fromArray(array $settings): self
@@ -38,7 +34,7 @@ final class Branding implements Arrayable
         return new self(
             name: $settings['name'] ?? config('app.name'),
             logo: $settings['logo'] ?? null,
-            cover: $settings['cover'] ?? null,
+            cover: $settings['cover'] ?? null
         );
     }
 
@@ -48,52 +44,32 @@ final class Branding implements Arrayable
         return [
             'name' => $this->name,
             'logo' => $this->logo,
-            'cover' => $this->cover,
+            'cover' => $this->cover
         ];
     }
 
     public function withLogo(?string $logo): self
     {
-        return new self(
-            name: $this->name,
-            logo: $logo,
-            cover: $this->cover,
-        );
+        return new self(name: $this->name, logo: $logo, cover: $this->cover);
     }
 
     public function withoutLogo(): self
     {
-        return new self(
-            name: $this->name,
-            logo: null,
-            cover: $this->cover,
-        );
+        return new self(name: $this->name, logo: null, cover: $this->cover);
     }
 
     public function withName(string $name): self
     {
-        return new self(
-            name: $name,
-            logo: $this->logo,
-            cover: $this->cover,
-        );
+        return new self(name: $name, logo: $this->logo, cover: $this->cover);
     }
 
     public function withCover(string $cover): self
     {
-        return new self(
-            name: $this->name,
-            logo: $this->logo,
-            cover: $cover,
-        );
+        return new self(name: $this->name, logo: $this->logo, cover: $cover);
     }
 
     public function withoutCover(): self
     {
-        return new self(
-            name: $this->name,
-            logo: $this->logo,
-            cover: null,
-        );
+        return new self(name: $this->name, logo: $this->logo, cover: null);
     }
 }

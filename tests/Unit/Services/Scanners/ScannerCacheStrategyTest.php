@@ -38,14 +38,14 @@ class ScannerCacheStrategyTest extends TestCase
     #[Test]
     public function differentKeysAreCachedIndependently(): void
     {
-        $a = $this->cache->remember('a', static fn () => 'foo');
-        $b = $this->cache->remember('b', static fn () => 'bar');
+        $a = $this->cache->remember('a', static fn() => 'foo');
+        $b = $this->cache->remember('b', static fn() => 'bar');
 
         self::assertSame('foo', $a);
         self::assertSame('bar', $b);
 
-        $a2 = $this->cache->remember('a', static fn () => 'baz');
-        $b2 = $this->cache->remember('b', static fn () => 'qux');
+        $a2 = $this->cache->remember('a', static fn() => 'baz');
+        $b2 = $this->cache->remember('b', static fn() => 'qux');
 
         self::assertSame('foo', $a2);
         self::assertSame('bar', $b2);
@@ -57,7 +57,7 @@ class ScannerCacheStrategyTest extends TestCase
         for ($i = 1; $i <= 3; $i++) {
             $key = 'k' . $i;
             $val = $i;
-            $this->cache->remember($key, static fn () => $val);
+            $this->cache->remember($key, static fn() => $val);
         }
 
         // Last entry before eviction
@@ -67,9 +67,9 @@ class ScannerCacheStrategyTest extends TestCase
         self::assertSame(1, $valueForK1);
 
         //Trigger eviction
-        $this->cache->remember('k4', static fn () => 4);
+        $this->cache->remember('k4', static fn() => 4);
 
-        $new = $this->cache->remember('k1', static fn () => 9999);
+        $new = $this->cache->remember('k1', static fn() => 9999);
         self::assertSame(9999, $new);
     }
 }

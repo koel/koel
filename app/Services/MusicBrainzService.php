@@ -35,13 +35,11 @@ class MusicBrainzService implements Encyclopedia
                     GetMbidForArtist::class,
                     GetArtistWikidataIdUsingMbid::class,
                     GetWikipediaPageTitleUsingWikidataId::class,
-                    GetWikipediaPageSummaryUsingPageTitle::class,
+                    GetWikipediaPageSummaryUsingPageTitle::class
                 ])
                 ->thenReturn();
 
-            return $wikipediaSummary
-                ? ArtistInformation::fromWikipediaSummary($wikipediaSummary)
-                : null;
+            return $wikipediaSummary ? ArtistInformation::fromWikipediaSummary($wikipediaSummary) : null;
         });
     }
 
@@ -62,32 +60,29 @@ class MusicBrainzService implements Encyclopedia
              */
             [$albumMbid, $releaseGroupMbid] = Pipeline::send([
                 'album' => $album->name,
-                'artist' => $album->artist->name,
-            ])
-                ->through([GetReleaseAndReleaseGroupMbidsForAlbum::class])
-                ->thenReturn();
+                'artist' => $album->artist->name
+            ])->through([GetReleaseAndReleaseGroupMbidsForAlbum::class])->thenReturn();
 
             if (!$albumMbid || !$releaseGroupMbid) {
                 return null;
             }
 
             /** @var array<mixed> $tracks */
-            $tracks = Pipeline::send($albumMbid)
-                ->through([GetAlbumTracksUsingMbid::class])
-                ->thenReturn() ?: [];
+            $tracks = Pipeline::send($albumMbid)->through([GetAlbumTracksUsingMbid::class])->thenReturn() ?: [];
 
             $wikipediaSummary = Pipeline::send($releaseGroupMbid)
                 ->through([
                     GetAlbumWikidataIdUsingReleaseGroupMbid::class,
                     GetWikipediaPageTitleUsingWikidataId::class,
-                    GetWikipediaPageSummaryUsingPageTitle::class,
+                    GetWikipediaPageSummaryUsingPageTitle::class
                 ])
                 ->thenReturn();
 
             return $wikipediaSummary
                 ? AlbumInformation::fromWikipediaSummary($wikipediaSummary)->withMusicBrainzTracks($tracks)
-                : AlbumInformation::make(url: "https://musicbrainz.org/release/$albumMbid")
-                    ->withMusicBrainzTracks($tracks);
+                : AlbumInformation::make(url: "https://musicbrainz.org/release/$albumMbid")->withMusicBrainzTracks(
+                    $tracks
+                );
         });
     }
 }

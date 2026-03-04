@@ -9,6 +9,6 @@ class DownloadServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        app()->singleton('Download', static fn (): DownloadService => app(DownloadService::class));
+        app()->singleton('Download', static fn(): DownloadService => app(DownloadService::class));
     }
 }

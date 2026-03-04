@@ -25,7 +25,7 @@ class Theme extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'properties' => ThemePropertiesCast::class,
+        'properties' => ThemePropertiesCast::class
     ];
 
     public function user(): BelongsTo

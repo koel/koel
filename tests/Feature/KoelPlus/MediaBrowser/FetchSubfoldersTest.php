@@ -25,10 +25,14 @@ class FetchSubfoldersTest extends PlusTestCase
         $folder = Folder::factory()->create();
 
         /** @var Collection $subfolders */
-        $subfolders = Folder::factory()->for($folder, 'parent')->count(2)->create();
+        $subfolders = Folder::factory()
+            ->for($folder, 'parent')
+            ->count(2)
+            ->create();
 
-        $response = $this->getAs('/api/browse/folders?path=' . $folder->path)
-            ->assertJsonStructure([0 => FolderResource::JSON_STRUCTURE]);
+        $response = $this->getAs('/api/browse/folders?path=' . $folder->path)->assertJsonStructure([
+            0 => FolderResource::JSON_STRUCTURE
+        ]);
 
         static::assertEqualsCanonicalizing($subfolders->pluck('id')->toArray(), $response->json('*.id'));
     }
@@ -38,8 +42,7 @@ class FetchSubfoldersTest extends PlusTestCase
     {
         $subfolders = Folder::factory()->count(2)->create();
 
-        $response = $this->getAs('/api/browse/folders')
-            ->assertJsonStructure([0 => FolderResource::JSON_STRUCTURE]);
+        $response = $this->getAs('/api/browse/folders')->assertJsonStructure([0 => FolderResource::JSON_STRUCTURE]);
 
         static::assertEqualsCanonicalizing($subfolders->pluck('id')->toArray(), $response->json('*.id'));
     }

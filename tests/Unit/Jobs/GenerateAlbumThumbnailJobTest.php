@@ -21,6 +21,6 @@ class GenerateAlbumThumbnailJobTest extends TestCase
         $albumService = $this->mock(AlbumService::class);
         $albumService->expects('generateAlbumThumbnail')->with($album)->once();
 
-        (new GenerateAlbumThumbnailJob($album))->handle($albumService);
+        ( new GenerateAlbumThumbnailJob($album) )->handle($albumService);
     }
 }

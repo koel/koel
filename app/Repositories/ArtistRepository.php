@@ -19,9 +19,7 @@ class ArtistRepository extends Repository implements ScoutableRepository
      */
     public function getOne($id, ?User $user = null): Artist
     {
-        return Artist::query()
-            ->withUserContext(user: $user ?? $this->auth->user())
-            ->findOrFail($id);
+        return Artist::query()->withUserContext(user: $user ?? $this->auth->user())->findOrFail($id);
     }
 
     /** @return Collection|array<array-key, Artist> */
@@ -51,7 +49,7 @@ class ArtistRepository extends Repository implements ScoutableRepository
         string $sortColumn,
         string $sortDirection,
         bool $favoritesOnly = false,
-        ?User $user = null,
+        ?User $user = null
     ): Paginator {
         return Artist::query()
             ->withUserContext(user: $user ?? $this->auth->user(), favoritesOnly: $favoritesOnly)
@@ -64,9 +62,12 @@ class ArtistRepository extends Repository implements ScoutableRepository
     public function search(string $keywords, int $limit, ?User $user = null): Collection
     {
         return $this->getMany(
-            ids: Artist::search($keywords)->get()->take($limit)->modelKeys(),
+            ids: Artist::search($keywords)
+                ->get()
+                ->take($limit)
+                ->modelKeys(),
             preserveOrder: true,
-            user: $user,
+            user: $user
         );
     }
 }

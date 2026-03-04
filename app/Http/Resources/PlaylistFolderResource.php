@@ -12,11 +12,12 @@ class PlaylistFolderResource extends JsonResource
         'id',
         'name',
         'user_id',
-        'created_at',
+        'created_at'
     ];
 
-    public function __construct(private readonly PlaylistFolder $folder)
-    {
+    public function __construct(
+        private readonly PlaylistFolder $folder
+    ) {
         parent::__construct($folder);
     }
 
@@ -28,7 +29,7 @@ class PlaylistFolderResource extends JsonResource
             'id' => $this->folder->id,
             'name' => $this->folder->name,
             'user_id' => $this->folder->user_id,
-            'created_at' => $this->folder->created_at,
+            'created_at' => $this->folder->created_at
         ];
     }
 }

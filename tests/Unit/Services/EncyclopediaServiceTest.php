@@ -36,7 +36,7 @@ class EncyclopediaServiceTest extends TestCase
         $this->encyclopediaService = new EncyclopediaService(
             $this->encyclopedia,
             $this->imageStorage,
-            $this->spotifyService,
+            $this->spotifyService
         );
 
         $this->spotifyConfig = config('koel.services.spotify');
@@ -79,9 +79,7 @@ class EncyclopediaServiceTest extends TestCase
             ->with($album)
             ->andReturn($info);
 
-        $this->imageStorage
-            ->expects('storeImage')
-            ->with('https://wiki.example.com/album-cover.jpg');
+        $this->imageStorage->expects('storeImage')->with('https://wiki.example.com/album-cover.jpg');
 
         self::assertSame($info, $this->encyclopediaService->getAlbumInformation($album));
     }
@@ -91,7 +89,7 @@ class EncyclopediaServiceTest extends TestCase
     {
         config()->set('koel.services.spotify', [
             'client_id' => 'spotify-client-id',
-            'client_secret' => 'spotify-client-secret',
+            'client_secret' => 'spotify-client-secret'
         ]);
 
         /** @var Album $album */
@@ -105,11 +103,12 @@ class EncyclopediaServiceTest extends TestCase
             ->with($album)
             ->andReturn($info);
 
-        $this->spotifyService->expects('tryGetAlbumCover')->with($album)->andReturn('https://spotify.com/cover.jpg');
+        $this->spotifyService
+            ->expects('tryGetAlbumCover')
+            ->with($album)
+            ->andReturn('https://spotify.com/cover.jpg');
 
-        $this->imageStorage
-            ->expects('storeImage')
-            ->with('https://spotify.com/cover.jpg');
+        $this->imageStorage->expects('storeImage')->with('https://spotify.com/cover.jpg');
 
         self::assertSame($info, $this->encyclopediaService->getAlbumInformation($album));
     }
@@ -146,9 +145,7 @@ class EncyclopediaServiceTest extends TestCase
             ->with($artist)
             ->andReturn($info);
 
-        $this->imageStorage
-            ->expects('storeImage')
-            ->with('https://wiki.example.com/artist-image.jpg');
+        $this->imageStorage->expects('storeImage')->with('https://wiki.example.com/artist-image.jpg');
 
         self::assertSame($info, $this->encyclopediaService->getArtistInformation($artist));
     }
@@ -158,7 +155,7 @@ class EncyclopediaServiceTest extends TestCase
     {
         config()->set('koel.services.spotify', [
             'client_id' => 'spotify-client-id',
-            'client_secret' => 'spotify-client-secret',
+            'client_secret' => 'spotify-client-secret'
         ]);
 
         /** @var Artist $artist */
@@ -172,11 +169,12 @@ class EncyclopediaServiceTest extends TestCase
             ->with($artist)
             ->andReturn($info);
 
-        $this->spotifyService->expects('tryGetArtistImage')->with($artist)->andReturn('https://spotify.com/image.jpg');
+        $this->spotifyService
+            ->expects('tryGetArtistImage')
+            ->with($artist)
+            ->andReturn('https://spotify.com/image.jpg');
 
-        $this->imageStorage
-            ->expects('storeImage')
-            ->with('https://spotify.com/image.jpg');
+        $this->imageStorage->expects('storeImage')->with('https://spotify.com/image.jpg');
 
         self::assertSame($info, $this->encyclopediaService->getArtistInformation($artist));
     }

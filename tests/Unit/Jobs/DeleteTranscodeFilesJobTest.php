@@ -17,14 +17,16 @@ class DeleteTranscodeFilesJobTest extends TestCase
     {
         $files = collect([
             TranscodeFileInfo::make('path/to/transcode.m4a', SongStorageType::LOCAL),
-            TranscodeFileInfo::make('key.m4a', SongStorageType::S3),
+            TranscodeFileInfo::make('key.m4a', SongStorageType::S3)
         ]);
 
-        $this->mock(LocalTranscodingStrategy::class)
+        $this
+            ->mock(LocalTranscodingStrategy::class)
             ->expects('deleteTranscodeFile')
             ->with('path/to/transcode.m4a', SongStorageType::LOCAL);
 
-        $this->mock(CloudTranscodingStrategy::class)
+        $this
+            ->mock(CloudTranscodingStrategy::class)
             ->expects('deleteTranscodeFile')
             ->with('key.m4a', SongStorageType::S3);
 

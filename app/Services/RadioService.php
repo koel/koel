@@ -12,7 +12,7 @@ class RadioService
 {
     public function __construct(
         private readonly RadioStationRepository $repository,
-        private readonly ImageStorage $imageStorage,
+        private readonly ImageStorage $imageStorage
     ) {
     }
 
@@ -29,7 +29,7 @@ class RadioService
             'name' => $dto->name,
             'logo' => $logoFileName,
             'description' => $dto->description,
-            'is_public' => $dto->isPublic,
+            'is_public' => $dto->isPublic
         ]);
 
         return $this->repository->findOneWithUserContext($station->id, $user);
@@ -41,11 +41,11 @@ class RadioService
             'url' => $dto->url,
             'name' => $dto->name,
             'description' => $dto->description,
-            'is_public' => $dto->isPublic,
+            'is_public' => $dto->isPublic
         ];
 
         if (is_string($dto->logo)) {
-            $data['logo'] = rescue_if($dto->logo, fn () => $this->imageStorage->storeImage($dto->logo), '');
+            $data['logo'] = rescue_if($dto->logo, fn() => $this->imageStorage->storeImage($dto->logo), '');
         }
 
         $radioStation->update($data);

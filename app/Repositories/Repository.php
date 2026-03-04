@@ -25,7 +25,7 @@ abstract class Repository implements RepositoryContract
 
         // This instantiation may fail during a console command if e.g. APP_KEY is empty,
         // rendering the whole installation failing.
-        rescue(fn () => $this->auth = app(Guard::class));
+        rescue(fn() => $this->auth = app(Guard::class));
     }
 
     /** @return class-string<T> */
@@ -66,7 +66,7 @@ abstract class Repository implements RepositoryContract
         return $preserveOrder ? $models->orderByArray($ids) : $models;
     }
 
-    /** @inheritDoc */ // @phpcs:ignore
+    /** @inheritDoc */
     public function getAll(): Collection
     {
         return $this->modelClass::all(); // @phpstan-ignore-line

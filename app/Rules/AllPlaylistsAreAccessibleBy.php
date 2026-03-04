@@ -10,8 +10,9 @@ use Illuminate\Support\Arr;
 
 final class AllPlaylistsAreAccessibleBy implements ValidationRule
 {
-    public function __construct(private readonly User $user)
-    {
+    public function __construct(
+        private readonly User $user
+    ) {
     }
 
     public function validate(string $attribute, mixed $value, Closure $fail): void

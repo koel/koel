@@ -19,9 +19,9 @@ class ThemeFactory extends Factory
                 bgImage: '',
                 highlightColor: $this->faker->hexColor(),
                 fontFamily: $this->faker->word(),
-                fontSize: $this->faker->numberBetween(13, 20),
+                fontSize: $this->faker->numberBetween(13, 20)
             ),
-            'user_id' => User::factory(),
+            'user_id' => User::factory()
         ];
     }
 }

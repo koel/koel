@@ -13,19 +13,23 @@ final class AlbumInformation implements Arrayable
         'cover',
         'wiki' => [
             'summary',
-            'full',
+            'full'
         ],
         'tracks' => [
             '*' => [
                 'title',
                 'length',
-                'url',
-            ],
-        ],
+                'url'
+            ]
+        ]
     ];
 
-    private function __construct(public ?string $url, public ?string $cover, public array $wiki, public array $tracks)
-    {
+    private function __construct(
+        public ?string $url,
+        public ?string $cover,
+        public array $wiki,
+        public array $tracks
+    ) {
         $purifier = new HTMLPurifier();
 
         $this->wiki['summary'] = $purifier->purify($this->wiki['summary']);
@@ -47,10 +51,10 @@ final class AlbumInformation implements Arrayable
             url: Arr::get($summary, 'content_urls.desktop.page'),
             cover: Arr::get($summary, 'thumbnail.source'),
             wiki: [
-                'summary' =>  Arr::get($summary, 'extract', ''),
-                'full' => Arr::get($summary, 'extract_html', ''),
+                'summary' => Arr::get($summary, 'extract', ''),
+                'full' => Arr::get($summary, 'extract_html', '')
             ],
-            tracks: [],
+            tracks: []
         );
     }
 
@@ -62,7 +66,7 @@ final class AlbumInformation implements Arrayable
             return [
                 'title' => Arr::get($track, 'title'),
                 'length' => (int) Arr::get($track, 'length', 0) / 1000, // MusicBrainz length is in milliseconds
-                'url' => 'https://musicbrainz.org/recording/' . Arr::get($track, 'id'),
+                'url' => 'https://musicbrainz.org/recording/' . Arr::get($track, 'id')
             ];
         })->toArray();
 
@@ -76,7 +80,7 @@ final class AlbumInformation implements Arrayable
             'url' => $this->url,
             'cover' => $this->cover,
             'wiki' => $this->wiki,
-            'tracks' => $this->tracks,
+            'tracks' => $this->tracks
         ];
     }
 }

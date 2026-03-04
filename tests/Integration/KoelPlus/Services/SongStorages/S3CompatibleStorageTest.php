@@ -51,7 +51,7 @@ class S3CompatibleStorageTest extends PlusTestCase
 
         $reference = UploadReference::make(
             location: 's3://koel/123__random__song.mp3', // 'koel' is the bucket name
-            localPath: '/tmp/random/song.mp3',
+            localPath: '/tmp/random/song.mp3'
         );
 
         $this->service->undoUpload($reference);

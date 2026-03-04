@@ -32,6 +32,7 @@ use Throwable;
 use TiBeN\CrontabManager\CrontabAdapter;
 use TiBeN\CrontabManager\CrontabRepository;
 
+// @mago-ignore lint:too-many-methods,cyclomatic-complexity,kan-defect
 class DoctorCommand extends Command
 {
     protected $signature = 'koel:doctor';
@@ -149,7 +150,7 @@ class DoctorCommand extends Command
         $recipient = Ulid::generate() . '@mailinator.com';
 
         try {
-            Mail::raw('This is a test email.', static fn (Message $message) => $message->to($recipient));
+            Mail::raw('This is a test email.', static fn(Message $message) => $message->to($recipient));
             $this->reportSuccess('Mailer configuration');
         } catch (Throwable $e) {
             $this->collectError($e);
@@ -237,7 +238,7 @@ class DoctorCommand extends Command
         $this->assert(
             condition: extension_loaded('zip'),
             success: 'PHP extension <info>zip</info> is loaded. Multi-file downloading is supported.',
-            warning: 'PHP extension <info>zip</info> is not loaded. Multi-file downloading will not be available.',
+            warning: 'PHP extension <info>zip</info> is not loaded. Multi-file downloading will not be available.'
         );
 
         // as "gd" and "SimpleXML" are both required in the composer.json file, we don't need to check for them
@@ -252,7 +253,7 @@ class DoctorCommand extends Command
                 condition: File::exists($ffmpegPath) && is_executable($ffmpegPath),
                 success: "FFmpeg binary <info>$ffmpegPath</info> is executable.",
                 warning: "FFmpeg binary <info>$ffmpegPath</info> does not exist or is not executable. "
-                . 'Transcoding will not be available.',
+                . 'Transcoding will not be available.'
             );
         } else {
             $this->reportWarning('FFmpeg path is not set. Transcoding will not be available.');
@@ -364,7 +365,7 @@ class DoctorCommand extends Command
         $this->assert(
             condition: File::isReadable($path) && File::isWritable($path),
             success: "$name directory <info>$path</info> is readable/writable.",
-            error: "$name directory <info>$path</info> is not readable/writable.",
+            error: "$name directory <info>$path</info> is not readable/writable."
         );
     }
 
@@ -372,7 +373,7 @@ class DoctorCommand extends Command
         Closure|bool $condition,
         Closure|string|null $success = null,
         Closure|string|null $error = null,
-        Closure|string|null $warning = null,
+        Closure|string|null $warning = null
     ): void {
         $result = value($condition);
 

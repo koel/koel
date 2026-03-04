@@ -13,8 +13,9 @@ class ActivateLicenseRequest extends Request implements HasBody
 
     protected Method $method = Method::POST;
 
-    public function __construct(private readonly string $key)
-    {
+    public function __construct(
+        private readonly string $key
+    ) {
     }
 
     public function resolveEndpoint(): string
@@ -27,7 +28,7 @@ class ActivateLicenseRequest extends Request implements HasBody
     {
         return [
             'license_key' => $this->key,
-            'instance_name' => 'Koel Plus',
+            'instance_name' => 'Koel Plus'
         ];
     }
 }

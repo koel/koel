@@ -16,7 +16,7 @@ class ImportSearchableEntitiesCommand extends Command
         Album::class,
         Artist::class,
         Playlist::class,
-        Podcast::class,
+        Podcast::class
     ];
 
     protected $signature = 'koel:search:import';
