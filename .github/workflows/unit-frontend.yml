@@ -5,6 +5,7 @@ on:
       - master
     paths:
       - resources/assets/**
+      - package.json
       - .github/workflows/unit-frontend.yml
   push:
     branches:
@@ -12,6 +13,7 @@ on:
       - next
     paths:
       - resources/assets/**
+      - package.json
       - .github/workflows/unit-frontend.yml
   workflow_dispatch:
 
