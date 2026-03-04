@@ -1,5 +1,5 @@
 import type { AxiosResponse } from 'axios'
-import axios from 'axios'
+import { isAxiosError } from 'axios'
 import { logger } from '@/utils/logger'
 import { parseValidationError } from '@/utils/formatters'
 import { useDialogBox } from '@/composables/useDialogBox'
@@ -22,7 +22,7 @@ export const useErrorHandler = (driver: ErrorMessageDriver = 'toast') => {
   const handleHttpError = (error: unknown, statusMessageMap: StatusMessageMap = {}) => {
     logger.error(error)
 
-    if (!axios.isAxiosError(error) || !error.response?.status) {
+    if (!isAxiosError(error) || !error.response?.status) {
       return showGenericError()
     }
 

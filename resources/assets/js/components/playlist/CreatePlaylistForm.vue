@@ -59,7 +59,7 @@ import SelectBox from '@/components/ui/form/SelectBox.vue'
 import TextArea from '@/components/ui/form/TextArea.vue'
 import ArtworkField from '@/components/ui/form/ArtworkField.vue'
 
-const props = withDefaults(defineProps<{ playables: Playable[], folder?: PlaylistFolder | null }>(), {
+const props = withDefaults(defineProps<{ playables?: Playable[], folder?: PlaylistFolder | null }>(), {
   playables: () => [],
 })
 

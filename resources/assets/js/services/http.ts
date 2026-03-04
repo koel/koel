@@ -1,5 +1,5 @@
 import type { AxiosInstance, Method } from 'axios'
-import Axios from 'axios'
+import axios from 'axios'
 import NProgress from 'nprogress'
 import { authService } from '@/services/authService'
 import { eventBus } from '@/utils/eventBus'
@@ -10,7 +10,7 @@ class Http {
   private silent = false
 
   constructor () {
-    this.client = Axios.create({
+    this.client = axios.create({
       baseURL: `${window.BASE_URL}api`,
       headers: {
         'X-Api-Version': 'v7',
