@@ -112,5 +112,10 @@
       "eslint --fix"
     ]
   },
-  "type": "module"
+  "type": "module",
+  "pnpm": {
+    "overrides": {
+      "form-data@<2.5.4": ">=2.5.4"
+    }
+  }
 }
