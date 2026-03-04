@@ -19,9 +19,9 @@ class ApplicationInformationService
     {
         return rescue(function () {
             return Cache::remember(cache_key('latest version number'), now()->addDay(), function (): string {
-                return json_decode($this->client->get(
-                    'https://api.github.com/repos/koel/koel/tags'
-                )->getBody())[0]->name;
+                return json_decode(
+                    $this->client->get('https://api.github.com/repos/koel/koel/tags')->getBody()
+                )[0]->name;
             });
         }) ?? koel_version();
     }

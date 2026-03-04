@@ -42,8 +42,8 @@ class ArtistInformationTest extends TestCase
         config(['koel.services.lastfm.key' => null]);
         config(['koel.services.lastfm.secret' => null]);
 
-        $this->getAs('api/artists/'
-        . Artist::factory()->create()->id
-        . '/information')->assertJsonStructure(ArtistInformation::JSON_STRUCTURE);
+        $this->getAs(
+            'api/artists/' . Artist::factory()->create()->id . '/information'
+        )->assertJsonStructure(ArtistInformation::JSON_STRUCTURE);
     }
 }

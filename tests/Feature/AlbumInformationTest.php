@@ -54,8 +54,8 @@ class AlbumInformationTest extends TestCase
         config(['koel.services.lastfm.key' => null]);
         config(['koel.services.lastfm.secret' => null]);
 
-        $this->getAs('api/albums/'
-        . Album::factory()->create()->id
-        . '/information')->assertJsonStructure(AlbumInformation::JSON_STRUCTURE);
+        $this->getAs(
+            'api/albums/' . Album::factory()->create()->id . '/information'
+        )->assertJsonStructure(AlbumInformation::JSON_STRUCTURE);
     }
 }

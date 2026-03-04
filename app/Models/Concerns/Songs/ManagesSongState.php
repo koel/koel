@@ -14,7 +14,6 @@ trait ManagesSongState
         $genreNames = is_array($genres) ? $genres : explode(',', $genres);
 
         $genreIds = collect($genreNames)
-            // @mago-ignore lint:prefer-first-class-callable
             ->map(static fn(string $name) => trim($name))
             ->filter()
             ->unique()
@@ -31,7 +30,6 @@ trait ManagesSongState
     public function genreEqualsTo(string|array $genres): bool
     {
         $genreNames = collect(is_string($genres) ? explode(',', $genres) : $genres)
-            // @mago-ignore lint:prefer-first-class-callable
             ->map(static fn(string $name) => trim($name))
             ->filter()
             ->unique()
