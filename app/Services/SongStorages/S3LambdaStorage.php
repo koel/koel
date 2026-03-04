@@ -50,7 +50,7 @@ class S3LambdaStorage extends S3CompatibleStorage
         int $track,
         string $lyrics
     ): Song {
-        $user = $this->userRepository->getFirstAdminUser();
+        $user = $this->userRepository->getOrCreateFirstAdmin();
         $path = Song::getPathFromS3BucketAndKey($bucket, $key);
         $artist = Artist::getOrCreate($user, $artistName);
 

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Playlist;
 use App\Models\PlaylistFolder;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -44,5 +45,12 @@ class PlaylistFolderService
     public function movePlaylistsToRootLevel(PlaylistFolder $folder, array $playlistIds): void
     {
         $folder->playlists()->detach($playlistIds);
+    }
+
+    public function getFolderForPlaylist(Playlist $playlist, ?User $user = null): ?PlaylistFolder
+    {
+        return $playlist->folders->firstWhere(
+            static fn (PlaylistFolder $folder) => $folder->user->is($user ?? $playlist->owner)
+        );
     }
 }

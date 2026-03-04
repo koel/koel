@@ -33,7 +33,7 @@ class SongZipArchive
 
     public function addSongs(Collection $songs): static
     {
-        $songs->each(fn (Song $song) => $this->addSong($song));
+        $songs->each($this->addSong(...));
 
         return $this;
     }

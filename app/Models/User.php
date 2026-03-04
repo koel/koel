@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Builders\UserBuilder;
 use App\Casts\UserPreferencesCast;
 use App\Enums\Acl\Role as RoleEnum;
-use App\Exceptions\UserAlreadySubscribedToPodcastException;
 use App\Facades\License;
 use App\Models\Contracts\Permissionable;
 use App\Values\User\UserPreferences;
@@ -21,7 +20,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\PersonalAccessToken;
 use OwenIt\Auditing\Auditable;
@@ -67,7 +65,7 @@ class User extends Authenticatable implements AuditableContract, Permissionable
     use Notifiable;
     use Prunable;
 
-    private const FIRST_ADMIN_NAME = 'Koel';
+    public const FIRST_ADMIN_NAME = 'Koel';
     public const FIRST_ADMIN_EMAIL = 'admin@koel.dev';
     public const FIRST_ADMIN_PASSWORD = 'KoelIsCool';
     public const DEMO_PASSWORD = 'demo';
@@ -92,31 +90,6 @@ class User extends Authenticatable implements AuditableContract, Permissionable
     public function newEloquentBuilder($query): UserBuilder
     {
         return new UserBuilder($query);
-    }
-
-    /**
-     * The first admin user in the system.
-     * This user is created automatically if it does not exist (e.g., during installation or unit tests).
-     */
-    public static function firstAdmin(): static
-    {
-        $defaultOrganization = Organization::default();
-
-        return static::query() // @phpstan-ignore-line
-            ->whereRole(RoleEnum::ADMIN)
-            ->where('organization_id', $defaultOrganization->id)
-            ->oldest()
-            ->firstOr(static function () use ($defaultOrganization): User {
-                /** @var User $user */
-                $user = static::query()->create([
-                    'email' => self::FIRST_ADMIN_EMAIL,
-                    'name' => self::FIRST_ADMIN_NAME,
-                    'password' => Hash::make(self::FIRST_ADMIN_PASSWORD),
-                    'organization_id' => $defaultOrganization->id,
-                ]);
-
-                return $user->syncRoles(RoleEnum::ADMIN);
-            });
     }
 
     public function organization(): BelongsTo
@@ -176,21 +149,6 @@ class User extends Authenticatable implements AuditableContract, Permissionable
     public function subscribedToPodcast(Podcast $podcast): bool
     {
         return $this->podcasts()->whereKey($podcast)->exists();
-    }
-
-    public function subscribeToPodcast(Podcast $podcast): void
-    {
-        throw_if(
-            $this->subscribedToPodcast($podcast),
-            UserAlreadySubscribedToPodcastException::create($this, $podcast)
-        );
-
-        $this->podcasts()->attach($podcast);
-    }
-
-    public function unsubscribeFromPodcast(Podcast $podcast): void
-    {
-        $this->podcasts()->detach($podcast);
     }
 
     protected function avatar(): Attribute

@@ -6,6 +6,7 @@ use App\Helpers\Ulid;
 use App\Http\Resources\PlaylistResource;
 use App\Models\Playlist;
 use App\Models\Song;
+use App\Services\PlaylistFolderService;
 use App\Values\SmartPlaylist\SmartPlaylistRule;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -31,6 +32,9 @@ class PlaylistTest extends TestCase
     #[Test]
     public function creatingPlaylist(): void
     {
+        /** @var PlaylistFolderService $playlistFolderService */
+        $playlistFolderService = app(PlaylistFolderService::class);
+
         $user = create_user();
 
         $songs = Song::factory(2)->create();
@@ -46,12 +50,12 @@ class PlaylistTest extends TestCase
         ], $user)
             ->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
 
-        $playlist = Playlist::query()->latest()->first();
+        $playlist = Playlist::query()->latest()->firstOrFail();
 
         self::assertSame('Foo Bar', $playlist->name);
         self::assertSame('Foo Bar Description', $playlist->description);
         self::assertTrue($playlist->ownedBy($user));
-        self::assertNull($playlist->getFolder());
+        self::assertNull($playlistFolderService->getFolderForPlaylist($playlist));
         self::assertEqualsCanonicalizing($songs->modelKeys(), $playlist->playables->modelKeys());
         self::assertSame("$ulid.webp", $playlist->cover);
     }
@@ -59,6 +63,9 @@ class PlaylistTest extends TestCase
     #[Test]
     public function createPlaylistWithoutCover(): void
     {
+        /** @var PlaylistFolderService $playlistFolderService */
+        $playlistFolderService = app(PlaylistFolderService::class);
+
         $user = create_user();
 
         $this->postAs('api/playlists', [
@@ -69,12 +76,12 @@ class PlaylistTest extends TestCase
         ], $user)
             ->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
 
-        $playlist = Playlist::query()->latest()->first();
+        $playlist = Playlist::query()->latest()->firstOrFail();
 
         self::assertSame('Foo Bar', $playlist->name);
         self::assertSame('Foo Bar Description', $playlist->description);
         self::assertTrue($playlist->ownedBy($user));
-        self::assertNull($playlist->getFolder());
+        self::assertNull($playlistFolderService->getFolderForPlaylist($playlist));
         self::assertEmpty($playlist->cover);
     }
 
@@ -100,6 +107,9 @@ class PlaylistTest extends TestCase
     #[Test]
     public function creatingSmartPlaylist(): void
     {
+        /** @var PlaylistFolderService $playlistFolderService */
+        $playlistFolderService = app(PlaylistFolderService::class);
+
         $user = create_user();
 
         $rule = SmartPlaylistRule::make([
@@ -127,7 +137,7 @@ class PlaylistTest extends TestCase
         self::assertTrue($playlist->ownedBy($user));
         self::assertTrue($playlist->is_smart);
         self::assertCount(1, $playlist->rule_groups);
-        self::assertNull($playlist->getFolder());
+        self::assertNull($playlistFolderService->getFolderForPlaylist($playlist));
         self::assertTrue($rule->equals($playlist->rule_groups[0]->rules[0]));
         self::assertNotNull($playlist->cover);
     }

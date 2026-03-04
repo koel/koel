@@ -72,6 +72,7 @@ enum Role: string implements Arrayable
 
     public function description(): string
     {
+        // @mago-ignore lint:prefer-first-class-callable
         $isCommunity = once(static fn () => License::isCommunity());
 
         return match ($this) {

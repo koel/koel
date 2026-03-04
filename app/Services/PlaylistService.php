@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\Placement;
 use App\Exceptions\OperationNotApplicableForSmartPlaylistException;
+use App\Facades\License as LicenseFacade;
 use App\Models\Playlist;
 use App\Models\Song as Playable;
 use App\Models\User;
@@ -90,7 +91,7 @@ class PlaylistService
             );
 
             // if the playlist is collaborative, make the songs public
-            if ($playlist->is_collaborative) {
+            if ($this->isPlaylistCollaborative($playlist)) {
                 $this->makePlaylistContentPublic($playlist);
             }
 
@@ -140,5 +141,12 @@ class PlaylistService
 
             $playlist->playables()->syncWithoutDetaching($values);
         });
+    }
+
+    public function isPlaylistCollaborative(Playlist $playlist): bool
+    {
+        return once(static fn () => !$playlist->is_smart
+            && LicenseFacade::isPlus()
+            && $playlist->collaborators->isNotEmpty());
     }
 }

@@ -32,7 +32,7 @@ class GetArtistWikidataIdUsingMbidTest extends TestCase
 
         (new GetArtistWikidataIdUsingMbid(new MusicBrainzConnector()))(
             'sample-mbid',
-            static fn ($args) => $mock->next($args) // @phpstan-ignore-line
+            $mock->next(...) // @phpstan-ignore-line
         );
 
         Saloon::assertSent(static function (GetArtistUrlRelationshipsRequest $request): bool {
@@ -58,7 +58,7 @@ class GetArtistWikidataIdUsingMbidTest extends TestCase
 
         (new GetArtistWikidataIdUsingMbid(new MusicBrainzConnector()))(
             'sample-mbid',
-            static fn ($args) => $mock->next($args) // @phpstan-ignore-line
+            $mock->next(...), // @phpstan-ignore-line
         );
 
         Saloon::assertNothingSent();
@@ -73,7 +73,7 @@ class GetArtistWikidataIdUsingMbidTest extends TestCase
 
         (new GetArtistWikidataIdUsingMbid(new MusicBrainzConnector()))(
             null,
-            static fn ($args) => $mock->next($args) // @phpstan-ignore-line
+            $mock->next(...) // @phpstan-ignore-line
         );
 
         Saloon::assertNothingSent();

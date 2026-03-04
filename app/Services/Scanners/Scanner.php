@@ -66,6 +66,7 @@ abstract class Scanner
         }
 
         if (config('koel.scan.memory_limit')) {
+            // @mago-ignore lint:no-ini-set
             ini_set('memory_limit', config('koel.scan.memory_limit') . 'M');
         }
     }

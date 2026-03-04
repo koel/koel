@@ -6,6 +6,7 @@ use App\Console\Commands\Concerns\AskForPassword;
 use App\Exceptions\InstallationFailedException;
 use App\Models\Setting;
 use App\Models\User;
+use App\Repositories\UserRepository;
 use Illuminate\Console\Command;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Artisan;
@@ -30,8 +31,10 @@ class InitCommand extends Command
 
     private bool $adminSeeded = false;
 
-    public function __construct(private readonly DotenvEditor $dotenvEditor)
-    {
+    public function __construct(
+        private readonly UserRepository $userRepository,
+        private readonly DotenvEditor $dotenvEditor,
+    ) {
         parent::__construct();
     }
 
@@ -194,7 +197,7 @@ class InitCommand extends Command
     private function setUpAdminAccount(): void
     {
         $this->components->task('Creating default admin account', function (): void {
-            User::firstAdmin();
+            $this->userRepository->getOrCreateFirstAdmin();
             $this->adminSeeded = true;
         });
     }

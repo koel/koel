@@ -39,6 +39,7 @@ class PodcastService
     public function addPodcast(string $url, User $user): Podcast
     {
         // Since downloading and parsing a feed can be time-consuming, try setting the execution time to 5 minutes
+        // @mago-ignore lint:no-ini-set,no-error-control-operator
         @ini_set('max_execution_time', 300);
 
         $podcast = $this->podcastRepository->findOneByUrl($url);
@@ -127,24 +128,26 @@ class PodcastService
 
         /** @var EpisodeValue $episodeValue */
         foreach ($episodeCollection as $episodeValue) {
-            if (!in_array($episodeValue->guid->value, $existingEpisodeGuids, true)) {
-                $id = Uuid::generate();
-                $ids[] = $id;
-                $records[] = [
-                    'id' => $id,
-                    'podcast_id' => $podcast->id,
-                    'title' => $episodeValue->title,
-                    'lyrics' => '',
-                    'path' => $episodeValue->enclosure->url,
-                    'created_at' => $episodeValue->metadata->pubDate ?: now(),
-                    'updated_at' => $episodeValue->metadata->pubDate ?: now(),
-                    'episode_metadata' => $episodeValue->metadata->toJson(),
-                    'episode_guid' => $episodeValue->guid,
-                    'length' => $episodeValue->metadata->duration ?? 0,
-                    'mtime' => time(),
-                    'is_public' => true,
-                ];
+            if (in_array($episodeValue->guid->value, $existingEpisodeGuids, true)) {
+                continue;
             }
+
+            $id = Uuid::generate();
+            $ids[] = $id;
+            $records[] = [
+                'id' => $id,
+                'podcast_id' => $podcast->id,
+                'title' => $episodeValue->title,
+                'lyrics' => '',
+                'path' => $episodeValue->enclosure->url,
+                'created_at' => $episodeValue->metadata->pubDate ?: now(),
+                'updated_at' => $episodeValue->metadata->pubDate ?: now(),
+                'episode_metadata' => $episodeValue->metadata->toJson(),
+                'episode_guid' => $episodeValue->guid,
+                'length' => $episodeValue->metadata->duration ?? 0,
+                'mtime' => time(),
+                'is_public' => true,
+            ];
         }
 
         // We use insert() instead of $podcast->episodes()->createMany() for better performance,
@@ -156,9 +159,14 @@ class PodcastService
         Episode::query()->whereIn('id', $ids)->searchable(); // @phpstan-ignore-line
     }
 
-    private function subscribeUserToPodcast(User $user, Podcast $podcast): void
+    public function subscribeUserToPodcast(User $user, Podcast $podcast): void
     {
-        $user->subscribeToPodcast($podcast);
+        throw_if(
+            $user->subscribedToPodcast($podcast),
+            UserAlreadySubscribedToPodcastException::create($user, $podcast)
+        );
+
+        $user->podcasts()->attach($podcast);
 
         // Refreshing so that $podcast->subscribers are updated
         $podcast->refresh();
@@ -180,7 +188,7 @@ class PodcastService
 
     public function unsubscribeUserFromPodcast(User $user, Podcast $podcast): void
     {
-        $user->unsubscribeFromPodcast($podcast);
+        $user->podcasts()->detach($podcast);
         event(new UserUnsubscribedFromPodcast($user, $podcast));
     }
 

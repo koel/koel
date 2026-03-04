@@ -46,7 +46,7 @@ class SongTest extends TestCase
         $this->deleteAs('api/songs', ['songs' => $songs->modelKeys()], create_admin())
             ->assertNoContent();
 
-        $songs->each(fn (Song $song) => $this->assertModelMissing($song));
+        $songs->each($this->assertModelMissing(...));
     }
 
     #[Test]
@@ -60,7 +60,7 @@ class SongTest extends TestCase
         $this->deleteAs('api/songs', ['songs' => $songs->modelKeys()])
             ->assertForbidden();
 
-        $songs->each(fn (Song $song) => $this->assertModelExists($song));
+        $songs->each($this->assertModelExists(...));
     }
 
     #[Test]

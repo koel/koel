@@ -51,9 +51,11 @@ class EmbedOptions implements Arrayable
 
         // Remove the default values from the array to keep the payload minimal
         foreach (self::make()->toArray() as $key => $value) {
-            if ($array[$key] === $value) {
-                unset($array[$key]);
+            if ($array[$key] !== $value) {
+                continue;
             }
+
+            unset($array[$key]);
         }
 
         return encrypt($array);

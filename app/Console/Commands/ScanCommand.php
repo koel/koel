@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Enums\ScanEvent;
 use App\Models\Setting;
 use App\Models\User;
+use App\Repositories\UserRepository;
 use App\Services\Scanners\DirectoryScanner;
 use App\Services\Scanners\WatchRecordScanner;
 use App\Values\Scanning\ScanConfiguration;
@@ -35,6 +36,7 @@ class ScanCommand extends Command
     public function __construct(
         private readonly DirectoryScanner $directoryScanner,
         private readonly WatchRecordScanner $watchRecordScanner,
+        private readonly UserRepository $userRepository,
     ) {
         parent::__construct();
     }
@@ -170,6 +172,7 @@ class ScanCommand extends Command
         $specifiedOwner = $this->option('owner');
 
         if ($specifiedOwner) {
+            /** @var User $user */
             $user = User::query()->findOr($specifiedOwner, function () use ($specifiedOwner): never {
                 $this->components->error("User with ID $specifiedOwner does not exist.");
                 exit(self::INVALID);
@@ -180,7 +183,7 @@ class ScanCommand extends Command
             return $user;
         }
 
-        $user = User::firstAdmin();
+        $user = $this->userRepository->getOrCreateFirstAdmin();
 
         $this->components->warn(
             "No song owner specified. Setting the first admin ($user->name, ID {$user->id}) as owner."

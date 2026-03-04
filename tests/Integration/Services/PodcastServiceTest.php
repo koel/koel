@@ -92,7 +92,7 @@ class PodcastServiceTest extends TestCase
         ]);
 
         $user = create_user();
-        $user->subscribeToPodcast($podcast);
+        $this->service->subscribeUserToPodcast($user, $podcast);
 
         $this->service->addPodcast('https://example.com/feed.xml', $user);
     }
@@ -116,7 +116,7 @@ class PodcastServiceTest extends TestCase
         self::assertCount(0, $podcast->episodes);
 
         $user = create_user();
-        $user->subscribeToPodcast($podcast);
+        $this->service->subscribeUserToPodcast($user, $podcast);
 
         $this->service->addPodcast('https://example.com/feed.xml', $user);
 
@@ -132,7 +132,7 @@ class PodcastServiceTest extends TestCase
         /** @var Podcast $podcast */
         $podcast = Podcast::factory()->create();
         $user = create_user();
-        $user->subscribeToPodcast($podcast);
+        $this->service->subscribeUserToPodcast($user, $podcast);
 
         $this->service->unsubscribeUserFromPodcast($user, $podcast);
 
@@ -179,7 +179,7 @@ class PodcastServiceTest extends TestCase
         /** @var Song $episode */
         $episode = Song::factory()->asEpisode()->create();
         $user = create_user();
-        $user->subscribeToPodcast($episode->podcast);
+        $this->service->subscribeUserToPodcast($user, $episode->podcast);
 
         $this->service->updateEpisodeProgress($user, $episode->refresh(), 123);
 

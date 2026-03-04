@@ -32,7 +32,7 @@ class GetMbidForArtistTest extends TestCase
 
         (new GetMbidForArtist(new MusicBrainzConnector()))(
             'Skid Row',
-            static fn ($args) => $mock->next($args) // @phpstan-ignore-line
+            $mock->next(...) // @phpstan-ignore-line
         );
 
         Saloon::assertSent(static function (SearchForArtistRequest $request): bool {
@@ -59,7 +59,7 @@ class GetMbidForArtistTest extends TestCase
 
         (new GetMbidForArtist(new MusicBrainzConnector()))(
             'Skid Row',
-            static fn ($args) => $mock->next($args) // @phpstan-ignore-line
+            $mock->next(...) // @phpstan-ignore-line
         );
 
         Saloon::assertNothingSent();
@@ -73,7 +73,7 @@ class GetMbidForArtistTest extends TestCase
 
         (new GetMbidForArtist(new MusicBrainzConnector()))(
             null,
-            static fn ($args) => $mock->next($args) // @phpstan-ignore-line
+            $mock->next(...) // @phpstan-ignore-line
         );
 
         Saloon::assertNothingSent();

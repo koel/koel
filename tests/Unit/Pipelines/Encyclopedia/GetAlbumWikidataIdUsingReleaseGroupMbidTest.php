@@ -32,7 +32,7 @@ class GetAlbumWikidataIdUsingReleaseGroupMbidTest extends TestCase
 
         (new GetAlbumWikidataIdUsingReleaseGroupMbid(new MusicBrainzConnector()))(
             'sample-mbid',
-            static fn ($args) => $mock->next($args) // @phpstan-ignore-line
+            $mock->next(...) // @phpstan-ignore-line
         );
 
         Saloon::assertSent(static function (GetReleaseGroupUrlRelationshipsRequest $request): bool {
@@ -58,7 +58,7 @@ class GetAlbumWikidataIdUsingReleaseGroupMbidTest extends TestCase
 
         (new GetAlbumWikidataIdUsingReleaseGroupMbid(new MusicBrainzConnector()))(
             'sample-mbid',
-            static fn ($args) => $mock->next($args) // @phpstan-ignore-line
+            $mock->next(...) // @phpstan-ignore-line
         );
 
         Saloon::assertNothingSent();
@@ -73,7 +73,7 @@ class GetAlbumWikidataIdUsingReleaseGroupMbidTest extends TestCase
 
         (new GetAlbumWikidataIdUsingReleaseGroupMbid(new MusicBrainzConnector()))(
             null,
-            static fn ($args) => $mock->next($args) // @phpstan-ignore-line
+            $mock->next(...) // @phpstan-ignore-line
         );
 
         Saloon::assertNothingSent();

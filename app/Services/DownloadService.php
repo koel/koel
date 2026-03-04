@@ -22,7 +22,7 @@ class DownloadService
         if ($songs->count() === 1) {
             return optional(
                 $this->getLocalPathOrDownloadableUrl($songs->first()), // @phpstan-ignore-line
-                static fn (string $url) => Downloadable::make($url)
+                Downloadable::make(...)
             );
         }
 

@@ -32,7 +32,7 @@ class GetWikipediaPageSummaryUsingPageTitleTest extends TestCase
 
         (new GetWikipediaPageSummaryUsingPageTitle(new WikipediaConnector()))(
             'Skid Row (American band)',
-            static fn ($args) => $mock->next($args), // @phpstan-ignore-line
+            $mock->next(...), // @phpstan-ignore-line
         );
 
         Saloon::assertSent(static function (GetPageSummaryRequest $request): bool {
@@ -59,7 +59,7 @@ class GetWikipediaPageSummaryUsingPageTitleTest extends TestCase
 
         (new GetWikipediaPageSummaryUsingPageTitle(new WikipediaConnector()))(
             'Skid Row (American band)',
-            static fn ($args) => $mock->next($args), // @phpstan-ignore-line
+            $mock->next(...), // @phpstan-ignore-line
         );
 
         Saloon::assertNothingSent();
@@ -73,7 +73,7 @@ class GetWikipediaPageSummaryUsingPageTitleTest extends TestCase
 
         (new GetWikipediaPageSummaryUsingPageTitle(new WikipediaConnector()))(
             null,
-            static fn ($args) => $mock->next($args), // @phpstan-ignore-line
+            $mock->next(...), // @phpstan-ignore-line
         );
 
         Saloon::assertNothingSent();

@@ -28,7 +28,7 @@ class YouTubeTest extends TestCase
 
         $this->youTubeService
             ->expects('searchVideosRelatedToSong')
-            ->with(Mockery::on(static fn (Song $retrievedSong) => $song->is($retrievedSong)), 'foo');
+            ->with(Mockery::on($song->is(...)), 'foo');
 
         $this->getAs("/api/youtube/search/song/{$song->id}?pageToken=foo")
             ->assertOk();

@@ -28,6 +28,7 @@ class Genre extends Model
         'name',
     ];
 
+    // @mago-ignore lint:no-redundant-method-override
     public static function query(): GenreBuilder
     {
         /** @var GenreBuilder */

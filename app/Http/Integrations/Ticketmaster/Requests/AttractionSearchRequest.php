@@ -35,6 +35,6 @@ class AttractionSearchRequest extends Request
     public function createDtoFromResponse(Response $response): Collection
     {
         return collect($response->json('_embedded.attractions', []))
-            ->map(static fn (array $data) => TicketmasterAttraction::fromArray($data));
+            ->map(TicketmasterAttraction::fromArray(...));
     }
 }

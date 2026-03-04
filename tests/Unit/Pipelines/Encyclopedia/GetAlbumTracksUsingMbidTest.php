@@ -53,7 +53,7 @@ class GetAlbumTracksUsingMbidTest extends TestCase
 
         (new GetAlbumTracksUsingMbid(new MusicBrainzConnector()))(
             'sample-mbid',
-            static fn ($args) => $mock->next($args) // @phpstan-ignore-line
+            $mock->next(...) // @phpstan-ignore-line
         );
 
         Saloon::assertSent(static function (GetRecordingsRequest $request): bool {
@@ -75,7 +75,7 @@ class GetAlbumTracksUsingMbidTest extends TestCase
 
         (new GetAlbumTracksUsingMbid(new MusicBrainzConnector()))(
             'sample-mbid',
-            static fn ($args) => $mock->next($args) // @phpstan-ignore-line
+            $mock->next(...) // @phpstan-ignore-line
         );
 
         Saloon::assertNothingSent();
@@ -90,7 +90,7 @@ class GetAlbumTracksUsingMbidTest extends TestCase
 
         (new GetAlbumTracksUsingMbid(new MusicBrainzConnector()))(
             null,
-            static fn ($args) => $mock->next($args) // @phpstan-ignore-line
+            $mock->next(...) // @phpstan-ignore-line
         );
 
         Saloon::assertNothingSent();

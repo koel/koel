@@ -116,7 +116,7 @@ class Album extends Model implements AuditableContract, Embeddable, Favoriteable
      */
     protected function name(): Attribute
     {
-        return Attribute::get(static fn (?string $value) => html_entity_decode($value))->shouldCache();
+        return Attribute::get(html_entity_decode(...))->shouldCache();
     }
 
     protected function thumbnail(): Attribute

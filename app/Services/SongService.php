@@ -11,7 +11,6 @@ use App\Jobs\ExtractSongFolderStructureJob;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
-use App\Models\Transcode;
 use App\Models\User;
 use App\Repositories\SongRepository;
 use App\Repositories\TranscodeRepository;
@@ -28,6 +27,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
+// @mago-ignore lint:cyclomatic-complexity
 class SongService
 {
     public function __construct(
@@ -102,6 +102,7 @@ class SongService
         });
     }
 
+    // @mago-ignore lint:halstead
     private function updateSong(Song $song, SongUpdateData $data): Song
     {
         // For non-nullable fields, if the provided data is empty, use the existing value
@@ -182,10 +183,10 @@ class SongService
         // dispatch a job to delete their associated files.
         $songFiles = Song::query()
             ->findMany($ids)
-            ->map(static fn (Song $song) => SongFileInfo::fromSong($song)); // @phpstan-ignore-line
+            ->map(SongFileInfo::fromSong(...)); // @phpstan-ignore-line
 
         $transcodeFiles = $this->transcodeRepository->findBySongIds($ids)
-            ->map(static fn (Transcode $transcode) => TranscodeFileInfo::fromTranscode($transcode)); // @phpstan-ignore-line
+            ->map(TranscodeFileInfo::fromTranscode(...)); // @phpstan-ignore-line
 
         if (Song::destroy($ids) === 0) {
             return;

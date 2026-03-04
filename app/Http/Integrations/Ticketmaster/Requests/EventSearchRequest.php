@@ -37,6 +37,6 @@ class EventSearchRequest extends Request
     public function createDtoFromResponse(Response $response): Collection
     {
         return collect($response->json('_embedded.events', []))
-            ->map(static fn (array $data) => TicketmasterEvent::fromArray($data));
+            ->map(TicketmasterEvent::fromArray(...));
     }
 }

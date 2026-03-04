@@ -32,7 +32,7 @@ class GetWikipediaPageTitleUsingWikidataIdTest extends TestCase
 
         (new GetWikipediaPageTitleUsingWikidataId(new WikidataConnector()))(
             'Q461269',
-            static fn ($args) => $mock->next($args), // @phpstan-ignore-line
+            $mock->next(...), // @phpstan-ignore-line
         );
 
         Saloon::assertSent(static function (GetEntityDataRequest $request): bool {
@@ -59,7 +59,7 @@ class GetWikipediaPageTitleUsingWikidataIdTest extends TestCase
 
         (new GetWikipediaPageTitleUsingWikidataId(new WikidataConnector()))(
             'Q461269',
-            static fn ($args) => $mock->next($args), // @phpstan-ignore-line
+            $mock->next(...), // @phpstan-ignore-line
         );
 
         Saloon::assertNothingSent();
@@ -73,7 +73,7 @@ class GetWikipediaPageTitleUsingWikidataIdTest extends TestCase
 
         (new GetWikipediaPageTitleUsingWikidataId(new WikidataConnector()))(
             null,
-            static fn ($args) => $mock->next($args), // @phpstan-ignore-line
+            $mock->next(...), // @phpstan-ignore-line
         );
 
         Saloon::assertNothingSent();

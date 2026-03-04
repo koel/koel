@@ -40,7 +40,7 @@ class S3LambdaStorageTest extends TestCase
     public function createSongEntry(): void
     {
         $user = create_admin();
-        $this->userRepository->expects('getFirstAdminUser')->andReturn($user);
+        $this->userRepository->expects('getOrCreateFirstAdmin')->andReturn($user);
 
         $song = $this->storage->createSongEntry(
             bucket: 'foo',
@@ -70,7 +70,7 @@ class S3LambdaStorageTest extends TestCase
     {
         $user = create_admin();
 
-        $this->userRepository->expects('getFirstAdminUser')->andReturn($user);
+        $this->userRepository->expects('getOrCreateFirstAdmin')->andReturn($user);
 
         /** @var Song $song */
         $song = Song::factory()->create([

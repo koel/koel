@@ -53,6 +53,7 @@ class ArtistResource extends JsonResource
     /** @inheritdoc */
     public function toArray($request): array
     {
+        // @mago-ignore lint:prefer-first-class-callable
         $isPlus = once(static fn () => License::isPlus());
         $user = $this->user ?? once(static fn () => auth()->user());
         $embedding = $request->routeIs('embeds.payload');

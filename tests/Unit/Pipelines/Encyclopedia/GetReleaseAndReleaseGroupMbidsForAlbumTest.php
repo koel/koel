@@ -35,7 +35,7 @@ class GetReleaseAndReleaseGroupMbidsForAlbumTest extends TestCase
                 'album' => 'Slave to the Grind',
                 'artist' => 'Skid Row',
             ],
-            static fn ($args) => $mock->next($args) // @phpstan-ignore-line
+            $mock->next(...) // @phpstan-ignore-line
         );
 
         Saloon::assertSent(static function (SearchForReleaseRequest $request): bool {
@@ -73,7 +73,7 @@ class GetReleaseAndReleaseGroupMbidsForAlbumTest extends TestCase
                 'album' => 'Slave to the Grind',
                 'artist' => 'Skid Row',
             ],
-            static fn ($args) => $mock->next($args) // @phpstan-ignore-line
+            $mock->next(...) // @phpstan-ignore-line
         );
 
         Saloon::assertNothingSent();
@@ -87,7 +87,7 @@ class GetReleaseAndReleaseGroupMbidsForAlbumTest extends TestCase
 
         (new GetReleaseAndReleaseGroupMbidsForAlbum(new MusicBrainzConnector()))(
             null,
-            static fn ($args) => $mock->next($args) // @phpstan-ignore-line
+            $mock->next(...) // @phpstan-ignore-line
         );
 
         Saloon::assertNothingSent();

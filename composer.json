@@ -65,7 +65,8 @@
     "phlak/semver": "^5.0",
     "laravel/boost": "^1.0",
     "opcodesio/log-viewer": "^3.19",
-    "slevomat/coding-standard": "^8.23"
+    "slevomat/coding-standard": "^8.23",
+    "carthage-software/mago": "^1.8.0"
   },
   "suggest": {
     "ext-zip": "Allow downloading multiple songs as Zip archives"
@@ -134,7 +135,8 @@
     "optimize-autoloader": true,
     "allow-plugins": {
       "dealerdirect/phpcodesniffer-composer-installer": true,
-      "php-http/discovery": true
+      "php-http/discovery": true,
+      "carthage-software/mago": true
     }
   },
   "minimum-stability": "stable",
