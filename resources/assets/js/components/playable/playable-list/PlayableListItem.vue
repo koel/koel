@@ -56,7 +56,7 @@ import { getPlayableProp, requireInjection } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
 import { secondsToHis } from '@/utils/formatters'
 import { usePlayableListColumnVisibility } from '@/composables/usePlayableListColumnVisibility'
-import { PlayableListConfigKey } from '@/symbols'
+import { PlayableListConfigKey } from '@/config/symbols'
 import { playableStore } from '@/stores/playableStore'
 
 import SoundBars from '@/components/ui/SoundBars.vue'

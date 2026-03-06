@@ -15,7 +15,7 @@
 import type { Ref } from 'vue'
 import { computed, ref } from 'vue'
 import { requireInjection } from '@/utils/helpers'
-import { CurrentStreamableKey } from '@/symbols'
+import { CurrentStreamableKey } from '@/config/symbols'
 import { useBranding } from '@/composables/useBranding'
 
 const station = requireInjection<Ref<RadioStation | undefined>>(CurrentStreamableKey, ref())

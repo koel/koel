@@ -23,7 +23,7 @@ import { OnClickOutside } from '@vueuse/components'
 import { faFilter } from '@fortawesome/free-solid-svg-icons'
 import { computed, nextTick, ref } from 'vue'
 import { requireInjection } from '@/utils/helpers'
-import { FilterKeywordsKey } from '@/symbols'
+import { FilterKeywordsKey } from '@/config/symbols'
 
 import TextInput from '@/components/ui/form/TextInput.vue'
 

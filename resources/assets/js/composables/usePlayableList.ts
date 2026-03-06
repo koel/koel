@@ -19,7 +19,7 @@ import {
   PlayableListSortOrderKey,
   PlayablesKey,
   SelectedPlayablesKey,
-} from '@/symbols'
+} from '@/config/symbols'
 
 const PlayableList = defineAsyncComponent(() => import('@/components/playable/playable-list/PlayableList.vue'))
 const ThumbnailStack = defineAsyncComponent(() => import('@/components/ui/ThumbnailStack.vue'))

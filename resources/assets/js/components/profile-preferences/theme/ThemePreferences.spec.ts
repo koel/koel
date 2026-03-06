@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
 import { screen } from '@testing-library/vue'
-import themes from '@/themes'
+import themes from '@/config/themes'
 import { themeStore } from '@/stores/themeStore'
 import { eventBus } from '@/utils/eventBus'
 import Component from './ThemePreferences.vue'

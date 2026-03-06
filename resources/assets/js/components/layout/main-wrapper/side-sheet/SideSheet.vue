@@ -77,7 +77,7 @@ import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 import { eventBus } from '@/utils/eventBus'
 import { isSong } from '@/utils/typeGuards'
 import { defineAsyncComponent, requireInjection } from '@/utils/helpers'
-import { CurrentStreamableKey } from '@/symbols'
+import { CurrentStreamableKey } from '@/config/symbols'
 
 import ProfileAvatar from '@/components/ui/ProfileAvatar.vue'
 import AboutKoelButton from '@/components/layout/main-wrapper/side-sheet/AboutKoelButton.vue'

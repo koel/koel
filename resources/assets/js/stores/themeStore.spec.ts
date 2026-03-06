@@ -5,7 +5,7 @@ import type { ThemeData } from '@/stores/themeStore'
 import { themeStore } from '@/stores/themeStore'
 import { http } from '@/services/http'
 import { cache } from '@/services/cache'
-import builtInThemes from '@/themes'
+import builtInThemes from '@/config/themes'
 
 describe('themeStore', () => {
   const h = createHarness({

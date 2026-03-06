@@ -9,7 +9,7 @@ import {
   PlayableListSortFieldKey,
   PlayableListSortOrderKey,
   SelectedPlayablesKey,
-} from '@/symbols'
+} from '@/config/symbols'
 import Component from './PlayableList.vue'
 
 describe('playableList.vue', () => {

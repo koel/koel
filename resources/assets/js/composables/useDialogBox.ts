@@ -1,6 +1,6 @@
 import type { Ref } from 'vue'
 import { requireInjection } from '@/utils/helpers'
-import { DialogBoxKey } from '@/symbols'
+import { DialogBoxKey } from '@/config/symbols'
 
 import type DialogBox from '@/components/ui/DialogBox.vue'
 

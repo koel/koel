@@ -4,7 +4,7 @@ import StyleObserver from 'style-observer'
 import { reactive } from 'vue'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { http } from '@/services/http'
-import themes from '@/themes'
+import themes from '@/config/themes'
 import { cache } from '@/services/cache'
 
 export interface ThemeData {

@@ -65,7 +65,7 @@ import { eventBus } from '@/utils/eventBus'
 import { podcastStore } from '@/stores/podcastStore'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useFuzzySearch } from '@/composables/useFuzzySearch'
-import { FilterKeywordsKey } from '@/symbols'
+import { FilterKeywordsKey } from '@/config/symbols'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 
 import Btn from '@/components/ui/form/Btn.vue'

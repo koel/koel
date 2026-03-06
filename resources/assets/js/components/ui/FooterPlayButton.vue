@@ -18,7 +18,7 @@ import { recentlyPlayedStore } from '@/stores/recentlyPlayedStore'
 import { playableStore } from '@/stores/playableStore'
 import { useRouter } from '@/composables/useRouter'
 import { requireInjection } from '@/utils/helpers'
-import { CurrentStreamableKey } from '@/symbols'
+import { CurrentStreamableKey } from '@/config/symbols'
 import { playback } from '@/services/playbackManager'
 
 import FooterButton from '@/components/layout/app-footer/FooterButton.vue'

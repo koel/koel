@@ -21,5 +21,5 @@
 </template>
 
 <script lang="ts" setup>
-import sponsors from '@/sponsors'
+import sponsors from '@/config/sponsors'
 </script>

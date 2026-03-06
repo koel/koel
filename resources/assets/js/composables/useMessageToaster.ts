@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import { MessageToasterKey } from '@/symbols'
+import { MessageToasterKey } from '@/config/symbols'
 import { requireInjection } from '@/utils/helpers'
 
 import type MessageToaster from '@/components/ui/message-toaster/MessageToaster.vue'

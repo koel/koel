@@ -1,6 +1,6 @@
 import type { Ref } from 'vue'
 import { requireInjection } from '@/utils/helpers'
-import { OverlayKey } from '@/symbols'
+import { OverlayKey } from '@/config/symbols'
 import type Overlay from '@/components/ui/Overlay.vue'
 
 export const useOverlay = (overlay?: Ref<InstanceType<typeof Overlay>> | null) => {

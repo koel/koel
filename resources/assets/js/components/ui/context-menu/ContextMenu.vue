@@ -18,7 +18,7 @@
 import { nextTick, ref, toRefs, watch } from 'vue'
 import { logger } from '@/utils/logger'
 import { requireInjection } from '@/utils/helpers'
-import { ContextMenuKey } from '@/symbols'
+import { ContextMenuKey } from '@/config/symbols'
 
 const props = defineProps<{ extraClass?: string }>()
 const { extraClass } = toRefs(props)
