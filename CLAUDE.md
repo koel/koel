@@ -108,6 +108,9 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ## PHPDoc Blocks
 - Add useful array shape type definitions for arrays when appropriate.
 
+### Imports
+- Always use `use` imports instead of fully qualified class names (e.g. `new RuntimeException`, not `new \RuntimeException`).
+
 ## Enums
 - Typically, keys in an Enum should be TitleCase. For example: `FavoritePerson`, `BestLake`, `Monthly`.
 

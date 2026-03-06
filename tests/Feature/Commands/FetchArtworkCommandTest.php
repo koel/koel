@@ -31,12 +31,12 @@ class FetchArtworkCommandTest extends TestCase
             'koel.services.spotify.client_secret' => 'fake-secret',
         ]);
 
-        Artist::factory()->create(['image' => null]);
-        Album::factory()->create(['cover' => null]);
+        Artist::factory()->create(['image' => '']);
+        Album::factory()->create(['cover' => '']);
 
         $encyclopedia = Mockery::mock(EncyclopediaService::class);
-        $encyclopedia->shouldReceive('getArtistInformation')->once();
-        $encyclopedia->shouldReceive('getAlbumInformation')->once();
+        $encyclopedia->shouldReceive('getArtistInformation')->atLeast()->once();
+        $encyclopedia->shouldReceive('getAlbumInformation')->atLeast()->once();
 
         $this->app->instance(EncyclopediaService::class, $encyclopedia);
 

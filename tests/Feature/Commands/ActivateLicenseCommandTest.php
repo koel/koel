@@ -6,6 +6,7 @@ use App\Models\License;
 use App\Services\License\Contracts\LicenseServiceInterface;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
+use RuntimeException;
 use Tests\TestCase;
 
 class ActivateLicenseCommandTest extends TestCase
@@ -31,7 +32,7 @@ class ActivateLicenseCommandTest extends TestCase
             ->shouldReceive('activate')
             ->with('invalid-key')
             ->once()
-            ->andThrow(new \RuntimeException('Invalid license key'));
+            ->andThrow(new RuntimeException('Invalid license key'));
 
         $this->app->instance(LicenseServiceInterface::class, $licenseService);
 
