@@ -1,0 +1,14 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`settingGroup.vue > renders slots 1`] = `
+<article class="flex flex-col md:flex-row gap-4">
+  <header class="w-full md:w-64">
+    <h3 class="font-semibold text-k-fg">Media Path</h3>
+    <!--v-if-->
+  </header>
+  <main class="flex-1 bg-k-fg-5 border border-k-fg-10 rounded-md">
+    <div class="p-4">Main content</div>
+    <footer class="p-4 border-t border-k-fg-10">Save button</footer>
+  </main>
+</article>
+`;
