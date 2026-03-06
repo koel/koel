@@ -97,6 +97,7 @@ const menuItems = computed(() => {
   const album: MenuItem = { column: 'album', label: 'Album', field: 'album_name', visibilityToggleable: true }
   const track: MenuItem = { column: 'track', label: 'Track & Disc', field: 'track', visibilityToggleable: true }
   const time: MenuItem = { column: 'duration', label: 'Time', field: 'length', visibilityToggleable: true }
+  const playCount: MenuItem = { column: 'play_count', label: 'Play Count', field: 'play_count', visibilityToggleable: true }
   const genre: MenuItem = { column: 'genre', label: 'Genre', field: 'genre', visibilityToggleable: true }
   const year: MenuItem = { column: 'year', label: 'Year', field: 'year', visibilityToggleable: true }
 
@@ -117,7 +118,7 @@ const menuItems = computed(() => {
 
   const customOrder: MenuItem = { label: 'Custom Order', field: 'position', visibilityToggleable: false }
 
-  let items: MenuItem[] = [title, album, artist, track, genre, year, time, dateAdded]
+  let items: MenuItem[] = [title, album, artist, track, genre, year, time, playCount, dateAdded]
 
   if (contentType.value === 'episodes') {
     items = [title, podcast, author, time, dateAdded]

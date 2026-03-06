@@ -45,6 +45,7 @@
         <span v-if="shouldShowColumn('year')" class="year">{{ playable.year || '—' }}</span>
       </template>
       <span v-if="shouldShowColumn('duration')" class="time font-mono">{{ fmtLength }}</span>
+      <span v-if="shouldShowColumn('play_count')" class="plays">{{ localePlayCount }}</span>
       <span class="extra">
         <FavoriteButton :favorite="playable.favorite" @toggle="toggleFavorite" />
       </span>
@@ -55,7 +56,7 @@
 <script lang="ts" setup>
 import { faPodcast } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
-import { getPlayableProp, requireInjection } from '@/utils/helpers'
+import { getPlayableProp, humanReadablePlayCount, requireInjection } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
 import { secondsToHis } from '@/utils/formatters'
 import { usePlayableListColumnVisibility } from '@/composables/usePlayableListColumnVisibility'
@@ -91,6 +92,11 @@ const album = computed(() => getPlayableProp(playable.value, 'album_name', 'podc
 const collaborator = computed<Pick<User, 'name' | 'avatar'>>(
   () => (playable.value as Song).collaboration!.user,
 )
+
+const localePlayCount = computed(() => {
+  const playCount = playable.value.play_count
+  return (playCount > 999_999) ? humanReadablePlayCount(playCount) : playCount.toLocaleString()
+})
 
 const play = () => emit('play', playable.value)
 

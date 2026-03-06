@@ -1,7 +1,7 @@
 <template>
   <div
     :class="config.sortable ? 'sortable' : 'unsortable'"
-    class="song-list-header flex z-[2] bg-k-fg-3 pl-5"
+    class="song-list-header flex z-[2] bg-k-fg-3 pl-2"
   >
     <span
       v-if="shouldShowColumn('track')"
@@ -91,6 +91,22 @@
       <template v-if="config.sortable">
         <Icon v-if="sortField === 'length' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
         <Icon v-if="sortField === 'length' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
+      </template>
+    </span>
+    <span
+      v-if="shouldShowColumn('play_count')"
+      class="plays"
+      data-testid="header-playcount"
+      role="button"
+      tabindex="0"
+      title="Sort by play count"
+      @click="sort('play_count')"
+      @keydown.enter.prevent.stop="sort('play_count')"
+    >
+      Plays
+      <template v-if="config.sortable">
+        <Icon v-if="sortField === 'play_count' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
+        <Icon v-if="sortField === 'play_count' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
       </template>
     </span>
     <span class="extra">

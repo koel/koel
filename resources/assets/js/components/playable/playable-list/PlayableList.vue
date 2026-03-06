@@ -327,6 +327,10 @@ onMounted(() => render())
       @apply basis-20 overflow-visible;
     }
 
+    &.plays {
+      @apply basis-[75px] overflow-visible;
+    }
+
     &.track-number {
       @apply basis-16;
     }
@@ -396,8 +400,8 @@ onMounted(() => render())
       width: 200%;
     }
 
-    .song-item :is(.track-number, .album, .time, .year, .genre, .added-at),
-    .song-list-header :is(.track-number, .album, .time, .year, .genre, .added-at) {
+    .song-item :is(.track-number, .album, .time, .year, .genre, .added-at, .plays),
+    .song-list-header :is(.track-number, .album, .time, .year, .genre, .added-at, .plays) {
       display: none;
     }
 
