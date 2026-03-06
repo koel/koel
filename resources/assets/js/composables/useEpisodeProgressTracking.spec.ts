@@ -12,7 +12,7 @@ vi.mock('@/stores/podcastStore', () => ({
 }))
 
 describe('useEpisodeProgressTracking', () => {
-  createHarness({
+  const h = createHarness({
     beforeEach: () => {
       mockResolve.mockReset()
       eventBus.removeAllListeners('EPISODE_PROGRESS_UPDATED')
@@ -25,27 +25,29 @@ describe('useEpisodeProgressTracking', () => {
   })
 
   it('updates progress on tracked episode', async () => {
-    const podcast = { state: { current_episode: null, progresses: {} as Record<string, number> } }
+    const podcast = h.factory('podcast')
+    podcast.state.current_episode = null
+    podcast.state.progresses = {}
     mockResolve.mockResolvedValue(podcast)
 
     const { trackEpisode } = useEpisodeProgressTracking()
 
-    const episode = { id: 'ep-1', podcast_id: 'pod-1' } as unknown as Episode
+    const episode = h.factory('episode')
     trackEpisode(episode)
 
     eventBus.emit('EPISODE_PROGRESS_UPDATED', episode, 0.75)
 
     await vi.waitFor(() => {
-      expect(podcast.state.current_episode).toBe('ep-1')
-      expect(podcast.state.progresses['ep-1']).toBe(0.75)
+      expect(podcast.state.current_episode).toBe(episode.id)
+      expect(podcast.state.progresses[episode.id]).toBe(0.75)
     })
   })
 
   it('ignores progress for non-tracked episode', async () => {
     const { trackEpisode } = useEpisodeProgressTracking()
 
-    const tracked = { id: 'ep-1', podcast_id: 'pod-1' } as unknown as Episode
-    const other = { id: 'ep-2', podcast_id: 'pod-2' } as unknown as Episode
+    const tracked = h.factory('episode')
+    const other = h.factory('episode')
 
     trackEpisode(tracked)
 

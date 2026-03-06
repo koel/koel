@@ -20,7 +20,7 @@ vi.mock('@/composables/useAuthorization', () => ({
 import { useLocalStorage } from './useLocalStorage'
 
 describe('useLocalStorage', () => {
-  createHarness({
+  const h = createHarness({
     beforeEach: () => {
       mockGet.mockReset()
       mockSet.mockReset()
@@ -35,7 +35,8 @@ describe('useLocalStorage', () => {
   })
 
   it('namespaces keys with provided user id', () => {
-    const { set } = useLocalStorage(true, { id: 99 } as User)
+    const user = h.factory('user', { id: 99 })
+    const { set } = useLocalStorage(true, user)
     set('volume', 80)
     expect(mockSet).toHaveBeenCalledWith('99::volume', 80)
   })
