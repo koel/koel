@@ -1,0 +1,3 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SoundBars > renders correctly 1`] = `<i data-v-47e95701="" class="relative flex gap-1 content-between w-[13px] aspect-square"><span data-v-47e95701=""></span><span data-v-47e95701=""></span><span data-v-47e95701=""></span></i>`;
