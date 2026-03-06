@@ -231,3 +231,6 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 - Always use Tailwind CSS v3; verify you're using only classes supported by this version.
 </laravel-boost-guidelines>
+
+## Git Commits
+- Use [Conventional Commits](https://www.conventionalcommits.org/) for all commit messages (e.g. `fix:`, `feat:`, `chore:`, `test:`, `refactor:`, `docs:`, `ci:`, etc.).

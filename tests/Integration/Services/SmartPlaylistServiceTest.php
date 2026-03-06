@@ -370,8 +370,8 @@ class SmartPlaylistServiceTest extends TestCase
     public function lastPlayedAtIsInLast(): void
     {
         $user = create_user();
-        $matches = Song::factory()->count(1)->create();
-        $notMatch = Song::factory()->create();
+        $matches = Song::factory()->count(1)->create(['created_at' => now()->subDays(3)]);
+        $notMatch = Song::factory()->create(['created_at' => now()->subDays(5)]);
 
         Interaction::factory()
             ->for($matches[0])
@@ -406,7 +406,7 @@ class SmartPlaylistServiceTest extends TestCase
     public function lastPlayedNotInLast(): void
     {
         $user = create_user();
-        $matches = Song::factory()->count(1)->create();
+        $matches = Song::factory()->count(1)->create(['created_at' => now()->subDays(4)]);
         $notMatch = Song::factory()->create();
 
         Interaction::factory()
@@ -417,7 +417,7 @@ class SmartPlaylistServiceTest extends TestCase
         Interaction::factory()
             ->for($user)
             ->for($notMatch)
-            ->create(['last_played_at' => now()->subDays(2)]);
+            ->create(['last_played_at' => now()]);
 
         $this->assertMatchesAgainstRules(
             $matches,
@@ -443,7 +443,7 @@ class SmartPlaylistServiceTest extends TestCase
     {
         $user = create_user();
         $matches = Song::factory()->count(1)->create();
-        $notMatch = Song::factory()->create();
+        $notMatch = Song::factory()->create(['created_at' => now()->subDays(5)]);
 
         Interaction::factory()
             ->for($matches[0])
