@@ -5,6 +5,7 @@ on:
       - master
     paths:
       - resources/assets/**
+      - package.json
       - .github/workflows/lint-frontend.yml
   push:
     branches:
@@ -12,6 +13,7 @@ on:
       - next
     paths:
       - resources/assets/**
+      - package.json
       - .github/workflows/lint-frontend.yml
   workflow_dispatch:
 
@@ -39,3 +41,5 @@ jobs:
         run: pnpm format
       - name: Lint
         run: pnpm lint
+      - name: Type check
+        run: pnpm typecheck
