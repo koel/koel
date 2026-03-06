@@ -1,0 +1,3 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`tabPanelContainer.vue > renders 1`] = `<div class="p-6 overflow-auto">Content</div>`;

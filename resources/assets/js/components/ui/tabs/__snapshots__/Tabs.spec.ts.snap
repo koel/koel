@@ -1,0 +1,3 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`tabs.vue > renders 1`] = `<div class="min-h-full flex flex-col relative">Tabs content</div>`;
