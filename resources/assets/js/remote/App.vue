@@ -58,7 +58,7 @@ const inStandaloneMode = ref(
 
 const init = async () => {
   try {
-    userStore.init(await authService.getProfile())
+    userStore.init((await authService.getProfile()) as CurrentUser)
     await socketService.init()
 
     socketService

@@ -1,6 +1,6 @@
 <template>
   <div class="avatar-width ring-4 ring-white mt-8 rounded-full relative overflow-hidden aspect-square">
-    <UserAvatar v-if="profile.avatar" :user="profile" class="avatar-width" />
+    <UserAvatar v-if="profile.avatar" :user="profile as any" class="avatar-width" />
 
     <div
       class="absolute top-0 rounded-full w-full aspect-square flex items-center justify-center gap-2 pt-[50%] bg-black/50 opacity-0 hover:opacity-100 transition-opacity duration-300"
@@ -33,7 +33,7 @@ import { gravatar } from '@/utils/helpers'
 import UserAvatar from '@/components/user/UserAvatar.vue'
 import ImageCropper from '@/components/utils/ImageCropper.vue'
 
-const props = defineProps<{ profile: Pick<User, 'name' | 'avatar'> }>()
+const props = defineProps<{ profile: { name: string; avatar?: string } }>()
 const emit = defineEmits<{ (e: 'changed', image: string): void }>()
 
 const { profile } = props

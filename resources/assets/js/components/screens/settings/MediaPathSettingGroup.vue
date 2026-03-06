@@ -71,7 +71,7 @@ const save = async () => {
   showOverlay({ message: 'Scanning…' })
 
   try {
-    await settingStore.updateMediaPath(mediaPath.value)
+    await settingStore.updateMediaPath(mediaPath.value!)
     toastSuccess('Settings saved.')
     // Make sure we're back to home first.
     go(url('home'), true)

@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker'
 import { equalizerPresets } from '@/config/audio'
 
-const preferences = {
+const preferences: UserPreferences = {
   volume: 0.7,
   show_now_playing_notification: false,
   repeat_mode: 'NO_REPEAT',

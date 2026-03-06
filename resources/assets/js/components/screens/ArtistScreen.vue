@@ -192,7 +192,7 @@ const fetchScreenData = async () => {
     context.entity = artist.value
     editable.value = await currentUserCan.editArtist(artist.value!)
   } catch (error: unknown) {
-    if (error?.status === 404) {
+    if ((error as any)?.status === 404) {
       triggerNotFound()
       return
     }

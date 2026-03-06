@@ -84,13 +84,15 @@
     "typescript": "^5.8.3",
     "vite": "^5.4.19",
     "vitepress": "^1.6.3",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "vue-tsc": "^3.2.5"
   },
   "scripts": {
     "format": "oxfmt --check ./resources/assets",
     "format:fix": "oxfmt --write ./resources/assets",
     "lint": "oxlint ./resources/assets",
     "lint:fix": "oxlint --fix ./resources/assets",
+    "typecheck": "vue-tsc --noEmit -p resources/assets/tsconfig.typecheck.json",
     "test": "vitest",
     "test:unit": "vitest",
     "test:e2e": "kill-port 8080 && start-test dev http-get://localhost:8080/api/ping 'cypress open'",
@@ -110,6 +112,7 @@
       "oxfmt --write",
       "oxlint --fix"
     ],
+    "resources/assets/**/*.{ts,vue}": "bash -c 'vue-tsc --noEmit -p resources/assets/tsconfig.typecheck.json'",
     "cypress/**/*.ts": [
       "oxfmt --write",
       "oxlint --fix"

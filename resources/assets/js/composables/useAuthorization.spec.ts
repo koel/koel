@@ -7,7 +7,7 @@ describe('useAuthorization', () => {
   const h = createHarness()
 
   it('returns a ref to the current user', () => {
-    const user = h.factory('user', { name: 'Alice' })
+    const user = h.factory('user', { name: 'Alice' }) as CurrentUser
     userStore.state.current = user
 
     const { currentUser } = useAuthorization()
@@ -17,7 +17,7 @@ describe('useAuthorization', () => {
   it('reacts to user changes', () => {
     const { currentUser } = useAuthorization()
 
-    userStore.state.current = h.factory('user', { name: 'Bob' })
+    userStore.state.current = h.factory('user', { name: 'Bob' }) as CurrentUser
     expect(currentUser.value.name).toBe('Bob')
   })
 })

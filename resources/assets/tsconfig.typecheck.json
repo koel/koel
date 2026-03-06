@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "moduleResolution": "bundler"
+  },
+  "include": ["js/**/*"],
+  "exclude": []
+}

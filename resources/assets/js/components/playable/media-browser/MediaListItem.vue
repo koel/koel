@@ -12,12 +12,7 @@
           <FileMusicIcon class="hidden sm:block" :size="16" />
 
           <!-- on a mobile device, show a Play button for a better UX -->
-          <button
-            v-if="item.playback_state !== 'Playing'"
-            class="sm:hidden py-px"
-            title="Play"
-            @click.prevent.stop="emit('play-song')"
-          >
+          <button class="sm:hidden py-px" title="Play" @click.prevent.stop="emit('play-song')">
             <PlayCircleIcon :size="16" />
           </button>
         </template>

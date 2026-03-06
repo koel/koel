@@ -8,7 +8,7 @@ import Component from './ProfileForm.vue'
 describe('profileForm.vue', () => {
   const h = createHarness()
 
-  const renderComponent = (user: User) => {
+  const renderComponent = (user: CurrentUser) => {
     return h.actingAsUser(user).render(Component)
   }
 
@@ -19,7 +19,7 @@ describe('profileForm.vue', () => {
     renderComponent(
       h.factory('user', {
         avatar: 'https://gravatar.com/foo',
-      }),
+      }) as CurrentUser,
     )
 
     await h.type(screen.getByTestId('currentPassword'), 'old-password')

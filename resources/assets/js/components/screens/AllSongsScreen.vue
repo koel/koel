@@ -110,7 +110,7 @@ const playAll = async (shuffle: boolean) => {
   if (shuffle) {
     await queueStore.fetchRandom()
   } else {
-    await queueStore.fetchInOrder(sortField, sortOrder)
+    await queueStore.fetchInOrder(Array.isArray(sortField) ? sortField[0] : sortField, sortOrder)
   }
 
   go(url('queue'))

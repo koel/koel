@@ -19,7 +19,7 @@
     title="Artist information"
     @click.prevent="toggleTab('Artist')"
   >
-    <MicVocalIcon size="18" />
+    <MicVocalIcon :size="18" />
   </SideSheetButton>
   <SideSheetButton
     id="extraTabAlbum"

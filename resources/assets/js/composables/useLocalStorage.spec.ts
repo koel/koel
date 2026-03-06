@@ -35,7 +35,7 @@ describe('useLocalStorage', () => {
   })
 
   it('namespaces keys with provided user id', () => {
-    const user = h.factory('user', { id: 99 })
+    const user = h.factory('user', { id: '99' })
     const { set } = useLocalStorage(true, user)
     set('volume', 80)
     expect(mockSet).toHaveBeenCalledWith('99::volume', 80)

@@ -11,6 +11,11 @@ describe('profileAvatar.vue', () => {
       avatar: 'https://example.com/avatar.jpg',
     })
 
-    expect(h.actingAsUser(user).render(Component).html()).toMatchSnapshot()
+    expect(
+      h
+        .actingAsUser(user as CurrentUser)
+        .render(Component)
+        .html(),
+    ).toMatchSnapshot()
   })
 })
