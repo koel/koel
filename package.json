@@ -87,8 +87,8 @@
     "vitest": "^3.2.4"
   },
   "scripts": {
-    "format": "oxfmt --write ./resources/assets",
-    "format:check": "oxfmt --check ./resources/assets",
+    "format": "oxfmt --check ./resources/assets",
+    "format:fix": "oxfmt --write ./resources/assets",
     "lint": "oxlint ./resources/assets",
     "lint:fix": "oxlint --fix ./resources/assets",
     "test": "vitest",
