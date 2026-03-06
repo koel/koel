@@ -1,0 +1,8 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`audioPlayer.vue > renders 1`] = `
+<!--
+    A very thin wrapper around Plyr, extracted as a standalone component for easier styling and to work better with HMR.
+  -->
+<div class="plyr w-full h-[4px]"><audio class="hidden" controls="" crossorigin="anonymous"></audio></div>
+`;
