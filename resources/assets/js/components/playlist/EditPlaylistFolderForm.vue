@@ -55,7 +55,7 @@ const { data, isPristine, handleSubmit } = useForm<Pick<PlaylistFolder, 'name'>>
 })
 
 const maybeClose = async () => {
-  if (isPristine() || await showConfirmDialog('Discard all changes?')) {
+  if (isPristine() || (await showConfirmDialog('Discard all changes?'))) {
     close()
   }
 }

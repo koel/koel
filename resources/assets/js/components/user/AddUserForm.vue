@@ -69,7 +69,7 @@ const { data, isPristine, loading, handleSubmit } = useForm<CreateUserData>({
 })
 
 const maybeClose = async () => {
-  if (isPristine() || await showConfirmDialog('Discard all changes?')) {
+  if (isPristine() || (await showConfirmDialog('Discard all changes?'))) {
     close()
   }
 }

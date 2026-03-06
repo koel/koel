@@ -1,11 +1,11 @@
 // Adapted from https://stackoverflow.com/a/53058574
-async function readEntriesPromise (directoryReader: FileSystemDirectoryReader): Promise<FileSystemEntry[]> {
+async function readEntriesPromise(directoryReader: FileSystemDirectoryReader): Promise<FileSystemEntry[]> {
   return await new Promise((resolve, reject): void => {
     directoryReader.readEntries(resolve, reject)
   })
 }
 
-async function readAllDirectoryEntries (directoryReader: FileSystemDirectoryReader): Promise<FileSystemEntry[]> {
+async function readAllDirectoryEntries(directoryReader: FileSystemDirectoryReader): Promise<FileSystemEntry[]> {
   const entries: FileSystemEntry[] = []
   let readEntries = await readEntriesPromise(directoryReader)
 
@@ -17,7 +17,7 @@ async function readAllDirectoryEntries (directoryReader: FileSystemDirectoryRead
   return entries
 }
 
-async function getAllFileEntries (dataTransferItemList: DataTransferItemList) {
+async function getAllFileEntries(dataTransferItemList: DataTransferItemList) {
   const fileEntries: FileSystemFileEntry[] = []
   const queue: FileSystemEntry[] = []
 
@@ -35,7 +35,7 @@ async function getAllFileEntries (dataTransferItemList: DataTransferItemList) {
     if (entry.isFile) {
       fileEntries.push(entry as FileSystemFileEntry)
     } else if (entry.isDirectory) {
-      queue.push(...await readAllDirectoryEntries(entry.createReader()))
+      queue.push(...(await readAllDirectoryEntries(entry.createReader())))
     }
   }
 

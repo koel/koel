@@ -1,11 +1,7 @@
 <template>
   <ul class="text-base" :class="disabled && 'disabled'">
     <li v-for="crumb in crumbs" :key="String(crumb.path)" class="inline-block">
-      <a
-        v-if="crumb.path !== null"
-        :href="url('media-browser', { path: crumb.path })"
-        class="text-k-fg-70 font-normal"
-      >
+      <a v-if="crumb.path !== null" :href="url('media-browser', { path: crumb.path })" class="text-k-fg-70 font-normal">
         {{ crumb.name }}
       </a>
       <span v-else>
@@ -20,7 +16,7 @@ import { useRouter } from '@/composables/useRouter'
 import { computed, toRefs } from 'vue'
 import { mediaBrowser } from '@/services/mediaBrowser'
 
-const props = withDefaults(defineProps<{ path: string, disabled?: boolean }>(), {
+const props = withDefaults(defineProps<{ path: string; disabled?: boolean }>(), {
   disabled: false,
 })
 

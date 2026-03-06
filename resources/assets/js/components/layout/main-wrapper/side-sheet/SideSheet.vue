@@ -4,10 +4,7 @@
     class="fixed sm:relative top-0 w-screen md:w-auto flex flex-col md:flex-row-reverse z-[2]"
   >
     <header
-      class="controls flex md:flex-col justify-between items-center md:w-[64px] md:py-6 tw:px-0
-      bg-black/5 md:border-l border-solid md:border-l-k-fg-5 md:border-b-0 md:shadow-none
-      z-[2] w-screen flex-row border-b border-b-k-fg-5 border-l-0 shadow-xl
-      py-0 px-6 h-k-header-height"
+      class="controls flex md:flex-col justify-between items-center md:w-[64px] md:py-6 tw:px-0 bg-black/5 md:border-l border-solid md:border-l-k-fg-5 md:border-b-0 md:shadow-none z-[2] w-screen flex-row border-b border-b-k-fg-5 border-l-0 shadow-xl py-0 px-6 h-k-header-height"
     >
       <div class="btn-group">
         <SideSheetButton class="md:hidden" @click.prevent="expandSidebar">
@@ -87,8 +84,7 @@ import AboutKoelButton from '@/components/layout/main-wrapper/side-sheet/AboutKo
 import LogoutButton from '@/components/layout/main-wrapper/side-sheet/LogoutButton.vue'
 import SideSheetButton from '@/components/layout/main-wrapper/side-sheet/SideSheetButton.vue'
 import SideSheetPanelLazyWrapper from '@/components/layout/main-wrapper/side-sheet/SideSheetPanelLazyWrapper.vue'
-import SideSheetArtistAlbumInfoSkeleton
-  from '@/components/layout/main-wrapper/side-sheet/SideSheetArtistAlbumInfoSkeleton.vue'
+import SideSheetArtistAlbumInfoSkeleton from '@/components/layout/main-wrapper/side-sheet/SideSheetArtistAlbumInfoSkeleton.vue'
 import SideSheetTabHeader from './SideSheetTabHeader.vue'
 
 const LyricsPane = defineAsyncComponent(() => import('@/components/ui/lyrics/LyricsPane.vue'))
@@ -143,14 +139,18 @@ const resolveArtistOrAlbum = (activeTab: SideSheetTab | null = null, song: Song)
   }
 }
 
-watch(streamable, song => {
-  if (!song || !isSong(song)) {
-    return
-  }
+watch(
+  streamable,
+  song => {
+    if (!song || !isSong(song)) {
+      return
+    }
 
-  streamable.value = song
-  resolveArtistOrAlbum(activeTab.value, song)
-}, { immediate: true })
+    streamable.value = song
+    resolveArtistOrAlbum(activeTab.value, song)
+  },
+  { immediate: true },
+)
 
 watch(activeTab, tab => {
   if (!tab) {

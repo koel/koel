@@ -2,7 +2,7 @@
   <section>
     <h3 class="text-2xl mb-2 flex items-center gap-2">
       <span class="mr-2 text-[#1db954]">
-        <img :src="musicbrainzLogo" alt="MusicBrainz Logo" height="20" width="20">
+        <img :src="musicbrainzLogo" alt="MusicBrainz Logo" height="20" width="20" />
       </span>
       MusicBrainz Integration
     </h3>
@@ -10,8 +10,8 @@
     <div v-if="useMusicBrainz">
       <p>
         MusicBrainz integration is enabled.
-        {{ appName }} will attempt to retrieve album and artist information from MusicBrainz (and Wikipedia)
-        when a song is played, if needed.
+        {{ appName }} will attempt to retrieve album and artist information from MusicBrainz (and Wikipedia) when a song
+        is played, if needed.
       </p>
     </div>
     <div v-else>

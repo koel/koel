@@ -8,7 +8,7 @@ export const useLocalStorage = (namespaced = true, user?: User) => {
     namespace = user ? `${user.id}::` : `${useAuthorization().currentUser.value.id}::`
   }
 
-  const get = <T> (key: string, defaultValue: T | null = null): T | null => {
+  const get = <T>(key: string, defaultValue: T | null = null): T | null => {
     const value = baseGet<T>(namespace + key)
 
     return value === null ? defaultValue : value

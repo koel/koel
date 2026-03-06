@@ -33,7 +33,7 @@ export const searchStore = {
     playables: [] as Playable[],
   }),
 
-  async excerptSearch (q: string) {
+  async excerptSearch(q: string) {
     const result = await http.get<ExcerptSearchResult>(`search?q=${q}`)
 
     this.state.excerpt.playables = playableStore.syncWithVault(result.songs)
@@ -43,11 +43,11 @@ export const searchStore = {
     this.state.excerpt.radio_stations = radioStationStore.sync(result.radio_stations)
   },
 
-  async playableSearch (q: string) {
+  async playableSearch(q: string) {
     this.state.playables = playableStore.syncWithVault(await http.get<Playable[]>(`search/songs?q=${q}`))
   },
 
-  resetPlayableResultState () {
+  resetPlayableResultState() {
     this.state.playables = []
   },
 }

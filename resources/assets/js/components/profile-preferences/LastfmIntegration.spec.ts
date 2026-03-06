@@ -6,7 +6,12 @@ import Component from './LastfmIntegration.vue'
 describe('lastfmIntegration.vue', () => {
   const h = createHarness()
 
-  it.each<[boolean, boolean]>([[false, false], [false, true], [true, false], [true, true]])(
+  it.each<[boolean, boolean]>([
+    [false, false],
+    [false, true],
+    [true, false],
+    [true, true],
+  ])(
     'renders proper content with Last.fm integration status %s, current user admin status %s',
     (useLastfm, isAdmin) => {
       commonStore.state.uses_last_fm = useLastfm

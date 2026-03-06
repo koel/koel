@@ -9,7 +9,7 @@ type Broadcaster = 'pusher' | 'null' // narrow down the supported broadcasters
 export const broadcastSubscriber = {
   echo: null as Echo<Broadcaster> | null,
 
-  newEchoInstance (): Echo<Broadcaster> {
+  newEchoInstance(): Echo<Broadcaster> {
     const key = import.meta.env.VITE_PUSHER_APP_KEY
     const cluster = import.meta.env.VITE_PUSHER_APP_CLUSTER
 
@@ -30,7 +30,7 @@ export const broadcastSubscriber = {
     })
   },
 
-  init (userId: User['id'], echo?: Echo<'pusher' | 'null'>) {
+  init(userId: User['id'], echo?: Echo<'pusher' | 'null'>) {
     this.subscribeToEvents(echo || this.newEchoInstance(), userId)
   },
 

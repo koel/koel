@@ -128,9 +128,10 @@ const onDropOnHatch = async (event: DragEvent) => {
   await playlistFolderStore.removePlaylistFromFolder(folder.value, playlist)
 }
 
-const onContextMenu = (event: MouseEvent) => openContextMenu<'PLAYLIST_FOLDER'>(ContextMenu, event, {
-  folder: folder.value,
-})
+const onContextMenu = (event: MouseEvent) =>
+  openContextMenu<'PLAYLIST_FOLDER'>(ContextMenu, event, {
+    folder: folder.value,
+  })
 </script>
 
 <style lang="postcss" scoped>

@@ -4,8 +4,8 @@ import { use } from '@/utils/helpers'
 import { socketService } from '@/services/socketService'
 
 export class RadioPlaybackService extends BasePlaybackService {
-  public async play (station: RadioStation) {
-    use(radioStationStore.current, station => station.playback_state = 'Stopped')
+  public async play(station: RadioStation) {
+    use(radioStationStore.current, station => (station.playback_state = 'Stopped'))
 
     station.playback_state = 'Playing'
     this.player.media.src = radioStationStore.getSourceUrl(station)
@@ -14,31 +14,32 @@ export class RadioPlaybackService extends BasePlaybackService {
     socketService.broadcast('SOCKET_STREAMABLE', station)
   }
 
-  public async stop () {
+  public async stop() {
     return this.pause()
   }
 
-  protected onError (): void { // eslint-disable node/handle-callback-err
+  protected onError(): void {
+    // eslint-disable node/handle-callback-err
     // @todo Handle radio playback errors?
   }
 
-  public fastSeek (): void {
+  public fastSeek(): void {
     // Not supported for radio playback
   }
 
-  public forward (): void {
+  public forward(): void {
     // Not supported for radio playback
   }
 
-  protected onEnded (): void {
+  protected onEnded(): void {
     // Not supported for radio playback
   }
 
-  protected onTimeUpdate (): void {
+  protected onTimeUpdate(): void {
     // Not supported for radio playback
   }
 
-  public async pause () {
+  public async pause() {
     use(radioStationStore.current, station => {
       station.playback_state = 'Paused'
 
@@ -54,15 +55,15 @@ export class RadioPlaybackService extends BasePlaybackService {
     }
   }
 
-  public async playNext () {
+  public async playNext() {
     // Not supported for radio playback
   }
 
-  public async playPrev () {
+  public async playPrev() {
     // Not supported for radio playback
   }
 
-  public async resume () {
+  public async resume() {
     if (!radioStationStore.current) {
       throw new Error('Logic exception: no current radio station.')
     }
@@ -70,19 +71,19 @@ export class RadioPlaybackService extends BasePlaybackService {
     return this.play(radioStationStore.current)
   }
 
-  public rewind (): void {
+  public rewind(): void {
     // Not supported for radio playback
   }
 
-  public seekTo (): void {
+  public seekTo(): void {
     // Not supported for radio playback
   }
 
-  public rotateRepeatMode (): void {
+  public rotateRepeatMode(): void {
     // Not supported for radio playback
   }
 
-  async toggle () {
+  async toggle() {
     if (radioStationStore.current?.playback_state === 'Playing') {
       await this.stop()
     } else {

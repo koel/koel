@@ -5,13 +5,13 @@
       class="-mt-[48px] rounded-full border-[6px] border-k-fg"
       src="@/../img/koel-plus.svg"
       width="96"
-    >
+    />
 
     <main class="!px-8 !py-5 text-center flex flex-col gap-5">
       <div>
-        Koel Plus adds premium features on top of the default installation.<br>
-        Pay <em>once</em> and enjoy all additional features forever — including those to be built into the app
-        in the future!
+        Koel Plus adds premium features on top of the default installation.<br />
+        Pay <em>once</em> and enjoy all additional features forever — including those to be built into the app in the
+        future!
       </div>
 
       <div v-show="!showingActivateLicenseForm" class="space-x-3" data-testid="buttons">

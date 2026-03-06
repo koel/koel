@@ -59,11 +59,13 @@ describe('footerPlayButton.vue', () => {
   })
 
   // @ts-ignore
-  it.each<[
-    string,
+  it.each<
+    [
+      string,
       typeof playableStore | typeof recentlyPlayedStore,
       MethodOf<typeof playableStore | typeof recentlyPlayedStore>,
-  ]>([
+    ]
+  >([
     ['/favorites', playableStore, 'fetchFavorites'],
     ['/recently-played', recentlyPlayedStore, 'fetch'],
   ])('initiates playback for %s', async (hash, store, fetchMethod) => {

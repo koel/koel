@@ -41,7 +41,7 @@
                 <template #label>Folder</template>
                 <SelectBox v-model="data.folder_id">
                   <option :value="null" />
-                  <option v-for="({ id, name }) in folders" :key="id" :value="id">{{ name }}</option>
+                  <option v-for="{ id, name } in folders" :key="id" :value="id">{{ name }}</option>
                 </SelectBox>
               </FormRow>
               <FormRow class="col-span-2">
@@ -111,13 +111,7 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { folder: targetFolder } = props
 
-const {
-  Btn,
-  RuleGroup,
-  collectedRuleGroups,
-  addGroup,
-  onGroupChanged,
-} = useSmartPlaylistForm()
+const { Btn, RuleGroup, collectedRuleGroups, addGroup, onGroupChanged } = useSmartPlaylistForm()
 
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
@@ -136,10 +130,11 @@ const { data, isPristine, handleSubmit } = useForm<CreatePlaylistData>({
     cover: null,
   },
   isPristine: (original, current) => isEqual(original, current) && collectedRuleGroups.value.length === 0,
-  onSubmit: async data => await playlistStore.store({
-    ...data,
-    rules: collectedRuleGroups.value,
-  }),
+  onSubmit: async data =>
+    await playlistStore.store({
+      ...data,
+      rules: collectedRuleGroups.value,
+    }),
   onSuccess: (playlist: Playlist) => {
     toastSuccess(`Playlist "${playlist.name}" created.`)
     close()
@@ -148,7 +143,7 @@ const { data, isPristine, handleSubmit } = useForm<CreatePlaylistData>({
 })
 
 const maybeClose = async () => {
-  if (isPristine() || await showConfirmDialog('Discard all changes?')) {
+  if (isPristine() || (await showConfirmDialog('Discard all changes?'))) {
     close()
   }
 }

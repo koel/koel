@@ -20,7 +20,7 @@
 import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
 
-const props = withDefaults(defineProps<{ playable?: Playable, preview?: boolean, progress?: number }>(), {
+const props = withDefaults(defineProps<{ playable?: Playable; preview?: boolean; progress?: number }>(), {
   preview: false,
   progress: 0,
 })

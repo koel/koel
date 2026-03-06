@@ -15,12 +15,16 @@ describe('footerRadioStationInfo.vue', () => {
       playback_state: 'Playing',
     })
 
-    expect(h.render(Component, {
-      global: {
-        provide: {
-          [<symbol>CurrentStreamableKey]: ref(station),
-        },
-      },
-    }).html()).toMatchSnapshot()
+    expect(
+      h
+        .render(Component, {
+          global: {
+            provide: {
+              [<symbol>CurrentStreamableKey]: ref(station),
+            },
+          },
+        })
+        .html(),
+    ).toMatchSnapshot()
   })
 })

@@ -1,9 +1,5 @@
 <template>
-  <article
-    ref="lyricsContainer"
-    v-koel-overflow-fade
-    class="overflow-y-auto space-y-2"
-  >
+  <article ref="lyricsContainer" v-koel-overflow-fade class="overflow-y-auto space-y-2">
     <LrcLyricsLine
       v-for="(line, index) in lyrics"
       :key="index"
@@ -99,16 +95,20 @@ const startTimeUpdates = () => {
   }
 }
 
-watch(() => props.lyrics, () => {
-  currentLineIndex.value = -1
+watch(
+  () => props.lyrics,
+  () => {
+    currentLineIndex.value = -1
 
-  lyricsContainer.value?.scrollTo({
-    top: 0,
-    behavior: 'smooth',
-  })
+    lyricsContainer.value?.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    })
 
-  startTimeUpdates()
-}, { immediate: true, deep: true })
+    startTimeUpdates()
+  },
+  { immediate: true, deep: true },
+)
 
 onMounted(() => {
   if (typeof window !== 'undefined') {

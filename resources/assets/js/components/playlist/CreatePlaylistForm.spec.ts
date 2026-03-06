@@ -34,12 +34,15 @@ describe('createPlaylistForm.vue', () => {
     await h.type(screen.getByRole('textbox', { name: 'description' }), 'Some description')
     await h.user.click(screen.getByRole('button', { name: 'Save' }))
 
-    expect(storeMock).toHaveBeenCalledWith({
-      name: 'My playlist',
-      description: 'Some description',
-      folder_id: folder.id,
-      cover: null,
-    }, [])
+    expect(storeMock).toHaveBeenCalledWith(
+      {
+        name: 'My playlist',
+        description: 'Some description',
+        folder_id: folder.id,
+        cover: null,
+      },
+      [],
+    )
   })
 
   it('creates playlist with playables', async () => {
@@ -52,12 +55,15 @@ describe('createPlaylistForm.vue', () => {
     await h.type(screen.getByRole('textbox', { name: 'description' }), 'Some description')
     await h.user.click(screen.getByRole('button', { name: 'Save' }))
 
-    expect(storeMock).toHaveBeenCalledWith({
-      name: 'My playlist',
-      description: 'Some description',
-      folder_id: folder.id,
-      cover: null,
-    }, playables)
+    expect(storeMock).toHaveBeenCalledWith(
+      {
+        name: 'My playlist',
+        description: 'Some description',
+        folder_id: folder.id,
+        cover: null,
+      },
+      playables,
+    )
   })
 
   it('creates playlist with a cover', async () => {
@@ -75,11 +81,14 @@ describe('createPlaylistForm.vue', () => {
     await h.type(screen.getByRole('textbox', { name: 'description' }), 'Some description')
     await h.user.click(screen.getByRole('button', { name: 'Save' }))
 
-    expect(storeMock).toHaveBeenCalledWith({
-      name: 'My playlist',
-      description: 'Some description',
-      folder_id: folder.id,
-      cover: 'data:image/png;base64,Ynl0ZXM=',
-    }, [])
+    expect(storeMock).toHaveBeenCalledWith(
+      {
+        name: 'My playlist',
+        description: 'Some description',
+        folder_id: folder.id,
+        cover: 'data:image/png;base64,Ynl0ZXM=',
+      },
+      [],
+    )
   })
 })

@@ -5,7 +5,7 @@
     :title="user.name"
     class="object-cover rounded-full aspect-square bg-k-bg"
     @error="user.avatar = defaultCover"
-  >
+  />
 </template>
 
 <script lang="ts" setup>

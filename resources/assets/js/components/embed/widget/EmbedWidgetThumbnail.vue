@@ -1,11 +1,6 @@
 <template>
   <article class="relative aspect-square block rounded-md overflow-hidden">
-    <img
-      :src
-      alt="Thumbnail"
-      class="w-full aspect-square object-cover"
-      loading="lazy"
-    >
+    <img :src alt="Thumbnail" class="w-full aspect-square object-cover" loading="lazy" />
   </article>
 </template>
 
@@ -40,6 +35,4 @@ switch (embeddable.type) {
 src = src || defaultCover
 </script>
 
-<style scoped lang="postcss">
-
-</style>
+<style scoped lang="postcss"></style>

@@ -5,20 +5,16 @@ import { commonStore } from '@/stores/commonStore'
 import { cache } from '@/services/cache'
 
 export const mediaBrowser = {
-  async browse (path: string | null, page = 1, forceRefresh = false) {
+  async browse(path: string | null, page = 1, forceRefresh = false) {
     if (forceRefresh) {
       cache.remove(['folder', path, 'folders'])
       cache.remove(['folder', path, 'songs', page])
     }
 
     const [folders, paginator] = await Promise.all([
-      cache.remember(
-        ['folder', path, 'folders'],
-        () => http.get<Folder[]>(`browse/folders?path=${path ?? ''}`),
-      ),
-      cache.remember(
-        ['folder', path, 'songs', page],
-        () => http.get<PaginatorResource<Song>>(`browse/songs?path=${path ?? ''}&page=${page}`),
+      cache.remember(['folder', path, 'folders'], () => http.get<Folder[]>(`browse/folders?path=${path ?? ''}`)),
+      cache.remember(['folder', path, 'songs', page], () =>
+        http.get<PaginatorResource<Song>>(`browse/songs?path=${path ?? ''}&page=${page}`),
       ),
     ])
 
@@ -29,14 +25,16 @@ export const mediaBrowser = {
     }
   },
 
-  generateBreadcrumbs (path: string | null) {
+  generateBreadcrumbs(path: string | null) {
     const sep = commonStore.state.dir_separator
     path = path || ''
 
-    const results = [{
-      name: 'Library',
-      path: '',
-    }]
+    const results = [
+      {
+        name: 'Library',
+        path: '',
+      },
+    ]
 
     const segments = path.split(sep).filter(Boolean)
 
@@ -52,7 +50,7 @@ export const mediaBrowser = {
     return results
   },
 
-  getParentFolder (path: string | null): Folder | null {
+  getParentFolder(path: string | null): Folder | null {
     path = path || ''
 
     if (!path) {
@@ -76,7 +74,7 @@ export const mediaBrowser = {
     }
   },
 
-  extractMediaReferences (items: (Song | Folder)[]) {
+  extractMediaReferences(items: (Song | Folder)[]) {
     return items.map<MediaReference>(item => {
       if (item.type === 'songs') {
         return {

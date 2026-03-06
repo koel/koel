@@ -54,7 +54,7 @@ type CommonStoreState = typeof initialState
 export const commonStore = {
   state: reactive<CommonStoreState>(initialState),
 
-  async init () {
+  async init() {
     Object.assign(this.state, await http.get<CommonStoreState>('data'))
 
     // Always disable YouTube integration on mobile.

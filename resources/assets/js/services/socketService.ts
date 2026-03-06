@@ -7,7 +7,7 @@ export const socketService = {
   pusher: null as Pusher.Pusher | null,
   channel: null as Pusher.Channel | null,
 
-  async init () {
+  async init() {
     if (!window.PUSHER_APP_KEY) {
       return false
     }
@@ -28,12 +28,12 @@ export const socketService = {
     return true
   },
 
-  broadcast (eventName: string, data: any = {}) {
+  broadcast(eventName: string, data: any = {}) {
     this.channel?.trigger(`client-${eventName}.${userStore.current.id}`, data)
     return this
   },
 
-  listen (eventName: string, cb: Closure) {
+  listen(eventName: string, cb: Closure) {
     this.channel?.bind(`client-${eventName}.${userStore.current.id}`, data => cb(data))
     return this
   },

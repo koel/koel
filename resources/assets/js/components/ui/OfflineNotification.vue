@@ -1,8 +1,7 @@
 <template>
   <article
     v-if="!dismissed"
-    class="text-orange-600 p-4 bg-white rounded-md flex items-center justify-center
-    gap-3 fixed z-[10000] left-6 shadow-lg cursor-pointer"
+    class="text-orange-600 p-4 bg-white rounded-md flex items-center justify-center gap-3 fixed z-[10000] left-6 shadow-lg cursor-pointer"
     title="Click to dismiss"
     @click="dismissed = true"
   >

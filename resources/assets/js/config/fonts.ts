@@ -1,14 +1,7 @@
 // List of fonts commonly available on a user's machine.
 // This is to be used in case accessing local fonts using local-fonts API fails.
 
-export const genericFonts = [
-  'system-ui',
-  'sans-serif',
-  'serif',
-  'monospace',
-  'cursive',
-  'fantasy',
-]
+export const genericFonts = ['system-ui', 'sans-serif', 'serif', 'monospace', 'cursive', 'fantasy']
 
 export const commonFonts = [
   'Andale Mono',

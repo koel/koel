@@ -23,19 +23,22 @@ const { MenuItem, trigger } = useContextMenu()
 const { toastSuccess } = useMessageToaster()
 const { go } = useRouter()
 
-const play = () => trigger(async () => {
-  go('queue')
-  await playback().queueAndPlay(await playableStore.fetchSongsByGenre(genre.value))
-})
+const play = () =>
+  trigger(async () => {
+    go('queue')
+    await playback().queueAndPlay(await playableStore.fetchSongsByGenre(genre.value))
+  })
 
-const shuffle = () => trigger(async () => {
-  go('queue')
-  await playback().queueAndPlay(await playableStore.fetchSongsByGenre(genre.value, true))
-})
+const shuffle = () =>
+  trigger(async () => {
+    go('queue')
+    await playback().queueAndPlay(await playableStore.fetchSongsByGenre(genre.value, true))
+  })
 
-const queue = () => trigger(async () => {
-  const songs = await playableStore.fetchSongsByGenre(genre.value)
-  queueStore.queue(songs)
-  toastSuccess(`${pluralize(songs, 'song')} added to queue.`)
-})
+const queue = () =>
+  trigger(async () => {
+    const songs = await playableStore.fetchSongsByGenre(genre.value)
+    queueStore.queue(songs)
+    toastSuccess(`${pluralize(songs, 'song')} added to queue.`)
+  })
 </script>

@@ -5,7 +5,7 @@ import { artistStore } from '@/stores/artistStore'
 import { playableStore } from '@/stores/playableStore'
 
 export const encyclopediaService = {
-  async fetchForArtist (artist: Artist) {
+  async fetchForArtist(artist: Artist) {
     artist = artistStore.syncWithVault(artist)[0]
     const cacheKey = ['artist.info', artist.id]
     if (cache.has(cacheKey)) {
@@ -20,7 +20,7 @@ export const encyclopediaService = {
     return info
   },
 
-  async fetchForAlbum (album: Album) {
+  async fetchForAlbum(album: Album) {
     album = albumStore.syncWithVault(album)[0]
     const cacheKey = ['album.info', album.id, album.name]
 

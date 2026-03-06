@@ -17,9 +17,7 @@
 
     <ScreenEmptyState v-if="libraryEmpty">
       No files found.
-      <span v-if="currentUserCan.manageSettings()" class="secondary block">
-        Have you set up your library yet?
-      </span>
+      <span v-if="currentUserCan.manageSettings()" class="secondary block"> Have you set up your library yet? </span>
     </ScreenEmptyState>
 
     <div v-else class="-m-6 h-full min-h-full flex flex-col flex-1 overflow-auto">

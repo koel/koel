@@ -5,7 +5,7 @@
     <PlayableListSkeleton v-if="loading" class="border border-k-fg-5 rounded-lg" />
     <template v-else>
       <PlayableList
-        v-if=" playables.length"
+        v-if="playables.length"
         ref="playableList"
         class="border border-k-fg-5 rounded-lg overflow-hidden"
         @press:enter="onPressEnter"
@@ -27,14 +27,13 @@ import PlayableListSkeleton from '@/components/playable/playable-list/PlayableLi
 const props = withDefaults(defineProps<{ loading?: boolean }>(), { loading: false })
 const { loading } = toRefs(props)
 
-const {
-  PlayableList,
-  playables,
-  playableList,
-  selectedPlayables,
-} = usePlayableList(toRef(overviewStore.state, 'recentlyAddedSongs'), {}, {
-  sortable: false,
-})
+const { PlayableList, playables, playableList, selectedPlayables } = usePlayableList(
+  toRef(overviewStore.state, 'recentlyAddedSongs'),
+  {},
+  {
+    sortable: false,
+  },
+)
 
 const onPressEnter = () => selectedPlayables.value.length && playback().play(selectedPlayables.value[0])
 </script>

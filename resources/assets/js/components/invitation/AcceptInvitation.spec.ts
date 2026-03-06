@@ -9,11 +9,12 @@ describe('acceptInvitation.vue', () => {
   const h = createHarness()
 
   it('accepts invitation', async () => {
-    const getProspectMock = h.mock(invitationService, 'getUserProspect')
+    const getProspectMock = h
+      .mock(invitationService, 'getUserProspect')
       .mockResolvedValue(factory.states('prospect')('user'))
 
     const acceptMock = h.mock(invitationService, 'accept').mockResolvedValue({
-      'token': 'my-api-token',
+      token: 'my-api-token',
       'audio-token': 'my-audio-token',
     })
 

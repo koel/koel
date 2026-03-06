@@ -6,13 +6,17 @@ describe('screenHeader.vue', () => {
   const h = createHarness()
 
   it('renders', () => {
-    expect(h.render(Component, {
-      slots: {
-        default: 'This Header',
-        meta: '<p>Some meta</p>',
-        controls: '<nav>Some controls</nav>',
-        thumbnail: '<img src="https://placekitten.com/200/300" />',
-      },
-    }).html()).toMatchSnapshot()
+    expect(
+      h
+        .render(Component, {
+          slots: {
+            default: 'This Header',
+            meta: '<p>Some meta</p>',
+            controls: '<nav>Some controls</nav>',
+            thumbnail: '<img src="https://placekitten.com/200/300" />',
+          },
+        })
+        .html(),
+    ).toMatchSnapshot()
   })
 })

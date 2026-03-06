@@ -15,7 +15,7 @@ export const useErrorHandler = (driver: ErrorMessageDriver = 'toast') => {
   const { toastError } = useMessageToaster()
   const { showErrorDialog } = useDialogBox()
 
-  const showError = (message: string) => driver === 'toast' ? toastError(message) : showErrorDialog(message)
+  const showError = (message: string) => (driver === 'toast' ? toastError(message) : showErrorDialog(message))
 
   const showGenericError = () => showError('An unknown error occurred.')
 
@@ -27,8 +27,8 @@ export const useErrorHandler = (driver: ErrorMessageDriver = 'toast') => {
     }
 
     if (
-      !Object.prototype.hasOwnProperty.call(statusMessageMap, error.response.status)
-      && error.response.status === 422
+      !Object.prototype.hasOwnProperty.call(statusMessageMap, error.response.status) &&
+      error.response.status === 422
     ) {
       return showError(parseValidationError(error.response.data)[0])
     }

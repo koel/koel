@@ -6,7 +6,7 @@ import Component from './LrcLyricsLine.vue'
 describe('lrcLyricsLine.vue', () => {
   const h = createHarness()
 
-  const renderComponent = (line: { time: number, text: string }, isActive = false) => {
+  const renderComponent = (line: { time: number; text: string }, isActive = false) => {
     return h.render(Component, {
       props: {
         line,

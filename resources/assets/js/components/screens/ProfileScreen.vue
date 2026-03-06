@@ -20,11 +20,7 @@
         >
           Preferences
         </TabButton>
-        <TabButton
-          :selected="currentTab === 'themes'"
-          aria-controls="profilePaneThemes"
-          @click="currentTab = 'themes'"
-        >
+        <TabButton :selected="currentTab === 'themes'" aria-controls="profilePaneThemes" @click="currentTab = 'themes'">
           Themes
         </TabButton>
         <TabButton
@@ -34,11 +30,7 @@
         >
           Integrations
         </TabButton>
-        <TabButton
-          :selected="currentTab === 'qr'"
-          aria-controls="profilePaneQr"
-          @click="currentTab = 'qr'"
-        >
+        <TabButton :selected="currentTab === 'qr'" aria-controls="profilePaneQr" @click="currentTab = 'qr'">
           <QrCodeIcon :size="16" />
         </TabButton>
       </TabList>

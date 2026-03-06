@@ -20,7 +20,7 @@ export const audioService = {
 
   bands: [] as Band[],
 
-  init (mediaElement: HTMLMediaElement) {
+  init(mediaElement: HTMLMediaElement) {
     this.element = mediaElement
 
     this.context = new AudioContext()
@@ -70,11 +70,11 @@ export const audioService = {
     this.unlockAudioContext()
   },
 
-  changePreampGain (db: number) {
+  changePreampGain(db: number) {
     this.preampGainNode.gain.value = dbToGain(db)
   },
 
-  changeFilterGain (node: BiquadFilterNode, db: number) {
+  changeFilterGain(node: BiquadFilterNode, db: number) {
     node.gain.value = dbToGain(db)
   },
 
@@ -82,22 +82,26 @@ export const audioService = {
    * Attempt to unlock the audio context on mobile devices by creating and playing a silent buffer upon the
    * first user interaction.
    */
-  unlockAudioContext () {
-    ['touchend', 'touchstart', 'click'].forEach(event => {
-      document.addEventListener(event, () => {
-        if (this.unlocked) {
-          return
-        }
+  unlockAudioContext() {
+    ;['touchend', 'touchstart', 'click'].forEach(event => {
+      document.addEventListener(
+        event,
+        () => {
+          if (this.unlocked) {
+            return
+          }
 
-        const source = this.context.createBufferSource()
-        source.buffer = this.context.createBuffer(1, 1, 22050)
-        source.connect(this.context.destination)
-        source.start(0)
+          const source = this.context.createBufferSource()
+          source.buffer = this.context.createBuffer(1, 1, 22050)
+          source.connect(this.context.destination)
+          source.start(0)
 
-        this.unlocked = true
-      }, {
-        once: true,
-      })
+          this.unlocked = true
+        },
+        {
+          once: true,
+        },
+      )
     })
   },
 }

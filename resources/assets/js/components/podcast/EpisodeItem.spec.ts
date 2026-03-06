@@ -53,34 +53,35 @@ describe('episodeItem.vue', () => {
     expect(resumeMock).toHaveBeenCalled()
   })
 
-  it.each([[600, 50, 50], [600, 650, 0], [600, null, 0]])(
-    'plays without continuous playback',
-    async (episodeLength, currentPosition, startPlaybackPosition) => {
-      h.createAudioPlayer()
+  it.each([
+    [600, 50, 50],
+    [600, 650, 0],
+    [600, null, 0],
+  ])('plays without continuous playback', async (episodeLength, currentPosition, startPlaybackPosition) => {
+    h.createAudioPlayer()
 
-      preferenceStore.temporary.continuous_playback = false
-      const playMock = h.mock(playbackService, 'play')
+    preferenceStore.temporary.continuous_playback = false
+    const playMock = h.mock(playbackService, 'play')
 
-      const episode = h.factory('episode', {
-        length: episodeLength,
-      })
+    const episode = h.factory('episode', {
+      length: episodeLength,
+    })
 
-      const podcast = h.factory('podcast', {
-        id: episode.podcast_id,
-        state: {
-          current_episode: episode.id,
-          progresses: {
-            [episode.id]: currentPosition,
-          },
+    const podcast = h.factory('podcast', {
+      id: episode.podcast_id,
+      state: {
+        current_episode: episode.id,
+        progresses: {
+          [episode.id]: currentPosition,
         },
-      })
+      },
+    })
 
-      renderComponent(episode, podcast)
-      await h.user.click(screen.getByTestId('play-button'))
+    renderComponent(episode, podcast)
+    await h.user.click(screen.getByTestId('play-button'))
 
-      expect(playMock).toHaveBeenCalledWith(episode, startPlaybackPosition)
-    },
-  )
+    expect(playMock).toHaveBeenCalledWith(episode, startPlaybackPosition)
+  })
 
   it('plays from beginning if no saved progress', async () => {
     h.createAudioPlayer()

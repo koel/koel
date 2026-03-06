@@ -124,13 +124,19 @@ const onDragOver = (e: DragEvent) => {
   showDropZone.value = Boolean(e.dataTransfer?.types.includes('Files')) && !isCurrentScreen('Upload')
 }
 
-watch(() => queueStore.current, song => (currentStreamable.value = song))
+watch(
+  () => queueStore.current,
+  song => (currentStreamable.value = song),
+)
 
-watch(() => radioStationStore.current, station => {
-  if (station) {
-    currentStreamable.value = station
-  }
-})
+watch(
+  () => radioStationStore.current,
+  station => {
+    if (station) {
+      currentStreamable.value = station
+    }
+  },
+)
 
 const onDragEnd = () => (showDropZone.value = false)
 
@@ -149,10 +155,13 @@ provide(DialogBoxKey, dialog)
 provide(MessageToasterKey, toaster)
 provide(CurrentStreamableKey, currentStreamable)
 
-provide(ContextMenuKey, shallowRef({
-  component: null,
-  position: { top: 0, left: 0 },
-}))
+provide(
+  ContextMenuKey,
+  shallowRef({
+    component: null,
+    position: { top: 0, left: 0 },
+  }),
+)
 </script>
 
 <style lang="postcss">

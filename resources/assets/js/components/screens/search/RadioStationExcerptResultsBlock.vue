@@ -25,7 +25,7 @@ import ExcerptResultBlock from '@/components/screens/search/ExcerptResultBlock.v
 import RadioStationCardSkeleton from '@/components/radio/RadioStationCardSkeleton.vue'
 import RadioStationCard from '@/components/radio/RadioStationCard.vue'
 
-const props = withDefaults(defineProps<{ stations?: RadioStation[], searching?: boolean }>(), {
+const props = withDefaults(defineProps<{ stations?: RadioStation[]; searching?: boolean }>(), {
   stations: () => [],
   searching: false,
 })

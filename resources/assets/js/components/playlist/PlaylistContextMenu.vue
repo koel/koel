@@ -55,48 +55,52 @@ const canShowCollaboration = computed(() => isPlus.value && !playlist.value?.is_
 
 const edit = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist.value))
 
-const destroy = () => trigger(async () => {
-  if (await showConfirmDialog(`Delete the playlist "${playlist.value.name}"?`)) {
-    await playlistStore.delete(playlist.value)
-    toastSuccess(`Playlist "${playlist.value.name}" deleted.`)
-    eventBus.emit('PLAYLIST_DELETED', playlist.value)
-  }
-})
+const destroy = () =>
+  trigger(async () => {
+    if (await showConfirmDialog(`Delete the playlist "${playlist.value.name}"?`)) {
+      await playlistStore.delete(playlist.value)
+      toastSuccess(`Playlist "${playlist.value.name}" deleted.`)
+      eventBus.emit('PLAYLIST_DELETED', playlist.value)
+    }
+  })
 
 const download = () => trigger(() => downloadService.fromPlaylist(playlist.value))
 
-const play = () => trigger(async () => {
-  const songs = await playableStore.fetchForPlaylist(playlist.value)
+const play = () =>
+  trigger(async () => {
+    const songs = await playableStore.fetchForPlaylist(playlist.value)
 
-  if (songs.length) {
-    playback().queueAndPlay(songs)
-    go(url('queue'))
-  } else {
-    toastWarning('The playlist is empty.')
-  }
-})
+    if (songs.length) {
+      playback().queueAndPlay(songs)
+      go(url('queue'))
+    } else {
+      toastWarning('The playlist is empty.')
+    }
+  })
 
-const shuffle = () => trigger(async () => {
-  const songs = await playableStore.fetchForPlaylist(playlist.value)
+const shuffle = () =>
+  trigger(async () => {
+    const songs = await playableStore.fetchForPlaylist(playlist.value)
 
-  if (songs.length) {
-    playback().queueAndPlay(songs, true)
-    go(url('queue'))
-  } else {
-    toastWarning('The playlist is empty.')
-  }
-})
+    if (songs.length) {
+      playback().queueAndPlay(songs, true)
+      go(url('queue'))
+    } else {
+      toastWarning('The playlist is empty.')
+    }
+  })
 
-const addToQueue = () => trigger(async () => {
-  const songs = await playableStore.fetchForPlaylist(playlist.value)
+const addToQueue = () =>
+  trigger(async () => {
+    const songs = await playableStore.fetchForPlaylist(playlist.value)
 
-  if (songs.length) {
-    queueStore.queueAfterCurrent(songs)
-    toastSuccess('Playlist added to queue.')
-  } else {
-    toastWarning('The playlist is empty.')
-  }
-})
+    if (songs.length) {
+      queueStore.queueAfterCurrent(songs)
+      toastSuccess('Playlist added to queue.')
+    } else {
+      toastWarning('The playlist is empty.')
+    }
+  })
 
 const showCollaborationModal = () => trigger(() => eventBus.emit('MODAL_SHOW_PLAYLIST_COLLABORATION', playlist.value))
 const showEmbedModal = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_EMBED_FORM', playlist.value))

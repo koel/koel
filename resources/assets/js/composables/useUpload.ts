@@ -26,13 +26,15 @@ export const useUpload = () => {
   const queueFilesForUpload = (files: Array<File>) => {
     const uploadCandidates = files
       .filter(file => acceptsFile(file))
-      .map((file): UploadFile => ({
-        file,
-        id: `${file.name}-${file.size}`, // for simplicity, a file's identity is determined by its name and size
-        status: 'Ready',
-        name: file.name,
-        progress: 0,
-      }))
+      .map(
+        (file): UploadFile => ({
+          file,
+          id: `${file.name}-${file.size}`, // for simplicity, a file's identity is determined by its name and size
+          status: 'Ready',
+          name: file.name,
+          progress: 0,
+        }),
+      )
 
     uploadService.queue(uploadCandidates)
 

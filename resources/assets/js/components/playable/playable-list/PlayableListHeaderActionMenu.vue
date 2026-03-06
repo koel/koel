@@ -22,10 +22,9 @@
               :checked="shouldShowColumn(item.column!)"
               :disabled="!item.visibilityToggleable"
               :title="item.visibilityToggleable ? `Click to toggle the ${item.label} column` : ''"
-              class="disabled:opacity-20 disabled:cursor-not-allowed bg-k-fg group-hover:border-k-highlight-fg h-4
-              aspect-square rounded checked:border-k-fg-70 checked:border-2 checked:bg-k-highlight"
+              class="disabled:opacity-20 disabled:cursor-not-allowed bg-k-fg group-hover:border-k-highlight-fg h-4 aspect-square rounded checked:border-k-fg-70 checked:border-2 checked:bg-k-highlight"
               type="checkbox"
-            >
+            />
           </label>
           <span class="flex-1 text-left">{{ item.label }}</span>
           <span class="icon hidden ml-3">
@@ -49,19 +48,22 @@ import { arrayify } from '@/utils/helpers'
 import type { getPlayableCollectionContentType } from '@/utils/typeGuards'
 import { usePlayableListColumnVisibility } from '@/composables/usePlayableListColumnVisibility'
 
-const props = withDefaults(defineProps<{
-  sortable?: boolean
-  field?: MaybeArray<PlayableListSortField> // the current field(s) being sorted by
-  order?: SortOrder
-  hasCustomOrderSort?: boolean // whether to provide "custom order" sort (like for playlists)
-  contentType?: ReturnType<typeof getPlayableCollectionContentType>
-}>(), {
-  sortable: true,
-  field: 'title',
-  order: 'asc',
-  hasCustomOrderSort: false,
-  contentType: 'songs',
-})
+const props = withDefaults(
+  defineProps<{
+    sortable?: boolean
+    field?: MaybeArray<PlayableListSortField> // the current field(s) being sorted by
+    order?: SortOrder
+    hasCustomOrderSort?: boolean // whether to provide "custom order" sort (like for playlists)
+    contentType?: ReturnType<typeof getPlayableCollectionContentType>
+  }>(),
+  {
+    sortable: true,
+    field: 'title',
+    order: 'asc',
+    hasCustomOrderSort: false,
+    contentType: 'songs',
+  },
+)
 
 const emit = defineEmits<{ (e: 'sort', field: MaybeArray<PlayableListSortField>): void }>()
 

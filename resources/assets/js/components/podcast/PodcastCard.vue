@@ -11,18 +11,13 @@
       <h3>
         <a :href class="font-medium" data-testid="title">{{ podcast.title }}</a>
 
-        <FavoriteButton
-          v-if="podcast.favorite"
-          :favorite="podcast.favorite"
-          class="ml-2"
-          @toggle="toggleFavorite"
-        />
+        <FavoriteButton v-if="podcast.favorite" :favorite="podcast.favorite" class="ml-2" @toggle="toggleFavorite" />
       </h3>
       <span>{{ podcast.author }}</span>
     </template>
 
     <template #thumbnail>
-      <img :src="podcast.image" class="aspect-square w-[80px] object-cover rounded-lg" alt="Podcast image">
+      <img :src="podcast.image" class="aspect-square w-[80px] object-cover rounded-lg" alt="Podcast image" />
     </template>
   </BaseCard>
 </template>
@@ -37,7 +32,7 @@ import { useContextMenu } from '@/composables/useContextMenu'
 import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
 import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
-const props = withDefaults(defineProps<{ podcast: Podcast, layout?: CardLayout }>(), { layout: 'full' })
+const props = withDefaults(defineProps<{ podcast: Podcast; layout?: CardLayout }>(), { layout: 'full' })
 
 const ContextMenu = defineAsyncComponent(() => import('@/components/podcast/PodcastContextMenu.vue'))
 

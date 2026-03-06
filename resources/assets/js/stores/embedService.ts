@@ -2,7 +2,7 @@ import { http } from '@/services/http'
 import { themeStore } from '@/stores/themeStore'
 
 export const embedService = {
-  async resolveForEmbeddable (embeddable: Embeddable) {
+  async resolveForEmbeddable(embeddable: Embeddable) {
     let embeddableType = embeddable.type.slice(0, -1) // remove the last 's' to get the singular form
 
     if (embeddableType === 'song' || embeddableType === 'episode') {
@@ -15,7 +15,7 @@ export const embedService = {
     })
   },
 
-  async encryptOptions (options: EmbedOptions) {
+  async encryptOptions(options: EmbedOptions) {
     const { encrypted } = await http.post<{ encrypted: string }>('embed-options', {
       ...options,
     })
@@ -23,8 +23,8 @@ export const embedService = {
     return encrypted
   },
 
-  async getWidgetPayload (id: string, encryptedOptions: string) {
-    const payload = await http.get<{ embed: WidgetReadyEmbed, options: EmbedOptions, theme: Theme | null }>(
+  async getWidgetPayload(id: string, encryptedOptions: string) {
+    const payload = await http.get<{ embed: WidgetReadyEmbed; options: EmbedOptions; theme: Theme | null }>(
       `embeds/${id}/${encryptedOptions}`,
     )
 

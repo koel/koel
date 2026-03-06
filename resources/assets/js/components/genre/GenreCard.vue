@@ -20,9 +20,7 @@
       </span>
       <span class="text-k-fg-70 text-lg">{{ pluralize(genre.song_count, 'song') }}</span>
     </a>
-    <span
-      class="absolute -z-10 pointer-events-none inset-0 bg-gradient-to-t from-k-fg-10  via-k-fg-5 to-transparent"
-    />
+    <span class="absolute -z-10 pointer-events-none inset-0 bg-gradient-to-t from-k-fg-10 via-k-fg-5 to-transparent" />
   </li>
 </template>
 
@@ -44,9 +42,10 @@ const { openContextMenu } = useContextMenu()
 
 const color = computed(() => textToHsl(props.genre.id))
 
-const onContextMenu = (event: MouseEvent) => openContextMenu<'GENRE'>(ContextMenu, event, {
-  genre: props.genre,
-})
+const onContextMenu = (event: MouseEvent) =>
+  openContextMenu<'GENRE'>(ContextMenu, event, {
+    genre: props.genre,
+  })
 
 const onDragStart = (event: DragEvent) => startDragging(event, props.genre)
 </script>

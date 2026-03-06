@@ -4,7 +4,7 @@
       :src="coverArt"
       class="my-0 mx-auto w-[calc(70vw_+_4px)] aspect-square rounded-full border-2 border-solid border-k-fg object-center object-cover"
       alt="Cover art"
-    >
+    />
     <div class="w-full flex flex-col justify-around px-6">
       <div>
         <p class="text-[6vmin] font-bold mx-auto mb-4">{{ title }}</p>
@@ -35,17 +35,15 @@ const coverArt = computed(() => {
   return src || defaultCover
 })
 
-const title = computed(() => isRadioStation(streamable.value) ? streamable.value.name : streamable.value.title)
-const description = computed(() => isRadioStation(streamable.value) ? streamable.value.description : null)
+const title = computed(() => (isRadioStation(streamable.value) ? streamable.value.name : streamable.value.title))
+const description = computed(() => (isRadioStation(streamable.value) ? streamable.value.description : null))
 
-const artist = computed(() => isRadioStation(streamable.value)
-  ? ''
-  : getPlayableProp(streamable.value, 'artist_name', 'podcast_author'),
+const artist = computed(() =>
+  isRadioStation(streamable.value) ? '' : getPlayableProp(streamable.value, 'artist_name', 'podcast_author'),
 )
 
-const album = computed(() => isRadioStation(streamable.value)
-  ? ''
-  : getPlayableProp(streamable.value, 'album_name', 'podcast_title'),
+const album = computed(() =>
+  isRadioStation(streamable.value) ? '' : getPlayableProp(streamable.value, 'album_name', 'podcast_title'),
 )
 </script>
 

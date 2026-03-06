@@ -18,11 +18,10 @@
         alt="Episode thumbnail"
         class="w-[128px] aspect-square object-cover"
         loading="lazy"
-      >
+      />
       <span class="absolute top-0 left-0 w-full h-full group-hover:bg-black/40 z-10" />
       <span
-        class="absolute flex opacity-0 items-center justify-center w-[48px] aspect-square rounded-full top-1/2
-        left-1/2 -translate-x-1/2 -translate-y-1/2 bg-k-highlight group-hover:opacity-100 duration-500 transition z-20"
+        class="absolute flex opacity-0 items-center justify-center w-[48px] aspect-square rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-k-highlight group-hover:opacity-100 duration-500 transition z-20"
       >
         <Icon v-if="isPlaying" :icon="faPause" class="text-white" size="2xl" />
         <Icon v-else :icon="faPlay" class="ml-1 text-white" size="2xl" />
@@ -41,12 +40,7 @@
       <h3 class="text-xl" :title="episode.title">
         {{ episode.title }}
 
-        <FavoriteButton
-          v-if="episode.favorite"
-          :favorite="episode.favorite"
-          class="ml-2"
-          @toggle="toggleFavorite"
-        />
+        <FavoriteButton v-if="episode.favorite" :favorite="episode.favorite" class="ml-2" @toggle="toggleFavorite" />
       </h3>
 
       <div class="description mt-3 line-clamp-3 text-k-fg-70" v-html="description" />
@@ -76,7 +70,7 @@ import { playback } from '@/services/playbackManager'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { useContextMenu } from '@/composables/useContextMenu'
 
-const props = defineProps<{ episode: Episode, podcast: Podcast }>()
+const props = defineProps<{ episode: Episode; podcast: Podcast }>()
 const PlayableContextMenu = defineAsyncComponent(() => import('@/components/playable/PlayableContextMenu.vue'))
 const EpisodeProgress = defineAsyncComponent(() => import('@/components/podcast/EpisodeProgress.vue'))
 const FavoriteButton = defineAsyncComponent(() => import('@/components/ui/FavoriteButton.vue'))
@@ -117,9 +111,10 @@ const description = computed(() => DOMPurify.sanitize(episode.value.episode_desc
 
 const onDragStart = (event: DragEvent) => startDragging(event, episode.value)
 
-const requestContextMenu = (event: MouseEvent) => openContextMenu<'PLAYABLES'>(PlayableContextMenu, event, {
-  playables: [episode.value],
-})
+const requestContextMenu = (event: MouseEvent) =>
+  openContextMenu<'PLAYABLES'>(PlayableContextMenu, event, {
+    playables: [episode.value],
+  })
 
 const isPlaying = computed(() => episode.value.playback_state === 'Playing')
 

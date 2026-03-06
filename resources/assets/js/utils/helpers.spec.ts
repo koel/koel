@@ -16,7 +16,10 @@ describe('helpers utils', () => {
 
   it.each([
     ['foo', ['foo']],
-    [['foo', 'bar'], ['foo', 'bar']],
+    [
+      ['foo', 'bar'],
+      ['foo', 'bar'],
+    ],
   ])('turns the parameter into an array', (input, output) => expect(arrayify(input)).toEqual(output))
 
   it.each([

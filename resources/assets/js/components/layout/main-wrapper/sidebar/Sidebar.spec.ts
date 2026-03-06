@@ -5,14 +5,7 @@ import { commonStore } from '@/stores/commonStore'
 import { eventBus } from '@/utils/eventBus'
 import Component from './Sidebar.vue'
 
-const standardItems = [
-  'All Songs',
-  'Albums',
-  'Artists',
-  'Genres',
-  'Favorites',
-  'Recently Played',
-]
+const standardItems = ['All Songs', 'Albums', 'Artists', 'Genres', 'Favorites', 'Recently Played']
 
 const adminItems = [...standardItems, 'Users', 'Upload', 'Settings']
 

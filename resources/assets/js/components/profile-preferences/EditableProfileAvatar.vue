@@ -3,8 +3,7 @@
     <UserAvatar v-if="profile.avatar" :user="profile" class="avatar-width" />
 
     <div
-      class="absolute top-0 rounded-full w-full aspect-square flex items-center justify-center gap-2 pt-[50%]
-      bg-black/50 opacity-0 hover:opacity-100 transition-opacity duration-300"
+      class="absolute top-0 rounded-full w-full aspect-square flex items-center justify-center gap-2 pt-[50%] bg-black/50 opacity-0 hover:opacity-100 transition-opacity duration-300"
     >
       <button class="control" title="Pick a new avatar" type="button" @click.prevent="openFileDialog">
         <Icon :icon="faUpload" />

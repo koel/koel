@@ -102,7 +102,7 @@ const page = ref<number | null>(1)
 
 const moreSongsAvailable = computed(() => page.value !== null)
 const showSkeletons = computed(() => loading.value && songs.value.length === 0)
-const duration = computed(() => genre.value ? secondsToHumanReadable(genre.value.length) : '')
+const duration = computed(() => (genre.value ? secondsToHumanReadable(genre.value.length) : ''))
 
 const fetch = async () => {
   if (!moreSongsAvailable.value || loading.value) {
@@ -112,9 +112,9 @@ const fetch = async () => {
   loading.value = true
 
   try {
-    let fetched: { songs: Song[], nextPage: number | null }
+    let fetched: { songs: Song[]; nextPage: number | null }
 
-    [genre.value, fetched] = await Promise.all([
+    ;[genre.value, fetched] = await Promise.all([
       genreStore.fetchOne(id.value!),
       playableStore.paginateSongsByGenre(id.value!, {
         sort: sortField,
@@ -171,9 +171,10 @@ const playAll = async (shuffle = false) => {
   }
 }
 
-const requestContextMenu = (event: MouseEvent) => openContextMenu<'GENRE'>(ContextMenu, event, {
-  genre: genre.value!,
-})
+const requestContextMenu = (event: MouseEvent) =>
+  openContextMenu<'GENRE'>(ContextMenu, event, {
+    genre: genre.value!,
+  })
 
 onMounted(() => {
   if (isCurrentScreen('Genre')) {
@@ -181,8 +182,8 @@ onMounted(() => {
   }
 })
 
-watch(id, async () => id.value && await refresh())
+watch(id, async () => id.value && (await refresh()))
 
 // We can't really tell how/if the genres have been updated, so we just refresh the list
-eventBus.on('SONGS_UPDATED', async () => genre.value && await refresh())
+eventBus.on('SONGS_UPDATED', async () => genre.value && (await refresh()))
 </script>

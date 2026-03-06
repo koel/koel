@@ -61,12 +61,7 @@
           <AlbumCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
         </template>
         <template v-else>
-          <RadioStationCard
-            v-for="station in stations"
-            :key="station.id"
-            :station
-            :layout="itemLayout"
-          />
+          <RadioStationCard v-for="station in stations" :key="station.id" :station :layout="itemLayout" />
           <BtnScrollToTop />
         </template>
       </GridListView>
@@ -116,13 +111,13 @@ const stations = computed(() => {
     keywords.value ? fuzzy.search(keywords.value) : radioStationStore.state.stations,
     preferences.radio_stations_sort_field,
     preferences.radio_stations_sort_order,
-  ).filter(station => preferences.radio_stations_favorites_only ? station.favorite : true)
+  ).filter(station => (preferences.radio_stations_favorites_only ? station.favorite : true))
 })
 
 const canAdd = computed(() => currentUserCan.addRadioStation())
 const noStations = computed(() => !loading.value && stations.value.length === 0)
 const showSkeletons = computed(() => loading.value && stations.value.length === 0)
-const itemLayout = computed<CardLayout>(() => preferences.radio_stations_view_mode === 'list' ? 'compact' : 'full')
+const itemLayout = computed<CardLayout>(() => (preferences.radio_stations_view_mode === 'list' ? 'compact' : 'full'))
 
 const fetchStations = async () => {
   if (loading.value) {

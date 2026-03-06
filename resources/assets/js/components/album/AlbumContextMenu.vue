@@ -40,15 +40,17 @@ const allowEdit = ref(false)
 
 const isStandardAlbum = computed(() => !albumStore.isUnknown(album.value))
 
-const play = () => trigger(async () => {
-  go(url('queue'))
-  await playback().queueAndPlay(await playableStore.fetchSongsForAlbum(album.value))
-})
+const play = () =>
+  trigger(async () => {
+    go(url('queue'))
+    await playback().queueAndPlay(await playableStore.fetchSongsForAlbum(album.value))
+  })
 
-const shuffle = () => trigger(async () => {
-  go(url('queue'))
-  await playback().queueAndPlay(await playableStore.fetchSongsForAlbum(album.value), true)
-})
+const shuffle = () =>
+  trigger(async () => {
+    go(url('queue'))
+    await playback().queueAndPlay(await playableStore.fetchSongsForAlbum(album.value), true)
+  })
 
 const edit = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_ALBUM_FORM', album.value))
 const toggleFavorite = () => trigger(() => albumStore.toggleFavorite(album.value))

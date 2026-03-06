@@ -13,9 +13,11 @@ describe('radioStationContextMenu.vue', () => {
   const renderComponent = async (station?: RadioStation, manageable = true) => {
     h.mock(acl, 'checkResourcePermission').mockReturnValue(manageable)
 
-    station = station || h.factory('radio-station', {
-      favorite: false,
-    })
+    station =
+      station ||
+      h.factory('radio-station', {
+        favorite: false,
+      })
 
     const rendered = h.render(Component, {
       props: {

@@ -39,7 +39,7 @@ import ExcerptResultBlock from '@/components/screens/search/ExcerptResultBlock.v
 import Btn from '@/components/ui/form/Btn.vue'
 import PlayableListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
 
-const props = withDefaults(defineProps<{ playables?: Playable[], query?: string, searching?: boolean }>(), {
+const props = withDefaults(defineProps<{ playables?: Playable[]; query?: string; searching?: boolean }>(), {
   playables: () => [],
   query: '',
   searching: false,
@@ -52,9 +52,13 @@ const {
   playables: displayedPlayables,
   playableList,
   selectedPlayables,
-} = usePlayableList(playables, {}, {
-  sortable: false,
-})
+} = usePlayableList(
+  playables,
+  {},
+  {
+    sortable: false,
+  },
+)
 
 const headingText = computed(() => {
   switch (getPlayableCollectionContentType(props.playables)) {

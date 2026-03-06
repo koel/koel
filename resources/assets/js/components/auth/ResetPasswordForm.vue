@@ -41,7 +41,7 @@ const token = ref('')
 const validPayload = computed(() => email.value && token.value)
 
 try {
-  [email.value, token.value] = base64Decode(decodeURIComponent(getRouteParam('payload')!)).split('|')
+  ;[email.value, token.value] = base64Decode(decodeURIComponent(getRouteParam('payload')!)).split('|')
 } catch (error: unknown) {
   logger.error(error)
   toastError('Invalid reset password link.')

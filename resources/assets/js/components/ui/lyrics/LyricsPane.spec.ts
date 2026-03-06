@@ -8,9 +8,11 @@ describe('lyricsPane.vue', () => {
   const h = createHarness()
 
   const renderComponent = (song?: Song) => {
-    song = song || h.factory('song', {
-      lyrics: 'Foo bar baz qux',
-    })
+    song =
+      song ||
+      h.factory('song', {
+        lyrics: 'Foo bar baz qux',
+      })
 
     const rendered = h.render(Component, {
       props: {
@@ -33,9 +35,11 @@ describe('lyricsPane.vue', () => {
   it('renders', () => expect(renderComponent().html()).toMatchSnapshot())
 
   it('renders plain text lyrics when lyrics are not synced', () => {
-    renderComponent(h.factory('song', {
-      lyrics: 'Plain lyrics\nLine 2\nLine 3',
-    }))
+    renderComponent(
+      h.factory('song', {
+        lyrics: 'Plain lyrics\nLine 2\nLine 3',
+      }),
+    )
 
     screen.getByTestId('plain-text-lyrics')
     expect(screen.queryByTestId('lrc-lyrics-pane')).toBeNull()

@@ -7,15 +7,17 @@ import { ContextMenuKey } from '@/symbols'
 import { requireInjection } from '@/utils/helpers'
 import type { ContextMenus } from '@/config/contextMenus'
 
-type Position = {
-  top: number
-  left: number
-} | MouseEvent
+type Position =
+  | {
+      top: number
+      left: number
+    }
+  | MouseEvent
 
 export const useContextMenu = () => {
   const contextMenuOptions = requireInjection(ContextMenuKey)
 
-  const openContextMenu = <K extends keyof ContextMenus = never> (
+  const openContextMenu = <K extends keyof ContextMenus = never>(
     menu: Component,
     position: Position,
     props?: K extends keyof ContextMenus

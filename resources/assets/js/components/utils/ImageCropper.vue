@@ -23,18 +23,21 @@ import 'vue-advanced-cropper/dist/style.css'
 
 import Btn from '@/components/ui/form/Btn.vue'
 
-const props = withDefaults(defineProps<{
-  source?: string | null
-  config?: {
-    minWidth: number
-    maxWidth?: number
-  }
-}>(), {
-  source: null,
-  config: () => ({
-    minWidth: 192,
-  }),
-})
+const props = withDefaults(
+  defineProps<{
+    source?: string | null
+    config?: {
+      minWidth: number
+      maxWidth?: number
+    }
+  }>(),
+  {
+    source: null,
+    config: () => ({
+      minWidth: 192,
+    }),
+  },
+)
 
 const emits = defineEmits<{
   (e: 'crop', result: string): void

@@ -7,23 +7,11 @@
     <main class="space-y-5">
       <FormRow>
         <template #label>Name</template>
-        <TextInput
-          v-model="data.name"
-          v-koel-focus
-          name="name"
-          placeholder="My Favorite Radio Station"
-          required
-        />
+        <TextInput v-model="data.name" v-koel-focus name="name" placeholder="My Favorite Radio Station" required />
       </FormRow>
       <FormRow>
         <template #label>URL</template>
-        <TextInput
-          v-model="data.url"
-          type="url"
-          name="url"
-          placeholder="https://radio.example.com/stream"
-          required
-        />
+        <TextInput v-model="data.url" type="url" name="url" placeholder="https://radio.example.com/stream" required />
       </FormRow>
       <FormRow>
         <template #label>Description</template>
@@ -87,7 +75,7 @@ const { data, isPristine, handleSubmit } = useForm<RadioStationData>({
 })
 
 const maybeClose = async () => {
-  if (isPristine() || await showConfirmDialog('Discard all changes?')) {
+  if (isPristine() || (await showConfirmDialog('Discard all changes?'))) {
     close()
   }
 }

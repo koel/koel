@@ -35,9 +35,7 @@
         <Icon :icon="faCompactDisc" />
       </template>
       No albums found.
-      <span v-if="currentUserCan.manageSettings()" class="secondary block">
-        Have you set up your library yet?
-      </span>
+      <span v-if="currentUserCan.manageSettings()" class="secondary block"> Have you set up your library yet? </span>
     </ScreenEmptyState>
 
     <div v-else ref="gridContainer" v-koel-overflow-fade class="-m-6 overflow-auto">
@@ -92,9 +90,7 @@ const page = ref<number | null>(1)
 
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 
-const itemLayout = computed<CardLayout>(
-  () => preferences.albums_view_mode === 'thumbnails' ? 'full' : 'compact',
-)
+const itemLayout = computed<CardLayout>(() => (preferences.albums_view_mode === 'thumbnails' ? 'full' : 'compact'))
 
 const moreAlbumsAvailable = computed(() => page.value !== null)
 const showSkeletons = computed(() => loading.value && albums.value.length === 0)

@@ -14,7 +14,7 @@ describe('brandImageField.vue', () => {
       components: {
         Component,
       },
-      setup () {
+      setup() {
         return { model }
       },
       template: `

@@ -26,13 +26,7 @@
     </template>
 
     <PlayableListSkeleton v-if="loading" class="-m-6" />
-    <PlayableList
-      v-else
-      ref="playableList"
-      class="-m-6"
-      @press:enter="onPressEnter"
-      @swipe="onSwipe"
-    />
+    <PlayableList v-else ref="playableList" class="-m-6" @press:enter="onPressEnter" @swipe="onSwipe" />
   </ScreenBase>
 </template>
 

@@ -2,12 +2,8 @@
   <div class="relative p-4 rounded-md border border-white/15">
     <h4 class="mb-3">
       <span>
-        <template v-if="isFirstGroup">
-          Include songs that match <strong>all</strong> of these criteria
-        </template>
-        <template v-else>
-          or <strong>all</strong> of these criteria
-        </template>
+        <template v-if="isFirstGroup"> Include songs that match <strong>all</strong> of these criteria </template>
+        <template v-else> or <strong>all</strong> of these criteria </template>
       </span>
     </h4>
 
@@ -41,7 +37,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { defineAsyncComponent, reactive, toRefs } from 'vue'
 import { playlistStore } from '@/stores/playlistStore'
 
-const props = defineProps<{ group: SmartPlaylistRuleGroup, isFirstGroup: boolean }>()
+const props = defineProps<{ group: SmartPlaylistRuleGroup; isFirstGroup: boolean }>()
 const emit = defineEmits<{ (e: 'input', group: SmartPlaylistRuleGroup): void }>()
 
 const { group, isFirstGroup } = toRefs(props)

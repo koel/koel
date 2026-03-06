@@ -16,7 +16,7 @@ export const overviewStore = {
     recentlyPlayed: [] as Playable[],
   }),
 
-  async fetch () {
+  async fetch() {
     const resource = await http.get<{
       most_played_albums: Album[]
       most_played_artists: Artist[]
@@ -40,7 +40,7 @@ export const overviewStore = {
     this.refreshPlayStats()
   },
 
-  refreshPlayStats () {
+  refreshPlayStats() {
     this.state.mostPlayedSongs = playableStore.getMostPlayedSongs(7)
     this.state.recentlyPlayed = recentlyPlayedStore.excerptState.playables.filter(playable => {
       if (isSong(playable) && playable.deleted) {

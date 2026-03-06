@@ -6,17 +6,17 @@ import Component from './FavoriteButton.vue'
 describe('favoriteButton.vue', () => {
   const h = createHarness()
 
-  it.each([[true, 'Undo Favorite'], [false, 'Favorite']])(
-    'renders and emits the toggle event when clicked',
-    async (favorite, label) => {
-      const { emitted } = h.render(Component, {
-        props: {
-          favorite,
-        },
-      })
+  it.each([
+    [true, 'Undo Favorite'],
+    [false, 'Favorite'],
+  ])('renders and emits the toggle event when clicked', async (favorite, label) => {
+    const { emitted } = h.render(Component, {
+      props: {
+        favorite,
+      },
+    })
 
-      await h.user.click(screen.getByRole('button', { name: label }))
-      expect(emitted()).toHaveProperty('toggle')
-    },
-  )
+    await h.user.click(screen.getByRole('button', { name: label }))
+    expect(emitted()).toHaveProperty('toggle')
+  })
 })

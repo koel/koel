@@ -43,12 +43,14 @@ import { useContextMenu } from '@/composables/useContextMenu'
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
 import MediaListItem from '@/components/playable/media-browser/MediaListItem.vue'
 
-const props = defineProps<{ items: (Folder | Song)[], path: string }>()
+const props = defineProps<{ items: (Folder | Song)[]; path: string }>()
 defineEmits<{
   (e: 'press:enter', event: KeyboardEvent): void
   (e: 'scrolled-to-end'): void
 }>()
-const MediaBrowserContextMenu = defineAsyncComponent(() => import('@/components/media-browser/MediaBrowserContextMenu.vue'))
+const MediaBrowserContextMenu = defineAsyncComponent(
+  () => import('@/components/media-browser/MediaBrowserContextMenu.vue'),
+)
 const PlayableContextMenu = defineAsyncComponent(() => import('@/components/playable/PlayableContextMenu.vue'))
 
 const { items, path } = toRefs(props)
@@ -76,7 +78,7 @@ const {
   selected,
   lastSelected,
   reapplySelection,
-} = useListSelection(rows, (row: MediaRow) => isSong(row.item) ? 'item.id' : 'item.path')
+} = useListSelection(rows, (row: MediaRow) => (isSong(row.item) ? 'item.id' : 'item.path'))
 
 watch(items, () => reapplySelection(), { deep: true })
 
@@ -94,7 +96,7 @@ const handleEnter = async (event: KeyboardEvent) => {
   }
 
   const resolvedSongs = onlySongsSelected.value
-    ? selectedItems.value as Song[]
+    ? (selectedItems.value as Song[])
     : await playableStore.resolveSongsFromMediaReferences(mediaBrowser.extractMediaReferences(selectedItems.value))
 
   //  • Only Enter: Queue to bottom

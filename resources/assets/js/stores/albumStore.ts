@@ -29,12 +29,16 @@ export const albumStore = {
     albums: [] as Album[],
   }),
 
-  byId (id: Album['id']) {
+  byId(id: Album['id']) {
     return this.vault.get(id)
   },
 
-  removeByIds (ids: Album['id'][]) {
-    this.state.albums = differenceBy(this.state.albums, ids.map(id => this.byId(id)), 'id')
+  removeByIds(ids: Album['id'][]) {
+    this.state.albums = differenceBy(
+      this.state.albums,
+      ids.map(id => this.byId(id)),
+      'id',
+    )
     ids.forEach(id => {
       this.vault.delete(id)
       cache.remove(['album', id])
@@ -49,7 +53,7 @@ export const albumStore = {
     return album.name === UNKNOWN_ALBUM_NAME
   },
 
-  syncWithVault (albums: MaybeArray<Album>) {
+  syncWithVault(albums: MaybeArray<Album>) {
     return arrayify(albums).map(album => {
       let local = this.vault.get(album.id)
       local = reactive(local ? merge(local, album) : album)
@@ -59,7 +63,7 @@ export const albumStore = {
     })
   },
 
-  async update (album: Album, data: AlbumUpdateData) {
+  async update(album: Album, data: AlbumUpdateData) {
     const updated = await http.put<Album>(`albums/${album.id}`, data)
     this.state.albums = unionBy(this.state.albums, this.syncWithVault(updated), 'id')
 
@@ -73,7 +77,7 @@ export const albumStore = {
     return (await http.get<{ thumbnailUrl: string }>(`albums/${id}/thumbnail`)).thumbnailUrl
   },
 
-  async resolve (id: Album['id']) {
+  async resolve(id: Album['id']) {
     let album = this.byId(id)
 
     if (!album) {
@@ -89,14 +93,14 @@ export const albumStore = {
     return album
   },
 
-  async paginate (params: AlbumListPaginateParams) {
+  async paginate(params: AlbumListPaginateParams) {
     const resource = await http.get<PaginatorResource<Album>>(`albums?${new URLSearchParams(params).toString()}`)
     this.state.albums = unionBy(this.state.albums, this.syncWithVault(resource.data), 'id')
 
     return resource.links.next ? ++resource.meta.current_page : null
   },
 
-  async fetchForArtist (artist: Artist | Artist['id']) {
+  async fetchForArtist(artist: Artist | Artist['id']) {
     const id = typeof artist === 'string' ? artist : artist.id
 
     return this.syncWithVault(
@@ -104,7 +108,7 @@ export const albumStore = {
     )
   },
 
-  async toggleFavorite (album: Reactive<Album>) {
+  async toggleFavorite(album: Reactive<Album>) {
     // Don't wait for the HTTP response to update the status, just toggle right away.
     // We'll update the liked status again after the HTTP request.
     album.favorite = !album.favorite
@@ -117,7 +121,7 @@ export const albumStore = {
     album.favorite = Boolean(favorite)
   },
 
-  reset () {
+  reset() {
     this.vault.clear()
     this.state.albums = []
   },

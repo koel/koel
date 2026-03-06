@@ -16,10 +16,12 @@ describe('albumContextMenu.vue', () => {
   const renderComponent = async (album?: Album) => {
     h.mock(acl, 'checkResourcePermission').mockReturnValue(true)
 
-    album = album || h.factory('album', {
-      name: 'IV',
-      favorite: false,
-    })
+    album =
+      album ||
+      h.factory('album', {
+        name: 'IV',
+        favorite: false,
+      })
 
     const rendered = h.actingAsAdmin().render(Component, {
       props: {

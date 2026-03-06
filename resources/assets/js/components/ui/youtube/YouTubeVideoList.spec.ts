@@ -12,13 +12,16 @@ describe('youTubeVideoList.vue', () => {
   it('functions', async () => {
     const song = h.factory('song')
 
-    const searchMock = h.mock(youTubeService, 'searchVideosBySong').mockResolvedValueOnce({
-      nextPageToken: 'foo',
-      items: h.factory('you-tube-video', 5),
-    }).mockResolvedValueOnce({
-      nextPageToken: 'bar',
-      items: h.factory('you-tube-video', 3),
-    })
+    const searchMock = h
+      .mock(youTubeService, 'searchVideosBySong')
+      .mockResolvedValueOnce({
+        nextPageToken: 'foo',
+        items: h.factory('you-tube-video', 5),
+      })
+      .mockResolvedValueOnce({
+        nextPageToken: 'bar',
+        items: h.factory('you-tube-video', 3),
+      })
 
     h.render(Component, {
       props: {

@@ -21,10 +21,7 @@ export const socketListener = {
         })
       })
       .listen('SOCKET_GET_CURRENT_PLAYABLE', () => {
-        socketService.broadcast(
-          'SOCKET_STREAMABLE',
-          playingRadio() ? radioStationStore.current : queueStore.current,
-        )
+        socketService.broadcast('SOCKET_STREAMABLE', playingRadio() ? radioStationStore.current : queueStore.current)
       })
       .listen('SOCKET_SET_VOLUME', (volume: number) => volumeManager.set(volume))
       .listen('SOCKET_TOGGLE_FAVORITE', async () => {

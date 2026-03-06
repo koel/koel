@@ -11,9 +11,11 @@ describe('genreContextMenu.vue', () => {
   const h = createHarness()
 
   const renderComponent = async (genre?: Genre) => {
-    genre = genre || h.factory('genre', {
-      name: 'Classical',
-    })
+    genre =
+      genre ||
+      h.factory('genre', {
+        name: 'Classical',
+      })
 
     const rendered = h.render(Component, {
       props: {

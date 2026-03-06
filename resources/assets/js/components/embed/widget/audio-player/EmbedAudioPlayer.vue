@@ -24,7 +24,7 @@ import ProgressBar from '@/components/embed/widget/audio-player/EmbedAudioPlayer
 import PlayButton from '@/components/embed/widget/audio-player/EmbedAudioPlayerPlayButton.vue'
 import NextButton from '@/components/embed/widget/audio-player/EmbedAudioPlayerNextButton.vue'
 
-const props = defineProps<{ playables: Playable[], preview: boolean }>()
+const props = defineProps<{ playables: Playable[]; preview: boolean }>()
 
 const { playables, preview } = toRefs(props)
 
@@ -34,16 +34,18 @@ const timeRemainingLabel = ref('')
 const maxDuration = ref(0)
 const progress = ref(0)
 
-const currentPlayable = computed(() => playables.value!.find(playable => {
-  return playable.playback_state === 'Playing' || playable.playback_state === 'Paused'
-}))
+const currentPlayable = computed(() =>
+  playables.value!.find(playable => {
+    return playable.playback_state === 'Playing' || playable.playback_state === 'Paused'
+  }),
+)
 
 const seek = (percentage: number) => {
   if (!maxDuration.value) {
     return
   }
 
-  audio.value!.currentTime = percentage / 100 * maxDuration.value
+  audio.value!.currentTime = (percentage / 100) * maxDuration.value
 }
 
 const nextPlayable = computed(() => {
@@ -103,7 +105,7 @@ const playOrPause = () => {
   }
 }
 
-const playNext = () => nextPlayable.value ? play(nextPlayable.value) : stop()
+const playNext = () => (nextPlayable.value ? play(nextPlayable.value) : stop())
 
 const setupAudioEvents = (audio: HTMLAudioElement) => {
   audio.addEventListener('loadedmetadata', () => {
@@ -113,26 +115,29 @@ const setupAudioEvents = (audio: HTMLAudioElement) => {
 
   audio.addEventListener('ended', () => playNext())
 
-  audio.addEventListener('timeupdate', throttle(() => {
-    progress.value = audio.currentTime / maxDuration.value! * 100
+  audio.addEventListener(
+    'timeupdate',
+    throttle(() => {
+      progress.value = (audio.currentTime / maxDuration.value!) * 100
 
-    const timeRemaining = secondsToHis(maxDuration.value - audio.currentTime)
-    timeRemainingLabel.value = timeRemaining === 'NaN:NaN' ? '--:--' : `-${timeRemaining}`
+      const timeRemaining = secondsToHis(maxDuration.value - audio.currentTime)
+      timeRemainingLabel.value = timeRemaining === 'NaN:NaN' ? '--:--' : `-${timeRemaining}`
 
-    if (preview.value) {
-      if (audio.currentTime + 3 >= maxDuration.value) {
-        // Gradually decrease the volume once we're approaching the end of the sample.
-        audio.volume = Math.max(0, audio.volume - 0.07)
+      if (preview.value) {
+        if (audio.currentTime + 3 >= maxDuration.value) {
+          // Gradually decrease the volume once we're approaching the end of the sample.
+          audio.volume = Math.max(0, audio.volume - 0.07)
+        }
+
+        // Play the next track once we've reached the end of the sample.
+        if (audio.currentTime >= maxDuration.value) {
+          audio.pause()
+          audio.currentTime = 0
+          audio.dispatchEvent(new Event('ended'))
+        }
       }
-
-      // Play the next track once we've reached the end of the sample.
-      if (audio.currentTime >= maxDuration.value) {
-        audio.pause()
-        audio.currentTime = 0
-        audio.dispatchEvent(new Event('ended'))
-      }
-    }
-  }, 100))
+    }, 100),
+  )
 }
 
 onMounted(() => setupAudioEvents(audio.value!))

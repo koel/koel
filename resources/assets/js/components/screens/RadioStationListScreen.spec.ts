@@ -55,10 +55,7 @@ describe('radioStationListScreen.vue', () => {
     await waitFor(() => expect(screen.getByTestId('radio-station-grid').classList.contains(`as-list`)).toBe(true))
 
     await h.user.click(screen.getByRole('radio', { name: 'View as thumbnails' }))
-    await waitFor(() => expect(
-      screen.getByTestId('radio-station-grid').classList.contains(`as-thumbnails`),
-    ).toBe(true),
-    )
+    await waitFor(() => expect(screen.getByTestId('radio-station-grid').classList.contains(`as-thumbnails`)).toBe(true))
   })
 
   it('requests the Add Radio Station form', async () => {
@@ -72,18 +69,20 @@ describe('radioStationListScreen.vue', () => {
     expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_ADD_RADIO_STATION_FORM')
   })
 
-  it('does not show the Add button in demo mode', async () => await h.withDemoMode(async () => {
-    await renderComponent()
-    await h.tick()
+  it('does not show the Add button in demo mode', async () =>
+    await h.withDemoMode(async () => {
+      await renderComponent()
+      await h.tick()
 
-    expect(screen.queryByRole('button', { name: 'Add a new station' })).toBeNull()
-  }))
+      expect(screen.queryByRole('button', { name: 'Add a new station' })).toBeNull()
+    }))
 
-  it('shows the Add button in demo mode for admins', async () => await h.withDemoMode(async () => {
-    h.actingAsAdmin()
-    await renderComponent()
-    await h.tick()
+  it('shows the Add button in demo mode for admins', async () =>
+    await h.withDemoMode(async () => {
+      h.actingAsAdmin()
+      await renderComponent()
+      await h.tick()
 
-    screen.getByRole('button', { name: 'Add a new station' })
-  }))
+      screen.getByRole('button', { name: 'Add a new station' })
+    }))
 })

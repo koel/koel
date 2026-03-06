@@ -1,8 +1,5 @@
 <template>
-  <div
-    :class="config.sortable ? 'sortable' : 'unsortable'"
-    class="song-list-header flex z-[2] bg-k-fg-3 pl-5"
-  >
+  <div :class="config.sortable ? 'sortable' : 'unsortable'" class="song-list-header flex z-[2] bg-k-fg-3 pl-5">
     <span
       v-if="shouldShowColumn('track')"
       class="track-number"
@@ -17,13 +14,7 @@
         <Icon v-if="sortField === 'track' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
       </template>
     </span>
-    <span
-      class="title-artist"
-      data-testid="header-title"
-      role="button"
-      title="Sort by title"
-      @click="sort('title')"
-    >
+    <span class="title-artist" data-testid="header-title" role="button" title="Sort by title" @click="sort('title')">
       Title
       <template v-if="config.sortable">
         <Icon v-if="sortField === 'title' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
@@ -32,11 +23,19 @@
     </span>
     <span
       v-if="shouldShowColumn('album')"
-      :title="`Sort by ${contentType === 'episodes' ? 'podcast' : (contentType === 'songs' ? 'album' : 'album/podcast')}`"
+      :title="`Sort by ${contentType === 'episodes' ? 'podcast' : contentType === 'songs' ? 'album' : 'album/podcast'}`"
       class="album"
       data-testid="header-album"
       role="button"
-      @click="sort(contentType === 'episodes' ? 'podcast_title' : (contentType === 'songs' ? 'album_name' : ['album_name', 'podcast_title']))"
+      @click="
+        sort(
+          contentType === 'episodes'
+            ? 'podcast_title'
+            : contentType === 'songs'
+              ? 'album_name'
+              : ['album_name', 'podcast_title'],
+        )
+      "
     >
       <template v-if="contentType === 'episodes'">Podcast</template>
       <template v-else-if="contentType === 'songs'">Album</template>
@@ -117,11 +116,14 @@ import { usePlayableListColumnVisibility } from '@/composables/usePlayableListCo
 
 import PlayableListHeaderActionMenu from '@/components/playable/playable-list/PlayableListHeaderActionMenu.vue'
 
-withDefaults(defineProps<{
-  contentType?: ReturnType<typeof getPlayableCollectionContentType>
-}>(), {
-  contentType: 'songs',
-})
+withDefaults(
+  defineProps<{
+    contentType?: ReturnType<typeof getPlayableCollectionContentType>
+  }>(),
+  {
+    contentType: 'songs',
+  },
+)
 
 const emit = defineEmits<{
   (e: 'sort', field: MaybeArray<PlayableListSortField>, order: SortOrder): void
@@ -129,7 +131,8 @@ const emit = defineEmits<{
 
 const { shouldShowColumn } = usePlayableListColumnVisibility()
 
-const [sortField, setSortField] = requireInjection<[Ref<MaybeArray<PlayableListSortField>>, Closure]>(PlayableListSortFieldKey)
+const [sortField, setSortField] =
+  requireInjection<[Ref<MaybeArray<PlayableListSortField>>, Closure]>(PlayableListSortFieldKey)
 const [sortOrder, setSortOrder] = requireInjection<[Ref<SortOrder>, Closure]>(PlayableListSortOrderKey)
 const [config] = requireInjection<[Partial<PlayableListConfig>]>(PlayableListConfigKey, [{}])
 

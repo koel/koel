@@ -6,11 +6,15 @@ describe('screenEmptyState.vue', () => {
   const h = createHarness()
 
   it('renders', () => {
-    expect(h.render(Component, {
-      slots: {
-        icon: '<i class="my-icon"/>',
-        default: 'Nothing here',
-      },
-    }).html()).toMatchSnapshot()
+    expect(
+      h
+        .render(Component, {
+          slots: {
+            icon: '<i class="my-icon"/>',
+            default: 'Nothing here',
+          },
+        })
+        .html(),
+    ).toMatchSnapshot()
   })
 })

@@ -2,8 +2,7 @@
   <OnClickOutside @trigger="close">
     <div
       v-if="allowsUpload && mediaPathSetUp"
-      class="drop-zone w-screen h-screen fixed z-50 top-0 left-0 rounded-3xl bg-black/40
-      flex items-center justify-center overflow-hidden duration-200"
+      class="drop-zone w-screen h-screen fixed z-50 top-0 left-0 rounded-3xl bg-black/40 flex items-center justify-center overflow-hidden duration-200"
       @dragleave="onDropLeave"
       @dragover="onDragOver"
       @drop="onDrop"

@@ -17,9 +17,7 @@
       </a>
     </template>
     <template #meta>
-      <a :title="`Shuffle all songs by ${artist.name}`" role="button" @click.prevent="shuffle">
-        Shuffle
-      </a>
+      <a :title="`Shuffle all songs by ${artist.name}`" role="button" @click.prevent="shuffle"> Shuffle </a>
       <a v-if="allowDownload" :title="`Download all songs by ${artist.name}`" role="button" @click.prevent="download">
         Download
       </a>
@@ -43,7 +41,7 @@ import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
 import ExternalMark from '@/components/ui/ExternalMark.vue'
 import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
-const props = withDefaults(defineProps<{ artist: Artist, layout?: CardLayout }>(), { layout: 'full' })
+const props = withDefaults(defineProps<{ artist: Artist; layout?: CardLayout }>(), { layout: 'full' })
 
 const ContextMenu = defineAsyncComponent(() => import('@/components/artist/ArtistContextMenu.vue'))
 
@@ -68,7 +66,8 @@ const toggleFavorite = () => artistStore.toggleFavorite(artist.value)
 const download = () => downloadService.fromArtist(artist.value)
 const onDragStart = (event: DragEvent) => startDragging(event, artist.value)
 
-const requestContextMenu = (event: MouseEvent) => openContextMenu<'ARTIST'>(ContextMenu, event, {
-  artist: artist.value,
-})
+const requestContextMenu = (event: MouseEvent) =>
+  openContextMenu<'ARTIST'>(ContextMenu, event, {
+    artist: artist.value,
+  })
 </script>

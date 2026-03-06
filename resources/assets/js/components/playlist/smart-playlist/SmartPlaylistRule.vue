@@ -84,16 +84,17 @@ if (!operator) {
 selectedOperator.value = operator
 
 const isOriginalOperatorSelected = computed(() => {
-  return selectedModel.value?.name === mutatedRule.model.name
-    && selectedOperator.value?.operator === mutatedRule.operator
+  return (
+    selectedModel.value?.name === mutatedRule.model.name && selectedOperator.value?.operator === mutatedRule.operator
+  )
 })
 
-const availableInputs = computed<{ id: string, value: any }[]>(() => {
+const availableInputs = computed<{ id: string; value: any }[]>(() => {
   if (!selectedOperator.value) {
     return []
   }
 
-  const inputs: Array<{ id: string, value: string }> = []
+  const inputs: Array<{ id: string; value: string }> = []
 
   for (let i = 0, inputCount = selectedOperator.value.inputs || 1; i < inputCount; ++i) {
     inputs.push({

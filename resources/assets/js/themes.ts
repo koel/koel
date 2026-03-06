@@ -183,7 +183,7 @@ export default [
   },
   {
     id: 'cat',
-    name: 'What\'s New Pussycat?',
+    name: "What's New Pussycat?",
     thumbnail_color: '#000',
     thumbnail_image: thumbCat,
     properties: {

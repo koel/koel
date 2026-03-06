@@ -8,7 +8,7 @@
       @submit.prevent="handleSubmit"
     >
       <div class="text-center mb-8">
-        <img alt="Logo" class="inline-block" :src="logo" width="156">
+        <img alt="Logo" class="inline-block" :src="logo" width="156" />
       </div>
 
       <FormRow>
@@ -70,7 +70,7 @@ const ssoProviders = window.SSO_PROVIDERS || []
 const emailPlaceholder = window.IS_DEMO ? demoAccount.email : 'Your email address'
 const passwordPlaceholder = window.IS_DEMO ? demoAccount.password : 'Your password'
 
-const { data, handleSubmit } = useForm<{ email: string, password: string }>({
+const { data, handleSubmit } = useForm<{ email: string; password: string }>({
   initialValues: window.IS_DEMO
     ? demoAccount
     : {

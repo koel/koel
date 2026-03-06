@@ -18,8 +18,7 @@
     </button>
 
     <button
-      class="text-[7vmin] w-[16vmin] aspect-square border border-solid border-k-fg rounded-full flex
-      items-center justify-center has-[.paused]:pl-[4px]"
+      class="text-[7vmin] w-[16vmin] aspect-square border border-solid border-k-fg rounded-full flex items-center justify-center has-[.paused]:pl-[4px]"
       data-testid="btn-toggle-playback"
       @click.prevent="togglePlayback"
     >

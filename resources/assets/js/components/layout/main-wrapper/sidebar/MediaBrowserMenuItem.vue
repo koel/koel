@@ -29,6 +29,4 @@ onRouteChanged(handler => {
 })
 </script>
 
-<style scoped lang="postcss">
-
-</style>
+<style scoped lang="postcss"></style>

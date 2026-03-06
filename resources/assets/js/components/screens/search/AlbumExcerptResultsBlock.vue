@@ -25,7 +25,7 @@ import ExcerptResultBlock from '@/components/screens/search/ExcerptResultBlock.v
 import AlbumCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
 import AlbumCard from '@/components/album/AlbumCard.vue'
 
-const props = withDefaults(defineProps<{ albums?: Album[], searching?: boolean }>(), {
+const props = withDefaults(defineProps<{ albums?: Album[]; searching?: boolean }>(), {
   albums: () => [],
   searching: false,
 })

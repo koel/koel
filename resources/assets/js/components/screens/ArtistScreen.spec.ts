@@ -20,15 +20,14 @@ describe('artistScreen.vue', () => {
     },
   })
 
-  const renderComponent = async (
-    tab: 'songs' | 'albums' | 'information' | 'events' = 'songs',
-    artist?: Artist,
-  ) => {
+  const renderComponent = async (tab: 'songs' | 'albums' | 'information' | 'events' = 'songs', artist?: Artist) => {
     commonStore.state.uses_last_fm = true
 
-    artist = artist || h.factory('artist', {
-      name: 'Led Zeppelin',
-    })
+    artist =
+      artist ||
+      h.factory('artist', {
+        name: 'Led Zeppelin',
+      })
 
     const resolveArtistMock = h.mock(artistStore, 'resolve').mockResolvedValue(artist)
 

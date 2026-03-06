@@ -8,7 +8,7 @@ export abstract class BasePlaybackService {
   public player!: Plyr
   private boundMediaEvents = new Set<[string, EventListener, boolean]>()
 
-  public activate (plyrWrapper: HTMLElement) {
+  public activate(plyrWrapper: HTMLElement) {
     if (!this.player) {
       // player and watchers can be kept between init/destroy sessions
       this.player = this.player || plyr.setup(plyrWrapper, { controls: [] })[0]
@@ -23,7 +23,7 @@ export abstract class BasePlaybackService {
     return this
   }
 
-  protected setMediaSessionActionHandlers () {
+  protected setMediaSessionActionHandlers() {
     if (!navigator.mediaSession) {
       return
     }
@@ -48,7 +48,7 @@ export abstract class BasePlaybackService {
     })
   }
 
-  private addMediaEventListeners () {
+  private addMediaEventListeners() {
     const listen = (event: string, handler: Closure, options?: boolean | AddEventListenerOptions) => {
       this.player.media.addEventListener(event, handler, options)
       this.boundMediaEvents.add([event, handler, !!options])
@@ -61,37 +61,37 @@ export abstract class BasePlaybackService {
     listen('timeupdate', timeUpdateHandler.bind(this))
   }
 
-  public abstract play (source: Streamable): Promise<void>
+  public abstract play(source: Streamable): Promise<void>
 
-  public abstract stop (): Promise<void>
+  public abstract stop(): Promise<void>
 
-  public abstract pause (): Promise<void>
+  public abstract pause(): Promise<void>
 
-  public abstract resume (): Promise<void>
+  public abstract resume(): Promise<void>
 
-  public abstract playNext (): Promise<void>
+  public abstract playNext(): Promise<void>
 
-  public abstract playPrev (): Promise<void>
+  public abstract playPrev(): Promise<void>
 
-  public abstract toggle (): Promise<void>
+  public abstract toggle(): Promise<void>
 
-  public abstract rewind (seconds: number): void
+  public abstract rewind(seconds: number): void
 
-  public abstract forward (seconds: number): void
+  public abstract forward(seconds: number): void
 
-  public abstract seekTo (position: number): void
+  public abstract seekTo(position: number): void
 
-  public abstract fastSeek (position: number): void
+  public abstract fastSeek(position: number): void
 
-  protected abstract onError (error: ErrorEvent): void
+  protected abstract onError(error: ErrorEvent): void
 
-  protected abstract onEnded (event: Event): void
+  protected abstract onEnded(event: Event): void
 
-  protected abstract onTimeUpdate (event: Event): void
+  protected abstract onTimeUpdate(event: Event): void
 
-  public abstract rotateRepeatMode (): void
+  public abstract rotateRepeatMode(): void
 
-  public deactivate () {
+  public deactivate() {
     // Upon deactivating (i.e. switching to another playback service) we want to remove all event listeners
     // to not mess up the media events in the other service.
     this.boundMediaEvents.forEach(([event, handler, options]) => {

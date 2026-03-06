@@ -6,11 +6,12 @@ import { screen, waitFor } from '@testing-library/vue'
 describe('artworkField.vue', () => {
   const h = createHarness()
 
-  const renderComponent = (defaultValue: null | string = null) => h.render(Component, {
-    props: {
-      modelValue: defaultValue,
-    },
-  })
+  const renderComponent = (defaultValue: null | string = null) =>
+    h.render(Component, {
+      props: {
+        modelValue: defaultValue,
+      },
+    })
 
   it('shows a preview upon selecting an image and allows removing it', async () => {
     const { emitted } = renderComponent()

@@ -1,35 +1,38 @@
 const DEFAULT_EXPIRATION_TIME = 1000 * 60 * 60 * 24 // 1 day
 
 export class Cache {
-  private storage = new Map<any, {
-    expires: number
-    value: any
-  }>()
+  private storage = new Map<
+    any,
+    {
+      expires: number
+      value: any
+    }
+  >()
 
-  private static normalizeKey (key: any) {
+  private static normalizeKey(key: any) {
     return typeof key === 'object' ? JSON.stringify(key) : key
   }
 
-  public has (key: any) {
+  public has(key: any) {
     return this.hit(key)
   }
 
-  public get<T> (key: any) {
+  public get<T>(key: any) {
     return this.storage.get(Cache.normalizeKey(key))?.value as T
   }
 
-  public set (key: any, value: any, seconds: number = DEFAULT_EXPIRATION_TIME) {
+  public set(key: any, value: any, seconds: number = DEFAULT_EXPIRATION_TIME) {
     this.storage.set(Cache.normalizeKey(key), {
       value,
       expires: Date.now() + seconds * 1000,
     })
   }
 
-  public hit (key: any) {
+  public hit(key: any) {
     return !this.miss(key)
   }
 
-  public miss (key: any) {
+  public miss(key: any) {
     key = Cache.normalizeKey(key)
 
     if (!this.storage.has(key)) {
@@ -46,16 +49,16 @@ export class Cache {
     return false
   }
 
-  public remove (key: any) {
+  public remove(key: any) {
     this.storage.delete(Cache.normalizeKey(key))
   }
 
-  async remember<R> (key: any, resolver: () => R | Promise<R>, seconds: number = DEFAULT_EXPIRATION_TIME) {
+  async remember<R>(key: any, resolver: () => R | Promise<R>, seconds: number = DEFAULT_EXPIRATION_TIME) {
     this.hit(key) || this.set(key, await resolver(), seconds)
     return this.get(key) as Awaited<R>
   }
 
-  clear () {
+  clear() {
     this.storage.clear()
   }
 }

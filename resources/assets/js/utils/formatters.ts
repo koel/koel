@@ -41,7 +41,11 @@ export const secondsToHis = (total: number) => {
     parts.push(hours.toString().padStart(2, '0'))
   }
 
-  parts.push((Math.floor((total / 60) % 60)).toString().padStart(2, '0'))
+  parts.push(
+    Math.floor((total / 60) % 60)
+      .toString()
+      .padStart(2, '0'),
+  )
   parts.push((total % 60).toString().padStart(2, '0'))
 
   return parts.join(':')
@@ -68,7 +72,7 @@ export const parseValidationError = (error: ServerValidationError) => {
 /**
  * Turn <br> into new line characters.
  */
-export const br2nl = (str: string) => str ? str.replace(/<br\s*\/?>/gi, '\n') : ''
+export const br2nl = (str: string) => (str ? str.replace(/<br\s*\/?>/gi, '\n') : '')
 
 /**
  * Turn carriage returns (\r) to line feeds (\n) using JavaScript's implicit DOM-writing behavior
@@ -80,7 +84,10 @@ export const cr2lf = (str: string) => {
 }
 
 export const slugToTitle = (slug: string, separator = '-') => {
-  const title = slug.split(separator).map(w => w.charAt(0).toUpperCase() + w.substring(1).toLowerCase()).join(' ')
+  const title = slug
+    .split(separator)
+    .map(w => w.charAt(0).toUpperCase() + w.substring(1).toLowerCase())
+    .join(' ')
   return title.replace(/\s+/g, ' ').trim()
 }
 
@@ -90,7 +97,7 @@ export const pluralize = (count: any[] | number | undefined, singular: string) =
 }
 
 const fnv1a = (str: string) => {
-  let h = 0x811C9DC5
+  let h = 0x811c9dc5
 
   for (let i = 0; i < str.length; i++) {
     h ^= str.charCodeAt(i)

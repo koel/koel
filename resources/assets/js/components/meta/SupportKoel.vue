@@ -1,9 +1,5 @@
 <template>
-  <div
-    v-if="shown"
-    class="bg-k-bg text-[0.9rem] px-6 py-4 flex z-10 space-x-3"
-    data-testid="support-bar"
-  >
+  <div v-if="shown" class="bg-k-bg text-[0.9rem] px-6 py-4 flex z-10 space-x-3" data-testid="support-bar">
     <p class="flex-1">
       Loving Koel? Please consider supporting its development via
       <a href="https://github.com/users/phanan/sponsorship" rel="noopener" target="_blank">GitHub Sponsors</a>
@@ -28,28 +24,32 @@ const shown = ref(false)
 
 const { isPlus } = useKoelPlus()
 const setUpShowBarTimeout = () => setTimeout(() => (shown.value = true), delayUntilShow)
-const close = () => shown.value = false
+const close = () => (shown.value = false)
 
 const stopBugging = () => {
   preferenceStore.set('support_bar_no_bugging', true)
   close()
 }
 
-watch(preferenceStore.initialized, initialized => {
-  if (!initialized) {
-    return
-  }
+watch(
+  preferenceStore.initialized,
+  initialized => {
+    if (!initialized) {
+      return
+    }
 
-  if (preferenceStore.state.support_bar_no_bugging || isMobile.any) {
-    return
-  }
+    if (preferenceStore.state.support_bar_no_bugging || isMobile.any) {
+      return
+    }
 
-  if (isPlus.value) {
-    return
-  }
+    if (isPlus.value) {
+      return
+    }
 
-  setUpShowBarTimeout()
-}, { immediate: true })
+    setUpShowBarTimeout()
+  },
+  { immediate: true },
+)
 </script>
 
 <style lang="postcss" scoped>

@@ -89,7 +89,11 @@ describe('playbackService', () => {
     expect(scrobbleMock).toHaveBeenCalled()
   })
 
-  it.each<[RepeatMode, number, number]>([['REPEAT_ONE', 1, 0], ['NO_REPEAT', 0, 1], ['REPEAT_ALL', 0, 1]])(
+  it.each<[RepeatMode, number, number]>([
+    ['REPEAT_ONE', 1, 0],
+    ['NO_REPEAT', 0, 1],
+    ['REPEAT_ALL', 0, 1],
+  ])(
     'when playable ends, if repeat mode is %s then restart() is called %d times and playNext() is called %d times',
     (repeatMode, restartCalls, playNextCalls) => {
       setCurrentSong()
@@ -278,9 +282,11 @@ describe('playbackService', () => {
   })
 
   it('resumes playback', async () => {
-    const song = setCurrentSong(h.factory('song', {
-      playback_state: 'Paused',
-    }))
+    const song = setCurrentSong(
+      h.factory('song', {
+        playback_state: 'Paused',
+      }),
+    )
 
     const playMock = h.mock(window.HTMLMediaElement.prototype, 'play')
     const broadcastMock = h.mock(socketService, 'broadcast')

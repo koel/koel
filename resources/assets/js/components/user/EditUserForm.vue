@@ -6,7 +6,7 @@
 
     <main class="space-y-5">
       <AlertBox v-if="user.sso_provider" type="info">
-        This user logs in via SSO by {{ user.sso_provider }}.<br>
+        This user logs in via SSO by {{ user.sso_provider }}.<br />
       </AlertBox>
 
       <FormRow>
@@ -90,7 +90,7 @@ const { data, isPristine, handleSubmit } = useForm<UpdateUserData>({
 })
 
 const maybeClose = async () => {
-  if (isPristine() || await showConfirmDialog('Discard all changes?')) {
+  if (isPristine() || (await showConfirmDialog('Discard all changes?'))) {
     close()
   }
 }

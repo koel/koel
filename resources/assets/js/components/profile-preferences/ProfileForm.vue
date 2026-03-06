@@ -5,7 +5,8 @@
         You’re authenticated by a reverse proxy.
       </template>
       <template v-else>
-        You’re logged in via single sign-on provided by <strong>{{ currentUser.sso_provider }}</strong>.
+        You’re logged in via single sign-on provided by <strong>{{ currentUser.sso_provider }}</strong
+        >.
       </template>
       You can still update your name and avatar here.
     </AlertBox>
@@ -63,9 +64,7 @@
 
     <footer class="mt-8">
       <Btn class="btn-submit" type="submit">Save</Btn>
-      <span v-if="isDemo" class="text-[.95rem] opacity-70 ml-2">
-        Changes will not be saved in the demo version.
-      </span>
+      <span v-if="isDemo" class="text-[.95rem] opacity-70 ml-2"> Changes will not be saved in the demo version. </span>
     </footer>
   </form>
 </template>

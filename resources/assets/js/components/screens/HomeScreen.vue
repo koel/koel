@@ -9,9 +9,7 @@
         <Icon :icon="faVolumeOff" />
       </template>
       No songs found.
-      <span v-if="currentUserCan.manageSettings()" class="secondary block">
-        Have you set up your library yet?
-      </span>
+      <span v-if="currentUserCan.manageSettings()" class="secondary block"> Have you set up your library yet? </span>
     </ScreenEmptyState>
 
     <div v-else class="space-y-12">
@@ -63,13 +61,14 @@ const greetings = [
   'How have you been, %s?',
 ]
 
-const greeting = computed(() => userStore.current ? sample(greetings)!.replace('%s', userStore.current.name) : '')
+const greeting = computed(() => (userStore.current ? sample(greetings)!.replace('%s', userStore.current.name) : ''))
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 
 const loading = ref(false)
 let initialized = false
 
-eventBus.on('SONGS_DELETED', () => overviewStore.fetch())
+eventBus
+  .on('SONGS_DELETED', () => overviewStore.fetch())
   .on('SONGS_UPDATED', () => overviewStore.fetch())
   .on('SONG_UPLOADED', () => overviewStore.fetch())
 

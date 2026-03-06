@@ -4,7 +4,7 @@ import { findIndex, findLastIndex, get } from 'lodash'
 
 type Selectable<T> = Reactive<T & { selected: boolean }>
 
-export const useListSelection = <T> (
+export const useListSelection = <T>(
   selectables: Ref<Array<Selectable<T>>>,
   idPath: string | ((s: Selectable<T>) => string) = 'item.id',
 ) => {
@@ -14,7 +14,7 @@ export const useListSelection = <T> (
   // the list is sorted, or infinite loading triggered), we can reapply the selection.
   const selectedIds = new Set()
 
-  const resolveIdPath = (selectable: Selectable<T>) => typeof idPath === 'function' ? idPath(selectable) : idPath
+  const resolveIdPath = (selectable: Selectable<T>) => (typeof idPath === 'function' ? idPath(selectable) : idPath)
 
   const select = (selectable: Selectable<T>) => {
     selectable.selected = true

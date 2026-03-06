@@ -5,9 +5,7 @@
         <UserAvatar v-koel-tooltip :user="user" class="border border-white/30" width="24" />
       </li>
     </ul>
-    <span v-if="remainderCount" class="ml-2">
-      +{{ remainderCount }} more
-    </span>
+    <span v-if="remainderCount" class="ml-2"> +{{ remainderCount }} more </span>
   </div>
 </template>
 

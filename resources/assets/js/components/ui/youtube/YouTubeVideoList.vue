@@ -26,7 +26,9 @@ import { useErrorHandler } from '@/composables/useErrorHandler'
 const props = defineProps<{ song: Song }>()
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 const YouTubeVideo = defineAsyncComponent(() => import('@/components/ui/youtube/YouTubeVideoItem.vue'))
-const YouTubeVideoListSkeleton = defineAsyncComponent(() => import('@/components/ui/youtube/YouTubeVideoListSkeleton.vue'))
+const YouTubeVideoListSkeleton = defineAsyncComponent(
+  () => import('@/components/ui/youtube/YouTubeVideoListSkeleton.vue'),
+)
 
 const { song } = toRefs(props)
 
@@ -51,9 +53,13 @@ const loadMore = async () => {
 
 const somethingWrong = computed(() => !loading.value && videos.value.length === 0)
 
-watch(song, () => {
-  videos.value = []
-  nextPageToken = ''
-  loadMore()
-}, { immediate: true })
+watch(
+  song,
+  () => {
+    videos.value = []
+    nextPageToken = ''
+    loadMore()
+  },
+  { immediate: true },
+)
 </script>

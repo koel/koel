@@ -8,7 +8,7 @@
         <template #thumbnail>
           <article class="relative aspect-square block rounded-md overflow-hidden" data-testid="podcast-thumbnail">
             <div class="pointer-events-none">
-              <img :src="podcast.image" alt="Podcast thumbnail">
+              <img :src="podcast.image" alt="Podcast thumbnail" />
             </div>
           </article>
         </template>
@@ -130,7 +130,7 @@ const { search } = useFuzzySearch<Episode>(episodes, ['title', 'episode_descript
 const { openContextMenu } = useContextMenu()
 
 const fetchDetails = async (id: Podcast['id']) => {
-  [podcast.value, episodes.value] = await Promise.all([
+  ;[podcast.value, episodes.value] = await Promise.all([
     podcastStore.resolve(id),
     episodeStore.fetchEpisodesInPodcast(id),
   ])
@@ -170,9 +170,10 @@ const maybeExpandDescription = () => {
   descriptionEl.value.classList.toggle('line-clamp-3')
 }
 
-const requestContextMenu = (event: MouseEvent) => openContextMenu<'PODCAST'>(ContextMenu, event, {
-  podcast: podcast.value!,
-})
+const requestContextMenu = (event: MouseEvent) =>
+  openContextMenu<'PODCAST'>(ContextMenu, event, {
+    podcast: podcast.value!,
+  })
 
 const descriptionTooltip = computed(() => {
   if (!description.overflown) {
@@ -198,9 +199,7 @@ const inProgress = computed(() => Boolean(podcast.value?.state.current_episode))
 
 const currentPlayingItemIsPartOfPodcast = computed(() => {
   const currentPlayable = queueStore.current
-  return currentPlayable
-    && isEpisode(currentPlayable)
-    && currentPlayable.podcast_id === podcast.value?.id
+  return currentPlayable && isEpisode(currentPlayable) && currentPlayable.podcast_id === podcast.value?.id
 })
 
 const podcastPlaying = computed(() => {

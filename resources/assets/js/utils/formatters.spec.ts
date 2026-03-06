@@ -1,13 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { ServerValidationError } from './formatters'
-import {
-  br2nl,
-  parseValidationError,
-  pluralize,
-  secondsToHis,
-  secondsToHumanReadable,
-  slugToTitle,
-} from './formatters'
+import { br2nl, parseValidationError, pluralize, secondsToHis, secondsToHumanReadable, slugToTitle } from './formatters'
 
 describe('formatters utils', () => {
   it.each([
@@ -34,13 +27,8 @@ describe('formatters utils', () => {
     const error: ServerValidationError = {
       message: 'The given data was invalid',
       errors: {
-        email: [
-          'The email has already been taken',
-          'The domain is blacklisted',
-        ],
-        name: [
-          'The name is required',
-        ],
+        email: ['The email has already been taken', 'The domain is blacklisted'],
+        name: ['The name is required'],
       },
     }
 
@@ -75,8 +63,7 @@ describe('formatters utils', () => {
     [['foo'], 'cat', 'cat'],
     [['foo', 'bar'], 'cat', 'cats'],
     [[], 'cat', 'cats'],
-  ])(
-    'pluralizes with array parameters',
-    (arr, noun, plural) => expect(pluralize(arr, noun)).toEqual(`${arr.length} ${plural}`),
+  ])('pluralizes with array parameters', (arr, noun, plural) =>
+    expect(pluralize(arr, noun)).toEqual(`${arr.length} ${plural}`),
   )
 })

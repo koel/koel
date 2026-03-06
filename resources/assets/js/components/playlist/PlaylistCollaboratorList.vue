@@ -41,18 +41,15 @@ const fetchCollaborators = async () => {
   loading.value = true
 
   try {
-    collaborators.value = sortBy(
-      await playlistCollaborationService.fetchCollaborators(playlist.value),
-      ({ id }) => {
-        if (id === currentUser.value.id) {
-          return 0
-        }
-        if (id === playlist.value.owner_id) {
-          return 1
-        }
-        return 2
-      },
-    )
+    collaborators.value = sortBy(await playlistCollaborationService.fetchCollaborators(playlist.value), ({ id }) => {
+      if (id === currentUser.value.id) {
+        return 0
+      }
+      if (id === playlist.value.owner_id) {
+        return 1
+      }
+      return 2
+    })
   } finally {
     loading.value = false
   }

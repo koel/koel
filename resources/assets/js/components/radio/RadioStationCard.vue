@@ -33,7 +33,7 @@ import { playback } from '@/services/playbackManager'
 
 import RadioStationThumbnail from '@/components/radio/RadioStationThumbnail.vue'
 
-const props = withDefaults(defineProps<{ layout?: CardLayout, station: RadioStation }>(), {
+const props = withDefaults(defineProps<{ layout?: CardLayout; station: RadioStation }>(), {
   layout: 'full',
 })
 const FavoriteButton = defineAsyncComponent(() => import('@/components/ui/FavoriteButton.vue'))
@@ -55,9 +55,10 @@ const onDblClick = () => togglePlay()
 
 const onThumbnailClicked = () => togglePlay()
 
-const onContextMenu = (event: MouseEvent) => openContextMenu<'RADIO_STATION'>(ContextMenu, event, {
-  station: station.value,
-})
+const onContextMenu = (event: MouseEvent) =>
+  openContextMenu<'RADIO_STATION'>(ContextMenu, event, {
+    station: station.value,
+  })
 
 const toggleFavorite = () => radioStationStore.toggleFavorite(station.value)
 </script>

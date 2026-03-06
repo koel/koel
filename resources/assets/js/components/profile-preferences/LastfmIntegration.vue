@@ -12,9 +12,7 @@
         Last.fm integration is enabled.
         {{ appName }} will attempt to retrieve album and artist information from Last.fm.
       </p>
-      <p v-if="connected">
-        It appears that you have connected your Last.fm account as well – Perfect!
-      </p>
+      <p v-if="connected">It appears that you have connected your Last.fm account as well – Perfect!</p>
       <p v-else>You can also connect your Last.fm account here.</p>
       <p>
         Connecting {{ appName }} and your Last.fm account enables such exciting features as
@@ -34,9 +32,7 @@
           <a href="https://docs.koel.dev/service-integrations#last-fm" target="_blank">Documentation</a>
           for integration instructions.
         </span>
-        <span v-else data-testid="lastfm-user-instruction">
-          Try politely asking an administrator to enable it.
-        </span>
+        <span v-else data-testid="lastfm-user-instruction"> Try politely asking an administrator to enable it. </span>
       </p>
     </div>
   </section>
@@ -67,11 +63,12 @@ const connected = computed(() => Boolean(currentUser.value.preferences.lastfm_se
  * This method opens a new window.
  * Koel will reload once the connection is successful.
  */
-const connect = () => window.open(
-  `${window.BASE_URL}lastfm/connect?api_token=${authService.getApiToken()}`,
-  '_blank',
-  'toolbar=no,titlebar=no,location=no,width=1024,height=640',
-)
+const connect = () =>
+  window.open(
+    `${window.BASE_URL}lastfm/connect?api_token=${authService.getApiToken()}`,
+    '_blank',
+    'toolbar=no,titlebar=no,location=no,width=1024,height=640',
+  )
 
 const disconnect = async () => {
   await http.delete('lastfm/disconnect')

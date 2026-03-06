@@ -29,28 +29,30 @@ export const artistStore = {
     artists: [] as Artist[],
   }),
 
-  byId (id: Artist['id']) {
+  byId(id: Artist['id']) {
     return this.vault.get(id)
   },
 
-  removeByIds (ids: Artist['id'][]) {
-    this.state.artists = differenceBy(this.state.artists, ids.map(id => this.byId(id)), 'id')
+  removeByIds(ids: Artist['id'][]) {
+    this.state.artists = differenceBy(
+      this.state.artists,
+      ids.map(id => this.byId(id)),
+      'id',
+    )
     ids.forEach(id => this.vault.delete(id))
   },
 
-  isVarious: (artist: Artist | Artist['name']) => typeof artist === 'string'
-    ? artist === VARIOUS_ARTISTS_NAME
-    : artist.name === VARIOUS_ARTISTS_NAME,
+  isVarious: (artist: Artist | Artist['name']) =>
+    typeof artist === 'string' ? artist === VARIOUS_ARTISTS_NAME : artist.name === VARIOUS_ARTISTS_NAME,
 
-  isUnknown: (artist: Artist | Artist['name']) => typeof artist === 'string'
-    ? artist === UNKNOWN_ARTIST_NAME
-    : artist.name === UNKNOWN_ARTIST_NAME,
+  isUnknown: (artist: Artist | Artist['name']) =>
+    typeof artist === 'string' ? artist === UNKNOWN_ARTIST_NAME : artist.name === UNKNOWN_ARTIST_NAME,
 
-  isStandard (artist: Artist | Artist['name']) {
+  isStandard(artist: Artist | Artist['name']) {
     return !this.isVarious(artist) && !this.isUnknown(artist)
   },
 
-  syncWithVault (artists: MaybeArray<Artist>) {
+  syncWithVault(artists: MaybeArray<Artist>) {
     return arrayify(artists).map(artist => {
       let local = this.vault.get(artist.id)
       local = local ? Object.assign(local, artist) : reactive(artist)
@@ -60,13 +62,13 @@ export const artistStore = {
     })
   },
 
-  async update (artist: Artist, data: ArtistUpdateData) {
+  async update(artist: Artist, data: ArtistUpdateData) {
     const updated = await http.put<Artist>(`artists/${artist.id}`, data)
     this.state.artists = unionBy(this.state.artists, this.syncWithVault(updated), 'id')
     songStore.syncArtistProperties(updated)
   },
 
-  async resolve (id: Artist['id']) {
+  async resolve(id: Artist['id']) {
     let artist = this.byId(id)
 
     if (!artist) {
@@ -82,19 +84,19 @@ export const artistStore = {
     return artist
   },
 
-  async paginate (params: ArtistListPaginateParams) {
+  async paginate(params: ArtistListPaginateParams) {
     const resource = await http.get<PaginatorResource<Artist>>(`artists?${new URLSearchParams(params).toString()}`)
     this.state.artists = unionBy(this.state.artists, this.syncWithVault(resource.data), 'id')
 
     return resource.links.next ? ++resource.meta.current_page : null
   },
 
-  reset () {
+  reset() {
     this.vault.clear()
     this.state.artists = []
   },
 
-  async toggleFavorite (artist: Reactive<Artist>) {
+  async toggleFavorite(artist: Reactive<Artist>) {
     // Don't wait for the HTTP response to update the status, just toggle right away.
     // We'll update the liked status again after the HTTP request.
     artist.favorite = !artist.favorite
@@ -107,7 +109,7 @@ export const artistStore = {
     artist.favorite = Boolean(favorite)
   },
 
-  async fetchEvents (artist: Artist) {
+  async fetchEvents(artist: Artist) {
     return await http.get<LiveEvent[]>(`artists/${artist.id}/events`)
   },
 }

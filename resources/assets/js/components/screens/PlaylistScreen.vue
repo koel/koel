@@ -1,11 +1,7 @@
 <template>
   <ScreenBase v-if="playlistId">
     <template #header>
-      <ScreenHeader
-        v-if="playlist"
-        :disabled="loading"
-        :layout="allPlayables.length ? headerLayout : 'collapsed'"
-      >
+      <ScreenHeader v-if="playlist" :disabled="loading" :layout="allPlayables.length ? headerLayout : 'collapsed'">
         {{ playlist.name }}
         <p v-if="playlist.description" class="text-base text-k-fg-70 font-light">
           {{ playlist.description }}
@@ -245,7 +241,7 @@ watch(playlistId, async id => {
   listConfig.collaborative = playlist.value.is_collaborative
   listConfig.hasCustomOrderSort = !playlist.value.is_smart
 
-  currentState.sortField ??= (playlist.value?.is_smart ? 'title' : 'position')
+  currentState.sortField ??= playlist.value?.is_smart ? 'title' : 'position'
   currentState.sortOrder ??= 'asc'
 
   sort(currentState.sortField, currentState.sortOrder)
@@ -253,13 +249,14 @@ watch(playlistId, async id => {
 
 onScreenActivated('Playlist', () => (playlistId.value = getRouteParam('id')!))
 
-const requestContextMenu = (event: MouseEvent) => openContextMenu<'PLAYLIST'>(ContextMenu, event, {
-  playlist: playlist.value!,
-})
+const requestContextMenu = (event: MouseEvent) =>
+  openContextMenu<'PLAYLIST'>(ContextMenu, event, {
+    playlist: playlist.value!,
+  })
 
 eventBus
-  .on('PLAYLIST_UPDATED', async ({ id }) => id === playlistId.value && await fetchDetails())
-  .on('PLAYLIST_COLLABORATOR_REMOVED', async ({ id }) => id === playlistId.value && await fetchDetails())
+  .on('PLAYLIST_UPDATED', async ({ id }) => id === playlistId.value && (await fetchDetails()))
+  .on('PLAYLIST_COLLABORATOR_REMOVED', async ({ id }) => id === playlistId.value && (await fetchDetails()))
   .on('PLAYLIST_CONTENT_REMOVED', async ({ id }, removed) => {
     if (id === playlistId.value) {
       allPlayables.value = differenceBy(allPlayables.value, removed, 'id')

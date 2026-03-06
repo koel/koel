@@ -63,12 +63,7 @@
 
       <div v-show="activeTab === 'songs'" class="songs-pane">
         <SongListSkeleton v-if="loading" />
-        <SongList
-          v-if="!loading && artist"
-          ref="songList"
-          @press:enter="onPressEnter"
-          @swipe="onSwipe"
-        />
+        <SongList v-if="!loading && artist" ref="songList" @press:enter="onPressEnter" @swipe="onSwipe" />
       </div>
 
       <div v-show="activeTab === 'albums'" class="albums-pane">
@@ -133,7 +128,7 @@ const FavoriteButton = defineAsyncComponent(() => import('@/components/ui/Favori
 const ArtistContextMenu = defineAsyncComponent(() => import('@/components/artist/ArtistContextMenu.vue'))
 
 const validTabs = ['songs', 'albums', 'information', 'events'] as const
-type Tab = typeof validTabs[number]
+type Tab = (typeof validTabs)[number]
 
 const { PlayableListControls: SongListControls, config } = usePlayableListControls('Artist')
 const { useLastfm, useMusicBrainz, useTicketmaster } = useThirdPartyServices()
@@ -183,10 +178,7 @@ const fetchScreenData = async () => {
   loading.value = true
 
   try {
-    [artist.value, songs.value] = await Promise.all([
-      artistStore.resolve(id),
-      playableStore.fetchSongsForArtist(id),
-    ])
+    ;[artist.value, songs.value] = await Promise.all([artistStore.resolve(id), playableStore.fetchSongsForArtist(id)])
 
     if (!artist.value) {
       triggerNotFound()
@@ -214,9 +206,10 @@ const fetchScreenData = async () => {
 onScreenActivated('Artist', () => fetchScreenData())
 onRouteChanged(route => route.name === 'artists.show' && fetchScreenData())
 
-const requestContextMenu = (event: MouseEvent) => openContextMenu<'ARTIST'>(ArtistContextMenu, event, {
-  artist: artist.value!,
-})
+const requestContextMenu = (event: MouseEvent) =>
+  openContextMenu<'ARTIST'>(ArtistContextMenu, event, {
+    artist: artist.value!,
+  })
 
 eventBus.on('SONGS_UPDATED', result => {
   // After songs are updated, check if the current artist still exists.

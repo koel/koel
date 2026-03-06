@@ -26,7 +26,7 @@ describe('aboutKoelButton.vue', () => {
     screen.getByTestId('new-version-indicator')
   })
 
-  it('doesn\'t show notification to non-admin users', () => {
+  it("doesn't show notification to non-admin users", () => {
     commonStore.state.current_version = '1.0.0'
     commonStore.state.latest_version = '1.0.1'
 

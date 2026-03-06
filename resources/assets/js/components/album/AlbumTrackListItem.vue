@@ -23,7 +23,7 @@ import { secondsToHis } from '@/utils/formatters'
 import { PlayablesKey } from '@/symbols'
 import { playback } from '@/services/playbackManager'
 
-const props = defineProps<{ album: Album, track: AlbumTrack }>()
+const props = defineProps<{ album: Album; track: AlbumTrack }>()
 
 const AppleMusicButton = defineAsyncComponent(() => import('@/components/ui/AppleMusicButton.vue'))
 
@@ -34,7 +34,7 @@ const { useAppleMusic } = useThirdPartyServices()
 const songsToMatchAgainst = requireInjection<Ref<Song[]>>(PlayablesKey)
 
 const matchedSong = computed(() => playableStore.matchSongsByTitle(track.value.title, songsToMatchAgainst.value))
-const tooltip = computed(() => matchedSong.value ? 'Click to play' : '')
+const tooltip = computed(() => (matchedSong.value ? 'Click to play' : ''))
 const fmtLength = computed(() => secondsToHis(track.value.length))
 
 const active = computed(() => matchedSong.value && matchedSong.value.playback_state !== 'Stopped')

@@ -7,7 +7,7 @@ export const equalizerStore = {
   /**
    * Get the current equalizer config.
    */
-  getConfig () {
+  getConfig() {
     let config: EqualizerPreset | undefined
 
     if (this.isCustom(preferences.equalizer)) {
@@ -21,20 +21,22 @@ export const equalizerStore = {
     return config || presets[0]
   },
 
-  isCustom (preset: any) {
-    return typeof preset === 'object'
-      && preset !== null
-      && preset.name === null
-      && typeof preset.preamp === 'number'
-      && Array.isArray(preset.gains)
-      && preset.gains.length === 10
-      && preset.gains.every((gain: any) => typeof gain === 'number')
+  isCustom(preset: any) {
+    return (
+      typeof preset === 'object' &&
+      preset !== null &&
+      preset.name === null &&
+      typeof preset.preamp === 'number' &&
+      Array.isArray(preset.gains) &&
+      preset.gains.length === 10 &&
+      preset.gains.every((gain: any) => typeof gain === 'number')
+    )
   },
 
   /**
    * Save the current equalizer config.
    */
-  saveConfig (name: EqualizerPreset['name'] | null, preamp: number, gains: number[]) {
+  saveConfig(name: EqualizerPreset['name'] | null, preamp: number, gains: number[]) {
     const preset = name ? this.getPresetByName(name) : null
 
     preferences.equalizer = preset || {

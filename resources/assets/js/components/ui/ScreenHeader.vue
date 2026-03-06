@@ -1,13 +1,9 @@
 <template>
   <header
     :class="[layout, disabled ? 'disabled' : '']"
-    class="screen-header gap-4 min-h-0 md:min-h-full flex items-end flex-shrink-0 relative content-stretch leading-normal p-6
-    border-b border-b-k-fg-5"
+    class="screen-header gap-4 min-h-0 md:min-h-full flex items-end flex-shrink-0 relative content-stretch leading-normal p-6 border-b border-b-k-fg-5"
   >
-    <aside
-      v-if="$slots.thumbnail"
-      class="thumbnail-wrapper hidden md:flex items-end overflow-hidden rounded-md"
-    >
+    <aside v-if="$slots.thumbnail" class="thumbnail-wrapper hidden md:flex items-end overflow-hidden rounded-md">
       <slot name="thumbnail" />
     </aside>
 
@@ -29,13 +25,16 @@
 </template>
 
 <script lang="ts" setup>
-withDefaults(defineProps<{
-  layout?: ScreenHeaderLayout
-  disabled?: boolean
-}>(), {
-  layout: 'expanded',
-  disabled: false,
-})
+withDefaults(
+  defineProps<{
+    layout?: ScreenHeaderLayout
+    disabled?: boolean
+  }>(),
+  {
+    layout: 'expanded',
+    disabled: false,
+  },
+)
 </script>
 
 <style lang="postcss" scoped>

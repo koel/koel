@@ -27,16 +27,17 @@ const { Separator, MenuItem, trigger } = useContextMenu()
 
 const applyTheme = () => trigger(() => themeStore.setTheme(theme.value))
 
-const destroy = () => trigger(async () => {
-  if (!await showConfirmDialog('Are you sure you want to delete this theme?')) {
-    return
-  }
+const destroy = () =>
+  trigger(async () => {
+    if (!(await showConfirmDialog('Are you sure you want to delete this theme?'))) {
+      return
+    }
 
-  try {
-    await themeStore.destroy(theme.value)
-    toastSuccess('Theme deleted.')
-  } catch (e: unknown) {
-    handleHttpError(e)
-  }
-})
+    try {
+      await themeStore.destroy(theme.value)
+      toastSuccess('Theme deleted.')
+    } catch (e: unknown) {
+      handleHttpError(e)
+    }
+  })
 </script>

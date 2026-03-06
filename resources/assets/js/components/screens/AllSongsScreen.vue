@@ -15,12 +15,7 @@
 
         <template #controls>
           <div class="controls w-full flex justify-between items-center gap-4">
-            <SongListControls
-              v-if="totalSongCount"
-              :config
-              @play-all="playAll"
-              @play-selected="playSelected"
-            />
+            <SongListControls v-if="totalSongCount" :config @play-all="playAll" @play-selected="playSelected" />
           </div>
         </template>
       </ScreenHeader>

@@ -38,7 +38,7 @@
             v-if="data.bg_image"
             class="w-36 aspect-video relative overflow-hidden rounded-md border border-k-fg-10"
           >
-            <img :src="data.bg_image" alt="Background image" class="inset-0 object-cover">
+            <img :src="data.bg_image" alt="Background image" class="inset-0 object-cover" />
             <button
               type="button"
               class="absolute inset-0 opacity-0 hover:opacity-100 bg-black/70 active:bg-black/85 active:text-[.9rem] transition-opacity"
@@ -155,9 +155,7 @@ const tryLoadSystemFonts = async () => {
   }
 }
 
-const loadAvailableFonts = async () => shouldTryLoadSystemFonts.value
-  ? await tryLoadSystemFonts()
-  : loadCommonFonts()
+const loadAvailableFonts = async () => (shouldTryLoadSystemFonts.value ? await tryLoadSystemFonts() : loadCommonFonts())
 
 const onFontSelectBoxClick = async () => {
   if (availableFonts.value.length === 0) {
@@ -168,23 +166,43 @@ const onFontSelectBoxClick = async () => {
 const applyProperty = (property: string, value: string) => document.body.style.setProperty(property, value)
 
 watch(previewing, () => toggleCssClass('backdrop:bg-transparent', 'bg-transparent', 'cursor-not-allowed'))
-watch(() => data.fg_color, color => applyProperty('--color-fg', color))
-watch(() => data.bg_color, color => applyProperty('--color-bg', color))
-watch(() => data.highlight_color, color => applyProperty('--color-highlight', color))
+watch(
+  () => data.fg_color,
+  color => applyProperty('--color-fg', color),
+)
+watch(
+  () => data.bg_color,
+  color => applyProperty('--color-bg', color),
+)
+watch(
+  () => data.highlight_color,
+  color => applyProperty('--color-highlight', color),
+)
 
-watch(() => data.bg_image, imageUrl => applyProperty('--bg-image', imageUrl ? `url(${imageUrl})` : 'none'), {
-  immediate: true,
-})
+watch(
+  () => data.bg_image,
+  imageUrl => applyProperty('--bg-image', imageUrl ? `url(${imageUrl})` : 'none'),
+  {
+    immediate: true,
+  },
+)
 
-watch(() => data.font_family, font => applyProperty('--font-family', font), { immediate: true })
-watch(() => data.font_size, size => applyProperty('--font-size', `${size}px`))
+watch(
+  () => data.font_family,
+  font => applyProperty('--font-family', font),
+  { immediate: true },
+)
+watch(
+  () => data.font_size,
+  size => applyProperty('--font-size', `${size}px`),
+)
 
 const { onImageInputChange: onBackgroundImageChange } = useImageFileInput({
-  onImageDataUrl: dataUrl => data.bg_image = dataUrl,
+  onImageDataUrl: dataUrl => (data.bg_image = dataUrl),
 })
 
 const maybeClose = async () => {
-  if (isPristine() || await showConfirmDialog('Discard all changes?')) {
+  if (isPristine() || (await showConfirmDialog('Discard all changes?'))) {
     // restore the theme
     themeStore.setTheme()
     close()

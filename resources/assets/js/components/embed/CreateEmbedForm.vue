@@ -11,7 +11,7 @@
         ref="previewIframe"
         :height="options.layout === 'compact' ? '150' : 350"
         :src="embedSrc"
-        allow="autoplay *; encrypted-media *;"
+        allow="autoplay *; encrypted-media *"
         class="rounded-xl bg-transparent w-full max-w-[650px] overflow-hidden border-0"
         data-testid="embed-preview-iframe"
         loading="lazy"
@@ -68,13 +68,17 @@ const showCode = ref(false)
 const loading = ref(false)
 const encryptedOptions = ref('')
 
-const { data: options, handleSubmit: encryptOptions, loading: encryptingOptions } = useForm<EmbedOptions>({
+const {
+  data: options,
+  handleSubmit: encryptOptions,
+  loading: encryptingOptions,
+} = useForm<EmbedOptions>({
   initialValues: {
     theme: isPlus.value ? themeStore.getCurrentTheme().id : themeStore.getDefaultTheme().id,
     layout: ['songs', 'episodes'].includes(embeddable.type) ? 'compact' : 'full',
     preview: false,
   },
-  onSubmit: async data => encryptedOptions.value = await embedService.encryptOptions(data),
+  onSubmit: async data => (encryptedOptions.value = await embedService.encryptOptions(data)),
   useOverlay: false,
 })
 
@@ -93,9 +97,11 @@ const code = computed(() => {
     return ''
   }
 
-  return `<iframe src="${embedSrc.value}" style="border-radius:10px;width:100%;max-width:650px;overflow:hidden;"`
-    + ` height="${options.layout === 'compact' ? '150' : 350}" frameborder="0" allow="autoplay *;encrypted-media *;"`
-    + ' loading="lazy"></iframe>'
+  return (
+    `<iframe src="${embedSrc.value}" style="border-radius:10px;width:100%;max-width:650px;overflow:hidden;"` +
+    ` height="${options.layout === 'compact' ? '150' : 350}" frameborder="0" allow="autoplay *;encrypted-media *;"` +
+    ' loading="lazy"></iframe>'
+  )
 })
 
 watch(embedSrc, value => {

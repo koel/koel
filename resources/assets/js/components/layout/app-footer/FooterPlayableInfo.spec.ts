@@ -18,12 +18,16 @@ describe('footerPlayableInfo.vue', () => {
       artist_name: 'Led Zeppelin',
     })
 
-    expect(h.render(Component, {
-      global: {
-        provide: {
-          [<symbol>CurrentStreamableKey]: ref(song),
-        },
-      },
-    }).html()).toMatchSnapshot()
+    expect(
+      h
+        .render(Component, {
+          global: {
+            provide: {
+              [<symbol>CurrentStreamableKey]: ref(song),
+            },
+          },
+        })
+        .html(),
+    ).toMatchSnapshot()
   })
 })

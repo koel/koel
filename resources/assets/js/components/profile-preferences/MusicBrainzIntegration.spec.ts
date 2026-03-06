@@ -6,7 +6,12 @@ import Component from './MusicBrainzIntegration.vue'
 describe('musicBrainzIntegration.vue', () => {
   const h = createHarness()
 
-  it.each<[boolean, boolean]>([[false, false], [false, true], [true, false], [true, true]])(
+  it.each<[boolean, boolean]>([
+    [false, false],
+    [false, true],
+    [true, false],
+    [true, true],
+  ])(
     'renders proper content with MusicBrainz integration status %s, current user admin status %s',
     (useMusicBrainz, isAdmin) => {
       commonStore.state.uses_musicbrainz = useMusicBrainz

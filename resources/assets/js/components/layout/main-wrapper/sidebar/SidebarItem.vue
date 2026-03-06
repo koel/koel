@@ -1,15 +1,13 @@
 <template>
   <li
     :class="{ active }"
-    class="relative before:right-0 px-6 before:top-1/4 before:w-[4px] before:h-1/2 before:absolute before:rounded-full
-    before:transition-[box-shadow,_background-color] before:ease-in-out before:duration-500"
+    class="relative before:right-0 px-6 before:top-1/4 before:w-[4px] before:h-1/2 before:absolute before:rounded-full before:transition-[box-shadow,_background-color] before:ease-in-out before:duration-500"
     data-testid="sidebar-item"
     @click="onClick"
   >
     <a
       :href="props.href"
-      class="flex items-center overflow-x-hidden gap-3 h-11 relative active:pt-0.5 active:pr-0 active:pb-0 active:pl-0.5
-      text-k-fg-70 hover:text-k-fg"
+      class="flex items-center overflow-x-hidden gap-3 h-11 relative active:pt-0.5 active:pr-0 active:pb-0 active:pl-0.5 text-k-fg-70 hover:text-k-fg"
     >
       <span>
         <slot name="icon" />
@@ -25,12 +23,15 @@
 <script lang="ts" setup>
 import { eventBus } from '@/utils/eventBus'
 
-const props = withDefaults(defineProps<{
-  href?: string | undefined
-  active?: boolean
-}>(), {
-  active: false,
-})
+const props = withDefaults(
+  defineProps<{
+    href?: string | undefined
+    active?: boolean
+  }>(),
+  {
+    active: false,
+  },
+)
 
 const onClick = () => {
   if (props.href) {

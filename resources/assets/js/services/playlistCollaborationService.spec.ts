@@ -51,8 +51,7 @@ describe('playlistCollaborationService', () => {
     await service.removeCollaborator(playlist, collaborator)
 
     expect(deleteMock).toHaveBeenCalledWith(`playlists/${playlist.id}/collaborators`, {
-      collaborator:
-      collaborator.id,
+      collaborator: collaborator.id,
     })
 
     expect(removeCacheMock).toHaveBeenCalledWith(['playlist.songs', playlist.id])

@@ -1,7 +1,5 @@
 <template>
-  <Btn highlight rounded small @click.prevent="goToRecentlyPlayedScreen">
-    View All
-  </Btn>
+  <Btn highlight rounded small @click.prevent="goToRecentlyPlayedScreen"> View All </Btn>
 </template>
 
 <script lang="ts" setup>
@@ -13,6 +11,4 @@ const { go, url } = useRouter()
 const goToRecentlyPlayedScreen = () => go(url('recently-played'))
 </script>
 
-<style lang="postcss" scoped>
-
-</style>
+<style lang="postcss" scoped></style>

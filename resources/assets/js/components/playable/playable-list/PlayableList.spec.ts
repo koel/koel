@@ -45,7 +45,10 @@ describe('playableList.vue', () => {
           [<symbol>SelectedPlayablesKey]: [ref(selectedPlayables), (value: Playable[]) => (selectedPlayables = value)],
           [<symbol>PlayableListConfigKey]: [config],
           [<symbol>PlayableListContextKey]: [context],
-          [<symbol>PlayableListSortFieldKey]: [sortFieldRef, (value: PlayableListSortField) => (sortFieldRef.value = value)],
+          [<symbol>PlayableListSortFieldKey]: [
+            sortFieldRef,
+            (value: PlayableListSortField) => (sortFieldRef.value = value),
+          ],
           [<symbol>PlayableListSortOrderKey]: [sortOrderRef, (value: SortOrder) => (sortOrderRef.value = value)],
         },
       },

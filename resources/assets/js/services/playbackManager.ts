@@ -12,7 +12,7 @@ const playbackServiceMap: Record<string, BasePlaybackService> = {
 export const playbackManager = {
   _currentService: null as BasePlaybackService | null,
 
-  usePlayback (type: keyof typeof playbackServiceMap, plyrWrapper?: HTMLElement) {
+  usePlayback(type: keyof typeof playbackServiceMap, plyrWrapper?: HTMLElement) {
     for (const key in playbackServiceMap) {
       if (key !== type) {
         playbackServiceMap[key].deactivate()
@@ -21,14 +21,14 @@ export const playbackManager = {
 
     this._currentService = playbackServiceMap[type]
 
-    return playbackServiceMap[type].activate(plyrWrapper ?? document.querySelector('.plyr-wrapper') as HTMLElement)
+    return playbackServiceMap[type].activate(plyrWrapper ?? (document.querySelector('.plyr-wrapper') as HTMLElement))
   },
 
-  useQueuePlayback (plyrWrapper?: HTMLElement) {
+  useQueuePlayback(plyrWrapper?: HTMLElement) {
     return this.usePlayback('queue', plyrWrapper)
   },
 
-  useRadioPlayback (plyrWrapper?: HTMLElement) {
+  useRadioPlayback(plyrWrapper?: HTMLElement) {
     return this.usePlayback('radio', plyrWrapper)
   },
 }
@@ -39,9 +39,10 @@ interface PlaybackTypeMap {
   current: BasePlaybackService | null
 }
 
-export function playback<
-  T extends keyof PlaybackTypeMap = 'queue',
-> (type?: T, plyrWrapper?: HTMLElement): PlaybackTypeMap[T] {
+export function playback<T extends keyof PlaybackTypeMap = 'queue'>(
+  type?: T,
+  plyrWrapper?: HTMLElement,
+): PlaybackTypeMap[T] {
   const actualType = (type ?? 'queue') as keyof PlaybackTypeMap
 
   if (actualType === 'queue') {

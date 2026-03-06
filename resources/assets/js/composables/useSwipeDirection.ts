@@ -3,10 +3,10 @@ import { throttle } from 'lodash'
 
 export type SwipeDirection = 'up' | 'down'
 
-export function useSwipeDirection (
+export function useSwipeDirection(
   target: HTMLElement | (() => HTMLElement | null | undefined),
   callback: (direction: SwipeDirection) => void,
-  options?: { threshold?: number, wheelThreshold?: number },
+  options?: { threshold?: number; wheelThreshold?: number },
 ) {
   const threshold = options?.threshold ?? 30
   const wheelThreshold = options?.wheelThreshold ?? 5

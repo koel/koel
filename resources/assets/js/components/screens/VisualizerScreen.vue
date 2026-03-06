@@ -1,13 +1,9 @@
 <template>
   <section id="vizContainer" ref="container" :class="{ fullscreen: isFullscreen }" @dblclick.prevent="toggleFullscreen">
     <div
-      class="absolute z-[1] w-full h-full top-0 left-0 opacity-0 transition-opacity
-      duration-300 ease-in-out hover:opacity-100"
+      class="absolute z-[1] w-full h-full top-0 left-0 opacity-0 transition-opacity duration-300 ease-in-out hover:opacity-100"
     >
-      <div
-        v-if="selectedVisualizer"
-        class="absolute bottom-8 left-8 px-6 py-4 bg-black/30 rounded-md"
-      >
+      <div v-if="selectedVisualizer" class="absolute bottom-8 left-8 px-6 py-4 bg-black/30 rounded-md">
         <h3 class="text-lg mb-2">{{ selectedVisualizer.name }}</h3>
         <p v-if="selectedVisualizer.credits">
           by {{ selectedVisualizer.credits.author }}

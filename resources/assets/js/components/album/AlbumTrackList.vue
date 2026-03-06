@@ -22,7 +22,7 @@ import { PlayablesKey } from '@/symbols'
 
 import TrackListItem from '@/components/album/AlbumTrackListItem.vue'
 
-const props = defineProps<{ album: Album, tracks: AlbumTrack[] }>()
+const props = defineProps<{ album: Album; tracks: AlbumTrack[] }>()
 const { album, tracks } = toRefs(props)
 
 const songs = ref<Song[]>([])
@@ -30,7 +30,7 @@ const songs = ref<Song[]>([])
 // @ts-ignore
 provide(PlayablesKey, songs)
 
-onMounted(async () => songs.value = await playableStore.fetchSongsForAlbum(album.value))
+onMounted(async () => (songs.value = await playableStore.fetchSongsForAlbum(album.value)))
 </script>
 
 <style lang="postcss" scoped>

@@ -8,11 +8,13 @@ describe('podcastCard.vue', () => {
   const h = createHarness()
 
   const renderComponent = (podcast?: Podcast) => {
-    podcast = podcast || h.factory('podcast', {
-      title: 'A Brief History of Time',
-      author: 'Stephen Hawking',
-      favorite: false,
-    })
+    podcast =
+      podcast ||
+      h.factory('podcast', {
+        title: 'A Brief History of Time',
+        author: 'Stephen Hawking',
+        favorite: false,
+      })
 
     const rendered = h.render(Component, {
       props: {

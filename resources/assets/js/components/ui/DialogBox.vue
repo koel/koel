@@ -47,17 +47,26 @@ const showCancelButton = computed(() => type.value === 'confirm')
 const close = () => dialog.value?.close()
 const cancel = () => dialog.value?.dispatchEvent(new Event('cancel'))
 
-const waitForInput = () => new Promise(resolve => {
-  dialog.value?.addEventListener('cancel', () => {
-    close()
-    resolve(false)
-  }, { once: true })
+const waitForInput = () =>
+  new Promise(resolve => {
+    dialog.value?.addEventListener(
+      'cancel',
+      () => {
+        close()
+        resolve(false)
+      },
+      { once: true },
+    )
 
-  dialog.value?.querySelector('[name=ok]')!.addEventListener('click', () => {
-    close()
-    resolve(true)
-  }, { once: true })
-})
+    dialog.value?.querySelector('[name=ok]')!.addEventListener(
+      'click',
+      () => {
+        close()
+        resolve(true)
+      },
+      { once: true },
+    )
+  })
 
 const show = async (_type: DialogType, _message: string, _title: string = '') => {
   type.value = _type

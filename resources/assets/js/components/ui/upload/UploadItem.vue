@@ -38,7 +38,7 @@ const { file } = toRefs(props)
 const canRetry = computed(() => file.value.status === 'Canceled' || file.value.status === 'Errored')
 const canRemove = computed(() => file.value.status !== 'Uploading') // we're not supporting cancel tokens (yet).
 const cssClass = computed(() => slugify(file.value.status).toLowerCase())
-const progressBarWidth = computed(() => file.value.status === 'Uploading' ? `${file.value.progress}%` : '0')
+const progressBarWidth = computed(() => (file.value.status === 'Uploading' ? `${file.value.progress}%` : '0'))
 
 const remove = () => uploadService.remove(file.value)
 const retry = () => uploadService.retry(file.value)

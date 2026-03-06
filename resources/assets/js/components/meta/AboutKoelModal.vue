@@ -8,7 +8,7 @@
   >
     <main class="p-6">
       <div class="mb-4">
-        <img alt="Logo" class="inline-block" :src="logo" width="128">
+        <img alt="Logo" class="inline-block" :src="logo" width="128" />
       </div>
 
       <div class="current-version">
@@ -18,7 +18,7 @@
         Edition
         <p v-if="isPlus" class="plus-badge">
           Licensed to {{ license.customerName }} &lt;{{ license.customerEmail }}&gt;
-          <br>
+          <br />
           License key: <span class="key font-mono">{{ license.shortKey }}</span>
         </p>
 
@@ -72,12 +72,7 @@ import CreditsBlock from '@/components/meta/CreditsBlock.vue'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 const { name: appName, logo, hasCustomBranding } = useBranding()
-const {
-  shouldNotifyNewVersion,
-  currentVersion,
-  latestVersion,
-  latestVersionReleaseUrl,
-} = useNewVersionNotification()
+const { shouldNotifyNewVersion, currentVersion, latestVersion, latestVersionReleaseUrl } = useNewVersionNotification()
 
 const { isPlus, license } = useKoelPlus()
 const { currentUserCan } = usePolicies()
