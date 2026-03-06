@@ -3,7 +3,7 @@ import ContextMenu from '@/components/ui/context-menu/ContextMenu.vue'
 import Separator from '@/components/ui/context-menu/ContextMenuSeparator.vue'
 import MenuItem from '@/components/ui/context-menu/ContextMenuItem.vue'
 
-import { ContextMenuKey } from '@/symbols'
+import { ContextMenuKey } from '@/config/symbols'
 import { requireInjection } from '@/utils/helpers'
 import type { ContextMenus } from '@/config/contextMenus'
 

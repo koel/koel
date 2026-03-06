@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { ref } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import { CurrentStreamableKey } from '@/symbols'
+import { CurrentStreamableKey } from '@/config/symbols'
 import Component from './FooterPlayableInfo.vue'
 
 describe('footerPlayableInfo.vue', () => {

@@ -40,7 +40,7 @@
 import { faStepBackward, faStepForward } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref } from 'vue'
 import { requireInjection } from '@/utils/helpers'
-import { CurrentStreamableKey } from '@/symbols'
+import { CurrentStreamableKey } from '@/config/symbols'
 import { playableStore } from '@/stores/playableStore'
 import { playback } from '@/services/playbackManager'
 import { radioStationStore } from '@/stores/radioStationStore'

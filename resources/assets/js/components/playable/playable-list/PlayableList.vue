@@ -55,7 +55,7 @@ import {
   PlayableListContextKey,
   PlayableListSortFieldKey,
   SelectedPlayablesKey,
-} from '@/symbols'
+} from '@/config/symbols'
 
 import PlayableListItem from '@/components/playable/playable-list/PlayableListItem.vue'
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'

@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import { CurrentStreamableKey } from '@/symbols'
+import { CurrentStreamableKey } from '@/config/symbols'
 import { playbackService } from '@/services/QueuePlaybackService'
 import Component from './FooterPlaybackControls.vue'
 

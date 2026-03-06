@@ -10,7 +10,7 @@ import { DialogBoxStub, MessageToasterStub, OverlayStub } from '@/__tests__/stub
 import { commonStore } from '@/stores/commonStore'
 import { userStore } from '@/stores/userStore'
 import { http } from '@/services/http'
-import { ContextMenuKey, DialogBoxKey, MessageToasterKey, OverlayKey, RouterKey } from '@/symbols'
+import { ContextMenuKey, DialogBoxKey, MessageToasterKey, OverlayKey, RouterKey } from '@/config/symbols'
 import Router from '@/router'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { noop } from '@/utils/helpers'

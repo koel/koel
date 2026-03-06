@@ -20,7 +20,7 @@ import { authService } from '@/services/authService'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 import { requireInjection } from '@/utils/helpers'
 import { secondsToHis } from '@/utils/formatters'
-import { PlayablesKey } from '@/symbols'
+import { PlayablesKey } from '@/config/symbols'
 import { playback } from '@/services/playbackManager'
 
 const props = defineProps<{ album: Album; track: AlbumTrack }>()

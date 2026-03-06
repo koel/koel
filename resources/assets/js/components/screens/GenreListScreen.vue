@@ -46,7 +46,7 @@ import { genreStore } from '@/stores/genreStore'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useFuzzySearch } from '@/composables/useFuzzySearch'
-import { FilterKeywordsKey } from '@/symbols'
+import { FilterKeywordsKey } from '@/config/symbols'
 import { orderBy } from 'lodash'
 import { usePolicies } from '@/composables/usePolicies'
 

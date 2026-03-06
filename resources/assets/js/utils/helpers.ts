@@ -9,7 +9,7 @@ import {
   readonly,
   shallowReadonly,
 } from 'vue'
-import type { ReadonlyInjectionKey } from '@/symbols'
+import type { ReadonlyInjectionKey } from '@/config/symbols'
 import { logger } from '@/utils/logger'
 import { md5 } from '@/utils/crypto'
 import { isSong } from '@/utils/typeGuards'

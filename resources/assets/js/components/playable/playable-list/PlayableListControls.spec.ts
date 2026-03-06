@@ -3,7 +3,7 @@ import { merge, take } from 'lodash'
 import { ref } from 'vue'
 import { describe, expect, it } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
-import { FilteredPlayablesKey, PlayablesKey, SelectedPlayablesKey } from '@/symbols'
+import { FilteredPlayablesKey, PlayablesKey, SelectedPlayablesKey } from '@/config/symbols'
 import Component from './PlayableListControls.vue'
 
 describe('playableListControls.vue', () => {

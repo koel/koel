@@ -89,7 +89,7 @@ import { faPlay, faRandom, faRotateRight } from '@fortawesome/free-solid-svg-ico
 import type { Ref } from 'vue'
 import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref, toRef, watch } from 'vue'
 import { OnClickOutside } from '@vueuse/components'
-import { FilteredPlayablesKey, PlayablesKey, SelectedPlayablesKey } from '@/symbols'
+import { FilteredPlayablesKey, PlayablesKey, SelectedPlayablesKey } from '@/config/symbols'
 import { requireInjection } from '@/utils/helpers'
 import { useFloatingUi } from '@/composables/useFloatingUi'
 

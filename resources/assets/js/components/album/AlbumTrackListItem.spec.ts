@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
 import { playableStore } from '@/stores/playableStore'
 import { playbackService } from '@/services/QueuePlaybackService'
-import { PlayablesKey } from '@/symbols'
+import { PlayablesKey } from '@/config/symbols'
 import Component from './AlbumTrackListItem.vue'
 
 describe('albumTrackListItem.vue', () => {

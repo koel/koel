@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
 import { ref } from 'vue'
-import { FilterKeywordsKey } from '@/symbols'
+import { FilterKeywordsKey } from '@/config/symbols'
 import { createHarness } from '@/__tests__/TestHarness'
 import Component from './ListFilter.vue'
 

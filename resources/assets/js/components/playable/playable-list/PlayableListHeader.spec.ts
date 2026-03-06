@@ -8,7 +8,7 @@ import {
   PlayableListSortFieldKey,
   PlayableListSortOrderKey,
   SelectedPlayablesKey,
-} from '@/symbols'
+} from '@/config/symbols'
 import PlayableListHeader from './PlayableListHeader.vue'
 
 describe('playableListHeader.vue', () => {

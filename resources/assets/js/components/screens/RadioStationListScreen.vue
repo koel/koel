@@ -80,7 +80,7 @@ import { eventBus } from '@/utils/eventBus'
 import { useFuzzySearch } from '@/composables/useFuzzySearch'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { orderBy } from 'lodash'
-import { FilterKeywordsKey } from '@/symbols'
+import { FilterKeywordsKey } from '@/config/symbols'
 import { radioStationStore } from '@/stores/radioStationStore'
 import { usePolicies } from '@/composables/usePolicies'
 

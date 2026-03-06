@@ -1,4 +1,4 @@
-import { RouterKey } from '@/symbols'
+import { RouterKey } from '@/config/symbols'
 import Router from '@/router'
 import { requireInjection } from '@/utils/helpers'
 
