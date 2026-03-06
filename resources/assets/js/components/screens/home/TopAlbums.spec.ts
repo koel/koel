@@ -8,12 +8,16 @@ describe('topAlbums.vue', () => {
 
   it('displays the albums', () => {
     overviewStore.state.mostPlayedAlbums = h.factory('album', 6)
-    expect(h.render(TopAlbums, {
-      global: {
-        stubs: {
-          AlbumCard: h.stub('album-card'),
-        },
-      },
-    }).getAllByTestId('album-card')).toHaveLength(6)
+    expect(
+      h
+        .render(TopAlbums, {
+          global: {
+            stubs: {
+              AlbumCard: h.stub('album-card'),
+            },
+          },
+        })
+        .getAllByTestId('album-card'),
+    ).toHaveLength(6)
   })
 })

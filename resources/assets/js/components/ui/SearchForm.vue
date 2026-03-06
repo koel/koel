@@ -1,9 +1,7 @@
 <template>
   <form
     id="searchForm"
-    class="relative text-k-fg-70 flex items-stretch border border-k-fg-10 overflow-hidden gap-2 py-0 rounded-md
-    bg-k-bg-50 focus-within:border-k-highlight
-    transition-[border,_background-color] duration-200 ease-in-out"
+    class="relative text-k-fg-70 flex items-stretch border border-k-fg-10 overflow-hidden gap-2 py-0 rounded-md bg-k-bg-50 focus-within:border-k-highlight transition-[border,_background-color] duration-200 ease-in-out"
     role="search"
     @submit.prevent="onSubmit"
   >

@@ -34,17 +34,14 @@ export const themeStore = {
     themes,
   }),
 
-  init (theme: Theme | Theme['id'] = 'classic') {
+  init(theme: Theme | Theme['id'] = 'classic') {
     for (const key in this.defaultProperties) {
       this.defaultProperties[key] = document.body.style.getPropertyValue(key)
     }
 
     // calculate and set the highlight foreground color
     const observer = new StyleObserver(([{ value }]) => {
-      document.body.style.setProperty(
-        '--color-highlight-fg',
-        Color(value).isDark() ? '#ffffff' : '#111111',
-      )
+      document.body.style.setProperty('--color-highlight-fg', Color(value).isDark() ? '#ffffff' : '#111111')
     })
 
     observer.observe(document.body, '--color-highlight')
@@ -57,11 +54,11 @@ export const themeStore = {
     this.setTheme(theme)
   },
 
-  get all () {
+  get all() {
     return this.state.themes
   },
 
-  setTheme (theme?: Theme | Theme['id']) {
+  setTheme(theme?: Theme | Theme['id']) {
     if (theme === undefined) {
       return this.setTheme(this.getCurrentTheme())
     }
@@ -80,30 +77,28 @@ export const themeStore = {
     preferences.theme = theme.id
   },
 
-  isCurrentTheme (theme: Theme | Theme['id']) {
+  isCurrentTheme(theme: Theme | Theme['id']) {
     const currentTheme = this.getCurrentTheme()
     return typeof theme === 'string' ? currentTheme.id === theme : currentTheme.id === theme.id
   },
 
-  getThemeById (id: Theme['id']) {
+  getThemeById(id: Theme['id']) {
     return this.state.themes.find(theme => theme.id === id)
   },
 
-  getDefaultTheme () {
+  getDefaultTheme() {
     return this.getThemeById('classic')!
   },
 
-  getCurrentTheme () {
-    return preferences.theme
-      ? (this.getThemeById(preferences.theme) ?? this.getDefaultTheme())
-      : this.getDefaultTheme()
+  getCurrentTheme() {
+    return preferences.theme ? (this.getThemeById(preferences.theme) ?? this.getDefaultTheme()) : this.getDefaultTheme()
   },
 
-  isValidTheme (id: Theme['id']) {
+  isValidTheme(id: Theme['id']) {
     return this.getThemeById(id) !== undefined
   },
 
-  async store (data: ThemeData) {
+  async store(data: ThemeData) {
     const theme = await http.post<Theme>('themes', data)
     this.state.themes.unshift(theme)
     cache.remove('custom-themes')
@@ -111,12 +106,12 @@ export const themeStore = {
     return theme
   },
 
-  async fetchCustomThemes () {
+  async fetchCustomThemes() {
     const customThemes = await cache.remember('custom-themes', async () => await http.get<Theme[]>('themes'))
     this.state.themes = uniqBy(this.state.themes.concat(customThemes), 'id')
   },
 
-  async destroy (theme: Theme) {
+  async destroy(theme: Theme) {
     if (!theme.is_custom) {
       return
     }

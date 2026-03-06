@@ -31,39 +31,42 @@ let references: MediaReference[]
 
 const openFolder = () => trigger(async () => go(url('media-browser', { path: (items.value[0] as Folder).path })))
 
-const play = () => trigger(async () => {
-  const songs = await playableStore.resolveSongsFromMediaReferences(references)
+const play = () =>
+  trigger(async () => {
+    const songs = await playableStore.resolveSongsFromMediaReferences(references)
 
-  if (songs.length) {
-    playback().queueAndPlay(songs)
-    go(url('queue'))
-  } else {
-    toastWarning('Nothing to play.')
-  }
-})
+    if (songs.length) {
+      playback().queueAndPlay(songs)
+      go(url('queue'))
+    } else {
+      toastWarning('Nothing to play.')
+    }
+  })
 
-const shuffle = () => trigger(async () => {
-  const songs = await playableStore.resolveSongsFromMediaReferences(references, true)
+const shuffle = () =>
+  trigger(async () => {
+    const songs = await playableStore.resolveSongsFromMediaReferences(references, true)
 
-  if (songs.length) {
-    // folder shuffling has already been done server-side, but local songs shuffling is still needed.
-    playback().queueAndPlay(songs, true)
-    go(url('queue'))
-  } else {
-    toastWarning('Nothing to play.')
-  }
-})
+    if (songs.length) {
+      // folder shuffling has already been done server-side, but local songs shuffling is still needed.
+      playback().queueAndPlay(songs, true)
+      go(url('queue'))
+    } else {
+      toastWarning('Nothing to play.')
+    }
+  })
 
-const queue = () => trigger(async () => {
-  const songs = await playableStore.resolveSongsFromMediaReferences(references)
+const queue = () =>
+  trigger(async () => {
+    const songs = await playableStore.resolveSongsFromMediaReferences(references)
 
-  if (songs.length) {
-    queueStore.queue(songs)
-    toastSuccess(`${pluralize(songs, 'song')} added to queue.`)
-  } else {
-    toastWarning('Nothing to queue.')
-  }
-})
+    if (songs.length) {
+      queueStore.queue(songs)
+      toastSuccess(`${pluralize(songs, 'song')} added to queue.`)
+    } else {
+      toastWarning('Nothing to queue.')
+    }
+  })
 
 onMounted(() => {
   references = mediaBrowser.extractMediaReferences(items.value)

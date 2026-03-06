@@ -17,10 +17,12 @@ describe('podcastScreen.vue', () => {
   const h = createHarness()
 
   const renderComponent = async (podcast?: Podcast, episodes?: Episode[]) => {
-    podcast = podcast || h.factory('podcast', {
-      title: 'A Brief History of Time',
-      favorite: false,
-    })
+    podcast =
+      podcast ||
+      h.factory('podcast', {
+        title: 'A Brief History of Time',
+        favorite: false,
+      })
 
     episodes = episodes || h.factory('episode', 9, { podcast_id: podcast.id })
 
@@ -121,9 +123,7 @@ describe('podcastScreen.vue', () => {
     const { podcast } = await renderComponent(h.factory('podcast', { favorite: true }))
     const toggleFavoriteMock = h.mock(podcastStore, 'toggleFavorite')
 
-    await waitFor(async () =>
-      await h.user.click(screen.getByRole('button', { name: 'Undo Favorite' })),
-    )
+    await waitFor(async () => await h.user.click(screen.getByRole('button', { name: 'Undo Favorite' })))
 
     expect(toggleFavoriteMock).toHaveBeenCalledWith(podcast)
   })

@@ -38,15 +38,15 @@ describe('downloadService', () => {
     expect(mock).toHaveBeenCalledWith(`playlist/${playlist.id}`)
   })
 
-  it.each<[Playable[], boolean]>([[[], false], [h.factory('song', 5), true]])(
-    'downloads favorites if available',
-    (songs, triggered) => {
-      const mock = h.mock(downloadService, 'trigger')
-      playableStore.state.favorites = songs
+  it.each<[Playable[], boolean]>([
+    [[], false],
+    [h.factory('song', 5), true],
+  ])('downloads favorites if available', (songs, triggered) => {
+    const mock = h.mock(downloadService, 'trigger')
+    playableStore.state.favorites = songs
 
-      downloadService.fromFavorites()
+    downloadService.fromFavorites()
 
-      triggered ? expect(mock).toHaveBeenCalledWith('favorites') : expect(mock).not.toHaveBeenCalled()
-    },
-  )
+    triggered ? expect(mock).toHaveBeenCalledWith('favorites') : expect(mock).not.toHaveBeenCalled()
+  })
 })

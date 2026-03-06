@@ -6,22 +6,18 @@
     @contextmenu.prevent="onContextMenu"
   >
     <aside class="hidden md:block md:flex-[0_0_128px]">
-      <img :src="podcast.image" alt="Podcast image" class="w-[128px] aspect-square object-cover rounded-lg">
+      <img :src="podcast.image" alt="Podcast image" class="w-[128px] aspect-square object-cover rounded-lg" />
     </aside>
     <main class="flex-1">
       <header>
         <h3 class="text-3xl font-bold">
           {{ podcast.title }}
-          <FavoriteButton
-            v-if="podcast.favorite"
-            :favorite="podcast.favorite"
-            class="ml-2"
-            @toggle="toggleFavorite"
-          />
+          <FavoriteButton v-if="podcast.favorite" :favorite="podcast.favorite" class="ml-2" @toggle="toggleFavorite" />
         </h3>
         <p class="mt-2">
           {{ podcast.author }}
-          <template v-if="lastPlayedAt"> •
+          <template v-if="lastPlayedAt">
+            •
             <span class="text-k-fg-50">
               Last played
               <time :datetime="podcast.last_played_at" :title="podcast.last_played_at">{{ lastPlayedAt }}</time>
@@ -52,16 +48,16 @@ const { openContextMenu } = useContextMenu()
 
 const description = computed(() => DOMPurify.sanitize(podcast.description))
 
-const lastPlayedAt = computed(() => podcast.state.current_episode
-  ? formatTimeAgo(new Date(podcast.last_played_at))
-  : null,
+const lastPlayedAt = computed(() =>
+  podcast.state.current_episode ? formatTimeAgo(new Date(podcast.last_played_at)) : null,
 )
 
 const toggleFavorite = () => podcastStore.toggleFavorite(podcast)
 
-const onContextMenu = (event: MouseEvent) => openContextMenu<'PODCAST'>(PodcastContextMenu, event, {
-  podcast,
-})
+const onContextMenu = (event: MouseEvent) =>
+  openContextMenu<'PODCAST'>(PodcastContextMenu, event, {
+    podcast,
+  })
 </script>
 
 <style scoped lang="postcss">

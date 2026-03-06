@@ -10,11 +10,13 @@ describe('podcastContextMenu.vue', () => {
   const h = createHarness()
 
   const renderComponent = async (podcast?: Podcast) => {
-    podcast = podcast || h.factory('podcast', {
-      title: 'A Brief History of Time',
-      author: 'Stephen Hawking',
-      favorite: false,
-    })
+    podcast =
+      podcast ||
+      h.factory('podcast', {
+        title: 'A Brief History of Time',
+        author: 'Stephen Hawking',
+        favorite: false,
+      })
 
     const rendered = h.actingAsAdmin().render(Component, {
       props: {

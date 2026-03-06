@@ -13,7 +13,7 @@ import { broadcastSubscriber } from '@/services/broadcastSubscriber'
 class FakeEcho extends Echo<'null'> {
   public channels: Record<string, FakeChannel> = {}
 
-  private (channelName: string) {
+  private(channelName: string) {
     const channel = new FakeChannel()
     this.channels[channelName] = channel
     return channel as unknown as Broadcaster['null']['private']
@@ -23,12 +23,12 @@ class FakeEcho extends Echo<'null'> {
 class FakeChannel {
   private listeners: Record<string, Closure> = {}
 
-  listen (event: string, callback: Closure) {
+  listen(event: string, callback: Closure) {
     this.listeners[event] = callback
     return this
   }
 
-  trigger (event: string, data: any) {
+  trigger(event: string, data: any) {
     this.listeners[event]?.(data)
   }
 }

@@ -17,7 +17,7 @@ interface UseFormConfig<T extends Record<string, any>> {
   useOverlay?: boolean
 }
 
-export const useForm = <T extends Record<string, any>> (config: UseFormConfig<T>) => {
+export const useForm = <T extends Record<string, any>>(config: UseFormConfig<T>) => {
   const useOverlay = config.useOverlay ?? true
   const { showOverlay, hideOverlay } = useOverlayComposable()
 
@@ -25,18 +25,15 @@ export const useForm = <T extends Record<string, any>> (config: UseFormConfig<T>
   const data = reactive<T>(config.initialValues)
   const rawOriginalData = cloneDeep(toRaw(data)) as T
 
-  const isPristine = () => config.isPristine
-    ? config.isPristine(rawOriginalData, toRaw(data))
-    : isEqual(rawOriginalData, toRaw(data))
+  const isPristine = () =>
+    config.isPristine ? config.isPristine(rawOriginalData, toRaw(data)) : isEqual(rawOriginalData, toRaw(data))
 
   const onError = async (error: unknown) => {
-    config.onError
-      ? await config.onError(error)
-      : useErrorHandler('dialog').handleHttpError(error)
+    config.onError ? await config.onError(error) : useErrorHandler('dialog').handleHttpError(error)
   }
 
   const handleSubmit = async () => {
-    if (config.validator && !await config.validator?.(data)) {
+    if (config.validator && !(await config.validator?.(data))) {
       return
     }
 

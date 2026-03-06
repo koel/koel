@@ -5,7 +5,7 @@
     type="button"
     @click.prevent="loginWithGoogle"
   >
-    <img :src="googleLogo" alt="Google Logo" height="32" width="32">
+    <img :src="googleLogo" alt="Google Logo" height="32" width="32" />
   </button>
 </template>
 

@@ -21,11 +21,10 @@ describe('themeList.vue', () => {
     await h.withPlusEdition(async () => {
       const emitMock = h.mock(eventBus, 'emit')
 
-      h.mock(themeStore, 'fetchCustomThemes')
-        .mockImplementation(() => {
-          // manually modify the internal state, as the mock will prevent the real method from running
-          themeStore.state.themes = themeStore.state.themes.concat(...h.factory('theme', 4))
-        })
+      h.mock(themeStore, 'fetchCustomThemes').mockImplementation(() => {
+        // manually modify the internal state, as the mock will prevent the real method from running
+        themeStore.state.themes = themeStore.state.themes.concat(...h.factory('theme', 4))
+      })
 
       h.render(Component)
       await h.tick()

@@ -36,20 +36,19 @@ const { currentUserCan } = usePolicies()
 const allowDownload = toRef(commonStore.state, 'allows_download')
 const allowEdit = ref(false)
 
-const isStandardArtist = computed(() =>
-  !artistStore.isUnknown(artist.value)
-  && !artistStore.isVarious(artist.value),
-)
+const isStandardArtist = computed(() => !artistStore.isUnknown(artist.value) && !artistStore.isVarious(artist.value))
 
-const play = () => trigger(async () => {
-  go(url('queue'))
-  await playback().queueAndPlay(await playableStore.fetchSongsForArtist(artist.value))
-})
+const play = () =>
+  trigger(async () => {
+    go(url('queue'))
+    await playback().queueAndPlay(await playableStore.fetchSongsForArtist(artist.value))
+  })
 
-const shuffle = () => trigger(async () => {
-  go(url('queue'))
-  await playback().queueAndPlay(await playableStore.fetchSongsForArtist(artist.value), true)
-})
+const shuffle = () =>
+  trigger(async () => {
+    go(url('queue'))
+    await playback().queueAndPlay(await playableStore.fetchSongsForArtist(artist.value), true)
+  })
 
 const download = () => trigger(() => downloadService.fromArtist(artist.value))
 const toggleFavorite = () => trigger(() => artistStore.toggleFavorite(artist.value))

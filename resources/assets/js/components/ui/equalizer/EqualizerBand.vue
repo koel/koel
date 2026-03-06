@@ -11,13 +11,16 @@
 import { computed, onMounted, ref } from 'vue'
 import noUiSlider from 'nouislider'
 
-const props = withDefaults(defineProps<{
-  type?: 'preamp' | 'gain'
-  modelValue?: number
-}>(), {
-  type: 'gain',
-  modelValue: 0,
-})
+const props = withDefaults(
+  defineProps<{
+    type?: 'preamp' | 'gain'
+    modelValue?: number
+  }>(),
+  {
+    type: 'gain',
+    modelValue: 0,
+  },
+)
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: number): void

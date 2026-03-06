@@ -5,7 +5,7 @@ import { userStore } from '@/stores/userStore'
 export const invitationService = {
   getUserProspect: async (token: string) => await http.get<User>(`invitations?token=${token}`),
 
-  async accept (token: string, name: string, password: string) {
+  async accept(token: string, name: string, password: string) {
     const compositeToken = await http.post<CompositeToken>('invitations/accept', { token, name, password })
 
     authService.setAudioToken(compositeToken['audio-token'])

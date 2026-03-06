@@ -54,7 +54,10 @@ const currentStreamable = requireInjection(CurrentStreamableKey)
 /**
  * Pause video playback when a playable is played/resumed.
  */
-watch(() => currentStreamable.value?.playback_state, state => state === 'Playing' && player?.pauseVideo())
+watch(
+  () => currentStreamable.value?.playback_state,
+  state => state === 'Playing' && player?.pauseVideo(),
+)
 
 eventBus.on('PLAY_YOUTUBE_VIDEO', payload => {
   showingVideo.value = true

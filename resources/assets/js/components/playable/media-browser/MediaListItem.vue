@@ -55,11 +55,9 @@ const emit = defineEmits<{
 
 const { item } = toRefs(props)
 
-const playing = computed(
-  () => isSong(item.value) && ['Playing', 'Paused'].includes(item.value.playback_state!),
-)
+const playing = computed(() => isSong(item.value) && ['Playing', 'Paused'].includes(item.value.playback_state!))
 
-const label = computed(() => isSong(item.value) ? item.value.basename : item.value.name)
+const label = computed(() => (isSong(item.value) ? item.value.basename : item.value.name))
 
 const pausePlayback = () => playback().pause()
 </script>

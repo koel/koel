@@ -15,11 +15,6 @@
       "@/*": ["js/*"]
     }
   },
-  "include": [
-    "js/**/*",
-    "../../node_modules/vitest/globals.d.ts"
-  ],
-  "exclude": [
-    "js/__tests__/**/*"
-  ]
+  "include": ["js/**/*", "../../node_modules/vitest/globals.d.ts"],
+  "exclude": ["js/__tests__/**/*"]
 }

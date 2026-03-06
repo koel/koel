@@ -18,7 +18,7 @@ import SelectBox from '@/components/ui/form/SelectBox.vue'
 const props = withDefaults(defineProps<{ modelValue?: Role }>(), { modelValue: 'user' })
 const emit = defineEmits<{ (e: 'update:modelValue', value: Role): void }>()
 
-const assignableRoles = ref<{ id: Role, label: string, description: string }[]>([])
+const assignableRoles = ref<{ id: Role; label: string; description: string }[]>([])
 
 const value = computed({
   get: () => props.modelValue,

@@ -7,9 +7,11 @@ describe('useLyrics', () => {
   const h = createHarness()
 
   it('handles non-LRC lyrics', () => {
-    const song = ref(h.factory('song', {
-      lyrics: 'This is a normal text\n without any LRC format',
-    }))
+    const song = ref(
+      h.factory('song', {
+        lyrics: 'This is a normal text\n without any LRC format',
+      }),
+    )
 
     const { lrcLyrics, hasLyrics, plainTextLyrics, isLrc } = useLyrics(song)
 
@@ -20,9 +22,11 @@ describe('useLyrics', () => {
   })
 
   it('handles LRC format', () => {
-    const song = ref(h.factory('song', {
-      lyrics: '[00:05.00]First line\n[00:12.00]Second line\n[00:21.00]Third line',
-    }))
+    const song = ref(
+      h.factory('song', {
+        lyrics: '[00:05.00]First line\n[00:12.00]Second line\n[00:21.00]Third line',
+      }),
+    )
 
     const { lrcLyrics, hasLyrics, plainTextLyrics, isLrc } = useLyrics(song)
 
@@ -38,9 +42,11 @@ describe('useLyrics', () => {
   })
 
   it('handles empty lyrics', () => {
-    const song = ref(h.factory('song', {
-      lyrics: '',
-    }))
+    const song = ref(
+      h.factory('song', {
+        lyrics: '',
+      }),
+    )
 
     const { lrcLyrics, hasLyrics, plainTextLyrics, isLrc } = useLyrics(song)
 
@@ -51,9 +57,11 @@ describe('useLyrics', () => {
   })
 
   it('assigns 00:00.00 timestamp first line if it has no timestamp', () => {
-    const song = ref(h.factory('song', {
-      lyrics: 'First line without timestamp\n[00:12.00]Second line\n[00:21.00]Third line',
-    }))
+    const song = ref(
+      h.factory('song', {
+        lyrics: 'First line without timestamp\n[00:12.00]Second line\n[00:21.00]Third line',
+      }),
+    )
 
     const { lrcLyrics } = useLyrics(song)
     expect(lrcLyrics.value[0].text).toBe('First line without timestamp')
@@ -61,9 +69,11 @@ describe('useLyrics', () => {
   })
 
   it('assigns previous timestamp to last line if it has no timestamp', () => {
-    const song = ref(h.factory('song', {
-      lyrics: '[00:12.00]First line\n[00:21.00]Second line\nLast line without timestamp',
-    }))
+    const song = ref(
+      h.factory('song', {
+        lyrics: '[00:12.00]First line\n[00:21.00]Second line\nLast line without timestamp',
+      }),
+    )
 
     const { lrcLyrics } = useLyrics(song)
     expect(lrcLyrics.value[2].text).toBe('Last line without timestamp')
@@ -71,9 +81,11 @@ describe('useLyrics', () => {
   })
 
   it('assigns an average timestamp to a line if it has no timestamp', () => {
-    const song = ref(h.factory('song', {
-      lyrics: '[00:12.00]First line\nSecond line without timestamp\n[00:16.00]Last line',
-    }))
+    const song = ref(
+      h.factory('song', {
+        lyrics: '[00:12.00]First line\nSecond line without timestamp\n[00:16.00]Last line',
+      }),
+    )
 
     const { lrcLyrics } = useLyrics(song)
     expect(lrcLyrics.value[1].text).toBe('Second line without timestamp')

@@ -32,26 +32,28 @@ const { currentUserCan } = usePolicies()
 const allowEdit = ref(false)
 const allowDelete = ref(false)
 
-const togglePlayback = () => trigger(async () => {
-  const playbackService = playback('radio')
+const togglePlayback = () =>
+  trigger(async () => {
+    const playbackService = playback('radio')
 
-  if (station.value.playback_state === 'Playing') {
-    await playbackService.stop()
-  } else {
-    await playbackService.play(station.value)
-  }
-})
+    if (station.value.playback_state === 'Playing') {
+      await playbackService.stop()
+    } else {
+      await playbackService.play(station.value)
+    }
+  })
 
 const toggleFavorite = () => trigger(() => radioStationStore.toggleFavorite(station.value))
 
 const requestEditForm = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_RADIO_STATION_FORM', station.value))
 
-const maybeDelete = () => trigger(async () => {
-  if (await showConfirmDialog('Delete the radio station? This action is NOT reversible!')) {
-    await radioStationStore.delete(station.value)
-    toastSuccess(`Radio station deleted.`)
-  }
-})
+const maybeDelete = () =>
+  trigger(async () => {
+    if (await showConfirmDialog('Delete the radio station? This action is NOT reversible!')) {
+      await radioStationStore.delete(station.value)
+      toastSuccess(`Radio station deleted.`)
+    }
+  })
 
 onMounted(async () => {
   allowEdit.value = await currentUserCan.editRadioStation(station.value)

@@ -2,7 +2,7 @@ import { cache } from '@/services/cache'
 import { http } from '@/services/http'
 
 export const playlistCollaborationService = {
-  async createInviteLink (playlist: Playlist) {
+  async createInviteLink(playlist: Playlist) {
     if (playlist.is_smart) {
       throw new Error('Smart playlists are not collaborative.')
     }
@@ -11,15 +11,15 @@ export const playlistCollaborationService = {
     return `${window.location.origin}/#/playlist/collaborate/${token}`
   },
 
-  async acceptInvite (token: string) {
+  async acceptInvite(token: string) {
     return http.post<Playlist>(`playlists/collaborators/accept`, { token })
   },
 
-  async fetchCollaborators (playlist: Playlist) {
+  async fetchCollaborators(playlist: Playlist) {
     return http.get<PlaylistCollaborator[]>(`playlists/${playlist.id}/collaborators`)
   },
 
-  async removeCollaborator (playlist: Playlist, collaborator: PlaylistCollaborator) {
+  async removeCollaborator(playlist: Playlist, collaborator: PlaylistCollaborator) {
     await http.delete(`playlists/${playlist.id}/collaborators`, { collaborator: collaborator.id })
     // invalidate the playlist cache to ensure songs from the collaborator are removed
     cache.remove(['playlist.songs', playlist.id])

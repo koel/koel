@@ -6,7 +6,7 @@ import Component from './LrcLyricsPane.vue'
 describe('lrcLyricsPane.vue', () => {
   const h = createHarness()
 
-  const renderComponent = (lyrics?: Array<{ time: number, text: string }>) => {
+  const renderComponent = (lyrics?: Array<{ time: number; text: string }>) => {
     lyrics = lyrics ?? [
       { time: 10.5, text: 'First line' },
       { time: 15.2, text: 'Second line' },

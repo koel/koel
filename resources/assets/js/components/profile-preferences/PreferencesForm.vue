@@ -73,13 +73,7 @@ const { isPlus } = useKoelPlus()
 const showTranscodingOption = toRef(commonStore.state, 'supports_transcoding')
 
 const continuousPlaybackLabel = computed(() => {
-  const types = [
-    'playlist',
-    'album',
-    'artist',
-    'genre',
-    'podcast',
-  ]
+  const types = ['playlist', 'album', 'artist', 'genre', 'podcast']
 
   if (commonStore.state.uses_media_browser) {
     types.push('folder')

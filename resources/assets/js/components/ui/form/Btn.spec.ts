@@ -6,10 +6,14 @@ describe('btn.vue', () => {
   const h = createHarness()
 
   it('renders', () => {
-    expect(h.render(Component, {
-      slots: {
-        default: 'Click Me Nao',
-      },
-    }).html()).toMatchSnapshot()
+    expect(
+      h
+        .render(Component, {
+          slots: {
+            default: 'Click Me Nao',
+          },
+        })
+        .html(),
+    ).toMatchSnapshot()
   })
 })

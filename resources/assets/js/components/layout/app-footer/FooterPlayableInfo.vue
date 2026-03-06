@@ -8,10 +8,7 @@
     <span class="album-thumb block h-[55%] md:h-3/4 aspect-square rounded-full bg-cover" />
     <div v-if="playable" class="meta overflow-hidden hidden md:block">
       <h3 class="title text-ellipsis overflow-hidden whitespace-nowrap">{{ playable.title }}</h3>
-      <a
-        :href="artistOrPodcastUri"
-        class="artist text-ellipsis overflow-hidden whitespace-nowrap block text-[0.9rem]"
-      >
+      <a :href="artistOrPodcastUri" class="artist text-ellipsis overflow-hidden whitespace-nowrap block text-[0.9rem]">
         {{ artistOrPodcastName }}
       </a>
     </div>
@@ -34,9 +31,8 @@ const { cover: defaultCover } = useBranding()
 
 const playable = requireInjection<Ref<Playable | undefined>>(CurrentStreamableKey, ref())
 
-const cover = computed(() => playable.value
-  ? getPlayableProp(playable.value, 'album_cover', 'episode_image')
-  : defaultCover,
+const cover = computed(() =>
+  playable.value ? getPlayableProp(playable.value, 'album_cover', 'episode_image') : defaultCover,
 )
 
 const artistOrPodcastUri = computed(() => {
@@ -49,9 +45,8 @@ const artistOrPodcastUri = computed(() => {
     : url('podcasts.show', { id: playable.value?.podcast_id })
 })
 
-const artistOrPodcastName = computed(() => playable.value
-  ? getPlayableProp(playable.value, 'artist_name', 'podcast_title')
-  : '',
+const artistOrPodcastName = computed(() =>
+  playable.value ? getPlayableProp(playable.value, 'artist_name', 'podcast_title') : '',
 )
 
 const coverBackgroundImage = computed(() => `url(${cover.value ?? defaultCover})`)

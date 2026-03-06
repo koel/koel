@@ -1,13 +1,7 @@
-const iOS = () => [
-  'iPad Simulator',
-  'iPhone Simulator',
-  'iPod Simulator',
-  'iPad',
-  'iPhone',
-  'iPod',
-].includes(navigator.platform)
-// iPad on iOS 13 detection
-|| (navigator.userAgent.includes('Mac') && 'ontouchend' in document)
+const iOS = () =>
+  ['iPad Simulator', 'iPhone Simulator', 'iPod Simulator', 'iPad', 'iPhone', 'iPod'].includes(navigator.platform) ||
+  // iPad on iOS 13 detection
+  (navigator.userAgent.includes('Mac') && 'ontouchend' in document)
 
 /**
  * Check if AudioContext is supported by the current browser.
@@ -19,7 +13,7 @@ export const isAudioContextSupported = !window.RUNNING_UNIT_TESTS && !iOS()
 /**
  * Checks if the browser supports reading (and thus uploading) a whole directory.
  */
-export const isDirectoryReadingSupported = window.DataTransferItem
-  && typeof window.DataTransferItem.prototype.webkitGetAsEntry === 'function'
+export const isDirectoryReadingSupported =
+  window.DataTransferItem && typeof window.DataTransferItem.prototype.webkitGetAsEntry === 'function'
 
 export const isFullscreenSupported = () => Boolean(document.fullscreenEnabled)

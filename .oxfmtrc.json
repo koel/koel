@@ -1,0 +1,11 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "semi": false,
+  "singleQuote": true,
+  "arrowParens": "avoid",
+  "printWidth": 120,
+  "ignorePatterns": [
+    "resources/assets/css/vendor/**",
+    "resources/assets/js/visualizers/**"
+  ]
+}

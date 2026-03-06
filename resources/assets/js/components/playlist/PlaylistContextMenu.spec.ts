@@ -14,13 +14,15 @@ import Component from './PlaylistContextMenu.vue'
 
 describe('playlistContextMenu.vue', () => {
   const h = createHarness({
-    beforeEach: () => queueStore.state.playables = [],
+    beforeEach: () => (queueStore.state.playables = []),
   })
 
   const renderComponent = async (playlist: Playlist, user: CurrentUser | null = null) => {
-    user = user || h.factory.states('current')('user', {
-      id: playlist.owner_id,
-    }) as CurrentUser
+    user =
+      user ||
+      (h.factory.states('current')('user', {
+        id: playlist.owner_id,
+      }) as CurrentUser)
 
     userStore.state.current = user
 
@@ -167,14 +169,15 @@ describe('playlistContextMenu.vue', () => {
     expect(screen.queryByText('Delete')).toBeNull()
   })
 
-  it('opens collaboration form', async () => await h.withPlusEdition(async () => {
-    const { playlist } = await renderComponent(h.factory('playlist'))
-    const emitMock = h.mock(eventBus, 'emit')
+  it('opens collaboration form', async () =>
+    await h.withPlusEdition(async () => {
+      const { playlist } = await renderComponent(h.factory('playlist'))
+      const emitMock = h.mock(eventBus, 'emit')
 
-    await h.user.click(screen.getByText('Collaborate…'))
+      await h.user.click(screen.getByText('Collaborate…'))
 
-    expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_PLAYLIST_COLLABORATION', playlist)
-  }))
+      expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_PLAYLIST_COLLABORATION', playlist)
+    }))
 
   it('requests the embed form', async () => {
     const { playlist } = await renderComponent(h.factory('playlist'))

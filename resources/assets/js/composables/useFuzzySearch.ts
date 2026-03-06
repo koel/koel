@@ -2,12 +2,13 @@ import Fuse from 'fuse.js'
 import type { Ref } from 'vue'
 import { isRef, watch } from 'vue'
 
-type Path<T> = T extends object ? {
-  [K in keyof T]:
-  `${Exclude<K, symbol>}${'' | `.${Path<T[K]>}`}`
-}[keyof T] : never
+type Path<T> = T extends object
+  ? {
+      [K in keyof T]: `${Exclude<K, symbol>}${'' | `.${Path<T[K]>}`}`
+    }[keyof T]
+  : never
 
-export const useFuzzySearch = <T> (items: T[] | Ref<T[]>, keys: Path<T>[] | string[]) => {
+export const useFuzzySearch = <T>(items: T[] | Ref<T[]>, keys: Path<T>[] | string[]) => {
   const fuse = new Fuse<T>([], { keys })
   let documents = items
 
@@ -26,9 +27,7 @@ export const useFuzzySearch = <T> (items: T[] | Ref<T[]>, keys: Path<T>[] | stri
   const search = (query: string | null) => {
     query = query?.trim() ?? null
 
-    return query
-      ? fuse.search(query).map(result => result.item)
-      : isRef(documents) ? documents.value : documents
+    return query ? fuse.search(query).map(result => result.item) : isRef(documents) ? documents.value : documents
   }
 
   return {

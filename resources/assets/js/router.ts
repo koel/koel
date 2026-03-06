@@ -45,15 +45,13 @@ export default class Router {
   private readonly notFoundRoute: Route
   private routeChangedHandlers: RouteChangedHandler[] = []
 
-  compileRoute (route: Route): CompiledRoute {
+  compileRoute(route: Route): CompiledRoute {
     const paramNames: string[] = []
 
     const regexPath = route.path.replace(/\/:(\w+)\??/g, (match, key) => {
       const constraint = route.constraints?.[key] ?? '[^/]+'
       paramNames.push(key)
-      return match.endsWith('?')
-        ? `(?:/(?<${key}>${constraint}))?`
-        : `/(?<${key}>${constraint})`
+      return match.endsWith('?') ? `(?:/(?<${key}>${constraint}))?` : `/(?<${key}>${constraint})`
     })
 
     return {
@@ -63,7 +61,7 @@ export default class Router {
     }
   }
 
-  constructor () {
+  constructor() {
     this.homeRoute = routes.find(({ screen }) => screen === 'Home')!
     this.notFoundRoute = routes.find(({ screen }) => screen === '404')!
     this.$currentRoute = ref(this.homeRoute)
@@ -82,7 +80,7 @@ export default class Router {
     addEventListener('popstate', () => this.resolve(), true)
   }
 
-  public static go (path: string | number, reload = false) {
+  public static go(path: string | number, reload = false) {
     if (typeof path === 'number') {
       history.go(path)
       return
@@ -102,7 +100,7 @@ export default class Router {
     reload && forceReloadWindow()
   }
 
-  public resolve (hash?: string) {
+  public resolve(hash?: string) {
     hash = hash ?? location.hash
 
     if (['', '#/', '#!/'].includes(hash)) {
@@ -133,12 +131,12 @@ export default class Router {
   public triggerNotFound = () => this.activateRoute(this.notFoundRoute)
   public onRouteChanged = (handler: RouteChangedHandler) => this.routeChangedHandlers.push(handler)
 
-  public activateRoute (route: Route, params: RouteParams = {}) {
+  public activateRoute(route: Route, params: RouteParams = {}) {
     this.$currentRoute.value = route
     this.$currentRoute.value.params = params
   }
 
-  private tryMatchRoute (hash: string): MatchedRoute | null {
+  private tryMatchRoute(hash: string): MatchedRoute | null {
     const [path, queryString] = hash.replace(/^#?/, '').split('?')
 
     for (const route of this.compiledRoutes) {
@@ -164,7 +162,7 @@ export default class Router {
     return null
   }
 
-  public static url (name: RouteName, params: object = {}) {
+  public static url(name: RouteName, params: object = {}) {
     const route = routes.find(route => route.name === name)
 
     if (!route) {

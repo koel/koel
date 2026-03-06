@@ -26,16 +26,21 @@ const { cover: defaultCover } = useBranding()
 const defaultBackgroundImage = `url(${defaultCover})`
 const displayedThumbnails = ref<string[]>([])
 
-watch(thumbnails, () => {
-  if (thumbnails.value.length === 0) {
-    displayedThumbnails.value = [defaultCover]
-  } else {
-    displayedThumbnails.value = take(thumbnails.value, thumbnails.value.length < 4 ? 1 : 4)
-      .map(url => url || defaultCover)
-  }
-}, { immediate: true })
+watch(
+  thumbnails,
+  () => {
+    if (thumbnails.value.length === 0) {
+      displayedThumbnails.value = [defaultCover]
+    } else {
+      displayedThumbnails.value = take(thumbnails.value, thumbnails.value.length < 4 ? 1 : 4).map(
+        url => url || defaultCover,
+      )
+    }
+  },
+  { immediate: true },
+)
 
-const layout = computed(() => displayedThumbnails.value.length < 4 ? 'single' : 'tiles')
+const layout = computed(() => (displayedThumbnails.value.length < 4 ? 'single' : 'tiles'))
 </script>
 
 <style lang="postcss" scoped>

@@ -22,21 +22,23 @@ describe('artistEvent.vue', () => {
   }
 
   it('renders', () => {
-    renderComponent(h.factory('live-event', {
-      id: 'foo',
-      name: 'Metalfest',
-      url: 'https://www.metalfest.com/tix',
-      image: 'https://www.metalfest.com/tix/logo.png',
-      dates: {
-        start: 'Jan 1, 2022 12:00',
-        end: 'Jan 1, 2022 13:00',
-      },
-      venue: {
-        name: 'Backstage',
-        url: 'https://www.metalfest.com/venue/backstage',
-        city: 'Munich',
-      },
-    }))
+    renderComponent(
+      h.factory('live-event', {
+        id: 'foo',
+        name: 'Metalfest',
+        url: 'https://www.metalfest.com/tix',
+        image: 'https://www.metalfest.com/tix/logo.png',
+        dates: {
+          start: 'Jan 1, 2022 12:00',
+          end: 'Jan 1, 2022 13:00',
+        },
+        venue: {
+          name: 'Backstage',
+          url: 'https://www.metalfest.com/venue/backstage',
+          city: 'Munich',
+        },
+      }),
+    )
 
     screen.getByText('Metalfest')
     expect(screen.getByRole('link').getAttribute('href')).toBe('https://www.metalfest.com/tix')

@@ -5,12 +5,7 @@
     data-testid="theme-card"
     @contextmenu.prevent="onContextMenu"
   >
-    <Icon
-      v-if="isCurrentTheme"
-      :icon="faBookmark"
-      class="absolute z-10 -top-1 right-3 text-k-highlight"
-      size="xl"
-    />
+    <Icon v-if="isCurrentTheme" :icon="faBookmark" class="absolute z-10 -top-1 right-3 text-k-highlight" size="xl" />
 
     <button
       class="opacity-0 hover:opacity-100 absolute h-full rounded-lg w-full top-0 left-0 flex items-center justify-center text-lg transition-opacity bg-k-bg-70 !text-k-fg"
@@ -39,13 +34,14 @@ const { openContextMenu } = useContextMenu()
 
 const isCurrentTheme = computed(() => themeStore.isCurrentTheme(theme.value))
 const thumbnailColor = computed(() => theme.value.thumbnail_color)
-const thumbnailImage = computed(() => theme.value.thumbnail_image ? `url(${theme.value.thumbnail_image})` : 'none')
+const thumbnailImage = computed(() => (theme.value.thumbnail_image ? `url(${theme.value.thumbnail_image})` : 'none'))
 
 const onClick = () => themeStore.setTheme(theme.value)
 
-const onContextMenu = (e: MouseEvent) => openContextMenu<'THEME'>(ContextMenu, e, {
-  theme: theme.value,
-})
+const onContextMenu = (e: MouseEvent) =>
+  openContextMenu<'THEME'>(ContextMenu, e, {
+    theme: theme.value,
+  })
 </script>
 
 <style lang="postcss" scoped>

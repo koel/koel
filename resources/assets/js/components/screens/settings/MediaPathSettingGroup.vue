@@ -8,8 +8,8 @@
       <FormRow v-else>
         <template #help>
           <span id="mediaPathHelp">
-            The <em>absolute</em> path to the server directory containing your media.
-            Koel will scan this directory for songs and extract any available information.<br>
+            The <em>absolute</em> path to the server directory containing your media. Koel will scan this directory for
+            songs and extract any available information.<br />
             Scanning may take a while, especially if you have a lot of songs, so be patient.
           </span>
         </template>
@@ -84,8 +84,11 @@ const save = async () => {
 
 const confirmThenSave = async () => {
   if (shouldWarn.value) {
-    await showConfirmDialog('Changing the media path will essentially remove all existing local data – songs, artists, \
-      albums, favorites, etc. Sure you want to proceed?', 'Confirm') && await save()
+    ;(await showConfirmDialog(
+      'Changing the media path will essentially remove all existing local data – songs, artists, \
+      albums, favorites, etc. Sure you want to proceed?',
+      'Confirm',
+    )) && (await save())
   } else {
     await save()
   }

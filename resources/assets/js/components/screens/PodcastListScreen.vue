@@ -90,7 +90,7 @@ const podcasts = computed(() => {
     keywords.value ? fuzzy.search(keywords.value) : podcastStore.state.podcasts,
     preferences.podcasts_sort_field,
     preferences.podcasts_sort_order,
-  ).filter(podcast => preferences.podcasts_favorites_only ? podcast.favorite : true)
+  ).filter(podcast => (preferences.podcasts_favorites_only ? podcast.favorite : true))
 })
 
 const noPodcasts = computed(() => !loading.value && podcasts.value.length === 0)

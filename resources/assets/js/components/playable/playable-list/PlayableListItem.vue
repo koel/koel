@@ -1,9 +1,6 @@
 <template>
   <div>
-    <h4
-      v-if="isSong(playable) && showDisc && playable.disc"
-      class="title text-k-fg !flex gap-2 p-2 uppercase pl-5"
-    >
+    <h4 v-if="isSong(playable) && showDisc && playable.disc" class="title text-k-fg !flex gap-2 p-2 uppercase pl-5">
       Disc {{ playable.disc }}
     </h4>
 
@@ -68,7 +65,7 @@ import UserAvatar from '@/components/user/UserAvatar.vue'
 import ExternalMark from '@/components/ui/ExternalMark.vue'
 import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
-const props = withDefaults(defineProps<{ item: PlayableRow, showDisc?: boolean }>(), {
+const props = withDefaults(defineProps<{ item: PlayableRow; showDisc?: boolean }>(), {
   showDisc: false,
 })
 
@@ -88,9 +85,7 @@ const fmtLength = secondsToHis(playable.value.length)
 const artist = computed(() => getPlayableProp(playable.value, 'artist_name', 'podcast_author'))
 const album = computed(() => getPlayableProp(playable.value, 'album_name', 'podcast_title'))
 
-const collaborator = computed<Pick<User, 'name' | 'avatar'>>(
-  () => (playable.value as Song).collaboration!.user,
-)
+const collaborator = computed<Pick<User, 'name' | 'avatar'>>(() => (playable.value as Song).collaboration!.user)
 
 const play = () => emit('play', playable.value)
 

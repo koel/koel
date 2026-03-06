@@ -11,7 +11,8 @@
         <TextInput
           v-model="data.email"
           class="flex-1 sm:rounded-l sm:rounded-r-none"
-          placeholder="Your email address" required
+          placeholder="Your email address"
+          required
           type="email"
         />
         <Btn :disabled="loading" class="sm:rounded-l-none sm:rounded-r" type="submit">Reset Password</Btn>

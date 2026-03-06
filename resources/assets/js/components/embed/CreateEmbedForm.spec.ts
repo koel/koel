@@ -12,10 +12,12 @@ describe('createEmbedForm.vue', () => {
     embeddable = embeddable ?? h.factory('playlist')
 
     // @ts-ignore
-    embed = embed ?? h.factory('embed', {
-      embeddable_id: embeddable.id,
-      embeddable_type: embeddable.type.slice(0, -1),
-    })
+    embed =
+      embed ??
+      h.factory('embed', {
+        embeddable_id: embeddable.id,
+        embeddable_type: embeddable.type.slice(0, -1),
+      })
 
     const resolveEmbedMock = h.mock(embedService, 'resolveForEmbeddable').mockResolvedValue(embed)
     const encryptOptionsMock = h.mock(embedService, 'encryptOptions').mockResolvedValueOnce('encrypted-1')

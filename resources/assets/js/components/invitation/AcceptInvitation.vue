@@ -17,13 +17,7 @@
 
       <FormRow>
         <template #label>Your name</template>
-        <TextInput
-          v-model="name"
-          v-koel-focus
-          data-testid="name"
-          placeholder="Erm… Bruce Dickinson?"
-          required
-        />
+        <TextInput v-model="name" v-koel-focus data-testid="name" placeholder="Erm… Bruce Dickinson?" required />
       </FormRow>
 
       <FormRow>

@@ -21,10 +21,11 @@ import { playback } from '@/services/playbackManager'
 
 const mode = toRef(preferenceStore.state, 'repeat_mode')
 
-const readableMode = computed(() => mode.value
-  .split('_')
-  .map(part => part[0].toUpperCase() + part.substring(1).toLowerCase())
-  .join(' '),
+const readableMode = computed(() =>
+  mode.value
+    .split('_')
+    .map(part => part[0].toUpperCase() + part.substring(1).toLowerCase())
+    .join(' '),
 )
 
 const changeMode = () => playback().rotateRepeatMode()

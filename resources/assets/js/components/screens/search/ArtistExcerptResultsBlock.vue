@@ -25,7 +25,7 @@ import ArtistCard from '@/components/artist/ArtistCard.vue'
 import ArtistCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
 import ExcerptResultBlock from '@/components/screens/search/ExcerptResultBlock.vue'
 
-const props = withDefaults(defineProps<{ artists?: Artist[], searching?: boolean }>(), {
+const props = withDefaults(defineProps<{ artists?: Artist[]; searching?: boolean }>(), {
   artists: () => [],
   searching: false,
 })

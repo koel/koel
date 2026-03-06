@@ -11,9 +11,6 @@ describe('textInput.vue', () => {
 
     await h.type(screen.getByRole('textbox'), 'Hi')
 
-    expect(emitted()['update:modelValue']).toStrictEqual([
-      ['H'],
-      ['Hi'],
-    ])
+    expect(emitted()['update:modelValue']).toStrictEqual([['H'], ['Hi']])
   })
 })

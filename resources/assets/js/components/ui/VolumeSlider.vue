@@ -17,7 +17,7 @@
       title="Volume"
       type="range"
       @input="setVolume"
-    >
+    />
   </span>
 </template>
 
@@ -49,10 +49,14 @@ const setVolume = (e: Event) => volumeManager.set(Number.parseFloat((e.target as
 
 // since changing volume can be frequent, we throttle the event to avoid too many "save preferences" API calls
 // and socket broadcasts
-watchThrottled(volumeManager.volume, volume => {
-  preferenceStore.volume = volume
-  socketService.broadcast('SOCKET_VOLUME_CHANGED', volume)
-}, { throttle: 1_000 })
+watchThrottled(
+  volumeManager.volume,
+  volume => {
+    preferenceStore.volume = volume
+    socketService.broadcast('SOCKET_VOLUME_CHANGED', volume)
+  },
+  { throttle: 1_000 },
+)
 
 onMounted(() => volumeManager.init(inputEl.value!, preferenceStore.volume))
 </script>

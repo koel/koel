@@ -8,12 +8,16 @@ describe('topArtists.vue', () => {
 
   it('displays the artists', () => {
     overviewStore.state.mostPlayedArtists = h.factory('artist', 6)
-    expect(h.render(TopArtists, {
-      global: {
-        stubs: {
-          ArtistCard: h.stub('artist-card'),
-        },
-      },
-    }).getAllByTestId('artist-card')).toHaveLength(6)
+    expect(
+      h
+        .render(TopArtists, {
+          global: {
+            stubs: {
+              ArtistCard: h.stub('artist-card'),
+            },
+          },
+        })
+        .getAllByTestId('artist-card'),
+    ).toHaveLength(6)
   })
 })

@@ -98,10 +98,12 @@ describe('podcastStore', () => {
     const podcast = h.factory('podcast', { favorite: false })
     podcastStore.state.podcasts.push(podcast)
 
-    const postMock = h.mock(http, 'post').mockResolvedValueOnce(h.factory('favorite', {
-      favoriteable_type: 'podcast',
-      favoriteable_id: podcast.id,
-    }))
+    const postMock = h.mock(http, 'post').mockResolvedValueOnce(
+      h.factory('favorite', {
+        favoriteable_type: 'podcast',
+        favoriteable_id: podcast.id,
+      }),
+    )
 
     await podcastStore.toggleFavorite(podcast)
 

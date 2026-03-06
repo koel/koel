@@ -8,12 +8,16 @@ describe('newAlbums.vue', () => {
 
   it('displays the albums', () => {
     overviewStore.state.recentlyAddedAlbums = h.factory('album', 6)
-    expect(h.render(Component, {
-      global: {
-        stubs: {
-          AlbumCard: h.stub('album-card'),
-        },
-      },
-    }).getAllByTestId('album-card')).toHaveLength(6)
+    expect(
+      h
+        .render(Component, {
+          global: {
+            stubs: {
+              AlbumCard: h.stub('album-card'),
+            },
+          },
+        })
+        .getAllByTestId('album-card'),
+    ).toHaveLength(6)
   })
 })

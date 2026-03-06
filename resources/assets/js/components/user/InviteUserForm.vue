@@ -64,7 +64,7 @@ const collectValidEmails = () => {
 
 const close = () => emit('close')
 
-const { data, isPristine, handleSubmit } = useForm<{ raw_emails: string, role: Role }>({
+const { data, isPristine, handleSubmit } = useForm<{ raw_emails: string; role: Role }>({
   initialValues: {
     raw_emails: '',
     role: 'user',
@@ -93,13 +93,20 @@ const { data, isPristine, handleSubmit } = useForm<{ raw_emails: string, role: R
   },
 })
 
-watch(() => data.raw_emails, val => {
-  emailEntries = val.trim().split('\n').map(email => email.trim()).filter(Boolean)
-  emailEntries = [...new Set(emailEntries)]
-})
+watch(
+  () => data.raw_emails,
+  val => {
+    emailEntries = val
+      .trim()
+      .split('\n')
+      .map(email => email.trim())
+      .filter(Boolean)
+    emailEntries = [...new Set(emailEntries)]
+  },
+)
 
 const maybeClose = async () => {
-  if (isPristine() || await showConfirmDialog('Discard all changes?')) {
+  if (isPristine() || (await showConfirmDialog('Discard all changes?'))) {
     close()
   }
 }

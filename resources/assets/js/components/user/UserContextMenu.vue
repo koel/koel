@@ -7,10 +7,7 @@
       <MenuItem v-if="user.is_prospect" @click="revokeInvite">Revoke Invitation</MenuItem>
       <MenuItem v-else @click="destroy">Delete</MenuItem>
     </template>
-    <MenuItem
-      v-if="allowEdit === false && allowDelete === false"
-      class="italic pointer-events-none"
-    >
+    <MenuItem v-if="allowEdit === false && allowDelete === false" class="italic pointer-events-none">
       No available actions
     </MenuItem>
   </ul>
@@ -40,17 +37,18 @@ const { currentUserCan } = usePolicies()
 
 const edit = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_USER_FORM', user.value))
 
-const destroy = () => trigger(async () => {
-  if (!await showConfirmDialog(`Unperson ${user!.value.name}?`)) {
-    return
-  }
+const destroy = () =>
+  trigger(async () => {
+    if (!(await showConfirmDialog(`Unperson ${user!.value.name}?`))) {
+      return
+    }
 
-  await userStore.destroy(user.value)
-  toastSuccess(`User "${user.value.name}" deleted.`)
-})
+    await userStore.destroy(user.value)
+    toastSuccess(`User "${user.value.name}" deleted.`)
+  })
 
 const revokeInvite = async () => {
-  if (!await showConfirmDialog(`Revoke the invite for ${user.value.email}?`)) {
+  if (!(await showConfirmDialog(`Revoke the invite for ${user.value.email}?`))) {
     return
   }
 
@@ -65,7 +63,7 @@ const revokeInvite = async () => {
 }
 
 onMounted(async () => {
-  allowEdit.value = user.value.is_prospect ? false : (await currentUserCan.editUser(user.value))
+  allowEdit.value = user.value.is_prospect ? false : await currentUserCan.editUser(user.value)
   allowDelete.value = await currentUserCan.deleteUser(user.value)
 })
 </script>

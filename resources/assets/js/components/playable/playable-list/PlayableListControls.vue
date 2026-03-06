@@ -56,12 +56,7 @@
           </Btn>
         </template>
 
-        <Btn
-          v-if="showAddToButton"
-          ref="addToButton"
-          success
-          @click.prevent.stop="toggleAddToMenu"
-        >
+        <Btn v-if="showAddToButton" ref="addToButton" success @click.prevent.stop="toggleAddToMenu">
           {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
         </Btn>
 
@@ -136,16 +131,20 @@ const registerKeyup = (event: KeyboardEvent) => event.key === 'Alt' && (altPress
 
 let usedFloatingUi: ReturnType<typeof useFloatingUi>
 
-watch(showAddToButton, async showingButton => {
-  await nextTick()
+watch(
+  showAddToButton,
+  async showingButton => {
+    await nextTick()
 
-  if (showingButton) {
-    usedFloatingUi = useFloatingUi(addToButton.value!.button!, addToMenu, { autoTrigger: false })
-    usedFloatingUi.setup()
-  } else {
-    usedFloatingUi?.teardown()
-  }
-}, { immediate: true })
+    if (showingButton) {
+      usedFloatingUi = useFloatingUi(addToButton.value!.button!, addToMenu, { autoTrigger: false })
+      usedFloatingUi.setup()
+    } else {
+      usedFloatingUi?.teardown()
+    }
+  },
+  { immediate: true },
+)
 
 const closeAddToMenu = () => {
   usedFloatingUi?.hide()

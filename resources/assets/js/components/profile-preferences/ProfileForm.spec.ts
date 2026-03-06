@@ -16,9 +16,11 @@ describe('profileForm.vue', () => {
     const updateMock = h.mock(authService, 'updateProfile')
     const alertMock = h.mock(MessageToasterStub.value, 'success')
 
-    renderComponent(h.factory('user', {
-      avatar: 'https://gravatar.com/foo',
-    }))
+    renderComponent(
+      h.factory('user', {
+        avatar: 'https://gravatar.com/foo',
+      }),
+    )
 
     await h.type(screen.getByTestId('currentPassword'), 'old-password')
     await h.type(screen.getByTestId('email'), 'koel@example.com')

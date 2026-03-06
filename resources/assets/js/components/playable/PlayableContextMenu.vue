@@ -193,38 +193,42 @@ const { currentUserCan } = usePolicies()
 const contentType = computed(() => getPlayableCollectionContentType(playables.value))
 const allowEdit = computed(() => contentType.value === 'songs' && currentUserCan.editSong(playables.value as Song[]))
 const onlyOneSelected = computed(() => playables.value.length === 1)
-const firstSongPlaying = computed(() => playables.value.length ? playables.value[0].playback_state === 'Playing' : false)
+const firstSongPlaying = computed(() =>
+  playables.value.length ? playables.value[0].playback_state === 'Playing' : false,
+)
 const normalPlaylists = computed(() => playlists.value.filter(({ is_smart }) => !is_smart))
 const canBeShared = computed(() => !isPlus.value || (isSong(playables.value[0]) && playables.value[0].is_public))
 
-const makePublic = () => trigger(async () => {
-  if (contentType.value !== 'songs') {
-    throw new Error('Only songs can be marked as public or private')
-  }
+const makePublic = () =>
+  trigger(async () => {
+    if (contentType.value !== 'songs') {
+      throw new Error('Only songs can be marked as public or private')
+    }
 
-  await playableStore.publicizeSongs(playables.value as Song[])
-  toastSuccess(`Unmarked ${pluralize(playables.value, 'song')} as private.`)
-})
+    await playableStore.publicizeSongs(playables.value as Song[])
+    toastSuccess(`Unmarked ${pluralize(playables.value, 'song')} as private.`)
+  })
 
-const makePrivate = () => trigger(async () => {
-  if (contentType.value !== 'songs') {
-    throw new Error('Only songs can be marked as public or private')
-  }
+const makePrivate = () =>
+  trigger(async () => {
+    if (contentType.value !== 'songs') {
+      throw new Error('Only songs can be marked as public or private')
+    }
 
-  const privatizedIds = await playableStore.privatizeSongs(playables.value as Song[])
+    const privatizedIds = await playableStore.privatizeSongs(playables.value as Song[])
 
-  if (!privatizedIds.length) {
-    toastError('Songs cannot be marked as private if they’re part of a collaborative playlist.')
-    return
-  }
+    if (!privatizedIds.length) {
+      toastError('Songs cannot be marked as private if they’re part of a collaborative playlist.')
+      return
+    }
 
-  if (privatizedIds.length < playables.value.length) {
-    toastWarning('Some songs cannot be marked as private as they’re part of a collaborative playlist.')
-    return
-  }
+    if (privatizedIds.length < playables.value.length) {
+      toastWarning('Some songs cannot be marked as private as they’re part of a collaborative playlist.')
+      return
+    }
 
-  toastSuccess(`Marked ${pluralize(playables.value, 'song')} as private.`)
-})
+    toastSuccess(`Marked ${pluralize(playables.value, 'song')} as private.`)
+  })
 
 const visibilityActions = computed(() => {
   if (contentType.value !== 'songs' || !allowEdit.value) {
@@ -235,10 +239,9 @@ const visibilityActions = computed(() => {
     return []
   }
 
-  const visibilities = Array.from(new Set((playables.value as Song[]).map(song => song.is_public
-    ? 'public'
-    : 'private',
-  )))
+  const visibilities = Array.from(
+    new Set((playables.value as Song[]).map(song => (song.is_public ? 'public' : 'private'))),
+  )
 
   if (visibilities.length === 2) {
     return [
@@ -269,31 +272,34 @@ const canBeRemovedFromPlaylist = computed(() => {
 const isQueueScreen = computed(() => isCurrentScreen('Queue'))
 const isFavoritesScreen = computed(() => isCurrentScreen('Favorites'))
 
-const doPlayback = () => trigger(async () => {
-  if (!playables.value.length) {
-    return
-  }
+const doPlayback = () =>
+  trigger(async () => {
+    if (!playables.value.length) {
+      return
+    }
 
-  switch (playables.value[0].playback_state) {
-    case 'Playing':
-      await playback().pause()
-      break
+    switch (playables.value[0].playback_state) {
+      case 'Playing':
+        await playback().pause()
+        break
 
-    case 'Paused':
-      await playback().resume()
-      break
+      case 'Paused':
+        await playback().resume()
+        break
 
-    default:
-      await playback().play(playables.value[0])
-      break
-  }
-})
+      default:
+        await playback().play(playables.value[0])
+        break
+    }
+  })
 
-const openEditForm = () => trigger(() =>
-  playables.value.length
-  && contentType.value === 'songs'
-  && eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', playables.value as Song[]),
-)
+const openEditForm = () =>
+  trigger(
+    () =>
+      playables.value.length &&
+      contentType.value === 'songs' &&
+      eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', playables.value as Song[]),
+  )
 
 const viewAlbum = (song: Song) => trigger(() => go(url('albums.show', { id: song.album_id })))
 const viewArtist = (song: Song) => trigger(() => go(url('artists.show', { id: song.artist_id })))
@@ -302,28 +308,31 @@ const viewEpisode = (episode: Episode) => trigger(() => go(url('episodes.show', 
 const visitEpisodeWebpage = (episode: Episode) => trigger(() => window.open(episode.episode_link!, '_blank'))
 const download = () => trigger(() => downloadService.fromPlayables(playables.value))
 
-const removePlayablesFromPlaylist = () => trigger(async () => {
-  const playlist = playlistStore.byId(getRouteParam('id'))
+const removePlayablesFromPlaylist = () =>
+  trigger(async () => {
+    const playlist = playlistStore.byId(getRouteParam('id'))
 
-  if (!playlist) {
-    return
-  }
+    if (!playlist) {
+      return
+    }
 
-  await removeFromPlaylist(playlist, playables.value)
-})
+    await removeFromPlaylist(playlist, playables.value)
+  })
 
-const copyUrl = () => trigger(async () => {
-  await copyText(playableStore.getShareableUrl(playables.value[0]))
-  toastSuccess('URL copied to clipboard.')
-})
+const copyUrl = () =>
+  trigger(async () => {
+    await copyText(playableStore.getShareableUrl(playables.value[0]))
+    toastSuccess('URL copied to clipboard.')
+  })
 
 const showEmbedModal = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_EMBED_FORM', playables.value[0]))
 
-const deleteFromFilesystem = () => trigger(async () => {
-  if (await showConfirmDialog('Delete selected playable(s) from the filesystem? This action is NOT reversible!')) {
-    await playableStore.deleteSongsFromFilesystem(playables.value as Song[])
-    toastSuccess(`Deleted ${pluralize(playables.value, 'song')} from the filesystem.`)
-    eventBus.emit('SONGS_DELETED', playables.value as Song[])
-  }
-})
+const deleteFromFilesystem = () =>
+  trigger(async () => {
+    if (await showConfirmDialog('Delete selected playable(s) from the filesystem? This action is NOT reversible!')) {
+      await playableStore.deleteSongsFromFilesystem(playables.value as Song[])
+      toastSuccess(`Deleted ${pluralize(playables.value, 'song')} from the filesystem.`)
+      eventBus.emit('SONGS_DELETED', playables.value as Song[])
+    }
+  })
 </script>

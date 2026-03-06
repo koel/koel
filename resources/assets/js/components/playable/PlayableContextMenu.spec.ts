@@ -15,7 +15,7 @@ import Component from './PlayableContextMenu.vue'
 
 describe('playableContextMenu.vue', () => {
   const h = createHarness({
-    beforeEach: () => queueStore.state.playables = [],
+    beforeEach: () => (queueStore.state.playables = []),
   })
 
   const renderComponent = async (playables?: MaybeArray<Playable>) => {
@@ -336,39 +336,41 @@ describe('playableContextMenu.vue', () => {
     expect(screen.queryByText('Unmark as Private')).toBeNull()
   })
 
-  it('makes songs private', async () => await h.withPlusEdition(async () => {
-    const user = h.factory.states('current')('user') as CurrentUser
-    const songs = h.factory('song', 5, {
-      is_public: true,
-      owner_id: user.id,
-    })
+  it('makes songs private', async () =>
+    await h.withPlusEdition(async () => {
+      const user = h.factory.states('current')('user') as CurrentUser
+      const songs = h.factory('song', 5, {
+        is_public: true,
+        owner_id: user.id,
+      })
 
-    h.actingAsUser(user)
+      h.actingAsUser(user)
 
-    await renderComponent(songs)
-    const privatizeMock = h.mock(playableStore, 'privatizeSongs').mockResolvedValue(songs.map(song => song.id))
+      await renderComponent(songs)
+      const privatizeMock = h.mock(playableStore, 'privatizeSongs').mockResolvedValue(songs.map(song => song.id))
 
-    await h.user.click(screen.getByText('Mark as Private'))
+      await h.user.click(screen.getByText('Mark as Private'))
 
-    expect(privatizeMock).toHaveBeenCalledWith(songs)
-  }))
+      expect(privatizeMock).toHaveBeenCalledWith(songs)
+    }))
 
-  it('makes songs public', async () => await h.withPlusEdition(async () => {
-    const user = h.factory.states('current')('user') as CurrentUser
-    const songs = h.factory('song', 5, {
-      is_public: false,
-      owner_id: user.id,
-    })
+  it('makes songs public', async () =>
+    await h.withPlusEdition(async () => {
+      const user = h.factory.states('current')('user') as CurrentUser
+      const songs = h.factory('song', 5, {
+        is_public: false,
+        owner_id: user.id,
+      })
 
-    h.actingAsUser(user)
+      h.actingAsUser(user)
 
-    await renderComponent(songs)
-    const publicizeMock = h.mock(playableStore, 'publicizeSongs').mockResolvedValue(songs.map(song => song.id))
+      await renderComponent(songs)
+      const publicizeMock = h.mock(playableStore, 'publicizeSongs').mockResolvedValue(songs.map(song => song.id))
 
-    await h.user.click(screen.getByText('Unmark as Private'))
+      await h.user.click(screen.getByText('Unmark as Private'))
 
-    expect(publicizeMock).toHaveBeenCalledWith(songs)
-  }))
+      expect(publicizeMock).toHaveBeenCalledWith(songs)
+    }))
 
   it('does not have an option to make songs public or private if current user is not owner', async () => {
     await h.withPlusEdition(async () => {
@@ -391,13 +393,17 @@ describe('playableContextMenu.vue', () => {
   it('has both options to make public and private if songs have mixed visibilities', async () => {
     await h.withPlusEdition(async () => {
       const owner = h.factory.states('current')('user') as CurrentUser
-      const songs = h.factory('song', 2, {
-        is_public: false,
-        owner_id: owner.id,
-      }).concat(...h.factory('song', 3, {
-        is_public: true,
-        owner_id: owner.id,
-      }))
+      const songs = h
+        .factory('song', 2, {
+          is_public: false,
+          owner_id: owner.id,
+        })
+        .concat(
+          ...h.factory('song', 3, {
+            is_public: true,
+            owner_id: owner.id,
+          }),
+        )
 
       h.actingAsUser(owner)
       await renderComponent(songs)

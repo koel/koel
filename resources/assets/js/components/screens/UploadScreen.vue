@@ -49,7 +49,7 @@
               name="file[]"
               type="file"
               @change="onFileInputChange"
-            >
+            />
           </a>
         </span>
       </ScreenEmptyState>

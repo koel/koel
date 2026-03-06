@@ -6,13 +6,7 @@
 
     <main>
       <FormRow>
-        <TextInput
-          v-model="data.name"
-          v-koel-focus
-          name="name"
-          placeholder="Folder name"
-          required
-        />
+        <TextInput v-model="data.name" v-koel-focus name="name" placeholder="Folder name" required />
       </FormRow>
     </main>
 
@@ -52,7 +46,7 @@ const { data, isPristine, handleSubmit } = useForm<Pick<PlaylistFolder, 'name'>>
 })
 
 const maybeClose = async () => {
-  if (isPristine() || await showConfirmDialog('Discard all changes?')) {
+  if (isPristine() || (await showConfirmDialog('Discard all changes?'))) {
     close()
   }
 }

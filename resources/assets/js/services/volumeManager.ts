@@ -5,31 +5,31 @@ export class VolumeManager {
   private input!: HTMLInputElement
   private originalVolume = 0
 
-  public init (input: HTMLInputElement, initialVolume: number) {
+  public init(input: HTMLInputElement, initialVolume: number) {
     this.input = input
     this.originalVolume = initialVolume
     this.set(initialVolume)
   }
 
-  public get () {
+  public get() {
     return this.volume.value
   }
 
-  public set (volume: number) {
+  public set(volume: number) {
     this.volume.value = volume
     this.input.value = String(volume)
   }
 
-  public mute () {
+  public mute() {
     this.originalVolume = this.get()
     this.set(0)
   }
 
-  public unmute () {
+  public unmute() {
     this.set(this.originalVolume)
   }
 
-  public toggleMute () {
+  public toggleMute() {
     if (this.get() === 0) {
       this.unmute()
     } else {
@@ -37,11 +37,11 @@ export class VolumeManager {
     }
   }
 
-  public increase (amount = 1) {
+  public increase(amount = 1) {
     this.set(Math.min(10, this.get() + amount))
   }
 
-  public decrease (amount = 1) {
+  public decrease(amount = 1) {
     this.set(Math.max(this.get() - amount, 0))
   }
 }

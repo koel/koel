@@ -8,8 +8,7 @@
       type="button"
       @click="scrollToTop"
     >
-      <Icon :icon="faCircleUp" />&nbsp;
-      Top
+      <Icon :icon="faCircleUp" />&nbsp; Top
     </button>
   </Transition>
 </template>

@@ -49,9 +49,7 @@ const state = reactive<RemoteState>({
 provide('state', state)
 
 const showAlbumArtOverlay = computed(() => {
-  return preferenceStore.show_album_art_overlay
-    && state.streamable
-    && isSong(state.streamable)
+  return preferenceStore.show_album_art_overlay && state.streamable && isSong(state.streamable)
 })
 
 const inStandaloneMode = ref(
@@ -66,8 +64,8 @@ const init = async () => {
     socketService
       .listen('SOCKET_STREAMABLE', playable => (state.streamable = playable))
       .listen('SOCKET_PLAYBACK_STOPPED', () => state.streamable && (state.streamable.playback_state = 'Stopped'))
-      .listen('SOCKET_VOLUME_CHANGED', (volume: number) => state.volume = volume)
-      .listen('SOCKET_STATUS', (data: { streamable?: Streamable, volume: number }) => {
+      .listen('SOCKET_VOLUME_CHANGED', (volume: number) => (state.volume = volume))
+      .listen('SOCKET_STATUS', (data: { streamable?: Streamable; volume: number }) => {
         state.volume = data.volume || 0
         state.streamable = data.streamable || null
         connected.value = true

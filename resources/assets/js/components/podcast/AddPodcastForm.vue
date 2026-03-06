@@ -53,13 +53,14 @@ const { loading, handleSubmit, data, isPristine } = useForm<Pick<Podcast, 'url'>
     close()
     toastSuccess(`Podcast "${podcast.title}" added.`)
   },
-  onError: error => useErrorHandler('dialog').handleHttpError(error, {
-    409: 'You have already subscribed to this podcast.',
-  }),
+  onError: error =>
+    useErrorHandler('dialog').handleHttpError(error, {
+      409: 'You have already subscribed to this podcast.',
+    }),
 })
 
 const maybeClose = async () => {
-  if (isPristine() || await showConfirmDialog('Discard all changes?')) {
+  if (isPristine() || (await showConfirmDialog('Discard all changes?'))) {
     close()
   }
 }

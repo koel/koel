@@ -128,11 +128,8 @@ const removeSelected = async () => {
 
 const onPressEnter = () => selectedPlayables.value.length && playback().play(selectedPlayables.value[0])
 
-const onReorder = (target: Playable, placement: Placement) => queueStore.move(
-  selectedPlayables.value,
-  target,
-  placement,
-)
+const onReorder = (target: Playable, placement: Placement) =>
+  queueStore.move(selectedPlayables.value, target, placement)
 
 onScreenActivated('Queue', async () => {
   if (!cache.get('song-to-queue')) {

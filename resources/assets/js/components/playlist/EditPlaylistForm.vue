@@ -8,13 +8,7 @@
       <div class="grid grid-cols-2 gap-4">
         <FormRow>
           <template #label>Name *</template>
-          <TextInput
-            v-model="data.name"
-            v-koel-focus
-            name="name"
-            placeholder="Playlist name"
-            required
-          />
+          <TextInput v-model="data.name" v-koel-focus name="name" placeholder="Playlist name" required />
         </FormRow>
         <FormRow>
           <template #label>Folder</template>
@@ -85,7 +79,7 @@ const { data, isPristine, handleSubmit } = useForm<UpdatePlaylistData>({
 })
 
 const maybeClose = async () => {
-  if (isPristine() || await showConfirmDialog('Discard all changes?')) {
+  if (isPristine() || (await showConfirmDialog('Discard all changes?'))) {
     close()
   }
 }

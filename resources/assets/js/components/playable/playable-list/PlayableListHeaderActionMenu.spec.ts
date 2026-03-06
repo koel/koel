@@ -11,8 +11,8 @@ describe('playableListHeaderActionMenu.vue', () => {
     h.render(Component)
 
     ;['Title', 'Album', 'Artist', 'Track & Disc', 'Time', 'Date Added'].forEach(text => screen.getByText(text))
-    ;['Podcast', 'Album or Podcast', 'Author', 'Artist or Author'].forEach(
-      text => expect(screen.queryByText(text)).toBeNull(),
+    ;['Podcast', 'Album or Podcast', 'Author', 'Artist or Author'].forEach(text =>
+      expect(screen.queryByText(text)).toBeNull(),
     )
   })
 
@@ -30,8 +30,8 @@ describe('playableListHeaderActionMenu.vue', () => {
     })
 
     ;['Title', 'Podcast', 'Author', 'Time', 'Date Added'].forEach(text => screen.getByText(text))
-    ;['Album', 'Album or Podcast', 'Artist', 'Artist or Author'].forEach(
-      text => expect(screen.queryByText(text)).toBeNull(),
+    ;['Album', 'Album or Podcast', 'Artist', 'Artist or Author'].forEach(text =>
+      expect(screen.queryByText(text)).toBeNull(),
     )
   })
 
@@ -74,9 +74,12 @@ describe('playableListHeaderActionMenu.vue', () => {
 
     await h.user.click(screen.getByTitle('Click to toggle the Album column'))
 
-    expect(useLocalStorage().get('playable-list-columns')).toEqual(
-      <PlayableListColumnName[]>['track', 'title', 'artist', 'duration'],
-    )
+    expect(useLocalStorage().get('playable-list-columns')).toEqual(<PlayableListColumnName[]>[
+      'track',
+      'title',
+      'artist',
+      'duration',
+    ])
   })
 
   it('gets the column visibility from local storage', async () => {
@@ -86,16 +89,20 @@ describe('playableListHeaderActionMenu.vue', () => {
     useLocalStorage().set('playable-list-columns', ['track'])
     h.render(Component)
 
-    ;[{
-      title: 'Track & Disc',
-      checked: true,
-    }, {
-      title: 'Album',
-      checked: false,
-    }, {
-      title: 'Time',
-      checked: true,
-    }].forEach(({ title, checked }) => {
+    ;[
+      {
+        title: 'Track & Disc',
+        checked: true,
+      },
+      {
+        title: 'Album',
+        checked: false,
+      },
+      {
+        title: 'Time',
+        checked: true,
+      },
+    ].forEach(({ title, checked }) => {
       const el: HTMLInputElement = screen.getByTitle(`Click to toggle the ${title} column`)
       expect(el.checked).toBe(checked)
     })

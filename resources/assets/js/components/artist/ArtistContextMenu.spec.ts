@@ -16,10 +16,12 @@ describe('artistContextMenu.vue', () => {
   const renderComponent = async (artist?: Artist) => {
     h.mock(acl, 'checkResourcePermission').mockReturnValue(true)
 
-    artist = artist || h.factory('artist', {
-      name: 'Accept',
-      favorite: false,
-    })
+    artist =
+      artist ||
+      h.factory('artist', {
+        name: 'Accept',
+        favorite: false,
+      })
 
     const rendered = h.render(Component, {
       props: {

@@ -122,13 +122,17 @@ const initPlaybackRelatedServices = async () => {
   }
 }
 
-watch(preferenceStore.initialized, async initialized => {
-  if (!initialized) {
-    return
-  }
+watch(
+  preferenceStore.initialized,
+  async initialized => {
+    if (!initialized) {
+      return
+    }
 
-  await initPlaybackRelatedServices()
-}, { immediate: true })
+    await initPlaybackRelatedServices()
+  },
+  { immediate: true },
+)
 
 const setupControlHidingTimer = () => {
   hideControlsTimeout = window.setTimeout(() => root.value?.classList.add('hide-controls'), 5000)
@@ -153,8 +157,7 @@ watch(isFullscreen, fullscreen => {
   }
 })
 
-eventBus.on('FULLSCREEN_TOGGLE', () => toggleFullscreen())
-  .on('UP_NEXT', next => (nextPlayable.value = next))
+eventBus.on('FULLSCREEN_TOGGLE', () => toggleFullscreen()).on('UP_NEXT', next => (nextPlayable.value = next))
 </script>
 
 <style lang="postcss" scoped>

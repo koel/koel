@@ -1,8 +1,7 @@
 <template>
   <article
     :class="{ me: isCurrentUser }"
-    class="apply p-4 flex items-center rounded-md bg-k-fg-5 border border-k-fg-10
-    gap-3 transition-[border-color] duration-200 ease-in-out hover:border-k-fg-20"
+    class="apply p-4 flex items-center rounded-md bg-k-fg-5 border border-k-fg-10 gap-3 transition-[border-color] duration-200 ease-in-out hover:border-k-fg-20"
   >
     <UserAvatar :user="user" width="48" />
 
@@ -24,7 +23,7 @@
           height="14"
           title="Google SSO"
           width="14"
-        >
+        />
       </h3>
 
       <p>{{ user.email }}</p>
@@ -62,7 +61,8 @@ const { currentUser } = useAuthorization()
 const isCurrentUser = computed(() => user.value.id === currentUser.value.id)
 const hasAdminPrivileges = computed(() => user.value.role === 'admin' || user.value.role === 'manager')
 
-const requestContextMenu = (event: MouseEvent) => openContextMenu<'USER'>(UserContextMenu, event, {
-  user: user.value,
-})
+const requestContextMenu = (event: MouseEvent) =>
+  openContextMenu<'USER'>(UserContextMenu, event, {
+    user: user.value,
+  })
 </script>

@@ -74,20 +74,24 @@ describe('albumListScreen.vue', () => {
 
     await h.user.click(screen.getByRole('button', { name: 'Show favorites only' }))
 
-    await waitFor(() => expect(paginateMock).toHaveBeenNthCalledWith(2, {
-      favorites_only: true,
-      page: 1,
-      order: 'asc',
-      sort: 'name',
-    }))
+    await waitFor(() =>
+      expect(paginateMock).toHaveBeenNthCalledWith(2, {
+        favorites_only: true,
+        page: 1,
+        order: 'asc',
+        sort: 'name',
+      }),
+    )
 
     await h.user.click(screen.getByRole('button', { name: 'Show all' }))
 
-    await waitFor(() => expect(paginateMock).toHaveBeenNthCalledWith(3, {
-      favorites_only: false,
-      page: 1,
-      order: 'asc',
-      sort: 'name',
-    }))
+    await waitFor(() =>
+      expect(paginateMock).toHaveBeenNthCalledWith(3, {
+        favorites_only: false,
+        page: 1,
+        order: 'asc',
+        sort: 'name',
+      }),
+    )
   })
 })

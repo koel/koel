@@ -56,9 +56,11 @@ const isFavoriteList = (list: PlaylistLike): list is FavoriteList => list.name =
 const isRecentlyPlayedList = (list: PlaylistLike): list is RecentlyPlayedList => list.name === 'Recently Played'
 
 const active = computed(() => {
-  return (isCurrentScreen('Favorites') && isFavoriteList(list.value))
-    || (isCurrentScreen('RecentlyPlayed') && isRecentlyPlayedList(list.value))
-    || (isCurrentScreen('Playlist') && (list.value as Playlist).id === getRouteParam('id'))
+  return (
+    (isCurrentScreen('Favorites') && isFavoriteList(list.value)) ||
+    (isCurrentScreen('RecentlyPlayed') && isRecentlyPlayedList(list.value)) ||
+    (isCurrentScreen('Playlist') && (list.value as Playlist).id === getRouteParam('id'))
+  )
 })
 
 const href = computed(() => {

@@ -52,8 +52,7 @@
       No favorites yet.
       <span class="secondary block">
         Click the&nbsp;
-        <Icon :icon="faStar" />&nbsp;
-        icon to mark a song as favorite.
+        <Icon :icon="faStar" />&nbsp; icon to mark a song as favorite.
       </span>
     </ScreenEmptyState>
   </ScreenBase>

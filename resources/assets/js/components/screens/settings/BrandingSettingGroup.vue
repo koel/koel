@@ -42,12 +42,7 @@ import BrandingImageField from '@/components/screens/settings/BrandingImageField
 const props = defineProps<{ currentBranding: Branding }>()
 
 const { showConfirmDialog } = useDialogBox()
-const {
-  koelBirdCover,
-  koelBirdLogo,
-  isKoelBirdCover,
-  isKoelBirdLogo,
-} = useBranding()
+const { koelBirdCover, koelBirdLogo, isKoelBirdCover, isKoelBirdLogo } = useBranding()
 
 const { data, loading, handleSubmit } = useForm<Branding>({
   initialValues: { ...props.currentBranding },

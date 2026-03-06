@@ -47,16 +47,15 @@ describe('uploadItem.vue', () => {
     expect(mock).toHaveBeenCalled()
   })
 
-  it.each<[UploadStatus]>([
-    ['Uploaded'],
-    ['Errored'],
-    ['Canceled'],
-  ])('allows removal if not uploading', async status => {
-    const mock = h.mock(uploadService, 'remove')
-    renderComponent(status)
+  it.each<[UploadStatus]>([['Uploaded'], ['Errored'], ['Canceled']])(
+    'allows removal if not uploading',
+    async status => {
+      const mock = h.mock(uploadService, 'remove')
+      renderComponent(status)
 
-    await h.user.click(screen.getByRole('button', { name: 'Remove' }))
+      await h.user.click(screen.getByRole('button', { name: 'Remove' }))
 
-    expect(mock).toHaveBeenCalled()
-  })
+      expect(mock).toHaveBeenCalled()
+    },
+  )
 })

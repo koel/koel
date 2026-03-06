@@ -26,8 +26,12 @@ const { currentUser } = useAuthorization()
  * Request for notification permission if it's not provided and the user is OK with notifications.
  */
 const requestNotificationPermission = async () => {
-  if (preferences.show_now_playing_notification && window.Notification && window.Notification.permission !== 'granted') {
-    preferences.show_now_playing_notification = await window.Notification.requestPermission() === 'denied'
+  if (
+    preferences.show_now_playing_notification &&
+    window.Notification &&
+    window.Notification.permission !== 'granted'
+  ) {
+    preferences.show_now_playing_notification = (await window.Notification.requestPermission()) === 'denied'
   }
 }
 
@@ -47,7 +51,7 @@ onMounted(async () => {
     })
 
     broadcastSubscriber.init(currentUser.value.id)
-    await socketService.init() && socketListener.listen()
+    ;(await socketService.init()) && socketListener.listen()
 
     emits('success')
   } catch (error: unknown) {

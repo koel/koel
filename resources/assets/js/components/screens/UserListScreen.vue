@@ -59,10 +59,12 @@ const { currentUser } = useAuthorization()
 
 const allUsers = toRef(userStore.state, 'users')
 
-const users = computed(() => allUsers
-  .value
-  .filter(({ is_prospect }) => !is_prospect)
-  .sort((a, b) => a.id === currentUser.value.id ? -1 : b.id === currentUser.value.id ? 1 : a.name.localeCompare(b.name)),
+const users = computed(() =>
+  allUsers.value
+    .filter(({ is_prospect }) => !is_prospect)
+    .sort((a, b) =>
+      a.id === currentUser.value.id ? -1 : b.id === currentUser.value.id ? 1 : a.name.localeCompare(b.name),
+    ),
 )
 
 const prospects = computed(() => allUsers.value.filter(({ is_prospect }) => is_prospect))

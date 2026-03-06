@@ -8,7 +8,8 @@
         @toggle="toggleFavorite"
       />
 
-      <button v-else type="button" /> <!-- a placeholder to maintain the asymmetric layout -->
+      <button v-else type="button" />
+      <!-- a placeholder to maintain the asymmetric layout -->
 
       <FooterBtn
         :class="isRadio && 'pointer-events-none opacity-30 cursor-not-allowed'"
@@ -53,8 +54,8 @@ const streamable = requireInjection(CurrentStreamableKey, ref())
 
 const isRadio = computed(() => streamable.value?.type === 'radio-stations')
 
-const playPrev = async () => isRadio.value || await playback().playPrev()
-const playNext = async () => isRadio.value || await playback().playNext()
+const playPrev = async () => isRadio.value || (await playback().playPrev())
+const playNext = async () => isRadio.value || (await playback().playNext())
 
 const toggleFavorite = () => {
   if (isRadio.value) {

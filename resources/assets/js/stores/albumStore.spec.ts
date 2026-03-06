@@ -87,12 +87,14 @@ describe('albumStore', () => {
       },
     })
 
-    expect(await albumStore.paginate({
-      favorites_only: false,
-      sort: 'name',
-      order: 'asc',
-      page: 1,
-    })).toEqual(2)
+    expect(
+      await albumStore.paginate({
+        favorites_only: false,
+        sort: 'name',
+        order: 'asc',
+        page: 1,
+      }),
+    ).toEqual(2)
 
     expect(albumStore.state.albums).toEqual(albums)
     expect(albumStore.vault.size).toBe(3)
@@ -123,10 +125,12 @@ describe('albumStore', () => {
     const album = h.factory('album', { favorite: false })
     albumStore.syncWithVault(album)
 
-    const postMock = h.mock(http, 'post').mockResolvedValueOnce(h.factory('favorite', {
-      favoriteable_type: 'album',
-      favoriteable_id: album.id,
-    }))
+    const postMock = h.mock(http, 'post').mockResolvedValueOnce(
+      h.factory('favorite', {
+        favoriteable_type: 'album',
+        favoriteable_id: album.id,
+      }),
+    )
 
     await albumStore.toggleFavorite(album)
 

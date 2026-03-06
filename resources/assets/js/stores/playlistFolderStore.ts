@@ -5,19 +5,19 @@ import { differenceBy, orderBy } from 'lodash'
 import { playlistStore } from '@/stores/playlistStore'
 
 export const playlistFolderStore = {
-  state: reactive<{ folders: PlaylistFolder [] }>({
+  state: reactive<{ folders: PlaylistFolder[] }>({
     folders: [],
   }),
 
-  init (folders: PlaylistFolder[]) {
+  init(folders: PlaylistFolder[]) {
     this.state.folders = this.sort(reactive(folders))
   },
 
-  byId (id: PlaylistFolder['id']) {
+  byId(id: PlaylistFolder['id']) {
     return this.state.folders.find(folder => folder.id === id)
   },
 
-  async store (name: PlaylistFolder['name']) {
+  async store(name: PlaylistFolder['name']) {
     const folder = reactive(await http.post<PlaylistFolder>('playlist-folders', { name }))
 
     this.state.folders.push(folder)
@@ -26,25 +26,25 @@ export const playlistFolderStore = {
     return folder
   },
 
-  async delete (folder: PlaylistFolder) {
+  async delete(folder: PlaylistFolder) {
     await http.delete(`playlist-folders/${folder.id}`)
     this.state.folders = differenceBy(this.state.folders, [folder], 'id')
     playlistStore.byFolder(folder).forEach(playlist => (playlist.folder_id = null))
   },
 
-  async rename (folder: PlaylistFolder, name: PlaylistFolder['name']) {
+  async rename(folder: PlaylistFolder, name: PlaylistFolder['name']) {
     await http.put(`playlist-folders/${folder.id}`, { name })
     this.byId(folder.id)!.name = name
   },
 
-  async addPlaylistToFolder (folder: PlaylistFolder, playlist: Playlist) {
+  async addPlaylistToFolder(folder: PlaylistFolder, playlist: Playlist) {
     // Update the folder ID right away, so that the UI can be refreshed immediately.
     // The actual HTTP request will be done in the background.
     playlist.folder_id = folder.id
     await http.post(`playlist-folders/${folder.id}/playlists`, { playlists: [playlist.id] })
   },
 
-  async removePlaylistFromFolder (folder: PlaylistFolder, playlist: Playlist) {
+  async removePlaylistFromFolder(folder: PlaylistFolder, playlist: Playlist) {
     // Update the folder ID right away, so that the UI can be updated immediately.
     // The actual update will be done in the background.
     playlist.folder_id = null

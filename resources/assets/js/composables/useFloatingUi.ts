@@ -15,7 +15,7 @@ export const useFloatingUi = (
   floating: HTMLElement | Ref<HTMLElement | undefined>,
   config: Partial<Config> = {},
 ) => {
-  const extractRef = <T extends HTMLElement | Ref<HTMLElement | undefined>> (ref: T): HTMLElement => {
+  const extractRef = <T extends HTMLElement | Ref<HTMLElement | undefined>>(ref: T): HTMLElement => {
     if (isRef(ref) && !ref.value) {
       throw new TypeError('Reference element is not defined')
     }
@@ -23,11 +23,14 @@ export const useFloatingUi = (
     return isRef(ref) ? ref.value! : ref
   }
 
-  const mergedConfig: Config = Object.assign({
-    placement: 'bottom',
-    useArrow: true,
-    autoTrigger: true,
-  }, config)
+  const mergedConfig: Config = Object.assign(
+    {
+      placement: 'bottom',
+      useArrow: true,
+      autoTrigger: true,
+    },
+    config,
+  )
 
   let _cleanUp: Closure
   let _show: Closure
@@ -40,10 +43,7 @@ export const useFloatingUi = (
 
     floatingElement.style.display = 'none'
 
-    const middleware = [
-      flip(),
-      offset(6),
-    ]
+    const middleware = [flip(), offset(6)]
 
     let arrow: HTMLElement
 
@@ -52,16 +52,24 @@ export const useFloatingUi = (
       arrow.className = 'arrow'
       floatingElement.appendChild(arrow)
 
-      middleware.push(arrowMiddleware({
-        element: arrow,
-        padding: 6,
-      }))
+      middleware.push(
+        arrowMiddleware({
+          element: arrow,
+          padding: 6,
+        }),
+      )
     }
 
-    const update = async () => await updateFloatingUi(referenceElement, floatingElement, {
-      placement: mergedConfig.placement,
-      middleware,
-    }, arrow)
+    const update = async () =>
+      await updateFloatingUi(
+        referenceElement,
+        floatingElement,
+        {
+          placement: mergedConfig.placement,
+          middleware,
+        },
+        arrow,
+      )
 
     _cleanUp = autoUpdate(referenceElement, floatingElement, update)
 
@@ -71,7 +79,7 @@ export const useFloatingUi = (
     }
 
     _hide = () => (floatingElement.style.display = 'none')
-    _trigger = () => floatingElement.style.display === 'none' ? _show() : _hide()
+    _trigger = () => (floatingElement.style.display === 'none' ? _show() : _hide())
 
     if (mergedConfig.autoTrigger) {
       referenceElement.addEventListener('mouseenter', _show)

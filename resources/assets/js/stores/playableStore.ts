@@ -56,14 +56,14 @@ export interface GenreSongListPaginateParams extends Record<string, any> {
 export const playableStore = {
   vault: new Map<Playable['id'], Playable>(),
 
-  state: reactive<{ playables: Playable[], favorites: Playable[] }>({
+  state: reactive<{ playables: Playable[]; favorites: Playable[] }>({
     playables: [],
     favorites: [],
   }),
 
   getFormattedLength: (playables: MaybeArray<Playable>) => secondsToHumanReadable(sumBy(arrayify(playables), 'length')),
 
-  byId (id: Playable['id']) {
+  byId(id: Playable['id']) {
     const playable = this.vault.get(id)
 
     if (!playable) {
@@ -77,35 +77,38 @@ export const playableStore = {
     return playable
   },
 
-  byIds<T extends Playable = Playable> (ids: T['id'][]) {
+  byIds<T extends Playable = Playable>(ids: T['id'][]) {
     const playables: Playable[] = []
     ids.forEach(id => use(this.byId(id), song => playables.push(song!)))
     return playables as T[]
   },
 
-  byAlbum (album: Album) {
-    return Array.from(this.vault.values())
-      .filter(playable => isSong(playable) && playable.album_id === album.id) as Song[]
+  byAlbum(album: Album) {
+    return Array.from(this.vault.values()).filter(
+      playable => isSong(playable) && playable.album_id === album.id,
+    ) as Song[]
   },
 
-  syncAlbumProperties (album: Album) {
+  syncAlbumProperties(album: Album) {
     this.byAlbum(album).forEach(a => {
       a.album_cover = album.cover
       a.album_name = album.name
     })
   },
 
-  byArtist (artist: Artist) {
-    return Array.from(this.vault.values())
-      .filter(playable => isSong(playable) && playable.artist_id === artist.id) as Song[]
+  byArtist(artist: Artist) {
+    return Array.from(this.vault.values()).filter(
+      playable => isSong(playable) && playable.artist_id === artist.id,
+    ) as Song[]
   },
 
-  byAlbumArtist (artist: Artist) {
-    return Array.from(this.vault.values())
-      .filter(playable => isSong(playable) && playable.album_artist_id === artist.id) as Song[]
+  byAlbumArtist(artist: Artist) {
+    return Array.from(this.vault.values()).filter(
+      playable => isSong(playable) && playable.album_artist_id === artist.id,
+    ) as Song[]
   },
 
-  syncArtistProperties (artist: Artist) {
+  syncArtistProperties(artist: Artist) {
     this.byArtist(artist).forEach(a => {
       a.artist_name = artist.name
     })
@@ -115,7 +118,7 @@ export const playableStore = {
     })
   },
 
-  async resolve (id: Playable['id']) {
+  async resolve(id: Playable['id']) {
     let playable = this.byId(id)
 
     if (!playable) {
@@ -161,7 +164,7 @@ export const playableStore = {
     })
   },
 
-  async updateSongs (songsToUpdate: Song[], data: SongUpdateData) {
+  async updateSongs(songsToUpdate: Song[], data: SongUpdateData) {
     if (songsToUpdate.some(song => !isSong(song))) {
       throw new Error('Only songs can be updated.')
     }
@@ -190,7 +193,7 @@ export const playableStore = {
 
   getShareableUrl: (song: Playable) => `${window.BASE_URL}#/songs/${song.id}`,
 
-  syncWithVault (playables: MaybeArray<Playable>) {
+  syncWithVault(playables: MaybeArray<Playable>) {
     return arrayify(playables).map(playable => {
       let local = this.byId(playable.id)
 
@@ -208,57 +211,63 @@ export const playableStore = {
   },
 
   watchPlayCount: (playable: Playable) => {
-    watch(() => playable.play_count, () => overviewStore.refreshPlayStats())
+    watch(
+      () => playable.play_count,
+      () => overviewStore.refreshPlayStats(),
+    )
   },
 
   ensureNotDeleted: (songs: MaybeArray<Song>) => arrayify(songs).filter(({ deleted }) => !deleted),
 
-  async fetchSongsForAlbum (album: Album | Album['id']) {
+  async fetchSongsForAlbum(album: Album | Album['id']) {
     const id = typeof album === 'string' ? album : album.id
 
-    return this.ensureNotDeleted(await cache.remember(
-      [`album.songs`, id],
-      async () => this.syncWithVault(await http.get<Song[]>(`albums/${id}/songs`)),
-    ) as Song[])
+    return this.ensureNotDeleted(
+      (await cache.remember([`album.songs`, id], async () =>
+        this.syncWithVault(await http.get<Song[]>(`albums/${id}/songs`)),
+      )) as Song[],
+    )
   },
 
-  async fetchSongsForArtist (artist: Artist | Artist['id']) {
+  async fetchSongsForArtist(artist: Artist | Artist['id']) {
     const id = typeof artist === 'string' ? artist : artist.id
 
-    return this.ensureNotDeleted(await cache.remember(
-      [`artist.songs`, id],
-      async () => this.syncWithVault(await http.get<Song[]>(`artists/${id}/songs`)),
-    ) as Song[])
+    return this.ensureNotDeleted(
+      (await cache.remember([`artist.songs`, id], async () =>
+        this.syncWithVault(await http.get<Song[]>(`artists/${id}/songs`)),
+      )) as Song[],
+    )
   },
 
-  async fetchForPlaylist (playlist: Playlist | Playlist['id'], refresh = false) {
+  async fetchForPlaylist(playlist: Playlist | Playlist['id'], refresh = false) {
     const id = typeof playlist === 'string' ? playlist : playlist.id
 
     if (refresh) {
       cache.remove(['playlist.songs', id])
     }
 
-    const songs = this.ensureNotDeleted(await cache.remember(
-      [`playlist.songs`, id],
-      async () => this.syncWithVault(await http.get<Song[]>(`playlists/${id}/songs`)),
-    ) as Song[])
+    const songs = this.ensureNotDeleted(
+      (await cache.remember([`playlist.songs`, id], async () =>
+        this.syncWithVault(await http.get<Song[]>(`playlists/${id}/songs`)),
+      )) as Song[],
+    )
 
     playlistStore.byId(id)!.playables = songs
 
     return songs
   },
 
-  async fetchForPlaylistFolder (folder: PlaylistFolder) {
+  async fetchForPlaylistFolder(folder: PlaylistFolder) {
     const playables: Playable[] = []
 
     for await (const playlist of playlistStore.byFolder(folder)) {
-      playables.push(...await this.fetchForPlaylist(playlist))
+      playables.push(...(await this.fetchForPlaylist(playlist)))
     }
 
     return uniqBy(playables, 'id')
   },
 
-  async fetchEpisodesInPodcast (podcast: Podcast | Podcast['id'], refresh = false) {
+  async fetchEpisodesInPodcast(podcast: Podcast | Podcast['id'], refresh = false) {
     const id = typeof podcast === 'string' ? podcast : podcast.id
 
     if (refresh) {
@@ -267,13 +276,14 @@ export const playableStore = {
 
     return await cache.remember(
       [`podcast.episodes`, id],
-      async () => this.syncWithVault(
-        await http.get<Episode[]>(`podcasts/${id}/episodes${refresh ? '?refresh=true' : ''}`),
-      ) as Episode[],
+      async () =>
+        this.syncWithVault(
+          await http.get<Episode[]>(`podcasts/${id}/episodes${refresh ? '?refresh=true' : ''}`),
+        ) as Episode[],
     )
   },
 
-  async paginateSongsByGenre (genre: Genre | Genre['id'], params: GenreSongListPaginateParams) {
+  async paginateSongsByGenre(genre: Genre | Genre['id'], params: GenreSongListPaginateParams) {
     const id = typeof genre === 'string' ? genre : genre.id
 
     const resource = await http.get<PaginatorResource<Song>>(
@@ -288,7 +298,7 @@ export const playableStore = {
     }
   },
 
-  async fetchSongsByGenre (genre: Genre | Genre['id'], random = false, limit = 500) {
+  async fetchSongsByGenre(genre: Genre | Genre['id'], random = false, limit = 500) {
     const id = typeof genre === 'string' ? genre : genre.id
 
     const params = new URLSearchParams({
@@ -299,19 +309,19 @@ export const playableStore = {
     return this.syncWithVault(await http.get<Song[]>(`genres/${id}/songs/queue?${params}`))
   },
 
-  async paginateSongs (params: SongListPaginateParams) {
+  async paginateSongs(params: SongListPaginateParams) {
     const resource = await http.get<PaginatorResource<Playable>>(`songs?${new URLSearchParams(params).toString()}`)
     this.state.playables = unionBy(this.state.playables, this.syncWithVault(resource.data), 'id')
 
     return resource.links.next ? ++resource.meta.current_page : null
   },
 
-  getMostPlayedSongs (count: number) {
+  getMostPlayedSongs(count: number) {
     return take(
       orderBy(
-        Array
-          .from(this.vault.values())
-          .filter(playable => isSong(playable) && !playable.deleted && playable.play_count > 0),
+        Array.from(this.vault.values()).filter(
+          playable => isSong(playable) && !playable.deleted && playable.play_count > 0,
+        ),
         'play_count',
         'desc',
       ),
@@ -319,7 +329,7 @@ export const playableStore = {
     ) as Song[]
   },
 
-  async deleteSongsFromFilesystem (songs: Song[]) {
+  async deleteSongsFromFilesystem(songs: Song[]) {
     const ids = songs.map(song => {
       // Whenever a vault sync is requested (e.g., upon playlist/album/artist fetching)
       // songs marked as "deleted" will be excluded.
@@ -330,7 +340,7 @@ export const playableStore = {
     await http.delete('songs', { songs: ids })
   },
 
-  async publicizeSongs (songs: Song[]) {
+  async publicizeSongs(songs: Song[]) {
     if (songs.some(song => !isSong(song))) {
       throw new Error('This action is only supported for songs.')
     }
@@ -342,7 +352,7 @@ export const playableStore = {
     songs.forEach(song => (song.is_public = true))
   },
 
-  async privatizeSongs (songs: Song[]) {
+  async privatizeSongs(songs: Song[]) {
     if (songs.some(song => !isSong(song))) {
       throw new Error('This action is only supported for songs.')
     }
@@ -359,7 +369,7 @@ export const playableStore = {
     return privatizedIds
   },
 
-  async resolveSongsFromMediaReferences (data: MediaReference[], shuffle = false) {
+  async resolveSongsFromMediaReferences(data: MediaReference[], shuffle = false) {
     const songReferences = data.filter(item => item.type === 'songs') as Array<Pick<Song, 'type' | 'id'>>
     const songs = this.byIds(songReferences.map(item => item.id)) as Song[]
 
@@ -383,16 +393,16 @@ export const playableStore = {
     return unionBy(songs, songsFromFolders as Song[], 'id')
   },
 
-  async fetchSongsInFolder (path: Folder['path']) {
+  async fetchSongsInFolder(path: Folder['path']) {
     return this.syncWithVault(await http.get<Song[]>(`songs/in-folder?path=${path}`))
   },
 
-  async fetchFavorites () {
+  async fetchFavorites() {
     this.state.favorites = this.syncWithVault(await http.get<Playable[]>('songs/favorite'))
     return this.state.favorites
   },
 
-  async toggleFavorite (playable: Reactive<Playable>) {
+  async toggleFavorite(playable: Reactive<Playable>) {
     // Don't wait for the HTTP response to update the status, just toggle right away.
     // We'll update the liked status again after the HTTP request.
     playable.favorite = !playable.favorite
@@ -409,7 +419,7 @@ export const playableStore = {
       : differenceBy(this.state.favorites, arrayify(playable), 'id')
   },
 
-  async favorite (playables: MaybeArray<Playable>) {
+  async favorite(playables: MaybeArray<Playable>) {
     playables = arrayify(playables)
     playables.forEach(playable => (playable.favorite = true))
 
@@ -421,7 +431,7 @@ export const playableStore = {
     this.state.favorites = unionBy(this.state.favorites, playables, 'id')
   },
 
-  async undoFavorite (playables: MaybeArray<Playable>) {
+  async undoFavorite(playables: MaybeArray<Playable>) {
     playables = arrayify(playables)
     playables.forEach(playable => (playable.favorite = true))
 

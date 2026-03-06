@@ -7,10 +7,12 @@ describe('radioStationThumbnail.vue', () => {
   const h = createHarness()
 
   const renderComponent = (station?: RadioStation) => {
-    station = station || h.factory('radio-station', {
-      name: 'Beethoven Goes Metal',
-      logo: 'https://test/beet.jpg',
-    })
+    station =
+      station ||
+      h.factory('radio-station', {
+        name: 'Beethoven Goes Metal',
+        logo: 'https://test/beet.jpg',
+      })
 
     const rendered = h.render(Component, {
       props: {

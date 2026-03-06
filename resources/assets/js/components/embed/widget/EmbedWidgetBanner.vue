@@ -19,7 +19,7 @@
     </div>
 
     <span class="absolute right-3 top-3 size-10 p-1 bg-k-fg-10 rounded-md">
-      <img :src="logo" alt="Koel's logo">
+      <img :src="logo" alt="Koel's logo" />
     </span>
   </header>
 </template>
@@ -31,7 +31,7 @@ import { useBranding } from '@/composables/useBranding'
 import Thumbnail from '@/components/embed/widget/EmbedWidgetThumbnail.vue'
 import PreviewBadge from '@/components/embed/widget/PreviewBadge.vue'
 
-const props = defineProps<{ embed: WidgetReadyEmbed, options: EmbedOptions }>()
+const props = defineProps<{ embed: WidgetReadyEmbed; options: EmbedOptions }>()
 const { embed, options } = props
 
 const { logo } = useBranding()

@@ -22,7 +22,7 @@ const station = requireInjection<Ref<RadioStation | undefined>>(CurrentStreamabl
 
 const { cover: defaultCover } = useBranding()
 
-const cover = computed(() => station.value ? station.value.logo : defaultCover)
+const cover = computed(() => (station.value ? station.value.logo : defaultCover))
 const coverBackgroundImage = computed(() => `url(${cover.value ?? defaultCover})`)
 </script>
 

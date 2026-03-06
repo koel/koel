@@ -24,10 +24,7 @@ describe('thumbnailStack.vue', () => {
   it('displays the first thumbnail if less than 4 are provided', () => {
     const { getAllByTestId } = h.render(Component, {
       props: {
-        thumbnails: [
-          'https://via.placeholder.com/150',
-          'https://via.placeholder.com/150?foo',
-        ],
+        thumbnails: ['https://via.placeholder.com/150', 'https://via.placeholder.com/150?foo'],
       },
     })
 

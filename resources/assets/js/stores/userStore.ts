@@ -21,7 +21,7 @@ export const userStore = {
     current: null! as CurrentUser,
   }),
 
-  syncWithVault (users: MaybeArray<User>) {
+  syncWithVault(users: MaybeArray<User>) {
     return arrayify(users).map(user => {
       let local = this.byId(user.id)
       local = reactive(local ? merge(local, user) : user)
@@ -31,38 +31,38 @@ export const userStore = {
     })
   },
 
-  init (currentUser: CurrentUser) {
+  init(currentUser: CurrentUser) {
     this.state.users = this.syncWithVault(currentUser)
     this.state.current = this.state.users[0] as CurrentUser
   },
 
-  async fetch () {
+  async fetch() {
     this.state.users = this.syncWithVault(await http.get<User[]>('users'))
   },
 
-  byId (id: User['id']) {
+  byId(id: User['id']) {
     return this.vault.get(id)
   },
 
-  get current () {
+  get current() {
     return this.state.current as CurrentUser
   },
 
-  async store (data: CreateUserData) {
+  async store(data: CreateUserData) {
     const user = await http.post<User>('users', data)
     this.add(user)
     return this.byId(user.id)
   },
 
-  add (user: MaybeArray<User>) {
+  add(user: MaybeArray<User>) {
     this.state.users.push(...this.syncWithVault(user))
   },
 
-  async update (user: User, data: UpdateUserData) {
+  async update(user: User, data: UpdateUserData) {
     this.syncWithVault(await http.put<User>(`users/${user.id}`, data))
   },
 
-  async destroy (user: User) {
+  async destroy(user: User) {
     await http.delete(`users/${user.id}`)
     this.remove(user)
 
@@ -86,7 +86,7 @@ export const userStore = {
     // I sometimes wish I'd never been born at all
   },
 
-  remove (user: User) {
+  remove(user: User) {
     this.state.users = differenceBy(this.state.users, [user], 'id')
     this.vault.delete(user.id)
   },

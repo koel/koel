@@ -16,7 +16,7 @@
 <script lang="ts" setup>
 import { computed, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
 
-const props = defineProps<{ items: any[], itemHeight: number }>()
+const props = defineProps<{ items: any[]; itemHeight: number }>()
 const emit = defineEmits<{
   (e: 'scrolled-to-end'): void
   (e: 'scroll', event: Event): void
@@ -39,21 +39,22 @@ const renderedItems = computed(() => {
   return items.value.slice(startPosition.value, startPosition.value + count)
 })
 
-const onScroll = (e: Event) => requestAnimationFrame(() => {
-  scrollTop.value = (e.target as HTMLElement).scrollTop
+const onScroll = (e: Event) =>
+  requestAnimationFrame(() => {
+    scrollTop.value = (e.target as HTMLElement).scrollTop
 
-  if (!scroller.value) {
-    return
-  }
+    if (!scroller.value) {
+      return
+    }
 
-  emit('scroll', e)
+    emit('scroll', e)
 
-  if (scroller.value.scrollTop + scroller.value.clientHeight + itemHeight.value >= scroller.value.scrollHeight) {
-    emit('scrolled-to-end')
-  }
-})
+    if (scroller.value.scrollTop + scroller.value.clientHeight + itemHeight.value >= scroller.value.scrollHeight) {
+      emit('scrolled-to-end')
+    }
+  })
 
-const observer = new ResizeObserver(entries => entries.forEach(el => scrollerHeight.value = el.contentRect.height))
+const observer = new ResizeObserver(entries => entries.forEach(el => (scrollerHeight.value = el.contentRect.height)))
 
 onMounted(() => {
   observer.observe(scroller.value!)

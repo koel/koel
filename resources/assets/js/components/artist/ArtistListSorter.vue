@@ -5,17 +5,20 @@
 <script setup lang="ts">
 import BasicListSorter from '@/components/ui/BasicListSorter.vue'
 
-withDefaults(defineProps<{
-  field?: ArtistListSortField
-  order?: SortOrder
-}>(), {
-  field: 'name',
-  order: 'asc',
-})
+withDefaults(
+  defineProps<{
+    field?: ArtistListSortField
+    order?: SortOrder
+  }>(),
+  {
+    field: 'name',
+    order: 'asc',
+  },
+)
 
 const emit = defineEmits<{ (e: 'sort', field: ArtistListSortField, order: SortOrder): void }>()
 
-const items: { label: string, field: ArtistListSortField }[] = [
+const items: { label: string; field: ArtistListSortField }[] = [
   { label: 'Name', field: 'name' },
   { label: 'Date Added', field: 'created_at' },
 ]

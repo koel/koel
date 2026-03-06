@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { computed, toRefs } from 'vue'
 
-const props = defineProps<{ episode: Episode, position: number }>()
+const props = defineProps<{ episode: Episode; position: number }>()
 const { episode, position } = toRefs(props)
 
 const percentage = computed(() => (position.value / episode.value.length) * 100)

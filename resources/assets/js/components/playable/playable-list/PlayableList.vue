@@ -113,20 +113,18 @@ const {
 } = useListSelection(rows, 'playable.id')
 
 const shouldTriggerContinuousPlayback = computed(() => {
-  return preferences.continuous_playback
-    && typeof context.type !== 'undefined'
-    && ['Playlist', 'Album', 'Artist', 'Genre', 'Favorites'].includes(context.type)
+  return (
+    preferences.continuous_playback &&
+    typeof context.type !== 'undefined' &&
+    ['Playlist', 'Album', 'Artist', 'Genre', 'Favorites'].includes(context.type)
+  )
 })
 
 const contentType = computed(() => getPlayableCollectionContentType(rows.value.map(({ playable }) => playable)))
 
 const getAllPlayablesWithSort = () => rows.value.map(row => row.playable)
 
-watch(
-  selected,
-  () => setSelectedPlayables(selected.value.map(({ playable }) => playable)),
-  { deep: true },
-)
+watch(selected, () => setSelectedPlayables(selected.value.map(({ playable }) => playable)), { deep: true })
 
 const sort = (field: MaybeArray<PlayableListSortField>, order: SortOrder) => {
   // we simply pass the sort event from the header up to the parent component
@@ -182,7 +180,9 @@ const onDragOver = throttle((event: DragEvent) => {
 }, 50)
 
 const onDragLeave = (event: DragEvent) => {
-  (event.target as HTMLElement).closest('.playable-item')?.classList.remove('droppable', 'dragover-top', 'dragover-bottom')
+  ;(event.target as HTMLElement)
+    .closest('.playable-item')
+    ?.classList.remove('droppable', 'dragover-top', 'dragover-bottom')
   return false
 }
 
@@ -297,7 +297,7 @@ const calculatedItemHeight = computed(() => {
   const discCount = Object.keys(discIndexMap.value).length
   const totalAdditionalPixels = discCount * discNumberHeight
 
-  const totalHeight = (rows.value.length * standardSongItemHeight) + totalAdditionalPixels
+  const totalHeight = rows.value.length * standardSongItemHeight + totalAdditionalPixels
 
   return totalHeight / rows.value.length
 })

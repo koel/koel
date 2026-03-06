@@ -65,12 +65,7 @@
 
       <div v-show="activeTab === 'songs'" class="songs-pane">
         <SongListSkeleton v-if="loading" />
-        <SongList
-          v-if="!loading && album"
-          ref="songList"
-          @press:enter="onPressEnter"
-          @swipe="onSwipe"
-        />
+        <SongList v-if="!loading && album" ref="songList" @press:enter="onPressEnter" @swipe="onSwipe" />
       </div>
 
       <div v-show="activeTab === 'other-albums'" class="albums-pane" data-testid="albums-pane">
@@ -78,9 +73,7 @@
           <GridListView v-if="otherAlbums.length" v-koel-overflow-fade view-mode="list">
             <AlbumCard v-for="otherAlbum in otherAlbums" :key="otherAlbum.id" :album="otherAlbum" layout="compact" />
           </GridListView>
-          <p v-else>
-            No other albums by {{ album.artist_name }} found in the library.
-          </p>
+          <p v-else>No other albums by {{ album.artist_name }} found in the library.</p>
         </template>
         <GridListView v-else view-mode="list">
           <AlbumCardSkeleton v-for="i in 6" :key="i" layout="compact" />
@@ -184,10 +177,7 @@ const fetchScreenData = async () => {
   loading.value = true
 
   try {
-    [album.value, songs.value] = await Promise.all([
-      albumStore.resolve(id),
-      playableStore.fetchSongsForAlbum(id),
-    ])
+    ;[album.value, songs.value] = await Promise.all([albumStore.resolve(id), playableStore.fetchSongsForAlbum(id)])
 
     if (!album.value) {
       // If the album does not exist, redirect to the album list.
@@ -220,9 +210,10 @@ const fetchScreenData = async () => {
 onScreenActivated('Album', () => fetchScreenData())
 onRouteChanged(route => route.name === 'albums.show' && fetchScreenData())
 
-const requestContextMenu = (event: MouseEvent) => openContextMenu<'ALBUM'>(ContextMenu, event, {
-  album: album.value!,
-})
+const requestContextMenu = (event: MouseEvent) =>
+  openContextMenu<'ALBUM'>(ContextMenu, event, {
+    album: album.value!,
+  })
 
 eventBus.on('SONGS_UPDATED', result => {
   // After songs are updated, check if the current album still exists.

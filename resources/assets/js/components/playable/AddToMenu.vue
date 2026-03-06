@@ -15,9 +15,7 @@
             >
               After Current
             </li>
-            <li class="bottom-queue" data-testid="queue-bottom" tabindex="0" @click="queueToBottom">
-              Bottom of Queue
-            </li>
+            <li class="bottom-queue" data-testid="queue-bottom" tabindex="0" @click="queueToBottom">Bottom of Queue</li>
             <li class="top-queue" data-testid="queue-top" tabindex="0" @click="queueToTop">Top of Queue</li>
           </template>
           <li v-else data-testid="queue" tabindex="0" @click="queueToBottom">Queue</li>
@@ -46,11 +44,7 @@
       </ul>
     </section>
 
-    <Btn
-      class="!w-full !border !border-solid !border-white/20"
-      transparent
-      @click.prevent="addToNewPlaylist"
-    >
+    <Btn class="!w-full !border !border-solid !border-white/20" transparent @click.prevent="addToNewPlaylist">
       New Playlist…
     </Btn>
   </div>
@@ -65,7 +59,7 @@ import { usePlayableMenuMethods } from '@/composables/usePlayableMenuMethods'
 
 import Btn from '@/components/ui/form/Btn.vue'
 
-const props = defineProps<{ playables: Playable[], config: AddToMenuConfig }>()
+const props = defineProps<{ playables: Playable[]; config: AddToMenuConfig }>()
 const emit = defineEmits<{ (e: 'closing'): void }>()
 
 const { playables, config } = toRefs(props)
@@ -78,14 +72,8 @@ const playlists = computed(() => allPlaylists.value.filter(({ is_smart }) => !is
 
 const close = () => emit('closing')
 
-const {
-  queueAfterCurrent,
-  queueToBottom,
-  queueToTop,
-  addToFavorites,
-  addToExistingPlaylist,
-  addToNewPlaylist,
-} = usePlayableMenuMethods(playables, close)
+const { queueAfterCurrent, queueToBottom, queueToTop, addToFavorites, addToExistingPlaylist, addToNewPlaylist } =
+  usePlayableMenuMethods(playables, close)
 
 watch(playables, () => playables.value.length || close())
 </script>

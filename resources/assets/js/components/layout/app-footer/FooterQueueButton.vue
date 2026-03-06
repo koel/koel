@@ -27,13 +27,18 @@ import FooterButton from '@/components/layout/app-footer/FooterButton.vue'
 const { go, isCurrentScreen, url } = useRouter()
 const { toastWarning, toastSuccess } = useMessageToaster()
 
-const { acceptsDrop, resolveDroppedItems } = useDroppable(
-  ['playables', 'album', 'artist', 'playlist', 'playlist-folder', 'browser-media'],
-)
+const { acceptsDrop, resolveDroppedItems } = useDroppable([
+  'playables',
+  'album',
+  'artist',
+  'playlist',
+  'playlist-folder',
+  'browser-media',
+])
 
 const droppable = ref(false)
 
-const onDragEnter = (event: DragEvent) => droppable.value = acceptsDrop(event)
+const onDragEnter = (event: DragEvent) => (droppable.value = acceptsDrop(event))
 const onDragLeave = (e: DragEvent) => {
   if ((e.currentTarget as Node)?.contains?.(e.relatedTarget as Node)) {
     return
@@ -46,7 +51,7 @@ const onDrop = async (event: DragEvent) => {
   droppable.value = false
 
   event.preventDefault()
-  const items = await resolveDroppedItems(event) || []
+  const items = (await resolveDroppedItems(event)) || []
 
   if (items.length) {
     queueStore.queue(items)

@@ -1,9 +1,6 @@
 <template>
   <OnClickOutside @trigger="maybeHideInput">
-    <form
-      class="flex border rounded-md border-k-fg-10 focus-within:border-k-highlight"
-      @submit.prevent
-    >
+    <form class="flex border rounded-md border-k-fg-10 focus-within:border-k-highlight" @submit.prevent>
       <button v-koel-tooltip class="px-3.5 py-2" title="Filter" type="button" @click.prevent="showInput">
         <Icon :icon="faFilter" fixed-width />
       </button>

@@ -24,9 +24,7 @@ describe('mediaBrowser', () => {
       },
     }
 
-    const getMock = h.mock(http, 'get')
-      .mockResolvedValueOnce(folders)
-      .mockResolvedValueOnce(songPaginator)
+    const getMock = h.mock(http, 'get').mockResolvedValueOnce(folders).mockResolvedValueOnce(songPaginator)
 
     const syncWithVaultMock = h.mock(playableStore, 'syncWithVault').mockReturnValue(songs)
 
@@ -95,9 +93,7 @@ describe('mediaBrowser', () => {
       },
     }
 
-    const getMock = h.mock(http, 'get')
-      .mockResolvedValueOnce(folders)
-      .mockResolvedValueOnce(songPaginator)
+    const getMock = h.mock(http, 'get').mockResolvedValueOnce(folders).mockResolvedValueOnce(songPaginator)
 
     const syncWithVaultMock = h.mock(playableStore, 'syncWithVault').mockReturnValue(songs)
 
@@ -129,9 +125,7 @@ describe('mediaBrowser', () => {
       { name: 'baz', path: 'foo/bar/baz' },
     ])
 
-    expect(mediaBrowser.generateBreadcrumbs('')).toEqual([
-      { name: 'Library', path: '' },
-    ])
+    expect(mediaBrowser.generateBreadcrumbs('')).toEqual([{ name: 'Library', path: '' }])
   })
 
   it.each([
@@ -145,24 +139,22 @@ describe('mediaBrowser', () => {
   ])('gets the parent folder for %s', (path, parentPath) => {
     commonStore.state.dir_separator = '/'
 
-    const expectedParentFolder = parentPath === null
-      ? null
-      : {
-          type: 'folders',
-          id: '..',
-          parent_id: '..',
-          name: '..',
-          path: parentPath,
-        }
+    const expectedParentFolder =
+      parentPath === null
+        ? null
+        : {
+            type: 'folders',
+            id: '..',
+            parent_id: '..',
+            name: '..',
+            path: parentPath,
+          }
 
     expect(mediaBrowser.getParentFolder(path)).toEqual(expectedParentFolder)
   })
 
   it('extracts media references', () => {
-    const items = [
-      h.factory('song'),
-      h.factory('folder', 1),
-    ]
+    const items = [h.factory('song'), h.factory('folder', 1)]
 
     const references = mediaBrowser.extractMediaReferences(items)
 

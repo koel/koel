@@ -1,19 +1,14 @@
 <template>
-  <div
-    class="collaboration-modal max-w-[640px]"
-    tabindex="0"
-    data-testid="playlist-collaboration"
-    @keydown.esc="close"
-  >
+  <div class="collaboration-modal max-w-[640px]" tabindex="0" data-testid="playlist-collaboration" @keydown.esc="close">
     <header>
       <h1>Playlist Collaboration</h1>
     </header>
 
     <main>
       <p>
-        Collaborative playlists allow multiple users to contribute. <br>
-        Note: Songs added to a collaborative playlist are made accessible to all users,
-        and you cannot mark a song as private if it’s still part of a collaborative playlist.
+        Collaborative playlists allow multiple users to contribute. <br />
+        Note: Songs added to a collaborative playlist are made accessible to all users, and you cannot mark a song as
+        private if it’s still part of a collaborative playlist.
       </p>
 
       <section class="space-y-5">

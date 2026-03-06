@@ -11,9 +11,7 @@
       <div class="t-4 b-5 x-4 p-4 flex justify-between rounded-md bg-black/20">
         <EqualizerBand ref="preampBandEl" v-model="preampGain" type="preamp" @commit="save">Preamp</EqualizerBand>
 
-        <span
-          class="text-sm h-[100px] w-[20px] flex flex-col justify-between items-center -ml-6 opacity-50"
-        >
+        <span class="text-sm h-[100px] w-[20px] flex flex-col justify-between items-center -ml-6 opacity-50">
           <span class="leading-none text-k-fg">+20</span>
           <span class="leading-none text-k-fg">0</span>
           <span class="leading-none text-k-fg">-20</span>
@@ -77,7 +75,12 @@ const loadPreset = async (preset: EqualizerPreset) => {
   applyingPreset = false
 }
 
-const save = () => equalizerStore.saveConfig(selectedPresetName.value, preampGain.value, bands.map(band => band.db))
+const save = () =>
+  equalizerStore.saveConfig(
+    selectedPresetName.value,
+    preampGain.value,
+    bands.map(band => band.db),
+  )
 const close = () => emit('close')
 
 watch(preampGain, value => {

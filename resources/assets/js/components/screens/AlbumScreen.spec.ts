@@ -20,17 +20,16 @@ describe('albumScreen.vue', () => {
     },
   })
 
-  const renderComponent = async (
-    tab: 'songs' | 'other-albums' | 'information' = 'songs',
-    album?: Album,
-  ) => {
+  const renderComponent = async (tab: 'songs' | 'other-albums' | 'information' = 'songs', album?: Album) => {
     commonStore.state.uses_last_fm = true
 
-    album = album || h.factory('album', {
-      name: 'Led Zeppelin IV',
-      artist_id: 'bar',
-      artist_name: 'Led Zeppelin',
-    })
+    album =
+      album ||
+      h.factory('album', {
+        name: 'Led Zeppelin IV',
+        artist_id: 'bar',
+        artist_name: 'Led Zeppelin',
+      })
 
     const resolveAlbumMock = h.mock(albumStore, 'resolve').mockResolvedValue(album)
 

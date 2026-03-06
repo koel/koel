@@ -9,7 +9,7 @@ type SmartPlaylistFormTab = 'details' | 'rules'
 
 export const useSmartPlaylistForm = (initialRuleGroups: SmartPlaylistRuleGroup[] = []) => {
   const currentTab = ref<SmartPlaylistFormTab>('details')
-  const activateTab = (tab: SmartPlaylistFormTab) => currentTab.value = tab
+  const activateTab = (tab: SmartPlaylistFormTab) => (currentTab.value = tab)
   const isTabActive = (tab: SmartPlaylistFormTab) => currentTab.value === tab
 
   const collectedRuleGroups = ref<SmartPlaylistRuleGroup[]>(initialRuleGroups)

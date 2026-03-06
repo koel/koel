@@ -10,7 +10,7 @@ import { mediaBrowser } from '@/services/mediaBrowser'
 
 type Draggable = MaybeArray<Playable> | Album | Artist | Genre | Playlist | PlaylistFolder | MaybeArray<Song | Folder>
 const draggableTypes = <const>['playables', 'album', 'artist', 'genre', 'playlist', 'playlist-folder', 'browser-media']
-type DraggableType = typeof draggableTypes[number]
+type DraggableType = (typeof draggableTypes)[number]
 
 const createGhostDragImage = (event: DragEvent, text: string): void => {
   if (!event.dataTransfer) {
@@ -48,9 +48,10 @@ export const useDraggable = (type: DraggableType) => {
     switch (type) {
       case 'playables':
         dragged = arrayify(<Playable>dragged)
-        text = dragged.length === 1
-          ? `${dragged[0].title} by ${getPlayableProp(dragged[0], 'artist_name', 'podcast_author')}`
-          : pluralize(dragged, 'item')
+        text =
+          dragged.length === 1
+            ? `${dragged[0].title} by ${getPlayableProp(dragged[0], 'artist_name', 'podcast_author')}`
+            : pluralize(dragged, 'item')
 
         data = dragged.map(song => song.id)
         break
@@ -126,7 +127,7 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
     }
   }
 
-  const resolveDroppedValue = async <T = Playlist> (event: DragEvent): Promise<T | undefined> => {
+  const resolveDroppedValue = async <T = Playlist>(event: DragEvent): Promise<T | undefined> => {
     try {
       switch (getDragType(event)) {
         case 'playlist':

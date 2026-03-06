@@ -2,7 +2,9 @@
   <ScreenBase>
     <template #header>
       <ScreenHeader layout="collapsed">
-        <span v-if="q">Searching for <span class="font-thin">{{ q }}</span></span>
+        <span v-if="q"
+          >Searching for <span class="font-thin">{{ q }}</span></span
+        >
         <span v-else>Search</span>
       </ScreenHeader>
     </template>
@@ -60,12 +62,14 @@ const doSearch = async () => {
   searching.value = false
 }
 
-eventBus.on('SEARCH_KEYWORDS_CHANGED', async _q => {
-  q.value = _q
-  await doSearch()
-}).on('SONGS_DELETED', async songs => {
-  if (intersectionBy(songs, excerpt.value.playables, 'id').length !== 0) {
+eventBus
+  .on('SEARCH_KEYWORDS_CHANGED', async _q => {
+    q.value = _q
     await doSearch()
-  }
-})
+  })
+  .on('SONGS_DELETED', async songs => {
+    if (intersectionBy(songs, excerpt.value.playables, 'id').length !== 0) {
+      await doSearch()
+    }
+  })
 </script>

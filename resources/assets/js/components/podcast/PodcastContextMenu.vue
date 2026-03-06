@@ -30,15 +30,17 @@ const { MenuItem, Separator, trigger } = useContextMenu()
 const { showConfirmDialog } = useDialogBox()
 const { toastSuccess } = useMessageToaster()
 
-const play = () => trigger(async () => {
-  playback().queueAndPlay(await playableStore.fetchEpisodesInPodcast(podcast.value))
-  go(url('queue'))
-})
+const play = () =>
+  trigger(async () => {
+    playback().queueAndPlay(await playableStore.fetchEpisodesInPodcast(podcast.value))
+    go(url('queue'))
+  })
 
-const shuffle = () => trigger(async () => {
-  playback().queueAndPlay(await playableStore.fetchEpisodesInPodcast(podcast.value), true)
-  go(url('queue'))
-})
+const shuffle = () =>
+  trigger(async () => {
+    playback().queueAndPlay(await playableStore.fetchEpisodesInPodcast(podcast.value), true)
+    go(url('queue'))
+  })
 
 const unsubscribe = async () => {
   if (await showConfirmDialog('Unsubscribe from podcast?')) {

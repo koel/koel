@@ -34,11 +34,13 @@ describe('allSongsScreen.vue', () => {
       },
     })
 
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith({
-      sort: 'title',
-      order: 'asc',
-      page: 1,
-    }))
+    await waitFor(() =>
+      expect(fetchMock).toHaveBeenCalledWith({
+        sort: 'title',
+        order: 'asc',
+        page: 1,
+      }),
+    )
 
     return [rendered, fetchMock] as const
   }

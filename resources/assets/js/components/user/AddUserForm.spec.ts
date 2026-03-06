@@ -19,10 +19,12 @@ describe('addUserForm.vue', () => {
   }
 
   it('creates a new user', async () => {
-    const storeMock = h.mock(userStore, 'store').mockResolvedValue(h.factory('user', {
-      name: 'John Doe',
-      email: 'john@doe.com',
-    }))
+    const storeMock = h.mock(userStore, 'store').mockResolvedValue(
+      h.factory('user', {
+        name: 'John Doe',
+        email: 'john@doe.com',
+      }),
+    )
 
     const toasterMock = h.mock(MessageToasterStub.value, 'success')
 

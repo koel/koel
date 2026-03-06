@@ -32,7 +32,7 @@ export class QueuePlaybackService extends BasePlaybackService {
    * The next item in the queue.
    * If we're in REPEAT_ALL mode and there's no next item, just get the first item.
    */
-  public get next () {
+  public get next() {
     if (queueStore.next) {
       return queueStore.next
     }
@@ -46,7 +46,7 @@ export class QueuePlaybackService extends BasePlaybackService {
    * The previous item in the queue.
    * If we're in REPEAT_ALL mode and there's no prev item, get the last item.
    */
-  public get previous () {
+  public get previous() {
     if (queueStore.previous) {
       return queueStore.previous
     }
@@ -56,13 +56,13 @@ export class QueuePlaybackService extends BasePlaybackService {
     }
   }
 
-  public registerPlay (playable: Playable) {
+  public registerPlay(playable: Playable) {
     recentlyPlayedStore.add(playable)
     playableStore.registerPlay(playable)
     playable.play_count_registered = true
   }
 
-  public preload (playable: Playable) {
+  public preload(playable: Playable) {
     const audioElement = document.createElement('audio')
     audioElement.setAttribute('src', playableStore.getSourceUrl(playable))
     audioElement.setAttribute('preload', 'auto')
@@ -78,7 +78,7 @@ export class QueuePlaybackService extends BasePlaybackService {
    * So many dreams swinging out of the blue
    * We'll let them come true
    */
-  public async play (playable: Playable, position = 0) {
+  public async play(playable: Playable, position = 0) {
     if (isEpisode(playable)) {
       useEpisodeProgressTracking().trackEpisode(playable)
     }
@@ -120,7 +120,7 @@ export class QueuePlaybackService extends BasePlaybackService {
     this.setMediaSessionActionHandlers()
   }
 
-  public showNotification (playable: Playable) {
+  public showNotification(playable: Playable) {
     if (!isSong(playable) && !isEpisode(playable)) {
       throw new Error('Invalid playable type.')
     }
@@ -129,9 +129,7 @@ export class QueuePlaybackService extends BasePlaybackService {
       try {
         const notification = new window.Notification(`♫ ${playable.title}`, {
           icon: getPlayableProp(playable, 'album_cover', 'episode_image'),
-          body: isSong(playable)
-            ? `${playable.album_name} – ${playable.artist_name}`
-            : playable.title,
+          body: isSong(playable) ? `${playable.album_name} – ${playable.artist_name}` : playable.title,
         })
 
         notification.onclick = () => window.focus()
@@ -160,7 +158,7 @@ export class QueuePlaybackService extends BasePlaybackService {
     })
   }
 
-  public async restart () {
+  public async restart() {
     const playable = queueStore.current!
 
     // Reset the "up next" value to let subscribers know that the next item is cleared
@@ -191,7 +189,7 @@ export class QueuePlaybackService extends BasePlaybackService {
     }
   }
 
-  public rotateRepeatMode () {
+  public rotateRepeatMode() {
     let index = this.repeatModes.indexOf(preferences.repeat_mode) + 1
 
     if (index >= this.repeatModes.length) {
@@ -205,7 +203,7 @@ export class QueuePlaybackService extends BasePlaybackService {
    * Play the prev item the queue, if one is found.
    * If there's no prev item and the current mode is NO_REPEAT, we stop completely.
    */
-  public async playPrev () {
+  public async playPrev() {
     // If the item's duration is greater than 5 seconds, and we've passed 5 seconds into it,
     // restart playing instead.
     if (this.player.media.currentTime > 5 && queueStore.current!.length > 5) {
@@ -217,7 +215,7 @@ export class QueuePlaybackService extends BasePlaybackService {
     if (!this.previous && preferences.repeat_mode === 'NO_REPEAT') {
       await this.stop()
     } else {
-      this.previous && await this.play(this.previous)
+      this.previous && (await this.play(this.previous))
     }
   }
 
@@ -225,15 +223,15 @@ export class QueuePlaybackService extends BasePlaybackService {
    * Play the next item in the queue if one is found.
    * If there's no next item and the current mode is NO_REPEAT, we stop completely.
    */
-  public async playNext () {
+  public async playNext() {
     if (!this.next && preferences.repeat_mode === 'NO_REPEAT') {
       await this.stop() //  Nothing lasts forever, even cold November rain.
     } else {
-      this.next && await this.play(this.next)
+      this.next && (await this.play(this.next))
     }
   }
 
-  public async stop () {
+  public async stop() {
     if (this.player) {
       this.player.pause()
       this.seekTo(0)
@@ -247,7 +245,7 @@ export class QueuePlaybackService extends BasePlaybackService {
     socketService.broadcast('SOCKET_PLAYBACK_STOPPED')
   }
 
-  public async pause () {
+  public async pause() {
     this.player.pause()
 
     queueStore.current!.playback_state = 'Paused'
@@ -256,7 +254,7 @@ export class QueuePlaybackService extends BasePlaybackService {
     socketService.broadcast('SOCKET_STREAMABLE', queueStore.current)
   }
 
-  public async resume () {
+  public async resume() {
     const playable = queueStore.current!
 
     if (!this.player.media.src) {
@@ -281,7 +279,7 @@ export class QueuePlaybackService extends BasePlaybackService {
     socketService.broadcast('SOCKET_STREAMABLE', playable)
   }
 
-  public async toggle () {
+  public async toggle() {
     if (!queueStore.current) {
       await this.playFirstInQueue()
       return
@@ -298,7 +296,7 @@ export class QueuePlaybackService extends BasePlaybackService {
   /**
    * Queue up playables (replace them into the queue) and start playing right away.
    */
-  public async queueAndPlay (playables: MaybeArray<Playable>, shuffled = false) {
+  public async queueAndPlay(playables: MaybeArray<Playable>, shuffled = false) {
     playables = arrayify(playables)
 
     if (shuffled) {
@@ -310,11 +308,11 @@ export class QueuePlaybackService extends BasePlaybackService {
     await this.play(queueStore.first)
   }
 
-  public async playFirstInQueue () {
-    queueStore.all.length && await this.play(queueStore.first)
+  public async playFirstInQueue() {
+    queueStore.all.length && (await this.play(queueStore.first))
   }
 
-  private async setNowPlayingMeta (playable: Playable) {
+  private async setNowPlayingMeta(playable: Playable) {
     document.title = `${playable.title} ♫ ${useBranding().name}`
     this.player.media.setAttribute(
       'title',
@@ -327,7 +325,7 @@ export class QueuePlaybackService extends BasePlaybackService {
   }
 
   // Record the UNIX timestamp the playable starts playing, for scrobbling purpose
-  private recordStartTime (song: Playable) {
+  private recordStartTime(song: Playable) {
     if (!isSong(song)) {
       return
     }
@@ -336,16 +334,16 @@ export class QueuePlaybackService extends BasePlaybackService {
     song.play_count_registered = false
   }
 
-  public forward (seconds: number): void {
+  public forward(seconds: number): void {
     this.player.media.currentTime += seconds
   }
 
-  protected onEnded (): void {
+  protected onEnded(): void {
     if (
-      queueStore.current
-      && isSong(queueStore.current)
-      && commonStore.state.uses_last_fm
-      && userStore.current.preferences.lastfm_session_key
+      queueStore.current &&
+      isSong(queueStore.current) &&
+      commonStore.state.uses_last_fm &&
+      userStore.current.preferences.lastfm_session_key
     ) {
       playableStore.scrobble(queueStore.current)
     }
@@ -353,12 +351,12 @@ export class QueuePlaybackService extends BasePlaybackService {
     preferences.repeat_mode === 'REPEAT_ONE' ? this.restart() : this.playNext()
   }
 
-  protected onError (error: ErrorEvent): void {
+  protected onError(error: ErrorEvent): void {
     logger.error(error)
     this.playNext()
   }
 
-  protected onTimeUpdate (): void {
+  protected onTimeUpdate(): void {
     const currentPlayable = queueStore.current
 
     if (!currentPlayable) {
@@ -405,15 +403,15 @@ export class QueuePlaybackService extends BasePlaybackService {
     }
   }
 
-  public rewind (seconds: number): void {
+  public rewind(seconds: number): void {
     this.player.media.currentTime -= seconds
   }
 
-  public fastSeek (position: number): void {
+  public fastSeek(position: number): void {
     this.player.media.fastSeek(position || 0)
   }
 
-  public seekTo (position: number): void {
+  public seekTo(position: number): void {
     this.player.seek(position || 0)
   }
 }

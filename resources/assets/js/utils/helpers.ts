@@ -16,7 +16,7 @@ import { isSong } from '@/utils/typeGuards'
 
 import LoadingComponent from '@/components/ui/Loading.vue'
 
-export const use = <T> (value: T | undefined | null, cb: (arg: T) => void) => {
+export const use = <T>(value: T | undefined | null, cb: (arg: T) => void) => {
   if (typeof value === 'undefined' || value === null) {
     return
   }
@@ -24,16 +24,15 @@ export const use = <T> (value: T | undefined | null, cb: (arg: T) => void) => {
   cb(value)
 }
 
-export const arrayify = <T> (maybeArray: MaybeArray<T>) => Array.isArray(maybeArray) ? maybeArray : [maybeArray]
+export const arrayify = <T>(maybeArray: MaybeArray<T>) => (Array.isArray(maybeArray) ? maybeArray : [maybeArray])
 
 // @ts-ignore
-export const noop = () => {
-}
+export const noop = () => {}
 
-export const limitBy = <T> (arr: T[], count: number, offset: number = 0): T[] => arr.slice(offset, offset + count)
+export const limitBy = <T>(arr: T[], count: number, offset: number = 0): T[] => arr.slice(offset, offset + count)
 
-export const provideReadonly = <T> (key: ReadonlyInjectionKey<T>, value: T, deep = true, mutator?: Closure) => {
-  mutator = mutator || (v => isRef(value) ? (value.value = v) : (value = v))
+export const provideReadonly = <T>(key: ReadonlyInjectionKey<T>, value: T, deep = true, mutator?: Closure) => {
+  mutator = mutator || (v => (isRef(value) ? (value.value = v) : (value = v)))
 
   if (!isObject(value)) {
     logger.warn(`value cannot be made readonly: ${value}`)
@@ -46,7 +45,7 @@ export const provideReadonly = <T> (key: ReadonlyInjectionKey<T>, value: T, deep
   }
 }
 
-export const requireInjection = <T> (key: InjectionKey<T>, defaultValue?: T) => {
+export const requireInjection = <T>(key: InjectionKey<T>, defaultValue?: T) => {
   const value = inject(key, defaultValue)
 
   if (typeof value === 'undefined') {
@@ -56,16 +55,17 @@ export const requireInjection = <T> (key: InjectionKey<T>, defaultValue?: T) => 
   return value
 }
 
-export const moveItemsInList = <T> (list: T[], items: T | T[], target: T, placement: Placement) => {
+export const moveItemsInList = <T>(list: T[], items: T | T[], target: T, placement: Placement) => {
   if (!list.includes(target)) {
     throw new Error('Target not found in list')
   }
 
   const subset = arrayify(items)
 
-  const isTargetAdjacent = placement === 'before'
-    ? list.indexOf(subset[subset.length - 1]) + 1 === list.indexOf(target)
-    : list.indexOf(subset[0]) - 1 === list.indexOf(target)
+  const isTargetAdjacent =
+    placement === 'before'
+      ? list.indexOf(subset[subset.length - 1]) + 1 === list.indexOf(target)
+      : list.indexOf(subset[0]) - 1 === list.indexOf(target)
 
   if (isTargetAdjacent) {
     return list
@@ -84,9 +84,13 @@ export const gravatar = (email: string, size = 192) => {
 }
 
 export const openPopup = (url: string, name: string, width: number, height: number, parent: Window) => {
-  const y = parent.top!.outerHeight / 2 + parent.top!.screenY - (height / 2)
-  const x = parent.top!.outerWidth / 2 + parent.top!.screenX - (width / 2)
-  return parent.open(url, name, `toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${width}, height=${height}, top=${y}, left=${x}`)
+  const y = parent.top!.outerHeight / 2 + parent.top!.screenY - height / 2
+  const x = parent.top!.outerWidth / 2 + parent.top!.screenX - width / 2
+  return parent.open(
+    url,
+    name,
+    `toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${width}, height=${height}, top=${y}, left=${x}`,
+  )
 }
 /**
  * Force reloading window regardless of "Confirm before reload" setting.
@@ -122,10 +126,8 @@ export const copyText = async (text: string) => {
   }
 }
 
-export const getPlayableProp = <
-  SK extends keyof Song,
-  EK extends keyof Episode,
-> (playable: Playable,
+export const getPlayableProp = <SK extends keyof Song, EK extends keyof Episode>(
+  playable: Playable,
   songKey: SK,
   episodeKey: EK,
 ): Song[SK] | Episode[EK] => {
@@ -136,6 +138,5 @@ export const defineAsyncComponent = (loader: AsyncComponentLoader, loadingCompon
   return baseDefineAsyncComponent({
     loader,
     loadingComponent: loadingComponent || LoadingComponent,
-
   })
 }

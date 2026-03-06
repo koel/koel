@@ -8,11 +8,9 @@ import Component from './ModalWrapper.vue'
 describe('modalWrapper.vue', () => {
   const h = createHarness()
 
-  it.each<[
-    string,
-    keyof Events,
-      User | MaybeArray<Streamable> | Playlist | PlaylistFolder | Artist | Album | undefined,
-  ]>([
+  it.each<
+    [string, keyof Events, User | MaybeArray<Streamable> | Playlist | PlaylistFolder | Artist | Album | undefined]
+  >([
     ['about-koel', 'MODAL_SHOW_ABOUT_KOEL', undefined],
     ['add-podcast-form', 'MODAL_SHOW_ADD_PODCAST_FORM', undefined],
     ['add-radio-station-form', 'MODAL_SHOW_ADD_RADIO_STATION_FORM', undefined],

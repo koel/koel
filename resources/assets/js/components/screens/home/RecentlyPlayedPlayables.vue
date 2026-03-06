@@ -31,14 +31,13 @@ import PlayableListSkeleton from '@/components/playable/playable-list/PlayableLi
 const props = withDefaults(defineProps<{ loading?: boolean }>(), { loading: false })
 const { loading } = toRefs(props)
 
-const {
-  PlayableList,
-  playables,
-  playableList,
-  selectedPlayables,
-} = usePlayableList(toRef(overviewStore.state, 'recentlyPlayed'), {}, {
-  sortable: false,
-})
+const { PlayableList, playables, playableList, selectedPlayables } = usePlayableList(
+  toRef(overviewStore.state, 'recentlyPlayed'),
+  {},
+  {
+    sortable: false,
+  },
+)
 
 const onPressEnter = () => selectedPlayables.value.length && playback().play(selectedPlayables.value[0])
 </script>

@@ -21,11 +21,13 @@ declare global {
 
 expect.addSnapshotSerializer(vueSnapshotSerializer)
 
-globalThis.ResizeObserver = globalThis.ResizeObserver || vi.fn().mockImplementation(() => ({
-  disconnect: vi.fn(),
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-}))
+globalThis.ResizeObserver =
+  globalThis.ResizeObserver ||
+  vi.fn().mockImplementation(() => ({
+    disconnect: vi.fn(),
+    observe: vi.fn(),
+    unobserve: vi.fn(),
+  }))
 
 globalThis.LemonSqueezy = {
   Url: {
@@ -37,15 +39,15 @@ HTMLMediaElement.prototype.load = vi.fn()
 HTMLMediaElement.prototype.play = vi.fn()
 HTMLMediaElement.prototype.pause = vi.fn()
 
-HTMLDialogElement.prototype.show = vi.fn(function mock () {
+HTMLDialogElement.prototype.show = vi.fn(function mock() {
   this.open = true
 })
 
-HTMLDialogElement.prototype.showModal = vi.fn(function mock () {
+HTMLDialogElement.prototype.showModal = vi.fn(function mock() {
   this.open = true
 })
 
-HTMLDialogElement.prototype.close = vi.fn(function mock () {
+HTMLDialogElement.prototype.close = vi.fn(function mock() {
   this.open = false
 })
 
@@ -77,7 +79,7 @@ const iframeContentWindowMap = new WeakMap<HTMLIFrameElement, any>()
 
 Object.defineProperty(HTMLIFrameElement.prototype, 'contentWindow', {
   configurable: true,
-  get (this: HTMLIFrameElement) {
+  get(this: HTMLIFrameElement) {
     if (!iframeContentWindowMap.has(this)) {
       const stub = {
         location: {

@@ -1,7 +1,7 @@
 <template>
   <article class="space-y-3">
     <span v-if="model" class="block size-24 aspect-square relative">
-      <img :src="model" alt="" class="w-24 h-24 rounded object-cover">
+      <img :src="model" alt="" class="w-24 h-24 rounded object-cover" />
       <button
         class="absolute inset-0 opacity-0 hover:opacity-100 bg-black/70 active:bg-black/85 active:text-[.9rem] transition-opacity"
         type="button"

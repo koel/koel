@@ -44,13 +44,15 @@ describe('editSongForm.vue', () => {
     const emitMock = h.mock(eventBus, 'emit')
     const alertMock = h.mock(MessageToasterStub.value, 'success')
 
-    const { songs, html } = await renderComponent(h.factory('song', {
-      title: 'Rocket to Heaven',
-      artist_name: 'Led Zeppelin',
-      album_name: 'IV',
-      album_cover: 'http://test/album.jpg',
-      genre: 'Rock',
-    }))
+    const { songs, html } = await renderComponent(
+      h.factory('song', {
+        title: 'Rocket to Heaven',
+        artist_name: 'Led Zeppelin',
+        album_name: 'IV',
+        album_cover: 'http://test/album.jpg',
+        genre: 'Rock',
+      }),
+    )
 
     expect(html()).toMatchSnapshot()
 
@@ -62,7 +64,7 @@ describe('editSongForm.vue', () => {
     await h.type(screen.getByTestId('track-input'), '10')
     await h.type(screen.getByTestId('genre-input'), 'Rock & Roll')
     await h.type(screen.getByTestId('year-input'), '1971')
-    await h.type(screen.getByTestId('lyrics-input'), 'I\'m gonna make him an offer he can\'t refuse')
+    await h.type(screen.getByTestId('lyrics-input'), "I'm gonna make him an offer he can't refuse")
 
     await h.user.click(screen.getByRole('button', { name: 'Update' }))
 
@@ -71,7 +73,7 @@ describe('editSongForm.vue', () => {
       album_name: 'Back in Black',
       artist_name: 'AC/DC',
       album_artist_name: 'AC/DC',
-      lyrics: 'I\'m gonna make him an offer he can\'t refuse',
+      lyrics: "I'm gonna make him an offer he can't refuse",
       track: 10,
       disc: 1,
       genre: 'Rock & Roll',
@@ -128,12 +130,14 @@ describe('editSongForm.vue', () => {
   })
 
   it('displays artist name if all songs have the same artist', async () => {
-    await renderComponent(h.factory('song', 4, {
-      artist_id: 'led-zeppelin',
-      artist_name: 'Led Zeppelin',
-      album_id: 'iv',
-      album_name: 'IV',
-    }))
+    await renderComponent(
+      h.factory('song', 4, {
+        artist_id: 'led-zeppelin',
+        artist_name: 'Led Zeppelin',
+        album_id: 'iv',
+        album_name: 'IV',
+      }),
+    )
 
     expect(screen.getByTestId('displayed-artist-name').textContent).toBe('Led Zeppelin')
     expect(screen.getByTestId('displayed-album-name').textContent).toBe('IV')

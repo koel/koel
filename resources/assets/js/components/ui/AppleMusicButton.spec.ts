@@ -6,10 +6,14 @@ describe('appleMusicButton.vue', () => {
   const h = createHarness()
 
   it('renders', () => {
-    expect(h.render(Component, {
-      props: {
-        url: 'https://music.apple.com/buy-nao',
-      },
-    }).html()).toMatchSnapshot()
+    expect(
+      h
+        .render(Component, {
+          props: {
+            url: 'https://music.apple.com/buy-nao',
+          },
+        })
+        .html(),
+    ).toMatchSnapshot()
   })
 })

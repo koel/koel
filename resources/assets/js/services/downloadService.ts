@@ -3,24 +3,24 @@ import { playableStore } from '@/stores/playableStore'
 import { arrayify } from '@/utils/helpers'
 
 export const downloadService = {
-  fromPlayables (playables: MaybeArray<Playable>) {
+  fromPlayables(playables: MaybeArray<Playable>) {
     const query = arrayify(playables).reduce((q, playable) => `songs[]=${playable.id}&${q}`, '')
     this.trigger(`songs?${query}`)
   },
 
-  fromAlbum (album: Album) {
+  fromAlbum(album: Album) {
     this.trigger(`album/${album.id}`)
   },
 
-  fromArtist (artist: Artist) {
+  fromArtist(artist: Artist) {
     this.trigger(`artist/${artist.id}`)
   },
 
-  fromPlaylist (playlist: Playlist) {
+  fromPlaylist(playlist: Playlist) {
     this.trigger(`playlist/${playlist.id}`)
   },
 
-  fromFavorites () {
+  fromFavorites() {
     if (playableStore.state.favorites.length) {
       this.trigger('favorites')
     }

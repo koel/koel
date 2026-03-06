@@ -7,11 +7,11 @@ export const settingStore = {
     media_path: '',
   }),
 
-  init (settings: Settings) {
+  init(settings: Settings) {
     merge(this.state, settings)
   },
 
-  async updateMediaPath (path: string) {
+  async updateMediaPath(path: string) {
     await http.put('settings/media-path', {
       path,
     })
@@ -19,7 +19,7 @@ export const settingStore = {
     this.state.media_path = path
   },
 
-  async updateBranding (data: Partial<Branding>) {
+  async updateBranding(data: Partial<Branding>) {
     await http.put('settings/branding', data)
   },
 }

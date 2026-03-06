@@ -1,8 +1,6 @@
 import { useFileReader } from '@/composables/useFileReader'
 
-export const useImageFileInput = (config: {
-  onImageDataUrl: (dataUrl: string) => void
-}) => {
+export const useImageFileInput = (config: { onImageDataUrl: (dataUrl: string) => void }) => {
   const { readAsDataUrl } = useFileReader()
 
   const onImageInputChange = (e: InputEvent) => {

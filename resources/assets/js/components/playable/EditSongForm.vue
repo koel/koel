@@ -1,19 +1,13 @@
 <template>
   <form class="max-w-[540px]" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
     <header class="gap-4">
-      <img :src="coverUrl" alt="" class="w-[84px] aspect-square object-cover object-center rounded-md">
+      <img :src="coverUrl" alt="" class="w-[84px] aspect-square object-cover object-center rounded-md" />
       <div class="flex-1 flex flex-col justify-center overflow-hidden">
         <h1 :class="{ mixed: editingMultipleSongs }">{{ displayedTitle }}</h1>
-        <h2
-          :class="{ mixed: !allSongsAreFromSameArtist && !data.artist_name }"
-          data-testid="displayed-artist-name"
-        >
+        <h2 :class="{ mixed: !allSongsAreFromSameArtist && !data.artist_name }" data-testid="displayed-artist-name">
           {{ displayedArtistName }}
         </h2>
-        <h2
-          :class="{ mixed: !allSongsAreInSameAlbum && !data.album_name }"
-          data-testid="displayed-album-name"
-        >
+        <h2 :class="{ mixed: !allSongsAreInSameAlbum && !data.album_name }" data-testid="displayed-album-name">
           {{ displayedAlbumName }}
         </h2>
       </div>
@@ -143,13 +137,7 @@
           aria-labelledby="editSongTabLyrics"
         >
           <FormRow>
-            <TextArea
-              v-model="data.lyrics"
-              v-koel-focus
-              data-testid="lyrics-input"
-              name="lyrics"
-              title="Lyrics"
-            />
+            <TextArea v-model="data.lyrics" v-koel-focus data-testid="lyrics-input" name="lyrics" title="Lyrics" />
           </FormRow>
         </TabPanel>
       </TabPanelContainer>
@@ -184,7 +172,7 @@ import TabButton from '@/components/ui/tabs/TabButton.vue'
 import TabPanel from '@/components/ui/tabs/TabPanel.vue'
 import TabPanelContainer from '@/components/ui/tabs/TabPanelContainer.vue'
 
-const props = withDefaults(defineProps<{ songs: Song[], initialTab?: EditSongFormTabName }>(), {
+const props = withDefaults(defineProps<{ songs: Song[]; initialTab?: EditSongFormTabName }>(), {
   initialTab: 'details',
 })
 
@@ -202,13 +190,12 @@ const editingOnlyOneSong = songs.length === 1
 const editingMultipleSongs = !editingOnlyOneSong
 const inputPlaceholder = editingMultipleSongs ? 'Leave unchanged' : ''
 
-const allSongsShareSameValue = (key: keyof Song) => editingMultipleSongs
-  ? new Set(songs.map(song => song[key])).size === 1
-  : true
+const allSongsShareSameValue = (key: keyof Song) =>
+  editingMultipleSongs ? new Set(songs.map(song => song[key])).size === 1 : true
 
 const allSongsAreFromSameArtist = allSongsShareSameValue('artist_name')
 const allSongsAreInSameAlbum = allSongsShareSameValue('album_id')
-const coverUrl = allSongsAreInSameAlbum ? (songs[0].album_cover || defaultCover) : defaultCover
+const coverUrl = allSongsAreInSameAlbum ? songs[0].album_cover || defaultCover : defaultCover
 
 const initialValues: SongUpdateData = {
   album_name: allSongsAreInSameAlbum ? songs[0].album_name : '',
@@ -244,16 +231,18 @@ const { data, isPristine, handleSubmit } = useForm<SongUpdateData>({
   },
 })
 
-const displayedTitle = computed(() => editingOnlyOneSong ? data.title : `${songs.length} songs selected`)
+const displayedTitle = computed(() => (editingOnlyOneSong ? data.title : `${songs.length} songs selected`))
 
 const displayedArtistName = computed(() => {
   return allSongsAreFromSameArtist || data.artist_name ? data.artist_name : 'Mixed Artists'
 })
 
-const displayedAlbumName = computed(() => allSongsAreInSameAlbum || data.album_name ? data.album_name : 'Mixed Albums')
+const displayedAlbumName = computed(() =>
+  allSongsAreInSameAlbum || data.album_name ? data.album_name : 'Mixed Albums',
+)
 
 const maybeClose = async () => {
-  if (isPristine() || await showConfirmDialog('Discard all changes?')) {
+  if (isPristine() || (await showConfirmDialog('Discard all changes?'))) {
     close()
   }
 }

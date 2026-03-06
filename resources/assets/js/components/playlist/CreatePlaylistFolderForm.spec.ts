@@ -8,8 +8,7 @@ describe('createPlaylistFolderForm.vue', () => {
   const h = createHarness()
 
   it('submits', async () => {
-    const storeMock = h.mock(playlistFolderStore, 'store')
-      .mockResolvedValue(h.factory('playlist-folder'))
+    const storeMock = h.mock(playlistFolderStore, 'store').mockResolvedValue(h.factory('playlist-folder'))
 
     h.render(Component)
 

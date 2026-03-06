@@ -18,5 +18,5 @@ import { computed } from 'vue'
 const props = defineProps<{ favorite: boolean }>()
 const emit = defineEmits<{ (e: 'toggle'): void }>()
 
-const title = computed(() => props.favorite ? 'Undo Favorite' : 'Favorite')
+const title = computed(() => (props.favorite ? 'Undo Favorite' : 'Favorite'))
 </script>

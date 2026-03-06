@@ -16,7 +16,7 @@
         </h2>
 
         <template #thumbnail>
-          <img :src="episode.episode_image" class="aspect-square object-cover" alt="Episode thumbnail">
+          <img :src="episode.episode_image" class="aspect-square object-cover" alt="Episode thumbnail" />
         </template>
 
         <template #controls>
@@ -28,7 +28,8 @@
 
             <Btn
               v-if="episode.episode_link"
-              v-koel-tooltip="'Visit episode webpage'" :href="episode.episode_link"
+              v-koel-tooltip="'Visit episode webpage'"
+              :href="episode.episode_link"
               gray
               tag="a"
               target="_blank"
@@ -98,7 +99,7 @@ const formattedDescription = computed(() => {
 })
 
 const fetchDetails = async () => {
-  episode.value = await episodeStore.resolve(episodeId.value!) as Episode
+  episode.value = (await episodeStore.resolve(episodeId.value!)) as Episode
 }
 
 const playOrPause = async () => {
@@ -126,7 +127,9 @@ const playOrPause = async () => {
   }
 
   if (preferences.continuous_playback) {
-    queueStore.replaceQueueWith(orderBy(await episodeStore.fetchEpisodesInPodcast(episode.value!.podcast_id), 'created_at'))
+    queueStore.replaceQueueWith(
+      orderBy(await episodeStore.fetchEpisodesInPodcast(episode.value!.podcast_id), 'created_at'),
+    )
   }
 
   await playback().play(episode.value!, startingPoint)
@@ -150,9 +153,10 @@ watch(episodeId, async id => {
   }
 })
 
-const requestContextMenu = (event: MouseEvent) => openContextMenu<'PLAYABLES'>(ContextMenu, event, {
-  playables: [episode.value!],
-})
+const requestContextMenu = (event: MouseEvent) =>
+  openContextMenu<'PLAYABLES'>(ContextMenu, event, {
+    playables: [episode.value!],
+  })
 
 const toggleFavorite = () => episodeStore.toggleFavorite(episode.value!)
 

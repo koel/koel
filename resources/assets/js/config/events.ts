@@ -4,7 +4,7 @@ export interface Events {
   LOG_OUT: () => void
   TOGGLE_SIDEBAR: () => void
   FOCUS_SEARCH_FIELD: () => void
-  PLAY_YOUTUBE_VIDEO: (payload: { id: string, title: string }) => void
+  PLAY_YOUTUBE_VIDEO: (payload: { id: string; title: string }) => void
   SEARCH_KEYWORDS_CHANGED: (keywords: string) => void
 
   FULLSCREEN_TOGGLE: () => void
@@ -51,7 +51,7 @@ export interface Events {
   SOCKET_PLAY_PREV: () => void
   SOCKET_PLAYBACK_STOPPED: () => void
   SOCKET_GET_STATUS: () => void
-  SOCKET_STATUS: (data: { streamable?: Streamable, volume: number }) => void
+  SOCKET_STATUS: (data: { streamable?: Streamable; volume: number }) => void
   SOCKET_GET_CURRENT_PLAYABLE: () => void
   SOCKET_STREAMABLE: (streamable: Streamable) => void
   SOCKET_SET_VOLUME: (volume: number) => void

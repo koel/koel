@@ -14,10 +14,12 @@ import { uuid } from '@/utils/crypto'
 
 import MessageToast from '@/components/ui/message-toaster/MessageToast.vue'
 
-const root = ref<HTMLDivElement & {
-  popover?: 'manual' | 'auto'
-  showPopover?: () => void
-}>()
+const root = ref<
+  HTMLDivElement & {
+    popover?: 'manual' | 'auto'
+    showPopover?: () => void
+  }
+>()
 
 const messages = ref<ToastMessage[]>([])
 

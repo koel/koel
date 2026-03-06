@@ -30,13 +30,15 @@ const folders = toRef(playlistFolderStore.state, 'folders')
 const playlists = toRef(playlistStore.state, 'playlists')
 const favorites = toRef(playableStore.state, 'favorites')
 
-const orphanPlaylists = computed(() => playlists.value.filter(({ folder_id }) => {
-  if (folder_id === null) {
-    return true
-  }
+const orphanPlaylists = computed(() =>
+  playlists.value.filter(({ folder_id }) => {
+    if (folder_id === null) {
+      return true
+    }
 
-  // if the playlist's folder is not found, it's an orphan
-  // this can happen if the playlist belongs to another user (collaborative playlist)
-  return !folders.value.find(folder => folder.id === folder_id)
-}))
+    // if the playlist's folder is not found, it's an orphan
+    // this can happen if the playlist belongs to another user (collaborative playlist)
+    return !folders.value.find(folder => folder.id === folder_id)
+  }),
+)
 </script>

@@ -11,9 +11,7 @@ export const youTubeService = {
   searchVideosBySong: async (song: Song, nextPageToken: string) => {
     return await cache.remember(
       ['youtube.search', song.id, nextPageToken],
-      async () => await http.get<YouTubeSearchResult>(
-        `youtube/search/song/${song.id}?pageToken=${nextPageToken}`,
-      ),
+      async () => await http.get<YouTubeSearchResult>(`youtube/search/song/${song.id}?pageToken=${nextPageToken}`),
     )
   },
 

@@ -20,9 +20,7 @@ import BrandingSettingGroup from '@/components/screens/settings/BrandingSettingG
 import { useKoelPlus } from '@/composables/useKoelPlus'
 import { useBranding } from '@/composables/useBranding'
 
-const {
-  currentBranding,
-} = useBranding()
+const { currentBranding } = useBranding()
 
 const { isPlus } = useKoelPlus()
 </script>
