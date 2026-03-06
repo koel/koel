@@ -14,7 +14,7 @@ describe('usePolicies', () => {
     } as CurrentUser)
 
     const { currentUserCan } = usePolicies()
-    const song = h.factory('song', { owner_id: 999 })
+    const song = h.factory('song', { owner_id: '999' })
 
     expect(currentUserCan.editSong(song)).toBe(true)
   })
@@ -37,7 +37,7 @@ describe('usePolicies', () => {
 
     await h.withPlusEdition(async () => {
       const { currentUserCan } = usePolicies()
-      const otherSong = h.factory('song', { owner_id: 999 })
+      const otherSong = h.factory('song', { owner_id: '999' })
 
       expect(currentUserCan.editSong(otherSong)).toBe(false)
     })
@@ -69,7 +69,7 @@ describe('usePolicies', () => {
     h.actingAsUser(h.factory('user') as CurrentUser)
 
     const { currentUserCan } = usePolicies()
-    const playlist = h.factory('playlist', { owner_id: 999 })
+    const playlist = h.factory('playlist', { owner_id: '999' })
 
     expect(currentUserCan.editPlaylist(playlist)).toBe(false)
   })

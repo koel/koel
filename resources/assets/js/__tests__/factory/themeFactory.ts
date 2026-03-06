@@ -1,7 +1,6 @@
 import { faker } from '@faker-js/faker'
 
 export default (): Theme => ({
-  type: 'themes',
   id: faker.string.ulid(),
   name: faker.word.words(3),
   thumbnail_color: faker.color.rgb(),

@@ -196,7 +196,7 @@ const fetchScreenData = async () => {
 
     editable.value = await currentUserCan.editAlbum(album.value!)
   } catch (error: unknown) {
-    if (error?.status === 404) {
+    if ((error as any)?.status === 404) {
       triggerNotFound()
       return
     }

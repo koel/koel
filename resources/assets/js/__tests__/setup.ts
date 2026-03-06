@@ -6,9 +6,9 @@ declare global {
   interface Window {
     BASE_URL: string
     MAILER_CONFIGURED: boolean
-    SSO_PROVIDERS: string[]
+    SSO_PROVIDERS: SSOProvider[]
     BRANDING: Branding
-    createLemonSqueezy: () => void
+    createLemonSqueezy?: () => Closure
     RUNNING_UNIT_TESTS?: boolean
   }
 
@@ -39,15 +39,15 @@ HTMLMediaElement.prototype.load = vi.fn()
 HTMLMediaElement.prototype.play = vi.fn()
 HTMLMediaElement.prototype.pause = vi.fn()
 
-HTMLDialogElement.prototype.show = vi.fn(function mock() {
+HTMLDialogElement.prototype.show = vi.fn(function mock(this: HTMLDialogElement) {
   this.open = true
 })
 
-HTMLDialogElement.prototype.showModal = vi.fn(function mock() {
+HTMLDialogElement.prototype.showModal = vi.fn(function mock(this: HTMLDialogElement) {
   this.open = true
 })
 
-HTMLDialogElement.prototype.close = vi.fn(function mock() {
+HTMLDialogElement.prototype.close = vi.fn(function mock(this: HTMLDialogElement) {
   this.open = false
 })
 

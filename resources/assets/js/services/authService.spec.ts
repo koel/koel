@@ -94,7 +94,7 @@ describe('authService', () => {
     userStore.state.current = h.factory('user', {
       name: 'John Doe',
       email: 'john@doe.com',
-    })
+    }) as CurrentUser
 
     const updated = h.factory('user', {
       name: 'Jane Doe',

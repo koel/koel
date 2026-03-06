@@ -11,7 +11,7 @@
 <script lang="ts" setup>
 import { computed, ref, useAttrs } from 'vue'
 
-const value = defineModel<string | number>()
+const value = defineModel<string | number | null>()
 const attrs = useAttrs()
 
 // Aria label is optional, but if it's not provided, we'll use the name prop as a fallback.

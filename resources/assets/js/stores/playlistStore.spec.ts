@@ -93,6 +93,7 @@ describe('playlistStore', () => {
         name: 'New Playlist',
         folder_id: folder.id,
         description: 'Foo',
+        cover: null,
       },
       songs,
     )
@@ -100,6 +101,7 @@ describe('playlistStore', () => {
     expect(postMock).toHaveBeenCalledWith('playlists', {
       name: 'New Playlist',
       description: 'Foo',
+      cover: null,
       songs: songs.map(song => song.id),
       folder_id: folder.id,
     })

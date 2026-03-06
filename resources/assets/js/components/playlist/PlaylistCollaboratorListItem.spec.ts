@@ -23,7 +23,7 @@ describe('playlistCollaboratorListItem.vue', () => {
   }
 
   it('does not show a badge when current user is not the collaborator', async () => {
-    const currentUser = h.factory('user')
+    const currentUser = h.factory('user') as CurrentUser
     h.actingAsUser(currentUser)
     renderComponent({
       collaborator: h.factory('playlist-collaborator', { id: currentUser.id + 1 }),
@@ -36,7 +36,7 @@ describe('playlistCollaboratorListItem.vue', () => {
   })
 
   it('shows a badge when current user is the collaborator', async () => {
-    const currentUser = h.factory('user')
+    const currentUser = h.factory('user') as CurrentUser
     h.actingAsUser(currentUser)
     renderComponent({
       collaborator: h.factory('playlist-collaborator', {

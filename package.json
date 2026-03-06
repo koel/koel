@@ -112,6 +112,7 @@
       "oxfmt --write",
       "oxlint --fix"
     ],
+    "resources/assets/**/*.{ts,vue}": "bash -c 'vue-tsc --noEmit -p resources/assets/tsconfig.typecheck.json'",
     "cypress/**/*.ts": [
       "oxfmt --write",
       "oxlint --fix"

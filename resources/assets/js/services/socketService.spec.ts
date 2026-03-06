@@ -31,14 +31,14 @@ describe('socketService', () => {
   const h = createHarness()
 
   it('does not init without PUSHER_APP_KEY', async () => {
-    window.PUSHER_APP_KEY = ''
+    Object.defineProperty(window, 'PUSHER_APP_KEY', { value: '', writable: true, configurable: true })
     const result = await socketService.init()
     expect(result).toBe(false)
   })
 
   it('inits with PUSHER_APP_KEY', async () => {
-    window.PUSHER_APP_KEY = 'test-key'
-    window.PUSHER_APP_CLUSTER = 'mt1'
+    Object.defineProperty(window, 'PUSHER_APP_KEY', { value: 'test-key', writable: true, configurable: true })
+    Object.defineProperty(window, 'PUSHER_APP_CLUSTER', { value: 'mt1', writable: true, configurable: true })
     window.BASE_URL = 'http://localhost/'
 
     const result = await socketService.init()
@@ -47,7 +47,7 @@ describe('socketService', () => {
   })
 
   it('broadcasts events', () => {
-    const user = h.factory('user')
+    const user = h.factory('user') as CurrentUser
     userStore.state.current = user
 
     socketService.broadcast('TEST_EVENT', { foo: 'bar' })
@@ -55,7 +55,7 @@ describe('socketService', () => {
   })
 
   it('listens to events', () => {
-    const user = h.factory('user')
+    const user = h.factory('user') as CurrentUser
     userStore.state.current = user
 
     const cb = vi.fn()

@@ -4,10 +4,10 @@ import { OverlayKey } from '@/config/symbols'
 import type Overlay from '@/components/ui/Overlay.vue'
 
 export const useOverlay = (overlay?: Ref<InstanceType<typeof Overlay>> | null) => {
-  overlay = overlay || requireInjection(OverlayKey)
+  const resolved = overlay || requireInjection(OverlayKey)
 
   return {
-    showOverlay: overlay.value.show.bind(overlay.value),
-    hideOverlay: overlay.value.hide.bind(overlay.value),
+    showOverlay: resolved.value!.show.bind(resolved.value!),
+    hideOverlay: resolved.value!.hide.bind(resolved.value!),
   }
 }

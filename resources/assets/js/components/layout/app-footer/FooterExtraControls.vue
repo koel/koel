@@ -19,7 +19,7 @@
         title="Show equalizer"
         @click.prevent="showEqualizer"
       >
-        <AudioLinesIcon size="16" />
+        <AudioLinesIcon :size="16" />
       </FooterBtn>
 
       <VolumeSlider />
