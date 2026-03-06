@@ -1,0 +1,28 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`integrations.vue > renders 1`] = `
+<div class="space-y-5">
+  <section>
+    <h3 class="text-2xl mb-2 flex items-center gap-2"><span class="mr-2 text-[#1db954]"><img src="undefined/resources/assets/img/logos/musicbrainz.svg" alt="MusicBrainz Logo" height="20" width="20"></span> MusicBrainz Integration </h3>
+    <div>
+      <p> MusicBrainz integration is not enabled.
+        <!--v-if-->
+      </p>
+    </div>
+  </section>
+  <section>
+    <h3 class="text-2xl mb-2"><span class="mr-2 text-[#1db954]"><br data-testid="Icon" icon="[object Object]"></span> Spotify Integration </h3>
+    <div>
+      <p> Spotify integration is not enabled.
+        <!--v-if-->
+      </p>
+    </div>
+  </section>
+  <section data-v-6bdc1e9f="">
+    <h3 data-v-6bdc1e9f="" class="text-2xl mb-2"><span data-v-6bdc1e9f="" class="mr-2 text-[var(--lastfm-color)]"><br data-v-6bdc1e9f="" data-testid="Icon" icon="[object Object]"></span> Last.fm Integration </h3>
+    <div data-v-6bdc1e9f="" data-testid="lastfm-not-integrated">
+      <p data-v-6bdc1e9f=""> Last.fm integration is not enabled. <span data-v-6bdc1e9f="" data-testid="lastfm-user-instruction"> Try politely asking an administrator to enable it. </span></p>
+    </div>
+  </section>
+</div>
+`;
