@@ -19,7 +19,7 @@ import { computed, onMounted, ref, toRef, toRefs } from 'vue'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
-import { downloadService } from '@/services/downloadService'
+import { useDownload } from '@/composables/useDownload'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { useRouter } from '@/composables/useRouter'
 import { eventBus } from '@/utils/eventBus'
@@ -50,7 +50,8 @@ const shuffle = () =>
     await playback().queueAndPlay(await playableStore.fetchSongsForArtist(artist.value), true)
   })
 
-const download = () => trigger(() => downloadService.fromArtist(artist.value))
+const { fromArtist } = useDownload()
+const download = () => trigger(() => fromArtist(artist.value))
 const toggleFavorite = () => trigger(() => artistStore.toggleFavorite(artist.value))
 const requestEditForm = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_ARTIST_FORM', artist.value))
 const showEmbedModal = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_EMBED_FORM', artist.value))

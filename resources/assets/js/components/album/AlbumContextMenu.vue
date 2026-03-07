@@ -21,7 +21,7 @@ import { computed, onMounted, ref, toRef, toRefs } from 'vue'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
-import { downloadService } from '@/services/downloadService'
+import { useDownload } from '@/composables/useDownload'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { usePolicies } from '@/composables/usePolicies'
 import { useRouter } from '@/composables/useRouter'
@@ -54,7 +54,8 @@ const shuffle = () =>
 
 const edit = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_ALBUM_FORM', album.value))
 const toggleFavorite = () => trigger(() => albumStore.toggleFavorite(album.value))
-const download = () => trigger(() => downloadService.fromAlbum(album.value))
+const { fromAlbum } = useDownload()
+const download = () => trigger(() => fromAlbum(album.value))
 const showEmbedModal = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_EMBED_FORM', album.value))
 
 onMounted(async () => {

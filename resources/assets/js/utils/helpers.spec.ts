@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { arrayify, limitBy, use } from './helpers'
+import { arrayify, flattenParams, limitBy, use } from './helpers'
 
 describe('helpers utils', () => {
   it('use() triggers a closure with a defined value', () => {
@@ -31,5 +31,31 @@ describe('helpers utils', () => {
     [0, 1, []],
   ])('takes %d elements from %d position', (count, position, result) => {
     expect(limitBy(['a', 'b', 'c', 'd'], count, position)).toEqual(result)
+  })
+
+  describe('flattenParams', () => {
+    it('flattens scalar values', () => {
+      expect(flattenParams({ type: 'album', id: 42 })).toEqual({ type: 'album', id: '42' })
+    })
+
+    it('flattens array values with indexed keys', () => {
+      expect(flattenParams({ ids: ['a', 'b', 'c'] })).toEqual({
+        'ids[0]': 'a',
+        'ids[1]': 'b',
+        'ids[2]': 'c',
+      })
+    })
+
+    it('handles mixed scalar and array values', () => {
+      expect(flattenParams({ type: 'songs', ids: [1, 2] })).toEqual({
+        type: 'songs',
+        'ids[0]': '1',
+        'ids[1]': '2',
+      })
+    })
+
+    it('skips null and undefined values', () => {
+      expect(flattenParams({ type: 'favorites', id: null, extra: undefined })).toEqual({ type: 'favorites' })
+    })
   })
 })

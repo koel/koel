@@ -89,10 +89,13 @@ via the "Download" buttons found on according screens or context menus.
 This feature requires the [`zip` extension](https://www.php.net/manual/en/book.zip.php) to be installed and enabled on
 the server.
 
-:::warning Resource Intensive
-Downloading a large number of songs at once (or a big playlist) can be resource-intensive, may take a long time, or
-even (silently) fail.
-:::
+### Download Limit
+
+By default, there is no limit to the number of songs that can be downloaded at once.
+However, it is recommended to set a limit via the `DOWNLOAD_LIMIT` environment variable to avoid excessive memory usage
+and disk space consumption during zip file creation.
+For example, setting `DOWNLOAD_LIMIT=100` will prevent downloading more than 100 songs at once.
+A value of `0` (the default) means no limit. Single-song downloads are always allowed regardless of this setting.
 
 ## Deleting Songs
 

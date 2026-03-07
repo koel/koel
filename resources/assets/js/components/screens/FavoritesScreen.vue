@@ -64,7 +64,7 @@ import { faStar } from '@fortawesome/free-regular-svg-icons'
 import { ref, toRef } from 'vue'
 import { pluralize } from '@/utils/formatters'
 import { playableStore } from '@/stores/playableStore'
-import { downloadService } from '@/services/downloadService'
+import { useDownload } from '@/composables/useDownload'
 import { useRouter } from '@/composables/useRouter'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
@@ -93,7 +93,8 @@ const {
 
 const { PlayableListControls, config } = usePlayableListControls('Favorites')
 
-const download = () => downloadService.fromFavorites()
+const { fromFavorites } = useDownload()
+const download = () => fromFavorites()
 const removeSelected = () => selectedPlayables.value.length && playableStore.undoFavorite(selectedPlayables.value)
 
 let initialized = false

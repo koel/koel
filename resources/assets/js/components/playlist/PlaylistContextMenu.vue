@@ -36,7 +36,7 @@ import { playback } from '@/services/playbackManager'
 import { playlistStore } from '@/stores/playlistStore'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { commonStore } from '@/stores/commonStore'
-import { downloadService } from '@/services/downloadService'
+import { useDownload } from '@/composables/useDownload'
 
 const props = defineProps<{ playlist: Playlist }>()
 const { playlist } = toRefs(props)
@@ -64,7 +64,8 @@ const destroy = () =>
     }
   })
 
-const download = () => trigger(() => downloadService.fromPlaylist(playlist.value))
+const { fromPlaylist } = useDownload()
+const download = () => trigger(() => fromPlaylist(playlist.value))
 
 const play = () =>
   trigger(async () => {
