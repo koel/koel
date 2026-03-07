@@ -88,6 +88,7 @@ import { usePlaylistContentManagement } from '@/composables/usePlaylistContentMa
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
 import { useContextMenu } from '@/composables/useContextMenu'
+import { useModal } from '@/composables/useModal'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -99,6 +100,10 @@ import PlayableListSkeleton from '@/components/playable/playable-list/PlayableLi
 import Btn from '@/components/ui/form/Btn.vue'
 
 const ContextMenu = defineAsyncComponent(() => import('@/components/playlist/PlaylistContextMenu.vue'))
+const EditPlaylistForm = defineAsyncComponent(() => import('@/components/playlist/EditPlaylistForm.vue'))
+const EditSmartPlaylistForm = defineAsyncComponent(
+  () => import('@/components/playlist/smart-playlist/EditSmartPlaylistForm.vue'),
+)
 
 // Since this component is responsible for all playlists, we keep track of the state for each,
 // so that filter and sort settings are preserved when switching between them.
@@ -111,6 +116,7 @@ interface PlaylistScreenState {
 
 const { triggerNotFound, getRouteParam, onScreenActivated, go, url } = useRouter()
 const { openContextMenu } = useContextMenu()
+const { openModal } = useModal()
 
 const states = new Map<Playlist['id'], PlaylistScreenState>()
 
@@ -182,7 +188,12 @@ const sort = (field: MaybeArray<PlayableListSortField> | null, order: SortOrder)
   }
 }
 
-const editPlaylist = () => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist.value!)
+const editPlaylist = () => {
+  const p = playlist.value!
+  p.is_smart
+    ? openModal<'EDIT_SMART_PLAYLIST_FORM'>(EditSmartPlaylistForm, { playlist: p })
+    : openModal<'EDIT_PLAYLIST_FORM'>(EditPlaylistForm, { playlist: p })
+}
 
 const removeSelected = async () => await removeFromPlaylist(playlist.value!, selectedPlayables.value)
 

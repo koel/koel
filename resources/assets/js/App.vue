@@ -38,7 +38,14 @@ import { useOnline } from '@vueuse/core'
 import { queueStore } from '@/stores/queueStore'
 import { authService } from '@/services/authService'
 import { radioStationStore } from '@/stores/radioStationStore'
-import { ContextMenuKey, CurrentStreamableKey, DialogBoxKey, MessageToasterKey, OverlayKey } from '@/config/symbols'
+import {
+  ContextMenuKey,
+  CurrentStreamableKey,
+  DialogBoxKey,
+  MessageToasterKey,
+  ModalKey,
+  OverlayKey,
+} from '@/config/symbols'
 import { useRouter } from '@/composables/useRouter'
 import type { Route } from '@/router'
 
@@ -160,6 +167,13 @@ provide(
   shallowRef({
     component: null,
     position: { top: 0, left: 0 },
+  }),
+)
+
+provide(
+  ModalKey,
+  shallowRef({
+    component: null,
   }),
 )
 </script>

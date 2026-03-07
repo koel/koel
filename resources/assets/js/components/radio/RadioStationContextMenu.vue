@@ -13,8 +13,9 @@
 
 <script lang="ts" setup>
 import { onMounted, ref, toRefs } from 'vue'
+import { defineAsyncComponent } from '@/utils/helpers'
 import { useContextMenu } from '@/composables/useContextMenu'
-import { eventBus } from '@/utils/eventBus'
+import { useModal } from '@/composables/useModal'
 import { radioStationStore } from '@/stores/radioStationStore'
 import { playback } from '@/services/playbackManager'
 import { usePolicies } from '@/composables/usePolicies'
@@ -24,7 +25,10 @@ import { useMessageToaster } from '@/composables/useMessageToaster'
 const props = defineProps<{ station: RadioStation }>()
 const { station } = toRefs(props)
 
+const EditRadioStationForm = defineAsyncComponent(() => import('@/components/radio/EditRadioStationForm.vue'))
+
 const { MenuItem, Separator, trigger } = useContextMenu()
+const { openModal } = useModal()
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { currentUserCan } = usePolicies()
@@ -45,7 +49,8 @@ const togglePlayback = () =>
 
 const toggleFavorite = () => trigger(() => radioStationStore.toggleFavorite(station.value))
 
-const requestEditForm = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_RADIO_STATION_FORM', station.value))
+const requestEditForm = () =>
+  trigger(() => openModal<'EDIT_RADIO_STATION_FORM'>(EditRadioStationForm, { station: station.value }))
 
 const maybeDelete = () =>
   trigger(async () => {

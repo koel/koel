@@ -1,14 +1,26 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import { eventBus } from '@/utils/eventBus'
+import { assertOpenModal } from '@/__tests__/assertions'
 import { playbackService } from '@/services/RadioPlaybackService'
 import { acl } from '@/services/acl'
 import { radioStationStore } from '@/stores/radioStationStore'
+import EditRadioStationForm from '@/components/radio/EditRadioStationForm.vue'
+
+const openModalMock = vi.fn()
+
+vi.mock('@/composables/useModal', () => ({
+  useModal: () => ({
+    openModal: openModalMock,
+  }),
+}))
+
 import Component from './RadioStationContextMenu.vue'
 
 describe('radioStationContextMenu.vue', () => {
-  const h = createHarness()
+  const h = createHarness({
+    beforeEach: () => openModalMock.mockClear(),
+  })
 
   const renderComponent = async (station?: RadioStation, manageable = true) => {
     h.mock(acl, 'checkResourcePermission').mockReturnValue(manageable)
@@ -93,10 +105,9 @@ describe('radioStationContextMenu.vue', () => {
   it('requests edit form', async () => {
     const { station } = await renderComponent()
 
-    const emitMock = h.mock(eventBus, 'emit')
     await h.user.click(screen.getByText('Edit…'))
 
-    expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_RADIO_STATION_FORM', station)
+    await assertOpenModal(openModalMock, EditRadioStationForm, { station })
   })
 
   it('deletes', async () => {

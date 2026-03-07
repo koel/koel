@@ -25,8 +25,10 @@
 <script lang="ts" setup>
 import { computed, toRef, toRefs } from 'vue'
 import { eventBus } from '@/utils/eventBus'
+import { defineAsyncComponent } from '@/utils/helpers'
 import { useRouter } from '@/composables/useRouter'
 import { useContextMenu } from '@/composables/useContextMenu'
+import { useModal } from '@/composables/useModal'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { usePolicies } from '@/composables/usePolicies'
 import { useKoelPlus } from '@/composables/useKoelPlus'
@@ -41,7 +43,17 @@ import { useDownload } from '@/composables/useDownload'
 const props = defineProps<{ playlist: Playlist }>()
 const { playlist } = toRefs(props)
 
+const EditPlaylistForm = defineAsyncComponent(() => import('@/components/playlist/EditPlaylistForm.vue'))
+const EditSmartPlaylistForm = defineAsyncComponent(
+  () => import('@/components/playlist/smart-playlist/EditSmartPlaylistForm.vue'),
+)
+const PlaylistCollaborationModal = defineAsyncComponent(
+  () => import('@/components/playlist/PlaylistCollaborationModal.vue'),
+)
+const CreateEmbedForm = defineAsyncComponent(() => import('@/components/embed/CreateEmbedForm.vue'))
+
 const { MenuItem, Separator, trigger } = useContextMenu()
+const { openModal } = useModal()
 const { go, url } = useRouter()
 const { toastWarning, toastSuccess } = useMessageToaster()
 const { isPlus } = useKoelPlus()
@@ -53,7 +65,13 @@ const allowDownload = toRef(commonStore.state, 'allows_download')
 const canEditPlaylist = computed(() => currentUserCan.editPlaylist(playlist.value))
 const canShowCollaboration = computed(() => isPlus.value && !playlist.value?.is_smart)
 
-const edit = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist.value))
+const edit = () =>
+  trigger(() => {
+    const p = playlist.value
+    p.is_smart
+      ? openModal<'EDIT_SMART_PLAYLIST_FORM'>(EditSmartPlaylistForm, { playlist: p })
+      : openModal<'EDIT_PLAYLIST_FORM'>(EditPlaylistForm, { playlist: p })
+  })
 
 const destroy = () =>
   trigger(async () => {
@@ -103,6 +121,8 @@ const addToQueue = () =>
     }
   })
 
-const showCollaborationModal = () => trigger(() => eventBus.emit('MODAL_SHOW_PLAYLIST_COLLABORATION', playlist.value))
-const showEmbedModal = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_EMBED_FORM', playlist.value))
+const showCollaborationModal = () =>
+  trigger(() => openModal<'PLAYLIST_COLLABORATION'>(PlaylistCollaborationModal, { playlist: playlist.value }))
+const showEmbedModal = () =>
+  trigger(() => openModal<'CREATE_EMBED_FORM'>(CreateEmbedForm, { embeddable: playlist.value }))
 </script>

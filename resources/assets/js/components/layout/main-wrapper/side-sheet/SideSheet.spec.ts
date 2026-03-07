@@ -1,19 +1,31 @@
 import type { Ref } from 'vue'
 import { ref } from 'vue'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { screen, waitFor } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
+import { assertOpenModal } from '@/__tests__/assertions'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { CurrentStreamableKey } from '@/config/symbols'
 import { eventBus } from '@/utils/eventBus'
+import AboutKoelModal from '@/components/meta/AboutKoelModal.vue'
+
+const openModalMock = vi.fn()
+
+vi.mock('@/composables/useModal', () => ({
+  useModal: () => ({
+    openModal: openModalMock,
+  }),
+}))
+
 import Component from './SideSheet.vue'
 
 describe('sideSheet.vue', () => {
   const h = createHarness({
     beforeEach: () => {
+      openModalMock.mockClear()
       // disable getting and saving the preferences
       h.mock(preferenceStore, 'update')
     },
@@ -107,12 +119,11 @@ describe('sideSheet.vue', () => {
   })
 
   it('shows About Koel model', async () => {
-    const emitMock = h.mock(eventBus, 'emit')
     renderComponent()
 
     await h.user.click(screen.getByRole('button', { name: 'About Koel' }))
 
-    expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_ABOUT_KOEL')
+    await assertOpenModal(openModalMock, AboutKoelModal)
   })
 
   it('notifies new version', async () => {

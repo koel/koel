@@ -76,13 +76,14 @@ import { faStar as faEmptyStar } from '@fortawesome/free-regular-svg-icons'
 
 import { computed, onMounted, provide, ref } from 'vue'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
-import { eventBus } from '@/utils/eventBus'
 import { useFuzzySearch } from '@/composables/useFuzzySearch'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { orderBy } from 'lodash'
 import { FilterKeywordsKey } from '@/config/symbols'
 import { radioStationStore } from '@/stores/radioStationStore'
+import { defineAsyncComponent } from '@/utils/helpers'
 import { usePolicies } from '@/composables/usePolicies'
+import { useModal } from '@/composables/useModal'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
@@ -96,6 +97,8 @@ import AlbumCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkele
 import BtnScrollToTop from '@/components/ui/BtnScrollToTop.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 
+const AddRadioStationForm = defineAsyncComponent(() => import('@/components/radio/AddRadioStationForm.vue'))
+const { openModal } = useModal()
 const { currentUserCan } = usePolicies()
 const fuzzy = useFuzzySearch<RadioStation>(radioStationStore.state.stations, ['name', 'description'])
 
@@ -144,7 +147,7 @@ const sort = (field: RadioStationListSortField, order: SortOrder) => {
   preferences.radio_stations_sort_order = order
 }
 
-const requestAddStationForm = () => eventBus.emit('MODAL_SHOW_ADD_RADIO_STATION_FORM')
+const requestAddStationForm = () => openModal<'ADD_RADIO_STATION_FORM'>(AddRadioStationForm)
 
 onMounted(async () => await fetchStations())
 </script>

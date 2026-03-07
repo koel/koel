@@ -134,6 +134,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { MicVocalIcon } from 'lucide-vue-next'
 import { computed, toRef, toRefs } from 'vue'
+import { defineAsyncComponent } from '@/utils/helpers'
 import { pluralize } from '@/utils/formatters'
 import { eventBus } from '@/utils/eventBus'
 import { copyText } from '@/utils/helpers'
@@ -150,6 +151,7 @@ import { usePlaylistContentManagement } from '@/composables/usePlaylistContentMa
 import { usePlayableMenuMethods } from '@/composables/usePlayableMenuMethods'
 import { usePolicies } from '@/composables/usePolicies'
 import { useContextMenu } from '@/composables/useContextMenu'
+import { useModal } from '@/composables/useModal'
 import { useKoelPlus } from '@/composables/useKoelPlus'
 import { playback } from '@/services/playbackManager'
 
@@ -159,7 +161,11 @@ const { playables } = toRefs(props)
 const { toastSuccess, toastError, toastWarning } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { go, getRouteParam, isCurrentScreen, url } = useRouter()
+const EditSongForm = defineAsyncComponent(() => import('@/components/playable/EditSongForm.vue'))
+const CreateEmbedForm = defineAsyncComponent(() => import('@/components/embed/CreateEmbedForm.vue'))
+
 const { MenuItem, Separator, closeContextMenu, trigger } = useContextMenu()
+const { openModal } = useModal()
 const { removeFromPlaylist } = usePlaylistContentManagement()
 const { isPlus } = useKoelPlus()
 
@@ -294,12 +300,11 @@ const doPlayback = () =>
   })
 
 const openEditForm = () =>
-  trigger(
-    () =>
-      playables.value.length &&
-      contentType.value === 'songs' &&
-      eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', playables.value as Song[]),
-  )
+  trigger(() => {
+    if (playables.value.length && contentType.value === 'songs') {
+      openModal<'EDIT_SONG_FORM'>(EditSongForm, { songs: playables.value as Song[], initialTab: 'details' })
+    }
+  })
 
 const viewAlbum = (song: Song) => trigger(() => go(url('albums.show', { id: song.album_id })))
 const viewArtist = (song: Song) => trigger(() => go(url('artists.show', { id: song.artist_id })))
@@ -326,7 +331,8 @@ const copyUrl = () =>
     toastSuccess('URL copied to clipboard.')
   })
 
-const showEmbedModal = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_EMBED_FORM', playables.value[0]))
+const showEmbedModal = () =>
+  trigger(() => openModal<'CREATE_EMBED_FORM'>(CreateEmbedForm, { embeddable: playables.value[0] }))
 
 const deleteFromFilesystem = () =>
   trigger(async () => {

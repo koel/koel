@@ -60,15 +60,18 @@
 </template>
 
 <script lang="ts" setup>
+import { defineAsyncComponent } from '@/utils/helpers'
 import { useKoelPlus } from '@/composables/useKoelPlus'
 import { useNewVersionNotification } from '@/composables/useNewVersionNotification'
-import { eventBus } from '@/utils/eventBus'
 import { usePolicies } from '@/composables/usePolicies'
 import { useBranding } from '@/composables/useBranding'
+import { useModal } from '@/composables/useModal'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import BtnUpgradeToPlus from '@/components/koel-plus/BtnUpgradeToPlus.vue'
 import CreditsBlock from '@/components/meta/CreditsBlock.vue'
+
+const KoelPlusModal = defineAsyncComponent(() => import('@/components/koel-plus/KoelPlusModal.vue'))
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 const { name: appName, logo, hasCustomBranding } = useBranding()
@@ -76,13 +79,11 @@ const { shouldNotifyNewVersion, currentVersion, latestVersion, latestVersionRele
 
 const { isPlus, license } = useKoelPlus()
 const { currentUserCan } = usePolicies()
+const { openModal } = useModal()
 
 const close = () => emit('close')
 
-const showPlusModal = () => {
-  close()
-  eventBus.emit('MODAL_SHOW_KOEL_PLUS')
-}
+const showPlusModal = () => openModal<'KOEL_PLUS'>(KoelPlusModal)
 
 const isDemo = window.IS_DEMO
 </script>

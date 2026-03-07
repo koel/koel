@@ -24,15 +24,17 @@
 
 <script lang="ts" setup>
 import { computed, ref, toRefs, watch } from 'vue'
-import { eventBus } from '@/utils/eventBus'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { useLyrics } from '@/composables/useLyrics'
+import { useModal } from '@/composables/useModal'
 
 const props = defineProps<{ song: Song }>()
 const LrcLyricsPane = defineAsyncComponent(() => import('@/components/ui/lyrics/LrcLyricsPane.vue'))
 const Magnifier = defineAsyncComponent(() => import('@/components/ui/Magnifier.vue'))
+const EditSongForm = defineAsyncComponent(() => import('@/components/playable/EditSongForm.vue'))
 
+const { openModal } = useModal()
 const { song } = toRefs(props)
 const zoomLevel = ref(preferences.lyrics_zoom_level || 1)
 
@@ -42,7 +44,7 @@ const fontSize = computed(() => `${1 + (zoomLevel.value - 1) * 0.2}rem`)
 
 const zoomIn = () => (zoomLevel.value = Math.min(zoomLevel.value + 1, 8))
 const zoomOut = () => (zoomLevel.value = Math.max(zoomLevel.value - 1, -2))
-const showEditSongForm = () => eventBus.emit('MODAL_SHOW_EDIT_SONG_FORM', song.value, 'lyrics')
+const showEditSongForm = () => openModal<'EDIT_SONG_FORM'>(EditSongForm, { songs: [song.value], initialTab: 'lyrics' })
 
 watch(zoomLevel, level => (preferences.lyrics_zoom_level = level), { immediate: true })
 </script>

@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
+import { assertOpenModal } from '@/__tests__/assertions'
 import factory from '@/__tests__/factory'
 import { arrayify } from '@/utils/helpers'
 import { eventBus } from '@/utils/eventBus'
@@ -11,11 +12,26 @@ import { queueStore } from '@/stores/queueStore'
 import { playableStore } from '@/stores/playableStore'
 import { DialogBoxStub, MessageToasterStub } from '@/__tests__/stubs'
 import Router from '@/router'
+import EditSongForm from '@/components/playable/EditSongForm.vue'
+import CreateEmbedForm from '@/components/embed/CreateEmbedForm.vue'
+import CreatePlaylistForm from '@/components/playlist/CreatePlaylistForm.vue'
+
+const openModalMock = vi.fn()
+
+vi.mock('@/composables/useModal', () => ({
+  useModal: () => ({
+    openModal: openModalMock,
+  }),
+}))
+
 import Component from './PlayableContextMenu.vue'
 
 describe('playableContextMenu.vue', () => {
   const h = createHarness({
-    beforeEach: () => (queueStore.state.playables = []),
+    beforeEach: () => {
+      queueStore.state.playables = []
+      openModalMock.mockClear()
+    },
   })
 
   const renderComponent = async (playables?: MaybeArray<Playable>) => {
@@ -261,11 +277,9 @@ describe('playableContextMenu.vue', () => {
     h.actingAsAdmin()
     const { playables } = await renderComponent()
 
-    // mock after render to ensure that the component is mounted properly
-    const emitMock = h.mock(eventBus, 'emit')
     await h.user.click(screen.getByText('Edit…'))
 
-    expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_SONG_FORM', playables)
+    await assertOpenModal(openModalMock, EditSongForm, { songs: playables as Song[], initialTab: 'details' })
   })
 
   it('does not allow edit songs if current user is not admin', async () => {
@@ -322,12 +336,9 @@ describe('playableContextMenu.vue', () => {
     h.actingAsUser()
     const { playables } = await renderComponent()
 
-    // mock after render to ensure that the component is mounted properly
-    const emitMock = h.mock(eventBus, 'emit')
-
     await h.user.click(screen.getByText('New Playlist…'))
 
-    expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_CREATE_PLAYLIST_FORM', null, playables)
+    await assertOpenModal(openModalMock, CreatePlaylistForm, { folder: null, playables })
   })
 
   it('does not have the options to mark song as private or public in Community edition', async () => {
@@ -429,9 +440,8 @@ describe('playableContextMenu.vue', () => {
 
   it('requests the embed form', async () => {
     const { playables } = await renderComponent(h.factory('song'))
-    const emitMock = h.mock(eventBus, 'emit')
     await h.user.click(screen.getByText('Embed…'))
 
-    expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_CREATE_EMBED_FORM', playables[0])
+    await assertOpenModal(openModalMock, CreateEmbedForm, { embeddable: playables[0] })
   })
 })

@@ -1,11 +1,23 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import { eventBus } from '@/utils/eventBus'
+import { assertOpenModal } from '@/__tests__/assertions'
+import EditSongForm from '@/components/playable/EditSongForm.vue'
+
+const openModalMock = vi.fn()
+
+vi.mock('@/composables/useModal', () => ({
+  useModal: () => ({
+    openModal: openModalMock,
+  }),
+}))
+
 import Component from './LyricsPane.vue'
 
 describe('lyricsPane.vue', () => {
-  const h = createHarness()
+  const h = createHarness({
+    beforeEach: () => openModalMock.mockClear(),
+  })
 
   const renderComponent = (song?: Song) => {
     song =
@@ -59,13 +71,12 @@ describe('lyricsPane.vue', () => {
   it('provides a button to add lyrics if current user is admin', async () => {
     const song = h.factory('song', { lyrics: null })
 
-    const mock = h.mock(eventBus, 'emit')
     h.actingAsAdmin()
     renderComponent(song)
 
     await h.user.click(screen.getByRole('button', { name: 'Click here' }))
 
-    expect(mock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_SONG_FORM', song, 'lyrics')
+    await assertOpenModal(openModalMock, EditSongForm, { songs: [song], initialTab: 'lyrics' })
   })
 
   it('does not have a button to add lyrics if current user is not an admin', async () => {

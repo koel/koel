@@ -1,11 +1,15 @@
 import type { Ref } from 'vue'
 import { queueStore } from '@/stores/queueStore'
-import { eventBus } from '@/utils/eventBus'
+import { defineAsyncComponent } from '@/utils/helpers'
 import { usePlaylistContentManagement } from '@/composables/usePlaylistContentManagement'
+import { useModal } from '@/composables/useModal'
 import { playableStore } from '@/stores/playableStore'
+
+const CreatePlaylistForm = defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistForm.vue'))
 
 export const usePlayableMenuMethods = (playables: Ref<Playable[]>, close: Closure) => {
   const { addToPlaylist } = usePlaylistContentManagement()
+  const { openModal } = useModal()
 
   const trigger = async (cb: Closure) => {
     close()
@@ -20,6 +24,9 @@ export const usePlayableMenuMethods = (playables: Ref<Playable[]>, close: Closur
     removeFromFavorites: () => trigger(() => playableStore.undoFavorite(playables.value)),
     removeFromQueue: () => trigger(() => queueStore.unqueue(playables.value)),
     addToExistingPlaylist: (playlist: Playlist) => trigger(() => addToPlaylist(playlist, playables.value)),
-    addToNewPlaylist: () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_PLAYLIST_FORM', null, playables.value)),
+    addToNewPlaylist: () =>
+      trigger(() =>
+        openModal<'CREATE_PLAYLIST_FORM'>(CreatePlaylistForm, { folder: null, playables: playables.value }),
+      ),
   }
 }

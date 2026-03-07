@@ -19,6 +19,13 @@ export const ContextMenuKey: InjectionKey<
   }>
 > = Symbol('ContextMenu')
 
+export const ModalKey: InjectionKey<
+  Ref<{
+    component: Component | null
+    props?: Record<string, any>
+  }>
+> = Symbol('Modal')
+
 export const FilterKeywordsKey: InjectionKey<Ref<string>> = Symbol('PlayableListFilterKeywords')
 
 export const PlayablesKey: ReadonlyInjectionKey<Ref<Playable[]>> | InjectionKey<Ref<Playable[]>> =
