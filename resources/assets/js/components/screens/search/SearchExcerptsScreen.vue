@@ -26,22 +26,31 @@
       />
     </div>
 
-    <ScreenEmptyState v-else>
+    <ScreenEmptyState v-else-if="online">
       <template #icon>
         <Icon :icon="faSearch" />
       </template>
       Find songs, artists, and albums,
       <span class="secondary block">all in one place.</span>
     </ScreenEmptyState>
+
+    <ScreenEmptyState v-else>
+      <template #icon>
+        <WifiOff :size="64" />
+      </template>
+      Search is unavailable offline.
+    </ScreenEmptyState>
   </ScreenBase>
 </template>
 
 <script lang="ts" setup>
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { WifiOff } from 'lucide-vue-next'
 import { intersectionBy } from 'lodash'
 import { ref, toRef } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { searchStore } from '@/stores/searchStore'
+import { useNetworkStatus } from '@/composables/useNetworkStatus'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -53,6 +62,7 @@ import PodcastExcerptResultsBlock from '@/components/screens/search/PodcastExcer
 import RadioStationExcerptResultsBlock from '@/components/screens/search/RadioStationExcerptResultsBlock.vue'
 
 const excerpt = toRef(searchStore.state, 'excerpt')
+const { online } = useNetworkStatus()
 const q = ref('')
 const searching = ref(false)
 

@@ -24,6 +24,8 @@ export interface Events {
 
   EPISODE_PROGRESS_UPDATED: (episode: Episode, progress: number) => void
 
+  OFFLINE_PLAYBACK_BLOCKED: (playable: Playable) => void
+
   SOCKET_TOGGLE_PLAYBACK: () => void
   SOCKET_TOGGLE_FAVORITE: (streamable: Streamable) => void
   SOCKET_PLAY_NEXT: () => void

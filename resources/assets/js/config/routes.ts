@@ -50,6 +50,11 @@ export const routes = [
     screen: 'RecentlyPlayed',
   },
   {
+    name: 'offline-songs',
+    path: '/offline-songs',
+    screen: 'OfflineSongs',
+  },
+  {
     name: 'search',
     path: '/search',
     screen: 'Search.Excerpt',

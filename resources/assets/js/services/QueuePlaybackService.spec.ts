@@ -1,8 +1,18 @@
-import { nextTick, reactive } from 'vue'
+import { nextTick, reactive, ref } from 'vue'
 import plyr from 'plyr'
 import { describe, expect, it, vi } from 'vitest'
 import * as lodash from 'lodash'
 import { createHarness } from '@/__tests__/TestHarness'
+
+const onlineMock = ref(true)
+vi.mock('@/composables/useNetworkStatus', () => ({
+  useNetworkStatus: () => ({ online: onlineMock }),
+}))
+
+const isCachedMock = vi.fn().mockReturnValue(false)
+vi.mock('@/composables/useOfflinePlayback', () => ({
+  useOfflinePlayback: () => ({ isCached: isCachedMock }),
+}))
 
 vi.mock('lodash', async importOriginal => {
   const mod = await importOriginal<typeof lodash>()
@@ -376,5 +386,35 @@ describe('playbackService', () => {
 
     expect(playNextMock).not.toHaveBeenCalled()
     expect(logMock).not.toHaveBeenCalled()
+  })
+
+  it('blocks playback of non-cached songs when offline', async () => {
+    onlineMock.value = false
+    isCachedMock.mockReturnValue(false)
+
+    const song = h.factory('song')
+    const stopMock = h.mock(playbackService, 'stop')
+
+    await playbackService.play(song)
+
+    expect(stopMock).toHaveBeenCalled()
+    onlineMock.value = true
+  })
+
+  it('allows playback of cached songs when offline', async () => {
+    onlineMock.value = false
+    isCachedMock.mockReturnValue(true)
+
+    const song = setCurrentSong()
+    h.mock(playableStore, 'getSourceUrl').mockReturnValue('/play/123?t=token')
+    h.mock(window.HTMLMediaElement.prototype, 'play')
+    h.mock(socketService, 'broadcast')
+    h.mock(http, 'put')
+
+    await playbackService.play(song)
+
+    expect(song.playback_state).toEqual('Playing')
+    onlineMock.value = true
+    isCachedMock.mockReturnValue(false)
   })
 })

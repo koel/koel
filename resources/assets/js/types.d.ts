@@ -498,6 +498,7 @@ declare type ScreenName =
   | 'Home'
   | 'Invitation.Accept'
   | 'MediaBrowser'
+  | 'OfflineSongs'
   | 'Password.Reset'
   | 'Playlist'
   | 'Playlist.Collaborate'
@@ -578,6 +579,7 @@ interface PlayableListContext {
     | 'Queue'
     | 'Genre'
     | 'Search.Playables'
+    | 'OfflineSongs'
   >
 }
 

@@ -27,4 +27,9 @@ createApp(App)
    */
   .mount('#app')
 
-window.addEventListener('load', () => navigator.serviceWorker?.register('./sw.js'))
+window.addEventListener('load', () => {
+  navigator.serviceWorker?.register('./sw.js').then(registration => {
+    // Check for SW updates periodically
+    setInterval(() => registration.update(), 60 * 60 * 1000)
+  })
+})

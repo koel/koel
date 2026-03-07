@@ -21,6 +21,9 @@
           >
             Download All
           </a>
+          <a v-if="canToggleOffline" role="button" @click.prevent="toggleOffline">
+            {{ allCached ? 'Remove Offline' : 'Make Offline' }}
+          </a>
         </template>
 
         <template #controls>
@@ -61,10 +64,12 @@
 <script lang="ts" setup>
 import { faHeartBroken } from '@fortawesome/free-solid-svg-icons'
 import { faStar } from '@fortawesome/free-regular-svg-icons'
-import { ref, toRef } from 'vue'
+import { computed, ref, toRef } from 'vue'
 import { pluralize } from '@/utils/formatters'
 import { playableStore } from '@/stores/playableStore'
 import { useDownload } from '@/composables/useDownload'
+import { useOfflinePlayback } from '@/composables/useOfflinePlayback'
+import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useRouter } from '@/composables/useRouter'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
@@ -96,6 +101,20 @@ const { PlayableListControls, config } = usePlayableListControls('Favorites')
 const { fromFavorites } = useDownload()
 const download = () => fromFavorites()
 const removeSelected = () => selectedPlayables.value.length && playableStore.undoFavorite(selectedPlayables.value)
+
+const { makePlayablesAvailableOffline, removePlayablesOfflineCache, allPlayablesCached } = useOfflinePlayback()
+const canToggleOffline = computed(() => Boolean(navigator.serviceWorker?.controller) && playables.value.length > 0)
+const allCached = computed(() => allPlayablesCached(playables.value))
+
+const toggleOffline = () => {
+  if (allCached.value) {
+    removePlayablesOfflineCache(playables.value)
+    useMessageToaster().toastSuccess('Removed offline versions for favorites.')
+  } else {
+    makePlayablesAvailableOffline(playables.value)
+    useMessageToaster().toastSuccess(`Making ${pluralize(playables.value, 'song')} available offline…`)
+  }
+}
 
 let initialized = false
 const loading = ref(false)

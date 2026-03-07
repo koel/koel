@@ -16,6 +16,7 @@
     <PlaylistScreen v-if="screenLoaded('Playlist')" v-show="screen === 'Playlist'" />
     <FavoritesScreen v-if="screenLoaded('Favorites')" v-show="screen === 'Favorites'" />
     <RecentlyPlayedScreen v-if="screenLoaded('RecentlyPlayed')" v-show="screen === 'RecentlyPlayed'" />
+    <OfflineSongsScreen v-if="screenLoaded('OfflineSongs')" v-show="screen === 'OfflineSongs'" />
     <UploadScreen v-if="screenLoaded('Upload')" v-show="screen === 'Upload'" />
     <SearchExcerptsScreen v-if="screenLoaded('Search.Excerpt')" v-show="screen === 'Search.Excerpt'" />
     <GenreScreen v-if="screenLoaded('Genre')" v-show="screen === 'Genre'" />
@@ -69,7 +70,9 @@ const PlaylistScreen = defineAsyncComponent(() => import('@/components/screens/P
 const PodcastListScreen = defineAsyncComponent(() => import('@/components/screens/PodcastListScreen.vue'))
 const PodcastScreen = defineAsyncComponent(() => import('@/components/screens/PodcastScreen.vue'))
 const ProfileScreen = defineAsyncComponent(() => import('@/components/screens/ProfileScreen.vue'))
-const QueueScreen = defineAsyncComponent(() => import('@/components/screens/QueueScreen.vue'))
+// QueueScreen and OfflineSongsScreen must NOT be lazy-loaded, so they work offline.
+import QueueScreen from '@/components/screens/QueueScreen.vue'
+import OfflineSongsScreen from '@/components/screens/OfflineSongsScreen.vue'
 const RadioStationListScreen = defineAsyncComponent(() => import('@/components/screens/RadioStationListScreen.vue'))
 const RecentlyPlayedScreen = defineAsyncComponent(() => import('@/components/screens/RecentlyPlayedScreen.vue'))
 const SearchExcerptsScreen = defineAsyncComponent(() => import('@/components/screens/search/SearchExcerptsScreen.vue'))

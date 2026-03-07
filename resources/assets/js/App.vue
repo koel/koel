@@ -34,7 +34,7 @@
 <script lang="ts" setup>
 import { defineAsyncComponent } from '@/utils/helpers'
 import { computed, onMounted, provide, ref, shallowRef, watch } from 'vue'
-import { useOnline } from '@vueuse/core'
+import { useNetworkStatus } from '@/composables/useNetworkStatus'
 import { queueStore } from '@/stores/queueStore'
 import { authService } from '@/services/authService'
 import { radioStationStore } from '@/stores/radioStationStore'
@@ -79,7 +79,7 @@ const currentStreamable = ref<Streamable>()
 const showDropZone = ref(false)
 
 const { isCurrentScreen, resolveRoute, triggerNotFound } = useRouter()
-const online = useOnline()
+const { online } = useNetworkStatus()
 
 const authenticated = ref(false)
 const initialized = ref(false)

@@ -16,6 +16,8 @@ import { audioService } from '@/services/audioService'
 import { http } from '@/services/http'
 import { socketService } from '@/services/socketService'
 import { useEpisodeProgressTracking } from '@/composables/useEpisodeProgressTracking'
+import { useNetworkStatus } from '@/composables/useNetworkStatus'
+import { useOfflinePlayback } from '@/composables/useOfflinePlayback'
 import { BasePlaybackService } from '@/services/BasePlaybackService'
 import { useBranding } from '@/composables/useBranding'
 
@@ -79,6 +81,20 @@ export class QueuePlaybackService extends BasePlaybackService {
    * We'll let them come true
    */
   public async play(playable: Playable, position = 0) {
+    // If offline and the song isn't cached, skip to next or stop.
+    if (!useNetworkStatus().online.value && isSong(playable) && !useOfflinePlayback().isCached(playable)) {
+      logger.warn('Cannot play non-cached song while offline', playable)
+      eventBus.emit('OFFLINE_PLAYBACK_BLOCKED', playable)
+
+      if (this.next && this.next.id !== playable.id) {
+        await this.playNext()
+      } else {
+        await this.stop()
+      }
+
+      return
+    }
+
     if (isEpisode(playable)) {
       useEpisodeProgressTracking().trackEpisode(playable)
     }

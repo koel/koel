@@ -1,8 +1,15 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { screen } from '@testing-library/vue'
 import { playableStore } from '@/stores/playableStore'
 import { PlayableListConfigKey } from '@/config/symbols'
 import { createHarness } from '@/__tests__/TestHarness'
+
+vi.mock('@/composables/useOfflinePlayback', () => ({
+  useOfflinePlayback: () => ({
+    isCached: vi.fn().mockReturnValue(false),
+  }),
+}))
+
 import Component from './PlayableListItem.vue'
 
 describe('playableListItem.vue', () => {
