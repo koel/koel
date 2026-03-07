@@ -8,6 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 /** @template T of Model */
 interface Repository
 {
+    /**
+     * Resolve a model instance from an ID or model.
+     *
+     * @param T|string|int $modelOrId
+     *
+     * @return T
+     */
+    public function resolveOne(Model|string|int $modelOrId): Model;
+
     /** @return T */
     public function getOne($id): Model;
 

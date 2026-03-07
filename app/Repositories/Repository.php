@@ -34,11 +34,7 @@ abstract class Repository implements RepositoryContract
         return preg_replace('/(.+)\\\\Repositories\\\\(.+)Repository$/m', '$1\Models\\\$2', static::class);
     }
 
-    /**
-     * @param T|string|int $modelOrId
-     *
-     * @return T
-     */
+    /** @inheritDoc */
     public function resolveOne(Model|string|int $modelOrId): Model
     {
         return $modelOrId instanceof Model ? $modelOrId : $this->getOne($modelOrId);
