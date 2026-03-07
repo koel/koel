@@ -36,6 +36,9 @@ class SongRepository extends Repository implements ScoutableRepository
     private const LIST_SIZE_LIMIT = 500;
 
     public function __construct(
+        private readonly AlbumRepository $albumRepository,
+        private readonly ArtistRepository $artistRepository,
+        private readonly PlaylistRepository $playlistRepository,
         private readonly FolderRepository $folderRepository,
     ) {
         parent::__construct();
@@ -140,7 +143,7 @@ class SongRepository extends Repository implements ScoutableRepository
     /** @return Collection|array<array-key, Song> */
     public function getByAlbum(Album|string $album, ?User $scopedUser = null): Collection
     {
-        $album = $album instanceof Album ? $album : Album::findOrFail($album);
+        $album = $this->albumRepository->resolveOne($album);
 
         return Song::query(user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
@@ -165,7 +168,7 @@ class SongRepository extends Repository implements ScoutableRepository
     /** @return Collection|array<array-key, Song> */
     public function getByArtist(Artist|string $artist, ?User $scopedUser = null): Collection
     {
-        $artist = $artist instanceof Artist ? $artist : Artist::findOrFail($artist);
+        $artist = $this->artistRepository->resolveOne($artist);
 
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
@@ -186,7 +189,7 @@ class SongRepository extends Repository implements ScoutableRepository
     /** @return Collection|array<array-key, Song> */
     public function getByPlaylist(Playlist|string $playlist, ?User $scopedUser = null): Collection
     {
-        $playlist = $playlist instanceof Playlist ? $playlist : Playlist::findOrFail($playlist);
+        $playlist = $this->playlistRepository->resolveOne($playlist);
 
         if ($playlist->is_smart) {
             return $this->getBySmartPlaylist($playlist, $scopedUser);
