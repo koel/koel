@@ -76,6 +76,7 @@ Koel’s configuration is stored in the `.env` file at the root of the project, 
 process
 by copying the `.env.example` file and filling it with sensible values.
 You can always modify the values to suit your environment.
+For a full list of Koel-specific configuration options, refer to [Environment Variables](/environment-variables).
 
 ### Configure a Mailer
 
