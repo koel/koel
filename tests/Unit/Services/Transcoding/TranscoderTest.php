@@ -32,6 +32,7 @@ class TranscoderTest extends TestCase
             return (
                 $process->command === [
                     '/usr/bin/ffmpeg',
+                    '-nostdin',
                     '-i',
                     '/path/to/song.flac',
                     '-vn',
@@ -39,6 +40,10 @@ class TranscoderTest extends TestCase
                     'aac',
                     '-b:a',
                     '128k',
+                    '-threads',
+                    '0',
+                    '-movflags',
+                    '+faststart',
                     '-y',
                     '/path/to/output.m4a',
                 ]
