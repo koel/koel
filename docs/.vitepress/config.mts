@@ -99,6 +99,10 @@ export default defineConfig({
         link: '/cli-commands',
       },
       {
+        text: 'Environment Variables',
+        link: '/environment-variables',
+      },
+      {
         text: 'Local Development',
         link: '/development',
       },
