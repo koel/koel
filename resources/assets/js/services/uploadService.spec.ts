@@ -117,6 +117,18 @@ describe('uploadService', () => {
     expect(proceedMock).toHaveBeenCalled()
   })
 
+  it('does not handle result if response is malformed', async () => {
+    h.mock(http, 'post').mockResolvedValue({ message: 'The POST data is too large.' })
+    const handleMock = h.mock(uploadService, 'handleUploadResult')
+    h.mock(uploadService, 'proceed')
+
+    const file = createUploadFile()
+    await uploadService.upload(file)
+
+    expect(file.status).toBe('Uploaded')
+    expect(handleMock).not.toHaveBeenCalled()
+  })
+
   it('sets progress during upload', async () => {
     h.mock(http, 'post').mockImplementation(async (_url, _data, onProgress) => {
       onProgress({ loaded: 50, total: 100 })

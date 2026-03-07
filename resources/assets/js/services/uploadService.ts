@@ -83,7 +83,7 @@ export const uploadService = {
 
       file.status = 'Uploaded'
 
-      if (result) {
+      if (result?.song && result?.album) {
         this.handleUploadResult(result)
       }
 
