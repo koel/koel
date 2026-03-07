@@ -71,6 +71,7 @@ Required when `STORAGE_DRIVER=sftp`.
 | `TRANSCODE_FLAC` | Whether to transcode FLAC to MP3 on the fly. Set to `false` to stream FLAC as-is. | `true` |
 | `TRANSCODE_BIT_RATE` | The bit rate (in kbps) for transcoded audio. Higher values mean better quality but slower streaming. | `128` |
 | `FFMPEG_PATH` | The full path to the ffmpeg binary. Automatically detected if left empty. | _(auto-detected)_ |
+| `TRANSCODE_TIMEOUT` | The maximum time in seconds allowed for transcoding a single file. Increase for very large files. `0` disables the timeout. | `300` |
 
 ## Downloading
 
