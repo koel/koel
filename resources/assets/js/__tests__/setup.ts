@@ -23,11 +23,13 @@ expect.addSnapshotSerializer(vueSnapshotSerializer)
 
 globalThis.ResizeObserver =
   globalThis.ResizeObserver ||
-  vi.fn().mockImplementation(() => ({
-    disconnect: vi.fn(),
-    observe: vi.fn(),
-    unobserve: vi.fn(),
-  }))
+  vi.fn().mockImplementation(function () {
+    return {
+      disconnect: vi.fn(),
+      observe: vi.fn(),
+      unobserve: vi.fn(),
+    }
+  })
 
 globalThis.LemonSqueezy = {
   Url: {
@@ -72,7 +74,7 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 })
 
-axios.defaults.adapter = vi.fn()
+axios.defaults.adapter = vi.fn() as any
 
 // Mock iframe's navigation API
 const iframeContentWindowMap = new WeakMap<HTMLIFrameElement, any>()
@@ -98,12 +100,10 @@ Object.defineProperty(HTMLIFrameElement.prototype, 'contentWindow', {
   },
 })
 
-const mockIntersectionObserver = vi.fn()
-
-mockIntersectionObserver.mockReturnValue({
-  observe: () => null,
-  unobserve: () => null,
-  disconnect: () => null,
+window.IntersectionObserver = vi.fn().mockImplementation(function () {
+  return {
+    observe: vi.fn(),
+    unobserve: vi.fn(),
+    disconnect: vi.fn(),
+  }
 })
-
-window.IntersectionObserver = mockIntersectionObserver

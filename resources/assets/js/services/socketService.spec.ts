@@ -15,7 +15,9 @@ const { mockPusherInstance, mockChannel } = vi.hoisted(() => {
 })
 
 vi.mock('pusher-js', () => ({
-  default: vi.fn().mockImplementation(() => mockPusherInstance),
+  default: vi.fn().mockImplementation(function () {
+    return mockPusherInstance
+  }),
 }))
 
 vi.mock('@/services/authService', () => ({

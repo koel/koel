@@ -1,5 +1,4 @@
 import { screen, waitFor } from '@testing-library/vue'
-import type { Mock } from 'vitest'
 import { describe, expect, it } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
 import { authService } from '@/services/authService'
@@ -11,7 +10,7 @@ describe('loginForm.vue', () => {
     authenticated: false,
   })
 
-  const submitForm = async (loginMock: Mock) => {
+  const submitForm = async (loginMock: ReturnType<typeof h.mock>) => {
     const rendered = h.render(Component)
 
     await h.type(screen.getByPlaceholderText('Your email address'), 'john@doe.com')
