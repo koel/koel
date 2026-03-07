@@ -47,8 +47,50 @@
       </span>
     </span>
     <template v-if="config.collaborative">
-      <span class="collaborator">User</span>
-      <span class="added-at">Added</span>
+      <span
+        v-if="shouldShowColumn('playlist_collaborator')"
+        class="collaborator"
+        data-testid="header-collaborator"
+        role="button"
+        title="Sort by user"
+        @click="sort('collaboration.user.name')"
+      >
+        User
+        <template v-if="config.sortable">
+          <Icon
+            v-if="sortField === 'collaboration.user.name' && sortOrder === 'asc'"
+            :icon="faCaretUp"
+            class="text-k-highlight"
+          />
+          <Icon
+            v-if="sortField === 'collaboration.user.name' && sortOrder === 'desc'"
+            :icon="faCaretDown"
+            class="text-k-highlight"
+          />
+        </template>
+      </span>
+      <span
+        v-if="shouldShowColumn('playlist_added_at')"
+        class="added-at"
+        data-testid="header-contributed-at"
+        role="button"
+        title="Sort by contributed at"
+        @click="sort('collaboration.added_at')"
+      >
+        Contributed
+        <template v-if="config.sortable">
+          <Icon
+            v-if="sortField === 'collaboration.added_at' && sortOrder === 'asc'"
+            :icon="faCaretUp"
+            class="text-k-highlight"
+          />
+          <Icon
+            v-if="sortField === 'collaboration.added_at' && sortOrder === 'desc'"
+            :icon="faCaretDown"
+            class="text-k-highlight"
+          />
+        </template>
+      </span>
     </template>
     <span
       v-if="shouldShowColumn('genre')"
@@ -99,6 +141,7 @@
         :has-custom-order-sort="config.hasCustomOrderSort"
         :order="sortOrder"
         :content-type="contentType"
+        :collaborative="config.collaborative"
         @sort="sort"
       />
     </span>

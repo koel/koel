@@ -17,9 +17,19 @@ export const usePlayableListColumnVisibility = () => {
       'album',
       'duration',
       'play_count',
+      'playlist_collaborator',
+      'playlist_added_at',
     ]
 
-    const defaultColumns: PlayableListColumnName[] = ['track', 'title', 'artist', 'album', 'duration']
+    const defaultColumns: PlayableListColumnName[] = [
+      'track',
+      'title',
+      'artist',
+      'album',
+      'duration',
+      'playlist_collaborator',
+      'playlist_added_at',
+    ]
 
     try {
       let columns = useLocalStorage().get<PlayableListColumnName[]>('playable-list-columns', defaultColumns)!

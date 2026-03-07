@@ -336,7 +336,7 @@ onMounted(() => render())
     }
 
     &.collaborator {
-      @apply basis-[72px];
+      @apply basis-20;
     }
 
     &.year {
@@ -348,7 +348,7 @@ onMounted(() => render())
     }
 
     &.added-at {
-      @apply basis-36 text-left;
+      @apply basis-44 text-left;
     }
 
     &.extra {
@@ -396,8 +396,8 @@ onMounted(() => render())
       width: 200%;
     }
 
-    .song-item :is(.track-number, .album, .time, .year, .genre, .added-at),
-    .song-list-header :is(.track-number, .album, .time, .year, .genre, .added-at) {
+    .song-item :is(.track-number, .album, .time, .year, .genre, .collaborator, .added-at),
+    .song-list-header :is(.track-number, .album, .time, .year, .genre, .collaborator, .added-at) {
       display: none;
     }
 

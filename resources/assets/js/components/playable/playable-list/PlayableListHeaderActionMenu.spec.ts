@@ -46,6 +46,46 @@ describe('playableListHeaderActionMenu.vue', () => {
     ;['Album', 'Artist', 'Podcast', 'Author'].forEach(text => expect(screen.queryByText(text)).toBeNull())
   })
 
+  it('contains collaborative items when collaborative', () => {
+    h.render(Component, {
+      props: {
+        collaborative: true,
+      },
+    })
+
+    ;['User', 'Contributed'].forEach(text => screen.getByText(text))
+  })
+
+  it('does not contain collaborative items when not collaborative', () => {
+    h.render(Component)
+
+    ;['User', 'Contributed'].forEach(text => expect(screen.queryByText(text)).toBeNull())
+  })
+
+  it('sorts by collaborative columns', async () => {
+    const { emitted } = h.render(Component, {
+      props: {
+        collaborative: true,
+      },
+    })
+
+    await h.user.click(screen.getByText('User'))
+    expect(emitted().sort[0]).toEqual(['collaboration.user.name'])
+
+    await h.user.click(screen.getByText('Contributed'))
+    expect(emitted().sort[1]).toEqual(['collaboration.added_at'])
+  })
+
+  it('has toggleable checkboxes for collaborative columns', async () => {
+    h.actingAsUser().render(Component, {
+      props: {
+        collaborative: true,
+      },
+    })
+
+    ;['User', 'Contributed'].forEach(text => screen.getByTitle(`Click to toggle the ${text} column`))
+  })
+
   it('has custom order sort if so configured', () => {
     h.render(Component, {
       props: {
@@ -79,6 +119,8 @@ describe('playableListHeaderActionMenu.vue', () => {
       'title',
       'artist',
       'duration',
+      'playlist_collaborator',
+      'playlist_added_at',
     ])
   })
 

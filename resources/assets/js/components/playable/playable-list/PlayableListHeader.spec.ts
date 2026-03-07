@@ -73,6 +73,41 @@ describe('playableListHeader.vue', () => {
     expect(emitted().sort[1]).toEqual([field, 'asc'])
   })
 
+  it('shows collaborative columns when collaborative', async () => {
+    await renderComponent({
+      sortable: true,
+      reorderable: true,
+      collaborative: true,
+    })
+
+    screen.getByTestId('header-collaborator')
+    screen.getByTestId('header-contributed-at')
+  })
+
+  it('does not show collaborative columns when not collaborative', async () => {
+    await renderComponent()
+
+    expect(screen.queryByTestId('header-collaborator')).toBeNull()
+    expect(screen.queryByTestId('header-contributed-at')).toBeNull()
+  })
+
+  it.each<[PlayableListSortField, string]>([
+    ['collaboration.user.name', 'header-collaborator'],
+    ['collaboration.added_at', 'header-contributed-at'],
+  ])('sorts collaborative column by %s upon %s clicked', async (field, testId) => {
+    const { emitted } = await renderComponent({
+      sortable: true,
+      reorderable: true,
+      collaborative: true,
+    })
+
+    await h.user.click(screen.getByTestId(testId))
+    expect(emitted().sort[0]).toEqual([field, 'desc'])
+
+    await h.user.click(screen.getByTestId(testId))
+    expect(emitted().sort[1]).toEqual([field, 'asc'])
+  })
+
   it('cannot be sorted if configured so', async () => {
     const { emitted } = await renderComponent({
       sortable: false,

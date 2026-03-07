@@ -55,6 +55,7 @@ const props = withDefaults(
     order?: SortOrder
     hasCustomOrderSort?: boolean // whether to provide "custom order" sort (like for playlists)
     contentType?: ReturnType<typeof getPlayableCollectionContentType>
+    collaborative?: boolean
   }>(),
   {
     sortable: true,
@@ -62,6 +63,7 @@ const props = withDefaults(
     order: 'asc',
     hasCustomOrderSort: false,
     contentType: 'songs',
+    collaborative: false,
   },
 )
 
@@ -80,7 +82,7 @@ const {
   isConfigurable: shouldShowColumnVisibilityCheckboxes,
 } = usePlayableListColumnVisibility()
 
-const { field, order, hasCustomOrderSort, contentType } = toRefs(props)
+const { field, order, hasCustomOrderSort, contentType, collaborative } = toRefs(props)
 
 const button = ref<HTMLButtonElement>()
 const menu = ref<HTMLDivElement>()
@@ -119,12 +121,30 @@ const menuItems = computed(() => {
 
   const customOrder: MenuItem = { label: 'Custom Order', field: 'position', visibilityToggleable: false }
 
+  const collaborator: MenuItem = {
+    column: 'playlist_collaborator',
+    label: 'User',
+    field: 'collaboration.user.name',
+    visibilityToggleable: true,
+  }
+
+  const contributedAt: MenuItem = {
+    column: 'playlist_added_at',
+    label: 'Contributed',
+    field: 'collaboration.added_at',
+    visibilityToggleable: true,
+  }
+
   let items: MenuItem[] = [title, album, artist, track, genre, year, time, dateAdded]
 
   if (contentType.value === 'episodes') {
     items = [title, podcast, author, time, dateAdded]
   } else if (contentType.value === 'mixed') {
     items = [title, albumOrPodcast, artistOrAuthor, time, dateAdded]
+  }
+
+  if (collaborative.value) {
+    items.push(collaborator, contributedAt)
   }
 
   if (hasCustomOrderSort.value) {
