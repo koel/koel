@@ -588,6 +588,8 @@ type PlayableListSortField =
     >
   | keyof Pick<Episode, 'podcast_author' | 'podcast_title'>
   | 'position'
+  | 'collaboration.user.name'
+  | 'collaboration.added_at'
 
 type AlbumListSortField = keyof Pick<Album, 'name' | 'year' | 'artist_name' | 'created_at'>
 type ArtistListSortField = keyof Pick<Artist, 'name' | 'created_at'>
@@ -660,6 +662,8 @@ type PlayableListColumnName =
   | 'play_count'
   | 'year'
   | 'genre'
+  | 'playlist_collaborator'
+  | 'playlist_added_at'
 
 interface Folder {
   type: 'folders'

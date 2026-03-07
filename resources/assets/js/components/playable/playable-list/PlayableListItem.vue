@@ -30,10 +30,14 @@
       </span>
       <span v-if="shouldShowColumn('album')" class="album">{{ album }}</span>
       <template v-if="config.collaborative && isSong(playable) && playable.collaboration">
-        <span class="collaborator">
+        <span v-if="shouldShowColumn('playlist_collaborator')" class="collaborator">
           <UserAvatar :user="collaborator" width="24" />
         </span>
-        <span :title="String(playable.collaboration.added_at)" class="added-at">
+        <span
+          v-if="shouldShowColumn('playlist_added_at')"
+          :title="String(playable.collaboration.added_at)"
+          class="added-at"
+        >
           {{ playable.collaboration.fmt_added_at }}
         </span>
       </template>

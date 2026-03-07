@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/vue'
 import { playableStore } from '@/stores/playableStore'
+import { PlayableListConfigKey } from '@/config/symbols'
 import { createHarness } from '@/__tests__/TestHarness'
 import Component from './PlayableListItem.vue'
 
@@ -58,6 +59,47 @@ describe('playableListItem.vue', () => {
     const showDisc = true
     const { getByText } = renderComponent(song, showDisc)
     expect(getByText('Disc 2')).toBeTruthy()
+  })
+
+  it('shows collaboration info when collaborative', () => {
+    const song = h.factory('song', {
+      collaboration: {
+        user: { name: 'Alice', avatar: 'https://example.com/alice.jpg' },
+        added_at: '2025-01-01',
+        fmt_added_at: 'Jan 1, 2025',
+      },
+    })
+
+    const { getByText } = h.render(Component, {
+      props: {
+        item: { playable: song, selected: false },
+      },
+      global: {
+        provide: {
+          [<symbol>PlayableListConfigKey]: [{ collaborative: true }],
+        },
+      },
+    })
+
+    expect(getByText('Jan 1, 2025')).toBeTruthy()
+  })
+
+  it('does not show collaboration info when not collaborative', () => {
+    const song = h.factory('song', {
+      collaboration: {
+        user: { name: 'Alice', avatar: 'https://example.com/alice.jpg' },
+        added_at: '2025-01-01',
+        fmt_added_at: 'Jan 1, 2025',
+      },
+    })
+
+    const { queryByText } = h.render(Component, {
+      props: {
+        item: { playable: song, selected: false },
+      },
+    })
+
+    expect(queryByText('Jan 1, 2025')).toBeNull()
   })
 
   it('toggles favorite state when the Favorite button is clicked', async () => {
