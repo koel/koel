@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { AxiosError, AxiosHeaders } from 'axios'
+import { HTTPError } from 'ky'
 import { useErrorHandler } from './useErrorHandler'
 
 const mockToastError = vi.fn()
@@ -22,18 +22,21 @@ vi.mock('@/utils/logger', () => ({
 }))
 
 describe('useErrorHandler', () => {
-  const createAxiosError = (status: number, data: any = {}) => {
-    const headers = new AxiosHeaders()
-    return new AxiosError('Request failed', 'ERR_BAD_REQUEST', undefined, undefined, {
+  const createHttpError = (status: number, data: any = {}) => {
+    const response = new Response(JSON.stringify(data), {
       status,
-      data,
-      headers,
       statusText: 'Error',
-      config: { headers },
+      headers: { 'Content-Type': 'application/json' },
     })
+
+    const request = new Request('http://test/api/test')
+    const error = new HTTPError(response, request, {} as any)
+    ;(error as any).responseData = data
+
+    return error
   }
 
-  it('shows generic error for non-Axios errors', () => {
+  it('shows generic error for non-HTTP errors', () => {
     const { handleHttpError } = useErrorHandler('toast')
     handleHttpError(new Error('something went wrong'))
 
@@ -57,7 +60,7 @@ describe('useErrorHandler', () => {
 
   it('shows validation error for 422 responses', () => {
     const { handleHttpError } = useErrorHandler('toast')
-    const error = createAxiosError(422, {
+    const error = createHttpError(422, {
       errors: { name: ['The name field is required.'] },
     })
 
@@ -68,7 +71,7 @@ describe('useErrorHandler', () => {
 
   it('uses custom status message map', () => {
     const { handleHttpError } = useErrorHandler('toast')
-    const error = createAxiosError(403, {})
+    const error = createHttpError(403, {})
 
     handleHttpError(error, { 403: 'Access denied.' })
 
@@ -78,7 +81,7 @@ describe('useErrorHandler', () => {
   it('calls closure from status message map', () => {
     const closure = vi.fn()
     const { handleHttpError } = useErrorHandler('toast')
-    const error = createAxiosError(403, {})
+    const error = createHttpError(403, {})
 
     handleHttpError(error, { 403: closure })
 
@@ -87,7 +90,7 @@ describe('useErrorHandler', () => {
 
   it('falls back to response message', () => {
     const { handleHttpError } = useErrorHandler('toast')
-    const error = createAxiosError(500, { message: 'Internal Server Error' })
+    const error = createHttpError(500, { message: 'Internal Server Error' })
 
     handleHttpError(error)
 
@@ -96,7 +99,7 @@ describe('useErrorHandler', () => {
 
   it('shows generic error when no message is available', () => {
     const { handleHttpError } = useErrorHandler('toast')
-    const error = createAxiosError(500, {})
+    const error = createHttpError(500, {})
 
     handleHttpError(error)
 
@@ -105,7 +108,7 @@ describe('useErrorHandler', () => {
 
   it('prefers custom 422 message over default validation parsing', () => {
     const { handleHttpError } = useErrorHandler('toast')
-    const error = createAxiosError(422, {
+    const error = createHttpError(422, {
       errors: { name: ['The name field is required.'] },
     })
 

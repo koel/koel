@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
+import { HTTPError } from 'ky'
 import { createHarness } from '@/__tests__/TestHarness'
 import type { UploadFile } from '@/services/uploadService'
 import { uploadService } from '@/services/uploadService'
@@ -144,12 +145,11 @@ describe('uploadService', () => {
   })
 
   it('handles upload error with message', async () => {
-    const axiosError = Object.assign(new Error('fail'), {
-      isAxiosError: true,
-      response: { data: { message: 'File too large' } },
-    })
+    const response = new Response(JSON.stringify({ message: 'File too large' }), { status: 413 })
+    const httpError = new HTTPError(response, new Request('http://test/api/upload'), {} as any)
+    ;(httpError as any).responseData = { message: 'File too large' }
 
-    h.mock(http, 'post').mockRejectedValue(axiosError)
+    h.mock(http, 'post').mockRejectedValue(httpError)
     h.mock(uploadService, 'proceed')
 
     const file = createUploadFile()

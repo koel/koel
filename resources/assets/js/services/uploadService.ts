@@ -1,4 +1,4 @@
-import { isAxiosError } from 'axios'
+import { isHttpError } from '@/services/http'
 import { without } from 'lodash'
 import { reactive } from 'vue'
 import { http } from '@/services/http'
@@ -95,8 +95,8 @@ export const uploadService = {
       logger.error(error)
       file.status = 'Errored'
 
-      if (isAxiosError(error) && error.response?.data?.message) {
-        file.message = `Upload failed: ${error.response.data.message}`
+      if (isHttpError(error) && (error as any).responseData?.message) {
+        file.message = `Upload failed: ${(error as any).responseData.message}`
       } else {
         file.message = 'Upload failed: Unknown error.'
       }

@@ -1,12 +1,11 @@
-import type { AxiosResponse } from 'axios'
-import { isAxiosError } from 'axios'
+import { isHttpError } from '@/services/http'
 import { logger } from '@/utils/logger'
 import { parseValidationError } from '@/utils/formatters'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 
 export interface StatusMessageMap {
-  [key: AxiosResponse['status']]: string | Closure
+  [key: number]: string | Closure
 }
 
 type ErrorMessageDriver = 'toast' | 'dialog'
@@ -22,25 +21,25 @@ export const useErrorHandler = (driver: ErrorMessageDriver = 'toast') => {
   const handleHttpError = (error: unknown, statusMessageMap: StatusMessageMap = {}) => {
     logger.error(error)
 
-    if (!isAxiosError(error) || !error.response?.status) {
+    if (!isHttpError(error) || !error.response?.status) {
       return showGenericError()
     }
 
-    if (
-      !Object.prototype.hasOwnProperty.call(statusMessageMap, error.response.status) &&
-      error.response.status === 422
-    ) {
-      return showError(parseValidationError(error.response.data)[0])
+    const status = error.response.status
+    const data = (error as any).responseData
+
+    if (!Object.prototype.hasOwnProperty.call(statusMessageMap, status) && status === 422) {
+      return showError(parseValidationError(data)[0])
     }
 
-    const messageOrClosure = statusMessageMap[error.response.status]
+    const messageOrClosure = statusMessageMap[status]
 
     if (messageOrClosure) {
       return typeof messageOrClosure === 'string' ? showError(messageOrClosure) : messageOrClosure()
     }
 
-    if (error.response.data.message) {
-      return showError(error.response.data.message)
+    if (data?.message) {
+      return showError(data.message)
     }
 
     return showGenericError()

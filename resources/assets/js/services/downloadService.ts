@@ -1,6 +1,6 @@
 export class DownloadLimitExceededError extends Error {}
 
-import { isAxiosError } from 'axios'
+import { isHttpError } from '@/services/http'
 import { authService } from '@/services/authService'
 import { http } from '@/services/http'
 import { playableStore } from '@/stores/playableStore'
@@ -52,8 +52,8 @@ export const downloadService = {
     try {
       await http.get<void>(`download/check?${new URLSearchParams(flattenParams(params))}`)
     } catch (error: unknown) {
-      if (isAxiosError(error) && error.response?.status === 403) {
-        throw new DownloadLimitExceededError(error.response.data.message)
+      if (isHttpError(error) && error.response?.status === 403) {
+        throw new DownloadLimitExceededError((error as any).responseData?.message)
       }
 
       throw error
