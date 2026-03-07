@@ -38,7 +38,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --reporter=silent
       - name: Run unit tests
         run: pnpm test:unit --shard=${{ matrix.shard }}
       - name: Collect coverage
