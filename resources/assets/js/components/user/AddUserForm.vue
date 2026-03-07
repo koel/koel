@@ -15,14 +15,7 @@
       </FormRow>
       <FormRow>
         <template #label>Password</template>
-        <TextInput
-          v-model="data.password"
-          autocomplete="new-password"
-          name="password"
-          required
-          title="Password"
-          type="password"
-        />
+        <PasswordField v-model="data.password" autocomplete="new-password" name="password" required title="Password" />
         <template #help>Min. 10 characters. Should be a mix of characters, numbers, and symbols.</template>
       </FormRow>
       <RolePicker v-model="data.role" />
@@ -46,6 +39,7 @@ import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 import RolePicker from '@/components/user/RolePicker.vue'
+import PasswordField from '@/components/ui/form/PasswordField.vue'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 

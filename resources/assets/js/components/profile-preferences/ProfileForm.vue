@@ -15,14 +15,13 @@
       <div class="flex-1 space-y-5">
         <FormRow v-if="!currentUser.sso_provider">
           <template #label>Current Password</template>
-          <TextInput
+          <PasswordField
             v-model="data.current_password"
             v-koel-focus
             data-testid="currentPassword"
             name="current_password"
             placeholder="Required to update your profile"
             required
-            type="password"
           />
         </FormRow>
 

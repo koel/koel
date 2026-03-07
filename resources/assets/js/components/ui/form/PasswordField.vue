@@ -7,8 +7,8 @@
       type="button"
       @click.prevent="toggleReveal"
     >
-      <Icon v-if="type === 'password'" :icon="faEye" />
-      <Icon v-else :icon="faEyeSlash" />
+      <Icon v-if="type === 'password'" :icon="faEye" class="text-k-fg" fixed-width />
+      <Icon v-else :icon="faEyeSlash" class="text-k-fg" fixed-width />
     </button>
   </div>
 </template>
