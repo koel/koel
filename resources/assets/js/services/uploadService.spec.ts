@@ -2,7 +2,16 @@ import { describe, expect, it, vi } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
 import type { UploadFile } from '@/services/uploadService'
 import { uploadService } from '@/services/uploadService'
-import { http } from '@/services/http'
+
+const postWithProgressMock = vi.fn()
+
+vi.mock('@/services/http', async importOriginal => {
+  const actual = await importOriginal<typeof import('@/services/http')>()
+  return {
+    ...actual,
+    postWithProgress: (...args: any[]) => postWithProgressMock(...args),
+  }
+})
 
 vi.mock('@/utils/logger', () => ({
   logger: { error: vi.fn() },
@@ -95,17 +104,16 @@ describe('uploadService', () => {
   })
 
   it('skips already uploading files', async () => {
-    const postMock = h.mock(http, 'post')
     const file = createUploadFile({ status: 'Uploading' })
 
     await uploadService.upload(file)
 
-    expect(postMock).not.toHaveBeenCalled()
+    expect(postWithProgressMock).not.toHaveBeenCalled()
   })
 
   it('uploads a file successfully', async () => {
     const result = { song: h.factory('song'), album: h.factory('album') }
-    h.mock(http, 'post').mockResolvedValue(result)
+    postWithProgressMock.mockResolvedValue(result)
     const handleMock = h.mock(uploadService, 'handleUploadResult')
     const proceedMock = h.mock(uploadService, 'proceed')
 
@@ -118,7 +126,7 @@ describe('uploadService', () => {
   })
 
   it('marks file as errored if response is malformed', async () => {
-    h.mock(http, 'post').mockResolvedValue({ message: 'The POST data is too large.' })
+    postWithProgressMock.mockResolvedValue({ message: 'The POST data is too large.' })
     const handleMock = h.mock(uploadService, 'handleUploadResult')
     h.mock(uploadService, 'proceed')
 
@@ -131,7 +139,7 @@ describe('uploadService', () => {
   })
 
   it('sets progress during upload', async () => {
-    h.mock(http, 'post').mockImplementation(async (_url, _data, onProgress) => {
+    postWithProgressMock.mockImplementation(async (_url: string, _data: FormData, onProgress: Function) => {
       onProgress({ loaded: 50, total: 100 })
       return null
     })
@@ -144,12 +152,11 @@ describe('uploadService', () => {
   })
 
   it('handles upload error with message', async () => {
-    const axiosError = Object.assign(new Error('fail'), {
-      isAxiosError: true,
-      response: { data: { message: 'File too large' } },
+    const error = Object.assign(new Error('Upload failed with status 413'), {
+      responseData: { message: 'File too large' },
     })
 
-    h.mock(http, 'post').mockRejectedValue(axiosError)
+    postWithProgressMock.mockRejectedValue(error)
     h.mock(uploadService, 'proceed')
 
     const file = createUploadFile()
@@ -160,7 +167,7 @@ describe('uploadService', () => {
   })
 
   it('handles upload error without message', async () => {
-    h.mock(http, 'post').mockRejectedValue(new Error('network error'))
+    postWithProgressMock.mockRejectedValue(new Error('network error'))
     h.mock(uploadService, 'proceed')
 
     const file = createUploadFile()

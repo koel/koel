@@ -1,7 +1,6 @@
-import { isAxiosError } from 'axios'
 import { without } from 'lodash'
 import { reactive } from 'vue'
-import { http } from '@/services/http'
+import { postWithProgress } from '@/services/http'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
@@ -77,8 +76,8 @@ export const uploadService = {
     file.status = 'Uploading'
 
     try {
-      const result = await http.post<UploadResult | null>('upload', formData, (progressEvent: ProgressEvent) => {
-        file.progress = (progressEvent.loaded * 100) / progressEvent.total
+      const result = await postWithProgress<UploadResult | null>('upload', formData, (e: ProgressEvent) => {
+        file.progress = (e.loaded * 100) / e.total
       })
 
       if (result?.song && result?.album) {
@@ -95,8 +94,8 @@ export const uploadService = {
       logger.error(error)
       file.status = 'Errored'
 
-      if (isAxiosError(error) && error.response?.data?.message) {
-        file.message = `Upload failed: ${error.response.data.message}`
+      if (error instanceof Error && 'responseData' in error && (error as any).responseData?.message) {
+        file.message = `Upload failed: ${(error as any).responseData.message}`
       } else {
         file.message = 'Upload failed: Unknown error.'
       }

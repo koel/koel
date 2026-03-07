@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
 import { authService } from '@/services/authService'
 import { http } from '@/services/http'
@@ -29,7 +29,7 @@ describe('http service', () => {
 
     const result = await http.post('endpoint', { key: 'value' })
 
-    expect(requestMock).toHaveBeenCalledWith('post', 'endpoint', { key: 'value' }, undefined)
+    expect(requestMock).toHaveBeenCalledWith('post', 'endpoint', { key: 'value' })
     expect(result).toBe('result')
   })
 
@@ -57,63 +57,59 @@ describe('http service', () => {
     expect(requestMock).toHaveBeenCalledWith('delete', 'endpoint', { key: 'value' })
   })
 
-  it('emits LOG_OUT on 401 for non-login requests', async () => {
-    const emitMock = h.mock(eventBus, 'emit')
-    h.mock(authService, 'setRedirect')
+  describe('interceptor behavior', () => {
+    const originalFetch = globalThis.fetch
 
-    const error = {
-      response: { status: 401 },
-      config: { method: 'get', url: 'songs' },
+    afterEach(() => {
+      globalThis.fetch = originalFetch
+    })
+
+    const mockFetch = (status: number, data: any = {}, headers: Record<string, string> = {}) => {
+      globalThis.fetch = vi.fn().mockResolvedValue(
+        new Response(JSON.stringify(data), {
+          status,
+          headers: { 'Content-Type': 'application/json', ...headers },
+        }),
+      )
     }
 
-    // Access the response error interceptor
-    const errorInterceptor = (http.client.interceptors.response as any).handlers[0].rejected
+    it('emits LOG_OUT on 401 for non-login requests', async () => {
+      mockFetch(401, {})
+      h.restoreAllMocks()
+      const emitMock = h.mock(eventBus, 'emit')
+      h.mock(authService, 'setRedirect')
 
-    await expect(errorInterceptor(error)).rejects.toBe(error)
-    expect(emitMock).toHaveBeenCalledWith('LOG_OUT')
-  })
+      await expect(http.get('songs')).rejects.toThrow()
+      expect(emitMock).toHaveBeenCalledWith('LOG_OUT')
+    })
 
-  it('does not emit LOG_OUT on 401 for login request', async () => {
-    const emitMock = h.mock(eventBus, 'emit')
+    it('does not emit LOG_OUT on 401 for login request', async () => {
+      mockFetch(401, {})
+      h.restoreAllMocks()
+      const emitMock = h.mock(eventBus, 'emit')
 
-    const error = {
-      response: { status: 401 },
-      config: { method: 'post', url: 'me' },
-    }
+      await expect(http.post('me', {})).rejects.toThrow()
+      expect(emitMock).not.toHaveBeenCalledWith('LOG_OUT')
+    })
 
-    const errorInterceptor = (http.client.interceptors.response as any).handlers[0].rejected
+    it('emits LOG_OUT on 400 for non-login requests', async () => {
+      mockFetch(400, {})
+      h.restoreAllMocks()
+      const emitMock = h.mock(eventBus, 'emit')
+      h.mock(authService, 'setRedirect')
 
-    await expect(errorInterceptor(error)).rejects.toBe(error)
-    expect(emitMock).not.toHaveBeenCalledWith('LOG_OUT')
-  })
+      await expect(http.get('data')).rejects.toThrow()
+      expect(emitMock).toHaveBeenCalledWith('LOG_OUT')
+    })
 
-  it('emits LOG_OUT on 400 for non-login requests', async () => {
-    const emitMock = h.mock(eventBus, 'emit')
-    h.mock(authService, 'setRedirect')
+    it('saves token from response header', async () => {
+      mockFetch(200, { result: 'ok' }, { authorization: 'new-token' })
+      h.restoreAllMocks()
+      const setTokenMock = h.mock(authService, 'setApiToken')
 
-    const error = {
-      response: { status: 400 },
-      config: { method: 'get', url: 'data' },
-    }
+      await http.get('endpoint')
 
-    const errorInterceptor = (http.client.interceptors.response as any).handlers[0].rejected
-
-    await expect(errorInterceptor(error)).rejects.toBe(error)
-    expect(emitMock).toHaveBeenCalledWith('LOG_OUT')
-  })
-
-  it('saves token from response header', async () => {
-    const setTokenMock = h.mock(authService, 'setApiToken')
-
-    const response = {
-      headers: { authorization: 'new-token' },
-      data: {},
-    }
-
-    const successInterceptor = (http.client.interceptors.response as any).handlers[0].fulfilled
-
-    successInterceptor(response)
-
-    expect(setTokenMock).toHaveBeenCalledWith('new-token')
+      expect(setTokenMock).toHaveBeenCalledWith('new-token')
+    })
   })
 })

@@ -29,9 +29,6 @@ importers:
       '@laravel/echo-vue':
         specifier: ^2.1.6
         version: 2.1.6(pusher-js@4.4.0)(socket.io-client@4.8.1)(vue@3.5.29(typescript@5.8.3))
-      axios:
-        specifier: ^1.13.5
-        version: 1.13.5
       butterchurn:
         specifier: ^2.6.7
         version: 2.6.7
@@ -56,6 +53,9 @@ importers:
       ismobilejs:
         specifier: ^0.4.1
         version: 0.4.1
+      ky:
+        specifier: ^1.14.3
+        version: 1.14.3
       local-storage:
         specifier: ^2.0.0
         version: 2.0.0
@@ -2824,6 +2824,10 @@ packages:
     resolution: {integrity: sha512-NOW9QQXMoZGg/oqnVNoNTTIFEIid1627WCffUBJEdMxYApq7mNE7CpzucIPc+ZQg25Phej7IJSmX3hO+oblOtQ==}
     engines: {node: '>=0.10.0'}
 
+  ky@1.14.3:
+    resolution: {integrity: sha512-9zy9lkjac+TR1c2tG+mkNSVlyOpInnWdSMiue4F+kq8TwJSgv6o8jhLRg8Ho6SnZ9wOYUq/yozts9qQCfk7bIw==}
+    engines: {node: '>=18'}
+
   laravel-echo@2.1.6:
     resolution: {integrity: sha512-X7tdIDhG/o8AenMvY83Hcjtw/TN/eKT+zA5WEENHIbY8tq12NQbdxtVePw1yImxXwKC/yZoVWNukFlG+gWqKCA==}
     engines: {node: '>=20'}
@@ -5422,6 +5426,7 @@ snapshots:
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
       - debug
+    optional: true
 
   babel-runtime@6.26.0:
     dependencies:
@@ -6090,7 +6095,8 @@ snapshots:
     dependencies:
       tabbable: 6.2.0
 
-  follow-redirects@1.15.11: {}
+  follow-redirects@1.15.11:
+    optional: true
 
   for-each@0.3.5:
     dependencies:
@@ -6516,6 +6522,8 @@ snapshots:
   kind-of@3.2.2:
     dependencies:
       is-buffer: 1.1.6
+
+  ky@1.14.3: {}
 
   laravel-echo@2.1.6(pusher-js@4.4.0)(socket.io-client@4.8.1):
     dependencies:
@@ -6982,7 +6990,8 @@ snapshots:
 
   proxy-from-env@1.0.0: {}
 
-  proxy-from-env@1.1.0: {}
+  proxy-from-env@1.1.0:
+    optional: true
 
   psl@1.15.0:
     dependencies:

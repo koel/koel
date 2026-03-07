@@ -1,60 +1,77 @@
-import type { AxiosInstance, Method } from 'axios'
-import axios from 'axios'
+import ky, { HTTPError } from 'ky'
 import NProgress from 'nprogress'
 import { authService } from '@/services/authService'
 import { eventBus } from '@/utils/eventBus'
 
-class Http {
-  client: AxiosInstance
+export { HTTPError }
 
+export const isHttpError = (error: unknown): error is HTTPError => error instanceof HTTPError
+
+class Http {
+  private client: ReturnType<typeof ky.create>
   private silent = false
 
   constructor() {
-    this.client = axios.create({
-      baseURL: `${window.BASE_URL}api`,
+    this.client = ky.create({
+      prefixUrl: `${window.BASE_URL}api`,
       headers: {
         'X-Api-Version': 'v7',
       },
-    })
+      hooks: {
+        beforeRequest: [
+          request => {
+            this.silent || this.showLoadingIndicator()
+            request.headers.set('Authorization', `Bearer ${authService.getApiToken()}`)
+          },
+        ],
+        afterResponse: [
+          (_request, _options, response) => {
+            this.silent || this.hideLoadingIndicator()
+            this.silent = false
 
-    // Intercept the request to make sure the token is injected into the header.
-    this.client.interceptors.request.use(config => {
-      this.silent || this.showLoadingIndicator()
-      config.headers.Authorization = `Bearer ${authService.getApiToken()}`
-      return config
-    })
+            const token = response.headers.get('authorization')
+            token && authService.setApiToken(token)
+          },
+        ],
+        beforeError: [
+          async error => {
+            this.silent || this.hideLoadingIndicator()
+            this.silent = false
 
-    // Intercept the response and…
-    this.client.interceptors.response.use(
-      response => {
-        this.silent || this.hideLoadingIndicator()
-        this.silent = false
+            const { response } = error
 
-        // …get the tokens from the header if exists, and save them
-        // This occurs during user updating password.
-        const token = response.headers.authorization
-        token && authService.setApiToken(token)
+            if (response && (response.status === 400 || response.status === 401)) {
+              const method = (error.request?.method || '').toLowerCase()
 
-        return response
+              let url = ''
+
+              try {
+                url = new URL(error.request?.url || '').pathname
+              } catch {
+                url = String(error.request?.url || '')
+              }
+
+              if (!(method === 'post' && url.endsWith('/me'))) {
+                authService.setRedirect()
+                eventBus.emit('LOG_OUT')
+              }
+            }
+
+            // Attach parsed response data for error handlers
+            try {
+              ;(error as any).responseData = await response?.clone().json()
+            } catch {
+              ;(error as any).responseData = null
+            }
+
+            return error
+          },
+        ],
       },
-      error => {
-        this.silent || this.hideLoadingIndicator()
-        this.silent = false
-
-        // Also, if we receive a Bad Request / Unauthorized error
-        if (error.response?.status === 400 || error.response?.status === 401) {
-          // and we're not trying to log in
-          if (!(error.config.method === 'post' && error.config.url === 'me')) {
-            // the token must have expired.
-            // store the attempted URL so we can redirect the user to it after login.
-            authService.setRedirect()
-            eventBus.emit('LOG_OUT')
-          }
-        }
-
-        return Promise.reject(error)
-      },
-    )
+      retry: 0,
+      timeout: false,
+      fetch: (...args: Parameters<typeof fetch>) => fetch(...args),
+    })
   }
 
   public get silently() {
@@ -62,21 +79,30 @@ class Http {
     return this
   }
 
-  public request<T>(method: Method, url: string, data: Record<string, any> = {}, onUploadProgress?: any) {
-    return this.client.request({
-      url,
-      data,
-      method,
-      onUploadProgress,
-    }) as Promise<{ data: T }>
+  public async request<T>(method: string, url: string, data: Record<string, any> = {}) {
+    const options: Record<string, any> = {}
+
+    if (method !== 'get' && data) {
+      if (data instanceof FormData) {
+        options.body = data
+      } else {
+        options.json = data
+      }
+    }
+
+    const response = await this.client(url, { method, ...options })
+    const contentType = response.headers.get('content-type')
+    const responseData = contentType?.includes('application/json') ? await response.json() : await response.text()
+
+    return { data: responseData as T }
   }
 
   public async get<T>(url: string) {
     return (await this.request<T>('get', url)).data
   }
 
-  public async post<T>(url: string, data: Record<string, any> = {}, onUploadProgress?: any) {
-    return (await this.request<T>('post', url, data, onUploadProgress)).data
+  public async post<T>(url: string, data: Record<string, any> = {}) {
+    return (await this.request<T>('post', url, data)).data
   }
 
   public async put<T>(url: string, data: Record<string, any>) {
@@ -101,3 +127,5 @@ class Http {
 }
 
 export const http = new Http()
+
+export { postWithProgress } from '@/services/httpUpload'
