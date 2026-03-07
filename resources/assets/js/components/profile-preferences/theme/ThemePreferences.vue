@@ -14,11 +14,15 @@
 <script lang="ts" setup>
 import { computed, onMounted, toRef } from 'vue'
 import { themeStore } from '@/stores/themeStore'
+import { defineAsyncComponent } from '@/utils/helpers'
 import { useKoelPlus } from '@/composables/useKoelPlus'
-import { eventBus } from '@/utils/eventBus'
+import { useModal } from '@/composables/useModal'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import ThemeList from '@/components/profile-preferences/theme/ThemeList.vue'
+
+const CreateThemeForm = defineAsyncComponent(() => import('@/components/profile-preferences/theme/CreateThemeForm.vue'))
+const { openModal } = useModal()
 
 const themes = toRef(themeStore.state, 'themes')
 
@@ -27,7 +31,7 @@ const customThemes = computed(() => themes.value.filter(theme => theme.is_custom
 
 const { isPlus } = useKoelPlus()
 
-const requestCreateThemeForm = () => eventBus.emit('MODAL_SHOW_CREATE_THEME_FORM')
+const requestCreateThemeForm = () => openModal<'CREATE_THEME_FORM'>(CreateThemeForm)
 
 onMounted(async () => {
   if (isPlus.value) {

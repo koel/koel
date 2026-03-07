@@ -43,10 +43,11 @@
 
 <script lang="ts" setup>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { computed, defineAsyncComponent, onMounted, toRef } from 'vue'
+import { computed, onMounted, toRef } from 'vue'
 import { userStore } from '@/stores/userStore'
-import { eventBus } from '@/utils/eventBus'
+import { defineAsyncComponent } from '@/utils/helpers'
 import { useAuthorization } from '@/composables/useAuthorization'
+import { useModal } from '@/composables/useModal'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import UserCard from '@/components/user/UserCard.vue'
@@ -54,7 +55,10 @@ import BtnGroup from '@/components/ui/form/BtnGroup.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
+const AddUserForm = defineAsyncComponent(() => import('@/components/user/AddUserForm.vue'))
+const InviteUserForm = defineAsyncComponent(() => import('@/components/user/InviteUserForm.vue'))
 
+const { openModal } = useModal()
 const { currentUser } = useAuthorization()
 
 const allUsers = toRef(userStore.state, 'users')
@@ -71,8 +75,8 @@ const prospects = computed(() => allUsers.value.filter(({ is_prospect }) => is_p
 
 const canInvite = window.MAILER_CONFIGURED
 
-const showAddUserForm = () => eventBus.emit('MODAL_SHOW_ADD_USER_FORM')
-const showInviteUserForm = () => eventBus.emit('MODAL_SHOW_INVITE_USER_FORM')
+const showAddUserForm = () => openModal<'ADD_USER_FORM'>(AddUserForm)
+const showInviteUserForm = () => openModal<'INVITE_USER_FORM'>(InviteUserForm)
 
 onMounted(async () => await userStore.fetch())
 </script>

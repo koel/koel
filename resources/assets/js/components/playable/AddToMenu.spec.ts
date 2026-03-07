@@ -1,17 +1,29 @@
 import { clone } from 'lodash'
 import { screen } from '@testing-library/vue'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
+import { assertOpenModal } from '@/__tests__/assertions'
 import { playlistStore } from '@/stores/playlistStore'
 import { queueStore } from '@/stores/queueStore'
-import { eventBus } from '@/utils/eventBus'
 import { arrayify } from '@/utils/helpers'
 import { playableStore } from '@/stores/playableStore'
 import Btn from '@/components/ui/form/Btn.vue'
+import CreatePlaylistForm from '@/components/playlist/CreatePlaylistForm.vue'
+
+const openModalMock = vi.fn()
+
+vi.mock('@/composables/useModal', () => ({
+  useModal: () => ({
+    openModal: openModalMock,
+  }),
+}))
+
 import Component from './AddToMenu.vue'
 
 describe('addToMenu.vue', () => {
-  const h = createHarness()
+  const h = createHarness({
+    beforeEach: () => openModalMock.mockClear(),
+  })
 
   const renderComponent = (customConfig: Partial<AddToMenuConfig> = {}) => {
     const playables = h.factory('song', 5)
@@ -94,11 +106,10 @@ describe('addToMenu.vue', () => {
   })
 
   it('creates playlist from selected songs', async () => {
-    const emitMock = h.mock(eventBus, 'emit')
     const { playables } = renderComponent()
 
     await h.user.click(screen.getByText('New Playlist…'))
 
-    expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_CREATE_PLAYLIST_FORM', null, playables)
+    await assertOpenModal(openModalMock, CreatePlaylistForm, { folder: null, playables })
   })
 })

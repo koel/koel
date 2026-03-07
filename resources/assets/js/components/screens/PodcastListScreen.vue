@@ -61,12 +61,13 @@ import { faAdd, faPodcast, faStar } from '@fortawesome/free-solid-svg-icons'
 import { faStar as faEmptyStar } from '@fortawesome/free-regular-svg-icons'
 import { orderBy } from 'lodash'
 import { computed, onMounted, provide, ref } from 'vue'
-import { eventBus } from '@/utils/eventBus'
 import { podcastStore } from '@/stores/podcastStore'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useFuzzySearch } from '@/composables/useFuzzySearch'
+import { defineAsyncComponent } from '@/utils/helpers'
 import { FilterKeywordsKey } from '@/config/symbols'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
+import { useModal } from '@/composables/useModal'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'
@@ -78,6 +79,8 @@ import ScreenBase from '@/components/screens/ScreenBase.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 
+const AddPodcastForm = defineAsyncComponent(() => import('@/components/podcast/AddPodcastForm.vue'))
+const { openModal } = useModal()
 const fuzzy = useFuzzySearch<Podcast>([], ['title', 'description', 'author'])
 
 const loading = ref(false)
@@ -112,7 +115,7 @@ const fetchPodcasts = async () => {
   }
 }
 
-const requestAddPodcastForm = () => eventBus.emit('MODAL_SHOW_ADD_PODCAST_FORM')
+const requestAddPodcastForm = () => openModal<'ADD_PODCAST_FORM'>(AddPodcastForm)
 
 const sort = (field: PodcastListSortField, order: SortOrder) => {
   preferences.podcasts_sort_order = order

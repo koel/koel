@@ -15,10 +15,11 @@
 
 <script setup lang="ts">
 import { onMounted, ref, toRefs } from 'vue'
-import { eventBus } from '@/utils/eventBus'
+import { defineAsyncComponent } from '@/utils/helpers'
 import { userStore } from '@/stores/userStore'
 import { usePolicies } from '@/composables/usePolicies'
 import { useContextMenu } from '@/composables/useContextMenu'
+import { useModal } from '@/composables/useModal'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { invitationService } from '@/services/invitationService'
@@ -32,10 +33,13 @@ const allowDelete = ref<boolean | null>(null)
 
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
+const EditUserForm = defineAsyncComponent(() => import('@/components/user/EditUserForm.vue'))
+
 const { MenuItem, trigger } = useContextMenu()
+const { openModal } = useModal()
 const { currentUserCan } = usePolicies()
 
-const edit = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_USER_FORM', user.value))
+const edit = () => trigger(() => openModal<'EDIT_USER_FORM'>(EditUserForm, { user: user.value }))
 
 const destroy = () =>
   trigger(async () => {

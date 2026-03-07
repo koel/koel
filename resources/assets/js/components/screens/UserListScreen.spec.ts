@@ -1,16 +1,28 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
+import { assertOpenModal } from '@/__tests__/assertions'
 import factory from '@/__tests__/factory'
 import { http } from '@/services/http'
-import { eventBus } from '@/utils/eventBus'
 import Btn from '@/components/ui/form/Btn.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'
+import AddUserForm from '@/components/user/AddUserForm.vue'
+import InviteUserForm from '@/components/user/InviteUserForm.vue'
+
+const openModalMock = vi.fn()
+
+vi.mock('@/composables/useModal', () => ({
+  useModal: () => ({
+    openModal: openModalMock,
+  }),
+}))
+
 import UserListScreen from './UserListScreen.vue'
 
 describe('userListScreen.vue', () => {
   const h = createHarness({
     beforeEach: () => {
+      openModalMock.mockClear()
       h.actingAsAdmin()
     },
   })
@@ -53,20 +65,18 @@ describe('userListScreen.vue', () => {
   })
 
   it('triggers create user modal', async () => {
-    const emitMock = h.mock(eventBus, 'emit')
     await renderComponent()
 
     await h.user.click(screen.getByRole('button', { name: 'Add' }))
 
-    expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_ADD_USER_FORM')
+    await assertOpenModal(openModalMock, AddUserForm)
   })
 
   it('triggers invite user modal', async () => {
-    const emitMock = h.mock(eventBus, 'emit')
     await renderComponent()
 
     await h.user.click(screen.getByRole('button', { name: 'Invite' }))
 
-    expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_INVITE_USER_FORM')
+    await assertOpenModal(openModalMock, InviteUserForm)
   })
 })

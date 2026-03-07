@@ -1,23 +1,44 @@
-import { describe, expect, it } from 'vitest'
-import { screen, waitFor } from '@testing-library/vue'
+import { describe, it, vi } from 'vitest'
+import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import { eventBus } from '@/utils/eventBus'
-import type { Events } from '@/config/events'
+import { assertOpenModal } from '@/__tests__/assertions'
+import CreatePlaylistForm from '@/components/playlist/CreatePlaylistForm.vue'
+import CreateSmartPlaylistForm from '@/components/playlist/smart-playlist/CreateSmartPlaylistForm.vue'
+import CreatePlaylistFolderForm from '@/components/playlist/CreatePlaylistFolderForm.vue'
+
+const openModalMock = vi.fn()
+
+vi.mock('@/composables/useModal', () => ({
+  useModal: () => ({
+    openModal: openModalMock,
+  }),
+}))
+
 import Component from './CreatePlaylistContextMenu.vue'
 
 describe('createPlaylistContextMenu.vue', () => {
-  const h = createHarness()
+  const h = createHarness({
+    beforeEach: () => openModalMock.mockClear(),
+  })
 
-  const renderComponent = async () => h.render(Component)
+  it('opens CreatePlaylistForm when clicking New Playlist', async () => {
+    h.render(Component)
+    await h.user.click(screen.getByText('New Playlist…'))
 
-  it.each<[string, keyof Events]>([
-    ['New Playlist…', 'MODAL_SHOW_CREATE_PLAYLIST_FORM'],
-    ['New Smart Playlist…', 'MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM'],
-    ['New Folder…', 'MODAL_SHOW_CREATE_PLAYLIST_FOLDER_FORM'],
-  ])('when clicking on %s, should emit %s', async (id, eventName) => {
-    await renderComponent()
-    const emitMock = h.mock(eventBus, 'emit')
-    await h.user.click(screen.getByText(id))
-    await waitFor(() => expect(emitMock).toHaveBeenCalledWith(eventName))
+    await assertOpenModal(openModalMock, CreatePlaylistForm, { folder: null, playables: [] })
+  })
+
+  it('opens CreateSmartPlaylistForm when clicking New Smart Playlist', async () => {
+    h.render(Component)
+    await h.user.click(screen.getByText('New Smart Playlist…'))
+
+    await assertOpenModal(openModalMock, CreateSmartPlaylistForm, { folder: null })
+  })
+
+  it('opens CreatePlaylistFolderForm when clicking New Folder', async () => {
+    h.render(Component)
+    await h.user.click(screen.getByText('New Folder…'))
+
+    await assertOpenModal(openModalMock, CreatePlaylistFolderForm)
   })
 })

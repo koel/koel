@@ -1,14 +1,9 @@
 import { describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue'
+import { waitFor } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { commonStore } from '@/stores/commonStore'
 import Component from './AppInitializer.vue'
-
-const flushPromises = async () => {
-  for (let i = 0; i < 10; i++) {
-    await new Promise(resolve => setTimeout(resolve))
-  }
-}
 
 vi.mock('@/services/socketService', () => ({
   socketService: {
@@ -54,10 +49,11 @@ describe('appInitializer.vue', () => {
     h.mock(commonStore, 'init').mockResolvedValue(undefined)
 
     const { emitted } = h.render(Component)
-    await flushPromises()
 
-    expect(commonStore.init).toHaveBeenCalled()
-    expect(emitted().success).toBeTruthy()
+    await waitFor(() => {
+      expect(commonStore.init).toHaveBeenCalled()
+      expect(emitted().success).toBeTruthy()
+    })
   })
 
   it('emits error when init fails', async () => {
@@ -65,8 +61,9 @@ describe('appInitializer.vue', () => {
     h.mock(commonStore, 'init').mockRejectedValue(error)
 
     const { emitted } = h.render(Component)
-    await flushPromises()
 
-    expect(emitted().error).toBeTruthy()
+    await waitFor(() => {
+      expect(emitted().error).toBeTruthy()
+    })
   })
 })

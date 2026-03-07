@@ -2,8 +2,17 @@ import { describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue'
 import { queueStore } from '@/stores/queueStore'
 import { playableStore } from '@/stores/playableStore'
-import { eventBus } from '@/utils/eventBus'
 import { createHarness } from '@/__tests__/TestHarness'
+import { assertOpenModal } from '@/__tests__/assertions'
+import CreatePlaylistForm from '@/components/playlist/CreatePlaylistForm.vue'
+
+const openModalMock = vi.fn()
+
+vi.mock('@/composables/useModal', () => ({
+  useModal: () => ({
+    openModal: openModalMock,
+  }),
+}))
 
 vi.mock('@/composables/usePlaylistContentManagement', () => ({
   usePlaylistContentManagement: () => ({
@@ -14,7 +23,9 @@ vi.mock('@/composables/usePlaylistContentManagement', () => ({
 import { usePlayableMenuMethods } from './usePlayableMenuMethods'
 
 describe('usePlayableMenuMethods', () => {
-  const h = createHarness()
+  const h = createHarness({
+    beforeEach: () => openModalMock.mockClear(),
+  })
 
   it('queues to bottom', async () => {
     const songs = [h.factory('song')]
@@ -60,11 +71,10 @@ describe('usePlayableMenuMethods', () => {
     const songs = [h.factory('song')]
     const playables = ref<Playable[]>(songs)
     const close = vi.fn()
-    const emitMock = h.mock(eventBus, 'emit')
 
     const { addToNewPlaylist } = usePlayableMenuMethods(playables, close)
     await addToNewPlaylist()
 
-    expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_CREATE_PLAYLIST_FORM', null, songs)
+    await assertOpenModal(openModalMock, CreatePlaylistForm, { folder: null, playables: songs })
   })
 })

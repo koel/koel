@@ -1,14 +1,27 @@
 import { screen, waitFor } from '@testing-library/vue'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
+import { assertOpenModal } from '@/__tests__/assertions'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { radioStationStore } from '@/stores/radioStationStore'
-import { eventBus } from '@/utils/eventBus'
+import AddRadioStationForm from '@/components/radio/AddRadioStationForm.vue'
+
+const openModalMock = vi.fn()
+
+vi.mock('@/composables/useModal', () => ({
+  useModal: () => ({
+    openModal: openModalMock,
+  }),
+}))
+
 import Component from './RadioStationListScreen.vue'
 
 describe('radioStationListScreen.vue', () => {
   const h = createHarness({
-    beforeEach: () => h.mock(radioStationStore, 'fetchAll'),
+    beforeEach: () => {
+      openModalMock.mockClear()
+      h.mock(radioStationStore, 'fetchAll')
+    },
   })
 
   const renderComponent = async (stations?: RadioStation[]) => {
@@ -59,14 +72,13 @@ describe('radioStationListScreen.vue', () => {
   })
 
   it('requests the Add Radio Station form', async () => {
-    const emitMock = h.mock(eventBus, 'emit')
     await renderComponent()
     await h.tick()
 
     const addButton = screen.getByRole('button', { name: 'Add a new station' })
     await h.user.click(addButton)
 
-    expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_ADD_RADIO_STATION_FORM')
+    await assertOpenModal(openModalMock, AddRadioStationForm)
   })
 
   it('does not show the Add button in demo mode', async () =>

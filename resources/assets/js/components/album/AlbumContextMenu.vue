@@ -22,17 +22,22 @@ import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
 import { useDownload } from '@/composables/useDownload'
+import { defineAsyncComponent } from '@/utils/helpers'
 import { useContextMenu } from '@/composables/useContextMenu'
+import { useModal } from '@/composables/useModal'
 import { usePolicies } from '@/composables/usePolicies'
 import { useRouter } from '@/composables/useRouter'
-import { eventBus } from '@/utils/eventBus'
 import { playback } from '@/services/playbackManager'
 
 const props = defineProps<{ album: Album }>()
 const { album } = toRefs(props)
 
+const EditAlbumForm = defineAsyncComponent(() => import('@/components/album/EditAlbumForm.vue'))
+const CreateEmbedForm = defineAsyncComponent(() => import('@/components/embed/CreateEmbedForm.vue'))
+
 const { go, url } = useRouter()
 const { MenuItem, Separator, trigger } = useContextMenu()
+const { openModal } = useModal()
 const { currentUserCan } = usePolicies()
 
 const allowDownload = toRef(commonStore.state, 'allows_download')
@@ -52,11 +57,11 @@ const shuffle = () =>
     await playback().queueAndPlay(await playableStore.fetchSongsForAlbum(album.value), true)
   })
 
-const edit = () => trigger(() => eventBus.emit('MODAL_SHOW_EDIT_ALBUM_FORM', album.value))
+const edit = () => trigger(() => openModal<'EDIT_ALBUM_FORM'>(EditAlbumForm, { album: album.value }))
 const toggleFavorite = () => trigger(() => albumStore.toggleFavorite(album.value))
 const { fromAlbum } = useDownload()
 const download = () => trigger(() => fromAlbum(album.value))
-const showEmbedModal = () => trigger(() => eventBus.emit('MODAL_SHOW_CREATE_EMBED_FORM', album.value))
+const showEmbedModal = () => trigger(() => openModal<'CREATE_EMBED_FORM'>(CreateEmbedForm, { embeddable: album.value }))
 
 onMounted(async () => {
   allowEdit.value = await currentUserCan.editAlbum(album.value)

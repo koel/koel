@@ -1,17 +1,30 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
+import { assertOpenModal } from '@/__tests__/assertions'
 import factory from '@/__tests__/factory'
-import { eventBus } from '@/utils/eventBus'
 import { downloadService } from '@/services/downloadService'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
 import { acl } from '@/services/acl'
+import EditAlbumForm from '@/components/album/EditAlbumForm.vue'
+import CreateEmbedForm from '@/components/embed/CreateEmbedForm.vue'
+
+const openModalMock = vi.fn()
+
+vi.mock('@/composables/useModal', () => ({
+  useModal: () => ({
+    openModal: openModalMock,
+  }),
+}))
+
 import Component from './AlbumContextMenu.vue'
 
 describe('albumContextMenu.vue', () => {
-  const h = createHarness()
+  const h = createHarness({
+    beforeEach: () => openModalMock.mockClear(),
+  })
 
   const renderComponent = async (album?: Album) => {
     h.mock(acl, 'checkResourcePermission').mockReturnValue(true)
@@ -97,17 +110,15 @@ describe('albumContextMenu.vue', () => {
     // for the "Edit…" menu item to show up
     await h.tick(2)
 
-    const emitMock = h.mock(eventBus, 'emit')
     await h.user.click(screen.getByText('Edit…'))
 
-    expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_ALBUM_FORM', album)
+    await assertOpenModal(openModalMock, EditAlbumForm, { album })
   })
 
   it('requests the embed form', async () => {
     const { album } = await renderComponent()
-    const emitMock = h.mock(eventBus, 'emit')
     await h.user.click(screen.getByText('Embed…'))
 
-    expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_CREATE_EMBED_FORM', album)
+    await assertOpenModal(openModalMock, CreateEmbedForm, { embeddable: album })
   })
 })

@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
+import { assertOpenModal } from '@/__tests__/assertions'
 import factory from '@/__tests__/factory'
 import { MessageToasterStub } from '@/__tests__/stubs'
 import { screen, waitFor } from '@testing-library/vue'
@@ -7,14 +8,29 @@ import { queueStore } from '@/stores/queueStore'
 import { playableStore } from '@/stores/playableStore'
 import { userStore } from '@/stores/userStore'
 import { playbackService } from '@/services/QueuePlaybackService'
-import { eventBus } from '@/utils/eventBus'
 import Router from '@/router'
 import { playlistStore } from '@/stores/playlistStore'
+import EditPlaylistForm from '@/components/playlist/EditPlaylistForm.vue'
+import EditSmartPlaylistForm from '@/components/playlist/smart-playlist/EditSmartPlaylistForm.vue'
+import PlaylistCollaborationModal from '@/components/playlist/PlaylistCollaborationModal.vue'
+import CreateEmbedForm from '@/components/embed/CreateEmbedForm.vue'
+
+const openModalMock = vi.fn()
+
+vi.mock('@/composables/useModal', () => ({
+  useModal: () => ({
+    openModal: openModalMock,
+  }),
+}))
+
 import Component from './PlaylistContextMenu.vue'
 
 describe('playlistContextMenu.vue', () => {
   const h = createHarness({
-    beforeEach: () => (queueStore.state.playables = []),
+    beforeEach: () => {
+      queueStore.state.playables = []
+      openModalMock.mockClear()
+    },
   })
 
   const renderComponent = async (playlist: Playlist, user: CurrentUser | null = null) => {
@@ -43,20 +59,18 @@ describe('playlistContextMenu.vue', () => {
 
   it('edits a standard playlist', async () => {
     const { playlist } = await renderComponent(h.factory('playlist'))
-    const emitMock = h.mock(eventBus, 'emit')
 
     await h.user.click(screen.getByText('Edit…'))
 
-    expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist)
+    await assertOpenModal(openModalMock, EditPlaylistForm, { playlist })
   })
 
   it('edits a smart playlist', async () => {
     const { playlist } = await renderComponent(factory.states('smart')('playlist'))
-    const emitMock = h.mock(eventBus, 'emit')
 
     await h.user.click(screen.getByText('Edit…'))
 
-    expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_EDIT_PLAYLIST_FORM', playlist)
+    await assertOpenModal(openModalMock, EditSmartPlaylistForm, { playlist })
   })
 
   it('deletes a playlist', async () => {
@@ -172,18 +186,16 @@ describe('playlistContextMenu.vue', () => {
   it('opens collaboration form', async () =>
     await h.withPlusEdition(async () => {
       const { playlist } = await renderComponent(h.factory('playlist'))
-      const emitMock = h.mock(eventBus, 'emit')
 
       await h.user.click(screen.getByText('Collaborate…'))
 
-      expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_PLAYLIST_COLLABORATION', playlist)
+      await assertOpenModal(openModalMock, PlaylistCollaborationModal, { playlist })
     }))
 
   it('requests the embed form', async () => {
     const { playlist } = await renderComponent(h.factory('playlist'))
-    const emitMock = h.mock(eventBus, 'emit')
     await h.user.click(screen.getByText('Embed…'))
 
-    expect(emitMock).toHaveBeenCalledWith('MODAL_SHOW_CREATE_EMBED_FORM', playlist)
+    await assertOpenModal(openModalMock, CreateEmbedForm, { embeddable: playlist })
   })
 })

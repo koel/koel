@@ -10,7 +10,7 @@ import { DialogBoxStub, MessageToasterStub, OverlayStub } from '@/__tests__/stub
 import { commonStore } from '@/stores/commonStore'
 import { userStore } from '@/stores/userStore'
 import { http } from '@/services/http'
-import { ContextMenuKey, DialogBoxKey, MessageToasterKey, OverlayKey, RouterKey } from '@/config/symbols'
+import { ContextMenuKey, DialogBoxKey, MessageToasterKey, ModalKey, OverlayKey, RouterKey } from '@/config/symbols'
 import Router from '@/router'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { noop } from '@/utils/helpers'
@@ -235,6 +235,14 @@ class TestHarness {
       shallowRef({
         component: null,
         position: { top: 0, left: 0 },
+      }),
+    )
+
+    setPropIfNotExists(
+      options.global.provide,
+      ModalKey,
+      shallowRef({
+        component: null,
       }),
     )
 

@@ -7,19 +7,30 @@
 </template>
 
 <script lang="ts" setup>
+import { defineAsyncComponent } from '@/utils/helpers'
 import { useContextMenu } from '@/composables/useContextMenu'
-import { eventBus } from '@/utils/eventBus'
-import type { Events } from '@/config/events'
+import { useModal } from '@/composables/useModal'
+
+const CreatePlaylistForm = defineAsyncComponent(() => import('@/components/playlist/CreatePlaylistForm.vue'))
+const CreateSmartPlaylistForm = defineAsyncComponent(
+  () => import('@/components/playlist/smart-playlist/CreateSmartPlaylistForm.vue'),
+)
+const CreatePlaylistFolderForm = defineAsyncComponent(
+  () => import('@/components/playlist/CreatePlaylistFolderForm.vue'),
+)
 
 const { MenuItem, trigger } = useContextMenu()
+const { openModal } = useModal()
 
-type Action = 'new-playlist' | 'new-smart-playlist' | 'new-folder'
-
-const actionToEventMap: Record<Action, keyof Events> = {
-  'new-playlist': 'MODAL_SHOW_CREATE_PLAYLIST_FORM',
-  'new-smart-playlist': 'MODAL_SHOW_CREATE_SMART_PLAYLIST_FORM',
-  'new-folder': 'MODAL_SHOW_CREATE_PLAYLIST_FOLDER_FORM',
-}
-
-const onItemClicked = (key: keyof typeof actionToEventMap) => trigger(() => eventBus.emit(actionToEventMap[key]))
+const onItemClicked = (action: 'new-playlist' | 'new-smart-playlist' | 'new-folder') =>
+  trigger(() => {
+    switch (action) {
+      case 'new-playlist':
+        return openModal<'CREATE_PLAYLIST_FORM'>(CreatePlaylistForm, { folder: null, playables: [] })
+      case 'new-smart-playlist':
+        return openModal<'CREATE_SMART_PLAYLIST_FORM'>(CreateSmartPlaylistForm, { folder: null })
+      case 'new-folder':
+        return openModal<'CREATE_PLAYLIST_FOLDER_FORM'>(CreatePlaylistFolderForm)
+    }
+  })
 </script>
