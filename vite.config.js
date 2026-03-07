@@ -19,6 +19,23 @@ export default defineConfig({
       filename: 'stats.html'
     })
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return
+
+          if (id.includes('three')) return 'three'
+          if (id.includes('pusher-js')) return 'pusher'
+          if (id.includes('plyr')) return 'plyr'
+          if (id.includes('@floating-ui')) return 'floating-ui'
+          if (id.includes('vue') || id.includes('@vue')) return 'vue'
+          if (id.includes('lodash')) return 'lodash'
+          if (id.includes('axios')) return 'axios'
+        },
+      },
+    },
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './resources/assets/js'),
