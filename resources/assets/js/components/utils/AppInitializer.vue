@@ -9,10 +9,7 @@ import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useOverlay } from '@/composables/useOverlay'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
-import { socketListener } from '@/services/socketListener'
-import { socketService } from '@/services/socketService'
 import { uploadService } from '@/services/uploadService'
-import { broadcastSubscriber } from '@/services/broadcastSubscriber'
 
 const emits = defineEmits<{
   (e: 'success'): void
@@ -50,8 +47,15 @@ onMounted(async () => {
       }
     })
 
+    const { broadcastSubscriber } = await import('@/services/broadcastSubscriber')
     broadcastSubscriber.init(currentUser.value.id)
-    ;(await socketService.init()) && socketListener.listen()
+
+    const { socketService } = await import('@/services/socketService')
+
+    if (await socketService.init()) {
+      const { socketListener } = await import('@/services/socketListener')
+      socketListener.listen()
+    }
 
     emits('success')
   } catch (error: unknown) {

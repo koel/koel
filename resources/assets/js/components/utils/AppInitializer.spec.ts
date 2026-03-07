@@ -4,6 +4,12 @@ import { createHarness } from '@/__tests__/TestHarness'
 import { commonStore } from '@/stores/commonStore'
 import Component from './AppInitializer.vue'
 
+const flushPromises = async () => {
+  for (let i = 0; i < 10; i++) {
+    await new Promise(resolve => setTimeout(resolve))
+  }
+}
+
 vi.mock('@/services/socketService', () => ({
   socketService: {
     init: vi.fn().mockResolvedValue(false),
@@ -48,7 +54,7 @@ describe('appInitializer.vue', () => {
     h.mock(commonStore, 'init').mockResolvedValue(undefined)
 
     const { emitted } = h.render(Component)
-    await h.tick(2)
+    await flushPromises()
 
     expect(commonStore.init).toHaveBeenCalled()
     expect(emitted().success).toBeTruthy()
@@ -59,7 +65,7 @@ describe('appInitializer.vue', () => {
     h.mock(commonStore, 'init').mockRejectedValue(error)
 
     const { emitted } = h.render(Component)
-    await h.tick(2)
+    await flushPromises()
 
     expect(emitted().error).toBeTruthy()
   })
