@@ -25,7 +25,7 @@ class TranscoderTest extends TestCase
         Process::fake();
         File::expects('ensureDirectoryExists')->with('/path/to');
 
-        $transcoder = new Transcoder();
+        $transcoder = new Transcoder(transcodeTimeout: 300);
         $transcoder->transcode('/path/to/song.flac', '/path/to/output.m4a', 128);
 
         $closure = static function (PendingProcess $process): bool {
@@ -60,7 +60,7 @@ class TranscoderTest extends TestCase
         $this->expectException(TranscodingFailedException::class);
         $this->expectExceptionMessage('something went wrong');
 
-        $transcoder = new Transcoder();
+        $transcoder = new Transcoder(transcodeTimeout: 300);
         $transcoder->transcode('/path/to/song.flac', '/path/to/output.m4a', 128);
     }
 

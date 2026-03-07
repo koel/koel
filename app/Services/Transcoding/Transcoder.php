@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Process;
 class Transcoder
 {
     public function __construct(
-        private readonly int $transcodeTimeout = 300,
+        private readonly int $transcodeTimeout,
     ) {}
 
     public function transcode(string $source, string $destination, int $bitRate): void
