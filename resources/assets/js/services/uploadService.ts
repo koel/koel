@@ -81,15 +81,16 @@ export const uploadService = {
         file.progress = (progressEvent.loaded * 100) / progressEvent.total
       })
 
-      file.status = 'Uploaded'
-
-      if (result) {
+      if (result?.song && result?.album) {
+        file.status = 'Uploaded'
         this.handleUploadResult(result)
+        window.setTimeout(() => this.remove(file), 1000)
+      } else {
+        file.status = 'Errored'
+        file.message = 'Upload failed: Server returned an unexpected response.'
       }
 
-      this.proceed() // upload the next file
-
-      window.setTimeout(() => this.remove(file), 1000)
+      this.proceed()
     } catch (error: unknown) {
       logger.error(error)
       file.status = 'Errored'
