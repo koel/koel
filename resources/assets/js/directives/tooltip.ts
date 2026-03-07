@@ -6,6 +6,7 @@ import { updateFloatingUi } from '@/utils/floatingUi'
 type ElementWithTooltip = HTMLElement & {
   $tooltip?: HTMLDivElement
   $cleanup?: Closure
+  $tooltipListenersAttached?: boolean
 }
 
 const getOrCreateTooltip = (el: ElementWithTooltip): HTMLElement => {
@@ -65,6 +66,12 @@ const init = (el: ElementWithTooltip, binding: DirectiveBinding) => {
 
   el.$cleanup = el.$cleanup || autoUpdate(el, $tooltip, update)
 
+  if (el.$tooltipListenersAttached) {
+    return
+  }
+
+  el.$tooltipListenersAttached = true
+
   const showTooltip = async () => {
     $tooltip.classList.add('show')
     await update()
@@ -73,9 +80,16 @@ const init = (el: ElementWithTooltip, binding: DirectiveBinding) => {
   const hideTooltip = () => $tooltip.classList.remove('show')
 
   el.addEventListener('mouseenter', showTooltip)
-  el.addEventListener('focus', showTooltip)
   el.addEventListener('mouseleave', hideTooltip)
   el.addEventListener('blur', hideTooltip)
+  el.addEventListener('mousedown', hideTooltip)
+
+  el.addEventListener('focus', () => {
+    // Only show tooltip for keyboard focus (Tab), not mouse click focus
+    if (el.matches(':focus-visible')) {
+      showTooltip()
+    }
+  })
 }
 
 export const tooltip: Directive = {
