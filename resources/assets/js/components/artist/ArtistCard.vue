@@ -31,7 +31,7 @@ import { defineAsyncComponent } from '@/utils/helpers'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
-import { downloadService } from '@/services/downloadService'
+import { useDownload } from '@/composables/useDownload'
 import { useDraggable } from '@/composables/useDragAndDrop'
 import { useRouter } from '@/composables/useRouter'
 import { playback } from '@/services/playbackManager'
@@ -63,7 +63,8 @@ const shuffle = async () => {
 
 const toggleFavorite = () => artistStore.toggleFavorite(artist.value)
 
-const download = () => downloadService.fromArtist(artist.value)
+const { fromArtist } = useDownload()
+const download = () => fromArtist(artist.value)
 const onDragStart = (event: DragEvent) => startDragging(event, artist.value)
 
 const requestContextMenu = (event: MouseEvent) =>

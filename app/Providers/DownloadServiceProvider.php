@@ -10,5 +10,10 @@ class DownloadServiceProvider extends ServiceProvider
     public function register(): void
     {
         app()->singleton('Download', static fn (): DownloadService => app(DownloadService::class));
+
+        $this->app
+            ->when(DownloadService::class)
+            ->needs('$downloadLimit')
+            ->giveConfig('koel.download.limit');
     }
 }

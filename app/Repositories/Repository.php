@@ -35,6 +35,12 @@ abstract class Repository implements RepositoryContract
     }
 
     /** @inheritDoc */
+    public function resolveOne(Model|string|int $modelOrId): Model
+    {
+        return $modelOrId instanceof Model ? $modelOrId : $this->getOne($modelOrId);
+    }
+
+    /** @inheritDoc */
     public function getOne($id): Model
     {
         return $this->modelClass::query()->findOrFail($id);

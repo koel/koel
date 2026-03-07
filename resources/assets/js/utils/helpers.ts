@@ -140,3 +140,17 @@ export const defineAsyncComponent = (loader: AsyncComponentLoader, loadingCompon
     loadingComponent: loadingComponent || LoadingComponent,
   })
 }
+
+export const flattenParams = (params: Record<string, unknown>): Record<string, string> => {
+  const result: Record<string, string> = {}
+
+  for (const [key, value] of Object.entries(params)) {
+    if (Array.isArray(value)) {
+      value.forEach((v, i) => (result[`${key}[${i}]`] = String(v)))
+    } else if (value !== undefined && value !== null) {
+      result[key] = String(value)
+    }
+  }
+
+  return result
+}

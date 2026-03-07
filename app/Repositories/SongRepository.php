@@ -36,6 +36,9 @@ class SongRepository extends Repository implements ScoutableRepository
     private const LIST_SIZE_LIMIT = 500;
 
     public function __construct(
+        private readonly AlbumRepository $albumRepository,
+        private readonly ArtistRepository $artistRepository,
+        private readonly PlaylistRepository $playlistRepository,
         private readonly FolderRepository $folderRepository,
     ) {
         parent::__construct();
@@ -138,8 +141,10 @@ class SongRepository extends Repository implements ScoutableRepository
     }
 
     /** @return Collection|array<array-key, Song> */
-    public function getByAlbum(Album $album, ?User $scopedUser = null): Collection
+    public function getByAlbum(Album|string $album, ?User $scopedUser = null): Collection
     {
+        $album = $this->albumRepository->resolveOne($album);
+
         return Song::query(user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
             ->whereBelongsTo($album)
@@ -161,8 +166,10 @@ class SongRepository extends Repository implements ScoutableRepository
     }
 
     /** @return Collection|array<array-key, Song> */
-    public function getByArtist(Artist $artist, ?User $scopedUser = null): Collection
+    public function getByArtist(Artist|string $artist, ?User $scopedUser = null): Collection
     {
+        $artist = $this->artistRepository->resolveOne($artist);
+
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
             ->where(static function (SongBuilder $query) use ($artist): void {
@@ -180,8 +187,10 @@ class SongRepository extends Repository implements ScoutableRepository
     }
 
     /** @return Collection|array<array-key, Song> */
-    public function getByPlaylist(Playlist $playlist, ?User $scopedUser = null): Collection
+    public function getByPlaylist(Playlist|string $playlist, ?User $scopedUser = null): Collection
     {
+        $playlist = $this->playlistRepository->resolveOne($playlist);
+
         if ($playlist->is_smart) {
             return $this->getBySmartPlaylist($playlist, $scopedUser);
         } else {

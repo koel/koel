@@ -60,6 +60,7 @@ class FetchInitialDataController extends Controller
             'uses_i_tunes' => ITunesService::used(),
             'uses_ticketmaster' => TicketmasterService::used(),
             'allows_download' => config('koel.download.allow'),
+            'download_limit' => (int) config('koel.download.limit'),
             'uses_media_browser' => MediaBrowser::used(),
             'supports_batch_downloading' => extension_loaded('zip'),
             'media_path_set' => (bool) Setting::get('media_path'),

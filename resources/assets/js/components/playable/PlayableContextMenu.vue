@@ -142,7 +142,7 @@ import { commonStore } from '@/stores/commonStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { queueStore } from '@/stores/queueStore'
 import { playableStore } from '@/stores/playableStore'
-import { downloadService } from '@/services/downloadService'
+import { useDownload } from '@/composables/useDownload'
 import { useRouter } from '@/composables/useRouter'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useDialogBox } from '@/composables/useDialogBox'
@@ -306,7 +306,8 @@ const viewArtist = (song: Song) => trigger(() => go(url('artists.show', { id: so
 const viewPodcast = (episode: Episode) => trigger(() => go(url('podcasts.show', { id: episode.podcast_id })))
 const viewEpisode = (episode: Episode) => trigger(() => go(url('episodes.show', { id: episode.id })))
 const visitEpisodeWebpage = (episode: Episode) => trigger(() => window.open(episode.episode_link!, '_blank'))
-const download = () => trigger(() => downloadService.fromPlayables(playables.value))
+const { fromPlayables } = useDownload()
+const download = () => trigger(() => fromPlayables(playables.value))
 
 const removePlayablesFromPlaylist = () =>
   trigger(async () => {

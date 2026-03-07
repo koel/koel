@@ -2,9 +2,13 @@
 
 namespace App\Services;
 
+use App\Enums\DownloadableType;
 use App\Enums\SongStorageType;
+use App\Exceptions\DownloadLimitExceededException;
 use App\Models\Song;
 use App\Models\SongZipArchive;
+use App\Models\User;
+use App\Repositories\SongRepository;
 use App\Services\SongStorages\CloudStorageFactory;
 use App\Services\SongStorages\SftpStorage;
 use App\Values\Downloadable;
@@ -14,11 +18,41 @@ use Illuminate\Support\Facades\File;
 
 class DownloadService
 {
+    public function __construct(
+        private readonly SongRepository $songRepository,
+        private readonly int $downloadLimit = 0,
+    ) {}
+
+    /**
+     * @throws DownloadLimitExceededException
+     */
+    public function assertWithinDownloadLimit(
+        DownloadableType $type,
+        User $user,
+        array|string|int|null $id = null,
+    ): void {
+        if ($this->downloadLimit === 0) {
+            return;
+        }
+
+        $count = match ($type) {
+            DownloadableType::Songs => count((array) $id),
+            DownloadableType::Album => $this->songRepository->getByAlbum($id, $user)->count(),
+            DownloadableType::Artist => $this->songRepository->getByArtist($id, $user)->count(),
+            DownloadableType::Playlist => $this->songRepository->getByPlaylist($id, $user)->count(),
+            DownloadableType::Favorites => $this->songRepository->getFavorites($user)->count(),
+        };
+
+        $this->assertWithinLimit($count);
+    }
+
     /**
      * @param Collection<Song>|array<array-key, Song> $songs
      */
     public function getDownloadable(Collection $songs): ?Downloadable
     {
+        $this->assertWithinLimit($songs->count());
+
         if ($songs->count() === 1) {
             return optional(
                 $this->getLocalPathOrDownloadableUrl($songs->first()), // @phpstan-ignore-line
@@ -31,6 +65,14 @@ class DownloadService
                 ->addSongs($songs)
                 ->finish()
                 ->getPath(),
+        );
+    }
+
+    private function assertWithinLimit(int $count): void
+    {
+        throw_if(
+            $this->downloadLimit > 0 && $count > $this->downloadLimit,
+            new DownloadLimitExceededException($this->downloadLimit),
         );
     }
 

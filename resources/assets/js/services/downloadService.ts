@@ -1,37 +1,65 @@
+export class DownloadLimitExceededError extends Error {}
+
+import { isAxiosError } from 'axios'
 import { authService } from '@/services/authService'
+import { http } from '@/services/http'
 import { playableStore } from '@/stores/playableStore'
-import { arrayify } from '@/utils/helpers'
+import { arrayify, flattenParams } from '@/utils/helpers'
 
 export const downloadService = {
-  fromPlayables(playables: MaybeArray<Playable>) {
-    const query = arrayify(playables).reduce((q, playable) => `songs[]=${playable.id}&${q}`, '')
+  async fromPlayables(playables: MaybeArray<Playable>) {
+    const items = arrayify(playables)
+
+    if (items.length === 1) {
+      this.trigger(`songs?songs[]=${items[0].id}`)
+      return
+    }
+
+    await this.checkDownloadable({ type: 'songs', ids: items.map(p => p.id) })
+
+    const query = items.reduce((q, playable) => `songs[]=${playable.id}&${q}`, '')
     this.trigger(`songs?${query}`)
   },
 
-  fromAlbum(album: Album) {
+  async fromAlbum(album: Album) {
+    await this.checkDownloadable({ type: 'album', id: album.id })
     this.trigger(`album/${album.id}`)
   },
 
-  fromArtist(artist: Artist) {
+  async fromArtist(artist: Artist) {
+    await this.checkDownloadable({ type: 'artist', id: artist.id })
     this.trigger(`artist/${artist.id}`)
   },
 
-  fromPlaylist(playlist: Playlist) {
+  async fromPlaylist(playlist: Playlist) {
+    await this.checkDownloadable({ type: 'playlist', id: playlist.id })
     this.trigger(`playlist/${playlist.id}`)
   },
 
-  fromFavorites() {
-    if (playableStore.state.favorites.length) {
-      this.trigger('favorites')
+  async fromFavorites() {
+    if (!playableStore.state.favorites.length) {
+      return
     }
+
+    await this.checkDownloadable({ type: 'favorites' })
+    this.trigger('favorites')
   },
 
   /**
-   * Build a download link using a segment and trigger it.
-   *
-   * @param  {string} uri The uri segment, corresponding to the playable(s),
-   *                      artist, playlist, or album.
+   * @throws {DownloadLimitExceededError} if the server rejects the download due to limit
    */
+  async checkDownloadable(params: Record<string, unknown>) {
+    try {
+      await http.get<void>(`download/check?${new URLSearchParams(flattenParams(params))}`)
+    } catch (error: unknown) {
+      if (isAxiosError(error) && error.response?.status === 403) {
+        throw new DownloadLimitExceededError(error.response.data.message)
+      }
+
+      throw error
+    }
+  },
+
   trigger: (uri: string) => {
     const sep = uri.includes('?') ? '&' : '?'
     const url = `${window.BASE_URL}download/${uri}${sep}t=${authService.getAudioToken()}`

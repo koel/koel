@@ -53,7 +53,7 @@ import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
-import { downloadService } from '@/services/downloadService'
+import { useDownload } from '@/composables/useDownload'
 import { useDraggable } from '@/composables/useDragAndDrop'
 import { useRouter } from '@/composables/useRouter'
 import { playback } from '@/services/playbackManager'
@@ -97,7 +97,8 @@ const shuffle = async () => {
 
 const toggleFavorite = () => albumStore.toggleFavorite(album.value)
 
-const download = () => downloadService.fromAlbum(album.value)
+const { fromAlbum } = useDownload()
+const download = () => fromAlbum(album.value)
 const onDragStart = (event: DragEvent) => startDragging(event, album.value)
 
 const requestContextMenu = (event: MouseEvent) =>
