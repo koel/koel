@@ -43,7 +43,7 @@
     "style-observer": "^0.1.2",
     "three": "^0.146.0",
     "tiny-typed-emitter": "^2.1.0",
-    "vue": "^3.5.17",
+    "vue": "^3.5.29",
     "vue-advanced-cropper": "^2.8.9",
     "youtube-player": "^3.1.2"
   },
