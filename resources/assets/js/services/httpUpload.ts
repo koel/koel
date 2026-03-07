@@ -26,6 +26,8 @@ export const postWithProgress = <T>(url: string, data: FormData, onUploadProgres
       } else {
         const error = Object.assign(new Error(`Upload failed with status ${xhr.status}`), {
           responseData,
+          status: xhr.status,
+          statusText: xhr.statusText,
         })
 
         reject(error)

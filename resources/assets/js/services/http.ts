@@ -8,7 +8,7 @@ export { HTTPError }
 export const isHttpError = (error: unknown): error is HTTPError => error instanceof HTTPError
 
 class Http {
-  private client: typeof ky
+  private client: ReturnType<typeof ky.create>
   private silent = false
 
   constructor() {
@@ -40,9 +40,16 @@ class Http {
 
             const { response } = error
 
-            if (response.status === 400 || response.status === 401) {
-              const method = error.request.method.toLowerCase()
-              const url = new URL(error.request.url).pathname
+            if (response && (response.status === 400 || response.status === 401)) {
+              const method = (error.request?.method || '').toLowerCase()
+
+              let url = ''
+
+              try {
+                url = new URL(error.request?.url || '').pathname
+              } catch {
+                url = String(error.request?.url || '')
+              }
 
               if (!(method === 'post' && url.endsWith('/me'))) {
                 authService.setRedirect()
@@ -52,7 +59,7 @@ class Http {
 
             // Attach parsed response data for error handlers
             try {
-              ;(error as any).responseData = await response.clone().json()
+              ;(error as any).responseData = await response?.clone().json()
             } catch {
               ;(error as any).responseData = null
             }
