@@ -51,9 +51,7 @@ class DownloadService
      */
     public function getDownloadable(Collection $songs): ?Downloadable
     {
-        if ($songs->count() > 1) {
-            $this->assertWithinLimit($songs->count());
-        }
+        $this->assertWithinLimit($songs->count());
 
         if ($songs->count() === 1) {
             return optional(
