@@ -29,7 +29,7 @@ describe('http service', () => {
 
     const result = await http.post('endpoint', { key: 'value' })
 
-    expect(requestMock).toHaveBeenCalledWith('post', 'endpoint', { key: 'value' }, undefined)
+    expect(requestMock).toHaveBeenCalledWith('post', 'endpoint', { key: 'value' })
     expect(result).toBe('result')
   })
 

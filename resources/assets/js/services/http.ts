@@ -72,7 +72,7 @@ class Http {
     return this
   }
 
-  public async request<T>(method: string, url: string, data: Record<string, any> = {}, onUploadProgress?: any) {
+  public async request<T>(method: string, url: string, data: Record<string, any> = {}) {
     const options: Record<string, any> = {}
 
     if (method !== 'get' && data) {
@@ -80,15 +80,6 @@ class Http {
         options.body = data
       } else {
         options.json = data
-      }
-    }
-
-    if (onUploadProgress) {
-      options.onUploadProgress = (progress: { percent: number; transferredBytes: number; totalBytes: number }) => {
-        onUploadProgress({
-          loaded: progress.transferredBytes,
-          total: progress.totalBytes,
-        })
       }
     }
 
@@ -103,8 +94,8 @@ class Http {
     return (await this.request<T>('get', url)).data
   }
 
-  public async post<T>(url: string, data: Record<string, any> = {}, onUploadProgress?: any) {
-    return (await this.request<T>('post', url, data, onUploadProgress)).data
+  public async post<T>(url: string, data: Record<string, any> = {}) {
+    return (await this.request<T>('post', url, data)).data
   }
 
   public async put<T>(url: string, data: Record<string, any>) {
@@ -129,3 +120,5 @@ class Http {
 }
 
 export const http = new Http()
+
+export { postWithProgress } from '@/services/httpUpload'
