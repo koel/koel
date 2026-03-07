@@ -22,13 +22,18 @@ class Transcoder
 
         $result = $process->run([
             config('koel.streaming.ffmpeg_path'),
+            '-nostdin',
             '-i',
             $source,
             '-vn', // Strip video
             '-c:a',
-            'aac', // Use native AAC encoder for its efficiency
+            'aac',
             '-b:a',
-            "{$bitRate}k", // Set target bitrate (e.g., 128k, 192k)
+            "{$bitRate}k",
+            '-threads',
+            '0',
+            '-movflags',
+            '+faststart', // Place moov atom at the start for faster streaming
             '-y', // Overwrite if exists
             $destination,
         ]);
