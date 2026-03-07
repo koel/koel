@@ -1,4 +1,4 @@
-import { md5 as baseMd5 } from 'js-md5'
+import baseMd5 from 'md5'
 
 export const uuid = () => {
   if (typeof window === 'undefined') {
