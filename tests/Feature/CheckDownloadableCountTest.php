@@ -15,6 +15,13 @@ use function Tests\create_user;
 
 class CheckDownloadableCountTest extends TestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        config(['koel.download.limit' => 0]);
+    }
+
     #[Test]
     public function checkSongs(): void
     {

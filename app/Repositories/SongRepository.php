@@ -138,7 +138,7 @@ class SongRepository extends Repository implements ScoutableRepository
     }
 
     /** @return Collection|array<array-key, Song> */
-    public function getByAlbum(Album|string|int $album, ?User $scopedUser = null): Collection
+    public function getByAlbum(Album|string $album, ?User $scopedUser = null): Collection
     {
         $album = $album instanceof Album ? $album : Album::findOrFail($album);
 
@@ -163,7 +163,7 @@ class SongRepository extends Repository implements ScoutableRepository
     }
 
     /** @return Collection|array<array-key, Song> */
-    public function getByArtist(Artist|string|int $artist, ?User $scopedUser = null): Collection
+    public function getByArtist(Artist|string $artist, ?User $scopedUser = null): Collection
     {
         $artist = $artist instanceof Artist ? $artist : Artist::findOrFail($artist);
 
@@ -184,7 +184,7 @@ class SongRepository extends Repository implements ScoutableRepository
     }
 
     /** @return Collection|array<array-key, Song> */
-    public function getByPlaylist(Playlist|string|int $playlist, ?User $scopedUser = null): Collection
+    public function getByPlaylist(Playlist|string $playlist, ?User $scopedUser = null): Collection
     {
         $playlist = $playlist instanceof Playlist ? $playlist : Playlist::findOrFail($playlist);
 

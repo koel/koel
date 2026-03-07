@@ -26,11 +26,8 @@ class DownloadService
     /**
      * @throws DownloadLimitExceededException
      */
-    public function assertWithinDownloadLimit(
-        DownloadableType $type,
-        User $user,
-        array|string|int|null $id = null,
-    ): void {
+    public function assertWithinDownloadLimit(DownloadableType $type, User $user, array|string|null $id = null): void
+    {
         if ($this->downloadLimit === 0) {
             return;
         }
