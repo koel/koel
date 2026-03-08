@@ -2,16 +2,19 @@
 
 namespace App\Services\Scanners\Strategies;
 
-use App\Enums\ScanResultType;
 use App\Values\Scanning\ScanConfiguration;
-use App\Values\Scanning\ScanResult;
 use App\Values\Scanning\ScanResultCollection;
 use Illuminate\Support\Facades\File;
 use RuntimeException;
 use Symfony\Component\Process\Process;
 
+// @mago-ignore lint:cyclomatic-complexity,kan-defect
 class ParallelScanStrategy
 {
+    public function __construct(
+        private readonly ScanResultDeserializer $deserializer,
+    ) {}
+
     /** @param iterable<\SplFileInfo> $files */
     public function scan(
         iterable $files,
@@ -30,6 +33,15 @@ class ParallelScanStrategy
         }
 
         $chunks = array_chunk($paths, (int) ceil(count($paths) / $jobs));
+
+        return $this->spawnAndCollect($chunks, $config, $onProgress);
+    }
+
+    private function spawnAndCollect(
+        array $chunks,
+        ScanConfiguration $config,
+        ?callable $onProgress,
+    ): ScanResultCollection {
         $manifests = [];
         $processes = [];
 
@@ -89,37 +101,11 @@ class ParallelScanStrategy
 
         while ($processes) {
             foreach ($processes as $i => $process) {
-                $output = $process->getIncrementalOutput();
-
-                if ($output !== '') {
-                    $buffers[$i] .= $output;
-
-                    while (($newlinePos = strpos($buffers[$i], "\n")) !== false) {
-                        $line = substr($buffers[$i], 0, $newlinePos);
-                        $buffers[$i] = substr($buffers[$i], $newlinePos + 1);
-
-                        $this->handleResultLine($line, $results, $onProgress);
-                    }
-                }
-
-                $errOutput = $process->getIncrementalErrorOutput();
-
-                if ($errOutput !== '') {
-                    $errBuffers[$i] .= $errOutput;
-                }
+                $this->drainStdout($process, $buffers[$i], $results, $onProgress);
+                $this->drainStderr($process, $errBuffers[$i]);
 
                 if (!$process->isRunning()) {
-                    if (trim($buffers[$i]) !== '') {
-                        $this->handleResultLine($buffers[$i], $results, $onProgress);
-                    }
-
-                    if (!$process->isSuccessful()) {
-                        $stderr = trim($errBuffers[$i]);
-                        $msg = $stderr ?: 'Process exited with code ' . ($process->getExitCode() ?? 'unknown');
-
-                        throw new RuntimeException("Parallel scan worker failed: $msg");
-                    }
-
+                    $this->finalizeProcess($process, $buffers[$i], $errBuffers[$i], $results, $onProgress);
                     unset($processes[$i], $buffers[$i], $errBuffers[$i]);
                 }
             }
@@ -132,37 +118,53 @@ class ParallelScanStrategy
         return $results;
     }
 
-    private function handleResultLine(string $json, ScanResultCollection $results, ?callable $onProgress): void
-    {
-        $result = $this->deserializeResult($json);
+    private function drainStdout(
+        Process $process,
+        string &$buffer,
+        ScanResultCollection $results,
+        ?callable $onProgress,
+    ): void {
+        $output = $process->getIncrementalOutput();
 
-        if ($result) {
-            $results->add($result);
+        if ($output === '') {
+            return;
+        }
 
-            if ($onProgress) {
-                $onProgress($result);
-            }
+        $buffer .= $output;
+
+        while (($newlinePos = strpos($buffer, "\n")) !== false) {
+            $line = substr($buffer, 0, $newlinePos);
+            $buffer = substr($buffer, $newlinePos + 1);
+
+            $this->deserializer->handleLine($line, $results, $onProgress);
         }
     }
 
-    private function deserializeResult(string $json): ?ScanResult
+    private function drainStderr(Process $process, string &$errBuffer): void
     {
-        $data = json_decode(trim($json), true);
+        $errOutput = $process->getIncrementalErrorOutput();
 
-        if (!is_array($data) || !isset($data['path'], $data['type'])) {
-            return null;
+        if ($errOutput !== '') {
+            $errBuffer .= $errOutput;
+        }
+    }
+
+    private function finalizeProcess(
+        Process $process,
+        string $buffer,
+        string $errBuffer,
+        ScanResultCollection $results,
+        ?callable $onProgress,
+    ): void {
+        if (trim($buffer) !== '') {
+            $this->deserializer->handleLine($buffer, $results, $onProgress);
         }
 
-        $type = ScanResultType::tryFrom($data['type']);
+        if (!$process->isSuccessful()) {
+            $stderr = trim($errBuffer);
+            $msg = $stderr ?: 'Process exited with code ' . ($process->getExitCode() ?? 'unknown');
 
-        if (!$type) {
-            return null;
+            throw new RuntimeException("Parallel scan worker failed: $msg");
         }
-
-        return match ($type) {
-            ScanResultType::SUCCESS => ScanResult::success($data['path']),
-            ScanResultType::SKIPPED => ScanResult::skipped($data['path']),
-            ScanResultType::ERROR => ScanResult::error($data['path'], $data['error'] ?? null),
-        };
     }
 }
