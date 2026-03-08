@@ -39,10 +39,7 @@
               </FormRow>
               <FormRow>
                 <template #label>Folder</template>
-                <SelectBox v-model="data.folder_id">
-                  <option :value="null" />
-                  <option v-for="{ id, name } in folders" :key="id" :value="id">{{ name }}</option>
-                </SelectBox>
+                <FolderSelect v-model:folder-id="data.folder_id" v-model:folder-name="data.folder_name" />
               </FormRow>
               <FormRow class="col-span-2">
                 <template #label>Description</template>
@@ -85,8 +82,7 @@
 <script lang="ts" setup>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { isEqual } from 'lodash'
-import { ref, toRef } from 'vue'
-import { playlistFolderStore } from '@/stores/playlistFolderStore'
+import { ref } from 'vue'
 import type { CreatePlaylistData } from '@/stores/playlistStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { useDialogBox } from '@/composables/useDialogBox'
@@ -97,7 +93,7 @@ import { useForm } from '@/composables/useForm'
 
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
-import SelectBox from '@/components/ui/form/SelectBox.vue'
+import FolderSelect from '@/components/ui/form/FolderSelect.vue'
 import TextArea from '@/components/ui/form/TextArea.vue'
 import TabPanelContainer from '@/components/ui/tabs/TabPanelContainer.vue'
 import TabButton from '@/components/ui/tabs/TabButton.vue'
@@ -117,7 +113,6 @@ const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { go, url } = useRouter()
 
-const folders = toRef(playlistFolderStore.state, 'folders')
 const currentTab = ref<'details' | 'rules'>('details')
 
 const close = () => emit('close')
@@ -127,6 +122,7 @@ const { data, isPristine, handleSubmit } = useForm<CreatePlaylistData>({
     name: '',
     description: '',
     folder_id: targetFolder?.id || null,
+    folder_name: null,
     cover: null,
   },
   isPristine: (original, current) => isEqual(original, current) && collectedRuleGroups.value.length === 0,

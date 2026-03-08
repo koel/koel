@@ -30,7 +30,13 @@ class PlaylistStoreRequest extends Request
             'songs' => ['array', new AllPlayablesAreAccessibleBy($this->user())],
             'description' => 'string|sometimes|nullable', // backward compatibility for mobile apps
             'rules' => ['array', 'nullable', new ValidSmartPlaylistRulePayload()],
-            'folder_id' => ['nullable', 'sometimes', Rule::exists(PlaylistFolder::class, 'id')],
+            'folder_id' => [
+                'nullable',
+                'sometimes',
+                'prohibits:folder_name',
+                Rule::exists(PlaylistFolder::class, 'id')->where('user_id', $this->user()->id),
+            ],
+            'folder_name' => ['nullable', 'sometimes', 'prohibits:folder_id', 'string', 'max:191'],
             'cover' => ['sometimes', 'nullable', new ValidImageData()],
         ];
     }
@@ -41,6 +47,7 @@ class PlaylistStoreRequest extends Request
             name: $this->name,
             description: (string) $this->description,
             folderId: $this->folder_id,
+            folderName: $this->folder_name,
             cover: $this->cover,
             playableIds: Arr::wrap($this->songs),
             ruleGroups: $this->rules ? SmartPlaylistRuleGroupCollection::create(Arr::wrap($this->rules)) : null,

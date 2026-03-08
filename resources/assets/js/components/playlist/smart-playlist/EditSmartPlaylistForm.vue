@@ -39,10 +39,7 @@
               </FormRow>
               <FormRow>
                 <template #label>Folder</template>
-                <SelectBox v-model="data.folder_id">
-                  <option :value="null" />
-                  <option v-for="folder in folders" :key="folder.id" :value="folder.id">{{ folder.name }}</option>
-                </SelectBox>
+                <FolderSelect v-model:folder-id="data.folder_id" v-model:folder-name="data.folder_name" />
               </FormRow>
               <FormRow class="col-span-2">
                 <template #label>Description</template>
@@ -85,9 +82,7 @@
 
 <script lang="ts" setup>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { toRef } from 'vue'
 import { cloneDeep, isEqual, pick } from 'lodash'
-import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import type { UpdatePlaylistData } from '@/stores/playlistStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { eventBus } from '@/utils/eventBus'
@@ -98,7 +93,7 @@ import { useForm } from '@/composables/useForm'
 
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
-import SelectBox from '@/components/ui/form/SelectBox.vue'
+import FolderSelect from '@/components/ui/form/FolderSelect.vue'
 import TextArea from '@/components/ui/form/TextArea.vue'
 import TabButton from '@/components/ui/tabs/TabButton.vue'
 import Tabs from '@/components/ui/tabs/Tabs.vue'
@@ -115,14 +110,13 @@ const { playlist } = props
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 
-const folders = toRef(playlistFolderStore.state, 'folders')
 const { Btn, RuleGroup, activateTab, isTabActive, collectedRuleGroups, addGroup, onGroupChanged } =
   useSmartPlaylistForm(cloneDeep(playlist.rules))
 
 const close = () => emit('close')
 
 const { data, isPristine, handleSubmit } = useForm<UpdatePlaylistData>({
-  initialValues: pick(playlist, 'name', 'folder_id', 'description', 'cover'),
+  initialValues: { ...pick(playlist, 'name', 'folder_id', 'description', 'cover'), folder_name: null },
   isPristine: (original, current) => isEqual(original, current) && isEqual(collectedRuleGroups.value, playlist.rules),
   onSubmit: async data => {
     const formData = {

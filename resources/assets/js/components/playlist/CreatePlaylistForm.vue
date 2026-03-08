@@ -15,10 +15,7 @@
         </FormRow>
         <FormRow>
           <template #label>Folder</template>
-          <SelectBox v-model="data.folder_id">
-            <option :value="null" />
-            <option v-for="{ id, name } in folders" :key="id" :value="id">{{ name }}</option>
-          </SelectBox>
+          <FolderSelect v-model:folder-id="data.folder_id" v-model:folder-name="data.folder_name" />
         </FormRow>
         <FormRow class="col-span-2">
           <template #label>Description</template>
@@ -41,8 +38,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, toRef } from 'vue'
-import { playlistFolderStore } from '@/stores/playlistFolderStore'
+import { computed } from 'vue'
 import type { CreatePlaylistData } from '@/stores/playlistStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { getPlayableCollectionContentType } from '@/utils/typeGuards'
@@ -55,7 +51,7 @@ import { useForm } from '@/composables/useForm'
 import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
-import SelectBox from '@/components/ui/form/SelectBox.vue'
+import FolderSelect from '@/components/ui/form/FolderSelect.vue'
 import TextArea from '@/components/ui/form/TextArea.vue'
 import ArtworkField from '@/components/ui/form/ArtworkField.vue'
 
@@ -71,8 +67,6 @@ const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { go, url } = useRouter()
 
-const folders = toRef(playlistFolderStore.state, 'folders')
-
 const close = () => emit('close')
 
 const { data, isPristine, handleSubmit } = useForm<CreatePlaylistData>({
@@ -80,6 +74,7 @@ const { data, isPristine, handleSubmit } = useForm<CreatePlaylistData>({
     name: '',
     description: '',
     folder_id: targetFolder?.id ?? null,
+    folder_name: null,
     cover: null,
   },
   onSubmit: async data => await playlistStore.store(data, playables),

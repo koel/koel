@@ -15,10 +15,12 @@ interface CreatePlaylistRequestData {
   description: Playlist['description']
   cover: string | null
   folder_id: PlaylistFolder['id'] | null
+  folder_name?: string | null
   rules?: SmartPlaylistRuleGroup[]
 }
 
 export type CreatePlaylistData = Pick<Playlist, 'name' | 'description' | 'folder_id' | 'cover'> & {
+  folder_name?: string | null
   songs?: Playable['id'][]
   rules?: SmartPlaylistRuleGroup[]
 }
@@ -27,6 +29,7 @@ export interface UpdatePlaylistData {
   name: Playlist['name']
   description: Playlist['description']
   folder_id?: PlaylistFolder['id'] | null
+  folder_name?: string | null
   cover?: string | null
   rules?: SmartPlaylistRuleGroup[]
 }
@@ -78,12 +81,9 @@ export const playlistStore = {
     return this.state.playlists.filter(({ folder_id }) => folder_id === folder.id)
   },
 
-  async store(
-    data: Pick<Playlist, 'name' | 'description' | 'folder_id' | 'cover'> & { rules?: SmartPlaylistRuleGroup[] },
-    songs: Playable[] = [],
-  ) {
+  async store(data: CreatePlaylistData, songs: Playable[] = []) {
     const requestData: CreatePlaylistRequestData = {
-      ...pick(data, 'name', 'description', 'folder_id', 'cover'),
+      ...pick(data, 'name', 'description', 'folder_id', 'folder_name', 'cover'),
       songs: songs.map(song => song.id),
     }
 

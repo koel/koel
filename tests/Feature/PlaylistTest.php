@@ -65,6 +65,91 @@ class PlaylistTest extends TestCase
     }
 
     #[Test]
+    public function creatingPlaylistWithNewFolderName(): void
+    {
+        $user = create_user();
+
+        $this->postAs(
+            'api/playlists',
+            [
+                'name' => 'My Playlist',
+                'description' => '',
+                'songs' => [],
+                'rules' => [],
+                'folder_name' => 'Brand New Folder',
+            ],
+            $user,
+        )->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
+
+        $playlist = Playlist::query()->latest()->firstOrFail();
+
+        self::assertSame('My Playlist', $playlist->name);
+
+        $folder = app(PlaylistFolderService::class)->getFolderForPlaylist($playlist);
+        self::assertNotNull($folder);
+        self::assertSame('Brand New Folder', $folder->name);
+        self::assertTrue($folder->user->is($user));
+    }
+
+    #[Test]
+    public function updatingPlaylistWithNewFolderName(): void
+    {
+        $playlist = create_playlist();
+
+        $this->putAs(
+            "api/playlists/{$playlist->id}",
+            [
+                'name' => 'Updated',
+                'description' => '',
+                'folder_name' => 'New Folder',
+            ],
+            $playlist->owner,
+        )->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
+
+        $folder = app(PlaylistFolderService::class)->getFolderForPlaylist($playlist->refresh());
+        self::assertNotNull($folder);
+        self::assertSame('New Folder', $folder->name);
+    }
+
+    #[Test]
+    public function creatingPlaylistWithBothFolderIdAndFolderNameFails(): void
+    {
+        $user = create_user();
+        $folder = $user->playlistFolders()->create(['name' => 'Existing']);
+
+        $this->postAs(
+            'api/playlists',
+            [
+                'name' => 'My Playlist',
+                'description' => '',
+                'songs' => [],
+                'rules' => [],
+                'folder_id' => $folder->id,
+                'folder_name' => 'New Folder',
+            ],
+            $user,
+        )->assertUnprocessable();
+    }
+
+    #[Test]
+    public function updatingPlaylistWithBothFolderIdAndFolderNameFails(): void
+    {
+        $playlist = create_playlist();
+        $folder = $playlist->owner->playlistFolders()->create(['name' => 'Existing']);
+
+        $this->putAs(
+            "api/playlists/{$playlist->id}",
+            [
+                'name' => 'Updated',
+                'description' => '',
+                'folder_id' => $folder->id,
+                'folder_name' => 'New Folder',
+            ],
+            $playlist->owner,
+        )->assertUnprocessable();
+    }
+
+    #[Test]
     public function createPlaylistWithoutCover(): void
     {
         /** @var PlaylistFolderService $playlistFolderService */

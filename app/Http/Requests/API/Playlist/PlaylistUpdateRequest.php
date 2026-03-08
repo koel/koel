@@ -27,7 +27,13 @@ class PlaylistUpdateRequest extends Request
             'name' => 'required',
             'description' => 'string|sometimes|nullable',
             'rules' => ['array', 'nullable', new ValidSmartPlaylistRulePayload()],
-            'folder_id' => ['nullable', 'sometimes', Rule::exists(PlaylistFolder::class, 'id')],
+            'folder_id' => [
+                'nullable',
+                'sometimes',
+                'prohibits:folder_name',
+                Rule::exists(PlaylistFolder::class, 'id')->where('user_id', $this->user()->id),
+            ],
+            'folder_name' => ['nullable', 'sometimes', 'prohibits:folder_id', 'string', 'max:191'],
             'cover' => ['string', 'sometimes', 'nullable', new ValidImageData()],
         ];
     }
@@ -38,6 +44,7 @@ class PlaylistUpdateRequest extends Request
             name: $this->name,
             description: (string) $this->description,
             folderId: $this->folder_id,
+            folderName: $this->folder_name,
             cover: $this->has('cover') ? $this->string('cover') : null,
             ruleGroups: $this->rules ? SmartPlaylistRuleGroupCollection::create(Arr::wrap($this->rules)) : null,
         );
