@@ -31,7 +31,7 @@
         <Icon :icon="faTimes" fixed-width />
       </button>
     </div>
-    <SelectBox v-else v-model="selected" @change="onSelectChange">
+    <SelectBox v-else v-model="selected" @update:model-value="onSelectChange">
       <option :value="null" />
       <option v-for="folder in folders" :key="folder.id" :value="folder.id">{{ folder.name }}</option>
       <option v-if="folderName" :value="PENDING_FOLDER">{{ folderName }} (new)</option>
