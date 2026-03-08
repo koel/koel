@@ -36,9 +36,18 @@ class ValidRadioStationUrl implements ValidationRule
         }
 
         try {
-            $response = Http::withOptions(['allow_redirects' => false])->head($value);
+            $response = Http::head($value);
         } catch (Throwable) {
             $fail("The $attribute couldn't be reached.");
+
+            return;
+        }
+
+        // After following redirects, validate the final URL's host to prevent SSRF via redirect.
+        $effectiveUrl = $response->effectiveUri()?->getHost();
+
+        if ($effectiveUrl && !$this->isPublicHost($effectiveUrl)) {
+            $fail("The $attribute must point to a public URL.");
 
             return;
         }
