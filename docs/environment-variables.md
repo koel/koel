@@ -60,6 +60,7 @@ Required when `STORAGE_DRIVER=sftp`.
 |---|---|---|
 | `APP_MAX_SCAN_TIME` | The maximum scan time in seconds when scanning via the browser. Does not affect `koel:sync`. | `600` |
 | `MEMORY_LIMIT` | The memory limit in MB for the scanning process. Example: `2048`. | _(empty)_ |
+| `SCAN_PARALLELISM` | The number of parallel worker processes for scanning. Set to `1` to disable parallel scanning. Can be overridden with `--jobs` flag. | `4` |
 | `IGNORE_DOT_FILES` | Whether to ignore dot files and folders when scanning. Greatly improves performance if your media root has folders like `.git` or `.cache`. | `true` |
 | `SYNC_LOG_LEVEL` | The verbosity of sync logs (found under `storage/logs/`). Options: `all`, `error`. | `error` |
 

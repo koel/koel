@@ -26,7 +26,8 @@ class ScanCommand extends Command
         {--P|private : Whether to make the newly scanned songs private to the user.}
         {--V|verbose : Show more details about the scanning process
         {--I|ignore=* : The comma-separated tags to ignore (exclude) from scanning}
-        {--F|force : Force re-scanning even unchanged files}';
+        {--F|force : Force re-scanning even unchanged files}
+        {--J|jobs= : Number of parallel worker processes}';
 
     protected $description = 'Scan for songs in the configured directory.';
 
@@ -94,7 +95,14 @@ class ScanCommand extends Command
             $this->components->info('Ignoring tag(s): ' . implode(', ', $config->ignores));
         }
 
-        $results = $this->directoryScanner->scan((string) Setting::get('media_path'), $config);
+        $jobs = (int) ($this->option('jobs') ?: config('koel.scan.parallelism', 4));
+        $jobs = max(1, $jobs);
+
+        if ($jobs > 1) {
+            $this->components->info("Using $jobs parallel worker(s).");
+        }
+
+        $results = $this->directoryScanner->scan((string) Setting::get('media_path'), $config, $jobs);
 
         $this->newLine(2);
         $this->components->info('Scanning completed!');

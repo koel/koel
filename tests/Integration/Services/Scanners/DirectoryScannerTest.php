@@ -242,6 +242,32 @@ class DirectoryScannerTest extends TestCase
     }
 
     #[Test]
+    public function parallelScanFallsBackToSequentialOnSQLite(): void
+    {
+        Event::fake([MediaScanCompleted::class]);
+        Dispatcher::shouldReceive('dispatch')->with(ExtractSongFolderStructureJob::class)->atLeast();
+
+        $owner = create_admin();
+
+        // Even with jobs > 1, SQLite should fall back to sequential and still produce correct results
+        $results = $this->scanner->scan($this->mediaPath, ScanConfiguration::make(owner: $owner), jobs: 4);
+
+        $this->assertDatabaseHas(Song::class, [
+            'path' => $this->path('/full.mp3'),
+            'track' => 5,
+            'owner_id' => $owner->id,
+        ]);
+
+        $this->assertDatabaseHas(Song::class, [
+            'path' => $this->path('/subdir/back-in-black.ogg'),
+            'owner_id' => $owner->id,
+        ]);
+
+        self::assertTrue($results->success()->count() > 0);
+        Event::assertDispatched(MediaScanCompleted::class);
+    }
+
+    #[Test]
     public function hiddenFilesAndFoldersAreIgnoredIfConfiguredSo(): void
     {
         Event::fake([MediaScanCompleted::class]);
