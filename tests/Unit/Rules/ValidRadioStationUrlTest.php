@@ -50,6 +50,35 @@ class ValidRadioStationUrlTest extends TestCase
         );
     }
 
+    /** @return array<mixed> */
+    public static function providePrivateUrls(): array
+    {
+        return [
+            'localhost' => ['http://localhost/stream'],
+            'private IPv4' => ['http://192.168.1.1/stream'],
+            'loopback IPv4' => ['http://127.0.0.1/stream'],
+            'link-local IPv4' => ['http://169.254.1.1/stream'],
+            'private 10.x' => ['http://10.0.0.1/stream'],
+        ];
+    }
+
+    #[Test, DataProvider('providePrivateUrls')]
+    public function rejectsPrivateUrls(string $url): void
+    {
+        Http::fake([
+            '*' => Http::response('', 200, ['Content-Type' => 'audio/mpeg']),
+        ]);
+
+        $failed = false;
+
+        (new ValidRadioStationUrl())->validate('url', $url, function () use (&$failed) { // @phpstan-ignore-line
+            $failed = true;
+        });
+
+        self::assertTrue($failed, "Expected validation to fail for private URL: $url");
+        Http::assertNothingSent();
+    }
+
     #[Test]
     public function bypass(): void
     {
