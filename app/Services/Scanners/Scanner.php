@@ -2,43 +2,14 @@
 
 namespace App\Services\Scanners;
 
-use App\Repositories\SongRepository;
-use App\Services\SongService;
-use App\Values\Scanning\ScanConfiguration;
-use App\Values\Scanning\ScanResult;
-use Illuminate\Support\Facades\File;
 use Symfony\Component\Finder\Finder;
-use Throwable;
 
 abstract class Scanner
 {
     public function __construct(
-        protected SongService $songService,
-        protected SongRepository $songRepository,
-        protected FileScanner $fileScanner,
-        protected Finder $finder,
+        protected readonly IndividualFileHandler $fileHandler,
+        protected readonly Finder $finder,
     ) {}
-
-    protected function handleIndividualFile(string $path, ScanConfiguration $config): ScanResult
-    {
-        try {
-            $song = $this->songRepository->findOneByPath($path);
-
-            // Use last modified time instead of hash to determine if the file is modified
-            // as calculating hash for every file is too time-consuming.
-            // See https://github.com/koel/koel/issues/2165.
-            if (!$config->force && $song && !$song->isFileModified(File::lastModified($path))) {
-                return ScanResult::skipped($path);
-            }
-
-            $info = $this->fileScanner->scan($path);
-            $this->songService->createOrUpdateSongFromScan($info, $config, $song);
-
-            return ScanResult::success($info->path);
-        } catch (Throwable $e) {
-            return ScanResult::error($path, $e->getMessage());
-        }
-    }
 
     /**
      * Gather all applicable files in a given directory.

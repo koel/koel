@@ -25,6 +25,7 @@ return [
     'scan' => [
         'timeout' => env('APP_MAX_SCAN_TIME', 600),
         'memory_limit' => env('MEMORY_LIMIT'),
+        'jobs' => env('SCAN_JOBS', 4),
     ],
 
     /*

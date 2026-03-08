@@ -4,15 +4,28 @@ namespace App\Services\Scanners;
 
 use App\Enums\ScanEvent;
 use App\Events\MediaScanCompleted;
+use App\Services\Scanners\Strategies\ParallelScanStrategy;
+use App\Services\Scanners\Strategies\SequentialScanStrategy;
 use App\Values\Scanning\ScanConfiguration;
+use App\Values\Scanning\ScanResult;
 use App\Values\Scanning\ScanResultCollection;
+use Symfony\Component\Finder\Finder;
 
 class DirectoryScanner extends Scanner
 {
     /** @var array<string, callable> */
     private array $events = [];
 
-    public function scan(string $directory, ScanConfiguration $config): ScanResultCollection
+    public function __construct(
+        IndividualFileHandler $fileHandler,
+        Finder $finder,
+        private readonly SequentialScanStrategy $sequentialStrategy,
+        private readonly ParallelScanStrategy $parallelStrategy,
+    ) {
+        parent::__construct($fileHandler, $finder);
+    }
+
+    public function scan(string $directory, ScanConfiguration $config, int $jobs = 1): ScanResultCollection
     {
         self::setSystemRequirements();
 
@@ -22,16 +35,13 @@ class DirectoryScanner extends Scanner
             $this->events[ScanEvent::PATHS_GATHERED->name]($files);
         }
 
-        $results = ScanResultCollection::create();
+        $onProgress = isset($this->events[ScanEvent::SCAN_PROGRESS->name])
+            ? fn (ScanResult $result) => $this->events[ScanEvent::SCAN_PROGRESS->name]($result)
+            : null;
 
-        foreach ($files as $file) {
-            $result = $this->handleIndividualFile($file->getRealPath(), $config);
-            $results->add($result);
-
-            if (isset($this->events[ScanEvent::SCAN_PROGRESS->name])) {
-                $this->events[ScanEvent::SCAN_PROGRESS->name]($result);
-            }
-        }
+        $results = $jobs > 1
+            ? $this->parallelStrategy->scan($files, $config, $jobs, $onProgress)
+            : $this->sequentialStrategy->scan($files, $config, $onProgress);
 
         event(new MediaScanCompleted($results));
 
