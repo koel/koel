@@ -77,6 +77,7 @@ class ParallelScanStrategy
             $manifest,
             '--owner=' . $config->owner->id,
             '--no-interaction',
+            '--no-ansi',
         ];
 
         if ($config->makePublic) {
