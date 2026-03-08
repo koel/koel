@@ -59,6 +59,7 @@ class ValidRadioStationUrlTest extends TestCase
             'loopback IPv4' => ['http://127.0.0.1/stream'],
             'link-local IPv4' => ['http://169.254.1.1/stream'],
             'private 10.x' => ['http://10.0.0.1/stream'],
+            'loopback IPv6' => ['http://[::1]/stream'],
         ];
     }
 
