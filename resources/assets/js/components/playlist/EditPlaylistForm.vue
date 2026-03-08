@@ -12,10 +12,7 @@
         </FormRow>
         <FormRow>
           <template #label>Folder</template>
-          <SelectBox v-model="data.folder_id">
-            <option :value="null" />
-            <option v-for="folder in folders" :key="folder.id" :value="folder.id">{{ folder.name }}</option>
-          </SelectBox>
+          <FolderSelect v-model="data.folder_id" />
         </FormRow>
         <FormRow class="col-span-2">
           <template #label>Description</template>
@@ -33,9 +30,7 @@
 </template>
 
 <script lang="ts" setup>
-import { toRef } from 'vue'
 import { cloneDeep, pick } from 'lodash'
-import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import type { UpdatePlaylistData } from '@/stores/playlistStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { useDialogBox } from '@/composables/useDialogBox'
@@ -45,7 +40,7 @@ import { useForm } from '@/composables/useForm'
 import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
-import SelectBox from '@/components/ui/form/SelectBox.vue'
+import FolderSelect from '@/components/ui/form/FolderSelect.vue'
 import TextArea from '@/components/ui/form/TextArea.vue'
 import ArtworkField from '@/components/ui/form/ArtworkField.vue'
 
@@ -58,8 +53,6 @@ const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 
 const close = () => emit('close')
-
-const folders = toRef(playlistFolderStore.state, 'folders')
 
 const { data, isPristine, handleSubmit } = useForm<UpdatePlaylistData>({
   initialValues: { ...pick(playlist, 'name', 'folder_id', 'description', 'cover') },
