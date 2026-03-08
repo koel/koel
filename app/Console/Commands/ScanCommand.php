@@ -95,7 +95,7 @@ class ScanCommand extends Command
             $this->components->info('Ignoring tag(s): ' . implode(', ', $config->ignores));
         }
 
-        $jobs = (int) ($this->option('jobs') ?: config('koel.scan.parallelism', 4));
+        $jobs = (int) ($this->option('jobs') ?: config('koel.scan.jobs', 4));
         $jobs = max(1, $jobs);
 
         if ($jobs > 1) {
