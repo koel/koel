@@ -89,17 +89,15 @@ class ScanCommand extends Command
 
         $this->directoryScanner->on(ScanEvent::SCAN_PROGRESS, [$this, 'onScanProgress']);
 
-        $this->components->info('Scanning ' . $this->mediaPath);
-
-        if ($config->ignores) {
-            $this->components->info('Ignoring tag(s): ' . implode(', ', $config->ignores));
-        }
-
         $jobs = (int) ($this->option('jobs') ?: config('koel.scan.jobs', 4));
         $jobs = max(1, $jobs);
 
-        if ($jobs > 1) {
-            $this->components->info("Using $jobs parallel workers.");
+        $this->components->info(
+            $jobs > 1 ? "Scanning $this->mediaPath with $jobs parallel workers." : "Scanning $this->mediaPath",
+        );
+
+        if ($config->ignores) {
+            $this->components->info('Ignoring tag(s): ' . implode(', ', $config->ignores));
         }
 
         $results = $this->directoryScanner->scan((string) Setting::get('media_path'), $config, $jobs);
