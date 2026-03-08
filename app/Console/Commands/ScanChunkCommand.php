@@ -34,12 +34,16 @@ class ScanChunkCommand extends Command
         $manifestPath = $this->argument('manifest');
 
         if (!File::exists($manifestPath)) {
+            $this->components->error("Manifest file not found: $manifestPath");
+
             return self::FAILURE;
         }
 
         $paths = json_decode(File::get($manifestPath), true);
 
         if (!is_array($paths)) {
+            $this->components->error("Malformed manifest file: $manifestPath");
+
             return self::FAILURE;
         }
 
