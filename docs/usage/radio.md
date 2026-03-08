@@ -22,5 +22,6 @@ However, there are a couple of differences:
 * You cannot rewind, fast-forward, or seek a radio stream.
 * You cannot add radio stations to playlists.
 * Inapplicable interface elements such as the side sheet (artist, albums, lyrics, etc.) will be hidden.
+* If the radio stream supports [ICY metadata](https://liquidsoap.readthedocs.io/en/stable/content/icy_metadata.html), Koel will display the currently playing song name in the footer.
 * As of current, Koel doesn't maintain the "state" of radio stations. This means when you open Koel again, it will revert to the queued songs (or podcast episodes).
   This limitation applies to both the web interface and the [mobile apps](../mobile-apps.md) (which don't support radio stations yet).

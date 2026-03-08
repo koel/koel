@@ -65,6 +65,7 @@ export default defineConfig({
           { text: 'Artist, Album, & Playlist Arts', link: '/usage/artist-album-playlist-arts' },
           { text: 'Podcasts', link: '/usage/podcasts' },
           { text: 'Radio', link: '/usage/radio' },
+          { text: 'Offline Playback', link: '/usage/offline-playback' },
           { text: 'User Management', link: '/usage/user-management' },
           { text: 'Profile & Preferences', link: '/usage/profile-preferences' },
           { text: 'Remote Controller', link: '/usage/remote-controller' },
