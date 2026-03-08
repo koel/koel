@@ -4,7 +4,6 @@ import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { playableStore } from '@/stores/playableStore'
 import { radioStationStore } from '@/stores/radioStationStore'
-import { useNetworkStatus } from '@/composables/useNetworkStatus'
 
 export interface ExcerptState {
   playables: Playable[]
@@ -35,8 +34,6 @@ export const searchStore = {
   }),
 
   async excerptSearch(q: string) {
-    if (!useNetworkStatus().online.value) return
-
     const result = await http.get<ExcerptSearchResult>(`search?q=${q}`)
 
     this.state.excerpt.playables = playableStore.syncWithVault(result.songs)
@@ -47,8 +44,6 @@ export const searchStore = {
   },
 
   async playableSearch(q: string) {
-    if (!useNetworkStatus().online.value) return
-
     this.state.playables = playableStore.syncWithVault(await http.get<Playable[]>(`search/songs?q=${q}`))
   },
 
