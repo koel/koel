@@ -132,6 +132,27 @@ describe('editSmartPlaylistForm', () => {
     })
   })
 
+  it('adds a new rule group when clicking "+ Group"', async () => {
+    const updateMock = h.mock(playlistStore, 'update')
+    renderComponent()
+
+    await h.user.click(screen.getByText('Rules'))
+    await waitFor(() => screen.getByText(/Include songs that match/))
+
+    await h.user.click(screen.getByTitle('Add a new group'))
+
+    // Switch back to Details to access the name field
+    await h.user.click(screen.getByText('Details'))
+    await h.type(screen.getByRole('textbox', { name: 'name' }), 'Updated')
+    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+
+    await waitFor(() => {
+      expect(updateMock).toHaveBeenCalled()
+      const submittedData = updateMock.mock.calls[0][1]
+      expect(submittedData.rules).toHaveLength(2)
+    })
+  })
+
   it('closes without confirmation when form is pristine', async () => {
     const { emitted } = renderComponent()
 
