@@ -53,7 +53,7 @@ class ParallelScanStrategy
                 File::put($manifest, json_encode($chunk));
                 $manifests[] = $manifest;
 
-                $process = new Process($this->buildCommand($manifest, $config), base_path());
+                $process = new Process(self::buildCommand($manifest, $config), base_path());
                 $process->setTimeout(config('koel.scan.timeout'));
                 $process->start();
                 $processes[] = $process;
@@ -68,7 +68,7 @@ class ParallelScanStrategy
     }
 
     /** @return array<string> */
-    private function buildCommand(string $manifest, ScanConfiguration $config): array
+    private static function buildCommand(string $manifest, ScanConfiguration $config): array
     {
         $command = [
             PHP_BINARY,

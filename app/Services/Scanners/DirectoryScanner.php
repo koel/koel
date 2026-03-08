@@ -4,10 +4,8 @@ namespace App\Services\Scanners;
 
 use App\Enums\ScanEvent;
 use App\Events\MediaScanCompleted;
-use App\Repositories\SongRepository;
 use App\Services\Scanners\Strategies\ParallelScanStrategy;
 use App\Services\Scanners\Strategies\SequentialScanStrategy;
-use App\Services\SongService;
 use App\Values\Scanning\ScanConfiguration;
 use App\Values\Scanning\ScanResult;
 use App\Values\Scanning\ScanResultCollection;
@@ -19,14 +17,12 @@ class DirectoryScanner extends Scanner
     private array $events = [];
 
     public function __construct(
-        SongService $songService,
-        SongRepository $songRepository,
-        FileScanner $fileScanner,
+        IndividualFileHandler $fileHandler,
         Finder $finder,
         private readonly SequentialScanStrategy $sequentialStrategy,
         private readonly ParallelScanStrategy $parallelStrategy,
     ) {
-        parent::__construct($songService, $songRepository, $fileScanner, $finder);
+        parent::__construct($fileHandler, $finder);
     }
 
     public function scan(string $directory, ScanConfiguration $config, int $jobs = 1): ScanResultCollection

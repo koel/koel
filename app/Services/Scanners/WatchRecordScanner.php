@@ -3,13 +3,26 @@
 namespace App\Services\Scanners;
 
 use App\Models\Song;
+use App\Repositories\SongRepository;
+use App\Services\SongService;
 use App\Values\Scanning\ScanConfiguration;
 use App\Values\WatchRecord\Contracts\WatchRecordInterface;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\Finder\Finder;
 use Throwable;
 
 class WatchRecordScanner extends Scanner
 {
+    public function __construct(
+        IndividualFileHandler $fileHandler,
+        Finder $finder,
+        private readonly SongRepository $songRepository,
+        private readonly SongService $songService,
+        private readonly FileScanner $fileScanner,
+    ) {
+        parent::__construct($fileHandler, $finder);
+    }
+
     public function scan(WatchRecordInterface $record, ScanConfiguration $config): void
     {
         self::setSystemRequirements();
@@ -78,7 +91,7 @@ class WatchRecordScanner extends Scanner
     private function handleNewOrModifiedDirectoryRecord(string $path, ScanConfiguration $config): void
     {
         foreach ($this->gatherFiles($path) as $file) {
-            $this->handleIndividualFile($file->getPathname(), $config);
+            $this->fileHandler->handle($file->getPathname(), $config);
         }
 
         Log::info("Scanned all song(s) under $path");
