@@ -1,3 +1,7 @@
+---
+description: Using Koel's Pusher-based remote controller to control a desktop instance from your phone.
+---
+
 # Remote Controller
 
 Koel has a built-in remote controller that lets you control a desktop instance.

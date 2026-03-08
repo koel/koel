@@ -1,3 +1,7 @@
+---
+description: Song visibility, sharing, collaborative playlists, and multi-user library management in Koel Plus.
+---
+
 # Collaboration
 
 One of the distinctive features of Koel Plus is the ability for users to share and collaborate with others.

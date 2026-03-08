@@ -1,3 +1,7 @@
+---
+description: How Koel fetches and displays artwork from Spotify, Last.fm, and MusicBrainz, with support for custom uploads.
+---
+
 # Artist, Album, and Playlist Arts
 
 If [integrated](../service-integrations) Koel will attempt to fetch artists' images and album arts from Spotify,

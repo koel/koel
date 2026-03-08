@@ -1,5 +1,6 @@
 ---
 outline: [2, 3]
+description: Reference for all Koel artisan CLI commands including scanning, syncing, pruning, search indexing, and storage setup.
 ---
 
 # CLI Commands

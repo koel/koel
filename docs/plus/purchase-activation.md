@@ -1,3 +1,7 @@
+---
+description: Koel Plus pricing, purchasing, license activation via web or CLI, and deactivation steps.
+---
+
 # Purchase & Activation
 
 ## Pricing

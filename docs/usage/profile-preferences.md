@@ -1,3 +1,7 @@
+---
+description: Managing your profile, avatar, theme selection, playback preferences, and service integration settings.
+---
+
 # Profile and Preferences
 
 To manage your profile and preferences, click on your avatar in the bottom-right corner of the screen.

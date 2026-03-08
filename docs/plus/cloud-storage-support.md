@@ -1,3 +1,7 @@
+---
+description: Setting up SFTP, Amazon S3, DigitalOcean Spaces, Cloudflare R2, and Dropbox as Koel storage drivers.
+---
+
 # Cloud Storage Support
 
 In addition to storing your music on the same server as Koel’s installation via the `local` storage drivers,

@@ -1,3 +1,7 @@
+---
+description: Integrating Ticketmaster for live event listings on artist pages, including API key setup and country detection.
+---
+
 # Ticketmaster
 
 [Ticketmaster](https://www.ticketmaster.com/) is one of the most popular ticketing platforms for events, tours, and

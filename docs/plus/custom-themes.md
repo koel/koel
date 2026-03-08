@@ -1,3 +1,7 @@
+---
+description: Creating custom themes with colors, background images, and fonts in Koel Plus.
+---
+
 # Custom Themes
 
 Apart from the built-in themes, you can create your own themes as a Koel Plus user.

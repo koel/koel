@@ -1,3 +1,7 @@
+---
+description: Embedding tracks, playlists, albums, and artists via iframe with layout and theme options.
+---
+
 # Embedding
 
 Koel supports embedding tracks, playlists (including smart playlists), albums, and artists. To create a new embed,

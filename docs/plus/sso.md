@@ -1,3 +1,7 @@
+---
+description: Configuring Google SSO with OAuth for Koel Plus, including environment variables and user management.
+---
+
 # Single Sign-On
 
 Apart from the default authentication mechanism with email and password, users can also log in to Koel Plus via Single Sign-On (SSO).

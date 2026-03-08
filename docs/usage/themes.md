@@ -1,3 +1,7 @@
+---
+description: Built-in theme selection and custom theme support in Koel Plus.
+---
+
 # Themes
 
 <UISubjectToChangeNote />

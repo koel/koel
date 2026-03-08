@@ -1,3 +1,7 @@
+---
+description: Browsing your music library at the file and folder level using Koel Plus's media browser.
+---
+
 # Media Browser
 
 Apart from the standard ability to browse your music library via extracted metadata, Koel Plus also provides a

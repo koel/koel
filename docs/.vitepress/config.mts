@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress'
+import llmstxt from 'vitepress-plugin-llms'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -15,6 +16,9 @@ export default defineConfig({
     ['link', { rel: 'icon', href: '/favicon.png', type: 'image/x-png' }],
   ],
   cleanUrls: true,
+  vite: {
+    plugins: [llmstxt()],
+  },
   markdown: {
     linkify: false,
     image: {

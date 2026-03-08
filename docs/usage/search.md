@@ -1,3 +1,7 @@
+---
+description: Full-text instant search powered by Laravel Scout with support for TNTSearch, Algolia, and Meilisearch.
+---
+
 # Instant Search
 
 Powered by [Laravel Scout](https://github.com/laravel/scout), Koel provides an instant search feature that performs full-text,

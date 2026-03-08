@@ -1,3 +1,7 @@
+---
+description: User roles (admin, user, manager), creating and inviting users, and managing permissions in Koel.
+---
+
 # User Management
 
 Koel supports multiple users with different roles and permissions.

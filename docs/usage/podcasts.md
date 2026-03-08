@@ -1,3 +1,7 @@
+---
+description: Subscribing to podcasts via RSS, playback behavior, resume position tracking, and automatic syncing.
+---
+
 # Podcasts
 
 Aside from music, Koel also supports podcast streaming. This feature is still in its early stages, so expect more improvements in the future.

@@ -1,3 +1,7 @@
+---
+description: Overview of Koel Plus premium features including multi-library, collaboration, cloud storage, SSO, and white labeling.
+---
+
 # What Is Koel Plus?
 
 ## Introduction

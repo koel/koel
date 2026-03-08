@@ -1,3 +1,7 @@
+---
+description: Creating standard and smart playlists, organizing with folders, and collaborative playlist management in Koel.
+---
+
 # Creating and Managing Playlists
 
 Koel supports creating an unlimited number of playlists as well as organizing them into folders.

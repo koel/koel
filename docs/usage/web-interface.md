@@ -1,3 +1,7 @@
+---
+description: Guide to browsing, searching, playing, editing, downloading, and sharing music through Koel's web interface.
+---
+
 # Using the Web Interface
 
 <UISubjectToChangeNote />

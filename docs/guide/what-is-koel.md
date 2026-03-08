@@ -1,3 +1,7 @@
+---
+description: An overview of Koel, a modern, open-source personal music streaming service built with Laravel and Vue.js.
+---
+
 ![Koel's homepage](../assets/img/interface/home.webp)
 
 <br>

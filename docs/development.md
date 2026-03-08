@@ -1,3 +1,7 @@
+---
+description: Setting up a local Koel development environment, running the dev server, testing, linting, and contributing.
+---
+
 # Local Development
 
 ## Koel

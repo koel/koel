@@ -1,3 +1,7 @@
+---
+description: How Koel discovers media files via scanning, uploading, filesystem watching, and AWS Lambda integration.
+---
+
 # Music Discovery
 
 There are several ways for Koel to discover your media files. In the most common scenario, you will have a directory on

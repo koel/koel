@@ -1,5 +1,6 @@
 ---
 outline: [ 2, 2 ]
+description: Common Koel issues and solutions, debugging steps, log locations, and how to get help.
 ---
 
 # Troubleshooting
