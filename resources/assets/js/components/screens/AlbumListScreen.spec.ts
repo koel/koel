@@ -94,4 +94,54 @@ describe('albumListScreen.vue', () => {
       }),
     )
   })
+
+  it('filters out unfavorited albums in favorites mode', async () => {
+    const albums = h.factory('album', 5, { favorite: true })
+    albumStore.state.albums = albums
+
+    h.mock(albumStore, 'paginate').mockResolvedValue(null)
+
+    h.render(Component, {
+      global: {
+        stubs: {
+          AlbumCard: h.stub('album-card'),
+        },
+      },
+    })
+
+    await h.tick(2)
+
+    preferences.albums_favorites_only = true
+    await h.tick()
+
+    expect(screen.getAllByTestId('album-card')).toHaveLength(5)
+
+    // Simulate unfavoriting an album (must mutate through reactive proxy)
+    albumStore.state.albums[0].favorite = false
+    await h.tick()
+
+    expect(screen.getAllByTestId('album-card')).toHaveLength(4)
+  })
+
+  it('shows empty state when no favorite albums', async () => {
+    albumStore.state.albums = []
+
+    h.mock(albumStore, 'paginate').mockResolvedValue(null)
+    preferences.albums_favorites_only = true
+
+    h.render(Component, {
+      global: {
+        stubs: {
+          AlbumCard: h.stub('album-card'),
+        },
+      },
+    })
+
+    await h.tick(2)
+
+    await waitFor(() => {
+      const emptyState = screen.getByTestId('screen-empty-state')
+      expect(emptyState.textContent).toContain('No favorite albums')
+    })
+  })
 })

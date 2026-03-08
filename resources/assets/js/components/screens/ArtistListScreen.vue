@@ -38,13 +38,20 @@
       <span v-if="currentUserCan.manageSettings()" class="secondary block"> Have you set up your library yet? </span>
     </ScreenEmptyState>
 
+    <ScreenEmptyState v-else-if="noFavoriteArtists">
+      <template #icon>
+        <Icon :icon="faMicrophoneSlash" />
+      </template>
+      No favorite artists.
+    </ScreenEmptyState>
+
     <div v-else ref="gridContainer" v-koel-overflow-fade class="-m-6 flex-1 overflow-auto">
       <GridListView :view-mode="preferences.artists_view_mode" data-testid="artist-list">
         <template v-if="showSkeletons">
           <ArtistCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
         </template>
         <template v-else>
-          <ArtistCard v-for="artist in artists" :key="artist.id" :artist="artist" :layout="itemLayout" />
+          <ArtistCard v-for="artist in displayedArtists" :key="artist.id" :artist="artist" :layout="itemLayout" />
           <ToTopButton />
         </template>
       </GridListView>
@@ -86,6 +93,17 @@ const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 
 const itemLayout = computed<CardLayout>(() => (preferences.artists_view_mode === 'thumbnails' ? 'full' : 'compact'))
 
+const displayedArtists = computed(() =>
+  preferences.artists_favorites_only ? artists.value.filter(a => a.favorite) : artists.value,
+)
+
+const noFavoriteArtists = computed(
+  () =>
+    !loading.value &&
+    preferences.artists_favorites_only &&
+    displayedArtists.value.length === 0 &&
+    !moreArtistsAvailable.value,
+)
 const moreArtistsAvailable = computed(() => page.value !== null)
 const showSkeletons = computed(() => loading.value && artists.value.length === 0)
 
