@@ -45,7 +45,7 @@
       <span class="secondary block">Add a podcast to get started.</span>
     </ScreenEmptyState>
 
-    <div v-else v-koel-overflow-fade class="-m-6 p-6 overflow-auto space-y-3 min-h-full">
+    <div v-else v-koel-overflow-fade class="-m-6 p-6 flex-1 overflow-auto space-y-3">
       <template v-if="loading">
         <PodcastItemSkeleton v-for="i in 5" :key="i" />
       </template>

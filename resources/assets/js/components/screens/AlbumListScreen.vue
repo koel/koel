@@ -38,7 +38,7 @@
       <span v-if="currentUserCan.manageSettings()" class="secondary block"> Have you set up your library yet? </span>
     </ScreenEmptyState>
 
-    <div v-else ref="gridContainer" v-koel-overflow-fade class="-m-6 overflow-auto">
+    <div v-else ref="gridContainer" v-koel-overflow-fade class="-m-6 flex-1 overflow-auto">
       <GridListView ref="grid" :view-mode="preferences.albums_view_mode" data-testid="album-grid">
         <template v-if="showSkeletons">
           <AlbumCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
