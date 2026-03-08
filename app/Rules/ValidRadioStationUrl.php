@@ -7,6 +7,7 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Illuminate\Translation\PotentiallyTranslatedString;
+use Throwable;
 
 class ValidRadioStationUrl implements ValidationRule
 {
@@ -34,7 +35,15 @@ class ValidRadioStationUrl implements ValidationRule
             return;
         }
 
-        $contentType = Http::head($value)->header('Content-Type');
+        try {
+            $response = Http::withOptions(['allow_redirects' => false])->head($value);
+        } catch (Throwable) {
+            $fail("The $attribute couldn't be reached.");
+
+            return;
+        }
+
+        $contentType = $response->header('Content-Type');
 
         if (!$contentType || !Str::startsWith($contentType, 'audio/')) {
             $fail("The $attribute doesn't look like a valid radio station URL.");
