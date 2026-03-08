@@ -3,7 +3,7 @@
 namespace Tests\Unit\Services;
 
 use App\Models\RadioStation;
-use App\Services\RadioStreamService;
+use App\Services\RadioStreamMetadata;
 use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -14,7 +14,7 @@ class RadioStreamServiceTest extends TestCase
     public function parseIcyMetadataExtractsStreamTitle(): void
     {
         $metadata = "StreamTitle='Artist - Song Title';StreamUrl='';";
-        $result = RadioStreamService::parseIcyMetadata($metadata);
+        $result = RadioStreamMetadata::parseIcyBlock($metadata);
 
         self::assertSame('Artist - Song Title', $result['stream_title']);
     }
@@ -23,7 +23,7 @@ class RadioStreamServiceTest extends TestCase
     public function parseIcyMetadataReturnsNullForEmptyTitle(): void
     {
         $metadata = "StreamTitle='';StreamUrl='';";
-        $result = RadioStreamService::parseIcyMetadata($metadata);
+        $result = RadioStreamMetadata::parseIcyBlock($metadata);
 
         self::assertNull($result['stream_title']);
     }
@@ -32,7 +32,7 @@ class RadioStreamServiceTest extends TestCase
     public function parseIcyMetadataReturnsNullForNoMatch(): void
     {
         $metadata = 'no metadata here';
-        $result = RadioStreamService::parseIcyMetadata($metadata);
+        $result = RadioStreamMetadata::parseIcyBlock($metadata);
 
         self::assertNull($result['stream_title']);
     }
@@ -42,8 +42,8 @@ class RadioStreamServiceTest extends TestCase
     {
         $station = RadioStation::factory()->create();
 
-        RadioStreamService::cacheMetadata($station, 'Now Playing - Track');
-        $cached = RadioStreamService::getCachedMetadata($station);
+        RadioStreamMetadata::cache($station, 'Now Playing - Track');
+        $cached = RadioStreamMetadata::getCached($station);
 
         self::assertSame('Now Playing - Track', $cached['stream_title']);
         self::assertNotNull($cached['updated_at']);
@@ -54,8 +54,8 @@ class RadioStreamServiceTest extends TestCase
     {
         $station = RadioStation::factory()->create();
 
-        Cache::forget(RadioStreamService::cacheKey($station));
-        $cached = RadioStreamService::getCachedMetadata($station);
+        Cache::forget(RadioStreamMetadata::cacheKey($station));
+        $cached = RadioStreamMetadata::getCached($station);
 
         self::assertNull($cached['stream_title']);
         self::assertNull($cached['updated_at']);

@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\RadioStation;
-use App\Services\RadioStreamService;
+use App\Services\RadioStreamMetadata;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -17,7 +17,7 @@ class RadioStationNowPlayingTest extends TestCase
         $user = create_user();
         $station = RadioStation::factory()->create(['user_id' => $user->id]);
 
-        RadioStreamService::cacheMetadata($station, 'Artist - Great Song');
+        RadioStreamMetadata::cache($station, 'Artist - Great Song');
 
         $this
             ->getAs("/api/radio/stations/{$station->id}/now-playing", $user)

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\RadioStation;
 use App\Models\User;
-use App\Services\RadioStreamService;
+use App\Services\RadioStreamMetadata;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\JsonResponse;
 
@@ -18,6 +18,6 @@ class RadioStationNowPlayingController extends Controller
     {
         $this->authorize('access', $radioStation);
 
-        return response()->json(RadioStreamService::getCachedMetadata($radioStation));
+        return response()->json(RadioStreamMetadata::getCached($radioStation));
     }
 }
