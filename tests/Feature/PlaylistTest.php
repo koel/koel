@@ -112,6 +112,44 @@ class PlaylistTest extends TestCase
     }
 
     #[Test]
+    public function creatingPlaylistWithBothFolderIdAndFolderNameFails(): void
+    {
+        $user = create_user();
+        $folder = $user->playlistFolders()->create(['name' => 'Existing']);
+
+        $this->postAs(
+            'api/playlists',
+            [
+                'name' => 'My Playlist',
+                'description' => '',
+                'songs' => [],
+                'rules' => [],
+                'folder_id' => $folder->id,
+                'folder_name' => 'New Folder',
+            ],
+            $user,
+        )->assertUnprocessable();
+    }
+
+    #[Test]
+    public function updatingPlaylistWithBothFolderIdAndFolderNameFails(): void
+    {
+        $playlist = create_playlist();
+        $folder = $playlist->owner->playlistFolders()->create(['name' => 'Existing']);
+
+        $this->putAs(
+            "api/playlists/{$playlist->id}",
+            [
+                'name' => 'Updated',
+                'description' => '',
+                'folder_id' => $folder->id,
+                'folder_name' => 'New Folder',
+            ],
+            $playlist->owner,
+        )->assertUnprocessable();
+    }
+
+    #[Test]
     public function createPlaylistWithoutCover(): void
     {
         /** @var PlaylistFolderService $playlistFolderService */
