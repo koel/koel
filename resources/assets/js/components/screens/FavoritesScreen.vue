@@ -102,8 +102,8 @@ const { fromFavorites } = useDownload()
 const download = () => fromFavorites()
 const removeSelected = () => selectedPlayables.value.length && playableStore.undoFavorite(selectedPlayables.value)
 
-const { makePlayablesAvailableOffline, removePlayablesOfflineCache, allPlayablesCached } = useOfflinePlayback()
-const canToggleOffline = computed(() => Boolean(navigator.serviceWorker?.controller) && playables.value.length > 0)
+const { swReady, makePlayablesAvailableOffline, removePlayablesOfflineCache, allPlayablesCached } = useOfflinePlayback()
+const canToggleOffline = computed(() => swReady.value && playables.value.length > 0)
 const allCached = computed(() => allPlayablesCached(playables.value))
 
 const toggleOffline = () => {

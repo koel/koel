@@ -70,8 +70,8 @@ const { fromAlbum } = useDownload()
 const download = () => trigger(() => fromAlbum(album.value))
 const showEmbedModal = () => trigger(() => openModal<'CREATE_EMBED_FORM'>(CreateEmbedForm, { embeddable: album.value }))
 
-const { makePlayablesAvailableOffline, removePlayablesOfflineCache, allPlayablesCached } = useOfflinePlayback()
-const canToggleOffline = computed(() => Boolean(navigator.serviceWorker?.controller))
+const { swReady, makePlayablesAvailableOffline, removePlayablesOfflineCache, allPlayablesCached } = useOfflinePlayback()
+const canToggleOffline = computed(() => swReady.value)
 const albumSongs = ref<Playable[]>([])
 const allCached = computed(() => allPlayablesCached(albumSongs.value))
 

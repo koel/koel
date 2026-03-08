@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
+import { ref } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { assertOpenModal } from '@/__tests__/assertions'
 import factory from '@/__tests__/factory'
@@ -30,6 +31,7 @@ const isCachedMock = vi.fn().mockReturnValue(false)
 
 vi.mock('@/composables/useOfflinePlayback', () => ({
   useOfflinePlayback: () => ({
+    swReady: ref(true),
     makeAvailableOffline: makeAvailableOfflineMock,
     removeOfflineCache: removeOfflineCacheMock,
     isCached: isCachedMock,

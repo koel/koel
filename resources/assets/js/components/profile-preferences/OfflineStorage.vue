@@ -34,12 +34,12 @@ import { formatBytes } from '@/utils/formatters'
 
 import Btn from '@/components/ui/form/Btn.vue'
 
-const { storageUsage, storageQuota, cachedSongCount, clearAllOfflineCache } = useOfflinePlayback()
+const { swReady, storageUsage, storageQuota, cachedSongCount, clearAllOfflineCache } = useOfflinePlayback()
 
 const { showConfirmDialog } = useDialogBox()
 const { toastSuccess } = useMessageToaster()
 
-const supported = computed(() => Boolean(navigator.serviceWorker?.controller))
+const supported = computed(() => swReady.value)
 
 const usagePercent = computed(() => {
   if (!storageQuota.value) return 0

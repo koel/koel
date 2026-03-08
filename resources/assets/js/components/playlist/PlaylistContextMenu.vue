@@ -132,8 +132,8 @@ const showCollaborationModal = () =>
 const showEmbedModal = () =>
   trigger(() => openModal<'CREATE_EMBED_FORM'>(CreateEmbedForm, { embeddable: playlist.value }))
 
-const { makePlayablesAvailableOffline, removePlayablesOfflineCache, allPlayablesCached } = useOfflinePlayback()
-const canToggleOffline = computed(() => Boolean(navigator.serviceWorker?.controller))
+const { swReady, makePlayablesAvailableOffline, removePlayablesOfflineCache, allPlayablesCached } = useOfflinePlayback()
+const canToggleOffline = computed(() => swReady.value)
 const playlistSongs = ref<Playable[]>([])
 const allCached = computed(() => allPlayablesCached(playlistSongs.value))
 

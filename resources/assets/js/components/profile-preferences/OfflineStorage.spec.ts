@@ -10,6 +10,7 @@ const clearAllOfflineCacheMock = vi.fn().mockResolvedValue(undefined)
 
 vi.mock('@/composables/useOfflinePlayback', () => ({
   useOfflinePlayback: () => ({
+    swReady: ref(true),
     cachedSongIds,
     manifestEntries: ref([]),
     storageUsage: ref(500 * 1024 * 1024),

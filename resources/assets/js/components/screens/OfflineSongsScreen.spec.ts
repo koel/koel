@@ -8,6 +8,7 @@ const cachedSongIds = ref(new Set<string>())
 
 vi.mock('@/composables/useOfflinePlayback', () => ({
   useOfflinePlayback: () => ({
+    swReady: ref(true),
     cachedSongIds,
     manifestEntries: ref([]),
     storageUsage: ref(0),

@@ -36,6 +36,24 @@ const storageQuota = ref(0)
 /** Whether the manifest has been loaded from IndexedDB. */
 let manifestLoaded = false
 
+/**
+ * Reactive flag that becomes true once a service worker is active and ready.
+ * Uses navigator.serviceWorker.ready (resolves when an active SW exists)
+ * and listens for 'controllerchange' to cover the initial registration case
+ * without requiring a page reload.
+ */
+const swReady = ref(Boolean(navigator.serviceWorker?.controller))
+
+if (navigator.serviceWorker) {
+  navigator.serviceWorker.ready.then(() => {
+    swReady.value = true
+  })
+
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    swReady.value = true
+  })
+}
+
 const getSW = (): ServiceWorker | null => navigator.serviceWorker?.controller || null
 
 const loadManifest = async () => {
@@ -233,6 +251,7 @@ export const useOfflinePlayback = () => {
   }
 
   return {
+    swReady,
     cachedSongIds,
     cachingProgress,
     manifestEntries,

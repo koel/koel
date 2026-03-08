@@ -318,8 +318,8 @@ const visitEpisodeWebpage = (episode: Episode) => trigger(() => window.open(epis
 const { fromPlayables } = useDownload()
 const download = () => trigger(() => fromPlayables(playables.value))
 
-const { makeAvailableOffline, removeOfflineCache, isCached } = useOfflinePlayback()
-const canToggleOffline = computed(() => contentType.value === 'songs' && Boolean(navigator.serviceWorker?.controller))
+const { swReady, makeAvailableOffline, removeOfflineCache, isCached } = useOfflinePlayback()
+const canToggleOffline = computed(() => contentType.value === 'songs' && swReady.value)
 const allCached = computed(() => playables.value.every(p => isCached(p)))
 
 const toggleOffline = () =>
