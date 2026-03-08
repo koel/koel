@@ -488,7 +488,7 @@ describe('playableContextMenu.vue', () => {
     isCachedMock.mockReturnValue(true)
     const { playables } = await renderComponent()
 
-    await h.user.click(screen.getByText('Remove Offline Version'))
+    await h.user.click(screen.getByText('Remove Offline Versions'))
 
     for (const playable of playables) {
       expect(removeOfflineCacheMock).toHaveBeenCalledWith(playable)

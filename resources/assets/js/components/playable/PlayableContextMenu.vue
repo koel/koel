@@ -111,7 +111,7 @@
     <MenuItem v-if="allowEdit" @click="openEditForm">Edit…</MenuItem>
     <MenuItem v-if="downloadable" @click="download">Download</MenuItem>
     <MenuItem v-if="canToggleOffline" @click="toggleOffline">
-      {{ allCached ? 'Remove Offline Version' : 'Make Available Offline' }}
+      {{ allCached ? 'Remove Offline Versions' : 'Make Available Offline' }}
     </MenuItem>
 
     <template v-if="canBeRemovedFromPlaylist">
