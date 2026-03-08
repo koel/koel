@@ -237,12 +237,14 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## PHP Conventions
 - Always prefer Laravel's built-in helpers over custom implementations (e.g. `str()->plural()`, `Str::slug()`, `Arr::flatten()`, etc.). Do not reimplement what Laravel already provides.
+- Methods that don't reference `$this` must be declared `static`.
 
 ## Environment Variables Documentation
 - When adding, removing, or modifying environment variables in `.env.example`, always update `docs/environment-variables.md` to stay in sync.
 
 ## Git Commits
 - Use [Conventional Commits](https://www.conventionalcommits.org/) for all commit messages (e.g. `fix:`, `feat:`, `chore:`, `test:`, `refactor:`, `docs:`, `ci:`, etc.).
+- Focus on the feature/purpose, not implementation details. For example, prefer "feat: show current playing song during radio stream" over "feat: radio station ICY metadata now-playing". Same applies to PR titles.
 
 ## Code Reviews
 - When addressing PR review comments, do NOT blindly follow them. Always use your own knowledge and logic to evaluate whether the feedback makes sense. If it doesn't, push back and explain why.

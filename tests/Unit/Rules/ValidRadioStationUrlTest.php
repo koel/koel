@@ -72,7 +72,7 @@ class ValidRadioStationUrlTest extends TestCase
 
         $failed = false;
 
-        (new ValidRadioStationUrl())->validate('url', $url, function () use (&$failed) { // @phpstan-ignore-line
+        (new ValidRadioStationUrl())->validate('url', $url, static function () use (&$failed) { // @phpstan-ignore-line
             $failed = true;
         });
 
