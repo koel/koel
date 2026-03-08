@@ -96,4 +96,54 @@ describe('artistListScreen.vue', () => {
       }),
     )
   })
+
+  it('filters out unfavorited artists in favorites mode', async () => {
+    const artists = h.factory('artist', 5, { favorite: true })
+    artistStore.state.artists = artists
+
+    h.mock(artistStore, 'paginate').mockResolvedValue(null)
+
+    h.render(Component, {
+      global: {
+        stubs: {
+          ArtistCard: h.stub('artist-card'),
+        },
+      },
+    })
+
+    await h.tick(2)
+
+    preferenceStore.artists_favorites_only = true
+    await h.tick()
+
+    expect(screen.getAllByTestId('artist-card')).toHaveLength(5)
+
+    // Simulate unfavoriting an artist (must mutate through reactive proxy)
+    artistStore.state.artists[0].favorite = false
+    await h.tick()
+
+    expect(screen.getAllByTestId('artist-card')).toHaveLength(4)
+  })
+
+  it('shows empty state when no favorite artists', async () => {
+    artistStore.state.artists = []
+
+    h.mock(artistStore, 'paginate').mockResolvedValue(null)
+    preferenceStore.artists_favorites_only = true
+
+    h.render(Component, {
+      global: {
+        stubs: {
+          ArtistCard: h.stub('artist-card'),
+        },
+      },
+    })
+
+    await h.tick(2)
+
+    await waitFor(() => {
+      const emptyState = screen.getByTestId('screen-empty-state')
+      expect(emptyState.textContent).toContain('No favorite artists')
+    })
+  })
 })

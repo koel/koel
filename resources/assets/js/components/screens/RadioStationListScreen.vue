@@ -51,8 +51,11 @@
       <template #icon>
         <RadioIcon :size="96" />
       </template>
-      No stations found.
-      <span class="secondary block">Add a station to get started.</span>
+      <template v-if="preferences.radio_stations_favorites_only"> No favorite stations. </template>
+      <template v-else>
+        No stations found.
+        <span class="secondary block">Add a station to get started.</span>
+      </template>
     </ScreenEmptyState>
 
     <div v-else ref="gridContainer" v-koel-overflow-fade class="-m-6 flex-1 overflow-auto">

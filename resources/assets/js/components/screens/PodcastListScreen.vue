@@ -41,8 +41,11 @@
       <template #icon>
         <Icon :icon="faPodcast" />
       </template>
-      No podcasts found.
-      <span class="secondary block">Add a podcast to get started.</span>
+      <template v-if="preferences.podcasts_favorites_only"> No favorite podcasts. </template>
+      <template v-else>
+        No podcasts found.
+        <span class="secondary block">Add a podcast to get started.</span>
+      </template>
     </ScreenEmptyState>
 
     <div v-else v-koel-overflow-fade class="-m-6 p-6 flex-1 overflow-auto space-y-3">

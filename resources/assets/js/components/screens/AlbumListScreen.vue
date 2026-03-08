@@ -38,6 +38,13 @@
       <span v-if="currentUserCan.manageSettings()" class="secondary block"> Have you set up your library yet? </span>
     </ScreenEmptyState>
 
+    <ScreenEmptyState v-else-if="noFavoriteAlbums">
+      <template #icon>
+        <Icon :icon="faCompactDisc" />
+      </template>
+      No favorite albums.
+    </ScreenEmptyState>
+
     <div v-else ref="gridContainer" v-koel-overflow-fade class="-m-6 flex-1 overflow-auto">
       <GridListView ref="grid" :view-mode="preferences.albums_view_mode" data-testid="album-grid">
         <template v-if="showSkeletons">
@@ -45,7 +52,7 @@
         </template>
         <template v-else>
           <AlbumCard
-            v-for="album in albums"
+            v-for="album in displayedAlbums"
             :key="album.id"
             :album
             :layout="itemLayout"
@@ -92,6 +99,17 @@ const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 
 const itemLayout = computed<CardLayout>(() => (preferences.albums_view_mode === 'thumbnails' ? 'full' : 'compact'))
 
+const displayedAlbums = computed(() =>
+  preferences.albums_favorites_only ? albums.value.filter(a => a.favorite) : albums.value,
+)
+
+const noFavoriteAlbums = computed(
+  () =>
+    !loading.value &&
+    preferences.albums_favorites_only &&
+    displayedAlbums.value.length === 0 &&
+    !moreAlbumsAvailable.value,
+)
 const moreAlbumsAvailable = computed(() => page.value !== null)
 const showSkeletons = computed(() => loading.value && albums.value.length === 0)
 
