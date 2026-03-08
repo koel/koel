@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
 import { commonStore } from '@/stores/commonStore'
 import { authService } from '@/services/authService'
@@ -9,6 +9,8 @@ describe('radioStationStore', () => {
   const h = createHarness({
     beforeEach: () => {
       store.state.stations = []
+      store.nowPlaying.value = null
+      store.stopPolling()
     },
   })
 
@@ -114,6 +116,45 @@ describe('radioStationStore', () => {
 
     expect(deleteMock).toHaveBeenCalledWith(`radio/stations/${station.id}`)
     expect(store.state.stations).toHaveLength(0)
+  })
+
+  it('fetches now-playing metadata', async () => {
+    const station = h.factory('radio-station')
+    const getMock = h.mock(http, 'get').mockResolvedValue({
+      stream_title: 'Artist - Song Title',
+      updated_at: '2026-03-08T00:00:00.000Z',
+    })
+
+    await store.fetchNowPlaying(station)
+
+    expect(getMock).toHaveBeenCalledWith(`radio/stations/${station.id}/now-playing`)
+    expect(store.nowPlaying.value).toBe('Artist - Song Title')
+  })
+
+  it('starts and stops polling', () => {
+    vi.useFakeTimers()
+
+    const station = h.factory('radio-station')
+    const fetchMock = h.mock(store, 'fetchNowPlaying').mockResolvedValue(undefined)
+
+    store.startPolling(station)
+
+    // Should fetch immediately
+    expect(fetchMock).toHaveBeenCalledWith(station)
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+
+    // Should fetch again after the poll interval
+    vi.advanceTimersByTime(15_000)
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+
+    store.stopPolling()
+
+    // Should not fetch after stopping
+    vi.advanceTimersByTime(15_000)
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+    expect(store.nowPlaying.value).toBeNull()
+
+    vi.useRealTimers()
   })
 
   it('toggles favorite status of a station', async () => {

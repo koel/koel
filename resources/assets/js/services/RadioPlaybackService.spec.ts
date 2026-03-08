@@ -32,6 +32,8 @@ describe('playbackService', () => {
     const broadcastMock = h.mock(socketService, 'broadcast')
     h.mock(radioStationStore, 'getSourceUrl', 'https://station.com/stream.mp3')
 
+    const startPollingMock = h.mock(radioStationStore, 'startPolling')
+
     await playbackService.play(toBePlayedStation)
 
     expect(playMock).toHaveBeenCalled()
@@ -39,6 +41,7 @@ describe('playbackService', () => {
     expect(currentStation.playback_state).toBe('Stopped')
     expect(toBePlayedStation.playback_state).toBe('Playing')
     expect(broadcastMock).toHaveBeenCalledWith('SOCKET_STREAMABLE', toBePlayedStation)
+    expect(startPollingMock).toHaveBeenCalledWith(toBePlayedStation)
   })
 
   it('pauses a radio station playback', async () => {
@@ -48,8 +51,10 @@ describe('playbackService', () => {
 
     const pauseMock = h.mock(playbackService.player.media, 'pause')
     const broadcastMock = h.mock(socketService, 'broadcast')
+    const stopPollingMock = h.mock(radioStationStore, 'stopPolling')
     await playbackService.stop()
 
+    expect(stopPollingMock).toHaveBeenCalled()
     expect(pauseMock).toHaveBeenCalled()
     expect(playbackService.player.media.src).toBe('')
     expect(currentStation.playback_state).toBe('Paused')

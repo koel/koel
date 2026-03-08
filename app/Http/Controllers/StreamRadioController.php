@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\RadioStation;
 use App\Models\User;
+use App\Services\RadioStreamService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class StreamRadioController extends Controller
@@ -11,10 +12,10 @@ class StreamRadioController extends Controller
     /**
      * @param User $user
      */
-    public function __invoke(Authenticatable $user, RadioStation $radioStation)
+    public function __invoke(Authenticatable $user, RadioStation $radioStation, RadioStreamService $radioStreamService)
     {
         $this->authorize('access', $radioStation);
 
-        return redirect($radioStation->url);
+        return $radioStreamService->stream($radioStation);
     }
 }
