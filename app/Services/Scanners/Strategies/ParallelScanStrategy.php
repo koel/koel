@@ -3,9 +3,11 @@
 namespace App\Services\Scanners\Strategies;
 
 use App\Values\Scanning\ScanConfiguration;
+use App\Values\Scanning\ScanResult;
 use App\Values\Scanning\ScanResultCollection;
 use Illuminate\Support\Facades\File;
 use RuntimeException;
+use SplFileInfo;
 use Symfony\Component\Process\Process;
 
 // @mago-ignore lint:cyclomatic-complexity,kan-defect
@@ -15,7 +17,7 @@ class ParallelScanStrategy
         private readonly ScanResultDeserializer $deserializer,
     ) {}
 
-    /** @param iterable<\SplFileInfo> $files */
+    /** @param iterable<SplFileInfo> $files */
     public function scan(
         iterable $files,
         ScanConfiguration $config,
@@ -136,7 +138,7 @@ class ParallelScanStrategy
             $line = substr($buffer, 0, $newlinePos);
             $buffer = substr($buffer, $newlinePos + 1);
 
-            $this->deserializer->handleLine($line, $results, $onProgress);
+            $this->addResult($this->deserializer->deserialize($line), $results, $onProgress);
         }
     }
 
@@ -157,7 +159,7 @@ class ParallelScanStrategy
         ?callable $onProgress,
     ): void {
         if (trim($buffer) !== '') {
-            $this->deserializer->handleLine($buffer, $results, $onProgress);
+            $this->addResult($this->deserializer->deserialize($buffer), $results, $onProgress);
         }
 
         if (!$process->isSuccessful()) {
@@ -165,6 +167,19 @@ class ParallelScanStrategy
             $msg = $stderr ?: 'Process exited with code ' . ($process->getExitCode() ?? 'unknown');
 
             throw new RuntimeException("Parallel scan worker failed: $msg");
+        }
+    }
+
+    private function addResult(?ScanResult $result, ScanResultCollection $results, ?callable $onProgress): void
+    {
+        if (!$result) {
+            return;
+        }
+
+        $results->add($result);
+
+        if ($onProgress) {
+            $onProgress($result);
         }
     }
 }
