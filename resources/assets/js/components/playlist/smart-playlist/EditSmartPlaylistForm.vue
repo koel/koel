@@ -39,7 +39,7 @@
               </FormRow>
               <FormRow>
                 <template #label>Folder</template>
-                <FolderSelect ref="folderSelect" v-model="data.folder_id" />
+                <FolderSelect v-model:folder-id="data.folder_id" v-model:folder-name="data.folder_name" />
               </FormRow>
               <FormRow class="col-span-2">
                 <template #label>Description</template>
@@ -82,7 +82,6 @@
 
 <script lang="ts" setup>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { ref } from 'vue'
 import { cloneDeep, isEqual, pick } from 'lodash'
 import type { UpdatePlaylistData } from '@/stores/playlistStore'
 import { playlistStore } from '@/stores/playlistStore'
@@ -111,18 +110,15 @@ const { playlist } = props
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 
-const folderSelect = ref<InstanceType<typeof FolderSelect>>()
-
 const { Btn, RuleGroup, activateTab, isTabActive, collectedRuleGroups, addGroup, onGroupChanged } =
   useSmartPlaylistForm(cloneDeep(playlist.rules))
 
 const close = () => emit('close')
 
 const { data, isPristine, handleSubmit } = useForm<UpdatePlaylistData>({
-  initialValues: pick(playlist, 'name', 'folder_id', 'description', 'cover'),
+  initialValues: { ...pick(playlist, 'name', 'folder_id', 'description', 'cover'), folder_name: null },
   isPristine: (original, current) => isEqual(original, current) && isEqual(collectedRuleGroups.value, playlist.rules),
   onSubmit: async data => {
-    await folderSelect.value?.maybeCreateFolder()
     const formData = {
       ...cloneDeep(data),
       rules: collectedRuleGroups.value,

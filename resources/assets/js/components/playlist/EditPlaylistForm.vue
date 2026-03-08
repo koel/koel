@@ -12,7 +12,7 @@
         </FormRow>
         <FormRow>
           <template #label>Folder</template>
-          <FolderSelect ref="folderSelect" v-model="data.folder_id" />
+          <FolderSelect v-model:folder-id="data.folder_id" v-model:folder-name="data.folder_name" />
         </FormRow>
         <FormRow class="col-span-2">
           <template #label>Description</template>
@@ -30,7 +30,6 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
 import { cloneDeep, pick } from 'lodash'
 import type { UpdatePlaylistData } from '@/stores/playlistStore'
 import { playlistStore } from '@/stores/playlistStore'
@@ -53,14 +52,11 @@ const { playlist } = props
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 
-const folderSelect = ref<InstanceType<typeof FolderSelect>>()
-
 const close = () => emit('close')
 
 const { data, isPristine, handleSubmit } = useForm<UpdatePlaylistData>({
-  initialValues: { ...pick(playlist, 'name', 'folder_id', 'description', 'cover') },
+  initialValues: { ...pick(playlist, 'name', 'folder_id', 'description', 'cover'), folder_name: null },
   onSubmit: async data => {
-    await folderSelect.value?.maybeCreateFolder()
     const formData = cloneDeep(data)
 
     if (formData.cover === playlist.cover) {

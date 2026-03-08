@@ -19,6 +19,7 @@ interface CreatePlaylistRequestData {
 }
 
 export type CreatePlaylistData = Pick<Playlist, 'name' | 'description' | 'folder_id' | 'cover'> & {
+  folder_name?: string | null
   songs?: Playable['id'][]
   rules?: SmartPlaylistRuleGroup[]
 }
@@ -27,6 +28,7 @@ export interface UpdatePlaylistData {
   name: Playlist['name']
   description: Playlist['description']
   folder_id?: PlaylistFolder['id'] | null
+  folder_name?: string | null
   cover?: string | null
   rules?: SmartPlaylistRuleGroup[]
 }

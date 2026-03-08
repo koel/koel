@@ -44,6 +44,7 @@ describe('editPlaylistForm.vue', () => {
         name: 'Your playlist',
         description: 'Updated description',
         folder_id: playlist.folder_id,
+        folder_name: null,
       })
     })
   })
@@ -69,6 +70,7 @@ describe('editPlaylistForm.vue', () => {
         name: 'Your playlist',
         description: 'Updated description',
         folder_id: playlist.folder_id,
+        folder_name: null,
         cover: '',
       })
     })
@@ -102,6 +104,7 @@ describe('editPlaylistForm.vue', () => {
         name: 'Your playlist',
         description: 'Updated description',
         folder_id: playlist.folder_id,
+        folder_name: null,
         cover: 'data:image/png;base64,Ynl0ZXM=',
       })
     })

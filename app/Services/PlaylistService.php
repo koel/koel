@@ -20,6 +20,7 @@ class PlaylistService
     public function __construct(
         private readonly ImageStorage $imageStorage,
         private readonly SongRepository $songRepository,
+        private readonly PlaylistFolderService $folderService,
     ) {}
 
     public function createPlaylist(PlaylistCreateData $data, User $user): Playlist
@@ -29,7 +30,7 @@ class PlaylistService
             return $this->imageStorage->storeImage($data->cover);
         });
 
-        return DB::transaction(static function () use ($data, $cover, $user): Playlist {
+        return DB::transaction(function () use ($data, $cover, $user): Playlist {
             /** @var Playlist $playlist */
             $playlist = Playlist::query()->create([
                 'name' => $data->name,
@@ -42,7 +43,8 @@ class PlaylistService
                 'role' => 'owner',
             ]);
 
-            $playlist->folders()->attach($data->folderId);
+            $folderId = $this->resolveFolderId($data->folderId, $data->folderName, $user);
+            $playlist->folders()->attach($folderId);
 
             if (!$playlist->is_smart && $data->playableIds) {
                 $playlist->addPlayables($data->playableIds, $user);
@@ -66,11 +68,26 @@ class PlaylistService
 
         $playlist->update($data);
 
-        if ($dto->folderId) {
-            $playlist->folders()->syncWithoutDetaching([$dto->folderId]);
+        $folderId = $this->resolveFolderId($dto->folderId, $dto->folderName, $playlist->owner);
+
+        if ($folderId) {
+            $playlist->folders()->syncWithoutDetaching([$folderId]);
         }
 
         return $playlist->refresh();
+    }
+
+    private function resolveFolderId(?string $folderId, ?string $folderName, User $user): ?string
+    {
+        if ($folderId) {
+            return $folderId;
+        }
+
+        if ($folderName) {
+            return $this->folderService->createFolder($user, $folderName)->id;
+        }
+
+        return null;
     }
 
     /** @return EloquentCollection<array-key, Playable> */

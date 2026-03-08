@@ -1,30 +1,28 @@
 <template>
   <div>
     <div
-      v-if="creating"
+      v-if="entering"
       class="flex items-stretch rounded border border-k-fg-10 overflow-hidden bg-k-bg-input focus-within:border-k-highlight transition-[border] duration-200"
     >
       <input
         ref="newFolderInput"
-        v-model="newFolderName"
+        v-model="inputName"
         aria-label="New folder name"
         class="flex-1 min-w-0 text-base px-3.5 py-2 bg-transparent text-k-fg-input border-0 focus-visible:outline-0"
         placeholder="Folder name"
         type="text"
-        @keydown.enter.prevent="submit"
+        @keydown.enter.prevent="confirm"
         @keydown.esc.stop.prevent="cancel"
       />
       <button
-        :disabled="saving"
         class="px-2.5 bg-k-fg-5 text-k-success hover:text-white border-l border-k-fg-10"
         title="Create"
         type="button"
-        @click="submit"
+        @click="confirm"
       >
         <Icon :icon="faCheck" fixed-width />
       </button>
       <button
-        :disabled="saving"
         class="px-2.5 bg-k-fg-5 text-k-fg-60 hover:text-white border-l border-k-fg-10"
         title="Cancel"
         type="button"
@@ -36,7 +34,8 @@
     <SelectBox v-else v-model="selected" @change="onSelectChange">
       <option :value="null" />
       <option v-for="folder in folders" :key="folder.id" :value="folder.id">{{ folder.name }}</option>
-      <option :value="NEW_FOLDER_SENTINEL">+ New Folder</option>
+      <option v-if="folderName" :value="PENDING_FOLDER">{{ folderName }} (new)</option>
+      <option :value="NEW_FOLDER">+ New Folder</option>
     </SelectBox>
   </div>
 </template>
@@ -45,71 +44,54 @@
 import { nextTick, ref, toRef, watch } from 'vue'
 import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
-import { useMessageToaster } from '@/composables/useMessageToaster'
 
 import SelectBox from '@/components/ui/form/SelectBox.vue'
 
-const NEW_FOLDER_SENTINEL = '__new__'
+const NEW_FOLDER = '__new__'
+const PENDING_FOLDER = '__pending__'
 
-const folderId = defineModel<PlaylistFolder['id'] | null | undefined>({ required: true })
-
-const { toastSuccess } = useMessageToaster()
+const folderId = defineModel<PlaylistFolder['id'] | null | undefined>('folderId', { required: true })
+const folderName = defineModel<string | null>('folderName', { default: null })
 
 const folders = toRef(playlistFolderStore.state, 'folders')
-const creating = ref(false)
-const saving = ref(false)
-const newFolderName = ref('')
+const entering = ref(false)
+const inputName = ref('')
 const newFolderInput = ref<HTMLInputElement>()
-const selected = ref(folderId.value)
+const selected = ref(folderName.value ? PENDING_FOLDER : folderId.value)
 
 watch(folderId, value => {
-  selected.value = value
+  if (!folderName.value) {
+    selected.value = value
+  }
 })
 
 const onSelectChange = () => {
-  if (selected.value === NEW_FOLDER_SENTINEL) {
-    creating.value = true
-    selected.value = folderId.value
+  if (selected.value === NEW_FOLDER || selected.value === PENDING_FOLDER) {
+    entering.value = true
+    inputName.value = folderName.value ?? ''
     nextTick(() => newFolderInput.value?.focus())
   } else {
     folderId.value = selected.value
+    folderName.value = null
   }
 }
 
-const submit = async () => {
-  const name = newFolderName.value.trim()
+const confirm = () => {
+  const name = inputName.value.trim()
 
   if (!name) {
     return
   }
 
-  saving.value = true
-
-  try {
-    const folder = await playlistFolderStore.store(name)
-    folderId.value = folder.id
-    toastSuccess(`Folder "${folder.name}" created.`)
-    reset()
-  } finally {
-    saving.value = false
-  }
+  folderName.value = name
+  folderId.value = null
+  selected.value = PENDING_FOLDER
+  entering.value = false
 }
 
 const cancel = () => {
-  reset()
-  selected.value = folderId.value
+  entering.value = false
+  inputName.value = ''
+  selected.value = folderName.value ? PENDING_FOLDER : folderId.value
 }
-
-const maybeCreateFolder = async () => {
-  if (creating.value && newFolderName.value.trim()) {
-    await submit()
-  }
-}
-
-const reset = () => {
-  creating.value = false
-  newFolderName.value = ''
-}
-
-defineExpose({ maybeCreateFolder })
 </script>

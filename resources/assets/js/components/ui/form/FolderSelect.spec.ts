@@ -12,8 +12,10 @@ describe('folderSelect', () => {
 
     return h.render(Component, {
       props: {
-        modelValue: folderId,
-        'onUpdate:modelValue': (value: any) => value,
+        folderId,
+        'onUpdate:folderId': (value: any) => value,
+        folderName: null,
+        'onUpdate:folderName': (value: any) => value,
       },
     })
   }
@@ -39,23 +41,19 @@ describe('folderSelect', () => {
     })
   })
 
-  it('creates a folder and selects it on submit', async () => {
-    const newFolder = { ...h.factory('playlist-folder'), id: 999, name: 'Brand New' }
-    const storeMock = h.mock(playlistFolderStore, 'store').mockResolvedValue(newFolder)
-
+  it('emits folder name on confirm', async () => {
     const { emitted } = renderComponent()
 
     await h.user.selectOptions(screen.getByRole('combobox'), '__new__')
 
     await waitFor(() => screen.getByPlaceholderText('Folder name'))
-    await h.user.type(screen.getByPlaceholderText('Folder name'), 'Brand New')
+    await h.user.type(screen.getByPlaceholderText('Folder name'), 'My Folder')
     await h.user.click(screen.getByTitle('Create'))
 
     await waitFor(() => {
-      expect(storeMock).toHaveBeenCalledWith('Brand New')
-      expect(emitted()['update:modelValue']).toBeTruthy()
-      const lastEmit = emitted()['update:modelValue'].at(-1)
-      expect(lastEmit).toEqual([999])
+      expect(emitted()['update:folderName']).toBeTruthy()
+      const lastEmit = emitted()['update:folderName'].at(-1)
+      expect(lastEmit).toEqual(['My Folder'])
     })
   })
 
@@ -72,16 +70,37 @@ describe('folderSelect', () => {
     })
   })
 
-  it('does not submit when folder name is empty', async () => {
-    const storeMock = h.mock(playlistFolderStore, 'store')
-
-    renderComponent()
+  it('does not confirm when folder name is empty', async () => {
+    const { emitted } = renderComponent()
 
     await h.user.selectOptions(screen.getByRole('combobox'), '__new__')
 
     await waitFor(() => screen.getByPlaceholderText('Folder name'))
     await h.user.click(screen.getByTitle('Create'))
 
-    expect(storeMock).not.toHaveBeenCalled()
+    expect(emitted()['update:folderName']).toBeFalsy()
+  })
+
+  it('clears folder name when selecting an existing folder', async () => {
+    playlistFolderStore.state.folders = h.factory('playlist-folder', 3)
+    const folders = playlistFolderStore.state.folders
+
+    const { emitted } = h.render(Component, {
+      props: {
+        folderId: null,
+        'onUpdate:folderId': (value: any) => value,
+        folderName: 'Pending Folder',
+        'onUpdate:folderName': (value: any) => value,
+      },
+    })
+
+    await h.user.selectOptions(screen.getByRole('combobox'), folders[0].id)
+
+    await waitFor(() => {
+      const lastFolderNameEmit = emitted()['update:folderName'].at(-1)
+      expect(lastFolderNameEmit).toEqual([null])
+      const lastFolderIdEmit = emitted()['update:folderId'].at(-1)
+      expect(lastFolderIdEmit).toEqual([folders[0].id])
+    })
   })
 })
