@@ -99,7 +99,7 @@ class ScanCommand extends Command
         $jobs = max(1, $jobs);
 
         if ($jobs > 1) {
-            $this->components->info("Using $jobs parallel worker(s).");
+            $this->components->info("Using $jobs parallel workers.");
         }
 
         $results = $this->directoryScanner->scan((string) Setting::get('media_path'), $config, $jobs);

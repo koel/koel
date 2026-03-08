@@ -11,7 +11,6 @@ use App\Services\SongService;
 use App\Values\Scanning\ScanConfiguration;
 use App\Values\Scanning\ScanResult;
 use App\Values\Scanning\ScanResultCollection;
-use Illuminate\Support\Facades\DB;
 use Symfony\Component\Finder\Finder;
 
 class DirectoryScanner extends Scanner
@@ -38,10 +37,6 @@ class DirectoryScanner extends Scanner
 
         if (isset($this->events[ScanEvent::PATHS_GATHERED->name])) {
             $this->events[ScanEvent::PATHS_GATHERED->name]($files);
-        }
-
-        if ($jobs > 1 && DB::connection()->getDriverName() === 'sqlite') {
-            $jobs = 1;
         }
 
         $onProgress = isset($this->events[ScanEvent::SCAN_PROGRESS->name])
