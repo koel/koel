@@ -34,7 +34,7 @@ class PlaylistStoreRequest extends Request
                 'nullable',
                 'sometimes',
                 'prohibits:folder_name',
-                Rule::exists(PlaylistFolder::class, 'id'),
+                Rule::exists(PlaylistFolder::class, 'id')->where('user_id', $this->user()->id),
             ],
             'folder_name' => ['nullable', 'sometimes', 'prohibits:folder_id', 'string', 'max:191'],
             'cover' => ['sometimes', 'nullable', new ValidImageData()],

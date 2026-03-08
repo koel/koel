@@ -59,10 +59,8 @@ const inputName = ref('')
 const newFolderInput = ref<HTMLInputElement>()
 const selected = ref(folderName.value ? PENDING_FOLDER : folderId.value)
 
-watch(folderId, value => {
-  if (!folderName.value) {
-    selected.value = value
-  }
+watch([folderId, folderName], ([id, name]) => {
+  selected.value = name ? PENDING_FOLDER : id
 })
 
 const onSelectChange = () => {

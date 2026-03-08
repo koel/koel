@@ -44,7 +44,10 @@ class PlaylistService
             ]);
 
             $folderId = $this->resolveFolderId($data->folderId, $data->folderName, $user);
-            $playlist->folders()->attach($folderId);
+
+            if ($folderId) {
+                $playlist->folders()->attach($folderId);
+            }
 
             if (!$playlist->is_smart && $data->playableIds) {
                 $playlist->addPlayables($data->playableIds, $user);
