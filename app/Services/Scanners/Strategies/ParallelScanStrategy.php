@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\File;
 use RuntimeException;
 use SplFileInfo;
 use Symfony\Component\Process\Process;
+use Throwable;
 
 // @mago-ignore lint:cyclomatic-complexity,kan-defect
 class ParallelScanStrategy
@@ -118,7 +119,7 @@ class ParallelScanStrategy
                     usleep(50_000); // 50ms
                 }
             }
-        } catch (RuntimeException $e) {
+        } catch (Throwable $e) {
             $this->terminateAll($processes);
             throw $e;
         }
@@ -130,11 +131,16 @@ class ParallelScanStrategy
     private function terminateAll(array $processes): void
     {
         foreach ($processes as $process) {
-            if (!$process->isRunning()) {
-                continue;
-            }
+            try {
+                if (!$process->isRunning()) {
+                    continue;
+                }
 
-            $process->stop(1);
+                $process->stop(1);
+
+                // @mago-ignore no-empty-catch-clause
+            } catch (Throwable) {
+            }
         }
     }
 
