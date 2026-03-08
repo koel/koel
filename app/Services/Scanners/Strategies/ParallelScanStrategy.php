@@ -101,23 +101,40 @@ class ParallelScanStrategy
         $buffers = array_fill(0, count($processes), '');
         $errBuffers = array_fill(0, count($processes), '');
 
-        while ($processes) {
-            foreach ($processes as $i => $process) {
-                $this->drainStdout($process, $buffers[$i], $results, $onProgress);
-                $this->drainStderr($process, $errBuffers[$i]);
+        try {
+            while ($processes) {
+                foreach ($processes as $i => $process) {
+                    $this->drainStdout($process, $buffers[$i], $results, $onProgress);
+                    $this->drainStderr($process, $errBuffers[$i]);
 
-                if (!$process->isRunning()) {
-                    $this->finalizeProcess($process, $buffers[$i], $errBuffers[$i], $results, $onProgress);
-                    unset($processes[$i], $buffers[$i], $errBuffers[$i]);
+                    if (!$process->isRunning()) {
+                        $this->finalizeProcess($process, $buffers[$i], $errBuffers[$i], $results, $onProgress);
+                        unset($processes[$i], $buffers[$i], $errBuffers[$i]);
+                    }
+                }
+
+                if ($processes) {
+                    usleep(50_000); // 50ms
                 }
             }
-
-            if ($processes) {
-                usleep(50_000); // 50ms
-            }
+        } catch (RuntimeException $e) {
+            $this->terminateAll($processes);
+            throw $e;
         }
 
         return $results;
+    }
+
+    /** @param Process[] $processes */
+    private function terminateAll(array $processes): void
+    {
+        foreach ($processes as $process) {
+            if (!$process->isRunning()) {
+                continue;
+            }
+
+            $process->stop(1);
+        }
     }
 
     private function drainStdout(
