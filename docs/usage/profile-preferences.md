@@ -46,6 +46,11 @@ Koel allows you to set a couple of preferences:
 
 These preferences are saved immediately upon change and synced across all of your devices.
 
+## Offline Storage
+
+If you have songs [cached for offline playback](./offline-playback), this section displays your current storage usage
+with a progress bar showing used vs. available space. You can clear all cached songs at once by clicking the "Clear All" button.
+
 ## Service Integration Statuses
 
 If your Koel installation is [integrated](../service-integrations) with any external services, such as Last.fm or Spotify, you can see their statuses here along with the ability to connect or disconnect them when applicable.
