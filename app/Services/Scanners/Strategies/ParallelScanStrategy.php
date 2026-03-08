@@ -7,6 +7,7 @@ use App\Values\Scanning\ScanConfiguration;
 use App\Values\Scanning\ScanResult;
 use App\Values\Scanning\ScanResultCollection;
 use Illuminate\Support\Facades\File;
+use RuntimeException;
 use Symfony\Component\Process\Process;
 
 class ParallelScanStrategy
@@ -84,6 +85,7 @@ class ParallelScanStrategy
     {
         $results = ScanResultCollection::create();
         $buffers = array_fill(0, count($processes), '');
+        $errBuffers = array_fill(0, count($processes), '');
 
         while ($processes) {
             foreach ($processes as $i => $process) {
@@ -100,12 +102,25 @@ class ParallelScanStrategy
                     }
                 }
 
+                $errOutput = $process->getIncrementalErrorOutput();
+
+                if ($errOutput !== '') {
+                    $errBuffers[$i] .= $errOutput;
+                }
+
                 if (!$process->isRunning()) {
                     if (trim($buffers[$i]) !== '') {
                         $this->handleResultLine($buffers[$i], $results, $onProgress);
                     }
 
-                    unset($processes[$i], $buffers[$i]);
+                    if (!$process->isSuccessful()) {
+                        $stderr = trim($errBuffers[$i]);
+                        $msg = $stderr ?: 'Process exited with code ' . ($process->getExitCode() ?? 'unknown');
+
+                        throw new RuntimeException("Parallel scan worker failed: $msg");
+                    }
+
+                    unset($processes[$i], $buffers[$i], $errBuffers[$i]);
                 }
             }
 
