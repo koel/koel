@@ -245,6 +245,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ## Documentation Pages
 - Every doc page under `docs/` must have a `description` in its YAML frontmatter. When creating or editing a doc page, ensure the description accurately summarizes the page content.
 - The docs use `vitepress-plugin-llms` to generate `llms.txt` and `llms-full.txt` on build; descriptions are surfaced there.
+- Run `bash docs/.vitepress/check-frontmatter.sh` to verify all pages have descriptions.
 
 ## Git Commits
 - Use [Conventional Commits](https://www.conventionalcommits.org/) for all commit messages (e.g. `fix:`, `feat:`, `chore:`, `test:`, `refactor:`, `docs:`, `ci:`, etc.).
