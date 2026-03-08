@@ -18,6 +18,10 @@ let dbPromise: Promise<IDBDatabase> | null = null
 const openDB = (): Promise<IDBDatabase> => {
   if (dbPromise) return dbPromise
 
+  if (typeof indexedDB === 'undefined') {
+    return Promise.reject(new Error('indexedDB is not available'))
+  }
+
   dbPromise = new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION)
 
@@ -54,7 +58,7 @@ export const offlineManifest = {
     try {
       return await withStore('readonly', store => store.getAll())
     } catch (error) {
-      logger.error('Failed to read offline manifest', error)
+      logger.warn('Failed to read offline manifest', error)
       return []
     }
   },
@@ -63,7 +67,7 @@ export const offlineManifest = {
     try {
       return await withStore('readonly', store => store.get(songId))
     } catch (error) {
-      logger.error('Failed to read offline manifest entry', error)
+      logger.warn('Failed to read offline manifest entry', error)
       return undefined
     }
   },
@@ -72,7 +76,7 @@ export const offlineManifest = {
     try {
       await withStore('readwrite', store => store.put(entry))
     } catch (error) {
-      logger.error('Failed to write offline manifest entry', error)
+      logger.warn('Failed to write offline manifest entry', error)
     }
   },
 
@@ -80,7 +84,7 @@ export const offlineManifest = {
     try {
       await withStore('readwrite', store => store.delete(songId))
     } catch (error) {
-      logger.error('Failed to remove offline manifest entry', error)
+      logger.warn('Failed to remove offline manifest entry', error)
     }
   },
 
@@ -88,7 +92,7 @@ export const offlineManifest = {
     try {
       await withStore('readwrite', store => store.clear())
     } catch (error) {
-      logger.error('Failed to clear offline manifest', error)
+      logger.warn('Failed to clear offline manifest', error)
     }
   },
 }

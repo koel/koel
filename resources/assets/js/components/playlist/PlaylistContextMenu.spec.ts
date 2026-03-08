@@ -34,6 +34,10 @@ describe('playlistContextMenu.vue', () => {
   })
 
   const renderComponent = async (playlist: Playlist, user: CurrentUser | null = null) => {
+    if (!vi.isMockFunction(playableStore.fetchForPlaylist)) {
+      h.mock(playableStore, 'fetchForPlaylist').mockResolvedValue([])
+    }
+
     user =
       user ||
       (h.factory.states('current')('user', {

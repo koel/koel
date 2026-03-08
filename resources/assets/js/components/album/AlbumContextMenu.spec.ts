@@ -29,6 +29,10 @@ describe('albumContextMenu.vue', () => {
   const renderComponent = async (album?: Album) => {
     h.mock(acl, 'checkResourcePermission').mockReturnValue(true)
 
+    if (!vi.isMockFunction(playableStore.fetchSongsForAlbum)) {
+      h.mock(playableStore, 'fetchSongsForAlbum').mockResolvedValue([])
+    }
+
     album =
       album ||
       h.factory('album', {
