@@ -11,6 +11,7 @@ export class RadioPlaybackService extends BasePlaybackService {
     this.player.media.src = radioStationStore.getSourceUrl(station)
     await this.player.media.play()
 
+    radioStationStore.startPolling(station)
     socketService.broadcast('SOCKET_STREAMABLE', station)
   }
 
@@ -40,6 +41,8 @@ export class RadioPlaybackService extends BasePlaybackService {
   }
 
   public async pause() {
+    radioStationStore.stopPolling()
+
     use(radioStationStore.current, station => {
       station.playback_state = 'Paused'
 

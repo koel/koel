@@ -53,6 +53,7 @@ use App\Http\Controllers\API\ProfileController;
 use App\Http\Controllers\API\PublicizeSongsController;
 use App\Http\Controllers\API\QueueStateController;
 use App\Http\Controllers\API\RadioStationController;
+use App\Http\Controllers\API\RadioStationNowPlayingController;
 use App\Http\Controllers\API\RegisterPlayController;
 use App\Http\Controllers\API\ResetPasswordController;
 use App\Http\Controllers\API\ScrobbleController;
@@ -247,6 +248,7 @@ Route::prefix('api')
             // Radio station routes
             Route::group(['prefix' => 'radio'], static function (): void {
                 Route::apiResource('stations', RadioStationController::class);
+                Route::get('stations/{radioStation}/now-playing', RadioStationNowPlayingController::class);
             });
 
             // Theme routes

@@ -1,7 +1,8 @@
 import type { Reactive } from 'vue'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { http } from '@/services/http'
 import { authService } from '@/services/authService'
+import { logger } from '@/utils/logger'
 import { merge } from 'lodash'
 import { arrayify } from '@/utils/helpers'
 import { commonStore } from '@/stores/commonStore'
@@ -14,12 +15,22 @@ export interface RadioStationData {
   logo?: RadioStation['logo']
 }
 
+interface NowPlayingResponse {
+  stream_title: string | null
+  updated_at: string | null
+}
+
+const POLL_INTERVAL = 15_000
+
 export const radioStationStore = {
   // Unlike songs, we don't expect a lot of radio stations per user.
   // Keep it simple by using state.stations only (without the vault/local cache algorithm).
   state: reactive({
     stations: [] as RadioStation[],
   }),
+
+  nowPlaying: ref<string | null>(null),
+  _pollTimer: null as ReturnType<typeof setInterval> | null,
 
   byId(id: RadioStation['id']) {
     return this.state.stations.find(station => station.id === id)
@@ -66,6 +77,30 @@ export const radioStationStore = {
   async delete(station: Reactive<RadioStation>) {
     await http.delete(`radio/stations/${station.id}`)
     this.state.stations = this.state.stations.filter(({ id }) => id !== station.id)
+  },
+
+  async fetchNowPlaying(station: RadioStation) {
+    try {
+      const response = await http.get<NowPlayingResponse>(`radio/stations/${station.id}/now-playing`)
+      this.nowPlaying.value = response.stream_title
+    } catch (e: unknown) {
+      logger.error('Failed to fetch now-playing metadata', e)
+    }
+  },
+
+  startPolling(station: RadioStation) {
+    this.stopPolling()
+    this.fetchNowPlaying(station)
+    this._pollTimer = setInterval(() => this.fetchNowPlaying(station), POLL_INTERVAL)
+  },
+
+  stopPolling() {
+    if (this._pollTimer) {
+      clearInterval(this._pollTimer)
+      this._pollTimer = null
+    }
+
+    this.nowPlaying.value = null
   },
 
   toggleFavorite: async (station: Reactive<RadioStation>) => {
