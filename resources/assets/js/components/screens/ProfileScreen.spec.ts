@@ -13,5 +13,6 @@ describe('profileScreen.vue', () => {
     screen.getByText('Preferences')
     screen.getByText('Themes')
     screen.getByText('Integrations')
+    screen.getByText('Offline')
   })
 })

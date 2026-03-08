@@ -24,6 +24,7 @@
       <span class="title-artist flex flex-col gap-2 overflow-hidden">
         <span class="title text-k-fg !flex gap-2 items-center">
           <ExternalMark v-if="external" />
+          <OfflineMark v-if="cachedOffline" />
           <span class="flex-1">{{ playable.title }}</span>
         </span>
         <span class="artist">{{ artist }}</span>
@@ -60,6 +61,7 @@ import { getPlayableProp, requireInjection } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
 import { secondsToHis } from '@/utils/formatters'
 import { usePlayableListColumnVisibility } from '@/composables/usePlayableListColumnVisibility'
+import { useOfflinePlayback } from '@/composables/useOfflinePlayback'
 import { PlayableListConfigKey } from '@/config/symbols'
 import { playableStore } from '@/stores/playableStore'
 
@@ -67,6 +69,7 @@ import SoundBars from '@/components/ui/SoundBars.vue'
 import PlayableThumbnail from '@/components/playable/PlayableThumbnail.vue'
 import UserAvatar from '@/components/user/UserAvatar.vue'
 import ExternalMark from '@/components/ui/ExternalMark.vue'
+import OfflineMark from '@/components/ui/OfflineMark.vue'
 import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
 const props = withDefaults(defineProps<{ item: PlayableRow; showDisc?: boolean }>(), {
@@ -84,6 +87,8 @@ const { item } = toRefs(props)
 const playable = computed<Playable>(() => item.value.playable)
 const playing = computed(() => ['Playing', 'Paused'].includes(playable.value.playback_state!))
 const external = computed(() => isSong(playable.value) && playable.value.is_external)
+const { isCached } = useOfflinePlayback()
+const cachedOffline = computed(() => isSong(playable.value) && isCached(playable.value))
 
 const fmtLength = secondsToHis(playable.value.length)
 const artist = computed(() => getPlayableProp(playable.value, 'artist_name', 'podcast_author'))

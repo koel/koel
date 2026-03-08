@@ -110,6 +110,9 @@
 
     <MenuItem v-if="allowEdit" @click="openEditForm">Edit…</MenuItem>
     <MenuItem v-if="downloadable" @click="download">Download</MenuItem>
+    <MenuItem v-if="canToggleOffline" @click="toggleOffline">
+      {{ allCached ? 'Remove Offline Versions' : 'Make Available Offline' }}
+    </MenuItem>
 
     <template v-if="canBeRemovedFromPlaylist">
       <Separator />
@@ -153,6 +156,7 @@ import { usePolicies } from '@/composables/usePolicies'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { useModal } from '@/composables/useModal'
 import { useKoelPlus } from '@/composables/useKoelPlus'
+import { useOfflinePlayback } from '@/composables/useOfflinePlayback'
 import { playback } from '@/services/playbackManager'
 
 const props = defineProps<{ playables: Playable[] }>()
@@ -313,6 +317,25 @@ const viewEpisode = (episode: Episode) => trigger(() => go(url('episodes.show', 
 const visitEpisodeWebpage = (episode: Episode) => trigger(() => window.open(episode.episode_link!, '_blank'))
 const { fromPlayables } = useDownload()
 const download = () => trigger(() => fromPlayables(playables.value))
+
+const { swReady, makeAvailableOffline, removeOfflineCache, isCached } = useOfflinePlayback()
+const canToggleOffline = computed(() => contentType.value === 'songs' && swReady.value)
+const allCached = computed(() => playables.value.every(p => isCached(p)))
+
+const toggleOffline = () =>
+  trigger(() => {
+    if (allCached.value) {
+      playables.value.forEach(p => removeOfflineCache(p))
+      toastSuccess(
+        playables.value.length === 1
+          ? 'Removed offline version.'
+          : `Removed ${playables.value.length} offline versions.`,
+      )
+    } else {
+      playables.value.filter(p => !isCached(p)).forEach(p => makeAvailableOffline(p))
+      toastSuccess(`Making ${pluralize(playables.value, 'song')} available offline…`)
+    }
+  })
 
 const removePlayablesFromPlaylist = () =>
   trigger(async () => {

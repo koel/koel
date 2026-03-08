@@ -1,6 +1,14 @@
 import { describe, expect, it } from 'vitest'
 import type { ServerValidationError } from './formatters'
-import { br2nl, parseValidationError, pluralize, secondsToHis, secondsToHumanReadable, slugToTitle } from './formatters'
+import {
+  br2nl,
+  formatBytes,
+  parseValidationError,
+  pluralize,
+  secondsToHis,
+  secondsToHumanReadable,
+  slugToTitle,
+} from './formatters'
 
 describe('formatters utils', () => {
   it.each([
@@ -66,4 +74,14 @@ describe('formatters utils', () => {
   ])('pluralizes with array parameters', (arr, noun, plural) =>
     expect(pluralize(arr, noun)).toEqual(`${arr.length} ${plural}`),
   )
+
+  it.each([
+    [0, '0 B'],
+    [512, '512 B'],
+    [1024, '1.0 KB'],
+    [1536, '1.5 KB'],
+    [1048576, '1.0 MB'],
+    [1073741824, '1.0 GB'],
+    [524288000, '500.0 MB'],
+  ])('formats %d bytes', (bytes, formatted) => expect(formatBytes(bytes)).toBe(formatted))
 })

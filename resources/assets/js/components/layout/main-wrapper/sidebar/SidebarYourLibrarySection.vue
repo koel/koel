@@ -48,16 +48,23 @@
         </template>
         Radio
       </SidebarItem>
+      <SidebarItem v-if="supportsOffline" :href="url('offline-songs')" :active="isCurrentScreen('OfflineSongs')">
+        <template #icon>
+          <Icon :icon="faCloudArrowDown" fixed-width />
+        </template>
+        Available Offline
+      </SidebarItem>
       <MediaBrowserMenuItem v-if="usesMediaBrowser" :active="isCurrentScreen('MediaBrowser')" />
     </ul>
   </SidebarSection>
 </template>
 
 <script lang="ts" setup>
-import { faCompactDisc, faMusic, faPodcast } from '@fortawesome/free-solid-svg-icons'
+import { faCloudArrowDown, faCompactDisc, faMusic, faPodcast } from '@fortawesome/free-solid-svg-icons'
 import { GuitarIcon, MicVocalIcon, RadioIcon } from 'lucide-vue-next'
 import { unescape } from 'lodash'
-import { ref, toRef } from 'vue'
+import { computed, ref, toRef } from 'vue'
+import { useOfflinePlayback } from '@/composables/useOfflinePlayback'
 import { eventBus } from '@/utils/eventBus'
 import { useRouter } from '@/composables/useRouter'
 import { commonStore } from '@/stores/commonStore'
@@ -72,6 +79,8 @@ const youtubeVideoTitle = ref<string | null>(null)
 const { url, isCurrentScreen } = useRouter()
 
 const usesMediaBrowser = toRef(commonStore.state, 'uses_media_browser')
+const { swReady, cachedSongCount } = useOfflinePlayback()
+const supportsOffline = computed(() => swReady.value && cachedSongCount.value > 0)
 const isDemo = window.IS_DEMO
 
 eventBus.on('PLAY_YOUTUBE_VIDEO', payload => (youtubeVideoTitle.value = unescape(payload.title)))

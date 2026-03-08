@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
+import { ref } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { assertOpenModal } from '@/__tests__/assertions'
 import factory from '@/__tests__/factory'
@@ -24,13 +25,36 @@ vi.mock('@/composables/useModal', () => ({
   }),
 }))
 
+const makeAvailableOfflineMock = vi.fn()
+const removeOfflineCacheMock = vi.fn()
+const isCachedMock = vi.fn().mockReturnValue(false)
+
+vi.mock('@/composables/useOfflinePlayback', () => ({
+  useOfflinePlayback: () => ({
+    swReady: ref(true),
+    makeAvailableOffline: makeAvailableOfflineMock,
+    removeOfflineCache: removeOfflineCacheMock,
+    isCached: isCachedMock,
+  }),
+}))
+
 import Component from './PlayableContextMenu.vue'
+
+// Mock service worker controller so offline menu items show up
+Object.defineProperty(navigator, 'serviceWorker', {
+  value: { controller: { postMessage: vi.fn() }, addEventListener: vi.fn() },
+  writable: true,
+  configurable: true,
+})
 
 describe('playableContextMenu.vue', () => {
   const h = createHarness({
     beforeEach: () => {
       queueStore.state.playables = []
       openModalMock.mockClear()
+      makeAvailableOfflineMock.mockClear()
+      removeOfflineCacheMock.mockClear()
+      isCachedMock.mockReturnValue(false)
     },
   })
 
@@ -443,5 +467,31 @@ describe('playableContextMenu.vue', () => {
     await h.user.click(screen.getByText('Embed…'))
 
     await assertOpenModal(openModalMock, CreateEmbedForm, { embeddable: playables[0] })
+  })
+
+  it('makes songs available offline', async () => {
+    const { playables } = await renderComponent()
+
+    await h.user.click(screen.getByText('Make Available Offline'))
+
+    for (const playable of playables) {
+      expect(makeAvailableOfflineMock).toHaveBeenCalledWith(playable)
+    }
+  })
+
+  it('does not show offline option for episodes', async () => {
+    await renderComponent(h.factory('episode'))
+    expect(screen.queryByText('Make Available Offline')).toBeNull()
+  })
+
+  it('removes offline versions when all songs are cached', async () => {
+    isCachedMock.mockReturnValue(true)
+    const { playables } = await renderComponent()
+
+    await h.user.click(screen.getByText('Remove Offline Versions'))
+
+    for (const playable of playables) {
+      expect(removeOfflineCacheMock).toHaveBeenCalledWith(playable)
+    }
   })
 })

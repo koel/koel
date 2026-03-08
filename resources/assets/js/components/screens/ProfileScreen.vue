@@ -30,6 +30,13 @@
         >
           Integrations
         </TabButton>
+        <TabButton
+          :selected="currentTab === 'offline'"
+          aria-controls="profilePaneOffline"
+          @click="currentTab = 'offline'"
+        >
+          Offline
+        </TabButton>
         <TabButton :selected="currentTab === 'qr'" aria-controls="profilePaneQr" @click="currentTab = 'qr'">
           <QrCodeIcon :size="16" />
         </TabButton>
@@ -60,6 +67,10 @@
           <Integrations />
         </TabPanel>
 
+        <TabPanel v-if="currentTab === 'offline'" id="profilePaneOffline" aria-labelledby="profilePaneOffline">
+          <OfflineStorage />
+        </TabPanel>
+
         <TabPanel v-if="currentTab === 'qr'" id="profilePaneQr" aria-labelledby="profilePaneQr">
           <QRLogin />
         </TabPanel>
@@ -86,11 +97,14 @@ const ProfileForm = defineAsyncComponent(() => import('@/components/profile-pref
 const PreferencesForm = defineAsyncComponent(() => import('@/components/profile-preferences/PreferencesForm.vue'))
 const ThemeList = defineAsyncComponent(() => import('@/components/profile-preferences/theme/ThemePreferences.vue'))
 const Integrations = defineAsyncComponent(() => import('@/components/profile-preferences/Integrations.vue'))
+const OfflineStorage = defineAsyncComponent(() => import('@/components/profile-preferences/OfflineStorage.vue'))
 const QRLogin = defineAsyncComponent(() => import('@/components/profile-preferences/QRLogin.vue'))
 
 const { get, set } = useLocalStorage()
 
-const currentTab = ref(get<'profile' | 'preferences' | 'themes' | 'integrations' | 'qr'>('profileScreenTab', 'profile'))
+const currentTab = ref(
+  get<'profile' | 'preferences' | 'themes' | 'integrations' | 'offline' | 'qr'>('profileScreenTab', 'profile'),
+)
 
 watch(currentTab, tab => set('profileScreenTab', tab))
 </script>

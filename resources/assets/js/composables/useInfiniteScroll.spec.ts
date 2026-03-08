@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { ref } from 'vue'
+import { effectScope, ref } from 'vue'
 
 vi.mock('@vueuse/core', async importOriginal => ({
   ...(await importOriginal<typeof import('@vueuse/core')>()),
@@ -10,29 +10,40 @@ import { useInfiniteScroll } from './useInfiniteScroll'
 
 describe('useInfiniteScroll', () => {
   it('returns ToTopButton and makeScrollable', () => {
-    const el = ref<HTMLElement>()
-    const loadMore = vi.fn()
+    const scope = effectScope()
 
-    const result = useInfiniteScroll(el, loadMore)
+    scope.run(() => {
+      const el = ref<HTMLElement>()
+      const loadMore = vi.fn()
 
-    expect(result.ToTopButton).toBeTruthy()
-    expect(typeof result.makeScrollable).toBe('function')
+      const result = useInfiniteScroll(el, loadMore)
+
+      expect(result.ToTopButton).toBeTruthy()
+      expect(typeof result.makeScrollable).toBe('function')
+    })
+
+    scope.stop()
   })
 
   it('calls loadMore when container is not scrollable', async () => {
     vi.useFakeTimers()
-    const container = document.createElement('div')
-    Object.defineProperty(container, 'scrollHeight', { value: 100 })
-    Object.defineProperty(container, 'clientHeight', { value: 200 })
+    const scope = effectScope()
 
-    const el = ref<HTMLElement>(container)
-    const loadMore = vi.fn().mockResolvedValue(undefined)
+    await scope.run(async () => {
+      const container = document.createElement('div')
+      Object.defineProperty(container, 'scrollHeight', { value: 100 })
+      Object.defineProperty(container, 'clientHeight', { value: 200 })
 
-    const { makeScrollable } = useInfiniteScroll(el, loadMore)
-    await makeScrollable()
+      const el = ref<HTMLElement>(container)
+      const loadMore = vi.fn().mockResolvedValue(undefined)
 
-    expect(loadMore).toHaveBeenCalled()
+      const { makeScrollable } = useInfiniteScroll(el, loadMore)
+      await makeScrollable()
 
+      expect(loadMore).toHaveBeenCalled()
+    })
+
+    scope.stop()
     vi.useRealTimers()
   })
 })
