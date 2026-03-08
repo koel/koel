@@ -243,3 +243,6 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## Git Commits
 - Use [Conventional Commits](https://www.conventionalcommits.org/) for all commit messages (e.g. `fix:`, `feat:`, `chore:`, `test:`, `refactor:`, `docs:`, `ci:`, etc.).
+
+## Code Reviews
+- When addressing PR review comments, do NOT blindly follow them. Always use your own knowledge and logic to evaluate whether the feedback makes sense. If it doesn't, push back and explain why.
