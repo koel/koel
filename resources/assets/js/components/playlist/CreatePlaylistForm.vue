@@ -15,7 +15,7 @@
         </FormRow>
         <FormRow>
           <template #label>Folder</template>
-          <FolderSelect v-model="data.folder_id" />
+          <FolderSelect ref="folderSelect" v-model="data.folder_id" />
         </FormRow>
         <FormRow class="col-span-2">
           <template #label>Description</template>
@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import type { CreatePlaylistData } from '@/stores/playlistStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { getPlayableCollectionContentType } from '@/utils/typeGuards'
@@ -67,6 +67,8 @@ const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { go, url } = useRouter()
 
+const folderSelect = ref<InstanceType<typeof FolderSelect>>()
+
 const close = () => emit('close')
 
 const { data, isPristine, handleSubmit } = useForm<CreatePlaylistData>({
@@ -76,7 +78,10 @@ const { data, isPristine, handleSubmit } = useForm<CreatePlaylistData>({
     folder_id: targetFolder?.id ?? null,
     cover: null,
   },
-  onSubmit: async data => await playlistStore.store(data, playables),
+  onSubmit: async data => {
+    await folderSelect.value?.maybeCreateFolder()
+    return await playlistStore.store(data, playables)
+  },
   onSuccess: (playlist: Playlist) => {
     close()
     toastSuccess(`Playlist "${playlist.name}" created.`)

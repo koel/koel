@@ -39,7 +39,7 @@
               </FormRow>
               <FormRow>
                 <template #label>Folder</template>
-                <FolderSelect v-model="data.folder_id" />
+                <FolderSelect ref="folderSelect" v-model="data.folder_id" />
               </FormRow>
               <FormRow class="col-span-2">
                 <template #label>Description</template>
@@ -113,6 +113,7 @@ const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { go, url } = useRouter()
 
+const folderSelect = ref<InstanceType<typeof FolderSelect>>()
 const currentTab = ref<'details' | 'rules'>('details')
 
 const close = () => emit('close')
@@ -125,11 +126,13 @@ const { data, isPristine, handleSubmit } = useForm<CreatePlaylistData>({
     cover: null,
   },
   isPristine: (original, current) => isEqual(original, current) && collectedRuleGroups.value.length === 0,
-  onSubmit: async data =>
-    await playlistStore.store({
+  onSubmit: async data => {
+    await folderSelect.value?.maybeCreateFolder()
+    return await playlistStore.store({
       ...data,
       rules: collectedRuleGroups.value,
-    }),
+    })
+  },
   onSuccess: (playlist: Playlist) => {
     toastSuccess(`Playlist "${playlist.name}" created.`)
     close()
