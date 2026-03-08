@@ -1,3 +1,7 @@
+---
+description: Setting up MusicBrainz, Last.fm, Spotify, and YouTube integrations for metadata, artwork, and scrobbling.
+---
+
 # Service Integrations
 
 To further enhance your music experience, Koel supports several 3rd-party service integrations: MusicBrainz, Last.fm,

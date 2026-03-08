@@ -1,3 +1,7 @@
+---
+description: Configuring reverse proxy authentication via headers and IP allow-lists for Koel Plus.
+---
+
 # Proxy Authentication <sup>Beta</sup>
 
 Koel can be configured to authenticate users via a reverse proxy.

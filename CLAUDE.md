@@ -242,6 +242,10 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ## Environment Variables Documentation
 - When adding, removing, or modifying environment variables in `.env.example`, always update `docs/environment-variables.md` to stay in sync.
 
+## Documentation Pages
+- Every doc page under `docs/` must have a `description` in its YAML frontmatter. When creating or editing a doc page, ensure the description accurately summarizes the page content.
+- The docs use `vitepress-plugin-llms` to generate `llms.txt` and `llms-full.txt` on build; descriptions are surfaced there.
+
 ## Git Commits
 - Use [Conventional Commits](https://www.conventionalcommits.org/) for all commit messages (e.g. `fix:`, `feat:`, `chore:`, `test:`, `refactor:`, `docs:`, `ci:`, etc.).
 - Focus on the feature/purpose, not implementation details. For example, prefer "feat: show current playing song during radio stream" over "feat: radio station ICY metadata now-playing". Same applies to PR titles.

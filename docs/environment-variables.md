@@ -1,3 +1,7 @@
+---
+description: Comprehensive reference of all Koel .env variables for storage, scanning, streaming, integrations, SSO, and more.
+---
+
 # Environment Variables
 
 This page documents the environment variables specific to Koel. These variables are typically set in the `.env` file

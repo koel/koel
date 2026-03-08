@@ -1,3 +1,7 @@
+---
+description: Requirements, installation methods (pre-compiled, source, Docker), configuration, upgrading, and downgrading Koel.
+---
+
 # Getting Started
 
 ## Requirements

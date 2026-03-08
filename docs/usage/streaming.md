@@ -1,3 +1,7 @@
+---
+description: Streaming methods (PHP, x-accel-redirect, x-sendfile), transcoding with FFmpeg, and cloud storage streaming.
+---
+
 # Streaming Music
 
 ## Streaming Methods

@@ -1,3 +1,7 @@
+---
+description: The official Koel Player Flutter app for Android and iOS as a companion to the web interface.
+---
+
 # Mobile Apps
 
 While Koel is accessible on mobile devices through its responsive design, the user experience may not be optimal 

@@ -1,3 +1,7 @@
+---
+description: Caching songs for offline playback using Service Workers, managing offline storage, and limitations.
+---
+
 # Offline Playback
 
 Koel allows you to cache songs for offline playback directly from your browser. This is especially useful when

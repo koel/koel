@@ -1,3 +1,7 @@
+---
+description: VitePress markdown extension examples including syntax highlighting and custom containers.
+---
+
 # Markdown Extension Examples
 
 This page demonstrates some of the built-in markdown extensions provided by VitePress.

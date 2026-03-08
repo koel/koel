@@ -1,3 +1,7 @@
+---
+description: Customizing the app name, logo, and default cover image in Koel Plus.
+---
+
 # White Labeling
 
 Another Plus-only feature is the ability to customize the branding of the app, a practice commonly known as
