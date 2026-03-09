@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\DB;
 /** @extends Repository<Genre> */
 class GenreRepository extends Repository
 {
+    public function findByName(string $name): ?Genre
+    {
+        return Genre::query()->where('name', 'like', "%{$name}%")->first();
+    }
+
     /** @return Collection<GenreSummary>|array<array-key, GenreSummary> */
     public function getAllSummaries(?User $scopedUser = null): Collection
     {

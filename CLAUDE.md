@@ -238,6 +238,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ## PHP Conventions
 - Always prefer Laravel's built-in helpers over custom implementations (e.g. `str()->plural()`, `Str::slug()`, `Arr::flatten()`, etc.). Do not reimplement what Laravel already provides.
 - Methods that don't reference `$this` must be declared `static`.
+- Never query models directly (e.g. `Model::query()->where(...)`) outside of the corresponding Repository class. All model lookups and queries must go through the appropriate Repository (e.g. `PlaylistRepository`, `SongRepository`).
 
 ## Environment Variables Documentation
 - When adding, removing, or modifying environment variables in `.env.example`, always update `docs/environment-variables.md` to stay in sync.

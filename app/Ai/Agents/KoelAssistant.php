@@ -4,6 +4,8 @@ namespace App\Ai\Agents;
 
 use App\Ai\AiAssistantResult;
 use App\Ai\Tools\AddRadioStation;
+use App\Ai\Tools\AddToFavorites;
+use App\Ai\Tools\AddToPlaylist;
 use App\Ai\Tools\CreateSmartPlaylist;
 use App\Ai\Tools\GetAlbumInfo;
 use App\Ai\Tools\GetArtistInfo;
@@ -12,6 +14,7 @@ use App\Ai\Tools\PlayAlbum;
 use App\Ai\Tools\PlayArtist;
 use App\Ai\Tools\PlayFavorites;
 use App\Ai\Tools\PlayMostPlayed;
+use App\Ai\Tools\PlayPlaylist;
 use App\Ai\Tools\PlayRadioStation;
 use App\Ai\Tools\PlayRecentlyAdded;
 use App\Ai\Tools\PlayRecentlyAddedAlbum;
@@ -24,9 +27,12 @@ use App\Ai\Tools\PlaySongsByLyrics;
 use App\Models\User;
 use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
+use App\Repositories\GenreRepository;
+use App\Repositories\PlaylistRepository;
 use App\Repositories\RadioStationRepository;
 use App\Repositories\SongRepository;
 use App\Services\EncyclopediaService;
+use App\Services\FavoriteService;
 use App\Services\PlaylistService;
 use App\Services\RadioService;
 use Laravel\Ai\Attributes\Temperature;
@@ -51,8 +57,11 @@ class KoelAssistant implements Agent, Conversational, HasTools
         private readonly SongRepository $songRepository,
         private readonly AlbumRepository $albumRepository,
         private readonly ArtistRepository $artistRepository,
+        private readonly GenreRepository $genreRepository,
+        private readonly PlaylistRepository $playlistRepository,
         private readonly RadioStationRepository $radioStationRepository,
         private readonly EncyclopediaService $encyclopediaService,
+        private readonly FavoriteService $favoriteService,
         private readonly PlaylistService $playlistService,
         private readonly RadioService $radioService,
         private readonly ?string $currentSongId = null,
@@ -72,6 +81,9 @@ class KoelAssistant implements Agent, Conversational, HasTools
             - Play the user's favorites, most played, or recently played songs
             - Tell the user what song is currently playing
             - Get information about artists and albums (biography, track listing, library stats)
+            - Add songs to the user's favorites
+            - Add songs to existing playlists
+            - Play all songs from a specific playlist
             - Create smart playlists with auto-updating filter rules
             - Add and stream internet radio stations
 
@@ -89,7 +101,7 @@ class KoelAssistant implements Agent, Conversational, HasTools
     {
         return [
             new PlaySongs($this->user, $this->result, $this->songRepository),
-            new PlaySongsByGenre($this->user, $this->result, $this->songRepository),
+            new PlaySongsByGenre($this->user, $this->result, $this->genreRepository, $this->songRepository),
             new PlaySongsByLyrics($this->user, $this->result, $this->songRepository),
             new PlaySimilarSongs($this->user, $this->result, $this->songRepository, $this->currentSongId),
             new PlayAlbum($this->user, $this->result, $this->albumRepository, $this->songRepository),
@@ -99,7 +111,7 @@ class KoelAssistant implements Agent, Conversational, HasTools
             new PlayRecentlyPlayed($this->user, $this->result, $this->songRepository),
             new PlayRecentlyAdded($this->user, $this->result, $this->songRepository),
             new PlayRecentlyAddedAlbum($this->user, $this->result, $this->albumRepository, $this->songRepository),
-            new PlayRecentlyAddedArtist($this->user, $this->result, $this->songRepository),
+            new PlayRecentlyAddedArtist($this->user, $this->result, $this->artistRepository, $this->songRepository),
             new GetCurrentSong(
                 $this->user,
                 $this->songRepository,
@@ -110,6 +122,15 @@ class KoelAssistant implements Agent, Conversational, HasTools
             ),
             new GetArtistInfo($this->user, $this->artistRepository, $this->songRepository, $this->encyclopediaService),
             new GetAlbumInfo($this->user, $this->albumRepository, $this->songRepository, $this->encyclopediaService),
+            new AddToFavorites($this->user, $this->songRepository, $this->favoriteService, $this->currentSongId),
+            new AddToPlaylist(
+                $this->user,
+                $this->songRepository,
+                $this->playlistRepository,
+                $this->playlistService,
+                $this->currentSongId,
+            ),
+            new PlayPlaylist($this->user, $this->result, $this->playlistRepository, $this->songRepository),
             new PlayRadioStation($this->user, $this->result, $this->radioStationRepository),
             new CreateSmartPlaylist($this->user, $this->result, $this->playlistService),
             new AddRadioStation($this->user, $this->result, $this->radioService),

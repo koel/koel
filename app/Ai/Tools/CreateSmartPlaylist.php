@@ -14,6 +14,7 @@ use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
 use Stringable;
+use Throwable;
 
 class CreateSmartPlaylist implements Tool
 {
@@ -104,7 +105,7 @@ class CreateSmartPlaylist implements Tool
 
         try {
             $ruleGroups = SmartPlaylistRuleGroupCollection::create($rawGroups);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return (
                 'Error creating rules: '
                 . $e->getMessage()

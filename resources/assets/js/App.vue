@@ -17,7 +17,11 @@
     <MainWrapper />
     <AppFooter />
     <SupportKoel />
-    <AiFloatingButton v-if="commonStore.state.uses_ai" class="fixed right-24 z-20" style="bottom: calc(var(--footer-height) + 20px)" />
+    <AiFloatingButton
+      v-if="commonStore.state.uses_ai"
+      class="fixed right-24 z-20"
+      style="bottom: calc(var(--footer-height) + 20px)"
+    />
     <AiAssistantScreen v-if="commonStore.state.uses_ai && isCurrentScreen('AI')" />
     <DropZone v-show="showDropZone" @close="showDropZone = false" />
   </main>

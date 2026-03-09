@@ -18,6 +18,7 @@ trait HasAlbumAttributes
      */
     protected function name(): Attribute
     {
+        // @mago-ignore lint:prefer-first-class-callable
         return Attribute::get(static fn (?string $value) => html_entity_decode($value))->shouldCache();
     }
 

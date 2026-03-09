@@ -138,7 +138,7 @@ class ParallelScanStrategy
 
                 $process->stop(1);
 
-                // @mago-ignore no-empty-catch-clause
+                // @mago-ignore lint:no-empty-catch-clause
             } catch (Throwable) {
             }
         }

@@ -4,6 +4,7 @@ namespace App\Ai\Tools;
 
 use App\Ai\AiAssistantResult;
 use App\Models\User;
+use App\Repositories\ArtistRepository;
 use App\Repositories\SongRepository;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Contracts\Tool;
@@ -15,6 +16,7 @@ class PlayRecentlyAddedArtist implements Tool
     public function __construct(
         private readonly User $user,
         private readonly AiAssistantResult $result,
+        private readonly ArtistRepository $artistRepository,
         private readonly SongRepository $songRepository,
     ) {}
 
@@ -33,14 +35,18 @@ class PlayRecentlyAddedArtist implements Tool
 
     public function handle(Request $request): Stringable|string
     {
-        $recentSong = $this->songRepository->getRecentlyAdded(1, $this->user)->first();
+        $artists = $this->artistRepository->getRecentlyAdded(1, $this->user);
 
-        if (!$recentSong) {
-            return 'No songs found in the library.';
+        if ($artists->isEmpty()) {
+            return 'No artists found in the library.';
         }
 
-        $artist = $recentSong->artist;
+        $artist = $artists->first();
         $songs = $this->songRepository->getByArtist($artist, $this->user);
+
+        if ($songs->isEmpty()) {
+            return "The artist \"{$artist->name}\" has no playable songs.";
+        }
 
         $this->result->action = 'play_songs';
         $this->result->data = ['songs' => $songs];

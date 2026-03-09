@@ -3,8 +3,8 @@
 namespace App\Ai\Tools;
 
 use App\Ai\AiAssistantResult;
-use App\Models\Genre;
 use App\Models\User;
+use App\Repositories\GenreRepository;
 use App\Repositories\SongRepository;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Contracts\Tool;
@@ -16,6 +16,7 @@ class PlaySongsByGenre implements Tool
     public function __construct(
         private readonly User $user,
         private readonly AiAssistantResult $result,
+        private readonly GenreRepository $genreRepository,
         private readonly SongRepository $songRepository,
     ) {}
 
@@ -34,7 +35,7 @@ class PlaySongsByGenre implements Tool
 
     public function handle(Request $request): Stringable|string
     {
-        $genre = Genre::query()->where('name', 'like', '%' . $request['genre'] . '%')->first();
+        $genre = $this->genreRepository->findByName($request['genre']);
 
         if (!$genre) {
             return "No genre matching \"{$request['genre']}\" found in the library.";

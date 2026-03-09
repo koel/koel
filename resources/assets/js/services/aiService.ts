@@ -16,7 +16,7 @@ type AiHandledResult = {
 export const aiService = {
   conversationId: null as string | null,
 
-  prompt: async (text: string, context?: { songId?: string, radioStationId?: string }) => {
+  prompt: async (text: string, context?: { songId?: string; radioStationId?: string }) => {
     return await http.post<AiResponse>('ai/prompt', {
       prompt: text,
       current_song_id: context?.songId,

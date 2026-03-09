@@ -1,12 +1,15 @@
 <template>
-  <div class="ai-screen fixed inset-0 z-50 flex flex-col w-screen h-screen overflow-hidden bg-k-bg text-k-fg" @keydown.esc="goBack">
+  <div
+    class="ai-screen fixed inset-0 z-50 flex flex-col w-screen h-screen overflow-hidden bg-k-bg text-k-fg"
+    @keydown.esc="goBack"
+  >
     <button
       class="absolute top-4 right-4 z-10 text-k-fg-50 hover:text-k-fg transition-colors cursor-pointer"
       title="Close"
       type="button"
       @click="goBack"
     >
-      <XIcon class="w-6 h-6"/>
+      <XIcon class="w-6 h-6" />
     </button>
 
     <div class="flex-1 flex flex-col items-center justify-center px-8">
@@ -14,6 +17,7 @@
         <form class="relative z-10" @submit.prevent="handleSubmit">
           <div class="relative">
             <textarea
+              ref="textareaEl"
               v-model="prompt"
               v-koel-focus
               :disabled="loading"
@@ -28,8 +32,8 @@
               title="Send"
               type="submit"
             >
-              <Icon v-if="loading" :icon="faSpinner" spin/>
-              <ArrowUpIcon v-else class="w-5 h-5"/>
+              <Icon v-if="loading" :icon="faSpinner" spin />
+              <ArrowUpIcon v-else class="w-5 h-5" />
             </button>
           </div>
         </form>
@@ -41,7 +45,11 @@
           v-html="revealedHtml"
         />
 
-        <AiSamplePrompts v-if="!prompt.trim() && !displayedMessage" class="relative z-10 w-full mt-4" @select="prompt = $event" />
+        <AiSamplePrompts
+          v-if="!prompt.trim() && !displayedMessage"
+          class="relative z-10 w-full mt-4"
+          @select="selectSamplePrompt"
+        />
       </div>
     </div>
   </div>
@@ -50,7 +58,7 @@
 <script lang="ts" setup>
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { ArrowUpIcon, XIcon } from 'lucide-vue-next'
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { aiService } from '@/services/aiService'
 import { playback } from '@/services/playbackManager'
 import { queueStore } from '@/stores/queueStore'
@@ -66,6 +74,7 @@ const { toastSuccess } = useMessageToaster()
 const { go, url } = useRouter()
 const { handleHttpError } = useErrorHandler()
 
+const textareaEl = ref<HTMLTextAreaElement>()
 const prompt = ref('')
 const loading = ref(false)
 const displayedMessage = ref('')
@@ -92,6 +101,12 @@ const revealedHtml = computed(() => {
 })
 
 const goBack = () => go(-1)
+
+const selectSamplePrompt = async (text: string) => {
+  prompt.value = text
+  await nextTick()
+  textareaEl.value?.focus()
+}
 
 const handleSubmit = async () => {
   if (!prompt.value.trim() || loading.value) {

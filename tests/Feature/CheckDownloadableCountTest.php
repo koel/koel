@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Favorite;
-use App\Models\Playlist;
 use App\Models\Song;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;

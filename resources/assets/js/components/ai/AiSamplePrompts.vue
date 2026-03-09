@@ -7,7 +7,7 @@
       type="button"
       @click="emit('select', example)"
     >
-      <SparkleIcon class="size-4 inline"/>
+      <SparkleIcon class="size-4 inline" />
       <span class="flex-1">{{ example }}</span>
     </button>
   </div>
