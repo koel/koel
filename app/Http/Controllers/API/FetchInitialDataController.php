@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Enums\Acl\Permission;
+use App\Facades\License;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PlaylistFolderResource;
 use App\Http\Resources\PlaylistResource;
@@ -62,6 +63,7 @@ class FetchInitialDataController extends Controller
             'allows_download' => config('koel.download.allow'),
             'download_limit' => (int) config('koel.download.limit'),
             'uses_media_browser' => MediaBrowser::used(),
+            'uses_ai' => License::isPlus() && config('koel.ai.enabled'),
             'supports_batch_downloading' => extension_loaded('zip'),
             'media_path_set' => (bool) Setting::get('media_path'),
             'supports_transcoding' =>

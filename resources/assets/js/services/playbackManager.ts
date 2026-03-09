@@ -21,7 +21,7 @@ export const playbackManager = {
 
     this._currentService = playbackServiceMap[type]
 
-    return playbackServiceMap[type].activate(plyrWrapper ?? (document.querySelector('.plyr-wrapper') as HTMLElement))
+    return playbackServiceMap[type].activate(plyrWrapper ?? (document.querySelector('.plyr') as HTMLElement))
   },
 
   useQueuePlayback(plyrWrapper?: HTMLElement) {

@@ -2,6 +2,7 @@
 
 use App\Facades\YouTube;
 use App\Helpers\Uuid;
+use App\Http\Controllers\API\AiController;
 use App\Http\Controllers\API\Acl\CheckResourcePermissionController;
 use App\Http\Controllers\API\Acl\FetchAssignableRolesController;
 use App\Http\Controllers\API\ActivateLicenseController;
@@ -250,6 +251,9 @@ Route::prefix('api')
                 Route::apiResource('stations', RadioStationController::class);
                 Route::get('stations/{radioStation}/now-playing', RadioStationNowPlayingController::class);
             });
+
+            // AI assistant
+            Route::post('ai/prompt', AiController::class)->middleware('throttle:10,1');
 
             // Theme routes
             Route::apiResource('themes', ThemeController::class)->except('show', 'update');

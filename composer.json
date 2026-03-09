@@ -9,7 +9,7 @@
   "license": "MIT",
   "type": "project",
   "require": {
-    "php": ">=8.2",
+    "php": ">=8.3",
     "laravel/framework": "^12.0",
     "james-heinrich/getid3": "^1.9",
     "guzzlehttp/guzzle": "^7.2",
@@ -54,7 +54,8 @@
     "fakerphp/faker": "^1.24",
     "spatie/laravel-permission": "^6.21",
     "enshrined/svg-sanitize": "^0.22.0",
-    "phanan/poddle": "^1.2"
+    "phanan/poddle": "^1.2",
+    "laravel/ai": "^0.2.6"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
@@ -138,7 +139,7 @@
       "carthage-software/mago": true
     },
     "platform": {
-      "php": "8.2.0"
+      "php": "8.3.0"
     }
   },
   "minimum-stability": "stable",

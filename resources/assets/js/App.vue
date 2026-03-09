@@ -17,6 +17,8 @@
     <MainWrapper />
     <AppFooter />
     <SupportKoel />
+    <AiFloatingButton v-if="commonStore.state.uses_ai" class="fixed right-24 z-20" style="bottom: calc(var(--footer-height) + 20px)" />
+    <AiAssistantScreen v-if="commonStore.state.uses_ai && isCurrentScreen('AI')" />
     <DropZone v-show="showDropZone" @close="showDropZone = false" />
   </main>
 
@@ -47,6 +49,7 @@ import {
   OverlayKey,
 } from '@/config/symbols'
 import { useRouter } from '@/composables/useRouter'
+import { commonStore } from '@/stores/commonStore'
 import type { Route } from '@/router'
 
 import DialogBox from '@/components/ui/DialogBox.vue'
@@ -67,6 +70,8 @@ const HotkeyListener = defineAsyncComponent(() => import('@/components/utils/Hot
 const LoginForm = defineAsyncComponent(() => import('@/components/auth/LoginForm.vue'))
 const MainWrapper = defineAsyncComponent(() => import('@/components/layout/main-wrapper/index.vue'))
 const SupportKoel = defineAsyncComponent(() => import('@/components/meta/SupportKoel.vue'))
+const AiFloatingButton = defineAsyncComponent(() => import('@/components/ai/AiFloatingButton.vue'))
+const AiAssistantScreen = defineAsyncComponent(() => import('@/components/ai/AiAssistantScreen.vue'))
 const DropZone = defineAsyncComponent(() => import('@/components/ui/upload/DropZone.vue'))
 const AcceptInvitation = defineAsyncComponent(() => import('@/components/invitation/AcceptInvitation.vue'))
 const ResetPasswordForm = defineAsyncComponent(() => import('@/components/auth/ResetPasswordForm.vue'))
@@ -78,7 +83,7 @@ const toaster = ref<InstanceType<typeof MessageToaster>>()
 const currentStreamable = ref<Streamable>()
 const showDropZone = ref(false)
 
-const { isCurrentScreen, resolveRoute, triggerNotFound } = useRouter()
+const { isCurrentScreen, resolveRoute, triggerNotFound, onRouteChanged } = useRouter()
 const { online } = useNetworkStatus()
 
 const authenticated = ref(false)
@@ -144,6 +149,8 @@ watch(
     }
   },
 )
+
+onRouteChanged(route => (currentRoute.value = route))
 
 const onDragEnd = () => (showDropZone.value = false)
 

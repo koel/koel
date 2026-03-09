@@ -485,6 +485,7 @@ interface EqualizerPreset {
 declare type PlaybackState = 'Stopped' | 'Playing' | 'Paused'
 declare type ScreenName =
   | '404'
+  | 'AI'
   | 'Album'
   | 'Albums'
   | 'Artist'
@@ -713,4 +714,15 @@ interface EmbedOptions {
 interface LrcLine {
   time: number
   text: string
+}
+
+interface AiResponse {
+  message: string
+  action: 'play_songs' | 'create_smart_playlist' | 'add_radio_station' | 'play_radio_station' | null
+  conversation_id: string | null
+  data: {
+    songs?: Song[]
+    playlist?: Playlist
+    station?: RadioStation
+  }
 }

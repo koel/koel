@@ -200,6 +200,10 @@ return [
         'allow_list' => array_map(static fn ($entry) => trim($entry), explode(',', env('PROXY_AUTH_ALLOW_LIST', ''))),
     ],
 
+    'ai' => [
+        'enabled' => env('AI_ENABLED', false),
+    ],
+
     'misc' => [
         'home_url' => 'https://koel.dev',
         'docs_url' => 'https://docs.koel.dev',
