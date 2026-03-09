@@ -84,6 +84,7 @@ class KoelAssistant implements Agent, Conversational, HasTools
             INSTRUCTIONS;
     }
 
+    // @mago-ignore lint:halstead
     public function tools(): iterable
     {
         return [

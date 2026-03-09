@@ -34,7 +34,7 @@ use LogicException;
 // @mago-ignore lint:too-many-methods,cyclomatic-complexity
 class SongRepository extends Repository implements ScoutableRepository
 {
-    private const int LIST_SIZE_LIMIT = 500;
+    private const LIST_SIZE_LIMIT = 500;
 
     public function __construct(
         private readonly AlbumRepository $albumRepository,

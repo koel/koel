@@ -89,7 +89,7 @@ class CreateSmartPlaylist implements Tool
             ];
         }, $request['rule_groups'] ?? []);
 
-        if (empty($rawGroups) || empty($rawGroups[0]['rules'])) {
+        if ($rawGroups === [] || !isset($rawGroups[0]['rules']) || $rawGroups[0]['rules'] === []) {
             return (
                 'Error: rule_groups must contain at least one group with at least one rule. '
                 . 'Each rule needs model, operator, and value. '

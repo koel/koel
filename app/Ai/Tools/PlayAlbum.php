@@ -22,7 +22,7 @@ class PlayAlbum implements Tool
 
     public function description(): Stringable|string
     {
-        return 'Play all songs from a specific album. ' . 'Use this when the user wants to listen to an album by name.';
+        return 'Play all songs from a specific album. Use this when the user wants to listen to an album by name.';
     }
 
     public function schema(JsonSchema $schema): array

@@ -22,9 +22,7 @@ class PlayArtist implements Tool
 
     public function description(): Stringable|string
     {
-        return (
-            'Play all songs by a specific artist. ' . 'Use this when the user wants to listen to a particular artist.'
-        );
+        return 'Play all songs by a specific artist. Use this when the user wants to listen to a particular artist.';
     }
 
     public function schema(JsonSchema $schema): array
