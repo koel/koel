@@ -63,6 +63,7 @@ The assistant understands a wide range of requests. Here are some examples to ge
 - "Tell me about Radiohead"
 - "Tell me about the album Dark Side of the Moon"
 - "Show me the lyrics of this song"
+- "Find the lyrics for this song if there are none"
 
 ### Managing Playlists
 

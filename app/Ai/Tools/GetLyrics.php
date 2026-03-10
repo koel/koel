@@ -47,7 +47,10 @@ class GetLyrics implements Tool
         }
 
         if (!$song->lyrics) {
-            return "No lyrics available for \"{$song->title}\" by {$song->artist->name}.";
+            return (
+                "No lyrics available for \"{$song->title}\" by {$song->artist->name}. "
+                . 'You can search the web for lyrics and use the UpdateSongLyrics tool to save them.'
+            );
         }
 
         $this->result->action = 'show_lyrics';

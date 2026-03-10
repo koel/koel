@@ -10,6 +10,7 @@ use Laravel\Ai\Contracts\Conversational;
 use Laravel\Ai\Contracts\HasTools;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Promptable;
+use Laravel\Ai\Providers\Tools\WebSearch;
 use Stringable;
 use Symfony\Component\Finder\Finder;
 
@@ -40,6 +41,7 @@ class KoelAssistant implements Agent, Conversational, HasTools
             - Create smart playlists with auto-updating filter rules
             - Rename or delete playlists
             - Get the lyrics of a song
+            - Search the web for lyrics when a song has none, and save them to the library
             - Add and stream internet radio stations
 
             Guidelines:
@@ -55,7 +57,7 @@ class KoelAssistant implements Agent, Conversational, HasTools
 
     public function tools(): iterable
     {
-        return collect(
+        $tools = collect(
             Finder::create()
                 ->files()
                 ->name('*.php')
@@ -69,5 +71,9 @@ class KoelAssistant implements Agent, Conversational, HasTools
             ->map(static fn (string $class) => app()->make($class))
             ->values()
             ->all();
+
+        $tools[] = new WebSearch();
+
+        return $tools;
     }
 }

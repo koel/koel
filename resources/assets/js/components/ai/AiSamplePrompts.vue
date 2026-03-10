@@ -48,6 +48,7 @@ const allExamples = [
   'Rename my playlist to Summer Hits',
   'Delete my old workout playlist',
   'Show me the lyrics of this song',
+  'Find the lyrics for this song if there are none',
   'Play my most listened-to album',
   'Play my top artist',
 ]
