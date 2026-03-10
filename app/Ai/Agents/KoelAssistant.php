@@ -51,6 +51,7 @@ class KoelAssistant implements Agent, Conversational, HasTools
             - When playing songs, default to playing immediately unless the user explicitly asks to "add to queue" or "queue".
             - When playing songs, default to shuffling unless the user asks for a specific order.
             - When creating smart playlists, pick a descriptive name if the user doesn't specify one.
+            - When searching for lyrics online, prefer synchronized/LRC lyrics (with timestamps) over plain text.
             - For radio stations, the user must provide a URL.
             INSTRUCTIONS;
     }

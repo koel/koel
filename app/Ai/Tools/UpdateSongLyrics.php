@@ -23,7 +23,9 @@ class UpdateSongLyrics implements Tool
         return (
             'Update or add lyrics to a song. '
             . 'Use this after searching the web for lyrics to save them to the song in the library. '
-            . 'Can target the currently playing song or find a song by title.'
+            . 'Can target the currently playing song or find a song by title. '
+            . 'When searching for lyrics, prefer synchronized/LRC format (with timestamps like [00:12.34]) '
+            . 'over plain text lyrics, as Koel supports synced lyrics playback.'
         );
     }
 
