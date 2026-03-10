@@ -78,6 +78,16 @@ class SongRepository extends Repository implements ScoutableRepository
     }
 
     /** @return Collection|array<array-key, Song> */
+    public function getLeastPlayed(int $count = 50, ?User $scopedUser = null): Collection
+    {
+        return Song::query(user: $scopedUser ?? $this->auth->user())
+            ->withUserContext()
+            ->orderBy('interactions.play_count')
+            ->limit($count)
+            ->get();
+    }
+
+    /** @return Collection|array<array-key, Song> */
     public function getRecentlyPlayed(int $count = 8, ?User $scopedUser = null): Collection
     {
         return Song::query(user: $scopedUser ?? $this->auth->user())

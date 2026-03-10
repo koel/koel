@@ -42,12 +42,7 @@
     <template v-else>
       <div ref="chatContainerEl" class="flex-1 overflow-y-auto p-8 pb-4">
         <div class="w-full max-w-4xl mx-auto space-y-4">
-          <AiChatMessage
-            v-for="(msg, index) in messages"
-            :key="msg.id"
-            :message="msg"
-            :animate="msg.role === 'assistant' && index === lastAssistantIndex"
-          />
+          <AiChatMessage v-for="msg in messages" :key="msg.id" :message="msg" />
           <div v-if="loading" class="flex justify-start">
             <div class="rounded-2xl px-4 py-3 bg-white/5 text-k-fg-50">
               <Icon :icon="faSpinner" spin />
@@ -91,7 +86,7 @@
 <script lang="ts" setup>
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { ArrowUpIcon, XIcon } from 'lucide-vue-next'
-import { computed, nextTick, ref, watch } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 import { playback } from '@/services/playbackManager'
 import { queueStore } from '@/stores/queueStore'
 import { useAiChat } from '@/composables/useAiChat'
@@ -111,16 +106,6 @@ const textareaEl = ref<HTMLTextAreaElement>()
 const messagesEndEl = ref<HTMLDivElement>()
 const chatContainerEl = ref<HTMLDivElement>()
 const prompt = ref('')
-
-const lastAssistantIndex = computed(() => {
-  for (let i = messages.value.length - 1; i >= 0; i--) {
-    if (messages.value[i].role === 'assistant') {
-      return i
-    }
-  }
-
-  return -1
-})
 
 const goBack = () => go(-1)
 
