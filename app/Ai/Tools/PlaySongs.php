@@ -2,8 +2,8 @@
 
 namespace App\Ai\Tools;
 
-use App\Ai\AiAssistantResult;
-use App\Models\User;
+use App\Ai\AiRequestContext;
+use App\Ai\Services\PlaybackService;
 use App\Repositories\SongRepository;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Contracts\Tool;
@@ -13,9 +13,9 @@ use Stringable;
 class PlaySongs implements Tool
 {
     public function __construct(
-        private readonly User $user,
-        private readonly AiAssistantResult $result,
+        private readonly AiRequestContext $context,
         private readonly SongRepository $songRepository,
+        private readonly PlaybackService $playbackService,
     ) {}
 
     public function description(): Stringable|string
@@ -34,26 +34,27 @@ class PlaySongs implements Tool
                 ->string()
                 ->required()
                 ->description('Search keywords to find songs (e.g. artist name, song title, album name)'),
-            'limit' => $schema->integer()->description('Maximum number of songs to return. Default 50'),
+            ...PlaybackService::limitSchema($schema),
+            ...PlaybackService::queueSchema($schema),
         ];
     }
 
     public function handle(Request $request): Stringable|string
     {
-        $limit = min((int) ($request['limit'] ?? 50), 500);
-        $songs = $this->songRepository->search($request['query'], $limit, $this->user);
+        $songs = $this->songRepository->search(
+            $request['query'],
+            PlaybackService::extractLimit($request),
+            $this->context->user,
+        );
 
-        $this->result->action = 'play_songs';
-        $this->result->data = [
-            'songs' => $songs,
-        ];
-
-        $count = $songs->count();
-
-        if ($count === 0) {
+        if ($songs->isEmpty()) {
             return 'No songs found matching the criteria.';
         }
 
-        return "Found {$count} song(s) and queued them for playback.";
+        $queue = $this->playbackService->queueSongs($songs, $request);
+        $verb = $queue ? 'Added' : 'Found';
+        $suffix = $queue ? 'to the queue' : 'and queued them for playback';
+
+        return "{$verb} {$songs->count()} song(s) {$suffix}.";
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Ai\Tools;
 
-use App\Models\User;
+use App\Ai\AiRequestContext;
 use App\Repositories\AlbumRepository;
 use App\Repositories\SongRepository;
 use App\Services\EncyclopediaService;
@@ -14,7 +14,7 @@ use Stringable;
 class GetAlbumInfo implements Tool
 {
     public function __construct(
-        private readonly User $user,
+        private readonly AiRequestContext $context,
         private readonly AlbumRepository $albumRepository,
         private readonly SongRepository $songRepository,
         private readonly EncyclopediaService $encyclopediaService,
@@ -37,14 +37,14 @@ class GetAlbumInfo implements Tool
 
     public function handle(Request $request): Stringable|string
     {
-        $albums = $this->albumRepository->search($request['name'], 1, $this->user);
+        $albums = $this->albumRepository->search($request['name'], 1, $this->context->user);
 
         if ($albums->isEmpty()) {
             return "No album matching \"{$request['name']}\" found in the library.";
         }
 
         $album = $albums->first();
-        $songs = $this->songRepository->getByAlbum($album, $this->user);
+        $songs = $this->songRepository->getByAlbum($album, $this->context->user);
         $info = $this->encyclopediaService->getAlbumInformation($album);
 
         $response = "\"{$album->name}\" by {$album->artist->name} — {$songs->count()} song(s) in your library.";

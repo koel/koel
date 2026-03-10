@@ -2,10 +2,9 @@
 
 namespace App\Ai\Tools;
 
-use App\Ai\AiAssistantResult;
-use App\Models\User;
+use App\Ai\AiRequestContext;
+use App\Ai\Services\PlaybackService;
 use App\Repositories\ArtistRepository;
-use App\Repositories\SongRepository;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
@@ -14,10 +13,9 @@ use Stringable;
 class PlayRecentlyAddedArtist implements Tool
 {
     public function __construct(
-        private readonly User $user,
-        private readonly AiAssistantResult $result,
+        private readonly AiRequestContext $context,
         private readonly ArtistRepository $artistRepository,
-        private readonly SongRepository $songRepository,
+        private readonly PlaybackService $playbackService,
     ) {}
 
     public function description(): Stringable|string
@@ -30,27 +28,17 @@ class PlayRecentlyAddedArtist implements Tool
 
     public function schema(JsonSchema $schema): array
     {
-        return [];
+        return PlaybackService::queueSchema($schema);
     }
 
     public function handle(Request $request): Stringable|string
     {
-        $artists = $this->artistRepository->getRecentlyAdded(1, $this->user);
+        $artists = $this->artistRepository->getRecentlyAdded(1, $this->context->user);
 
         if ($artists->isEmpty()) {
             return 'No artists found in the library.';
         }
 
-        $artist = $artists->first();
-        $songs = $this->songRepository->getByArtist($artist, $this->user);
-
-        if ($songs->isEmpty()) {
-            return "The artist \"{$artist->name}\" has no playable songs.";
-        }
-
-        $this->result->action = 'play_songs';
-        $this->result->data = ['songs' => $songs];
-
-        return "Playing {$songs->count()} song(s) by {$artist->name} (most recently added artist).";
+        return $this->playbackService->playArtist($artists->first(), $this->context->user, $request);
     }
 }

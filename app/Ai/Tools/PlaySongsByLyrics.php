@@ -2,8 +2,8 @@
 
 namespace App\Ai\Tools;
 
-use App\Ai\AiAssistantResult;
-use App\Models\User;
+use App\Ai\AiRequestContext;
+use App\Ai\Services\PlaybackService;
 use App\Repositories\SongRepository;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Contracts\Tool;
@@ -13,9 +13,9 @@ use Stringable;
 class PlaySongsByLyrics implements Tool
 {
     public function __construct(
-        private readonly User $user,
-        private readonly AiAssistantResult $result,
+        private readonly AiRequestContext $context,
         private readonly SongRepository $songRepository,
+        private readonly PlaybackService $playbackService,
     ) {}
 
     public function description(): Stringable|string
@@ -34,25 +34,22 @@ class PlaySongsByLyrics implements Tool
                 ->string()
                 ->required()
                 ->description('The lyrics or phrase the user remembers. Can be partial or approximate.'),
+            ...PlaybackService::queueSchema($schema),
         ];
     }
 
     public function handle(Request $request): Stringable|string
     {
-        $songs = $this->songRepository->searchByLyrics($request['lyrics'], 50, $this->user);
+        $songs = $this->songRepository->searchByLyrics($request['lyrics'], 50, $this->context->user);
 
         if ($songs->isEmpty()) {
             return 'No songs found with matching lyrics in the library.';
         }
 
-        $this->result->action = 'play_songs';
-        $this->result->data = [
-            'songs' => $songs,
-        ];
-
-        $count = $songs->count();
+        $queue = $this->playbackService->queueSongs($songs, $request);
         $titles = $songs->take(5)->pluck('title')->implode(', ');
+        $suffix = $queue ? 'Added to the queue.' : 'Queued for playback.';
 
-        return "Found {$count} song(s) with matching lyrics: {$titles}. Queued for playback.";
+        return "Found {$songs->count()} song(s) with matching lyrics: {$titles}. {$suffix}";
     }
 }

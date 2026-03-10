@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Ai;
 
 use App\Ai\AiAssistantResult;
+use App\Ai\AiRequestContext;
 use App\Ai\Tools\PlaySongsByLyrics;
 use App\Models\Song;
-use App\Repositories\SongRepository;
 use Laravel\Ai\Tools\Request;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -29,7 +29,9 @@ class PlaySongsByLyricsToolTest extends TestCase
         ]);
 
         $result = new AiAssistantResult();
-        $tool = new PlaySongsByLyrics($user, $result, app(SongRepository::class));
+        app()->instance(AiAssistantResult::class, $result);
+        app()->instance(AiRequestContext::class, new AiRequestContext($user));
+        $tool = app()->make(PlaySongsByLyrics::class);
 
         $response = $tool->handle(new Request(['lyrics' => 'real life']));
 
@@ -47,7 +49,9 @@ class PlaySongsByLyricsToolTest extends TestCase
         ]);
 
         $result = new AiAssistantResult();
-        $tool = new PlaySongsByLyrics($user, $result, app(SongRepository::class));
+        app()->instance(AiAssistantResult::class, $result);
+        app()->instance(AiRequestContext::class, new AiRequestContext($user));
+        $tool = app()->make(PlaySongsByLyrics::class);
 
         $response = $tool->handle(new Request(['lyrics' => 'zzzznonexistentgibberishxyz']));
 
@@ -65,7 +69,9 @@ class PlaySongsByLyricsToolTest extends TestCase
         ]);
 
         $result = new AiAssistantResult();
-        $tool = new PlaySongsByLyrics($user, $result, app(SongRepository::class));
+        app()->instance(AiAssistantResult::class, $result);
+        app()->instance(AiRequestContext::class, new AiRequestContext($user));
+        $tool = app()->make(PlaySongsByLyrics::class);
 
         $response = $tool->handle(new Request(['lyrics' => 'glitters is gold']));
 

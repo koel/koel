@@ -2,8 +2,8 @@
 
 namespace App\Ai\Tools;
 
-use App\Ai\AiAssistantResult;
-use App\Models\User;
+use App\Ai\AiRequestContext;
+use App\Ai\Services\PlaybackService;
 use App\Repositories\GenreRepository;
 use App\Repositories\SongRepository;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -14,10 +14,10 @@ use Stringable;
 class PlaySongsByGenre implements Tool
 {
     public function __construct(
-        private readonly User $user,
-        private readonly AiAssistantResult $result,
+        private readonly AiRequestContext $context,
         private readonly GenreRepository $genreRepository,
         private readonly SongRepository $songRepository,
+        private readonly PlaybackService $playbackService,
     ) {}
 
     public function description(): Stringable|string
@@ -29,7 +29,8 @@ class PlaySongsByGenre implements Tool
     {
         return [
             'genre' => $schema->string()->required()->description('The genre name (e.g. rock, jazz, pop, classical)'),
-            'limit' => $schema->integer()->description('Maximum number of songs to return. Default 50'),
+            ...PlaybackService::limitSchema($schema),
+            ...PlaybackService::queueSchema($schema),
         ];
     }
 
@@ -41,20 +42,21 @@ class PlaySongsByGenre implements Tool
             return "No genre matching \"{$request['genre']}\" found in the library.";
         }
 
-        $limit = min((int) ($request['limit'] ?? 50), 500);
-        $songs = $this->songRepository->getByGenre($genre, $limit, random: true, scopedUser: $this->user);
+        $songs = $this->songRepository->getByGenre(
+            $genre,
+            PlaybackService::extractLimit($request),
+            random: true,
+            scopedUser: $this->context->user,
+        );
 
-        $this->result->action = 'play_songs';
-        $this->result->data = [
-            'songs' => $songs,
-        ];
-
-        $count = $songs->count();
-
-        if ($count === 0) {
+        if ($songs->isEmpty()) {
             return "No songs found in the \"{$genre->name}\" genre.";
         }
 
-        return "Found {$count} {$genre->name} song(s) and queued them for playback.";
+        $queue = $this->playbackService->queueSongs($songs, $request);
+        $verb = $queue ? 'Added' : 'Found';
+        $suffix = $queue ? 'to the queue' : 'and queued them for playback';
+
+        return "{$verb} {$songs->count()} {$genre->name} song(s) {$suffix}.";
     }
 }

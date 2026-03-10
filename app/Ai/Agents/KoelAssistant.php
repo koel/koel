@@ -2,47 +2,16 @@
 
 namespace App\Ai\Agents;
 
-use App\Ai\AiAssistantResult;
-use App\Ai\Tools\AddRadioStation;
-use App\Ai\Tools\AddToFavorites;
-use App\Ai\Tools\AddToPlaylist;
-use App\Ai\Tools\CreateSmartPlaylist;
-use App\Ai\Tools\GetAlbumInfo;
-use App\Ai\Tools\GetArtistInfo;
-use App\Ai\Tools\GetCurrentSong;
-use App\Ai\Tools\PlayAlbum;
-use App\Ai\Tools\PlayArtist;
-use App\Ai\Tools\PlayFavorites;
-use App\Ai\Tools\PlayMostPlayed;
-use App\Ai\Tools\PlayPlaylist;
-use App\Ai\Tools\PlayRadioStation;
-use App\Ai\Tools\PlayRecentlyAdded;
-use App\Ai\Tools\PlayRecentlyAddedAlbum;
-use App\Ai\Tools\PlayRecentlyAddedArtist;
-use App\Ai\Tools\PlayRecentlyPlayed;
-use App\Ai\Tools\PlaySimilarSongs;
-use App\Ai\Tools\PlaySongs;
-use App\Ai\Tools\PlaySongsByGenre;
-use App\Ai\Tools\PlaySongsByLyrics;
-use App\Models\User;
-use App\Repositories\AlbumRepository;
-use App\Repositories\ArtistRepository;
-use App\Repositories\GenreRepository;
-use App\Repositories\PlaylistRepository;
-use App\Repositories\RadioStationRepository;
-use App\Repositories\SongRepository;
-use App\Services\EncyclopediaService;
-use App\Services\FavoriteService;
-use App\Services\PlaylistService;
-use App\Services\RadioService;
 use Laravel\Ai\Attributes\Temperature;
 use Laravel\Ai\Attributes\UseCheapestModel;
 use Laravel\Ai\Concerns\RemembersConversations;
 use Laravel\Ai\Contracts\Agent;
 use Laravel\Ai\Contracts\Conversational;
 use Laravel\Ai\Contracts\HasTools;
+use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Promptable;
 use Stringable;
+use Symfony\Component\Finder\Finder;
 
 #[UseCheapestModel]
 #[Temperature(0)]
@@ -50,23 +19,6 @@ class KoelAssistant implements Agent, Conversational, HasTools
 {
     use Promptable;
     use RemembersConversations;
-
-    public function __construct(
-        private readonly User $user,
-        private readonly AiAssistantResult $result,
-        private readonly SongRepository $songRepository,
-        private readonly AlbumRepository $albumRepository,
-        private readonly ArtistRepository $artistRepository,
-        private readonly GenreRepository $genreRepository,
-        private readonly PlaylistRepository $playlistRepository,
-        private readonly RadioStationRepository $radioStationRepository,
-        private readonly EncyclopediaService $encyclopediaService,
-        private readonly FavoriteService $favoriteService,
-        private readonly PlaylistService $playlistService,
-        private readonly RadioService $radioService,
-        private readonly ?string $currentSongId = null,
-        private readonly ?string $currentRadioStationId = null,
-    ) {}
 
     public function instructions(): Stringable|string
     {
@@ -79,61 +31,40 @@ class KoelAssistant implements Agent, Conversational, HasTools
             - Play songs similar to a given song or the currently playing song
             - Play all songs from a specific album or artist
             - Play the user's favorites, most played, or recently played songs
+            - Play the most played album or artist
             - Tell the user what song is currently playing
             - Get information about artists and albums (biography, track listing, library stats)
-            - Add songs to the user's favorites
-            - Add songs to existing playlists
+            - Add or remove items (songs, albums, artists, radio stations, podcasts) from the user's favorites
+            - Add or remove songs from existing playlists
             - Play all songs from a specific playlist
             - Create smart playlists with auto-updating filter rules
+            - Rename or delete playlists
+            - Get the lyrics of a song
             - Add and stream internet radio stations
 
             Guidelines:
             - Be concise in your responses — one or two sentences max.
+            - Use a calm, matter-of-fact tone. Avoid using exclamation marks.
             - If the user's request doesn't match any available action, say so briefly.
+            - When playing songs, default to playing immediately unless the user explicitly asks to "add to queue" or "queue".
             - When playing songs, default to shuffling unless the user asks for a specific order.
             - When creating smart playlists, pick a descriptive name if the user doesn't specify one.
             - For radio stations, the user must provide a URL.
             INSTRUCTIONS;
     }
 
-    // @mago-ignore lint:halstead
     public function tools(): iterable
     {
-        return [
-            new PlaySongs($this->user, $this->result, $this->songRepository),
-            new PlaySongsByGenre($this->user, $this->result, $this->genreRepository, $this->songRepository),
-            new PlaySongsByLyrics($this->user, $this->result, $this->songRepository),
-            new PlaySimilarSongs($this->user, $this->result, $this->songRepository, $this->currentSongId),
-            new PlayAlbum($this->user, $this->result, $this->albumRepository, $this->songRepository),
-            new PlayArtist($this->user, $this->result, $this->artistRepository, $this->songRepository),
-            new PlayFavorites($this->user, $this->result, $this->songRepository),
-            new PlayMostPlayed($this->user, $this->result, $this->songRepository),
-            new PlayRecentlyPlayed($this->user, $this->result, $this->songRepository),
-            new PlayRecentlyAdded($this->user, $this->result, $this->songRepository),
-            new PlayRecentlyAddedAlbum($this->user, $this->result, $this->albumRepository, $this->songRepository),
-            new PlayRecentlyAddedArtist($this->user, $this->result, $this->artistRepository, $this->songRepository),
-            new GetCurrentSong(
-                $this->user,
-                $this->songRepository,
-                $this->radioStationRepository,
-                $this->encyclopediaService,
-                $this->currentSongId,
-                $this->currentRadioStationId,
-            ),
-            new GetArtistInfo($this->user, $this->artistRepository, $this->songRepository, $this->encyclopediaService),
-            new GetAlbumInfo($this->user, $this->albumRepository, $this->songRepository, $this->encyclopediaService),
-            new AddToFavorites($this->user, $this->songRepository, $this->favoriteService, $this->currentSongId),
-            new AddToPlaylist(
-                $this->user,
-                $this->songRepository,
-                $this->playlistRepository,
-                $this->playlistService,
-                $this->currentSongId,
-            ),
-            new PlayPlaylist($this->user, $this->result, $this->playlistRepository, $this->songRepository),
-            new PlayRadioStation($this->user, $this->result, $this->radioStationRepository),
-            new CreateSmartPlaylist($this->user, $this->result, $this->playlistService),
-            new AddRadioStation($this->user, $this->result, $this->radioService),
-        ];
+        return collect(
+            Finder::create()
+                ->files()
+                ->name('*.php')
+                ->in(app_path('Ai/Tools')),
+        )
+            ->map(fn ($file) => 'App\\Ai\\Tools\\' . $file->getFilenameWithoutExtension())
+            ->filter(fn (string $class) => is_subclass_of($class, Tool::class))
+            ->map(fn (string $class) => app()->make($class))
+            ->values()
+            ->all();
     }
 }

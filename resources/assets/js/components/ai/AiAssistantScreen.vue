@@ -122,21 +122,26 @@ const handleSubmit = async () => {
       songId: queueStore.current?.id,
       radioStationId: radioStationStore.current?.id,
     })
-    const { message: responseMessage, action, resource } = aiService.handleResponse(response)
+    const result = aiService.handleResponse(response)
 
-    displayedMessage.value = responseMessage
+    displayedMessage.value = result.message
 
-    if (action === 'create_smart_playlist') {
-      toastSuccess(`Playlist "${resource.name}" created.`)
-      go(url('playlists.show', { id: resource.id }))
-    } else if (action === 'add_radio_station') {
-      toastSuccess(`Station "${resource.name}" added.`)
+    if (result.action === 'create_smart_playlist') {
+      toastSuccess(`Playlist "${result.resource.name}" created.`)
+      go(url('playlists.show', { id: result.resource.id }))
+    } else if (result.action === 'add_radio_station') {
+      toastSuccess(`Station "${result.resource.name}" added.`)
       go(url('radio-stations.index'))
-    } else if (action === 'play_radio_station') {
-      await playback('radio').play(resource)
+    } else if (result.action === 'play_radio_station') {
+      await playback('radio').play(result.resource)
       go(url('queue'))
-    } else if (action === 'play_songs') {
-      await playback().queueAndPlay(resource)
+    } else if (result.action === 'play_songs') {
+      if (result.queue) {
+        queueStore.queue(result.resource)
+      } else {
+        await playback().queueAndPlay(result.resource)
+      }
+
       go(url('queue'))
     }
   } catch (e: unknown) {

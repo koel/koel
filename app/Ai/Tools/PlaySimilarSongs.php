@@ -2,9 +2,9 @@
 
 namespace App\Ai\Tools;
 
-use App\Ai\AiAssistantResult;
+use App\Ai\AiRequestContext;
+use App\Ai\Services\PlaybackService;
 use App\Models\Song;
-use App\Models\User;
 use App\Repositories\SongRepository;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Contracts\Tool;
@@ -14,10 +14,9 @@ use Stringable;
 class PlaySimilarSongs implements Tool
 {
     public function __construct(
-        private readonly User $user,
-        private readonly AiAssistantResult $result,
+        private readonly AiRequestContext $context,
         private readonly SongRepository $songRepository,
-        private readonly ?string $currentSongId,
+        private readonly PlaybackService $playbackService,
     ) {}
 
     public function description(): Stringable|string
@@ -36,7 +35,8 @@ class PlaySimilarSongs implements Tool
                 ->description(
                     'The title of the song to find similar songs for. If not provided, the currently playing song is used.',
                 ),
-            'limit' => $schema->integer()->description('Maximum number of similar songs to return. Default 50'),
+            ...PlaybackService::limitSchema($schema, 'Maximum number of similar songs to return. Default 50'),
+            ...PlaybackService::queueSchema($schema),
         ];
     }
 
@@ -53,31 +53,33 @@ class PlaySimilarSongs implements Tool
 
         $song->load('genres');
 
-        $limit = min((int) ($request['limit'] ?? 50), 500);
-        $songs = $this->songRepository->getSimilar($song, $limit, $this->user);
+        $songs = $this->songRepository->getSimilar(
+            $song,
+            PlaybackService::extractLimit($request),
+            $this->context->user,
+        );
 
         if ($songs->isEmpty()) {
             return "No similar songs found for \"{$song->title}\".";
         }
 
-        $this->result->action = 'play_songs';
-        $this->result->data = ['songs' => $songs];
+        $queue = $this->playbackService->queueSongs($songs, $request);
+        $verb = $queue ? 'Added' : 'Found';
+        $suffix = $queue ? 'to the queue' : 'and queued them for playback';
 
-        $count = $songs->count();
-
-        return "Found {$count} song(s) similar to \"{$song->title}\" and queued them for playback.";
+        return "{$verb} {$songs->count()} song(s) similar to \"{$song->title}\" {$suffix}.";
     }
 
     private function resolveSong(Request $request): ?Song
     {
         if (isset($request['song_title'])) {
-            $songs = $this->songRepository->search($request['song_title'], 1, $this->user);
+            $songs = $this->songRepository->search($request['song_title'], 1, $this->context->user);
 
             return $songs->first();
         }
 
-        if ($this->currentSongId) {
-            return $this->songRepository->findOne($this->currentSongId, $this->user);
+        if ($this->context->currentSongId) {
+            return $this->songRepository->findOne($this->context->currentSongId, $this->context->user);
         }
 
         return null;

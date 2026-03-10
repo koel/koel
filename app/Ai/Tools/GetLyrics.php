@@ -1,0 +1,71 @@
+<?php
+
+namespace App\Ai\Tools;
+
+use App\Ai\AiAssistantResult;
+use App\Ai\AiRequestContext;
+use App\Models\Song;
+use App\Repositories\SongRepository;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
+use Stringable;
+
+class GetLyrics implements Tool
+{
+    public function __construct(
+        private readonly AiRequestContext $context,
+        private readonly AiAssistantResult $result,
+        private readonly SongRepository $songRepository,
+    ) {}
+
+    public function description(): Stringable|string
+    {
+        return (
+            'Get the lyrics of a song. '
+            . 'Use this when the user wants to see or read the lyrics of a song. '
+            . 'Can get lyrics for the currently playing song or search by title.'
+        );
+    }
+
+    public function schema(JsonSchema $schema): array
+    {
+        return [
+            'query' => $schema
+                ->string()
+                ->description('Search keywords to find the song. '
+                . 'If omitted, the currently playing song will be used.'),
+        ];
+    }
+
+    public function handle(Request $request): Stringable|string
+    {
+        $song = $this->resolveSong($request);
+
+        if (!$song) {
+            return 'Could not find the song. Please specify a title or make sure a song is currently playing.';
+        }
+
+        if (!$song->lyrics) {
+            return "No lyrics available for \"{$song->title}\" by {$song->artist->name}.";
+        }
+
+        $this->result->action = 'show_lyrics';
+        $this->result->data = ['lyrics' => $song->lyrics];
+
+        return "Here are the lyrics for \"{$song->title}\" by {$song->artist->name}.";
+    }
+
+    private function resolveSong(Request $request): ?Song
+    {
+        if (isset($request['query'])) {
+            return $this->songRepository->search($request['query'], 1, $this->context->user)->first();
+        }
+
+        if ($this->context->currentSongId) {
+            return $this->songRepository->findOne($this->context->currentSongId, $this->context->user);
+        }
+
+        return null;
+    }
+}

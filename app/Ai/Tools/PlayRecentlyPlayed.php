@@ -2,8 +2,8 @@
 
 namespace App\Ai\Tools;
 
-use App\Ai\AiAssistantResult;
-use App\Models\User;
+use App\Ai\AiRequestContext;
+use App\Ai\Services\PlaybackService;
 use App\Repositories\SongRepository;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Contracts\Tool;
@@ -13,9 +13,9 @@ use Stringable;
 class PlayRecentlyPlayed implements Tool
 {
     public function __construct(
-        private readonly User $user,
-        private readonly AiAssistantResult $result,
+        private readonly AiRequestContext $context,
         private readonly SongRepository $songRepository,
+        private readonly PlaybackService $playbackService,
     ) {}
 
     public function description(): Stringable|string
@@ -29,22 +29,26 @@ class PlayRecentlyPlayed implements Tool
     public function schema(JsonSchema $schema): array
     {
         return [
-            'limit' => $schema->integer()->description('Number of recent songs to play. Default 50'),
+            ...PlaybackService::limitSchema($schema, 'Number of recent songs to play. Default 50'),
+            ...PlaybackService::queueSchema($schema),
         ];
     }
 
     public function handle(Request $request): Stringable|string
     {
-        $limit = min((int) ($request['limit'] ?? 50), 500);
-        $songs = $this->songRepository->getRecentlyPlayed($limit, $this->user);
+        $songs = $this->songRepository->getRecentlyPlayed(
+            PlaybackService::extractLimit($request),
+            $this->context->user,
+        );
 
         if ($songs->isEmpty()) {
             return 'No recently played songs found.';
         }
 
-        $this->result->action = 'play_songs';
-        $this->result->data = ['songs' => $songs];
+        $queue = $this->playbackService->queueSongs($songs, $request);
+        $verb = $queue ? 'Added' : 'Playing';
+        $suffix = $queue ? ' to the queue' : '';
 
-        return "Playing {$songs->count()} recently played song(s).";
+        return "{$verb} {$songs->count()} recently played song(s){$suffix}.";
     }
 }

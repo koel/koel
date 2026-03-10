@@ -718,11 +718,28 @@ interface LrcLine {
 
 interface AiResponse {
   message: string
-  action: 'play_songs' | 'create_smart_playlist' | 'add_radio_station' | 'play_radio_station' | null
+  action:
+    | 'play_songs'
+    | 'create_smart_playlist'
+    | 'add_radio_station'
+    | 'play_radio_station'
+    | 'add_to_favorites'
+    | 'remove_from_favorites'
+    | 'add_to_playlist'
+    | 'remove_from_playlist'
+    | 'show_lyrics'
+    | null
   conversation_id: string | null
   data: {
+    type?: 'playable' | 'album' | 'artist' | 'radio-station' | 'podcast'
     songs?: Song[]
+    queue?: boolean
+    albums?: Album[]
+    artists?: Artist[]
+    stations?: RadioStation[]
+    podcasts?: Podcast[]
     playlist?: Playlist
     station?: RadioStation
+    lyrics?: string
   }
 }

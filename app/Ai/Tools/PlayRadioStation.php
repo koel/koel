@@ -3,7 +3,7 @@
 namespace App\Ai\Tools;
 
 use App\Ai\AiAssistantResult;
-use App\Models\User;
+use App\Ai\AiRequestContext;
 use App\Repositories\RadioStationRepository;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Contracts\Tool;
@@ -13,7 +13,7 @@ use Stringable;
 class PlayRadioStation implements Tool
 {
     public function __construct(
-        private readonly User $user,
+        private readonly AiRequestContext $context,
         private readonly AiAssistantResult $result,
         private readonly RadioStationRepository $radioStationRepository,
     ) {}
@@ -38,7 +38,7 @@ class PlayRadioStation implements Tool
 
     public function handle(Request $request): Stringable|string
     {
-        $stations = $this->radioStationRepository->search($request['name'], 1, $this->user);
+        $stations = $this->radioStationRepository->search($request['name'], 1, $this->context->user);
 
         if ($stations->isEmpty()) {
             return "No radio station matching \"{$request['name']}\" found.";

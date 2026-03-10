@@ -2,7 +2,7 @@
 
 namespace App\Ai\Tools;
 
-use App\Models\User;
+use App\Ai\AiRequestContext;
 use App\Repositories\RadioStationRepository;
 use App\Repositories\SongRepository;
 use App\Services\EncyclopediaService;
@@ -14,12 +14,10 @@ use Stringable;
 class GetCurrentSong implements Tool
 {
     public function __construct(
-        private readonly User $user,
+        private readonly AiRequestContext $context,
         private readonly SongRepository $songRepository,
         private readonly RadioStationRepository $radioStationRepository,
         private readonly EncyclopediaService $encyclopediaService,
-        private readonly ?string $currentSongId,
-        private readonly ?string $currentRadioStationId,
     ) {}
 
     public function description(): Stringable|string
@@ -37,8 +35,8 @@ class GetCurrentSong implements Tool
 
     public function handle(Request $request): Stringable|string
     {
-        if ($this->currentRadioStationId) {
-            $station = $this->radioStationRepository->findOne($this->currentRadioStationId);
+        if ($this->context->currentRadioStationId) {
+            $station = $this->radioStationRepository->findOne($this->context->currentRadioStationId);
 
             if ($station) {
                 return (
@@ -48,8 +46,8 @@ class GetCurrentSong implements Tool
             }
         }
 
-        if ($this->currentSongId) {
-            $song = $this->songRepository->findOne($this->currentSongId, $this->user);
+        if ($this->context->currentSongId) {
+            $song = $this->songRepository->findOne($this->context->currentSongId, $this->context->user);
 
             if ($song) {
                 $parts = ["Currently playing: **{$song->title}**"];

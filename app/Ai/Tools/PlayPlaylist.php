@@ -2,8 +2,8 @@
 
 namespace App\Ai\Tools;
 
-use App\Ai\AiAssistantResult;
-use App\Models\User;
+use App\Ai\AiRequestContext;
+use App\Ai\Services\PlaybackService;
 use App\Repositories\PlaylistRepository;
 use App\Repositories\SongRepository;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -14,10 +14,10 @@ use Stringable;
 class PlayPlaylist implements Tool
 {
     public function __construct(
-        private readonly User $user,
-        private readonly AiAssistantResult $result,
+        private readonly AiRequestContext $context,
         private readonly PlaylistRepository $playlistRepository,
         private readonly SongRepository $songRepository,
+        private readonly PlaybackService $playbackService,
     ) {}
 
     public function description(): Stringable|string
@@ -32,26 +32,28 @@ class PlayPlaylist implements Tool
     {
         return [
             'name' => $schema->string()->required()->description('The playlist name (or partial name) to search for'),
+            ...PlaybackService::queueSchema($schema),
         ];
     }
 
     public function handle(Request $request): Stringable|string
     {
-        $playlist = $this->playlistRepository->findAccessibleByName($request['name'], $this->user);
+        $playlist = $this->playlistRepository->findAccessibleByName($request['name'], $this->context->user);
 
         if (!$playlist) {
             return "No playlist matching \"{$request['name']}\" found.";
         }
 
-        $songs = $this->songRepository->getByPlaylist($playlist, $this->user);
+        $songs = $this->songRepository->getByPlaylist($playlist, $this->context->user);
 
         if ($songs->isEmpty()) {
             return "The playlist \"{$playlist->name}\" has no songs.";
         }
 
-        $this->result->action = 'play_songs';
-        $this->result->data = ['songs' => $songs];
+        $queue = $this->playbackService->queueSongs($songs, $request);
+        $verb = $queue ? 'Added' : 'Playing';
+        $suffix = $queue ? ' to the queue' : '';
 
-        return "Playing \"{$playlist->name}\" ({$songs->count()} songs).";
+        return "{$verb} \"{$playlist->name}\" ({$songs->count()} songs){$suffix}.";
     }
 }

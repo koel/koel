@@ -10,7 +10,7 @@ use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
 use Stringable;
 
-class PlayArtist implements Tool
+class PlayMostPlayedArtist implements Tool
 {
     public function __construct(
         private readonly AiRequestContext $context,
@@ -20,23 +20,23 @@ class PlayArtist implements Tool
 
     public function description(): Stringable|string
     {
-        return 'Play all songs by a specific artist. Use this when the user wants to listen to a particular artist.';
+        return (
+            'Play all songs by the user\'s most played (top) artist. '
+            . 'Use this when the user wants to listen to their favorite or most listened-to artist.'
+        );
     }
 
     public function schema(JsonSchema $schema): array
     {
-        return [
-            'name' => $schema->string()->required()->description('The artist name (or partial name) to search for'),
-            ...PlaybackService::queueSchema($schema),
-        ];
+        return PlaybackService::queueSchema($schema);
     }
 
     public function handle(Request $request): Stringable|string
     {
-        $artists = $this->artistRepository->search($request['name'], 1, $this->context->user);
+        $artists = $this->artistRepository->getMostPlayed(1, $this->context->user);
 
         if ($artists->isEmpty()) {
-            return "No artist matching \"{$request['name']}\" found.";
+            return 'No play history found yet.';
         }
 
         return $this->playbackService->playArtist($artists->first(), $this->context->user, $request);

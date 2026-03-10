@@ -1,13 +1,11 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Ai;
 
+use App\Ai\AiRequestContext;
 use App\Ai\Tools\GetCurrentSong;
 use App\Models\RadioStation;
 use App\Models\Song;
-use App\Repositories\RadioStationRepository;
-use App\Repositories\SongRepository;
-use App\Services\EncyclopediaService;
 use Laravel\Ai\Tools\Request;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -16,18 +14,6 @@ use function Tests\create_user;
 
 class GetCurrentSongToolTest extends TestCase
 {
-    private function createTool(?string $currentSongId = null, ?string $currentRadioStationId = null): GetCurrentSong
-    {
-        return new GetCurrentSong(
-            create_user(),
-            app(SongRepository::class),
-            app(RadioStationRepository::class),
-            app(EncyclopediaService::class),
-            $currentSongId,
-            $currentRadioStationId,
-        );
-    }
-
     #[Test]
     public function returnsCurrentSongInfo(): void
     {
@@ -38,14 +24,8 @@ class GetCurrentSongToolTest extends TestCase
             'album_name' => 'A Night at the Opera',
         ]);
 
-        $tool = new GetCurrentSong(
-            $user,
-            app(SongRepository::class),
-            app(RadioStationRepository::class),
-            app(EncyclopediaService::class),
-            $song->id,
-            null,
-        );
+        app()->instance(AiRequestContext::class, new AiRequestContext($user, currentSongId: $song->id));
+        $tool = app()->make(GetCurrentSong::class);
 
         $response = (string) $tool->handle(new Request([]));
 
@@ -60,14 +40,8 @@ class GetCurrentSongToolTest extends TestCase
         $user = create_user();
         $station = RadioStation::factory()->create(['name' => 'Jazz FM']);
 
-        $tool = new GetCurrentSong(
-            $user,
-            app(SongRepository::class),
-            app(RadioStationRepository::class),
-            app(EncyclopediaService::class),
-            null,
-            $station->id,
-        );
+        app()->instance(AiRequestContext::class, new AiRequestContext($user, currentRadioStationId: $station->id));
+        $tool = app()->make(GetCurrentSong::class);
 
         $response = (string) $tool->handle(new Request([]));
 
@@ -82,14 +56,11 @@ class GetCurrentSongToolTest extends TestCase
         $song = Song::factory()->for($user, 'owner')->create(['title' => 'Some Song']);
         $station = RadioStation::factory()->create(['name' => 'Rock Radio']);
 
-        $tool = new GetCurrentSong(
-            $user,
-            app(SongRepository::class),
-            app(RadioStationRepository::class),
-            app(EncyclopediaService::class),
-            $song->id,
-            $station->id,
+        app()->instance(
+            AiRequestContext::class,
+            new AiRequestContext($user, currentSongId: $song->id, currentRadioStationId: $station->id),
         );
+        $tool = app()->make(GetCurrentSong::class);
 
         $response = (string) $tool->handle(new Request([]));
 
@@ -102,14 +73,8 @@ class GetCurrentSongToolTest extends TestCase
     {
         $user = create_user();
 
-        $tool = new GetCurrentSong(
-            $user,
-            app(SongRepository::class),
-            app(RadioStationRepository::class),
-            app(EncyclopediaService::class),
-            null,
-            null,
-        );
+        app()->instance(AiRequestContext::class, new AiRequestContext($user));
+        $tool = app()->make(GetCurrentSong::class);
 
         $response = (string) $tool->handle(new Request([]));
 

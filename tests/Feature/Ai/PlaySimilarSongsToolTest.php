@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Ai;
 
 use App\Ai\AiAssistantResult;
+use App\Ai\AiRequestContext;
 use App\Ai\Tools\PlaySimilarSongs;
 use App\Models\Song;
-use App\Repositories\SongRepository;
 use Laravel\Ai\Tools\Request;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -27,7 +27,9 @@ class PlaySimilarSongsToolTest extends TestCase
         Song::factory()->for($user, 'owner')->create(['title' => 'Unrelated']);
 
         $result = new AiAssistantResult();
-        $tool = new PlaySimilarSongs($user, $result, app(SongRepository::class), $referenceSong->id);
+        app()->instance(AiAssistantResult::class, $result);
+        app()->instance(AiRequestContext::class, new AiRequestContext($user, currentSongId: $referenceSong->id));
+        $tool = app()->make(PlaySimilarSongs::class);
 
         $response = $tool->handle(new Request([]));
 
@@ -51,7 +53,9 @@ class PlaySimilarSongsToolTest extends TestCase
         Song::factory()->for($user, 'owner')->create(['title' => 'Jazz Song']);
 
         $result = new AiAssistantResult();
-        $tool = new PlaySimilarSongs($user, $result, app(SongRepository::class), $referenceSong->id);
+        app()->instance(AiAssistantResult::class, $result);
+        app()->instance(AiRequestContext::class, new AiRequestContext($user, currentSongId: $referenceSong->id));
+        $tool = app()->make(PlaySimilarSongs::class);
 
         $response = $tool->handle(new Request([]));
 
@@ -68,7 +72,9 @@ class PlaySimilarSongsToolTest extends TestCase
         $song = Song::factory()->for($user, 'owner')->create(['title' => 'Lonely Song']);
 
         $result = new AiAssistantResult();
-        $tool = new PlaySimilarSongs($user, $result, app(SongRepository::class), $song->id);
+        app()->instance(AiAssistantResult::class, $result);
+        app()->instance(AiRequestContext::class, new AiRequestContext($user, currentSongId: $song->id));
+        $tool = app()->make(PlaySimilarSongs::class);
 
         $response = $tool->handle(new Request([]));
 
@@ -88,7 +94,9 @@ class PlaySimilarSongsToolTest extends TestCase
             ->create(['title' => 'Battery']);
 
         $result = new AiAssistantResult();
-        $tool = new PlaySimilarSongs($user, $result, app(SongRepository::class), $referenceSong->id);
+        app()->instance(AiAssistantResult::class, $result);
+        app()->instance(AiRequestContext::class, new AiRequestContext($user, currentSongId: $referenceSong->id));
+        $tool = app()->make(PlaySimilarSongs::class);
 
         $response = $tool->handle(new Request([]));
 
@@ -103,7 +111,9 @@ class PlaySimilarSongsToolTest extends TestCase
         $user = create_user();
 
         $result = new AiAssistantResult();
-        $tool = new PlaySimilarSongs($user, $result, app(SongRepository::class), null);
+        app()->instance(AiAssistantResult::class, $result);
+        app()->instance(AiRequestContext::class, new AiRequestContext($user));
+        $tool = app()->make(PlaySimilarSongs::class);
 
         $response = $tool->handle(new Request([]));
 

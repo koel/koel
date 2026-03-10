@@ -3,10 +3,10 @@
 namespace App\Ai\Tools;
 
 use App\Ai\AiAssistantResult;
+use App\Ai\AiRequestContext;
 use App\Enums\SmartPlaylistModel;
 use App\Enums\SmartPlaylistOperator;
 use App\Helpers\Uuid;
-use App\Models\User;
 use App\Services\PlaylistService;
 use App\Values\Playlist\PlaylistCreateData;
 use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
@@ -19,7 +19,7 @@ use Throwable;
 class CreateSmartPlaylist implements Tool
 {
     public function __construct(
-        private readonly User $user,
+        private readonly AiRequestContext $context,
         private readonly AiAssistantResult $result,
         private readonly PlaylistService $playlistService,
     ) {}
@@ -122,7 +122,7 @@ class CreateSmartPlaylist implements Tool
 
         $playlist = $this->playlistService->createPlaylist(
             PlaylistCreateData::make(name: $request['name'], ruleGroups: $ruleGroups),
-            $this->user,
+            $this->context->user,
         );
 
         $this->result->action = 'create_smart_playlist';

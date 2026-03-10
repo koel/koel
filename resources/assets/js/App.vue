@@ -22,7 +22,7 @@
       class="fixed right-24 z-20"
       style="bottom: calc(var(--footer-height) + 20px)"
     />
-    <AiAssistantScreen v-if="commonStore.state.uses_ai && isCurrentScreen('AI')" />
+    <AiAssistantScreen v-if="commonStore.state.uses_ai" v-show="isCurrentScreen('AI')" />
     <DropZone v-show="showDropZone" @close="showDropZone = false" />
   </main>
 

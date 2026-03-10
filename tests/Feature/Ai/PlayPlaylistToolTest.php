@@ -1,13 +1,12 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Ai;
 
 use App\Ai\AiAssistantResult;
+use App\Ai\AiRequestContext;
 use App\Ai\Tools\PlayPlaylist;
 use App\Models\Playlist;
 use App\Models\Song;
-use App\Repositories\PlaylistRepository;
-use App\Repositories\SongRepository;
 use Laravel\Ai\Tools\Request;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -30,7 +29,9 @@ class PlayPlaylistToolTest extends TestCase
         $playlist->addPlayables($songs, $user);
 
         $result = new AiAssistantResult();
-        $tool = new PlayPlaylist($user, $result, app(PlaylistRepository::class), app(SongRepository::class));
+        app()->instance(AiAssistantResult::class, $result);
+        app()->instance(AiRequestContext::class, new AiRequestContext($user));
+        $tool = app()->make(PlayPlaylist::class);
         $response = $tool->handle(new Request(['name' => 'Chill']));
 
         self::assertSame('play_songs', $result->action);
@@ -44,7 +45,9 @@ class PlayPlaylistToolTest extends TestCase
         $user = create_user();
 
         $result = new AiAssistantResult();
-        $tool = new PlayPlaylist($user, $result, app(PlaylistRepository::class), app(SongRepository::class));
+        app()->instance(AiAssistantResult::class, $result);
+        app()->instance(AiRequestContext::class, new AiRequestContext($user));
+        $tool = app()->make(PlayPlaylist::class);
         $response = $tool->handle(new Request(['name' => 'Nonexistent']));
 
         self::assertNull($result->action);
@@ -59,7 +62,9 @@ class PlayPlaylistToolTest extends TestCase
         $playlist->users()->attach($user, ['role' => 'owner']);
 
         $result = new AiAssistantResult();
-        $tool = new PlayPlaylist($user, $result, app(PlaylistRepository::class), app(SongRepository::class));
+        app()->instance(AiAssistantResult::class, $result);
+        app()->instance(AiRequestContext::class, new AiRequestContext($user));
+        $tool = app()->make(PlayPlaylist::class);
         $response = $tool->handle(new Request(['name' => 'Empty']));
 
         self::assertNull($result->action);
@@ -75,7 +80,9 @@ class PlayPlaylistToolTest extends TestCase
         $playlist->users()->attach($otherUser, ['role' => 'owner']);
 
         $result = new AiAssistantResult();
-        $tool = new PlayPlaylist($user, $result, app(PlaylistRepository::class), app(SongRepository::class));
+        app()->instance(AiAssistantResult::class, $result);
+        app()->instance(AiRequestContext::class, new AiRequestContext($user));
+        $tool = app()->make(PlayPlaylist::class);
         $response = $tool->handle(new Request(['name' => 'Secret']));
 
         self::assertNull($result->action);

@@ -15,7 +15,7 @@ use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
 use Stringable;
 
-class AddToPlaylist implements Tool
+class RemoveFromPlaylist implements Tool
 {
     public function __construct(
         private readonly AiRequestContext $context,
@@ -31,9 +31,9 @@ class AddToPlaylist implements Tool
     public function description(): Stringable|string
     {
         return (
-            'Add songs to an existing playlist. '
-            . 'Use this when the user wants to add a song or songs to a specific playlist by name. '
-            . 'Can add the currently playing song or search for songs by title.'
+            'Remove songs from an existing playlist. '
+            . 'Use this when the user wants to remove a song or songs from a specific playlist by name. '
+            . 'Can remove the currently playing song or search for songs by title.'
         );
     }
 
@@ -43,11 +43,11 @@ class AddToPlaylist implements Tool
             'playlist_name' => $schema
                 ->string()
                 ->required()
-                ->description('The name (or partial name) of the playlist to add songs to'),
+                ->description('The name (or partial name) of the playlist to remove songs from'),
             'song_query' => $schema
                 ->string()
-                ->description('Search keywords to find songs to add. '
-                . 'If omitted, the currently playing song will be added.'),
+                ->description('Search keywords to find songs to remove. '
+                . 'If omitted, the currently playing song will be removed.'),
         ];
     }
 
@@ -60,32 +60,32 @@ class AddToPlaylist implements Tool
         }
 
         if ($this->gate->denies('collaborate', $playlist)) {
-            return "You don't have permission to add songs to \"{$playlist->name}\".";
+            return "You don't have permission to remove songs from \"{$playlist->name}\".";
         }
 
         if ($playlist->is_smart) {
-            return "Cannot add songs to \"{$playlist->name}\" because it's a smart playlist with automatic rules.";
+            return "Cannot remove songs from \"{$playlist->name}\" because it's a smart playlist with automatic rules.";
         }
 
         $songs = $this->resolveSongs($request);
 
         if ($songs->isEmpty()) {
             return (
-                'Could not find any songs to add. '
+                'Could not find any songs to remove. '
                 . 'Please specify a song title or make sure a song is currently playing.'
             );
         }
 
-        $this->playlistService->addPlayablesToPlaylist($playlist, $songs, $this->context->user);
+        $this->playlistService->removePlayablesFromPlaylist($playlist, $songs);
 
-        $this->result->action = 'add_to_playlist';
+        $this->result->action = 'remove_from_playlist';
         $this->result->data = ['songs' => $songs, 'playlist' => $playlist];
 
         if ($songs->count() === 1) {
-            return "Added \"{$songs->first()->title}\" to \"{$playlist->name}\".";
+            return "Removed \"{$songs->first()->title}\" from \"{$playlist->name}\".";
         }
 
-        return "Added {$songs->count()} song(s) to \"{$playlist->name}\".";
+        return "Removed {$songs->count()} song(s) from \"{$playlist->name}\".";
     }
 
     /** @return Collection<int, Song> */
