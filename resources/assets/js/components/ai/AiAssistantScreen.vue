@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="ai-screen fixed inset-0 z-50 flex flex-col w-screen h-screen overflow-y-auto bg-k-bg text-k-fg"
-    @keydown.esc="goBack"
-  >
+  <div class="ai-screen fixed inset-0 z-50 flex flex-col w-screen h-screen bg-k-bg text-k-fg" @keydown.esc="goBack">
     <button
       class="fixed top-4 right-4 z-20 text-k-fg-50 hover:text-k-fg transition-colors cursor-pointer"
       title="Close"
@@ -12,7 +9,8 @@
       <XIcon class="w-6 h-6" />
     </button>
 
-    <div class="flex-1 flex flex-col items-center p-8">
+    <!-- Initial state: centered prompt -->
+    <div v-if="!hasMessages && !loading" class="flex-1 flex flex-col items-center p-8">
       <div class="w-full max-w-4xl my-auto">
         <form class="relative z-10" @submit.prevent="handleSubmit">
           <div class="relative">
@@ -20,87 +18,125 @@
               ref="textareaEl"
               v-model="prompt"
               v-koel-focus
-              :disabled="loading"
-              class="w-full h-40 p-6 pr-14 pb-12 text-xl rounded-3xl bg-k-bg-input text-k-fg-input border border-k-fg-10 resize-none focus:outline-none focus:border-k-highlight disabled:opacity-50 disabled:cursor-not-allowed"
+              class="w-full h-40 p-6 pr-14 pb-12 text-xl rounded-3xl bg-k-bg-input text-k-fg-input border border-k-fg-10 resize-none focus:outline-none focus:border-k-highlight"
               name="prompt"
               placeholder="Ask Koel to play songs, create playlists, add radio stations, and more."
               @keydown.enter.exact.prevent="handleSubmit"
             />
             <button
-              :disabled="!prompt.trim() || loading"
+              :disabled="!prompt.trim()"
               class="absolute right-3 bottom-4 w-9 h-9 flex items-center justify-center rounded-full bg-k-highlight text-white disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed transition-opacity"
               title="Send"
               type="submit"
             >
-              <Icon v-if="loading" :icon="faSpinner" spin />
-              <ArrowUpIcon v-else class="w-5 h-5" />
+              <ArrowUpIcon class="w-5 h-5" />
             </button>
           </div>
         </form>
 
-        <div
-          v-if="displayedMessage"
-          class="relative z-10 w-full mt-4 text-lg px-4 py-2 rounded-lg ai-response"
-          :class="error ? 'bg-red-500/10 text-red-400' : 'bg-k-highlight/10 text-k-fg'"
-          v-html="revealedHtml"
-        />
-
-        <AiSamplePrompts
-          v-if="!prompt.trim() && !displayedMessage"
-          class="relative z-10 w-full mt-4"
-          @select="selectSamplePrompt"
-        />
+        <AiSamplePrompts v-if="!prompt.trim()" class="relative z-10 w-full mt-4" @select="selectSamplePrompt" />
       </div>
     </div>
+
+    <!-- Chat mode -->
+    <template v-else>
+      <div ref="chatContainerEl" class="flex-1 overflow-y-auto p-8 pb-4">
+        <div class="w-full max-w-4xl mx-auto space-y-4">
+          <AiChatMessage
+            v-for="(msg, index) in messages"
+            :key="msg.id"
+            :message="msg"
+            :animate="msg.role === 'assistant' && index === lastAssistantIndex"
+          />
+          <div v-if="loading" class="flex justify-start">
+            <div class="rounded-2xl px-4 py-3 bg-white/5 text-k-fg-50">
+              <Icon :icon="faSpinner" spin />
+            </div>
+          </div>
+          <div ref="messagesEndEl" />
+        </div>
+      </div>
+
+      <div class="shrink-0 p-4 pt-2 border-t border-k-fg-10">
+        <form class="w-full max-w-4xl mx-auto" @submit.prevent="handleSubmit">
+          <div class="relative">
+            <textarea
+              ref="textareaEl"
+              v-model="prompt"
+              v-koel-focus
+              :disabled="loading"
+              class="w-full p-4 pr-14 text-base rounded-2xl bg-k-bg-input text-k-fg-input border border-k-fg-10 resize-none focus:outline-none focus:border-k-highlight disabled:opacity-50 disabled:cursor-not-allowed"
+              name="prompt"
+              placeholder="Send a message…"
+              rows="1"
+              @keydown.enter.exact.prevent="handleSubmit"
+              @input="autoResize"
+            />
+            <button
+              :disabled="!prompt.trim() || loading"
+              class="absolute right-3 bottom-3 w-8 h-8 flex items-center justify-center rounded-full bg-k-highlight text-white disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed transition-opacity"
+              title="Send"
+              type="submit"
+            >
+              <Icon v-if="loading" :icon="faSpinner" spin />
+              <ArrowUpIcon v-else class="w-4 h-4" />
+            </button>
+          </div>
+        </form>
+      </div>
+    </template>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { ArrowUpIcon, XIcon } from 'lucide-vue-next'
-import { computed, nextTick, ref } from 'vue'
-import { aiService } from '@/services/aiService'
+import { computed, nextTick, ref, watch } from 'vue'
 import { playback } from '@/services/playbackManager'
 import { queueStore } from '@/stores/queueStore'
-import { radioStationStore } from '@/stores/radioStationStore'
-import { simpleMarkdownToHtml } from '@/utils/formatters'
+import { useAiChat } from '@/composables/useAiChat'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useRouter } from '@/composables/useRouter'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 
+import AiChatMessage from '@/components/ai/AiChatMessage.vue'
 import AiSamplePrompts from '@/components/ai/AiSamplePrompts.vue'
 
 const { toastSuccess } = useMessageToaster()
 const { go, url } = useRouter()
 const { handleHttpError } = useErrorHandler()
+const { messages, loading, hasMessages, sendPrompt } = useAiChat()
 
 const textareaEl = ref<HTMLTextAreaElement>()
+const messagesEndEl = ref<HTMLDivElement>()
+const chatContainerEl = ref<HTMLDivElement>()
 const prompt = ref('')
-const loading = ref(false)
-const displayedMessage = ref('')
-const error = ref(false)
 
-const revealedHtml = computed(() => {
-  if (!displayedMessage.value) {
-    return ''
+const lastAssistantIndex = computed(() => {
+  for (let i = messages.value.length - 1; i >= 0; i--) {
+    if (messages.value[i].role === 'assistant') {
+      return i
+    }
   }
 
-  const html = simpleMarkdownToHtml(displayedMessage.value)
-  let wordIndex = 0
-
-  // Split on word boundaries while preserving HTML tags intact
-  return html.replace(/(<[^>]+>)|(\S+)/g, (match, tag) => {
-    if (tag) {
-      return match // HTML tags pass through unchanged
-    }
-
-    const delay = wordIndex * 60
-    wordIndex++
-    return `<span class="ai-word" style="animation-delay:${delay}ms">${match}</span>`
-  })
+  return -1
 })
 
 const goBack = () => go(-1)
+
+const scrollToBottom = async () => {
+  await nextTick()
+  messagesEndEl.value?.scrollIntoView({ behavior: 'smooth' })
+}
+
+const autoResize = () => {
+  const el = textareaEl.value
+
+  if (el) {
+    el.style.height = 'auto'
+    el.style.height = `${Math.min(el.scrollHeight, 120)}px`
+  }
+}
 
 const selectSamplePrompt = async (text: string) => {
   prompt.value = text
@@ -108,23 +144,28 @@ const selectSamplePrompt = async (text: string) => {
   textareaEl.value?.focus()
 }
 
+watch(() => messages.value.length, scrollToBottom)
+
 const handleSubmit = async () => {
   if (!prompt.value.trim() || loading.value) {
     return
   }
 
-  loading.value = true
-  displayedMessage.value = ''
-  error.value = false
+  const text = prompt.value.trim()
+  prompt.value = ''
+
+  await nextTick()
+
+  if (textareaEl.value) {
+    textareaEl.value.style.height = 'auto'
+  }
 
   try {
-    const response = await aiService.prompt(prompt.value, {
-      songId: queueStore.current?.id,
-      radioStationId: radioStationStore.current?.id,
-    })
-    const result = aiService.handleResponse(response)
+    const result = await sendPrompt(text)
 
-    displayedMessage.value = result.message
+    if (!result) {
+      return
+    }
 
     if (result.action === 'create_smart_playlist') {
       toastSuccess(`Playlist "${result.resource.name}" created.`)
@@ -146,8 +187,6 @@ const handleSubmit = async () => {
     }
   } catch (e: unknown) {
     handleHttpError(e)
-  } finally {
-    loading.value = false
   }
 }
 </script>
@@ -166,20 +205,5 @@ const handleSubmit = async () => {
 
 .ai-screen:has(textarea:focus)::before {
   opacity: 0.5;
-}
-
-.ai-response :deep(.ai-word) {
-  opacity: 0;
-  animation: word-fade-in 0.4s ease forwards;
-}
-
-@keyframes word-fade-in {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
 }
 </style>

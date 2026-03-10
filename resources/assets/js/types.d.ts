@@ -716,6 +716,13 @@ interface LrcLine {
   text: string
 }
 
+interface AiChatMessage {
+  id: string
+  role: 'user' | 'assistant'
+  content: string
+  error: boolean
+}
+
 interface AiResponse {
   message: string
   action:

@@ -1,12 +1,18 @@
 import { screen, waitFor } from '@testing-library/vue'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createHarness } from '@/__tests__/TestHarness'
 import { aiService } from '@/services/aiService'
+import { useAiChat } from '@/composables/useAiChat'
 import Router from '@/router'
 import Component from './AiAssistantScreen.vue'
 
 describe('aiAssistantScreen.vue', () => {
   const h = createHarness()
+
+  beforeEach(() => {
+    Element.prototype.scrollIntoView = vi.fn()
+    useAiChat().clearHistory()
+  })
 
   it('renders the prompt textarea', () => {
     h.render(Component)
@@ -18,7 +24,7 @@ describe('aiAssistantScreen.vue', () => {
     expect(screen.getAllByRole('button').length).toBeGreaterThan(1)
   })
 
-  it('submits a prompt and displays the response', async () => {
+  it('submits a prompt and transitions to chat mode', async () => {
     const response: AiResponse = {
       message: 'Playing some jazz for you.',
       action: null,
@@ -40,8 +46,10 @@ describe('aiAssistantScreen.vue', () => {
 
     await waitFor(() => {
       expect(aiService.prompt).toHaveBeenCalledWith('Play some jazz', expect.objectContaining({}))
-      const responseEl = document.querySelector('.ai-response')
-      expect(responseEl?.textContent).toContain('Playing some jazz')
+      const messages = document.querySelectorAll('.ai-message')
+      const texts = Array.from(messages).map(el => el.textContent)
+      expect(texts.some(t => t?.includes('Play some jazz'))).toBe(true)
+      expect(texts.some(t => t?.includes('Playing some jazz'))).toBe(true)
     })
   })
 
@@ -70,6 +78,31 @@ describe('aiAssistantScreen.vue', () => {
     const promptText = sampleButton.textContent!.trim()
     await h.user.click(sampleButton)
 
-    expect((screen.getByRole('textbox') as HTMLTextAreaElement).value).toBe(promptText)
+    expect(screen.getByRole<HTMLTextAreaElement>('textbox').value).toBe(promptText)
+  })
+
+  it('shows chat input at bottom after first message', async () => {
+    const response: AiResponse = {
+      message: 'Done.',
+      action: null,
+      conversation_id: 'conv-1',
+      data: {},
+    }
+
+    h.mock(aiService, 'prompt').mockResolvedValue(response)
+    h.mock(aiService, 'handleResponse').mockReturnValue({
+      message: 'Done.',
+      action: null,
+      resource: undefined,
+    })
+
+    h.render(Component)
+
+    await h.type(screen.getByRole('textbox'), 'Hello')
+    await h.user.click(screen.getByTitle('Send'))
+
+    await waitFor(() => {
+      screen.getByPlaceholderText('Send a message…')
+    })
   })
 })

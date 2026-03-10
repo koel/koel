@@ -112,6 +112,10 @@ export const aiService = {
     return { message, action: null, resource: undefined }
   },
 
+  resetConversation: () => {
+    aiService.conversationId = null
+  },
+
   syncFavoriteState: (data: AiResponse['data'], favorite: boolean) => {
     const type = data.type ?? 'playable'
 
