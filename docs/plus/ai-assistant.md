@@ -23,7 +23,16 @@ AI_ENABLED=true
 ANTHROPIC_API_KEY=your-anthropic-api-key
 ```
 
-Additional providers (Gemini, Ollama, etc.) can be configured in `config/ai.php`.
+OpenAI is the default provider, but the AI assistant is powered by [Laravel's AI SDK](https://laravel.com/docs/12.x/ai-sdk),
+which supports a wide range of providers including Anthropic, Gemini, DeepSeek, Mistral, Groq, Ollama, and more.
+You can switch the default provider by setting the `AI_PROVIDER` environment variable:
+
+```dotenv
+AI_PROVIDER=anthropic
+```
+
+For the full list of supported providers and their configuration options,
+refer to the [Laravel AI SDK documentation](https://laravel.com/docs/12.x/ai-sdk).
 
 ## Using the Assistant
 
