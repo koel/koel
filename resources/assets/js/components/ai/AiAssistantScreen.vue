@@ -40,17 +40,7 @@
 
     <!-- Chat mode -->
     <template v-else>
-      <div ref="chatContainerEl" class="flex-1 overflow-y-auto p-8 pb-4">
-        <div class="w-full max-w-4xl mx-auto space-y-4">
-          <AiChatMessage v-for="msg in messages" :key="msg.id" :message="msg" />
-          <div v-if="loading" class="flex justify-start">
-            <div class="rounded-2xl px-4 py-3 bg-white/5 text-k-fg-50">
-              <Icon :icon="faSpinner" spin />
-            </div>
-          </div>
-          <div ref="messagesEndEl" />
-        </div>
-      </div>
+      <AiChatHistory :messages="messages" :loading="loading" class="flex-1 p-8 pb-4" />
 
       <div class="shrink-0 p-4 pt-2 border-t border-k-fg-10">
         <form class="w-full max-w-4xl mx-auto" @submit.prevent="handleSubmit">
@@ -86,7 +76,7 @@
 <script lang="ts" setup>
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { ArrowUpIcon, XIcon } from 'lucide-vue-next'
-import { nextTick, ref, watch } from 'vue'
+import { nextTick, ref } from 'vue'
 import { playback } from '@/services/playbackManager'
 import { queueStore } from '@/stores/queueStore'
 import { useAiChat } from '@/composables/useAiChat'
@@ -94,7 +84,7 @@ import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useRouter } from '@/composables/useRouter'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 
-import AiChatMessage from '@/components/ai/AiChatMessage.vue'
+import AiChatHistory from '@/components/ai/AiChatHistory.vue'
 import AiSamplePrompts from '@/components/ai/AiSamplePrompts.vue'
 
 const { toastSuccess } = useMessageToaster()
@@ -103,16 +93,9 @@ const { handleHttpError } = useErrorHandler()
 const { messages, loading, hasMessages, sendPrompt } = useAiChat()
 
 const textareaEl = ref<HTMLTextAreaElement>()
-const messagesEndEl = ref<HTMLDivElement>()
-const chatContainerEl = ref<HTMLDivElement>()
 const prompt = ref('')
 
 const goBack = () => go(-1)
-
-const scrollToBottom = async () => {
-  await nextTick()
-  messagesEndEl.value?.scrollIntoView({ behavior: 'smooth' })
-}
 
 const autoResize = () => {
   const el = textareaEl.value
@@ -128,8 +111,6 @@ const selectSamplePrompt = async (text: string) => {
   await nextTick()
   textareaEl.value?.focus()
 }
-
-watch(() => messages.value.length, scrollToBottom)
 
 const handleSubmit = async () => {
   if (!prompt.value.trim() || loading.value) {
