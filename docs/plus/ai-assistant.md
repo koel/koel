@@ -2,7 +2,7 @@
 description: Using the AI assistant to control music playback, manage playlists, and explore your library with natural language.
 ---
 
-# AI Assistant <PlusBadge />
+# AI Assistant
 
 Koel Plus comes with an AI-powered assistant that lets you interact with your music library using natural language.
 Instead of navigating through menus, you can simply type what you want in plain English.
