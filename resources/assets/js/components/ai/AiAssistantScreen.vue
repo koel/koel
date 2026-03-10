@@ -163,13 +163,8 @@ const handleSubmit = async () => {
   position: fixed;
   inset: 0;
   background: #000;
-  opacity: 0;
-  transition: opacity 0.5s ease;
+  opacity: 0.4;
   pointer-events: none;
   z-index: 0;
-}
-
-.ai-screen:has(textarea:focus)::before {
-  opacity: 0.5;
 }
 </style>
