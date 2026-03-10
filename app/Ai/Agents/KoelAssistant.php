@@ -62,10 +62,11 @@ class KoelAssistant implements Agent, Conversational, HasTools
                 ->in(app_path('Ai/Tools')),
         )
             ->map(
-                fn ($file) => 'App\\Ai\\Tools\\' . str_replace(['/', '.php'], ['\\', ''], $file->getRelativePathname()),
+                static fn ($file) => 'App\\Ai\\Tools\\'
+                . str_replace(['/', '.php'], ['\\', ''], $file->getRelativePathname()),
             )
-            ->filter(fn (string $class) => is_subclass_of($class, Tool::class))
-            ->map(fn (string $class) => app()->make($class))
+            ->filter(static fn (string $class) => is_subclass_of($class, Tool::class))
+            ->map(static fn (string $class) => app()->make($class))
             ->values()
             ->all();
     }

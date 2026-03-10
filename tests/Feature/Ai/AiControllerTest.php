@@ -28,7 +28,7 @@ class AiControllerTest extends PlusTestCase
             ->assertSuccessful()
             ->assertJsonStructure(['message', 'action', 'data', 'conversation_id']);
 
-        KoelAssistant::assertPrompted(fn ($prompt) => $prompt->contains('Play some jazz'));
+        KoelAssistant::assertPrompted(static fn ($prompt) => $prompt->contains('Play some jazz'));
     }
 
     #[Test]
