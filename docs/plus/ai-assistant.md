@@ -7,6 +7,13 @@ description: Using the AI assistant to control music playback, manage playlists,
 Koel Plus comes with an AI-powered assistant that lets you interact with your music library using natural language.
 Instead of navigating through menus, you can simply type what you want in plain English.
 
+:::warning Important
+As with any AI-powered feature, the assistant may occasionally misunderstand your request, produce unexpected results,
+or fail to find what you're looking for. Natural language is inherently ambiguous, and the assistant's responses
+depend on the underlying AI model. Always verify important actions (e.g., deleting playlists) and don't hesitate
+to rephrase your request if the result isn't what you expected.
+:::
+
 ## Setup
 
 To enable the AI assistant, you need to configure an AI provider. Set the following environment variables in your `.env` file:
