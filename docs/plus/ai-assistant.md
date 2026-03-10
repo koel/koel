@@ -30,7 +30,7 @@ refer to the [Laravel AI SDK documentation](https://laravel.com/docs/12.x/ai-sdk
 
 ## Using the Assistant
 
-Open the AI assistant by pressing <kbd>Cmd/Ctrl+K</kbd> or clicking the sparkle button in the interface.
+Open the AI assistant by pressing <kbd>/</kbd> or clicking the sparkle button in the interface.
 Type your request in natural language and press Enter.
 
 The assistant understands a wide range of requests. Here are some examples to get you started:
