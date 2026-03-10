@@ -21,6 +21,7 @@ type AiHandledResult = {
   | { action: 'add_to_playlist'; resource: { songs: Song[]; playlist: Reactive<Playlist> } }
   | { action: 'remove_from_playlist'; resource: { songs: Song[]; playlist: Reactive<Playlist> } }
   | { action: 'show_lyrics'; resource: undefined }
+  | { action: 'update_lyrics'; resource: undefined }
   | { action: null; resource: undefined }
 )
 
@@ -92,6 +93,18 @@ export const aiService = {
       return {
         message: `${message}\n\n${response.data.lyrics}`,
         action: 'show_lyrics',
+        resource: undefined,
+      }
+    }
+
+    if (response.action === 'update_lyrics' && response.data.lyrics) {
+      if (response.data.song) {
+        playableStore.syncWithVault(response.data.song)
+      }
+
+      return {
+        message: `${message}\n\n${response.data.lyrics}`,
+        action: 'update_lyrics',
         resource: undefined,
       }
     }

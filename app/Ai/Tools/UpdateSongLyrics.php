@@ -2,6 +2,7 @@
 
 namespace App\Ai\Tools;
 
+use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
 use App\Repositories\SongRepository;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -13,6 +14,7 @@ class UpdateSongLyrics implements Tool
 {
     public function __construct(
         private readonly AiRequestContext $context,
+        private readonly AiAssistantResult $result,
         private readonly SongRepository $songRepository,
     ) {}
 
@@ -53,6 +55,9 @@ class UpdateSongLyrics implements Tool
         $song->lyrics = $request['lyrics'];
         $song->save();
 
-        return "Lyrics for \"{$song->title}\" by {$song->artist->name} have been updated.";
+        $this->result->action = 'update_lyrics';
+        $this->result->data = ['lyrics' => $song->lyrics, 'song' => $song];
+
+        return "Here are the lyrics for \"{$song->title}\" by {$song->artist->name}.";
     }
 }

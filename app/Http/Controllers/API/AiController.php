@@ -91,6 +91,10 @@ class AiController extends Controller
             'show_lyrics' => [
                 'lyrics' => $result->data['lyrics'],
             ],
+            'update_lyrics' => [
+                'lyrics' => $result->data['lyrics'] ?? '',
+                'song' => isset($result->data['song']) ? SongResource::make($result->data['song']) : null,
+            ],
             default => [],
         };
     }

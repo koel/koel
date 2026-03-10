@@ -728,6 +728,7 @@ interface AiResponse {
     | 'add_to_playlist'
     | 'remove_from_playlist'
     | 'show_lyrics'
+    | 'update_lyrics'
     | null
   conversation_id: string | null
   data: {
@@ -740,6 +741,7 @@ interface AiResponse {
     podcasts?: Podcast[]
     playlist?: Playlist
     station?: RadioStation
+    song?: Song
     lyrics?: string
   }
 }

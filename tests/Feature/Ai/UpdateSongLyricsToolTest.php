@@ -34,8 +34,10 @@ class UpdateSongLyricsToolTest extends TestCase
 
         $song->refresh();
         self::assertStringContainsString('Stairway to Heaven', (string) $response);
-        self::assertStringContainsString('updated', (string) $response);
         self::assertSame("There's a lady who's sure all that glitters is gold", $song->lyrics);
+        self::assertSame('update_lyrics', $result->action);
+        self::assertSame($song->lyrics, $result->data['lyrics']);
+        self::assertTrue($result->data['song']->is($song));
     }
 
     #[Test]
