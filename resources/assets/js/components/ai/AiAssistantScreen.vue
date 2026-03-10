@@ -1,10 +1,10 @@
 <template>
   <div
-    class="ai-screen fixed inset-0 z-50 flex flex-col w-screen h-screen overflow-hidden bg-k-bg text-k-fg"
+    class="ai-screen fixed inset-0 z-50 flex flex-col w-screen h-screen overflow-y-auto bg-k-bg text-k-fg"
     @keydown.esc="goBack"
   >
     <button
-      class="absolute top-4 right-4 z-10 text-k-fg-50 hover:text-k-fg transition-colors cursor-pointer"
+      class="fixed top-4 right-4 z-20 text-k-fg-50 hover:text-k-fg transition-colors cursor-pointer"
       title="Close"
       type="button"
       @click="goBack"
@@ -12,8 +12,8 @@
       <XIcon class="w-6 h-6" />
     </button>
 
-    <div class="flex-1 flex flex-col items-center justify-center px-8">
-      <div class="w-full max-w-4xl">
+    <div class="flex-1 flex flex-col items-center p-8">
+      <div class="w-full max-w-4xl my-auto">
         <form class="relative z-10" @submit.prevent="handleSubmit">
           <div class="relative">
             <textarea
