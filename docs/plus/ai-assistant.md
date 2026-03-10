@@ -11,14 +11,14 @@ Instead of navigating through menus, you can simply type what you want in plain 
 
 To enable the AI assistant, you need to configure an AI provider. Set the following environment variables in your `.env` file:
 
-```
+```dotenv
 AI_ENABLED=true
 OPENAI_API_KEY=your-openai-api-key
 ```
 
 Alternatively, you can use Anthropic (Claude) instead of OpenAI:
 
-```
+```dotenv
 AI_ENABLED=true
 ANTHROPIC_API_KEY=your-anthropic-api-key
 ```
