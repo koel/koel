@@ -4,6 +4,7 @@ namespace App\Ai\Tools;
 
 use App\Ai\AiRequestContext;
 use App\Ai\Services\PlaybackService;
+use App\Enums\PlayableType;
 use App\Repositories\SongRepository;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Contracts\Tool;
@@ -39,6 +40,7 @@ class PlayRecentlyPlayed implements Tool
         $songs = $this->songRepository->getRecentlyPlayed(
             PlaybackService::extractLimit($request),
             $this->context->user,
+            type: PlayableType::SONG,
         );
 
         if ($songs->isEmpty()) {

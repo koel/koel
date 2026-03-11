@@ -4,6 +4,7 @@ namespace App\Ai\Tools;
 
 use App\Ai\AiRequestContext;
 use App\Ai\Services\PlaybackService;
+use App\Enums\PlayableType;
 use App\Repositories\SongRepository;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Contracts\Tool;
@@ -36,7 +37,11 @@ class PlayMostPlayed implements Tool
 
     public function handle(Request $request): Stringable|string
     {
-        $songs = $this->songRepository->getMostPlayed(PlaybackService::extractLimit($request), $this->context->user);
+        $songs = $this->songRepository->getMostPlayed(
+            PlaybackService::extractLimit($request),
+            $this->context->user,
+            type: PlayableType::SONG,
+        );
 
         if ($songs->isEmpty()) {
             return 'No play history found yet.';

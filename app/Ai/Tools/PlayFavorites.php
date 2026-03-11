@@ -4,6 +4,7 @@ namespace App\Ai\Tools;
 
 use App\Ai\AiRequestContext;
 use App\Ai\Services\PlaybackService;
+use App\Enums\PlayableType;
 use App\Repositories\SongRepository;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Contracts\Tool;
@@ -33,7 +34,7 @@ class PlayFavorites implements Tool
 
     public function handle(Request $request): Stringable|string
     {
-        $songs = $this->songRepository->getFavorites($this->context->user);
+        $songs = $this->songRepository->getFavorites($this->context->user, type: PlayableType::SONG);
 
         if ($songs->isEmpty()) {
             return 'You have no favorite songs yet.';

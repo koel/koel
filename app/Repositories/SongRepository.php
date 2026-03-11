@@ -67,9 +67,9 @@ class SongRepository extends Repository implements ScoutableRepository
     }
 
     /** @return Collection|array<array-key, Song> */
-    public function getMostPlayed(int $count = 8, ?User $scopedUser = null): Collection
+    public function getMostPlayed(int $count = 8, ?User $scopedUser = null, ?PlayableType $type = null): Collection
     {
-        return Song::query(user: $scopedUser ?? $this->auth->user())
+        return Song::query(type: $type, user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
             ->where('interactions.play_count', '>', 0)
             ->orderByDesc('interactions.play_count')
@@ -78,9 +78,9 @@ class SongRepository extends Repository implements ScoutableRepository
     }
 
     /** @return Collection|array<array-key, Song> */
-    public function getLeastPlayed(int $count = 50, ?User $scopedUser = null): Collection
+    public function getLeastPlayed(int $count = 50, ?User $scopedUser = null, ?PlayableType $type = null): Collection
     {
-        return Song::query(user: $scopedUser ?? $this->auth->user())
+        return Song::query(type: $type, user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
             ->orderBy('play_count')
             ->limit($count)
@@ -88,9 +88,9 @@ class SongRepository extends Repository implements ScoutableRepository
     }
 
     /** @return Collection|array<array-key, Song> */
-    public function getRecentlyPlayed(int $count = 8, ?User $scopedUser = null): Collection
+    public function getRecentlyPlayed(int $count = 8, ?User $scopedUser = null, ?PlayableType $type = null): Collection
     {
-        return Song::query(user: $scopedUser ?? $this->auth->user())
+        return Song::query(type: $type, user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
             ->where('interactions.play_count', '>', 0)
             ->addSelect('interactions.last_played_at')
@@ -146,9 +146,11 @@ class SongRepository extends Repository implements ScoutableRepository
     }
 
     /** @return Collection|array<array-key, Song> */
-    public function getFavorites(?User $scopedUser = null): Collection
+    public function getFavorites(?User $scopedUser = null, ?PlayableType $type = null): Collection
     {
-        return Song::query(user: $scopedUser ?? $this->auth->user())->withUserContext(favoritesOnly: true)->get();
+        return Song::query(type: $type, user: $scopedUser ?? $this->auth->user())->withUserContext(
+            favoritesOnly: true,
+        )->get();
     }
 
     /** @return Collection|array<array-key, Song> */
