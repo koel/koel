@@ -1,6 +1,6 @@
 <template>
   <div ref="containerEl">
-    <div class="w-full max-w-4xl mx-auto space-y-4">
+    <div class="w-full mx-auto space-y-4">
       <AiChatMessage v-for="msg in messages" :key="msg.id" :message="msg" />
       <div v-if="loading" class="flex justify-start">
         <div class="rounded-3xl px-5 py-3">

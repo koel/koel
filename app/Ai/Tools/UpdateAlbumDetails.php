@@ -60,7 +60,7 @@ class UpdateAlbumDetails implements Tool
 
         $album = $this->albumService->updateAlbum($album, AlbumUpdateData::make(
             name: $request['name'] ?? $album->name,
-            year: array_key_exists('year', $request->all()) ? $request['year'] : $album->year,
+            year: array_key_exists('year', $request->only(['year'])) ? $request['year'] : $album->year,
         ));
 
         $this->result->action = 'update_album';
@@ -72,11 +72,11 @@ class UpdateAlbumDetails implements Tool
             $changes[] = "name to \"{$request['name']}\"";
         }
 
-        if (array_key_exists('year', $request->all())) {
+        if (array_key_exists('year', $request->only(['year']))) {
             $changes[] = $request['year'] ? "year to {$request['year']}" : 'removed the release year';
         }
 
-        if (empty($changes)) {
+        if ($changes === []) {
             return "No changes were made to \"{$album->name}\".";
         }
 

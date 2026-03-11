@@ -1,6 +1,6 @@
 <template>
   <div
-    class="ai-screen fixed inset-0 z-50 px-2 flex flex-col w-screen h-screen bg-k-bg text-xl text-k-fg"
+    class="ai-screen fixed inset-0 z-50 px-2 flex overflow-hidden flex-col w-screen h-screen bg-k-bg text-xl text-k-fg"
     @keydown.esc="goBack"
   >
     <button
@@ -22,7 +22,7 @@
 
     <!-- Chat mode -->
     <template v-else>
-      <section v-koel-overflow-fade class="py-6 flex-1 flex flex-col overflow-auto">
+      <section v-koel-overflow-fade class="py-6 flex-1 flex flex-col max-w-4xl overflow-auto mx-auto">
         <AiChatHistory :messages="messages" :loading="loading" class="flex-1" />
       </section>
 
