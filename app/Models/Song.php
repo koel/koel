@@ -175,7 +175,7 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
         $genreNames = is_array($genres) ? $genres : explode(',', $genres);
 
         $genreIds = collect($genreNames)
-            ->map(trim(...))
+            ->map(static fn ($g) => trim($g))
             ->filter()
             ->unique()
             ->map(static fn (string $name) => Genre::get($name)->id);
@@ -191,10 +191,11 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
     public function genreEqualsTo(string|array $genres): bool
     {
         $genreNames = collect(is_string($genres) ? explode(',', $genres) : $genres)
-            ->map(trim(...))
+            ->map(static fn ($g) => trim($g))
             ->filter()
             ->unique()
             ->sort()
+            ->values()
             ->join(', ');
 
         if (!$this->genre && !$genreNames) {
