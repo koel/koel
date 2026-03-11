@@ -1,5 +1,8 @@
 <template>
-  <div class="ai-screen fixed inset-0 z-50 flex flex-col w-screen h-screen bg-k-bg text-k-fg" @keydown.esc="goBack">
+  <div
+    class="ai-screen fixed inset-0 z-50 px-2 flex flex-col w-screen h-screen bg-k-bg text-xl text-k-fg"
+    @keydown.esc="goBack"
+  >
     <button
       class="fixed top-4 right-4 z-20 text-k-fg-50 hover:text-k-fg transition-colors cursor-pointer"
       title="Close"
@@ -12,70 +15,32 @@
     <!-- Initial state: centered prompt -->
     <div v-if="!hasMessages && !loading" class="flex-1 flex flex-col items-center p-8">
       <div class="w-full max-w-4xl my-auto">
-        <form class="relative z-10" @submit.prevent="handleSubmit">
-          <div class="relative">
-            <textarea
-              ref="textareaEl"
-              v-model="prompt"
-              v-koel-focus
-              class="w-full h-40 p-6 pr-14 pb-12 text-xl rounded-3xl bg-k-bg-input text-k-fg-input border border-k-fg-10 resize-none focus:outline-none focus:border-k-highlight"
-              name="prompt"
-              placeholder="Ask Koel to play songs, create playlists, add radio stations, and more."
-              @keydown.enter.exact.prevent="handleSubmit"
-            />
-            <button
-              :disabled="!prompt.trim()"
-              class="absolute right-3 bottom-4 w-9 h-9 flex items-center justify-center rounded-full bg-k-highlight text-white disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed transition-opacity"
-              title="Send"
-              type="submit"
-            >
-              <ArrowUpIcon class="w-5 h-5" />
-            </button>
-          </div>
-        </form>
-
-        <AiSamplePrompts v-if="!prompt.trim()" class="relative z-10 w-full mt-4" @select="selectSamplePrompt" />
+        <AiPromptBox ref="promptBoxEl" class="relative z-10" @submit="handleSubmit" />
+        <AiSamplePrompts class="relative z-10 w-full mt-4" @select="selectSamplePrompt" />
       </div>
     </div>
 
     <!-- Chat mode -->
     <template v-else>
-      <AiChatHistory :messages="messages" :loading="loading" class="flex-1 p-8 pb-4" />
+      <section v-koel-overflow-fade class="py-6 flex-1 flex flex-col overflow-auto">
+        <AiChatHistory :messages="messages" :loading="loading" class="flex-1" />
+      </section>
 
-      <div class="shrink-0 p-4 pt-2 border-t border-k-fg-10">
-        <form class="w-full max-w-4xl mx-auto" @submit.prevent="handleSubmit">
-          <div class="relative">
-            <textarea
-              ref="textareaEl"
-              v-model="prompt"
-              v-koel-focus
-              :disabled="loading"
-              class="w-full p-4 pr-14 text-base rounded-2xl bg-k-bg-input text-k-fg-input border border-k-fg-10 resize-none focus:outline-none focus:border-k-highlight disabled:opacity-50 disabled:cursor-not-allowed"
-              name="prompt"
-              placeholder="Send a message…"
-              rows="1"
-              @keydown.enter.exact.prevent="handleSubmit"
-              @input="autoResize"
-            />
-            <button
-              :disabled="!prompt.trim() || loading"
-              class="absolute right-3 bottom-3 w-8 h-8 flex items-center justify-center rounded-full bg-k-highlight text-white disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed transition-opacity"
-              title="Send"
-              type="submit"
-            >
-              <Icon v-if="loading" :icon="faSpinner" spin />
-              <ArrowUpIcon v-else class="w-4 h-4" />
-            </button>
-          </div>
-        </form>
+      <div class="shrink-0 p-4 pt-2">
+        <AiPromptBox
+          ref="promptBoxEl"
+          mode="chat"
+          :disabled="loading"
+          class="w-full max-w-4xl mx-auto"
+          @submit="handleSubmit"
+        />
       </div>
     </template>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { faSpinner } from '@fortawesome/free-solid-svg-icons'
-import { ArrowUpIcon, XIcon } from 'lucide-vue-next'
+import { XIcon } from 'lucide-vue-next'
 import { nextTick, ref } from 'vue'
 import { playback } from '@/services/playbackManager'
 import { queueStore } from '@/stores/queueStore'
@@ -85,6 +50,7 @@ import { useRouter } from '@/composables/useRouter'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 
 import AiChatHistory from '@/components/ai/AiChatHistory.vue'
+import AiPromptBox from '@/components/ai/AiPromptBox.vue'
 import AiSamplePrompts from '@/components/ai/AiSamplePrompts.vue'
 
 const { toastSuccess } = useMessageToaster()
@@ -92,40 +58,13 @@ const { go, url } = useRouter()
 const { handleHttpError } = useErrorHandler()
 const { messages, loading, hasMessages, sendPrompt } = useAiChat()
 
-const textareaEl = ref<HTMLTextAreaElement>()
-const prompt = ref('')
+const promptBoxEl = ref<InstanceType<typeof AiPromptBox>>()
 
 const goBack = () => go(-1)
 
-const autoResize = () => {
-  const el = textareaEl.value
+const selectSamplePrompt = (text: string) => promptBoxEl.value?.fill(text)
 
-  if (el) {
-    el.style.height = 'auto'
-    el.style.height = `${Math.min(el.scrollHeight, 120)}px`
-  }
-}
-
-const selectSamplePrompt = async (text: string) => {
-  prompt.value = text
-  await nextTick()
-  textareaEl.value?.focus()
-}
-
-const handleSubmit = async () => {
-  if (!prompt.value.trim() || loading.value) {
-    return
-  }
-
-  const text = prompt.value.trim()
-  prompt.value = ''
-
-  await nextTick()
-
-  if (textareaEl.value) {
-    textareaEl.value.style.height = 'auto'
-  }
-
+const handleSubmit = async (text: string) => {
   try {
     const result = await sendPrompt(text)
 
@@ -135,36 +74,34 @@ const handleSubmit = async () => {
 
     if (result.action === 'create_smart_playlist') {
       toastSuccess(`Playlist "${result.resource.name}" created.`)
-      go(url('playlists.show', { id: result.resource.id }))
     } else if (result.action === 'add_radio_station') {
       toastSuccess(`Station "${result.resource.name}" added.`)
-      go(url('radio-stations.index'))
     } else if (result.action === 'play_radio_station') {
       await playback('radio').play(result.resource)
-      go(url('queue'))
     } else if (result.action === 'play_songs') {
       if (result.queue) {
         queueStore.queue(result.resource)
       } else {
         await playback().queueAndPlay(result.resource)
       }
-
-      go(url('queue'))
     }
   } catch (e: unknown) {
     handleHttpError(e)
+  } finally {
+    await nextTick()
+    promptBoxEl.value?.focus()
   }
 }
 </script>
 
 <style lang="postcss" scoped>
-.ai-screen::before {
+.ai-screen::after {
   content: '';
   position: fixed;
   inset: 0;
   background: #000;
   opacity: 0.4;
   pointer-events: none;
-  z-index: 0;
+  z-index: -1;
 }
 </style>

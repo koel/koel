@@ -259,5 +259,10 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ## AI Assistant Tools
 - When AI assistant tool capabilities change (added, removed, or updated), always update the sample prompts in `AiSamplePrompts.vue` to reflect the current abilities.
 
+## Vue Component Styling
+- Put shared/base Tailwind classes directly on the HTML element via the `class` attribute.
+- For variant-specific styles (e.g. modes, states), use custom CSS classes (`.initial`, `.chat`, `.user`, `.error`, etc.) with `@apply` in a scoped `<style>` block.
+- Do NOT build class strings in JavaScript arrays or computed properties.
+
 ## Code Reviews
 - When addressing PR review comments, do NOT blindly follow them. Always use your own knowledge and logic to evaluate whether the feedback makes sense. If it doesn't, push back and explain why.

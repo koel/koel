@@ -727,6 +727,7 @@ interface AiResponse {
   message: string
   action:
     | 'play_songs'
+    | 'suggest_songs'
     | 'create_smart_playlist'
     | 'add_radio_station'
     | 'play_radio_station'
@@ -736,6 +737,8 @@ interface AiResponse {
     | 'remove_from_playlist'
     | 'show_lyrics'
     | 'update_lyrics'
+    | 'update_album'
+    | 'update_artist'
     | null
   conversation_id: string | null
   data: {
@@ -749,6 +752,9 @@ interface AiResponse {
     playlist?: Playlist
     station?: RadioStation
     song?: Song
+    album?: Album
+    artist?: Artist
     lyrics?: string
+    list?: string
   }
 }

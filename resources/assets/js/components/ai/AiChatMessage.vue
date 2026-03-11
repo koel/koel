@@ -1,6 +1,10 @@
 <template>
   <div class="flex" :class="message.role === 'user' ? 'justify-end' : 'justify-start'">
-    <div class="max-w-[80%] rounded-2xl px-4 py-3 text-base ai-message" :class="bubbleClasses" v-html="renderedHtml" />
+    <div
+      class="rounded-3xl px-5 py-3 text-lg ai-message"
+      :class="message.role === 'user' ? 'user' : message.error ? 'error' : 'assistant'"
+      v-html="renderedHtml"
+    />
   </div>
 </template>
 
@@ -12,13 +16,19 @@ const props = defineProps<{
   message: AiChatMessage
 }>()
 
-const bubbleClasses = computed(() => {
-  if (props.message.role === 'user') {
-    return 'bg-k-highlight/20 text-k-fg'
-  }
-
-  return props.message.error ? 'bg-red-500/10 text-red-400' : 'bg-white/5 text-k-fg'
-})
-
 const renderedHtml = computed(() => simpleMarkdownToHtml(props.message.content))
 </script>
+
+<style lang="postcss" scoped>
+.user {
+  @apply bg-white/5 text-k-fg;
+}
+
+.assistant {
+  @apply text-k-fg;
+}
+
+.error {
+  @apply bg-red-500/10 text-red-400;
+}
+</style>

@@ -77,6 +77,10 @@ class AiController extends Controller
                 'songs' => SongResource::collection($result->data['songs']),
                 'queue' => $result->data['queue'] ?? false,
             ],
+            'suggest_songs' => [
+                'songs' => SongResource::collection($result->data['songs']),
+                'list' => $result->data['list'] ?? '',
+            ],
             'add_to_favorites', 'remove_from_favorites' => self::serializeFavoriteData($result),
             'add_to_playlist', 'remove_from_playlist' => [
                 'songs' => SongResource::collection($result->data['songs']),
@@ -87,6 +91,12 @@ class AiController extends Controller
             ],
             'play_radio_station', 'add_radio_station' => [
                 'station' => RadioStationResource::make($result->data['station']),
+            ],
+            'update_album' => [
+                'album' => AlbumResource::make($result->data['album']),
+            ],
+            'update_artist' => [
+                'artist' => ArtistResource::make($result->data['artist']),
             ],
             'show_lyrics' => [
                 'lyrics' => $result->data['lyrics'],

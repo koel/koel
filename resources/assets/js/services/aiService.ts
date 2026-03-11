@@ -16,10 +16,13 @@ type AiHandledResult = {
   | { action: 'add_radio_station'; resource: Reactive<RadioStation> }
   | { action: 'play_radio_station'; resource: Reactive<RadioStation> }
   | { action: 'play_songs'; resource: Song[]; queue: boolean }
+  | { action: 'suggest_songs'; resource: undefined }
   | { action: 'add_to_favorites'; resource: undefined }
   | { action: 'remove_from_favorites'; resource: undefined }
   | { action: 'add_to_playlist'; resource: { songs: Song[]; playlist: Reactive<Playlist> } }
   | { action: 'remove_from_playlist'; resource: { songs: Song[]; playlist: Reactive<Playlist> } }
+  | { action: 'update_album'; resource: undefined }
+  | { action: 'update_artist'; resource: undefined }
   | { action: 'show_lyrics'; resource: undefined }
   | { action: 'update_lyrics'; resource: undefined }
   | { action: null; resource: undefined }
@@ -57,7 +60,23 @@ export const aiService = {
     }
 
     if (response.action === 'play_songs' && response.data.songs) {
-      return { message, action: 'play_songs', resource: response.data.songs, queue: response.data.queue ?? false }
+      const count = response.data.songs.length
+      const fallback = response.data.queue
+        ? `Added ${count} song${count === 1 ? '' : 's'} to the queue.`
+        : `Playing ${count} song${count === 1 ? '' : 's'}.`
+
+      return {
+        message: message || fallback,
+        action: 'play_songs',
+        resource: response.data.songs,
+        queue: response.data.queue ?? false,
+      }
+    }
+
+    if (response.action === 'suggest_songs' && response.data.songs) {
+      playableStore.syncWithVault(response.data.songs)
+      const list = response.data.list ? `\n\n${response.data.list}` : ''
+      return { message: `${message}${list}`, action: 'suggest_songs', resource: undefined }
     }
 
     if (response.action === 'add_to_favorites') {
@@ -89,9 +108,19 @@ export const aiService = {
       }
     }
 
+    if (response.action === 'update_album' && response.data.album) {
+      albumStore.syncWithVault(response.data.album)
+      return { message, action: 'update_album', resource: undefined }
+    }
+
+    if (response.action === 'update_artist' && response.data.artist) {
+      artistStore.syncWithVault(response.data.artist)
+      return { message, action: 'update_artist', resource: undefined }
+    }
+
     if (response.action === 'show_lyrics' && response.data.lyrics) {
       return {
-        message: `${message}\n\n${response.data.lyrics}`,
+        message: response.data.lyrics,
         action: 'show_lyrics',
         resource: undefined,
       }
@@ -103,7 +132,7 @@ export const aiService = {
       }
 
       return {
-        message: `${message}\n\n${response.data.lyrics}`,
+        message: response.data.lyrics,
         action: 'update_lyrics',
         resource: undefined,
       }

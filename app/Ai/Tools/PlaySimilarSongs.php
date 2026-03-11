@@ -2,6 +2,7 @@
 
 namespace App\Ai\Tools;
 
+use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
 use App\Ai\Services\PlaybackService;
 use App\Models\Song;
@@ -15,6 +16,7 @@ class PlaySimilarSongs implements Tool
 {
     public function __construct(
         private readonly AiRequestContext $context,
+        private readonly AiAssistantResult $result,
         private readonly SongRepository $songRepository,
         private readonly PlaybackService $playbackService,
     ) {}
@@ -22,8 +24,10 @@ class PlaySimilarSongs implements Tool
     public function description(): Stringable|string
     {
         return (
-            'Play songs similar to a given song. Finds songs by the same artist or in the same genre. '
-            . 'Use this when the user wants to hear more songs like the one currently playing or a specific song.'
+            'Find and optionally play songs similar to a given song. '
+            . 'Finds songs by the same artist or in the same genre. '
+            . 'Set preview=true to list the songs without playing them (for discovery or recommendation requests). '
+            . 'Set preview=false to play or queue them immediately.'
         );
     }
 
@@ -35,7 +39,16 @@ class PlaySimilarSongs implements Tool
                 ->description(
                     'The title of the song to find similar songs for. If not provided, the currently playing song is used.',
                 ),
-            ...PlaybackService::limitSchema($schema, 'Maximum number of similar songs to return. Default 50'),
+            'preview' => $schema
+                ->boolean()
+                ->description(
+                    'If true, list the songs without playing them. '
+                    . 'Use this when the user asks to discover or see similar songs. Default false.',
+                ),
+            ...PlaybackService::limitSchema(
+                $schema,
+                'Maximum number of similar songs to return. Default 20 for preview, 50 for playback',
+            ),
             ...PlaybackService::queueSchema($schema),
         ];
     }
@@ -53,21 +66,32 @@ class PlaySimilarSongs implements Tool
 
         $song->load('genres');
 
-        $songs = $this->songRepository->getSimilar(
-            $song,
-            PlaybackService::extractLimit($request),
-            $this->context->user,
-        );
+        $preview = (bool) ($request['preview'] ?? false);
+        $defaultLimit = $preview ? 20 : 50;
+        $limit = min((int) ($request['limit'] ?? $defaultLimit), 500);
+
+        $songs = $this->songRepository->getSimilar($song, $limit, $this->context->user);
 
         if ($songs->isEmpty()) {
             return "No similar songs found for \"{$song->title}\".";
         }
 
-        $queue = $this->playbackService->queueSongs($songs, $request);
-        $verb = $queue ? 'Added' : 'Found';
-        $suffix = $queue ? 'to the queue' : 'and queued them for playback';
+        if ($preview) {
+            $list = $songs->map(
+                static fn (Song $s, int $i) => ($i + 1) . '. **' . $s->title . '** — ' . $s->artist->name,
+            )->implode("\n");
 
-        return "{$verb} {$songs->count()} song(s) similar to \"{$song->title}\" {$suffix}.";
+            $this->result->action = 'suggest_songs';
+            $this->result->data = ['songs' => $songs, 'list' => $list];
+
+            return "Found {$songs->count()} song(s) similar to \"{$song->title}\". Ask the user if they want to play or queue them.";
+        }
+
+        $queue = $this->playbackService->queueSongs($songs, $request);
+        $verb = $queue ? 'Added' : 'Playing';
+        $suffix = $queue ? ' to the queue' : '';
+
+        return "{$verb} {$songs->count()} song(s) similar to \"{$song->title}\"{$suffix}.";
     }
 
     private function resolveSong(Request $request): ?Song

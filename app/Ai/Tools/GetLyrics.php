@@ -33,8 +33,11 @@ class GetLyrics implements Tool
         return [
             'query' => $schema
                 ->string()
-                ->description('Search keywords to find the song. '
-                . 'If omitted, the currently playing song will be used.'),
+                ->description(
+                    'Search keywords to find a specific song by title. '
+                    . 'Only provide this when the user explicitly names a different song. '
+                    . 'Omit this parameter to use the currently playing song.',
+                ),
         ];
     }
 
@@ -49,9 +52,7 @@ class GetLyrics implements Tool
         if (!$song->lyrics) {
             return (
                 "No lyrics available for \"{$song->title}\" by {$song->artist->name}. "
-                . 'Offer to search the web for the lyrics and save them. '
-                . 'If the user agrees, use WebSearch to find the lyrics '
-                . 'and then UpdateSongLyrics to save them.'
+                . 'Ask the user if they would like you to search the web for the lyrics.'
             );
         }
 
