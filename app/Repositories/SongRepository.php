@@ -82,7 +82,7 @@ class SongRepository extends Repository implements ScoutableRepository
     {
         return Song::query(user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
-            ->orderBy('interactions.play_count')
+            ->orderBy('play_count')
             ->limit($count)
             ->get();
     }
