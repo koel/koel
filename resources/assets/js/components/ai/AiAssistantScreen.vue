@@ -22,7 +22,7 @@
 
     <!-- Chat mode -->
     <template v-else>
-      <section v-koel-overflow-fade class="py-6 flex-1 flex flex-col max-w-4xl overflow-auto mx-auto">
+      <section v-koel-overflow-fade class="py-6 flex-1 flex flex-col w-full max-w-4xl overflow-auto mx-auto">
         <AiChatHistory :messages="messages" :loading="loading" class="flex-1" />
       </section>
 
