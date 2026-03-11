@@ -76,7 +76,7 @@ class UpdateAlbumDetails implements Tool
             $changes[] = $request['year'] ? "year to {$request['year']}" : 'removed the release year';
         }
 
-        if ($changes === []) {
+        if (!$changes) {
             return "No changes were made to \"{$album->name}\".";
         }
 
