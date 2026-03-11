@@ -17,11 +17,6 @@
     <MainWrapper />
     <AppFooter />
     <SupportKoel />
-    <AiFloatingButton
-      v-if="commonStore.state.uses_ai"
-      class="fixed right-24 z-20"
-      style="bottom: calc(var(--footer-height) + 20px)"
-    />
     <AiAssistantScreen v-if="commonStore.state.uses_ai" v-show="isCurrentScreen('AI')" />
     <DropZone v-show="showDropZone" @close="showDropZone = false" />
   </main>
@@ -74,7 +69,6 @@ const HotkeyListener = defineAsyncComponent(() => import('@/components/utils/Hot
 const LoginForm = defineAsyncComponent(() => import('@/components/auth/LoginForm.vue'))
 const MainWrapper = defineAsyncComponent(() => import('@/components/layout/main-wrapper/index.vue'))
 const SupportKoel = defineAsyncComponent(() => import('@/components/meta/SupportKoel.vue'))
-const AiFloatingButton = defineAsyncComponent(() => import('@/components/ai/AiFloatingButton.vue'))
 const AiAssistantScreen = defineAsyncComponent(() => import('@/components/ai/AiAssistantScreen.vue'))
 const DropZone = defineAsyncComponent(() => import('@/components/ui/upload/DropZone.vue'))
 const AcceptInvitation = defineAsyncComponent(() => import('@/components/invitation/AcceptInvitation.vue'))

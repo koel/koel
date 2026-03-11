@@ -54,13 +54,18 @@ import AiPromptBox from '@/components/ai/AiPromptBox.vue'
 import AiSamplePrompts from '@/components/ai/AiSamplePrompts.vue'
 
 const { toastSuccess } = useMessageToaster()
-const { go, url } = useRouter()
+const { go, onScreenActivated, url } = useRouter()
 const { handleHttpError } = useErrorHandler()
 const { messages, loading, hasMessages, sendPrompt } = useAiChat()
 
 const promptBoxEl = ref<InstanceType<typeof AiPromptBox>>()
 
 const goBack = () => go(-1)
+
+onScreenActivated('AI', async () => {
+  await nextTick()
+  promptBoxEl.value?.focus()
+})
 
 const selectSamplePrompt = (text: string) => promptBoxEl.value?.fill(text)
 
@@ -100,7 +105,7 @@ const handleSubmit = async (text: string) => {
   position: fixed;
   inset: 0;
   background: #000;
-  opacity: 0.4;
+  opacity: 0.1;
   pointer-events: none;
   z-index: -1;
 }

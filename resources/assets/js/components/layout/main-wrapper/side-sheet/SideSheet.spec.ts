@@ -41,7 +41,6 @@ describe('sideSheet.vue', () => {
     const rendered = h.render(Component, {
       global: {
         stubs: {
-          ProfileAvatar: h.stub('profile-avatar'),
           LyricsPane: h.stub('lyrics'),
           AlbumInfo: h.stub('album-info'),
           ArtistInfo: h.stub('artist-info'),
@@ -58,6 +57,10 @@ describe('sideSheet.vue', () => {
       resolveArtistMock,
       resolveAlbumMock,
     }
+  }
+
+  const openProfileMenu = async () => {
+    await h.user.click(screen.getByTestId('profile-dropdown-trigger'))
   }
 
   it('renders without a current playable', () => expect(renderComponent().rendered.html()).toMatchSnapshot())
@@ -118,10 +121,11 @@ describe('sideSheet.vue', () => {
     })
   })
 
-  it('shows About Koel model', async () => {
+  it('shows About Koel modal', async () => {
     renderComponent()
+    await openProfileMenu()
 
-    await h.user.click(screen.getByRole('button', { name: 'About Koel' }))
+    await h.user.click(screen.getByTestId('about-btn'))
 
     await assertOpenModal(openModalMock, AboutKoelModal)
   })
@@ -131,14 +135,17 @@ describe('sideSheet.vue', () => {
     commonStore.state.latest_version = 'v1.0.1'
     h.actingAsAdmin()
     renderComponent()
-    screen.getByRole('button', { name: 'New version available!' })
+    await openProfileMenu()
+
+    screen.getByText('New version available!')
   })
 
   it('logs out', async () => {
     const emitMock = h.mock(eventBus, 'emit')
     renderComponent()
+    await openProfileMenu()
 
-    await h.user.click(screen.getByRole('button', { name: 'Log out' }))
+    await h.user.click(screen.getByTestId('logout-btn'))
 
     expect(emitMock).toHaveBeenCalledWith('LOG_OUT')
   })

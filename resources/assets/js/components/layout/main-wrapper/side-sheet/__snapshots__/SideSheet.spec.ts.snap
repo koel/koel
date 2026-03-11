@@ -6,9 +6,12 @@ exports[`sideSheet.vue > renders without a current playable 1`] = `
     <div data-v-9fd7deea="" class="btn-group"><button data-v-7447146c="" data-v-9fd7deea="" class="relative flex items-center justify-center h-[42px] aspect-square rounded-full bg-none md:bg-k-fg-10 text-k-fg-70 opacity-50 text-xl transition-opacity duration-200 ease-in-out cursor-pointer hover:active-state active:scale-90 md:hidden" type="button"><br data-v-9fd7deea="" data-testid="Icon" icon="[object Object]" fixed-width=""></button>
       <!--v-if-->
     </div>
-    <div data-v-9fd7deea="" class="btn-group"><button data-v-7447146c="" data-v-9fd7deea="" class="relative flex items-center justify-center h-[42px] aspect-square rounded-full bg-none md:bg-k-fg-10 text-k-fg-70 opacity-50 text-xl transition-opacity duration-200 ease-in-out cursor-pointer hover:active-state active:scale-90" type="button" title="About Koel"><br data-testid="Icon" icon="[object Object]">
+    <div data-v-9fd7deea="" class="btn-group">
+      <!--v-if-->
+      <div data-v-fd5302b7="" data-v-9fd7deea="" class="relative flex items-center"><button data-v-fd5302b7="" class="rounded-full cursor-pointer active:scale-95 h-[42px] aspect-square" data-testid="profile-dropdown-trigger" type="button"><img data-v-fd5302b7="" alt="Avatar of Reginald Legros" src="https://gravatar.com/foo" title="Reginald Legros" class="object-cover rounded-full aspect-square bg-k-bg w-full h-full p-0.5 border border-solid border-k-fg-10 transition duration-200 ease-in-out hover:border-k-highlight"></button>
         <!--v-if-->
-      </button><button data-v-7447146c="" data-v-9fd7deea="" class="relative flex items-center justify-center h-[42px] aspect-square rounded-full bg-none md:bg-k-fg-10 text-k-fg-70 opacity-50 text-xl transition-opacity duration-200 ease-in-out cursor-pointer hover:active-state active:scale-90" type="button" title="Log out"><br data-testid="Icon" icon="[object Object]"></button><br data-v-9fd7deea="" data-testid="profile-avatar"></div>
+      </div>
+    </div>
   </header>
   <!--v-if-->
 </aside>

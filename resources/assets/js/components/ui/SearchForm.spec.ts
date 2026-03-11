@@ -13,14 +13,14 @@ describe('searchForm.vue', () => {
 
     eventBus.emit('FOCUS_SEARCH_FIELD')
 
-    expect(screen.getByRole('searchbox')).toBe(document.activeElement)
+    expect(screen.getByRole('textbox')).toBe(document.activeElement)
   })
 
   it('goes to search screen when search box is focused', async () => {
     const mock = h.mock(Router, 'go')
     h.render(Component)
 
-    await h.user.click(screen.getByRole('searchbox'))
+    await h.user.click(screen.getByRole('textbox'))
 
     expect(mock).toHaveBeenCalledWith('/#/search')
   })
@@ -29,7 +29,7 @@ describe('searchForm.vue', () => {
     const mock = h.mock(eventBus, 'emit')
     h.render(Component)
 
-    await h.type(screen.getByRole('searchbox'), 'hey')
+    await h.type(screen.getByRole('textbox'), 'hey')
 
     expect(mock).toHaveBeenCalledWith('SEARCH_KEYWORDS_CHANGED', 'hey')
   })
@@ -38,7 +38,7 @@ describe('searchForm.vue', () => {
     const goMock = h.mock(Router, 'go')
     h.render(Component)
 
-    await h.type(screen.getByRole('searchbox'), 'hey')
+    await h.type(screen.getByRole('textbox'), 'hey')
     await h.user.click(screen.getByRole('button', { name: 'Search' }))
 
     expect(goMock).toHaveBeenCalledWith('/#/search')
