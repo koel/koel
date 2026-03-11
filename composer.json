@@ -1,105 +1,116 @@
 {
   "name": "koel/koel",
   "description": "Audio streaming solution that works.",
+  "license": "MIT",
+  "type": "project",
   "keywords": [
     "audio",
     "stream",
     "mp3"
   ],
-  "license": "MIT",
-  "type": "project",
   "require": {
     "php": ">=8.3",
-    "laravel/framework": "^12.0",
-    "james-heinrich/getid3": "^1.9",
-    "guzzlehttp/guzzle": "^7.2",
-    "pusher/pusher-php-server": "^7.2",
-    "predis/predis": "~1.0",
-    "koel/dotenv-editor": "^2.2",
     "ext-exif": "*",
-    "ext-gd": "*",
     "ext-fileinfo": "*",
+    "ext-gd": "*",
     "ext-json": "*",
-    "ext-SimpleXML": "*",
-    "daverandom/resume": "^0.0.3",
-    "laravel/helpers": "^1.7",
-    "lstrojny/functional-php": "^1.14",
-    "teamtnt/laravel-scout-tntsearch-driver": "^15.0",
+    "ext-simplexml": "*",
     "algolia/algoliasearch-client-php": "^3.3",
-    "webmozart/assert": "^1.10",
+    "daverandom/resume": "^0.0.3",
+    "enshrined/svg-sanitize": "^0.22.0",
+    "ezyang/htmlpurifier": "^4.18",
+    "fakerphp/faker": "^1.24",
+    "fileeye/mimemap": "^2.2",
+    "guzzlehttp/guzzle": "^7.2",
+    "http-interop/http-factory-guzzle": "^1.2",
+    "intervention/image-laravel": "^1.5",
+    "james-heinrich/getid3": "^1.9",
+    "jaybizzle/crawler-detect": "^1.3",
+    "jwilsson/spotify-web-api-php": "^5.2",
+    "koel/dotenv-editor": "^2.2",
+    "laravel/ai": "^0.2.6",
+    "laravel/framework": "^12.0",
+    "laravel/helpers": "^1.7",
+    "laravel/nightwatch": "^1.13",
+    "laravel/prompts": "^0.3.6",
     "laravel/sanctum": "^4.0",
     "laravel/scout": "^10.0",
-    "jwilsson/spotify-web-api-php": "^5.2",
-    "meilisearch/meilisearch-php": "^0.24.0",
-    "http-interop/http-factory-guzzle": "^1.2",
-    "league/flysystem-aws-s3-v3": "^3.0",
-    "spatie/flysystem-dropbox": "^3.0",
-    "saloonphp/saloon": "^3.8",
-    "saloonphp/laravel-plugin": "^3.0",
     "laravel/socialite": "^5.12",
-    "laravel/ui": "^4.5",
-    "nunomaduro/collision": "^v8.8",
-    "league/flysystem-sftp-v3": "^3.0",
-    "spatie/laravel-ray": "^1.36",
-    "tiben/crontab-manager": "*",
-    "owen-it/laravel-auditing": "^14.0",
-    "fileeye/mimemap": "^2.2",
-    "ezyang/htmlpurifier": "^4.18",
-    "jaybizzle/crawler-detect": "^1.3",
-    "paragonie/sodium_compat": "^1.6",
-    "laravel/nightwatch": "^1.13",
-    "intervention/image-laravel": "^1.5",
-    "laravel/prompts": "^0.3.6",
     "laravel/tinker": "^2.10",
-    "fakerphp/faker": "^1.24",
-    "spatie/laravel-permission": "^6.21",
-    "enshrined/svg-sanitize": "^0.22.0",
+    "laravel/ui": "^4.5",
+    "league/flysystem-aws-s3-v3": "^3.0",
+    "league/flysystem-sftp-v3": "^3.0",
+    "lstrojny/functional-php": "^1.14",
+    "meilisearch/meilisearch-php": "^0.24.0",
+    "nunomaduro/collision": "^8.8",
+    "owen-it/laravel-auditing": "^14.0",
+    "paragonie/sodium_compat": "^1.6",
     "phanan/poddle": "^1.2",
-    "laravel/ai": "^0.2.6"
+    "predis/predis": "^1.0",
+    "pusher/pusher-php-server": "^7.2",
+    "saloonphp/laravel-plugin": "^3.0",
+    "saloonphp/saloon": "^3.8",
+    "spatie/flysystem-dropbox": "^3.0",
+    "spatie/laravel-permission": "^6.21",
+    "spatie/laravel-ray": "^1.36",
+    "teamtnt/laravel-scout-tntsearch-driver": "^15.0",
+    "tiben/crontab-manager": "*",
+    "webmozart/assert": "^1.10"
   },
   "require-dev": {
-    "roave/security-advisories": "dev-latest",
-    "mockery/mockery": "~1.0",
-    "phpunit/phpunit": "^11.0",
-    "php-mock/php-mock-mockery": "^1.3",
+    "carthage-software/mago": "^1.8.0",
+    "ergebnis/composer-normalize": "^2.50",
     "larastan/larastan": "^3.7",
-    "phlak/semver": "^5.0",
     "laravel/boost": "^1.0",
+    "mockery/mockery": "^1.0",
     "opcodesio/log-viewer": "^3.19",
-    "carthage-software/mago": "^1.8.0"
+    "phlak/semver": "^5.0",
+    "php-mock/php-mock-mockery": "^1.3",
+    "phpunit/phpunit": "^11.0",
+    "roave/security-advisories": "dev-latest"
   },
   "suggest": {
     "ext-zip": "Allow downloading multiple songs as Zip archives"
   },
+  "minimum-stability": "stable",
+  "prefer-stable": false,
   "autoload": {
-    "classmap": [
-      "database"
-    ],
     "psr-4": {
       "App\\": "app/",
       "Database\\Seeders\\": "database/seeders/"
     },
+    "classmap": [
+      "database"
+    ],
     "files": [
       "app/Helpers.php"
     ]
   },
   "autoload-dev": {
+    "psr-4": {
+      "Database\\Factories\\": "database/factories/",
+      "Tests\\": "tests/"
+    },
     "classmap": [
       "tests/TestCase.php"
     ],
-    "psr-4": {
-      "Tests\\": "tests/",
-      "Database\\Factories\\": "database/factories/"
-    },
     "files": [
       "tests/Helpers.php"
     ]
   },
+  "config": {
+    "allow-plugins": {
+      "carthage-software/mago": true,
+      "ergebnis/composer-normalize": true,
+      "php-http/discovery": true
+    },
+    "optimize-autoloader": true,
+    "platform": {
+      "php": "8.3.0"
+    },
+    "preferred-install": "dist"
+  },
   "scripts": {
-    "post-autoload-dump": [
-      "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-      "@php artisan package:discover"
-    ],
     "post-install-cmd": [
       "@php artisan clear-compiled",
       "@php artisan cache:clear",
@@ -113,35 +124,26 @@
       "@php artisan cache:clear",
       "@php artisan boost:update --ansi"
     ],
+    "post-autoload-dump": [
+      "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+      "@php artisan package:discover"
+    ],
     "post-root-package-install": [
       "@php -r \"copy('.env.example', '.env');\""
     ],
     "post-create-project-cmd": [
       "@php artisan key:generate"
     ],
-    "koel:init": "@php scripts/koel-init.php",
-    "test": "@php artisan test",
+    "analyze": "phpstan analyse --memory-limit 1G --configuration phpstan.neon.dist --ansi",
     "coverage": "@php artisan test --coverage-clover=coverage.xml",
     "cs": "mago format --check",
     "cs:fix": "mago format",
-    "lint": "mago lint",
-    "analyze": "phpstan analyse --memory-limit 1G --configuration phpstan.neon.dist --ansi",
     "dev": [
       "Composer\\Config::disableProcessTimeout",
       "npx concurrently -k -c \"#93c5fd,#c4b5fd,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"vite\" --names=server,queue,vite --restart-tries=3"
-    ]
-  },
-  "config": {
-    "preferred-install": "dist",
-    "optimize-autoloader": true,
-    "allow-plugins": {
-      "php-http/discovery": true,
-      "carthage-software/mago": true
-    },
-    "platform": {
-      "php": "8.3.0"
-    }
-  },
-  "minimum-stability": "stable",
-  "prefer-stable": false
+    ],
+    "koel:init": "@php scripts/koel-init.php",
+    "lint": "mago lint",
+    "test": "@php artisan test"
+  }
 }
