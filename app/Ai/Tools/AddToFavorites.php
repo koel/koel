@@ -79,7 +79,7 @@ class AddToFavorites implements Tool
         $name = self::entityName($entities->first());
 
         if ($entities->count() === 1) {
-            return "Added \"{$name}\" to your favorites.";
+            return sprintf('Added "%s" to your favorites.', $name);
         }
 
         return "Added {$entities->count()} {$type->value}(s) to your favorites.";

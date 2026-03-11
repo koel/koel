@@ -51,7 +51,7 @@ class GetLyrics implements Tool
 
         if (!$song->lyrics) {
             return (
-                "No lyrics available for \"{$song->title}\" by {$song->artist->name}. "
+                sprintf('No lyrics available for "%s" by %s. ', $song->title, $song->artist->name)
                 . 'Ask the user if they would like you to search the web for the lyrics.'
             );
         }
@@ -59,7 +59,7 @@ class GetLyrics implements Tool
         $this->result->action = 'show_lyrics';
         $this->result->data = ['lyrics' => $song->lyrics];
 
-        return "Here are the lyrics for \"{$song->title}\" by {$song->artist->name}.";
+        return sprintf('Here are the lyrics for "%s" by %s.', $song->title, $song->artist->name);
     }
 
     private function resolveSong(Request $request): ?Song

@@ -41,19 +41,19 @@ class PlayPlaylist implements Tool
         $playlist = $this->playlistRepository->findAccessibleByName($request['name'], $this->context->user);
 
         if (!$playlist) {
-            return "No playlist matching \"{$request['name']}\" found.";
+            return sprintf('No playlist matching "%s" found.', $request['name']);
         }
 
         $songs = $this->songRepository->getByPlaylist($playlist, $this->context->user);
 
         if ($songs->isEmpty()) {
-            return "The playlist \"{$playlist->name}\" has no songs.";
+            return sprintf('The playlist "%s" has no songs.', $playlist->name);
         }
 
         $queue = $this->playbackService->queueSongs($songs, $request);
         $verb = $queue ? 'Added' : 'Playing';
         $suffix = $queue ? ' to the queue' : '';
 
-        return "{$verb} \"{$playlist->name}\" ({$songs->count()} songs){$suffix}.";
+        return sprintf('%s "%s" (%d songs)%s.', $verb, $playlist->name, $songs->count(), $suffix);
     }
 }

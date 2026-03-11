@@ -39,7 +39,7 @@ class PlaySongsByGenre implements Tool
         $genre = $this->genreRepository->findByName($request['genre']);
 
         if (!$genre) {
-            return "No genre matching \"{$request['genre']}\" found in the library.";
+            return sprintf('No genre matching "%s" found in the library.', $request['genre']);
         }
 
         $songs = $this->songRepository->getByGenre(
@@ -50,7 +50,7 @@ class PlaySongsByGenre implements Tool
         );
 
         if ($songs->isEmpty()) {
-            return "No songs found in the \"{$genre->name}\" genre.";
+            return sprintf('No songs found in the "%s" genre.', $genre->name);
         }
 
         $queue = $this->playbackService->queueSongs($songs, $request);

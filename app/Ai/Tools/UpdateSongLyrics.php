@@ -60,6 +60,6 @@ class UpdateSongLyrics implements Tool
         $this->result->action = 'update_lyrics';
         $this->result->data = ['lyrics' => $song->lyrics, 'song' => $song];
 
-        return "Here are the lyrics for \"{$song->title}\" by {$song->artist->name}.";
+        return sprintf('Here are the lyrics for "%s" by %s.', $song->title, $song->artist->name);
     }
 }

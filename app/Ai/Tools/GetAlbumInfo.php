@@ -40,14 +40,19 @@ class GetAlbumInfo implements Tool
         $albums = $this->albumRepository->search($request['name'], 1, $this->context->user);
 
         if ($albums->isEmpty()) {
-            return "No album matching \"{$request['name']}\" found in the library.";
+            return sprintf('No album matching "%s" found in the library.', $request['name']);
         }
 
         $album = $albums->first();
         $songs = $this->songRepository->getByAlbum($album, $this->context->user);
         $info = $this->encyclopediaService->getAlbumInformation($album);
 
-        $response = "\"{$album->name}\" by {$album->artist->name} — {$songs->count()} song(s) in your library.";
+        $response = sprintf(
+            '"%s" by %s — %d song(s) in your library.',
+            $album->name,
+            $album->artist->name,
+            $songs->count(),
+        );
 
         if ($info && $info->wiki['summary']) {
             $wiki = strip_tags($info->wiki['summary']);

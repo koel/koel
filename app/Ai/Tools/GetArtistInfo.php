@@ -40,14 +40,14 @@ class GetArtistInfo implements Tool
         $artists = $this->artistRepository->search($request['name'], 1, $this->context->user);
 
         if ($artists->isEmpty()) {
-            return "No artist matching \"{$request['name']}\" found in the library.";
+            return sprintf('No artist matching "%s" found in the library.', $request['name']);
         }
 
         $artist = $artists->first();
         $songs = $this->songRepository->getByArtist($artist, $this->context->user);
         $info = $this->encyclopediaService->getArtistInformation($artist);
 
-        $response = "\"{$artist->name}\" — {$songs->count()} song(s) in your library.";
+        $response = sprintf('"%s" — %d song(s) in your library.', $artist->name, $songs->count());
 
         if ($info && $info->bio['summary']) {
             $bio = strip_tags($info->bio['summary']);

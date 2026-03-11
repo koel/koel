@@ -36,7 +36,7 @@ class PlayAlbum implements Tool
         $albums = $this->albumRepository->search($request['name'], 1, $this->context->user);
 
         if ($albums->isEmpty()) {
-            return "No album matching \"{$request['name']}\" found.";
+            return sprintf('No album matching "%s" found.', $request['name']);
         }
 
         return $this->playbackService->playAlbum($albums->first(), $this->context->user, $request);

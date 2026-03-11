@@ -56,15 +56,18 @@ class AddToPlaylist implements Tool
         $playlist = $this->playlistRepository->findAccessibleByName($request['playlist_name'], $this->context->user);
 
         if (!$playlist) {
-            return "No playlist matching \"{$request['playlist_name']}\" found.";
+            return sprintf('No playlist matching "%s" found.', $request['playlist_name']);
         }
 
         if ($this->gate->denies('collaborate', $playlist)) {
-            return "You don't have permission to add songs to \"{$playlist->name}\".";
+            return sprintf('You don\'t have permission to add songs to "%s".', $playlist->name);
         }
 
         if ($playlist->is_smart) {
-            return "Cannot add songs to \"{$playlist->name}\" because it's a smart playlist with automatic rules.";
+            return sprintf(
+                'Cannot add songs to "%s" because it\'s a smart playlist with automatic rules.',
+                $playlist->name,
+            );
         }
 
         $songs = $this->resolveSongs($request);
@@ -82,10 +85,10 @@ class AddToPlaylist implements Tool
         $this->result->data = ['songs' => $songs, 'playlist' => $playlist];
 
         if ($songs->count() === 1) {
-            return "Added \"{$songs->first()->title}\" to \"{$playlist->name}\".";
+            return sprintf('Added "%s" to "%s".', $songs->first()->title, $playlist->name);
         }
 
-        return "Added {$songs->count()} song(s) to \"{$playlist->name}\".";
+        return sprintf('Added %d song(s) to "%s".', $songs->count(), $playlist->name);
     }
 
     /** @return Collection<int, Song> */

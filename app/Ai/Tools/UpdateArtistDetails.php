@@ -49,11 +49,11 @@ class UpdateArtistDetails implements Tool
         ]);
 
         if (!$artist) {
-            return "No artist matching \"{$request['current_name']}\" found in your library.";
+            return sprintf('No artist matching "%s" found in your library.', $request['current_name']);
         }
 
         if ($this->gate->denies('update', $artist)) {
-            return "You don't have permission to update \"{$artist->name}\".";
+            return sprintf('You don\'t have permission to update "%s".', $artist->name);
         }
 
         $oldName = $artist->name;
@@ -63,6 +63,6 @@ class UpdateArtistDetails implements Tool
         $this->result->action = 'update_artist';
         $this->result->data = ['artist' => $artist];
 
-        return "Renamed \"{$oldName}\" to \"{$request['new_name']}\".";
+        return sprintf('Renamed "%s" to "%s".', $oldName, $request['new_name']);
     }
 }

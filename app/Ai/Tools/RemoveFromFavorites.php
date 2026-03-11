@@ -79,7 +79,7 @@ class RemoveFromFavorites implements Tool
         $name = self::entityName($entities->first());
 
         if ($entities->count() === 1) {
-            return "Removed \"{$name}\" from your favorites.";
+            return sprintf('Removed "%s" from your favorites.', $name);
         }
 
         return "Removed {$entities->count()} {$type->value}(s) from your favorites.";

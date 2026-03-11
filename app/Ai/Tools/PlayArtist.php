@@ -36,7 +36,7 @@ class PlayArtist implements Tool
         $artists = $this->artistRepository->search($request['name'], 1, $this->context->user);
 
         if ($artists->isEmpty()) {
-            return "No artist matching \"{$request['name']}\" found.";
+            return sprintf('No artist matching "%s" found.', $request['name']);
         }
 
         return $this->playbackService->playArtist($artists->first(), $this->context->user, $request);

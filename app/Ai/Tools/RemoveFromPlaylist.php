@@ -56,15 +56,18 @@ class RemoveFromPlaylist implements Tool
         $playlist = $this->playlistRepository->findAccessibleByName($request['playlist_name'], $this->context->user);
 
         if (!$playlist) {
-            return "No playlist matching \"{$request['playlist_name']}\" found.";
+            return sprintf('No playlist matching "%s" found.', $request['playlist_name']);
         }
 
         if ($this->gate->denies('collaborate', $playlist)) {
-            return "You don't have permission to remove songs from \"{$playlist->name}\".";
+            return sprintf('You don\'t have permission to remove songs from "%s".', $playlist->name);
         }
 
         if ($playlist->is_smart) {
-            return "Cannot remove songs from \"{$playlist->name}\" because it's a smart playlist with automatic rules.";
+            return sprintf(
+                'Cannot remove songs from "%s" because it\'s a smart playlist with automatic rules.',
+                $playlist->name,
+            );
         }
 
         $songs = $this->resolveSongs($request);
@@ -82,10 +85,10 @@ class RemoveFromPlaylist implements Tool
         $this->result->data = ['songs' => $songs, 'playlist' => $playlist];
 
         if ($songs->count() === 1) {
-            return "Removed \"{$songs->first()->title}\" from \"{$playlist->name}\".";
+            return sprintf('Removed "%s" from "%s".', $songs->first()->title, $playlist->name);
         }
 
-        return "Removed {$songs->count()} song(s) from \"{$playlist->name}\".";
+        return sprintf('Removed %d song(s) from "%s".', $songs->count(), $playlist->name);
     }
 
     /** @return Collection<int, Song> */

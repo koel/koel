@@ -133,6 +133,6 @@ class CreateSmartPlaylist implements Tool
             'playlist' => $playlist,
         ];
 
-        return "Smart playlist \"{$playlist->name}\" created successfully.";
+        return sprintf('Smart playlist "%s" created successfully.', $playlist->name);
     }
 }

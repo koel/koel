@@ -44,11 +44,11 @@ class RenamePlaylist implements Tool
         $playlist = $this->playlistRepository->findAccessibleByName($request['current_name'], $this->context->user);
 
         if (!$playlist) {
-            return "No playlist matching \"{$request['current_name']}\" found.";
+            return sprintf('No playlist matching "%s" found.', $request['current_name']);
         }
 
         if ($this->gate->denies('own', $playlist)) {
-            return "You don't have permission to rename \"{$playlist->name}\".";
+            return sprintf('You don\'t have permission to rename "%s".', $playlist->name);
         }
 
         $oldName = $playlist->name;
@@ -58,6 +58,6 @@ class RenamePlaylist implements Tool
             description: $playlist->description ?? '',
         ));
 
-        return "Renamed \"{$oldName}\" to \"{$request['new_name']}\".";
+        return sprintf('Renamed "%s" to "%s".', $oldName, $request['new_name']);
     }
 }

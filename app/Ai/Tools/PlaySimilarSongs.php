@@ -74,7 +74,7 @@ class PlaySimilarSongs implements Tool
         $songs = $this->songRepository->getSimilar($song, $limit, $this->context->user);
 
         if ($songs->isEmpty()) {
-            return "No similar songs found for \"{$song->title}\".";
+            return sprintf('No similar songs found for "%s".', $song->title);
         }
 
         if ($preview) {
@@ -86,14 +86,18 @@ class PlaySimilarSongs implements Tool
             $this->result->action = 'suggest_songs';
             $this->result->data = ['songs' => $songs, 'list' => $list];
 
-            return "Found {$songs->count()} song(s) similar to \"{$song->title}\". Ask the user if they want to play or queue them.";
+            return sprintf(
+                'Found %d song(s) similar to "%s". Ask the user if they want to play or queue them.',
+                $songs->count(),
+                $song->title,
+            );
         }
 
         $queue = $this->playbackService->queueSongs($songs, $request);
         $verb = $queue ? 'Added' : 'Playing';
         $suffix = $queue ? ' to the queue' : '';
 
-        return "{$verb} {$songs->count()} song(s) similar to \"{$song->title}\"{$suffix}.";
+        return sprintf('%s %d song(s) similar to "%s"%s.', $verb, $songs->count(), $song->title, $suffix);
     }
 
     private function resolveSong(Request $request): ?Song

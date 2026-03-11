@@ -51,11 +51,11 @@ class UpdateAlbumDetails implements Tool
         ]);
 
         if (!$album) {
-            return "No album matching \"{$request['query']}\" found in your library.";
+            return sprintf('No album matching "%s" found in your library.', $request['query']);
         }
 
         if ($this->gate->denies('update', $album)) {
-            return "You don't have permission to update \"{$album->name}\".";
+            return sprintf('You don\'t have permission to update "%s".', $album->name);
         }
 
         $album = $this->albumService->updateAlbum($album, AlbumUpdateData::make(
@@ -69,7 +69,7 @@ class UpdateAlbumDetails implements Tool
         $changes = [];
 
         if (isset($request['name'])) {
-            $changes[] = "name to \"{$request['name']}\"";
+            $changes[] = sprintf('name to "%s"', $request['name']);
         }
 
         if (array_key_exists('year', $request->only(['year']))) {
@@ -77,9 +77,9 @@ class UpdateAlbumDetails implements Tool
         }
 
         if (!$changes) {
-            return "No changes were made to \"{$album->name}\".";
+            return sprintf('No changes were made to "%s".', $album->name);
         }
 
-        return "Updated \"{$album->name}\": " . implode(', ', $changes) . '.';
+        return sprintf('Updated "%s": %s.', $album->name, implode(', ', $changes));
     }
 }

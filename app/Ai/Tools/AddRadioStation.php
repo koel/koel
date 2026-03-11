@@ -44,6 +44,6 @@ class AddRadioStation implements Tool
             'station' => $station,
         ];
 
-        return "Radio station \"{$station->name}\" added successfully.";
+        return sprintf('Radio station "%s" added successfully.', $station->name);
     }
 }

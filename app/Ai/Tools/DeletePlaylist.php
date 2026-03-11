@@ -40,16 +40,16 @@ class DeletePlaylist implements Tool
         $playlist = $this->playlistRepository->findAccessibleByName($request['playlist_name'], $this->context->user);
 
         if (!$playlist) {
-            return "No playlist matching \"{$request['playlist_name']}\" found.";
+            return sprintf('No playlist matching "%s" found.', $request['playlist_name']);
         }
 
         if ($this->gate->denies('own', $playlist)) {
-            return "You don't have permission to delete \"{$playlist->name}\".";
+            return sprintf('You don\'t have permission to delete "%s".', $playlist->name);
         }
 
         $name = $playlist->name;
         $playlist->delete();
 
-        return "Deleted the playlist \"{$name}\".";
+        return sprintf('Deleted the playlist "%s".', $name);
     }
 }

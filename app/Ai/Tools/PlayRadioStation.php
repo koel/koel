@@ -41,7 +41,7 @@ class PlayRadioStation implements Tool
         $stations = $this->radioStationRepository->search($request['name'], 1, $this->context->user);
 
         if ($stations->isEmpty()) {
-            return "No radio station matching \"{$request['name']}\" found.";
+            return sprintf('No radio station matching "%s" found.', $request['name']);
         }
 
         $station = $stations->first();
@@ -51,6 +51,6 @@ class PlayRadioStation implements Tool
             'station' => $station,
         ];
 
-        return "Now streaming \"{$station->name}\".";
+        return sprintf('Now streaming "%s".', $station->name);
     }
 }

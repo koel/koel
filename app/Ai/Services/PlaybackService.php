@@ -62,14 +62,14 @@ class PlaybackService
         $songs = $this->songRepository->getByAlbum($album, $user);
 
         if ($songs->isEmpty()) {
-            return "The album \"{$album->name}\" has no playable songs.";
+            return sprintf('The album "%s" has no playable songs.', $album->name);
         }
 
         $queue = $this->queueSongs($songs, $request);
         $verb = $queue ? 'Added' : 'Playing';
         $suffix = $queue ? ' to the queue' : '';
 
-        return "{$verb} \"{$album->name}\" ({$songs->count()} songs){$suffix}.";
+        return sprintf('%s "%s" (%d songs)%s.', $verb, $album->name, $songs->count(), $suffix);
     }
 
     public function playArtist(Artist $artist, User $user, Request $request): string
@@ -77,7 +77,7 @@ class PlaybackService
         $songs = $this->songRepository->getByArtist($artist, $user);
 
         if ($songs->isEmpty()) {
-            return "No songs by \"{$artist->name}\" found in the library.";
+            return sprintf('No songs by "%s" found in the library.', $artist->name);
         }
 
         $queue = $this->queueSongs($songs, $request);
