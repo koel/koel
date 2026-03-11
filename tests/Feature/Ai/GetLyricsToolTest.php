@@ -6,6 +6,7 @@ use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
 use App\Ai\Tools\GetLyrics;
 use App\Models\Song;
+use App\Models\User;
 use Laravel\Ai\Tools\Request;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -14,42 +15,54 @@ use function Tests\create_user;
 
 class GetLyricsToolTest extends TestCase
 {
+    private AiAssistantResult $result;
+    private User $user;
+    private GetLyrics $tool;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user = create_user();
+        $this->result = new AiAssistantResult();
+
+        app()->instance(AiAssistantResult::class, $this->result);
+        app()->instance(AiRequestContext::class, new AiRequestContext($this->user));
+        $this->tool = app()->make(GetLyrics::class);
+    }
+
     #[Test]
     public function getsLyricsOfCurrentlyPlayingSong(): void
     {
-        $user = create_user();
-        $song = Song::factory()->for($user, 'owner')->create([
+        $song = Song::factory()->for($this->user, 'owner')->create([
             'title' => 'Bohemian Rhapsody',
             'lyrics' => "Is this the real life?\nIs this just fantasy?",
         ]);
 
-        $result = new AiAssistantResult();
-        app()->instance(AiAssistantResult::class, $result);
-        app()->instance(AiRequestContext::class, new AiRequestContext($user, currentSongId: $song->id));
-        $tool = app()->make(GetLyrics::class);
-        $response = $tool->handle(new Request([]));
+        app()->instance(AiRequestContext::class, new AiRequestContext($this->user, currentSongId: $song->id));
+        $this->tool = app()->make(GetLyrics::class);
 
-        self::assertSame('show_lyrics', $result->action);
-        self::assertStringContainsString('Is this the real life?', $result->data['lyrics']);
+        $response = $this->tool->handle(new Request([]));
+
+        self::assertSame('show_lyrics', $this->result->action);
+        self::assertStringContainsString('Is this the real life?', $this->result->data['lyrics']);
         self::assertStringContainsString('Bohemian Rhapsody', (string) $response);
     }
 
     #[Test]
     public function returnsMessageWhenNoLyricsAvailable(): void
     {
-        $user = create_user();
-        $song = Song::factory()->for($user, 'owner')->create([
+        $song = Song::factory()->for($this->user, 'owner')->create([
             'title' => 'Instrumental Track',
             'lyrics' => '',
         ]);
 
-        $result = new AiAssistantResult();
-        app()->instance(AiAssistantResult::class, $result);
-        app()->instance(AiRequestContext::class, new AiRequestContext($user, currentSongId: $song->id));
-        $tool = app()->make(GetLyrics::class);
-        $response = $tool->handle(new Request([]));
+        app()->instance(AiRequestContext::class, new AiRequestContext($this->user, currentSongId: $song->id));
+        $this->tool = app()->make(GetLyrics::class);
 
-        self::assertNull($result->action);
+        $response = $this->tool->handle(new Request([]));
+
+        self::assertNull($this->result->action);
         self::assertStringContainsString('No lyrics available', (string) $response);
         self::assertStringContainsString('Instrumental Track', (string) $response);
     }
@@ -57,15 +70,9 @@ class GetLyricsToolTest extends TestCase
     #[Test]
     public function returnsErrorWhenNoSongAvailable(): void
     {
-        $user = create_user();
+        $response = $this->tool->handle(new Request([]));
 
-        $result = new AiAssistantResult();
-        app()->instance(AiAssistantResult::class, $result);
-        app()->instance(AiRequestContext::class, new AiRequestContext($user));
-        $tool = app()->make(GetLyrics::class);
-        $response = $tool->handle(new Request([]));
-
-        self::assertNull($result->action);
+        self::assertNull($this->result->action);
         self::assertStringContainsString('Could not find', (string) $response);
     }
 }

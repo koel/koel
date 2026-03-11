@@ -8,6 +8,7 @@ use App\Ai\Tools\AddToPlaylist;
 use App\Helpers\Uuid;
 use App\Models\Playlist;
 use App\Models\Song;
+use App\Models\User;
 use Laravel\Ai\Tools\Request;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -16,6 +17,22 @@ use function Tests\create_user;
 
 class AddToPlaylistToolTest extends TestCase
 {
+    private AiAssistantResult $result;
+    private User $user;
+    private AddToPlaylist $tool;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user = create_user();
+        $this->result = new AiAssistantResult();
+
+        app()->instance(AiAssistantResult::class, $this->result);
+        app()->instance(AiRequestContext::class, new AiRequestContext($this->user));
+        $this->tool = app()->make(AddToPlaylist::class);
+    }
+
     #[Test]
     public function addsCurrentSongToPlaylist(): void
     {
@@ -24,10 +41,10 @@ class AddToPlaylistToolTest extends TestCase
         $user = $playlist->owner;
         $song = Song::factory()->for($user, 'owner')->create(['title' => 'Test Song']);
 
-        app()->instance(AiAssistantResult::class, new AiAssistantResult());
         app()->instance(AiRequestContext::class, new AiRequestContext($user, currentSongId: $song->id));
-        $tool = app()->make(AddToPlaylist::class);
-        $response = $tool->handle(new Request(['playlist_name' => 'Rock Playlist']));
+        $this->tool = app()->make(AddToPlaylist::class);
+
+        $response = $this->tool->handle(new Request(['playlist_name' => 'Rock Playlist']));
 
         self::assertStringContainsString('Test Song', (string) $response);
         self::assertStringContainsString('My Rock Playlist', (string) $response);
@@ -37,12 +54,7 @@ class AddToPlaylistToolTest extends TestCase
     #[Test]
     public function returnsErrorWhenPlaylistNotFound(): void
     {
-        $user = create_user();
-
-        app()->instance(AiAssistantResult::class, new AiAssistantResult());
-        app()->instance(AiRequestContext::class, new AiRequestContext($user));
-        $tool = app()->make(AddToPlaylist::class);
-        $response = $tool->handle(new Request(['playlist_name' => 'Nonexistent']));
+        $response = $this->tool->handle(new Request(['playlist_name' => 'Nonexistent']));
 
         self::assertStringContainsString('No playlist matching', (string) $response);
     }
@@ -64,10 +76,10 @@ class AddToPlaylistToolTest extends TestCase
         $user = $playlist->owner;
         $song = Song::factory()->for($user, 'owner')->create();
 
-        app()->instance(AiAssistantResult::class, new AiAssistantResult());
         app()->instance(AiRequestContext::class, new AiRequestContext($user, currentSongId: $song->id));
-        $tool = app()->make(AddToPlaylist::class);
-        $response = $tool->handle(new Request(['playlist_name' => 'Smart Jazz']));
+        $this->tool = app()->make(AddToPlaylist::class);
+
+        $response = $this->tool->handle(new Request(['playlist_name' => 'Smart Jazz']));
 
         self::assertStringContainsString('smart playlist', (string) $response);
     }
@@ -78,10 +90,10 @@ class AddToPlaylistToolTest extends TestCase
         $playlist = Playlist::factory()->create(['name' => 'My Playlist']);
         $user = $playlist->owner;
 
-        app()->instance(AiAssistantResult::class, new AiAssistantResult());
         app()->instance(AiRequestContext::class, new AiRequestContext($user));
-        $tool = app()->make(AddToPlaylist::class);
-        $response = $tool->handle(new Request(['playlist_name' => 'My Playlist']));
+        $this->tool = app()->make(AddToPlaylist::class);
+
+        $response = $this->tool->handle(new Request(['playlist_name' => 'My Playlist']));
 
         self::assertStringContainsString('Could not find', (string) $response);
     }

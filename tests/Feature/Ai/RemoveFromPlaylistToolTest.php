@@ -8,6 +8,7 @@ use App\Ai\Tools\RemoveFromPlaylist;
 use App\Helpers\Uuid;
 use App\Models\Playlist;
 use App\Models\Song;
+use App\Models\User;
 use Laravel\Ai\Tools\Request;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -16,6 +17,22 @@ use function Tests\create_user;
 
 class RemoveFromPlaylistToolTest extends TestCase
 {
+    private AiAssistantResult $result;
+    private User $user;
+    private RemoveFromPlaylist $tool;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user = create_user();
+        $this->result = new AiAssistantResult();
+
+        app()->instance(AiAssistantResult::class, $this->result);
+        app()->instance(AiRequestContext::class, new AiRequestContext($this->user));
+        $this->tool = app()->make(RemoveFromPlaylist::class);
+    }
+
     #[Test]
     public function removesCurrentSongFromPlaylist(): void
     {
@@ -25,13 +42,12 @@ class RemoveFromPlaylistToolTest extends TestCase
         $song = Song::factory()->for($user, 'owner')->create(['title' => 'Test Song']);
         $playlist->playables()->attach($song, ['user_id' => $user->id]);
 
-        $result = new AiAssistantResult();
-        app()->instance(AiAssistantResult::class, $result);
         app()->instance(AiRequestContext::class, new AiRequestContext($user, currentSongId: $song->id));
-        $tool = app()->make(RemoveFromPlaylist::class);
-        $response = $tool->handle(new Request(['playlist_name' => 'Rock Playlist']));
+        $this->tool = app()->make(RemoveFromPlaylist::class);
 
-        self::assertSame('remove_from_playlist', $result->action);
+        $response = $this->tool->handle(new Request(['playlist_name' => 'Rock Playlist']));
+
+        self::assertSame('remove_from_playlist', $this->result->action);
         self::assertStringContainsString('Test Song', (string) $response);
         self::assertStringContainsString('My Rock Playlist', (string) $response);
         self::assertFalse($playlist->playables()->where('songs.id', $song->id)->exists());
@@ -40,12 +56,7 @@ class RemoveFromPlaylistToolTest extends TestCase
     #[Test]
     public function returnsErrorWhenPlaylistNotFound(): void
     {
-        $user = create_user();
-
-        app()->instance(AiAssistantResult::class, new AiAssistantResult());
-        app()->instance(AiRequestContext::class, new AiRequestContext($user));
-        $tool = app()->make(RemoveFromPlaylist::class);
-        $response = $tool->handle(new Request(['playlist_name' => 'Nonexistent']));
+        $response = $this->tool->handle(new Request(['playlist_name' => 'Nonexistent']));
 
         self::assertStringContainsString('No playlist matching', (string) $response);
     }
@@ -67,10 +78,10 @@ class RemoveFromPlaylistToolTest extends TestCase
         $user = $playlist->owner;
         $song = Song::factory()->for($user, 'owner')->create();
 
-        app()->instance(AiAssistantResult::class, new AiAssistantResult());
         app()->instance(AiRequestContext::class, new AiRequestContext($user, currentSongId: $song->id));
-        $tool = app()->make(RemoveFromPlaylist::class);
-        $response = $tool->handle(new Request(['playlist_name' => 'Smart Jazz']));
+        $this->tool = app()->make(RemoveFromPlaylist::class);
+
+        $response = $this->tool->handle(new Request(['playlist_name' => 'Smart Jazz']));
 
         self::assertStringContainsString('smart playlist', (string) $response);
     }
@@ -81,10 +92,10 @@ class RemoveFromPlaylistToolTest extends TestCase
         $playlist = Playlist::factory()->create(['name' => 'My Playlist']);
         $user = $playlist->owner;
 
-        app()->instance(AiAssistantResult::class, new AiAssistantResult());
         app()->instance(AiRequestContext::class, new AiRequestContext($user));
-        $tool = app()->make(RemoveFromPlaylist::class);
-        $response = $tool->handle(new Request(['playlist_name' => 'My Playlist']));
+        $this->tool = app()->make(RemoveFromPlaylist::class);
+
+        $response = $this->tool->handle(new Request(['playlist_name' => 'My Playlist']));
 
         self::assertStringContainsString('Could not find', (string) $response);
     }

@@ -5,6 +5,7 @@ namespace Tests\Feature\Ai;
 use App\Ai\AiRequestContext;
 use App\Ai\Tools\DeletePlaylist;
 use App\Models\Playlist;
+use App\Models\User;
 use Laravel\Ai\Tools\Request;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -13,6 +14,19 @@ use function Tests\create_user;
 
 class DeletePlaylistToolTest extends TestCase
 {
+    private User $user;
+    private DeletePlaylist $tool;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user = create_user();
+
+        app()->instance(AiRequestContext::class, new AiRequestContext($this->user));
+        $this->tool = app()->make(DeletePlaylist::class);
+    }
+
     #[Test]
     public function deletesOwnedPlaylist(): void
     {
@@ -20,8 +34,9 @@ class DeletePlaylistToolTest extends TestCase
         $user = $playlist->owner;
 
         app()->instance(AiRequestContext::class, new AiRequestContext($user));
-        $tool = app()->make(DeletePlaylist::class);
-        $response = $tool->handle(new Request(['playlist_name' => 'Old Playlist']));
+        $this->tool = app()->make(DeletePlaylist::class);
+
+        $response = $this->tool->handle(new Request(['playlist_name' => 'Old Playlist']));
 
         self::assertStringContainsString('Deleted', (string) $response);
         self::assertStringContainsString('My Old Playlist', (string) $response);
@@ -31,11 +46,7 @@ class DeletePlaylistToolTest extends TestCase
     #[Test]
     public function returnsErrorWhenPlaylistNotFound(): void
     {
-        $user = create_user();
-
-        app()->instance(AiRequestContext::class, new AiRequestContext($user));
-        $tool = app()->make(DeletePlaylist::class);
-        $response = $tool->handle(new Request(['playlist_name' => 'Nonexistent']));
+        $response = $this->tool->handle(new Request(['playlist_name' => 'Nonexistent']));
 
         self::assertStringContainsString('No playlist matching', (string) $response);
     }

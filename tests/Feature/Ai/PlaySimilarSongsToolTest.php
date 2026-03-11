@@ -6,6 +6,7 @@ use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
 use App\Ai\Tools\PlaySimilarSongs;
 use App\Models\Song;
+use App\Models\User;
 use Laravel\Ai\Tools\Request;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -14,112 +15,106 @@ use function Tests\create_user;
 
 class PlaySimilarSongsToolTest extends TestCase
 {
+    private AiAssistantResult $result;
+    private User $user;
+    private PlaySimilarSongs $tool;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user = create_user();
+        $this->result = new AiAssistantResult();
+
+        app()->instance(AiAssistantResult::class, $this->result);
+        app()->instance(AiRequestContext::class, new AiRequestContext($this->user));
+        $this->tool = app()->make(PlaySimilarSongs::class);
+    }
+
     #[Test]
     public function findsSimilarSongsByArtist(): void
     {
-        $user = create_user();
-
-        $referenceSong = Song::factory()->for($user, 'owner')->create(['title' => 'One']);
+        $referenceSong = Song::factory()->for($this->user, 'owner')->create(['title' => 'One']);
         Song::factory()
-            ->for($user, 'owner')
+            ->for($this->user, 'owner')
             ->for($referenceSong->artist)
             ->create(['title' => 'Two']);
-        Song::factory()->for($user, 'owner')->create(['title' => 'Unrelated']);
+        Song::factory()->for($this->user, 'owner')->create(['title' => 'Unrelated']);
 
-        $result = new AiAssistantResult();
-        app()->instance(AiAssistantResult::class, $result);
-        app()->instance(AiRequestContext::class, new AiRequestContext($user, currentSongId: $referenceSong->id));
-        $tool = app()->make(PlaySimilarSongs::class);
+        app()->instance(AiRequestContext::class, new AiRequestContext($this->user, currentSongId: $referenceSong->id));
+        $this->tool = app()->make(PlaySimilarSongs::class);
 
-        $response = $tool->handle(new Request([]));
+        $response = $this->tool->handle(new Request([]));
 
-        self::assertSame('play_songs', $result->action);
-        self::assertCount(1, $result->data['songs']);
-        self::assertSame('Two', $result->data['songs']->first()->title);
+        self::assertSame('play_songs', $this->result->action);
+        self::assertCount(1, $this->result->data['songs']);
+        self::assertSame('Two', $this->result->data['songs']->first()->title);
         self::assertStringContainsString('One', (string) $response);
     }
 
     #[Test]
     public function findsSimilarSongsByGenre(): void
     {
-        $user = create_user();
-
         /** @var Song $referenceSong */
-        $referenceSong = Song::factory()->for($user, 'owner')->create(['title' => 'Rock Song']);
+        $referenceSong = Song::factory()->for($this->user, 'owner')->create(['title' => 'Rock Song']);
         $referenceSong->syncGenres('Rock');
 
         /** @var Song $similarSong */
-        $similarSong = Song::factory()->for($user, 'owner')->create(['title' => 'Another Rock Song']);
+        $similarSong = Song::factory()->for($this->user, 'owner')->create(['title' => 'Another Rock Song']);
         $similarSong->syncGenres('Rock');
 
-        Song::factory()->for($user, 'owner')->create(['title' => 'Jazz Song']);
+        Song::factory()->for($this->user, 'owner')->create(['title' => 'Jazz Song']);
 
-        $result = new AiAssistantResult();
-        app()->instance(AiAssistantResult::class, $result);
-        app()->instance(AiRequestContext::class, new AiRequestContext($user, currentSongId: $referenceSong->id));
-        $tool = app()->make(PlaySimilarSongs::class);
+        app()->instance(AiRequestContext::class, new AiRequestContext($this->user, currentSongId: $referenceSong->id));
+        $this->tool = app()->make(PlaySimilarSongs::class);
 
-        $response = $tool->handle(new Request([]));
+        $response = $this->tool->handle(new Request([]));
 
-        self::assertSame('play_songs', $result->action);
-        self::assertNotEmpty($result->data['songs']);
-        self::assertTrue($result->data['songs']->contains('title', 'Another Rock Song'));
-        self::assertFalse($result->data['songs']->contains('title', 'Jazz Song'));
+        self::assertSame('play_songs', $this->result->action);
+        self::assertNotEmpty($this->result->data['songs']);
+        self::assertTrue($this->result->data['songs']->contains('title', 'Another Rock Song'));
+        self::assertFalse($this->result->data['songs']->contains('title', 'Jazz Song'));
     }
 
     #[Test]
     public function returnsNotFoundWhenNoSimilarSongs(): void
     {
-        $user = create_user();
-        $song = Song::factory()->for($user, 'owner')->create(['title' => 'Lonely Song']);
+        $song = Song::factory()->for($this->user, 'owner')->create(['title' => 'Lonely Song']);
 
-        $result = new AiAssistantResult();
-        app()->instance(AiAssistantResult::class, $result);
-        app()->instance(AiRequestContext::class, new AiRequestContext($user, currentSongId: $song->id));
-        $tool = app()->make(PlaySimilarSongs::class);
+        app()->instance(AiRequestContext::class, new AiRequestContext($this->user, currentSongId: $song->id));
+        $this->tool = app()->make(PlaySimilarSongs::class);
 
-        $response = $tool->handle(new Request([]));
+        $response = $this->tool->handle(new Request([]));
 
-        self::assertNull($result->action);
+        self::assertNull($this->result->action);
         self::assertStringContainsString('No similar songs', (string) $response);
     }
 
     #[Test]
     public function usesCurrentlyPlayingSongWhenNoTitleSpecified(): void
     {
-        $user = create_user();
-
-        $referenceSong = Song::factory()->for($user, 'owner')->create(['title' => 'Master of Puppets']);
+        $referenceSong = Song::factory()->for($this->user, 'owner')->create(['title' => 'Master of Puppets']);
         Song::factory()
-            ->for($user, 'owner')
+            ->for($this->user, 'owner')
             ->for($referenceSong->artist)
             ->create(['title' => 'Battery']);
 
-        $result = new AiAssistantResult();
-        app()->instance(AiAssistantResult::class, $result);
-        app()->instance(AiRequestContext::class, new AiRequestContext($user, currentSongId: $referenceSong->id));
-        $tool = app()->make(PlaySimilarSongs::class);
+        app()->instance(AiRequestContext::class, new AiRequestContext($this->user, currentSongId: $referenceSong->id));
+        $this->tool = app()->make(PlaySimilarSongs::class);
 
-        $response = $tool->handle(new Request([]));
+        $response = $this->tool->handle(new Request([]));
 
-        self::assertSame('play_songs', $result->action);
-        self::assertNotEmpty($result->data['songs']);
+        self::assertSame('play_songs', $this->result->action);
+        self::assertNotEmpty($this->result->data['songs']);
         self::assertStringContainsString('Master of Puppets', (string) $response);
     }
 
     #[Test]
     public function returnsErrorWhenNoSongSpecifiedAndNoneIsPlaying(): void
     {
-        $user = create_user();
+        $response = $this->tool->handle(new Request([]));
 
-        $result = new AiAssistantResult();
-        app()->instance(AiAssistantResult::class, $result);
-        app()->instance(AiRequestContext::class, new AiRequestContext($user));
-        $tool = app()->make(PlaySimilarSongs::class);
-
-        $response = $tool->handle(new Request([]));
-
-        self::assertNull($result->action);
+        self::assertNull($this->result->action);
         self::assertStringContainsString('Could not determine', (string) $response);
     }
 }

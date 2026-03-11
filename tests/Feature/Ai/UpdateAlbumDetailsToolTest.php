@@ -6,6 +6,7 @@ use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
 use App\Ai\Tools\UpdateAlbumDetails;
 use App\Models\Album;
+use App\Models\User;
 use Laravel\Ai\Tools\Request;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -15,51 +16,52 @@ use function Tests\create_user;
 
 class UpdateAlbumDetailsToolTest extends TestCase
 {
+    private AiAssistantResult $result;
+    private User $user;
+    private UpdateAlbumDetails $tool;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user = create_admin();
+        $this->result = new AiAssistantResult();
+
+        app()->instance(AiAssistantResult::class, $this->result);
+        app()->instance(AiRequestContext::class, new AiRequestContext($this->user));
+        $this->tool = app()->make(UpdateAlbumDetails::class);
+    }
+
     #[Test]
     public function renamesAlbum(): void
     {
-        $user = create_admin();
-        $album = Album::factory()->for($user)->create(['name' => 'Old Album']);
+        $album = Album::factory()->for($this->user)->create(['name' => 'Old Album']);
 
-        $result = new AiAssistantResult();
-        app()->instance(AiAssistantResult::class, $result);
-        app()->instance(AiRequestContext::class, new AiRequestContext($user));
-        $tool = app()->make(UpdateAlbumDetails::class);
-        $response = $tool->handle(new Request(['query' => 'Old Album', 'name' => 'New Album']));
+        $response = $this->tool->handle(new Request(['query' => 'Old Album', 'name' => 'New Album']));
 
         self::assertStringContainsString('name to "New Album"', (string) $response);
         self::assertSame('New Album', $album->fresh()->name);
-        self::assertSame('update_album', $result->action);
+        self::assertSame('update_album', $this->result->action);
     }
 
     #[Test]
     public function updatesYear(): void
     {
-        $user = create_admin();
-        $album = Album::factory()->for($user)->create(['name' => 'My Album', 'year' => null]);
+        $album = Album::factory()->for($this->user)->create(['name' => 'My Album', 'year' => null]);
 
-        $result = new AiAssistantResult();
-        app()->instance(AiAssistantResult::class, $result);
-        app()->instance(AiRequestContext::class, new AiRequestContext($user));
-        $tool = app()->make(UpdateAlbumDetails::class);
-        $response = $tool->handle(new Request(['query' => 'My Album', 'year' => 1999]));
+        $response = $this->tool->handle(new Request(['query' => 'My Album', 'year' => 1999]));
 
         self::assertStringContainsString('year to 1999', (string) $response);
         self::assertSame(1999, $album->fresh()->year);
-        self::assertSame('update_album', $result->action);
+        self::assertSame('update_album', $this->result->action);
     }
 
     #[Test]
     public function updatesNameAndYear(): void
     {
-        $user = create_admin();
-        $album = Album::factory()->for($user)->create(['name' => 'Old Album', 'year' => 2000]);
+        $album = Album::factory()->for($this->user)->create(['name' => 'Old Album', 'year' => 2000]);
 
-        $result = new AiAssistantResult();
-        app()->instance(AiAssistantResult::class, $result);
-        app()->instance(AiRequestContext::class, new AiRequestContext($user));
-        $tool = app()->make(UpdateAlbumDetails::class);
-        $response = $tool->handle(new Request(['query' => 'Old Album', 'name' => 'New Album', 'year' => 2024]));
+        $response = $this->tool->handle(new Request(['query' => 'Old Album', 'name' => 'New Album', 'year' => 2024]));
 
         self::assertStringContainsString('name to "New Album"', (string) $response);
         self::assertStringContainsString('year to 2024', (string) $response);
@@ -72,29 +74,18 @@ class UpdateAlbumDetailsToolTest extends TestCase
     #[Test]
     public function returnsErrorWhenAlbumNotFound(): void
     {
-        $user = create_admin();
-
-        $result = new AiAssistantResult();
-        app()->instance(AiAssistantResult::class, $result);
-        app()->instance(AiRequestContext::class, new AiRequestContext($user));
-        $tool = app()->make(UpdateAlbumDetails::class);
-        $response = $tool->handle(new Request(['query' => 'Nonexistent', 'name' => 'Whatever']));
+        $response = $this->tool->handle(new Request(['query' => 'Nonexistent', 'name' => 'Whatever']));
 
         self::assertStringContainsString('No album matching', (string) $response);
-        self::assertNull($result->action);
+        self::assertNull($this->result->action);
     }
 
     #[Test]
     public function returnsNoChangesWhenNothingProvided(): void
     {
-        $user = create_admin();
-        $album = Album::factory()->for($user)->create(['name' => 'My Album']);
+        Album::factory()->for($this->user)->create(['name' => 'My Album']);
 
-        $result = new AiAssistantResult();
-        app()->instance(AiAssistantResult::class, $result);
-        app()->instance(AiRequestContext::class, new AiRequestContext($user));
-        $tool = app()->make(UpdateAlbumDetails::class);
-        $response = $tool->handle(new Request(['query' => 'My Album']));
+        $response = $this->tool->handle(new Request(['query' => 'My Album']));
 
         self::assertStringContainsString('No changes', (string) $response);
     }
@@ -105,14 +96,13 @@ class UpdateAlbumDetailsToolTest extends TestCase
         $user = create_user();
         $album = Album::factory()->for($user)->create(['name' => 'My Album']);
 
-        $result = new AiAssistantResult();
-        app()->instance(AiAssistantResult::class, $result);
         app()->instance(AiRequestContext::class, new AiRequestContext($user));
-        $tool = app()->make(UpdateAlbumDetails::class);
-        $response = $tool->handle(new Request(['query' => 'My Album', 'name' => 'Hacked']));
+        $this->tool = app()->make(UpdateAlbumDetails::class);
+
+        $response = $this->tool->handle(new Request(['query' => 'My Album', 'name' => 'Hacked']));
 
         self::assertStringContainsString("don't have permission", (string) $response);
         self::assertSame('My Album', $album->fresh()->name);
-        self::assertNull($result->action);
+        self::assertNull($this->result->action);
     }
 }

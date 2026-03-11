@@ -9,6 +9,7 @@ use App\Enums\FavoriteableType;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
+use App\Models\User;
 use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
 use Illuminate\Database\Eloquent\Collection;
@@ -21,92 +22,92 @@ use function Tests\create_user;
 
 class RemoveFromFavoritesToolTest extends TestCase
 {
+    private AiAssistantResult $result;
+    private User $user;
+    private RemoveFromFavorites $tool;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user = create_user();
+        $this->result = new AiAssistantResult();
+
+        app()->instance(AiAssistantResult::class, $this->result);
+        app()->instance(AiRequestContext::class, new AiRequestContext($this->user));
+        $this->tool = app()->make(RemoveFromFavorites::class);
+    }
+
     #[Test]
     public function unfavoritesCurrentlyPlayingSong(): void
     {
-        $user = create_user();
         /** @var Song $song */
-        $song = Song::factory()->for($user, 'owner')->create(['title' => 'Bohemian Rhapsody']);
-        $song->favorites()->create(['user_id' => $user->id]);
+        $song = Song::factory()->for($this->user, 'owner')->create(['title' => 'Bohemian Rhapsody']);
+        $song->favorites()->create(['user_id' => $this->user->id]);
 
-        $result = new AiAssistantResult();
-        app()->instance(AiAssistantResult::class, $result);
-        app()->instance(AiRequestContext::class, new AiRequestContext($user, currentSongId: $song->id));
-        $tool = app()->make(RemoveFromFavorites::class);
-        $response = $tool->handle(new Request([]));
+        app()->instance(AiRequestContext::class, new AiRequestContext($this->user, currentSongId: $song->id));
+        $this->tool = app()->make(RemoveFromFavorites::class);
 
-        self::assertSame('remove_from_favorites', $result->action);
-        self::assertSame(FavoriteableType::PLAYABLE, $result->data['type']);
-        self::assertCount(1, $result->data['entities']);
+        $response = $this->tool->handle(new Request([]));
+
+        self::assertSame('remove_from_favorites', $this->result->action);
+        self::assertSame(FavoriteableType::PLAYABLE, $this->result->data['type']);
+        self::assertCount(1, $this->result->data['entities']);
         self::assertStringContainsString('Bohemian Rhapsody', (string) $response);
-        self::assertFalse($song->favorites()->where('user_id', $user->id)->exists());
+        self::assertFalse($song->favorites()->where('user_id', $this->user->id)->exists());
     }
 
     #[Test]
     public function returnsErrorWhenNoSongAvailable(): void
     {
-        $user = create_user();
+        $response = $this->tool->handle(new Request([]));
 
-        $result = new AiAssistantResult();
-        app()->instance(AiAssistantResult::class, $result);
-        app()->instance(AiRequestContext::class, new AiRequestContext($user));
-        $tool = app()->make(RemoveFromFavorites::class);
-        $response = $tool->handle(new Request([]));
-
-        self::assertNull($result->action);
+        self::assertNull($this->result->action);
         self::assertStringContainsString('Could not find', (string) $response);
     }
 
     #[Test]
     public function unfavoritesAlbumBySearch(): void
     {
-        $user = create_user();
         /** @var Album $album */
         $album = Album::factory()->create(['name' => 'A Night at the Opera']);
-        $album->favorites()->create(['user_id' => $user->id]);
+        $album->favorites()->create(['user_id' => $this->user->id]);
 
         $albumRepository = Mockery::mock(AlbumRepository::class);
         $albumRepository
             ->shouldReceive('search')
-            ->with('Night at the Opera', 1, $user)
+            ->with('Night at the Opera', 1, $this->user)
             ->andReturn(new Collection([$album]));
 
         app()->instance(AlbumRepository::class, $albumRepository);
+        $this->tool = app()->make(RemoveFromFavorites::class);
 
-        $result = new AiAssistantResult();
-        app()->instance(AiAssistantResult::class, $result);
-        app()->instance(AiRequestContext::class, new AiRequestContext($user));
-        $tool = app()->make(RemoveFromFavorites::class);
-        $response = $tool->handle(new Request(['type' => 'album', 'query' => 'Night at the Opera']));
+        $response = $this->tool->handle(new Request(['type' => 'album', 'query' => 'Night at the Opera']));
 
-        self::assertSame('remove_from_favorites', $result->action);
-        self::assertSame(FavoriteableType::ALBUM, $result->data['type']);
+        self::assertSame('remove_from_favorites', $this->result->action);
+        self::assertSame(FavoriteableType::ALBUM, $this->result->data['type']);
         self::assertStringContainsString('A Night at the Opera', (string) $response);
-        self::assertFalse($album->favorites()->where('user_id', $user->id)->exists());
+        self::assertFalse($album->favorites()->where('user_id', $this->user->id)->exists());
     }
 
     #[Test]
     public function unfavoritesArtistBySearch(): void
     {
-        $user = create_user();
         /** @var Artist $artist */
         $artist = Artist::factory()->create(['name' => 'Queen']);
-        $artist->favorites()->create(['user_id' => $user->id]);
+        $artist->favorites()->create(['user_id' => $this->user->id]);
 
         $artistRepository = Mockery::mock(ArtistRepository::class);
-        $artistRepository->shouldReceive('search')->with('Queen', 1, $user)->andReturn(new Collection([$artist]));
+        $artistRepository->shouldReceive('search')->with('Queen', 1, $this->user)->andReturn(new Collection([$artist]));
 
         app()->instance(ArtistRepository::class, $artistRepository);
+        $this->tool = app()->make(RemoveFromFavorites::class);
 
-        $result = new AiAssistantResult();
-        app()->instance(AiAssistantResult::class, $result);
-        app()->instance(AiRequestContext::class, new AiRequestContext($user));
-        $tool = app()->make(RemoveFromFavorites::class);
-        $response = $tool->handle(new Request(['type' => 'artist', 'query' => 'Queen']));
+        $response = $this->tool->handle(new Request(['type' => 'artist', 'query' => 'Queen']));
 
-        self::assertSame('remove_from_favorites', $result->action);
-        self::assertSame(FavoriteableType::ARTIST, $result->data['type']);
+        self::assertSame('remove_from_favorites', $this->result->action);
+        self::assertSame(FavoriteableType::ARTIST, $this->result->data['type']);
         self::assertStringContainsString('Queen', (string) $response);
-        self::assertFalse($artist->favorites()->where('user_id', $user->id)->exists());
+        self::assertFalse($artist->favorites()->where('user_id', $this->user->id)->exists());
     }
 }
