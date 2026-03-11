@@ -85,7 +85,6 @@ class AddToFavorites implements Tool
         return "Added {$entities->count()} {$type->value}(s) to your favorites.";
     }
 
-    /** @return Collection<int, Model&Favoriteable> */
     private function resolve(FavoriteableType $type, Request $request): Collection
     {
         if (isset($request['query'])) {

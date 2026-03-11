@@ -44,9 +44,11 @@ class PlaySimilarSongsToolTest extends TestCase
     {
         $user = create_user();
 
+        /** @var Song $referenceSong */
         $referenceSong = Song::factory()->for($user, 'owner')->create(['title' => 'Rock Song']);
         $referenceSong->syncGenres('Rock');
 
+        /** @var Song $similarSong */
         $similarSong = Song::factory()->for($user, 'owner')->create(['title' => 'Another Rock Song']);
         $similarSong->syncGenres('Rock');
 

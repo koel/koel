@@ -25,6 +25,7 @@ class AddToFavoritesToolTest extends TestCase
     public function favoritesCurrentlyPlayingSong(): void
     {
         $user = create_user();
+        /** @var Song $song */
         $song = Song::factory()->for($user, 'owner')->create(['title' => 'Bohemian Rhapsody']);
 
         $result = new AiAssistantResult();
@@ -59,6 +60,7 @@ class AddToFavoritesToolTest extends TestCase
     public function favoritesAlbumBySearch(): void
     {
         $user = create_user();
+        /** @var Album $album */
         $album = Album::factory()->create(['name' => 'A Night at the Opera']);
 
         $albumRepository = Mockery::mock(AlbumRepository::class);
@@ -85,6 +87,7 @@ class AddToFavoritesToolTest extends TestCase
     public function favoritesArtistBySearch(): void
     {
         $user = create_user();
+        /** @var Artist $artist */
         $artist = Artist::factory()->create(['name' => 'Queen']);
 
         $artistRepository = Mockery::mock(ArtistRepository::class);

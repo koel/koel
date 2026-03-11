@@ -19,6 +19,7 @@ class PlayPlaylistToolTest extends TestCase
     public function playsPlaylistByName(): void
     {
         $user = create_user();
+        /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create(['name' => 'Chill Vibes']);
         $playlist->users()->attach($user, ['role' => 'owner']);
 
@@ -58,6 +59,7 @@ class PlayPlaylistToolTest extends TestCase
     public function returnsErrorWhenPlaylistIsEmpty(): void
     {
         $user = create_user();
+        /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create(['name' => 'Empty Playlist']);
         $playlist->users()->attach($user, ['role' => 'owner']);
 
@@ -76,6 +78,7 @@ class PlayPlaylistToolTest extends TestCase
     {
         $user = create_user();
         $otherUser = create_user();
+        /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create(['name' => 'Secret Playlist']);
         $playlist->users()->attach($otherUser, ['role' => 'owner']);
 

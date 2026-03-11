@@ -85,7 +85,6 @@ class RemoveFromFavorites implements Tool
         return "Removed {$entities->count()} {$type->value}(s) from your favorites.";
     }
 
-    /** @return Collection<int, Model&Favoriteable> */
     private function resolve(FavoriteableType $type, Request $request): Collection
     {
         if (isset($request['query'])) {

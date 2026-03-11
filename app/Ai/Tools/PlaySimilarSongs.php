@@ -8,6 +8,7 @@ use App\Ai\Services\PlaybackService;
 use App\Models\Song;
 use App\Repositories\SongRepository;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Database\Eloquent\Collection;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
 use Stringable;
@@ -77,6 +78,7 @@ class PlaySimilarSongs implements Tool
         }
 
         if ($preview) {
+            /** @var Collection<int, Song> $songs */
             $list = $songs->map(
                 static fn (Song $s, int $i) => ($i + 1) . '. **' . $s->title . '** — ' . $s->artist->name,
             )->implode("\n");

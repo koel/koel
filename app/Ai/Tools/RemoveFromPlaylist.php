@@ -10,7 +10,7 @@ use App\Repositories\SongRepository;
 use App\Services\PlaylistService;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
 use Stringable;
@@ -98,9 +98,9 @@ class RemoveFromPlaylist implements Tool
         if ($this->context->currentSongId) {
             $song = $this->songRepository->findOne($this->context->currentSongId, $this->context->user);
 
-            return $song ? collect([$song]) : collect();
+            return $song ? new Collection([$song]) : new Collection();
         }
 
-        return collect();
+        return new Collection();
     }
 }

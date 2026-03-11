@@ -47,9 +47,11 @@ class CreateSmartPlaylist implements Tool
         return [
             'name' => $schema->string()->required()->description('The playlist name'),
             'rule_groups' => $schema
-                ->array($schema->object([
+                ->array()
+                ->items($schema->object([
                     'rules' => $schema
-                        ->array($schema->object([
+                        ->array()
+                        ->items($schema->object([
                             'model' => $schema
                                 ->string()
                                 ->required()
@@ -59,7 +61,8 @@ class CreateSmartPlaylist implements Tool
                                 ->required()
                                 ->description("The comparison operator. Must be one of: $validOperators"),
                             'value' => $schema
-                                ->array($schema->string())
+                                ->array()
+                                ->items($schema->string())
                                 ->required()
                                 ->description(
                                     'The filter value(s) as strings. Use ["value"] for single values, ["min", "max"] for isBetween.',
