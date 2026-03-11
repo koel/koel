@@ -128,8 +128,9 @@ Koel Plus only. See [Proxy Authentication](plus/proxy-auth).
 | Variable | Description | Default |
 |---|---|---|
 | `AI_ENABLED` | Enable the AI assistant feature. Requires a configured AI provider. | `false` |
-| `OPENAI_API_KEY` | API key for OpenAI (default provider). | _(empty)_ |
-| `ANTHROPIC_API_KEY` | API key for Anthropic (Claude). | _(empty)_ |
+| `AI_PROVIDER` | The AI provider to use. Supported values: `openai`, `anthropic`, `gemini`, `ollama`, and more. See `config/ai.php` for the full list. | `openai` |
+| `OPENAI_API_KEY` | API key for OpenAI. Required when `AI_PROVIDER=openai`. | _(empty)_ |
+| `ANTHROPIC_API_KEY` | API key for Anthropic (Claude). Required when `AI_PROVIDER=anthropic`. | _(empty)_ |
 
 Additional providers (Gemini, Ollama, etc.) can be configured in `config/ai.php`.
 

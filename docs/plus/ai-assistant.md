@@ -26,15 +26,19 @@ To enable the AI assistant, you need to configure an AI provider. Set the follow
 
 ```dotenv
 AI_ENABLED=true
-ANTHROPIC_API_KEY=your-anthropic-api-key
+AI_PROVIDER=openai
+OPENAI_API_KEY=your-openai-api-key
 ```
 
-Alternatively, you can use OpenAI:
+Or, if you prefer Anthropic:
 
 ```dotenv
 AI_ENABLED=true
-OPENAI_API_KEY=your-openai-api-key
+AI_PROVIDER=anthropic
+ANTHROPIC_API_KEY=your-anthropic-api-key
 ```
+
+`AI_PROVIDER` must match one of the provider keys defined in `config/ai.php` (e.g., `openai`, `anthropic`, `gemini`, `ollama`).
 
 The AI assistant is powered by [Laravel's AI SDK](https://laravel.com/docs/12.x/ai-sdk),
 which supports a wide range of providers including Anthropic, Gemini, DeepSeek, Mistral, Groq, Ollama, and more.
