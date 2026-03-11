@@ -24,6 +24,7 @@ use App\Values\SmartPlaylist\SmartPlaylistRuleGroup as RuleGroup;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 use LogicException;
 
 /**
@@ -33,7 +34,7 @@ use LogicException;
 // @mago-ignore lint:too-many-methods,cyclomatic-complexity
 class SongRepository extends Repository implements ScoutableRepository
 {
-    private const LIST_SIZE_LIMIT = 500;
+    private const int LIST_SIZE_LIMIT = 500;
 
     public function __construct(
         private readonly AlbumRepository $albumRepository,
@@ -72,6 +73,16 @@ class SongRepository extends Repository implements ScoutableRepository
             ->withUserContext()
             ->where('interactions.play_count', '>', 0)
             ->orderByDesc('interactions.play_count')
+            ->limit($count)
+            ->get();
+    }
+
+    /** @return Collection|array<array-key, Song> */
+    public function getLeastPlayed(int $count = 50, ?User $scopedUser = null): Collection
+    {
+        return Song::query(user: $scopedUser ?? $this->auth->user())
+            ->withUserContext()
+            ->orderBy('play_count')
             ->limit($count)
             ->get();
     }
@@ -405,6 +416,42 @@ class SongRepository extends Repository implements ScoutableRepository
             ->when($folder, static fn (SongBuilder $query) => $query->where('songs.folder_id', $folder->id)) // @phpstan-ignore-line
             ->when(!$folder, static fn (SongBuilder $query) => $query->whereNull('songs.folder_id'))
             ->orderBy('songs.path')
+            ->get();
+    }
+
+    /** @return Collection<Song>|array<array-key, Song> */
+    public function searchByLyrics(string $lyrics, int $limit = 50, ?User $user = null): Collection
+    {
+        $query = Song::query(type: PlayableType::SONG, user: $user ?? $this->auth->user())->withUserContext();
+
+        if (DB::getDriverName() === 'sqlite') {
+            $query->where('songs.lyrics', 'like', '%' . $lyrics . '%');
+        } else {
+            $query->whereFullText('songs.lyrics', $lyrics);
+        }
+
+        return $query->limit($limit)->get();
+    }
+
+    /** @return Collection<Song>|array<array-key, Song> */
+    public function getSimilar(Song $song, int $limit = 50, ?User $user = null): Collection
+    {
+        $genreIds = $song->genres->pluck('id')->all();
+
+        return Song::query(type: PlayableType::SONG, user: $user ?? $this->auth->user())
+            ->withUserContext()
+            ->where('songs.id', '!=', $song->id)
+            ->where(static function (SongBuilder $query) use ($song, $genreIds): void {
+                $query->where(
+                    'songs.artist_id',
+                    $song->artist_id,
+                )->when($genreIds, static fn (SongBuilder $q) => $q->orWhereHas('genres', static fn (Builder $gq) => $gq->whereIn(
+                    'genres.id',
+                    $genreIds,
+                )));
+            })
+            ->inRandomOrder()
+            ->limit($limit)
             ->get();
     }
 

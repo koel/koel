@@ -23,6 +23,17 @@ class ArtistRepository extends Repository implements ScoutableRepository
     }
 
     /** @return Collection|array<array-key, Artist> */
+    public function getRecentlyAdded(int $count = 6, ?User $user = null): Collection
+    {
+        return Artist::query()
+            ->onlyStandard()
+            ->withUserContext(user: $user ?? $this->auth->user())
+            ->latest()
+            ->limit($count)
+            ->get();
+    }
+
+    /** @return Collection|array<array-key, Artist> */
     public function getMostPlayed(int $count = 6, ?User $user = null): Collection
     {
         return Artist::query()

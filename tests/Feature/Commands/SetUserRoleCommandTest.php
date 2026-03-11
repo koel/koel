@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Commands;
 
-use App\Models\User;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 

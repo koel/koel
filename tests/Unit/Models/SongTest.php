@@ -51,7 +51,8 @@ class SongTest extends TestCase
         $song = Song::factory()
             ->hasAttached(Genre::factory()->create(['name' => 'Pop']))
             ->hasAttached(Genre::factory()->create(['name' => 'Rock']))
-            ->create();
+            ->create()
+            ->refresh();
 
         self::assertSame($isEqual, $song->genreEqualsTo($target));
     }

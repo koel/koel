@@ -123,6 +123,16 @@ Koel Plus only. See [Proxy Authentication](plus/proxy-auth).
 | `PROXY_AUTH_PREFERRED_NAME_HEADER` | The header containing the user's preferred display name. | `remote-preferred-name` |
 | `PROXY_AUTH_ALLOW_LIST` | A comma-separated list of allowed proxy IPs or CIDRs. If empty, no requests are allowed. | _(empty)_ |
 
+## AI Assistant (Koel Plus)
+
+| Variable | Description | Default |
+|---|---|---|
+| `AI_ENABLED` | Enable the AI assistant feature. Requires a configured AI provider. | `false` |
+| `OPENAI_API_KEY` | API key for OpenAI (default provider). | _(empty)_ |
+| `ANTHROPIC_API_KEY` | API key for Anthropic (Claude). | _(empty)_ |
+
+Additional providers (Gemini, Ollama, etc.) can be configured in `config/ai.php`.
+
 ## Miscellaneous
 
 | Variable | Description | Default |

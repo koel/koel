@@ -485,6 +485,7 @@ interface EqualizerPreset {
 declare type PlaybackState = 'Stopped' | 'Playing' | 'Paused'
 declare type ScreenName =
   | '404'
+  | 'AI'
   | 'Album'
   | 'Albums'
   | 'Artist'
@@ -713,4 +714,47 @@ interface EmbedOptions {
 interface LrcLine {
   time: number
   text: string
+}
+
+interface AiChatMessage {
+  id: string
+  role: 'user' | 'assistant'
+  content: string
+  error: boolean
+}
+
+interface AiResponse {
+  message: string
+  action:
+    | 'play_songs'
+    | 'suggest_songs'
+    | 'create_smart_playlist'
+    | 'add_radio_station'
+    | 'play_radio_station'
+    | 'add_to_favorites'
+    | 'remove_from_favorites'
+    | 'add_to_playlist'
+    | 'remove_from_playlist'
+    | 'show_lyrics'
+    | 'update_lyrics'
+    | 'update_album'
+    | 'update_artist'
+    | null
+  conversation_id: string | null
+  data: {
+    type?: 'playable' | 'album' | 'artist' | 'radio-station' | 'podcast'
+    songs?: Song[]
+    queue?: boolean
+    albums?: Album[]
+    artists?: Artist[]
+    stations?: RadioStation[]
+    podcasts?: Podcast[]
+    playlist?: Playlist
+    station?: RadioStation
+    song?: Song
+    album?: Album
+    artist?: Artist
+    lyrics?: string
+    list?: string
+  }
 }

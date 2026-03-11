@@ -235,9 +235,17 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - Always use Tailwind CSS v3; verify you're using only classes supported by this version.
 </laravel-boost-guidelines>
 
+## Code Organization
+- Traits must be placed in a `Concerns` subfolder (namespace) relative to their consumers (e.g. `App\Ai\Tools\Concerns\PlaysMusic`).
+- Interfaces must be placed in a `Contracts` subfolder (namespace) relative to their consumers (e.g. `App\Ai\Tools\Contracts\SomeInterface`).
+
 ## PHP Conventions
 - Always prefer Laravel's built-in helpers over custom implementations (e.g. `str()->plural()`, `Str::slug()`, `Arr::flatten()`, etc.). Do not reimplement what Laravel already provides.
 - Methods that don't reference `$this` must be declared `static`.
+- Always use the least visibility possible. Use `private` by default; only use `protected` or `public` when required by inheritance or external access.
+- Never use `empty()` to check arrays. If the variable is known to be an array, use `!$array` instead. Don't compare to `[]` either.
+- When a string contains quotes, don't use escaped double quotes (e.g. `"Playlist \"$name\" created"`). Use `sprintf()` with a single-quoted format string instead (e.g. `sprintf('Playlist "%s" created', $name)`).
+- Never query models directly (e.g. `Model::query()->where(...)`) outside of the corresponding Repository class. All model lookups and queries must go through the appropriate Repository (e.g. `PlaylistRepository`, `SongRepository`).
 
 ## Environment Variables Documentation
 - When adding, removing, or modifying environment variables in `.env.example`, always update `docs/environment-variables.md` to stay in sync.
@@ -250,6 +258,17 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ## Git Commits
 - Use [Conventional Commits](https://www.conventionalcommits.org/) for all commit messages (e.g. `fix:`, `feat:`, `chore:`, `test:`, `refactor:`, `docs:`, `ci:`, etc.).
 - Focus on the feature/purpose, not implementation details. For example, prefer "feat: show current playing song during radio stream" over "feat: radio station ICY metadata now-playing". Same applies to PR titles.
+
+## AI Assistant Tools
+- When AI assistant tool capabilities change (added, removed, or updated), always update the sample prompts in `AiSamplePrompts.vue` to reflect the current abilities.
+
+## Lucide Icons
+- When importing icons from `lucide-vue-next`, always use the `Icon` suffix (e.g. `SparklesIcon`, not `Sparkles`; `SearchIcon`, not `Search`).
+
+## Vue Component Styling
+- Put shared/base Tailwind classes directly on the HTML element via the `class` attribute.
+- For variant-specific styles (e.g. modes, states), use custom CSS classes (`.initial`, `.chat`, `.user`, `.error`, etc.) with `@apply` in a scoped `<style>` block.
+- Do NOT build class strings in JavaScript arrays or computed properties.
 
 ## Code Reviews
 - When addressing PR review comments, do NOT blindly follow them. Always use your own knowledge and logic to evaluate whether the feedback makes sense. If it doesn't, push back and explain why.

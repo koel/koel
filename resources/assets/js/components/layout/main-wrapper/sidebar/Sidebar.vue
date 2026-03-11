@@ -14,8 +14,8 @@
     </section>
 
     <section class="home-search-block p-6 flex gap-2">
-      <HomeButton />
-      <SearchForm class="flex-1" />
+      <HomeButton v-show="!searchFocused" />
+      <SearchForm class="flex-1" @focus-change="onSearchFocusChange" />
     </section>
 
     <section v-koel-overflow-fade class="pt-2 pb-10 overflow-y-auto space-y-8">
@@ -60,6 +60,9 @@ const { isPlus } = useKoelPlus()
 const { get: lsGet, set: lsSet } = useLocalStorage()
 
 const mobileShowing = ref(false)
+const searchFocused = ref(false)
+
+const onSearchFocusChange = (focused: boolean) => (searchFocused.value = focused)
 const expanded = ref(!lsGet('sidebar-collapsed', false))
 
 watch(expanded, value => lsSet('sidebar-collapsed', !value))

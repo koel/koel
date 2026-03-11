@@ -212,6 +212,11 @@ export const routes = [
     },
   },
   {
+    name: 'ai',
+    path: '/ai',
+    screen: 'AI',
+  },
+  {
     name: 'media-browser',
     path: '/browse/:path?',
     screen: 'MediaBrowser',

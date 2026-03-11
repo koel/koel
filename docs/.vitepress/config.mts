@@ -88,6 +88,7 @@ export default defineConfig({
           { text: 'Media Browser', link: '/plus/media-browser' },
           { text: 'White Labeling', link: '/plus/white-labeling' },
           { text: 'Custom Themes', link: '/plus/custom-themes' },
+          { text: 'AI Assistant', link: '/plus/ai-assistant' },
           { text: 'Ticketmaster', link: '/plus/ticketmaster' },
         ],
       },
