@@ -62,8 +62,6 @@ const filterBandEls = ref<InstanceType<typeof EqualizerBand>[]>()
 const filterBandsEl = ref<HTMLElement>()
 const curvePoints = ref<{ x: number; y: number }[]>([])
 
-const SLIDER_HEIGHT = 100
-
 const updateCurvePoints = () => {
   if (!filterBandEls.value?.length || !filterBandsEl.value) {
     return
@@ -71,11 +69,17 @@ const updateCurvePoints = () => {
 
   const containerRect = filterBandsEl.value.getBoundingClientRect()
 
-  curvePoints.value = filterBandEls.value.map((bandEl, i) => {
+  curvePoints.value = filterBandEls.value.map(bandEl => {
     const el = bandEl.$el as HTMLElement
-    const elRect = el.getBoundingClientRect()
-    const x = elRect.left - containerRect.left + elRect.width / 2
-    const y = ((20 - bands[i].db) / 40) * SLIDER_HEIGHT
+    const handle = el.querySelector('.noUi-handle') as HTMLElement
+
+    if (!handle) {
+      return { x: 0, y: 0 }
+    }
+
+    const handleRect = handle.getBoundingClientRect()
+    const x = handleRect.left - containerRect.left + handleRect.width / 2
+    const y = handleRect.top - containerRect.top + handleRect.height / 2
 
     return { x, y }
   })
