@@ -1,6 +1,10 @@
 <template>
-  <span ref="containerRef" class="marquee-container inline-block max-w-full">
-    <span ref="textRef" class="marquee-text inline-block" :style="animationStyle">{{ text }}</span>
+  <span
+    ref="containerRef"
+    class="inline-block max-w-full"
+    :class="prefersReducedMotion && 'text-ellipsis overflow-hidden'"
+  >
+    <span ref="textRef" class="inline-block" :style="animationStyle">{{ text }}</span>
   </span>
 </template>
 
@@ -8,6 +12,8 @@
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 
 const props = withDefaults(defineProps<{ text: string; speed?: number }>(), { speed: 30 })
+
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
 const containerRef = ref<HTMLElement>()
 const textRef = ref<HTMLElement>()
@@ -52,6 +58,10 @@ const pause = (ms: number) =>
   })
 
 const animate = async () => {
+  if (prefersReducedMotion) {
+    return
+  }
+
   measure()
 
   if (overflow.value <= 0) {
