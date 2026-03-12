@@ -79,7 +79,7 @@ article {
       &::after {
         content: ' ';
         position: absolute;
-        width: 2px;
+        width: 1px;
         height: 100%;
         top: 0;
         left: 7px;
@@ -100,7 +100,7 @@ article {
       &::after {
         content: ' ';
         position: absolute;
-        width: 2px;
+        width: 1px;
         height: 100%;
         background: rgba(255, 255, 255, 0.15);
         top: 0;
