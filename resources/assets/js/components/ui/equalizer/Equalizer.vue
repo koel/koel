@@ -23,7 +23,7 @@
             :key="band.label"
             ref="filterBandEls"
             v-model="band.db"
-            @commit="save"
+            @commit="commitFilterGain"
             @update:model-value="changeFilterGain(band)"
           >
             {{ band.label }}
@@ -130,6 +130,13 @@ const changeFilterGain = (band: Band) => {
     updateCurvePoints()
     selectedPresetName.value = null
   }
+}
+
+const commitFilterGain = () => {
+  save()
+  // Track clicks trigger a 300ms CSS transition (noUi-state-tap),
+  // so re-read handle positions after it completes.
+  setTimeout(updateCurvePoints, 350)
 }
 
 watch(selectedPresetName, value => {
