@@ -82,7 +82,7 @@ article {
         width: 1px;
         height: 100%;
         top: 0;
-        left: 7px;
+        left: 50%;
       }
     }
 
@@ -110,7 +110,7 @@ article {
           transparent
         );
         top: 0;
-        left: 7px;
+        left: 50%;
       }
     }
 
@@ -130,7 +130,7 @@ article {
       .noUi-handle {
         width: 12px;
         height: 12px;
-        left: -14px;
+        left: -14.5px;
         border-radius: 9999px;
         top: -3px;
         position: relative;
