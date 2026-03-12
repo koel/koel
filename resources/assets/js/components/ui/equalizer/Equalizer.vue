@@ -8,25 +8,29 @@
     </header>
 
     <main>
-      <div class="t-4 b-5 x-4 p-4 flex justify-between rounded-md bg-black/20">
+      <div class="t-4 b-5 x-4 p-4 flex gap-1 rounded-md bg-black/20">
         <EqualizerBand ref="preampBandEl" v-model="preampGain" type="preamp" @commit="save">Preamp</EqualizerBand>
 
-        <span class="text-sm h-[100px] w-[20px] flex flex-col justify-between items-center -ml-6 opacity-50">
+        <span class="text-sm h-[100px] w-[20px] flex flex-col justify-between items-center opacity-50">
           <span class="leading-none text-k-fg">+20</span>
           <span class="leading-none text-k-fg">0</span>
           <span class="leading-none text-k-fg">-20</span>
         </span>
 
-        <EqualizerBand
-          v-for="band in bands"
-          :key="band.label"
-          ref="filterBandEls"
-          v-model="band.db"
-          @commit="save"
-          @update:model-value="changeFilterGain(band)"
-        >
-          {{ band.label }}
-        </EqualizerBand>
+        <div ref="filterBandsEl" class="relative flex-1 flex justify-between">
+          <EqualizerBand
+            v-for="band in bands"
+            :key="band.label"
+            ref="filterBandEls"
+            v-model="band.db"
+            @commit="save"
+            @update:model-value="changeFilterGain(band)"
+          >
+            {{ band.label }}
+          </EqualizerBand>
+
+          <EqualizerCurve :gains="bandGains" :width="curveWidth" :height="100" />
+        </div>
       </div>
     </main>
 
@@ -37,7 +41,8 @@
 </template>
 
 <script lang="ts" setup>
-import { nextTick, onMounted, ref, watch } from 'vue'
+import { useElementSize } from '@vueuse/core'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { equalizerStore } from '@/stores/equalizerStore'
 import type { Band } from '@/services/audioService'
 import { audioService } from '@/services/audioService'
@@ -46,6 +51,7 @@ import { equalizerPresets as presets } from '@/config/audio'
 import Btn from '@/components/ui/form/Btn.vue'
 import SelectBox from '@/components/ui/form/SelectBox.vue'
 import EqualizerBand from '@/components/ui/equalizer/EqualizerBand.vue'
+import EqualizerCurve from '@/components/ui/equalizer/EqualizerCurve.vue'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 
@@ -54,6 +60,9 @@ const preampGain = ref(0)
 const selectedPresetName = ref<EqualizerPreset['name']>(null)
 const preampBandEl = ref<InstanceType<typeof EqualizerBand>>()
 const filterBandEls = ref<InstanceType<typeof EqualizerBand>[]>()
+const filterBandsEl = ref<HTMLElement>()
+const { width: curveWidth } = useElementSize(filterBandsEl)
+const bandGains = computed(() => bands.map(band => band.db))
 
 // A flag to determine if the changes made to the bands are from loading a preset
 // or by user customizing the sliders, in such a case the preset name should
