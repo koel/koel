@@ -102,7 +102,13 @@ article {
         position: absolute;
         width: 1px;
         height: 100%;
-        background: rgba(255, 255, 255, 0.15);
+        background: linear-gradient(
+          to bottom,
+          transparent,
+          rgba(255, 255, 255, 0.15) 15%,
+          rgba(255, 255, 255, 0.15) 85%,
+          transparent
+        );
         top: 0;
         left: 7px;
       }
