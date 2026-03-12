@@ -1,7 +1,7 @@
 <template>
   <svg class="absolute inset-0 pointer-events-none overflow-visible">
     <defs>
-      <linearGradient id="eq-curve-gradient" x1="0" y1="0" x2="0" y2="1">
+      <linearGradient id="eq-curve-gradient" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="100">
         <stop offset="0%" stop-color="var(--color-highlight)" stop-opacity="0.8" />
         <stop offset="100%" stop-color="var(--color-success)" stop-opacity="0.8" />
       </linearGradient>
