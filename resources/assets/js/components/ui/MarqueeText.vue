@@ -1,9 +1,6 @@
 <template>
-  <span
-    ref="containerRef"
-    class="inline-block max-w-full"
-    :class="prefersReducedMotion && 'text-ellipsis overflow-hidden'"
-  >
+  <span v-if="prefersReducedMotion" class="block truncate">{{ text }}</span>
+  <span v-else ref="containerRef" class="inline-block max-w-full">
     <span ref="textRef" class="inline-block" :style="animationStyle">{{ text }}</span>
   </span>
 </template>
