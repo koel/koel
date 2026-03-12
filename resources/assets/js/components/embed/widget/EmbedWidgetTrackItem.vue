@@ -63,7 +63,7 @@ article {
 
   .title-artist {
     span {
-      @apply overflow-hidden whitespace-nowrap text-ellipsis block;
+      @apply truncate block;
     }
   }
 }

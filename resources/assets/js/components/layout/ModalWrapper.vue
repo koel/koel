@@ -54,7 +54,7 @@ dialog {
       @apply flex bg-k-fg-5;
 
       h1 {
-        @apply text-3xl leading-normal overflow-hidden text-ellipsis whitespace-nowrap;
+        @apply text-3xl leading-normal truncate;
       }
     }
 

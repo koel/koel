@@ -49,6 +49,6 @@ const album = computed(() =>
 
 <style lang="postcss" scoped>
 p {
-  @apply max-w-[90%] mx-auto overflow-hidden text-ellipsis whitespace-nowrap leading-[1.3];
+  @apply max-w-[90%] mx-auto truncate leading-[1.3];
 }
 </style>

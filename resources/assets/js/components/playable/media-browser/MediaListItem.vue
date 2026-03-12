@@ -18,7 +18,7 @@
         </template>
       </template>
       <Icon v-else :icon="faFolder" class="text-k-fg" fixed-width />
-      <span class="flex-1 overflow-hidden text-ellipsis whitespace-nowrap user-select-none">{{ label }}</span>
+      <span class="flex-1 truncate user-select-none">{{ label }}</span>
 
       <!-- on a mobile device, show an Open button for a beter UX -->
       <button

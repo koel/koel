@@ -13,7 +13,7 @@
         <slot name="icon" />
       </span>
 
-      <span class="overflow-hidden text-ellipsis whitespace-nowrap">
+      <span class="truncate">
         <slot />
       </span>
     </a>

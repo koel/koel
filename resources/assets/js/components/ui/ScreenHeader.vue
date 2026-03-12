@@ -9,9 +9,7 @@
 
     <main class="flex flex-1 gap-5 items-center overflow-hidden">
       <div class="w-full flex-1 overflow-hidden">
-        <h1
-          class="name text-k-fg overflow-hidden whitespace-nowrap text-ellipsis mr-4 font-thin md:font-bold my-0 leading-tight"
-        >
+        <h1 class="name text-k-fg truncate mr-4 font-thin md:font-bold my-0 leading-tight">
           <slot />
         </h1>
         <span v-if="$slots.meta" class="meta hidden text-[0.9rem] leading-loose space-x-2">

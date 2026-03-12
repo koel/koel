@@ -4,7 +4,7 @@
       <ScreenHeaderSkeleton v-if="loading && !episode" />
       <ScreenHeader v-if="episode">
         <p class="text-base font-normal">Episode</p>
-        <h1 class="text-ellipsis overflow-hidden whitespace-nowrap" :title="episode.title">{{ episode.title }}</h1>
+        <h1 class="truncate" :title="episode.title">{{ episode.title }}</h1>
 
         <h2 class="text-2xl">
           <a
