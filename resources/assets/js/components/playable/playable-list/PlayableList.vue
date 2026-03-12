@@ -321,7 +321,7 @@ onMounted(() => render())
 
   .song-list-header > span,
   .song-item > span {
-    @apply text-left p-2 align-middle text-ellipsis overflow-hidden whitespace-nowrap;
+    @apply text-left p-2 align-middle truncate;
 
     &.time {
       @apply basis-20 overflow-visible;

@@ -11,7 +11,7 @@
       </aside>
       <dl class="flex-1 flex flex-col justify-center border-l border-white/20 border-dashed p-4 overflow-hidden">
         <dt class="sr-only">Name</dt>
-        <dd class="text-xl text-k-fg mb-2 overflow-hidden whitespace-nowrap text-ellipsis">
+        <dd class="text-xl text-k-fg mb-2 truncate">
           {{ event.name }}
         </dd>
         <dt class="sr-only">Date and Time</dt>

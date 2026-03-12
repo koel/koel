@@ -12,10 +12,7 @@
       :title="genre.name || 'No Genre'"
       class="flex flex-col justify-end h-full p-4"
     >
-      <span
-        class="text-2xl overflow-hidden whitespace-nowrap text-ellipsis font-normal text-k-fg-90"
-        :class="genre.name || 'italic'"
-      >
+      <span class="text-2xl truncate font-normal text-k-fg-90" :class="genre.name || 'italic'">
         {{ genre.name || 'No Genre' }}
       </span>
       <span class="text-k-fg-70 text-lg">{{ pluralize(genre.song_count, 'song') }}</span>
