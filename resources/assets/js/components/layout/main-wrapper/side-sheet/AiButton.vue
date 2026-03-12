@@ -2,11 +2,11 @@
   <button
     v-koel-tooltip.left
     class="ai-btn relative flex items-center justify-center h-[42px] aspect-square rounded-full cursor-pointer p-0.5 active:scale-90"
-    title="AI Assistant (press /)"
+    title="AI Assistant (/)"
     type="button"
     @click.prevent="go(url('ai'))"
   >
-    <span class="w-full h-full rounded-full bg-k-bg flex items-center justify-center">
+    <span class="w-full h-full rounded-full bg-[#1a1a2e] flex items-center justify-center">
       <svg
         class="size-5"
         xmlns="http://www.w3.org/2000/svg"

@@ -5,7 +5,7 @@
     type="button"
     @click="go(url('ai'))"
   >
-    <span class="w-full h-full rounded-full bg-k-bg flex items-center justify-center">
+    <span class="w-full h-full rounded-full bg-[#1a1a2e] flex items-center justify-center">
       <Sparkles class="w-5 h-5 text-k-fg group-hover:text-k-fg transition-colors" />
     </span>
   </button>
