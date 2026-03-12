@@ -128,11 +128,11 @@ article {
 
     &-vertical {
       .noUi-handle {
-        width: 16px;
-        height: 6px;
-        left: -16px;
+        width: 12px;
+        height: 12px;
+        left: -14px;
         border-radius: 9999px;
-        top: 0;
+        top: -3px;
       }
     }
   }
