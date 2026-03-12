@@ -103,8 +103,9 @@ const loadPreset = async (preset: EqualizerPreset) => {
 
   await nextTick()
   applyingPreset = false
-  // noUiSlider repositions handles asynchronously; wait for a repaint before reading DOM positions
-  requestAnimationFrame(updateCurvePoints)
+  // noUiSlider.set() triggers a 300ms CSS transition (noUi-state-tap);
+  // wait for it to finish before reading handle positions.
+  setTimeout(updateCurvePoints, 350)
 }
 
 const save = () =>
@@ -124,8 +125,9 @@ watch(preampGain, value => {
 
 const changeFilterGain = (band: Band) => {
   audioService.changeFilterGain(band.node, band.db)
-  updateCurvePoints()
+
   if (!applyingPreset) {
+    updateCurvePoints()
     selectedPresetName.value = null
   }
 }
