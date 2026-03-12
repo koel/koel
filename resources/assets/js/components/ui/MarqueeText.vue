@@ -6,11 +6,12 @@
 </template>
 
 <script lang="ts" setup>
+import { useMediaQuery } from '@vueuse/core'
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 
 const props = withDefaults(defineProps<{ text: string; speed?: number }>(), { speed: 30 })
 
-const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
 
 const containerRef = ref<HTMLElement>()
 const textRef = ref<HTMLElement>()
