@@ -83,6 +83,7 @@ article {
         height: 100%;
         top: 0;
         left: 50%;
+        transform: translateX(-50%);
       }
     }
 
@@ -111,6 +112,7 @@ article {
         );
         top: 0;
         left: 50%;
+        transform: translateX(-50%);
       }
     }
 
