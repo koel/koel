@@ -130,9 +130,9 @@ article {
       .noUi-handle {
         width: 13px;
         height: 13px;
-        left: -15px;
+        left: -14.5px;
         border-radius: 9999px;
-        top: -4px;
+        top: -6.5px;
         position: relative;
 
         &::after {
