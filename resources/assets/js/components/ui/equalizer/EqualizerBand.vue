@@ -79,10 +79,11 @@ article {
       &::after {
         content: ' ';
         position: absolute;
-        width: 2px;
+        width: 1px;
         height: 100%;
         top: 0;
-        left: 7px;
+        left: 50%;
+        transform: translateX(-50%);
       }
     }
 
@@ -100,17 +101,18 @@ article {
       &::after {
         content: ' ';
         position: absolute;
-        width: 2px;
+        width: 1px;
         height: 100%;
         background: linear-gradient(
           to bottom,
-          var(--color-highlight) 0%,
-          var(--color-highlight) 36%,
-          var(--color-success) 100%
+          transparent,
+          color-mix(in srgb, var(--color-fg) 15%, transparent) 15%,
+          color-mix(in srgb, var(--color-fg) 15%, transparent) 85%,
+          transparent
         );
-        background-size: 2px;
         top: 0;
-        left: 7px;
+        left: 50%;
+        transform: translateX(-50%);
       }
     }
 
@@ -128,11 +130,27 @@ article {
 
     &-vertical {
       .noUi-handle {
-        width: 16px;
-        height: 6px;
-        left: -16px;
+        --eq-handle-size: 13px;
+        --eq-hit-size: 28px;
+        width: var(--eq-handle-size);
+        height: var(--eq-handle-size);
         border-radius: 9999px;
+        position: relative;
+        /* noUi-origin sits at right:0 (x=16), not center — offset to track center */
+        left: -8px;
         top: 0;
+        transform: translate(-50%, -50%);
+
+        &::after {
+          content: '';
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: var(--eq-hit-size);
+          height: var(--eq-hit-size);
+          transform: translate(-50%, -50%);
+          pointer-events: auto;
+        }
       }
     }
   }
