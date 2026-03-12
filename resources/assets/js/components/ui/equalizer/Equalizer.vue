@@ -29,7 +29,7 @@
             {{ band.label }}
           </EqualizerBand>
 
-          <EqualizerCurve :gains="bandGains" :width="curveWidth" :height="100" />
+          <EqualizerCurve :points="curvePoints" />
         </div>
       </div>
     </main>
@@ -41,8 +41,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useElementSize } from '@vueuse/core'
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { nextTick, onMounted, ref, watch } from 'vue'
 import { equalizerStore } from '@/stores/equalizerStore'
 import type { Band } from '@/services/audioService'
 import { audioService } from '@/services/audioService'
@@ -61,8 +60,26 @@ const selectedPresetName = ref<EqualizerPreset['name']>(null)
 const preampBandEl = ref<InstanceType<typeof EqualizerBand>>()
 const filterBandEls = ref<InstanceType<typeof EqualizerBand>[]>()
 const filterBandsEl = ref<HTMLElement>()
-const { width: curveWidth } = useElementSize(filterBandsEl)
-const bandGains = computed(() => bands.map(band => band.db))
+const curvePoints = ref<{ x: number; y: number }[]>([])
+
+const SLIDER_HEIGHT = 100
+
+const updateCurvePoints = () => {
+  if (!filterBandEls.value?.length || !filterBandsEl.value) {
+    return
+  }
+
+  const containerRect = filterBandsEl.value.getBoundingClientRect()
+
+  curvePoints.value = filterBandEls.value.map((bandEl, i) => {
+    const el = bandEl.$el as HTMLElement
+    const elRect = el.getBoundingClientRect()
+    const x = elRect.left - containerRect.left + elRect.width / 2
+    const y = ((20 - bands[i].db) / 40) * SLIDER_HEIGHT
+
+    return { x, y }
+  })
+}
 
 // A flag to determine if the changes made to the bands are from loading a preset
 // or by user customizing the sliders, in such a case the preset name should
@@ -82,6 +99,7 @@ const loadPreset = async (preset: EqualizerPreset) => {
 
   await nextTick()
   applyingPreset = false
+  updateCurvePoints()
 }
 
 const save = () =>
@@ -101,6 +119,7 @@ watch(preampGain, value => {
 
 const changeFilterGain = (band: Band) => {
   audioService.changeFilterGain(band.node, band.db)
+  updateCurvePoints()
   if (!applyingPreset) {
     selectedPresetName.value = null
   }
@@ -114,9 +133,11 @@ watch(selectedPresetName, value => {
   save()
 })
 
-onMounted(() => {
+onMounted(async () => {
   const { name, preamp } = equalizerStore.getConfig()
   selectedPresetName.value = name
   preampGain.value = preamp
+  await nextTick()
+  updateCurvePoints()
 })
 </script>

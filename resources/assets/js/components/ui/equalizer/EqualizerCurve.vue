@@ -1,5 +1,5 @@
 <template>
-  <svg class="absolute inset-0 pointer-events-none" :viewBox="`0 0 ${width} ${height}`" preserveAspectRatio="none">
+  <svg class="absolute inset-0 pointer-events-none overflow-visible">
     <defs>
       <linearGradient id="eq-curve-gradient" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stop-color="var(--color-highlight)" stop-opacity="0.8" />
@@ -13,36 +13,23 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 
-const props = defineProps<{
-  gains: number[]
-  width: number
-  height: number
-}>()
-
-const dbToY = (db: number) => ((20 - db) / 40) * props.height
+const props = defineProps<{ points: { x: number; y: number }[] }>()
 
 const curvePath = computed(() => {
-  if (!props.gains.length || !props.width || !props.height) {
-    return ''
-  }
+  const pts = props.points
 
-  const count = props.gains.length
-  const padding = props.width / (count * 2)
-  const spacing = (props.width - padding * 2) / (count - 1)
-  const points = props.gains.map((db, i) => ({ x: padding + i * spacing, y: dbToY(db) }))
-
-  if (points.length < 2) {
+  if (pts.length < 2) {
     return ''
   }
 
   // Catmull-Rom to cubic bezier conversion
-  const segments: string[] = [`M ${points[0].x} ${points[0].y}`]
+  const segments: string[] = [`M ${pts[0].x} ${pts[0].y}`]
 
-  for (let i = 0; i < points.length - 1; i++) {
-    const p0 = points[Math.max(i - 1, 0)]
-    const p1 = points[i]
-    const p2 = points[i + 1]
-    const p3 = points[Math.min(i + 2, points.length - 1)]
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[Math.max(i - 1, 0)]
+    const p1 = pts[i]
+    const p2 = pts[i + 1]
+    const p3 = pts[Math.min(i + 2, pts.length - 1)]
 
     const cp1x = p1.x + (p2.x - p0.x) / 6
     const cp1y = p1.y + (p2.y - p0.y) / 6
