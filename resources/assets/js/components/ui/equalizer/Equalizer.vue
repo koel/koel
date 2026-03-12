@@ -103,7 +103,8 @@ const loadPreset = async (preset: EqualizerPreset) => {
 
   await nextTick()
   applyingPreset = false
-  updateCurvePoints()
+  // noUiSlider repositions handles asynchronously; wait for a repaint before reading DOM positions
+  requestAnimationFrame(updateCurvePoints)
 }
 
 const save = () =>
@@ -142,6 +143,6 @@ onMounted(async () => {
   selectedPresetName.value = name
   preampGain.value = preamp
   await nextTick()
-  updateCurvePoints()
+  requestAnimationFrame(updateCurvePoints)
 })
 </script>

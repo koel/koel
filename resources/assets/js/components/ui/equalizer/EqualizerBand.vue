@@ -133,6 +133,17 @@ article {
         left: -14px;
         border-radius: 9999px;
         top: -3px;
+        position: relative;
+
+        &::after {
+          content: '';
+          position: absolute;
+          left: -8px;
+          top: -8px;
+          width: 28px;
+          height: 28px;
+          pointer-events: auto;
+        }
       }
     }
   }

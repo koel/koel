@@ -5,8 +5,62 @@
         <stop offset="0%" stop-color="var(--color-highlight)" stop-opacity="0.8" />
         <stop offset="100%" stop-color="var(--color-success)" stop-opacity="0.8" />
       </linearGradient>
+      <template v-if="curveExtent">
+        <linearGradient
+          id="eq-fade-left"
+          gradientUnits="userSpaceOnUse"
+          :x1="curveExtent.left"
+          y1="0"
+          :x2="curveExtent.firstBand"
+          y2="0"
+        >
+          <stop offset="0%" stop-color="black" />
+          <stop offset="100%" stop-color="white" />
+        </linearGradient>
+        <linearGradient
+          id="eq-fade-right"
+          gradientUnits="userSpaceOnUse"
+          :x1="curveExtent.lastBand"
+          y1="0"
+          :x2="curveExtent.right"
+          y2="0"
+        >
+          <stop offset="0%" stop-color="white" />
+          <stop offset="100%" stop-color="black" />
+        </linearGradient>
+        <mask id="eq-curve-mask" maskUnits="userSpaceOnUse" x="-50" y="-500" width="2000" height="1000">
+          <rect
+            :x="curveExtent.left"
+            y="-500"
+            :width="curveExtent.firstBand - curveExtent.left"
+            height="1000"
+            fill="url(#eq-fade-left)"
+          />
+          <rect
+            :x="curveExtent.firstBand"
+            y="-500"
+            :width="curveExtent.lastBand - curveExtent.firstBand"
+            height="1000"
+            fill="white"
+          />
+          <rect
+            :x="curveExtent.lastBand"
+            y="-500"
+            :width="curveExtent.right - curveExtent.lastBand"
+            height="1000"
+            fill="url(#eq-fade-right)"
+          />
+        </mask>
+      </template>
     </defs>
-    <path :d="curvePath" fill="none" stroke="url(#eq-curve-gradient)" stroke-width="2" stroke-linecap="round" />
+    <path
+      :d="curvePath"
+      fill="none"
+      stroke="url(#eq-curve-gradient)"
+      stroke-width="2"
+      stroke-linecap="round"
+      :mask="curveExtent ? 'url(#eq-curve-mask)' : undefined"
+    />
   </svg>
 </template>
 
@@ -15,12 +69,37 @@ import { computed } from 'vue'
 
 const props = defineProps<{ points: { x: number; y: number }[] }>()
 
-const curvePath = computed(() => {
-  const pts = props.points
+const EXTEND = 15
 
-  if (pts.length < 2) {
+const curveExtent = computed(() => {
+  if (props.points.length < 2) {
+    return null
+  }
+
+  return {
+    left: props.points[0].x - EXTEND,
+    firstBand: props.points[0].x,
+    lastBand: props.points[props.points.length - 1].x,
+    right: props.points[props.points.length - 1].x + EXTEND,
+  }
+})
+
+const curvePath = computed(() => {
+  if (props.points.length < 2) {
     return ''
   }
+
+  const first = props.points[0]
+  const second = props.points[1]
+  const secondLast = props.points[props.points.length - 2]
+  const last = props.points[props.points.length - 1]
+
+  // Extrapolate points beyond the first and last bands so the curve tapers off naturally
+  const pts = [
+    { x: first.x - EXTEND, y: first.y + ((first.y - second.y) / (second.x - first.x)) * EXTEND },
+    ...props.points,
+    { x: last.x + EXTEND, y: last.y + ((last.y - secondLast.y) / (last.x - secondLast.x)) * EXTEND },
+  ]
 
   // Catmull-Rom to cubic bezier conversion
   const segments: string[] = [`M ${pts[0].x} ${pts[0].y}`]
