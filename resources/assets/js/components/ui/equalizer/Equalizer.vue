@@ -62,6 +62,8 @@ const filterBandEls = ref<InstanceType<typeof EqualizerBand>[]>()
 const filterBandsEl = ref<HTMLElement>()
 const curvePoints = ref<{ x: number; y: number }[]>([])
 
+let curveAnimationId = 0
+
 const updateCurvePoints = () => {
   if (!filterBandEls.value?.length || !filterBandsEl.value) {
     return
@@ -85,6 +87,27 @@ const updateCurvePoints = () => {
   })
 }
 
+/**
+ * Continuously read handle positions over the duration of the noUi-state-tap
+ * CSS transition (~300ms) so the curve animates smoothly alongside the handles.
+ */
+const animateCurveToHandles = () => {
+  cancelAnimationFrame(curveAnimationId)
+
+  const start = performance.now()
+  const duration = 350
+
+  const tick = () => {
+    updateCurvePoints()
+
+    if (performance.now() - start < duration) {
+      curveAnimationId = requestAnimationFrame(tick)
+    }
+  }
+
+  curveAnimationId = requestAnimationFrame(tick)
+}
+
 // A flag to determine if the changes made to the bands are from loading a preset
 // or by user customizing the sliders, in such a case the preset name should
 // be set to null (customized).
@@ -103,9 +126,7 @@ const loadPreset = async (preset: EqualizerPreset) => {
 
   await nextTick()
   applyingPreset = false
-  // noUiSlider.set() triggers a 300ms CSS transition (noUi-state-tap);
-  // wait for it to finish before reading handle positions.
-  setTimeout(updateCurvePoints, 350)
+  animateCurveToHandles()
 }
 
 const save = () =>
@@ -134,9 +155,7 @@ const changeFilterGain = (band: Band) => {
 
 const commitFilterGain = () => {
   save()
-  // Track clicks trigger a 300ms CSS transition (noUi-state-tap),
-  // so re-read handle positions after it completes.
-  setTimeout(updateCurvePoints, 350)
+  animateCurveToHandles()
 }
 
 watch(selectedPresetName, value => {
