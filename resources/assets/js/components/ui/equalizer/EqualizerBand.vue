@@ -105,8 +105,8 @@ article {
         background: linear-gradient(
           to bottom,
           transparent,
-          rgba(255, 255, 255, 0.15) 15%,
-          rgba(255, 255, 255, 0.15) 85%,
+          color-mix(in srgb, var(--color-fg) 15%, transparent) 15%,
+          color-mix(in srgb, var(--color-fg) 15%, transparent) 85%,
           transparent
         );
         top: 0;

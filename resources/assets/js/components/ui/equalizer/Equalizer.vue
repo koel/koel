@@ -24,8 +24,8 @@
               background: linear-gradient(
                 to right,
                 transparent,
-                rgba(255, 255, 255, 0.1) 5%,
-                rgba(255, 255, 255, 0.1) 95%,
+                color-mix(in srgb, var(--color-fg) 10%, transparent) 5%,
+                color-mix(in srgb, var(--color-fg) 10%, transparent) 95%,
                 transparent
               );
             "
@@ -53,7 +53,7 @@
 </template>
 
 <script lang="ts" setup>
-import { nextTick, onMounted, ref, watch } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { equalizerStore } from '@/stores/equalizerStore'
 import type { Band } from '@/services/audioService'
 import { audioService } from '@/services/audioService'
@@ -185,4 +185,6 @@ onMounted(async () => {
   await nextTick()
   requestAnimationFrame(updateCurvePoints)
 })
+
+onBeforeUnmount(() => cancelAnimationFrame(curveAnimationId))
 </script>
