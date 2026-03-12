@@ -4,9 +4,7 @@ namespace App\Ai\Tools;
 
 use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
-use App\Ai\Tools\Concerns\ResolvesSongFromRequest;
 use App\Repositories\PlaylistRepository;
-use App\Repositories\SongRepository;
 use App\Services\PlaylistService;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -16,12 +14,10 @@ use Stringable;
 
 class RemoveFromPlaylist implements Tool
 {
-    use ResolvesSongFromRequest;
-
     public function __construct(
         private readonly AiRequestContext $context,
         private readonly AiAssistantResult $result,
-        private readonly SongRepository $songRepository,
+        private readonly SongRequestResolver $songResolver,
         private readonly PlaylistRepository $playlistRepository,
         private readonly PlaylistService $playlistService,
         private Gate $gate,
@@ -71,7 +67,7 @@ class RemoveFromPlaylist implements Tool
             );
         }
 
-        $songs = $this->resolveSongs($request);
+        $songs = $this->songResolver->resolveSongs($request, $this->context);
 
         if ($songs->isEmpty()) {
             return (

@@ -5,7 +5,6 @@ namespace App\Ai\Tools;
 use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
 use App\Ai\Services\PlaybackService;
-use App\Ai\Tools\Concerns\ResolvesSongFromRequest;
 use App\Models\Song;
 use App\Repositories\SongRepository;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -16,12 +15,11 @@ use Stringable;
 
 class PlaySimilarSongs implements Tool
 {
-    use ResolvesSongFromRequest;
-
     public function __construct(
         private readonly AiRequestContext $context,
         private readonly AiAssistantResult $result,
         private readonly SongRepository $songRepository,
+        private readonly SongRequestResolver $songResolver,
         private readonly PlaybackService $playbackService,
     ) {}
 
@@ -59,7 +57,7 @@ class PlaySimilarSongs implements Tool
 
     public function handle(Request $request): Stringable|string
     {
-        $song = $this->resolveSong($request, 'song_title');
+        $song = $this->songResolver->resolveSong($request, $this->context, 'song_title');
 
         if (!$song) {
             return (

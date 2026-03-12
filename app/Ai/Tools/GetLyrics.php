@@ -4,8 +4,6 @@ namespace App\Ai\Tools;
 
 use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
-use App\Ai\Tools\Concerns\ResolvesSongFromRequest;
-use App\Repositories\SongRepository;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
@@ -13,12 +11,10 @@ use Stringable;
 
 class GetLyrics implements Tool
 {
-    use ResolvesSongFromRequest;
-
     public function __construct(
         private readonly AiRequestContext $context,
         private readonly AiAssistantResult $result,
-        private readonly SongRepository $songRepository,
+        private readonly SongRequestResolver $songResolver,
     ) {}
 
     public function description(): Stringable|string
@@ -45,7 +41,7 @@ class GetLyrics implements Tool
 
     public function handle(Request $request): Stringable|string
     {
-        $song = $this->resolveSong($request);
+        $song = $this->songResolver->resolveSong($request, $this->context);
 
         if (!$song) {
             return 'Could not find the song. Please specify a title or make sure a song is currently playing.';
