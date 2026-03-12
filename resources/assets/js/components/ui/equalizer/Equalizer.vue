@@ -18,6 +18,7 @@
         </span>
 
         <div ref="filterBandsEl" class="relative flex-1 flex justify-between">
+          <div class="absolute left-0 right-0 top-1/2 h-px bg-white/10 pointer-events-none" />
           <EqualizerBand
             v-for="band in bands"
             :key="band.label"
