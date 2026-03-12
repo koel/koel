@@ -130,20 +130,25 @@ article {
 
     &-vertical {
       .noUi-handle {
-        width: 13px;
-        height: 13px;
-        left: -14.5px;
+        --eq-handle-size: 13px;
+        --eq-hit-size: 28px;
+        width: var(--eq-handle-size);
+        height: var(--eq-handle-size);
         border-radius: 9999px;
-        top: -6.5px;
         position: relative;
+        /* noUi-origin sits at right:0 (x=16), not center — offset to track center */
+        left: -8px;
+        top: 0;
+        transform: translate(-50%, -50%);
 
         &::after {
           content: '';
           position: absolute;
-          left: -7.5px;
-          top: -7.5px;
-          width: 28px;
-          height: 28px;
+          left: 50%;
+          top: 50%;
+          width: var(--eq-hit-size);
+          height: var(--eq-hit-size);
+          transform: translate(-50%, -50%);
           pointer-events: auto;
         }
       }
