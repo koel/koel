@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Ai;
+namespace Tests\Unit\Ai\Services;
 
 use App\Ai\AiRequestContext;
 use App\Ai\Services\SongRequestResolver;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Ai;
+namespace Tests\Unit\Ai\Serializers;
 
 use App\Ai\AiAssistantResult;
 use App\Ai\Serializers\AiResultSerializerRegistry;

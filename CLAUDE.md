@@ -243,7 +243,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ## PHP Conventions
 - Always prefer Laravel's built-in helpers over custom implementations (e.g. `str()->plural()`, `Str::slug()`, `Arr::flatten()`, etc.). Do not reimplement what Laravel already provides.
 - All methods must have explicit visibility (`public`, `protected`, or `private`). Never omit the visibility keyword, even on interface methods or static methods.
-- Methods that don't reference `$this` must be declared `static`.
+- Methods that don't reference `$this` must be declared `static`, unless the class is injectable (DI service) — in that case, prefer instance methods for better testability and decoupling.
 - Always use the least visibility possible. Use `private` by default; only use `protected` or `public` when required by inheritance or external access.
 - Never use `empty()` to check arrays. If the variable is known to be an array, use `!$array` instead. Don't compare to `[]` either.
 - When a string contains quotes, don't use escaped double quotes (e.g. `"Playlist \"$name\" created"`). Use `sprintf()` with a single-quoted format string instead (e.g. `sprintf('Playlist "%s" created', $name)`).
@@ -274,6 +274,10 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## Testing Assertions
 - When asserting two Eloquent models are the same, use `assertTrue($modelA->is($modelB))` instead of comparing IDs.
+
+## Test Class Namespacing
+- Unit test classes must mirror the namespace of the class under test. Replace `App\` with `Tests\Unit\` and add a `Test` suffix (e.g. `App\Ai\Services\FavoriteableEntityResolver` → `Tests\Unit\Ai\Services\FavoriteableEntityResolverTest`).
+- The test file path must match the namespace (e.g. `tests/Unit/Ai/Services/FavoriteableEntityResolverTest.php`).
 
 ## Code Reviews
 - When addressing PR review comments, do NOT blindly follow them. Always use your own knowledge and logic to evaluate whether the feedback makes sense. If it doesn't, push back and explain why.
