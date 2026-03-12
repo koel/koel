@@ -4,19 +4,20 @@ namespace App\Ai\Tools;
 
 use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
-use App\Models\Song;
+use App\Ai\Tools\Concerns\ResolvesSongFromRequest;
 use App\Repositories\PlaylistRepository;
 use App\Repositories\SongRepository;
 use App\Services\PlaylistService;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Illuminate\Database\Eloquent\Collection;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
 use Stringable;
 
 class RemoveFromPlaylist implements Tool
 {
+    use ResolvesSongFromRequest;
+
     public function __construct(
         private readonly AiRequestContext $context,
         private readonly AiAssistantResult $result,
@@ -89,21 +90,5 @@ class RemoveFromPlaylist implements Tool
         }
 
         return sprintf('Removed %d song(s) from "%s".', $songs->count(), $playlist->name);
-    }
-
-    /** @return Collection<int, Song> */
-    private function resolveSongs(Request $request): Collection
-    {
-        if (isset($request['song_query'])) {
-            return $this->songRepository->search($request['song_query'], 10, $this->context->user);
-        }
-
-        if ($this->context->currentSongId) {
-            $song = $this->songRepository->findOne($this->context->currentSongId, $this->context->user);
-
-            return $song ? new Collection([$song]) : new Collection();
-        }
-
-        return new Collection();
     }
 }
