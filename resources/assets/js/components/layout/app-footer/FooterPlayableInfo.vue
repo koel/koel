@@ -7,9 +7,11 @@
   >
     <span class="album-thumb block h-[55%] md:h-3/4 aspect-square rounded-full bg-cover" />
     <div v-if="playable" class="meta overflow-hidden hidden md:block">
-      <h3 class="title text-ellipsis overflow-hidden whitespace-nowrap">{{ playable.title }}</h3>
-      <a :href="artistOrPodcastUri" class="artist text-ellipsis overflow-hidden whitespace-nowrap block text-[0.9rem]">
-        {{ artistOrPodcastName }}
+      <h3 class="title overflow-hidden whitespace-nowrap">
+        <MarqueeText :text="playable.title" />
+      </h3>
+      <a :href="artistOrPodcastUri" class="artist overflow-hidden whitespace-nowrap block text-[0.9rem]">
+        <MarqueeText :text="artistOrPodcastName" />
       </a>
     </div>
   </div>
@@ -24,6 +26,8 @@ import { CurrentStreamableKey } from '@/config/symbols'
 import { useDraggable } from '@/composables/useDragAndDrop'
 import { useRouter } from '@/composables/useRouter'
 import { useBranding } from '@/composables/useBranding'
+
+import MarqueeText from '@/components/ui/MarqueeText.vue'
 
 const { startDragging } = useDraggable('playables')
 const { url } = useRouter()
