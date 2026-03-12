@@ -130,6 +130,7 @@ watch(
   containerRef,
   () => {
     if (containerRef.value) {
+      stop()
       animate()
     }
   },
