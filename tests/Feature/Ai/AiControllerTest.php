@@ -4,11 +4,11 @@ namespace Tests\Feature\Ai;
 
 use App\Ai\Agents\KoelAssistant;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\PlusTestCase;
+use Tests\TestCase;
 
 use function Tests\create_user;
 
-class AiControllerTest extends PlusTestCase
+class AiControllerTest extends TestCase
 {
     #[Test]
     public function promptsTheAgent(): void

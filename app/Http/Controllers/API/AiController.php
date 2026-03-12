@@ -5,7 +5,6 @@ namespace App\Http\Controllers\API;
 use App\Ai\Agents\KoelAssistant;
 use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
-use App\Attributes\RequiresPlus;
 use App\Enums\FavoriteableType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\AiRequest;
@@ -21,7 +20,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Laravel\Ai\Exceptions\AiException;
 
-#[RequiresPlus]
 class AiController extends Controller
 {
     /** @param User $user */
