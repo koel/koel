@@ -6,7 +6,7 @@
     type="button"
     @click.prevent="go(url('ai'))"
   >
-    <span class="w-full h-full rounded-full bg-k-bg flex items-center justify-center">
+    <span class="w-full h-full rounded-full bg-[#1a1a2e] flex items-center justify-center">
       <svg
         class="size-5"
         xmlns="http://www.w3.org/2000/svg"
