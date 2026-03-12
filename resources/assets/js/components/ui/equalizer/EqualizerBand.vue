@@ -128,18 +128,18 @@ article {
 
     &-vertical {
       .noUi-handle {
-        width: 12px;
-        height: 12px;
-        left: -14.5px;
+        width: 13px;
+        height: 13px;
+        left: -15px;
         border-radius: 9999px;
-        top: -3px;
+        top: -4px;
         position: relative;
 
         &::after {
           content: '';
           position: absolute;
-          left: -8px;
-          top: -8px;
+          left: -7.5px;
+          top: -7.5px;
           width: 28px;
           height: 28px;
           pointer-events: auto;
