@@ -17,7 +17,6 @@ Koel Plus is the premium version of Koel. It offers additional features and enha
 - **[Media Browser](./media-browser)**: A file-explorer-like interface that allows browsing music directly at a file level, useful for libraries without proper ID3 tagging.
 - **[White Labeling](white-labeling.md)**: Customize the app's branding elements (name, logo, cover) to match those of your organization's.
 - **[Custom Themes](custom-themes.md)**: Create and apply your own themes.
-- **[AI Assistant](./ai-assistant)**: Control your music library with natural language — play songs, manage playlists, explore artists, and more.
 
 New features are constantly planned or in active development.
 
