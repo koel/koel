@@ -28,7 +28,6 @@ class ArtistServiceTest extends TestCase
     #[Test]
     public function updateArtist(): void
     {
-        /** @var Artist $artist */
         $artist = Artist::factory()->create(['name' => 'Old Artist Name']);
 
         $songs = Song::factory()
@@ -58,7 +57,6 @@ class ArtistServiceTest extends TestCase
     #[Test]
     public function updateArtistWithImage(): void
     {
-        /** @var Artist $artist */
         $artist = Artist::factory()->create(['name' => 'Old Artist Name']);
 
         $songs = Song::factory()
@@ -90,10 +88,7 @@ class ArtistServiceTest extends TestCase
     #[Test]
     public function rejectUpdatingIfArtistAlreadyExistsForUser(): void
     {
-        /** @var Artist $existingArtist */
         $existingArtist = Artist::factory()->create(['name' => 'Existing Artist Name']);
-
-        /** @var Artist $artist */
         $artist = Artist::factory()->for($existingArtist->user)->create(['name' => 'Old Artist Name']);
         $data = ArtistUpdateData::make(name: 'Existing Artist Name');
 

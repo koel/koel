@@ -30,7 +30,6 @@ class StreamerTest extends TestCase
         Http::fake();
 
         collect(SongStorageType::cases())->each(function (SongStorageType $type): void {
-            /** @var Song $song */
             $song = Song::factory()->make(['storage' => $type]);
 
             switch ($type) {
@@ -59,8 +58,6 @@ class StreamerTest extends TestCase
     {
         $backup = config('koel.streaming.transcode_flac');
         config(['koel.streaming.transcode_flac' => false]);
-
-        /** @var Song $song */
         $song = Song::factory()->create([
             'storage' => SongStorageType::LOCAL,
             'path' => '/tmp/test.flac',
@@ -77,7 +74,6 @@ class StreamerTest extends TestCase
     #[Test]
     public function useTranscodingAdapterToPlayFlacIfConfiguredSo(): void
     {
-        /** @var Song $song */
         $song = Song::factory()->create(['storage' => SongStorageType::LOCAL]);
 
         $streamer = new Streamer($song, null, RequestedStreamingConfig::make(transcode: true));
@@ -90,8 +86,6 @@ class StreamerTest extends TestCase
     {
         $backupConfig = config('koel.streaming.transcode_required_mime_types');
         config(['koel.streaming.transcode_required_mime_types' => ['audio/aif']]);
-
-        /** @var Song $song */
         $song = Song::factory()->create([
             'storage' => SongStorageType::LOCAL,
             'path' => '/tmp/test.aiff',
@@ -120,8 +114,6 @@ class StreamerTest extends TestCase
     public function resolveLocalAdapter(?string $config, string $expectedClass): void
     {
         config(['koel.streaming.method' => $config]);
-
-        /** @var Song $song */
         $song = Song::factory()->make(['path' => test_path('songs/blank.mp3')]);
 
         self::assertInstanceOf($expectedClass, (new Streamer($song))->getAdapter());
@@ -132,7 +124,6 @@ class StreamerTest extends TestCase
     #[Test]
     public function resolvePodcastAdapter(): void
     {
-        /** @var Song $song */
         $song = Song::factory()->asEpisode()->create();
         $streamer = new Streamer($song);
 

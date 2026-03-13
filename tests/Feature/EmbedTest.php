@@ -17,7 +17,6 @@ class EmbedTest extends TestCase
     #[Test]
     public function resolveForEmbeddable(): void
     {
-        /** @var Song $song */
         $song = Song::factory()->create();
 
         $this
@@ -48,8 +47,6 @@ class EmbedTest extends TestCase
             'options' => EmbedOptionsResource::JSON_STRUCTURE,
             'theme',
         ];
-
-        /** @var Embed $embed */
         $embed = Embed::factory()->create();
         $options = EmbedOptions::make();
 
@@ -62,7 +59,6 @@ class EmbedTest extends TestCase
     #[Test]
     public function getPayloadThrowsNotFoundIfEmbeddableIsNotAvailableAnyMore(): void
     {
-        /** @var Embed $embed */
         $embed = Embed::factory()->create();
         $embed->embeddable->delete();
 

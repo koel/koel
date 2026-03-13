@@ -14,14 +14,10 @@ class SongTest extends PlusTestCase
     public function showSongPolicy(): void
     {
         $user = create_user();
-
-        /** @var Song $publicSong */
         $publicSong = Song::factory()->public()->create();
 
         // We can access public songs.
         $this->getAs("api/songs/{$publicSong->id}", $user)->assertSuccessful();
-
-        /** @var Song $ownPrivateSong */
         $ownPrivateSong = Song::factory()
             ->for($user, 'owner')
             ->private()
@@ -29,8 +25,6 @@ class SongTest extends PlusTestCase
 
         // We can access our own private songs.
         $this->getAs("api/songs/{$ownPrivateSong->id}", $user)->assertSuccessful();
-
-        /** @var Song $externalUnownedSong */
         $externalUnownedSong = Song::factory()->private()->create();
 
         // But we can't access private songs that are not ours.

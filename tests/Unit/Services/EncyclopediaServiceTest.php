@@ -52,7 +52,6 @@ class EncyclopediaServiceTest extends TestCase
     #[Test]
     public function getAlbumInformation(): void
     {
-        /** @var Album $album */
         $album = Album::factory()->create();
         $info = AlbumInformation::make();
 
@@ -68,7 +67,6 @@ class EncyclopediaServiceTest extends TestCase
     #[Test]
     public function getAlbumInformationTriesDownloadingCover(): void
     {
-        /** @var Album $album */
         $album = Album::factory()->create(['cover' => '']);
         $info = AlbumInformation::make(cover: 'https://wiki.example.com/album-cover.jpg');
 
@@ -91,8 +89,6 @@ class EncyclopediaServiceTest extends TestCase
             'client_id' => 'spotify-client-id',
             'client_secret' => 'spotify-client-secret',
         ]);
-
-        /** @var Album $album */
         $album = Album::factory()->create(['cover' => '']);
         $info = AlbumInformation::make(cover: 'https://wiki.example.com/album-cover.jpg');
 
@@ -116,7 +112,6 @@ class EncyclopediaServiceTest extends TestCase
     #[Test]
     public function getArtistInformation(): void
     {
-        /** @var Artist $artist */
         $artist = Artist::factory()->create();
         $info = ArtistInformation::make();
 
@@ -134,7 +129,6 @@ class EncyclopediaServiceTest extends TestCase
     #[Test]
     public function getArtistInformationTriesDownloadingImage(): void
     {
-        /** @var Artist $artist */
         $artist = Artist::factory()->create(['image' => '']);
         $info = ArtistInformation::make(image: 'https://wiki.example.com/artist-image.jpg');
 
@@ -157,8 +151,6 @@ class EncyclopediaServiceTest extends TestCase
             'client_id' => 'spotify-client-id',
             'client_secret' => 'spotify-client-secret',
         ]);
-
-        /** @var Artist $artist */
         $artist = Artist::factory()->create(['image' => '']);
         $info = ArtistInformation::make(image: 'https://wiki.example.com/artist-image.jpg');
 

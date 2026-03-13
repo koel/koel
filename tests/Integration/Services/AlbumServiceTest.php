@@ -31,7 +31,6 @@ class AlbumServiceTest extends TestCase
     #[Test]
     public function updateAlbum(): void
     {
-        /** @var Album $album */
         $album = Album::factory()->create([
             'name' => 'Old Album Name',
             'year' => 2020,
@@ -57,7 +56,6 @@ class AlbumServiceTest extends TestCase
     #[Test]
     public function updateAlbumWithCover(): void
     {
-        /** @var Album $album */
         $album = Album::factory()->create([
             'name' => 'Old Album Name',
             'year' => 2020,
@@ -90,7 +88,6 @@ class AlbumServiceTest extends TestCase
     #[Test]
     public function updateAlbumRemovingCover(): void
     {
-        /** @var Album $album */
         $album = Album::factory()->create();
 
         $data = AlbumUpdateData::make(name: 'New Album Name', year: 2023, cover: '');
@@ -105,10 +102,7 @@ class AlbumServiceTest extends TestCase
     #[Test]
     public function rejectUpdatingIfArtistAlreadyHasAnAlbumWithTheSameName(): void
     {
-        /** @var Album $existingAlbum */
         $existingAlbum = Album::factory()->create(['name' => 'Existing Album Name']);
-
-        /** @var Album $album */
         $album = Album::factory()->for($existingAlbum->artist)->create(['name' => 'Old Album Name']);
         $data = AlbumUpdateData::make(name: 'Existing Album Name', year: 2023);
 
@@ -120,7 +114,6 @@ class AlbumServiceTest extends TestCase
     #[Test]
     public function storeAlbumCover(): void
     {
-        /** @var Album $album */
         $album = Album::factory()->create();
 
         $this->imageStorage

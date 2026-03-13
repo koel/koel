@@ -52,8 +52,6 @@ class PlaylistCollaborationServiceTest extends PlusTestCase
     public function acceptUsingToken(): void
     {
         Event::fake(NewPlaylistCollaboratorJoined::class);
-
-        /** @var PlaylistCollaborationToken $token */
         $token = PlaylistCollaborationToken::factory()->create();
         $user = create_user();
         self::assertFalse($token->playlist->collaborators->contains($user));
@@ -69,8 +67,6 @@ class PlaylistCollaborationServiceTest extends PlusTestCase
     {
         $this->expectException(PlaylistCollaborationTokenExpiredException::class);
         Event::fake(NewPlaylistCollaboratorJoined::class);
-
-        /** @var PlaylistCollaborationToken $token */
         $token = PlaylistCollaborationToken::factory()->create();
         $user = create_user();
 

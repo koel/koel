@@ -17,6 +17,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon $updated_at
  *
  * @property-read Collection<User>|array<array-key, User> $users
+ *
+ * @method static \Database\Factories\OrganizationFactory factory(...$parameters)
  */
 
 class Organization extends Model

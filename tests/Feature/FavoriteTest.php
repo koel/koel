@@ -21,8 +21,6 @@ class FavoriteTest extends TestCase
     public function favorite(): void
     {
         Event::fake(SongFavoriteToggled::class);
-
-        /** @var Song $song */
         $song = Song::factory()->create();
         $user = create_user();
 
@@ -48,8 +46,6 @@ class FavoriteTest extends TestCase
     public function undoFavorite(): void
     {
         Event::fake(SongFavoriteToggled::class);
-
-        /** @var Favorite $favorite */
         $favorite = Favorite::factory()->create();
 
         $this->postAs(

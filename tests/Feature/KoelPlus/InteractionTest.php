@@ -22,17 +22,14 @@ class InteractionTest extends PlusTestCase
         $owner = create_user();
 
         // Can't increase play count of a private song that doesn't belong to the user
-        /** @var Song $externalPrivateSong */
         $externalPrivateSong = Song::factory()->private()->create();
         $this->postAs('api/interaction/play', ['song' => $externalPrivateSong->id], $owner)->assertForbidden();
 
         // Can increase play count of a public song that doesn't belong to the user
-        /** @var Song $externalPublicSong */
         $externalPublicSong = Song::factory()->public()->create();
         $this->postAs('api/interaction/play', ['song' => $externalPublicSong->id], $owner)->assertSuccessful();
 
         // Can increase play count of a private song that belongs to the user
-        /** @var Song $ownPrivateSong */
         $ownPrivateSong = Song::factory()
             ->private()
             ->for($owner, 'owner')
@@ -52,17 +49,14 @@ class InteractionTest extends PlusTestCase
         $owner = create_user();
 
         // Can't like a private song that doesn't belong to the user
-        /** @var Song $externalPrivateSong */
         $externalPrivateSong = Song::factory()->private()->create();
         $this->postAs('api/interaction/like', ['song' => $externalPrivateSong->id], $owner)->assertForbidden();
 
         // Can like a public song that doesn't belong to the user
-        /** @var Song $externalPublicSong */
         $externalPublicSong = Song::factory()->public()->create();
         $this->postAs('api/interaction/like', ['song' => $externalPublicSong->id], $owner)->assertSuccessful();
 
         // Can like a private song that belongs to the user
-        /** @var Song $ownPrivateSong */
         $ownPrivateSong = Song::factory()
             ->private()
             ->for($owner, 'owner')

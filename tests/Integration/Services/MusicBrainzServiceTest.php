@@ -58,8 +58,6 @@ class MusicBrainzServiceTest extends TestCase
             'Skid Row (American band)',
             File::json(test_path('fixtures/wikipedia/artist-page-summary.json')),
         );
-
-        /** @var Artist $artist */
         $artist = Artist::factory()->create(['name' => 'Skid Row']);
 
         $info = $this->service->getArtistInformation($artist);
@@ -87,8 +85,6 @@ class MusicBrainzServiceTest extends TestCase
             'sample-mbid',
             new Exception('Something went wrong'),
         );
-
-        /** @var Artist $artist */
         $artist = Artist::factory()->create(['name' => 'Skid Row']);
 
         self::assertNull($this->service->getArtistInformation($artist));
@@ -125,8 +121,6 @@ class MusicBrainzServiceTest extends TestCase
         );
 
         $user = create_user();
-
-        /** @var Album $album */
         $album = Artist::factory()
             ->for($user)
             ->create(['name' => 'Skid Row'])
@@ -156,8 +150,6 @@ class MusicBrainzServiceTest extends TestCase
         $this->mockPipelinePipe(GetAlbumTracksUsingMbid::class, 'sample-album-mbid', new Exception('Oopsie'));
 
         $user = create_user();
-
-        /** @var Album $album */
         $album = Artist::factory()
             ->for($user)
             ->create(['name' => 'Skid Row'])

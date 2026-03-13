@@ -20,10 +20,7 @@ class FetchRecursiveFolderSongsTest extends PlusTestCase
     #[Test]
     public function includesSongsInNestedFolder(): void
     {
-        /** @var Folder $folder */
         $folder = Folder::factory()->create(['path' => 'foo']);
-
-        /** @var Folder $subfolder */
         $subfolder = Folder::factory()->for($folder, 'parent')->create(['path' => 'foo/bar']);
 
         $irrelevantFolder = Folder::factory()->create(['path' => 'foo/baz']);
@@ -50,7 +47,6 @@ class FetchRecursiveFolderSongsTest extends PlusTestCase
     #[Test]
     public function resolveWhenOneOfThePathsIsRoot(): void
     {
-        /** @var Folder $folder */
         $folder = Folder::factory()->create(['path' => 'foo']);
 
         $songs = Song::factory()

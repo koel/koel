@@ -14,6 +14,8 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property string $song_id
  * @property Carbon|string $last_played_at
+ *
+ * @method static \Database\Factories\InteractionFactory factory(...$parameters)
  */
 class Interaction extends Model
 {

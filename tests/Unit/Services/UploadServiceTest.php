@@ -79,8 +79,6 @@ class UploadServiceTest extends TestCase
         $file = '/tmp/some-tmp-file.mp3';
         $scanInfo = ScanInformation::make(path: '/tmp/some-tmp-file.mp3');
         $uploader = create_user();
-
-        /** @var Song $song */
         $song = Song::factory()->create([
             'path' => '/tmp/some-tmp-file.mp3', // Initially set to the local path
             'storage' => SongStorageType::LOCAL, // Initially set to local storage
@@ -122,8 +120,6 @@ class UploadServiceTest extends TestCase
         $storage = Mockery::mock(SongStorage::class . ',' . MustDeleteTemporaryLocalFileAfterUpload::class, [
             'getStorageType' => SongStorageType::S3,
         ]);
-
-        /** @var Song $song */
         $song = Song::factory()->create();
 
         $file = '/tmp/some-tmp-file.mp3';

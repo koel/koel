@@ -36,6 +36,8 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property string $cover The album cover's file name
  * @property string $id
  * @property string $name Name of the album
+ *
+ * @method static \Database\Factories\AlbumFactory factory(...$parameters)
  */
 class Album extends Model implements AuditableContract, Embeddable, Favoriteable, Permissionable
 {

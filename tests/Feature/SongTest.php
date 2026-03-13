@@ -29,7 +29,6 @@ class SongTest extends TestCase
     #[Test]
     public function show(): void
     {
-        /** @var Song $song */
         $song = Song::factory()->create();
 
         $this->getAs("api/songs/{$song->id}")->assertJsonStructure(SongResource::JSON_STRUCTURE);
@@ -64,7 +63,6 @@ class SongTest extends TestCase
     #[Test]
     public function singleUpdateAllInfoNoCompilation(): void
     {
-        /** @var Song $song */
         $song = Song::factory()->create();
 
         $this->putAs(
@@ -103,7 +101,6 @@ class SongTest extends TestCase
     #[Test]
     public function singleUpdateSomeInfoNoCompilation(): void
     {
-        /** @var Song $song */
         $song = Song::factory()->create();
 
         $originalArtistId = $song->artist->id;
@@ -211,7 +208,6 @@ class SongTest extends TestCase
     #[Test]
     public function singleUpdateAllInfoWithCompilation(): void
     {
-        /** @var Song $song */
         $song = Song::factory()->create();
 
         $this->putAs(
@@ -255,7 +251,6 @@ class SongTest extends TestCase
     #[Test]
     public function updateSingleSongWithEmptyTrackAndDisc(): void
     {
-        /** @var Song $song */
         $song = Song::factory()->create([
             'track' => 12,
             'disc' => 2,

@@ -80,7 +80,6 @@ class DownloadTest extends TestCase
     #[Test]
     public function downloadAlbum(): void
     {
-        /** @var Album $album */
         $album = Album::factory()->create();
         $songs = Song::factory(2)->for($album)->create();
         $user = create_user();
@@ -100,7 +99,6 @@ class DownloadTest extends TestCase
     #[Test]
     public function downloadArtist(): void
     {
-        /** @var Artist $artist */
         $artist = Artist::factory()->create();
         $songs = Song::factory(2)->for($artist)->create();
         $user = create_user();

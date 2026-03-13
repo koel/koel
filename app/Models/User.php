@@ -49,6 +49,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read bool $is_sso
  * @property-read string $avatar
  * @property-read RoleEnum $role
+ *
+ * @method static \Database\Factories\UserFactory factory(...$parameters)
  */
 class User extends Authenticatable implements AuditableContract, Permissionable
 {

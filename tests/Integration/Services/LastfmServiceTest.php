@@ -40,7 +40,6 @@ class LastfmServiceTest extends TestCase
     #[Test]
     public function getArtistInformation(): void
     {
-        /** @var Artist $artist */
         $artist = Artist::factory()->make(['name' => 'Kamelot']);
 
         Saloon::fake([
@@ -81,7 +80,6 @@ class LastfmServiceTest extends TestCase
     #[Test]
     public function getArtistInformationForNonExistentArtist(): void
     {
-        /** @var Artist $artist */
         $artist = Artist::factory()->make(['name' => 'bar']);
 
         Saloon::fake([
@@ -96,7 +94,6 @@ class LastfmServiceTest extends TestCase
     #[Test]
     public function getAlbumInformation(): void
     {
-        /** @var Album $album */
         $album = Album::factory()->for(Artist::factory()->create(['name' => 'Kamelot']))->create(['name' => 'Epica']);
 
         Saloon::fake([
@@ -148,7 +145,6 @@ class LastfmServiceTest extends TestCase
     #[Test]
     public function getAlbumInformationForNonExistentAlbum(): void
     {
-        /** @var Album $album */
         $album = Album::factory()->for(Artist::factory()->create(['name' => 'Kamelot']))->create(['name' => 'Foo']);
 
         Saloon::fake([
@@ -168,8 +164,6 @@ class LastfmServiceTest extends TestCase
                 'lastfm_session_key' => 'my_key',
             ],
         ]);
-
-        /** @var Song $song */
         $song = Song::factory()->create();
 
         Saloon::fake([ScrobbleRequest::class => MockResponse::make()]);
@@ -211,8 +205,6 @@ class LastfmServiceTest extends TestCase
                 'lastfm_session_key' => 'my_key',
             ],
         ]);
-
-        /** @var Song $song */
         $song = Song::factory()->create();
 
         Saloon::fake([ToggleLoveTrackRequest::class => MockResponse::make()]);
@@ -242,8 +234,6 @@ class LastfmServiceTest extends TestCase
                 'lastfm_session_key' => 'my_key',
             ],
         ]);
-
-        /** @var Song $song */
         $song = Song::factory()->for(Artist::factory()->create(['name' => 'foo']))->create(['title' => 'bar']);
 
         Saloon::fake([UpdateNowPlayingRequest::class => MockResponse::make()]);

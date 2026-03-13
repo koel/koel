@@ -19,6 +19,8 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property int $user_id
  * @property Carbon $created_at
  * @property ?string $id
+ *
+ * @method static \Database\Factories\PlaylistFolderFactory factory(...$parameters)
  */
 class PlaylistFolder extends Model implements AuditableContract
 {

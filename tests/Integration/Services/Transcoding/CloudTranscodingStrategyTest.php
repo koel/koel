@@ -30,7 +30,6 @@ class CloudTranscodingStrategyTest extends TestCase
     #[Test]
     public function getTranscodeLocation(): void
     {
-        /** @var Song $song */
         $song = Song::factory()->create([
             'path' => 's3://bucket/key.flac',
             'storage' => SongStorageType::S3,
@@ -71,7 +70,6 @@ class CloudTranscodingStrategyTest extends TestCase
     #[Test]
     public function getFromDatabaseRecord(): void
     {
-        /** @var Song $song */
         $song = Song::factory()->create([
             'path' => 's3://bucket/key.flac',
             'storage' => SongStorageType::S3,

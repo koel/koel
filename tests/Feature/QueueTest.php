@@ -27,7 +27,6 @@ class QueueTest extends TestCase
     #[Test]
     public function getExistingState(): void
     {
-        /** @var QueueState $queueState */
         $queueState = QueueState::factory()->create([
             'current_song_id' => Song::factory(),
             'playback_position' => 123,
@@ -55,10 +54,7 @@ class QueueTest extends TestCase
     #[Test]
     public function updatePlaybackStatus(): void
     {
-        /** @var QueueState $state */
         $state = QueueState::factory()->create();
-
-        /** @var Song $song */
         $song = Song::factory()->create();
 
         $this->putAs(
@@ -70,8 +66,6 @@ class QueueTest extends TestCase
         $state->refresh();
         self::assertSame($song->id, $state->current_song_id);
         self::assertSame(123, $state->playback_position);
-
-        /** @var Song $anotherSong */
         $anotherSong = Song::factory()->create();
 
         $this->putAs(

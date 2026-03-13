@@ -76,8 +76,6 @@ class TicketmasterServiceTest extends TestCase
                 return MockResponse::make(body: $liteDataJson);
             },
         ]);
-
-        /** @var Artist $artist */
         $artist = Artist::factory()->create([
             'name' => 'Slayer',
         ]);

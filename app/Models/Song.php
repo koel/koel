@@ -76,6 +76,8 @@ use PhanAn\Poddle\Values\EpisodeMetadata;
  * @property ?string $episode_guid
  * @property ?string $podcast_id
  * @property ?Podcast $podcast
+ *
+ * @method static \Database\Factories\SongFactory factory(...$parameters)
  */
 class Song extends Model implements AuditableContract, Favoriteable, Embeddable
 {

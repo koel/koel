@@ -33,6 +33,8 @@ use PhanAn\Poddle\Values\ChannelMetadata;
  * @property int $added_by
  * @property Carbon $last_synced_at
  * @property ?string $author
+ *
+ * @method static \Database\Factories\PodcastFactory factory(...$parameters)
  */
 class Podcast extends Model implements Favoriteable
 {

@@ -28,13 +28,9 @@ class PlaylistFolderTest extends PlusTestCase
 
         $playlist = create_playlist();
         $playlist->addCollaborator($collaborator);
-
-        /** @var PlaylistFolder $ownerFolder */
         $ownerFolder = PlaylistFolder::factory()->for($playlist->owner)->create();
         $ownerFolder->playlists()->attach($playlist);
         self::assertTrue($this->folderService->getFolderForPlaylist($playlist)?->is($ownerFolder));
-
-        /** @var PlaylistFolder $collaboratorFolder */
         $collaboratorFolder = PlaylistFolder::factory()->for($collaborator)->create();
         self::assertNull($this->folderService->getFolderForPlaylist($playlist, $collaborator));
 
@@ -59,13 +55,9 @@ class PlaylistFolderTest extends PlusTestCase
         $playlist = create_playlist();
         $playlist->addCollaborator($collaborator);
         self::assertNull($this->folderService->getFolderForPlaylist($playlist));
-
-        /** @var PlaylistFolder $ownerFolder */
         $ownerFolder = PlaylistFolder::factory()->for($playlist->owner)->create();
         $ownerFolder->playlists()->attach($playlist);
         self::assertTrue($this->folderService->getFolderForPlaylist($playlist->refresh())?->is($ownerFolder));
-
-        /** @var PlaylistFolder $collaboratorFolder */
         $collaboratorFolder = PlaylistFolder::factory()->for($collaborator)->create();
 
         $collaboratorFolder->playlists()->attach($playlist);

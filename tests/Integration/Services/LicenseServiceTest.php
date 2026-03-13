@@ -105,7 +105,6 @@ class LicenseServiceTest extends TestCase
     #[Test]
     public function deactivateLicense(): void
     {
-        /** @var License $license */
         $license = License::factory()->create();
 
         Saloon::fake([
@@ -136,7 +135,6 @@ class LicenseServiceTest extends TestCase
     #[Test]
     public function deactivateLicenseHandlesLeftoverRecords(): void
     {
-        /** @var License $license */
         $license = License::factory()->create();
         Saloon::fake([DeactivateLicenseRequest::class => MockResponse::make(status: Response::HTTP_NOT_FOUND)]);
 
@@ -149,8 +147,6 @@ class LicenseServiceTest extends TestCase
     public function deactivateLicenseFails(): void
     {
         $this->expectExceptionMessage('Unprocessable Entity (422) Response: Something went horrible wrong');
-
-        /** @var License $license */
         $license = License::factory()->create();
 
         Saloon::fake([
@@ -167,8 +163,6 @@ class LicenseServiceTest extends TestCase
     public function getLicenseStatusFromCache(): void
     {
         Saloon::fake([]);
-
-        /** @var License $license */
         $license = License::factory()->create();
 
         Cache::put('license_status', LicenseStatus::valid($license));
@@ -192,7 +186,6 @@ class LicenseServiceTest extends TestCase
     #[Test]
     public function getLicenseStatusValidatesWithApi(): void
     {
-        /** @var License $license */
         $license = License::factory()->create();
 
         self::assertFalse(Cache::has('license_status'));

@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read bool $expired
  * @property string $playlist_id
  * @property Playlist $playlist
+ *
+ * @method static \Database\Factories\PlaylistCollaborationTokenFactory factory(...$parameters)
  */
 class PlaylistCollaborationToken extends Model
 {

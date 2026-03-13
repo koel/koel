@@ -22,6 +22,8 @@ use Illuminate\Support\Arr;
  * @property-read ?int $uploader_id
  * @property ?string $parent_id
  * @property string $hash
+ *
+ * @method static \Database\Factories\FolderFactory factory(...$parameters)
  */
 class Folder extends Model
 {

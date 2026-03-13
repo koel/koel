@@ -39,7 +39,6 @@ class PlaylistFolderServiceTest extends TestCase
     #[Test]
     public function update(): void
     {
-        /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->create(['name' => 'Metal']);
 
         $this->service->renameFolder($folder, 'Classical');
@@ -52,8 +51,6 @@ class PlaylistFolderServiceTest extends TestCase
     {
         $user = create_user();
         $playlists = create_playlists(count: 3, owner: $user);
-
-        /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->for($user)->create();
 
         $this->service->addPlaylistsToFolder($folder, $playlists->modelKeys());
@@ -65,13 +62,9 @@ class PlaylistFolderServiceTest extends TestCase
     public function aPlaylistCannotBelongToMultipleFoldersByOneUser(): void
     {
         $playlist = create_playlist();
-
-        /** @var PlaylistFolder $existingFolder */
         $existingFolder = PlaylistFolder::factory()->for($playlist->owner)->create();
 
         $existingFolder->playlists()->attach($playlist);
-
-        /** @var PlaylistFolder $newFolder */
         $newFolder = PlaylistFolder::factory()->for($playlist->owner)->create();
 
         $this->service->addPlaylistsToFolder($newFolder, [$playlist->id]);
@@ -82,13 +75,10 @@ class PlaylistFolderServiceTest extends TestCase
     #[Test]
     public function aPlaylistCanBelongToMultipleFoldersFromDifferentUsers(): void
     {
-        /** @var PlaylistFolder $existingFolderFromAnotherUser */
         $existingFolderFromAnotherUser = PlaylistFolder::factory()->create();
 
         $playlist = create_playlist();
         $existingFolderFromAnotherUser->playlists()->attach($playlist);
-
-        /** @var PlaylistFolder $newFolder */
         $newFolder = PlaylistFolder::factory()->for($playlist->owner)->create();
 
         $this->service->addPlaylistsToFolder($newFolder, [$playlist->id]);
@@ -99,7 +89,6 @@ class PlaylistFolderServiceTest extends TestCase
     #[Test]
     public function movePlaylistsToRootLevel(): void
     {
-        /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->create();
 
         $playlists = create_playlists(count: 3);

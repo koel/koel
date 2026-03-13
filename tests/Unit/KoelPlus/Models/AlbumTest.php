@@ -12,10 +12,7 @@ class AlbumTest extends PlusTestCase
     #[Test]
     public function getOrCreate(): void
     {
-        /** @var Artist $artist */
         $artist = Artist::factory()->create();
-
-        /** @var Album $album */
         $album = Album::factory()
             ->for($artist)
             ->for($artist->user)

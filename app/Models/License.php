@@ -20,6 +20,8 @@ use Illuminate\Support\Str;
  * @see https://docs.lemonsqueezy.com/api/license-key-instances
  * @property LicenseMeta $meta
  * @property-read Carbon $activated_at
+ *
+ * @method static \Database\Factories\LicenseFactory factory(...$parameters)
  */
 class License extends Model
 {

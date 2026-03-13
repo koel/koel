@@ -55,11 +55,8 @@ class PlaySimilarSongsToolTest extends TestCase
     #[Test]
     public function findsSimilarSongsByGenre(): void
     {
-        /** @var Song $referenceSong */
         $referenceSong = Song::factory()->for($this->user, 'owner')->create(['title' => 'Rock Song']);
         $referenceSong->syncGenres('Rock');
-
-        /** @var Song $similarSong */
         $similarSong = Song::factory()->for($this->user, 'owner')->create(['title' => 'Another Rock Song']);
         $similarSong->syncGenres('Rock');
 

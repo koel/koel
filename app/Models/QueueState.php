@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property ?string $current_song_id
  * @property int $playback_position
  * @property User $user
+ *
+ * @method static \Database\Factories\QueueStateFactory factory(...$parameters)
  */
 class QueueState extends Model
 {
