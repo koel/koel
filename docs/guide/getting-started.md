@@ -16,7 +16,7 @@ The requirements for each part are as follows:
   extensions
 * One of the databases supported by Laravel. Koel has been tested with MySQL, MariaDB, PostgreSQL, and SQLite.
 * If you're [building Koel from source](#building-from-source), make sure to have [Composer](https://getcomposer.org/),
-  Git, and Node.js >= 18 with [pnpm](https://pnpm.io/).
+  Git, Node.js >= 20 with [pnpm](https://pnpm.io/), and [Vite+](https://viteplus.dev/) (`curl -fsSL https://vite.plus | bash`).
 
 ### Client
 
