@@ -270,5 +270,8 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - For variant-specific styles (e.g. modes, states), use custom CSS classes (`.initial`, `.chat`, `.user`, `.error`, etc.) with `@apply` in a scoped `<style>` block.
 - Do NOT build class strings in JavaScript arrays or computed properties.
 
+## Testing Assertions
+- When asserting two Eloquent models are the same, use `assertTrue($modelA->is($modelB))` instead of comparing IDs.
+
 ## Code Reviews
 - When addressing PR review comments, do NOT blindly follow them. Always use your own knowledge and logic to evaluate whether the feedback makes sense. If it doesn't, push back and explain why.
