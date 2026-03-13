@@ -26,6 +26,8 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property Carbon|string $created_at
  * @property string $name
  * @property-read ?boolean $favorite Whether the (scoped) user has favorited this radio station
+ *
+ * @method static \Database\Factories\RadioStationFactory factory(...$parameters)
  */
 class RadioStation extends Model implements AuditableContract, Favoriteable, Permissionable
 {

@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property string $id
  * @property string $embeddable_id
  * @property string $embeddable_type
+ *
+ * @method static \Database\Factories\EmbedFactory factory(...$parameters)
  */
 class Embed extends Model
 {

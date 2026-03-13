@@ -35,7 +35,6 @@ class SpotifyServiceTest extends TestCase
     #[Test]
     public function tryGetArtistImage(): void
     {
-        /** @var Artist $artist */
         $artist = Artist::factory(['name' => 'Foo'])->create();
 
         $this->client
@@ -59,7 +58,6 @@ class SpotifyServiceTest extends TestCase
     #[Test]
     public function tryGetAlbumImage(): void
     {
-        /** @var Album $album */
         $album = Album::factory(['name' => 'Bar'])->for(Artist::factory(['name' => 'Foo']))->create();
 
         $this->client

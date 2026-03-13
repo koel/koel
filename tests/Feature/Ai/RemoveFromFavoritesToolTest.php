@@ -41,7 +41,6 @@ class RemoveFromFavoritesToolTest extends TestCase
     #[Test]
     public function unfavoritesCurrentlyPlayingSong(): void
     {
-        /** @var Song $song */
         $song = Song::factory()->for($this->user, 'owner')->create(['title' => 'Bohemian Rhapsody']);
         $song->favorites()->create(['user_id' => $this->user->id]);
 
@@ -69,7 +68,6 @@ class RemoveFromFavoritesToolTest extends TestCase
     #[Test]
     public function unfavoritesAlbumBySearch(): void
     {
-        /** @var Album $album */
         $album = Album::factory()->create(['name' => 'A Night at the Opera']);
         $album->favorites()->create(['user_id' => $this->user->id]);
 
@@ -93,7 +91,6 @@ class RemoveFromFavoritesToolTest extends TestCase
     #[Test]
     public function unfavoritesArtistBySearch(): void
     {
-        /** @var Artist $artist */
         $artist = Artist::factory()->create(['name' => 'Queen']);
         $artist->favorites()->create(['user_id' => $this->user->id]);
 

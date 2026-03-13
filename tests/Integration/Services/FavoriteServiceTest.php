@@ -33,8 +33,6 @@ class FavoriteServiceTest extends TestCase
         Event::fake(SongFavoriteToggled::class);
 
         $user = create_user();
-
-        /** @var Song $song */
         $song = Song::factory()->create();
 
         $this->service->toggleFavorite($song, $user);
@@ -54,8 +52,6 @@ class FavoriteServiceTest extends TestCase
         Event::fake(SongFavoriteToggled::class);
 
         $user = create_user();
-
-        /** @var Favorite $favorite */
         $favorite = Favorite::factory()->for($user)->create();
 
         $this->service->toggleFavorite($favorite->favoriteable, $user);
@@ -70,8 +66,6 @@ class FavoriteServiceTest extends TestCase
         Event::fake(SongFavoriteToggled::class);
 
         $user = create_user();
-
-        /** @var Album $album */
         $album = Album::factory()->create();
 
         $this->service->toggleFavorite($album, $user);

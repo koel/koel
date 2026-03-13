@@ -48,7 +48,6 @@ class RadioServiceTest extends TestCase
     #[Test]
     public function updateRadioStation(): void
     {
-        /** @var RadioStation $station */
         $station = RadioStation::factory()->create();
 
         $updatedStation = $this->service->updateRadioStation($station, RadioStationUpdateData::make(

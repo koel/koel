@@ -44,7 +44,6 @@ class AlbumTest extends TestCase
     #[Test]
     public function updateWithCover(): void
     {
-        /** @var Album $album */
         $album = Album::factory()->create();
 
         $ulid = Ulid::freeze();
@@ -72,7 +71,6 @@ class AlbumTest extends TestCase
     #[Test]
     public function updateKeepingCoverIntact(): void
     {
-        /** @var Album $album */
         $album = Album::factory()->create(['cover' => 'neat-cover.webp']);
 
         $this
@@ -93,7 +91,6 @@ class AlbumTest extends TestCase
     #[Test]
     public function updateRemovingCover(): void
     {
-        /** @var Album $album */
         $album = Album::factory()->create(['cover' => 'neat-cover.webp']);
 
         $this
@@ -115,10 +112,7 @@ class AlbumTest extends TestCase
     #[Test]
     public function updatingToExistingNameFails(): void
     {
-        /** @var Album $existingAlbum */
         $existingAlbum = Album::factory()->create(['name' => 'Black Album']);
-
-        /** @var Album $album */
         $album = Album::factory()->for($existingAlbum->artist)->create();
 
         $this->putAs(
@@ -136,7 +130,6 @@ class AlbumTest extends TestCase
     #[Test]
     public function nonAdminCannotUpdateAlbum(): void
     {
-        /** @var Album $album */
         $album = Album::factory()->create();
 
         $this->putAs(

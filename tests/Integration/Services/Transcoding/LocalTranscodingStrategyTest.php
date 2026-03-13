@@ -28,7 +28,6 @@ class LocalTranscodingStrategyTest extends TestCase
     #[Test]
     public function getTranscodedLocation(): void
     {
-        /** @var Song $song */
         $song = Song::factory()->create(['path' => '/path/to/song.flac']);
 
         $ulid = Ulid::freeze();
@@ -58,8 +57,6 @@ class LocalTranscodingStrategyTest extends TestCase
     public function getFromDatabaseRecord(): void
     {
         $this->transcoder->expects('transcode')->never();
-
-        /** @var Transcode $transcode */
         $transcode = Transcode::factory()->create([
             'location' => '/path/to/transcode.m4a',
             'bit_rate' => 128,
@@ -81,8 +78,6 @@ class LocalTranscodingStrategyTest extends TestCase
         $song = Song::factory()->create(['path' => '/path/to/song.flac']);
 
         $ulid = Ulid::freeze();
-
-        /** @var Transcode $transcode */
         $transcode = Transcode::factory()->for($song)->create([
             'location' => '/path/to/transcode.m4a',
             'bit_rate' => 128,

@@ -16,8 +16,6 @@ class AlbumInformationTest extends TestCase
     {
         config(['koel.services.lastfm.key' => 'foo']);
         config(['koel.services.lastfm.secret' => 'geheim']);
-
-        /** @var Album $album */
         $album = Album::factory()->create();
 
         $lastfm = $this->mock(EncyclopediaService::class);

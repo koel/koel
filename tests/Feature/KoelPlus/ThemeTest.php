@@ -63,7 +63,6 @@ class ThemeTest extends PlusTestCase
     #[Test]
     public function deleteTheme(): void
     {
-        /** @var Theme $theme */
         $theme = Theme::factory()->create();
 
         $this->deleteAs("api/themes/{$theme->id}", [], $theme->user)->assertNoContent();
@@ -74,7 +73,6 @@ class ThemeTest extends PlusTestCase
     #[Test]
     public function deleteThemeUnauthorized(): void
     {
-        /** @var Theme $theme */
         $theme = Theme::factory()->create();
 
         $this->deleteAs("api/themes/{$theme->id}", [], create_user())->assertForbidden();

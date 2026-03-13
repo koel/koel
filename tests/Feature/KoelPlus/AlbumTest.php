@@ -15,7 +15,6 @@ class AlbumTest extends PlusTestCase
     #[Test]
     public function updateAsOwner(): void
     {
-        /** @var Album $album */
         $album = Album::factory()->create();
 
         $this->putAs(
@@ -36,7 +35,6 @@ class AlbumTest extends PlusTestCase
     #[Test]
     public function adminCannotUpdateIfNonOwner(): void
     {
-        /** @var Album $album */
         $album = Album::factory()->create();
         $scaryBossMan = create_admin();
 
@@ -55,7 +53,6 @@ class AlbumTest extends PlusTestCase
     #[Test]
     public function updateForbiddenForNonOwners(): void
     {
-        /** @var Album $album */
         $album = Album::factory()->create();
         $randomDude = create_user();
 

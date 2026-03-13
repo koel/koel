@@ -12,6 +12,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property mixed $value
  *
  * @method static self find(string $key)
+ * @method static \Database\Factories\SettingFactory factory(...$parameters)
  */
 class Setting extends Model implements AuditableContract
 {

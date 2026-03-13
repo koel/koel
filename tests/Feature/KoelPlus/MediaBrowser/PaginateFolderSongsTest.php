@@ -14,7 +14,6 @@ class PaginateFolderSongsTest extends PlusTestCase
     #[Test]
     public function paginate(): void
     {
-        /** @var Folder $folder */
         $folder = Folder::factory()->create(['path' => 'foo/bar']);
 
         /** @var Collection<Song> $songs */

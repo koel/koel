@@ -16,8 +16,6 @@ class ScrobbleTest extends TestCase
     public function lastfmScrobble(): void
     {
         $user = create_user();
-
-        /** @var Song $song */
         $song = Song::factory()->create();
 
         Dispatcher::expects('dispatch')->andReturnUsing(function (ScrobbleJob $job) use ($song, $user): void {

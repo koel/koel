@@ -14,10 +14,7 @@ class GenreTest extends TestCase
     #[Test]
     public function getAllGenres(): void
     {
-        /** @var Genre $rock */
         $rock = Genre::factory()->has(Song::factory()->count(2))->create(['name' => 'Rock']);
-
-        /** @var Genre $pop */
         $pop = Genre::factory()->has(Song::factory()->count(1))->create(['name' => 'Pop']);
 
         Song::factory()->count(2)->create();
@@ -34,7 +31,6 @@ class GenreTest extends TestCase
     #[Test]
     public function getOneGenre(): void
     {
-        /** @var Genre $rock */
         $rock = Genre::factory()->has(Song::factory()->count(2))->create(['name' => 'Rock']);
 
         $this
@@ -52,7 +48,6 @@ class GenreTest extends TestCase
     #[Test]
     public function paginateSongsInGenre(): void
     {
-        /** @var Genre $rock */
         $rock = Genre::factory()->has(Song::factory()->count(2))->create(['name' => 'Rock']);
 
         $this->getAs("api/genres/$rock->public_id/songs")->assertJsonStructure(SongResource::PAGINATION_JSON_STRUCTURE);
@@ -61,7 +56,6 @@ class GenreTest extends TestCase
     #[Test]
     public function getSongsInGenre(): void
     {
-        /** @var Genre $rock */
         $rock = Genre::factory()->has(Song::factory()->count(2))->create(['name' => 'Rock']);
 
         $this
@@ -73,7 +67,6 @@ class GenreTest extends TestCase
     #[Test]
     public function getRandomSongsInGenre(): void
     {
-        /** @var Genre $rock */
         $rock = Genre::factory()->has(Song::factory()->count(2))->create(['name' => 'Rock']);
 
         $this

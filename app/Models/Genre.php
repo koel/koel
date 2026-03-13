@@ -12,6 +12,8 @@ use Laravel\Scout\Searchable;
  * @property int $id
  * @property string $public_id
  * @property string $name
+ *
+ * @method static \Database\Factories\GenreFactory factory(...$parameters)
  */
 class Genre extends Model
 {

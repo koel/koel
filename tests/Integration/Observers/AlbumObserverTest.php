@@ -26,8 +26,6 @@ class AlbumObserverTest extends TestCase
     public function dispatchJobToGenerateThumbnailUponUpdate(): void
     {
         Dispatcher::expects('dispatch')->once()->with(Mockery::type(GenerateAlbumThumbnailJob::class));
-
-        /** @var Album $album */
         $album = Album::factory()->create();
 
         self::restoreObserver();
@@ -40,8 +38,6 @@ class AlbumObserverTest extends TestCase
     public function doNotDispatchJobToGenerateThumbnailIfCoverIsEmpty(): void
     {
         Dispatcher::expects('dispatch')->never();
-
-        /** @var Album $album */
         $album = Album::factory()->create();
 
         self::restoreObserver();

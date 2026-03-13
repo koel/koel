@@ -38,7 +38,6 @@ class ArtistTest extends TestCase
     #[Test]
     public function updateWithImage(): void
     {
-        /** @var Artist $artist */
         $artist = Artist::factory()->create();
 
         $ulid = Ulid::freeze();
@@ -64,7 +63,6 @@ class ArtistTest extends TestCase
     #[Test]
     public function updateKeepingImageIntact(): void
     {
-        /** @var Artist $artist */
         $artist = Artist::factory()->create(['image' => 'neat-pose.webp']);
 
         $this
@@ -84,7 +82,6 @@ class ArtistTest extends TestCase
     #[Test]
     public function updateRemovingImage(): void
     {
-        /** @var Artist $artist */
         $artist = Artist::factory()->create(['image' => 'neat-pose.webp']);
 
         $this
@@ -105,10 +102,7 @@ class ArtistTest extends TestCase
     #[Test]
     public function updatingToExistingNameFails(): void
     {
-        /** @var Artist $existingArtist */
         $existingArtist = Artist::factory()->create(['name' => 'Maydup Nem']);
-
-        /** @var Artist $artist */
         $artist = Artist::factory()->for($existingArtist->user)->create();
 
         $this->putAs(
@@ -125,7 +119,6 @@ class ArtistTest extends TestCase
     #[Test]
     public function nonAdminCannotUpdateArtist(): void
     {
-        /** @var Artist $artist */
         $artist = Artist::factory()->create();
 
         $this->putAs(

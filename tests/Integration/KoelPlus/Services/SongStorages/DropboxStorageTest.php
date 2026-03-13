@@ -119,8 +119,6 @@ class DropboxStorageTest extends PlusTestCase
     public function getSongPresignedUrl(): void
     {
         $this->client->allows('setAccessToken');
-
-        /** @var Song $song */
         $song = Song::factory()->create(['path' => 'dropbox://song.mp3', 'storage' => 'dropbox']);
 
         /** @var DropboxStorage $service */

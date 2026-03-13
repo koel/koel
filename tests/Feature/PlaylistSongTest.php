@@ -99,8 +99,6 @@ class PlaylistSongTest extends TestCase
     public function nonOwnerCannotModifyPlaylist(): void
     {
         $playlist = create_playlist();
-
-        /** @var Song $song */
         $song = Song::factory()->create();
 
         $this->postAs("api/playlists/{$playlist->id}/songs", ['songs' => [$song->id]])->assertForbidden();

@@ -24,11 +24,7 @@ class FolderRepositoryTest extends PlusTestCase
     public function getByPaths(): void
     {
         $user = create_user(['id' => 99]);
-
-        /** @var Folder $foo */
         $foo = Folder::factory()->create(['path' => 'foo']);
-
-        /** @var Folder $bar */
         $bar = Folder::factory()->create(['path' => 'foo/bar']);
 
         // This folder is not browsable by the user and should not be returned

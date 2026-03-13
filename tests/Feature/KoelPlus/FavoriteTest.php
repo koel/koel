@@ -13,7 +13,6 @@ class FavoriteTest extends PlusTestCase
     #[Test]
     public function toggleIsProhibitedIfSongIsNotAccessible(): void
     {
-        /** @var Song $song */
         $song = Song::factory()->private()->create();
 
         $this->postAs('api/favorites/toggle', [
@@ -25,7 +24,6 @@ class FavoriteTest extends PlusTestCase
     #[Test]
     public function toggleIsProhibitedIfAlbumIsNotAccessible(): void
     {
-        /** @var Album $album */
         $album = Album::factory()->create();
 
         $this->postAs('api/favorites/toggle', [
@@ -37,7 +35,6 @@ class FavoriteTest extends PlusTestCase
     #[Test]
     public function toggleIsProhibitedIfArtistIsNotAccessible(): void
     {
-        /** @var Artist $artist */
         $artist = Artist::factory()->create();
 
         $this->postAs('api/favorites/toggle', [

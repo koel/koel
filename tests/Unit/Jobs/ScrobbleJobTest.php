@@ -17,8 +17,6 @@ class ScrobbleJobTest extends TestCase
     public function handle(): void
     {
         $user = create_user();
-
-        /** @var Song $song */
         $song = Song::factory()->make();
         $job = new ScrobbleJob($user, $song, 100);
         $lastfm = Mockery::mock(LastfmService::class);

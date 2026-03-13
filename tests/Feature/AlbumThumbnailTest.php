@@ -24,7 +24,6 @@ class AlbumThumbnailTest extends TestCase
     #[Test]
     public function getAlbumThumbnail(): void
     {
-        /** @var Album $createdAlbum */
         $createdAlbum = Album::factory()->create(['cover' => 'foo.jpg']);
 
         $this->imageStorage
@@ -43,7 +42,6 @@ class AlbumThumbnailTest extends TestCase
     #[Test]
     public function getThumbnailForAlbumWithoutCover(): void
     {
-        /** @var Album $createdAlbum */
         $createdAlbum = Album::factory()->create(['cover' => '']);
         $this->imageStorage->expects('storeImage')->never();
 

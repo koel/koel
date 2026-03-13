@@ -17,7 +17,6 @@ class MakePlaylistSongsPublicTest extends TestCase
     #[Test]
     public function handle(): void
     {
-        /** @var PlaylistCollaborationToken $token */
         $token = PlaylistCollaborationToken::factory()->create();
 
         $service = Mockery::mock(PlaylistService::class);

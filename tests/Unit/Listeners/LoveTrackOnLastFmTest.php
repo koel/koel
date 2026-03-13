@@ -17,7 +17,6 @@ class LoveTrackOnLastFmTest extends TestCase
     #[Test]
     public function handleFavoriteCase(): void
     {
-        /** @var Song $song */
         $song = Song::factory()->create();
 
         $user = create_user();
@@ -31,7 +30,6 @@ class LoveTrackOnLastFmTest extends TestCase
     #[Test]
     public function handleUndoFavoriteCase(): void
     {
-        /** @var Song $song */
         $song = Song::factory()->create();
 
         $user = create_user();

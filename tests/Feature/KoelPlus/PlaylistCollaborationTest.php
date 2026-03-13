@@ -29,7 +29,6 @@ class PlaylistCollaborationTest extends PlusTestCase
     #[Test]
     public function acceptPlaylistCollaborationViaToken(): void
     {
-        /** @var PlaylistCollaborationToken $token */
         $token = PlaylistCollaborationToken::factory()->create();
         $user = create_user();
 

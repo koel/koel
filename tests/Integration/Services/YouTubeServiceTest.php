@@ -29,7 +29,6 @@ class YouTubeServiceTest extends TestCase
     #[Test]
     public function searchVideosRelatedToSong(): void
     {
-        /** @var Song $song */
         $song = Song::factory()->for(Artist::factory()->create(['name' => 'Slipknot']))->create(['title' => 'Snuff']);
 
         Saloon::fake([

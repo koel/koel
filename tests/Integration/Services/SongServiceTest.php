@@ -41,7 +41,6 @@ class SongServiceTest extends TestCase
     #[Test]
     public function updateSingleSong(): void
     {
-        /** @var Song $song */
         $song = Song::factory()->create();
 
         $data = SongUpdateData::make(albumArtistName: 'Queen', disc: 1, lyrics: 'Is this the real life?');
@@ -63,7 +62,6 @@ class SongServiceTest extends TestCase
     #[Test]
     public function updateSingleSongWithAlbumChanged(): void
     {
-        /** @var Song $song */
         $song = Song::factory()->create();
         $artist = $song->artist;
         $album = $song->album;
@@ -88,7 +86,6 @@ class SongServiceTest extends TestCase
     #[Test]
     public function updateSongWithArtistChanged(): void
     {
-        /** @var Song $song */
         $song = Song::factory()->create();
         $artist = $song->artist;
         $album = $song->album;
@@ -120,10 +117,7 @@ class SongServiceTest extends TestCase
     #[Test]
     public function updateMultipleSongsTrackProvided(): void
     {
-        /** @var Song $song1 */
         $song1 = Song::factory()->create(['track' => 1]);
-
-        /** @var Song $song2 */
         $song2 = Song::factory()->create(['track' => 2]);
 
         $data = SongUpdateData::make(
@@ -155,10 +149,7 @@ class SongServiceTest extends TestCase
     #[Test]
     public function updateMultipleTracksWithoutProvidingTrack(): void
     {
-        /** @var Song $song1 */
         $song1 = Song::factory()->create(['track' => 1, 'disc' => 1]);
-
-        /** @var Song $song2 */
         $song2 = Song::factory()->create(['track' => 2, 'disc' => 1]);
 
         $data = SongUpdateData::make(artistName: 'Queen', genre: 'Rock', lyrics: 'Is this the real life?');
@@ -265,11 +256,7 @@ class SongServiceTest extends TestCase
         Dispatcher::expects('dispatch')->with(ExtractSongFolderStructureJob::class);
 
         $owner = create_admin();
-
-        /** @var Artist $artist */
         $artist = Artist::factory(['name' => 'Koel'])->for($owner)->create();
-
-        /** @var Album $album */
         $album = Album::factory([
             'name' => 'Koel Testing Vol. 1',
             'year' => null,
@@ -289,11 +276,7 @@ class SongServiceTest extends TestCase
         Dispatcher::expects('dispatch')->with(ExtractSongFolderStructureJob::class);
 
         $owner = create_admin();
-
-        /** @var Artist $artist */
         $artist = Artist::factory(['name' => 'Koel'])->for($owner)->create();
-
-        /** @var Album $album */
         $album = Album::factory([
             'name' => 'Koel Testing Vol. 1',
             'year' => 2018,

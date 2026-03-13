@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\File;
  * @property ?int $file_size
  * @property string $hash
  * @property string $location
+ *
+ * @method static \Database\Factories\TranscodeFactory factory(...$parameters)
  */
 class Transcode extends Model
 {

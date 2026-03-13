@@ -16,7 +16,6 @@ class EmbedTest extends PlusTestCase
     #[Test]
     public function getPayloadWithCustomTheme(): void
     {
-        /** @var Theme $theme */
         $theme = Theme::factory()->create();
 
         $jsonStructure = [
@@ -24,8 +23,6 @@ class EmbedTest extends PlusTestCase
             'options' => EmbedOptionsResource::JSON_STRUCTURE,
             'theme' => ThemeResource::JSON_STRUCTURE,
         ];
-
-        /** @var Embed $embed */
         $embed = Embed::factory()->create();
         $options = EmbedOptions::make(theme: $theme->id);
 

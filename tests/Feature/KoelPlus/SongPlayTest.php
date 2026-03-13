@@ -19,8 +19,6 @@ class SongPlayTest extends PlusTestCase
     {
         /** @var CompositeToken $token */
         $token = app(TokenManager::class)->createCompositeToken(create_user());
-
-        /** @var Song $song */
         $song = Song::factory()
             ->public()
             ->create([
@@ -35,7 +33,6 @@ class SongPlayTest extends PlusTestCase
     #[Test]
     public function playPrivateOwnedSong(): void
     {
-        /** @var Song $song */
         $song = Song::factory()
             ->private()
             ->create([
@@ -53,7 +50,6 @@ class SongPlayTest extends PlusTestCase
     #[Test]
     public function cannotPlayPrivateUnownedSong(): void
     {
-        /** @var Song $song */
         $song = Song::factory()
             ->private()
             ->create([

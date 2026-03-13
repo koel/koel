@@ -14,7 +14,6 @@ class SongZipArchiveTest extends TestCase
     #[Test]
     public function addSongIntoArchive(): void
     {
-        /** @var Song $song */
         $song = Song::factory()->create(['path' => test_path('songs/full.mp3')]);
 
         $songZipArchive = new SongZipArchive();

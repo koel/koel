@@ -36,7 +36,6 @@ class AddToPlaylistToolTest extends TestCase
     #[Test]
     public function addsCurrentSongToPlaylist(): void
     {
-        /** @var Playlist $playlist */
         $playlist = Playlist::factory()->create(['name' => 'My Rock Playlist']);
         $user = $playlist->owner;
         $song = Song::factory()->for($user, 'owner')->create(['title' => 'Test Song']);

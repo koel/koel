@@ -40,8 +40,6 @@ class ArtistEventTest extends PlusTestCase
             EventSearchRequest::class => MockResponse::make(body: $eventSearchJson),
             GetLiteDataRequest::class => MockResponse::make(body: $liteDataJson),
         ]);
-
-        /** @var Artist $artist */
         $artist = Artist::factory()->create([
             'name' => 'Slayer',
         ]);
@@ -74,8 +72,6 @@ class ArtistEventTest extends PlusTestCase
 
         Cache::put(cache_key('Ticketmaster events', 'Slayer', 'DE'), collect([$event]), now()->addDay());
         Cache::forever(cache_key('IP to country code', '127.0.0.1'), 'DE');
-
-        /** @var Artist $artist */
         $artist = Artist::factory()->create([
             'name' => 'Slayer',
         ]);

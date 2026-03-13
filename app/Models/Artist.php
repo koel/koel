@@ -34,6 +34,8 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property int $user_id The ID of the user that owns this artist
  * @property string $id
  * @property string $name
+ *
+ * @method static \Database\Factories\ArtistFactory factory(...$parameters)
  */
 class Artist extends Model implements AuditableContract, Embeddable, Favoriteable, Permissionable
 {

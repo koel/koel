@@ -13,10 +13,7 @@ class AlbumTest extends TestCase
     #[Test]
     public function existingAlbumCanBeRetrievedUsingArtistAndName(): void
     {
-        /** @var Artist $artist */
         $artist = Artist::factory()->create();
-
-        /** @var Album $album */
         $album = Album::factory()
             ->for($artist)
             ->for($artist->user)
@@ -28,7 +25,6 @@ class AlbumTest extends TestCase
     #[Test]
     public function newAlbumIsAutomaticallyCreatedWithUserAndArtistAndName(): void
     {
-        /** @var Artist $artist */
         $artist = Artist::factory()->create();
         $name = 'Foo';
 
@@ -59,7 +55,6 @@ class AlbumTest extends TestCase
     #[Test]
     public function newAlbumWithoutNameIsCreatedAsUnknownAlbum($name): void
     {
-        /** @var Artist $artist */
         $artist = Artist::factory()->create();
 
         $album = Album::getOrCreate($artist, $name);

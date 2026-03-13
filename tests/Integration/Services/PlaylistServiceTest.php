@@ -116,7 +116,6 @@ class PlaylistServiceTest extends TestCase
     #[Test]
     public function createPlaylistInFolder(): void
     {
-        /** @var PlaylistFolder $folder */
         $folder = PlaylistFolder::factory()->create();
 
         $data = PlaylistCreateData::make(name: 'foo', description: 'bar', folderId: $folder->id);
@@ -210,8 +209,6 @@ class PlaylistServiceTest extends TestCase
 
         $playlist = create_playlist();
         $playlist->addPlayables(Song::factory(2)->create());
-
-        /** @var Podcast $podcast */
         $podcast = Podcast::factory()->create();
         $episodes = Song::factory(2)
             ->asEpisode()

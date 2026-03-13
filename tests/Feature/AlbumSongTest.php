@@ -13,7 +13,6 @@ class AlbumSongTest extends TestCase
     #[Test]
     public function index(): void
     {
-        /** @var Album $album */
         $album = Album::factory()->create();
         Song::factory(5)->for($album)->create();
 

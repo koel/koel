@@ -21,7 +21,6 @@ class StreamerTest extends PlusTestCase
     public function resolveAdapters(): void
     {
         collect(SongStorageType::cases())->each(static function (SongStorageType $type): void {
-            /** @var Song $song */
             $song = Song::factory()->create(['storage' => $type]);
 
             if ($type === SongStorageType::DROPBOX) {

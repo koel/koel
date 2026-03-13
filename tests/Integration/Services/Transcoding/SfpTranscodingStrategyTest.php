@@ -30,7 +30,6 @@ class SfpTranscodingStrategyTest extends TestCase
     #[Test]
     public function getTranscodeLocation(): void
     {
-        /** @var Song $song */
         $song = Song::factory()->create([
             'path' => 'sftp://remote/path/to/song.flac',
             'storage' => SongStorageType::SFTP,
@@ -65,8 +64,6 @@ class SfpTranscodingStrategyTest extends TestCase
     public function getFromDatabaseRecord(): void
     {
         $this->transcoder->expects('transcode')->never();
-
-        /** @var Transcode $transcode */
         $transcode = Transcode::factory()->create([
             'location' => '/path/to/transcode.m4a',
             'bit_rate' => 128,
@@ -91,8 +88,6 @@ class SfpTranscodingStrategyTest extends TestCase
         ]);
 
         $ulid = Ulid::freeze();
-
-        /** @var Transcode $transcode */
         $transcode = Transcode::factory()->for($song)->create([
             'location' => '/path/to/transcode.m4a',
             'bit_rate' => 128,

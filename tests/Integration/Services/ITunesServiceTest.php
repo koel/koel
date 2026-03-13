@@ -45,8 +45,6 @@ class ITunesServiceTest extends TestCase
                 'results' => [['trackViewUrl' => 'https://itunes.apple.com/bar']],
             ]),
         ]);
-
-        /** @var Album $album */
         $album = Album::factory()->for(Artist::factory()->create(['name' => 'Queen']))->create([
             'name' => 'A Night at the Opera',
         ]);

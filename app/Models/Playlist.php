@@ -36,6 +36,8 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property ?string $cover The playlist cover's file name
  * @property-read EloquentCollection<array-key, PlaylistFolder> $folders
  * @property int $owner_id
+ *
+ * @method static \Database\Factories\PlaylistFactory factory(...$parameters)
  */
 class Playlist extends Model implements AuditableContract, Embeddable
 {

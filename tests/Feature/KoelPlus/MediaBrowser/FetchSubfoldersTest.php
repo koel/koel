@@ -21,7 +21,6 @@ class FetchSubfoldersTest extends PlusTestCase
     #[Test]
     public function testFetch(): void
     {
-        /** @var Folder $folder */
         $folder = Folder::factory()->create();
 
         /** @var Collection $subfolders */

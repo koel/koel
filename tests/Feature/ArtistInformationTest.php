@@ -16,8 +16,6 @@ class ArtistInformationTest extends TestCase
     {
         config(['koel.services.lastfm.key' => 'foo']);
         config(['koel.services.lastfm.secret' => 'geheim']);
-
-        /** @var Artist $artist */
         $artist = Artist::factory()->create();
 
         $lastfm = $this->mock(EncyclopediaService::class);

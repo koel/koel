@@ -43,8 +43,6 @@ class PlaylistSongTest extends PlusTestCase
                 ->count(2)
                 ->create(),
         );
-
-        /** @var Song $privateSong */
         $privateSong = Song::factory()->private()->create();
         $playlist->addPlayables($privateSong);
 

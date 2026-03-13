@@ -23,8 +23,6 @@ class InteractionTest extends TestCase
         Event::fake(PlaybackStarted::class);
 
         $user = create_user();
-
-        /** @var Song $song */
         $song = Song::factory()->create();
 
         $this->postAs('api/interaction/play', ['song' => $song->id], $user);
@@ -52,8 +50,6 @@ class InteractionTest extends TestCase
         Event::fake(SongFavoriteToggled::class);
 
         $user = create_user();
-
-        /** @var Song $song */
         $song = Song::factory()->create();
 
         // Toggle on

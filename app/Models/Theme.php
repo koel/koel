@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $user_id
  * @property ThemeProperties $properties
  * @property User $user
+ *
+ * @method static \Database\Factories\ThemeFactory factory(...$parameters)
  */
 class Theme extends Model
 {

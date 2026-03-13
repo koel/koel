@@ -13,7 +13,6 @@ class ArtistTest extends PlusTestCase
     #[Test]
     public function getOrCreate(): void
     {
-        /** @var Artist $artist */
         $artist = Artist::factory()->create(['name' => 'Foo']);
 
         // The artist can be retrieved by its name and user
