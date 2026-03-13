@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Ai\Tools;
+namespace App\Ai\Services;
 
 use App\Ai\AiRequestContext;
 use App\Models\Song;
 use App\Repositories\SongRepository;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Laravel\Ai\Tools\Request;
 
 class SongRequestResolver
@@ -39,9 +39,9 @@ class SongRequestResolver
         if ($context->currentSongId) {
             $song = $this->songRepository->findOne($context->currentSongId, $context->user);
 
-            return $song ? new Collection([$song]) : new Collection();
+            return $song ? collect([$song]) : collect();
         }
 
-        return new Collection();
+        return collect();
     }
 }

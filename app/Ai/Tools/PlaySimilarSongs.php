@@ -5,6 +5,7 @@ namespace App\Ai\Tools;
 use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
 use App\Ai\Services\PlaybackService;
+use App\Ai\Services\SongRequestResolver;
 use App\Models\Song;
 use App\Repositories\SongRepository;
 use Illuminate\Contracts\JsonSchema\JsonSchema;

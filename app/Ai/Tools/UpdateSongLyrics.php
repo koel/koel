@@ -4,6 +4,7 @@ namespace App\Ai\Tools;
 
 use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
+use App\Ai\Services\SongRequestResolver;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;

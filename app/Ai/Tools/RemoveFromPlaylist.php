@@ -4,6 +4,7 @@ namespace App\Ai\Tools;
 
 use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
+use App\Ai\Services\SongRequestResolver;
 use App\Repositories\PlaylistRepository;
 use App\Services\PlaylistService;
 use Illuminate\Contracts\Auth\Access\Gate;
