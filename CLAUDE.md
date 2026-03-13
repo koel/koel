@@ -241,6 +241,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## PHP Conventions
 - Always prefer Laravel's built-in helpers over custom implementations (e.g. `str()->plural()`, `Str::slug()`, `Arr::flatten()`, etc.). Do not reimplement what Laravel already provides.
+- All methods must have explicit visibility (`public`, `protected`, or `private`). Never omit the visibility keyword, even on interface methods or static methods.
 - Methods that don't reference `$this` must be declared `static`.
 - Always use the least visibility possible. Use `private` by default; only use `protected` or `public` when required by inheritance or external access.
 - Never use `empty()` to check arrays. If the variable is known to be an array, use `!$array` instead. Don't compare to `[]` either.

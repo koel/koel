@@ -6,7 +6,7 @@ use App\Ai\AiAssistantResult;
 
 interface AiResultSerializer
 {
-    static function supports(AiAssistantResult $result): bool;
+    public static function supports(AiAssistantResult $result): bool;
 
-    static function serialize(AiAssistantResult $result): array;
+    public static function serialize(AiAssistantResult $result): array;
 }

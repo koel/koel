@@ -3,10 +3,11 @@
 namespace App\Ai\Serializers;
 
 use App\Ai\AiAssistantResult;
+use App\Ai\Serializers\Contracts\AiResultSerializer;
 
 class AiResultSerializerRegistry
 {
-    /** @var array<class-string<Contracts\AiResultSerializer>> */
+    /** @var array<class-string<AiResultSerializer>> */
     private static array $serializers = [
         PlaySongsResultSerializer::class,
         SuggestSongsResultSerializer::class,
