@@ -281,3 +281,28 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## Code Reviews
 - When addressing PR review comments, do NOT blindly follow them. Always use your own knowledge and logic to evaluate whether the feedback makes sense. If it doesn't, push back and explain why.
+
+## Vite+ Toolchain
+
+This project uses **Vite+**, a unified toolchain wrapping Vite, Vitest, Oxlint, Oxfmt, and more via a single global CLI called `vp`. Run `vp help` for available commands.
+
+### Key Commands
+- `vp dev` — development server
+- `vp build` — production build
+- `vp test` — run frontend tests (Vitest)
+- `vp lint` — lint code (Oxlint)
+- `vp fmt` — format code (Oxfmt)
+- `vp check` — run format + lint + type checks
+- `vp install` / `vp add` / `vp remove` — package management (delegates to pnpm)
+- `vp run <script>` — run a package.json script (equivalent of `pnpm run <script>`)
+
+### Imports
+- Import from `vite-plus` instead of `vite` (e.g. `import { defineConfig } from 'vite-plus'`)
+- Import from `vite-plus/test` instead of `vitest` (e.g. `import { describe, expect, it, vi } from 'vite-plus/test'`)
+- Do NOT install `vitest`, `oxlint`, or `oxfmt` directly — Vite+ wraps these tools
+
+### Common Pitfalls
+- Do not use `vp vitest` or `vp oxlint` — use `vp test` and `vp lint` instead
+- `vp test` runs the built-in test command; `vp run test` runs the `test` script from package.json
+- Use `vp check` for validation loops (combines fmt + lint + typecheck)
+- Prefer `vp check resources/assets` to scope checks to frontend code
