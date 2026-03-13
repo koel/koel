@@ -17,7 +17,7 @@ class GenreTest extends TestCase
         $rock = Genre::factory()->has(Song::factory()->count(2))->create(['name' => 'Rock']);
         $pop = Genre::factory()->has(Song::factory()->count(1))->create(['name' => 'Pop']);
 
-        Song::factory()->count(2)->create();
+        Song::factory()->createMany(2);
 
         $this
             ->getAs('api/genres')

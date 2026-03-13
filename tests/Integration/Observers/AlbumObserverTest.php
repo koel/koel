@@ -19,14 +19,14 @@ class AlbumObserverTest extends TestCase
 
         self::restoreObserver();
 
-        Album::factory()->create();
+        Album::factory()->createOne();
     }
 
     #[Test]
     public function dispatchJobToGenerateThumbnailUponUpdate(): void
     {
         Dispatcher::expects('dispatch')->once()->with(Mockery::type(GenerateAlbumThumbnailJob::class));
-        $album = Album::factory()->create();
+        $album = Album::factory()->createOne();
 
         self::restoreObserver();
 
@@ -38,7 +38,7 @@ class AlbumObserverTest extends TestCase
     public function doNotDispatchJobToGenerateThumbnailIfCoverIsEmpty(): void
     {
         Dispatcher::expects('dispatch')->never();
-        $album = Album::factory()->create();
+        $album = Album::factory()->createOne();
 
         self::restoreObserver();
 
@@ -46,7 +46,7 @@ class AlbumObserverTest extends TestCase
         $album->save();
 
         // create another album to ensure the observer is still not triggered
-        Album::factory()->create(['cover' => '']);
+        Album::factory()->createOne(['cover' => '']);
     }
 
     private static function restoreObserver(): void

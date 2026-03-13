@@ -35,7 +35,7 @@ class ExtractFoldersCommandTest extends TestCase
         config(['koel.storage_driver' => 'local']);
         Setting::set('media_path', '/tmp/media');
 
-        $song = Song::factory()->create(['path' => '/tmp/media/Rock/song.mp3', 'folder_id' => null]);
+        $song = Song::factory()->createOne(['path' => '/tmp/media/Rock/song.mp3', 'folder_id' => null]);
 
         $browser = Mockery::mock(MediaBrowser::class);
         $browser

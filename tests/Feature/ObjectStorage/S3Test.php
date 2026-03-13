@@ -53,7 +53,7 @@ class S3Test extends TestCase
     #[Test]
     public function removingASong(): void
     {
-        Song::factory()->create([
+        Song::factory()->createOne([
             'path' => 's3://koel/sample.mp3',
         ]);
 

@@ -13,7 +13,7 @@ class SongTest extends TestCase
     #[Test]
     public function retrievedLyricsPreserveTimestamps(): void
     {
-        $song = Song::factory()->create(['lyrics' => "[00:00.00]Line 1\n[00:01.00]Line 2\n[00:02.00]Line 3"]);
+        $song = Song::factory()->createOne(['lyrics' => "[00:00.00]Line 1\n[00:01.00]Line 2\n[00:02.00]Line 3"]);
 
         self::assertSame("[00:00.00]Line 1\n[00:01.00]Line 2\n[00:02.00]Line 3", $song->lyrics);
         self::assertSame("[00:00.00]Line 1\n[00:01.00]Line 2\n[00:02.00]Line 3", $song->getAttributes()['lyrics']);
@@ -22,7 +22,7 @@ class SongTest extends TestCase
     #[Test]
     public function syncGenres(): void
     {
-        $song = Song::factory()->create();
+        $song = Song::factory()->createOne();
         $song->syncGenres('Pop, Rock');
 
         self::assertCount(2, $song->genres);
@@ -46,8 +46,8 @@ class SongTest extends TestCase
     public function genreEqualsTo(string $target, bool $isEqual): void
     {
         $song = Song::factory()
-            ->hasAttached(Genre::factory()->create(['name' => 'Pop']))
-            ->hasAttached(Genre::factory()->create(['name' => 'Rock']))
+            ->hasAttached(Genre::factory()->createOne(['name' => 'Pop']))
+            ->hasAttached(Genre::factory()->createOne(['name' => 'Rock']))
             ->create()
             ->refresh();
 
@@ -57,7 +57,7 @@ class SongTest extends TestCase
     #[Test]
     public function deletingByChunk(): void
     {
-        Song::factory(5)->create();
+        Song::factory()->createMany(5);
 
         Song::deleteByChunk(Song::query()->get()->modelKeys(), 1);
 

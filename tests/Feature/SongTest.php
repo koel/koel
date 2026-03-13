@@ -20,7 +20,7 @@ class SongTest extends TestCase
     #[Test]
     public function index(): void
     {
-        Song::factory(2)->create();
+        Song::factory()->createMany(2);
 
         $this->getAs('api/songs')->assertJsonStructure(SongResource::PAGINATION_JSON_STRUCTURE);
         $this->getAs('api/songs?sort=title&order=desc')->assertJsonStructure(SongResource::PAGINATION_JSON_STRUCTURE);
@@ -29,7 +29,7 @@ class SongTest extends TestCase
     #[Test]
     public function show(): void
     {
-        $song = Song::factory()->create();
+        $song = Song::factory()->createOne();
 
         $this->getAs("api/songs/{$song->id}")->assertJsonStructure(SongResource::JSON_STRUCTURE);
     }
@@ -40,7 +40,7 @@ class SongTest extends TestCase
         Bus::fake();
         Dispatcher::expects('dispatch')->with(DeleteSongFilesJob::class);
 
-        $songs = Song::factory(2)->create();
+        $songs = Song::factory()->createMany(2);
 
         $this->deleteAs('api/songs', ['songs' => $songs->modelKeys()], create_admin())->assertNoContent();
 
@@ -53,7 +53,7 @@ class SongTest extends TestCase
         Bus::fake();
         Dispatcher::expects('dispatch')->never();
 
-        $songs = Song::factory(2)->create();
+        $songs = Song::factory()->createMany(2);
 
         $this->deleteAs('api/songs', ['songs' => $songs->modelKeys()])->assertForbidden();
 
@@ -63,7 +63,7 @@ class SongTest extends TestCase
     #[Test]
     public function singleUpdateAllInfoNoCompilation(): void
     {
-        $song = Song::factory()->create();
+        $song = Song::factory()->createOne();
 
         $this->putAs(
             '/api/songs',
@@ -101,7 +101,7 @@ class SongTest extends TestCase
     #[Test]
     public function singleUpdateSomeInfoNoCompilation(): void
     {
-        $song = Song::factory()->create();
+        $song = Song::factory()->createOne();
 
         $originalArtistId = $song->artist->id;
 
@@ -130,7 +130,7 @@ class SongTest extends TestCase
     #[Test]
     public function multipleUpdateNoCompilation(): void
     {
-        $songIds = Song::factory(2)->create()->modelKeys();
+        $songIds = Song::factory()->createMany(2)->modelKeys();
 
         $this->putAs(
             '/api/songs',
@@ -168,7 +168,7 @@ class SongTest extends TestCase
     #[Test]
     public function multipleUpdateCreatingNewAlbumsAndArtists(): void
     {
-        $originalSongs = Song::factory(2)->create();
+        $originalSongs = Song::factory()->createMany(2);
         $originalSongIds = $originalSongs->modelKeys();
         $originalAlbumNames = $originalSongs->pluck('album.name')->all();
         $originalAlbumIds = $originalSongs->pluck('album_id')->all();
@@ -208,7 +208,7 @@ class SongTest extends TestCase
     #[Test]
     public function singleUpdateAllInfoWithCompilation(): void
     {
-        $song = Song::factory()->create();
+        $song = Song::factory()->createOne();
 
         $this->putAs(
             '/api/songs',
@@ -251,7 +251,7 @@ class SongTest extends TestCase
     #[Test]
     public function updateSingleSongWithEmptyTrackAndDisc(): void
     {
-        $song = Song::factory()->create([
+        $song = Song::factory()->createOne([
             'track' => 12,
             'disc' => 2,
         ]);

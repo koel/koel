@@ -24,11 +24,11 @@ class FolderRepositoryTest extends PlusTestCase
     public function getByPaths(): void
     {
         $user = create_user(['id' => 99]);
-        $foo = Folder::factory()->create(['path' => 'foo']);
-        $bar = Folder::factory()->create(['path' => 'foo/bar']);
+        $foo = Folder::factory()->createOne(['path' => 'foo']);
+        $bar = Folder::factory()->createOne(['path' => 'foo/bar']);
 
         // This folder is not browsable by the user and should not be returned
-        Folder::factory()->create(['path' => '__KOEL_UPLOADS_$1__']);
+        Folder::factory()->createOne(['path' => '__KOEL_UPLOADS_$1__']);
 
         $results = $this->repository->getByPaths(['foo', 'foo/bar', '__KOEL_UPLOADS_$1__'], $user);
 

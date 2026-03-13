@@ -21,7 +21,7 @@ class StreamerTest extends PlusTestCase
     public function resolveAdapters(): void
     {
         collect(SongStorageType::cases())->each(static function (SongStorageType $type): void {
-            $song = Song::factory()->create(['storage' => $type]);
+            $song = Song::factory()->createOne(['storage' => $type]);
 
             if ($type === SongStorageType::DROPBOX) {
                 self::mockDropboxRefreshAccessTokenCall();

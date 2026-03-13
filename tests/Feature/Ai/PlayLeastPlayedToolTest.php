@@ -35,19 +35,19 @@ class PlayLeastPlayedToolTest extends TestCase
     #[Test]
     public function playsLeastPlayedSongs(): void
     {
-        $neverPlayed = Song::factory()->for($this->user, 'owner')->create();
+        $neverPlayed = Song::factory()->for($this->user, 'owner')->createOne();
 
-        $rarelyPlayed = Song::factory()->for($this->user, 'owner')->create();
+        $rarelyPlayed = Song::factory()->for($this->user, 'owner')->createOne();
         Interaction::factory()
             ->for($this->user)
             ->for($rarelyPlayed)
-            ->create(['play_count' => 1]);
+            ->createOne(['play_count' => 1]);
 
-        $heavilyPlayed = Song::factory()->for($this->user, 'owner')->create();
+        $heavilyPlayed = Song::factory()->for($this->user, 'owner')->createOne();
         Interaction::factory()
             ->for($this->user)
             ->for($heavilyPlayed)
-            ->create(['play_count' => 100]);
+            ->createOne(['play_count' => 100]);
 
         $response = $this->tool->handle(new Request(['limit' => 2]));
 

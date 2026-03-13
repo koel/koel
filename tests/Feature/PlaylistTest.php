@@ -38,7 +38,7 @@ class PlaylistTest extends TestCase
 
         $user = create_user();
 
-        $songs = Song::factory(2)->create();
+        $songs = Song::factory()->createMany(2);
 
         $ulid = Ulid::freeze();
 
@@ -259,7 +259,7 @@ class PlaylistTest extends TestCase
                     ],
                 ],
             ],
-            'songs' => Song::factory(2)->create()->modelKeys(),
+            'songs' => Song::factory()->createMany(2)->modelKeys(),
         ])->assertUnprocessable();
     }
 

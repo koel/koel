@@ -54,7 +54,7 @@ class PlaylistFolderTest extends TestCase
     #[Test]
     public function update(): void
     {
-        $folder = PlaylistFolder::factory()->create(['name' => 'Metal']);
+        $folder = PlaylistFolder::factory()->createOne(['name' => 'Metal']);
 
         $this->patchAs(
             "api/playlist-folders/{$folder->id}",
@@ -68,7 +68,7 @@ class PlaylistFolderTest extends TestCase
     #[Test]
     public function unauthorizedUpdate(): void
     {
-        $folder = PlaylistFolder::factory()->create(['name' => 'Metal']);
+        $folder = PlaylistFolder::factory()->createOne(['name' => 'Metal']);
 
         $this->patchAs("api/playlist-folders/{$folder->id}", ['name' => 'Classical'])->assertForbidden();
 
@@ -78,7 +78,7 @@ class PlaylistFolderTest extends TestCase
     #[Test]
     public function destroy(): void
     {
-        $folder = PlaylistFolder::factory()->create();
+        $folder = PlaylistFolder::factory()->createOne();
 
         $this->deleteAs(
             "api/playlist-folders/{$folder->id}",
@@ -92,7 +92,7 @@ class PlaylistFolderTest extends TestCase
     #[Test]
     public function nonAuthorizedDelete(): void
     {
-        $folder = PlaylistFolder::factory()->create();
+        $folder = PlaylistFolder::factory()->createOne();
 
         $this->deleteAs("api/playlist-folders/{$folder->id}", ['name' => 'Classical'])->assertForbidden();
 
@@ -103,7 +103,7 @@ class PlaylistFolderTest extends TestCase
     public function movePlaylistToFolder(): void
     {
         $playlist = create_playlist();
-        $folder = PlaylistFolder::factory()->for($playlist->owner)->create();
+        $folder = PlaylistFolder::factory()->for($playlist->owner)->createOne();
 
         self::assertNull($this->folderService->getFolderForPlaylist($playlist));
 
@@ -120,7 +120,7 @@ class PlaylistFolderTest extends TestCase
     public function unauthorizedMovingPlaylistToFolderIsNotAllowed(): void
     {
         $playlist = create_playlist();
-        $folder = PlaylistFolder::factory()->for($playlist->owner)->create();
+        $folder = PlaylistFolder::factory()->for($playlist->owner)->createOne();
 
         self::assertNull($this->folderService->getFolderForPlaylist($playlist));
 
@@ -135,7 +135,7 @@ class PlaylistFolderTest extends TestCase
     public function movePlaylistToRootLevel(): void
     {
         $playlist = create_playlist();
-        $folder = PlaylistFolder::factory()->for($playlist->owner)->create();
+        $folder = PlaylistFolder::factory()->for($playlist->owner)->createOne();
 
         $folder->playlists()->attach($playlist);
         self::assertTrue($this->folderService->getFolderForPlaylist($playlist->refresh())?->is($folder));
@@ -153,7 +153,7 @@ class PlaylistFolderTest extends TestCase
     public function unauthorizedMovingPlaylistToRootLevelIsNotAllowed(): void
     {
         $playlist = create_playlist();
-        $folder = PlaylistFolder::factory()->for($playlist->owner)->create();
+        $folder = PlaylistFolder::factory()->for($playlist->owner)->createOne();
 
         $folder->playlists()->attach($playlist);
         self::assertTrue($this->folderService->getFolderForPlaylist($playlist->refresh())?->is($folder));

@@ -39,7 +39,7 @@ class PlaylistFolderServiceTest extends TestCase
     #[Test]
     public function update(): void
     {
-        $folder = PlaylistFolder::factory()->create(['name' => 'Metal']);
+        $folder = PlaylistFolder::factory()->createOne(['name' => 'Metal']);
 
         $this->service->renameFolder($folder, 'Classical');
 
@@ -51,7 +51,7 @@ class PlaylistFolderServiceTest extends TestCase
     {
         $user = create_user();
         $playlists = create_playlists(count: 3, owner: $user);
-        $folder = PlaylistFolder::factory()->for($user)->create();
+        $folder = PlaylistFolder::factory()->for($user)->createOne();
 
         $this->service->addPlaylistsToFolder($folder, $playlists->modelKeys());
 
@@ -62,10 +62,10 @@ class PlaylistFolderServiceTest extends TestCase
     public function aPlaylistCannotBelongToMultipleFoldersByOneUser(): void
     {
         $playlist = create_playlist();
-        $existingFolder = PlaylistFolder::factory()->for($playlist->owner)->create();
+        $existingFolder = PlaylistFolder::factory()->for($playlist->owner)->createOne();
 
         $existingFolder->playlists()->attach($playlist);
-        $newFolder = PlaylistFolder::factory()->for($playlist->owner)->create();
+        $newFolder = PlaylistFolder::factory()->for($playlist->owner)->createOne();
 
         $this->service->addPlaylistsToFolder($newFolder, [$playlist->id]);
 
@@ -75,11 +75,11 @@ class PlaylistFolderServiceTest extends TestCase
     #[Test]
     public function aPlaylistCanBelongToMultipleFoldersFromDifferentUsers(): void
     {
-        $existingFolderFromAnotherUser = PlaylistFolder::factory()->create();
+        $existingFolderFromAnotherUser = PlaylistFolder::factory()->createOne();
 
         $playlist = create_playlist();
         $existingFolderFromAnotherUser->playlists()->attach($playlist);
-        $newFolder = PlaylistFolder::factory()->for($playlist->owner)->create();
+        $newFolder = PlaylistFolder::factory()->for($playlist->owner)->createOne();
 
         $this->service->addPlaylistsToFolder($newFolder, [$playlist->id]);
 
@@ -89,7 +89,7 @@ class PlaylistFolderServiceTest extends TestCase
     #[Test]
     public function movePlaylistsToRootLevel(): void
     {
-        $folder = PlaylistFolder::factory()->create();
+        $folder = PlaylistFolder::factory()->createOne();
 
         $playlists = create_playlists(count: 3);
         $folder->playlists()->attach($playlists);

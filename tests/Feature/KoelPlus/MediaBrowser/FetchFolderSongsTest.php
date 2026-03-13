@@ -23,8 +23,8 @@ class FetchFolderSongsTest extends PlusTestCase
     #[Test]
     public function fetchSongsInFolderWithAValidPath(): void
     {
-        $folder = Folder::factory()->create(['path' => 'foo']);
-        $subfolder = Folder::factory()->for($folder, 'parent')->create(['path' => 'foo/bar']);
+        $folder = Folder::factory()->createOne(['path' => 'foo']);
+        $subfolder = Folder::factory()->for($folder, 'parent')->createOne(['path' => 'foo/bar']);
 
         /** @var Collection $songs */
         $songs = Song::factory()
@@ -33,7 +33,7 @@ class FetchFolderSongsTest extends PlusTestCase
             ->create();
 
         // create songs in the subfolder, which should not be returned
-        Song::factory()->for($subfolder)->create();
+        Song::factory()->for($subfolder)->createOne();
 
         $response = $this->getAs('api/songs/in-folder?path=foo');
 
@@ -45,12 +45,12 @@ class FetchFolderSongsTest extends PlusTestCase
     public function fetchSongsInFolderWithEmptyPath(): void
     {
         /** @var Collection $songs */
-        $songs = Song::factory()->count(2)->create();
+        $songs = Song::factory()->createMany(2);
 
-        $folder = Folder::factory()->create(['path' => 'foo']);
+        $folder = Folder::factory()->createOne(['path' => 'foo']);
 
         // create songs in the folder, which should not be returned
-        Song::factory()->for($folder)->create();
+        Song::factory()->for($folder)->createOne();
 
         $response = $this->getAs('api/songs/in-folder?path=');
 
@@ -67,9 +67,9 @@ class FetchFolderSongsTest extends PlusTestCase
     public function doesNotFetchPrivateSongsFromOtherUsers(): void
     {
         /** @var Collection $songs */
-        $songs = Song::factory()->count(2)->create();
+        $songs = Song::factory()->createMany(2);
 
-        Song::factory()->create(['is_public' => false]);
+        Song::factory()->createOne(['is_public' => false]);
 
         $response = $this->getAs('api/songs/in-folder?path=');
 

@@ -132,7 +132,7 @@ class UserInvitationTest extends TestCase
 
     private static function createProspect(): User
     {
-        return User::factory()->for(create_admin(), 'invitedBy')->create([
+        return User::factory()->for(create_admin(), 'invitedBy')->createOne([
             'invitation_token' => Str::uuid()->toString(),
             'invited_at' => now(),
         ]);

@@ -59,7 +59,7 @@ class RadioStationTest extends TestCase
     #[Test]
     public function updateKeepingLogoIntact(): void
     {
-        $station = RadioStation::factory()->create([
+        $station = RadioStation::factory()->createOne([
             'logo' => 'neat-logo.webp',
         ]);
 
@@ -89,7 +89,7 @@ class RadioStationTest extends TestCase
     #[Test]
     public function updateWithNewLogo(): void
     {
-        $station = RadioStation::factory()->create();
+        $station = RadioStation::factory()->createOne();
 
         $ulid = Ulid::freeze();
 
@@ -113,7 +113,7 @@ class RadioStationTest extends TestCase
     #[Test]
     public function updateRemovingLogo(): void
     {
-        $station = RadioStation::factory()->create();
+        $station = RadioStation::factory()->createOne();
 
         $this
             ->putAs(
@@ -135,7 +135,7 @@ class RadioStationTest extends TestCase
     #[Test]
     public function normalNonAdminCannotUpdate(): void
     {
-        $station = RadioStation::factory()->create();
+        $station = RadioStation::factory()->createOne();
         $data = [
             'url' => 'https://example.com/updated-stream',
             'name' => 'Updated Radio Station',
@@ -150,7 +150,7 @@ class RadioStationTest extends TestCase
     #[Test]
     public function adminFromSameOrgCanUpdate(): void
     {
-        $station = RadioStation::factory()->create();
+        $station = RadioStation::factory()->createOne();
         $data = [
             'url' => 'https://example.com/updated-stream',
             'name' => 'Updated Radio Station',
@@ -165,7 +165,7 @@ class RadioStationTest extends TestCase
     #[Test]
     public function adminFromOtherOrgCannotUpdate(): void
     {
-        $station = RadioStation::factory()->create();
+        $station = RadioStation::factory()->createOne();
         $data = [
             'url' => 'https://example.com/updated-stream',
             'name' => 'Updated Radio Station',
@@ -183,14 +183,14 @@ class RadioStationTest extends TestCase
     public function listAll(): void
     {
         $user = create_user();
-        $ownStation = RadioStation::factory()->for($user)->create();
-        $publicStation = RadioStation::factory()->create(['is_public' => true]);
+        $ownStation = RadioStation::factory()->for($user)->createOne();
+        $publicStation = RadioStation::factory()->createOne(['is_public' => true]);
 
         // Non-public station should not be included
         RadioStation::factory()->count(2)->create(['is_public' => false]);
 
         // Public station but in another organization should not be included
-        RadioStation::factory()->create([
+        RadioStation::factory()->createOne([
             'is_public' => true,
             'user_id' => create_user(['organization_id' => Organization::factory()])->id,
         ]);
@@ -207,7 +207,7 @@ class RadioStationTest extends TestCase
     #[Test]
     public function destroy(): void
     {
-        $station = RadioStation::factory()->create();
+        $station = RadioStation::factory()->createOne();
 
         $this->deleteAs("/api/radio/stations/{$station->id}", [], $station->user)->assertNoContent();
 
@@ -217,7 +217,7 @@ class RadioStationTest extends TestCase
     #[Test]
     public function nonAdminCannotDelete(): void
     {
-        $station = RadioStation::factory()->create();
+        $station = RadioStation::factory()->createOne();
 
         $this->deleteAs("/api/radio/stations/{$station->id}", [], create_user())->assertForbidden();
     }
@@ -225,7 +225,7 @@ class RadioStationTest extends TestCase
     #[Test]
     public function adminFromOtherOrgCannotDelete(): void
     {
-        $station = RadioStation::factory()->create();
+        $station = RadioStation::factory()->createOne();
 
         $this->deleteAs("/api/radio/stations/{$station->id}", [], create_admin([
             'organization_id' => Organization::factory(),
@@ -235,7 +235,7 @@ class RadioStationTest extends TestCase
     #[Test]
     public function adminFromSameOrgCanDelete(): void
     {
-        $station = RadioStation::factory()->create();
+        $station = RadioStation::factory()->createOne();
 
         $this->deleteAs("/api/radio/stations/{$station->id}", [], create_admin())->assertNoContent();
 

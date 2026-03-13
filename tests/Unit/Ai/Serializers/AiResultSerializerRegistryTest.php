@@ -110,7 +110,7 @@ class AiResultSerializerRegistryTest extends TestCase
     #[Test]
     public function serializeRemoveFromFavoritesWithAlbums(): void
     {
-        $albums = Album::factory()->count(2)->create();
+        $albums = Album::factory()->createMany(2);
 
         $result = new AiAssistantResult();
         $result->action = 'remove_from_favorites';
@@ -125,7 +125,7 @@ class AiResultSerializerRegistryTest extends TestCase
     #[Test]
     public function serializeFavoriteWithArtists(): void
     {
-        $artists = Artist::factory()->count(1)->create();
+        $artists = Artist::factory()->createMany(1);
 
         $result = new AiAssistantResult();
         $result->action = 'add_to_favorites';
@@ -140,7 +140,7 @@ class AiResultSerializerRegistryTest extends TestCase
     #[Test]
     public function serializeFavoriteWithRadioStations(): void
     {
-        $stations = RadioStation::factory()->count(1)->create();
+        $stations = RadioStation::factory()->createMany(1);
 
         $result = new AiAssistantResult();
         $result->action = 'add_to_favorites';
@@ -207,7 +207,7 @@ class AiResultSerializerRegistryTest extends TestCase
     #[Test]
     public function serializePlayRadioStation(): void
     {
-        $station = RadioStation::factory()->create();
+        $station = RadioStation::factory()->createOne();
 
         $result = new AiAssistantResult();
         $result->action = 'play_radio_station';
@@ -221,7 +221,7 @@ class AiResultSerializerRegistryTest extends TestCase
     #[Test]
     public function serializeAddRadioStation(): void
     {
-        $station = RadioStation::factory()->create();
+        $station = RadioStation::factory()->createOne();
 
         $result = new AiAssistantResult();
         $result->action = 'add_radio_station';
@@ -235,7 +235,7 @@ class AiResultSerializerRegistryTest extends TestCase
     #[Test]
     public function serializeUpdateAlbum(): void
     {
-        $album = Album::factory()->create();
+        $album = Album::factory()->createOne();
 
         $result = new AiAssistantResult();
         $result->action = 'update_album';
@@ -249,7 +249,7 @@ class AiResultSerializerRegistryTest extends TestCase
     #[Test]
     public function serializeUpdateArtist(): void
     {
-        $artist = Artist::factory()->create();
+        $artist = Artist::factory()->createOne();
 
         $result = new AiAssistantResult();
         $result->action = 'update_artist';
@@ -275,7 +275,7 @@ class AiResultSerializerRegistryTest extends TestCase
     #[Test]
     public function serializeUpdateLyrics(): void
     {
-        $song = Song::factory()->for(create_user(), 'owner')->create();
+        $song = Song::factory()->for(create_user(), 'owner')->createOne();
 
         $result = new AiAssistantResult();
         $result->action = 'update_lyrics';

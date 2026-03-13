@@ -35,7 +35,7 @@ class UpdateArtistDetailsToolTest extends TestCase
     #[Test]
     public function renamesArtist(): void
     {
-        $artist = Artist::factory()->for($this->user)->create(['name' => 'Beetles']);
+        $artist = Artist::factory()->for($this->user)->createOne(['name' => 'Beetles']);
 
         $response = $this->tool->handle(new Request(['current_name' => 'Beetles', 'new_name' => 'Beatles']));
 
@@ -59,7 +59,7 @@ class UpdateArtistDetailsToolTest extends TestCase
     public function deniesUnauthorizedUser(): void
     {
         $user = create_user();
-        $artist = Artist::factory()->for($user)->create(['name' => 'My Artist']);
+        $artist = Artist::factory()->for($user)->createOne(['name' => 'My Artist']);
 
         app()->instance(AiRequestContext::class, new AiRequestContext($user));
         $this->tool = app()->make(UpdateArtistDetails::class);

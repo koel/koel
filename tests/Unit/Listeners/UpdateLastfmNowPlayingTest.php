@@ -18,7 +18,7 @@ class UpdateLastfmNowPlayingTest extends TestCase
     public function updateNowPlayingStatus(): void
     {
         $user = create_user();
-        $song = Song::factory()->create();
+        $song = Song::factory()->createOne();
         $lastfm = Mockery::mock(LastfmService::class, ['enabled' => true]);
 
         $lastfm->expects('updateNowPlaying')->with($song, $user);

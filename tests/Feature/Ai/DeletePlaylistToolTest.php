@@ -30,7 +30,7 @@ class DeletePlaylistToolTest extends TestCase
     #[Test]
     public function deletesOwnedPlaylist(): void
     {
-        $playlist = Playlist::factory()->create(['name' => 'My Old Playlist']);
+        $playlist = Playlist::factory()->createOne(['name' => 'My Old Playlist']);
         $user = $playlist->owner;
 
         app()->instance(AiRequestContext::class, new AiRequestContext($user));

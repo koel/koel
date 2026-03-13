@@ -14,7 +14,7 @@ class ActivateLicenseCommandTest extends TestCase
     #[Test]
     public function activateALicense(): void
     {
-        $license = License::factory()->create();
+        $license = License::factory()->createOne();
 
         $licenseService = Mockery::mock(LicenseServiceInterface::class);
         $licenseService->shouldReceive('activate')->with('test-license-key')->once()->andReturn($license);

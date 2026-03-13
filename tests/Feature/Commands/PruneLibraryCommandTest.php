@@ -13,11 +13,11 @@ class PruneLibraryCommandTest extends TestCase
     #[Test]
     public function pruneEmptyArtistsAndAlbums(): void
     {
-        $emptyAlbum = Album::factory()->create();
-        $emptyArtist = Artist::factory()->create();
+        $emptyAlbum = Album::factory()->createOne();
+        $emptyArtist = Artist::factory()->createOne();
 
-        $albumWithSongs = Album::factory()->create();
-        Song::factory()->for($albumWithSongs)->create();
+        $albumWithSongs = Album::factory()->createOne();
+        Song::factory()->for($albumWithSongs)->createOne();
 
         $this->artisan('koel:prune')->assertSuccessful();
 
@@ -29,8 +29,8 @@ class PruneLibraryCommandTest extends TestCase
     #[Test]
     public function dryRunWithoutDeleting(): void
     {
-        $emptyAlbum = Album::factory()->create();
-        $emptyArtist = Artist::factory()->create();
+        $emptyAlbum = Album::factory()->createOne();
+        $emptyArtist = Artist::factory()->createOne();
 
         $this
             ->artisan('koel:prune', ['--dry-run' => true])

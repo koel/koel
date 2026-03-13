@@ -18,7 +18,7 @@ class OverviewTest extends TestCase
     {
         $user = create_user();
 
-        Interaction::factory(20)->for($user)->create();
+        Interaction::factory()->for($user)->createMany(20);
 
         $this->getAs('api/overview', $user)->assertJsonStructure([
             'most_played_songs' => [0 => SongResource::JSON_STRUCTURE],

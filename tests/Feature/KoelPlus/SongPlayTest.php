@@ -21,7 +21,7 @@ class SongPlayTest extends PlusTestCase
         $token = app(TokenManager::class)->createCompositeToken(create_user());
         $song = Song::factory()
             ->public()
-            ->create([
+            ->createOne([
                 'path' => test_path('songs/blank.mp3'),
             ]);
 
@@ -35,7 +35,7 @@ class SongPlayTest extends PlusTestCase
     {
         $song = Song::factory()
             ->private()
-            ->create([
+            ->createOne([
                 'path' => test_path('songs/blank.mp3'),
             ]);
 
@@ -52,7 +52,7 @@ class SongPlayTest extends PlusTestCase
     {
         $song = Song::factory()
             ->private()
-            ->create([
+            ->createOne([
                 'path' => test_path('songs/blank.mp3'),
             ]);
 

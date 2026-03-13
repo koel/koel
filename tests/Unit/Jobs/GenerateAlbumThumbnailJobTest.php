@@ -14,7 +14,7 @@ class GenerateAlbumThumbnailJobTest extends TestCase
     #[Test]
     public function handle(): void
     {
-        $album = Album::factory()->create();
+        $album = Album::factory()->createOne();
 
         /** @var AlbumService|MockInterface $albumService */
         $albumService = $this->mock(AlbumService::class);

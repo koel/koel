@@ -36,9 +36,9 @@ class AddToPlaylistToolTest extends TestCase
     #[Test]
     public function addsCurrentSongToPlaylist(): void
     {
-        $playlist = Playlist::factory()->create(['name' => 'My Rock Playlist']);
+        $playlist = Playlist::factory()->createOne(['name' => 'My Rock Playlist']);
         $user = $playlist->owner;
-        $song = Song::factory()->for($user, 'owner')->create(['title' => 'Test Song']);
+        $song = Song::factory()->for($user, 'owner')->createOne(['title' => 'Test Song']);
 
         app()->instance(AiRequestContext::class, new AiRequestContext($user, currentSongId: $song->id));
         $this->tool = app()->make(AddToPlaylist::class);
@@ -61,7 +61,7 @@ class AddToPlaylistToolTest extends TestCase
     #[Test]
     public function cannotAddToSmartPlaylist(): void
     {
-        $playlist = Playlist::factory()->create([
+        $playlist = Playlist::factory()->createOne([
             'name' => 'Smart Jazz',
             'rules' => [
                 [
@@ -73,7 +73,7 @@ class AddToPlaylistToolTest extends TestCase
             ],
         ]);
         $user = $playlist->owner;
-        $song = Song::factory()->for($user, 'owner')->create();
+        $song = Song::factory()->for($user, 'owner')->createOne();
 
         app()->instance(AiRequestContext::class, new AiRequestContext($user, currentSongId: $song->id));
         $this->tool = app()->make(AddToPlaylist::class);
@@ -86,7 +86,7 @@ class AddToPlaylistToolTest extends TestCase
     #[Test]
     public function returnsErrorWhenNoSongAvailable(): void
     {
-        $playlist = Playlist::factory()->create(['name' => 'My Playlist']);
+        $playlist = Playlist::factory()->createOne(['name' => 'My Playlist']);
         $user = $playlist->owner;
 
         app()->instance(AiRequestContext::class, new AiRequestContext($user));

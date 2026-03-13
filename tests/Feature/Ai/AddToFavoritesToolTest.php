@@ -41,7 +41,7 @@ class AddToFavoritesToolTest extends TestCase
     #[Test]
     public function favoritesCurrentlyPlayingSong(): void
     {
-        $song = Song::factory()->for($this->user, 'owner')->create(['title' => 'Bohemian Rhapsody']);
+        $song = Song::factory()->for($this->user, 'owner')->createOne(['title' => 'Bohemian Rhapsody']);
 
         app()->instance(AiRequestContext::class, new AiRequestContext($this->user, currentSongId: $song->id));
         $this->tool = app()->make(AddToFavorites::class);
@@ -67,7 +67,7 @@ class AddToFavoritesToolTest extends TestCase
     #[Test]
     public function favoritesAlbumBySearch(): void
     {
-        $album = Album::factory()->create(['name' => 'A Night at the Opera']);
+        $album = Album::factory()->createOne(['name' => 'A Night at the Opera']);
 
         $albumRepository = Mockery::mock(AlbumRepository::class);
         $albumRepository
@@ -89,7 +89,7 @@ class AddToFavoritesToolTest extends TestCase
     #[Test]
     public function favoritesArtistBySearch(): void
     {
-        $artist = Artist::factory()->create(['name' => 'Queen']);
+        $artist = Artist::factory()->createOne(['name' => 'Queen']);
 
         $artistRepository = Mockery::mock(ArtistRepository::class);
         $artistRepository->shouldReceive('search')->with('Queen', 1, $this->user)->andReturn(new Collection([$artist]));

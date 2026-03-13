@@ -31,7 +31,7 @@ class AlbumServiceTest extends TestCase
     #[Test]
     public function updateAlbum(): void
     {
-        $album = Album::factory()->create([
+        $album = Album::factory()->createOne([
             'name' => 'Old Album Name',
             'year' => 2020,
         ]);
@@ -56,7 +56,7 @@ class AlbumServiceTest extends TestCase
     #[Test]
     public function updateAlbumWithCover(): void
     {
-        $album = Album::factory()->create([
+        $album = Album::factory()->createOne([
             'name' => 'Old Album Name',
             'year' => 2020,
         ]);
@@ -88,7 +88,7 @@ class AlbumServiceTest extends TestCase
     #[Test]
     public function updateAlbumRemovingCover(): void
     {
-        $album = Album::factory()->create();
+        $album = Album::factory()->createOne();
 
         $data = AlbumUpdateData::make(name: 'New Album Name', year: 2023, cover: '');
 
@@ -102,8 +102,8 @@ class AlbumServiceTest extends TestCase
     #[Test]
     public function rejectUpdatingIfArtistAlreadyHasAnAlbumWithTheSameName(): void
     {
-        $existingAlbum = Album::factory()->create(['name' => 'Existing Album Name']);
-        $album = Album::factory()->for($existingAlbum->artist)->create(['name' => 'Old Album Name']);
+        $existingAlbum = Album::factory()->createOne(['name' => 'Existing Album Name']);
+        $album = Album::factory()->for($existingAlbum->artist)->createOne(['name' => 'Old Album Name']);
         $data = AlbumUpdateData::make(name: 'Existing Album Name', year: 2023);
 
         $this->expectException(AlbumNameConflictException::class);
@@ -114,7 +114,7 @@ class AlbumServiceTest extends TestCase
     #[Test]
     public function storeAlbumCover(): void
     {
-        $album = Album::factory()->create();
+        $album = Album::factory()->createOne();
 
         $this->imageStorage
             ->expects('storeImage')

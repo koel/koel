@@ -24,7 +24,7 @@ class CheckDownloadableCountTest extends TestCase
     #[Test]
     public function checkSongs(): void
     {
-        $songs = Song::factory(3)->create();
+        $songs = Song::factory()->createMany(3);
 
         $this->getAs(
             'api/download/check?'
@@ -38,8 +38,8 @@ class CheckDownloadableCountTest extends TestCase
     #[Test]
     public function checkAlbum(): void
     {
-        $album = Album::factory()->create();
-        Song::factory(5)->for($album)->create();
+        $album = Album::factory()->createOne();
+        Song::factory()->for($album)->createMany(5);
 
         $this->getAs(
             'api/download/check?'
@@ -53,11 +53,11 @@ class CheckDownloadableCountTest extends TestCase
     #[Test]
     public function checkArtist(): void
     {
-        $artist = Artist::factory()->create();
-        Song::factory(4)
+        $artist = Artist::factory()->createOne();
+        Song::factory()
             ->for($artist)
             ->for(Album::factory())
-            ->create();
+            ->createMany(4);
 
         $this->getAs(
             'api/download/check?'
@@ -75,7 +75,7 @@ class CheckDownloadableCountTest extends TestCase
         $playlist = create_playlist();
         $playlist->users()->detach();
         $playlist->users()->attach($user, ['role' => 'owner']);
-        $songs = Song::factory(3)->create();
+        $songs = Song::factory()->createMany(3);
         $playlist->playables()->attach($songs, ['user_id' => $user->id]);
 
         $this->getAs(
@@ -92,9 +92,9 @@ class CheckDownloadableCountTest extends TestCase
     public function checkFavorites(): void
     {
         $user = create_user();
-        $songs = Song::factory(2)->create();
+        $songs = Song::factory()->createMany(2);
 
-        $songs->each(static fn (Song $song) => Favorite::factory()->for($user)->create([
+        $songs->each(static fn (Song $song) => Favorite::factory()->for($user)->createOne([
             'favoriteable_id' => $song->id,
         ]));
 
@@ -112,7 +112,7 @@ class CheckDownloadableCountTest extends TestCase
     {
         config(['koel.download.limit' => 2]);
 
-        $songs = Song::factory(3)->create();
+        $songs = Song::factory()->createMany(3);
 
         $this->getAs(
             'api/download/check?'
@@ -128,7 +128,7 @@ class CheckDownloadableCountTest extends TestCase
     {
         config(['koel.download.limit' => 0]);
 
-        $songs = Song::factory(10)->create();
+        $songs = Song::factory()->createMany(10);
 
         $this->getAs(
             'api/download/check?'
@@ -144,7 +144,7 @@ class CheckDownloadableCountTest extends TestCase
     {
         config(['koel.download.limit' => 5]);
 
-        $songs = Song::factory(5)->create();
+        $songs = Song::factory()->createMany(5);
 
         $this->getAs(
             'api/download/check?'

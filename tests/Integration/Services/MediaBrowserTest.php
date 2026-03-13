@@ -25,7 +25,7 @@ class MediaBrowserTest extends TestCase
     public function createFolderStructureForSong(): void
     {
         Setting::set('media_path', $this->mediaPath);
-        $song = Song::factory()->create([
+        $song = Song::factory()->createOne([
             'path' => "$this->mediaPath/foo/bar/baz.mp3",
             'storage' => SongStorageType::LOCAL,
         ]);
@@ -42,7 +42,7 @@ class MediaBrowserTest extends TestCase
         self::assertTrue($song->folder->is($bar));
 
         // Make sure subsequent runs work too
-        $qux = Song::factory()->create([
+        $qux = Song::factory()->createOne([
             'path' => "$this->mediaPath/foo/bar/qux.mp3",
             'storage' => SongStorageType::LOCAL,
         ]);
@@ -51,7 +51,7 @@ class MediaBrowserTest extends TestCase
 
         self::assertTrue($qux->folder->is($bar));
 
-        $songInRootPath = Song::factory()->create([
+        $songInRootPath = Song::factory()->createOne([
             'path' => "$this->mediaPath/baz.mp3",
             'storage' => SongStorageType::LOCAL,
         ]);

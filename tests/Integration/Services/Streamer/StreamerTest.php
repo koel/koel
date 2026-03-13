@@ -58,7 +58,7 @@ class StreamerTest extends TestCase
     {
         $backup = config('koel.streaming.transcode_flac');
         config(['koel.streaming.transcode_flac' => false]);
-        $song = Song::factory()->create([
+        $song = Song::factory()->createOne([
             'storage' => SongStorageType::LOCAL,
             'path' => '/tmp/test.flac',
             'mime_type' => 'audio/flac',
@@ -74,7 +74,7 @@ class StreamerTest extends TestCase
     #[Test]
     public function useTranscodingAdapterToPlayFlacIfConfiguredSo(): void
     {
-        $song = Song::factory()->create(['storage' => SongStorageType::LOCAL]);
+        $song = Song::factory()->createOne(['storage' => SongStorageType::LOCAL]);
 
         $streamer = new Streamer($song, null, RequestedStreamingConfig::make(transcode: true));
 
@@ -86,7 +86,7 @@ class StreamerTest extends TestCase
     {
         $backupConfig = config('koel.streaming.transcode_required_mime_types');
         config(['koel.streaming.transcode_required_mime_types' => ['audio/aif']]);
-        $song = Song::factory()->create([
+        $song = Song::factory()->createOne([
             'storage' => SongStorageType::LOCAL,
             'path' => '/tmp/test.aiff',
             'mime_type' => 'audio/aif',
@@ -124,7 +124,7 @@ class StreamerTest extends TestCase
     #[Test]
     public function resolvePodcastAdapter(): void
     {
-        $song = Song::factory()->asEpisode()->create();
+        $song = Song::factory()->asEpisode()->createOne();
         $streamer = new Streamer($song);
 
         self::assertInstanceOf(PodcastStreamerAdapter::class, $streamer->getAdapter());

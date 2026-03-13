@@ -33,7 +33,7 @@ class FavoriteServiceTest extends TestCase
         Event::fake(SongFavoriteToggled::class);
 
         $user = create_user();
-        $song = Song::factory()->create();
+        $song = Song::factory()->createOne();
 
         $this->service->toggleFavorite($song, $user);
 
@@ -52,7 +52,7 @@ class FavoriteServiceTest extends TestCase
         Event::fake(SongFavoriteToggled::class);
 
         $user = create_user();
-        $favorite = Favorite::factory()->for($user)->create();
+        $favorite = Favorite::factory()->for($user)->createOne();
 
         $this->service->toggleFavorite($favorite->favoriteable, $user);
         $this->assertDatabaseMissing(Favorite::class, ['id' => $favorite->id]);
@@ -66,7 +66,7 @@ class FavoriteServiceTest extends TestCase
         Event::fake(SongFavoriteToggled::class);
 
         $user = create_user();
-        $album = Album::factory()->create();
+        $album = Album::factory()->createOne();
 
         $this->service->toggleFavorite($album, $user);
 
@@ -85,7 +85,7 @@ class FavoriteServiceTest extends TestCase
         Event::fake(MultipleSongsLiked::class);
 
         /** @var Collection<int, Song> $songs */
-        $songs = Song::factory()->count(2)->create();
+        $songs = Song::factory()->createMany(2);
         $user = create_user();
 
         $this->service->batchFavorite($songs, $user); // @phpstan-ignore-line

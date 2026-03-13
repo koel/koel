@@ -24,7 +24,7 @@ class AlbumThumbnailTest extends TestCase
     #[Test]
     public function getAlbumThumbnail(): void
     {
-        $createdAlbum = Album::factory()->create(['cover' => 'foo.jpg']);
+        $createdAlbum = Album::factory()->createOne(['cover' => 'foo.jpg']);
 
         $this->imageStorage
             ->expects('storeImage')
@@ -42,7 +42,7 @@ class AlbumThumbnailTest extends TestCase
     #[Test]
     public function getThumbnailForAlbumWithoutCover(): void
     {
-        $createdAlbum = Album::factory()->create(['cover' => '']);
+        $createdAlbum = Album::factory()->createOne(['cover' => '']);
         $this->imageStorage->expects('storeImage')->never();
 
         $response = $this->getAs("api/albums/{$createdAlbum->id}/thumbnail");

@@ -15,7 +15,7 @@ class PlaylistSongTest extends TestCase
     public function getNormalPlaylist(): void
     {
         $playlist = create_playlist();
-        $playlist->addPlayables(Song::factory(5)->create());
+        $playlist->addPlayables(Song::factory()->createMany(5));
 
         $this
             ->getAs("api/playlists/{$playlist->id}/songs", $playlist->owner)
@@ -26,7 +26,7 @@ class PlaylistSongTest extends TestCase
     #[Test]
     public function getSmartPlaylist(): void
     {
-        Song::factory()->create(['title' => 'A foo song']);
+        Song::factory()->createOne(['title' => 'A foo song']);
 
         $playlist = create_playlist([
             'rules' => [
@@ -53,7 +53,7 @@ class PlaylistSongTest extends TestCase
     public function nonOwnerCannotAccessPlaylist(): void
     {
         $playlist = create_playlist();
-        $playlist->addPlayables(Song::factory(5)->create());
+        $playlist->addPlayables(Song::factory()->createMany(5));
 
         $this->getAs("api/playlists/{$playlist->id}/songs")->assertForbidden();
     }
@@ -62,7 +62,7 @@ class PlaylistSongTest extends TestCase
     public function addSongsToPlaylist(): void
     {
         $playlist = create_playlist();
-        $songs = Song::factory(2)->create();
+        $songs = Song::factory()->createMany(2);
 
         $this->postAs(
             "api/playlists/{$playlist->id}/songs",
@@ -77,8 +77,8 @@ class PlaylistSongTest extends TestCase
     public function removeSongsFromPlaylist(): void
     {
         $playlist = create_playlist();
-        $toRemainSongs = Song::factory(5)->create();
-        $toBeRemovedSongs = Song::factory(2)->create();
+        $toRemainSongs = Song::factory()->createMany(5);
+        $toBeRemovedSongs = Song::factory()->createMany(2);
 
         $playlist->addPlayables($toRemainSongs->merge($toBeRemovedSongs));
 
@@ -99,7 +99,7 @@ class PlaylistSongTest extends TestCase
     public function nonOwnerCannotModifyPlaylist(): void
     {
         $playlist = create_playlist();
-        $song = Song::factory()->create();
+        $song = Song::factory()->createOne();
 
         $this->postAs("api/playlists/{$playlist->id}/songs", ['songs' => [$song->id]])->assertForbidden();
 
@@ -125,7 +125,7 @@ class PlaylistSongTest extends TestCase
             ],
         ]);
 
-        $songs = Song::factory(2)->create()->modelKeys();
+        $songs = Song::factory()->createMany(2)->modelKeys();
 
         $this->postAs("api/playlists/{$playlist->id}/songs", ['songs' => $songs], $playlist->owner)->assertForbidden();
 

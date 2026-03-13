@@ -52,7 +52,7 @@ class SongRequestResolverTest extends TestCase
     #[Test]
     public function resolveSongByCurrentSongId(): void
     {
-        $song = Song::factory()->for($this->user, 'owner')->create();
+        $song = Song::factory()->for($this->user, 'owner')->createOne();
 
         $this->songRepository
             ->shouldReceive('findOne')
@@ -77,7 +77,7 @@ class SongRequestResolverTest extends TestCase
     #[Test]
     public function resolveSongPrefersQueryOverCurrentSong(): void
     {
-        $currentSong = Song::factory()->for($this->user, 'owner')->create(['title' => 'Current']);
+        $currentSong = Song::factory()->for($this->user, 'owner')->createOne(['title' => 'Current']);
         $queriedSongs = Song::factory()
             ->for($this->user, 'owner')
             ->count(1)
@@ -135,7 +135,7 @@ class SongRequestResolverTest extends TestCase
     #[Test]
     public function resolveSongsByCurrentSongId(): void
     {
-        $song = Song::factory()->for($this->user, 'owner')->create();
+        $song = Song::factory()->for($this->user, 'owner')->createOne();
 
         $this->songRepository
             ->shouldReceive('findOne')

@@ -14,7 +14,7 @@ class PaginateFolderSongsTest extends PlusTestCase
     #[Test]
     public function paginate(): void
     {
-        $folder = Folder::factory()->create(['path' => 'foo/bar']);
+        $folder = Folder::factory()->createOne(['path' => 'foo/bar']);
 
         /** @var Collection<Song> $songs */
         $songs = Song::factory()
@@ -33,7 +33,7 @@ class PaginateFolderSongsTest extends PlusTestCase
     public function paginateRootMediaFolder(): void
     {
         /** @var Collection<Song> $songs */
-        $songs = Song::factory()->count(2)->create();
+        $songs = Song::factory()->createMany(2);
 
         $response = $this->getAs('/api/browse/songs')->assertJsonStructure(SongFileResource::PAGINATION_JSON_STRUCTURE);
 

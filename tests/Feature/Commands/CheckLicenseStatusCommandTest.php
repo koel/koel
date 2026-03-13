@@ -14,7 +14,7 @@ class CheckLicenseStatusCommandTest extends TestCase
     #[Test]
     public function showValidLicenseStatus(): void
     {
-        $license = License::factory()->create();
+        $license = License::factory()->createOne();
 
         $licenseService = Mockery::mock(LicenseServiceInterface::class);
         $licenseService->shouldReceive('getStatus')->once()->andReturn(LicenseStatus::valid($license));
@@ -38,7 +38,7 @@ class CheckLicenseStatusCommandTest extends TestCase
     #[Test]
     public function showInvalidLicenseStatus(): void
     {
-        $license = License::factory()->create();
+        $license = License::factory()->createOne();
 
         $licenseService = Mockery::mock(LicenseServiceInterface::class);
         $licenseService->shouldReceive('getStatus')->once()->andReturn(LicenseStatus::invalid($license));
@@ -51,7 +51,7 @@ class CheckLicenseStatusCommandTest extends TestCase
     #[Test]
     public function warnAboutMultipleLicenses(): void
     {
-        License::factory()->count(2)->create();
+        License::factory()->createMany(2);
 
         $licenseService = Mockery::mock(LicenseServiceInterface::class);
         $licenseService->shouldReceive('getStatus')->once()->andReturn(LicenseStatus::noLicense());

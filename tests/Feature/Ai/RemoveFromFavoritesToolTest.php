@@ -41,7 +41,7 @@ class RemoveFromFavoritesToolTest extends TestCase
     #[Test]
     public function unfavoritesCurrentlyPlayingSong(): void
     {
-        $song = Song::factory()->for($this->user, 'owner')->create(['title' => 'Bohemian Rhapsody']);
+        $song = Song::factory()->for($this->user, 'owner')->createOne(['title' => 'Bohemian Rhapsody']);
         $song->favorites()->create(['user_id' => $this->user->id]);
 
         app()->instance(AiRequestContext::class, new AiRequestContext($this->user, currentSongId: $song->id));
@@ -68,7 +68,7 @@ class RemoveFromFavoritesToolTest extends TestCase
     #[Test]
     public function unfavoritesAlbumBySearch(): void
     {
-        $album = Album::factory()->create(['name' => 'A Night at the Opera']);
+        $album = Album::factory()->createOne(['name' => 'A Night at the Opera']);
         $album->favorites()->create(['user_id' => $this->user->id]);
 
         $albumRepository = Mockery::mock(AlbumRepository::class);
@@ -91,7 +91,7 @@ class RemoveFromFavoritesToolTest extends TestCase
     #[Test]
     public function unfavoritesArtistBySearch(): void
     {
-        $artist = Artist::factory()->create(['name' => 'Queen']);
+        $artist = Artist::factory()->createOne(['name' => 'Queen']);
         $artist->favorites()->create(['user_id' => $this->user->id]);
 
         $artistRepository = Mockery::mock(ArtistRepository::class);

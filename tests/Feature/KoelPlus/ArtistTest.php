@@ -15,7 +15,7 @@ class ArtistTest extends PlusTestCase
     #[Test]
     public function updateAsOwner(): void
     {
-        $artist = Artist::factory()->create();
+        $artist = Artist::factory()->createOne();
 
         $this->putAs(
             "api/artists/{$artist->id}",
@@ -33,7 +33,7 @@ class ArtistTest extends PlusTestCase
     #[Test]
     public function adminCannotUpdateIfNonOwner(): void
     {
-        $artist = Artist::factory()->create();
+        $artist = Artist::factory()->createOne();
         $scaryBossMan = create_admin();
 
         self::assertFalse($artist->belongsToUser($scaryBossMan));
@@ -50,7 +50,7 @@ class ArtistTest extends PlusTestCase
     #[Test]
     public function updateForbiddenForNonOwners(): void
     {
-        $artist = Artist::factory()->create();
+        $artist = Artist::factory()->createOne();
         $randomDude = create_user();
 
         self::assertFalse($artist->belongsToUser($randomDude));

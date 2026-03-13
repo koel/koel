@@ -41,7 +41,7 @@ class SongServiceTest extends TestCase
     #[Test]
     public function updateSingleSong(): void
     {
-        $song = Song::factory()->create();
+        $song = Song::factory()->createOne();
 
         $data = SongUpdateData::make(albumArtistName: 'Queen', disc: 1, lyrics: 'Is this the real life?');
 
@@ -62,7 +62,7 @@ class SongServiceTest extends TestCase
     #[Test]
     public function updateSingleSongWithAlbumChanged(): void
     {
-        $song = Song::factory()->create();
+        $song = Song::factory()->createOne();
         $artist = $song->artist;
         $album = $song->album;
 
@@ -86,7 +86,7 @@ class SongServiceTest extends TestCase
     #[Test]
     public function updateSongWithArtistChanged(): void
     {
-        $song = Song::factory()->create();
+        $song = Song::factory()->createOne();
         $artist = $song->artist;
         $album = $song->album;
         $albumName = $song->album->name;
@@ -117,8 +117,8 @@ class SongServiceTest extends TestCase
     #[Test]
     public function updateMultipleSongsTrackProvided(): void
     {
-        $song1 = Song::factory()->create(['track' => 1]);
-        $song2 = Song::factory()->create(['track' => 2]);
+        $song1 = Song::factory()->createOne(['track' => 1]);
+        $song2 = Song::factory()->createOne(['track' => 2]);
 
         $data = SongUpdateData::make(
             artistName: 'Queen',
@@ -149,8 +149,8 @@ class SongServiceTest extends TestCase
     #[Test]
     public function updateMultipleTracksWithoutProvidingTrack(): void
     {
-        $song1 = Song::factory()->create(['track' => 1, 'disc' => 1]);
-        $song2 = Song::factory()->create(['track' => 2, 'disc' => 1]);
+        $song1 = Song::factory()->createOne(['track' => 1, 'disc' => 1]);
+        $song2 = Song::factory()->createOne(['track' => 2, 'disc' => 1]);
 
         $data = SongUpdateData::make(artistName: 'Queen', genre: 'Rock', lyrics: 'Is this the real life?');
 
@@ -174,7 +174,7 @@ class SongServiceTest extends TestCase
     #[Test]
     public function deleteSongs(): void
     {
-        $songs = Song::factory()->count(2)->create();
+        $songs = Song::factory()->createMany(2);
 
         Dispatcher::expects('dispatch')
             ->with(DeleteSongFilesJob::class)
@@ -194,7 +194,7 @@ class SongServiceTest extends TestCase
     #[Test]
     public function deleteSongsWithTranscodes(): void
     {
-        $transcodes = Transcode::factory()->count(2)->create();
+        $transcodes = Transcode::factory()->createMany(2);
         $songs = $transcodes->map(static fn (Transcode $transcode) => $transcode->song); // @phpstan-ignore-line
 
         Dispatcher::expects('dispatch')
