@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/vue'
 import { merge, take } from 'lodash'
 import { ref } from 'vue'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { FilteredPlayablesKey, PlayablesKey, SelectedPlayablesKey } from '@/config/symbols'
 import Component from './PlayableListControls.vue'

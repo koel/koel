@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { http } from '@/services/http'
 import { playableStore } from '@/stores/playableStore'

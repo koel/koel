@@ -1,4 +1,4 @@
-import { vi } from 'vitest'
+import { vi } from 'vite-plus/test'
 
 export const openContextMenu = vi.fn()
 export const closeContextMenu = vi.fn()

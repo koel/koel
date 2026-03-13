@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { screen } from '@testing-library/vue'
 import { faHome } from '@fortawesome/free-solid-svg-icons'
 import { createHarness } from '@/__tests__/TestHarness'

@@ -1,11 +1,27 @@
-/// <reference types="vitest" />
-import { defineConfig } from 'vite'
+/// <reference types="vite-plus/test" />
+import { defineConfig } from 'vite-plus'
 import vue from '@vitejs/plugin-vue'
 import laravel from 'laravel-vite-plugin'
-import path from 'path'
+import { resolve } from 'path'
 import { visualizer } from 'rollup-plugin-visualizer'
 
+const __dirname = import.meta.dirname
+
 export default defineConfig({
+  staged: {
+    '**/*.php': [
+      'composer cs'
+    ],
+    'resources/assets/**/*.{js,ts,css,pcss,vue}': [
+      'vp fmt --write',
+      'vp lint --fix'
+    ],
+    'resources/assets/**/*.{ts,vue}': "bash -c 'vue-tsc --noEmit -p resources/assets/tsconfig.typecheck.json'",
+    'cypress/**/*.ts': [
+      'vp fmt --write',
+      'vp lint --fix'
+    ]
+  },
   plugins: [
     vue(),
     laravel({
@@ -24,13 +40,13 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './resources/assets/js'),
-      '@modules': path.resolve(__dirname, './node_modules'),
+      '@': resolve(__dirname, './resources/assets/js'),
+      '@modules': resolve(__dirname, './node_modules'),
       'lodash': 'lodash-es'
     }
   },
   test: {
     environment: 'jsdom',
-    setupFiles: path.resolve(__dirname, './resources/assets/js/__tests__/setup.ts')
+    setupFiles: resolve(__dirname, './resources/assets/js/__tests__/setup.ts')
   }
 })

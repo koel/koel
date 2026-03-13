@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { acl } from '@/services/acl'
 import { screen, waitFor, within } from '@testing-library/vue'

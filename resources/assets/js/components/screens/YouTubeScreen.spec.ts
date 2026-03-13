@@ -1,4 +1,4 @@
-import { describe, it } from 'vitest'
+import { describe, it } from 'vite-plus/test'
 import { ref } from 'vue'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'

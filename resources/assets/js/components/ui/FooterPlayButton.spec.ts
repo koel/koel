@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/vue'
 import { ref } from 'vue'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { CurrentStreamableKey } from '@/config/symbols'
