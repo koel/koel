@@ -10,7 +10,9 @@ use Laravel\Ai\Tools\Request;
 
 class SongRequestResolver
 {
-    public function __construct(private readonly SongRepository $songRepository) {}
+    public function __construct(
+        private readonly SongRepository $songRepository,
+    ) {}
 
     public function resolveSong(Request $request, AiRequestContext $context, string $queryKey = 'query'): ?Song
     {

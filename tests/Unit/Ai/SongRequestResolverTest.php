@@ -33,7 +33,10 @@ class SongRequestResolverTest extends TestCase
     #[Test]
     public function resolveSongByQuery(): void
     {
-        $songs = Song::factory()->for($this->user, 'owner')->count(1)->create(['title' => 'Bohemian Rhapsody']);
+        $songs = Song::factory()
+            ->for($this->user, 'owner')
+            ->count(1)
+            ->create(['title' => 'Bohemian Rhapsody']);
 
         $this->songRepository
             ->shouldReceive('search')
@@ -75,7 +78,10 @@ class SongRequestResolverTest extends TestCase
     public function resolveSongPrefersQueryOverCurrentSong(): void
     {
         $currentSong = Song::factory()->for($this->user, 'owner')->create(['title' => 'Current']);
-        $queriedSongs = Song::factory()->for($this->user, 'owner')->count(1)->create(['title' => 'Queried']);
+        $queriedSongs = Song::factory()
+            ->for($this->user, 'owner')
+            ->count(1)
+            ->create(['title' => 'Queried']);
 
         $this->songRepository
             ->shouldReceive('search')
@@ -91,7 +97,10 @@ class SongRequestResolverTest extends TestCase
     #[Test]
     public function resolveSongWithCustomQueryKey(): void
     {
-        $songs = Song::factory()->for($this->user, 'owner')->count(1)->create();
+        $songs = Song::factory()
+            ->for($this->user, 'owner')
+            ->count(1)
+            ->create();
 
         $this->songRepository
             ->shouldReceive('search')
@@ -107,7 +116,10 @@ class SongRequestResolverTest extends TestCase
     #[Test]
     public function resolveSongsByQuery(): void
     {
-        $songs = Song::factory()->for($this->user, 'owner')->count(3)->create();
+        $songs = Song::factory()
+            ->for($this->user, 'owner')
+            ->count(3)
+            ->create();
 
         $this->songRepository
             ->shouldReceive('search')
@@ -163,7 +175,10 @@ class SongRequestResolverTest extends TestCase
     #[Test]
     public function resolveSongsWithCustomLimit(): void
     {
-        $songs = Song::factory()->for($this->user, 'owner')->count(5)->create();
+        $songs = Song::factory()
+            ->for($this->user, 'owner')
+            ->count(5)
+            ->create();
 
         $this->songRepository
             ->shouldReceive('search')

@@ -2,10 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\Theme;
 use App\Models\User;
 use App\Values\Theme\ThemeProperties;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/** @extends Factory<Theme> */
 class ThemeFactory extends Factory
 {
     /** @inheritdoc */

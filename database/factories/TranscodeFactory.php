@@ -3,8 +3,10 @@
 namespace Database\Factories;
 
 use App\Models\Song;
+use App\Models\Transcode;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/** @extends Factory<Transcode> */
 class TranscodeFactory extends Factory
 {
     /** @inheritdoc  */

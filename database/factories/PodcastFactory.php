@@ -2,10 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\Podcast;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
+/** @extends Factory<Podcast> */
 class PodcastFactory extends Factory
 {
     /** @inheritdoc */

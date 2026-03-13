@@ -3,9 +3,11 @@
 namespace Database\Factories;
 
 use App\Helpers\Ulid;
+use App\Models\Artist;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/** @extends Factory<Artist> */
 class ArtistFactory extends Factory
 {
     /** @inheritdoc */

@@ -2,11 +2,13 @@
 
 namespace Database\Factories;
 
+use App\Models\License;
 use App\Values\License\LicenseInstance;
 use App\Values\License\LicenseMeta;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
+/** @extends Factory<License> */
 class LicenseFactory extends Factory
 {
     /** @inheritdoc */

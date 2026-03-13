@@ -2,10 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\Interaction;
 use App\Models\Song;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/** @extends Factory<Interaction> */
 class InteractionFactory extends Factory
 {
     /** @inheritdoc */

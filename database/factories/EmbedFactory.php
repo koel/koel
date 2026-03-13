@@ -3,9 +3,11 @@
 namespace Database\Factories;
 
 use App\Enums\EmbeddableType;
+use App\Models\Embed;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/** @extends Factory<Embed> */
 class EmbedFactory extends Factory
 {
     /** @inheritdoc */
