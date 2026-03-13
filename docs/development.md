@@ -49,9 +49,7 @@ composer analyze     # Run PHP static analysis
 # Client code quality tasks
 pnpm run build       # Build a production version of the client application
 pnpm run test        # Unit testing
-pnpm exec vp check   # Format + lint + type check
-pnpm run lint        # Lint only
-pnpm run format      # Format check only
+pnpm run check       # Format + lint + type check
 ```
 
 ## Koel Docs

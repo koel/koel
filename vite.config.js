@@ -9,18 +9,9 @@ const __dirname = import.meta.dirname
 
 export default defineConfig({
   staged: {
-    '**/*.php': [
-      'composer cs'
-    ],
-    'resources/assets/**/*.{js,ts,css,pcss,vue}': [
-      'vp fmt --write',
-      'vp lint --fix'
-    ],
-    'resources/assets/**/*.{ts,vue}': "bash -c 'vue-tsc --noEmit -p resources/assets/tsconfig.typecheck.json'",
-    'cypress/**/*.ts': [
-      'vp fmt --write',
-      'vp lint --fix'
-    ]
+    '**/*.php': ['composer cs'],
+    'resources/assets/**/*.{js,ts,css,pcss,vue}': ['vp check --fix'],
+    'cypress/**/*.ts': ['vp check --fix'],
   },
   plugins: [
     vue(),
