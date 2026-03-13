@@ -7,12 +7,12 @@ use App\Ai\Serializers\AiResultSerializerRegistry;
 use App\Enums\FavoriteableType;
 use App\Models\Album;
 use App\Models\Artist;
-use App\Models\Playlist;
 use App\Models\RadioStation;
 use App\Models\Song;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
+use function Tests\create_playlist;
 use function Tests\create_user;
 
 class AiResultSerializerRegistryTest extends TestCase
@@ -159,7 +159,7 @@ class AiResultSerializerRegistryTest extends TestCase
             ->for(create_user(), 'owner')
             ->count(2)
             ->create();
-        $playlist = Playlist::factory()->create();
+        $playlist = create_playlist();
 
         $result = new AiAssistantResult();
         $result->action = 'add_to_playlist';
@@ -178,7 +178,7 @@ class AiResultSerializerRegistryTest extends TestCase
             ->for(create_user(), 'owner')
             ->count(1)
             ->create();
-        $playlist = Playlist::factory()->create();
+        $playlist = create_playlist();
 
         $result = new AiAssistantResult();
         $result->action = 'remove_from_playlist';
@@ -193,7 +193,7 @@ class AiResultSerializerRegistryTest extends TestCase
     #[Test]
     public function serializeCreateSmartPlaylist(): void
     {
-        $playlist = Playlist::factory()->create();
+        $playlist = create_playlist();
 
         $result = new AiAssistantResult();
         $result->action = 'create_smart_playlist';
