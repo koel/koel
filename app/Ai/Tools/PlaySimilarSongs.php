@@ -5,6 +5,7 @@ namespace App\Ai\Tools;
 use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
 use App\Ai\Services\PlaybackService;
+use App\Ai\Services\SongRequestResolver;
 use App\Models\Song;
 use App\Repositories\SongRepository;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -19,6 +20,7 @@ class PlaySimilarSongs implements Tool
         private readonly AiRequestContext $context,
         private readonly AiAssistantResult $result,
         private readonly SongRepository $songRepository,
+        private readonly SongRequestResolver $songResolver,
         private readonly PlaybackService $playbackService,
     ) {}
 
@@ -56,7 +58,7 @@ class PlaySimilarSongs implements Tool
 
     public function handle(Request $request): Stringable|string
     {
-        $song = $this->resolveSong($request);
+        $song = $this->songResolver->resolveSong($request, $this->context, 'song_title');
 
         if (!$song) {
             return (
@@ -98,20 +100,5 @@ class PlaySimilarSongs implements Tool
         $suffix = $queue ? ' to the queue' : '';
 
         return sprintf('%s %d song(s) similar to "%s"%s.', $verb, $songs->count(), $song->title, $suffix);
-    }
-
-    private function resolveSong(Request $request): ?Song
-    {
-        if (isset($request['song_title'])) {
-            $songs = $this->songRepository->search($request['song_title'], 1, $this->context->user);
-
-            return $songs->first();
-        }
-
-        if ($this->context->currentSongId) {
-            return $this->songRepository->findOne($this->context->currentSongId, $this->context->user);
-        }
-
-        return null;
     }
 }

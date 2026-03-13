@@ -11,6 +11,7 @@ use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
+/** @extends Factory<Playlist> */
 class PlaylistFactory extends Factory
 {
     /** @inheritdoc */

@@ -2,10 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\QueueState;
 use App\Models\Song;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/** @extends Factory<QueueState> */
 class QueueStateFactory extends Factory
 {
     /** @inheritdoc */

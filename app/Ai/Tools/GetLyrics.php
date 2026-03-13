@@ -4,8 +4,7 @@ namespace App\Ai\Tools;
 
 use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
-use App\Models\Song;
-use App\Repositories\SongRepository;
+use App\Ai\Services\SongRequestResolver;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
@@ -16,7 +15,7 @@ class GetLyrics implements Tool
     public function __construct(
         private readonly AiRequestContext $context,
         private readonly AiAssistantResult $result,
-        private readonly SongRepository $songRepository,
+        private readonly SongRequestResolver $songResolver,
     ) {}
 
     public function description(): Stringable|string
@@ -43,7 +42,7 @@ class GetLyrics implements Tool
 
     public function handle(Request $request): Stringable|string
     {
-        $song = $this->resolveSong($request);
+        $song = $this->songResolver->resolveSong($request, $this->context);
 
         if (!$song) {
             return 'Could not find the song. Please specify a title or make sure a song is currently playing.';
@@ -60,18 +59,5 @@ class GetLyrics implements Tool
         $this->result->data = ['lyrics' => $song->lyrics];
 
         return sprintf('Here are the lyrics for "%s" by %s.', $song->title, $song->artist->name);
-    }
-
-    private function resolveSong(Request $request): ?Song
-    {
-        if (isset($request['query'])) {
-            return $this->songRepository->search($request['query'], 1, $this->context->user)->first();
-        }
-
-        if ($this->context->currentSongId) {
-            return $this->songRepository->findOne($this->context->currentSongId, $this->context->user);
-        }
-
-        return null;
     }
 }

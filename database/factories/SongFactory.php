@@ -4,9 +4,11 @@ namespace Database\Factories;
 
 use App\Models\Album;
 use App\Models\Podcast;
+use App\Models\Song;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use PhanAn\Poddle\Values\EpisodeMetadata;
 
+/** @extends Factory<Song> */
 class SongFactory extends Factory
 {
     /** @inheritdoc */
