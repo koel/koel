@@ -13,7 +13,7 @@ describe('authService', () => {
     beforeEach: () => {
       Object.defineProperty(window, 'location', {
         value: {
-          ...window.location,
+          ...window.location, // eslint-disable-line typescript-eslint/no-misused-spread -- intentional shallow copy for test
         },
         writable: true,
       })

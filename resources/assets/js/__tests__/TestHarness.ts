@@ -1,5 +1,5 @@
 import isMobile from 'ismobilejs'
-import type { EventType, RenderOptions } from '@testing-library/vue'
+import type { RenderOptions } from '@testing-library/vue'
 import { cleanup, createEvent, fireEvent, render } from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
 import type { UserEvent } from '@testing-library/user-event'
@@ -68,7 +68,7 @@ class TestHarness {
     }
   }
 
-  public readonly auth = this.actingAsUser
+  public readonly auth = (user?: CurrentUser) => this.actingAsUser(user)
 
   public actingAsUser(user?: CurrentUser) {
     userStore.state.current = user || (factory.states('current')('user') as CurrentUser)
@@ -216,7 +216,7 @@ class TestHarness {
     await this.user.type(element, value)
   }
 
-  public async trigger(element: HTMLElement, key: EventType | string, options: object = {}) {
+  public async trigger(element: HTMLElement, key: string, options: object = {}) {
     await fireEvent(element, createEvent[key](element, options))
   }
 
