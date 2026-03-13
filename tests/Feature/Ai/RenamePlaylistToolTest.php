@@ -30,7 +30,7 @@ class RenamePlaylistToolTest extends TestCase
     #[Test]
     public function renamesOwnedPlaylist(): void
     {
-        $playlist = Playlist::factory()->create(['name' => 'Old Name']);
+        $playlist = Playlist::factory()->createOne(['name' => 'Old Name']);
         $user = $playlist->owner;
 
         app()->instance(AiRequestContext::class, new AiRequestContext($user));

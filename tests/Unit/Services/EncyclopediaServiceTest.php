@@ -52,7 +52,7 @@ class EncyclopediaServiceTest extends TestCase
     #[Test]
     public function getAlbumInformation(): void
     {
-        $album = Album::factory()->create();
+        $album = Album::factory()->createOne();
         $info = AlbumInformation::make();
 
         $this->encyclopedia
@@ -67,7 +67,7 @@ class EncyclopediaServiceTest extends TestCase
     #[Test]
     public function getAlbumInformationTriesDownloadingCover(): void
     {
-        $album = Album::factory()->create(['cover' => '']);
+        $album = Album::factory()->createOne(['cover' => '']);
         $info = AlbumInformation::make(cover: 'https://wiki.example.com/album-cover.jpg');
 
         self::assertEmpty($album->cover);
@@ -89,7 +89,7 @@ class EncyclopediaServiceTest extends TestCase
             'client_id' => 'spotify-client-id',
             'client_secret' => 'spotify-client-secret',
         ]);
-        $album = Album::factory()->create(['cover' => '']);
+        $album = Album::factory()->createOne(['cover' => '']);
         $info = AlbumInformation::make(cover: 'https://wiki.example.com/album-cover.jpg');
 
         self::assertEmpty($album->cover);
@@ -112,7 +112,7 @@ class EncyclopediaServiceTest extends TestCase
     #[Test]
     public function getArtistInformation(): void
     {
-        $artist = Artist::factory()->create();
+        $artist = Artist::factory()->createOne();
         $info = ArtistInformation::make();
 
         self::assertNotEmpty($artist->image);
@@ -129,7 +129,7 @@ class EncyclopediaServiceTest extends TestCase
     #[Test]
     public function getArtistInformationTriesDownloadingImage(): void
     {
-        $artist = Artist::factory()->create(['image' => '']);
+        $artist = Artist::factory()->createOne(['image' => '']);
         $info = ArtistInformation::make(image: 'https://wiki.example.com/artist-image.jpg');
 
         self::assertEmpty($artist->image);
@@ -151,7 +151,7 @@ class EncyclopediaServiceTest extends TestCase
             'client_id' => 'spotify-client-id',
             'client_secret' => 'spotify-client-secret',
         ]);
-        $artist = Artist::factory()->create(['image' => '']);
+        $artist = Artist::factory()->createOne(['image' => '']);
         $info = ArtistInformation::make(image: 'https://wiki.example.com/artist-image.jpg');
 
         self::assertEmpty($artist->image);

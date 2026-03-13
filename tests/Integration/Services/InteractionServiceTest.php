@@ -21,7 +21,7 @@ class InteractionServiceTest extends TestCase
     #[Test]
     public function increasePlayCount(): void
     {
-        $interaction = Interaction::factory()->create();
+        $interaction = Interaction::factory()->createOne();
         $currentCount = $interaction->play_count;
         $this->interactionService->increasePlayCount($interaction->song, $interaction->user);
 

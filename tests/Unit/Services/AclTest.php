@@ -43,7 +43,7 @@ class AclTest extends TestCase
 
         /** @var class-string<Model|Permissionable> $modelClass */
         $modelClass = $type->modelClass();
-        $subject = $modelClass::factory()->create(); // @phpstan-ignore-line
+        $subject = $modelClass::factory()->createOne(); // @phpstan-ignore-line
 
         Gate::expects('forUser')->with($user)->andReturnSelf();
 

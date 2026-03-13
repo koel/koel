@@ -35,7 +35,7 @@ class UpdateAlbumDetailsToolTest extends TestCase
     #[Test]
     public function renamesAlbum(): void
     {
-        $album = Album::factory()->for($this->user)->create(['name' => 'Old Album']);
+        $album = Album::factory()->for($this->user)->createOne(['name' => 'Old Album']);
 
         $response = $this->tool->handle(new Request(['query' => 'Old Album', 'name' => 'New Album']));
 
@@ -47,7 +47,7 @@ class UpdateAlbumDetailsToolTest extends TestCase
     #[Test]
     public function updatesYear(): void
     {
-        $album = Album::factory()->for($this->user)->create(['name' => 'My Album', 'year' => null]);
+        $album = Album::factory()->for($this->user)->createOne(['name' => 'My Album', 'year' => null]);
 
         $response = $this->tool->handle(new Request(['query' => 'My Album', 'year' => 1999]));
 
@@ -59,7 +59,7 @@ class UpdateAlbumDetailsToolTest extends TestCase
     #[Test]
     public function updatesNameAndYear(): void
     {
-        $album = Album::factory()->for($this->user)->create(['name' => 'Old Album', 'year' => 2000]);
+        $album = Album::factory()->for($this->user)->createOne(['name' => 'Old Album', 'year' => 2000]);
 
         $response = $this->tool->handle(new Request(['query' => 'Old Album', 'name' => 'New Album', 'year' => 2024]));
 
@@ -83,7 +83,7 @@ class UpdateAlbumDetailsToolTest extends TestCase
     #[Test]
     public function returnsNoChangesWhenNothingProvided(): void
     {
-        Album::factory()->for($this->user)->create(['name' => 'My Album']);
+        Album::factory()->for($this->user)->createOne(['name' => 'My Album']);
 
         $response = $this->tool->handle(new Request(['query' => 'My Album']));
 
@@ -94,7 +94,7 @@ class UpdateAlbumDetailsToolTest extends TestCase
     public function deniesUnauthorizedUser(): void
     {
         $user = create_user();
-        $album = Album::factory()->for($user)->create(['name' => 'My Album']);
+        $album = Album::factory()->for($user)->createOne(['name' => 'My Album']);
 
         app()->instance(AiRequestContext::class, new AiRequestContext($user));
         $this->tool = app()->make(UpdateAlbumDetails::class);

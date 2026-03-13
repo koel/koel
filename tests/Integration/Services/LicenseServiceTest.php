@@ -105,7 +105,7 @@ class LicenseServiceTest extends TestCase
     #[Test]
     public function deactivateLicense(): void
     {
-        $license = License::factory()->create();
+        $license = License::factory()->createOne();
 
         Saloon::fake([
             DeactivateLicenseRequest::class => MockResponse::make(
@@ -135,7 +135,7 @@ class LicenseServiceTest extends TestCase
     #[Test]
     public function deactivateLicenseHandlesLeftoverRecords(): void
     {
-        $license = License::factory()->create();
+        $license = License::factory()->createOne();
         Saloon::fake([DeactivateLicenseRequest::class => MockResponse::make(status: Response::HTTP_NOT_FOUND)]);
 
         $this->service->deactivate($license);
@@ -147,7 +147,7 @@ class LicenseServiceTest extends TestCase
     public function deactivateLicenseFails(): void
     {
         $this->expectExceptionMessage('Unprocessable Entity (422) Response: Something went horrible wrong');
-        $license = License::factory()->create();
+        $license = License::factory()->createOne();
 
         Saloon::fake([
             DeactivateLicenseRequest::class => MockResponse::make(
@@ -163,7 +163,7 @@ class LicenseServiceTest extends TestCase
     public function getLicenseStatusFromCache(): void
     {
         Saloon::fake([]);
-        $license = License::factory()->create();
+        $license = License::factory()->createOne();
 
         Cache::put('license_status', LicenseStatus::valid($license));
 
@@ -186,7 +186,7 @@ class LicenseServiceTest extends TestCase
     #[Test]
     public function getLicenseStatusValidatesWithApi(): void
     {
-        $license = License::factory()->create();
+        $license = License::factory()->createOne();
 
         self::assertFalse(Cache::has('license_status'));
 
@@ -215,7 +215,7 @@ class LicenseServiceTest extends TestCase
     #[Test]
     public function getLicenseStatusValidatesWithApiWithInvalidLicense(): void
     {
-        License::factory()->create();
+        License::factory()->createOne();
 
         self::assertFalse(Cache::has('license_status'));
 

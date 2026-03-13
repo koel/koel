@@ -21,7 +21,7 @@ class SongRepositoryTest extends TestCase
     #[Test]
     public function getOneByPath(): void
     {
-        $song = Song::factory()->create(['path' => 'foo']);
+        $song = Song::factory()->createOne(['path' => 'foo']);
         self::assertSame($song->id, $this->songRepository->findOneByPath('foo')->id);
     }
 }

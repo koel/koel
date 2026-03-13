@@ -17,7 +17,7 @@ class ArtistTest extends TestCase
     #[Test]
     public function index(): void
     {
-        Artist::factory(10)->create();
+        Artist::factory()->createMany(10);
 
         $this->getAs('api/artists')->assertJsonStructure(ArtistResource::PAGINATION_JSON_STRUCTURE);
 
@@ -32,13 +32,13 @@ class ArtistTest extends TestCase
     public function show(): void
     {
         $this->getAs('api/artists/'
-        . Artist::factory()->create()->id)->assertJsonStructure(ArtistResource::JSON_STRUCTURE);
+        . Artist::factory()->createOne()->id)->assertJsonStructure(ArtistResource::JSON_STRUCTURE);
     }
 
     #[Test]
     public function updateWithImage(): void
     {
-        $artist = Artist::factory()->create();
+        $artist = Artist::factory()->createOne();
 
         $ulid = Ulid::freeze();
 
@@ -63,7 +63,7 @@ class ArtistTest extends TestCase
     #[Test]
     public function updateKeepingImageIntact(): void
     {
-        $artist = Artist::factory()->create(['image' => 'neat-pose.webp']);
+        $artist = Artist::factory()->createOne(['image' => 'neat-pose.webp']);
 
         $this
             ->putAs(
@@ -82,7 +82,7 @@ class ArtistTest extends TestCase
     #[Test]
     public function updateRemovingImage(): void
     {
-        $artist = Artist::factory()->create(['image' => 'neat-pose.webp']);
+        $artist = Artist::factory()->createOne(['image' => 'neat-pose.webp']);
 
         $this
             ->putAs(
@@ -102,8 +102,8 @@ class ArtistTest extends TestCase
     #[Test]
     public function updatingToExistingNameFails(): void
     {
-        $existingArtist = Artist::factory()->create(['name' => 'Maydup Nem']);
-        $artist = Artist::factory()->for($existingArtist->user)->create();
+        $existingArtist = Artist::factory()->createOne(['name' => 'Maydup Nem']);
+        $artist = Artist::factory()->for($existingArtist->user)->createOne();
 
         $this->putAs(
             "api/artists/{$artist->id}",
@@ -119,7 +119,7 @@ class ArtistTest extends TestCase
     #[Test]
     public function nonAdminCannotUpdateArtist(): void
     {
-        $artist = Artist::factory()->create();
+        $artist = Artist::factory()->createOne();
 
         $this->putAs(
             "api/artists/{$artist->id}",

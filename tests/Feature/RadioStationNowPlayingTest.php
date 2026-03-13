@@ -15,7 +15,7 @@ class RadioStationNowPlayingTest extends TestCase
     public function getNowPlaying(): void
     {
         $user = create_user();
-        $station = RadioStation::factory()->create(['user_id' => $user->id]);
+        $station = RadioStation::factory()->createOne(['user_id' => $user->id]);
 
         RadioStreamMetadata::cache($station, 'Artist - Great Song');
 
@@ -31,7 +31,7 @@ class RadioStationNowPlayingTest extends TestCase
     public function getNowPlayingWhenNoCachedData(): void
     {
         $user = create_user();
-        $station = RadioStation::factory()->create(['user_id' => $user->id]);
+        $station = RadioStation::factory()->createOne(['user_id' => $user->id]);
 
         $this
             ->getAs("/api/radio/stations/{$station->id}/now-playing", $user)
@@ -46,7 +46,7 @@ class RadioStationNowPlayingTest extends TestCase
     public function cannotGetNowPlayingForInaccessibleStation(): void
     {
         $user = create_user();
-        $station = RadioStation::factory()->create(['is_public' => false]);
+        $station = RadioStation::factory()->createOne(['is_public' => false]);
 
         $this->getAs("/api/radio/stations/{$station->id}/now-playing", $user)->assertForbidden();
     }

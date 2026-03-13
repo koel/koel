@@ -29,7 +29,7 @@ class PlaylistCollaborationTest extends PlusTestCase
     #[Test]
     public function acceptPlaylistCollaborationViaToken(): void
     {
-        $token = PlaylistCollaborationToken::factory()->create();
+        $token = PlaylistCollaborationToken::factory()->createOne();
         $user = create_user();
 
         $this->postAs(
@@ -74,7 +74,7 @@ class PlaylistCollaborationTest extends PlusTestCase
     public function collaboratorsCanAccessSharedPlaylistInFolder(): void
     {
         $playlist = create_playlist();
-        $playlist->folders()->attach(PlaylistFolder::factory()->create());
+        $playlist->folders()->attach(PlaylistFolder::factory()->createOne());
         $collaborator = create_user();
 
         $playlist->addCollaborator($collaborator);

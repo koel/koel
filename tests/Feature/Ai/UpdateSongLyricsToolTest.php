@@ -34,7 +34,7 @@ class UpdateSongLyricsToolTest extends TestCase
     #[Test]
     public function updatesSongLyricsForCurrentlyPlayingSong(): void
     {
-        $song = Song::factory()->for($this->user, 'owner')->create([
+        $song = Song::factory()->for($this->user, 'owner')->createOne([
             'title' => 'Stairway to Heaven',
             'lyrics' => '',
         ]);
@@ -57,7 +57,7 @@ class UpdateSongLyricsToolTest extends TestCase
     #[Test]
     public function overwritesExistingLyrics(): void
     {
-        $song = Song::factory()->for($this->user, 'owner')->create([
+        $song = Song::factory()->for($this->user, 'owner')->createOne([
             'title' => 'Hotel California',
             'lyrics' => 'Old lyrics here',
         ]);

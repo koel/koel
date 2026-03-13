@@ -34,12 +34,12 @@ class PlaySimilarSongsToolTest extends TestCase
     #[Test]
     public function findsSimilarSongsByArtist(): void
     {
-        $referenceSong = Song::factory()->for($this->user, 'owner')->create(['title' => 'One']);
+        $referenceSong = Song::factory()->for($this->user, 'owner')->createOne(['title' => 'One']);
         Song::factory()
             ->for($this->user, 'owner')
             ->for($referenceSong->artist)
-            ->create(['title' => 'Two']);
-        Song::factory()->for($this->user, 'owner')->create(['title' => 'Unrelated']);
+            ->createOne(['title' => 'Two']);
+        Song::factory()->for($this->user, 'owner')->createOne(['title' => 'Unrelated']);
 
         app()->instance(AiRequestContext::class, new AiRequestContext($this->user, currentSongId: $referenceSong->id));
         $this->tool = app()->make(PlaySimilarSongs::class);
@@ -55,12 +55,12 @@ class PlaySimilarSongsToolTest extends TestCase
     #[Test]
     public function findsSimilarSongsByGenre(): void
     {
-        $referenceSong = Song::factory()->for($this->user, 'owner')->create(['title' => 'Rock Song']);
+        $referenceSong = Song::factory()->for($this->user, 'owner')->createOne(['title' => 'Rock Song']);
         $referenceSong->syncGenres('Rock');
-        $similarSong = Song::factory()->for($this->user, 'owner')->create(['title' => 'Another Rock Song']);
+        $similarSong = Song::factory()->for($this->user, 'owner')->createOne(['title' => 'Another Rock Song']);
         $similarSong->syncGenres('Rock');
 
-        Song::factory()->for($this->user, 'owner')->create(['title' => 'Jazz Song']);
+        Song::factory()->for($this->user, 'owner')->createOne(['title' => 'Jazz Song']);
 
         app()->instance(AiRequestContext::class, new AiRequestContext($this->user, currentSongId: $referenceSong->id));
         $this->tool = app()->make(PlaySimilarSongs::class);
@@ -76,7 +76,7 @@ class PlaySimilarSongsToolTest extends TestCase
     #[Test]
     public function returnsNotFoundWhenNoSimilarSongs(): void
     {
-        $song = Song::factory()->for($this->user, 'owner')->create(['title' => 'Lonely Song']);
+        $song = Song::factory()->for($this->user, 'owner')->createOne(['title' => 'Lonely Song']);
 
         app()->instance(AiRequestContext::class, new AiRequestContext($this->user, currentSongId: $song->id));
         $this->tool = app()->make(PlaySimilarSongs::class);
@@ -90,11 +90,11 @@ class PlaySimilarSongsToolTest extends TestCase
     #[Test]
     public function usesCurrentlyPlayingSongWhenNoTitleSpecified(): void
     {
-        $referenceSong = Song::factory()->for($this->user, 'owner')->create(['title' => 'Master of Puppets']);
+        $referenceSong = Song::factory()->for($this->user, 'owner')->createOne(['title' => 'Master of Puppets']);
         Song::factory()
             ->for($this->user, 'owner')
             ->for($referenceSong->artist)
-            ->create(['title' => 'Battery']);
+            ->createOne(['title' => 'Battery']);
 
         app()->instance(AiRequestContext::class, new AiRequestContext($this->user, currentSongId: $referenceSong->id));
         $this->tool = app()->make(PlaySimilarSongs::class);

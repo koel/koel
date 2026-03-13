@@ -23,7 +23,7 @@ class YouTubeTest extends TestCase
     #[Test]
     public function searchYouTubeVideos(): void
     {
-        $song = Song::factory()->create();
+        $song = Song::factory()->createOne();
 
         $this->youTubeService->expects('searchVideosRelatedToSong')->with(Mockery::on($song->is(...)), 'foo');
 

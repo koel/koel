@@ -77,7 +77,7 @@ class FavoriteableEntityResolverTest extends TestCase
     #[Test]
     public function resolveAlbumByQuery(): void
     {
-        $albums = Album::factory()->count(1)->create();
+        $albums = Album::factory()->createMany(1);
 
         $this->albumRepository
             ->shouldReceive('search')
@@ -93,7 +93,7 @@ class FavoriteableEntityResolverTest extends TestCase
     #[Test]
     public function resolveArtistByQuery(): void
     {
-        $artists = Artist::factory()->count(1)->create();
+        $artists = Artist::factory()->createMany(1);
 
         $this->artistRepository
             ->shouldReceive('search')
@@ -109,7 +109,7 @@ class FavoriteableEntityResolverTest extends TestCase
     #[Test]
     public function resolveRadioStationByQuery(): void
     {
-        $stations = RadioStation::factory()->count(1)->create();
+        $stations = RadioStation::factory()->createMany(1);
 
         $this->radioStationRepository
             ->shouldReceive('search')
@@ -129,7 +129,7 @@ class FavoriteableEntityResolverTest extends TestCase
     #[Test]
     public function resolvePodcastByQuery(): void
     {
-        $podcasts = Podcast::factory()->count(1)->create();
+        $podcasts = Podcast::factory()->createMany(1);
 
         $this->podcastRepository
             ->shouldReceive('search')
@@ -145,7 +145,7 @@ class FavoriteableEntityResolverTest extends TestCase
     #[Test]
     public function resolveCurrentlyPlayingSong(): void
     {
-        $song = Song::factory()->for($this->user, 'owner')->create();
+        $song = Song::factory()->for($this->user, 'owner')->createOne();
 
         $this->songRepository
             ->shouldReceive('findOne')
@@ -194,7 +194,7 @@ class FavoriteableEntityResolverTest extends TestCase
     #[Test]
     public function resolveIgnoresCurrentSongForNonPlayableType(): void
     {
-        $song = Song::factory()->for($this->user, 'owner')->create();
+        $song = Song::factory()->for($this->user, 'owner')->createOne();
 
         $context = new AiRequestContext($this->user, currentSongId: $song->id);
         $result = $this->resolver->resolve(FavoriteableType::ARTIST, new Request([]), $context);
@@ -205,7 +205,7 @@ class FavoriteableEntityResolverTest extends TestCase
     #[Test]
     public function resolvePrefersQueryOverCurrentSong(): void
     {
-        $currentSong = Song::factory()->for($this->user, 'owner')->create();
+        $currentSong = Song::factory()->for($this->user, 'owner')->createOne();
         $queriedSongs = Song::factory()
             ->for($this->user, 'owner')
             ->count(2)
@@ -225,7 +225,7 @@ class FavoriteableEntityResolverTest extends TestCase
     #[Test]
     public function entityNameReturnsTitleForSong(): void
     {
-        $song = Song::factory()->for($this->user, 'owner')->create(['title' => 'Bohemian Rhapsody']);
+        $song = Song::factory()->for($this->user, 'owner')->createOne(['title' => 'Bohemian Rhapsody']);
 
         self::assertSame('Bohemian Rhapsody', $this->resolver->entityName($song));
     }
@@ -233,7 +233,7 @@ class FavoriteableEntityResolverTest extends TestCase
     #[Test]
     public function entityNameReturnsNameForArtist(): void
     {
-        $artist = Artist::factory()->create(['name' => 'Queen']);
+        $artist = Artist::factory()->createOne(['name' => 'Queen']);
 
         self::assertSame('Queen', $this->resolver->entityName($artist));
     }

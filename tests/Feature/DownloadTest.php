@@ -34,13 +34,13 @@ class DownloadTest extends TestCase
     {
         $this->downloadService->shouldNotReceive('getDownloadable');
 
-        $this->get('download/songs?songs[]=' . Song::factory()->create()->id)->assertUnauthorized();
+        $this->get('download/songs?songs[]=' . Song::factory()->createOne()->id)->assertUnauthorized();
     }
 
     #[Test]
     public function downloadOneSong(): void
     {
-        $song = Song::factory()->create();
+        $song = Song::factory()->createOne();
         $user = create_user();
 
         $this->downloadService
@@ -58,7 +58,7 @@ class DownloadTest extends TestCase
     #[Test]
     public function downloadMultipleSongs(): void
     {
-        $songs = Song::factory(2)->create();
+        $songs = Song::factory()->createMany(2);
         $user = create_user();
 
         $this->downloadService
@@ -80,8 +80,8 @@ class DownloadTest extends TestCase
     #[Test]
     public function downloadAlbum(): void
     {
-        $album = Album::factory()->create();
-        $songs = Song::factory(2)->for($album)->create();
+        $album = Album::factory()->createOne();
+        $songs = Song::factory()->for($album)->createMany(2);
         $user = create_user();
 
         $this->downloadService
@@ -99,8 +99,8 @@ class DownloadTest extends TestCase
     #[Test]
     public function downloadArtist(): void
     {
-        $artist = Artist::factory()->create();
-        $songs = Song::factory(2)->for($artist)->create();
+        $artist = Artist::factory()->createOne();
+        $songs = Song::factory()->for($artist)->createMany(2);
         $user = create_user();
 
         $this->downloadService
@@ -118,7 +118,7 @@ class DownloadTest extends TestCase
     #[Test]
     public function downloadPlaylist(): void
     {
-        $songs = Song::factory(2)->create();
+        $songs = Song::factory()->createMany(2);
 
         $playlist = create_playlist();
         $playlist->playables()->attach($songs, ['user_id' => $playlist->owner->id]);
@@ -153,10 +153,10 @@ class DownloadTest extends TestCase
         $user = create_user();
 
         /** @var Collection<int, Song> $songs */
-        $songs = Song::factory(2)->for($user, 'owner')->create();
+        $songs = Song::factory()->for($user, 'owner')->createMany(2);
 
         $songs->map(static function (Song $song) use ($user): Favorite {
-            return Favorite::factory()->for($user)->create([
+            return Favorite::factory()->for($user)->createOne([
                 'favoriteable_id' => $song->id,
             ]);
         });

@@ -14,7 +14,7 @@ class SongVisibilityTest extends TestCase
     public function changingVisibilityIsForbiddenInCommunityEdition(): void
     {
         $owner = create_admin();
-        Song::factory(2)->create();
+        Song::factory()->createMany(2);
 
         $this->putAs('api/songs/publicize', ['songs' => Song::query()->get()->modelKeys()], $owner)->assertNotFound();
 

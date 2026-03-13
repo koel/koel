@@ -14,7 +14,7 @@ class SyncPodcastsCommandTest extends TestCase
     #[Test]
     public function syncPodcasts(): void
     {
-        Podcast::factory()->count(2)->create();
+        Podcast::factory()->createMany(2);
 
         $podcastService = Mockery::mock(PodcastService::class);
 
@@ -30,7 +30,7 @@ class SyncPodcastsCommandTest extends TestCase
     #[Test]
     public function skipNonObsoletePodcasts(): void
     {
-        Podcast::factory()->create();
+        Podcast::factory()->createOne();
 
         $podcastService = Mockery::mock(PodcastService::class);
 
@@ -46,7 +46,7 @@ class SyncPodcastsCommandTest extends TestCase
     #[Test]
     public function handleExceptionsGracefully(): void
     {
-        Podcast::factory()->create();
+        Podcast::factory()->createOne();
 
         $podcastService = Mockery::mock(PodcastService::class);
 

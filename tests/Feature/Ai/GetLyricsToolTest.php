@@ -34,7 +34,7 @@ class GetLyricsToolTest extends TestCase
     #[Test]
     public function getsLyricsOfCurrentlyPlayingSong(): void
     {
-        $song = Song::factory()->for($this->user, 'owner')->create([
+        $song = Song::factory()->for($this->user, 'owner')->createOne([
             'title' => 'Bohemian Rhapsody',
             'lyrics' => "Is this the real life?\nIs this just fantasy?",
         ]);
@@ -52,7 +52,7 @@ class GetLyricsToolTest extends TestCase
     #[Test]
     public function returnsMessageWhenNoLyricsAvailable(): void
     {
-        $song = Song::factory()->for($this->user, 'owner')->create([
+        $song = Song::factory()->for($this->user, 'owner')->createOne([
             'title' => 'Instrumental Track',
             'lyrics' => '',
         ]);

@@ -23,7 +23,7 @@ class InteractionTest extends TestCase
         Event::fake(PlaybackStarted::class);
 
         $user = create_user();
-        $song = Song::factory()->create();
+        $song = Song::factory()->createOne();
 
         $this->postAs('api/interaction/play', ['song' => $song->id], $user);
 
@@ -50,7 +50,7 @@ class InteractionTest extends TestCase
         Event::fake(SongFavoriteToggled::class);
 
         $user = create_user();
-        $song = Song::factory()->create();
+        $song = Song::factory()->createOne();
 
         // Toggle on
         $this->postAs('api/interaction/like', ['song' => $song->id], $user);
@@ -82,7 +82,7 @@ class InteractionTest extends TestCase
         $user = create_user();
 
         /** @var Collection<Song> $songs */
-        $songs = Song::factory(2)->create();
+        $songs = Song::factory()->createMany(2);
         $songIds = $songs->modelKeys();
 
         $this->postAs('api/interaction/batch/like', ['songs' => $songIds], $user);

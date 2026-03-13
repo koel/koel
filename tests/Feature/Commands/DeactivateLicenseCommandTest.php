@@ -14,7 +14,7 @@ class DeactivateLicenseCommandTest extends TestCase
     #[Test]
     public function deactivateALicense(): void
     {
-        $license = License::factory()->create();
+        $license = License::factory()->createOne();
 
         $licenseService = Mockery::mock(LicenseServiceInterface::class);
         $licenseService->shouldReceive('getStatus')->once()->andReturn(LicenseStatus::valid($license));
@@ -35,7 +35,7 @@ class DeactivateLicenseCommandTest extends TestCase
     #[Test]
     public function abortWhenUserDeclinesConfirmation(): void
     {
-        $license = License::factory()->create();
+        $license = License::factory()->createOne();
 
         $licenseService = Mockery::mock(LicenseServiceInterface::class);
         $licenseService->shouldReceive('getStatus')->once()->andReturn(LicenseStatus::valid($license));
@@ -66,7 +66,7 @@ class DeactivateLicenseCommandTest extends TestCase
     #[Test]
     public function handleDeactivationFailure(): void
     {
-        $license = License::factory()->create();
+        $license = License::factory()->createOne();
 
         $licenseService = Mockery::mock(LicenseServiceInterface::class);
         $licenseService->shouldReceive('getStatus')->once()->andReturn(LicenseStatus::valid($license));

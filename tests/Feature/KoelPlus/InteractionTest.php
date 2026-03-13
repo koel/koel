@@ -22,18 +22,18 @@ class InteractionTest extends PlusTestCase
         $owner = create_user();
 
         // Can't increase play count of a private song that doesn't belong to the user
-        $externalPrivateSong = Song::factory()->private()->create();
+        $externalPrivateSong = Song::factory()->private()->createOne();
         $this->postAs('api/interaction/play', ['song' => $externalPrivateSong->id], $owner)->assertForbidden();
 
         // Can increase play count of a public song that doesn't belong to the user
-        $externalPublicSong = Song::factory()->public()->create();
+        $externalPublicSong = Song::factory()->public()->createOne();
         $this->postAs('api/interaction/play', ['song' => $externalPublicSong->id], $owner)->assertSuccessful();
 
         // Can increase play count of a private song that belongs to the user
         $ownPrivateSong = Song::factory()
             ->private()
             ->for($owner, 'owner')
-            ->create();
+            ->createOne();
         $this->postAs(
             'api/interaction/play',
             ['song' => $ownPrivateSong->id],
@@ -49,18 +49,18 @@ class InteractionTest extends PlusTestCase
         $owner = create_user();
 
         // Can't like a private song that doesn't belong to the user
-        $externalPrivateSong = Song::factory()->private()->create();
+        $externalPrivateSong = Song::factory()->private()->createOne();
         $this->postAs('api/interaction/like', ['song' => $externalPrivateSong->id], $owner)->assertForbidden();
 
         // Can like a public song that doesn't belong to the user
-        $externalPublicSong = Song::factory()->public()->create();
+        $externalPublicSong = Song::factory()->public()->createOne();
         $this->postAs('api/interaction/like', ['song' => $externalPublicSong->id], $owner)->assertSuccessful();
 
         // Can like a private song that belongs to the user
         $ownPrivateSong = Song::factory()
             ->private()
             ->for($owner, 'owner')
-            ->create();
+            ->createOne();
         $this->postAs('api/interaction/like', ['song' => $ownPrivateSong->id], $owner)->assertSuccessful();
     }
 

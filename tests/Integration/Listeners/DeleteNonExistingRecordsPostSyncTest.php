@@ -29,7 +29,7 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
         collect(SongStorageType::cases())
             ->filter(static fn ($type) => $type !== SongStorageType::LOCAL)
             ->each(function ($type): void {
-                $song = Song::factory()->create(['storage' => $type]);
+                $song = Song::factory()->createOne(['storage' => $type]);
                 $this->listener->handle(new MediaScanCompleted(ScanResultCollection::create()));
 
                 $this->assertModelExists($song);
@@ -39,7 +39,7 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
     #[Test]
     public function handleDoesNotDeleteEpisodes(): void
     {
-        $episode = Song::factory()->asEpisode()->create();
+        $episode = Song::factory()->asEpisode()->createOne();
         $this->listener->handle(new MediaScanCompleted(ScanResultCollection::create()));
         $this->assertModelExists($episode);
     }
@@ -48,7 +48,7 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
     public function handle(): void
     {
         /** @var Collection|array<array-key, Song> $songs */
-        $songs = Song::factory(4)->create();
+        $songs = Song::factory()->createMany(4);
 
         self::assertCount(4, Song::all());
 

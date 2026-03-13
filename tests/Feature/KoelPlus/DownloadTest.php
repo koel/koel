@@ -20,11 +20,11 @@ class DownloadTest extends PlusTestCase
         $apiToken = $owner->createToken('Koel')->plainTextToken;
 
         // Can't download a private song that doesn't belong to the user
-        $externalPrivateSong = Song::factory()->private()->create();
+        $externalPrivateSong = Song::factory()->private()->createOne();
         $this->get("download/songs?songs[]={$externalPrivateSong->id}&api_token=" . $apiToken)->assertForbidden();
 
         // Can download a public song that doesn't belong to the user
-        $externalPublicSong = Song::factory()->public()->create();
+        $externalPublicSong = Song::factory()->public()->createOne();
 
         $downloadService = $this->mock(DownloadService::class);
         $downloadService->expects('getDownloadable')->andReturn(Downloadable::make(test_path('songs/blank.mp3')));
@@ -35,7 +35,7 @@ class DownloadTest extends PlusTestCase
         $ownSong = Song::factory()
             ->for($owner, 'owner')
             ->private()
-            ->create();
+            ->createOne();
         $downloadService->expects('getDownloadable')->andReturn(Downloadable::make(test_path('songs/blank.mp3')));
         $this->get("download/songs?songs[]={$ownSong->id}&api_token=" . $apiToken)->assertOk();
     }

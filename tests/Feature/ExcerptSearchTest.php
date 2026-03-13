@@ -35,16 +35,16 @@ class ExcerptSearchTest extends TestCase
     public function search(): void
     {
         $user = create_user();
-        Song::factory()->for($user, 'owner')->create(['title' => 'Foo Song']);
-        Song::factory()->create();
+        Song::factory()->for($user, 'owner')->createOne(['title' => 'Foo Song']);
+        Song::factory()->createOne();
 
-        Artist::factory()->for($user)->create(['name' => 'Foo Fighters']);
-        Artist::factory()->create();
+        Artist::factory()->for($user)->createOne(['name' => 'Foo Fighters']);
+        Artist::factory()->createOne();
 
-        Album::factory()->for($user)->create(['name' => 'Foo Number Five']);
-        Album::factory()->create();
+        Album::factory()->for($user)->createOne(['name' => 'Foo Number Five']);
+        Album::factory()->createOne();
 
-        Podcast::factory()->hasAttached($user, relationship: 'subscribers')->create(['title' => 'Foo Podcast']);
+        Podcast::factory()->hasAttached($user, relationship: 'subscribers')->createOne(['title' => 'Foo Podcast']);
 
         $this->getAs('api/search?q=foo', $user)->assertJsonStructure([
             'songs' => [0 => SongResource::JSON_STRUCTURE],

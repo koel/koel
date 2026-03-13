@@ -40,7 +40,7 @@ class RadioStreamServiceTest extends TestCase
     #[Test]
     public function cacheAndGetMetadata(): void
     {
-        $station = RadioStation::factory()->create();
+        $station = RadioStation::factory()->createOne();
 
         RadioStreamMetadata::cache($station, 'Now Playing - Track');
         $cached = RadioStreamMetadata::getCached($station);
@@ -52,7 +52,7 @@ class RadioStreamServiceTest extends TestCase
     #[Test]
     public function getCachedMetadataReturnsDefaultWhenEmpty(): void
     {
-        $station = RadioStation::factory()->create();
+        $station = RadioStation::factory()->createOne();
 
         Cache::forget(RadioStreamMetadata::cacheKey($station));
         $cached = RadioStreamMetadata::getCached($station);

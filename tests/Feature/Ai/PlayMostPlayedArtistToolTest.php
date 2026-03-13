@@ -36,7 +36,7 @@ class PlayMostPlayedArtistToolTest extends TestCase
     #[Test]
     public function playsMostPlayedArtist(): void
     {
-        $artist = Artist::factory()->create();
+        $artist = Artist::factory()->createOne();
         $songs = Song::factory()
             ->count(3)
             ->for($artist)
@@ -47,7 +47,7 @@ class PlayMostPlayedArtistToolTest extends TestCase
             Interaction::factory()
                 ->for($this->user)
                 ->for($song)
-                ->create(['play_count' => 10]);
+                ->createOne(['play_count' => 10]);
         }
 
         $response = $this->tool->handle(new Request([]));
@@ -69,7 +69,7 @@ class PlayMostPlayedArtistToolTest extends TestCase
     #[Test]
     public function queuesInsteadOfPlaying(): void
     {
-        $artist = Artist::factory()->create();
+        $artist = Artist::factory()->createOne();
         $songs = Song::factory()
             ->count(2)
             ->for($artist)
@@ -80,7 +80,7 @@ class PlayMostPlayedArtistToolTest extends TestCase
             Interaction::factory()
                 ->for($this->user)
                 ->for($song)
-                ->create(['play_count' => 5]);
+                ->createOne(['play_count' => 5]);
         }
 
         $response = $this->tool->handle(new Request(['queue' => true]));

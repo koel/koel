@@ -64,7 +64,7 @@ class PodcastServiceTest extends TestCase
     #[Test]
     public function subscribeUserToPodcast(): void
     {
-        $podcast = Podcast::factory()->create([
+        $podcast = Podcast::factory()->createOne([
             'url' => 'https://example.com/feed.xml',
             'title' => 'My Cool Podcast',
         ]);
@@ -84,7 +84,7 @@ class PodcastServiceTest extends TestCase
     public function resubscribeUserToPodcastThrows(): void
     {
         self::expectException(UserAlreadySubscribedToPodcastException::class);
-        $podcast = Podcast::factory()->create([
+        $podcast = Podcast::factory()->createOne([
             'url' => 'https://example.com/feed.xml',
         ]);
 
@@ -102,7 +102,7 @@ class PodcastServiceTest extends TestCase
         Http::fake([
             'https://example.com/feed.xml' => Http::response(headers: ['Last-Modified' => now()->toRfc1123String()]),
         ]);
-        $podcast = Podcast::factory()->create([
+        $podcast = Podcast::factory()->createOne([
             'url' => 'https://example.com/feed.xml',
             'title' => 'Shall be changed very sad',
             'last_synced_at' => now()->subDays(3),
@@ -123,7 +123,7 @@ class PodcastServiceTest extends TestCase
     public function unsubscribeUserFromPodcast(): void
     {
         Event::fake(UserUnsubscribedFromPodcast::class);
-        $podcast = Podcast::factory()->create();
+        $podcast = Podcast::factory()->createOne();
         $user = create_user();
         $this->service->subscribeUserToPodcast($user, $podcast);
 
@@ -142,7 +142,7 @@ class PodcastServiceTest extends TestCase
     #[Test]
     public function podcastNotObsoleteIfSyncedRecently(): void
     {
-        $podcast = Podcast::factory()->create([
+        $podcast = Podcast::factory()->createOne([
             'last_synced_at' => now()->subHours(6),
         ]);
 
@@ -155,7 +155,7 @@ class PodcastServiceTest extends TestCase
         Http::fake([
             'https://example.com/feed.xml' => Http::response(headers: ['Last-Modified' => now()->toRfc1123String()]),
         ]);
-        $podcast = Podcast::factory()->create([
+        $podcast = Podcast::factory()->createOne([
             'url' => 'https://example.com/feed.xml',
             'last_synced_at' => now()->subDays(1),
         ]);
@@ -166,7 +166,7 @@ class PodcastServiceTest extends TestCase
     #[Test]
     public function updateEpisodeProgress(): void
     {
-        $episode = Song::factory()->asEpisode()->create();
+        $episode = Song::factory()->asEpisode()->createOne();
         $user = create_user();
         $this->service->subscribeUserToPodcast($user, $episode->podcast);
 
@@ -227,7 +227,7 @@ class PodcastServiceTest extends TestCase
     #[Test]
     public function deletePodcast(): void
     {
-        $podcast = Podcast::factory()->create();
+        $podcast = Podcast::factory()->createOne();
         $this->service->deletePodcast($podcast);
         self::assertModelMissing($podcast);
     }

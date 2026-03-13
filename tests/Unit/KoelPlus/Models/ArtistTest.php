@@ -13,7 +13,7 @@ class ArtistTest extends PlusTestCase
     #[Test]
     public function getOrCreate(): void
     {
-        $artist = Artist::factory()->create(['name' => 'Foo']);
+        $artist = Artist::factory()->createOne(['name' => 'Foo']);
 
         // The artist can be retrieved by its name and user
         self::assertTrue(Artist::getOrCreate($artist->user, 'Foo')->is($artist));

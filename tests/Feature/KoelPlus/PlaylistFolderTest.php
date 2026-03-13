@@ -28,10 +28,10 @@ class PlaylistFolderTest extends PlusTestCase
 
         $playlist = create_playlist();
         $playlist->addCollaborator($collaborator);
-        $ownerFolder = PlaylistFolder::factory()->for($playlist->owner)->create();
+        $ownerFolder = PlaylistFolder::factory()->for($playlist->owner)->createOne();
         $ownerFolder->playlists()->attach($playlist);
         self::assertTrue($this->folderService->getFolderForPlaylist($playlist)?->is($ownerFolder));
-        $collaboratorFolder = PlaylistFolder::factory()->for($collaborator)->create();
+        $collaboratorFolder = PlaylistFolder::factory()->for($collaborator)->createOne();
         self::assertNull($this->folderService->getFolderForPlaylist($playlist, $collaborator));
 
         $this->postAs(
@@ -55,10 +55,10 @@ class PlaylistFolderTest extends PlusTestCase
         $playlist = create_playlist();
         $playlist->addCollaborator($collaborator);
         self::assertNull($this->folderService->getFolderForPlaylist($playlist));
-        $ownerFolder = PlaylistFolder::factory()->for($playlist->owner)->create();
+        $ownerFolder = PlaylistFolder::factory()->for($playlist->owner)->createOne();
         $ownerFolder->playlists()->attach($playlist);
         self::assertTrue($this->folderService->getFolderForPlaylist($playlist->refresh())?->is($ownerFolder));
-        $collaboratorFolder = PlaylistFolder::factory()->for($collaborator)->create();
+        $collaboratorFolder = PlaylistFolder::factory()->for($collaborator)->createOne();
 
         $collaboratorFolder->playlists()->attach($playlist);
         self::assertTrue($this->folderService->getFolderForPlaylist($playlist->refresh(), $collaborator)?->is(

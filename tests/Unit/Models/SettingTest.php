@@ -50,7 +50,7 @@ class SettingTest extends TestCase
     #[Test]
     public function getSettings(): void
     {
-        Setting::factory()->create([
+        Setting::factory()->createOne([
             'key' => 'foo',
             'value' => 'bar',
         ]);

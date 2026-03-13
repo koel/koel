@@ -11,7 +11,7 @@ class ArtistEventTest extends TestCase
     #[Test]
     public function disabledInCommunityEdition(): void
     {
-        $artist = Artist::factory()->create();
+        $artist = Artist::factory()->createOne();
 
         $this->getAs("api/artists/{$artist->id}/events")->assertNotFound();
     }

@@ -54,7 +54,7 @@ class UserInvitationServiceTest extends TestCase
         $token = Str::uuid()->toString();
         $user = create_admin();
 
-        $prospect = User::factory()->for($user, 'invitedBy')->create([
+        $prospect = User::factory()->for($user, 'invitedBy')->createOne([
             'invitation_token' => $token,
             'invited_at' => now(),
         ]);
@@ -73,7 +73,7 @@ class UserInvitationServiceTest extends TestCase
     public function revokeByEmail(): void
     {
         $user = create_admin();
-        $prospect = User::factory()->for($user, 'invitedBy')->create([
+        $prospect = User::factory()->for($user, 'invitedBy')->createOne([
             'invitation_token' => Str::uuid()->toString(),
             'invited_at' => now(),
         ]);
@@ -91,7 +91,7 @@ class UserInvitationServiceTest extends TestCase
             ->for($admin, 'invitedBy')
             ->admin()
             ->prospect()
-            ->create();
+            ->createOne();
 
         $user = $this->service->accept($prospect->invitation_token, 'Bruce Dickinson', 'SuperSecretPassword');
 

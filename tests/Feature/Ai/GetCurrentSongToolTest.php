@@ -31,7 +31,7 @@ class GetCurrentSongToolTest extends TestCase
     #[Test]
     public function returnsCurrentSongInfo(): void
     {
-        $song = Song::factory()->for($this->user, 'owner')->create([
+        $song = Song::factory()->for($this->user, 'owner')->createOne([
             'title' => 'Bohemian Rhapsody',
             'artist_name' => 'Queen',
             'album_name' => 'A Night at the Opera',
@@ -50,7 +50,7 @@ class GetCurrentSongToolTest extends TestCase
     #[Test]
     public function returnsCurrentRadioStationInfo(): void
     {
-        $station = RadioStation::factory()->create(['name' => 'Jazz FM']);
+        $station = RadioStation::factory()->createOne(['name' => 'Jazz FM']);
 
         app()->instance(
             AiRequestContext::class,
@@ -67,8 +67,8 @@ class GetCurrentSongToolTest extends TestCase
     #[Test]
     public function radioStationTakesPrecedenceOverSong(): void
     {
-        $song = Song::factory()->for($this->user, 'owner')->create(['title' => 'Some Song']);
-        $station = RadioStation::factory()->create(['name' => 'Rock Radio']);
+        $song = Song::factory()->for($this->user, 'owner')->createOne(['title' => 'Some Song']);
+        $station = RadioStation::factory()->createOne(['name' => 'Rock Radio']);
 
         app()->instance(
             AiRequestContext::class,

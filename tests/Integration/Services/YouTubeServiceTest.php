@@ -29,7 +29,9 @@ class YouTubeServiceTest extends TestCase
     #[Test]
     public function searchVideosRelatedToSong(): void
     {
-        $song = Song::factory()->for(Artist::factory()->create(['name' => 'Slipknot']))->create(['title' => 'Snuff']);
+        $song = Song::factory()->for(Artist::factory()->createOne(['name' => 'Slipknot']))->createOne([
+            'title' => 'Snuff',
+        ]);
 
         Saloon::fake([
             SearchVideosRequest::class => MockResponse::make(body: File::get(test_path(

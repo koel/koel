@@ -29,7 +29,7 @@ class ChangePasswordCommandTest extends TestCase
     #[Test]
     public function changePasswordForSpecificUser(): void
     {
-        $user = User::factory()->create(['email' => 'john@example.com']);
+        $user = User::factory()->createOne(['email' => 'john@example.com']);
 
         $this
             ->artisan('koel:admin:change-password', ['email' => 'john@example.com'])

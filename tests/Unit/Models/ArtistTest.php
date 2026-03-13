@@ -16,7 +16,7 @@ class ArtistTest extends TestCase
     #[Test]
     public function existingArtistCanBeRetrievedUsingName(): void
     {
-        $artist = Artist::factory()->create(['name' => 'Foo']);
+        $artist = Artist::factory()->createOne(['name' => 'Foo']);
 
         self::assertTrue(Artist::getOrCreate($artist->user, 'Foo')->is($artist));
     }

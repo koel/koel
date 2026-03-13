@@ -196,7 +196,7 @@ class UserTest extends TestCase
             'email' => Ulid::generate() . '@demo.koel.dev',
         ]);
 
-        Interaction::factory()->for($oldUserWithOldActivity)->create([
+        Interaction::factory()->for($oldUserWithOldActivity)->createOne([
             'last_played_at' => now()->subDays(14),
         ]);
 
@@ -210,7 +210,7 @@ class UserTest extends TestCase
             'email' => Ulid::generate() . '@demo.koel.dev',
         ]);
 
-        Interaction::factory()->for($oldUserWithNewActivity)->create([
+        Interaction::factory()->for($oldUserWithNewActivity)->createOne([
             'last_played_at' => now()->subDays(6),
         ]);
 

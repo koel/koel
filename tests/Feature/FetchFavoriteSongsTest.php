@@ -16,10 +16,10 @@ class FetchFavoriteSongsTest extends TestCase
     public function index(): void
     {
         $user = create_user();
-        $songs = Song::factory(2)->for($user, 'owner')->create();
+        $songs = Song::factory()->for($user, 'owner')->createMany(2);
 
         $songs->each(static function (Song $song) use ($user): void {
-            Favorite::factory()->for($user)->create([
+            Favorite::factory()->for($user)->createOne([
                 'favoriteable_id' => $song->id,
             ]);
         });

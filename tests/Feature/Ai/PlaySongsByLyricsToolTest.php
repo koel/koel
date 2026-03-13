@@ -41,7 +41,7 @@ class PlaySongsByLyricsToolTest extends TestCase
     #[Test]
     public function findsSongsByLyrics(): void
     {
-        $song = Song::factory()->for($this->user, 'owner')->create(['title' => 'Bohemian Rhapsody']);
+        $song = Song::factory()->for($this->user, 'owner')->createOne(['title' => 'Bohemian Rhapsody']);
 
         $this->songRepository
             ->shouldReceive('searchByLyrics')
@@ -72,7 +72,7 @@ class PlaySongsByLyricsToolTest extends TestCase
     #[Test]
     public function matchesPartialLyrics(): void
     {
-        $song = Song::factory()->for($this->user, 'owner')->create(['title' => 'Stairway to Heaven']);
+        $song = Song::factory()->for($this->user, 'owner')->createOne(['title' => 'Stairway to Heaven']);
 
         $this->songRepository
             ->shouldReceive('searchByLyrics')
