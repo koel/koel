@@ -145,6 +145,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ### Controllers & Validation
 - Always create Form Request classes for validation rather than inline validation in controllers. Include both validation rules and custom error messages.
 - Check sibling Form Requests to see if the application uses array or string based validation rules.
+- When accessing request data, prefer `$request->variable` over `$request->input('variable')`. Type hint each input as a `@property-read` on the Form Request class (e.g. `@property-read string $prompt`, `@property-read ?string $conversation_id`).
 
 ### Queues
 - Use queued jobs for time-consuming operations with the `ShouldQueue` interface.

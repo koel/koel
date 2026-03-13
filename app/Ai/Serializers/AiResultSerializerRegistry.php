@@ -29,7 +29,6 @@ class AiResultSerializerRegistry
             Finder::create()
                 ->files()
                 ->name('*.php')
-                ->notName('AiResultSerializerRegistry.php')
                 ->depth(0)
                 ->in(__DIR__),
         )
