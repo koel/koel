@@ -43,7 +43,7 @@ class SongRequestResolverTest extends TestCase
         $context = new AiRequestContext($this->user);
         $result = $this->resolver->resolveSong(new Request(['query' => 'bohemian']), $context);
 
-        self::assertSame($songs->first()->id, $result->id);
+        self::assertTrue($result->is($songs->first()));
     }
 
     #[Test]
@@ -59,7 +59,7 @@ class SongRequestResolverTest extends TestCase
         $context = new AiRequestContext($this->user, currentSongId: $song->id);
         $result = $this->resolver->resolveSong(new Request([]), $context);
 
-        self::assertSame($song->id, $result->id);
+        self::assertTrue($result->is($song));
     }
 
     #[Test]
@@ -85,7 +85,7 @@ class SongRequestResolverTest extends TestCase
         $context = new AiRequestContext($this->user, currentSongId: $currentSong->id);
         $result = $this->resolver->resolveSong(new Request(['query' => 'queried']), $context);
 
-        self::assertSame($queriedSongs->first()->id, $result->id);
+        self::assertTrue($result->is($queriedSongs->first()));
     }
 
     #[Test]
@@ -101,7 +101,7 @@ class SongRequestResolverTest extends TestCase
         $context = new AiRequestContext($this->user);
         $result = $this->resolver->resolveSong(new Request(['song_title' => 'test']), $context, 'song_title');
 
-        self::assertSame($songs->first()->id, $result->id);
+        self::assertTrue($result->is($songs->first()));
     }
 
     #[Test]
@@ -134,7 +134,7 @@ class SongRequestResolverTest extends TestCase
         $result = $this->resolver->resolveSongs(new Request([]), $context);
 
         self::assertCount(1, $result);
-        self::assertSame($song->id, $result->first()->id);
+        self::assertTrue($result->first()->is($song));
     }
 
     #[Test]
