@@ -7,8 +7,8 @@ settings:
 overrides:
   form-data@<2.5.4: '>=2.5.4'
   '@rolldown/pluginutils': 1.0.0-rc.9
-  vite: npm:@voidzero-dev/vite-plus-core@latest
-  vitest: npm:@voidzero-dev/vite-plus-test@latest
+  vite: npm:@voidzero-dev/vite-plus-core@^0.1.11
+  vitest: npm:@voidzero-dev/vite-plus-test@^0.1.11
 
 importers:
 
@@ -214,10 +214,10 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
-        specifier: npm:@voidzero-dev/vite-plus-core@latest
+        specifier: npm:@voidzero-dev/vite-plus-core@^0.1.11
         version: '@voidzero-dev/vite-plus-core@0.1.11(@types/node@24.0.7)(esbuild@0.27.3)(jiti@2.4.2)(typescript@5.8.3)(yaml@2.8.0)'
       vite-plus:
-        specifier: latest
+        specifier: ^0.1.11
         version: 0.1.11(@types/node@24.0.7)(@voidzero-dev/vite-plus-core@0.1.11(@types/node@24.0.7)(esbuild@0.27.3)(jiti@2.4.2)(typescript@5.8.3)(yaml@2.8.0))(esbuild@0.27.3)(jiti@2.4.2)(jsdom@26.1.0)(typescript@5.8.3)(yaml@2.8.0)
       vitepress:
         specifier: ^1.6.3
@@ -226,7 +226,7 @@ importers:
         specifier: ^1.11.0
         version: 1.11.0
       vitest:
-        specifier: npm:@voidzero-dev/vite-plus-test@latest
+        specifier: npm:@voidzero-dev/vite-plus-test@^0.1.11
         version: '@voidzero-dev/vite-plus-test@0.1.11(@types/node@24.0.7)(@voidzero-dev/vite-plus-core@0.1.11(@types/node@24.0.7)(esbuild@0.27.3)(jiti@2.4.2)(typescript@5.8.3)(yaml@2.8.0))(esbuild@0.27.3)(jiti@2.4.2)(jsdom@26.1.0)(typescript@5.8.3)(yaml@2.8.0)'
       vue-tsc:
         specifier: ^3.2.5
