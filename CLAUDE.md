@@ -145,6 +145,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ### Controllers & Validation
 - Always create Form Request classes for validation rather than inline validation in controllers. Include both validation rules and custom error messages.
 - Check sibling Form Requests to see if the application uses array or string based validation rules.
+- When accessing request data, prefer `$request->variable` over `$request->input('variable')`. Type hint each input as a `@property-read` on the Form Request class (e.g. `@property-read string $prompt`, `@property-read ?string $conversation_id`).
 
 ### Queues
 - Use queued jobs for time-consuming operations with the `ShouldQueue` interface.
@@ -241,6 +242,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## PHP Conventions
 - Always prefer Laravel's built-in helpers over custom implementations (e.g. `str()->plural()`, `Str::slug()`, `Arr::flatten()`, etc.). Do not reimplement what Laravel already provides.
+- All methods must have explicit visibility (`public`, `protected`, or `private`). Never omit the visibility keyword, even on interface methods or static methods.
 - Methods that don't reference `$this` must be declared `static`.
 - Always use the least visibility possible. Use `private` by default; only use `protected` or `public` when required by inheritance or external access.
 - Never use `empty()` to check arrays. If the variable is known to be an array, use `!$array` instead. Don't compare to `[]` either.
