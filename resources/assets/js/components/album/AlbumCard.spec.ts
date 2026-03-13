@@ -12,6 +12,8 @@ import { assertOpenContextMenu } from '@/__tests__/assertions'
 import AlbumContextMenu from './AlbumContextMenu.vue'
 import Component from './AlbumCard.vue'
 
+vi.mock('@/composables/useContextMenu')
+
 describe('albumCard', () => {
   const h = createHarness()
 
@@ -86,7 +88,6 @@ describe('albumCard', () => {
   })
 
   it('requests context menu', async () => {
-    vi.mock('@/composables/useContextMenu')
     const { openContextMenu } = useContextMenu()
     const { album } = renderComponent()
     await h.trigger(screen.getByTestId('artist-album-card'), 'contextMenu')

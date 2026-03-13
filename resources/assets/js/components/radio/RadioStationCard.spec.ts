@@ -9,6 +9,8 @@ import { assertOpenContextMenu } from '@/__tests__/assertions'
 import RadioStationContextMenu from '@/components/radio/RadioStationContextMenu.vue'
 import Component from './RadioStationCard.vue'
 
+vi.mock('@/composables/useContextMenu')
+
 describe('radioStationCard.vue', () => {
   const h = createHarness()
 
@@ -64,7 +66,6 @@ describe('radioStationCard.vue', () => {
   })
 
   it('requests context menu', async () => {
-    vi.mock('@/composables/useContextMenu')
     const { openContextMenu } = useContextMenu()
     const { station } = renderComponent()
     await h.trigger(screen.getByTestId('radio-station-card'), 'contextMenu')

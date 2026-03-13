@@ -4,14 +4,12 @@ import { createHarness } from '@/__tests__/TestHarness'
 import { authService } from '@/services/authService'
 import Component from './QRLogin.vue'
 
+vi.mock('@vueuse/integrations/useQRCode', () => ({
+  useQRCode: () => 'data:image/png;base64,my-qr-code',
+}))
+
 describe('qRLogin.vue', () => {
-  const h = createHarness({
-    beforeEach: () => {
-      vi.mock('@vueuse/integrations/useQRCode', () => ({
-        useQRCode: () => 'data:image/png;base64,my-qr-code',
-      }))
-    },
-  })
+  const h = createHarness()
 
   it('renders', async () => {
     const getTokenMock = h.mock(authService, 'getOneTimeToken').mockResolvedValue('my-token')

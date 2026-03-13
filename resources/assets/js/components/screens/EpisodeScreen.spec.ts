@@ -8,6 +8,8 @@ import { assertOpenContextMenu } from '@/__tests__/assertions'
 import PlayableContextMenu from '@/components/playable/PlayableContextMenu.vue'
 import Component from './EpisodeScreen.vue'
 
+vi.mock('@/composables/useContextMenu')
+
 describe('episodeScreen.vue', () => {
   const h = createHarness()
 
@@ -45,7 +47,6 @@ describe('episodeScreen.vue', () => {
   })
 
   it('requests Actions menu', async () => {
-    vi.mock('@/composables/useContextMenu')
     const { openContextMenu } = useContextMenu()
     const { episode } = await renderComponent()
 

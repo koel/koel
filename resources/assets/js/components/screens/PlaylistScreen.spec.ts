@@ -12,6 +12,8 @@ import { assertOpenContextMenu } from '@/__tests__/assertions'
 import PlaylistContextMenu from '@/components/playlist/PlaylistContextMenu.vue'
 import Component from './PlaylistScreen.vue'
 
+vi.mock('@/composables/useContextMenu')
+
 describe('playlistScreen.vue', () => {
   const h = createHarness()
 
@@ -72,7 +74,6 @@ describe('playlistScreen.vue', () => {
   })
 
   it('shows Actions menu', async () => {
-    vi.mock('@/composables/useContextMenu')
     const { openContextMenu } = useContextMenu()
     const { playlist } = await renderComponent()
 

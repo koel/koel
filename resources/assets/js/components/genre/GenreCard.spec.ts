@@ -7,6 +7,8 @@ import { assertOpenContextMenu } from '@/__tests__/assertions'
 import GenreContextMenu from '@/components/genre/GenreContextMenu.vue'
 import Component from './GenreCard.vue'
 
+vi.mock('@/composables/useContextMenu')
+
 describe('genreCard.vue', () => {
   const h = createHarness()
 
@@ -37,7 +39,6 @@ describe('genreCard.vue', () => {
   it('renders', () => expect(renderComponent().html()).toMatchSnapshot())
 
   it('requests context menu', async () => {
-    vi.mock('@/composables/useContextMenu')
     const { openContextMenu } = useContextMenu()
     const { genre } = renderComponent()
 

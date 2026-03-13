@@ -7,6 +7,8 @@ import Component from './UserCard.vue'
 import { assertOpenContextMenu } from '@/__tests__/assertions'
 import UserContextMenu from '@/components/user/UserContextMenu.vue'
 
+vi.mock('@/composables/useContextMenu')
+
 describe('userCard.vue', () => {
   const h = createHarness()
 
@@ -36,7 +38,6 @@ describe('userCard.vue', () => {
   })
 
   it('requests the context menu', async () => {
-    vi.mock('@/composables/useContextMenu')
     const { openContextMenu } = useContextMenu()
     const { user } = renderComponent()
 

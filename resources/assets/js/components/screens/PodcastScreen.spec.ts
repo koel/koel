@@ -13,6 +13,8 @@ import { assertOpenContextMenu } from '@/__tests__/assertions'
 import PodcastContextMenu from '@/components/podcast/PodcastContextMenu.vue'
 import Component from './PodcastScreen.vue'
 
+vi.mock('@/composables/useContextMenu')
+
 describe('podcastScreen.vue', () => {
   const h = createHarness()
 
@@ -134,7 +136,6 @@ describe('podcastScreen.vue', () => {
   })
 
   it('requests Actions menu', async () => {
-    vi.mock('@/composables/useContextMenu')
     const { openContextMenu } = useContextMenu()
     const { podcast } = await renderComponent()
 
