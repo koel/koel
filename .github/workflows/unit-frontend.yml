@@ -35,12 +35,10 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
-      - name: Install Vite+
-        run: curl -fsSL https://vite.plus | bash
       - name: Install dependencies
-        run: vp install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
       - name: Run unit tests
-        run: vp test --run --shard=${{ matrix.shard }}
+        run: pnpm exec vp test --run --shard=${{ matrix.shard }}
       - name: Collect coverage
         uses: codecov/codecov-action@v1
         with:

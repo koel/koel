@@ -33,9 +33,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - uses: pnpm/action-setup@v4
-      - name: Install Vite+
-        run: curl -fsSL https://vite.plus | bash
       - name: Install dependencies
-        run: vp install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
       - name: Check (format + lint)
-        run: vp check resources/assets
+        run: pnpm exec vp check resources/assets

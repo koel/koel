@@ -29,7 +29,7 @@ Below are a couple of commands that might help in this area:
 rm -rf vendor && composer install
 
 # Clear node_modules, re-install, and re-build the front-end assets
-rm -rf node_modules && vp install && vp build
+rm -rf node_modules && pnpm install && pnpm run build
 
 # Clear the Laravel cache. This command is automatically run after `composer install`.
 php artisan cache:clear

@@ -14,24 +14,18 @@ It's highly recommended to take a look at Koel's
 Koel is built with Laravel and Vue.js, and as such, it requires a PHP environment to run.
 There are multiple ways to set up a PHP development environment, but if you're on macOS,
 the easiest way is probably to use [Laravel Herd](https://herd.laravel.com/).
-You will also need [Node.js](https://nodejs.org/) and [Vite+](https://viteplus.dev/) (`vp`) to build the client application.
+You will also need [Node.js](https://nodejs.org/) and [pnpm](https://pnpm.io/) to build the client application.
 For more requirements, refer to the [Requirements section](./guide/getting-started#requirements).
 
 ### Running the Local Webserver
 
-First, install [Vite+](https://viteplus.dev/) if you haven't already:
-
-```bash
-curl -fsSL https://vite.plus | bash
-```
-
-Then clone the repository and install the dependencies:
+First, clone the repository and install the dependencies:
 
 ```bash
 git clone https://github.com/koel/koel.git
 cd koel
 composer install
-vp install
+pnpm install
 ```
 
 You can now start the development server with `composer dev`:
@@ -53,11 +47,11 @@ composer cs:fix      # Run code style fixer
 composer analyze     # Run PHP static analysis
 
 # Client code quality tasks
-vp build             # Build a production version of the client application
-vp test              # Unit testing
-vp check             # Format + lint + type check
-vp lint              # Lint only
-vp fmt               # Format only
+pnpm run build       # Build a production version of the client application
+pnpm run test        # Unit testing
+pnpm exec vp check   # Format + lint + type check
+pnpm run lint        # Lint only
+pnpm run format      # Format check only
 ```
 
 ## Koel Docs
