@@ -10,6 +10,7 @@ use App\Repositories\SongRepository;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Laravel\Ai\Tools\Request;
 use Mockery;
+use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -17,7 +18,7 @@ use function Tests\create_user;
 
 class SongRequestResolverTest extends TestCase
 {
-    private SongRepository $songRepository;
+    private SongRepository|MockInterface $songRepository;
     private SongRequestResolver $resolver;
     private User $user;
 
