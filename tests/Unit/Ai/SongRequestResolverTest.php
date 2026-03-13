@@ -7,7 +7,6 @@ use App\Ai\Services\SongRequestResolver;
 use App\Models\Song;
 use App\Models\User;
 use App\Repositories\SongRepository;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Laravel\Ai\Tools\Request;
 use Mockery;
 use Mockery\MockInterface;
@@ -34,17 +33,17 @@ class SongRequestResolverTest extends TestCase
     #[Test]
     public function resolveSongByQuery(): void
     {
-        $song = Song::factory()->for($this->user, 'owner')->create(['title' => 'Bohemian Rhapsody']);
+        $songs = Song::factory()->for($this->user, 'owner')->count(1)->create(['title' => 'Bohemian Rhapsody']);
 
         $this->songRepository
             ->shouldReceive('search')
             ->with('bohemian', 1, $this->user)
-            ->andReturn(EloquentCollection::make([$song]));
+            ->andReturn($songs);
 
         $context = new AiRequestContext($this->user);
         $result = $this->resolver->resolveSong(new Request(['query' => 'bohemian']), $context);
 
-        self::assertSame($song->id, $result->id);
+        self::assertSame($songs->first()->id, $result->id);
     }
 
     #[Test]
@@ -76,33 +75,33 @@ class SongRequestResolverTest extends TestCase
     public function resolveSongPrefersQueryOverCurrentSong(): void
     {
         $currentSong = Song::factory()->for($this->user, 'owner')->create(['title' => 'Current']);
-        $queriedSong = Song::factory()->for($this->user, 'owner')->create(['title' => 'Queried']);
+        $queriedSongs = Song::factory()->for($this->user, 'owner')->count(1)->create(['title' => 'Queried']);
 
         $this->songRepository
             ->shouldReceive('search')
             ->with('queried', 1, $this->user)
-            ->andReturn(EloquentCollection::make([$queriedSong]));
+            ->andReturn($queriedSongs);
 
         $context = new AiRequestContext($this->user, currentSongId: $currentSong->id);
         $result = $this->resolver->resolveSong(new Request(['query' => 'queried']), $context);
 
-        self::assertSame($queriedSong->id, $result->id);
+        self::assertSame($queriedSongs->first()->id, $result->id);
     }
 
     #[Test]
     public function resolveSongWithCustomQueryKey(): void
     {
-        $song = Song::factory()->for($this->user, 'owner')->create();
+        $songs = Song::factory()->for($this->user, 'owner')->count(1)->create();
 
         $this->songRepository
             ->shouldReceive('search')
             ->with('test', 1, $this->user)
-            ->andReturn(EloquentCollection::make([$song]));
+            ->andReturn($songs);
 
         $context = new AiRequestContext($this->user);
         $result = $this->resolver->resolveSong(new Request(['song_title' => 'test']), $context, 'song_title');
 
-        self::assertSame($song->id, $result->id);
+        self::assertSame($songs->first()->id, $result->id);
     }
 
     #[Test]
@@ -113,7 +112,7 @@ class SongRequestResolverTest extends TestCase
         $this->songRepository
             ->shouldReceive('search')
             ->with('rock', 10, $this->user)
-            ->andReturn(EloquentCollection::make($songs));
+            ->andReturn($songs);
 
         $context = new AiRequestContext($this->user);
         $result = $this->resolver->resolveSongs(new Request(['song_query' => 'rock']), $context);
@@ -169,7 +168,7 @@ class SongRequestResolverTest extends TestCase
         $this->songRepository
             ->shouldReceive('search')
             ->with('jazz', 5, $this->user)
-            ->andReturn(EloquentCollection::make($songs));
+            ->andReturn($songs);
 
         $context = new AiRequestContext($this->user);
         $result = $this->resolver->resolveSongs(new Request(['song_query' => 'jazz']), $context, limit: 5);
