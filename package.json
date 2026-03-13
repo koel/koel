@@ -79,18 +79,21 @@
     "lint-staged": "^10.5.4",
     "oxfmt": "^0.36.0",
     "oxlint": "^1.51.0",
-    "postcss": "^8.5.6",
+    "postcss": "^8.5.8",
     "postcss-mixins": "^10.0.1",
     "postcss-nested": "^6.2.0",
     "pusher-js": "^4.4.0",
     "rollup-plugin-visualizer": "^6.0.3",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3",
-    "vite": "^7.3.1",
+    "vite": "^8.0.0",
     "vitepress": "^1.6.3",
     "vitepress-plugin-llms": "^1.11.0",
     "vitest": "^4.0.18",
     "vue-tsc": "^3.2.5"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
   },
   "scripts": {
     "format": "oxfmt --check ./resources/assets",
@@ -127,7 +130,8 @@
   "type": "module",
   "pnpm": {
     "overrides": {
-      "form-data@<2.5.4": ">=2.5.4"
+      "form-data@<2.5.4": ">=2.5.4",
+      "@rolldown/pluginutils": "1.0.0-rc.9"
     }
   }
 }

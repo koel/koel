@@ -19,6 +19,9 @@ export default defineConfig({
       filename: 'stats.html'
     })
   ],
+  build: {
+    cssMinify: 'esbuild'
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './resources/assets/js'),
