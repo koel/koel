@@ -111,8 +111,8 @@ importers:
         specifier: ^2.8.9
         version: 2.8.9(vue@3.5.29(typescript@5.8.3))
       youtube-player:
-        specifier: ^3.1.2
-        version: 3.1.2
+        specifier: ^5.6.0
+        version: 5.6.0
     devDependencies:
       '@commitlint/cli':
         specifier: ^19.8.1
@@ -3820,8 +3820,8 @@ packages:
     resolution: {integrity: sha512-AyeEbWOu/TAXdxlV9wmGcR0+yh2j3vYPGOECcIj2S7MkrLyC7ne+oye2BKTItt0ii2PHk4cDy+95+LshzbXnGg==}
     engines: {node: '>=12.20'}
 
-  youtube-player@3.1.2:
-    resolution: {integrity: sha512-eIC6txUvxKSLrNjotTAYJ5N1+eD9C9q7hNAn/Rkbhjp+G8r8+x7X0+bhibLfGfdwsv0co9UozB9OdM1b+qmzfQ==}
+  youtube-player@5.6.0:
+    resolution: {integrity: sha512-x95fBbxV7eZ1ZsFtMLMcSGX0Jb/GPPj69RsooyEDVa9bzvvNZ4d5VjnBVBYoY85008VefkLvtaV+b+l38R/LMQ==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -7400,10 +7400,12 @@ snapshots:
 
   yocto-queue@1.2.1: {}
 
-  youtube-player@3.1.2:
+  youtube-player@5.6.0:
     dependencies:
+      debug: 4.4.3
       load-script: 1.0.0
-      lodash: 4.17.23
       sister: 3.0.2
+    transitivePeerDependencies:
+      - supports-color
 
   zwitch@2.0.4: {}
