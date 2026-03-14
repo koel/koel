@@ -13,8 +13,10 @@
         <slot name="icon" />
       </span>
 
-      <span class="truncate">
-        <slot />
+      <span class="flex-1 overflow-hidden">
+        <MarqueeText hover-only>
+          <slot />
+        </MarqueeText>
       </span>
     </a>
   </li>
@@ -22,6 +24,7 @@
 
 <script lang="ts" setup>
 import { eventBus } from '@/utils/eventBus'
+import MarqueeText from '@/components/ui/MarqueeText.vue'
 
 const props = withDefaults(
   defineProps<{
