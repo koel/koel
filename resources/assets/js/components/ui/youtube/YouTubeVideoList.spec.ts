@@ -1,5 +1,5 @@
 import { screen, waitFor } from '@testing-library/vue'
-import { describe, expect, it, vi } from 'vite-plus/test'
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { youTubeService } from '@/services/youTubeService'
 import YouTubeVideo from '@/components/ui/youtube/YouTubeVideoItem.vue'
@@ -8,13 +8,20 @@ import Component from './YouTubeVideoList.vue'
 describe('youTubeVideoList', () => {
   const h = createHarness()
 
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
   it('loads initial results and loads more on scroll', async () => {
     let intersectionCallback: IntersectionObserverCallback
 
-    window.IntersectionObserver = vi.fn().mockImplementation(function (cb: IntersectionObserverCallback) {
-      intersectionCallback = cb
-      return { observe: vi.fn(), unobserve: vi.fn(), disconnect: vi.fn() }
-    }) as unknown as typeof IntersectionObserver
+    vi.stubGlobal(
+      'IntersectionObserver',
+      vi.fn().mockImplementation(function (cb: IntersectionObserverCallback) {
+        intersectionCallback = cb
+        return { observe: vi.fn(), unobserve: vi.fn(), disconnect: vi.fn() }
+      }),
+    )
 
     const song = h.factory('song')
 

@@ -35,7 +35,7 @@ const { song } = toRefs(props)
 const loading = ref(false)
 const videos = ref<YouTubeVideo[]>([])
 const hasMore = ref(true)
-const sentinelRef = ref<HTMLElement>()
+const sentinelRef = ref<HTMLElement | null>(null)
 
 let nextPageToken = ''
 
@@ -69,7 +69,11 @@ watch(
       return
     }
 
-    observer = new IntersectionObserver(
+    if (typeof IntersectionObserver === 'undefined') {
+      return
+    }
+
+    const obs = new IntersectionObserver(
       entries => {
         if (entries[0].isIntersecting) {
           loadMore()
@@ -78,9 +82,10 @@ watch(
       { rootMargin: '100px' },
     )
 
-    observer.observe(el)
+    observer = obs
+    obs.observe(el)
 
-    onCleanup(() => observer?.disconnect())
+    onCleanup(() => obs.disconnect())
   },
   { flush: 'post' },
 )
