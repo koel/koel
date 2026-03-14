@@ -19,7 +19,10 @@
 <script lang="ts" setup>
 import { faYoutube } from '@fortawesome/free-brands-svg-icons'
 import { unescape } from 'lodash'
-import createYouTubePlayer from 'youtube-player'
+import youtubePlayer from 'youtube-player'
+
+// youtube-player is a CJS module; handle interop where default may be nested
+const createYouTubePlayer = typeof youtubePlayer === 'function' ? youtubePlayer : youtubePlayer.default
 import { ref, watch } from 'vue'
 import type { YouTubePlayer } from 'youtube-player/dist/types'
 import { eventBus } from '@/utils/eventBus'
