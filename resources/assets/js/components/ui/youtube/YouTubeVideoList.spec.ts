@@ -1,15 +1,21 @@
 import { screen, waitFor } from '@testing-library/vue'
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { youTubeService } from '@/services/youTubeService'
-import Btn from '@/components/ui/form/Btn.vue'
 import YouTubeVideo from '@/components/ui/youtube/YouTubeVideoItem.vue'
 import Component from './YouTubeVideoList.vue'
 
-describe('youTubeVideoList.vue', () => {
+describe('youTubeVideoList', () => {
   const h = createHarness()
 
-  it('functions', async () => {
+  it('loads initial results and loads more on scroll', async () => {
+    let intersectionCallback: IntersectionObserverCallback
+
+    window.IntersectionObserver = vi.fn().mockImplementation(function (cb: IntersectionObserverCallback) {
+      intersectionCallback = cb
+      return { observe: vi.fn(), unobserve: vi.fn(), disconnect: vi.fn() }
+    }) as unknown as typeof IntersectionObserver
+
     const song = h.factory('song')
 
     const searchMock = h
@@ -19,19 +25,14 @@ describe('youTubeVideoList.vue', () => {
         items: h.factory('you-tube-video', 5),
       })
       .mockResolvedValueOnce({
-        nextPageToken: 'bar',
+        nextPageToken: '',
         items: h.factory('you-tube-video', 3),
       })
 
     h.render(Component, {
-      props: {
-        song,
-      },
+      props: { song },
       global: {
-        stubs: {
-          Btn,
-          YouTubeVideo,
-        },
+        stubs: { YouTubeVideo },
       },
     })
 
@@ -40,7 +41,8 @@ describe('youTubeVideoList.vue', () => {
       expect(screen.getAllByRole('listitem')).toHaveLength(5)
     })
 
-    await h.user.click(screen.getByRole('button', { name: 'Load More' }))
+    // Simulate the sentinel becoming visible (infinite scroll trigger)
+    intersectionCallback!([{ isIntersecting: true } as IntersectionObserverEntry], {} as IntersectionObserver)
 
     await waitFor(() => {
       expect(searchMock).toHaveBeenNthCalledWith(2, song, 'foo')
