@@ -4,7 +4,9 @@
       <ScreenHeaderSkeleton v-if="loading && !episode" />
       <ScreenHeader v-if="episode">
         <p class="text-base font-normal">Episode</p>
-        <h1 class="truncate" :title="episode.title">{{ episode.title }}</h1>
+        <h1 class="overflow-hidden" :title="episode.title">
+          <MarqueeText hover-only :speed="70">{{ episode.title }}</MarqueeText>
+        </h1>
 
         <h2 class="text-2xl">
           <a
@@ -76,6 +78,7 @@ import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useContextMenu } from '@/composables/useContextMenu'
 
 import ScreenBase from '@/components/screens/ScreenBase.vue'
+import MarqueeText from '@/components/ui/MarqueeText.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import ScreenHeaderSkeleton from '@/components/ui/ScreenHeaderSkeleton.vue'
