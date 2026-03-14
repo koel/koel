@@ -23,7 +23,7 @@
     "ext-SimpleXML": "*",
     "daverandom/resume": "^0.0.3",
     "laravel/helpers": "^1.7",
-    "lstrojny/functional-php": "^1.14",
+    "mattiabasone/functional-php": "^1.18",
     "teamtnt/laravel-scout-tntsearch-driver": "^15.0",
     "algolia/algoliasearch-client-php": "^3.3",
     "webmozart/assert": "^1.10",
