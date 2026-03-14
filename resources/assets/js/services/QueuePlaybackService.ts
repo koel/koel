@@ -184,7 +184,7 @@ export class QueuePlaybackService extends BasePlaybackService {
       navigator.mediaSession && (navigator.mediaSession.playbackState = 'playing')
       this.showNotification(playable)
     } catch (error: unknown) {
-      // convert this into a warning, as an error will cause Cypress to fail the tests entirely
+      // convert this into a warning to avoid breaking the app
       logger.warn(error)
     }
   }

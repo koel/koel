@@ -11,7 +11,6 @@ export default defineConfig({
   staged: {
     '**/*.php': ['composer cs'],
     'resources/assets/**/*.{js,ts,css,pcss,vue}': ['vp check --fix'],
-    'cypress/**/*.ts': ['vp check --fix'],
   },
   lint: {
     plugins: ['typescript', 'vue', 'import'],
