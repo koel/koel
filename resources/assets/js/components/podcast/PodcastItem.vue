@@ -1,33 +1,45 @@
 <template>
-  <a
-    :href="url('podcasts.show', { id: podcast.id })"
-    class="flex gap-5 p-5 rounded-lg border border-k-fg-5 hover:bg-k-fg-10 bg-k-fg-5 !text-k-fg !hover:text-k-fg"
-    data-testid="podcast-item"
-    @contextmenu.prevent="onContextMenu"
+  <WithGradientBorder
+    border-width="1px"
+    color="var(--color-highlight)"
+    border-color="color-mix(in srgb, var(--color-fg), transparent 97%)"
+    class="rounded-lg"
   >
-    <aside class="hidden md:block md:flex-[0_0_128px]">
-      <img :src="podcast.image" alt="Podcast image" class="w-[128px] aspect-square object-cover rounded-lg" />
-    </aside>
-    <main class="flex-1">
-      <header>
-        <h3 class="text-3xl font-bold">
-          {{ podcast.title }}
-          <FavoriteButton v-if="podcast.favorite" :favorite="podcast.favorite" class="ml-2" @toggle="toggleFavorite" />
-        </h3>
-        <p class="mt-2">
-          {{ podcast.author }}
-          <template v-if="lastPlayedAt">
-            •
-            <span class="text-k-fg-50">
-              Last played
-              <time :datetime="podcast.last_played_at" :title="podcast.last_played_at">{{ lastPlayedAt }}</time>
-            </span>
-          </template>
-        </p>
-      </header>
-      <div v-koel-new-tab class="description mt-3 line-clamp-3 text-k-fg-70" v-html="description" />
-    </main>
-  </a>
+    <a
+      :href="url('podcasts.show', { id: podcast.id })"
+      class="flex gap-5 p-5 rounded-[inherit] bg-k-fg-5 hover:bg-k-fg-10 !text-k-fg !hover:text-k-fg"
+      data-testid="podcast-item"
+      @contextmenu.prevent="onContextMenu"
+    >
+      <aside class="hidden md:block md:flex-[0_0_128px]">
+        <img :src="podcast.image" alt="Podcast image" class="w-[128px] aspect-square object-cover rounded-lg" />
+      </aside>
+      <main class="flex-1">
+        <header>
+          <h3 class="text-3xl font-bold">
+            {{ podcast.title }}
+            <FavoriteButton
+              v-if="podcast.favorite"
+              :favorite="podcast.favorite"
+              class="ml-2"
+              @toggle="toggleFavorite"
+            />
+          </h3>
+          <p class="mt-2">
+            {{ podcast.author }}
+            <template v-if="lastPlayedAt">
+              •
+              <span class="text-k-fg-50">
+                Last played
+                <time :datetime="podcast.last_played_at" :title="podcast.last_played_at">{{ lastPlayedAt }}</time>
+              </span>
+            </template>
+          </p>
+        </header>
+        <div v-koel-new-tab class="description mt-3 line-clamp-3 text-k-fg-70" v-html="description" />
+      </main>
+    </a>
+  </WithGradientBorder>
 </template>
 
 <script setup lang="ts">
@@ -35,6 +47,7 @@ import { computed } from 'vue'
 import DOMPurify from 'dompurify'
 import { formatTimeAgo } from '@vueuse/core'
 import { useRouter } from '@/composables/useRouter'
+import WithGradientBorder from '@/components/ui/WithGradientBorder.vue'
 import { podcastStore } from '@/stores/podcastStore'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { defineAsyncComponent } from '@/utils/helpers'
