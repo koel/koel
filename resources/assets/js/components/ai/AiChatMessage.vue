@@ -22,16 +22,17 @@
 </template>
 
 <script lang="ts" setup>
+import DOMPurify from 'dompurify'
+import { marked } from 'marked'
 import { computed, onBeforeUnmount, ref } from 'vue'
 import { CopyIcon, ClipboardCheckIcon } from 'lucide-vue-next'
 import { copyText } from '@/utils/helpers'
-import { simpleMarkdownToHtml } from '@/utils/formatters'
 
 const props = defineProps<{
   message: AiChatMessage
 }>()
 
-const renderedHtml = computed(() => simpleMarkdownToHtml(props.message.content))
+const renderedHtml = computed(() => DOMPurify.sanitize(marked.parse(props.message.content) as string))
 
 const copied = ref(false)
 let copiedTimeout = 0
@@ -64,5 +65,44 @@ onBeforeUnmount(() => {
 .copy-btn {
   @apply absolute -bottom-6 left-4 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity
     text-k-fg-50 hover:text-k-fg p-1 rounded;
+}
+
+.ai-message {
+  :deep(p + p) {
+    @apply mt-2;
+  }
+
+  :deep(ul),
+  :deep(ol) {
+    @apply ml-5 my-2;
+  }
+
+  :deep(ul) {
+    @apply list-disc;
+  }
+
+  :deep(ol) {
+    @apply list-decimal;
+  }
+
+  :deep(code) {
+    @apply bg-white/10 px-1.5 py-0.5 rounded text-[0.9em];
+  }
+
+  :deep(pre) {
+    @apply bg-white/10 p-3 rounded-lg my-2 overflow-x-auto;
+  }
+
+  :deep(pre code) {
+    @apply bg-transparent p-0;
+  }
+
+  :deep(a) {
+    @apply text-k-highlight hover:underline;
+  }
+
+  :deep(blockquote) {
+    @apply border-l-2 border-k-fg-30 pl-3 my-2 text-k-fg-70;
+  }
 }
 </style>

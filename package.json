@@ -33,6 +33,7 @@
     "lodash": "^4.17.23",
     "lodash-es": "^4.17.23",
     "lucide-vue-next": "^0.452.0",
+    "marked": "^17.0.4",
     "md5": "^2.3.0",
     "nouislider": "^14.7.0",
     "nprogress": "^0.2.0",
