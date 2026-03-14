@@ -6,6 +6,7 @@
     class="playlist select-none"
     draggable="true"
     :active
+    @dblclick="onDblClick"
     @contextmenu="onContextMenu"
     @dragleave.stop="onDragLeave"
     @dragover.stop="onDragOver"
@@ -29,10 +30,12 @@ import { ListMusicIcon } from 'lucide-vue-next'
 import { computed, ref, toRefs } from 'vue'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { playableStore } from '@/stores/playableStore'
+import { recentlyPlayedStore } from '@/stores/recentlyPlayedStore'
 import { useRouter } from '@/composables/useRouter'
 import { useDraggable, useDroppable } from '@/composables/useDragAndDrop'
 import { usePlaylistContentManagement } from '@/composables/usePlaylistContentManagement'
 import { useContextMenu } from '@/composables/useContextMenu'
+import { playback } from '@/services/playbackManager'
 
 import SidebarItem from '@/components/layout/main-wrapper/sidebar/SidebarItem.vue'
 
@@ -96,6 +99,22 @@ const onContextMenu = (event: MouseEvent) => {
     openContextMenu<'PLAYLIST'>(PlaylistContextMenu, event, {
       playlist: list.value,
     })
+  }
+}
+
+const onDblClick = async () => {
+  let playables: Playable[]
+
+  if (isFavoriteList(list.value)) {
+    playables = await playableStore.fetchFavorites()
+  } else if (isRecentlyPlayedList(list.value)) {
+    playables = await recentlyPlayedStore.fetch()
+  } else {
+    playables = await playableStore.fetchForPlaylist(list.value as Playlist)
+  }
+
+  if (playables.length) {
+    playback().queueAndPlay(playables)
   }
 }
 
