@@ -46,7 +46,7 @@
     "tiny-typed-emitter": "^2.1.0",
     "vue": "^3.5.29",
     "vue-advanced-cropper": "^2.8.9",
-    "youtube-player": "^3.1.2"
+    "youtube-player": "^5.6.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
@@ -82,11 +82,11 @@
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3",
     "vite": "npm:@voidzero-dev/vite-plus-core@^0.1.11",
+    "vite-plus": "^0.1.11",
     "vitepress": "^1.6.3",
     "vitepress-plugin-llms": "^1.11.0",
     "vitest": "npm:@voidzero-dev/vite-plus-test@^0.1.11",
-    "vue-tsc": "^3.2.5",
-    "vite-plus": "^0.1.11"
+    "vue-tsc": "^3.2.5"
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"
