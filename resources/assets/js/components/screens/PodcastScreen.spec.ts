@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/vue'
-import type { Mock } from 'vitest'
-import { describe, expect, it, vi } from 'vitest'
+import type { Mock } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { podcastStore } from '@/stores/podcastStore'
 import { playableStore as episodeStore } from '@/stores/playableStore'
@@ -12,6 +12,8 @@ import { useContextMenu } from '@/composables/useContextMenu'
 import { assertOpenContextMenu } from '@/__tests__/assertions'
 import PodcastContextMenu from '@/components/podcast/PodcastContextMenu.vue'
 import Component from './PodcastScreen.vue'
+
+vi.mock('@/composables/useContextMenu')
 
 describe('podcastScreen.vue', () => {
   const h = createHarness()
@@ -134,7 +136,6 @@ describe('podcastScreen.vue', () => {
   })
 
   it('requests Actions menu', async () => {
-    vi.mock('@/composables/useContextMenu')
     const { openContextMenu } = useContextMenu()
     const { podcast } = await renderComponent()
 

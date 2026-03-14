@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/vue'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { albumStore } from '@/stores/albumStore'
 import { createHarness } from '@/__tests__/TestHarness'
 import { logger } from '@/utils/logger'

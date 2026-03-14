@@ -1,12 +1,14 @@
 import { screen, waitFor } from '@testing-library/vue'
-import type { Mock } from 'vitest'
-import { describe, expect, it, vi } from 'vitest'
+import type { Mock } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { playableStore as episodeStore } from '@/stores/playableStore'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { assertOpenContextMenu } from '@/__tests__/assertions'
 import PlayableContextMenu from '@/components/playable/PlayableContextMenu.vue'
 import Component from './EpisodeScreen.vue'
+
+vi.mock('@/composables/useContextMenu')
 
 describe('episodeScreen.vue', () => {
   const h = createHarness()
@@ -45,7 +47,6 @@ describe('episodeScreen.vue', () => {
   })
 
   it('requests Actions menu', async () => {
-    vi.mock('@/composables/useContextMenu')
     const { openContextMenu } = useContextMenu()
     const { episode } = await renderComponent()
 

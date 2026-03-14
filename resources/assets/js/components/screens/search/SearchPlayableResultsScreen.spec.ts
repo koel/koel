@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { searchStore } from '@/stores/searchStore'
 import SearchPlayableResultsScreen from './SearchPlayableResultsScreen.vue'

@@ -31,13 +31,16 @@ jobs:
       - name: Generate app key
         run: php artisan key:generate --quiet
       - name: Set up Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: 22
+      - uses: pnpm/action-setup@v4
+      - name: Install dependencies
+        run: pnpm install
       - name: Run E2E tests
         uses: cypress-io/github-action@v2
         with:
-          build: pnpm build --no-progress
+          build: pnpm exec vp build --no-progress
           start: php artisan serve --port=8080 --quiet
           wait-on: 'http://localhost:8080'
           quiet: true

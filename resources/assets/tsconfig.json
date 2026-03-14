@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "target": "es2022",
     "lib": ["es2022", "dom", "dom.iterable"],
     "jsx": "preserve",
@@ -12,7 +11,7 @@
     "esModuleInterop": true,
     "allowJs": true,
     "paths": {
-      "@/*": ["js/*"]
+      "@/*": ["./js/*"]
     }
   },
   "include": ["js/**/*", "../../node_modules/vitest/globals.d.ts"],

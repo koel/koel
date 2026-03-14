@@ -1,5 +1,5 @@
 import { screen, waitFor } from '@testing-library/vue'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import Component from './EditPlaylistFolderForm.vue'

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import type { UpdateCurrentProfileData } from '@/services/authService'
 import { authService } from '@/services/authService'
@@ -13,7 +13,7 @@ describe('authService', () => {
     beforeEach: () => {
       Object.defineProperty(window, 'location', {
         value: {
-          ...window.location,
+          ...window.location, // eslint-disable-line typescript-eslint/no-misused-spread -- intentional shallow copy for test
         },
         writable: true,
       })

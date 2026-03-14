@@ -1,5 +1,5 @@
-import type { Mock } from 'vitest'
-import { expect } from 'vitest'
+import type { Mock } from 'vite-plus/test'
+import { expect } from 'vite-plus/test'
 import type { Component } from 'vue'
 
 export const assertOpenContextMenu = async (

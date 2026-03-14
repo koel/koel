@@ -1,6 +1,6 @@
 import type { Broadcaster } from 'laravel-echo'
 import Echo from 'laravel-echo'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { uploadService } from '@/services/uploadService'
 import { broadcastSubscriber } from '@/services/broadcastSubscriber'

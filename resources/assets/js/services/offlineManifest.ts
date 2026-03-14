@@ -1,5 +1,3 @@
-import { logger } from '@/utils/logger'
-
 export interface OfflineManifestEntry {
   songId: string
   title: string
@@ -57,8 +55,7 @@ export const offlineManifest = {
   async getAll(): Promise<OfflineManifestEntry[]> {
     try {
       return await withStore('readonly', store => store.getAll())
-    } catch (error) {
-      logger.warn('Failed to read offline manifest', error)
+    } catch {
       return []
     }
   },
@@ -66,8 +63,7 @@ export const offlineManifest = {
   async get(songId: string): Promise<OfflineManifestEntry | undefined> {
     try {
       return await withStore('readonly', store => store.get(songId))
-    } catch (error) {
-      logger.warn('Failed to read offline manifest entry', error)
+    } catch {
       return undefined
     }
   },
@@ -75,24 +71,24 @@ export const offlineManifest = {
   async put(entry: OfflineManifestEntry): Promise<void> {
     try {
       await withStore('readwrite', store => store.put(entry))
-    } catch (error) {
-      logger.warn('Failed to write offline manifest entry', error)
+    } catch {
+      // noop — indexedDB may not be available (e.g. in tests or unsupported browsers)
     }
   },
 
   async remove(songId: string): Promise<void> {
     try {
       await withStore('readwrite', store => store.delete(songId))
-    } catch (error) {
-      logger.warn('Failed to remove offline manifest entry', error)
+    } catch {
+      // noop
     }
   },
 
   async clear(): Promise<void> {
     try {
       await withStore('readwrite', store => store.clear())
-    } catch (error) {
-      logger.warn('Failed to clear offline manifest', error)
+    } catch {
+      // noop
     }
   },
 }

@@ -1,5 +1,5 @@
 import { screen, waitFor } from '@testing-library/vue'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { aiService } from '@/services/aiService'
 import { useAiChat } from '@/composables/useAiChat'

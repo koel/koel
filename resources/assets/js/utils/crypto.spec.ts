@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { base64Decode, base64Encode, md5, uuid } from './crypto'
 
 describe('crypto utils', () => {

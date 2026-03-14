@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { markRaw, ref } from 'vue'
 
 const modalOptions = ref<any>({

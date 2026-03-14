@@ -128,7 +128,7 @@
     "analyze": "phpstan analyse --memory-limit 1G --configuration phpstan.neon.dist --ansi",
     "dev": [
       "Composer\\Config::disableProcessTimeout",
-      "npx concurrently -k -c \"#93c5fd,#c4b5fd,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"vite\" --names=server,queue,vite --restart-tries=3"
+      "npx concurrently -k -c \"#93c5fd,#c4b5fd,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"vp dev\" --names=server,queue,vite --restart-tries=3"
     ]
   },
   "config": {

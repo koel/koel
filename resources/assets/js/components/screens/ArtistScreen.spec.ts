@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/vue'
-import type { Mock } from 'vitest'
-import { describe, expect, it, vi } from 'vitest'
+import type { Mock } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
@@ -12,6 +12,8 @@ import { useContextMenu } from '@/composables/useContextMenu'
 import { assertOpenContextMenu } from '@/__tests__/assertions'
 import ArtistContextMenu from '@/components/artist/ArtistContextMenu.vue'
 import Component from './ArtistScreen.vue'
+
+vi.mock('@/composables/useContextMenu')
 
 describe('artistScreen.vue', () => {
   const h = createHarness({
@@ -112,7 +114,6 @@ describe('artistScreen.vue', () => {
   })
 
   it('requests Actions menu', async () => {
-    vi.mock('@/composables/useContextMenu')
     const { openContextMenu } = useContextMenu()
     const { artist } = await renderComponent()
 

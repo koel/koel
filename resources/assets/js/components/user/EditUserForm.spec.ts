@@ -1,5 +1,5 @@
 import { fireEvent, screen, waitFor } from '@testing-library/vue'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { MessageToasterStub } from '@/__tests__/stubs'
 import { userStore } from '@/stores/userStore'

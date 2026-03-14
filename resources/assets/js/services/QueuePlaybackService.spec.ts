@@ -1,6 +1,6 @@
 import { nextTick, reactive } from 'vue'
 import plyr from 'plyr'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import * as lodash from 'lodash'
 import { createHarness } from '@/__tests__/TestHarness'
 

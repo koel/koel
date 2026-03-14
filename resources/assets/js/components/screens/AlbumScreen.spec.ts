@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/vue'
-import type { Mock } from 'vitest'
-import { describe, expect, it, vi } from 'vitest'
+import type { Mock } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
@@ -12,6 +12,8 @@ import { useContextMenu } from '@/composables/useContextMenu'
 import { assertOpenContextMenu } from '@/__tests__/assertions'
 import AlbumContextMenu from '@/components/album/AlbumContextMenu.vue'
 import Component from './AlbumScreen.vue'
+
+vi.mock('@/composables/useContextMenu')
 
 describe('albumScreen.vue', () => {
   const h = createHarness({
@@ -114,7 +116,6 @@ describe('albumScreen.vue', () => {
   })
 
   it('requests Actions menu', async () => {
-    vi.mock('@/composables/useContextMenu')
     const { openContextMenu } = useContextMenu()
     const { album } = await renderComponent()
 

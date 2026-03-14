@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { DialogBoxStub } from '@/__tests__/stubs'
 import { userStore } from '@/stores/userStore'
 import { screen, waitFor } from '@testing-library/vue'

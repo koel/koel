@@ -1,5 +1,5 @@
 import vueSnapshotSerializer from 'jest-serializer-vue'
-import { expect, vi } from 'vitest'
+import { expect, vi } from 'vite-plus/test'
 
 declare global {
   interface Window {

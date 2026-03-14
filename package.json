@@ -71,14 +71,10 @@
     "cypress": "^9.7.0",
     "factoria": "^4.0.1",
     "fake-indexeddb": "^6.2.5",
-    "husky": "^9.1.7",
     "jest-serializer-vue": "^2.0.2",
     "jsdom": "^26.1.0",
     "laravel-echo": "^2.1.6",
     "laravel-vite-plugin": "^2.1.0",
-    "lint-staged": "^10.5.4",
-    "oxfmt": "^0.36.0",
-    "oxlint": "^1.51.0",
     "postcss": "^8.5.8",
     "postcss-mixins": "^10.0.1",
     "postcss-nested": "^6.2.0",
@@ -86,52 +82,39 @@
     "rollup-plugin-visualizer": "^6.0.3",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3",
-    "vite": "^8.0.0",
+    "vite": "npm:@voidzero-dev/vite-plus-core@^0.1.11",
     "vitepress": "^1.6.3",
     "vitepress-plugin-llms": "^1.11.0",
-    "vitest": "^4.0.18",
-    "vue-tsc": "^3.2.5"
+    "vitest": "npm:@voidzero-dev/vite-plus-test@^0.1.11",
+    "vue-tsc": "^3.2.5",
+    "vite-plus": "^0.1.11"
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"
   },
   "scripts": {
-    "format": "oxfmt --check ./resources/assets",
-    "format:fix": "oxfmt --write ./resources/assets",
-    "lint": "oxlint ./resources/assets",
-    "lint:fix": "oxlint --fix ./resources/assets",
-    "typecheck": "vue-tsc --noEmit -p resources/assets/tsconfig.typecheck.json",
-    "test": "vitest",
-    "test:unit": "vitest",
+    "check": "vp check resources/assets",
+    "check:fix": "vp check --fix resources/assets",
+    "test": "vp test",
+    "test:unit": "vp test",
     "test:e2e": "kill-port 8080 && start-test dev http-get://localhost:8080/api/ping 'cypress open'",
     "test:e2e:ci": "kill-port 8080 && start-test 'php artisan serve --port=8080 --quiet' http-get://localhost:8080/api/ping 'cypress run --browser chromium'",
-    "build:sw": "vite build --config vite.config.sw.js",
-    "build": "vite build && pnpm run build:sw",
+    "build:sw": "vp build --config vite.config.sw.js",
+    "build": "vp build && pnpm run build:sw",
     "dev": "node -e \"console.warn('Command \\\"pnpm dev\\\" has been removed. Use \\\"composer dev\\\" instead.')\"",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-    "prepare": "husky"
-  },
-  "lint-staged": {
-    "**/*.php": [
-      "composer cs"
-    ],
-    "resources/assets/**/*.{js,ts,css,pcss,vue}": [
-      "oxfmt --write",
-      "oxlint --fix"
-    ],
-    "resources/assets/**/*.{ts,vue}": "bash -c 'vue-tsc --noEmit -p resources/assets/tsconfig.typecheck.json'",
-    "cypress/**/*.ts": [
-      "oxfmt --write",
-      "oxlint --fix"
-    ]
+    "prepare": "vp config"
   },
   "type": "module",
   "pnpm": {
     "overrides": {
       "form-data@<2.5.4": ">=2.5.4",
-      "@rolldown/pluginutils": "1.0.0-rc.9"
+      "@rolldown/pluginutils": "1.0.0-rc.9",
+      "vite": "npm:@voidzero-dev/vite-plus-core@^0.1.11",
+      "vitest": "npm:@voidzero-dev/vite-plus-test@^0.1.11"
     }
-  }
+  },
+  "packageManager": "pnpm@10.32.1"
 }

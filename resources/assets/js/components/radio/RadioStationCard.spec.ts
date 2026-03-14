@@ -1,5 +1,5 @@
-import type { Mock } from 'vitest'
-import { describe, expect, it, vi } from 'vitest'
+import type { Mock } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { fireEvent, screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { playbackService } from '@/services/RadioPlaybackService'
@@ -8,6 +8,8 @@ import { useContextMenu } from '@/composables/useContextMenu'
 import { assertOpenContextMenu } from '@/__tests__/assertions'
 import RadioStationContextMenu from '@/components/radio/RadioStationContextMenu.vue'
 import Component from './RadioStationCard.vue'
+
+vi.mock('@/composables/useContextMenu')
 
 describe('radioStationCard.vue', () => {
   const h = createHarness()
@@ -64,7 +66,6 @@ describe('radioStationCard.vue', () => {
   })
 
   it('requests context menu', async () => {
-    vi.mock('@/composables/useContextMenu')
     const { openContextMenu } = useContextMenu()
     const { station } = renderComponent()
     await h.trigger(screen.getByTestId('radio-station-card'), 'contextMenu')

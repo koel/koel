@@ -1,6 +1,6 @@
 import { clone } from 'lodash'
 import { screen } from '@testing-library/vue'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { assertOpenModal } from '@/__tests__/assertions'
 import { playlistStore } from '@/stores/playlistStore'

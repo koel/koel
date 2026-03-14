@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/vue'
-import type { Mock } from 'vitest'
-import { describe, expect, it, vi } from 'vitest'
+import type { Mock } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { downloadService } from '@/services/downloadService'
 import { playbackService } from '@/services/QueuePlaybackService'
@@ -11,6 +11,8 @@ import { useContextMenu } from '@/composables/useContextMenu'
 import { assertOpenContextMenu } from '@/__tests__/assertions'
 import AlbumContextMenu from './AlbumContextMenu.vue'
 import Component from './AlbumCard.vue'
+
+vi.mock('@/composables/useContextMenu')
 
 describe('albumCard', () => {
   const h = createHarness()
@@ -86,7 +88,6 @@ describe('albumCard', () => {
   })
 
   it('requests context menu', async () => {
-    vi.mock('@/composables/useContextMenu')
     const { openContextMenu } = useContextMenu()
     const { album } = renderComponent()
     await h.trigger(screen.getByTestId('artist-album-card'), 'contextMenu')

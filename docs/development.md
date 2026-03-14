@@ -31,26 +31,7 @@ pnpm install
 You can now start the development server with `composer dev`:
 
 ```bash
-$ composer dev
-
-> Composer\Config::disableProcessTimeout
-> npx concurrently -k -c "#93c5fd,#c4b5fd,#fdba74" "php artisan serve" "php artisan queue:listen --tries=1" "vite" --names=server,queue,vite --restart-tries=3
-[vite]
-[vite]   VITE v5.1.8  ready in 294 ms
-[vite]
-[vite]   ➜  Local:   http://localhost:5173/
-[vite]   ➜  Network: use --host to expose
-[queue]
-[queue]    INFO  Processing jobs from the [default] queue.
-[queue]
-[vite]
-[vite]   LARAVEL v10.48.8  plugin v1.0.2
-[vite]
-[vite]   ➜  APP_URL: http://localhost:8000
-[server]
-[server]    INFO  Server running on [http://127.0.0.1:8000].
-[server]
-[server]   Press Ctrl+C to stop the server
+composer dev
 ```
 
 A development version of Koel should now be available at `http://localhost:8000` with full HMR support.
@@ -60,18 +41,15 @@ Every change you make to the client application will be reflected in the browser
 
 ```bash
 # PHP-related code quality tasks
-# Basically, take a look at the "scripts" section in composer.json
 composer test        # Run the PHP test suite
 composer cs          # Run code style checker
 composer cs:fix      # Run code style fixer
 composer analyze     # Run PHP static analysis
 
-pnpm build # Build a production version of the client application
-
 # Client code quality tasks
-# These commands need to be run from within the submodule (resources/assets)
-pnpm test            # Unit testing
-pnpm lint            # Lint
+pnpm run build       # Build a production version of the client application
+pnpm run test        # Unit testing
+pnpm run check       # Format + lint + type check
 ```
 
 ## Koel Docs

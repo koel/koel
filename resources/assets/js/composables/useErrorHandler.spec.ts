@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { HTTPError } from 'ky'
 import { useErrorHandler } from './useErrorHandler'
 

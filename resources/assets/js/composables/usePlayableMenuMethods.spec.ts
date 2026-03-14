@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { ref } from 'vue'
 import { queueStore } from '@/stores/queueStore'
 import { playableStore } from '@/stores/playableStore'

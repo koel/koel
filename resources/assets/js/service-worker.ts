@@ -226,7 +226,7 @@ const cacheAudio = async (data: CacheAudioMessage, client: Client) => {
       throw new Error('ReadableStream not supported')
     }
 
-    const chunks: Uint8Array[] = []
+    const chunks: BlobPart[] = []
     let received = 0
 
     while (true) {

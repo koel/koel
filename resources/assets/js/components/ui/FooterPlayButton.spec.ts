@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/vue'
 import { ref } from 'vue'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { CurrentStreamableKey } from '@/config/symbols'
@@ -34,7 +34,7 @@ describe('footerPlayButton.vue', () => {
     expect(toggleMock).toHaveBeenCalled()
   })
 
-  it.each<[string, MethodOf<typeof playableStore>, Album['id'] | Artist['id'] | Playlist['id']]>([
+  it.each<[string, MethodOf<typeof playableStore>, Album['id']]>([
     ['/albums/01K610ZFJGVTCVGZ0505464ZGR', 'fetchSongsForAlbum', '01K610ZFJGVTCVGZ0505464ZGR'],
     ['/artists/01K610ZFJGVTCVGZ0505464ZGR', 'fetchSongsForArtist', '01K610ZFJGVTCVGZ0505464ZGR'],
     ['/playlists/73a36cfd-4afd-48ae-b031-ae5488858375', 'fetchForPlaylist', '73a36cfd-4afd-48ae-b031-ae5488858375'],
@@ -58,14 +58,8 @@ describe('footerPlayButton.vue', () => {
     })
   })
 
-  // @ts-ignore
-  it.each<
-    [
-      string,
-      typeof playableStore | typeof recentlyPlayedStore,
-      MethodOf<typeof playableStore | typeof recentlyPlayedStore>,
-    ]
-  >([
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- vitest it.each typing limitation
+  it.each<[string, any, string]>([
     ['/favorites', playableStore, 'fetchFavorites'],
     ['/recently-played', recentlyPlayedStore, 'fetch'],
   ])('initiates playback for %s', async (hash, store, fetchMethod) => {

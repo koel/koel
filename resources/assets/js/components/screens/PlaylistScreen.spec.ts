@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/vue'
-import type { Mock } from 'vitest'
-import { describe, expect, it, vi } from 'vitest'
+import type { Mock } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { eventBus } from '@/utils/eventBus'
 import { playlistStore } from '@/stores/playlistStore'
@@ -11,6 +11,8 @@ import { useContextMenu } from '@/composables/useContextMenu'
 import { assertOpenContextMenu } from '@/__tests__/assertions'
 import PlaylistContextMenu from '@/components/playlist/PlaylistContextMenu.vue'
 import Component from './PlaylistScreen.vue'
+
+vi.mock('@/composables/useContextMenu')
 
 describe('playlistScreen.vue', () => {
   const h = createHarness()
@@ -72,7 +74,6 @@ describe('playlistScreen.vue', () => {
   })
 
   it('shows Actions menu', async () => {
-    vi.mock('@/composables/useContextMenu')
     const { openContextMenu } = useContextMenu()
     const { playlist } = await renderComponent()
 
