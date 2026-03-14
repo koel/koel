@@ -11,15 +11,13 @@
         </template>
 
         <template #meta>
-          <span class="flex meta-content">
-            <a v-if="isStandardArtist" :href="url('artists.show', { id: album.artist_id })" class="artist">
-              {{ album.artist_name }}
-            </a>
-            <span v-else class="text-k-fg">{{ album.artist_name }}</span>
-            <span v-if="album.year">{{ album.year }}</span>
-            <span>{{ pluralize(songs, 'song') }}</span>
-            <span>{{ duration }}</span>
-          </span>
+          <a v-if="isStandardArtist" :href="url('artists.show', { id: album.artist_id })" class="artist">
+            {{ album.artist_name }}
+          </a>
+          <span v-else class="text-k-fg">{{ album.artist_name }}</span>
+          <span v-if="album.year">{{ album.year }}</span>
+          <span>{{ pluralize(songs, 'song') }}</span>
+          <span>{{ duration }}</span>
         </template>
 
         <template #controls>
@@ -225,11 +223,6 @@ eventBus.on('SONGS_UPDATED', result => {
 </script>
 
 <style lang="postcss" scoped>
-.meta-content > *:not(:first-child)::before {
-  content: '•';
-  margin: 0 0.25em;
-}
-
 .screen-header :deep(.play-icon) {
   @apply scale-[2];
 }

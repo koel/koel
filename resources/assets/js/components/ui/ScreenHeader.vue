@@ -14,7 +14,7 @@
             <slot />
           </MarqueeText>
         </h1>
-        <span v-if="$slots.meta" class="meta hidden text-[0.9rem] leading-loose space-x-2">
+        <span v-if="$slots.meta" class="meta hidden text-[0.9rem] leading-loose">
           <slot name="meta" />
         </span>
       </div>
@@ -86,7 +86,7 @@ header.screen-header {
       @apply text-k-fg hover:text-k-highlight;
     }
 
-    > :slotted(*) + :slotted(*) {
+    :deep(> * + *) {
       @apply ml-1 inline-block before:content-['•'] before:mr-1 before:text-k-fg-70;
     }
   }
