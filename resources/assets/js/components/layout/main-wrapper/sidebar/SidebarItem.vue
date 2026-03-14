@@ -53,7 +53,7 @@ const navigate = () => {
 
 const onClick = () => {
   clearTimeout(clickTimer)
-  clickTimer = window.setTimeout(navigate, 250)
+  clickTimer = window.setTimeout(navigate, 150)
 }
 
 const onDblClick = () => {
