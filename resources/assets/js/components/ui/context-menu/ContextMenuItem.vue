@@ -12,7 +12,7 @@
       <slot name="icon" />
     </span>
 
-    <span class="label flex-1 overflow-hidden max-w-40 text-ellipsis">
+    <span class="label flex-1 overflow-hidden text-ellipsis">
       <slot />
     </span>
 
