@@ -56,7 +56,7 @@ const copy = async () => {
 }
 
 .copy-btn {
-  @apply absolute -bottom-6 left-4 opacity-0 group-hover:opacity-100 transition-opacity
+  @apply absolute -bottom-6 left-4 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity
     text-k-fg-50 hover:text-k-fg p-1 rounded;
 }
 </style>
