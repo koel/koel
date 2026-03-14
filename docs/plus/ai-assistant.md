@@ -99,6 +99,15 @@ The assistant is context-aware. If a song is currently playing, you can refer to
 without having to specify the exact title.
 :::
 
+## Known Limitations
+
+### Lyrics Display
+
+When asked to show lyrics, the assistant retrieves them from your library and attempts to relay them in the response.
+However, some AI providers may refuse to display lyrics due to copyright restrictions built into their models.
+If this happens, try a different AI provider — behavior varies between providers and models.
+The lyrics are still stored in your library and can always be viewed via the side sheet's Lyrics tab.
+
 ## Conversation Memory
 
 The AI assistant remembers the context of your current conversation session.
