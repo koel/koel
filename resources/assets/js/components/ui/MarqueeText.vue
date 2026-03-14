@@ -1,7 +1,24 @@
 <template>
-  <span v-if="prefersReducedMotion" class="block truncate">{{ text }}</span>
-  <span v-else ref="containerRef" class="inline-block max-w-full">
-    <span ref="textRef" class="inline-block" :style="animationStyle">{{ text }}</span>
+  <span v-if="prefersReducedMotion" class="block truncate">
+    <template v-if="text">{{ text }}</template>
+    <slot v-else />
+  </span>
+  <span
+    v-else
+    ref="containerRef"
+    class="block max-w-full overflow-hidden"
+    @mouseenter="onMouseEnter"
+    @mouseleave="onMouseLeave"
+  >
+    <span
+      ref="textRef"
+      class="inline-block whitespace-nowrap"
+      :class="animating ? '' : 'max-w-full truncate align-bottom'"
+      :style="animationStyle"
+    >
+      <template v-if="text">{{ text }}</template>
+      <slot v-else />
+    </span>
   </span>
 </template>
 
@@ -9,7 +26,11 @@
 import { useMediaQuery } from '@vueuse/core'
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 
-const props = withDefaults(defineProps<{ text: string; speed?: number }>(), { speed: 30 })
+const props = withDefaults(defineProps<{ text?: string; speed?: number; hoverOnly?: boolean }>(), {
+  text: undefined,
+  speed: 30,
+  hoverOnly: false,
+})
 
 const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
 
@@ -56,7 +77,7 @@ const pause = (ms: number) =>
   })
 
 const animate = async () => {
-  if (prefersReducedMotion) {
+  if (prefersReducedMotion.value) {
     return
   }
 
@@ -115,11 +136,27 @@ const animate = async () => {
   frameId = requestAnimationFrame(step)
 }
 
+const onMouseEnter = () => {
+  if (props.hoverOnly) {
+    stop()
+    animate()
+  }
+}
+
+const onMouseLeave = () => {
+  if (props.hoverOnly) {
+    stop()
+  }
+}
+
 watch(
   () => props.text,
   () => {
     stop()
-    animate()
+
+    if (!props.hoverOnly) {
+      animate()
+    }
   },
   { flush: 'post' },
 )
@@ -127,7 +164,7 @@ watch(
 watch(
   containerRef,
   () => {
-    if (containerRef.value) {
+    if (containerRef.value && !props.hoverOnly) {
       stop()
       animate()
     }
