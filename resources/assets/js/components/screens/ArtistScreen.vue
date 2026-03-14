@@ -11,11 +11,9 @@
         </template>
 
         <template #meta>
-          <span class="flex meta-content">
-            <span>{{ pluralize(albumCount, 'album') }}</span>
-            <span>{{ pluralize(songs, 'song') }}</span>
-            <span>{{ duration }}</span>
-          </span>
+          <span>{{ pluralize(albumCount, 'album') }}</span>
+          <span>{{ pluralize(songs, 'song') }}</span>
+          <span>{{ duration }}</span>
         </template>
 
         <template #controls>
@@ -221,11 +219,6 @@ eventBus.on('SONGS_UPDATED', result => {
 </script>
 
 <style lang="postcss" scoped>
-.meta-content > *:not(:first-child)::before {
-  content: '•';
-  margin: 0 0.25em;
-}
-
 .screen-header :deep(.play-icon) {
   @apply scale-[2];
 }
