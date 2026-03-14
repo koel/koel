@@ -91,17 +91,18 @@ class UpdateAlbumDetailsToolTest extends PlusTestCase
     }
 
     #[Test]
-    public function deniesUnauthorizedUser(): void
+    public function nonOwnerCannotFindAlbum(): void
     {
-        $user = create_user();
-        $album = Album::factory()->for($user)->createOne(['name' => 'My Album']);
+        $owner = create_user();
+        $otherUser = create_user();
+        $album = Album::factory()->for($owner)->createOne(['name' => 'My Album']);
 
-        app()->instance(AiRequestContext::class, new AiRequestContext($user));
+        app()->instance(AiRequestContext::class, new AiRequestContext($otherUser));
         $this->tool = app()->make(UpdateAlbumDetails::class);
 
         $response = $this->tool->handle(new Request(['query' => 'My Album', 'name' => 'Hacked']));
 
-        self::assertStringContainsString("don't have permission", (string) $response);
+        self::assertStringContainsString('No album matching', (string) $response);
         self::assertSame('My Album', $album->fresh()->name);
         self::assertNull($this->result->action);
     }

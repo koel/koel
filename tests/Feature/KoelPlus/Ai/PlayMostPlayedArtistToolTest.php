@@ -36,7 +36,7 @@ class PlayMostPlayedArtistToolTest extends PlusTestCase
     #[Test]
     public function playsMostPlayedArtist(): void
     {
-        $artist = Artist::factory()->createOne();
+        $artist = Artist::factory()->for($this->user)->createOne();
         $songs = Song::factory()
             ->count(3)
             ->for($artist)
@@ -69,7 +69,7 @@ class PlayMostPlayedArtistToolTest extends PlusTestCase
     #[Test]
     public function queuesInsteadOfPlaying(): void
     {
-        $artist = Artist::factory()->createOne();
+        $artist = Artist::factory()->for($this->user)->createOne();
         $songs = Song::factory()
             ->count(2)
             ->for($artist)

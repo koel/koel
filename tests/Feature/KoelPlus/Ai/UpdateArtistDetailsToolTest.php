@@ -56,17 +56,18 @@ class UpdateArtistDetailsToolTest extends PlusTestCase
     }
 
     #[Test]
-    public function deniesUnauthorizedUser(): void
+    public function nonOwnerCannotFindArtist(): void
     {
-        $user = create_user();
-        $artist = Artist::factory()->for($user)->createOne(['name' => 'My Artist']);
+        $owner = create_user();
+        $otherUser = create_user();
+        $artist = Artist::factory()->for($owner)->createOne(['name' => 'My Artist']);
 
-        app()->instance(AiRequestContext::class, new AiRequestContext($user));
+        app()->instance(AiRequestContext::class, new AiRequestContext($otherUser));
         $this->tool = app()->make(UpdateArtistDetails::class);
 
         $response = $this->tool->handle(new Request(['current_name' => 'My Artist', 'new_name' => 'Hacked']));
 
-        self::assertStringContainsString("don't have permission", (string) $response);
+        self::assertStringContainsString('No artist matching', (string) $response);
         self::assertSame('My Artist', $artist->fresh()->name);
         self::assertNull($this->result->action);
     }
