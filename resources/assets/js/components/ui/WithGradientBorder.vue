@@ -30,6 +30,8 @@ const findScrollParent = (el: HTMLElement): Element | null => {
   return null
 }
 
+const scrollHandlers = new Map<Element, EventListener>()
+
 const subscribeToScroll = (container: Element, cb: Fn): Fn => {
   let subs = scrollSubscribers.get(container)
 
@@ -37,23 +39,30 @@ const subscribeToScroll = (container: Element, cb: Fn): Fn => {
     subs = new Set()
     scrollSubscribers.set(container, subs)
 
-    container.addEventListener(
-      'scroll',
-      () => {
-        for (const fn of scrollSubscribers.get(container) || []) {
-          fn()
-        }
-      },
-      { passive: true },
-    )
+    const onScroll = () => {
+      for (const fn of scrollSubscribers.get(container) || []) {
+        fn()
+      }
+    }
+
+    scrollHandlers.set(container, onScroll)
+    container.addEventListener('scroll', onScroll, { passive: true })
   }
 
   subs.add(cb)
 
   return () => {
-    subs!.delete(cb)
+    const current = scrollSubscribers.get(container)
+    current?.delete(cb)
 
-    if (subs!.size === 0) {
+    if (!current || current.size === 0) {
+      const handler = scrollHandlers.get(container)
+
+      if (handler) {
+        container.removeEventListener('scroll', handler)
+        scrollHandlers.delete(container)
+      }
+
       scrollSubscribers.delete(container)
     }
   }
@@ -158,6 +167,7 @@ onBeforeUnmount(() => {
   mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
   mask-composite: exclude;
   padding: var(--gradient-border-width);
 }
@@ -169,6 +179,7 @@ onBeforeUnmount(() => {
   mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
   mask-composite: exclude;
   padding: var(--gradient-border-width);
 }
