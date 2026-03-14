@@ -117,19 +117,6 @@ const fnv1a = (str: string) => {
   return h >>> 0
 }
 
-/**
- * Convert simple markdown (bold, italic, newlines) to HTML.
- */
-export const simpleMarkdownToHtml = (text: string) => {
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/\n/g, '<br>')
-}
-
 export const textToHsl = (text: string, s = 65, l = 55) => {
   const hash = fnv1a(text)
   const h = hash % 360
