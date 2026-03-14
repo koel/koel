@@ -71,6 +71,9 @@ importers:
       lucide-vue-next:
         specifier: ^0.452.0
         version: 0.452.0(vue@3.5.29(typescript@5.8.3))
+      marked:
+        specifier: ^17.0.4
+        version: 17.0.4
       md5:
         specifier: ^2.3.0
         version: 2.3.0
@@ -2786,6 +2789,11 @@ packages:
   markdown-title@1.0.2:
     resolution: {integrity: sha512-MqIQVVkz+uGEHi3TsHx/czcxxCbRIL7sv5K5DnYw/tI+apY54IbPefV/cmgxp6LoJSEx/TqcHdLs/298afG5QQ==}
     engines: {node: '>=6'}
+
+  marked@17.0.4:
+    resolution: {integrity: sha512-NOmVMM+KAokHMvjWmC5N/ZOvgmSWuqJB8FoYI019j4ogb/PeRMKoKIjReZ2w3376kkA8dSJIP8uD993Kxc0iRQ==}
+    engines: {node: '>= 20'}
+    hasBin: true
 
   math-intrinsics@1.1.0:
     resolution: {integrity: sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==}
@@ -6070,6 +6078,8 @@ snapshots:
       uc.micro: 2.1.0
 
   markdown-title@1.0.2: {}
+
+  marked@17.0.4: {}
 
   math-intrinsics@1.1.0: {}
 
