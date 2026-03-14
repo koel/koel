@@ -1,35 +1,44 @@
 <template>
-  <article
-    :class="layout"
-    class="relative group flex max-w-full md:max-w-[256px] border p-5 rounded-lg flex-col gap-5"
-    data-testid="artist-album-card"
-    draggable="true"
-    tabindex="0"
-    @dblclick="onDblClick"
-    @dragstart="onDragStart"
-    @contextmenu.prevent="onContextMenu"
+  <WithGradientBorder
+    border-width="1px"
+    color="var(--color-highlight)"
+    border-color="color-mix(in srgb, var(--color-fg), transparent 97%)"
+    class="rounded-lg max-w-full md:max-w-[256px]"
+    :class="{ compact: layout === 'compact' }"
   >
-    <slot name="thumbnail">
-      <Thumbnail v-if="!isPodcast(entity)" :entity="entity" />
-    </slot>
+    <article
+      :class="layout"
+      class="relative group flex p-5 rounded-[inherit] flex-col gap-5"
+      data-testid="artist-album-card"
+      draggable="true"
+      tabindex="0"
+      @dblclick="onDblClick"
+      @dragstart="onDragStart"
+      @contextmenu.prevent="onContextMenu"
+    >
+      <slot name="thumbnail">
+        <Thumbnail v-if="!isPodcast(entity)" :entity="entity" />
+      </slot>
 
-    <footer class="flex flex-1 flex-col gap-1.5 overflow-hidden">
-      <div class="name flex flex-col gap-2 whitespace-nowrap">
-        <slot name="name" />
-      </div>
-      <p class="meta text-[0.9rem] flex gap-1.5 opacity-70 hover:opacity-100">
-        <slot name="meta" />
-      </p>
-    </footer>
+      <footer class="flex flex-1 flex-col gap-1.5 overflow-hidden">
+        <div class="name flex flex-col gap-2 whitespace-nowrap">
+          <slot name="name" />
+        </div>
+        <p class="meta text-[0.9rem] flex gap-1.5 opacity-70 hover:opacity-100">
+          <slot name="meta" />
+        </p>
+      </footer>
 
-    <slot />
-  </article>
+      <slot />
+    </article>
+  </WithGradientBorder>
 </template>
 
 <script lang="ts" setup>
 import { toRefs } from 'vue'
 
 import Thumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
+import WithGradientBorder from '@/components/ui/WithGradientBorder.vue'
 
 const props = withDefaults(defineProps<{ layout?: CardLayout; entity: Artist | Album | Podcast }>(), {
   layout: 'full',
@@ -52,7 +61,7 @@ const onContextMenu = (e: MouseEvent) => emit('contextmenu', e)
 
 <style lang="postcss" scoped>
 article {
-  @apply bg-k-fg-5 border border-k-fg-10 hover:border-white/15;
+  @apply bg-k-fg-5;
 
   &.full {
     :deep(.play-icon) {
@@ -76,7 +85,7 @@ article {
   }
 
   &.compact {
-    @apply flex-row gap-4 max-w-full p-3 rounded-md items-center;
+    @apply flex-row gap-4 p-3 rounded-md items-center;
 
     .thumbnail {
       @apply w-[80px] rounded-md;
@@ -100,5 +109,9 @@ article {
       }
     }
   }
+}
+
+.compact {
+  @apply max-w-full rounded-md;
 }
 </style>
