@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Ai;
+namespace Tests\Feature\KoelPlus\Ai;
 
 use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
@@ -16,11 +16,11 @@ use Illuminate\Database\Eloquent\Collection;
 use Laravel\Ai\Tools\Request;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\PlusTestCase;
 
 use function Tests\create_user;
 
-class RemoveFromFavoritesToolTest extends TestCase
+class RemoveFromFavoritesToolTest extends PlusTestCase
 {
     private AiAssistantResult $result;
     private User $user;

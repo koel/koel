@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Ai;
+namespace Tests\Feature\KoelPlus\Ai;
 
 use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
@@ -9,12 +9,12 @@ use App\Models\Artist;
 use App\Models\User;
 use Laravel\Ai\Tools\Request;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\PlusTestCase;
 
 use function Tests\create_admin;
 use function Tests\create_user;
 
-class UpdateArtistDetailsToolTest extends TestCase
+class UpdateArtistDetailsToolTest extends PlusTestCase
 {
     private AiAssistantResult $result;
     private User $user;
@@ -56,17 +56,18 @@ class UpdateArtistDetailsToolTest extends TestCase
     }
 
     #[Test]
-    public function deniesUnauthorizedUser(): void
+    public function nonOwnerCannotFindArtist(): void
     {
-        $user = create_user();
-        $artist = Artist::factory()->for($user)->createOne(['name' => 'My Artist']);
+        $owner = create_user();
+        $otherUser = create_user();
+        $artist = Artist::factory()->for($owner)->createOne(['name' => 'My Artist']);
 
-        app()->instance(AiRequestContext::class, new AiRequestContext($user));
+        app()->instance(AiRequestContext::class, new AiRequestContext($otherUser));
         $this->tool = app()->make(UpdateArtistDetails::class);
 
         $response = $this->tool->handle(new Request(['current_name' => 'My Artist', 'new_name' => 'Hacked']));
 
-        self::assertStringContainsString("don't have permission", (string) $response);
+        self::assertStringContainsString('No artist matching', (string) $response);
         self::assertSame('My Artist', $artist->fresh()->name);
         self::assertNull($this->result->action);
     }

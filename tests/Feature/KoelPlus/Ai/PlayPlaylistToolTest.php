@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Ai;
+namespace Tests\Feature\KoelPlus\Ai;
 
 use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
@@ -10,11 +10,11 @@ use App\Models\Song;
 use App\Models\User;
 use Laravel\Ai\Tools\Request;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\PlusTestCase;
 
 use function Tests\create_user;
 
-class PlayPlaylistToolTest extends TestCase
+class PlayPlaylistToolTest extends PlusTestCase
 {
     private AiAssistantResult $result;
     private User $user;

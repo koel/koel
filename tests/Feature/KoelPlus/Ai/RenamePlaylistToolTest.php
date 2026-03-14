@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Ai;
+namespace Tests\Feature\KoelPlus\Ai;
 
 use App\Ai\AiRequestContext;
 use App\Ai\Tools\RenamePlaylist;
@@ -8,11 +8,11 @@ use App\Models\Playlist;
 use App\Models\User;
 use Laravel\Ai\Tools\Request;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\PlusTestCase;
 
 use function Tests\create_user;
 
-class RenamePlaylistToolTest extends TestCase
+class RenamePlaylistToolTest extends PlusTestCase
 {
     private User $user;
     private RenamePlaylist $tool;

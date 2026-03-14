@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Ai;
+namespace Tests\Feature\KoelPlus\Ai;
 
 use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
@@ -13,11 +13,11 @@ use Laravel\Ai\Tools\Request;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\PlusTestCase;
 
 use function Tests\create_user;
 
-class PlaySongsByLyricsToolTest extends TestCase
+class PlaySongsByLyricsToolTest extends PlusTestCase
 {
     private AiAssistantResult $result;
     private User $user;
