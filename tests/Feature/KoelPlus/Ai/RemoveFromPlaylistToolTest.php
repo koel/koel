@@ -1,25 +1,25 @@
 <?php
 
-namespace Tests\Feature\Ai;
+namespace Tests\Feature\KoelPlus\Ai;
 
 use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
-use App\Ai\Tools\AddToPlaylist;
+use App\Ai\Tools\RemoveFromPlaylist;
 use App\Helpers\Uuid;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
 use Laravel\Ai\Tools\Request;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\PlusTestCase;
 
 use function Tests\create_user;
 
-class AddToPlaylistToolTest extends TestCase
+class RemoveFromPlaylistToolTest extends PlusTestCase
 {
     private AiAssistantResult $result;
     private User $user;
-    private AddToPlaylist $tool;
+    private RemoveFromPlaylist $tool;
 
     public function setUp(): void
     {
@@ -30,24 +30,26 @@ class AddToPlaylistToolTest extends TestCase
 
         app()->instance(AiAssistantResult::class, $this->result);
         app()->instance(AiRequestContext::class, new AiRequestContext($this->user));
-        $this->tool = app()->make(AddToPlaylist::class);
+        $this->tool = app()->make(RemoveFromPlaylist::class);
     }
 
     #[Test]
-    public function addsCurrentSongToPlaylist(): void
+    public function removesCurrentSongFromPlaylist(): void
     {
         $playlist = Playlist::factory()->createOne(['name' => 'My Rock Playlist']);
         $user = $playlist->owner;
         $song = Song::factory()->for($user, 'owner')->createOne(['title' => 'Test Song']);
+        $playlist->playables()->attach($song, ['user_id' => $user->id]);
 
         app()->instance(AiRequestContext::class, new AiRequestContext($user, currentSongId: $song->id));
-        $this->tool = app()->make(AddToPlaylist::class);
+        $this->tool = app()->make(RemoveFromPlaylist::class);
 
         $response = $this->tool->handle(new Request(['playlist_name' => 'Rock Playlist']));
 
+        self::assertSame('remove_from_playlist', $this->result->action);
         self::assertStringContainsString('Test Song', (string) $response);
         self::assertStringContainsString('My Rock Playlist', (string) $response);
-        self::assertTrue($playlist->playables()->where('songs.id', $song->id)->exists());
+        self::assertFalse($playlist->playables()->where('songs.id', $song->id)->exists());
     }
 
     #[Test]
@@ -59,7 +61,7 @@ class AddToPlaylistToolTest extends TestCase
     }
 
     #[Test]
-    public function cannotAddToSmartPlaylist(): void
+    public function cannotRemoveFromSmartPlaylist(): void
     {
         $playlist = Playlist::factory()->createOne([
             'name' => 'Smart Jazz',
@@ -76,7 +78,7 @@ class AddToPlaylistToolTest extends TestCase
         $song = Song::factory()->for($user, 'owner')->createOne();
 
         app()->instance(AiRequestContext::class, new AiRequestContext($user, currentSongId: $song->id));
-        $this->tool = app()->make(AddToPlaylist::class);
+        $this->tool = app()->make(RemoveFromPlaylist::class);
 
         $response = $this->tool->handle(new Request(['playlist_name' => 'Smart Jazz']));
 
@@ -90,7 +92,7 @@ class AddToPlaylistToolTest extends TestCase
         $user = $playlist->owner;
 
         app()->instance(AiRequestContext::class, new AiRequestContext($user));
-        $this->tool = app()->make(AddToPlaylist::class);
+        $this->tool = app()->make(RemoveFromPlaylist::class);
 
         $response = $this->tool->handle(new Request(['playlist_name' => 'My Playlist']));
 

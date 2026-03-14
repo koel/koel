@@ -1,25 +1,25 @@
 <?php
 
-namespace Tests\Feature\Ai;
+namespace Tests\Feature\KoelPlus\Ai;
 
 use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
-use App\Ai\Tools\PlayMostPlayedAlbum;
-use App\Models\Album;
+use App\Ai\Tools\PlayMostPlayedArtist;
+use App\Models\Artist;
 use App\Models\Interaction;
 use App\Models\Song;
 use App\Models\User;
 use Laravel\Ai\Tools\Request;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\PlusTestCase;
 
 use function Tests\create_user;
 
-class PlayMostPlayedAlbumToolTest extends TestCase
+class PlayMostPlayedArtistToolTest extends PlusTestCase
 {
     private AiAssistantResult $result;
     private User $user;
-    private PlayMostPlayedAlbum $tool;
+    private PlayMostPlayedArtist $tool;
 
     public function setUp(): void
     {
@@ -30,16 +30,16 @@ class PlayMostPlayedAlbumToolTest extends TestCase
 
         app()->instance(AiAssistantResult::class, $this->result);
         app()->instance(AiRequestContext::class, new AiRequestContext($this->user));
-        $this->tool = app()->make(PlayMostPlayedAlbum::class);
+        $this->tool = app()->make(PlayMostPlayedArtist::class);
     }
 
     #[Test]
-    public function playsMostPlayedAlbum(): void
+    public function playsMostPlayedArtist(): void
     {
-        $album = Album::factory()->createOne();
+        $artist = Artist::factory()->createOne();
         $songs = Song::factory()
             ->count(3)
-            ->for($album)
+            ->for($artist)
             ->for($this->user, 'owner')
             ->create();
 
@@ -54,7 +54,7 @@ class PlayMostPlayedAlbumToolTest extends TestCase
 
         self::assertSame('play_songs', $this->result->action);
         self::assertCount(3, $this->result->data['songs']);
-        self::assertStringContainsString($album->name, (string) $response);
+        self::assertStringContainsString($artist->name, (string) $response);
     }
 
     #[Test]
@@ -69,10 +69,10 @@ class PlayMostPlayedAlbumToolTest extends TestCase
     #[Test]
     public function queuesInsteadOfPlaying(): void
     {
-        $album = Album::factory()->createOne();
+        $artist = Artist::factory()->createOne();
         $songs = Song::factory()
             ->count(2)
-            ->for($album)
+            ->for($artist)
             ->for($this->user, 'owner')
             ->create();
 

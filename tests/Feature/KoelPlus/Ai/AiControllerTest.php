@@ -1,14 +1,14 @@
 <?php
 
-namespace Tests\Feature\Ai;
+namespace Tests\Feature\KoelPlus\Ai;
 
 use App\Ai\Agents\KoelAssistant;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\PlusTestCase;
 
 use function Tests\create_user;
 
-class AiControllerTest extends TestCase
+class AiControllerTest extends PlusTestCase
 {
     #[Test]
     public function promptsTheAgent(): void

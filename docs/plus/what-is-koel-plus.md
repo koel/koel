@@ -1,5 +1,5 @@
 ---
-description: Overview of Koel Plus premium features including multi-library, collaboration, cloud storage, SSO, and white labeling.
+description: Overview of Koel Plus premium features including multi-library, collaboration, cloud storage, SSO, white labeling, and AI assistant.
 ---
 
 # What Is Koel Plus?
@@ -17,6 +17,7 @@ Koel Plus is the premium version of Koel. It offers additional features and enha
 - **[Media Browser](./media-browser)**: A file-explorer-like interface that allows browsing music directly at a file level, useful for libraries without proper ID3 tagging.
 - **[White Labeling](white-labeling.md)**: Customize the app's branding elements (name, logo, cover) to match those of your organization's.
 - **[Custom Themes](custom-themes.md)**: Create and apply your own themes.
+- **[AI Assistant](./ai-assistant)**: Interact with your music library using natural language — play music, manage playlists, and more.
 
 New features are constantly planned or in active development.
 
