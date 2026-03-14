@@ -12,7 +12,7 @@
       <slot name="icon" />
     </span>
 
-    <span class="label flex-1 overflow-hidden text-ellipsis">
+    <span class="label flex-1 min-w-0 max-w-40 truncate">
       <slot />
     </span>
 
@@ -20,7 +20,7 @@
       <slot name="subMenuItems" />
     </ul>
 
-    <span v-if="hasSubMenuItems">
+    <span v-if="hasSubMenuItems" class="ml-auto">
       <Icon :icon="faCaretRight" fixed-width />
     </span>
   </li>
