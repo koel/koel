@@ -39,7 +39,7 @@ describe('aiChatMessage', () => {
       },
     })
 
-    expect(screen.getByTitle('Copy to clipboard')).toBeTruthy()
+    expect(screen.getByRole('button', { name: /copy/i })).toBeTruthy()
   })
 
   it('does not show copy button for user messages', () => {
@@ -49,7 +49,7 @@ describe('aiChatMessage', () => {
       },
     })
 
-    expect(screen.queryByTitle('Copy to clipboard')).toBeNull()
+    expect(screen.queryByRole('button', { name: /copy/i })).toBeNull()
   })
 
   it('does not show copy button for error messages', () => {
@@ -59,7 +59,7 @@ describe('aiChatMessage', () => {
       },
     })
 
-    expect(screen.queryByTitle('Copy to clipboard')).toBeNull()
+    expect(screen.queryByRole('button', { name: /copy/i })).toBeNull()
   })
 
   it('copies message content to clipboard when copy button is clicked', async () => {
@@ -69,7 +69,7 @@ describe('aiChatMessage', () => {
       },
     })
 
-    await h.user.click(screen.getByTitle('Copy to clipboard'))
+    await h.user.click(screen.getByRole('button', { name: /copy/i }))
 
     expect(copyText).toHaveBeenCalledWith('Here are your songs.')
   })

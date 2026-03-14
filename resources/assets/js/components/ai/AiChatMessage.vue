@@ -9,6 +9,8 @@
       <button
         v-if="message.role === 'assistant' && !message.error"
         class="copy-btn"
+        type="button"
+        aria-label="Copy message to clipboard"
         title="Copy to clipboard"
         @click="copy"
       >
@@ -20,7 +22,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import { CopyIcon, ClipboardCheckIcon } from 'lucide-vue-next'
 import { copyText } from '@/utils/helpers'
 import { simpleMarkdownToHtml } from '@/utils/formatters'
@@ -40,6 +42,10 @@ const copy = async () => {
   clearTimeout(copiedTimeout)
   copiedTimeout = window.setTimeout(() => (copied.value = false), 2000)
 }
+
+onBeforeUnmount(() => {
+  clearTimeout(copiedTimeout)
+})
 </script>
 
 <style lang="postcss" scoped>
