@@ -1,6 +1,11 @@
 <template>
   <section class="max-h-full min-h-full w-full flex flex-col transform-gpu overflow-hidden">
-    <div v-if="backgroundImage" class="cover-bg" :style="{ backgroundImage: `url(${backgroundImage})` }" />
+    <div
+      v-if="backgroundImage"
+      class="cover-bg"
+      data-testid="cover-bg"
+      :style="{ backgroundImage: `url(${backgroundImage})` }"
+    />
     <slot name="header" />
 
     <main v-koel-overflow-fade class="overflow-scroll flex flex-col b-16 md:b-6 p-6 flex-1 place-content-start">

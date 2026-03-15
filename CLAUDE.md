@@ -267,12 +267,16 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ## Lucide Icons
 - When importing icons from `lucide-vue-next`, always use the `Icon` suffix (e.g. `SparklesIcon`, not `Sparkles`; `SearchIcon`, not `Search`).
 
+## TypeScript Conventions
+- Always prefer generics over type casting when the API supports it (e.g. `container.querySelector<HTMLElement>('.foo')` instead of `container.querySelector('.foo') as HTMLElement`).
+
 ## Vue Component Styling
 - Put shared/base Tailwind classes directly on the HTML element via the `class` attribute.
 - For variant-specific styles (e.g. modes, states), use custom CSS classes (`.initial`, `.chat`, `.user`, `.error`, etc.) with `@apply` in a scoped `<style>` block.
 - Do NOT build class strings in JavaScript arrays or computed properties.
 
-## Testing Assertions
+## Frontend Testing
+- Prefer `screen` queries from `@testing-library/vue` over `container.querySelector`. Use `data-testid` attributes when no semantic query (role, text, label) is available.
 - When asserting two Eloquent models are the same, use `assertTrue($modelA->is($modelB))` instead of comparing IDs.
 
 ## Test Class Namespacing
