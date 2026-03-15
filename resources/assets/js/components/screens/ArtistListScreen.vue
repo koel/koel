@@ -70,6 +70,7 @@ import { computed, nextTick, onMounted, ref, toRef } from 'vue'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
+import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useInfiniteScroll } from '@/composables/useInfiniteScroll'
 import { usePolicies } from '@/composables/usePolicies'
 
@@ -117,14 +118,18 @@ const fetchArtists = async () => {
 
   loading.value = true
 
-  page.value = await artistStore.paginate({
-    favorites_only: preferences.artists_favorites_only,
-    page: page!.value || 1,
-    sort: preferences.artists_sort_field,
-    order: preferences.artists_sort_order,
-  })
-
-  loading.value = false
+  try {
+    page.value = await artistStore.paginate({
+      favorites_only: preferences.artists_favorites_only,
+      page: page!.value || 1,
+      sort: preferences.artists_sort_field,
+      order: preferences.artists_sort_order,
+    })
+  } catch (error: unknown) {
+    useErrorHandler().handleHttpError(error)
+  } finally {
+    loading.value = false
+  }
 }
 
 const { ToTopButton, sentinel } = useInfiniteScroll(gridContainer, () => fetchArtists())

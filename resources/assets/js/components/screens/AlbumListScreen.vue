@@ -76,6 +76,7 @@ import { computed, nextTick, onMounted, ref, toRef } from 'vue'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
+import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useInfiniteScroll } from '@/composables/useInfiniteScroll'
 import { usePolicies } from '@/composables/usePolicies'
 
@@ -123,14 +124,18 @@ const fetchAlbums = async () => {
 
   loading.value = true
 
-  page.value = await albumStore.paginate({
-    favorites_only: preferences.albums_favorites_only,
-    page: page!.value || 1,
-    sort: preferences.albums_sort_field,
-    order: preferences.albums_sort_order,
-  })
-
-  loading.value = false
+  try {
+    page.value = await albumStore.paginate({
+      favorites_only: preferences.albums_favorites_only,
+      page: page!.value || 1,
+      sort: preferences.albums_sort_field,
+      order: preferences.albums_sort_order,
+    })
+  } catch (error: unknown) {
+    useErrorHandler().handleHttpError(error)
+  } finally {
+    loading.value = false
+  }
 }
 
 const { ToTopButton, sentinel } = useInfiniteScroll(gridContainer, () => fetchAlbums())
