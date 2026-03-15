@@ -34,7 +34,7 @@ main {
   @apply absolute bg-cover bg-center pointer-events-none;
   inset: -32px;
   filter: blur(24px);
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, transparent 50%);
   -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, transparent 50%);
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, transparent 50%);
 }
 </style>
