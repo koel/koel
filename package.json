@@ -24,7 +24,7 @@
     "butterchurn-presets": "^2.4.7",
     "color": "^5.0.2",
     "compare-versions": "^3.6.0",
-    "dompurify": "^3.2.6",
+    "dompurify": "^3.3.2",
     "events": "^3.3.0",
     "fuse.js": "^7.1.0",
     "idb": "^8.0.3",
