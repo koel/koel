@@ -219,11 +219,7 @@ const onDrop = (row: PlayableRow, event: DragEvent) => {
   wrapper.value?.classList.remove('dragging')
 
   if (!inSelectedRange(row)) {
-    emit(
-      'reorder',
-      row.playable,
-      currentDropTarget?.classList.contains('dragover-bottom') ? 'after' : 'before',
-    )
+    emit('reorder', row.playable, currentDropTarget?.classList.contains('dragover-bottom') ? 'after' : 'before')
   }
 
   clearDropTarget()
