@@ -1,3 +1,6 @@
+import type { DBSchema, IDBPDatabase } from 'idb'
+import { openDB } from 'idb'
+
 export interface OfflineManifestEntry {
   playable: Playable
   cachedAt: number
@@ -9,58 +12,46 @@ interface StoredEntry extends OfflineManifestEntry {
   id: string
 }
 
-const DB_NAME = 'koel-offline'
-const DB_VERSION = 2
-const STORE_NAME = 'manifest'
-
-let dbPromise: Promise<IDBDatabase> | null = null
-
-const openDB = () => {
-  if (dbPromise) return dbPromise
-
-  if (typeof indexedDB === 'undefined') {
-    return Promise.reject(new Error('indexedDB is not available'))
+interface KoelOfflineDB extends DBSchema {
+  manifest: {
+    key: string
+    value: StoredEntry
   }
-
-  dbPromise = new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION)
-
-    request.onupgradeneeded = () => {
-      const db = request.result
-
-      // v1 used 'songId' as keyPath — drop and recreate with 'id'
-      if (db.objectStoreNames.contains(STORE_NAME)) {
-        db.deleteObjectStore(STORE_NAME)
-      }
-
-      db.createObjectStore(STORE_NAME, { keyPath: 'id' })
-    }
-
-    request.onsuccess = () => resolve(request.result)
-    request.onerror = () => {
-      dbPromise = null
-      reject(request.error)
-    }
-  })
-
-  return dbPromise
 }
 
-const withStore = async <T>(mode: IDBTransactionMode, fn: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> => {
-  const db = await openDB()
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, mode)
-    const store = tx.objectStore(STORE_NAME)
-    const request = fn(store)
-    request.onsuccess = () => resolve(request.result)
-    request.onerror = () => reject(request.error)
+const DB_NAME = 'koel-offline'
+const DB_VERSION = 2
+
+let dbInstance: IDBPDatabase<KoelOfflineDB> | null = null
+let dbPromise: Promise<IDBPDatabase<KoelOfflineDB>> | null = null
+
+const getDB = async () => {
+  if (dbInstance) return dbInstance
+  if (dbPromise) return dbPromise
+
+  dbPromise = openDB<KoelOfflineDB>(DB_NAME, DB_VERSION, {
+    upgrade(db) {
+      // v1 used 'songId' as keyPath — drop and recreate with 'id'
+      if (db.objectStoreNames.contains('manifest')) {
+        db.deleteObjectStore('manifest')
+      }
+
+      db.createObjectStore('manifest', { keyPath: 'id' })
+    },
   })
+
+  try {
+    dbInstance = await dbPromise
+    return dbInstance
+  } finally {
+    dbPromise = null
+  }
 }
 
 export const offlineManifest = {
   async getAll() {
     try {
-      return await withStore('readonly', store => store.getAll())
+      return await (await getDB()).getAll('manifest')
     } catch {
       return []
     }
@@ -68,8 +59,7 @@ export const offlineManifest = {
 
   async put(entry: OfflineManifestEntry) {
     try {
-      const stored: StoredEntry = { ...entry, id: entry.playable.id }
-      await withStore('readwrite', store => store.put(stored))
+      await (await getDB()).put('manifest', { ...entry, id: entry.playable.id })
     } catch {
       // noop — indexedDB may not be available
     }
@@ -77,7 +67,7 @@ export const offlineManifest = {
 
   async remove(songId: Song['id']) {
     try {
-      await withStore('readwrite', store => store.delete(songId))
+      await (await getDB()).delete('manifest', songId)
     } catch {
       // noop
     }
@@ -85,7 +75,7 @@ export const offlineManifest = {
 
   async clear() {
     try {
-      await withStore('readwrite', store => store.clear())
+      await (await getDB()).clear('manifest')
     } catch {
       // noop
     }
