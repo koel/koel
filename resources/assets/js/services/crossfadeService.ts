@@ -6,8 +6,8 @@ interface CrossfadeState {
   incomingAudio: HTMLAudioElement
   /** The playable being faded in */
   playable: Playable
-  /** The animation frame / interval ID for the volume ramp */
-  intervalId: number
+  /** The requestAnimationFrame handle for the volume ramp */
+  rafId: number
   /** The original volume of the primary player (0-10 scale) */
   originalVolume: number
 }
@@ -36,7 +36,7 @@ export const crossfadeService = {
       const state: CrossfadeState = {
         incomingAudio,
         playable: nextPlayable,
-        intervalId: 0,
+        rafId: 0,
         originalVolume: currentVolume,
       }
 
@@ -49,16 +49,18 @@ export const crossfadeService = {
           const durationMs = duration * 1000
           const normalizedVolume = currentVolume / 10
 
-          state.intervalId = window.setInterval(() => {
+          const step = () => {
             const elapsed = performance.now() - startTime
             const progress = Math.min(elapsed / durationMs, 1)
 
             incomingAudio.volume = progress * normalizedVolume
 
-            if (progress >= 1) {
-              clearInterval(state.intervalId)
+            if (progress < 1) {
+              state.rafId = requestAnimationFrame(step)
             }
-          }, 50)
+          }
+
+          state.rafId = requestAnimationFrame(step)
         })
         .catch(e => {
           logger.warn('Crossfade play failed:', e)
@@ -81,9 +83,9 @@ export const crossfadeService = {
       return
     }
 
-    const { incomingAudio, intervalId } = this.state
+    const { incomingAudio, rafId } = this.state
 
-    clearInterval(intervalId)
+    cancelAnimationFrame(rafId)
 
     incomingAudio.pause()
     incomingAudio.removeAttribute('src')
