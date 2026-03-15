@@ -1,5 +1,5 @@
 <template>
-  <ScreenBase>
+  <ScreenBase :background-image="album?.cover">
     <template #header>
       <ScreenHeaderSkeleton v-if="loading && !album" />
 

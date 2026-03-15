@@ -1,5 +1,5 @@
 <template>
-  <ScreenBase>
+  <ScreenBase :background-image="podcast?.image">
     <template #header>
       <ScreenHeaderSkeleton v-if="loading && !podcast" />
       <ScreenHeader v-if="podcast" :layout="headerLayout">

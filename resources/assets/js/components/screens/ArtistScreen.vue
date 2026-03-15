@@ -1,5 +1,5 @@
 <template>
-  <ScreenBase>
+  <ScreenBase :background-image="artist?.image || undefined">
     <template #header>
       <ScreenHeaderSkeleton v-if="loading && !artist" />
 
