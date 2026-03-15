@@ -27,6 +27,7 @@
     "dompurify": "^3.2.6",
     "events": "^3.3.0",
     "fuse.js": "^7.1.0",
+    "idb": "^8.0.3",
     "ismobilejs": "^0.4.1",
     "ky": "^1.14.3",
     "local-storage": "^2.0.0",
