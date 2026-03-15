@@ -10,10 +10,21 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { playback } from '@/services/playbackManager'
+import { crossfadeService } from '@/services/crossfadeService'
 
 const progress = ref(0)
 
 const updateProgress = () => {
+  // During crossfade, show the incoming track's progress
+  if (crossfadeService.active && crossfadeService.state) {
+    const { incomingAudio } = crossfadeService.state
+    const { currentTime, duration } = incomingAudio
+
+    progress.value = duration > 0 ? (currentTime / duration) * 100 : 0
+
+    return
+  }
+
   const service = playback('current')
 
   if (!service?.media) {

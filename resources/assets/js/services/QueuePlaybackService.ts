@@ -460,7 +460,14 @@ export class QueuePlaybackService extends BasePlaybackService {
       media.duration > CROSSFADE_DURATION * 2 && // skip for short tracks
       media.currentTime + CROSSFADE_DURATION >= media.duration
     ) {
-      crossfadeService.start(nextPlayable, CROSSFADE_DURATION, volumeManager.get())
+      if (crossfadeService.start(nextPlayable, CROSSFADE_DURATION, volumeManager.get())) {
+        // Show the incoming track as "now playing" immediately
+        queueStore.current!.playback_state = 'Stopped'
+        nextPlayable.playback_state = 'Playing'
+        this.setNowPlayingMeta(nextPlayable)
+        this.showNotification(nextPlayable)
+        this.registerPlay(nextPlayable)
+      }
     }
 
     // Fade out the primary player during an active crossfade
