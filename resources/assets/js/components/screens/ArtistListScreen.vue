@@ -52,9 +52,13 @@
         </template>
         <template v-else>
           <ArtistCard v-for="artist in displayedArtists" :key="artist.id" :artist="artist" :layout="itemLayout" />
+          <template v-if="loading">
+            <ArtistCardSkeleton v-for="i in 4" :key="`loading-${i}`" :layout="itemLayout" />
+          </template>
           <ToTopButton />
         </template>
       </GridListView>
+      <div v-if="moreArtistsAvailable && !loading" ref="sentinel" class="h-px" />
     </div>
   </ScreenBase>
 </template>
@@ -66,7 +70,6 @@ import { computed, nextTick, onMounted, ref, toRef } from 'vue'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
-import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useInfiniteScroll } from '@/composables/useInfiniteScroll'
 import { usePolicies } from '@/composables/usePolicies'
 
@@ -124,7 +127,7 @@ const fetchArtists = async () => {
   loading.value = false
 }
 
-const { ToTopButton, makeScrollable } = useInfiniteScroll(gridContainer, async () => await fetchArtists())
+const { ToTopButton, sentinel } = useInfiniteScroll(gridContainer, () => fetchArtists())
 
 const resetState = async () => {
   page.value = 1
@@ -150,15 +153,9 @@ const toggleFavoritesOnly = async () => {
   await fetchArtists()
 }
 
-onMounted(async () => {
-  if (libraryEmpty.value) {
-    return
-  }
-
-  try {
-    await makeScrollable()
-  } catch (error: unknown) {
-    useErrorHandler().handleHttpError(error)
+onMounted(() => {
+  if (!libraryEmpty.value) {
+    fetchArtists()
   }
 })
 </script>
