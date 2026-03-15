@@ -1,19 +1,21 @@
 export interface OfflineManifestEntry {
-  songId: string
-  title: string
-  artist: string
-  album: string
+  playable: Playable
   cachedAt: number
   size: number
 }
 
+/** The stored format includes an explicit key for IndexedDB */
+interface StoredEntry extends OfflineManifestEntry {
+  id: string
+}
+
 const DB_NAME = 'koel-offline'
-const DB_VERSION = 1
+const DB_VERSION = 2
 const STORE_NAME = 'manifest'
 
 let dbPromise: Promise<IDBDatabase> | null = null
 
-const openDB = (): Promise<IDBDatabase> => {
+const openDB = () => {
   if (dbPromise) return dbPromise
 
   if (typeof indexedDB === 'undefined') {
@@ -25,9 +27,13 @@ const openDB = (): Promise<IDBDatabase> => {
 
     request.onupgradeneeded = () => {
       const db = request.result
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME, { keyPath: 'songId' })
+
+      // v1 used 'songId' as keyPath — drop and recreate with 'id'
+      if (db.objectStoreNames.contains(STORE_NAME)) {
+        db.deleteObjectStore(STORE_NAME)
       }
+
+      db.createObjectStore(STORE_NAME, { keyPath: 'id' })
     }
 
     request.onsuccess = () => resolve(request.result)
@@ -52,7 +58,7 @@ const withStore = async <T>(mode: IDBTransactionMode, fn: (store: IDBObjectStore
 }
 
 export const offlineManifest = {
-  async getAll(): Promise<OfflineManifestEntry[]> {
+  async getAll() {
     try {
       return await withStore('readonly', store => store.getAll())
     } catch {
@@ -60,23 +66,16 @@ export const offlineManifest = {
     }
   },
 
-  async get(songId: string): Promise<OfflineManifestEntry | undefined> {
+  async put(entry: OfflineManifestEntry) {
     try {
-      return await withStore('readonly', store => store.get(songId))
+      const stored: StoredEntry = { ...entry, id: entry.playable.id }
+      await withStore('readwrite', store => store.put(stored))
     } catch {
-      return undefined
+      // noop — indexedDB may not be available
     }
   },
 
-  async put(entry: OfflineManifestEntry): Promise<void> {
-    try {
-      await withStore('readwrite', store => store.put(entry))
-    } catch {
-      // noop — indexedDB may not be available (e.g. in tests or unsupported browsers)
-    }
-  },
-
-  async remove(songId: string): Promise<void> {
+  async remove(songId: Song['id']) {
     try {
       await withStore('readwrite', store => store.delete(songId))
     } catch {
@@ -84,7 +83,7 @@ export const offlineManifest = {
     }
   },
 
-  async clear(): Promise<void> {
+  async clear() {
     try {
       await withStore('readwrite', store => store.clear())
     } catch {

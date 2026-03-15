@@ -121,8 +121,7 @@ describe('useOfflinePlayback', () => {
     expect(cachingProgress.value.has(song.id)).toBe(false)
     expect(offlineManifest.put).toHaveBeenCalledWith(
       expect.objectContaining({
-        songId: song.id,
-        title: song.title,
+        playable: expect.objectContaining({ id: song.id }),
       }),
     )
   })
@@ -192,7 +191,7 @@ describe('useOfflinePlayback', () => {
 
     cachedSongIds.value.add(song.id)
     manifestEntries.value = [
-      { songId: song.id, title: song.title, artist: 'A', album: 'B', cachedAt: Date.now(), size: 0 },
+      { playable: song, cachedAt: Date.now(), size: 0 },
     ]
 
     await clearAllOfflineCache()
