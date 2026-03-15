@@ -1,15 +1,16 @@
 <template>
-  <div class="audio-player w-full h-[4px] relative" :class="{ loading: isLoading }">
+  <div class="audio-player" :class="{ loading: isLoading }">
     <audio id="audio-player" class="hidden" crossorigin="anonymous" />
-    <div
-      class="progress-bar absolute top-0 w-full h-full cursor-pointer"
-      @click="seek"
-      @mousemove="onHover"
-      @mouseleave="hoverProgress = 0"
-    >
-      <div class="progress-buffer absolute top-0 left-0 h-full" :style="{ width: `${bufferProgress}%` }" />
-      <div class="progress-hover absolute top-0 left-0 h-full" :style="{ width: `${hoverProgress}%` }" />
-      <div class="progress-played absolute top-0 left-0 h-full" :style="{ width: `${progress}%` }" />
+    <!--
+      The hit area is absolutely positioned over the top of the footer,
+      extending above and below the visible 4px track for easy clicking.
+    -->
+    <div class="hit-area" @click="seek" @mousemove="onHover" @mouseleave="hoverProgress = 0">
+      <div class="track">
+        <div class="progress-buffer" :style="{ width: `${bufferProgress}%` }" />
+        <div class="progress-hover" :style="{ width: `${hoverProgress}%` }" />
+        <div class="progress-played" :style="{ width: `${progress}%` }" />
+      </div>
     </div>
   </div>
 </template>
@@ -65,34 +66,50 @@ const seek = (e: MouseEvent) => {
     return
   }
 
-  const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+  const track = (e.currentTarget as HTMLElement).querySelector('.track')!
+  const rect = track.getBoundingClientRect()
   const position = ((e.clientX - rect.left) / rect.width) * service.media.duration
   service.seekTo(position)
 }
 
 const onHover = (e: MouseEvent) => {
-  const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
-  hoverProgress.value = ((e.clientX - rect.left) / rect.width) * 100
+  const track = (e.currentTarget as HTMLElement).querySelector('.track')!
+  const rect = track.getBoundingClientRect()
+  hoverProgress.value = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100))
 }
 
 setInterval(updateProgress, 250)
 </script>
 
 <style lang="postcss" scoped>
+.hit-area {
+  @apply absolute left-0 right-0 top-0 cursor-pointer;
+  z-index: 30;
+  /* Extend the clickable area above and below the visible track */
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-top: -10px;
+}
+
+.track {
+  @apply relative w-full;
+  height: var(--progress-bar-height);
+}
+
 .progress-buffer {
-  @apply bg-white/10 transition-[width] duration-200 ease-in-out;
+  @apply absolute top-0 left-0 h-full bg-white/10 transition-[width] duration-200 ease-in-out;
 }
 
 .progress-hover {
-  @apply bg-white/5 opacity-0 transition-opacity;
+  @apply absolute top-0 left-0 h-full bg-white/5 opacity-0 transition-opacity;
 }
 
-.progress-bar:hover .progress-hover {
+.hit-area:hover .progress-hover {
   @apply opacity-100;
 }
 
 .progress-played {
-  @apply bg-k-fg-10 transition-[width] duration-200 ease-in-out;
+  @apply absolute top-0 left-0 h-full bg-k-fg-10 transition-[width] duration-200 ease-in-out;
 }
 
 .audio-player:hover .progress-played {
@@ -127,8 +144,8 @@ setInterval(updateProgress, 250)
   }
 }
 
-:fullscreen .audio-player {
-  @apply z-[4] bg-white/20 rounded-full overflow-hidden;
+:fullscreen .track {
+  @apply bg-white/20 rounded-full overflow-hidden;
 }
 
 :fullscreen .progress-played {
