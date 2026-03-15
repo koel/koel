@@ -1,31 +1,31 @@
 <template>
   <div class="space-y-4">
     <FormRow v-if="isPlus">
-      <label class="pref-row">
+      <label>
         <span>Make uploaded songs public by default</span>
         <CheckBox v-model="preferences.make_uploads_public" name="make_uploads_public" />
       </label>
     </FormRow>
     <FormRow v-if="isPlus">
-      <label class="pref-row">
+      <label>
         <span>Show other users' public songs, albums, artists, and radio stations in your library (reload required)</span>
         <CheckBox v-model="preferences.include_public_media" name="include_public_media" />
       </label>
     </FormRow>
     <FormRow>
-      <label class="pref-row">
+      <label>
         <span>{{ continuousPlaybackLabel }}</span>
         <CheckBox v-model="preferences.continuous_playback" name="continuous_playback" />
       </label>
     </FormRow>
     <FormRow v-if="onMobile">
-      <label class="pref-row">
+      <label>
         <span>Show "Now Playing" notification</span>
         <CheckBox v-model="preferences.show_now_playing_notification" name="notify" />
       </label>
     </FormRow>
     <FormRow v-if="!onMobile">
-      <label class="pref-row">
+      <label>
         <span>Confirm before closing Koel</span>
         <CheckBox v-model="preferences.confirm_before_closing" name="confirm_closing" />
       </label>
@@ -47,7 +47,7 @@
       </div>
     </FormRow>
     <FormRow>
-      <label class="pref-row">
+      <label>
         <span>Show a translucent, blurred overlay of the current album's art</span>
         <CheckBox v-model="preferences.show_album_art_overlay" name="show_album_art_overlay" />
       </label>
@@ -117,6 +117,7 @@ const continuousPlaybackLabel = computed(() => {
 </script>
 
 <style lang="postcss" scoped>
+label,
 .pref-row {
   @apply flex items-center gap-4 cursor-pointer;
 
