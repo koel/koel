@@ -1,5 +1,5 @@
 <template>
-  <ScreenBase v-if="playlistId">
+  <ScreenBase v-if="playlistId" :background-image="playlist?.cover || thumbnails[0]">
     <template #header>
       <ScreenHeader v-if="playlist" :disabled="loading" :layout="allPlayables.length ? headerLayout : 'collapsed'">
         {{ playlist.name }}
