@@ -97,9 +97,9 @@ onMounted(() => volumeManager.init(inputEl.value!, preferenceStore.volume))
 
 .volume-slider[type='range']::-moz-range-track {
   height: 6px;
-  background: rgba(255, 255, 255, 0.2);
   border: 0;
   border-radius: 3px;
+  @apply bg-k-fg-10;
 }
 
 .volume-slider[type='range']::-moz-range-thumb {
