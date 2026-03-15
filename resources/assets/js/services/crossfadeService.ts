@@ -42,22 +42,25 @@ export const crossfadeService = {
 
       this.state = state
 
-      incomingAudio.play().catch(e => logger.warn('Crossfade play failed:', e))
+      incomingAudio
+        .play()
+        .then(() => {
+          const startTime = performance.now()
+          const durationMs = duration * 1000
+          const normalizedVolume = currentVolume / 10
 
-      const startTime = performance.now()
-      const durationMs = duration * 1000
-      const normalizedVolume = currentVolume / 10
+          state.intervalId = window.setInterval(() => {
+            const elapsed = performance.now() - startTime
+            const progress = Math.min(elapsed / durationMs, 1)
 
-      state.intervalId = window.setInterval(() => {
-        const elapsed = performance.now() - startTime
-        const progress = Math.min(elapsed / durationMs, 1)
+            incomingAudio.volume = progress * normalizedVolume
 
-        incomingAudio.volume = progress * normalizedVolume
-
-        if (progress >= 1) {
-          clearInterval(state.intervalId)
-        }
-      }, 50)
+            if (progress >= 1) {
+              clearInterval(state.intervalId)
+            }
+          }, 50)
+        })
+        .catch(e => logger.warn('Crossfade play failed:', e))
 
       return true
     } catch (e) {
