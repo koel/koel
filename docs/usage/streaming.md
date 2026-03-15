@@ -1,5 +1,5 @@
 ---
-description: Streaming methods (PHP, x-accel-redirect, x-sendfile), transcoding with FFmpeg, and cloud storage streaming.
+description: Streaming methods (PHP, x-accel-redirect, x-sendfile), transcoding with FFmpeg, cloud storage streaming, and crossfade.
 ---
 
 # Streaming Music
@@ -65,3 +65,14 @@ setup and configuration (see above) are correct.
 On a mobile device where data usage is a concern, the user might want to instruct Koel to transcode all songs
 (regardless of their formats) to a lower bit rate to save bandwidth. This can be done via the
 [Preferences screen](./profile-preferences#preferences).
+
+## Crossfade
+
+Koel supports crossfading between songs, where the currently playing track fades out while the next track fades in,
+creating a seamless transition. The crossfade duration can be configured from 0 to 15 seconds via the
+[Preferences screen](./profile-preferences#preferences). A value of 0 disables crossfade.
+
+:::tip
+Crossfade is automatically skipped for tracks shorter than twice the crossfade duration, and is not applied
+when the repeat mode is set to "Repeat One" or during radio playback.
+:::

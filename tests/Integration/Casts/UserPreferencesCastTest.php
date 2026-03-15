@@ -30,4 +30,167 @@ class UserPreferencesCastTest extends TestCase
         $user->save();
         self::assertNull($user->refresh()->preferences->lastFmSessionKey);
     }
+
+    #[Test]
+    public function defaultValues(): void
+    {
+        $user = create_user();
+        $prefs = $user->preferences;
+
+        self::assertSame(7.0, $prefs->volume);
+        self::assertSame('NO_REPEAT', $prefs->repeatMode);
+        self::assertSame('thumbnails', $prefs->albumsViewMode);
+        self::assertSame('thumbnails', $prefs->artistsViewMode);
+        self::assertSame('thumbnails', $prefs->radioStationsViewMode);
+        self::assertSame('name', $prefs->albumsSortField);
+        self::assertSame('name', $prefs->artistsSortField);
+        self::assertSame('name', $prefs->genresSortField);
+        self::assertSame('title', $prefs->podcastsSortField);
+        self::assertSame('name', $prefs->radioStationsSortField);
+        self::assertSame('asc', $prefs->albumsSortOrder);
+        self::assertSame('asc', $prefs->artistsSortOrder);
+        self::assertSame('asc', $prefs->genresSortOrder);
+        self::assertSame('asc', $prefs->podcastsSortOrder);
+        self::assertSame('asc', $prefs->radioStationsSortOrder);
+        self::assertFalse($prefs->albumsFavoritesOnly);
+        self::assertFalse($prefs->artistsFavoritesOnly);
+        self::assertFalse($prefs->podcastsFavoritesOnly);
+        self::assertFalse($prefs->radioStationsFavoritesOnly);
+        self::assertSame('classic', $prefs->theme);
+        self::assertTrue($prefs->showNowPlayingNotification);
+        self::assertFalse($prefs->confirmBeforeClosing);
+        self::assertTrue($prefs->transcodeOnMobile);
+        self::assertTrue($prefs->showAlbumArtOverlay);
+        self::assertFalse($prefs->makeUploadsPublic);
+        self::assertTrue($prefs->includePublicMedia);
+        self::assertFalse($prefs->supportBarNoBugging);
+        self::assertFalse($prefs->continuousPlayback);
+        self::assertSame(0, $prefs->crossfadeDuration);
+        self::assertSame(1, $prefs->lyricsZoomLevel);
+        self::assertSame('default', $prefs->visualizer);
+        self::assertNull($prefs->activeExtraPanelTab);
+    }
+
+    #[Test]
+    public function castsVolume(): void
+    {
+        $user = create_user(['preferences' => ['volume' => 5.5]]);
+        self::assertSame(5.5, $user->preferences->volume);
+
+        $user->preferences->volume = 8.0;
+        $user->save();
+        self::assertSame(8.0, $user->refresh()->preferences->volume);
+    }
+
+    #[Test]
+    public function castsRepeatMode(): void
+    {
+        $user = create_user(['preferences' => ['repeat_mode' => 'REPEAT_ALL']]);
+        self::assertSame('REPEAT_ALL', $user->preferences->repeatMode);
+    }
+
+    #[Test]
+    public function castsBooleanPreferences(): void
+    {
+        $user = create_user([
+            'preferences' => [
+                'continuous_playback' => true,
+                'confirm_before_closing' => true,
+                'show_album_art_overlay' => false,
+                'make_uploads_public' => true,
+            ],
+        ]);
+
+        self::assertTrue($user->preferences->continuousPlayback);
+        self::assertTrue($user->preferences->confirmBeforeClosing);
+        self::assertFalse($user->preferences->showAlbumArtOverlay);
+        self::assertTrue($user->preferences->makeUploadsPublic);
+    }
+
+    #[Test]
+    public function castsCrossfadeDuration(): void
+    {
+        $user = create_user(['preferences' => ['crossfade_duration' => 7]]);
+        self::assertSame(7, $user->preferences->crossfadeDuration);
+
+        $user->preferences->crossfadeDuration = 12;
+        $user->save();
+        self::assertSame(12, $user->refresh()->preferences->crossfadeDuration);
+    }
+
+    #[Test]
+    public function castsTranscodeQuality(): void
+    {
+        $user = create_user(['preferences' => ['transcode_quality' => 256]]);
+        self::assertSame(256, $user->preferences->transcodeQuality);
+    }
+
+    #[Test]
+    public function castsViewModes(): void
+    {
+        $user = create_user([
+            'preferences' => [
+                'albums_view_mode' => 'list',
+                'artists_view_mode' => 'list',
+            ],
+        ]);
+
+        self::assertSame('list', $user->preferences->albumsViewMode);
+        self::assertSame('list', $user->preferences->artistsViewMode);
+    }
+
+    #[Test]
+    public function castsSortFields(): void
+    {
+        $user = create_user([
+            'preferences' => [
+                'albums_sort_field' => 'year',
+                'albums_sort_order' => 'desc',
+            ],
+        ]);
+
+        self::assertSame('year', $user->preferences->albumsSortField);
+        self::assertSame('desc', $user->preferences->albumsSortOrder);
+    }
+
+    #[Test]
+    public function castsActiveExtraPanelTab(): void
+    {
+        $user = create_user(['preferences' => ['active_extra_panel_tab' => 'Lyrics']]);
+        self::assertSame('Lyrics', $user->preferences->activeExtraPanelTab);
+
+        $user->preferences->activeExtraPanelTab = null;
+        $user->save();
+        self::assertNull($user->refresh()->preferences->activeExtraPanelTab);
+    }
+
+    #[Test]
+    public function roundTripsAllPreferences(): void
+    {
+        $user = create_user([
+            'preferences' => [
+                'volume' => 3.5,
+                'repeat_mode' => 'REPEAT_ONE',
+                'theme' => 'classic',
+                'continuous_playback' => true,
+                'crossfade_duration' => 10,
+                'lyrics_zoom_level' => 2,
+                'visualizer' => 'default',
+                'active_extra_panel_tab' => 'Album',
+                'lastfm_session_key' => 'session123',
+            ],
+        ]);
+
+        $prefs = $user->refresh()->preferences;
+
+        self::assertSame(3.5, $prefs->volume);
+        self::assertSame('REPEAT_ONE', $prefs->repeatMode);
+        self::assertSame('classic', $prefs->theme);
+        self::assertTrue($prefs->continuousPlayback);
+        self::assertSame(10, $prefs->crossfadeDuration);
+        self::assertSame(2, $prefs->lyricsZoomLevel);
+        self::assertSame('default', $prefs->visualizer);
+        self::assertSame('Album', $prefs->activeExtraPanelTab);
+        self::assertSame('session123', $prefs->lastFmSessionKey);
+    }
 }

@@ -70,6 +70,18 @@ export const audioService = {
     this.unlockAudioContext()
   },
 
+  reconnectSource(newElement: HTMLMediaElement) {
+    try {
+      this.source.disconnect()
+    } catch {
+      // may already be disconnected
+    }
+
+    this.element = newElement
+    this.source = this.context.createMediaElementSource(newElement)
+    this.source.connect(this.preampGainNode)
+  },
+
   changePreampGain(db: number) {
     this.preampGainNode.gain.value = dbToGain(db)
   },

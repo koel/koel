@@ -17,20 +17,6 @@ declare module 'youtube-player' {
   export default createYouTubePlayer
 }
 
-interface Plyr {
-  media: HTMLMediaElement
-
-  restart: () => void
-
-  play: () => void
-
-  pause: () => void
-
-  seek: (position: number) => void
-
-  setVolume: (volume: number) => void
-}
-
 declare module 'ismobilejs' {
   let apple: { device: boolean }
   let any: boolean
@@ -410,6 +396,7 @@ interface UserPreferences extends Record<string, any> {
   active_extra_panel_tab: SideSheetTab | null
   make_uploads_public: boolean
   include_public_media: boolean
+  crossfade_duration: number
   lastfm_session_key?: string
 }
 

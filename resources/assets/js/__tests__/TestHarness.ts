@@ -250,11 +250,11 @@ class TestHarness {
   }
 
   public createAudioPlayer() {
-    if (document.querySelector('.plyr')) {
+    if (document.querySelector('#audio-player')) {
       return
     }
 
-    document.body.innerHTML = '<div class="plyr"><audio crossorigin="anonymous" controls/></div>'
+    document.body.innerHTML = '<audio id="audio-player" crossorigin="anonymous"/>'
 
     window.AudioContext = vi.fn().mockImplementation(() => ({
       createMediaElementSource: vi.fn(noop),

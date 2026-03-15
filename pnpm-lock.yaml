@@ -83,9 +83,6 @@ importers:
       nprogress:
         specifier: ^0.2.0
         version: 0.2.0
-      plyr:
-        specifier: 1.5.20
-        version: 1.5.20
       qrcode:
         specifier: ^1.5.4
         version: 1.5.4
@@ -3122,9 +3119,6 @@ packages:
   pixelmatch@7.1.0:
     resolution: {integrity: sha512-1wrVzJ2STrpmONHKBy228LM1b84msXDUoAzVEl0R8Mz4Ce6EPr+IVtxm8+yvrqLYMHswREkjYFaMxnyGnaY3Ng==}
     hasBin: true
-
-  plyr@1.5.20:
-    resolution: {integrity: sha512-YwI0jNfRrWz+t3b28rrOhm1VpzmNl8bCsFGQ/wJaU/8utyrFNX9AEZi2GAvSO5ctODLKt424RQs2CQ1SY+YZfg==}
 
   pngjs@5.0.0:
     resolution: {integrity: sha512-40QW5YalBNfQo5yRYmiw7Yz6TKKVr3h6970B2YE+3fQpsWcrbj1PzJgxeJ19DRQjhMbKPIuMY8rFaXc8moolVw==}
@@ -6524,8 +6518,6 @@ snapshots:
   pixelmatch@7.1.0:
     dependencies:
       pngjs: 7.0.0
-
-  plyr@1.5.20: {}
 
   pngjs@5.0.0: {}
 

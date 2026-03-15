@@ -39,6 +39,7 @@ export const defaultPreferences: UserPreferences = {
   make_uploads_public: false,
   include_public_media: true,
   continuous_playback: false,
+  crossfade_duration: 0,
 }
 
 const preferenceStore = {

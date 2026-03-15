@@ -10,7 +10,7 @@
 
     <input
       ref="inputEl"
-      class="plyr__volume !w-[120px] before:absolute before:left-0 before:right-0 before:top-[-12px] before:bottom-[-12px]"
+      class="volume-slider !w-[120px] before:absolute before:left-0 before:right-0 before:top-[-12px] before:bottom-[-12px]"
       max="10"
       role="slider"
       step="0.1"
@@ -62,29 +62,73 @@ onMounted(() => volumeManager.init(inputEl.value!, preferenceStore.volume))
 </script>
 
 <style lang="postcss" scoped>
-#volume {
-  [type='range'] {
-    &::-webkit-slider-thumb {
-      @apply bg-k-fg-70;
-    }
-
-    &:hover {
-      &::-webkit-slider-thumb {
-        @apply bg-k-fg;
-      }
-    }
-  }
-
-  &.muted {
-    [type='range'] {
-      &::-webkit-slider-thumb {
-        @apply bg-transparent shadow-none;
-      }
-    }
-  }
+.volume-slider[type='range'] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  vertical-align: middle;
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  border: none;
 }
 
-.plyr__volume[type='range']::-webkit-slider-runnable-track {
+.volume-slider[type='range']:focus {
+  outline: 0;
+}
+
+.volume-slider[type='range']::-webkit-slider-runnable-track {
+  height: 6px;
+  border: 0;
+  border-radius: 3px;
   @apply bg-k-fg-10;
+}
+
+.volume-slider[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  margin-top: -3px;
+  height: 12px;
+  width: 12px;
+  border: 0;
+  border-radius: 100%;
+  transition: background 0.3s ease;
+  cursor: ew-resize;
+  @apply bg-k-fg-70;
+}
+
+.volume-slider[type='range']::-moz-range-track {
+  height: 6px;
+  border: 0;
+  border-radius: 3px;
+  @apply bg-k-fg-10;
+}
+
+.volume-slider[type='range']::-moz-range-thumb {
+  height: 12px;
+  width: 12px;
+  border: 0;
+  border-radius: 100%;
+  transition: background 0.3s ease;
+  cursor: ew-resize;
+  @apply bg-k-fg-70;
+}
+
+#volume {
+  [type='range']:hover::-webkit-slider-thumb {
+    @apply bg-k-fg;
+  }
+
+  [type='range']:hover::-moz-range-thumb {
+    @apply bg-k-fg;
+  }
+
+  &.muted [type='range'] {
+    &::-webkit-slider-thumb {
+      @apply bg-transparent shadow-none;
+    }
+
+    &::-moz-range-thumb {
+      @apply bg-transparent shadow-none;
+    }
+  }
 }
 </style>

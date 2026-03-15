@@ -12,7 +12,7 @@ const playbackServiceMap: Record<string, BasePlaybackService> = {
 export const playbackManager = {
   _currentService: null as BasePlaybackService | null,
 
-  usePlayback(type: keyof typeof playbackServiceMap, plyrWrapper?: HTMLElement) {
+  usePlayback(type: keyof typeof playbackServiceMap, mediaElement?: HTMLMediaElement) {
     for (const key in playbackServiceMap) {
       if (key !== type) {
         playbackServiceMap[key].deactivate()
@@ -21,15 +21,15 @@ export const playbackManager = {
 
     this._currentService = playbackServiceMap[type]
 
-    return playbackServiceMap[type].activate(plyrWrapper ?? (document.querySelector('.plyr') as HTMLElement))
+    return playbackServiceMap[type].activate(mediaElement ?? document.querySelector<HTMLMediaElement>('#audio-player')!)
   },
 
-  useQueuePlayback(plyrWrapper?: HTMLElement) {
-    return this.usePlayback('queue', plyrWrapper)
+  useQueuePlayback(mediaElement?: HTMLMediaElement) {
+    return this.usePlayback('queue', mediaElement)
   },
 
-  useRadioPlayback(plyrWrapper?: HTMLElement) {
-    return this.usePlayback('radio', plyrWrapper)
+  useRadioPlayback(mediaElement?: HTMLMediaElement) {
+    return this.usePlayback('radio', mediaElement)
   },
 }
 
@@ -41,14 +41,14 @@ interface PlaybackTypeMap {
 
 export function playback<T extends keyof PlaybackTypeMap = 'queue'>(
   type?: T,
-  plyrWrapper?: HTMLElement,
+  mediaElement?: HTMLMediaElement,
 ): PlaybackTypeMap[T] {
   const actualType = (type ?? 'queue') as keyof PlaybackTypeMap
 
   if (actualType === 'queue') {
-    return playbackManager.useQueuePlayback(plyrWrapper) as PlaybackTypeMap[T]
+    return playbackManager.useQueuePlayback(mediaElement) as PlaybackTypeMap[T]
   } else if (actualType === 'radio') {
-    return playbackManager.useRadioPlayback(plyrWrapper) as PlaybackTypeMap[T]
+    return playbackManager.useRadioPlayback(mediaElement) as PlaybackTypeMap[T]
   } else if (actualType === 'current') {
     return playbackManager._currentService as PlaybackTypeMap[T]
   }

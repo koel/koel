@@ -1,5 +1,4 @@
-import plyr from 'plyr'
-import { describe, expect, it, vi } from 'vite-plus/test'
+import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { radioStationStore } from '@/stores/radioStationStore'
 import { socketService } from '@/services/socketService'
@@ -9,15 +8,14 @@ describe('playbackService', () => {
   const h = createHarness({
     beforeEach: () => {
       h.createAudioPlayer()
-      playbackService.activate(document.querySelector('.plyr')!)
+      playbackService.activate(document.querySelector<HTMLMediaElement>('#audio-player')!)
     },
   })
 
   it('only initializes once', () => {
-    const spy = vi.spyOn(plyr, 'setup')
-
-    playbackService.activate(document.querySelector('.plyr')!)
-    expect(spy).not.toHaveBeenCalled()
+    const media = playbackService.media
+    playbackService.activate(document.querySelector<HTMLMediaElement>('#audio-player')!)
+    expect(playbackService.media).toBe(media)
   })
 
   it('plays a radio station', async () => {
@@ -28,7 +26,7 @@ describe('playbackService', () => {
 
     radioStationStore.state.stations = [currentStation, toBePlayedStation]
 
-    const playMock = h.mock(playbackService.player.media, 'play')
+    const playMock = h.mock(playbackService.media, 'play')
     const broadcastMock = h.mock(socketService, 'broadcast')
     h.mock(radioStationStore, 'getSourceUrl', 'https://station.com/stream.mp3')
 
@@ -37,7 +35,7 @@ describe('playbackService', () => {
     await playbackService.play(toBePlayedStation)
 
     expect(playMock).toHaveBeenCalled()
-    expect(playbackService.player.media.src).toBe('https://station.com/stream.mp3')
+    expect(playbackService.media.src).toBe('https://station.com/stream.mp3')
     expect(currentStation.playback_state).toBe('Stopped')
     expect(toBePlayedStation.playback_state).toBe('Playing')
     expect(broadcastMock).toHaveBeenCalledWith('SOCKET_STREAMABLE', toBePlayedStation)
@@ -49,14 +47,14 @@ describe('playbackService', () => {
     currentStation.playback_state = 'Playing'
     radioStationStore.state.stations = [currentStation]
 
-    const pauseMock = h.mock(playbackService.player.media, 'pause')
+    const pauseMock = h.mock(playbackService.media, 'pause')
     const broadcastMock = h.mock(socketService, 'broadcast')
     const stopPollingMock = h.mock(radioStationStore, 'stopPolling')
     await playbackService.stop()
 
     expect(stopPollingMock).toHaveBeenCalled()
     expect(pauseMock).toHaveBeenCalled()
-    expect(playbackService.player.media.src).toBe('')
+    expect(playbackService.media.src).toBe('')
     expect(currentStation.playback_state).toBe('Paused')
     expect(broadcastMock).toHaveBeenCalledWith('SOCKET_STREAMABLE', currentStation)
   })

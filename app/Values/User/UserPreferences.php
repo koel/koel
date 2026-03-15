@@ -10,11 +10,12 @@ use Webmozart\Assert\Assert;
 // @mago-ignore lint:cyclomatic-complexity
 final class UserPreferences implements Arrayable, JsonSerializable
 {
-    private const CASTS = [
+    private const array CASTS = [
         'albums_favorites_only' => 'boolean',
         'artists_favorites_only' => 'boolean',
         'confirm_before_closing' => 'boolean',
         'continuous_playback' => 'boolean',
+        'crossfade_duration' => 'integer',
         'include_public_media' => 'boolean',
         'lyrics_zoom_level' => 'integer',
         'make_uploads_public' => 'boolean',
@@ -28,7 +29,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
         'volume' => 'float',
     ];
 
-    private const CUSTOMIZABLE_KEYS = [
+    private const array CUSTOMIZABLE_KEYS = [
         'active_extra_panel_tab',
         'albums_favorites_only',
         'albums_sort_field',
@@ -40,6 +41,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
         'artists_view_mode',
         'confirm_before_closing',
         'continuous_playback',
+        'crossfade_duration',
         'equalizer',
         'genres_sort_field',
         'genres_sort_order',
@@ -64,7 +66,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
         'volume',
     ];
 
-    private const ALL_KEYS = self::CUSTOMIZABLE_KEYS + ['lastfm_session_key'];
+    private const array ALL_KEYS = self::CUSTOMIZABLE_KEYS + ['lastfm_session_key'];
 
     private function __construct(
         public float $volume,
@@ -97,6 +99,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
         public bool $includePublicMedia,
         public bool $supportBarNoBugging,
         public bool $continuousPlayback,
+        public int $crossfadeDuration,
         public int $lyricsZoomLevel,
         public string $visualizer,
         public ?string $activeExtraPanelTab,
@@ -117,6 +120,8 @@ final class UserPreferences implements Arrayable, JsonSerializable
         Assert::oneOf(strtolower($this->podcastsSortOrder), ['asc', 'desc']);
         Assert::oneOf($this->radioStationsSortField, ['name', 'created_at']);
         Assert::oneOf(strtolower($this->radioStationsSortOrder), ['asc', 'desc']);
+
+        Assert::range($this->crossfadeDuration, 0, 15);
 
         if (!in_array($this->transcodeQuality, [64, 96, 128, 192, 256, 320], true)) {
             $this->transcodeQuality = 128;
@@ -156,6 +161,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
             includePublicMedia: $data['include_public_media'] ?? true,
             supportBarNoBugging: $data['support_bar_no_bugging'] ?? false,
             continuousPlayback: $data['continuous_playback'] ?? false,
+            crossfadeDuration: $data['crossfade_duration'] ?? 0,
             lyricsZoomLevel: $data['lyrics_zoom_level'] ?? 1,
             visualizer: $data['visualizer'] ?? 'default',
             activeExtraPanelTab: $data['active_extra_panel_tab'] ?? null,
@@ -230,6 +236,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
             'visualizer' => $this->visualizer,
             'active_extra_panel_tab' => $this->activeExtraPanelTab,
             'continuous_playback' => $this->continuousPlayback,
+            'crossfade_duration' => $this->crossfadeDuration,
         ];
     }
 

@@ -61,7 +61,7 @@ const scrollToCurrentLine = async () => {
 }
 
 const updateCurrentLine = () => {
-  const currentTime = currentPlayback?.player.media.currentTime || 0
+  const currentTime = currentPlayback?.media.currentTime || 0
   let newIndex = -1
 
   for (let i = props.lyrics.length - 1; i >= 0; i--) {

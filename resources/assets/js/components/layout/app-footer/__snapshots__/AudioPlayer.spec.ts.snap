@@ -1,8 +1,11 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`audioPlayer.vue > renders 1`] = `
-<!--
-    A very thin wrapper around Plyr, extracted as a standalone component for easier styling and to work better with HMR.
-  -->
-<div class="plyr w-full h-[4px]"><audio class="hidden" controls="" crossorigin="anonymous"></audio></div>
+<div data-v-a2321d8c="" class="audio-player w-full h-[4px] relative"><audio data-v-a2321d8c="" id="audio-player" class="hidden" crossorigin="anonymous"></audio>
+  <div data-v-a2321d8c="" class="progress-bar absolute top-0 w-full h-full cursor-pointer">
+    <div data-v-a2321d8c="" class="progress-buffer absolute top-0 left-0 h-full" style="width: 0%;"></div>
+    <div data-v-a2321d8c="" class="progress-hover absolute top-0 left-0 h-full" style="width: 0%;"></div>
+    <div data-v-a2321d8c="" class="progress-played absolute top-0 left-0 h-full" style="width: 0%;"></div>
+  </div>
+</div>
 `;

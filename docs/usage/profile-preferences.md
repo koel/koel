@@ -44,6 +44,7 @@ Koel allows you to set a couple of preferences:
 * Whether to show a notification whenever a new song starts playing
 * Whether to confirm before closing Koel’s browser tab
 * Whether to show a translucent, blurred overlay of the current album’s art
+* Crossfade duration between songs (0–15 seconds, 0 to disable)
 * Whether to transcode music to a lower bitrate (mobile only, useful if you have a slow connection)
 * <PlusBadge /> Whether to set your uploaded music as public by default
 * <PlusBadge /> Whether to include public media (songs, albums, and artists) from other users in your library and search results
