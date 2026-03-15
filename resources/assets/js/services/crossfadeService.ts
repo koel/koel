@@ -50,6 +50,10 @@ export const crossfadeService = {
           const normalizedVolume = currentVolume / 10
 
           const step = () => {
+            if (this.state !== state) {
+              return
+            }
+
             const elapsed = performance.now() - startTime
             const progress = Math.min(elapsed / durationMs, 1)
 
