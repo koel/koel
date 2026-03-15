@@ -64,8 +64,9 @@
       <div class="pref-row">
         <span class="flex-1">
           <span class="flex items-center gap-3">
-            <span class="shrink-0">Crossfade songs</span>
+            <label id="crossfade-label" for="crossfade-slider" class="shrink-0">Crossfade songs</label>
             <input
+              id="crossfade-slider"
               v-model.number="preferences.crossfade_duration"
               type="range"
               min="0"
@@ -136,9 +137,9 @@ const continuousPlaybackLabel = computed(() => {
 .crossfade-slider {
   appearance: none;
   height: 4px;
-  background: rgba(255, 255, 255, 0.1);
   border-radius: 2px;
   outline: none;
+  @apply bg-k-fg-10;
   cursor: pointer;
 }
 
