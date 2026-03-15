@@ -21,25 +21,31 @@ interface KoelOfflineDB extends DBSchema {
 
 const DB_NAME = 'koel-offline'
 const DB_VERSION = 2
-const STORE_NAME = 'manifest'
 
 let dbInstance: IDBPDatabase<KoelOfflineDB> | null = null
+let dbPromise: Promise<IDBPDatabase<KoelOfflineDB>> | null = null
 
 const getDB = async () => {
   if (dbInstance) return dbInstance
+  if (dbPromise) return dbPromise
 
-  dbInstance = await openDB<KoelOfflineDB>(DB_NAME, DB_VERSION, {
+  dbPromise = openDB<KoelOfflineDB>(DB_NAME, DB_VERSION, {
     upgrade(db) {
       // v1 used 'songId' as keyPath — drop and recreate with 'id'
-      if (db.objectStoreNames.contains(STORE_NAME)) {
-        db.deleteObjectStore(STORE_NAME)
+      if (db.objectStoreNames.contains('manifest')) {
+        db.deleteObjectStore('manifest')
       }
 
-      db.createObjectStore(STORE_NAME, { keyPath: 'id' })
+      db.createObjectStore('manifest', { keyPath: 'id' })
     },
   })
 
-  return dbInstance
+  try {
+    dbInstance = await dbPromise
+    return dbInstance
+  } finally {
+    dbPromise = null
+  }
 }
 
 export const offlineManifest = {
