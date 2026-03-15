@@ -200,9 +200,9 @@ const onDragOver = throttle((event: DragEvent) => {
 
 const onDragLeave = (event: DragEvent) => {
   // Only clear if the cursor actually left the item (not just moved between children)
-  const related = event.relatedTarget as HTMLElement | null
+  const related = event.relatedTarget
 
-  if (!related || !currentDropTarget?.contains(related)) {
+  if (!(related instanceof Node) || !currentDropTarget?.contains(related)) {
     clearDropTarget()
   }
 
