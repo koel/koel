@@ -13,8 +13,11 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 class FetchSongsByIdsController extends Controller
 {
     /** @param User $user */
-    public function __invoke(Request $request, SongRepository $songRepository, Authenticatable $user): ResourceCollection
-    {
+    public function __invoke(
+        Request $request,
+        SongRepository $songRepository,
+        Authenticatable $user,
+    ): ResourceCollection {
         $ids = $request->input('ids', []);
 
         return SongResource::collection($songRepository->getMany($ids, scopedUser: $user));

@@ -190,9 +190,7 @@ describe('useOfflinePlayback', () => {
     h.mock(playableStore, 'getSourceUrl').mockReturnValue(sourceUrl)
 
     cachedSongIds.value.add(song.id)
-    manifestEntries.value = [
-      { playable: song, cachedAt: Date.now(), size: 0 },
-    ]
+    manifestEntries.value = [{ playable: song, cachedAt: Date.now(), size: 0 }]
 
     await clearAllOfflineCache()
 
