@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4bd611505082aee6de4765a63ee3825f",
+    "content-hash": "e8c0355c668c2aa5908e0dc0377ba5b2",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -4103,17 +4103,17 @@
             "time": "2026-01-15T06:54:53+00:00"
         },
         {
-            "name": "lstrojny/functional-php",
-            "version": "1.17.0",
+            "name": "mattiabasone/functional-php",
+            "version": "1.18.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/lstrojny/functional-php.git",
-                "reference": "e459d5cb307bc6e10e9e992c4e96bb71a0262506"
+                "url": "https://github.com/mattiabasone/functional-php.git",
+                "reference": "e7675c43268529a103cf1dae99a343fcca7ba416"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lstrojny/functional-php/zipball/e459d5cb307bc6e10e9e992c4e96bb71a0262506",
-                "reference": "e459d5cb307bc6e10e9e992c4e96bb71a0262506",
+                "url": "https://api.github.com/repos/mattiabasone/functional-php/zipball/e7675c43268529a103cf1dae99a343fcca7ba416",
+                "reference": "e7675c43268529a103cf1dae99a343fcca7ba416",
                 "shasum": ""
             },
             "require": {
@@ -4144,6 +4144,7 @@
                     "src/Functional/DropFirst.php",
                     "src/Functional/DropLast.php",
                     "src/Functional/Each.php",
+                    "src/Functional/Entries.php",
                     "src/Functional/Equal.php",
                     "src/Functional/ErrorToException.php",
                     "src/Functional/Every.php",
@@ -4155,6 +4156,7 @@
                     "src/Functional/FlatMap.php",
                     "src/Functional/Flatten.php",
                     "src/Functional/Flip.php",
+                    "src/Functional/FromEntries.php",
                     "src/Functional/GreaterThan.php",
                     "src/Functional/GreaterThanOrEqual.php",
                     "src/Functional/Group.php",
@@ -4245,8 +4247,7 @@
                 "functional"
             ],
             "support": {
-                "issues": "https://github.com/lstrojny/functional-php/issues",
-                "source": "https://github.com/lstrojny/functional-php/tree/1.17.0"
+                "source": "https://github.com/mattiabasone/functional-php/tree/1.18.0"
             },
             "funding": [
                 {
@@ -4254,7 +4255,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-03-07T00:25:34+00:00"
+            "time": "2025-09-01T10:22:37+00:00"
         },
         {
             "name": "meilisearch/meilisearch-php",
