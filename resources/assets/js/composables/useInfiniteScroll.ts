@@ -1,39 +1,42 @@
 import type { Ref } from 'vue'
-import { onScopeDispose } from 'vue'
-import { useInfiniteScroll as baseUseInfiniteScroll } from '@vueuse/core'
+import { onBeforeUnmount, ref, watch } from 'vue'
 
 import ToTopButton from '@/components/ui/BtnScrollToTop.vue'
 
-export const useInfiniteScroll = (el: Ref<HTMLElement | undefined>, loadMore: Closure) => {
-  baseUseInfiniteScroll(el, loadMore, { distance: 32 })
+export const useInfiniteScroll = (container: Ref<HTMLElement | undefined>, loadMore: Closure) => {
+  const sentinel = ref<HTMLElement>()
+  let observer: IntersectionObserver | undefined
 
-  let tries = 0
-  let timerId: ReturnType<typeof setTimeout> | undefined
-  const MAX_TRIES = 5
+  watch(
+    sentinel,
+    (el, _, onCleanup) => {
+      if (!el) {
+        return
+      }
 
-  const makeScrollable = async () => {
-    const container = el.value
+      observer = new IntersectionObserver(
+        entries => {
+          if (entries[0].isIntersecting) {
+            loadMore()
+          }
+        },
+        {
+          root: container.value,
+          rootMargin: '100px',
+        },
+      )
 
-    if (!container) {
-      timerId = setTimeout(() => makeScrollable(), 200)
-      return
-    }
+      observer.observe(el)
 
-    if (container.scrollHeight <= container.clientHeight && tries < MAX_TRIES) {
-      tries++
-      await loadMore()
-      timerId = setTimeout(() => makeScrollable(), 200)
-    }
-  }
+      onCleanup(() => observer?.disconnect())
+    },
+    { flush: 'post' },
+  )
 
-  onScopeDispose(() => {
-    if (timerId !== undefined) {
-      clearTimeout(timerId)
-    }
-  })
+  onBeforeUnmount(() => observer?.disconnect())
 
   return {
     ToTopButton,
-    makeScrollable,
+    sentinel,
   }
 }

@@ -1,49 +1,81 @@
 import { describe, expect, it, vi } from 'vite-plus/test'
-import { effectScope, ref } from 'vue'
-
-vi.mock('@vueuse/core', async importOriginal => ({
-  ...(await importOriginal<typeof import('@vueuse/core')>()),
-  useInfiniteScroll: vi.fn(),
-}))
-
+import { effectScope, nextTick, ref } from 'vue'
 import { useInfiniteScroll } from './useInfiniteScroll'
 
 describe('useInfiniteScroll', () => {
-  it('returns ToTopButton and makeScrollable', () => {
+  it('returns ToTopButton and sentinel ref', () => {
     const scope = effectScope()
 
     scope.run(() => {
       const el = ref<HTMLElement>()
-      const loadMore = vi.fn()
-
-      const result = useInfiniteScroll(el, loadMore)
+      const result = useInfiniteScroll(el, vi.fn())
 
       expect(result.ToTopButton).toBeTruthy()
-      expect(typeof result.makeScrollable).toBe('function')
+      expect(result.sentinel).toBeDefined()
     })
 
     scope.stop()
   })
 
-  it('calls loadMore when container is not scrollable', async () => {
-    vi.useFakeTimers()
+  it('calls loadMore when sentinel becomes visible', async () => {
+    let intersectionCallback: IntersectionObserverCallback
+
+    vi.stubGlobal(
+      'IntersectionObserver',
+      vi.fn().mockImplementation(function (cb: IntersectionObserverCallback) {
+        intersectionCallback = cb
+        return { observe: vi.fn(), unobserve: vi.fn(), disconnect: vi.fn() }
+      }),
+    )
+
     const scope = effectScope()
 
     await scope.run(async () => {
-      const container = document.createElement('div')
-      Object.defineProperty(container, 'scrollHeight', { value: 100 })
-      Object.defineProperty(container, 'clientHeight', { value: 200 })
+      const container = ref(document.createElement('div'))
+      const loadMore = vi.fn()
 
-      const el = ref<HTMLElement>(container)
-      const loadMore = vi.fn().mockResolvedValue(undefined)
+      const { sentinel } = useInfiniteScroll(container, loadMore)
+      sentinel.value = document.createElement('div')
 
-      const { makeScrollable } = useInfiniteScroll(el, loadMore)
-      await makeScrollable()
+      await nextTick()
+
+      intersectionCallback!([{ isIntersecting: true } as IntersectionObserverEntry], {} as IntersectionObserver)
 
       expect(loadMore).toHaveBeenCalled()
     })
 
     scope.stop()
-    vi.useRealTimers()
+    vi.restoreAllMocks()
+  })
+
+  it('does not call loadMore when sentinel is not intersecting', async () => {
+    let intersectionCallback: IntersectionObserverCallback
+
+    vi.stubGlobal(
+      'IntersectionObserver',
+      vi.fn().mockImplementation(function (cb: IntersectionObserverCallback) {
+        intersectionCallback = cb
+        return { observe: vi.fn(), unobserve: vi.fn(), disconnect: vi.fn() }
+      }),
+    )
+
+    const scope = effectScope()
+
+    await scope.run(async () => {
+      const container = ref(document.createElement('div'))
+      const loadMore = vi.fn()
+
+      const { sentinel } = useInfiniteScroll(container, loadMore)
+      sentinel.value = document.createElement('div')
+
+      await nextTick()
+
+      intersectionCallback!([{ isIntersecting: false } as IntersectionObserverEntry], {} as IntersectionObserver)
+
+      expect(loadMore).not.toHaveBeenCalled()
+    })
+
+    scope.stop()
+    vi.restoreAllMocks()
   })
 })

@@ -58,9 +58,13 @@
             :layout="itemLayout"
             :show-release-year="preferences.albums_sort_field === 'year'"
           />
+          <template v-if="loading">
+            <AlbumCardSkeleton v-for="i in 4" :key="`loading-${i}`" :layout="itemLayout" />
+          </template>
           <ToTopButton />
         </template>
       </GridListView>
+      <div v-if="moreAlbumsAvailable && !loading" ref="sentinel" class="h-px" />
     </div>
   </ScreenBase>
 </template>
@@ -120,17 +124,21 @@ const fetchAlbums = async () => {
 
   loading.value = true
 
-  page.value = await albumStore.paginate({
-    favorites_only: preferences.albums_favorites_only,
-    page: page!.value || 1,
-    sort: preferences.albums_sort_field,
-    order: preferences.albums_sort_order,
-  })
-
-  loading.value = false
+  try {
+    page.value = await albumStore.paginate({
+      favorites_only: preferences.albums_favorites_only,
+      page: page!.value || 1,
+      sort: preferences.albums_sort_field,
+      order: preferences.albums_sort_order,
+    })
+  } catch (error: unknown) {
+    useErrorHandler().handleHttpError(error)
+  } finally {
+    loading.value = false
+  }
 }
 
-const { ToTopButton, makeScrollable } = useInfiniteScroll(gridContainer, async () => await fetchAlbums())
+const { ToTopButton, sentinel } = useInfiniteScroll(gridContainer, () => fetchAlbums())
 
 const resetState = async () => {
   page.value = 1
@@ -156,15 +164,9 @@ const toggleFavoritesOnly = async () => {
   await fetchAlbums()
 }
 
-onMounted(async () => {
-  if (libraryEmpty.value) {
-    return
-  }
-
-  try {
-    await makeScrollable()
-  } catch (error: unknown) {
-    useErrorHandler().handleHttpError(error)
+onMounted(() => {
+  if (!libraryEmpty.value) {
+    fetchAlbums()
   }
 })
 </script>
