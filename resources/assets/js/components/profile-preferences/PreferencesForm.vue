@@ -1,63 +1,82 @@
 <template>
-  <div class="space-y-3">
+  <div class="space-y-4">
     <FormRow v-if="isPlus">
-      <div>
+      <label class="pref-row">
+        <span>Make uploaded songs public by default</span>
         <CheckBox v-model="preferences.make_uploads_public" name="make_uploads_public" />
-        Make uploaded songs public by default
-      </div>
+      </label>
     </FormRow>
     <FormRow v-if="isPlus">
-      <div>
+      <label class="pref-row">
+        <span>Show other users' public songs, albums, artists, and radio stations in your library (reload required)</span>
         <CheckBox v-model="preferences.include_public_media" name="include_public_media" />
-        Show other users’ public songs, albums, artists, and radio stations in your library (reload required)
-      </div>
+      </label>
     </FormRow>
     <FormRow>
-      <div>
+      <label class="pref-row">
+        <span>{{ continuousPlaybackLabel }}</span>
         <CheckBox v-model="preferences.continuous_playback" name="continuous_playback" />
-        {{ continuousPlaybackLabel }}
-      </div>
+      </label>
     </FormRow>
     <FormRow v-if="onMobile">
-      <div>
+      <label class="pref-row">
+        <span>Show "Now Playing" notification</span>
         <CheckBox v-model="preferences.show_now_playing_notification" name="notify" />
-        Show “Now Playing” notification
-      </div>
+      </label>
     </FormRow>
     <FormRow v-if="!onMobile">
-      <div>
+      <label class="pref-row">
+        <span>Confirm before closing Koel</span>
         <CheckBox v-model="preferences.confirm_before_closing" name="confirm_closing" />
-        Confirm before closing Koel
-      </div>
+      </label>
     </FormRow>
     <FormRow v-if="showTranscodingOption">
-      <div>
-        <CheckBox
-          v-model="preferences.transcode_on_mobile"
-          data-testid="transcode_on_mobile"
-          name="transcode_on_mobile"
-        />
-        Convert and play media at
-        <select
-          v-model="preferences.transcode_quality"
-          :disabled="!preferences.transcode_on_mobile"
-          class="appearance-auto rounded"
-        >
-          <option v-for="quality in [64, 96, 128, 192, 256, 320]" :key="quality" :value="quality">{{ quality }}</option>
-        </select>
-        kbps on mobile
+      <div class="pref-row">
+        <span>
+          Convert and play media at
+          <select
+            v-model="preferences.transcode_quality"
+            :disabled="!preferences.transcode_on_mobile"
+            class="appearance-auto rounded"
+          >
+            <option v-for="quality in [64, 96, 128, 192, 256, 320]" :key="quality" :value="quality">{{ quality }}</option>
+          </select>
+          kbps on mobile
+        </span>
+        <CheckBox v-model="preferences.transcode_on_mobile" data-testid="transcode_on_mobile" name="transcode_on_mobile" />
       </div>
     </FormRow>
     <FormRow>
-      <div>
+      <label class="pref-row">
+        <span>Show a translucent, blurred overlay of the current album's art</span>
         <CheckBox v-model="preferences.show_album_art_overlay" name="show_album_art_overlay" />
-        Show a translucent, blurred overlay of the current album’s art
-      </div>
+      </label>
     </FormRow>
-    <FormRow v-if="isPlus">
-      <div>
-        <CheckBox v-model="preferences.crossfade" name="crossfade" />
-        Crossfade between songs
+    <FormRow>
+      <div class="pref-row">
+        <span class="flex-1">
+          <span class="flex items-center gap-3">
+            <span class="shrink-0">Crossfade songs</span>
+            <input
+              v-model.number="preferences.crossfade_duration"
+              type="range"
+              min="0"
+              max="15"
+              step="1"
+              data-testid="crossfade-slider"
+              class="crossfade-slider flex-1 min-w-32 max-w-96"
+            />
+            <span class="text-k-fg-50 shrink-0">
+              {{ crossfadeEnabled ? `${preferences.crossfade_duration}s` : 'Off' }}
+            </span>
+          </span>
+        </span>
+        <CheckBox
+          :model-value="crossfadeEnabled"
+          name="crossfade"
+          data-testid="crossfade-toggle"
+          @update:model-value="toggleCrossfade"
+        />
       </div>
     </FormRow>
   </div>
@@ -78,6 +97,12 @@ const { isPlus } = useKoelPlus()
 
 const showTranscodingOption = toRef(commonStore.state, 'supports_transcoding')
 
+const crossfadeEnabled = computed(() => preferences.crossfade_duration > 0)
+
+const toggleCrossfade = (enabled: boolean) => {
+  preferences.crossfade_duration = enabled ? 7 : 0
+}
+
 const continuousPlaybackLabel = computed(() => {
   const types = ['playlist', 'album', 'artist', 'genre', 'podcast']
 
@@ -92,7 +117,39 @@ const continuousPlaybackLabel = computed(() => {
 </script>
 
 <style lang="postcss" scoped>
-label {
-  @apply text-base;
+.pref-row {
+  @apply flex items-center gap-4 cursor-pointer;
+
+  > :first-child {
+    @apply flex-1;
+  }
+}
+
+.crossfade-slider {
+  appearance: none;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.crossfade-slider::-webkit-slider-thumb {
+  appearance: none;
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  border: 0;
+  cursor: pointer;
+  @apply bg-k-fg;
+}
+
+.crossfade-slider::-moz-range-thumb {
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  border: 0;
+  cursor: pointer;
+  @apply bg-k-fg;
 }
 </style>

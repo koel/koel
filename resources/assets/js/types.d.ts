@@ -396,7 +396,7 @@ interface UserPreferences extends Record<string, any> {
   active_extra_panel_tab: SideSheetTab | null
   make_uploads_public: boolean
   include_public_media: boolean
-  crossfade: boolean
+  crossfade_duration: number
   lastfm_session_key?: string
 }
 

@@ -26,10 +26,6 @@ import { useBranding } from '@/composables/useBranding'
  */
 const PRELOAD_BUFFER = 30
 
-/**
- * The duration of the crossfade in seconds.
- */
-const CROSSFADE_DURATION = 5
 
 export class QueuePlaybackService extends BasePlaybackService {
   private repeatModes: RepeatMode[] = ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE']
@@ -86,8 +82,7 @@ export class QueuePlaybackService extends BasePlaybackService {
    * We'll let them come true
    */
   public async play(playable: Playable, position = 0) {
-    const isCrossfadeFinalization =
-      crossfadeService.active && crossfadeService.state!.playable.id === playable.id
+    const isCrossfadeFinalization = crossfadeService.active && crossfadeService.state!.playable.id === playable.id
 
     // Cancel any active crossfade unless we're finalizing it
     if (!isCrossfadeFinalization) {
@@ -124,24 +119,19 @@ export class QueuePlaybackService extends BasePlaybackService {
       // Simply swap it in as the new primary — no src change, no seeking, no interruption.
       const { incomingAudio } = crossfadeService.state!
 
-      // Stop and discard the old element
+      // Stop and fully discard the old element
       this.media.pause()
       this.media.removeAttribute('src')
-
-      // Disconnect the crossfade gain node — the source will be connected directly
-      crossfadeService.disconnectIncomingGain()
+      this.media.load()
 
       // The incoming audio is already playing at the right position.
       // Just make it the new primary media element.
       this.swapMediaElement(incomingAudio)
       this.setVolume(volumeManager.get())
 
-      // Reconnect: the incoming source node connects directly to preampGainNode
-      // (same path as the original source, so equalizer stays applied)
-      if (isAudioContextSupported && audioService.context && crossfadeService.state?.incomingSource) {
-        audioService.source.disconnect()
-        audioService.source = crossfadeService.state.incomingSource
-        audioService.source.connect(audioService.preampGainNode)
+      // Reconnect the audio graph to the new element
+      if (isAudioContextSupported && audioService.context) {
+        audioService.reconnectSource(incomingAudio)
       }
 
       crossfadeService.state = null
@@ -452,15 +442,17 @@ export class QueuePlaybackService extends BasePlaybackService {
       this.preload(nextPlayable)
     }
 
-    // Initiate crossfade if enabled (Plus feature) and near the end of the track
+    // Initiate crossfade if enabled and near the end of the track
+    const crossfadeDuration = preferences.crossfade_duration
+
     if (
-      preferences.crossfade &&
+      crossfadeDuration > 0 &&
       !crossfadeService.active &&
       preferences.repeat_mode !== 'REPEAT_ONE' &&
-      media.duration > CROSSFADE_DURATION * 2 && // skip for short tracks
-      media.currentTime + CROSSFADE_DURATION >= media.duration
+      media.duration > crossfadeDuration * 2 && // skip for short tracks
+      media.currentTime + crossfadeDuration >= media.duration
     ) {
-      if (crossfadeService.start(nextPlayable, CROSSFADE_DURATION, volumeManager.get())) {
+      if (crossfadeService.start(nextPlayable, crossfadeDuration, volumeManager.get())) {
         // Show the incoming track as "now playing" immediately
         queueStore.current!.playback_state = 'Stopped'
         nextPlayable.playback_state = 'Playing'
@@ -473,7 +465,7 @@ export class QueuePlaybackService extends BasePlaybackService {
     // Fade out the primary player during an active crossfade
     if (crossfadeService.active && crossfadeService.state) {
       const remaining = media.duration - media.currentTime
-      const progress = Math.max(0, 1 - remaining / CROSSFADE_DURATION)
+      const progress = Math.max(0, 1 - remaining / crossfadeDuration)
       this.setVolume(volumeManager.get() * (1 - progress))
     }
   }
