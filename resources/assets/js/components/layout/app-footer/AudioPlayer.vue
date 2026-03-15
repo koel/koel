@@ -1,44 +1,65 @@
 <template>
-  <!--
-    A very thin wrapper around Plyr, extracted as a standalone component for easier styling and to work better with HMR.
-  -->
-  <div class="plyr w-full h-[4px]">
-    <audio class="hidden" controls crossorigin="anonymous" />
+  <div class="audio-player w-full h-[4px] relative">
+    <audio id="audio-player" class="hidden" crossorigin="anonymous" />
+    <div class="progress-bar absolute top-0 w-full h-full bg-transparent cursor-pointer" @click="seek">
+      <div class="progress-played h-full transition-all duration-300 ease-in-out" :style="{ width: `${progress}%` }" />
+    </div>
   </div>
 </template>
 
-<style lang="postcss">
-/* can't be scoped as it would be overridden by the plyr css */
-.plyr {
-  .plyr__controls {
-    @apply bg-transparent shadow-none absolute top-0 w-full;
-    @apply p-0 !important;
+<script lang="ts" setup>
+import { ref } from 'vue'
+import { playback } from '@/services/playbackManager'
+
+const progress = ref(0)
+
+const updateProgress = () => {
+  const service = playback('current')
+
+  if (!service?.media) {
+    return
   }
 
-  .plyr__progress--played[value] {
-    @apply transition duration-300 ease-in-out text-k-fg-10;
+  const { currentTime, duration } = service.media
 
-    :fullscreen & {
-      @apply text-k-fg-50 rounded-full overflow-hidden;
-    }
+  if (duration > 0) {
+    progress.value = (currentTime / duration) * 100
+  }
+}
+
+const seek = (e: MouseEvent) => {
+  const service = playback('current')
+
+  if (!service?.media?.duration) {
+    return
   }
 
-  &:hover {
-    .plyr__progress--played[value] {
-      @apply text-k-highlight;
-    }
-  }
+  const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+  const position = ((e.clientX - rect.left) / rect.width) * service.media.duration
+  service.seekTo(position)
+}
 
-  .plyr__progress--played[value] {
-    @apply no-hover:text-k-highlight;
-  }
+setInterval(updateProgress, 250)
+</script>
 
-  :fullscreen & {
-    @apply z-[4] bg-white/20 rounded-full;
+<style lang="postcss" scoped>
+.progress-played {
+  @apply bg-k-fg-10;
+}
 
-    .plyr__progress--played[value] {
-      @apply text-white !important;
-    }
-  }
+.audio-player:hover .progress-played {
+  @apply bg-k-highlight;
+}
+
+.progress-played {
+  @apply no-hover:bg-k-highlight;
+}
+
+:fullscreen .audio-player {
+  @apply z-[4] bg-white/20 rounded-full overflow-hidden;
+}
+
+:fullscreen .progress-played {
+  @apply bg-white !important;
 }
 </style>

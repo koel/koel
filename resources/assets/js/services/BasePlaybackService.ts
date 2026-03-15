@@ -1,18 +1,16 @@
 import isMobile from 'ismobilejs'
 import { throttle } from 'lodash'
-import plyr from 'plyr'
 import { watch } from 'vue'
 import { volumeManager } from '@/services/volumeManager'
 
 export abstract class BasePlaybackService {
-  public player!: Plyr
+  public media!: HTMLMediaElement
   private boundMediaEvents = new Set<[string, EventListener, boolean]>()
 
-  public activate(plyrWrapper: HTMLElement) {
-    if (!this.player) {
-      // player and watchers can be kept between init/destroy sessions
-      this.player = this.player || plyr.setup(plyrWrapper, { controls: [] })[0]
-      watch(volumeManager.volume, volume => this.player.setVolume(volume), { immediate: true })
+  public activate(mediaElement: HTMLMediaElement) {
+    if (!this.media) {
+      this.media = mediaElement
+      watch(volumeManager.volume, volume => this.setVolume(volume), { immediate: true })
       this.setMediaSessionActionHandlers()
     }
 
@@ -21,6 +19,11 @@ export abstract class BasePlaybackService {
     }
 
     return this
+  }
+
+  public setVolume(volume: number) {
+    // volumeManager uses 0-10 scale, HTMLMediaElement uses 0-1
+    this.media.volume = Math.max(0, Math.min(1, volume / 10))
   }
 
   protected setMediaSessionActionHandlers() {
@@ -40,7 +43,7 @@ export abstract class BasePlaybackService {
     }
 
     navigator.mediaSession.setActionHandler('seekto', details => {
-      if (details.fastSeek && 'fastSeek' in this.player.media) {
+      if (details.fastSeek && 'fastSeek' in this.media) {
         this.fastSeek(details.seekTime || 0)
       } else {
         this.seekTo(details.seekTime || 0)
@@ -50,7 +53,7 @@ export abstract class BasePlaybackService {
 
   private addMediaEventListeners() {
     const listen = (event: string, handler: Closure, options?: boolean | AddEventListenerOptions) => {
-      this.player.media.addEventListener(event, handler, options)
+      this.media.addEventListener(event, handler, options)
       this.boundMediaEvents.add([event, handler, !!options])
     }
 
@@ -59,6 +62,22 @@ export abstract class BasePlaybackService {
 
     const timeUpdateHandler = window.RUNNING_UNIT_TESTS ? this.onTimeUpdate : throttle(this.onTimeUpdate, 1000)
     listen('timeupdate', timeUpdateHandler.bind(this))
+  }
+
+  /** Move media event listeners to a new element (e.g. after a crossfade element swap) */
+  public swapMediaElement(newMedia: HTMLMediaElement) {
+    // Remove listeners from old element
+    this.boundMediaEvents.forEach(([event, handler, options]) => {
+      this.media.removeEventListener(event, handler, options)
+    })
+
+    this.boundMediaEvents.clear()
+
+    // Swap the reference
+    this.media = newMedia
+
+    // Reattach listeners on the new element
+    this.addMediaEventListeners()
   }
 
   public abstract play(source: Streamable): Promise<void>
@@ -92,10 +111,8 @@ export abstract class BasePlaybackService {
   public abstract rotateRepeatMode(): void
 
   public deactivate() {
-    // Upon deactivating (i.e. switching to another playback service) we want to remove all event listeners
-    // to not mess up the media events in the other service.
     this.boundMediaEvents.forEach(([event, handler, options]) => {
-      this.player.media.removeEventListener(event, handler, options)
+      this.media.removeEventListener(event, handler, options)
     })
 
     this.boundMediaEvents.clear()

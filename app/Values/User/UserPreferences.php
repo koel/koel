@@ -15,6 +15,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
         'artists_favorites_only' => 'boolean',
         'confirm_before_closing' => 'boolean',
         'continuous_playback' => 'boolean',
+        'crossfade' => 'boolean',
         'include_public_media' => 'boolean',
         'lyrics_zoom_level' => 'integer',
         'make_uploads_public' => 'boolean',
@@ -40,6 +41,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
         'artists_view_mode',
         'confirm_before_closing',
         'continuous_playback',
+        'crossfade',
         'equalizer',
         'genres_sort_field',
         'genres_sort_order',
@@ -97,6 +99,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
         public bool $includePublicMedia,
         public bool $supportBarNoBugging,
         public bool $continuousPlayback,
+        public bool $crossfade,
         public int $lyricsZoomLevel,
         public string $visualizer,
         public ?string $activeExtraPanelTab,
@@ -156,6 +159,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
             includePublicMedia: $data['include_public_media'] ?? true,
             supportBarNoBugging: $data['support_bar_no_bugging'] ?? false,
             continuousPlayback: $data['continuous_playback'] ?? false,
+            crossfade: $data['crossfade'] ?? false,
             lyricsZoomLevel: $data['lyrics_zoom_level'] ?? 1,
             visualizer: $data['visualizer'] ?? 'default',
             activeExtraPanelTab: $data['active_extra_panel_tab'] ?? null,
@@ -230,6 +234,7 @@ final class UserPreferences implements Arrayable, JsonSerializable
             'visualizer' => $this->visualizer,
             'active_extra_panel_tab' => $this->activeExtraPanelTab,
             'continuous_playback' => $this->continuousPlayback,
+            'crossfade' => $this->crossfade,
         ];
     }
 

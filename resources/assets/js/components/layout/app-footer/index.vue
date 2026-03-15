@@ -105,9 +105,9 @@ const appBackgroundImage = computed(() => {
 })
 
 const initPlaybackRelatedServices = async () => {
-  const plyrWrapper = document.querySelector<HTMLElement>('.plyr')
+  const audioElement = document.querySelector<HTMLMediaElement>('#audio-player')
 
-  if (!plyrWrapper) {
+  if (!audioElement) {
     await nextTick()
     await initPlaybackRelatedServices()
     return
@@ -118,7 +118,7 @@ const initPlaybackRelatedServices = async () => {
 
   // If audio context is supported, initialize the audio service which handles audio processing (equalizer, etc.)
   if (isAudioContextSupported) {
-    audioService.init(playbackService.player.media)
+    audioService.init(playbackService.media)
   }
 }
 

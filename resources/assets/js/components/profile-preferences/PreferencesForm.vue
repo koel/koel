@@ -54,6 +54,12 @@
         Show a translucent, blurred overlay of the current album’s art
       </div>
     </FormRow>
+    <FormRow v-if="isPlus">
+      <div>
+        <CheckBox v-model="preferences.crossfade" name="crossfade" />
+        Crossfade between songs
+      </div>
+    </FormRow>
   </div>
 </template>
 

@@ -8,8 +8,8 @@ export class RadioPlaybackService extends BasePlaybackService {
     use(radioStationStore.current, station => (station.playback_state = 'Stopped'))
 
     station.playback_state = 'Playing'
-    this.player.media.src = radioStationStore.getSourceUrl(station)
-    await this.player.media.play()
+    this.media.src = radioStationStore.getSourceUrl(station)
+    await this.media.play()
 
     radioStationStore.startPolling(station)
     socketService.broadcast('SOCKET_STREAMABLE', station)
@@ -51,10 +51,10 @@ export class RadioPlaybackService extends BasePlaybackService {
     })
 
     // For radio playback, we simply stop the player and reset the media source.
-    if (this.player) {
-      this.player.media.pause()
-      this.player.media.currentTime = 0
-      this.player.media.removeAttribute('src')
+    if (this.media) {
+      this.media.pause()
+      this.media.currentTime = 0
+      this.media.removeAttribute('src')
     }
   }
 
