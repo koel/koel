@@ -1,31 +1,33 @@
 <template>
   <div class="space-y-4">
     <FormRow v-if="isPlus">
-      <label>
+      <label class="pref-row">
         <span>Make uploaded songs public by default</span>
         <CheckBox v-model="preferences.make_uploads_public" name="make_uploads_public" />
       </label>
     </FormRow>
     <FormRow v-if="isPlus">
-      <label>
-        <span>Show other users' public songs, albums, artists, and radio stations in your library (reload required)</span>
+      <label class="pref-row">
+        <span
+          >Show other users' public songs, albums, artists, and radio stations in your library (reload required)</span
+        >
         <CheckBox v-model="preferences.include_public_media" name="include_public_media" />
       </label>
     </FormRow>
     <FormRow>
-      <label>
+      <label class="pref-row">
         <span>{{ continuousPlaybackLabel }}</span>
         <CheckBox v-model="preferences.continuous_playback" name="continuous_playback" />
       </label>
     </FormRow>
     <FormRow v-if="onMobile">
-      <label>
+      <label class="pref-row">
         <span>Show "Now Playing" notification</span>
         <CheckBox v-model="preferences.show_now_playing_notification" name="notify" />
       </label>
     </FormRow>
     <FormRow v-if="!onMobile">
-      <label>
+      <label class="pref-row">
         <span>Confirm before closing Koel</span>
         <CheckBox v-model="preferences.confirm_before_closing" name="confirm_closing" />
       </label>
@@ -39,15 +41,21 @@
             :disabled="!preferences.transcode_on_mobile"
             class="appearance-auto rounded"
           >
-            <option v-for="quality in [64, 96, 128, 192, 256, 320]" :key="quality" :value="quality">{{ quality }}</option>
+            <option v-for="quality in [64, 96, 128, 192, 256, 320]" :key="quality" :value="quality">
+              {{ quality }}
+            </option>
           </select>
           kbps on mobile
         </span>
-        <CheckBox v-model="preferences.transcode_on_mobile" data-testid="transcode_on_mobile" name="transcode_on_mobile" />
+        <CheckBox
+          v-model="preferences.transcode_on_mobile"
+          data-testid="transcode_on_mobile"
+          name="transcode_on_mobile"
+        />
       </div>
     </FormRow>
     <FormRow>
-      <label>
+      <label class="pref-row">
         <span>Show a translucent, blurred overlay of the current album's art</span>
         <CheckBox v-model="preferences.show_album_art_overlay" name="show_album_art_overlay" />
       </label>
@@ -117,7 +125,6 @@ const continuousPlaybackLabel = computed(() => {
 </script>
 
 <style lang="postcss" scoped>
-label,
 .pref-row {
   @apply flex items-center gap-4 cursor-pointer;
 

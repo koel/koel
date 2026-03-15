@@ -26,7 +26,6 @@ import { useBranding } from '@/composables/useBranding'
  */
 const PRELOAD_BUFFER = 30
 
-
 export class QueuePlaybackService extends BasePlaybackService {
   private repeatModes: RepeatMode[] = ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE']
   private upNext: Ref<Playable | null> = ref(null)
