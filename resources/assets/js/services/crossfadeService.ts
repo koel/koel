@@ -60,7 +60,10 @@ export const crossfadeService = {
             }
           }, 50)
         })
-        .catch(e => logger.warn('Crossfade play failed:', e))
+        .catch(e => {
+          logger.warn('Crossfade play failed:', e)
+          this.cancel()
+        })
 
       return true
     } catch (e) {
