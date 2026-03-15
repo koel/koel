@@ -1,11 +1,17 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`audioPlayer.vue > renders 1`] = `
-<div data-v-a2321d8c="" class="audio-player w-full h-[4px] relative"><audio data-v-a2321d8c="" id="audio-player" class="hidden" crossorigin="anonymous"></audio>
-  <div data-v-a2321d8c="" class="progress-bar absolute top-0 w-full h-full cursor-pointer">
-    <div data-v-a2321d8c="" class="progress-buffer absolute top-0 left-0 h-full" style="width: 0%;"></div>
-    <div data-v-a2321d8c="" class="progress-hover absolute top-0 left-0 h-full" style="width: 0%;"></div>
-    <div data-v-a2321d8c="" class="progress-played absolute top-0 left-0 h-full" style="width: 0%;"></div>
+<div data-v-a2321d8c="" class="audio-player"><audio data-v-a2321d8c="" id="audio-player" class="hidden" crossorigin="anonymous"></audio>
+  <!--
+      The hit area is absolutely positioned over the top of the footer,
+      extending above and below the visible 4px track for easy clicking.
+    -->
+  <div data-v-a2321d8c="" class="hit-area">
+    <div data-v-a2321d8c="" class="track">
+      <div data-v-a2321d8c="" class="progress-buffer" style="width: 0%;"></div>
+      <div data-v-a2321d8c="" class="progress-hover" style="width: 0%;"></div>
+      <div data-v-a2321d8c="" class="progress-played" style="width: 0%;"></div>
+    </div>
   </div>
 </div>
 `;
