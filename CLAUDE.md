@@ -236,6 +236,9 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - Always use Tailwind CSS v3; verify you're using only classes supported by this version.
 </laravel-boost-guidelines>
 
+## Architecture
+- Koel loads data progressively — there is no method to fetch all songs at once. Songs are loaded lazily per screen/context. This is by design for large libraries. Never assume the playable store vault contains all songs.
+
 ## Code Organization
 - Traits must be placed in a `Concerns` subfolder (namespace) relative to their consumers (e.g. `App\Ai\Tools\Concerns\PlaysMusic`).
 - Interfaces must be placed in a `Contracts` subfolder (namespace) relative to their consumers (e.g. `App\Ai\Tools\Contracts\SomeInterface`).
@@ -269,6 +272,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## TypeScript Conventions
 - Always prefer generics over type casting when the API supports it (e.g. `container.querySelector<HTMLElement>('.foo')` instead of `container.querySelector('.foo') as HTMLElement`).
+- Do not add explicit return types when they can be inferred by the compiler. Only annotate return types when inference is insufficient or ambiguous.
 
 ## Vue Component Styling
 - Put shared/base Tailwind classes directly on the HTML element via the `class` attribute.

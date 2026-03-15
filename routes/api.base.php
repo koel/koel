@@ -26,6 +26,7 @@ use App\Http\Controllers\API\FetchFavoriteSongsController;
 use App\Http\Controllers\API\FetchInitialDataController;
 use App\Http\Controllers\API\FetchOverviewController;
 use App\Http\Controllers\API\FetchRecentlyPlayedSongController;
+use App\Http\Controllers\API\FetchSongsByIdsController;
 use App\Http\Controllers\API\FetchSongsForQueueController;
 use App\Http\Controllers\API\FetchSongsToQueueByGenreController;
 use App\Http\Controllers\API\ForgotPasswordController;
@@ -146,6 +147,7 @@ Route::prefix('api')
             // Fetch songs under several folder paths (may include multiple nested levels).
             // This is a POST request because the folder paths may be long.
             Route::post('songs/by-folders', FetchRecursiveFolderSongsController::class);
+            Route::post('songs/by-ids', FetchSongsByIdsController::class);
 
             // Fetch songs **directly** in a specific folder path (or the media root if no path is specified)
             Route::get('songs/in-folder', FetchFolderSongsController::class);

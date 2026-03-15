@@ -1,12 +1,14 @@
-import { computed, ref } from 'vue'
+import { computed, ref, toRaw } from 'vue'
 import { playableStore } from '@/stores/playableStore'
 import { offlineManifest } from '@/services/offlineManifest'
 import type { OfflineManifestEntry } from '@/services/offlineManifest'
+import { http } from '@/services/http'
+import { eventBus } from '@/utils/eventBus'
 import { logger } from '@/utils/logger'
 import { isSong } from '@/utils/typeGuards'
 
 type CacheProgress = {
-  songId: string
+  songId: Song['id']
   progress: number
   received: number
   total: number
@@ -16,7 +18,7 @@ type CacheProgress = {
  * Tracks which songs are currently cached for offline playback.
  * Key: song ID, Value: true if cached.
  */
-const cachedSongIds = ref(new Set<string>())
+const cachedSongIds = ref(new Set<Song['id']>())
 
 /**
  * Full manifest entries loaded from IndexedDB.
@@ -27,7 +29,7 @@ const manifestEntries = ref<OfflineManifestEntry[]>([])
  * Tracks songs currently being cached.
  * Key: song ID, Value: download progress (0-1).
  */
-const cachingProgress = ref(new Map<string, number>())
+const cachingProgress = ref(new Map<Song['id'], number>())
 
 /** Storage estimate from navigator.storage API. */
 const storageUsage = ref(0)
@@ -64,10 +66,63 @@ const loadManifest = async () => {
   manifestEntries.value = entries
 
   for (const entry of entries) {
-    cachedSongIds.value.add(entry.songId)
+    cachedSongIds.value.add(entry.playable.id)
+
+    // Restore the playable into the vault if it's not already there
+    if (!playableStore.byId(entry.playable.id)) {
+      playableStore.syncWithVault(entry.playable)
+    }
   }
 
   await refreshStorageEstimate()
+
+  // Sync with the server after a delay to avoid competing with init requests
+  if (entries.length) {
+    setTimeout(() => syncWithServer(entries), 3 * 60 * 1000) // 3 minutes
+  }
+}
+
+/**
+ * Sync offline manifest with the server:
+ * - Fetch fresh data for all cached song IDs
+ * - Update manifest entries with current metadata (e.g. changed lyrics, title)
+ * - Remove entries for songs that no longer exist on the server
+ * - Clean up the corresponding audio cache for removed songs
+ */
+const syncWithServer = async (entries: OfflineManifestEntry[]) => {
+  try {
+    const cachedIds = entries.map(e => e.playable.id)
+    const freshPlayables = await http.silently.post<Playable[]>('songs/by-ids', { ids: cachedIds })
+    const freshIds = new Set(freshPlayables.map(p => p.id))
+
+    // Update existing entries with fresh data
+    for (const playable of freshPlayables) {
+      playableStore.syncWithVault(playable)
+      offlineManifest.put({ playable, cachedAt: Date.now(), size: 0 })
+    }
+
+    // Remove orphans (songs deleted from server)
+    const sw = getSW()
+
+    for (const entry of entries) {
+      if (!freshIds.has(entry.playable.id)) {
+        cachedSongIds.value.delete(entry.playable.id)
+        offlineManifest.remove(entry.playable.id)
+
+        if (sw) {
+          sw.postMessage({
+            type: 'DELETE_AUDIO_CACHE',
+            songId: entry.playable.id,
+            sourceUrl: playableStore.getSourceUrl(entry.playable),
+          })
+        }
+      }
+    }
+
+    manifestEntries.value = manifestEntries.value.filter(e => freshIds.has(e.playable.id))
+  } catch (e) {
+    logger.warn('Failed to sync offline cache with server:', e)
+  }
 }
 
 const refreshStorageEstimate = async () => {
@@ -84,7 +139,7 @@ const setupMessageListener = () => {
 
     switch (data.type) {
       case 'CACHE_AUDIO_PROGRESS': {
-        const { songId, progress } = data as CacheProgress & { type: string }
+        const { songId, progress } = data as CacheProgress & { type: Song['id'] }
         cachingProgress.value.set(songId, progress)
         break
       }
@@ -108,7 +163,7 @@ const setupMessageListener = () => {
       case 'DELETE_AUDIO_CACHE_COMPLETE': {
         const { songId } = data
         cachedSongIds.value.delete(songId)
-        manifestEntries.value = manifestEntries.value.filter(e => e.songId !== songId)
+        manifestEntries.value = manifestEntries.value.filter(e => e.playable.id !== songId)
         offlineManifest.remove(songId)
         refreshStorageEstimate()
         break
@@ -131,27 +186,49 @@ const setupMessageListener = () => {
   })
 }
 
-const persistManifestEntry = (songId: string) => {
+const persistManifestEntry = (songId: Song['id']) => {
   const playable = playableStore.byId(songId)
 
   if (!playable) return
 
   const entry: OfflineManifestEntry = {
-    songId,
-    title: playable.title,
-    artist: isSong(playable) ? playable.artist_name : (playable as Episode).podcast_author,
-    album: isSong(playable) ? playable.album_name : (playable as Episode).podcast_title,
+    playable: toRaw(playable),
     cachedAt: Date.now(),
     size: 0,
   }
 
   offlineManifest.put(entry)
-  manifestEntries.value = [...manifestEntries.value.filter(e => e.songId !== songId), entry]
+  manifestEntries.value = [...manifestEntries.value.filter(e => e.playable.id !== songId), entry]
+}
+
+const setupSongDeletionListener = () => {
+  eventBus.on('SONGS_DELETED', deletedSongs => {
+    const sw = getSW()
+
+    for (const song of deletedSongs) {
+      if (!cachedSongIds.value.has(song.id)) {
+        continue
+      }
+
+      cachedSongIds.value.delete(song.id)
+      offlineManifest.remove(song.id)
+
+      if (sw) {
+        sw.postMessage({
+          type: 'DELETE_AUDIO_CACHE',
+          songId: song.id,
+          sourceUrl: playableStore.getSourceUrl(song),
+        })
+      }
+    }
+
+    manifestEntries.value = manifestEntries.value.filter(e => !deletedSongs.some(s => s.id === e.playable.id))
+  })
 }
 
 let listenerSetup = false
 
-const extractSongIdFromUrl = (url: string): string | null => {
+const extractSongIdFromUrl = (url: string): Song['id'] | null => {
   const match = url.match(/\/play\/([^/?]+)/)
   return match?.[1] || null
 }
@@ -161,6 +238,7 @@ export const useOfflinePlayback = () => {
     listenerSetup = true
     setupMessageListener()
     loadManifest()
+    setupSongDeletionListener()
   }
 
   const makeAvailableOffline = (playable: Playable) => {
@@ -197,20 +275,12 @@ export const useOfflinePlayback = () => {
     const entries = [...manifestEntries.value]
 
     for (const entry of entries) {
-      const playable = playableStore.byId(entry.songId)
-
-      if (playable) {
-        const sourceUrl = playableStore.getSourceUrl(playable)
-        sw.postMessage({
-          type: 'DELETE_AUDIO_CACHE',
-          songId: entry.songId,
-          sourceUrl,
-        })
-      } else {
-        // Song no longer in vault — just clean up manifest
-        cachedSongIds.value.delete(entry.songId)
-        offlineManifest.remove(entry.songId)
-      }
+      const sourceUrl = playableStore.getSourceUrl(entry.playable)
+      sw.postMessage({
+        type: 'DELETE_AUDIO_CACHE',
+        songId: entry.playable.id,
+        sourceUrl,
+      })
     }
 
     manifestEntries.value = []
