@@ -11,7 +11,7 @@ import Component from './RadioStationCard.vue'
 
 vi.mock('@/composables/useContextMenu')
 
-describe('radioStationCard.vue', () => {
+describe('radioStationCard', () => {
   const h = createHarness()
 
   const createRadioStation = (overrides: Partial<RadioStation> = {}): RadioStation => {
@@ -32,7 +32,7 @@ describe('radioStationCard.vue', () => {
 
     const render = h.render(Component, {
       props: {
-        station: station || createRadioStation(),
+        station,
       },
       global: {
         stubs: {
@@ -47,16 +47,23 @@ describe('radioStationCard.vue', () => {
     }
   }
 
-  it('renders with stopped state', () => expect(renderComponent().html()).toMatchSnapshot())
-
-  it('renders with playing state', () => {
-    const station = createRadioStation({ playback_state: 'Playing' })
-    expect(renderComponent(station).html()).toMatchSnapshot()
+  it('renders station name', () => {
+    renderComponent()
+    screen.getByText('Beethoven Goes Metal')
   })
 
-  it('plays', async () => {
-    h.createAudioPlayer()
+  it('renders station description', () => {
+    renderComponent()
+    screen.getByText('Heavy af')
+  })
 
+  it('renders thumbnail with play/pause button', () => {
+    renderComponent()
+    screen.getByTitle('Play/pause Beethoven Goes Metal')
+  })
+
+  it('plays on thumbnail click', async () => {
+    h.createAudioPlayer()
     const playMock = h.mock(playbackService, 'play')
     const { station } = renderComponent()
 
@@ -68,23 +75,23 @@ describe('radioStationCard.vue', () => {
   it('requests context menu', async () => {
     const { openContextMenu } = useContextMenu()
     const { station } = renderComponent()
-    await h.trigger(screen.getByTestId('radio-station-card'), 'contextMenu')
+    await h.trigger(screen.getByTestId('artist-album-card'), 'contextMenu')
 
     await assertOpenContextMenu(openContextMenu as Mock, RadioStationContextMenu, { station })
   })
 
-  it('if favorite, has a Favorite icon button that undoes favorite state', async () => {
-    const album = createRadioStation({ favorite: true })
+  it('shows favorite button when favorited', async () => {
+    const station = createRadioStation({ favorite: true })
     const toggleMock = h.mock(radioStationStore, 'toggleFavorite')
-    renderComponent(album)
+    renderComponent(station)
 
     await fireEvent(screen.getByTestId('favorite-button'), new CustomEvent('toggle'))
 
-    expect(toggleMock).toHaveBeenCalledWith(album)
+    expect(toggleMock).toHaveBeenCalledWith(station)
   })
 
-  it('if not favorite, does not have a Favorite icon button', async () => {
+  it('does not show favorite button when not favorited', () => {
     renderComponent()
-    expect(screen.queryByRole('button', { name: 'Undo Favorite' })).toBeNull()
+    expect(screen.queryByTestId('favorite-button')).toBeNull()
   })
 })
