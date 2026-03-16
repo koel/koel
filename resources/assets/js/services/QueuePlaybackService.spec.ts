@@ -30,6 +30,7 @@ describe('playbackService', () => {
     song = reactive(song || h.factory('song', { playback_state: 'Playing' }))
 
     queueStore.state.playables = reactive([song])
+    queueStore.current = song
     return song
   }
 
@@ -300,6 +301,7 @@ describe('playbackService', () => {
 
   it('plays first in queue if toggled when there is no current playable', async () => {
     queueStore.state.playables = []
+    queueStore.current = undefined
     const playFirstInQueueMock = h.mock(playbackService, 'playFirstInQueue')
 
     await playbackService.toggle()

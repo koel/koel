@@ -12,6 +12,7 @@ describe('queueStore', () => {
     beforeEach: () => {
       songs = h.factory('song', 3)
       queueStore.state.playables = reactive(songs)
+      queueStore.current = undefined
     },
   })
 
@@ -74,28 +75,28 @@ describe('queueStore', () => {
     expect(putMock).toHaveBeenCalledWith('queue/state', { songs: [] })
   })
 
-  it.each<[PlaybackState]>([['Playing'], ['Paused']])('identifies the current song by %s state', state => {
-    queueStore.state.playables[1].playback_state = state
+  it('tracks the current song', () => {
+    queueStore.current = queueStore.state.playables[1]
     expect(queueStore.current).toEqual(queueStore.state.playables[1])
   })
 
   it('gets the next song in queue', () => {
-    queueStore.state.playables[1].playback_state = 'Playing'
+    queueStore.current = queueStore.state.playables[1]
     expect(queueStore.next).toEqual(queueStore.state.playables[2])
   })
 
   it('returns undefined as next song if at end of queue', () => {
-    queueStore.state.playables[2].playback_state = 'Playing'
+    queueStore.current = queueStore.state.playables[2]
     expect(queueStore.next).toBeUndefined()
   })
 
   it('gets the previous song in queue', () => {
-    queueStore.state.playables[1].playback_state = 'Playing'
+    queueStore.current = queueStore.state.playables[1]
     expect(queueStore.previous).toEqual(queueStore.state.playables[0])
   })
 
   it('returns undefined as previous song if at beginning of queue', () => {
-    queueStore.state.playables[0].playback_state = 'Playing'
+    queueStore.current = queueStore.state.playables[0]
     expect(queueStore.previous).toBeUndefined()
   })
 

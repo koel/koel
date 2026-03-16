@@ -110,6 +110,7 @@ export class QueuePlaybackService extends BasePlaybackService {
     }
 
     playable.playback_state = 'Playing'
+    queueStore.current = playable
 
     await this.setNowPlayingMeta(playable)
 
@@ -273,7 +274,11 @@ export class QueuePlaybackService extends BasePlaybackService {
 
     document.title = useBranding().name
 
-    queueStore.current && (queueStore.current.playback_state = 'Stopped')
+    if (queueStore.current) {
+      queueStore.current.playback_state = 'Stopped'
+      queueStore.current = undefined
+    }
+
     navigator.mediaSession && (navigator.mediaSession.playbackState = 'none')
 
     socketService.broadcast('SOCKET_PLAYBACK_STOPPED')
@@ -455,6 +460,7 @@ export class QueuePlaybackService extends BasePlaybackService {
         // Show the incoming track as "now playing" immediately
         queueStore.current!.playback_state = 'Stopped'
         nextPlayable.playback_state = 'Playing'
+        queueStore.current = nextPlayable
         this.setNowPlayingMeta(nextPlayable)
         this.showNotification(nextPlayable)
         this.registerPlay(nextPlayable)

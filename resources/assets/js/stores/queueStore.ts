@@ -7,8 +7,9 @@ import { http } from '@/services/http'
 import { playableStore } from '@/stores/playableStore'
 
 export const queueStore = {
-  state: reactive<{ playables: Playable[] }>({
+  state: reactive<{ playables: Playable[]; currentPlayable: Playable | undefined }>({
     playables: [],
+    currentPlayable: undefined,
   }),
 
   init(savedState: QueueState) {
@@ -20,9 +21,12 @@ export const queueStore = {
     }
 
     if (savedState.current_song) {
-      playableStore.syncWithVault(savedState.current_song)[0].playback_state = 'Paused'
+      const song = playableStore.syncWithVault(savedState.current_song)[0]
+      song.playback_state = 'Paused'
+      this.current = song
     } else {
       this.all[0].playback_state = 'Paused'
+      this.current = this.all[0]
     }
   },
 
@@ -98,7 +102,15 @@ export const queueStore = {
 
   unqueue(playables: MaybeArray<Playable>) {
     playables = arrayify(playables)
-    playables.forEach(song => (song.playback_state = 'Stopped'))
+
+    playables.forEach(song => {
+      song.playback_state = 'Stopped'
+
+      if (this.current?.id === song.id) {
+        this.current = undefined
+      }
+    })
+
     this.all = differenceBy(this.all, playables, 'id')
   },
 
@@ -146,7 +158,11 @@ export const queueStore = {
   },
 
   get current() {
-    return this.all.find(({ playback_state }) => playback_state !== 'Stopped')
+    return this.state.currentPlayable
+  },
+
+  set current(playable: Playable | undefined) {
+    this.state.currentPlayable = playable
   },
 
   async fetchRandom(limit = 500) {
