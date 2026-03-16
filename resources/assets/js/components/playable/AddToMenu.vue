@@ -65,7 +65,7 @@ const emit = defineEmits<{ (e: 'closing'): void }>()
 const { playables, config } = toRefs(props)
 
 const queue = toRef(queueStore.state, 'playables')
-const currentPlayable = queueStore.current
+const currentPlayable = computed(() => queueStore.current)
 
 const allPlaylists = toRef(playlistStore.state, 'playlists')
 const playlists = computed(() => allPlaylists.value.filter(({ is_smart }) => !is_smart))

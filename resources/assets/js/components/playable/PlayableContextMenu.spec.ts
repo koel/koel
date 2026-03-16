@@ -77,6 +77,7 @@ describe('playableContextMenu.vue', () => {
 
   const fillQueue = () => {
     queueStore.state.playables = h.factory('song', 5)
+    playableStore.syncWithVault(queueStore.state.playables)
     queueStore.state.playables[2].playback_state = 'Playing'
   }
 

@@ -21,17 +21,18 @@ import { playbackService } from '@/services/QueuePlaybackService'
 describe('playbackService', () => {
   const h = createHarness({
     beforeEach: () => {
+      playableStore.vault.clear()
       h.createAudioPlayer()
       playbackService.activate(document.querySelector<HTMLMediaElement>('#audio-player')!)
     },
   })
 
   const setCurrentSong = (song?: Playable) => {
-    song = reactive(song || h.factory('song', { playback_state: 'Playing' }))
-
-    queueStore.state.playables = reactive([song])
-    queueStore.current = song
-    return song
+    const playbackState = song?.playback_state ?? 'Playing'
+    const [synced] = playableStore.syncWithVault(song || h.factory('song'))
+    synced.playback_state = playbackState
+    queueStore.state.playables = reactive([synced])
+    return synced
   }
 
   it('only initializes once', () => {
@@ -86,6 +87,7 @@ describe('playbackService', () => {
   })
 
   it('scrobbles if current playable ends', () => {
+    setCurrentSong()
     commonStore.state.uses_last_fm = true
     userStore.state.current.preferences.lastfm_session_key = 'foo'
 
@@ -123,6 +125,7 @@ describe('playbackService', () => {
   ])(
     'when next playable preloaded is %s, current media time is %d, media duration is %d, then preload() should be called %d times',
     (preloaded, currentTime, duration, numberOfCalls) => {
+      setCurrentSong()
       h.mock(playbackService, 'registerPlay')
       h.setReadOnlyProperty(queueStore, 'next', h.factory('song', { preloaded }))
 
@@ -301,7 +304,7 @@ describe('playbackService', () => {
 
   it('plays first in queue if toggled when there is no current playable', async () => {
     queueStore.state.playables = []
-    queueStore.current = undefined
+    playableStore.vault.clear()
     const playFirstInQueueMock = h.mock(playbackService, 'playFirstInQueue')
 
     await playbackService.toggle()
