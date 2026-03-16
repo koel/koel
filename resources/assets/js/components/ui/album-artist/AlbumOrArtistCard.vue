@@ -17,7 +17,7 @@
       @contextmenu.prevent="onContextMenu"
     >
       <slot name="thumbnail">
-        <Thumbnail v-if="!isPodcast(entity)" :entity="entity" />
+        <Thumbnail v-if="hasThumbnail(entity)" :entity="entity" />
       </slot>
 
       <footer class="flex flex-1 flex-col gap-1.5 overflow-hidden">
@@ -40,7 +40,7 @@ import { toRefs } from 'vue'
 import Thumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
 import WithGradientBorder from '@/components/ui/WithGradientBorder.vue'
 
-const props = withDefaults(defineProps<{ layout?: CardLayout; entity: Artist | Album | Podcast }>(), {
+const props = withDefaults(defineProps<{ layout?: CardLayout; entity: Artist | Album | Podcast | RadioStation }>(), {
   layout: 'full',
 })
 
@@ -50,7 +50,8 @@ const emit = defineEmits<{
   (e: 'contextmenu', event: MouseEvent): void
 }>()
 
-const isPodcast = (entity: Album | Artist | Podcast): entity is Podcast => entity.type === 'podcasts'
+const hasThumbnail = (entity: Artist | Album | Podcast | RadioStation): entity is Artist | Album | Podcast =>
+  entity.type !== 'radio-stations'
 
 const { layout } = toRefs(props)
 
@@ -87,7 +88,7 @@ article {
   &.compact {
     @apply flex-row gap-4 p-3 rounded-md items-center;
 
-    .thumbnail {
+    :deep(.thumbnail) {
       @apply w-[80px] rounded-md;
     }
   }
