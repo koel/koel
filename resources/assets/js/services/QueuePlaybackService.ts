@@ -274,6 +274,7 @@ export class QueuePlaybackService extends BasePlaybackService {
     document.title = useBranding().name
 
     queueStore.current && (queueStore.current.playback_state = 'Stopped')
+
     navigator.mediaSession && (navigator.mediaSession.playbackState = 'none')
 
     socketService.broadcast('SOCKET_PLAYBACK_STOPPED')

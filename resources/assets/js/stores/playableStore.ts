@@ -54,7 +54,7 @@ export interface GenreSongListPaginateParams extends Record<string, any> {
 }
 
 export const playableStore = {
-  vault: new Map<Playable['id'], Playable>(),
+  vault: new Map<Playable['id'], Reactive<Playable>>(),
 
   state: reactive<{ playables: Playable[]; favorites: Playable[] }>({
     playables: [],
@@ -62,6 +62,16 @@ export const playableStore = {
   }),
 
   getFormattedLength: (playables: MaybeArray<Playable>) => secondsToHumanReadable(sumBy(arrayify(playables), 'length')),
+
+  findPlaying() {
+    for (const playable of this.vault.values()) {
+      if (playable.playback_state !== 'Stopped') {
+        return playable
+      }
+    }
+
+    return undefined
+  },
 
   byId(id: Playable['id']) {
     const playable = this.vault.get(id)

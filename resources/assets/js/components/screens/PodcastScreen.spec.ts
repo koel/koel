@@ -84,8 +84,9 @@ describe('podcastScreen.vue', () => {
     const playMock = h.mock(playbackService, 'resume')
 
     const { episodes } = await renderComponent()
-    queueStore.state.playables = episodes
-    queueStore.state.playables[0].playback_state = 'Paused'
+    const synced = episodeStore.syncWithVault(episodes)
+    queueStore.state.playables = synced
+    synced[0].playback_state = 'Paused'
 
     await h.tick()
     await h.user.click(screen.getByRole('button', { name: 'Start Listening' }))

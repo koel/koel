@@ -146,7 +146,9 @@ export const queueStore = {
   },
 
   get current() {
-    return this.all.find(({ playback_state }) => playback_state !== 'Stopped')
+    // Search the queue first (reactive array — triggers Vue computed re-evaluation).
+    // Fall back to the vault for songs removed from the queue (e.g. after replaceQueueWith).
+    return this.all.find(({ playback_state }) => playback_state !== 'Stopped') || playableStore.findPlaying()
   },
 
   async fetchRandom(limit = 500) {

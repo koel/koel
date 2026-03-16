@@ -196,7 +196,7 @@ const downloadable = computed(() => {
 })
 
 const queue = toRef(queueStore.state, 'playables')
-const currentSong = toRef(queueStore, 'current')
+const currentSong = computed(() => queueStore.current)
 
 const { currentUserCan } = usePolicies()
 

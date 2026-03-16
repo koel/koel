@@ -10,7 +10,8 @@ describe('queueStore', () => {
 
   const h = createHarness({
     beforeEach: () => {
-      songs = h.factory('song', 3)
+      playableStore.vault.clear()
+      songs = playableStore.syncWithVault(h.factory('song', 3)) as Song[]
       queueStore.state.playables = reactive(songs)
     },
   })
