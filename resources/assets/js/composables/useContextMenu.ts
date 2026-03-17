@@ -47,9 +47,11 @@ export const useContextMenu = () => {
     }
   }
 
-  const trigger = (func: Closure) => {
+  const trigger = async (func: Closure) => {
+    // Run the callback before closing the context menu to preserve the user activation
+    // (required for clipboard writes and other APIs that need a user gesture).
+    await func()
     closeContextMenu()
-    func()
   }
 
   return {
