@@ -97,6 +97,8 @@ const onDragLeave = () => {
 }
 
 const onDrop = async (event: DragEvent) => {
+  clearTimeout(expandTimeout)
+  expandTimeout = 0
   droppable.value = false
 
   if (!acceptsDrop(event)) {
