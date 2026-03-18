@@ -172,6 +172,6 @@ class MoveFavoriteSongsTest extends TestCase
                 'placement' => 'after',
             ],
             $user,
-        )->assertServerError();
+        )->assertUnprocessable();
     }
 }

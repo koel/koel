@@ -27,6 +27,7 @@ class MoveFavoriteSongsRequest extends Request
             'target' => [
                 'required',
                 Rule::exists('favorites', 'favoriteable_id')->where('user_id', $this->user()->id),
+                Rule::notIn($this->input('songs', [])),
             ],
             'placement' => ['required', new Enum(Placement::class)],
         ];
