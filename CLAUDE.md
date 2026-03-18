@@ -273,6 +273,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ## TypeScript Conventions
 - Always prefer generics over type casting when the API supports it (e.g. `container.querySelector<HTMLElement>('.foo')` instead of `container.querySelector('.foo') as HTMLElement`).
 - Do not add explicit return types when they can be inferred by the compiler. Only annotate return types when inference is insufficient or ambiguous.
+- When using `setTimeout`, `setInterval`, or `requestAnimationFrame`, always ensure they are cleaned up: on component unmount (`onBeforeUnmount`), on state transitions that invalidate them (e.g. drop cancels a pending expand), and when the operation completes. Treat every timer/rAF as a resource that must be explicitly released.
 
 ## Vue Component Styling
 - Put shared/base Tailwind classes directly on the HTML element via the `class` attribute.
