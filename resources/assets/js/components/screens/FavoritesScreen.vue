@@ -129,10 +129,13 @@ let initialized = false
 const loading = ref(false)
 
 const fetchFavorites = async () => {
-  loading.value = true
-  allPlayables.value = await playableStore.fetchFavorites()
-  loading.value = false
-  sort('position', 'asc')
+  try {
+    loading.value = true
+    await playableStore.fetchFavorites()
+    sort('position', 'asc')
+  } finally {
+    loading.value = false
+  }
 }
 
 const sort = (field: MaybeArray<PlayableListSortField> | null, order: SortOrder) => {

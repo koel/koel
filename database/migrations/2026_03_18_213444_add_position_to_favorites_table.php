@@ -21,6 +21,7 @@ return new class extends Migration {
                 DB::table('favorites')
                     ->where('user_id', $userId)
                     ->orderBy('created_at')
+                    ->orderBy('id')
                     ->pluck('id')
                     ->each(static function (int $id, int $index): void {
                         DB::table('favorites')->where('id', $id)->update(['position' => $index]);
