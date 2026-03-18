@@ -186,7 +186,7 @@ provide(
 <style lang="postcss">
 #dragGhost {
   @apply hidden py-2 pl-8 pr-3 rounded-md text-base fixed bg-k-bg border border-k-fg-10
-  text-k-fg no-hover:hidden pointer-events-none z-50 whitespace-nowrap;
+  text-k-fg pointer-events-none z-50 whitespace-nowrap;
 }
 
 #copyArea {

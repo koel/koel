@@ -29,6 +29,7 @@ const createGhostDragImage = (event: DragEvent, text: string): void => {
   if (!dragGhost) {
     dragGhost = document.createElement('div')
     dragGhost.id = 'dragGhost'
+    dragGhost.setAttribute('aria-hidden', 'true')
     document.body.appendChild(dragGhost)
   }
 
@@ -40,8 +41,16 @@ const createGhostDragImage = (event: DragEvent, text: string): void => {
 
   dragGhost.style.display = 'block'
 
+  let rafId: number | null = null
+
   const cleanup = () => {
     dragGhost!.style.display = 'none'
+
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId)
+      rafId = null
+    }
+
     document.removeEventListener('drag', onDrag)
     document.removeEventListener('dragend', cleanup)
     document.removeEventListener('drop', cleanup, true)
@@ -49,12 +58,20 @@ const createGhostDragImage = (event: DragEvent, text: string): void => {
 
   const onDrag = (e: DragEvent) => {
     if (e.clientX === 0 && e.clientY === 0) {
+      // Browser sends (0,0) as the final drag event — hide the ghost immediately.
       cleanup()
       return
     }
 
-    dragGhost!.style.left = `${e.clientX}px`
-    dragGhost!.style.top = `${e.clientY}px`
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId)
+    }
+
+    rafId = requestAnimationFrame(() => {
+      dragGhost!.style.left = `${e.clientX}px`
+      dragGhost!.style.top = `${e.clientY}px`
+      rafId = null
+    })
   }
 
   document.addEventListener('drag', onDrag)
