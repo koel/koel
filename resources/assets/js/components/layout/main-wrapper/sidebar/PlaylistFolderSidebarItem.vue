@@ -65,6 +65,7 @@ const { openContextMenu } = useContextMenu()
 const opened = ref(false)
 const droppable = ref(false)
 const droppableOnHatch = ref(false)
+let expandTimeout = 0
 
 const playlistsInFolder = computed(() => playlistStore.byFolder(folder.value))
 
@@ -73,18 +74,31 @@ const toggle = () => (opened.value = !opened.value)
 const onDragStart = (event: DragEvent) => startDragging(event, folder.value)
 
 const onDragOver = (event: DragEvent) => {
+  // Expand the folder after a short delay so the user can drop songs onto playlists inside.
+  if (!opened.value && !expandTimeout) {
+    expandTimeout = window.setTimeout(() => {
+      opened.value = true
+      expandTimeout = 0
+    }, 500)
+  }
+
   if (!acceptsDrop(event)) {
     return false
   }
 
   event.preventDefault()
   droppable.value = true
-  opened.value = true
 }
 
-const onDragLeave = () => (droppable.value = false)
+const onDragLeave = () => {
+  droppable.value = false
+  clearTimeout(expandTimeout)
+  expandTimeout = 0
+}
 
 const onDrop = async (event: DragEvent) => {
+  clearTimeout(expandTimeout)
+  expandTimeout = 0
   droppable.value = false
 
   if (!acceptsDrop(event)) {
