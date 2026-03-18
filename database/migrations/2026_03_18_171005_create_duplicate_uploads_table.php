@@ -8,10 +8,10 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('duplicate_uploads', function (Blueprint $table) {
-            $table->string('id', 32)->primary();
+            $table->uuid('id')->primary();
             $table->integer('user_id')->unsigned();
             $table->string('file_path');
-            $table->string('existing_song_id')->unsigned()->nullable();
+            $table->string('existing_song_id')->nullable();
             $table->timestamps();
         });
 
