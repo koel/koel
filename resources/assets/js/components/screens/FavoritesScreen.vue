@@ -132,6 +132,7 @@ const fetchFavorites = async () => {
   loading.value = true
   allPlayables.value = await playableStore.fetchFavorites()
   loading.value = false
+  sort('position', 'asc')
 }
 
 const sort = (field: MaybeArray<PlayableListSortField> | null, order: SortOrder) => {
@@ -140,8 +141,8 @@ const sort = (field: MaybeArray<PlayableListSortField> | null, order: SortOrder)
   baseSort(field, order)
 
   if (field === 'position') {
-    // Restore the server-side custom order
-    allPlayables.value = [...playableStore.state.favorites]
+    // Point directly to the store's array so in-place reorder mutations are reflected
+    allPlayables.value = playableStore.state.favorites
   }
 }
 
