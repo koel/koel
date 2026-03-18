@@ -12,6 +12,13 @@ type Draggable = MaybeArray<Playable> | Album | Artist | Genre | Playlist | Play
 const draggableTypes = <const>['playables', 'album', 'artist', 'genre', 'playlist', 'playlist-folder', 'browser-media']
 type DraggableType = (typeof draggableTypes)[number]
 
+// A transparent 1x1 image used to suppress the browser's default drag ghost.
+const emptyDragImage = (() => {
+  const img = new Image()
+  img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+  return img
+})()
+
 const createGhostDragImage = (event: DragEvent, text: string): void => {
   if (!event.dataTransfer) {
     return
@@ -20,14 +27,56 @@ const createGhostDragImage = (event: DragEvent, text: string): void => {
   let dragGhost = document.querySelector<HTMLElement>('#dragGhost')
 
   if (!dragGhost) {
-    // Create the element to be the ghost drag image.
     dragGhost = document.createElement('div')
     dragGhost.id = 'dragGhost'
+    dragGhost.setAttribute('aria-hidden', 'true')
     document.body.appendChild(dragGhost)
   }
 
   dragGhost.textContent = text
-  event.dataTransfer.setDragImage(dragGhost, 0, 0)
+
+  // Use a transparent image as the native drag ghost to avoid browser rendering artifacts.
+  // The real ghost is a custom DOM element that follows the cursor via the 'drag' event.
+  event.dataTransfer.setDragImage(emptyDragImage, 0, 0)
+
+  dragGhost.style.display = 'block'
+
+  let rafId: number | null = null
+
+  const cleanup = () => {
+    dragGhost!.style.display = 'none'
+
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId)
+      rafId = null
+    }
+
+    document.removeEventListener('drag', onDrag)
+    document.removeEventListener('dragend', cleanup)
+    document.removeEventListener('drop', cleanup, true)
+  }
+
+  const onDrag = (e: DragEvent) => {
+    if (e.clientX === 0 && e.clientY === 0) {
+      // Browser sends (0,0) as the final drag event — hide the ghost immediately.
+      cleanup()
+      return
+    }
+
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId)
+    }
+
+    rafId = requestAnimationFrame(() => {
+      dragGhost!.style.left = `${e.clientX}px`
+      dragGhost!.style.top = `${e.clientY}px`
+      rafId = null
+    })
+  }
+
+  document.addEventListener('drag', onDrag)
+  document.addEventListener('dragend', cleanup)
+  document.addEventListener('drop', cleanup, true)
 }
 
 const getDragType = (event: DragEvent) => {
