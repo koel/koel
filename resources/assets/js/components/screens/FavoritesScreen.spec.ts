@@ -7,8 +7,11 @@ import Component from './FavoritesScreen.vue'
 describe('favoritesScreen.vue', () => {
   const h = createHarness()
 
-  const renderComponent = async () => {
-    const fetchMock = h.mock(playableStore, 'fetchFavorites')
+  const renderComponent = async (favorites?: Playable[]) => {
+    favorites = favorites ?? h.factory('song', 13)
+    playableStore.state.favorites = favorites
+
+    const fetchMock = h.mock(playableStore, 'fetchFavorites').mockResolvedValue(favorites)
 
     h.render(Component)
     h.visit('/favorites')
@@ -17,7 +20,6 @@ describe('favoritesScreen.vue', () => {
   }
 
   it('renders a list of favorites', async () => {
-    playableStore.state.favorites = h.factory('song', 13)
     await renderComponent()
 
     await waitFor(() => {
@@ -27,8 +29,7 @@ describe('favoritesScreen.vue', () => {
   })
 
   it('shows empty state', async () => {
-    playableStore.state.favorites = []
-    await renderComponent()
+    await renderComponent([])
 
     screen.getByTestId('screen-empty-state')
     expect(screen.queryByTestId('song-list')).toBeNull()

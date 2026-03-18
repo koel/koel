@@ -123,4 +123,26 @@ class FavoriteTest extends TestCase
 
         Event::assertDispatched(MultipleSongsUnliked::class);
     }
+
+    #[Test]
+    public function fetchFavoritesInPositionOrder(): void
+    {
+        $user = create_user();
+        $songs = Song::factory()->count(3)->create();
+
+        // Create favorites in reverse position order to verify sorting
+        foreach ($songs as $index => $song) {
+            Favorite::factory()->for($user)->create([
+                'favoriteable_id' => $song->id,
+                'favoriteable_type' => 'playable',
+                'position' => count($songs) - 1 - $index,
+            ]);
+        }
+
+        $response = $this->getAs('api/songs/favorites', $user)->assertSuccessful();
+        $returnedIds = collect($response->json())->pluck('id')->toArray();
+
+        // Songs should be returned in position order (reversed from creation order)
+        self::assertSame([$songs[2]->id, $songs[1]->id, $songs[0]->id], $returnedIds);
+    }
 }

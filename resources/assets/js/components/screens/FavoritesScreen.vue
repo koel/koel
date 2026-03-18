@@ -43,6 +43,8 @@
       v-if="playables.length"
       ref="playableList"
       class="-m-6"
+      @reorder="onReorder"
+      @sort="sort"
       @press:delete="removeSelected"
       @press:enter="onPressEnter"
       @swipe="onSwipe"
@@ -64,7 +66,7 @@
 <script lang="ts" setup>
 import { faHeartBroken } from '@fortawesome/free-solid-svg-icons'
 import { faStar } from '@fortawesome/free-regular-svg-icons'
-import { computed, ref, toRef } from 'vue'
+import { computed, ref } from 'vue'
 import { pluralize } from '@/utils/formatters'
 import { playableStore } from '@/stores/playableStore'
 import { useDownload } from '@/composables/useDownload'
@@ -78,6 +80,8 @@ import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import PlayableListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
+
+const allPlayables = ref<Playable[]>([])
 
 const {
   PlayableList,
@@ -94,7 +98,12 @@ const {
   playSelected,
   applyFilter,
   onSwipe,
-} = usePlayableList(toRef(playableStore.state, 'favorites'), { type: 'Favorites' })
+  sort: baseSort,
+  config: listConfig,
+} = usePlayableList(allPlayables, { type: 'Favorites' })
+
+listConfig.reorderable = true
+listConfig.hasCustomOrderSort = true
 
 const { PlayableListControls, config } = usePlayableListControls('Favorites')
 
@@ -121,8 +130,23 @@ const loading = ref(false)
 
 const fetchFavorites = async () => {
   loading.value = true
-  await playableStore.fetchFavorites()
+  allPlayables.value = await playableStore.fetchFavorites()
   loading.value = false
+}
+
+const sort = (field: MaybeArray<PlayableListSortField> | null, order: SortOrder) => {
+  listConfig.reorderable = field === 'position'
+
+  baseSort(field, order)
+
+  if (field === 'position') {
+    // Restore the server-side custom order
+    allPlayables.value = [...playableStore.state.favorites]
+  }
+}
+
+const onReorder = (target: Playable, placement: Placement) => {
+  playableStore.moveFavoritesInList(selectedPlayables.value, target, placement)
 }
 
 useRouter().onScreenActivated('Favorites', async () => {

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\Placement;
 use App\Events\MultipleSongsLiked;
 use App\Events\MultipleSongsUnliked;
 use App\Events\SongFavoriteToggled;
@@ -19,7 +20,12 @@ class FavoriteService
     public function toggleFavorite(Favoriteable|Model $favoriteable, User $user): ?Favorite
     {
         $favorite = $favoriteable->favorites()->where('user_id', $user->id)->delete() === 0
-            ? $favoriteable->favorites()->create(['user_id' => $user->id])
+            ? $favoriteable
+                ->favorites()
+                ->create([
+                    'user_id' => $user->id,
+                    'position' => $this->getNextPosition($user),
+                ])
             : null;
 
         if ($favoriteable instanceof Song) {
@@ -36,6 +42,7 @@ class FavoriteService
      */
     public function batchFavorite(Collection $entities, User $user): void
     {
+        $position = $this->getNextPosition($user);
         $favorites = [];
 
         foreach ($entities as $entity) {
@@ -48,6 +55,7 @@ class FavoriteService
                 'favoriteable_type' => $entity->getMorphClass(),
                 'favoriteable_id' => $entity->getKey(),
                 'created_at' => now(),
+                'position' => $position++,
             ];
         }
 
@@ -84,5 +92,42 @@ class FavoriteService
         if ($songs->isNotEmpty()) {
             event(new MultipleSongsUnliked($songs, $user));
         }
+    }
+
+    /** @param array<string> $movingIds */
+    public function moveFavorites(User $user, array $movingIds, string $target, Placement $placement): void
+    {
+        DB::transaction(static function () use ($user, $movingIds, $target, $placement): void {
+            $targetPosition = Favorite::query()
+                ->where('user_id', $user->id)
+                ->where('favoriteable_id', $target)
+                ->value('position');
+
+            $insertPosition = $placement === Placement::BEFORE ? $targetPosition : $targetPosition + 1;
+
+            // Create a gap for the moving items
+            Favorite::query()
+                ->where('user_id', $user->id)
+                ->where('position', $placement === Placement::BEFORE ? '>=' : '>', $targetPosition)
+                ->whereNotIn('favoriteable_id', $movingIds)
+                ->increment('position', count($movingIds));
+
+            // Place the moving items into the gap
+            $position = $insertPosition;
+
+            foreach ($movingIds as $id) {
+                Favorite::query()
+                    ->where('user_id', $user->id)
+                    ->where('favoriteable_id', $id)
+                    ->update(['position' => $position++]);
+            }
+        });
+    }
+
+    private static function getNextPosition(User $user): int
+    {
+        $max = Favorite::query()->where('user_id', $user->id)->max('position');
+
+        return $max === null ? 0 : $max + 1;
     }
 }

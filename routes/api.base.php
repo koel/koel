@@ -2,10 +2,10 @@
 
 use App\Facades\YouTube;
 use App\Helpers\Uuid;
-use App\Http\Controllers\API\AiController;
 use App\Http\Controllers\API\Acl\CheckResourcePermissionController;
 use App\Http\Controllers\API\Acl\FetchAssignableRolesController;
 use App\Http\Controllers\API\ActivateLicenseController;
+use App\Http\Controllers\API\AiController;
 use App\Http\Controllers\API\AlbumController;
 use App\Http\Controllers\API\AlbumSongController;
 use App\Http\Controllers\API\Artist\ArtistAlbumController;
@@ -38,6 +38,7 @@ use App\Http\Controllers\API\MediaBrowser\FetchFolderSongsController;
 use App\Http\Controllers\API\MediaBrowser\FetchRecursiveFolderSongsController;
 use App\Http\Controllers\API\MediaBrowser\FetchSubfoldersController;
 use App\Http\Controllers\API\MediaBrowser\PaginateFolderSongsController;
+use App\Http\Controllers\API\MoveFavoriteSongsController;
 use App\Http\Controllers\API\MovePlaylistSongsController;
 use App\Http\Controllers\API\PaginateSongsByGenreController;
 use App\Http\Controllers\API\PlaylistCollaboration\AcceptPlaylistCollaborationInviteController;
@@ -163,6 +164,7 @@ Route::prefix('api')
             Route::post('interaction/batch/unlike', UnlikeMultipleSongsController::class);
 
             Route::post('favorites/toggle', [FavoriteController::class, 'toggle']);
+            Route::post('favorites/move', MoveFavoriteSongsController::class);
             Route::post('favorites', [FavoriteController::class, 'store']);
             Route::delete('favorites', [FavoriteController::class, 'destroy']);
 
