@@ -97,6 +97,10 @@ class FavoriteService
     /** @param array<string> $movingIds */
     public function moveFavorites(User $user, array $movingIds, string $target, Placement $placement): void
     {
+        if (in_array($target, $movingIds, true)) {
+            throw new InvalidArgumentException('Cannot move items relative to a target that is being moved.');
+        }
+
         DB::transaction(static function () use ($user, $movingIds, $target, $placement): void {
             $targetPosition = Favorite::query()
                 ->where('user_id', $user->id)
