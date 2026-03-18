@@ -149,4 +149,29 @@ class MoveFavoriteSongsTest extends TestCase
             $user,
         )->assertUnprocessable();
     }
+
+    #[Test]
+    public function cannotMoveTargetThatIsAlsoBeingMoved(): void
+    {
+        $user = create_user();
+        $songs = Song::factory()->createMany(3);
+
+        foreach ($songs as $index => $song) {
+            Favorite::factory()->for($user)->createOne([
+                'favoriteable_id' => $song->id,
+                'favoriteable_type' => 'playable',
+                'position' => $index,
+            ]);
+        }
+
+        $this->postAs(
+            'api/favorites/move',
+            [
+                'songs' => [$songs[0]->id, $songs[1]->id],
+                'target' => $songs[1]->id,
+                'placement' => 'after',
+            ],
+            $user,
+        )->assertServerError();
+    }
 }
