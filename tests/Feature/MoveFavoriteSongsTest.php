@@ -121,4 +121,32 @@ class MoveFavoriteSongsTest extends TestCase
             $positions,
         );
     }
+
+    #[Test]
+    public function cannotMoveAnotherUsersFavorites(): void
+    {
+        $user = create_user();
+        $otherUser = create_user();
+
+        $songs = Song::factory()->count(2)->create();
+
+        // Songs are favorited by $otherUser, not $user
+        foreach ($songs as $index => $song) {
+            Favorite::factory()->for($otherUser)->create([
+                'favoriteable_id' => $song->id,
+                'favoriteable_type' => 'playable',
+                'position' => $index,
+            ]);
+        }
+
+        $this->postAs(
+            'api/favorites/move',
+            [
+                'songs' => [$songs[0]->id],
+                'target' => $songs[1]->id,
+                'placement' => 'after',
+            ],
+            $user,
+        )->assertUnprocessable();
+    }
 }

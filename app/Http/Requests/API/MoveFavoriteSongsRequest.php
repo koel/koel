@@ -3,6 +3,7 @@
 namespace App\Http\Requests\API;
 
 use App\Enums\Placement;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 
 /**
@@ -16,8 +17,17 @@ class MoveFavoriteSongsRequest extends Request
     public function rules(): array
     {
         return [
-            'songs' => 'required|array|exists:songs,id',
-            'target' => 'required|exists:favorites,favoriteable_id',
+            'songs' => [
+                'required',
+                'array',
+            ],
+            'songs.*' => [
+                Rule::exists('favorites', 'favoriteable_id')->where('user_id', $this->user()->id),
+            ],
+            'target' => [
+                'required',
+                Rule::exists('favorites', 'favoriteable_id')->where('user_id', $this->user()->id),
+            ],
             'placement' => ['required', new Enum(Placement::class)],
         ];
     }
