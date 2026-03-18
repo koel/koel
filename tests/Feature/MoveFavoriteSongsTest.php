@@ -15,10 +15,10 @@ class MoveFavoriteSongsTest extends TestCase
     public function moveFavoritesAfterTarget(): void
     {
         $user = create_user();
-        $songs = Song::factory()->count(4)->create();
+        $songs = Song::factory()->createMany(4);
 
         foreach ($songs as $index => $song) {
-            Favorite::factory()->for($user)->create([
+            Favorite::factory()->for($user)->createOne([
                 'favoriteable_id' => $song->id,
                 'favoriteable_type' => 'playable',
                 'position' => $index,
@@ -49,10 +49,10 @@ class MoveFavoriteSongsTest extends TestCase
     public function moveFavoritesBeforeTarget(): void
     {
         $user = create_user();
-        $songs = Song::factory()->count(4)->create();
+        $songs = Song::factory()->createMany(4);
 
         foreach ($songs as $index => $song) {
-            Favorite::factory()->for($user)->create([
+            Favorite::factory()->for($user)->createOne([
                 'favoriteable_id' => $song->id,
                 'favoriteable_type' => 'playable',
                 'position' => $index,
@@ -83,10 +83,10 @@ class MoveFavoriteSongsTest extends TestCase
     public function moveMultipleFavorites(): void
     {
         $user = create_user();
-        $songs = Song::factory()->count(5)->create();
+        $songs = Song::factory()->createMany(5);
 
         foreach ($songs as $index => $song) {
-            Favorite::factory()->for($user)->create([
+            Favorite::factory()->for($user)->createOne([
                 'favoriteable_id' => $song->id,
                 'favoriteable_type' => 'playable',
                 'position' => $index,
@@ -128,11 +128,11 @@ class MoveFavoriteSongsTest extends TestCase
         $user = create_user();
         $otherUser = create_user();
 
-        $songs = Song::factory()->count(2)->create();
+        $songs = Song::factory()->createMany(2);
 
         // Songs are favorited by $otherUser, not $user
         foreach ($songs as $index => $song) {
-            Favorite::factory()->for($otherUser)->create([
+            Favorite::factory()->for($otherUser)->createOne([
                 'favoriteable_id' => $song->id,
                 'favoriteable_type' => 'playable',
                 'position' => $index,

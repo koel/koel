@@ -128,11 +128,11 @@ class FavoriteTest extends TestCase
     public function fetchFavoritesInPositionOrder(): void
     {
         $user = create_user();
-        $songs = Song::factory()->count(3)->create();
+        $songs = Song::factory()->createMany(3);
 
         // Create favorites in reverse position order to verify sorting
         foreach ($songs as $index => $song) {
-            Favorite::factory()->for($user)->create([
+            Favorite::factory()->for($user)->createOne([
                 'favoriteable_id' => $song->id,
                 'favoriteable_type' => 'playable',
                 'position' => count($songs) - 1 - $index,

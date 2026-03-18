@@ -52,7 +52,7 @@ class FavoriteServiceTest extends TestCase
         Event::fake(SongFavoriteToggled::class);
 
         $user = create_user();
-        $songs = Song::factory()->count(3)->create();
+        $songs = Song::factory()->createMany(3);
 
         $this->service->toggleFavorite($songs[0], $user);
         $this->service->toggleFavorite($songs[1], $user);
