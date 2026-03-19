@@ -76,11 +76,6 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(LicenseServiceInterface::class, LicenseService::class);
 
-        $this->app
-            ->when(LicenseService::class)
-            ->needs('$hashSalt')
-            ->give(config('app.key'));
-
         $this->app->bind(ScannerCacheStrategyContract::class, static function () {
             // Use a no-cache strategy for unit tests to ensure consistent results
             return app()->runningUnitTests() ? app(ScannerNoCacheStrategy::class) : app(ScannerCacheStrategy::class);
@@ -104,11 +99,6 @@ class AppServiceProvider extends ServiceProvider
             'radio-station' => RadioStation::class,
             'playlist' => Playlist::class,
         ]);
-
-        $this->app
-            ->when(TicketmasterService::class)
-            ->needs('$defaultCountryCode')
-            ->give(config('koel.services.ticketmaster.default_country_code'));
 
         $this->app->bind(GeolocationService::class, static function (): GeolocationService {
             return app(IPinfoService::class);

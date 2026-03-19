@@ -3,12 +3,14 @@
 namespace App\Services\Transcoding;
 
 use App\Exceptions\TranscodingFailedException;
+use Illuminate\Container\Attributes\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Process;
 
 class Transcoder
 {
     public function __construct(
+        #[Config('koel.streaming.transcode_timeout')]
         private readonly int $transcodeTimeout,
     ) {}
 
