@@ -15,7 +15,7 @@ use SensitiveParameter;
  *
  * This approach helps prevent the API token from being logged by servers and proxies.
  */
-final class CompositeToken implements Arrayable
+final readonly class CompositeToken implements Arrayable
 {
     private function __construct(
         #[SensitiveParameter]

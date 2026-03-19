@@ -5,7 +5,7 @@ namespace App\Values\Playlist;
 use App\Models\User;
 use Illuminate\Contracts\Support\Arrayable;
 
-final class PlaylistCollaborator implements Arrayable
+final readonly class PlaylistCollaborator implements Arrayable
 {
     private function __construct(
         public string $publicId,

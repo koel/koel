@@ -4,7 +4,7 @@ namespace App\Values\Album;
 
 use Illuminate\Contracts\Support\Arrayable;
 
-final class AlbumUpdateData implements Arrayable
+final readonly class AlbumUpdateData implements Arrayable
 {
     private function __construct(
         public string $name,

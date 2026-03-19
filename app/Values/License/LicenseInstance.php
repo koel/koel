@@ -10,7 +10,7 @@ use Illuminate\Contracts\Support\Jsonable;
  * A Lemon Squeezy license instance
  * @see https://docs.lemonsqueezy.com/api/license-key-instances#the-license-key-instance-object
  */
-final class LicenseInstance implements Arrayable, Jsonable
+final readonly class LicenseInstance implements Arrayable, Jsonable
 {
     private function __construct(
         public string $id,
