@@ -297,6 +297,9 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ## Code Reviews
 - When addressing PR review comments, do NOT blindly follow them. Always use your own knowledge and logic to evaluate whether the feedback makes sense. If it doesn't, push back and explain why.
 
+## Linting & Static Analysis
+- When running lint or static analysis (backend or frontend), fix ALL warnings and errors to ensure 100% clean output — even pre-existing issues unrelated to current changes.
+
 ## Vite+ Toolchain
 
 This project uses **Vite+**, a unified toolchain wrapping Vite, Vitest, Oxlint, Oxfmt, and more via a single global CLI called `vp`. Run `vp help` for available commands.

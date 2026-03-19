@@ -25,7 +25,7 @@ class LicenseService implements LicenseServiceInterface
     public function __construct(
         private readonly LemonSqueezyConnector $connector,
         #[Config('app.key')]
-        private readonly string $hashSalt,
+        private readonly ?string $hashSalt = null,
     ) {}
 
     public function activate(string $key): License
