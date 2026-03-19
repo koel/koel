@@ -12,6 +12,8 @@ class Transcoder
     public function __construct(
         #[Config('koel.streaming.transcode_timeout')]
         private readonly int $transcodeTimeout,
+        #[Config('koel.streaming.ffmpeg_path')]
+        private readonly string $ffmpegPath,
     ) {}
 
     public function transcode(string $source, string $destination, int $bitRate): void
@@ -23,7 +25,7 @@ class Transcoder
         $process = $this->transcodeTimeout ? Process::timeout($this->transcodeTimeout) : Process::forever();
 
         $result = $process->run([
-            config('koel.streaming.ffmpeg_path'),
+            $this->ffmpegPath,
             '-nostdin',
             '-i',
             $source,

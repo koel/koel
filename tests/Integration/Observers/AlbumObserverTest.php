@@ -17,7 +17,7 @@ class AlbumObserverTest extends TestCase
         parent::setUp();
 
         // Re-bind the real AlbumObserver (TestCase replaces `saved` with a no-op).
-        $this->app->bind(AlbumObserver::class, static fn () => new AlbumObserver());
+        $this->app->instance(AlbumObserver::class, new AlbumObserver());
     }
 
     #[Test]
@@ -42,9 +42,9 @@ class AlbumObserverTest extends TestCase
     #[Test]
     public function doNotDispatchJobToGenerateThumbnailIfCoverIsEmpty(): void
     {
-        $album = Album::factory()->createOne(['cover' => '']);
-
         Dispatcher::expects('dispatch')->with(Mockery::type(GenerateAlbumThumbnailJob::class))->never();
+
+        $album = Album::factory()->createOne(['cover' => '']);
 
         $album->cover = '';
         $album->save();
