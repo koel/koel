@@ -11,7 +11,7 @@ use Illuminate\Console\Command;
 
 class ImportSearchableEntitiesCommand extends Command
 {
-    private const SEARCHABLE_ENTITIES = [
+    private const array SEARCHABLE_ENTITIES = [
         Song::class,
         Album::class,
         Artist::class,

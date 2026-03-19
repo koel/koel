@@ -7,7 +7,7 @@ use Carbon\Carbon;
 
 class CollaborativeSongResource extends SongResource
 {
-    public const JSON_STRUCTURE = SongResource::JSON_STRUCTURE
+    public const array JSON_STRUCTURE = SongResource::JSON_STRUCTURE
         + [
             'collaboration' => [
                 'user' => PlaylistCollaboratorResource::JSON_STRUCTURE,

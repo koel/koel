@@ -10,7 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class AlbumResource extends JsonResource
 {
-    public const JSON_STRUCTURE = [
+    public const array JSON_STRUCTURE = [
         'type',
         'id',
         'name',
@@ -21,7 +21,7 @@ class AlbumResource extends JsonResource
         'year',
     ];
 
-    public const PAGINATION_JSON_STRUCTURE = [
+    public const array PAGINATION_JSON_STRUCTURE = [
         'data' => [
             '*' => self::JSON_STRUCTURE,
         ],

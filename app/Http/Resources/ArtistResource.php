@@ -9,7 +9,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class ArtistResource extends JsonResource
 {
-    public const JSON_STRUCTURE = [
+    public const array JSON_STRUCTURE = [
         'type',
         'id',
         'name',
@@ -17,7 +17,7 @@ class ArtistResource extends JsonResource
         'created_at',
     ];
 
-    public const PAGINATION_JSON_STRUCTURE = [
+    public const array PAGINATION_JSON_STRUCTURE = [
         'data' => [
             '*' => self::JSON_STRUCTURE,
         ],

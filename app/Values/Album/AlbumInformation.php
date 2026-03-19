@@ -8,7 +8,7 @@ use Illuminate\Support\Arr;
 
 final class AlbumInformation implements Arrayable
 {
-    public const JSON_STRUCTURE = [
+    public const array JSON_STRUCTURE = [
         'url',
         'cover',
         'wiki' => [

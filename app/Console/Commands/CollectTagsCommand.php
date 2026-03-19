@@ -10,7 +10,7 @@ class CollectTagsCommand extends Command
     protected $signature = 'koel:tags:collect {tag*}';
     protected $description = 'Collect additional tags from existing songs';
 
-    private const ALL_TAGS = [
+    private const array ALL_TAGS = [
         'title',
         'album',
         'artist',
@@ -23,7 +23,7 @@ class CollectTagsCommand extends Command
         'cover',
     ];
 
-    private const COLLECTABLE_TAGS = ['year', 'genre'];
+    private const array COLLECTABLE_TAGS = ['year', 'genre'];
 
     public function handle(): int
     {

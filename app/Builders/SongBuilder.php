@@ -15,7 +15,7 @@ class SongBuilder extends FavoriteableBuilder
 {
     use CanScopeByUser;
 
-    public const SORT_COLUMNS_NORMALIZE_MAP = [
+    public const array SORT_COLUMNS_NORMALIZE_MAP = [
         'title' => 'songs.title',
         'track' => 'songs.track',
         'length' => 'songs.length',
@@ -29,7 +29,7 @@ class SongBuilder extends FavoriteableBuilder
         'genre' => 'genres.name',
     ];
 
-    private const VALID_SORT_COLUMNS = [
+    private const array VALID_SORT_COLUMNS = [
         'songs.title',
         'songs.track',
         'songs.length',

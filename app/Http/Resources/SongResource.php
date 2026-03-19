@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 
 class SongResource extends JsonResource
 {
-    public const JSON_STRUCTURE = [
+    public const array JSON_STRUCTURE = [
         'type',
         'id',
         'title',
@@ -35,7 +35,7 @@ class SongResource extends JsonResource
         'created_at',
     ];
 
-    public const PAGINATION_JSON_STRUCTURE = [
+    public const array PAGINATION_JSON_STRUCTURE = [
         'data' => [
             0 => self::JSON_STRUCTURE,
         ],

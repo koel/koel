@@ -13,7 +13,7 @@ use SpotifyWebAPI\SpotifyWebAPI;
  */
 class SpotifyClient
 {
-    public const ACCESS_TOKEN_CACHE_KEY = 'spotify.access_token';
+    public const string ACCESS_TOKEN_CACHE_KEY = 'spotify.access_token';
 
     public function __construct(
         public SpotifyWebAPI $wrapped,

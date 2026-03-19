@@ -54,8 +54,8 @@ class Artist extends Model implements AuditableContract, Embeddable, Favoriteabl
     use Searchable;
     use SupportsDeleteWhereValueNotIn;
 
-    public const UNKNOWN_NAME = 'Unknown Artist';
-    public const VARIOUS_NAME = 'Various Artists';
+    public const string UNKNOWN_NAME = 'Unknown Artist';
+    public const string VARIOUS_NAME = 'Various Artists';
 
     protected $guarded = ['id'];
     protected $hidden = ['created_at', 'updated_at'];

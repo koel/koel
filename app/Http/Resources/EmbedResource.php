@@ -10,7 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class EmbedResource extends JsonResource
 {
-    public const JSON_STRUCTURE = [
+    public const array JSON_STRUCTURE = [
         'type',
         'id',
         'embeddable_type',
@@ -19,7 +19,7 @@ class EmbedResource extends JsonResource
         'embeddable',
     ];
 
-    public const JSON_PUBLIC_STRUCTURE = [
+    public const array JSON_PUBLIC_STRUCTURE = [
         'type',
         'id',
         'embeddable_type',

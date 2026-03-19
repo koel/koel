@@ -16,8 +16,8 @@ use Throwable;
 
 class SearchService
 {
-    public const DEFAULT_EXCERPT_RESULT_LIMIT = 6;
-    public const DEFAULT_SONG_RESULT_LIMIT = 500;
+    public const int DEFAULT_EXCERPT_RESULT_LIMIT = 6;
+    public const int DEFAULT_SONG_RESULT_LIMIT = 500;
 
     public function __construct(
         private readonly SongRepository $songRepository,
