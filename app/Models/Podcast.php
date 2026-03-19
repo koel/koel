@@ -9,6 +9,7 @@ use App\Models\Concerns\MorphsToFavorites;
 use App\Models\Contracts\Favoriteable;
 use App\Models\Song as Episode;
 use Carbon\Carbon;
+use Database\Factories\PodcastFactory;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -35,7 +36,7 @@ use PhanAn\Poddle\Values\ChannelMetadata;
  * @property Carbon $last_synced_at
  * @property ?string $author
  *
- * @method static \Database\Factories\PodcastFactory factory(...$parameters)
+ * @method static PodcastFactory factory(...$parameters)
  */
 #[UseEloquentBuilder(PodcastBuilder::class)]
 class Podcast extends Model implements Favoriteable
@@ -48,12 +49,15 @@ class Podcast extends Model implements Favoriteable
     protected $hidden = ['created_at', 'updated_at'];
     protected $guarded = [];
 
-    protected $casts = [
-        'categories' => CategoriesCast::class,
-        'metadata' => PodcastMetadataCast::class,
-        'last_synced_at' => 'datetime',
-        'explicit' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'categories' => CategoriesCast::class,
+            'metadata' => PodcastMetadataCast::class,
+            'last_synced_at' => 'datetime',
+            'explicit' => 'boolean',
+        ];
+    }
 
     public static function query(): PodcastBuilder
     {

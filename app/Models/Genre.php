@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Builders\GenreBuilder;
 use App\Observers\GenreObserver;
+use Database\Factories\GenreFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,7 +17,7 @@ use Laravel\Scout\Searchable;
  * @property string $public_id
  * @property string $name
  *
- * @method static \Database\Factories\GenreFactory factory(...$parameters)
+ * @method static GenreFactory factory(...$parameters)
  */
 #[ObservedBy(GenreObserver::class)]
 #[UseEloquentBuilder(GenreBuilder::class)]

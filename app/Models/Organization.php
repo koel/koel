@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\OrganizationFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,7 +19,7 @@ use Illuminate\Support\Carbon;
  *
  * @property-read Collection<User>|array<array-key, User> $users
  *
- * @method static \Database\Factories\OrganizationFactory factory(...$parameters)
+ * @method static OrganizationFactory factory(...$parameters)
  */
 
 class Organization extends Model
