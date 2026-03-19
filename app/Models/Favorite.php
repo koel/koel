@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Contracts\Favoriteable;
 use Carbon\Carbon;
+use Database\Factories\FavoriteFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property string $favoriteable_type
  * @property int $position
  *
- * @method static \Database\Factories\FavoriteFactory factory(...$parameters)
+ * @method static FavoriteFactory factory(...$parameters)
  */
 class Favorite extends Model
 {
@@ -28,9 +29,12 @@ class Favorite extends Model
     public $timestamps = false;
     protected $with = ['user', 'favoriteable'];
 
-    protected $casts = [
-        'created_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'created_at' => 'datetime',
+        ];
+    }
 
     public static function booted(): void
     {

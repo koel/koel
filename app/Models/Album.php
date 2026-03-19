@@ -12,6 +12,7 @@ use App\Models\Contracts\Favoriteable;
 use App\Models\Contracts\Permissionable;
 use App\Observers\AlbumObserver;
 use Carbon\Carbon;
+use Database\Factories\AlbumFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
@@ -40,7 +41,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property string $id
  * @property string $name Name of the album
  *
- * @method static \Database\Factories\AlbumFactory factory(...$parameters)
+ * @method static AlbumFactory factory(...$parameters)
  */
 #[ObservedBy(AlbumObserver::class)]
 #[UseEloquentBuilder(AlbumBuilder::class)]

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\QueueStateFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $playback_position
  * @property User $user
  *
- * @method static \Database\Factories\QueueStateFactory factory(...$parameters)
+ * @method static QueueStateFactory factory(...$parameters)
  */
 class QueueState extends Model
 {
@@ -20,10 +21,13 @@ class QueueState extends Model
 
     protected $guarded = ['id'];
 
-    protected $casts = [
-        'song_ids' => 'array',
-        'playback_position' => 'int',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'song_ids' => 'array',
+            'playback_position' => 'int',
+        ];
+    }
 
     public function user(): BelongsTo
     {

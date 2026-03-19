@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Observers\FolderObserver;
+use Database\Factories\FolderFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -25,7 +26,7 @@ use Illuminate\Support\Arr;
  * @property ?string $parent_id
  * @property string $hash
  *
- * @method static \Database\Factories\FolderFactory factory(...$parameters)
+ * @method static FolderFactory factory(...$parameters)
  */
 #[ObservedBy(FolderObserver::class)]
 class Folder extends Model

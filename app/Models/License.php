@@ -8,6 +8,7 @@ use App\Casts\LicenseMetaCast;
 use App\Values\License\LicenseInstance;
 use App\Values\License\LicenseMeta;
 use Carbon\Carbon;
+use Database\Factories\LicenseFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -21,7 +22,7 @@ use Illuminate\Support\Str;
  * @property LicenseMeta $meta
  * @property-read Carbon $activated_at
  *
- * @method static \Database\Factories\LicenseFactory factory(...$parameters)
+ * @method static LicenseFactory factory(...$parameters)
  */
 class License extends Model
 {
@@ -29,12 +30,15 @@ class License extends Model
 
     protected $guarded = ['id'];
 
-    protected $casts = [
-        'key' => EncryptedValueCast::class,
-        'instance' => LicenseInstanceCast::class,
-        'meta' => LicenseMetaCast::class,
-        'expires_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'key' => EncryptedValueCast::class,
+            'instance' => LicenseInstanceCast::class,
+            'meta' => LicenseMetaCast::class,
+            'expires_at' => 'datetime',
+        ];
+    }
 
     protected function shortKey(): Attribute
     {

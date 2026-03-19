@@ -14,6 +14,7 @@ use App\Models\Contracts\Favoriteable;
 use App\Models\Contracts\Permissionable;
 use App\Observers\ArtistObserver;
 use Carbon\Carbon;
+use Database\Factories\ArtistFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
@@ -38,7 +39,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property string $id
  * @property string $name
  *
- * @method static \Database\Factories\ArtistFactory factory(...$parameters)
+ * @method static ArtistFactory factory(...$parameters)
  */
 #[ObservedBy(ArtistObserver::class)]
 #[UseEloquentBuilder(ArtistBuilder::class)]

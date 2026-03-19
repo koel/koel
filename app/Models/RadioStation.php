@@ -8,6 +8,7 @@ use App\Models\Contracts\Favoriteable;
 use App\Models\Contracts\Permissionable;
 use App\Observers\RadioStationObserver;
 use Carbon\Carbon;
+use Database\Factories\RadioStationFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
@@ -30,7 +31,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property string $name
  * @property-read ?boolean $favorite Whether the (scoped) user has favorited this radio station
  *
- * @method static \Database\Factories\RadioStationFactory factory(...$parameters)
+ * @method static RadioStationFactory factory(...$parameters)
  */
 #[ObservedBy(RadioStationObserver::class)]
 #[UseEloquentBuilder(RadioStationBuilder::class)]
@@ -46,13 +47,17 @@ class RadioStation extends Model implements AuditableContract, Favoriteable, Per
     public $incrementing = false;
 
     protected $with = ['user'];
-    protected $casts = [
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'favorite' => 'boolean',
-        'is_public' => 'boolean',
-        'description' => 'string',
-    ];
+
+    protected function casts(): array
+    {
+        return [
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
+            'favorite' => 'boolean',
+            'is_public' => 'boolean',
+            'description' => 'string',
+        ];
+    }
 
     public function user(): BelongsTo
     {

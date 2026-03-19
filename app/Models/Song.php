@@ -18,6 +18,7 @@ use App\Models\Contracts\Embeddable;
 use App\Models\Contracts\Favoriteable;
 use App\Values\SongStorageMetadata\SongStorageMetadata;
 use Carbon\Carbon;
+use Database\Factories\SongFactory;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -78,7 +79,7 @@ use PhanAn\Poddle\Values\EpisodeMetadata;
  * @property ?string $podcast_id
  * @property ?Podcast $podcast
  *
- * @method static \Database\Factories\SongFactory factory(...$parameters)
+ * @method static SongFactory factory(...$parameters)
  */
 #[UseEloquentBuilder(SongBuilder::class)]
 class Song extends Model implements AuditableContract, Favoriteable, Embeddable
@@ -96,20 +97,23 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
     protected $guarded = [];
     protected $hidden = ['updated_at', 'path', 'mtime'];
 
-    protected $casts = [
-        'title' => SongTitleCast::class,
-        'lyrics' => SongLyricsCast::class,
-        'length' => 'float',
-        'file_size' => 'int',
-        'mtime' => 'int',
-        'track' => 'int',
-        'disc' => 'int',
-        'year' => 'int',
-        'is_public' => 'bool',
-        'storage' => SongStorageCast::class,
-        'episode_metadata' => EpisodeMetadataCast::class,
-        'favorite' => 'bool',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'title' => SongTitleCast::class,
+            'lyrics' => SongLyricsCast::class,
+            'length' => 'float',
+            'file_size' => 'int',
+            'mtime' => 'int',
+            'track' => 'int',
+            'disc' => 'int',
+            'year' => 'int',
+            'is_public' => 'bool',
+            'storage' => SongStorageCast::class,
+            'episode_metadata' => EpisodeMetadataCast::class,
+            'favorite' => 'bool',
+        ];
+    }
 
     protected $with = ['album', 'artist', 'album.artist', 'podcast', 'genres', 'owner'];
 

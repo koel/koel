@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\SongStorageType;
+use Database\Factories\TranscodeFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,7 +21,7 @@ use Illuminate\Support\Facades\File;
  * @property string $hash
  * @property string $location
  *
- * @method static \Database\Factories\TranscodeFactory factory(...$parameters)
+ * @method static TranscodeFactory factory(...$parameters)
  */
 class Transcode extends Model
 {
@@ -29,10 +30,13 @@ class Transcode extends Model
 
     protected $guarded = [];
 
-    protected $casts = [
-        'bit_rate' => 'int',
-        'file_size' => 'int',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'bit_rate' => 'int',
+            'file_size' => 'int',
+        ];
+    }
 
     protected $with = ['song'];
 

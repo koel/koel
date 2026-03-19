@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Casts\ThemePropertiesCast;
 use App\Observers\ThemeObserver;
 use App\Values\Theme\ThemeProperties;
+use Database\Factories\ThemeFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property ThemeProperties $properties
  * @property User $user
  *
- * @method static \Database\Factories\ThemeFactory factory(...$parameters)
+ * @method static ThemeFactory factory(...$parameters)
  */
 #[ObservedBy(ThemeObserver::class)]
 class Theme extends Model
@@ -29,9 +30,12 @@ class Theme extends Model
 
     protected $guarded = [];
 
-    protected $casts = [
-        'properties' => ThemePropertiesCast::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'properties' => ThemePropertiesCast::class,
+        ];
+    }
 
     public function user(): BelongsTo
     {
