@@ -283,6 +283,9 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ## Testing Assertions
 - When asserting two Eloquent models are the same, use `assertTrue($modelA->is($modelB))` instead of comparing IDs.
 
+## Model Factories
+- Use `createOne()` to create a single model and `createMany()` to create a collection. Never use `create()` directly, as its return type is ambiguous (single model or collection depending on arguments).
+
 ## Frontend Testing
 - Prefer semantic queries (`getByRole`, `getByLabelText`, `getByText`) via `screen` from `@testing-library/vue`. Use `data-testid` only as a last resort when no semantic query is available.
 

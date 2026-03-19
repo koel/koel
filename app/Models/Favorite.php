@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property int $id
  * @property string $favoriteable_id
  * @property string $favoriteable_type
+ * @property int $position
  *
  * @method static \Database\Factories\FavoriteFactory factory(...$parameters)
  */

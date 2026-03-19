@@ -3,7 +3,7 @@ import slugify from 'slugify'
 import { differenceBy, merge, orderBy, sumBy, take, unionBy, uniqBy } from 'lodash'
 import type { Reactive } from 'vue'
 import { reactive, watch } from 'vue'
-import { arrayify, use } from '@/utils/helpers'
+import { arrayify, moveItemsInList, use } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
 import { logger } from '@/utils/logger'
 import { md5 } from '@/utils/crypto'
@@ -451,5 +451,23 @@ export const playableStore = {
     })
 
     this.state.favorites = differenceBy(this.state.favorites, playables, 'id')
+  },
+
+  async moveFavoritesInList(playables: MaybeArray<Playable>, target: Playable, placement: Placement) {
+    const orderHash = JSON.stringify(this.state.favorites.map(({ id }) => id))
+
+    this.state.favorites.splice(
+      0,
+      this.state.favorites.length,
+      ...moveItemsInList(this.state.favorites, playables, target, placement),
+    )
+
+    if (orderHash !== JSON.stringify(this.state.favorites.map(({ id }) => id))) {
+      await http.silently.post('favorites/move', {
+        placement,
+        songs: arrayify(playables).map(({ id }) => id),
+        target: target.id,
+      })
+    }
   },
 }

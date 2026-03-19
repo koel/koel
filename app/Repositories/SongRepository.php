@@ -148,9 +148,10 @@ class SongRepository extends Repository implements ScoutableRepository
     /** @return Collection|array<array-key, Song> */
     public function getFavorites(?User $scopedUser = null, ?PlayableType $type = null): Collection
     {
-        return Song::query(type: $type, user: $scopedUser ?? $this->auth->user())->withUserContext(
-            favoritesOnly: true,
-        )->get();
+        return Song::query(type: $type, user: $scopedUser ?? $this->auth->user())
+            ->withUserContext(favoritesOnly: true)
+            ->orderBy('favorites.position')
+            ->get();
     }
 
     /** @return Collection|array<array-key, Song> */

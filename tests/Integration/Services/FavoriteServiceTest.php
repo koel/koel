@@ -47,6 +47,27 @@ class FavoriteServiceTest extends TestCase
     }
 
     #[Test]
+    public function toggleFavoriteAssignsIncrementingPosition(): void
+    {
+        Event::fake(SongFavoriteToggled::class);
+
+        $user = create_user();
+        $songs = Song::factory()->createMany(3);
+
+        $this->service->toggleFavorite($songs[0], $user);
+        $this->service->toggleFavorite($songs[1], $user);
+        $this->service->toggleFavorite($songs[2], $user);
+
+        $positions = Favorite::query()
+            ->where('user_id', $user->id)
+            ->orderBy('position')
+            ->pluck('position')
+            ->toArray();
+
+        self::assertSame([0, 1, 2], $positions);
+    }
+
+    #[Test]
     public function toggleFavoriteToFalse(): void
     {
         Event::fake(SongFavoriteToggled::class);
