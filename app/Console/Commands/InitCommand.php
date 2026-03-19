@@ -207,12 +207,6 @@ class InitCommand extends Command
     {
         if (!User::query()->count()) {
             $this->setUpAdminAccount();
-
-            $this->components->task('Seeding data', static function (): void {
-                Artisan::call('db:seed', ['--force' => true, '--quiet' => true]);
-            });
-        } else {
-            $this->components->task('Data already seeded -- skipping');
         }
     }
 
