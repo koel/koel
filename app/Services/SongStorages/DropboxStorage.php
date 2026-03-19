@@ -20,7 +20,7 @@ class DropboxStorage extends CloudStorage
     public function __construct(
         private readonly DropboxFilesystem $filesystem,
         #[Config('filesystems.disks.dropbox')]
-        private readonly array $config,
+        private readonly array $config = [],
     ) {
         $this->filesystem
             ->getAdapter()

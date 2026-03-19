@@ -11,9 +11,9 @@ class Transcoder
 {
     public function __construct(
         #[Config('koel.streaming.transcode_timeout')]
-        private readonly int $transcodeTimeout,
+        private readonly int $transcodeTimeout = 0,
         #[Config('koel.streaming.ffmpeg_path')]
-        private readonly string $ffmpegPath,
+        private readonly string $ffmpegPath = '',
     ) {}
 
     public function transcode(string $source, string $destination, int $bitRate): void

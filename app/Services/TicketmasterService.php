@@ -20,7 +20,7 @@ class TicketmasterService
         private readonly TicketmasterConnector $connector,
         private readonly GeolocationService $geolocator,
         #[Config('koel.services.ticketmaster.default_country_code')]
-        private readonly string $defaultCountryCode,
+        private readonly string $defaultCountryCode = '',
     ) {}
 
     public static function used(): bool
