@@ -15,11 +15,8 @@ export interface ArtistUpdateData {
   image?: Artist['image'] | null
 }
 
-interface ArtistListPaginateParams extends Record<string, any> {
+interface ArtistListPaginateParams extends PaginateParams<ArtistListSortField> {
   favorites_only: boolean
-  sort: ArtistListSortField
-  order: SortOrder
-  page: number
 }
 
 export const artistStore = {

@@ -41,17 +41,7 @@ export interface SongUpdateResult {
   }
 }
 
-export interface SongListPaginateParams extends Record<string, any> {
-  sort: MaybeArray<PlayableListSortField>
-  order: SortOrder
-  page: number
-}
-
-export interface GenreSongListPaginateParams extends Record<string, any> {
-  sort: MaybeArray<PlayableListSortField>
-  order: SortOrder
-  page: number
-}
+export type SongListPaginateParams = PaginateParams<PlayableListSortField>
 
 export const playableStore = {
   vault: new Map<Playable['id'], Reactive<Playable>>(),
@@ -293,7 +283,7 @@ export const playableStore = {
     )
   },
 
-  async paginateSongsByGenre(genre: Genre | Genre['id'], params: GenreSongListPaginateParams) {
+  async paginateSongsByGenre(genre: Genre | Genre['id'], params: SongListPaginateParams) {
     const id = typeof genre === 'string' ? genre : genre.id
 
     const resource = await http.get<PaginatorResource<Song>>(

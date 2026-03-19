@@ -601,6 +601,12 @@ interface BasicListSorterDropDownItem<T extends SortField> {
 type SortOrder = 'asc' | 'desc'
 type Placement = 'before' | 'after'
 
+interface PaginateParams<S extends string = string> {
+  sort: MaybeArray<S>
+  order: SortOrder
+  page: number
+}
+
 type MethodOf<T> = { [K in keyof T]: T[K] extends Closure ? K : never }[keyof T]
 
 interface PaginatorResource<T> {

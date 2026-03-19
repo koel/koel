@@ -15,11 +15,8 @@ export interface AlbumUpdateData {
   cover?: Album['cover'] | null
 }
 
-interface AlbumListPaginateParams extends Record<string, any> {
+interface AlbumListPaginateParams extends PaginateParams<AlbumListSortField> {
   favorites_only: boolean
-  sort: AlbumListSortField
-  order: SortOrder
-  page: number
 }
 
 export const albumStore = {
