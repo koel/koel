@@ -2,7 +2,6 @@
 
 namespace Tests\Integration\Services;
 
-use App\Models\Album;
 use App\Models\Artist;
 use App\Pipelines\Encyclopedia\GetAlbumTracksUsingMbid;
 use App\Pipelines\Encyclopedia\GetAlbumWikidataIdUsingReleaseGroupMbid;

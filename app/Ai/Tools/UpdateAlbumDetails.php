@@ -4,7 +4,6 @@ namespace App\Ai\Tools;
 
 use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
-use App\Models\Album;
 use App\Repositories\AlbumRepository;
 use App\Services\AlbumService;
 use App\Values\Album\AlbumUpdateData;
