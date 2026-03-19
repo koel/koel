@@ -22,11 +22,15 @@ class MoveFavoriteSongsRequest extends Request
                 'array',
             ],
             'songs.*' => [
-                Rule::exists('favorites', 'favoriteable_id')->where('user_id', $this->user()->id),
+                Rule::exists('favorites', 'favoriteable_id')
+                    ->where('user_id', $this->user()->id)
+                    ->where('favoriteable_type', 'playable'),
             ],
             'target' => [
                 'required',
-                Rule::exists('favorites', 'favoriteable_id')->where('user_id', $this->user()->id),
+                Rule::exists('favorites', 'favoriteable_id')
+                    ->where('user_id', $this->user()->id)
+                    ->where('favoriteable_type', 'playable'),
                 Rule::notIn($this->input('songs', [])),
             ],
             'placement' => ['required', new Enum(Placement::class)],
