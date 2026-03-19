@@ -6,7 +6,6 @@ use App\Services\Streamer\Adapters\LocalStreamerAdapter;
 use App\Services\Streamer\Adapters\PhpStreamerAdapter;
 use App\Services\Streamer\Adapters\XAccelRedirectStreamerAdapter;
 use App\Services\Streamer\Adapters\XSendFileStreamerAdapter;
-use App\Services\Transcoding\Transcoder;
 use Illuminate\Support\ServiceProvider;
 
 class StreamerServiceProvider extends ServiceProvider
@@ -20,10 +19,5 @@ class StreamerServiceProvider extends ServiceProvider
                 default => $this->app->make(PhpStreamerAdapter::class),
             };
         });
-
-        $this->app
-            ->when(Transcoder::class)
-            ->needs('$transcodeTimeout')
-            ->giveConfig('koel.streaming.transcode_timeout');
     }
 }

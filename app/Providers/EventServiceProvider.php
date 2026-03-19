@@ -19,24 +19,6 @@ use App\Listeners\PruneLibrary;
 use App\Listeners\UnloveMultipleTracksOnLastfm;
 use App\Listeners\UpdateLastfmNowPlaying;
 use App\Listeners\WriteScanLog;
-use App\Models\Album;
-use App\Models\Artist;
-use App\Models\Folder;
-use App\Models\Genre;
-use App\Models\Playlist;
-use App\Models\PlaylistCollaborationToken;
-use App\Models\RadioStation;
-use App\Models\Theme;
-use App\Models\User;
-use App\Observers\AlbumObserver;
-use App\Observers\ArtistObserver;
-use App\Observers\FolderObserver;
-use App\Observers\GenreObserver;
-use App\Observers\PlaylistCollaborationTokenObserver;
-use App\Observers\PlaylistObserver;
-use App\Observers\RadioStationObserver;
-use App\Observers\ThemeObserver;
-use App\Observers\UserObserver;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as BaseServiceProvider;
 
 class EventServiceProvider extends BaseServiceProvider
@@ -76,19 +58,4 @@ class EventServiceProvider extends BaseServiceProvider
             DeletePodcastIfNoSubscribers::class,
         ],
     ];
-
-    public function boot(): void
-    {
-        parent::boot();
-
-        Album::observe(AlbumObserver::class);
-        Artist::observe(ArtistObserver::class);
-        Folder::observe(FolderObserver::class);
-        Playlist::observe(PlaylistObserver::class);
-        PlaylistCollaborationToken::observe(PlaylistCollaborationTokenObserver::class);
-        Genre::observe(GenreObserver::class);
-        User::observe(UserObserver::class);
-        RadioStation::observe(RadioStationObserver::class);
-        Theme::observe(ThemeObserver::class);
-    }
 }

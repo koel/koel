@@ -6,6 +6,7 @@ use App\Enums\SongStorageType;
 use App\Models\User;
 use App\Services\SongStorages\Concerns\DeletesUsingFilesystem;
 use App\Values\UploadReference;
+use Illuminate\Container\Attributes\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -15,6 +16,7 @@ class S3CompatibleStorage extends CloudStorage
     use DeletesUsingFilesystem;
 
     public function __construct(
+        #[Config('filesystems.disks.s3.bucket')]
         private readonly ?string $bucket = null,
     ) {}
 

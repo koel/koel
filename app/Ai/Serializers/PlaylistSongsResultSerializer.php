@@ -11,7 +11,7 @@ class PlaylistSongsResultSerializer implements AiResultSerializer
 {
     public static function supports(AiAssistantResult $result): bool
     {
-        return in_array($result->action, ['add_to_playlist', 'remove_from_playlist']);
+        return in_array($result->action, ['add_to_playlist', 'remove_from_playlist'], true);
     }
 
     public static function serialize(AiAssistantResult $result): array

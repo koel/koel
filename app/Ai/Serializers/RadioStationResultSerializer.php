@@ -10,7 +10,7 @@ class RadioStationResultSerializer implements AiResultSerializer
 {
     public static function supports(AiAssistantResult $result): bool
     {
-        return in_array($result->action, ['play_radio_station', 'add_radio_station']);
+        return in_array($result->action, ['play_radio_station', 'add_radio_station'], true);
     }
 
     public static function serialize(AiAssistantResult $result): array

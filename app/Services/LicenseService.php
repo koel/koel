@@ -12,6 +12,7 @@ use App\Services\License\Contracts\LicenseServiceInterface;
 use App\Values\License\LicenseInstance;
 use App\Values\License\LicenseMeta;
 use App\Values\License\LicenseStatus;
+use Illuminate\Container\Attributes\Config;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
@@ -23,10 +24,9 @@ class LicenseService implements LicenseServiceInterface
 {
     public function __construct(
         private readonly LemonSqueezyConnector $connector,
-        private ?string $hashSalt = null,
-    ) {
-        $this->hashSalt ??= config('app.key');
-    }
+        #[Config('app.key')]
+        private readonly ?string $hashSalt = null,
+    ) {}
 
     public function activate(string $key): License
     {

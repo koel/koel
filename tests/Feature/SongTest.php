@@ -51,9 +51,9 @@ class SongTest extends TestCase
     public function unauthorizedDelete(): void
     {
         Bus::fake();
-        Dispatcher::expects('dispatch')->never();
-
         $songs = Song::factory()->createMany(2);
+
+        Dispatcher::expects('dispatch')->never();
 
         $this->deleteAs('api/songs', ['songs' => $songs->modelKeys()])->assertForbidden();
 

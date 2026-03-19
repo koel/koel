@@ -13,6 +13,7 @@ use App\Services\SongStorages\CloudStorageFactory;
 use App\Services\SongStorages\SftpStorage;
 use App\Values\Downloadable;
 use App\Values\Podcast\EpisodePlayable;
+use Illuminate\Container\Attributes\Config;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\File;
 
@@ -20,6 +21,7 @@ class DownloadService
 {
     public function __construct(
         private readonly SongRepository $songRepository,
+        #[Config('koel.download.limit')]
         private readonly int $downloadLimit = 0,
     ) {}
 

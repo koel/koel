@@ -9,6 +9,7 @@ use App\Http\Integrations\Ticketmaster\TicketmasterConnector;
 use App\Services\Geolocation\Contracts\GeolocationService;
 use App\Values\Ticketmaster\TicketmasterAttraction;
 use App\Values\Ticketmaster\TicketmasterEvent;
+use Illuminate\Container\Attributes\Config;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
@@ -18,7 +19,8 @@ class TicketmasterService
     public function __construct(
         private readonly TicketmasterConnector $connector,
         private readonly GeolocationService $geolocator,
-        private readonly string $defaultCountryCode,
+        #[Config('koel.services.ticketmaster.default_country_code')]
+        private readonly string $defaultCountryCode = '',
     ) {}
 
     public static function used(): bool

@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use App\Builders\GenreBuilder;
+use App\Observers\GenreObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -15,6 +18,8 @@ use Laravel\Scout\Searchable;
  *
  * @method static \Database\Factories\GenreFactory factory(...$parameters)
  */
+#[ObservedBy(GenreObserver::class)]
+#[UseEloquentBuilder(GenreBuilder::class)]
 class Genre extends Model
 {
     use HasFactory;
@@ -35,11 +40,6 @@ class Genre extends Model
     {
         /** @var GenreBuilder */
         return parent::query();
-    }
-
-    public function newEloquentBuilder($query): GenreBuilder
-    {
-        return new GenreBuilder($query);
     }
 
     public function songs(): BelongsToMany

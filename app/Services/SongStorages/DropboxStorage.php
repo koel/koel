@@ -7,6 +7,7 @@ use App\Filesystems\DropboxFilesystem;
 use App\Models\User;
 use App\Services\SongStorages\Concerns\DeletesUsingFilesystem;
 use App\Values\UploadReference;
+use Illuminate\Container\Attributes\Config;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
@@ -18,7 +19,8 @@ class DropboxStorage extends CloudStorage
 
     public function __construct(
         private readonly DropboxFilesystem $filesystem,
-        private readonly array $config,
+        #[Config('filesystems.disks.dropbox')]
+        private readonly array $config = [],
     ) {
         $this->filesystem
             ->getAdapter()

@@ -15,7 +15,7 @@ class FavoriteResultSerializer implements AiResultSerializer
 {
     public static function supports(AiAssistantResult $result): bool
     {
-        return in_array($result->action, ['add_to_favorites', 'remove_from_favorites']);
+        return in_array($result->action, ['add_to_favorites', 'remove_from_favorites'], true);
     }
 
     public static function serialize(AiAssistantResult $result): array

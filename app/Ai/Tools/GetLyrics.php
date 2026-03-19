@@ -49,9 +49,10 @@ class GetLyrics implements Tool
         }
 
         if (!$song->lyrics) {
-            return (
-                sprintf('No lyrics available for "%s" by %s. ', $song->title, $song->artist->name)
-                . 'Ask the user if they would like you to search the web for the lyrics.'
+            return sprintf(
+                'No lyrics available for "%s" by %s. Ask the user if they would like you to search the web for the lyrics.',
+                $song->title,
+                $song->artist->name,
             );
         }
 

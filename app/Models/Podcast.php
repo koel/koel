@@ -9,6 +9,7 @@ use App\Models\Concerns\MorphsToFavorites;
 use App\Models\Contracts\Favoriteable;
 use App\Models\Song as Episode;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -36,6 +37,7 @@ use PhanAn\Poddle\Values\ChannelMetadata;
  *
  * @method static \Database\Factories\PodcastFactory factory(...$parameters)
  */
+#[UseEloquentBuilder(PodcastBuilder::class)]
 class Podcast extends Model implements Favoriteable
 {
     use HasFactory;
@@ -57,11 +59,6 @@ class Podcast extends Model implements Favoriteable
     {
         /** @var PodcastBuilder */
         return parent::query()->addSelect('podcasts.*');
-    }
-
-    public function newEloquentBuilder($query): PodcastBuilder
-    {
-        return new PodcastBuilder($query);
     }
 
     public function episodes(): HasMany

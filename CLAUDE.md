@@ -251,6 +251,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - Never use `empty()` to check arrays. If the variable is known to be an array, use `!$array` instead. Don't compare to `[]` either.
 - When a string contains quotes, don't use escaped double quotes (e.g. `"Playlist \"$name\" created"`). Use `sprintf()` with a single-quoted format string instead (e.g. `sprintf('Playlist "%s" created', $name)`).
 - Never query models directly (e.g. `Model::query()->where(...)`) outside of the corresponding Repository class. All model lookups and queries must go through the appropriate Repository (e.g. `PlaylistRepository`, `SongRepository`).
+- For config values needed by services, use the `#[Config('key')]` attribute on constructor parameters (from `Illuminate\Container\Attributes\Config`) — never call `config()` inside the service.
 
 ## Environment Variables Documentation
 - When adding, removing, or modifying environment variables in `.env.example`, always update `docs/environment-variables.md` to stay in sync.
@@ -295,6 +296,9 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## Code Reviews
 - When addressing PR review comments, do NOT blindly follow them. Always use your own knowledge and logic to evaluate whether the feedback makes sense. If it doesn't, push back and explain why.
+
+## Linting & Static Analysis
+- When running lint or static analysis (backend or frontend), fix ALL warnings and errors to ensure 100% clean output — even pre-existing issues unrelated to current changes.
 
 ## Vite+ Toolchain
 

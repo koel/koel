@@ -25,7 +25,7 @@ class TranscoderTest extends TestCase
         Process::fake();
         File::expects('ensureDirectoryExists')->with('/path/to');
 
-        $transcoder = new Transcoder(transcodeTimeout: 300);
+        $transcoder = new Transcoder(transcodeTimeout: 300, ffmpegPath: '/usr/bin/ffmpeg');
         $transcoder->transcode('/path/to/song.flac', '/path/to/output.m4a', 128);
 
         $closure = static function (PendingProcess $process): bool {
@@ -65,7 +65,7 @@ class TranscoderTest extends TestCase
         $this->expectException(TranscodingFailedException::class);
         $this->expectExceptionMessage('something went wrong');
 
-        $transcoder = new Transcoder(transcodeTimeout: 300);
+        $transcoder = new Transcoder(transcodeTimeout: 300, ffmpegPath: '/usr/bin/ffmpeg');
         $transcoder->transcode('/path/to/song.flac', '/path/to/output.m4a', 128);
     }
 
@@ -75,7 +75,7 @@ class TranscoderTest extends TestCase
         Process::fake();
         File::expects('ensureDirectoryExists')->with('/path/to');
 
-        $transcoder = new Transcoder(transcodeTimeout: 600);
+        $transcoder = new Transcoder(transcodeTimeout: 600, ffmpegPath: '/usr/bin/ffmpeg');
         $transcoder->transcode('/path/to/song.flac', '/path/to/output.m4a', 128);
 
         Process::assertRanTimes(static function (PendingProcess $process): bool {
@@ -89,7 +89,7 @@ class TranscoderTest extends TestCase
         Process::fake();
         File::expects('ensureDirectoryExists')->with('/path/to');
 
-        $transcoder = new Transcoder(transcodeTimeout: 0);
+        $transcoder = new Transcoder(transcodeTimeout: 0, ffmpegPath: '/usr/bin/ffmpeg');
         $transcoder->transcode('/path/to/song.flac', '/path/to/output.m4a', 128);
 
         Process::assertRanTimes(static function (PendingProcess $process): bool {

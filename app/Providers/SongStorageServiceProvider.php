@@ -23,15 +23,5 @@ class SongStorageServiceProvider extends ServiceProvider
 
             return $this->app->make($concrete);
         });
-
-        $this->app
-            ->when(S3CompatibleStorage::class)
-            ->needs('$bucket')
-            ->giveConfig('filesystems.disks.s3.bucket');
-
-        $this->app
-            ->when(DropboxStorage::class)
-            ->needs('$config')
-            ->giveConfig('filesystems.disks.dropbox');
     }
 }
