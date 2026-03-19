@@ -5,6 +5,7 @@ namespace Tests;
 use App\Facades\License;
 use App\Helpers\Ulid;
 use App\Helpers\Uuid;
+use App\Models\Album;
 use App\Observers\AlbumObserver;
 use App\Services\License\CommunityLicenseService;
 use App\Services\MediaBrowser;
@@ -41,7 +42,7 @@ abstract class TestCase extends BaseTestCase
         // thumbnail generation jobs). All other observer methods are preserved.
         // Tests that verify the `saved` behavior can re-bind the real observer.
         $this->app->bind(AlbumObserver::class, static fn () => new class extends AlbumObserver {
-            public function saved(\App\Models\Album $album): void
+            public function saved(Album $album): void
             {
                 // no-op: prevent thumbnail job dispatch noise in tests
             }
