@@ -2,8 +2,11 @@
 
 namespace Tests\Unit\Models;
 
+use App\Enums\SongStorageType;
 use App\Models\Genre;
 use App\Models\Song;
+use App\Values\SongStorageMetadata\S3CompatibleMetadata;
+use App\Values\SongStorageMetadata\S3LambdaMetadata;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -52,6 +55,36 @@ class SongTest extends TestCase
             ->refresh();
 
         self::assertSame($isEqual, $song->genreEqualsTo($target));
+    }
+
+    #[Test]
+    public function s3StorageMetadataHandlesNestedKeys(): void
+    {
+        $song = Song::factory()->createOne([
+            'path' => 's3://my-bucket/path/to/nested/file.mp3',
+            'storage' => SongStorageType::S3,
+        ]);
+
+        $metadata = $song->storage_metadata;
+
+        self::assertInstanceOf(S3CompatibleMetadata::class, $metadata);
+        self::assertSame('my-bucket', $metadata->bucket);
+        self::assertSame('path/to/nested/file.mp3', $metadata->key);
+    }
+
+    #[Test]
+    public function s3LambdaStorageMetadataHandlesNestedKeys(): void
+    {
+        $song = Song::factory()->createOne([
+            'path' => 's3://my-bucket/path/to/nested/file.mp3',
+            'storage' => SongStorageType::S3_LAMBDA,
+        ]);
+
+        $metadata = $song->storage_metadata;
+
+        self::assertInstanceOf(S3LambdaMetadata::class, $metadata);
+        self::assertSame('my-bucket', $metadata->bucket);
+        self::assertSame('path/to/nested/file.mp3', $metadata->key);
     }
 
     #[Test]
