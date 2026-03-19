@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Observers\FolderObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -25,6 +27,7 @@ use Illuminate\Support\Arr;
  *
  * @method static \Database\Factories\FolderFactory factory(...$parameters)
  */
+#[ObservedBy(FolderObserver::class)]
 class Folder extends Model
 {
     use HasFactory;

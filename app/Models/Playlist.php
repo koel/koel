@@ -8,8 +8,10 @@ use App\Models\Concerns\Playlists\ManagesCollaborators;
 use App\Models\Concerns\Playlists\ManagesPlayables;
 use App\Models\Contracts\Embeddable;
 use App\Models\Song as Playable;
+use App\Observers\PlaylistObserver;
 use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -39,6 +41,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  *
  * @method static \Database\Factories\PlaylistFactory factory(...$parameters)
  */
+#[ObservedBy(PlaylistObserver::class)]
 class Playlist extends Model implements AuditableContract, Embeddable
 {
     use Auditable;

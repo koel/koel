@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Builders\GenreBuilder;
+use App\Observers\GenreObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,6 +18,7 @@ use Laravel\Scout\Searchable;
  *
  * @method static \Database\Factories\GenreFactory factory(...$parameters)
  */
+#[ObservedBy(GenreObserver::class)]
 #[UseEloquentBuilder(GenreBuilder::class)]
 class Genre extends Model
 {

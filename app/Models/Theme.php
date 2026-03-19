@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Casts\ThemePropertiesCast;
+use App\Observers\ThemeObserver;
 use App\Values\Theme\ThemeProperties;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -19,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @method static \Database\Factories\ThemeFactory factory(...$parameters)
  */
+#[ObservedBy(ThemeObserver::class)]
 class Theme extends Model
 {
     use HasFactory;

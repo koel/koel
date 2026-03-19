@@ -8,8 +8,10 @@ use App\Enums\Acl\Role as RoleEnum;
 use App\Models\Concerns\Users\HasUserAttributes;
 use App\Models\Concerns\Users\HasUserRelationships;
 use App\Models\Contracts\Permissionable;
+use App\Observers\UserObserver;
 use App\Values\User\UserPreferences;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -53,6 +55,7 @@ use Spatie\Permission\Traits\HasRoles;
  *
  * @method static \Database\Factories\UserFactory factory(...$parameters)
  */
+#[ObservedBy(UserObserver::class)]
 #[UseEloquentBuilder(UserBuilder::class)]
 class User extends Authenticatable implements AuditableContract, Permissionable
 {

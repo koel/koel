@@ -10,7 +10,9 @@ use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
 use App\Models\Contracts\Embeddable;
 use App\Models\Contracts\Favoriteable;
 use App\Models\Contracts\Permissionable;
+use App\Observers\AlbumObserver;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
@@ -40,6 +42,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  *
  * @method static \Database\Factories\AlbumFactory factory(...$parameters)
  */
+#[ObservedBy(AlbumObserver::class)]
 #[UseEloquentBuilder(AlbumBuilder::class)]
 class Album extends Model implements AuditableContract, Embeddable, Favoriteable, Permissionable
 {
