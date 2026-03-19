@@ -12,7 +12,7 @@ use Webmozart\Assert\Assert;
 
 class Acl
 {
-    private const VALID_ACTIONS = [
+    private const array VALID_ACTIONS = [
         'edit',
         'delete',
     ];

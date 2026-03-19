@@ -24,7 +24,7 @@ class InitCommand extends Command
 {
     use AskForPassword;
 
-    private const NON_INTERACTION_MAX_DATABASE_ATTEMPT_COUNT = 10;
+    private const int NON_INTERACTION_MAX_DATABASE_ATTEMPT_COUNT = 10;
 
     protected $signature = 'koel:init {--no-assets : Do not compile front-end assets} {--no-scheduler : Do not install scheduler}';
     protected $description = 'Install or upgrade Koel';

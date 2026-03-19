@@ -17,21 +17,12 @@ class Util
 
     public function detectUTFEncoding(?string $str): ?string
     {
-        switch (substr($str, 0, 2)) {
-            case UTF16_BIG_ENDIAN_BOM:
-                return 'UTF-16BE';
-
-            case UTF16_LITTLE_ENDIAN_BOM:
-                return 'UTF-16LE';
-        }
-
-        if (substr($str, 0, 3) === UTF8_BOM) {
-            return 'UTF-8';
-        }
-
-        return match (substr($str, 0, 4)) {
-            UTF32_BIG_ENDIAN_BOM => 'UTF-32BE',
-            UTF32_LITTLE_ENDIAN_BOM => 'UTF-32LE',
+        return match (true) {
+            substr($str, 0, 2) === UTF16_BIG_ENDIAN_BOM => 'UTF-16BE',
+            substr($str, 0, 2) === UTF16_LITTLE_ENDIAN_BOM => 'UTF-16LE',
+            substr($str, 0, 3) === UTF8_BOM => 'UTF-8',
+            substr($str, 0, 4) === UTF32_BIG_ENDIAN_BOM => 'UTF-32BE',
+            substr($str, 0, 4) === UTF32_LITTLE_ENDIAN_BOM => 'UTF-32LE',
             default => null,
         };
     }

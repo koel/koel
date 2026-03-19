@@ -16,12 +16,12 @@ class ArtistBuilder extends FavoriteableBuilder
 {
     use CanScopeByUser;
 
-    public const SORT_COLUMNS_NORMALIZE_MAP = [
+    public const array SORT_COLUMNS_NORMALIZE_MAP = [
         'name' => 'artists.name',
         'created_at' => 'artists.created_at',
     ];
 
-    private const VALID_SORT_COLUMNS = [
+    private const array VALID_SORT_COLUMNS = [
         'artists.name',
         'artists.created_at',
     ];

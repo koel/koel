@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class FavoriteResource extends JsonResource
 {
-    public const JSON_STRUCTURE = [
+    public const array JSON_STRUCTURE = [
         'type',
         'favoriteable_type',
         'favoriteable_id',

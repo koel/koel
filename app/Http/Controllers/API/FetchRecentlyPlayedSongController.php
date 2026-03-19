@@ -10,7 +10,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 
 class FetchRecentlyPlayedSongController extends Controller
 {
-    private const MAX_ITEM_COUNT = 128;
+    private const int MAX_ITEM_COUNT = 128;
 
     /** @param User $user */
     public function __invoke(SongRepository $repository, Authenticatable $user)

@@ -8,7 +8,7 @@ use Webmozart\Assert\Assert;
 
 class SongFileResource extends SongResource
 {
-    public const JSON_STRUCTURE = [
+    public const array JSON_STRUCTURE = [
         'type',
         'id',
         'title',

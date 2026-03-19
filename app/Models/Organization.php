@@ -27,7 +27,7 @@ class Organization extends Model
     use HasUlids;
     use HasFactory;
 
-    public const DEFAULT_SLUG = 'koel';
+    public const string DEFAULT_SLUG = 'koel';
 
     protected $guarded = ['id'];
 

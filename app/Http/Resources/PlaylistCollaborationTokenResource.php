@@ -8,7 +8,7 @@ use SensitiveParameter;
 
 class PlaylistCollaborationTokenResource extends JsonResource
 {
-    public const JSON_STRUCTURE = [
+    public const array JSON_STRUCTURE = [
         'type',
         'token',
     ];

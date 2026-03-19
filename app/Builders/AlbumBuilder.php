@@ -16,14 +16,14 @@ class AlbumBuilder extends FavoriteableBuilder
 {
     use CanScopeByUser;
 
-    public const SORT_COLUMNS_NORMALIZE_MAP = [
+    public const array SORT_COLUMNS_NORMALIZE_MAP = [
         'name' => 'albums.name',
         'year' => 'albums.year',
         'created_at' => 'albums.created_at',
         'artist_name' => 'albums.artist_name',
     ];
 
-    private const VALID_SORT_COLUMNS = [
+    private const array VALID_SORT_COLUMNS = [
         'albums.name',
         'albums.year',
         'albums.created_at',

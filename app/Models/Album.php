@@ -56,7 +56,7 @@ class Album extends Model implements AuditableContract, Embeddable, Favoriteable
     use Searchable;
     use SupportsDeleteWhereValueNotIn;
 
-    public const UNKNOWN_NAME = 'Unknown Album';
+    public const string UNKNOWN_NAME = 'Unknown Album';
 
     protected $guarded = ['id'];
     protected $hidden = ['updated_at'];

@@ -26,8 +26,8 @@ class Genre extends Model
     use HasFactory;
     use Searchable;
 
-    public const NO_GENRE_PUBLIC_ID = 'no-genre';
-    public const NO_GENRE_NAME = '';
+    public const string NO_GENRE_PUBLIC_ID = 'no-genre';
+    public const string NO_GENRE_NAME = '';
 
     public $timestamps = false;
 

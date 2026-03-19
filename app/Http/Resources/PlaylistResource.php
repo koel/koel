@@ -10,7 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class PlaylistResource extends JsonResource
 {
-    public const JSON_STRUCTURE = [
+    public const array JSON_STRUCTURE = [
         'type',
         'id',
         'name',

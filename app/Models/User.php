@@ -71,11 +71,11 @@ class User extends Authenticatable implements AuditableContract, Permissionable
     use Notifiable;
     use Prunable;
 
-    public const FIRST_ADMIN_NAME = 'Koel';
-    public const FIRST_ADMIN_EMAIL = 'admin@koel.dev';
-    public const FIRST_ADMIN_PASSWORD = 'KoelIsCool';
-    public const DEMO_PASSWORD = 'demo';
-    public const DEMO_USER_DOMAIN = 'demo.koel.dev';
+    public const string FIRST_ADMIN_NAME = 'Koel';
+    public const string FIRST_ADMIN_EMAIL = 'admin@koel.dev';
+    public const string FIRST_ADMIN_PASSWORD = 'KoelIsCool';
+    public const string DEMO_PASSWORD = 'demo';
+    public const string DEMO_USER_DOMAIN = 'demo.koel.dev';
 
     protected $guarded = ['id', 'public_id'];
     protected $hidden = ['password', 'remember_token', 'created_at', 'updated_at', 'invitation_accepted_at'];

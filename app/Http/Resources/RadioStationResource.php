@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class RadioStationResource extends JsonResource
 {
-    public const JSON_STRUCTURE = [
+    public const array JSON_STRUCTURE = [
         'type',
         'name',
         'id',
