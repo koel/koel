@@ -24,7 +24,6 @@ use App\Services\Scanners\Contracts\ScannerCacheStrategy as ScannerCacheStrategy
 use App\Services\Scanners\ScannerCacheStrategy;
 use App\Services\Scanners\ScannerNoCacheStrategy;
 use App\Services\SpotifyService;
-use App\Services\TicketmasterService;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
