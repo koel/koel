@@ -5,11 +5,11 @@ namespace App\Values\Transcoding;
 use App\Enums\SongStorageType;
 use App\Models\Transcode;
 
-class TranscodeFileInfo
+final readonly class TranscodeFileInfo
 {
     public function __construct(
-        public readonly string $location,
-        public readonly SongStorageType $storage,
+        public string $location,
+        public SongStorageType $storage,
     ) {}
 
     public static function make(string $location, SongStorageType $storageType): self

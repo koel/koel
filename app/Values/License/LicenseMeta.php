@@ -9,7 +9,7 @@ use Illuminate\Contracts\Support\Jsonable;
  * A Lemon Squeezy license meta
  * @see https://docs.lemonsqueezy.com/help/licensing/license-api#meta
  */
-final class LicenseMeta implements Arrayable, Jsonable
+final readonly class LicenseMeta implements Arrayable, Jsonable
 {
     private function __construct(
         public int $customerId,

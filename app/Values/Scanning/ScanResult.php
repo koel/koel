@@ -4,7 +4,7 @@ namespace App\Values\Scanning;
 
 use App\Enums\ScanResultType;
 
-final class ScanResult
+final readonly class ScanResult
 {
     private function __construct(
         public string $path,
