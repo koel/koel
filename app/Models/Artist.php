@@ -13,6 +13,7 @@ use App\Models\Contracts\Embeddable;
 use App\Models\Contracts\Favoriteable;
 use App\Models\Contracts\Permissionable;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -37,6 +38,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  *
  * @method static \Database\Factories\ArtistFactory factory(...$parameters)
  */
+#[UseEloquentBuilder(ArtistBuilder::class)]
 class Artist extends Model implements AuditableContract, Embeddable, Favoriteable, Permissionable
 {
     use Auditable;
@@ -58,11 +60,6 @@ class Artist extends Model implements AuditableContract, Embeddable, Favoriteabl
     {
         /** @var ArtistBuilder */
         return parent::query()->addSelect('artists.*');
-    }
-
-    public function newEloquentBuilder($query): ArtistBuilder
-    {
-        return new ArtistBuilder($query);
     }
 
     public function albums(): HasMany

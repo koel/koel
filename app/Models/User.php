@@ -10,6 +10,7 @@ use App\Models\Concerns\Users\HasUserRelationships;
 use App\Models\Contracts\Permissionable;
 use App\Values\User\UserPreferences;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -52,6 +53,7 @@ use Spatie\Permission\Traits\HasRoles;
  *
  * @method static \Database\Factories\UserFactory factory(...$parameters)
  */
+#[UseEloquentBuilder(UserBuilder::class)]
 class User extends Authenticatable implements AuditableContract, Permissionable
 {
     use Auditable;
@@ -86,11 +88,6 @@ class User extends Authenticatable implements AuditableContract, Permissionable
     {
         /** @var UserBuilder */
         return parent::query();
-    }
-
-    public function newEloquentBuilder($query): UserBuilder
-    {
-        return new UserBuilder($query);
     }
 
     public function getRouteKeyName(): string

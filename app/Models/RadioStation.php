@@ -7,6 +7,7 @@ use App\Models\Concerns\MorphsToFavorites;
 use App\Models\Contracts\Favoriteable;
 use App\Models\Contracts\Permissionable;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -29,6 +30,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  *
  * @method static \Database\Factories\RadioStationFactory factory(...$parameters)
  */
+#[UseEloquentBuilder(RadioStationBuilder::class)]
 class RadioStation extends Model implements AuditableContract, Favoriteable, Permissionable
 {
     use Auditable;
@@ -58,11 +60,6 @@ class RadioStation extends Model implements AuditableContract, Favoriteable, Per
     {
         /** @var RadioStationBuilder */
         return parent::query()->addSelect('radio_stations.*');
-    }
-
-    public function newEloquentBuilder($query): RadioStationBuilder
-    {
-        return new RadioStationBuilder($query);
     }
 
     /** @inheritdoc */

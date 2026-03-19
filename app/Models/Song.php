@@ -18,6 +18,7 @@ use App\Models\Contracts\Embeddable;
 use App\Models\Contracts\Favoriteable;
 use App\Values\SongStorageMetadata\SongStorageMetadata;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -79,6 +80,7 @@ use PhanAn\Poddle\Values\EpisodeMetadata;
  *
  * @method static \Database\Factories\SongFactory factory(...$parameters)
  */
+#[UseEloquentBuilder(SongBuilder::class)]
 class Song extends Model implements AuditableContract, Favoriteable, Embeddable
 {
     use Auditable;
@@ -121,11 +123,6 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
                 default => $query,
             })
             ->addSelect('songs.*');
-    }
-
-    public function newEloquentBuilder($query): SongBuilder
-    {
-        return new SongBuilder($query);
     }
 
     public function accessibleBy(User $user): bool
