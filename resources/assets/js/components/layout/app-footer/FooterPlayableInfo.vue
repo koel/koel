@@ -5,7 +5,13 @@
     class="song-info px-6 py-0 flex items-center content-start w-[84px] md:w-[420px] gap-5"
     @dragstart="onDragStart"
   >
-    <span class="album-thumb block h-[55%] md:h-3/4 aspect-square rounded-full bg-cover" />
+    <span
+      v-koel-tooltip
+      :class="playable && 'cursor-pointer'"
+      :title="playable ? 'Scroll to currently playing' : undefined"
+      class="album-thumb block h-[55%] md:h-3/4 aspect-square rounded-full bg-cover"
+      @click="scrollToCurrentInQueue"
+    />
     <div v-if="playable" class="meta overflow-hidden hidden md:block">
       <h3 class="title overflow-hidden whitespace-nowrap">
         <MarqueeText :text="playable.title" />
@@ -26,11 +32,12 @@ import { CurrentStreamableKey } from '@/config/symbols'
 import { useDraggable } from '@/composables/useDragAndDrop'
 import { useRouter } from '@/composables/useRouter'
 import { useBranding } from '@/composables/useBranding'
+import { cache } from '@/services/cache'
 
 import MarqueeText from '@/components/ui/MarqueeText.vue'
 
 const { startDragging } = useDraggable('playables')
-const { url } = useRouter()
+const { go, url } = useRouter()
 const { cover: defaultCover } = useBranding()
 
 const playable = requireInjection<Ref<Playable | undefined>>(CurrentStreamableKey, ref())
@@ -57,6 +64,15 @@ const coverBackgroundImage = computed(() => `url(${cover.value ?? defaultCover})
 const draggable = computed(() => Boolean(playable.value))
 
 const onDragStart = (event: DragEvent) => use(playable.value, p => startDragging(event, [p]))
+
+const scrollToCurrentInQueue = () => {
+  if (!playable.value) {
+    return
+  }
+
+  cache.set('scroll-to-current-in-queue', true)
+  go(url('queue'))
+}
 </script>
 
 <style lang="postcss" scoped>

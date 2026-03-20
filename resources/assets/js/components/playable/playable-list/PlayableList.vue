@@ -11,6 +11,7 @@
     <PlayableListHeader v-if="config.hasHeader" :content-type="contentType" @sort="sort" />
 
     <VirtualScroller
+      ref="virtualScroller"
       v-slot="{ item }: { item: PlayableRow }"
       :item-height="calculatedItemHeight"
       :items="rows"
@@ -83,6 +84,7 @@ const [config] = requireInjection<[Partial<PlayableListConfig>]>(PlayableListCon
 const [context] = requireInjection<[PlayableListContext]>(PlayableListContextKey)
 
 const wrapper = ref<HTMLElement>()
+const virtualScroller = ref<InstanceType<typeof VirtualScroller>>()
 const sortFields = ref<PlayableListSortField[]>([])
 
 useSwipeDirection(
@@ -326,8 +328,17 @@ const calculatedItemHeight = computed(() => {
   return totalHeight / rows.value.length
 })
 
+const scrollToPlayable = (playable: Playable) => {
+  const index = findIndex(rows.value, row => row.playable.id === playable.id)
+
+  if (index >= 0) {
+    virtualScroller.value?.scrollToIndex(index)
+  }
+}
+
 defineExpose({
   getAllPlayablesWithSort,
+  scrollToPlayable,
 })
 
 onMounted(() => render())

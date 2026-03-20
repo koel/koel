@@ -53,7 +53,7 @@
 
 <script lang="ts" setup>
 import { faCoffee } from '@fortawesome/free-solid-svg-icons'
-import { computed, ref, toRef } from 'vue'
+import { computed, nextTick, ref, toRef } from 'vue'
 import { pluralize } from '@/utils/formatters'
 import { commonStore } from '@/stores/commonStore'
 import { queueStore } from '@/stores/queueStore'
@@ -155,5 +155,21 @@ onScreenActivated('Queue', async () => {
 
   queueStore.clearSilently()
   queueStore.queue(playable!)
+})
+
+onScreenActivated('Queue', async () => {
+  if (!cache.hit('scroll-to-current-in-queue')) {
+    return
+  }
+
+  cache.remove('scroll-to-current-in-queue')
+  const current = queueStore.current
+
+  if (!current) {
+    return
+  }
+
+  await nextTick()
+  playableList.value?.scrollToPlayable(current)
 })
 </script>

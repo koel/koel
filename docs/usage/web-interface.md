@@ -63,6 +63,7 @@ rewind/fast-forward the song by clicking and dragging the progress bar.
 
 From the same area, you can also:
 
+* click the rotating cover art to navigate to the Queue screen and scroll to the currently playing song
 * <InterfaceIcon :src="heartIcon" alt="Heart" /> like/unlike the current song
 * <InterfaceIcon :src="repeatIcon" alt="Repeat" /> switch between repeat modes
 * <InterfaceIcon :src="queueIcon" alt="Queue" /> toggle the Queue screen
