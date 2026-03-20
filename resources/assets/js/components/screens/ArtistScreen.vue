@@ -198,8 +198,8 @@ const fetchScreenData = async () => {
 
     context.entity = artist.value
 
-    const restoredField = lsGet<PlayableListSortField>(`artist-${id}-sort-field`, 'track')!
-    const restoredOrder = lsGet<SortOrder>(`artist-${id}-sort-order`, 'asc')!
+    const restoredField = lsGet<PlayableListSortField>('artist-sort-field', 'track')!
+    const restoredOrder = lsGet<SortOrder>('artist-sort-order', 'asc')!
     sort(restoredField, restoredOrder)
 
     editable.value = await currentUserCan.editArtist(artist.value!)
@@ -216,10 +216,8 @@ const fetchScreenData = async () => {
 }
 
 const onSort = (field: MaybeArray<PlayableListSortField>, order: SortOrder) => {
-  if (artist.value) {
-    lsSet(`artist-${artist.value.id}-sort-field`, field)
-    lsSet(`artist-${artist.value.id}-sort-order`, order)
-  }
+  lsSet('artist-sort-field', field)
+  lsSet('artist-sort-order', order)
 }
 
 onScreenActivated('Artist', () => fetchScreenData())
