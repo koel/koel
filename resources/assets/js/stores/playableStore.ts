@@ -6,7 +6,7 @@ import { arrayify, moveItemsInList, use } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
 import { logger } from '@/utils/logger'
 import { md5 } from '@/utils/crypto'
-import { secondsToHumanReadable } from '@/utils/formatters'
+import { normalizeForComparison, secondsToHumanReadable } from '@/utils/formatters'
 import { authService } from '@/services/authService'
 import { cache } from '@/services/cache'
 import { http } from '@/services/http'
@@ -132,18 +132,8 @@ export const playableStore = {
   },
 
   matchSongsByTitle: (title: string, songs: Song[]) => {
-    const normalize = (str: string) =>
-      str
-        .normalize('NFKD')
-        .replace(/[\u0300-\u036f]/g, '') // strip diacritics/combining marks
-        .replace(/[\p{P}\p{S}]/gu, '') // strip punctuation and symbols
-        .toLowerCase()
-        .replace(/\s+/g, ' ')
-        .trim()
-
-    const normalizedTitle = normalize(title)
-
-    return songs.find(song => normalize(song.title) === normalizedTitle) ?? null
+    const normalizedTitle = normalizeForComparison(title)
+    return songs.find(song => normalizeForComparison(song.title) === normalizedTitle) ?? null
   },
 
   /**

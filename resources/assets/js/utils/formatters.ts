@@ -106,6 +106,19 @@ export const formatBytes = (bytes: number): string => {
   return `${value.toFixed(i === 0 ? 0 : 1)} ${units[i]}`
 }
 
+/**
+ * Normalize a string for comparison by stripping diacritics, punctuation, symbols, and extra whitespace.
+ * Works with all scripts (Latin, CJK, Arabic, Cyrillic, etc.).
+ */
+export const normalizeForComparison = (str: string) =>
+  str
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '') // strip diacritics/combining marks
+    .replace(/[\p{P}\p{S}]/gu, '') // strip punctuation and symbols
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .trim()
+
 const fnv1a = (str: string) => {
   let h = 0x811c9dc5
 
