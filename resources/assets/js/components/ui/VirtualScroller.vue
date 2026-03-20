@@ -62,6 +62,17 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => observer.unobserve(scroller.value!))
+
+const scrollToIndex = (index: number) => {
+  if (!scroller.value) {
+    return
+  }
+
+  const top = index * itemHeight.value - scrollerHeight.value / 2 + itemHeight.value / 2
+  scroller.value.scrollTo({ top: Math.max(0, top), behavior: 'smooth' })
+}
+
+defineExpose({ scrollToIndex })
 </script>
 
 <style lang="postcss" scoped>
