@@ -1,5 +1,5 @@
 <template>
-  <div class="flex" :class="message.role === 'user' ? 'justify-end' : 'justify-start'">
+  <div class="flex items-end gap-2" :class="message.role === 'user' ? 'justify-end' : 'justify-start'">
     <div class="relative group">
       <div
         class="rounded-3xl px-5 py-3 text-lg ai-message"
@@ -18,6 +18,7 @@
         <CopyIcon v-else class="size-4" />
       </button>
     </div>
+    <UserAvatar v-if="message.role === 'user'" :user class="size-8 flex-shrink-0" />
   </div>
 </template>
 
@@ -28,8 +29,11 @@ import { computed, onBeforeUnmount, ref } from 'vue'
 import { CopyIcon, ClipboardCheckIcon } from 'lucide-vue-next'
 import { copyText } from '@/utils/helpers'
 
+import UserAvatar from '@/components/user/UserAvatar.vue'
+
 const props = defineProps<{
   message: AiChatMessage
+  user: Pick<User, 'name' | 'avatar'>
 }>()
 
 const renderedHtml = computed(() => DOMPurify.sanitize(marked.parse(props.message.content) as string))
