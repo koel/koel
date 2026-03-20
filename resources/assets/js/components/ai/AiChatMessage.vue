@@ -18,7 +18,7 @@
         <CopyIcon v-else class="size-4" />
       </button>
     </div>
-    <UserAvatar v-if="message.role === 'user'" :user="currentUser" class="size-8 flex-shrink-0" />
+    <UserAvatar v-if="message.role === 'user'" :user class="size-8 flex-shrink-0" />
   </div>
 </template>
 
@@ -28,14 +28,12 @@ import { marked } from 'marked'
 import { computed, onBeforeUnmount, ref } from 'vue'
 import { CopyIcon, ClipboardCheckIcon } from 'lucide-vue-next'
 import { copyText } from '@/utils/helpers'
-import { useAuthorization } from '@/composables/useAuthorization'
 
 import UserAvatar from '@/components/user/UserAvatar.vue'
 
-const { currentUser } = useAuthorization()
-
 const props = defineProps<{
   message: AiChatMessage
+  user: Pick<User, 'name' | 'avatar'>
 }>()
 
 const renderedHtml = computed(() => DOMPurify.sanitize(marked.parse(props.message.content) as string))

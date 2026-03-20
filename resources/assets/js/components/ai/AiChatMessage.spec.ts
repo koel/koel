@@ -11,11 +11,13 @@ vi.mock('@/utils/helpers', async original => {
 
 describe('aiChatMessage', () => {
   const h = createHarness()
+  const user = { name: 'John Doe', avatar: 'https://example.com/avatar.jpg' }
 
   it('renders assistant message content', () => {
     h.render(Component, {
       props: {
         message: { id: '1', role: 'assistant', content: 'Here is some jazz.', error: false },
+        user,
       },
     })
 
@@ -26,6 +28,7 @@ describe('aiChatMessage', () => {
     h.render(Component, {
       props: {
         message: { id: '2', role: 'user', content: 'Play some jazz', error: false },
+        user,
       },
     })
 
@@ -36,6 +39,7 @@ describe('aiChatMessage', () => {
     h.render(Component, {
       props: {
         message: { id: '1', role: 'assistant', content: 'Hello!', error: false },
+        user,
       },
     })
 
@@ -46,6 +50,7 @@ describe('aiChatMessage', () => {
     h.render(Component, {
       props: {
         message: { id: '2', role: 'user', content: 'Play jazz', error: false },
+        user,
       },
     })
 
@@ -56,6 +61,7 @@ describe('aiChatMessage', () => {
     h.render(Component, {
       props: {
         message: { id: '3', role: 'assistant', content: 'Something went wrong.', error: true },
+        user,
       },
     })
 
@@ -66,6 +72,7 @@ describe('aiChatMessage', () => {
     h.render(Component, {
       props: {
         message: { id: '1', role: 'assistant', content: 'Here are your songs.', error: false },
+        user,
       },
     })
 
