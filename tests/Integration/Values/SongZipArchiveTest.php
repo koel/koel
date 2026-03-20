@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\Integration\Models;
+namespace Tests\Integration\Values;
 
 use App\Models\Song;
-use App\Models\SongZipArchive;
+use App\Values\SongZipArchive;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
