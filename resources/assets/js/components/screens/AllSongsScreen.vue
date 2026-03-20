@@ -85,9 +85,6 @@ const loading = ref(false)
 let sortField: MaybeArray<PlayableListSortField> = lsGet<PlayableListSortField>('all-songs-sort-field', 'title')!
 let sortOrder: SortOrder = lsGet<SortOrder>('all-songs-sort-order', 'asc')!
 
-// Sync the composable's sort state with the restored values so the header reflects them correctly
-composableSort(sortField, sortOrder)
-
 const page = ref<number | null>(1)
 const moreSongsAvailable = computed(() => page.value !== null)
 const showSkeletons = computed(() => loading.value && songs.value.length === 0)
@@ -135,7 +132,10 @@ const sort = async (field: MaybeArray<PlayableListSortField>, order: SortOrder) 
   await fetchSongs()
 }
 
-onMounted(async () => await fetchSongs())
+onMounted(async () => {
+  composableSort(sortField, sortOrder)
+  await fetchSongs()
+})
 </script>
 
 <style lang="postcss" scoped>

@@ -98,9 +98,6 @@ const { get: lsGet, set: lsSet } = useLocalStorage()
 let sortField: MaybeArray<PlayableListSortField> = lsGet<PlayableListSortField>('genre-sort-field', 'title')!
 let sortOrder: SortOrder = lsGet<SortOrder>('genre-sort-order', 'asc')!
 
-// Sync the composable's sort state with the restored values so the header reflects them correctly
-composableSort(sortField, sortOrder)
-
 const id = ref<Genre['id'] | null>(null)
 const genre = ref<Genre | null>(null)
 const loading = ref(false)
@@ -186,6 +183,8 @@ const requestContextMenu = (event: MouseEvent) =>
   })
 
 onMounted(() => {
+  composableSort(sortField, sortOrder)
+
   if (isCurrentScreen('Genre')) {
     id.value = getIdFromRoute()
   }
