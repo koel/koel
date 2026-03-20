@@ -113,7 +113,7 @@ export const formatBytes = (bytes: number): string => {
 export const normalizeForComparison = (str: string) =>
   str
     .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '') // strip diacritics/combining marks
+    .replace(/\p{M}/gu, '') // strip all combining marks (diacritics)
     .replace(/[\p{P}\p{S}]/gu, '') // strip punctuation and symbols
     .toLowerCase()
     .replace(/\s+/g, ' ')
