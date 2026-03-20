@@ -4,7 +4,7 @@
       <FavoriteButton
         v-if="streamable"
         :favorite="streamable.favorite"
-        class="text-base scale-105 origin-top"
+        class="text-base scale-105 origin-top min-w-[44px] min-h-[44px] flex items-center justify-center"
         @toggle="toggleFavorite"
       />
 
@@ -31,7 +31,10 @@
         <Icon :icon="faStepForward" />
       </FooterBtn>
 
-      <RepeatModeSwitch :class="isRadio && 'pointer-events-none opacity-30 cursor-not-allowed'" class="text-base" />
+      <RepeatModeSwitch
+        :class="isRadio && 'pointer-events-none opacity-30 cursor-not-allowed'"
+        class="text-base min-w-[44px] min-h-[44px] flex items-center justify-center"
+      />
     </div>
   </div>
 </template>
