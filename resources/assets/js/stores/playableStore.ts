@@ -1,5 +1,4 @@
 import isMobile from 'ismobilejs'
-import slugify from 'slugify'
 import { differenceBy, merge, orderBy, sumBy, take, unionBy, uniqBy } from 'lodash'
 import type { Reactive } from 'vue'
 import { reactive, watch } from 'vue'
@@ -133,15 +132,18 @@ export const playableStore = {
   },
 
   matchSongsByTitle: (title: string, songs: Song[]) => {
-    title = slugify(title.toLowerCase())
+    const normalize = (str: string) =>
+      str
+        .normalize('NFKD')
+        .replace(/[\u0300-\u036f]/g, '') // strip diacritics/combining marks
+        .replace(/[\p{P}\p{S}]/gu, '') // strip punctuation and symbols
+        .toLowerCase()
+        .replace(/\s+/g, ' ')
+        .trim()
 
-    for (const song of songs) {
-      if (slugify(song.title.toLowerCase()) === title) {
-        return song
-      }
-    }
+    const normalizedTitle = normalize(title)
 
-    return null
+    return songs.find(song => normalize(song.title) === normalizedTitle) ?? null
   },
 
   /**

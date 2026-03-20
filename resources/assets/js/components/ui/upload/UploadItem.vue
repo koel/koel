@@ -23,7 +23,6 @@
 </template>
 
 <script lang="ts" setup>
-import slugify from 'slugify'
 import { faInfoCircle, faRotateBack, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, toRefs } from 'vue'
 import type { UploadFile } from '@/services/uploadService'
@@ -37,7 +36,7 @@ const { file } = toRefs(props)
 
 const canRetry = computed(() => file.value.status === 'Canceled' || file.value.status === 'Errored')
 const canRemove = computed(() => file.value.status !== 'Uploading') // we're not supporting cancel tokens (yet).
-const cssClass = computed(() => slugify(file.value.status).toLowerCase())
+const cssClass = computed(() => file.value.status.toLowerCase())
 const progressBarWidth = computed(() => (file.value.status === 'Uploading' ? `${file.value.progress}%` : '0'))
 
 const remove = () => uploadService.remove(file.value)
