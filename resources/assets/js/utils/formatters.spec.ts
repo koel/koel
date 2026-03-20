@@ -3,6 +3,7 @@ import type { ServerValidationError } from './formatters'
 import {
   br2nl,
   formatBytes,
+  normalizeForComparison,
   parseValidationError,
   pluralize,
   secondsToHis,
@@ -84,4 +85,25 @@ describe('formatters utils', () => {
     [1073741824, '1.0 GB'],
     [524288000, '500.0 MB'],
   ])('formats %d bytes', (bytes, formatted) => expect(formatBytes(bytes)).toBe(formatted))
+
+  it.each<[string, string]>([
+    ['Hello World', 'hello world'],
+    ['AN AMAZING SONG', 'an amazing song'],
+    ['Xin chào Việt Nam', 'xin chao viet nam'],
+    ['Über den Wölken', 'uber den wolken'],
+    ['Café 你好', 'cafe 你好'],
+    ['你好世界', '你好世界'],
+    ['こんにちは世界', 'こんにちは世界'],
+    ['안녕하세요 세계', '안녕하세요 세계'.normalize('NFKD')],
+    ['مرحبا بالعالم', 'مرحبا بالعالم'],
+    ['Hello, World!', 'hello world'],
+    ['Fade - To Black', 'fade to black'],
+    ['Song Title (Remastered)', 'song title remastered'],
+    ['Song Title [Live]', 'song title live'],
+    ['Mr. Brightside', 'mr brightside'],
+    ["Don't Stop Me Now", 'dont stop me now'],
+    ['Hello   World', 'hello world'],
+  ])('normalizes "%s" for comparison', (input, expected) => {
+    expect(normalizeForComparison(input)).toBe(expected)
+  })
 })
