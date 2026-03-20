@@ -134,6 +134,7 @@ const fetchFavorites = async () => {
   try {
     loading.value = true
     await playableStore.fetchFavorites()
+    // Keep a direct reference to the store's favorites array so in-place reorder mutations are reflected in the UI
     allPlayables.value = playableStore.state.favorites
 
     const restoredField = lsGet<PlayableListSortField>('favorites-sort-field', 'position')!
