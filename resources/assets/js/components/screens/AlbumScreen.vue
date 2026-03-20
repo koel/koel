@@ -63,7 +63,7 @@
 
       <div v-show="activeTab === 'songs'" class="songs-pane">
         <SongListSkeleton v-if="loading" />
-        <SongList v-if="!loading && album" ref="songList" @press:enter="onPressEnter" @swipe="onSwipe" />
+        <SongList v-if="!loading && album" ref="songList" @sort="onSort" @press:enter="onPressEnter" @swipe="onSwipe" />
       </div>
 
       <div v-show="activeTab === 'other-albums'" class="albums-pane" data-testid="albums-pane">
@@ -97,6 +97,7 @@ import { useErrorHandler } from '@/composables/useErrorHandler'
 import { usePolicies } from '@/composables/usePolicies'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
+import { useLocalStorage } from '@/composables/useLocalStorage'
 import { useRouter } from '@/composables/useRouter'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 import { useContextMenu } from '@/composables/useContextMenu'
@@ -122,6 +123,7 @@ const FavoriteButton = defineAsyncComponent(() => import('@/components/ui/Favori
 const { getRouteParam, go, onScreenActivated, onRouteChanged, url, triggerNotFound } = useRouter()
 const { currentUserCan } = usePolicies()
 const { PlayableListControls: SongListControls, config } = usePlayableListControls('Album')
+const { get: lsGet, set: lsSet } = useLocalStorage()
 const { useLastfm, useMusicBrainz } = useThirdPartyServices()
 const { openContextMenu } = useContextMenu()
 
@@ -190,7 +192,9 @@ const fetchScreenData = async () => {
 
     context.entity = album.value
 
-    sort('track')
+    const restoredField = lsGet<PlayableListSortField>('album-sort-field', 'track')!
+    const restoredOrder = lsGet<SortOrder>('album-sort-order', 'asc')!
+    sort(restoredField, restoredOrder)
 
     editable.value = await currentUserCan.editAlbum(album.value!)
   } catch (error: unknown) {
@@ -203,6 +207,11 @@ const fetchScreenData = async () => {
   } finally {
     loading.value = false
   }
+}
+
+const onSort = (field: MaybeArray<PlayableListSortField>, order: SortOrder) => {
+  lsSet('album-sort-field', field)
+  lsSet('album-sort-order', order)
 }
 
 onScreenActivated('Album', () => fetchScreenData())

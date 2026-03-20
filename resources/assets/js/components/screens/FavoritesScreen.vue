@@ -75,6 +75,7 @@ import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useRouter } from '@/composables/useRouter'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
+import { useLocalStorage } from '@/composables/useLocalStorage'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -106,6 +107,7 @@ listConfig.reorderable = true
 listConfig.hasCustomOrderSort = true
 
 const { PlayableListControls, config } = usePlayableListControls('Favorites')
+const { get: lsGet, set: lsSet } = useLocalStorage()
 
 const { fromFavorites } = useDownload()
 const download = () => fromFavorites()
@@ -132,7 +134,12 @@ const fetchFavorites = async () => {
   try {
     loading.value = true
     await playableStore.fetchFavorites()
-    sort('position', 'asc')
+    // Keep a direct reference to the store's favorites array so in-place reorder mutations are reflected in the UI
+    allPlayables.value = playableStore.state.favorites
+
+    const restoredField = lsGet<PlayableListSortField>('favorites-sort-field', 'position')!
+    const restoredOrder = lsGet<SortOrder>('favorites-sort-order', 'asc')!
+    sort(restoredField, restoredOrder)
   } finally {
     loading.value = false
   }
@@ -140,6 +147,9 @@ const fetchFavorites = async () => {
 
 const sort = (field: MaybeArray<PlayableListSortField> | null, order: SortOrder) => {
   listConfig.reorderable = field === 'position'
+
+  lsSet('favorites-sort-field', field)
+  lsSet('favorites-sort-order', order)
 
   baseSort(field, order)
 

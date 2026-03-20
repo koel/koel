@@ -87,6 +87,7 @@ import { useErrorHandler } from '@/composables/useErrorHandler'
 import { usePlaylistContentManagement } from '@/composables/usePlaylistContentManagement'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
+import { useLocalStorage } from '@/composables/useLocalStorage'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { useModal } from '@/composables/useModal'
 
@@ -117,20 +118,21 @@ interface PlaylistScreenState {
 const { triggerNotFound, getRouteParam, onScreenActivated, go, url } = useRouter()
 const { openContextMenu } = useContextMenu()
 const { openModal } = useModal()
+const { get: lsGet, set: lsSet } = useLocalStorage()
 
 const states = new Map<Playlist['id'], PlaylistScreenState>()
 
-const blankState = (): PlaylistScreenState => {
+const blankState = (id?: Playlist['id']): PlaylistScreenState => {
   return {
     filterKeywords: '',
-    sortField: null,
-    sortOrder: 'asc',
+    sortField: id ? (lsGet<PlayableListSortField>(`playlist-${id}-sort-field`) ?? null) : null,
+    sortOrder: id ? lsGet<SortOrder>(`playlist-${id}-sort-order`, 'asc')! : 'asc',
   }
 }
 
 const getState = (id: Playlist['id']) => {
   if (!states.has(id)) {
-    states.set(id, blankState())
+    states.set(id, blankState(id))
   }
 
   return states.get(id)!
@@ -176,6 +178,11 @@ const sort = (field: MaybeArray<PlayableListSortField> | null, order: SortOrder)
 
   currentState.sortField = field
   currentState.sortOrder = order
+
+  if (playlistId.value) {
+    lsSet(`playlist-${playlistId.value}-sort-field`, field)
+    lsSet(`playlist-${playlistId.value}-sort-order`, order)
+  }
 
   // We always call the base sort function, which will handle the actual sorting logic.
   // For the 'position' field, which actually doesn't use the base sort function, we call it anyway
