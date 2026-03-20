@@ -122,11 +122,11 @@ const { get: lsGet, set: lsSet } = useLocalStorage()
 
 const states = new Map<Playlist['id'], PlaylistScreenState>()
 
-const blankState = (id: Playlist['id']): PlaylistScreenState => {
+const blankState = (id?: Playlist['id']): PlaylistScreenState => {
   return {
     filterKeywords: '',
-    sortField: lsGet<PlayableListSortField>(`playlist-${id}-sort-field`) ?? null,
-    sortOrder: lsGet<SortOrder>(`playlist-${id}-sort-order`, 'asc')!,
+    sortField: id ? (lsGet<PlayableListSortField>(`playlist-${id}-sort-field`) ?? null) : null,
+    sortOrder: id ? lsGet<SortOrder>(`playlist-${id}-sort-order`, 'asc')! : 'asc',
   }
 }
 
