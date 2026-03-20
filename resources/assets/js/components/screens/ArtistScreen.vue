@@ -61,7 +61,13 @@
 
       <div v-show="activeTab === 'songs'" class="songs-pane">
         <SongListSkeleton v-if="loading" />
-        <SongList v-if="!loading && artist" ref="songList" @press:enter="onPressEnter" @swipe="onSwipe" />
+        <SongList
+          v-if="!loading && artist"
+          ref="songList"
+          @sort="onSort"
+          @press:enter="onPressEnter"
+          @swipe="onSwipe"
+        />
       </div>
 
       <div v-show="activeTab === 'albums'" class="albums-pane">
@@ -104,6 +110,7 @@ import { playableStore } from '@/stores/playableStore'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
+import { useLocalStorage } from '@/composables/useLocalStorage'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 import { useRouter } from '@/composables/useRouter'
 import { usePolicies } from '@/composables/usePolicies'
@@ -133,6 +140,7 @@ const { useLastfm, useMusicBrainz, useTicketmaster } = useThirdPartyServices()
 const { getRouteParam, go, onScreenActivated, onRouteChanged, url, triggerNotFound } = useRouter()
 const { currentUserCan } = usePolicies()
 const { openContextMenu } = useContextMenu()
+const { get: lsGet, set: lsSet } = useLocalStorage()
 
 const activeTab = ref<Tab>('songs')
 const artist = ref<Artist>()
@@ -147,6 +155,7 @@ const {
   playableList: songList,
   context,
   duration,
+  sort,
   onPressEnter,
   playAll,
   playSelected,
@@ -188,6 +197,11 @@ const fetchScreenData = async () => {
     }
 
     context.entity = artist.value
+
+    const restoredField = lsGet<PlayableListSortField>(`artist-${id}-sort-field`, 'track')!
+    const restoredOrder = lsGet<SortOrder>(`artist-${id}-sort-order`, 'asc')!
+    sort(restoredField, restoredOrder)
+
     editable.value = await currentUserCan.editArtist(artist.value!)
   } catch (error: unknown) {
     if ((error as any)?.status === 404) {
@@ -198,6 +212,13 @@ const fetchScreenData = async () => {
     useErrorHandler('dialog').handleHttpError(error)
   } finally {
     loading.value = false
+  }
+}
+
+const onSort = (field: MaybeArray<PlayableListSortField>, order: SortOrder) => {
+  if (artist.value) {
+    lsSet(`artist-${artist.value.id}-sort-field`, field)
+    lsSet(`artist-${artist.value.id}-sort-order`, order)
   }
 }
 
