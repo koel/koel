@@ -64,6 +64,7 @@ import { useRouter } from '@/composables/useRouter'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
+import { useLocalStorage } from '@/composables/useLocalStorage'
 import { useContextMenu } from '@/composables/useContextMenu'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -86,14 +87,19 @@ const {
   onPressEnter,
   playSelected,
   onSwipe,
+  sort: composableSort,
 } = usePlayableList(songs, { type: 'Genre' }, { sortable: true, filterable: false })
 
 const { PlayableListControls: SongListControls, config } = usePlayableListControls('Genre')
 const { getRouteParam, isCurrentScreen, go, onRouteChanged, url } = useRouter()
 const { openContextMenu } = useContextMenu()
+const { get: lsGet, set: lsSet } = useLocalStorage()
 
-let sortField: MaybeArray<PlayableListSortField> = 'title'
-let sortOrder: SortOrder = 'asc'
+let sortField: MaybeArray<PlayableListSortField> = lsGet<PlayableListSortField>('genre-sort-field', 'title')!
+let sortOrder: SortOrder = lsGet<SortOrder>('genre-sort-order', 'asc')!
+
+// Sync the composable's sort state with the restored values so the header reflects them correctly
+composableSort(sortField, sortOrder)
 
 const id = ref<Genre['id'] | null>(null)
 const genre = ref<Genre | null>(null)
@@ -145,6 +151,9 @@ const fetchWithSort = async (field: MaybeArray<PlayableListSortField>, order: So
   songs.value = []
   sortField = field
   sortOrder = order
+
+  lsSet('genre-sort-field', field)
+  lsSet('genre-sort-order', order)
 
   await fetch()
 }

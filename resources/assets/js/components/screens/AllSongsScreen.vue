@@ -53,6 +53,7 @@ import { useRouter } from '@/composables/useRouter'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
+import { useLocalStorage } from '@/composables/useLocalStorage'
 import { playback } from '@/services/playbackManager'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -73,14 +74,19 @@ const {
   onPressEnter,
   playSelected,
   onSwipe,
+  sort: composableSort,
 } = usePlayableList(toRef(playableStore.state, 'playables'), { type: 'Songs' }, { filterable: false, sortable: true })
 
 const { PlayableListControls: SongListControls, config } = usePlayableListControls('Songs')
 const { go, url } = useRouter()
+const { get: lsGet, set: lsSet } = useLocalStorage()
 
 const loading = ref(false)
-let sortField: MaybeArray<PlayableListSortField> = 'title' // @todo get from query string
-let sortOrder: SortOrder = 'asc'
+let sortField: MaybeArray<PlayableListSortField> = lsGet<PlayableListSortField>('all-songs-sort-field', 'title')!
+let sortOrder: SortOrder = lsGet<SortOrder>('all-songs-sort-order', 'asc')!
+
+// Sync the composable's sort state with the restored values so the header reflects them correctly
+composableSort(sortField, sortOrder)
 
 const page = ref<number | null>(1)
 const moreSongsAvailable = computed(() => page.value !== null)
@@ -122,6 +128,9 @@ const sort = async (field: MaybeArray<PlayableListSortField>, order: SortOrder) 
   playableStore.state.playables = []
   sortField = field
   sortOrder = order
+
+  lsSet('all-songs-sort-field', field)
+  lsSet('all-songs-sort-order', order)
 
   await fetchSongs()
 }
