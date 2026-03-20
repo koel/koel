@@ -134,6 +134,7 @@ const fetchFavorites = async () => {
   try {
     loading.value = true
     await playableStore.fetchFavorites()
+    allPlayables.value = playableStore.state.favorites
 
     const restoredField = lsGet<PlayableListSortField>('favorites-sort-field', 'position')!
     const restoredOrder = lsGet<SortOrder>('favorites-sort-order', 'asc')!
