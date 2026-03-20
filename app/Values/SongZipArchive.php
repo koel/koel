@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Models;
+namespace App\Values;
 
 use App\Facades\Download;
 use App\Helpers\Ulid;
+use App\Models\Song;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use RuntimeException;
