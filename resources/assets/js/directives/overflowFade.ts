@@ -8,13 +8,20 @@ const toggleClasses = (el: HTMLElement) => {
 
 export const overflowFade: Directive = {
   mounted: async (el: HTMLElement) => {
-    const update = () => requestAnimationFrame(() => toggleClasses(el))
+    let rafId: number | null = null
+    const update = () => {
+      if (rafId !== null) return
+      rafId = requestAnimationFrame(() => {
+        toggleClasses(el)
+        rafId = null
+      })
+    }
 
     // Catch content changes (async-loaded children) that make the element scrollable
     const mutationObserver = new MutationObserver(update)
     mutationObserver.observe(el, { childList: true, subtree: true })
 
-    // Catch size changes on the element itself and its children
+    // Catch size changes on the element (including when children change the element's size)
     const resizeObserver = new ResizeObserver(update)
     resizeObserver.observe(el)
 
