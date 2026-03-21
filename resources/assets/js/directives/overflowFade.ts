@@ -8,10 +8,17 @@ const toggleClasses = (el: HTMLElement) => {
 
 export const overflowFade: Directive = {
   mounted: async (el: HTMLElement) => {
-    const observer = new ResizeObserver(() => toggleClasses(el))
-    observer.observe(el)
+    const update = () => requestAnimationFrame(() => toggleClasses(el))
+
+    // Catch content changes (async-loaded children) that make the element scrollable
+    const mutationObserver = new MutationObserver(update)
+    mutationObserver.observe(el, { childList: true, subtree: true })
+
+    // Catch size changes on the element itself and its children
+    const resizeObserver = new ResizeObserver(update)
+    resizeObserver.observe(el)
 
     useIntersectionObserver(el, ([{ isIntersecting }]) => isIntersecting && toggleClasses(el))
-    el.addEventListener('scroll', () => requestAnimationFrame(() => toggleClasses(el)))
+    el.addEventListener('scroll', update)
   },
 }
