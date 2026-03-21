@@ -7,7 +7,7 @@
       <PlayableList
         v-if="playables.length"
         ref="playableList"
-        class="border border-k-fg-5 rounded-lg overflow-hidden"
+        class="-mx-6 overflow-hidden"
         @press:enter="onPressEnter"
       />
       <p v-else>No songs available.</p>

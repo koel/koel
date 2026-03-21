@@ -117,12 +117,10 @@ eventBus.on('TOGGLE_SIDEBAR', () => (mobileShowing.value = !mobileShowing.value)
 @import '@/../css/partials/mixins.pcss';
 
 nav {
-  @apply bg-k-fg-5;
   -ms-overflow-style: -ms-autohiding-scrollbar;
-  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
 
   &.collapsed {
-    @apply w-[24px] transition-[width] duration-200;
+    @apply w-4 transition-[width] duration-200;
 
     > *:not(.btn-toggle) {
       @apply hidden;

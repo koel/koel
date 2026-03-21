@@ -19,7 +19,7 @@
       </div>
     </header>
 
-    <main v-if="songPlaying" v-show="activeTab" class="panes relative overflow-auto bg-k-fg-5">
+    <main v-if="songPlaying" v-show="activeTab" class="panes relative overflow-auto" v-koel-overflow-fade>
       <SideSheetPanelLazyWrapper
         id="extraPanelLyrics"
         :active="activeTab === 'Lyrics'"
@@ -203,8 +203,6 @@ aside {
 
 .panes {
   @apply no-hover:overflow-y-auto w-k-side-sheet-width;
-
-  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
 
   @media screen and (max-width: 768px) {
     width: 100%;
