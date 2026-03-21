@@ -10,5 +10,6 @@ export const overflowFade: Directive = {
   mounted: async (el: HTMLElement) => {
     useIntersectionObserver(el, ([{ isIntersecting }]) => isIntersecting && toggleClasses(el))
     el.addEventListener('scroll', () => requestAnimationFrame(() => toggleClasses(el)))
+    requestAnimationFrame(() => toggleClasses(el))
   },
 }
