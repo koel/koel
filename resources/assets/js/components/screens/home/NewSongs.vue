@@ -2,7 +2,7 @@
   <HomeScreenBlock>
     <template #header>New Songs</template>
 
-    <PlayableListSkeleton v-if="loading" class="border border-k-fg-5 rounded-lg" />
+    <PlayableListSkeleton v-if="loading" class="-mx-6 overflow-hidden" />
     <template v-else>
       <PlayableList
         v-if="playables.length"
