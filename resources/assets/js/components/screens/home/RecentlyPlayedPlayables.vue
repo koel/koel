@@ -5,12 +5,12 @@
       <ViewAllRecentlyPlayedPlayablesButton v-if="playables.length" class="float-right" />
     </template>
 
-    <PlayableListSkeleton v-if="loading" class="border border-k-fg-5 rounded-lg" />
+    <PlayableListSkeleton v-if="loading" class="-mx-6 overflow-hidden" />
     <template v-else>
       <PlayableList
         v-if="playables.length"
         ref="playableList"
-        class="border border-k-fg-5 rounded-lg overflow-hidden"
+        class="-mx-6 overflow-hidden"
         @press:enter="onPressEnter"
       />
       <p v-else>Nothing played as of late.</p>

@@ -1,7 +1,7 @@
 <template>
   <div class="relative flex flex-1 overflow-hidden">
     <SideBar />
-    <MainContent />
+    <MainContent class="m-4 sm:ml-0 mb-0 bg-k-fg-3 border border-k-fg-5 rounded-xl" />
     <SideSheet />
     <ModalWrapper />
   </div>
