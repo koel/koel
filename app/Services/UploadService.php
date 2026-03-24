@@ -2,9 +2,12 @@
 
 namespace App\Services;
 
+use App\Exceptions\DuplicateSongUploadException;
 use App\Exceptions\SongUploadFailedException;
 use App\Models\Song;
 use App\Models\User;
+use App\Repositories\DuplicateUploadRepository;
+use App\Repositories\SongRepository;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
 use App\Services\SongStorages\SongStorage;
@@ -19,10 +22,22 @@ class UploadService
         private readonly SongService $songService,
         private readonly SongStorage $storage,
         private readonly FileScanner $scanner,
+        private readonly SongRepository $songRepository,
+        private readonly DuplicateUploadRepository $duplicateUploadRepository,
     ) {}
 
     public function handleUpload(string $filePath, User $uploader): Song
     {
+        $hash = File::hash($filePath);
+        $existingSong = $this->songRepository->findByHash($hash, $uploader);
+
+        if ($existingSong) {
+            // TODO: check to make sure that after the upload of the file it is still safe and doesn't need to be moved into some extra "quarrentine area"
+            // It seems like we might need to call storeUploadedFile to move it to 'quarrentine'
+            $this->duplicateUploadRepository->create($uploader, $filePath, $existingSong);
+            throw DuplicateSongUploadException::fromFilePath($filePath);
+        }
+
         $uploadReference = $this->storage->storeUploadedFile($filePath, $uploader);
 
         $config = ScanConfiguration::make(
