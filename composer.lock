@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "669698bb8f2d776d9995fdcb7fdcaf3d",
+    "content-hash": "5d869fc810e916fe0b3afe0d3cb0bec5",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -6805,30 +6805,30 @@
         },
         {
             "name": "saloonphp/laravel-plugin",
-            "version": "v3.9.0",
+            "version": "v4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/saloonphp/laravel-plugin.git",
-                "reference": "2562dec6d8341a0dfad0ab51a6fdc7df2e32d45b"
+                "reference": "64c26b3beacbdbd82e796c6f7a8f43d938e082c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/saloonphp/laravel-plugin/zipball/2562dec6d8341a0dfad0ab51a6fdc7df2e32d45b",
-                "reference": "2562dec6d8341a0dfad0ab51a6fdc7df2e32d45b",
+                "url": "https://api.github.com/repos/saloonphp/laravel-plugin/zipball/64c26b3beacbdbd82e796c6f7a8f43d938e082c3",
+                "reference": "64c26b3beacbdbd82e796c6f7a8f43d938e082c3",
                 "shasum": ""
             },
             "require": {
-                "illuminate/console": "^11.0 || ^v12.39.0",
-                "illuminate/support": "^11.0 || ^12.39.0",
+                "illuminate/console": "^11.0 || ^12.39.0 || ^13.0",
+                "illuminate/support": "^11.0 || ^12.39.0 || ^13.0",
                 "php": "^8.2",
-                "saloonphp/saloon": "^3.5",
-                "symfony/finder": "^6.4 || ^7.0"
+                "saloonphp/saloon": "^4.0",
+                "symfony/finder": "^6.4 || ^7.0 || ^8.0"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.48",
                 "laravel/pulse": "^1.4",
                 "laravel/telescope": "^5.16",
-                "orchestra/testbench": "^9.15 || ^10.7",
+                "orchestra/testbench": "^9.15 || ^10.7 || ^11.0",
                 "pestphp/pest": "^3.0|^4.0",
                 "phpstan/phpstan": "^1.10.57|^2.0.2"
             },
@@ -6869,22 +6869,22 @@
                 "sdk"
             ],
             "support": {
-                "source": "https://github.com/saloonphp/laravel-plugin/tree/v3.9.0"
+                "source": "https://github.com/saloonphp/laravel-plugin/tree/v4.0.0"
             },
-            "time": "2026-02-26T22:03:11+00:00"
+            "time": "2026-03-25T20:31:13+00:00"
         },
         {
             "name": "saloonphp/saloon",
-            "version": "v3.15.0",
+            "version": "v4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/saloonphp/saloon.git",
-                "reference": "8039c76132ca52d08c887407773a770c15ab04a0"
+                "reference": "1307b1d72cacdd2c9c20978cdf7a0b720b4bf3bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/saloonphp/saloon/zipball/8039c76132ca52d08c887407773a770c15ab04a0",
-                "reference": "8039c76132ca52d08c887407773a770c15ab04a0",
+                "url": "https://api.github.com/repos/saloonphp/saloon/zipball/1307b1d72cacdd2c9c20978cdf7a0b720b4bf3bb",
+                "reference": "1307b1d72cacdd2c9c20978cdf7a0b720b4bf3bb",
                 "shasum": ""
             },
             "require": {
@@ -6944,7 +6944,7 @@
             ],
             "support": {
                 "issues": "https://github.com/saloonphp/saloon/issues",
-                "source": "https://github.com/saloonphp/saloon/tree/v3.15.0"
+                "source": "https://github.com/saloonphp/saloon/tree/v4.0.0"
             },
             "funding": [
                 {
@@ -6952,7 +6952,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-03-02T22:04:13+00:00"
+            "time": "2026-03-17T22:58:33+00:00"
         },
         {
             "name": "saloonphp/xml-wrangler",
