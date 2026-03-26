@@ -30,14 +30,6 @@ class UploadService
     {
         $hash = File::hash($filePath);
         $existingSong = $this->songRepository->findByHash($hash, $uploader);
-
-        if ($existingSong) {
-            // TODO: check to make sure that after the upload of the file it is still safe and doesn't need to be moved into some extra "quarrentine area"
-            // It seems like we might need to call storeUploadedFile to move it to 'quarrentine'
-            $this->duplicateUploadRepository->create($uploader, $filePath, $existingSong);
-            throw DuplicateSongUploadException::fromFilePath($filePath);
-        }
-
         $uploadReference = $this->storage->storeUploadedFile($filePath, $uploader);
 
         $config = ScanConfiguration::make(
@@ -46,12 +38,26 @@ class UploadService
             extractFolderStructure: $this->storage->getStorageType()->supportsFolderStructureExtraction(),
         );
 
+        if ($existingSong) {
+            // TODO: we should store the config object and use the upload reference object instead of the filepath
+            // this will support the feature with agnostic storage methods. As well, now the song will get stored in the
+            // correct spot in the database, but the entry will be in a different table
+            // this will allow a future crud repository to either cleanup the song and its data or easily move it
+            // into the songs table without having to do any data transformation
+            $this->duplicateUploadRepository->create($uploader, $filePath, $existingSong);
+            if ($this->storage instanceof MustDeleteTemporaryLocalFileAfterUpload) {
+                File::delete($uploadReference->localPath);
+            }
+            throw DuplicateSongUploadException::fromFilePath($filePath);
+        }
+
         try {
             $song = $this->songService->createOrUpdateSongFromScan(
                 $this->scanner->scan($uploadReference->localPath),
                 $config,
             );
         } catch (Throwable $error) {
+            if ($error instanceof DuplicateSongUploadException) throw $error;
             $this->handleUploadFailure($uploadReference, $error);
         }
 
