@@ -5,17 +5,24 @@ namespace App\Repositories;
 use App\Models\DuplicateUpload;
 use App\Models\Song;
 use App\Models\User;
+use App\Services\SongStorages\SongStorage;
+use App\Values\Scanning\ScanConfiguration;
+use App\Values\UploadReference;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\File;
 
 class DuplicateUploadRepository extends Repository
 {
-    public function create(User $user, string $filePath, Song $existingSong): DuplicateUpload
+    public function __construct(private readonly SongStorage $storage) {}
+
+    public function create(ScanConfiguration $config, UploadReference $uploadReference, Song $existingSong): DuplicateUpload
     {
         return DuplicateUpload::query()->create([
-            'user_id' => $user->id,
-            'file_path' => $filePath,
+            'user_id' => $config->owner->id,
             'existing_song_id' => $existingSong->id,
+            'location' => $uploadReference->location,
+            'storage' => $this->storage->getStorageType(),
+            'make_public' => $config->makePublic,
+            'extract_folder_structure' => $config->extractFolderStructure,
         ]);
     }
 
@@ -28,8 +35,8 @@ class DuplicateUploadRepository extends Repository
     {
         DuplicateUpload::query()
             ->where('created_at', '<', now()->subHours($ttlHours))
-            ->each(static function (DuplicateUpload $record): void {
-                File::delete($record->file_path);
+            ->each(function (DuplicateUpload $record): void {
+                $this->storage->delete($record->location);
                 $record->delete();
             });
     }

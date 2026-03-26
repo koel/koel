@@ -221,13 +221,15 @@ class UploadServiceTest extends TestCase
         $existingSong = Song::factory()->createOne();
         $duplicateUpload = DuplicateUpload::factory()->makeOne();
 
+        $reference = UploadReference::make(location: $file, localPath: $file);
+
         File::expects('hash')->with($file)->andReturn('abc123');
         $this->songRepository->expects('findByHash')->with('abc123', $uploader)->andReturn($existingSong);
+        $storage->expects('storeUploadedFile')->with($file, $uploader)->andReturn($reference);
         $this->duplicateUploadRepository
             ->expects('create')
-            ->with($uploader, $file, $existingSong)
+            ->with(Mockery::type(ScanConfiguration::class), $reference, $existingSong)
             ->andReturn($duplicateUpload);
-        $storage->expects('storeUploadedFile')->never();
 
         $this->expectException(DuplicateSongUploadException::class);
 

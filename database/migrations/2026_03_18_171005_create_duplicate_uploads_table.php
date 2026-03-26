@@ -10,8 +10,11 @@ return new class extends Migration {
         Schema::create('duplicate_uploads', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->integer('user_id')->unsigned();
-            $table->string('file_path');
             $table->string('existing_song_id')->nullable();
+            $table->string('location');
+            $table->string('storage');
+            $table->boolean('make_public');
+            $table->boolean('extract_folder_structure');
             $table->timestamps();
         });
 

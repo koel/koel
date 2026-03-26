@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\SongStorageType;
+use App\Values\Scanning\ScanConfiguration;
+use App\Values\UploadReference;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,7 +19,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $id
  * @property int $user_id
  * @property string|null $existing_song_id
- * @property string $file_path
+ * @property string $location
+ * @property SongStorageType $storage
+ * @property bool $make_public
+ * @property bool $extract_folder_structure
  *
  * @method static \Database\Factories\DuplicateUploadFactory factory(...$parameters)
  */
@@ -27,6 +33,30 @@ class DuplicateUpload extends Model
 
     protected $guarded = ['id'];
     protected $hidden = ['updated_at'];
+
+    /** @return array<string, mixed> */
+    protected function casts(): array
+    {
+        return [
+            'storage' => SongStorageType::class,
+            'make_public' => 'boolean',
+            'extract_folder_structure' => 'boolean',
+        ];
+    }
+
+    public function toUploadReference(): UploadReference
+    {
+        return UploadReference::make($this->location, $this->location);
+    }
+
+    public function toScanConfiguration(): ScanConfiguration
+    {
+        return ScanConfiguration::make(
+            owner: $this->user,
+            makePublic: $this->make_public,
+            extractFolderStructure: $this->extract_folder_structure,
+        );
+    }
 
     public function user(): BelongsTo
     {

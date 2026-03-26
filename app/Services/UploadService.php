@@ -39,12 +39,7 @@ class UploadService
         );
 
         if ($existingSong) {
-            // TODO: we should store the config object and use the upload reference object instead of the filepath
-            // this will support the feature with agnostic storage methods. As well, now the song will get stored in the
-            // correct spot in the database, but the entry will be in a different table
-            // this will allow a future crud repository to either cleanup the song and its data or easily move it
-            // into the songs table without having to do any data transformation
-            $this->duplicateUploadRepository->create($uploader, $filePath, $existingSong);
+            $this->duplicateUploadRepository->create($config, $uploadReference, $existingSong);
             if ($this->storage instanceof MustDeleteTemporaryLocalFileAfterUpload) {
                 File::delete($uploadReference->localPath);
             }

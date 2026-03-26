@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\SongStorageType;
 use App\Models\Song;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -14,7 +15,10 @@ class DuplicateUploadFactory extends Factory
         return [
             'user_id' => User::factory(),
             'existing_song_id' => Song::factory(),
-            'file_path' => '/tmp/duplicate_uploads/' . $this->faker->uuid() . '.mp3',
+            'location' => '/var/media/koel/some-file.mp3',
+            'storage' => SongStorageType::LOCAL,
+            'make_public' => false,
+            'extract_folder_structure' => true,
         ];
     }
 }
