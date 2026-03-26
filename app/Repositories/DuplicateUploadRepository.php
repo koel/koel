@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\SongStorages\SongStorage;
 use App\Values\Scanning\ScanConfiguration;
 use App\Values\UploadReference;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 
 class DuplicateUploadRepository extends Repository
@@ -26,9 +27,12 @@ class DuplicateUploadRepository extends Repository
         ]);
     }
 
-    public function findForUser(User $user): Collection
+    public function findForUser(User $user, int $perPage = 50): Paginator
     {
-        return DuplicateUpload::query()->where('user_id', $user->id)->get();
+        return DuplicateUpload::query()
+            ->where('user_id', $user->id)
+            ->with('existingSong')
+            ->simplePaginate($perPage);
     }
 
     public function deleteExpired(int $ttlHours = 24): void
