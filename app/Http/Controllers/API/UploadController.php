@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Exceptions\DuplicateSongUploadException;
 use App\Exceptions\MediaPathNotSetException;
 use App\Exceptions\SongUploadFailedException;
 use App\Facades\Dispatcher;
@@ -49,6 +50,8 @@ class UploadController extends Controller
             }
 
             return response()->noContent();
+        } catch (DuplicateSongUploadException $e) {
+            abort(Response::HTTP_CONFLICT, $e->getMessage());
         } catch (MediaPathNotSetException $e) {
             abort(Response::HTTP_FORBIDDEN, $e->getMessage());
         } catch (SongUploadFailedException $e) {
