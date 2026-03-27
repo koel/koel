@@ -32,6 +32,9 @@
         <UploadItem v-for="file in files" :key="file.id" :file="file" data-testid="upload-item" />
       </div>
 
+      <UploadScreenDuplicateBanner v-if="duplicateFilesDetected" @toggle="viewingDuplicateSongFiles = !viewingDuplicateSongFiles" />
+      <UploadScreenDuplicateSongList v-if="viewingDuplicateSongFiles" />
+
       <ScreenEmptyState v-else>
         <template #icon>
           <Icon :icon="faUpload" />
@@ -78,6 +81,9 @@ import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 
+import UploadScreenDuplicateBanner from '../ui/UploadScreenDuplicateBanner.vue'
+import UploadScreenDuplicateSongList from '../ui/UploadScreenDuplicateSongList.vue'
+
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 const UploadItem = defineAsyncComponent(() => import('@/components/ui/upload/UploadItem.vue'))
 
@@ -87,6 +93,9 @@ const { allowsUpload, mediaPathSetUp, queueFilesForUpload, handleDropEvent } = u
 
 const files = toRef(uploadService.state, 'files')
 const droppable = ref(false)
+
+const duplicateFilesDetected = ref(true)
+const viewingDuplicateSongFiles = ref(true)
 
 const hasUploadFailures = computed(() => files.value.filter(({ status }) => status === 'Errored').length > 0)
 
