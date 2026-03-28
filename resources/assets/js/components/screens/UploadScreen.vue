@@ -29,14 +29,17 @@
       @dragover.prevent
     >
 
-      <div>{{duplicateFilesUploaded}}</div>
-
       <div v-if="files.length" class="pb-4 space-y-4">
         <UploadItem v-for="file in files" :key="file.id" :file="file" data-testid="upload-item" />
       </div>
 
-      <UploadScreenDuplicateBanner v-if="duplicateFilesDetected" @toggle="viewingDuplicateSongFiles = !viewingDuplicateSongFiles" />
-      <UploadScreenDuplicateSongList v-if="viewingDuplicateSongFiles" />
+      <UploadScreenDuplicateBanner 
+        v-if="duplicateFilesUploaded" 
+        @toggle="handleToggleDuplicates" 
+        @close="duplicateFilesUploaded = false"  
+      />
+
+      <UploadScreenDuplicateSongList :songs="duplicatedSongs" v-if="viewingDuplicates" />
 
       <ScreenEmptyState v-else>
         <template #icon>
@@ -92,14 +95,15 @@ const UploadItem = defineAsyncComponent(() => import('@/components/ui/upload/Upl
 
 const acceptAttribute = acceptedExtensions.map(ext => `.${ext}`).join(',')
 
-const { allowsUpload, mediaPathSetUp, queueFilesForUpload, handleDropEvent } = useUpload()
+const { allowsUpload, mediaPathSetUp, queueFilesForUpload, handleDropEvent} = useUpload()
 
 const files = toRef(uploadService.state, 'files')
-const duplicateFilesUploaded = toRef(uploadService.state, 'duplicateFilesUploaded')
+// const duplicateFilesUploaded = toRef(uploadService.state, 'duplicateFilesUploaded')
 const droppable = ref(false)
 
-const duplicateFilesDetected = ref(true)
-const viewingDuplicateSongFiles = ref(true)
+const {duplicateFilesUploaded, fetchDuplicates, duplicatedSongs } = useUpload()
+
+const viewingDuplicates = ref(false)
 
 const hasUploadFailures = computed(() => files.value.filter(({ status }) => status === 'Errored').length > 0)
 
@@ -124,6 +128,13 @@ const onFileInputChange = (event: Event) => {
 const onDrop = async (event: DragEvent) => {
   droppable.value = false
   await handleDropEvent(event)
+}
+
+const handleToggleDuplicates = async () => {
+  if (!viewingDuplicates.value) {
+    await fetchDuplicates()
+  }
+  viewingDuplicates.value = !viewingDuplicates.value
 }
 
 const retryAll = () => uploadService.retryAll()

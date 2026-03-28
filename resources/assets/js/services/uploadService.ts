@@ -1,5 +1,6 @@
 import { without } from 'lodash'
 import { reactive } from 'vue'
+import { http } from '@/services/http'
 import { postWithProgress } from '@/services/http'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
@@ -23,10 +24,17 @@ export interface UploadFile {
   message?: string
 }
 
+export interface DuplicateUpload {
+  id: string
+  type: string
+  filename: string
+}
+
 export const uploadService = {
   state: reactive({
     files: [] as UploadFile[],
     duplicateFilesUploaded: false,
+    duplicatedSongs: [] as DuplicateUpload[],
   }),
 
   abortHandles: new Map<string, () => void>(),
@@ -137,6 +145,13 @@ export const uploadService = {
     } finally {
       this.abortHandles.delete(file.id)
     }
+  },
+
+  async fetchDuplicates() {
+    const response = await http.get<{data: DuplicateUpload[]}>('duplicate-uploads')
+    this.state.duplicatedSongs = response.data
+    console.log(this.state.duplicatedSongs)
+    return this.state.duplicatedSongs;    
   },
 
   handleUploadResult: (result: UploadResult) => {

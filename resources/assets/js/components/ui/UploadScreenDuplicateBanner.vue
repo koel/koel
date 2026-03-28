@@ -2,20 +2,27 @@
   <div class="duplicate-banner">
     <div class="message-content">
       <FontAwesomeIcon :icon="faTriangleExclamation" class="status-icon" />
-      <span><strong>4 duplicate files</strong> detected</span>
+      <span><strong>Duplicate files</strong> detected</span>
     </div>
 
-    <button class="expand-btn" @click="$emit('toggle')">
-      View songs
-    </button>
+
+    <div class="controls">
+      <button class="expand-btn" @click="$emit('toggle')">
+        View songs
+      </button>
+      
+      <button class="close-btn" @click="$emit('close')">
+        <FontAwesomeIcon :icon="faXmark" />
+      </button>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons'
+import { faTriangleExclamation, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-defineEmits(['toggle'])
+defineEmits(['toggle', 'close'])
 </script>
 
 <style scoped>
@@ -43,16 +50,19 @@ defineEmits(['toggle'])
   gap: 0.75rem;
   font-size: 1.1rem;
 }
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .status-icon {
   font-size: 1.1rem;
 }
 
 .expand-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
   padding: 0.4rem 0.8rem;
-
   background: rgba(245, 158, 11, 0.2);
   border: none;
   border-radius: 6px;
@@ -64,5 +74,24 @@ defineEmits(['toggle'])
 
 .expand-btn:hover {
   background: rgba(245, 158, 11, 0.3);
+}
+
+.close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: inherit;
+  opacity: 0.6;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 1.2rem;
+  transition: 0.2s;
+}
+
+.close-btn:hover {
+  opacity: 1;
+  transform: scale(1.1);
 }
 </style>
