@@ -28,6 +28,9 @@
       @drop.prevent="onDrop"
       @dragover.prevent
     >
+
+      <div>{{duplicateFilesUploaded}}</div>
+
       <div v-if="files.length" class="pb-4 space-y-4">
         <UploadItem v-for="file in files" :key="file.id" :file="file" data-testid="upload-item" />
       </div>
@@ -92,6 +95,7 @@ const acceptAttribute = acceptedExtensions.map(ext => `.${ext}`).join(',')
 const { allowsUpload, mediaPathSetUp, queueFilesForUpload, handleDropEvent } = useUpload()
 
 const files = toRef(uploadService.state, 'files')
+const duplicateFilesUploaded = toRef(uploadService.state, 'duplicateFilesUploaded')
 const droppable = ref(false)
 
 const duplicateFilesDetected = ref(true)
