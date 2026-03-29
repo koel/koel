@@ -58,9 +58,12 @@ class EncyclopediaService
             return $info;
         }
 
-        $info->cover = rescue(function () use ($album, $info): ?string {
-            return $this->fetchAndStoreAlbumCover($album, $info) ?? $info->cover;
-        });
+        $info->cover = rescue(
+            function () use ($album, $info): ?string {
+                return $this->fetchAndStoreAlbumCover($album, $info) ?? $info->cover;
+            },
+            fn () => $info->cover,
+        );
 
         return $info;
     }
@@ -73,9 +76,12 @@ class EncyclopediaService
             return $info;
         }
 
-        $info->image = rescue(function () use ($artist, $info): ?string {
-            return $this->fetchAndStoreArtistImage($artist, $info) ?? $info->image;
-        });
+        $info->image = rescue(
+            function () use ($artist, $info): ?string {
+                return $this->fetchAndStoreArtistImage($artist, $info) ?? $info->image;
+            },
+            fn () => $info->image,
+        );
 
         return $info;
     }
