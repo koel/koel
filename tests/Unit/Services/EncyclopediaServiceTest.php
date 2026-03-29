@@ -194,10 +194,8 @@ class EncyclopediaServiceTest extends TestCase
     {
         Cache::shouldReceive('remember')->andThrow(new RuntimeException('file_put_contents failed'));
 
-        $artist = Artist::factory()->createOne();
+        $artist = Artist::factory()->createOne(['image' => 'existing.jpg']);
         $info = ArtistInformation::make();
-
-        self::assertNotEmpty($artist->image);
 
         $this->encyclopedia
             ->expects('getArtistInformation')
