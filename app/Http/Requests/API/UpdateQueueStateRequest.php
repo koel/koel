@@ -13,7 +13,7 @@ class UpdateQueueStateRequest extends Request
     public function rules(): array
     {
         return [
-            'songs' => ['required', 'array', new AllPlayablesAreAccessibleBy($this->user())],
+            'songs' => ['present', 'array', new AllPlayablesAreAccessibleBy($this->user())],
         ];
     }
 }

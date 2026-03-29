@@ -52,6 +52,18 @@ class QueueTest extends TestCase
     }
 
     #[Test]
+    public function updateStateWithEmptySongList(): void
+    {
+        $user = create_user();
+
+        $this->putAs('api/queue/state', ['songs' => []], $user)->assertNoContent();
+
+        /** @var QueueState $queue */
+        $queue = QueueState::query()->whereBelongsTo($user)->firstOrFail();
+        self::assertSame([], $queue->song_ids);
+    }
+
+    #[Test]
     public function updatePlaybackStatus(): void
     {
         $state = QueueState::factory()->createOne();
