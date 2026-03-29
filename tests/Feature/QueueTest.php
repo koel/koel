@@ -56,6 +56,8 @@ class QueueTest extends TestCase
     {
         $user = create_user();
 
+        $this->assertDatabaseMissing(QueueState::class, ['user_id' => $user->id]);
+
         $this->putAs('api/queue/state', ['songs' => []], $user)->assertNoContent();
 
         /** @var QueueState $queue */
