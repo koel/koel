@@ -11,9 +11,11 @@ use App\Services\LastfmService;
 use App\Services\SpotifyService;
 use App\Values\Album\AlbumInformation;
 use App\Values\Artist\ArtistInformation;
+use Illuminate\Support\Facades\Cache;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
+use RuntimeException;
 use Tests\TestCase;
 
 class EncyclopediaServiceTest extends TestCase
@@ -167,6 +169,38 @@ class EncyclopediaServiceTest extends TestCase
             ->andReturn('https://spotify.com/image.jpg');
 
         $this->imageStorage->expects('storeImage')->with('https://spotify.com/image.jpg');
+
+        self::assertSame($info, $this->encyclopediaService->getArtistInformation($artist));
+    }
+
+    #[Test]
+    public function getAlbumInformationGracefullyHandlesCacheFailure(): void
+    {
+        Cache::shouldReceive('remember')->andThrow(new RuntimeException('file_put_contents failed'));
+
+        $album = Album::factory()->createOne();
+        $info = AlbumInformation::make();
+
+        $this->encyclopedia
+            ->expects('getAlbumInformation')
+            ->with($album)
+            ->andReturn($info);
+
+        self::assertSame($info, $this->encyclopediaService->getAlbumInformation($album));
+    }
+
+    #[Test]
+    public function getArtistInformationGracefullyHandlesCacheFailure(): void
+    {
+        Cache::shouldReceive('remember')->andThrow(new RuntimeException('file_put_contents failed'));
+
+        $artist = Artist::factory()->createOne(['image' => 'existing.jpg']);
+        $info = ArtistInformation::make();
+
+        $this->encyclopedia
+            ->expects('getArtistInformation')
+            ->with($artist)
+            ->andReturn($info);
 
         self::assertSame($info, $this->encyclopediaService->getArtistInformation($artist));
     }
