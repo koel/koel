@@ -15,6 +15,7 @@ class Http {
     this.client = ky.create({
       prefixUrl: `${window.BASE_URL}api`,
       headers: {
+        Accept: 'application/json',
         'X-Api-Version': 'v7',
       },
       hooks: {
