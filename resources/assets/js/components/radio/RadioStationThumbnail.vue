@@ -8,16 +8,12 @@
   >
     <img alt="Logo" :src="station.logo || defaultCover" class="w-full aspect-square object-cover" loading="lazy" />
     <span class="absolute top-0 left-0 w-full h-full group-hover:bg-black/40 no-hover:bg-black/40 z-10" />
-    <PlayIcon>
-      <Icon v-if="station.playback_state === 'Playing'" :icon="faPause" class="text-k-highlight-fg" size="lg" />
-      <Icon v-else :icon="faPlay" class="ml-0.5 text-k-highlight-fg" size="lg" />
-    </PlayIcon>
+    <PlayIcon :playing="station.playback_state === 'Playing'" />
   </button>
 </template>
 
 <script setup lang="ts">
 import { toRefs } from 'vue'
-import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
 import { useBranding } from '@/composables/useBranding'
 
 import PlayIcon from '@/components/ui/PlayIcon.vue'
