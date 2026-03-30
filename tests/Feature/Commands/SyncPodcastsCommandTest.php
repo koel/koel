@@ -24,7 +24,7 @@ class SyncPodcastsCommandTest extends TestCase
 
         $this->app->instance(PodcastService::class, $podcastService);
 
-        $this->artisan('koel:podcasts:sync')->assertSuccessful();
+        $this->artisan('koel:podcasts:sync --jobs=1')->assertSuccessful();
     }
 
     #[Test]
@@ -40,7 +40,7 @@ class SyncPodcastsCommandTest extends TestCase
 
         $this->app->instance(PodcastService::class, $podcastService);
 
-        $this->artisan('koel:podcasts:sync')->assertSuccessful();
+        $this->artisan('koel:podcasts:sync --jobs=1')->assertSuccessful();
     }
 
     #[Test]
@@ -57,6 +57,12 @@ class SyncPodcastsCommandTest extends TestCase
 
         $this->app->instance(PodcastService::class, $podcastService);
 
+        $this->artisan('koel:podcasts:sync --jobs=1')->assertSuccessful();
+    }
+
+    #[Test]
+    public function handleEmptyLibrary(): void
+    {
         $this->artisan('koel:podcasts:sync')->assertSuccessful();
     }
 }
