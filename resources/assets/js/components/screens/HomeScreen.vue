@@ -96,12 +96,13 @@ useRouter().onScreenActivated('Home', async () => {
 </script>
 
 <style lang="postcss" scoped>
-.home-sections > *:not(:first-child) {
-  @apply pt-12 relative;
+.home-sections {
+  > *:not(:first-child) {
+    @apply pt-12 relative;
 
-  &::before {
-    @apply content-[''] absolute top-0 left-1/2 -translate-x-1/2 h-px bg-white/5;
-    width: 100vw;
+    &::before {
+      @apply content-[''] absolute top-0 left-0 right-0 -mx-6 h-px bg-k-fg-5;
+    }
   }
 }
 </style>
