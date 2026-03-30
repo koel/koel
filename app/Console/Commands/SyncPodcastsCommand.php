@@ -125,16 +125,16 @@ class SyncPodcastsCommand extends Command
 
     private function handleResultLine(string $line): void
     {
-        $data = json_decode(trim($line), true);
+        $data = json_decode(trim($line));
 
         if (!$data) {
             return;
         }
 
-        match ($data['status']) {
-            'synced' => $this->info("Synced \"{$data['title']}\""),
-            'skipped' => $this->warn("Skipped \"{$data['title']}\" (feed not updated recently)"),
-            'error' => $this->error("Error syncing \"{$data['title']}\": {$data['error']}"),
+        match ($data->status) {
+            'synced' => $this->info("Synced \"$data->title\""),
+            'skipped' => $this->warn("Skipped \"$data->title\" (feed not updated recently)"),
+            'error' => $this->error("Error syncing \"$data->title\": $data->error"),
             default => null,
         };
     }
