@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/vue'
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import Component from './HomeScreenBlock.vue'
 
@@ -13,7 +13,7 @@ describe('HomeScreenBlock', () => {
         default: '<p>Song list</p>',
       },
     })
-    expect(screen.getByText('Recently Played')).toBeTruthy()
-    expect(screen.getByText('Song list')).toBeTruthy()
+    screen.getByText('Recently Played')
+    screen.getByText('Song list')
   })
 })

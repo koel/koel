@@ -21,7 +21,7 @@ describe('aiChatMessage', () => {
       },
     })
 
-    expect(screen.getByText('Here is some jazz.')).toBeTruthy()
+    screen.getByText('Here is some jazz.')
   })
 
   it('renders user message content', () => {
@@ -32,7 +32,7 @@ describe('aiChatMessage', () => {
       },
     })
 
-    expect(screen.getByText('Play some jazz')).toBeTruthy()
+    screen.getByText('Play some jazz')
   })
 
   it('shows copy button for assistant messages', () => {
@@ -43,7 +43,7 @@ describe('aiChatMessage', () => {
       },
     })
 
-    expect(screen.getByRole('button', { name: /copy/i })).toBeTruthy()
+    screen.getByRole('button', { name: /copy/i })
   })
 
   it('does not show copy button for user messages', () => {

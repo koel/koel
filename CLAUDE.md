@@ -19,7 +19,6 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - laravel/mcp (MCP) - v0
 - phpunit/phpunit (PHPUNIT) - v11
 - vue (VUE) - v3
-- eslint (ESLINT) - v9
 - laravel-echo (ECHO) - v2
 - tailwindcss (TAILWINDCSS) - v3
 
@@ -36,7 +35,7 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - Do not change the application's dependencies without approval.
 
 ## Frontend Bundling
-- If the user doesn't see a frontend change reflected in the UI, it could mean they need to run `vp build`, `vp dev`, or `composer run dev`. Ask them.
+- If the user doesn't see a frontend change reflected in the UI, it could mean they need to run `pnpm run build`, `pnpm run dev`, or `composer run dev`. Ask them.
 
 ## Replies
 - Be concise in your explanations - focus on what's important rather than explaining obvious details.
@@ -108,9 +107,6 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ## PHPDoc Blocks
 - Add useful array shape type definitions for arrays when appropriate.
 
-### Imports
-- Always use `use` imports instead of fully qualified class names (e.g. `new RuntimeException`, not `new \RuntimeException`).
-
 ## Enums
 - Typically, keys in an Enum should be TitleCase. For example: `FavoritePerson`, `BestLake`, `Monthly`.
 
@@ -145,7 +141,6 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ### Controllers & Validation
 - Always create Form Request classes for validation rather than inline validation in controllers. Include both validation rules and custom error messages.
 - Check sibling Form Requests to see if the application uses array or string based validation rules.
-- When accessing request data, prefer `$request->variable` over `$request->input('variable')`. Type hint each input as a `@property-read` on the Form Request class (e.g. `@property-read string $prompt`, `@property-read ?string $conversation_id`).
 
 ### Queues
 - Use queued jobs for time-consuming operations with the `ShouldQueue` interface.
@@ -165,7 +160,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - When creating tests, make use of `php artisan make:test [options] {name}` to create a feature test, and pass `--unit` to create a unit test. Most tests should be feature tests.
 
 ### Vite Error
-- If you receive an "Illuminate\Foundation\ViteException: Unable to locate file in Vite manifest" error, you can run `vp build` or ask the user to run `vp dev` or `composer run dev`.
+- If you receive an "Illuminate\Foundation\ViteException: Unable to locate file in Vite manifest" error, you can run `pnpm run build` or ask the user to run `pnpm run dev` or `composer run dev`.
 
 === laravel/v12 rules ===
 
@@ -264,6 +259,8 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ## Git Commits
 - Use [Conventional Commits](https://www.conventionalcommits.org/) for all commit messages (e.g. `fix:`, `feat:`, `chore:`, `test:`, `refactor:`, `docs:`, `ci:`, etc.).
 - Focus on the feature/purpose, not implementation details. For example, prefer "feat: show current playing song during radio stream" over "feat: radio station ICY metadata now-playing". Same applies to PR titles.
+- Never mention Claude Code in commits, PR descriptions, or any generated content. No "Generated with Claude Code" footers, no Co-Authored-By lines referencing Claude.
+- When the implementation of a PR changes (e.g. during code review), always update the PR title and description to reflect the current state of the changes.
 
 ## AI Assistant Tools
 - When AI assistant tool capabilities change (added, removed, or updated), always update the sample prompts in `AiSamplePrompts.vue` to reflect the current abilities.
@@ -289,6 +286,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## Frontend Testing
 - Prefer semantic queries (`getByRole`, `getByLabelText`, `getByText`) via `screen` from `@testing-library/vue`. Use `data-testid` only as a last resort when no semantic query is available.
+- `getBy*` queries already throw if the element is not found, so never wrap them in `expect().toBeTruthy()`. Just call `screen.getByTestId('foo')` directly — the throw is the assertion. Use `expect(screen.queryBy*()).toBeNull()` to assert absence.
 
 ## Test Class Namespacing
 - Unit test classes must mirror the namespace of the class under test. Replace `App\` with `Tests\Unit\` and add a `Test` suffix (e.g. `App\Ai\Services\FavoriteableEntityResolver` → `Tests\Unit\Ai\Services\FavoriteableEntityResolverTest`).

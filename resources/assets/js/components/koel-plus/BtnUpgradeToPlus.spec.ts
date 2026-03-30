@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/vue'
-import { describe, expect, it, vi } from 'vite-plus/test'
+import { describe, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { assertOpenModal } from '@/__tests__/assertions'
 import KoelPlusModal from '@/components/koel-plus/KoelPlusModal.vue'
@@ -21,7 +21,7 @@ describe('BtnUpgradeToPlus', () => {
 
   it('renders the upgrade button', () => {
     h.render(Component)
-    expect(screen.getByText('Upgrade to Plus')).toBeTruthy()
+    screen.getByText('Upgrade to Plus')
   })
 
   it('opens KoelPlusModal on click', async () => {

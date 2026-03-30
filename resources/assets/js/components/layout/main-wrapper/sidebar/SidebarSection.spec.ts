@@ -18,7 +18,7 @@ describe('SidebarSection', () => {
         default: '<ul><li>Item</li></ul>',
       },
     })
-    expect(screen.getByText('Title')).toBeTruthy()
-    expect(screen.getByText('Item')).toBeTruthy()
+    screen.getByText('Title')
+    screen.getByText('Item')
   })
 })

@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/vue'
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import Component from './ExcerptResultBlock.vue'
 
@@ -13,7 +13,7 @@ describe('ExcerptResultBlock', () => {
         default: '<p>Result items</p>',
       },
     })
-    expect(screen.getByText('Top Results')).toBeTruthy()
-    expect(screen.getByText('Result items')).toBeTruthy()
+    screen.getByText('Top Results')
+    screen.getByText('Result items')
   })
 })
