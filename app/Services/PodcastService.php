@@ -210,7 +210,10 @@ class PodcastService
 
             return Carbon::createFromFormat(Carbon::RFC1123, $lastModified)->isAfter($podcast->last_synced_at);
         } catch (Throwable $e) {
-            Log::warning("Failed to check Last-Modified for podcast {$podcast->url}: {$e->getMessage()}");
+            Log::warning(
+                sprintf('Failed to check Last-Modified for podcast %s: %s', $podcast->url, $e->getMessage()),
+                ['exception' => $e],
+            );
 
             return true;
         }
