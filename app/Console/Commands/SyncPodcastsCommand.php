@@ -46,7 +46,7 @@ class SyncPodcastsCommand extends Command
     {
         Podcast::query()->get()->each(function (Podcast $podcast): void {
             try {
-                $this->info("Checking \"$podcast->title\" for new content…");
+                $this->info(sprintf('Checking "%s" for new content…', $podcast->title));
 
                 if (!$this->podcastService->isPodcastObsolete($podcast)) {
                     $this->warn('└── The podcast feed has not been updated recently, skipping.');
@@ -132,9 +132,9 @@ class SyncPodcastsCommand extends Command
         }
 
         match ($data->status) {
-            'synced' => $this->info("Synced \"$data->title\""),
-            'skipped' => $this->warn("Skipped \"$data->title\" (feed not updated recently)"),
-            'error' => $this->error("Error syncing \"$data->title\": $data->error"),
+            'synced' => $this->info(sprintf('Synced "%s"', $data->title)),
+            'skipped' => $this->warn(sprintf('Skipped "%s" (feed not updated recently)', $data->title)),
+            'error' => $this->error(sprintf('Error syncing "%s": %s', $data->title, $data->error)),
             default => null,
         };
     }
