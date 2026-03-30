@@ -49,6 +49,6 @@ class SyncPodcastsChunkCommand extends Command
             'title' => $podcast->title,
             'status' => $status,
             'error' => $error,
-        ]));
+        ], JSON_UNESCAPED_UNICODE));
     }
 }
