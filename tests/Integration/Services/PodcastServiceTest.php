@@ -164,6 +164,21 @@ class PodcastServiceTest extends TestCase
     }
 
     #[Test]
+    public function podcastObsoleteIfNoLastModifiedHeader(): void
+    {
+        Http::fake([
+            'https://example.com/feed.xml' => Http::response(),
+        ]);
+
+        $podcast = Podcast::factory()->createOne([
+            'url' => 'https://example.com/feed.xml',
+            'last_synced_at' => now()->subDays(1),
+        ]);
+
+        self::assertTrue($this->service->isPodcastObsolete($podcast));
+    }
+
+    #[Test]
     public function updateEpisodeProgress(): void
     {
         $episode = Song::factory()->asEpisode()->createOne();

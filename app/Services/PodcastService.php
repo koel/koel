@@ -204,9 +204,14 @@ class PodcastService
         try {
             $lastModified = Http::head($podcast->url)->header('Last-Modified');
 
-            return $lastModified
-            && Carbon::createFromFormat(Carbon::RFC1123, $lastModified)->isAfter($podcast->last_synced_at);
-        } catch (Throwable) {
+            if (!$lastModified) {
+                return true;
+            }
+
+            return Carbon::createFromFormat(Carbon::RFC1123, $lastModified)->isAfter($podcast->last_synced_at);
+        } catch (Throwable $e) {
+            Log::warning("Failed to check Last-Modified for podcast {$podcast->url}: {$e->getMessage()}");
+
             return true;
         }
     }
