@@ -32,7 +32,7 @@ describe('recentlyPlayedStore', () => {
   it('adds a song to the state', async () => {
     const newSong = h.factory('song')
     const songs = h.factory('song', 10)
-    const exceptSongs = songs.slice(0, 7)
+    const exceptSongs = songs.slice(0, 6)
 
     // We don't want to keep the reference to the original songs
     recentlyPlayedStore.state.playables = JSON.parse(JSON.stringify(songs))
@@ -41,13 +41,13 @@ describe('recentlyPlayedStore', () => {
     await recentlyPlayedStore.add(newSong)
 
     expect(recentlyPlayedStore.state.playables).toEqual([newSong, ...songs])
-    expect(recentlyPlayedStore.excerptState.playables).toEqual([newSong, ...songs.slice(0, 6)])
+    expect(recentlyPlayedStore.excerptState.playables).toEqual([newSong, ...songs.slice(0, 5)])
   })
 
   it('deduplicates when adding a song to the state', async () => {
     const songs = h.factory('song', 10)
     const newSong = songs[1]
-    const exceptSongs = songs.slice(0, 7)
+    const exceptSongs = songs.slice(0, 6)
 
     // We don't want to keep the reference to the original songs
     recentlyPlayedStore.state.playables = JSON.parse(JSON.stringify(songs))
@@ -56,6 +56,6 @@ describe('recentlyPlayedStore', () => {
     await recentlyPlayedStore.add(newSong)
 
     expect(recentlyPlayedStore.state.playables).toEqual([newSong, songs[0], ...songs.slice(2)])
-    expect(recentlyPlayedStore.excerptState.playables).toEqual([newSong, songs[0], ...songs.slice(2, 7)])
+    expect(recentlyPlayedStore.excerptState.playables).toEqual([newSong, songs[0], ...songs.slice(2, 6)])
   })
 })

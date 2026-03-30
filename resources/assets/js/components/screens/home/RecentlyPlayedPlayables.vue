@@ -5,14 +5,9 @@
       <ViewAllRecentlyPlayedPlayablesButton v-if="playables.length" class="float-right" />
     </template>
 
-    <PlayableListSkeleton v-if="loading" class="-mx-6 overflow-hidden" />
+    <PlayableCardGridSkeleton v-if="loading" />
     <template v-else>
-      <PlayableList
-        v-if="playables.length"
-        ref="playableList"
-        class="-mx-6 overflow-hidden"
-        @press:enter="onPressEnter"
-      />
+      <PlayableCardGrid v-if="playables.length" :playables="playables" />
       <p v-else>Nothing played as of late.</p>
     </template>
   </HomeScreenBlock>
@@ -21,23 +16,14 @@
 <script lang="ts" setup>
 import { toRef, toRefs } from 'vue'
 import { overviewStore } from '@/stores/overviewStore'
-import { usePlayableList } from '@/composables/usePlayableList'
-import { playback } from '@/services/playbackManager'
 
 import HomeScreenBlock from '@/components/screens/home/HomeScreenBlock.vue'
 import ViewAllRecentlyPlayedPlayablesButton from '@/components/screens/home/ViewAllRecentlyPlayedPlayablesButton.vue'
-import PlayableListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
+import PlayableCardGrid from '@/components/screens/home/PlayableCardGrid.vue'
+import PlayableCardGridSkeleton from '@/components/screens/home/PlayableCardGridSkeleton.vue'
 
 const props = withDefaults(defineProps<{ loading?: boolean }>(), { loading: false })
 const { loading } = toRefs(props)
 
-const { PlayableList, playables, playableList, selectedPlayables } = usePlayableList(
-  toRef(overviewStore.state, 'recentlyPlayed'),
-  {},
-  {
-    sortable: false,
-  },
-)
-
-const onPressEnter = () => selectedPlayables.value.length && playback().play(selectedPlayables.value[0])
+const playables = toRef(overviewStore.state, 'recentlyPlayed')
 </script>

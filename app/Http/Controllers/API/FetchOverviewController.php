@@ -25,6 +25,7 @@ class FetchOverviewController extends Controller
             'most_played_artists' => ArtistResource::collection($artistRepository->getMostPlayed()),
             'most_played_songs' => SongResource::collection($songRepository->getMostPlayed(6)),
             'recently_added_albums' => AlbumResource::collection($albumRepository->getRecentlyAdded()),
+            'recently_added_artists' => ArtistResource::collection($artistRepository->getRecentlyAdded()),
             'recently_added_songs' => SongResource::collection($songRepository->getRecentlyAdded(6)),
             'recently_played_songs' => SongResource::collection($recentlyPlayed),
             'least_played_songs' => SongResource::collection($songRepository->getLeastPlayed(6)),

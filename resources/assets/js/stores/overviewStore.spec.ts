@@ -14,6 +14,7 @@ describe('overviewStore', () => {
         recentlyPlayed: [],
         recentlyAddedSongs: [],
         recentlyAddedAlbums: [],
+        recentlyAddedArtists: [],
         mostPlayedSongs: [],
         mostPlayedAlbums: [],
         mostPlayedArtists: [],
@@ -35,6 +36,7 @@ describe('overviewStore', () => {
     const mostPlayedArtists = h.factory('artist', 6)
     const recentlyAddedSongs = h.factory('song', 6)
     const recentlyAddedAlbums = h.factory('album', 6)
+    const recentlyAddedArtists = h.factory('artist', 6)
     const recentlyPlayedSongs = h.factory('song', 6)
     const leastPlayedSongs = h.factory('song', 6)
     const randomSongs = h.factory('song', 6)
@@ -46,6 +48,7 @@ describe('overviewStore', () => {
       most_played_artists: mostPlayedArtists,
       recently_added_songs: recentlyAddedSongs,
       recently_added_albums: recentlyAddedAlbums,
+      recently_added_artists: recentlyAddedArtists,
       recently_played_songs: recentlyPlayedSongs,
       least_played_songs: leastPlayedSongs,
       random_songs: randomSongs,
@@ -63,7 +66,8 @@ describe('overviewStore', () => {
     expect(songSyncMock).toHaveBeenNthCalledWith(6, recentlyPlayedSongs)
     expect(albumSyncMock).toHaveBeenNthCalledWith(1, mostPlayedAlbums)
     expect(albumSyncMock).toHaveBeenNthCalledWith(2, recentlyAddedAlbums)
-    expect(artistSyncMock).toHaveBeenCalledWith(mostPlayedArtists)
+    expect(artistSyncMock).toHaveBeenNthCalledWith(1, mostPlayedArtists)
+    expect(artistSyncMock).toHaveBeenNthCalledWith(2, recentlyAddedArtists)
     expect(refreshMock).toHaveBeenCalled()
   })
 
