@@ -204,8 +204,8 @@ class PodcastService
         try {
             $lastModified = Http::head($podcast->url)->header('Last-Modified');
 
-            return $lastModified
-            && Carbon::createFromFormat(Carbon::RFC1123, $lastModified)->isAfter($podcast->last_synced_at);
+            return !$lastModified
+            || Carbon::createFromFormat(Carbon::RFC1123, $lastModified)->isAfter($podcast->last_synced_at);
         } catch (Throwable) {
             return true;
         }
