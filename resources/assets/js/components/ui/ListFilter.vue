@@ -8,7 +8,7 @@
         v-if="showingInput"
         ref="input"
         v-model="keywords"
-        class="text-k-fg bg-transparent border-0 rounded-none !pl-0 !h-[unset] placeholder:text-k-fg-50 focus-visible:outline-0"
+        class="text-k-fg bg-transparent border-0 rounded-none !pl-0 !h-[unset] placeholder:text-k-fg-50 outline-none"
         placeholder="Keywords"
         type="search"
         @blur="inputting = false"
