@@ -144,6 +144,10 @@ setInterval(updateProgress, 250)
   }
 }
 
+:fullscreen .audio-player {
+  @apply relative;
+}
+
 :fullscreen .track {
   @apply bg-white/20 rounded-full overflow-hidden;
 }
