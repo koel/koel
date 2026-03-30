@@ -66,9 +66,4 @@ const playOrQueue = async (event: MouseEvent) => {
     pointer-events: none;
   }
 }
-
-.compact .icon {
-  @apply text-[.3rem];
-  /* to control the size of the icon */
-}
 </style>

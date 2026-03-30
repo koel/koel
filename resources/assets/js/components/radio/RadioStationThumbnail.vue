@@ -1,7 +1,7 @@
 <template>
   <button
     :style="{ backgroundImage: `url(${defaultCover})` }"
-    class="thumbnail relative w-full aspect-square bg-no-repeat bg-cover bg-center overflow-hidden rounded-md active:scale-95"
+    class="thumbnail group relative w-full aspect-square bg-no-repeat bg-cover bg-center overflow-hidden rounded-md active:scale-95"
     data-testid="radio-station-card-thumbnail"
     :title="`Play/pause ${station.name}`"
     @click.prevent="emit('clicked')"
