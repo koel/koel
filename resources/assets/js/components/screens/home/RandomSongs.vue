@@ -1,6 +1,6 @@
 <template>
   <HomeScreenBlock>
-    <template #header>Random Songs</template>
+    <template #header>Something Random</template>
 
     <PlayableListSkeleton v-if="loading" class="-mx-6 overflow-hidden" />
     <template v-else>

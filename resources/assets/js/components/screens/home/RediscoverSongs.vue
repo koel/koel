@@ -1,6 +1,6 @@
 <template>
   <HomeScreenBlock>
-    <template #header>Least Played</template>
+    <template #header>Hidden Gems</template>
 
     <PlayableListSkeleton v-if="loading" class="-mx-6 overflow-hidden" />
     <template v-else>
