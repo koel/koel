@@ -1,11 +1,11 @@
 <template>
   <HomeScreenBlock>
-    <template #header>Most Played</template>
+    <template #header>Hidden Gems</template>
 
     <PlayableCardGridSkeleton v-if="loading" />
     <template v-else>
       <PlayableCardGrid v-if="playables.length" :playables="playables" />
-      <p v-else>Nothing played as of late.</p>
+      <p v-else>No songs to rediscover.</p>
     </template>
   </HomeScreenBlock>
 </template>
@@ -21,5 +21,5 @@ import PlayableCardGridSkeleton from '@/components/screens/home/PlayableCardGrid
 const props = withDefaults(defineProps<{ loading?: boolean }>(), { loading: false })
 const { loading } = toRefs(props)
 
-const playables = toRef(overviewStore.state, 'mostPlayedSongs')
+const playables = toRef(overviewStore.state, 'leastPlayedSongs')
 </script>

@@ -14,9 +14,13 @@ describe('overviewStore', () => {
         recentlyPlayed: [],
         recentlyAddedSongs: [],
         recentlyAddedAlbums: [],
+        recentlyAddedArtists: [],
         mostPlayedSongs: [],
         mostPlayedAlbums: [],
         mostPlayedArtists: [],
+        leastPlayedSongs: [],
+        randomSongs: [],
+        similarSongs: [],
       }
     },
   })
@@ -27,12 +31,16 @@ describe('overviewStore', () => {
     const artistSyncMock = h.mock(artistStore, 'syncWithVault')
     const refreshMock = h.mock(overviewStore, 'refreshPlayStats')
 
-    const mostPlayedSongs = h.factory('song', 7)
+    const mostPlayedSongs = h.factory('song', 6)
     const mostPlayedAlbums = h.factory('album', 6)
     const mostPlayedArtists = h.factory('artist', 6)
-    const recentlyAddedSongs = h.factory('song', 9)
+    const recentlyAddedSongs = h.factory('song', 6)
     const recentlyAddedAlbums = h.factory('album', 6)
-    const recentlyPlayedSongs = h.factory('song', 9)
+    const recentlyAddedArtists = h.factory('artist', 6)
+    const recentlyPlayedSongs = h.factory('song', 6)
+    const leastPlayedSongs = h.factory('song', 6)
+    const randomSongs = h.factory('song', 6)
+    const similarSongs = h.factory('song', 6)
 
     const getMock = h.mock(http, 'get').mockResolvedValueOnce({
       most_played_songs: mostPlayedSongs,
@@ -40,7 +48,11 @@ describe('overviewStore', () => {
       most_played_artists: mostPlayedArtists,
       recently_added_songs: recentlyAddedSongs,
       recently_added_albums: recentlyAddedAlbums,
+      recently_added_artists: recentlyAddedArtists,
       recently_played_songs: recentlyPlayedSongs,
+      least_played_songs: leastPlayedSongs,
+      random_songs: randomSongs,
+      similar_songs: similarSongs,
     })
 
     await overviewStore.fetch()
@@ -48,16 +60,20 @@ describe('overviewStore', () => {
     expect(getMock).toHaveBeenCalledWith('overview')
     expect(songSyncMock).toHaveBeenNthCalledWith(1, mostPlayedSongs)
     expect(songSyncMock).toHaveBeenNthCalledWith(2, recentlyAddedSongs)
-    expect(songSyncMock).toHaveBeenNthCalledWith(3, recentlyPlayedSongs)
-    expect(albumSyncMock).toHaveBeenNthCalledWith(1, recentlyAddedAlbums)
-    expect(albumSyncMock).toHaveBeenNthCalledWith(2, mostPlayedAlbums)
-    expect(artistSyncMock).toHaveBeenCalledWith(mostPlayedArtists)
+    expect(songSyncMock).toHaveBeenNthCalledWith(3, leastPlayedSongs)
+    expect(songSyncMock).toHaveBeenNthCalledWith(4, randomSongs)
+    expect(songSyncMock).toHaveBeenNthCalledWith(5, similarSongs)
+    expect(songSyncMock).toHaveBeenNthCalledWith(6, recentlyPlayedSongs)
+    expect(albumSyncMock).toHaveBeenNthCalledWith(1, mostPlayedAlbums)
+    expect(albumSyncMock).toHaveBeenNthCalledWith(2, recentlyAddedAlbums)
+    expect(artistSyncMock).toHaveBeenNthCalledWith(1, mostPlayedArtists)
+    expect(artistSyncMock).toHaveBeenNthCalledWith(2, recentlyAddedArtists)
     expect(refreshMock).toHaveBeenCalled()
   })
 
   it('refreshes the store', () => {
-    const mostPlayedSongs = h.factory('song', 7)
-    const recentlyPlayedSongs = h.factory('song', 9)
+    const mostPlayedSongs = h.factory('song', 6)
+    const recentlyPlayedSongs = h.factory('song', 6)
 
     const mostPlayedSongsMock = h.mock(playableStore, 'getMostPlayedSongs', mostPlayedSongs)
     recentlyPlayedStore.excerptState.playables = recentlyPlayedSongs

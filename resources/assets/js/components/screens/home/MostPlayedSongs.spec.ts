@@ -10,6 +10,6 @@ describe('mostPlayedSongs.vue', () => {
   it('displays the songs', async () => {
     overviewStore.state.mostPlayedSongs = h.factory('song', 6)
     h.render(Component)
-    await waitFor(() => expect(screen.getAllByTestId('song-item')).toHaveLength(6))
+    await waitFor(() => expect(screen.getAllByTestId('song-card')).toHaveLength(6))
   })
 })

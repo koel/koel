@@ -3,7 +3,7 @@ import { remove } from 'lodash'
 import { http } from '@/services/http'
 import { playableStore } from '@/stores/playableStore'
 
-const EXCERPT_COUNT = 7
+const EXCERPT_COUNT = 6
 
 export const recentlyPlayedStore = {
   excerptState: reactive({

@@ -1,12 +1,9 @@
 <template>
-  <HomeScreenBlock>
-    <template #header>Most Played</template>
+  <HomeScreenBlock v-if="loading || playables.length">
+    <template #header>You Might Also Like</template>
 
     <PlayableCardGridSkeleton v-if="loading" />
-    <template v-else>
-      <PlayableCardGrid v-if="playables.length" :playables="playables" />
-      <p v-else>Nothing played as of late.</p>
-    </template>
+    <PlayableCardGrid v-else :playables="playables" />
   </HomeScreenBlock>
 </template>
 
@@ -21,5 +18,5 @@ import PlayableCardGridSkeleton from '@/components/screens/home/PlayableCardGrid
 const props = withDefaults(defineProps<{ loading?: boolean }>(), { loading: false })
 const { loading } = toRefs(props)
 
-const playables = toRef(overviewStore.state, 'mostPlayedSongs')
+const playables = toRef(overviewStore.state, 'similarSongs')
 </script>
