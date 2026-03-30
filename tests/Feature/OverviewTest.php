@@ -24,9 +24,13 @@ class OverviewTest extends TestCase
             'most_played_songs' => [0 => SongResource::JSON_STRUCTURE],
             'recently_played_songs' => [0 => SongResource::JSON_STRUCTURE],
             'recently_added_albums' => [0 => AlbumResource::JSON_STRUCTURE],
+            'recently_added_artists' => [0 => ArtistResource::JSON_STRUCTURE],
             'recently_added_songs' => [0 => SongResource::JSON_STRUCTURE],
             'most_played_artists' => [0 => ArtistResource::JSON_STRUCTURE],
             'most_played_albums' => [0 => AlbumResource::JSON_STRUCTURE],
+            'least_played_songs' => [0 => SongResource::JSON_STRUCTURE],
+            'random_songs' => [0 => SongResource::JSON_STRUCTURE],
+            'similar_songs',
         ]);
     }
 }
