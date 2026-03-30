@@ -8,13 +8,13 @@ describe('playIcon.vue', () => {
 
   it('renders play icon by default', () => {
     h.render(Component)
-    expect(screen.getByTestId('icon-play')).toBeTruthy()
+    screen.getByTestId('icon-play')
     expect(screen.queryByTestId('icon-pause')).toBeNull()
   })
 
   it('renders pause icon when playing', () => {
     h.render(Component, { props: { playing: true } })
-    expect(screen.getByTestId('icon-pause')).toBeTruthy()
+    screen.getByTestId('icon-pause')
     expect(screen.queryByTestId('icon-play')).toBeNull()
   })
 })

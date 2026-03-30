@@ -286,6 +286,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## Frontend Testing
 - Prefer semantic queries (`getByRole`, `getByLabelText`, `getByText`) via `screen` from `@testing-library/vue`. Use `data-testid` only as a last resort when no semantic query is available.
+- `getBy*` queries already throw if the element is not found, so never wrap them in `expect().toBeTruthy()`. Just call `screen.getByTestId('foo')` directly — the throw is the assertion. Use `expect(screen.queryBy*()).toBeNull()` to assert absence.
 
 ## Test Class Namespacing
 - Unit test classes must mirror the namespace of the class under test. Replace `App\` with `Tests\Unit\` and add a `Test` suffix (e.g. `App\Ai\Services\FavoriteableEntityResolver` → `Tests\Unit\Ai\Services\FavoriteableEntityResolverTest`).
