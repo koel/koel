@@ -33,8 +33,6 @@ export const overviewStore = {
     }>('overview')
 
     playableStore.syncWithVault(resource.most_played_songs)
-    albumStore.syncWithVault(resource.recently_added_albums)
-    artistStore.syncWithVault(resource.most_played_artists)
 
     this.state.mostPlayedAlbums = albumStore.syncWithVault(resource.most_played_albums)
     this.state.mostPlayedArtists = artistStore.syncWithVault(resource.most_played_artists)
