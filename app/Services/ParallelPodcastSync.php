@@ -2,13 +2,14 @@
 
 namespace App\Services;
 
+use Closure;
 use Symfony\Component\Process\Process;
 
-// @mago-ignore lint:kan-defect
+// @mago-ignore lint:cyclomatic-complexity,kan-defect
 class ParallelPodcastSync
 {
-    /** @return array<object> */
-    public function execute(array $ids, int $jobs): array
+    /** @param Closure(object): void $onResult */
+    public function execute(array $ids, int $jobs, Closure $onResult): void
     {
         $chunks = array_chunk($ids, (int) ceil(count($ids) / $jobs));
         $processes = [];
@@ -26,26 +27,25 @@ class ParallelPodcastSync
             $processes[] = $process;
         }
 
-        return $this->collectResults($processes);
+        $this->collectResults($processes, $onResult);
     }
 
     /** @param Process[] $processes */
-    private function collectResults(array $processes): array
+    private function collectResults(array $processes, Closure $onResult): void
     {
-        $results = [];
         $buffers = array_fill(0, count($processes), '');
         $errBuffers = array_fill(0, count($processes), '');
 
         while ($processes) {
             foreach ($processes as $i => $process) {
-                $this->drainOutput($process, $buffers[$i], $results);
-                $this->drainErrorOutput($process, $errBuffers[$i]);
+                $this->drainOutput($process, $buffers[$i], $onResult);
+                $this->drainErrorOutput($process, $errBuffers[$i], $onResult);
 
                 if ($process->isRunning()) {
                     continue;
                 }
 
-                $this->finalizeWorker($process, $buffers[$i], $errBuffers[$i], $results);
+                $this->finalizeWorker($process, $buffers[$i], $errBuffers[$i], $onResult);
                 unset($processes[$i], $buffers[$i], $errBuffers[$i]);
             }
 
@@ -53,11 +53,9 @@ class ParallelPodcastSync
                 usleep(50_000);
             }
         }
-
-        return $results;
     }
 
-    private function drainOutput(Process $process, string &$buffer, array &$results): void
+    private function drainOutput(Process $process, string &$buffer, Closure $onResult): void
     {
         $output = $process->getIncrementalOutput();
 
@@ -68,47 +66,62 @@ class ParallelPodcastSync
         $buffer .= $output;
 
         while (($pos = strpos($buffer, "\n")) !== false) {
-            $this->parseLine(substr($buffer, 0, $pos), $results);
+            $this->parseLine(substr($buffer, 0, $pos), $onResult);
             $buffer = substr($buffer, $pos + 1);
         }
     }
 
-    private function drainErrorOutput(Process $process, string &$buffer): void
+    private function drainErrorOutput(Process $process, string &$buffer, Closure $onResult): void
     {
         $output = $process->getIncrementalErrorOutput();
 
-        if ($output !== '') {
-            $buffer .= $output;
+        if ($output === '') {
+            return;
+        }
+
+        $buffer .= $output;
+
+        while (($pos = strpos($buffer, "\n")) !== false) {
+            $line = rtrim(substr($buffer, 0, $pos));
+            $buffer = substr($buffer, $pos + 1);
+
+            if ($line !== '') {
+                $onResult((object) ['status' => 'error', 'title' => '', 'error' => $line]);
+            }
         }
     }
 
-    private function finalizeWorker(Process $process, string $buffer, string $errBuffer, array &$results): void
+    private function finalizeWorker(Process $process, string $buffer, string $errBuffer, Closure $onResult): void
     {
-        if (trim($buffer) !== '') {
-            $this->parseLine($buffer, $results);
+        foreach (explode("\n", $buffer) as $line) {
+            if (trim($line) === '') {
+                continue;
+            }
+
+            $this->parseLine($line, $onResult);
         }
 
         if (trim($errBuffer) !== '') {
-            $results[] = (object) ['status' => 'error', 'title' => '', 'error' => trim($errBuffer)];
+            $onResult((object) ['status' => 'error', 'title' => '', 'error' => trim($errBuffer)]);
         }
 
         $exitCode = $process->getExitCode();
 
         if ($exitCode !== 0 && $exitCode !== null) {
-            $results[] = (object) [
+            $onResult((object) [
                 'status' => 'error',
                 'title' => '',
                 'error' => sprintf('Worker exited with code %d', $exitCode),
-            ];
+            ]);
         }
     }
 
-    private function parseLine(string $line, array &$results): void
+    private function parseLine(string $line, Closure $onResult): void
     {
         $data = json_decode(trim($line));
 
-        if ($data) {
-            $results[] = $data;
+        if (is_object($data) && property_exists($data, 'status')) {
+            $onResult($data);
         }
     }
 }

@@ -65,16 +65,14 @@ class SyncPodcastsCommand extends Command
     {
         $this->info(sprintf('Syncing %d podcast(s) with %d parallel workers.', count($ids), $jobs));
 
-        $results = $this->parallelSync->execute($ids, $jobs);
-
-        foreach ($results as $result) {
+        $this->parallelSync->execute($ids, $jobs, function (object $result): void {
             match ($result->status) {
                 'synced' => $this->info(sprintf('Synced "%s"', $result->title)),
                 'skipped' => $this->warn(sprintf('Skipped "%s" (feed not updated recently)', $result->title)),
                 'error' => $this->error(sprintf('Error syncing "%s": %s', $result->title, $result->error)),
                 default => null,
             };
-        }
+        });
 
         return self::SUCCESS;
     }
