@@ -2,7 +2,7 @@
   <dialog
     ref="el"
     :class="state.type"
-    class="border-0 p-0 bg-transparent backdrop:bg-black/80 outline-0"
+    class="border-0 p-0 bg-transparent backdrop:bg-black/80 outline-none"
     data-testid="overlay"
     @cancel.prevent="onCancel"
   >
