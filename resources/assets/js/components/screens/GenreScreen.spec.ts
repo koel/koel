@@ -44,6 +44,6 @@ describe('genreScreen', () => {
 
   it('renders the song list', async () => {
     await renderComponent()
-    expect(screen.getByTestId('song-list')).toBeTruthy()
+    screen.getByTestId('song-list')
   })
 })

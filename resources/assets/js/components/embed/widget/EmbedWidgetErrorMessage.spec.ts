@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/vue'
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import Component from './EmbedWidgetErrorMessage.vue'
 
@@ -8,6 +8,6 @@ describe('EmbedWidgetErrorMessage', () => {
 
   it('renders the error message', () => {
     h.render(Component)
-    expect(screen.getByText('Content not available')).toBeTruthy()
+    screen.getByText('Content not available')
   })
 })

@@ -8,7 +8,7 @@ describe('AlertBox', () => {
 
   it('renders default type with slot content', () => {
     h.render(Component, { slots: { default: 'Hello world' } })
-    expect(screen.getByText('Hello world')).toBeTruthy()
+    screen.getByText('Hello world')
   })
 
   it('applies type-based CSS class', () => {

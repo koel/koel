@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/vue'
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import Component from './NotFoundScreen.vue'
 
@@ -8,6 +8,6 @@ describe('NotFoundScreen', () => {
 
   it('renders the not found message', () => {
     h.render(Component)
-    expect(screen.getByText('The requested content cannot be found.')).toBeTruthy()
+    screen.getByText('The requested content cannot be found.')
   })
 })

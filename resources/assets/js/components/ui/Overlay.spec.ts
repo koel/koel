@@ -13,7 +13,7 @@ describe('overlay', () => {
 
   it('renders dialog element with testid', () => {
     h.render(Component)
-    expect(screen.getByTestId('overlay')).toBeTruthy()
+    screen.getByTestId('overlay')
   })
 
   it('renders with loading type by default', () => {

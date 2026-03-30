@@ -15,7 +15,7 @@ describe('PlaylistCollaboratorsBadge', () => {
   it('shows remainder count when more than 3', () => {
     const collaborators = Array.from({ length: 5 }, () => h.factory('user'))
     h.render(Component, { props: { collaborators } })
-    expect(screen.getByText('+2 more')).toBeTruthy()
+    screen.getByText('+2 more')
   })
 
   it('does not show remainder for 3 or fewer', () => {

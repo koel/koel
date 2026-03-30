@@ -24,7 +24,7 @@ describe('screenHeader', () => {
       },
     })
 
-    expect(screen.getByAltText('thumb')).toBeTruthy()
+    screen.getByAltText('thumb')
   })
 
   it('renders meta slot when provided', () => {
@@ -35,7 +35,7 @@ describe('screenHeader', () => {
       },
     })
 
-    expect(screen.getByText('3 songs')).toBeTruthy()
+    screen.getByText('3 songs')
   })
 
   it('renders controls slot', () => {
@@ -46,7 +46,7 @@ describe('screenHeader', () => {
       },
     })
 
-    expect(screen.getByRole('button', { name: 'Play' })).toBeTruthy()
+    screen.getByRole('button', { name: 'Play' })
   })
 
   it('applies the disabled state', () => {

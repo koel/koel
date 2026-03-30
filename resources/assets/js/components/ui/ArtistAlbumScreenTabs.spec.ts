@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/vue'
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import Component from './ArtistAlbumScreenTabs.vue'
 
@@ -13,8 +13,8 @@ describe('ArtistAlbumScreenTabs', () => {
         default: '<div>Tab content</div>',
       },
     })
-    expect(screen.getByText('Songs')).toBeTruthy()
-    expect(screen.getByText('Albums')).toBeTruthy()
-    expect(screen.getByText('Tab content')).toBeTruthy()
+    screen.getByText('Songs')
+    screen.getByText('Albums')
+    screen.getByText('Tab content')
   })
 })
