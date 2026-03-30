@@ -98,45 +98,62 @@ class SyncPodcastsCommand extends Command
 
         while ($processes) {
             foreach ($processes as $i => $process) {
-                $output = $process->getIncrementalOutput();
+                $this->drainStdout($process, $buffers[$i]);
+                $this->drainStderr($process, $errBuffers[$i]);
 
-                if ($output !== '') {
-                    $buffers[$i] .= $output;
-
-                    while (($pos = strpos($buffers[$i], "\n")) !== false) {
-                        $this->handleResultLine(substr($buffers[$i], 0, $pos));
-                        $buffers[$i] = substr($buffers[$i], $pos + 1);
-                    }
+                if ($process->isRunning()) {
+                    continue;
                 }
 
-                $errorOutput = $process->getIncrementalErrorOutput();
-
-                if ($errorOutput !== '') {
-                    $errBuffers[$i] .= $errorOutput;
-                }
-
-                if (!$process->isRunning()) {
-                    if (trim($buffers[$i]) !== '') {
-                        $this->handleResultLine($buffers[$i]);
-                    }
-
-                    if (trim($errBuffers[$i]) !== '') {
-                        $this->error($errBuffers[$i]);
-                    }
-
-                    $exitCode = $process->getExitCode();
-
-                    if ($exitCode !== 0 && $exitCode !== null) {
-                        $this->error(sprintf('Worker exited with code %d', $exitCode));
-                    }
-
-                    unset($processes[$i], $buffers[$i], $errBuffers[$i]);
-                }
+                $this->finalizeWorker($process, $buffers[$i], $errBuffers[$i]);
+                unset($processes[$i], $buffers[$i], $errBuffers[$i]);
             }
 
             if ($processes) {
                 usleep(50_000);
             }
+        }
+    }
+
+    private function drainStdout(Process $process, string &$buffer): void
+    {
+        $output = $process->getIncrementalOutput();
+
+        if ($output === '') {
+            return;
+        }
+
+        $buffer .= $output;
+
+        while (($pos = strpos($buffer, "\n")) !== false) {
+            $this->handleResultLine(substr($buffer, 0, $pos));
+            $buffer = substr($buffer, $pos + 1);
+        }
+    }
+
+    private function drainStderr(Process $process, string &$buffer): void
+    {
+        $output = $process->getIncrementalErrorOutput();
+
+        if ($output !== '') {
+            $buffer .= $output;
+        }
+    }
+
+    private function finalizeWorker(Process $process, string $buffer, string $errBuffer): void
+    {
+        if (trim($buffer) !== '') {
+            $this->handleResultLine($buffer);
+        }
+
+        if (trim($errBuffer) !== '') {
+            $this->error($errBuffer);
+        }
+
+        $exitCode = $process->getExitCode();
+
+        if ($exitCode !== 0 && $exitCode !== null) {
+            $this->error(sprintf('Worker exited with code %d', $exitCode));
         }
     }
 
