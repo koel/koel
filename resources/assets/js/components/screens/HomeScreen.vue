@@ -21,7 +21,7 @@
       <TopArtists :loading="loading" data-testid="most-played-artists" />
       <NewSongs :loading="loading" data-testid="recently-added-songs" />
       <NewArtists :loading="loading" data-testid="recently-added-artists" />
-      <RediscoverSongs :loading="loading" data-testid="least-played-songs" />
+      <LeastPlayedSongs :loading="loading" data-testid="least-played-songs" />
       <RandomSongs :loading="loading" data-testid="random-songs" />
       <BtnScrollToTop />
     </div>
@@ -47,7 +47,7 @@ import NewSongs from '@/components/screens/home/NewSongs.vue'
 import TopArtists from '@/components/screens/home/TopArtists.vue'
 import TopAlbums from '@/components/screens/home/TopAlbums.vue'
 import NewArtists from '@/components/screens/home/NewArtists.vue'
-import RediscoverSongs from '@/components/screens/home/RediscoverSongs.vue'
+import LeastPlayedSongs from '@/components/screens/home/LeastPlayedSongs.vue'
 import RandomSongs from '@/components/screens/home/RandomSongs.vue'
 import SimilarSongs from '@/components/screens/home/SimilarSongs.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
