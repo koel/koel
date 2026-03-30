@@ -14,10 +14,13 @@
 
     <div v-else class="space-y-12">
       <RecentlyPlayedPlayables :loading="loading" data-testid="recently-played-songs" />
+      <SimilarSongs :loading="loading" data-testid="similar-songs" />
       <NewAlbums :loading="loading" data-testid="recently-added-albums" />
       <NewSongs :loading="loading" data-testid="recently-added-songs" />
+      <RandomSongs :loading="loading" data-testid="random-songs" />
       <TopAlbums :loading="loading" data-testid="most-played-albums" />
       <MostPlayedSongs :loading="loading" data-testid="most-played-songs" />
+      <RediscoverSongs :loading="loading" data-testid="least-played-songs" />
       <TopArtists :loading="loading" data-testid="most-played-artists" />
       <BtnScrollToTop />
     </div>
@@ -42,6 +45,9 @@ import NewAlbums from '@/components/screens/home/NewAlbums.vue'
 import NewSongs from '@/components/screens/home/NewSongs.vue'
 import TopArtists from '@/components/screens/home/TopArtists.vue'
 import TopAlbums from '@/components/screens/home/TopAlbums.vue'
+import RediscoverSongs from '@/components/screens/home/RediscoverSongs.vue'
+import RandomSongs from '@/components/screens/home/RandomSongs.vue'
+import SimilarSongs from '@/components/screens/home/SimilarSongs.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import BtnScrollToTop from '@/components/ui/BtnScrollToTop.vue'

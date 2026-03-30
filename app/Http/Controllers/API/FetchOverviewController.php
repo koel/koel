@@ -17,13 +17,21 @@ class FetchOverviewController extends Controller
         AlbumRepository $albumRepository,
         ArtistRepository $artistRepository,
     ) {
+        $recentlyPlayed = $songRepository->getRecentlyPlayed(6);
+        $mostRecentSong = $recentlyPlayed->first();
+
         return response()->json([
             'most_played_albums' => AlbumResource::collection($albumRepository->getMostPlayed()),
             'most_played_artists' => ArtistResource::collection($artistRepository->getMostPlayed()),
-            'most_played_songs' => SongResource::collection($songRepository->getMostPlayed()),
+            'most_played_songs' => SongResource::collection($songRepository->getMostPlayed(6)),
             'recently_added_albums' => AlbumResource::collection($albumRepository->getRecentlyAdded()),
-            'recently_added_songs' => SongResource::collection($songRepository->getRecentlyAdded()),
-            'recently_played_songs' => SongResource::collection($songRepository->getRecentlyPlayed()),
+            'recently_added_songs' => SongResource::collection($songRepository->getRecentlyAdded(6)),
+            'recently_played_songs' => SongResource::collection($recentlyPlayed),
+            'least_played_songs' => SongResource::collection($songRepository->getLeastPlayed(6)),
+            'random_songs' => SongResource::collection($songRepository->getRandom(6)),
+            'similar_songs' => SongResource::collection(
+                $mostRecentSong ? $songRepository->getSimilar($mostRecentSong, 6) : collect(),
+            ),
         ]);
     }
 }

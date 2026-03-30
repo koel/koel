@@ -14,6 +14,9 @@ export const overviewStore = {
     recentlyAddedAlbums: [] as Album[],
     recentlyAddedSongs: [] as Song[],
     recentlyPlayed: [] as Playable[],
+    leastPlayedSongs: [] as Song[],
+    randomSongs: [] as Song[],
+    similarSongs: [] as Song[],
   }),
 
   async fetch() {
@@ -24,6 +27,9 @@ export const overviewStore = {
       recently_added_albums: Album[]
       recently_added_songs: Song[]
       recently_played_songs: Playable[]
+      least_played_songs: Song[]
+      random_songs: Song[]
+      similar_songs: Song[]
     }>('overview')
 
     playableStore.syncWithVault(resource.most_played_songs)
@@ -34,6 +40,9 @@ export const overviewStore = {
     this.state.mostPlayedArtists = artistStore.syncWithVault(resource.most_played_artists)
     this.state.recentlyAddedAlbums = albumStore.syncWithVault(resource.recently_added_albums)
     this.state.recentlyAddedSongs = playableStore.syncWithVault(resource.recently_added_songs) as Song[]
+    this.state.leastPlayedSongs = playableStore.syncWithVault(resource.least_played_songs) as Song[]
+    this.state.randomSongs = playableStore.syncWithVault(resource.random_songs) as Song[]
+    this.state.similarSongs = playableStore.syncWithVault(resource.similar_songs) as Song[]
 
     recentlyPlayedStore.excerptState.playables = playableStore.syncWithVault(resource.recently_played_songs)
 
@@ -41,7 +50,7 @@ export const overviewStore = {
   },
 
   refreshPlayStats() {
-    this.state.mostPlayedSongs = playableStore.getMostPlayedSongs(7)
+    this.state.mostPlayedSongs = playableStore.getMostPlayedSongs(6)
     this.state.recentlyPlayed = recentlyPlayedStore.excerptState.playables.filter(playable => {
       if (isSong(playable) && playable.deleted) {
         return false
