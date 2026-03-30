@@ -94,6 +94,7 @@ class SyncPodcastsCommand extends Command
     private function collectResults(array $processes): void
     {
         $buffers = array_fill(0, count($processes), '');
+        $errBuffers = array_fill(0, count($processes), '');
 
         while ($processes) {
             foreach ($processes as $i => $process) {
@@ -108,12 +109,28 @@ class SyncPodcastsCommand extends Command
                     }
                 }
 
+                $errorOutput = $process->getIncrementalErrorOutput();
+
+                if ($errorOutput !== '') {
+                    $errBuffers[$i] .= $errorOutput;
+                }
+
                 if (!$process->isRunning()) {
                     if (trim($buffers[$i]) !== '') {
                         $this->handleResultLine($buffers[$i]);
                     }
 
-                    unset($processes[$i], $buffers[$i]);
+                    if (trim($errBuffers[$i]) !== '') {
+                        $this->error($errBuffers[$i]);
+                    }
+
+                    $exitCode = $process->getExitCode();
+
+                    if ($exitCode !== 0 && $exitCode !== null) {
+                        $this->error(sprintf('Worker exited with code %d', $exitCode));
+                    }
+
+                    unset($processes[$i], $buffers[$i], $errBuffers[$i]);
                 }
             }
 
