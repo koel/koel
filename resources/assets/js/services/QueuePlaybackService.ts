@@ -18,6 +18,7 @@ import { socketService } from '@/services/socketService'
 import { useEpisodeProgressTracking } from '@/composables/useEpisodeProgressTracking'
 import { BasePlaybackService } from '@/services/BasePlaybackService'
 import { crossfadeService } from '@/services/crossfadeService'
+import { encyclopediaService } from '@/services/encyclopediaService'
 import { volumeManager } from '@/services/volumeManager'
 import { useBranding } from '@/composables/useBranding'
 
@@ -62,6 +63,10 @@ export class QueuePlaybackService extends BasePlaybackService {
     recentlyPlayedStore.add(playable)
     playableStore.registerPlay(playable)
     playable.play_count_registered = true
+
+    if (isSong(playable) && !playable.album_cover) {
+      encyclopediaService.fetchForAlbum({ id: playable.album_id } as Album).catch(logger.error)
+    }
   }
 
   public preload(playable: Playable) {
