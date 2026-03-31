@@ -30,7 +30,7 @@ ol > :deep(:nth-child(n + 2)) {
 
     &::before {
       @apply content-[''] absolute top-0 left-0 h-px bg-k-fg-5;
-      width: calc(200% + 1px);
+      width: 200%;
     }
   }
 }
