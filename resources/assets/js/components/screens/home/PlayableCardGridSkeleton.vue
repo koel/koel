@@ -1,6 +1,6 @@
 <template>
-  <ol class="grid grid-cols-1 md:grid-cols-2">
-    <li v-for="key in 6" :key class="flex items-center gap-3 p-4">
+  <ol class="skeleton grid grid-cols-1 md:grid-cols-2 -mx-6">
+    <li v-for="key in 6" :key class="flex items-center gap-4 px-6 py-4">
       <div class="w-12 aspect-square rounded pulse flex-shrink-0" />
       <span class="flex-1 space-y-2">
         <div class="h-4 rounded-full w-3/5 pulse" />
