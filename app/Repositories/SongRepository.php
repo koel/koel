@@ -439,10 +439,13 @@ class SongRepository extends Repository implements ScoutableRepository
     /** @return Collection<Song>|array<array-key, Song> */
     public function getSimilar(Song $song, int $limit = 50, ?User $user = null): Collection
     {
-        return $this->getSimilarToMany(new Collection([$song]), $limit, $user);
+        /** @var Collection<int, Song> $songs */
+        $songs = new Collection([$song]);
+
+        return $this->getSimilarToMany($songs, $limit, $user);
     }
 
-    /** @param Collection<Song> $songs */
+    /** @param Collection<int, Song> $songs */
     public function getSimilarToMany(Collection $songs, int $limit = 50, ?User $user = null): Collection
     {
         if ($songs->isEmpty()) {
@@ -451,11 +454,10 @@ class SongRepository extends Repository implements ScoutableRepository
 
         $songIds = $songs->pluck('id')->all();
         $artistIds = $songs->pluck('artist_id')->unique()->all();
-        $genreIds = $songs
-            ->load('genres')
-            ->flatMap(static fn (Song $song) => $song->genres->pluck('id'))
-            ->unique()
-            ->all();
+
+        /** @var Collection<int, Song> $loadedSongs */
+        $loadedSongs = $songs->load('genres');
+        $genreIds = $loadedSongs->flatMap(static fn (Song $song) => $song->genres->pluck('id'))->unique()->all();
 
         return Song::query(type: PlayableType::SONG, user: $user ?? $this->auth->user())
             ->withUserContext()
