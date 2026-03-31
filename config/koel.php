@@ -60,6 +60,7 @@ return [
             'audio/dts' => 'dts', // DTS
             'audio/vnd.rn-realaudio' => ['ra', 'rm'], // RealAudio
             'audio/x-ms-wma' => 'wma', // Windows Media Audio (WMA)
+            'video/x-ms-asf' => 'wma', // WMA/ASF (detected by fileinfo for WMA files)
             'audio/basic' => 'au', // µ-law
 
             // Lossless and other audio formats
@@ -97,6 +98,7 @@ return [
             'audio/dts',
             'audio/vnd.rn-realaudio',
             'audio/x-ms-wma',
+            'video/x-ms-asf', // WMA detected as ASF container by fileinfo
             'audio/basic',
             'audio/vnd.wave', // not always handled correctly
             'audio/aiff',
