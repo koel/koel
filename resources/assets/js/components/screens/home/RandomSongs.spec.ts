@@ -23,13 +23,16 @@ describe('randomSongs.vue', () => {
     expect(refreshMock).toHaveBeenCalled()
   })
 
-  it('shows skeleton during refresh', async () => {
+  it('fades grid during refresh', async () => {
     overviewStore.state.randomSongs = h.factory('song', 6)
     h.mock(overviewStore, 'refreshRandomSongs').mockReturnValue(new Promise(() => {}))
     h.render(Component)
 
     await h.user.click(screen.getByRole('button', { name: 'Refresh' }))
 
-    await waitFor(() => screen.getByTestId('playable-card-grid-skeleton'))
+    await waitFor(() => {
+      const grid = screen.getAllByTestId('song-card')[0].closest('ol')!
+      expect(grid.classList).toContain('opacity-70')
+    })
   })
 })

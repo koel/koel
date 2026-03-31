@@ -8,9 +8,14 @@
       </Btn>
     </template>
 
-    <PlayableCardGridSkeleton v-if="loading || refreshing" class="-mx-6" />
+    <PlayableCardGridSkeleton v-if="loading" class="-mx-6" />
     <template v-else>
-      <PlayableCardGrid v-if="playables.length" class="-mx-6" :playables />
+      <PlayableCardGrid
+        v-if="playables.length"
+        class="-mx-6 transition-opacity"
+        :class="{ 'opacity-70': refreshing }"
+        :playables
+      />
       <p v-else>No songs available.</p>
     </template>
   </HomeScreenBlock>
