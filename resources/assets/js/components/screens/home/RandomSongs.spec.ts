@@ -18,8 +18,18 @@ describe('randomSongs.vue', () => {
     const refreshMock = h.mock(overviewStore, 'refreshRandomSongs')
     h.render(Component)
 
-    await h.user.click(screen.getByRole('button', { name: /Refresh/ }))
+    await h.user.click(screen.getByRole('button', { name: 'Refresh' }))
 
     expect(refreshMock).toHaveBeenCalled()
+  })
+
+  it('shows skeleton during refresh', async () => {
+    overviewStore.state.randomSongs = h.factory('song', 6)
+    h.mock(overviewStore, 'refreshRandomSongs').mockReturnValue(new Promise(() => {}))
+    h.render(Component)
+
+    await h.user.click(screen.getByRole('button', { name: 'Refresh' }))
+
+    await waitFor(() => screen.getByTestId('playable-card-grid-skeleton'))
   })
 })
