@@ -51,9 +51,11 @@ export const overviewStore = {
   },
 
   async refreshRandomSongs() {
-    this.state.randomSongs = playableStore.syncWithVault(
-      await http.get<Song[]>('queue/fetch?order=rand&limit=6'),
-    ) as Song[]
+    const songs = playableStore.syncWithVault(await http.get<Song[]>('queue/fetch?order=rand&limit=6')) as Song[]
+
+    this.state.randomSongs = songs
+
+    return songs
   },
 
   refreshPlayStats() {
