@@ -1,6 +1,7 @@
 <template>
   <HomeScreenSection>
     <template #header>Top Artists</template>
+    <template #subheading>Artists you can't get enough of</template>
 
     <ol v-if="loading" class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
       <li v-for="i in 4" :key="i">

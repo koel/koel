@@ -1,6 +1,7 @@
 <template>
   <HomeScreenBlock>
     <template #header>New Songs</template>
+    <template #subheading>Songs that just landed in your library</template>
 
     <PlayableCardGridSkeleton v-if="loading" class="-mx-6" />
     <template v-else>

@@ -1,6 +1,7 @@
 <template>
   <HomeScreenBlock>
     <template #header>Most Played</template>
+    <template #subheading>Your all-time favorites</template>
 
     <PlayableCardGridSkeleton v-if="loading" class="-mx-6" />
     <template v-else>

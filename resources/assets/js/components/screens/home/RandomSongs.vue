@@ -7,6 +7,7 @@
         <span class="sr-only">Refresh</span>
       </Btn>
     </template>
+    <template #subheading>Shuffle the deck, see what comes up</template>
 
     <PlayableCardGridSkeleton v-if="loading" class="-mx-6" />
     <template v-else>

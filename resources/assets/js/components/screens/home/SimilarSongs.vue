@@ -1,6 +1,7 @@
 <template>
   <HomeScreenBlock v-if="loading || playables.length">
     <template #header>You Might Also Like</template>
+    <template #subheading>Based on what you've been playing</template>
 
     <PlayableCardGridSkeleton v-if="loading" class="-mx-6" />
     <PlayableCardGrid v-else class="-mx-6" :playables />
