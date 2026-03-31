@@ -9,7 +9,7 @@
       ref="input"
       v-model="q"
       :class="{ dirty: q }"
-      :placeholder="placeholder"
+      :placeholder
       autocorrect="false"
       class="flex-1 rounded-none border-0 bg-transparent focus-visible:outline-none px-4"
       name="q"
