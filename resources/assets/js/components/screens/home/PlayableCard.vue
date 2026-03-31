@@ -15,7 +15,7 @@
       <span class="title block truncate">{{ playable.title }}</span>
       <span class="block truncate text-k-fg-50 text-[0.9rem]">{{ artist }}</span>
     </span>
-    <span class="text-k-fg-40 text-[0.9rem] tabular-nums flex-shrink-0 h-full py-1">
+    <span class="text-k-fg-50 text-[0.9rem] tabular-nums">
       {{ fmtLength }}
     </span>
   </li>
