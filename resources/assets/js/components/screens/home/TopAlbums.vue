@@ -10,7 +10,7 @@
     <template v-else>
       <ol v-if="albums.length" class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
         <li v-for="album in albums" :key="album.id">
-          <AlbumCard :album="album" layout="compact" />
+          <AlbumCard :album layout="compact" />
         </li>
       </ol>
       <p v-else>No albums found.</p>

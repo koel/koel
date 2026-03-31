@@ -10,7 +10,7 @@
     <template v-else>
       <ul v-if="albums.length" class="results">
         <li v-for="album in albums" :key="album.id">
-          <AlbumCard :album="album" layout="compact" />
+          <AlbumCard :album layout="compact" />
         </li>
       </ul>
       <p v-else>None found.</p>

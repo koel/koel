@@ -10,7 +10,7 @@
     <template v-else>
       <ul v-if="artists.length" class="results">
         <li v-for="artist in artists" :key="artist.id">
-          <ArtistCard :artist="artist" layout="compact" />
+          <ArtistCard :artist layout="compact" />
         </li>
       </ul>
       <p v-else>None found.</p>

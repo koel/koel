@@ -5,9 +5,9 @@
       <ViewAllRecentlyPlayedPlayablesButton v-if="playables.length" class="float-right" />
     </template>
 
-    <PlayableCardGridSkeleton v-if="loading" />
+    <PlayableCardGridSkeleton v-if="loading" class="-mx-6" />
     <template v-else>
-      <PlayableCardGrid v-if="playables.length" :playables="playables" />
+      <PlayableCardGrid v-if="playables.length" class="-mx-6" :playables />
       <p v-else>Nothing played as of late.</p>
     </template>
   </HomeScreenBlock>

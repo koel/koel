@@ -70,7 +70,7 @@
         :items="displayedEpisodes"
         @scroll="onListScroll"
       >
-        <EpisodeItem :key="item.id" :podcast="podcast" :episode="item" />
+        <EpisodeItem :key="item.id" :podcast :episode="item" />
       </VirtualScroller>
     </div>
   </ScreenBase>

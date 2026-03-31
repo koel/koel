@@ -11,13 +11,7 @@
     <template v-if="!loading && info?.wiki">
       <div v-html="info.wiki.full" />
 
-      <TrackList
-        v-if="info.tracks?.length"
-        :album="album"
-        :tracks="info.tracks"
-        class="mt-8"
-        data-testid="album-info-tracks"
-      />
+      <TrackList v-if="info.tracks?.length" :album :tracks="info.tracks" class="mt-8" data-testid="album-info-tracks" />
     </template>
 
     <template v-if="!loading && info?.url" #footer>

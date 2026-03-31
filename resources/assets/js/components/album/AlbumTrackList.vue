@@ -9,7 +9,7 @@
         class="flex p-2 before:w-7 before:text-k-fg-50"
         data-testid="album-track-item"
       >
-        <TrackListItem :album="album" :track="track" />
+        <TrackListItem :album :track />
       </li>
     </ul>
   </article>

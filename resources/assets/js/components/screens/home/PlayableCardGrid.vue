@@ -1,5 +1,5 @@
 <template>
-  <ol class="grid grid-cols-1 md:grid-cols-2 -mx-6">
+  <ol class="grid grid-cols-1 md:grid-cols-2">
     <PlayableCard v-for="playable in playables" :key="playable.id" :playable />
   </ol>
 </template>

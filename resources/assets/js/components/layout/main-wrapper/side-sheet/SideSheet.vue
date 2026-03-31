@@ -37,7 +37,7 @@
         data-testid="side-sheet-artist"
         aria-labelledby="extraTabArtist"
       >
-        <ArtistInfo v-if="artist && !loadingArtist" :artist="artist" class="px-6 py-8" mode="aside" />
+        <ArtistInfo v-if="artist && !loadingArtist" :artist class="px-6 py-8" mode="aside" />
         <SideSheetArtistAlbumInfoSkeleton v-else class="px-6 py-8" />
       </SideSheetPanelLazyWrapper>
 
@@ -48,7 +48,7 @@
         data-testid="side-sheet-album"
         aria-labelledby="extraTabAlbum"
       >
-        <AlbumInfo v-if="album && !loadingAlbum" :album="album" class="px-6 py-8" mode="aside" />
+        <AlbumInfo v-if="album && !loadingAlbum" :album class="px-6 py-8" mode="aside" />
         <SideSheetArtistAlbumInfoSkeleton v-else class="px-6 py-8" />
       </SideSheetPanelLazyWrapper>
 

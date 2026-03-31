@@ -18,7 +18,7 @@
 
     <ul class="space-y-3">
       <li v-for="user in users" :key="user.id">
-        <UserCard :user="user" />
+        <UserCard :user />
       </li>
     </ul>
 
@@ -34,7 +34,7 @@
 
       <ul class="space-y-3">
         <li v-for="user in prospects" :key="user.id">
-          <UserCard :user="user" />
+          <UserCard :user />
         </li>
       </ul>
     </template>
