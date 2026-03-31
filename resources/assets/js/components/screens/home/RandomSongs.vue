@@ -3,7 +3,7 @@
     <template #header>
       Something Random
       <Btn v-if="playables.length" class="float-right" transparent rounded small @click.prevent="refresh">
-        <Icon :icon="faArrowsRotate" />
+        <Icon :icon="faRotateRight" />
         <span class="sr-only">Refresh</span>
       </Btn>
     </template>
@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons'
+import { faRotateRight } from '@fortawesome/free-solid-svg-icons'
 import { ref, toRef, toRefs } from 'vue'
 import { overviewStore } from '@/stores/overviewStore'
 
