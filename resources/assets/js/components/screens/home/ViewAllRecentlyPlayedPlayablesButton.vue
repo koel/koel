@@ -10,5 +10,3 @@ import Btn from '@/components/ui/form/Btn.vue'
 const { go, url } = useRouter()
 const goToRecentlyPlayedScreen = () => go(url('recently-played'))
 </script>
-
-<style lang="postcss" scoped></style>

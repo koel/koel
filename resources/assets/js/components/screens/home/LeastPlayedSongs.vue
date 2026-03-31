@@ -2,9 +2,9 @@
   <HomeScreenBlock>
     <template #header>Hidden Gems</template>
 
-    <PlayableCardGridSkeleton v-if="loading" />
+    <PlayableCardGridSkeleton v-if="loading" class="-mx-6" />
     <template v-else>
-      <PlayableCardGrid v-if="playables.length" :playables="playables" />
+      <PlayableCardGrid v-if="playables.length" class="-mx-6" :playables />
       <p v-else>No songs to rediscover.</p>
     </template>
   </HomeScreenBlock>

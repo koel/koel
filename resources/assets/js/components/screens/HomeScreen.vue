@@ -13,16 +13,16 @@
     </ScreenEmptyState>
 
     <div v-else class="home-sections space-y-12">
-      <RecentlyPlayedPlayables :loading="loading" data-testid="recently-played-songs" />
-      <NewAlbums :loading="loading" data-testid="recently-added-albums" />
-      <SimilarSongs :loading="loading" data-testid="similar-songs" />
-      <TopAlbums :loading="loading" data-testid="most-played-albums" />
-      <MostPlayedSongs :loading="loading" data-testid="most-played-songs" />
-      <TopArtists :loading="loading" data-testid="most-played-artists" />
-      <NewSongs :loading="loading" data-testid="recently-added-songs" />
-      <NewArtists :loading="loading" data-testid="recently-added-artists" />
-      <LeastPlayedSongs :loading="loading" data-testid="least-played-songs" />
-      <RandomSongs :loading="loading" data-testid="random-songs" />
+      <RecentlyPlayedPlayables :loading data-testid="recently-played-songs" />
+      <NewAlbums :loading data-testid="recently-added-albums" />
+      <SimilarSongs :loading data-testid="similar-songs" />
+      <TopAlbums :loading data-testid="most-played-albums" />
+      <MostPlayedSongs :loading data-testid="most-played-songs" />
+      <TopArtists :loading data-testid="most-played-artists" />
+      <NewSongs :loading data-testid="recently-added-songs" />
+      <NewArtists :loading data-testid="recently-added-artists" />
+      <LeastPlayedSongs :loading data-testid="least-played-songs" />
+      <RandomSongs :loading data-testid="random-songs" />
       <BtnScrollToTop />
     </div>
   </ScreenBase>

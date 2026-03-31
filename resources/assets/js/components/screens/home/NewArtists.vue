@@ -10,7 +10,7 @@
     <template v-else>
       <ol v-if="artists.length" class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
         <li v-for="artist in artists" :key="artist.id">
-          <ArtistCard :artist="artist" layout="compact" />
+          <ArtistCard :artist layout="compact" />
         </li>
       </ol>
       <p v-else>No new artists.</p>

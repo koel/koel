@@ -23,7 +23,7 @@
     <!-- Chat mode -->
     <template v-else>
       <section v-koel-overflow-fade class="py-6 flex-1 flex flex-col w-full max-w-4xl overflow-auto mx-auto">
-        <AiChatHistory :messages="messages" :loading="loading" class="flex-1" />
+        <AiChatHistory :messages :loading class="flex-1" />
       </section>
 
       <div class="shrink-0 p-4 pt-2">

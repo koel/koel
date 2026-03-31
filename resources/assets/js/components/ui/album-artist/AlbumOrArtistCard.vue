@@ -17,7 +17,7 @@
       @contextmenu.prevent="onContextMenu"
     >
       <slot name="thumbnail">
-        <Thumbnail v-if="hasThumbnail(entity)" :entity="entity" />
+        <Thumbnail v-if="hasThumbnail(entity)" :entity />
       </slot>
 
       <footer class="flex flex-1 flex-col gap-1.5 overflow-hidden">

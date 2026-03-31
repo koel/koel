@@ -273,6 +273,9 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - Do not add explicit return types when they can be inferred by the compiler. Only annotate return types when inference is insufficient or ambiguous.
 - When using `setTimeout`, `setInterval`, or `requestAnimationFrame`, always ensure they are cleaned up: on component unmount (`onBeforeUnmount`), on state transitions that invalidate them (e.g. drop cancels a pending expand), and when the operation completes. Treat every timer/rAF as a resource that must be explicitly released.
 
+## Vue Template Conventions
+- Always use Vue's same-name shorthand for bindings: `:foo` instead of `:foo="foo"`. This applies to props, components, and any v-bind where the attribute name matches the variable name.
+
 ## Vue Component Styling
 - Put shared/base Tailwind classes directly on the HTML element via the `class` attribute.
 - For variant-specific styles (e.g. modes, states), use custom CSS classes (`.initial`, `.chat`, `.user`, `.error`, etc.) with `@apply` in a scoped `<style>` block.

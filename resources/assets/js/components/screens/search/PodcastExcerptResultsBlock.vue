@@ -10,7 +10,7 @@
     <template v-else>
       <ul v-if="podcasts.length" class="results">
         <li v-for="podcast in podcasts" :key="podcast.id">
-          <PodcastCard :podcast="podcast" layout="compact" />
+          <PodcastCard :podcast layout="compact" />
         </li>
       </ul>
       <p v-else>None found.</p>

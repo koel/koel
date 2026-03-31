@@ -73,13 +73,7 @@
       <div v-show="activeTab === 'albums'" class="albums-pane">
         <GridListView v-koel-overflow-fade view-mode="list">
           <template v-if="albums">
-            <AlbumCard
-              v-for="album in albums"
-              :key="album.id"
-              :album="album"
-              :show-release-year="true"
-              layout="compact"
-            />
+            <AlbumCard v-for="album in albums" :key="album.id" :album :show-release-year="true" layout="compact" />
           </template>
           <template v-else>
             <AlbumCardSkeleton v-for="i in 6" :key="i" layout="compact" />
@@ -88,11 +82,11 @@
       </div>
 
       <div v-if="useEncyclopedia && artist" v-show="activeTab === 'information'" class="info-pane">
-        <ArtistInfo :artist="artist" mode="full" />
+        <ArtistInfo :artist mode="full" />
       </div>
 
       <div v-if="useTicketmaster && artist" v-show="activeTab === 'events'" class="events-pane">
-        <ArtistEventList :artist="artist" />
+        <ArtistEventList :artist />
       </div>
     </ScreenTabs>
   </ScreenBase>

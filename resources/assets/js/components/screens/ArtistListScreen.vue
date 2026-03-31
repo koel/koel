@@ -51,7 +51,7 @@
           <ArtistCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
         </template>
         <template v-else>
-          <ArtistCard v-for="artist in displayedArtists" :key="artist.id" :artist="artist" :layout="itemLayout" />
+          <ArtistCard v-for="artist in displayedArtists" :key="artist.id" :artist :layout="itemLayout" />
           <template v-if="loading">
             <ArtistCardSkeleton v-for="i in 4" :key="`loading-${i}`" :layout="itemLayout" />
           </template>
