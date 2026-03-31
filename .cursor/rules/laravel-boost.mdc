@@ -22,7 +22,6 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - laravel/mcp (MCP) - v0
 - phpunit/phpunit (PHPUNIT) - v11
 - vue (VUE) - v3
-- eslint (ESLINT) - v9
 - laravel-echo (ECHO) - v2
 - tailwindcss (TAILWINDCSS) - v3
 

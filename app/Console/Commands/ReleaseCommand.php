@@ -12,6 +12,7 @@ use function Laravel\Prompts\error;
 use function Laravel\Prompts\info;
 use function Laravel\Prompts\note;
 use function Laravel\Prompts\select;
+use function Laravel\Prompts\task;
 use function Laravel\Prompts\text;
 use function Laravel\Prompts\warning;
 
@@ -77,7 +78,7 @@ class ReleaseCommand extends Command
         ];
 
         foreach ($gitCommands as $command) {
-            $this->components->task("Executing `git $command`", static fn () => self::runOkOrThrow("git $command"));
+            task(label: "Executing `git $command`", callback: static fn () => self::runOkOrThrow("git $command"));
         }
 
         info("Success! The new version $version has been tagged.");

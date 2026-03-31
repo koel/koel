@@ -24,6 +24,7 @@ use function Laravel\Prompts\info;
 use function Laravel\Prompts\password;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\suggest;
+use function Laravel\Prompts\task;
 use function Laravel\Prompts\text;
 use function Laravel\Prompts\warning;
 
@@ -109,7 +110,7 @@ class InitCommand extends Command
 
     private function clearCaches(): void
     {
-        $this->components->task('Clearing caches', static function (): void {
+        task(label: 'Clearing caches', callback: static function (): void {
             Artisan::call('config:clear', ['--quiet' => true]);
             Artisan::call('cache:clear', ['--quiet' => true]);
         });
@@ -118,11 +119,11 @@ class InitCommand extends Command
     private function loadEnvFile(): void
     {
         if (!File::exists(base_path('.env'))) {
-            $this->components->task('Copying .env file', static function (): void {
+            task(label: 'Copying .env file', callback: static function (): void {
                 File::copy(base_path('.env.example'), base_path('.env'));
             });
         } else {
-            $this->components->task('.env file exists -- skipping');
+            info('.env file exists -- skipping');
         }
 
         $this->dotenvEditor->load(base_path('.env'));
@@ -132,7 +133,7 @@ class InitCommand extends Command
     {
         $key = $this->laravel['config']['app.key'];
 
-        $this->components->task($key ? 'Retrieving app key' : 'Generating app key', function () use (&$key): void {
+        task(label: $key ? 'Retrieving app key' : 'Generating app key', callback: function () use (&$key): void {
             if (!$key) {
                 // Generate the key manually to prevent some clashes with `php artisan key:generate`
                 $key = $this->generateRandomKey();
@@ -141,7 +142,7 @@ class InitCommand extends Command
             }
         });
 
-        $this->components->task('Using app key: ' . Str::limit($key, 16));
+        info('Using app key: ' . Str::limit($key, 16));
     }
 
     /**
@@ -203,7 +204,7 @@ class InitCommand extends Command
 
     private function setUpAdminAccount(): void
     {
-        $this->components->task('Creating default admin account', function (): void {
+        task(label: 'Creating default admin account', callback: function (): void {
             $this->userRepository->getOrCreateFirstAdmin();
             $this->adminSeeded = true;
         });
@@ -214,11 +215,11 @@ class InitCommand extends Command
         if (!User::query()->count()) {
             $this->setUpAdminAccount();
 
-            $this->components->task('Seeding data', static function (): void {
+            task(label: 'Seeding data', callback: static function (): void {
                 Artisan::call('db:seed', ['--force' => true, '--quiet' => true]);
             });
         } else {
-            $this->components->task('Data already seeded -- skipping');
+            info('Data already seeded -- skipping');
         }
     }
 
@@ -268,7 +269,7 @@ class InitCommand extends Command
 
     private function migrateDatabase(): void
     {
-        $this->components->task('Migrating database', static function (): void {
+        task(label: 'Migrating database', callback: static function (): void {
             Artisan::call('migrate', ['--force' => true, '--quiet' => true]);
         });
     }
@@ -314,11 +315,11 @@ class InitCommand extends Command
             return;
         }
 
-        $this->components->task('Installing npm dependencies', function (): void {
+        task(label: 'Installing npm dependencies', callback: function (): void {
             $this->runOkOrThrow('pnpm install --color');
         });
 
-        $this->components->task('Compiling frontend assets', function (): void {
+        task(label: 'Compiling frontend assets', callback: function (): void {
             $this->runOkOrThrow('pnpm run --color build');
         });
     }
@@ -367,7 +368,7 @@ class InitCommand extends Command
 
         $result = 0;
 
-        $this->components->task('Installing Koel scheduler', static function () use (&$result): void {
+        task(label: 'Installing Koel scheduler', callback: static function () use (&$result): void {
             $result = Artisan::call('koel:scheduler:install', ['--quiet' => true]);
         });
 
@@ -384,11 +385,11 @@ class InitCommand extends Command
             $source = public_path("$file.example");
 
             if (File::exists($destination)) {
-                $this->components->task("$file already exists -- skipping");
+                info("$file already exists -- skipping");
                 continue;
             }
 
-            $this->components->task("Copying $file", static function () use ($source, $destination): void {
+            task(label: "Copying $file", callback: static function () use ($source, $destination): void {
                 File::copy($source, $destination);
             });
         }
