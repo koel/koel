@@ -2,7 +2,7 @@
   <HomeScreenBlock>
     <template #header>
       Something Random
-      <Btn v-if="playables.length" class="float-right" highlight rounded small @click.prevent="refresh">
+      <Btn v-if="playables.length" class="float-right" transparent rounded small @click.prevent="refresh">
         <Icon :icon="faArrowsRotate" />
         <span class="sr-only">Refresh</span>
       </Btn>
