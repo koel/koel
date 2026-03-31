@@ -10,13 +10,7 @@
 
     <PlayableCardGridSkeleton v-if="loading" class="-mx-6" />
     <template v-else>
-      <PlayableCardGrid
-        v-if="playables.length"
-        :aria-busy="refreshing"
-        class="-mx-6"
-        :class="{ refreshing }"
-        :playables
-      />
+      <PlayableCardGrid v-if="playables.length" :aria-busy="refreshing" class="-mx-6" :playables />
       <p v-else>No songs available.</p>
     </template>
   </HomeScreenBlock>
@@ -50,7 +44,7 @@ const refresh = async () => {
 </script>
 
 <style lang="postcss" scoped>
-:deep(.refreshing) {
+:deep([aria-busy='true']) {
   @apply opacity-70 transition-opacity;
 }
 </style>
