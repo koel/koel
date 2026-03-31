@@ -12,8 +12,9 @@
     <template v-else>
       <PlayableCardGrid
         v-if="playables.length"
-        class="-mx-6 transition-opacity"
-        :class="{ 'opacity-70': refreshing }"
+        :aria-busy="refreshing"
+        class="-mx-6"
+        :class="{ refreshing }"
         :playables
       />
       <p v-else>No songs available.</p>
@@ -47,3 +48,9 @@ const refresh = async () => {
   }
 }
 </script>
+
+<style lang="postcss" scoped>
+:deep(.refreshing) {
+  @apply opacity-70 transition-opacity;
+}
+</style>

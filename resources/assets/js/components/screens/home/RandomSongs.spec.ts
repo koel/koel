@@ -23,7 +23,7 @@ describe('randomSongs.vue', () => {
     expect(refreshMock).toHaveBeenCalled()
   })
 
-  it('fades grid during refresh', async () => {
+  it('marks grid as busy during refresh', async () => {
     overviewStore.state.randomSongs = h.factory('song', 6)
     h.mock(overviewStore, 'refreshRandomSongs').mockReturnValue(new Promise(() => {}))
     h.render(Component)
@@ -32,7 +32,7 @@ describe('randomSongs.vue', () => {
 
     await waitFor(() => {
       const grid = screen.getAllByTestId('song-card')[0].closest('ol')!
-      expect(grid.classList).toContain('opacity-70')
+      expect(grid.getAttribute('aria-busy')).toBe('true')
     })
   })
 })
