@@ -18,6 +18,11 @@ use RuntimeException;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Finder\Finder;
 
+use function Laravel\Prompts\error;
+use function Laravel\Prompts\info;
+use function Laravel\Prompts\text;
+use function Laravel\Prompts\warning;
+
 class ScanCommand extends Command
 {
     protected $signature = 'koel:scan
@@ -52,7 +57,7 @@ class ScanCommand extends Command
     public function handle(): int
     {
         if (config('koel.storage_driver') !== 'local') {
-            $this->components->error('This command only works with the local storage driver.');
+            error('This command only works with the local storage driver.');
 
             return self::INVALID;
         }
@@ -92,18 +97,16 @@ class ScanCommand extends Command
         $jobs = (int) ($this->option('jobs') ?: config('koel.scan.jobs', 4));
         $jobs = max(1, $jobs);
 
-        $this->components->info(
-            $jobs > 1 ? "Scanning $this->mediaPath with $jobs parallel workers." : "Scanning $this->mediaPath",
-        );
+        info($jobs > 1 ? "Scanning $this->mediaPath with $jobs parallel workers." : "Scanning $this->mediaPath");
 
         if ($config->ignores) {
-            $this->components->info('Ignoring tag(s): ' . implode(', ', $config->ignores));
+            info('Ignoring tag(s): ' . implode(', ', $config->ignores));
         }
 
         $results = $this->directoryScanner->scan((string) Setting::get('media_path'), $config, $jobs);
 
         $this->newLine(2);
-        $this->components->info('Scanning completed!');
+        info('Scanning completed!');
 
         $this->components->bulletList([
             "<fg=green>{$results->success()->count()}</> new or updated song(s)",
@@ -157,17 +160,17 @@ class ScanCommand extends Command
             return $path;
         }
 
-        $this->warn("Media path hasn't been configured. Let's set it up.");
+        warning("Media path hasn't been configured. Let's set it up.");
 
         while (true) {
-            $path = $this->ask('Absolute path to your media directory');
+            $path = text('Absolute path to your media directory');
 
             if (File::isDirectory($path) && File::isReadable($path)) {
                 Setting::set('media_path', $path);
                 break;
             }
 
-            $this->error('The path does not exist or is not readable. Try again.');
+            error('The path does not exist or is not readable. Try again.');
         }
 
         return $path;
@@ -179,21 +182,19 @@ class ScanCommand extends Command
 
         if ($specifiedOwner) {
             /** @var User $user */
-            $user = User::query()->findOr($specifiedOwner, function () use ($specifiedOwner): never {
-                $this->components->error("User with ID $specifiedOwner does not exist.");
+            $user = User::query()->findOr($specifiedOwner, static function () use ($specifiedOwner): never {
+                error("User with ID $specifiedOwner does not exist.");
                 exit(self::INVALID);
             });
 
-            $this->components->info("Setting owner to $user->name (ID {$user->id}).");
+            info("Setting owner to $user->name (ID {$user->id}).");
 
             return $user;
         }
 
         $user = $this->userRepository->getOrCreateFirstAdmin();
 
-        $this->components->warn(
-            "No song owner specified. Setting the first admin ($user->name, ID {$user->id}) as owner.",
-        );
+        warning("No song owner specified. Setting the first admin ($user->name, ID {$user->id}) as owner.");
 
         return $user;
     }

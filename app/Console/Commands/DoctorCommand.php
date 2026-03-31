@@ -32,6 +32,9 @@ use Throwable;
 use TiBeN\CrontabManager\CrontabAdapter;
 use TiBeN\CrontabManager\CrontabRepository;
 
+use function Laravel\Prompts\error;
+use function Laravel\Prompts\info;
+
 // @mago-ignore lint:too-many-methods,cyclomatic-complexity,kan-defect
 class DoctorCommand extends Command
 {
@@ -43,16 +46,16 @@ class DoctorCommand extends Command
     public function handle(): int
     {
         if (PHP_OS_FAMILY === 'Windows' || PHP_OS_FAMILY === 'Unknown') {
-            $this->components->error('This command is only available on Linux systems.');
+            error('This command is only available on Linux systems.');
 
             return self::FAILURE;
         }
 
         $this->components->alert('Checking Koel setup...');
-        $this->line('');
+        info('');
 
         if (exec('whoami') === 'root') {
-            $this->components->error('This command cannot be run as root.');
+            error('This command cannot be run as root.');
 
             return self::FAILURE;
         }
@@ -79,7 +82,7 @@ class DoctorCommand extends Command
         if ($this->errors) {
             $this->reportErroneousResult();
         } else {
-            $this->output->success('Your Koel setup should be good to go!');
+            info('Your Koel setup should be good to go!');
         }
 
         return self::SUCCESS;
@@ -87,7 +90,7 @@ class DoctorCommand extends Command
 
     private function reportErroneousResult(): void
     {
-        $this->components->error('There are errors in your Koel setup. Koel will not work properly.');
+        error('There are errors in your Koel setup. Koel will not work properly.');
 
         if (File::isWritable(base_path('storage/logs/laravel.log'))) {
             /** @var Throwable $error */
@@ -95,13 +98,13 @@ class DoctorCommand extends Command
                 Log::error('[KOEL.DOCTOR] ' . $error->getMessage(), ['error' => $error]);
             }
 
-            $this->components->error('You can find more details in ' . base_path('storage/logs/laravel.log'));
+            error('You can find more details in ' . base_path('storage/logs/laravel.log'));
         } else {
-            $this->components->error('The list of errors is as follows:');
+            error('The list of errors is as follows:');
 
             /** @var Throwable $error */
             foreach ($this->errors as $i => $error) {
-                $this->line("  <error>[$i]</error> " . $error->getMessage());
+                info("  <error>[$i]</error> " . $error->getMessage());
             }
         }
     }

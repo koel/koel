@@ -5,6 +5,8 @@ namespace App\Console\Commands;
 use App\Services\LibraryManager;
 use Illuminate\Console\Command;
 
+use function Laravel\Prompts\info;
+
 class PruneLibraryCommand extends Command
 {
     protected $signature = 'koel:prune {--dry-run}';
@@ -22,24 +24,24 @@ class PruneLibraryCommand extends Command
         $results = $this->libraryManager->prune($dryRun);
 
         if ($dryRun) {
-            $this->info('Dry run: no changes made.');
+            info('Dry run: no changes made.');
 
-            $this->info(
+            info(
                 "Found {$results['artists']->count()} empty artist(s) and {$results['albums']->count()} empty album(s).",
             );
 
             foreach ($results['artists'] as $result) {
-                $this->line("Artist: {$result->name} (ID: {$result->id})");
+                info("Artist: {$result->name} (ID: {$result->id})");
             }
 
             foreach ($results['albums'] as $result) {
-                $this->line("Album: {$result->name} (ID: {$result->id}})");
+                info("Album: {$result->name} (ID: {$result->id}})");
             }
 
             return self::SUCCESS;
         }
 
-        $this->info("{$results['artists']->count()} empty artist(s) and {$results['albums']->count()} albums removed.");
+        info("{$results['artists']->count()} empty artist(s) and {$results['albums']->count()} albums removed.");
 
         return self::SUCCESS;
     }

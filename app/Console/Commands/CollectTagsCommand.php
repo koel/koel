@@ -5,6 +5,8 @@ namespace App\Console\Commands;
 use App\Models\Song;
 use Illuminate\Console\Command;
 
+use function Laravel\Prompts\error;
+
 class CollectTagsCommand extends Command
 {
     protected $signature = 'koel:tags:collect {tag*}';
@@ -28,7 +30,7 @@ class CollectTagsCommand extends Command
     public function handle(): int
     {
         if (config('koel.storage_driver') !== 'local') {
-            $this->components->error('This command only works with the local storage driver.');
+            error('This command only works with the local storage driver.');
 
             return self::INVALID;
         }
@@ -36,7 +38,7 @@ class CollectTagsCommand extends Command
         $tags = collect($this->argument('tag'))->unique();
 
         if ($tags->diff(self::COLLECTABLE_TAGS)->isNotEmpty()) {
-            $this->error(sprintf(
+            error(sprintf(
                 'Invalid tag(s): %s. Allowed tags are: %s.',
                 $tags->diff(self::COLLECTABLE_TAGS)->join(', '),
                 implode(', ', self::COLLECTABLE_TAGS),

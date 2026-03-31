@@ -8,6 +8,9 @@ use App\Services\MediaBrowser;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 
+use function Laravel\Prompts\error;
+use function Laravel\Prompts\info;
+
 class ExtractFoldersCommand extends Command
 {
     protected $signature = 'koel:extract-folders';
@@ -24,7 +27,7 @@ class ExtractFoldersCommand extends Command
     public function handle(): int
     {
         if (config('koel.storage_driver') !== 'local') {
-            $this->components->error('This command only works with the local storage driver.');
+            error('This command only works with the local storage driver.');
 
             return self::INVALID;
         }
@@ -32,7 +35,7 @@ class ExtractFoldersCommand extends Command
         $root = Setting::get('media_path');
 
         if (!$root) {
-            $this->components->error('The media path is not set. Please set it up first.');
+            error('The media path is not set. Please set it up first.');
 
             return self::INVALID;
         }
@@ -46,7 +49,7 @@ class ExtractFoldersCommand extends Command
 
         $this->progressBar = new ProgressBar($this->output, count($songs));
 
-        $this->components->info('Extracting folders from the song paths...');
+        info('Extracting folders from the song paths...');
 
         $songs->each(function (Song $song): void {
             $this->browser->maybeCreateFolderStructureForSong($song);
@@ -54,7 +57,7 @@ class ExtractFoldersCommand extends Command
         });
 
         $this->progressBar->finish();
-        $this->output->success('Done!');
+        info('Done!');
 
         return self::SUCCESS;
     }

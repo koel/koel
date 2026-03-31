@@ -4,23 +4,22 @@ namespace App\Console\Commands\Concerns;
 
 use SensitiveParameter;
 
-/**
- * @method void  error($message, $verbosity = null)
- * @method mixed secret($message, $fallback = true)
- */
+use function Laravel\Prompts\error;
+use function Laravel\Prompts\password;
+
 trait AskForPassword
 {
     private function askForPassword(): string
     {
         do {
-            $password = $this->secret('Your desired password');
+            $password = password('Your desired password');
 
             if (!$password) {
-                $this->error('Passwords cannot be empty. You know that.');
+                error('Passwords cannot be empty. You know that.');
                 continue;
             }
 
-            $confirmedPassword = $this->secret('Again, just to be sure');
+            $confirmedPassword = password('Again, just to be sure');
         } while (!$this->comparePasswords($password, $confirmedPassword ?? null));
 
         return $password;
@@ -35,7 +34,7 @@ trait AskForPassword
         }
 
         if (strcmp($password, $confirmedPassword) !== 0) {
-            $this->error('The passwords do not match. Try again maybe?');
+            error('The passwords do not match. Try again maybe?');
 
             return false;
         }

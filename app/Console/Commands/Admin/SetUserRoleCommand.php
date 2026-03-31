@@ -6,6 +6,8 @@ use App\Enums\Acl\Role;
 use App\Repositories\UserRepository;
 use Illuminate\Console\Command;
 
+use function Laravel\Prompts\error;
+use function Laravel\Prompts\info;
 use function Laravel\Prompts\select;
 
 class SetUserRoleCommand extends Command
@@ -24,7 +26,7 @@ class SetUserRoleCommand extends Command
         $user = $this->userRepository->findOneByEmail($this->argument('email'));
 
         if (!$user) {
-            $this->components->error('The user account cannot be found.');
+            error('The user account cannot be found.');
 
             return self::FAILURE;
         }
@@ -38,7 +40,7 @@ class SetUserRoleCommand extends Command
         $role = select(label: 'What role should the user have?', options: $roles, default: $user->role->value);
 
         $user->syncRoles($role);
-        $this->info("The user's role has been set to <info>'$role'</info>.");
+        info("The user's role has been set to '$role'.");
 
         return self::SUCCESS;
     }

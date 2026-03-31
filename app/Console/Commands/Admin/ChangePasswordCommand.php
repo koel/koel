@@ -7,6 +7,9 @@ use App\Repositories\UserRepository;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Hashing\Hasher as Hash;
 
+use function Laravel\Prompts\error;
+use function Laravel\Prompts\info;
+
 class ChangePasswordCommand extends Command
 {
     use AskForPassword;
@@ -29,17 +32,17 @@ class ChangePasswordCommand extends Command
         $user = $email ? $this->userRepository->findOneByEmail($email) : $this->userRepository->getOrCreateFirstAdmin();
 
         if (!$user) {
-            $this->error('The user account cannot be found.');
+            error('The user account cannot be found.');
 
             return self::FAILURE;
         }
 
-        $this->comment("Changing the user's password (ID: {$user->id}, email: $user->email)");
+        info("Changing the user's password (ID: {$user->id}, email: $user->email)");
 
         $user->password = $this->hash->make($this->askForPassword());
         $user->save();
 
-        $this->comment('Alrighty, the new password has been saved. Enjoy! 👌');
+        info('Alrighty, the new password has been saved. Enjoy!');
 
         return self::SUCCESS;
     }

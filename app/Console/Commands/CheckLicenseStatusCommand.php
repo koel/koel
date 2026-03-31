@@ -8,6 +8,10 @@ use App\Services\License\Contracts\LicenseServiceInterface;
 use Illuminate\Console\Command;
 use Throwable;
 
+use function Laravel\Prompts\error;
+use function Laravel\Prompts\info;
+use function Laravel\Prompts\warning;
+
 class CheckLicenseStatusCommand extends Command
 {
     protected $signature = 'koel:license:status';
@@ -21,10 +25,10 @@ class CheckLicenseStatusCommand extends Command
 
     public function handle(): int
     {
-        $this->components->info('Checking your Koel Plus license status…');
+        info('Checking your Koel Plus license status…');
 
         if (License::count() > 1) {
-            $this->components->warn('Multiple licenses found. This can cause unexpected behaviors.');
+            warning('Multiple licenses found. This can cause unexpected behaviors.');
         }
 
         try {
@@ -32,7 +36,7 @@ class CheckLicenseStatusCommand extends Command
 
             switch ($status->status) {
                 case LicenseStatus::VALID:
-                    $this->output->success('You have a valid Koel Plus license. All Plus features are enabled.');
+                    info('You have a valid Koel Plus license. All Plus features are enabled.');
                     $this->components->twoColumnDetail('License Key', $status->license->short_key);
 
                     $this->components->twoColumnDetail(
@@ -45,21 +49,21 @@ class CheckLicenseStatusCommand extends Command
                     break;
 
                 case LicenseStatus::NO_LICENSE:
-                    $this->components->info(
+                    info(
                         'No license found. You can purchase one at https://store.koel.dev'
                             . config('lemonsqueezy.plus_product_id'),
                     );
                     break;
 
                 case LicenseStatus::INVALID:
-                    $this->components->error('Your license is invalid. Plus features will not be available.');
+                    error('Your license is invalid. Plus features will not be available.');
                     break;
 
                 default:
-                    $this->components->warn('Your license status is unknown. Please try again later.');
+                    warning('Your license status is unknown. Please try again later.');
             }
         } catch (Throwable $e) {
-            $this->output->error($e->getMessage());
+            error($e->getMessage());
         }
 
         return self::SUCCESS;

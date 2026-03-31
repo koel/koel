@@ -9,6 +9,12 @@ use Illuminate\Support\Facades\Artisan;
 use Jackiedo\DotenvEditor\DotenvEditor;
 use Throwable;
 
+use function Laravel\Prompts\error;
+use function Laravel\Prompts\info;
+use function Laravel\Prompts\password;
+use function Laravel\Prompts\text;
+use function Laravel\Prompts\warning;
+
 class SetupS3StorageCommand extends Command
 {
     protected $signature = 'koel:storage:s3';
@@ -23,27 +29,27 @@ class SetupS3StorageCommand extends Command
     public function handle(): int
     {
         if (!License::isPlus()) {
-            $this->components->error('S3 as a storage driver is only available in Koel Plus.');
+            error('S3 as a storage driver is only available in Koel Plus.');
 
             return self::FAILURE;
         }
 
-        $this->components->info('Setting up S3 or an S3-compatible service as the storage driver for Koel.');
-        $this->components->warn('Changing the storage configuration can cause irreversible data loss.');
-        $this->components->warn('Consider backing up your data before proceeding.');
+        info('Setting up S3 or an S3-compatible service as the storage driver for Koel.');
+        warning('Changing the storage configuration can cause irreversible data loss.');
+        warning('Consider backing up your data before proceeding.');
 
         $config = ['STORAGE_DRIVER' => 's3'];
 
-        $config['AWS_ACCESS_KEY_ID'] = $this->ask('Enter the access key ID (AWS_ACCESS_KEY_ID)');
-        $config['AWS_SECRET_ACCESS_KEY'] = $this->ask('Enter the  secret access key (AWS_SECRET_ACCESS_KEY)');
-        $config['AWS_REGION'] = $this->ask('Enter the region (AWS_REGION). For Cloudflare R2, use "auto".');
-        $config['AWS_ENDPOINT'] = $this->ask('Enter the endpoint (AWS_ENDPOINT)');
-        $config['AWS_BUCKET'] = $this->ask('Enter the bucket name (AWS_BUCKET)');
+        $config['AWS_ACCESS_KEY_ID'] = text(label: 'Enter the access key ID (AWS_ACCESS_KEY_ID)');
+        $config['AWS_SECRET_ACCESS_KEY'] = password(label: 'Enter the secret access key (AWS_SECRET_ACCESS_KEY)');
+        $config['AWS_REGION'] = text(label: 'Enter the region (AWS_REGION). For Cloudflare R2, use "auto".');
+        $config['AWS_ENDPOINT'] = text(label: 'Enter the endpoint (AWS_ENDPOINT)');
+        $config['AWS_BUCKET'] = text(label: 'Enter the bucket name (AWS_BUCKET)');
 
         $this->dotenvEditor->setKeys($config);
         $this->dotenvEditor->save();
 
-        $this->comment('Uploading a test file to make sure everything is working...');
+        info('Uploading a test file to make sure everything is working...');
 
         config('filesystems.disks.s3.bucket', $config['AWS_BUCKET']);
 
@@ -52,8 +58,8 @@ class SetupS3StorageCommand extends Command
             $storage = app()->build(S3CompatibleStorage::class);
             $storage->testSetup();
         } catch (Throwable $e) {
-            $this->error('Failed to upload test file: ' . $e->getMessage() . '.');
-            $this->comment('Please check your configuration and try again.');
+            error('Failed to upload test file: ' . $e->getMessage() . '.');
+            info('Please check your configuration and try again.');
 
             $this->dotenvEditor->restore();
             Artisan::call('config:clear', ['--quiet' => true]);
@@ -61,7 +67,7 @@ class SetupS3StorageCommand extends Command
             return self::FAILURE;
         }
 
-        $this->components->info('All done!');
+        info('All done!');
 
         return self::SUCCESS;
     }

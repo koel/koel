@@ -10,6 +10,8 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use SplFileInfo;
 
+use function Laravel\Prompts\error;
+
 class ScanChunkCommand extends Command
 {
     protected $signature = 'koel:scan:chunk
@@ -34,7 +36,7 @@ class ScanChunkCommand extends Command
         $manifestPath = $this->argument('manifest');
 
         if (!File::exists($manifestPath)) {
-            $this->components->error("Manifest file not found: $manifestPath");
+            error("Manifest file not found: $manifestPath");
 
             return self::FAILURE;
         }
@@ -42,7 +44,7 @@ class ScanChunkCommand extends Command
         $paths = json_decode(File::get($manifestPath), true);
 
         if (!is_array($paths)) {
-            $this->components->error("Malformed manifest file: $manifestPath");
+            error("Malformed manifest file: $manifestPath");
 
             return self::FAILURE;
         }

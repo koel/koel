@@ -12,7 +12,7 @@ class TidyLibraryCommandTest extends TestCase
     {
         $this
             ->artisan('koel:tidy')
-            ->expectsOutput('koel:tidy has been renamed. Use koel:prune instead.')
+            ->expectsOutputToContain('koel:tidy has been renamed. Use koel:prune instead.')
             ->assertSuccessful();
     }
 }

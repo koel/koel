@@ -19,6 +19,14 @@ use Illuminate\Support\Str;
 use Jackiedo\DotenvEditor\DotenvEditor;
 use Throwable;
 
+use function Laravel\Prompts\error;
+use function Laravel\Prompts\info;
+use function Laravel\Prompts\password;
+use function Laravel\Prompts\select;
+use function Laravel\Prompts\suggest;
+use function Laravel\Prompts\text;
+use function Laravel\Prompts\warning;
+
 // @mago-ignore lint:too-many-methods,cyclomatic-complexity,kan-defect
 class InitCommand extends Command
 {
@@ -42,12 +50,10 @@ class InitCommand extends Command
     {
         $this->components->alert('KOEL INSTALLATION WIZARD');
 
-        $this->components->info(
-            'Remember, you can always install/upgrade manually using the guide at ' . config('koel.misc.docs_url'),
-        );
+        info('Remember, you can always install/upgrade manually using the guide at ' . config('koel.misc.docs_url'));
 
         if ($this->inNoInteractionMode()) {
-            $this->components->info('Running in no-interaction mode');
+            info('Running in no-interaction mode');
         }
 
         try {
@@ -65,10 +71,10 @@ class InitCommand extends Command
         } catch (Throwable $e) {
             Log::error($e);
 
-            $this->components->error("Oops! Koel installation or upgrade didn't finish successfully.");
-            $this->components->error('Please check the error log at storage/logs/laravel.log and try again.');
-            $this->components->error('For further troubleshooting, visit https://docs.koel.dev/troubleshooting.');
-            $this->components->error('😥 Sorry for this. You deserve better.');
+            error("Oops! Koel installation or upgrade didn't finish successfully.");
+            error('Please check the error log at storage/logs/laravel.log and try again.');
+            error('For further troubleshooting, visit https://docs.koel.dev/troubleshooting.');
+            error('😥 Sorry for this. You deserve better.');
 
             return self::FAILURE;
         }
@@ -77,13 +83,13 @@ class InitCommand extends Command
         $this->components->success('All done!');
 
         if (app()->environment('local')) {
-            $this->components->info('🏗️ Koel can now be run from localhost with `php artisan serve`');
+            info('🏗️ Koel can now be run from localhost with `php artisan serve`');
         } else {
-            $this->components->info('🌟 A shiny Koel is now available at ' . config('app.url'));
+            info('🌟 A shiny Koel is now available at ' . config('app.url'));
         }
 
         if ($this->adminSeeded) {
-            $this->components->info(sprintf(
+            info(sprintf(
                 '🧑‍💻 Log in with email %s and password %s',
                 User::FIRST_ADMIN_EMAIL,
                 User::FIRST_ADMIN_PASSWORD,
@@ -91,12 +97,12 @@ class InitCommand extends Command
         }
 
         if (!Setting::get('media_path')) {
-            $this->components->info('📀 You can set up the storage with `php artisan koel:storage`');
+            info('📀 You can set up the storage with `php artisan koel:storage`');
         }
 
-        $this->components->info('🛟 Documentation can be found at ' . config('koel.misc.docs_url'));
-        $this->components->info('🤗 Consider supporting Koel’s development: ' . config('koel.misc.sponsor_github_url'));
-        $this->components->info('🤘 Finally, thanks for using Koel. You rock!');
+        info('🛟 Documentation can be found at ' . config('koel.misc.docs_url'));
+        info(sprintf('🤗 Consider supporting Koel\'s development: %s', config('koel.misc.sponsor_github_url')));
+        info('🤘 Finally, thanks for using Koel. You rock!');
 
         return self::SUCCESS;
     }
@@ -150,25 +156,25 @@ class InitCommand extends Command
             'DB_PASSWORD' => '',
         ];
 
-        $config['DB_CONNECTION'] = $this->choice(
-            'Your DB driver of choice',
-            [
+        $config['DB_CONNECTION'] = select(
+            label: 'Your DB driver of choice',
+            options: [
                 'mysql' => 'MySQL/MariaDB',
                 'pgsql' => 'PostgreSQL',
                 'sqlsrv' => 'SQL Server',
                 'sqlite-e2e' => 'SQLite',
             ],
-            'mysql',
+            default: 'mysql',
         );
 
         if ($config['DB_CONNECTION'] === 'sqlite-e2e') {
-            $config['DB_DATABASE'] = $this->ask('Absolute path to the DB file');
+            $config['DB_DATABASE'] = text(label: 'Absolute path to the DB file');
         } else {
-            $config['DB_HOST'] = $this->anticipate('DB host', ['127.0.0.1', 'localhost']);
-            $config['DB_PORT'] = (string) $this->ask('DB port (leave empty for default)');
-            $config['DB_DATABASE'] = $this->anticipate('DB name', ['koel']);
-            $config['DB_USERNAME'] = $this->anticipate('DB user', ['koel']);
-            $config['DB_PASSWORD'] = (string) $this->ask('DB password');
+            $config['DB_HOST'] = suggest(label: 'DB host', options: ['127.0.0.1', 'localhost']);
+            $config['DB_PORT'] = (string) text(label: 'DB port', placeholder: 'Leave empty for default');
+            $config['DB_DATABASE'] = suggest(label: 'DB name', options: ['koel']);
+            $config['DB_USERNAME'] = suggest(label: 'DB user', options: ['koel']);
+            $config['DB_PASSWORD'] = (string) password(label: 'DB password');
         }
 
         $this->dotenvEditor->setKeys($config);
@@ -225,7 +231,7 @@ class InitCommand extends Command
             // Doing so will just end up with a huge amount of "failed to connect" logs.
             // We do retry a little, though, just in case there's some kind of temporary failure.
             if ($attempt >= self::NON_INTERACTION_MAX_DATABASE_ATTEMPT_COUNT && $this->inNoInteractionMode()) {
-                $this->components->error('Maximum database connection attempts reached. Giving up.');
+                error('Maximum database connection attempts reached. Giving up.');
                 break;
             }
 
@@ -251,9 +257,9 @@ class InitCommand extends Command
                         self::NON_INTERACTION_MAX_DATABASE_ATTEMPT_COUNT,
                     );
 
-                    $this->components->warn($warning);
+                    warning($warning);
                 } else {
-                    $this->components->warn("Cannot connect to the database. Let's set it up.");
+                    warning("Cannot connect to the database. Let's set it up.");
                     $this->setUpDatabase();
                 }
             }
@@ -280,13 +286,13 @@ class InitCommand extends Command
         }
 
         $this->newLine();
-        $this->info(
+        info(
             'The absolute path to your media directory. You can leave it blank and set it later via the web interface.',
         );
-        $this->info('If you plan to use Koel with a cloud provider (S3 or Dropbox), you can also skip this.');
+        info('If you plan to use Koel with a cloud provider (S3 or Dropbox), you can also skip this.');
 
         while (true) {
-            $path = $this->ask('Media path', config('koel.media_path'));
+            $path = text(label: 'Media path', default: config('koel.media_path') ?? '');
 
             if (!$path) {
                 return;
@@ -298,7 +304,7 @@ class InitCommand extends Command
                 return;
             }
 
-            $this->components->error('The path does not exist or not readable. Try again?');
+            error('The path does not exist or not readable. Try again?');
         }
     }
 
@@ -335,7 +341,7 @@ class InitCommand extends Command
         if (self::isValidMediaPath($path)) {
             Setting::set('media_path', $path);
         } else {
-            $this->components->warn(sprintf('The path %s does not exist or not readable. Skipping.', $path));
+            warning(sprintf('The path %s does not exist or not readable. Skipping.', $path));
         }
     }
 
@@ -366,7 +372,7 @@ class InitCommand extends Command
         });
 
         if ($result !== self::SUCCESS) {
-            $this->components->warn('Failed to install scheduler. '
+            warning('Failed to install scheduler. '
             . 'Please install manually: https://docs.koel.dev/cli-commands#command-scheduling');
         }
     }

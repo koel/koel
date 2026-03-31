@@ -6,6 +6,9 @@ use App\Services\License\Contracts\LicenseServiceInterface;
 use Illuminate\Console\Command;
 use Throwable;
 
+use function Laravel\Prompts\error;
+use function Laravel\Prompts\info;
+
 class ActivateLicenseCommand extends Command
 {
     protected $signature = 'koel:license:activate {key : The license key to activate.}';
@@ -19,17 +22,17 @@ class ActivateLicenseCommand extends Command
 
     public function handle(): int
     {
-        $this->components->info('Activating license…');
+        info('Activating license…');
 
         try {
             $license = $this->licenseService->activate($this->argument('key'));
         } catch (Throwable $e) {
-            $this->components->error($e->getMessage());
+            error($e->getMessage());
 
             return self::FAILURE;
         }
 
-        $this->output->success('Koel Plus activated! All Plus features are now available.');
+        info('Koel Plus activated! All Plus features are now available.');
         $this->components->twoColumnDetail('License Key', $license->short_key);
 
         $this->components->twoColumnDetail(

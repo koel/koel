@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\Http;
 use Jackiedo\DotenvEditor\DotenvEditor;
 use Throwable;
 
+use function Laravel\Prompts\error;
+use function Laravel\Prompts\info;
+use function Laravel\Prompts\password;
+use function Laravel\Prompts\text;
+use function Laravel\Prompts\warning;
+
 class SetupDropboxStorageCommand extends Command
 {
     protected $signature = 'koel:storage:dropbox';
@@ -24,26 +30,26 @@ class SetupDropboxStorageCommand extends Command
     public function handle(bool $firstTry = true): int
     {
         if (!License::isPlus()) {
-            $this->components->error('Dropbox as a storage driver is only available in Koel Plus.');
+            error('Dropbox as a storage driver is only available in Koel Plus.');
 
             return self::FAILURE;
         }
 
         if ($firstTry) {
-            $this->components->info('Setting up Dropbox as the storage driver for Koel.');
-            $this->components->warn('Changing the storage configuration can cause irreversible data loss.');
-            $this->components->warn('Consider backing up your data before proceeding.');
+            info('Setting up Dropbox as the storage driver for Koel.');
+            warning('Changing the storage configuration can cause irreversible data loss.');
+            warning('Consider backing up your data before proceeding.');
         }
 
         $config = ['STORAGE_DRIVER' => 'dropbox'];
-        $config['DROPBOX_APP_KEY'] = $this->ask('Enter your Dropbox app key', env('DROPBOX_APP_KEY'));
-        $config['DROPBOX_APP_SECRET'] = $this->ask('Enter your Dropbox app secret', env('DROPBOX_APP_SECRET'));
+        $config['DROPBOX_APP_KEY'] = text(label: 'Enter your Dropbox app key', default: env('DROPBOX_APP_KEY') ?? '');
+        $config['DROPBOX_APP_SECRET'] = password(label: 'Enter your Dropbox app secret');
 
-        $this->comment('Visit the following link to authorize Koel to access your Dropbox account.');
-        $this->comment('After you have authorized Koel, enter the access code below.');
-        $this->info(route('dropbox.authorize', ['key' => $config['DROPBOX_APP_KEY']]));
+        info('Visit the following link to authorize Koel to access your Dropbox account.');
+        info('After you have authorized Koel, enter the access code below.');
+        info(route('dropbox.authorize', ['key' => $config['DROPBOX_APP_KEY']]));
 
-        $accessCode = $this->ask('Access code');
+        $accessCode = text(label: 'Access code');
 
         $response = Http::asForm()
             ->withBasicAuth($config['DROPBOX_APP_KEY'], $config['DROPBOX_APP_SECRET'])
@@ -53,11 +59,9 @@ class SetupDropboxStorageCommand extends Command
             ]);
 
         if ($response->failed()) {
-            $this->error(
-                'Failed to authorize with Dropbox. The server said: ' . $response->json('error_description') . '.',
-            );
+            error('Failed to authorize with Dropbox. The server said: ' . $response->json('error_description') . '.');
 
-            $this->info('Please try again.');
+            info('Please try again.');
 
             return $this->handle(firstTry: false);
         }
@@ -73,15 +77,15 @@ class SetupDropboxStorageCommand extends Command
             'refresh_token' => $config['DROPBOX_REFRESH_TOKEN'],
         ]);
 
-        $this->comment('Uploading a test file to make sure everything is working...');
+        info('Uploading a test file to make sure everything is working...');
 
         try {
             /** @var DropboxStorage $storage */
             $storage = app()->build(DropboxStorage::class); // build instead of make to avoid singleton issues
             $storage->testSetup();
         } catch (Throwable $e) {
-            $this->error('Failed to upload test file: ' . $e->getMessage() . '.');
-            $this->comment('Please make sure the app has the correct permissions and try again.');
+            error('Failed to upload test file: ' . $e->getMessage() . '.');
+            info('Please make sure the app has the correct permissions and try again.');
 
             $this->dotenvEditor->restore();
             Artisan::call('config:clear', ['--quiet' => true]);
@@ -89,7 +93,7 @@ class SetupDropboxStorageCommand extends Command
             return $this->handle(firstTry: false);
         }
 
-        $this->components->info('All done!');
+        info('All done!');
 
         return self::SUCCESS;
     }

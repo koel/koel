@@ -7,6 +7,9 @@ use TiBeN\CrontabManager\CrontabAdapter;
 use TiBeN\CrontabManager\CrontabJob;
 use TiBeN\CrontabManager\CrontabRepository;
 
+use function Laravel\Prompts\error;
+use function Laravel\Prompts\info;
+
 class InstallSchedulerCommand extends Command
 {
     protected $signature = 'koel:scheduler:install';
@@ -15,17 +18,17 @@ class InstallSchedulerCommand extends Command
     public function handle(): int
     {
         if (PHP_OS_FAMILY === 'Windows' || PHP_OS_FAMILY === 'Unknown') {
-            $this->components->error('This command is only available on Linux systems.');
+            error('This command is only available on Linux systems.');
 
             return self::FAILURE;
         }
 
         $crontab = new CrontabRepository(new CrontabAdapter());
 
-        $this->components->info('Trying to install Koel scheduler…');
+        info('Trying to install Koel scheduler…');
 
         if (self::schedulerInstalled($crontab)) {
-            $this->components->info('Koel scheduler is already installed. Skipping…');
+            info('Koel scheduler is already installed. Skipping…');
 
             return self::SUCCESS;
         }
@@ -37,7 +40,7 @@ class InstallSchedulerCommand extends Command
         $crontab->addJob($job);
         $crontab->persist();
 
-        $this->components->info('Koel scheduler installed successfully.');
+        info('Koel scheduler installed successfully.');
 
         return self::SUCCESS;
     }

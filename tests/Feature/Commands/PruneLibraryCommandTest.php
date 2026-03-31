@@ -34,7 +34,7 @@ class PruneLibraryCommandTest extends TestCase
 
         $this
             ->artisan('koel:prune', ['--dry-run' => true])
-            ->expectsOutput('Dry run: no changes made.')
+            ->expectsOutputToContain('Dry run: no changes made.')
             ->assertSuccessful();
 
         self::assertModelExists($emptyAlbum);

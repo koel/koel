@@ -8,6 +8,12 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Jackiedo\DotenvEditor\DotenvEditor;
 
+use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\error;
+use function Laravel\Prompts\info;
+use function Laravel\Prompts\text;
+use function Laravel\Prompts\warning;
+
 class SetupLocalStorageCommand extends Command
 {
     protected $signature = 'koel:storage:local';
@@ -21,9 +27,9 @@ class SetupLocalStorageCommand extends Command
 
     public function handle(): int
     {
-        $this->components->info('Setting up local storage for Koel.');
-        $this->components->warn('Changing the storage configuration can cause irreversible data loss.');
-        $this->components->warn('Consider backing up your data before proceeding.');
+        info('Setting up local storage for Koel.');
+        warning('Changing the storage configuration can cause irreversible data loss.');
+        warning('Consider backing up your data before proceeding.');
 
         Setting::set('media_path', $this->askForMediaPath());
 
@@ -31,9 +37,9 @@ class SetupLocalStorageCommand extends Command
         $this->dotenvEditor->save();
         Artisan::call('config:clear', ['--quiet' => true]);
 
-        $this->components->info('Local storage has been set up.');
+        info('Local storage has been set up.');
 
-        if ($this->components->confirm('Would you want to initialize a scan now?', true)) {
+        if (confirm(label: 'Would you want to initialize a scan now?', default: true)) {
             $this->call('koel:scan');
         }
 
@@ -42,13 +48,16 @@ class SetupLocalStorageCommand extends Command
 
     private function askForMediaPath(): string
     {
-        $mediaPath = $this->components->ask('Enter the absolute path to your media files', Setting::get('media_path'));
+        $mediaPath = text(
+            label: 'Enter the absolute path to your media files',
+            default: Setting::get('media_path') ?? '',
+        );
 
         if (File::isReadable($mediaPath) && File::isWritable($mediaPath)) {
             return $mediaPath;
         }
 
-        $this->components->error('The path you entered is not read- and/or writeable. Please check and try again.');
+        error('The path you entered is not read- and/or writeable. Please check and try again.');
 
         return $this->askForMediaPath();
     }

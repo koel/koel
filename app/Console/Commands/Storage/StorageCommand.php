@@ -6,16 +6,19 @@ use App\Facades\License;
 use App\Models\Setting;
 use Illuminate\Console\Command;
 
+use function Laravel\Prompts\info;
+use function Laravel\Prompts\select;
+
 class StorageCommand extends Command
 {
     protected $signature = 'koel:storage';
-    protected $description = 'Set up and configure Koel’s storage';
+    protected $description = "Set up and configure Koel's storage";
 
     public function handle(): int
     {
-        $this->info('This command will set up and configure Koel’s storage.');
+        info('This command will set up and configure Koel\'s storage.');
 
-        $this->info('Current storage configuration:');
+        info('Current storage configuration:');
         $this->components->twoColumnDetail('Driver', config('koel.storage_driver'));
 
         if (config('koel.storage_driver') === 'local') {
@@ -29,17 +32,17 @@ class StorageCommand extends Command
                 'dropbox' => 'Dropbox',
             ];
 
-            $driver = $this->choice(
-                'Where do you want to store your media files?',
-                $choices,
-                config('koel.storage_driver'),
+            $driver = select(
+                label: 'Where do you want to store your media files?',
+                options: $choices,
+                default: config('koel.storage_driver'),
             );
         } else {
             $driver = 'local';
         }
 
         if ($this->call("koel:storage:$driver") === self::SUCCESS) {
-            $this->output->success('Storage has been set up.');
+            info('Storage has been set up.');
 
             return self::SUCCESS;
         }

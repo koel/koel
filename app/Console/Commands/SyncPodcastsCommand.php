@@ -9,6 +9,10 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
+use function Laravel\Prompts\error;
+use function Laravel\Prompts\info;
+use function Laravel\Prompts\warning;
+
 class SyncPodcastsCommand extends Command
 {
     protected $signature = 'koel:podcasts:sync
@@ -28,7 +32,7 @@ class SyncPodcastsCommand extends Command
         $ids = Podcast::query()->pluck('id')->all();
 
         if (!$ids) {
-            $this->info('No podcasts to sync.');
+            info('No podcasts to sync.');
 
             return self::SUCCESS;
         }
@@ -43,15 +47,15 @@ class SyncPodcastsCommand extends Command
     {
         Podcast::query()->get()->each(function (Podcast $podcast): void {
             try {
-                $this->info(sprintf('Checking "%s" for new content…', $podcast->title));
+                info(sprintf('Checking "%s" for new content…', $podcast->title));
 
                 if (!$this->podcastService->isPodcastObsolete($podcast)) {
-                    $this->warn('└── The podcast feed has not been updated recently, skipping.');
+                    warning('└── The podcast feed has not been updated recently, skipping.');
 
                     return;
                 }
 
-                $this->info('└── Synchronizing episodes…');
+                info('└── Synchronizing episodes…');
                 $this->podcastService->refreshPodcast($podcast);
             } catch (Throwable $e) {
                 Log::error($e);
@@ -63,13 +67,13 @@ class SyncPodcastsCommand extends Command
 
     private function syncInParallel(array $ids, int $jobs): int
     {
-        $this->info(sprintf('Syncing %d podcast(s) with %d parallel workers.', count($ids), $jobs));
+        info(sprintf('Syncing %d podcast(s) with %d parallel workers.', count($ids), $jobs));
 
-        $this->parallelSync->execute($ids, $jobs, function (object $result): void {
+        $this->parallelSync->execute($ids, $jobs, static function (object $result): void {
             match ($result->status) {
-                'synced' => $this->info(sprintf('Synced "%s"', $result->title)),
-                'skipped' => $this->warn(sprintf('Skipped "%s" (feed not updated recently)', $result->title)),
-                'error' => $this->error(sprintf('Error syncing "%s": %s', $result->title, $result->error)),
+                'synced' => info(sprintf('Synced "%s"', $result->title)),
+                'skipped' => warning(sprintf('Skipped "%s" (feed not updated recently)', $result->title)),
+                'error' => error(sprintf('Error syncing "%s": %s', $result->title, $result->error)),
                 default => null,
             };
         });

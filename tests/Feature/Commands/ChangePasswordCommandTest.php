@@ -46,7 +46,7 @@ class ChangePasswordCommandTest extends TestCase
     {
         $this
             ->artisan('koel:admin:change-password', ['email' => 'nobody@example.com'])
-            ->expectsOutput('The user account cannot be found.')
+            ->expectsOutputToContain('The user account cannot be found.')
             ->assertFailed();
     }
 }

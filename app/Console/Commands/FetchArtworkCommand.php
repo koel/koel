@@ -12,6 +12,9 @@ use App\Services\SpotifyService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 
+use function Laravel\Prompts\error;
+use function Laravel\Prompts\info;
+
 class FetchArtworkCommand extends Command
 {
     /**
@@ -31,12 +34,12 @@ class FetchArtworkCommand extends Command
     public function handle(): int
     {
         if (!SpotifyService::enabled() && !MusicBrainzService::enabled()) {
-            $this->components->error('Please configure Spotify and/or MusicBrainz integration first.');
+            error('Please configure Spotify and/or MusicBrainz integration first.');
 
             return self::FAILURE;
         }
 
-        $this->components->info('Fetching artist images...');
+        info('Fetching artist images...');
 
         Artist::query()
             ->whereNotIn('name', [Artist::UNKNOWN_NAME, Artist::VARIOUS_NAME])
@@ -54,7 +57,7 @@ class FetchArtworkCommand extends Command
                 sleep(self::INTERVAL);
             });
 
-        $this->components->info('Fetching album covers...');
+        info('Fetching album covers...');
 
         Album::query()
             ->whereNot('name', Album::UNKNOWN_NAME)
@@ -73,7 +76,7 @@ class FetchArtworkCommand extends Command
                 sleep(self::INTERVAL);
             });
 
-        $this->components->success('All done!');
+        info('All done!');
 
         return self::SUCCESS;
     }

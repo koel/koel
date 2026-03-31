@@ -6,6 +6,8 @@ use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
+use function Laravel\Prompts\info;
+
 class CleanUpTempFilesCommand extends Command
 {
     protected $signature = 'koel:clean-up-temp-files {--age=1440 : The age of temporary files to remove in minutes}';
@@ -25,14 +27,14 @@ class CleanUpTempFilesCommand extends Command
             }
 
             File::delete($file->getPathname());
-            $this->components->info("Deleted {$file->getPathname()}");
+            info("Deleted {$file->getPathname()}");
             $count++;
         }
 
         if ($count === 0) {
-            $this->components->info("No temporary files older than $maxAgeMinutes minutes to delete.");
+            info("No temporary files older than $maxAgeMinutes minutes to delete.");
         } else {
-            $this->components->info("Deleted {$count} temporary files older than {$maxAgeMinutes} minutes.");
+            info("Deleted {$count} temporary files older than {$maxAgeMinutes} minutes.");
         }
 
         return self::SUCCESS;
