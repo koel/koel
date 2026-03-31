@@ -11,7 +11,7 @@
       :class="{ dirty: q }"
       :placeholder="placeholder"
       autocorrect="false"
-      class="flex-1 rounded-none border-0 bg-transparent focus-visible:outline-0 px-4"
+      class="flex-1 rounded-none border-0 bg-transparent focus-visible:outline-none px-4"
       name="q"
       required
       spellcheck="false"
