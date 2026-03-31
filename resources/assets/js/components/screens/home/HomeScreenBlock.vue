@@ -1,13 +1,9 @@
 <template>
   <div>
-    <h3 class="text-2xl font-thin text-k-fg">
+    <h3 class="text-2xl mb-8 font-thin text-k-fg">
       <slot name="header" />
     </h3>
-    <p v-if="$slots.subheading" class="text-k-fg-50 mt-1">
-      <slot name="subheading" />
-    </p>
-    <div class="mt-8">
-      <slot />
-    </div>
+
+    <slot />
   </div>
 </template>

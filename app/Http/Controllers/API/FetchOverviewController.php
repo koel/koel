@@ -19,7 +19,6 @@ class FetchOverviewController extends Controller
         ArtistRepository $artistRepository,
     ) {
         $recentlyPlayed = $songRepository->getRecentlyPlayed(6, type: PlayableType::SONG);
-        $mostRecentSong = $recentlyPlayed->first();
 
         return response()->json([
             'most_played_albums' => AlbumResource::collection($albumRepository->getMostPlayed()),
@@ -37,9 +36,7 @@ class FetchOverviewController extends Controller
                 type: PlayableType::SONG,
             )),
             'random_songs' => SongResource::collection($songRepository->getRandom(6)),
-            'similar_songs' => SongResource::collection(
-                $mostRecentSong ? $songRepository->getSimilar($mostRecentSong, 6) : collect(),
-            ),
+            'similar_songs' => SongResource::collection($songRepository->getSimilarToMany($recentlyPlayed->take(5), 6)),
         ]);
     }
 }

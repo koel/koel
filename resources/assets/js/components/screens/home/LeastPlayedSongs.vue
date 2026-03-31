@@ -1,8 +1,6 @@
 <template>
   <HomeScreenBlock>
     <template #header>Hidden Gems</template>
-    <template #subheading>Tracks waiting to be discovered</template>
-
     <PlayableCardGridSkeleton v-if="loading" class="-mx-6" />
     <template v-else>
       <PlayableCardGrid v-if="playables.length" class="-mx-6" :playables />
