@@ -439,15 +439,33 @@ class SongRepository extends Repository implements ScoutableRepository
     /** @return Collection<Song>|array<array-key, Song> */
     public function getSimilar(Song $song, int $limit = 50, ?User $user = null): Collection
     {
-        $genreIds = $song->genres->pluck('id')->all();
+        /** @var Collection<int, Song> $songs */
+        $songs = new Collection([$song]);
+
+        return $this->getSimilarToMany($songs, $limit, $user);
+    }
+
+    /** @param Collection<int, Song> $songs */
+    public function getSimilarToMany(Collection $songs, int $limit = 50, ?User $user = null): Collection
+    {
+        if ($songs->isEmpty()) {
+            return new Collection();
+        }
+
+        $songIds = $songs->pluck('id')->all();
+        $artistIds = $songs->pluck('artist_id')->unique()->all();
+
+        /** @var Collection<int, Song> $loadedSongs */
+        $loadedSongs = $songs->load('genres');
+        $genreIds = $loadedSongs->flatMap(static fn (Song $song) => $song->genres->pluck('id'))->unique()->all();
 
         return Song::query(type: PlayableType::SONG, user: $user ?? $this->auth->user())
             ->withUserContext()
-            ->where('songs.id', '!=', $song->id)
-            ->where(static function (SongBuilder $query) use ($song, $genreIds): void {
-                $query->where(
+            ->whereNotIn('songs.id', $songIds)
+            ->where(static function (SongBuilder $query) use ($artistIds, $genreIds): void {
+                $query->whereIn(
                     'songs.artist_id',
-                    $song->artist_id,
+                    $artistIds,
                 )->when($genreIds, static fn (SongBuilder $q) => $q->orWhereHas('genres', static fn (Builder $gq) => $gq->whereIn(
                     'genres.id',
                     $genreIds,

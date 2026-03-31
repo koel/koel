@@ -4,7 +4,6 @@
       Recently Played
       <ViewAllRecentlyPlayedPlayablesButton v-if="playables.length" class="float-right" />
     </template>
-
     <PlayableCardGridSkeleton v-if="loading" class="-mx-6" />
     <template v-else>
       <PlayableCardGrid v-if="playables.length" class="-mx-6" :playables />

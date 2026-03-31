@@ -62,7 +62,7 @@ class EncyclopediaService
             function () use ($album, $info): ?string {
                 return $this->fetchAndStoreAlbumCover($album, $info) ?? $info->cover;
             },
-            fn () => $info->cover,
+            static fn () => $info->cover,
         );
 
         return $info;
@@ -80,7 +80,7 @@ class EncyclopediaService
             function () use ($artist, $info): ?string {
                 return $this->fetchAndStoreArtistImage($artist, $info) ?? $info->image;
             },
-            fn () => $info->image,
+            static fn () => $info->image,
         );
 
         return $info;

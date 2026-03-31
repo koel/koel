@@ -7,7 +7,6 @@
         <span class="sr-only">Refresh</span>
       </Btn>
     </template>
-
     <PlayableCardGridSkeleton v-if="loading" class="-mx-6" />
     <template v-else>
       <PlayableCardGrid v-if="playables.length" :aria-busy="refreshing" class="-mx-6" :playables />

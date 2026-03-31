@@ -1,7 +1,6 @@
 <template>
   <HomeScreenBlock>
     <template #header>New Songs</template>
-
     <PlayableCardGridSkeleton v-if="loading" class="-mx-6" />
     <template v-else>
       <PlayableCardGrid v-if="playables.length" class="-mx-6" :playables />
