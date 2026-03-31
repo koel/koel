@@ -7,6 +7,7 @@ export const postWithProgress = <T>(url: string, data: FormData, onUploadProgres
   return new Promise<T>((resolve, reject) => {
     const xhr = new XMLHttpRequest()
     xhr.open('POST', `${window.BASE_URL}api/${url}`)
+    xhr.setRequestHeader('Accept', 'application/json')
     xhr.setRequestHeader('Authorization', `Bearer ${authService.getApiToken()}`)
     xhr.setRequestHeader('X-Api-Version', 'v7')
 
