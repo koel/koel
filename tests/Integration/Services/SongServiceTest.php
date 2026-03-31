@@ -11,11 +11,14 @@ use App\Models\Artist;
 use App\Models\Setting;
 use App\Models\Song;
 use App\Models\Transcode;
+use App\Services\AlbumService;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
 use App\Values\Scanning\ScanConfiguration;
 use App\Values\Song\SongUpdateData;
+use Mockery;
 use PHPUnit\Framework\Attributes\Test;
+use RuntimeException;
 use Tests\TestCase;
 
 use function Tests\create_admin;
@@ -288,5 +291,23 @@ class SongServiceTest extends TestCase
         self::assertTrue($song->album->is($album));
 
         self::assertSame(2018, $album->refresh()->year);
+    }
+
+    #[Test]
+    public function scanContinuesWhenCoverArtExtractionFails(): void
+    {
+        Dispatcher::expects('dispatch')->with(ExtractSongFolderStructureJob::class);
+
+        $albumService = Mockery::mock(AlbumService::class);
+        $albumService->shouldReceive('storeAlbumCover')->andThrow(new RuntimeException('DecoderException'));
+        $albumService->shouldReceive('trySetAlbumCoverFromDirectory');
+        $this->app->instance(AlbumService::class, $albumService);
+
+        $this->service = app(SongService::class);
+
+        $info = app(FileScanner::class)->scan(test_path('songs/full.mp3'));
+        $song = $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(owner: create_admin()));
+
+        self::assertSame('Amet', $song->title);
     }
 }
