@@ -12,4 +12,14 @@ describe('randomSongs.vue', () => {
     h.render(Component)
     await waitFor(() => expect(screen.getAllByTestId('song-card')).toHaveLength(6))
   })
+
+  it('refreshes random songs on button click', async () => {
+    overviewStore.state.randomSongs = h.factory('song', 6)
+    const refreshMock = h.mock(overviewStore, 'refreshRandomSongs')
+    h.render(Component)
+
+    await h.user.click(screen.getByRole('button', { name: /Refresh/ }))
+
+    expect(refreshMock).toHaveBeenCalled()
+  })
 })

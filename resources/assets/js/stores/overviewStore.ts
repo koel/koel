@@ -50,6 +50,12 @@ export const overviewStore = {
     this.refreshPlayStats()
   },
 
+  async refreshRandomSongs() {
+    this.state.randomSongs = playableStore.syncWithVault(
+      await http.get<Song[]>('queue/fetch?order=rand&limit=6'),
+    ) as Song[]
+  },
+
   refreshPlayStats() {
     this.state.mostPlayedSongs = playableStore.getMostPlayedSongs(6)
     this.state.recentlyPlayed = recentlyPlayedStore.excerptState.playables
