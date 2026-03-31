@@ -98,6 +98,7 @@ return [
             'audio/dts',
             'audio/vnd.rn-realaudio',
             'audio/x-ms-wma',
+            'video/x-ms-asf', // WMA detected as ASF container by fileinfo
             'audio/basic',
             'audio/vnd.wave', // not always handled correctly
             'audio/aiff',
