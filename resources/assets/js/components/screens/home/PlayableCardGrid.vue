@@ -14,17 +14,24 @@ const { playables } = toRefs(props)
 </script>
 
 <style lang="postcss" scoped>
+/* 1-col: divider above every item except the first */
 ol > :deep(:nth-child(n + 2)) {
   @apply border-t border-k-fg-5;
 }
 
+/* 2-col: only the left-column items (odd) in row 2+ draw the divider */
 @media (min-width: 768px) {
   ol > :deep(:nth-child(n + 2)) {
     @apply border-t-0;
   }
 
-  ol > :deep(:nth-child(n + 3)) {
-    @apply border-t border-k-fg-5;
+  ol > :deep(:nth-child(odd):nth-child(n + 3)) {
+    @apply relative;
+
+    &::before {
+      @apply content-[''] absolute top-0 left-0 h-px bg-k-fg-5;
+      width: calc(200% + 1px);
+    }
   }
 }
 </style>
