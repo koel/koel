@@ -446,12 +446,16 @@ class SongRepository extends Repository implements ScoutableRepository
     public function getSimilarToMany(Collection $songs, int $limit = 50, ?User $user = null): Collection
     {
         if ($songs->isEmpty()) {
-            return collect();
+            return new Collection();
         }
 
         $songIds = $songs->pluck('id')->all();
         $artistIds = $songs->pluck('artist_id')->unique()->all();
-        $genreIds = $songs->load('genres')->pluck('genres')->flatten()->pluck('id')->unique()->all();
+        $genreIds = $songs
+            ->load('genres')
+            ->flatMap(static fn (Song $song) => $song->genres->pluck('id'))
+            ->unique()
+            ->all();
 
         return Song::query(type: PlayableType::SONG, user: $user ?? $this->auth->user())
             ->withUserContext()
