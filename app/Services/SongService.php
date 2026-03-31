@@ -244,7 +244,7 @@ class SongService
             $coverData = Arr::get($data, 'cover.data');
 
             if ($coverData) {
-                $this->albumService->storeAlbumCover($album, $coverData);
+                rescue(fn () => $this->albumService->storeAlbumCover($album, $coverData), report: true);
             } else {
                 $this->albumService->trySetAlbumCoverFromDirectory($album, dirname($data['path']));
             }
