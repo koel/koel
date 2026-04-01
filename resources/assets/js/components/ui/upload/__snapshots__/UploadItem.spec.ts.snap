@@ -8,7 +8,7 @@ exports[`uploadItem.vue > renders 1`] = `
     </div>
   </div>
   <p data-v-c7c7e2e2="" class="text-[.90rem] mt-1 ml-4">
-    <!--v-if--><span data-v-c7c7e2e2="">Cancelled.</span>
+    <!--v-if--><span data-v-c7c7e2e2="">Canceled.</span>
     <!--v-if-->
     <!--v-if-->
     <!--v-if-->
