@@ -1,10 +1,18 @@
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import type { UploadStatus } from '@/services/uploadService'
 import { uploadService } from '@/services/uploadService'
 import Btn from '@/components/ui/form/Btn.vue'
 import Component from './UploadItem.vue'
+
+const mockShowConfirmDialog = vi.fn()
+
+vi.mock('@/composables/useDialogBox', () => ({
+  useDialogBox: () => ({
+    showConfirmDialog: mockShowConfirmDialog,
+  }),
+}))
 
 describe('uploadItem.vue', () => {
   const h = createHarness()
@@ -59,13 +67,26 @@ describe('uploadItem.vue', () => {
     },
   )
 
-  it('allows cancelling when uploading', async () => {
+  it('cancels upload after confirmation', async () => {
+    mockShowConfirmDialog.mockResolvedValue(true)
     const mock = h.mock(uploadService, 'cancel')
     renderComponent('Uploading')
 
     await h.user.click(screen.getByRole('button', { name: 'Cancel' }))
 
+    expect(mockShowConfirmDialog).toHaveBeenCalledWith('Cancel this upload?')
     expect(mock).toHaveBeenCalled()
+  })
+
+  it('does not cancel upload if confirmation is declined', async () => {
+    mockShowConfirmDialog.mockResolvedValue(false)
+    const mock = h.mock(uploadService, 'cancel')
+    renderComponent('Uploading')
+
+    await h.user.click(screen.getByRole('button', { name: 'Cancel' }))
+
+    expect(mockShowConfirmDialog).toHaveBeenCalledWith('Cancel this upload?')
+    expect(mock).not.toHaveBeenCalled()
   })
 
   it('does not show remove button when uploading', () => {

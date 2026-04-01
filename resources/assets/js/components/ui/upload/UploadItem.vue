@@ -43,6 +43,7 @@ import {
   faXmark,
 } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, toRefs } from 'vue'
+import { useDialogBox } from '@/composables/useDialogBox'
 import type { UploadFile } from '@/services/uploadService'
 import { uploadService } from '@/services/uploadService'
 
@@ -58,9 +59,16 @@ const canRemove = computed(() => file.value.status !== 'Uploading')
 const cssClass = computed(() => file.value.status.toLowerCase())
 const progressBarWidth = computed(() => (file.value.status === 'Uploading' ? `${file.value.progress}%` : '0'))
 
+const { showConfirmDialog } = useDialogBox()
+
 const remove = () => uploadService.remove(file.value)
 const retry = () => uploadService.retry(file.value)
-const cancel = () => uploadService.cancel(file.value)
+
+const cancel = async () => {
+  if (await showConfirmDialog('Cancel this upload?')) {
+    uploadService.cancel(file.value)
+  }
+}
 </script>
 
 <style lang="postcss" scoped>
