@@ -1,7 +1,7 @@
 <template>
   <WithGradientBorder
     border-width="1px"
-    color="var(--color-highlight)"
+    :color="gradientColor"
     border-color="color-mix(in srgb, var(--color-fg), transparent 97%)"
     class="rounded-lg max-w-full md:max-w-[256px]"
     :class="{ compact: layout === 'compact' }"
@@ -35,7 +35,8 @@
 </template>
 
 <script lang="ts" setup>
-import { toRefs } from 'vue'
+import { computed, toRefs } from 'vue'
+import { textToHsl } from '@/utils/formatters'
 
 import Thumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
 import WithGradientBorder from '@/components/ui/WithGradientBorder.vue'
@@ -54,6 +55,7 @@ const hasThumbnail = (entity: Artist | Album | Podcast | RadioStation): entity i
   entity.type !== 'radio-stations'
 
 const { layout } = toRefs(props)
+const gradientColor = computed(() => textToHsl(String(props.entity.id)))
 
 const onDblClick = () => emit('dblclick')
 const onDragStart = (e: DragEvent) => emit('dragstart', e)

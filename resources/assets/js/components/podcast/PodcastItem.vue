@@ -1,7 +1,7 @@
 <template>
   <WithGradientBorder
     border-width="1px"
-    color="var(--color-highlight)"
+    :color="gradientColor"
     border-color="color-mix(in srgb, var(--color-fg), transparent 97%)"
     class="rounded-lg"
   >
@@ -46,6 +46,7 @@
 import { computed } from 'vue'
 import DOMPurify from 'dompurify'
 import { formatTimeAgo } from '@vueuse/core'
+import { textToHsl } from '@/utils/formatters'
 import { useRouter } from '@/composables/useRouter'
 import WithGradientBorder from '@/components/ui/WithGradientBorder.vue'
 import { podcastStore } from '@/stores/podcastStore'
@@ -57,6 +58,7 @@ const FavoriteButton = defineAsyncComponent(() => import('@/components/ui/Favori
 const PodcastContextMenu = defineAsyncComponent(() => import('@/components/podcast/PodcastContextMenu.vue'))
 
 const { url } = useRouter()
+const gradientColor = computed(() => textToHsl(podcast.id))
 const { openContextMenu } = useContextMenu()
 
 const description = computed(() => DOMPurify.sanitize(podcast.description))
