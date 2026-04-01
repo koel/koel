@@ -89,6 +89,20 @@ describe('uploadItem.vue', () => {
     expect(mock).not.toHaveBeenCalled()
   })
 
+  it('does not abort if upload completed while confirming', async () => {
+    mockShowConfirmDialog.mockImplementation(async () => {
+      // Simulate the upload finishing while the dialog is open
+      renderResult.file.status = 'Uploaded'
+      return true
+    })
+    const mock = h.mock(uploadService, 'abort')
+    const renderResult = renderComponent('Uploading')
+
+    await h.user.click(screen.getByRole('button', { name: 'Abort' }))
+
+    expect(mock).not.toHaveBeenCalled()
+  })
+
   it('does not show remove button when uploading', () => {
     renderComponent('Uploading')
 

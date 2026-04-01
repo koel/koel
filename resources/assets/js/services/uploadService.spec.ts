@@ -154,16 +154,19 @@ describe('uploadService', () => {
   })
 
   it('sets progress during upload', async () => {
-    postWithProgressMock.mockImplementation((_url: string, _data: FormData, onProgress: Function) => ({
-      promise: Promise.resolve(onProgress({ loaded: 50, total: 100 })),
-      abort: vi.fn(),
-    }))
+    const result = { song: h.factory('song'), album: h.factory('album') }
+    postWithProgressMock.mockImplementation((_url: string, _data: FormData, onProgress: Function) => {
+      onProgress({ loaded: 50, total: 100 })
+      return { promise: Promise.resolve(result), abort: vi.fn() }
+    })
+    h.mock(uploadService, 'handleUploadResult')
     h.mock(uploadService, 'proceed')
 
     const file = createUploadFile()
     await uploadService.upload(file)
 
     expect(file.progress).toBe(50)
+    expect(file.status).toBe('Uploaded')
   })
 
   it('handles upload error with message', async () => {
