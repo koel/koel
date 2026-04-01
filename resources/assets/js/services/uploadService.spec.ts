@@ -21,6 +21,7 @@ describe('uploadService', () => {
   const h = createHarness({
     beforeEach: () => {
       uploadService.state.files = []
+      uploadService.abortHandles.clear()
     },
   })
 
@@ -32,6 +33,20 @@ describe('uploadService', () => {
     progress: 0,
     ...overrides,
   })
+
+  const mockPostWithProgress = (resolveValue: any) => {
+    postWithProgressMock.mockReturnValue({
+      promise: Promise.resolve(resolveValue),
+      abort: vi.fn(),
+    })
+  }
+
+  const mockPostWithProgressRejection = (error: any) => {
+    postWithProgressMock.mockReturnValue({
+      promise: Promise.reject(error),
+      abort: vi.fn(),
+    })
+  }
 
   it('queues files and triggers proceed', () => {
     const proceedMock = h.mock(uploadService, 'proceed')
@@ -113,7 +128,7 @@ describe('uploadService', () => {
 
   it('uploads a file successfully', async () => {
     const result = { song: h.factory('song'), album: h.factory('album') }
-    postWithProgressMock.mockResolvedValue(result)
+    mockPostWithProgress(result)
     const handleMock = h.mock(uploadService, 'handleUploadResult')
     const proceedMock = h.mock(uploadService, 'proceed')
 
@@ -126,7 +141,7 @@ describe('uploadService', () => {
   })
 
   it('marks file as errored if response is malformed', async () => {
-    postWithProgressMock.mockResolvedValue({ message: 'The POST data is too large.' })
+    mockPostWithProgress({ message: 'The POST data is too large.' })
     const handleMock = h.mock(uploadService, 'handleUploadResult')
     h.mock(uploadService, 'proceed')
 
@@ -139,16 +154,19 @@ describe('uploadService', () => {
   })
 
   it('sets progress during upload', async () => {
-    postWithProgressMock.mockImplementation(async (_url: string, _data: FormData, onProgress: Function) => {
+    const result = { song: h.factory('song'), album: h.factory('album') }
+    postWithProgressMock.mockImplementation((_url: string, _data: FormData, onProgress: Function) => {
       onProgress({ loaded: 50, total: 100 })
-      return null
+      return { promise: Promise.resolve(result), abort: vi.fn() }
     })
+    h.mock(uploadService, 'handleUploadResult')
     h.mock(uploadService, 'proceed')
 
     const file = createUploadFile()
     await uploadService.upload(file)
 
     expect(file.progress).toBe(50)
+    expect(file.status).toBe('Uploaded')
   })
 
   it('handles upload error with message', async () => {
@@ -156,7 +174,7 @@ describe('uploadService', () => {
       responseData: { message: 'File too large' },
     })
 
-    postWithProgressMock.mockRejectedValue(error)
+    mockPostWithProgressRejection(error)
     h.mock(uploadService, 'proceed')
 
     const file = createUploadFile()
@@ -167,7 +185,7 @@ describe('uploadService', () => {
   })
 
   it('handles upload error without message', async () => {
-    postWithProgressMock.mockRejectedValue(new Error('network error'))
+    mockPostWithProgressRejection(new Error('network error'))
     h.mock(uploadService, 'proceed')
 
     const file = createUploadFile()
@@ -175,6 +193,54 @@ describe('uploadService', () => {
 
     expect(file.status).toBe('Errored')
     expect(file.message).toBe('Upload failed: Unknown error.')
+  })
+
+  it('aborts an in-progress upload', async () => {
+    const abortMock = vi.fn()
+    postWithProgressMock.mockReturnValue({
+      promise: new Promise((_, reject) => {
+        // Simulate abort: when abort is called, reject with AbortError
+        abortMock.mockImplementation(() => reject(new DOMException('Upload aborted', 'AbortError')))
+      }),
+      abort: (...args: any[]) => abortMock(...args),
+    })
+    h.mock(uploadService, 'proceed')
+
+    const file = createUploadFile()
+    const uploadPromise = uploadService.upload(file)
+
+    expect(file.status).toBe('Uploading')
+    expect(uploadService.abortHandles.has(file.id)).toBe(true)
+
+    uploadService.abort(file)
+
+    await uploadPromise
+
+    expect(file.status).toBe('Canceled')
+    expect(abortMock).toHaveBeenCalled()
+  })
+
+  it('cleans up abort handle after successful upload', async () => {
+    const result = { song: h.factory('song'), album: h.factory('album') }
+    mockPostWithProgress(result)
+    h.mock(uploadService, 'handleUploadResult')
+    h.mock(uploadService, 'proceed')
+
+    const file = createUploadFile()
+    await uploadService.upload(file)
+
+    expect(uploadService.abortHandles.has(file.id)).toBe(false)
+  })
+
+  it('cleans up abort handle on remove', () => {
+    h.mock(uploadService, 'proceed')
+    const file = createUploadFile()
+    uploadService.state.files = [file]
+    uploadService.abortHandles.set(file.id, vi.fn())
+
+    uploadService.remove(uploadService.state.files[0])
+
+    expect(uploadService.abortHandles.has(file.id)).toBe(false)
   })
 
   it('retries a file', () => {

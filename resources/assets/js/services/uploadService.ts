@@ -28,6 +28,8 @@ export const uploadService = {
     files: [] as UploadFile[],
   }),
 
+  abortHandles: new Map<string, () => void>(),
+
   simultaneousUploads: 5,
 
   queue(file: UploadFile | UploadFile[]) {
@@ -36,8 +38,14 @@ export const uploadService = {
   },
 
   remove(file: UploadFile) {
+    this.abortHandles.delete(file.id)
     this.state.files = without(this.state.files, file)
     this.proceed()
+  },
+
+  abort(file: UploadFile) {
+    this.abortHandles.get(file.id)?.()
+    this.abortHandles.delete(file.id)
   },
 
   proceed() {
@@ -75,10 +83,14 @@ export const uploadService = {
     file.progress = 0
     file.status = 'Uploading'
 
+    const { promise, abort } = postWithProgress<UploadResult | null>('upload', formData, (e: ProgressEvent) => {
+      file.progress = (e.loaded * 100) / e.total
+    })
+
+    this.abortHandles.set(file.id, abort)
+
     try {
-      const result = await postWithProgress<UploadResult | null>('upload', formData, (e: ProgressEvent) => {
-        file.progress = (e.loaded * 100) / e.total
-      })
+      const result = await promise
 
       if (result?.song && result?.album) {
         file.status = 'Uploaded'
@@ -91,6 +103,13 @@ export const uploadService = {
 
       this.proceed()
     } catch (error: unknown) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        file.status = 'Canceled'
+        file.message = 'Upload cancelled.'
+        this.proceed()
+        return
+      }
+
       logger.error(error)
       file.status = 'Errored'
 
@@ -101,6 +120,8 @@ export const uploadService = {
       }
 
       this.proceed() // upload the next file
+    } finally {
+      this.abortHandles.delete(file.id)
     }
   },
 
