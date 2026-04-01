@@ -8,7 +8,7 @@
         ref="newFolderInput"
         v-model="inputName"
         aria-label="New folder name"
-        class="flex-1 min-w-0 text-base px-3.5 py-2 bg-transparent text-k-fg-input border-0 focus-visible:outline-0"
+        class="flex-1 min-w-0 text-base px-3.5 py-2 bg-transparent text-k-fg-input border-0 focus-visible:outline-none"
         placeholder="Folder name"
         type="text"
         @keydown.enter.prevent="confirm"
