@@ -13,7 +13,9 @@ vi.mock('@/composables/useOfflinePlayback', () => ({
 import Component from './PlayableCard.vue'
 
 describe('playableCard.vue', () => {
-  const h = createHarness()
+  const h = createHarness({
+    beforeEach: () => isCachedMock.mockReturnValue(false),
+  })
 
   const renderCard = (overrides: Partial<Song> = {}) => {
     const song = h.factory('song', {
