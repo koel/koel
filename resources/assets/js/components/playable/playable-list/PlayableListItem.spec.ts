@@ -19,7 +19,9 @@ import Component from './PlayableListItem.vue'
 describe('playableListItem.vue', () => {
   const h = createHarness({
     beforeEach: () => {
+      isCachedMock.mockClear()
       isCachedMock.mockReturnValue(false)
+      isCachingMock.mockClear()
       isCachingMock.mockReturnValue(false)
     },
   })

@@ -13,7 +13,14 @@
     <PlayableThumbnail :playable @clicked="play" />
     <span class="flex-1 min-w-0 gap-1 flex flex-col">
       <span class="title flex gap-2 items-center truncate">
-        <Icon v-if="cachingOffline" :icon="faSpinner" class="!opacity-50" spin title="Caching for offline playback" />
+        <Icon
+          v-if="cachingOffline"
+          :icon="faSpinner"
+          class="!opacity-50"
+          spin
+          title="Caching for offline playback"
+          aria-label="Caching for offline playback"
+        />
         <OfflineMark v-else-if="cachedOffline" />
         <span class="truncate">{{ playable.title }}</span>
       </span>

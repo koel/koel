@@ -24,7 +24,14 @@
       <span class="title-artist flex flex-col gap-1 overflow-hidden">
         <span class="title text-k-fg !flex gap-2 items-center">
           <ExternalMark v-if="external" />
-          <Icon v-if="cachingOffline" :icon="faSpinner" class="!opacity-50" spin title="Caching for offline playback" />
+          <Icon
+            v-if="cachingOffline"
+            :icon="faSpinner"
+            class="!opacity-50"
+            spin
+            title="Caching for offline playback"
+            aria-label="Caching for offline playback"
+          />
           <OfflineMark v-else-if="cachedOffline" />
           <span class="flex-1">{{ playable.title }}</span>
         </span>
