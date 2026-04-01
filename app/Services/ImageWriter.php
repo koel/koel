@@ -38,7 +38,9 @@ class ImageWriter
     {
         $config ??= ImageWritingConfig::default();
 
-        $img = Image::read(Str::isUrl($source) ? Http::get($source)->body() : $source)->scale(width: $config->maxWidth);
+        $img = Image::read(
+            Str::isUrl($source) ? Http::withUserAgent('Koel')->get($source)->body() : $source,
+        )->scale(width: $config->maxWidth);
 
         if ($config->blur) {
             $img->blur($config->blur);
