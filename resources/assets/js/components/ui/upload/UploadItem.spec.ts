@@ -67,25 +67,25 @@ describe('uploadItem.vue', () => {
     },
   )
 
-  it('cancels upload after confirmation', async () => {
+  it('aborts upload after confirmation', async () => {
     mockShowConfirmDialog.mockResolvedValue(true)
     const mock = h.mock(uploadService, 'cancel')
     renderComponent('Uploading')
 
-    await h.user.click(screen.getByRole('button', { name: 'Cancel' }))
+    await h.user.click(screen.getByRole('button', { name: 'Abort' }))
 
-    expect(mockShowConfirmDialog).toHaveBeenCalledWith('Cancel this upload?')
+    expect(mockShowConfirmDialog).toHaveBeenCalledWith('Abort this upload?')
     expect(mock).toHaveBeenCalled()
   })
 
-  it('does not cancel upload if confirmation is declined', async () => {
+  it('does not abort upload if confirmation is declined', async () => {
     mockShowConfirmDialog.mockResolvedValue(false)
     const mock = h.mock(uploadService, 'cancel')
     renderComponent('Uploading')
 
-    await h.user.click(screen.getByRole('button', { name: 'Cancel' }))
+    await h.user.click(screen.getByRole('button', { name: 'Abort' }))
 
-    expect(mockShowConfirmDialog).toHaveBeenCalledWith('Cancel this upload?')
+    expect(mockShowConfirmDialog).toHaveBeenCalledWith('Abort this upload?')
     expect(mock).not.toHaveBeenCalled()
   })
 

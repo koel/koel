@@ -6,7 +6,7 @@
         <Btn v-if="canRetry" class="!px-3" icon-only title="Retry" transparent unrounded @click="retry">
           <Icon :icon="faRotateBack" />
         </Btn>
-        <Btn v-if="canCancel" class="!px-3" icon-only title="Cancel" transparent unrounded @click="cancel">
+        <Btn v-if="canAbort" class="!px-3" icon-only title="Abort" transparent unrounded @click="abort">
           <Icon :icon="faXmark" />
         </Btn>
         <Btn v-if="canRemove" class="!px-3" icon-only title="Remove" transparent unrounded @click="remove">
@@ -19,8 +19,8 @@
         <Icon :icon="faExclamationCircle" class="mr-1" />
         {{ file.message }}
       </span>
-      <span v-if="file.status === 'Canceled'" class="text-k-warning">Cancelled</span>
-      <span v-if="file.status === 'Ready'">Queued</span>
+      <span v-if="file.status === 'Canceled'">Cancelled.</span>
+      <span v-if="file.status === 'Ready'">Queued.</span>
       <span v-if="file.status === 'Uploading'">
         Uploading
         <span class="tabular-nums">
@@ -28,13 +28,17 @@
           >%
         </span>
       </span>
-      <span v-if="file.status === 'Uploaded'" class="text-k-success">Uploaded</span>
+      <span v-if="file.status === 'Uploaded'" class="text-k-success">
+        <Icon :icon="faCheckCircle" class="mr-1" />
+        Uploaded.
+      </span>
     </p>
   </article>
 </template>
 
 <script lang="ts" setup>
 import {
+  faCheckCircle,
   faExclamationCircle,
   faExclamationTriangle,
   faInfoCircle,
@@ -54,7 +58,7 @@ const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 const { file } = toRefs(props)
 
 const canRetry = computed(() => file.value.status === 'Canceled' || file.value.status === 'Errored')
-const canCancel = computed(() => file.value.status === 'Uploading')
+const canAbort = computed(() => file.value.status === 'Uploading')
 const canRemove = computed(() => file.value.status !== 'Uploading')
 const cssClass = computed(() => file.value.status.toLowerCase())
 const progressBarWidth = computed(() => (file.value.status === 'Uploading' ? `${file.value.progress}%` : '0'))
@@ -64,8 +68,8 @@ const { showConfirmDialog } = useDialogBox()
 const remove = () => uploadService.remove(file.value)
 const retry = () => uploadService.retry(file.value)
 
-const cancel = async () => {
-  if (await showConfirmDialog('Cancel this upload?')) {
+const abort = async () => {
+  if (await showConfirmDialog('Abort this upload?')) {
     uploadService.cancel(file.value)
   }
 }
