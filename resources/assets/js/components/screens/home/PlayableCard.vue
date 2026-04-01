@@ -13,7 +13,8 @@
     <PlayableThumbnail :playable @clicked="play" />
     <span class="flex-1 min-w-0 gap-1 flex flex-col">
       <span class="title flex gap-2 items-center truncate">
-        <OfflineMark v-if="cachedOffline" />
+        <Icon v-if="cachingOffline" :icon="faSpinner" class="!opacity-50" spin title="Caching for offline playback" />
+        <OfflineMark v-else-if="cachedOffline" />
         <span class="truncate">{{ playable.title }}</span>
       </span>
       <span class="block truncate text-k-fg-50 text-[0.9rem]">{{ artist }}</span>
@@ -25,6 +26,7 @@
 </template>
 
 <script lang="ts" setup>
+import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
 import { defineAsyncComponent, getPlayableProp } from '@/utils/helpers'
 import { secondsToHis } from '@/utils/formatters'
@@ -44,11 +46,12 @@ const { playable } = toRefs(props)
 
 const { startDragging } = useDraggable('playables')
 const { openContextMenu } = useContextMenu()
-const { isCached } = useOfflinePlayback()
+const { isCached, isCaching } = useOfflinePlayback()
 
 const artist = computed(() => getPlayableProp<string>(playable.value, 'artist_name', 'podcast_author') || '')
 const playing = computed(() => ['Playing', 'Paused'].includes(playable.value.playback_state!))
 const cachedOffline = computed(() => isSong(playable.value) && isCached(playable.value))
+const cachingOffline = computed(() => isSong(playable.value) && isCaching(playable.value))
 const fmtLength = secondsToHis(playable.value.length)
 
 const play = () => {

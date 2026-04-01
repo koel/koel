@@ -3,10 +3,12 @@ import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 
 const isCachedMock = vi.fn().mockReturnValue(false)
+const isCachingMock = vi.fn().mockReturnValue(false)
 
 vi.mock('@/composables/useOfflinePlayback', () => ({
   useOfflinePlayback: () => ({
     isCached: isCachedMock,
+    isCaching: isCachingMock,
   }),
 }))
 
@@ -14,7 +16,10 @@ import Component from './PlayableCard.vue'
 
 describe('playableCard.vue', () => {
   const h = createHarness({
-    beforeEach: () => isCachedMock.mockReturnValue(false),
+    beforeEach: () => {
+      isCachedMock.mockReturnValue(false)
+      isCachingMock.mockReturnValue(false)
+    },
   })
 
   const renderCard = (overrides: Partial<Song> = {}) => {
@@ -58,8 +63,21 @@ describe('playableCard.vue', () => {
   })
 
   it('does not show offline mark for non-cached songs', () => {
-    isCachedMock.mockReturnValue(false)
     renderCard()
+    expect(screen.queryByTitle('Available offline')).toBeNull()
+  })
+
+  it('shows spinner when caching offline', () => {
+    isCachingMock.mockReturnValue(true)
+    renderCard()
+    screen.getByTitle('Caching for offline playback')
+  })
+
+  it('shows spinner instead of offline mark when caching', () => {
+    isCachingMock.mockReturnValue(true)
+    isCachedMock.mockReturnValue(true)
+    renderCard()
+    screen.getByTitle('Caching for offline playback')
     expect(screen.queryByTitle('Available offline')).toBeNull()
   })
 })

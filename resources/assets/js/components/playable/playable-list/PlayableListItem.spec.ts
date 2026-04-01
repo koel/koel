@@ -4,16 +4,25 @@ import { playableStore } from '@/stores/playableStore'
 import { PlayableListConfigKey } from '@/config/symbols'
 import { createHarness } from '@/__tests__/TestHarness'
 
+const isCachedMock = vi.fn().mockReturnValue(false)
+const isCachingMock = vi.fn().mockReturnValue(false)
+
 vi.mock('@/composables/useOfflinePlayback', () => ({
   useOfflinePlayback: () => ({
-    isCached: vi.fn().mockReturnValue(false),
+    isCached: isCachedMock,
+    isCaching: isCachingMock,
   }),
 }))
 
 import Component from './PlayableListItem.vue'
 
 describe('playableListItem.vue', () => {
-  const h = createHarness()
+  const h = createHarness({
+    beforeEach: () => {
+      isCachedMock.mockReturnValue(false)
+      isCachingMock.mockReturnValue(false)
+    },
+  })
 
   const renderComponent = (playable?: Playable, showDisc = false) => {
     playable = playable ?? h.factory('song', { favorite: false })
@@ -116,5 +125,19 @@ describe('playableListItem.vue', () => {
     await h.user.click(screen.getByRole('button', { name: 'Favorite' }))
 
     expect(toggleFavoriteMock).toHaveBeenCalledWith(row.playable)
+  })
+
+  it('shows spinner when caching offline', () => {
+    isCachingMock.mockReturnValue(true)
+    renderComponent()
+    screen.getByTitle('Caching for offline playback')
+  })
+
+  it('shows spinner instead of offline mark when caching', () => {
+    isCachingMock.mockReturnValue(true)
+    isCachedMock.mockReturnValue(true)
+    renderComponent()
+    screen.getByTitle('Caching for offline playback')
+    expect(screen.queryByTitle('Available offline')).toBeNull()
   })
 })
