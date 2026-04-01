@@ -19,7 +19,7 @@
         <Icon :icon="faExclamationCircle" class="mr-1" />
         {{ file.message }}
       </span>
-      <span v-if="file.status === 'Canceled'">Cancelled.</span>
+      <span v-if="file.status === 'Canceled'">Canceled.</span>
       <span v-if="file.status === 'Ready'">Queued.</span>
       <span v-if="file.status === 'Uploading'">
         Uploading
