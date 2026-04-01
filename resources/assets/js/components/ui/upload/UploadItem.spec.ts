@@ -58,4 +58,19 @@ describe('uploadItem.vue', () => {
       expect(mock).toHaveBeenCalled()
     },
   )
+
+  it('allows cancelling when uploading', async () => {
+    const mock = h.mock(uploadService, 'cancel')
+    renderComponent('Uploading')
+
+    await h.user.click(screen.getByRole('button', { name: 'Cancel' }))
+
+    expect(mock).toHaveBeenCalled()
+  })
+
+  it('does not show remove button when uploading', () => {
+    renderComponent('Uploading')
+
+    expect(screen.queryByRole('button', { name: 'Remove' })).toBeNull()
+  })
 })

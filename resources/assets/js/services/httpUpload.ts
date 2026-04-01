@@ -1,11 +1,21 @@
 import { authService } from '@/services/authService'
 
+export interface UploadHandle<T> {
+  promise: Promise<T>
+  abort: () => void
+}
+
 /**
  * Upload with progress tracking using XHR, since fetch/ky don't support upload progress.
  */
-export const postWithProgress = <T>(url: string, data: FormData, onUploadProgress: (e: ProgressEvent) => void) => {
-  return new Promise<T>((resolve, reject) => {
-    const xhr = new XMLHttpRequest()
+export const postWithProgress = <T>(
+  url: string,
+  data: FormData,
+  onUploadProgress: (e: ProgressEvent) => void,
+): UploadHandle<T> => {
+  const xhr = new XMLHttpRequest()
+
+  const promise = new Promise<T>((resolve, reject) => {
     xhr.open('POST', `${window.BASE_URL}api/${url}`)
     xhr.setRequestHeader('Accept', 'application/json')
     xhr.setRequestHeader('Authorization', `Bearer ${authService.getApiToken()}`)
@@ -36,7 +46,10 @@ export const postWithProgress = <T>(url: string, data: FormData, onUploadProgres
     })
 
     xhr.addEventListener('error', () => reject(new Error('Network error')))
+    xhr.addEventListener('abort', () => reject(new DOMException('Upload aborted', 'AbortError')))
 
     xhr.send(data)
   })
+
+  return { promise, abort: () => xhr.abort() }
 }
