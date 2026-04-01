@@ -1,10 +1,21 @@
 import { screen } from '@testing-library/vue'
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
+
+const isCachedMock = vi.fn().mockReturnValue(false)
+
+vi.mock('@/composables/useOfflinePlayback', () => ({
+  useOfflinePlayback: () => ({
+    isCached: isCachedMock,
+  }),
+}))
+
 import Component from './PlayableCard.vue'
 
 describe('playableCard.vue', () => {
-  const h = createHarness()
+  const h = createHarness({
+    beforeEach: () => isCachedMock.mockReturnValue(false),
+  })
 
   const renderCard = (overrides: Partial<Song> = {}) => {
     const song = h.factory('song', {
@@ -38,5 +49,17 @@ describe('playableCard.vue', () => {
   it('is draggable', () => {
     renderCard()
     expect(screen.getByTestId('song-card').getAttribute('draggable')).toBe('true')
+  })
+
+  it('shows offline mark for cached songs', () => {
+    isCachedMock.mockReturnValue(true)
+    renderCard()
+    screen.getByTitle('Available offline')
+  })
+
+  it('does not show offline mark for non-cached songs', () => {
+    isCachedMock.mockReturnValue(false)
+    renderCard()
+    expect(screen.queryByTitle('Available offline')).toBeNull()
   })
 })
