@@ -130,8 +130,9 @@ const fnv1a = (str: string) => {
   return h >>> 0
 }
 
-export const textToHsl = (text: string, s = 65, l = 55) => {
+export const textToHsl = (text: string, l = 55) => {
   const hash = fnv1a(text)
   const h = hash % 360
+  const s = 50 + ((hash >>> 8) % 30)
   return `hsl(${h} ${s}% ${l}%)`
 }
