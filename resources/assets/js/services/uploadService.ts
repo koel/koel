@@ -43,7 +43,7 @@ export const uploadService = {
     this.proceed()
   },
 
-  cancel(file: UploadFile) {
+  abort(file: UploadFile) {
     this.abortHandles.get(file.id)?.()
     this.abortHandles.delete(file.id)
   },

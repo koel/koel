@@ -192,7 +192,7 @@ describe('uploadService', () => {
     expect(file.message).toBe('Upload failed: Unknown error.')
   })
 
-  it('cancels an in-progress upload', async () => {
+  it('aborts an in-progress upload', async () => {
     const abortMock = vi.fn()
     postWithProgressMock.mockReturnValue({
       promise: new Promise((_, reject) => {
@@ -209,7 +209,7 @@ describe('uploadService', () => {
     expect(file.status).toBe('Uploading')
     expect(uploadService.abortHandles.has(file.id)).toBe(true)
 
-    uploadService.cancel(file)
+    uploadService.abort(file)
 
     await uploadPromise
 

@@ -69,7 +69,7 @@ describe('uploadItem.vue', () => {
 
   it('aborts upload after confirmation', async () => {
     mockShowConfirmDialog.mockResolvedValue(true)
-    const mock = h.mock(uploadService, 'cancel')
+    const mock = h.mock(uploadService, 'abort')
     renderComponent('Uploading')
 
     await h.user.click(screen.getByRole('button', { name: 'Abort' }))
@@ -80,7 +80,7 @@ describe('uploadItem.vue', () => {
 
   it('does not abort upload if confirmation is declined', async () => {
     mockShowConfirmDialog.mockResolvedValue(false)
-    const mock = h.mock(uploadService, 'cancel')
+    const mock = h.mock(uploadService, 'abort')
     renderComponent('Uploading')
 
     await h.user.click(screen.getByRole('button', { name: 'Abort' }))

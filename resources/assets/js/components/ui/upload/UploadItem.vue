@@ -70,7 +70,7 @@ const retry = () => uploadService.retry(file.value)
 
 const abort = async () => {
   if (await showConfirmDialog('Abort this upload?')) {
-    uploadService.cancel(file.value)
+    uploadService.abort(file.value)
   }
 }
 </script>
