@@ -21,6 +21,12 @@
           title="Caching for offline playback"
           aria-label="Caching for offline playback"
         />
+        <Icon
+          v-else-if="cachingFailed"
+          :icon="faExclamationTriangle"
+          class="text-k-danger !opacity-75"
+          :title="`Error: ${cachingErrorMessage}`"
+        />
         <OfflineMark v-else-if="cachedOffline" />
         <span class="truncate">{{ playable.title }}</span>
       </span>
@@ -33,7 +39,7 @@
 </template>
 
 <script lang="ts" setup>
-import { faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { faExclamationTriangle, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
 import { defineAsyncComponent, getPlayableProp } from '@/utils/helpers'
 import { secondsToHis } from '@/utils/formatters'
@@ -53,12 +59,14 @@ const { playable } = toRefs(props)
 
 const { startDragging } = useDraggable('playables')
 const { openContextMenu } = useContextMenu()
-const { isCached, isCaching } = useOfflinePlayback()
+const { isCached, isCaching, hasCachingError, getCachingError } = useOfflinePlayback()
 
 const artist = computed(() => getPlayableProp<string>(playable.value, 'artist_name', 'podcast_author') || '')
 const playing = computed(() => ['Playing', 'Paused'].includes(playable.value.playback_state!))
 const cachedOffline = computed(() => isSong(playable.value) && isCached(playable.value))
 const cachingOffline = computed(() => isSong(playable.value) && isCaching(playable.value))
+const cachingFailed = computed(() => isSong(playable.value) && hasCachingError(playable.value))
+const cachingErrorMessage = computed(() => getCachingError(playable.value))
 const fmtLength = secondsToHis(playable.value.length)
 
 const play = () => {

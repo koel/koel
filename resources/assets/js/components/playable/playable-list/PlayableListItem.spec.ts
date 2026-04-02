@@ -6,11 +6,15 @@ import { createHarness } from '@/__tests__/TestHarness'
 
 const isCachedMock = vi.fn().mockReturnValue(false)
 const isCachingMock = vi.fn().mockReturnValue(false)
+const hasCachingErrorMock = vi.fn().mockReturnValue(false)
+const getCachingErrorMock = vi.fn().mockReturnValue(undefined)
 
 vi.mock('@/composables/useOfflinePlayback', () => ({
   useOfflinePlayback: () => ({
     isCached: isCachedMock,
     isCaching: isCachingMock,
+    hasCachingError: hasCachingErrorMock,
+    getCachingError: getCachingErrorMock,
   }),
 }))
 
@@ -23,6 +27,10 @@ describe('playableListItem.vue', () => {
       isCachedMock.mockReturnValue(false)
       isCachingMock.mockClear()
       isCachingMock.mockReturnValue(false)
+      hasCachingErrorMock.mockClear()
+      hasCachingErrorMock.mockReturnValue(false)
+      getCachingErrorMock.mockClear()
+      getCachingErrorMock.mockReturnValue(undefined)
     },
   })
 
@@ -141,5 +149,12 @@ describe('playableListItem.vue', () => {
     renderComponent()
     screen.getByTitle('Caching for offline playback')
     expect(screen.queryByTitle('Available offline')).toBeNull()
+  })
+
+  it('shows error icon when caching fails', () => {
+    hasCachingErrorMock.mockReturnValue(true)
+    getCachingErrorMock.mockReturnValue('Network error')
+    renderComponent()
+    screen.getByTitle('Error: Network error')
   })
 })
