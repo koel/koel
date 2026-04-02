@@ -51,7 +51,9 @@ const preventOffScreen = async (element: HTMLElement, isSubmenu = false) => {
 
 const safeAreaHeight = ref('0px')
 const safeAreaWidth = ref('0px')
-const safeAreaClipPath = ref('0 0, 0 0, 0 0, 0 0')
+const safeAreaClipPath = ref('polygon(0 0, 0 0, 0 0)')
+const safeAreaLeft = ref('auto')
+const safeAreaRight = ref('0')
 
 type MenuItem = HTMLElement & {
   eventsRegistered?: boolean
@@ -76,12 +78,26 @@ const initSubmenus = () => {
       await preventOffScreen(submenu, true)
     })
 
-    item.addEventListener('mousemove', async (e: MouseEvent) => {
-      await nextTick()
-      const rect = submenu.getBoundingClientRect()
-      safeAreaHeight.value = `${rect.height}px`
-      safeAreaWidth.value = `${rect.x - e.clientX}px`
-      safeAreaClipPath.value = `polygon(100% 0, 0 ${e.clientY - rect.top}px, 100% 100%)`
+    item.addEventListener('mousemove', (e: MouseEvent) => {
+      const submenuRect = submenu.getBoundingClientRect()
+      const itemRect = item.getBoundingClientRect()
+      const submenuIsLeft = submenuRect.right <= itemRect.left
+
+      safeAreaHeight.value = `${submenuRect.height}px`
+
+      if (submenuIsLeft) {
+        const gap = e.clientX - submenuRect.right
+        safeAreaWidth.value = `${gap}px`
+        safeAreaLeft.value = '0'
+        safeAreaRight.value = 'auto'
+        safeAreaClipPath.value = `polygon(0 0, 100% ${e.clientY - submenuRect.top}px, 0 100%)`
+      } else {
+        const gap = submenuRect.x - e.clientX
+        safeAreaWidth.value = `${gap}px`
+        safeAreaLeft.value = 'auto'
+        safeAreaRight.value = '0'
+        safeAreaClipPath.value = `polygon(100% 0, 0 ${e.clientY - submenuRect.top}px, 100% 100%)`
+      }
     })
 
     item.addEventListener('mouseleave', () => {
@@ -155,10 +171,12 @@ watch(options, newOptions => {
 <style lang="postcss" scoped>
 dialog {
   :deep(.has-sub) {
-    @apply after:absolute after:right-0 after:top-0 after:z-[2] after:opacity-0;
+    @apply after:absolute after:top-0 after:z-[2] after:opacity-0 after:content-[''];
   }
 
   :deep(.has-sub)::after {
+    left: v-bind(safeAreaLeft);
+    right: v-bind(safeAreaRight);
     width: v-bind(safeAreaWidth);
     height: v-bind(safeAreaHeight);
     clip-path: v-bind(safeAreaClipPath);
