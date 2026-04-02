@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import { nextTick, ref, toRefs, watch } from 'vue'
+import { nextTick, onBeforeUnmount, ref, toRefs, watch } from 'vue'
 import { logger } from '@/utils/logger'
 import { requireInjection } from '@/utils/helpers'
 import { ContextMenuKey } from '@/config/symbols'
@@ -94,6 +94,27 @@ const initSubmenus = () => {
   })
 }
 
+let observer: MutationObserver | undefined
+
+const startObservingSubmenus = () => {
+  stopObservingSubmenus()
+
+  if (!el.value) {
+    return
+  }
+
+  observer = new MutationObserver(() => initSubmenus())
+  observer.observe(el.value, { childList: true, subtree: true })
+
+  // Also init immediately in case the content is already rendered
+  initSubmenus()
+}
+
+const stopObservingSubmenus = () => {
+  observer?.disconnect()
+  observer = undefined
+}
+
 const open = async (t = 0, l = 0) => {
   top.value = `${t}px`
   left.value = `${l}px`
@@ -103,23 +124,24 @@ const open = async (t = 0, l = 0) => {
 
   await nextTick()
 
-  // wrap the call to preventOffScreen() in a setTimeout() to better ensure the DOM is updated
-  setTimeout(async () => {
-    try {
-      await preventOffScreen(el.value!)
-      initSubmenus()
-    } catch (error: unknown) {
-      logger.error(error)
-      // in a non-browser environment (e.g., unit testing), these two functions are broken due to calls to
-      // getBoundingClientRect() and querySelectorAll()
-    }
-  }, 100)
+  try {
+    await preventOffScreen(el.value!)
+  } catch (error: unknown) {
+    logger.error(error)
+  }
+
+  startObservingSubmenus()
 }
 
-const close = () => el.value?.close()
+const close = () => {
+  stopObservingSubmenus()
+  el.value?.close()
+}
 
 // Close the context menu when clicking outside it.
 const onMouseDown = (e: MouseEvent) => e.target === el.value && close()
+
+onBeforeUnmount(stopObservingSubmenus)
 
 watch(options, newOptions => {
   if (newOptions.component) {
