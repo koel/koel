@@ -26,7 +26,6 @@ export interface UploadFile {
 
 export interface DuplicateUpload {
   id: string
-  type: string
   filename: string
 }
 
@@ -42,7 +41,7 @@ export const uploadService = {
   simultaneousUploads: 5,
 
   queue(file: UploadFile | UploadFile[]) {
-    this.state.duplicateFilesUploaded = false;
+    this.state.duplicateFilesUploaded = false
     this.state.files = this.state.files.concat(file)
     this.proceed()
   },
@@ -123,19 +122,19 @@ export const uploadService = {
       logger.error(error)
       file.status = 'Errored'
 
-      if (error instanceof Error && 'status' in error) {
-        const status = (error as any).status
-
-        if (status === 409) {
-          file.message = 'Duplicate file uploaded.'
-          console.log('Duplicate File uploaded')
-          this.state.duplicateFilesUploaded = true;
-          this.proceed()
-          return
-        }
+      const err = error as {
+        status?: number
+        responseData?: { message?: string }
       }
 
-      if (error instanceof Error && 'responseData' in error && (error as any).responseData?.message) {
+      if (err.status === 409) {
+        this.state.duplicateFilesUploaded = true
+        this.remove(file)
+        this.proceed()
+        return
+      }
+
+      if (err.responseData?.message) {
         file.message = `Upload failed: ${(error as any).responseData.message}`
       } else {
         file.message = 'Upload failed: Unknown error.'
@@ -148,10 +147,10 @@ export const uploadService = {
   },
 
   async fetchDuplicates() {
-    const response = await http.get<{data: DuplicateUpload[]}>('duplicate-uploads')
+    const response = await http.get<{ data: DuplicateUpload[] }>('duplicate-uploads')
     this.state.duplicatedSongs = response.data
     console.log(this.state.duplicatedSongs)
-    return this.state.duplicatedSongs;    
+    return this.state.duplicatedSongs
   },
 
   handleUploadResult: (result: UploadResult) => {

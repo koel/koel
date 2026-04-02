@@ -33,10 +33,10 @@
         <UploadItem v-for="file in files" :key="file.id" :file="file" data-testid="upload-item" />
       </div>
 
-      <UploadScreenDuplicateBanner 
-        v-if="duplicateFilesUploaded" 
-        @toggle="handleToggleDuplicates" 
-        @close="duplicateFilesUploaded = false"  
+      <UploadScreenDuplicateBanner
+        v-if="duplicateFilesUploaded"
+        @toggle="handleToggleDuplicates"
+        @close="duplicateFilesUploaded = false"
       />
 
       <UploadScreenDuplicateSongList :songs="duplicatedSongs" v-if="viewingDuplicates" />
@@ -95,13 +95,18 @@ const UploadItem = defineAsyncComponent(() => import('@/components/ui/upload/Upl
 
 const acceptAttribute = acceptedExtensions.map(ext => `.${ext}`).join(',')
 
-const { allowsUpload, mediaPathSetUp, queueFilesForUpload, handleDropEvent} = useUpload()
+const {
+  allowsUpload,
+  mediaPathSetUp,
+  queueFilesForUpload,
+  handleDropEvent,
+  duplicateFilesUploaded,
+  fetchDuplicates,
+  duplicatedSongs,
+} = useUpload()
 
 const files = toRef(uploadService.state, 'files')
-// const duplicateFilesUploaded = toRef(uploadService.state, 'duplicateFilesUploaded')
 const droppable = ref(false)
-
-const {duplicateFilesUploaded, fetchDuplicates, duplicatedSongs } = useUpload()
 
 const viewingDuplicates = ref(false)
 
@@ -135,6 +140,7 @@ const handleToggleDuplicates = async () => {
     await fetchDuplicates()
   }
   viewingDuplicates.value = !viewingDuplicates.value
+  duplicateFilesUploaded.value = false
 }
 
 const retryAll = () => uploadService.retryAll()

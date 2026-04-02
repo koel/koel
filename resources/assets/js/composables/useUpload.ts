@@ -1,4 +1,4 @@
-import { computed } from 'vue'
+import { computed, toRef } from 'vue'
 import { commonStore } from '@/stores/commonStore'
 import { acceptsFile } from '@/utils/mediaHelper'
 import type { UploadFile } from '@/services/uploadService'
@@ -15,7 +15,7 @@ export const useUpload = () => {
 
   const { currentUserCan } = usePolicies()
 
-  const duplicateFilesUploaded = computed(() => uploadService.state.duplicateFilesUploaded)
+  const duplicateFilesUploaded = toRef(uploadService.state, 'duplicateFilesUploaded')
   const duplicatedSongs = computed(() => uploadService.state.duplicatedSongs)
 
   const mediaPathSetUp = computed(() => {
@@ -62,7 +62,7 @@ export const useUpload = () => {
   }
 
   const fetchDuplicates = async () => {
-      return await uploadService.fetchDuplicates()
+    return await uploadService.fetchDuplicates()
   }
 
   return {
