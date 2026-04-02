@@ -16,6 +16,8 @@ class ArtistBuilder extends FavoriteableBuilder
 {
     use CanScopeByUser;
 
+    private bool $needsGroupBy = false;
+
     public const array SORT_COLUMNS_NORMALIZE_MAP = [
         'name' => 'artists.name',
         'created_at' => 'artists.created_at',
@@ -49,6 +51,8 @@ class ArtistBuilder extends FavoriteableBuilder
         // Otherwise, return artists owned by the user or that have at least one
         // public song from another user in the same organization.
         // Use joins instead of nested whereHas to avoid correlated EXISTS subqueries.
+        $this->needsGroupBy = true;
+
         return $this
             ->leftJoin('songs as songs_a11y', 'artists.id', 'songs_a11y.artist_id')
             ->leftJoin('users as song_owners_a11y', static function (JoinClause $join) {
@@ -63,8 +67,7 @@ class ArtistBuilder extends FavoriteableBuilder
                             ->where('song_owners_a11y.organization_id', $this->user->organization_id)
                             ->where('songs_a11y.owner_id', '<>', $this->user->id);
                     });
-            })
-            ->groupBy('artists.id');
+            });
     }
 
     private function withPlayCount(bool $includingFavoriteStatus = false): self
@@ -112,9 +115,15 @@ class ArtistBuilder extends FavoriteableBuilder
     ): self {
         $this->user = $user;
 
-        return $this
-            ->accessible()
-            ->when($includeFavoriteStatus, static fn (self $query) => $query->withFavoriteStatus($favoritesOnly))
-            ->when($includePlayCount, static fn (self $query) => $query->withPlayCount($includeFavoriteStatus));
+        $this->accessible();
+
+        if ($this->needsGroupBy) {
+            $groupColumns = $includeFavoriteStatus ? ['artists.id', 'favorites.created_at'] : ['artists.id'];
+            $this->groupBy($groupColumns);
+        }
+
+        return $this->when($includeFavoriteStatus, static fn (self $query) => $query->withFavoriteStatus(
+            $favoritesOnly,
+        ))->when($includePlayCount, static fn (self $query) => $query->withPlayCount($includeFavoriteStatus));
     }
 }
