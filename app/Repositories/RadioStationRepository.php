@@ -2,7 +2,6 @@
 
 namespace App\Repositories;
 
-use App\Models\Podcast;
 use App\Models\RadioStation;
 use App\Models\User;
 use App\Repositories\Contracts\ScoutableRepository;
@@ -11,7 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 /** @extends Repository<RadioStation> */
 class RadioStationRepository extends Repository implements ScoutableRepository
 {
-    /** @return Collection<Podcast>|array<array-key, Podcast> */
+    /** @return Collection<RadioStation>|array<array-key, RadioStation> */
     public function getMany(array $ids, bool $preserveOrder = false, ?User $user = null): Collection
     {
         $stations = RadioStation::query()
@@ -27,8 +26,8 @@ class RadioStationRepository extends Repository implements ScoutableRepository
     {
         return $this->getMany(
             ids: RadioStation::search($keywords)
-                ->get()
                 ->take($limit)
+                ->get()
                 ->modelKeys(),
             preserveOrder: true,
             user: $user,

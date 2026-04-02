@@ -92,8 +92,8 @@ class AlbumRepository extends Repository implements ScoutableRepository
     {
         return $this->getMany(
             ids: Album::search($keywords)
-                ->get()
                 ->take($limit)
+                ->get()
                 ->modelKeys(),
             preserveOrder: true,
             user: $user,
