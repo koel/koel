@@ -19,19 +19,4 @@ return new class extends Migration {
             $table->index(['playlist_id', 'song_id']);
         });
     }
-
-    public function down(): void
-    {
-        Schema::table('interactions', static function (Blueprint $table): void {
-            $table->dropIndex(['user_id', 'song_id']);
-        });
-
-        Schema::table('podcast_user', static function (Blueprint $table): void {
-            $table->dropIndex(['user_id', 'podcast_id']);
-        });
-
-        Schema::table('playlist_song', static function (Blueprint $table): void {
-            $table->dropIndex(['playlist_id', 'song_id']);
-        });
-    }
 };
