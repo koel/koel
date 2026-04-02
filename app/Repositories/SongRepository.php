@@ -186,12 +186,9 @@ class SongRepository extends Repository implements ScoutableRepository
 
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
+            ->leftJoin('albums as albums_by_artist', 'songs.album_id', 'albums_by_artist.id')
             ->where(static function (SongBuilder $query) use ($artist): void {
-                $query->whereBelongsTo($artist)->orWhereHas('album', static function (Builder $albumQuery) use (
-                    $artist,
-                ): void {
-                    $albumQuery->whereBelongsTo($artist);
-                });
+                $query->where('songs.artist_id', $artist->id)->orWhere('albums_by_artist.artist_id', $artist->id);
             })
             ->orderBy('songs.album_name')
             ->orderBy('songs.disc')

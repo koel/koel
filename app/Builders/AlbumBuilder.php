@@ -51,19 +51,25 @@ class AlbumBuilder extends FavoriteableBuilder
             return $this->whereBelongsTo($this->user);
         }
 
-        // otherwise, we return albums that belong to the user or
-        // albums that have at least one public song owned by the user in the same organization.
-        return $this->where(function (Builder $query): void {
-            $query->whereBelongsTo($this->user)->orWhereHas('songs', function (Builder $q): void {
-                $q->where('songs.is_public', true)->whereHas('owner', function (Builder $owner): void {
-                    $owner->where('organization_id', $this->user->organization_id)->where(
-                        'owner_id',
-                        '<>',
-                        $this->user->id,
-                    );
-                });
-            });
-        });
+        // Otherwise, return albums owned by the user or that have at least one
+        // public song from another user in the same organization.
+        // Use joins instead of nested whereHas to avoid correlated EXISTS subqueries.
+        return $this
+            ->leftJoin('songs as songs_a11y', 'albums.id', 'songs_a11y.album_id')
+            ->leftJoin('users as song_owners_a11y', static function (JoinClause $join) {
+                $join->on('songs_a11y.owner_id', 'song_owners_a11y.id');
+            })
+            ->where(function (Builder $query): void {
+                $query
+                    ->whereBelongsTo($this->user)
+                    ->orWhere(function (Builder $q): void {
+                        $q
+                            ->where('songs_a11y.is_public', true)
+                            ->where('song_owners_a11y.organization_id', $this->user->organization_id)
+                            ->where('songs_a11y.owner_id', '<>', $this->user->id);
+                    });
+            })
+            ->groupBy('albums.id');
     }
 
     private function withPlayCount($includingFavoriteStatus = false): self
