@@ -14,6 +14,10 @@ class FolderRepository extends Repository
     {
         $user ??= $this->auth->user();
 
+        if (!$user) {
+            return new Collection();
+        }
+
         return Collection::wrap($folders)->filter(static fn (Folder $folder): bool => $folder->browsableBy($user)); // @phpstan-ignore argument.type
     }
 
