@@ -240,6 +240,8 @@ const extractSongIdFromUrl = (url: string): Song['id'] | null => {
   return match?.[1] || null
 }
 
+export const shouldWarnUponWindowUnload = () => cachingProgress.value.size > 0
+
 export const useOfflinePlayback = () => {
   if (!listenerSetup) {
     listenerSetup = true
@@ -349,7 +351,7 @@ export const useOfflinePlayback = () => {
     getCachingProgress,
     hasCachingError,
     getCachingError,
-    shouldWarnUponWindowUnload: () => cachingProgress.value.size > 0,
+    shouldWarnUponWindowUnload,
     checkCacheStatus,
     refreshStorageEstimate,
   }

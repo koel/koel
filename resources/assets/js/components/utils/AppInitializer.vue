@@ -9,7 +9,7 @@ import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useOverlay } from '@/composables/useOverlay'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
-import { useOfflinePlayback } from '@/composables/useOfflinePlayback'
+import { shouldWarnUponWindowUnload as shouldWarnAboutOfflineCaching } from '@/composables/useOfflinePlayback'
 import { uploadService } from '@/services/uploadService'
 
 const emits = defineEmits<{
@@ -19,7 +19,6 @@ const emits = defineEmits<{
 
 const { showOverlay, hideOverlay } = useOverlay()
 const { currentUser } = useAuthorization()
-const { shouldWarnUponWindowUnload: shouldWarnAboutOfflineCaching } = useOfflinePlayback()
 
 /**
  * Request for notification permission if it's not provided and the user is OK with notifications.
