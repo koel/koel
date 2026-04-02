@@ -7,6 +7,7 @@ use App\Facades\License;
 use App\Models\Album;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use LogicException;
@@ -51,7 +52,7 @@ class AlbumBuilder extends FavoriteableBuilder
         return $this->where(function (Builder $query): void {
             $query
                 ->whereBelongsTo($this->user)
-                ->orWhereExists(function ($sub): void {
+                ->orWhereExists(function (QueryBuilder $sub): void {
                     $sub
                         ->select(DB::raw(1))
                         ->from('songs')
