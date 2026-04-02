@@ -16,8 +16,6 @@ class ArtistBuilder extends FavoriteableBuilder
 {
     use CanScopeByUser;
 
-    private bool $needsGroupBy = false;
-
     public const array SORT_COLUMNS_NORMALIZE_MAP = [
         'name' => 'artists.name',
         'created_at' => 'artists.created_at',
@@ -36,38 +34,29 @@ class ArtistBuilder extends FavoriteableBuilder
     private function accessible(): self
     {
         if (License::isCommunity()) {
-            // With the Community license, all artists are accessible by all users.
             return $this;
         }
 
         throw_unless($this->user, new LogicException('User must be set to query accessible artists.'));
 
         if (!$this->user->preferences->includePublicMedia) {
-            // If the user does not want to include public media, we only return artists
-            // that belong to them.
             return $this->whereBelongsTo($this->user);
         }
 
-        // Otherwise, return artists owned by the user or that have at least one
-        // public song from another user in the same organization.
-        // Use joins instead of nested whereHas to avoid correlated EXISTS subqueries.
-        $this->needsGroupBy = true;
-
-        return $this
-            ->leftJoin('songs as songs_a11y', 'artists.id', 'songs_a11y.artist_id')
-            ->leftJoin('users as song_owners_a11y', static function (JoinClause $join) {
-                $join->on('songs_a11y.owner_id', 'song_owners_a11y.id');
-            })
-            ->where(function (Builder $query): void {
-                $query
-                    ->whereBelongsTo($this->user)
-                    ->orWhere(function (Builder $q): void {
-                        $q
-                            ->where('songs_a11y.is_public', true)
-                            ->where('song_owners_a11y.organization_id', $this->user->organization_id)
-                            ->where('songs_a11y.owner_id', '<>', $this->user->id);
-                    });
-            });
+        return $this->where(function (Builder $query): void {
+            $query
+                ->whereBelongsTo($this->user)
+                ->orWhereExists(function ($sub): void {
+                    $sub
+                        ->select(DB::raw(1))
+                        ->from('songs')
+                        ->join('users', 'songs.owner_id', 'users.id')
+                        ->whereColumn('songs.artist_id', 'artists.id')
+                        ->where('songs.is_public', true)
+                        ->where('users.organization_id', $this->user->organization_id)
+                        ->where('songs.owner_id', '<>', $this->user->id);
+                });
+        });
     }
 
     private function withPlayCount(bool $includingFavoriteStatus = false): self
@@ -115,15 +104,9 @@ class ArtistBuilder extends FavoriteableBuilder
     ): self {
         $this->user = $user;
 
-        $this->accessible();
-
-        if ($this->needsGroupBy) {
-            $groupColumns = $includeFavoriteStatus ? ['artists.id', 'favorites.created_at'] : ['artists.id'];
-            $this->groupBy($groupColumns);
-        }
-
-        return $this->when($includeFavoriteStatus, static fn (self $query) => $query->withFavoriteStatus(
-            $favoritesOnly,
-        ))->when($includePlayCount, static fn (self $query) => $query->withPlayCount($includeFavoriteStatus));
+        return $this
+            ->accessible()
+            ->when($includeFavoriteStatus, static fn (self $query) => $query->withFavoriteStatus($favoritesOnly))
+            ->when($includePlayCount, static fn (self $query) => $query->withPlayCount($includeFavoriteStatus));
     }
 }

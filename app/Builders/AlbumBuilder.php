@@ -16,8 +16,6 @@ class AlbumBuilder extends FavoriteableBuilder
 {
     use CanScopeByUser;
 
-    private bool $needsGroupBy = false;
-
     public const array SORT_COLUMNS_NORMALIZE_MAP = [
         'name' => 'albums.name',
         'year' => 'albums.year',
@@ -41,38 +39,29 @@ class AlbumBuilder extends FavoriteableBuilder
     private function accessible(): self
     {
         if (License::isCommunity()) {
-            // With the Community license, all albums are accessible by all users.
             return $this;
         }
 
         throw_unless($this->user, new LogicException('User must be set to query accessible albums.'));
 
         if (!$this->user->preferences->includePublicMedia) {
-            // If the user does not want to include public media, we only return albums
-            // that belong to them.
             return $this->whereBelongsTo($this->user);
         }
 
-        // Otherwise, return albums owned by the user or that have at least one
-        // public song from another user in the same organization.
-        // Use joins instead of nested whereHas to avoid correlated EXISTS subqueries.
-        $this->needsGroupBy = true;
-
-        return $this
-            ->leftJoin('songs as songs_a11y', 'albums.id', 'songs_a11y.album_id')
-            ->leftJoin('users as song_owners_a11y', static function (JoinClause $join) {
-                $join->on('songs_a11y.owner_id', 'song_owners_a11y.id');
-            })
-            ->where(function (Builder $query): void {
-                $query
-                    ->whereBelongsTo($this->user)
-                    ->orWhere(function (Builder $q): void {
-                        $q
-                            ->where('songs_a11y.is_public', true)
-                            ->where('song_owners_a11y.organization_id', $this->user->organization_id)
-                            ->where('songs_a11y.owner_id', '<>', $this->user->id);
-                    });
-            });
+        return $this->where(function (Builder $query): void {
+            $query
+                ->whereBelongsTo($this->user)
+                ->orWhereExists(function ($sub): void {
+                    $sub
+                        ->select(DB::raw(1))
+                        ->from('songs')
+                        ->join('users', 'songs.owner_id', 'users.id')
+                        ->whereColumn('songs.album_id', 'albums.id')
+                        ->where('songs.is_public', true)
+                        ->where('users.organization_id', $this->user->organization_id)
+                        ->where('songs.owner_id', '<>', $this->user->id);
+                });
+        });
     }
 
     private function withPlayCount($includingFavoriteStatus = false): self
@@ -103,16 +92,10 @@ class AlbumBuilder extends FavoriteableBuilder
     ): self {
         $this->user = $user;
 
-        $this->accessible();
-
-        if ($this->needsGroupBy) {
-            $groupColumns = $includeFavoriteStatus ? ['albums.id', 'favorites.created_at'] : ['albums.id'];
-            $this->groupBy($groupColumns);
-        }
-
-        return $this->when($includeFavoriteStatus, static fn (self $query) => $query->withFavoriteStatus(
-            $favoritesOnly,
-        ))->when($includePlayCount, static fn (self $query) => $query->withPlayCount($includeFavoriteStatus));
+        return $this
+            ->accessible()
+            ->when($includeFavoriteStatus, static fn (self $query) => $query->withFavoriteStatus($favoritesOnly))
+            ->when($includePlayCount, static fn (self $query) => $query->withPlayCount($includeFavoriteStatus));
     }
 
     private static function normalizeSortColumn(string $column): string
@@ -131,7 +114,6 @@ class AlbumBuilder extends FavoriteableBuilder
 
         return $this
             ->orderBy($column, $direction)
-            // Depending on the column, we might need to order by the album's name as well.
             ->when($column === 'albums.artist_name', static fn (self $query) => $query->orderBy('albums.name'))
             ->when($column === 'albums.year', static fn (self $query) => $query->orderBy('albums.name'))
             ->when($column === 'favorite', static fn (self $query) => $query->orderBy('albums.name'));

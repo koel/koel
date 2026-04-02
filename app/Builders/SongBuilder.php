@@ -4,6 +4,7 @@ namespace App\Builders;
 
 use App\Builders\Concerns\CanScopeByUser;
 use App\Facades\License;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -82,12 +83,7 @@ class SongBuilder extends FavoriteableBuilder
             });
 
         // If the song is a podcast episode, we need to ensure that the user has access to it.
-        // Use a join on users instead of nested whereHas to avoid correlated EXISTS subqueries.
-        return $this->leftJoin(
-            'users as song_owners',
-            'songs.owner_id',
-            'song_owners.id',
-        )->where(function (self $query): void {
+        return $this->where(function (self $query): void {
             $query
                 ->whereNotNull('songs.podcast_id')
                 ->orWhere(function (self $q2) {
@@ -97,10 +93,10 @@ class SongBuilder extends FavoriteableBuilder
 
                     return $q2->where(function (self $q3): void {
                         $q3->whereBelongsTo($this->user, 'owner')->orWhere(function (self $q4): void {
-                            $q4
-                                ->where('songs.is_public', true)
-                                ->where('song_owners.organization_id', $this->user->organization_id)
-                                ->where('songs.owner_id', '<>', $this->user->id);
+                            $q4->where('songs.is_public', true)->whereHas('owner', fn (Builder $owner) => $owner->where(
+                                'organization_id',
+                                $this->user->organization_id,
+                            )->where('owner_id', '<>', $this->user->id));
                         });
                     });
                 });
