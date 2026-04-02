@@ -21,7 +21,7 @@ class PlaylistRepository extends Repository
             ->get(['playlists.*', 'playlist_playlist_folder.folder_id']);
     }
 
-    public function findAccessibleByName(string $name, User $user): ?Playlist
+    public function searchAccessibleByName(string $name, User $user): ?Playlist
     {
         return $this->accessibleByUser($user)->where('playlists.name', 'like', "%{$name}%")->first();
     }

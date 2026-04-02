@@ -36,7 +36,7 @@ class PlaySongsByGenre implements Tool
 
     public function handle(Request $request): Stringable|string
     {
-        $genre = $this->genreRepository->findByName($request['genre']);
+        $genre = $this->genreRepository->searchByName($request['genre']);
 
         if (!$genre) {
             return sprintf('No genre matching "%s" found in the library.', $request['genre']);

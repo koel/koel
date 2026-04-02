@@ -51,7 +51,7 @@ class AddToPlaylist implements Tool
 
     public function handle(Request $request): Stringable|string
     {
-        $playlist = $this->playlistRepository->findAccessibleByName($request['playlist_name'], $this->context->user);
+        $playlist = $this->playlistRepository->searchAccessibleByName($request['playlist_name'], $this->context->user);
 
         if (!$playlist) {
             return sprintf('No playlist matching "%s" found.', $request['playlist_name']);

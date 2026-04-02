@@ -87,22 +87,16 @@ class SongBuilder extends FavoriteableBuilder
             $query
                 ->whereNotNull('songs.podcast_id')
                 ->orWhere(function (self $q2) {
-                    // Depending on the user preferences, the song must be either:
-                    // - owned by the user, or
-                    // - shared (is_public=true) by the users in the same organization
                     if (!$this->user->preferences->includePublicMedia) {
                         return $q2->whereBelongsTo($this->user, 'owner');
                     }
 
                     return $q2->where(function (self $q3): void {
                         $q3->whereBelongsTo($this->user, 'owner')->orWhere(function (self $q4): void {
-                            $q4->where('songs.is_public', true)->whereHas('owner', function (Builder $owner): void {
-                                $owner->where('organization_id', $this->user->organization_id)->where(
-                                    'owner_id',
-                                    '<>',
-                                    $this->user->id,
-                                );
-                            });
+                            $q4->where('songs.is_public', true)->whereHas('owner', fn (Builder $owner) => $owner->where(
+                                'organization_id',
+                                $this->user->organization_id,
+                            )->where('owner_id', '<>', $this->user->id));
                         });
                     });
                 });
@@ -178,7 +172,9 @@ class SongBuilder extends FavoriteableBuilder
     public function storedLocally(): self
     {
         return $this->where(static function (self $query): void {
-            $query->whereNull('songs.storage')->orWhere('songs.storage', '')->whereNull('songs.podcast_id');
+            $query->where(static function (self $q): void {
+                $q->whereNull('songs.storage')->orWhere('songs.storage', '');
+            })->whereNull('songs.podcast_id');
         });
     }
 }

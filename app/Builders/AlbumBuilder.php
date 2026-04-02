@@ -7,6 +7,7 @@ use App\Facades\License;
 use App\Models\Album;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use LogicException;
@@ -39,30 +40,28 @@ class AlbumBuilder extends FavoriteableBuilder
     private function accessible(): self
     {
         if (License::isCommunity()) {
-            // With the Community license, all albums are accessible by all users.
             return $this;
         }
 
         throw_unless($this->user, new LogicException('User must be set to query accessible albums.'));
 
         if (!$this->user->preferences->includePublicMedia) {
-            // If the user does not want to include public media, we only return albums
-            // that belong to them.
             return $this->whereBelongsTo($this->user);
         }
 
-        // otherwise, we return albums that belong to the user or
-        // albums that have at least one public song owned by the user in the same organization.
         return $this->where(function (Builder $query): void {
-            $query->whereBelongsTo($this->user)->orWhereHas('songs', function (Builder $q): void {
-                $q->where('songs.is_public', true)->whereHas('owner', function (Builder $owner): void {
-                    $owner->where('organization_id', $this->user->organization_id)->where(
-                        'owner_id',
-                        '<>',
-                        $this->user->id,
-                    );
+            $query
+                ->whereBelongsTo($this->user)
+                ->orWhereExists(function (QueryBuilder $sub): void {
+                    $sub
+                        ->select(DB::raw(1))
+                        ->from('songs')
+                        ->join('users', 'songs.owner_id', 'users.id')
+                        ->whereColumn('songs.album_id', 'albums.id')
+                        ->where('songs.is_public', true)
+                        ->where('users.organization_id', $this->user->organization_id)
+                        ->where('songs.owner_id', '<>', $this->user->id);
                 });
-            });
         });
     }
 
@@ -116,7 +115,6 @@ class AlbumBuilder extends FavoriteableBuilder
 
         return $this
             ->orderBy($column, $direction)
-            // Depending on the column, we might need to order by the album's name as well.
             ->when($column === 'albums.artist_name', static fn (self $query) => $query->orderBy('albums.name'))
             ->when($column === 'albums.year', static fn (self $query) => $query->orderBy('albums.name'))
             ->when($column === 'favorite', static fn (self $query) => $query->orderBy('albums.name'));

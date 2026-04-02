@@ -74,8 +74,8 @@ class ArtistRepository extends Repository implements ScoutableRepository
     {
         return $this->getMany(
             ids: Artist::search($keywords)
-                ->get()
                 ->take($limit)
+                ->get()
                 ->modelKeys(),
             preserveOrder: true,
             user: $user,

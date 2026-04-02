@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 /** @extends Repository<Genre> */
 class GenreRepository extends Repository
 {
-    public function findByName(string $name): ?Genre
+    public function searchByName(string $name): ?Genre
     {
         return Genre::query()->where('name', 'like', "%{$name}%")->first();
     }
@@ -24,7 +24,7 @@ class GenreRepository extends Repository
         $genres = Genre::query()
             ->join('genre_song', 'genre_song.genre_id', '=', 'genres.id')
             ->join('songs', 'songs.id', '=', 'genre_song.song_id')
-            ->accessibleBy($scopedUser ?? auth()->user())
+            ->accessibleBy($scopedUser ?? $this->auth->user())
             ->groupBy('genres.id', 'genres.name', 'genres.public_id')
             ->orderBy('genres.name')
             ->select(
@@ -54,7 +54,7 @@ class GenreRepository extends Repository
     public function getSummaryForGenre(Genre $genre, ?User $scopedUser = null): GenreSummary
     {
         /** @var object $result */
-        $result = Song::query(type: PlayableType::SONG, user: $scopedUser ?? auth()->user())
+        $result = Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
             ->accessible()
             ->join('genre_song', 'songs.id', '=', 'genre_song.song_id')
             ->join('genres', 'genre_song.genre_id', '=', 'genres.id')
@@ -79,7 +79,7 @@ class GenreRepository extends Repository
     public function getSummaryForNoGenre(?User $scopedUser = null): GenreSummary
     {
         /** @var object $result */
-        $result = Song::query(type: PlayableType::SONG, user: $scopedUser ?? auth()->user())
+        $result = Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
             ->accessible()
             ->leftJoin('genre_song', 'songs.id', '=', 'genre_song.song_id')
             ->whereNull('genre_song.genre_id')
