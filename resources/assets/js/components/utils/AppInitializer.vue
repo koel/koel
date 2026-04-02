@@ -9,6 +9,7 @@ import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useOverlay } from '@/composables/useOverlay'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
+import { shouldWarnUponWindowUnload as shouldWarnAboutOfflineCaching } from '@/composables/useOfflinePlayback'
 import { uploadService } from '@/services/uploadService'
 
 const emits = defineEmits<{
@@ -41,7 +42,11 @@ onMounted(async () => {
     await requestNotificationPermission()
 
     window.addEventListener('beforeunload', (e: BeforeUnloadEvent) => {
-      if (uploadService.shouldWarnUponWindowUnload() || preferences.confirm_before_closing) {
+      if (
+        uploadService.shouldWarnUponWindowUnload() ||
+        shouldWarnAboutOfflineCaching() ||
+        preferences.confirm_before_closing
+      ) {
         e.preventDefault()
         e.returnValue = ''
       }

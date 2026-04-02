@@ -24,7 +24,21 @@
       <span class="title-artist flex flex-col gap-1 overflow-hidden">
         <span class="title text-k-fg !flex gap-2 items-center">
           <ExternalMark v-if="external" />
-          <OfflineMark v-if="cachedOffline" />
+          <Icon
+            v-if="cachingOffline"
+            :icon="faSpinner"
+            class="!opacity-50"
+            spin
+            title="Caching for offline playback"
+            aria-label="Caching for offline playback"
+          />
+          <Icon
+            v-else-if="cachingFailed"
+            :icon="faExclamationTriangle"
+            class="text-k-danger !opacity-75"
+            :title="`Error: ${cachingErrorMessage}`"
+          />
+          <OfflineMark v-else-if="cachedOffline" />
           <span class="flex-1">{{ playable.title }}</span>
         </span>
         <span class="artist text-[0.9rem] text-k-fg-50">{{ artist }}</span>
@@ -57,7 +71,7 @@
 </template>
 
 <script lang="ts" setup>
-import { faPodcast } from '@fortawesome/free-solid-svg-icons'
+import { faExclamationTriangle, faPodcast, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
 import { getPlayableProp, requireInjection } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
@@ -89,8 +103,11 @@ const { item } = toRefs(props)
 const playable = computed<Playable>(() => item.value.playable)
 const playing = computed(() => ['Playing', 'Paused'].includes(playable.value.playback_state!))
 const external = computed(() => isSong(playable.value) && playable.value.is_external)
-const { isCached } = useOfflinePlayback()
+const { isCached, isCaching, hasCachingError, getCachingError } = useOfflinePlayback()
 const cachedOffline = computed(() => isSong(playable.value) && isCached(playable.value))
+const cachingOffline = computed(() => isSong(playable.value) && isCaching(playable.value))
+const cachingFailed = computed(() => isSong(playable.value) && hasCachingError(playable.value))
+const cachingErrorMessage = computed(() => getCachingError(playable.value))
 
 const fmtLength = secondsToHis(playable.value.length)
 const artist = computed(() => getPlayableProp(playable.value, 'artist_name', 'podcast_author'))

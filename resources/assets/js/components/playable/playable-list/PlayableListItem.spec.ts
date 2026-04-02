@@ -4,16 +4,35 @@ import { playableStore } from '@/stores/playableStore'
 import { PlayableListConfigKey } from '@/config/symbols'
 import { createHarness } from '@/__tests__/TestHarness'
 
+const isCachedMock = vi.fn().mockReturnValue(false)
+const isCachingMock = vi.fn().mockReturnValue(false)
+const hasCachingErrorMock = vi.fn().mockReturnValue(false)
+const getCachingErrorMock = vi.fn().mockReturnValue(undefined)
+
 vi.mock('@/composables/useOfflinePlayback', () => ({
   useOfflinePlayback: () => ({
-    isCached: vi.fn().mockReturnValue(false),
+    isCached: isCachedMock,
+    isCaching: isCachingMock,
+    hasCachingError: hasCachingErrorMock,
+    getCachingError: getCachingErrorMock,
   }),
 }))
 
 import Component from './PlayableListItem.vue'
 
 describe('playableListItem.vue', () => {
-  const h = createHarness()
+  const h = createHarness({
+    beforeEach: () => {
+      isCachedMock.mockClear()
+      isCachedMock.mockReturnValue(false)
+      isCachingMock.mockClear()
+      isCachingMock.mockReturnValue(false)
+      hasCachingErrorMock.mockClear()
+      hasCachingErrorMock.mockReturnValue(false)
+      getCachingErrorMock.mockClear()
+      getCachingErrorMock.mockReturnValue(undefined)
+    },
+  })
 
   const renderComponent = (playable?: Playable, showDisc = false) => {
     playable = playable ?? h.factory('song', { favorite: false })
@@ -116,5 +135,26 @@ describe('playableListItem.vue', () => {
     await h.user.click(screen.getByRole('button', { name: 'Favorite' }))
 
     expect(toggleFavoriteMock).toHaveBeenCalledWith(row.playable)
+  })
+
+  it('shows spinner when caching offline', () => {
+    isCachingMock.mockReturnValue(true)
+    renderComponent()
+    screen.getByTitle('Caching for offline playback')
+  })
+
+  it('shows spinner instead of offline mark when caching', () => {
+    isCachingMock.mockReturnValue(true)
+    isCachedMock.mockReturnValue(true)
+    renderComponent()
+    screen.getByTitle('Caching for offline playback')
+    expect(screen.queryByTitle('Available offline')).toBeNull()
+  })
+
+  it('shows error icon when caching fails', () => {
+    hasCachingErrorMock.mockReturnValue(true)
+    getCachingErrorMock.mockReturnValue('Network error')
+    renderComponent()
+    screen.getByTitle('Error: Network error')
   })
 })

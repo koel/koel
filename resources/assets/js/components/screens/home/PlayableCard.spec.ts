@@ -3,10 +3,16 @@ import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 
 const isCachedMock = vi.fn().mockReturnValue(false)
+const isCachingMock = vi.fn().mockReturnValue(false)
+const hasCachingErrorMock = vi.fn().mockReturnValue(false)
+const getCachingErrorMock = vi.fn().mockReturnValue(undefined)
 
 vi.mock('@/composables/useOfflinePlayback', () => ({
   useOfflinePlayback: () => ({
     isCached: isCachedMock,
+    isCaching: isCachingMock,
+    hasCachingError: hasCachingErrorMock,
+    getCachingError: getCachingErrorMock,
   }),
 }))
 
@@ -14,7 +20,16 @@ import Component from './PlayableCard.vue'
 
 describe('playableCard.vue', () => {
   const h = createHarness({
-    beforeEach: () => isCachedMock.mockReturnValue(false),
+    beforeEach: () => {
+      isCachedMock.mockClear()
+      isCachedMock.mockReturnValue(false)
+      isCachingMock.mockClear()
+      isCachingMock.mockReturnValue(false)
+      hasCachingErrorMock.mockClear()
+      hasCachingErrorMock.mockReturnValue(false)
+      getCachingErrorMock.mockClear()
+      getCachingErrorMock.mockReturnValue(undefined)
+    },
   })
 
   const renderCard = (overrides: Partial<Song> = {}) => {
@@ -58,8 +73,28 @@ describe('playableCard.vue', () => {
   })
 
   it('does not show offline mark for non-cached songs', () => {
-    isCachedMock.mockReturnValue(false)
     renderCard()
     expect(screen.queryByTitle('Available offline')).toBeNull()
+  })
+
+  it('shows spinner when caching offline', () => {
+    isCachingMock.mockReturnValue(true)
+    renderCard()
+    screen.getByTitle('Caching for offline playback')
+  })
+
+  it('shows spinner instead of offline mark when caching', () => {
+    isCachingMock.mockReturnValue(true)
+    isCachedMock.mockReturnValue(true)
+    renderCard()
+    screen.getByTitle('Caching for offline playback')
+    expect(screen.queryByTitle('Available offline')).toBeNull()
+  })
+
+  it('shows error icon when caching fails', () => {
+    hasCachingErrorMock.mockReturnValue(true)
+    getCachingErrorMock.mockReturnValue('Network error')
+    renderCard()
+    screen.getByTitle('Error: Network error')
   })
 })

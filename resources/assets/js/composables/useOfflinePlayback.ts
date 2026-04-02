@@ -31,6 +31,12 @@ const manifestEntries = ref<OfflineManifestEntry[]>([])
  */
 const cachingProgress = ref(new Map<Song['id'], number>())
 
+/**
+ * Tracks songs whose caching failed.
+ * Key: song ID, Value: error message.
+ */
+const cachingErrors = ref(new Map<Song['id'], string>())
+
 /** Storage estimate from navigator.storage API. */
 const storageUsage = ref(0)
 const storageQuota = ref(0)
@@ -156,6 +162,7 @@ const setupMessageListener = () => {
       case 'CACHE_AUDIO_ERROR': {
         const { songId, error } = data
         cachingProgress.value.delete(songId)
+        cachingErrors.value.set(songId, error || 'Unknown error')
         logger.error(`Failed to cache song ${songId}: ${error}`)
         break
       }
@@ -233,6 +240,8 @@ const extractSongIdFromUrl = (url: string): Song['id'] | null => {
   return match?.[1] || null
 }
 
+export const shouldWarnUponWindowUnload = () => cachingProgress.value.size > 0
+
 export const useOfflinePlayback = () => {
   if (!listenerSetup) {
     listenerSetup = true
@@ -248,6 +257,7 @@ export const useOfflinePlayback = () => {
     const sourceUrl = playableStore.getSourceUrl(playable)
 
     cachingProgress.value.set(playable.id, 0)
+    cachingErrors.value.delete(playable.id)
     sw.postMessage({
       type: 'CACHE_AUDIO',
       songId: playable.id,
@@ -292,6 +302,8 @@ export const useOfflinePlayback = () => {
   const isCached = (playable: Playable): boolean => cachedSongIds.value.has(playable.id)
   const isCaching = (playable: Playable): boolean => cachingProgress.value.has(playable.id)
   const getCachingProgress = (playable: Playable): number => cachingProgress.value.get(playable.id) ?? 0
+  const hasCachingError = (playable: Playable): boolean => cachingErrors.value.has(playable.id)
+  const getCachingError = (playable: Playable): string | undefined => cachingErrors.value.get(playable.id)
 
   const cachedSongCount = computed(() => cachedSongIds.value.size)
 
@@ -337,6 +349,9 @@ export const useOfflinePlayback = () => {
     isCached,
     isCaching,
     getCachingProgress,
+    hasCachingError,
+    getCachingError,
+    shouldWarnUponWindowUnload,
     checkCacheStatus,
     refreshStorageEstimate,
   }
