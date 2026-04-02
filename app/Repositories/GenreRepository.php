@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 /** @extends Repository<Genre> */
 class GenreRepository extends Repository
 {
-    public function findByApproximateName(string $name): ?Genre
+    public function searchByName(string $name): ?Genre
     {
         return Genre::query()->where('name', 'like', "%{$name}%")->first();
     }
