@@ -75,14 +75,14 @@ class AlbumBuilder extends FavoriteableBuilder
         // in this join to avoid conflicts.
         return $this
             ->leftJoin('songs as songs_for_playcount', 'albums.id', 'songs_for_playcount.album_id')
-            ->join('interactions', function (JoinClause $join): void {
+            ->leftJoin('interactions', function (JoinClause $join): void {
                 $join->on('songs_for_playcount.id', 'interactions.song_id')->where(
                     'interactions.user_id',
                     $this->user->id,
                 );
             })
             ->groupBy($groupColumns)
-            ->addSelect(DB::raw('SUM(interactions.play_count) as play_count'));
+            ->addSelect(DB::raw('COALESCE(SUM(interactions.play_count), 0) as play_count'));
     }
 
     public function withUserContext(

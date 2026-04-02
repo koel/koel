@@ -70,14 +70,14 @@ class ArtistBuilder extends FavoriteableBuilder
         // in this join to avoid conflicts.
         return $this
             ->leftJoin('songs as songs_for_playcount', 'artists.id', 'songs_for_playcount.artist_id')
-            ->join('interactions', function (JoinClause $join): void {
+            ->leftJoin('interactions', function (JoinClause $join): void {
                 $join->on('interactions.song_id', 'songs_for_playcount.id')->where(
                     'interactions.user_id',
                     $this->user->id,
                 );
             })
             ->groupBy($groupColumns)
-            ->addSelect(DB::raw('SUM(interactions.play_count) as play_count'));
+            ->addSelect(DB::raw('COALESCE(SUM(interactions.play_count), 0) as play_count'));
     }
 
     private static function normalizeSortColumn(string $column): string
