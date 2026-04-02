@@ -92,11 +92,11 @@ class SongBuilder extends FavoriteableBuilder
                 ->whereNotNull('songs.podcast_id')
                 ->orWhere(function (self $q2) {
                     if (!$this->user->preferences->includePublicMedia) {
-                        return $q2->where('songs.owner_id', $this->user->id);
+                        return $q2->whereBelongsTo($this->user, 'owner');
                     }
 
                     return $q2->where(function (self $q3): void {
-                        $q3->where('songs.owner_id', $this->user->id)->orWhere(function (self $q4): void {
+                        $q3->whereBelongsTo($this->user, 'owner')->orWhere(function (self $q4): void {
                             $q4
                                 ->where('songs.is_public', true)
                                 ->where('song_owners.organization_id', $this->user->organization_id)
