@@ -19,7 +19,7 @@ const emits = defineEmits<{
 
 const { showOverlay, hideOverlay } = useOverlay()
 const { currentUser } = useAuthorization()
-const { cachingProgress } = useOfflinePlayback()
+const { shouldWarnUponWindowUnload: shouldWarnAboutOfflineCaching } = useOfflinePlayback()
 
 /**
  * Request for notification permission if it's not provided and the user is OK with notifications.
@@ -45,7 +45,7 @@ onMounted(async () => {
     window.addEventListener('beforeunload', (e: BeforeUnloadEvent) => {
       if (
         uploadService.shouldWarnUponWindowUnload() ||
-        cachingProgress.value.size > 0 ||
+        shouldWarnAboutOfflineCaching() ||
         preferences.confirm_before_closing
       ) {
         e.preventDefault()

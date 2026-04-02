@@ -349,6 +349,7 @@ export const useOfflinePlayback = () => {
     getCachingProgress,
     hasCachingError,
     getCachingError,
+    shouldWarnUponWindowUnload: () => cachingProgress.value.size > 0,
     checkCacheStatus,
     refreshStorageEstimate,
   }
