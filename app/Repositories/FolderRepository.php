@@ -12,9 +12,9 @@ class FolderRepository extends Repository
     /** @return Collection<Folder>|array<array-key, Folder> */
     private function getOnlyBrowsable(Collection|Folder $folders, ?User $user = null): Collection
     {
-        return Collection::wrap($folders)->filter(fn (Folder $folder): bool => $folder->browsableBy( // @phpstan-ignore argument.type
-            $user ?? $this->auth->user(),
-        ));
+        $user ??= $this->auth->user();
+
+        return Collection::wrap($folders)->filter(static fn (Folder $folder): bool => $folder->browsableBy($user)); // @phpstan-ignore argument.type
     }
 
     private static function pathToHash(?string $path = null): string
