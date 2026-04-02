@@ -131,7 +131,7 @@ watch(options, newOptions => {
 </script>
 
 <style lang="postcss" scoped>
-nav {
+dialog {
   :deep(.has-sub) {
     @apply after:absolute after:right-0 after:top-0 after:z-[2] after:opacity-0;
   }
