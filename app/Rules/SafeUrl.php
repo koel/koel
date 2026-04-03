@@ -32,22 +32,59 @@ class SafeUrl implements ValidationRule
             return;
         }
 
-        // If the host is already an IP, use it directly; otherwise resolve it.
-        if (filter_var($host, FILTER_VALIDATE_IP)) {
-            $ip = $host;
-        } else {
-            $ip = gethostbyname($host);
+        $ips = self::resolveAllIps($host);
 
-            // gethostbyname returns the original hostname if resolution fails
-            if ($ip === $host) {
-                $fail('The :attribute could not be resolved.');
+        if (!$ips) {
+            $fail('The :attribute could not be resolved.');
+
+            return;
+        }
+
+        foreach ($ips as $ip) {
+            if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
+                $fail('The :attribute must not resolve to a private or reserved IP address.');
 
                 return;
             }
         }
+    }
 
-        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
-            $fail('The :attribute must not resolve to a private or reserved IP address.');
+    /** @return array<string> */
+    private static function resolveAllIps(string $host): array
+    {
+        // Normalize bracketed IPv6 (e.g. "[::1]" → "::1")
+        $normalized = trim($host, '[]');
+
+        if (filter_var($normalized, FILTER_VALIDATE_IP)) {
+            return [$normalized];
         }
+
+        $ips = [];
+
+        // Collect both A (IPv4) and AAAA (IPv6) records
+        if (function_exists('dns_get_record')) {
+            $records = @dns_get_record($host, DNS_A | DNS_AAAA) ?: [];
+
+            foreach ($records as $record) {
+                if (!empty($record['ip'])) {
+                    $ips[] = $record['ip'];
+                }
+
+                if (!empty($record['ipv6'])) {
+                    $ips[] = $record['ipv6'];
+                }
+            }
+        }
+
+        // Fallback: gethostbynamel returns all IPv4 addresses
+        if (!$ips) {
+            $v4 = gethostbynamel($host);
+
+            if ($v4) {
+                $ips = $v4;
+            }
+        }
+
+        return array_values(array_unique($ips));
     }
 }

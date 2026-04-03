@@ -37,9 +37,10 @@ class SafeUrlTest extends TestCase
     }
 
     #[Test]
-    public function rejectsLocalhostHostname(): void
+    public function rejectsLoopbackAddress(): void
     {
-        self::assertFalse($this->passes('http://localhost/feed'));
+        self::assertFalse($this->passes('http://127.0.0.1/feed'));
+        self::assertFalse($this->passes('http://[::1]/feed'));
     }
 
     #[Test]
