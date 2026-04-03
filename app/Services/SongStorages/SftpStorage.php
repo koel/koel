@@ -77,6 +77,11 @@ class SftpStorage extends SongStorage implements MustDeleteTemporaryLocalFileAft
         $this->deleteUsingFilesystem($this->disk, $path, $backup);
     }
 
+    public function getLocalPath(string $location): string
+    {
+        return $this->copyToLocal(Str::after($location, 'sftp://'));
+    }
+
     public function getStorageType(): SongStorageType
     {
         return SongStorageType::SFTP;

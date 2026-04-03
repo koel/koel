@@ -19,6 +19,8 @@ abstract class SongStorage
 
     abstract public function testSetup(): void;
 
+    abstract public function getLocalPath(string $location): string;
+
     public function assertSupported(): void
     {
         throw_unless(

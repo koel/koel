@@ -87,6 +87,11 @@ class LocalStorage extends SongStorage
         throw new RuntimeException(sprintf('The media path %s is not readable or writable.', $mediaPath));
     }
 
+    public function getLocalPath(string $location): string
+    {
+        return $location;
+    }
+
     public function getStorageType(): SongStorageType
     {
         return SongStorageType::LOCAL;
