@@ -1,8 +1,8 @@
-import { uploadService } from '@/services/uploadService'
-import { computed, toRef } from 'vue'
+import { DuplicateUpload, uploadService } from '@/services/uploadService'
+import { computed } from 'vue'
 
 export const useDuplicateUploads = () => {
-  const duplicateFilesUploaded = toRef(uploadService.state, 'duplicateFilesUploaded')
+  const duplicateFilesUploaded = uploadService.duplicateFilesUploaded
   const duplicatedSongs = computed(() => uploadService.state.duplicatedSongs)
 
   const fetchDuplicates = async () => {

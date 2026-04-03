@@ -1,5 +1,5 @@
 import { without } from 'lodash'
-import { reactive } from 'vue'
+import { computed, reactive } from 'vue'
 import { http } from '@/services/http'
 import { postWithProgress } from '@/services/http'
 import { albumStore } from '@/stores/albumStore'
@@ -35,16 +35,17 @@ export interface DuplicateUpload {
 export const uploadService = {
   state: reactive({
     files: [] as UploadFile[],
-    duplicateFilesUploaded: false,
     duplicatedSongs: [] as DuplicateUpload[],
   }),
+
+  duplicateFilesUploaded: computed(() => uploadService.state.duplicatedSongs.length > 0),
 
   abortHandles: new Map<string, () => void>(),
 
   simultaneousUploads: 5,
 
   queue(file: UploadFile | UploadFile[]) {
-    this.state.duplicateFilesUploaded = false
+    // this.state.duplicateFilesUploaded = false
     this.state.files = this.state.files.concat(file)
     this.proceed()
   },
@@ -131,7 +132,7 @@ export const uploadService = {
       }
 
       if (err.status === 409) {
-        this.state.duplicateFilesUploaded = true
+        // this.state.duplicateFilesUploaded = true
         this.remove(file)
         this.proceed()
         return

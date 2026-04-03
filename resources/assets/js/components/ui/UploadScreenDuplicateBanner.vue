@@ -7,10 +7,6 @@
 
     <div class="controls">
       <button class="expand-btn" @click="$emit('toggle')">View songs</button>
-
-      <button class="close-btn" @click="$emit('close')">
-        <FontAwesomeIcon :icon="faXmark" />
-      </button>
     </div>
   </div>
 </template>
@@ -71,24 +67,5 @@ defineEmits(['toggle', 'close'])
 
 .expand-btn:hover {
   background: rgba(245, 158, 11, 0.3);
-}
-
-.close-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  border: none;
-  color: inherit;
-  opacity: 0.6;
-  cursor: pointer;
-  padding: 4px;
-  font-size: 1.2rem;
-  transition: 0.2s;
-}
-
-.close-btn:hover {
-  opacity: 1;
-  transform: scale(1.1);
 }
 </style>

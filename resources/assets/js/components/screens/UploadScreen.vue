@@ -32,11 +32,7 @@
         <UploadItem v-for="file in files" :key="file.id" :file="file" data-testid="upload-item" />
       </div>
 
-      <UploadScreenDuplicateBanner
-        v-if="duplicateFilesUploaded"
-        @toggle="handleToggleDuplicates"
-        @close="duplicateFilesUploaded = false"
-      />
+      <UploadScreenDuplicateBanner v-if="duplicateFilesUploaded" @toggle="handleViewingSongs" />
 
       <UploadScreenDuplicateSongList :songs="duplicatedSongs" v-if="viewingDuplicates" />
 
@@ -74,7 +70,7 @@
 
 <script lang="ts" setup>
 import { faRotateRight, faTrashCan, faUpload, faWarning } from '@fortawesome/free-solid-svg-icons'
-import { computed, defineAsyncComponent, ref, toRef } from 'vue'
+import { computed, defineAsyncComponent, ref, toRef, onMounted } from 'vue'
 
 import { isDirectoryReadingSupported as canDropFolders } from '@/utils/supports'
 import { acceptedExtensions } from '@/utils/mediaHelper'
@@ -104,6 +100,10 @@ const droppable = ref(false)
 
 const viewingDuplicates = ref(false)
 
+onMounted(async () => {
+  await uploadService.fetchDuplicates()
+})
+
 const hasUploadFailures = computed(() => files.value.filter(({ status }) => status === 'Errored').length > 0)
 
 const onDragEnter = () => (droppable.value = allowsUpload.value)
@@ -129,12 +129,11 @@ const onDrop = async (event: DragEvent) => {
   await handleDropEvent(event)
 }
 
-const handleToggleDuplicates = async () => {
+const handleViewingSongs = async () => {
   if (!viewingDuplicates.value) {
     await fetchDuplicates()
   }
   viewingDuplicates.value = !viewingDuplicates.value
-  duplicateFilesUploaded.value = false
 }
 
 const retryAll = () => uploadService.retryAll()
