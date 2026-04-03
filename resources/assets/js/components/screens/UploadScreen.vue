@@ -28,13 +28,13 @@
       @drop.prevent="onDrop"
       @dragover.prevent
     >
+      <UploadScreenDuplicateSongList :songs="duplicatedSongs" v-if="duplicateFilesUploaded" />
+
       <div v-if="files.length" class="pb-4 space-y-4">
         <UploadItem v-for="file in files" :key="file.id" :file="file" data-testid="upload-item" />
       </div>
 
-      <UploadScreenDuplicateSongList :songs="duplicatedSongs" v-if="duplicateFilesUploaded" />
-
-      <ScreenEmptyState v-else>
+      <ScreenEmptyState v-else-if="!files.length">
         <template #icon>
           <Icon :icon="faUpload" />
         </template>

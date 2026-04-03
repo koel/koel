@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vite-plus/test'
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { screen, waitFor } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { uploadService } from '@/services/uploadService'
@@ -22,6 +22,11 @@ vi.mock('@/composables/useUpload', () => ({
 
 describe('uploadScreen.vue', () => {
   const h = createHarness()
+
+  beforeEach(() => {
+    vi.spyOn(uploadService, 'fetchDuplicates').mockResolvedValue([])
+    uploadService.state.duplicatedSongs = []
+  })
 
   it('renders the upload header', () => {
     h.render(Component)
