@@ -20,7 +20,10 @@
         <div class="dup-icon">
           <FontAwesomeIcon :icon="faMusic" />
         </div>
-        <span class="dup-name">{{ song.filename }}</span>
+        <div class="dup-text">
+          <span class="dup-name">{{ song.existing_song.artist_name }} - {{ song.existing_song.title }} </span>
+          <span class="dup-date">Added {{ useDateFormat(song.existing_song.created_at, 'YYYY-MM-DD') }}</span>
+        </div>
         <button class="dup-badge" @click="keepDuplicates([song.id])">
           <FontAwesomeIcon :icon="faCheck" />
           Duplicate
@@ -32,11 +35,11 @@
       </div>
 
       <div class="dup-footer">
-        <button class="btn-discard-all" @click="deleteDuplicates(songs.map(({id}) => id))">
+        <button class="btn-discard-all" @click="deleteDuplicates(songs.map(({ id }) => id))">
           <FontAwesomeIcon :icon="faX" />
           Discard all
         </button>
-        <button class="btn-upload-all" @click="keepDuplicates(songs.map(({id}) => id))">
+        <button class="btn-upload-all" @click="keepDuplicates(songs.map(({ id }) => id))">
           <FontAwesomeIcon :icon="faUpload" />
           Upload all anyway
         </button>
@@ -59,6 +62,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { useDuplicateUploads } from '@/composables/useDuplicateUploads'
 import { ref } from 'vue'
+import { useDateFormat } from '@vueuse/core'
 
 defineProps<{
   songs: DuplicateUpload[]
@@ -126,9 +130,9 @@ const { keepDuplicates, deleteDuplicates } = useDuplicateUploads()
   font-size: 0.85rem;
 }
 
-/* Row & List Styles */
 .dup-content {
   border-top: 1px solid rgba(245, 158, 11, 0.2);
+  font-style: italic;
 }
 
 .dup-row {
@@ -140,8 +144,8 @@ const { keepDuplicates, deleteDuplicates } = useDuplicateUploads()
 }
 
 .dup-icon {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   border-radius: 6px;
   background: rgba(186, 117, 23, 0.15);
   display: flex;
@@ -150,21 +154,33 @@ const { keepDuplicates, deleteDuplicates } = useDuplicateUploads()
   color: #c99040;
 }
 
+.dup-text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.dup-date {
+  font-size: 0.9rem;
+  color: #a0a0a0;
+  margin-top: 2px;
+}
+
 .dup-name {
   flex: 1;
-  font-size: 0.9rem;
+  font-size: 1.1rem;
   color: #e0e0e0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* Action Buttons */
 .dup-badge,
 .btn-discard {
   padding: 4px 10px;
   border-radius: 6px;
-  font-size: 0.8rem;
+  font-size: 1rem;
   cursor: pointer;
   background: transparent;
   display: flex;
@@ -188,7 +204,6 @@ const { keepDuplicates, deleteDuplicates } = useDuplicateUploads()
   background: rgba(224, 96, 96, 0.1);
 }
 
-/* Footer */
 .dup-footer {
   display: flex;
   padding: 12px 16px;
@@ -200,7 +215,7 @@ const { keepDuplicates, deleteDuplicates } = useDuplicateUploads()
 .btn-upload-all {
   padding: 6px 14px;
   border-radius: 6px;
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   display: flex;
