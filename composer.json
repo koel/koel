@@ -45,7 +45,6 @@
     "fileeye/mimemap": "^2.2",
     "ezyang/htmlpurifier": "^4.18",
     "jaybizzle/crawler-detect": "^1.3",
-    "paragonie/sodium_compat": "^1.6",
     "laravel/nightwatch": "^1.13",
     "intervention/image-laravel": "^1.5",
     "laravel/prompts": "^0.3.6",
