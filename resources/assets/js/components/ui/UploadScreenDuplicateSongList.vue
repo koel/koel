@@ -10,22 +10,22 @@
         <FontAwesomeIcon :icon="faMusic" />
       </div>
       <span class="dup-name">{{ song.filename }}</span>
-      <button class="dup-badge" @click="keepDuplicates([song])">
+      <button class="dup-badge" @click="keepDuplicates([song.id])">
         <FontAwesomeIcon :icon="faCheck" />
         Duplicate
       </button>
-      <button class="btn-discard" @click="deleteDuplicates([song])">
+      <button class="btn-discard" @click="deleteDuplicates([song.id])">
         <FontAwesomeIcon :icon="faX" />
         Discard
       </button>
     </div>
 
     <div class="dup-footer">
-      <button class="btn-discard-all" @click="deleteDuplicates(songs)">
+      <button class="btn-discard-all" @click="deleteDuplicates(songs.map(({id}) => id))">
         <FontAwesomeIcon :icon="faX" />
         Discard all
       </button>
-      <button class="btn-upload-all" @click="keepDuplicates(songs)">
+      <button class="btn-upload-all" @click="keepDuplicates(songs.map(({id}) => id))">
         <FontAwesomeIcon :icon="faUpload" />
         Upload all anyway
       </button>

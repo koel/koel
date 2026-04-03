@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\DuplicateUploadService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
+use App\Http\Requests\API\DuplicateUploadRequest;
 
 class DuplicateUploadsController extends Controller
 {
@@ -20,14 +21,16 @@ class DuplicateUploadsController extends Controller
     }
 
     /** @param User $user */
-    public function keep(Request $request, DuplicateUploadService $service, Authenticatable $user)
+    public function keep(DuplicateUploadRequest $request, DuplicateUploadService $service, Authenticatable $user)
     {
+        $service->keepDuplicateUploads($user, (array) $request->input('uploads'));
         return;
     }
 
     /** @param User $user */
-    public function delete(Request $request, DuplicateUploadService $service, Authenticatable $user)
+    public function delete(DuplicateUploadRequest $request, DuplicateUploadService $service, Authenticatable $user)
     {
+        $service->discardDuplicateUploads($user, (array) $request->input('uploads'));
         return;
     }
 }

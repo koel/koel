@@ -156,13 +156,13 @@ export const uploadService = {
     return this.state.duplicatedSongs
   },
 
-  async keepDuplicates(songs: DuplicateUpload[]) {
-    await http.post('duplicate-uploads/keep', songs)
+  async keepDuplicates(duplicateUploadIds: string[]) {
+    await http.post('duplicate-uploads/keep', { uploads: duplicateUploadIds })
     await this.fetchDuplicates()
   },
 
-  async deleteDuplicates(songs: DuplicateUpload[]) {
-    await http.post('duplicate-uploads/delete', songs)
+  async deleteDuplicates(duplicateUploadIds: string[]) {
+    await http.delete('duplicate-uploads/delete', { uploads: duplicateUploadIds })
     await this.fetchDuplicates()
   },
 

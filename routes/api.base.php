@@ -156,7 +156,7 @@ Route::prefix('api')
 
             Route::post('upload', UploadController::class);
             Route::get('duplicate-uploads', [DuplicateUploadsController::class, 'fetch']);
-            Route::put('duplicate-uploads/keep', [DuplicateUploadsController::class, 'keep']);
+            Route::post('duplicate-uploads/keep', [DuplicateUploadsController::class, 'keep']);
             Route::delete('duplicate-uploads/delete', [DuplicateUploadsController::class, 'delete']);
 
             // Interaction routes

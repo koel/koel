@@ -1,4 +1,4 @@
-import { DuplicateUpload, uploadService } from '@/services/uploadService'
+import { uploadService } from '@/services/uploadService'
 import { computed, toRef } from 'vue'
 
 export const useDuplicateUploads = () => {
@@ -9,14 +9,12 @@ export const useDuplicateUploads = () => {
     return await uploadService.fetchDuplicates()
   }
 
-  const keepDuplicates = async (songs: DuplicateUpload[]) => {
-    console.log('keep', songs)
-    return await uploadService.keepDuplicates(songs)
+  const keepDuplicates = async (duplicateUploadIds: string[]) => {
+    return await uploadService.keepDuplicates(duplicateUploadIds)
   }
 
-  const deleteDuplicates = async (songs: DuplicateUpload[]) => {
-    console.log('delete', songs)
-    return await uploadService.deleteDuplicates(songs)
+  const deleteDuplicates = async (duplicateUploadIds: string[]) => {
+    return await uploadService.deleteDuplicates(duplicateUploadIds)
   }
 
   return {
