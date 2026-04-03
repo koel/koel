@@ -25,8 +25,11 @@ export interface UploadFile {
 }
 
 export interface DuplicateUpload {
+  type: 'duplicate-uploads'
   id: string
   filename: string
+  created_at: Date
+  existing_song: Song
 }
 
 export const uploadService = {
@@ -151,6 +154,16 @@ export const uploadService = {
     this.state.duplicatedSongs = response.data
     console.log(this.state.duplicatedSongs)
     return this.state.duplicatedSongs
+  },
+
+  async keepDuplicates(songs: DuplicateUpload[]) {
+    await http.post('duplicate-uploads/keep', songs)
+    await this.fetchDuplicates()
+  },
+
+  async deleteDuplicates(songs: DuplicateUpload[]) {
+    await http.post('duplicate-uploads/delete', songs)
+    await this.fetchDuplicates()
   },
 
   handleUploadResult: (result: UploadResult) => {

@@ -28,7 +28,6 @@
       @drop.prevent="onDrop"
       @dragover.prevent
     >
-
       <div v-if="files.length" class="pb-4 space-y-4">
         <UploadItem v-for="file in files" :key="file.id" :file="file" data-testid="upload-item" />
       </div>
@@ -89,21 +88,16 @@ import ScreenBase from '@/components/screens/ScreenBase.vue'
 
 import UploadScreenDuplicateBanner from '../ui/UploadScreenDuplicateBanner.vue'
 import UploadScreenDuplicateSongList from '../ui/UploadScreenDuplicateSongList.vue'
+import { useDuplicateUploads } from '@/composables/useDuplicateUploads'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 const UploadItem = defineAsyncComponent(() => import('@/components/ui/upload/UploadItem.vue'))
 
 const acceptAttribute = acceptedExtensions.map(ext => `.${ext}`).join(',')
 
-const {
-  allowsUpload,
-  mediaPathSetUp,
-  queueFilesForUpload,
-  handleDropEvent,
-  duplicateFilesUploaded,
-  fetchDuplicates,
-  duplicatedSongs,
-} = useUpload()
+const { allowsUpload, mediaPathSetUp, queueFilesForUpload, handleDropEvent } = useUpload()
+
+const { duplicateFilesUploaded, fetchDuplicates, duplicatedSongs } = useDuplicateUploads()
 
 const files = toRef(uploadService.state, 'files')
 const droppable = ref(false)

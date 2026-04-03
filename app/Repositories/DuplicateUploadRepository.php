@@ -9,7 +9,6 @@ use App\Services\SongStorages\SongStorage;
 use App\Values\Scanning\ScanConfiguration;
 use App\Values\UploadReference;
 use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Database\Eloquent\Collection;
 
 class DuplicateUploadRepository extends Repository
 {

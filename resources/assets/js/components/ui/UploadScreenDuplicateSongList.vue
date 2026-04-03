@@ -10,22 +10,22 @@
         <FontAwesomeIcon :icon="faMusic" />
       </div>
       <span class="dup-name">{{ song.filename }}</span>
-      <span class="dup-badge">
+      <button class="dup-badge" @click="keepDuplicates([song])">
         <FontAwesomeIcon :icon="faCheck" />
         Duplicate
-      </span>
-      <button class="btn-discard" @click="$emit('discard', song)">
+      </button>
+      <button class="btn-discard" @click="deleteDuplicates([song])">
         <FontAwesomeIcon :icon="faX" />
         Discard
       </button>
     </div>
 
     <div class="dup-footer">
-      <button class="btn-discard-all" @click="$emit('discard-all')">
+      <button class="btn-discard-all" @click="deleteDuplicates(songs)">
         <FontAwesomeIcon :icon="faX" />
         Discard all
       </button>
-      <button class="btn-upload-all" @click="$emit('upload-all')">
+      <button class="btn-upload-all" @click="keepDuplicates(songs)">
         <FontAwesomeIcon :icon="faUpload" />
         Upload all anyway
       </button>
@@ -37,16 +37,13 @@
 import { DuplicateUpload } from '@/services/uploadService'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faUpload, faX, faWarning, faMusic, faCheck } from '@fortawesome/free-solid-svg-icons'
+import { useDuplicateUploads } from '@/composables/useDuplicateUploads'
 
 defineProps<{
   songs: DuplicateUpload[]
 }>()
 
-defineEmits<{
-  (e: 'discard', song: DuplicateUpload): void
-  (e: 'discard-all'): void
-  (e: 'upload-all'): void
-}>()
+const { keepDuplicates, deleteDuplicates } = useDuplicateUploads()
 </script>
 
 <style scoped>

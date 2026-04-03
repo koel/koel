@@ -5,12 +5,9 @@
       <span><strong>Duplicate files</strong> detected</span>
     </div>
 
-
     <div class="controls">
-      <button class="expand-btn" @click="$emit('toggle')">
-        View songs
-      </button>
-      
+      <button class="expand-btn" @click="$emit('toggle')">View songs</button>
+
       <button class="close-btn" @click="$emit('close')">
         <FontAwesomeIcon :icon="faXmark" />
       </button>

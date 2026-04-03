@@ -22,7 +22,7 @@ use App\Http\Controllers\API\FavoriteController;
 use App\Http\Controllers\API\FetchAlbumInformationController;
 use App\Http\Controllers\API\FetchAlbumThumbnailController;
 use App\Http\Controllers\API\FetchDemoCreditsController;
-use App\Http\Controllers\API\FetchDuplicateUploadsController;
+use App\Http\Controllers\API\DuplicateUploadsController;
 use App\Http\Controllers\API\FetchFavoriteSongsController;
 use App\Http\Controllers\API\FetchInitialDataController;
 use App\Http\Controllers\API\FetchOverviewController;
@@ -155,7 +155,9 @@ Route::prefix('api')
             Route::get('songs/in-folder', FetchFolderSongsController::class);
 
             Route::post('upload', UploadController::class);
-            Route::get('duplicate-uploads', FetchDuplicateUploadsController::class);
+            Route::get('duplicate-uploads', [DuplicateUploadsController::class, 'fetch']);
+            Route::put('duplicate-uploads/keep', [DuplicateUploadsController::class, 'keep']);
+            Route::delete('duplicate-uploads/delete', [DuplicateUploadsController::class, 'delete']);
 
             // Interaction routes
             Route::post('interaction/play', RegisterPlayController::class);

@@ -1,4 +1,4 @@
-import { computed, toRef } from 'vue'
+import { computed } from 'vue'
 import { commonStore } from '@/stores/commonStore'
 import { acceptsFile } from '@/utils/mediaHelper'
 import type { UploadFile } from '@/services/uploadService'
@@ -14,9 +14,6 @@ export const useUpload = () => {
   const { go, isCurrentScreen } = useRouter()
 
   const { currentUserCan } = usePolicies()
-
-  const duplicateFilesUploaded = toRef(uploadService.state, 'duplicateFilesUploaded')
-  const duplicatedSongs = computed(() => uploadService.state.duplicatedSongs)
 
   const mediaPathSetUp = computed(() => {
     return commonStore.state.storage_driver !== 'local' || commonStore.state.media_path_set
@@ -61,17 +58,10 @@ export const useUpload = () => {
     }
   }
 
-  const fetchDuplicates = async () => {
-    return await uploadService.fetchDuplicates()
-  }
-
   return {
     mediaPathSetUp,
     allowsUpload,
     handleDropEvent,
     queueFilesForUpload,
-    duplicateFilesUploaded,
-    duplicatedSongs,
-    fetchDuplicates,
   }
 }
