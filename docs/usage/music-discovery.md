@@ -99,6 +99,8 @@ folders into the web interface.
 Note that if you’re not using a cloud storage (available with Koel Plus), you will need to set the media path first,
 as the files will be uploaded into the `%media_path%/__KOEL__UPLOADS__` directory.
 
+Koel automatically detects duplicate uploads by comparing file hashes (not song metadata). If a file you upload matches a song already in your library, it will be flagged and held in a duplicate uploads panel on the Upload screen. You can then choose to discard the upload or continue and keep the duplicate.
+
 Depending on how big your files are, you may want to set `upload_max_filesize` and `post_max_size` in your `php.ini`
 correspondingly, or uploading may fail with a `Payload too large` error.
 This applies even if you’re using a cloud storage, as the files will be uploaded to your server first before being sent
