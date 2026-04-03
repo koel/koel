@@ -69,7 +69,10 @@ class UploadServiceTest extends TestCase
         );
 
         File::expects('hash')->with($file)->andReturn('abc123');
-        $this->songRepository->expects('findByHash')->with('abc123', $uploader)->andReturnNull();
+        $this->songRepository
+            ->expects('findByHash')
+            ->with('abc123', $uploader)
+            ->andReturnNull();
         $storage->expects('storeUploadedFile')->with($file, $uploader)->andReturn($reference);
 
         $this->scanner
@@ -108,7 +111,10 @@ class UploadServiceTest extends TestCase
         $reference = UploadReference::make(location: 's3://koel/some-file.mp3', localPath: '/tmp/some-tmp-file.mp3');
 
         File::expects('hash')->with($file)->andReturn('abc123');
-        $this->songRepository->expects('findByHash')->with('abc123', $uploader)->andReturnNull();
+        $this->songRepository
+            ->expects('findByHash')
+            ->with('abc123', $uploader)
+            ->andReturnNull();
         $storage->expects('storeUploadedFile')->with($file, $uploader)->andReturn($reference);
 
         $this->scanner
@@ -151,7 +157,10 @@ class UploadServiceTest extends TestCase
         $reference = UploadReference::make(location: 's3://koel/some-file.mp3', localPath: '/tmp/some-tmp-file.mp3');
 
         File::expects('hash')->with($file)->andReturn('abc123');
-        $this->songRepository->expects('findByHash')->with('abc123', $uploader)->andReturnNull();
+        $this->songRepository
+            ->expects('findByHash')
+            ->with('abc123', $uploader)
+            ->andReturnNull();
         $storage->expects('storeUploadedFile')->andReturn($reference);
         $this->scanner->expects('scan')->andReturn($scanInfo);
         $this->songService->expects('createOrUpdateSongFromScan')->andReturn($song);
@@ -175,7 +184,10 @@ class UploadServiceTest extends TestCase
         );
 
         File::expects('hash')->with($file)->andReturn('abc123');
-        $this->songRepository->expects('findByHash')->with('abc123', $uploader)->andReturnNull();
+        $this->songRepository
+            ->expects('findByHash')
+            ->with('abc123', $uploader)
+            ->andReturnNull();
         $storage->expects('storeUploadedFile')->with($file, $uploader)->andReturn($reference);
         $this->scanner->expects('scan')->andReturn($scanInfo);
         $storage->expects('undoUpload')->with($reference);
@@ -201,7 +213,10 @@ class UploadServiceTest extends TestCase
         );
 
         File::expects('hash')->with($file)->andReturn('abc123');
-        $this->songRepository->expects('findByHash')->with('abc123', $uploader)->andReturnNull();
+        $this->songRepository
+            ->expects('findByHash')
+            ->with('abc123', $uploader)
+            ->andReturnNull();
         $storage->expects('storeUploadedFile')->with($file, $uploader)->andReturn($reference);
         $this->scanner->expects('scan')->andThrow(new Exception('File supports racism'));
         $storage->expects('undoUpload')->with($reference);
@@ -224,7 +239,10 @@ class UploadServiceTest extends TestCase
         $reference = UploadReference::make(location: $file, localPath: $file);
 
         File::expects('hash')->with($file)->andReturn('abc123');
-        $this->songRepository->expects('findByHash')->with('abc123', $uploader)->andReturn($existingSong);
+        $this->songRepository
+            ->expects('findByHash')
+            ->with('abc123', $uploader)
+            ->andReturn($existingSong);
         $storage->expects('storeUploadedFile')->with($file, $uploader)->andReturn($reference);
         $this->duplicateUploadRepository
             ->expects('create')

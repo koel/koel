@@ -13,10 +13,15 @@ use Illuminate\Database\Eloquent\Collection;
 
 class DuplicateUploadRepository extends Repository
 {
-    public function __construct(private readonly SongStorage $storage) {}
+    public function __construct(
+        private readonly SongStorage $storage,
+    ) {}
 
-    public function create(ScanConfiguration $config, UploadReference $uploadReference, Song $existingSong): DuplicateUpload
-    {
+    public function create(
+        ScanConfiguration $config,
+        UploadReference $uploadReference,
+        Song $existingSong,
+    ): DuplicateUpload {
         return DuplicateUpload::query()->create([
             'user_id' => $config->owner->id,
             'existing_song_id' => $existingSong->id,

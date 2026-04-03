@@ -72,7 +72,10 @@ class DuplicateUploadRepositoryTest extends TestCase
         $expired = DuplicateUpload::factory()->createOne(['created_at' => now()->subHours(25)]);
         $fresh = DuplicateUpload::factory()->createOne(['created_at' => now()->subHour()]);
 
-        $this->storage->expects('delete')->once()->with($expired->location);
+        $this->storage
+            ->expects('delete')
+            ->once()
+            ->with($expired->location);
 
         $this->repository->deleteExpired(24);
 

@@ -10,8 +10,9 @@ class DuplicateUploadResource extends JsonResource
 {
     public const JSON_STRUCTURE = ['type', 'id', 'existing_song', 'filename', 'created_at'];
 
-    public function __construct(private readonly DuplicateUpload $upload)
-    {
+    public function __construct(
+        private readonly DuplicateUpload $upload,
+    ) {
         parent::__construct($upload);
     }
 
@@ -21,9 +22,7 @@ class DuplicateUploadResource extends JsonResource
         return [
             'type' => 'duplicate-uploads',
             'id' => $this->upload->id,
-            'existing_song' => $this->upload->existingSong
-                ? new SongResource($this->upload->existingSong)
-                : null,
+            'existing_song' => $this->upload->existingSong ? new SongResource($this->upload->existingSong) : null,
             'filename' => basename($this->upload->location),
             'created_at' => $this->upload->created_at,
         ];

@@ -2,17 +2,17 @@
 
 namespace App\Services;
 
-use App\Models\User;
-use App\Models\DuplicateUpload;
-use App\Repositories\DuplicateUploadRepository;
-use Illuminate\Contracts\Pagination\Paginator;
-use App\Jobs\DeleteSongFilesJob;
-use App\Values\Song\SongFileInfo;
-use App\Services\Scanners\FileScanner;
-use App\Facades\Dispatcher;
 use App\Exceptions\SongUploadFailedException;
+use App\Facades\Dispatcher;
+use App\Jobs\DeleteSongFilesJob;
+use App\Models\DuplicateUpload;
+use App\Models\User;
+use App\Repositories\DuplicateUploadRepository;
+use App\Services\Scanners\FileScanner;
 use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
 use App\Services\SongStorages\SongStorage;
+use App\Values\Song\SongFileInfo;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\File;
 use Throwable;
 
@@ -22,7 +22,7 @@ class DuplicateUploadService
         private readonly DuplicateUploadRepository $repository,
         private readonly FileScanner $scanner,
         private readonly SongService $songService,
-        private readonly SongStorage $storage
+        private readonly SongStorage $storage,
     ) {}
 
     public function findForUser(User $user, int $perPage = 50): Paginator
@@ -33,8 +33,11 @@ class DuplicateUploadService
     public function discardDuplicateUploads(User $user, array $ids): void
     {
         $duplicateUploads = $this->repository->findByIdsForUser($user, $ids);
-        $songFiles = $duplicateUploads->map(static fn (DuplicateUpload $upload) => SongFileInfo::make($upload->location, $upload->storage));
-        
+        $songFiles = $duplicateUploads->map(static fn (DuplicateUpload $upload) => SongFileInfo::make(
+            $upload->location,
+            $upload->storage,
+        ));
+
         Dispatcher::dispatch(new DeleteSongFilesJob($songFiles));
         foreach ($duplicateUploads as $upload) {
             $upload->delete();
@@ -49,10 +52,7 @@ class DuplicateUploadService
             $localFilePath = $this->storage->getLocalPath($upload->location);
 
             try {
-                $song = $this->songService->createOrUpdateSongFromScan(
-                    $this->scanner->scan($localFilePath),
-                    $config,
-                );
+                $song = $this->songService->createOrUpdateSongFromScan($this->scanner->scan($localFilePath), $config);
             } catch (Throwable $error) {
                 throw SongUploadFailedException::make($error);
             } finally {

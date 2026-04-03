@@ -3,21 +3,19 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\API\DuplicateUploadRequest;
 use App\Http\Resources\DuplicateUploadResource;
 use App\Models\User;
 use App\Services\DuplicateUploadService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
-use App\Http\Requests\API\DuplicateUploadRequest;
 
 class DuplicateUploadsController extends Controller
 {
     /** @param User $user */
     public function fetch(Request $request, DuplicateUploadService $service, Authenticatable $user)
     {
-        return DuplicateUploadResource::collection(
-            $service->findForUser($user, (int) $request->input('per_page', 50))
-        );
+        return DuplicateUploadResource::collection($service->findForUser($user, (int) $request->input('per_page', 50)));
     }
 
     /** @param User $user */
