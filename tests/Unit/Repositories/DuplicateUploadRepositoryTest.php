@@ -65,21 +65,4 @@ class DuplicateUploadRepositoryTest extends TestCase
         self::assertCount(1, $results);
         self::assertTrue($recordA->is($results->first()));
     }
-
-    #[Test]
-    public function deleteExpiredRemovesRecordsOlderThanTtl(): void
-    {
-        $expired = DuplicateUpload::factory()->createOne(['created_at' => now()->subHours(25)]);
-        $fresh = DuplicateUpload::factory()->createOne(['created_at' => now()->subHour()]);
-
-        $this->storage
-            ->expects('delete')
-            ->once()
-            ->with($expired->location);
-
-        $this->repository->deleteExpired(24);
-
-        $this->assertDatabaseMissing('duplicate_uploads', ['id' => $expired->id]);
-        $this->assertDatabaseHas('duplicate_uploads', ['id' => $fresh->id]);
-    }
 }

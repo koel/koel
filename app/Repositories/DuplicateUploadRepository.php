@@ -48,14 +48,4 @@ class DuplicateUploadRepository extends Repository
             ->whereIn('id', $ids)
             ->get();
     }
-
-    public function deleteExpired(int $ttlHours = 24): void
-    {
-        DuplicateUpload::query()
-            ->where('created_at', '<', now()->subHours($ttlHours))
-            ->each(function (DuplicateUpload $record): void {
-                $this->storage->delete($record->location);
-                $record->delete();
-            });
-    }
 }
