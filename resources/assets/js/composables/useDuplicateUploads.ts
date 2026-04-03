@@ -5,10 +5,6 @@ export const useDuplicateUploads = () => {
   const duplicateFilesUploaded = uploadService.duplicateFilesUploaded
   const duplicatedSongs = computed(() => uploadService.state.duplicatedSongs)
 
-  const fetchDuplicates = async () => {
-    return await uploadService.fetchDuplicates()
-  }
-
   const keepDuplicates = async (duplicateUploadIds: string[]) => {
     return await uploadService.keepDuplicates(duplicateUploadIds)
   }
@@ -20,7 +16,6 @@ export const useDuplicateUploads = () => {
   return {
     duplicateFilesUploaded,
     duplicatedSongs,
-    fetchDuplicates,
     keepDuplicates,
     deleteDuplicates,
   }

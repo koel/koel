@@ -45,7 +45,6 @@ export const uploadService = {
   simultaneousUploads: 5,
 
   queue(file: UploadFile | UploadFile[]) {
-    // this.state.duplicateFilesUploaded = false
     this.state.files = this.state.files.concat(file)
     this.proceed()
   },
@@ -132,8 +131,8 @@ export const uploadService = {
       }
 
       if (err.status === 409) {
-        // this.state.duplicateFilesUploaded = true
         this.remove(file)
+        this.fetchDuplicates()
         this.proceed()
         return
       }

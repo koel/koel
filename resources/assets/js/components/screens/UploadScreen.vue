@@ -32,9 +32,7 @@
         <UploadItem v-for="file in files" :key="file.id" :file="file" data-testid="upload-item" />
       </div>
 
-      <UploadScreenDuplicateBanner v-if="duplicateFilesUploaded" @toggle="handleViewingSongs" />
-
-      <UploadScreenDuplicateSongList :songs="duplicatedSongs" v-if="viewingDuplicates" />
+      <UploadScreenDuplicateSongList :songs="duplicatedSongs" v-if="duplicateFilesUploaded" />
 
       <ScreenEmptyState v-else>
         <template #icon>
@@ -82,7 +80,6 @@ import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 
-import UploadScreenDuplicateBanner from '../ui/UploadScreenDuplicateBanner.vue'
 import UploadScreenDuplicateSongList from '../ui/UploadScreenDuplicateSongList.vue'
 import { useDuplicateUploads } from '@/composables/useDuplicateUploads'
 
@@ -93,12 +90,10 @@ const acceptAttribute = acceptedExtensions.map(ext => `.${ext}`).join(',')
 
 const { allowsUpload, mediaPathSetUp, queueFilesForUpload, handleDropEvent } = useUpload()
 
-const { duplicateFilesUploaded, fetchDuplicates, duplicatedSongs } = useDuplicateUploads()
+const { duplicateFilesUploaded, duplicatedSongs } = useDuplicateUploads()
 
 const files = toRef(uploadService.state, 'files')
 const droppable = ref(false)
-
-const viewingDuplicates = ref(false)
 
 onMounted(async () => {
   await uploadService.fetchDuplicates()
@@ -127,13 +122,6 @@ const onFileInputChange = (event: Event) => {
 const onDrop = async (event: DragEvent) => {
   droppable.value = false
   await handleDropEvent(event)
-}
-
-const handleViewingSongs = async () => {
-  if (!viewingDuplicates.value) {
-    await fetchDuplicates()
-  }
-  viewingDuplicates.value = !viewingDuplicates.value
 }
 
 const retryAll = () => uploadService.retryAll()
