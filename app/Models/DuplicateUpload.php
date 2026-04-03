@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Enums\SongStorageType;
 use App\Values\Scanning\ScanConfiguration;
-use App\Values\UploadReference;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -42,11 +41,6 @@ class DuplicateUpload extends Model
             'make_public' => 'boolean',
             'extract_folder_structure' => 'boolean',
         ];
-    }
-
-    public function toUploadReference(): UploadReference
-    {
-        return UploadReference::make($this->location, $this->location);
     }
 
     public function toScanConfiguration(): ScanConfiguration

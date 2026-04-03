@@ -52,9 +52,6 @@ class UploadService
                 $config,
             );
         } catch (Throwable $error) {
-            if ($error instanceof DuplicateSongUploadException) {
-                throw $error;
-            }
             $this->handleUploadFailure($uploadReference, $error);
         }
 

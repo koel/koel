@@ -3,19 +3,26 @@
 namespace App\Services;
 
 use App\Models\User;
-use App\Models\Song;
 use App\Models\DuplicateUpload;
 use App\Repositories\DuplicateUploadRepository;
 use Illuminate\Contracts\Pagination\Paginator;
 use App\Jobs\DeleteSongFilesJob;
 use App\Values\Song\SongFileInfo;
+use App\Services\Scanners\FileScanner;
 use App\Facades\Dispatcher;
+use App\Exceptions\SongUploadFailedException;
+use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
+use App\Services\SongStorages\SongStorage;
+use Illuminate\Support\Facades\File;
+use Throwable;
 
 class DuplicateUploadService
 {
     public function __construct(
         private readonly DuplicateUploadRepository $repository,
-        private readonly SongService $songService
+        private readonly FileScanner $scanner,
+        private readonly SongService $songService,
+        private readonly SongStorage $storage
     ) {}
 
     public function findForUser(User $user, int $perPage = 50): Paginator
@@ -34,28 +41,35 @@ class DuplicateUploadService
         }
     }
 
-    /**
-    * @property Carbon $created_at
-    * @property Carbon $updated_at
-    * @property Song|null $existingSong
-    * @property User $user
-    * @property string $id
-    * @property int $user_id
-    * @property string|null $existing_song_id
-    * @property string $location
-    * @property SongStorageType $storage
-    * @property bool $make_public
-    * @property bool $extract_folder_structure
-    *
-    * @method static \Database\Factories\DuplicateUploadFactory factory(...$parameters)
-    */
-
     public function keepDuplicateUploads(User $user, array $ids): void
     {
         $duplicateUploads = $this->repository->findByIdsForUser($user, $ids);
         foreach ($duplicateUploads as $upload) {
             $config = $upload->toScanConfiguration();
-            $uploadReference = $upload->toUploadReference();
+            $localFilePath = $this->storage->getLocalPath($upload->location);
+
+            try {
+                $song = $this->songService->createOrUpdateSongFromScan(
+                    $this->scanner->scan($localFilePath),
+                    $config,
+                );
+            } catch (Throwable $error) {
+                throw SongUploadFailedException::make($error);
+            } finally {
+                if ($this->storage instanceof MustDeleteTemporaryLocalFileAfterUpload) {
+                    File::delete($localFilePath);
+                }
+            }
+
+            // Since we scanned a local file, the song's path was initially set to the local path.
+            // We need to update it to the actual storage (e.g. S3) and location (e.g., the S3 key) if applicable.
+            if ($song->path !== $upload->location || $song->storage !== $this->storage->getStorageType()) {
+                $song->update([
+                    'path' => $upload->location,
+                    'storage' => $this->storage->getStorageType(),
+                ]);
+            }
+            $upload->delete();
         }
     }
 }
