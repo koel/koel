@@ -49,34 +49,9 @@ const preventOffScreen = async (element: HTMLElement, isSubmenu = false) => {
   }
 }
 
-/**
- * Check if point (px, py) is inside the triangle formed by (ax, ay), (bx, by), (cx, cy)
- * using the sign of cross products.
- */
-const pointInTriangle = (
-  px: number,
-  py: number,
-  ax: number,
-  ay: number,
-  bx: number,
-  by: number,
-  cx: number,
-  cy: number,
-): boolean => {
-  const d1 = (px - bx) * (ay - by) - (ax - bx) * (py - by)
-  const d2 = (px - cx) * (by - cy) - (bx - cx) * (py - cy)
-  const d3 = (px - ax) * (cy - ay) - (cx - ax) * (py - ay)
-
-  const hasNeg = d1 < 0 || d2 < 0 || d3 < 0
-  const hasPos = d1 > 0 || d2 > 0 || d3 > 0
-
-  return !(hasNeg && hasPos)
-}
-
 type MenuItem = HTMLElement & {
   eventsRegistered?: boolean
   hideTimeout?: ReturnType<typeof setTimeout>
-  lastSubmenuRect?: DOMRect
 }
 
 const HIDE_DELAY = 150
@@ -116,23 +91,10 @@ const initSubmenus = () => {
 
       await nextTick()
       await preventOffScreen(submenu, true)
-
-      item.lastSubmenuRect = submenu.getBoundingClientRect()
     })
 
-    item.addEventListener('mousemove', (e: MouseEvent) => {
-      if (submenu.style.display !== 'block' || !item.lastSubmenuRect) {
-        return
-      }
-
-      const sr = item.lastSubmenuRect
-      const itemRect = item.getBoundingClientRect()
-      const submenuIsLeft = sr.right <= itemRect.left
-
-      // Triangle: cursor → two corners of the submenu's near edge
-      const nearEdgeX = submenuIsLeft ? sr.right : sr.left
-
-      if (pointInTriangle(e.clientX, e.clientY, nearEdgeX, sr.top, nearEdgeX, sr.bottom, e.clientX, e.clientY)) {
+    item.addEventListener('mousemove', () => {
+      if (submenu.style.display === 'block') {
         cancelHide(item)
       }
     })
@@ -198,7 +160,14 @@ const close = () => {
 
 const onMouseDown = (e: MouseEvent) => e.target === el.value && close()
 
-onBeforeUnmount(stopObservingSubmenus)
+onBeforeUnmount(() => {
+  stopObservingSubmenus()
+  el.value?.querySelectorAll<HTMLElement>('.has-sub').forEach((item: MenuItem) => {
+    clearTimeout(item.hideTimeout)
+    item.hideTimeout = undefined
+    item.eventsRegistered = false
+  })
+})
 
 watch(options, newOptions => {
   if (newOptions.component) {
