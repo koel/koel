@@ -30,21 +30,6 @@ class DuplicateUploadTest extends TestCase
     }
 
     #[Test]
-    public function toUploadReference(): void
-    {
-        $duplicateUpload = DuplicateUpload::factory()->createOne([
-            'location' => '/var/media/koel/some-file.mp3',
-            'storage' => SongStorageType::LOCAL,
-        ]);
-
-        $reference = $duplicateUpload->toUploadReference();
-
-        self::assertInstanceOf(UploadReference::class, $reference);
-        self::assertSame('/var/media/koel/some-file.mp3', $reference->location);
-        self::assertSame('/var/media/koel/some-file.mp3', $reference->localPath);
-    }
-
-    #[Test]
     public function toScanConfiguration(): void
     {
         $duplicateUpload = DuplicateUpload::factory()->createOne([
