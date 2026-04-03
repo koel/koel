@@ -1,4 +1,4 @@
-import { DuplicateUpload, uploadService } from '@/services/uploadService'
+import { uploadService } from '@/services/uploadService'
 import { computed } from 'vue'
 
 export const useDuplicateUploads = () => {
