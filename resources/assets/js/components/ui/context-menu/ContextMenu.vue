@@ -79,7 +79,7 @@ type MenuItem = HTMLElement & {
   lastSubmenuRect?: DOMRect
 }
 
-const HIDE_DELAY = 80
+const HIDE_DELAY = 150
 
 const hideSubmenu = (item: MenuItem, submenu: HTMLElement) => {
   submenu.style.display = 'none'
