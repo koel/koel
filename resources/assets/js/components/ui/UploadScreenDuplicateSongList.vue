@@ -1,34 +1,39 @@
 <template>
   <div class="dup-wrap">
-    <div class="dup-header">
+    <div class="dup-header" @click="isExpanded = !isExpanded" style="cursor: pointer">
       <FontAwesomeIcon :icon="faWarning" class="warning-icon" />
       <span class="dup-header-label">{{ songs.length }} Duplicated song{{ songs.length !== 1 ? 's' : '' }}</span>
+      <button class="btn-toggle">
+        <FontAwesomeIcon :icon="isExpanded ? faChevronUp : faChevronDown" />
+      </button>
     </div>
 
-    <div v-for="song in songs" :key="song.id" class="dup-row">
-      <div class="dup-icon">
-        <FontAwesomeIcon :icon="faMusic" />
+    <div v-if="isExpanded" class="dup-content">
+      <div v-for="song in songs" :key="song.id" class="dup-row">
+        <div class="dup-icon">
+          <FontAwesomeIcon :icon="faMusic" />
+        </div>
+        <span class="dup-name">{{ song.filename }}</span>
+        <button class="dup-badge" @click="keepDuplicates([song.id])">
+          <FontAwesomeIcon :icon="faCheck" />
+          Duplicate
+        </button>
+        <button class="btn-discard" @click="deleteDuplicates([song.id])">
+          <FontAwesomeIcon :icon="faX" />
+          Discard
+        </button>
       </div>
-      <span class="dup-name">{{ song.filename }}</span>
-      <button class="dup-badge" @click="keepDuplicates([song.id])">
-        <FontAwesomeIcon :icon="faCheck" />
-        Duplicate
-      </button>
-      <button class="btn-discard" @click="deleteDuplicates([song.id])">
-        <FontAwesomeIcon :icon="faX" />
-        Discard
-      </button>
-    </div>
 
-    <div class="dup-footer">
-      <button class="btn-discard-all" @click="deleteDuplicates(songs.map(({id}) => id))">
-        <FontAwesomeIcon :icon="faX" />
-        Discard all
-      </button>
-      <button class="btn-upload-all" @click="keepDuplicates(songs.map(({id}) => id))">
-        <FontAwesomeIcon :icon="faUpload" />
-        Upload all anyway
-      </button>
+      <div class="dup-footer">
+        <button class="btn-discard-all" @click="deleteDuplicates(songs.map(({id}) => id))">
+          <FontAwesomeIcon :icon="faX" />
+          Discard all
+        </button>
+        <button class="btn-upload-all" @click="keepDuplicates(songs.map(({id}) => id))">
+          <FontAwesomeIcon :icon="faUpload" />
+          Upload all anyway
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -36,13 +41,23 @@
 <script setup lang="ts">
 import { DuplicateUpload } from '@/services/uploadService'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faUpload, faX, faWarning, faMusic, faCheck } from '@fortawesome/free-solid-svg-icons'
+import {
+  faUpload,
+  faX,
+  faWarning,
+  faMusic,
+  faCheck,
+  faChevronUp,
+  faChevronDown,
+} from '@fortawesome/free-solid-svg-icons'
 import { useDuplicateUploads } from '@/composables/useDuplicateUploads'
+import { ref } from 'vue'
 
 defineProps<{
   songs: DuplicateUpload[]
 }>()
 
+const isExpanded = ref(true)
 const { keepDuplicates, deleteDuplicates } = useDuplicateUploads()
 </script>
 
@@ -59,6 +74,20 @@ const { keepDuplicates, deleteDuplicates } = useDuplicateUploads()
   gap: 8px;
   padding: 10px 14px;
   border-bottom: 0.5px solid rgba(255, 255, 255, 0.07);
+}
+.btn-toggle {
+  background: none;
+  border: none;
+  color: #a89060;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+.btn-toggle:hover {
+  color: #f59e0b;
 }
 .warning-icon {
   color: #f59e0b;
