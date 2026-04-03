@@ -133,6 +133,7 @@ export const uploadService = {
       if (err.status === 409) {
         this.remove(file)
         this.fetchDuplicates()
+        eventBus.emit('DUPLICATE_UPLOAD_DETECTED')
         this.proceed()
         return
       }

@@ -68,12 +68,14 @@
 
 <script lang="ts" setup>
 import { faRotateRight, faTrashCan, faUpload, faWarning } from '@fortawesome/free-solid-svg-icons'
-import { computed, defineAsyncComponent, ref, toRef, onMounted } from 'vue'
+import { computed, defineAsyncComponent, ref, toRef, onMounted, onBeforeUnmount } from 'vue'
+import { eventBus } from '@/utils/eventBus'
 
 import { isDirectoryReadingSupported as canDropFolders } from '@/utils/supports'
 import { acceptedExtensions } from '@/utils/mediaHelper'
 import { uploadService } from '@/services/uploadService'
 import { useUpload } from '@/composables/useUpload'
+import { useMessageToaster } from '@/composables/useMessageToaster'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -92,14 +94,21 @@ const { allowsUpload, mediaPathSetUp, queueFilesForUpload, handleDropEvent } = u
 
 const { duplicateFilesUploaded, duplicatedSongs } = useDuplicateUploads()
 
+const { toastWarning } = useMessageToaster()
+
 const files = toRef(uploadService.state, 'files')
 const droppable = ref(false)
 
+const hasUploadFailures = computed(() => files.value.filter(({ status }) => status === 'Errored').length > 0)
+
 onMounted(async () => {
+  eventBus.on('DUPLICATE_UPLOAD_DETECTED', handleDuplicateDetected)
   await uploadService.fetchDuplicates()
 })
 
-const hasUploadFailures = computed(() => files.value.filter(({ status }) => status === 'Errored').length > 0)
+onBeforeUnmount(() => {
+  eventBus.off('DUPLICATE_UPLOAD_DETECTED', handleDuplicateDetected)
+})
 
 const onDragEnter = () => (droppable.value = allowsUpload.value)
 
@@ -122,6 +131,10 @@ const onFileInputChange = (event: Event) => {
 const onDrop = async (event: DragEvent) => {
   droppable.value = false
   await handleDropEvent(event)
+}
+
+const handleDuplicateDetected = () => {
+  toastWarning('Duplicate file uploaded')
 }
 
 const retryAll = () => uploadService.retryAll()

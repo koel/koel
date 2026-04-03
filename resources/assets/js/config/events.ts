@@ -22,6 +22,8 @@ export interface Events {
   SONGS_DELETED: (songs: Song[]) => void
   SONG_UPLOADED: (song: Song) => void
 
+  DUPLICATE_UPLOAD_DETECTED: () => void
+
   EPISODE_PROGRESS_UPDATED: (episode: Episode, progress: number) => void
 
   SOCKET_TOGGLE_PLAYBACK: () => void
