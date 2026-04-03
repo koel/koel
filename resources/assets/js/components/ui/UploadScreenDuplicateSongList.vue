@@ -26,7 +26,7 @@
         </div>
         <button class="dup-badge" @click="keepDuplicates([song.id])">
           <FontAwesomeIcon :icon="faCheck" />
-          Duplicate
+          Upload anyway
         </button>
         <button class="btn-discard" @click="deleteDuplicates([song.id])">
           <FontAwesomeIcon :icon="faX" />
