@@ -49,79 +49,52 @@ const preventOffScreen = async (element: HTMLElement, isSubmenu = false) => {
   }
 }
 
+/**
+ * Check if point (px, py) is inside the triangle formed by (ax, ay), (bx, by), (cx, cy)
+ * using the sign of cross products.
+ */
+const pointInTriangle = (
+  px: number,
+  py: number,
+  ax: number,
+  ay: number,
+  bx: number,
+  by: number,
+  cx: number,
+  cy: number,
+): boolean => {
+  const d1 = (px - bx) * (ay - by) - (ax - bx) * (py - by)
+  const d2 = (px - cx) * (by - cy) - (bx - cx) * (py - cy)
+  const d3 = (px - ax) * (cy - ay) - (cx - ax) * (py - ay)
+
+  const hasNeg = d1 < 0 || d2 < 0 || d3 < 0
+  const hasPos = d1 > 0 || d2 > 0 || d3 > 0
+
+  return !(hasNeg && hasPos)
+}
+
 type MenuItem = HTMLElement & {
   eventsRegistered?: boolean
-  safeArea?: HTMLDivElement
+  hideTimeout?: ReturnType<typeof setTimeout>
+  lastSubmenuRect?: DOMRect
 }
 
-const createSafeArea = (item: MenuItem): HTMLDivElement => {
-  if (item.safeArea) {
-    return item.safeArea
-  }
+const HIDE_DELAY = 80
 
-  const div = document.createElement('div')
-  div.style.cssText = 'position:fixed;z-index:1000;opacity:0;pointer-events:auto;display:none;'
-  document.body.appendChild(div)
-  item.safeArea = div
-
-  div.addEventListener('mouseleave', () => {
-    div.style.display = 'none'
-  })
-
-  return div
+const hideSubmenu = (item: MenuItem, submenu: HTMLElement) => {
+  submenu.style.display = 'none'
+  submenu.style.top = '0'
+  submenu.style.bottom = 'auto'
 }
 
-const updateSafeArea = (
-  safeArea: HTMLDivElement,
-  itemRect: DOMRect,
-  submenuRect: DOMRect,
-  cursorX: number,
-  cursorY: number,
-) => {
-  // Build a bounding box that covers the gap between the cursor and the submenu.
-  const boxLeft = Math.min(cursorX, submenuRect.left)
-  const boxRight = Math.max(cursorX, submenuRect.right)
-  const boxTop = Math.min(cursorY, submenuRect.top)
-  const boxBottom = Math.max(cursorY, submenuRect.bottom)
-
-  safeArea.style.left = `${boxLeft}px`
-  safeArea.style.top = `${boxTop}px`
-  safeArea.style.width = `${boxRight - boxLeft}px`
-  safeArea.style.height = `${boxBottom - boxTop}px`
-  safeArea.style.display = 'block'
-
-  // Create a triangle clip-path from the cursor point to two corners of the submenu edge.
-  const cx = cursorX - boxLeft
-  const cy = cursorY - boxTop
-
-  const submenuIsLeft = submenuRect.right <= itemRect.left
-
-  let p1x: number, p1y: number, p2x: number, p2y: number
-
-  if (submenuIsLeft) {
-    // Submenu is to the left: triangle points to the submenu's right edge
-    p1x = submenuRect.right - boxLeft
-    p1y = submenuRect.top - boxTop
-    p2x = submenuRect.right - boxLeft
-    p2y = submenuRect.bottom - boxTop
-  } else {
-    // Submenu is to the right: triangle points to the submenu's left edge
-    p1x = submenuRect.left - boxLeft
-    p1y = submenuRect.top - boxTop
-    p2x = submenuRect.left - boxLeft
-    p2y = submenuRect.bottom - boxTop
-  }
-
-  safeArea.style.clipPath = `polygon(${cx}px ${cy}px, ${p1x}px ${p1y}px, ${p2x}px ${p2y}px)`
+const scheduleHide = (item: MenuItem, submenu: HTMLElement) => {
+  clearTimeout(item.hideTimeout)
+  item.hideTimeout = setTimeout(() => hideSubmenu(item, submenu), HIDE_DELAY)
 }
 
-const cleanupSafeAreas = () => {
-  el.value?.querySelectorAll<HTMLElement>('.has-sub').forEach((item: MenuItem) => {
-    if (item.safeArea) {
-      item.safeArea.remove()
-      item.safeArea = undefined
-    }
-  })
+const cancelHide = (item: MenuItem) => {
+  clearTimeout(item.hideTimeout)
+  item.hideTimeout = undefined
 }
 
 const initSubmenus = () => {
@@ -133,6 +106,8 @@ const initSubmenus = () => {
     }
 
     item.addEventListener('mouseenter', async () => {
+      cancelHide(item)
+
       submenu.style.top = '0'
       submenu.style.left = '100%'
       submenu.style.bottom = 'auto'
@@ -141,47 +116,37 @@ const initSubmenus = () => {
 
       await nextTick()
       await preventOffScreen(submenu, true)
+
+      item.lastSubmenuRect = submenu.getBoundingClientRect()
     })
 
     item.addEventListener('mousemove', (e: MouseEvent) => {
-      if (submenu.style.display !== 'block') {
+      if (submenu.style.display !== 'block' || !item.lastSubmenuRect) {
         return
       }
 
-      const safeArea = createSafeArea(item)
-      const submenuRect = submenu.getBoundingClientRect()
+      const sr = item.lastSubmenuRect
       const itemRect = item.getBoundingClientRect()
-      updateSafeArea(safeArea, itemRect, submenuRect, e.clientX, e.clientY)
-    })
+      const submenuIsLeft = sr.right <= itemRect.left
 
-    item.addEventListener('mouseleave', (e: MouseEvent) => {
-      const related = e.relatedTarget as Node | null
+      // Triangle: cursor → two corners of the submenu's near edge
+      const nearEdgeX = submenuIsLeft ? sr.right : sr.left
 
-      // If the mouse moved into the submenu or the safe area, keep the submenu open.
-      if (related && (submenu.contains(related) || item.safeArea?.contains(related))) {
-        return
-      }
-
-      submenu.style.display = 'none'
-
-      if (item.safeArea) {
-        item.safeArea.style.display = 'none'
+      if (pointInTriangle(e.clientX, e.clientY, nearEdgeX, sr.top, nearEdgeX, sr.bottom, e.clientX, e.clientY)) {
+        cancelHide(item)
       }
     })
 
-    submenu.addEventListener('mouseleave', (e: MouseEvent) => {
-      const related = e.relatedTarget as Node | null
+    item.addEventListener('mouseleave', () => {
+      scheduleHide(item, submenu)
+    })
 
-      // If the mouse moved back to the parent item or its safe area, keep the submenu open.
-      if (related && (item.contains(related) || item.safeArea?.contains(related))) {
-        return
-      }
+    submenu.addEventListener('mouseenter', () => {
+      cancelHide(item)
+    })
 
-      submenu.style.display = 'none'
-
-      if (item.safeArea) {
-        item.safeArea.style.display = 'none'
-      }
+    submenu.addEventListener('mouseleave', () => {
+      scheduleHide(item, submenu)
     })
 
     item.eventsRegistered = true
@@ -227,17 +192,13 @@ const open = async (t = 0, l = 0) => {
 }
 
 const close = () => {
-  cleanupSafeAreas()
   stopObservingSubmenus()
   el.value?.close()
 }
 
 const onMouseDown = (e: MouseEvent) => e.target === el.value && close()
 
-onBeforeUnmount(() => {
-  cleanupSafeAreas()
-  stopObservingSubmenus()
-})
+onBeforeUnmount(stopObservingSubmenus)
 
 watch(options, newOptions => {
   if (newOptions.component) {
