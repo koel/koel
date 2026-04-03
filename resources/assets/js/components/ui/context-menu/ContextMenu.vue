@@ -49,12 +49,27 @@ const preventOffScreen = async (element: HTMLElement, isSubmenu = false) => {
   }
 }
 
-const safeAreaHeight = ref('0px')
-const safeAreaWidth = ref('0px')
-const safeAreaClipPath = ref('0 0, 0 0, 0 0, 0 0')
-
 type MenuItem = HTMLElement & {
   eventsRegistered?: boolean
+  hideTimeout?: ReturnType<typeof setTimeout>
+}
+
+const HIDE_DELAY = 150
+
+const hideSubmenu = (item: MenuItem, submenu: HTMLElement) => {
+  submenu.style.display = 'none'
+  submenu.style.top = '0'
+  submenu.style.bottom = 'auto'
+}
+
+const scheduleHide = (item: MenuItem, submenu: HTMLElement) => {
+  clearTimeout(item.hideTimeout)
+  item.hideTimeout = setTimeout(() => hideSubmenu(item, submenu), HIDE_DELAY)
+}
+
+const cancelHide = (item: MenuItem) => {
+  clearTimeout(item.hideTimeout)
+  item.hideTimeout = undefined
 }
 
 const initSubmenus = () => {
@@ -66,6 +81,8 @@ const initSubmenus = () => {
     }
 
     item.addEventListener('mouseenter', async () => {
+      cancelHide(item)
+
       submenu.style.top = '0'
       submenu.style.left = '100%'
       submenu.style.bottom = 'auto'
@@ -76,18 +93,22 @@ const initSubmenus = () => {
       await preventOffScreen(submenu, true)
     })
 
-    item.addEventListener('mousemove', async (e: MouseEvent) => {
-      await nextTick()
-      const rect = submenu.getBoundingClientRect()
-      safeAreaHeight.value = `${rect.height}px`
-      safeAreaWidth.value = `${rect.x - e.clientX}px`
-      safeAreaClipPath.value = `polygon(100% 0, 0 ${e.clientY - rect.top}px, 100% 100%)`
+    item.addEventListener('mousemove', () => {
+      if (submenu.style.display === 'block') {
+        cancelHide(item)
+      }
     })
 
     item.addEventListener('mouseleave', () => {
-      submenu.style.top = '0'
-      submenu.style.bottom = 'auto'
-      submenu.style.display = 'none'
+      scheduleHide(item, submenu)
+    })
+
+    submenu.addEventListener('mouseenter', () => {
+      cancelHide(item)
+    })
+
+    submenu.addEventListener('mouseleave', () => {
+      scheduleHide(item, submenu)
     })
 
     item.eventsRegistered = true
@@ -106,7 +127,6 @@ const startObservingSubmenus = () => {
   observer = new MutationObserver(() => initSubmenus())
   observer.observe(el.value, { childList: true, subtree: true })
 
-  // Also init immediately in case the content is already rendered
   initSubmenus()
 }
 
@@ -138,10 +158,16 @@ const close = () => {
   el.value?.close()
 }
 
-// Close the context menu when clicking outside it.
 const onMouseDown = (e: MouseEvent) => e.target === el.value && close()
 
-onBeforeUnmount(stopObservingSubmenus)
+onBeforeUnmount(() => {
+  stopObservingSubmenus()
+  el.value?.querySelectorAll<HTMLElement>('.has-sub').forEach((item: MenuItem) => {
+    clearTimeout(item.hideTimeout)
+    item.hideTimeout = undefined
+    item.eventsRegistered = false
+  })
+})
 
 watch(options, newOptions => {
   if (newOptions.component) {
@@ -151,17 +177,3 @@ watch(options, newOptions => {
   }
 })
 </script>
-
-<style lang="postcss" scoped>
-dialog {
-  :deep(.has-sub) {
-    @apply after:absolute after:right-0 after:top-0 after:z-[2] after:opacity-0;
-  }
-
-  :deep(.has-sub)::after {
-    width: v-bind(safeAreaWidth);
-    height: v-bind(safeAreaHeight);
-    clip-path: v-bind(safeAreaClipPath);
-  }
-}
-</style>
