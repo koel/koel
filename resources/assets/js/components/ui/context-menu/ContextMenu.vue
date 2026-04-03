@@ -49,6 +49,7 @@ const preventOffScreen = async (element: HTMLElement, isSubmenu = false) => {
   }
 }
 
+const safeAreaTop = ref('0')
 const safeAreaHeight = ref('0px')
 const safeAreaWidth = ref('0px')
 const safeAreaClipPath = ref('polygon(0 0, 0 0, 0 0)')
@@ -83,20 +84,26 @@ const initSubmenus = () => {
       const itemRect = item.getBoundingClientRect()
       const submenuIsLeft = submenuRect.right <= itemRect.left
 
+      // The safe area top is relative to the item, accounting for submenus that extend above.
+      const topOffset = submenuRect.top - itemRect.top
+      safeAreaTop.value = `${topOffset}px`
       safeAreaHeight.value = `${submenuRect.height}px`
+
+      // Cursor Y relative to the safe area (not the submenu rect, since they're now the same).
+      const cursorY = e.clientY - submenuRect.top
 
       if (submenuIsLeft) {
         const gap = e.clientX - submenuRect.right
         safeAreaWidth.value = `${gap}px`
         safeAreaLeft.value = '0'
         safeAreaRight.value = 'auto'
-        safeAreaClipPath.value = `polygon(0 0, 100% ${e.clientY - submenuRect.top}px, 0 100%)`
+        safeAreaClipPath.value = `polygon(0 0, 100% ${cursorY}px, 0 100%)`
       } else {
         const gap = submenuRect.x - e.clientX
         safeAreaWidth.value = `${gap}px`
         safeAreaLeft.value = 'auto'
         safeAreaRight.value = '0'
-        safeAreaClipPath.value = `polygon(100% 0, 0 ${e.clientY - submenuRect.top}px, 100% 100%)`
+        safeAreaClipPath.value = `polygon(100% 0, 0 ${cursorY}px, 100% 100%)`
       }
     })
 
@@ -171,10 +178,11 @@ watch(options, newOptions => {
 <style lang="postcss" scoped>
 dialog {
   :deep(.has-sub) {
-    @apply after:absolute after:top-0 after:z-[2] after:opacity-0 after:content-[''];
+    @apply after:absolute after:z-[2] after:opacity-0 after:content-[''];
   }
 
   :deep(.has-sub)::after {
+    top: v-bind(safeAreaTop);
     left: v-bind(safeAreaLeft);
     right: v-bind(safeAreaRight);
     width: v-bind(safeAreaWidth);
