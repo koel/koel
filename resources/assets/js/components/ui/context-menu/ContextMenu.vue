@@ -49,15 +49,79 @@ const preventOffScreen = async (element: HTMLElement, isSubmenu = false) => {
   }
 }
 
-const safeAreaTop = ref('0')
-const safeAreaHeight = ref('0px')
-const safeAreaWidth = ref('0px')
-const safeAreaClipPath = ref('polygon(0 0, 0 0, 0 0)')
-const safeAreaLeft = ref('auto')
-const safeAreaRight = ref('0')
-
 type MenuItem = HTMLElement & {
   eventsRegistered?: boolean
+  safeArea?: HTMLDivElement
+}
+
+const createSafeArea = (item: MenuItem): HTMLDivElement => {
+  if (item.safeArea) {
+    return item.safeArea
+  }
+
+  const div = document.createElement('div')
+  div.style.cssText = 'position:fixed;z-index:1000;opacity:0;pointer-events:auto;display:none;'
+  document.body.appendChild(div)
+  item.safeArea = div
+
+  div.addEventListener('mouseleave', () => {
+    div.style.display = 'none'
+  })
+
+  return div
+}
+
+const updateSafeArea = (
+  safeArea: HTMLDivElement,
+  itemRect: DOMRect,
+  submenuRect: DOMRect,
+  cursorX: number,
+  cursorY: number,
+) => {
+  // Build a bounding box that covers the gap between the cursor and the submenu.
+  const boxLeft = Math.min(cursorX, submenuRect.left)
+  const boxRight = Math.max(cursorX, submenuRect.right)
+  const boxTop = Math.min(cursorY, submenuRect.top)
+  const boxBottom = Math.max(cursorY, submenuRect.bottom)
+
+  safeArea.style.left = `${boxLeft}px`
+  safeArea.style.top = `${boxTop}px`
+  safeArea.style.width = `${boxRight - boxLeft}px`
+  safeArea.style.height = `${boxBottom - boxTop}px`
+  safeArea.style.display = 'block'
+
+  // Create a triangle clip-path from the cursor point to two corners of the submenu edge.
+  const cx = cursorX - boxLeft
+  const cy = cursorY - boxTop
+
+  const submenuIsLeft = submenuRect.right <= itemRect.left
+
+  let p1x: number, p1y: number, p2x: number, p2y: number
+
+  if (submenuIsLeft) {
+    // Submenu is to the left: triangle points to the submenu's right edge
+    p1x = submenuRect.right - boxLeft
+    p1y = submenuRect.top - boxTop
+    p2x = submenuRect.right - boxLeft
+    p2y = submenuRect.bottom - boxTop
+  } else {
+    // Submenu is to the right: triangle points to the submenu's left edge
+    p1x = submenuRect.left - boxLeft
+    p1y = submenuRect.top - boxTop
+    p2x = submenuRect.left - boxLeft
+    p2y = submenuRect.bottom - boxTop
+  }
+
+  safeArea.style.clipPath = `polygon(${cx}px ${cy}px, ${p1x}px ${p1y}px, ${p2x}px ${p2y}px)`
+}
+
+const cleanupSafeAreas = () => {
+  el.value?.querySelectorAll<HTMLElement>('.has-sub').forEach((item: MenuItem) => {
+    if (item.safeArea) {
+      item.safeArea.remove()
+      item.safeArea = undefined
+    }
+  })
 }
 
 const initSubmenus = () => {
@@ -80,37 +144,44 @@ const initSubmenus = () => {
     })
 
     item.addEventListener('mousemove', (e: MouseEvent) => {
+      if (submenu.style.display !== 'block') {
+        return
+      }
+
+      const safeArea = createSafeArea(item)
       const submenuRect = submenu.getBoundingClientRect()
       const itemRect = item.getBoundingClientRect()
-      const submenuIsLeft = submenuRect.right <= itemRect.left
+      updateSafeArea(safeArea, itemRect, submenuRect, e.clientX, e.clientY)
+    })
 
-      // The safe area top is relative to the item, accounting for submenus that extend above.
-      const topOffset = submenuRect.top - itemRect.top
-      safeAreaTop.value = `${topOffset}px`
-      safeAreaHeight.value = `${submenuRect.height}px`
+    item.addEventListener('mouseleave', (e: MouseEvent) => {
+      const related = e.relatedTarget as Node | null
 
-      // Cursor Y relative to the safe area (not the submenu rect, since they're now the same).
-      const cursorY = e.clientY - submenuRect.top
+      // If the mouse moved into the submenu or the safe area, keep the submenu open.
+      if (related && (submenu.contains(related) || item.safeArea?.contains(related))) {
+        return
+      }
 
-      if (submenuIsLeft) {
-        const gap = e.clientX - submenuRect.right
-        safeAreaWidth.value = `${gap}px`
-        safeAreaLeft.value = '0'
-        safeAreaRight.value = 'auto'
-        safeAreaClipPath.value = `polygon(0 0, 100% ${cursorY}px, 0 100%)`
-      } else {
-        const gap = submenuRect.x - e.clientX
-        safeAreaWidth.value = `${gap}px`
-        safeAreaLeft.value = 'auto'
-        safeAreaRight.value = '0'
-        safeAreaClipPath.value = `polygon(100% 0, 0 ${cursorY}px, 100% 100%)`
+      submenu.style.display = 'none'
+
+      if (item.safeArea) {
+        item.safeArea.style.display = 'none'
       }
     })
 
-    item.addEventListener('mouseleave', () => {
-      submenu.style.top = '0'
-      submenu.style.bottom = 'auto'
+    submenu.addEventListener('mouseleave', (e: MouseEvent) => {
+      const related = e.relatedTarget as Node | null
+
+      // If the mouse moved back to the parent item or its safe area, keep the submenu open.
+      if (related && (item.contains(related) || item.safeArea?.contains(related))) {
+        return
+      }
+
       submenu.style.display = 'none'
+
+      if (item.safeArea) {
+        item.safeArea.style.display = 'none'
+      }
     })
 
     item.eventsRegistered = true
@@ -129,7 +200,6 @@ const startObservingSubmenus = () => {
   observer = new MutationObserver(() => initSubmenus())
   observer.observe(el.value, { childList: true, subtree: true })
 
-  // Also init immediately in case the content is already rendered
   initSubmenus()
 }
 
@@ -157,14 +227,17 @@ const open = async (t = 0, l = 0) => {
 }
 
 const close = () => {
+  cleanupSafeAreas()
   stopObservingSubmenus()
   el.value?.close()
 }
 
-// Close the context menu when clicking outside it.
 const onMouseDown = (e: MouseEvent) => e.target === el.value && close()
 
-onBeforeUnmount(stopObservingSubmenus)
+onBeforeUnmount(() => {
+  cleanupSafeAreas()
+  stopObservingSubmenus()
+})
 
 watch(options, newOptions => {
   if (newOptions.component) {
@@ -174,20 +247,3 @@ watch(options, newOptions => {
   }
 })
 </script>
-
-<style lang="postcss" scoped>
-dialog {
-  :deep(.has-sub) {
-    @apply after:absolute after:z-[2] after:opacity-0 after:content-[''];
-  }
-
-  :deep(.has-sub)::after {
-    top: v-bind(safeAreaTop);
-    left: v-bind(safeAreaLeft);
-    right: v-bind(safeAreaRight);
-    width: v-bind(safeAreaWidth);
-    height: v-bind(safeAreaHeight);
-    clip-path: v-bind(safeAreaClipPath);
-  }
-}
-</style>
