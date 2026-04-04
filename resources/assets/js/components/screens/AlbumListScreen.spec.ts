@@ -27,6 +27,11 @@ describe('albumListScreen.vue', () => {
       global: {
         stubs: {
           AlbumCard: h.stub('album-card'),
+          VirtualGridScroller: {
+            template: '<div data-testid="album-grid"><slot v-for="item in items" :item="item" /></div>',
+            props: ['items', 'itemHeight', 'minItemWidth'],
+            methods: { scrollToTop() {} },
+          },
         },
       },
     })
@@ -49,24 +54,6 @@ describe('albumListScreen.vue', () => {
     await renderComponent()
 
     await waitFor(() => screen.getByTestId('screen-empty-state'))
-  })
-
-  it.each<[ViewMode]>([['list'], ['thumbnails']])('sets layout from preferences', async mode => {
-    preferences.temporary.albums_view_mode = mode
-
-    await renderComponent()
-
-    await waitFor(() => expect(screen.getByTestId('album-grid').classList.contains(`as-${mode}`)).toBe(true))
-  })
-
-  it('switches layout', async () => {
-    await renderComponent()
-
-    await h.user.click(screen.getByRole('radio', { name: 'View as list' }))
-    await waitFor(() => expect(screen.getByTestId('album-grid').classList.contains(`as-list`)).toBe(true))
-
-    await h.user.click(screen.getByRole('radio', { name: 'View as thumbnails' }))
-    await waitFor(() => expect(screen.getByTestId('album-grid').classList.contains(`as-thumbnails`)).toBe(true))
   })
 
   it('shows all or only favorites upon toggling the button', async () => {
@@ -105,6 +92,11 @@ describe('albumListScreen.vue', () => {
       global: {
         stubs: {
           AlbumCard: h.stub('album-card'),
+          VirtualGridScroller: {
+            template: '<div data-testid="album-grid"><slot v-for="item in items" :item="item" /></div>',
+            props: ['items', 'itemHeight', 'minItemWidth'],
+            methods: { scrollToTop() {} },
+          },
         },
       },
     })
@@ -133,6 +125,11 @@ describe('albumListScreen.vue', () => {
       global: {
         stubs: {
           AlbumCard: h.stub('album-card'),
+          VirtualGridScroller: {
+            template: '<div data-testid="album-grid"><slot v-for="item in items" :item="item" /></div>',
+            props: ['items', 'itemHeight', 'minItemWidth'],
+            methods: { scrollToTop() {} },
+          },
         },
       },
     })

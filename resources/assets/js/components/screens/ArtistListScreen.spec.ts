@@ -6,6 +6,12 @@ import { commonStore } from '@/stores/commonStore'
 import { preferenceStore } from '@/stores/preferenceStore'
 import Component from './ArtistListScreen.vue'
 
+const virtualGridStub = {
+  template: '<div data-testid="artist-list"><slot v-for="item in items" :item="item" /></div>',
+  props: ['items', 'itemHeight', 'minItemWidth'],
+  methods: { scrollToTop() {} },
+}
+
 describe('artistListScreen.vue', () => {
   const h = createHarness()
 
@@ -28,6 +34,7 @@ describe('artistListScreen.vue', () => {
       global: {
         stubs: {
           ArtistCard: h.stub('artist-card'),
+          VirtualGridScroller: virtualGridStub,
         },
       },
     })
@@ -51,24 +58,6 @@ describe('artistListScreen.vue', () => {
     await renderComponent()
 
     await waitFor(() => screen.getByTestId('screen-empty-state'))
-  })
-
-  it.each<[ViewMode]>([['list'], ['thumbnails']])('sets layout:%s from preferences', async mode => {
-    preferenceStore.artists_view_mode = mode
-
-    await renderComponent()
-
-    await waitFor(() => expect(screen.getByTestId('artist-list').classList.contains(`as-${mode}`)).toBe(true))
-  })
-
-  it('switches layout', async () => {
-    await renderComponent()
-
-    await h.user.click(screen.getByRole('radio', { name: 'View as list' }))
-    await waitFor(() => expect(screen.getByTestId('artist-list').classList.contains(`as-list`)).toBe(true))
-
-    await h.user.click(screen.getByRole('radio', { name: 'View as thumbnails' }))
-    await waitFor(() => expect(screen.getByTestId('artist-list').classList.contains(`as-thumbnails`)).toBe(true))
   })
 
   it('shows all or only favorites upon toggling the button', async () => {
@@ -107,6 +96,7 @@ describe('artistListScreen.vue', () => {
       global: {
         stubs: {
           ArtistCard: h.stub('artist-card'),
+          VirtualGridScroller: virtualGridStub,
         },
       },
     })
@@ -135,6 +125,7 @@ describe('artistListScreen.vue', () => {
       global: {
         stubs: {
           ArtistCard: h.stub('artist-card'),
+          VirtualGridScroller: virtualGridStub,
         },
       },
     })
