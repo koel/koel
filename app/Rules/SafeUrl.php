@@ -60,11 +60,22 @@ class SafeUrl implements ValidationRule
             return [$normalized];
         }
 
+        // Convert internationalized domain names (IDN) to ASCII for DNS functions.
+        $lookupHost = $host;
+
+        if (function_exists('idn_to_ascii')) {
+            $ascii = idn_to_ascii($host);
+
+            if ($ascii !== false && $ascii !== '') {
+                $lookupHost = $ascii;
+            }
+        }
+
         $ips = [];
 
         // Collect both A (IPv4) and AAAA (IPv6) records
         if (function_exists('dns_get_record')) {
-            $records = @dns_get_record($host, DNS_A | DNS_AAAA) ?: [];
+            $records = @dns_get_record($lookupHost, DNS_A | DNS_AAAA) ?: [];
 
             foreach ($records as $record) {
                 if (!empty($record['ip'])) {
@@ -79,10 +90,16 @@ class SafeUrl implements ValidationRule
 
         // Fallback: gethostbynamel returns all IPv4 addresses
         if (!$ips) {
-            $v4 = gethostbynamel($host);
+            $v4 = gethostbynamel($lookupHost);
 
             if ($v4) {
                 $ips = $v4;
+            } else {
+                $ip = gethostbyname($lookupHost);
+
+                if ($ip !== $lookupHost) {
+                    $ips[] = $ip;
+                }
             }
         }
 
