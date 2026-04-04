@@ -8,7 +8,7 @@ import Component from './ArtistListScreen.vue'
 
 const virtualGridStub = {
   template: '<div data-testid="artist-list"><slot v-for="item in items" :item="item" /></div>',
-  props: ['items', 'itemHeight', 'minItemWidth'],
+  props: ['items', 'minItemWidth'],
   methods: { scrollToTop() {} },
 }
 

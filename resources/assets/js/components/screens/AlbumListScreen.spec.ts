@@ -29,7 +29,7 @@ describe('albumListScreen.vue', () => {
           AlbumCard: h.stub('album-card'),
           VirtualGridScroller: {
             template: '<div data-testid="album-grid"><slot v-for="item in items" :item="item" /></div>',
-            props: ['items', 'itemHeight', 'minItemWidth'],
+            props: ['items', 'minItemWidth'],
             methods: { scrollToTop() {} },
           },
         },
@@ -94,7 +94,7 @@ describe('albumListScreen.vue', () => {
           AlbumCard: h.stub('album-card'),
           VirtualGridScroller: {
             template: '<div data-testid="album-grid"><slot v-for="item in items" :item="item" /></div>',
-            props: ['items', 'itemHeight', 'minItemWidth'],
+            props: ['items', 'minItemWidth'],
             methods: { scrollToTop() {} },
           },
         },
@@ -127,7 +127,7 @@ describe('albumListScreen.vue', () => {
           AlbumCard: h.stub('album-card'),
           VirtualGridScroller: {
             template: '<div data-testid="album-grid"><slot v-for="item in items" :item="item" /></div>',
-            props: ['items', 'itemHeight', 'minItemWidth'],
+            props: ['items', 'minItemWidth'],
             methods: { scrollToTop() {} },
           },
         },

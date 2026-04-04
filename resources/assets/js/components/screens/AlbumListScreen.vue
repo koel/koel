@@ -55,7 +55,6 @@
         v-else
         ref="grid"
         :items="displayedAlbums"
-        :item-height="itemHeight"
         :min-item-width="minItemWidth"
         class="flex-1"
         data-testid="album-grid"
@@ -100,7 +99,6 @@ const page = ref<number | null>(1)
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 
 const itemLayout = computed<CardLayout>(() => (preferences.albums_view_mode === 'thumbnails' ? 'full' : 'compact'))
-const itemHeight = computed(() => (preferences.albums_view_mode === 'thumbnails' ? 282 : 88))
 const minItemWidth = computed(() => (preferences.albums_view_mode === 'thumbnails' ? 240 : 350))
 
 const displayedAlbums = computed(() =>
