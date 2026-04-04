@@ -948,8 +948,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SongWithAlbumAndArtist'
+        '409':
+          description: Conflict - a song with the same content already exists. The upload has been saved as a duplicate for later review.
       operationId: post-upload
-      description: Upload a song. The current authenticated user must be an admin.
+      description: Upload a song. The current authenticated user must be an admin. Returns 409 if the uploaded file is a duplicate of an existing song; the upload is stored and can be reviewed via the duplicate-uploads endpoints.
       security:
         - Bearer Token: [ ]
       requestBody:
@@ -963,6 +965,84 @@ paths:
                   format: binary
               required:
                 - file
+  /api/duplicate-uploads:
+    get:
+      summary: List duplicate uploads
+      tags: [ ]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DuplicateUpload'
+      operationId: get-duplicate-uploads
+      description: Retrieve a paginated list of duplicate song uploads for the authenticated user.
+      security:
+        - Bearer Token: [ ]
+      parameters:
+        - name: per_page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 50
+          description: Number of results per page
+  /api/duplicate-uploads/keep:
+    post:
+      summary: Keep duplicate uploads
+      tags: [ ]
+      responses:
+        '200':
+          description: OK
+      operationId: post-duplicate-uploads-keep
+      description: Import the selected duplicate uploads as songs.
+      security:
+        - Bearer Token: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uploads:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  description: IDs of the duplicate uploads to keep
+              required:
+                - uploads
+  /api/duplicate-uploads/delete:
+    delete:
+      summary: Discard duplicate uploads
+      tags: [ ]
+      responses:
+        '200':
+          description: OK
+      operationId: delete-duplicate-uploads
+      description: Delete the selected duplicate upload files and remove their records.
+      security:
+        - Bearer Token: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uploads:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  description: IDs of the duplicate uploads to discard
+              required:
+                - uploads
   '/api/{songId}/scrobble':
     parameters:
       - schema:
@@ -1689,6 +1769,35 @@ components:
                     height: 360
                 channelTitle: Queen Official
                 liveBroadcastContent: none
+    DuplicateUpload:
+      title: DuplicateUpload
+      type: object
+      description: A song upload that was detected as a duplicate of an existing song
+      properties:
+        type:
+          type: string
+          enum:
+            - duplicate-uploads
+        id:
+          type: string
+          format: uuid
+        existing_song:
+          oneOf:
+            - $ref: '#/components/schemas/Song'
+            - type: 'null'
+          description: The existing song that the has the same hash as the upload, if still present, null otherwise
+        filename:
+          type: string
+          description: The original filename of the upload
+        created_at:
+          type: string
+          format: date-time
+      required:
+        - type
+        - id
+        - existing_song
+        - filename
+        - created_at
     SongWithAlbumAndArtist:
       title: SongWithAlbumAndArtist
       type: object
