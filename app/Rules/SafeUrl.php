@@ -4,6 +4,7 @@ namespace App\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Translation\PotentiallyTranslatedString;
 
 /**
  * Validates that a URL does not resolve to a private or reserved IP address,
@@ -13,7 +14,7 @@ class SafeUrl implements ValidationRule
 {
     private const array ALLOWED_SCHEMES = ['http', 'https'];
 
-    /** @param Closure(string, ?string=): \Illuminate\Translation\PotentiallyTranslatedString $fail */
+    /** @param Closure(string, ?string=): PotentiallyTranslatedString $fail */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $scheme = parse_url((string) $value, PHP_URL_SCHEME);
