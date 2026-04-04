@@ -22,7 +22,13 @@ class SafeUrl implements ValidationRule
     /** @param Closure(string, ?string=): PotentiallyTranslatedString $fail */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $uri = Uri::of((string) $value);
+        try {
+            $uri = Uri::of((string) $value);
+        } catch (Throwable) {
+            $fail('The :attribute is not a valid URL.');
+
+            return;
+        }
 
         if (!in_array($uri->scheme(), self::ALLOWED_SCHEMES, true)) {
             $fail('The :attribute must use HTTP or HTTPS.');
