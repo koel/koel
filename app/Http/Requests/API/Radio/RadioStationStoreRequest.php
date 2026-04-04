@@ -3,8 +3,9 @@
 namespace App\Http\Requests\API\Radio;
 
 use App\Http\Requests\API\Request;
+use App\Rules\HasAudioContentType;
+use App\Rules\SafeUrl;
 use App\Rules\ValidImageData;
-use App\Rules\ValidRadioStationUrl;
 use App\Values\Radio\RadioStationCreateData;
 use Illuminate\Validation\Rule;
 
@@ -27,7 +28,8 @@ class RadioStationStoreRequest extends Request
                 Rule::unique('radio_stations')->where(function ($query) {
                     return $query->where('user_id', $this->user()->id);
                 }),
-                app(ValidRadioStationUrl::class),
+                new SafeUrl(),
+                new HasAudioContentType(),
             ],
             'name' => ['required', 'string', 'max:191'],
             'logo' => ['nullable', new ValidImageData()],

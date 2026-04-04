@@ -3,14 +3,16 @@
 namespace Tests\Unit\Rules;
 
 use App\Rules\SafeUrl;
+use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
+use RuntimeException;
+use Tests\TestCase;
 
 class SafeUrlTest extends TestCase
 {
     private SafeUrl $rule;
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
         $this->rule = new SafeUrl();
@@ -60,8 +62,17 @@ class SafeUrlTest extends TestCase
     #[Test]
     public function acceptsPublicIpUrls(): void
     {
-        // 8.8.8.8 (Google DNS) is a known public IP
+        Http::fake(['*' => Http::response()]);
+
         self::assertTrue($this->passes('https://8.8.8.8/feed'));
         self::assertTrue($this->passes('http://1.1.1.1/feed.xml'));
+    }
+
+    #[Test]
+    public function rejectsUnreachableUrls(): void
+    {
+        Http::fake(static fn () => throw new RuntimeException('Connection refused'));
+
+        self::assertFalse($this->passes('https://8.8.8.8/feed'));
     }
 }

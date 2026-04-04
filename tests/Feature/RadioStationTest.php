@@ -6,7 +6,7 @@ use App\Helpers\Ulid;
 use App\Http\Resources\RadioStationResource;
 use App\Models\Organization;
 use App\Models\RadioStation;
-use App\Rules\ValidRadioStationUrl;
+use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -20,8 +20,7 @@ class RadioStationTest extends TestCase
     {
         parent::setUp();
 
-        $validator = app(ValidRadioStationUrl::class);
-        $validator->bypass = true;
+        Http::fake(['*' => Http::response('', 200, ['Content-Type' => 'audio/mpeg'])]);
     }
 
     #[Test]

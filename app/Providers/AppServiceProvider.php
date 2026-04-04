@@ -11,7 +11,6 @@ use App\Models\Podcast;
 use App\Models\RadioStation;
 use App\Models\Song;
 use App\Models\User;
-use App\Rules\ValidRadioStationUrl;
 use App\Services\Contracts\Encyclopedia;
 use App\Services\Geolocation\Contracts\GeolocationService;
 use App\Services\Geolocation\IPinfoService;
@@ -79,8 +78,6 @@ class AppServiceProvider extends ServiceProvider
             // Use a no-cache strategy for unit tests to ensure consistent results
             return app()->runningUnitTests() ? app(ScannerNoCacheStrategy::class) : app(ScannerCacheStrategy::class);
         });
-
-        $this->app->singleton(ValidRadioStationUrl::class, static fn () => new ValidRadioStationUrl());
 
         Route::bind('genre', static function (string $value): ?Genre {
             if ($value === Genre::NO_GENRE_PUBLIC_ID) {
