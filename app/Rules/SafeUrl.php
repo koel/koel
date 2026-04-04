@@ -6,6 +6,7 @@ use App\Helpers\Network;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Uri;
 use Illuminate\Translation\PotentiallyTranslatedString;
 use Throwable;
 
@@ -21,17 +22,15 @@ class SafeUrl implements ValidationRule
     /** @param Closure(string, ?string=): PotentiallyTranslatedString $fail */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $scheme = parse_url((string) $value, PHP_URL_SCHEME);
+        $uri = Uri::of((string) $value);
 
-        if (!$scheme || !in_array(strtolower($scheme), self::ALLOWED_SCHEMES, true)) {
+        if (!in_array($uri->scheme(), self::ALLOWED_SCHEMES, true)) {
             $fail('The :attribute must use HTTP or HTTPS.');
 
             return;
         }
 
-        $host = parse_url((string) $value, PHP_URL_HOST);
-
-        if (!$host || !Network::isPublicHost($host)) {
+        if (!Network::isPublicHost($uri->host())) {
             $fail('The :attribute must point to a public URL.');
 
             return;

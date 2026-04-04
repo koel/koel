@@ -250,6 +250,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - Never query models directly (e.g. `Model::query()->where(...)`) outside of the corresponding Repository class. All model lookups and queries must go through the appropriate Repository (e.g. `PlaylistRepository`, `SongRepository`).
 - For config values needed by services, use the `#[Config('key')]` attribute on constructor parameters (from `Illuminate\Container\Attributes\Config`) — never call `config()` inside the service.
 - All closure parameters must be type-hinted. Never use untyped closure arguments (e.g. `function (Builder $query)`, not `function ($query)`).
+- When parsing or manipulating URLs, use `Illuminate\Support\Uri` instead of `parse_url()`.
 
 ## Environment Variables Documentation
 - When adding, removing, or modifying environment variables in `.env.example`, always update `docs/environment-variables.md` to stay in sync.
