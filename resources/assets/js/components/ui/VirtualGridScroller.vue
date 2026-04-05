@@ -11,8 +11,8 @@
     </div>
 
     <template v-else>
-      <div :style="{ height: `${totalHeight}px` }" class="will-change-transform overflow-hidden">
-        <div v-bind="$attrs" :style="gridStyle" class="will-change-transform grid">
+      <div class="height-container will-change-transform overflow-hidden">
+        <div v-bind="$attrs" class="grid-container will-change-transform grid">
           <slot v-for="item in renderedItems" :item />
         </div>
       </div>
@@ -39,22 +39,25 @@ const scrollerWidth = ref(0)
 const scrollerHeight = ref(0)
 const scrollTop = ref(0)
 const measuredItemHeight = ref(0)
-const measuredGap = ref(0)
-const measuredPadding = ref(0)
+const measuredRowGap = ref(0)
+const measuredColumnGap = ref(0)
+const measuredPaddingX = ref(0)
+const measuredPaddingY = ref(0)
 const measuring = ref(true)
 
 const renderAhead = 3
 
 const columnCount = computed(() => {
-  const g = measuredGap.value
-  return Math.max(1, Math.floor((scrollerWidth.value + g) / (minItemWidth.value + g)))
+  const contentWidth = scrollerWidth.value - measuredPaddingX.value
+  const g = measuredColumnGap.value
+  return Math.max(1, Math.floor((contentWidth + g) / (minItemWidth.value + g)))
 })
 
 const rowCount = computed(() => Math.ceil(items.value.length / columnCount.value))
-const rowHeight = computed(() => measuredItemHeight.value + measuredGap.value)
+const rowHeight = computed(() => measuredItemHeight.value + measuredRowGap.value)
 
 const totalHeight = computed(() =>
-  rowCount.value ? rowCount.value * rowHeight.value - measuredGap.value + measuredPadding.value : 0,
+  rowCount.value ? rowCount.value * rowHeight.value - measuredRowGap.value + measuredPaddingY.value : 0,
 )
 
 const startRow = computed(() => Math.max(0, Math.floor(scrollTop.value / rowHeight.value) - renderAhead))
@@ -70,10 +73,9 @@ const renderedItems = computed(() => {
   return items.value.slice(startRow.value * columnCount.value, endRow * columnCount.value)
 })
 
-const gridStyle = computed(() => ({
-  transform: `translateY(${offsetY.value}px)`,
-  gridTemplateColumns: `repeat(${columnCount.value}, minmax(0, 1fr))`,
-}))
+const cssHeight = computed(() => `${totalHeight.value}px`)
+const cssTransform = computed(() => `translateY(${offsetY.value}px)`)
+const cssColumns = computed(() => `repeat(${columnCount.value}, minmax(0, 1fr))`)
 
 const measure = async () => {
   if (!items.value.length) {
@@ -90,8 +92,10 @@ const measure = async () => {
   }
 
   const style = getComputedStyle(measureContainer.value)
-  measuredGap.value = parseFloat(style.rowGap) || parseFloat(style.gap) || 0
-  measuredPadding.value = (parseFloat(style.paddingTop) || 0) + (parseFloat(style.paddingBottom) || 0)
+  measuredRowGap.value = parseFloat(style.rowGap) || parseFloat(style.gap) || 0
+  measuredColumnGap.value = parseFloat(style.columnGap) || parseFloat(style.gap) || 0
+  measuredPaddingX.value = (parseFloat(style.paddingLeft) || 0) + (parseFloat(style.paddingRight) || 0)
+  measuredPaddingY.value = (parseFloat(style.paddingTop) || 0) + (parseFloat(style.paddingBottom) || 0)
 
   const firstChild = measureContainer.value.firstElementChild as HTMLElement | null
 
@@ -102,8 +106,12 @@ const measure = async () => {
   measuring.value = false
 }
 
-const onScroll = (e: Event) =>
-  requestAnimationFrame(() => {
+let scrollRafId = 0
+
+const onScroll = (e: Event) => {
+  cancelAnimationFrame(scrollRafId)
+
+  scrollRafId = requestAnimationFrame(() => {
     const el = scroller.value
 
     if (!el) {
@@ -116,6 +124,7 @@ const onScroll = (e: Event) =>
       emit('scrolled-to-end')
     }
   })
+}
 
 const resizeObserver = new ResizeObserver((entries: ResizeObserverEntry[]) => {
   for (const entry of entries) {
@@ -135,6 +144,8 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
+  cancelAnimationFrame(scrollRafId)
+
   if (scroller.value) {
     resizeObserver.unobserve(scroller.value)
   }
@@ -170,5 +181,14 @@ defineExpose({ scrollToTop })
       scrollbar-gutter: auto;
     }
   }
+}
+
+.height-container {
+  height: v-bind(cssHeight);
+}
+
+.grid-container {
+  transform: v-bind(cssTransform);
+  grid-template-columns: v-bind(cssColumns);
 }
 </style>
