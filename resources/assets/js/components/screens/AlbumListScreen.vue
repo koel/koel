@@ -56,7 +56,8 @@
           ref="grid"
           :items="displayedAlbums"
           :min-item-width="minItemWidth"
-          class="p-6 gap-5"
+          :class="itemLayout === 'full' ? 'gap-y-5' : 'gap-y-3'"
+          class="p-6 gap-x-5"
           data-testid="album-grid"
           @scrolled-to-end="fetchAlbums"
         >
