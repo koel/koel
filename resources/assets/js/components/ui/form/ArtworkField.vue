@@ -34,16 +34,16 @@ const { onImageInputChange } = useImageFileInput({
   onImageDataUrl: dataUrl => (model.value = dataUrl),
 })
 
-const onPaste = (e: ClipboardEvent) => {
-  const dt = e.clipboardData
+const onPaste = (event: ClipboardEvent) => {
+  const clipboardData = event.clipboardData
 
-  if (!dt) {
+  if (!clipboardData) {
     return
   }
 
   const file =
-    Array.from(dt.files || []).find((f: File) => f.type.startsWith('image/')) ||
-    Array.from(dt.items || [])
+    Array.from(clipboardData.files || []).find((f: File) => f.type.startsWith('image/')) ||
+    Array.from(clipboardData.items || [])
       .filter((item: DataTransferItem) => item.kind === 'file')
       .map((item: DataTransferItem) => item.getAsFile())
       .find((f: File | null): f is File => f !== null && f.type.startsWith('image/'))
@@ -52,7 +52,7 @@ const onPaste = (e: ClipboardEvent) => {
     return
   }
 
-  e.preventDefault()
+  event.preventDefault()
 
   // Create a fresh FileReader per paste to avoid accumulating listeners on a shared instance.
   const { readAsDataUrl } = useFileReader()

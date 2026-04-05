@@ -22,7 +22,7 @@
           placeholder="A short description of the station"
         />
       </FormRow>
-      <ArtworkField v-model="data.logo">Pick a logo (optional)</ArtworkField>
+      <ArtworkField v-model="data.logo">Pick or paste a logo (optional)</ArtworkField>
       <FormRow>
         <label>
           <CheckBox v-model="data.is_public" name="is_public" />

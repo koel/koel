@@ -26,7 +26,7 @@
             placeholder="Some optional description"
           />
         </FormRow>
-        <ArtworkField v-model="data.cover">Pick a cover (optional)</ArtworkField>
+        <ArtworkField v-model="data.cover">Pick or paste a cover (optional)</ArtworkField>
       </div>
     </main>
 
