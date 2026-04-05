@@ -273,7 +273,12 @@ const startObservingSubmenus = () => {
 
   observer = new MutationObserver(() => {
     initSubmenus()
-    el.value?.focus()
+
+    const active = document.activeElement as HTMLElement | null
+
+    if (!active || !el.value?.contains(active)) {
+      el.value?.focus()
+    }
   })
   observer.observe(el.value, { childList: true, subtree: true })
 
