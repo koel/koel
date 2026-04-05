@@ -143,12 +143,6 @@ const getActiveMenu = (): HTMLElement | null => {
   return getRootMenu()
 }
 
-const focusItem = (item: HTMLElement | null) => {
-  if (item) {
-    item.focus()
-  }
-}
-
 const navigateVertical = (direction: 'up' | 'down') => {
   const menu = getActiveMenu()
 
@@ -173,7 +167,7 @@ const navigateVertical = (direction: 'up' | 'down') => {
     nextIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1
   }
 
-  focusItem(items[nextIndex])
+  items[nextIndex]?.focus()
 }
 
 const openSubmenuOfFocused = async () => {
@@ -192,7 +186,7 @@ const openSubmenuOfFocused = async () => {
   await showSubmenu(focused as MenuItem, submenu)
 
   const firstItem = getMenuItems(submenu)[0]
-  focusItem(firstItem)
+  firstItem?.focus()
 }
 
 const closeSubmenuAndFocusParent = () => {
@@ -207,7 +201,7 @@ const closeSubmenuAndFocusParent = () => {
 
   if (parentItem) {
     hideSubmenu(parentItem, submenu)
-    focusItem(parentItem)
+    parentItem?.focus()
   }
 }
 
