@@ -153,18 +153,16 @@ watch(
 )
 
 watch(activeTab, tab => {
-  if (!tab) {
-    return
-  }
-
   preferenceStore.active_extra_panel_tab = tab
 
-  if (!activatedTabs.value.includes(tab)) {
-    activatedTabs.value.push(tab)
-  }
+  if (tab) {
+    if (!activatedTabs.value.includes(tab)) {
+      activatedTabs.value.push(tab)
+    }
 
-  if (streamable.value && isSong(streamable.value)) {
-    resolveArtistOrAlbum(tab, streamable.value)
+    if (streamable.value && isSong(streamable.value)) {
+      resolveArtistOrAlbum(tab, streamable.value)
+    }
   }
 })
 
