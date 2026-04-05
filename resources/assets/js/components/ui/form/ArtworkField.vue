@@ -30,20 +30,32 @@ const hasCustomArtwork = computed(() => defaultValue && model.value !== defaultV
 
 const removeOrRevert = () => (model.value = hasCustomArtwork.value ? defaultValue : '')
 
-const { readAsDataUrl } = useFileReader()
-
 const { onImageInputChange } = useImageFileInput({
   onImageDataUrl: (dataUrl: string) => (model.value = dataUrl),
 })
 
 const onPaste = (e: ClipboardEvent) => {
-  const file = Array.from(e.clipboardData?.files || []).find((f: File) => f.type.startsWith('image/'))
+  const dt = e.clipboardData
+
+  if (!dt) {
+    return
+  }
+
+  const file =
+    Array.from(dt.files || []).find((f: File) => f.type.startsWith('image/')) ||
+    Array.from(dt.items || [])
+      .filter((item: DataTransferItem) => item.kind === 'file')
+      .map((item: DataTransferItem) => item.getAsFile())
+      .find((f: File | null): f is File => f !== null && f.type.startsWith('image/'))
 
   if (!file) {
     return
   }
 
   e.preventDefault()
+
+  // Create a fresh FileReader per paste to avoid accumulating listeners on a shared instance.
+  const { readAsDataUrl } = useFileReader()
   readAsDataUrl(file, (dataUrl: string) => (model.value = dataUrl))
 }
 </script>
