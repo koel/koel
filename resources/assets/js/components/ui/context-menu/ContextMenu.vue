@@ -184,9 +184,7 @@ const openSubmenuOfFocused = async () => {
   }
 
   await showSubmenu(focused as MenuItem, submenu)
-
-  const firstItem = getMenuItems(submenu)[0]
-  firstItem?.focus()
+  getMenuItems(submenu)[0]?.focus()
 }
 
 const closeSubmenuAndFocusParent = () => {
