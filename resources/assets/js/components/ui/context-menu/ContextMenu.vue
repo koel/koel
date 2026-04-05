@@ -104,7 +104,9 @@ const showSubmenu = async (item: MenuItem, submenu: HTMLElement) => {
 }
 
 const getMenuItems = (container: HTMLElement): HTMLElement[] =>
-  Array.from(container.querySelectorAll<HTMLElement>(':scope > li:not(.separator)'))
+  Array.from(container.querySelectorAll<HTMLElement>('li:not(.separator)')).filter(
+    (li: HTMLElement) => !li.closest('.submenu') || li.closest('.submenu') === container,
+  )
 
 const getFocusedItem = (): HTMLElement | null => {
   const active = document.activeElement as HTMLElement | null
