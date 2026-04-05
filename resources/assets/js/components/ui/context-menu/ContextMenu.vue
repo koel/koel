@@ -72,8 +72,29 @@ const cancelHide = (item: MenuItem) => {
   item.hideTimeout = undefined
 }
 
+const closeSiblingSubmenus = (item: MenuItem) => {
+  const parent = item.parentElement
+
+  if (!parent) {
+    return
+  }
+
+  parent.querySelectorAll<HTMLElement>(':scope > li.has-sub').forEach((sibling: MenuItem) => {
+    if (sibling === item) {
+      return
+    }
+
+    const siblingSubmenu = sibling.querySelector<HTMLElement>('.submenu')
+
+    if (siblingSubmenu) {
+      hideSubmenu(sibling, siblingSubmenu)
+    }
+  })
+}
+
 const showSubmenu = async (item: MenuItem, submenu: HTMLElement) => {
   cancelHide(item)
+  closeSiblingSubmenus(item)
 
   submenu.style.top = '0'
   submenu.style.left = '100%'
@@ -90,7 +111,13 @@ const getMenuItems = (container: HTMLElement): HTMLElement[] =>
 
 const getFocusedItem = (): HTMLElement | null => {
   const active = document.activeElement as HTMLElement | null
-  return active?.closest<HTMLElement>('li') || null
+
+  if (!active) {
+    return null
+  }
+
+  const li = active.closest<HTMLElement>('li')
+  return li && el.value?.contains(li) ? li : null
 }
 
 const getRootMenu = (): HTMLElement | null => el.value?.querySelector<HTMLElement>(':scope > ul') || null
