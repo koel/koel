@@ -60,6 +60,7 @@ const hideSubmenu = (item: MenuItem, submenu: HTMLElement) => {
   submenu.style.display = 'none'
   submenu.style.top = '0'
   submenu.style.bottom = 'auto'
+  submenu.removeAttribute('data-open')
 }
 
 const scheduleHide = (item: MenuItem, submenu: HTMLElement) => {
@@ -87,6 +88,7 @@ const closeSiblingSubmenus = (item: MenuItem) => {
     const siblingSubmenu = sibling.querySelector<HTMLElement>('.submenu')
 
     if (siblingSubmenu) {
+      cancelHide(sibling)
       hideSubmenu(sibling, siblingSubmenu)
     }
   })
@@ -101,6 +103,7 @@ const showSubmenu = async (item: MenuItem, submenu: HTMLElement) => {
   submenu.style.bottom = 'auto'
   submenu.style.right = 'auto'
   submenu.style.display = 'block'
+  submenu.setAttribute('data-open', '')
 
   await nextTick()
   await preventOffScreen(submenu, true)
@@ -120,19 +123,18 @@ const getFocusedItem = (): HTMLElement | null => {
   return li && el.value?.contains(li) ? li : null
 }
 
-const getRootMenu = (): HTMLElement | null => el.value?.querySelector<HTMLElement>(':scope > ul') || null
+const getRootMenu = (): HTMLElement | null =>
+  el.value?.querySelector<HTMLElement>(':scope > ul, :scope > menu, :scope > nav') || null
 
 const getActiveMenu = (): HTMLElement | null => {
   const focused = getFocusedItem()
 
   if (focused) {
-    return (
-      (focused.closest('.submenu[style*="display: block"]') as HTMLElement) || (focused.parentElement as HTMLElement)
-    )
+    return (focused.closest('.submenu[data-open]') as HTMLElement) || (focused.parentElement as HTMLElement)
   }
 
   // Find the deepest open submenu, or fall back to the root menu
-  const openSubmenus = el.value?.querySelectorAll<HTMLElement>('.submenu[style*="display: block"]')
+  const openSubmenus = el.value?.querySelectorAll<HTMLElement>('.submenu[data-open]')
 
   if (openSubmenus?.length) {
     return openSubmenus[openSubmenus.length - 1]
@@ -195,7 +197,7 @@ const openSubmenuOfFocused = async () => {
 
 const closeSubmenuAndFocusParent = () => {
   const focused = getFocusedItem()
-  const submenu = focused?.closest('.submenu[style*="display: block"]') as HTMLElement | null
+  const submenu = focused?.closest('.submenu[data-open]') as HTMLElement | null
 
   if (!submenu) {
     return
@@ -268,7 +270,7 @@ const initSubmenus = () => {
     item.addEventListener('mouseenter', () => showSubmenu(item, submenu))
 
     item.addEventListener('mousemove', () => {
-      if (submenu.style.display === 'block') {
+      if (submenu.hasAttribute('data-open')) {
         cancelHide(item)
       }
     })
