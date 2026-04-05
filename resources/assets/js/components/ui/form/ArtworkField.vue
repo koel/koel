@@ -31,7 +31,7 @@ const hasCustomArtwork = computed(() => defaultValue && model.value !== defaultV
 const removeOrRevert = () => (model.value = hasCustomArtwork.value ? defaultValue : '')
 
 const { onImageInputChange } = useImageFileInput({
-  onImageDataUrl: (dataUrl: string) => (model.value = dataUrl),
+  onImageDataUrl: dataUrl => (model.value = dataUrl),
 })
 
 const onPaste = (e: ClipboardEvent) => {
@@ -56,6 +56,6 @@ const onPaste = (e: ClipboardEvent) => {
 
   // Create a fresh FileReader per paste to avoid accumulating listeners on a shared instance.
   const { readAsDataUrl } = useFileReader()
-  readAsDataUrl(file, (dataUrl: string) => (model.value = dataUrl))
+  readAsDataUrl(file, dataUrl => (model.value = dataUrl))
 }
 </script>

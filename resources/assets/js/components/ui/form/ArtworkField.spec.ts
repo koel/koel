@@ -59,7 +59,7 @@ describe('artworkField.vue', () => {
 
     const file = new File(['pasted-bytes'], 'image.png', { type: 'image/png' })
 
-    await fireEvent.paste(container.querySelector('article')!, {
+    await fireEvent.paste(container.querySelector<HTMLElement>('article')!, {
       clipboardData: { files: [file] } as unknown as DataTransfer,
     })
 
@@ -74,7 +74,7 @@ describe('artworkField.vue', () => {
 
     const file = new File(['text'], 'doc.txt', { type: 'text/plain' })
 
-    await fireEvent.paste(container.querySelector('article')!, {
+    await fireEvent.paste(container.querySelector<HTMLElement>('article')!, {
       clipboardData: { files: [file] } as unknown as DataTransfer,
     })
 
