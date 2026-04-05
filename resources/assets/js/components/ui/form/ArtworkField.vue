@@ -1,5 +1,5 @@
 <template>
-  <article class="space-y-3">
+  <article class="space-y-3" @paste="onPaste">
     <span v-if="model" class="block size-24 aspect-square relative">
       <img :src="model" alt="" class="w-24 h-24 rounded object-cover" />
       <button
@@ -11,13 +11,14 @@
       </button>
     </span>
     <FileInput accept="image/*" name="cover" @change="onImageInputChange">
-      <slot>Select a file…</slot>
+      <slot>Select or paste a file…</slot>
     </FileInput>
   </article>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useFileReader } from '@/composables/useFileReader'
 import { useImageFileInput } from '@/composables/useImageFileInput'
 
 import FileInput from '@/components/ui/form/FileInput.vue'
@@ -29,7 +30,20 @@ const hasCustomArtwork = computed(() => defaultValue && model.value !== defaultV
 
 const removeOrRevert = () => (model.value = hasCustomArtwork.value ? defaultValue : '')
 
+const { readAsDataUrl } = useFileReader()
+
 const { onImageInputChange } = useImageFileInput({
-  onImageDataUrl: dataUrl => (model.value = dataUrl),
+  onImageDataUrl: (dataUrl: string) => (model.value = dataUrl),
 })
+
+const onPaste = (e: ClipboardEvent) => {
+  const file = Array.from(e.clipboardData?.files || []).find((f: File) => f.type.startsWith('image/'))
+
+  if (!file) {
+    return
+  }
+
+  e.preventDefault()
+  readAsDataUrl(file, (dataUrl: string) => (model.value = dataUrl))
+}
 </script>
