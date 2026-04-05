@@ -6,6 +6,17 @@ import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import Component from './AlbumListScreen.vue'
 
+const virtualGridStub = {
+  template: '<div data-testid="album-grid"><slot v-for="(item, i) in items" :key="i" :item="item" /></div>',
+  props: ['items', 'minItemWidth'],
+  methods: { scrollToTop() {} },
+}
+
+const albumCardStub = {
+  template: '<div data-testid="album-card" :data-layout="layout" />',
+  props: ['album', 'layout', 'showReleaseYear'],
+}
+
 describe('albumListScreen.vue', () => {
   const h = createHarness()
 
@@ -26,7 +37,8 @@ describe('albumListScreen.vue', () => {
     const rendered = h.render(Component, {
       global: {
         stubs: {
-          AlbumCard: h.stub('album-card'),
+          AlbumCard: albumCardStub,
+          VirtualGridScroller: virtualGridStub,
         },
       },
     })
@@ -51,22 +63,29 @@ describe('albumListScreen.vue', () => {
     await waitFor(() => screen.getByTestId('screen-empty-state'))
   })
 
-  it.each<[ViewMode]>([['list'], ['thumbnails']])('sets layout from preferences', async mode => {
+  it.each<[ViewMode, CardLayout]>([
+    ['thumbnails', 'full'],
+    ['list', 'compact'],
+  ])('passes correct card layout for %s view mode', async (mode, expectedLayout) => {
     preferences.temporary.albums_view_mode = mode
-
     await renderComponent()
 
-    await waitFor(() => expect(screen.getByTestId('album-grid').classList.contains(`as-${mode}`)).toBe(true))
+    const cards = screen.getAllByTestId('album-card')
+    cards.forEach((card: HTMLElement) => expect(card.dataset.layout).toBe(expectedLayout))
   })
 
-  it('switches layout', async () => {
+  it('switches layout via view mode toggle', async () => {
     await renderComponent()
 
     await h.user.click(screen.getByRole('radio', { name: 'View as list' }))
-    await waitFor(() => expect(screen.getByTestId('album-grid').classList.contains(`as-list`)).toBe(true))
+    await waitFor(() => {
+      screen.getAllByTestId('album-card').forEach((card: HTMLElement) => expect(card.dataset.layout).toBe('compact'))
+    })
 
     await h.user.click(screen.getByRole('radio', { name: 'View as thumbnails' }))
-    await waitFor(() => expect(screen.getByTestId('album-grid').classList.contains(`as-thumbnails`)).toBe(true))
+    await waitFor(() => {
+      screen.getAllByTestId('album-card').forEach((card: HTMLElement) => expect(card.dataset.layout).toBe('full'))
+    })
   })
 
   it('shows all or only favorites upon toggling the button', async () => {
@@ -104,7 +123,8 @@ describe('albumListScreen.vue', () => {
     h.render(Component, {
       global: {
         stubs: {
-          AlbumCard: h.stub('album-card'),
+          AlbumCard: albumCardStub,
+          VirtualGridScroller: virtualGridStub,
         },
       },
     })
@@ -116,7 +136,6 @@ describe('albumListScreen.vue', () => {
 
     expect(screen.getAllByTestId('album-card')).toHaveLength(5)
 
-    // Simulate unfavoriting an album (must mutate through reactive proxy)
     albumStore.state.albums[0].favorite = false
     await h.tick()
 
@@ -132,7 +151,8 @@ describe('albumListScreen.vue', () => {
     h.render(Component, {
       global: {
         stubs: {
-          AlbumCard: h.stub('album-card'),
+          AlbumCard: albumCardStub,
+          VirtualGridScroller: virtualGridStub,
         },
       },
     })

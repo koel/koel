@@ -6,6 +6,17 @@ import { commonStore } from '@/stores/commonStore'
 import { preferenceStore } from '@/stores/preferenceStore'
 import Component from './ArtistListScreen.vue'
 
+const virtualGridStub = {
+  template: '<div data-testid="artist-list"><slot v-for="(item, i) in items" :key="i" :item="item" /></div>',
+  props: ['items', 'minItemWidth'],
+  methods: { scrollToTop() {} },
+}
+
+const artistCardStub = {
+  template: '<div data-testid="artist-card" :data-layout="layout" />',
+  props: ['artist', 'layout'],
+}
+
 describe('artistListScreen.vue', () => {
   const h = createHarness()
 
@@ -27,7 +38,8 @@ describe('artistListScreen.vue', () => {
     const rendered = h.render(Component, {
       global: {
         stubs: {
-          ArtistCard: h.stub('artist-card'),
+          ArtistCard: artistCardStub,
+          VirtualGridScroller: virtualGridStub,
         },
       },
     })
@@ -53,22 +65,29 @@ describe('artistListScreen.vue', () => {
     await waitFor(() => screen.getByTestId('screen-empty-state'))
   })
 
-  it.each<[ViewMode]>([['list'], ['thumbnails']])('sets layout:%s from preferences', async mode => {
-    preferenceStore.artists_view_mode = mode
-
+  it.each<[ViewMode, CardLayout]>([
+    ['thumbnails', 'full'],
+    ['list', 'compact'],
+  ])('passes correct card layout for %s view mode', async (mode, expectedLayout) => {
+    preferenceStore.temporary.artists_view_mode = mode
     await renderComponent()
 
-    await waitFor(() => expect(screen.getByTestId('artist-list').classList.contains(`as-${mode}`)).toBe(true))
+    const cards = screen.getAllByTestId('artist-card')
+    cards.forEach((card: HTMLElement) => expect(card.dataset.layout).toBe(expectedLayout))
   })
 
-  it('switches layout', async () => {
+  it('switches layout via view mode toggle', async () => {
     await renderComponent()
 
     await h.user.click(screen.getByRole('radio', { name: 'View as list' }))
-    await waitFor(() => expect(screen.getByTestId('artist-list').classList.contains(`as-list`)).toBe(true))
+    await waitFor(() => {
+      screen.getAllByTestId('artist-card').forEach((card: HTMLElement) => expect(card.dataset.layout).toBe('compact'))
+    })
 
     await h.user.click(screen.getByRole('radio', { name: 'View as thumbnails' }))
-    await waitFor(() => expect(screen.getByTestId('artist-list').classList.contains(`as-thumbnails`)).toBe(true))
+    await waitFor(() => {
+      screen.getAllByTestId('artist-card').forEach((card: HTMLElement) => expect(card.dataset.layout).toBe('full'))
+    })
   })
 
   it('shows all or only favorites upon toggling the button', async () => {
@@ -106,7 +125,8 @@ describe('artistListScreen.vue', () => {
     h.render(Component, {
       global: {
         stubs: {
-          ArtistCard: h.stub('artist-card'),
+          ArtistCard: artistCardStub,
+          VirtualGridScroller: virtualGridStub,
         },
       },
     })
@@ -118,7 +138,6 @@ describe('artistListScreen.vue', () => {
 
     expect(screen.getAllByTestId('artist-card')).toHaveLength(5)
 
-    // Simulate unfavoriting an artist (must mutate through reactive proxy)
     artistStore.state.artists[0].favorite = false
     await h.tick()
 
@@ -134,7 +153,8 @@ describe('artistListScreen.vue', () => {
     h.render(Component, {
       global: {
         stubs: {
-          ArtistCard: h.stub('artist-card'),
+          ArtistCard: artistCardStub,
+          VirtualGridScroller: virtualGridStub,
         },
       },
     })

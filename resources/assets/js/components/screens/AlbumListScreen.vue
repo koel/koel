@@ -45,27 +45,31 @@
       No favorite albums.
     </ScreenEmptyState>
 
-    <div v-else ref="gridContainer" v-koel-overflow-fade class="-m-6 flex-1 overflow-auto">
-      <GridListView ref="grid" :view-mode="preferences.albums_view_mode" data-testid="album-grid">
-        <template v-if="showSkeletons">
+    <template v-else>
+      <template v-if="showSkeletons">
+        <div class="grid gap-5 p-6" :style="{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }">
           <AlbumCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
-        </template>
-        <template v-else>
-          <AlbumCard
-            v-for="album in displayedAlbums"
-            :key="album.id"
-            :album
-            :layout="itemLayout"
-            :show-release-year="preferences.albums_sort_field === 'year'"
-          />
-          <template v-if="loading">
-            <AlbumCardSkeleton v-for="i in 4" :key="`loading-${i}`" :layout="itemLayout" />
+        </div>
+      </template>
+      <div class="-m-6 flex-1 flex flex-col min-h-0" v-else>
+        <VirtualGridScroller
+          ref="grid"
+          :items="displayedAlbums"
+          :min-item-width="minItemWidth"
+          class="p-6 gap-5"
+          data-testid="album-grid"
+          @scrolled-to-end="fetchAlbums"
+        >
+          <template #default="{ item }">
+            <AlbumCard
+              :album="item"
+              :layout="itemLayout"
+              :show-release-year="preferences.albums_sort_field === 'year'"
+            />
           </template>
-          <ToTopButton />
-        </template>
-      </GridListView>
-      <div v-if="moreAlbumsAvailable && !loading" ref="sentinel" class="h-px" />
-    </div>
+        </VirtualGridScroller>
+      </div>
+    </template>
   </ScreenBase>
 </template>
 
@@ -77,7 +81,6 @@ import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useErrorHandler } from '@/composables/useErrorHandler'
-import { useInfiniteScroll } from '@/composables/useInfiniteScroll'
 import { usePolicies } from '@/composables/usePolicies'
 
 import AlbumCard from '@/components/album/AlbumCard.vue'
@@ -86,14 +89,13 @@ import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
-import GridListView from '@/components/ui/GridListView.vue'
+import VirtualGridScroller from '@/components/ui/VirtualGridScroller.vue'
 import AlbumListSorter from '@/components/album/AlbumListSorter.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 
 const { currentUserCan } = usePolicies()
 
-const gridContainer = ref<HTMLDivElement>()
-const grid = ref<InstanceType<typeof GridListView>>()
+const grid = ref<InstanceType<typeof VirtualGridScroller>>()
 const albums = toRef(albumStore.state, 'albums')
 
 const loading = ref(false)
@@ -102,9 +104,10 @@ const page = ref<number | null>(1)
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 
 const itemLayout = computed<CardLayout>(() => (preferences.albums_view_mode === 'thumbnails' ? 'full' : 'compact'))
+const minItemWidth = computed(() => (preferences.albums_view_mode === 'thumbnails' ? 240 : 350))
 
 const displayedAlbums = computed(() =>
-  preferences.albums_favorites_only ? albums.value.filter(a => a.favorite) : albums.value,
+  preferences.albums_favorites_only ? albums.value.filter((a: Album) => a.favorite) : albums.value,
 )
 
 const noFavoriteAlbums = computed(
@@ -138,13 +141,11 @@ const fetchAlbums = async () => {
   }
 }
 
-const { ToTopButton, sentinel } = useInfiniteScroll(gridContainer, () => fetchAlbums())
-
 const resetState = async () => {
   page.value = 1
 
   albumStore.reset()
-  await grid.value?.scrollToTop()
+  grid.value?.scrollToTop()
 }
 
 const sort = async (field: AlbumListSortField, order: SortOrder) => {

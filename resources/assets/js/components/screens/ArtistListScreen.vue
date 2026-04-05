@@ -45,21 +45,27 @@
       No favorite artists.
     </ScreenEmptyState>
 
-    <div v-else ref="gridContainer" v-koel-overflow-fade class="-m-6 flex-1 overflow-auto">
-      <GridListView :view-mode="preferences.artists_view_mode" data-testid="artist-list">
-        <template v-if="showSkeletons">
+    <template v-else>
+      <template v-if="showSkeletons">
+        <div class="grid gap-5 p-6" :style="{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }">
           <ArtistCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
-        </template>
-        <template v-else>
-          <ArtistCard v-for="artist in displayedArtists" :key="artist.id" :artist :layout="itemLayout" />
-          <template v-if="loading">
-            <ArtistCardSkeleton v-for="i in 4" :key="`loading-${i}`" :layout="itemLayout" />
+        </div>
+      </template>
+      <div class="-m-6 flex-1 flex flex-col min-h-0" v-else>
+        <VirtualGridScroller
+          ref="grid"
+          :items="displayedArtists"
+          :min-item-width="minItemWidth"
+          class="p-6 gap-5"
+          data-testid="artist-list"
+          @scrolled-to-end="fetchArtists"
+        >
+          <template #default="{ item }">
+            <ArtistCard :artist="item" :layout="itemLayout" />
           </template>
-          <ToTopButton />
-        </template>
-      </GridListView>
-      <div v-if="moreArtistsAvailable && !loading" ref="sentinel" class="h-px" />
-    </div>
+        </VirtualGridScroller>
+      </div>
+    </template>
   </ScreenBase>
 </template>
 
@@ -71,7 +77,6 @@ import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useErrorHandler } from '@/composables/useErrorHandler'
-import { useInfiniteScroll } from '@/composables/useInfiniteScroll'
 import { usePolicies } from '@/composables/usePolicies'
 
 import ArtistCard from '@/components/artist/ArtistCard.vue'
@@ -80,14 +85,13 @@ import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
-import GridListView from '@/components/ui/GridListView.vue'
+import VirtualGridScroller from '@/components/ui/VirtualGridScroller.vue'
 import ArtistListSorter from '@/components/artist/ArtistListSorter.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 
 const { currentUserCan } = usePolicies()
 
-const gridContainer = ref<HTMLDivElement>()
-const grid = ref<InstanceType<typeof GridListView>>()
+const grid = ref<InstanceType<typeof VirtualGridScroller>>()
 const artists = toRef(artistStore.state, 'artists')
 
 const loading = ref(false)
@@ -96,9 +100,10 @@ const page = ref<number | null>(1)
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 
 const itemLayout = computed<CardLayout>(() => (preferences.artists_view_mode === 'thumbnails' ? 'full' : 'compact'))
+const minItemWidth = computed(() => (preferences.artists_view_mode === 'thumbnails' ? 240 : 350))
 
 const displayedArtists = computed(() =>
-  preferences.artists_favorites_only ? artists.value.filter(a => a.favorite) : artists.value,
+  preferences.artists_favorites_only ? artists.value.filter((a: Artist) => a.favorite) : artists.value,
 )
 
 const noFavoriteArtists = computed(
@@ -132,13 +137,11 @@ const fetchArtists = async () => {
   }
 }
 
-const { ToTopButton, sentinel } = useInfiniteScroll(gridContainer, () => fetchArtists())
-
 const resetState = async () => {
   page.value = 1
 
   artistStore.reset()
-  await grid.value?.scrollToTop()
+  grid.value?.scrollToTop()
 }
 
 const sort = async (field: ArtistListSortField, order: SortOrder) => {
