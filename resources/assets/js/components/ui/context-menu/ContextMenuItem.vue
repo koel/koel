@@ -6,7 +6,6 @@
     tabindex="-1"
     @mouseover="focus()"
     @click.prevent="emit('click')"
-    @keydown.enter.prevent="emit('click')"
   >
     <span v-if="hasIconSlot" class="w-4">
       <slot name="icon" />
