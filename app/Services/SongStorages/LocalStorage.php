@@ -8,9 +8,9 @@ use App\Helpers\Ulid;
 use App\Models\Setting;
 use App\Models\User;
 use App\Values\UploadReference;
-use Exception;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 class LocalStorage extends SongStorage
 {
@@ -66,10 +66,13 @@ class LocalStorage extends SongStorage
         if ($backup) {
             throw_unless(
                 File::move($location, "$location.bak"),
-                new Exception(sprintf('Failed to back up song file: %s', $location)),
+                new RuntimeException(sprintf('Failed to back up song file: %s', $location)),
             );
         } else {
-            throw_unless(File::delete($location), new Exception(sprintf('Failed to delete song file: %s', $location)));
+            throw_unless(
+                File::delete($location),
+                new RuntimeException(sprintf('Failed to delete song file: %s', $location)),
+            );
         }
     }
 
