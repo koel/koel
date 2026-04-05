@@ -5,12 +5,11 @@
     class="virtual-grid-scroller will-change-transform overflow-scroll h-full"
     @scroll.passive="onScroll"
   >
-    <!-- Measuring phase: render one item to measure height and gap -->
+    <!-- Measuring phase: render one item to measure height, gap, and padding -->
     <div v-if="measuring && items.length" ref="measureContainer" v-bind="$attrs" class="grid">
       <slot :item="items[0]" />
     </div>
 
-    <!-- Virtual scrolling phase -->
     <template v-else>
       <div :style="{ height: `${totalHeight}px` }" class="will-change-transform overflow-hidden">
         <div v-bind="$attrs" :style="gridStyle" class="will-change-transform grid">
@@ -31,11 +30,7 @@ const props = defineProps<{
   minItemWidth: number
 }>()
 
-const emit = defineEmits<{
-  (e: 'scrolled-to-end'): void
-  (e: 'scroll', event: Event): void
-}>()
-
+const emit = defineEmits<{ (e: 'scrolled-to-end'): void }>()
 const { items, minItemWidth } = toRefs(props)
 
 const scroller = ref<HTMLElement>()
@@ -45,26 +40,22 @@ const scrollerHeight = ref(0)
 const scrollTop = ref(0)
 const measuredItemHeight = ref(0)
 const measuredGap = ref(0)
-const measuredPaddingTop = ref(0)
-const measuredPaddingBottom = ref(0)
+const measuredPadding = ref(0)
 const measuring = ref(true)
+
 const renderAhead = 3
 
 const columnCount = computed(() => {
-  const available = scrollerWidth.value
-  const g = measuredGap.value || 0
-  return Math.max(1, Math.floor((available + g) / (minItemWidth.value + g)))
+  const g = measuredGap.value
+  return Math.max(1, Math.floor((scrollerWidth.value + g) / (minItemWidth.value + g)))
 })
 
 const rowCount = computed(() => Math.ceil(items.value.length / columnCount.value))
 const rowHeight = computed(() => measuredItemHeight.value + measuredGap.value)
-const totalHeight = computed(() => {
-  if (!rowCount.value) {
-    return 0
-  }
 
-  return rowCount.value * rowHeight.value - measuredGap.value + measuredPaddingTop.value + measuredPaddingBottom.value
-})
+const totalHeight = computed(() =>
+  rowCount.value ? rowCount.value * rowHeight.value - measuredGap.value + measuredPadding.value : 0,
+)
 
 const startRow = computed(() => Math.max(0, Math.floor(scrollTop.value / rowHeight.value) - renderAhead))
 const offsetY = computed(() => startRow.value * rowHeight.value)
@@ -76,9 +67,7 @@ const renderedItems = computed(() => {
 
   const visibleRows = Math.ceil(scrollerHeight.value / rowHeight.value) + 2 * renderAhead
   const endRow = Math.min(rowCount.value, startRow.value + visibleRows)
-  const startIndex = startRow.value * columnCount.value
-  const endIndex = Math.min(items.value.length, endRow * columnCount.value)
-  return items.value.slice(startIndex, endIndex)
+  return items.value.slice(startRow.value * columnCount.value, endRow * columnCount.value)
 })
 
 const gridStyle = computed(() => ({
@@ -86,7 +75,7 @@ const gridStyle = computed(() => ({
   gridTemplateColumns: `repeat(${columnCount.value}, minmax(0, 1fr))`,
 }))
 
-const measureItem = async () => {
+const measure = async () => {
   if (!items.value.length) {
     measuring.value = false
     return
@@ -95,37 +84,37 @@ const measureItem = async () => {
   measuring.value = true
   await nextTick()
 
-  if (measureContainer.value) {
-    const style = getComputedStyle(measureContainer.value)
-    measuredGap.value = parseFloat(style.rowGap) || parseFloat(style.gap) || 0
-    measuredPaddingTop.value = parseFloat(style.paddingTop) || 0
-    measuredPaddingBottom.value = parseFloat(style.paddingBottom) || 0
+  if (!measureContainer.value) {
+    measuring.value = false
+    return
+  }
 
-    const firstChild = measureContainer.value.firstElementChild as HTMLElement | null
+  const style = getComputedStyle(measureContainer.value)
+  measuredGap.value = parseFloat(style.rowGap) || parseFloat(style.gap) || 0
+  measuredPadding.value = (parseFloat(style.paddingTop) || 0) + (parseFloat(style.paddingBottom) || 0)
 
-    if (firstChild) {
-      measuredItemHeight.value = firstChild.offsetHeight
-    }
+  const firstChild = measureContainer.value.firstElementChild as HTMLElement | null
+
+  if (firstChild) {
+    measuredItemHeight.value = firstChild.offsetHeight
   }
 
   measuring.value = false
 }
 
-const checkScrollEnd = () => {
-  if (!scroller.value) {
-    return
-  }
-
-  if (scroller.value.scrollTop + scroller.value.clientHeight + rowHeight.value >= scroller.value.scrollHeight) {
-    emit('scrolled-to-end')
-  }
-}
-
 const onScroll = (e: Event) =>
   requestAnimationFrame(() => {
+    const el = scroller.value
+
+    if (!el) {
+      return
+    }
+
     scrollTop.value = (e.target as HTMLElement).scrollTop
-    emit('scroll', e)
-    checkScrollEnd()
+
+    if (el.scrollTop + el.clientHeight + rowHeight.value >= el.scrollHeight) {
+      emit('scrolled-to-end')
+    }
   })
 
 const resizeObserver = new ResizeObserver((entries: ResizeObserverEntry[]) => {
@@ -142,7 +131,7 @@ onMounted(async () => {
     scrollerHeight.value = scroller.value.offsetHeight
   }
 
-  await measureItem()
+  await measure()
 })
 
 onBeforeUnmount(() => {
@@ -151,11 +140,9 @@ onBeforeUnmount(() => {
   }
 })
 
-const scrollToTop = () => {
-  scroller.value?.scrollTo({ top: 0, behavior: 'smooth' })
-}
+const scrollToTop = () => scroller.value?.scrollTo({ top: 0, behavior: 'smooth' })
 
-watch(minItemWidth, () => measureItem())
+watch(minItemWidth, () => measure())
 
 watch(
   () => items.value.length,
@@ -165,12 +152,12 @@ watch(
     }
 
     if (oldLen === 0 && newLen > 0 && !measuredItemHeight.value) {
-      await measureItem()
+      await measure()
     }
   },
 )
 
-defineExpose({ scrollToTop, columnCount })
+defineExpose({ scrollToTop })
 </script>
 
 <style lang="postcss" scoped>

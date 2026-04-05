@@ -51,19 +51,20 @@
           <ArtistCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
         </div>
       </template>
-      <VirtualGridScroller
-        v-else
-        ref="grid"
-        :items="displayedArtists"
-        :min-item-width="minItemWidth"
-        class="gap-5 p-6"
-        data-testid="artist-list"
-        @scrolled-to-end="fetchArtists"
-      >
-        <template #default="{ item }">
-          <ArtistCard :artist="item" :layout="itemLayout" />
-        </template>
-      </VirtualGridScroller>
+      <div class="-m-6 flex-1 flex flex-col min-h-0" v-else>
+        <VirtualGridScroller
+          ref="grid"
+          :items="displayedArtists"
+          :min-item-width="minItemWidth"
+          class="p-6 gap-5"
+          data-testid="artist-list"
+          @scrolled-to-end="fetchArtists"
+        >
+          <template #default="{ item }">
+            <ArtistCard :artist="item" :layout="itemLayout" />
+          </template>
+        </VirtualGridScroller>
+      </div>
     </template>
   </ScreenBase>
 </template>
