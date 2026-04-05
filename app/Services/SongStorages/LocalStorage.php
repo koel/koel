@@ -8,9 +8,9 @@ use App\Helpers\Ulid;
 use App\Models\Setting;
 use App\Models\User;
 use App\Values\UploadReference;
-use Exception;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 class LocalStorage extends SongStorage
 {
@@ -64,9 +64,15 @@ class LocalStorage extends SongStorage
     public function delete(string $location, bool $backup = false): void
     {
         if ($backup) {
-            File::move($location, "$location.bak");
+            throw_unless(
+                File::move($location, "$location.bak"),
+                new RuntimeException(sprintf('Failed to back up song file: %s', $location)),
+            );
         } else {
-            throw_unless(File::delete($location), new Exception("Failed to delete song file: $location"));
+            throw_unless(
+                File::delete($location),
+                new RuntimeException(sprintf('Failed to delete song file: %s', $location)),
+            );
         }
     }
 
@@ -78,7 +84,7 @@ class LocalStorage extends SongStorage
             return;
         }
 
-        throw new Exception("The media path $mediaPath is not readable or writable.");
+        throw new RuntimeException(sprintf('The media path %s is not readable or writable.', $mediaPath));
     }
 
     public function getStorageType(): SongStorageType
