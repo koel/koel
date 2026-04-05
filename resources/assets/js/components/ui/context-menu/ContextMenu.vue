@@ -8,7 +8,7 @@
     tabindex="0"
     @mousedown="onMouseDown"
     @contextmenu.prevent
-    @keydown.esc="close"
+    @keydown="onKeyDown"
   >
     <component :is="options.component" v-if="options.component" v-bind="options.props" />
   </dialog>
@@ -72,6 +72,164 @@ const cancelHide = (item: MenuItem) => {
   item.hideTimeout = undefined
 }
 
+const showSubmenu = async (item: MenuItem, submenu: HTMLElement) => {
+  cancelHide(item)
+
+  submenu.style.top = '0'
+  submenu.style.left = '100%'
+  submenu.style.bottom = 'auto'
+  submenu.style.right = 'auto'
+  submenu.style.display = 'block'
+
+  await nextTick()
+  await preventOffScreen(submenu, true)
+}
+
+const getMenuItems = (container: HTMLElement): HTMLElement[] =>
+  Array.from(container.querySelectorAll<HTMLElement>(':scope > li:not(.separator)'))
+
+const getFocusedItem = (): HTMLElement | null => {
+  const active = document.activeElement as HTMLElement | null
+  return active?.tagName === 'LI' ? active : null
+}
+
+const getActiveMenu = (): HTMLElement | null => {
+  const focused = getFocusedItem()
+
+  if (focused) {
+    return (
+      (focused.closest('.submenu[style*="display: block"]') as HTMLElement) ||
+      (focused.closest('.context-menu') as HTMLElement)
+    )
+  }
+
+  // Find the deepest open submenu, or fall back to the root menu
+  const openSubmenus = el.value?.querySelectorAll<HTMLElement>('.submenu[style*="display: block"]')
+
+  if (openSubmenus?.length) {
+    return openSubmenus[openSubmenus.length - 1]
+  }
+
+  const nav = el.value?.querySelector<HTMLElement>('nav')
+  return nav || el.value || null
+}
+
+const focusItem = (item: HTMLElement | null) => {
+  if (item) {
+    item.focus()
+  }
+}
+
+const navigateVertical = (direction: 'up' | 'down') => {
+  const menu = getActiveMenu()
+
+  if (!menu) {
+    return
+  }
+
+  const items = getMenuItems(menu)
+
+  if (!items.length) {
+    return
+  }
+
+  const focused = getFocusedItem()
+  const currentIndex = focused ? items.indexOf(focused) : -1
+
+  let nextIndex: number
+
+  if (direction === 'down') {
+    nextIndex = currentIndex < items.length - 1 ? currentIndex + 1 : 0
+  } else {
+    nextIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1
+  }
+
+  focusItem(items[nextIndex])
+}
+
+const openSubmenuOfFocused = async () => {
+  const focused = getFocusedItem()
+
+  if (!focused?.classList.contains('has-sub')) {
+    return
+  }
+
+  const submenu = focused.querySelector<HTMLElement>('.submenu')
+
+  if (!submenu) {
+    return
+  }
+
+  await showSubmenu(focused as MenuItem, submenu)
+
+  const firstItem = getMenuItems(submenu)[0]
+  focusItem(firstItem)
+}
+
+const closeSubmenuAndFocusParent = () => {
+  const focused = getFocusedItem()
+  const submenu = focused?.closest('.submenu[style*="display: block"]') as HTMLElement | null
+
+  if (!submenu) {
+    return
+  }
+
+  const parentItem = submenu.closest('li.has-sub') as MenuItem | null
+
+  if (parentItem) {
+    hideSubmenu(parentItem, submenu)
+    focusItem(parentItem)
+  }
+}
+
+const activateFocused = () => {
+  const focused = getFocusedItem()
+
+  if (!focused) {
+    return
+  }
+
+  if (focused.classList.contains('has-sub')) {
+    openSubmenuOfFocused()
+  } else {
+    focused.click()
+  }
+}
+
+const onKeyDown = (event: KeyboardEvent) => {
+  switch (event.key) {
+    case 'ArrowDown':
+      event.preventDefault()
+      navigateVertical('down')
+      break
+
+    case 'ArrowUp':
+      event.preventDefault()
+      navigateVertical('up')
+      break
+
+    case 'ArrowRight':
+      event.preventDefault()
+      openSubmenuOfFocused()
+      break
+
+    case 'ArrowLeft':
+      event.preventDefault()
+      closeSubmenuAndFocusParent()
+      break
+
+    case 'Enter':
+      event.preventDefault()
+      activateFocused()
+      break
+
+    case 'Escape':
+      event.preventDefault()
+      close()
+      break
+  }
+}
+
 const initSubmenus = () => {
   el.value?.querySelectorAll<HTMLElement>('.has-sub').forEach((item: MenuItem) => {
     const submenu = item.querySelector<HTMLElement>('.submenu')
@@ -80,18 +238,7 @@ const initSubmenus = () => {
       return
     }
 
-    item.addEventListener('mouseenter', async () => {
-      cancelHide(item)
-
-      submenu.style.top = '0'
-      submenu.style.left = '100%'
-      submenu.style.bottom = 'auto'
-      submenu.style.right = 'auto'
-      submenu.style.display = 'block'
-
-      await nextTick()
-      await preventOffScreen(submenu, true)
-    })
+    item.addEventListener('mouseenter', () => showSubmenu(item, submenu))
 
     item.addEventListener('mousemove', () => {
       if (submenu.style.display === 'block') {
