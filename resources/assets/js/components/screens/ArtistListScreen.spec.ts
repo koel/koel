@@ -7,13 +7,13 @@ import { preferenceStore } from '@/stores/preferenceStore'
 import Component from './ArtistListScreen.vue'
 
 const virtualGridStub = {
-  template: '<div data-testid="artist-list"><slot v-for="item in items" :item="item" /></div>',
+  template: '<div data-testid="artist-list"><slot v-for="(item, i) in items" :key="i" :item="item" /></div>',
   props: ['items', 'minItemWidth'],
   methods: { scrollToTop() {} },
 }
 
 const artistCardStub = {
-  template: '<br data-testid="artist-card" :data-layout="layout" />',
+  template: '<div data-testid="artist-card" :data-layout="layout" />',
   props: ['artist', 'layout'],
 }
 
@@ -69,7 +69,7 @@ describe('artistListScreen.vue', () => {
     ['thumbnails', 'full'],
     ['list', 'compact'],
   ])('passes correct card layout for %s view mode', async (mode, expectedLayout) => {
-    preferenceStore.artists_view_mode = mode
+    preferenceStore.temporary.artists_view_mode = mode
     await renderComponent()
 
     const cards = screen.getAllByTestId('artist-card')

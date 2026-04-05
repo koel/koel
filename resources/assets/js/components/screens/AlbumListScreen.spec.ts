@@ -7,13 +7,13 @@ import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import Component from './AlbumListScreen.vue'
 
 const virtualGridStub = {
-  template: '<div data-testid="album-grid"><slot v-for="item in items" :item="item" /></div>',
+  template: '<div data-testid="album-grid"><slot v-for="(item, i) in items" :key="i" :item="item" /></div>',
   props: ['items', 'minItemWidth'],
   methods: { scrollToTop() {} },
 }
 
 const albumCardStub = {
-  template: '<br data-testid="album-card" :data-layout="layout" />',
+  template: '<div data-testid="album-card" :data-layout="layout" />',
   props: ['album', 'layout', 'showReleaseYear'],
 }
 
