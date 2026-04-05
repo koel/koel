@@ -57,10 +57,8 @@ type MenuItem = HTMLElement & {
 const HIDE_DELAY = 150
 
 const hideSubmenu = (item: MenuItem, submenu: HTMLElement) => {
-  submenu.style.display = 'none'
-  submenu.style.top = '0'
-  submenu.style.bottom = 'auto'
   submenu.removeAttribute('data-open')
+  submenu.removeAttribute('style')
 }
 
 const scheduleHide = (item: MenuItem, submenu: HTMLElement) => {
@@ -98,11 +96,7 @@ const showSubmenu = async (item: MenuItem, submenu: HTMLElement) => {
   cancelHide(item)
   closeSiblingSubmenus(item)
 
-  submenu.style.top = '0'
-  submenu.style.left = '100%'
-  submenu.style.bottom = 'auto'
-  submenu.style.right = 'auto'
-  submenu.style.display = 'block'
+  submenu.removeAttribute('style')
   submenu.setAttribute('data-open', '')
 
   await nextTick()
