@@ -90,7 +90,7 @@ const getMenuItems = (container: HTMLElement): HTMLElement[] =>
 
 const getFocusedItem = (): HTMLElement | null => {
   const active = document.activeElement as HTMLElement | null
-  return active?.tagName === 'LI' ? active : null
+  return active?.closest<HTMLElement>('li') || null
 }
 
 const getRootMenu = (): HTMLElement | null => el.value?.querySelector<HTMLElement>(':scope > ul') || null
