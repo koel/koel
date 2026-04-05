@@ -271,7 +271,10 @@ const startObservingSubmenus = () => {
     return
   }
 
-  observer = new MutationObserver(() => initSubmenus())
+  observer = new MutationObserver(() => {
+    initSubmenus()
+    el.value?.focus()
+  })
   observer.observe(el.value, { childList: true, subtree: true })
 
   initSubmenus()
@@ -288,6 +291,7 @@ const open = async (t = 0, l = 0) => {
   bottom.value = 'auto'
   right.value = 'auto'
   el.value?.showModal()
+  el.value?.focus()
 
   await nextTick()
 
