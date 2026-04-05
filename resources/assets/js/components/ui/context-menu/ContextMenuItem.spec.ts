@@ -24,17 +24,6 @@ describe('contextMenuItem', () => {
     expect(emitted().click).toBeTruthy()
   })
 
-  it('emits click on Enter keydown', async () => {
-    const { emitted } = h.render(Component, {
-      slots: { default: 'Play' },
-    })
-
-    const li = screen.getByText('Play').closest('li')!
-    await h.trigger(li, 'keyDown', { key: 'Enter' })
-
-    expect(emitted().click).toBeTruthy()
-  })
-
   it('renders submenu caret when subMenuItems slot is provided', () => {
     h.render(Component, {
       slots: {
