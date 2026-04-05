@@ -89,7 +89,7 @@ describe('editPlaylistForm.vue', () => {
     await h.user.click(screen.getByRole('button', { name: 'Remove' }))
 
     await h.user.upload(
-      screen.getByLabelText('Pick a cover (optional)'),
+      screen.getByLabelText('Pick or paste a cover (optional)'),
       new File(['bytes'], 'cover.png', { type: 'image/png' }),
     )
 

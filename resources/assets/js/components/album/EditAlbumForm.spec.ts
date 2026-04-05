@@ -47,7 +47,7 @@ describe('editAlbumForm.vue', () => {
     await h.type(screen.getByTitle('Release year'), '2022')
 
     await h.user.upload(
-      screen.getByLabelText('Pick a cover (optional)'),
+      screen.getByLabelText('Pick or paste a cover (optional)'),
       new File(['bytes'], 'cover.png', { type: 'image/png' }),
     )
 
