@@ -154,6 +154,7 @@ watch(
 
 watch(activeTab, tab => {
   if (!tab) {
+    preferenceStore.active_extra_panel_tab = null
     return
   }
 

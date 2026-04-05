@@ -90,6 +90,19 @@ describe('sideSheet.vue', () => {
     })
   })
 
+  it('persists collapsed state when closing a tab', async () => {
+    preferenceStore.active_extra_panel_tab = 'Lyrics'
+    renderComponent(ref(h.factory('song')))
+    await h.tick()
+
+    // Click the same tab again to collapse
+    await h.user.click(screen.getByTestId('side-sheet-lyrics-tab-header'))
+
+    await waitFor(() => {
+      expect(preferenceStore.active_extra_panel_tab).toBeNull()
+    })
+  })
+
   it('resolves album and fetches album info for the current playable', async () => {
     preferenceStore.active_extra_panel_tab = 'Album'
 
