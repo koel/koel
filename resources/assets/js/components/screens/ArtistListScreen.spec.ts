@@ -12,6 +12,11 @@ const virtualGridStub = {
   methods: { scrollToTop() {} },
 }
 
+const artistCardStub = {
+  template: '<br data-testid="artist-card" :data-layout="layout" />',
+  props: ['artist', 'layout'],
+}
+
 describe('artistListScreen.vue', () => {
   const h = createHarness()
 
@@ -33,7 +38,7 @@ describe('artistListScreen.vue', () => {
     const rendered = h.render(Component, {
       global: {
         stubs: {
-          ArtistCard: h.stub('artist-card'),
+          ArtistCard: artistCardStub,
           VirtualGridScroller: virtualGridStub,
         },
       },
@@ -58,6 +63,31 @@ describe('artistListScreen.vue', () => {
     await renderComponent()
 
     await waitFor(() => screen.getByTestId('screen-empty-state'))
+  })
+
+  it.each<[ViewMode, CardLayout]>([
+    ['thumbnails', 'full'],
+    ['list', 'compact'],
+  ])('passes correct card layout for %s view mode', async (mode, expectedLayout) => {
+    preferenceStore.artists_view_mode = mode
+    await renderComponent()
+
+    const cards = screen.getAllByTestId('artist-card')
+    cards.forEach((card: HTMLElement) => expect(card.dataset.layout).toBe(expectedLayout))
+  })
+
+  it('switches layout via view mode toggle', async () => {
+    await renderComponent()
+
+    await h.user.click(screen.getByRole('radio', { name: 'View as list' }))
+    await waitFor(() => {
+      screen.getAllByTestId('artist-card').forEach((card: HTMLElement) => expect(card.dataset.layout).toBe('compact'))
+    })
+
+    await h.user.click(screen.getByRole('radio', { name: 'View as thumbnails' }))
+    await waitFor(() => {
+      screen.getAllByTestId('artist-card').forEach((card: HTMLElement) => expect(card.dataset.layout).toBe('full'))
+    })
   })
 
   it('shows all or only favorites upon toggling the button', async () => {
@@ -95,7 +125,7 @@ describe('artistListScreen.vue', () => {
     h.render(Component, {
       global: {
         stubs: {
-          ArtistCard: h.stub('artist-card'),
+          ArtistCard: artistCardStub,
           VirtualGridScroller: virtualGridStub,
         },
       },
@@ -108,7 +138,6 @@ describe('artistListScreen.vue', () => {
 
     expect(screen.getAllByTestId('artist-card')).toHaveLength(5)
 
-    // Simulate unfavoriting an artist (must mutate through reactive proxy)
     artistStore.state.artists[0].favorite = false
     await h.tick()
 
@@ -124,7 +153,7 @@ describe('artistListScreen.vue', () => {
     h.render(Component, {
       global: {
         stubs: {
-          ArtistCard: h.stub('artist-card'),
+          ArtistCard: artistCardStub,
           VirtualGridScroller: virtualGridStub,
         },
       },
