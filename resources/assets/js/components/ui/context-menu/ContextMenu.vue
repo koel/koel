@@ -93,13 +93,14 @@ const getFocusedItem = (): HTMLElement | null => {
   return active?.tagName === 'LI' ? active : null
 }
 
+const getRootMenu = (): HTMLElement | null => el.value?.querySelector<HTMLElement>(':scope > ul') || null
+
 const getActiveMenu = (): HTMLElement | null => {
   const focused = getFocusedItem()
 
   if (focused) {
     return (
-      (focused.closest('.submenu[style*="display: block"]') as HTMLElement) ||
-      (focused.closest('.context-menu') as HTMLElement)
+      (focused.closest('.submenu[style*="display: block"]') as HTMLElement) || (focused.parentElement as HTMLElement)
     )
   }
 
@@ -110,8 +111,7 @@ const getActiveMenu = (): HTMLElement | null => {
     return openSubmenus[openSubmenus.length - 1]
   }
 
-  const nav = el.value?.querySelector<HTMLElement>('nav')
-  return nav || el.value || null
+  return getRootMenu()
 }
 
 const focusItem = (item: HTMLElement | null) => {
