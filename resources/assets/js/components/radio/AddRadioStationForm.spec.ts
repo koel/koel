@@ -35,7 +35,7 @@ describe('addRadioStationForm.vue', () => {
     await h.type(screen.getByPlaceholderText('A short description of the station'), 'Heavy af')
 
     await h.user.upload(
-      screen.getByLabelText('Pick a logo (optional)'),
+      screen.getByLabelText('Pick or paste a logo (optional)'),
       new File(['bytes'], 'logo.png', { type: 'image/png' }),
     )
 

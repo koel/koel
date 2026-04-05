@@ -16,7 +16,7 @@
           title="Artist name"
         />
       </FormRow>
-      <ArtworkField v-model="data.image">Pick an image (optional)</ArtworkField>
+      <ArtworkField v-model="data.image">Pick or paste an image (optional)</ArtworkField>
     </main>
 
     <footer>

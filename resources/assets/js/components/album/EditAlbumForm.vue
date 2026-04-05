@@ -19,7 +19,7 @@
           <TextInput v-model="data.year" type="number" name="year" title="Release year" min="1000" />
         </FormRow>
       </div>
-      <ArtworkField v-model="data.cover">Pick a cover (optional)</ArtworkField>
+      <ArtworkField v-model="data.cover">Pick or paste a cover (optional)</ArtworkField>
     </main>
 
     <footer>
