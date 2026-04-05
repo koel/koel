@@ -51,19 +51,24 @@
           <AlbumCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
         </div>
       </template>
-      <VirtualGridScroller
-        v-else
-        ref="grid"
-        :items="displayedAlbums"
-        :min-item-width="minItemWidth"
-        class="flex-1"
-        data-testid="album-grid"
-        @scrolled-to-end="fetchAlbums"
-      >
-        <template #default="{ item }">
-          <AlbumCard :album="item" :layout="itemLayout" :show-release-year="preferences.albums_sort_field === 'year'" />
-        </template>
-      </VirtualGridScroller>
+      <div class="-m-6 flex-1 flex flex-col min-h-0" v-else>
+        <VirtualGridScroller
+          ref="grid"
+          :items="displayedAlbums"
+          :min-item-width="minItemWidth"
+          class="p-6 gap-5"
+          data-testid="album-grid"
+          @scrolled-to-end="fetchAlbums"
+        >
+          <template #default="{ item }">
+            <AlbumCard
+              :album="item"
+              :layout="itemLayout"
+              :show-release-year="preferences.albums_sort_field === 'year'"
+            />
+          </template>
+        </VirtualGridScroller>
+      </div>
     </template>
   </ScreenBase>
 </template>

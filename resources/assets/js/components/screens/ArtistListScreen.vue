@@ -56,7 +56,7 @@
         ref="grid"
         :items="displayedArtists"
         :min-item-width="minItemWidth"
-        class="flex-1"
+        class="gap-5 p-6"
         data-testid="artist-list"
         @scrolled-to-end="fetchArtists"
       >

@@ -2,19 +2,19 @@
   <div
     ref="scroller"
     v-koel-overflow-fade
-    class="virtual-grid-scroller will-change-transform overflow-scroll"
+    class="virtual-grid-scroller will-change-transform overflow-scroll h-full"
     @scroll.passive="onScroll"
   >
-    <!-- Measuring phase: render one item in a real grid to measure height and gap -->
-    <div v-if="measuring" ref="measureContainer" class="measure-grid">
+    <!-- Measuring phase: render one item to measure height and gap -->
+    <div v-if="measuring && items.length" ref="measureContainer" v-bind="$attrs" class="grid">
       <slot :item="items[0]" />
     </div>
 
     <!-- Virtual scrolling phase -->
     <template v-else>
       <div :style="{ height: `${totalHeight}px` }" class="will-change-transform overflow-hidden">
-        <div :style="gridStyle" class="will-change-transform">
-          <slot v-for="item in renderedItems" :item="item" />
+        <div v-bind="$attrs" :style="gridStyle" class="will-change-transform grid">
+          <slot v-for="item in renderedItems" :item />
         </div>
       </div>
     </template>
@@ -23,6 +23,8 @@
 
 <script lang="ts" setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, toRefs, watch } from 'vue'
+
+defineOptions({ inheritAttrs: false })
 
 const props = defineProps<{
   items: any[]
@@ -43,6 +45,8 @@ const scrollerHeight = ref(0)
 const scrollTop = ref(0)
 const measuredItemHeight = ref(0)
 const measuredGap = ref(0)
+const measuredPaddingTop = ref(0)
+const measuredPaddingBottom = ref(0)
 const measuring = ref(true)
 const renderAhead = 3
 
@@ -54,7 +58,13 @@ const columnCount = computed(() => {
 
 const rowCount = computed(() => Math.ceil(items.value.length / columnCount.value))
 const rowHeight = computed(() => measuredItemHeight.value + measuredGap.value)
-const totalHeight = computed(() => (rowCount.value ? rowCount.value * rowHeight.value - measuredGap.value : 0))
+const totalHeight = computed(() => {
+  if (!rowCount.value) {
+    return 0
+  }
+
+  return rowCount.value * rowHeight.value - measuredGap.value + measuredPaddingTop.value + measuredPaddingBottom.value
+})
 
 const startRow = computed(() => Math.max(0, Math.floor(scrollTop.value / rowHeight.value) - renderAhead))
 const offsetY = computed(() => startRow.value * rowHeight.value)
@@ -73,13 +83,12 @@ const renderedItems = computed(() => {
 
 const gridStyle = computed(() => ({
   transform: `translateY(${offsetY.value}px)`,
-  display: 'grid',
   gridTemplateColumns: `repeat(${columnCount.value}, minmax(0, 1fr))`,
-  gap: `${measuredGap.value}px`,
 }))
 
 const measureItem = async () => {
   if (!items.value.length) {
+    measuring.value = false
     return
   }
 
@@ -89,6 +98,8 @@ const measureItem = async () => {
   if (measureContainer.value) {
     const style = getComputedStyle(measureContainer.value)
     measuredGap.value = parseFloat(style.rowGap) || parseFloat(style.gap) || 0
+    measuredPaddingTop.value = parseFloat(style.paddingTop) || 0
+    measuredPaddingBottom.value = parseFloat(style.paddingBottom) || 0
 
     const firstChild = measureContainer.value.firstElementChild as HTMLElement | null
 
@@ -100,19 +111,21 @@ const measureItem = async () => {
   measuring.value = false
 }
 
+const checkScrollEnd = () => {
+  if (!scroller.value) {
+    return
+  }
+
+  if (scroller.value.scrollTop + scroller.value.clientHeight + rowHeight.value >= scroller.value.scrollHeight) {
+    emit('scrolled-to-end')
+  }
+}
+
 const onScroll = (e: Event) =>
   requestAnimationFrame(() => {
     scrollTop.value = (e.target as HTMLElement).scrollTop
-
-    if (!scroller.value) {
-      return
-    }
-
     emit('scroll', e)
-
-    if (scroller.value.scrollTop + scroller.value.clientHeight + rowHeight.value >= scroller.value.scrollHeight) {
-      emit('scrolled-to-end')
-    }
+    checkScrollEnd()
   })
 
 const resizeObserver = new ResizeObserver((entries: ResizeObserverEntry[]) => {
@@ -142,19 +155,17 @@ const scrollToTop = () => {
   scroller.value?.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
-// Re-measure when minItemWidth changes (view mode switch)
 watch(minItemWidth, () => measureItem())
 
-// Reset scroll when items shrink (sort/filter reset)
 watch(
   () => items.value.length,
-  (newLen: number, oldLen: number) => {
+  async (newLen: number, oldLen: number) => {
     if (newLen < oldLen) {
       scrollTop.value = 0
     }
 
     if (oldLen === 0 && newLen > 0 && !measuredItemHeight.value) {
-      measureItem()
+      await measureItem()
     }
   },
 )
@@ -172,10 +183,5 @@ defineExpose({ scrollToTop, columnCount })
       scrollbar-gutter: auto;
     }
   }
-}
-
-.measure-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(v-bind('`${minItemWidth}px`'), 1fr));
 }
 </style>
