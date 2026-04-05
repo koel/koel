@@ -28,6 +28,7 @@ class ArtistRepository extends Repository implements ScoutableRepository
         return Artist::query()
             ->onlyStandard()
             ->withUserContext(user: $user ?? $this->auth->user())
+            ->whereHas('songs')
             ->latest()
             ->limit($count)
             ->get();

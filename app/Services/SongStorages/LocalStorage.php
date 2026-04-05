@@ -64,7 +64,10 @@ class LocalStorage extends SongStorage
     public function delete(string $location, bool $backup = false): void
     {
         if ($backup) {
-            File::move($location, "$location.bak");
+            throw_unless(
+                File::move($location, "$location.bak"),
+                new Exception(sprintf('Failed to back up song file: %s', $location)),
+            );
         } else {
             throw_unless(File::delete($location), new Exception("Failed to delete song file: $location"));
         }
