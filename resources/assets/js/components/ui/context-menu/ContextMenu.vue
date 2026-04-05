@@ -201,7 +201,7 @@ const closeSubmenuAndFocusParent = () => {
 
   if (parentItem) {
     hideSubmenu(parentItem, submenu)
-    parentItem?.focus()
+    parentItem.focus()
   }
 }
 
