@@ -104,9 +104,10 @@ const showSubmenu = async (item: MenuItem, submenu: HTMLElement) => {
 }
 
 const getMenuItems = (container: HTMLElement): HTMLElement[] =>
-  Array.from(container.querySelectorAll<HTMLElement>('li:not(.separator)')).filter(
-    (li: HTMLElement) => !li.closest('.submenu') || li.closest('.submenu') === container,
-  )
+  Array.from(container.querySelectorAll<HTMLElement>('li:not(.separator)')).filter((li: HTMLElement) => {
+    const closestSubmenu = li.closest('.submenu')
+    return !closestSubmenu || closestSubmenu === container
+  })
 
 const getFocusedItem = (): HTMLElement | null => {
   const active = document.activeElement as HTMLElement | null
