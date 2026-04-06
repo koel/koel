@@ -11,11 +11,18 @@ class CleanUpDuplicateUploadsCommand extends Command
     protected $signature = 'koel:clean-up-duplicate-uploads {--days=7 : Remove entries older than this many days}';
     protected $description = 'Remove stale duplicate upload entries and their associated files.';
 
-    public function handle(DuplicateUploadService $service, DuplicateUploadRepository $repository): int
+    public function __construct(
+        private readonly DuplicateUploadService $service,
+        private readonly DuplicateUploadRepository $repository,
+    ) {
+        parent::__construct();
+    }
+
+    public function handle(): int
     {
         $days = (int) $this->option('days');
 
-        $staleUploads = $repository->getStaleUploads($days);
+        $staleUploads = $this->repository->getStaleUploads($days);
 
         if ($staleUploads->isEmpty()) {
             $this->components->info('No stale duplicate uploads found.');
@@ -23,7 +30,7 @@ class CleanUpDuplicateUploadsCommand extends Command
             return self::SUCCESS;
         }
 
-        $service->discard($staleUploads);
+        $this->service->discard($staleUploads);
 
         $this->components->info(sprintf('%d stale duplicate upload(s) removed.', $staleUploads->count()));
 
