@@ -123,12 +123,11 @@ class DuplicateUploadActionTest extends TestCase
 
         $user = create_user();
 
-        $uploads = collect([1, 2])->map(function (int $i) use ($user) {
+        foreach (range(1, 2) as $i) {
             $songPath = public_path("sandbox/media/keep-all-test-{$i}.mp3");
             File::copy(test_path('songs/full.mp3'), $songPath);
-
-            return DuplicateUpload::factory()->for($user)->createOne(['location' => $songPath]);
-        });
+            DuplicateUpload::factory()->for($user)->createOne(['location' => $songPath]);
+        }
 
         $this->postAs('api/duplicate-uploads', [], $user)->assertSuccessful();
 
