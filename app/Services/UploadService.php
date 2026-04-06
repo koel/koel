@@ -29,7 +29,7 @@ class UploadService
         $uploadReference = $this->storage->storeUploadedFile($filePath, $uploader);
 
         try {
-            $this->duplicateUploadService->detectAndHandle($uploadReference->localPath, $uploadReference, $uploader);
+            $this->duplicateUploadService->detectDuplicate($uploadReference->localPath, $uploadReference, $uploader);
 
             return $this->scanAndStore(
                 $uploadReference->localPath,

@@ -1,23 +1,25 @@
 <template>
   <details class="rounded-lg border border-k-fg-10 overflow-hidden">
-    <summary class="flex items-center justify-between px-4 py-3 text-k-highlight cursor-pointer list-none">
+    <summary
+      class="flex items-center justify-between px-4 py-3 hover:bg-k-fg-3 text-k-highlight cursor-pointer list-none"
+    >
       <span class="flex items-center gap-3">
         <Icon :icon="faCopy" />
-        <strong>Duplicate file{{ songs.length === 1 ? '' : 's' }} detected</strong>
-        <span class="text-sm bg-k-highlight text-k-highlight-fg px-2 py-0.5 rounded-full uppercase font-bold">
+        <strong>Duplicate file{{ songs.length === 1 ? '' : 's' }}</strong>
+        <span class="text-xs bg-k-highlight text-k-highlight-fg px-2 py-0.5 rounded-full uppercase font-bold">
           {{ songs.length }}
         </span>
       </span>
     </summary>
 
-    <div class="border-t border-k-fg-5">
+    <section class="border-t border-k-fg-5">
       <DuplicateUploadItem v-for="upload in songs" :key="upload.id" :upload />
 
-      <div class="flex justify-end gap-2 px-4 py-3 bg-k-fg-5">
+      <footer class="flex justify-end gap-2 px-4 py-3 bg-k-fg-3">
         <Btn small highlight @click="confirmDiscardAll">Discard All</Btn>
         <Btn small success @click="keepAll">Keep All</Btn>
-      </div>
-    </div>
+      </footer>
+    </section>
   </details>
 </template>
 

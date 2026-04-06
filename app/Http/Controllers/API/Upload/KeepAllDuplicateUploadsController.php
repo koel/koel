@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\API\Upload;
 
 use App\Http\Controllers\Controller;
+use App\Models\Song;
 use App\Models\User;
+use App\Repositories\AlbumRepository;
 use App\Repositories\DuplicateUploadRepository;
+use App\Repositories\SongRepository;
+use App\Responses\SongUploadResponse;
 use App\Services\DuplicateUploadService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
@@ -14,10 +18,17 @@ class KeepAllDuplicateUploadsController extends Controller
     public function __invoke(
         DuplicateUploadRepository $repository,
         DuplicateUploadService $service,
+        SongRepository $songRepository,
+        AlbumRepository $albumRepository,
         Authenticatable $user,
     ) {
-        $service->keep($repository->getAllForUser($user));
+        $songs = $service->keep($repository->getAllForUser($user));
 
-        return response()->noContent();
+        return array_map(static function (Song $song) use ($songRepository, $albumRepository): array {
+            $populatedSong = $songRepository->getOne($song->id);
+            $album = $albumRepository->getOne($populatedSong->album_id);
+
+            return SongUploadResponse::make(song: $populatedSong, album: $album)->toArray();
+        }, $songs);
     }
 }

@@ -57,7 +57,7 @@ class DuplicateUploadServiceTest extends TestCase
 
         $this->expectException(DuplicateSongUploadException::class);
 
-        $this->makeService()->detectAndHandle('/tmp/song.mp3', $reference, $uploader);
+        $this->makeService()->detectDuplicate('/tmp/song.mp3', $reference, $uploader);
 
         $this->assertDatabaseHas('duplicate_uploads', [
             'user_id' => $uploader->id,
@@ -73,7 +73,7 @@ class DuplicateUploadServiceTest extends TestCase
 
         $this->songRepository->expects('findByHash')->never();
 
-        $this->makeService()->detectAndHandle('/tmp/song.mp3', $reference, $uploader);
+        $this->makeService()->detectDuplicate('/tmp/song.mp3', $reference, $uploader);
     }
 
     #[Test]
@@ -88,7 +88,7 @@ class DuplicateUploadServiceTest extends TestCase
             ->with('abc123', $uploader)
             ->andReturnNull();
 
-        $this->makeService()->detectAndHandle('/tmp/song.mp3', $reference, $uploader);
+        $this->makeService()->detectDuplicate('/tmp/song.mp3', $reference, $uploader);
 
         self::assertSame(0, DuplicateUpload::query()->count());
     }

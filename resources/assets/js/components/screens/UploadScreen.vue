@@ -28,7 +28,7 @@
       @drop.prevent="onDrop"
       @dragover.prevent
     >
-      <UploadScreenDuplicateSongList v-if="duplicatedSongs.length" :songs="duplicatedSongs" class="mb-4" />
+      <DuplicateUploadList v-if="duplicatedSongs.length" :songs="duplicatedSongs" class="mb-4" />
 
       <div v-if="files.length" class="pb-4 space-y-4">
         <UploadItem v-for="file in files" :key="file.id" :file="file" data-testid="upload-item" />
@@ -68,21 +68,19 @@
 
 <script lang="ts" setup>
 import { faRotateRight, faTrashCan, faUpload, faWarning } from '@fortawesome/free-solid-svg-icons'
-import { computed, defineAsyncComponent, ref, toRef, onMounted, onBeforeUnmount } from 'vue'
-import { eventBus } from '@/utils/eventBus'
+import { computed, defineAsyncComponent, ref, toRef, onMounted } from 'vue'
 
 import { isDirectoryReadingSupported as canDropFolders } from '@/utils/supports'
 import { acceptedExtensions } from '@/utils/mediaHelper'
 import { uploadService } from '@/services/uploadService'
 import { useUpload } from '@/composables/useUpload'
-import { useMessageToaster } from '@/composables/useMessageToaster'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 
-import UploadScreenDuplicateSongList from '../ui/UploadScreenDuplicateSongList.vue'
+import DuplicateUploadList from '@/components/ui/DuplicateUploadList.vue'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 const UploadItem = defineAsyncComponent(() => import('@/components/ui/upload/UploadItem.vue'))
@@ -93,21 +91,10 @@ const { allowsUpload, mediaPathSetUp, queueFilesForUpload, handleDropEvent } = u
 
 const duplicatedSongs = toRef(uploadService.state, 'duplicatedSongs')
 
-const { toastWarning } = useMessageToaster()
-
 const files = toRef(uploadService.state, 'files')
 const droppable = ref(false)
 
 const hasUploadFailures = computed(() => files.value.filter(({ status }) => status === 'Errored').length > 0)
-
-onMounted(async () => {
-  eventBus.on('DUPLICATE_UPLOAD_DETECTED', handleDuplicateDetected)
-  await uploadService.fetchDuplicates()
-})
-
-onBeforeUnmount(() => {
-  eventBus.off('DUPLICATE_UPLOAD_DETECTED', handleDuplicateDetected)
-})
 
 const onDragEnter = () => (droppable.value = allowsUpload.value)
 
@@ -132,12 +119,10 @@ const onDrop = async (event: DragEvent) => {
   await handleDropEvent(event)
 }
 
-const handleDuplicateDetected = () => {
-  toastWarning('Duplicate file uploaded')
-}
-
 const retryAll = () => uploadService.retryAll()
 const removeFailedEntries = () => uploadService.removeFailed()
+
+onMounted(() => uploadService.fetchDuplicates())
 </script>
 
 <style lang="postcss" scoped>

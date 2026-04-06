@@ -7,6 +7,7 @@ use App\Exceptions\SongUploadFailedException;
 use App\Facades\Dispatcher;
 use App\Jobs\DeleteSongFilesJob;
 use App\Models\DuplicateUpload;
+use App\Models\Song;
 use App\Models\User;
 use App\Repositories\SongRepository;
 use App\Services\Concerns\ScansAndStoresSong;
@@ -33,7 +34,7 @@ class DuplicateUploadService
     /**
      * @throws DuplicateSongUploadException
      */
-    public function detectAndHandle(string $filePath, UploadReference $uploadReference, User $uploader): void
+    public function detectDuplicate(string $filePath, UploadReference $uploadReference, User $uploader): void
     {
         if (!$uploader->preferences->detectDuplicateUploads) {
             return;
@@ -56,14 +57,20 @@ class DuplicateUploadService
         throw DuplicateSongUploadException::create($filePath, $duplicate);
     }
 
-    /** @param Collection<DuplicateUpload> $uploads */
-    public function keep(Collection $uploads): void
+    /**
+     * @param Collection<DuplicateUpload> $uploads
+     *
+     * @return array<Song>
+     */
+    public function keep(Collection $uploads): array
     {
+        $songs = [];
+
         foreach ($uploads as $upload) {
             $localFilePath = $this->storage->getLocalPath($upload->location);
 
             try {
-                $this->scanAndStore(
+                $songs[] = $this->scanAndStore(
                     $localFilePath,
                     $upload->location,
                     $upload->user,
@@ -81,6 +88,8 @@ class DuplicateUploadService
 
             $upload->delete();
         }
+
+        return $songs;
     }
 
     /** @param Collection<DuplicateUpload> $uploads */

@@ -60,7 +60,7 @@ class UploadServiceTest extends TestCase
         );
 
         $storage->expects('storeUploadedFile')->with($file, $uploader)->andReturn($reference);
-        $this->duplicateUploadService->expects('detectAndHandle');
+        $this->duplicateUploadService->expects('detectDuplicate');
 
         $this->scanner
             ->expects('scan')
@@ -92,7 +92,7 @@ class UploadServiceTest extends TestCase
         $reference = UploadReference::make(location: 's3://koel/some-file.mp3', localPath: '/tmp/some-tmp-file.mp3');
 
         $storage->expects('storeUploadedFile')->with($file, $uploader)->andReturn($reference);
-        $this->duplicateUploadService->expects('detectAndHandle');
+        $this->duplicateUploadService->expects('detectDuplicate');
         $this->scanner
             ->expects('scan')
             ->with('/tmp/some-tmp-file.mp3')
@@ -122,7 +122,7 @@ class UploadServiceTest extends TestCase
         $reference = UploadReference::make(location: 's3://koel/some-file.mp3', localPath: '/tmp/some-tmp-file.mp3');
 
         $storage->expects('storeUploadedFile')->andReturn($reference);
-        $this->duplicateUploadService->expects('detectAndHandle');
+        $this->duplicateUploadService->expects('detectDuplicate');
         $this->scanner->expects('scan')->andReturn($scanInfo);
         $this->songService->expects('createOrUpdateSongFromScan')->andReturn($song);
 
@@ -145,7 +145,7 @@ class UploadServiceTest extends TestCase
         );
 
         $storage->expects('storeUploadedFile')->with($file, $uploader)->andReturn($reference);
-        $this->duplicateUploadService->expects('detectAndHandle');
+        $this->duplicateUploadService->expects('detectDuplicate');
         $this->scanner->expects('scan')->andReturn($scanInfo);
         $storage->expects('undoUpload')->with($reference);
         $this->songService->expects('createOrUpdateSongFromScan')->andThrow(new Exception('scan failed'));
@@ -166,7 +166,7 @@ class UploadServiceTest extends TestCase
 
         $storage->expects('storeUploadedFile')->with($file, $uploader)->andReturn($reference);
         $this->duplicateUploadService
-            ->expects('detectAndHandle')
+            ->expects('detectDuplicate')
             ->andThrow(DuplicateSongUploadException::create($file, new DuplicateUpload()));
 
         $this->expectException(DuplicateSongUploadException::class);

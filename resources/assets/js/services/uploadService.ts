@@ -132,7 +132,6 @@ export const uploadService = {
       if (err.status === 409 && err.responseData) {
         this.state.duplicatedSongs.push(err.responseData as DuplicateUpload)
         this.remove(file)
-        eventBus.emit('DUPLICATE_UPLOAD_DETECTED')
         this.proceed()
         return
       }
@@ -154,13 +153,15 @@ export const uploadService = {
   },
 
   async keepDuplicate(id: DuplicateUpload['id']) {
-    await http.post(`duplicate-uploads/${id}`)
+    const result = await http.post<UploadResult>(`duplicate-uploads/${id}`)
     this.state.duplicatedSongs = this.state.duplicatedSongs.filter(s => s.id !== id)
+    this.handleUploadResult(result)
   },
 
   async keepAllDuplicates() {
-    await http.post('duplicate-uploads')
+    const results = await http.post<UploadResult[]>('duplicate-uploads')
     this.state.duplicatedSongs = []
+    results.forEach(result => this.handleUploadResult(result))
   },
 
   async discardDuplicate(id: DuplicateUpload['id']) {
