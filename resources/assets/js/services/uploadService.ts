@@ -132,7 +132,6 @@ export const uploadService = {
       if (err.status === 409 && err.responseData) {
         this.state.duplicatedSongs.push(err.responseData as DuplicateUpload)
         this.remove(file)
-        this.proceed()
         return
       }
 

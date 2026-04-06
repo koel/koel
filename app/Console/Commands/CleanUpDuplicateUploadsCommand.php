@@ -20,7 +20,15 @@ class CleanUpDuplicateUploadsCommand extends Command
 
     public function handle(): int
     {
-        $days = (int) $this->option('days');
+        $rawDays = $this->option('days');
+
+        if (!is_numeric($rawDays) || (int) $rawDays < 1) {
+            $this->components->error('The --days option must be a positive integer.');
+
+            return self::FAILURE;
+        }
+
+        $days = (int) $rawDays;
 
         $staleUploads = $this->repository->getStaleUploads($days);
 

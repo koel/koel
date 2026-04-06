@@ -70,4 +70,18 @@ class CleanUpDuplicateUploadsCommandTest extends TestCase
 
         self::assertSame(1, DuplicateUpload::query()->count());
     }
+
+    #[Test]
+    public function rejectsInvalidDaysOption(): void
+    {
+        $this
+            ->artisan('koel:clean-up-duplicate-uploads --days=0')
+            ->expectsOutputToContain('must be a positive integer')
+            ->assertFailed();
+
+        $this
+            ->artisan('koel:clean-up-duplicate-uploads --days=abc')
+            ->expectsOutputToContain('must be a positive integer')
+            ->assertFailed();
+    }
 }
