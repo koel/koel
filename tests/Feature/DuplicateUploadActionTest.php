@@ -3,17 +3,42 @@
 namespace Tests\Feature;
 
 use App\Models\DuplicateUpload;
+use App\Models\Setting;
+use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
+use function Tests\test_path;
 
 class DuplicateUploadActionTest extends TestCase
 {
     #[Test]
-    public function keepSingleDuplicate(): void
+    public function unauthenticatedUserCannotKeepDuplicate(): void
     {
-        $this->markTestSkipped('Requires local storage setup for scanning');
+        $upload = DuplicateUpload::factory()->createOne();
+
+        $this->json('post', "api/duplicate-uploads/{$upload->id}")->assertUnauthorized();
+    }
+
+    #[Test]
+    public function unauthenticatedUserCannotKeepAllDuplicates(): void
+    {
+        $this->json('post', 'api/duplicate-uploads')->assertUnauthorized();
+    }
+
+    #[Test]
+    public function unauthenticatedUserCannotDiscardDuplicate(): void
+    {
+        $upload = DuplicateUpload::factory()->createOne();
+
+        $this->json('delete', "api/duplicate-uploads/{$upload->id}")->assertUnauthorized();
+    }
+
+    #[Test]
+    public function unauthenticatedUserCannotDiscardAllDuplicates(): void
+    {
+        $this->json('delete', 'api/duplicate-uploads')->assertUnauthorized();
     }
 
     #[Test]
@@ -27,17 +52,6 @@ class DuplicateUploadActionTest extends TestCase
     }
 
     #[Test]
-    public function discardSingleDuplicate(): void
-    {
-        $user = create_user();
-        $upload = DuplicateUpload::factory()->for($user)->createOne();
-
-        $this->deleteAs("api/duplicate-uploads/{$upload->id}", [], $user)->assertNoContent();
-
-        $this->assertDatabaseMissing('duplicate_uploads', ['id' => $upload->id]);
-    }
-
-    #[Test]
     public function cannotDiscardOtherUsersDuplicate(): void
     {
         $owner = create_user();
@@ -47,6 +61,17 @@ class DuplicateUploadActionTest extends TestCase
         $this->deleteAs("api/duplicate-uploads/{$upload->id}", [], $other)->assertForbidden();
 
         $this->assertDatabaseHas('duplicate_uploads', ['id' => $upload->id]);
+    }
+
+    #[Test]
+    public function discardSingleDuplicate(): void
+    {
+        $user = create_user();
+        $upload = DuplicateUpload::factory()->for($user)->createOne();
+
+        $this->deleteAs("api/duplicate-uploads/{$upload->id}", [], $user)->assertNoContent();
+
+        $this->assertDatabaseMissing('duplicate_uploads', ['id' => $upload->id]);
     }
 
     #[Test]
@@ -85,8 +110,37 @@ class DuplicateUploadActionTest extends TestCase
     }
 
     #[Test]
+    public function keepSingleDuplicate(): void
+    {
+        Setting::set('media_path', public_path('sandbox/media'));
+
+        $user = create_user();
+        $songPath = public_path('sandbox/media/keep-test.mp3');
+        File::copy(test_path('songs/full.mp3'), $songPath);
+
+        $upload = DuplicateUpload::factory()->for($user)->createOne(['location' => $songPath]);
+
+        $this->postAs("api/duplicate-uploads/{$upload->id}", [], $user)->assertJsonStructure(['song', 'album']);
+
+        $this->assertDatabaseMissing('duplicate_uploads', ['id' => $upload->id]);
+    }
+
+    #[Test]
     public function keepAllDuplicates(): void
     {
-        $this->markTestSkipped('Requires local storage setup for scanning');
+        Setting::set('media_path', public_path('sandbox/media'));
+
+        $user = create_user();
+
+        $uploads = collect([1, 2])->map(function (int $i) use ($user) {
+            $songPath = public_path("sandbox/media/keep-all-test-{$i}.mp3");
+            File::copy(test_path('songs/full.mp3'), $songPath);
+
+            return DuplicateUpload::factory()->for($user)->createOne(['location' => $songPath]);
+        });
+
+        $this->postAs('api/duplicate-uploads', [], $user)->assertSuccessful();
+
+        self::assertSame(0, DuplicateUpload::query()->where('user_id', $user->id)->count());
     }
 }

@@ -28,6 +28,7 @@ class DuplicateUpload extends Model
 
     protected $guarded = ['id'];
     protected $hidden = ['updated_at'];
+    protected $with = ['user'];
 
     /** @return array<string, mixed> */
     protected function casts(): array

@@ -64,20 +64,20 @@ class DuplicateUploadService
      */
     public function keep(Collection $uploads): Collection
     {
-        $songs = [];
+        $songs = collect();
 
         foreach ($uploads as $upload) {
             $localFilePath = $this->storage->getLocalPath($upload->location);
 
             try {
-                $songs[] = $this->scanAndStore(
+                $songs->add($this->scanAndStore(
                     $localFilePath,
                     $upload->location,
                     $upload->user,
                     $this->scanner,
                     $this->songService,
                     $this->storage,
-                );
+                ));
             } catch (Throwable $error) {
                 throw SongUploadFailedException::make($error);
             } finally {
