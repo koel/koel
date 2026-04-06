@@ -29,8 +29,8 @@ class FetchDuplicateUploadsTest extends TestCase
         $this
             ->getAs('api/duplicate-uploads', $user)
             ->assertSuccessful()
-            ->assertJsonCount(3, 'data')
-            ->assertJsonStructure(['data' => [DuplicateUploadResource::JSON_STRUCTURE]]);
+            ->assertJsonCount(3)
+            ->assertJsonStructure(['*' => DuplicateUploadResource::JSON_STRUCTURE]);
     }
 
     #[Test]
@@ -48,42 +48,18 @@ class FetchDuplicateUploadsTest extends TestCase
             ->for($otherUser)
             ->create();
 
-        $this->getAs('api/duplicate-uploads', $user)->assertSuccessful()->assertJsonCount(2, 'data');
+        $this->getAs('api/duplicate-uploads', $user)->assertSuccessful()->assertJsonCount(2);
     }
 
     #[Test]
-    public function returnsEmptyWhenNoDuplicatesExist(): void
-    {
-        $user = create_user();
-
-        $this->getAs('api/duplicate-uploads', $user)->assertSuccessful()->assertJsonCount(0, 'data');
-    }
-
-    #[Test]
-    public function responseIncludesFilename(): void
+    public function responseIncludesSongTitleAndFilename(): void
     {
         $user = create_user();
         DuplicateUpload::factory()->for($user)->create(['location' => '/var/media/koel/my-song.mp3']);
 
-        $this
-            ->getAs('api/duplicate-uploads', $user)
-            ->assertSuccessful()
-            ->assertJsonPath('data.0.filename', 'my-song.mp3');
-    }
+        $response = $this->getAs('api/duplicate-uploads', $user)->assertSuccessful();
 
-    #[Test]
-    public function responseIsPaginated(): void
-    {
-        $user = create_user();
-        DuplicateUpload::factory()
-            ->count(5)
-            ->for($user)
-            ->create();
-
-        $this
-            ->getAs('api/duplicate-uploads?per_page=2', $user)
-            ->assertSuccessful()
-            ->assertJsonCount(2, 'data')
-            ->assertJsonStructure(['data', 'links' => ['next', 'prev']]);
+        $response->assertJsonPath('0.filename', 'my-song.mp3');
+        $response->assertJsonStructure(['*' => ['song_title', 'artist_name']]);
     }
 }

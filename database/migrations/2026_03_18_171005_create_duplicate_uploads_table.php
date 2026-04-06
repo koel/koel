@@ -13,8 +13,6 @@ return new class extends Migration {
             $table->string('existing_song_id')->nullable();
             $table->string('location');
             $table->string('storage');
-            $table->boolean('make_public');
-            $table->boolean('extract_folder_structure');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();

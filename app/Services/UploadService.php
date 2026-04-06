@@ -6,79 +6,49 @@ use App\Exceptions\DuplicateSongUploadException;
 use App\Exceptions\SongUploadFailedException;
 use App\Models\Song;
 use App\Models\User;
-use App\Repositories\DuplicateUploadRepository;
-use App\Repositories\SongRepository;
+use App\Services\Concerns\ScansAndStoresSong;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
 use App\Services\SongStorages\SongStorage;
-use App\Values\Scanning\ScanConfiguration;
-use App\Values\UploadReference;
-use Illuminate\Container\Attributes\Config;
 use Illuminate\Support\Facades\File;
 use Throwable;
 
 class UploadService
 {
+    use ScansAndStoresSong;
+
     public function __construct(
         private readonly SongService $songService,
         private readonly SongStorage $storage,
         private readonly FileScanner $scanner,
-        private readonly SongRepository $songRepository,
-        private readonly DuplicateUploadRepository $duplicateUploadRepository,
-        #[Config('koel.detect_duplicate_uploads')]
-        private readonly bool $detectDuplicates = true,
+        private readonly DuplicateUploadService $duplicateUploadService,
     ) {}
 
     public function handleUpload(string $filePath, User $uploader): Song
     {
         $uploadReference = $this->storage->storeUploadedFile($filePath, $uploader);
-        $existingSong = $this->detectDuplicates
-            ? $this->songRepository->findByHash(File::hash($filePath), $uploader)
-            : null;
 
-        $config = ScanConfiguration::make(
-            owner: $uploader,
-            makePublic: $uploader->preferences->makeUploadsPublic,
-            extractFolderStructure: $this->storage->getStorageType()->supportsFolderStructureExtraction(),
-        );
+        try {
+            $this->duplicateUploadService->detectAndHandle($uploadReference->localPath, $uploadReference, $uploader);
 
-        if ($existingSong) {
-            $this->duplicateUploadRepository->create($config, $uploadReference, $existingSong);
+            return $this->scanAndStore(
+                $uploadReference->localPath,
+                $uploadReference->location,
+                $uploader,
+                $this->scanner,
+                $this->songService,
+                $this->storage,
+            );
+        } catch (DuplicateSongUploadException $e) {
+            throw $e;
+        } catch (Throwable $error) {
+            $this->storage->undoUpload($uploadReference);
+
+            throw SongUploadFailedException::make($error);
+        } finally {
             if ($this->storage instanceof MustDeleteTemporaryLocalFileAfterUpload) {
                 File::delete($uploadReference->localPath);
             }
-            throw DuplicateSongUploadException::fromFilePath($filePath);
         }
-
-        try {
-            $song = $this->songService->createOrUpdateSongFromScan(
-                $this->scanner->scan($uploadReference->localPath),
-                $config,
-            );
-        } catch (Throwable $error) {
-            $this->handleUploadFailure($uploadReference, $error);
-        }
-
-        if ($this->storage instanceof MustDeleteTemporaryLocalFileAfterUpload) {
-            File::delete($uploadReference->localPath);
-        }
-
-        // Since we scanned a local file, the song's path was initially set to the local path.
-        // We need to update it to the actual storage (e.g. S3) and location (e.g., the S3 key) if applicable.
-        if ($song->path !== $uploadReference->location || $song->storage !== $this->storage->getStorageType()) {
-            $song->update([
-                'path' => $uploadReference->location,
-                'storage' => $this->storage->getStorageType(),
-            ]);
-        }
-
-        return $song;
-    }
-
-    private function handleUploadFailure(UploadReference $reference, Throwable|string $error): never
-    {
-        $this->storage->undoUpload($reference);
-
-        throw SongUploadFailedException::make($error);
     }
 }

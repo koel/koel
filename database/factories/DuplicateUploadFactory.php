@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\SongStorageType;
+use App\Models\DuplicateUpload;
 use App\Models\Song;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -17,8 +18,6 @@ class DuplicateUploadFactory extends Factory
             'existing_song_id' => Song::factory(),
             'location' => '/var/media/koel/some-file.mp3',
             'storage' => SongStorageType::LOCAL,
-            'make_public' => false,
-            'extract_folder_structure' => true,
         ];
     }
 }

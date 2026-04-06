@@ -5,7 +5,6 @@ namespace Tests\Unit\Models;
 use App\Models\DuplicateUpload;
 use App\Models\Song;
 use App\Models\User;
-use App\Values\Scanning\ScanConfiguration;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -25,21 +24,5 @@ class DuplicateUploadTest extends TestCase
         $duplicateUpload = DuplicateUpload::factory()->createOne();
 
         self::assertInstanceOf(Song::class, $duplicateUpload->existingSong);
-    }
-
-    #[Test]
-    public function toScanConfiguration(): void
-    {
-        $duplicateUpload = DuplicateUpload::factory()->createOne([
-            'make_public' => true,
-            'extract_folder_structure' => false,
-        ]);
-
-        $config = $duplicateUpload->toScanConfiguration();
-
-        self::assertInstanceOf(ScanConfiguration::class, $config);
-        self::assertTrue($duplicateUpload->user->is($config->owner));
-        self::assertTrue($config->makePublic);
-        self::assertFalse($config->extractFolderStructure);
     }
 }

@@ -14,9 +14,8 @@ class CleanUpDuplicateUploadsCommand extends Command
     public function handle(DuplicateUploadService $service): int
     {
         $days = (int) $this->option('days');
-        $threshold = now()->subDays($days);
 
-        $staleUploads = DuplicateUpload::query()->where('created_at', '<', $threshold)->get();
+        $staleUploads = DuplicateUpload::query()->where('created_at', '<', now()->subDays($days))->get();
 
         if ($staleUploads->isEmpty()) {
             $this->components->info('No stale duplicate uploads found.');
@@ -24,11 +23,7 @@ class CleanUpDuplicateUploadsCommand extends Command
             return self::SUCCESS;
         }
 
-        $userGroups = $staleUploads->groupBy('user_id');
-
-        foreach ($userGroups as $uploads) {
-            $service->discardDuplicateUploads($uploads->first()->user, $uploads->pluck('id')->all());
-        }
+        $service->discard($staleUploads);
 
         $this->components->info(sprintf('%d stale duplicate upload(s) removed.', $staleUploads->count()));
 

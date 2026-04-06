@@ -1,5 +1,5 @@
 import { without } from 'lodash'
-import { computed, reactive } from 'vue'
+import { reactive } from 'vue'
 import { http } from '@/services/http'
 import { postWithProgress } from '@/services/http'
 import { albumStore } from '@/stores/albumStore'
@@ -27,9 +27,10 @@ export interface UploadFile {
 export interface DuplicateUpload {
   type: 'duplicate-uploads'
   id: string
+  song_title: string | null
+  artist_name: string | null
   filename: string
   created_at: Date
-  existing_song: Song
 }
 
 export const uploadService = {
@@ -37,8 +38,6 @@ export const uploadService = {
     files: [] as UploadFile[],
     duplicatedSongs: [] as DuplicateUpload[],
   }),
-
-  duplicateFilesUploaded: computed(() => uploadService.state.duplicatedSongs.length > 0),
 
   abortHandles: new Map<string, () => void>(),
 
@@ -127,19 +126,19 @@ export const uploadService = {
 
       const err = error as {
         status?: number
-        responseData?: { message?: string }
+        responseData?: DuplicateUpload | { message?: string }
       }
 
-      if (err.status === 409) {
+      if (err.status === 409 && err.responseData) {
+        this.state.duplicatedSongs.push(err.responseData as DuplicateUpload)
         this.remove(file)
-        this.fetchDuplicates()
         eventBus.emit('DUPLICATE_UPLOAD_DETECTED')
         this.proceed()
         return
       }
 
-      if (err.responseData?.message) {
-        file.message = `Upload failed: ${(error as any).responseData.message}`
+      if (err.responseData && 'message' in err.responseData && err.responseData.message) {
+        file.message = `Upload failed: ${err.responseData.message}`
       } else {
         file.message = 'Upload failed: Unknown error.'
       }
@@ -151,20 +150,27 @@ export const uploadService = {
   },
 
   async fetchDuplicates() {
-    const response = await http.get<{ data: DuplicateUpload[] }>('duplicate-uploads')
-    this.state.duplicatedSongs = response.data
-
-    return this.state.duplicatedSongs
+    this.state.duplicatedSongs = await http.get<DuplicateUpload[]>('duplicate-uploads')
   },
 
-  async keepDuplicates(duplicateUploadIds: string[]) {
-    await http.post('duplicate-uploads/keep', { uploads: duplicateUploadIds })
-    await this.fetchDuplicates()
+  async keepDuplicate(id: DuplicateUpload['id']) {
+    await http.post(`duplicate-uploads/${id}/keep`)
+    this.state.duplicatedSongs = this.state.duplicatedSongs.filter(s => s.id !== id)
   },
 
-  async deleteDuplicates(duplicateUploadIds: string[]) {
-    await http.delete('duplicate-uploads/delete', { uploads: duplicateUploadIds })
-    await this.fetchDuplicates()
+  async keepAllDuplicates() {
+    await http.post('duplicate-uploads/keep')
+    this.state.duplicatedSongs = []
+  },
+
+  async discardDuplicate(id: DuplicateUpload['id']) {
+    await http.delete(`duplicate-uploads/${id}`)
+    this.state.duplicatedSongs = this.state.duplicatedSongs.filter(s => s.id !== id)
+  },
+
+  async discardAllDuplicates() {
+    await http.delete('duplicate-uploads')
+    this.state.duplicatedSongs = []
   },
 
   handleUploadResult: (result: UploadResult) => {

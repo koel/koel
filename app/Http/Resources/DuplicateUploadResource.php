@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class DuplicateUploadResource extends JsonResource
 {
-    public const JSON_STRUCTURE = ['type', 'id', 'existing_song', 'filename', 'created_at'];
+    public const array JSON_STRUCTURE = ['type', 'id', 'song_title', 'artist_name', 'filename', 'created_at'];
 
     public function __construct(
         private readonly DuplicateUpload $upload,
@@ -22,7 +22,8 @@ class DuplicateUploadResource extends JsonResource
         return [
             'type' => 'duplicate-uploads',
             'id' => $this->upload->id,
-            'existing_song' => $this->upload->existingSong ? new SongResource($this->upload->existingSong) : null,
+            'song_title' => $this->upload->existingSong?->title,
+            'artist_name' => $this->upload->existingSong?->artist_name,
             'filename' => basename($this->upload->location),
             'created_at' => $this->upload->created_at,
         ];

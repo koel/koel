@@ -22,7 +22,6 @@ use App\Http\Controllers\API\FavoriteController;
 use App\Http\Controllers\API\FetchAlbumInformationController;
 use App\Http\Controllers\API\FetchAlbumThumbnailController;
 use App\Http\Controllers\API\FetchDemoCreditsController;
-use App\Http\Controllers\API\DuplicateUploadsController;
 use App\Http\Controllers\API\FetchFavoriteSongsController;
 use App\Http\Controllers\API\FetchInitialDataController;
 use App\Http\Controllers\API\FetchOverviewController;
@@ -72,7 +71,12 @@ use App\Http\Controllers\API\ToggleLikeSongController;
 use App\Http\Controllers\API\UnlikeMultipleSongsController;
 use App\Http\Controllers\API\UpdatePlaybackStatusController;
 use App\Http\Controllers\API\UpdateUserPreferenceController;
-use App\Http\Controllers\API\UploadController;
+use App\Http\Controllers\API\Upload\DiscardAllDuplicateUploadsController;
+use App\Http\Controllers\API\Upload\DiscardDuplicateUploadController;
+use App\Http\Controllers\API\Upload\FetchDuplicateUploadsController;
+use App\Http\Controllers\API\Upload\KeepAllDuplicateUploadsController;
+use App\Http\Controllers\API\Upload\KeepDuplicateUploadController;
+use App\Http\Controllers\API\Upload\UploadSongController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\UserInvitationController;
 use App\Http\Controllers\Download\CheckDownloadableCountController;
@@ -154,10 +158,12 @@ Route::prefix('api')
             // Fetch songs **directly** in a specific folder path (or the media root if no path is specified)
             Route::get('songs/in-folder', FetchFolderSongsController::class);
 
-            Route::post('upload', UploadController::class);
-            Route::get('duplicate-uploads', [DuplicateUploadsController::class, 'fetch']);
-            Route::post('duplicate-uploads/keep', [DuplicateUploadsController::class, 'keep']);
-            Route::delete('duplicate-uploads/delete', [DuplicateUploadsController::class, 'delete']);
+            Route::post('upload', UploadSongController::class);
+            Route::get('duplicate-uploads', FetchDuplicateUploadsController::class);
+            Route::post('duplicate-uploads/{duplicateUpload}/keep', KeepDuplicateUploadController::class);
+            Route::post('duplicate-uploads/keep', KeepAllDuplicateUploadsController::class);
+            Route::delete('duplicate-uploads/{duplicateUpload}', DiscardDuplicateUploadController::class);
+            Route::delete('duplicate-uploads', DiscardAllDuplicateUploadsController::class);
 
             // Interaction routes
             Route::post('interaction/play', RegisterPlayController::class);

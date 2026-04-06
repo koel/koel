@@ -1,57 +1,43 @@
 <template>
-  <div class="rounded-lg border border-k-warning/20 overflow-hidden">
-    <button
-      class="flex items-center justify-between w-full px-4 py-3 bg-k-warning/10 text-k-warning hover:bg-k-warning/15 transition-colors"
-      type="button"
-      @click="isExpanded = !isExpanded"
-    >
+  <details class="rounded-lg border border-k-fg-10 overflow-hidden">
+    <summary class="flex items-center justify-between px-4 py-3 text-k-highlight cursor-pointer list-none">
       <span class="flex items-center gap-3">
-        <Icon :icon="faExclamationTriangle" />
-        <strong>Duplicate files detected</strong>
-        <span class="text-xs bg-k-warning/20 px-2 py-0.5 rounded-full uppercase font-bold">
+        <span class="text-sm bg-k-highlight text-k-highlight-fg px-2 py-0.5 rounded-full uppercase font-bold">
           {{ songs.length }}
         </span>
+        <strong>Duplicate file{{ songs.length === 1 ? '' : 's' }} detected</strong>
       </span>
-      <Icon :icon="isExpanded ? faChevronUp : faChevronDown" />
-    </button>
+    </summary>
 
-    <div v-if="isExpanded" class="border-t border-k-warning/20">
-      <div
-        v-for="song in songs"
-        :key="song.id"
-        class="flex items-center gap-3 px-4 py-2.5 border-b border-k-fg-5 last:border-b-0"
-      >
-        <span class="flex-1 min-w-0">
-          <span class="block truncate">{{ song.existing_song.artist_name }} — {{ song.existing_song.title }}</span>
-          <span class="block text-k-fg-50 text-[0.85rem]">
-            Added {{ new Date(song.existing_song.created_at).toLocaleDateString() }}
-          </span>
-        </span>
-        <Btn small transparent @click="keepDuplicates([song.id])">Upload anyway</Btn>
-        <Btn small transparent class="!text-k-danger" @click="deleteDuplicates([song.id])">Discard</Btn>
-      </div>
+    <div class="border-t border-k-fg-5">
+      <DuplicateUploadItem v-for="upload in songs" :key="upload.id" :upload />
 
       <div class="flex justify-end gap-2 px-4 py-3 bg-k-fg-5">
-        <Btn small transparent class="!text-k-danger" @click="deleteDuplicates(songs.map(({ id }) => id))">
-          Discard all
-        </Btn>
-        <Btn small highlight @click="keepDuplicates(songs.map(({ id }) => id))">Upload all anyway</Btn>
+        <Btn small highlight @click="confirmDiscardAll">Discard All</Btn>
+        <Btn small success @click="keepAll">Keep All</Btn>
       </div>
     </div>
-  </div>
+  </details>
 </template>
 
 <script setup lang="ts">
-import { faChevronDown, faChevronUp, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons'
-import { ref } from 'vue'
-import { useDuplicateUploads } from '@/composables/useDuplicateUploads'
+import { useDialogBox } from '@/composables/useDialogBox'
+import { uploadService } from '@/services/uploadService'
 
 import Btn from '@/components/ui/form/Btn.vue'
+import DuplicateUploadItem from '@/components/ui/upload/DuplicateUploadItem.vue'
 
 import type { DuplicateUpload } from '@/services/uploadService'
 
 defineProps<{ songs: DuplicateUpload[] }>()
 
-const isExpanded = ref(false)
-const { keepDuplicates, deleteDuplicates } = useDuplicateUploads()
+const { showConfirmDialog } = useDialogBox()
+
+const keepAll = () => uploadService.keepAllDuplicates()
+
+const confirmDiscardAll = async () => {
+  if (await showConfirmDialog('Discard all duplicate uploads?')) {
+    uploadService.discardAllDuplicates()
+  }
+}
 </script>
