@@ -193,8 +193,6 @@ return [
     'force_https' => env('FORCE_HTTPS', false),
     'backup_on_delete' => env('BACKUP_ON_DELETE', true),
 
-    'detect_duplicate_uploads' => env('DETECT_DUPLICATE_UPLOADS', true),
-
     'sync_log_level' => env('SYNC_LOG_LEVEL', 'error'),
 
     'proxy_auth' => [

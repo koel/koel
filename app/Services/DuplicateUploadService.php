@@ -15,7 +15,6 @@ use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
 use App\Services\SongStorages\SongStorage;
 use App\Values\Song\SongFileInfo;
 use App\Values\UploadReference;
-use Illuminate\Container\Attributes\Config;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Throwable;
@@ -29,8 +28,6 @@ class DuplicateUploadService
         private readonly SongService $songService,
         private readonly FileScanner $scanner,
         private readonly SongStorage $storage,
-        #[Config('koel.detect_duplicate_uploads')]
-        private readonly bool $detectionEnabled = true,
     ) {}
 
     /**
@@ -38,7 +35,7 @@ class DuplicateUploadService
      */
     public function detectAndHandle(string $filePath, UploadReference $uploadReference, User $uploader): void
     {
-        if (!$this->detectionEnabled) {
+        if (!$uploader->preferences->detectDuplicateUploads) {
             return;
         }
 
