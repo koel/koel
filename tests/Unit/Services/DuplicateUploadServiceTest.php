@@ -55,14 +55,15 @@ class DuplicateUploadServiceTest extends TestCase
             ->with('abc123', $uploader)
             ->andReturn($existingSong);
 
-        $this->expectException(DuplicateSongUploadException::class);
-
-        $this->makeService()->detectDuplicate('/tmp/song.mp3', $reference, $uploader);
-
-        $this->assertDatabaseHas('duplicate_uploads', [
-            'user_id' => $uploader->id,
-            'existing_song_id' => $existingSong->id,
-        ]);
+        try {
+            $this->makeService()->detectDuplicate('/tmp/song.mp3', $reference, $uploader);
+            self::fail('Expected DuplicateSongUploadException was not thrown.');
+        } catch (DuplicateSongUploadException) {
+            $this->assertDatabaseHas('duplicate_uploads', [
+                'user_id' => $uploader->id,
+                'existing_song_id' => $existingSong->id,
+            ]);
+        }
     }
 
     #[Test]
