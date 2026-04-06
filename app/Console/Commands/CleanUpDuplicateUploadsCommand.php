@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\DuplicateUpload;
+use App\Repositories\DuplicateUploadRepository;
 use App\Services\DuplicateUploadService;
 use Illuminate\Console\Command;
 
@@ -11,11 +11,11 @@ class CleanUpDuplicateUploadsCommand extends Command
     protected $signature = 'koel:clean-up-duplicate-uploads {--days=7 : Remove entries older than this many days}';
     protected $description = 'Remove stale duplicate upload entries and their associated files.';
 
-    public function handle(DuplicateUploadService $service): int
+    public function handle(DuplicateUploadService $service, DuplicateUploadRepository $repository): int
     {
         $days = (int) $this->option('days');
 
-        $staleUploads = DuplicateUpload::query()->where('created_at', '<', now()->subDays($days))->get();
+        $staleUploads = $repository->getStaleUploads($days);
 
         if ($staleUploads->isEmpty()) {
             $this->components->info('No stale duplicate uploads found.');
