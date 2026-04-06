@@ -9,6 +9,7 @@ use Illuminate\Support\Arr;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 use Saloon\Http\Response;
+use stdClass;
 
 final class GetAlbumInfoRequest extends Request
 {
@@ -52,7 +53,7 @@ final class GetAlbumInfoRequest extends Request
                 'summary' => self::formatLastFmText(object_get($album, 'wiki.summary')),
                 'full' => self::formatLastFmText(object_get($album, 'wiki.content')),
             ],
-            tracks: array_map(static fn ($track): array => [
+            tracks: array_map(static fn (stdClass $track): array => [
                 'title' => $track->name,
                 'length' => (int) $track->duration,
                 'url' => $track->url,

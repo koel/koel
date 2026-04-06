@@ -159,15 +159,14 @@ class LastfmServiceTest extends TestCase
 
         $info = $this->service->getAlbumInformation($album);
 
+        self::assertCount(1, $info->toArray()['tracks']);
         self::assertSame(
             [
-                [
-                    'title' => 'Only Track',
-                    'length' => 200,
-                    'url' => 'https://foo/only-track',
-                ],
+                'title' => 'Only Track',
+                'length' => 200,
+                'url' => 'https://foo/only-track',
             ],
-            $info->toArray()['tracks'],
+            $info->toArray()['tracks'][0],
         );
     }
 
