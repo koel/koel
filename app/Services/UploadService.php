@@ -13,6 +13,7 @@ use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
 use App\Services\SongStorages\SongStorage;
 use App\Values\Scanning\ScanConfiguration;
 use App\Values\UploadReference;
+use Illuminate\Container\Attributes\Config;
 use Illuminate\Support\Facades\File;
 use Throwable;
 
@@ -24,13 +25,16 @@ class UploadService
         private readonly FileScanner $scanner,
         private readonly SongRepository $songRepository,
         private readonly DuplicateUploadRepository $duplicateUploadRepository,
+        #[Config('koel.detect_duplicate_uploads')]
+        private readonly bool $detectDuplicates = true,
     ) {}
 
     public function handleUpload(string $filePath, User $uploader): Song
     {
-        $hash = File::hash($filePath);
-        $existingSong = $this->songRepository->findByHash($hash, $uploader);
         $uploadReference = $this->storage->storeUploadedFile($filePath, $uploader);
+        $existingSong = $this->detectDuplicates
+            ? $this->songRepository->findByHash(File::hash($filePath), $uploader)
+            : null;
 
         $config = ScanConfiguration::make(
             owner: $uploader,

@@ -2,12 +2,10 @@
 
 namespace Tests\Unit\Models;
 
-use App\Enums\SongStorageType;
 use App\Models\DuplicateUpload;
 use App\Models\Song;
 use App\Models\User;
 use App\Values\Scanning\ScanConfiguration;
-use App\Values\UploadReference;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
