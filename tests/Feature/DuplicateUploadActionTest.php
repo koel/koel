@@ -78,10 +78,7 @@ class DuplicateUploadActionTest extends TestCase
     public function discardAllDuplicates(): void
     {
         $user = create_user();
-        DuplicateUpload::factory()
-            ->count(3)
-            ->for($user)
-            ->create();
+        DuplicateUpload::factory()->for($user)->createMany([[], [], []]);
 
         $this->deleteAs('api/duplicate-uploads', [], $user)->assertNoContent();
 
@@ -94,14 +91,8 @@ class DuplicateUploadActionTest extends TestCase
         $user = create_user();
         $other = create_user();
 
-        DuplicateUpload::factory()
-            ->count(2)
-            ->for($user)
-            ->create();
-        DuplicateUpload::factory()
-            ->count(3)
-            ->for($other)
-            ->create();
+        DuplicateUpload::factory()->for($user)->createMany([[], []]);
+        DuplicateUpload::factory()->for($other)->createMany([[], [], []]);
 
         $this->deleteAs('api/duplicate-uploads', [], $user)->assertNoContent();
 

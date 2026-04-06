@@ -97,7 +97,7 @@ class DuplicateUploadServiceTest extends TestCase
     #[Test]
     public function discardDeletesRecordsAndFiles(): void
     {
-        $uploads = DuplicateUpload::factory()->count(2)->create();
+        $uploads = DuplicateUpload::factory()->createMany([[], []]);
 
         $this->makeService()->discard($uploads);
 

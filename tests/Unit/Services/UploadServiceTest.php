@@ -167,7 +167,7 @@ class UploadServiceTest extends TestCase
         $storage->expects('storeUploadedFile')->with($file, $uploader)->andReturn($reference);
         $this->duplicateUploadService
             ->expects('detectDuplicate')
-            ->andThrow(DuplicateSongUploadException::create($file, new DuplicateUpload()));
+            ->andThrow(DuplicateSongUploadException::create($file, DuplicateUpload::factory()->makeOne()));
 
         $this->expectException(DuplicateSongUploadException::class);
 
