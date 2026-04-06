@@ -85,6 +85,11 @@ class DropboxStorage extends CloudStorage
         $this->filesystem->delete('test.txt');
     }
 
+    public function getLocalPath(string $location): string
+    {
+        return $this->copyToLocal(Str::after($location, 'dropbox://'));
+    }
+
     public function getStorageType(): SongStorageType
     {
         return SongStorageType::DROPBOX;

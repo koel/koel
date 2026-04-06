@@ -63,6 +63,11 @@ class S3CompatibleStorage extends CloudStorage
         Storage::disk('s3')->delete('test.txt');
     }
 
+    public function getLocalPath(string $location): string
+    {
+        return $this->copyToLocal(Str::after($location, "s3://$this->bucket/"));
+    }
+
     public function getStorageType(): SongStorageType
     {
         return SongStorageType::S3;

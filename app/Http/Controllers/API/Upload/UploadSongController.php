@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\Upload;
 
+use App\Exceptions\DuplicateSongUploadException;
 use App\Exceptions\MediaPathNotSetException;
 use App\Exceptions\SongUploadFailedException;
 use App\Facades\Dispatcher;
 use App\Helpers\Ulid;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\API\UploadRequest;
+use App\Http\Requests\API\Upload\UploadSongRequest;
+use App\Http\Resources\DuplicateUploadResource;
 use App\Jobs\HandleSongUploadJob;
 use App\Models\Song;
 use App\Models\User;
@@ -19,14 +21,14 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Bus\PendingDispatch;
 use Illuminate\Http\Response;
 
-class UploadController extends Controller
+class UploadSongController extends Controller
 {
     /** @param User $user */
     public function __invoke(
         SongStorage $storage,
         AlbumRepository $albumRepository,
         SongRepository $songRepository,
-        UploadRequest $request,
+        UploadSongRequest $request,
         Authenticatable $user,
     ) {
         $this->authorize('upload', User::class);
@@ -49,6 +51,8 @@ class UploadController extends Controller
             }
 
             return response()->noContent();
+        } catch (DuplicateSongUploadException $e) {
+            return response()->json(new DuplicateUploadResource($e->duplicateUpload), Response::HTTP_CONFLICT);
         } catch (MediaPathNotSetException $e) {
             abort(Response::HTTP_FORBIDDEN, $e->getMessage());
         } catch (SongUploadFailedException $e) {

@@ -28,11 +28,13 @@
       @drop.prevent="onDrop"
       @dragover.prevent
     >
+      <DuplicateUploadList v-if="duplicatedSongs.length" :songs="duplicatedSongs" class="mb-4" />
+
       <div v-if="files.length" class="pb-4 space-y-4">
         <UploadItem v-for="file in files" :key="file.id" :file="file" data-testid="upload-item" />
       </div>
 
-      <ScreenEmptyState v-else>
+      <ScreenEmptyState v-else-if="!files.length && !duplicatedSongs.length">
         <template #icon>
           <Icon :icon="faUpload" />
         </template>
@@ -66,7 +68,7 @@
 
 <script lang="ts" setup>
 import { faRotateRight, faTrashCan, faUpload, faWarning } from '@fortawesome/free-solid-svg-icons'
-import { computed, defineAsyncComponent, ref, toRef } from 'vue'
+import { computed, defineAsyncComponent, ref, toRef, onMounted } from 'vue'
 
 import { isDirectoryReadingSupported as canDropFolders } from '@/utils/supports'
 import { acceptedExtensions } from '@/utils/mediaHelper'
@@ -78,12 +80,16 @@ import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 
+import DuplicateUploadList from '@/components/ui/DuplicateUploadList.vue'
+
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 const UploadItem = defineAsyncComponent(() => import('@/components/ui/upload/UploadItem.vue'))
 
 const acceptAttribute = acceptedExtensions.map(ext => `.${ext}`).join(',')
 
 const { allowsUpload, mediaPathSetUp, queueFilesForUpload, handleDropEvent } = useUpload()
+
+const duplicatedSongs = toRef(uploadService.state, 'duplicatedSongs')
 
 const files = toRef(uploadService.state, 'files')
 const droppable = ref(false)
@@ -115,6 +121,8 @@ const onDrop = async (event: DragEvent) => {
 
 const retryAll = () => uploadService.retryAll()
 const removeFailedEntries = () => uploadService.removeFailed()
+
+onMounted(() => uploadService.fetchDuplicates())
 </script>
 
 <style lang="postcss" scoped>

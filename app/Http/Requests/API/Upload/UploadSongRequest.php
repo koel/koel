@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Requests\API;
+namespace App\Http\Requests\API\Upload;
 
 use App\Http\Requests\Request;
 use App\Rules\SupportedAudioFile;
 use Illuminate\Http\UploadedFile;
 
 /** @property UploadedFile $file */
-class UploadRequest extends Request
+class UploadSongRequest extends Request
 {
     /** @inheritdoc */
     public function rules(): array

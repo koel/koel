@@ -1,5 +1,6 @@
 import { without } from 'lodash'
 import { reactive } from 'vue'
+import { http } from '@/services/http'
 import { postWithProgress } from '@/services/http'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
@@ -23,9 +24,19 @@ export interface UploadFile {
   message?: string
 }
 
+export interface DuplicateUpload {
+  type: 'duplicate-uploads'
+  id: string
+  song_title: string | null
+  artist_name: string | null
+  filename: string
+  created_at: string
+}
+
 export const uploadService = {
   state: reactive({
     files: [] as UploadFile[],
+    duplicatedSongs: [] as DuplicateUpload[],
   }),
 
   abortHandles: new Map<string, () => void>(),
@@ -113,8 +124,19 @@ export const uploadService = {
       logger.error(error)
       file.status = 'Errored'
 
-      if (error instanceof Error && 'responseData' in error && (error as any).responseData?.message) {
-        file.message = `Upload failed: ${(error as any).responseData.message}`
+      const err = error as {
+        status?: number
+        responseData?: DuplicateUpload | { message?: string }
+      }
+
+      if (err.status === 409 && err.responseData) {
+        this.state.duplicatedSongs.push(err.responseData as DuplicateUpload)
+        this.remove(file)
+        return
+      }
+
+      if (err.responseData && 'message' in err.responseData && err.responseData.message) {
+        file.message = `Upload failed: ${err.responseData.message}`
       } else {
         file.message = 'Upload failed: Unknown error.'
       }
@@ -123,6 +145,32 @@ export const uploadService = {
     } finally {
       this.abortHandles.delete(file.id)
     }
+  },
+
+  async fetchDuplicates() {
+    this.state.duplicatedSongs = await http.get<DuplicateUpload[]>('duplicate-uploads')
+  },
+
+  async keepDuplicate(id: DuplicateUpload['id']) {
+    const result = await http.post<UploadResult>(`duplicate-uploads/${id}`)
+    this.state.duplicatedSongs = this.state.duplicatedSongs.filter(s => s.id !== id)
+    this.handleUploadResult(result)
+  },
+
+  async keepAllDuplicates() {
+    const results = await http.post<UploadResult[]>('duplicate-uploads')
+    this.state.duplicatedSongs = []
+    results.forEach(result => this.handleUploadResult(result))
+  },
+
+  async discardDuplicate(id: DuplicateUpload['id']) {
+    await http.delete(`duplicate-uploads/${id}`)
+    this.state.duplicatedSongs = this.state.duplicatedSongs.filter(s => s.id !== id)
+  },
+
+  async discardAllDuplicates() {
+    await http.delete('duplicate-uploads')
+    this.state.duplicatedSongs = []
   },
 
   handleUploadResult: (result: UploadResult) => {

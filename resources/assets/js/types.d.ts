@@ -395,6 +395,7 @@ interface UserPreferences extends Record<string, any> {
   visualizer?: Visualizer['id'] | null
   active_extra_panel_tab: SideSheetTab | null
   make_uploads_public: boolean
+  detect_duplicate_uploads: boolean
   include_public_media: boolean
   crossfade_duration: number
   lastfm_session_key?: string

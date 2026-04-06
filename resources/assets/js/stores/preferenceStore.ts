@@ -37,6 +37,7 @@ export const defaultPreferences: UserPreferences = {
   visualizer: 'default',
   active_extra_panel_tab: null,
   make_uploads_public: false,
+  detect_duplicate_uploads: true,
   include_public_media: true,
   continuous_playback: false,
   crossfade_duration: 0,

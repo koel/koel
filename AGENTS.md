@@ -208,6 +208,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ## Tailwind CSS
 
 - Use Tailwind CSS classes to style HTML; check and use existing Tailwind conventions within the project before writing your own.
+- Only use colors defined in the project's CSS custom properties (`vars.pcss`) or derived from them (e.g. `k-highlight/20`). Never use arbitrary Tailwind color classes like `amber-500` or `blue-400`.
 - Offer to extract repeated patterns into components that match the project's conventions (i.e. Blade, JSX, Vue, etc.).
 - Think through class placement, order, priority, and defaults. Remove redundant classes, add classes to parent or child carefully to limit repetition, and group elements logically.
 - You can use the `search-docs` tool to get exact examples from the official documentation when needed.
@@ -248,9 +249,11 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - Never use `empty()` to check arrays. If the variable is known to be an array, use `!$array` instead. Don't compare to `[]` either.
 - When a string contains quotes, don't use escaped double quotes (e.g. `"Playlist \"$name\" created"`). Use `sprintf()` with a single-quoted format string instead (e.g. `sprintf('Playlist "%s" created', $name)`).
 - Never query models directly (e.g. `Model::query()->where(...)`) outside of the corresponding Repository class. All model lookups and queries must go through the appropriate Repository (e.g. `PlaylistRepository`, `SongRepository`).
+- Repositories are read-only — they must never create, update, or delete records. Write operations belong in services or on the models directly.
 - For config values needed by services, use the `#[Config('key')]` attribute on constructor parameters (from `Illuminate\Container\Attributes\Config`) — never call `config()` inside the service.
 - All closure parameters must be type-hinted. Never use untyped closure arguments (e.g. `function (Builder $query)`, not `function ($query)`).
 - When parsing or manipulating URLs, use `Illuminate\Support\Uri` instead of `parse_url()`.
+- Do not add return type declarations to controller methods — controller responses are too dynamic/flexible for strict return types.
 
 ## Environment Variables Documentation
 - When adding, removing, or modifying environment variables in `.env.example`, always update `docs/environment-variables.md` to stay in sync.
