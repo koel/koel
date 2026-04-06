@@ -24,7 +24,7 @@ describe('duplicateUploadItem', () => {
     song_title: 'Test Song',
     artist_name: 'Test Artist',
     filename: 'test-song.mp3',
-    created_at: new Date('2026-04-01'),
+    created_at: '2026-04-01T00:00:00.000000Z',
     ...overrides,
   })
 

@@ -30,7 +30,7 @@ export interface DuplicateUpload {
   song_title: string | null
   artist_name: string | null
   filename: string
-  created_at: Date
+  created_at: string
 }
 
 export const uploadService = {

@@ -25,7 +25,7 @@ describe('duplicateUploadList', () => {
       song_title: `Song ${i}`,
       artist_name: `Artist ${i}`,
       filename: `song-${i}.mp3`,
-      created_at: new Date('2026-04-01'),
+      created_at: '2026-04-01T00:00:00.000000Z',
     }))
 
   const renderComponent = (songs = makeSongs()) =>
