@@ -35,6 +35,10 @@ scrobbling. To enable the connection:
 
 ## Spotify
 
+:::warning Spotify API Access
+As of early 2026, Spotify's Web API [requires a Premium subscription](https://developer.spotify.com/blog/2026-02-06-update-on-developer-access-and-platform-security) for new developer apps. If you don't have one, you can still use MusicBrainz and Last.fm for artwork and metadata.
+:::
+
 Integration with Spotify allows Koel to fetch more metadata like album arts and artist images. To enable the integration:
 
 1. Register for a developer account and create an app in [Spotify dashboard](https://developer.spotify.com/dashboard/)
