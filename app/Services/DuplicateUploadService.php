@@ -57,11 +57,7 @@ class DuplicateUploadService
         throw DuplicateSongUploadException::create($filePath, $duplicate);
     }
 
-    /**
-     * @param Collection<DuplicateUpload> $uploads
-     *
-     * @return Collection<Song>
-     */
+    /** @return Collection<int, Song> */
     public function keep(Collection $uploads): Collection
     {
         $songs = collect();
@@ -92,7 +88,6 @@ class DuplicateUploadService
         return $songs;
     }
 
-    /** @param Collection<DuplicateUpload> $uploads */
     public function discard(Collection $uploads): void
     {
         $songFiles = $uploads->map(static fn (DuplicateUpload $upload) => SongFileInfo::make(
