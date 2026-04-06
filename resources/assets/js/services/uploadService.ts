@@ -153,7 +153,7 @@ export const uploadService = {
   async fetchDuplicates() {
     const response = await http.get<{ data: DuplicateUpload[] }>('duplicate-uploads')
     this.state.duplicatedSongs = response.data
-    console.log(this.state.duplicatedSongs)
+
     return this.state.duplicatedSongs
   },
 

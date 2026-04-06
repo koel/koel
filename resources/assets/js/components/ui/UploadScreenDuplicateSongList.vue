@@ -22,7 +22,7 @@
         </div>
         <div class="dup-text">
           <span class="dup-name">{{ song.existing_song.artist_name }} - {{ song.existing_song.title }} </span>
-          <span class="dup-date">Added {{ useDateFormat(song.existing_song.created_at, 'YYYY-MM-DD') }}</span>
+          <span class="dup-date">Added {{ new Date(song.existing_song.created_at).toLocaleDateString() }}</span>
         </div>
         <button class="dup-badge" @click="keepDuplicates([song.id])">
           <FontAwesomeIcon :icon="faCheck" />
@@ -49,20 +49,18 @@
 </template>
 
 <script setup lang="ts">
-import { DuplicateUpload } from '@/services/uploadService'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
-  faUpload,
-  faX,
-  faWarning,
-  faMusic,
   faCheck,
-  faChevronUp,
   faChevronDown,
+  faChevronUp,
+  faMusic,
+  faUpload,
+  faWarning,
+  faX,
 } from '@fortawesome/free-solid-svg-icons'
-import { useDuplicateUploads } from '@/composables/useDuplicateUploads'
 import { ref } from 'vue'
-import { useDateFormat } from '@vueuse/core'
+import { useDuplicateUploads } from '@/composables/useDuplicateUploads'
+import type { DuplicateUpload } from '@/services/uploadService'
 
 defineProps<{
   songs: DuplicateUpload[]

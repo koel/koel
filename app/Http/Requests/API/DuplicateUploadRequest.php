@@ -14,7 +14,8 @@ class DuplicateUploadRequest extends Request
     public function rules(): array
     {
         return [
-            'uploads' => ['required', 'array', Rule::exists(DuplicateUpload::class, 'id')],
+            'uploads' => ['required', 'array'],
+            'uploads.*' => ['required', Rule::exists(DuplicateUpload::class, 'id')],
         ];
     }
 }

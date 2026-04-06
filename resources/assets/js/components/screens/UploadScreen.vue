@@ -34,7 +34,7 @@
         <UploadItem v-for="file in files" :key="file.id" :file="file" data-testid="upload-item" />
       </div>
 
-      <ScreenEmptyState v-else-if="!files.length">
+      <ScreenEmptyState v-else-if="!files.length && !duplicateFilesUploaded">
         <template #icon>
           <Icon :icon="faUpload" />
         </template>
