@@ -154,12 +154,12 @@ export const uploadService = {
   },
 
   async keepDuplicate(id: DuplicateUpload['id']) {
-    await http.post(`duplicate-uploads/${id}/keep`)
+    await http.post(`duplicate-uploads/${id}`)
     this.state.duplicatedSongs = this.state.duplicatedSongs.filter(s => s.id !== id)
   },
 
   async keepAllDuplicates() {
-    await http.post('duplicate-uploads/keep')
+    await http.post('duplicate-uploads')
     this.state.duplicatedSongs = []
   },
 

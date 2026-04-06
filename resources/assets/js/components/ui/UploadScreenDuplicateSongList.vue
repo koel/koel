@@ -2,10 +2,11 @@
   <details class="rounded-lg border border-k-fg-10 overflow-hidden">
     <summary class="flex items-center justify-between px-4 py-3 text-k-highlight cursor-pointer list-none">
       <span class="flex items-center gap-3">
+        <Icon :icon="faCopy" />
+        <strong>Duplicate file{{ songs.length === 1 ? '' : 's' }} detected</strong>
         <span class="text-sm bg-k-highlight text-k-highlight-fg px-2 py-0.5 rounded-full uppercase font-bold">
           {{ songs.length }}
         </span>
-        <strong>Duplicate file{{ songs.length === 1 ? '' : 's' }} detected</strong>
       </span>
     </summary>
 
@@ -21,6 +22,7 @@
 </template>
 
 <script setup lang="ts">
+import { faCopy } from '@fortawesome/free-solid-svg-icons'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { uploadService } from '@/services/uploadService'
 

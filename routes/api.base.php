@@ -160,8 +160,8 @@ Route::prefix('api')
 
             Route::post('upload', UploadSongController::class);
             Route::get('duplicate-uploads', FetchDuplicateUploadsController::class);
-            Route::post('duplicate-uploads/{duplicateUpload}/keep', KeepDuplicateUploadController::class);
-            Route::post('duplicate-uploads/keep', KeepAllDuplicateUploadsController::class);
+            Route::post('duplicate-uploads/{duplicateUpload}', KeepDuplicateUploadController::class);
+            Route::post('duplicate-uploads', KeepAllDuplicateUploadsController::class);
             Route::delete('duplicate-uploads/{duplicateUpload}', DiscardDuplicateUploadController::class);
             Route::delete('duplicate-uploads', DiscardAllDuplicateUploadsController::class);
 

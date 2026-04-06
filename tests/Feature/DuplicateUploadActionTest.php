@@ -23,7 +23,7 @@ class DuplicateUploadActionTest extends TestCase
         $other = create_user();
         $upload = DuplicateUpload::factory()->for($owner)->createOne();
 
-        $this->postAs("api/duplicate-uploads/{$upload->id}/keep", [], $other)->assertForbidden();
+        $this->postAs("api/duplicate-uploads/{$upload->id}", [], $other)->assertForbidden();
     }
 
     #[Test]
