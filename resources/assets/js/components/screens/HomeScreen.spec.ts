@@ -44,6 +44,28 @@ describe('homeScreen.vue', () => {
     expect(screen.queryByTestId('screen-empty-state')).toBeNull()
   })
 
+  it('transitions from empty state to content after first upload', async () => {
+    commonStore.state.song_length = 0
+    const fetchOverviewMock = h.mock(overviewStore, 'fetch')
+
+    h.render(Component)
+
+    // Verify empty state is shown
+    screen.getByTestId('screen-empty-state')
+    expect(screen.queryByTestId('recently-added-albums')).toBeNull()
+
+    // Simulate what uploadService.handleUploadResult does
+    commonStore.state.song_length += 1
+    eventBus.emit('SONG_UPLOADED', h.factory('song'))
+
+    await h.tick(2)
+
+    // Empty state should be gone, sections should render
+    expect(screen.queryByTestId('screen-empty-state')).toBeNull()
+    screen.getByTestId('recently-added-albums')
+    expect(fetchOverviewMock).toHaveBeenCalled()
+  })
+
   it.each<[keyof Events]>([['SONGS_UPDATED'], ['SONGS_DELETED'], ['SONG_UPLOADED']])(
     'refreshes the overviews on %s event',
     async eventName => {
