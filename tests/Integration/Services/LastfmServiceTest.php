@@ -145,6 +145,33 @@ class LastfmServiceTest extends TestCase
     }
 
     #[Test]
+    public function getAlbumInformationWithSingleTrack(): void
+    {
+        $album = Album::factory()->for(Artist::factory()->createOne(['name' => 'Kamelot']))->createOne([
+            'name' => 'Single',
+        ]);
+
+        Saloon::fake([
+            GetAlbumInfoRequest::class => MockResponse::make(body: File::get(test_path(
+                'fixtures/lastfm/album-single-track.json',
+            ))),
+        ]);
+
+        $info = $this->service->getAlbumInformation($album);
+
+        self::assertSame(
+            [
+                [
+                    'title' => 'Only Track',
+                    'length' => 200,
+                    'url' => 'https://foo/only-track',
+                ],
+            ],
+            $info->toArray()['tracks'],
+        );
+    }
+
+    #[Test]
     public function getAlbumInformationForNonExistentAlbum(): void
     {
         $album = Album::factory()->for(Artist::factory()->createOne(['name' => 'Kamelot']))->createOne([

@@ -52,14 +52,11 @@ final class GetAlbumInfoRequest extends Request
                 'summary' => self::formatLastFmText(object_get($album, 'wiki.summary')),
                 'full' => self::formatLastFmText(object_get($album, 'wiki.content')),
             ],
-            tracks: array_map(
-                static fn ($track): array => [
-                    'title' => $track->name,
-                    'length' => (int) $track->duration,
-                    'url' => $track->url,
-                ],
-                object_get($album, 'tracks.track', []),
-            ),
+            tracks: array_map(static fn ($track): array => [
+                'title' => $track->name,
+                'length' => (int) $track->duration,
+                'url' => $track->url,
+            ], Arr::wrap(object_get($album, 'tracks.track', []))),
         );
     }
 }
