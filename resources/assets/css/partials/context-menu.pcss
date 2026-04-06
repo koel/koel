@@ -21,5 +21,9 @@
 
   .submenu {
     @apply absolute top-0 left-full hidden;
+
+    &[data-open] {
+      @apply block;
+    }
   }
 }
