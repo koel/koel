@@ -34,6 +34,7 @@ const preferences: UserPreferences = {
   visualizer: null,
   active_extra_panel_tab: null,
   make_uploads_public: false,
+  detect_duplicate_uploads: true,
   include_public_media: true,
   lastfm_session_key: 'fake-session-key',
 }

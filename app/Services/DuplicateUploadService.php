@@ -60,9 +60,9 @@ class DuplicateUploadService
     /**
      * @param Collection<DuplicateUpload> $uploads
      *
-     * @return array<Song>
+     * @return Collection<Song>
      */
-    public function keep(Collection $uploads): array
+    public function keep(Collection $uploads): Collection
     {
         $songs = [];
 

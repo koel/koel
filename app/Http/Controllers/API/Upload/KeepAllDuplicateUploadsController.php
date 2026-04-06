@@ -22,13 +22,14 @@ class KeepAllDuplicateUploadsController extends Controller
         AlbumRepository $albumRepository,
         Authenticatable $user,
     ) {
-        $songs = $service->keep($repository->getAllForUser($user));
-
-        return array_map(static function (Song $song) use ($songRepository, $albumRepository): array {
+        return $service->keep($repository->getAllForUser($user))->map(function (Song $song) use (
+            $songRepository,
+            $albumRepository,
+        ): SongUploadResponse {
             $populatedSong = $songRepository->getOne($song->id);
             $album = $albumRepository->getOne($populatedSong->album_id);
 
-            return SongUploadResponse::make(song: $populatedSong, album: $album)->toArray();
-        }, $songs);
+            return SongUploadResponse::make(song: $populatedSong, album: $album);
+        });
     }
 }

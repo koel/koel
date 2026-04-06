@@ -6,6 +6,12 @@
         <CheckBox v-model="preferences.make_uploads_public" name="make_uploads_public" />
       </label>
     </FormRow>
+    <FormRow v-if="canUpload">
+      <label class="pref-row">
+        <span>Detect and flag duplicate file uploads</span>
+        <CheckBox v-model="preferences.detect_duplicate_uploads" name="detect_duplicate_uploads" />
+      </label>
+    </FormRow>
     <FormRow v-if="isPlus">
       <label class="pref-row">
         <span
@@ -97,12 +103,15 @@ import { computed, toRef } from 'vue'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useKoelPlus } from '@/composables/useKoelPlus'
+import { usePolicies } from '@/composables/usePolicies'
 
 import CheckBox from '@/components/ui/form/CheckBox.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 
 const onMobile = isMobile.any
 const { isPlus } = useKoelPlus()
+const { currentUserCan } = usePolicies()
+const canUpload = currentUserCan.uploadSongs()
 
 const showTranscodingOption = toRef(commonStore.state, 'supports_transcoding')
 
