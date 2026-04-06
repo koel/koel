@@ -14,12 +14,7 @@ use Illuminate\Support\Facades\Cache;
 
 class FetchArtworkCommand extends Command
 {
-    /**
-     * Time to sleep between requests in second to avoid hitting the possible rate limit.
-     */
-    private const int INTERVAL = 1;
-
-    protected $signature = 'koel:fetch-artwork';
+    protected $signature = 'koel:fetch-artwork {--delay=1 : Time in seconds between requests to avoid rate limits}';
     protected $description = 'Attempt to fetch artist and album artworks from available sources.';
 
     public function __construct(
@@ -30,6 +25,8 @@ class FetchArtworkCommand extends Command
 
     public function handle(): int
     {
+        $delay = (int) $this->option('delay');
+
         if (!SpotifyService::enabled() && !MusicBrainzService::enabled()) {
             $this->components->error('Please configure Spotify and/or MusicBrainz integration first.');
 
@@ -43,7 +40,7 @@ class FetchArtworkCommand extends Command
             ->where(static fn (ArtistBuilder $query) => $query->whereNull('image')->orWhere('image', ''))
             ->orderBy('name')
             ->lazy()
-            ->each(function (Artist $artist): void {
+            ->each(function (Artist $artist) use ($delay): void {
                 Cache::forget(cache_key('artist information', $artist->name));
 
                 $this->encyclopedia->getArtistInformation($artist);
@@ -51,7 +48,7 @@ class FetchArtworkCommand extends Command
                 $status = $artist->image ? '<info>OK</info>' : '<error>Failed</error>';
                 $this->components->twoColumnDetail($artist->name, $status);
 
-                sleep(self::INTERVAL);
+                sleep($delay);
             });
 
         $this->components->info('Fetching album covers...');
@@ -62,7 +59,7 @@ class FetchArtworkCommand extends Command
             ->where(static fn (AlbumBuilder $query) => $query->whereNull('cover')->orWhere('cover', ''))
             ->orderBy('name')
             ->lazy()
-            ->each(function (Album $album): void {
+            ->each(function (Album $album) use ($delay): void {
                 Cache::forget(cache_key('album information', $album->name));
 
                 $this->encyclopedia->getAlbumInformation($album);
@@ -70,7 +67,7 @@ class FetchArtworkCommand extends Command
                 $status = $album->cover ? '<info>OK</info>' : '<error>Failed</error>';
                 $this->components->twoColumnDetail($album->name . ' - ' . $album->artist_name, $status);
 
-                sleep(self::INTERVAL);
+                sleep($delay);
             });
 
         $this->components->success('All done!');

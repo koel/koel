@@ -9,6 +9,7 @@ use Intervention\Image\FileExtension;
 use Intervention\Image\Interfaces\ImageManagerInterface;
 use Intervention\Image\Laravel\Facades\Image;
 use RuntimeException;
+use Throwable;
 
 class ImageWriter
 {
@@ -38,9 +39,19 @@ class ImageWriter
     {
         $config ??= ImageWritingConfig::default();
 
-        $img = Image::read(
-            Str::isUrl($source) ? Http::withUserAgent('Koel')->get($source)->body() : $source,
-        )->scale(width: $config->maxWidth);
+        if (Str::isUrl($source)) {
+            try {
+                $source = Http::withUserAgent(http_user_agent())
+                    ->get($source)
+                    ->throwIfClientError()
+                    ->throwIfServerError()
+                    ->body();
+            } catch (Throwable $e) {
+                throw new RuntimeException('Failed to fetch image from URL: ' . $source, previous: $e);
+            }
+        }
+
+        $img = Image::read($source)->scale(width: $config->maxWidth);
 
         if ($config->blur) {
             $img->blur($config->blur);

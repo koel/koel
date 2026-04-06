@@ -1,0 +1,26 @@
+{
+  "album": {
+    "name": "Single",
+    "artist": "Kamelot",
+    "url": "https://www.last.fm/music/Kamelot/Single",
+    "image": [],
+    "tracks": {
+      "track": {
+        "name": "Only Track",
+        "url": "https://foo/only-track",
+        "duration": "200",
+        "@attr": {
+          "rank": "1"
+        },
+        "artist": {
+          "name": "Kamelot",
+          "url": "https://www.last.fm/music/Kamelot"
+        }
+      }
+    },
+    "wiki": {
+      "summary": "A single.",
+      "content": "A single with one track."
+    }
+  }
+}

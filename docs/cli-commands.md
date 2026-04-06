@@ -112,13 +112,15 @@ Attempt to fetch missing album covers and artist images from the available sourc
 You'll need to configure and enable the corresponding [3rd-party integrations](./service-integrations.md) for this
 command to work.
 
-Note that Koel will only make a maximum of one request per second to avoid hitting the rate limits (if any) and
-risking getting blocked by the services.
+To avoid hitting rate limits, Koel pauses between requests. By default, this delay is 1 second, but you can customize it
+with the `--delay` option.
 
 #### Usage
 
 ```bash
 php artisan koel:fetch-artwork
+# Or with a custom delay (in seconds) between requests:
+php artisan koel:fetch-artwork --delay=2
 ```
 
 ### `koel:init`
