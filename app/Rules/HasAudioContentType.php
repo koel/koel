@@ -38,7 +38,7 @@ class HasAudioContentType implements ValidationRule
      * Many streaming servers (Shoutcast/Icecast) don't support HEAD requests,
      * so we fall back to a GET with streaming headers if HEAD fails.
      */
-    private function resolveContentType(string $url): ?string
+    private function resolveContentType(string $url): string
     {
         $response = Http::head($url);
 
