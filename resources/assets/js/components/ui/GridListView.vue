@@ -36,7 +36,7 @@ div {
 }
 
 div.as-list {
-  @apply gap-x-4 gap-y-3 content-start;
+  @apply gap-x-4 gap-y-3 content-start items-start;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
 }
 </style>
