@@ -45,9 +45,14 @@ class SafeUrl implements ValidationRule
         try {
             $response = Http::head((string) $value);
         } catch (Throwable) {
-            $fail("The $attribute couldn't be reached.");
+            // Some streaming servers don't support HEAD — try GET
+            try {
+                $response = Http::withOptions(['stream' => true])->get((string) $value);
+            } catch (Throwable) {
+                $fail("The $attribute couldn't be reached.");
 
-            return;
+                return;
+            }
         }
 
         $effectiveHost = $response->effectiveUri()?->getHost();
