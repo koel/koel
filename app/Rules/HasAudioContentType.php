@@ -18,8 +18,10 @@ class HasAudioContentType implements ValidationRule
     /** @param Closure(string, ?string=): PotentiallyTranslatedString $fail */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+        $url = (string) $value;
+
         try {
-            $contentType = Http::head((string) $value)->header('Content-Type');
+            $contentType = $this->resolveContentType($url);
         } catch (Throwable) {
             $fail("The $attribute couldn't be reached.");
 
@@ -29,5 +31,24 @@ class HasAudioContentType implements ValidationRule
         if (!$contentType || !Str::startsWith($contentType, 'audio/')) {
             $fail("The $attribute doesn't look like a valid radio station URL.");
         }
+    }
+
+    /**
+     * Resolve the Content-Type of a URL.
+     * Many streaming servers (Shoutcast/Icecast) don't support HEAD requests,
+     * so we fall back to a GET with streaming headers if HEAD fails.
+     */
+    private function resolveContentType(string $url): ?string
+    {
+        $response = Http::head($url);
+
+        if ($response->successful()) {
+            return $response->header('Content-Type');
+        }
+
+        // Fall back to GET with ICY headers — streaming servers often only respond to GET
+        $response = Http::withHeaders(['Icy-MetaData' => '1'])->withOptions(['stream' => true])->get($url);
+
+        return $response->header('Content-Type');
     }
 }
