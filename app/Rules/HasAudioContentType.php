@@ -40,10 +40,15 @@ class HasAudioContentType implements ValidationRule
      */
     private function resolveContentType(string $url): string
     {
-        $response = Http::head($url);
+        // Try HEAD first — fast and lightweight
+        try {
+            $response = Http::head($url);
 
-        if ($response->successful()) {
-            return $response->header('Content-Type');
+            if ($response->successful()) {
+                return $response->header('Content-Type');
+            }
+        } catch (Throwable) {
+            // HEAD may time out or fail on streaming servers — fall through to GET
         }
 
         // Fall back to GET with ICY headers — streaming servers often only respond to GET
