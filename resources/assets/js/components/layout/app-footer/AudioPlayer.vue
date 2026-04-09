@@ -154,6 +154,10 @@ setInterval(updateProgress, 250)
   @apply bg-k-highlight;
 }
 
+.audio-player.dragging .progress-played {
+  @apply transition-none;
+}
+
 .progress-played {
   @apply no-hover:bg-k-highlight;
 }
