@@ -5,7 +5,13 @@
       The hit area is absolutely positioned over the top of the footer,
       extending above and below the visible 4px track for easy clicking.
     -->
-    <div class="hit-area" @mousedown="onMouseDown" @mousemove="onHover" @mouseleave="hoverProgress = 0">
+    <div
+      class="hit-area"
+      @pointerdown="onPointerDown"
+      @click="onClickSeek"
+      @mousemove="onHover"
+      @mouseleave="hoverProgress = 0"
+    >
       <div class="track">
         <div class="progress-buffer" :style="{ width: `${bufferProgress}%` }" />
         <div class="progress-hover" :style="{ width: `${hoverProgress}%` }" />
@@ -62,42 +68,68 @@ const updateProgress = () => {
 
 let trackEl: HTMLElement | null = null
 
-const seekFromEvent = (e: MouseEvent) => {
-  const service = playback('current')
+const computeRatio = (clientX: number, track: HTMLElement) => {
+  const rect = track.getBoundingClientRect()
 
-  if (!service?.media?.duration || !trackEl) {
+  if (rect.width === 0) {
+    return 0
+  }
+
+  return Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
+}
+
+const seekFromEvent = (e: MouseEvent | PointerEvent) => {
+  const service = playback('current')
+  const targetTrack = trackEl ?? (e.currentTarget as HTMLElement)?.querySelector<HTMLElement>('.track')
+
+  if (!service?.media?.duration || !targetTrack) {
     return
   }
 
-  const rect = trackEl.getBoundingClientRect()
-  const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
-  service.seekTo(ratio * service.media.duration)
+  service.seekTo(computeRatio(e.clientX, targetTrack) * service.media.duration)
 }
 
-const onMouseDown = (e: MouseEvent) => {
+const onClickSeek = (e: MouseEvent) => {
+  if (isDragging.value) {
+    return
+  }
+
+  seekFromEvent(e)
+}
+
+const onPointerDown = (e: PointerEvent) => {
+  if (e.button !== 0) {
+    return
+  }
+
   trackEl = (e.currentTarget as HTMLElement).querySelector('.track')
+
+  if (!trackEl) {
+    return
+  }
+
+  e.preventDefault()
   isDragging.value = true
   seekFromEvent(e)
 
-  document.addEventListener('mousemove', onDragMove)
-  document.addEventListener('mouseup', onDragEnd)
+  document.addEventListener('pointermove', onDragMove)
+  document.addEventListener('pointerup', onDragEnd)
 }
 
-const onDragMove = (e: MouseEvent) => {
+const onDragMove = (e: PointerEvent) => {
   if (!isDragging.value || !trackEl) {
     return
   }
 
-  const rect = trackEl.getBoundingClientRect()
-  progress.value = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100))
+  progress.value = computeRatio(e.clientX, trackEl) * 100
   seekFromEvent(e)
 }
 
 const onDragEnd = () => {
   isDragging.value = false
   trackEl = null
-  document.removeEventListener('mousemove', onDragMove)
-  document.removeEventListener('mouseup', onDragEnd)
+  document.removeEventListener('pointermove', onDragMove)
+  document.removeEventListener('pointerup', onDragEnd)
 }
 
 const onHover = (e: MouseEvent) => {
@@ -105,17 +137,17 @@ const onHover = (e: MouseEvent) => {
     return
   }
 
-  const track = (e.currentTarget as HTMLElement).querySelector('.track')!
-  const rect = track.getBoundingClientRect()
-  hoverProgress.value = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100))
+  const track = (e.currentTarget as HTMLElement).querySelector<HTMLElement>('.track')!
+  hoverProgress.value = computeRatio(e.clientX, track) * 100
 }
 
-onBeforeUnmount(() => {
-  document.removeEventListener('mousemove', onDragMove)
-  document.removeEventListener('mouseup', onDragEnd)
-})
+const progressInterval = setInterval(updateProgress, 250)
 
-setInterval(updateProgress, 250)
+onBeforeUnmount(() => {
+  clearInterval(progressInterval)
+  document.removeEventListener('pointermove', onDragMove)
+  document.removeEventListener('pointerup', onDragEnd)
+})
 </script>
 
 <style lang="postcss" scoped>
