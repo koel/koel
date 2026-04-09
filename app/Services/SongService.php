@@ -47,7 +47,6 @@ class SongService
             $data->lyrics = $data->lyrics ?: '';
             $data->year = $data->year ?: null;
             $data->genre = $data->genre ?: '';
-            $data->albumArtistName = $data->albumArtistName ?: $data->artistName;
         }
 
         return DB::transaction(function () use ($ids, $data): SongUpdateResult {
@@ -119,7 +118,15 @@ class SongService
         // For nullable fields, use the existing value only if the provided data is explicitly null
         // (i.e., when multiple songs are being updated and the user did not provide a value).
         // This allows us to clear those fields (when the user provides an empty string).
-        $data->albumArtistName ??= $song->album_artist->name;
+        // Album artist handling:
+        // If the user provided an explicit album artist, use it.
+        // If not (null/empty), check if this is a compilation (album artist ≠ song artist).
+        // For compilations, preserve the existing album artist (e.g. "Various Artists").
+        // For non-compilations, let the album artist follow the (potentially updated) song artist.
+        if (!$data->albumArtistName) {
+            $isCompilation = !$song->album_artist->is($song->artist);
+            $data->albumArtistName = $isCompilation ? $song->album_artist->name : $data->artistName;
+        }
         $data->lyrics ??= $song->lyrics;
         $data->track ??= $song->track;
         $data->disc ??= $song->disc;
