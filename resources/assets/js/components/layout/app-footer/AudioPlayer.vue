@@ -1,11 +1,11 @@
 <template>
-  <div class="audio-player" :class="{ loading: isLoading }">
+  <div class="audio-player" :class="{ loading: isLoading, dragging: isDragging }">
     <audio id="audio-player" class="hidden" crossorigin="anonymous" />
     <!--
       The hit area is absolutely positioned over the top of the footer,
       extending above and below the visible 4px track for easy clicking.
     -->
-    <div class="hit-area" @click="seek" @mousemove="onHover" @mouseleave="hoverProgress = 0">
+    <div class="hit-area" @mousedown="onMouseDown" @mousemove="onHover" @mouseleave="hoverProgress = 0">
       <div class="track">
         <div class="progress-buffer" :style="{ width: `${bufferProgress}%` }" />
         <div class="progress-hover" :style="{ width: `${hoverProgress}%` }" />
@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
 import { playback } from '@/services/playbackManager'
 import { crossfadeService } from '@/services/crossfadeService'
 
@@ -24,6 +24,7 @@ const progress = ref(0)
 const bufferProgress = ref(0)
 const hoverProgress = ref(0)
 const isLoading = ref(false)
+const isDragging = ref(false)
 
 const getActiveMedia = (): HTMLMediaElement | null => {
   if (crossfadeService.active && crossfadeService.state) {
@@ -59,24 +60,60 @@ const updateProgress = () => {
   isLoading.value = !!media.src && readyState < 3 && currentTime === 0
 }
 
-const seek = (e: MouseEvent) => {
+let trackEl: HTMLElement | null = null
+
+const seekFromEvent = (e: MouseEvent) => {
   const service = playback('current')
 
-  if (!service?.media?.duration) {
+  if (!service?.media?.duration || !trackEl) {
+    return
+  }
+
+  const rect = trackEl.getBoundingClientRect()
+  const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
+  service.seekTo(ratio * service.media.duration)
+}
+
+const onMouseDown = (e: MouseEvent) => {
+  trackEl = (e.currentTarget as HTMLElement).querySelector('.track')
+  isDragging.value = true
+  seekFromEvent(e)
+
+  document.addEventListener('mousemove', onDragMove)
+  document.addEventListener('mouseup', onDragEnd)
+}
+
+const onDragMove = (e: MouseEvent) => {
+  if (!isDragging.value || !trackEl) {
+    return
+  }
+
+  const rect = trackEl.getBoundingClientRect()
+  progress.value = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100))
+  seekFromEvent(e)
+}
+
+const onDragEnd = () => {
+  isDragging.value = false
+  trackEl = null
+  document.removeEventListener('mousemove', onDragMove)
+  document.removeEventListener('mouseup', onDragEnd)
+}
+
+const onHover = (e: MouseEvent) => {
+  if (isDragging.value) {
     return
   }
 
   const track = (e.currentTarget as HTMLElement).querySelector('.track')!
   const rect = track.getBoundingClientRect()
-  const position = ((e.clientX - rect.left) / rect.width) * service.media.duration
-  service.seekTo(position)
-}
-
-const onHover = (e: MouseEvent) => {
-  const track = (e.currentTarget as HTMLElement).querySelector('.track')!
-  const rect = track.getBoundingClientRect()
   hoverProgress.value = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100))
 }
+
+onBeforeUnmount(() => {
+  document.removeEventListener('mousemove', onDragMove)
+  document.removeEventListener('mouseup', onDragEnd)
+})
 
 setInterval(updateProgress, 250)
 </script>
@@ -112,7 +149,8 @@ setInterval(updateProgress, 250)
   @apply absolute top-0 left-0 h-full bg-k-fg-10 transition-[width] duration-200 ease-in-out;
 }
 
-.audio-player:hover .progress-played {
+.audio-player:hover .progress-played,
+.audio-player.dragging .progress-played {
   @apply bg-k-highlight;
 }
 
