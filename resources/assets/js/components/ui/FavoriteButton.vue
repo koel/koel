@@ -5,7 +5,7 @@
     class="relative transition-[color] duration-200 ease-in-out hover:text-k-fg"
     @click.prevent.stop="emit('toggle')"
   >
-    <Icon :class="favorite && 'text-k-highlight'" :icon="favorite ? faStar : faEmptyStar" size="sm" />
+    <Icon :class="favorite && 'text-k-fg-70'" :icon="favorite ? faStar : faEmptyStar" size="sm" />
     <span class="sr-only">{{ title }}</span>
   </button>
 </template>

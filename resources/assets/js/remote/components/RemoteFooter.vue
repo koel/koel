@@ -1,7 +1,7 @@
 <template>
   <footer class="h-[18vh] w-screen flex justify-around items-center border-t border-solid border-t-k-fg-10 py-4">
     <button
-      class="text-[5vmin] has-[.yep]:text-k-highlight"
+      class="text-[5vmin] has-[.yep]:text-k-fg-70"
       data-testid="btn-toggle-favorite"
       @click.prevent="toggleFavorite"
     >

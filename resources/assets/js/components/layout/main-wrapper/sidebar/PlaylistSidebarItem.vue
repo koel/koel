@@ -14,8 +14,8 @@
     @drop.stop="onDrop"
   >
     <template #icon>
-      <Icon v-if="isRecentlyPlayedList(list)" :icon="faClockRotateLeft" class="text-k-success" fixed-width />
-      <Icon v-else-if="isFavoriteList(list)" :icon="faStar" class="text-k-highlight" fixed-width />
+      <Icon v-if="isRecentlyPlayedList(list)" :icon="faClockRotateLeft" fixed-width />
+      <Icon v-else-if="isFavoriteList(list)" :icon="faStar" fixed-width />
       <Icon v-else-if="list.is_smart" :icon="faWandMagicSparkles" fixed-width />
       <Icon v-else-if="list.is_collaborative" :icon="faUsers" fixed-width />
       <ListMusicIcon v-else :size="16" />
