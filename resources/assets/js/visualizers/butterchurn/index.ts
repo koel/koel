@@ -1,6 +1,9 @@
-import butterchurn from 'butterchurn'
+import butterchurnModule from 'butterchurn'
 import butterchurnPresets from 'butterchurn-presets'
 import { audioService } from '@/services/audioService'
+
+// Unwrap the default export from the namespace (required for UMD module compatibility)
+const butterchurn = (butterchurnModule as any).default || butterchurnModule
 
 export const initVisualizer = (container: HTMLElement) => {
   const audioContext = audioService.context
