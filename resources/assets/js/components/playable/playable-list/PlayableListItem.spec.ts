@@ -55,7 +55,7 @@ describe('playableListItem.vue', () => {
     }
   }
 
-  it('renders', async () => {
+  it('renders song details', () => {
     const song = h.factory('song', {
       title: 'Test Song',
       album_name: 'Test Album',
@@ -67,7 +67,12 @@ describe('playableListItem.vue', () => {
       favorite: true,
     })
 
-    expect(renderComponent(song).html()).toMatchSnapshot()
+    renderComponent(song)
+
+    screen.getByText('Test Song')
+    screen.getByText('Test Artist')
+    screen.getByText('Test Album')
+    screen.getByRole('button', { name: 'Undo Favorite' })
   })
 
   it('emits play event on double click', async () => {
