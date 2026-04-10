@@ -56,6 +56,7 @@ const { isFullscreen, toggle: toggleFullscreen } = useFullscreen(container)
 const controlsHidden = ref(false)
 
 const setupControlHidingTimer = () => {
+  window.clearTimeout(hideControlsTimeout)
   hideControlsTimeout = window.setTimeout(() => (controlsHidden.value = true), 5000)
 }
 
@@ -65,7 +66,6 @@ const showControls = throttle(() => {
   }
 
   controlsHidden.value = false
-  window.clearTimeout(hideControlsTimeout)
   setupControlHidingTimer()
 }, 100)
 
@@ -117,6 +117,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   window.clearTimeout(hideControlsTimeout)
+  showControls.cancel()
   freeUp()
 })
 </script>
