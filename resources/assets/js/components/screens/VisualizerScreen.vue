@@ -74,6 +74,7 @@ watch(isFullscreen, fullscreen => {
     setupControlHidingTimer()
   } else {
     window.clearTimeout(hideControlsTimeout)
+    showControls.cancel()
     controlsHidden.value = false
   }
 })
