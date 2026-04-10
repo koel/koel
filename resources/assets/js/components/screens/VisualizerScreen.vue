@@ -2,12 +2,13 @@
   <section
     id="vizContainer"
     ref="container"
-    :class="{ fullscreen: isFullscreen, 'hide-controls': controlsHidden }"
+    :class="{ fullscreen: isFullscreen, 'cursor-none': isFullscreen && controlsHidden }"
     @dblclick.prevent="toggleFullscreen"
     @mousemove="showControls"
   >
     <div
-      class="controls absolute z-[1] w-full h-full top-0 left-0 opacity-0 transition-opacity duration-300 ease-in-out hover:opacity-100"
+      class="controls absolute z-[1] w-full h-full top-0 left-0 opacity-0 transition-opacity duration-300 ease-in-out"
+      :class="{ 'hover:opacity-100': !isFullscreen, 'show-controls': !controlsHidden && isFullscreen }"
     >
       <div v-if="selectedVisualizer" class="absolute bottom-8 left-8 px-6 py-4 bg-black/30 rounded-md">
         <h3 class="text-lg mb-2">{{ selectedVisualizer.name }}</h3>
@@ -127,15 +128,14 @@ onBeforeUnmount(() => {
 
 .fullscreen {
   /* :fullscreen pseudo support is kind of buggy, so we use a class instead */
-  @apply bg-k-bg cursor-none;
+  @apply bg-k-bg;
 }
 
-.fullscreen:not(.hide-controls) {
-  @apply cursor-auto;
+.controls.show-controls {
+  @apply opacity-100;
 }
 
-.hide-controls .controls {
-  transition: opacity 2s ease-in-out !important;
-  @apply !opacity-0 pointer-events-none;
+.fullscreen .controls:not(.show-controls) {
+  @apply pointer-events-none;
 }
 </style>
