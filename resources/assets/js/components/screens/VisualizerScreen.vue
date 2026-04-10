@@ -1,7 +1,13 @@
 <template>
-  <section id="vizContainer" ref="container" :class="{ fullscreen: isFullscreen }" @dblclick.prevent="toggleFullscreen">
+  <section
+    id="vizContainer"
+    ref="container"
+    :class="{ fullscreen: isFullscreen, 'hide-controls': controlsHidden }"
+    @dblclick.prevent="toggleFullscreen"
+    @mousemove="showControls"
+  >
     <div
-      class="absolute z-[1] w-full h-full top-0 left-0 opacity-0 transition-opacity duration-300 ease-in-out hover:opacity-100"
+      class="controls absolute z-[1] w-full h-full top-0 left-0 opacity-0 transition-opacity duration-300 ease-in-out hover:opacity-100"
     >
       <div v-if="selectedVisualizer" class="absolute bottom-8 left-8 px-6 py-4 bg-black/30 rounded-md">
         <h3 class="text-lg mb-2">{{ selectedVisualizer.name }}</h3>
@@ -29,6 +35,7 @@
 import { faUpRightFromSquare } from '@fortawesome/free-solid-svg-icons'
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useFullscreen } from '@vueuse/core'
+import { throttle } from 'lodash'
 import { logger } from '@/utils/logger'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { visualizerStore } from '@/stores/visualizerStore'
@@ -37,12 +44,38 @@ import SelectBox from '@/components/ui/form/SelectBox.vue'
 
 const visualizers = visualizerStore.all
 let destroyVisualizer: () => void
+let hideControlsTimeout: number
 
 const el = ref<HTMLElement | null>(null)
 const container = ref<HTMLElement | null>(null)
 const selectedId = ref<Visualizer['id']>()
 
 const { isFullscreen, toggle: toggleFullscreen } = useFullscreen(container)
+
+const controlsHidden = ref(false)
+
+const setupControlHidingTimer = () => {
+  hideControlsTimeout = window.setTimeout(() => (controlsHidden.value = true), 5000)
+}
+
+const showControls = throttle(() => {
+  if (!isFullscreen.value) {
+    return
+  }
+
+  controlsHidden.value = false
+  window.clearTimeout(hideControlsTimeout)
+  setupControlHidingTimer()
+}, 100)
+
+watch(isFullscreen, fullscreen => {
+  if (fullscreen) {
+    setupControlHidingTimer()
+  } else {
+    window.clearTimeout(hideControlsTimeout)
+    controlsHidden.value = false
+  }
+})
 
 const freeUp = () => {
   destroyVisualizer?.()
@@ -81,7 +114,10 @@ onMounted(() => {
   }
 })
 
-onBeforeUnmount(() => freeUp())
+onBeforeUnmount(() => {
+  window.clearTimeout(hideControlsTimeout)
+  freeUp()
+})
 </script>
 
 <style lang="postcss" scoped>
@@ -91,6 +127,15 @@ onBeforeUnmount(() => freeUp())
 
 .fullscreen {
   /* :fullscreen pseudo support is kind of buggy, so we use a class instead */
-  @apply bg-k-bg;
+  @apply bg-k-bg cursor-none;
+}
+
+.fullscreen:not(.hide-controls) {
+  @apply cursor-auto;
+}
+
+.hide-controls .controls {
+  transition: opacity 2s ease-in-out !important;
+  @apply !opacity-0 pointer-events-none;
 }
 </style>
