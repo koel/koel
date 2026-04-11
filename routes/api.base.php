@@ -14,6 +14,7 @@ use App\Http\Controllers\API\Artist\ArtistSongController;
 use App\Http\Controllers\API\Artist\FetchArtistEventsController;
 use App\Http\Controllers\API\Artist\FetchArtistInformationController;
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\GoogleMobileSsoController;
 use App\Http\Controllers\API\DisconnectFromLastfmController;
 use App\Http\Controllers\API\Embed\EmbedController;
 use App\Http\Controllers\API\Embed\EmbedOptionsController;
@@ -92,6 +93,9 @@ Route::prefix('api')
         Route::middleware('throttle:10,1')->group(static function (): void {
             Route::post('me', [AuthController::class, 'login'])->name('auth.login');
             Route::post('me/otp', [AuthController::class, 'loginUsingOneTimeToken']);
+
+            Route::post('me/google', [GoogleMobileSsoController::class, 'login']);
+            Route::post('me/google/consent', [GoogleMobileSsoController::class, 'consent']);
 
             Route::delete('me', [AuthController::class, 'logout']);
 
