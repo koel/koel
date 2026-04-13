@@ -11,7 +11,6 @@ use App\Services\ConsentService;
 use App\Services\GoogleIdTokenVerifier;
 use App\Services\SettingService;
 use App\Services\UserService;
-use App\Values\User\SsoUser;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -61,9 +60,13 @@ class GoogleMobileSsoController extends Controller
 
     public function consent(GoogleMobileConsentRequest $request): JsonResponse
     {
-        $ssoUser = SsoUser::fromArray($request->sso_user);
-        $user = $this->userService->createOrUpdateUserFromSso($ssoUser);
+        try {
+            $ssoUser = $this->verifier->verify($request->id_token);
+        } catch (Throwable) {
+            abort(Response::HTTP_UNAUTHORIZED, 'Invalid Google ID token');
+        }
 
+        $user = $this->userService->createOrUpdateUserFromSso($ssoUser);
         $this->consentService->recordConsent($user, $request);
 
         return response()->json($this->auth->logUserIn($user)->toArray());

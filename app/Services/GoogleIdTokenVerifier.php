@@ -44,7 +44,13 @@ class GoogleIdTokenVerifier
     private function getPublicKeys(): array
     {
         $jwks = Cache::remember('google-jwk-keys', 3600, static function (): array {
-            return Http::get(self::CERTS_URL)->json();
+            $response = Http::timeout(10)->get(self::CERTS_URL);
+
+            if ($response->failed()) {
+                throw new UnexpectedValueException('Failed to fetch Google public keys');
+            }
+
+            return $response->json();
         });
 
         return JWK::parseKeySet($jwks, 'RS256');

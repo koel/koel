@@ -206,6 +206,11 @@ return [
         'enabled' => env('AI_ENABLED', false),
     ],
 
+    'legal' => [
+        'terms_url' => env('LEGAL_TERMS_URL'),
+        'privacy_url' => env('LEGAL_PRIVACY_URL'),
+    ],
+
     'misc' => [
         'home_url' => 'https://koel.dev',
         'docs_url' => 'https://docs.koel.dev',

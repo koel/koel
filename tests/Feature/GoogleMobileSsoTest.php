@@ -91,10 +91,11 @@ class GoogleMobileSsoTest extends TestCase
     public function consentCreatesUserAndReturnsTokens(): void
     {
         $ssoUser = $this->ssoUser();
+        $this->mockVerifier($ssoUser);
 
         $this
             ->post('api/me/google/consent', [
-                'sso_user' => $ssoUser->toArray(),
+                'id_token' => 'valid-token',
                 'terms_accepted' => true,
                 'privacy_accepted' => true,
                 'age_verified' => true,
@@ -110,11 +111,26 @@ class GoogleMobileSsoTest extends TestCase
     }
 
     #[Test]
+    public function consentWithInvalidTokenReturns401(): void
+    {
+        $this->mockVerifier(throws: true);
+
+        $this
+            ->postJson('api/me/google/consent', [
+                'id_token' => 'invalid-token',
+                'terms_accepted' => true,
+                'privacy_accepted' => true,
+                'age_verified' => true,
+            ])
+            ->assertUnauthorized();
+    }
+
+    #[Test]
     public function consentFailsWithoutRequiredFields(): void
     {
         $this
             ->postJson('api/me/google/consent', [
-                'sso_user' => $this->ssoUser()->toArray(),
+                'id_token' => 'valid-token',
             ])
             ->assertUnprocessable();
     }
