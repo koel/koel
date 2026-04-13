@@ -111,6 +111,8 @@ Koel Plus only. See [Single Sign-On](plus/sso).
 | `SSO_GOOGLE_CLIENT_ID` | Your Google OAuth client ID. | _(empty)_ |
 | `SSO_GOOGLE_CLIENT_SECRET` | Your Google OAuth client secret. | _(empty)_ |
 | `SSO_GOOGLE_HOSTED_DOMAIN` | The Google Workspace domain users must belong to. | _(empty)_ |
+| `LEGAL_TERMS_URL` | URL to Terms of Service shown during mobile Google SSO consent. | _(empty)_ |
+| `LEGAL_PRIVACY_URL` | URL to Privacy Policy shown during mobile Google SSO consent. | _(empty)_ |
 
 ## Proxy Authentication
 
